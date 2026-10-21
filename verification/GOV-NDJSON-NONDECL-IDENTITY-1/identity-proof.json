@@ -1,0 +1,145 @@
+{
+  "base_commit": "50d784300ac74d6ded633685bfce201cdddb630a",
+  "logs": [
+    {
+      "id": "R23",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "sha256": "bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1",
+      "tracked": false,
+      "bytes": 24213,
+      "status": "?? verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json\n",
+      "value_count": 6,
+      "kind_counts": {
+        "meta": 1,
+        "observation": 4,
+        "closed": 1
+      },
+      "each_nonblank_line_is_single_json": true,
+      "all_file_content_consumed_as_lines": true,
+      "schema": "P02-NEW-TIME-BASELINE-collector-1",
+      "outputRule": "single exclusive CreateNew NDJSON stream; line kinds meta/observation/closed; final closed line is self-contained; every check references /observations/<seq>/... JSON Pointers",
+      "resource_identity_node_matches": [],
+      "identity_key_occurrences": {
+        "path": 54,
+        "disposition": 1
+      },
+      "actual_guard_declarations": 0,
+      "actual_guard_errors": 0,
+      "pin_named_string_count": 18,
+      "pin_named_string_samples": [
+        {
+          "locator": "$line[1].freezeManifest.path",
+          "text": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE\\freeze\\baseline-20261014T0430CST-ac3fix.freeze.json"
+        },
+        {
+          "locator": "$line[1].frozenInputs.expectedBranch",
+          "text": "agent/zcode/P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenInputs.cwd",
+          "text": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenInputs.outputDir",
+          "text": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenInputs.worktree",
+          "text": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenContractPins[0].path",
+          "text": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/09_COLLABORATION.md"
+        },
+        {
+          "locator": "$line[1].frozenContractPins[1].path",
+          "text": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md"
+        },
+        {
+          "locator": "$line[1].frozenContractPins[2].path",
+          "text": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/templates/TASK.md"
+        }
+      ],
+      "reference_boundary": "metadata pin/path strings retain historical evidence/reference value; not resource declarations under current parse_json_declarations. No claim all referenced targets are inventoried or deletion-safe."
+    },
+    {
+      "id": "R24",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "tracked": true,
+      "bytes": 161783,
+      "status": "",
+      "value_count": 64,
+      "kind_counts": {
+        "meta": 1,
+        "observation": 62,
+        "closed": 1
+      },
+      "each_nonblank_line_is_single_json": true,
+      "all_file_content_consumed_as_lines": true,
+      "schema": "P02-NEW-TIME-BASELINE-collector-1",
+      "outputRule": "single exclusive CreateNew NDJSON stream; line kinds meta/observation/closed; final closed line is self-contained; every check references /observations/<seq>/... JSON Pointers",
+      "resource_identity_node_matches": [],
+      "identity_key_occurrences": {
+        "path": 184,
+        "disposition": 1
+      },
+      "actual_guard_declarations": 0,
+      "actual_guard_errors": 0,
+      "pin_named_string_count": 28,
+      "pin_named_string_samples": [
+        {
+          "locator": "$line[1].freezeManifest.path",
+          "text": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\baseline-20261014T0915CST-p02-admission-r2\\freeze-manifest.json"
+        },
+        {
+          "locator": "$line[1].frozenInputs.expectedBranch",
+          "text": "agent/zcode/P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenInputs.cwd",
+          "text": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenInputs.outputDir",
+          "text": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenInputs.worktree",
+          "text": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE"
+        },
+        {
+          "locator": "$line[1].frozenContractPins[0].path",
+          "text": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\09_COLLABORATION.md"
+        },
+        {
+          "locator": "$line[1].frozenContractPins[1].path",
+          "text": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\AD-001_TARGET_DESKTOP_ARCHITECTURE.md"
+        },
+        {
+          "locator": "$line[1].frozenContractPins[2].path",
+          "text": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\templates\\TASK.md"
+        }
+      ],
+      "reference_boundary": "metadata pin/path strings retain historical evidence/reference value; not resource declarations under current parse_json_declarations. No claim all referenced targets are inventoried or deletion-safe."
+    }
+  ],
+  "frozen_raw_inputs": {
+    "G:\\CODEX\\New Manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json": {
+      "sha256": "bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1",
+      "git_status": "?? verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json\n"
+    },
+    "G:\\CODEX\\New Manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json": {
+      "sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "git_status": ""
+    },
+    "G:\\CODEX\\New Manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\non-declaration-json-exceptions.json": {
+      "sha256": "238039dd3a9a70243ff8ffaee8dbf5b080e211cb8dc747de1a5da29211efdef2",
+      "git_status": ""
+    },
+    "G:\\CODEX\\New Manga\\tools\\governance\\clean_workspace.py": {
+      "sha256": "7e59e8fe9e6d1386981a9abbd969aeba230e1175e6dba3cd0f33bfa4281cffd0",
+      "git_status": ""
+    }
+  }
+}

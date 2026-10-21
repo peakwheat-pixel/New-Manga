@@ -1,0 +1,7 @@
+{
+  "exit": 1,
+  "error": "TypeError: _path_normpath: path should be string, bytes or os.PathLike, not int",
+  "cause": "仅workspace探针的io.open mock未排除subprocess文件描述符整数；不涉及guard/source修改",
+  "fix": "仅workspace探针：在按路径匹配前检查str/bytes/os.PathLike，整数file descriptor直接调用原io.open",
+  "retry": "原因明确修复后一次完整复验；失败原探针保留"
+}

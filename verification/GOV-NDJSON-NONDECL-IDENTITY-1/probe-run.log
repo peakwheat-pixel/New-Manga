@@ -1,0 +1,102 @@
+{
+  "identity_values": [
+    [
+      "R23",
+      6,
+      {
+        "meta": 1,
+        "observation": 4,
+        "closed": 1
+      }
+    ],
+    [
+      "R24",
+      64,
+      {
+        "meta": 1,
+        "observation": 62,
+        "closed": 1
+      }
+    ]
+  ],
+  "baseline": 32,
+  "cases": [
+    {
+      "name": "matching_exact_two_entries",
+      "mode": "workspace override manifest only",
+      "errors": 30,
+      "source_logs_still_fatal": [],
+      "other_30_error_identities_unchanged": true,
+      "baseline_protected_roots_preserved": true,
+      "protected_roots": 1704,
+      "R23_resource_declaration_registered": false,
+      "apply_called": false
+    },
+    {
+      "name": "wrong_path_does_not_match",
+      "mode": "workspace override manifest only",
+      "errors": 31,
+      "source_logs_still_fatal": [
+        "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json"
+      ],
+      "other_30_error_identities_unchanged": true,
+      "baseline_protected_roots_preserved": true,
+      "protected_roots": 1704,
+      "R23_resource_declaration_registered": false,
+      "apply_called": false
+    },
+    {
+      "name": "wrong_hash_does_not_match",
+      "mode": "workspace override manifest only",
+      "errors": 31,
+      "source_logs_still_fatal": [
+        "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json"
+      ],
+      "other_30_error_identities_unchanged": true,
+      "baseline_protected_roots_preserved": true,
+      "protected_roots": 1704,
+      "R23_resource_declaration_registered": false,
+      "apply_called": false
+    },
+    {
+      "name": "byte_drift_loses_exception",
+      "mode": "in-memory source bytes",
+      "errors": 31,
+      "source_logs_still_fatal": [
+        "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json"
+      ],
+      "other_30_error_identities_unchanged": true,
+      "baseline_protected_roots_preserved": true,
+      "protected_roots": 1704,
+      "R23_resource_declaration_registered": false,
+      "apply_called": false
+    },
+    {
+      "name": "drift_to_valid_resource_is_parsed",
+      "mode": "in-memory source bytes",
+      "errors": 30,
+      "source_logs_still_fatal": [],
+      "other_30_error_identities_unchanged": true,
+      "baseline_protected_roots_preserved": true,
+      "protected_roots": 1704,
+      "R23_resource_declaration_registered": true,
+      "apply_called": false
+    },
+    {
+      "name": "trust_boundary_exact_hash_can_bypass_valid_resource",
+      "mode": "in-memory source bytes",
+      "errors": 30,
+      "source_logs_still_fatal": [],
+      "other_30_error_identities_unchanged": true,
+      "baseline_protected_roots_preserved": true,
+      "protected_roots": 1704,
+      "R23_resource_declaration_registered": false,
+      "apply_called": false
+    }
+  ],
+  "default_final": 32,
+  "counts": [
+    98,
+    136
+  ]
+}

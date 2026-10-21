@@ -1,0 +1,54 @@
+import pathlib,sys,json,hashlib,subprocess,collections,os,io
+from unittest import mock
+ROOT=pathlib.Path(r'G:\CODEX\New Manga'); OUT=pathlib.Path(__file__).resolve().parent
+EV=ROOT/'verification/GOV-NDJSON-NONDECL-IDENTITY-1'; WS=pathlib.Path(r'G:\CODEX\New Manga.workspace')
+sys.path.insert(0,str(ROOT/'tools/governance'));import clean_workspace as guard
+scope=json.loads((EV/'scope.json').read_bytes()); logs=scope['source_logs']; registry=ROOT/guard.DEFAULT_JSON_EXCEPTION_MANIFEST
+sha=lambda b:hashlib.sha256(b).hexdigest()
+paths=[ROOT/s['file'] for s in logs]+[registry,ROOT/'tools/governance/clean_workspace.py']
+original={str(p):{'sha256':sha(p.read_bytes()),'git_status':subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all','--',str(p)]).decode('utf-8')} for p in paths}
+identity=[]; raw={}
+for src in logs:
+ p=ROOT/src['file'];b=p.read_bytes();assert sha(b)==src['sha256'];raw[src['file']]=b;text=b.decode('utf-8-sig');values=[json.loads(line) for line in text.splitlines() if line.strip()];idx=guard.ProtectionIndex(str(ROOT),str(WS));node_matches=[];key_hits=collections.Counter();pin_named_strings=[]
+ def walk(v,loc='$',pin_context=False):
+  if isinstance(v,dict):
+   if ('source_path' in v and ('disposition' in v or 'disposition_original' in v)) or all(k in v for k in ['resource_type','path','disposition']):node_matches.append(loc)
+   for k,x in v.items():
+    if k in ['source_path','destination_path','resource_type','disposition_original','path','disposition']:key_hits[k]+=1
+    walk(x,loc+'.'+k,pin_context or any(t in k.lower() for t in ['pin','frozeninput','freezemanifest','mutableobservation']))
+  elif isinstance(v,list):
+   for i,x in enumerate(v):walk(x,loc+f'[{i}]',pin_context)
+  elif isinstance(v,str) and pin_context and (('/' in v or '\\' in v) and len(v)<1000):pin_named_strings.append({'locator':loc,'text':v})
+ for i,val in enumerate(values):guard.parse_json_declarations(idx,val,src['file']);walk(val,f'$line[{i+1}]')
+ assert not idx.declarations and not idx.errors and not node_matches
+ kinds=dict(collections.Counter(v.get('kind') for v in values));assert kinds==({'meta':1,'observation':4,'closed':1} if src['id']=='R23' else {'meta':1,'observation':62,'closed':1})
+ identity.append({**src,'bytes':len(b),'status':original[str(p)]['git_status'],'value_count':len(values),'kind_counts':kinds,'each_nonblank_line_is_single_json':True,'all_file_content_consumed_as_lines':True,'schema':values[0].get('schema'),'outputRule':values[0].get('outputRule'),'resource_identity_node_matches':node_matches,'identity_key_occurrences':dict(key_hits),'actual_guard_declarations':len(idx.declarations),'actual_guard_errors':len(idx.errors),'pin_named_string_count':len(pin_named_strings),'pin_named_string_samples':pin_named_strings[:8],'reference_boundary':'metadata pin/path strings retain historical evidence/reference value; not resource declarations under current parse_json_declarations. No claim all referenced targets are inventoried or deletion-safe.'})
+entries=json.loads(registry.read_bytes());assert not any(e['path'] in raw for e in entries)
+def manifest(name,added):
+ p=OUT/(name+'.json');p.write_bytes((json.dumps(entries+added,ensure_ascii=False,indent=2)+'\n').encode());return str(p)
+adds=[{'path':s['file'],'sha256':s['sha256'],'reason':'CANDIDATE ONLY: fixed NDJSON meta/observation/closed evidence; all values passed current declaration parser with zero resource declarations; originals and references preserved.'} for s in logs]
+candidate=manifest('candidate-analysis-only',adds);wrongpath=[dict(e) for e in adds];wrongpath[0]['path']+='.unmatched';wronghash=[dict(e) for e in adds];wronghash[0]['sha256']='0'*64
+original_status=sha(subprocess.check_output(['git','status','--porcelain=v1','-z','--untracked-files=all']))
+baseline,stats=guard.scan_repo_declarations(str(ROOT),str(WS));assert len(baseline.errors)==32
+logpaths=set(raw);identitykey=lambda e:(e['code'],e['file'],e['locator'],e['message']);residual=collections.Counter(identitykey(e) for e in baseline.errors if e['file'] not in logpaths)
+original_open=guard.io.open; log0=logs[0]['file'];absolute0=os.path.normcase(os.path.abspath(ROOT/log0));target=(ROOT/'tools/governance/clean_workspace.py').as_posix()
+synthetic=json.dumps({'resources':[{'resource_type':'file','source_path':target,'disposition':'PRESERVE_REFERENCED','destination_path':target}]}).encode()
+def run(name,path,expected_count,expected_error_logs,substitute=None,expected_decl=False):
+ def patched_open(path,*args,**kwargs):
+  mode=args[0] if args else kwargs.get('mode','r')
+  if substitute is not None and isinstance(path, (str, bytes, os.PathLike)) and os.path.normcase(os.path.abspath(path))==absolute0:
+   return io.BytesIO(substitute) if 'b' in mode else io.StringIO(substitute.decode('utf-8'))
+  return original_open(path,*args,**kwargs)
+ with mock.patch.object(guard.io,'open',side_effect=patched_open): idx,counts=guard.scan_repo_declarations(str(ROOT),str(WS),path)
+ remaining=sorted(e['file'] for e in idx.errors if e['file'] in logpaths);decls=[d for d in idx.declarations if d.source_file==log0];assert len(idx.errors)==expected_count and remaining==sorted(expected_error_logs),(name,len(idx.errors),remaining);assert bool(decls)==expected_decl
+ assert collections.Counter(identitykey(e) for e in idx.errors if e['file'] not in logpaths)==residual
+ assert set(baseline.protected)<=set(idx.protected)
+ return {'name':name,'mode':'in-memory source bytes' if substitute is not None else 'workspace override manifest only','errors':len(idx.errors),'source_logs_still_fatal':remaining,'other_30_error_identities_unchanged':True,'baseline_protected_roots_preserved':True,'protected_roots':len(idx.protected),'R23_resource_declaration_registered':bool(decls),'apply_called':False}
+results=[run('matching_exact_two_entries',candidate,30,[]),run('wrong_path_does_not_match',manifest('candidate-wrong-path',wrongpath),31,[log0]),run('wrong_hash_does_not_match',manifest('candidate-wrong-hash',wronghash),31,[log0]),run('byte_drift_loses_exception',candidate,31,[log0],raw[log0]+b'\n'),run('drift_to_valid_resource_is_parsed',candidate,30,[],synthetic,True)]
+poison=[dict(e) for e in adds];poison[0]['sha256']=sha(synthetic);results.append(run('trust_boundary_exact_hash_can_bypass_valid_resource',manifest('candidate-trust-boundary',poison),30,[],synthetic,False))
+final,finalstats=guard.scan_repo_declarations(str(ROOT),str(WS));assert collections.Counter(map(identitykey,final.errors))==collections.Counter(map(identitykey,baseline.errors));assert original_status==sha(subprocess.check_output(['git','status','--porcelain=v1','-z','--untracked-files=all']))
+for p in paths:assert sha(p.read_bytes())==original[str(p)]['sha256'] and subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all','--',str(p)]).decode('utf-8')==original[str(p)]['git_status']
+heads=len(subprocess.check_output(['git','for-each-ref','--format=%(refname)','refs/heads']).splitlines());wts=sum(x.startswith('worktree ') for x in subprocess.check_output(['git','worktree','list','--porcelain']).decode().splitlines());assert(heads,wts)==(98,136)
+(EV/'identity-proof.json').write_bytes((json.dumps({'base_commit':scope['base_commit'],'logs':identity,'frozen_raw_inputs':original},ensure_ascii=False,indent=2)+'\n').encode())
+proof={'baseline_errors':len(baseline.errors),'baseline_protected_roots':len(baseline.protected),'baseline_error_identities':baseline.errors,'cases':results,'final_default_errors':len(final.errors),'default_32_error_identities_unchanged':True,'raw_inputs_and_status_unchanged':True,'repository_status_snapshot_unchanged':True,'heads':heads,'worktrees':wts,'formal_exception_registry_modified':False,'candidate_registry_entries_added_to_formal':0,'mechanism_trust_boundary':'Exception match is checked BEFORE JSON decoding. Exact path+hash proves byte identity only; reviewed non-declaration semantics are trusted. The last case intentionally demonstrates a forged exact entry could hide a real declaration; this is not approval to register such content.','probe_script_sha256':sha(pathlib.Path(__file__).read_bytes()),'negative_case_not_performed':'No actual rename/edit of source; path mismatch uses candidate-entry mismatch, byte drift uses in-memory open substitution; no filesystem mutation.'}
+(EV/'mechanism-proof.json').write_bytes((json.dumps(proof,ensure_ascii=False,indent=2)+'\n').encode());print(json.dumps({'identity_values':[(s['id'],s['value_count'],s['kind_counts']) for s in identity],'baseline':32,'cases':results,'default_final':32,'counts':[heads,wts]},ensure_ascii=False,indent=2))
