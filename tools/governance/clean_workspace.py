@@ -1257,8 +1257,10 @@ def parse_table_block(block, start):
 
 
 def _exact_column(header, *names):
-    """AC5: exact English column name only (no Chinese/prose aliases)."""
+    """Exact names plus the single frozen Canonical Evidence template label."""
     lowered = [cell.strip().lower() for cell in header]
+    lowered = ["path" if cell == "path（仓库相对路径或绝对路径）" else cell
+               for cell in lowered]
     for name in names:
         if name in lowered:
             return lowered.index(name)
@@ -1269,6 +1271,8 @@ def _duplicate_identity_columns(header, names):
     """Review r7 F-05: duplicate identity columns must not be silently reduced
     to the first index -- that would hide declarations in later columns."""
     lowered = [cell.strip().lower() for cell in header]
+    lowered = ["path" if cell == "path（仓库相对路径或绝对路径）" else cell
+               for cell in lowered]
     duplicates = []
     for name in names:
         count = lowered.count(name)
