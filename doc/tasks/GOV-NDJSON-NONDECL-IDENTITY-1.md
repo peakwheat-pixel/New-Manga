@@ -3,7 +3,7 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
@@ -87,3 +87,7 @@ ready冻结后认领；Reviewer只读，审查期间Owner暂停被审文档写�
 ## 交付记录
 
 证据488ab6cbec7774df8c0c3b2e8a9e169750a92101：NDJSON共6/64值、种类1/4/1及1/62/1，实际当前声明parser均0；6候选/负例EXIT0，正式默认32身份完整保留，候选仅消两项32→30、原保护集合不减，98heads/136worktrees。正式表是旧Canonical Evidence；磁盘CRLF与历史Git blob hash区分，禁止原地更新。未来最小写范围为新当前配置+默认常量，未释放。审查期间暂停被审文档写入。
+
+## R1独审
+
+DSH session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d，EXIT0，changes_requested固定3ff9dba39694751a72fd1a67380757041cd7dc08。主体身份、6cases、默认32/候选30、旧表pin边界已独立重算通过；阻断为本Task Canonical Evidence表空行导致10行pin未被guard注册。只修自有表格结构/恢复指针，不改guard或源。
