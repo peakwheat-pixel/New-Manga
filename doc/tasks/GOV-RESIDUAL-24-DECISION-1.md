@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-24-DECISION-1
 title: 剩余二十四项声明与主线收敛的最小裁决清单
 kind: research
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_auto_advance_20261021_readonly_decision_summary
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: a2cceac539a77d8de9c0158b0b58a0063381dc66
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 9915cb69a7c6a95264c8228f9b3c7956f1343e8e
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-RESIDUAL-24-DECISION-1
@@ -36,9 +36,9 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1** 当前24项完整身份/9来源逐项归组并与当前guard及原矩阵一致，源字节/status前后不变。 <<NOT_RUN>>
-- [ ] **AC2** 形成12宽根/7历史身份/2冻结模板/3NUL的具体边界、最小裁决和安全下一步；19独有支线tip核对、99/137数量如实，禁止把备份/保护解除/实现授权混淆。 <<NOT_RUN>>
-- [ ] **AC3** DeepSeek固定head独审、Codex实际pin注册/治理check/源保全核验、Handoff/资源核销完成，父blocked不变。 <<NOT_RUN>>
+- [x] **AC1** 当前24项完整身份/9来源逐项归组并与当前guard及原矩阵一致，源字节/status前后不变。 <<MET>>
+- [x] **AC2** 形成12宽根/7历史身份/2冻结模板/3NUL的具体边界、最小裁决和安全下一步；19独有支线tip核对、99/137数量如实，禁止把备份/保护解除/实现授权混淆。 <<MET>>
+- [ ] **AC3** DeepSeek固定head独审、Codex实际pin注册/治理check/源保全核验、Handoff/资源核销完成，父blocked不变。 <<PARTIAL: 取证已完成，独审/核销待完成>>
 
 ## 测试与禁止
 
@@ -48,6 +48,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+|EV-1|AC1/AC2/AC3|verification/GOV-RESIDUAL-24-DECISION-1/.gitattributes|9915cb69a7c6a95264c8228f9b3c7956f1343e8e|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
+|EV-2|AC1/AC2/AC3|verification/GOV-RESIDUAL-24-DECISION-1/checkpoint.md|9915cb69a7c6a95264c8228f9b3c7956f1343e8e|43ab0bc017b8eef6818f48538bdb2dd5abb8ad483d3c1e1ece80983c3504a16f|CANONICAL|
+|EV-3|AC1/AC2/AC3|verification/GOV-RESIDUAL-24-DECISION-1/decision-facts.json|9915cb69a7c6a95264c8228f9b3c7956f1343e8e|62f793b52c268db0bf3823ef942b484e93f84a5625e3fbce2f9ce0e10615eed4|CANONICAL|
+|EV-4|AC1/AC2/AC3|verification/GOV-RESIDUAL-24-DECISION-1/decision-request.md|9915cb69a7c6a95264c8228f9b3c7956f1343e8e|440a36c646f39ae741534a1556002cb8d75325c931e5f2540a66c91b32314d65|CANONICAL|
 
 ## Resource Manifest
 

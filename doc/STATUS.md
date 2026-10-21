@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-RESIDUAL-24-DECISION-1](tasks/GOV-RESIDUAL-24-DECISION-1.md)**（`in_progress`；24错误最小裁决，只读、DeepSeek独审）。
+- 当前 Task：**[GOV-RESIDUAL-24-DECISION-1](tasks/GOV-RESIDUAL-24-DECISION-1.md)**（`in_review`；24错误最小裁决，只读、DeepSeek独审）。
 - 最近完成：GOV-NONRESOURCE-MANIFEST-FORMAT-1 `done`，独审2573375dc，30→24。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式24错误/原保护/STATUS-r212禁令有效。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
