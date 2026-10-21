@@ -4,16 +4,16 @@ task_id: WORKSPACE-DECLARATION-REMEDIATION-1
 author: workspace-hardening (DeepSeek Harness)
 reviewer: Codex
 status: in_review
-review_round: r4 changes_requested fixes
+review_round: r5 changes_requested fixes
 base_commit: 83b111ac104d47b30cf0842f553f97656cd0d8d1
 start_commit: f0f19596f
-evidence_commit: a3bc20901067a743d09ebd48c623d0a017df021f
+evidence_commit: aac8cb52b6e3185bdffedf46ce1561441bbd4de8
 date: 2026-10-21
 branch: dsh/WORKSPACE-DECLARATION-REMEDIATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
 ---
 
-# WORKSPACE-DECLARATION-REMEDIATION-1 Handoff (review r4)
+# WORKSPACE-DECLARATION-REMEDIATION-1 Handoff (review r5)
 
 > Handoff 不是 Review、不是批准、不是关闭。Task 仍为 `in_review`。
 > 未执行任何真实 apply/删除/移动/GC/prune/push；未修改历史 Task/证据/untracked 文件。
@@ -43,7 +43,7 @@ git HEAD `f0f19596f…`；扫描输入 7416 tracked + 1504 untracked，逐文件
   `error`（已解析但 identity 不安全/不可读 → 保留原 GuardError 为 fatal）、`prose`（仅
   `DECL_BARE_NAME`/`DECL_RELATIVE_UNRESOLVED`/`DECL_RELATIVE_NO_ROOT` 三类“非身份”才跳过）。
   generalized junction（顶层 CJK/空格名指向 workspace/managed root）在 source 与 evidence pin
-  两个入口都 fatal。新增 3 个 junction 夹具（generalized source fatal、safe junction 保护、
+  两个入口都 fatal。新增 3 个 junction 夹具 + 3 个 TRIAGE 多 code 归因夹具（generalized source fatal、safe junction 保护、
   generalized evidence fatal）。
 - **快照（P2）**：`run_evidence.py` 对实际扫描输入（tracked + untracked，逐文件内容 sha256）取
   指纹；before/after audit 前后各采样一次（4 点一致 `same_snapshot=true`）；命令记录为实际 argv
@@ -58,7 +58,7 @@ git HEAD `f0f19596f…`；扫描输入 7416 tracked + 1504 untracked，逐文件
 
 | 命令 | 结果 |
 |---|---|
-| `python -B -m unittest test_declaration_remediation -v` | **exit 0**，23/23 OK |
+| `python -B -m unittest test_declaration_remediation -v` | **exit 0**，26/26 OK |
 | `python -B run_suite.py`（既有 80 tests，只读副本） | **exit 0**，80/80 OK |
 | `clean_workspace.py --replay-incident <ledger>` | **exit 0**，15/15 REJECT、0 删除、18/18 source |
 | `remove_worktrees.py --replay-incident <ledger>` | **exit 0**，同上 |
@@ -86,3 +86,8 @@ git HEAD `f0f19596f…`；扫描输入 7416 tracked + 1504 untracked，逐文件
 同 r3：44 个不完整 identity 表需 Codex 裁定“补列/明确叙述”；6 泛化声明、6 泛化 destination、
 4 env、1 歧义相对路径、2 含 token JSON、1 malformed 行、1 destination prose、3 损坏文件需裁定；
 全部在 `RESIDUAL.md` 逐条可审计。
+
+## r5 fix
+
+- TRIAGE `after_index` 改为按 `(file, locator, role)` 保存**列表**，`match_status()` 先精确匹配 before code，再按显式 transition（如 `DECL_DESTINATION_UNRESOLVED -> DECL_DESTINATION_GENERALIZED`）匹配；未列出的多 code 冲突标为 ambiguous，不再错误归因。GOV-DEBT-CLEANUP-2 的 `TABLE_ROW_ARITY` 现精确显示 `after: TABLE_ROW_ARITY`。
+- 新增 3 个 TRIAGE 多 code 归因回归夹具（26/26 tests）。
