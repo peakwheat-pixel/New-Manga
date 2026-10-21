@@ -4,7 +4,7 @@
 
 ## 模板两项
 
-R25/R26：旧Review verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md rawSHA dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa，tracked且原LF归一化内容等于Git blob（磁盘CRLF与blob LF不同，原rawSHA不变）。物理line228/229，scanner locator为内嵌section相对line7/8。原文line115明确这是待正式注册、尚未落盘的Task payload；四反引号围栏117..239包围整个草案。不是该旧Review发出的实际资源处置声明。
+R25/R26：旧Review verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md rawSHA dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa，tracked且磁盘原字节等于HEAD blob（rawSHA保持不变）。物理line228/229，scanner locator为内嵌section相对line7/8。原文line115明确这是待正式注册、尚未落盘的Task payload；四反引号围栏117..239包围整个草案。不是该旧Review发出的实际资源处置声明。
 
 两行分别含“workspace对应Task子目录/NOT_APPLICABLE或按实核实”和“本Task两个目录”的占位/复合自然语言，不能据此生成具体路径或处置权限。line227的同围栏实际精确worktree已被当前parser登记为PRESERVE_UNKNOWN，必须继续保护；不能泛化忽略围栏或排除整个Review。scanner section_text仅匹配##标题且不感知围栏，故命中内嵌草案，而非前面的###叙述标题。当前对该文件独立内存parse实际1条保护/2错误/2warning，不移除已登记保护。
 
