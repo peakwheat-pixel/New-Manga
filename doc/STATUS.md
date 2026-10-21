@@ -4,7 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；R2 仅批准 c9a1bdd30 盘点；97 分支/135 worktrees；旧禁令/77 声明错误未解除）。
+- 当前 Task：**[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md)**（`ready`；仅固定表头兼容；禁令有效）。
+
+- 收敛父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；R2 仅批准 c9a1bdd30 盘点；97 分支/135 worktrees；旧禁令/77 声明错误未解除）。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
@@ -14,7 +16,6 @@
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。
 - **[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)**：`superseded`；**[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md)**：`closed_with_limitations`（v1 证据）。
 - **Task 台账**：[TASK_LEDGER](TASK_LEDGER.md) 当前实算 325 文件 / 312 终态 / 13 非终态；其中 11 个非终态历史未跟踪草稿原样保留。状态字段不证明活性，不批量关闭。
-- **r38 裁定**：状态字段只说明生命周期记录，**不能单独证明 Task 仍活跃或已僵死**；不批量改状态；台账由 `tools/governance/task_ledger.py --write` 生成（已建）。
 - DIR-4：同一失败上限 2 次；DIR-5：goal 轮次上限 1000。Coordinator=codex，epoch=9，lease=e06e91c0a6b94d309c2af578256551d8（LEASE_VALID）。
 
 ## Gate 与保留项
@@ -25,4 +26,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[当前 checkpoint](../verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
+- 恢复点：[当前 checkpoint](../verification/GOV-PATH-HEADER-COMPAT-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
