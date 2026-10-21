@@ -1,0 +1,30 @@
+{
+  "approved_head": "edbd1a49273d6a1d776d6eeaf0a1cc969ba5d3d7",
+  "source_checks": [
+    {
+      "task": "doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md",
+      "registered": 19,
+      "original_bytes_and_fields_preserved": true
+    },
+    {
+      "task": "doc/tasks/GOV-PATH-HEADER-COMPAT-1.md",
+      "registered": 19,
+      "original_bytes_and_fields_preserved": true
+    },
+    {
+      "task": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
+      "registered": 13,
+      "original_bytes_and_fields_preserved": true
+    }
+  ],
+  "original_pin_checks": 51,
+  "default_errors": 32,
+  "same_error_identities": true,
+  "resource_closeout": "complete: agent-output PRESERVE_REFERENCED; no new branch/worktree/env/build; 98/136",
+  "deleted": 0,
+  "migrated": 0,
+  "archived": 0,
+  "untracked_limit": "No broad byte baseline claimed; only scoped source evidence and operations proved",
+  "next_task": "auto-authorized but separately freeze GOV-NDJSON-EXCEPTION-CONFIG-1",
+  "historical_checkpoint": "pinned in_review snapshot kept unchanged; terminal state in Task/Handoff/STATUS"
+}

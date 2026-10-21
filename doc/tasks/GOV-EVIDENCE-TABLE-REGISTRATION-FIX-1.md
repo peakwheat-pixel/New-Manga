@@ -3,11 +3,13 @@ id: GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 title: 三个治理Task证据表连续性与实际保护注册修正
 kind: governance
 governance_version: 3
-status: in_review
+status: approved
 approval: user_auto_advance_20261021_scoped_mechanical_metadata_fix
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/deepseek-review-r2.md
+reviewed_head: edbd1a49273d6a1d776d6eeaf0a1cc969ba5d3d7
 depends_on: [GOV-NDJSON-NONDECL-IDENTITY-1]
 base_commit: f72dd96ee51f21cc24472b05cceaf488060b679a
 branch: main
