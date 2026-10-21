@@ -1,0 +1,210 @@
+{
+  "timestamp": "2026-10-21T16:06:44.755916+00:00",
+  "integration_commit": "a3bba87ce0eef4049be6e07dc2e46403af8597ca",
+  "source_commit": "6e3bac7867c67a2e76e45e2facbbf859d5dba526",
+  "reviewed_head": "d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05",
+  "branch_count_before": 100,
+  "branch_count_after": 100,
+  "worktree_count_before": 138,
+  "worktree_count_after": 138,
+  "formal_error_count": 12,
+  "remaining_errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "counts": {
+    "declarations": 2539,
+    "protected_roots": 1854,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 381,
+      "EVIDENCE_PIN": 1730,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 372,
+      "PRESERVE_UNKNOWN": 33,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 268
+  },
+  "scanned": {
+    "markdown": 2337,
+    "json": 1232,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7617,
+    "untracked_declaration_files": 1510,
+    "declarations": 2539,
+    "errors": 12,
+    "warnings": 268
+  },
+  "evidence_pins_verified": 32,
+  "actual_evidence_pin_declarations": 32,
+  "six_probes_preserved": [
+    "G:\\CODEX\\New Manga\\dsh-probe-36zy1stn",
+    "G:\\CODEX\\New Manga\\dsh-probe-6lu_0g3w",
+    "G:\\CODEX\\New Manga\\dsh-probe-dagqohp7",
+    "G:\\CODEX\\New Manga\\dsh-probe-npzn41rw",
+    "G:\\CODEX\\New Manga\\dsh-probe-ut0j1y6p",
+    "G:\\CODEX\\New Manga\\.dsh-mode-29c6eed9"
+  ],
+  "cli": [
+    {
+      "mode": "audit",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "G:\\CODEX\\New Manga\\tools\\governance\\clean_workspace.py",
+        "--repo",
+        "G:\\CODEX\\New Manga",
+        "--workspace-root",
+        "G:\\CODEX\\New Manga.workspace",
+        "--out",
+        "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\integrated-audit",
+        "--audit-declarations"
+      ],
+      "exit": 2,
+      "report_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\integrated-audit\\declaration-audit.json",
+      "report_sha256": "d3e0c1b7bfdd275a23b915b59c9a930ffa8093c79471f89db12be8734c6d258d",
+      "real_resource_operations": 0
+    },
+    {
+      "mode": "clean",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "G:\\CODEX\\New Manga\\tools\\governance\\clean_workspace.py",
+        "--repo",
+        "G:\\CODEX\\New Manga",
+        "--workspace-root",
+        "G:\\CODEX\\New Manga.workspace",
+        "--out",
+        "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\integrated-clean"
+      ],
+      "exit": 2,
+      "report_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\integrated-clean\\clean-workspace-refused.json",
+      "report_sha256": "c29f79d4079560f764d395b9fcd2181147ecea1e35a176aeeac526f0c8bc93c0",
+      "real_resource_operations": 0
+    },
+    {
+      "mode": "remove",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "G:\\CODEX\\New Manga\\tools\\governance\\remove_worktrees.py",
+        "--repo",
+        "G:\\CODEX\\New Manga",
+        "--workspace-root",
+        "G:\\CODEX\\New Manga.workspace",
+        "--out",
+        "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\integrated-remove",
+        "--inventory",
+        "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\refusal-probe-inventory.json"
+      ],
+      "exit": 2,
+      "report_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\integrated-remove\\worktree-removal-refused.json",
+      "report_sha256": "5db5daff371a0ac22b33549cf6e0af980220251e57d46d934b7c1a8f9eb7a8bb",
+      "real_resource_operations": 0
+    }
+  ],
+  "real_cleanup": "NOT_RUN; prohibited by r212",
+  "canonical_full_consolidate": "NOT_RUN",
+  "product_build": "NOT_RUN",
+  "parent_task": "blocked",
+  "sole_main_goal": "NOT_ACHIEVED",
+  "reviewed_source_blob_sha256": "b828bc7b54333512dc3047281a3bedebe74ec4d8db5985f98fa7de77dfd8d18a",
+  "integrated_code_matches_reviewed_source": true,
+  "historical_source_fingerprints": [
+    {
+      "path": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "unchanged": true
+    },
+    {
+      "path": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "unchanged": true
+    }
+  ],
+  "governance_code_paths_changed": [
+    "tools/governance/broad-root-preservation.json",
+    "tools/governance/clean_workspace.py"
+  ],
+  "historical_exception_configuration_changed": false,
+  "reviewer_limits": [
+    "Full18fixtureNOT_RUN sandbox; Owner127passed0skip",
+    "Review directory content enumerationNOT_RUN ACL; Codex post-merge independently observed all6empty without ACL edits",
+    "Canonical full100/138consolidationNOT_RUN"
+  ]
+}

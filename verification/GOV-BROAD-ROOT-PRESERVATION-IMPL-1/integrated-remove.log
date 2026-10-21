@@ -1,0 +1,10 @@
+REFUSE: 12 declaration integrity error(s); no worktree can be removed until protection declarations can be trusted
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER' [verification/ENV-BUNDLE-1-FU1/resource-manifest.json]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实' [verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous [verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md]
+  ERROR FILE_UNREADABLE: tracked markdown g:\codex\new manga\verification\P14\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text [verification/P14/owner-initiated-dsh-self-review-r1.md]
+  ERROR FILE_UNREADABLE: tracked markdown g:\codex\new manga\verification\P14\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text [verification/P14/owner-initiated-dsh-self-review-r2.md]
+  report: G:/CODEX/New Manga.workspace/agent-output/codex/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/integrated-remove/worktree-removal-refused.json

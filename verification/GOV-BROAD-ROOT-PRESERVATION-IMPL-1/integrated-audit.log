@@ -1,0 +1,12 @@
+declaration audit: 2539 declaration(s), 1854 protected root(s), 12 error(s), 268 warning(s)
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER' [verification/ENV-BUNDLE-1-FU1/resource-manifest.json]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实' [verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous [verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md]
+  ERROR FILE_UNREADABLE: tracked markdown g:\codex\new manga\verification\P14\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text [verification/P14/owner-initiated-dsh-self-review-r1.md]
+  ERROR FILE_UNREADABLE: tracked markdown g:\codex\new manga\verification\P14\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text [verification/P14/owner-initiated-dsh-self-review-r2.md]
+  ERROR DECL_DESTINATION_UNRESOLVED: declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  report: G:/CODEX/New Manga.workspace/agent-output/codex/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/integrated-audit/declaration-audit.json
