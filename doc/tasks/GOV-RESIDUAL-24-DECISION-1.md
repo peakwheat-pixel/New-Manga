@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-24-DECISION-1
 title: 剩余二十四项声明与主线收敛的最小裁决清单
 kind: research
 governance_version: 3
-status: ready
+status: in_progress
 approval: user_auto_advance_20261021_readonly_decision_summary
 suggested_owner: Codex
 owner: Codex

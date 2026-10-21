@@ -1,0 +1,644 @@
+{
+  "task": "GOV-RESIDUAL-24-DECISION-1",
+  "snapshot_commit": "e235c0663a440d259ca34292cb32e54054b29234",
+  "error_count": 24,
+  "source_count": 9,
+  "groups": {
+    "HISTORICAL_RESOURCE_IDENTITY": 7,
+    "PROTECTED_BROAD_ROOT": 12,
+    "HISTORICAL_TEMPLATE_TEXT": 2,
+    "RAW_EVIDENCE_NUL": 3
+  },
+  "errors": [
+    {
+      "original_id": "R05",
+      "error": {
+        "code": "DECL_RELATIVE_AMBIGUOUS",
+        "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+        "file": "doc/tasks/P19.md",
+        "locator": "line 5"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "工作区相对路径worktrees/P19-AC3-1被明确拒绝；同行称5个worktree，不是完整五项绝对清单。直接引用Inventory仅证明历史曾移除此名，不能证明当前状态。",
+      "minimal_proposal": "另做逐项历史来源映射；保留路径歧义，不从目录名猜五项或重写历史删除事实。",
+      "decision_boundary": "需要来源Owner/Lead核定每项原绝对路径与时点；当前全部保留。",
+      "actual_locator": "line 112",
+      "verbatim_record_json": "\"| P19 子 Task worktree（5 个）| worktrees/P19-AC3-1 | DELETE_SAFE | - | doc/WORKTREE_SAFETY_INVENTORY.md | **已不存在**（closeout 前按清单核实后清理）；原记录的 PRESERVE_REFERENCED 与事实不符，已按事实更正 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R06",
+      "error": {
+        "code": "DECL_ENV",
+        "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+        "file": "doc/tasks/P19.md",
+        "locator": "line 6"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "%TEMP%是历史运行时变量；当前TEMP值不能还原当时22/12个隔离根，引用证据未给完整绝对列表。",
+      "minimal_proposal": "只从当时收据/runner元数据另建来源映射；未能重建的身份保留UNKNOWN，不执行通配清理。",
+      "decision_boundary": "先核定历史执行账户/时点/完整根集合；缺证据则持续保留，删除另需授权。",
+      "actual_locator": "line 113",
+      "verbatim_record_json": "\"| 测试隔离根 | %TEMP%/p19-ac2-r1 | DELETE_SAFE | - | verification/P19/r3-closure-checklist.md | 22 个 p19* 临时隔离根，**已清理**（2026-10-18，Coordinator）；非用户数据 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R07",
+      "error": {
+        "code": "DECL_ENV",
+        "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+        "file": "doc/tasks/P19.md",
+        "locator": "line 7"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "%TEMP%是历史运行时变量；当前TEMP值不能还原当时22/12个隔离根，引用证据未给完整绝对列表。",
+      "minimal_proposal": "只从当时收据/runner元数据另建来源映射；未能重建的身份保留UNKNOWN，不执行通配清理。",
+      "decision_boundary": "先核定历史执行账户/时点/完整根集合；缺证据则持续保留，删除另需授权。",
+      "actual_locator": "line 114",
+      "verbatim_record_json": "\"| 本轮新增隔离根 | %TEMP%/p19-ac2-main-1 | DELETE_SAFE | - | verification/P19/codex-review-r1.md | 12 个（AC2x8 / AC4v3x3 / smokex1），**已清理**；非用户数据 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R10",
+      "error": {
+        "code": "DECL_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+        "locator": "line 5"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 113",
+      "verbatim_record_json": "\"| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R11",
+      "error": {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+        "locator": "line 5"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 113",
+      "verbatim_record_json": "\"| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R12",
+      "error": {
+        "code": "DECL_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 10"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 293",
+      "verbatim_record_json": "\"| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R13",
+      "error": {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 10"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 293",
+      "verbatim_record_json": "\"| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R14",
+      "error": {
+        "code": "DECL_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 11"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 294",
+      "verbatim_record_json": "\"| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R15",
+      "error": {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 11"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 294",
+      "verbatim_record_json": "\"| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R16",
+      "error": {
+        "code": "DECL_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 12"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 295",
+      "verbatim_record_json": "\"| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R17",
+      "error": {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 12"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 295",
+      "verbatim_record_json": "\"| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R18",
+      "error": {
+        "code": "DECL_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 14"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 297",
+      "verbatim_record_json": "\"| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R19",
+      "error": {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 14"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 297",
+      "verbatim_record_json": "\"| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R20",
+      "error": {
+        "code": "DECL_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 15"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 298",
+      "verbatim_record_json": "\"| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R21",
+      "error": {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "locator": "line 15"
+      },
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "actual_locator": "line 298",
+      "verbatim_record_json": "\"| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R22",
+      "error": {
+        "code": "DECL_UNKNOWN_DISPOSITION",
+        "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+        "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+        "locator": "$.resources[7].disposition"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "CLEANED_BY_OWNER不是允许的disposition；同一source还包含%TEMP%和.tmp*及说明，本次首个错误遮蔽后续定位问题。",
+      "minimal_proposal": "另行核对Rust TempDir日志/当时路径；历史已清理动作与当前保留声明分开表达，不能仅替换枚举。",
+      "decision_boundary": "记录未验证自清声明；先确认历史来源Owner与完整集合，再冻文档/工具范围。",
+      "actual_locator": "$.resources[7].disposition",
+      "verbatim_record_json": "\"{\\\"resource_type\\\": \\\"test_temp_data\\\", \\\"source_path\\\": \\\"%TEMP%/.tmp* created by Rust tempfile tests\\\", \\\"disposition\\\": \\\"CLEANED_BY_OWNER\\\", \\\"destination_path\\\": null, \\\"reference_check\\\": \\\"Rust TempDir values dropped at test completion; isolated smoke-test directories and child processes were cleaned up.\\\"}\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R25",
+      "error": {
+        "code": "DECL_UNKNOWN_DISPOSITION",
+        "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+        "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+        "locator": "line 7"
+      },
+      "category": "HISTORICAL_TEMPLATE_TEXT",
+      "finding": "来源是Review记录内嵌的尚未核实Task模板，表中“对应Task子目录”“NOT_APPLICABLE或按实核实”“本Task…”不是冻结资源身份。",
+      "minimal_proposal": "候选：新治理索引区分历史模板引用与实际声明；原Review保持原字节，若工具增加精确引用范围策略需单独Task。",
+      "decision_boundary": "不能静默编辑历史Review或批量排除verification；当前2错误继续保留。",
+      "actual_locator": "line 228",
+      "verbatim_record_json": "\"| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` 或按实核实 | — | closeout 时复核 | 不假定存在；记录检查结果 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R26",
+      "error": {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+        "locator": "line 8"
+      },
+      "category": "HISTORICAL_TEMPLATE_TEXT",
+      "finding": "来源是Review记录内嵌的尚未核实Task模板，表中“对应Task子目录”“NOT_APPLICABLE或按实核实”“本Task…”不是冻结资源身份。",
+      "minimal_proposal": "候选：新治理索引区分历史模板引用与实际声明；原Review保持原字节，若工具增加精确引用范围策略需单独Task。",
+      "decision_boundary": "不能静默编辑历史Review或批量排除verification；当前2错误继续保留。",
+      "actual_locator": "line 229",
+      "verbatim_record_json": "\"| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | 原路径 | closeout 时计算 | 被回归套件/证据索引引用，保留 |\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R27",
+      "error": {
+        "code": "FILE_UNREADABLE",
+        "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+        "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+        "locator": null
+      },
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "两个文件严格UTF-8可解码，各在byte286含1个NUL，位于会话简称行；已有抬头明确不是独立Review。",
+      "minimal_proposal": "未来生成带source hash/byte offset的可读派生视图，或精确确认非声明例外；原始blob不重编码、不去NUL。",
+      "decision_boundary": "需要单独证据视图/工具范围，原始pin永不改写；不自动豁免含NUL文件。",
+      "actual_locator": "line 3",
+      "verbatim_record_json": "\"> 顶层会话 cb4e75d6/\\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R28",
+      "error": {
+        "code": "FILE_UNREADABLE",
+        "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+        "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+        "locator": null
+      },
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "两个文件严格UTF-8可解码，各在byte286含1个NUL，位于会话简称行；已有抬头明确不是独立Review。",
+      "minimal_proposal": "未来生成带source hash/byte offset的可读派生视图，或精确确认非声明例外；原始blob不重编码、不去NUL。",
+      "decision_boundary": "需要单独证据视图/工具范围，原始pin永不改写；不自动豁免含NUL文件。",
+      "actual_locator": "line 3",
+      "verbatim_record_json": "\"> 顶层会话 cb4e75d6/\\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R29",
+      "error": {
+        "code": "DECL_DESTINATION_UNRESOLVED",
+        "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+        "locator": "$.resources[1].destination_path"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "destination是已在GOV-RESOURCE-MANIFEST-SAME-LOCATION-1列明的精确同源sentinel；该已完成授权只作用于check.ps1，不能自动扩展到清理guard。",
+      "minimal_proposal": "另冻共享guard契约Task核对精确sentinel、源身份枚举与重复/多路径负例；不改历史JSON。",
+      "decision_boundary": "已有checker批准不等于guard新语义批准；本次不实施、不放宽源解析。",
+      "actual_locator": "$.resources[1].destination_path",
+      "verbatim_record_json": "\"{\\\"resource_type\\\": \\\"generated-build-artifacts\\\", \\\"source_path\\\": \\\"apps/desktop/src-tauri/target/{core-sidecar,debug/resources,debug/m2rc1-desktop.exe}; apps/desktop/frontend/dist\\\", \\\"disposition\\\": \\\"PRESERVE_REFERENCED\\\", \\\"destination_path\\\": \\\"Same ignored target/dist locations in this worktree\\\", \\\"deleted\\\": false, \\\"moved\\\": false, \\\"process_check\\\": \\\"Retained for GUI reproduction and binary/resource hash verification; not added to Git.\\\"}\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R30",
+      "error": {
+        "code": "DECL_ENV",
+        "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+        "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+        "locator": "$.resources[2].disposition"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "原locator标成disposition但失败字面实际在resources[2/3].source_path；%APPDATA%加brace集合不能按当前用户环境替换。直接引用仅有四个相对文件hash，不含历史绝对用户根。",
+      "minimal_proposal": "仅用历史执行环境/隔离路径映射建立新绝对身份证据；保留原locator同时记录实际JSON pointer，不访问/修改用户DB。",
+      "decision_boundary": "先证明历史用户/根路径和copy→source关系；未确认项保持用户数据保护，迁移删除另需用户裁决。",
+      "actual_locator": "$.resources[2].source_path",
+      "verbatim_record_json": "\"{\\\"resource_type\\\": \\\"isolated-user-data-copy\\\", \\\"source_path\\\": \\\"%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}\\\", \\\"disposition\\\": \\\"PRESERVE_REFERENCED\\\", \\\"destination_path\\\": \\\"apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017\\\", \\\"deleted\\\": false, \\\"moved\\\": false, \\\"process_check\\\": \\\"Only the target copy was rebound/launched. Source catalog, data database, lock file, and derived namespace lock SHA256 values match before/after; see appdata-source-preservation-check.json.\\\"}\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R31",
+      "error": {
+        "code": "DECL_ENV",
+        "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+        "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+        "locator": "$.resources[3].disposition"
+      },
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "原locator标成disposition但失败字面实际在resources[2/3].source_path；%APPDATA%加brace集合不能按当前用户环境替换。直接引用仅有四个相对文件hash，不含历史绝对用户根。",
+      "minimal_proposal": "仅用历史执行环境/隔离路径映射建立新绝对身份证据；保留原locator同时记录实际JSON pointer，不访问/修改用户DB。",
+      "decision_boundary": "先证明历史用户/根路径和copy→source关系；未确认项保持用户数据保护，迁移删除另需用户裁决。",
+      "actual_locator": "$.resources[3].source_path",
+      "verbatim_record_json": "\"{\\\"resource_type\\\": \\\"user-data-source\\\", \\\"source_path\\\": \\\"%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}\\\", \\\"disposition\\\": \\\"PRESERVE_REFERENCED\\\", \\\"destination_path\\\": \\\"Same source location\\\", \\\"deleted\\\": false, \\\"moved\\\": false, \\\"modified\\\": false, \\\"process_check\\\": \\\"Four-file length/SHA256 comparison passed.\\\"}\"",
+      "source_status": "PRESERVE; no source mutation"
+    },
+    {
+      "original_id": "R32",
+      "error": {
+        "code": "FILE_UNREADABLE",
+        "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+        "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+        "locator": null
+      },
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "未跟踪P22历史malformed快照严格UTF-8可解码，嵌入2个NUL；文件内owner仅是快照记录，不能证明快照作者或当前活性。",
+      "minimal_proposal": "候选只读派生视图保留raw hash/NUL偏移；核验原引用，不提交原文件、不替换历史pin。",
+      "decision_boundary": "实际文件作者未知，原样保护；任何源改动需要来源作者/用户授权，当前不申请。",
+      "actual_locator": "NUL byte offsets [12330, 20486]",
+      "verbatim_record_json": "\"{\\\"nul_byte_offsets\\\": [12330, 20486], \\\"nul_lines\\\": [91, 205], \\\"snapshot_owner\\\": \\\"Antigravity（文件内字段，实际作者未知）\\\"}\"",
+      "source_status": "PRESERVE; no source mutation"
+    }
+  ],
+  "source_fingerprints": {
+    "doc/tasks/P19.md": {
+      "raw_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "bytes": 18443,
+      "nul_offsets": [],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "doc/tasks/SEC-FIX-PATH-ECHO-1.md": {
+      "raw_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "bytes": 15570,
+      "nul_offsets": [],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "doc/tasks/WORKSPACE-CONSOLIDATION-1.md": {
+      "raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "bytes": 32777,
+      "nul_offsets": [],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "verification/ENV-BUNDLE-1-FU1/resource-manifest.json": {
+      "raw_sha256": "2c90839bd8fb97273d45103f2b368726baaef3d509de6cab8f3bde97f043508f",
+      "bytes": 3784,
+      "nul_offsets": [],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md": {
+      "raw_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "bytes": 23845,
+      "nul_offsets": [],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "verification/P14/owner-initiated-dsh-self-review-r1.md": {
+      "raw_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "bytes": 3288,
+      "nul_offsets": [
+        286
+      ],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "verification/P14/owner-initiated-dsh-self-review-r2.md": {
+      "raw_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "bytes": 3433,
+      "nul_offsets": [
+        286
+      ],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "verification/P19-UI-FIX-1/resource-manifest.json": {
+      "raw_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "bytes": 4027,
+      "nul_offsets": [],
+      "git_status": "",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    },
+    "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md": {
+      "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "bytes": 21531,
+      "nul_offsets": [
+        12330,
+        20486
+      ],
+      "git_status": "?? verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "actual_writer": "UNKNOWN; preserve original ownership"
+    }
+  },
+  "branches": [
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "tip": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "tip": "4a707db80499f11e93cee163a9a10bf6392b1a92",
+      "content_route": "NEW_ARCH_READ_ONLY_ASSESSMENT",
+      "boundary": "实际涉及 React/Tauri 代码；先核对当前实现/需求/测试，禁止直接合并",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "tip": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "tip": "06990b7993d042ae5e74ab479e291e494b622588",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "tip": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "tip": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "tip": "10c35daed241aa3717b248da14c1b9b959ff1fba",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "tip": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "tip": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "tip": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64",
+      "content_route": "PATCH_EQUIVALENT_HISTORY",
+      "boundary": "非 merge patch 已等价移植；保留原提交及证据，不代表 refs 可删",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "tip": "13ae23f65e963cf1d5aea19634572627e5e709db",
+      "content_route": "LEGACY_HISTORY_ONLY",
+      "boundary": "包含 QML/PyInstaller 历史实现；不进入新架构实施",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "tip": "ceca2446da88df23a719f40868cc89e1481ccb2c",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "codex/P14",
+      "tip": "41c3206942730536bc9b41e871f23ad9b3de3f1d",
+      "content_route": "NEW_ARCH_READ_ONLY_ASSESSMENT",
+      "boundary": "实际涉及 React/Tauri 代码；先核对当前实现/需求/测试，禁止直接合并",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "tip": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e",
+      "content_route": "UNRELEASED_PLAN_HISTORY_ONLY",
+      "boundary": "未释放旧规划草案；不得覆盖当前 Plan/STATUS",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "tip": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "boundary": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "tip": "daab1996b99c7036108bc505cc3db29b744fdf9d",
+      "content_route": "PATCH_EQUIVALENT_HISTORY",
+      "boundary": "非 merge patch 已等价移植；保留原提交及证据，不代表 refs 可删",
+      "operation": "PRESERVE_ORIGINAL_REF_AND_WORKTREE",
+      "current_dirty_occupancy": "NOT_RESCANNED; original snapshot cannot authorize deletion"
+    }
+  ],
+  "local_head_count": 99,
+  "worktree_count": 137,
+  "protection_counts_snapshot": {
+    "declarations": 2459,
+    "protected_roots": 1790,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 366,
+      "EVIDENCE_PIN": 1680,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 359,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 252
+  },
+  "status_r212_ban": "IN_FORCE",
+  "parent_state": "blocked",
+  "deleted_resources": 0
+}
