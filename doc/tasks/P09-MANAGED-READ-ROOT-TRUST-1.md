@@ -12,7 +12,9 @@ base_commit: b8a1e519703f13af73b320dded117004b4bb189a
 branch: dsh/P09-MANAGED-READ-ROOT-TRUST-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1
 integration_commit: null
-delivery_head: 56aee75ae8fa88913655f27c019345224414096d
+delivery_head: 2a0ff8819dceff0849a2ea783ba202769e18078b
+previous_delivery_head: 56aee75ae8fa88913655f27c019345224414096d
+review_round: 2  # 第 1 轮 Codex changes_requested（R-001/R-002/R-003 + 建议 R-004/R-005）已返修
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P09-MANAGED-READ-ROOT-TRUST-1
@@ -106,32 +108,36 @@ Task 表行号来自 R5b 审计时（`34fe1069f`）；base `b8a1e51` 实际行�
 - [x] **AC1**：R5b 的复现（祖先 junction → 读出 `outside bytes`）**被拒绝**。
       **结果 MET**：`ac1-r5b-repro.py` 在同一 driver 上对 base 快照 = VULNERABLE（读到 `OUTSIDE`）、
       当前 = SAFE（`P16WireError`，outside bytes 未读出）；调用 exit 0
-      （`logs/ac1-after-fix.txt`；修复前 exit 1，`logs/ac1-before-fix.txt`）。
+      （返修后重跑 `logs/ac1-after-fix.txt`；修复前 exit 1，`logs/ac1-before-fix.txt`）。
 - [x] **AC2**：**合法读取不回归**（含链接合法使用场景；链接策略取舍见上节并记录链接合法使用结论）。
       **结果 MET**：8 处测试均含「换 root 前合法读取成功」断言；8 个套件逐套件 base/current 计数一致
-      （core 564、storage 87、m2_resource_channel 106、security 29→40、library 63、reading_export 141、
-      export 13、m2_acceptance 37），runner exit 0；链接策略与结论见
+      （core 564、storage 87、m2_resource_channel 106、security 29→**43**、library 63、reading_export 141、
+      export 13、m2_acceptance 37），runner exit 0；**R-003：每份 `logs/suite-*.log` 均含执行头
+      （shell/os/python/cwd/command）与日志内 `EXIT=<code>`**；链接策略与结论见
       `verification/P09-MANAGED-READ-ROOT-TRUST-1/DESIGN-expected-identity.md` 第四节、`SITE-MATRIX.md`。
 - [x] **AC3**：**8 处逐个**有测试或探针，**不接受「模式相同所以一起算」**。
-      **结果 MET**：`ac3-discrimination.py` exit 0；同一测试文件在 base 源码快照上 8/8 site 测试
-      FAIL、当前 8/8 PASS（`logs/ac3-discrimination.txt`）；逐处映射 `SITE-MATRIX.md`。
+      **结果 MET**：`ac3-discrimination.py` exit 0；**以 pytest 退出码为门槛**（base exit=1、current exit=0），
+      `-v` 解析真实结果集合，同一测试文件在 base 源码快照上 8/8 site 测试 FAILED、当前 8/8 PASSED
+      （`logs/ac3-discrimination.txt`）；R-001/R-002 补充测试 base FAILED → current PASSED；
+      逐处映射 `SITE-MATRIX.md`。
 - [x] **AC4**：不引入新依赖或契约变更。
-      **结果 MET**：`logs/ac4-change-files.txt` 只含 4 个实现/测试文件 + 本 Task 文档/证据；
-      无 `pyproject/requirements/package.json/Cargo.*`、无 `doc/contracts/**`、无 Schema/ACL 变更。
+      **结果 MET**：`logs/ac4-change-files.txt`（base..`2a0ff8819`）中 `src/`+`tests/` 只含 4 个
+      实现/测试文件；全量 diff 无 `pyproject/requirements/package.json/Cargo.*`、无
+      `doc/contracts/**`、无 Schema/ACL 变更。
 - [x] **AC5**：`P09-AC3-DELETE-HARDEN-1` 的 9 个探针**不回归**。
-      **结果 MET**：`ac5-run-delete-probes.py` exit 0；9/9 与基线一致（`logs/ac5-delete-probes.txt`；
-      仅改路径常量的副本 diff：`ac5-delete-probes/PATH-ADAPTATION.diff`）。
+      **结果 MET**：`ac5-run-delete-probes.py` exit 0；9/9 与基线一致（返修后重跑
+      `logs/ac5-delete-probes.txt`；仅改路径常量的副本 diff：`ac5-delete-probes/PATH-ADAPTATION.diff`）。
 
 ## 测试要求
 
 | 场景/AC | 命令/步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | `C:/Python314/python.exe verification/P09-MANAGED-READ-ROOT-TRUST-1/ac1-r5b-repro.py` | Windows、Python 3.14.6、worktree | **exit 0**；base=VULNERABLE、current=SAFE（修复前 exit 1、双 VULNERABLE） | `logs/ac1-after-fix.txt`、`logs/ac1-before-fix.txt` |
-| AC1/AC3 | `C:/Python314/python.exe -m pytest tests/security/test_p09_managed_read_root_trust.py -q` | 同上 | **11 passed** | `logs/suite-security.log`（该 suite 40 = 29 旧 + 11 新） |
-| AC3 | `C:/Python314/python.exe verification/P09-MANAGED-READ-ROOT-TRUST-1/ac3-discrimination.py` | 同上（内部取 base 源码快照） | **exit 0**；8/8 site 测试 base FAIL、current PASS | `logs/ac3-discrimination.txt`、`SITE-MATRIX.md` |
-| AC2 | `pwsh -NoProfile -File verification/P09-MANAGED-READ-ROOT-TRUST-1/run-suites.ps1` | 同上 | **exit 0**；core 564 / storage 87 / m2_resource_channel 106 / security 40 / library 63 / reading_export 141 / export 13 / m2_acceptance 37 | `logs/summary.txt`、`logs/suite-*.log`、`logs/baseline/` |
+| AC1 | `C:/Python314/python.exe verification/P09-MANAGED-READ-ROOT-TRUST-1/ac1-r5b-repro.py` | Windows、Python 3.14.6、worktree、scratch=`New Manga.workspace/temp/...` | **exit 0**；base=VULNERABLE、current=SAFE（修复前 exit 1、双 VULNERABLE） | `logs/ac1-after-fix.txt`、`logs/ac1-before-fix.txt` |
+| AC1/AC3 | `C:/Python314/python.exe -m pytest tests/security/test_p09_managed_read_root_trust.py -q` | 同上 | **14 passed**（该 suite 43 = 29 旧 + 14 本 Task） | `logs/suite-security.log` |
+| AC3 | `C:/Python314/python.exe verification/P09-MANAGED-READ-ROOT-TRUST-1/ac3-discrimination.py` | 同上（内部取 base 源码快照；`-v` + 退出码门槛） | **exit 0**；base exit=1、current exit=0；8/8 site + 3 条 R-001/R-002 测试均 FAILED→PASSED | `logs/ac3-discrimination.txt`、`SITE-MATRIX.md` |
+| AC2 | `pwsh -NoProfile -File verification/P09-MANAGED-READ-ROOT-TRUST-1/run-suites.ps1` | 同上；每份日志含执行头+`EXIT` | **exit 0**；core 564 / storage 87 / m2_resource_channel 106 / security 43 / library 63 / reading_export 141 / export 13 / m2_acceptance 37 | `logs/summary.txt`、`logs/suite-*.log`、`logs/baseline/`（历史） |
 | AC5 | `C:/Python314/python.exe verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-run-delete-probes.py` | 同上 | **exit 0**；9/9 与基线一致 | `logs/ac5-delete-probes.txt`、`.json` |
-| AC4 | `git diff --name-only b8a1e5197..56aee75ae`（记录于 `logs/ac4-change-files.txt`） | 同上 | 仅 4 个实现/测试文件 + 本 Task 文档/证据；无依赖/契约/Schema/ACL 变更 | `logs/ac4-change-files.txt`、`AC-RESULTS.md` |
+| AC4 | `git diff --name-only b8a1e5197..2a0ff8819 -- src tests`（记录于 `logs/ac4-change-files.txt`） | 同上 | 仅 3 个源文件 + 1 个测试文件；全量列表无依赖/契约/Schema/ACL 变更 | `logs/ac4-change-files.txt`、`AC-RESULTS.md` |
 
 **未运行**：Rust、React/前端、packaging 测试（变更面只在 Python Core 读取路径；不属于 AC1–AC5 范围）。
 
@@ -151,39 +157,53 @@ Task 表行号来自 R5b 审计时（`34fe1069f`）；base `b8a1e51` 实际行�
   root 被搬走后读取拒绝）。
 - 无阻塞。
 
+## Review 返修记录
+
+| 轮次 | 结论 | 说明 |
+|---|---|---|
+| 第 1 轮（对 `56aee75ae`） | `changes_requested` | R-001 目录准入回归、R-002 AC3 覆盖/断言不足、R-003 AC2 日志证据纪律（P2）；R-004 scratch 位置、R-005 重复收敛（P3 建议） |
+| 第 2 轮（对 `2a0ff8819`） | 待 Codex Review | 全部 5 条已逐条返修：目录在**已打开句柄**上拒绝；site3 增导出 hash + 惰性 provider 测试；`ac3-discrimination.py` 以真实结果集合 + pytest 退出码为门槛；8 份 suite 日志加执行头 + `EXIT`；ac1/ac3 scratch 移到 `New Manga.workspace/temp/...`；重复收敛。证据见 `AC-RESULTS.md` 文末「Review 返修对照」与 `doc/handoffs/P09-MANAGED-READ-ROOT-TRUST-1-2a0ff88.md` |
+
 ## 交付与运行记录
 
 - **设计（第一交付物）**：`verification/P09-MANAGED-READ-ROOT-TRUST-1/DESIGN-expected-identity.md`
-  —— commit `a5147eed8`（先于产品代码提交；Task `in_progress` 同提交）。
-- **实现 head**：`56aee75ae8fa88913655f27c019345224414096d`（3 个源文件 + 11 个测试）。
-- **证据提交**：`82b23bac8a961daa5169be5dc5acd3a7b41f1215`（`verification/P09-MANAGED-READ-ROOT-TRUST-1/` +
-  Handoff）。
-- **Handoff**：`doc/handoffs/P09-MANAGED-READ-ROOT-TRUST-1-56aee75.md`（commit `82b23bac8`）。
-- **Review**：尚无（Owner 不得自造 Review；等待 Codex 独立 Review）。
+  —— 首版 commit `a5147eed8`（先于产品代码提交；Task `in_progress` 同提交）；返修轮补充
+  R-001 目录拒绝（见证据提交）。
+- **实现 head（返修后，当前）**：`2a0ff8819dceff0849a2ea783ba202769e18078b`
+  （3 个源文件 + 14 个测试）。
+- **历史实现 head（已被 Review 替换）**：`56aee75ae8fa88913655f27c019345224414096d`（11 个测试）。
+- **证据提交（返修后）**：`d305c584540f2979f149618de2d3947f4abcbf28`。
+- **历史证据提交**：`82b23bac8a961daa5169be5dc5acd3a7b41f1215`。
+- **Handoff（返修轮）**：`doc/handoffs/P09-MANAGED-READ-ROOT-TRUST-1-2a0ff88.md`；
+  历史 Handoff `doc/handoffs/P09-MANAGED-READ-ROOT-TRUST-1-56aee75.md` 保留为 HISTORICAL。
+- **Review**：Codex 第 1 轮独立 Review 结论 `changes_requested`（R-001/R-002/R-003 + 建议
+  R-004/R-005），本轮已逐条返修；**尚无第 2 轮 Review**（Owner 不得自造 Review）。
 - **实际测试**：见「测试要求」表；全部命令与 exit code 已记录，本文件不含任何未运行项被写成 PASS。
 
 ## Canonical Evidence
 
-仓库内文件 pin 提交 `82b23bac8a961daa5169be5dc5acd3a7b41f1215`（除设计文档 pin 其自身提交
-`a5147eed8`）；仓外原始输入 pin SHA-256。
+仓库内文件 pin 证据提交 `d305c584540f2979f149618de2d3947f4abcbf28`；仓外原始输入 pin SHA-256。
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC1 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac1-before-fix.txt` | `82b23bac8` | `89886379C15DD3B1DE1A29DC2EFDE62F5D8707167E3C7B4DC4A6807AECC5694F` | CANONICAL |
-| EV-02 | AC1 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac1-after-fix.txt` | `82b23bac8` | `0B9E957446C79462C38C4DF4C9201C38B55BC16EB13BFADDFB300A94128155A9` | CANONICAL |
-| EV-03 | AC1 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/ac1-r5b-repro.py` | `82b23bac8` | `BBF488E84916BB968E27B562ACE721FB304E1B8083BA91B0E1E506FC362C2B24` | CANONICAL |
-| EV-04 | AC3 | `tests/security/test_p09_managed_read_root_trust.py` | `82b23bac8` | `8635C40CEEDB51261122420AB2A73674CAE15314DC7EB7EA7A4DFD1BC982B25D` | CANONICAL |
-| EV-05 | AC3 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/ac3-discrimination.py` | `82b23bac8` | `A15C015B691107E6A0D48DA308376B3261836BF6A5FFC4696D95DB22972D691C` | CANONICAL |
-| EV-06 | AC3 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac3-discrimination.txt` | `82b23bac8` | `DC4945AB821EA82E5B3E6A4180AF1824EC57497B00452CD5049DEACE5F57E38D` | CANONICAL |
-| EV-07 | AC3 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/SITE-MATRIX.md` | `82b23bac8` | `166B62103C27B39DC96EE3AF97F39052A9577E41F65A67778F94D104DEAA6E28` | CANONICAL |
-| EV-08 | AC2 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/summary.txt` | `82b23bac8` | `D508D2562ADE5F895812CF0DE3E602C054F36806B502CCB91D777C4A1F278115` | CANONICAL |
-| EV-09 | AC2 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/baseline/baseline-core.log` | `82b23bac8` | `B70F50E311E3458C4F19C39037EAEEECA5088449AE157140782053E55DD3D1C9` | CANONICAL |
-| EV-10 | AC4 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac4-change-files.txt` | `82b23bac8` | `97A5E982000A79003700A6FF2F8C3FB75658CA5A3CC02407DCEA57C0366C81FA` | CANONICAL |
-| EV-11 | AC5 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac5-delete-probes.txt` | `82b23bac8` | `6E04762BA908699BB152C98760FD60F3ED5A411ABD394E58EBF9F1DC9DEE4AE0` | CANONICAL |
-| EV-12 | AC5 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/PATH-ADAPTATION.diff` | `82b23bac8` | `29A2256658DF016DBBC6B089AEA1F404924F897C57F3BFB6F27CBDED615A055A` | CANONICAL |
-| EV-13 | AC1–AC5 汇总 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md` | `82b23bac8` | `0BD708B2805A3836DA613A6B66599DE8AC0D29F1019BFE18E11CAAB8561621BA` | CANONICAL |
-| EV-14 | 设计（第一交付物） | `verification/P09-MANAGED-READ-ROOT-TRUST-1/DESIGN-expected-identity.md` | `a5147eed8` | `A75AF59E447025CC0927532E56857412DFC29536F3DEA9A21755FC91ACEA27AE` | CANONICAL |
-| EV-15 | 交付 Handoff | `doc/handoffs/P09-MANAGED-READ-ROOT-TRUST-1-56aee75.md` | `82b23bac8` | `72714B63C72FBC7D61C34994483F1A017985F6ABE7D2D031BF41E7C077D36CB6` | CANONICAL |
+| EV-01 | AC1 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac1-before-fix.txt` | `d305c5845` | `89886379C15DD3B1DE1A29DC2EFDE62F5D8707167E3C7B4DC4A6807AECC5694F` | CANONICAL |
+| EV-02 | AC1 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac1-after-fix.txt` | `d305c5845` | `37E635968529D5C4C9BB1B0630F01558BEE9034708B3BAF799E15A17E7CA48EC` | CANONICAL |
+| EV-03 | AC1 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/ac1-r5b-repro.py` | `d305c5845` | `7A2AD52C77E83DB0B1253E0C0191B6AF89BE55C208A24FB3F45297B86EC35590` | CANONICAL |
+| EV-04 | AC3 | `tests/security/test_p09_managed_read_root_trust.py` | `d305c5845` | `2C3FEC921BE7EE24ED86FC22B94B8F5A5EC77680AA575D00C8B8F733A056E1C8` | CANONICAL |
+| EV-05 | AC3 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/ac3-discrimination.py` | `d305c5845` | `D774CDEF109CB4CA3DEF4ADEE92301EFC39F588D2BF63906F6FAFAB79D8842DA` | CANONICAL |
+| EV-06 | AC3 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac3-discrimination.txt` | `d305c5845` | `42C8E95C57B0C563262B6F9521B675535842DD9DBD48CEA0D4FE42B92BC001AB` | CANONICAL |
+| EV-07 | AC3 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/SITE-MATRIX.md` | `d305c5845` | `4FDC11ADB8B66E3D054E2133E04249F88C10D3435CE9B772780296DB6C684B92` | CANONICAL |
+| EV-08 | AC2 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/summary.txt` | `d305c5845` | `F9DA9A0803690E1CEDC168EFF061218908A7229B16E60FD184A401C401977809` | CANONICAL |
+| EV-09 | AC2 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/suite-security.log`（带头+EXIT） | `d305c5845` | `5E77C66655824D09986E1EDCF7C47D700CA7AE8E4314D59ABAA9AD831B135250` | CANONICAL |
+| EV-10 | AC2 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/suite-core.log`（带头+EXIT） | `d305c5845` | `AD1EF2252B6832D6FC7150C2C990D303C56E9B7BC7BA56FB99E9BC92071801A3` | CANONICAL |
+| EV-11 | AC2 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/baseline/baseline-core.log`（历史基线） | `d305c5845` | `B70F50E311E3458C4F19C39037EAEEECA5088449AE157140782053E55DD3D1C9` | CANONICAL |
+| EV-12 | AC4 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac4-change-files.txt` | `d305c5845` | `1EFDBD87FF279438C9C013E65DD6EB1CE0A302B050C77309C16B458DF6214EA1` | CANONICAL |
+| EV-13 | AC5 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/ac5-delete-probes.txt` | `d305c5845` | `6E04762BA908699BB152C98760FD60F3ED5A411ABD394E58EBF9F1DC9DEE4AE0` | CANONICAL |
+| EV-14 | AC5 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/PATH-ADAPTATION.diff` | `d305c5845` | `29A2256658DF016DBBC6B089AEA1F404924F897C57F3BFB6F27CBDED615A055A` | CANONICAL |
+| EV-15 | AC1–AC5 汇总 | `verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md` | `d305c5845` | `1BD235CC6E281EB10593802FFB081BCB94722A48DE52C98AE1FA17E7EB420AA1` | CANONICAL |
+| EV-16 | 设计（第一交付物） | `verification/P09-MANAGED-READ-ROOT-TRUST-1/DESIGN-expected-identity.md` | `d305c5845` | `58576C08B86B07790474A2388F19CB7DB3E404713AFBBC5732DC487F3FDC0314` | CANONICAL |
+| EV-17 | 交付 Handoff（返修轮） | `doc/handoffs/P09-MANAGED-READ-ROOT-TRUST-1-2a0ff88.md` | `d305c5845` | `598B568AC0EBC7ADE9C56CCB05031ED3C4C3E4CD2D7247900FED4F5B2B23797D` | CANONICAL |
+| EV-18 | 证据工具（日志合规） | `verification/P09-MANAGED-READ-ROOT-TRUST-1/run-suites.ps1` | `d305c5845` | `417295293C5DF76EA5385148FE31ACD342F323EA4EDBA6FCFA09A34567BC275A` | CANONICAL |
 | SP-01 | 来源（R5b 原始复现） | `G:/CODEX/New Manga.workspace/agent-output/coordinator/codex-r5b-result.md` | — | `B8D7CA7A1988FFB9C755AB53E48EFC9D884171E1C42877B00CD56E6CD0AC23AD` | SOURCE_PIN |
 | SP-02 | 来源（R6 原始复现） | `G:/CODEX/New Manga.workspace/agent-output/coordinator/codex-r6-result.md` | — | `E0C5BE3E203FAEFFD47943C0D558B9BD72C547776BA8112F27DF14CF7529E424` | SOURCE_PIN |
 
@@ -192,14 +212,14 @@ Task 表行号来自 R5b 审计时（`34fe1069f`）；base `b8a1e51` 实际行�
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | `G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1` | PRESERVE_REFERENCED | 本路径 | — | 本 Task 交付；删除须 Codex 按 Worktree Safety Inventory 另行授权 |
-| temp（探针临时目录） | `%TEMP%/p09-ac1-*`、`%TEMP%/p09-ac3-*`（`git archive` 解出的 base 源码 + driver） | NOT_APPLICABLE | — | — | 探针自建自清（`finally: shutil.rmtree`）；不触碰用户数据/仓库 |
+| temp（探针 scratch） | `G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/`（ac1/ac3 的 base 源码快照与 driver，R-004） | NOT_APPLICABLE | — | — | 探针自建自清（`finally: shutil.rmtree`）；不写仓库、不用系统 `%TEMP%` |
 | scratch（AC5 探针夹具） | `verification/P09-MANAGED-READ-ROOT-TRUST-1/_scratch/` | NOT_APPLICABLE | — | — | `ac5-run-delete-probes.py` 前后清理（先 `os.rmdir` 移除 junction 再删目录）；证据目录中无残留 |
 | agent-output | 无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02） | NOT_APPLICABLE | — | — | 证据全部在 `verification/P09-MANAGED-READ-ROOT-TRUST-1/` |
 
 ## Closeout Record
 
 - Closeout date / Codex：待关闭时填写（本 Task 只到 `in_review`，不关闭）。
-- canonical_evidence_status：`pending`（等待 Codex Review/收口确认）。
+- canonical_evidence_status：`pending`（等待 Codex 第二轮 Review/收口确认）。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：0（本 Task 不执行清理）。
 - 未关闭项及保留原因：残余风险四项见设计文档第六节；Rust/前端/packaging 未运行（不在 AC 范围）。
