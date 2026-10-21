@@ -1,0 +1,3 @@
+* text eol=lf
+# Preserve independent Review originals verbatim.
+deepseek-review-*.md -whitespace

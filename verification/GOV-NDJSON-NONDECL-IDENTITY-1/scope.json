@@ -1,0 +1,23 @@
+{
+  "task": "GOV-NDJSON-NONDECL-IDENTITY-1",
+  "base_commit": "50d784300ac74d6ded633685bfce201cdddb630a",
+  "source_logs": [
+    {
+      "id": "R23",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "sha256": "bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1",
+      "tracked": false
+    },
+    {
+      "id": "R24",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "tracked": true
+    }
+  ],
+  "read_only_mechanism": [
+    "tools/governance/clean_workspace.py:load_json_exceptions,scan_repo_declarations,parse_json_declarations,ProtectionIndex",
+    "verification/WORKSPACE-DECLARATION-REMEDIATION-1/non-declaration-json-exceptions.json"
+  ],
+  "analysis_mode": "workspace候选清单/内存字节负例；不修改原source/guard/实际例外表"
+}
