@@ -3,7 +3,7 @@ id: GOV-PATH-HEADER-COMPAT-1
 title: 固定模板路径列表头兼容，保留所有 fail-closed 门槛
 kind: governance-hardening
 governance_version: 3
-status: ready
+status: in_progress
 approval: codex_scoped_technical_followup_user_boundary_continuation_20261021
 suggested_owner: Codex
 owner: Codex

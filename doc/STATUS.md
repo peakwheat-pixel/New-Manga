@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md)**（`ready`；仅固定表头兼容；禁令有效）。
+- 当前 Task：**[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md)**（`in_progress`；仅固定表头兼容；禁令有效）。
 
 - 收敛父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；R2 仅批准 c9a1bdd30 盘点；97 分支/135 worktrees；旧禁令/77 声明错误未解除）。
 
@@ -15,7 +15,7 @@
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。
 - **[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)**：`superseded`；**[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md)**：`closed_with_limitations`（v1 证据）。
-- **Task 台账**：[TASK_LEDGER](TASK_LEDGER.md) 当前实算 325 文件 / 312 终态 / 13 非终态；其中 11 个非终态历史未跟踪草稿原样保留。状态字段不证明活性，不批量关闭。
+- **Task 台账**：实时计数见 [TASK_LEDGER](TASK_LEDGER.md)；11 个非终态历史未跟踪草稿原样保留，状态字段不证明活性，不批量关闭。
 - DIR-4：同一失败上限 2 次；DIR-5：goal 轮次上限 1000。Coordinator=codex，epoch=9，lease=e06e91c0a6b94d309c2af578256551d8（LEASE_VALID）。
 
 ## Gate 与保留项

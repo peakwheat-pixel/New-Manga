@@ -6,12 +6,12 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|GOV-PATH-HEADER-COMPAT-1|WORKSPACE-DECLARATION-REMEDIATION-1|ready（单一固定别名；无资源处置授权）|
+|GOV-PATH-HEADER-COMPAT-1|WORKSPACE-DECLARATION-REMEDIATION-1|in_progress（单一固定别名；无资源处置授权）|
 |GIT-MAINLINE-CONVERGENCE-1|—|blocked（盘点切片获批；等待保护处置裁决，77 声明错误保留）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**GOV-PATH-HEADER-COMPAT-1**。
+READY 节点：**无**。
 
 ## 终态依赖与限制
 
