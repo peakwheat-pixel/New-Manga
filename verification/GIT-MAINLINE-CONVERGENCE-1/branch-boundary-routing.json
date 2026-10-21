@@ -1,0 +1,165 @@
+{
+  "base_head": "b13d4f25b03f2cf3ab54c5b5444c894cab1f5bc2",
+  "scope": "Codex technical preservation boundary; not owner product-discard decision or cleanup authorization",
+  "branches": [
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "tip": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "tip": "4a707db80499f11e93cee163a9a10bf6392b1a92",
+      "content_route": "NEW_ARCH_READ_ONLY_ASSESSMENT",
+      "rationale": "实际涉及 React/Tauri 代码；先核对当前实现/需求/测试，禁止直接合并",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "tip": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "tip": "06990b7993d042ae5e74ab479e291e494b622588",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "tip": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "tip": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "tip": "10c35daed241aa3717b248da14c1b9b959ff1fba",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "tip": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "tip": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "tip": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64",
+      "content_route": "PATCH_EQUIVALENT_HISTORY",
+      "rationale": "非 merge patch 已等价移植；保留原提交及证据，不代表 refs 可删",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "tip": "13ae23f65e963cf1d5aea19634572627e5e709db",
+      "content_route": "LEGACY_HISTORY_ONLY",
+      "rationale": "包含 QML/PyInstaller 历史实现；不进入新架构实施",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "tip": "ceca2446da88df23a719f40868cc89e1481ccb2c",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "codex/P14",
+      "tip": "41c3206942730536bc9b41e871f23ad9b3de3f1d",
+      "content_route": "NEW_ARCH_READ_ONLY_ASSESSMENT",
+      "rationale": "实际涉及 React/Tauri 代码；先核对当前实现/需求/测试，禁止直接合并",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "tip": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e",
+      "content_route": "UNRELEASED_PLAN_HISTORY_ONLY",
+      "rationale": "未释放旧规划草案；不得覆盖当前 Plan/STATUS",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "tip": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1",
+      "content_route": "HISTORICAL_EVIDENCE_OR_CONTRACT",
+      "rationale": "含证据/工具/旧契约修订，保存历史，不用旧状态激活；需要的现代行为另行专项复现",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "tip": "daab1996b99c7036108bc505cc3db29b744fdf9d",
+      "content_route": "PATCH_EQUIVALENT_HISTORY",
+      "rationale": "非 merge patch 已等价移植；保留原提交及证据，不代表 refs 可删",
+      "actual_operation": "PRESERVE_BRANCH_AND_WORKTREE_IN_PLACE",
+      "authorization": "NO_MERGE_NO_DELETION_NO_MIGRATION"
+    }
+  ],
+  "counts": {
+    "HISTORICAL_EVIDENCE_OR_CONTRACT": 13,
+    "NEW_ARCH_READ_ONLY_ASSESSMENT": 2,
+    "PATCH_EQUIVALENT_HISTORY": 2,
+    "LEGACY_HISTORY_ONLY": 1,
+    "UNRELEASED_PLAN_HISTORY_ONLY": 1
+  }
+}
