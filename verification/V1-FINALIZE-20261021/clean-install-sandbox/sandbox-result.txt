@@ -1,0 +1,26 @@
+﻿[2026-10-21 10:29:25] sandbox_os=Microsoft Windows 11 企业版 build=26100 user=WDAGUtilityAccount
+[2026-10-21 10:29:25] installer_exists=True installer_bytes=579979256
+[2026-10-21 10:29:26] installer_sha256=b0ad46f5df01f4ffc287e9aeaef9ecaf5b163778d9ac632db92c6ce66ac38c7b
+[2026-10-21 10:29:26] pre_install_uninstall_entries=0
+[2026-10-21 10:29:26] is_admin=True user=C1D39A7F-0854-4\WDAGUtilityAccount
+[2026-10-21 10:29:26] localappdata=C:\Users\WDAGUtilityAccount\AppData\Local
+[2026-10-21 10:29:26] c_free_gb=77.3
+[2026-10-21 10:29:26] webview2_registry=HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5} pv=155.0.4283.60
+[2026-10-21 10:29:27] local_copy_exists=True sha256=b0ad46f5df01f4ffc287e9aeaef9ecaf5b163778d9ac632db92c6ce66ac38c7b
+[2026-10-21 10:29:27] install_start
+[2026-10-21 10:30:10] install_exit=0
+[2026-10-21 10:30:10] webview2_bootstrapper_temp_exists=False
+[2026-10-21 10:30:15] post_install_uninstall_entries=1
+[2026-10-21 10:30:15] post_entry key=m2rc1-desktop DisplayName=m2rc1-desktop version=0.1.0 location="C:\Users\WDAGUtilityAccount\AppData\Local\m2rc1-desktop" uninstall="C:\Users\WDAGUtilityAccount\AppData\Local\m2rc1-desktop\uninstall.exe"
+[2026-10-21 10:30:15] install_location=C:\Users\WDAGUtilityAccount\AppData\Local\m2rc1-desktop exists=True
+[2026-10-21 10:30:15] installed_file_count=5565 installed_bytes=1299418018
+[2026-10-21 10:30:15] m2rc1-desktop.exe_exists=True
+[2026-10-21 10:30:15] m2rc1-desktop.exe_sha256=f2d85356f99c081691a0a2165b9523c1e50c7f47218ff6ffaef4fe4e9abab8ef bytes=11882496
+[2026-10-21 10:30:15] uninstall.exe_exists=True
+[2026-10-21 10:30:15] uninstall.exe_sha256=a685a1ad8da0b7f1ff4fedc86b8a25b459a0019318abf622f3dd6c952650ca1e bytes=131562
+[2026-10-21 10:30:15] core_service_exists=True path=C:\Users\WDAGUtilityAccount\AppData\Local\m2rc1-desktop\resources\core-sidecar\core_service.exe bytes=68793273 sha256=b61074d48b6c8d59e3dc930bd3482422e8d0309568a518527fad94f549564a46
+[2026-10-21 10:30:15] uninstall_start
+[2026-10-21 10:30:17] uninstall_exit=0
+[2026-10-21 10:30:18] post_uninstall_location_exists=False
+[2026-10-21 10:30:18] post_uninstall_entries=0
+[2026-10-21 10:30:18] DONE_OK

@@ -1,0 +1,18 @@
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\bundle\nsis</HostFolder>
+      <SandboxFolder>C:\installer</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>C:\Users\49745\AppData\Local\Temp\v1-sandbox-out</HostFolder>
+      <SandboxFolder>C:\out</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <Networking>Enable</Networking>
+  <LogonCommand>
+    <Command>cmd.exe /c copy /Y C:\out\clean-install-test.ps1 C:\test.ps1 &amp; echo COPY_DONE &gt; C:\out\ps-copy.txt &amp; C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\test.ps1</Command>
+  </LogonCommand>
+</Configuration>

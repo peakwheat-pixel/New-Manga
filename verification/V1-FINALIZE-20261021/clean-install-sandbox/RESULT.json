@@ -1,0 +1,46 @@
+{
+  "environment": {
+    "host": "Windows 11 Pro 10.0.26300",
+    "sandbox": "Windows 11 Enterprise build 26100 (WDAGUtilityAccount)"
+  },
+  "installer": {
+    "path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+    "bytes": 579979256,
+    "sha256": "b0ad46f5df01f4ffc287e9aeaef9ecaf5b163778d9ac632db92c6ce66ac38c7b"
+  },
+  "build_exe": {
+    "path": "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+    "bytes": 11882496,
+    "sha256": "7063ac321b951091aa1a17daa9fdf272c94e473f8aefa34dc816a0a395fb85f9"
+  },
+  "frozen_sidecar": {
+    "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/core_service.exe",
+    "bytes": 68793273,
+    "sha256": "b61074d48b6c8d59e3dc930bd3482422e8d0309568a518527fad94f549564a46"
+  },
+  "results": {
+    "pre_install_uninstall_entries": 0,
+    "install_exit": 0,
+    "post_install_uninstall_entries": 1,
+    "install_location": "C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\m2rc1-desktop",
+    "installed_file_count": 5565,
+    "installed_bytes": 1299418018,
+    "installed_exe_sha256": "f2d85356f99c081691a0a2165b9523c1e50c7f47218ff6ffaef4fe4e9abab8ef",
+    "installed_core_service_sha256": "b61074d48b6c8d59e3dc930bd3482422e8d0309568a518527fad94f549564a46",
+    "uninstall_exit": 0,
+    "post_uninstall_location_exists": false,
+    "post_uninstall_entries": 0,
+    "webview2_pv": "155.0.4283.60"
+  },
+  "evidence_files": {
+    "clean-install-test.ps1": "485b39f1ec645b2a5c661b5878d8238dc269096b4fe8754321b167e25000aa84",
+    "clean-install.wsb": "91fffc47677b7e2c9408fc9ffad354c9195a04d3e0aa4ce8a7c38e721ff8167b",
+    "ps-copy.txt": "27fa06a7a3a89caa77c10f1de90ff5e274e26b5d7488802d860340056387c158",
+    "sandbox-result.txt": "919d122643c4b79dcd84b73e86224ca0024f35520c1f42e09c0b91c599965f0a"
+  },
+  "notes": [
+    "Windows Sandbox 为同主机隔离 VM，不是第二台物理机；无网络安装（Networking 仅用于 WebView2 检测，实际未下载）",
+    "安装包未签名（NotSigned）；签名验证仍待证书",
+    "installed_exe 与 target/release exe 哈希不同：NSIS/Tauri 打包阶段会写入 bundle 元信息，安装后 payload 以具体字节为准；core_service 与 frozen sidecar SHA 完全一致"
+  ]
+}
