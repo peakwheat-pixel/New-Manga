@@ -1,6 +1,6 @@
 # 全部分支逐项清册
 
-固定内容 tip 见本表；相对 main 基线 fdca2057e，分析时 main 56272e40b。A 仅表示提交祖先关系已合并，不授予删除；D 为待裁决保留。C 为非合并 patch 全等价，仍保护原提交和资源。main 独立保留。
+分支清点源为 fdca2057e；随后分析时 main 为 56272e40b，本表 main 行已按该分析时点修正；R1 审查时 main 为 83a8a15c。其他分支 tip 未变化。当前 HEAD 以 Git/STATUS/checkpoint 为准。A 仅表示提交祖先关系已合并，不授予删除；D 为待裁决保留。C 为非合并 patch 全等价，仍保护原提交和资源。main 独立保留。
 
 |分支|tip|独有提交|patch 等价/不等价|内容分类与实际处置|工作树|
 |---|---|---:|---|---|---|
@@ -89,7 +89,7 @@
 |dsh/P09-MANAGED-READ-ROOT-TRUST-1|9f5560bc1d169e803bb853c94b6c3d2619263f68|0|—|A；保留（资源门禁未满足）|G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1|
 |dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1|1dc8a89445207e47a28a330610a925fa8514bf3b|0|—|A；保留（资源门禁未满足）|G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1|
 |dsh/WORKSPACE-DECLARATION-REMEDIATION-1|f3d8cb27b196472d12f979c29788ad3966ab026f|0|—|A；保留（资源门禁未满足）|G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1|
-|main|fdca2057eec058996f936fc16138cc87e8cdc0bc|0|—|main；保留|G:/CODEX/New Manga|
+|main|56272e40b4492dd9c9006ae230a8d44ae66fb0fd|0|—|main；保留|G:/CODEX/New Manga|
 |review/deepseek/M2-C1-typed-ipc-7d908a5|e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1|4|0/4|D；保留（独有变更需裁决）|G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5|
 |review/deepseek/M2-C1-zcode-7de1cd2|b2377288680569dbee4e2299fd7dfae4de067c54|0|—|A；保留（资源门禁未满足）|G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2|
 |review/deepseek/M2-C1-zcode-7de1cd2-r2|b2377288680569dbee4e2299fd7dfae4de067c54|0|—|A；保留（资源门禁未满足）|C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2|

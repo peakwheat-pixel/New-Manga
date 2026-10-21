@@ -1,0 +1,15 @@
+{
+  "old_error_count": 76,
+  "new_error_count": 77,
+  "added": [
+    [
+      "TABLE_SCHEMA_INCOMPLETE",
+      "doc/tasks/workspace-declaration-remediation-1.md",
+      "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+    ]
+  ],
+  "removed": [],
+  "source_old": "verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-after.json",
+  "source_new_mainline_head": "83a8a15c259c82267c0a1001123f3cf4ede8a246",
+  "no_semantic_change": true
+}

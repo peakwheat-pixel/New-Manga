@@ -1,6 +1,6 @@
 # 全部工作树逐项清册
 
-观察结果不是删除清单。D=全部原位保留；保护来源、精确 status 文件名与 ignored 根见 worktree-analysis.json。ignored 按根分组，未逐文件计算 hash；有内容的一律不删除。进程占用未逐路径证实为空。
+观测时点为 main=56272e40b（工作树分析时），不是当前 HEAD；后续只有主工作树 HEAD 因本 Task 治理提交推进。观察结果不是删除清单。D=全部原位保留；保护来源、精确 status 文件名与 ignored 根见 worktree-analysis.json。ignored 按根分组，未逐文件计算 hash；有内容的一律不删除。进程占用未逐路径证实为空。
 
 |路径|HEAD|分支/Detached|tracked 改动|untracked 文件|ignored 根数|独有提交|保护命中|实际处置|
 |---|---|---|---:|---:|---:|---:|---:|---|

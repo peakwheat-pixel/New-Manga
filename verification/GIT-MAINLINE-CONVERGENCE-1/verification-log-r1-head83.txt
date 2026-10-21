@@ -1,0 +1,17 @@
+SHELL=DSH outer constrained PowerShell; child pwsh 7.6.6 / Python 3.14.6
+SOURCE_HEAD=83a8a15c259c82267c0a1001123f3cf4ede8a246 (clean tracked tree during independent R1)
+SESSION=session-1b587ef1-3c10-4e81-97b0-17e7d84c0765
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md; Write-Output "GOVERNANCE_EXIT=$LASTEXITCODE"
+RESULT from actual tool_result:
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GIT-MAINLINE-CONVERGENCE-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3091 bytes / 28 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\GIT-MAINLINE-CONVERGENCE-1\checkpoint.md
+Governance check: PASS (3 warnings)
+GOVERNANCE_EXIT=0
+[stderr]
+InvalidOperation: 无法创建类型。此语言模式仅支持核心类型。
+InvalidOperation: 无法创建类型。此语言模式仅支持核心类型。
+
+NOTE: outer ConstrainedLanguage emitted InvalidOperation diagnostics; child checker printed GOVERNANCE_EXIT=0. These diagnostics are retained, not omitted.

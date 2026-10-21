@@ -1,10 +1,13 @@
 # Task Index
 
-仅导航；DAG以[Plan](../REBASELINE_PLAN.md)为准，运行以[STATUS](../STATUS.md)为准。
+仅导航；DAG 以 [Plan](../REBASELINE_PLAN.md) 为准，运行以 [STATUS](../STATUS.md) 为准。
 
 - 当前：[GIT-MAINLINE-CONVERGENCE-1](GIT-MAINLINE-CONVERGENCE-1.md)，Codex 盘点/保全/审查；旧清理禁令未解除。
-- 历史导航（不激活 Task）：[PROJECT-ROADMAP-RELEASE](PROJECT-ROADMAP-RELEASE.md)，完整路线恢复与Gate复核。
-- 下一实施切片：[P22-REBASE-1](P22-REBASE-1.md)，独立审查后释放；原P22/P04来源与阻塞保留。
-- 最近产品收口：[P02-MAINLINE-INTEGRATION](P02-MAINLINE-INTEGRATION.md) DONE；P02总入口限定关闭。
-- 完整P01–P22路线已回到当前Plan；P09/P18/P20的架构映射Gate未关闭。
-- 其它历史Task不按旧ready/in_progress激活；不再释放Legacy实现。
+- READY：以 Plan 声明为准；当前无。不得据历史导航重开或释放已完成 Task。
+
+## 历史导航（不构成当前授权）
+
+- [PROJECT-ROADMAP-RELEASE](PROJECT-ROADMAP-RELEASE.md)：历史路线恢复与 Gate 复核。
+- [P22-REBASE-1](P22-REBASE-1.md)：done / integrated，非下一实施切片；原 P22/P04 来源与阻塞按原记录保留。
+- [P02-MAINLINE-INTEGRATION](P02-MAINLINE-INTEGRATION.md)：历史产品收口；P02 总入口限定关闭。
+- 其它历史 Task 不按旧 ready/in_progress 激活；不再释放 Legacy 实施。

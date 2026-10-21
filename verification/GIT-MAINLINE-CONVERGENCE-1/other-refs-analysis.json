@@ -1,0 +1,1181 @@
+{
+  "ref_count": 117,
+  "refs": [
+    {
+      "ref": "refs/codex/snapshots/01632bc4edf673ea6d5c0ae18bda31e39daabfcf",
+      "oid": "98b38b7ed6519118432cf8520c0f7b8cbd5685cd",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/0dc1db57748e2328ae6b9d0be4271bdff0a85656",
+      "oid": "677c3fd5f7aa9974d0a7fa54c42bd1a94a021320",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/0edd1db52f433ffaf7ba60d2b5d6e703427b21fa",
+      "oid": "549a6544f0be1eec66c09ece393fd1a409f10bf3",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/2711b057428ac009a54e952846ccb9d0a9f40682",
+      "oid": "0b4e4342e94576a23a20d2861a045d42ab911005",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/555b88cbe1ace3c4d04aaaa9c1063f4dd777321d",
+      "oid": "fe2e750dd31b9c7d9eae5ed2c371e316aed13c51",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/5b0f8e46f733f3ab5a3a2d2c5d88e2239b59795f",
+      "oid": "130e04c96615d8b89377481ced54a420c89e5d76",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/5dff1ef5ba6c9216a3b1285206359b935709c4b2",
+      "oid": "132e776da36b3e496745abb308a8cf2e685bcd5e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/5fa20d36c1e366f0873a70ae9bb815f50684120e",
+      "oid": "1940830751281ffdc441802be4df6ab4c2677c77",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/620eb613189031a4bc022101b5c0d5a047122ee4",
+      "oid": "b1fcbaef9ed216d496498a6536715bb74c7bf8c5",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/636edfe63c7420f802eca7d93c28064cf17dc341",
+      "oid": "cbb70afb70932437768ce4f9b7c6b9b2c4feb09f",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/661549288048f9142857c614fc81de6914394687",
+      "oid": "c705e02d590e2668eacbd0133631cdeac975d7c6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/7c6a353af2cc3d7e3c9e4cbef160137c708d78bd",
+      "oid": "38294ae22c21b8cdcf9c173f8f778167af474194",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/91bf3746842080eeb886934a9ad75eb046b4e084",
+      "oid": "256e3ea622cba7a658020ddcf015b18894d88b38",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 7,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/99ff99c354e1ea9fe3b4f5015af4af65d04880ba",
+      "oid": "130e04c96615d8b89377481ced54a420c89e5d76",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/9a9f885cf43afed16ba2d9f08374ba38a6309031",
+      "oid": "98b38b7ed6519118432cf8520c0f7b8cbd5685cd",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/9cc398c0a8798eb1921b4598ef04a4704f06f668",
+      "oid": "17ba1335d6dbf6810d8d0a684385e239a75f7b49",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/a34d42783f5e6face42cf58d3325f71f9fd462cc",
+      "oid": "343895fb5f0329c0c07a7104ec321b698f967607",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/b0b2029954fc861b515ba9e226012172134ea0b3",
+      "oid": "e0978d104938d33b2f89f648bd2c429041020bc4",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/b7f5b619ba3cdf4969d1f53d55cc0fc1d5dfbead",
+      "oid": "e771179beaa92b7c592a1986a32ffbf1b6302566",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/c53b932fb6a7dbe63b4c23c6b8e2b9944b1b674d",
+      "oid": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/cf5d3814652702fe296f5c0e0abb7bad6ebaf811",
+      "oid": "9c45e91d369b573fe82e003aad259a966618015c",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/d800fe86b2d922bf3b1073f2940b00d0aa1b81a8",
+      "oid": "132e776da36b3e496745abb308a8cf2e685bcd5e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/ed9fd278e0bd76a7c9109c0c4e002456baf0f662",
+      "oid": "409ea73d9b68e0a6fdcbdb84e2595f7f4ed8065f",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/snapshots/fbac210eb33b9048f3f71a845e0f26f2f2147701",
+      "oid": "b696b9b9705ed495e3fd2b9ee807a111d494d369",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base",
+      "oid": "4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a",
+      "oid": "1b624045962a11c648adc42699bb0ade55ff7af6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd",
+      "oid": "1b624045962a11c648adc42699bb0ade55ff7af6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170",
+      "oid": "7ee65352609dc41541e423349087d29f088c3879",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae",
+      "oid": "702fcd0647427c2349eced85e42103fd08ed06b5",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/95a59e126b023f7bc335b762b3fafb77/c609a60b29a6fdf493dbaf62bc5846a5/1791597168878/cf0fb806-6aaa-4462-976a-30a7faa2ce1a",
+      "oid": "750fb859e8febe4d4d50639c62b8fed9be404ddb",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/98cf597f6facc546832598dba5a7bc82/37592e407668ef1fe79bf1b3170698d5/1791561247835/1a9613e1-8029-4466-9a57-771e1acb8f57",
+      "oid": "abdc2fa7d68eac615b5e60d924480b259e420b9b",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/a8d74c6b2173918ebddc460ff3123118/7cf02dff5e596747f1762ef7e352c70b/1791799552138/4a7ac00a-36e2-4eae-b6ad-c424e5220b09",
+      "oid": "11b7df5c88cbad3a5fb80157d8e8498096df2213",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/b9aa7d9d03a631af56775016b8e4c3d8/a4526310baec5746ba94aabe295ed1d3/1791857453487/03623fed-565b-4db4-9879-0a2371ae4df6",
+      "oid": "e2c111a3f18474b3fa350a93a7488ca1e5e937a0",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/c7b8e260820e2b891a5d0f22245ed093/409a4e62bf92e93461d2ed7692c8189d/1791812298607/c3b1ba5e-e341-42e9-b0e0-f76727442357",
+      "oid": "e57d42fccf8b4b2885d414fa9b30d132280ad43a",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/e43ff4cf08e04c00ffbaae12dbc73d4c/1fb56d5994325ee4201440d26321248a/1791449705780/6f83c941-4d10-4051-93de-92637b25713a",
+      "oid": "d32bafb547f71858f0fb0dd7c80cbaf363f35f49",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/fea2ad9aac9cb5702c824535dd76db99/2349ae4389c124e593e485a2893f9f8a/1791799204216/8f791a11-dfb6-423a-bd58-b946d722c7a3",
+      "oid": "0c551e6220601480883e66f5867213840f1be592",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/codex/turn-diffs/checkpoints/ff347f97929c8d9a667722dbb25af805/9d3aa8ab01360c09cb9300c7b336533b/1791534637550/be5ee87a-2b8f-474f-8bfd-41cd4758f65d",
+      "oid": "432195924796f7e30c3c9dc4accfd08accf49e25",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/remotes/dsh/M2-S1-resource-channel-spike",
+      "oid": "9f5eb1d51cb4283eb670085410ea9596d1f7b0d2",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/remotes/origin/HEAD",
+      "oid": "6a68fdeb92d8a1c7903166a8076d6260bf8fa79a",
+      "peeled_oid": "",
+      "symref": "refs/remotes/origin/main",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/remotes/origin/main",
+      "oid": "6a68fdeb92d8a1c7903166a8076d6260bf8fa79a",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 0,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/P03-review-prep-112495c7",
+      "oid": "0a25ceb4577158d9dff184776ff4599e74e25c57",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_P02PRE-R1G",
+      "oid": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 6,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_P02PRE-R1H",
+      "oid": "256e3ea622cba7a658020ddcf015b18894d88b38",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 7,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_P02PRE-R1H-H2-COLLECTOR-R3",
+      "oid": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 15,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_P02PRE-R1H-R6-A4",
+      "oid": "c7c7879e8ae90ad23b29d9d8cc6ea97e3eff5427",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_P22-roundtrip-serialization",
+      "oid": "4a707db80499f11e93cee163a9a10bf6392b1a92",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 10,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-10",
+      "oid": "d7edea5f00507a8d9601e6a95294695353cbf7f6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 49,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-11",
+      "oid": "941dbc89e139a2e24e6b1d17c900e363995decfc",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 53,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-12",
+      "oid": "8738c41d7215920935e6fa067d3740e69280cdc6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 54,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-14",
+      "oid": "2f0d26645a5e3597977859f0624d72f561d38ba1",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 4,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-3",
+      "oid": "d37088a46f0bdae14b7a068f93bbcec38ffe5bad",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 15,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-4",
+      "oid": "0e0905f8041743175239183d9c4ab7eabb78cb90",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 19,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-5",
+      "oid": "297c3dd7d0c977eb22eedefd0ba1ae03d29b64cd",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 25,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-6",
+      "oid": "14f587c90f6627c0788ec35d5fd72e44ff4806cf",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 30,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-7",
+      "oid": "37d5488ebf8e33f897e802b4147cbd5fb1ad8e04",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 41,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-repair-9",
+      "oid": "eeb095ea94cdf0d477bcb09ab7c761883b06f833",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 46,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_antigravity_T3.2.1-windows-packaging",
+      "oid": "ffff7c688df07165c6e801c0c9572e9c4910cb9e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 8,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_M2-C1-typed-ipc-contract",
+      "oid": "86013b34da52e106ad55afc035792e9340c5aee8",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 16,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_P02PRE-R1H",
+      "oid": "c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 13,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "oid": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 3,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "oid": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 4,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_P02PRE-R1H-H2-RUN-INTEGRATION",
+      "oid": "06990b7993d042ae5e74ab479e291e494b622588",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 3,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "oid": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 18,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_T1.2.1-integration",
+      "oid": "0b4e4342e94576a23a20d2861a045d42ab911005",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_codex_TASK-013-production-pipeline-seam",
+      "oid": "0eb49ae7fb3b4429877f2d704ff410d061600d55",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_M2-PACKAGED-AC1-DLL-DIAG",
+      "oid": "c2bde356554c37520bd87d0bc13791a748250133",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T1.1.1-detector-evaluation",
+      "oid": "ed607b755e68e478914f7106ac903cef909cb080",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-740503e",
+      "oid": "60d1d5035e32b0709c00f2ab0fdde844e2acee9e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-7d687f5",
+      "oid": "4613338815406be0fdf2240cb1e5715a619f61f7",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-92c9307c",
+      "oid": "48bc7f36b67fa73d3b5badbc4f0d079aa11bb29f",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-9622395",
+      "oid": "4f2f8a07e5b8119834cdc4cfd0fd0aa5c62ac4cc",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 53,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-a2f6695",
+      "oid": "a6564862649b00fd91fa4e4ea8a2f64205eb71b7",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 54,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-be5200e",
+      "oid": "ddc21a2f3cf5521675e95d6e2a8f8f50b1c065fb",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 49,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-cdc0b6f",
+      "oid": "54bf043379363cacca3da5310eb1ecb371f62407",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 6,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-d2bf6a8",
+      "oid": "85f8c59d0a012c1edc4e466187b5b42515297d74",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 46,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-d79d7dd",
+      "oid": "54f2627196969309d5c3942caf19ccec6c6ab7b5",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 14,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-f39ddc0",
+      "oid": "dc199f607c407adce40d303cb182b28f9a76a1db",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-f6dc383",
+      "oid": "82049145f5dae7e36c6e4f8b71b0b959995ed0c7",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 31,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-repair-14",
+      "oid": "430193968b01022b52edb72b4d6615e3e836e181",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 3,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-repair-14-r2",
+      "oid": "f616175e24229c4fbcffb0145e10764e0c7f93df",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 5,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_T3.2.1-review-repair-7",
+      "oid": "2585efd69009cd7620c6b020e67df90c7d49b0f1",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 6,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_TASK-004-review",
+      "oid": "020c2859b601dedf53c0bc1c822f75f55dae5a2a",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_TASK-015-posthoc",
+      "oid": "9b776853787ed22bd18082057cc0c4895a9c0f40",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_TASK-017-posthoc",
+      "oid": "fb0bc400709665e1fcc998d42cd367a696fb5030",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_deepseek_TASK-024-posthoc",
+      "oid": "9454cecf7be07ff12dda8734dfc73fb7e9aa3fdd",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_qoder_T1.1.2-region-canvas",
+      "oid": "52de319a4d9cb03ab591736438ac9ca1a3e0f720",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_qoder_T2.2.1-reader-workbench-qml",
+      "oid": "08465739ae92d7175a77d00053abe598bb150bae",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 5,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_qoder_T3.2.1-repair-13",
+      "oid": "8738c41d7215920935e6fa067d3740e69280cdc6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 54,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_qoder_TASK-047-ui-ux-gui-design",
+      "oid": "980ae7df716a0a1b40a060cb3d028cd250e93cbc",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 9,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_qoder_TASK-061-review",
+      "oid": "be995446db5a3309adcc81ee0e8779abcc79f65e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 4,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_M2-I1-core-assembly-seam",
+      "oid": "8dab0abbc667e09054616d4f0b0f5a76b1a04d9e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_P02-NEW-TIME-BASELINE",
+      "oid": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 60,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "oid": "10c35daed241aa3717b248da14c1b9b959ff1fba",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 31,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "oid": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 78,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "oid": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 43,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_P02PRE-R1H",
+      "oid": "256e3ea622cba7a658020ddcf015b18894d88b38",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 7,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_P02PRE-R1H-H2-COLLECTOR",
+      "oid": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 4,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_T1.2.1-settings-ui-viewmodel",
+      "oid": "b8a8841449135320337c9bc9736f85b695d8ab2a",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_T2.2.1-reader-workbench-polish",
+      "oid": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_T3.2.1-repair-13",
+      "oid": "13ae23f65e963cf1d5aea19634572627e5e709db",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 64,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/agent_zcode_TASK-045-posthoc",
+      "oid": "8b47b2efd05b86f6bdef2f251f3365c5fb812998",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_FEAT-CREATE-1",
+      "oid": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 3,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_P02-fallback-scope",
+      "oid": "0b95c6a1024f89ae341c637c0d531611175acdc5",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_P02-hook-cache-isolation-plan",
+      "oid": "ceca2446da88df23a719f40868cc89e1481ccb2c",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 7,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_P14",
+      "oid": "41c3206942730536bc9b41e871f23ad9b3de3f1d",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_P15-C1-FU2",
+      "oid": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_T3.2.1-release-gate-closeout",
+      "oid": "188d72a9d144b8cab16f77757abc46318ac8e5e6",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 50,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_integration-p02pre-r1h-p2-1-external-harness-trace",
+      "oid": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 18,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_project-roadmap-rebaseline",
+      "oid": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/codex_rebaseline-audit-20260921",
+      "oid": "17ba1335d6dbf6810d8d0a684385e239a75f7b49",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/dsh_GOV-PIN-LINEAGE-1",
+      "oid": "60d47991baea777996313d2cf1a335c136fb1ba0",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 2,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/master",
+      "oid": "78faeee583600c51740200efd0e05776d6f2cf96",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 3,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/review_deepseek_M2-C1-typed-ipc-7d908a5",
+      "oid": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 4,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/review_deepseek_M2-C1-typed-ipc-r2-7e65f4f",
+      "oid": "5386744720061d1e411356d2004c5e3ae6ccb6fd",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 12,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/review_deepseek_M2-C1-typed-ipc-r3-4d66523",
+      "oid": "ac38dede84ff22290c9b9d579c1372c8184a7bd5",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 14,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/review_deepseek_M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "oid": "daab1996b99c7036108bc505cc3db29b744fdf9d",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 1,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    },
+    {
+      "ref": "refs/tags/archive/review_qoder_M2-C1-typed-ipc-r3-4d66523",
+      "oid": "1950a23619ae489ecc88209593eac75546d61105",
+      "peeled_oid": "",
+      "symref": "",
+      "unique_commits_against_main": 15,
+      "inspection_exit": 0,
+      "reason_on_error": "",
+      "actual_action": "PRESERVED_UNCHANGED"
+    }
+  ],
+  "branch_unique_count_sum": 351,
+  "branch_unique_count_deduplicated": 224,
+  "all_refs_unique_count_deduplicated": 334,
+  "other_refs_additional_commits_count": 110,
+  "limits": "Counts are commit reachability, not product value. refs/codex snapshots remain protected; no refs/reflogs/objects removed.",
+  "source_mainline_head": "83a8a15c259c82267c0a1001123f3cf4ede8a246"
+}

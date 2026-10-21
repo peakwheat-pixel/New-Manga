@@ -14,7 +14,7 @@ READY 节点：**无**。
 
 ## 终态依赖与限制
 
-本 Plan 明确继承[冻结 DAG](../archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md)中的其余节点状态、依赖、Legacy Mapping 与限制；这是对原图的无损引用，不重开 Task、不增加 READY。完整源为 `fdca2057e:doc/REBASELINE_PLAN.md`，SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`。
+本 Plan 明确继承[冻结 DAG](../archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md)中的其余节点状态、依赖 与限制；这是对原图的无损引用，不重开 Task、不增加 READY。完整源为 `fdca2057e:doc/REBASELINE_PLAN.md`，SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`。
 
 - 已完成节点共 54 项（源图口径）；P09/P18/P19/P20 等限定关闭，未满足 Gate 不变。
 - WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 个受保护资源限制；不得清理/GC/prune。132 worktrees/93 branches 是历史快照，新 Task 基线为 135/97。

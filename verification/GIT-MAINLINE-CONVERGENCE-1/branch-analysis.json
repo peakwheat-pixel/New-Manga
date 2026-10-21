@@ -3282,7 +3282,7 @@
     },
     {
       "branch": "main",
-      "tip": "fdca2057eec058996f936fc16138cc87e8cdc0bc",
+      "tip": "56272e40b4492dd9c9006ae230a8d44ae66fb0fd",
       "merged": true,
       "unique_commits": 0,
       "tip_date": "2026-10-21",
@@ -3294,7 +3294,8 @@
       "tree_difference_count": 9,
       "disposition": "MAIN",
       "owner_hint": "main",
-      "owner_hint_basis": "branch name only; not authority"
+      "owner_hint_basis": "branch name only; not authority",
+      "tip_basis": "analysis-time mainline head; other branch tips from fdca inventory remain unchanged"
     },
     {
       "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
@@ -4811,5 +4812,6 @@
     "stashes": 0,
     "unmerged": 19
   },
-  "no_mutation": true
+  "no_mutation": true,
+  "current_head_at_r1_review": "83a8a15c259c82267c0a1001123f3cf4ede8a246"
 }

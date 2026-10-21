@@ -48,6 +48,8 @@
 
 ## 验证与限制
 
-初始全局治理 PASS 4 warnings。新 Task 触发严格检查后发现 Plan 超预算、Ledger 过期与 READY 行解析问题：原 Plan 完整源字节保存到 archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md，当前 Plan 显式继承其已关闭节点/依赖/限制并保持 1652B/24 行；台账使用现有生成器刷新，未更改任何历史 Task 状态，也未修改 checker 规则。随后治理 PASS 2 warnings；最终逐次日志另存 verification-log.txt。产品测试 NOT_RUN（无产品代码变更）。
+初始全局治理 PASS 4 warnings。新 Task 触发严格检查后发现 Plan 超预算、Ledger 过期与 READY 行解析问题：原 Plan 完整源字节保存到 archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md，当前 Plan 显式继承其已关闭节点/依赖/限制并保持 1652B/24 行；台账使用现有生成器刷新，未更改任何历史 Task 状态，也未修改 checker 规则。随后治理 PASS 2 warnings（早期时点）；独立 R1 在固定 83a8a15c 实测 PASS 3 warnings，见 verification-log-r1-head83.txt。第三项 warning 是滚动 checkpoint 未登记，不将其伪装为不可变证据；后续新 head 的日志单独记录。产品测试 NOT_RUN（无产品代码变更）。
 
-独立 Review 待固定盘点交付 head 后由 DeepSeek 执行，只审查非破坏性盘点切片，不把审查通过解释为全部 AC 达成或删除授权。
+DeepSeek R1 已对固定 83a8a15c 批准非破坏性盘点切片，提出 6 项 P2；原报告 deepseek-review-r1.md，逐项响应 rework-r1.md。新 head 需限定复审；不把批准解释为全部 AC 达成或删除授权。
+
+补充：117 个非 heads refs 的逐项可达性分析见 other-refs-analysis.json；分支集合外仍有 110 个去重提交，全部原样保留且已纳入记录时备份。

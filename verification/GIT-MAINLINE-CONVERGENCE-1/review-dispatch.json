@@ -1,0 +1,11 @@
+{
+  "reviewer": "DeepSeek Harness",
+  "skill": "dsh-dispatch",
+  "session_id": "session-1b587ef1-3c10-4e81-97b0-17e7d84c0765",
+  "reviewed_head": "83a8a15c259c82267c0a1001123f3cf4ede8a246",
+  "exit": 0,
+  "raw_output": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GIT-MAINLINE-CONVERGENCE-1\\dsh-review.jsonl",
+  "stderr": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GIT-MAINLINE-CONVERGENCE-1\\dsh-review.stderr.log",
+  "desktop_visibility": "NOT_VERIFIED",
+  "scope": "read-only bounded inventory review; no owner/coordinator takeover"
+}

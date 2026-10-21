@@ -25,6 +25,7 @@ allowed_paths:
   - doc/WORKTREE_SAFETY_INVENTORY.md
   - doc/TASK_LEDGER.md
   - archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md
+  - archive/history/2026-10-21/git-mainline-convergence/.gitattributes
   - verification/GIT-MAINLINE-CONVERGENCE-1
   - doc/handoffs/GIT-MAINLINE-CONVERGENCE-1.md
 created: 2026-10-21
@@ -45,7 +46,7 @@ created: 2026-10-21
 - [ ] **AC3** 19 条未合并支线逐项核对提交、patch 等价性、实际差异、归档与恢复，不盲合并。 <<PARTIAL: 19 条完成提交/路径/patch 分析与归档复核；17 条产品价值裁决待定>>
 - [ ] **AC4** 所有计划删除对象已备份、验证恢复、刷新 Inventory、通过独立 Review 并获所需授权；未满足者保留。 <<BLOCKED: 19 份增量归档验证、全 refs 备份/空仓恢复均通过；旧禁令及 77 声明错误未解除>>
 - [ ] **AC5** 本地 refs/heads 仅 main，无需保留的 linked worktree 安全退出；例外必须据实列出，不能宣称达标。 <<BLOCKED: 当前 97 分支/135 worktree，尚未达标>>
-- [ ] **AC6** 完成独立 Review、集成验证、治理检查、Handoff 和逐项资源处置记录。 <<PARTIAL: 最新治理 PASS 2 warnings；盘点切片独立 Review 待执行>>
+- [ ] **AC6** 完成独立 Review、集成验证、治理检查、Handoff 和逐项资源处置记录。 <<PARTIAL: R1 在 83a8a15c 治理 PASS 3 warnings；非破坏性盘点获批，6 项 P2 修订中>>
 
 ## 允许修改范围
 
@@ -101,7 +102,7 @@ created: 2026-10-21
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GIT-MAINLINE-CONVERGENCE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GIT-MAINLINE-CONVERGENCE-1 | verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md | 本 Task 诊断/备份；不删除 |
-| artifact | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-56272e40b.bundle | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-56272e40b.bundle | 8128955e47f835989a718b55b3af11754752e893b7f78fe7f337eaef68c0f1a9 | 空仓恢复 214 refs 全等、135 HEAD 可读；仅 Git 历史 |
+| artifact | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-56272e40b.bundle | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-56272e40b.bundle | 8128955e47f835989a718b55b3af11754752e893b7f78fe7f337eaef68c0f1a9 | 截至 main=56272e40b 的快照：214 common refs 全等、135 记录时 HEAD 可读；不含后续治理提交；仅 Git 历史 |
 | temp | G:/CODEX/New Manga.workspace/temp/GIT-MAINLINE-CONVERGENCE-1/restore-all-refs.git | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/temp/GIT-MAINLINE-CONVERGENCE-1/restore-all-refs.git | verification/GIT-MAINLINE-CONVERGENCE-1/backup-restoration.json | 只作恢复探针，非项目真值；保留待裁决 |
 
 ## Closeout Record
@@ -115,3 +116,7 @@ created: 2026-10-21
 ### 盘点交付与 Review 范围
 
 交付 head a91e659c3e2e6bb0509d289a49c76fbf37792fc3；只申请对非破坏性盘点/保全切片独立 Review。全部目标未达成，不申请 Task done，不申请删除；Review 通过也不解除保护。19 个未合并分支中 2 条非合并 patch 全等价、17 条仍有不等价提交。全部 refs 及已注册 worktree HEAD 的 Git 历史恢复验证通过；未提交/ignored/应用会话未备份，原位保留。
+
+### R1 响应（待限定复审）
+
+R1 固定 83a8a15c，DeepSeek 只批准非破坏性切片；R-001..R-006 均按 rework-r1.md 修订。不批准删除或 Task done。Owner 额外 raw-byte 检查发现本轮证据 disk CRLF 与 blob LF 不一致；旧 Review 的 blob 一致性措辞不足以证明原始字节相等，保留原报告，另以 byte-mode subprocess 重新核验。统一本 Task 自有证据 LF 并在新 evidence commit 重新 pin；不改既有历史证据或 checker。归档快照仅新增目录内 .gitattributes 固定 LF。
