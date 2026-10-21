@@ -730,8 +730,7 @@ PROSE_SAFE_ERROR_CODES = frozenset({
 # non-declaration exception manifest (review r2 F-02).  File names are mutable
 # and must never exempt a file.
 DEFAULT_JSON_EXCEPTION_MANIFEST = (
-    "verification/WORKSPACE-DECLARATION-REMEDIATION-1/"
-    "non-declaration-json-exceptions.json")
+    "tools/governance/non-declaration-json-exceptions.json")
 
 
 def load_json_exceptions(repo_root, manifest_path=None):
