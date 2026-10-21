@@ -1,0 +1,26 @@
+V1-FINALIZE-20261021 rework r1 — pin checkout reproducibility
+base=a689a1ec2510278bfe53519baa2e81665e94778b
+fix_commit=9f5262f19684a4bda1dbdec4e966b49b2c000442
+date=2026-10-21
+
+[1] archive (default autocrlf=true)
+cmd: git archive --format=tar -o %TEMP%\v1-evidence.tar HEAD verification/V1-FINALIZE-20261021
+archive_exit=0
+cmd: tar -xf %TEMP%\v1-evidence.tar -C %TEMP%\v1-pin-check
+tar_exit=0
+result: rows=13 match=13 bad=0; files=13 with_crlf=0
+
+[2] archive (core.autocrlf=false)
+cmd: git -c core.autocrlf=false archive --format=tar -o %TEMP%\v1-evidence-false.tar HEAD verification/V1-FINALIZE-20261021
+archive_false_exit=0
+cmd: tar -xf ... -C %TEMP%\v1-pin-check-false
+tar_false_exit=0
+result: rows=13 match=13
+
+[3] historical commit-pin sample (P19-AC3-1)
+cmd: git cat-file blob <commit>:<path> + SHA-256 for 17 evidence rows
+result: commit_pins=17 match=17 bad=0
+
+conclusion: evidence SHA-256 pins are reproducible from a fresh checkout/archive
+regardless of core.autocrlf, because verification/V1-FINALIZE-20261021/.gitattributes
+declares "* text eol=lf" and pins are LF-byte hashes.
