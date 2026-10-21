@@ -3,19 +3,21 @@ id: GOV-NONRESOURCE-MANIFEST-FORMAT-1
 title: 六个历史Task非资源说明表格的有界格式修正
 kind: governance
 governance_version: 3
-status: in_review
+status: done
 approval: user_auto_advance_20261021_scoped_six_manifest_rows
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/review-dsh.md
+reviewed_head: 2573375dcc55b95d202ad2b6cdfee90d3f07c525
 depends_on: [GOV-NDJSON-EXCEPTION-CONFIG-1]
 base_commit: 54ff86fb200a8446aa0135aeb90fb0cac9ea7963
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 2573375dcc55b95d202ad2b6cdfee90d3f07c525
 delivery_head: 4c415d8ea
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1
 allowed_paths:
   - doc/tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md
@@ -47,7 +49,7 @@ allowed_paths:
 - [x] **AC1** 六个Task各一行格式变化，原文字、状态、AC、Review和207pin字段不变；所有直接原文件前后字节保全。 <<MET>>
 - [x] **AC2** 同数据默认30→24，仅移六指定错误，其余24完整身份相等，保护集合不减少；六单表parser错误归零。 <<MET>>
 - [x] **AC3** 207pin逐项给出实际blob/raw/EOL/commit-only/外部身份及既有限制；不将原始hash相等误称blob相等。 <<MET>>
-- [ ] **AC4** DeepSeek固定提交独审，Codex集成复验、真实pin注册、治理check与资源核销/Handoff完整。 <<PARTIAL: 机制与字节核验已过，独审和集成复验待完成>>
+- [x] **AC4** DeepSeek固定提交独审，Codex集成复验、真实pin注册、治理check与资源核销/Handoff完整。 <<MET>>
 
 ## 禁止与验证
 
@@ -61,6 +63,8 @@ allowed_paths:
 |EV-2|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/checkpoint.md|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|502548ba7be6cfc09eb4a10d3c6a03f6babd6d0854f366c28d94589dc3bcb0fd|CANONICAL|
 |EV-3|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/format-proof.json|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|e1b669ea3820e6a99f5d9f14be484e4947a1e59426a5cb2343f77f1ed7739ebd|CANONICAL|
 |EV-4|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/report.md|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|1924c7c1d90197ace606148bdda63c833e8ff6ce342479d5822adc1fb33c80f0|CANONICAL|
+|EV-5|AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/review-dsh.md|0893de2b50fec385c5d0c5a8ff20d3b6633b53da|00b8a7a1b44cfae9b20234a64f73ee79eb8a9d1f240624187e2f8532c83db7a4|CANONICAL|
+|EV-6|AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/integration-validation.json|0893de2b50fec385c5d0c5a8ff20d3b6633b53da|f16b849c5a3560d93d4bd4738ced3914bd04195882f5057826d0b876823c86a0|CANONICAL|
 
 ## Resource Manifest
 
@@ -68,3 +72,9 @@ allowed_paths:
 |---|---|---|---|---|---|
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-NONRESOURCE-MANIFEST-FORMAT-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-NONRESOURCE-MANIFEST-FORMAT-1 | doc/tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md | 派生预览/取证/审查日志全部保留，无删除授权 |
 | worktree/env/build | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | main串行文档治理，无新建 |
+
+## Closeout Record
+
+2026-10-21 / Codex：DeepSeek固定2573375dcc55b95d202ad2b6cdfee90d3f07c525 approved（delivery4c415d8ea），main串行集成复验同点：30→24，declarations2449→2455，protected1785→1787，新增2根/无移除。proof1781→1783为自有EV登记前快照，不能混称实时值。4原EV实际注册且raw=blob=pin；207原文件前后未改，不等于207pin都等于raw：195pin/raw相等、10行尾差异、2commit-only；19历史blob不等项继续BLOCKED。P09Managed raw混合CRLF与Git LF不同，内容diff只有冻结行。默认CLI exit2/24、check PASS2warnings、diff-check PASS。109工具回归未重复（无工具修改）；产品/构建NOT_RUN。
+
+resource_closeout_status=complete：本Taskagent-output/派生预览/Review原位PRESERVE_REFERENCED，未新增worktree/env；DSH已exit0。99heads/137worktrees，0删除/迁移/归档/GC/prune/push，父blocked及STATUS/r212禁令保留。下一仅可另冻余24项只读裁决汇总，由Codex负责、DeepSeek独审；指令见本Task Handoff。

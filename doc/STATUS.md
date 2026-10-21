@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-NONRESOURCE-MANIFEST-FORMAT-1](tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md)**（`in_review`；六行metadata，独审DeepSeek，19历史blob差异不修复）。
+- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；正式24错误及清理禁令有效）。
 - 最近完成：GOV-NDJSON-EXCEPTION-CONFIG-1 `done`，独审85a393dc4、集成9d21f8fb8。
-- 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式30错误/原保护/STATUS-r212禁令有效。
+- 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式24错误/原保护/STATUS-r212禁令有效。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
