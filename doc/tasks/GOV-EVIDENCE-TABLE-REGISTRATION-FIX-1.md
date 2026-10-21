@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 title: 三个治理Task证据表连续性与实际保护注册修正
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: user_auto_advance_20261021_scoped_mechanical_metadata_fix
 suggested_owner: Codex
 owner: Codex
