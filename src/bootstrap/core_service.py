@@ -2663,6 +2663,12 @@ class CoreServiceServer:
         if not valid:
             raise P16WireError("INVALID_REQUEST", "validation", "Export options are invalid")
 
+    @staticmethod
+    def _managed_input_unavailable(detail: str) -> P16WireError:
+        """One constructor for the stable ``EXPORT_INPUT_UNAVAILABLE`` face."""
+
+        return P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", detail)
+
     def _managed_root_trust(self) -> ManagedRootTrust:
         """The start-up identity snapshot; fail-closed when it is absent.
 
@@ -2674,11 +2680,7 @@ class CoreServiceServer:
         """
         trust = getattr(self._core, "managed_root_trust", None)
         if trust is None:
-            raise P16WireError(
-                "EXPORT_INPUT_UNAVAILABLE",
-                "unavailable",
-                "Managed export input is unavailable",
-            )
+            raise self._managed_input_unavailable("Managed export input is unavailable")
         return trust
 
     def _checked_managed_path(self, path: str) -> Path:
@@ -2691,29 +2693,20 @@ class CoreServiceServer:
         try:
             verified = self._managed_root_trust().verify_existing(path)
         except TypedResourceChannelError as error:
-            raise P16WireError(
-                "EXPORT_INPUT_UNAVAILABLE",
-                "unavailable",
-                "Managed export input is unavailable",
+            raise self._managed_input_unavailable(
+                "Managed export input is unavailable"
             ) from error
         return Path(verified)
 
     def _reader_sha256(self, path: str, expected: str | None) -> str:
-        trust = getattr(self._core, "managed_root_trust", None)
-        if trust is None:
-            raise P16WireError(
-                "EXPORT_INPUT_UNAVAILABLE", "unavailable", "Managed export input is unavailable"
-            )
         try:
-            digest, _size = trust.digest_of(path)
+            digest, _size = self._managed_root_trust().digest_of(path)
         except TypedResourceChannelError as error:
-            raise P16WireError(
-                "EXPORT_INPUT_UNAVAILABLE",
-                "unavailable",
-                "Managed export input is unavailable",
+            raise self._managed_input_unavailable(
+                "Managed export input is unavailable"
             ) from error
         if expected and expected != digest:
-            raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Reader input failed integrity verification")
+            raise self._managed_input_unavailable("Reader input failed integrity verification")
         return digest
 
     def _read_verified_managed(self, path: str) -> bytes:
@@ -2722,10 +2715,8 @@ class CoreServiceServer:
         try:
             return self._managed_root_trust().read_bytes(path)
         except TypedResourceChannelError as error:
-            raise P16WireError(
-                "EXPORT_INPUT_UNAVAILABLE",
-                "unavailable",
-                "Managed export input is unavailable",
+            raise self._managed_input_unavailable(
+                "Managed export input is unavailable"
             ) from error
 
     def _verified_managed_sha256(self, path: str) -> str:
@@ -2734,10 +2725,8 @@ class CoreServiceServer:
         try:
             digest, _size = self._managed_root_trust().digest_of(path)
         except TypedResourceChannelError as error:
-            raise P16WireError(
-                "EXPORT_INPUT_UNAVAILABLE",
-                "unavailable",
-                "A translated input is unavailable",
+            raise self._managed_input_unavailable(
+                "A translated input is unavailable"
             ) from error
         return digest
 

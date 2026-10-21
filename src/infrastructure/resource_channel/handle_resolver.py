@@ -775,7 +775,19 @@ class ManagedRootTrust:
                 else Path(self._root_abs)
             )
             leaf_handle = _open_trusted_read_handle(target)
-            if _attributes_of(leaf_handle) & FILE_ATTRIBUTE_REPARSE_POINT:
+            leaf_attributes = _attributes_of(leaf_handle)
+            if leaf_attributes & FILE_ATTRIBUTE_DIRECTORY:
+                # R-001 (Codex Review): a same-name DIRECTORY substitution keeps
+                # the canonical path equal to the expectation, so the path check
+                # alone accepted it.  The old callers had their own is_file()
+                # guard; this trust boundary must not depend on that -- an
+                # object that is not a regular file is refused from the opened
+                # handle itself (image_state -> "invalid", URI -> "", reads ->
+                # typed refusal).
+                raise TypedResourceChannelError(
+                    E_OUT_OF_SCOPE, "managed path is not a regular file"
+                )
+            if leaf_attributes & FILE_ATTRIBUTE_REPARSE_POINT:
                 raise TypedResourceChannelError(E_REPARSE, "managed path is a reparse point")
             if _normalized(_final_path_of(leaf_handle)) != _normalized(
                 self._expected_canonical(segments)

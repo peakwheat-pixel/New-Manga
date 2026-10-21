@@ -164,6 +164,21 @@ class _BoundedDiagnosticsSink:
         return str(self._store.write(payload.decode("utf-8"), timestamp=timestamp))
 
 
+def _root_trust_for(owner: object) -> ManagedRootTrust:
+    """The owner's managed-root snapshot, captured once if not injected.
+
+    The production assembly passes the start-up snapshot explicitly; a legacy
+    or test construction that bypasses ``__init__`` captures one on first use
+    (fail-closed either way).  R-005: one copy instead of two.
+    """
+
+    trust = getattr(owner, "_root_trust", None)
+    if trust is None:
+        trust = ManagedRootTrust.capture(owner._storage.root)
+        owner._root_trust = trust
+    return trust
+
+
 class _ManagedPageCatalog:
     """Expose SQLite pages and immutable Managed Copy URLs to the Viewer.
 
@@ -188,11 +203,7 @@ class _ManagedPageCatalog:
         self._root_trust = root_trust
 
     def _trust(self) -> ManagedRootTrust:
-        trust = getattr(self, "_root_trust", None)
-        if trust is None:
-            trust = ManagedRootTrust.capture(self._storage.root)
-            self._root_trust = trust
-        return trust
+        return _root_trust_for(self)
 
     def list_pages(self, chapter_id: str):
         return self._repository.list_pages(chapter_id)
@@ -289,11 +300,7 @@ class _ManagedPageImageSource:
         self._root_trust = root_trust
 
     def _trust(self) -> ManagedRootTrust:
-        trust = getattr(self, "_root_trust", None)
-        if trust is None:
-            trust = ManagedRootTrust.capture(self._storage.root)
-            self._root_trust = trust
-        return trust
+        return _root_trust_for(self)
 
     def _page_image(self, page_id: str):
         from PySide6.QtGui import QImage

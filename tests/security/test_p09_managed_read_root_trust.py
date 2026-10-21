@@ -106,6 +106,20 @@ class TrustHarness:
         target.write_bytes(payload)
         return target
 
+    def mirror_abs(self, absolute_path: str | Path, payload: bytes = OUTSIDE) -> Path:
+        """Mirror OUTSIDE bytes at the payload tree location of an absolute ref."""
+
+        parts = Path(os.path.abspath(str(absolute_path))).parts
+        root_parts = Path(os.path.abspath(str(self.managed))).parts
+        if tuple(os.path.normcase(part) for part in parts[: len(root_parts)]) != tuple(
+            os.path.normcase(part) for part in root_parts
+        ):
+            raise AssertionError(f"reference is not under the managed root: {absolute_path}")
+        target = self.payload_managed.joinpath(*parts[len(root_parts):])
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(payload)
+        return target
+
     # ---------------------------------------------------------------- swap
 
     def swap(self) -> None:
@@ -161,6 +175,51 @@ def _derived_bytes(derived_root: Path) -> list[bytes]:
     if not pages.is_dir():
         return []
     return [path.read_bytes() for path in pages.iterdir() if path.is_file()]
+
+
+def _commit_artifact(core, page, artifact_type, payload: bytes):
+    """Commit one managed artifact revision (reader/export input fixture)."""
+
+    from infrastructure.sqlite.artifacts import SqliteArtifactRepository
+    from ports.repositories.artifacts import (
+        ContentProvider,
+        NewArtifact,
+        PendingArtifactCommit,
+    )
+
+    repository = SqliteArtifactRepository(core.conn, core.storage)
+    chapter = core.repository.get_chapter(page.chapter_id)
+    assert chapter is not None
+    record = repository.create_artifact(
+        NewArtifact(
+            book_id=chapter.book_id,
+            chapter_id=page.chapter_id,
+            page_id=page.page_id,
+            artifact_type=artifact_type,
+        )
+    )
+    result = repository.commit_revision(
+        PendingArtifactCommit(
+            artifact_id=record.artifact_id,
+            content_provider=ContentProvider(payload=payload),
+            mime_type="image/png",
+            expected_current_revision_id=None,
+            width=page.width,
+            height=page.height,
+            file_suffix=".png",
+        )
+    )
+    assert result.status.value == "committed", result.detail
+    return result.revision
+
+
+def _reader_page(harness):
+    page = harness.core.repository.get_page(harness.page_id)
+    return next(
+        item
+        for item in harness.core.reader_catalog.list_pages(page.chapter_id)
+        if item.page_id == harness.page_id
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -437,3 +496,143 @@ def test_trust_snapshot_reads_legal_reference_and_refuses_outside(harness, tmp_p
     with pytest.raises(TypedResourceChannelError) as excinfo:
         trust.read_bytes("../outside.png")
     assert excinfo.value.code == E_OUT_OF_SCOPE
+
+
+# ---------------------------------------------------------------------------
+# R-001 (Codex Review): same-name DIRECTORY substitution must be refused.
+# The canonical path still matches the expectation, so this can only be caught
+# on the opened handle (FILE_ATTRIBUTE_DIRECTORY), not by path comparison.
+# ---------------------------------------------------------------------------
+
+
+def test_directory_substitution_is_refused_by_the_opened_handle(harness):
+    from bootstrap.core_assembly import _ManagedPageImageSource
+    from bootstrap.core_service import CoreServiceServer, P16WireError
+    from infrastructure.sqlite.regions import SqliteRegionRepository
+    from ports.providers.errors import ProviderInputError
+
+    catalog = harness.core.page_catalog
+    server = CoreServiceServer(harness.core)
+    source = _ManagedPageImageSource(
+        harness.core.repository,
+        harness.core.storage,
+        SqliteRegionRepository(harness.core.conn),
+    )
+    reader_page = _reader_page(harness)
+    assert catalog.image_state(harness.page_id, "original") == "ok"
+    assert catalog.image_url(harness.page_id, "original")
+    assert server._managed_root_trust().read_bytes(harness.ref()) == harness.legal_bytes()
+
+    live = harness.live_path()
+    live.unlink()
+    live.mkdir()
+    try:
+        # Site 5/6: the reviewer's exact reproduction -- a directory at the
+        # reference used to keep "ok" and hand out a directory file:// URI.
+        assert catalog.image_state(harness.page_id, "original") == "invalid"
+        assert catalog.image_url(harness.page_id, "original") == ""
+        assert catalog._uri_within(harness.ref()) == ""
+        with pytest.raises(P16WireError):
+            server._checked_managed_path(str(live))
+        with pytest.raises(P16WireError):
+            server._read_verified_managed(reader_page.original_path)
+        with pytest.raises(P16WireError):
+            server._reader_sha256(reader_page.original_path, reader_page.original_sha256)
+        with pytest.raises(ProviderInputError):
+            source.page_frame(harness.page_id)
+    finally:
+        live.rmdir()
+
+
+# ---------------------------------------------------------------------------
+# R-002 (Codex Review): site 3 must also cover the export hash
+# (`_verified_managed_sha256`) and the LAZY export provider
+# (`_read_verified_managed`, consumed by the real ExportService later).
+# ---------------------------------------------------------------------------
+
+
+def _translated_reader_page(harness):
+    from ports.repositories.artifacts import ArtifactType
+
+    page = harness.core.repository.get_page(harness.page_id)
+    assert page is not None
+    translated_bytes = _make_png(30, 20)
+    _commit_artifact(harness.core, page, ArtifactType.TRANSLATED, translated_bytes)
+    reader_page = _reader_page(harness)
+    assert reader_page.translated_path and reader_page.translated_revision_id
+    return reader_page, translated_bytes
+
+
+def test_site3_export_hash_refuses_repointed_ancestor(harness):
+    from bootstrap.core_service import CoreServiceServer, P16WireError
+
+    reader_page, translated_bytes = _translated_reader_page(harness)
+    server = CoreServiceServer(harness.core)
+    # legal: the export hash is computed through the verified handle
+    assert (
+        server._verified_managed_sha256(reader_page.translated_path)
+        == reader_page.translated_sha256
+    )
+    assert server._reader_sha256(reader_page.translated_path, reader_page.translated_sha256)
+
+    harness.mirror_abs(reader_page.translated_path, OUTSIDE)
+    harness.swap()
+    with pytest.raises(P16WireError):
+        server._verified_managed_sha256(reader_page.translated_path)
+    with pytest.raises(P16WireError):
+        server._read_verified_managed(reader_page.translated_path)
+    del translated_bytes
+
+
+def test_site3_lazy_export_provider_refuses_repointed_ancestor(harness, tmp_path):
+    from application.export import ExportFormat, ExportPage, ExportRequest, StalePolicy
+    from application.export.service import OverwritePolicy
+    from bootstrap.core_service import CoreServiceServer, P16WireError
+
+    reader_page, translated_bytes = _translated_reader_page(harness)
+    server = CoreServiceServer(harness.core)
+    page = harness.core.repository.get_page(harness.page_id)
+    assert page is not None
+    chapter = harness.core.repository.get_chapter(page.chapter_id)
+    assert chapter is not None
+
+    def make_request(output: Path) -> ExportRequest:
+        # Same lazy-provider contract the Core builds for the export job: the
+        # bytes are only read when the exporter consumes the provider.
+        return ExportRequest(
+            book_id=chapter.book_id,
+            chapter_id=page.chapter_id,
+            format=ExportFormat.ZIP,
+            output_path=output,
+            pages=(
+                ExportPage(
+                    page_id=page.page_id,
+                    filename="page.png",
+                    source_provider=lambda ref=reader_page.translated_path: (
+                        server._read_verified_managed(ref)
+                    ),
+                    translated_provider=lambda ref=reader_page.translated_path: (
+                        server._read_verified_managed(ref)
+                    ),
+                    translated_revision_id=reader_page.translated_revision_id,
+                    current_translated_revision_id=reader_page.translated_revision_id,
+                    sha256=reader_page.translated_sha256,
+                ),
+            ),
+            mode="translated",
+            overwrite_policy=OverwritePolicy.OVERWRITE,
+            stale_policy=StalePolicy.ABORT,
+        )
+
+    legal_output = tmp_path / "legal.zip"
+    legal = harness.core.export_service.export(make_request(legal_output))
+    assert legal.status.value == "completed", legal.status
+    assert legal_output.is_file()
+
+    harness.mirror_abs(reader_page.translated_path, OUTSIDE)
+    harness.swap()
+    refused_output = tmp_path / "refused.zip"
+    with pytest.raises(P16WireError):
+        harness.core.export_service.export(make_request(refused_output))
+    assert not refused_output.exists(), "a refused export must not publish a file"
+    del translated_bytes
