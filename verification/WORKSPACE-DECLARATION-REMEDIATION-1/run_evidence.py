@@ -334,6 +334,8 @@ def main():
             relative = os.path.relpath(full, HERE).replace("\\", "/")
             if relative.startswith("evidence/audit-after-run/"):
                 continue
+            if "__pycache__" in relative or relative.endswith(".pyc"):
+                continue
             files.append(relative)
     files.sort()
     lines = []
