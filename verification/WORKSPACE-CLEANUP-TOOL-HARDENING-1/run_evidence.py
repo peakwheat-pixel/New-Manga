@@ -222,7 +222,6 @@ def main():
                          cwd=TESTS, label="new-hardening-suite")
     combined = (result.stdout or "") + (result.stderr or "")
     write_text("tests.log", combined)
-    write_text("tests.exitcode", "%d\n" % result.returncode)
     runs.append(record)
     if result.returncode != 0:
         required_failures.append("new-hardening-suite")
@@ -246,7 +245,6 @@ def main():
         runs.append(record)
         write_text("existing-%s.log" % script,
                    (result.stdout or "") + (result.stderr or ""))
-        write_text("existing-%s.exitcode" % script, "%d\n" % result.returncode)
     existing = {run_record["label"]: run_record for run_record in runs}
     # test_ac_gate.py is a regression gate for this Task (must stay green).
     if existing["existing-test_ac_gate.py"]["exit_code"] != 0:
@@ -262,9 +260,6 @@ def main():
              "--replay-incident", LEDGER, "--out", EVIDENCE],
             cwd=ROOT, label="replay-" + script)
         runs.append(record)
-        write_text("replay-%s.log" % script,
-                   (result.stdout or "") + (result.stderr or ""))
-        write_text("replay-%s.exitcode" % script, "%d\n" % result.returncode)
         report_path = os.path.join(EVIDENCE, report_name)
         if result.returncode != 0 or not os.path.isfile(report_path):
             required_failures.append("replay-" + script)
@@ -289,7 +284,6 @@ def main():
     runs.append(record)
     write_text("declaration-audit.log",
                (result.stdout or "") + (result.stderr or ""))
-    write_text("declaration-audit.exitcode", "%d\n" % result.returncode)
     audit = json.load(open(os.path.join(EVIDENCE, "declaration-audit.json"),
                            encoding="utf-8"))
     audit_summary = {

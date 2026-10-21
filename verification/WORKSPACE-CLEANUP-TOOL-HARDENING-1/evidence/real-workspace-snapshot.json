@@ -1,16 +1,10 @@
 {
-  "generated_at": "2026-10-21T10:10:15+08:00",
+  "generated_at": "2026-10-21T10:14:48+08:00",
   "before": {
-    "head": "b8a1e519703f13af73b320dded117004b4bb189a",
+    "head": "cf7d2d46dad593eac9ec0789943aab38d4931fa2",
     "head_exit": 0,
     "status_exit": 0,
-    "status_outside_this_task": [
-      " M tools/governance/archive_branches.py",
-      " M tools/governance/clean_workspace.py",
-      " M tools/governance/consolidate.py",
-      " M tools/governance/delete_branches.py",
-      " M tools/governance/remove_worktrees.py"
-    ],
+    "status_outside_this_task": [],
     "ledger_paths_exist": {
       "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree": true,
       "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION": true,
@@ -34,16 +28,10 @@
     }
   },
   "after": {
-    "head": "b8a1e519703f13af73b320dded117004b4bb189a",
+    "head": "cf7d2d46dad593eac9ec0789943aab38d4931fa2",
     "head_exit": 0,
     "status_exit": 0,
-    "status_outside_this_task": [
-      " M tools/governance/archive_branches.py",
-      " M tools/governance/clean_workspace.py",
-      " M tools/governance/consolidate.py",
-      " M tools/governance/delete_branches.py",
-      " M tools/governance/remove_worktrees.py"
-    ],
+    "status_outside_this_task": [],
     "ledger_paths_exist": {
       "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree": true,
       "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION": true,

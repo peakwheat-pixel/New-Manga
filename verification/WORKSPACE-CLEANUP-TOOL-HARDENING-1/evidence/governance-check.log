@@ -1,0 +1,16 @@
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/WORKSPACE-CLEANUP-TOOL-HARDENING-1.md
+CWD: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
+EXIT_CODE: 1
+
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\WORKSPACE-CLEANUP-TOOL-HARDENING-1.md
+WARN: 存在 2 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3130 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6525 bytes / 56 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\verification\WORKSPACE-CLEANUP-TOOL-HARDENING-1\HANDOFF.md, G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\verification\WORKSPACE-CLEANUP-TOOL-HARDENING-1\evidence\declaration-audit.log, G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\verification\WORKSPACE-CLEANUP-TOOL-HARDENING-1\evidence\governance-check.log, G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\verification\WORKSPACE-CLEANUP-TOOL-HARDENING-1\evidence\manifest.sha256
+FAIL: TASK_LEDGER 已过期：声明 322 个 Task，实际 296 个（重跑 tools/governance/task_ledger.py --write）
+FAIL: TASK_LEDGER 已过期：声明 13 个非终态 Task，实际 2 个（重跑 tools/governance/task_ledger.py --write）
+FAIL: 失效的本地引用：doc\00_INDEX.md → ../archive/history/2026-10-12/README.md
+FAIL: 失效的本地引用：doc\00_INDEX.md → ../archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+FAIL: 失效的本地引用：doc\AD-001_TARGET_DESKTOP_ARCHITECTURE.md → ../archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+Governance check: FAIL (5 errors, 4 warnings)
