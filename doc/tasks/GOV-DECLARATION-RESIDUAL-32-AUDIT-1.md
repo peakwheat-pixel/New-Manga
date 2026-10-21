@@ -3,11 +3,13 @@ id: GOV-DECLARATION-RESIDUAL-32-AUDIT-1
 title: 剩余32项声明只读取证与最小裁决矩阵
 kind: research
 governance_version: 3
-status: in_review
+status: approved
 approval: user_authorized_20261021_readonly_32_declarations_independent_dsh_review
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/deepseek-review-r2.md
+reviewed_head: 927e06f8b25563afbc7acbcc25d19fe775d1ded6
 depends_on: [GOV-PATH-HEADER-COMPAT-1]
 base_commit: c0a9cb7962669cb4e987af51260f68850f4fe3b0
 branch: main
@@ -25,6 +27,8 @@ allowed_paths:
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
   - doc/tasks/README.md
+  - doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md
+  - verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md
 created: 2026-10-21
 ---
 
@@ -88,3 +92,9 @@ Windows PowerShell/Python -B。只读source字节/引用核验、原错误身份
 DSH session-15d4c9be-21a7-4f1c-afa3-e9cd29af81a1，EXIT0，changes_requested，reviewed_head=f6184f3babf473d639932016fba328224e5d7fe6。P1为R24跟踪属性泛化措辞和NDJSON种类计数措辞；P2为checkpoint登记、初审失败输出证据数量/完整身份列表、共享用户数据源措辞。仅本Task文档修正，不改source/guard/旧pin。Reviewer实际核验来源与多项事实；其审计输出目录WinError5受阻，未当作Reviewer审计PASS。
 
 R1五项修正完成，证据固定e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f；当前10行证据表均按Git blob原bytes与磁盘SHA核验，不存在名为“Task8”的独立文件（旧提示指Task中8行pin）。checkpoint已登记SOURCE_PIN并冻结本次恢复快照；终态另记closeout。下一Review只核定新固定head，R1保持changes_requested历史原文。
+
+## R2独审与精确closeout范围
+
+DSH同一session复审EXIT0，approved固定927e06f8b25563afbc7acbcc25d19fe775d1ded6；独立复算10pins和完整32身份/hash，R1已核验17来源等通过未变diff复用。R2未运行声明审计，不冒称Reviewer实测。唯一非阻塞P2是R1原文Markdown双空格触发diff-check exit2；按Review建议仅两份原文文件使用本Task局部-whitespace保留字节，源码/其它文件规则不变。
+
+Codex明确追加closeout元数据范围：父Task仅追加本研究完成事实与推荐下一步、父rolling checkpoint更新当前恢复点；不修改父原AC/pin/历史证据或扩大R2批准范围。两路径已列allowed_paths，不属于17个只读来源，不申请清理授权。

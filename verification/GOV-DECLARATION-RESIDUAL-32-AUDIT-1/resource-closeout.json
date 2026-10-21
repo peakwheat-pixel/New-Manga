@@ -1,0 +1,17 @@
+{
+  "task": "GOV-DECLARATION-RESIDUAL-32-AUDIT-1",
+  "retained_agent_output_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-DECLARATION-RESIDUAL-32-AUDIT-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "reference": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
+  "reason": "保存原始派发/失败输出/读数，现有清理禁令有效，不移除",
+  "worktree_taskenv_dataset_model_build_temp_exchange": "NOT_APPLICABLE: no new resources of these classes",
+  "local_heads": 98,
+  "registered_worktrees": 136,
+  "deleted": 0,
+  "migrated": 0,
+  "archived": 0,
+  "untracked_sources_committed": 0,
+  "review_session": "session-15d4c9be-21a7-4f1c-afa3-e9cd29af81a1",
+  "review_exit": 0,
+  "process_release_not_claimed": "Reviewer headless已退出；不声称其它应用/源资源占用已释放，也不删除资源"
+}

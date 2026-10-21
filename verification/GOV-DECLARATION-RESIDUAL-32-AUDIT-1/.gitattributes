@@ -1,1 +1,4 @@
 * text eol=lf
+# Preserve the two independent Review originals verbatim, including Markdown hard breaks.
+deepseek-review-r1.md -whitespace
+deepseek-review-r2.md -whitespace

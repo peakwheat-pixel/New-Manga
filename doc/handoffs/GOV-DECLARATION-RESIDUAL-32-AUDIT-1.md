@@ -28,3 +28,11 @@ Recovery：G:/CODEX/New Manga，main；固定base/head=22bd5e07af5710af2359827a4
 风险：原32错误未消解，未证明资源可删除或只剩main；全部保护不变。无需本轮额外产品测试。
 
 R1要求已按文档范围修正：R24 tracked与R23 untracked分清；6/64为总值数、类型计数1/4/1与1/62/1；R30/31同源不同destination；新增完整错误身份与稳定hash，checkpoint将登记SOURCE_PIN。原始source17项不变，旧Review原文保留。
+
+## 最终独审与Codex核销
+
+R2在927e06f8b25563afbc7acbcc25d19fe775d1ded6 approved；DSH session-15d4c9be-21a7-4f1c-afa3-e9cd29af81a1，R1/R2 EXIT0，原文deepseek-review-r1/r2.md保存。P1/P2五项修正已通过复审，10pins独立raw bytes复算PASS。独审未复跑声明审计，Codex收口再跑exit2且原32完整身份多重集合相等；17原字节/status不变。
+
+R2非阻塞格式项为Review原文4处Markdown双空格；仅对本Task两份Review设置-whitespace，保留原文，diff-check exit0，不影响其它文档/源码。无新branch/worktree、0删除/迁移/归档；agent-output原位PRESERVE_REFERENCED，其余派生类NOT_APPLICABLE，详resource-closeout.json/integration-validation.json。文档研究已串行落main，不需要产品分支merge；集成点为R2 reviewed_head，尾部提交仅登记批准/核销。
+
+父收敛仍blocked，当前98heads/136worktrees；全部保护和32errors继续有效。下一Task建议仍为拟议GOV-NDJSON-NONDECL-IDENTITY-1，未释放，不自动开始工具/例外表修改。
