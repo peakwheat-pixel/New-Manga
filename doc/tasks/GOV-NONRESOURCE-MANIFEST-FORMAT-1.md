@@ -3,7 +3,7 @@ id: GOV-NONRESOURCE-MANIFEST-FORMAT-1
 title: 六个历史Task非资源说明表格的有界格式修正
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: user_auto_advance_20261021_scoped_six_manifest_rows
 suggested_owner: Codex
 owner: Codex

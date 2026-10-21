@@ -141,7 +141,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源；18 个提交全部在本仓工作区完成。 |
+| 不新建 worktree | - | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源；18 个提交全部在本仓工作区完成。 ；原 source_path 说明： 复用 `G:/CODEX/New Manga` |
 
 ## Closeout Record
 

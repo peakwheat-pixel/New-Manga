@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-NONRESOURCE-MANIFEST-FORMAT-1](tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md)**（`ready`；六行metadata，独审DeepSeek，19历史blob差异不修复）。
+- 当前 Task：**[GOV-NONRESOURCE-MANIFEST-FORMAT-1](tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md)**（`in_progress`；六行metadata，独审DeepSeek，19历史blob差异不修复）。
 - 最近完成：GOV-NDJSON-EXCEPTION-CONFIG-1 `done`，独审85a393dc4、集成9d21f8fb8。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式30错误/原保护/STATUS-r212禁令有效。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。

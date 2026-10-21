@@ -241,7 +241,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 |
+| 不新建 worktree | - | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 ；原 source_path 说明： 复用 `G:/CODEX/New Manga` |
 | AC8 R4 临时输出 | 不适用（临时输出未纳入版本控制） | `NOT_APPLICABLE` | 不适用 | 不适用 | R4 复审期间在 `%TEMP%` 生成的 AC8 回归输出；`ac8-regression-summary.md` SHA-256 `9dd609ef08c87665f524e09c643f6ca308af919931a1247bb078843ad99eab85`、9 个 exit 文件均为 0，均记录于 R4 Review；未纳入版本控制、未删除。 |
 
 ## Closeout Record

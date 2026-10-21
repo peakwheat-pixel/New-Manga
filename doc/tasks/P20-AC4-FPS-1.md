@@ -153,7 +153,7 @@ r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源。 |
+| 不新建 worktree | - | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源。 ；原 source_path 说明： 复用 `G:/CODEX/New Manga` |
 
 ## Closeout Record
 

@@ -154,7 +154,7 @@ planned：永久删除的真实工作流验收（隔离源样本 + 真实 Core a
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 收口时实测未创建/未删除资源；`m2rc1-desktop`/`core_service`/`host_bridge` 进程数 = 0；隔离验证根均在 `%TEMP%` 且已清理。 |
+| 不新建 worktree | - | `NOT_APPLICABLE` | 不适用 | 不适用 | 收口时实测未创建/未删除资源；`m2rc1-desktop`/`core_service`/`host_bridge` 进程数 = 0；隔离验证根均在 `%TEMP%` 且已清理。 ；原 source_path 说明： 复用 `G:/CODEX/New Manga` |
 
 ## Coordinator 独立复核（2026-10-18）
 
