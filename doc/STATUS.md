@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md)**（`in_review`；5+29+80测试通过，仅固定表头兼容；禁令有效）。
-
-- 收敛父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；R2 仅批准 c9a1bdd30 盘点；收敛基线97/135；当前98分支/136工作树（新增工具Task）；旧禁令有效）。
+- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；保护边界已明确，32残余声明错误与STATUS/r212禁令保留）。
+- 技术前置：[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md) `done`，独审78fc0cba2、集成9cae94142；77→32错误，新增410保护根，未清理。
+- 收敛基线97/135；当前98本地分支/136工作树（新增并保留工具Task）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
@@ -26,4 +26,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[当前 checkpoint](../verification/GOV-PATH-HEADER-COMPAT-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
+- 恢复点：[当前 checkpoint](../verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。

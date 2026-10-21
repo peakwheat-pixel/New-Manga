@@ -2,11 +2,10 @@
 
 2026-10-21 / Codex epoch9 / GIT-MAINLINE-CONVERGENCE-1。
 TaskStatus=blocked；resume_status=in_review；ExecutionState=CHECKPOINTED。
-主分支 main；初始 fdca2057e；R1 历史证据 a91e659c3；R2 修订证据 c615d52b4；R2 reviewed/delivery c9a1bdd30（本尾部提交仅保存审查与阻塞记录）。
-完成：97 heads/135 worktrees/214 common refs/0 stash 全清册；19 增量归档验证；记录时全refs bundle空仓恢复/135 HEAD可读/fsck PASS。19 pins raw bytes/disk/blob均等；R2 approved仅非破坏性切片。
-实际删除/移动/merge/GC/prune/远端操作=0；全部原有未跟踪内容保留。无产品代码改动。
-阻塞：125工作树保护命中、82含dirty/untracked、60含ignored根（集合重叠）；77声明错误（旧76+整改Task路径列表头1）；旧清理禁令与旧主线保留规则有效。
-备份截至56272e40b，不含后续治理提交/未提交/ignored/会话/reflog-only/unreachable；不可用作最终工作区完整备份。
-下一精确步骤：读取 Task、R2 Review、decision-request.md、Handoff；取得保护/独有工作处置裁决前，不删、不换他人分支、不释放实施或下一Owner。
-当前本Task产物agent-output、bundle、restore bare全保留，详见Resource Manifest。源权威status/plan已同步；没有恢复旧INFLIGHT/r12任务。
-恢复核验：先 git HEAD/status/worktree/common-dir 与本记录比较；只有本Task尾部治理提交推进main属于预期，其他漂移 DRIFT_DETECTED，原作者文件不得覆盖。
+main唯一开发/集成主线；实际HEAD在本记录提交后核对。原R2 reviewed_head=c9a1bdd30仍仅批准盘点切片。
+保护边界见boundary-adjudication.md；原135工作树、19未合并支线全部保留。125保护/82dirty-untracked/60ignored为原盘点快照，未据此授权删除。
+GOV-PATH-HEADER-COMPAT-1 done，独审78fc0cba2，集成9cae94142；main5测试exit0，diff-check exit0；同快照77→32 errors，旧1280保护根保留+410。新增证据后审计1702根/32错误/exit2（fail-closed）；见子Task证据与Handoff。
+当前98 heads/136 worktrees（新增工具Task资源保留），尚未达到只剩main。0真实资源删除/迁移/归档、0远端操作，无产品支线集成；STATUS/r212禁令有效。
+旧bundle截至56272e40b，不含后续治理/未提交/ignored/会话/reflog-only/unreachable，不是当前完整备份。
+下一建议是冻结32残余声明只读取证切片（Codex Owner/DSH Reviewer），详见doc/handoffs/GOV-PATH-HEADER-COMPAT-1.md可转发指令；尚未释放，不自动实施，不改历史source/pin或解除保护。
+恢复先核对HEAD/status/common-dir/租约；原作者文件不得覆盖。

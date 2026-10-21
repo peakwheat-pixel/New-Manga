@@ -38,3 +38,7 @@ status: blocked
 - 交付：逐项source/HEAD/归属/保护来源/引用/占用/备份恢复矩阵、原始错误与修复前后对照、固定commit、非作者Review和Handoff。删除另需独立授权窗口。
 - 验证：现有声明审计/incident replay（如涉及工具）、Task治理check、必要回归；所有命令有环境/EXIT，任何PARTIAL/BLOCKED不写PASS。
 - Forwardable instruction：在 G:/CODEX/New Manga 的 main 读取 GIT-MAINLINE-CONVERGENCE-1、R2 reviewed_head=c9a1bdd3061300c9c1c633eb8f2279903918e5a2、checkpoint与decision-request，先核对实际HEAD和唯一Codex租约。确认用户对所选保护资源/独有支线的处置裁决；未获裁决则保持blocked和全部原位保护。获裁决后仅冻结一个最小后续Task，明确Owner Codex/Reviewer DeepSeek、source/HEAD/allowed_paths；代码修复使用待创建的codex任务分支和workspace工作树。交付真实before/after矩阵、必要测试、固定commit、独立Review/Handoff；任何删除需另做备份恢复与精确授权窗口，禁止强删旁路、Legacy盲合并、GC/prune或push。
+
+## 2026-10-21 后续状态（覆盖上文历史计数与77错误的当前含义）
+
+保护处置边界已记录boundary-adjudication.md，全部原资源保留，STATUS/r212禁令有效。工具前置GOV-PATH-HEADER-COMPAT-1独审/集成完成9cae94142；77→32 errors，原保护集合全保留+410。当前98本地分支/136工作树，新增Task资源原位保留，尚未达到只剩main。父Task继续blocked；旧盘点Review范围不扩张。下一建议为32项只读取证，完整启动条件/Owner/Reviewer/base/范围/验证/可转发指令见 [子Task Handoff](GOV-PATH-HEADER-COMPAT-1.md)，尚未释放。

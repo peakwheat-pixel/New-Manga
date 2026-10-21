@@ -2,7 +2,8 @@
 
 仅导航；DAG 以 [Plan](../REBASELINE_PLAN.md) 为准，运行以 [STATUS](../STATUS.md) 为准。
 
-- 当前：[GIT-MAINLINE-CONVERGENCE-1](GIT-MAINLINE-CONVERGENCE-1.md)，Codex 盘点/保全/审查；旧清理禁令未解除。
+- 当前：[GIT-MAINLINE-CONVERGENCE-1](GIT-MAINLINE-CONVERGENCE-1.md)，blocked；保护边界已明确，32残余错误与旧清理禁令保留。
+- 技术前置：[GOV-PATH-HEADER-COMPAT-1](GOV-PATH-HEADER-COMPAT-1.md) done / integrated 9cae94142；不授权清理。
 - READY：以 Plan 声明为准；当前无。不得据历史导航重开或释放已完成 Task。
 
 ## 历史导航（不构成当前授权）

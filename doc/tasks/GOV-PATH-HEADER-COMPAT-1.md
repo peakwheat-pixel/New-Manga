@@ -3,19 +3,21 @@ id: GOV-PATH-HEADER-COMPAT-1
 title: 固定模板路径列表头兼容，保留所有 fail-closed 门槛
 kind: governance-hardening
 governance_version: 3
-status: approved
+status: done
 approval: codex_scoped_technical_followup_user_boundary_continuation_20261021
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-PATH-HEADER-COMPAT-1/deepseek-review-r2.md
+reviewed_head: 78fc0cba26d0f52f3bb86014076039c0212dd4f0
 depends_on: [WORKSPACE-DECLARATION-REMEDIATION-1]
 base_commit: e7cbcada6d1a5c01f9c55e888e30c3efba20e1ff
 branch: codex/gov-path-header-compat-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1
-integration_commit: null
+integration_commit: 9cae94142a51ee104dea19714568d3fe2b89dad0
 delivery_head: 78fc0cba26d0f52f3bb86014076039c0212dd4f0
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-PATH-HEADER-COMPAT-1
 allowed_paths:
   - tools/governance/clean_workspace.py
@@ -47,8 +49,8 @@ created: 2026-10-21
 - [x] **AC1** 完整固定别名和原始path列都识别，真实Canonical Evidence行被保护。 <<MET>>
 - [x] **AC2** alias+path、alias+alias重复列拒绝；其它说明/别名/缺列/malformed不接受或保持原判定，未知disposition等安全门槛不变。 <<MET>>
 - [x] **AC3** 同一main数据快照用原实现和候选实现审计，45个schema错误消解、其余32保留，原保护根不丢失，新增根可复算；不调用apply。 <<MET>>
-- [ ] **AC4** 既有声明/安全回归和incident replay通过，记录shell/interpreter/EXIT与skips；固定head独立Review。 <<PARTIAL: 5+29+80测试和双事故回放通过，等待独立Review>>
-- [ ] **AC5** Codex集成后复验、Handoff与资源清册闭环；父Task继续blocked，不解除禁令、不宣称只有main。 <<PARTIAL: 固定交付待独审与Codex集成；资源保留>>
+- [x] **AC4** 既有声明/安全回归和incident replay通过，记录shell/interpreter/EXIT与skips；固定head独立Review。 <<MET>>
+- [x] **AC5** Codex集成后复验、Handoff与资源清册闭环；父Task继续blocked，不解除禁令、不宣称只有main。 <<MET>>
 
 ## 禁止范围
 
@@ -75,11 +77,20 @@ created: 2026-10-21
 |EV-11|AC1/AC2/AC3/AC4|verification/GOV-PATH-HEADER-COMPAT-1/report.md|9f59537f989299c4ee6f41993134aa69d6cfbc12|5521c7826f770070ffa24d80c3e5dcd4cb55a1bb09fcf29c29a18d6f263b512d|CANONICAL|
 |EV-12|AC5|verification/GOV-PATH-HEADER-COMPAT-1/.gitattributes|9ea78f1aac5c4f9838745d4ef8e3b0aa988fbc26|a00748782874dff77c1533a093b13c8cdeb02afb5d9280446b2fd22548185a28|SOURCE_PIN|
 
+|EV-13|AC4|verification/GOV-PATH-HEADER-COMPAT-1/deepseek-review-r2.md|167552efcaf01a883e9a01fea815c8c814868d6a|afc5fe4e76a89e6abdc59955e71c110e22710353a5b8159c8ab3ca40220b5895|CANONICAL|
+|EV-14|AC4|verification/GOV-PATH-HEADER-COMPAT-1/review-r2-owner-verification.json|167552efcaf01a883e9a01fea815c8c814868d6a|e85a6be3f8ac4c36e9e156114344101763dc4a7a38fe39fcaffabcc829293c9a|SOURCE_PIN|
+|EV-15|AC5|verification/GOV-PATH-HEADER-COMPAT-1/postintegration-validation.json|63446b22eb9b2d349218b2d238fd2ddc525a8d0f|05c2da38159a12a03e0e7e4c635aba2d9de3bef0a80b3fc5980fb3df4a109e58|CANONICAL|
+|EV-16|AC3/AC5|verification/GOV-PATH-HEADER-COMPAT-1/postintegration-declaration-audit.json|63446b22eb9b2d349218b2d238fd2ddc525a8d0f|96e8451431edd8a72b02030a12917a16b6c9c014663581550cf43dc9a3470e27|CANONICAL|
+|EV-17|AC5|verification/GOV-PATH-HEADER-COMPAT-1/resource-closeout.json|63446b22eb9b2d349218b2d238fd2ddc525a8d0f|0908b9ebc77049a41cc93815de53640823396bc84f10b1b1409bda5b314fdcb1|CANONICAL|
+
+|EV-18|AC4/AC5|verification/GOV-PATH-HEADER-COMPAT-1/deepseek-review.md|167552efcaf01a883e9a01fea815c8c814868d6a|81103ad29a9568ecd5f8957d7893f2f0bd27bcf2ce91329711ba9cf7b4355d15|SOURCE_PIN|
+|EV-19|AC4/AC5|verification/GOV-PATH-HEADER-COMPAT-1/checkpoint.md|2f4727c821831ea5edd7b5bfcb0a1c1d9f1cf65e|aca1f19dd2a8b2d43a27a02add0c7940234115230c0feddcae58ba962e9ddbce|SOURCE_PIN|
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1 | doc/tasks/GOV-PATH-HEADER-COMPAT-1.md | 待释放后创建；父禁令有效，不删除 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1 | doc/tasks/GOV-PATH-HEADER-COMPAT-1.md | 已创建，b26b60ca6，tracked/untracked状态空；父禁令有效，分支/工作树原位保留 |
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-PATH-HEADER-COMPAT-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-PATH-HEADER-COMPAT-1 | doc/tasks/GOV-PATH-HEADER-COMPAT-1.md | 本Task日志/原始对照，保留 |
 | temp | G:/CODEX/New Manga.workspace/temp/GOV-PATH-HEADER-COMPAT-1 | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp/GOV-PATH-HEADER-COMPAT-1 | doc/tasks/GOV-PATH-HEADER-COMPAT-1.md | 仅自有测试夹具；结束残余保留，不清理真实项目资源 |
 
@@ -98,3 +109,9 @@ created: 2026-10-21
 DSH R2 session-90adda56-6155-4d06-95df-667579988499，EXIT0，approved 固定78fc0cba26d0f52f3bb86014076039c0212dd4f0；仅精确代码集成，不批准清理/父Task done。R1因工作树shell ACL受阻未批准，R2从canonical root完成Git检查；测试和12pin字节校验为Owner实测，独审未冒称重跑。
 
 P2记录闭环：delivery_head更新为实际审查head；EV12源提交9ea78f1aa正确（git log -- .gitattributes可核验），1a958d770只修改Task的pin，并未修改属性文件，不伪造迁移来源。前置内存模拟1277→1687，实际冻结Task增加三个资源根后同快照实测1280→1690；两者旧根全部保留且均+410，不混用绝对快照值。
+
+## 集成与终态核销
+
+main集成 9cae94142a51ee104dea19714568d3fe2b89dad0，主线5测试exit0、diff-check exit0；声明审计exit2并保留32项致命错误，类别与原32项一致，保护根1702为新增证据后的快照。全部已释放AC通过；独审未授权资源清理。资源逐项保留已核销（resource-closeout.json）；不以删除作为done条件。Handoff：[交付及下一任务建议](../handoffs/GOV-PATH-HEADER-COMPAT-1.md)。父收敛继续blocked；98 heads/136 worktrees，尚未达到只剩main。
+
+治理元数据检查曾报告台账14→13未刷新及终态目录2个未登记文件，已用既有task_ledger生成器刷新并为R1原文/冻结checkpoint登记SOURCE_PIN。台账不在租约helper的canonical受控目标集合，使用项目规定生成器，无扩大租约或修改scope。

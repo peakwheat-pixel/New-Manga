@@ -144,3 +144,9 @@ R2 固定 c9a1bdd30，decision approved 仅限非破坏性盘点；R-001..R-006 
 Task 转 blocked（暂停前阶段 in_review），不 done、不 closed_with_limitations。AC4/AC5 原 BLOCKED 不变；125 个保护命中、82 dirty/untracked、60 ignored 根、77 声明错误均保留。原位保护尚未获逐项处置裁决；19 条未合并分支不得以强删或 Legacy merge 达成数量目标。无破坏性窗口可执行。
 
 下一步按 Handoff/decision-request.md 等待针对旧保护与独有工作处置的裁决；不得以本 Task 的新建/切片批准当作解除禁令。没有启动下一 Task/Owner。源 backup 截至56272，后续治理提交仍由 main 保存；任何删除窗口必须更新备份并验证未提交/ignored/会话数据。
+
+## 2026-10-21 边界与技术前置进展
+
+用户要求保护边界优先、STATUS/r212禁令有效。Codex裁定见 verification/GIT-MAINLINE-CONVERGENCE-1/boundary-adjudication.md：原135工作树、19独有支线全部保留；P14/P22仅未来只读评估候选，其余等价/Legacy/旧规划/历史证据不盲合并。
+
+独立GOV-PATH-HEADER-COMPAT-1已独审固定78fc0cba2并集成main 9cae94142a51ee104dea19714568d3fe2b89dad0；仅精确固定表头兼容及重复列防护，原保护集合全保留+410。主线审计剩32错误（此前77为历史基线），错误类别完整保留，禁止全局忽略。当前98 heads/136工作树，新增工具Task资源保留；0真实资源删除/迁移/归档、0远端操作、无产品支线集成。完整收敛目标继续blocked，resume_status=in_review，旧Review仅覆盖原盘点切片，不被本进展扩大。下一有界只读取证建议及转发指令见 doc/handoffs/GOV-PATH-HEADER-COMPAT-1.md，尚未释放。
