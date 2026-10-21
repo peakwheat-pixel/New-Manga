@@ -1,0 +1,208 @@
+{
+  "document_kind": "DESIGN_SPECIMEN_NOT_RUNTIME_POLICY",
+  "version": 1,
+  "decision_ref": "verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/ruling.md",
+  "decision_raw_sha256": "4f9b206ce835fabf029d2a59ff70e3116febbe26302928978090117b4d375f38",
+  "runtime_destination_proposed": "tools/governance/broad-root-preservation.json",
+  "records": [
+    {
+      "id": "BPR-01",
+      "origin_file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "origin_raw_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "global_line": 113,
+      "row_raw_sha256": "1d8e1ccd4148502a56fff33a0811cf03af061f65ead3d3e432d6aa161e294dc2",
+      "row_verbatim": "| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |\n",
+      "parser_locator": "line 5",
+      "root_abs": "G:/CODEX/New Manga.workspace",
+      "root_normalized": "g:/codex/new manga.workspace",
+      "root_real_expected": "g:/codex/new manga.workspace",
+      "source_keep": "PRESERVE_REFERENCED",
+      "error_pair": [
+        {
+          "code": "DECL_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+          "locator": "line 5"
+        },
+        {
+          "code": "DECL_DESTINATION_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+          "locator": "line 5"
+        }
+      ],
+      "error_original_ids": [
+        "R10",
+        "R11"
+      ]
+    },
+    {
+      "id": "BPR-02",
+      "origin_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "origin_raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "global_line": 293,
+      "row_raw_sha256": "f9d2ef6de52f10166295ad16930dd85cee26e2d5428f760797db6d4dbcf1a89e",
+      "row_verbatim": "| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |\n",
+      "parser_locator": "line 10",
+      "root_abs": "G:/CODEX/New Manga.workspace/task-envs",
+      "root_normalized": "g:/codex/new manga.workspace/task-envs",
+      "root_real_expected": "g:/codex/new manga.workspace/task-envs",
+      "source_keep": "PRESERVE_REFERENCED",
+      "error_pair": [
+        {
+          "code": "DECL_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 10"
+        },
+        {
+          "code": "DECL_DESTINATION_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 10"
+        }
+      ],
+      "error_original_ids": [
+        "R12",
+        "R13"
+      ]
+    },
+    {
+      "id": "BPR-03",
+      "origin_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "origin_raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "global_line": 294,
+      "row_raw_sha256": "91cae7c7f2e5ea88a4984831722c3c239be5e6cae1301f93d270331580a8627d",
+      "row_verbatim": "| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |\n",
+      "parser_locator": "line 11",
+      "root_abs": "G:/CODEX/New Manga.workspace",
+      "root_normalized": "g:/codex/new manga.workspace",
+      "root_real_expected": "g:/codex/new manga.workspace",
+      "source_keep": "PRESERVE_REFERENCED",
+      "error_pair": [
+        {
+          "code": "DECL_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 11"
+        },
+        {
+          "code": "DECL_DESTINATION_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 11"
+        }
+      ],
+      "error_original_ids": [
+        "R14",
+        "R15"
+      ]
+    },
+    {
+      "id": "BPR-04",
+      "origin_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "origin_raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "global_line": 295,
+      "row_raw_sha256": "5aeb19dcc39ad204c7b0204c318a4803d219e465ab8f062ca4c50845ac534b77",
+      "row_verbatim": "| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |\n",
+      "parser_locator": "line 12",
+      "root_abs": "G:/CODEX/New Manga.workspace/worktrees",
+      "root_normalized": "g:/codex/new manga.workspace/worktrees",
+      "root_real_expected": "g:/codex/new manga.workspace/worktrees",
+      "source_keep": "PRESERVE_REFERENCED",
+      "error_pair": [
+        {
+          "code": "DECL_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 12"
+        },
+        {
+          "code": "DECL_DESTINATION_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 12"
+        }
+      ],
+      "error_original_ids": [
+        "R16",
+        "R17"
+      ]
+    },
+    {
+      "id": "BPR-05",
+      "origin_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "origin_raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "global_line": 297,
+      "row_raw_sha256": "dbfe4cf72ad821a2f6ab42e47b75cc9717fba2a332e9acd69917e839dfd46c05",
+      "row_verbatim": "| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |\n",
+      "parser_locator": "line 14",
+      "root_abs": "G:/CODEX/New Manga.workspace/review-scratch",
+      "root_normalized": "g:/codex/new manga.workspace/review-scratch",
+      "root_real_expected": "g:/codex/new manga.workspace/review-scratch",
+      "source_keep": "PRESERVE_UNKNOWN",
+      "error_pair": [
+        {
+          "code": "DECL_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 14"
+        },
+        {
+          "code": "DECL_DESTINATION_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 14"
+        }
+      ],
+      "error_original_ids": [
+        "R18",
+        "R19"
+      ]
+    },
+    {
+      "id": "BPR-06",
+      "origin_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "origin_raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "global_line": 298,
+      "row_raw_sha256": "33f5a3a0504ec9442115c49ea50f41e7a2efcad06559b473c6f5ec8dd7d672f6",
+      "row_verbatim": "| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |\n",
+      "parser_locator": "line 15",
+      "root_abs": "G:/CODEX/New Manga.workspace/temp",
+      "root_normalized": "g:/codex/new manga.workspace/temp",
+      "root_real_expected": "g:/codex/new manga.workspace/temp",
+      "source_keep": "PRESERVE_UNKNOWN",
+      "error_pair": [
+        {
+          "code": "DECL_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 15"
+        },
+        {
+          "code": "DECL_DESTINATION_GENERALIZED",
+          "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 15"
+        }
+      ],
+      "error_original_ids": [
+        "R20",
+        "R21"
+      ]
+    }
+  ],
+  "source_fingerprints": {
+    "doc/tasks/SEC-FIX-PATH-ECHO-1.md": {
+      "raw_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "git_status": "",
+      "blob_sha256_at_design_base": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0"
+    },
+    "doc/tasks/WORKSPACE-CONSOLIDATION-1.md": {
+      "raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "git_status": "",
+      "blob_sha256_at_design_base": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8"
+    }
+  },
+  "current_error_count": 24
+}

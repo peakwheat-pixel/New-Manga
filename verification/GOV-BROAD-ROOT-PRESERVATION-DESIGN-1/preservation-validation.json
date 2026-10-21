@@ -1,0 +1,79 @@
+{
+  "kind": "DESIGN_ONLY_PRESERVATION",
+  "snapshot_commit": "12e3a4061cc951fcd6501dac50df1c0051a0a4c4",
+  "base_commit": "3d0a36ac04d30eba0906e70218ef9491c5b9ffbc",
+  "actual_guard_counts": {
+    "declarations": 2467,
+    "protected_roots": 1797,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 367,
+      "EVIDENCE_PIN": 1686,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 360,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 254
+  },
+  "actual24_error_identity_unchanged": true,
+  "immutable_inputs": [
+    {
+      "file": "tools/governance/clean_workspace.py",
+      "raw_sha256": "210b37b3a3f2aeeabe6a52dd313d020cd0e83d9f5fda9ef0d3b3bfe801523e7b",
+      "base_blob_sha256": "3a63bd6ee291a6655be5fd1cbf17bfdf3b53e6df23414a98768a9dd7a8a04d62",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    },
+    {
+      "file": "tools/governance/remove_worktrees.py",
+      "raw_sha256": "9c3eb38943361ffd9b119c299719295495cda8d126e9388dc06d316d3278f04a",
+      "base_blob_sha256": "5db35bbe08dc3dd7e8c9f23413872ab8195521ea15f7cd0e1666b7c8d469afec",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    },
+    {
+      "file": "tools/governance/consolidate.py",
+      "raw_sha256": "1fbb785b4a45c4bbda4b50c5758f9070f4ed399770c226058c10d329c3e1a1e9",
+      "base_blob_sha256": "734f1b6acb02fadc853fabaab5b3c3000e7d12f8166505a4c98ac582895c78a0",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    },
+    {
+      "file": "tools/governance/non-declaration-json-exceptions.json",
+      "raw_sha256": "ce6ff6ad69750786fa64ee5073fb42e9cbd062c5c5e47c3210c905d36050764b",
+      "base_blob_sha256": "78819415d975f42cb9fb16863fbfb19f2236f59252e54391a66753f009ed3e62",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    },
+    {
+      "file": "verification/WORKSPACE-DECLARATION-REMEDIATION-1/non-declaration-json-exceptions.json",
+      "raw_sha256": "238039dd3a9a70243ff8ffaee8dbf5b080e211cb8dc747de1a5da29211efdef2",
+      "base_blob_sha256": "c2f185fb489e4b89be28cdfb139eb649c7022a718d0d27877be4ca0d8fa4adc4",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    },
+    {
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "raw_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "base_blob_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    },
+    {
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "base_blob_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "git_status": "",
+      "base_to_head_content_changed": false
+    }
+  ],
+  "runtime_policy_exists": false,
+  "runtime_guard_changed": false,
+  "own_specimen_model_resource_nodes": 0,
+  "branches": 99,
+  "worktrees": 137,
+  "real_resource_operations": 0,
+  "product_build_109_regression": "NOT_RUN; design only"
+}

@@ -1,0 +1,281 @@
+{
+  "kind": "SIMULATION_ONLY; not production implementation",
+  "snapshot_commit": "12e3a4061cc951fcd6501dac50df1c0051a0a4c4",
+  "before_counts": {
+    "declarations": 2467,
+    "protected_roots": 1797,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 367,
+      "EVIDENCE_PIN": 1686,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 360,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 254
+  },
+  "modeled_after_counts": {
+    "declarations": 2479,
+    "protected_roots": 1802,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 373,
+      "EVIDENCE_PIN": 1686,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 364,
+      "PRESERVE_UNKNOWN": 33,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 254
+  },
+  "removed_exact12_error_identities": [
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
+    }
+  ],
+  "remaining12_errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "old_protected_subset": true,
+  "added_roots": [
+    "g:/codex/new manga.workspace",
+    "g:/codex/new manga.workspace/review-scratch",
+    "g:/codex/new manga.workspace/task-envs",
+    "g:/codex/new manga.workspace/temp",
+    "g:/codex/new manga.workspace/worktrees"
+  ],
+  "registered_modeled_declarations": 12,
+  "coverage_checks": [
+    {
+      "record": "BPR-01",
+      "case": "root",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-01",
+      "case": "future_descendant",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-02",
+      "case": "root",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-02",
+      "case": "future_descendant",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-03",
+      "case": "root",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-03",
+      "case": "future_descendant",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-04",
+      "case": "root",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-04",
+      "case": "future_descendant",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-05",
+      "case": "root",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-05",
+      "case": "future_descendant",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-06",
+      "case": "root",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "record": "BPR-06",
+      "case": "future_descendant",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "case": "ancestor",
+      "result": "MODEL_PROTECTED"
+    },
+    {
+      "case": "repo-sibling",
+      "result": "MODEL_NO_NEW_ROOT_HIT_NOT_DELETE_PERMISSION"
+    },
+    {
+      "case": "lexical-prefix-sibling",
+      "result": "MODEL_NO_NEW_ROOT_HIT_NOT_DELETE_PERMISSION"
+    }
+  ],
+  "coverage_check_count": 15,
+  "real_tool_current_error_count": 24,
+  "policy_schema_matcher_negative_tests": "NOT_RUN; specified for future implementation",
+  "guard_code_and_runtime_policy_changed": false,
+  "source_fingerprints": {
+    "doc/tasks/SEC-FIX-PATH-ECHO-1.md": {
+      "raw_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "git_status": "",
+      "blob_sha256_at_design_base": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0"
+    },
+    "doc/tasks/WORKSPACE-CONSOLIDATION-1.md": {
+      "raw_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "git_status": "",
+      "blob_sha256_at_design_base": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8"
+    }
+  }
+}
