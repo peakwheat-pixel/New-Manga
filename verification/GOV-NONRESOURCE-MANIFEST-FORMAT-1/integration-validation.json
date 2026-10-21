@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-10-21T11:53:25.525288+00:00",
+  "snapshot_commit": "2573375dcc55b95d202ad2b6cdfee90d3f07c525",
+  "reviewed_head": "2573375dcc55b95d202ad2b6cdfee90d3f07c525",
+  "delivery_head": "4c415d8ea5ca9c7fff5c95f22dbf4f57b46652d8",
+  "before_counts": {
+    "declarations": 2449,
+    "protected_roots": 1785,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 362,
+      "EVIDENCE_PIN": 1678,
+      "NOT_APPLICABLE": 4,
+      "PRESERVE_REFERENCED": 356,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 30,
+    "warnings": 248
+  },
+  "after_counts": {
+    "declarations": 2455,
+    "protected_roots": 1787,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 365,
+      "EVIDENCE_PIN": 1678,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 358,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 250
+  },
+  "remaining24_identity_unchanged": true,
+  "protection_subset": true,
+  "added_protected_roots": [
+    "g:/codex/new manga/doc/tasks/gov-debt-cleanup-2.md",
+    "g:/codex/new manga/verification/gov-debt-cleanup-2"
+  ],
+  "source6_after_raw_sha_verified": true,
+  "direct207_asset_bytes_unchanged": true,
+  "historical19_blob_limitations": "BLOCKED; no re-sign",
+  "pin_raw_boundary": "195 pin=current raw,10 EOL differences,2 commit-only without SHA; all207 actual files byte-identical before/after",
+  "p09_managed_boundary": "mixed CRLF raw differs from LF Git blob; content diff only frozen line",
+  "main_cli_exit": 2,
+  "main_cli_error_count": 24,
+  "counts": {
+    "branches": 99,
+    "worktrees": 137
+  },
+  "deleted_resources": 0,
+  "gc_prune_push": false,
+  "review_session": "session-1bac51c5-047e-4596-baf5-d9d45099c877",
+  "web_visibility": "unverified"
+}
