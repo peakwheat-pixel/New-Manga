@@ -1,20 +1,29 @@
 ---
 task_id: GOV-BROAD-ROOT-PRESERVATION-IMPL-1
 author: Codex
-recipient: DeepSeek Harness
+recipient: Codex
 base_commit: f47c68969dac7d3cec0dddbe3fca4ea2fa7803db
 delivery_head: 6e3bac7867c67a2e76e45e2facbbf859d5dba526
-status: in_review
+status: done
 ---
 
-# 五根整体保护运行实现
+# 五根整体保护已集成
 
-唯一repo G:/CODEX/New Manga；branch codex/gov-broad-root-preservation-impl-1，worktree G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1，common Git dir G:/CODEX/New Manga/.git。Task来源base40343a8b2，实际branch/review diff base f47c68969dac7d3cec0dddbe3fca4ea2fa7803db，其间仅Task冻结metadata。source528940a00，证据2fdf5b75d，最终reviewed head以派发实际固定hash为准，勿混用delivery。
+唯一repo G:/CODEX/New Manga，main；DeepSeek R4 approved d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05（P0/P1=0），正常集成a3bba87ce0eef4049be6e07dc2e46403af8597ca。当前source6e3bac786，集成证据569674d0b581d553f31faf8759ff329b2f33a86d。正式24→12；旧保护保全+5广域根/+12角色/+12warning，旧源/69例外/三消费者代码未改。最终证据与逐项核验见Task Canonical Evidence、integration-validation.json、integration-report.md和review-dsh-r4.md。
 
-依据已审设计R3 232e3a589。只共享scanner、新运行policy及自己的tests；通用拒绝、三个消费者、两历史源/旧pin/69例外不改。严格schema/全6绑定/原子index+scanned、12保全warning；127测试通过0skip，双回放各15REJECT/0deleted/0violations；真实同canonical数据24→12、+5根/12角色/12warnings，其余12身份与旧保护保全。真实clean/audit/remove错误拒绝，合成CLI三入口保护验证。consolidate整100/138资源盘点未重跑，不用合成inventory冒称真资源清单。具体路径/命令/快照/限制见report.md/test-execution.json/runtime-proof.json。
+Owner127=18+29+80/0skip、双回放各15REJECT/0deleted/0violations；Reviewer独立同数据scan、EV/注册/日志/内存正负例、check/diff。Reviewer完整18fixture因沙箱NOT_RUN；六探针内容Reviewer因ACL未枚举，Codex集成复验实际均空且保护，不改ACL。main三CLI拒绝exit2/12errors/空候选；remove用明确合成空inventory，不冒称真清单；全100/138 consolidate未重跑，产品构建NOT_RUN。
 
-main目前仅镜像新增policy与自有evidence/tests以track和check，旧guard正式24，未合并代码；candidate应以canonical repo数据读取R23/P22等未跟踪源，不能把worktree缺证据当真值。root检查器仅canonical，branch自有Task同步不复制租约。100heads/138worktrees全部保留，禁真实cleanup/迁移/归档/GC/prune/push/ACL/Legacy；父blocked/r212有效。
+分支codex/gov-broad-root-preservation-impl-1与WT G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1固定d5d21ff9，均按禁令保留。agent-output含原始日志/DSH会话材料保留；六处空探针逐项原位PRESERVE_REFERENCED。资源核销完成不等于删除授权。当前100heads/138WT，尚未只剩main；父blocked及r212/STATUS禁令保留，未push/真实apply/迁移/归档/GC/prune/reset/stash。
 
-DeepSeek固定head非作者Review通过后Codex正常merge并main复验正式12、原源/保护/EV/check，才done。下一建议（仅拟议，未释放）：Codex另冻剩12项中的历史模板/NUL当前解释的只读身份核验，Reviewer DeepSeek；先保持7历史运行身份BLOCKED，不猜TEMP/APPDATA，不修改旧Review/NUL/JSON/pin。Recovery main集成commit待集成后填写，启动核对最新head，范围限新Task/evidence/Handoff与STATUS/Plan/ledger/parent checkpoint；只读真实相应源与已引用32矩阵，交付精确路径/raw SHA/语义/原字节和保护前后、不实施通用忽略或真实资源处置。验证真实剩12身份、指纹、check/diff、固定head独审；需产品/源归属裁决则保留BLOCKED。可转发：Codex，先核本实现独审集成done，再冻结剩12中模板/NUL五项只读身份研究，Owner Codex/Reviewer DeepSeek，以当前main恢复，仅按上述有界来源取证并保全旧字节，独审后再建议后续；不把研究当作删除或旧证据改写授权。
+## 下一任务建议（proposed，未释放）
 
-当前source6e3bac7867c67a2e76e45e2facbbf859d5dba526，R2后两个最小对齐项已完成且127重跑0skip，双15拒绝重跑通过。六处空审查探针全原位保护；原5计数仅历史。日志原CRLF/版本化LF分别标hash。下一Gate仅R3纯只读复审，禁任何fixture/探针写入；Reviewer完整18 NOT_RUN，不影响Owner实测127的独立记录。
+Task：GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1，剩余模板与NUL五项只读身份核验；依赖本实现已done，启动条件是Codex核对main权威后另冻Task，不重开旧Task。
+Agent：Owner Codex，Reviewer DeepSeek Harness，不得自审。
+Recovery point：G:/CODEX/New Manga，main；固定base为集成a3bba87ce0eef4049be6e07dc2e46403af8597ca，已知证据head569674d0b581d553f31faf8759ff329b2f33a86d（交接快照，启动时核main最新HEAD）。新分支/worktree待Codex按协议创建，不臆造已存在资源。
+Scope：只读当前正式12错误对应来源中2模板/3NUL、其已引用32矩阵和必要定位代码；仅允许新Task/Handoff/verification及STATUS/Plan/ledger/Task导航/父rolling checkpoint。禁止修改旧Review/NUL/两历史Task/69例外/source pin/通用scanner/真实资源，7历史运行身份保留BLOCKED，不猜TEMP/APPDATA，不增加忽略或清理许可；无共享Schema/依赖变更。
+Deliverables：五项精确code/file/locator/message、raw字节SHA、语义/归属、引用与保护登记前后、可保持保护的解释选项、未知最小裁决、测试实测/NOT_RUN、checkpoint/Handoff及固定head独审。
+Verification：Python -B纯只读scan核正式12不减少、旧源raw指纹和原保护不变；运行pwsh -NoProfile -File tools/governance/check.ps1；git diff --check；Reviewer沙箱禁止写探针/fixture/ACL，实测与Owner证据分列。独审通过仅研究done，不实施解析修复/资源处置；未知归属保留BLOCKED。
+
+可直接转发指令：
+
+Codex，请在G:/CODEX/New Manga核main/共同Git目录和epoch9租约，以a3bba87ce0eef4049be6e07dc2e46403af8597ca为已集成来源、569674d0b581d553f31faf8759ff329b2f33a86d为证据快照核对最新HEAD；先按生命周期另冻GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1（Owner Codex/Reviewer DeepSeek Harness，新branch/worktree待创建），范围只读剩12中的2模板/3NUL及已引用矩阵，不重开旧Task。只写新Task/Handoff/verification和必要权威导航，交付精确身份/raw SHA/语义与引用保护、未知裁决、实测/NOT_RUN及恢复点；7历史运行身份继续BLOCKED，不改旧源/Review/NUL/pin/例外/通用scanner、不真实清理。Python -B同数据scan确认正式12和旧保护不变，check.ps1与diff-check通过后交DeepSeek固定head纯只读独审，严禁权限探针/fixture/ACL；不得把研究当作修复或删除授权。
