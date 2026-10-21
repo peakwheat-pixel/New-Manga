@@ -59,9 +59,6 @@ Windows PowerShell/Python -B。只读source字节/引用核验、原错误身份
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-
-
-
 |EV-1|AC4|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/.gitattributes|706e67adf0027e1a8691265808595866ea07edf7|fcf93454a24425f223b13f85d9edea5b763ea54ae818b87b4b7975f6b69f4b4c|SOURCE_PIN|
 |EV-2|AC1|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/scope.json|706e67adf0027e1a8691265808595866ea07edf7|890a2e7edee5d8290b80c1852fd3f40195d92f1d0c4794df987abe110a80c35d|CANONICAL|
 |EV-3|AC1/AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/source-facts.json|706e67adf0027e1a8691265808595866ea07edf7|bcc6cd03e37111c6883f90f6fe1963b74a5eca97eda54aa3ee5b9e9a416d426b|CANONICAL|

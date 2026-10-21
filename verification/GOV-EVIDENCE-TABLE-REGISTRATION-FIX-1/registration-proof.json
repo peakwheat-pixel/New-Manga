@@ -1,0 +1,648 @@
+{
+  "targets": [
+    {
+      "task_path": "doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md",
+      "raw_sha256": "2392fe124fac0481b8da489aa759f4385bc2f50d02626d81949afee22197506d",
+      "status": "blocked",
+      "pin_rows": 19,
+      "actual_registered_evidence": 9,
+      "parser_errors": [],
+      "all_pin_bytes_valid": true,
+      "pins": [
+        {
+          "id": "EV-AUTH",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/authorization.md",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "4ca93ccd070990d4936213ec1c1e5989167efe5265020a80d1f4de9d52c14d15",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-BASE",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/baseline.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "d7a886d3b077eeef3f35ead3ab7cbfbf0f3e54fa61862525d4c0d247ef656561",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-INV",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/preflight-inventory.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "45f46570ba42a9c850928ab3cfead45cddefae57b5c47bd3e6d30c5f625c7175",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-BRANCH",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/branch-analysis.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "1c40282a79f85d53f703f3484e198931b4926f752c4b98b52ba13e856bc237c6",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-WT",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/worktree-analysis.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "e637da321d2c84ca04ec3cdf9158a85c848373001001def88de231a501273e05",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-ARCHIVE",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/archive-verification-resolved.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "d7cfb6d4c05495fe6a1a69550bfd98c4eedd329128d4a069be161100e9eee4f1",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-RESTORE",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/backup-restoration.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "9fc5a14d3b3908f032a02af7248132d95c2f414181f2e281e8d02e707758929c",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-REPORT",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/report.md",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "554c8b72bb8f3ba7a7c08af38a0c251dfc66e72799e53ac1cd4de8826dc620d8",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-CHECK",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/verification-log-r1-head83.txt",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "76c7f1a5f914b527cbd4564018d58a793a6b55ee39600df395f132e5ac952319",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-ATTR",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/.gitattributes",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-BRANCHES",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/branches.md",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "3e8eaebb723c3969401911aa01868da30222d1b30dccc2ca236f641bb1bd54d6",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-WORKTREES",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/worktrees.md",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "26caf4eb231c0ddd44b22c8445b40c039950c7f1837fd82c5882be451f2b9446",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-LOG-ATTEMPT1",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/verification-log-attempt1.txt",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "92889a01801f70efa87d372cbf9c22bdad38d6ede426ddcada9c19b4bc2cb310",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-OTHERREFS",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/other-refs-analysis.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "9299cbd7c5210be0a26c481317be91d0fea3820de366ec3506c4c4646dcf39c9",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-DELTA",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/declaration-delta.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "b6c1ba2c8dbafe8f8488003008e4e8902b1bd5cedee176fbff45371febfc42e6",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-REWORK",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/rework-r1.md",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "f180e8498f4772cf527654293ea7330e538aa0d29fc595ea46653814e0f33ccb",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-R1",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/deepseek-review-r1.md",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "c16d52e0b33665ee13ff24ab05bca8beb6194b7495c738673e5dddde6ac4d23b",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-DISPATCH",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/review-dispatch.json",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "3700cfc95b056cd20effbf409ecee0b107eafa70c65451c9c9dbca8c0df44747",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "SRC-EARLY-CHECK",
+          "path": "verification/GIT-MAINLINE-CONVERGENCE-1/verification-log.txt",
+          "commit": "c615d52b4f2f382979e4061b38c01fc7a38120c3",
+          "sha256": "0363cd90a9eb8cfdf33f0f980c6d2780d79b5df11b35d8387dc71e4ec6977a04",
+          "disk_equals_blob_and_sha": true
+        }
+      ],
+      "after_raw_sha256": "9a275598dc693b57f211b31af09a36cebb45952288c2141ecb1ff5f60d17ec04",
+      "after_registered": 19,
+      "after_parser_errors": [],
+      "nonblank_byte_lines_unchanged": true,
+      "removed_blank_lines": 10,
+      "all_51_source_bytes_unchanged": true
+    },
+    {
+      "task_path": "doc/tasks/GOV-PATH-HEADER-COMPAT-1.md",
+      "raw_sha256": "070c4cf9a92fa687e574d811aa868cb72f0695a9cf80294f57abc96ff42d9a9c",
+      "status": "done",
+      "pin_rows": 19,
+      "actual_registered_evidence": 12,
+      "parser_errors": [],
+      "all_pin_bytes_valid": true,
+      "pins": [
+        {
+          "id": "EV-1",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/new-tests.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "d6d3a0bd38fc02f22fb40ef68ba328cfb6b86406f324d2bef3540372fa382344",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-2",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/declaration-tests.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "6acac17af39688b225c56ef2923f196cf748d8202a26db25d9cd0847dbd0e4c1",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-3",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/hardening-tests.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "aba565751ae78fa020c488bb469d2c90dcc6906d1a0c2ababeb72ca655204da5",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-4",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/real-comparison.json",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "df0824fce7ae4b2e30ddf32bf16a1be73333ec00fd621c85be53131a4fc43937",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-5",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/baseline-discriminator.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "0b8e8fa819b1af22e30c153e53adc07c12c5ea8bd5000c6cbd63a57527d31548",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-6",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/incident-replay-clean-workspace.json",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "cbcfcd1b78d0c0eeffb6322e8b67ce1c2dce3ec070fac7b0d2a0177f4cbf19fb",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-7",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/incident-replay-remove-worktrees.json",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "63f296b126ba1d13edf44694bd3936f1f060a517d597aa1ba8a2b08d9c3fbaac",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-8",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/replay-clean-executed.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "33de0b51fc7ae4f7b7896029bb0772cea520505ffb74e6e5d388dbbfb5dfc6f8",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-9",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/replay-worktrees-executed.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "54155be6a1a23a8b6a7e92b5d2b1c277ae022ed6e52b4ae067ca600511b29b3e",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-10",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/replay-clean.log",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "aece49f317b301935566f8f3ee3e6426d0c708adfe6052e81cf69743a614b8dd",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-11",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/report.md",
+          "commit": "9f59537f989299c4ee6f41993134aa69d6cfbc12",
+          "sha256": "5521c7826f770070ffa24d80c3e5dcd4cb55a1bb09fcf29c29a18d6f263b512d",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-12",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/.gitattributes",
+          "commit": "9ea78f1aac5c4f9838745d4ef8e3b0aa988fbc26",
+          "sha256": "a00748782874dff77c1533a093b13c8cdeb02afb5d9280446b2fd22548185a28",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-13",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/deepseek-review-r2.md",
+          "commit": "167552efcaf01a883e9a01fea815c8c814868d6a",
+          "sha256": "afc5fe4e76a89e6abdc59955e71c110e22710353a5b8159c8ab3ca40220b5895",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-14",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/review-r2-owner-verification.json",
+          "commit": "167552efcaf01a883e9a01fea815c8c814868d6a",
+          "sha256": "e85a6be3f8ac4c36e9e156114344101763dc4a7a38fe39fcaffabcc829293c9a",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-15",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/postintegration-validation.json",
+          "commit": "63446b22eb9b2d349218b2d238fd2ddc525a8d0f",
+          "sha256": "05c2da38159a12a03e0e7e4c635aba2d9de3bef0a80b3fc5980fb3df4a109e58",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-16",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/postintegration-declaration-audit.json",
+          "commit": "63446b22eb9b2d349218b2d238fd2ddc525a8d0f",
+          "sha256": "96e8451431edd8a72b02030a12917a16b6c9c014663581550cf43dc9a3470e27",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-17",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/resource-closeout.json",
+          "commit": "63446b22eb9b2d349218b2d238fd2ddc525a8d0f",
+          "sha256": "0908b9ebc77049a41cc93815de53640823396bc84f10b1b1409bda5b314fdcb1",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-18",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/deepseek-review.md",
+          "commit": "167552efcaf01a883e9a01fea815c8c814868d6a",
+          "sha256": "81103ad29a9568ecd5f8957d7893f2f0bd27bcf2ce91329711ba9cf7b4355d15",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-19",
+          "path": "verification/GOV-PATH-HEADER-COMPAT-1/checkpoint.md",
+          "commit": "2f4727c821831ea5edd7b5bfcb0a1c1d9f1cf65e",
+          "sha256": "aca1f19dd2a8b2d43a27a02add0c7940234115230c0feddcae58ba962e9ddbce",
+          "disk_equals_blob_and_sha": true
+        }
+      ],
+      "after_raw_sha256": "071680ccabc62d95421e124ad6a22136edd945875251fe4a0b6e6afd34ceb57f",
+      "after_registered": 19,
+      "after_parser_errors": [],
+      "nonblank_byte_lines_unchanged": true,
+      "removed_blank_lines": 2,
+      "all_51_source_bytes_unchanged": true
+    },
+    {
+      "task_path": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
+      "raw_sha256": "ef4f6df33b10038da6949b530dff1f49f905cb1cdf9ad0be9b5e11c6959fa14f",
+      "status": "done",
+      "pin_rows": 13,
+      "actual_registered_evidence": 0,
+      "parser_errors": [],
+      "all_pin_bytes_valid": true,
+      "pins": [
+        {
+          "id": "EV-1",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/.gitattributes",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "fcf93454a24425f223b13f85d9edea5b763ea54ae818b87b4b7975f6b69f4b4c",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-2",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/scope.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "890a2e7edee5d8290b80c1852fd3f40195d92f1d0c4794df987abe110a80c35d",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-3",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/source-facts.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "bcc6cd03e37111c6883f90f6fe1963b74a5eca97eda54aa3ee5b9e9a416d426b",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-4",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/direct-reference-facts.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "d5143da8284b645aa7175b8cf7e1a3eed319da1f02c01d700cdf44c3afbebcac",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-5",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "568c26d85be8e29a2e6350e0e47e4e89dc4bcfb7cadb5e997150c899642bc51e",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-6",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.md",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "0e518c8bd57bcd21616ab0fb6b1f117f722a5a1bcbfee60dc3967b3944ecdd7a",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-7",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/preservation-validation.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "6ba3c267b31fd8f5266caf0e259c01f1db8de97d23b80ade4e7c57a5f9249dd8",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-8",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/report.md",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "a87567f4eb2fa480786f0e3dd144c68f601d03b9b0b0a9976409293f1cdac0c7",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-9",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/deepseek-review-r1.md",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "7cdbd6070066129b6c2075000e23b905cc63e4fbae3a6873813500c80d5c43f5",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-10",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/checkpoint.md",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "dea0a1dbd3bf20e1a68284cba59a29b979ef42b50d8cb708ead430096325f042",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-11",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/deepseek-review-r2.md",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "f1dc9a6d1b8bffb76cc39ea9298cfe43ecaa0f16bfa6cdf4b530e02a480df581",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-12",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/resource-closeout.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "7a1645c021efaf91f76237bb122a1decdf4909a3e79546f2b08d710f13424c64",
+          "disk_equals_blob_and_sha": true
+        },
+        {
+          "id": "EV-13",
+          "path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/integration-validation.json",
+          "commit": "706e67adf0027e1a8691265808595866ea07edf7",
+          "sha256": "a10f765771b1717739dee2cdbbfeb746d9758259fb1b99a7da4fcbab832bf552",
+          "disk_equals_blob_and_sha": true
+        }
+      ],
+      "after_raw_sha256": "787311e640c7765e99cb758d35bf860c399d229386ab3aafda265b3ecf472b2c",
+      "after_registered": 13,
+      "after_parser_errors": [],
+      "nonblank_byte_lines_unchanged": true,
+      "removed_blank_lines": 3,
+      "all_51_source_bytes_unchanged": true
+    }
+  ],
+  "default_before_errors": 32,
+  "default_after_errors": 32,
+  "same_full_error_multiset": true,
+  "error_identities": [
+    {
+      "code": "TABLE_ROW_ARITY",
+      "message": "table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection",
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-AC3-DELETE-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02）' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P20-AC4-FPS-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json is not valid JSON: Extra data: line 2 column 1 (char 7494)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "protected_roots_before": 1723,
+  "protected_roots_after": 1753,
+  "old_protected_roots_preserved": true,
+  "new_protected_roots": [
+    "g:/codex/new manga/verification/git-mainline-convergence-1/.gitattributes",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/branches.md",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/declaration-delta.json",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/deepseek-review-r1.md",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/other-refs-analysis.json",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/review-dispatch.json",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/rework-r1.md",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/verification-log-attempt1.txt",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/verification-log.txt",
+    "g:/codex/new manga/verification/git-mainline-convergence-1/worktrees.md",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/.gitattributes",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/checkpoint.md",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/deepseek-review-r1.md",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/deepseek-review-r2.md",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/direct-reference-facts.json",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/integration-validation.json",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/matrix.json",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/matrix.md",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/preservation-validation.json",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/report.md",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/resource-closeout.json",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/scope.json",
+    "g:/codex/new manga/verification/gov-declaration-residual-32-audit-1/source-facts.json",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/checkpoint.md",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/deepseek-review-r2.md",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/deepseek-review.md",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/postintegration-declaration-audit.json",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/postintegration-validation.json",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/resource-closeout.json",
+    "g:/codex/new manga/verification/gov-path-header-compat-1/review-r2-owner-verification.json"
+  ],
+  "source_evidence_files_changed": 0,
+  "original_status_ac_review_pin_fields_changed": 0,
+  "heads": 98,
+  "worktrees": 136
+}
