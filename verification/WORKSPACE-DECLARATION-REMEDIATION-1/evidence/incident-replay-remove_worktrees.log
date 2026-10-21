@@ -1,5 +1,7 @@
 COMMAND: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\tools\governance\remove_worktrees.py --replay-incident G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-CONSOLIDATION-1\incident-ledger-r208.json --out G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1
 CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1
+PARENT_SHELL: pwsh (parent process of run_evidence.py; Windows PowerShell/pwsh 7)
+SHELL: False (subprocess.run(shell=False); argv list passed without shell interpolation)
 EXIT_CODE: 0
 
     REJECT    ROOT-01 G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree                exact_source_path:g:/codex/new manga.workspace/gov-pin-lineage-1/worktree [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[0] (SRC-01)}

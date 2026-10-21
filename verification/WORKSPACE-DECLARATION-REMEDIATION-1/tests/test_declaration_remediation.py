@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""AC2–AC5 fixtures for WORKSPACE-DECLARATION-REMEDIATION-1.
+"""AC2–AC5 fixtures for WORKSPACE-DECLARATION-REMEDIATION-1 (review r2).
 
 Reuses the isolated repository fixture from the previous Task read-only
 (``verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/tests/fixture_support.py``);
 nothing in that directory is modified.
 """
+import hashlib
+import json
 import os
-import shutil
 import sys
 import unittest
 
@@ -17,7 +18,7 @@ OLD_TESTS = os.path.join(ROOT, "verification",
 sys.path.insert(0, OLD_TESTS)
 
 from fixture_support import (RepoFixture, guard, load_json,  # noqa: E402
-                             run_tool, TOOLS)
+                             run_tool)
 
 
 def write_bytes(path, payload):
@@ -50,49 +51,62 @@ class DeclarationRemediationFixture(unittest.TestCase):
             if item.get("normalized") == normalized:
                 return item
         self.fail("candidate %s not in report: %s"
-                  % (normalized, [c.get("normalized") for c in report["candidates"]]))
+                  % (normalized,
+                     [c.get("normalized") for c in report["candidates"]]))
+
+    def exception_manifest(self, entries):
+        path = os.path.join(self.fx.tmp, "json-exceptions.json")
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump(entries, handle, ensure_ascii=False)
+        return path
+
+    def sha(self, relative):
+        full = os.path.join(self.fx.repo, relative.replace("/", os.sep))
+        return hashlib.sha256(open(full, "rb").read()).hexdigest()
 
     # ==================================================================
-    # AC2: JSON declaration file identification
+    # F-02 / AC2: JSON declaration file identification
     # ==================================================================
-    def test_ac2_non_declaration_json_is_warning(self):
+    def test_ac2_explicit_path_sha_exception_is_warning(self):
         target = self.fx.candidate("temp", "JSON-NONDECL", {"f.txt": "x"})
-        self.fx.declare_raw('runner stdout, not JSON at all',
-                            relative="verification/runner.stdout.json",
+        relative = "verification/runner.stdout.json"
+        self.fx.declare_raw("runner stdout, not JSON at all", relative=relative,
                             commit=False)
-        result = self.run_clean()
+        manifest = self.exception_manifest([{
+            "path": relative, "sha256": self.sha(relative),
+            "reason": "runner stdout fixture"}])
+        result = self.run_clean("--json-exceptions", manifest)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = self.report()
         self.assertTrue(any("JSON_NON_DECLARATION" in w["code"]
                             for w in report["declaration_warnings"]))
-        self.assertEqual(report["declaration_scan"]["json_non_declaration"], 1)
-        self.assertEqual(report["declaration_scan"]["json_parse_fatal"], 0)
-        record = self.candidate_record(report, target)
-        self.assertEqual(record["decision"], "CANDIDATE")
+        self.assertEqual(self.candidate_record(report, target)["decision"],
+                         "CANDIDATE")
 
-    def test_ac2_malformed_json_with_token_is_fatal(self):
-        target = self.fx.candidate("temp", "JSON-TOKEN", {"f.txt": "x"})
+    def test_ac2_renamed_declaration_stdout_json_stays_fatal(self):
+        """A real declaration renamed *.stdout.json cannot buy an exemption."""
+        target = self.fx.candidate("temp", "JSON-RENAMED", {"f.txt": "x"})
         self.fx.declare_raw(
-            '{"source_path": "%s", "disposition": "MIGRATE",'
+            '{"resources": [{"source_path": "%s", "disposition": "MIGRATE"},'
             % target.replace("\\", "\\\\"),
-            relative="verification/runner.stdout.json", commit=False)
+            relative="verification/real-decl.stdout.json", commit=False)
         result = self.run_clean()
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("JSON_PARSE", result.stdout + result.stderr)
         self.assertTrue(os.path.isdir(target))
 
-    def test_ac2_malformed_json_with_manifest_name_is_fatal(self):
-        target = self.fx.candidate("temp", "JSON-NAME", {"f.txt": "x"})
-        self.fx.declare_raw('{"truncated": ',
-                            relative="verification/resource-manifest.json",
-                            commit=False)
-        result = self.run_clean()
+    def test_ac2_exception_with_wrong_sha_does_not_apply(self):
+        target = self.fx.candidate("temp", "JSON-STALE", {"f.txt": "x"})
+        relative = "verification/runner.stdout.json"
+        self.fx.declare_raw("not json", relative=relative, commit=False)
+        manifest = self.exception_manifest([{
+            "path": relative, "sha256": "0" * 64,
+            "reason": "stale fixture"}])
+        result = self.run_clean("--json-exceptions", manifest)
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("JSON_PARSE", result.stdout + result.stderr)
-        self.assertTrue(os.path.isdir(target))
 
-    def test_ac2_tracked_artifact_json_stays_fatal(self):
-        """Tracked malformed non-instrumentation JSON keeps the old contract."""
+    def test_ac2_tracked_malformed_artifact_json_is_fatal(self):
         self.fx.declare_raw('{"truncated": ',
                             relative="verification/broken-tracked.json")
         result = self.run_clean()
@@ -100,23 +114,12 @@ class DeclarationRemediationFixture(unittest.TestCase):
         self.assertIn("JSON_PARSE", result.stdout + result.stderr)
 
     # ==================================================================
-    # AC3: non-path source values
+    # F-01 / AC3: non-path source values and path-like values
     # ==================================================================
-    def test_ac3_not_applicable_source_is_warning(self):
-        target = self.fx.candidate("temp", "PROSE-NA", {"f.txt": "x"})
-        self.fx.declare([("NOT_APPLICABLE", "PRESERVE_REFERENCED")])
-        result = self.run_clean()
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        report = self.report()
-        self.assertTrue(any("DECL_SOURCE_NOT_A_PATH" in w["code"]
-                            for w in report["declaration_warnings"]))
-        self.assertEqual(self.candidate_record(report, target)["decision"],
-                         "CANDIDATE")
-
-    def test_ac3_none_yet_and_chinese_prose_are_warnings(self):
+    def test_ac3_explicit_placeholder_and_pure_prose_are_warnings(self):
         target = self.fx.candidate("temp", "PROSE-CJK", {"f.txt": "x"})
-        self.fx.declare([("none yet", "PRESERVE_REFERENCED"),
-                         ("见 G:/CODEX/New Manga", "PRESERVE_REFERENCED"),
+        self.fx.declare([("NOT_APPLICABLE", "PRESERVE_REFERENCED"),
+                         ("none yet", "PRESERVE_REFERENCED"),
                          ("释放后真实记录", "PRESERVE_REFERENCED")])
         result = self.run_clean()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -125,6 +128,22 @@ class DeclarationRemediationFixture(unittest.TestCase):
         self.assertEqual(codes.count("DECL_SOURCE_NOT_A_PATH"), 3)
         self.assertEqual(self.candidate_record(report, target)["decision"],
                          "CANDIDATE")
+
+    def test_ac3_pathlike_value_with_spaces_and_cjk_is_protected(self):
+        """F-01: path-like values must never be skipped as prose."""
+        target = self.fx.candidate("temp", "spaced data 中文", {"f.txt": "x"})
+        self.fx.declare([(target, "PRESERVE_REFERENCED")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        record = self.candidate_record(self.report(), target)
+        self.assertEqual(record["decision"], "REJECT")
+        self.assertTrue(os.path.isdir(target))
+
+    def test_ac3_pathlike_value_with_embedded_path_is_fatal(self):
+        self.fx.declare([("见 G:/CODEX/New Manga", "PRESERVE_REFERENCED")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertNotIn("DECL_SOURCE_NOT_A_PATH", result.stdout + result.stderr)
 
     def test_ac3_bare_identifier_still_fails_closed(self):
         self.fx.declare([("P06-GC-DISTRIBUTION-MIGRATION",
@@ -138,14 +157,78 @@ class DeclarationRemediationFixture(unittest.TestCase):
         self.fx.declare([(target, "PRESERVE_REFERENCED")])
         result = self.run_clean()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        record = self.candidate_record(self.report(), target)
-        self.assertEqual(record["decision"], "REJECT")
-        self.assertTrue(os.path.isdir(target))
+        self.assertEqual(self.candidate_record(self.report(), target)["decision"],
+                         "REJECT")
 
     # ==================================================================
-    # AC4: legacy encoding
+    # F-03 / AC5: generalized destination stays fatal
     # ==================================================================
-    def test_ac4_gb18030_markdown_is_read_with_warning(self):
+    def test_ac5_generalized_destination_is_fatal(self):
+        target = self.fx.candidate("temp", "GEN-DEST", {"f.txt": "x"})
+        self.fx.declare([(target, "PRESERVE_REFERENCED", self.fx.ws)])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("DECL_DESTINATION_GENERALIZED",
+                      result.stdout + result.stderr)
+
+    # ==================================================================
+    # F-04 / AC5: incomplete resource/evidence schemas
+    # ==================================================================
+    def test_ac5_incomplete_resource_schema_is_fatal(self):
+        self.fx.declare_raw(
+            "# fixture\n\n## Resource Manifest\n\n"
+            "| resource_type | source_path |\n"
+            "|---|---|\n"
+            "| worktree | G:/some/path |\n",
+            relative="doc/tasks/FIXTURE-INCOMPLETE-RESOURCE.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("TABLE_SCHEMA_INCOMPLETE", result.stdout + result.stderr)
+
+    def test_ac5_incomplete_evidence_schema_is_fatal(self):
+        self.fx.declare_raw(
+            "# fixture\n\n## Canonical Evidence\n\n"
+            "| evidence_id | sha256 |\n"
+            "|---|---|\n"
+            "| EV-1 | abc |\n",
+            relative="doc/tasks/FIXTURE-INCOMPLETE-EVIDENCE.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("TABLE_SCHEMA_INCOMPLETE", result.stdout + result.stderr)
+
+    def test_ac5_narrative_table_without_identity_columns_is_warning(self):
+        target = self.fx.candidate("temp", "NARRATIVE", {"f.txt": "x"})
+        self.fx.declare_raw(
+            "# fixture\n\n## Resource Manifest\n\n"
+            "| 资源类型 | 说明 |\n"
+            "|---|---|\n"
+            "| worktree | %s |\n" % target.replace("\\", "/"),
+            relative="doc/tasks/FIXTURE-NARRATIVE.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        report = self.report()
+        self.assertTrue(any("TABLE_NOT_RESOURCE_MANIFEST" in w["code"]
+                            for w in report["declaration_warnings"]))
+        self.assertEqual(self.candidate_record(report, target)["decision"],
+                         "CANDIDATE")
+
+    def test_ac5_malformed_english_manifest_stays_arity_error(self):
+        self.fx.declare_raw(
+            "# fixture\n\n## Resource Manifest\n\n"
+            "| resource_type | source_path | disposition | destination_path "
+            "| sha256/manifest | reference |\n"
+            "|---|---|---|---|---|---|\n"
+            "| worktree | G:/some/path | PRESERVE_REFERENCED | - | - | extra "
+            "| seventh |\n",
+            relative="doc/tasks/FIXTURE-MALFORMED.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("TABLE_ROW_ARITY", result.stdout + result.stderr)
+
+    # ==================================================================
+    # F-05 / AC4: GB18030 fallback boundary
+    # ==================================================================
+    def test_ac4_gb18030_chinese_markdown_is_read_with_warning(self):
         target = self.fx.candidate("temp", "GBK-READ", {"f.txt": "x"})
         text = (
             "# 历史说明（GBK）\n\n"
@@ -163,77 +246,26 @@ class DeclarationRemediationFixture(unittest.TestCase):
         report = self.report()
         self.assertTrue(any("FILE_ENCODING_LEGACY" in w["code"]
                             for w in report["declaration_warnings"]))
-        record = self.candidate_record(report, target)
-        self.assertEqual(record["decision"], "REJECT")
+        self.assertEqual(self.candidate_record(report, target)["decision"],
+                         "REJECT")
 
-    def test_ac4_undecodable_markdown_stays_unreadable(self):
-        path = os.path.join(self.fx.repo, "verification", "broken-encoding.md")
-        write_bytes(path, b"\xff\xfe\x00\x00not text")
-        self.fx.commit("broken encoding")
+    def test_ac4_binary_with_nul_is_unreadable(self):
+        path = os.path.join(self.fx.repo, "verification", "binary-nul.md")
+        write_bytes(path, b"\x00\x01\x02\x03 not text")
+        self.fx.commit("binary nul")
         result = self.run_clean()
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("FILE_UNREADABLE", result.stdout + result.stderr)
 
-    # ==================================================================
-    # AC5: narrative table recognition
-    # ==================================================================
-    def test_ac5_chinese_header_table_is_narrative(self):
-        target = self.fx.candidate("temp", "NARRATIVE", {"f.txt": "x"})
-        self.fx.declare_raw(
-            "# fixture\n\n## Resource Manifest\n\n"
-            "| 资源类型 | 来源 | 处置 | 目标 |\n"
-            "|---|---|---|---|\n"
-            "| worktree | %s | PRESERVE_REFERENCED | - |\n"
-            % target.replace("\\", "/"),
-            relative="doc/tasks/FIXTURE-NARRATIVE.md")
-        result = self.run_clean()
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        report = self.report()
-        self.assertTrue(any("TABLE_NOT_RESOURCE_MANIFEST" in w["code"]
-                            for w in report["declaration_warnings"]))
-        self.assertEqual(self.candidate_record(report, target)["decision"],
-                         "CANDIDATE")
-
-    def test_ac5_narrative_english_table_is_not_a_manifest(self):
-        target = self.fx.candidate("temp", "NARRATIVE-EN", {"f.txt": "x"})
-        self.fx.declare_raw(
-            "# fixture\n\n## Resource Manifest\n\n"
-            "| note | value |\n"
-            "|---|---|\n"
-            "| source | %s |\n"
-            % target.replace("\\", "/"),
-            relative="doc/tasks/FIXTURE-NARRATIVE-EN.md")
-        result = self.run_clean()
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        report = self.report()
-        self.assertTrue(any("TABLE_NOT_RESOURCE_MANIFEST" in w["code"]
-                            for w in report["declaration_warnings"]))
-
-    def test_ac5_malformed_english_manifest_stays_hard_error(self):
-        self.fx.declare_raw(
-            "# fixture\n\n## Resource Manifest\n\n"
-            "| resource_type | source_path | disposition | destination_path "
-            "| sha256/manifest | reference |\n"
-            "|---|---|---|---|---|---|\n"
-            "| worktree | G:/some/path | PRESERVE_REFERENCED | - | - | extra "
-            "| seventh |\n",
-            relative="doc/tasks/FIXTURE-MALFORMED.md")
+    def test_ac4_gb18030_decodable_binary_is_unreadable(self):
+        # Decodes as one non-CJK control character, no NUL: rejected because a
+        # legacy declaration note must contain CJK text.
+        path = os.path.join(self.fx.repo, "verification", "binary-gb.md")
+        write_bytes(path, b"\x81\x30\x81\x30")
+        self.fx.commit("binary gb")
         result = self.run_clean()
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-        self.assertIn("TABLE_ROW_ARITY", result.stdout + result.stderr)
-
-    def test_ac5_narrative_canonical_evidence_table_is_skipped(self):
-        self.fx.declare_raw(
-            "# fixture\n\n## Canonical Evidence\n\n"
-            "| 文件 | 提交 | 校验 |\n"
-            "|---|---|---|\n"
-            "| a.md | abc1234 | sha |\n",
-            relative="doc/tasks/FIXTURE-EVIDENCE-NARRATIVE.md")
-        result = self.run_clean()
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        report = self.report()
-        self.assertTrue(any("TABLE_NOT_CANONICAL_EVIDENCE" in w["code"]
-                            for w in report["declaration_warnings"]))
+        self.assertIn("FILE_UNREADABLE", result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

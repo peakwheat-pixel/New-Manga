@@ -50,8 +50,13 @@ def run(command, cwd, label, log_name):
     output = (result.stdout or "") + (result.stderr or "")
     with io.open(os.path.join(EVIDENCE, log_name), "w", encoding="utf-8",
                  newline="\n") as handle:
-        handle.write("COMMAND: %s\nCWD: %s\nEXIT_CODE: %d\n\n"
-                     % (" ".join(command), cwd, result.returncode))
+        handle.write("COMMAND: %s\nCWD: %s\nPARENT_SHELL: %s (parent process "
+                     "of run_evidence.py; Windows PowerShell/pwsh 7)\nSHELL: "
+                     "False (subprocess.run(shell=False); argv list passed "
+                     "without shell interpolation)\nEXIT_CODE: %d\n\n"
+                     % (" ".join(command), cwd,
+                        "pwsh" if os.environ.get("PSModulePath") else
+                        "unknown", result.returncode))
         handle.write(output)
     record = {"label": label, "command": command, "cwd": cwd,
               "exit_code": result.returncode, "log": log_name,

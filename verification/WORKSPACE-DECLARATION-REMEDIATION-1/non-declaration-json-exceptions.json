@@ -1,0 +1,337 @@
+[
+  {
+    "path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r1.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/runner-execution.json",
+    "sha256": "4ab52b44f88635c813f19bdd0e8c3c76c07d68949b79d5e2c339596177243ac2",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac6-contrast/runner-execution.json",
+    "sha256": "56da62febd918808f897c3c2b89ee93dad2cb3754ec92826ec79fb31b2ec3636",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P02/antigravity-dispatch-r1.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-dispatch-env-smoke-20261012-152149.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-dispatch-smoke-20261012.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-dispatch-smoke-after-restore-20261012.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-20261012.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-desktop-20261012.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P02/zcode-p02pre-r1h-exec-a6.stdout.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "non-declaration JSON artifact (truncated runner/tool output; no declaration tokens)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json",
+    "sha256": "e1787e41180043cb41730b3debb2bc31524e77d70521e7aa1615267ea63e31ee",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.meta.json",
+    "sha256": "2d10347d35df911028cbda9e55ac2f8abbd98f5a888d67aa43500541b0547cdc",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.meta.json",
+    "sha256": "0f64a90991e9bb6456e79ac8832b96957623c04016f7f616ab3fb51d92e54185",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json",
+    "sha256": "612b9b25cdf39a871ad6c138e864cd3d47846eeefde4e8cb03c41489e42d5ca7",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json",
+    "sha256": "d5e4fab6e9286b8128fca9143efa3534c3b8f9a30ed3d6bb268c8e7ed6b1dd8a",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.meta.json",
+    "sha256": "b5c19d205faba26b97f5c973569281372211d0b7ed853d33d7e4fb9f5c16ac91",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.meta.json",
+    "sha256": "a8670a7af7c1b4c5e99406a900e256fb5b0b46da65df3f264bb4ad4204794ad3",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.meta.json",
+    "sha256": "cf0b652a4f27cc32a823fb5f7a1cf3353f0f4625a9938b9e4d0b8c3abc0e180a",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.meta.json",
+    "sha256": "c79374aefafb70de83f23e3572b54c2e83e4f460e442c0646377da21302c2911",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.meta.json",
+    "sha256": "57324fc87579af45241abc86b5b5ae36930dbaf0f05b750a46edd45bf3ea8c9a",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json",
+    "sha256": "ae283df3b6f77133c11c85b49061b1833564bb69e81699824a3647ff747a6470",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json",
+    "sha256": "7fcd5aa21b9bb4bad55524774d9fd1103cf117bf579d7ee47a34df9c9d06a11f",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.meta.json",
+    "sha256": "0f5d867fb589b106588e479dbec12a1e8dfbcdbdbff441877725e9af2f53cd54",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json",
+    "sha256": "efacde57e43fb1b94755dcbd7cdd9c622d56e763f55e1ad09baf01f2d710e706",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.meta.json",
+    "sha256": "695301a5e65333754c5dfb5bd8dbadece08de0a2edb305e60a322a556b285090",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac5-20261018-1555/ac5-metadata.json",
+    "sha256": "6238d36ae06c8dd7b14bff59dadc5b03114293a33232f263ad90679575b97506",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.json",
+    "sha256": "0a74cb5b5a2f3abf04d0a07f0448272871a2858c2e525ead4e21929783f84117",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.meta.json",
+    "sha256": "616dc1c6280bdd1dd31611fd33f84859f40eeeb8cec97803d8ac49d54baa2dd4",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.meta.json",
+    "sha256": "26a5732d6e662b9f8d94af2d9eb2c6f1bf953d8bb5de76b7dc3b6af31753baa2",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.meta.json",
+    "sha256": "d30fff31906ade9d24d0424aec195945ed6c467576851ed4e995939fef7d598c",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.meta.json",
+    "sha256": "5cf238b3884cf429538a1098ed99fffb9030ad1cc2fd82c2f17948b979efed2e",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac1-overlay-bound.meta.json",
+    "sha256": "cb40da466fed8816b5847af5ef512a936f6921f4edd90e127094773c9e1ac178",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac1-shutdown-writes.meta.json",
+    "sha256": "ec5320a54dd0b9ddd441c41432c9c05cf8c91050ac510ed8a222de6e7a5ee429",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.meta.json",
+    "sha256": "8c8c5ccb36e96786e012b3249f1fe94fc4fe5e36335a8f7225bc719f17ef99f2",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-child-fallback-post-deadline.meta.json",
+    "sha256": "3b192dc8363e824eae07db7fa72b91f0e52f4271cdb0ee055a1126494efe2fa5",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-resilient-channel.meta.json",
+    "sha256": "1941244d718a50546f9ec5cad68d8fb7f734b778c93b3dee638ec9b840d0b4a6",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-stdio-channel-drop.meta.json",
+    "sha256": "8bdcb0d66ea8b323649c22a572f21dd93161c64e0577d7c68ec7f2e3999e8c86",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-child-lock-contention.meta.json",
+    "sha256": "cad38302e5eaef26c1bc43f8c0f2427cd7005e5f886e268927c20237b21663c4",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-contention.meta.json",
+    "sha256": "1abeec943d0aa5e4eadb4276eecc6ef63a1a2065b5348de8a5ea158773ae5f3f",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-fallback-spawn-failure.meta.json",
+    "sha256": "f99822a6a1c65ed6c0b074fd6056dd511de207c5d4267daf82e051c5cd599219",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-fallback-timeout.meta.json",
+    "sha256": "9faac76fe984491962a07775670a1ad29cd8983a7e4de740cbb4831ab089fde3",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-pending-lock-contention.meta.json",
+    "sha256": "2fa9126c3f5e1c4becd186d23bd9a83def5906db20551024029ad8b431fd71c4",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-poisoned-child-lock.meta.json",
+    "sha256": "08a73aa6f648978177df2d0e00b1c09473ba6fed3694c24dcbc2611c16fc8958",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-reader-guard.meta.json",
+    "sha256": "7a5700d50436f6d198fa7e25a7408ff312ff17451f42ae7378d07f7ef34b80b0",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-reentrant-child-reap-check.meta.json",
+    "sha256": "c710ffe979ec51efb8540a105ec2d5162ed25db46b521d9f285500142c7f7e16",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-taskkill-fault-injection.meta.json",
+    "sha256": "ef6308d4fa13f35740f3fe5982dd1c2bc2ff44c8cad2954ebb459f70a2074ff8",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-wait-timeout-or-kill.meta.json",
+    "sha256": "156d023fe394de89d89e42fb9ead0ce24831e59db5afd28008b83d1f59f6f1de",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-writer-pipe-overflow.meta.json",
+    "sha256": "e844e7d9676561e17e949cdf1eb2bebc2ad63abbd6095701db95af9db5926264",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-is-down-write-routing.meta.json",
+    "sha256": "ef714a89d8bde3e82cb508a5c8d4952a1b0193dcbeb7732852f75e1d95c792ca",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-max-retries-3.meta.json",
+    "sha256": "bf7c9cb8d3d4ca6209db9960659a86092e9f4e3f1cb085ebff3737fce5dfd93e",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-pipe-overflow-2mb.meta.json",
+    "sha256": "93e35221568050c7b9968b95b0d9e3a433252e3aa654fb23d272aa42edc2c269",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r003-cycle-break-and-reap.meta.json",
+    "sha256": "f254111b9f3b099f92221d63ccb7e79ba8debdd98af51e376a2480b82d219120",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r006-error-presentation.meta.json",
+    "sha256": "5b676fc35d3594298684114f84b87d4365e386b432f2284f8c1f16a0336df315",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r008-heartbeat-recovery.meta.json",
+    "sha256": "11e49aba96f19657973b949c1ddfd6a6191d468757edebb34239433d41947c74",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-resilient-suite-9-tests.meta.json",
+    "sha256": "e270faa7e8ce640752aaa2b98250cd89686efec651c5f3e7f251ec522dad24e2",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-shutdown-writes-suite.meta.json",
+    "sha256": "0a2d52dec2bb4474e9145cacfd71025c009ae0dc959acf472ad53401e32ce569",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-stdio-channel-drop.meta.json",
+    "sha256": "b68be00fbc800ac7a97fbb787b76770b34a7b16629432eaeaba22d71bed337e8",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P22-REBASE-1/mutation-report.json",
+    "sha256": "9ab20a0627ebe387f0b12203d701493d88026d807ba22c9d6ac1f162afb7e51a",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P22-REBASE-1/test-run-meta.json",
+    "sha256": "87a272eddbe5c243c0358d84d45bee934bd4dbc6ea616d5cc2f975a6674a35e3",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/P22-REBASE-1/test-run-summary.json",
+    "sha256": "1c3b141edb387bda2e06fa7ecf424a25b0643ec0b78991b8eaacf3089f6834cf",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs-argparse-fail-attempt1/cold-start-results.json",
+    "sha256": "7829ff58169eaf1cbfc0d9c990cc646dacae389c3fc1f12400a0d2d5de28a0a3",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs/cold-start-results.json",
+    "sha256": "32673dd7bcfa7a430928bdf07577bc380085e21934aca8fd24ceec617018e15d",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/default-data-root-probe/default-data-root-probe.json",
+    "sha256": "0a4b50b41018e20f4efd48aed0b7ec6732d555bf854d41230830c3efee00e8f8",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun2/logs/post-exit-check.json",
+    "sha256": "b821c9898165281f1ab5a8866c1a620a936e2f2b7ad92f1ea3b79dbb13911d71",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun2/logs/process-exit.json",
+    "sha256": "9da5375610c21cf8261eb2cf12d142739be4da5ed9d1fc76a4419d883676b5e1",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  },
+  {
+    "path": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun3/logs/process-exit.json",
+    "sha256": "a631bb65f6f699ec26a86566940918169bb00bc2c256e603327bacde474cef46",
+    "reason": "non-declaration JSON artifact (parses after BOM strip; no declaration objects)"
+  }
+]

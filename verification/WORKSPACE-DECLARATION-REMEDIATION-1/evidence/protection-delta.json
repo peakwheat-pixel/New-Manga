@@ -4,35 +4,10 @@
     "protected_roots": 1264
   },
   "new": {
-    "declarations": 1855,
-    "protected_roots": 1262
+    "declarations": 1858,
+    "protected_roots": 1264
   },
-  "dropped_declarations": [
-    {
-      "raw": "verification/、.orchestrator/、doc/、archive/ 下的 1591 个未入库文件",
-      "disposition": "PRESERVE_UNKNOWN",
-      "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
-      "locator": "line 7",
-      "normalized": "g:/codex/new manga/verification/、.orchestrator/、doc/、archive/ 下的 1591 个未入库文件",
-      "exists_as_a_path": false
-    },
-    {
-      "raw": "G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/（ac1/ac3 的 base 源码快照与 driver，R-004）",
-      "disposition": "NOT_APPLICABLE",
-      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
-      "locator": "line 5",
-      "normalized": "g:/codex/new manga.workspace/temp/p09-managed-read-root-trust-1/（ac1/ac3 的 base 源码快照与 driver，r-004）",
-      "exists_as_a_path": false
-    },
-    {
-      "raw": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1/apps/desktop/src-tauri/target/core-sidecar and apps/desktop/frontend/dist",
-      "disposition": "PRESERVE_REFERENCED",
-      "file": "verification/HOST-ISSUER-1/resource-manifest.json",
-      "locator": "$.resources[2].disposition",
-      "normalized": "g:/codex/new manga.workspace/worktrees/host-issuer-1/apps/desktop/src-tauri/target/core-sidecar and apps/desktop/frontend/dist",
-      "exists_as_a_path": false
-    }
-  ],
+  "dropped_declarations": [],
   "added_declarations": [],
   "dropped_that_exist_as_paths": [],
   "verdict": "OK: every dropped declaration is prose that does not exist as a path; no real protected identity was lost"

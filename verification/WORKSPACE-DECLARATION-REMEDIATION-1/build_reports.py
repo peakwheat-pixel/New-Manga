@@ -221,40 +221,45 @@ def main():
                      "(`incident-replay-*.json`).\n")
         handle.write("- Real-repository audit still exits 2 (fail-closed); no "
                      "real file was deleted/moved/archived.\n")
-        handle.write("- Protected identities: before %d -> after %d. The three "
-                     "declarations the old parser registered but the new parser "
-                     "does not are prose strings wrongly normalised as protected "
-                     "identities; none exists as a single path "
-                     "(see `evidence/protection-delta.json`).\n"
+        handle.write("- Protected identities: before %d -> after %d "
+                     "(`evidence/protection-delta.json`; every dropped or "
+                     "changed declaration is explained there).\n"
                      % (before["counts"]["protected_roots"],
                         after["counts"]["protected_roots"]))
         handle.write("\n## Fixes\n\n")
-        handle.write("1. AC2: BOM-tolerant JSON loading; unparsable tracked/"
-                     "token/manifest-named JSON stays fatal, untracked "
-                     "instrumentation JSON becomes `JSON_NON_DECLARATION` "
-                     "warning. JSON_PARSE 69 -> %d.\n"
+        handle.write("1. AC2: BOM-tolerant JSON loading; unparsable JSON is "
+                     "fatal unless its exact path+sha256 is in the explicit "
+                     "`non-declaration-json-exceptions.json` (67 reviewed "
+                     "logs). Renamed `*.stdout.json` declarations stay fatal. "
+                     "JSON_PARSE 69 -> %d.\n"
                      % after_codes.get("JSON_PARSE", 0))
-        handle.write("2. AC3: descriptive source values (`NOT_APPLICABLE`, "
-                     "`none yet`, Chinese prose, `见 G:/...`) are warnings and "
-                     "do not register protection; bare identifiers and real "
-                     "path-like `PRESERVE_*` failures stay fatal. "
-                     "DECL_BARE_NAME 57 -> %d.\n"
-                     % after_codes.get("DECL_BARE_NAME", 0))
-        handle.write("3. AC4: strict GB18030 fallback with "
-                     "`FILE_ENCODING_LEGACY`; FILE_UNREADABLE 3 -> %d.\n"
+        handle.write("2. AC3/F-01: only explicit placeholders and pure prose "
+                     "are skipped; ANY path-like value is parsed and unresolved "
+                     "path-like values are fatal (spaces/CJK paths included). "
+                     "DECL_BARE_NAME 57 -> %d, DECL_RELATIVE_UNRESOLVED 6 -> "
+                     "%d.\n"
+                     % (after_codes.get("DECL_BARE_NAME", 0),
+                        after_codes.get("DECL_RELATIVE_UNRESOLVED", 0)))
+        handle.write("3. AC4/F-05: strict GB18030 fallback only for CJK text; "
+                     "NUL/control-heavy or non-CJK binary payloads are "
+                     "`FILE_UNREADABLE`. FILE_UNREADABLE 3 -> %d.\n"
                      % after_codes.get("FILE_UNREADABLE", 0))
-        handle.write("4. AC5: Resource Manifest / Canonical Evidence tables "
-                     "need the exact English schema; narrative tables are "
-                     "warnings. DECL_UNKNOWN_DISPOSITION 9 -> %d, "
-                     "TABLE_ROW_ARITY stays %d (genuinely malformed).\n"
-                     % (after_codes.get("DECL_UNKNOWN_DISPOSITION", 0),
+        handle.write("4. AC5/F-04: Resource Manifest / Canonical Evidence "
+                     "tables that claim identity columns but lack a required "
+                     "one are `TABLE_SCHEMA_INCOMPLETE` integrity errors; only "
+                     "tables with no identity columns are narrative warnings. "
+                     "TABLE_SCHEMA_INCOMPLETE -> %d, TABLE_ROW_ARITY -> %d.\n"
+                     % (after_codes.get("TABLE_SCHEMA_INCOMPLETE", 0),
                         after_codes.get("TABLE_ROW_ARITY", 0)))
-        handle.write("5. Residual: %d errors remain (see `RESIDUAL.md`): %s. "
-                     "The <=10 goal is **not** met: 10 of the 15 are the "
-                     "explicitly policy-gated generalized/env declarations and "
-                     "5 are genuine non-policy residuals; reaching <=10 would "
-                     "require either weakening fail-closed semantics or editing "
-                     "frozen history, both forbidden by the Task.\n\n"
+        handle.write("5. F-03: path-like generalized destinations are fatal "
+                     "again (`DECL_DESTINATION_GENERALIZED` -> %d).\n"
+                     % after_codes.get("DECL_DESTINATION_GENERALIZED", 0))
+        handle.write("6. Residual: %d errors remain (see `RESIDUAL.md`): %s. "
+                     "The <=10 target is **not** met because review r2 restored "
+                     "fail-closed rules (F-01/F-03/F-04) and kept 67 explicit "
+                     "byte-bound exemptions; lowering the count would require "
+                     "weakening fail-closed semantics or editing frozen "
+                     "history, both forbidden by the Task.\n\n"
                      % (len(residual_rows), dict(residual_categories)))
 
     with open(RESIDUAL, "w", encoding="utf-8", newline="\n") as handle:
@@ -263,9 +268,9 @@ def main():
         handle.write("Source: `audit-after.json` (same command/snapshot as "
                      "`audit-before.json`). **%d errors remain; none is "
                      "silent.**\n\n" % len(residual_rows))
-        handle.write("| # | code | file | tracked | owner | locator | why the "
-                     "parser cannot fix it | suggested ruling |\n"
-                     "|---:|---|---|---|---|---|---|---|\n")
+        handle.write("| # | code | file | tracked | owner | locator | message | "
+                     "why the parser cannot fix it | suggested ruling |\n"
+                     "|---:|---|---|---|---|---|---|---|---|\n")
         for position, row in enumerate(residual_rows, 1):
             why = {
                 "DECL_GENERALIZED": "declaration intentionally names the "
@@ -275,12 +280,25 @@ def main():
                             "is not provable",
                 "DECL_RELATIVE_AMBIGUOUS": "relative path could mean repo or "
                                            "workspace root",
+                "DECL_RELATIVE_UNRESOLVED": "path-like prose/embedded path that "
+                                            "cannot be resolved; F-01 keeps it "
+                                            "fatal",
+                "DECL_UNKNOWN_DISPOSITION": "path-like row with a disposition "
+                                            "outside the allowed enum",
                 "TABLE_ROW_ARITY": "genuinely malformed resource table (7 vs 6 "
                                    "columns); AC5 keeps it fatal",
-                "JSON_PARSE": "unparsable JSON contains declaration tokens; "
-                              "cannot prove protection is complete",
+                "TABLE_SCHEMA_INCOMPLETE": "table claims resource/evidence "
+                                           "identity columns but omits a "
+                                           "required one; F-04 keeps it fatal",
+                "JSON_PARSE": "unparsable JSON is not in the path+sha256 "
+                              "non-declaration exception manifest",
+                "FILE_UNREADABLE": "binary/NUL/control-heavy payload (or "
+                                   "UTF-16) that neither strict UTF-8 nor "
+                                   "CJK-bearing GB18030 can represent",
                 "DECL_DESTINATION_UNRESOLVED": "path-like destination prose; "
                                                "F-03 keeps it an integrity error",
+                "DECL_DESTINATION_GENERALIZED": "over-broad path-like "
+                                               "destination; F-03 keeps it fatal",
             }.get(row["code"], "reviewed")
             ruling = {
                 "DECL_GENERALIZED": "Codex ruling: narrow to a concrete "
@@ -290,27 +308,48 @@ def main():
                             "historical Task, or confirm ignore",
                 "DECL_RELATIVE_AMBIGUOUS": "User ruling: pin repo-relative or "
                                            "workspace-relative intent",
+                "DECL_RELATIVE_UNRESOLVED": "Codex ruling: fix the historical "
+                                            "row or confirm it is narrative",
+                "DECL_UNKNOWN_DISPOSITION": "Codex ruling: fix the disposition"
+                                            " or confirm the row is narrative",
                 "TABLE_ROW_ARITY": "Codex ruling: fix the historical table "
                                    "(not done: history is frozen)",
-                "JSON_PARSE": "Codex ruling: replace with a single valid JSON "
-                              "document or declare it non-declaration",
+                "TABLE_SCHEMA_INCOMPLETE": "Codex ruling: complete the table "
+                                           "columns or classify it as "
+                                           "narrative explicitly",
+                "JSON_PARSE": "Codex ruling: replace with valid JSON or add a "
+                              "reviewed path+sha256 exception",
+                "FILE_UNREADABLE": "Codex ruling: repair/replace the file or "
+                                   "confirm it is not a declaration source",
                 "DECL_DESTINATION_UNRESOLVED": "Codex ruling: treat as prose "
                                                "or fix the value",
+                "DECL_DESTINATION_GENERALIZED": "Codex ruling: narrow the "
+                                                "destination or grant a "
+                                                "root-policy exemption",
             }.get(row["code"], "review")
-            handle.write("| %d | %s | `%s` | %s | %s | %s | %s | %s |\n"
+            message = row["message"].replace("|", "\\|").replace("\n", " ")
+            if len(message) > 240:
+                message = message[:237] + "..."
+            handle.write("| %d | %s | `%s` | %s | %s | %s | %s | %s | %s |\n"
                          % (position, row["code"], row["file"], row["tracked"],
-                            row["owner"], row["locator"], why, ruling))
+                            row["owner"], row["locator"], message, why, ruling))
         handle.write("\n## Grouping\n\n")
         for code, count in sorted(residual_categories.items()):
             handle.write("- `%s`: %d\n" % (code, count))
-        handle.write("\n## Why 15 rather than <=10\n\n")
-        handle.write("`DECL_GENERALIZED` (6) and `DECL_ENV` (4) are the "
-                     "policy-gated declarations the Task explicitly keeps for "
-                     "Codex/user ruling; `DECL_RELATIVE_AMBIGUOUS` (1), "
-                     "`TABLE_ROW_ARITY` (1), `JSON_PARSE` (2) and the "
-                     "destination-prose error (1) are genuine gaps. Reaching "
-                     "<=10 would require weakening fail-closed semantics "
-                     "(forbidden) or editing 107 historical files (forbidden).\n")
+        handle.write("\n## Why the count is %d rather than <=10\n\n"
+                     % len(residual_rows))
+        handle.write("Review r2 required restoring fail-closed rules: F-01 "
+                     "path-like prose is fatal again (6 `DECL_RELATIVE_"
+                     "UNRESOLVED` + 2 `DECL_UNKNOWN_DISPOSITION`), F-03 "
+                     "generalized destinations are fatal (6), F-04 incomplete "
+                     "identity tables are fatal (44), and F-05 rejects 3 "
+                     "NUL/UTF-16 files. Those 61 extra integrity errors are the "
+                     "safety cost of the review; the policy-gated residual is "
+                     "unchanged (6 `DECL_GENERALIZED`, 4 `DECL_ENV`, 1 "
+                     "`DECL_RELATIVE_AMBIGUOUS`, 2 `JSON_PARSE`, 1 "
+                     "`TABLE_ROW_ARITY`, 1 destination prose). Lowering the "
+                     "number would require weakening fail-closed semantics or "
+                     "editing frozen historical files, both forbidden.\n")
         handle.write("\n## Not done / not claimed\n\n")
         handle.write("- No historical Task/evidence/untracked file was edited "
                      "to lower the count.\n")

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "WORKSPACE-DECLARATION-REMEDIATION-1",
-  "generated_at": "2026-10-21T04:30:14+00:00",
+  "generated_at": "2026-10-21T04:56:23+00:00",
   "host": {
     "platform": "Windows-11-10.0.26300-SP0",
     "python": "3.14.6",
@@ -23,7 +23,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
       "exit_code": 0,
       "log": "new-tests.log",
-      "stdout_sha256": "1af308905fe232c6c067f45004c7e405264ba7cfab54ee74c5b0989382a732e0"
+      "stdout_sha256": "1eeb75231dc0541662865ff5e4213840ff261a1d5719820e4274377a6f06ff39"
     },
     {
       "label": "existing-80-tests",
@@ -35,7 +35,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
       "exit_code": 0,
       "log": "existing-tests.log",
-      "stdout_sha256": "3ba6e6966fd09d85e19d1b23cf1fdb6c2ea5a54b2fc44ee1e66f46d464696917"
+      "stdout_sha256": "1da51db73ca82622f8c661028642958871bdd397c122f1dd58066e365684161b"
     },
     {
       "label": "replay-clean_workspace.py",
@@ -86,7 +86,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1",
       "exit_code": 2,
       "log": "audit-after.log",
-      "stdout_sha256": "ec490e974d2f5283be64ab55314a993652e97f15bd6c6351d545d6adbe430159"
+      "stdout_sha256": "3ff314f4e9d337309d2ee13c2fcc4379d5130c65b44672ec402fdc10458d7450"
     },
     {
       "label": "build-reports",
@@ -98,7 +98,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1",
       "exit_code": 0,
       "log": "build-reports.log",
-      "stdout_sha256": "3eba3837a1f2d80394da66a699317ebd75f2b860ec1e38e1be28457323fa305a"
+      "stdout_sha256": "711f8cf71dfe54e5659d7736dd37b6a080e8fa2d4e673b6f38c21746bdc9b8ea"
     },
     {
       "label": "protection-delta",
@@ -110,7 +110,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1",
       "exit_code": 0,
       "log": "protection-delta.log",
-      "stdout_sha256": "cc8523e13334c4a7958a0659a886fb9846b16d4ea3083367c0af4e6effc00427"
+      "stdout_sha256": "6b0571bf645427c0dc99e59ed84c29fe0b7a3ff4ea13f4f7f7f326431d09808d"
     }
   ],
   "audit": {
@@ -123,10 +123,10 @@
       "exit_code": 2
     },
     "after": {
-      "errors": 15,
-      "warnings": 239,
-      "declarations": 1855,
-      "protected_roots": 1262,
+      "errors": 76,
+      "warnings": 236,
+      "declarations": 1858,
+      "protected_roots": 1264,
       "exit_code": 2
     }
   },
@@ -138,10 +138,10 @@
       "protected_roots": 1264
     },
     "after": {
-      "errors": 15,
-      "warnings": 239,
-      "declarations": 1855,
-      "protected_roots": 1262
+      "errors": 76,
+      "warnings": 236,
+      "declarations": 1858,
+      "protected_roots": 1264
     },
     "before_codes": {
       "TABLE_ROW_ARITY": 1,
@@ -156,26 +156,70 @@
       "FILE_UNREADABLE": 3
     },
     "after_codes": {
+      "TABLE_SCHEMA_INCOMPLETE": 44,
       "TABLE_ROW_ARITY": 1,
+      "DECL_RELATIVE_UNRESOLVED": 6,
       "DECL_RELATIVE_AMBIGUOUS": 1,
       "DECL_ENV": 4,
       "DECL_GENERALIZED": 6,
+      "DECL_DESTINATION_GENERALIZED": 6,
+      "DECL_UNKNOWN_DISPOSITION": 2,
       "JSON_PARSE": 2,
+      "FILE_UNREADABLE": 3,
       "DECL_DESTINATION_UNRESOLVED": 1
     },
     "after_warnings": {
-      "TABLE_NOT_CANONICAL_EVIDENCE": 91,
-      "DECL_SOURCE_NOT_A_PATH": 65,
+      "TABLE_NOT_CANONICAL_EVIDENCE": 47,
+      "DECL_SOURCE_NOT_A_PATH": 54,
       "DECL_DESTINATION_PROSE": 35,
       "TABLE_NOT_RESOURCE_MANIFEST": 1,
-      "DECL_DESTINATION_GENERALIZED": 6,
       "DECL_ALIAS_REAL_TARGET": 19,
-      "JSON_NON_DECLARATION": 9,
+      "JSON_NON_DECLARATION": 67,
       "DECL_EVIDENCE_NOT_A_PATH": 10,
       "FILE_ENCODING_LEGACY": 3
     },
     "triage_rows": 163,
     "residual": [
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/ENV-BUNDLE-1-FU1.md",
+        "tracked": "tracked",
+        "owner": "historical Task ENV-BUNDLE-1-FU1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/EVENTS-FWD-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task EVENTS-FWD-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/EXPORT-IPC-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task EXPORT-IPC-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/EXPORT-REVEAL-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task EXPORT-REVEAL-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-AC-GATE-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-AC-GATE-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
       {
         "code": "TABLE_ROW_ARITY",
         "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
@@ -183,6 +227,278 @@
         "owner": "historical Task GOV-DEBT-CLEANUP-2",
         "locator": "",
         "message": "table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-DEBT-CLEANUP-2",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-EOL-PIN-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-EOL-PIN-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-EVIDENCE-DIR-SWEEP-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-EVIDENCE-UNIQUE-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-EVIDENCE-UNIQUE-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-P15-MANIFEST-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-P15-MANIFEST-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-PIN-LINEAGE-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-PIN-LINEAGE-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-PLAN-BUDGET-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-PLAN-BUDGET-1",
+        "locator": "",
+        "message": "table at line 3 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-RESOURCE-MANIFEST-JSON-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-SOURCE-RECORDS-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-SOURCE-RECORDS-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task GOV-UNTRACKED-BACKLOG-1",
+        "locator": "",
+        "message": "table at line 5 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task HOST-TTL-BOUNDARY-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md",
+        "tracked": "tracked",
+        "owner": "historical Task P02-NEW-TIME-X6-POSTRUN-REVIEW",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "file": "doc/tasks/P09-AC3-DELETE-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P09-AC3-DELETE-1",
+        "locator": "line 4",
+        "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous"
+      },
+      {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P09-AC3-DELETE-HARDEN-1",
+        "locator": "line 4",
+        "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous"
+      },
+      {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P09-MANAGED-READ-ROOT-TRUST-1",
+        "locator": "line 7",
+        "message": "declared relative path '无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02）' is not an existing repo top-level entry; identity is ambiguous"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P09-MANAGED-READ-ROOT-TRUST-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P12.md",
+        "tracked": "tracked",
+        "owner": "historical Task P12",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P14.md",
+        "tracked": "tracked",
+        "owner": "historical Task P14",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-C1-FU1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-C1-FU1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-C1-FU2.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-C1-FU2",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-C1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-C1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-CORE-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-CORE-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-CORE-1A.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-CORE-1A",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-CORE-1B.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-CORE-1B",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-CORE-1C.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-CORE-1C",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-HOST-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-HOST-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15-HOST-2.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15-HOST-2",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P15.md",
+        "tracked": "tracked",
+        "owner": "historical Task P15",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P17.md",
+        "tracked": "tracked",
+        "owner": "historical Task P17",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P19-AC3-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P19-AC3-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P19-BOOT-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P19-BOOT-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P19-UI-FIX-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P19-UI-FIX-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/P19-UI-MANIFEST-VIEW-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P19-UI-MANIFEST-VIEW-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
       },
       {
         "code": "DECL_RELATIVE_AMBIGUOUS",
@@ -209,6 +525,38 @@
         "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token"
       },
       {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "file": "doc/tasks/P20-AC4-FPS-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P20-AC4-FPS-1",
+        "locator": "line 4",
+        "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous"
+      },
+      {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task P20-CLOSE-BOUND-HARDEN-1",
+        "locator": "line 4",
+        "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/READER-IPC-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task READER-IPC-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/RUN-IPC-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task RUN-IPC-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
         "code": "DECL_GENERALIZED",
         "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
         "tracked": "tracked",
@@ -217,7 +565,47 @@
         "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
       },
       {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task SEC-FIX-PATH-ECHO-1",
+        "locator": "line 5",
+        "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task SEC-FIX-PATH-ECHO-1",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/UI-DESIGN-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task UI-DESIGN-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "doc/tasks/WORKSPACE-CLEANUP-TOOL-HARDENING-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+        "locator": "",
+        "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
         "code": "DECL_GENERALIZED",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+        "locator": "line 10",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling"
+      },
+      {
+        "code": "DECL_DESTINATION_GENERALIZED",
         "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
         "tracked": "tracked",
         "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
@@ -233,7 +621,23 @@
         "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
       },
       {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+        "locator": "line 11",
+        "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+      },
+      {
         "code": "DECL_GENERALIZED",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+        "locator": "line 12",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling"
+      },
+      {
+        "code": "DECL_DESTINATION_GENERALIZED",
         "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
         "tracked": "tracked",
         "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
@@ -249,6 +653,14 @@
         "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
       },
       {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+        "locator": "line 14",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
+      },
+      {
         "code": "DECL_GENERALIZED",
         "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
         "tracked": "tracked",
@@ -257,12 +669,28 @@
         "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
       },
       {
+        "code": "DECL_DESTINATION_GENERALIZED",
+        "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "tracked": "tracked",
+        "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+        "locator": "line 15",
+        "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
+      },
+      {
+        "code": "DECL_UNKNOWN_DISPOSITION",
+        "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+        "tracked": "tracked",
+        "owner": "evidence ENV-BUNDLE-1-FU1",
+        "locator": "$.resources[7].disposition",
+        "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'"
+      },
+      {
         "code": "JSON_PARSE",
         "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
         "tracked": "untracked",
         "owner": "evidence P02-NEW-TIME-BASELINE",
         "locator": "",
-        "message": "unparsable untracked JSON declaration file (token=True, declaration-name=False); protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001)"
+        "message": "unparsable untracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001)"
       },
       {
         "code": "JSON_PARSE",
@@ -270,7 +698,63 @@
         "tracked": "tracked",
         "owner": "evidence P02-NEW-TIME-BASELINE",
         "locator": "",
-        "message": "unparsable tracked JSON declaration file (token=True, declaration-name=False); protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json is not valid JSON: Extra data: line 2 column 1 (char 7494)"
+        "message": "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json is not valid JSON: Extra data: line 2 column 1 (char 7494)"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+        "tracked": "untracked",
+        "owner": "evidence P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "DECL_UNKNOWN_DISPOSITION",
+        "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+        "tracked": "tracked",
+        "owner": "evidence P09-GOVERNANCE-DEBT-20261019",
+        "locator": "line 7",
+        "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'"
+      },
+      {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+        "tracked": "tracked",
+        "owner": "evidence P09-GOVERNANCE-DEBT-20261019",
+        "locator": "line 8",
+        "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+        "tracked": "tracked",
+        "owner": "evidence P09-GOVERNANCE-DEBT-20261019",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "TABLE_SCHEMA_INCOMPLETE",
+        "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+        "tracked": "tracked",
+        "owner": "evidence P09-GOVERNANCE-DEBT-20261019",
+        "locator": "",
+        "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection"
+      },
+      {
+        "code": "FILE_UNREADABLE",
+        "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+        "tracked": "tracked",
+        "owner": "evidence P14",
+        "locator": "",
+        "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text"
+      },
+      {
+        "code": "FILE_UNREADABLE",
+        "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+        "tracked": "tracked",
+        "owner": "evidence P14",
+        "locator": "",
+        "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text"
       },
       {
         "code": "DECL_DESTINATION_UNRESOLVED",
@@ -295,26 +779,39 @@
         "owner": "evidence P19-UI-FIX-1",
         "locator": "$.resources[3].disposition",
         "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token"
+      },
+      {
+        "code": "FILE_UNREADABLE",
+        "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+        "tracked": "untracked",
+        "owner": "evidence P22",
+        "locator": "",
+        "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text"
       }
     ],
     "residual_grouping": {
+      "TABLE_SCHEMA_INCOMPLETE": 44,
       "TABLE_ROW_ARITY": 1,
+      "DECL_RELATIVE_UNRESOLVED": 6,
       "DECL_RELATIVE_AMBIGUOUS": 1,
       "DECL_ENV": 4,
       "DECL_GENERALIZED": 6,
+      "DECL_DESTINATION_GENERALIZED": 6,
+      "DECL_UNKNOWN_DISPOSITION": 2,
       "JSON_PARSE": 2,
+      "FILE_UNREADABLE": 3,
       "DECL_DESTINATION_UNRESOLVED": 1
     },
     "generated_from": {
       "before_sha256": "6038a36fe51e93a95bcf8cba7c094dd544bc187b403cd82908f0b85685e998ae",
-      "after_sha256": "5a5826e3a0772b65eca15ff2e5f6b18f7bc1ac8c371d989c144bf2dfe0dea2a9"
+      "after_sha256": "4213b6ccfeae42cd618edc0bbb5feec67c09d59fa018dd282a3e902a6ec0815f"
     }
   },
   "protection_delta": {
     "verdict": "OK: every dropped declaration is prose that does not exist as a path; no real protected identity was lost",
-    "dropped": 3,
+    "dropped": 0,
     "old_roots": 1264,
-    "new_roots": 1262
+    "new_roots": 1264
   },
   "replays": {
     "clean_workspace.py": {
