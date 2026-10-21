@@ -36,7 +36,7 @@
 | `.gitattributes` | （新增） | `abf835c828cacebff6df5c223e8db57b972a3404aba941ef18718286f5d29383` |
 | `v1-verification-20261021.md` | `5b39fde0921a11a9dd7b1b31015fa7c250d3ab0a5078b29113d168651fc64e0e` | （未变，原本即 LF） |
 
-日志文本内容未改；`git diff a689a1ec2..9f5262f19 -- verification/V1-FINALIZE-20261021/*.log` 为空。
+日志文本内容未改：10 个日志与 `v1-verification-20261021.md` 在 `a689a1ec2..9f5262f19` 间 `git diff` 为空；`legacy-task-closure-adjudication.md` 仅按裁定要求**追加** §9（原文逐字节保留，新增 10 行）。`git diff a689a1ec2..9f5262f19 -- verification/V1-FINALIZE-20261021/*.log` 为空。
 
 ## 3. 验证记录（明确退出码）
 
@@ -77,3 +77,11 @@ exit=0
 - **未**触碰 11 个 untracked 历史草稿（`P02PRE-*`、`P22`）；untracked 总数保持 1244。
 - **未**删除旧 hash：对照保留在 §2；原始日志在 Git 历史与工作区均未删除。
 - 本报告提交后才产生最终固定 head（父提交 `9f5262f19`）；Codex 独立复核尚未进行。
+
+## 5. Codex 独立复核 r1（2026-10-21）
+
+- 复核 head：`1fae46e991b9b462461ebeae05d9dc4954f49d01`；会话 `01a15bf2-5e2f-7c42-9d03-845b6e47ff34`。
+- 结论：**`approved_with_conditions`**。A/B/C/D 四项均通过；唯一 finding **R1-REVIEW-01（low）**：A 项验收表述需精确——12 个日志/文档中实际是 **10 个日志 + `v1-verification-20261021.md`** 无 diff，`legacy-task-closure-adjudication.md` 按 B 要求仅追加 §9；不能笼统写"12 个文件 diff 为空"。
+- 条件修正：仅改本报告 §2 的上述表述（见本提交）；**未**改代码、证据、pin、日志或裁定原文。已据此更新本报告。
+- Codex 裁定："可以据此裁定最终收口（V1 完成 + 25 个 Task 收口 + r1 返修）"，条件是接受 §9 追加并修正该表述；产品功能与本轮测试未重新运行或复审（超出本轮复核范围）。
+- 原始复核报告：`verification/V1-FINALIZE-20261021-codex-review-r1.md`。
