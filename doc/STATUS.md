@@ -4,10 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；30错误及清理禁令保留，等待只读子Task冻结）。
+- 当前 Task：**[GOV-NONRESOURCE-MANIFEST-FORMAT-1](tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md)**（`ready`；六行metadata，独审DeepSeek，19历史blob差异不修复）。
 - 最近完成：GOV-NDJSON-EXCEPTION-CONFIG-1 `done`，独审85a393dc4、集成9d21f8fb8。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式30错误/原保护/STATUS-r212禁令有效。
-- 技术前置：[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md) `done`，独审78fc0cba2、集成9cae94142；77→32错误，新增410保护根，未清理。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
@@ -28,4 +27,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[当前 checkpoint](../verification/GOV-NDJSON-EXCEPTION-CONFIG-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
+- 恢复点：[当前 checkpoint](../verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
