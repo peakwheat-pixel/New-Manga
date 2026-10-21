@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 title: 三个治理Task证据表连续性与实际保护注册修正
 kind: governance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_auto_advance_20261021_scoped_mechanical_metadata_fix
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: f72dd96ee51f21cc24472b05cceaf488060b679a
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 244d08e4eb5bb7aee1b6b54d0198093bcd16b48c
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
@@ -39,10 +39,10 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1** 逐Task原51pin raw磁盘/blob/SHA全部有效，记录原表行数/实际注册/状态。 <<NOT_RUN>>
-- [ ] **AC2** 仅移除3章节内空行，所有非空行序列/元数据/51 pin值不变；实际注册19/19/13，0 parser errors。 <<NOT_RUN>>
-- [ ] **AC3** 默认32错误完整身份不变，旧保护集合只增不减；原被pin文件/guard/正式表/用户与未跟踪内容不动；98/136不变。 <<NOT_RUN>>
-- [ ] **AC4** 独立固定head Review、Codex集成/保留资源核销、证据注册与治理check完成，后续自动推进仍独立冻结范围。 <<NOT_RUN>>
+- [x] **AC1** 逐Task原51pin raw磁盘/blob/SHA全部有效，记录原表行数/实际注册/状态。 <<MET>>
+- [x] **AC2** 仅移除3章节内空行，所有非空行序列/元数据/51 pin值不变；实际注册19/19/13，0 parser errors。 <<MET>>
+- [x] **AC3** 默认32错误完整身份不变，旧保护集合只增不减；原被pin文件/guard/正式表/用户与未跟踪内容不动；98/136不变。 <<MET>>
+- [ ] **AC4** 独立固定head Review、Codex集成/保留资源核销、证据注册与治理check完成，后续自动推进仍独立冻结范围。 <<PARTIAL: 等待固定head独立Review与核销>>
 
 ## 禁止与验证
 
@@ -52,6 +52,11 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/.gitattributes|dcfb553dccea858d0a5ae6fb8951265b4dd868bb|6c3ea912d1baf7bd93fe33a6c9f3653e83125326ee99b637594e6b3418c6b7d8|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/checkpoint.md|dcfb553dccea858d0a5ae6fb8951265b4dd868bb|db3b66c54967a76f271fef70f16ba6b20e244c565d6a9dbdf2ad8629fa219bbe|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/registration-proof.json|dcfb553dccea858d0a5ae6fb8951265b4dd868bb|69ab5ed13c4b6d5c585ab79c4bcf68283b7fb744dfd3ae98d435bc0223f9ce3c|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/report.md|dcfb553dccea858d0a5ae6fb8951265b4dd868bb|d9ebabf6a9920c9a2836923bbb726baf5ff423efae856eac62c1ab3612a54d89|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/scope.json|dcfb553dccea858d0a5ae6fb8951265b4dd868bb|f1c30a4d5cac296e1738b2878bb78709757c0bd24a569cbff9a4ccbfca69bcb5|CANONICAL|
 
 ## Resource Manifest
 
