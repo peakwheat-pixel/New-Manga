@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；无执行，READY 无）。
+- 当前 Task：**[GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1](tasks/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1.md)**（`in_progress`；五项只读身份研究，DeepSeek独审）。
 - 最近完成：**[GOV-BROAD-ROOT-PRESERVATION-IMPL-1](tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md)** `done`；R4 d5d21ff9f独审，main集成a3bba87ce；正式24→12，整体保护五根。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式12错误（7历史身份/2模板/3NUL），原保护与STATUS-r212禁令有效。
 - 收敛基线97/135；当前100本地分支/138工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
