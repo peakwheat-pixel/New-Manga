@@ -50,32 +50,31 @@ Agent 默认优先读取：
 
 禁止在 `G:\CODEX\` 根目录新建临时 `repair-*`、`build-*`、`qoder-tmp`、`P02-*`、`*-exchange`。版本化历史文档的统一归档目录为仓库根 `archive/`。迁移现存内容前必须保存映射与 hash，并核对所有 inbound references；当前 Gate 依赖文件不得移位。
 
-## 治理主线分支（2026-10-20 登记）
+## 治理主线分支（2026-10-21 切换：`main`）
 
-**当前治理主线分支**：`antigravity/P09-AC3-DELETE-HARDEN-1`
+**当前治理主线分支**：`main`
 
-**判据**：仓库现有数百条分支，`main` 与 `master` 都**不是**主线
-（2026-10-20 实测：`main` 落后主线 **367** 个提交，`master` 落后 **2271** 个）。
+**历史**：2026-10-20 登记的主线是 `antigravity/P09-AC3-DELETE-HARDEN-1`。该分支在 2026-10-21 的 tip 为 `26c0f2aab`；同日用户明确裁定“希望 main 成为真正长期主线”，Lead 将 `main` 指向该 tip 并把主 checkout 切换到 `main`。旧分支保留为历史证据，不删除、不再承接新提交。
+
+**恢复记录**：本地 `main` 曾在 2026-10-18 后被清理删除（`WORKTREE_SAFETY_INVENTORY` 记录其 0 个独有提交）。2026-10-21 先从 HEAD reflog 恢复到删除前最后 tip `397babe2d`，再以纯 fast-forward 推进到主线 tip `26c0f2aab`；未改写历史。
 
 **确认方法**（可复算）：
 
 ```
 git log --oneline -20 -- doc/REBASELINE_PLAN.md
+git rev-parse main
 ```
 
-**该文件的最近 20 个提交全部落在 `antigravity/P09-AC3-DELETE-HARDEN-1` 上。**
-
-**为什么需要这一节**：主线分支名没有任何命名约定能推断出来
-（`AGENTS.md` 规定 Agent 使用自己的任务分支，而这条分支的名字是一个 Task 名，
-实际上却承载了全项目的治理历史）。**没有登记时，每个新会话都必须靠翻提交历史反推。**
+切换后的新治理提交应落在 `main`；历史提交（含旧主线）仍从 `main` 可达。
 
 **维护规则**：
-1. **治理提交（`doc/**`、`verification/**` 的核查与登记）落在主线。**
+1. **治理提交（`doc/**`、`verification/**` 的核查与登记）落在 `main`。**
 2. **Task 实施提交落在该 Task 自己的分支**（`agent/<name>/<TASK-ID>`）。
-3. **主线切换时（重命名、建立真正的 `main`、或迁到新分支），必须同步更新本节。**
+3. **主线再次切换/重命名时，必须同步更新本节。**
 
-**未做**：重命名该分支或建立真正的 `main` 属于结构性变更，
-需要单独裁定，不在本次登记的范围内。
+**远端**：`origin/main` 仍停在旧提交 `6a68fdeb9`（2026-09-25），本仓库未执行 push；`main` 未设置上游跟踪，避免误推。是否推送/对齐远端是独立决定。
+
+**旧分支**：`antigravity/P09-AC3-DELETE-HARDEN-1` 保留（`26c0f2aab`，历史证据/恢复点），不作为当前主线。
 
 ## Verification 与清理门槛
 

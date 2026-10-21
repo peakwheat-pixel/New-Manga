@@ -22,5 +22,5 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 ## 当前权威指针
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
-- **治理主线分支**：`antigravity/P09-AC3-DELETE-HARDEN-1`（见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
+- **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
 - 恢复点：[checkpoint-r12](../verification/PROJECT-ORCHESTRATION-20261016/)；日志 `.orchestrator/{INFLIGHT,OPLOG}`。
