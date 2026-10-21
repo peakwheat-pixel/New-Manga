@@ -3,7 +3,7 @@ id: GOV-BROAD-ROOT-PRESERVATION-IMPL-1
 title: 五个广域根整体保护的精确运行策略实现
 kind: governance-hardening
 governance_version: 3
-status: ready
+status: in_progress
 approval: user_next_step_20261021_scoped_reviewed_design_implementation
 suggested_owner: Codex
 owner: Codex

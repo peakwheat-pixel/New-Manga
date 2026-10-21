@@ -4,10 +4,10 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-BROAD-ROOT-PRESERVATION-IMPL-1](tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md)**（`ready`；已审设计的精确保全实现，DeepSeek独审）。
+- 当前 Task：**[GOV-BROAD-ROOT-PRESERVATION-IMPL-1](tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md)**（`in_progress`；已审设计的精确保全实现，DeepSeek独审）。
 - 最近完成：[GOV-BROAD-ROOT-PRESERVATION-DESIGN-1](tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md) `done`，R3独审232e3a589（仅设计）。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式24错误/原保护/STATUS-r212禁令有效。
-- 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
+- 收敛基线97/135；当前100本地分支/138工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
