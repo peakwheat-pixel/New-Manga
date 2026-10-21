@@ -8,7 +8,7 @@ test_ac1_triage_same_locator_multiple_codes_prefers_exact_code (test_declaration
 test_ac1_triage_transition_codes (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_transition_codes) ... ok
 test_ac1_triage_unlisted_multi_code_is_ambiguous (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_unlisted_multi_code_is_ambiguous) ... ok
 test_ac2_exception_with_wrong_sha_does_not_apply (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_exception_with_wrong_sha_does_not_apply) ... ok
-test_ac2_explicit_path_sha_exception_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_explicit_path_sha_exception_is_warning) ... G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\tests\test_declaration_remediation.py:86: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\Users\\49745\\AppData\\Local\\Temp\\wc-decl-kze6mlpk\\repo\\verification\\runner.stdout.json'>
+test_ac2_explicit_path_sha_exception_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_explicit_path_sha_exception_is_warning) ... G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\tests\test_declaration_remediation.py:86: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\Users\\49745\\AppData\\Local\\Temp\\wc-decl-v2gvp3ar\\repo\\verification\\runner.stdout.json'>
   return hashlib.sha256(open(full, "rb").read()).hexdigest()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ok
@@ -40,6 +40,6 @@ test_ac5_malformed_english_manifest_stays_arity_error (test_declaration_remediat
 test_ac5_narrative_table_without_identity_columns_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_narrative_table_without_identity_columns_is_warning) ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 16.696s
+Ran 26 tests in 17.189s
 
 OK

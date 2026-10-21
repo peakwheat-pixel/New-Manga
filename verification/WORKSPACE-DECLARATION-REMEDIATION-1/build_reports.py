@@ -6,6 +6,7 @@ Read-only with respect to the repository: it reads
 """
 import collections
 import hashlib
+import io
 import json
 import os
 import re
@@ -422,6 +423,13 @@ def main():
         handle.write("- No historical Task/evidence/untracked file was edited "
                      "to lower the count.\n")
         handle.write("- No real apply/delete/move/GC/prune was executed.\n")
+
+    # Review r6 P3: exactly one trailing newline, no blank line at EOF.
+    for path in (REMEDIATION, RESIDUAL, TRIAGE):
+        with io.open(path, encoding="utf-8") as handle:
+            content = handle.read()
+        with io.open(path, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(content.rstrip("\n") + "\n")
 
     summary = {
         "before": {"errors": len(before_errors),

@@ -399,12 +399,14 @@ class DeclarationRemediationFixture(unittest.TestCase):
             ("warning", "DECL_SOURCE_NOT_A_PATH"))
 
     def test_ac1_triage_unlisted_multi_code_is_ambiguous(self):
+        # Same TABLE role, two different codes, before code not present and no
+        # transition: the matcher must refuse to guess (r6 F-03).
         self.assertIsNone(
-            build_reports.match_status("DECL_OLD_UNLISTED",
-                                       [("error", "TABLE_ROW_ARITY"),
-                                        ("error", "DECL_SOMETHING_ELSE")]))
+            build_reports.match_status(
+                "TABLE_OLD_UNLISTED",
+                [("error", "TABLE_ROW_ARITY"),
+                 ("error", "TABLE_SCHEMA_INCOMPLETE")]))
 
 
 if __name__ == "__main__":
     unittest.main()
-
