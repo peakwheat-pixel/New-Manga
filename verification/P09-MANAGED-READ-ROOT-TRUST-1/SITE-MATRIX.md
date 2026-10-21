@@ -29,6 +29,17 @@
 | 「任一祖先 reparse 即拒绝」 | **未采用**（会破坏上表第一行两类合法部署；对象身份快照已提供更强判据） | 设计文档第四节；`DESIGN-expected-identity.md` |
 | `resolve_namespace_identity` 既有「盘符根起拒绝 reparse」 | **保留**（derived/GC 域契约） | `tests/m2_resource_channel/test_handle_resolver.py` 106 passed（含 `test_reparse_derived_root_is_refused`、`test_race_equivalent_slipped_walk_still_refused`） |
 
+## Review 补充（R-001/R-002，第二轮交付）
+
+| 项 | 缺陷 | 修法 | 测试 | base | current |
+|---|---|---|---|---|---|
+| R-001 目录准入 | `verify_existing()` 只比对规范路径，未拒绝 `FILE_ATTRIBUTE_DIRECTORY`；`image_state`/`_uri_within` 又移除了原先的 `is_file()` → 同名目录替换时仍 `ok` 并返回目录 URI | 在**已打开目标句柄**上拒绝目录（`E_OUT_OF_SCOPE`，句柄级别判定），不再依赖调用方 `is_file()` | `test_directory_substitution_is_refused_by_the_opened_handle`（断言 `image_state=="invalid"`、`image_url==""`、`_uri_within==""`、`_checked_managed_path`/`_read_verified_managed`/`_reader_sha256` 拒绝、`page_frame` 抛 `ProviderInputError`） | FAILED | PASSED |
+| R-002 site3 覆盖 | site3 只覆盖 `_checked_managed_path`/`_reader_sha256`，未覆盖导出 hash 与惰性 provider | 补两条测试：导出 hash（`_verified_managed_sha256`）与惰性 provider（`_read_verified_managed`，经真实 `ExportService` 消费）重定向后拒绝；正常导出仍成功 | `test_site3_export_hash_refuses_repointed_ancestor`、`test_site3_lazy_export_provider_refuses_repointed_ancestor` | FAILED | PASSED |
+| R-002 判别器门槛 | `ac3-discrimination.py` 解析了未使用的 `current_passed`、把「不在失败集合」判 PASS、不以 pytest exit code 为门槛 | `-v` 解析真实 `PASSED/FAILED`；base 必须非 0、current 必须为 0；每条列出的测试必须出现在实际集合中 | `ac3-discrimination.py`（自身 exit 0） | — | — |
+| R-003 AC2 日志纪律 | `suite-*.log` 无执行头/`EXIT` | `run-suites.ps1` 为每份日志写 timestamp/shell/os/python/cwd/command 头 + 日志内 `EXIT=<code>` | `logs/suite-*.log`（8 份） | — | — |
+| R-004 scratch | 探针使用系统 `%TEMP%` | ac1/ac3 的 base 快照与 driver 临时目录改到 `G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/` | ac1/ac3 脚本 | — | — |
+| R-005 重复 | `_trust()` 懒捕获两份；摘要/读取错误映射重复 | core_assembly 收敛为 `_root_trust_for()`；core_service 收敛为 `_managed_input_unavailable()` | 全量套件 | — | — |
+
 ## 共享基建
 
 `src/infrastructure/resource_channel/handle_resolver.py`：
@@ -43,7 +54,9 @@
 ## 未覆盖/非目标（与设计文档一致）
 
 - 叶子**内容**身份仍由既有 `sha256` pin 负责；本 Task 不新增叶子身份快照。
-- 硬链接与「同名目录替换」的残余风险见 `DESIGN-expected-identity.md` 第六节；
-  前者属于托管树写权限/ACL 边界，后者需要 `NtCreateFile` 相对句柄链（删除域同类基建）。
+- 硬链接残余风险见 `DESIGN-expected-identity.md` 第六节（属于托管树写权限/ACL 边界）。
+  **同名目录替换已由 R-001 关闭**：在已打开句柄上拒绝 `FILE_ATTRIBUTE_DIRECTORY`；
+  「同名目录整体 rename+replace 且新对象仍是普通文件」的残余窗口需要
+  `NtCreateFile` 相对句柄链（删除域同类基建），见设计文档第六节。
 - 第 5/6 处（QML `file://` 交接）与第 3 处 Reader 预览发布分支（发布器按名字复制）存在
   **交接窗口**残余风险，已显式记录；第 2 处的同类窗口已用「已验字节 → 私有临时文件」关闭。

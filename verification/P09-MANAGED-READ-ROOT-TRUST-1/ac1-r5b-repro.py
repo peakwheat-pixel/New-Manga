@@ -5,7 +5,8 @@
    junction。该方法**接受了外部路径**，随后**读取出 `outside bytes`**。」
 
 本探针不改 checkout、不写仓库：先用 ``git archive <base_commit> src`` 把 **base 源码**
-解到系统临时目录，再分别在 base 与当前 worktree 的代码上运行同一个 driver：
+解到 ``G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/``（R-004：仓外
+temp 目录，不用系统 `%TEMP%`），再分别在 base 与当前 worktree 的代码上运行同一个 driver：
 
   1. 以 ``live``（junction → ``real``）作为数据目录的**祖先**装配生产 Core；
   2. 写入合法的 managed 文件并做一次**合法读取**（证明探针不是一律失败）；
@@ -35,6 +36,8 @@ from pathlib import Path
 
 BASE_COMMIT = "b8a1e519703f13af73b320dded117004b4bb189a"
 REPO = Path(__file__).resolve().parents[2]
+#: R-004: repository-adjacent scratch root, never the system %TEMP%.
+SCRATCH_ROOT = Path("G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1")
 DRIVER = r'''
 from __future__ import annotations
 import json
@@ -53,7 +56,7 @@ from bootstrap.core_service import CoreServiceServer, assemble_production_core  
 
 report = {"injection_fired": False, "legal_read_ok": False, "accepted": None,
           "outside_bytes_served": None, "error": None}
-tmp = Path(tempfile.mkdtemp(prefix="p09-ac1-"))
+tmp = Path(tempfile.mkdtemp(prefix="ac1-driver-", dir=os.environ["P09_SCRATCH"]))
 live = tmp / "live"
 real = tmp / "real"
 payload = tmp / "payload"
@@ -115,11 +118,13 @@ def extract_base_src(destination: Path) -> Path:
 
 
 def run_variant(label: str, src: Path) -> dict:
-    scratch = Path(tempfile.mkdtemp(prefix=f"p09-ac1-{label}-"))
+    SCRATCH_ROOT.mkdir(parents=True, exist_ok=True)
+    scratch = Path(tempfile.mkdtemp(prefix=f"ac1-{label}-", dir=str(SCRATCH_ROOT)))
     driver = scratch / "driver.py"
     driver.write_text(DRIVER, encoding="utf-8")
     env = dict(os.environ)
     env["P09_SRC"] = str(src)
+    env["P09_SCRATCH"] = str(SCRATCH_ROOT)
     env["PYTHONPATH"] = str(src)
     env.pop("PYTHONSTARTUP", None)
     try:
@@ -158,7 +163,8 @@ def verdict(row: dict) -> str:
 
 
 def main() -> int:
-    work = Path(tempfile.mkdtemp(prefix="p09-ac1-base-"))
+    SCRATCH_ROOT.mkdir(parents=True, exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix="ac1-base-", dir=str(SCRATCH_ROOT)))
     try:
         base_src = extract_base_src(work)
         rows = []
@@ -173,6 +179,7 @@ def main() -> int:
     print("P09-MANAGED-READ-ROOT-TRUST-1 / AC1 — R5b read-path reproduction")
     print(f"base_commit = {BASE_COMMIT}")
     print(f"repo        = {REPO}")
+    print(f"scratch_root= {SCRATCH_ROOT}")
     for row in rows:
         print(
             f"  [{row['label']:<7}] injection_fired={row['injection_fired']!s:<5}"

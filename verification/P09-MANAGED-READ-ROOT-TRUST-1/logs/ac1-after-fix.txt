@@ -1,6 +1,7 @@
 P09-MANAGED-READ-ROOT-TRUST-1 / AC1 �� R5b read-path reproduction
 base_commit = b8a1e519703f13af73b320dded117004b4bb189a
 repo        = G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1
+scratch_root= G:\CODEX\New Manga.workspace\temp\P09-MANAGED-READ-ROOT-TRUST-1
   [base   ] injection_fired=True  legal_read_ok=True  accepted=True  outside_bytes_served=True  error=None -> VULNERABLE
   [current] injection_fired=True  legal_read_ok=True  accepted=False outside_bytes_served=False error=P16WireError -> SAFE
 RESULT = PASS

@@ -3,13 +3,19 @@
 AC3 要求 8 处**逐个**有测试，且不接受「模式相同所以一起算」。仅仅"当前测试全绿"
 不能证明测试有判别力——必须证明**每处测试在修复前会失败**。
 
-本脚本：
-  1. ``git archive <base_commit> src`` 把 base 源码解到系统临时目录（不 checkout）；
+本脚本（R-002 修订后）：
+  1. ``git archive <base_commit> src`` 把 base 源码解到
+     ``G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/``（R-004：不用系统 %TEMP%），
+     不 checkout、不改仓库；
   2. 把 ``tests/security/test_p09_managed_read_root_trust.py`` 复制进临时树，配一个把
      ``sys.path`` 指向 base src 的 conftest，在**同一个测试文件**上跑 base；
   3. 在 worktree 上跑同一测试文件（当前实现）；
-  4. 逐条对比：8 处 site 测试必须 base=FAIL、current=PASS；AC2 链接合法使用对照
-     必须在 base 上也 PASS（它不是安全修复，而是"不回归"的证明）。
+  4. 门槛（R-002 修订）：
+     - **pytest 退出码**：base 必须非 0、current 必须为 0；
+     - 每条列出的测试必须出现在**实际的 PASSED/FAILED 集合**中（用 ``-v`` 解析），
+       "未出现在失败集合"不再直接判 PASS；
+     - 8 处 site 测试：base=FAILED 且 current=PASSED；AC2 对照：两边都 PASSED；
+     - R-001/R-002 补充测试：current 必须 PASSED（base 结果记录，不参与判别力判定）。
 
 exit 0 = 每处都有判别力且当前全绿。
 
@@ -19,8 +25,6 @@ exit 0 = 每处都有判别力且当前全绿。
 from __future__ import annotations
 
 import io
-import json
-import os
 import re
 import shutil
 import subprocess
@@ -32,6 +36,7 @@ from pathlib import Path
 BASE_COMMIT = "b8a1e519703f13af73b320dded117004b4bb189a"
 REPO = Path(__file__).resolve().parents[2]
 TEST_REL = Path("tests/security/test_p09_managed_read_root_trust.py")
+SCRATCH_ROOT = Path("G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1")
 CONFTEST = '''"""Point the copied suite at an explicit source tree."""
 from pathlib import Path
 import sys
@@ -41,7 +46,6 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 '''
 
-#: AC3 requires one discriminating test per row of the Task's 8-site table.
 SITE_TESTS = {
     "site1": "test_site1_read_original_page_reader_refuses_repointed_ancestor",
     "site2": "test_site2_resolve_page_resource_refuses_repointed_ancestor",
@@ -53,10 +57,14 @@ SITE_TESTS = {
     "site8": "test_site8_resolve_namespace_identity_refuses_swap_between_walk_and_open",
 }
 #: AC2 controls: legal usage must work BOTH before and after the fix.
-AC2_CONTROLS = (
-    "test_ancestor_junction_is_allowed_for_legal_reads",
-    "test_site6_uri_within_refuses_repointed_ancestor",  # legal half runs before swap
+AC2_CONTROLS = ("test_ancestor_junction_is_allowed_for_legal_reads",)
+#: R-001/R-002 review additions: current implementation must pass them.
+REVIEW_ADDITIONS = (
+    "test_directory_substitution_is_refused_by_the_opened_handle",
+    "test_site3_export_hash_refuses_repointed_ancestor",
+    "test_site3_lazy_export_provider_refuses_repointed_ancestor",
 )
+_TEST_LINE = re.compile(r"^tests[/\\]\S+::(\w+)\s+(PASSED|FAILED|ERROR|SKIPPED)")
 
 
 def extract_base_src(destination: Path) -> Path:
@@ -70,22 +78,30 @@ def extract_base_src(destination: Path) -> Path:
     return destination / "src"
 
 
-def run_pytest(target: Path, cwd: Path) -> tuple[int, str, set[str], set[str]]:
+def run_pytest(target: Path, cwd: Path) -> tuple[int, str, dict[str, str]]:
     completed = subprocess.run(
-        [sys.executable, "-m", "pytest", str(target), "-q", "--tb=no", "-p", "no:cacheprovider"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            str(target),
+            "-v",
+            "--tb=no",
+            "-p",
+            "no:cacheprovider",
+        ],
         cwd=str(cwd),
         capture_output=True,
         text=True,
         timeout=900,
     )
     output = completed.stdout + completed.stderr
-    failed = set(re.findall(r"^FAILED \S+::(\w+)", output, re.MULTILINE))
-    passed = set(re.findall(r"^tests/\S+::(\w+) PASSED", output, re.MULTILINE))
-    if not passed:
-        match = re.search(r"(\d+) passed", output)
-        if match and not failed:
-            passed = {"<all>"}
-    return completed.returncode, output, failed, passed
+    outcomes: dict[str, str] = {}
+    for line in output.splitlines():
+        match = _TEST_LINE.match(line.strip())
+        if match:
+            outcomes[match.group(1)] = match.group(2)
+    return completed.returncode, output, outcomes
 
 
 def prepare_base_tree(workdir: Path, base_src: Path) -> Path:
@@ -97,49 +113,72 @@ def prepare_base_tree(workdir: Path, base_src: Path) -> Path:
 
 
 def main() -> int:
-    workdir = Path(tempfile.mkdtemp(prefix="p09-ac3-base-"))
+    SCRATCH_ROOT.mkdir(parents=True, exist_ok=True)
+    run_root = Path(tempfile.mkdtemp(prefix="ac3-", dir=str(SCRATCH_ROOT)))
     try:
-        base_src = extract_base_src(workdir / "base")
-        base_test = prepare_base_tree(workdir, base_src)
-        base_code, base_output, base_failed, base_passed = run_pytest(base_test, workdir)
+        base_src = extract_base_src(run_root / "base")
+        base_test = prepare_base_tree(run_root, base_src)
+        base_code, base_output, base_outcomes = run_pytest(base_test, run_root)
     finally:
-        shutil.rmtree(workdir, ignore_errors=True)
+        shutil.rmtree(run_root, ignore_errors=True)
 
-    current_code, current_output, current_failed, _current_passed = run_pytest(
-        REPO / TEST_REL, REPO
-    )
+    current_code, current_output, current_outcomes = run_pytest(REPO / TEST_REL, REPO)
 
     print("P09-MANAGED-READ-ROOT-TRUST-1 / AC3 — per-site discrimination")
-    print(f"base_commit = {BASE_COMMIT}")
+    print(f"base_commit  = {BASE_COMMIT}")
+    print(f"scratch_root = {SCRATCH_ROOT}")
     print(f"base pytest exit={base_code}  current pytest exit={current_code}")
-    print(f"base FAILED  = {len(base_failed)} tests  (first 6: {sorted(base_failed)[:6]})")
-    print(f"current FAILED = {len(current_failed)} tests")
+    print(f"base outcomes:    {len(base_outcomes)} tests observed")
+    print(f"current outcomes: {len(current_outcomes)} tests observed")
     print()
 
     ok = True
-    print(f"{'row':<6} {'test':<72} {'base':<6} {'current':<8} verdict")
+    if base_code == 0:
+        ok = False
+        print("FAIL: base run exited 0 -- the base snapshot is not expected to pass the suite")
+    if current_code != 0:
+        ok = False
+        print("FAIL: current run did not exit 0")
+    expected_count = len(SITE_TESTS) + len(AC2_CONTROLS) + len(REVIEW_ADDITIONS)
+    if len(current_outcomes) < expected_count:
+        ok = False
+        print("FAIL: current run did not report every expected test (parsed PASSED/FAILED lines)")
+
+    def outcome(outcomes: dict[str, str], name: str) -> str:
+        return outcomes.get(name, "MISSING")
+
+    print(f"{'row':<6} {'test':<70} {'base':<10} {'current':<10} verdict")
     for row, test_name in SITE_TESTS.items():
-        base_verdict = "FAIL" if test_name in base_failed else "PASS"
-        current_verdict = "FAIL" if test_name in current_failed else "PASS"
-        discriminating = base_verdict == "FAIL" and current_verdict == "PASS"
+        base_verdict = outcome(base_outcomes, test_name)
+        current_verdict = outcome(current_outcomes, test_name)
+        discriminating = base_verdict == "FAILED" and current_verdict == "PASSED"
         if not discriminating:
             ok = False
         print(
-            f"{row:<6} {test_name:<72} {base_verdict:<6} {current_verdict:<8}"
+            f"{row:<6} {test_name:<70} {base_verdict:<10} {current_verdict:<10}"
             f" {'OK' if discriminating else 'NOT DISCRIMINATING'}"
         )
     print()
     for test_name in AC2_CONTROLS:
-        if "site6" in test_name:
-            continue  # the site6 row above already covers the legal half
-        base_verdict = "FAIL" if test_name in base_failed else "PASS"
-        current_verdict = "FAIL" if test_name in current_failed else "PASS"
-        control_ok = base_verdict == "PASS" and current_verdict == "PASS"
+        base_verdict = outcome(base_outcomes, test_name)
+        current_verdict = outcome(current_outcomes, test_name)
+        control_ok = base_verdict == "PASSED" and current_verdict == "PASSED"
         if not control_ok:
             ok = False
         print(
-            f"AC2    {test_name:<72} {base_verdict:<6} {current_verdict:<8}"
+            f"AC2    {test_name:<70} {base_verdict:<10} {current_verdict:<10}"
             f" {'OK' if control_ok else 'REGRESSION'}"
+        )
+    print()
+    for test_name in REVIEW_ADDITIONS:
+        base_verdict = outcome(base_outcomes, test_name)
+        current_verdict = outcome(current_outcomes, test_name)
+        addition_ok = current_verdict == "PASSED"
+        if not addition_ok:
+            ok = False
+        print(
+            f"R-001/2 {test_name:<69} {base_verdict:<10} {current_verdict:<10}"
+            f" {'OK' if addition_ok else 'CURRENT FAILED'}"
         )
     print()
     if not ok:
