@@ -6,7 +6,7 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|GIT-MAINLINE-CONVERGENCE-1|—|in_review（Codex；盘点切片，非 Task 完成；旧禁令未解除）|
+|GIT-MAINLINE-CONVERGENCE-1|—|blocked（盘点切片获批；等待保护处置裁决，77 声明错误保留）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 

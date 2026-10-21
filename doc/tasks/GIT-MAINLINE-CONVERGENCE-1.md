@@ -3,8 +3,12 @@ id: GIT-MAINLINE-CONVERGENCE-1
 title: Git 主线与支线收敛到 main（逐项保全与受限清理）
 kind: ops
 governance_version: 3
-status: in_review
+status: blocked
 approval: user_authorized_20261021_convergence_preserving_existing_protections
+blocked_by: USER_PROTECTED_RESOURCE_DISPOSITION_AND_FAIL_CLOSED_DECLARATIONS
+resume_status: in_review
+latest_review: verification/GIT-MAINLINE-CONVERGENCE-1/deepseek-review-r2.md
+reviewed_head: c9a1bdd3061300c9c1c633eb8f2279903918e5a2
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
@@ -13,7 +17,7 @@ base_commit: fdca2057eec058996f936fc16138cc87e8cdc0bc
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: c615d52b4f2f382979e4061b38c01fc7a38120c3
+delivery_head: c9a1bdd3061300c9c1c633eb8f2279903918e5a2
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GIT-MAINLINE-CONVERGENCE-1
@@ -46,7 +50,7 @@ created: 2026-10-21
 - [ ] **AC3** 19 条未合并支线逐项核对提交、patch 等价性、实际差异、归档与恢复，不盲合并。 <<PARTIAL: 19 条完成提交/路径/patch 分析与归档复核；17 条产品价值裁决待定>>
 - [ ] **AC4** 所有计划删除对象已备份、验证恢复、刷新 Inventory、通过独立 Review 并获所需授权；未满足者保留。 <<BLOCKED: 19 份增量归档验证、全 refs 备份/空仓恢复均通过；旧禁令及 77 声明错误未解除>>
 - [ ] **AC5** 本地 refs/heads 仅 main，无需保留的 linked worktree 安全退出；例外必须据实列出，不能宣称达标。 <<BLOCKED: 当前 97 分支/135 worktree，尚未达标>>
-- [ ] **AC6** 完成独立 Review、集成验证、治理检查、Handoff 和逐项资源处置记录。 <<PARTIAL: R1 在 83a8a15c 治理 PASS 3 warnings；非破坏性盘点获批，6 项 P2 修订中>>
+- [ ] **AC6** 完成独立 Review、集成验证、治理检查、Handoff 和逐项资源处置记录。 <<PARTIAL: R2 固定 c9a1bdd30 盘点切片获批；6 项 P2 已修；治理 PASS 3 warnings；完整目标仍阻塞>>
 
 ## 允许修改范围
 
@@ -127,8 +131,16 @@ created: 2026-10-21
 
 ### 盘点交付与 Review 范围
 
-交付 head a91e659c3e2e6bb0509d289a49c76fbf37792fc3；只申请对非破坏性盘点/保全切片独立 Review。全部目标未达成，不申请 Task done，不申请删除；Review 通过也不解除保护。19 个未合并分支中 2 条非合并 patch 全等价、17 条仍有不等价提交。全部 refs 及已注册 worktree HEAD 的 Git 历史恢复验证通过；未提交/ignored/应用会话未备份，原位保留。
+R1 历史交付 head a91e659c3e2e6bb0509d289a49c76fbf37792fc3；当前 R2 证据 c615d52b4f2f382979e4061b38c01fc7a38120c3、盘点切片 reviewed/delivery head c9a1bdd3061300c9c1c633eb8f2279903918e5a2；只申请对非破坏性盘点/保全切片独立 Review。全部目标未达成，不申请 Task done，不申请删除；Review 通过也不解除保护。19 个未合并分支中 2 条非合并 patch 全等价、17 条仍有不等价提交。全部 refs 及已注册 worktree HEAD 的 Git 历史恢复验证通过；未提交/ignored/应用会话未备份，原位保留。
 
 ### R1 响应（待限定复审）
 
 R1 固定 83a8a15c，DeepSeek 只批准非破坏性切片；R-001..R-006 均按 rework-r1.md 修订。不批准删除或 Task done。Owner 额外 raw-byte 检查发现本轮证据 disk CRLF 与 blob LF 不一致；旧 Review 的 blob 一致性措辞不足以证明原始字节相等，保留原报告，另以 byte-mode subprocess 重新核验。统一本 Task 自有证据 LF 并在新 evidence commit 重新 pin；不改既有历史证据或 checker。归档快照仅新增目录内 .gitattributes 固定 LF。
+
+### R2 与阻塞交接（未关闭）
+
+R2 固定 c9a1bdd30，decision approved 仅限非破坏性盘点；R-001..R-006 全部 fixed，19/19 pins raw bytes/disk/blob 一致，治理 PASS 3 warnings。新 P2 N-001 在本记录提交修正：正文明确 R1 历史 a91e、R2 evidence c615、reviewed/delivery c9，rolling checkpoint 同步。尾部提交仅保存 Review/Handoff/状态，不作为新的实施交付；R2 不覆盖未来实施或删除。
+
+Task 转 blocked（暂停前阶段 in_review），不 done、不 closed_with_limitations。AC4/AC5 原 BLOCKED 不变；125 个保护命中、82 dirty/untracked、60 ignored 根、77 声明错误均保留。原位保护尚未获逐项处置裁决；19 条未合并分支不得以强删或 Legacy merge 达成数量目标。无破坏性窗口可执行。
+
+下一步按 Handoff/decision-request.md 等待针对旧保护与独有工作处置的裁决；不得以本 Task 的新建/切片批准当作解除禁令。没有启动下一 Task/Owner。源 backup 截至56272，后续治理提交仍由 main 保存；任何删除窗口必须更新备份并验证未提交/ignored/会话数据。

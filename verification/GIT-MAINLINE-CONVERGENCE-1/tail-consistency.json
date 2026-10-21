@@ -1,0 +1,115 @@
+{
+  "source_mainline_head": "c9a1bdd3061300c9c1c633eb8f2279903918e5a2",
+  "scope": "before final review-record metadata commit; current own metadata dirty explicitly expected",
+  "refs_changed": [
+    {
+      "ref": "refs/heads/main",
+      "before": "56272e40b4492dd9c9006ae230a8d44ae66fb0fd",
+      "after": "c9a1bdd3061300c9c1c633eb8f2279903918e5a2"
+    }
+  ],
+  "worktree_head_changes": [
+    "G:/CODEX/New Manga"
+  ],
+  "head_count": 97,
+  "worktree_count": 135,
+  "immutable_evidence_pins": [
+    {
+      "id": "EV-AUTH",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-BASE",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-INV",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-BRANCH",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-WT",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-ARCHIVE",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-RESTORE",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-REPORT",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-CHECK",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-ATTR",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-BRANCHES",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-WORKTREES",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-LOG-ATTEMPT1",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-OTHERREFS",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-DELTA",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "EV-REWORK",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-R1",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-DISPATCH",
+      "disk_matches": true,
+      "blob_matches": true
+    },
+    {
+      "id": "SRC-EARLY-CHECK",
+      "disk_matches": true,
+      "blob_matches": true
+    }
+  ],
+  "result": "PASS",
+  "deleted_or_merged_resources": 0
+}

@@ -1,12 +1,12 @@
 # 当前恢复点
 
-2026-10-21 / Codex epoch 9 / GIT-MAINLINE-CONVERGENCE-1。
-TaskStatus=in_review；ExecutionState=ACTIVE（盘点切片等待独立 Review，完整目标未完成）。
-当前 main；初始基线 fdca2057e；盘点证据 a91e659c3；未合并任何代码、未删除/移动/GC/prune。
-当前工作区仅本 Task 治理元数据修订；全部原有 untracked 原位保留；禁止 add 全仓。
-完成：97 branches /135 worktrees /214 refs /0 stash 全清册；19 增量 bundle verify；全 refs bundle 空仓恢复与 fsck PASS，135 HEAD 可读。
-保护：125 worktrees 命中声明；82 dirty/untracked；60 ignored 根；77 声明错误导致工具 fail-closed，旧清理禁令未解除。
-备份恢复只涵盖 Git 历史；不涵盖未提交/ignored/应用会话/reflog-only/unreachable 内容，原位保护。
-下一精确步骤：对固定提交调用 DSH 只读独立 Review；保留 Review 结果，按裁定修订；完整 Task 保持未完成。
-用户需裁决的范围详见 report.md；不把 Review 通过视作删除授权。产品测试未运行（无产品改动）。
-主控唯一 Codex epoch9；旧 INFLIGHT/checkpoint-r12 漂移，只作历史，不恢复旧作业。
+2026-10-21 / Codex epoch9 / GIT-MAINLINE-CONVERGENCE-1。
+TaskStatus=blocked；resume_status=in_review；ExecutionState=CHECKPOINTED。
+主分支 main；初始 fdca2057e；R1 历史证据 a91e659c3；R2 修订证据 c615d52b4；R2 reviewed/delivery c9a1bdd30（本尾部提交仅保存审查与阻塞记录）。
+完成：97 heads/135 worktrees/214 common refs/0 stash 全清册；19 增量归档验证；记录时全refs bundle空仓恢复/135 HEAD可读/fsck PASS。19 pins raw bytes/disk/blob均等；R2 approved仅非破坏性切片。
+实际删除/移动/merge/GC/prune/远端操作=0；全部原有未跟踪内容保留。无产品代码改动。
+阻塞：125工作树保护命中、82含dirty/untracked、60含ignored根（集合重叠）；77声明错误（旧76+整改Task路径列表头1）；旧清理禁令与旧主线保留规则有效。
+备份截至56272e40b，不含后续治理提交/未提交/ignored/会话/reflog-only/unreachable；不可用作最终工作区完整备份。
+下一精确步骤：读取 Task、R2 Review、decision-request.md、Handoff；取得保护/独有工作处置裁决前，不删、不换他人分支、不释放实施或下一Owner。
+当前本Task产物agent-output、bundle、restore bare全保留，详见Resource Manifest。源权威status/plan已同步；没有恢复旧INFLIGHT/r12任务。
+恢复核验：先 git HEAD/status/worktree/common-dir 与本记录比较；只有本Task尾部治理提交推进main属于预期，其他漂移 DRIFT_DETECTED，原作者文件不得覆盖。

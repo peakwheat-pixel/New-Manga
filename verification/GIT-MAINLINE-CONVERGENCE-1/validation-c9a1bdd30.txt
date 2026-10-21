@@ -1,0 +1,15 @@
+SHELL=pwsh UTF-8 / Python subprocess; interpreter=C:\Python314\python.exe
+SOURCE_HEAD=c9a1bdd3061300c9c1c633eb8f2279903918e5a2
+TRACKED_DIRTY_BEFORE=''
+COMMAND=['pwsh', '-NoProfile', '-Command', "[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new(); & './tools/governance/check.ps1' -TaskPath './doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md'"]
+EXIT=0
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GIT-MAINLINE-CONVERGENCE-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2926 bytes / 28 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\GIT-MAINLINE-CONVERGENCE-1\checkpoint.md
+Governance check: PASS (3 warnings)
+
+
+COMMAND=['git', 'diff', '--check', 'fdca2057e..HEAD']
+EXIT=0
