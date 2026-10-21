@@ -3,19 +3,21 @@ id: GOV-BROAD-ROOT-PRESERVATION-DESIGN-1
 title: 五个广域根整体保护的精确保全解释设计
 kind: design
 governance_version: 3
-status: in_review
+status: done
 approval: user_broad_roots_preserve_all_20261021_design_only
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r3.md
+reviewed_head: 232e3a5896644446acf3c4e0a0d5edc1a9490616
 depends_on: [GOV-RESIDUAL-24-DECISION-1]
 base_commit: 3d0a36ac04d30eba0906e70218ef9491c5b9ffbc
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 232e3a5896644446acf3c4e0a0d5edc1a9490616
 delivery_head: e33a51b4df4856b9bdfe2dd8e57b84f1c395a797
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1
 allowed_paths:
   - doc/tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md
@@ -40,8 +42,8 @@ allowed_paths:
 
 - [x] **AC1** 用户选择、5根/6记录/12错误/两源SHA及固定引用清晰，当前源字节/status保全。 <<MET>>
 - [x] **AC2** 设计只允许精确保全解释且新增whole-root保护，异常/漂移继续拒绝；source/destination、EVIDENCE_PIN/prose/JSON隔离与alias/realpath考虑齐全，3入口共同生效，不缩小保护。 <<MET>>
-- [ ] **AC3** 提供最小后续实现范围、正反测试矩阵/109回归和双15回放要求，模型结果与NOT_RUN分离，DeepSeek固定head独审。 <<PARTIAL: 设计/测试矩阵/模型已完成，独审待完成>>
-- [ ] **AC4** Codex只读集成复验、实际EV注册/治理check、Handoff/资源核销完整；正式仍24错误、99/137、父blocked/禁令不变。 <<PARTIAL: 源保全/正式24已核，独审后复验与核销>>
+- [x] **AC3** 提供最小后续实现范围、正反测试矩阵/109回归和双15回放要求，模型结果与NOT_RUN分离，DeepSeek固定head独审。 <<MET>>
+- [x] **AC4** Codex只读集成复验、实际EV注册/治理check、Handoff/资源核销完整；正式仍24错误、99/137、父blocked/禁令不变。 <<MET>>
 
 ## 禁止与验证
 
@@ -61,6 +63,8 @@ allowed_paths:
 |EV-8|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r1.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|94b28aa611559c45cd790bdd997efd30b3222091de51e1a95b72352899cb2764|CANONICAL|
 |EV-9|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/ruling.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|4f9b206ce835fabf029d2a59ff70e3116febbe26302928978090117b4d375f38|CANONICAL|
 |EV-10|AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r2.md|9cfae1352ca97a53cf5b037f7d66d4bb502a3fea|d19b466d33df4bb5310617a23f379a6bcf4dd4bb67c86efd6b910e71a0d15b62|CANONICAL|
+|EV-11|AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r3.md|a5b1a3d77397e109e72a480fec98c914ecec3076|b552adafdfc5be32304af71759a23b49f6ef9f92e93f1c59886df5f20527c6b0|CANONICAL|
+|EV-12|AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/integration-validation.json|a5b1a3d77397e109e72a480fec98c914ecec3076|fbe26bfb37fe09ac08fcb1a052890fae97684d6638574a81a70b44cd41fc6010|CANONICAL|
 
 ## Resource Manifest
 
@@ -72,3 +76,11 @@ allowed_paths:
 R1独审3879cb936 changes_requested已记录review-dsh-r1.md；e33a51b4d修订两P1/三P2，处理矩阵r1-response.md；R2须固定新head复审。15覆盖模型重算、warnings254→266；真实仍24。
 
 R2固定1670b34ec：设计P1/P2已关闭，仅Handoff下一Task旧delivery需修；现改为e33a51b4d，设计/模型/绑定7输入未变化。R3只核metadata最终固定head，不延用未批准结论。
+
+## Closeout Record
+
+2026-10-21 / Codex：R1两P1/三P2及R2单metadata问题均关闭，DeepSeek R3固定232e3a5896644446acf3c4e0a0d5edc1a9490616 approved，source交付e33a51b4d。main同点复验正式24完整错误身份不变；两原源和7输入raw/status不变、tools/运行配置未改、policy不存在；10原EV raw=blob=pin且实际注册10/0error。R3快照2477声明/1807根/24errors/254warnings，自有收口EV追加后会增加，不混同历史模型快照。模型仅15覆盖、+12Declaration/+5根/+12warnings和SIMULATION24→12；所有loader/负例/T01-T18/109/双15回放和产品/构建为未来NOT_RUN，不冒称实现已通过。
+
+资源核销：DSH同session-89d9de3e-714e-4a87-b0b0-b60526ec5eae R3已exit0，web_visibility=unverified。本Taskagent-output/设计/模型/三轮Review原位保留，无新worktree/env；99heads/137worktrees、0真实资源删除/迁移/归档/GC/prune/push。Task专项及当前authority治理check、diff-check终检。父blocked/r212禁令不解除，尚未只剩main。
+
+用户5广域根整体保留方向已落地设计；下一建议Codex按Handoff另冻GOV-BROAD-ROOT-PRESERVATION-IMPL-1、DeepSeek独审（拟议，未创建/未释放）。本Task完成只覆盖设计，不给工具实现、policy发布或资源退出授权；7历史身份及其它12项限制继续保留。

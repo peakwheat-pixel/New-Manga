@@ -19,3 +19,5 @@ GOV-PATH-HEADER-COMPAT-1 done，独审78fc0cba2，集成9cae94142；main5测试e
 最新：GOV-NONRESOURCE-MANIFEST-FORMAT-1独审2573375dc approved、main同点集成；六行格式30→24，原保护1785→1787+2，207直接资产未改，19历史blob限制不修复。99heads/137worktrees全部保留，仍未只剩main。余24=12广域根+7历史身份+2冻结Review模板+3NUL；仅准备只读最小裁决，不解除禁令。
 
 最新恢复点2026-10-21 / Codex epoch9：GOV-RESIDUAL-24-DECISION-1已独审d1ad7e525 approved、done。实际24完整错误/9原源SHA/status、19tip、99heads/137worktrees均保全；没有资源处置。main唯一开发集成主线但refs不止main，父blocked、STATUS/r212禁令有效。当前待用户显式裁定5广域根保留方向，最小清单verification/GOV-RESIDUAL-24-DECISION-1/decision-request.md；7历史身份还需真实来源，不猜环境。恢复先核本记录后main HEAD/租约/dirty；旧bundle不覆盖后续/未提交/ignored/会话。当前无READY实施Task，用户裁决后Codex另冻设计、DeepSeek独审，指令在本子Task Handoff。
+
+最新恢复点2026-10-21 / Codex epoch9：用户已显式裁定5广域根继续整体保护。GOV-BROAD-ROOT-PRESERVATION-DESIGN-1 done，DeepSeek R3固定232e3a589 approved、source e33a51b4d；两P1/三P2及Handoff旧delivery已修，原Review全部保留。设计仅绑定6原记录/12错误，整根/后代/祖先保护，严格tracked/原SHA/role/真实路径/错误对与隔离原子快照；15覆盖模型/模拟24→12并非真实实施。正式24完整errors、7输入/原pin/tools保持，runtime policy不存在，99heads/137worktrees。父blocked/r212仍有效、尚未只剩main。下一拟议GOV-BROAD-ROOT-PRESERVATION-IMPL-1未创建/释放，Owner Codex/Reviewer DeepSeek，允许路径与完整可转发指令见设计Handoff；实施须另冻，不能把设计批准当清理授权。旧bundle范围限制不变。

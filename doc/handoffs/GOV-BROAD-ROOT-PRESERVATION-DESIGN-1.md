@@ -4,7 +4,7 @@ author: Codex
 recipient: DeepSeek Harness
 base_commit: 3d0a36ac04d30eba0906e70218ef9491c5b9ffbc
 delivery_head: e33a51b4df4856b9bdfe2dd8e57b84f1c395a797
-status: in_review
+status: done
 ---
 
 # 五根整体保护的精确保全设计
@@ -16,3 +16,5 @@ status: in_review
 可转发：Codex，先核本设计独审done与当前main/租约，冻结GOV-BROAD-ROOT-PRESERVATION-IMPL-1上述精确路径，Owner Codex、Reviewer DeepSeek，依据固定设计实施最小共享scanner保全收口与运行策略，保持原历史字节和通用拒绝；按T01-T18/109/双回放/24→12/保护增量/check/独审/Handoff全部Gate交付，禁止清理/迁移/GC/prune/push/改旧证据，不把设计或例外登记当资源退出授权。当前仅建议，不代表本设计Task已实施或发布该实现。
 
 R1 changes_requested固定3879cb936；修订e33a51b4d后提交R2：12条add_warning、policy untracked fatal、new_index/new_scanned隔离原子发布、相邻仅无新增根命中、nonGit scanner继续fatal；15模型复算warnings+12。R2未批准不得done。
+
+最终核销：DeepSeek R3 fixed232e3a5896644446acf3c4e0a0d5edc1a9490616 approved（仅设计/metadata），R1/R2发现全部关闭。source e33a51b4d与R3 reviewed head分开；main正式仍24完整错误、7输入保全、runtime policy不存在，10原EV实际注册/raw=blob=pin通过。99/137、父blocked/r212不变。上文R2未批准为当时过程，现以R3批准为准；下一实现仅拟议，不在本设计Task实施。
