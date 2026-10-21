@@ -17,3 +17,5 @@ GOV-PATH-HEADER-COMPAT-1 done，独审78fc0cba2，集成9cae94142；main5测试e
 2026-10-21最新：GOV-NDJSON-EXCEPTION-CONFIG-1独审85a393dc4 approved、main集成9d21f8fb8；正式默认32→30，原保护相同，14pin实际注册/字节通过，109测试与双15拒绝回放通过。当前99heads/137worktrees，前文98/136和32为历史阶段；尚未只剩main，禁令/父blocked不变。六格式Task候选直接207pin：113历史blob匹配、53可由EOL重现、36hash和5路径/commit尚未核清。只读预检输出在workspace agent-output/codex/GOV-NONRESOURCE-MANIFEST-FORMAT-1，未改六原Task；下一先冻只读取证，不猜测pin。
 
 最新：GOV-NONRESOURCE-MANIFEST-FORMAT-1独审2573375dc approved、main同点集成；六行格式30→24，原保护1785→1787+2，207直接资产未改，19历史blob限制不修复。99heads/137worktrees全部保留，仍未只剩main。余24=12广域根+7历史身份+2冻结Review模板+3NUL；仅准备只读最小裁决，不解除禁令。
+
+最新恢复点2026-10-21 / Codex epoch9：GOV-RESIDUAL-24-DECISION-1已独审d1ad7e525 approved、done。实际24完整错误/9原源SHA/status、19tip、99heads/137worktrees均保全；没有资源处置。main唯一开发集成主线但refs不止main，父blocked、STATUS/r212禁令有效。当前待用户显式裁定5广域根保留方向，最小清单verification/GOV-RESIDUAL-24-DECISION-1/decision-request.md；7历史身份还需真实来源，不猜环境。恢复先核本记录后main HEAD/租约/dirty；旧bundle不覆盖后续/未提交/ignored/会话。当前无READY实施Task，用户裁决后Codex另冻设计、DeepSeek独审，指令在本子Task Handoff。
