@@ -1,0 +1,97 @@
+XX  1 valid external reference                 Governance check: FAIL (5 errors, 3 warnings)
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  2 referenced file missing                  Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest ���õ��ļ������ڣ�verification/ZZ-MANIFEST-FIXTURE/nope.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  3 traversal                                Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest ���ò���Խ���ֿ⣺verification/../doc/x.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  4 env var in reference                     Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest ���ò��ú�����������꣺%APPDATA%/r.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  5 outside verification/                    Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest ���ñ���λ�� verification/**��doc/x.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  6 two references                           Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest �����˶�� JSON��verification/ZZ-MANIFEST-FIXTURE/a.json, verification/ZZ-MANIFEST-FIXTURE/b.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  7 task_id mismatch                         Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest task_id 'OTHER' �� Task 'ZZ-MANIFEST-FIXTURE' ��һ��
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  8 schema_version != 1                      Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest schema_version ����Ϊ 1
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX  9 declared count != resources (allowed)    Governance check: FAIL (5 errors, 4 warnings)
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 10 empty resources                          Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest resources ����Ϊ��
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 11 invalid disposition                      Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource disposition ��Ч��BOGUS
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 12 ALREADY_ABSENT all conditions            Governance check: FAIL (5 errors, 3 warnings)
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 13 ALREADY_ABSENT no evidence               Governance check: FAIL (6 errors, 3 warnings)
+        -> ALREADY_ABSENT ȱ�� absent_evidence��C:/definitely/not/here-cache
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 14 ALREADY_ABSENT but target exists         Governance check: FAIL (7 errors, 3 warnings)
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 15 NOT_APPLICABLE for vanished              Governance check: FAIL (6 errors, 3 warnings)
+        -> NOT_APPLICABLE ������������ʧ��Դ��verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 16 missing process_check                    Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest ȱ������/���̼������C:/definitely/not/here-cache
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 17 ALREADY_ABSENT abs path that exists (P1 regression) Governance check: FAIL (7 errors, 3 warnings)
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�C:/Windows/System32/notepad.exe
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�C:/Windows/System32/notepad.exe
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 18 glob in reference                        Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest ���ò��ú� glob��verification/ZZ-MANIFEST-FIXTURE/*.json
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 19 malformed JSON                           Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource Manifest JSON �޷�������G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\verification\ZZ-MANIFEST-FIXTURE\resource-manife
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 20 sentinel: ignored target/dist            Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same ignored target/dist locations in this worktree' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIF
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 21 sentinel: source location                Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same source location' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.j
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 22 sentinel: shared build env               Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same shared build environment' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-m
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 23 sentinel: local cache                    Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same local cache location' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manif
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 24 sentinel: main-repository paths          Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same main-repository paths' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-mani
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 25 empty destination fallback               Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '(blank)' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 26 whitespace destination fallback          Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '(blank)' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 27 dash destination fallback                Governance check: FAIL (5 errors, 4 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '-' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 28 existing normal destination passes       Governance check: FAIL (5 errors, 3 warnings)
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 29 prose destination fails                  Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource ����·��δ��֤��some other place
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 30 unknown same destination fails           Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource ����·��δ��֤��Same custom unknown location
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 31 real missing destination fails           Governance check: FAIL (6 errors, 3 warnings)
+        -> Resource ����·��δ��֤��apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+XX 32 dash destination with missing source fails Governance check: FAIL (6 errors, 4 warnings)
+        -> Resource ����·��δ��֤��verification/ZZ-MANIFEST-FIXTURE/nonexistent-source.file
+        !! unrelated failures: ['TASK_LEDGER �ѹ��ڣ����� 322 �� Task��ʵ�� 296 �������� tools/governance/task_ledger.py --write��', 'TASK_LEDGER �ѹ��ڣ����� 13 ������̬ Task��ʵ�� 2 �������� tools/governance/task_ledger.py --write��']
+
+cleaned: tempdir=True manifest=True doc/tasks untouched=True
+0/32 cases behaved as expected

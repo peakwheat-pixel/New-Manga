@@ -3,16 +3,16 @@ id: WORKSPACE-CLEANUP-TOOL-HARDENING-1
 title: 工作区清理工具的保护判断与失败关闭修复（r208/r209 事故根因）
 kind: fix
 governance_version: 2
-status: proposed
-approval: pending_user_release
+status: in_progress
+approval: released_by_user_2026-10-21
 blocked_by: null
-suggested_owner: Antigravity
-owner: null
+suggested_owner: dsh
+owner: workspace-hardening
 reviewer: Codex
 depends_on: [WORKSPACE-CONSOLIDATION-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: b8a1e519703f13af73b320dded117004b4bb189a
+branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -90,9 +90,11 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
+- Handoff：WIP checkpoint（主机重启前保存）；完整 Handoff、AC 勾选与 Canonical Evidence 待恢复后补齐。
+- 已实现：五个脚本的 fail-closed 加固 + `verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/tests/`（66 测试，全过）+ `run_evidence.py` 证据生成器。
+- 已生成证据：`verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/evidence/`（tests.log、environment.json、ac-coverage.json、incident-replay-*.json、declaration-audit.json、real-workspace-snapshot.json、manifest.sha256）。
 - Review：尚无。
-- 实际测试：尚无。
+- 实际测试：见 WIP 证据；最终测试表待恢复后回填。
 
 ## Canonical Evidence
 
