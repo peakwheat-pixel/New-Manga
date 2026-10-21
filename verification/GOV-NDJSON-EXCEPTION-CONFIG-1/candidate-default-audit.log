@@ -1,0 +1,12 @@
+declaration audit: 2427 declaration(s), 1764 protected root(s), 30 error(s), 246 warning(s)
+  ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P09-AC3-DELETE-1.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P09-AC3-DELETE-HARDEN-1.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02）' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md]
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P20-AC4-FPS-1.md]
+  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling [doc/tasks/SEC-FIX-PATH-ECHO-1.md]
+  report: G:/CODEX/New Manga.workspace/agent-output/codex/GOV-NDJSON-EXCEPTION-CONFIG-1/candidate-default-audit/declaration-audit.json

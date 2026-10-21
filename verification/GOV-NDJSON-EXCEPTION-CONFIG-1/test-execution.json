@@ -1,0 +1,25 @@
+[
+  {
+    "name": "declaration-tests",
+    "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-NDJSON-EXCEPTION-CONFIG-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
+    "command": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "test_declaration_remediation",
+      "-v"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "hardening-tests",
+    "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-NDJSON-EXCEPTION-CONFIG-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
+    "command": [
+      "python",
+      "-B",
+      "run_suite.py"
+    ],
+    "exit": 0
+  }
+]
