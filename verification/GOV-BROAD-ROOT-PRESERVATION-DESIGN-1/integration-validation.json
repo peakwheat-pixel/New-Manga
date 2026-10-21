@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-10-21T12:32:44.587245+00:00",
+  "snapshot_commit": "232e3a5896644446acf3c4e0a0d5edc1a9490616",
+  "reviewed_head": "232e3a5896644446acf3c4e0a0d5edc1a9490616",
+  "delivery_head": "e33a51b4df4856b9bdfe2dd8e57b84f1c395a797",
+  "approval_scope": "DESIGN_AND_OWN_METADATA_ONLY",
+  "actual_guard_counts": {
+    "declarations": 2477,
+    "protected_roots": 1807,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 367,
+      "EVIDENCE_PIN": 1696,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 360,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 254
+  },
+  "actual24_full_error_identity_unchanged": true,
+  "immutable7_inputs_raw_and_status_unchanged": true,
+  "original10_ev_raw_blob_table_equal": true,
+  "actual_original_ev_registration": 10,
+  "runtime_policy_exists": false,
+  "guard_code_changed": false,
+  "heads": 99,
+  "worktrees": 137,
+  "real_resource_operations": 0,
+  "parent": "blocked",
+  "status_r212_ban": "IN_FORCE",
+  "source_user_decision": "five broad roots preserve all; design and independent review",
+  "model_only": "15 coverage asserts; warnings+12; SIMULATION24_to12; not runtime implementation",
+  "future_tests": "T01-T18/109 regression/dual15 NOT_RUN",
+  "review_session": "session-89d9de3e-714e-4a87-b0b0-b60526ec5eae",
+  "web_visibility": "unverified"
+}
