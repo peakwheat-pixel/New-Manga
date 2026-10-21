@@ -3,8 +3,8 @@ task_id: GOV-NDJSON-NONDECL-IDENTITY-1
 author: Codex
 recipient: Codex
 base_commit: 50d784300ac74d6ded633685bfce201cdddb630a
-delivery_head: 488ab6cbec7774df8c0c3b2e8a9e169750a92101
-status: in_review
+delivery_head: 4bab91982fd05db85764705fef9d45fe92485501
+status: integrated
 ---
 
 # Handoff：两份NDJSON身份核验
@@ -19,7 +19,7 @@ status: in_review
 
 Task：拟议GOV-NDJSON-EXCEPTION-CONFIG-1，建立当前配置并仅登记已核定两项。依赖本研究独审/closeout通过，先单独冻结Task/Plan/STATUS，不重开旧Task。Owner Codex / Reviewer DeepSeek Harness，理由是共享保护配置与默认入口须Lead负责。
 
-Recovery：G:/CODEX/New Manga，main，固定base/head=488ab6cbec7774df8c0c3b2e8a9e169750a92101，后续治理尾部commit启动时实测；实现分支codex/gov-ndjson-exception-config-1、workspace工作树均待Codex创建，不把示例当现成资源。
+Recovery：G:/CODEX/New Manga，main，固定base/head=4bab91982fd05db85764705fef9d45fe92485501，后续治理尾部commit启动时实测；实现分支codex/gov-ndjson-exception-config-1、workspace工作树均待Codex创建，不把示例当现成资源。
 
 允许写路径待冻结：tools/governance/non-declaration-json-exceptions.json（新当前配置，保留旧67逐项完整＋两精确path/raw SHA/reason）、tools/governance/clean_workspace.py仅DEFAULT_JSON_EXCEPTION_MANIFEST默认入口、自身Task/verification/Handoff、治理元数据。旧verification/WORKSPACE-DECLARATION-REMEDIATION-1表/Task/pins、原始P02日志、其它函数、用户数据、Schema/依赖禁止改写；不新增通用坏JSON/NDJSON匹配，不运行collector/Legacy，不apply/清理/归档/迁移/GC/prune/push。两条source raw一旦漂移即停，不能自动刷新hash。
 
@@ -33,8 +33,12 @@ R1要求修正本Task证据表断行：新增table-registration-proof证明原10
 
 先做拟议GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，再考虑上文配置迁移建议；配置Task保持未释放。Owner Codex / Reviewer DeepSeek Harness。原因是治理check能读取分散EV行，而guard按连续Markdown表注册保护；需先核对本轮已知相关治理Task的证据注册，不能凭check PASS清理。
 
-Recovery：G:/CODEX/New Manga，main，固定base/head=4bab91982（启动须解析完整SHA并核对后续纯元数据提交/唯一租约）；不新增worktree，Codex串行治理文档。范围须另行冻结为三个已知直接相关Task：doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md、doc/tasks/GOV-PATH-HEADER-COMPAT-1.md、doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md；只读各自当前EV表/直接被pin文件，先证明表行与实际EVIDENCE_PIN注册是否一致。仅在证明是断行问题且所有raw pins有效时，允许机械修正文档表格连续性，保留每条path/commit/SHA及所有旧状态/AC/Review；不重开终态Task。不修改旧evidence字节、source、guard、正式表/Schema/依赖，不扩大历史扫描，不清理/迁移/GC/prune/push。
+Recovery：G:/CODEX/New Manga，main，固定base/head=4bab91982fd05db85764705fef9d45fe92485501（启动须解析完整SHA并核对后续纯元数据提交/唯一租约）；不新增worktree，Codex串行治理文档。范围须另行冻结为三个已知直接相关Task：doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md、doc/tasks/GOV-PATH-HEADER-COMPAT-1.md、doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md；只读各自当前EV表/直接被pin文件，先证明表行与实际EVIDENCE_PIN注册是否一致。仅在证明是断行问题且所有raw pins有效时，允许机械修正文档表格连续性，保留每条path/commit/SHA及所有旧状态/AC/Review；不重开终态Task。不修改旧evidence字节、source、guard、正式表/Schema/依赖，不扩大历史扫描，不清理/迁移/GC/prune/push。
 
 交付：逐Task原EV行数/实际注册/丢失行及raw pin校验、最小文档diff、修正后实际注册及旧保护集合只增不减、正式32错误完整身份不变、固定head独审/Handoff。验证用当前parse_markdown_declarations和scan_repo_declarations只读调用、pwsh -NoProfile -File tools/governance/check.ps1与diff-check；NOT_RUN/BLOCKED明确记录；若任何内容/归属/源pin不明即原样保留并停止该项修正。无代码变更不跑产品测试。
 
-可直接转发：Codex，请先在G:/CODEX/New Manga的main核对实际HEAD/租约，以4bab91982为恢复点读取本Handoff/R1注册证明。冻结GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，Owner Codex/Reviewer DeepSeek，限定上述3个Task及其当前EV直接目标。对比EV文字行与guard实际注册、逐原始字节核对pin；仅对已证实的空行断表做最小机械修正，每条path/commit/SHA、Task终态/AC/Review均保留，不重开旧Task、不改任何旧证据/源码/例外表。记录正式32身份不变、保护集合只增不减、必要治理检查，固定commit独审/Handoff后由Codex集成；未知则保留报告，不以文档check PASS代替实际保护。此建议未释放，不自动开始配置迁移或清理。
+可直接转发：Codex，请先在G:/CODEX/New Manga的main核对实际HEAD/租约，以4bab91982fd05db85764705fef9d45fe92485501为恢复点读取本Handoff/R1注册证明。冻结GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，Owner Codex/Reviewer DeepSeek，限定上述3个Task及其当前EV直接目标。对比EV文字行与guard实际注册、逐原始字节核对pin；仅对已证实的空行断表做最小机械修正，每条path/commit/SHA、Task终态/AC/Review均保留，不重开旧Task、不改任何旧证据/源码/例外表。记录正式32身份不变、保护集合只增不减、必要治理检查，固定commit独审/Handoff后由Codex集成；未知则保留报告，不以文档check PASS代替实际保护。此建议未释放，不自动开始配置迁移或清理。
+
+## 最终独审与核销
+
+R2 approved 54cfbadad00071c70268ca557b1efcecbae87bf8，DSH session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d，R1/R2 EXIT0，原文保留；13pin/2原日志保护注册及旧1704根在1718中的子集关系已实际独立确认。已修Handoff固定交付/Recovery；两旧checkpoint均保持原字节历史SOURCE_PIN，终态切回父恢复点，批准状态见closeout-record.md。默认正式32错误仍保留、无例外登记；两日志/正式表/guard raw状态不变。所有资源保留核销完成，不清理。下一优先Task是有界证据表注册修正，配置迁移仍未释放。

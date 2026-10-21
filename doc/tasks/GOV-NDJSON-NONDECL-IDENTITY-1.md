@@ -3,11 +3,13 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: in_review
+status: approved
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-NDJSON-NONDECL-IDENTITY-1/deepseek-review-r2.md
+reviewed_head: 54cfbadad00071c70268ca557b1efcecbae87bf8
 depends_on: [GOV-DECLARATION-RESIDUAL-32-AUDIT-1]
 base_commit: 50d784300ac74d6ded633685bfce201cdddb630a
 branch: main
@@ -94,3 +96,7 @@ ready冻结后认领；Reviewer只读，审查期间Owner暂停被审文档写�
 DSH session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d，EXIT0，changes_requested固定3ff9dba39694751a72fd1a67380757041cd7dc08。主体身份、6cases、默认32/候选30、旧表pin边界已独立重算通过；阻断为本Task Canonical Evidence表空行导致10行pin未被guard注册。只修自有表格结构/恢复指针，不改guard或源。
 
 R1精确修正：证据表及原日志Manifest现在连续，实际parser已验证；原9份未变EV内容/commit/SHA保持不动，仅本Task report更正其旧保护快照说明后更新自身新版本pin。旧checkpoint.md原字节不动、保留历史SOURCE_PIN，当前恢复点改为新checkpoint-r2.md。新增R1原文/注册证明/当前checkpoint已登记。未修改原日志/guard/正式表或已关闭Task。
+
+## R2批准
+
+DSH session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d，R1/R2 EXIT0；R2 approved固定54cfbadad00071c70268ca557b1efcecbae87bf8，实际13pins/原日志保留2、默认32身份完整保留、1704旧保护根全部在1718集合内。仅本只读研究和本Task格式/恢复指针修正获批；两后续Task均未释放。

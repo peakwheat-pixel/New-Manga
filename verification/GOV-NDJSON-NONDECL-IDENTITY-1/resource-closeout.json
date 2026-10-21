@@ -1,0 +1,18 @@
+{
+  "task": "GOV-NDJSON-NONDECL-IDENTITY-1",
+  "retained_agent_output": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-NDJSON-NONDECL-IDENTITY-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "source_logs": "both original paths retained, R23 untracked not committed/R24 tracked not modified",
+  "new_worktree_branch_env_build_temp_exchange": "NOT_APPLICABLE",
+  "heads": 98,
+  "worktrees": 136,
+  "deleted": 0,
+  "migrated": 0,
+  "archived": 0,
+  "review_session": "session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d",
+  "review_exits": [
+    0,
+    0
+  ],
+  "release_occupancy_not_claimed": "No removal: no claim unrelated processes/session state released."
+}
