@@ -3,7 +3,7 @@ id: GOV-DECLARATION-RESIDUAL-32-AUDIT-1
 title: 剩余32项声明只读取证与最小裁决矩阵
 kind: research
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: user_authorized_20261021_readonly_32_declarations_independent_dsh_review
 suggested_owner: Codex
 owner: Codex
@@ -79,3 +79,7 @@ Windows PowerShell/Python -B。只读source字节/引用核验、原错误身份
 ## 交付记录
 
 32项/17来源取证完成；六组为6/12/7/2/2/3。原raw SHA/status不变，原32完整错误身份多重集合不变，98heads/136worktrees；声明审计exit2为预期fail-closed，不写成清理PASS。初始观察对象导致4重复错误，已仅修本Task报告引用形式，原来源未变。固定证据 22bd5e07af5710af2359827a45fdf658186f578d；Handoff doc/handoffs/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md。DSH独审期间暂停写入被审文档；Reviewer只读，不申请租约/改ACL/修改任何文件。
+
+## R1独审
+
+DSH session-15d4c9be-21a7-4f1c-afa3-e9cd29af81a1，EXIT0，changes_requested，reviewed_head=f6184f3babf473d639932016fba328224e5d7fe6。P1为R24跟踪属性泛化措辞和NDJSON种类计数措辞；P2为checkpoint登记、初审失败输出证据数量/完整身份列表、共享用户数据源措辞。仅本Task文档修正，不改source/guard/旧pin。Reviewer实际核验来源与多项事实；其审计输出目录WinError5受阻，未当作Reviewer审计PASS。
