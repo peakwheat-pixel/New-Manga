@@ -3,7 +3,7 @@ task_id: GOV-BROAD-ROOT-PRESERVATION-IMPL-1
 author: Codex
 recipient: DeepSeek Harness
 base_commit: f47c68969dac7d3cec0dddbe3fca4ea2fa7803db
-delivery_head: 528940a007ffc53ae7278a3ea007fa80d4a65f6d
+delivery_head: 6e3bac7867c67a2e76e45e2facbbf859d5dba526
 status: in_review
 ---
 
@@ -16,3 +16,5 @@ status: in_review
 main目前仅镜像新增policy与自有evidence/tests以track和check，旧guard正式24，未合并代码；candidate应以canonical repo数据读取R23/P22等未跟踪源，不能把worktree缺证据当真值。root检查器仅canonical，branch自有Task同步不复制租约。100heads/138worktrees全部保留，禁真实cleanup/迁移/归档/GC/prune/push/ACL/Legacy；父blocked/r212有效。
 
 DeepSeek固定head非作者Review通过后Codex正常merge并main复验正式12、原源/保护/EV/check，才done。下一建议（仅拟议，未释放）：Codex另冻剩12项中的历史模板/NUL当前解释的只读身份核验，Reviewer DeepSeek；先保持7历史运行身份BLOCKED，不猜TEMP/APPDATA，不修改旧Review/NUL/JSON/pin。Recovery main集成commit待集成后填写，启动核对最新head，范围限新Task/evidence/Handoff与STATUS/Plan/ledger/parent checkpoint；只读真实相应源与已引用32矩阵，交付精确路径/raw SHA/语义/原字节和保护前后、不实施通用忽略或真实资源处置。验证真实剩12身份、指纹、check/diff、固定head独审；需产品/源归属裁决则保留BLOCKED。可转发：Codex，先核本实现独审集成done，再冻结剩12中模板/NUL五项只读身份研究，Owner Codex/Reviewer DeepSeek，以当前main恢复，仅按上述有界来源取证并保全旧字节，独审后再建议后续；不把研究当作删除或旧证据改写授权。
+
+当前source6e3bac7867c67a2e76e45e2facbbf859d5dba526，R2后两个最小对齐项已完成且127重跑0skip，双15拒绝重跑通过。六处空审查探针全原位保护；原5计数仅历史。日志原CRLF/版本化LF分别标hash。下一Gate仅R3纯只读复审，禁任何fixture/探针写入；Reviewer完整18 NOT_RUN，不影响Owner实测127的独立记录。

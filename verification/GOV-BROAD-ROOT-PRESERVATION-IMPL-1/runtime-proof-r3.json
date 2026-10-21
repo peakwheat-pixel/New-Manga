@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-10-21T15:58:47.198774+00:00",
+  "source_commit": "6e3bac7867c67a2e76e45e2facbbf859d5dba526",
+  "canonical_snapshot_commit": "2dd207b9a37d9c5f21a0ba286ba85e295b6fcb39",
+  "old_counts": {
+    "declarations": 2517,
+    "protected_roots": 1839,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 375,
+      "EVIDENCE_PIN": 1720,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 368,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 256
+  },
+  "new_counts": {
+    "declarations": 2529,
+    "protected_roots": 1844,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 381,
+      "EVIDENCE_PIN": 1720,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 372,
+      "PRESERVE_UNKNOWN": 33,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 268
+  },
+  "removed_exact12_errors": [
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
+    }
+  ],
+  "added_errors": [],
+  "added_protected_roots": [
+    "g:/codex/new manga.workspace",
+    "g:/codex/new manga.workspace/review-scratch",
+    "g:/codex/new manga.workspace/task-envs",
+    "g:/codex/new manga.workspace/temp",
+    "g:/codex/new manga.workspace/worktrees"
+  ],
+  "original_protection_preserved": true,
+  "scanned_old": {
+    "markdown": 2336,
+    "json": 1228,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7607,
+    "untracked_declaration_files": 1512,
+    "declarations": 2517,
+    "errors": 24,
+    "warnings": 256
+  },
+  "scanned_new": {
+    "markdown": 2336,
+    "json": 1228,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7607,
+    "untracked_declaration_files": 1512,
+    "declarations": 2529,
+    "errors": 12,
+    "warnings": 268
+  },
+  "probe_directories": [
+    "G:\\CODEX\\New Manga\\.dsh-mode-29c6eed9",
+    "G:\\CODEX\\New Manga\\dsh-probe-36zy1stn",
+    "G:\\CODEX\\New Manga\\dsh-probe-6lu_0g3w",
+    "G:\\CODEX\\New Manga\\dsh-probe-dagqohp7",
+    "G:\\CODEX\\New Manga\\dsh-probe-npzn41rw",
+    "G:\\CODEX\\New Manga\\dsh-probe-ut0j1y6p"
+  ],
+  "all_six_empty_and_registered": true,
+  "evidence_pin_declarations": 22
+}

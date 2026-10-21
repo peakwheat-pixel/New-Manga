@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-21T13:30:53.061111+00:00",
+  "timestamp": "2026-10-21T13:38:08.391801+00:00",
   "task": "GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
   "kind": "REVIEW_OUT_OF_SCOPE_EMPTY_DIRECTORY_EXCEPTION",
   "directories": [
@@ -57,11 +57,25 @@
       "process_state": "owned review node PID27644 stopped; no descendants remain",
       "recovery": "empty directory retained at original path; no source content moved or lost",
       "inventory_sha256": "b19e91be420881a91da37bec94f9c982102b1e737eca4ac5e6e2644a9ec6865f"
+    },
+    {
+      "original_path": "G:/CODEX/New Manga/.dsh-mode-29c6eed9",
+      "exists": true,
+      "entries": [],
+      "mtime_ns": 1792588769917983400,
+      "origin": "DSH first review session session-0fa5098c-d90a-465f-b919-9eb52e3b8418 public os.mkdir(0o700) mode probe; identified in R2",
+      "state": "PRESERVE_REFERENCED; no removal or migration authorization",
+      "process_state": "original owned reviewer stopped; no writer released",
+      "recovery": "empty directory retained at original path; no source content moved or lost",
+      "inventory_sha256": "a77b0336d3d3166772171e260dce5a7b91663d48b86ea40f431c7873b2a092d9"
     }
   ],
-  "real_deletions": 0,
   "real_moves": 0,
   "source_content_changed": false,
   "cleanup_authorization": "NOT_GRANTED; preserve under r212",
-  "not_a_review_approval": true
+  "not_a_review_approval": true,
+  "retained_directory_count": 6,
+  "initial_five_record": "historical b656c6acb inventory missed the alternate .dsh-mode prefix; corrected after independent R2 observation",
+  "existing_user_or_project_resources_deleted": 0,
+  "review_probe_self_cleanup_note": "R1 modes default/0777 probe write/self-clean reported success; mode0700 self-clean failed; no pre-existing assets targeted; out-of-TMP probing was disallowed and interrupted"
 }

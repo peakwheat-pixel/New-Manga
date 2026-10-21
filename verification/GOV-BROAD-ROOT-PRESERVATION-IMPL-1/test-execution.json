@@ -1,35 +1,71 @@
 {
-  "source_commit": "528940a007ffc53ae7278a3ea007fa80d4a65f6d",
+  "source_commit": "6e3bac7867c67a2e76e45e2facbbf859d5dba526",
   "total_tests": 127,
   "suites": [
     {
-      "suite": "new-tests-r3",
-      "command": "python -B -m unittest discover -s verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/tests -p test_*.py -v",
+      "suite": "new-tests-r4",
       "count": 18,
-      "exit": 0,
       "skips": 0,
-      "log_sha256": "b95ebd0f86fd1793b9918a585af45151a287f2805874f257329066865dbd11ce"
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
+      "exit": 0,
+      "seconds": 14.032667398452759,
+      "raw_agent_output_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\new-tests-r4.log",
+      "raw_agent_output_sha256": "21088ea62844632fb4ba0ceac3adf523169cfe41da59ad2c36fa33bd4c75bed4",
+      "canonical_log_path": "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/new-tests-r4.log",
+      "canonical_log_sha256": "61f2f28746e75a35e1a37fd3edcab2a55f6b3e0bb14542194f86764562446b90"
     },
     {
-      "suite": "declaration-tests-r2",
-      "command": "python -B -m unittest test_declaration_remediation -v",
+      "suite": "declaration-tests-r3",
       "count": 29,
-      "exit": 0,
       "skips": 0,
-      "log_sha256": "7082e2f546ed313c44e45a48d53ed68eee84abb612c5fa657c29c1b8a349e247"
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "test_declaration_remediation",
+        "-v"
+      ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
+      "exit": 0,
+      "seconds": 13.525702953338623,
+      "raw_agent_output_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\declaration-tests-r3.log",
+      "raw_agent_output_sha256": "b56f591a4e1eea5a1175005b39f287b6e4193cf395b1df57b23d7bfea48b5942",
+      "canonical_log_path": "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/declaration-tests-r3.log",
+      "canonical_log_sha256": "9b68345555a3610678b65d810ad08b93086d64274ab7acc698a4c5b7469f3a38"
     },
     {
-      "suite": "hardening-tests-r2",
-      "command": "python -B run_suite.py",
+      "suite": "hardening-tests-r3",
       "count": 80,
-      "exit": 0,
       "skips": 0,
-      "log_sha256": "13880f31e80602c881774329df6231ac4e3b120883f5873cb64065f01a0cfe5f"
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "run_suite.py"
+      ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
+      "exit": 0,
+      "seconds": 37.98633432388306,
+      "raw_agent_output_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\hardening-tests-r3.log",
+      "raw_agent_output_sha256": "00c0dd0e82fdd72e45327b7da4dc9f85d14da71c9d815a22515bcf0d939c6f0c",
+      "canonical_log_path": "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/hardening-tests-r3.log",
+      "canonical_log_sha256": "7f09997aa72ae7c63a85b755567b2405ecdf44bd367e11a5b0df2b5202895873"
     }
   ],
-  "initial_attempt": "new-tests.log failed only T16 assumptions: default consolidate mainline and report filename; corrected in new test; original log retained in agent-output",
-  "final_code_additions": "absolute dot-dot rejected; final real-target drift rejects; all 127 rerun after these code changes",
-  "synthetic_fixture_scope": "only Task test-temp roots; test-owned create/cleanup; no actual project cleanup",
+  "hash_basis": "Raw agent-output logs preserve CRLF; canonical evidence logs normalize CRLF to LF. Both hashes and paths are explicit.",
+  "independent_review": "R2 approved prior head71dc9bd59; R3 required for side-effect-free identity and warning refinements. Reviewer full fixture rerun NOT_RUN due sandbox; R2 read-only positive and14memory-negative checks executed.",
   "product_build": "NOT_RUN",
-  "independent_review": "PENDING"
+  "real_resource_cleanup": "NOT_RUN; prohibited"
 }
