@@ -71,7 +71,7 @@ created: 2026-10-21
 |EV-9|AC4|verification/GOV-PATH-HEADER-COMPAT-1/replay-worktrees-executed.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|54155be6a1a23a8b6a7e92b5d2b1c277ae022ed6e52b4ae067ca600511b29b3e|SOURCE_PIN|
 |EV-10|AC4|verification/GOV-PATH-HEADER-COMPAT-1/replay-clean.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|aece49f317b301935566f8f3ee3e6426d0c708adfe6052e81cf69743a614b8dd|SOURCE_PIN|
 |EV-11|AC1/AC2/AC3/AC4|verification/GOV-PATH-HEADER-COMPAT-1/report.md|9f59537f989299c4ee6f41993134aa69d6cfbc12|5521c7826f770070ffa24d80c3e5dcd4cb55a1bb09fcf29c29a18d6f263b512d|CANONICAL|
-|EV-12|AC5|verification/GOV-PATH-HEADER-COMPAT-1/.gitattributes|9f59537f989299c4ee6f41993134aa69d6cfbc12|a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9|SOURCE_PIN|
+|EV-12|AC5|verification/GOV-PATH-HEADER-COMPAT-1/.gitattributes|9ea78f1aac5c4f9838745d4ef8e3b0aa988fbc26|a00748782874dff77c1533a093b13c8cdeb02afb5d9280446b2fd22548185a28|SOURCE_PIN|
 
 ## Resource Manifest
 
@@ -88,3 +88,5 @@ created: 2026-10-21
 ## 交付记录
 
 固定实现与证据 9f59537f989299c4ee6f41993134aa69d6cfbc12；5新增+29声明+80安全测试通过、0skip；baseline判别预期exit1；双incident replay各15/15拒绝、0删除；同快照77→32，1280旧根全部保留并新增410。源helper/code未在main实施。工作树已创建且按清理禁令保留；临时测试自有夹具由test cleanup回收，剩余temp根保留。Handoff在Review/集成后追加。
+
+原始判别失败日志含unittest固有尾随空格；仅对该日志设置局部-whitespace，保留原始输出，不更改源码或其它文件的检查规则。工作树Owner更新Task副本；canonical治理由main现有epoch9 gate串行同步，不复制/分叉runtime租约。
