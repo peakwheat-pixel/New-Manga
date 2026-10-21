@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[WORKSPACE-CLEANUP-TOOL-HARDENING-1](tasks/WORKSPACE-CLEANUP-TOOL-HARDENING-1.md)**（`in_review`，已集成 `368c07809`；Codex R4 approved；待签名/发布裁定后收口）。已 done：[P09-MANAGED-READ-ROOT-TRUST-1](tasks/P09-MANAGED-READ-ROOT-TRUST-1.md)（`155f7d3f2`，R2 approved_with_conditions）。
+- 当前 Task：**[WORKSPACE-CLEANUP-TOOL-HARDENING-1](tasks/WORKSPACE-CLEANUP-TOOL-HARDENING-1.md)**（`in_review`，集成 `368c07809`，R4 approved，待签名/收口）；P09 已 done（`155f7d3f2`）。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
-- **v1 收口（2026-10-21，HEAD `239b165c2`）**：修复 recycle-bin 生产 ACL 缺口；sidecar、Rust source 150/0/1、packaged 12/0、前端 327、pytest 106、NSIS 重建均 exit 0；见 `verification/V1-FINALIZE-20261021/`；Codex 复核 **approved**（最终收口 head `48cf5085a`）；Windows Sandbox 全新机器安装/卸载 **PASS**（`clean-install-sandbox/`）；签名流水线已用自签名测试证书在副本验证（`release-readiness.md`），真实签名待证书。
+- **v1 收口（2026-10-21，HEAD `239b165c2`）**：recycle-bin ACL 已修；source 150/0/1、packaged 12/0、前端 327、pytest 106、NSIS 重建 exit 0；Sandbox 安装/卸载 PASS；签名待证书（`release-readiness.md`）。
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`，6/8 消费者已处置；**ZCode 设计 Gate 与第二环境无活动 Task**）。
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。
