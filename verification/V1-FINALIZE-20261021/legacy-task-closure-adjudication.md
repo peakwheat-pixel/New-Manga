@@ -59,3 +59,13 @@ AD-001 规定：PySide6/QML 旧栈仅保留为历史证据，不再释放 Legacy
 1. 每个 Task 改动可用 `git diff` 逐项复核：仅 frontmatter `status`/终态字段 + 文末说明。
 2. `doc/TASK_LEDGER.md` 由 `tools/governance/task_ledger.py --write` 重生成；治理检查须 PASS。
 3. 任何被关闭 Task 的原始正文、证据路径、历史 Review 与 pin 均未删除或改写。
+
+
+## 9. r1 修正（2026-10-21，dsh）
+
+- **P15-CORE-1**：原写 `cancelled`/"未交付"不准确。其范围已拆分为 `P15-CORE-1A/1B/1C`（均 `done`，commit `9232802c0`/`6cf3c8209`/`52b0974ad`），Core 命令已实现并接线；Task 已改为 `superseded`，并指向真实 `verification/P15-CORE-1/resource-manifest.json`。
+- **P19-AC3-1**：限制说明精确到 successor —— 仅 AC2 由 `SEC-FIX-PATH-ECHO-1`（`done`）修复；AC1/AC4 未修复、无专项承接 Task。
+- **P19-UI-FIX-3**：补充 `FEAT-CREATE-4` AC6 真实 GUI/UIA 证据覆盖其 AC1–AC5 目标；本 Task 自身未执行。
+- **GOV-DEBT-CLEANUP-1**：明确 AC1 完成、AC2/AC3/AC4/AC6 未全部完成；`superseded` 仅表示不再作为 v1 门禁，不表示完成。
+- **RUST-ENV-BASELINE-1**：AC4 分类修正为 12+7+2+1=22；证据 EOL 统一为 LF 并重算 pin（旧 CRLF hash 见 rework 对照）。
+- 上文原始裁定文本保留，不回写。

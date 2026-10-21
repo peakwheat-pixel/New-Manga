@@ -3,7 +3,7 @@ id: P15-CORE-1
 title: 设置面 G21/G22/G23 专用命令的 Core 侧实现（Python Core 2.6；配对 P15-C1 契约）
 kind: feature
 governance_version: 2
-status: cancelled
+status: superseded
 approval: coordinator_ruling_20261017_scope_split_after_owner_escalation
 suggested_owner: Codex
 owner: null
@@ -89,7 +89,7 @@ evidence_dir: verification/P15-CORE-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | doc/tasks/P15-CORE-1.md | 未交付的隔离 worktree；保留原位、未清理；本 Task 未产生实现或产品数据 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | verification/P15-CORE-1/resource-manifest.json | 未交付的隔离 worktree；保留原位、未清理；本 Task 未产生实现或产品数据 |
 
 ## Closeout Record
 
@@ -114,7 +114,10 @@ evidence_dir: verification/P15-CORE-1
 
 Owner 成果：基线 `407 passed`（与我独立实测一致）已归档于其 worktree；**无实现提交**（HEAD 未移动），未改契约/apps/Schema/依赖。
 
-## 历史收口（2026-10-21，dsh）
+## 历史收口（2026-10-21，dsh；r1 修正）
 
-- 收口状态：`cancelled`。G21/G22/G23 专用 Core 命令不在 v1 发布范围内；P15 已 `closed_with_limitations`，v1 设置面使用既有命令。未交付/未集成，不声称 AC 完成。
+- 收口状态：`superseded`（**不声称本 Task 完成**）。本 Task 因契约 `TestNetworkProfile` 语义阻塞，经 Coordinator 拆分为
+  `P15-CORE-1A`（G21 Provider + G24 覆盖解析，`done`，commit `9232802c0`）、`P15-CORE-1B`（G22 凭据 + G23 Network CRUD/默认/解析，`done`，commit `6cf3c8209`）、
+  `P15-CORE-1C`（六阶段连接测试，`done`，commit `52b0974ad`）。Core 命令已由该三个子 Task 实现并接线；本 Task 自身无独立交付与 Handoff，故为 superseded，而非"能力不存在"。
+- 原始阻塞记录保留在上文（契约 §5.2 无探测目标 → 假阳性风险；Owner 失败关闭正确）；本次仅改状态、manifest 证据指向真实文件并追加本说明，不删除历史记录。
 - 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；worktree 保留原位，未删除或移动。

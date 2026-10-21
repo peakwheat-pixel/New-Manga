@@ -53,7 +53,8 @@ evidence_dir: verification/P19-UI-FIX-3
 |---|---|---|---|---|---|
 | NOT_APPLICABLE | - | NOT_APPLICABLE | - | - | 本 Task 无持久资源；只读扫描/证据不改变工作区，终态收口不涉及迁移或删除 |
 
-## 历史收口（2026-10-21，dsh）
+## 历史收口（2026-10-21，dsh；r1 修正）
 
-- 收口状态：`superseded`。空书架新建作品/章节的能力已由 `FEAT-CREATE-1`–`FEAT-CREATE-4`（均 `done`）交付：前端 `BookshelfPage` 通过 `library_create_book` 创建并有 Vitest 覆盖；本 Task 未执行，不声称其 AC 完成。
-- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；原阻塞（需要新 wire）已由 FEAT-CREATE 链的冻结契约解决。
+- 收口状态：`superseded`。`FEAT-CREATE-1`–`FEAT-CREATE-4`（均 `done`）交付了创建能力：契约、Core、host 注册、前端表单接线；其中 `FEAT-CREATE-4` 的 AC6 含真实 GUI/UIA 复验（空书架可新建 → 建章节 → 导入入口转可用），覆盖本 Task 的 AC1–AC5 目标。
+- **本 Task 自身未执行、无独立交付**，故不声称其 AC 由本 Task 完成；原始阻塞记录（契约未冻结 → 用户裁决 A1 立项 FEAT-CREATE-1..4）保留在上文。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；仅改状态与说明，不删除历史记录。

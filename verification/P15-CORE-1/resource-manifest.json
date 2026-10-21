@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task_id": "P15-CORE-1",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "disposition": "PRESERVE_UNKNOWN",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "note": "未交付的隔离 worktree；保留原位、未清理；本 Task 未产生实现或产品数据"
+    }
+  ]
+}

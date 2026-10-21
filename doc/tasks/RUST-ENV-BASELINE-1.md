@@ -65,18 +65,19 @@ Reviewer 定性：**环境 / 测试运行配置漂移**，且暴露**集成测�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-V1-RUST-SOURCE | RUST-ENV AC3 | `verification/V1-FINALIZE-20261021/cargo-source-fixed.log` | - | 8f2f94684291117b5eb5e04479175aa19e5758e5d2cf7253e99975e55366994e | CANONICAL |
-| EV-V1-RUST-PACKAGED | RUST-ENV AC3 | `verification/V1-FINALIZE-20261021/cargo-packaged-fixed.log` | - | c83ee5828c31d9220bf4211618dc232fbe30d17b7f1f311c710ea420cf5a26c3 | CANONICAL |
-| EV-V1-FRONTEND | RUST-ENV 回归 | `verification/V1-FINALIZE-20261021/vitest.log` | - | de1bb344dd99678056b344e145783b41ac4f77a58f6135ef328592a0822372a7 | CANONICAL |
-| EV-V1-PYTEST | RUST-ENV 回归 | `verification/V1-FINALIZE-20261021/pytest-m2.log` | - | a3a074188908f523411bb54c127fb9ddb4f746c11852a75b0d0c1a33e973b657 | CANONICAL |
-| EV-V1-INSTALLER | v1 安装包 | `verification/V1-FINALIZE-20261021/tauri-build-installer.log` | - | 7fa190f4c05ed2bf439def9e3b870a0367149a52433e8a8936344d23d504b007 | CANONICAL |
+| EV-V1-RUST-SOURCE | RUST-ENV AC3 | `verification/V1-FINALIZE-20261021/cargo-source-fixed.log` | - | bc0d3b4bdf9f84609d5653ffddce78bb6bd8f9f266fd23f398f2e871e3302b42 | CANONICAL |
+| EV-V1-RUST-PACKAGED | RUST-ENV AC3 | `verification/V1-FINALIZE-20261021/cargo-packaged-fixed.log` | - | 90f0d62738bebbc59196fbe230f8b978e2c541181def5bf30862f0360b755ddd | CANONICAL |
+| EV-V1-FRONTEND | RUST-ENV 回归 | `verification/V1-FINALIZE-20261021/vitest.log` | - | 374378e58d19a47730b43d73c7363d2b4bd94159f6088d3d3c92a9adc4494652 | CANONICAL |
+| EV-V1-PYTEST | RUST-ENV 回归 | `verification/V1-FINALIZE-20261021/pytest-m2.log` | - | 86e84af0a51cc53553e05fae33a80e8839a72e7833b69a1778c3df13340f4af4 | CANONICAL |
+| EV-V1-INSTALLER | v1 安装包 | `verification/V1-FINALIZE-20261021/tauri-build-installer.log` | - | b042fa7ce560dc353ce5218ec101e910a8b69bf8a99a94d6a069d417b69c0cd4 | CANONICAL |
 | EV-V1-DOC | v1 总证据 | `verification/V1-FINALIZE-20261021/v1-verification-20261021.md` | - | 5b39fde0921a11a9dd7b1b31015fa7c250d3ab0a5078b29113d168651fc64e0e | CANONICAL |
-| EV-V1-SIDECAR | v1 构建 | `verification/V1-FINALIZE-20261021/sidecar-build.log` | - | c9e29c32f856083c2e8833dcd7847ea157dfaa3b916bf19e94d31468452140a3 | SOURCE_PIN |
-| EV-V1-FRONTEND-BUILD | v1 构建 | `verification/V1-FINALIZE-20261021/frontend-build.log` | - | 8039ccb0ce829811075d16940d0c36bd1e75d97205c3821eca32ebc70ba7f1c6 | SOURCE_PIN |
-| EV-V1-NPM-CI | v1 环境 | `verification/V1-FINALIZE-20261021/npm-ci.log` | - | a36e1aad0294731fdcb15139368c3d680ee4398c9484ca917fcc43c17b8d9785 | SOURCE_PIN |
-| EV-V1-PRE-FIX-SOURCE | v1 修复前对照 | `verification/V1-FINALIZE-20261021/cargo-test-full.log` | - | 55d01b23ef6c04320651cc656d7c46569ccf04f725baa7200d5011a2a09e170e | SOURCE_PIN |
-| EV-V1-FIRST-RUN | v1 首次运行 | `verification/V1-FINALIZE-20261021/cargo-test.log` | - | 1e0a05b92a88741775a89c8bba0b9fb46cdf8532bb9f214b221ac223da59ca71 | SOURCE_PIN |
-| EV-V2-ADJUDICATION | 收口裁定 | `verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md` | - | 798e25a2c3d6adee17edf463eebc5bce3dc1dc1a69516df58cae20eef5a89370 | SOURCE_PIN |
+| EV-V1-GITATTR | 证据 EOL pin | `verification/V1-FINALIZE-20261021/.gitattributes` | - | abf835c828cacebff6df5c223e8db57b972a3404aba941ef18718286f5d29383 | SOURCE_PIN |
+| EV-V1-SIDECAR | v1 构建 | `verification/V1-FINALIZE-20261021/sidecar-build.log` | - | a2a50b3c88a7605a52947756024ec805ace36adbf6ac4fbd11f1cac144d2f276 | SOURCE_PIN |
+| EV-V1-FRONTEND-BUILD | v1 构建 | `verification/V1-FINALIZE-20261021/frontend-build.log` | - | 29868ad9b003e04e619571546598c195ffba187015410645c677d01ba92a955c | SOURCE_PIN |
+| EV-V1-NPM-CI | v1 环境 | `verification/V1-FINALIZE-20261021/npm-ci.log` | - | 0ed44d6c754e05d9f46bfe41ca8fb9b3e565692373c495ce4a219a3cca92e060 | SOURCE_PIN |
+| EV-V1-PRE-FIX-SOURCE | v1 修复前对照 | `verification/V1-FINALIZE-20261021/cargo-test-full.log` | - | 0803303ba0a0e671cb523e1d5306c78049946044e521bf4c1dbba2bcfb70e778 | SOURCE_PIN |
+| EV-V1-FIRST-RUN | v1 首次运行 | `verification/V1-FINALIZE-20261021/cargo-test.log` | - | c588edf7036e543c2c1311e60a039029ada7609cc969a8042d0b1fa912255cf5 | SOURCE_PIN |
+| EV-V2-ADJUDICATION | 收口裁定 | `verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md` | - | 089b25505a81a7fbb69f01f89a00a593d04962b0c5750cff58a0e903353f9212 | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -86,5 +87,6 @@ Reviewer 定性：**环境 / 测试运行配置漂移**，且暴露**集成测�
 
 ## 历史收口（2026-10-21，dsh）
 
-- 收口状态：`closed_with_limitations`。AC1：已固定/记录 `M2RC1_PYTHON=C:\Python314\python.exe` 运行口径，但未给集成测试加缺配置自检（限制）。AC2：基线 `8bf3ae30` 未重跑（历史基线不重写，限制）。AC3：当前 HEAD 修复后 source `150 passed / 0 failed / 1 ignored`、packaged `12 passed / 0 failed`，均 exit 0。AC4：修复前 22 项失败已逐类定性 = 13 项 packaged 环境门卫（错误运行口径）+ 7 项 recycle-bin ACL/计数漂移 + 3 项并行 registry 污染；其中 ACL 漂移是真实产品缺陷，已修复。AC5：真实缺陷只有 recycle-bin ACL 一项，已修；其余为环境/测试隔离。AC6：1 ignored 性能测量保持原状；AC7：本文与 `v1-verification-20261021.md` 如实记录，不冒充全绿。
+- 收口状态：`closed_with_limitations`。AC1：已固定/记录 `M2RC1_PYTHON=C:\Python314\python.exe` 运行口径，但未给集成测试加缺配置自检（限制）。AC2：基线 `8bf3ae30` 未重跑（历史基线不重写，限制）。AC3：当前 HEAD 修复后 source `150 passed / 0 failed / 1 ignored`、packaged `12 passed / 0 failed`，均 exit 0。AC4：修复前 22 项失败已逐类定性 = 12 项 `packaged_sidecar_tests` 环境门卫（未设置 `M2RC1_PACKAGED=1`）+ 7 项 recycle-bin ACL/计数漂移 + 2 项 worker-registry 并行污染 + 1 项 `M2RC1_PYTHON` 未设置；其中 ACL 漂移是真实产品缺陷，已由 239b165c2 修复，其余为运行口径/测试隔离。AC4 未逐条复跑，按原始日志与修复后套件对照定性。AC5：真实缺陷只有 recycle-bin ACL 一项，已修；其余为环境/测试隔离。AC6：1 ignored 性能测量保持原状；AC7：本文与 `v1-verification-20261021.md` 如实记录，不冒充全绿。
+- **EOL/pin 修正（2026-10-21 r1）**：`verification/V1-FINALIZE-20261021/.gitattributes` 增加 `* text eol=lf`；证据文件按 Git blob 的 LF 字节重写到工作区（文本内容不变），本 Task 证据行 SHA-256 改为 **LF 字节** 值；旧 CRLF 工作区 hash 与修正对照见 `verification/V1-FINALIZE-20261021-rework-r1.md`。该修正使证据在任意 `core.autocrlf` 的检出中可复现。
 - 依据：`verification/V1-FINALIZE-20261021/v1-verification-20261021.md`；不修改产品逻辑，不重写历史 pin。

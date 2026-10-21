@@ -126,7 +126,8 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 
 **分类清单**：`verification/GOV-DEBT-CLEANUP-1/untracked-evidence-triage.md`（逐文件）+ `failed-task-rootcause.md`（41→44 项根因）。
 
-## 历史收口（2026-10-21，dsh）
+## 历史收口（2026-10-21，dsh；r1 修正）
 
-- 收口状态：`superseded`。范围已由 `GOV-DEBT-CLEANUP-2`、`GOV-UNTRACKED-BACKLOG-1`、`GOV-PIN-LINEAGE-1`（均已终态）部分承接；剩余历史 pin/未入库证据不再阻塞 v1。
-- 本 Task 从未实施，未交付/未集成；不声称 AC 完成。依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`。
+- 收口状态：`superseded`。**AC1 完成**（逐项分类清单）；**AC2/AC3/AC4/AC6 未全部完成**，AC5（用户数据与未提交内容零触碰）保持；本 Task 不声称 AC 全完成。
+- 承接关系：`GOV-DEBT-CLEANUP-2`（`closed_with_limitations`，AC7 仅完成 61 项候选分类）、`GOV-UNTRACKED-BACKLOG-1`（`done`）、`GOV-PIN-LINEAGE-1`（`closed_with_limitations`，r28 裁定停止改造）、`GOV-EVIDENCE-DIR-SWEEP-1`（`done`）等仅**部分承接**；剩余历史 pin/未入库证据保留为历史记录，不再作为 v1 门禁。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；仅改状态与说明，不删除原记录。

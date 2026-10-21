@@ -21,9 +21,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---:|---|
 | `done` | 251 | yes |
 | `closed_with_limitations` | 34 | yes |
-| `cancelled` | 19 | yes |
+| `cancelled` | 18 | yes |
 | `blocked` | 7 | no |
-| `superseded` | 5 | yes |
+| `superseded` | 6 | yes |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
 | `proposed` | 2 | no |

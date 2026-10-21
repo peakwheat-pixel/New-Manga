@@ -11,7 +11,7 @@
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。
 - **[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)**：`superseded`；**[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md)**：`closed_with_limitations`（v1 证据）。
-- **Task 全量对账（2026-10-21 实算，可复算）**：`doc/tasks/` 共 **322** 个文件；终态 **309**（`done` 251 + `closed_with_limitations` 34 + `cancelled` 19 + `superseded` 5）；**非终态 13**（`blocked` 7、`in_progress` 2、`in_review` 2、`proposed` 2；其中 11 个是未跟踪历史草稿，按原样保留、不并入提交）。
+- **Task 全量对账（2026-10-21 实算，可复算）**：`doc/tasks/` 共 **322** 个文件；终态 **309**（`done` 251 + `closed_with_limitations` 34 + `cancelled` 18 + `superseded` 6）；**非终态 13**（`blocked` 7、`in_progress` 2、`in_review` 2、`proposed` 2；其中 11 个是未跟踪历史草稿，按原样保留、不并入提交）。
 - **r38 裁定**：状态字段只说明生命周期记录，**不能单独证明 Task 仍活跃或已僵死**；不批量改状态；台账由 `tools/governance/task_ledger.py --write` 生成（已建）。
 - DIR-4：同一失败上限 2 次；DIR-5：goal 轮次上限 1000。Coordinator=dsh，epoch=8，lease=39640ba370ec4a7cade35c1abd67f234（LEASE_VALID）。
 
