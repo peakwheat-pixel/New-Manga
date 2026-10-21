@@ -2,7 +2,7 @@
 id: P09-MANAGED-READ-ROOT-TRUST-1
 title: 托管文件读取/导出路径的 root 可信性（R5b P2 转交）
 kind: security-hardening
-status: in_review
+status: done
 approval: user_released_20261021
 suggested_owner: DeepSeek Harness
 owner: p09-root-trust
@@ -11,12 +11,12 @@ depends_on: [P09-AC3-DELETE-HARDEN-1]
 base_commit: b8a1e519703f13af73b320dded117004b4bb189a
 branch: dsh/P09-MANAGED-READ-ROOT-TRUST-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1
-integration_commit: null
+integration_commit: 155f7d3f29ae2c81ba40efa06a87ed32ba984eae
 delivery_head: 2a0ff8819dceff0849a2ea783ba202769e18078b
 previous_delivery_head: 56aee75ae8fa88913655f27c019345224414096d
 review_round: 2  # 第 1 轮 Codex changes_requested（R-001/R-002/R-003 + 建议 R-004/R-005）已返修
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P09-MANAGED-READ-ROOT-TRUST-1
 allowed_paths:
   - src/bootstrap/core_service.py
@@ -218,12 +218,13 @@ Task 表行号来自 R5b 审计时（`34fe1069f`）；base `b8a1e51` 实际行�
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写（本 Task 只到 `in_review`，不关闭）。
-- canonical_evidence_status：`pending`（等待 Codex 第二轮 Review/收口确认）。
-- resource_closeout_status：`pending`。
+- Closeout date / Codex：2026-10-21；Codex R2 `approved_with_conditions`（唯一条件为归档使用实际 HEAD，已满足）；合并提交 `155f7d3f29ae2c81ba40efa06a87ed32ba984eae`（integration_commit）。
+- canonical_evidence_status：`complete`（EV-01..EV-18、SP-01/02 已核）。
+- resource_closeout_status：`complete`（worktree PRESERVE_REFERENCED；scratch NOT_APPLICABLE）。
 - 删除、迁移、归档数量/字节数：0（本 Task 不执行清理）。
 - 未关闭项及保留原因：残余风险四项见设计文档第六节；Rust/前端/packaging 未运行（不在 AC 范围）。
-- 当前指针清理：不适用（Owner 不改 STATUS/Plan 指针）。
+- 当前指针清理：不适用（Owner 不改 STATUS/Plan 指针）；STATUS 已由 Lead 切到 WORKSPACE。
+- Review 归档：`doc/reviews/P09-MANAGED-READ-ROOT-TRUST-1-cb767e1b7-codex-r1.md`、`doc/reviews/P09-MANAGED-READ-ROOT-TRUST-1-9f5560bc1-codex-r2.md`。
 
 ## 释放记录（2026-10-21，用户授权）
 

@@ -7,26 +7,26 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 322 |
-| terminal | 309 |
-| non-terminal | 13 |
+| terminal | 310 |
+| non-terminal | 12 |
 | non-terminal named in the plan | 2 |
-| non-terminal outside the plan | 11 |
+| non-terminal outside the plan | 10 |
 | task files tracked by git | 296 |
 | task files untracked (drafts) | 26 |
-| non-terminal tracked by git | 2 |
+| non-terminal tracked by git | 1 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 251 | yes |
+| `done` | 252 | yes |
 | `closed_with_limitations` | 34 | yes |
 | `cancelled` | 18 | yes |
 | `blocked` | 7 | no |
 | `superseded` | 6 | yes |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
-| `proposed` | 2 | no |
+| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -43,8 +43,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P02PRE-R1H-R6-EXEC-A6` | `in_progress` | no |
 | `P02PRE-R1H-R6-ZCODE-H1` | `in_review` | no |
 | `P22` | `in_review` | own row |
-| `P09-MANAGED-READ-ROOT-TRUST-1` | `proposed` | no |
-| `WORKSPACE-CLEANUP-TOOL-HARDENING-1` | `proposed` | mentioned |
+| `WORKSPACE-CLEANUP-TOOL-HARDENING-1` | `ready` | own row |
 
 ## What this ledger does not say
 

@@ -51,8 +51,8 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|closed_with_limitations（v1 证据：source 150/0/1、packaged 12/0；AC2 基线未重跑）|
 |P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
-|P09-MANAGED-READ-ROOT-TRUST-1|P09-AC3-DELETE-HARDEN-1|ready（2026-10-21 用户释放；先交“期望身份”设计答案）|
+|P09-MANAGED-READ-ROOT-TRUST-1|P09-AC3-DELETE-HARDEN-1|done（merge `155f7d3f2`；Codex R2 approved_with_conditions，归档条件已满足）|
 |WORKSPACE-CLEANUP-TOOL-HARDENING-1|WORKSPACE-CONSOLIDATION-1|ready（2026-10-21 用户释放；allowed_paths 冻结；交付后 Codex 复核）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
 |WORKSPACE-CONSOLIDATION-1|—|**closed_with_limitations（r212 批准）**：18 个受保护资源 limitation（L1–L8 + p03-temp-scratch）；132 worktree、93 分支（19 未合并均已归档）；77 refs，1,225 合计/322 去重；49.48 GiB 逻辑字节、非物理净释放；AC1/AC2/AC3/AC6/AC7/AC9 PARTIAL；工具根因另立 WORKSPACE-CLEANUP-TOOL-HARDENING-1（proposed）|
-READY 节点：**P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1**。done：**51 项**。
+READY 节点：**WORKSPACE-CLEANUP-TOOL-HARDENING-1**。done：**52 项**。
