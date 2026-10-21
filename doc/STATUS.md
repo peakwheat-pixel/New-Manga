@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；正式24错误及清理禁令有效）。
-- 最近完成：GOV-NDJSON-EXCEPTION-CONFIG-1 `done`，独审85a393dc4、集成9d21f8fb8。
+- 当前 Task：**[GOV-RESIDUAL-24-DECISION-1](tasks/GOV-RESIDUAL-24-DECISION-1.md)**（`ready`；24错误最小裁决，只读、DeepSeek独审）。
+- 最近完成：GOV-NONRESOURCE-MANIFEST-FORMAT-1 `done`，独审2573375dc，30→24。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式24错误/原保护/STATUS-r212禁令有效。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
@@ -27,4 +27,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[当前 checkpoint](../verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
+- 恢复点：[当前 checkpoint](../verification/GOV-RESIDUAL-24-DECISION-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
