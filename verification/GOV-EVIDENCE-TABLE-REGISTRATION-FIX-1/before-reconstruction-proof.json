@@ -1,0 +1,54 @@
+{
+  "reviewed_head": "fa18dc2c6f4ae381563d507064020e248ea56052",
+  "base": "f72dd96ee51f21cc24472b05cceaf488060b679a",
+  "invalid_reconstruction": {
+    "method": "keep head file enumeration but return empty bytes for head-added files",
+    "error_count": 34,
+    "extra_error_identities": [
+      [
+        "JSON_PARSE",
+        "verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/registration-proof.json",
+        null,
+        "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1\\registration-proof.json is not valid JSON: Expecting value: line 1 column 1 (char 0)"
+      ],
+      [
+        "JSON_PARSE",
+        "verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/scope.json",
+        null,
+        "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1\\scope.json is not valid JSON: Expecting value: line 1 column 1 (char 0)"
+      ]
+    ]
+  },
+  "correct_reconstruction": {
+    "method": "exclude head-added files from git ls-files enumeration, substitute existing changed files with base raw bytes; current untracked snapshot held fixed",
+    "error_count": 32,
+    "protected_roots": 1722,
+    "full_32_error_multiset_equals_head": true
+  },
+  "head": {
+    "errors": 32,
+    "protected_roots": 1758
+  },
+  "base_protection_subset_of_head": true,
+  "base_per_target": [
+    {
+      "file": "doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md",
+      "base_raw_sha256": "2392fe124fac0481b8da489aa759f4385bc2f50d02626d81949afee22197506d",
+      "base_actual_evidence_pin_count": 9,
+      "base_parser_errors": []
+    },
+    {
+      "file": "doc/tasks/GOV-PATH-HEADER-COMPAT-1.md",
+      "base_raw_sha256": "070c4cf9a92fa687e574d811aa868cb72f0695a9cf80294f57abc96ff42d9a9c",
+      "base_actual_evidence_pin_count": 12,
+      "base_parser_errors": []
+    },
+    {
+      "file": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
+      "base_raw_sha256": "ef4f6df33b10038da6949b530dff1f49f905cb1cdf9ad0be9b5e11c6959fa14f",
+      "base_actual_evidence_pin_count": 0,
+      "base_parser_errors": []
+    }
+  ],
+  "untracked_scope_limit": "Git commit cannot prove all unrelated untracked content unchanged; comparison holds current untracked snapshot fixed. No cleanup or extra source writes performed."
+}

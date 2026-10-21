@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 title: 三个治理Task证据表连续性与实际保护注册修正
 kind: governance
 governance_version: 3
-status: changes_requested
+status: in_progress
 approval: user_auto_advance_20261021_scoped_mechanical_metadata_fix
 suggested_owner: Codex
 owner: Codex
@@ -66,3 +66,5 @@ allowed_paths:
 | worktree/env/build/temp/exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 不新建，98/136保持 |
 
 R1独审changes_requested（fa18dc2c6）：实现/51pin/实际注册/旧保护子集均通过；需解释before重建34而实测32的差异。暂停集成后续配置，独立定位两额外错误。
+
+定位结果：R1的两条额外JSON_PARSE来自将base不存在的本Task scope.json/registration-proof.json保留在HEAD枚举并返回空字节。不存在文件不等于空JSON。正确重建将HEAD新增文件从Git枚举中排除，再对原有变更文件回填base字节，固定当前未跟踪快照，结果base32/head32完全同身份，base1722为head1758子集；三个base文件分别注册9/12/0且0error。详before-reconstruction-proof.json，原实现/51pin/registration-proof不改。关于用户/未跟踪内容，只声明本Task未执行越界写入；未做全体逐字节基线，不能由Git证明全体未变。
