@@ -1,0 +1,34 @@
+{
+  "snapshot_commit": "d1ad7e525399d9fe50a05b9ddc0c74db067ce808",
+  "timestamp": "2026-10-21T12:04:46.596487+00:00",
+  "reviewed_head": "d1ad7e525399d9fe50a05b9ddc0c74db067ce808",
+  "delivery_head": "9915cb69a",
+  "counts_snapshot": {
+    "declarations": 2463,
+    "protected_roots": 1794,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 366,
+      "EVIDENCE_PIN": 1684,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 359,
+      "PRESERVE_UNKNOWN": 31,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 24,
+    "warnings": 252
+  },
+  "complete_error_identity_including_locator_equal": true,
+  "source9_raw_and_status_unchanged": true,
+  "original19_branch_tips_unchanged": true,
+  "actual_registered_original_ev": 4,
+  "original_ev_raw_blob_table_equal": true,
+  "branches": 99,
+  "worktrees": 137,
+  "resource_operations": 0,
+  "parent": "blocked",
+  "status_r212_ban": "IN_FORCE",
+  "review_session": "session-5102f87a-ff32-417f-a755-d8c05f0e23c4",
+  "web_visibility": "unverified",
+  "remaining_decision": "explicit broad-root preserve direction; no implementation/cleanup released"
+}
