@@ -1,0 +1,35 @@
+{
+  "source_commit": "528940a007ffc53ae7278a3ea007fa80d4a65f6d",
+  "total_tests": 127,
+  "suites": [
+    {
+      "suite": "new-tests-r3",
+      "command": "python -B -m unittest discover -s verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/tests -p test_*.py -v",
+      "count": 18,
+      "exit": 0,
+      "skips": 0,
+      "log_sha256": "b95ebd0f86fd1793b9918a585af45151a287f2805874f257329066865dbd11ce"
+    },
+    {
+      "suite": "declaration-tests-r2",
+      "command": "python -B -m unittest test_declaration_remediation -v",
+      "count": 29,
+      "exit": 0,
+      "skips": 0,
+      "log_sha256": "7082e2f546ed313c44e45a48d53ed68eee84abb612c5fa657c29c1b8a349e247"
+    },
+    {
+      "suite": "hardening-tests-r2",
+      "command": "python -B run_suite.py",
+      "count": 80,
+      "exit": 0,
+      "skips": 0,
+      "log_sha256": "13880f31e80602c881774329df6231ac4e3b120883f5873cb64065f01a0cfe5f"
+    }
+  ],
+  "initial_attempt": "new-tests.log failed only T16 assumptions: default consolidate mainline and report filename; corrected in new test; original log retained in agent-output",
+  "final_code_additions": "absolute dot-dot rejected; final real-target drift rejects; all 127 rerun after these code changes",
+  "synthetic_fixture_scope": "only Task test-temp roots; test-owned create/cleanup; no actual project cleanup",
+  "product_build": "NOT_RUN",
+  "independent_review": "PENDING"
+}

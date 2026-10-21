@@ -1,0 +1,23 @@
+[
+  {
+    "script": "clean_workspace.py",
+    "mode": "audit",
+    "exit": 2,
+    "out": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\candidate-audit",
+    "real_resource_operations": 0
+  },
+  {
+    "script": "clean_workspace.py",
+    "mode": "clean_workspace",
+    "exit": 2,
+    "out": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\candidate-clean_workspace",
+    "real_resource_operations": 0
+  },
+  {
+    "script": "remove_worktrees.py",
+    "mode": "remove_worktrees",
+    "exit": 2,
+    "out": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\candidate-remove_worktrees",
+    "real_resource_operations": 0
+  }
+]
