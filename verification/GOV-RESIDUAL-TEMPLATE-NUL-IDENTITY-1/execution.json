@@ -1,0 +1,52 @@
+{
+  "commands": [
+    {
+      "name": "audit-identity",
+      "command": [
+        "python",
+        "-B",
+        "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1\\verification\\GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1\\audit_identity.py",
+        "G:\\CODEX\\New Manga"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "exit": 0,
+      "raw_log_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1\\audit-identity.log",
+      "raw_log_sha256": "4a9f25ef2d875d46350241c01776d3ae85c61f72ccb1e3861b29691155b4687b"
+    },
+    {
+      "name": "governance",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/check.ps1",
+        "-TaskPath",
+        "doc/tasks/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1.md"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "exit": 0,
+      "raw_log_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1\\governance.log",
+      "raw_log_sha256": "c800e86a358cd75a9d94ef8d9530cb703f207e480266c95256dedbd24c871842"
+    },
+    {
+      "name": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "cc72f6a822f0c7823a50996d9e43674147bc7b4a",
+        "HEAD"
+      ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1",
+      "exit": 0,
+      "raw_log_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1\\diff.log",
+      "raw_log_sha256": "0781cceb319fc2dc649cb241eb664af6bc1ace7776a7deec0090b86afd83cb11"
+    }
+  ],
+  "assertions_executed": "5full identities/4rawSHA/strictUTF8/NULcounts/fence/12formal errors; read-only audit_identity.py",
+  "earlier_wrapper_attempt": "GBK stdout encoding failure; corrected invocation with PYTHONIOENCODING=utf-8, no source/logic change",
+  "fixture_tests": "NOT_RUN; no implementation or fixtures",
+  "product_build": "NOT_RUN",
+  "existing_regression127": "NOT_RUN; production code unchanged",
+  "process_handles": "NOT_RUN; no disposal authorized"
+}
