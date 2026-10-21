@@ -122,6 +122,9 @@ class BroadPreservationTests(unittest.TestCase):
         self.assertEqual(len(index.warnings) - len(self.base.warnings), 12)
         self.assertEqual({e["code"] for e in index.warnings},
                          {"DECL_BROAD_ROOT_PRESERVED"})
+        for warning in index.warnings:
+            self.assertIn(warning["file"], warning["message"])
+            self.assertIn(warning["locator"], warning["message"])
         self.assertEqual({d.disposition for d in index.declarations},
                          {"PRESERVE_REFERENCED", "PRESERVE_UNKNOWN",
                           "DESTINATION_PIN"})
@@ -324,6 +327,19 @@ class BroadPreservationTests(unittest.TestCase):
         self.assertIs(result, base)
         self.assertFalse(base.protected)
         self.assertEqual(report["errors"], 13)
+        observed_alias_flags = []
+        original_resolve = guard.ProtectionIndex._resolve_identity
+
+        def observe_identity(instance, text, source_file, locator, warn_alias=True):
+            observed_alias_flags.append(warn_alias)
+            return original_resolve(instance, text, source_file, locator, warn_alias)
+
+        with mock.patch.object(guard.ProtectionIndex, "_resolve_identity",
+                               observe_identity):
+            result, _ = guard._apply_broad_preservation(
+                copy.deepcopy(self.base), self.scanned)
+        self.assertEqual(result.errors, [])
+        self.assertEqual(observed_alias_flags, [False] * 6)
 
     def test_t13_evidence_json_prose_and_direct_index_have_no_permission(self):
         self.install()

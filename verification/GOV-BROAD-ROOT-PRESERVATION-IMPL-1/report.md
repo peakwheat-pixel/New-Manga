@@ -13,3 +13,7 @@
 最终source code的双事故回放各15REJECT/0deleted/0violations。产品/构建NOT_RUN；未来独审未完成。完整命令/退出码/日志见test-execution.json和cli-execution.json。100heads/138worktrees全保留，未执行真实删除/迁移/归档/GC/prune/push/ACL/Legacy；父blocked和r212仍有效。整体workspace保护即使其它12问题未来解决也拒绝其所有后代自动退出，不是资源清理许可。
 
 下一Gate：DeepSeek对固定head独审并实际核新增测试/负例，Codex在main正常merge后复验正式24→12、原保护和源指纹/EV/check，然后才可done。未提交原作者文件不动；旧bundle不覆盖本轮新提交/dirty/ignored/会话。
+
+## R2 后收尾
+
+当前 source6e3bac7867c67a2e76e45e2facbbf859d5dba526；18+29+80重新通过，0skip，双15REJECT/0deleted/0violations重新通过。test-execution.json明确区分原CRLF日志与版本化LF日志哈希。身份复核改无副作用解析，warning正文补源和locator。六处审查探针原位空目录全登记保护；R1的5是历史不完整计数。R2独立批准旧head，14内存负例实测；完整18 fixture复跑NOT_RUN，当前修改需R3。main仍旧代码正式24，候选12不等于已集成；r212禁令不变。

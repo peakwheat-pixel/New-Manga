@@ -4,7 +4,7 @@
   "source_commit": "528940a007ffc53ae7278a3ea007fa80d4a65f6d",
   "interrupted_review_head": "1a905a45259daefd8312f7419d73c960fa2dce19",
   "state": "INTERRUPTED_BY_CODEX_SCOPE_CONTAINMENT",
-  "reason": "independent fixture write denied by DSH sandbox; repeated permission probes created five empty dirs outside Task TMP; stopped only owned DSH child, no ACL/global sandbox changes",
+  "reason": "independent fixture write denied by DSH sandbox; repeated permission probes created six retained empty dirs (initially five registered) outside Task TMP; stopped only owned DSH child, no ACL/global sandbox changes",
   "owned_wrapper_pid": 21408,
   "stopped_owned_node_pid": 27644,
   "exit": 4294967295,
@@ -14,5 +14,7 @@
   "independent_full18_rerun": "NOT_RUN; blocked by sandbox",
   "owner_final127": "PASS,0skip; separate from reviewer execution",
   "next": "resume same session for exclusively read-only inspection and in-memory positive/negative checks; no filesystem probes/fixtures/writes allowed",
-  "probe_inventory": "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json"
+  "probe_inventory": "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json",
+  "retained_directory_count": 6,
+  "amendment": "R2 identified .dsh-mode-29c6eed9 as sixth retained empty probe; initial five count was incomplete; preserve all six"
 }
