@@ -13,7 +13,7 @@ depends_on: [WORKSPACE-CONSOLIDATION-1]
 base_commit: b8a1e519703f13af73b320dded117004b4bb189a
 branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
-integration_commit: null
+integration_commit: 368c0780974ada5879d165526c60d41ee0fc8dc2
 delivery_head: b0ad9f8d15e42f0751c137a9a41527f5dd3b4fda
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -177,6 +177,7 @@ allowed_paths:
 | EV-TEST-RUNNER | 测试运行器 | `verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/tests/run_suite.py` | `30946decf` | `0cb2b75dad75f2316ded3322a3f98b2f4ef1877b5fe287188de75232beff297b` | `SOURCE_PIN` |
 | EV-CHECK | 治理检查日志（过程证据） | `verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/evidence/governance-check.log` | `30946decf` | `4b7ddc851e477b2264fd21ec575c6f8cf6ec0f70ec4ddeb00bd8b96f0266cb21` | `SOURCE_PIN` |
 | EV-MANIFEST | 证据清单（过程证据） | `verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/evidence/manifest.sha256` | `30946decf` | `5dbf2a6dd5ae613f6e401dbfccea97460fc190675bbee622a1a07a6248f2d848` | `SOURCE_PIN` |
+| EV-28 | 交付 Handoff | `verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/HANDOFF.md` | `1dc8a8944` | `6ddcadb8c922736ac65c4352c22ec7a247999c2ee51100949c00d859febde048` | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -203,3 +204,10 @@ allowed_paths:
 - 范围冻结：沿用本 Task `allowed_paths`（5 个工具脚本 + 本 Task + evidence 目录），不扩大；Codex 在交付时独立复核。
 - Base：`b8a1e519703f13af73b320dded117004b4bb189a`；worktree：`G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1`；分支：`dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1`。
 - 硬边界不变：不授权、不执行任何真实删除/移动/分支清理/GC/prune/push；默认 dry-run。
+
+## 集成记录（2026-10-21，Lead）
+
+- 分支 `dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1` 已合并入治理主线：merge commit `368c0780974ada5879d165526c60d41ee0fc8dc2`（evidence commit `30946decf`、最终代码 commit `b0ad9f8d1`、delivery_head 见 frontmatter）。
+- Codex Review 链：R1 changes_requested（F-01..F-07）→ R2 changes_requested（F-02/F-05 残余）→ R3 changes_requested（仅 docstring 矛盾 R3-F02-DOC）→ **R4 approved**（0 阻塞 finding，可进入集成）。
+- 集成验证：证据 27/27 行、manifest 11/11 在主线复算通过；Task/Plan/STATUS/台账已同步；默认治理检查 PASS。
+- 状态保持 `in_review`：按 Codex R4“集成验证完成前不应标记 done”与项目生命周期，最终 `done` 收口与签名/发布裁定一并处理；本 Task 无未完成实现项。
