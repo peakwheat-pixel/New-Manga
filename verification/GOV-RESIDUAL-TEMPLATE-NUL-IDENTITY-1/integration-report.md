@@ -1,0 +1,13 @@
+# 只读身份研究集成与核销
+
+DeepSeek R2 approved49942377b452ea2131b0fe530d7f2235e3143af9，basecc72f6a822f0c7823a50996d9e43674147bc7b4a，delivery69f53e0548979fda90675cdc1229d0f8ac2acb75，P0/P1/P2=0。R1指出报告一处raw/blob换行描述与实际facts不符，已改为磁盘原字节等于HEAD blob并重签/复审；没有改原始事实或原件。正常merge fec50696a254ed726a4cfaed6be98e67d07c9e90后真实main复验通过，不以镜像证据等于已审集成。
+
+当前12完整code/file/locator/message与研究前基线相等，旧1865保护根集合为当前真子集。五项错误仍未消除：同一旧Review两条内嵌未释放草案行；三份strictUTF8但有NUL的原始证据。其余7历史运行身份保留，不猜路径或处置。四个源rawSHA与旧32矩阵一致，P22仍untracked且作者UNKNOWN；生产工具/69例外/旧Task/source pin/产品代码未改。当前line227精确worktree保护仍在，不能为了两个模板错误忽略整个Review或围栏。NUL三源内存0Declaration不等于正式解析豁免；正式reader继续拒绝，原字节不清除。
+
+P14旧Task两个SOURCE_PIN文字断表未实际登记，本Task只用自己的四行Resource Manifest补原位精确保全；未修旧表或顺带改变其它pin。四源新保护已实际注册，其中P22为PRESERVE_UNKNOWN。保全与实时计数口径：原1865→补四源1869（EV前快照），R1七EV实测1876，R2八EV实测1877；集成核验8EV raw/blob/pin与实际注册相等。最终追加Review/集成证据的pin数量在Task与最后验证中另核，不用快照伪装实时。
+
+本Task开始前100heads/138WT，按协议新增一组隔离Task资源后101/139，集成前后101/139不变。父治理基线97/135；所有分支/WT均保留，未对任何旧独有tip做合并/删除/改名，尚未只剩main。自己branch codex/gov-residual-template-nul-identity-1/WT固定49942377b原位保留；自己的agent-output原始日志、审查JSONL/会话与恢复材料原位PRESERVE_REFERENCED；三tracked源与untracked快照均原路径保留，不提交/接管快照。Git blob等于磁盘字节的事实见source-facts；未删除故未执行备份恢复演练，不声称旧bundle覆盖当前untracked或所有新提交。六处旧DSH探针目录不触碰/不改ACL，旧Task继续保护。
+
+独立审查实际运行当前scan、矩阵5身份、四源raw/NUL/C0/strictUTF8、P09和三NUL内存parse、P14旧表缺登记与新Manifest实际注册、审计脚本只读断言、EV raw/blob/pin/check/diff。Owner完整旧保护集合前后比较通过，Reviewer未独立重建该1865全集（明确NOT_RUN，不冒称）；产品构建/旧127回归/fixture/全资源与句柄盘点NOT_RUN，研究无实现且无任何删除授权。执行命令/EXIT/raw日志哈希见execution.json和agent-output。
+
+资源closeout为原位保留，不删除/迁移/归档/清理/GC/prune/push/reset/stash/ACL/Legacy；父blocked与r212禁令不变。下一建议仅设计：GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1，Owner Codex/Reviewer DeepSeek；精确来源绑定、整源及现有声明保护、failclosed与拒绝矩阵，禁止泛化忽略/NUL剥离，不自动实现。Handoff有可直接转发指令；Task释放另走生命周期。

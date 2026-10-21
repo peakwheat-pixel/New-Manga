@@ -1,0 +1,141 @@
+{
+  "timestamp": "2026-10-21T16:29:50.607331+00:00",
+  "integration_commit": "fec50696a254ed726a4cfaed6be98e67d07c9e90",
+  "reviewed_head": "49942377b452ea2131b0fe530d7f2235e3143af9",
+  "delivery": "69f53e0548979fda90675cdc1229d0f8ac2acb75",
+  "errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "formal_error_count": 12,
+  "original_error_identities_unchanged": true,
+  "original_protection_preserved": true,
+  "old_protected_count": 1865,
+  "new_protected_count": 1877,
+  "added_protected_roots": [
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/.gitattributes",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/audit_identity.py",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/checkpoint.md",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/deepseek-review-r1.md",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/execution.json",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/preservation-validation.json",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/report.md",
+    "g:/codex/new manga/verification/gov-residual-template-nul-identity-1/source-facts.json",
+    "g:/codex/new manga/verification/p09-governance-debt-20261019/codex-closeout-p19-view-r12.md",
+    "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r1.md",
+    "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r2.md",
+    "g:/codex/new manga/verification/p22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md"
+  ],
+  "sources": [
+    {
+      "path": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "raw_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "original_bytes_unchanged": true,
+      "protected": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "raw_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "original_bytes_unchanged": true,
+      "protected": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "raw_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "original_bytes_unchanged": true,
+      "protected": true
+    },
+    {
+      "path": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "original_bytes_unchanged": true,
+      "protected": true
+    }
+  ],
+  "production_code_and_policy_unchanged": true,
+  "pins_verified": 8,
+  "actual_registered": 8,
+  "pin_count_basis": "Snapshot before appending Review and this integration record",
+  "branches_before": 100,
+  "branches_after": 101,
+  "worktrees_before": 138,
+  "worktrees_after": 139,
+  "real_resource_operations": 0,
+  "raw_source_changes": 0,
+  "legacy_changes": 0,
+  "product_build": "NOT_RUN; research only",
+  "full_worktree_inventory": "NOT_RUN",
+  "parent": "blocked",
+  "r212": "UNCHANGED",
+  "sole_main": "NOT_ACHIEVED"
+}
