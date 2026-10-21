@@ -721,6 +721,11 @@ NON_PATH_WORDS = frozenset({
     "no", "无", "不适用", "待定", "待填写", "-", "--", "—", "–", "null",
     "todo", "pending",
 })
+# Review r4 F-01: only these resolution failures may be treated as prose
+# (value is not an identity at all).  Every other GuardError means the value
+# resolved to an unsafe/unreadable identity and must stay fatal.
+PROSE_SAFE_ERROR_CODES = frozenset({
+    "DECL_BARE_NAME", "DECL_RELATIVE_UNRESOLVED", "DECL_RELATIVE_NO_ROOT"})
 # Unparsable JSON is fatal unless it is listed in the explicit, SHA-256-bound
 # non-declaration exception manifest (review r2 F-02).  File names are mutable
 # and must never exempt a file.
@@ -950,7 +955,7 @@ class ProtectionIndex(object):
         for key in keys:
             self.protected.setdefault(key, []).append(declaration)
 
-    def _declared_identity(self, text, source_file, locator):
+    def _resolve_identity(self, text, source_file, locator, warn_alias=True):
         """Resolve a declaration to (lexical, real) normalised identities."""
         normalized = self.resolve_declared_path(text, source_file, locator)
         real = resolve_real_target(normalized, "declaration")
@@ -962,7 +967,7 @@ class ProtectionIndex(object):
                      "or a managed area root (%s) or above; over-broad "
                      "declarations need an explicit ruling"
                      % (text, value, generalized))
-        if real != normalized:
+        if warn_alias and real != normalized and source_file is not None:
             self.add_warning(
                 "DECL_ALIAS_REAL_TARGET",
                 "declaration %r is reached through a symlink/junction; the real "
@@ -970,24 +975,27 @@ class ProtectionIndex(object):
                 source_file, locator)
         return normalized, real
 
-    def _probe_identity(self, text):
-        """Return a resolvable normalised identity for a prose-looking value.
+    def _declared_identity(self, text, source_file, locator):
+        return self._resolve_identity(text, source_file, locator, True)
 
-        Review r3 F-01: a single-component value such as ``资料 文件`` or
-        ``中文目录`` has no path separator but may still be an existing repo
-        top-level entry.  Prose skipping must not win over a real resolvable
-        identity, so probe without side effects and let the normal resolver
-        register protection when it succeeds.
+    def _prose_probe(self, text):
+        """Classify a prose-looking value before skipping it (review r4 F-01).
+
+        Returns ``("identity", normalized)`` when the value resolves safely,
+        ``("error", GuardError)`` when it resolves but the identity is unsafe /
+        unreadable (generalized junction, escape, env, glob, traversal...), and
+        ``("prose", GuardError)`` only for the two "not an identity" codes
+        (bare name / unresolved relative path).  Review r4: a generalized
+        junction must NOT fall through as prose warning -- it stays fatal.
         """
         try:
-            normalized = self.resolve_declared_path(text, None, None)
-            real = resolve_real_target(normalized, "declaration")
-        except GuardError:
-            return None
-        for value in (normalized, real):
-            if self._generalized(value):
-                return None  # fatal through the normal path
-        return normalized
+            normalized, _real = self._resolve_identity(
+                text, None, None, warn_alias=False)
+        except GuardError as exc:
+            if exc.code in PROSE_SAFE_ERROR_CODES:
+                return "prose", exc
+            return "error", exc
+        return "identity", normalized
 
     def add_declaration(self, raw, disposition, source_file, locator):
         text = clean_cell(raw)
@@ -1000,19 +1008,23 @@ class ProtectionIndex(object):
                            "disposition %r" % (raw, disposition),
                            source_file, locator)
             return None
-        if is_descriptive_value(text) and self._probe_identity(text) is None:
-            # AC3 remediation: narrative source text ("NOT_APPLICABLE", "none
-            # yet", Chinese notes) is not an identity and is not a declaration.
-            # Recorded as a warning and skipped; it never registers protection
-            # and never authorises deletion.  Review r3 F-01: if the value does
-            # resolve (existing repo top-level entry, including single-component
-            # values with spaces/CJK), the prose shortcut does NOT apply and the
-            # normal resolver below registers protection.
-            self.add_warning("DECL_SOURCE_NOT_A_PATH",
-                             "source %r is descriptive text, not a path; "
-                             "skipped without protection" % text,
-                             source_file, locator)
-            return None
+        if is_descriptive_value(text):
+            verdict, payload = self._prose_probe(text)
+            if verdict == "prose":
+                # AC3: explicit placeholder / pure prose that is not an
+                # identity.  Skipped with warning; never registers protection.
+                self.add_warning("DECL_SOURCE_NOT_A_PATH",
+                                 "source %r is descriptive text, not a path; "
+                                 "skipped without protection" % text,
+                                 source_file, locator)
+                return None
+            if verdict == "error":
+                # Review r4 F-01: value resolved but its identity is unsafe /
+                # unreadable (e.g. generalized junction).  Keep fatal with the
+                # original code; prose must not swallow it.
+                self.add_error(payload.code, payload.message, source_file, locator)
+                return None
+            # verdict == "identity": fall through and register protection.
         if not disp:
             self.add_error("DECL_EMPTY_DISPOSITION",
                            "resource row for %r has no disposition; safety "
@@ -1041,12 +1053,17 @@ class ProtectionIndex(object):
         text = clean_cell(raw)
         if _is_placeholder(text):
             return None
-        if is_descriptive_value(text) and self._probe_identity(text) is None:
-            self.add_warning("DECL_EVIDENCE_NOT_A_PATH",
-                             "evidence path %r is descriptive text, not a "
-                             "path; skipped without protection" % text,
-                             source_file, locator)
-            return None
+        if is_descriptive_value(text):
+            verdict, payload = self._prose_probe(text)
+            if verdict == "prose":
+                self.add_warning("DECL_EVIDENCE_NOT_A_PATH",
+                                 "evidence path %r is descriptive text, not a "
+                                 "path; skipped without protection" % text,
+                                 source_file, locator)
+                return None
+            if verdict == "error":
+                self.add_error(payload.code, payload.message, source_file, locator)
+                return None
         try:
             normalized, real = self._declared_identity(text, source_file, locator)
         except GuardError as exc:

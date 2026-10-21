@@ -8,6 +8,7 @@ Governance scope: 13 current documents; no historical directory scan.
 Task: doc\tasks\WORKSPACE-DECLARATION-REMEDIATION-1.md
 WARN: 存在 2 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 WARN: doc/STATUS.md 已达到预算的 80%：2863 bytes / 26 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\__pycache__\build_reports.cpython-314.pyc, G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\__pycache__\run_evidence.cpython-314.pyc
 FAIL: TASK_LEDGER 已过期：声明 324 个 Task，实际 298 个（重跑 tools/governance/task_ledger.py --write）
 FAIL: TASK_LEDGER 已过期：声明 13 个非终态 Task，实际 2 个（重跑 tools/governance/task_ledger.py --write）
 FAIL: 失效的本地引用：doc\00_INDEX.md → ../archive/history/2026-10-12/README.md
@@ -15,4 +16,4 @@ FAIL: 失效的本地引用：doc\00_INDEX.md → ../archive/history/2026-10-13/
 FAIL: 失效的本地引用：doc\AD-001_TARGET_DESKTOP_ARCHITECTURE.md → ../archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
 FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7038 bytes / 60 lines
 FAIL: READY DAG 只允许 status: ready；WORKSPACE-DECLARATION-REMEDIATION-1 当前为 in_review
-Governance check: FAIL (7 errors, 2 warnings)
+Governance check: FAIL (7 errors, 3 warnings)

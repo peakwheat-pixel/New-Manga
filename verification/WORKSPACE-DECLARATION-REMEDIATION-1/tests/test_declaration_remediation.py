@@ -8,6 +8,7 @@ nothing in that directory is modified.
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import unittest
 
@@ -19,6 +20,16 @@ sys.path.insert(0, OLD_TESTS)
 
 from fixture_support import (RepoFixture, guard, load_json,  # noqa: E402
                              run_tool)
+
+
+def make_junction(link, target):
+    """Windows directory junction; returns False on unsupported hosts."""
+    os.makedirs(target, exist_ok=True)
+    if os.path.isdir(link):
+        return True
+    result = subprocess.run(["cmd", "/c", "mklink", "/J", link, target],
+                            capture_output=True, text=True)
+    return result.returncode == 0 and os.path.isdir(link)
 
 
 def write_bytes(path, payload):
@@ -290,6 +301,47 @@ class DeclarationRemediationFixture(unittest.TestCase):
         self.assertEqual(self.candidate_record(report, target)["decision"],
                          "CANDIDATE")
 
+    def test_ac3_generalized_junction_source_is_fatal(self):
+        """Review r4 F-01: CJK junction to the workspace root stays fatal."""
+        link = os.path.join(self.fx.repo, "资料 链接")
+        if not make_junction(link, self.fx.ws):
+            self.skipTest("directory junctions are not supported on this host")
+        self.fx.declare([("资料 链接", "PRESERVE_REFERENCED")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("DECL_GENERALIZED", result.stdout + result.stderr)
+        self.assertNotIn("DECL_SOURCE_NOT_A_PATH", result.stdout + result.stderr)
+
+    def test_ac3_safe_junction_source_is_protected(self):
+        """A CJK top-level junction to a repo dir resolves, not prose-skipped."""
+        target = os.path.join(self.fx.repo, "safe-target")
+        os.makedirs(target, exist_ok=True)
+        link = os.path.join(self.fx.repo, "安全 链接")
+        if not make_junction(link, target):
+            self.skipTest("directory junctions are not supported on this host")
+        self.fx.declare([("安全 链接", "PRESERVE_REFERENCED")])
+        command = ["--repo", self.fx.repo, "--workspace-root", self.fx.ws,
+                   "--out", self.fx.out, "--audit-declarations"]
+        result = run_tool("clean_workspace.py", *command)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        audit = load_json(os.path.join(self.fx.out, "declaration-audit.json"))
+        self.assertFalse(any("DECL_SOURCE_NOT_A_PATH" in w["code"]
+                             for w in audit["warnings"]))
+
+    def test_ac5_generalized_junction_evidence_is_fatal(self):
+        link = os.path.join(self.fx.repo, "证据 链接")
+        if not make_junction(link, self.fx.ws):
+            self.skipTest("directory junctions are not supported on this host")
+        self.fx.declare_raw(
+            "# fixture\n\n## Canonical Evidence\n\n"
+            "| evidence_id | path | commit | sha256 | class |\n"
+            "|---|---|---|---|---|\n"
+            "| EV-J | `证据 链接` | abc1234 | sha | CANONICAL |\n",
+            relative="doc/tasks/FIXTURE-EVIDENCE-JUNCTION.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("DECL_GENERALIZED", result.stdout + result.stderr)
+
     def test_ac4_short_control_rich_gb18030_payload_is_unreadable(self):
         # 24 bytes: 20 x 0x01 + GB18030 "中文" (4 bytes).  Decodes as GB18030
         # and contains CJK, but the control ratio must still reject it
@@ -314,3 +366,4 @@ class DeclarationRemediationFixture(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -72,19 +72,29 @@ def classify_json(relative, message):
             "declaration token/manifest name/tracked -> JSON_PARSE residual")
 
 
+def role_of(code):
+    """Review r4 P2: separate source/destination/evidence/table roles so rows
+    at the same (file, locator) cannot overwrite each other in TRIAGE."""
+    if code.startswith("DECL_DESTINATION"):
+        return "destination"
+    if "EVIDENCE" in code:
+        return "evidence"
+    if code.startswith("TABLE"):
+        return "table"
+    return "source"
+
+
 def decision_for(error, tracked, after_index):
     code = error["code"]
     rel = error.get("file") or ""
     locator = error.get("locator") or ""
-    # Review r3: derive the decision from the ACTUAL r2 result for this row
-    # instead of a stale hand-written mapping (generalized destinations are
-    # fatal again and some unknown-disposition rows stay fatal).
-    status = (after_index.get((rel, locator))
-              or after_index.get((rel, None))
-              or next((value for (f, _l), value in after_index.items()
-                       if f == rel and value[0] == "error"), None)
-              or next((value for (f, _l), value in after_index.items()
-                       if f == rel and value[0] == "warning"), None))
+    role = role_of(code)
+    status = (after_index.get((rel, locator, role))
+              or after_index.get((rel, None, role))
+              or next((value for (f, _l, r), value in after_index.items()
+                       if f == rel and r == role and value[0] == "error"), None)
+              or next((value for (f, _l, r), value in after_index.items()
+                       if f == rel and r == role and value[0] == "warning"), None))
     if status is not None:
         category = "after: %s" % status[1]
         if status[0] == "error":
@@ -115,12 +125,12 @@ def main():
     rows = []
     after_index = {}
     for error in after_errors:
-        after_index[(error.get("file") or "", error.get("locator") or "")] = (
-            "error", error["code"])
+        after_index[(error.get("file") or "", error.get("locator") or "",
+                     role_of(error["code"]))] = ("error", error["code"])
     for warning in after.get("warnings", []):
         after_index.setdefault(
-            (warning.get("file") or "", warning.get("locator") or ""),
-            ("warning", warning["code"]))
+            (warning.get("file") or "", warning.get("locator") or "",
+             role_of(warning["code"])), ("warning", warning["code"]))
     for error in before_errors:
         rel = error.get("file") or ""
         category, decision = decision_for(error, tracked, after_index)
@@ -167,13 +177,17 @@ def main():
         snapshots_path = os.path.join(HERE, "evidence", "audit-snapshots.json")
         if os.path.isfile(snapshots_path):
             snapshots = json.load(open(snapshots_path, encoding="utf-8"))
+            primary = snapshots["snapshot_points"]["before_before_audit"]
             handle.write("`same_snapshot`: **%s** (git HEAD `%s`; "
                          "`git ls-files -z -- doc/tasks verification` sha256 "
-                         "`%s`, %d tracked scan files).\n\n"
+                         "`%s`, %d tracked + %d untracked scan files, content "
+                         "manifest sha256 `%s`).\n\n"
                          % (snapshots["same_snapshot"],
-                            snapshots["before"]["git_head"],
-                            snapshots["before"]["ls_files_sha256"],
-                            snapshots["before"]["tracked_scan_files"]))
+                            primary["git_head"],
+                            primary["tracked_ls_files_sha256"],
+                            primary["tracked_scan_files"],
+                            primary["untracked_scan_files"],
+                            primary["scanned_input_sha256"]))
             handle.write("Before tool: `%s`\n\nAfter tool: `%s`\n\n"
                          % (snapshots["before"]["tool_sha256"],
                             snapshots["after"]["tool_sha256"]))

@@ -78,23 +78,47 @@ def write_text(name, text):
 
 
 def snapshot():
-    """Fingerprint the scanned repository input (review r3 P2)."""
+    """Fingerprint the actual audit scan input (review r4 P2).
+
+    Includes both tracked and non-ignored untracked files (the audit scans
+    ~1504 untracked paths) and a SHA-256 of every file's content, not just file
+    names: the aggregate digest proves the exact bytes both audits consumed.
+    """
     head = subprocess.run(["git", "-C", MAIN, "rev-parse", "HEAD"],
                           capture_output=True, text=True).stdout.strip()
-    files = subprocess.run(
+    tracked = subprocess.run(
         ["git", "-C", MAIN, "ls-files", "-z", "--", "doc/tasks",
          "verification"], capture_output=True).stdout
+    untracked = subprocess.run(
+        ["git", "-C", MAIN, "ls-files", "-z", "--others", "--exclude-standard",
+         "--", "doc/tasks", "verification"], capture_output=True).stdout
+    tracked_paths = {item for item in tracked.split(b"\x00") if item}
+    untracked_paths = {item for item in untracked.split(b"\x00") if item}
+    entries = []
+    for raw_path in sorted(tracked_paths | untracked_paths):
+        relative = raw_path.decode("utf-8", "replace")
+        absolute = os.path.join(MAIN, relative.replace("/", os.sep))
+        try:
+            digest = hashlib.sha256(open(absolute, "rb").read()).hexdigest()
+        except OSError:
+            digest = "UNREADABLE"
+        entries.append([relative, digest])
+    aggregate = hashlib.sha256(
+        json.dumps(entries, ensure_ascii=False,
+                   separators=(",", ":")).encode("utf-8")).hexdigest()
     return {
         "git_head": head,
-        "tracked_scan_files": len([item for item in files.split(b"\x00") if item]),
-        "ls_files_sha256": hashlib.sha256(files).hexdigest(),
+        "tracked_scan_files": len(tracked_paths),
+        "untracked_scan_files": len(untracked_paths),
+        "scanned_files": len(entries),
+        "tracked_ls_files_sha256": hashlib.sha256(tracked).hexdigest(),
+        "scanned_input_sha256": aggregate,
     }
 
 
 def main():
     runs = []
     failures = []
-    snap_before = snapshot()
     new_tests = os.path.join(HERE, "tests")
     command = [PYTHON, "-B", "-m", "unittest", "test_declaration_remediation",
                "-v"]
@@ -142,34 +166,21 @@ def main():
             failures.append("replay-gate-" + script)
 
     audit_dir = os.path.join(EVIDENCE, "audit-after-run")
-    command = [PYTHON, "-B", os.path.join(TOOLS, "clean_workspace.py"),
-               "--repo", MAIN, "--workspace-root", WS,
-               "--audit-declarations", "--out", audit_dir]
-    record, result = run(command, ROOT, "audit-after-real-repo",
-                         "audit-after.log")
-    runs.append(record)
-    audit_path = os.path.join(audit_dir, "declaration-audit.json")
-    if result.returncode != 2 or not os.path.isfile(audit_path):
-        failures.append("audit-after-real-repo")
-    else:
-        with open(audit_path, "rb") as source:
-            data = source.read()
-        with open(os.path.join(HERE, "audit-after.json"), "wb") as target:
-            target.write(data)
-        write_text("audit-after.exitcode", "%d\n" % result.returncode)
-    snap_after = snapshot()
-    if snap_before != snap_after:
-        failures.append("before-after-snapshot-mismatch")
-
-    # Regenerate the "before" audit from the pre-remediation tool against the
-    # same repository snapshot (review r3 P2: prove same command/snapshot).
     before_dir = os.path.join(EVIDENCE, "audit-before-run")
-    command = [PYTHON, "-B", BEFORE_TOOL, "--repo", MAIN,
-               "--workspace-root", WS, "--audit-declarations",
-               "--out", before_dir]
-    record, result = run(command, ROOT, "audit-before-real-repo",
+    after_command = [PYTHON, "-B", os.path.join(TOOLS, "clean_workspace.py"),
+                     "--repo", MAIN, "--workspace-root", WS,
+                     "--audit-declarations", "--out", audit_dir]
+    before_command = [PYTHON, "-B", BEFORE_TOOL, "--repo", MAIN,
+                      "--workspace-root", WS, "--audit-declarations",
+                      "--out", before_dir]
+
+    # Review r4 P2: four snapshots around both audits, fingerprinting the
+    # actual scan input bytes (tracked + untracked).
+    snap_b0 = snapshot()
+    record, result = run(before_command, ROOT, "audit-before-real-repo",
                          "audit-before.log")
     runs.append(record)
+    snap_b1 = snapshot()
     before_path = os.path.join(before_dir, "declaration-audit.json")
     if result.returncode != 2 or not os.path.isfile(before_path):
         failures.append("audit-before-real-repo")
@@ -180,24 +191,45 @@ def main():
             target.write(data)
         write_text("evidence/audit-before.exitcode",
                    "%d\n" % result.returncode)
+
+    snap_a0 = snapshot()
+    record, result = run(after_command, ROOT, "audit-after-real-repo",
+                         "audit-after.log")
+    runs.append(record)
+    snap_a1 = snapshot()
+    audit_path = os.path.join(audit_dir, "declaration-audit.json")
+    if result.returncode != 2 or not os.path.isfile(audit_path):
+        failures.append("audit-after-real-repo")
+    else:
+        with open(audit_path, "rb") as source:
+            data = source.read()
+        with open(os.path.join(HERE, "audit-after.json"), "wb") as target:
+            target.write(data)
+        write_text("audit-after.exitcode", "%d\n" % result.returncode)
+    snapshots = [snap_b0, snap_b1, snap_a0, snap_a1]
+    same_snapshot = all(item == snapshots[0] for item in snapshots)
+    if not same_snapshot:
+        failures.append("audit-snapshot-mismatch")
     with io.open(os.path.join(EVIDENCE, "audit-snapshots.json"), "w",
                  encoding="utf-8", newline="\n") as handle:
         json.dump({
             "schema_version": 1,
-            "same_snapshot": snap_before == snap_after,
-            "before": dict(snap_before, command=command, exit_code=2,
-                           tool_sha256=hashlib.sha256(
-                               open(BEFORE_TOOL, "rb").read()).hexdigest()),
-            "after": dict(snap_after,
-                          command=["C:/Python314/python.exe", "-B",
-                                   os.path.join(TOOLS, "clean_workspace.py"),
-                                   "--repo", MAIN, "--workspace-root", WS,
-                                   "--audit-declarations"],
-                          exit_code=2,
-                          tool_sha256=hashlib.sha256(
-                              open(os.path.join(TOOLS,
-                                                "clean_workspace.py"),
-                                   "rb").read()).hexdigest()),
+            "same_snapshot": same_snapshot,
+            "snapshot_points": {
+                "before_before_audit": snap_b0,
+                "after_before_audit": snap_b1,
+                "before_after_audit": snap_a0,
+                "after_after_audit": snap_a1,
+            },
+            "before": {"command": before_command, "cwd": ROOT,
+                       "exit_code": 2,
+                       "tool_sha256": hashlib.sha256(
+                           open(BEFORE_TOOL, "rb").read()).hexdigest()},
+            "after": {"command": after_command, "cwd": ROOT,
+                      "exit_code": 2,
+                      "tool_sha256": hashlib.sha256(
+                          open(os.path.join(TOOLS, "clean_workspace.py"),
+                               "rb").read()).hexdigest()},
         }, handle, ensure_ascii=False, indent=2)
         handle.write("\n")
     import shutil
@@ -267,6 +299,31 @@ def main():
                  encoding="utf-8", newline="\n") as handle:
         json.dump(environment, handle, ensure_ascii=False, indent=2)
         handle.write("\n")
+
+    # Review r4 P2: record this runner's own command/cwd/shell/exit so the
+    # evidence is self-describing (no outer shell log needed).
+    run_exit = 0 if not failures else 1
+    self_command = [PYTHON, "-B", os.path.abspath(__file__)]
+    with io.open(os.path.join(EVIDENCE, "run-evidence.log"), "w",
+                 encoding="utf-8", newline="\n") as handle:
+        handle.write("COMMAND: %s\nCWD: %s\nPARENT_SHELL: %s (operator "
+                     "shell; Windows PowerShell/pwsh 7)\nSHELL: False "
+                     "(subprocess.run(shell=False) for child commands)\n"
+                     "EXIT_CODE: %d\n\n"
+                     % (" ".join(self_command), HERE,
+                        "pwsh" if os.environ.get("PSModulePath") else
+                        "unknown", run_exit))
+        handle.write("new tests exit: %d\n" % runs[0]["exit_code"])
+        handle.write("existing 80 tests exit: %d\n" % runs[1]["exit_code"])
+        handle.write("replays: %s\n" % json.dumps(replay_reports))
+        handle.write("audit before errors: %d\n" % len(before["errors"]))
+        handle.write("audit after errors: %d warnings: %d\n"
+                     % (len(after["errors"]), len(after.get("warnings", []))))
+        handle.write("protection delta: %s\n" % delta["verdict"])
+        handle.write("failures: %s\n" % json.dumps(failures))
+    with io.open(os.path.join(EVIDENCE, "run-evidence.exitcode"), "w",
+                 encoding="utf-8", newline="\n") as handle:
+        handle.write("%d\n" % run_exit)
 
     files = []
     for base, _dirs, names in os.walk(HERE):

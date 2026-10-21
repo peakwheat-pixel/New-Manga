@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "WORKSPACE-DECLARATION-REMEDIATION-1",
-  "generated_at": "2026-10-21T05:16:43+00:00",
+  "generated_at": "2026-10-21T05:34:41+00:00",
   "host": {
     "platform": "Windows-11-10.0.26300-SP0",
     "python": "3.14.6",
@@ -23,7 +23,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
       "exit_code": 0,
       "log": "new-tests.log",
-      "stdout_sha256": "367c57a515196a3a6fcb26eaa0c785feceec40a2eb73a74bf50ad104727ece23"
+      "stdout_sha256": "f3792fc3d100c428a497f0f6d5243ffa102af3845d34522edb174e448b66570d"
     },
     {
       "label": "existing-80-tests",
@@ -35,7 +35,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
       "exit_code": 0,
       "log": "existing-tests.log",
-      "stdout_sha256": "3cf9d3c76e7ceab631b6b0e738ea5667eb5f31b38a53f4035370e857d27e269c"
+      "stdout_sha256": "5ae20f2d2c4afcacb6a2078de698f8fbe086d4c6cb57c62c2a7e574e5cb15d10"
     },
     {
       "label": "replay-clean_workspace.py",
@@ -70,25 +70,6 @@
       "stdout_sha256": "ac1b784fd03ebeaa4a7d0b15d9fce01e826125b5c0bfeaf616fecfc594152fb0"
     },
     {
-      "label": "audit-after-real-repo",
-      "command": [
-        "C:\\Python314\\python.exe",
-        "-B",
-        "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\tools\\governance\\clean_workspace.py",
-        "--repo",
-        "G:\\CODEX\\New Manga",
-        "--workspace-root",
-        "G:\\CODEX\\New Manga.workspace",
-        "--audit-declarations",
-        "--out",
-        "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-after-run"
-      ],
-      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1",
-      "exit_code": 2,
-      "log": "audit-after.log",
-      "stdout_sha256": "3ff314f4e9d337309d2ee13c2fcc4379d5130c65b44672ec402fdc10458d7450"
-    },
-    {
       "label": "audit-before-real-repo",
       "command": [
         "C:\\Python314\\python.exe",
@@ -106,6 +87,25 @@
       "exit_code": 2,
       "log": "audit-before.log",
       "stdout_sha256": "9ce0809288724efdc54e11242f90ad6ab02b376c8e214575365b2d6fd6b3523a"
+    },
+    {
+      "label": "audit-after-real-repo",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\tools\\governance\\clean_workspace.py",
+        "--repo",
+        "G:\\CODEX\\New Manga",
+        "--workspace-root",
+        "G:\\CODEX\\New Manga.workspace",
+        "--audit-declarations",
+        "--out",
+        "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-after-run"
+      ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1",
+      "exit_code": 2,
+      "log": "audit-after.log",
+      "stdout_sha256": "3ff314f4e9d337309d2ee13c2fcc4379d5130c65b44672ec402fdc10458d7450"
     },
     {
       "label": "build-reports",
@@ -822,17 +822,48 @@
       "DECL_DESTINATION_UNRESOLVED": 1
     },
     "generated_from": {
-      "before_sha256": "a6aa479199f804fa0b49d5dac4761680ee072068f964b4a8cf1811d619b43273",
-      "after_sha256": "d8cd63e57870a1e396dc25bc5c181adf817d999d1e2c8c1c7882e24b7eae3c14"
+      "before_sha256": "9a1cd58e29fd538b1033dc2d377d660fa1c4502f08561859a15585a5db421f57",
+      "after_sha256": "6893d21147ab4b6586ab560b8f214f0fcbf05a97e0d4cd103409bb65f22ecd43"
     }
   },
   "audit_snapshots": {
     "schema_version": 1,
     "same_snapshot": true,
+    "snapshot_points": {
+      "before_before_audit": {
+        "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
+        "tracked_scan_files": 7416,
+        "untracked_scan_files": 1504,
+        "scanned_files": 8920,
+        "tracked_ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
+        "scanned_input_sha256": "3187c41a66d1853cf247ba1a4570fdb77713c2747a2cce27f700d3baf8aad5ab"
+      },
+      "after_before_audit": {
+        "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
+        "tracked_scan_files": 7416,
+        "untracked_scan_files": 1504,
+        "scanned_files": 8920,
+        "tracked_ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
+        "scanned_input_sha256": "3187c41a66d1853cf247ba1a4570fdb77713c2747a2cce27f700d3baf8aad5ab"
+      },
+      "before_after_audit": {
+        "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
+        "tracked_scan_files": 7416,
+        "untracked_scan_files": 1504,
+        "scanned_files": 8920,
+        "tracked_ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
+        "scanned_input_sha256": "3187c41a66d1853cf247ba1a4570fdb77713c2747a2cce27f700d3baf8aad5ab"
+      },
+      "after_after_audit": {
+        "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
+        "tracked_scan_files": 7416,
+        "untracked_scan_files": 1504,
+        "scanned_files": 8920,
+        "tracked_ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
+        "scanned_input_sha256": "3187c41a66d1853cf247ba1a4570fdb77713c2747a2cce27f700d3baf8aad5ab"
+      }
+    },
     "before": {
-      "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
-      "tracked_scan_files": 7416,
-      "ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
       "command": [
         "C:\\Python314\\python.exe",
         "-B",
@@ -845,25 +876,26 @@
         "--out",
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-before-run"
       ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1",
       "exit_code": 2,
       "tool_sha256": "5a4a1a1cfaeb37698c1d22bd2c9d80149beb48bf4adf075027f7177eb5ded8a7"
     },
     "after": {
-      "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
-      "tracked_scan_files": 7416,
-      "ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
       "command": [
-        "C:/Python314/python.exe",
+        "C:\\Python314\\python.exe",
         "-B",
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\tools\\governance\\clean_workspace.py",
         "--repo",
         "G:\\CODEX\\New Manga",
         "--workspace-root",
         "G:\\CODEX\\New Manga.workspace",
-        "--audit-declarations"
+        "--audit-declarations",
+        "--out",
+        "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-after-run"
       ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1",
       "exit_code": 2,
-      "tool_sha256": "6747ba69bbbb1dc8c34d7c88cb7f527ea5b3ea08777058da4f70708ac6ea79d6"
+      "tool_sha256": "1a5b70ef91f015532ca85afd62c471cd60210f6353a6b151c3c259baa9b2b5ba"
     }
   },
   "protection_delta": {

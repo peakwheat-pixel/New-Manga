@@ -1,0 +1,13 @@
+COMMAND: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\run_evidence.py
+CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1
+PARENT_SHELL: pwsh (operator shell; Windows PowerShell/pwsh 7)
+SHELL: False (subprocess.run(shell=False) for child commands)
+EXIT_CODE: 0
+
+new tests exit: 0
+existing 80 tests exit: 0
+replays: {"clean_workspace.py": {"candidates": 15, "rejected": 15, "deleted": 0, "violations": 0, "sources_covering_roots": 18}, "remove_worktrees.py": {"candidates": 15, "rejected": 15, "deleted": 0, "violations": 0, "sources_covering_roots": 18}}
+audit before errors: 163
+audit after errors: 76 warnings: 236
+protection delta: OK: every dropped declaration is prose that does not exist as a path; no real protected identity was lost
+failures: []
