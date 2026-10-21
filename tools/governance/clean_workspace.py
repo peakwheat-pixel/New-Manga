@@ -1605,7 +1605,8 @@ def _apply_broad_preservation(index, scanned):
                         "code", "message", "file", "locator"} for error in pair),
                     "POLICY_INVALID", "invalid preservation error pair")
             try:
-                index._declared_identity(source, origin, binding["parser_locator"])
+                index._resolve_identity(source, origin,
+                                        binding["parser_locator"], warn_alias=False)
             except GuardError as exc:
                 require(exc.code == "DECL_GENERALIZED", "ERROR_MISMATCH",
                         "preservation no longer has a generalized identity")
@@ -1643,8 +1644,9 @@ def _apply_broad_preservation(index, scanned):
             staged._register_protective(declaration)
             staged.add_warning(
                 "DECL_BROAD_ROOT_PRESERVED",
-                "role=%s policy=%s root=%s source_keep=%s"
-                % (role, BROAD_PRESERVATION_POLICY, declaration.normalized, keep),
+                "role=%s policy=%s origin=%s locator=%s root=%s source_keep=%s"
+                % (role, BROAD_PRESERVATION_POLICY, declaration.source_file,
+                   declaration.locator, declaration.normalized, keep),
                 declaration.source_file, declaration.locator)
         result = _finish_declaration_scan(staged, scanned)
         for absolute, raw in snapshots.items():
