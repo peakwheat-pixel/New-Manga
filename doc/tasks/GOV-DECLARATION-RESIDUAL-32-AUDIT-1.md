@@ -3,7 +3,7 @@ id: GOV-DECLARATION-RESIDUAL-32-AUDIT-1
 title: 剩余32项声明只读取证与最小裁决矩阵
 kind: research
 governance_version: 3
-status: changes_requested
+status: in_progress
 approval: user_authorized_20261021_readonly_32_declarations_independent_dsh_review
 suggested_owner: Codex
 owner: Codex

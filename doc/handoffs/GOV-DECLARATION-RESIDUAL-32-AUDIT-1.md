@@ -11,7 +11,7 @@ status: in_review
 
 32项对应17来源，详见verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/report.md、matrix.json/md、source-facts.json、direct-reference-facts.json。六组错误计数6/12/7/2/2/3，12宽泛根错误仅6声明/5根；未把错误数当资源数。原code/file/locator/message保留，R30/31实际source_path定位另列；作者不明如实UNKNOWN，未提交原件未提交入Git。
 
-验证：17项raw SHA与逐源Git状态不变；只读clean_workspace.py --audit-declarations --out G:/CODEX/New Manga.workspace/agent-output/codex/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/corrected-observation-audit 返回exit2，原32错误多重集合完全相等；98heads/136worktrees；详情preservation-validation.json。曾两次36错误源于本Task结构化引用4原resource，已只改观察记录为原文字符串；失败输出留agent-output。无source/guard代码变更、无用户数据访问或资源处置；产品/工具回归NOT_RUN。
+验证：17项raw SHA与逐源Git状态不变；只读clean_workspace.py --audit-declarations --out G:/CODEX/New Manga.workspace/agent-output/codex/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/corrected-observation-audit 返回exit2，原32错误多重集合完全相等；98heads/136worktrees；详情preservation-validation.json。初始曾36错误（一份保留失败输出）源于本Task结构化引用4原resource，已只改观察记录为原文字符串；失败输出留agent-output。无source/guard代码变更、无用户数据访问或资源处置；产品/工具回归NOT_RUN。
 
 DeepSeek固定commit独立Review待完成；不得把Owner校验写成Reviewer实测。父Task blocked，STATUS/r212保护/清理禁令有效。原工作树和本Task输出全部保留。基线c0a9cb796，证据交付22bd5e07af5710af2359827a45fdf658186f578d，main文档提交，无新branch/worktree。
 
@@ -26,3 +26,5 @@ Recovery：G:/CODEX/New Manga，main；固定base/head=22bd5e07af5710af2359827a4
 可直接转发：Codex，请在G:/CODEX/New Manga的main核对实际HEAD/epoch9，以22bd5e07af5710af2359827a45fdf658186f578d为恢复基点读取本Handoff/32项矩阵R23/R24。先冻结拟议GOV-NDJSON-NONDECL-IDENTITY-1（依赖本Task独审关闭，Owner Codex/Reviewer DeepSeek），只读两项日志raw hash、完整NDJSON诊断和精确path+SHA非声明例外机制，提交身份/引用/保护影响和负例/漂移拒绝方案。只写新Task/自身verification/Handoff和冻结治理元数据；不改原始JSON/历史Task/pin/用户文件/guard/例外表，不运行旧collector，不清理/迁移/GC/prune/push，不恢复Legacy。记录真实命令/exit、逐源前后指纹、治理check、固定head独审；建议不等于释放，任何代码/例外表修改另冻精确范围。
 
 风险：原32错误未消解，未证明资源可删除或只剩main；全部保护不变。无需本轮额外产品测试。
+
+R1要求已按文档范围修正：R24 tracked与R23 untracked分清；6/64为总值数、类型计数1/4/1与1/62/1；R30/31同源不同destination；新增完整错误身份与稳定hash，checkpoint将登记SOURCE_PIN。原始source17项不变，旧Review原文保留。
