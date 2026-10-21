@@ -4,10 +4,10 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-NDJSON-EXCEPTION-CONFIG-1](tasks/GOV-NDJSON-EXCEPTION-CONFIG-1.md)**（`in_progress`；新69项当前配置/default，自动推进，DeepSeek独审）。
+- 当前 Task：**[GOV-NDJSON-EXCEPTION-CONFIG-1](tasks/GOV-NDJSON-EXCEPTION-CONFIG-1.md)**（`in_review`；新69项当前配置/default，自动推进，DeepSeek独审）。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式32错误/原保护/STATUS-r212禁令有效。
 - 技术前置：[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md) `done`，独审78fc0cba2、集成9cae94142；77→32错误，新增410保护根，未清理。
-- 收敛基线97/135；当前98本地分支/136工作树（新增并保留工具Task）；**尚未达到只剩main**。
+- 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
