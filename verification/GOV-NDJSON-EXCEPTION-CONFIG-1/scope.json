@@ -1,0 +1,31 @@
+{
+  "base_commit": "bbc9532b8ff7326b985e8f3f828bccd040c0d583",
+  "logs": [
+    {
+      "id": "R23",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "sha256": "bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1",
+      "tracked": false
+    },
+    {
+      "id": "R24",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "tracked": true
+    }
+  ],
+  "write_code": [
+    "tools/governance/clean_workspace.py:DEFAULT_JSON_EXCEPTION_MANIFEST only",
+    "tools/governance/non-declaration-json-exceptions.json new69 record current config"
+  ],
+  "historical_manifest": "verification/WORKSPACE-DECLARATION-REMEDIATION-1/non-declaration-json-exceptions.json",
+  "callers": [
+    "clean_workspace.py",
+    "remove_worktrees.py",
+    "consolidate.py"
+  ],
+  "expected_errors": [
+    32,
+    30
+  ]
+}

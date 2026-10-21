@@ -1,0 +1,2 @@
+* text eol=lf
+deepseek-review-*.md -whitespace
