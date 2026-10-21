@@ -1,0 +1,14 @@
+SHELL=Python subprocess from pwsh; interpreter=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga.workspace\worktrees\GOV-PATH-HEADER-COMPAT-1
+COMMAND=['python', '-B', '-m', 'unittest', 'discover', '-s', 'tools/governance/tests', '-p', 'test_path_header_compat.py', '-v']
+EXIT=0
+test_bad_row_shape_is_not_made_valid_by_the_alias (test_path_header_compat.PathHeaderCompatibility.test_bad_row_shape_is_not_made_valid_by_the_alias) ... ok
+test_duplicate_alias_and_literal_never_choose_one_path (test_path_header_compat.PathHeaderCompatibility.test_duplicate_alias_and_literal_never_choose_one_path) ... ok
+test_resource_identity_columns_do_not_gain_aliases (test_path_header_compat.PathHeaderCompatibility.test_resource_identity_columns_do_not_gain_aliases) ... ok
+test_template_and_plain_columns_protect_the_declared_pin (test_path_header_compat.PathHeaderCompatibility.test_template_and_plain_columns_protect_the_declared_pin) ... ok
+test_unknown_annotations_and_missing_path_still_fail_closed (test_path_header_compat.PathHeaderCompatibility.test_unknown_annotations_and_missing_path_still_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK
