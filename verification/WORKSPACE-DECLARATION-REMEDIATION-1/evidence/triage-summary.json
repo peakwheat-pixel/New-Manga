@@ -1,0 +1,180 @@
+{
+  "before": {
+    "errors": 163,
+    "warnings": 54,
+    "declarations": 1858,
+    "protected_roots": 1264
+  },
+  "after": {
+    "errors": 15,
+    "warnings": 239,
+    "declarations": 1855,
+    "protected_roots": 1262
+  },
+  "before_codes": {
+    "TABLE_ROW_ARITY": 1,
+    "DECL_BARE_NAME": 57,
+    "DECL_RELATIVE_UNRESOLVED": 6,
+    "DECL_RELATIVE_AMBIGUOUS": 1,
+    "DECL_ENV": 4,
+    "DECL_GENERALIZED": 6,
+    "DECL_DESTINATION_UNRESOLVED": 7,
+    "DECL_UNKNOWN_DISPOSITION": 9,
+    "JSON_PARSE": 69,
+    "FILE_UNREADABLE": 3
+  },
+  "after_codes": {
+    "TABLE_ROW_ARITY": 1,
+    "DECL_RELATIVE_AMBIGUOUS": 1,
+    "DECL_ENV": 4,
+    "DECL_GENERALIZED": 6,
+    "JSON_PARSE": 2,
+    "DECL_DESTINATION_UNRESOLVED": 1
+  },
+  "after_warnings": {
+    "TABLE_NOT_CANONICAL_EVIDENCE": 91,
+    "DECL_SOURCE_NOT_A_PATH": 65,
+    "DECL_DESTINATION_PROSE": 35,
+    "TABLE_NOT_RESOURCE_MANIFEST": 1,
+    "DECL_DESTINATION_GENERALIZED": 6,
+    "DECL_ALIAS_REAL_TARGET": 19,
+    "JSON_NON_DECLARATION": 9,
+    "DECL_EVIDENCE_NOT_A_PATH": 10,
+    "FILE_ENCODING_LEGACY": 3
+  },
+  "triage_rows": 163,
+  "residual": [
+    {
+      "code": "TABLE_ROW_ARITY",
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "tracked": "tracked",
+      "owner": "historical Task GOV-DEBT-CLEANUP-2",
+      "locator": "",
+      "message": "table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection"
+    },
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "file": "doc/tasks/P19.md",
+      "tracked": "tracked",
+      "owner": "historical Task P19",
+      "locator": "line 5",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused"
+    },
+    {
+      "code": "DECL_ENV",
+      "file": "doc/tasks/P19.md",
+      "tracked": "tracked",
+      "owner": "historical Task P19",
+      "locator": "line 6",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token"
+    },
+    {
+      "code": "DECL_ENV",
+      "file": "doc/tasks/P19.md",
+      "tracked": "tracked",
+      "owner": "historical Task P19",
+      "locator": "line 7",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "tracked": "tracked",
+      "owner": "historical Task SEC-FIX-PATH-ECHO-1",
+      "locator": "line 5",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "tracked": "tracked",
+      "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+      "locator": "line 10",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "tracked": "tracked",
+      "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+      "locator": "line 11",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "tracked": "tracked",
+      "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+      "locator": "line 12",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "tracked": "tracked",
+      "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+      "locator": "line 14",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "tracked": "tracked",
+      "owner": "historical Task WORKSPACE-CONSOLIDATION-1",
+      "locator": "line 15",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling"
+    },
+    {
+      "code": "JSON_PARSE",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "tracked": "untracked",
+      "owner": "evidence P02-NEW-TIME-BASELINE",
+      "locator": "",
+      "message": "unparsable untracked JSON declaration file (token=True, declaration-name=False); protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001)"
+    },
+    {
+      "code": "JSON_PARSE",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "tracked": "tracked",
+      "owner": "evidence P02-NEW-TIME-BASELINE",
+      "locator": "",
+      "message": "unparsable tracked JSON declaration file (token=True, declaration-name=False); protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json is not valid JSON: Extra data: line 2 column 1 (char 7494)"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "tracked": "tracked",
+      "owner": "evidence P19-UI-FIX-1",
+      "locator": "$.resources[1].destination_path",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous"
+    },
+    {
+      "code": "DECL_ENV",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "tracked": "tracked",
+      "owner": "evidence P19-UI-FIX-1",
+      "locator": "$.resources[2].disposition",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token"
+    },
+    {
+      "code": "DECL_ENV",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "tracked": "tracked",
+      "owner": "evidence P19-UI-FIX-1",
+      "locator": "$.resources[3].disposition",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token"
+    }
+  ],
+  "residual_grouping": {
+    "TABLE_ROW_ARITY": 1,
+    "DECL_RELATIVE_AMBIGUOUS": 1,
+    "DECL_ENV": 4,
+    "DECL_GENERALIZED": 6,
+    "JSON_PARSE": 2,
+    "DECL_DESTINATION_UNRESOLVED": 1
+  },
+  "generated_from": {
+    "before_sha256": "6038a36fe51e93a95bcf8cba7c094dd544bc187b403cd82908f0b85685e998ae",
+    "after_sha256": "5a5826e3a0772b65eca15ff2e5f6b18f7bc1ac8c371d989c144bf2dfe0dea2a9"
+  }
+}

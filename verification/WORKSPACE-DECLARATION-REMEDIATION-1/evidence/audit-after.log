@@ -1,0 +1,16 @@
+COMMAND: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\tools\governance\clean_workspace.py --repo G:\CODEX\New Manga --workspace-root G:\CODEX\New Manga.workspace --audit-declarations --out G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\evidence\audit-after-run
+CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1
+EXIT_CODE: 2
+
+declaration audit: 1855 declaration(s), 1262 protected root(s), 15 error(s), 239 warning(s)
+  ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling [doc/tasks/SEC-FIX-PATH-ECHO-1.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling [doc/tasks/WORKSPACE-CONSOLIDATION-1.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling [doc/tasks/WORKSPACE-CONSOLIDATION-1.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling [doc/tasks/WORKSPACE-CONSOLIDATION-1.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling [doc/tasks/WORKSPACE-CONSOLIDATION-1.md]
+  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling [doc/tasks/WORKSPACE-CONSOLIDATION-1.md]
+  report: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1/verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-after-run/declaration-audit.json

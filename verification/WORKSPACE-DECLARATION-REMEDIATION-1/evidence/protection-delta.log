@@ -1,0 +1,16 @@
+COMMAND: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\protection_delta.py
+CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1
+EXIT_CODE: 0
+
+{
+ "old": {
+  "declarations": 1858,
+  "protected_roots": 1264
+ },
+ "new": {
+  "declarations": 1855,
+  "protected_roots": 1262
+ },
+ "dropped": 3,
+ "verdict": "OK: every dropped declaration is prose that does not exist as a path; no real protected identity was lost"
+}
