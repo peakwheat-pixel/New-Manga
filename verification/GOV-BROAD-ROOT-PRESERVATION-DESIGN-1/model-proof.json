@@ -1,13 +1,13 @@
 {
   "kind": "SIMULATION_ONLY; not production implementation",
-  "snapshot_commit": "12e3a4061cc951fcd6501dac50df1c0051a0a4c4",
+  "snapshot_commit": "90e4b7826c337bc4acf3b145ca7c1dd4cfd0a1ca",
   "before_counts": {
-    "declarations": 2467,
-    "protected_roots": 1797,
+    "declarations": 2474,
+    "protected_roots": 1804,
     "by_disposition": {
       "DELETE_SAFE": 2,
       "DESTINATION_PIN": 367,
-      "EVIDENCE_PIN": 1686,
+      "EVIDENCE_PIN": 1693,
       "NOT_APPLICABLE": 5,
       "PRESERVE_REFERENCED": 360,
       "PRESERVE_UNKNOWN": 31,
@@ -17,19 +17,19 @@
     "warnings": 254
   },
   "modeled_after_counts": {
-    "declarations": 2479,
-    "protected_roots": 1802,
+    "declarations": 2486,
+    "protected_roots": 1809,
     "by_disposition": {
       "DELETE_SAFE": 2,
       "DESTINATION_PIN": 373,
-      "EVIDENCE_PIN": 1686,
+      "EVIDENCE_PIN": 1693,
       "NOT_APPLICABLE": 5,
       "PRESERVE_REFERENCED": 364,
       "PRESERVE_UNKNOWN": 33,
       "PRESERVE_USER_DATA": 16
     },
     "errors": 12,
-    "warnings": 254
+    "warnings": 266
   },
   "removed_exact12_error_identities": [
     {
@@ -277,5 +277,83 @@
       "git_status": "",
       "blob_sha256_at_design_base": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8"
     }
-  }
+  },
+  "modeled_warning_count_added": 12,
+  "modeled_warning_code": "DECL_BROAD_ROOT_PRESERVED",
+  "modeled_warnings": [
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=source policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=destination policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=source policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/task-envs; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=destination policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/task-envs; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=source policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=destination policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=source policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/worktrees; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=destination policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/worktrees; source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=source policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/review-scratch; source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=destination policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/review-scratch; source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=source policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/temp; source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "SIMULATION role=destination policy=proposed broad-root-preservation; root=g:/codex/new manga.workspace/temp; source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    }
+  ],
+  "adjacent_assertion_scope": "only new-root hits absent; pre-existing protection may remain",
+  "atomic_loader_negative_tests": "PLANNED/NOT_RUN; design-only, production implementation absent"
 }
