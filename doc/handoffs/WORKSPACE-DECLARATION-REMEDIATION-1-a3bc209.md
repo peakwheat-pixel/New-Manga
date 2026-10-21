@@ -7,7 +7,7 @@ status: in_review
 review_round: r4 changes_requested fixes
 base_commit: 83b111ac104d47b30cf0842f553f97656cd0d8d1
 start_commit: f0f19596f
-evidence_commit: 2deab2f077cd91bbd71bdb4bd599432e1b2d3242
+evidence_commit: a3bc20901067a743d09ebd48c623d0a017df021f
 date: 2026-10-21
 branch: dsh/WORKSPACE-DECLARATION-REMEDIATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
