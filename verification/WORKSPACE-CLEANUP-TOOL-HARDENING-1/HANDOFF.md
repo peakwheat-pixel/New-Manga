@@ -7,18 +7,21 @@ status: in_review
 resubmission: 3
 base_commit: b8a1e519703f13af73b320dded117004b4bb189a
 evidence_commit: 30946decf1f3f6f9f66ce53043f543b490f8b377
-previous_deliveries: 21715c5c0（r1 changes_requested）、beeac02af（r2 changes_requested）
+code_commit: b0ad9f8d15e42f0751c137a9a41527f5dd3b4fda
+docstring_commit_note: b0ad9f8d 仅改 scan_repo_declarations docstring（R3-F02-DOC），无行为变更；证据仍 pin 30946decf
+previous_deliveries: 21715c5c0（r1）、beeac02af（r2）、59f401143（r3 Task-only）
 date: 2026-10-21
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 ---
 
-# WORKSPACE-CLEANUP-TOOL-HARDENING-1 Handoff（Resubmission 3：F-02 malformed JSON + F-05 证据字节冻结）
+# WORKSPACE-CLEANUP-TOOL-HARDENING-1 Handoff（Resubmission 3：F-02 malformed JSON + F-05 证据字节冻结；R3-F02-DOC 文档修正）
 
 > 本文件是 Handoff，不是 Review，不是批准，不是关闭。任务状态仍为 `in_review`。
 > 本 Task 不执行任何真实 apply / 删除 / 移动 / 分支清理 / GC / prune / push；不把本文件或任何 Review
 > 当作对历史越界删除的追认。**提交顺序：evidence commit `30946decf`（冻结代码/测试/证据/最终日志/manifest）
-> → Task-only 记录 commit（引用该 evidence commit）。**
+> → 最终代码 commit `b0ad9f8d`（仅 docstring，R3-F02-DOC）→ Task-only 记录 commit（引用上述 commit）。**
+> `b0ad9f8d` 不改行为、不重新冻结证据；Canonical Evidence 仍 pin `30946decf`，manifest 仍 11/11。
 
 ## 0. Review 返修对照
 
@@ -40,6 +43,12 @@ branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 |---|---|---|
 | F-02 | malformed JSON 仅检查字面 `PRESERVE`，MIGRATE/ARCHIVE 可能漏保护 | **删除启发式**：扫描范围内任何 JSON 解析失败一律 `JSON_PARSE` 完整性错误（整态拒绝）。新增 MIGRATE / ARCHIVE / 无 marker 三个 malformed JSON 夹具（均 exit 2、候选保留） |
 | F-05 | evidence 冻结与 commit 字节不一致（`governance-check.log` 因 CRLF 与 blob 不一致；manifest 10/11） | `governance-check.log` 显式 **LF 归一**后写入；manifest 覆盖最终日志与全部证据（11 项）；evidence commit `30946decf` **同时包含**最终日志与最终 manifest；27 条证据行全部 pin `30946decf`，SHA-256 等于该 commit 的 **Git blob 字节**（逐项校验，无 SHA-only 行、无自引用） |
+
+### r3（`59f401143`，changes_requested，本次修复）
+
+| 编号 | 结论 | 修复 |
+|---|---|---|
+| R3-F02-DOC | `scan_repo_declarations` docstring 仍描述旧的“含 `PRESERVE` 才 fatal、无 marker 记 warning”规则，与实现/Handoff 相反 | **仅改 docstring**：改为“任何 JSON 解析失败 = `JSON_PARSE` 完整性错误、整态拒绝、无 marker 豁免”，并明确禁止重新引入该启发式。提交 `b0ad9f8d`（6 insertions / 3 deletions，全在 docstring 内）；行为未变（80/80 测试通过）；证据不重新冻结，Canonical Evidence 仍 pin `30946decf` |
 
 ## 1. 交付内容
 

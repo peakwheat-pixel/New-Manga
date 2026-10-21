@@ -14,7 +14,7 @@ base_commit: b8a1e519703f13af73b320dded117004b4bb189a
 branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 integration_commit: null
-delivery_head: 30946decf1f3f6f9f66ce53043f543b490f8b377
+delivery_head: b0ad9f8d15e42f0751c137a9a41527f5dd3b4fda
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1
@@ -126,6 +126,12 @@ allowed_paths:
     本 Task-only 记录 commit 只引用该 evidence commit；27 条 Canonical Evidence 行的 commit pin 全部指向
     `30946decf`，SHA-256 与该 commit 的 Git blob 字节一致（无 SHA-only 行、无自引用）。
   - Handoff 表述修正：7392+1504 为**枚举路径数**，2271 `.md` + 1147 `.json` 才是**实际解析文件数**。
+- **R3-F02-DOC（文档性变更，no behaviour change）**：`clean_workspace.py` 的
+  `scan_repo_declarations` docstring 原先仍写“含 `PRESERVE` marker 的 malformed JSON 才 fatal、无 marker 记
+  warning”，与实现及 Handoff 相反；已改为“任何 JSON 解析失败 = `JSON_PARSE` 完整性错误、整态拒绝、无 marker
+  豁免”，并明确禁止重新引入该启发式。只改 docstring（6 insertions / 3 deletions，均在 docstring 内），
+  80/80 测试仍通过，行为未变。最终代码 commit `b0ad9f8d`；Canonical Evidence 仍 pin evidence commit
+  `30946decf`（证据字节未重新冻结）。
 - Handoff：`verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/HANDOFF.md`（逐项 AC、命令/环境/退出码、残余风险）。
 - Review：r1 `changes_requested`（`21715c5c0`）→ r2 `changes_requested`（`beeac02af`）；本轮修复后请求再 Review。
   本 Task 不自审。
