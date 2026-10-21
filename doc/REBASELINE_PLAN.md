@@ -1,60 +1,24 @@
-# Project Rebaseline Plan —唯一DAG；运行见[STATUS](STATUS.md)。范围/裁决见[REPORT](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)。
+# Project Rebaseline Plan — 唯一 DAG
+
+运行以 [STATUS](STATUS.md) 为准；目标架构 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)。
+
+## 当前 DAG
+
 |节点/目标|依赖|状态|
 |---|---|---|
-|P01 台账 / P03 SFX入口 / P05 契约注记|—|done|
-|P02 WebView|P08|限定关闭|
-|P04 并发验收|P22|done|
-|P06 GC补证|—|**done**（集成 d3342895）|
-|P08 产品范围|—|done|
-|ARCH-DOC-REBASELINE|-|**closed_with_limitations**（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`（6/8 消费者已处置，ZCode 设计 Gate 与第二环境无活动 Task））|
-|P09 导入Core|P08/DOC|closed_with_limitations（集成 c6a7339f；AC3 由下项回补）|
-|P09-AC3-DELETE-1|P09|closed_with_limitations（R3 changes_requested；HARDEN-1 接手）|
-|P10 凭据通道 / P11 长任务契约|P08|**done**（c46c0df0 / ceca5721）|
-|P12 书架导入|P09/UI/C1/FU2|**done**（集成 465e3001e）|
-|P13 后台恢复|P09/P11/P13-C1|**done**（集成 8d7cad13）|
-|P14 工作台|P13/UI|**done**（集成 2dc14cdd1）|
-|P15 设置/Core/host|P15-C1/P10/UI|done（含 FU、HOST-1/2）|
-|P16 阅读导出Core|P08/P13/C1|**done**（集成 e1be3082）|
-|P17 阅读导出UI|P16/DOC/UI|**done**（集成 f18b7fe8f）|
-|P15-C1 设置面契约|P10|**done**（集成 f07221313）|
-|P18 JA/KO质量|P10/P13/DOC|closed_with_limitations（AC2门槛、AC5阻塞）|
-|P19 四页安全E2E|P12/14/15/17/18/P04|closed_with_limitations（4c860d882）|
-|P20 Windows发布|P19/P03/P06/DOC|closed_with_limitations（AC4 撕裂项 LIMITATION/UNOBSERVED；其余 6 AC done；用户 2026-10-20 授权）|
-|DETECT-TILING-1|ARCH-DOC-REBASELINE|**closed_with_limitations**（r36 收口；5/5 AC 完成，2 条带 limitation：SEC-FMT-005 的物理内存检查未实现、真实超限 JPEG 不存在；集成 `9d7eddf57`）|
-|DETECT-MEMORY-GUARD-1|DETECT-TILING-1|**closed_with_limitations**（5/5 AC；实现 `fa8615dc5`；ZCode Review 通过；限制 L1–L7，核心是「正常机器上永不触发」与「单机数据」）|
-|SEC-FMT-IMPL-1|ARCH-DOC-REBASELINE|**closed_with_limitations**（5 MET + AC5 `PARTIAL`；29 测试；AC5 发现并驱动修复 P1 [PDF-STREAM-FIX-1](tasks/PDF-STREAM-FIX-1.md)）|
-|PDF-STREAM-FIX-1|P18|**closed_with_limitations**（4 MET + AC3 `NOT_APPLICABLE`；`09676cc19`；ZCode `CHANGES_REQUESTED` 已返修；L2：PDFium 单引擎四天假绿）|
-|SEARCHABLE-PDF-CJK-1|PDF-STREAM-FIX-1|**closed_with_limitations**（5 MET + AC3 `PARTIAL`；韩文可搜索 PDF 已可用；L1 未子集化、L5 错误消息不可操作）|
-|TEST-ENV-ASSUMPTIONS-1|P13|**closed_with_limitations**（6 MET；`tests/providers` 6→2 failed；新增 4 个存在侧测试；7 sabotage 全抓；待 Review）|
-|P11-PROJECTION-TEST-ALIGN-1|P13|**closed_with_limitations**（6 MET；矩阵测试 2→9 状态；5 sabotage 全抓；待 Review）|
-|M2-PROD-DETECT-ENV-1|M2-PROD-DETECT-1|**closed_with_limitations**（5 MET；隔离 venv 装 `transformers==5.17.0`；`tests/providers` 2 failed→0；原「离线」为误判）|
-|P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
-|P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
-|GOV-DEBT-CLEANUP-1|P19/P20|superseded（2026-10-21：由 GOV-DEBT-CLEANUP-2 / GOV-UNTRACKED-BACKLOG-1 / GOV-PIN-LINEAGE-1 承接；剩余历史证据不阻塞 v1）|
-|GOV-DEBT-CLEANUP-2|—|closed_with_limitations（AC1–AC6/AC8 达成；AC7 仅完成 61 项候选分类，唯一最终证据判定未做；closeout r14）|
-|GOV-RESOURCE-MANIFEST-JSON-1|GOV-PLAN-BUDGET-1|done（外部 JSON Manifest 检查器；19/19 用例；集成 3fe78a67c）|
-|P19-UI-MANIFEST-VIEW-1|GOV-RESOURCE-MANIFEST-JSON-1|closed_with_limitations（AC1/AC2/AC4/AC5/AC6 达成；AC3 因 4→10 错误清单失败；按 Codex r11 保留修正）|
-|GOV-RESOURCE-MANIFEST-SAME-LOCATION-1|GOV-RESOURCE-MANIFEST-JSON-1|done（同源/空/\-\ 目的地语义；32/32 用例；集成 4b545eada；P19 错误 9→4）|
-|GOV-UNTRACKED-BACKLOG-1|—|done（1591 个未入库文件的分类与边界化；最小镜像集 3 文件；P1 由 GOV-EOL-PIN-1 修复）|
-|GOV-EOL-PIN-1|GOV-UNTRACKED-BACKLOG-1|done（为 hash-pinned 证据固定 LF；renormalize 无字节变化；worktree 复现通过）|
-|GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|done（AC 证据覆盖核验；83 AC：3 COVERED / 17 PARTIAL / 19 GAP / 42 N/A；四轮 Review）|
-|GOV-SOURCE-RECORDS-1|GOV-EVIDENCE-UNIQUE-1|done（EXPORT-REVEAL-1 补勾 6、P15 补勾 6；AC4 因 ③ BLOCKED 保留未勾；遗留三项已裁定拆专项）|
-|GOV-AC-GATE-1|GOV-SOURCE-RECORDS-1|done（v3 AC 门禁；12 夹具；窄 scope 不清算存量；两轮 Review）|
-|GOV-PIN-LINEAGE-1|GOV-SOURCE-RECORDS-1|closed_with_limitations（r28 裁定停止改造；300 pin 已核验、229 项 0 损坏；checker 未改）|
-|GOV-EVIDENCE-DIR-SWEEP-1|GOV-SOURCE-RECORDS-1|done（19 文件盘点；5 项补登记；0 个 ARCHIVE；两份失败日志保留）|
-|GOV-P15-MANIFEST-1|GOV-SOURCE-RECORDS-1|done（P15 manifest 重建；4 资源含 3 个实测 junction；原地集成已验证）|
-|P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
-|P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
-|P20-CLOSE-BOUND-HARDEN-2|P20-CLOSE-BOUND-HARDEN-1|done（R4-01 承接完毕；AC5 真实桌面实测 54.48 ms、零残留）|
-|P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
-|P09-PREVIEW-LIFECYCLE-RECLAIM-1|P09-AC3-DELETE-HARDEN-1|closed_with_limitations（AC6 未满足；未集成）|
-|GOV-PLAN-BUDGET-1|—|done|
-|RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|closed_with_limitations（v1 证据：source 150/0/1、packaged 12/0；AC2 基线未重跑）|
-|P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
-|P09-MANAGED-READ-ROOT-TRUST-1|P09-AC3-DELETE-HARDEN-1|done（merge `155f7d3f2`；Codex R2 approved_with_conditions，归档条件已满足）|
-|WORKSPACE-CLEANUP-TOOL-HARDENING-1|WORKSPACE-CONSOLIDATION-1|done（merge `368c07809`；Codex R1–R4，R4 approved）|
-|WORKSPACE-DECLARATION-REMEDIATION-1|WORKSPACE-CLEANUP-TOOL-HARDENING-1|done（merge `bb7887442`；Codex R7 approved；163→76 残余保留 fail-closed）|
-|V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核）|
-|P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-|WORKSPACE-CONSOLIDATION-1|—|**closed_with_limitations（r212 批准）**：18 个受保护资源 limitation（L1–L8 + p03-temp-scratch）；132 worktree、93 分支（19 未合并均已归档）；77 refs，1,225 合计/322 去重；49.48 GiB 逻辑字节、非物理净释放；AC1/AC2/AC3/AC6/AC7/AC9 PARTIAL；工具根因另立 WORKSPACE-CLEANUP-TOOL-HARDENING-1（proposed）|
-READY 节点：**无**。done：**54 项**。
+|GIT-MAINLINE-CONVERGENCE-1|—|in_progress（Codex；仅盘点/保全/审查；不解除旧清理禁令）|
+|V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
+|P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
+
+READY 节点：**无**。
+
+## 终态依赖与限制
+
+本 Plan 明确继承[冻结 DAG](../archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md)中的其余节点状态、依赖、Legacy Mapping 与限制；这是对原图的无损引用，不重开 Task、不增加 READY。完整源为 `fdca2057e:doc/REBASELINE_PLAN.md`，SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`。
+
+- 已完成节点共 54 项（源图口径）；P09/P18/P19/P20 等限定关闭，未满足 Gate 不变。
+- WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 个受保护资源限制；不得清理/GC/prune。132 worktrees/93 branches 是历史快照，新 Task 基线为 135/97。
+- WORKSPACE-CLEANUP-TOOL-HARDENING-1：done（368c07809）；WORKSPACE-DECLARATION-REMEDIATION-1：done（bb7887442），残余错误保留 fail-closed；不因工具修复自动获得删除授权。
+- P22 已集成；H1/P2-1/13 缺项和 BC-AC5 PARTIAL 保留。无 Legacy 实施/诊断/修复释放。
+
+当前治理主线 `main`；旧主线显式保留规则不变，远端不 push。
