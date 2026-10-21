@@ -3,7 +3,7 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: changes_requested
+status: in_progress
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
@@ -56,7 +56,6 @@ PowerShell/Python -B；只读标准库诊断与现有guard函数调用，不新�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-
 |EV-1|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/.gitattributes|488ab6cbec7774df8c0c3b2e8a9e169750a92101|cb96a500d3bdb6d5602a449af7f58a3e21155e9e72bbbc1684c8002c3982bd8f|SOURCE_PIN|
 |EV-2|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/checkpoint.md|488ab6cbec7774df8c0c3b2e8a9e169750a92101|8e497737ca6eb0cdf163a7787830c542cd554292f8788401e13e060ee5e63101|SOURCE_PIN|
 |EV-3|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/identity-proof.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|07c82d93d1d8e407fa9ebce02dcc224ae17fff13e6cb6d1ac1a889c34b55f88c|CANONICAL|
@@ -74,7 +73,6 @@ PowerShell/Python -B；只读标准库诊断与现有guard函数调用，不新�
 |---|---|---|---|---|---|
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-NDJSON-NONDECL-IDENTITY-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-NDJSON-NONDECL-IDENTITY-1 | doc/tasks/GOV-NDJSON-NONDECL-IDENTITY-1.md | 候选输入/负例/原始派发输出保留，不写正式例外表 |
 | worktree/task-env/dataset/model/build/temp/exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无新建，不删除其它资源 |
-
 | original-evidence-log | G:/CODEX/New Manga/verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json | PRESERVE_REFERENCED | G:/CODEX/New Manga/verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json | bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1 | 原始证据保持原路径/字节；R23未跟踪不提交，R24跟踪不改写；候选例外不解除保留 |
 | original-evidence-log | G:/CODEX/New Manga/verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json | PRESERVE_REFERENCED | G:/CODEX/New Manga/verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json | caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e | 原始证据保持原路径/字节；R23未跟踪不提交，R24跟踪不改写；候选例外不解除保留 |
 

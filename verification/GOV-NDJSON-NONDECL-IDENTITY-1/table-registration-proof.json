@@ -1,0 +1,28 @@
+{
+  "before_task_evidence_pin_count": 0,
+  "after_task_evidence_pin_count": 10,
+  "original_logs_preserve_declarations_after": 2,
+  "task_parser_errors": [],
+  "default_errors_before": 32,
+  "default_errors_after": 32,
+  "same_error_identities": true,
+  "protected_roots_before": 1704,
+  "protected_roots_after": 1715,
+  "old_roots_preserved": true,
+  "new_roots": [
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/.gitattributes",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/checkpoint.md",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/identity-proof.json",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/manifest-provenance.json",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/mechanism-proof.json",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/probe-first-attempt.json",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/probe-run.log",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/probe-source.py.txt",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/report.md",
+    "g:/codex/new manga/verification/gov-ndjson-nondecl-identity-1/scope.json",
+    "g:/codex/new manga/verification/p02-new-time-baseline/run-baseline-20261014t0430cst-ac3fix.json"
+  ],
+  "scope": "Only own Task contiguous Markdown tables; no parser/source/registry changes",
+  "discovered_same_cause": "本Task两个原日志保留行也位于空行后，本次同根因修正使其实际注册；不把旧快照1704视为已注册本Task所有保护。",
+  "other_tasks": "未扫描/修复已关闭Task的表格；治理check PASS不替代实际保护注册核验，后续需另冻结有界核对。"
+}

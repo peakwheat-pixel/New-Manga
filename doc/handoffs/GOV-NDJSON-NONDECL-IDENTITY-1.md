@@ -26,3 +26,5 @@ Recovery：G:/CODEX/New Manga，main，固定base/head=488ab6cbec7774df8c0c3b2e8
 交付与Gate：新配置语义来源矩阵、原67＋2条覆盖比较、仅默认常量改动、原日志/旧表raw与旧Git blob pin保全、默认实际仅32→30且其它30身份一致/原保护集合不减；错路径/hash/字节漂移/合法声明负例继续成立。使用现有机制/本研究有界探针作依据，若需新增源码测试则先冻结精确路径。pwsh -NoProfile -File tools/governance/check.ps1、git diff --check、必要回归与独立固定head Review/Handoff后由Codex集成；30残余仍fail-closed，不叫清理PASS。环境PowerShell/Python -B，NOT_RUN/BLOCKED明确记录。
 
 可转发指令：Codex，请在G:/CODEX/New Manga的main核对实际HEAD/唯一租约，以488ab6cbec7774df8c0c3b2e8a9e169750a92101为恢复点读本Handoff和研究证据，先冻结拟议GOV-NDJSON-EXCEPTION-CONFIG-1（依赖本Task独审done，Owner Codex/Reviewer DeepSeek）。只新建当前配置tools/governance/non-declaration-json-exceptions.json保留原67＋固定两项，并仅切换clean_workspace.py默认配置常量；实现branch/worktree待Codex创建。保护旧表/旧Task/原pin/原日志，不改解析函数、Schema/依赖，不运行旧collector，不清理/GC/prune/push。源漂移则停，不自动重签hash。交付真实before/after32→30/其它30身份/保护集合和旧67完整证明、负例与旧证据raw/历史pin检查、固定commit独立Review/Handoff及治理check；本建议不是释放，不自动实施。
+
+R1要求修正本Task证据表断行：新增table-registration-proof证明原10pin实际注册，同行原日志Manifest断行也同根因修复。旧checkpoint原字节作为历史SOURCE_PIN保留，当前指针改checkpoint-r2.md；report明确旧1704为修正前快照。只有本Task metadata/evidence变化，源/guard/正式表未动；旧10pin中仅本研究report修订后须重签自身新版本，其余内容保持原字节。

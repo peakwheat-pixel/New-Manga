@@ -25,7 +25,7 @@ load_json_exceptions要求path、64位sha256、reason，并核对原文件存在
 |R23内存改为合法资源声明|不适用旧hash，实际注册资源声明，其余30错误不变|
 |刻意给合法资源字节登记新hash|该声明被绕过：证明配置的内容审查信任边界，绝不是安全PASS或登记批准|
 
-六候选/负例及默认before/after未调用apply，各例原保护集合不减少（快照1704根，含本Task的原日志显式保护）。路径错配是候选条目错配，字节变化是内存io.open替换，并非真实改名/编辑源。四输入（两日志/guard/正式表）raw SHA及Git状态不变，受控扫描期间Git状态快照不变；98heads/136worktrees不变。mechanism-proof.json记录完整原32错误、六case结果和探针hash；probe-source.py.txt是实际workspace探针字节快照，只供审查，不要求Reviewer执行（会写自身产物）。probe-run.log为LF转写副本，workspace保留原stdout；双hash见manifest-provenance.json。
+六候选/负例及默认before/after未调用apply，各例原保护集合不减少（快照1704根；当时本Task的原日志声明尚受表格断行问题影响，修正后另验）。路径错配是候选条目错配，字节变化是内存io.open替换，并非真实改名/编辑源。四输入（两日志/guard/正式表）raw SHA及Git状态不变，受控扫描期间Git状态快照不变；98heads/136worktrees不变。mechanism-proof.json记录完整原32错误、六case结果和探针hash；probe-source.py.txt是实际workspace探针字节快照，只供审查，不要求Reviewer执行（会写自身产物）。probe-run.log为LF转写副本，workspace保留原stdout；双hash见manifest-provenance.json。
 
 初次workspace探针的io.open mock未排除subprocess整数文件描述符而TypeError，未完成全套；仅修探针类型检查后完整复验EXIT0。probe-first-attempt.json记录原因，失败原探针保留workspace。无guard/source实现修改，无同失败盲重试。产品/构建回归NOT_RUN；机制正反例已实际执行，不等同产品测试。
 
@@ -36,3 +36,5 @@ load_json_exceptions要求path、64位sha256、reason，并核对原文件存在
 技术结论：两份固定字节日志可作为既有机制的精确候选，当前未登记，正式错误仍32。后续若释放独立Task，最小方案是新建tools/governance/non-declaration-json-exceptions.json作为版本化当前配置（逐项保留旧67＋两精确条目），仅切换clean_workspace.py的DEFAULT_JSON_EXCEPTION_MANIFEST。旧表/旧Task/pin/原日志均原样保留；不改解析逻辑、Schema或通用匹配。新配置和默认入口写入超出本研究范围，尚未实施。
 
 后续验收须独立Review固定head、新默认实际仅32→30、其他30身份与原保护集合不丢、旧67逐项完整、路径/hash/字节漂移拒绝、真实声明解析成立、四原输入raw状态及旧pin保全、治理check。任何内容/归属漂移拒绝自动刷新hash。候选批准不解除保护，不批准清理/父Task done/只剩main。
+
+R1更正：10 EV行以及两个原日志保留行前有空行，未实际进入guard保护；本Task已仅修表格连续性，实际注册证据见table-registration-proof.json。原10条pin内容与原文件字节不变；旧checkpoint作为历史SOURCE_PIN保留，当前恢复点切换checkpoint-r2.md。新增证据的pin会在复审元数据提交登记，不宣称旧1704快照已包含这些实际保护。本次未扩大到已关闭Task；其证据表是否同类问题需另行有界核验，不能仅凭check.ps1 PASS推断保护注册。

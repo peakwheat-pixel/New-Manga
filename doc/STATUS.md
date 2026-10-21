@@ -27,4 +27,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[当前 checkpoint](../verification/GOV-NDJSON-NONDECL-IDENTITY-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
+- 恢复点：[当前 checkpoint](../verification/GOV-NDJSON-NONDECL-IDENTITY-1/checkpoint-r2.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
