@@ -1,0 +1,6 @@
+doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md
+src/bootstrap/core_assembly.py
+src/bootstrap/core_service.py
+src/infrastructure/resource_channel/handle_resolver.py
+tests/security/test_p09_managed_read_root_trust.py
+verification/P09-MANAGED-READ-ROOT-TRUST-1/DESIGN-expected-identity.md

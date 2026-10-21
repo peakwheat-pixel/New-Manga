@@ -1,0 +1,134 @@
+--- verification/P09-AC3-DELETE-HARDEN-1/n002-race-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/n002-race-probe.py
+@@ -18,7 +18,7 @@
+ import sys
+ from pathlib import Path
+ 
+-SRC = Path(__file__).resolve().parents[2] / "src"
++SRC = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1") / "src"
+ if str(SRC) not in sys.path:
+     sys.path.insert(0, str(SRC))
+ 
+--- verification/P09-AC3-DELETE-HARDEN-1/n002-race-probe2.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/n002-race-probe2.py
+@@ -23,7 +23,7 @@
+ import sys
+ from pathlib import Path
+ 
+-REPO = Path(r"G:\CODEX\New Manga")
++REPO = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1")
+ if str(REPO / "src") not in sys.path:
+     sys.path.insert(0, str(REPO / "src"))
+ 
+--- verification/P09-AC3-DELETE-HARDEN-1/n004-ancestor-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/n004-ancestor-probe.py
+@@ -1,9 +1,9 @@
+ import os, shutil, subprocess, sys, tempfile
+-sys.path.insert(0, r"G:\CODEX\New Manga\src")
++sys.path.insert(0, r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\src")
+ from pathlib import Path
+ import infrastructure.filesystem.win_unlink as w
+ 
+-WORKSPACE_TMP = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\n004-tmp")
++WORKSPACE_TMP = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\n004-tmp")
+ WORKSPACE_TMP.mkdir(parents=True, exist_ok=True)
+ base = Path(tempfile.mkdtemp(dir=str(WORKSPACE_TMP))).resolve()
+ # 结构：base/trusted/derived/pages/page-original.png
+--- verification/P09-AC3-DELETE-HARDEN-1/n004-production-order-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/n004-production-order-probe.py
+@@ -1,7 +1,7 @@
+ import os, shutil, subprocess, sys
+ from pathlib import Path
+-sys.path.insert(0, r"G:\CODEX\New Manga\src")
+-ws = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\n004-prod")
++sys.path.insert(0, r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\src")
++ws = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\n004-prod")
+ if ws.exists(): shutil.rmtree(ws, ignore_errors=True)
+ ws.mkdir(parents=True)
+ outside = ws / "outside"; (outside / "derived" / "pages").mkdir(parents=True)
+--- verification/P09-AC3-DELETE-HARDEN-1/r5-p1-managed-remove-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/r5-p1-managed-remove-probe.py
+@@ -24,12 +24,12 @@
+ import sys
+ from pathlib import Path
+ 
+-REPO = Path(r"G:\CODEX\New Manga")
++REPO = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1")
+ sys.path.insert(0, str(REPO / "src"))
+ 
+ from infrastructure.filesystem.managed_storage import ManagedFileStorage  # noqa: E402
+ 
+-ws = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\p1-repro")
++ws = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\p1-repro")
+ if ws.exists():
+     for child in ws.iterdir():
+         if child.is_dir() and child.is_symlink():
+--- verification/P09-AC3-DELETE-HARDEN-1/r5-p1-cleanup-book-files-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/r5-p1-cleanup-book-files-probe.py
+@@ -23,12 +23,12 @@
+ import sys
+ from pathlib import Path
+ 
+-REPO = Path(r"G:\CODEX\New Manga")
++REPO = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1")
+ sys.path.insert(0, str(REPO / "src"))
+ 
+ from bootstrap.core_service import assemble_production_core  # noqa: E402
+ 
+-WS = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\p1-cleanup")
++WS = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\p1-cleanup")
+ if WS.exists():
+     for child in WS.iterdir():
+         if child.is_dir() and child.is_symlink():
+--- verification/P09-AC3-DELETE-HARDEN-1/r5b-p1-remove-managed-race-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/r5b-p1-remove-managed-race-probe.py
+@@ -22,12 +22,12 @@
+ import sys
+ from pathlib import Path
+ 
+-REPO = Path(r"G:\CODEX\New Manga")
++REPO = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1")
+ sys.path.insert(0, str(REPO / "src"))
+ 
+ from infrastructure.filesystem.managed_storage import ManagedFileStorage  # noqa: E402
+ 
+-WS = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\p1-race")
++WS = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\p1-race")
+ if WS.exists():
+     for child in WS.iterdir():
+         if child.is_dir() and child.is_symlink():
+--- verification/P09-AC3-DELETE-HARDEN-1/r5b-p1-collect-orphans-race-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/r5b-p1-collect-orphans-race-probe.py
+@@ -23,12 +23,12 @@
+ import sys
+ from pathlib import Path
+ 
+-REPO = Path(r"G:\CODEX\New Manga")
++REPO = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1")
+ sys.path.insert(0, str(REPO / "src"))
+ 
+ from infrastructure.resource_channel.render_preview import RenderPreviewPublisher  # noqa: E402
+ 
+-WS = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\p1-orphan")
++WS = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\p1-orphan")
+ if WS.exists():
+     for child in WS.iterdir():
+         if child.is_dir() and child.is_symlink():
+--- verification/P09-AC3-DELETE-HARDEN-1/r6-p1a-publish-cleanup-race-probe.py
++++ verification/P09-MANAGED-READ-ROOT-TRUST-1/ac5-delete-probes/r6-p1a-publish-cleanup-race-probe.py
+@@ -22,13 +22,13 @@
+ import sys
+ from pathlib import Path
+ 
+-REPO = Path(r"G:\CODEX\New Manga")
++REPO = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1")
+ sys.path.insert(0, str(REPO / "src"))
+ 
+ import infrastructure.filesystem.win_unlink as w  # noqa: E402
+ from infrastructure.resource_channel.render_preview import RenderPreviewPublisher  # noqa: E402
+ 
+-WS = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\p1-publish")
++WS = Path(r"G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\_scratch\p1-publish")
+ if WS.exists():
+     for child in WS.iterdir():
+         if child.is_dir() and child.is_symlink():

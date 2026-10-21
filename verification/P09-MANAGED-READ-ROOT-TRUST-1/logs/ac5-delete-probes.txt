@@ -1,0 +1,17 @@
+P09-MANAGED-READ-ROOT-TRUST-1 / AC5 �� P09-AC3-DELETE-HARDEN-1 probes
+worktree = G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1
+probes   = G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\ac5-delete-probes
+
+probe                                      inject   survived  verdict        baseline  result
+n002-race-probe.py                         False    True      INCONCLUSIVE   INCONCLUSIVE OK
+n002-race-probe2.py                        True     True      SAFE           SAFE       OK
+n004-ancestor-probe.py                     True     True      SAFE           SAFE       OK
+n004-production-order-probe.py             True     True      SAFE           SAFE       OK
+r5-p1-managed-remove-probe.py              True     True      SAFE           SAFE       OK
+r5-p1-cleanup-book-files-probe.py          True     True      SAFE           SAFE       OK
+r5b-p1-remove-managed-race-probe.py        True     True      SAFE           SAFE       OK
+r5b-p1-collect-orphans-race-probe.py       True     True      SAFE           SAFE       OK
+r6-p1a-publish-cleanup-race-probe.py       True     True      SAFE           SAFE       OK
+
+detail = G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1\verification\P09-MANAGED-READ-ROOT-TRUST-1\logs\ac5-delete-probes.json
+RESULT = PASS
