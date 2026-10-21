@@ -2,8 +2,12 @@
 id: P09-MANAGED-READ-ROOT-TRUST-1
 title: 托管文件读取/导出路径的 root 可信性（R5b P2 转交）
 kind: security-hardening
-status: proposed
-owner: null
+status: ready
+owner: dsh-p09-root-trust
+approval: user_authorized_release_20261021
+base_commit: b8a1e519703f13af73b320dded117004b4bb189a
+branch: dsh/P09-MANAGED-READ-ROOT-TRUST-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-HARDEN-1]
 delivery_head: null
@@ -59,3 +63,9 @@ created: 2026-10-19
 - `verification/P20-CLOSE-BOUND-HARDEN-2/r5b-p2-read-path-draft.md`（草案，**scope 与 AC3 已含第 8 处**）
 - `verification/P09-AC3-DELETE-HARDEN-1/HANDOFF.md`（前序交付）
 - `workspace/agent-output/coordinator/codex-r5b-result.md`、`codex-r6-result.md`（原始复现）
+
+## 释放记录（2026-10-21，用户授权）
+
+- 用户裁决：释放（"1释放"）。Owner：`dsh-p09-root-trust`（DSH teammate）；Reviewer：Codex。
+- Base：`b8a1e519703f13af73b320dded117004b4bb189a`；worktree：`G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1`；分支：`dsh/P09-MANAGED-READ-ROOT-TRUST-1`。
+- 首交付物：**"期望身份"来源设计答案**（竞态前固定、不随后续解析变化），再实施 8 处修复；不得扩大到删除路径/契约/Schema/依赖。

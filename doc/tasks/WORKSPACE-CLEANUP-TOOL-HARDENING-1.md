@@ -3,16 +3,16 @@ id: WORKSPACE-CLEANUP-TOOL-HARDENING-1
 title: 工作区清理工具的保护判断与失败关闭修复（r208/r209 事故根因）
 kind: fix
 governance_version: 2
-status: proposed
-approval: pending_user_release
+status: ready
+approval: user_authorized_release_20261021_allowed_paths_frozen
 blocked_by: null
 suggested_owner: Antigravity
-owner: null
+owner: dsh-workspace-hardening
 reviewer: Codex
 depends_on: [WORKSPACE-CONSOLIDATION-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: b8a1e519703f13af73b320dded117004b4bb189a
+branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -114,3 +114,10 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：0（本 Task 禁止实际删除）。
 - 未关闭项及保留原因：待填写。
 - 当前指针清理：待填写。
+
+## 释放记录（2026-10-21，用户授权）
+
+- 用户裁决：释放（"1释放"）。Owner：`dsh-workspace-hardening`（DSH teammate）；Reviewer：Codex。
+- 范围冻结：沿用本 Task `allowed_paths`（5 个工具脚本 + 本 Task + evidence 目录），不扩大；Codex 在交付时独立复核。
+- Base：`b8a1e519703f13af73b320dded117004b4bb189a`；worktree：`G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1`；分支：`dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1`。
+- 硬边界不变：不授权、不执行任何真实删除/移动/分支清理/GC/prune/push；默认 dry-run。
