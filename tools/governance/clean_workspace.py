@@ -1256,14 +1256,6 @@ def parse_table_block(block, start):
     return header, rows
 
 
-def _find_column(header, *names):
-    lowered = [cell.strip().lower() for cell in header]
-    for name in names:
-        if name in lowered:
-            return lowered.index(name)
-    return None
-
-
 def _exact_column(header, *names):
     """AC5: exact English column name only (no Chinese/prose aliases)."""
     lowered = [cell.strip().lower() for cell in header]
@@ -1271,6 +1263,18 @@ def _exact_column(header, *names):
         if name in lowered:
             return lowered.index(name)
     return None
+
+
+def _duplicate_identity_columns(header, names):
+    """Review r7 F-05: duplicate identity columns must not be silently reduced
+    to the first index -- that would hide declarations in later columns."""
+    lowered = [cell.strip().lower() for cell in header]
+    duplicates = []
+    for name in names:
+        count = lowered.count(name)
+        if count > 1:
+            duplicates.append("%s x%d" % (name, count))
+    return duplicates
 
 
 def _table_header(block):
@@ -1298,6 +1302,17 @@ def parse_markdown_declarations(index, text, source_file):
                     "TABLE_NOT_RESOURCE_MANIFEST",
                     "table at line %d does not declare resource/evidence "
                     "identity columns; skipped as narrative" % start,
+                    source_file)
+                continue
+            duplicates = _duplicate_identity_columns(
+                header, ("resource_type", "source_path", "disposition",
+                         "destination_path"))
+            if duplicates:
+                index.add_error(
+                    "TABLE_DUPLICATE_IDENTITY_COLUMN",
+                    "table at line %d repeats identity column(s): %s; refusing "
+                    "to silently choose one column"
+                    % (start, ", ".join(duplicates)),
                     source_file)
                 continue
             if source_col is None or disposition_col is None:
@@ -1341,6 +1356,16 @@ def parse_markdown_declarations(index, text, source_file):
                     "TABLE_NOT_CANONICAL_EVIDENCE",
                     "table at line %d does not declare canonical-evidence "
                     "identity columns; skipped as narrative" % start,
+                    source_file)
+                continue
+            duplicates = _duplicate_identity_columns(header,
+                                                     ("evidence_id", "path"))
+            if duplicates:
+                index.add_error(
+                    "TABLE_DUPLICATE_IDENTITY_COLUMN",
+                    "table at line %d repeats canonical-evidence identity "
+                    "column(s): %s; refusing to silently choose one column"
+                    % (start, ", ".join(duplicates)),
                     source_file)
                 continue
             if path_col is None or evidence_col is None:

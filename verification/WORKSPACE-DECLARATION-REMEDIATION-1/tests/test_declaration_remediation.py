@@ -233,6 +233,38 @@ class DeclarationRemediationFixture(unittest.TestCase):
         self.assertEqual(self.candidate_record(report, target)["decision"],
                          "CANDIDATE")
 
+    def test_ac5_duplicate_resource_identity_columns_fatal(self):
+        self.fx.declare_raw(
+            "# fixture\n\n## Resource Manifest\n\n"
+            "| resource_type | source_path | disposition | source_path |\n"
+            "|---|---|---|---|\n"
+            "| worktree | G:/first | PRESERVE_REFERENCED | G:/second |\n",
+            relative="doc/tasks/FIXTURE-DUP-RESOURCE.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("TABLE_DUPLICATE_IDENTITY_COLUMN",
+                      result.stdout + result.stderr)
+
+    def test_ac5_duplicate_evidence_identity_columns_fatal(self):
+        self.fx.declare_raw(
+            "# fixture\n\n## Canonical Evidence\n\n"
+            "| evidence_id | path | sha256 | path |\n"
+            "|---|---|---|---|\n"
+            "| EV-1 | `README.md` | abc | `other.md` |\n",
+            relative="doc/tasks/FIXTURE-DUP-EVIDENCE.md")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("TABLE_DUPLICATE_IDENTITY_COLUMN",
+                      result.stdout + result.stderr)
+
+    def test_ac5_single_identity_columns_still_pass(self):
+        target = self.fx.candidate("temp", "SINGLE-COL", {"f.txt": "x"})
+        self.fx.declare([(target, "PRESERVE_REFERENCED")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(self.candidate_record(self.report(), target)["decision"],
+                         "REJECT")
+
     def test_ac5_malformed_english_manifest_stays_arity_error(self):
         self.fx.declare_raw(
             "# fixture\n\n## Resource Manifest\n\n"

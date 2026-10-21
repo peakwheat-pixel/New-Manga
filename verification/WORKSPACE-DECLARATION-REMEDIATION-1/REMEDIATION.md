@@ -8,7 +8,7 @@ Task: WORKSPACE-DECLARATION-REMEDIATION-1
 
 Before tool: `5a4a1a1cfaeb37698c1d22bd2c9d80149beb48bf4adf075027f7177eb5ded8a7`
 
-After tool: `1a5b70ef91f015532ca85afd62c471cd60210f6353a6b151c3c259baa9b2b5ba`
+After tool: `544aea1ebd5202bd7c70b65a7e7c4a08e6a66d2c48eebec68f13a9c195066188`
 
 ```
 BEFORE: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\tools\governance\clean_workspace.py --repo G:\CODEX\New Manga --workspace-root G:\CODEX\New Manga.workspace --audit-declarations --out G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\evidence\audit-before-run

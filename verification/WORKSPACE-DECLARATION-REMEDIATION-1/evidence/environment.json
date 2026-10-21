@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "WORKSPACE-DECLARATION-REMEDIATION-1",
-  "generated_at": "2026-10-21T06:05:43+00:00",
+  "generated_at": "2026-10-21T06:22:47+00:00",
   "host": {
     "platform": "Windows-11-10.0.26300-SP0",
     "python": "3.14.6",
@@ -23,7 +23,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
       "exit_code": 0,
       "log": "new-tests.log",
-      "stdout_sha256": "d8ff63ed925806a47a25574c8abfe4f0e49ddb971b8461bea7ab5af31b04776f"
+      "stdout_sha256": "419a8190fef3a0cb63e1d82dc698694e2b8c4bd82758b243bca9d0857d0e3040"
     },
     {
       "label": "existing-80-tests",
@@ -35,7 +35,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
       "exit_code": 0,
       "log": "existing-tests.log",
-      "stdout_sha256": "a92aa58b0cc5b98ef40588a3fad6d4260a138bb604c009a2969949c207312a40"
+      "stdout_sha256": "bf81ed11020df2a0a18ff2bf37c8f799dc39674e77d69c01ce0f037def2c14d7"
     },
     {
       "label": "replay-clean_workspace.py",
@@ -822,8 +822,8 @@
       "DECL_DESTINATION_UNRESOLVED": 1
     },
     "generated_from": {
-      "before_sha256": "ba3ee7e35c6a5777af67f1aa87e5d9c10966efdcacf2ed81310e5e5080d08487",
-      "after_sha256": "69a010bdbe2d0154c775ee6f5fb784e74c1a19362aaae6eaadd5c6ac4a25d4cd"
+      "before_sha256": "782420e81f545078354fd092c21f757f3f767fb8bc872dbd9d4d6bde599c354f",
+      "after_sha256": "134bb1fee298a297d063d5b3890f8b9c19ce1ed1090a5a9cf2bba1cfc30bcc03"
     }
   },
   "audit_snapshots": {
@@ -895,7 +895,7 @@
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1",
       "exit_code": 2,
-      "tool_sha256": "1a5b70ef91f015532ca85afd62c471cd60210f6353a6b151c3c259baa9b2b5ba"
+      "tool_sha256": "544aea1ebd5202bd7c70b65a7e7c4a08e6a66d2c48eebec68f13a9c195066188"
     }
   },
   "protection_delta": {
