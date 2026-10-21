@@ -37,7 +37,7 @@
 
 ## 4. 发布阻塞 / 待决项
 
-1. **签名证书缺失**（唯一发布硬阻塞；用户已选择提供 PFX，尚未交付）。
+1. **签名证书缺失**（唯一发布硬阻塞；用户已选择提供 PFX，尚未交付）。已登记 [V1-RELEASE-SIGNING-1](../tasks/V1-RELEASE-SIGNING-1.md)（`blocked`，等待 PFX/证书指纹）。
 2. `WORKSPACE-CLEANUP-TOOL-HARDENING-1` 已集成 (`368c07809`) 且 Codex R4 `approved`，Task 保持 `in_review`，待最终收口裁定。
 3. WORKSPACE 工具对真实仓库 fail-closed：发现 **163 条声明完整性错误**（含 69 条不可解析 JSON）；工具拒绝清理是预期行为，声明修复需另立 Task/Codex 裁定。
 4. 既有限制（不因本轮改变）：P20 AC4 撕裂项 = LIMITATION/UNOBSERVED；安装包未签名前不可作为正式发布包。

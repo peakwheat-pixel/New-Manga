@@ -1,0 +1,71 @@
+---
+id: V1-RELEASE-SIGNING-1
+title: v1 代码签名与发布签核（等待用户证书）
+kind: release
+status: blocked
+approval: user_authorized_release_20261021
+suggested_owner: DeepSeek Harness
+owner: dsh-lead
+reviewer: Codex
+depends_on: [P09-MANAGED-READ-ROOT-TRUST-1, WORKSPACE-CLEANUP-TOOL-HARDENING-1]
+base_commit: null
+branch: null
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
+evidence_dir: verification/V1-FINALIZE-20261021
+allowed_paths:
+  - doc/tasks/V1-RELEASE-SIGNING-1.md
+  - verification/V1-FINALIZE-20261021
+  - apps/desktop/src-tauri/target/release/bundle/nsis
+created: 2026-10-21
+---
+
+# V1-RELEASE-SIGNING-1：v1 代码签名与发布签核
+
+## 来源与目标
+
+来源：用户 2026-10-21 裁决“2. 是”（继续 v1 发布流程），并选择“我提供 PFX 路径 + 密码（推荐）”。
+目标：对 `m2rc1-desktop_0.1.0_x64-setup.exe` 完成真实代码签名、时间戳与 `signtool verify /pa`，记录 Authenticode 证据，给出“发布就绪/阻塞”的最终签核。
+
+## 当前状态（2026-10-21）
+
+- 安装/卸载：**DONE**。Windows Sandbox 全新环境 `setup.exe /S` exit 0、`uninstall.exe /S` exit 0；证据 `verification/V1-FINALIZE-20261021/clean-install-sandbox/`。
+- 签名流水线：**已验证（非真实发布签名）**。自签名测试证书 + DigiCert RFC3161 时间戳在**副本**上 `signtool sign` exit 0、时间戳链验证通过；`verify /pa` 仅因自签名根不受信任失败（预期）。测试证书/副本已清理，源安装包 SHA-256 未变。
+- 真实签名：**BLOCKED**。本机 CurrentUser/LocalMachine `My` 无 Code Signing EKU 证书；安装包 `NotSigned`。用户已选择提供 PFX，但尚未交付路径/密码。
+- 记录：`verification/V1-FINALIZE-20261021/release-readiness.md`、`signing-pipeline-test.log`。
+
+## 阻塞条件
+
+`BLOCKED: 缺少真实代码签名证书（等待用户提供 PFX 绝对路径 + 密码，或已导入证书指纹）`。
+
+## Acceptance Criteria
+
+- [ ] AC1 使用**真实**证书对安装包执行 `signtool sign`，exit 0，且 `/fd SHA256 /td SHA256 /tr <RFC3161>` 时间戳成功；不得使用自签名测试证书替代。 <<BLOCKED: 等待证书>>
+- [ ] AC2 `signtool verify /pa /v` exit 0；`Get-AuthenticodeSignature` 状态 `Valid`，签名者证书链可信。 <<BLOCKED: 等待证书>>
+- [ ] AC3 记录签名前后安装包 SHA-256、签名者 Subject/Thumbprint、时间戳来源、命令与 exit code，写入 `release-readiness.md`。 <<BLOCKED: 等待证书>>
+- [ ] AC4 若用户决定接受未签名发布：必须显式书面裁定并更新 `release-readiness.md`；否则不得发布。 <<BLOCKED: 等待用户裁决>>
+
+## 允许修改范围
+
+- 本 Task、`verification/V1-FINALIZE-20261021/` 证据目录、`apps/desktop/src-tauri/target/release/bundle/nsis/` 下的签名产物。
+- 不修改源码、契约、Schema、依赖、Plan/STATUS（由 Lead/Codex 同步）。
+
+## 禁止范围
+
+- 不得用自签名证书冒充发布签名。
+- 不得 push/GC/prune/历史重写。
+- 不得在无用户书面同意时发布未签名安装包。
+
+## 证据
+
+- `verification/V1-FINALIZE-20261021/release-readiness.md`
+- `verification/V1-FINALIZE-20261021/signing-pipeline-test.log`
+- `verification/V1-FINALIZE-20261021/clean-install-sandbox/`
+
+## Closeout Record
+
+- 关闭日期：未关闭（blocked）。
+- 阻塞原因：缺少真实代码签名证书；其余发布验证已完成。

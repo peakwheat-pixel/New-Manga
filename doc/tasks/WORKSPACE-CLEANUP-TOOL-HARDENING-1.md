@@ -3,7 +3,7 @@ id: WORKSPACE-CLEANUP-TOOL-HARDENING-1
 title: 工作区清理工具的保护判断与失败关闭修复（r208/r209 事故根因）
 kind: fix
 governance_version: 2
-status: in_review
+status: done
 approval: released_by_user_2026-10-21
 blocked_by: null
 suggested_owner: dsh
@@ -187,7 +187,7 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / Codex：待 Codex 独立 Review 与主仓集成后填写（本 Task 状态 `in_review`）。
+- Closeout date / Codex：2026-10-21；Codex R1→R2→R3→**R4 `approved`**（0 阻塞 finding）；主仓集成 commit `368c0780974ada5879d165526c60d41ee0fc8dc2`；Task 状态 `done`。
 - canonical_evidence_status：`complete`（27 条证据行，commit pin 全部为 evidence commit `30946decf`，
   SHA-256 与该 commit 的 Git blob 字节逐项一致；`governance-check.log`、`manifest.sha256` 亦在同一 evidence commit 内）。
 - resource_closeout_status：`complete`（无 worktree/task-env/artifact/exchange 等资源需处置；未执行任何真实删除）。
