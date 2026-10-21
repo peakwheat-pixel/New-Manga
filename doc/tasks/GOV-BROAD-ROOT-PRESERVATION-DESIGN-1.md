@@ -3,7 +3,7 @@ id: GOV-BROAD-ROOT-PRESERVATION-DESIGN-1
 title: 五个广域根整体保护的精确保全解释设计
 kind: design
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: user_broad_roots_preserve_all_20261021_design_only
 suggested_owner: Codex
 owner: Codex
