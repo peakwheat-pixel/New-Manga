@@ -60,6 +60,7 @@ allowed_paths:
 |EV-7|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/r1-response.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|acb3d5de2c0cc07ad953a7b4e1dcf55c8672b417fd7ec2b5d3aee4add6d5a1f6|CANONICAL|
 |EV-8|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r1.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|94b28aa611559c45cd790bdd997efd30b3222091de51e1a95b72352899cb2764|CANONICAL|
 |EV-9|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/ruling.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|4f9b206ce835fabf029d2a59ff70e3116febbe26302928978090117b4d375f38|CANONICAL|
+|EV-10|AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r2.md|9cfae1352ca97a53cf5b037f7d66d4bb502a3fea|d19b466d33df4bb5310617a23f379a6bcf4dd4bb67c86efd6b910e71a0d15b62|CANONICAL|
 
 ## Resource Manifest
 
@@ -69,3 +70,5 @@ allowed_paths:
 | worktree/env/build | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无新建 |
 
 R1独审3879cb936 changes_requested已记录review-dsh-r1.md；e33a51b4d修订两P1/三P2，处理矩阵r1-response.md；R2须固定新head复审。15覆盖模型重算、warnings254→266；真实仍24。
+
+R2固定1670b34ec：设计P1/P2已关闭，仅Handoff下一Task旧delivery需修；现改为e33a51b4d，设计/模型/绑定7输入未变化。R3只核metadata最终固定head，不延用未批准结论。
