@@ -80,6 +80,10 @@ SCHEMA_VERSION = 1
 
 REPO_DEFAULT = r"G:\CODEX\New Manga"
 WS_DEFAULT = r"G:\CODEX\New Manga.workspace"
+# Repository that hosts THIS tool (may be a worktree while auditing another
+# checkout); the non-declaration exception manifest is read from here.
+TOOL_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
 
 # The four derived areas this tool owns.  ``worktrees`` and ``task-envs`` remain
 # deliberately excluded (recovery points / detection venv).
@@ -284,22 +288,61 @@ def file_size(path):
         fail("IO_STAT_FAILED", "cannot stat %s: %s" % (path, exc))
 
 
-def read_text(path, what="file"):
+def read_text(path, what="file", legacy_warn=None):
     try:
-        with io.open(path, "r", encoding="utf-8", errors="strict") as handle:
-            return handle.read().replace("\r\n", "\n")
+        with io.open(path, "rb") as handle:
+            raw = handle.read()
     except PermissionError as exc:
         fail("PERMISSION_DENIED", "cannot read %s %s: %s" % (what, path, exc))
     except OSError as exc:
         fail("IO_READ_FAILED", "cannot read %s %s: %s" % (what, path, exc))
-    except UnicodeDecodeError as exc:
-        fail("IO_DECODE_FAILED", "%s %s is not valid UTF-8: %s" % (what, path, exc))
+    # F-05 (review r2): reject binary payloads before any decoding.  A legacy
+    # Chinese declaration note has no NUL bytes and almost no ASCII controls.
+    if b"\x00" in raw:
+        fail("FILE_UNREADABLE",
+             "%s %s contains NUL bytes; refusing a binary file as text"
+             % (what, path))
+    # Review r3 F-05: the control-byte ratio applies to EVERY length.  A short
+    # payload (e.g. 24 bytes, 20 control bytes, decodable GB18030 CJK) must be
+    # rejected too, not just files >= 64 bytes.
+    controls = sum(1 for byte in raw
+                   if byte < 0x20 and byte not in (0x09, 0x0A, 0x0D))
+    if controls and controls * 100 > len(raw):
+        fail("FILE_UNREADABLE",
+             "%s %s has %.2f%% control bytes; refusing a binary file as text"
+             % (what, path, controls * 100.0 / len(raw)))
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        # AC4 (WORKSPACE-DECLARATION-REMEDIATION-1): legacy P02/P04 notes are
+        # GB18030.  A strict fallback keeps fail-closed behaviour (no
+        # replacement characters can silently corrupt a declaration) while
+        # still reading the file; the caller records FILE_ENCODING_LEGACY.
+        # Review r2 F-05: the fallback must not accept arbitrary binary.  It is
+        # limited to payloads that decode to actual CJK text.
+        try:
+            text = raw.decode("gb18030")
+        except UnicodeDecodeError as exc:
+            fail("FILE_UNREADABLE",
+                 "%s %s is neither valid UTF-8 nor valid GB18030: %s"
+                 % (what, path, exc))
+        if not CJK_RE.search(text):
+            fail("FILE_UNREADABLE",
+                 "%s %s decodes as GB18030 but contains no CJK text; refusing "
+                 "it as a legacy declaration note" % (what, path))
+        if legacy_warn is not None:
+            legacy_warn("FILE_ENCODING_LEGACY",
+                        "%s %s is not valid UTF-8; decoded as GB18030 (legacy "
+                        "history, bytes preserved)" % (what, path))
+    return text.replace("\r\n", "\n")
 
 
 def load_json(path, what="JSON file"):
     text = read_text(path, what)
+    # BOM-prefixed JSON is common in historical evidence; the BOM is an
+    # encoding artefact, not declaration content (AC2 remediation).
     try:
-        return json.loads(text)
+        return json.loads(text.lstrip("\ufeff"))
     except ValueError as exc:
         fail("JSON_PARSE", "%s %s is not valid JSON: %s" % (what, path, exc))
 
@@ -667,6 +710,101 @@ def is_path_like(text):
     return False
 
 
+# ---------------------------------------------------------------------------
+# AC3/AC5 remediation: distinguish a declaration value from narrative text
+# ---------------------------------------------------------------------------
+CJK_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff]")
+CJK_PUNCT_RE = re.compile(r"[，。；：、（）【】「」]")
+# Values that are explicitly "not a path" rather than an unresolved identity.
+NON_PATH_WORDS = frozenset({
+    "not_applicable", "not applicable", "n/a", "na", "none", "none yet",
+    "no", "无", "不适用", "待定", "待填写", "-", "--", "—", "–", "null",
+    "todo", "pending",
+})
+# Review r4 F-01: only these resolution failures may be treated as prose
+# (value is not an identity at all).  Every other GuardError means the value
+# resolved to an unsafe/unreadable identity and must stay fatal.
+PROSE_SAFE_ERROR_CODES = frozenset({
+    "DECL_BARE_NAME", "DECL_RELATIVE_UNRESOLVED", "DECL_RELATIVE_NO_ROOT"})
+# Unparsable JSON is fatal unless it is listed in the explicit, SHA-256-bound
+# non-declaration exception manifest (review r2 F-02).  File names are mutable
+# and must never exempt a file.
+DEFAULT_JSON_EXCEPTION_MANIFEST = (
+    "verification/WORKSPACE-DECLARATION-REMEDIATION-1/"
+    "non-declaration-json-exceptions.json")
+
+
+def load_json_exceptions(repo_root, manifest_path=None):
+    """Load the explicit ``path + sha256`` non-declaration JSON exceptions.
+
+    Every entry must carry ``path``, ``sha256`` and ``reason``.  An exemption is
+    applied only when the file still exists with exactly that SHA-256; a missing
+    or changed file simply grants nothing (the file is then handled by the
+    normal fatal JSON_PARSE rule).  This keeps a stale list harmless without
+    weakening fail-closed behaviour, and lets the same tool run against fixture
+    repositories that do not contain the real manifest's paths.
+    """
+    relative_manifest = manifest_path or DEFAULT_JSON_EXCEPTION_MANIFEST
+    if os.path.isabs(relative_manifest):
+        path = relative_manifest
+    else:
+        path = os.path.join(TOOL_ROOT, relative_manifest.replace("/", os.sep))
+    if not os.path.isfile(path):
+        return {}
+    data = load_json(path, "JSON non-declaration exception manifest")
+    if not isinstance(data, list):
+        fail("JSON_EXCEPTION_SCHEMA",
+             "JSON exception manifest %s must be a list" % path)
+    exceptions = {}
+    for position, item in enumerate(data):
+        if not isinstance(item, dict):
+            fail("JSON_EXCEPTION_SCHEMA",
+                 "JSON exception entry %d is not an object" % position)
+        entry_path = item.get("path")
+        entry_sha = item.get("sha256")
+        reason = item.get("reason")
+        if not isinstance(entry_path, str) or not entry_path.strip():
+            fail("JSON_EXCEPTION_SCHEMA",
+                 "JSON exception entry %d has no path" % position)
+        if not isinstance(entry_sha, str) or not re.match(
+                r"^[0-9a-fA-F]{64}$", entry_sha.strip()):
+            fail("JSON_EXCEPTION_SCHEMA",
+                 "JSON exception entry %d has no valid sha256" % position)
+        if not isinstance(reason, str) or not reason.strip():
+            fail("JSON_EXCEPTION_SCHEMA",
+                 "JSON exception entry %d has no reason" % position)
+        relative = entry_path.strip().replace("\\", "/")
+        if relative.startswith("/") or ".." in relative.split("/"):
+            fail("JSON_EXCEPTION_SCHEMA",
+                 "JSON exception path %r escapes the repository" % relative)
+        absolute = os.path.join(repo_root, relative.replace("/", os.sep))
+        if not os.path.isfile(absolute):
+            continue  # stale entry: grants nothing, never a fatal for other repos
+        actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+        if actual != entry_sha.strip().lower():
+            continue  # changed file: grants nothing
+        exceptions[(relative, actual)] = reason.strip()
+    return exceptions
+
+
+def is_descriptive_value(text):
+    """AC3: True only for explicit placeholders or pure narrative text.
+
+    Review r2 F-01: a path-like value must NEVER be skipped, whatever spaces or
+    CJK characters it contains.  ``is_path_like`` wins; an unresolvable
+    path-like value then fails closed in ``_declared_identity``.  Only values
+    with no path syntax at all may be skipped as prose.
+    """
+    stripped = text.strip()
+    if stripped.lower() in NON_PATH_WORDS:
+        return True
+    if is_path_like(stripped):
+        return False
+    if CJK_RE.search(stripped) or CJK_PUNCT_RE.search(stripped):
+        return True
+    return len(stripped.split()) >= 2
+
+
 class Declaration(object):
     __slots__ = ("raw", "disposition", "source_file", "locator", "normalized",
                  "real_normalized")
@@ -817,7 +955,7 @@ class ProtectionIndex(object):
         for key in keys:
             self.protected.setdefault(key, []).append(declaration)
 
-    def _declared_identity(self, text, source_file, locator):
+    def _resolve_identity(self, text, source_file, locator, warn_alias=True):
         """Resolve a declaration to (lexical, real) normalised identities."""
         normalized = self.resolve_declared_path(text, source_file, locator)
         real = resolve_real_target(normalized, "declaration")
@@ -829,13 +967,35 @@ class ProtectionIndex(object):
                      "or a managed area root (%s) or above; over-broad "
                      "declarations need an explicit ruling"
                      % (text, value, generalized))
-        if real != normalized:
+        if warn_alias and real != normalized and source_file is not None:
             self.add_warning(
                 "DECL_ALIAS_REAL_TARGET",
                 "declaration %r is reached through a symlink/junction; the real "
                 "target %s is protected as well" % (text, real),
                 source_file, locator)
         return normalized, real
+
+    def _declared_identity(self, text, source_file, locator):
+        return self._resolve_identity(text, source_file, locator, True)
+
+    def _prose_probe(self, text):
+        """Classify a prose-looking value before skipping it (review r4 F-01).
+
+        Returns ``("identity", normalized)`` when the value resolves safely,
+        ``("error", GuardError)`` when it resolves but the identity is unsafe /
+        unreadable (generalized junction, escape, env, glob, traversal...), and
+        ``("prose", GuardError)`` only for the two "not an identity" codes
+        (bare name / unresolved relative path).  Review r4: a generalized
+        junction must NOT fall through as prose warning -- it stays fatal.
+        """
+        try:
+            normalized, _real = self._resolve_identity(
+                text, None, None, warn_alias=False)
+        except GuardError as exc:
+            if exc.code in PROSE_SAFE_ERROR_CODES:
+                return "prose", exc
+            return "error", exc
+        return "identity", normalized
 
     def add_declaration(self, raw, disposition, source_file, locator):
         text = clean_cell(raw)
@@ -848,6 +1008,23 @@ class ProtectionIndex(object):
                            "disposition %r" % (raw, disposition),
                            source_file, locator)
             return None
+        if is_descriptive_value(text):
+            verdict, payload = self._prose_probe(text)
+            if verdict == "prose":
+                # AC3: explicit placeholder / pure prose that is not an
+                # identity.  Skipped with warning; never registers protection.
+                self.add_warning("DECL_SOURCE_NOT_A_PATH",
+                                 "source %r is descriptive text, not a path; "
+                                 "skipped without protection" % text,
+                                 source_file, locator)
+                return None
+            if verdict == "error":
+                # Review r4 F-01: value resolved but its identity is unsafe /
+                # unreadable (e.g. generalized junction).  Keep fatal with the
+                # original code; prose must not swallow it.
+                self.add_error(payload.code, payload.message, source_file, locator)
+                return None
+            # verdict == "identity": fall through and register protection.
         if not disp:
             self.add_error("DECL_EMPTY_DISPOSITION",
                            "resource row for %r has no disposition; safety "
@@ -876,6 +1053,17 @@ class ProtectionIndex(object):
         text = clean_cell(raw)
         if _is_placeholder(text):
             return None
+        if is_descriptive_value(text):
+            verdict, payload = self._prose_probe(text)
+            if verdict == "prose":
+                self.add_warning("DECL_EVIDENCE_NOT_A_PATH",
+                                 "evidence path %r is descriptive text, not a "
+                                 "path; skipped without protection" % text,
+                                 source_file, locator)
+                return None
+            if verdict == "error":
+                self.add_error(payload.code, payload.message, source_file, locator)
+                return None
         try:
             normalized, real = self._declared_identity(text, source_file, locator)
         except GuardError as exc:
@@ -893,7 +1081,8 @@ class ProtectionIndex(object):
         if not is_path_like(text):
             # Descriptive destination (e.g. "由管理员裁定").  Explicitly allowed
             # and recorded; it cannot declare protection because it is not a
-            # path (F-03).
+            # path (F-03).  Do NOT widen this to path-like prose: F-03 keeps a
+            # path-like but unresolvable destination an integrity error.
             self.add_warning("DECL_DESTINATION_PROSE",
                              "destination %r is descriptive text, not a path; "
                              "it is not protection" % text,
@@ -902,6 +1091,13 @@ class ProtectionIndex(object):
         try:
             normalized, real = self._declared_identity(text, source_file, locator)
         except GuardError as exc:
+            if exc.code == "DECL_GENERALIZED":
+                # Review r2 F-03: a path-like over-broad destination weakens
+                # F-03 exactly like an over-broad source.  Keep it fatal; no
+                # root-policy exception is granted by this Task.
+                self.add_error("DECL_DESTINATION_GENERALIZED", exc.message,
+                               source_file, locator)
+                return None
             # Path-like destination that cannot be resolved is an integrity
             # error, not a warning: its protection cannot be enumerated (F-03).
             self.add_error("DECL_DESTINATION_UNRESOLVED", exc.message,
@@ -1060,12 +1256,25 @@ def parse_table_block(block, start):
     return header, rows
 
 
-def _find_column(header, *names):
+def _exact_column(header, *names):
+    """AC5: exact English column name only (no Chinese/prose aliases)."""
     lowered = [cell.strip().lower() for cell in header]
     for name in names:
         if name in lowered:
             return lowered.index(name)
     return None
+
+
+def _duplicate_identity_columns(header, names):
+    """Review r7 F-05: duplicate identity columns must not be silently reduced
+    to the first index -- that would hide declarations in later columns."""
+    lowered = [cell.strip().lower() for cell in header]
+    duplicates = []
+    for name in names:
+        count = lowered.count(name)
+        if count > 1:
+            duplicates.append("%s x%d" % (name, count))
+    return duplicates
 
 
 def _table_header(block):
@@ -1078,16 +1287,55 @@ def parse_markdown_declarations(index, text, source_file):
     if manifest:
         for start, block in iter_table_blocks(manifest):
             header = _table_header(block)
-            source_col = _find_column(header, "source_path", "源", "source")
-            disposition_col = _find_column(header, "disposition", "处置")
+            source_col = _exact_column(header, "source_path")
+            disposition_col = _exact_column(header, "disposition")
+            resource_type_col = _exact_column(header, "resource_type")
+            destination_col = _exact_column(header, "destination_path")
+            claims_manifest = (resource_type_col is not None
+                               or source_col is not None
+                               or disposition_col is not None
+                               or destination_col is not None)
+            if not claims_manifest:
+                # A table with none of the identity columns is narrative; it
+                # cannot enumerate protection.
+                index.add_warning(
+                    "TABLE_NOT_RESOURCE_MANIFEST",
+                    "table at line %d does not declare resource/evidence "
+                    "identity columns; skipped as narrative" % start,
+                    source_file)
+                continue
+            duplicates = _duplicate_identity_columns(
+                header, ("resource_type", "source_path", "disposition",
+                         "destination_path"))
+            if duplicates:
+                index.add_error(
+                    "TABLE_DUPLICATE_IDENTITY_COLUMN",
+                    "table at line %d repeats identity column(s): %s; refusing "
+                    "to silently choose one column"
+                    % (start, ", ".join(duplicates)),
+                    source_file)
+                continue
             if source_col is None or disposition_col is None:
-                continue  # not a resource table: no declaration semantics
+                # Review r2 F-04: a table that claims resource identity but
+                # lacks a required column is malformed, not narrative.  Skipping
+                # it could hide declarations, so fail closed.
+                index.add_error(
+                    "TABLE_SCHEMA_INCOMPLETE",
+                    "table at line %d declares resource identity columns but "
+                    "lacks %s; incomplete resource schemas cannot be trusted "
+                    "for protection"
+                    % (start, " and ".join(
+                        name for name, column in
+                        (("source_path", source_col),
+                         ("disposition", disposition_col))
+                        if column is None)),
+                    source_file)
+                continue
             try:
                 header, rows = parse_table_block(block, start)
             except GuardError as exc:
                 index.add_error(exc.code, exc.message, source_file)
                 continue
-            destination_col = _find_column(header, "destination_path", "目标")
             for line_number, row in rows:
                 locator = "line %d" % line_number
                 index.add_declaration(row[source_col], row[disposition_col],
@@ -1100,9 +1348,38 @@ def parse_markdown_declarations(index, text, source_file):
     if evidence:
         for start, block in iter_table_blocks(evidence):
             header = _table_header(block)
-            path_col = _find_column(header, "path", "路径")
-            if path_col is None or _find_column(header, "evidence_id") is None:
-                continue  # not a canonical-evidence table
+            path_col = _exact_column(header, "path")
+            evidence_col = _exact_column(header, "evidence_id")
+            claims_evidence = path_col is not None or evidence_col is not None
+            if not claims_evidence:
+                index.add_warning(
+                    "TABLE_NOT_CANONICAL_EVIDENCE",
+                    "table at line %d does not declare canonical-evidence "
+                    "identity columns; skipped as narrative" % start,
+                    source_file)
+                continue
+            duplicates = _duplicate_identity_columns(header,
+                                                     ("evidence_id", "path"))
+            if duplicates:
+                index.add_error(
+                    "TABLE_DUPLICATE_IDENTITY_COLUMN",
+                    "table at line %d repeats canonical-evidence identity "
+                    "column(s): %s; refusing to silently choose one column"
+                    % (start, ", ".join(duplicates)),
+                    source_file)
+                continue
+            if path_col is None or evidence_col is None:
+                index.add_error(
+                    "TABLE_SCHEMA_INCOMPLETE",
+                    "table at line %d declares canonical-evidence identity "
+                    "columns but lacks %s; incomplete schemas cannot be trusted "
+                    "for protection"
+                    % (start, " and ".join(
+                        name for name, column in
+                        (("evidence_id", evidence_col), ("path", path_col))
+                        if column is None)),
+                    source_file)
+                continue
             try:
                 header, rows = parse_table_block(block, start)
             except GuardError as exc:
@@ -1148,25 +1425,31 @@ def parse_json_declarations(index, data, source_file):
     _walk_json(data, callback)
 
 
-def scan_repo_declarations(repo_root, ws_root):
+def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
     """Build the protection index from ``doc/tasks/**`` and ``verification/**``.
 
     Read-only.  Both TRACKED files and non-ignored UNTRACKED ``.md``/``.json``
     files are scanned (F-02): a declaration that only exists as an untracked
     draft still names a protected resource, and silently ignoring it is exactly
-    the r208 failure mode.  Untracked declarations that cannot be parsed are
-    integrity errors, so apply is refused rather than run with incomplete
-    protection.
+    the r208 failure mode.
 
-    ``git ls-files`` failure is fatal (AC2).  ANY ``.json`` declaration file
-    that cannot be parsed is an integrity error (``JSON_PARSE``) and refuses the
-    whole run: protection cannot be enumerated from a file whose declarations
-    may include protective MIGRATE/ARCHIVE rows.  Do NOT reintroduce a
-    "PRESERVE marker present?" heuristic or a warning-and-continue path for
-    unparsable JSON (see Review r2 F-02); there is no marker-based exemption.
+    JSON classification (AC2 remediation, hardened by review r2 F-02): an
+    unparsable JSON file is fatal (``JSON_PARSE``) unless its exact path AND
+    SHA-256 appear in the explicit non-declaration exception manifest
+    (``non-declaration-json-exceptions.json``; path overridable with
+    ``--json-exceptions``).  File names are mutable and never exempt anything.
+    The manifest schema is validated and an entry is applied only when the file
+    still matches its recorded SHA-256; renames/edits therefore lose the
+    exemption and become fatal.  MIGRATE/ARCHIVE declarations cannot hide behind
+    a renamed ``*.stdout.json`` because the exemption is byte-bound.
+
+    ``git ls-files`` failure is fatal (AC2).  Legacy non-UTF-8 markdown is read
+    as strict GB18030 with ``FILE_ENCODING_LEGACY`` warning (AC4), but binary
+    payloads (NUL/control-heavy/no-CJK) remain ``FILE_UNREADABLE`` (F-05).
     """
     index = ProtectionIndex(repo_root=repo_root, ws_root=ws_root)
     repo = index.repo_root
+    exceptions = load_json_exceptions(repo, json_exceptions)
     tracked = git_checked(repo, "ls-files", "-z", "--", "doc/tasks",
                           "verification", what="git ls-files")
     untracked = git_checked(repo, "ls-files", "-z", "--others",
@@ -1177,6 +1460,7 @@ def scan_repo_declarations(repo_root, ws_root):
     untracked_files = {item for item in untracked.split("\x00") if item}
     files = sorted(tracked_files | untracked_files)
     scanned = {"markdown": 0, "json": 0, "unparsable_json": 0,
+               "json_non_declaration": 0, "json_parse_fatal": 0,
                "tracked_declaration_files": len(tracked_files),
                "untracked_declaration_files": len(untracked_files)}
     for relative in files:
@@ -1186,25 +1470,45 @@ def scan_repo_declarations(repo_root, ws_root):
         if relative.endswith(".md"):
             scanned["markdown"] += 1
             try:
-                text = read_text(absolute, "%s markdown" % source_kind)
+                text = read_text(absolute, "%s markdown" % source_kind,
+                                 legacy_warn=index.add_warning)
             except GuardError as exc:
                 index.add_error("FILE_UNREADABLE", exc.message, relative)
                 continue
             parse_markdown_declarations(index, text, relative)
         elif relative.endswith(".json"):
             scanned["json"] += 1
+            digest = None
+            if exceptions:
+                try:
+                    digest = hashlib.sha256(
+                        io.open(absolute, "rb").read()).hexdigest()
+                except OSError as exc:
+                    index.add_error(
+                        "IO_READ_FAILED",
+                        "cannot read %s JSON %s: %s"
+                        % (source_kind, absolute, exc), relative)
+                    continue
+                reason = exceptions.get((relative.replace("\\", "/"), digest))
+                if reason is not None:
+                    scanned["json_non_declaration"] += 1
+                    index.add_warning(
+                        "JSON_NON_DECLARATION",
+                        "unparsable %s JSON explicitly exempted by path+sha256 "
+                        "in the non-declaration manifest (%s)" % (source_kind,
+                                                                 reason),
+                        relative)
+                    continue
             try:
                 data = load_json(absolute, "%s JSON" % source_kind)
             except GuardError as exc:
                 scanned["unparsable_json"] += 1
-                # F-02 (R2 Review): an unparsable JSON declaration file is ALWAYS
-                # an integrity error.  Looking for the literal "PRESERVE" marker
-                # missed MIGRATE/ARCHIVE declarations (also protective) and let
-                # apply continue with incomplete protection.
+                scanned["json_parse_fatal"] += 1
                 index.add_error(
                     "JSON_PARSE",
                     "unparsable %s JSON declaration file; protection cannot be "
-                    "enumerated, so cleaning is refused: %s"
+                    "enumerated and it is not in the explicit path+sha256 "
+                    "non-declaration exception manifest: %s"
                     % (source_kind, exc.message), relative)
                 continue
             parse_json_declarations(index, data, relative)
@@ -1603,7 +1907,8 @@ def _declaration_audit_payload(index, scanned, ledger=None):
 def run_audit_declarations(config):
     repo = config["repo"]
     ws = config["ws"]
-    index, scanned = scan_repo_declarations(repo, ws)
+    index, scanned = scan_repo_declarations(repo, ws,
+                                            config.get("json_exceptions"))
     ledger = None
     if config.get("incident_ledger"):
         ledger = load_incident_ledger(config["incident_ledger"])
@@ -1745,7 +2050,8 @@ def _write_inventories(config, inventories):
 
 
 def run_clean_workspace(config):
-    index, scanned = scan_repo_declarations(config["repo"], config["ws"])
+    index, scanned = scan_repo_declarations(config["repo"], config["ws"],
+                                            config.get("json_exceptions"))
     if index.errors:
         report = {
             "schema_version": SCHEMA_VERSION,
@@ -1870,6 +2176,7 @@ def build_config(args):
         "replay": args.replay_incident,
         "audit": bool(args.audit_declarations),
         "incident_ledger": args.incident_ledger,
+        "json_exceptions": args.json_exceptions,
     }
 
 
@@ -1891,6 +2198,11 @@ def parse_args(argv):
                         help="read-only declaration audit; never deletes")
     parser.add_argument("--incident-ledger",
                         help="incident ledger for --audit-declarations coverage")
+    parser.add_argument("--json-exceptions",
+                        help="explicit path+sha256 non-declaration JSON "
+                             "exception manifest (default: this tool's "
+                             "verification/WORKSPACE-DECLARATION-REMEDIATION-1/"
+                             "non-declaration-json-exceptions.json)")
     return parser.parse_args(argv)
 
 

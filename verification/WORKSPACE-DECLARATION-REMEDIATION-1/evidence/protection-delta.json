@@ -1,0 +1,14 @@
+{
+  "old": {
+    "declarations": 1858,
+    "protected_roots": 1264
+  },
+  "new": {
+    "declarations": 1858,
+    "protected_roots": 1264
+  },
+  "dropped_declarations": [],
+  "added_declarations": [],
+  "dropped_that_exist_as_paths": [],
+  "verdict": "OK: every dropped declaration is prose that does not exist as a path; no real protected identity was lost"
+}

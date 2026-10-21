@@ -1,0 +1,1338 @@
+{
+  "schema_version": 1,
+  "tool": "clean_workspace.py",
+  "mode": "declaration_audit",
+  "generated_at": "2026-10-21T14:22:35+08:00",
+  "scan": {
+    "markdown": 2275,
+    "json": 1153,
+    "unparsable_json": 69,
+    "tracked_declaration_files": 7416,
+    "untracked_declaration_files": 1504,
+    "declarations": 1858,
+    "errors": 163,
+    "warnings": 54
+  },
+  "counts": {
+    "declarations": 1858,
+    "protected_roots": 1264,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 348,
+      "EVIDENCE_PIN": 1117,
+      "NOT_APPLICABLE": 3,
+      "PRESERVE_REFERENCED": 342,
+      "PRESERVE_UNKNOWN": 30,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 163,
+    "warnings": 54
+  },
+  "errors": [
+    {
+      "code": "TABLE_ROW_ARITY",
+      "message": "table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection",
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '仓外 agent-output，非本 Task 交付物' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/GOV-EOL-PIN-1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '仓外 agent-output，非本 Task 产物' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/GOV-PLAN-BUDGET-1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '仓外 agent-output，非本 Task 产物' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '仓外 agent-output，非本 Task 交付物' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 13"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-AC3-DELETE-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02）' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '仓外 agent-output，非本 Task 产物' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P19-UI-MANIFEST-VIEW-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P20-AC4-FPS-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '不适用（临时输出未纳入版本控制）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P22-REBASE-1.md",
+      "locator": "line 16"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P22-REBASE-1.md",
+      "locator": "line 17"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-review-preflight-r1.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r1.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'none yet' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'dsh-bounded-review-i2-r1.stdout.jsonl（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-i2-verify-adjudication-r1.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-ac3-branch-ref-blocker-20261014T0337.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'convergence-post-i2-ac3-branch-output-20261014T0337.json（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'none yet' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'dsh-bounded-review-i2-r1.stdout.jsonl（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-i2-verify-adjudication-r1.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-ac3-branch-ref-blocker-20261014T0337.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'convergence-post-i2-ac3-branch-output-20261014T0337.json（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json is not valid JSON: Extra data: line 2 column 1 (char 7494)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-X6-AC1-AC7\\runs\\p02-newtime-ac-20261014-i1\\ac5-keyboard-a2\\runner-execution.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/runner-execution.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-X6-AC1-AC7\\runs\\p02-newtime-ac-20261014-i1\\ac6-contrast\\runner-execution.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac6-contrast/runner-execution.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P02\\antigravity-dispatch-r1.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/antigravity-dispatch-r1.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P02\\dsh-p02-r2-closeout-review-r1.mount.md is not valid UTF-8: 'utf-8' codec can't decode byte 0xd2 in position 0: invalid continuation byte",
+      "file": "verification/P02/dsh-p02-r2-closeout-review-r1.mount.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P02\\dsh-p02-r2-closeout-review-r2.mount.md is not valid UTF-8: 'utf-8' codec can't decode byte 0xd2 in position 0: invalid continuation byte",
+      "file": "verification/P02/dsh-p02-r2-closeout-review-r2.mount.md",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-env-smoke-20261012-152149.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-dispatch-env-smoke-20261012-152149.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-smoke-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-dispatch-smoke-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-smoke-after-restore-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-dispatch-smoke-after-restore-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6-retry-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6-retry-desktop-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-desktop-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0)",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 13"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P04\\dsh-p04-owner-review-r1.mount.md is not valid UTF-8: 'utf-8' codec can't decode byte 0xd2 in position 0: invalid continuation byte",
+      "file": "verification/P04/dsh-p04-owner-review-r1.mount.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '待释放后记录' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '待释放后记录' has unknown disposition '待核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '无或待核实' has unknown disposition '`NOT_APPLICABLE` 仅在实证确认后填写'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '释放后据实记录' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '据实记录；无则核实后填 NOT_APPLICABLE' has unknown disposition '据实记录'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '释放后据实记录' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '释放后据实记录' has unknown disposition '据实记录保留 disposition'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '据实记录' has unknown disposition '据实记录；无资源须证实后填 `NOT_APPLICABLE`'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '释放后按实际路径记录' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '据实逐项记录；仅经核实从未适用才可填 NOT_APPLICABLE' has unknown disposition '据实填写'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '实际 Handoff 路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-p19-view-r10.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '实际 Review 路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-p19-view-r10.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path '据实记录' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '据实记录；无则核实 NOT_APPLICABLE' has unknown disposition '据实记录'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac1-overlay-bound.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac1-shutdown-writes.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac2-process-tree-audit.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac3-resilient-channel.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac3-stdio-channel-drop.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-child-lock-contention.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-inner-lock-contention.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-inner-lock-fallback-spawn-failure.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-inner-lock-fallback-timeout.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-pending-lock-contention.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-poisoned-child-lock.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-reader-guard.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-reentrant-child-reap-check.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-wait-timeout-or-kill.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac4-writer-pipe-overflow.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac5-20261018-1555\\ac5-metadata.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac5-20261018-1555/ac5-metadata.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\ac5-run-20261020\\ac5-metadata.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\r1fix-p1-1\\p1-1-governance.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\r1fix-p1-1\\p1-1-resilient-channel.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\r1fix-p1-1\\p1-1-shutdown-writes.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-1\\r1fix-p1-1\\p1-1-stdio-drop.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac1-overlay-bound.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac1-overlay-bound.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac1-shutdown-writes.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac1-shutdown-writes.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac2-process-tree-audit.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac3-child-fallback-post-deadline.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-child-fallback-post-deadline.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac3-resilient-channel.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-resilient-channel.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac3-stdio-channel-drop.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-stdio-channel-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-child-lock-contention.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-child-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-inner-lock-contention.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-inner-lock-fallback-spawn-failure.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-fallback-spawn-failure.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-inner-lock-fallback-timeout.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-fallback-timeout.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-pending-lock-contention.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-pending-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-poisoned-child-lock.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-poisoned-child-lock.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-reader-guard.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-reader-guard.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-reentrant-child-reap-check.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-reentrant-child-reap-check.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-taskkill-fault-injection.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-taskkill-fault-injection.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-wait-timeout-or-kill.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-wait-timeout-or-kill.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac4-writer-pipe-overflow.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-writer-pipe-overflow.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-is-down-write-routing.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-is-down-write-routing.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-max-retries-3.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-max-retries-3.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-pipe-overflow-2mb.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-pipe-overflow-2mb.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-r003-cycle-break-and-reap.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r003-cycle-break-and-reap.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-r006-error-presentation.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r006-error-presentation.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-r008-heartbeat-recovery.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r008-heartbeat-recovery.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-resilient-suite-9-tests.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-resilient-suite-9-tests.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-shutdown-writes-suite.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-shutdown-writes-suite.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P20-CLOSE-BOUND-HARDEN-1\\ac8-stdio-channel-drop.meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-stdio-channel-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P22-REBASE-1/integration/resource-closeout-manifest.json",
+      "locator": "$.resources[12].disposition"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P22-REBASE-1/integration/resource-closeout-manifest.json",
+      "locator": "$.resources[13].disposition"
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P22-REBASE-1\\mutation-report.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P22-REBASE-1/mutation-report.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P22-REBASE-1\\test-run-meta.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P22-REBASE-1/test-run-meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\P22-REBASE-1\\test-run-summary.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/P22-REBASE-1/test-run-summary.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\cold-start-benchmark\\logs-argparse-fail-attempt1\\cold-start-results.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs-argparse-fail-attempt1/cold-start-results.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\cold-start-benchmark\\logs\\cold-start-results.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs/cold-start-results.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\default-data-root-probe\\default-data-root-probe.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/default-data-root-probe/default-data-root-probe.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\rerun2\\logs\\post-exit-check.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun2/logs/post-exit-check.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\rerun2\\logs\\process-exit.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun2/logs/process-exit.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated, so cleaning is refused: tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\rerun3\\logs\\process-exit.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun3/logs/process-exit.json",
+      "locator": null
+    }
+  ],
+  "warnings": [
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'CON' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P09-AC3-DELETE-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '本路径' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P20-AC4-FPS-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored bundle in task worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored bundle in main worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[2].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored dist in task worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[3].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored dist in main worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[4].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same existing isolated build venv' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[5].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored node_modules in task worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[6].destination_path"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1/apps/desktop/frontend/node_modules' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/node_modules is protected as well",
+      "file": "verification/EVENTS-FWD-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EVENTS-FWD-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/EXPORT-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EXPORT-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EXPORT-REVEAL-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'junctions to the coordinator-provided main-repo build artifacts' is descriptive text, not a path; it is not protection",
+      "file": "verification/HOST-ISSUER-1/resource-manifest.json",
+      "locator": "$.resources[2].destination_path"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/HOST-TTL-BOUNDARY-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '据实记录' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '据实填写' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P12/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P12/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P14/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P14/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15-C1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P15-C1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15-C1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P15-C1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/node_modules' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/node_modules is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P19-BOOT-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same source location' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same shared build environment' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[4].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same local cache location' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[5].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same main-repository paths' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[6].destination_path"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/READER-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/READER-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/RUN-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/RUN-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    }
+  ],
+  "report_sha256": "c2cd37a337c0d95f469d1a4ce7e4f009f0ec4bb7bf6ab0cc7d3dfa8433c98acd"
+}

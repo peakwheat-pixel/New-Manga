@@ -1,0 +1,48 @@
+COMMAND: C:\Python314\python.exe -B -m unittest test_declaration_remediation -v
+CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\tests
+PARENT_SHELL: pwsh (parent process of run_evidence.py; Windows PowerShell/pwsh 7)
+SHELL: False (subprocess.run(shell=False); argv list passed without shell interpolation)
+EXIT_CODE: 0
+
+test_ac1_triage_same_locator_multiple_codes_prefers_exact_code (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_same_locator_multiple_codes_prefers_exact_code) ... ok
+test_ac1_triage_transition_codes (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_transition_codes) ... ok
+test_ac1_triage_unlisted_multi_code_is_ambiguous (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_unlisted_multi_code_is_ambiguous) ... ok
+test_ac2_exception_with_wrong_sha_does_not_apply (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_exception_with_wrong_sha_does_not_apply) ... ok
+test_ac2_explicit_path_sha_exception_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_explicit_path_sha_exception_is_warning) ... G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\tests\test_declaration_remediation.py:86: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\Users\\49745\\AppData\\Local\\Temp\\wc-decl-zjz97vkt\\repo\\verification\\runner.stdout.json'>
+  return hashlib.sha256(open(full, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_ac2_renamed_declaration_stdout_json_stays_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_renamed_declaration_stdout_json_stays_fatal)
+A real declaration renamed *.stdout.json cannot buy an exemption. ... ok
+test_ac2_tracked_malformed_artifact_json_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_tracked_malformed_artifact_json_is_fatal) ... ok
+test_ac3_bare_identifier_still_fails_closed (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_bare_identifier_still_fails_closed) ... ok
+test_ac3_existing_single_component_cjk_toplevel_is_protected (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_existing_single_component_cjk_toplevel_is_protected)
+Review r3 F-01: existing repo top-level '���� �ļ�' must protect. ... ok
+test_ac3_explicit_placeholder_and_pure_prose_are_warnings (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_explicit_placeholder_and_pure_prose_are_warnings) ... ok
+test_ac3_generalized_junction_source_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_generalized_junction_source_is_fatal)
+Review r4 F-01: CJK junction to the workspace root stays fatal. ... ok
+test_ac3_nonexistent_single_component_cjk_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_nonexistent_single_component_cjk_is_warning) ... ok
+test_ac3_pathlike_value_with_embedded_path_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_pathlike_value_with_embedded_path_is_fatal) ... ok
+test_ac3_pathlike_value_with_spaces_and_cjk_is_protected (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_pathlike_value_with_spaces_and_cjk_is_protected)
+F-01: path-like values must never be skipped as prose. ... ok
+test_ac3_real_preserve_path_still_protects (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_real_preserve_path_still_protects) ... ok
+test_ac3_safe_junction_source_is_protected (test_declaration_remediation.DeclarationRemediationFixture.test_ac3_safe_junction_source_is_protected)
+A CJK top-level junction to a repo dir resolves, not prose-skipped. ... ok
+test_ac4_binary_with_nul_is_unreadable (test_declaration_remediation.DeclarationRemediationFixture.test_ac4_binary_with_nul_is_unreadable) ... ok
+test_ac4_gb18030_chinese_markdown_is_read_with_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac4_gb18030_chinese_markdown_is_read_with_warning) ... ok
+test_ac4_gb18030_decodable_binary_is_unreadable (test_declaration_remediation.DeclarationRemediationFixture.test_ac4_gb18030_decodable_binary_is_unreadable) ... ok
+test_ac4_short_control_rich_gb18030_payload_is_unreadable (test_declaration_remediation.DeclarationRemediationFixture.test_ac4_short_control_rich_gb18030_payload_is_unreadable) ... ok
+test_ac5_duplicate_evidence_identity_columns_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_duplicate_evidence_identity_columns_fatal) ... ok
+test_ac5_duplicate_resource_identity_columns_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_duplicate_resource_identity_columns_fatal) ... ok
+test_ac5_generalized_destination_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_generalized_destination_is_fatal) ... ok
+test_ac5_generalized_junction_evidence_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_generalized_junction_evidence_is_fatal) ... ok
+test_ac5_incomplete_evidence_schema_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_incomplete_evidence_schema_is_fatal) ... ok
+test_ac5_incomplete_resource_schema_is_fatal (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_incomplete_resource_schema_is_fatal) ... ok
+test_ac5_malformed_english_manifest_stays_arity_error (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_malformed_english_manifest_stays_arity_error) ... ok
+test_ac5_narrative_table_without_identity_columns_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_narrative_table_without_identity_columns_is_warning) ... ok
+test_ac5_single_identity_columns_still_pass (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_single_identity_columns_still_pass) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 19.436s
+
+OK

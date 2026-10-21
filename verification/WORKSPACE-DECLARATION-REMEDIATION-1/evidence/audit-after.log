@@ -1,0 +1,18 @@
+COMMAND: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\tools\governance\clean_workspace.py --repo G:\CODEX\New Manga --workspace-root G:\CODEX\New Manga.workspace --audit-declarations --out G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\evidence\audit-after-run
+CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1
+PARENT_SHELL: pwsh (parent process of run_evidence.py; Windows PowerShell/pwsh 7)
+SHELL: False (subprocess.run(shell=False); argv list passed without shell interpolation)
+EXIT_CODE: 2
+
+declaration audit: 1858 declaration(s), 1264 protected root(s), 76 error(s), 236 warning(s)
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/ENV-BUNDLE-1-FU1.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/EVENTS-FWD-1.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/EXPORT-IPC-1.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/EXPORT-REVEAL-1.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/GOV-AC-GATE-1.md]
+  ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/GOV-EOL-PIN-1.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md]
+  ERROR TABLE_SCHEMA_INCOMPLETE: table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection [doc/tasks/GOV-EVIDENCE-UNIQUE-1.md]
+  report: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1/verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-after-run/declaration-audit.json
