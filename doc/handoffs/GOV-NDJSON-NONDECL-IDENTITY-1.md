@@ -28,3 +28,13 @@ Recovery：G:/CODEX/New Manga，main，固定base/head=488ab6cbec7774df8c0c3b2e8
 可转发指令：Codex，请在G:/CODEX/New Manga的main核对实际HEAD/唯一租约，以488ab6cbec7774df8c0c3b2e8a9e169750a92101为恢复点读本Handoff和研究证据，先冻结拟议GOV-NDJSON-EXCEPTION-CONFIG-1（依赖本Task独审done，Owner Codex/Reviewer DeepSeek）。只新建当前配置tools/governance/non-declaration-json-exceptions.json保留原67＋固定两项，并仅切换clean_workspace.py默认配置常量；实现branch/worktree待Codex创建。保护旧表/旧Task/原pin/原日志，不改解析函数、Schema/依赖，不运行旧collector，不清理/GC/prune/push。源漂移则停，不自动重签hash。交付真实before/after32→30/其它30身份/保护集合和旧67完整证明、负例与旧证据raw/历史pin检查、固定commit独立Review/Handoff及治理check；本建议不是释放，不自动实施。
 
 R1要求修正本Task证据表断行：新增table-registration-proof证明原10pin实际注册，同行原日志Manifest断行也同根因修复。旧checkpoint原字节作为历史SOURCE_PIN保留，当前指针改checkpoint-r2.md；report明确旧1704为修正前快照。只有本Task metadata/evidence变化，源/guard/正式表未动；旧10pin中仅本研究report修订后须重签自身新版本，其余内容保持原字节。
+
+## 下一任务优先级修正（本研究R1发现的前置条件，未释放）
+
+先做拟议GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，再考虑上文配置迁移建议；配置Task保持未释放。Owner Codex / Reviewer DeepSeek Harness。原因是治理check能读取分散EV行，而guard按连续Markdown表注册保护；需先核对本轮已知相关治理Task的证据注册，不能凭check PASS清理。
+
+Recovery：G:/CODEX/New Manga，main，固定base/head=4bab91982（启动须解析完整SHA并核对后续纯元数据提交/唯一租约）；不新增worktree，Codex串行治理文档。范围须另行冻结为三个已知直接相关Task：doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md、doc/tasks/GOV-PATH-HEADER-COMPAT-1.md、doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md；只读各自当前EV表/直接被pin文件，先证明表行与实际EVIDENCE_PIN注册是否一致。仅在证明是断行问题且所有raw pins有效时，允许机械修正文档表格连续性，保留每条path/commit/SHA及所有旧状态/AC/Review；不重开终态Task。不修改旧evidence字节、source、guard、正式表/Schema/依赖，不扩大历史扫描，不清理/迁移/GC/prune/push。
+
+交付：逐Task原EV行数/实际注册/丢失行及raw pin校验、最小文档diff、修正后实际注册及旧保护集合只增不减、正式32错误完整身份不变、固定head独审/Handoff。验证用当前parse_markdown_declarations和scan_repo_declarations只读调用、pwsh -NoProfile -File tools/governance/check.ps1与diff-check；NOT_RUN/BLOCKED明确记录；若任何内容/归属/源pin不明即原样保留并停止该项修正。无代码变更不跑产品测试。
+
+可直接转发：Codex，请先在G:/CODEX/New Manga的main核对实际HEAD/租约，以4bab91982为恢复点读取本Handoff/R1注册证明。冻结GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，Owner Codex/Reviewer DeepSeek，限定上述3个Task及其当前EV直接目标。对比EV文字行与guard实际注册、逐原始字节核对pin；仅对已证实的空行断表做最小机械修正，每条path/commit/SHA、Task终态/AC/Review均保留，不重开旧Task、不改任何旧证据/源码/例外表。记录正式32身份不变、保护集合只增不减、必要治理检查，固定commit独审/Handoff后由Codex集成；未知则保留报告，不以文档check PASS代替实际保护。此建议未释放，不自动开始配置迁移或清理。

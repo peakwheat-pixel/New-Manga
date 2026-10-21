@@ -3,7 +3,7 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: 50d784300ac74d6ded633685bfce201cdddb630a
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 488ab6cbec7774df8c0c3b2e8a9e169750a92101
+delivery_head: 4bab91982fd05db85764705fef9d45fe92485501
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-NDJSON-NONDECL-IDENTITY-1
@@ -64,8 +64,11 @@ PowerShell/Python -B；只读标准库诊断与现有guard函数调用，不新�
 |EV-6|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/probe-first-attempt.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|cf213021dec5b1b5c7928a221a7cfc6868b047e3bc4f52af006f799ed9dcf2f1|SOURCE_PIN|
 |EV-7|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/probe-run.log|488ab6cbec7774df8c0c3b2e8a9e169750a92101|6e67271a07d0cfec2a0b518c75f3fa2dfc2742a3637075bb1beac70958a485e5|SOURCE_PIN|
 |EV-8|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/probe-source.py.txt|488ab6cbec7774df8c0c3b2e8a9e169750a92101|6482b10b4626600236fdfedfa31f079abec43084a85676edcd40d69396c96bd5|SOURCE_PIN|
-|EV-9|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/report.md|488ab6cbec7774df8c0c3b2e8a9e169750a92101|53fc2e73df0633acb2a26aca48adb0466f9b8aacf9621bb53508e532a997f6cf|CANONICAL|
+|EV-9|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/report.md|4bab91982fd05db85764705fef9d45fe92485501|49e3bd6af2f7edec0751741c239e8e9cbaca26f16d319d9d1cef4418b564c501|CANONICAL|
 |EV-10|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/scope.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|2cba2846d3f7fc52f2a5781535f8728adacb6845b04072a3975d6884f5710aa6|CANONICAL|
+|EV-11|AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/deepseek-review-r1.md|4bab91982fd05db85764705fef9d45fe92485501|c6e1688d788e3975804f3c24e3807691a303e9e99861f1831cb251a5c767a107|SOURCE_PIN|
+|EV-12|AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/table-registration-proof.json|4bab91982fd05db85764705fef9d45fe92485501|c9c0684ba297dba15f9e6e6811d28cbfce7f66227a5594a613d923b32ae2fc55|SOURCE_PIN|
+|EV-13|AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/checkpoint-r2.md|4bab91982fd05db85764705fef9d45fe92485501|3f1ea3dec7250dbaaf1bb589c7583b0434c8b16e40d0e98534a7fe6a6158bb60|SOURCE_PIN|
 
 ## Resource Manifest
 
@@ -89,3 +92,5 @@ ready冻结后认领；Reviewer只读，审查期间Owner暂停被审文档写�
 ## R1独审
 
 DSH session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d，EXIT0，changes_requested固定3ff9dba39694751a72fd1a67380757041cd7dc08。主体身份、6cases、默认32/候选30、旧表pin边界已独立重算通过；阻断为本Task Canonical Evidence表空行导致10行pin未被guard注册。只修自有表格结构/恢复指针，不改guard或源。
+
+R1精确修正：证据表及原日志Manifest现在连续，实际parser已验证；原9份未变EV内容/commit/SHA保持不动，仅本Task report更正其旧保护快照说明后更新自身新版本pin。旧checkpoint.md原字节不动、保留历史SOURCE_PIN，当前恢复点改为新checkpoint-r2.md。新增R1原文/注册证明/当前checkpoint已登记。未修改原日志/guard/正式表或已关闭Task。
