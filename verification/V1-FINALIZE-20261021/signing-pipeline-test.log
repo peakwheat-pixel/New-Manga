@@ -1,0 +1,78 @@
+== signing pipeline test 2026-10-21T11:52:22.3969200+08:00 ==
+src_sha256=b0ad46f5df01f4ffc287e9aeaef9ecaf5b163778d9ac632db92c6ce66ac38c7b
+copy_sha256_before=b0ad46f5df01f4ffc287e9aeaef9ecaf5b163778d9ac632db92c6ce66ac38c7b
+selfsigned_thumbprint=B2813EB6CE4382306AE2A093FB555432A251C8DB subject=CN=NewManga Signing Pipeline Test
+Done Adding Additional Store
+Successfully signed: G:\CODEX\New Manga.workspace\temp\V1-RELEASE-SIGNING\setup-signing-test.exe
+
+sign_with_timestamp_exit=0
+
+
+Verifying: G:\CODEX\New Manga.workspace\temp\V1-RELEASE-SIGNING\setup-signing-test.exe
+
+
+Signature Index: 0 (Primary Signature)
+Hash of file (sha256): 2734C19C64C616F265539BE50011BF4B211B988FD3E5891C9E77BBC3FEA3F117
+
+Signing Certificate Chain:
+    Issued to: NewManga Signing Pipeline Test
+
+    Issued by: NewManga Signing Pipeline Test
+
+    Expires:   Fri Oct 23 11:52:23 2026
+
+    SHA1 hash: B2813EB6CE4382306AE2A093FB555432A251C8DB
+
+
+The signature is timestamped: Wed Oct 21 11:52:24 2026
+
+Timestamp Verified by:
+    Issued to: DigiCert Assured ID Root CA
+
+    Issued by: DigiCert Assured ID Root CA
+
+    Expires:   Mon Nov 10 08:00:00 2031
+
+    SHA1 hash: 0563B8630D62D75ABBC8AB1E4BDFB5A899B24D43
+
+
+        Issued to: DigiCert Trusted Root G4
+
+        Issued by: DigiCert Assured ID Root CA
+
+        Expires:   Mon Nov 10 07:59:59 2031
+
+        SHA1 hash: A99D5B79E9F1CDA59CDAB6373169D5353F5874C6
+
+
+            Issued to: DigiCert Trusted G4 TimeStamping RSA4096 SHA256 2025 CA1
+
+            Issued by: DigiCert Trusted Root G4
+
+            Expires:   Fri Jan 15 07:59:59 2038
+
+            SHA1 hash: 07894D00FC194A17DB273AEB5CF8FACEF14423A4
+
+
+SignTool Error: A certificate chain processed, but terminated in a root
+	certificate which is not trusted by the trust provider.
+                Issued to: DigiCert SHA256 RSA4096 Timestamp Responder 2026 1
+
+                Issued by: DigiCert Trusted G4 TimeStamping RSA4096 SHA256 2025 CA1
+
+                Expires:   Thu Nov 05 07:59:59 2037
+
+                SHA1 hash: 51D9ABDA034973D84F4266ACA48248E6B369C439
+
+
+
+Number of files successfully Verified: 0
+
+Number of warnings: 0
+
+Number of errors: 1
+
+signtool_verify_exit=1
+authenticode_status=UnknownError signer=CN=NewManga Signing Pipeline Test
+copy_sha256_after=f652d617fd7fa52492591b4a5cd7447820095875723a62dc4f7ca0e4b198c5e3
+cleaned_test_artifacts=true
