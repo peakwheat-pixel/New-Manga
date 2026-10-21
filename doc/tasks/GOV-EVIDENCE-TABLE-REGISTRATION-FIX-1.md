@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 title: 三个治理Task证据表连续性与实际保护注册修正
 kind: governance
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: user_auto_advance_20261021_scoped_mechanical_metadata_fix
 suggested_owner: Codex
 owner: Codex
@@ -64,3 +64,5 @@ allowed_paths:
 |---|---|---|---|---|---|
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1 | doc/tasks/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1.md | 本Task原始核验/Review输出保留，不清理 |
 | worktree/env/build/temp/exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 不新建，98/136保持 |
+
+R1独审changes_requested（fa18dc2c6）：实现/51pin/实际注册/旧保护子集均通过；需解释before重建34而实测32的差异。暂停集成后续配置，独立定位两额外错误。
