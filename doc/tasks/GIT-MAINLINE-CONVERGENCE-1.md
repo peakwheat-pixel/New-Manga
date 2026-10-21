@@ -154,3 +154,7 @@ Task 转 blocked（暂停前阶段 in_review），不 done、不 closed_with_lim
 ## 32项残余声明取证完成（2026-10-21）
 
 GOV-DECLARATION-RESIDUAL-32-AUDIT-1依用户授权冻结/执行，DeepSeek R2 approved固定927e06f8b25563afbc7acbcc25d19fe775d1ded6，已由Codex以只读研究切片done。矩阵32项/17来源，六组6/12/7/2/2/3；原字节/status与原32完整错误身份保留，98heads/136worktrees不变。没有修改source/guard/例外表或清理资源；本父Task仍blocked、resume_status=in_review。下一拟议GOV-NDJSON-NONDECL-IDENTITY-1的Owner/Reviewer/恢复点/范围/验证/完整指令见doc/handoffs/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md，尚未释放，不能自动实施。
+
+## 两日志身份研究完成（2026-10-21）
+
+GOV-NDJSON-NONDECL-IDENTITY-1独审54cfbadad00071c70268ca557b1efcecbae87bf8 approved并done。正式默认仍32；两固定日志是非声明候选，6模拟/负例已实测；旧正式例外表是历史Canonical Evidence，不可原地追加。当前无正式配置/源码/source/旧pin修改、无资源清理，98heads/136worktrees。R1发现自有Markdown断表造成pin保护未实际注册，本Task自身已修并独审：13pin/原日志保留2，原1704保护根为1718真子集（R2快照，后续新证据会增）。未修本父Task或另两旧Task的EV表。下一优先另冻GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，限Handoff指定3Task，先证实注册/原pin再机械修正；配置迁移继续未释放。本父Task仍blocked，原AC/pin/Review范围与STATUS-r212保护不变。

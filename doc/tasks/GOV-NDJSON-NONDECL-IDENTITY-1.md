@@ -3,7 +3,7 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: approved
+status: done
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
@@ -14,10 +14,10 @@ depends_on: [GOV-DECLARATION-RESIDUAL-32-AUDIT-1]
 base_commit: 50d784300ac74d6ded633685bfce201cdddb630a
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 54cfbadad00071c70268ca557b1efcecbae87bf8
 delivery_head: 4bab91982fd05db85764705fef9d45fe92485501
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-NDJSON-NONDECL-IDENTITY-1
 allowed_paths:
   - doc/tasks/GOV-NDJSON-NONDECL-IDENTITY-1.md
@@ -44,7 +44,7 @@ Codex串行文档写入main，DeepSeek固定commit独审。只读两日志及其
 - [x] **AC1** 两日志raw SHA/Git状态、逐行JSON/完整消费、schema/kind种类和全部结构化声明身份键核验；如存在引用路径，区分日志指针与保护声明，不把格式有效当无声明。 <<MET>>
 - [x] **AC2** 明确现有例外的精确path/hash/reason、加载/绕过时点和信任边界；候选匹配、不匹配路径、不匹配字节、无例外及变化后声明等负例有实际结果或明确NOT_RUN，不泛化坏JSON豁免。 <<MET>>
 - [x] **AC3** 同数据快照正式32错误保留；候选若32→30只能移除R23/R24且旧保护集合不减少；原日志、正式例外表和guard字节/status前后不变。 <<MET>>
-- [ ] **AC4** 固定head独立DeepSeek Review、Codex裁定、Handoff/证据pin/保留资源核销和治理check完成；是否需后续写范围作出明确裁定。 <<PARTIAL: 独立Review及Codex closeout待完成>>
+- [x] **AC4** 固定head独立DeepSeek Review、Codex裁定、Handoff/证据pin/保留资源核销和治理check完成；是否需后续写范围作出明确裁定。 <<MET>>
 
 ## 禁止范围
 
@@ -71,6 +71,10 @@ PowerShell/Python -B；只读标准库诊断与现有guard函数调用，不新�
 |EV-11|AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/deepseek-review-r1.md|4bab91982fd05db85764705fef9d45fe92485501|c6e1688d788e3975804f3c24e3807691a303e9e99861f1831cb251a5c767a107|SOURCE_PIN|
 |EV-12|AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/table-registration-proof.json|4bab91982fd05db85764705fef9d45fe92485501|c9c0684ba297dba15f9e6e6811d28cbfce7f66227a5594a613d923b32ae2fc55|SOURCE_PIN|
 |EV-13|AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/checkpoint-r2.md|4bab91982fd05db85764705fef9d45fe92485501|3f1ea3dec7250dbaaf1bb589c7583b0434c8b16e40d0e98534a7fe6a6158bb60|SOURCE_PIN|
+|EV-14|AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/deepseek-review-r2.md|2b291ecd0a9cea03ed672faea49224064c6f5f07|794794b2dbc9c09536bdfbffba1203c1e336b7cecd506a22565d6782c00e2efc|CANONICAL|
+|EV-15|AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/closeout-validation.json|2b291ecd0a9cea03ed672faea49224064c6f5f07|9601b015e2d5863fd2d3a4498fb27503d86c2732780935a4e92a7e720de5e1c6|CANONICAL|
+|EV-16|AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/resource-closeout.json|2b291ecd0a9cea03ed672faea49224064c6f5f07|c0b526512b1c6a21256740dcdf3f36b85b81ad7442b4e1e55db19f489a209489|CANONICAL|
+|EV-17|AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/closeout-record.md|2b291ecd0a9cea03ed672faea49224064c6f5f07|62a9ff82de4e3b8d6bb26343da62faf9b1c4b71719b776ac7d00163639ac60b0|CANONICAL|
 
 ## Resource Manifest
 
@@ -100,3 +104,9 @@ R1精确修正：证据表及原日志Manifest现在连续，实际parser已验�
 ## R2批准
 
 DSH session-d43a0051-1d57-4657-a4c3-fabe4adcbb5d，R1/R2 EXIT0；R2 approved固定54cfbadad00071c70268ca557b1efcecbae87bf8，实际13pins/原日志保留2、默认32身份完整保留、1704旧保护根全部在1718集合内。仅本只读研究和本Task格式/恢复指针修正获批；两后续Task均未释放。
+
+## 终态核销
+
+2026-10-21 Codex：R2批准固定54cfbadad；本Task done。AC1-3证据与R1独立实测、AC4 R2实际保护注册/原pin复算/治理检查/Handoff/保留资源闭环。17项自有证据全部登记；保持连续Markdown表，不以check PASS代替实际注册。原13项证据文件不改字节，新4项收口证据追加。两旧checkpoint都是已冻结历史SOURCE_PIN；STATUS恢复父Task当前checkpoint。0正式例外登记、0删除/迁移/归档，98heads/136worktrees，正式32错误与清理禁令保留。下一优先GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1尚未释放，后续配置迁移也未释放。
+
+最终实际核验（PowerShell/Python -B）：17条pin原始磁盘=Git blob=SHA一致；本Task实际parser注册17 EVIDENCE_PIN、2原日志PRESERVE_REFERENCED、0错误；默认32完整错误身份保留，R2的1718保护根全部保留并增为1722（新增4收口pin）。子Task及默认父Task governance check均PASS/2 warnings/EXIT0，diff-check EXIT0。原始收口输出在workspace本Task final-registration-validation.json；不是仅检查Markdown行数。产品/构建NOT_RUN，无配置/guard实现或正式例外登记变化。
