@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1
 title: 剩余模板与NUL五项只读身份核验
 kind: research
 governance_version: 3
-status: in_review
+status: done
 approval: user_auto_continue_next_task_20261022
 suggested_owner: Codex
 owner: Codex
@@ -12,10 +12,10 @@ depends_on: [GOV-BROAD-ROOT-PRESERVATION-IMPL-1]
 base_commit: 951b7c61f2d09e842fc170290a1327e6780acbc0
 branch: codex/gov-residual-template-nul-identity-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1
-integration_commit: null
+integration_commit: fec50696a254ed726a4cfaed6be98e67d07c9e90
 delivery_head: 69f53e0548979fda90675cdc1229d0f8ac2acb75
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1
 allowed_paths:
   - verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1
@@ -41,7 +41,7 @@ allowed_paths:
 - [x] **AC1** 五项完整code/file/locator/message与当前12、多重集匹配；原raw SHA/编码/NUL位置/行定位、tracked/HEAD blob或untracked归属事实明确，不猜修复。 <<MET>>
 - [x] **AC2** 有界核实语义、来源链与当前引用/保护，给出保持原字节和旧pin的解释选项；未知与最小裁决、7历史身份保留，禁止把研究当例外配置或删除授权。 <<MET>>
 - [x] **AC3** 同canonical数据前后12完整身份不变、旧保护集合不减、四个源文件raw不变；所有EV raw/blob/pin与实际注册、check/diff实测，NOT_RUN分列。 <<MET>>
-- [ ] **AC4** 固定head DeepSeek独审通过，Codex正常集成/复验、资源原位保留核销，Task/STATUS/Plan/Handoff/恢复点一致。 <<PARTIAL: 待审集成>>
+- [x] **AC4** DeepSeek R2 approved固定49942377b，正常集成fec50696a；main复验12完整错误不变/旧保护保全/四源raw与原路径不变/8EV注册通过（追加集成证据前快照），资源全部原位保留核销，权威指针/check和最终EV随closeout提交完成。 <<MET>>
 
 ## 测试计划与限制
 
@@ -51,14 +51,17 @@ planned：Python -B读取原字节/JSON和必要Git只读查询、调用当前sc
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-|EV-1|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/.gitattributes|69f53e0548979fda90675cdc1229d0f8ac2acb75|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
-|EV-2|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/audit_identity.py|69f53e0548979fda90675cdc1229d0f8ac2acb75|cafc14ded50cf7dd04aad41b14bcc2515e477bdb9cbdbf3aa0439ff2eb2aa8ff|CANONICAL|
-|EV-3|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/checkpoint.md|69f53e0548979fda90675cdc1229d0f8ac2acb75|dbdd0102434cd932a08f2b12bd745ff9746c9dae1da52ed1619124d6325448a6|CANONICAL|
-|EV-4|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/deepseek-review-r1.md|69f53e0548979fda90675cdc1229d0f8ac2acb75|1a09d06dbabd1af53fed4d9878af5c952ad6fb76f12586f7ef0d9dd84d99dbbb|CANONICAL|
-|EV-5|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/execution.json|69f53e0548979fda90675cdc1229d0f8ac2acb75|43bec31ed755c6a4fc8922a24dd21122508e0ac385045a9f55913bbab0b5cf5a|CANONICAL|
-|EV-6|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/preservation-validation.json|69f53e0548979fda90675cdc1229d0f8ac2acb75|5e00844c2828cd618c6eb57236b9a944cdb35e0271c998428865f084a12dbc97|CANONICAL|
-|EV-7|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/report.md|69f53e0548979fda90675cdc1229d0f8ac2acb75|ada56aed897b03d262d610a480d36d876684d7475078ffb3b31000298ead06ef|CANONICAL|
-|EV-8|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/source-facts.json|69f53e0548979fda90675cdc1229d0f8ac2acb75|f4821be6b0766d899b69980d7351f7e2b519f39b6247f33ab0fd2e6e861a708c|CANONICAL|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/.gitattributes|8a429a889768c18c6b0add5fc7e5c40b83f62746|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/audit_identity.py|8a429a889768c18c6b0add5fc7e5c40b83f62746|cafc14ded50cf7dd04aad41b14bcc2515e477bdb9cbdbf3aa0439ff2eb2aa8ff|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/checkpoint.md|8a429a889768c18c6b0add5fc7e5c40b83f62746|91016253fbf721f43130464c1d4b9d9b234a54c2c0d0cda74e89d45e153e6f7e|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/deepseek-review-r1.md|8a429a889768c18c6b0add5fc7e5c40b83f62746|1a09d06dbabd1af53fed4d9878af5c952ad6fb76f12586f7ef0d9dd84d99dbbb|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/deepseek-review-r2.md|8a429a889768c18c6b0add5fc7e5c40b83f62746|2c6ade1c085d86653e89e1ca51b542b5870bf34433f08d6448260fa442d3aec2|CANONICAL|
+|EV-6|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/execution.json|8a429a889768c18c6b0add5fc7e5c40b83f62746|43bec31ed755c6a4fc8922a24dd21122508e0ac385045a9f55913bbab0b5cf5a|CANONICAL|
+|EV-7|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/integration-report.md|8a429a889768c18c6b0add5fc7e5c40b83f62746|80ea06d5e413f7e1b4d4451be7858da13ea44c0d8a6d1db84e5a99f4b62fe6d8|CANONICAL|
+|EV-8|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/integration-validation.json|8a429a889768c18c6b0add5fc7e5c40b83f62746|ad839f1c9039b72098748f5c4f53f77e6ef9744309acfa08660acfaa9a4c86b0|CANONICAL|
+|EV-9|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/preservation-validation.json|8a429a889768c18c6b0add5fc7e5c40b83f62746|5e00844c2828cd618c6eb57236b9a944cdb35e0271c998428865f084a12dbc97|CANONICAL|
+|EV-10|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/report.md|8a429a889768c18c6b0add5fc7e5c40b83f62746|ada56aed897b03d262d610a480d36d876684d7475078ffb3b31000298ead06ef|CANONICAL|
+|EV-11|AC1/AC2/AC3/AC4|verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/source-facts.json|8a429a889768c18c6b0add5fc7e5c40b83f62746|f4821be6b0766d899b69980d7351f7e2b519f39b6247f33ab0fd2e6e861a708c|CANONICAL|
 
 ## Resource Manifest
 
@@ -81,3 +84,11 @@ planned：Python -B读取原字节/JSON和必要Git只读查询、调用当前sc
 交付ec8631131，实际branch/review diff base cc72f6a822f0c7823a50996d9e43674147bc7b4a；本Task7EV完整raw/blob/pin，研究不改生产代码。baseline12完整身份未变、protected1865→1869（仅新增四源，EV登记前快照），实际原作者文件全raw不变。执行记录execution.json（UTF8，EXIT0）；初次子进程stdout GBK编码失败已改调用环境，不修改源或审计逻辑。7历史身份保留，当前101/139，下一固定head DeepSeek纯只读独审；本研究源/Handoff见对应路径。
 
 R1 approved b8ab6317e（P0/P1=0）；非阻断P2为报告raw/blob换行叙述不准，现改为磁盘原字节等于HEAD blob，与原source-facts一致；仅报告/恢复点/R1 Review落盘/EV重签，审计脚本与原四源/工具不变。新交付69f53e054，当前8EV；固定新head交R2有界纯只读复核后才集成。
+
+R2 DeepSeek approved 49942377b452ea2131b0fe530d7f2235e3143af9，P0/P1/P2=0；正常main merge fec50696a254ed726a4cfaed6be98e67d07c9e90且复验通过。approved核销窗口，仅原位保留，无资源处置。
+
+## 最终核销（2026-10-22）
+
+当前canonical Review：verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/deepseek-review-r2.md，DeepSeek R2 approved49942377b452ea2131b0fe530d7f2235e3143af9，P0/P1/P2=0；交付69f53e054，正常集成fec50696a254ed726a4cfaed6be98e67d07c9e90，集成证据8a429a889。main完整12错误不变/四源raw不变且原位保护/旧1865保护根全集不减，旧源与工具无变化。资源保留核销已完成，删除/迁移/归档=0；Task WT固定49942377b clean、agent-output/四源原位保留，P22 untracked未提交。当前11EV raw/blob/pin与实际登记最终核验；各历史段落计数仅表示其时点，以本表和R2/最终实测为准。101/139尚未只剩main；父blocked/r212禁令不变，下一设计仅拟议，完整转发指令在Handoff。
+
+最终实测已完成：11EV raw=blob=pin并实际EVIDENCE_PIN11；正式12完整身份不变，原1865保护根全集保留，最终1880（四源+11自有证据）；四原件raw不变且精确保护，P22仍untracked，任务WT clean。101heads/139WT，真实资源操作0；显式Task/default root治理检查均PASS（2既有warning），diff-check exit0。最终机器记录G:/CODEX/New Manga.workspace/agent-output/codex/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/final-verification.json，SHA-256 2f55b49ecf334e0aed1880b1ca4c4f2ca9b103f21a491a5562f6e49a08526d63；对应final-*.log含命令/EXIT/hash，过程材料原位保留。

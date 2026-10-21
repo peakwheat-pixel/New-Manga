@@ -7,24 +7,24 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 335 |
-| terminal | 321 |
-| non-terminal | 14 |
-| non-terminal named in the plan | 4 |
+| terminal | 322 |
+| non-terminal | 13 |
+| non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 10 |
 | task files tracked by git | 309 |
 | task files untracked (drafts) | 26 |
-| non-terminal tracked by git | 3 |
+| non-terminal tracked by git | 2 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 263 | yes |
+| `done` | 264 | yes |
 | `closed_with_limitations` | 34 | yes |
 | `cancelled` | 18 | yes |
 | `blocked` | 8 | no |
 | `superseded` | 6 | yes |
-| `in_review` | 4 | no |
+| `in_review` | 3 | no |
 | `in_progress` | 2 | no |
 
 ## Non-terminal tasks
@@ -41,7 +41,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P02PRE-R1H-R6-EXEC-A5` | `blocked` | no |
 | `P02PRE-R1H` | `in_progress` | no |
 | `P02PRE-R1H-R6-EXEC-A6` | `in_progress` | no |
-| `GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1` | `in_review` | own row |
 | `P02PRE-R1H-R6-ZCODE-H1` | `in_review` | no |
 | `P22` | `in_review` | mentioned |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
