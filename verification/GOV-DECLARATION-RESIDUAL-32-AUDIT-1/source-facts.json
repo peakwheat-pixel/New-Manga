@@ -1,0 +1,2323 @@
+{
+  "base": "c0a9cb7962669cb4e987af51260f68850f4fe3b0",
+  "acquisition_head": "049fe5aa0f175aa6de26676ea4e9b2eccff3b580",
+  "sources": [
+    {
+      "path": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "size": 15633,
+      "sha256": "a1a7f69bb2ad6d27dc9cea01bbd4480f13a21832a1efe55ca5a45b77b69920e2",
+      "tracked": true,
+      "base_blob_sha256": "a1a7f69bb2ad6d27dc9cea01bbd4480f13a21832a1efe55ca5a45b77b69920e2",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a20474f562d444542542d434c45",
+      "git_last_change": "451bf9ef111d761b85bd1869bf2b3d64fca98eb6|peakwheat-pixel|governance(GOV-DEBT-CLEANUP-2): close with limitations per r14",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: GOV-DEBT-CLEANUP-2"
+        },
+        {
+          "line": 3,
+          "text": "title: 治理债逐项事实核对与资源证据闭环"
+        },
+        {
+          "line": 4,
+          "text": "kind: governance"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: user_decisions_recorded_2026-10-19; codex_scope_release_approved"
+        },
+        {
+          "line": 8,
+          "text": "suggested_owner: dsh"
+        },
+        {
+          "line": 9,
+          "text": "owner: dsh"
+        },
+        {
+          "line": 10,
+          "text": "reviewer: Antigravity"
+        },
+        {
+          "line": 11,
+          "text": "depends_on: []"
+        },
+        {
+          "line": 12,
+          "text": "base_commit: 75da8281b28c7c11f92518c63d4669b5cf3973e6"
+        },
+        {
+          "line": 13,
+          "text": "branch: agent/deepseek/GOV-DEBT-CLEANUP-2-governance-facts"
+        },
+        {
+          "line": 14,
+          "text": "worktree: G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-DEBT-CLEANUP-2"
+        },
+        {
+          "line": 15,
+          "text": "integration_commit: 2636301fe5d6c33535f873aeb776c3e4beb5dd2d"
+        },
+        {
+          "line": 16,
+          "text": "delivery_head: e63d9324766db0d381bad24b3fc60a58048430e1"
+        },
+        {
+          "line": 17,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 18,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "evidence_dir: verification/GOV-DEBT-CLEANUP-2"
+        },
+        {
+          "line": 20,
+          "text": "allowed_paths:"
+        },
+        {
+          "line": 21,
+          "text": "  - doc/tasks/"
+        },
+        {
+          "line": 22,
+          "text": "  - doc/REBASELINE_PLAN.md"
+        },
+        {
+          "line": 23,
+          "text": "  - doc/STATUS.md"
+        },
+        {
+          "line": 24,
+          "text": "  - doc/handoffs/"
+        },
+        {
+          "line": 25,
+          "text": "  - doc/reviews/"
+        },
+        {
+          "line": 26,
+          "text": "  - verification/GOV-DEBT-CLEANUP-2/"
+        },
+        {
+          "line": 27,
+          "text": "---"
+        },
+        {
+          "line": 119,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 120,
+          "text": ""
+        },
+        {
+          "line": 121,
+          "text": "所有未知、dirty、独有提交、pinned 或个人数据资源保持原位。不得以本 Manifest 授权物理清理。"
+        },
+        {
+          "line": 122,
+          "text": ""
+        },
+        {
+          "line": 123,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 124,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 125,
+          "text": "| task file | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `NOT_APPLICABLE` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | 本 Task 的容器文档，非被处置资源；自引用哈希无不动点，故不在此表 pin 自身，改由 Closeout Record 记录 | 本 Task 唯一改动的治理文档；未改生产代码 |"
+        },
+        {
+          "line": 126,
+          "text": "| evidence dir | `verification/GOV-DEBT-CLEANUP-2/` | `PRESERVE_REFERENCED` | `verification/GOV-DEBT-CLEANUP-2/` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | 10 份证据，均为 AC 直接产物 |"
+        },
+        {
+          "line": 127,
+          "text": "| task worktree | 不存在 | `NOT_APPLICABLE` | — | `c8aa1df32c5c2250a3f2b1ad33adc5d30153fe489a9d089b7720333d688bba74` | 本 Task 直接在主线交付，无 linked worktree、无 source 分支、无 merge commit |"
+        },
+        {
+          "line": 128,
+          "text": "| gov checker | `tools/governance/check.ps1` | `PRESERVE_REFERENCED` | `tools/governance/check.ps1` | `296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49` | **本 Task 未修改**（仅 AC3 记录预算裁决，实际扩容由 GOV-PLAN-BUDGET-1 执行）|"
+        },
+        {
+          "line": 129,
+          "text": "| agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `c8aa1df32c5c2250a3f2b1ad33adc5d30153fe489a9d089b7720333d688bba74` | codex r14 等派发产物不入库 |"
+        },
+        {
+          "line": 130,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/P09-AC3-DELETE-1.md",
+      "size": 22754,
+      "sha256": "67c0c2d074b05f2010a4d3b576b2cc2d2c2e1a4ebf9d5eda74bdf1e9be1856ca",
+      "tracked": true,
+      "base_blob_sha256": "67c0c2d074b05f2010a4d3b576b2cc2d2c2e1a4ebf9d5eda74bdf1e9be1856ca",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a205030392d4143332d44454c45",
+      "git_last_change": "4824ed5d4872a6dc519ca6e671bfa6485bd47d9a|peakwheat-pixel|docs(P09-AC3-DELETE-HARDEN-1): AC11 make the P09 authority pointers self-consistent",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P09-AC3-DELETE-1"
+        },
+        {
+          "line": 3,
+          "text": "title: 项目级永久删除（Core 硬删除）与 P09 AC3 源文件零改动回补"
+        },
+        {
+          "line": 4,
+          "text": "kind: feature"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: user_ruling_20261018_create_p09_ac3_delete"
+        },
+        {
+          "line": 8,
+          "text": "blocked_by: null"
+        },
+        {
+          "line": 9,
+          "text": "suggested_owner: Antigravity（ZCode CLI 不可用，按项目故障转移顺序）"
+        },
+        {
+          "line": 10,
+          "text": "owner: Antigravity"
+        },
+        {
+          "line": 11,
+          "text": "reviewer: Codex（非作者；同时负责先冻结本 Task 需要的新契约）"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: [P09]"
+        },
+        {
+          "line": 13,
+          "text": "base_commit: baf4ec90c"
+        },
+        {
+          "line": 14,
+          "text": "branch: null"
+        },
+        {
+          "line": 15,
+          "text": "worktree: G:/CODEX/New Manga（真实工作流验证须在隔离环境执行；执行方写 verification/P09-AC3-DELETE-1/**、本 Task、doc/handoffs/P09-AC3-DELETE-1-*.md）"
+        },
+        {
+          "line": 16,
+          "text": "integration_commit: null（未集成：R3 changes_requested 达 DIR-4 上限，按用户裁决以 closed_with_limitations 收口，未进入主线合并）"
+        },
+        {
+          "line": 17,
+          "text": "delivery_head: a04e4ea78d5b33a0f91efcdc06b396391c4b165e"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/P09-AC3-DELETE-1"
+        },
+        {
+          "line": 21,
+          "text": "---"
+        },
+        {
+          "line": 153,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 154,
+          "text": ""
+        },
+        {
+          "line": 155,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 156,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 157,
+          "text": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 收口时实测未创建/未删除资源；`m2rc1-desktop`/`core_service`/`host_bridge` 进程数 = 0；隔离验证根均在 `%TEMP%` 且已清理。 |"
+        },
+        {
+          "line": 158,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "size": 28344,
+      "sha256": "e297fa976432d9fa277218e8ea018461e59fee6039794dd8b757ac393f06348e",
+      "tracked": true,
+      "base_blob_sha256": "e297fa976432d9fa277218e8ea018461e59fee6039794dd8b757ac393f06348e",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a205030392d4143332d44454c45",
+      "git_last_change": "b23de6565213ac8af05d6185215629c43b2ff872|peakwheat-pixel|governance: 34 evidence pins pointed at states that never existed; record why, then stop pointing at them",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P09-AC3-DELETE-HARDEN-1"
+        },
+        {
+          "line": 3,
+          "text": "title: P09 永久删除加固（R3 未闭合项、四项新 P1 与 Schema v5 测试回归）"
+        },
+        {
+          "line": 4,
+          "text": "kind: fix"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: user_ruling_20261018_p09_harden_split"
+        },
+        {
+          "line": 8,
+          "text": "blocked_by: null"
+        },
+        {
+          "line": 9,
+          "text": "suggested_owner: dsh"
+        },
+        {
+          "line": 10,
+          "text": "owner: dsh"
+        },
+        {
+          "line": 11,
+          "text": "reviewer: Codex"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: [P09-AC3-DELETE-1]"
+        },
+        {
+          "line": 13,
+          "text": "base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e"
+        },
+        {
+          "line": 14,
+          "text": "branch: antigravity/P09-AC3-DELETE-HARDEN-1"
+        },
+        {
+          "line": 15,
+          "text": "worktree: G:/CODEX/New Manga"
+        },
+        {
+          "line": 16,
+          "text": "integration_commit: null"
+        },
+        {
+          "line": 17,
+          "text": "delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/P09-AC3-DELETE-HARDEN-1"
+        },
+        {
+          "line": 21,
+          "text": "## 终态落盘（Codex 裁决，Owner 以 Coordinator lease 执行）"
+        },
+        {
+          "line": 22,
+          "text": ""
+        },
+        {
+          "line": 23,
+          "text": "**Codex 作为 Integrator 作出终态裁决**（`verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-integration-intent.md`，源自其会话 `01a153aa-ea37-7b03-85ba-7a987de81013`）：**本 Task 设为 `closed_with_limitations`。**"
+        },
+        {
+          "line": 24,
+          "text": ""
+        },
+        {
+          "line": 25,
+          "text": "**关键限定**："
+        },
+        {
+          "line": 26,
+          "text": "- **本 Task 【未集成】**：`integration_commit` 保持 `null`。"
+        },
+        {
+          "line": 27,
+          "text": "- **不得把 R15 的 Review `approved` 写成已集成。**"
+        },
+        {
+          "line": 28,
+          "text": "- **终态关闭，但未集成**（closeout 原文要求写明这一点）。"
+        },
+        {
+          "line": 29,
+          "text": ""
+        },
+        {
+          "line": 30,
+          "text": "**落盘方式说明**：**治理写入门禁要求 Coordinator lease 持有人；裁决时持有人为 `dsh`，Codex 的 `guarded-write` 返回 `STALE_COORDINATOR`。** **故终态由 Codex 裁决、由 Owner 以有效 lease 落盘 —— 不是 Owner 自行设定。**"
+        },
+        {
+          "line": 31,
+          "text": ""
+        },
+        {
+          "line": 32,
+          "text": ""
+        },
+        {
+          "line": 33,
+          "text": "---"
+        },
+        {
+          "line": 140,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 141,
+          "text": ""
+        },
+        {
+          "line": 142,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 143,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 144,
+          "text": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源；18 个提交全部在本仓工作区完成。 |"
+        },
+        {
+          "line": 145,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "size": 19843,
+      "sha256": "596db5b9f9f85d6361718e55d8da8f3f7744d4365252c075f27a78882de09210",
+      "tracked": true,
+      "base_blob_sha256": "a01a68e9bb524da974f2d29e6ef3fc997184d5cb1046ce1670f191f454e0e221",
+      "disk_equals_base_blob": false,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0d0a69643a205030392d4d414e41474544",
+      "git_last_change": "bfbd17e582efc628c1081aabcda69e0a4c594671|peakwheat-pixel|docs(ops): integrate P09-MANAGED-READ-ROOT-TRUST-1 — done after Codex R2",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P09-MANAGED-READ-ROOT-TRUST-1"
+        },
+        {
+          "line": 3,
+          "text": "title: 托管文件读取/导出路径的 root 可信性（R5b P2 转交）"
+        },
+        {
+          "line": 4,
+          "text": "kind: security-hardening"
+        },
+        {
+          "line": 5,
+          "text": "status: done"
+        },
+        {
+          "line": 6,
+          "text": "approval: user_released_20261021"
+        },
+        {
+          "line": 7,
+          "text": "suggested_owner: DeepSeek Harness"
+        },
+        {
+          "line": 8,
+          "text": "owner: p09-root-trust"
+        },
+        {
+          "line": 9,
+          "text": "reviewer: Codex"
+        },
+        {
+          "line": 10,
+          "text": "depends_on: [P09-AC3-DELETE-HARDEN-1]"
+        },
+        {
+          "line": 11,
+          "text": "base_commit: b8a1e519703f13af73b320dded117004b4bb189a"
+        },
+        {
+          "line": 12,
+          "text": "branch: dsh/P09-MANAGED-READ-ROOT-TRUST-1"
+        },
+        {
+          "line": 13,
+          "text": "worktree: G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1"
+        },
+        {
+          "line": 14,
+          "text": "integration_commit: 155f7d3f29ae2c81ba40efa06a87ed32ba984eae"
+        },
+        {
+          "line": 15,
+          "text": "delivery_head: 2a0ff8819dceff0849a2ea783ba202769e18078b"
+        },
+        {
+          "line": 16,
+          "text": "previous_delivery_head: 56aee75ae8fa88913655f27c019345224414096d"
+        },
+        {
+          "line": 17,
+          "text": "review_round: 2  # 第 1 轮 Codex changes_requested（R-001/R-002/R-003 + 建议 R-004/R-005）已返修"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/P09-MANAGED-READ-ROOT-TRUST-1"
+        },
+        {
+          "line": 21,
+          "text": "allowed_paths:"
+        },
+        {
+          "line": 22,
+          "text": "  - src/bootstrap/core_service.py"
+        },
+        {
+          "line": 23,
+          "text": "  - src/bootstrap/core_assembly.py"
+        },
+        {
+          "line": 24,
+          "text": "  - src/infrastructure/resource_channel/handle_resolver.py"
+        },
+        {
+          "line": 25,
+          "text": "  - tests/security"
+        },
+        {
+          "line": 26,
+          "text": "  - verification/P09-MANAGED-READ-ROOT-TRUST-1"
+        },
+        {
+          "line": 27,
+          "text": "  - doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md"
+        },
+        {
+          "line": 28,
+          "text": "  - doc/handoffs"
+        },
+        {
+          "line": 29,
+          "text": "created: 2026-10-19"
+        },
+        {
+          "line": 30,
+          "text": "---"
+        },
+        {
+          "line": 210,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 211,
+          "text": ""
+        },
+        {
+          "line": 212,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 213,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 214,
+          "text": "| worktree | `G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1` | PRESERVE_REFERENCED | 本路径 | — | 本 Task 交付；删除须 Codex 按 Worktree Safety Inventory 另行授权 |"
+        },
+        {
+          "line": 215,
+          "text": "| temp（探针 scratch） | `G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/`（ac1/ac3 的 base 源码快照与 driver，R-004） | NOT_APPLICABLE | — | — | 探针自建自清（`finally: shutil.rmtree`）；不写仓库、不用系统 `%TEMP%` |"
+        },
+        {
+          "line": 216,
+          "text": "| scratch（AC5 探针夹具） | `verification/P09-MANAGED-READ-ROOT-TRUST-1/_scratch/` | NOT_APPLICABLE | — | — | `ac5-run-delete-probes.py` 前后清理（先 `os.rmdir` 移除 junction 再删目录）；证据目录中无残留 |"
+        },
+        {
+          "line": 217,
+          "text": "| agent-output | 无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02） | NOT_APPLICABLE | — | — | 证据全部在 `verification/P09-MANAGED-READ-ROOT-TRUST-1/` |"
+        },
+        {
+          "line": 218,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/P19.md",
+      "size": 18443,
+      "sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "tracked": true,
+      "base_blob_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a205031390a7469746c653a20e5",
+      "git_last_change": "ce8b0a97c4fb5f246c1aead452e2b2f9e0ecf3b3|peakwheat-pixel|fix(P19): correct the closeout bookkeeping and the resource manifest to match the facts",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P19"
+        },
+        {
+          "line": 3,
+          "text": "title: 四页安全 E2E（书架/工作台/阅读器/设置）——端到端安全与可达性验收"
+        },
+        {
+          "line": 4,
+          "text": "kind: feature"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: user_ruling_20261017_acceptance_method_D_plus"
+        },
+        {
+          "line": 8,
+          "text": "blocked_by: null（P19-BOOT-1 已 done：2026-10-17 恢复）"
+        },
+        {
+          "line": 9,
+          "text": "suggested_owner: dsh（验收执行方：本机 computer-use + CDP；项目角色含\"技术实验/测试\"）"
+        },
+        {
+          "line": 10,
+          "text": "owner: dsh"
+        },
+        {
+          "line": 11,
+          "text": "reviewer: Codex（非作者，独立复核验收方法与证据）"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: [P12, P14, P15, P17, P18, P04]"
+        },
+        {
+          "line": 13,
+          "text": "base_commit: 157e00f67b48bfa3452006f03734bdad485741d7"
+        },
+        {
+          "line": 14,
+          "text": "branch: null"
+        },
+        {
+          "line": 15,
+          "text": "worktree: G:/CODEX/New Manga（验收在真实桌面执行；执行方仅写 verification/P19/**、本 Task、doc/handoffs/P19-*.md）"
+        },
+        {
+          "line": 16,
+          "text": "integration_commit: 4c860d882a44580a955b5d090d8bc5d23180ede5"
+        },
+        {
+          "line": 17,
+          "text": "delivery_head: 4c860d882a44580a955b5d090d8bc5d23180ede5"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/P19"
+        },
+        {
+          "line": 21,
+          "text": "---"
+        },
+        {
+          "line": 107,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 108,
+          "text": ""
+        },
+        {
+          "line": 109,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 110,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 111,
+          "text": "| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | doc/WORKTREE_SAFETY_INVENTORY.md | 主仓本身，保留；清单见 Worktree Safety Inventory |"
+        },
+        {
+          "line": 112,
+          "text": "| P19 子 Task worktree（5 个）| worktrees/P19-AC3-1 | DELETE_SAFE | - | doc/WORKTREE_SAFETY_INVENTORY.md | **已不存在**（closeout 前按清单核实后清理）；原记录的 PRESERVE_REFERENCED 与事实不符，已按事实更正 |"
+        },
+        {
+          "line": 113,
+          "text": "| 测试隔离根 | %TEMP%/p19-ac2-r1 | DELETE_SAFE | - | verification/P19/r3-closure-checklist.md | 22 个 p19* 临时隔离根，**已清理**（2026-10-18，Coordinator）；非用户数据 |"
+        },
+        {
+          "line": 114,
+          "text": "| 本轮新增隔离根 | %TEMP%/p19-ac2-main-1 | DELETE_SAFE | - | verification/P19/codex-review-r1.md | 12 个（AC2x8 / AC4v3x3 / smokex1），**已清理**；非用户数据 |"
+        },
+        {
+          "line": 115,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/P20-AC4-FPS-1.md",
+      "size": 28563,
+      "sha256": "4f025519accbceb257c44c6481c4f39781739b612608e9081748d8c5e6dda2c2",
+      "tracked": true,
+      "base_blob_sha256": "4f025519accbceb257c44c6481c4f39781739b612608e9081748d8c5e6dda2c2",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a205032302d4143342d4650532d",
+      "git_last_change": "ba10b7e813feb5b393afa231f5b5c41b41d48082|peakwheat-pixel|docs(P20-AC4-FPS-1): register AC3 evidence pins and close as closed_with_limitations",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P20-AC4-FPS-1"
+        },
+        {
+          "line": 3,
+          "text": "title: P20 AC4 帧率与帧时间测量（默认关闭的前端 requestAnimationFrame 采样钩子）"
+        },
+        {
+          "line": 4,
+          "text": "kind: feature"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: user_ruling_20261018_ac4_fps_measurement"
+        },
+        {
+          "line": 8,
+          "text": "blocked_by: null"
+        },
+        {
+          "line": 9,
+          "text": "suggested_owner: ZCode"
+        },
+        {
+          "line": 10,
+          "text": "owner: ZCode"
+        },
+        {
+          "line": 11,
+          "text": "reviewer: Codex"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: [P20]"
+        },
+        {
+          "line": 13,
+          "text": "base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e"
+        },
+        {
+          "line": 14,
+          "text": "branch: null"
+        },
+        {
+          "line": 15,
+          "text": "worktree: G:/CODEX/New Manga"
+        },
+        {
+          "line": 16,
+          "text": "integration_commit: 16b99524794a7ff2132a19753ce6a7fcd53fc244"
+        },
+        {
+          "line": 17,
+          "text": "delivery_head: 16b99524794a7ff2132a19753ce6a7fcd53fc244"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/P20-AC4-FPS-1"
+        },
+        {
+          "line": 21,
+          "text": "---"
+        },
+        {
+          "line": 152,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 153,
+          "text": ""
+        },
+        {
+          "line": 154,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 155,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 156,
+          "text": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源。 |"
+        },
+        {
+          "line": 157,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "size": 41748,
+      "sha256": "1e2dfe34a75ba7e4d20c40f77c5b4a32c364edf8c725607460935ccae590b8ad",
+      "tracked": true,
+      "base_blob_sha256": "1e2dfe34a75ba7e4d20c40f77c5b4a32c364edf8c725607460935ccae590b8ad",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a205032302d434c4f53452d424f",
+      "git_last_change": "899db3857eb7f2098ff986d6972fb11f0ba635ff|peakwheat-pixel|chore(governance): close P20-CLOSE-BOUND-HARDEN-1 with limitations and split P20-CLOSE-BOUND-HARDEN-2",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P20-CLOSE-BOUND-HARDEN-1"
+        },
+        {
+          "line": 3,
+          "text": "title: sidecar 关闭 deadline 与 worker 生命周期加固"
+        },
+        {
+          "line": 4,
+          "text": "kind: fix"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: user_authorized_20261018_final_close_hardening"
+        },
+        {
+          "line": 8,
+          "text": "blocked_by: null"
+        },
+        {
+          "line": 9,
+          "text": "suggested_owner: Antigravity"
+        },
+        {
+          "line": 10,
+          "text": "owner: Antigravity"
+        },
+        {
+          "line": 11,
+          "text": "reviewer: Codex"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: [P20-CLOSE-BOUND-1]"
+        },
+        {
+          "line": 13,
+          "text": "base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e"
+        },
+        {
+          "line": 14,
+          "text": "branch: null"
+        },
+        {
+          "line": 15,
+          "text": "worktree: G:/CODEX/New Manga"
+        },
+        {
+          "line": 16,
+          "text": "integration_commit: null"
+        },
+        {
+          "line": 17,
+          "text": "delivery_head: 35770fe91ab722b6d6c5e06e1f855c062d15c0a2"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1"
+        },
+        {
+          "line": 21,
+          "text": "---"
+        },
+        {
+          "line": 240,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 241,
+          "text": ""
+        },
+        {
+          "line": 242,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 243,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 244,
+          "text": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 |"
+        },
+        {
+          "line": 245,
+          "text": "| AC8 R4 临时输出 | 不适用（临时输出未纳入版本控制） | `NOT_APPLICABLE` | 不适用 | 不适用 | R4 复审期间在 `%TEMP%` 生成的 AC8 回归输出；`ac8-regression-summary.md` SHA-256 `9dd609ef08c87665f524e09c643f6ca308af919931a1247bb078843ad99eab85`、9 个 exit 文件均为 0，均记录于 R4 Review；未纳入版本控制、未删除。 |"
+        },
+        {
+          "line": 246,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "size": 15570,
+      "sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "tracked": true,
+      "base_blob_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a205345432d4649582d50415448",
+      "git_last_change": "0d43e2fcd1b23680de6e0613006aab5ecc5ecf0f|peakwheat-pixel|fix(SEC-FIX-PATH-ECHO-1): register the files I added and fill the missing resource manifest",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: SEC-FIX-PATH-ECHO-1"
+        },
+        {
+          "line": 3,
+          "text": "title: 修复设置命令回显绝对路径（settings_get / settings_update_section）"
+        },
+        {
+          "line": 4,
+          "text": "kind: bugfix"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: done"
+        },
+        {
+          "line": 7,
+          "text": "approval: coordinator_release_20261017_from_P19_AC3_1_finding"
+        },
+        {
+          "line": 8,
+          "text": "suggested_owner: Codex"
+        },
+        {
+          "line": 9,
+          "text": "owner: Codex"
+        },
+        {
+          "line": 10,
+          "text": "reviewer: DeepSeek Harness"
+        },
+        {
+          "line": 11,
+          "text": "depends_on: [P15-HOST-2, P15-CORE-1C]"
+        },
+        {
+          "line": 12,
+          "text": "base_commit: f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f"
+        },
+        {
+          "line": 13,
+          "text": "branch: codex/SEC-FIX-PATH-ECHO-1"
+        },
+        {
+          "line": 14,
+          "text": "worktree: G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1"
+        },
+        {
+          "line": 15,
+          "text": "integration_commit: 06fb49f838fd1d6c83c64158aeacc0ed2c765d36"
+        },
+        {
+          "line": 16,
+          "text": "delivery_head: c52ce4695802a06fde8f4e08f2d96a8cecfd855d"
+        },
+        {
+          "line": 17,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 18,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "evidence_dir: verification/SEC-FIX-PATH-ECHO-1"
+        },
+        {
+          "line": 20,
+          "text": "---"
+        },
+        {
+          "line": 108,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 109,
+          "text": ""
+        },
+        {
+          "line": 110,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 111,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 112,
+          "text": "| artifact | verification/SEC-FIX-PATH-ECHO-1 | PRESERVE_REFERENCED | verification/SEC-FIX-PATH-ECHO-1 | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 全部证据（含基线/交付日志、独立 Review、Coordinator 复跑）保留在此目录并被本 Task 的 pin 引用 |"
+        },
+        {
+          "line": 113,
+          "text": "| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |"
+        },
+        {
+          "line": 114,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "size": 32777,
+      "sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "base_blob_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "2d2d2d0a69643a20574f524b53504143452d434f",
+      "git_last_change": "ec9afad9f1851df0ad3831c3b2f44f5a8dc27936|peakwheat-pixel|chore(ops): pin WORKSPACE-CONSOLIDATION-1 delivery head to closure commit",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: WORKSPACE-CONSOLIDATION-1"
+        },
+        {
+          "line": 3,
+          "text": "title: 工作区整理：归档未合并支线、清理可再生体积、收敛为单一主线"
+        },
+        {
+          "line": 4,
+          "text": "kind: ops"
+        },
+        {
+          "line": 5,
+          "text": "governance_version: 2"
+        },
+        {
+          "line": 6,
+          "text": "status: closed_with_limitations"
+        },
+        {
+          "line": 7,
+          "text": "approval: approved_by_owner_2026-10-20"
+        },
+        {
+          "line": 8,
+          "text": "blocked_by: null"
+        },
+        {
+          "line": 9,
+          "text": "suggested_owner: dsh"
+        },
+        {
+          "line": 10,
+          "text": "owner: dsh"
+        },
+        {
+          "line": 11,
+          "text": "reviewer: Codex"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: []"
+        },
+        {
+          "line": 13,
+          "text": "base_commit: b4560ae8ab2ff9c6c4db50f9d57b50fe1e8393df"
+        },
+        {
+          "line": 14,
+          "text": "branch: antigravity/P09-AC3-DELETE-HARDEN-1"
+        },
+        {
+          "line": 15,
+          "text": "worktree: G:/CODEX/New Manga"
+        },
+        {
+          "line": 16,
+          "text": "integration_commit: null"
+        },
+        {
+          "line": 17,
+          "text": "delivery_head: 5562bbe6ef5e0e1d559df35a67ceb67fd195be2e"
+        },
+        {
+          "line": 18,
+          "text": "canonical_evidence_status: complete"
+        },
+        {
+          "line": 19,
+          "text": "resource_closeout_status: complete"
+        },
+        {
+          "line": 20,
+          "text": "evidence_dir: verification/WORKSPACE-CONSOLIDATION-1"
+        },
+        {
+          "line": 21,
+          "text": "allowed_paths:"
+        },
+        {
+          "line": 22,
+          "text": "  - verification/WORKSPACE-CONSOLIDATION-1"
+        },
+        {
+          "line": 23,
+          "text": "  - doc/WORKTREE_SAFETY_INVENTORY.md"
+        },
+        {
+          "line": 24,
+          "text": "  - doc/tasks/WORKSPACE-CONSOLIDATION-1.md"
+        },
+        {
+          "line": 25,
+          "text": "  - doc/REBASELINE_PLAN.md"
+        },
+        {
+          "line": 26,
+          "text": "  - doc/STATUS.md"
+        },
+        {
+          "line": 27,
+          "text": "  - doc/TASK_LEDGER.md"
+        },
+        {
+          "line": 28,
+          "text": "  - G:/CODEX/New Manga.workspace/archive/bundles"
+        },
+        {
+          "line": 29,
+          "text": "---"
+        },
+        {
+          "line": 283,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 284,
+          "text": ""
+        },
+        {
+          "line": 285,
+          "text": "本表在 r211 关闭请求时改为**当前保留资源清单**（不再把已删动作列为 disposition）；r208 原表原文保留在"
+        },
+        {
+          "line": 286,
+          "text": "下一节历史附录中，不删除。18 个受保护 source 的受损记录只在事故台账表达，**不在此表新增 `LOST` disposition**。"
+        },
+        {
+          "line": 287,
+          "text": ""
+        },
+        {
+          "line": 288,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 289,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 290,
+          "text": "| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | verification/WORKSPACE-CONSOLIDATION-1/inventory.json | 主 checkout，本 Task 执行位置；未改其注册 |"
+        },
+        {
+          "line": 291,
+          "text": "| archive | G:/CODEX/New Manga.workspace/archive/bundles | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles | verification/WORKSPACE-CONSOLIDATION-1/archive-manifest.json | 76 个原分支 bundle + 1 个 P03 增量 bundle；77/77 verify exit 0；增量依赖前置 |"
+        },
+        {
+          "line": 292,
+          "text": "| archive-bundle-p03 | G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle | 4c2aef444ab3974401dfe038c7cf26f289cb8dd370bfe6062dfb5d2d70fddbee | tag archive/P03-review-prep-112495c7 指向 0a25ceb45；bundle 4,391 B，SHA-256 匹配 |"
+        },
+        {
+          "line": 293,
+          "text": "| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |"
+        },
+        {
+          "line": 294,
+          "text": "| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |"
+        },
+        {
+          "line": 295,
+          "text": "| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |"
+        },
+        {
+          "line": 296,
+          "text": "| legacy-worktrees | G:/CODEX/New Manga.worktrees | PRESERVE_UNKNOWN | G:/CODEX/New Manga.worktrees | verification/WORKSPACE-CONSOLIDATION-1/inventory.json | 历史 worktree 根；6 处路径部分重建（HEAD 快照）；37 个孤儿目录保留 |"
+        },
+        {
+          "line": 297,
+          "text": "| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |"
+        },
+        {
+          "line": 298,
+          "text": "| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |"
+        },
+        {
+          "line": 299,
+          "text": "| p03-temp-scratch | C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f | PRESERVE_UNKNOWN | C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f | verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md | P03 隔离恢复演练临时 bare repo：20 files / 26,469 B；objects 为空；保留原位、不删不移；清理需另行授权（R211-01） |"
+        },
+        {
+          "line": 300,
+          "text": "| p06-run-root | G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION | verification/P06/resource-manifest.json | 父根保留；受保护子树 old-runtime/worktree 缺失记录见事故台账 |"
+        },
+        {
+          "line": 301,
+          "text": ""
+        },
+        {
+          "line": 302,
+          "text": "### R211 关闭裁决请求（2026-10-21，待 Codex 裁决）"
+        },
+        {
+          "line": 303,
+          "text": ""
+        },
+        {
+          "line": 304,
+          "text": "用户 2026-10-20 23:51 回复「按你的推荐进行裁决」，接受：以 `closed_with_limitations` 收口、接受残余风险、"
+        },
+        {
+          "line": 305,
+          "text": "先做限时恢复搜索、工具修复另开 Task。关闭请求与 L1–L8 限制清单见"
+        },
+        {
+          "line": 306,
+          "text": "`verification/WORKSPACE-CONSOLIDATION-1/closure-package-r211.md`；恢复搜索证据见"
+        },
+        {
+          "line": 307,
+          "text": "`verification/WORKSPACE-CONSOLIDATION-1/recovery-search-r211.md`。"
+        },
+        {
+          "line": 308,
+          "text": ""
+        },
+        {
+          "line": 309,
+          "text": "- **恢复搜索（executed）**：8 个目标在 5 卷目录名枚举、回收站、卷影、USN 中 FOUND=0；G: USN 证实"
+        },
+        {
+          "line": 310,
+          "text": "  T1–T7 于 2026-10-20 20:25 被批量删除且无同名重建；T8 删除早于 journal 窗口；G: 无卷影副本。"
+        },
+        {
+          "line": 311,
+          "text": "  bounded NOT_FOUND，不升级为永久不可恢复。"
+        },
+        {
+          "line": 312,
+          "text": "- **L1–L8 limitations**：18 个受保护 source 受损、P09/BASELINE 缺失、六 worktree 仅部分重建、"
+        },
+        {
+          "line": 313,
+          "text": "  49.48 GiB 逻辑字节非物理净释放、增量 bundle、工具根因未修、AC PARTIAL、F-01 临时目录保留。"
+        },
+        {
+          "line": 314,
+          "text": "**R211 复审（`changes_requested`）响应**：R211-01 已补列 `p03-temp-scratch`；R211-02 收口提交前重生成 TASK_LEDGER；R211-03/04 记为 ACKNOWLEDGED；详见 `closure-package-r211.md` §8。"
+        },
+        {
+          "line": 315,
+          "text": ""
+        },
+        {
+          "line": 316,
+          "text": "**R212 裁决（2026-10-21）**：`approved_with_conditions`；R211-01/02 **FIXED**、R211-03/04 **ACKNOWLEDGED**；Codex 批准以 `closed_with_limitations` 收口，并授权 Owner 执行关闭提交、重生成 Ledger、运行治理检查。**不含删除/移动/GC/prune/push/历史改写。**"
+        },
+        {
+          "line": 317,
+          "text": ""
+        },
+        {
+          "line": 318,
+          "text": "- **请求**：Codex 记录 `closed_with_limitations`（`integration_commit: null`、不标 done），"
+        },
+        {
+          "line": 319,
+          "text": "  以 L1–L8 作为 canonical/resource `complete` 的内容。Owner 仍未自审/自批/关闭。"
+        },
+        {
+          "line": 320,
+          "text": ""
+        },
+        {
+          "line": 321,
+          "text": "## 附：r208 原 Resource Manifest（历史，不参与当前校验）"
+        },
+        {
+          "line": 322,
+          "text": ""
+        },
+        {
+          "line": 323,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 324,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 325,
+          "text": "| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | — | 主 checkout，本 Task 执行位置；未改其注册 |"
+        },
+        {
+          "line": 326,
+          "text": "| archive | G:/CODEX/New Manga.workspace/archive/bundles | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles | — | 76 个 bundle，76/76 `git bundle verify` 通过（21.1 MB）|"
+        },
+        {
+          "line": 327,
+          "text": "| worktree | 50 个已移除 worktree | DELETE_SAFE | — | — | 每个均满足「非保护 + status 空 + stash 空」，且移除前复核；未用 `--force`。明细见 `worktree-removal.json` |"
+        },
+        {
+          "line": 328,
+          "text": "| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | 原地 | — | 含 `M2-PROD-DETECT-ENV-1` 隔离 venv，**明确保留** |"
+        },
+        {
+          "line": 329,
+          "text": "| derived | G:/CODEX/New Manga.workspace/{review-scratch,builds,temp,tmp} | ARCHIVE | — | — | 158 项已清理（20.15 GB）；`P22-REBASE-1` 因被 pin 保留 |"
+        },
+        {
+          "line": 330,
+          "text": "| orphan-dir | G:/CODEX/New Manga.worktrees/<37 个> | PRESERVE_UNKNOWN | 原地 | — | `.git` 已丢失，内容不可判定；**保留** |"
+        },
+        {
+          "line": 331,
+          "text": ""
+        },
+        {
+          "line": 332,
+          "text": "**r208 更正（追加式，不改上方历史行）**："
+        },
+        {
+          "line": 333,
+          "text": ""
+        },
+        {
+          "line": 334,
+          "text": "- `derived` 行写的 `ARCHIVE` 与实际不符：158 项由 `shutil.rmtree` 删除、**无归档目的地**；不把删除称归档。"
+        },
+        {
+          "line": 335,
+          "text": "  删除前递归逻辑字节为 21,636,208,040 B（20.15 GiB）。"
+        },
+        {
+          "line": 336,
+          "text": "- `task-env` 行只保留「明确保留」结论；**task-envs 总逻辑 3,880,296,828 B（3.61 GiB），其中"
+        },
+        {
+          "line": 337,
+          "text": "  `M2-PROD-DETECT-ENV-1` 仅 138,129,041 B（131.73 MiB）**，不能把整个 3.61 GiB 称为检测环境。"
+        },
+        {
+          "line": 338,
+          "text": "- `archive` 行补充：76 个 bundle 为**增量**（依赖前置对象），非独立完整备份；返修期 P03 保全后当前 77 条。"
+        },
+        {
+          "line": 339,
+          "text": "- 18 个受影响 source / 15 个删除根的逐项 disposition 与 availability 见"
+        },
+        {
+          "line": 340,
+          "text": "  `incident-ledger-r208.md` / `.json`；**不新增 `LOST` disposition、不改 Schema**。"
+        },
+        {
+          "line": 341,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "size": 3784,
+      "sha256": "2c90839bd8fb97273d45103f2b368726baaef3d509de6cab8f3bde97f043508f",
+      "tracked": true,
+      "base_blob_sha256": "60729b5bc76ba32691b0f89cadfcd736f4e3b103e536f68d75f767a86cba3fc3",
+      "disk_equals_base_blob": false,
+      "nul_count": 0,
+      "prefix_hex": "7b0d0a2020227461736b5f6964223a2022454e56",
+      "git_last_change": "998200d48e10899e2916a73143578c69bceb30cf|peakwheat-pixel|test(ENV-BUNDLE-1-FU1): drive frozen sidecar scenarios",
+      "memory_decode": "utf-8-sig",
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": "",
+      "json_task_id": "ENV-BUNDLE-1-FU1",
+      "json_declared_generator": null,
+      "relevant_resources": [
+        {
+          "index": 7,
+          "verbatim_record_json": "{\"resource_type\": \"test_temp_data\", \"source_path\": \"%TEMP%/.tmp* created by Rust tempfile tests\", \"disposition\": \"CLEANED_BY_OWNER\", \"destination_path\": null, \"reference_check\": \"Rust TempDir values dropped at test completion; isolated smoke-test directories and child processes were cleaned up.\"}"
+        }
+      ]
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "size": 24213,
+      "sha256": "bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1",
+      "tracked": false,
+      "base_blob_sha256": null,
+      "disk_equals_base_blob": null,
+      "nul_count": 0,
+      "prefix_hex": "7b226b696e64223a226d657461222c2273636865",
+      "git_last_change": null,
+      "memory_decode": "utf-8-sig",
+      "json_error": "Extra data: line 2 column 1 (char 5002)",
+      "memory_stream_consumed": true,
+      "disk_lf_normalized_equals_base_blob": null,
+      "git_status_porcelain": "?? verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json\n",
+      "ndjson_diagnostics": {
+        "value_count": 6,
+        "kinds": {
+          "meta": 1,
+          "observation": 4,
+          "closed": 1
+        },
+        "all_input_consumed": true,
+        "schema": "P02-NEW-TIME-BASELINE-collector-1",
+        "task": "P02-NEW-TIME-BASELINE",
+        "outputRule": "single exclusive CreateNew NDJSON stream; line kinds meta/observation/closed; final closed line is self-contained; every check references /observations/<seq>/... JSON Pointers",
+        "resource_identity_key_hits": [],
+        "stream_value_character_offsets": [
+          {
+            "start": 0,
+            "end": 5000
+          },
+          {
+            "start": 5002,
+            "end": 9333
+          },
+          {
+            "start": 9335,
+            "end": 11498
+          },
+          {
+            "start": 11500,
+            "end": 12204
+          },
+          {
+            "start": 12206,
+            "end": 13037
+          },
+          {
+            "start": 13039,
+            "end": 24163
+          }
+        ]
+      }
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "size": 161783,
+      "sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "tracked": true,
+      "base_blob_sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "7b226b696e64223a226d657461222c2273636865",
+      "git_last_change": "749158ad375a29b61cf8259dad8a067e2daeca47|peakwheat-pixel|P02: record baseline admission evidence",
+      "memory_decode": "utf-8-sig",
+      "json_error": "Extra data: line 2 column 1 (char 7494)",
+      "memory_stream_consumed": true,
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": "",
+      "ndjson_diagnostics": {
+        "value_count": 64,
+        "kinds": {
+          "meta": 1,
+          "observation": 62,
+          "closed": 1
+        },
+        "all_input_consumed": true,
+        "schema": "P02-NEW-TIME-BASELINE-collector-1",
+        "task": "P02-NEW-TIME-BASELINE",
+        "outputRule": "single exclusive CreateNew NDJSON stream; line kinds meta/observation/closed; final closed line is self-contained; every check references /observations/<seq>/... JSON Pointers",
+        "resource_identity_key_hits": [],
+        "stream_value_character_offsets": [
+          {
+            "start": 0,
+            "end": 7493
+          },
+          {
+            "start": 7494,
+            "end": 14895
+          },
+          {
+            "start": 14896,
+            "end": 17104
+          },
+          {
+            "start": 17105,
+            "end": 17809
+          },
+          {
+            "start": 17810,
+            "end": 18655
+          },
+          {
+            "start": 18656,
+            "end": 19291
+          },
+          {
+            "start": 19292,
+            "end": 20287
+          },
+          {
+            "start": 20288,
+            "end": 21290
+          },
+          {
+            "start": 21291,
+            "end": 22305
+          },
+          {
+            "start": 22306,
+            "end": 23354
+          },
+          {
+            "start": 23355,
+            "end": 24317
+          },
+          {
+            "start": 24318,
+            "end": 25272
+          },
+          {
+            "start": 25273,
+            "end": 26237
+          },
+          {
+            "start": 26238,
+            "end": 36420
+          },
+          {
+            "start": 36421,
+            "end": 37004
+          },
+          {
+            "start": 37005,
+            "end": 37890
+          },
+          {
+            "start": 37891,
+            "end": 38528
+          },
+          {
+            "start": 38529,
+            "end": 39221
+          },
+          {
+            "start": 39222,
+            "end": 39928
+          },
+          {
+            "start": 39929,
+            "end": 40610
+          },
+          {
+            "start": 40611,
+            "end": 41298
+          },
+          {
+            "start": 41299,
+            "end": 41984
+          },
+          {
+            "start": 41985,
+            "end": 42609
+          },
+          {
+            "start": 42610,
+            "end": 43252
+          },
+          {
+            "start": 43253,
+            "end": 43881
+          },
+          {
+            "start": 43882,
+            "end": 44544
+          },
+          {
+            "start": 44545,
+            "end": 45209
+          },
+          {
+            "start": 45210,
+            "end": 45912
+          },
+          {
+            "start": 45913,
+            "end": 46623
+          },
+          {
+            "start": 46624,
+            "end": 47329
+          },
+          {
+            "start": 47330,
+            "end": 48088
+          },
+          {
+            "start": 48089,
+            "end": 48833
+          },
+          {
+            "start": 48834,
+            "end": 49591
+          },
+          {
+            "start": 49592,
+            "end": 50327
+          },
+          {
+            "start": 50328,
+            "end": 51062
+          },
+          {
+            "start": 51063,
+            "end": 51814
+          },
+          {
+            "start": 51815,
+            "end": 52553
+          },
+          {
+            "start": 52554,
+            "end": 53299
+          },
+          {
+            "start": 53300,
+            "end": 54045
+          },
+          {
+            "start": 54046,
+            "end": 54618
+          },
+          {
+            "start": 54619,
+            "end": 55471
+          },
+          {
+            "start": 55472,
+            "end": 56351
+          },
+          {
+            "start": 56352,
+            "end": 57210
+          },
+          {
+            "start": 57211,
+            "end": 58123
+          },
+          {
+            "start": 58124,
+            "end": 59052
+          },
+          {
+            "start": 59053,
+            "end": 59744
+          },
+          {
+            "start": 59745,
+            "end": 60450
+          },
+          {
+            "start": 60451,
+            "end": 61131
+          },
+          {
+            "start": 61132,
+            "end": 61818
+          },
+          {
+            "start": 61819,
+            "end": 62503
+          },
+          {
+            "start": 62504,
+            "end": 63205
+          },
+          {
+            "start": 63206,
+            "end": 63915
+          },
+          {
+            "start": 63916,
+            "end": 64620
+          },
+          {
+            "start": 64621,
+            "end": 65378
+          },
+          {
+            "start": 65379,
+            "end": 66122
+          },
+          {
+            "start": 66123,
+            "end": 66879
+          },
+          {
+            "start": 66880,
+            "end": 67614
+          },
+          {
+            "start": 67615,
+            "end": 68348
+          },
+          {
+            "start": 68349,
+            "end": 69099
+          },
+          {
+            "start": 69100,
+            "end": 69837
+          },
+          {
+            "start": 69838,
+            "end": 70582
+          },
+          {
+            "start": 70583,
+            "end": 71327
+          },
+          {
+            "start": 71328,
+            "end": 71992
+          },
+          {
+            "start": 71993,
+            "end": 161782
+          }
+        ]
+      }
+    },
+    {
+      "path": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "size": 23845,
+      "sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "tracked": true,
+      "base_blob_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "disk_equals_base_blob": true,
+      "nul_count": 0,
+      "prefix_hex": "23205031392d55492d4d414e49464553542d5649",
+      "git_last_change": "02d582852791b330912f6883a74ccd9a0e8a3122|peakwheat-pixel|governance: close P19-UI-MANIFEST-VIEW-1 in the Plan and release the same-location task",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 107,
+          "text": "### Resource Manifest"
+        },
+        {
+          "line": 108,
+          "text": ""
+        },
+        {
+          "line": 109,
+          "text": "Task 中 5 行 Resource Manifest 已覆盖 P19 Task 文件、源 JSON、evidence 目录、Task worktree、agent output 类别；但 worktree 当前 34 条 porcelain 状态的构成需要在 closeout 说明中以现场值补充：33 个未跟踪镜像文件 + 1 个已删除旧 Handoff 路径。其 disposition 保持 `PRESERVE_UNKNOWN`，destination 保持原 worktree；不得清理、恢复、移动或归档。"
+        },
+        {
+          "line": 110,
+          "text": ""
+        },
+        {
+          "line": 111,
+          "text": "`deletion / migration / archive = 0`。agent output 没有本 Task 专属的仓外产物，保留为 `NOT_APPLICABLE`。`resource_closeout_status: complete` 可保留，因为资源状态已盘点且未知项明确保留；“complete”表示 closeout 盘点完成，不表示资源已清除。Task 内已有的镜像数量描述与 worktree porcelain 数不是同一口径，应在 closeout 证据说明各自计数，不能把 34 条状态都说成 34 个未跟踪文件。"
+        },
+        {
+          "line": 112,
+          "text": ""
+        },
+        {
+          "line": 146,
+          "text": "# GOV-RESOURCE-MANIFEST-SAME-LOCATION-1：Resource Manifest 同源与空目的地语义"
+        },
+        {
+          "line": 147,
+          "text": ""
+        },
+        {
+          "line": 221,
+          "text": "## Resource Manifest"
+        },
+        {
+          "line": 222,
+          "text": ""
+        },
+        {
+          "line": 223,
+          "text": "Task worktree 与派生产物在 closeout 逐项核实；未知或 dirty 项保留，不按目录名推断可删除。"
+        },
+        {
+          "line": 224,
+          "text": ""
+        },
+        {
+          "line": 225,
+          "text": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |"
+        },
+        {
+          "line": 226,
+          "text": "|---|---|---|---|---|---|"
+        },
+        {
+          "line": 227,
+          "text": "| task worktree | `G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` | `PRESERVE_UNKNOWN` | 原路径 | closeout 时记录 HEAD/status | 未完成盘点前保留 |"
+        },
+        {
+          "line": 228,
+          "text": "| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` 或按实核实 | — | closeout 时复核 | 不假定存在；记录检查结果 |"
+        },
+        {
+          "line": 229,
+          "text": "| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | 原路径 | closeout 时计算 | 被回归套件/证据索引引用，保留 |"
+        },
+        {
+          "line": 230,
+          "text": ""
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": ""
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "size": 3288,
+      "sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "tracked": true,
+      "base_blob_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "disk_equals_base_blob": true,
+      "nul_count": 1,
+      "prefix_hex": "3e20e29aa0efb88f202a2ae69687e4bbb6e5908d",
+      "git_last_change": "263e0ec2fea10dce638e43797e99567019668424|peakwheat-pixel|docs(P14): relabel the owner-commissioned self-review summaries (BL-18; not the independent review)",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "> ⚠️ **文件名与抬头已由 Coordinator 更正（2026-10-16，BL-18）**：本文件**不是**协议意义上的独立 Review。"
+        },
+        {
+          "line": 2,
+          "text": "> 它由 **Owner（codex）自行发起**的 DSH 会话/子智能体产出（session 的 cwd 为 Owner 自己的工作树；"
+        },
+        {
+          "line": 3,
+          "text": "> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），"
+        },
+        {
+          "line": 4,
+          "text": "> 且其自述\"**未重跑测试**\"。**协议独立 Review 见 [dsh-review-r1.md](dsh-review-r1.md)**（Coordinator 路由的 Reviewer=dsh 出具，含亲自复跑）。"
+        },
+        {
+          "line": 5,
+          "text": "> 本文件保留为**自批判/质量改进证据**，其 R-008（m2res 边界）等 finding 促成了实际修复。"
+        },
+        {
+          "line": 6,
+          "text": "# P14 独立 Review R1 摘要"
+        },
+        {
+          "line": 7,
+          "text": ""
+        },
+        {
+          "line": 8,
+          "text": "- Reviewer：dsh"
+        },
+        {
+          "line": 9,
+          "text": "- Session：`session-cb4e75d6-54a7-4fb2-a901-f7c767fde23f`"
+        },
+        {
+          "line": 10,
+          "text": "- 固定实现提交：`8f3fddcc15e4db55e22e7bde425af168c18bec44`"
+        },
+        {
+          "line": 11,
+          "text": "- Review 结论：`changes_requested`"
+        },
+        {
+          "line": 12,
+          "text": "- Reviewer 未重跑测试；未报告 P0 / P1 边界缺陷。"
+        },
+        {
+          "line": 13,
+          "text": ""
+        },
+        {
+          "line": 14,
+          "text": "## Findings 与 Owner 处理"
+        },
+        {
+          "line": 15,
+          "text": ""
+        },
+        {
+          "line": 16,
+          "text": "| ID | 级别 | Finding | Owner 处理 |"
+        },
+        {
+          "line": 17,
+          "text": "|---|---|---|---|"
+        },
+        {
+          "line": 18,
+          "text": "| R-001 | P2 | 工作台错误只显示错误码；缺少本地化错误说明、重试操作与 Core 不可用错误卡。 | 复用既有 `parseSemanticError`，工作台错误现在本地化并提供重试；Core 不可用时显示全工作区错误卡。 |"
+        },
+        {
+          "line": 19,
+          "text": "| R-002 | P2 | 暂停/停止缺少中间状态。 | 添加立即可见的“正在暂停/正在停止”；权威快照变更后才显示最终状态，控制等待期间禁用重复操作。 |"
+        },
+        {
+          "line": 20,
+          "text": "| R-003 | P2 | `ExportDialog` 缺少行为测试。 | 新增 DOM 测试覆盖格式与选项、PNG 单页规则、提交取消、忙碌态、取消、进度、历史、打开目录、Escape 与错误重试。 |"
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": false,
+      "git_status_porcelain": "",
+      "nul_byte_offsets": [
+        286
+      ],
+      "nul_lines": [
+        3
+      ],
+      "strict_utf8_decode_succeeded": true,
+      "encoding_conclusion": "UTF-8可解码，但含嵌入NUL；不是UTF-16整文件误解码。仅内存观察，不去NUL、不写回。"
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "size": 3433,
+      "sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "tracked": true,
+      "base_blob_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "disk_equals_base_blob": true,
+      "nul_count": 1,
+      "prefix_hex": "3e20e29aa0efb88f202a2ae69687e4bbb6e5908d",
+      "git_last_change": "263e0ec2fea10dce638e43797e99567019668424|peakwheat-pixel|docs(P14): relabel the owner-commissioned self-review summaries (BL-18; not the independent review)",
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "> ⚠️ **文件名与抬头已由 Coordinator 更正（2026-10-16，BL-18）**：本文件**不是**协议意义上的独立 Review。"
+        },
+        {
+          "line": 2,
+          "text": "> 它由 **Owner（codex）自行发起**的 DSH 会话/子智能体产出（session 的 cwd 为 Owner 自己的工作树；"
+        },
+        {
+          "line": 3,
+          "text": "> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），"
+        },
+        {
+          "line": 4,
+          "text": "> 且其自述\"**未重跑测试**\"。**协议独立 Review 见 [dsh-review-r1.md](dsh-review-r1.md)**（Coordinator 路由的 Reviewer=dsh 出具，含亲自复跑）。"
+        },
+        {
+          "line": 5,
+          "text": "> 本文件保留为**自批判/质量改进证据**，其 R-008（m2res 边界）等 finding 促成了实际修复。"
+        },
+        {
+          "line": 6,
+          "text": "# P14 独立 Review R2 摘要"
+        },
+        {
+          "line": 7,
+          "text": ""
+        },
+        {
+          "line": 8,
+          "text": "- Reviewer：dsh"
+        },
+        {
+          "line": 9,
+          "text": "- Session：`session-00f8deab-fe9d-44a7-8afe-ed7bab570981`"
+        },
+        {
+          "line": 10,
+          "text": "- 审查提交：`e99be4d6209ba2c11171b215c55d20ff41fc17cc`"
+        },
+        {
+          "line": 11,
+          "text": "- Review 结论：`changes_requested`"
+        },
+        {
+          "line": 12,
+          "text": "- Reviewer 使用提交树静态检查，没有运行测试、build、Core / Rust 套件或 GUI e2e。"
+        },
+        {
+          "line": 13,
+          "text": ""
+        },
+        {
+          "line": 14,
+          "text": "## Findings"
+        },
+        {
+          "line": 15,
+          "text": ""
+        },
+        {
+          "line": 16,
+          "text": "| ID | 级别 | Finding | 后续处理 |"
+        },
+        {
+          "line": 17,
+          "text": "|---|---|---|---|"
+        },
+        {
+          "line": 18,
+          "text": "| F-01 | P1 | 4 条 Canonical Evidence SHA256 与审查提交树字节不符：前端 tests/build meta、Rust packaged meta、禁用入口证据。 | AC6 文档收尾按磁盘字节重算全部登记项，并由真实提交包含性校验。 |"
+        },
+        {
+          "line": 19,
+          "text": "| F-02 | P1 | `delivery_head` 和 12 条证据 commit 均指向旧提交 `8f3fddc`；R2 源码与新日志未登记，测试计数仍为 18/190。 | 固定最终实现/证据提交；登记最新 19/204 tests 与 build 原始日志、meta。 |"
+        },
+        {
+          "line": 20,
+          "text": "| F-03 | P2 | Task、Handoff 与 checkpoint 的状态不一致；R1 摘要错误声称 Task 已是 `in_review`。 | 修正 R1 摘要；Task、Handoff、checkpoint 统一为合法状态 `in_review`。 |"
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": false,
+      "git_status_porcelain": "",
+      "nul_byte_offsets": [
+        286
+      ],
+      "nul_lines": [
+        3
+      ],
+      "strict_utf8_decode_succeeded": true,
+      "encoding_conclusion": "UTF-8可解码，但含嵌入NUL；不是UTF-16整文件误解码。仅内存观察，不去NUL、不写回。"
+    },
+    {
+      "path": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "size": 4027,
+      "sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "tracked": true,
+      "base_blob_sha256": "d40280e1653e75ccdff74979a4a58dffe7feae8de4402a06abac194241e61110",
+      "disk_equals_base_blob": false,
+      "nul_count": 0,
+      "prefix_hex": "7b0d0a202022736368656d615f76657273696f6e",
+      "git_last_change": "5dd4b2af0a0c1da00d49d7267ddac11d718cd94c|peakwheat-pixel|docs(evidence): archive P19 UI fix GUI verification",
+      "memory_decode": "utf-8-sig",
+      "disk_lf_normalized_equals_base_blob": true,
+      "git_status_porcelain": "",
+      "json_task_id": "P19-UI-FIX-1",
+      "json_declared_generator": "Codex (Task Owner)",
+      "relevant_resources": [
+        {
+          "index": 1,
+          "verbatim_record_json": "{\"resource_type\": \"generated-build-artifacts\", \"source_path\": \"apps/desktop/src-tauri/target/{core-sidecar,debug/resources,debug/m2rc1-desktop.exe}; apps/desktop/frontend/dist\", \"disposition\": \"PRESERVE_REFERENCED\", \"destination_path\": \"Same ignored target/dist locations in this worktree\", \"deleted\": false, \"moved\": false, \"process_check\": \"Retained for GUI reproduction and binary/resource hash verification; not added to Git.\"}"
+        },
+        {
+          "index": 2,
+          "verbatim_record_json": "{\"resource_type\": \"isolated-user-data-copy\", \"source_path\": \"%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}\", \"disposition\": \"PRESERVE_REFERENCED\", \"destination_path\": \"apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017\", \"deleted\": false, \"moved\": false, \"process_check\": \"Only the target copy was rebound/launched. Source catalog, data database, lock file, and derived namespace lock SHA256 values match before/after; see appdata-source-preservation-check.json.\"}"
+        },
+        {
+          "index": 3,
+          "verbatim_record_json": "{\"resource_type\": \"user-data-source\", \"source_path\": \"%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}\", \"disposition\": \"PRESERVE_REFERENCED\", \"destination_path\": \"Same source location\", \"deleted\": false, \"moved\": false, \"modified\": false, \"process_check\": \"Four-file length/SHA256 comparison passed.\"}"
+        }
+      ]
+    },
+    {
+      "path": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "size": 21531,
+      "sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "tracked": false,
+      "base_blob_sha256": null,
+      "disk_equals_base_blob": null,
+      "nul_count": 2,
+      "prefix_hex": "2d2d2d0a69643a205032320a7469746c653a20e5",
+      "git_last_change": null,
+      "memory_decode": "utf-8-sig",
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "---"
+        },
+        {
+          "line": 2,
+          "text": "id: P22"
+        },
+        {
+          "line": 3,
+          "text": "title: 同通道 round_trip 响应归属串行化修复"
+        },
+        {
+          "line": 4,
+          "text": "kind: bugfix"
+        },
+        {
+          "line": 5,
+          "text": "status: in_review"
+        },
+        {
+          "line": 6,
+          "text": "approval: user_authorized_automatic_roadmap_20261010"
+        },
+        {
+          "line": 7,
+          "text": "suggested_owner: Antigravity"
+        },
+        {
+          "line": 8,
+          "text": "owner: Antigravity"
+        },
+        {
+          "line": 9,
+          "text": "suggested_reviewer: DeepSeek Harness"
+        },
+        {
+          "line": 10,
+          "text": "reviewer: DeepSeek Harness"
+        },
+        {
+          "line": 11,
+          "text": "integrator: Codex"
+        },
+        {
+          "line": 12,
+          "text": "depends_on: [M2-PAGE-NAV-PROJECTION-1]"
+        },
+        {
+          "line": 13,
+          "text": "blocked_by: []"
+        },
+        {
+          "line": 14,
+          "text": "base_commit: faea1a2c9e19f4817fd792290e91324f047529f9"
+        },
+        {
+          "line": 15,
+          "text": "branch: agent/antigravity/P22-roundtrip-serialization"
+        },
+        {
+          "line": 16,
+          "text": "worktree: G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity"
+        },
+        {
+          "line": 17,
+          "text": "integration_commit: null"
+        },
+        {
+          "line": 18,
+          "text": "delivery_commit: 92093792ba0bc653f9423dda2486d558226caf86"
+        },
+        {
+          "line": 19,
+          "text": "delivery_tree: 083a08f532afa7019a296ec96c805eeefd8b8805"
+        },
+        {
+          "line": 20,
+          "text": "---"
+        }
+      ],
+      "disk_lf_normalized_equals_base_blob": null,
+      "git_status_porcelain": "?? verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md\n",
+      "nul_byte_offsets": [
+        12330,
+        20486
+      ],
+      "nul_lines": [
+        91,
+        205
+      ],
+      "strict_utf8_decode_succeeded": true,
+      "encoding_conclusion": "UTF-8可解码，但含嵌入NUL；不是UTF-16整文件误解码。仅内存观察，不去NUL、不写回。"
+    }
+  ],
+  "representation_note": "resource原文仅作为verbatim_record_json字符串引用，不作为新的活跃资源声明；原来源、指纹、locator不变。初版结构化引用导致四条重复错误，失败日志保留于本Task agent-output。"
+}

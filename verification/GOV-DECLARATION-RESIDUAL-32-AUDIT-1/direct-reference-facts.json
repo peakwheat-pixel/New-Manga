@@ -1,0 +1,365 @@
+[
+  {
+    "path": "verification/P19/r3-closure-checklist.md",
+    "exists": true,
+    "sha256": "2199a70f95c32371480a1aa21e830035bb3e37d02df7c67e03559ba340f9e69b",
+    "excerpts": [
+      {
+        "line": 9,
+        "text": "| R3-001 | P1 | AC2 四页主流程真实验收（导入→Run→导出→翻页） | **已闭合**：8 次迭代（每次失败面不同，根因全部由 DB/UIA 转储证明为 runner 缺陷而非产品缺陷）→ 末次 `checks=27 fails=0 exit_code=0`。关键突破依 Codex R4 的路径判定（见 `codex-review-r4.md` §2）：**从章节行「翻译」入口进入工作台**（侧栏直达会使 `WorkbenchPage.listBooks()` 保持陈旧），Run 前置 `hasChapter`、导出前置 `selectedPageCount>0`（须先在页列表选页）。 | `verification/P19/ac2-main-20261018-0128/**`（UIA 转储 + 12 张截图 + trace + `run-metadata.txt`）；前序 `-0044/-0047/-0051/-0110/-0116/-0120/-0124`；隔离根 DB 直查：`books=1 chapters=1 pages=2`，两页 sha256/字节数与 fixture 逐项一致 | **CLOSED（真实 GUI，独立复核待 R5 覆盖）** |"
+      },
+      {
+        "line": 10,
+        "text": "| R3-002 | P1 | AC3 全域请求/返回/事件/错误扫描 + WebView 边界证明 | 已由 `P19-AC3-1` 交付（58 命令 × 4 面 + WebView 边界）；分支已合并入 main `7b1fcc45a` | `verification/P19-AC3-1/command-matrix.md/.csv`、`webview-boundary.md/.json`、`raw/**` | **CLOSED（已集成，独立审查待 R4 覆盖）** |"
+      },
+      {
+        "line": 11,
+        "text": "| R3-003 | P1 | Handoff、evidence pins、commit、resource manifest、closeout 与 Plan 指针一致闭环 | ① Resource Manifest 事实修正（旧记录 `worktrees/P19` **不存在**）→ 已提交 `a0dba4519`；② 隔离根盘点入账（22 个 `%TEMP%\\p19*`，CLEANUP_AFTER_CLOSEOUT）；③ 本条为**收口清单**；④ Closeout Record + Canonical Evidence 待 AC2 跑完后填 | `doc/tasks/P19.md`（Resource Manifest 段）、本文件 | **PARTIAL** |"
+      },
+      {
+        "line": 12,
+        "text": "| R3-004 | P2 | AC2/AC4 新实测缺**原始轨迹/UIA 转储/截图/时间戳/退出码** | **已闭合**：旧缺口坐实（`ac2-run2..12` 仅 app 日志；`d-run*` 无截图）。新 runner 每步产出 UIA 转储 + 截图 + `trace.log` + `run-metadata.txt`（含 `exe_sha256`/时间戳/`checks`/`fails`/`exit_code`）。AC2 8 轮 + AC4 v3 3 轮全部按此归档并已入库（`2117933b0`）。R4 复核确认\"新三轮已满足 R3-004 归档完整性\"。 | `verification/P19/ac2-main-*/**`、`d-run-20261018-005{3,5,6}/**`、三个 runner 脚本 | **CLOSED** |"
+      },
+      {
+        "line": 13,
+        "text": "| R3-005 | P2 | 复跑用**全新输出目录/拒绝覆盖**，关键断言失败**退出非零** | v2 缺陷已确认（默认覆盖 `d-run-v2`；断言失败仍 exit 0）。**不改 v2**（保持其已 pin 的 sha256 有效），新增 `run-d-acceptance-v3.ps1`：默认时间戳目录 + 拒绝覆盖（exit 4）+ 断言计数（失败 exit 1）+ 运行元数据（新增截图，R3-004） | `run-d-acceptance-v3.ps1`（自测：语法 0 错、拒绝覆盖 exit 4） | **CLOSED（脚本层）** |"
+      },
+      {
+        "line": 14,
+        "text": "| R3-006 | P2 | FEAT-CREATE-1/2 标 done 但 delivery head 缺失、canonical evidence `pending` | 已核实为**纯记账缺失**：`FEAT-CREATE-1/2`、`FEAT-CREATE-3/4`、`P19-BOOT-1`、`P19-UI-FIX-1` 的 `integration_commit` **全部验证为 main 祖先**，证据目录均在主仓 → **P19-AC3-1 的漏合并是孤例**。回填由 Codex 在治理窗口执行 | 本轮 `git merge-base --is-ancestor` 批量核验 | **OPEN（记 Codex 治理项）** |"
+      },
+      {
+        "line": 15,
+        "text": ""
+      },
+      {
+        "line": 16,
+        "text": "## 交叉发现（本轮新增，须并入 R4 审查）"
+      }
+    ]
+  },
+  {
+    "path": "verification/P19/codex-review-r1.md",
+    "exists": true,
+    "sha256": "32f7e2fc93d8677055679c0487f4ba1fb17cf090b179402a2fe941aedce5cce4",
+    "excerpts": [
+      {
+        "line": 13,
+        "text": "task_id: P19"
+      },
+      {
+        "line": 14,
+        "text": "reviewer: Codex（独立非作者 Reviewer）"
+      },
+      {
+        "line": 15,
+        "text": "author: dsh"
+      },
+      {
+        "line": 16,
+        "text": "base_commit: 157e00f67b48bfa3452006f03734bdad485741d7"
+      },
+      {
+        "line": 52,
+        "text": "- **CDP 不可用**：不是可自行转成 PASS 的普通限制。AC1 要先取得用户对 D 替代的明确裁决；若用户接受 D，可登记为 `closed_with_limitations` 的限制。若目标是 `done`，须满足当前 AC1 的 D+ 要求或由用户正式修订验收口径。"
+      },
+      {
+        "line": 53,
+        "text": "- **未提交表单**：设置写入路径没有被这次交互验证。要判 `done`，应在隔离的临时数据中验证提交与结果；若用户明确接受未验证写入，可在 `closed_with_limitations` 中保留 AC2 未完成状态。"
+      },
+      {
+        "line": 54,
+        "text": "- **未跑导入→Run→导出及阅读器翻页**：核心流程未跑，AC2 不可判 PASS。要判 `done` 必须补齐；只有用户明确接受缩小范围后，才能作为 `closed_with_limitations` 保留，并记录 AC2 未通过。"
+      },
+      {
+        "line": 55,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "path": "verification/P19-UI-FIX-1/appdata-source-preservation-check.json",
+    "exists": true,
+    "sha256": "43f817472f8daf97694620b90bc33a7edf623d2c9271ee3f940f3ea4da84f623",
+    "excerpts": [
+      {
+        "line": 1,
+        "text": "["
+      },
+      {
+        "line": 2,
+        "text": "  {"
+      },
+      {
+        "line": 3,
+        "text": "    \"path\": \"catalog\\\\catalog.sqlite\","
+      },
+      {
+        "line": 4,
+        "text": "    \"before_sha256\": \"0f094275808e51bce2d10812fff389670f4f129d93e7ef84802dbe6a04aeb5cd\","
+      },
+      {
+        "line": 5,
+        "text": "    \"after_sha256\": \"0f094275808e51bce2d10812fff389670f4f129d93e7ef84802dbe6a04aeb5cd\","
+      },
+      {
+        "line": 6,
+        "text": "    \"unchanged\": true"
+      },
+      {
+        "line": 7,
+        "text": "  },"
+      },
+      {
+        "line": 8,
+        "text": "  {"
+      },
+      {
+        "line": 9,
+        "text": "    \"path\": \"data\\\\library.db\","
+      },
+      {
+        "line": 10,
+        "text": "    \"before_sha256\": \"7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4\","
+      },
+      {
+        "line": 11,
+        "text": "    \"after_sha256\": \"7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4\","
+      },
+      {
+        "line": 12,
+        "text": "    \"unchanged\": true"
+      },
+      {
+        "line": 13,
+        "text": "  },"
+      },
+      {
+        "line": 14,
+        "text": "  {"
+      },
+      {
+        "line": 15,
+        "text": "    \"path\": \"data\\\\library.db.run-owner.lock\","
+      },
+      {
+        "line": 16,
+        "text": "    \"before_sha256\": \"6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d\","
+      },
+      {
+        "line": 17,
+        "text": "    \"after_sha256\": \"6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d\","
+      },
+      {
+        "line": 18,
+        "text": "    \"unchanged\": true"
+      },
+      {
+        "line": 19,
+        "text": "  },"
+      },
+      {
+        "line": 20,
+        "text": "  {"
+      },
+      {
+        "line": 21,
+        "text": "    \"path\": \"derived\\\\.preview-lifecycle.lock\","
+      },
+      {
+        "line": 22,
+        "text": "    \"before_sha256\": \"c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a\","
+      },
+      {
+        "line": 23,
+        "text": "    \"after_sha256\": \"c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a\","
+      },
+      {
+        "line": 24,
+        "text": "    \"unchanged\": true"
+      },
+      {
+        "line": 25,
+        "text": "  }"
+      },
+      {
+        "line": 26,
+        "text": "]"
+      }
+    ]
+  },
+  {
+    "path": "doc/WORKTREE_SAFETY_INVENTORY.md",
+    "exists": true,
+    "sha256": "850ddfc42ee02391e00e6d1a138d7d4c19995333642737384cd5a8756efe9543",
+    "excerpts": [
+      {
+        "line": 182,
+        "text": "- **`workspace/worktrees` 实际移除 7 处，不是「完全没动」**：FEAT-CREATE-1/2/4、"
+      },
+      {
+        "line": 183,
+        "text": "  P02-NEW-TIME-X6-AC1-AC7、P15-C1-review、P19-AC3-1、P19-UI-FIX-2；其中 4 处后来回建。"
+      },
+      {
+        "line": 184,
+        "text": "  该目录当前逻辑字节 120,499,443,541 B（112.22 GiB，不跟随 reparse；与 r208 时点差异未逐路径归因）。"
+      },
+      {
+        "line": 185,
+        "text": "- **`task-envs` 不等于检测环境**：总逻辑 3,880,296,828 B（3.61 GiB），6 个直接子目录；"
+      }
+    ]
+  },
+  {
+    "path": "doc/tasks/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1.md",
+    "exists": true,
+    "sha256": "7912cd96453564b4442450c6da39403e09e6dd5f8df558a999bc6388c2f71698",
+    "excerpts": [
+      {
+        "line": 2,
+        "text": "id: GOV-RESOURCE-MANIFEST-SAME-LOCATION-1"
+      },
+      {
+        "line": 3,
+        "text": "title: Resource Manifest 同源与空目的地语义"
+      },
+      {
+        "line": 4,
+        "text": "kind: governance/checker"
+      },
+      {
+        "line": 5,
+        "text": "governance_version: 2"
+      },
+      {
+        "line": 6,
+        "text": "status: done"
+      },
+      {
+        "line": 7,
+        "text": "approval: codex_release_20261019_after_P19-UI-MANIFEST-VIEW-1_closeout"
+      },
+      {
+        "line": 8,
+        "text": "suggested_owner: Antigravity"
+      },
+      {
+        "line": 9,
+        "text": "owner: antigravity"
+      },
+      {
+        "line": 10,
+        "text": "reviewer: dsh"
+      },
+      {
+        "line": 11,
+        "text": "depends_on: [GOV-RESOURCE-MANIFEST-JSON-1]"
+      },
+      {
+        "line": 12,
+        "text": "base_commit: 296a9389d"
+      },
+      {
+        "line": 28,
+        "text": ""
+      },
+      {
+        "line": 29,
+        "text": "# GOV-RESOURCE-MANIFEST-SAME-LOCATION-1：Resource Manifest 同源与空目的地语义"
+      },
+      {
+        "line": 30,
+        "text": ""
+      },
+      {
+        "line": 31,
+        "text": "## 来源与目标"
+      },
+      {
+        "line": 44,
+        "text": ""
+      },
+      {
+        "line": 45,
+        "text": "- [x] **AC1 同源与空值解析**：外部 JSON Resource Manifest 中，仅将上述五个已核实的 `Same ...` sentinel、空白/空字符串及字面 `-` 作为同源标记。将其解释为该行 `source_path` 并对 source 运行现有路径解析/存在性校验，或明确跳过 destination 存在性校验并输出可审计 note；优先采用 source-path 回退并验证 source。不得把 sentinel 文本本身传给 `Test-Path`。"
+      },
+      {
+        "line": 46,
+        "text": "- [x] **AC2 note 可追溯**：对每个被解释为同源的资源输出 note，至少指出资源标识、原 `destination_path` 形态及使用的 `source_path`；不得宣称存在一个不同于 source 的 destination。"
+      },
+      {
+        "line": 47,
+        "text": "- [x] **AC3 限制匹配范围**：非同类普通散文（例如 `some other place`）不能获得同源豁免，仍按普通 destination 路径处理并失败；未知 `Same ...` 文本也不能自动扩展为通用自然语言解析，除非它精确匹配本 Task 列明的 sentinel 之一。"
+      },
+      {
+        "line": 49,
+        "text": "- [x] **AC5 离线回归用例**：扩展 `tools/governance/tests/run-resource-manifest-cases.py` 及其现有 fixtures，至少覆盖：五个同源 sentinel 通过且给出 note；空字符串/空白与 `-` 回退 `source_path` 并给出 note；存在的普通 destination 通过；非同类散文失败；真实缺失 destination 失败。用例不得访问网络或依赖用户漫画/模型数据。"
+      },
+      {
+        "line": 50,
+        "text": "- [x] **AC6 集成前验证证据**：运行既有 Resource Manifest 离线套件及指定 Task checker，记录命令、环境、每例 PASS/FAIL、完整 stdout/stderr 与退出码。新行为不改变既有 19 个用例预期；目标 P19 源 Task 中的两项日志 SHA 差异、worktree 行尾差异、8 个未登记文件及真实缺失路径不得被宣称已清理。"
+      },
+      {
+        "line": 51,
+        "text": "- [x] **AC7 范围与资源保护**：差异只在 `allowed_paths`；不改源 JSON、P19 Task/evidence/pins、其他 Task、schema、依赖或任何资源；Handoff 与独立 Review 固定实际 delivery/reviewed head。"
+      },
+      {
+        "line": 52,
+        "text": ""
+      },
+      {
+        "line": 54,
+        "text": ""
+      },
+      {
+        "line": 55,
+        "text": "- `tools/governance/check.ps1`：仅外部 JSON Resource Manifest 的 destination 同源语义与 note。"
+      },
+      {
+        "line": 56,
+        "text": "- `tools/governance/tests/`：离线 Resource Manifest 用例与 fixtures。"
+      },
+      {
+        "line": 57,
+        "text": "- `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/`：本 Task 判别力证据。"
+      },
+      {
+        "line": 58,
+        "text": "- 本 Task 自己的 Handoff 与独立 Review 文件。"
+      },
+      {
+        "line": 74,
+        "text": "|---|---|---|---|---|"
+      },
+      {
+        "line": 75,
+        "text": "| AC1/AC2 同源、空值与 note | `python tools/governance/tests/run-resource-manifest-cases.py`；逐例断言 source 回退与 note | 离线、隔离临时 fixture | PASS (cases 20–27 均通过且输出审计 note；P19 消除 5 项 sentinel 错误) | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/resource-manifest-cases.txt` |"
+      },
+      {
+        "line": 76,
+        "text": "| AC3 普通散文与未知 sentinel | 同一离线套件；断言不被豁免并失败 | 离线 | PASS (cases 29, 30 明确失败) | 同上 |"
+      },
+      {
+        "line": 77,
+        "text": "| AC4 真实缺失 destination | 同一离线套件；用隔离根下不存在的真实路径断言失败；另保留该已知 P19 路径的预期失败事实 | 离线，不创建该路径 | PASS (case 31 明确失败；P19 真实缺失路径继续报错) | 同上 |"
+      },
+      {
+        "line": 111,
+        "text": ""
+      },
+      {
+        "line": 112,
+        "text": "## Resource Manifest"
+      },
+      {
+        "line": 113,
+        "text": ""
+      },
+      {
+        "line": 114,
+        "text": "Task worktree 与派生产物在 closeout 逐项核实；未知或 dirty 项保留，不按目录名推断可删除。"
+      }
+    ]
+  }
+]

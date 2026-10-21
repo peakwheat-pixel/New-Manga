@@ -1,0 +1,857 @@
+{
+  "task": "GOV-DECLARATION-RESIDUAL-32-AUDIT-1",
+  "errors": [
+    {
+      "id": "R01",
+      "code": "TABLE_ROW_ARITY",
+      "message": "table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection",
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "locator": null,
+      "category": "FORMAT_OR_NONRESOURCE",
+      "finding": "六列表头对应首行七单元格，实际第125行多一个说明栏；不能静默截断第七列。",
+      "protection_impact": "整表可信解析被拒绝；其余资源行不能据此失去保护。",
+      "minimal_proposal": "独立文档修复Task可将两个说明格合并为一个并保留全部原文；需核对终态Task和引用pin，不重开旧Task。",
+      "decision_boundary": "本Task无写授权；Codex另冻精确文档范围并独审，涉及原证据pin须保持旧blob。",
+      "source_sha256": "a1a7f69bb2ad6d27dc9cea01bbd4480f13a21832a1efe55ca5a45b77b69920e2",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "GOV-DEBT-CLEANUP-2",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Antigravity"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 125",
+      "verbatim_or_json_record": "| task file | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `NOT_APPLICABLE` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | 本 Task 的容器文档，非被处置资源；自引用哈希无不动点，故不在此表 pin 自身，改由 Closeout Record 记录 | 本 Task 唯一改动的治理文档；未改生产代码 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R02",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-AC3-DELETE-1.md",
+      "locator": "line 4",
+      "category": "FORMAT_OR_NONRESOURCE",
+      "finding": "NOT_APPLICABLE行把“复用”说明放入source_path；真实主仓库路径可从同行字面及frontmatter识别，不是新工作树。",
+      "protection_impact": "错误的散文路径不能变成可删除目录；主仓库一直保留。",
+      "minimal_proposal": "未来仅在新治理声明/精确补丁中把NOT_APPLICABLE与说明分栏；不得全局去掉“复用”前缀或迁移路径。",
+      "decision_boundary": "另冻文档修复范围；不批准重开终态Task或清理主仓库。",
+      "source_sha256": "67c0c2d074b05f2010a4d3b576b2cc2d2c2e1a4ebf9d5eda74bdf1e9be1856ca",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P09-AC3-DELETE-1",
+          "status": "closed_with_limitations",
+          "owner": "Antigravity",
+          "reviewer": "Codex（非作者；同时负责先冻结本 Task 需要的新契约）"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 157",
+      "verbatim_or_json_record": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 收口时实测未创建/未删除资源；`m2rc1-desktop`/`core_service`/`host_bridge` 进程数 = 0；隔离验证根均在 `%TEMP%` 且已清理。 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R03",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "locator": "line 4",
+      "category": "FORMAT_OR_NONRESOURCE",
+      "finding": "NOT_APPLICABLE行把“复用”说明放入source_path；真实主仓库路径可从同行字面及frontmatter识别，不是新工作树。",
+      "protection_impact": "错误的散文路径不能变成可删除目录；主仓库一直保留。",
+      "minimal_proposal": "未来仅在新治理声明/精确补丁中把NOT_APPLICABLE与说明分栏；不得全局去掉“复用”前缀或迁移路径。",
+      "decision_boundary": "另冻文档修复范围；不批准重开终态Task或清理主仓库。",
+      "source_sha256": "e297fa976432d9fa277218e8ea018461e59fee6039794dd8b757ac393f06348e",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P09-AC3-DELETE-HARDEN-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 144",
+      "verbatim_or_json_record": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源；18 个提交全部在本仓工作区完成。 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R04",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02）' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "locator": "line 7",
+      "category": "FORMAT_OR_NONRESOURCE",
+      "finding": "source_path为“不新建agent-output”的完整说明；同一行disposition=NOT_APPLICABLE。",
+      "protection_impact": "不代表真有此名称的文件；直接引用的证据与原工作树仍被保护。",
+      "minimal_proposal": "未来以结构化NOT_APPLICABLE和说明分栏表达，不创建虚拟路径、不改NOT_APPLICABLE通用解析。",
+      "decision_boundary": "仅研究结论，实际修订需新范围/独审及pin影响核验。",
+      "source_sha256": "596db5b9f9f85d6361718e55d8da8f3f7744d4365252c075f27a78882de09210",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P09-MANAGED-READ-ROOT-TRUST-1",
+          "status": "done",
+          "owner": "p09-root-trust",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 217",
+      "verbatim_or_json_record": "| agent-output | 无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02） | NOT_APPLICABLE | — | — | 证据全部在 `verification/P09-MANAGED-READ-ROOT-TRUST-1/` |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R05",
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "工作区相对路径worktrees/P19-AC3-1被明确拒绝；同行称5个worktree，不是完整五项绝对清单。直接引用Inventory仅证明历史曾移除此名，不能证明当前状态。",
+      "protection_impact": "DELETE_SAFE为历史记录，不是当前删除授权；已不存在自述不证明所有五项均不存在。",
+      "minimal_proposal": "另做逐项历史来源映射；保留路径歧义，不从目录名猜五项或重写历史删除事实。",
+      "decision_boundary": "需要来源Owner/Lead核定每项原绝对路径与时点；当前全部保留。",
+      "source_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P19",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex（非作者，独立复核验收方法与证据）"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 112",
+      "verbatim_or_json_record": "| P19 子 Task worktree（5 个）| worktrees/P19-AC3-1 | DELETE_SAFE | - | doc/WORKTREE_SAFETY_INVENTORY.md | **已不存在**（closeout 前按清单核实后清理）；原记录的 PRESERVE_REFERENCED 与事实不符，已按事实更正 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R06",
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "%TEMP%是历史运行时变量；当前TEMP值不能还原当时22/12个隔离根，引用证据未给完整绝对列表。",
+      "protection_impact": "不得按当前TEMP展开，更不能将历史DELETE_SAFE用于当前目录。",
+      "minimal_proposal": "只从当时收据/runner元数据另建来源映射；未能重建的身份保留UNKNOWN，不执行通配清理。",
+      "decision_boundary": "先核定历史执行账户/时点/完整根集合；缺证据则持续保留，删除另需授权。",
+      "source_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P19",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex（非作者，独立复核验收方法与证据）"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 113",
+      "verbatim_or_json_record": "| 测试隔离根 | %TEMP%/p19-ac2-r1 | DELETE_SAFE | - | verification/P19/r3-closure-checklist.md | 22 个 p19* 临时隔离根，**已清理**（2026-10-18，Coordinator）；非用户数据 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R07",
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "%TEMP%是历史运行时变量；当前TEMP值不能还原当时22/12个隔离根，引用证据未给完整绝对列表。",
+      "protection_impact": "不得按当前TEMP展开，更不能将历史DELETE_SAFE用于当前目录。",
+      "minimal_proposal": "只从当时收据/runner元数据另建来源映射；未能重建的身份保留UNKNOWN，不执行通配清理。",
+      "decision_boundary": "先核定历史执行账户/时点/完整根集合；缺证据则持续保留，删除另需授权。",
+      "source_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P19",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex（非作者，独立复核验收方法与证据）"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 114",
+      "verbatim_or_json_record": "| 本轮新增隔离根 | %TEMP%/p19-ac2-main-1 | DELETE_SAFE | - | verification/P19/codex-review-r1.md | 12 个（AC2x8 / AC4v3x3 / smokex1），**已清理**；非用户数据 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R08",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P20-AC4-FPS-1.md",
+      "locator": "line 4",
+      "category": "FORMAT_OR_NONRESOURCE",
+      "finding": "NOT_APPLICABLE行把“复用”说明放入source_path；真实主仓库路径可从同行字面及frontmatter识别，不是新工作树。",
+      "protection_impact": "错误的散文路径不能变成可删除目录；主仓库一直保留。",
+      "minimal_proposal": "未来仅在新治理声明/精确补丁中把NOT_APPLICABLE与说明分栏；不得全局去掉“复用”前缀或迁移路径。",
+      "decision_boundary": "另冻文档修复范围；不批准重开终态Task或清理主仓库。",
+      "source_sha256": "4f025519accbceb257c44c6481c4f39781739b612608e9081748d8c5e6dda2c2",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P20-AC4-FPS-1",
+          "status": "closed_with_limitations",
+          "owner": "ZCode",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 156",
+      "verbatim_or_json_record": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 未创建、未删除资源。 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R09",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 4",
+      "category": "FORMAT_OR_NONRESOURCE",
+      "finding": "NOT_APPLICABLE行把“复用”说明放入source_path；真实主仓库路径可从同行字面及frontmatter识别，不是新工作树。",
+      "protection_impact": "错误的散文路径不能变成可删除目录；主仓库一直保留。",
+      "minimal_proposal": "未来仅在新治理声明/精确补丁中把NOT_APPLICABLE与说明分栏；不得全局去掉“复用”前缀或迁移路径。",
+      "decision_boundary": "另冻文档修复范围；不批准重开终态Task或清理主仓库。",
+      "source_sha256": "1e2dfe34a75ba7e4d20c40f77c5b4a32c364edf8c725607460935ccae590b8ad",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P20-CLOSE-BOUND-HARDEN-1",
+          "status": "closed_with_limitations",
+          "owner": "Antigravity",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 244",
+      "verbatim_or_json_record": "| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R10",
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "SEC-FIX-PATH-ECHO-1",
+          "status": "done",
+          "owner": "Codex",
+          "reviewer": "DeepSeek Harness"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 113",
+      "verbatim_or_json_record": "| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R11",
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "5961e38e2527a012545eddcde2f28726405da8c7fc3d572f16a45ddf7be085f0",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "SEC-FIX-PATH-ECHO-1",
+          "status": "done",
+          "owner": "Codex",
+          "reviewer": "DeepSeek Harness"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 113",
+      "verbatim_or_json_record": "| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R12",
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 293",
+      "verbatim_or_json_record": "| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R13",
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 293",
+      "verbatim_or_json_record": "| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R14",
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 294",
+      "verbatim_or_json_record": "| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R15",
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 294",
+      "verbatim_or_json_record": "| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R16",
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 295",
+      "verbatim_or_json_record": "| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R17",
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 295",
+      "verbatim_or_json_record": "| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R18",
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 297",
+      "verbatim_or_json_record": "| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R19",
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 297",
+      "verbatim_or_json_record": "| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R20",
+      "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 298",
+      "verbatim_or_json_record": "| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R21",
+      "code": "DECL_DESTINATION_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15",
+      "category": "PROTECTED_BROAD_ROOT",
+      "finding": "合法的保留意图使用了工作区根或管理区根；source与destination同根分别触发错误。",
+      "protection_impact": "这12错误只涉及6条宽泛声明（其中工作区根在两文件出现），不是12个独立资源；禁止为消错缩窄或解除现有覆盖。",
+      "minimal_proposal": "未来提出显式广域保护语义或在完整核验后生成等价覆盖的精确子根清册；必须证明保护集合不减少，不能把所有子目录当派生产物。",
+      "decision_boundary": "需Codex/用户明确裁定广域保护表达；本Task不请求解除保护，不移植通配例外、不改Schema。",
+      "source_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "WORKSPACE-CONSOLIDATION-1",
+          "status": "closed_with_limitations",
+          "owner": "dsh",
+          "reviewer": "Codex"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 298",
+      "verbatim_or_json_record": "| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R22",
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "CLEANED_BY_OWNER不是允许的disposition；同一source还包含%TEMP%和.tmp*及说明，本次首个错误遮蔽后续定位问题。",
+      "protection_impact": "不能把测试自清自述映射成DELETE_SAFE；未知且通配的历史对象仍不可处置。",
+      "minimal_proposal": "另行核对Rust TempDir日志/当时路径；历史已清理动作与当前保留声明分开表达，不能仅替换枚举。",
+      "decision_boundary": "记录未验证自清声明；先确认历史来源Owner与完整集合，再冻文档/工具范围。",
+      "source_sha256": "2c90839bd8fb97273d45103f2b368726baaef3d509de6cab8f3bde97f043508f",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": "ENV-BUNDLE-1-FU1",
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "$.resources[7].disposition",
+      "verbatim_or_json_record": "{\"resource_type\": \"test_temp_data\", \"source_path\": \"%TEMP%/.tmp* created by Rust tempfile tests\", \"disposition\": \"CLEANED_BY_OWNER\", \"destination_path\": null, \"reference_check\": \"Rust TempDir values dropped at test completion; isolated smoke-test directories and child processes were cleaned up.\"}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R23",
+      "code": "JSON_PARSE",
+      "message": "unparsable untracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "locator": null,
+      "category": "NDJSON_EVIDENCE",
+      "finding": "文件自述输出为CreateNew NDJSON流；单JSON解码报Extra data，逐值只读诊断完整消费且分别6/64个meta-observation-closed对象；未发现resource身份键。",
+      "protection_impact": "原始日志有有效证据价值；不能改写成单JSON/截取最后对象，未跟踪文件仍归原作者。",
+      "minimal_proposal": "候选：在另冻工具Task中核验现有“精确路径+原始SHA非声明例外”机制，或只读派生视图；不得加入通用坏JSON忽略或执行旧collector。",
+      "decision_boundary": "本轮不修改例外表；需固定两文件raw hash、独审验证非声明性质/负例与漂移拒绝。",
+      "source_sha256": "bdabb170f9a415dd42855a0978fe557cae4ca1df97466ca143750b1ae288f7a1",
+      "tracked": false,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": "P02-NEW-TIME-BASELINE",
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "single JSON error line 2; memory stream character ranges in source-facts.json",
+      "verbatim_or_json_record": "{\"value_count\": 6, \"kinds\": {\"meta\": 1, \"observation\": 4, \"closed\": 1}, \"all_input_consumed\": true, \"schema\": \"P02-NEW-TIME-BASELINE-collector-1\", \"task\": \"P02-NEW-TIME-BASELINE\", \"outputRule\": \"single exclusive CreateNew NDJSON stream; line kinds meta/observation/closed; final closed line is self-contained; every check references /observations/<seq>/... JSON Pointers\", \"resource_identity_key_hits\": [], \"stream_value_character_offsets\": [{\"start\": 0, \"end\": 5000}, {\"start\": 5002, \"end\": 9333}, {\"start\": 9335, \"end\": 11498}, {\"start\": 11500, \"end\": 12204}, {\"start\": 12206, \"end\": 13037}, {\"start\": 13039, \"end\": 24163}]}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R24",
+      "code": "JSON_PARSE",
+      "message": "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json is not valid JSON: Extra data: line 2 column 1 (char 7494)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "locator": null,
+      "category": "NDJSON_EVIDENCE",
+      "finding": "文件自述输出为CreateNew NDJSON流；单JSON解码报Extra data，逐值只读诊断完整消费且分别6/64个meta-observation-closed对象；未发现resource身份键。",
+      "protection_impact": "原始日志有有效证据价值；不能改写成单JSON/截取最后对象，未跟踪文件仍归原作者。",
+      "minimal_proposal": "候选：在另冻工具Task中核验现有“精确路径+原始SHA非声明例外”机制，或只读派生视图；不得加入通用坏JSON忽略或执行旧collector。",
+      "decision_boundary": "本轮不修改例外表；需固定两文件raw hash、独审验证非声明性质/负例与漂移拒绝。",
+      "source_sha256": "caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": "P02-NEW-TIME-BASELINE",
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "single JSON error line 2; memory stream character ranges in source-facts.json",
+      "verbatim_or_json_record": "{\"value_count\": 64, \"kinds\": {\"meta\": 1, \"observation\": 62, \"closed\": 1}, \"all_input_consumed\": true, \"schema\": \"P02-NEW-TIME-BASELINE-collector-1\", \"task\": \"P02-NEW-TIME-BASELINE\", \"outputRule\": \"single exclusive CreateNew NDJSON stream; line kinds meta/observation/closed; final closed line is self-contained; every check references /observations/<seq>/... JSON Pointers\", \"resource_identity_key_hits\": [], \"stream_value_character_offsets\": [{\"start\": 0, \"end\": 7493}, {\"start\": 7494, \"end\": 14895}, {\"start\": 14896, \"end\": 17104}, {\"start\": 17105, \"end\": 17809}, {\"start\": 17810, \"end\": 18655}, {\"start\": 18656, \"end\": 19291}, {\"start\": 19292, \"end\": 20287}, {\"start\": 20288, \"end\": 21290}, {\"start\": 21291, \"end\": 22305}, {\"start\": 22306, \"end\": 23354}, {\"start\": 23355, \"end\": 24317}, {\"start\": 24318, \"end\": 25272}, {\"start\": 25273, \"end\": 26237}, {\"start\": 26238, \"end\": 36420}, {\"start\": 36421, \"end\": 37004}, {\"start\": 37005, \"end\": 37890}, {\"start\": 37891, \"end\": 38528}, {\"start\": 38529, \"end\": 39221}, {\"start\": 39222, \"end\": 39928}, {\"start\": 39929, \"end\": 40610}, {\"start\": 40611, \"end\": 41298}, {\"start\": 41299, \"end\": 41984}, {\"start\": 41985, \"end\": 42609}, {\"start\": 42610, \"end\": 43252}, {\"start\": 43253, \"end\": 43881}, {\"start\": 43882, \"end\": 44544}, {\"start\": 44545, \"end\": 45209}, {\"start\": 45210, \"end\": 45912}, {\"start\": 45913, \"end\": 46623}, {\"start\": 46624, \"end\": 47329}, {\"start\": 47330, \"end\": 48088}, {\"start\": 48089, \"end\": 48833}, {\"start\": 48834, \"end\": 49591}, {\"start\": 49592, \"end\": 50327}, {\"start\": 50328, \"end\": 51062}, {\"start\": 51063, \"end\": 51814}, {\"start\": 51815, \"end\": 52553}, {\"start\": 52554, \"end\": 53299}, {\"start\": 53300, \"end\": 54045}, {\"start\": 54046, \"end\": 54618}, {\"start\": 54619, \"end\": 55471}, {\"start\": 55472, \"end\": 56351}, {\"start\": 56352, \"end\": 57210}, {\"start\": 57211, \"end\": 58123}, {\"start\": 58124, \"end\": 59052}, {\"start\": 59053, \"end\": 59744}, {\"start\": 59745, \"end\": 60450}, {\"start\": 60451, \"end\": 61131}, {\"start\": 61132, \"end\": 61818}, {\"start\": 61819, \"end\": 62503}, {\"start\": 62504, \"end\": 63205}, {\"start\": 63206, \"end\": 63915}, {\"start\": 63916, \"end\": 64620}, {\"start\": 64621, \"end\": 65378}, {\"start\": 65379, \"end\": 66122}, {\"start\": 66123, \"end\": 66879}, {\"start\": 66880, \"end\": 67614}, {\"start\": 67615, \"end\": 68348}, {\"start\": 68349, \"end\": 69099}, {\"start\": 69100, \"end\": 69837}, {\"start\": 69838, \"end\": 70582}, {\"start\": 70583, \"end\": 71327}, {\"start\": 71328, \"end\": 71992}, {\"start\": 71993, \"end\": 161782}]}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R25",
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7",
+      "category": "HISTORICAL_TEMPLATE_TEXT",
+      "finding": "来源是Review记录内嵌的尚未核实Task模板，表中“对应Task子目录”“NOT_APPLICABLE或按实核实”“本Task…”不是冻结资源身份。",
+      "protection_impact": "不得把模板占位文字解释为资源，也不能因历史模板而忽略整个Review的其他保护。",
+      "minimal_proposal": "候选：新治理索引区分历史模板引用与实际声明；原Review保持原字节，若工具增加精确引用范围策略需单独Task。",
+      "decision_boundary": "不能静默编辑历史Review或批量排除verification；当前2错误继续保留。",
+      "source_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 228",
+      "verbatim_or_json_record": "| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` 或按实核实 | — | closeout 时复核 | 不假定存在；记录检查结果 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R26",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8",
+      "category": "HISTORICAL_TEMPLATE_TEXT",
+      "finding": "来源是Review记录内嵌的尚未核实Task模板，表中“对应Task子目录”“NOT_APPLICABLE或按实核实”“本Task…”不是冻结资源身份。",
+      "protection_impact": "不得把模板占位文字解释为资源，也不能因历史模板而忽略整个Review的其他保护。",
+      "minimal_proposal": "候选：新治理索引区分历史模板引用与实际声明；原Review保持原字节，若工具增加精确引用范围策略需单独Task。",
+      "decision_boundary": "不能静默编辑历史Review或批量排除verification；当前2错误继续保留。",
+      "source_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 229",
+      "verbatim_or_json_record": "| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | 原路径 | closeout 时计算 | 被回归套件/证据索引引用，保留 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R27",
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null,
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "两个文件严格UTF-8可解码，各在byte286含1个NUL，位于会话简称行；已有抬头明确不是独立Review。",
+      "protection_impact": "保持历史自批判证据及独立Review标签；不得去NUL后冒充原始证据或独立批准。",
+      "minimal_proposal": "未来生成带source hash/byte offset的可读派生视图，或精确确认非声明例外；原始blob不重编码、不去NUL。",
+      "decision_boundary": "需要单独证据视图/工具范围，原始pin永不改写；不自动豁免含NUL文件。",
+      "source_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 3",
+      "verbatim_or_json_record": "> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R28",
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null,
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "两个文件严格UTF-8可解码，各在byte286含1个NUL，位于会话简称行；已有抬头明确不是独立Review。",
+      "protection_impact": "保持历史自批判证据及独立Review标签；不得去NUL后冒充原始证据或独立批准。",
+      "minimal_proposal": "未来生成带source hash/byte offset的可读派生视图，或精确确认非声明例外；原始blob不重编码、不去NUL。",
+      "decision_boundary": "需要单独证据视图/工具范围，原始pin永不改写；不自动豁免含NUL文件。",
+      "source_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 3",
+      "verbatim_or_json_record": "> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R29",
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "destination是已在GOV-RESOURCE-MANIFEST-SAME-LOCATION-1列明的精确同源sentinel；该已完成授权只作用于check.ps1，不能自动扩展到清理guard。",
+      "protection_impact": "源是含大括号/分号的多路径描述；即便识别同源也必须核对源能否唯一解析，不能只消一个错误。",
+      "minimal_proposal": "另冻共享guard契约Task核对精确sentinel、源身份枚举与重复/多路径负例；不改历史JSON。",
+      "decision_boundary": "已有checker批准不等于guard新语义批准；本次不实施、不放宽源解析。",
+      "source_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": "P19-UI-FIX-1",
+          "generator": "Codex (Task Owner)"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "$.resources[1].destination_path",
+      "verbatim_or_json_record": "{\"resource_type\": \"generated-build-artifacts\", \"source_path\": \"apps/desktop/src-tauri/target/{core-sidecar,debug/resources,debug/m2rc1-desktop.exe}; apps/desktop/frontend/dist\", \"disposition\": \"PRESERVE_REFERENCED\", \"destination_path\": \"Same ignored target/dist locations in this worktree\", \"deleted\": false, \"moved\": false, \"process_check\": \"Retained for GUI reproduction and binary/resource hash verification; not added to Git.\"}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R30",
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "原locator标成disposition但失败字面实际在resources[2/3].source_path；%APPDATA%加brace集合不能按当前用户环境替换。直接引用仅有四个相对文件hash，不含历史绝对用户根。",
+      "protection_impact": "两行分别是隔离副本源与真实用户源，不能重复计成两套同一用户数据或以副本替代源保护；全部保留。",
+      "minimal_proposal": "仅用历史执行环境/隔离路径映射建立新绝对身份证据；保留原locator同时记录实际JSON pointer，不访问/修改用户DB。",
+      "decision_boundary": "先证明历史用户/根路径和copy→source关系；未确认项保持用户数据保护，迁移删除另需用户裁决。",
+      "source_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": "P19-UI-FIX-1",
+          "generator": "Codex (Task Owner)"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "$.resources[2].source_path",
+      "verbatim_or_json_record": "{\"resource_type\": \"isolated-user-data-copy\", \"source_path\": \"%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}\", \"disposition\": \"PRESERVE_REFERENCED\", \"destination_path\": \"apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017\", \"deleted\": false, \"moved\": false, \"process_check\": \"Only the target copy was rebound/launched. Source catalog, data database, lock file, and derived namespace lock SHA256 values match before/after; see appdata-source-preservation-check.json.\"}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R31",
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition",
+      "category": "HISTORICAL_RESOURCE_IDENTITY",
+      "finding": "原locator标成disposition但失败字面实际在resources[2/3].source_path；%APPDATA%加brace集合不能按当前用户环境替换。直接引用仅有四个相对文件hash，不含历史绝对用户根。",
+      "protection_impact": "两行分别是隔离副本源与真实用户源，不能重复计成两套同一用户数据或以副本替代源保护；全部保留。",
+      "minimal_proposal": "仅用历史执行环境/隔离路径映射建立新绝对身份证据；保留原locator同时记录实际JSON pointer，不访问/修改用户DB。",
+      "decision_boundary": "先证明历史用户/根路径和copy→source关系；未确认项保持用户数据保护，迁移删除另需用户裁决。",
+      "source_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": "P19-UI-FIX-1",
+          "generator": "Codex (Task Owner)"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "$.resources[3].source_path",
+      "verbatim_or_json_record": "{\"resource_type\": \"user-data-source\", \"source_path\": \"%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}\", \"disposition\": \"PRESERVE_REFERENCED\", \"destination_path\": \"Same source location\", \"deleted\": false, \"moved\": false, \"modified\": false, \"process_check\": \"Four-file length/SHA256 comparison passed.\"}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R32",
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null,
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "未跟踪P22历史malformed快照严格UTF-8可解码，嵌入2个NUL；文件内owner仅是快照记录，不能证明快照作者或当前活性。",
+      "protection_impact": "未提交快照归原作者；不修正/提交/丢弃，也不能据旧in_review重开P22或放大实施范围。",
+      "minimal_proposal": "候选只读派生视图保留raw hash/NUL偏移；核验原引用，不提交原文件、不替换历史pin。",
+      "decision_boundary": "实际文件作者未知，原样保护；任何源改动需要来源作者/用户授权，当前不申请。",
+      "source_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "tracked": false,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P22",
+          "status": "in_review",
+          "owner": "Antigravity",
+          "reviewer": "DeepSeek Harness"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "NUL byte offsets [12330, 20486]",
+      "verbatim_or_json_record": "{\"nul_byte_offsets\": [12330, 20486], \"nul_lines\": [91, 205], \"snapshot_owner\": \"Antigravity（文件内字段，实际作者未知）\"}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    }
+  ],
+  "counts": {
+    "FORMAT_OR_NONRESOURCE": 6,
+    "HISTORICAL_RESOURCE_IDENTITY": 7,
+    "PROTECTED_BROAD_ROOT": 12,
+    "NDJSON_EVIDENCE": 2,
+    "HISTORICAL_TEMPLATE_TEXT": 2,
+    "RAW_EVIDENCE_NUL": 3
+  }
+}

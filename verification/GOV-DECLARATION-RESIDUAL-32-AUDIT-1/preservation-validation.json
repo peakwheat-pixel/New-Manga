@@ -1,0 +1,121 @@
+{
+  "shell": "PowerShell",
+  "python": "Python 3.14.6",
+  "read_only_command": [
+    "python",
+    "-B",
+    "tools/governance/clean_workspace.py",
+    "--repo",
+    "G:\\CODEX\\New Manga",
+    "--workspace-root",
+    "G:\\CODEX\\New Manga.workspace",
+    "--audit-declarations",
+    "--out",
+    "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-DECLARATION-RESIDUAL-32-AUDIT-1\\corrected-observation-audit"
+  ],
+  "audit_exit": 2,
+  "audit_output": "declaration audit: 2359 declaration(s), 1703 protected root(s), 32 error(s), 250 warning(s)\r\n  ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]\r\n  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P09-AC3-DELETE-1.md]\r\n  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P09-AC3-DELETE-HARDEN-1.md]\r\n  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02）' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md]\r\n  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]\r\n  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]\r\n  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]\r\n  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P20-AC4-FPS-1.md]\r\n  ERROR DECL_RELATIVE_UNRESOLVED: declared relative path '复用 G:/CODEX/New Manga' is not an existing repo top-level entry; identity is ambiguous [doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md]\r\n  ERROR DECL_GENERALIZED: declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling [doc/tasks/SEC-FIX-PATH-ECHO-1.md]\r\n  report: G:/CODEX/New Manga.workspace/agent-output/codex/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/corrected-observation-audit/declaration-audit.json\r\n",
+  "same_32_error_multiset": true,
+  "source_count": 17,
+  "source_checks": [
+    {
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/P09-AC3-DELETE-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/P19.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/P20-AC4-FPS-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    },
+    {
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "raw_sha_unchanged": true,
+      "source_git_status_unchanged": true
+    }
+  ],
+  "counts": {
+    "local_heads": 98,
+    "worktrees": 136
+  },
+  "common_directory": "G:/CODEX/New Manga/.git",
+  "cleanup_performed": false,
+  "initial_attempts": {
+    "exit": 2,
+    "error_count": 36,
+    "repeated": 2,
+    "reason": "本Task引用原resource记录为JSON对象，递归扫描成为4条新声明",
+    "correction": "仅本Task观察字段改为原文字符串，未改源和guard，原32项身份全部保留；不是忽略或清理例外"
+  },
+  "not_run": "产品/工具回归、全仓历史扫描、用户数据打开、资源占用/恢复演练：本轮无代码改动且不授权清理"
+}
