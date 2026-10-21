@@ -1,0 +1,13 @@
+SHELL=pwsh / Python subprocess; interpreter=C:\Python314\python.exe
+SOURCE_HEAD=56272e40b; metadata/evidence only
+COMMAND=['pwsh', '-NoProfile', '-File', 'tools/governance/check.ps1', '-TaskPath', 'doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md']
+EXIT=0
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GIT-MAINLINE-CONVERGENCE-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3056 bytes / 28 lines
+Governance check: PASS (2 warnings)
+
+
+COMMAND=['git', 'diff', '--check']
+EXIT=0

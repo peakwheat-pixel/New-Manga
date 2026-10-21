@@ -210,3 +210,16 @@ P02/P02PRE 单条线上作业，本节处理全仓。
 fsck exit 0 但含 613 条 dangling；26 个草稿路径不变；18 个受影响 source 按 availability 逐项记录；
 Plan/STATUS/Task 的 r208 更正与本文件一致。
 
+
+## Stage 9 主线收敛只读刷新（2026-10-21）
+
+Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。本节取代旧数量口径，不解除 Stage 8/r212 的保护和禁令，不覆盖历史原文。
+
+- 当前注册工作树 **135**（含主 checkout；Detached **39**），本地分支 **97**（78 ancestor-merged / 19 unmerged），remote-tracking **3**，archive tags **77**，其他 refs/codex **37**，stash **0**。
+- **82** 个含 dirty/untracked；**60** 个含 ignored 根；**125** 个命中已解析保护声明。集合重叠，不作加总。ignored 为按目录根枚举，未逐文件 hash，任何有内容的工作树原位保留。
+- 新增数量相对 r212 的 132/93 为 3 个已完成 dsh Task worktree/branch，加上 main 恢复，共 +3 worktrees/+4 branches。旧 consolidate inventory 本身并非 r212 最终时点，不能用它的旧集合直接作计数差。
+- 保护扫描 **77 errors / 236 warnings**、Git inspection **0 errors**；工具 exit 1，拒绝发布可信删除清单。当前没有 DELETE_SAFE 批准。
+- 19/19 未合并分支已有增量 bundle/tag 验证通过；另建全 refs 备份并在空 bare repo 验证 214 refs 全等、135/135 worktree HEAD 可读、fsck exit 0。此备份不含未提交/ignored/应用会话。
+- 完整逐项清册与证据：[report](../verification/GIT-MAINLINE-CONVERGENCE-1/report.md)、[全部分支](../verification/GIT-MAINLINE-CONVERGENCE-1/branches.md)、[全部工作树](../verification/GIT-MAINLINE-CONVERGENCE-1/worktrees.md)。
+- 只读观测中的唯一无保护命中且无 dirty/untracked/ignored/unique 的表面候选是 WORKSPACE-CLEANUP-TOOL-HARDENING-1；全局禁令、解析错误与逐路径占用未知仍阻止删除。不得以本记录当作移除授权。
+- 本轮已执行删除/移动/merge/GC/prune：**0**；尚未达到只剩 main。
