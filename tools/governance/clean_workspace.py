@@ -66,6 +66,7 @@ USAGE
 There is no ``--force`` and no way to skip a protection check.
 """
 import argparse
+import copy
 import datetime
 import hashlib
 import io
@@ -1428,6 +1429,241 @@ def parse_json_declarations(index, data, source_file):
     _walk_json(data, callback)
 
 
+BROAD_PRESERVATION_POLICY = "tools/governance/broad-root-preservation.json"
+BROAD_PRESERVATION_RULING = (
+    "verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/ruling.md")
+
+
+def _finish_declaration_scan(index, scanned):
+    result = dict(scanned)
+    result.update(declarations=len(index.declarations),
+                  errors=len(index.errors), warnings=len(index.warnings))
+    if "protected_roots" in result:
+        result["protected_roots"] = len(index.protected)
+    return index, result
+
+
+def _unique_preservation_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            fail("POLICY_INVALID", "duplicate preservation policy key: %s" % key)
+        result[key] = value
+    return result
+
+
+def _apply_broad_preservation(index, scanned):
+    """Replace only the adjudicated error pairs with whole-root protection.
+
+    The normal scanner still parses every source. No staged collection is
+    published until all bindings, warnings, counts and byte snapshots succeed.
+    """
+    def require(condition, code, message):
+        if not condition:
+            fail(code, message)
+
+    snapshots = {}
+
+    def read(relative):
+        absolute = os.path.join(index.repo_root.replace("/", os.sep),
+                                relative.replace("/", os.sep))
+        if absolute not in snapshots:
+            with io.open(absolute, "rb") as handle:
+                snapshots[absolute] = handle.read()
+        return snapshots[absolute]
+
+    def digest(raw):
+        return hashlib.sha256(raw).hexdigest()
+
+    def matches_hash(value, raw):
+        return (isinstance(value, str)
+                and re.fullmatch(r"[0-9a-fA-F]{64}", value) is not None
+                and value.lower() == digest(raw))
+
+    try:
+        tracked = git_checked(
+            index.repo_root, "ls-files", "-z", "--", BROAD_PRESERVATION_POLICY,
+            what="git ls-files broad preservation policy")
+        tracked = BROAD_PRESERVATION_POLICY in tracked.split("\x00")
+        absolute = os.path.join(index.repo_root.replace("/", os.sep),
+                                BROAD_PRESERVATION_POLICY.replace("/", os.sep))
+        exists = os.path.lexists(absolute)
+        if not tracked and not exists:
+            return _finish_declaration_scan(index, scanned)
+        require(tracked, "POLICY_UNTRACKED",
+                "an untracked policy cannot activate broad preservation")
+        require(exists, "BROAD_PRESERVATION_POLICY_MISSING",
+                "tracked broad preservation policy is missing")
+        policy = json.loads(read(BROAD_PRESERVATION_POLICY).decode("utf-8"),
+                            object_pairs_hook=_unique_preservation_object)
+        require(isinstance(policy, dict) and set(policy) == {
+            "schema_version", "policy_kind", "scope_id", "decision_ref",
+            "decision_sha256", "bindings"}, "POLICY_INVALID",
+            "unexpected broad preservation policy schema")
+        require(type(policy["schema_version"]) is int
+                and policy["schema_version"] == 1
+                and policy["policy_kind"] == "BROAD_ROOT_PRESERVATION"
+                and policy["scope_id"] == "workspace-preserve-20261021-5roots",
+                "POLICY_INVALID", "unsupported preservation policy version/scope")
+        require(policy["decision_ref"] == BROAD_PRESERVATION_RULING,
+                "POLICY_INVALID", "unexpected preservation ruling reference")
+        require(matches_hash(policy["decision_sha256"],
+                             read(BROAD_PRESERVATION_RULING)),
+                "RULING_DRIFT", "preservation ruling bytes do not match")
+        bindings = policy["bindings"]
+        require(isinstance(bindings, list) and len(bindings) == 6,
+                "POLICY_INVALID", "preservation requires exactly six bindings")
+        first = "doc/tasks/SEC-FIX-PATH-ECHO-1.md"
+        second = "doc/tasks/WORKSPACE-CONSOLIDATION-1.md"
+        roots = {index.ws_root}
+        roots.update(index.ws_root.rstrip("/") + "/" + name for name in
+                     ("task-envs", "worktrees", "review-scratch", "temp"))
+        expected = {(first, index.ws_root)}
+        expected.update((second, root) for root in roots)
+        contexts, identifiers, removed, pending = set(), set(), [], []
+        fields = {"id", "origin_file", "origin_raw_sha256", "global_line",
+                  "row_raw_sha256", "row_verbatim", "parser_locator",
+                  "root_abs", "root_normalized", "root_real_expected",
+                  "source_keep", "error_pair"}
+        for binding in bindings:
+            require(isinstance(binding, dict) and set(binding) == fields,
+                    "POLICY_INVALID", "unexpected preservation binding schema")
+            require(isinstance(binding["id"], str)
+                    and re.fullmatch(r"BPR-0[1-6]", binding["id"]) is not None
+                    and binding["id"] not in identifiers,
+                    "POLICY_INVALID", "invalid or duplicate preservation id")
+            identifiers.add(binding["id"])
+            origin = binding["origin_file"]
+            require(isinstance(origin, str) and origin in (first, second),
+                    "POLICY_INVALID", "unexpected preservation source file")
+            raw = read(origin)
+            require(matches_hash(binding["origin_raw_sha256"], raw),
+                    "SOURCE_DRIFT", "preservation source bytes changed: %s"
+                    % origin)
+            lines = raw.splitlines(keepends=True)
+            line = binding["global_line"]
+            require(type(line) is int and 1 <= line <= len(lines),
+                    "RECORD_DRIFT", "invalid preservation source line")
+            require(isinstance(binding["row_verbatim"], str)
+                    and binding["row_verbatim"].encode("utf-8") == lines[line - 1]
+                    and matches_hash(binding["row_raw_sha256"], lines[line - 1]),
+                    "RECORD_DRIFT", "preservation source row bytes changed")
+            text = raw.decode("utf-8")
+            manifest = section_text(text, "Resource Manifest")
+            require(bool(manifest), "RECORD_DRIFT", "missing Resource Manifest")
+            offset = text[:text.index(manifest)].count("\n")
+            matches = []
+            for start, block in iter_table_blocks(manifest):
+                header = _table_header(block)
+                columns = [_exact_column(header, name) for name in
+                           ("resource_type", "source_path", "disposition",
+                            "destination_path")]
+                if any(column is None for column in columns):
+                    continue
+                require(not _duplicate_identity_columns(header, (
+                    "resource_type", "source_path", "disposition",
+                    "destination_path")), "RECORD_DRIFT",
+                    "duplicate preservation identity column")
+                _header, rows = parse_table_block(block, start)
+                for number, row in rows:
+                    if offset + number == line:
+                        matches.append((number, row, columns))
+            require(len(matches) == 1, "RECORD_DRIFT",
+                    "preservation row is not uniquely in its resource table")
+            number, row, columns = matches[0]
+            require(binding["parser_locator"] == "line %d" % number,
+                    "RECORD_DRIFT", "preservation parser locator changed")
+            source = clean_cell(row[columns[1]])
+            destination = clean_cell(row[columns[3]])
+            keep = clean_cell(row[columns[2]])
+            require(isinstance(binding["root_abs"], str)
+                    and is_abs_path(binding["root_abs"])
+                    and not any(part in (".", "..") for part in
+                                binding["root_abs"].replace("\\", "/").split("/"))
+                    and source == destination == binding["root_abs"],
+                    "RECORD_DRIFT", "preservation requires the same absolute root")
+            normalized = index.resolve_declared_path(
+                source, origin, binding["parser_locator"])
+            real = resolve_real_target(normalized, "preservation root")
+            require(normalized == binding["root_normalized"]
+                    and normalized in roots, "POLICY_INVALID",
+                    "preservation root is outside the adjudicated scope")
+            require(real == binding["root_real_expected"] == normalized,
+                    "REAL_DRIFT", "preservation real target changed")
+            context = (origin, normalized)
+            require(context in expected and context not in contexts,
+                    "POLICY_INVALID", "unexpected or duplicate preservation record")
+            contexts.add(context)
+            expected_keep = ("PRESERVE_UNKNOWN" if normalized in (
+                index.ws_root.rstrip("/") + "/review-scratch",
+                index.ws_root.rstrip("/") + "/temp") else "PRESERVE_REFERENCED")
+            require(keep == binding["source_keep"] == expected_keep,
+                    "RECORD_DRIFT", "preservation disposition changed")
+            pair = binding["error_pair"]
+            require(isinstance(pair, list) and len(pair) == 2
+                    and all(isinstance(error, dict) and set(error) == {
+                        "code", "message", "file", "locator"} for error in pair),
+                    "POLICY_INVALID", "invalid preservation error pair")
+            try:
+                index._resolve_identity(source, origin,
+                                        binding["parser_locator"], warn_alias=False)
+            except GuardError as exc:
+                require(exc.code == "DECL_GENERALIZED", "ERROR_MISMATCH",
+                        "preservation no longer has a generalized identity")
+                message = exc.message
+            else:
+                fail("ERROR_MISMATCH", "preservation identity no longer rejected")
+            for role, code, disposition in (
+                    ("source", "DECL_GENERALIZED", keep),
+                    ("destination", "DECL_DESTINATION_GENERALIZED",
+                     "DESTINATION_PIN")):
+                error = {"code": code, "message": message, "file": origin,
+                         "locator": binding["parser_locator"]}
+                require(pair[0 if role == "source" else 1] == error
+                        and index.errors.count(error) == 1
+                        and error not in removed, "ERROR_MISMATCH",
+                        "preservation error pair is absent, duplicated or changed")
+                removed.append(error)
+                pending.append((Declaration(source, disposition, origin,
+                                            binding["parser_locator"],
+                                            normalized, real), role, keep))
+        require(contexts == expected, "POLICY_INVALID",
+                "preservation bindings do not cover all six adjudicated records")
+        # Clone all mutable collections: an interrupted staging step cannot
+        # remove an original error or publish half of the root protection.
+        staged = copy.copy(index)
+        staged.declarations = list(index.declarations)
+        staged.protected = {root: list(items)
+                            for root, items in index.protected.items()}
+        staged.non_protective = list(index.non_protective)
+        staged.errors = [error for error in index.errors if error not in removed]
+        staged.warnings = list(index.warnings)
+        staged._repo_tops = (set(index._repo_tops)
+                            if index._repo_tops is not None else None)
+        for declaration, role, keep in pending:
+            staged._register_protective(declaration)
+            staged.add_warning(
+                "DECL_BROAD_ROOT_PRESERVED",
+                "role=%s policy=%s origin=%s locator=%s root=%s source_keep=%s"
+                % (role, BROAD_PRESERVATION_POLICY, declaration.source_file,
+                   declaration.locator, declaration.normalized, keep),
+                declaration.source_file, declaration.locator)
+        result = _finish_declaration_scan(staged, scanned)
+        for absolute, raw in snapshots.items():
+            with io.open(absolute, "rb") as handle:
+                require(handle.read() == raw, "SOURCE_DRIFT",
+                        "preservation input changed during scanning: %s" % absolute)
+        for root in {declaration.normalized for declaration, _, _ in pending}:
+            require(resolve_real_target(root, "preservation final target") == root,
+                    "REAL_DRIFT", "preservation real target changed during scanning")
+        return result
+    except Exception as exc:
+        code = exc.code if isinstance(exc, GuardError) else "POLICY_INVALID"
+        message = exc.message if isinstance(exc, GuardError) else str(exc)
+        index.add_error(code, message, BROAD_PRESERVATION_POLICY)
+        return _finish_declaration_scan(index, scanned)
+
+
 def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
     """Build the protection index from ``doc/tasks/**`` and ``verification/**``.
 
@@ -1515,10 +1751,7 @@ def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
                     % (source_kind, exc.message), relative)
                 continue
             parse_json_declarations(index, data, relative)
-    scanned["declarations"] = len(index.declarations)
-    scanned["errors"] = len(index.errors)
-    scanned["warnings"] = len(index.warnings)
-    return index, scanned
+    return _apply_broad_preservation(index, scanned)
 
 
 # ---------------------------------------------------------------------------
