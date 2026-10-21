@@ -1,0 +1,420 @@
+{
+  "task": "GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1",
+  "canonical_repo": "G:\\CODEX\\New Manga",
+  "measurement_head": "cc72f6a822f0c7823a50996d9e43674147bc7b4a",
+  "matrix_path": "verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.json",
+  "five_errors": [
+    {
+      "id": "R25",
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7",
+      "category": "HISTORICAL_TEMPLATE_TEXT",
+      "finding": "来源是Review记录内嵌的尚未核实Task模板，表中“对应Task子目录”“NOT_APPLICABLE或按实核实”“本Task…”不是冻结资源身份。",
+      "protection_impact": "不得把模板占位文字解释为资源，也不能因历史模板而忽略整个Review的其他保护。",
+      "minimal_proposal": "候选：新治理索引区分历史模板引用与实际声明；原Review保持原字节，若工具增加精确引用范围策略需单独Task。",
+      "decision_boundary": "不能静默编辑历史Review或批量排除verification；当前2错误继续保留。",
+      "source_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 228",
+      "verbatim_or_json_record": "| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` 或按实核实 | — | closeout 时复核 | 不假定存在；记录检查结果 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R26",
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8",
+      "category": "HISTORICAL_TEMPLATE_TEXT",
+      "finding": "来源是Review记录内嵌的尚未核实Task模板，表中“对应Task子目录”“NOT_APPLICABLE或按实核实”“本Task…”不是冻结资源身份。",
+      "protection_impact": "不得把模板占位文字解释为资源，也不能因历史模板而忽略整个Review的其他保护。",
+      "minimal_proposal": "候选：新治理索引区分历史模板引用与实际声明；原Review保持原字节，若工具增加精确引用范围策略需单独Task。",
+      "decision_boundary": "不能静默编辑历史Review或批量排除verification；当前2错误继续保留。",
+      "source_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 229",
+      "verbatim_or_json_record": "| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | 原路径 | closeout 时计算 | 被回归套件/证据索引引用，保留 |",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R27",
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null,
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "两个文件严格UTF-8可解码，各在byte286含1个NUL，位于会话简称行；已有抬头明确不是独立Review。",
+      "protection_impact": "保持历史自批判证据及独立Review标签；不得去NUL后冒充原始证据或独立批准。",
+      "minimal_proposal": "未来生成带source hash/byte offset的可读派生视图，或精确确认非声明例外；原始blob不重编码、不去NUL。",
+      "decision_boundary": "需要单独证据视图/工具范围，原始pin永不改写；不自动豁免含NUL文件。",
+      "source_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 3",
+      "verbatim_or_json_record": "> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R28",
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null,
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "两个文件严格UTF-8可解码，各在byte286含1个NUL，位于会话简称行；已有抬头明确不是独立Review。",
+      "protection_impact": "保持历史自批判证据及独立Review标签；不得去NUL后冒充原始证据或独立批准。",
+      "minimal_proposal": "未来生成带source hash/byte offset的可读派生视图，或精确确认非声明例外；原始blob不重编码、不去NUL。",
+      "decision_boundary": "需要单独证据视图/工具范围，原始pin永不改写；不自动豁免含NUL文件。",
+      "source_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "tracked": true,
+      "ownership": {
+        "source_declared_metadata": {
+          "task_id": null,
+          "generator": null
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "line 3",
+      "verbatim_or_json_record": "> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的 parentSession=f5a0166d），",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    },
+    {
+      "id": "R32",
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null,
+      "category": "RAW_EVIDENCE_NUL",
+      "finding": "未跟踪P22历史malformed快照严格UTF-8可解码，嵌入2个NUL；文件内owner仅是快照记录，不能证明快照作者或当前活性。",
+      "protection_impact": "未提交快照归原作者；不修正/提交/丢弃，也不能据旧in_review重开P22或放大实施范围。",
+      "minimal_proposal": "候选只读派生视图保留raw hash/NUL偏移；核验原引用，不提交原文件、不替换历史pin。",
+      "decision_boundary": "实际文件作者未知，原样保护；任何源改动需要来源作者/用户授权，当前不申请。",
+      "source_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "tracked": false,
+      "ownership": {
+        "source_declared_metadata": {
+          "id": "P22",
+          "status": "in_review",
+          "owner": "Antigravity",
+          "reviewer": "DeepSeek Harness"
+        },
+        "actual_file_writer": "UNKNOWN; Git最后提交身份不等于Agent身份，未跟踪文件亦不由嵌入Owner字段推定",
+        "current_authority": "Codex Lead只负责本取证；不接管原作者未提交内容"
+      },
+      "actual_locator": "NUL byte offsets [12330, 20486]",
+      "verbatim_or_json_record": "{\"nul_byte_offsets\": [12330, 20486], \"nul_lines\": [91, 205], \"snapshot_owner\": \"Antigravity（文件内字段，实际作者未知）\"}",
+      "disposition_this_task": "PRESERVE_ORIGINAL_AND_FAIL_CLOSED"
+    }
+  ],
+  "source_count": 4,
+  "source_facts": [
+    {
+      "path": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "size": 23845,
+      "raw_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "tracked": true,
+      "head_blob_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "disk_equals_head_blob": true,
+      "lf_normalized_equals_head_blob": true,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "nul_offsets": [],
+      "non_whitespace_C0": [],
+      "last_git_change": "02d582852791b330912f6883a74ccd9a0e8a3122 peakwheat-pixel governance: close P19-UI-MANIFEST-VIEW-1 in the Plan and release the same-location task",
+      "actual_writer": "UNKNOWN; Git committer and embedded Owner do not establish file writer",
+      "protected_now": true,
+      "memory_only_parser_declarations": [
+        {
+          "raw": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+          "keep": "PRESERVE_UNKNOWN",
+          "locator": "line 6",
+          "normalized": "g:/codex/new manga/.agents/worktrees/gov-resource-manifest-same-location-1"
+        }
+      ],
+      "memory_only_parser_errors": [
+        {
+          "code": "DECL_UNKNOWN_DISPOSITION",
+          "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+          "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+          "locator": "line 7"
+        },
+        {
+          "code": "DECL_RELATIVE_UNRESOLVED",
+          "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+          "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+          "locator": "line 8"
+        }
+      ],
+      "memory_only_parser_warning_count": 2,
+      "memory_parse_is_not_runtime_acceptance": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "size": 3288,
+      "raw_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "tracked": true,
+      "head_blob_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "disk_equals_head_blob": true,
+      "lf_normalized_equals_head_blob": false,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "nul_offsets": [
+        286
+      ],
+      "non_whitespace_C0": [
+        {
+          "offset": 286,
+          "byte": 0,
+          "line": 3,
+          "context_hex": "efbc9b0a3e20e9a1b6e5b182e4bc9ae8af9d2063623465373564362f0030663864656162efbc8ce5ad90e699bae883bde4bd932031623836343236382f363461323563303920e79a84",
+          "context_text": "；\n> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的"
+        }
+      ],
+      "last_git_change": "263e0ec2fea10dce638e43797e99567019668424 peakwheat-pixel docs(P14): relabel the owner-commissioned self-review summaries (BL-18; not the independent review)",
+      "actual_writer": "UNKNOWN; Git committer and embedded Owner do not establish file writer",
+      "protected_now": true,
+      "memory_only_parser_declarations": [],
+      "memory_only_parser_errors": [],
+      "memory_only_parser_warning_count": 0,
+      "memory_parse_is_not_runtime_acceptance": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "size": 3433,
+      "raw_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "tracked": true,
+      "head_blob_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "disk_equals_head_blob": true,
+      "lf_normalized_equals_head_blob": false,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "nul_offsets": [
+        286
+      ],
+      "non_whitespace_C0": [
+        {
+          "offset": 286,
+          "byte": 0,
+          "line": 3,
+          "context_hex": "efbc9b0a3e20e9a1b6e5b182e4bc9ae8af9d2063623465373564362f0030663864656162efbc8ce5ad90e699bae883bde4bd932031623836343236382f363461323563303920e79a84",
+          "context_text": "；\n> 顶层会话 cb4e75d6/\u00000f8deab，子智能体 1b864268/64a25c09 的"
+        }
+      ],
+      "last_git_change": "263e0ec2fea10dce638e43797e99567019668424 peakwheat-pixel docs(P14): relabel the owner-commissioned self-review summaries (BL-18; not the independent review)",
+      "actual_writer": "UNKNOWN; Git committer and embedded Owner do not establish file writer",
+      "protected_now": true,
+      "memory_only_parser_declarations": [],
+      "memory_only_parser_errors": [],
+      "memory_only_parser_warning_count": 0,
+      "memory_parse_is_not_runtime_acceptance": true
+    },
+    {
+      "path": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "size": 21531,
+      "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "tracked": false,
+      "head_blob_sha256": null,
+      "disk_equals_head_blob": null,
+      "lf_normalized_equals_head_blob": null,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "nul_offsets": [
+        12330,
+        20486
+      ],
+      "non_whitespace_C0": [
+        {
+          "offset": 12330,
+          "byte": 0,
+          "line": 91,
+          "context_hex": "83e59bb4e69687e6a1a3e4bbbbe58aa1efbc9b434c4920657869743d00202f204a534f4e207374617475733d2428407b636f6e766572736174696f6e5f69643d35393736346234352d",
+          "context_text": "�围文档任务；CLI exit=\u0000 / JSON status=$(@{conversation_id=59764b45-"
+        },
+        {
+          "offset": 20398,
+          "byte": 11,
+          "line": 204,
+          "context_hex": "be93e585a52fe8be93e587bae8af81e68daee589afe69cace59ca8200b6572696669636174696f6e2f5032322f616e7469677261766974792d6f776e65722d7032322d72342d68616e",
+          "context_text": "��入/输出证据副本在 \u000berification/P22/antigravity-owner-p22-r4-han"
+        },
+        {
+          "offset": 20486,
+          "byte": 0,
+          "line": 205,
+          "context_hex": "204f776e657220e68f90e4baa420523420666978656420484541443d00653436656337653863323361316663306261373933373435663531303138313362333838656133202f207472",
+          "context_text": " Owner 提交 R4 fixed HEAD=\u0000e46ec7e8c23a1fc0ba793745f5101813b388ea3 / tr"
+        },
+        {
+          "offset": 20534,
+          "byte": 12,
+          "line": 205,
+          "context_hex": "3933373435663531303138313362333838656133202f20747265653d0c623834663631363838366337336536343565623934656234353164636234366131316662353462202f207061",
+          "context_text": "93745f5101813b388ea3 / tree=\fb84f616886c73e645eb94eb451dcb46a11fb54b / pa"
+        },
+        {
+          "offset": 20650,
+          "byte": 11,
+          "line": 205,
+          "context_hex": "3035e3808252332e2e523420e594afe4b880e58f98e69bb4e4b8ba200b6572696669636174696f6e2f5032322f616e7469677261766974792d6f776e65722d7032322e68616e646f66",
+          "context_text": "05。R3..R4 唯一变更为 \u000berification/P22/antigravity-owner-p22.handof"
+        },
+        {
+          "offset": 21316,
+          "byte": 8,
+          "line": 206,
+          "context_hex": "3220e69caae99b86e68890efbc9b5030343d424c4f434b4544e38081086c6f636b65645f62793a5b5032325de380820a2d20e4b88be4b880e6ada5efbc9a446565705365656b204861",
+          "context_text": "2 未集成；P04=BLOCKED、\blocked_by:[P22]。\n- 下一步：DeepSeek Ha"
+        }
+      ],
+      "last_git_change": "",
+      "actual_writer": "UNKNOWN; Git committer and embedded Owner do not establish file writer",
+      "protected_now": true,
+      "memory_only_parser_declarations": [],
+      "memory_only_parser_errors": [],
+      "memory_only_parser_warning_count": 0,
+      "memory_parse_is_not_runtime_acceptance": true
+    }
+  ],
+  "bounded_references": [
+    {
+      "path": "doc/tasks/P14.md",
+      "raw_sha256": "bd3997f643c172c7d5d30732aec2c09ce888a00b52e93a15acc9ab6ed7a4719c",
+      "matching_lines": [
+        {
+          "line": 133,
+          "text": "| P14-SELF-REVIEW-R1 | Owner 自批判（BL-18；非独立 Review） | `verification/P14/owner-initiated-dsh-self-review-r1.md` | `263e0ec2f` | `df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608` | SOURCE_PIN |"
+        },
+        {
+          "line": 134,
+          "text": "| P14-SELF-REVIEW-R2 | Owner 自批判（BL-18；非独立 Review） | `verification/P14/owner-initiated-dsh-self-review-r2.md` | `263e0ec2f` | `122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a` | SOURCE_PIN |"
+        }
+      ]
+    },
+    {
+      "path": "doc/tasks/P22.md",
+      "raw_sha256": "e14ceeb937599fd3037247f3eb6c427af04af6e824fa5c506f6013c76b2f541c",
+      "matching_lines": [
+        {
+          "line": 95,
+          "text": "- DSH N1 指出当时 live Task R4 记录模板被错误展开；该精确旧字节已保存为 verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md（SHA-256=7EBD7D40E7334C9422F4BF126A29B3D0F49300E2BDBAC86CEDFDB1ED74EE98C9）。Codex 随即按字面值重建本 Task R4 记录，不保留错误插值或控制字符。"
+        }
+      ]
+    }
+  ],
+  "template_context": {
+    "fence_open": 117,
+    "fence_close": 239,
+    "draft_notice_global_line": 115,
+    "manifest_heading_global_line": 221,
+    "row_global_lines": [
+      228,
+      229
+    ],
+    "row_raw_sha256": [
+      "5288ac14c35787b715dca935efbf6b15a7801f66743ef8bec0e1bede5cfa1ed2",
+      "2a125700532c4c20e29e6ce7912ebc4415b34855782b45e5a186f6420027a7eb"
+    ],
+    "rows": [
+      "| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` 或按实核实 | — | closeout 时复核 | 不假定存在；记录检查结果 |",
+      "| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | 原路径 | closeout 时计算 | 被回归套件/证据索引引用，保留 |"
+    ]
+  },
+  "scan_counts": {
+    "declarations": 2560,
+    "protected_roots": 1869,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 387,
+      "EVIDENCE_PIN": 1739,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 377,
+      "PRESERVE_UNKNOWN": 34,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 270
+  },
+  "scan_statistics": {
+    "markdown": 2340,
+    "json": 1233,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7627,
+    "untracked_declaration_files": 1504,
+    "declarations": 2560,
+    "errors": 12,
+    "warnings": 270
+  },
+  "remaining_seven": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    }
+  ],
+  "assertions": "5 exact prior identities;4 raw hashes unchanged;strict UTF8;NUL counts0/1/1/2;fenced draft positions;12 formal errors"
+}
