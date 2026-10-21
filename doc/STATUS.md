@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`blocked`：等待用户 PFX/证书指纹）；WORKSPACE/P09 已 done（`368c07809`/`155f7d3f2`）。
+- 当前 Task：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）；WORKSPACE/P09 已 done（`368c07809`/`155f7d3f2`）。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
 - **v1 收口（2026-10-21，HEAD `239b165c2`）**：recycle-bin ACL 已修；source 150/0/1、packaged 12/0、前端 327、pytest 106、NSIS 重建 exit 0；Sandbox 安装/卸载 PASS；签名待证书（`release-readiness.md`）。
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`，6/8 消费者已处置；**ZCode 设计 Gate 与第二环境无活动 Task**）。
