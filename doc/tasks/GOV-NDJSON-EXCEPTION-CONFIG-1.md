@@ -43,7 +43,7 @@ Codex分支/worktree隔离实现，main唯一集成主线，DeepSeek非作者固
 - [x] **AC1** 新69项原67逐项完全相同、无丢失/重复/泛化，新增2条与独审原始字节匹配；历史表Git pin/磁盘CRLF及两日志原字节不变。 <<MET>>
 - [x] **AC2** 代码仅默认常量变化；同canonical数据实际默认32→30恰移两JSON_PARSE，剩30完整身份相同、保护集合不减少；三入口共享当前默认。 <<MET>>
 - [ ] **AC3** 错path/hash/字节漂移拒绝和合法声明解析验证、29声明+80安全回归、双事故回放通过，独立固定head Review。 <<PARTIAL: 回归/负例/双回放通过，独立Review待完成>>
-- [ ] **AC4** Codex主线集成复验默认30、治理check/实际pin注册与资源原位保留核销/Handoff完整；父blocked、保护及清理禁令不解除。 <<NOT_RUN>>
+- [ ] **AC4** Codex主线集成复验默认30、治理check/实际pin注册与资源原位保留核销/Handoff完整；父blocked、保护及清理禁令不解除。 <<PARTIAL: 独审通过后才执行main集成复验与核销>>
 
 ## 测试与禁止
 
