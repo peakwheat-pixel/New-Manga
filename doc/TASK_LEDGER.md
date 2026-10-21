@@ -24,9 +24,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `blocked` | 8 | no |
 | `superseded` | 6 | yes |
+| `in_progress` | 3 | no |
 | `in_review` | 3 | no |
-| `in_progress` | 2 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -40,12 +39,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P02PRE-R1H-P2-1-EVIDENCE-CLOSURE` | `blocked` | no |
 | `P02PRE-R1H-R6-EXEC-A4` | `blocked` | no |
 | `P02PRE-R1H-R6-EXEC-A5` | `blocked` | no |
+| `GOV-NDJSON-EXCEPTION-CONFIG-1` | `in_progress` | own row |
 | `P02PRE-R1H` | `in_progress` | no |
 | `P02PRE-R1H-R6-EXEC-A6` | `in_progress` | no |
 | `P02PRE-R1H-R6-ZCODE-H1` | `in_review` | no |
 | `P22` | `in_review` | mentioned |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
-| `GOV-NDJSON-EXCEPTION-CONFIG-1` | `ready` | own row |
 
 ## What this ledger does not say
 

@@ -3,7 +3,7 @@ id: GOV-NDJSON-EXCEPTION-CONFIG-1
 title: 当前例外配置迁移与两固定NDJSON精确登记
 kind: governance-hardening
 governance_version: 3
-status: ready
+status: in_progress
 approval: user_auto_advance_20261021_scoped_configuration_implementation
 suggested_owner: Codex
 owner: Codex
