@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；正式24错误，5根整体保护已裁定，工具实施未释放）。
+- 当前 Task：**[GOV-BROAD-ROOT-PRESERVATION-IMPL-1](tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md)**（`ready`；已审设计的精确保全实现，DeepSeek独审）。
 - 最近完成：[GOV-BROAD-ROOT-PRESERVATION-DESIGN-1](tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md) `done`，R3独审232e3a589（仅设计）。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式24错误/原保护/STATUS-r212禁令有效。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
@@ -27,4 +27,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[当前 checkpoint](../verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
+- 恢复点：[当前 checkpoint](../verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/checkpoint.md)；旧 checkpoint-r12/INFLIGHT 已漂移，不恢复旧作业。
