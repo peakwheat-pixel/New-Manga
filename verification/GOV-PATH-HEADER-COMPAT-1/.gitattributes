@@ -1,1 +1,3 @@
 * text eol=lf
+# Preserve unittest failure output verbatim, including its trailing spaces.
+baseline-discriminator.log -whitespace
