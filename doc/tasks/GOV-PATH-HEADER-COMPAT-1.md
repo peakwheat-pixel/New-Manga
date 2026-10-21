@@ -24,7 +24,7 @@ allowed_paths:
   - verification/GOV-PATH-HEADER-COMPAT-1
   - doc/handoffs/GOV-PATH-HEADER-COMPAT-1.md
   - doc/STATUS.md
-  - doc/REe7cbcada6d1a5c01f9c55e888e30c3efba20e1ffLINE_PLAN.md
+  - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
   - doc/tasks/README.md
 created: 2026-10-21
@@ -33,6 +33,8 @@ created: 2026-10-21
 # GOV-PATH-HEADER-COMPAT-1
 
 ## 来源与范围冻结
+
+创建时来源基线为 frontmatter 的 base_commit（e7cbcada6）；实际工作树及审查 diff 基线为 93c4eb2ca。两者之间仅本 Task 的释放与认领元数据，无产品代码差异。
 
 用户要求先明确保护与独有支线边界，再由Codex继续，并保留现有清理禁令。Codex技术裁定见 verification/GIT-MAINLINE-CONVERGENCE-1/boundary-adjudication.md（边界证据 e7cbcada6）。全部现有分支/工作树继续保留；P14/P22仅作为未来只读评估候选；不释放任何产品实现或处置窗口。
 
