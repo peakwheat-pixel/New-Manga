@@ -3,7 +3,7 @@ id: GOV-NONRESOURCE-MANIFEST-FORMAT-1
 title: 六个历史Task非资源说明表格的有界格式修正
 kind: governance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_auto_advance_20261021_scoped_six_manifest_rows
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: 54ff86fb200a8446aa0135aeb90fb0cac9ea7963
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 4c415d8ea
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1
@@ -44,10 +44,10 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1** 六个Task各一行格式变化，原文字、状态、AC、Review和207pin字段不变；所有直接原文件前后字节保全。 <<NOT_RUN>>
-- [ ] **AC2** 同数据默认30→24，仅移六指定错误，其余24完整身份相等，保护集合不减少；六单表parser错误归零。 <<NOT_RUN>>
-- [ ] **AC3** 207pin逐项给出实际blob/raw/EOL/commit-only/外部身份及既有限制；不将原始hash相等误称blob相等。 <<NOT_RUN>>
-- [ ] **AC4** DeepSeek固定提交独审，Codex集成复验、真实pin注册、治理check与资源核销/Handoff完整。 <<NOT_RUN>>
+- [x] **AC1** 六个Task各一行格式变化，原文字、状态、AC、Review和207pin字段不变；所有直接原文件前后字节保全。 <<MET>>
+- [x] **AC2** 同数据默认30→24，仅移六指定错误，其余24完整身份相等，保护集合不减少；六单表parser错误归零。 <<MET>>
+- [x] **AC3** 207pin逐项给出实际blob/raw/EOL/commit-only/外部身份及既有限制；不将原始hash相等误称blob相等。 <<MET>>
+- [ ] **AC4** DeepSeek固定提交独审，Codex集成复验、真实pin注册、治理check与资源核销/Handoff完整。 <<PARTIAL: 机制与字节核验已过，独审和集成复验待完成>>
 
 ## 禁止与验证
 
@@ -57,6 +57,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/.gitattributes|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/checkpoint.md|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|502548ba7be6cfc09eb4a10d3c6a03f6babd6d0854f366c28d94589dc3bcb0fd|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/format-proof.json|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|e1b669ea3820e6a99f5d9f14be484e4947a1e59426a5cb2343f77f1ed7739ebd|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-NONRESOURCE-MANIFEST-FORMAT-1/report.md|9ca7cee6ad9c3dcf9ea1d7b8d65ef3e66917e169|1924c7c1d90197ace606148bdda63c833e8ff6ce342479d5822adc1fb33c80f0|CANONICAL|
 
 ## Resource Manifest
 
