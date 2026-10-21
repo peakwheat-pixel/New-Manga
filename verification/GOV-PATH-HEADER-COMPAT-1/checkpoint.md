@@ -1,2 +1,2 @@
-GOV-PATH-HEADER-COMPAT-1 / Codex epoch9
-in_progress; code and 5+29+80 tests complete; 77->32 errors, old roots retained +410; replay 15/15 x2. Pending frozen head independent review; no cleanup authorization.
+GOV-PATH-HEADER-COMPAT-1 / Codex epoch9 / done
+独审78fc0cba2；main集成9cae94142。5+29+80测试、双回放通过；main声明审计exit2/32 errors。资源全部保留，98 heads/136 worktrees。恢复转父Task blocked checkpoint；无清理授权。
