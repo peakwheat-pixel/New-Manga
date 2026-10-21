@@ -73,6 +73,8 @@ Python -B/PYTHONDONTWRITEBYTECODE=1/UTF8；TMP/TEMP仅本Taskworkspace/agent-out
 |EV-18|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/runtime-proof.json|2fdf5b75d17c23e838427b590069ec630dfff574|15908a6378cf4a6cd7847d8fe0071366d8eae4b61d49dc9e0c0f5beb633bc046|CANONICAL|
 |EV-19|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/test-execution.json|2fdf5b75d17c23e838427b590069ec630dfff574|0244822e8822a7a17e50791a0fe3f6cd71c4e854c18619fdbfdb0b8ef2da1574|CANONICAL|
 |EV-20|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/tests/test_broad_preservation.py|2fdf5b75d17c23e838427b590069ec630dfff574|2f8b1f4e0af9dad693e13f658dc80ee685a7d67487a3350830a5ecb17b98c555|CANONICAL|
+|EV-21|AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-interruption.json|b656c6acb443a44e12179eee2ceb6b2c8046d284|4e09f0af6117f9b0188fbbcd055fd28fcc6da495965739870b642724add2762f|CANONICAL|
+|EV-22|AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json|b656c6acb443a44e12179eee2ceb6b2c8046d284|a482f6cf6c89a0ba696ed8e1628bcfff7cf6ae503999cc1f546a78c699681761|CANONICAL|
 
 ## Resource Manifest
 
@@ -81,7 +83,14 @@ Python -B/PYTHONDONTWRITEBYTECODE=1/UTF8；TMP/TEMP仅本Taskworkspace/agent-out
 | worktree | G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1 | doc/tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md | Codex冻结后创建，原位保留，禁止移除 |
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-BROAD-ROOT-PRESERVATION-IMPL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-BROAD-ROOT-PRESERVATION-IMPL-1 | doc/tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md | 日志/候选/测试根保留，仅自有合成fixture允许自清 |
 | other env/build | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无新建 |
+| reviewer-probe | G:/CODEX/New Manga/dsh-probe-36zy1stn | PRESERVE_REFERENCED | G:/CODEX/New Manga/dsh-probe-36zy1stn | verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json | 本Task DSH沙箱权限探针越出TMP，已终止该审查节点；目录逐项确认为空，原位保留，不授权删除 |
+| reviewer-probe | G:/CODEX/New Manga/dsh-probe-6lu_0g3w | PRESERVE_REFERENCED | G:/CODEX/New Manga/dsh-probe-6lu_0g3w | verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json | 本Task DSH沙箱权限探针越出TMP，已终止该审查节点；目录逐项确认为空，原位保留，不授权删除 |
+| reviewer-probe | G:/CODEX/New Manga/dsh-probe-dagqohp7 | PRESERVE_REFERENCED | G:/CODEX/New Manga/dsh-probe-dagqohp7 | verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json | 本Task DSH沙箱权限探针越出TMP，已终止该审查节点；目录逐项确认为空，原位保留，不授权删除 |
+| reviewer-probe | G:/CODEX/New Manga/dsh-probe-npzn41rw | PRESERVE_REFERENCED | G:/CODEX/New Manga/dsh-probe-npzn41rw | verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json | 本Task DSH沙箱权限探针越出TMP，已终止该审查节点；目录逐项确认为空，原位保留，不授权删除 |
+| reviewer-probe | G:/CODEX/New Manga/dsh-probe-ut0j1y6p | PRESERVE_REFERENCED | G:/CODEX/New Manga/dsh-probe-ut0j1y6p | verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json | 本Task DSH沙箱权限探针越出TMP，已终止该审查节点；目录逐项确认为空，原位保留，不授权删除 |
 
 ## 交付记录
 
 实现528940a00，证据2fdf5b75d，真实branch base f47c68969，Task来源base40343a8b2。candidate代码仅共享scanner收口和新增policy；127测试0skip、双15拒绝0删除0违规、真实canonical24→12/新增五根十二role及十二warning，详见report/runtime-proof。main只镜像新policy及自有证据供审查，旧guard未集成仍正式24；100/138全保留，独审前不得done。
+
+独审执行异常：第一会话session-0fa5098c-d90a-465f-b919-9eb52e3b8418的18测试因sandbox写入拒绝未运行，重复探针留下5个repo-root空目录；Codex仅终止自有node PID27644（wrapper21408），保存部分JSONL/exit4294967295，不把它当Review批准。目录来源/指纹/原路径见review-probe-inventory.json，按禁令保留。R2同会话仅允许纯只读与内存负例，禁止再创建/探测任何文件目录，不改权限。Owner127通过与Reviewer完整复跑NOT_RUN分开记录；待实际Review最终结论。

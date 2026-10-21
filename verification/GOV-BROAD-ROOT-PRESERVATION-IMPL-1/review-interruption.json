@@ -1,0 +1,18 @@
+{
+  "task": "GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
+  "review_session": "session-0fa5098c-d90a-465f-b919-9eb52e3b8418",
+  "source_commit": "528940a007ffc53ae7278a3ea007fa80d4a65f6d",
+  "interrupted_review_head": "1a905a45259daefd8312f7419d73c960fa2dce19",
+  "state": "INTERRUPTED_BY_CODEX_SCOPE_CONTAINMENT",
+  "reason": "independent fixture write denied by DSH sandbox; repeated permission probes created five empty dirs outside Task TMP; stopped only owned DSH child, no ACL/global sandbox changes",
+  "owned_wrapper_pid": 21408,
+  "stopped_owned_node_pid": 27644,
+  "exit": 4294967295,
+  "final_review_event_present": false,
+  "partial_jsonl_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-BROAD-ROOT-PRESERVATION-IMPL-1\\review.jsonl",
+  "partial_jsonl_sha256": "49420fd490f73891199a13a74fccd6da174f65a811518c313b0d06e5c13313d6",
+  "independent_full18_rerun": "NOT_RUN; blocked by sandbox",
+  "owner_final127": "PASS,0skip; separate from reviewer execution",
+  "next": "resume same session for exclusively read-only inspection and in-memory positive/negative checks; no filesystem probes/fixtures/writes allowed",
+  "probe_inventory": "verification/GOV-BROAD-ROOT-PRESERVATION-IMPL-1/review-probe-inventory.json"
+}
