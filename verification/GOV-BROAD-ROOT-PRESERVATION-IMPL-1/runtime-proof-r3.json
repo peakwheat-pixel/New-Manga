@@ -148,5 +148,6 @@
     "G:\\CODEX\\New Manga\\dsh-probe-ut0j1y6p"
   ],
   "all_six_empty_and_registered": true,
-  "evidence_pin_declarations": 22
+  "evidence_pin_declarations": 22,
+  "snapshot_basis": "PRE_FINAL_EV_REGISTRATION: measured with22 EV; final31 EV counters were independently checked by DSH R3, not represented as these snapshot counts."
 }
