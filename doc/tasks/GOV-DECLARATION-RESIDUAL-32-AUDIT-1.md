@@ -3,7 +3,7 @@ id: GOV-DECLARATION-RESIDUAL-32-AUDIT-1
 title: 剩余32项声明只读取证与最小裁决矩阵
 kind: research
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_authorized_20261021_readonly_32_declarations_independent_dsh_review
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: c0a9cb7962669cb4e987af51260f68850f4fe3b0
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 22bd5e07af5710af2359827a45fdf658186f578d
+delivery_head: e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1
@@ -56,14 +56,17 @@ Windows PowerShell/Python -B。只读source字节/引用核验、原错误身份
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 
-|EV-1|AC4|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/.gitattributes|22bd5e07af5710af2359827a45fdf658186f578d|a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9|CANONICAL|
-|EV-2|AC1|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/scope.json|22bd5e07af5710af2359827a45fdf658186f578d|890a2e7edee5d8290b80c1852fd3f40195d92f1d0c4794df987abe110a80c35d|CANONICAL|
-|EV-3|AC1/AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/source-facts.json|22bd5e07af5710af2359827a45fdf658186f578d|bcc6cd03e37111c6883f90f6fe1963b74a5eca97eda54aa3ee5b9e9a416d426b|CANONICAL|
-|EV-4|AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/direct-reference-facts.json|22bd5e07af5710af2359827a45fdf658186f578d|d5143da8284b645aa7175b8cf7e1a3eed319da1f02c01d700cdf44c3afbebcac|CANONICAL|
-|EV-5|AC1/AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.json|22bd5e07af5710af2359827a45fdf658186f578d|e905a64bdab13f3b846cd0306d82d1471f6a45321c191e948e614ca449258778|CANONICAL|
-|EV-6|AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.md|22bd5e07af5710af2359827a45fdf658186f578d|6fab40bbb0b2a6087c4c79fbf9bae04a84210603072aa19b02870cddafe36747|CANONICAL|
-|EV-7|AC3|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/preservation-validation.json|22bd5e07af5710af2359827a45fdf658186f578d|4613e4aec8e31453cd574cbbe07d6c5b2bdbc1dff724f7be09d512204e9d7392|CANONICAL|
-|EV-8|AC1/AC2/AC3|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/report.md|22bd5e07af5710af2359827a45fdf658186f578d|5755179129cf5c7484550f57506c4d74e881518454a8216dd22e4f533c2458e1|CANONICAL|
+
+|EV-1|AC4|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/.gitattributes|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9|SOURCE_PIN|
+|EV-2|AC1|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/scope.json|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|890a2e7edee5d8290b80c1852fd3f40195d92f1d0c4794df987abe110a80c35d|CANONICAL|
+|EV-3|AC1/AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/source-facts.json|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|bcc6cd03e37111c6883f90f6fe1963b74a5eca97eda54aa3ee5b9e9a416d426b|CANONICAL|
+|EV-4|AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/direct-reference-facts.json|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|d5143da8284b645aa7175b8cf7e1a3eed319da1f02c01d700cdf44c3afbebcac|CANONICAL|
+|EV-5|AC1/AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.json|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|568c26d85be8e29a2e6350e0e47e4e89dc4bcfb7cadb5e997150c899642bc51e|CANONICAL|
+|EV-6|AC2|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/matrix.md|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|0e518c8bd57bcd21616ab0fb6b1f117f722a5a1bcbfee60dc3967b3944ecdd7a|CANONICAL|
+|EV-7|AC3|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/preservation-validation.json|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|6ba3c267b31fd8f5266caf0e259c01f1db8de97d23b80ade4e7c57a5f9249dd8|CANONICAL|
+|EV-8|AC1/AC2/AC3|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/report.md|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|a87567f4eb2fa480786f0e3dd144c68f601d03b9b0b0a9976409293f1cdac0c7|CANONICAL|
+|EV-9|AC4|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/deepseek-review-r1.md|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|7cdbd6070066129b6c2075000e23b905cc63e4fbae3a6873813500c80d5c43f5|SOURCE_PIN|
+|EV-10|AC4|verification/GOV-DECLARATION-RESIDUAL-32-AUDIT-1/checkpoint.md|e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f|dea0a1dbd3bf20e1a68284cba59a29b979ef42b50d8cb708ead430096325f042|SOURCE_PIN|
 
 ## Resource Manifest
 
@@ -83,3 +86,5 @@ Windows PowerShell/Python -B。只读source字节/引用核验、原错误身份
 ## R1独审
 
 DSH session-15d4c9be-21a7-4f1c-afa3-e9cd29af81a1，EXIT0，changes_requested，reviewed_head=f6184f3babf473d639932016fba328224e5d7fe6。P1为R24跟踪属性泛化措辞和NDJSON种类计数措辞；P2为checkpoint登记、初审失败输出证据数量/完整身份列表、共享用户数据源措辞。仅本Task文档修正，不改source/guard/旧pin。Reviewer实际核验来源与多项事实；其审计输出目录WinError5受阻，未当作Reviewer审计PASS。
+
+R1五项修正完成，证据固定e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f；当前10行证据表均按Git blob原bytes与磁盘SHA核验，不存在名为“Task8”的独立文件（旧提示指Task中8行pin）。checkpoint已登记SOURCE_PIN并冻结本次恢复快照；终态另记closeout。下一Review只核定新固定head，R1保持changes_requested历史原文。

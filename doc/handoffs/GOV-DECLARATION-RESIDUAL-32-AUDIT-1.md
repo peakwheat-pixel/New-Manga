@@ -3,7 +3,7 @@ task_id: GOV-DECLARATION-RESIDUAL-32-AUDIT-1
 author: Codex
 recipient: Codex
 base_commit: c0a9cb7962669cb4e987af51260f68850f4fe3b0
-delivery_head: 22bd5e07af5710af2359827a45fdf658186f578d
+delivery_head: e2b8d19ed47a5ecde53d53f7fa17be6a2e10c29f
 status: in_review
 ---
 
