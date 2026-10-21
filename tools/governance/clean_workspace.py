@@ -1158,9 +1158,12 @@ def scan_repo_declarations(repo_root, ws_root):
     integrity errors, so apply is refused rather than run with incomplete
     protection.
 
-    ``git ls-files`` failure is fatal (AC2).  Unparsable JSON that advertises
-    PRESERVE content is fatal; unparsable JSON with no PRESERVE marker is a
-    recorded warning (it cannot carry a declaration), never a silent skip.
+    ``git ls-files`` failure is fatal (AC2).  ANY ``.json`` declaration file
+    that cannot be parsed is an integrity error (``JSON_PARSE``) and refuses the
+    whole run: protection cannot be enumerated from a file whose declarations
+    may include protective MIGRATE/ARCHIVE rows.  Do NOT reintroduce a
+    "PRESERVE marker present?" heuristic or a warning-and-continue path for
+    unparsable JSON (see Review r2 F-02); there is no marker-based exemption.
     """
     index = ProtectionIndex(repo_root=repo_root, ws_root=ws_root)
     repo = index.repo_root
