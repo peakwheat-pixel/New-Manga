@@ -7,7 +7,7 @@ status: in_review
 review_round: r6 changes_requested fixes (docs/evidence only)
 base_commit: 83b111ac104d47b30cf0842f553f97656cd0d8d1
 start_commit: f0f19596f
-evidence_commit: 4f2e65304152b0c8ae8b810d4eb5f6be128d05ef
+evidence_commit: cacd1c021a34c363f5b36d1b2b72f19f07acc081
 date: 2026-10-21
 branch: dsh/WORKSPACE-DECLARATION-REMEDIATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
@@ -38,7 +38,7 @@ sha256 聚合；before/after 命令记录实际 argv（含 `--out`），见 `evi
   `G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1`
   （`PRESERVE_REFERENCED`）与 `temp/WORKSPACE-DECL-REMEDIATION/pycache`
   （`NOT_APPLICABLE`，存在但空、未删除，留待核销）；`resource_closeout_status` 改为 `pending`。
-- **F-02 Handoff 锚点**：正文 §5 统一为 `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef`；清理旧轮次正文元数据。
+- **F-02 Handoff 锚点**：正文 §5 统一为 `cacd1c021a34c363f5b36d1b2b72f19f07acc081`；清理旧轮次正文元数据。
 - **F-03 ambiguous 夹具**：改为**同 table role** 的多 code 输入
   （`TABLE_OLD_UNLISTED` + `TABLE_ROW_ARITY`/`TABLE_SCHEMA_INCOMPLETE`），锁定 ambiguous 分支。
 - **F-04 whitespace**：`REMEDIATION.md` 与测试文件 EOF 规范为单换行；`git diff --check` 通过。
@@ -47,7 +47,7 @@ sha256 聚合；before/after 命令记录实际 argv（含 `--out`），见 `evi
 
 | 命令 | 结果 |
 |---|---|
-| `python -B -m unittest test_declaration_remediation -v` | **exit 0**，26/26 OK |
+| `python -B -m unittest test_declaration_remediation -v` | **exit 0**，29/29 OK |
 | `python -B run_suite.py`（既有 80 tests，只读副本） | **exit 0**，80/80 OK |
 | `clean_workspace.py --replay-incident <ledger>` | **exit 0**，15/15 REJECT、0 删除、18/18 source |
 | `remove_worktrees.py --replay-incident <ledger>` | **exit 0**，同上 |
@@ -64,7 +64,7 @@ sha256 聚合；before/after 命令记录实际 argv（含 `--out`），见 `evi
 
 ## 5. 提交 / 证据
 
-- evidence commit：`4f2e65304152b0c8ae8b810d4eb5f6be128d05ef`（32 条 Canonical Evidence 行 pin 它）
+- evidence commit：`cacd1c021a34c363f5b36d1b2b72f19f07acc081`（32 条 Canonical Evidence 行 pin 它）
 - Task-only 记录 commit：紧随其后（本 Handoff + Task 文件）
 - 报告/证据：`REMEDIATION.md`、`RESIDUAL.md`、`TRIAGE.md`、`audit-before/after.json`、
   `non-declaration-json-exceptions.json`、`evidence/`（manifest/snapshots/run-evidence/logs）。
@@ -75,3 +75,9 @@ sha256 聚合；before/after 命令记录实际 argv（含 `--out`），见 `evi
 同 r3：44 个不完整 identity 表需 Codex 裁定“补列/明确叙述”；6 泛化声明、6 泛化 destination、
 4 env、1 歧义相对路径、2 含 token JSON、1 malformed 行、1 destination prose、3 损坏文件需裁定；
 全部在 `RESIDUAL.md` 逐条可审计。
+
+## r7 fix
+
+- 新增 `TABLE_DUPLICATE_IDENTITY_COLUMN`：Resource Manifest 的 `resource_type/source_path/disposition/destination_path`、Canonical Evidence 的 `evidence_id/path` 出现重复列时直接 fatal，不再用 `_exact_column()` 静默取第一列。
+- 删除已无调用的 `_find_column()`。
+- 新增 3 个夹具：重复 source_path fatal、重复 evidence path fatal、单列正常通过（29/29 tests）。

@@ -13,7 +13,7 @@ base_commit: 83b111ac104d47b30cf0842f553f97656cd0d8d1
 branch: dsh/WORKSPACE-DECLARATION-REMEDIATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
 integration_commit: null
-delivery_head: 4f2e65304152b0c8ae8b810d4eb5f6be128d05ef
+delivery_head: cacd1c021a34c363f5b36d1b2b72f19f07acc081
 canonical_evidence_status: complete
 resource_closeout_status: pending
 start_commit: f0f19596f
@@ -56,17 +56,18 @@ F-04 使 44 个不完整 identity 表恢复 fatal，F-05 拒绝 3 个含 NUL/UTF
 - [x] **AC3 非路径 source（review F-01）**：只有明确占位符/纯 prose（无路径语法）跳过；一旦
   `is_path_like()` 为真必须解析，不可解析则 fatal（含空格/CJK 的真实路径被保护，嵌入路径的说明
   文字 fatal）。DECL_BARE_NAME **57 → 0**；DECL_RELATIVE_UNRESOLVED **0 → 6**、DECL_UNKNOWN_DISPOSITION
-  **0 → 2** 是 F-01 恢复 fail-closed 的预期结果。新增 13 个夹具（含空格/CJK 真实路径、已存在顶层单组件路径、generalized junction 正反例、TRIAGE 多 code 归因）。 <<MET>>
+  **0 → 2** 是 F-01 恢复 fail-closed 的预期结果。新增 16 个夹具（含空格/CJK 真实路径、已存在顶层单组件路径、generalized junction 正反例、TRIAGE 多 code 归因）。 <<MET>>
 - [x] **AC4 历史编码（review F-05）**：严格 GB18030 fallback 仅接受含 CJK 的文本；NUL、控制字符比例
   过高或非 CJK 的二进制 payload 一律 `FILE_UNREADABLE`。3 个 P02/P04 GBK 文件 → `FILE_ENCODING_LEGACY`
   warning；3 个含 NUL/UTF-16 的损坏文件 → `FILE_UNREADABLE` error（新增，fail-closed）。新增 4 个夹具。 <<MET>>
 - [x] **AC5 表格识别（review F-03/F-04）**：Resource Manifest/Canonical Evidence 只有在不声明任何
   identity 列时才是叙述表（warning）；声明了 identity 列但缺必要列 → `TABLE_SCHEMA_INCOMPLETE`
-  fatal；path-like 泛化 destination → `DECL_DESTINATION_GENERALIZED` fatal；真正 malformed 行 →
-  `TABLE_ROW_ARITY` fatal。新增 5 个夹具。 <<MET>>
+  fatal；path-like 泛化 destination → `DECL_DESTINATION_GENERALIZED` fatal；重复 identity 列 →
+  `TABLE_DUPLICATE_IDENTITY_COLUMN` fatal（不再静默取第一列）；真正 malformed 行 →
+  `TABLE_ROW_ARITY` fatal。新增 8 个夹具（含 Resource Manifest/Canonical Evidence 重复列正反例）。 <<MET>>
 - [x] **AC6 残余清单**：`RESIDUAL.md` 逐条 76 条（file/code/message/tracked/owner/why-not-precision/
   ruling），并解释为何 76 不是 0、为何不追求 ≤10。 <<MET>>
-- [x] **AC7 回归与证据**：既有 80 tests 全过；新增 26 tests 全过；双 incident replay 15/15 REJECT、
+- [x] **AC7 回归与证据**：既有 80 tests 全过；新增 29 tests 全过；双 incident replay 15/15 REJECT、
   0 删除、18/18 source；`run_evidence.py` exit 0；真实审计 exit 2 且 76 errors 如实记录；未执行任何
   真实删除/GC/prune/push；Canonical Evidence 行 pin evidence commit。 <<MET>>
 
@@ -87,7 +88,7 @@ F-04 使 44 个不完整 identity 表恢复 fatal，F-05 拒绝 3 个含 NUL/UTF
 
 | 场景/AC | 命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| 新增 AC2–AC5/F-01…F-05 夹具 | `C:/Python314/python.exe -B -m unittest test_declaration_remediation -v`（cwd `verification/WORKSPACE-DECLARATION-REMEDIATION-1/tests`） | Windows 11 / Python 3.14.6；`%TEMP%` 隔离仓库 | **executed**：`Ran 26 tests` / `OK`，exit `0` | `tests.log`、`evidence/new-tests.log` |
+| 新增 AC2–AC5/F-01…F-05 夹具 | `C:/Python314/python.exe -B -m unittest test_declaration_remediation -v`（cwd `verification/WORKSPACE-DECLARATION-REMEDIATION-1/tests`） | Windows 11 / Python 3.14.6；`%TEMP%` 隔离仓库 | **executed**：`Ran 29 tests` / `OK`，exit `0` | `tests.log`、`evidence/new-tests.log` |
 | 既有 80 tests | `C:/Python314/python.exe -B run_suite.py`（cwd `verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/tests`，只读） | 同上 | **executed**：`Ran 80 tests` / `OK`，exit `0` | `evidence/existing-tests.log` |
 | incident replay（clean_workspace） | `python -B tools/governance/clean_workspace.py --replay-incident verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json --out <taskdir>` | 只读 ledger | **executed**：15/15 REJECT、0 删除、0 violation、18/18 source，exit `0` | `incident-replay-clean-workspace.json` |
 | incident replay（remove_worktrees） | 同上换 `remove_worktrees.py` | 同上 | **executed**：15/15/0/0/18，exit `0` | `incident-replay-remove-worktrees.json` |
@@ -100,7 +101,7 @@ F-04 使 44 个不完整 identity 表恢复 fatal，F-05 拒绝 3 个含 NUL/UTF
 - 依赖：`WORKSPACE-CLEANUP-TOOL-HARDENING-1` 的 F-01…F-07 安全语义（80 tests 全过）。
 - 风险：76 条残余中 6 泛化声明、4 env、1 歧义相对路径、2 JSON_PARSE、1 malformed 行、1 path-like
   destination prose 需 Codex/用户裁定；其余 61 条是 review r2 恢复 fail-closed 后的真实历史缺口
-  （44 个不完整 identity 表、8 条 path-like prose、6 个泛化 destination、3 个损坏文件；r3/r4 另加存在顶层条目探测、generalized junction 探测、短二进制拒绝、扫描输入内容快照、TRIAGE 角色+code 归因、run_evidence 自日志）。详见
+  （44 个不完整 identity 表、8 条 path-like prose、6 个泛化 destination、3 个损坏文件；r3/r4 另加存在顶层条目探测、generalized junction 探测、短二进制拒绝、扫描输入内容快照、TRIAGE 角色+code 归因、README 自日志、重复 identity 列拒绝）。详见
   `RESIDUAL.md`。未修改任何历史文件；所有跳过项都有 warning 且不登记保护。
 
 ## 交付与运行记录
@@ -109,7 +110,7 @@ F-04 使 44 个不完整 identity 表恢复 fatal，F-05 拒绝 3 个含 NUL/UTF
   `non-declaration-json-exceptions.json`（67 条 path+sha256+reason）。
 - 证据：`audit-before.json`（163 errors / exit 2）、`audit-after.json`（76 errors / exit 2）、
   `tests.log`、`evidence/`（logs、environment、manifest、triage-summary、protection-delta）。
-- 提交：evidence commit `4f2e65304`（代码/测试/报告/日志/manifest 冻结）→ Task-only 记录 commit；Canonical
+- 提交：evidence commit `cacd1c021`（代码/测试/报告/日志/manifest 冻结）→ Task-only 记录 commit；Canonical
   Evidence 行 pin evidence commit；`delivery_head` 指向它。
 - 治理检查：worktree 内 `check.ps1` 结果与 exit 见 `evidence/governance-check.log`；既有 7 类
   base 问题（TASK_LEDGER 过期、archive stale、REBASELINE_PLAN 预算、READY DAG）由 Lead/Codex
@@ -119,38 +120,38 @@ F-04 使 44 个不完整 identity 表恢复 fatal，F-05 拒绝 3 个含 NUL/UTF
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EV-CODE | AC2–AC5 | `tools/governance/clean_workspace.py` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `1a5b70ef91f015532ca85afd62c471cd60210f6353a6b151c3c259baa9b2b5ba` | `CANONICAL` |
-| EV-TESTS-NEW | AC2–AC5/F-01…F-05 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/tests/test_declaration_remediation.py` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `544817826d79e0d3f0cc93fa35a7c5b36b5a029746bcbd54abdb8e8e5ac45f76` | `CANONICAL` |
-| EV-JSON-EXCEPTIONS | AC2/F-02 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/non-declaration-json-exceptions.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `c2f185fb489e4b89be28cdfb139eb649c7022a718d0d27877be4ca0d8fa4adc4` | `CANONICAL` |
-| EV-AUDIT-BEFORE | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-before.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `ba3ee7e35c6a5777af67f1aa87e5d9c10966efdcacf2ed81310e5e5080d08487` | `CANONICAL` |
-| EV-AUDIT-AFTER | AC2–AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-after.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `69a010bdbe2d0154c775ee6f5fb784e74c1a19362aaae6eaadd5c6ac4a25d4cd` | `CANONICAL` |
-| EV-SNAPSHOTS | AC1/AC7 same snapshot | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-snapshots.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `6a10942ba0fea7221a18750273106e9bc0c98815e5644638a365390211668b24` | `CANONICAL` |
-| EV-REMEDIATION | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/REMEDIATION.md` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `1c41724c83b6925eae419784bad6a3b8a438f1b974f26d67522b717595a1f44e` | `CANONICAL` |
-| EV-RESIDUAL | AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/RESIDUAL.md` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `986118f24ccb0d626dc00822852fae7173876364a3f673d9194e49ae885241ef` | `CANONICAL` |
-| EV-TRIAGE | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/TRIAGE.md` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `be04e10274d8066ae51df73143ed07d9c6080dad0d2988c46a0457308387aa7f` | `CANONICAL` |
-| EV-TESTS-LOG | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/tests.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `054ffbade9d22bb4c4773de3994ccc7340074078d33b0294178b849923ae65e3` | `CANONICAL` |
-| EV-NEW-TESTS-LOG | AC2–AC5 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/new-tests.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `054ffbade9d22bb4c4773de3994ccc7340074078d33b0294178b849923ae65e3` | `SOURCE_PIN` |
-| EV-EXISTING-LOG | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/existing-tests.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `64028b6ba7bed4cc2755f4432853e24f032057e372dacf808d20f2ac3ca06733` | `SOURCE_PIN` |
-| EV-REPLAY-CLEAN | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/incident-replay-clean-workspace.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `6c65099fff50554b43607dd08e968abf35927f743520eeb0c1412966fb9c6bdd` | `CANONICAL` |
-| EV-REPLAY-WT | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/incident-replay-remove-worktrees.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `43977e4030122f8ad7700572e1bf961671a101ca9c0563edf8294d197c2d4148` | `CANONICAL` |
-| EV-REPLAY-LOG-CLEAN | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/incident-replay-clean_workspace.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `1b6e7ecbe02e31521f27faf405f9338c3160848c4bbe425ebf73fd29f38c2069` | `SOURCE_PIN` |
-| EV-REPLAY-LOG-WT | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/incident-replay-remove_worktrees.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `b260568f8b7e0165788c106695182637d26adfffafc70ec810d5befc72acb335` | `SOURCE_PIN` |
-| EV-ENV | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/environment.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `c3fe11f3e66435c00d1ba37eac73e2af6aacc0157f895007f934705270b74635` | `CANONICAL` |
-| EV-TRIAGE-SUMMARY | AC1/AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/triage-summary.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `a7dac2dd6d44ce973a04c0bbeed2f8a27e4dbe0e54eb60d250749601c007c5ff` | `SOURCE_PIN` |
-| EV-DELTA | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/protection-delta.json` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `7891db6c58dd45daac40e5a9aa86865f8d0e12c371856ac300d9b74ee1656f8a` | `CANONICAL` |
-| EV-DELTA-LOG | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/protection-delta.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `23454b9f5fe2d782b618be69bb74887a9bc125cf8f6a66b8985453d242c01f8d` | `SOURCE_PIN` |
-| EV-DELTA-SCRIPT | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/protection_delta.py` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `bf03a964c6c470a0ea95d7409d8814c5cf7f7b7292ee7dcd91d5b5310079bd1e` | `SOURCE_PIN` |
-| EV-RUNNER | Gate（可复算） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/run_evidence.py` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `9b64fa3d7ce3d1f1acc549c73d0373b9bef06e9c78c8ea37c406a9a83ec9debc` | `SOURCE_PIN` |
-| EV-RUNNER-LOG | Gate（自日志） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/run-evidence.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `219f18c4b1630863d406492d0847bc8da69317cc1daa52d2c0adf48741a1acef` | `SOURCE_PIN` |
-| EV-RUNNER-EXIT | Gate（自 exit） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/run-evidence.exitcode` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa` | `SOURCE_PIN` |
-| EV-BUILD-REPORTS | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/build_reports.py` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `0c0074057178a6a90c8acf80491cc79e816a2fca5690d2c8fef66b53151b4327` | `SOURCE_PIN` |
-| EV-BUILD-LOG | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/build-reports.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `26d3045912e33ea4d97b7d16bcf193cfb6d125976aae71985f41559c00cd106c` | `SOURCE_PIN` |
-| EV-AUDIT-BEFORE-LOG | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-before.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `e87bb95973f4f7aec82b18aa71d721a395c767bb6636129229e03762abdc34ce` | `SOURCE_PIN` |
-| EV-AUDIT-AFTER-LOG | AC2–AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-after.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `e02002d4503dd4525a40e682c4bcb026385d39f04f2c7609e16267bd2cb99261` | `SOURCE_PIN` |
-| EV-AUDIT-BEFORE-EXITCODE | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-before.exitcode` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3` | `SOURCE_PIN` |
-| EV-AUDIT-AFTER-EXITCODE | AC2–AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-after.exitcode` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3` | `SOURCE_PIN` |
-| EV-CHECK | Gate（治理检查日志） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/governance-check.log` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `5e6d76c86489b06a235e2db29ed2a1d3185f782b2c07a1c9389d971c88bb503f` | `SOURCE_PIN` |
-| EV-MANIFEST | Gate（证据清单） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/manifest.sha256` | `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef` | `fbb6f69703be240a1e67746748233fb78f706fc261dfb6037a523c7d56ae4eec` | `SOURCE_PIN` |
+| EV-CODE | AC2–AC5 | `tools/governance/clean_workspace.py` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `544aea1ebd5202bd7c70b65a7e7c4a08e6a66d2c48eebec68f13a9c195066188` | `CANONICAL` |
+| EV-TESTS-NEW | AC2–AC5/F-01…F-05 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/tests/test_declaration_remediation.py` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `a12a38c89d259021a5324542c8a550cc9336a6ef52096f681b7e3b3eb9ba70fa` | `CANONICAL` |
+| EV-JSON-EXCEPTIONS | AC2/F-02 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/non-declaration-json-exceptions.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `c2f185fb489e4b89be28cdfb139eb649c7022a718d0d27877be4ca0d8fa4adc4` | `CANONICAL` |
+| EV-AUDIT-BEFORE | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-before.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `782420e81f545078354fd092c21f757f3f767fb8bc872dbd9d4d6bde599c354f` | `CANONICAL` |
+| EV-AUDIT-AFTER | AC2–AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-after.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `134bb1fee298a297d063d5b3890f8b9c19ce1ed1090a5a9cf2bba1cfc30bcc03` | `CANONICAL` |
+| EV-SNAPSHOTS | AC1/AC7 same snapshot | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-snapshots.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `601c542ce0b0f08cb467774b3876004ded01cd345a8c03e580898ff85dd5a0b3` | `CANONICAL` |
+| EV-REMEDIATION | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/REMEDIATION.md` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `e0943a28df52a5276fbbc6451ab30823deda876007bac4556756816097e2fc41` | `CANONICAL` |
+| EV-RESIDUAL | AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/RESIDUAL.md` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `986118f24ccb0d626dc00822852fae7173876364a3f673d9194e49ae885241ef` | `CANONICAL` |
+| EV-TRIAGE | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/TRIAGE.md` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `be04e10274d8066ae51df73143ed07d9c6080dad0d2988c46a0457308387aa7f` | `CANONICAL` |
+| EV-TESTS-LOG | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/tests.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `108b346f80c12c8c2de20da0f3e89fbd33cc8ed18fb45f72b26b5fc1d1365af7` | `CANONICAL` |
+| EV-NEW-TESTS-LOG | AC2–AC5 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/new-tests.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `108b346f80c12c8c2de20da0f3e89fbd33cc8ed18fb45f72b26b5fc1d1365af7` | `SOURCE_PIN` |
+| EV-EXISTING-LOG | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/existing-tests.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `848c28687dd31dda672495376c269a1c2478a9b13e3ba5257523de9217f0498f` | `SOURCE_PIN` |
+| EV-REPLAY-CLEAN | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/incident-replay-clean-workspace.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `c7143fdb7394a12d811a62cb93a7f5ed4f71601cc9c3fb7b72b898531f8445e5` | `CANONICAL` |
+| EV-REPLAY-WT | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/incident-replay-remove-worktrees.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `8817eeb5a0e857a8fc65aada005250125e9699093b3b4736a8978bbcee44c234` | `CANONICAL` |
+| EV-REPLAY-LOG-CLEAN | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/incident-replay-clean_workspace.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `1b6e7ecbe02e31521f27faf405f9338c3160848c4bbe425ebf73fd29f38c2069` | `SOURCE_PIN` |
+| EV-REPLAY-LOG-WT | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/incident-replay-remove_worktrees.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `b260568f8b7e0165788c106695182637d26adfffafc70ec810d5befc72acb335` | `SOURCE_PIN` |
+| EV-ENV | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/environment.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `c2f2bd87e7f020993fcb3f5cb22aa750dd5b749c3425c982ab773417df2e79f1` | `CANONICAL` |
+| EV-TRIAGE-SUMMARY | AC1/AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/triage-summary.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `e88785f7c8c61e74603e0c438f5152017fafa5f85dccbb8c9ad3f310d24d0387` | `SOURCE_PIN` |
+| EV-DELTA | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/protection-delta.json` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `7891db6c58dd45daac40e5a9aa86865f8d0e12c371856ac300d9b74ee1656f8a` | `CANONICAL` |
+| EV-DELTA-LOG | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/protection-delta.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `23454b9f5fe2d782b618be69bb74887a9bc125cf8f6a66b8985453d242c01f8d` | `SOURCE_PIN` |
+| EV-DELTA-SCRIPT | AC7 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/protection_delta.py` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `bf03a964c6c470a0ea95d7409d8814c5cf7f7b7292ee7dcd91d5b5310079bd1e` | `SOURCE_PIN` |
+| EV-RUNNER | Gate（可复算） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/run_evidence.py` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `9b64fa3d7ce3d1f1acc549c73d0373b9bef06e9c78c8ea37c406a9a83ec9debc` | `SOURCE_PIN` |
+| EV-RUNNER-LOG | Gate（自日志） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/run-evidence.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `219f18c4b1630863d406492d0847bc8da69317cc1daa52d2c0adf48741a1acef` | `SOURCE_PIN` |
+| EV-RUNNER-EXIT | Gate（自 exit） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/run-evidence.exitcode` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa` | `SOURCE_PIN` |
+| EV-BUILD-REPORTS | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/build_reports.py` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `0c0074057178a6a90c8acf80491cc79e816a2fca5690d2c8fef66b53151b4327` | `SOURCE_PIN` |
+| EV-BUILD-LOG | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/build-reports.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `26d3045912e33ea4d97b7d16bcf193cfb6d125976aae71985f41559c00cd106c` | `SOURCE_PIN` |
+| EV-AUDIT-BEFORE-LOG | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-before.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `e87bb95973f4f7aec82b18aa71d721a395c767bb6636129229e03762abdc34ce` | `SOURCE_PIN` |
+| EV-AUDIT-AFTER-LOG | AC2–AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-after.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `e02002d4503dd4525a40e682c4bcb026385d39f04f2c7609e16267bd2cb99261` | `SOURCE_PIN` |
+| EV-AUDIT-BEFORE-EXITCODE | AC1 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-before.exitcode` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3` | `SOURCE_PIN` |
+| EV-AUDIT-AFTER-EXITCODE | AC2–AC6 | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/audit-after.exitcode` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3` | `SOURCE_PIN` |
+| EV-CHECK | Gate（治理检查日志） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/governance-check.log` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `5e6d76c86489b06a235e2db29ed2a1d3185f782b2c07a1c9389d971c88bb503f` | `SOURCE_PIN` |
+| EV-MANIFEST | Gate（证据清单） | `verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/manifest.sha256` | `cacd1c021a34c363f5b36d1b2b72f19f07acc081` | `b09b40585333f9d6080cf3df55024175fac9a7c8b8ec500cd7d38fd9e7e1485b` | `SOURCE_PIN` |
 
 ## Resource Manifest
 
