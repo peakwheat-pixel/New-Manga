@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md)**（`in_progress`；仅固定表头兼容；禁令有效）。
+- 当前 Task：**[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md)**（`in_review`；5+29+80测试通过，仅固定表头兼容；禁令有效）。
 
-- 收敛父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；R2 仅批准 c9a1bdd30 盘点；97 分支/135 worktrees；旧禁令/77 声明错误未解除）。
+- 收敛父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；R2 仅批准 c9a1bdd30 盘点；收敛基线97/135；当前98分支/136工作树（新增工具Task）；旧禁令有效）。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。

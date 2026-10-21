@@ -3,7 +3,7 @@ id: GOV-PATH-HEADER-COMPAT-1
 title: 固定模板路径列表头兼容，保留所有 fail-closed 门槛
 kind: governance-hardening
 governance_version: 3
-status: in_progress
+status: in_review
 approval: codex_scoped_technical_followup_user_boundary_continuation_20261021
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: e7cbcada6d1a5c01f9c55e888e30c3efba20e1ff
 branch: codex/gov-path-header-compat-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1
 integration_commit: null
-delivery_head: null
+delivery_head: 9f59537f989299c4ee6f41993134aa69d6cfbc12
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-PATH-HEADER-COMPAT-1
@@ -42,11 +42,11 @@ created: 2026-10-21
 
 ## Acceptance Criteria
 
-- [ ] **AC1** 完整固定别名和原始path列都识别，真实Canonical Evidence行被保护。 <<BLOCKED: 待实施>>
-- [ ] **AC2** alias+path、alias+alias重复列拒绝；其它说明/别名/缺列/malformed不接受或保持原判定，未知disposition等安全门槛不变。 <<BLOCKED: 待正反例回归>>
-- [ ] **AC3** 同一main数据快照用原实现和候选实现审计，45个schema错误消解、其余32保留，原保护根不丢失，新增根可复算；不调用apply。 <<BLOCKED: 待真实对照>>
-- [ ] **AC4** 既有声明/安全回归和incident replay通过，记录shell/interpreter/EXIT与skips；固定head独立Review。 <<BLOCKED: 待验证>>
-- [ ] **AC5** Codex集成后复验、Handoff与资源清册闭环；父Task继续blocked，不解除禁令、不宣称只有main。 <<BLOCKED: 待集成>>
+- [x] **AC1** 完整固定别名和原始path列都识别，真实Canonical Evidence行被保护。 <<MET>>
+- [x] **AC2** alias+path、alias+alias重复列拒绝；其它说明/别名/缺列/malformed不接受或保持原判定，未知disposition等安全门槛不变。 <<MET>>
+- [x] **AC3** 同一main数据快照用原实现和候选实现审计，45个schema错误消解、其余32保留，原保护根不丢失，新增根可复算；不调用apply。 <<MET>>
+- [ ] **AC4** 既有声明/安全回归和incident replay通过，记录shell/interpreter/EXIT与skips；固定head独立Review。 <<PARTIAL: 5+29+80测试和双事故回放通过，等待独立Review>>
+- [ ] **AC5** Codex集成后复验、Handoff与资源清册闭环；父Task继续blocked，不解除禁令、不宣称只有main。 <<PARTIAL: 固定交付待独审与Codex集成；资源保留>>
 
 ## 禁止范围
 
@@ -60,6 +60,18 @@ created: 2026-10-21
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+|EV-1|AC1/AC2|verification/GOV-PATH-HEADER-COMPAT-1/new-tests.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|d6d3a0bd38fc02f22fb40ef68ba328cfb6b86406f324d2bef3540372fa382344|CANONICAL|
+|EV-2|AC2/AC4|verification/GOV-PATH-HEADER-COMPAT-1/declaration-tests.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|6acac17af39688b225c56ef2923f196cf748d8202a26db25d9cd0847dbd0e4c1|CANONICAL|
+|EV-3|AC2/AC4|verification/GOV-PATH-HEADER-COMPAT-1/hardening-tests.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|aba565751ae78fa020c488bb469d2c90dcc6906d1a0c2ababeb72ca655204da5|CANONICAL|
+|EV-4|AC3|verification/GOV-PATH-HEADER-COMPAT-1/real-comparison.json|9f59537f989299c4ee6f41993134aa69d6cfbc12|df0824fce7ae4b2e30ddf32bf16a1be73333ec00fd621c85be53131a4fc43937|CANONICAL|
+|EV-5|AC1/AC2|verification/GOV-PATH-HEADER-COMPAT-1/baseline-discriminator.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|0b8e8fa819b1af22e30c153e53adc07c12c5ea8bd5000c6cbd63a57527d31548|CANONICAL|
+|EV-6|AC4|verification/GOV-PATH-HEADER-COMPAT-1/incident-replay-clean-workspace.json|9f59537f989299c4ee6f41993134aa69d6cfbc12|cbcfcd1b78d0c0eeffb6322e8b67ce1c2dce3ec070fac7b0d2a0177f4cbf19fb|CANONICAL|
+|EV-7|AC4|verification/GOV-PATH-HEADER-COMPAT-1/incident-replay-remove-worktrees.json|9f59537f989299c4ee6f41993134aa69d6cfbc12|63f296b126ba1d13edf44694bd3936f1f060a517d597aa1ba8a2b08d9c3fbaac|CANONICAL|
+|EV-8|AC4|verification/GOV-PATH-HEADER-COMPAT-1/replay-clean-executed.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|33de0b51fc7ae4f7b7896029bb0772cea520505ffb74e6e5d388dbbfb5dfc6f8|SOURCE_PIN|
+|EV-9|AC4|verification/GOV-PATH-HEADER-COMPAT-1/replay-worktrees-executed.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|54155be6a1a23a8b6a7e92b5d2b1c277ae022ed6e52b4ae067ca600511b29b3e|SOURCE_PIN|
+|EV-10|AC4|verification/GOV-PATH-HEADER-COMPAT-1/replay-clean.log|9f59537f989299c4ee6f41993134aa69d6cfbc12|aece49f317b301935566f8f3ee3e6426d0c708adfe6052e81cf69743a614b8dd|SOURCE_PIN|
+|EV-11|AC1/AC2/AC3/AC4|verification/GOV-PATH-HEADER-COMPAT-1/report.md|9f59537f989299c4ee6f41993134aa69d6cfbc12|5521c7826f770070ffa24d80c3e5dcd4cb55a1bb09fcf29c29a18d6f263b512d|CANONICAL|
+|EV-12|AC5|verification/GOV-PATH-HEADER-COMPAT-1/.gitattributes|9f59537f989299c4ee6f41993134aa69d6cfbc12|a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9|SOURCE_PIN|
 
 ## Resource Manifest
 
@@ -72,3 +84,7 @@ created: 2026-10-21
 ## 运行记录
 
 先ready冻结，再Owner认领。Handoff/Review尚无；只释放本精确技术前置，不改变完整收敛Task的blocked状态。
+
+## 交付记录
+
+固定实现与证据 9f59537f989299c4ee6f41993134aa69d6cfbc12；5新增+29声明+80安全测试通过、0skip；baseline判别预期exit1；双incident replay各15/15拒绝、0删除；同快照77→32，1280旧根全部保留并新增410。源helper/code未在main实施。工作树已创建且按清理禁令保留；临时测试自有夹具由test cleanup回收，剩余temp根保留。Handoff在Review/集成后追加。

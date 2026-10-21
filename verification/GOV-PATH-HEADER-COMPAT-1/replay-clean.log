@@ -1,0 +1,11 @@
+SHELL=Python subprocess; interpreter=C:\Python314\python.exe
+COMMAND=['python', '-B', 'tools/governance/clean_workspace.py', '--repo', 'G:\\CODEX\\New Manga', '--workspace-root', 'G:\\CODEX\\New Manga.workspace', '--replay-incident', '--out', 'G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-PATH-HEADER-COMPAT-1\\replay-clean']
+EXIT=2
+usage: clean_workspace.py [-h] [--repo REPO] [--workspace-root WORKSPACE_ROOT]
+                          [--out OUT] [--apply]
+                          [--release-window RELEASE_WINDOW]
+                          [--replay-incident REPLAY_INCIDENT]
+                          [--audit-declarations]
+                          [--incident-ledger INCIDENT_LEDGER]
+                          [--json-exceptions JSON_EXCEPTIONS]
+clean_workspace.py: error: argument --replay-incident: expected one argument
