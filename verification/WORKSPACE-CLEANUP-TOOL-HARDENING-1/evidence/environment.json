@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T11:12:29+08:00",
+  "generated_at": "2026-10-21T11:30:32+08:00",
   "host": {
     "platform": "Windows-11-10.0.26300-SP0",
     "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
@@ -21,10 +21,10 @@
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests\\run_suite.py"
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
-      "started_at": "2026-10-21T11:11:50+08:00",
-      "elapsed_seconds": 46.76,
+      "started_at": "2026-10-21T11:30:01+08:00",
+      "elapsed_seconds": 48.63,
       "exit_code": 0,
-      "stdout_sha256": "acce5cfde9a6e179ea056f41169d42a4c7177bcc4a9835002f300edc382fc14d",
+      "stdout_sha256": "6b46adeb7d8904ca3c2445fbe07e1e26184f0cd1e6de287fa4884bbf05d8713e",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
@@ -35,10 +35,10 @@
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tools\\governance\\tests\\test_ac_gate.py"
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1",
-      "started_at": "2026-10-21T11:11:58+08:00",
-      "elapsed_seconds": 7.84,
+      "started_at": "2026-10-21T11:30:08+08:00",
+      "elapsed_seconds": 7.83,
       "exit_code": 0,
-      "stdout_sha256": "215c67de8f330235b16828e518e47e646460d5fd4e499fcccb79d4d39c7d67f3",
+      "stdout_sha256": "639947e13a6b7046210d85a817fc418eda18f49144f5b5fdd5f631745adc49ee",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
@@ -49,8 +49,8 @@
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tools\\governance\\tests\\run-resource-manifest-cases.py"
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1",
-      "started_at": "2026-10-21T11:12:20+08:00",
-      "elapsed_seconds": 21.32,
+      "started_at": "2026-10-21T11:30:30+08:00",
+      "elapsed_seconds": 21.31,
       "exit_code": 1,
       "stdout_sha256": "7ec53b200d745f7f8267634034df4dc88a13d9e13594919ce69d9443e8ddeb38",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -67,7 +67,7 @@
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\evidence"
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1",
-      "started_at": "2026-10-21T11:12:20+08:00",
+      "started_at": "2026-10-21T11:30:30+08:00",
       "elapsed_seconds": 0.1,
       "exit_code": 0,
       "stdout_sha256": "a554a91747917f88e8ded8a163428764f13b45d2b30574b5c1bf552b05b06b32",
@@ -85,8 +85,8 @@
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\evidence"
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1",
-      "started_at": "2026-10-21T11:12:20+08:00",
-      "elapsed_seconds": 0.1,
+      "started_at": "2026-10-21T11:30:30+08:00",
+      "elapsed_seconds": 0.11,
       "exit_code": 0,
       "stdout_sha256": "cdf54a376909d827041b5b91d970038552a2eb17429e6912f73c1b3743f145ed",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -104,10 +104,10 @@
         "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\evidence"
       ],
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1",
-      "started_at": "2026-10-21T11:12:29+08:00",
-      "elapsed_seconds": 9.36,
+      "started_at": "2026-10-21T11:30:32+08:00",
+      "elapsed_seconds": 1.77,
       "exit_code": 2,
-      "stdout_sha256": "561720500690a9a730f9c9d4541706334225c3d2561f5984d62b643f7216c453",
+      "stdout_sha256": "69401767843ba0d2443dab2f22906742363e331a013fb338a2ebde07d9a72b12",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ],
@@ -128,10 +128,10 @@
     }
   },
   "declaration_audit": {
-    "declarations": 1855,
-    "protected_roots": 1263,
-    "errors": 93,
-    "warnings": 122,
+    "declarations": 1858,
+    "protected_roots": 1264,
+    "errors": 163,
+    "warnings": 54,
     "incident_sources_covered": 18,
     "incident_sources_total": 18,
     "exit_code": 2,
@@ -180,6 +180,9 @@
         "test_tools_fixtures.ToolFixture.test_ac4_11_symlink_escape": "ok",
         "test_tools_fixtures.ToolFixture.test_ac2_untracked_declarations_are_scanned": "ok",
         "test_tools_fixtures.ToolFixture.test_ac2_untracked_declaration_parse_error_refused": "ok",
+        "test_tools_fixtures.ToolFixture.test_ac2_malformed_json_migrate_declaration_refused": "ok",
+        "test_tools_fixtures.ToolFixture.test_ac2_malformed_json_archive_declaration_refused": "ok",
+        "test_tools_fixtures.ToolFixture.test_ac2_malformed_json_without_preserve_marker_refused": "ok",
         "test_tools_fixtures.ToolFixture.test_ac2_destination_pathlike_unresolved_refused": "ok",
         "test_tools_fixtures.ToolFixture.test_ac2_destination_prose_allowed": "ok",
         "test_tools_fixtures.ToolFixture.test_ac2_git_status_failure_is_refused": "ok",
@@ -284,14 +287,13 @@
     "AC7_note": "run-resource-manifest-cases.py fails before and after this change for a reason outside the frozen scope: check.ps1 reports TASK_LEDGER budget failures in the current repo state. The suite never imports the five hardened scripts; the five scripts byte-compile and their own fixtures pass. This Task is not allowed to modify check.ps1/task_ledger.py."
   },
   "real_workspace_snapshot": {
-    "generated_at": "2026-10-21T11:12:29+08:00",
+    "generated_at": "2026-10-21T11:30:32+08:00",
     "before": {
-      "head": "21715c5c005e1a757b5f6f3befb9bf1e701e991b",
+      "head": "beeac02afee45d1b58bcbd8110bbc31048a23675",
       "head_exit": 0,
       "status_exit": 0,
       "status_outside_this_task": [
-        " M tools/governance/clean_workspace.py",
-        " M tools/governance/remove_worktrees.py"
+        " M tools/governance/clean_workspace.py"
       ],
       "ledger_paths_exist": {
         "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree": true,
@@ -316,12 +318,11 @@
       }
     },
     "after": {
-      "head": "21715c5c005e1a757b5f6f3befb9bf1e701e991b",
+      "head": "beeac02afee45d1b58bcbd8110bbc31048a23675",
       "head_exit": 0,
       "status_exit": 0,
       "status_outside_this_task": [
-        " M tools/governance/clean_workspace.py",
-        " M tools/governance/remove_worktrees.py"
+        " M tools/governance/clean_workspace.py"
       ],
       "ledger_paths_exist": {
         "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree": true,

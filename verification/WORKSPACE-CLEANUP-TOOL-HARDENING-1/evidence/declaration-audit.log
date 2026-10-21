@@ -1,4 +1,4 @@
-declaration audit: 1855 declaration(s), 1263 protected root(s), 93 error(s), 122 warning(s)
+declaration audit: 1858 declaration(s), 1264 protected root(s), 163 error(s), 54 warning(s)
   incident ledger sources protected by repo declarations: 18/18
   ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
   ERROR DECL_BARE_NAME: declared path '���� agent-output���Ǳ� Task ������' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/GOV-EOL-PIN-1.md]

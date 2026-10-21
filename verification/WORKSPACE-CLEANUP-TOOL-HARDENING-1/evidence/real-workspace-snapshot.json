@@ -1,12 +1,11 @@
 {
-  "generated_at": "2026-10-21T11:12:29+08:00",
+  "generated_at": "2026-10-21T11:30:32+08:00",
   "before": {
-    "head": "21715c5c005e1a757b5f6f3befb9bf1e701e991b",
+    "head": "beeac02afee45d1b58bcbd8110bbc31048a23675",
     "head_exit": 0,
     "status_exit": 0,
     "status_outside_this_task": [
-      " M tools/governance/clean_workspace.py",
-      " M tools/governance/remove_worktrees.py"
+      " M tools/governance/clean_workspace.py"
     ],
     "ledger_paths_exist": {
       "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree": true,
@@ -31,12 +30,11 @@
     }
   },
   "after": {
-    "head": "21715c5c005e1a757b5f6f3befb9bf1e701e991b",
+    "head": "beeac02afee45d1b58bcbd8110bbc31048a23675",
     "head_exit": 0,
     "status_exit": 0,
     "status_outside_this_task": [
-      " M tools/governance/clean_workspace.py",
-      " M tools/governance/remove_worktrees.py"
+      " M tools/governance/clean_workspace.py"
     ],
     "ledger_paths_exist": {
       "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree": true,

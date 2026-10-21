@@ -1194,21 +1194,15 @@ def scan_repo_declarations(repo_root, ws_root):
                 data = load_json(absolute, "%s JSON" % source_kind)
             except GuardError as exc:
                 scanned["unparsable_json"] += 1
-                try:
-                    raw = io.open(absolute, "r", encoding="utf-8",
-                                  errors="ignore").read().upper()
-                except OSError:
-                    raw = ""
-                if "PRESERVE" in raw:
-                    index.add_error("JSON_PARSE_PRESERVE",
-                                    "unparsable JSON mentions PRESERVE; protection "
-                                    "cannot be enumerated: %s" % exc.message,
-                                    relative)
-                else:
-                    index.add_warning("JSON_NONSTANDARD",
-                                      "%s JSON is not a single JSON document "
-                                      "and contains no PRESERVE marker (%s)"
-                                      % (source_kind, exc.message), relative)
+                # F-02 (R2 Review): an unparsable JSON declaration file is ALWAYS
+                # an integrity error.  Looking for the literal "PRESERVE" marker
+                # missed MIGRATE/ARCHIVE declarations (also protective) and let
+                # apply continue with incomplete protection.
+                index.add_error(
+                    "JSON_PARSE",
+                    "unparsable %s JSON declaration file; protection cannot be "
+                    "enumerated, so cleaning is refused: %s"
+                    % (source_kind, exc.message), relative)
                 continue
             parse_json_declarations(index, data, relative)
     scanned["declarations"] = len(index.declarations)

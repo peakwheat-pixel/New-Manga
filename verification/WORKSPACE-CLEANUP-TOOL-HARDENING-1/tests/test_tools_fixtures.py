@@ -647,6 +647,46 @@ class ToolFixture(unittest.TestCase):
         record = self.candidate(report, guard.norm_abs(target))
         self.assertEqual(record["decision"], "CANDIDATE")
 
+    # ==================================================================
+    # Review r2 rework: F-02 malformed JSON is always a hard error
+    # ==================================================================
+    def test_ac2_malformed_json_migrate_declaration_refused(self):
+        """F-02 R2: malformed JSON with a MIGRATE declaration is an integrity error."""
+        target = self.fx.candidate("temp", "MALFORMED-MIGRATE", {"f.txt": "x"})
+        self.fx.declare_raw(
+            '{"source_path": "%s", "disposition": "MIGRATE",'
+            % target.replace("\\", "\\\\"),
+            relative="verification/broken-migrate.json")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("JSON_PARSE", result.stdout + result.stderr)
+        self.assertTrue(os.path.isdir(target))
+        refused = self.report("clean-workspace-refused.json")
+        self.assertIn("JSON_PARSE", [error["code"]
+                                     for error in refused["declaration_errors"]])
+
+    def test_ac2_malformed_json_archive_declaration_refused(self):
+        """F-02 R2: malformed JSON with an ARCHIVE declaration is an integrity error."""
+        target = self.fx.candidate("temp", "MALFORMED-ARCHIVE", {"f.txt": "x"})
+        self.fx.declare_raw(
+            '{"source_path": "%s", "disposition": "ARCHIVE"}'
+            % target.replace("\\", "\\\\") + " trailing-garbage",
+            relative="verification/broken-archive.json")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("JSON_PARSE", result.stdout + result.stderr)
+        self.assertTrue(os.path.isdir(target))
+
+    def test_ac2_malformed_json_without_preserve_marker_refused(self):
+        """F-02 R2: a malformed JSON with no marker is still a hard error."""
+        target = self.fx.candidate("temp", "MALFORMED-PLAIN", {"f.txt": "x"})
+        self.fx.declare_raw('{"note": "no declaration here"',
+                            relative="verification/broken-plain.json")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("JSON_PARSE", result.stdout + result.stderr)
+        self.assertTrue(os.path.isdir(target))
+
     def test_ac5_out_inside_candidate_refused(self):
         """F-04: an --out inside (or aliasing into) a candidate is refused."""
         target = self.fx.candidate("temp", "OUT-INSIDE", {"f.txt": "keep"})
