@@ -1,0 +1,10 @@
+{
+  "base_commit": "f72dd96ee51f21cc24472b05cceaf488060b679a",
+  "targets": [
+    "doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md",
+    "doc/tasks/GOV-PATH-HEADER-COMPAT-1.md",
+    "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md"
+  ],
+  "precondition": "51 raw byte pins verified; only blank lines may be removed inside Canonical Evidence section; all nonblank content/state/AC/Review/pin cells unchanged",
+  "approval": "user_auto_advance_20261021"
+}
