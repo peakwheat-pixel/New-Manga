@@ -7,6 +7,7 @@ tool, both against the real main repository.  Writes
 existing path (i.e. if remediation lost real protection).
 """
 import importlib.util
+import io
 import json
 import os
 import sys
@@ -69,8 +70,9 @@ report = {
                 "FAIL: a dropped declaration names an existing path"),
 }
 target = os.path.join(HERE, "evidence", "protection-delta.json")
-json.dump(report, open(target, "w", encoding="utf-8"), ensure_ascii=False,
-          indent=2)
+with io.open(target, "w", encoding="utf-8", newline="\n") as handle:
+    json.dump(report, handle, ensure_ascii=False, indent=2)
+    handle.write("\n")
 print(json.dumps({"old": report["old"], "new": report["new"],
                   "dropped": len(dropped), "verdict": report["verdict"]},
                  ensure_ascii=False, indent=1))

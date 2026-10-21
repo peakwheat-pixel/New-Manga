@@ -451,8 +451,10 @@ def main():
             "after_sha256": hashlib.sha256(
                 open(AFTER, "rb").read()).hexdigest()},
     }
-    json.dump(summary, open(os.path.join(HERE, "evidence", "triage-summary.json"),
-                            "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    with io.open(os.path.join(HERE, "evidence", "triage-summary.json"),
+                 "w", encoding="utf-8", newline="\n") as handle:
+        json.dump(summary, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
     print(json.dumps({k: summary[k] for k in
                       ("before", "after", "before_codes", "after_codes",
                        "after_warnings", "residual_grouping")},
