@@ -4,6 +4,7 @@
 
 - 当前：[GIT-MAINLINE-CONVERGENCE-1](GIT-MAINLINE-CONVERGENCE-1.md)，blocked；保护边界已明确，32残余错误与旧清理禁令保留。
 - 技术前置：[GOV-PATH-HEADER-COMPAT-1](GOV-PATH-HEADER-COMPAT-1.md) done / integrated 9cae94142；不授权清理。
+- 只读取证：[GOV-DECLARATION-RESIDUAL-32-AUDIT-1](GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md) done；32项/17来源，原错误/保护保留。
 - READY：以 Plan 声明为准；当前无。不得据历史导航重开或释放已完成 Task。
 
 ## 历史导航（不构成当前授权）

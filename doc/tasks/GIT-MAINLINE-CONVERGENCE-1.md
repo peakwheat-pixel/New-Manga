@@ -150,3 +150,7 @@ Task 转 blocked（暂停前阶段 in_review），不 done、不 closed_with_lim
 用户要求保护边界优先、STATUS/r212禁令有效。Codex裁定见 verification/GIT-MAINLINE-CONVERGENCE-1/boundary-adjudication.md：原135工作树、19独有支线全部保留；P14/P22仅未来只读评估候选，其余等价/Legacy/旧规划/历史证据不盲合并。
 
 独立GOV-PATH-HEADER-COMPAT-1已独审固定78fc0cba2并集成main 9cae94142a51ee104dea19714568d3fe2b89dad0；仅精确固定表头兼容及重复列防护，原保护集合全保留+410。主线审计剩32错误（此前77为历史基线），错误类别完整保留，禁止全局忽略。当前98 heads/136工作树，新增工具Task资源保留；0真实资源删除/迁移/归档、0远端操作、无产品支线集成。完整收敛目标继续blocked，resume_status=in_review，旧Review仅覆盖原盘点切片，不被本进展扩大。下一有界只读取证建议及转发指令见 doc/handoffs/GOV-PATH-HEADER-COMPAT-1.md，尚未释放。
+
+## 32项残余声明取证完成（2026-10-21）
+
+GOV-DECLARATION-RESIDUAL-32-AUDIT-1依用户授权冻结/执行，DeepSeek R2 approved固定927e06f8b25563afbc7acbcc25d19fe775d1ded6，已由Codex以只读研究切片done。矩阵32项/17来源，六组6/12/7/2/2/3；原字节/status与原32完整错误身份保留，98heads/136worktrees不变。没有修改source/guard/例外表或清理资源；本父Task仍blocked、resume_status=in_review。下一拟议GOV-NDJSON-NONDECL-IDENTITY-1的Owner/Reviewer/恢复点/范围/验证/完整指令见doc/handoffs/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md，尚未释放，不能自动实施。
