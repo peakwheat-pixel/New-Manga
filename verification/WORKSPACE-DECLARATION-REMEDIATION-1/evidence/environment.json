@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "WORKSPACE-DECLARATION-REMEDIATION-1",
-  "generated_at": "2026-10-21T05:34:41+00:00",
+  "generated_at": "2026-10-21T05:48:29+00:00",
   "host": {
     "platform": "Windows-11-10.0.26300-SP0",
     "python": "3.14.6",
@@ -23,7 +23,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
       "exit_code": 0,
       "log": "new-tests.log",
-      "stdout_sha256": "f3792fc3d100c428a497f0f6d5243ffa102af3845d34522edb174e448b66570d"
+      "stdout_sha256": "250d5b677bbf05811e8b782aede9ff8aa8ba951f27f634649a3b446402a6a1ac"
     },
     {
       "label": "existing-80-tests",
@@ -35,7 +35,7 @@
       "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
       "exit_code": 0,
       "log": "existing-tests.log",
-      "stdout_sha256": "5ae20f2d2c4afcacb6a2078de698f8fbe086d4c6cb57c62c2a7e574e5cb15d10"
+      "stdout_sha256": "16ffb06db3f32552d35a438953281a5d3b325647bed7a176bd7da4e44c88514d"
     },
     {
       "label": "replay-clean_workspace.py",
@@ -822,8 +822,8 @@
       "DECL_DESTINATION_UNRESOLVED": 1
     },
     "generated_from": {
-      "before_sha256": "9a1cd58e29fd538b1033dc2d377d660fa1c4502f08561859a15585a5db421f57",
-      "after_sha256": "6893d21147ab4b6586ab560b8f214f0fcbf05a97e0d4cd103409bb65f22ecd43"
+      "before_sha256": "c0d9b74344dd48e2e5939d778df23f414a8e44926d6465d6c105a5e062de1ed3",
+      "after_sha256": "26df84fba85ab0b3d60fd2fc34489ec406590e3e3e80301760436a744d466f62"
     }
   },
   "audit_snapshots": {

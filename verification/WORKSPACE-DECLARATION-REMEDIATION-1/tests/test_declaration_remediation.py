@@ -21,6 +21,16 @@ sys.path.insert(0, OLD_TESTS)
 from fixture_support import (RepoFixture, guard, load_json,  # noqa: E402
                              run_tool)
 
+import importlib.util  # noqa: E402
+
+_BUILD_PATH = os.path.join(ROOT, "verification",
+                           "WORKSPACE-DECLARATION-REMEDIATION-1",
+                           "build_reports.py")
+_spec = importlib.util.spec_from_file_location("wc_build_reports",
+                                               _BUILD_PATH)
+build_reports = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(build_reports)
+
 
 def make_junction(link, target):
     """Windows directory junction; returns False on unsupported hosts."""
@@ -362,6 +372,37 @@ class DeclarationRemediationFixture(unittest.TestCase):
         result = self.run_clean()
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("FILE_UNREADABLE", result.stdout + result.stderr)
+
+
+    # ==================================================================
+    # Review r5 P2: TRIAGE same-locator multi-code attribution
+    # ==================================================================
+    def test_ac1_triage_same_locator_multiple_codes_prefers_exact_code(self):
+        entries = [("error", "TABLE_ROW_ARITY"),
+                   ("error", "TABLE_SCHEMA_INCOMPLETE")]
+        self.assertEqual(
+            build_reports.match_status("TABLE_ROW_ARITY", entries),
+            ("error", "TABLE_ROW_ARITY"))
+        self.assertEqual(
+            build_reports.match_status("TABLE_SCHEMA_INCOMPLETE", entries),
+            ("error", "TABLE_SCHEMA_INCOMPLETE"))
+
+    def test_ac1_triage_transition_codes(self):
+        self.assertEqual(
+            build_reports.match_status(
+                "DECL_DESTINATION_UNRESOLVED",
+                [("error", "DECL_DESTINATION_GENERALIZED")]),
+            ("error", "DECL_DESTINATION_GENERALIZED"))
+        self.assertEqual(
+            build_reports.match_status(
+                "DECL_BARE_NAME", [("warning", "DECL_SOURCE_NOT_A_PATH")]),
+            ("warning", "DECL_SOURCE_NOT_A_PATH"))
+
+    def test_ac1_triage_unlisted_multi_code_is_ambiguous(self):
+        self.assertIsNone(
+            build_reports.match_status("DECL_OLD_UNLISTED",
+                                       [("error", "TABLE_ROW_ARITY"),
+                                        ("error", "DECL_SOMETHING_ELSE")]))
 
 
 if __name__ == "__main__":

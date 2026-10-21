@@ -4,7 +4,7 @@ Generated from `audit-before.json`; one row per error from the pre-remediation a
 
 | # | code | file | tracked | owner | locator | category | decision |
 |---:|---|---|---|---|---|---|---|
-| 1 | TABLE_ROW_ARITY | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | tracked | historical Task GOV-DEBT-CLEANUP-2 |  | after: TABLE_SCHEMA_INCOMPLETE | r2: still fatal as TABLE_SCHEMA_INCOMPLETE |
+| 1 | TABLE_ROW_ARITY | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | tracked | historical Task GOV-DEBT-CLEANUP-2 |  | after: TABLE_ROW_ARITY | r2: still fatal as TABLE_ROW_ARITY |
 | 2 | DECL_BARE_NAME | `doc/tasks/GOV-EOL-PIN-1.md` | tracked | historical Task GOV-EOL-PIN-1 | line 9 | after: DECL_SOURCE_NOT_A_PATH | r2: skipped with DECL_SOURCE_NOT_A_PATH warning (no protection registered) |
 | 3 | DECL_BARE_NAME | `doc/tasks/GOV-PLAN-BUDGET-1.md` | tracked | historical Task GOV-PLAN-BUDGET-1 | line 7 | after: DECL_SOURCE_NOT_A_PATH | r2: skipped with DECL_SOURCE_NOT_A_PATH warning (no protection registered) |
 | 4 | DECL_BARE_NAME | `doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md` | tracked | historical Task GOV-RESOURCE-MANIFEST-JSON-1 | line 9 | after: DECL_SOURCE_NOT_A_PATH | r2: skipped with DECL_SOURCE_NOT_A_PATH warning (no protection registered) |

@@ -84,17 +84,56 @@ def role_of(code):
     return "source"
 
 
+# Review r5 P2: report-code transitions that are legitimate reclassifications.
+# Same-locator entries are kept as a LIST; exact code matching wins, then these
+# explicit transitions.  Unlisted multi-code collisions are reported as
+# ambiguous, never silently attributed to the wrong code.
+TRANSITION_CODES = {
+    "DECL_DESTINATION_UNRESOLVED": ("DECL_DESTINATION_GENERALIZED",
+                                     "DECL_DESTINATION_UNRESOLVED"),
+    "DECL_BARE_NAME": ("DECL_SOURCE_NOT_A_PATH",),
+    "DECL_RELATIVE_UNRESOLVED": ("DECL_RELATIVE_UNRESOLVED",
+                                 "DECL_SOURCE_NOT_A_PATH"),
+    "DECL_UNKNOWN_DISPOSITION": ("DECL_UNKNOWN_DISPOSITION",
+                                 "DECL_SOURCE_NOT_A_PATH"),
+    "DECL_EVIDENCE_NOT_A_PATH": ("DECL_EVIDENCE_NOT_A_PATH",),
+    "FILE_UNREADABLE": ("FILE_UNREADABLE", "FILE_ENCODING_LEGACY"),
+    "JSON_PARSE": ("JSON_PARSE", "JSON_NON_DECLARATION"),
+    "TABLE_ROW_ARITY": ("TABLE_ROW_ARITY",),
+    "TABLE_SCHEMA_INCOMPLETE": ("TABLE_SCHEMA_INCOMPLETE",),
+}
+
+
+def match_status(before_code, entries):
+    """Pick the after-status for one before-error (review r5 P2)."""
+    if not entries:
+        return None
+    for item in entries:
+        if item[1] == before_code:
+            return item
+    for candidate in TRANSITION_CODES.get(before_code, ()):
+        for item in entries:
+            if item[1] == candidate:
+                return item
+    if len(entries) == 1:
+        return entries[0]
+    return None
+
+
 def decision_for(error, tracked, after_index):
     code = error["code"]
     rel = error.get("file") or ""
     locator = error.get("locator") or ""
     role = role_of(code)
-    status = (after_index.get((rel, locator, role))
-              or after_index.get((rel, None, role))
-              or next((value for (f, _l, r), value in after_index.items()
-                       if f == rel and r == role and value[0] == "error"), None)
-              or next((value for (f, _l, r), value in after_index.items()
-                       if f == rel and r == role and value[0] == "warning"), None))
+    candidates = []
+    for key in ((rel, locator, role), (rel, None, role)):
+        entries = after_index.get(key)
+        if entries:
+            candidates.extend(entries)
+    if not candidates:
+        candidates = [item for (f, _l, r), values in after_index.items()
+                      if f == rel and r == role for item in values]
+    status = match_status(code, candidates)
     if status is not None:
         category = "after: %s" % status[1]
         if status[0] == "error":
@@ -102,6 +141,11 @@ def decision_for(error, tracked, after_index):
         else:
             decision = ("r2: skipped with %s warning (no protection "
                         "registered)" % status[1])
+    elif candidates:
+        codes = sorted({item[1] for item in candidates})
+        category = "after: ambiguous"
+        decision = ("r2: ambiguous, multiple same-locator results %s; "
+                    "see audit-after.json" % ",".join(codes))
     elif code == "JSON_PARSE":
         category = "AC2 JSON"
         decision = "r2: resolved (BOM normalised or explicit exemption)"
@@ -125,12 +169,13 @@ def main():
     rows = []
     after_index = {}
     for error in after_errors:
-        after_index[(error.get("file") or "", error.get("locator") or "",
-                     role_of(error["code"]))] = ("error", error["code"])
+        key = (error.get("file") or "", error.get("locator") or "",
+               role_of(error["code"]))
+        after_index.setdefault(key, []).append(("error", error["code"]))
     for warning in after.get("warnings", []):
-        after_index.setdefault(
-            (warning.get("file") or "", warning.get("locator") or "",
-             role_of(warning["code"])), ("warning", warning["code"]))
+        key = (warning.get("file") or "", warning.get("locator") or "",
+               role_of(warning["code"]))
+        after_index.setdefault(key, []).append(("warning", warning["code"]))
     for error in before_errors:
         rel = error.get("file") or ""
         category, decision = decision_for(error, tracked, after_index)

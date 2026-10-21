@@ -58,7 +58,7 @@ Enumeration vs parsing (AC2 wording fix): `tracked_declaration_files`/`untracked
 | after: DECL_UNKNOWN_DISPOSITION | 2 |
 | after: JSON_NON_DECLARATION | 67 |
 | after: JSON_PARSE | 2 |
-| after: TABLE_SCHEMA_INCOMPLETE | 1 |
+| after: TABLE_ROW_ARITY | 1 |
 | r2: no matching residual | 5 |
 
 Every one of the 163 before-audit errors is listed in `TRIAGE.md` (code / file / tracked / owner / locator / category / decision); nothing was dropped silently.
