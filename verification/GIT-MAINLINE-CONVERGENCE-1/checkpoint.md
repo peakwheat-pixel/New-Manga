@@ -13,3 +13,5 @@ GOV-PATH-HEADER-COMPAT-1 done，独审78fc0cba2，集成9cae94142；main5测试e
 恢复先核对HEAD/status/common-dir/租约；原作者文件不得覆盖。
 
 自动推进进展：GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1已done，R2 edbd1a492批准。3表只删15空行，原51pin/所有非空行/状态/AC/Review不变，实际注册19/19/13，默认仍32。before正确重建排除新增文件，32身份与head相同；不把历史未跟踪快照当Git证明。下一自动冻结GOV-NDJSON-EXCEPTION-CONFIG-1，现有保护/清理禁令保留。
+
+2026-10-21最新：GOV-NDJSON-EXCEPTION-CONFIG-1独审85a393dc4 approved、main集成9d21f8fb8；正式默认32→30，原保护相同，14pin实际注册/字节通过，109测试与双15拒绝回放通过。当前99heads/137worktrees，前文98/136和32为历史阶段；尚未只剩main，禁令/父blocked不变。六格式Task候选直接207pin：113历史blob匹配、53可由EOL重现、36hash和5路径/commit尚未核清。只读预检输出在workspace agent-output/codex/GOV-NONRESOURCE-MANIFEST-FORMAT-1，未改六原Task；下一先冻只读取证，不猜测pin。

@@ -3,19 +3,21 @@ id: GOV-NDJSON-EXCEPTION-CONFIG-1
 title: 当前例外配置迁移与两固定NDJSON精确登记
 kind: governance-hardening
 governance_version: 3
-status: in_review
+status: done
 approval: user_auto_advance_20261021_scoped_configuration_implementation
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
+latest_review: verification/GOV-NDJSON-EXCEPTION-CONFIG-1/review-dsh.md
+reviewed_head: 85a393dc43eaf60df20258040d5869b42700d2c5
 depends_on: [GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1, GOV-NDJSON-NONDECL-IDENTITY-1]
 base_commit: bbc9532b8ff7326b985e8f3f828bccd040c0d583
 branch: codex/gov-ndjson-exception-config-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-NDJSON-EXCEPTION-CONFIG-1
-integration_commit: null
+integration_commit: 9d21f8fb8c6eb3b67fa8ff31254ac7cc746be295
 delivery_head: 7fd00e8b4a1ec53440aac64b4d44566761579cd6
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-NDJSON-EXCEPTION-CONFIG-1
 allowed_paths:
   - tools/governance/clean_workspace.py
@@ -42,8 +44,8 @@ Codex分支/worktree隔离实现，main唯一集成主线，DeepSeek非作者固
 
 - [x] **AC1** 新69项原67逐项完全相同、无丢失/重复/泛化，新增2条与独审原始字节匹配；历史表Git pin/磁盘CRLF及两日志原字节不变。 <<MET>>
 - [x] **AC2** 代码仅默认常量变化；同canonical数据实际默认32→30恰移两JSON_PARSE，剩30完整身份相同、保护集合不减少；三入口共享当前默认。 <<MET>>
-- [ ] **AC3** 错path/hash/字节漂移拒绝和合法声明解析验证、29声明+80安全回归、双事故回放通过，独立固定head Review。 <<PARTIAL: 回归/负例/双回放通过，独立Review待完成>>
-- [ ] **AC4** Codex主线集成复验默认30、治理check/实际pin注册与资源原位保留核销/Handoff完整；父blocked、保护及清理禁令不解除。 <<PARTIAL: 独审通过后才执行main集成复验与核销>>
+- [x] **AC3** 错path/hash/字节漂移拒绝和合法声明解析验证、29声明+80安全回归、双事故回放通过，独立固定head Review。 <<MET>>
+- [x] **AC4** Codex主线集成复验默认30、治理check/实际pin注册与资源原位保留核销/Handoff完整；父blocked、保护及清理禁令不解除。 <<MET>>
 
 ## 测试与禁止
 
@@ -67,6 +69,8 @@ PowerShell/Python -B/PYTHONDONTWRITEBYTECODE=1。29声明测试与80安全回归
 |EV-12|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-EXCEPTION-CONFIG-1/report.md|b9a879c735b499dee9663e323976b0efd0544c98|9402dbc294ec088c25949d3ef8ce16dcd57ec691571b10e91c30e6816f991129|CANONICAL|
 |EV-13|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-EXCEPTION-CONFIG-1/scope.json|b9a879c735b499dee9663e323976b0efd0544c98|118fe670782171311e4478ea78d3449cb5dacd05bf7c76b38f535107fdd3f603|CANONICAL|
 |EV-14|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-EXCEPTION-CONFIG-1/test-execution.json|b9a879c735b499dee9663e323976b0efd0544c98|f1a2a57e66406ffc5f7432ebc331f297cfea3743e362ed27ecf666e3d3b362f1|CANONICAL|
+|EV-15|AC3/AC4|verification/GOV-NDJSON-EXCEPTION-CONFIG-1/review-dsh.md|ec6fa7361c0a9361beaebee60600e36b5702f862|8542c3ce1245914374d813579848e84ce1fc3f6a26dcda149003f81ad08e97b2|CANONICAL|
+|EV-16|AC3/AC4|verification/GOV-NDJSON-EXCEPTION-CONFIG-1/integration-validation.json|ec6fa7361c0a9361beaebee60600e36b5702f862|4a94fe414db563339eb048d2f7a5ffcf9c6d81dcd8f66eba8441fcc94427f5f9|CANONICAL|
 
 ## Resource Manifest
 
@@ -79,3 +83,11 @@ PowerShell/Python -B/PYTHONDONTWRITEBYTECODE=1。29声明测试与80安全回归
 ## 交付记录
 
 实际worktree/review diff基线98993fe10，frontmatter来源bbc9532b8；其间仅本Task冻结/认领metadata，guard/旧表内容相同。实现7fd00e8b4，证据b9a879c735b499dee9663e323976b0efd0544c98。69项旧67逐项相同、guard AST仅默认常量变化；同canonical main含R23数据实际32→30，原保护不减；错path/hash/字节漂移拒绝、合法声明解析，29+80回归0skip、双回放15REJECT/0删除/0违规。独审前main尚未合并代码，仍正式32。owner Task副本同步worktree，canonical元数据由main gate串行写，不复制runtime租约。99heads/137worktrees全部保留。
+
+## Closeout Record
+
+2026-10-21 / Codex：DeepSeek固定85a393dc4 approved；main正常merge 9d21f8fb8c6eb3b67fa8ff31254ac7cc746be295。主线默认CLI exit2/30（fail-closed）；同数据旧32→新30，1778保护根完全相等，14原证据raw=blob=pin且真实注册14，源日志/历史表原字节保全；详见integration-validation.json。旧proof1764为早期快照，Review1778为b70387829快照，新增本Task证据会增加保护数，不能冒称静态值。29+80与双15回放均通过；Reviewer未重跑109项，Owner已有实测。产品/构建NOT_RUN。治理check完成后收口。
+
+资源核销：本分支、worktree、agent-output/test-temp/回放输出全部原位PRESERVE_REFERENCED；无进程继续实现或审查（DSH session已exit0）；不授权删除。99heads/137worktrees，父blocked和STATUS/r212禁令有效。备份只覆盖旧基线，不声称当前完整备份。
+
+下一步：六历史Task格式候选的直接pin只读预检发现36条历史pin及5条路径/commit待核（另53条可由EOL重现）；在pin归属/证据边界未核清前不实施六表修正。由Codex先冻结只读取证Task，DeepSeek独审，源文件不动；不重开旧Task。

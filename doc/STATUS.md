@@ -4,8 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-NDJSON-EXCEPTION-CONFIG-1](tasks/GOV-NDJSON-EXCEPTION-CONFIG-1.md)**（`in_review`；新69项当前配置/default，自动推进，DeepSeek独审）。
-- 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式32错误/原保护/STATUS-r212禁令有效。
+- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；30错误及清理禁令保留，等待只读子Task冻结）。
+- 最近完成：GOV-NDJSON-EXCEPTION-CONFIG-1 `done`，独审85a393dc4、集成9d21f8fb8。
+- 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式30错误/原保护/STATUS-r212禁令有效。
 - 技术前置：[GOV-PATH-HEADER-COMPAT-1](tasks/GOV-PATH-HEADER-COMPAT-1.md) `done`，独审78fc0cba2、集成9cae94142；77→32错误，新增410保护根，未清理。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
