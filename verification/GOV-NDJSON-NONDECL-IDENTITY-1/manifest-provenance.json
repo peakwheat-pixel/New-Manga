@@ -1,0 +1,20 @@
+{
+  "historical_manifest": "verification/WORKSPACE-DECLARATION-REMEDIATION-1/non-declaration-json-exceptions.json",
+  "canonical_task": "doc/tasks/WORKSPACE-DECLARATION-REMEDIATION-1.md",
+  "canonical_evidence_id": "EV-JSON-EXCEPTIONS",
+  "canonical_task_line": 125,
+  "pinned_commit": "cacd1c021a34c363f5b36d1b2b72f19f07acc081",
+  "pinned_blob_sha256": "c2f185fb489e4b89be28cdfb139eb649c7022a718d0d27877be4ca0d8fa4adc4",
+  "disk_raw_sha256": "238039dd3a9a70243ff8ffaee8dbf5b080e211cb8dc747de1a5da29211efdef2",
+  "disk_equals_pinned_blob": false,
+  "disk_crlf_to_lf_equals_blob": true,
+  "git_status": "",
+  "existing_entry_count": 67,
+  "required_boundary": "No historical manifest/Task/pin rewrite. Separate task required for new current config and default-path switch, preserving original67 entries.",
+  "proposed_write_paths_not_authorized_this_task": [
+    "tools/governance/non-declaration-json-exceptions.json",
+    "tools/governance/clean_workspace.py:DEFAULT_JSON_EXCEPTION_MANIFEST only"
+  ],
+  "transcript_workspace_raw_sha256": "6c68fab556eca2572f1062d7457f8a1b766a735f5fa49ccbc344eb0d20568bc8",
+  "versioned_transcript_lf_sha256": "6e67271a07d0cfec2a0b518c75f3fa2dfc2742a3637075bb1beac70958a485e5"
+}
