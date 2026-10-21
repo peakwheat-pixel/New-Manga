@@ -11,3 +11,5 @@ GOV-PATH-HEADER-COMPAT-1 done，独审78fc0cba2，集成9cae94142；main5测试e
 两日志研究GOV-NDJSON-NONDECL-IDENTITY-1已done，R2 approved54cfbadad，正式32错误身份保留、候选仅模拟32→30。自有表格断行修复后R2实际13EV/原日志保留2、保护1704→1718（快照）；默认/旧表/源日志/guard未改。
 下一优先GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1，限Handoff所列3治理Task先核实际注册/原pin，证实仅断行后才机械修正，不重开/改旧证据；完整转发指令见doc/handoffs/GOV-NDJSON-NONDECL-IDENTITY-1.md。未释放；配置迁移Task也未释放，不自动解除保护或清理。
 恢复先核对HEAD/status/common-dir/租约；原作者文件不得覆盖。
+
+自动推进进展：GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1已done，R2 edbd1a492批准。3表只删15空行，原51pin/所有非空行/状态/AC/Review不变，实际注册19/19/13，默认仍32。before正确重建排除新增文件，32身份与head相同；不把历史未跟踪快照当Git证明。下一自动冻结GOV-NDJSON-EXCEPTION-CONFIG-1，现有保护/清理禁令保留。

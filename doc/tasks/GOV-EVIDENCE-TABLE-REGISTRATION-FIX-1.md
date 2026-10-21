@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 title: 三个治理Task证据表连续性与实际保护注册修正
 kind: governance
 governance_version: 3
-status: approved
+status: done
 approval: user_auto_advance_20261021_scoped_mechanical_metadata_fix
 suggested_owner: Codex
 owner: Codex
@@ -14,10 +14,10 @@ depends_on: [GOV-NDJSON-NONDECL-IDENTITY-1]
 base_commit: f72dd96ee51f21cc24472b05cceaf488060b679a
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: edbd1a49273d6a1d776d6eeaf0a1cc969ba5d3d7
 delivery_head: 244d08e4eb5bb7aee1b6b54d0198093bcd16b48c
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1
 allowed_paths:
   - doc/tasks/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1.md
@@ -44,7 +44,7 @@ allowed_paths:
 - [x] **AC1** 逐Task原51pin raw磁盘/blob/SHA全部有效，记录原表行数/实际注册/状态。 <<MET>>
 - [x] **AC2** 仅移除3章节内空行，所有非空行序列/元数据/51 pin值不变；实际注册19/19/13，0 parser errors。 <<MET>>
 - [x] **AC3** 默认32错误完整身份不变，旧保护集合只增不减；原被pin文件/guard/正式表/用户与未跟踪内容不动；98/136不变。 <<MET>>
-- [ ] **AC4** 独立固定head Review、Codex集成/保留资源核销、证据注册与治理check完成，后续自动推进仍独立冻结范围。 <<PARTIAL: 等待固定head独立Review与核销>>
+- [x] **AC4** 独立固定head Review、Codex集成/保留资源核销、证据注册与治理check完成，后续自动推进仍独立冻结范围。 <<MET>>
 
 ## 禁止与验证
 
@@ -54,13 +54,15 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-|EV-1|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/.gitattributes|e24989eb37016554c67028e9812ec3e8a5c7c9cd|6c3ea912d1baf7bd93fe33a6c9f3653e83125326ee99b637594e6b3418c6b7d8|CANONICAL|
-|EV-2|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/before-reconstruction-proof.json|e24989eb37016554c67028e9812ec3e8a5c7c9cd|5c16bbd98b32e30ccc51e3110bf7da94b2ac56513a6ce787828ab7ff8de0d6f9|CANONICAL|
-|EV-3|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/checkpoint.md|e24989eb37016554c67028e9812ec3e8a5c7c9cd|db3b66c54967a76f271fef70f16ba6b20e244c565d6a9dbdf2ad8629fa219bbe|CANONICAL|
-|EV-4|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/deepseek-review-r1.md|e24989eb37016554c67028e9812ec3e8a5c7c9cd|7b0b2ee1ae9760de6828266f95d6c54b9c20b3144bee2890d2ffd36f8546f54d|CANONICAL|
-|EV-5|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/registration-proof.json|e24989eb37016554c67028e9812ec3e8a5c7c9cd|69ab5ed13c4b6d5c585ab79c4bcf68283b7fb744dfd3ae98d435bc0223f9ce3c|CANONICAL|
-|EV-6|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/report.md|e24989eb37016554c67028e9812ec3e8a5c7c9cd|a441a365038bccfef932fb4ab1c19f647738dcfbc8b1ec2ab009de94979a804b|CANONICAL|
-|EV-7|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/scope.json|e24989eb37016554c67028e9812ec3e8a5c7c9cd|f1c30a4d5cac296e1738b2878bb78709757c0bd24a569cbff9a4ccbfca69bcb5|CANONICAL|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/.gitattributes|bcb031b80f8aad80c111c01b8267caa5a245abac|6c3ea912d1baf7bd93fe33a6c9f3653e83125326ee99b637594e6b3418c6b7d8|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/before-reconstruction-proof.json|bcb031b80f8aad80c111c01b8267caa5a245abac|5c16bbd98b32e30ccc51e3110bf7da94b2ac56513a6ce787828ab7ff8de0d6f9|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/checkpoint.md|bcb031b80f8aad80c111c01b8267caa5a245abac|db3b66c54967a76f271fef70f16ba6b20e244c565d6a9dbdf2ad8629fa219bbe|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/closeout-validation.json|bcb031b80f8aad80c111c01b8267caa5a245abac|6c007aeb46f1ac8190699dbaeec1493fbb67a171ce45c545673e12c21bd2fa42|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/deepseek-review-r1.md|bcb031b80f8aad80c111c01b8267caa5a245abac|7b0b2ee1ae9760de6828266f95d6c54b9c20b3144bee2890d2ffd36f8546f54d|CANONICAL|
+|EV-6|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/deepseek-review-r2.md|bcb031b80f8aad80c111c01b8267caa5a245abac|278aaf6641ffc736d6c70cb2bd141c63057c025058ffb68d9547a502da89120c|CANONICAL|
+|EV-7|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/registration-proof.json|bcb031b80f8aad80c111c01b8267caa5a245abac|69ab5ed13c4b6d5c585ab79c4bcf68283b7fb744dfd3ae98d435bc0223f9ce3c|CANONICAL|
+|EV-8|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/report.md|bcb031b80f8aad80c111c01b8267caa5a245abac|a441a365038bccfef932fb4ab1c19f647738dcfbc8b1ec2ab009de94979a804b|CANONICAL|
+|EV-9|AC1/AC2/AC3/AC4|verification/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1/scope.json|bcb031b80f8aad80c111c01b8267caa5a245abac|f1c30a4d5cac296e1738b2878bb78709757c0bd24a569cbff9a4ccbfca69bcb5|CANONICAL|
 
 ## Resource Manifest
 
@@ -72,3 +74,5 @@ allowed_paths:
 R1独审changes_requested（fa18dc2c6）：实现/51pin/实际注册/旧保护子集均通过；需解释before重建34而实测32的差异。暂停集成后续配置，独立定位两额外错误。
 
 定位结果：R1的两条额外JSON_PARSE来自将base不存在的本Task scope.json/registration-proof.json保留在HEAD枚举并返回空字节。不存在文件不等于空JSON。正确重建将HEAD新增文件从Git枚举中排除，再对原有变更文件回填base字节，固定当前未跟踪快照，结果base32/head32完全同身份，base1722为head1758子集；三个base文件分别注册9/12/0且0error。详before-reconstruction-proof.json，原实现/51pin/registration-proof不改。关于用户/未跟踪内容，只声明本Task未执行越界写入；未做全体逐字节基线，不能由Git证明全体未变。
+
+Closeout：R2独审/51原pin/3表注册/默认32身份/只增保护/保留资源均通过，0删除/迁移/归档。仅本Task终态，3个旧Task原状态不改，父Task仍blocked。下一配置Task由用户auto授权但需另冻结，旧表/pin不动。
