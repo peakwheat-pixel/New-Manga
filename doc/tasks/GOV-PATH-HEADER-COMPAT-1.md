@@ -3,7 +3,7 @@ id: GOV-PATH-HEADER-COMPAT-1
 title: 固定模板路径列表头兼容，保留所有 fail-closed 门槛
 kind: governance-hardening
 governance_version: 3
-status: in_review
+status: approved
 approval: codex_scoped_technical_followup_user_boundary_continuation_20261021
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: e7cbcada6d1a5c01f9c55e888e30c3efba20e1ff
 branch: codex/gov-path-header-compat-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1
 integration_commit: null
-delivery_head: 9f59537f989299c4ee6f41993134aa69d6cfbc12
+delivery_head: 78fc0cba26d0f52f3bb86014076039c0212dd4f0
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-PATH-HEADER-COMPAT-1
@@ -92,3 +92,9 @@ created: 2026-10-21
 固定实现与证据 9f59537f989299c4ee6f41993134aa69d6cfbc12；5新增+29声明+80安全测试通过、0skip；baseline判别预期exit1；双incident replay各15/15拒绝、0删除；同快照77→32，1280旧根全部保留并新增410。源helper/code未在main实施。工作树已创建且按清理禁令保留；临时测试自有夹具由test cleanup回收，剩余temp根保留。Handoff在Review/集成后追加。
 
 原始判别失败日志含unittest固有尾随空格；仅对该日志设置局部-whitespace，保留原始输出，不更改源码或其它文件的检查规则。工作树Owner更新Task副本；canonical治理由main现有epoch9 gate串行同步，不复制/分叉runtime租约。
+
+## Review 裁定与记录修正
+
+DSH R2 session-90adda56-6155-4d06-95df-667579988499，EXIT0，approved 固定78fc0cba26d0f52f3bb86014076039c0212dd4f0；仅精确代码集成，不批准清理/父Task done。R1因工作树shell ACL受阻未批准，R2从canonical root完成Git检查；测试和12pin字节校验为Owner实测，独审未冒称重跑。
+
+P2记录闭环：delivery_head更新为实际审查head；EV12源提交9ea78f1aa正确（git log -- .gitattributes可核验），1a958d770只修改Task的pin，并未修改属性文件，不伪造迁移来源。前置内存模拟1277→1687，实际冻结Task增加三个资源根后同快照实测1280→1690；两者旧根全部保留且均+410，不混用绝对快照值。

@@ -1,0 +1,62 @@
+{
+  "reviewed_head": "78fc0cba26d0f52f3bb86014076039c0212dd4f0",
+  "diff_base": "93c4eb2ca907a53af500634637582ed7ebeba0eb",
+  "pins": [
+    {
+      "id": "EV-1",
+      "ok": true
+    },
+    {
+      "id": "EV-2",
+      "ok": true
+    },
+    {
+      "id": "EV-3",
+      "ok": true
+    },
+    {
+      "id": "EV-4",
+      "ok": true
+    },
+    {
+      "id": "EV-5",
+      "ok": true
+    },
+    {
+      "id": "EV-6",
+      "ok": true
+    },
+    {
+      "id": "EV-7",
+      "ok": true
+    },
+    {
+      "id": "EV-8",
+      "ok": true
+    },
+    {
+      "id": "EV-9",
+      "ok": true
+    },
+    {
+      "id": "EV-10",
+      "ok": true
+    },
+    {
+      "id": "EV-11",
+      "ok": true
+    },
+    {
+      "id": "EV-12",
+      "ok": true
+    }
+  ],
+  "new-tests": {
+    "exit": 0,
+    "output": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.001s\r\n\r\nOK\r\n"
+  },
+  "diff-check": {
+    "exit": 0,
+    "output": ""
+  }
+}
