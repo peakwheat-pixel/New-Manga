@@ -3,7 +3,7 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: ready
+status: in_progress
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
