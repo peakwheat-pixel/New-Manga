@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-10-21T13:30:53.061111+00:00",
+  "task": "GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
+  "kind": "REVIEW_OUT_OF_SCOPE_EMPTY_DIRECTORY_EXCEPTION",
+  "directories": [
+    {
+      "original_path": "G:/CODEX/New Manga/dsh-probe-36zy1stn",
+      "exists": true,
+      "entries": [],
+      "mtime_ns": 1792588644683805400,
+      "origin": "DSH first review session session-0fa5098c-d90a-465f-b919-9eb52e3b8418 public tool_result permission probes",
+      "state": "PRESERVE_REFERENCED; no removal or migration authorization",
+      "process_state": "owned review node PID27644 stopped; no descendants remain",
+      "recovery": "empty directory retained at original path; no source content moved or lost",
+      "inventory_sha256": "11f6271587cdf9a69192708d4c9e1d0377aa234eccbfe425323d14a5fe0e5a9d"
+    },
+    {
+      "original_path": "G:/CODEX/New Manga/dsh-probe-6lu_0g3w",
+      "exists": true,
+      "entries": [],
+      "mtime_ns": 1792588661626112800,
+      "origin": "DSH first review session session-0fa5098c-d90a-465f-b919-9eb52e3b8418 public tool_result permission probes",
+      "state": "PRESERVE_REFERENCED; no removal or migration authorization",
+      "process_state": "owned review node PID27644 stopped; no descendants remain",
+      "recovery": "empty directory retained at original path; no source content moved or lost",
+      "inventory_sha256": "fec169e2d3244c7f83a6f499bee7f6222153f830429bb581d0742332a8b8892a"
+    },
+    {
+      "original_path": "G:/CODEX/New Manga/dsh-probe-dagqohp7",
+      "exists": true,
+      "entries": [],
+      "mtime_ns": 1792588750743325400,
+      "origin": "DSH first review session session-0fa5098c-d90a-465f-b919-9eb52e3b8418 public tool_result permission probes",
+      "state": "PRESERVE_REFERENCED; no removal or migration authorization",
+      "process_state": "owned review node PID27644 stopped; no descendants remain",
+      "recovery": "empty directory retained at original path; no source content moved or lost",
+      "inventory_sha256": "9f2472758abcfd478c9a5edf4e1f0e038952b8c29a27234e9af1cda52681f24f"
+    },
+    {
+      "original_path": "G:/CODEX/New Manga/dsh-probe-npzn41rw",
+      "exists": true,
+      "entries": [],
+      "mtime_ns": 1792588759724741700,
+      "origin": "DSH first review session session-0fa5098c-d90a-465f-b919-9eb52e3b8418 public tool_result permission probes",
+      "state": "PRESERVE_REFERENCED; no removal or migration authorization",
+      "process_state": "owned review node PID27644 stopped; no descendants remain",
+      "recovery": "empty directory retained at original path; no source content moved or lost",
+      "inventory_sha256": "14ed87b5f79e4638c810f52bfc32bfd3e1be121d5f39a82c084631218d7e16f3"
+    },
+    {
+      "original_path": "G:/CODEX/New Manga/dsh-probe-ut0j1y6p",
+      "exists": true,
+      "entries": [],
+      "mtime_ns": 1792588673310742800,
+      "origin": "DSH first review session session-0fa5098c-d90a-465f-b919-9eb52e3b8418 public tool_result permission probes",
+      "state": "PRESERVE_REFERENCED; no removal or migration authorization",
+      "process_state": "owned review node PID27644 stopped; no descendants remain",
+      "recovery": "empty directory retained at original path; no source content moved or lost",
+      "inventory_sha256": "b19e91be420881a91da37bec94f9c982102b1e737eca4ac5e6e2644a9ec6865f"
+    }
+  ],
+  "real_deletions": 0,
+  "real_moves": 0,
+  "source_content_changed": false,
+  "cleanup_authorization": "NOT_GRANTED; preserve under r212",
+  "not_a_review_approval": true
+}
