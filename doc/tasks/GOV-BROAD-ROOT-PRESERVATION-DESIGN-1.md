@@ -3,7 +3,7 @@ id: GOV-BROAD-ROOT-PRESERVATION-DESIGN-1
 title: 五个广域根整体保护的精确保全解释设计
 kind: design
 governance_version: 3
-status: changes_requested
+status: in_review
 approval: user_broad_roots_preserve_all_20261021_design_only
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: 3d0a36ac04d30eba0906e70218ef9491c5b9ffbc
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: c9d6b19514c7e3ea2b21dc40c37bf705729c69d7
+delivery_head: e33a51b4df4856b9bdfe2dd8e57b84f1c395a797
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1
@@ -51,13 +51,15 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-|EV-1|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/.gitattributes|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
-|EV-2|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/binding-specimen.json|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|95be5dfdc7c1ea0022a29cecd3ccc87fe096d4dadae9a077a33c46c6ccf36ea6|CANONICAL|
-|EV-3|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/checkpoint.md|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|ace9c1e1f102eaeea57cfdec16ace0a8db7e3e12338cef0e279c0a7226647bc2|CANONICAL|
-|EV-4|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/design.md|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|a01aa5df7f2ba2520f93043390001aad7fe3068cdd3da5bb16f406274b0a963f|CANONICAL|
-|EV-5|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/model-proof.json|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|e1948cdbb129009ccea7027c72b1da5b63435478b7cc10d693e54b0681988dcc|CANONICAL|
-|EV-6|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/preservation-validation.json|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|8a742b547351e6e0e47c2aa11c2b3050359c4570de8f973c4f22af095437d5b3|CANONICAL|
-|EV-7|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/ruling.md|c9d6b19514c7e3ea2b21dc40c37bf705729c69d7|4f9b206ce835fabf029d2a59ff70e3116febbe26302928978090117b4d375f38|CANONICAL|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/.gitattributes|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/binding-specimen.json|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|95be5dfdc7c1ea0022a29cecd3ccc87fe096d4dadae9a077a33c46c6ccf36ea6|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/checkpoint.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|ace9c1e1f102eaeea57cfdec16ace0a8db7e3e12338cef0e279c0a7226647bc2|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/design.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|f29d6eaadbc0fb46e48294772c401391b9d57226745e03e04f767f140bc0cf15|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/model-proof.json|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|be39c47baf9bdb989a173f56d83d0b45fe13a4fe4bf7dbfdbc1a7091ec3fb550|CANONICAL|
+|EV-6|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/preservation-validation.json|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|8a742b547351e6e0e47c2aa11c2b3050359c4570de8f973c4f22af095437d5b3|CANONICAL|
+|EV-7|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/r1-response.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|acb3d5de2c0cc07ad953a7b4e1dcf55c8672b417fd7ec2b5d3aee4add6d5a1f6|CANONICAL|
+|EV-8|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/review-dsh-r1.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|94b28aa611559c45cd790bdd997efd30b3222091de51e1a95b72352899cb2764|CANONICAL|
+|EV-9|AC1/AC2/AC3/AC4|verification/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1/ruling.md|e33a51b4df4856b9bdfe2dd8e57b84f1c395a797|4f9b206ce835fabf029d2a59ff70e3116febbe26302928978090117b4d375f38|CANONICAL|
 
 ## Resource Manifest
 
@@ -65,3 +67,5 @@ allowed_paths:
 |---|---|---|---|---|---|
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1 | doc/tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md | 设计/模型/独审输出保留 |
 | worktree/env/build | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无新建 |
+
+R1独审3879cb936 changes_requested已记录review-dsh-r1.md；e33a51b4d修订两P1/三P2，处理矩阵r1-response.md；R2须固定新head复审。15覆盖模型重算、warnings254→266；真实仍24。

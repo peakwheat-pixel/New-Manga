@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-BROAD-ROOT-PRESERVATION-DESIGN-1](tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md)**（`changes_requested`；用户裁定5根整体保护，仅设计、DeepSeek独审）。
+- 当前 Task：**[GOV-BROAD-ROOT-PRESERVATION-DESIGN-1](tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md)**（`in_review`；用户裁定5根整体保护，仅设计、DeepSeek独审）。
 - 最近完成：[GOV-RESIDUAL-24-DECISION-1](tasks/GOV-RESIDUAL-24-DECISION-1.md) `done`，独审d1ad7e525。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式24错误/原保护/STATUS-r212禁令有效。
 - 收敛基线97/135；当前99本地分支/137工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
