@@ -1,0 +1,152 @@
+{
+  "measurement": "Before final EV pins; snapshots are not perpetual live counts",
+  "baseline_head": "cc72f6a822f0c7823a50996d9e43674147bc7b4a",
+  "before_counts": {
+    "declarations": 2552,
+    "protected_roots": 1865,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 383,
+      "EVIDENCE_PIN": 1739,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 374,
+      "PRESERVE_UNKNOWN": 33,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 270
+  },
+  "after_counts": {
+    "declarations": 2560,
+    "protected_roots": 1869,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 387,
+      "EVIDENCE_PIN": 1739,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 377,
+      "PRESERVE_UNKNOWN": 34,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 270
+  },
+  "complete_error_identities_unchanged": true,
+  "errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "old_protected_subset": true,
+  "old_protected_count": 1865,
+  "after_protected_count": 1869,
+  "added_protected_roots": [
+    "g:/codex/new manga/verification/p09-governance-debt-20261019/codex-closeout-p19-view-r12.md",
+    "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r1.md",
+    "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r2.md",
+    "g:/codex/new manga/verification/p22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md"
+  ],
+  "four_sources": [
+    {
+      "path": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "raw_unchanged": true,
+      "protected_before": false,
+      "protected_after": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "raw_unchanged": true,
+      "protected_before": false,
+      "protected_after": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "raw_unchanged": true,
+      "protected_before": false,
+      "protected_after": true
+    },
+    {
+      "path": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "raw_unchanged": true,
+      "protected_before": false,
+      "protected_after": true
+    }
+  ],
+  "branches": 101,
+  "worktrees": 139,
+  "governance_tool_source_unchanged": true,
+  "raw_source_changes": 0,
+  "real_resource_operations": 0,
+  "process_handles": "NOT_RUN; no disposition or deletion inferred",
+  "product_build": "NOT_RUN; read-only research",
+  "old127_tests": "NOT_RUN; no implementation changes"
+}
