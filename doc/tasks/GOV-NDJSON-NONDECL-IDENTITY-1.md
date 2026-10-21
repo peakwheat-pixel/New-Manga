@@ -3,7 +3,7 @@ id: GOV-NDJSON-NONDECL-IDENTITY-1
 title: 两份P02 NDJSON证据的非声明身份与精确例外适用性核验
 kind: research
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_continue_next_readonly_identity_verification_20261021
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: 50d784300ac74d6ded633685bfce201cdddb630a
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 488ab6cbec7774df8c0c3b2e8a9e169750a92101
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-NDJSON-NONDECL-IDENTITY-1
@@ -39,10 +39,10 @@ Codex串行文档写入main，DeepSeek固定commit独审。只读两日志及其
 
 ## Acceptance Criteria
 
-- [ ] **AC1** 两日志raw SHA/Git状态、逐行JSON/完整消费、schema/kind种类和全部结构化声明身份键核验；如存在引用路径，区分日志指针与保护声明，不把格式有效当无声明。 <<NOT_RUN>>
-- [ ] **AC2** 明确现有例外的精确path/hash/reason、加载/绕过时点和信任边界；候选匹配、不匹配路径、不匹配字节、无例外及变化后声明等负例有实际结果或明确NOT_RUN，不泛化坏JSON豁免。 <<NOT_RUN>>
-- [ ] **AC3** 同数据快照正式32错误保留；候选若32→30只能移除R23/R24且旧保护集合不减少；原日志、正式例外表和guard字节/status前后不变。 <<NOT_RUN>>
-- [ ] **AC4** 固定head独立DeepSeek Review、Codex裁定、Handoff/证据pin/保留资源核销和治理check完成；是否需后续写范围作出明确裁定。 <<NOT_RUN>>
+- [x] **AC1** 两日志raw SHA/Git状态、逐行JSON/完整消费、schema/kind种类和全部结构化声明身份键核验；如存在引用路径，区分日志指针与保护声明，不把格式有效当无声明。 <<MET>>
+- [x] **AC2** 明确现有例外的精确path/hash/reason、加载/绕过时点和信任边界；候选匹配、不匹配路径、不匹配字节、无例外及变化后声明等负例有实际结果或明确NOT_RUN，不泛化坏JSON豁免。 <<MET>>
+- [x] **AC3** 同数据快照正式32错误保留；候选若32→30只能移除R23/R24且旧保护集合不减少；原日志、正式例外表和guard字节/status前后不变。 <<MET>>
+- [ ] **AC4** 固定head独立DeepSeek Review、Codex裁定、Handoff/证据pin/保留资源核销和治理check完成；是否需后续写范围作出明确裁定。 <<PARTIAL: 独立Review及Codex closeout待完成>>
 
 ## 禁止范围
 
@@ -56,6 +56,17 @@ PowerShell/Python -B；只读标准库诊断与现有guard函数调用，不新�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/.gitattributes|488ab6cbec7774df8c0c3b2e8a9e169750a92101|cb96a500d3bdb6d5602a449af7f58a3e21155e9e72bbbc1684c8002c3982bd8f|SOURCE_PIN|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/checkpoint.md|488ab6cbec7774df8c0c3b2e8a9e169750a92101|8e497737ca6eb0cdf163a7787830c542cd554292f8788401e13e060ee5e63101|SOURCE_PIN|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/identity-proof.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|07c82d93d1d8e407fa9ebce02dcc224ae17fff13e6cb6d1ac1a889c34b55f88c|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/manifest-provenance.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|0361cfbd12937b3dae8442b2bd58041d255f906a974ad12aedc53da56d3919e1|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/mechanism-proof.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|15f80f52a14362f1951312cd6c09d838d67210bbaf3657996dda941a5fb5e80a|CANONICAL|
+|EV-6|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/probe-first-attempt.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|cf213021dec5b1b5c7928a221a7cfc6868b047e3bc4f52af006f799ed9dcf2f1|SOURCE_PIN|
+|EV-7|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/probe-run.log|488ab6cbec7774df8c0c3b2e8a9e169750a92101|6e67271a07d0cfec2a0b518c75f3fa2dfc2742a3637075bb1beac70958a485e5|SOURCE_PIN|
+|EV-8|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/probe-source.py.txt|488ab6cbec7774df8c0c3b2e8a9e169750a92101|6482b10b4626600236fdfedfa31f079abec43084a85676edcd40d69396c96bd5|SOURCE_PIN|
+|EV-9|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/report.md|488ab6cbec7774df8c0c3b2e8a9e169750a92101|53fc2e73df0633acb2a26aca48adb0466f9b8aacf9621bb53508e532a997f6cf|CANONICAL|
+|EV-10|AC1/AC2/AC3/AC4|verification/GOV-NDJSON-NONDECL-IDENTITY-1/scope.json|488ab6cbec7774df8c0c3b2e8a9e169750a92101|2cba2846d3f7fc52f2a5781535f8728adacb6845b04072a3975d6884f5710aa6|CANONICAL|
 
 ## Resource Manifest
 
@@ -72,3 +83,7 @@ PowerShell/Python -B；只读标准库诊断与现有guard函数调用，不新�
 ready冻结后认领；Reviewer只读，审查期间Owner暂停被审文档写入。研究与候选输入不等于实际例外登记。Handoff/Review待交付。
 
 两原始日志显式列为本Task保留证据：非声明分类只讨论保护解析Schema，不取消其历史证据价值或内部引用；不因候选例外而允许删除日志或其引用对象。
+
+## 交付记录
+
+证据488ab6cbec7774df8c0c3b2e8a9e169750a92101：NDJSON共6/64值、种类1/4/1及1/62/1，实际当前声明parser均0；6候选/负例EXIT0，正式默认32身份完整保留，候选仅消两项32→30、原保护集合不减，98heads/136worktrees。正式表是旧Canonical Evidence；磁盘CRLF与历史Git blob hash区分，禁止原地更新。未来最小写范围为新当前配置+默认常量，未释放。审查期间暂停被审文档写入。
