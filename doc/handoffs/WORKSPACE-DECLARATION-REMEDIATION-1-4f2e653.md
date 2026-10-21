@@ -7,7 +7,7 @@ status: in_review
 review_round: r6 changes_requested fixes (docs/evidence only)
 base_commit: 83b111ac104d47b30cf0842f553f97656cd0d8d1
 start_commit: f0f19596f
-evidence_commit: 421706788ed86d5860a0423443e6323f944c5580
+evidence_commit: 4f2e65304152b0c8ae8b810d4eb5f6be128d05ef
 date: 2026-10-21
 branch: dsh/WORKSPACE-DECLARATION-REMEDIATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
@@ -38,7 +38,7 @@ sha256 聚合；before/after 命令记录实际 argv（含 `--out`），见 `evi
   `G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1`
   （`PRESERVE_REFERENCED`）与 `temp/WORKSPACE-DECL-REMEDIATION/pycache`
   （`NOT_APPLICABLE`，存在但空、未删除，留待核销）；`resource_closeout_status` 改为 `pending`。
-- **F-02 Handoff 锚点**：正文 §5 统一为 `421706788ed86d5860a0423443e6323f944c5580`；清理旧轮次正文元数据。
+- **F-02 Handoff 锚点**：正文 §5 统一为 `4f2e65304152b0c8ae8b810d4eb5f6be128d05ef`；清理旧轮次正文元数据。
 - **F-03 ambiguous 夹具**：改为**同 table role** 的多 code 输入
   （`TABLE_OLD_UNLISTED` + `TABLE_ROW_ARITY`/`TABLE_SCHEMA_INCOMPLETE`），锁定 ambiguous 分支。
 - **F-04 whitespace**：`REMEDIATION.md` 与测试文件 EOF 规范为单换行；`git diff --check` 通过。
@@ -64,7 +64,7 @@ sha256 聚合；before/after 命令记录实际 argv（含 `--out`），见 `evi
 
 ## 5. 提交 / 证据
 
-- evidence commit：`421706788ed86d5860a0423443e6323f944c5580`（32 条 Canonical Evidence 行 pin 它）
+- evidence commit：`4f2e65304152b0c8ae8b810d4eb5f6be128d05ef`（32 条 Canonical Evidence 行 pin 它）
 - Task-only 记录 commit：紧随其后（本 Handoff + Task 文件）
 - 报告/证据：`REMEDIATION.md`、`RESIDUAL.md`、`TRIAGE.md`、`audit-before/after.json`、
   `non-declaration-json-exceptions.json`、`evidence/`（manifest/snapshots/run-evidence/logs）。
