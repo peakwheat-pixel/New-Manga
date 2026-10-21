@@ -47,6 +47,7 @@ from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsServ
 from application.maintenance.trash import _JsonTrashManifest
 from application.reading.service import ReadingService
 from application.rendering.service import RenderService
+from application.resource_channel.dto import E_NOT_FOUND, TypedResourceChannelError
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
@@ -107,6 +108,7 @@ from infrastructure.sqlite.reading_export import (
 from infrastructure.export.jobs import JsonExportJobStore
 from infrastructure.export.qt_free import QtFreePdfComposer
 from infrastructure.export.target_refs import ExportTargetGrantRegistry
+from infrastructure.resource_channel.handle_resolver import ManagedRootTrust
 from infrastructure.resource_channel.import_source_refs import ImportSourceGrantRegistry
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
@@ -162,18 +164,46 @@ class _BoundedDiagnosticsSink:
         return str(self._store.write(payload.decode("utf-8"), timestamp=timestamp))
 
 
+def _root_trust_for(owner: object) -> ManagedRootTrust:
+    """The owner's managed-root snapshot, captured once if not injected.
+
+    The production assembly passes the start-up snapshot explicitly; a legacy
+    or test construction that bypasses ``__init__`` captures one on first use
+    (fail-closed either way).  R-005: one copy instead of two.
+    """
+
+    trust = getattr(owner, "_root_trust", None)
+    if trust is None:
+        trust = ManagedRootTrust.capture(owner._storage.root)
+        owner._root_trust = trust
+    return trust
+
+
 class _ManagedPageCatalog:
-    """Expose SQLite pages and immutable Managed Copy URLs to the Viewer."""
+    """Expose SQLite pages and immutable Managed Copy URLs to the Viewer.
+
+    P09-MANAGED-READ-ROOT-TRUST-1: every managed reference is admitted through
+    the start-up ``ManagedRootTrust`` snapshot (object identity + canonical
+    root), never through a re-resolved root.  The snapshot is passed in by the
+    assembly; a legacy construction that bypasses ``__init__`` captures one on
+    first use (fail-closed either way).
+    """
 
     def __init__(
         self,
         repository: SqliteLibraryRepository,
         storage: ManagedFileStorage,
         locator: SqlitePageArtifactLocator,
+        *,
+        root_trust: ManagedRootTrust | None = None,
     ) -> None:
         self._repository = repository
         self._storage = storage
         self._locator = locator
+        self._root_trust = root_trust
+
+    def _trust(self) -> ManagedRootTrust:
+        return _root_trust_for(self)
 
     def list_pages(self, chapter_id: str):
         return self._repository.list_pages(chapter_id)
@@ -224,22 +254,24 @@ class _ManagedPageCatalog:
             ref = page.managed_original_ref
         if not ref:
             return "missing"
-        root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(ref)).resolve()
+        # P09-MANAGED-READ-ROOT-TRUST-1: the identity/canonical check comes from
+        # the frozen root snapshot and the opened handle, so a configured-root
+        # ancestor repointed after start-up is "invalid", never "ok".
         try:
-            path.relative_to(root)
-        except ValueError:
+            self._trust().verify_existing(ref)
+        except TypedResourceChannelError:
             return "invalid"
-        return "ok" if path.is_file() else "invalid"
+        return "ok"
 
     def _uri_within(self, ref: str) -> str:
-        root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(ref)).resolve()
+        # P09-MANAGED-READ-ROOT-TRUST-1: same frozen-baseline admission as
+        # ``image_state``; the URI is built from the handle-verified canonical
+        # path (never from a fresh ``Path.resolve()``).
         try:
-            path.relative_to(root)
-        except ValueError:
+            verified = self._trust().verify_existing(ref)
+        except TypedResourceChannelError:
             return ""
-        return path.as_uri() if path.is_file() else ""
+        return Path(verified).as_uri()
 
 
 class _ManagedPageImageSource:
@@ -247,6 +279,11 @@ class _ManagedPageImageSource:
 
     Only the immutable Managed Copy is read; a missing or undecodable file is a
     typed provider-input failure, never an empty image.
+
+    P09-MANAGED-READ-ROOT-TRUST-1: the pixels come from bytes read through a
+    ``ManagedRootTrust``-verified handle (``QImage.fromData``), so the file that
+    was identity/canonical-path verified is the file Qt decodes -- the previous
+    ``QImage(str(path))`` re-resolved the name after the check.
     """
 
     def __init__(
@@ -254,10 +291,16 @@ class _ManagedPageImageSource:
         repository: SqliteLibraryRepository,
         storage: ManagedFileStorage,
         regions: SqliteRegionRepository,
+        *,
+        root_trust: ManagedRootTrust | None = None,
     ) -> None:
         self._repository = repository
         self._storage = storage
         self._regions = regions
+        self._root_trust = root_trust
+
+    def _trust(self) -> ManagedRootTrust:
+        return _root_trust_for(self)
 
     def _page_image(self, page_id: str):
         from PySide6.QtGui import QImage
@@ -267,23 +310,22 @@ class _ManagedPageImageSource:
             raise ProviderInputError(
                 f"page {page_id!r} has no managed original", stage="image-source"
             )
-        root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(page.managed_original_ref)).resolve()
+        ref = page.managed_original_ref
         try:
-            path.relative_to(root)
-        except ValueError as error:
+            data = self._trust().read_bytes(ref)
+        except TypedResourceChannelError as error:
+            if error.code == E_NOT_FOUND:
+                raise ProviderInputError(
+                    f"managed original is missing: {ref}", stage="image-source"
+                ) from error
             raise ProviderInputError(
                 f"managed original for {page_id!r} escapes the data root",
                 stage="image-source",
             ) from error
-        if not path.is_file():
-            raise ProviderInputError(
-                f"managed original is missing: {path}", stage="image-source"
-            )
-        image = QImage(str(path))
+        image = QImage.fromData(data)
         if image.isNull():
             raise ProviderInputError(
-                f"managed original is not decodable: {path}", stage="image-source"
+                f"managed original is not decodable: {ref}", stage="image-source"
             )
         return image
 
@@ -624,6 +666,11 @@ class CoreServices:
     #: Reader tile factory (Qt-free: stdlib streaming PNG, TASK-020/042);
     #: the cache lives under the managed root.
     tile_factory: Callable[[str], TiledPageRasterizer]
+    #: P09-MANAGED-READ-ROOT-TRUST-1: the start-up identity snapshot of the
+    #: configured managed root.  Read paths must admit references through it
+    #: instead of re-resolving the root (a junction above the root would move
+    #: both sides of a resolve-then-compare check).  Provenance object only.
+    managed_root_trust: object = None
     #: M2-PROD-DETECT-3: the detection adapter the pipeline ``detect`` step
     #: uses (manga/doctr backend selection + weights resolution, or the mock
     #: provider behind ``mock_local_providers``), exposed so the frozen
@@ -847,6 +894,11 @@ def assemble_core_services(
         repository = SqliteLibraryRepository(conn)
         storage = ManagedFileStorage(managed_root)
         storage.ensure_layout()
+        # P09-MANAGED-READ-ROOT-TRUST-1: freeze the managed-root identity BEFORE
+        # any business read can happen.  This is the "expected identity" every
+        # managed read is checked against; it is an object property taken from a
+        # real handle, so a later re-resolution cannot move it.
+        managed_root_trust = ManagedRootTrust.capture(managed_root)
         library = LibraryService(repository)
         regions = SqliteRegionRepository(conn)
 
@@ -1111,7 +1163,9 @@ def assemble_core_services(
             regions=regions,
             region_writer=RegionStepWriter(conn, regions),
             artifacts=ArtifactStepWriter(conn, storage),
-            images=_ManagedPageImageSource(repository, storage, regions),
+            images=_ManagedPageImageSource(
+                repository, storage, regions, root_trust=managed_root_trust
+            ),
             geometry=_RegionGeometrySource(regions),
             retry_policy=provider_runtime.retry_policy,
             heavy_runner=provider_runtime.heavy_runner,
@@ -1230,7 +1284,10 @@ def assemble_core_services(
             )
 
         page_catalog = _ManagedPageCatalog(
-            repository, storage, SqlitePageArtifactLocator(conn)
+            repository,
+            storage,
+            SqlitePageArtifactLocator(conn),
+            root_trust=managed_root_trust,
         )
         reader_catalog = _ManagedReaderCatalog(
             repository, storage, SqlitePageArtifactLocator(conn), conn
@@ -1240,6 +1297,7 @@ def assemble_core_services(
             conn=conn,
             repository=repository,
             storage=storage,
+            managed_root_trust=managed_root_trust,
             importer=importer,
             document_importer=document_importer,
             trash=trash,

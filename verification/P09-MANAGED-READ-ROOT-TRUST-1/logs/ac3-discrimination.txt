@@ -1,0 +1,24 @@
+P09-MANAGED-READ-ROOT-TRUST-1 / AC3 �� per-site discrimination
+base_commit  = b8a1e519703f13af73b320dded117004b4bb189a
+scratch_root = G:\CODEX\New Manga.workspace\temp\P09-MANAGED-READ-ROOT-TRUST-1
+base pytest exit=1  current pytest exit=0
+base outcomes:    14 tests observed
+current outcomes: 14 tests observed
+
+row    test                                                                   base       current    verdict
+site1  test_site1_read_original_page_reader_refuses_repointed_ancestor        FAILED     PASSED     OK
+site2  test_site2_resolve_page_resource_refuses_repointed_ancestor            FAILED     PASSED     OK
+site3  test_site3_checked_managed_path_refuses_repointed_ancestor             FAILED     PASSED     OK
+site4  test_site4_protected_export_target_uses_frozen_managed_baseline        FAILED     PASSED     OK
+site5  test_site5_image_state_refuses_repointed_ancestor                      FAILED     PASSED     OK
+site6  test_site6_uri_within_refuses_repointed_ancestor                       FAILED     PASSED     OK
+site7  test_site7_page_image_source_decodes_verified_handle_bytes             FAILED     PASSED     OK
+site8  test_site8_resolve_namespace_identity_refuses_swap_between_walk_and_open FAILED     PASSED     OK
+
+AC2    test_ancestor_junction_is_allowed_for_legal_reads                      PASSED     PASSED     OK
+
+R-001/2 test_directory_substitution_is_refused_by_the_opened_handle           FAILED     PASSED     OK
+R-001/2 test_site3_export_hash_refuses_repointed_ancestor                     FAILED     PASSED     OK
+R-001/2 test_site3_lazy_export_provider_refuses_repointed_ancestor            FAILED     PASSED     OK
+
+RESULT = PASS

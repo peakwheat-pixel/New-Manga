@@ -1,0 +1,17 @@
+================================================================
+P09-MANAGED-READ-ROOT-TRUST-1 suite log
+generated : 2026-10-21T10:56:50+08:00
+shell     : pwsh 7.6.6
+os        : Microsoft Windows NT 10.0.26300.0
+python    : C:/Python314/python.exe (3.14.6)
+python exe: C:\Python314\python.exe
+cwd       : G:\CODEX\New Manga.workspace\worktrees\P09-MANAGED-READ-ROOT-TRUST-1
+suite     : tests/library
+command   : C:/Python314/python.exe -m pytest tests/library -q
+exits     : pytest exit code recorded below as EXIT=<code>
+================================================================
+...............................................................          [100%]
+63 passed in 2.53s
+
+
+EXIT=0

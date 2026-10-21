@@ -1,0 +1,8 @@
+tests/core exit=0 :: file:///G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null | file:///G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+tests/storage exit=0 :: ...............                                                          [100%] | 87 passed in 5.13s
+tests/m2_resource_channel exit=0 :: ..................................                                       [100%] | 106 passed in 5.61s
+tests/security exit=0 :: ...........................................                              [100%] | 43 passed in 2.01s
+tests/library exit=0 :: ...............................................................          [100%] | 63 passed in 2.53s
+tests/reading_export exit=0 :: .....................................................................    [100%] | 141 passed in 18.36s
+tests/export exit=0 :: .............                                                            [100%] | 13 passed in 25.67s
+tests/m2_acceptance exit=0 :: .....................................                                    [100%] | 37 passed in 19.62s

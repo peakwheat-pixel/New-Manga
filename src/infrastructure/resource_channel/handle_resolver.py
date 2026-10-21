@@ -46,11 +46,19 @@ GENERIC_READ = 0x80000000
 GENERIC_WRITE = 0x40000000
 FILE_SHARE_READ = 0x00000001
 FILE_SHARE_WRITE = 0x00000002
+FILE_SHARE_DELETE = 0x00000004
 OPEN_EXISTING = 3
 CREATE_NEW = 1
 FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
 FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+FILE_ATTRIBUTE_DIRECTORY = 0x10
 FILE_ATTRIBUTE_NORMAL = 0x80
+
+#: P09-MANAGED-READ-ROOT-TRUST-1: the managed-read trust boundary opens with the
+#: SAME share mode a plain ``Path.read_bytes()`` used before it (CPython's
+#: ``_wopen`` shares everything), so putting the identity check in front of the
+#: read cannot introduce a new sharing refusal (AC2: legal reads never regress).
+_FILE_SHARE_ALL = FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
 INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value
 ERROR_SHARING_VIOLATION = 32
 ERROR_FILE_NOT_FOUND = 2
@@ -181,12 +189,18 @@ def _final_path_of(handle: int) -> str:
     return buffer.value
 
 
-def _normalized(path_text: str) -> str:
+def _display_path(path_text: str) -> str:
+    """``GetFinalPathNameByHandleW`` form -> ordinary DOS path form."""
+
     if path_text.startswith("\\\\?\\UNC\\"):
-        path_text = "\\\\" + path_text[8:]
-    elif path_text.startswith("\\\\?\\"):
-        path_text = path_text[4:]
-    return os.path.normpath(path_text).casefold()
+        return "\\\\" + path_text[8:]
+    if path_text.startswith("\\\\?\\"):
+        return path_text[4:]
+    return path_text
+
+
+def _normalized(path_text: str) -> str:
+    return os.path.normpath(_display_path(path_text)).casefold()
 
 
 def _preopen_reparse_walk(root: Path, rel_path: str) -> None:
@@ -599,25 +613,264 @@ def _open_directory_handle(resolved: Path) -> int:
     return int(handle)
 
 
+def _open_trusted_read_handle(path: Path) -> int:
+    """Open one existing object for reading under the pre-existing share mode.
+
+    ``GENERIC_READ`` only: the managed-read trust boundary never writes, and the
+    returned handle is used for identity/canonical-path facts and ``ReadFile`` --
+    never to resolve the target's name a second time.
+    """
+
+    handle = _k32.CreateFileW(
+        str(path),
+        GENERIC_READ,
+        _FILE_SHARE_ALL,
+        None,
+        OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS,
+        None,
+    )
+    if not handle or handle == INVALID_HANDLE_VALUE:
+        error = ctypes.get_last_error()
+        if error in (ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND):
+            raise TypedResourceChannelError(E_NOT_FOUND, "managed path not found")
+        raise TypedResourceChannelError(E_OPEN_FAILED, f"win32 error {error}")
+    return int(handle)
+
+
+class ManagedRootTrust:
+    """P09-MANAGED-READ-ROOT-TRUST-1: the frozen identity of the managed root.
+
+    Design answer to "where does the expected identity come from?" (the first
+    deliverable of this task, frozen before any product code changed):
+
+    * **object identity** ``(volume_serial, file_index)`` of the configured
+      managed root directory, taken from ONE handle opened at assembly time --
+      before any business read and before any request path is resolved;
+    * **canonical path** that this handle reported (``GetFinalPathNameByHandleW``);
+    * **lexical absolute path** of the configured root (``os.path.abspath``,
+      which never follows a link) used only to fold a database reference into
+      "segments below the root".
+
+    Every managed read then: folds the reference lexically (no filesystem
+    access), opens the configured root, requires its handle identity to equal
+    the frozen snapshot, opens the target and requires its handle-derived
+    canonical path to equal ``frozen canonical root + lexical segments``, and
+    reads through that same handle.  A name can be redirected at any time; the
+    snapshot cannot, so the check and the use are the same object.
+
+    The link policy is explicit: a reparse point AT or ABOVE the configured
+    root is allowed as long as the object identity still matches the snapshot
+    (this keeps the legitimate "data directory moved, junction left behind"
+    deployment working); any reparse component BELOW the root is refused
+    because the handle canonical path then differs from the lexical
+    expectation.  This is deliberately not "reject if any ancestor is a
+    reparse point".
+    """
+
+    def __init__(self, root_abs: str, canonical: str, identity: tuple[int, int]) -> None:
+        self._root_abs = root_abs
+        self._canonical = canonical
+        self._identity = identity
+
+    @classmethod
+    def capture(cls, root: str | Path) -> "ManagedRootTrust":
+        """Take the one startup snapshot from a real handle on the root."""
+
+        root_abs = os.path.abspath(os.fspath(root))
+        handle = _open_trusted_read_handle(Path(root_abs))
+        try:
+            if not _attributes_of(handle) & FILE_ATTRIBUTE_DIRECTORY:
+                raise TypedResourceChannelError(
+                    E_SCOPE_DENIED, "managed root is not a directory"
+                )
+            identity = _identity_of(handle)
+            canonical = _display_path(_final_path_of(handle))
+        finally:
+            _k32.CloseHandle(wintypes.HANDLE(handle))
+        return cls(root_abs, canonical, identity)
+
+    # ------------------------------------------------------------- read-only
+
+    @property
+    def root_abs(self) -> str:
+        return self._root_abs
+
+    @property
+    def canonical_path(self) -> str:
+        return self._canonical
+
+    @property
+    def identity(self) -> tuple[int, int]:
+        return self._identity
+
+    def _validate_segments(self, segments: tuple[str, ...]) -> None:
+        for segment in segments:
+            if segment in ("", ".", "..") or ":" in segment:
+                raise TypedResourceChannelError(
+                    E_OUT_OF_SCOPE, "managed reference may not traverse"
+                )
+
+    def _relative_segments(self, ref: str | Path) -> tuple[str, ...]:
+        """Fold a DB-relative ref or an absolute storage path into root segments.
+
+        Pure string/path arithmetic: ``os.path.abspath`` on the lexical form
+        never touches the filesystem, so the expected value is frozen before
+        any name is resolved.
+        """
+
+        text = os.fspath(ref)
+        if isinstance(text, bytes):
+            text = os.fsdecode(text)
+        if "\x00" in text:
+            raise TypedResourceChannelError(E_OUT_OF_SCOPE, "managed reference is malformed")
+        drive, _tail = os.path.splitdrive(text)
+        if drive or os.path.isabs(text):
+            candidate = Path(os.path.abspath(text))
+            reference_parts = candidate.parts
+            root_parts = Path(self._root_abs).parts
+            if len(reference_parts) < len(root_parts):
+                raise TypedResourceChannelError(
+                    E_OUT_OF_SCOPE, "reference is outside the managed root"
+                )
+            if tuple(os.path.normcase(part) for part in reference_parts[: len(root_parts)]) != tuple(
+                os.path.normcase(part) for part in root_parts
+            ):
+                raise TypedResourceChannelError(
+                    E_OUT_OF_SCOPE, "reference is outside the managed root"
+                )
+            segments = reference_parts[len(root_parts):]
+        else:
+            segments = Path(text).parts
+        self._validate_segments(segments)
+        return segments
+
+    def _expected_canonical(self, segments: tuple[str, ...]) -> str:
+        if not segments:
+            return self._canonical
+        return os.path.join(self._canonical, *segments)
+
+    def _open_verified(self, ref: str | Path) -> int:
+        """Return an open handle for ``ref`` that belongs to the frozen root."""
+
+        segments = self._relative_segments(ref)
+        root_handle = _open_trusted_read_handle(Path(self._root_abs))
+        leaf_handle: int | None = None
+        try:
+            if not _attributes_of(root_handle) & FILE_ATTRIBUTE_DIRECTORY:
+                raise TypedResourceChannelError(
+                    E_SCOPE_DENIED, "managed root is not a directory"
+                )
+            if _identity_of(root_handle) != self._identity:
+                raise TypedResourceChannelError(
+                    E_IDENTITY_CHANGED, "managed root identity changed"
+                )
+            if _normalized(_final_path_of(root_handle)) != _normalized(self._canonical):
+                raise TypedResourceChannelError(
+                    E_IDENTITY_CHANGED, "managed root moved"
+                )
+            target = (
+                Path(self._root_abs).joinpath(*segments)
+                if segments
+                else Path(self._root_abs)
+            )
+            leaf_handle = _open_trusted_read_handle(target)
+            leaf_attributes = _attributes_of(leaf_handle)
+            if leaf_attributes & FILE_ATTRIBUTE_DIRECTORY:
+                # R-001 (Codex Review): a same-name DIRECTORY substitution keeps
+                # the canonical path equal to the expectation, so the path check
+                # alone accepted it.  The old callers had their own is_file()
+                # guard; this trust boundary must not depend on that -- an
+                # object that is not a regular file is refused from the opened
+                # handle itself (image_state -> "invalid", URI -> "", reads ->
+                # typed refusal).
+                raise TypedResourceChannelError(
+                    E_OUT_OF_SCOPE, "managed path is not a regular file"
+                )
+            if leaf_attributes & FILE_ATTRIBUTE_REPARSE_POINT:
+                raise TypedResourceChannelError(E_REPARSE, "managed path is a reparse point")
+            if _normalized(_final_path_of(leaf_handle)) != _normalized(
+                self._expected_canonical(segments)
+            ):
+                raise TypedResourceChannelError(
+                    E_OUT_OF_SCOPE, "managed path resolved outside the trusted root"
+                )
+            return leaf_handle
+        except BaseException:
+            if leaf_handle is not None:
+                _k32.CloseHandle(wintypes.HANDLE(leaf_handle))
+            raise
+        finally:
+            _k32.CloseHandle(wintypes.HANDLE(root_handle))
+
+    def canonical_of(self, ref: str | Path) -> str:
+        """Frozen canonical location of ``ref`` -- pure lexical, no handle.
+
+        Used where a decision is a *comparison* (e.g. "is this export target a
+        protected managed file?"), so the managed side must never be a
+        re-resolution of the current filesystem state.
+        """
+
+        return self._expected_canonical(self._relative_segments(ref))
+
+    def verify_existing(self, ref: str | Path) -> str:
+        """Verify identity/canonical path of an existing file; return its path.
+
+        The returned path comes from the verified handle (never from a second
+        resolution); callers that must hand a path to another consumer (Qt/QML
+        image loading) use it only after this admission check.
+        """
+
+        handle = self._open_verified(ref)
+        try:
+            return _display_path(_final_path_of(handle))
+        finally:
+            _k32.CloseHandle(wintypes.HANDLE(handle))
+
+    def read_bytes(self, ref: str | Path) -> bytes:
+        """Read ``ref`` through the verified handle (same object, one open)."""
+
+        handle = self._open_verified(ref)
+        try:
+            return _read_all_through(handle)
+        finally:
+            _k32.CloseHandle(wintypes.HANDLE(handle))
+
+    def digest_of(self, ref: str | Path) -> tuple[str, int]:
+        """Streaming SHA-256/size of ``ref`` through the verified handle."""
+
+        handle = self._open_verified(ref)
+        try:
+            return _digest_through(handle)
+        finally:
+            _k32.CloseHandle(wintypes.HANDLE(handle))
+
+
 def resolve_namespace_identity(path: Path) -> tuple[str, tuple[int, int]]:
     """Canonical path + volume/file identity of an existing file or directory.
 
-    Refuses reparse components first, then opens the resolved path once and
-    re-verifies the final path against what was named -- an aliased identity
-    is a namespace refusal, never a guessed match.
+    P09-MANAGED-READ-ROOT-TRUST-1 (R5b P2 / R6): the expected value is the
+    **lexical** absolute form of ``path``, computed before any filesystem
+    access, and the canonical path/identity come from ONE opened handle whose
+    final path must equal that expectation.  The previous version compared the
+    handle's final path with ``path.resolve()`` -- a value that a junction
+    injected between the reparse walk and ``resolve()`` had already redirected,
+    so it verified a polluted value against itself and accepted
+    ``outside\\derived``.  The existing strict policy (any reparse component
+    from the drive root down is refused) is preserved unchanged.
     """
+
+    expected = os.path.abspath(str(path))
     _lstat_reparse_walk(path)
-    resolved = path.resolve()
-    _lstat_reparse_walk(resolved)
-    handle = _open_directory_handle(resolved)
+    handle = _open_directory_handle(Path(expected))
     try:
         identity = _identity_of(handle)
-        final = _final_path_of(handle)
-        if _normalized(final) != _normalized(str(resolved)):
+        final = _display_path(_final_path_of(handle))
+        if _normalized(final) != _normalized(expected):
             raise namespace_unavailable("namespace path resolved to a different identity")
     finally:
         _k32.CloseHandle(wintypes.HANDLE(handle))
-    return str(resolved), identity
+    return final, identity
 
 
 def _open_lock_handle(derived_root: str, *, exclusive: bool, create_new: bool = False) -> int:

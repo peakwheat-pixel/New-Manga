@@ -1,0 +1,119 @@
+[
+  {
+    "probe": "n002-race-probe.py",
+    "exit": 0,
+    "injection_fired": false,
+    "outside_survived": true,
+    "verdict": "INCONCLUSIVE",
+    "expected": {
+      "injected": false,
+      "survived": true,
+      "verdict": "INCONCLUSIVE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "n002-race-probe2.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": true,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "n004-ancestor-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": true,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "n004-production-order-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": null,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "r5-p1-managed-remove-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": null,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "r5-p1-cleanup-book-files-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": null,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "r5b-p1-remove-managed-race-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": true,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "r5b-p1-collect-orphans-race-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": true,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  },
+  {
+    "probe": "r6-p1a-publish-cleanup-race-probe.py",
+    "exit": 0,
+    "injection_fired": true,
+    "outside_survived": true,
+    "verdict": "SAFE",
+    "expected": {
+      "injected": true,
+      "survived": true,
+      "verdict": "SAFE"
+    },
+    "matches": true
+  }
+]

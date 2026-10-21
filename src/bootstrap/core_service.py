@@ -100,6 +100,7 @@ from pathlib import Path
 import re
 import sqlite3
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -116,7 +117,14 @@ from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
 from application.library.errors import BookNotFound
-from application.resource_channel.dto import TypedResourceChannelError
+from application.resource_channel.dto import (
+    E_IDENTITY_CHANGED,
+    E_NOT_FOUND,
+    E_OUT_OF_SCOPE,
+    E_REPARSE,
+    E_SCOPE_DENIED,
+    TypedResourceChannelError,
+)
 from application.settings.errors import BindingValidationError
 from application.export import ExportFormat, ExportPage, ExportRequest, P16ExportRuntime, StalePolicy
 from application.export.service import OverwritePolicy
@@ -142,6 +150,7 @@ from infrastructure.resource_channel.catalog_store import (
     restore_namespace_lock,
 )
 from infrastructure.resource_channel.handle_resolver import (
+    ManagedRootTrust,
     acquire_shared_lease,
     read_lock_binding_if_any,
     resolve_namespace_identity,
@@ -526,15 +535,24 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
         page = current.repository.get_page(page_id)
         if page is None or not page.managed_original_ref:
             return None
-        managed_root = current.storage.root.resolve()
-        path = Path(current.storage.absolute_path(page.managed_original_ref)).resolve()
+        # P09-MANAGED-READ-ROOT-TRUST-1: the reference is admitted through the
+        # start-up identity snapshot of the managed root and the bytes are read
+        # through the verifying handle.  Re-resolving ``storage.root`` here made
+        # both sides of the old containment check follow a junction injected
+        # above the configured root (R5b P2 reproduction).
+        trust = getattr(current, "managed_root_trust", None)
+        if trust is None:
+            raise ValueError("managed original escaped the Managed Copy root")
         try:
-            path.relative_to(managed_root)
-        except ValueError as error:
-            raise ValueError("managed original escaped the Managed Copy root") from error
-        if not path.is_file():
-            return None
-        return path.read_bytes()
+            return trust.read_bytes(page.managed_original_ref)
+        except TypedResourceChannelError as error:
+            if error.code == E_NOT_FOUND:
+                return None
+            if error.code in (E_IDENTITY_CHANGED, E_OUT_OF_SCOPE, E_REPARSE, E_SCOPE_DENIED):
+                raise ValueError(
+                    "managed original escaped the Managed Copy root"
+                ) from error
+            raise OSError(str(error)) from error
 
     core = assemble_core_services(
         db_path,
@@ -568,14 +586,6 @@ def make_error_envelope(
     if details is not None:
         envelope["details"] = details
     return envelope
-
-
-def _sha256_file_path(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def _export_ref_error_envelope(code: str) -> dict[str, Any]:
@@ -2063,21 +2073,31 @@ class CoreServiceServer:
         page = self._core.repository.get_page(page_id)
         if page is None or not page.managed_original_ref:
             raise RegionLookupError(page_id)
-        # Same seam as the assembly-time read_original_page closure: the
-        # managed original is resolved at use time, must stay inside the
-        # Managed Copy root, and no path or new business identity rides
-        # the wire (only the opaque catalog key).
-        managed_root = self._core.storage.root.resolve()
-        source = Path(self._core.storage.absolute_path(page.managed_original_ref)).resolve()
-        try:
-            source.relative_to(managed_root)
-        except ValueError as error:
-            raise RuntimeError("managed original escaped the Managed Copy root") from error
-        suffix = source.suffix.lower()
+        # The wire gate admits exactly the decode face's suffixes; the suffix is
+        # checked BEFORE any read so an unsupported ref stays the documented
+        # UNKNOWN/internal anomaly (never PAGE_NOT_FOUND because the file it
+        # points at happens to be missing).
+        suffix = Path(page.managed_original_ref).suffix.lower()
         if suffix not in _ORIGINAL_SUFFIXES:
             raise RuntimeError(f"unsupported managed original format: {suffix!r}")
-        if not source.is_file():
-            raise RegionLookupError(page_id)
+        # P09-MANAGED-READ-ROOT-TRUST-1: the managed original is admitted through
+        # the start-up identity snapshot of the managed root; the bytes that get
+        # published are read through the verifying handle, so a junction injected
+        # above the configured root after start-up is a typed refusal instead of
+        # an outside byte copy (R5b P2).
+        trust = getattr(self._core, "managed_root_trust", None)
+        if trust is None:
+            raise RuntimeError("managed original escaped the Managed Copy root")
+        try:
+            source_bytes = trust.read_bytes(page.managed_original_ref)
+        except TypedResourceChannelError as error:
+            if error.code == E_NOT_FOUND:
+                raise RegionLookupError(page_id) from error
+            if error.code in (E_IDENTITY_CHANGED, E_OUT_OF_SCOPE, E_REPARSE, E_SCOPE_DENIED):
+                raise RuntimeError(
+                    "managed original escaped the Managed Copy root"
+                ) from error
+            raise RuntimeError("managed original could not be read") from error
         resource_id = f"page-original-{page.page_id}"
         entry = self._render_previews.lookup(resource_id)
         if entry is not None and self._render_previews.artifact_exists(entry.rel_path):
@@ -2088,7 +2108,15 @@ class CoreServiceServer:
             # under the same deterministic key instead of returning a
             # key whose file is gone forever.
             return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
-        return self._render_previews.publish_original(source, resource_id, suffix)
+        temp_source = self._materialise_verified_managed_copy(
+            page.managed_original_ref, source_bytes
+        )
+        try:
+            return self._render_previews.publish_original(
+                temp_source, resource_id, suffix
+            )
+        finally:
+            temp_source.unlink(missing_ok=True)
 
     def handle_get_reader_projection(self, payload: dict[str, Any]) -> dict[str, Any]:
         if set(payload) != {"chapter_id", "mode", "start_position"}:
@@ -2554,10 +2582,12 @@ class CoreServiceServer:
         stale_details = []
         text_pages = []
         for order, page in enumerate(selected):
-            translated_path = self._checked_managed_path(page.translated_path)
-            if not translated_path.is_file():
-                raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "A translated input is unavailable")
-            actual_hash = _sha256_file_path(translated_path)
+            # P09-MANAGED-READ-ROOT-TRUST-1: hash and the lazy page providers
+            # below go through the frozen-root trust and read through the
+            # verifying handle.  The old code resolved the path once, hashed it
+            # by name and re-read it by name again in the export job -- three
+            # separate resolutions of a reference a junction can redirect.
+            actual_hash = self._verified_managed_sha256(page.translated_path)
             if page.translated_sha256 and actual_hash != page.translated_sha256:
                 raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "A translated input failed integrity verification")
             stale_page = bool(page.rendered_from_revision_id and page.current_source_revision_id and page.rendered_from_revision_id != page.current_source_revision_id)
@@ -2576,8 +2606,8 @@ class CoreServiceServer:
             lineage.append(item)
             export_pages.append(ExportPage(
                 page_id=page.page_id, filename=page.filename,
-                source_provider=lambda p=page: Path(self._checked_managed_path(p.original_path)).read_bytes(),
-                translated_provider=lambda p=translated_path: p.read_bytes(),
+                source_provider=lambda ref=page.original_path: self._read_verified_managed(ref),
+                translated_provider=lambda ref=page.translated_path: self._read_verified_managed(ref),
                 translated_revision_id=page.translated_revision_id,
                 current_translated_revision_id=page.current_translated_revision_id,
                 rendered_from_revision_id=page.rendered_from_revision_id,
@@ -2633,21 +2663,95 @@ class CoreServiceServer:
         if not valid:
             raise P16WireError("INVALID_REQUEST", "validation", "Export options are invalid")
 
+    @staticmethod
+    def _managed_input_unavailable(detail: str) -> P16WireError:
+        """One constructor for the stable ``EXPORT_INPUT_UNAVAILABLE`` face."""
+
+        return P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", detail)
+
+    def _managed_root_trust(self) -> ManagedRootTrust:
+        """The start-up identity snapshot; fail-closed when it is absent.
+
+        P09-MANAGED-READ-ROOT-TRUST-1: every managed read/compare below is
+        admitted through this snapshot.  A Core assembled by
+        ``assemble_core_services`` always carries it; a hand-built Core that
+        does not is a programming error, and refusing is safer than falling
+        back to the resolve-then-compare pattern this task removes.
+        """
+        trust = getattr(self._core, "managed_root_trust", None)
+        if trust is None:
+            raise self._managed_input_unavailable("Managed export input is unavailable")
+        return trust
+
     def _checked_managed_path(self, path: str) -> Path:
-        root = self._core.storage.root.resolve()
-        resolved = Path(path).resolve()
+        # P09-MANAGED-READ-ROOT-TRUST-1: R5b's reproduction point.  The old
+        # implementation resolved BOTH the configured root and the candidate,
+        # so a junction injected above the root moved both sides together and
+        # the containment passed before the outside file was read.  Admission
+        # now goes through the frozen root identity + the opened handle's
+        # canonical path, and the returned path is the handle's canonical path.
         try:
-            resolved.relative_to(root)
-        except ValueError as error:
-            raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Managed export input is unavailable") from error
-        return resolved
+            verified = self._managed_root_trust().verify_existing(path)
+        except TypedResourceChannelError as error:
+            raise self._managed_input_unavailable(
+                "Managed export input is unavailable"
+            ) from error
+        return Path(verified)
 
     def _reader_sha256(self, path: str, expected: str | None) -> str:
-        resolved = self._checked_managed_path(path)
-        digest = _sha256_file_path(resolved)
+        try:
+            digest, _size = self._managed_root_trust().digest_of(path)
+        except TypedResourceChannelError as error:
+            raise self._managed_input_unavailable(
+                "Managed export input is unavailable"
+            ) from error
         if expected and expected != digest:
-            raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Reader input failed integrity verification")
+            raise self._managed_input_unavailable("Reader input failed integrity verification")
         return digest
+
+    def _read_verified_managed(self, path: str) -> bytes:
+        """Provider used by lazy export reads: verify + read, same handle."""
+
+        try:
+            return self._managed_root_trust().read_bytes(path)
+        except TypedResourceChannelError as error:
+            raise self._managed_input_unavailable(
+                "Managed export input is unavailable"
+            ) from error
+
+    def _verified_managed_sha256(self, path: str) -> str:
+        """Digest of a managed file through the verifying handle (no re-open)."""
+
+        try:
+            digest, _size = self._managed_root_trust().digest_of(path)
+        except TypedResourceChannelError as error:
+            raise self._managed_input_unavailable(
+                "A translated input is unavailable"
+            ) from error
+        return digest
+
+    def _materialise_verified_managed_copy(self, ref: str, payload: bytes) -> Path:
+        """Write already-verified bytes to a private temp file.
+
+        The preview publisher copies its source by NAME.  Handing it the
+        managed path would reintroduce a check-then-open window; handing it a
+        file we just created closes it (the bytes are ours, not a resolution
+        of the managed reference).
+        """
+
+        suffix = Path(ref).suffix
+        handle = tempfile.NamedTemporaryFile(
+            prefix="p09-verified-", suffix=suffix, delete=False
+        )
+        try:
+            with handle:
+                handle.write(payload)
+                handle.flush()
+                os.fsync(handle.fileno())
+        except BaseException:
+            Path(handle.name).unlink(missing_ok=True)
+            raise
+        return Path(handle.name)
 
     def _export_regions(self, page_id: str) -> list[dict]:
         rows = self._core.conn.execute(
@@ -2677,19 +2781,30 @@ class CoreServiceServer:
         return ("\n\n".join(blocks) + "\n").encode("utf-8")
 
     def _is_protected_export_target(self, target: Path) -> bool:
-        root = self._core.storage.root.resolve()
+        # P09-MANAGED-READ-ROOT-TRUST-1: the managed side is a PURE LEXICAL
+        # comparison against the frozen canonical root.  Resolving the managed
+        # references here let a junction injected above the configured root move
+        # the "protected" set onto the outside tree, so the real managed
+        # originals stopped matching and could be overwritten by an export.
+        # The user-selected target keeps its single resolve() -- it is not
+        # managed data and has no frozen identity to compare against.
+        trust = getattr(self._core, "managed_root_trust", None)
         target = target.parent.resolve() / target.name
+        if trust is None:
+            # Fail-closed: without the frozen baseline we cannot prove the
+            # target is not a managed file.
+            return True
         rows = self._core.conn.execute(
             "SELECT managed_original_ref AS path FROM pages WHERE managed_original_ref IS NOT NULL"
             " UNION ALL SELECT managed_path AS path FROM artifact_revisions"
         ).fetchall()
+        normalized_target = os.path.normcase(str(target))
         for row in rows:
-            path = Path(self._core.storage.absolute_path(row["path"])).resolve()
             try:
-                path.relative_to(root)
-            except ValueError:
+                protected = trust.canonical_of(row["path"])
+            except TypedResourceChannelError:
                 continue
-            if os.path.normcase(str(path)) == os.path.normcase(str(target)):
+            if os.path.normcase(protected) == normalized_target:
                 return True
         return False
 
