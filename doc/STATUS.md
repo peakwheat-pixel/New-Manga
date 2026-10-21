@@ -6,7 +6,7 @@
 
 - 当前 Task：**无 Active Task**（READY 为空）；下一候选为 [WORKSPACE-CLEANUP-TOOL-HARDENING-1](tasks/WORKSPACE-CLEANUP-TOOL-HARDENING-1.md)（`proposed` / `pending_user_release`，**未释放**，须 Codex 冻结范围）。最近收口：[WORKSPACE-CONSOLIDATION-1](tasks/WORKSPACE-CONSOLIDATION-1.md)（`closed_with_limitations`：r212 批准；18 资源 limitation、49.48 GiB 逻辑字节；工具根因另立 Task）。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
-- **v1 收口（2026-10-21，HEAD `239b165c2`）**：修复 recycle-bin 生产 ACL 缺口；sidecar、Rust source 150/0/1、packaged 12/0、前端 327、pytest 106、NSIS 重建均 exit 0；见 `verification/V1-FINALIZE-20261021/`；Codex r1 复核 **approved**（`2982851df`）。
+- **v1 收口（2026-10-21，HEAD `239b165c2`）**：修复 recycle-bin 生产 ACL 缺口；sidecar、Rust source 150/0/1、packaged 12/0、前端 327、pytest 106、NSIS 重建均 exit 0；见 `verification/V1-FINALIZE-20261021/`；Codex 复核 **approved**（最终收口 head `48cf5085a`）。
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`，6/8 消费者已处置；**ZCode 设计 Gate 与第二环境无活动 Task**）。
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。

@@ -76,7 +76,7 @@ exit=0
 - **未**重跑产品测试、未重建安装包（用户范围：不改产品代码；v1 产物 SHA-256 未变：`b0ad46f5…38c7b`）。
 - **未**触碰 11 个 untracked 历史草稿（`P02PRE-*`、`P22`）；untracked 总数保持 1244。
 - **未**删除旧 hash：对照保留在 §2；原始日志在 Git 历史与工作区均未删除。
-- 本报告提交后才产生最终固定 head（父提交 `9f5262f19`）；Codex 独立复核尚未进行。
+- 本报告提交后才产生最终固定 head（父提交 `9f5262f19`）；Codex 复核见 §5–§7。
 
 ## 5. Codex 独立复核 r1（2026-10-21）
 
@@ -92,3 +92,10 @@ exit=0
 - Codex 在 `2982851df` 上复核确认：**decision `approved`**，条件已满足、无新 finding；治理默认与 5 个受影响 Task 定向检查全部 PASS（各 3 warnings）；台账 322/309/13。
 - **最终裁定**：接受 **V1 完成 + 25 个 Task 收口 + r1 返修通过**；无新增实现 Task。最终固定 head 为本裁定提交的 HEAD（父提交 `2982851df64c641b25929a18d9cbb9b407b7a269`）；确认报告见 `verification/V1-FINALIZE-20261021-codex-review-r1-confirm.md`。
 - 未声明：产品功能/测试未在本轮重跑（v1 原始运行证据仍为 2026-10-21 00:29–00:50）；安装包仍为未签名，未做全新机器安装复验。
+
+## 7. 最终收口复核确认（2026-10-21）
+
+- Codex 对最终裁定 head `48cf5085a4f0d50af16e54fc5375cc674079ba71` 完成独立只读复核：**decision `approved`，findings 无**；接受该 head 为 **V1 最终收口 head**，建议最终集成。
+- 核验：`2982851df..48cf5085a` 仅 3 个文档；产品路径 diff 为空；`git diff --check` exit 0；台账 322/309/13；默认 + 5 个定向治理检查全部 PASS（各 3 warnings）；V1 pin 13/13、P19 commit-pin 17/17；0 tracked dirty、1244 untracked（草稿未动）。
+- 结论：**V1 完成 + 25 个 Task 收口 + r1 返修 + 最终复核全部通过；无需额外 merge 或新增实现 Task。** 原始报告：`verification/V1-FINALIZE-20261021-codex-review-r1-final.md`。
+- 本 §7 及复核报告入库提交为 docs-only 记录；被批准的最终集成点仍为 `48cf5085a`。
