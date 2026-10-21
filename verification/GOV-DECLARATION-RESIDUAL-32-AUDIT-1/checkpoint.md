@@ -1,2 +1,2 @@
-GOV-DECLARATION-RESIDUAL-32-AUDIT-1 / in_progress / Codex epoch9
-32项、17来源矩阵完成；原字节/status不变；审计exit2/原32项身份相等；98heads/136worktrees。准备固定证据与独立Review；不修源、不清理。
+GOV-DECLARATION-RESIDUAL-32-AUDIT-1 / in_review / Codex epoch9
+证据22bd5e07a；32项/17来源，原字节/status保留，审计exit2/原32项相等，98heads/136worktrees。待固定head独立DSH审查，不修改source，不清理。
