@@ -1,0 +1,11 @@
+{
+  "worktree": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-PATH-HEADER-COMPAT-1",
+  "head": "b26b60ca68e39319fc90d7b6014b76de70cde310",
+  "tracked_and_untracked_status_bytes": 0,
+  "disposition": "PRESERVE_REFERENCED",
+  "branch": "codex/gov-path-header-compat-1",
+  "agent_output": "PRESERVE_REFERENCED",
+  "temp": "PRESERVE_UNKNOWN",
+  "process_release_required": false,
+  "reason": "No resource removed; existing STATUS/r212 ban retained. DSH review subprocess exited0; unrelated application/session state not changed."
+}
