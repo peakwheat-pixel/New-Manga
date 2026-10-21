@@ -1,0 +1,71 @@
+{
+  "status": "DESIGN_DATA_ASSERTIONS_PASSED",
+  "canonical_policy_sha256": "b7ce39be57d1e0ee4b682bbba5b7341a3448329f6f53c24b1eee359b0184cfd0",
+  "binding_ids": [
+    "HIE-T01",
+    "HIE-O01",
+    "HIE-O02",
+    "HIE-O03"
+  ],
+  "guards": [
+    "g:/codex/new manga/verification/p09-governance-debt-20261019/codex-closeout-p19-view-r12.md",
+    "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r1.md",
+    "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r2.md",
+    "g:/codex/new manga/verification/p22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+    "g:/codex/new manga/tools/governance/tests",
+    "g:/codex/new manga/verification/gov-resource-manifest-same-location-1"
+  ],
+  "all_six_guard_roots_currently_protected": true,
+  "formal_errors": 12,
+  "five_exact_identities_verified": true,
+  "four_original_raw_hashes_verified": true,
+  "template_original_declaration_preserved": true,
+  "production_helper": "NOT_IMPLEMENTED_NOT_RUN",
+  "runtime_matrix_T01_T18": "PLANNED_NOT_RUN",
+  "counts": {
+    "declarations": 2575,
+    "protected_roots": 1882,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 389,
+      "EVIDENCE_PIN": 1750,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 379,
+      "PRESERVE_UNKNOWN": 34,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 272
+  },
+  "scan": {
+    "markdown": 2347,
+    "json": 1238,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7639,
+    "untracked_declaration_files": 1508,
+    "declarations": 2575,
+    "errors": 12,
+    "warnings": 272
+  },
+  "design_only": true,
+  "baseline_head": "345c86857f6ea80153ead49271e84ff234a4963f",
+  "errors_unchanged": true,
+  "original_protected_subset": true,
+  "old_protected_count": 1882,
+  "current_protected_count": 1882,
+  "source_raw_changes": 0,
+  "production_code_changes": 0,
+  "actual_runtime_policy_created": false,
+  "planned_runtime_delta": {
+    "errors_removed": 5,
+    "remaining_errors": 7,
+    "declarations_added": 6,
+    "warnings_added": 4,
+    "canonical_current_new_roots": 0
+  },
+  "runtime_delta_status": "PLANNED_NOT_RUN",
+  "branch_count": 102,
+  "worktree_count": 140
+}

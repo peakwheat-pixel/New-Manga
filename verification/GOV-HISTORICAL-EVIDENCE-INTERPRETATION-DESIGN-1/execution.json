@@ -1,0 +1,51 @@
+{
+  "executed": [
+    {
+      "name": "design-data",
+      "command": [
+        "python",
+        "-B",
+        "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\validate_design.py",
+        "G:\\CODEX\\New Manga"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "exit": 0,
+      "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\design-data.log",
+      "raw_sha256": "df54b9eb9967e792667e70756e2f144ac66e5cc586c38ec8657d28625bbc378e"
+    },
+    {
+      "name": "governance",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/check.ps1",
+        "-TaskPath",
+        "doc/tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "exit": 0,
+      "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\governance.log",
+      "raw_sha256": "762e1df32f9ca9fedc674b343acbb4f994bb3bb61f49d59488468490c1729dfe"
+    },
+    {
+      "name": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1",
+      "exit": 0,
+      "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\diff.log",
+      "raw_sha256": "d0bfa516a8c156a8e731aa52fe80900d26dc5c5bcb358fa71e932d3cfc9a97e9"
+    }
+  ],
+  "executed_scope": "Static design binding/current-source consistency and12unchanged only; no proposed helper or error removal executed",
+  "future_T01_T18": "PLANNED_NOT_RUN",
+  "runtime_12_to_7": "NOT_RUN_NOT_IMPLEMENTED",
+  "product_build": "NOT_RUN",
+  "old127_regression": "NOT_RUN; design only",
+  "fixtures": "NOT_RUN; none created",
+  "full_resource_and_process_handle_inventory": "NOT_RUN; no disposal authorized"
+}
