@@ -1,3 +1,9 @@
+COMMAND: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\tools\governance\clean_workspace.py --repo G:\CODEX\New Manga --workspace-root G:\CODEX\New Manga.workspace --audit-declarations --out G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\evidence\audit-before-run
+CWD: G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1
+PARENT_SHELL: pwsh (parent process of run_evidence.py; Windows PowerShell/pwsh 7)
+SHELL: False (subprocess.run(shell=False); argv list passed without shell interpolation)
+EXIT_CODE: 2
+
 declaration audit: 1858 declaration(s), 1264 protected root(s), 163 error(s), 54 warning(s)
   ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
   ERROR DECL_BARE_NAME: declared path '���� agent-output���Ǳ� Task ������' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/GOV-EOL-PIN-1.md]
@@ -9,4 +15,4 @@ declaration audit: 1858 declaration(s), 1264 protected root(s), 163 error(s), 54
   ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md]
   ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md]
   ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md]
-  report: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1/verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-before/declaration-audit.json
+  report: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1/verification/WORKSPACE-DECLARATION-REMEDIATION-1/evidence/audit-before-run/declaration-audit.json

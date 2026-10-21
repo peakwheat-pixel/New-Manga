@@ -72,47 +72,32 @@ def classify_json(relative, message):
             "declaration token/manifest name/tracked -> JSON_PARSE residual")
 
 
-def decision_for(error, tracked, before_json_files):
+def decision_for(error, tracked, after_index):
     code = error["code"]
     rel = error.get("file") or ""
-    message = error.get("message") or ""
-    if code == "JSON_PARSE":
-        category, decision = classify_json(rel, message)
-    elif code == "DECL_BARE_NAME":
-        category = "AC3 non-path source"
-        decision = ("reclassified as DECL_SOURCE_NOT_A_PATH warning (prose / "
-                    "NOT_APPLICABLE / none yet); protection not registered")
-    elif code == "DECL_UNKNOWN_DISPOSITION":
-        category = "AC3/AC5 narrative row"
-        decision = ("narrative table row: source is prose -> skipped before "
-                    "disposition validation (DECL_SOURCE_NOT_A_PATH warning)")
-    elif code == "DECL_DESTINATION_UNRESOLVED":
-        category = "AC3/AC5 destination"
-        decision = ("generalized destination -> DECL_DESTINATION_GENERALIZED "
-                    "warning" if "GENERALIZED" in message or "workspace root"
-                    in message else
-                    "path-like destination prose -> residual integrity error")
-    elif code == "DECL_GENERALIZED":
-        category = "policy gap (over-broad declaration)"
-        decision = "RESIDUAL: needs Codex ruling"
-    elif code == "DECL_ENV":
-        category = "policy gap (environment token)"
-        decision = "RESIDUAL: needs user ruling on env expansion"
-    elif code == "DECL_RELATIVE_UNRESOLVED":
-        category = "AC3 non-path source"
-        decision = "reclassified as DECL_SOURCE_NOT_A_PATH warning (prose)"
-    elif code == "DECL_RELATIVE_AMBIGUOUS":
-        category = "policy gap (ambiguous relative path)"
-        decision = "RESIDUAL: needs user ruling"
-    elif code == "TABLE_ROW_ARITY":
-        category = "genuinely malformed resource table"
-        decision = "RESIDUAL: keep hard error (AC5)"
-    elif code == "FILE_UNREADABLE":
-        category = "AC4 legacy encoding"
-        decision = "decoded as GB18030 -> FILE_ENCODING_LEGACY warning"
+    locator = error.get("locator") or ""
+    # Review r3: derive the decision from the ACTUAL r2 result for this row
+    # instead of a stale hand-written mapping (generalized destinations are
+    # fatal again and some unknown-disposition rows stay fatal).
+    status = (after_index.get((rel, locator))
+              or after_index.get((rel, None))
+              or next((value for (f, _l), value in after_index.items()
+                       if f == rel and value[0] == "error"), None)
+              or next((value for (f, _l), value in after_index.items()
+                       if f == rel and value[0] == "warning"), None))
+    if status is not None:
+        category = "after: %s" % status[1]
+        if status[0] == "error":
+            decision = "r2: still fatal as %s" % status[1]
+        else:
+            decision = ("r2: skipped with %s warning (no protection "
+                        "registered)" % status[1])
+    elif code == "JSON_PARSE":
+        category = "AC2 JSON"
+        decision = "r2: resolved (BOM normalised or explicit exemption)"
     else:
-        category = "other"
-        decision = "reviewed"
+        category = "r2: no matching residual"
+        decision = "r2: resolved (no longer reported)"
     return category, decision
 
 
@@ -128,9 +113,17 @@ def main():
                                          for item in after.get("warnings", []))
 
     rows = []
+    after_index = {}
+    for error in after_errors:
+        after_index[(error.get("file") or "", error.get("locator") or "")] = (
+            "error", error["code"])
+    for warning in after.get("warnings", []):
+        after_index.setdefault(
+            (warning.get("file") or "", warning.get("locator") or ""),
+            ("warning", warning["code"]))
     for error in before_errors:
         rel = error.get("file") or ""
-        category, decision = decision_for(error, tracked, set())
+        category, decision = decision_for(error, tracked, after_index)
         rows.append({
             "code": error["code"], "file": rel,
             "tracked": "tracked" if rel in tracked else "untracked",
@@ -171,10 +164,27 @@ def main():
         handle.write("# REMEDIATION — real-repository declaration audit\n\n")
         handle.write("Task: WORKSPACE-DECLARATION-REMEDIATION-1\n\n")
         handle.write("## Same command / same snapshot\n\n")
-        handle.write("```\nC:/Python314/python.exe -B tools/governance/"
-                     "clean_workspace.py --repo G:/CODEX/New Manga "
-                     "--workspace-root G:/CODEX/New Manga.workspace "
-                     "--audit-declarations --out <dir>\n```\n\n")
+        snapshots_path = os.path.join(HERE, "evidence", "audit-snapshots.json")
+        if os.path.isfile(snapshots_path):
+            snapshots = json.load(open(snapshots_path, encoding="utf-8"))
+            handle.write("`same_snapshot`: **%s** (git HEAD `%s`; "
+                         "`git ls-files -z -- doc/tasks verification` sha256 "
+                         "`%s`, %d tracked scan files).\n\n"
+                         % (snapshots["same_snapshot"],
+                            snapshots["before"]["git_head"],
+                            snapshots["before"]["ls_files_sha256"],
+                            snapshots["before"]["tracked_scan_files"]))
+            handle.write("Before tool: `%s`\n\nAfter tool: `%s`\n\n"
+                         % (snapshots["before"]["tool_sha256"],
+                            snapshots["after"]["tool_sha256"]))
+            handle.write("```\nBEFORE: %s\nAFTER:  %s\n```\n\n"
+                         % (" ".join(snapshots["before"]["command"]),
+                            " ".join(snapshots["after"]["command"])))
+            handle.write("Both runs: cwd `%s`, `PARENT_SHELL=pwsh`, "
+                         "`SHELL=False` (subprocess list argv), exit `2` "
+                         "(read-only; 0 deletions).\n\n" % HERE)
+        else:
+            handle.write("Snapshot fingerprint file missing.\n\n")
         handle.write("| metric | before | after |\n|---|---:|---:|\n")
         handle.write("| declarations | %d | %d |\n"
                      % (before["counts"]["declarations"],
@@ -327,9 +337,7 @@ def main():
                                                 "destination or grant a "
                                                 "root-policy exemption",
             }.get(row["code"], "review")
-            message = row["message"].replace("|", "\\|").replace("\n", " ")
-            if len(message) > 240:
-                message = message[:237] + "..."
+            message = row["message"].replace("|", "\\|").replace("\n", "<br>")
             handle.write("| %d | %s | `%s` | %s | %s | %s | %s | %s | %s |\n"
                          % (position, row["code"], row["file"], row["tracked"],
                             row["owner"], row["locator"], message, why, ruling))
@@ -338,14 +346,15 @@ def main():
             handle.write("- `%s`: %d\n" % (code, count))
         handle.write("\n## Why the count is %d rather than <=10\n\n"
                      % len(residual_rows))
-        handle.write("Review r2 required restoring fail-closed rules: F-01 "
+        handle.write("Review r2/r3 required restoring fail-closed rules: F-01 "
                      "path-like prose is fatal again (6 `DECL_RELATIVE_"
                      "UNRESOLVED` + 2 `DECL_UNKNOWN_DISPOSITION`), F-03 "
                      "generalized destinations are fatal (6), F-04 incomplete "
                      "identity tables are fatal (44), and F-05 rejects 3 "
-                     "NUL/UTF-16 files. Those 61 extra integrity errors are the "
-                     "safety cost of the review; the policy-gated residual is "
-                     "unchanged (6 `DECL_GENERALIZED`, 4 `DECL_ENV`, 1 "
+                     "NUL/UTF-16 files plus any short/control-rich binary. "
+                     "Those 61 extra integrity errors are the safety cost of "
+                     "the review; the policy-gated residual is unchanged "
+                     "(6 `DECL_GENERALIZED`, 4 `DECL_ENV`, 1 "
                      "`DECL_RELATIVE_AMBIGUOUS`, 2 `JSON_PARSE`, 1 "
                      "`TABLE_ROW_ARITY`, 1 destination prose). Lowering the "
                      "number would require weakening fail-closed semantics or "

@@ -4,9 +4,18 @@ Task: WORKSPACE-DECLARATION-REMEDIATION-1
 
 ## Same command / same snapshot
 
+`same_snapshot`: **True** (git HEAD `f0f19596fa9df6b561626b27f1c086b095552be7`; `git ls-files -z -- doc/tasks verification` sha256 `6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3`, 7416 tracked scan files).
+
+Before tool: `5a4a1a1cfaeb37698c1d22bd2c9d80149beb48bf4adf075027f7177eb5ded8a7`
+
+After tool: `6747ba69bbbb1dc8c34d7c88cb7f527ea5b3ea08777058da4f70708ac6ea79d6`
+
 ```
-C:/Python314/python.exe -B tools/governance/clean_workspace.py --repo G:/CODEX/New Manga --workspace-root G:/CODEX/New Manga.workspace --audit-declarations --out <dir>
+BEFORE: C:\Python314\python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-CLEANUP-TOOL-HARDENING-1\tools\governance\clean_workspace.py --repo G:\CODEX\New Manga --workspace-root G:\CODEX\New Manga.workspace --audit-declarations --out G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\evidence\audit-before-run
+AFTER:  C:/Python314/python.exe -B G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\tools\governance\clean_workspace.py --repo G:\CODEX\New Manga --workspace-root G:\CODEX\New Manga.workspace --audit-declarations
 ```
+
+Both runs: cwd `G:\CODEX\New Manga.workspace\worktrees\WORKSPACE-DECLARATION-REMEDIATION-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1`, `PARENT_SHELL=pwsh`, `SHELL=False` (subprocess list argv), exit `2` (read-only; 0 deletions).
 
 | metric | before | after |
 |---|---:|---:|
@@ -39,16 +48,18 @@ Enumeration vs parsing (AC2 wording fix): `tracked_declaration_files`/`untracked
 
 | category | errors |
 |---|---:|
-| AC3 non-path source | 63 |
-| AC3/AC5 destination | 7 |
-| AC3/AC5 narrative row | 9 |
-| AC4 legacy encoding | 3 |
-| BOM/format tolerance | 58 |
-| JSON declaration classification | 11 |
-| genuinely malformed resource table | 1 |
-| policy gap (ambiguous relative path) | 1 |
-| policy gap (environment token) | 4 |
-| policy gap (over-broad declaration) | 6 |
+| after: DECL_DESTINATION_GENERALIZED | 12 |
+| after: DECL_DESTINATION_UNRESOLVED | 1 |
+| after: DECL_ENV | 4 |
+| after: DECL_EVIDENCE_NOT_A_PATH | 8 |
+| after: DECL_RELATIVE_AMBIGUOUS | 1 |
+| after: DECL_RELATIVE_UNRESOLVED | 6 |
+| after: DECL_SOURCE_NOT_A_PATH | 56 |
+| after: DECL_UNKNOWN_DISPOSITION | 2 |
+| after: JSON_NON_DECLARATION | 67 |
+| after: JSON_PARSE | 2 |
+| after: TABLE_SCHEMA_INCOMPLETE | 1 |
+| r2: no matching residual | 3 |
 
 Every one of the 163 before-audit errors is listed in `TRIAGE.md` (code / file / tracked / owner / locator / category / decision); nothing was dropped silently.
 

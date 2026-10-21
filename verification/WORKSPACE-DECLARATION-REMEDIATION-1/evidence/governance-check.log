@@ -1,6 +1,7 @@
 COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/WORKSPACE-DECLARATION-REMEDIATION-1.md
 CWD: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
 PARENT_SHELL: pwsh 7 (PowerShell)
+SHELL: False (argv list, no shell interpolation)
 EXIT_CODE: 1
 
 Governance scope: 13 current documents; no historical directory scan.

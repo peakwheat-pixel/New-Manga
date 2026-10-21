@@ -302,13 +302,15 @@ def read_text(path, what="file", legacy_warn=None):
         fail("FILE_UNREADABLE",
              "%s %s contains NUL bytes; refusing a binary file as text"
              % (what, path))
-    if len(raw) >= 64:
-        controls = sum(1 for byte in raw
-                       if byte < 0x20 and byte not in (0x09, 0x0A, 0x0D))
-        if controls * 100 > len(raw):
-            fail("FILE_UNREADABLE",
-                 "%s %s has %.2f%% control bytes; refusing a binary file as text"
-                 % (what, path, controls * 100.0 / len(raw)))
+    # Review r3 F-05: the control-byte ratio applies to EVERY length.  A short
+    # payload (e.g. 24 bytes, 20 control bytes, decodable GB18030 CJK) must be
+    # rejected too, not just files >= 64 bytes.
+    controls = sum(1 for byte in raw
+                   if byte < 0x20 and byte not in (0x09, 0x0A, 0x0D))
+    if controls and controls * 100 > len(raw):
+        fail("FILE_UNREADABLE",
+             "%s %s has %.2f%% control bytes; refusing a binary file as text"
+             % (what, path, controls * 100.0 / len(raw)))
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
@@ -968,6 +970,25 @@ class ProtectionIndex(object):
                 source_file, locator)
         return normalized, real
 
+    def _probe_identity(self, text):
+        """Return a resolvable normalised identity for a prose-looking value.
+
+        Review r3 F-01: a single-component value such as ``资料 文件`` or
+        ``中文目录`` has no path separator but may still be an existing repo
+        top-level entry.  Prose skipping must not win over a real resolvable
+        identity, so probe without side effects and let the normal resolver
+        register protection when it succeeds.
+        """
+        try:
+            normalized = self.resolve_declared_path(text, None, None)
+            real = resolve_real_target(normalized, "declaration")
+        except GuardError:
+            return None
+        for value in (normalized, real):
+            if self._generalized(value):
+                return None  # fatal through the normal path
+        return normalized
+
     def add_declaration(self, raw, disposition, source_file, locator):
         text = clean_cell(raw)
         disp = clean_cell(disposition).upper()
@@ -979,13 +1000,14 @@ class ProtectionIndex(object):
                            "disposition %r" % (raw, disposition),
                            source_file, locator)
             return None
-        if is_descriptive_value(text):
+        if is_descriptive_value(text) and self._probe_identity(text) is None:
             # AC3 remediation: narrative source text ("NOT_APPLICABLE", "none
-            # yet", "见 G:/CODEX/New Manga", Chinese notes) is not an identity
-            # and is not a declaration.  Recorded as a warning and skipped; it
-            # never registers protection and never authorises deletion.  A
-            # genuinely path-like PRESERVE_* value that cannot be resolved still
-            # fails closed below.
+            # yet", Chinese notes) is not an identity and is not a declaration.
+            # Recorded as a warning and skipped; it never registers protection
+            # and never authorises deletion.  Review r3 F-01: if the value does
+            # resolve (existing repo top-level entry, including single-component
+            # values with spaces/CJK), the prose shortcut does NOT apply and the
+            # normal resolver below registers protection.
             self.add_warning("DECL_SOURCE_NOT_A_PATH",
                              "source %r is descriptive text, not a path; "
                              "skipped without protection" % text,
@@ -1019,7 +1041,7 @@ class ProtectionIndex(object):
         text = clean_cell(raw)
         if _is_placeholder(text):
             return None
-        if is_descriptive_value(text):
+        if is_descriptive_value(text) and self._probe_identity(text) is None:
             self.add_warning("DECL_EVIDENCE_NOT_A_PATH",
                              "evidence path %r is descriptive text, not a "
                              "path; skipped without protection" % text,

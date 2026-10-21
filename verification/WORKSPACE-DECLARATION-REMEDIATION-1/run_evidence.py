@@ -30,6 +30,12 @@ PYTHON = sys.executable
 TOOLS = os.path.join(ROOT, "tools", "governance")
 OLD_TESTS = os.path.join(ROOT, "verification",
                          "WORKSPACE-CLEANUP-TOOL-HARDENING-1", "tests")
+# Pre-remediation tool (previous Task worktree, read-only) used to regenerate
+# the "before" audit with the exact same command/snapshot as "after".
+BEFORE_TOOL = os.path.join(
+    r"G:\CODEX\New Manga.workspace\worktrees",
+    "WORKSPACE-CLEANUP-TOOL-HARDENING-1", "tools", "governance",
+    "clean_workspace.py")
 LEDGER = os.path.join(ROOT, "verification", "WORKSPACE-CONSOLIDATION-1",
                       "incident-ledger-r208.json")
 EVIDENCE = os.path.join(HERE, "evidence")
@@ -71,9 +77,24 @@ def write_text(name, text):
         handle.write(text)
 
 
+def snapshot():
+    """Fingerprint the scanned repository input (review r3 P2)."""
+    head = subprocess.run(["git", "-C", MAIN, "rev-parse", "HEAD"],
+                          capture_output=True, text=True).stdout.strip()
+    files = subprocess.run(
+        ["git", "-C", MAIN, "ls-files", "-z", "--", "doc/tasks",
+         "verification"], capture_output=True).stdout
+    return {
+        "git_head": head,
+        "tracked_scan_files": len([item for item in files.split(b"\x00") if item]),
+        "ls_files_sha256": hashlib.sha256(files).hexdigest(),
+    }
+
+
 def main():
     runs = []
     failures = []
+    snap_before = snapshot()
     new_tests = os.path.join(HERE, "tests")
     command = [PYTHON, "-B", "-m", "unittest", "test_declaration_remediation",
                "-v"]
@@ -136,9 +157,52 @@ def main():
         with open(os.path.join(HERE, "audit-after.json"), "wb") as target:
             target.write(data)
         write_text("audit-after.exitcode", "%d\n" % result.returncode)
-    # Frozen before-audit (generated before the parser changes).
-    if not os.path.isfile(os.path.join(HERE, "audit-before.json")):
-        failures.append("missing-audit-before")
+    snap_after = snapshot()
+    if snap_before != snap_after:
+        failures.append("before-after-snapshot-mismatch")
+
+    # Regenerate the "before" audit from the pre-remediation tool against the
+    # same repository snapshot (review r3 P2: prove same command/snapshot).
+    before_dir = os.path.join(EVIDENCE, "audit-before-run")
+    command = [PYTHON, "-B", BEFORE_TOOL, "--repo", MAIN,
+               "--workspace-root", WS, "--audit-declarations",
+               "--out", before_dir]
+    record, result = run(command, ROOT, "audit-before-real-repo",
+                         "audit-before.log")
+    runs.append(record)
+    before_path = os.path.join(before_dir, "declaration-audit.json")
+    if result.returncode != 2 or not os.path.isfile(before_path):
+        failures.append("audit-before-real-repo")
+    else:
+        with open(before_path, "rb") as source:
+            data = source.read()
+        with open(os.path.join(HERE, "audit-before.json"), "wb") as target:
+            target.write(data)
+        write_text("evidence/audit-before.exitcode",
+                   "%d\n" % result.returncode)
+    with io.open(os.path.join(EVIDENCE, "audit-snapshots.json"), "w",
+                 encoding="utf-8", newline="\n") as handle:
+        json.dump({
+            "schema_version": 1,
+            "same_snapshot": snap_before == snap_after,
+            "before": dict(snap_before, command=command, exit_code=2,
+                           tool_sha256=hashlib.sha256(
+                               open(BEFORE_TOOL, "rb").read()).hexdigest()),
+            "after": dict(snap_after,
+                          command=["C:/Python314/python.exe", "-B",
+                                   os.path.join(TOOLS, "clean_workspace.py"),
+                                   "--repo", MAIN, "--workspace-root", WS,
+                                   "--audit-declarations"],
+                          exit_code=2,
+                          tool_sha256=hashlib.sha256(
+                              open(os.path.join(TOOLS,
+                                                "clean_workspace.py"),
+                                   "rb").read()).hexdigest()),
+        }, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    import shutil
+    for stale in (audit_dir, before_dir):
+        shutil.rmtree(stale, ignore_errors=True)
 
     record, result = run([PYTHON, "-B", os.path.join(HERE, "build_reports.py")],
                          HERE, "build-reports", "build-reports.log")
@@ -190,6 +254,8 @@ def main():
                       "exit_code": 2},
         },
         "triage": triage,
+        "audit_snapshots": json.load(open(
+            os.path.join(EVIDENCE, "audit-snapshots.json"), encoding="utf-8")),
         "protection_delta": {"verdict": delta["verdict"],
                              "dropped": len(delta["dropped_declarations"]),
                              "old_roots": delta["old"]["protected_roots"],

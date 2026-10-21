@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "same_snapshot": true,
+  "before": {
+    "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
+    "tracked_scan_files": 7416,
+    "ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
+    "command": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tools\\governance\\clean_workspace.py",
+      "--repo",
+      "G:\\CODEX\\New Manga",
+      "--workspace-root",
+      "G:\\CODEX\\New Manga.workspace",
+      "--audit-declarations",
+      "--out",
+      "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-before-run"
+    ],
+    "exit_code": 2,
+    "tool_sha256": "5a4a1a1cfaeb37698c1d22bd2c9d80149beb48bf4adf075027f7177eb5ded8a7"
+  },
+  "after": {
+    "git_head": "f0f19596fa9df6b561626b27f1c086b095552be7",
+    "tracked_scan_files": 7416,
+    "ls_files_sha256": "6eaeb3923c7f299f3b3bfa37cd60a6c2b86c4976e2d8bac8daf39a2e379210d3",
+    "command": [
+      "C:/Python314/python.exe",
+      "-B",
+      "G:\\CODEX\\New Manga.workspace\\worktrees\\WORKSPACE-DECLARATION-REMEDIATION-1\\tools\\governance\\clean_workspace.py",
+      "--repo",
+      "G:\\CODEX\\New Manga",
+      "--workspace-root",
+      "G:\\CODEX\\New Manga.workspace",
+      "--audit-declarations"
+    ],
+    "exit_code": 2,
+    "tool_sha256": "6747ba69bbbb1dc8c34d7c88cb7f527ea5b3ea08777058da4f70708ac6ea79d6"
+  }
+}

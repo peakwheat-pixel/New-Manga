@@ -257,6 +257,50 @@ class DeclarationRemediationFixture(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("FILE_UNREADABLE", result.stdout + result.stderr)
 
+    # ==================================================================
+    # Review r3 F-01: existing single-component top-level CJK/space entries
+    # ==================================================================
+    def test_ac3_existing_single_component_cjk_toplevel_is_protected(self):
+        """Review r3 F-01: existing repo top-level '资料 文件' must protect."""
+        top = os.path.join(self.fx.repo, "资料 文件")
+        os.makedirs(top, exist_ok=True)
+        with open(os.path.join(top, "keep.txt"), "w", encoding="utf-8") as handle:
+            handle.write("keep")
+        self.fx.commit("top-level cjk dir")
+        self.fx.declare([("资料 文件", "PRESERVE_REFERENCED")])
+        command = ["--repo", self.fx.repo, "--workspace-root", self.fx.ws,
+                   "--out", self.fx.out, "--audit-declarations"]
+        result = run_tool("clean_workspace.py", *command)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        audit = load_json(os.path.join(self.fx.out,
+                                       "declaration-audit.json"))
+        self.assertEqual(audit["errors"], [])
+        self.assertFalse(any("DECL_SOURCE_NOT_A_PATH" in w["code"]
+                             for w in audit["warnings"]))
+        self.assertGreaterEqual(audit["counts"]["protected_roots"], 1)
+
+    def test_ac3_nonexistent_single_component_cjk_is_warning(self):
+        target = self.fx.candidate("temp", "CJK-BARE", {"f.txt": "x"})
+        self.fx.declare([("中文目录不存在", "PRESERVE_REFERENCED")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        report = self.report()
+        self.assertTrue(any("DECL_SOURCE_NOT_A_PATH" in w["code"]
+                            for w in report["declaration_warnings"]))
+        self.assertEqual(self.candidate_record(report, target)["decision"],
+                         "CANDIDATE")
+
+    def test_ac4_short_control_rich_gb18030_payload_is_unreadable(self):
+        # 24 bytes: 20 x 0x01 + GB18030 "中文" (4 bytes).  Decodes as GB18030
+        # and contains CJK, but the control ratio must still reject it
+        # (review r3: check applies to every length, not just >= 64).
+        path = os.path.join(self.fx.repo, "verification", "short-binary.md")
+        write_bytes(path, b"\x01" * 20 + "中文".encode("gb18030"))
+        self.fx.commit("short binary")
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("FILE_UNREADABLE", result.stdout + result.stderr)
+
     def test_ac4_gb18030_decodable_binary_is_unreadable(self):
         # Decodes as one non-CJK control character, no NUL: rejected because a
         # legacy declaration note must contain CJK text.
