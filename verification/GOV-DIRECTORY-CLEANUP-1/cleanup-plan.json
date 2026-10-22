@@ -20,6 +20,596 @@
       "reason": "已归档并删除；归档 G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\New-Manga.worktrees-residue.tar.gz，SHA-256 69ea26de2b07152b…",
       "executed": true,
       "result": "DELETED"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive",
+      "mib": 26.2,
+      "files": 1805,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO",
+      "mib": 0.0,
+      "files": 5,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex-dsh-review-logs",
+      "mib": 0.6,
+      "files": 4,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation",
+      "mib": 21.2,
+      "files": 1795,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel",
+      "mib": 23.9,
+      "files": 2002,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-qoder",
+      "mib": 20.7,
+      "files": 1903,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging",
+      "mib": 23.7,
+      "files": 2009,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10",
+      "mib": 23.5,
+      "files": 1890,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11",
+      "mib": 22.1,
+      "files": 1807,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14",
+      "mib": 28.0,
+      "files": 1966,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3",
+      "mib": 22.7,
+      "files": 1986,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4",
+      "mib": 22.7,
+      "files": 1989,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5",
+      "mib": 19.0,
+      "files": 1647,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6",
+      "mib": 19.1,
+      "files": 1651,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7",
+      "mib": 19.9,
+      "files": 1766,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9",
+      "mib": 23.4,
+      "files": 1886,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout",
+      "mib": 21.4,
+      "files": 1693,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10",
+      "mib": 27.1,
+      "files": 2035,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11",
+      "mib": 21.5,
+      "files": 1698,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12",
+      "mib": 21.5,
+      "files": 1698,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e",
+      "mib": 17.7,
+      "files": 1631,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5",
+      "mib": 17.7,
+      "files": 1640,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9",
+      "mib": 26.6,
+      "files": 2007,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c",
+      "mib": 17.7,
+      "files": 1637,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f",
+      "mib": 19.0,
+      "files": 1638,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd",
+      "mib": 21.0,
+      "files": 1835,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0",
+      "mib": 17.7,
+      "files": 1632,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383",
+      "mib": 19.1,
+      "files": 1655,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14",
+      "mib": 27.2,
+      "files": 1960,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2",
+      "mib": 28.0,
+      "files": 1968,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7",
+      "mib": 18.0,
+      "files": 1655,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13",
+      "mib": 21.5,
+      "files": 1699,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review",
+      "mib": 0.3,
+      "files": 59,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-013-qoder",
+      "mib": 16.2,
+      "files": 1460,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc",
+      "mib": 3.2,
+      "files": 439,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc",
+      "mib": 3.5,
+      "files": 461,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc",
+      "mib": 2.9,
+      "files": 427,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode",
+      "mib": 5.7,
+      "files": 829,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-047-qoder",
+      "mib": 10.1,
+      "files": 870,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review",
+      "mib": 7.0,
+      "files": 1179,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.codewiki",
+      "mib": 1.5,
+      "files": 20,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.codex",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.dsh",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.gemini",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.git",
+      "mib": 170.9,
+      "files": 26,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.qoder",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.qoder-credits",
+      "mib": 3.8,
+      "files": 34,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.tmp.driveupload",
+      "mib": 125.6,
+      "files": 2148,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.workbuddy",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/apps",
+      "mib": 1.0,
+      "files": 81,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/doc",
+      "mib": 12.3,
+      "files": 805,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/docs",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/experiments",
+      "mib": 3.0,
+      "files": 222,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/packaging",
+      "mib": 0.2,
+      "files": 16,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/src",
+      "mib": 1.8,
+      "files": 228,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/test_assets",
+      "mib": 6.9,
+      "files": 86,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/tests",
+      "mib": 1.9,
+      "files": 182,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/verification",
+      "mib": 67.8,
+      "files": 3736,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/wiki",
+      "mib": 4.7,
+      "files": 27,
+      "disposition": "ARCHIVE",
+      "reason": "随根级执行一并归档删除；本条为根级收据的子项明细，F-001 返修回写",
+      "executed": true,
+      "result": "DELETED_WITH_PARENT"
     }
   ],
   "pending": [
@@ -918,483 +1508,12 @@
       "files": 4,
       "disposition": "PRESERVE_UNKNOWN",
       "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive",
-      "mib": 26.2,
-      "files": 1805,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO",
-      "mib": 0.0,
-      "files": 5,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex-dsh-review-logs",
-      "mib": 0.6,
-      "files": 4,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation",
-      "mib": 21.2,
-      "files": 1795,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel",
-      "mib": 23.9,
-      "files": 2002,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-qoder",
-      "mib": 20.7,
-      "files": 1903,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging",
-      "mib": 23.7,
-      "files": 2009,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10",
-      "mib": 23.5,
-      "files": 1890,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11",
-      "mib": 22.1,
-      "files": 1807,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14",
-      "mib": 28.0,
-      "files": 1966,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3",
-      "mib": 22.7,
-      "files": 1986,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4",
-      "mib": 22.7,
-      "files": 1989,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5",
-      "mib": 19.0,
-      "files": 1647,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6",
-      "mib": 19.1,
-      "files": 1651,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7",
-      "mib": 19.9,
-      "files": 1766,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9",
-      "mib": 23.4,
-      "files": 1886,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout",
-      "mib": 21.4,
-      "files": 1693,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10",
-      "mib": 27.1,
-      "files": 2035,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11",
-      "mib": 21.5,
-      "files": 1698,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12",
-      "mib": 21.5,
-      "files": 1698,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e",
-      "mib": 17.7,
-      "files": 1631,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5",
-      "mib": 17.7,
-      "files": 1640,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9",
-      "mib": 26.6,
-      "files": 2007,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c",
-      "mib": 17.7,
-      "files": 1637,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f",
-      "mib": 19.0,
-      "files": 1638,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd",
-      "mib": 21.0,
-      "files": 1835,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0",
-      "mib": 17.7,
-      "files": 1632,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383",
-      "mib": 19.1,
-      "files": 1655,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14",
-      "mib": 27.2,
-      "files": 1960,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2",
-      "mib": 28.0,
-      "files": 1968,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7",
-      "mib": 18.0,
-      "files": 1655,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13",
-      "mib": 21.5,
-      "files": 1699,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review",
-      "mib": 0.3,
-      "files": 59,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-013-qoder",
-      "mib": 16.2,
-      "files": 1460,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc",
-      "mib": 3.2,
-      "files": 439,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc",
-      "mib": 3.5,
-      "files": 461,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc",
-      "mib": 2.9,
-      "files": 427,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode",
-      "mib": 5.7,
-      "files": 829,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-047-qoder",
-      "mib": 10.1,
-      "files": 870,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/New Manga.worktrees",
-      "path": "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review",
-      "mib": 7.0,
-      "files": 1179,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.codewiki",
-      "mib": 1.5,
-      "files": 20,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.codex",
-      "mib": 0.0,
-      "files": 6,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.dsh",
-      "mib": 0.0,
-      "files": 6,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.gemini",
-      "mib": 0.0,
-      "files": 6,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.git",
-      "mib": 170.9,
-      "files": 26,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.qoder",
-      "mib": 0.0,
-      "files": 6,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.qoder-credits",
-      "mib": 3.8,
-      "files": 34,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.tmp.driveupload",
-      "mib": 125.6,
-      "files": 2148,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/.workbuddy",
-      "mib": 0.0,
-      "files": 6,
-      "disposition": "PRESERVE_UNKNOWN",
-      "reason": "未取得可删依据，按保守原则保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/apps",
-      "mib": 1.0,
-      "files": 81,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/doc",
-      "mib": 12.3,
-      "files": 805,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/docs",
-      "mib": 0.0,
-      "files": 6,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/experiments",
-      "mib": 3.0,
-      "files": 222,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/packaging",
-      "mib": 0.2,
-      "files": 16,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/src",
-      "mib": 1.8,
-      "files": 228,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/test_assets",
-      "mib": 6.9,
-      "files": 86,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/tests",
-      "mib": 1.9,
-      "files": 182,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/verification",
-      "mib": 67.8,
-      "files": 3736,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
-    },
-    {
-      "root": "G:/CODEX/P02-scratch-build-source",
-      "path": "G:/CODEX/P02-scratch-build-source/wiki",
-      "mib": 4.7,
-      "files": 27,
-      "disposition": "PRESERVE_REFERENCED",
-      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
     }
   ],
   "totals": {
     "examined": 173,
-    "executed": 2,
-    "pending": 171
-  }
+    "executed": 61,
+    "pending": 112
+  },
+  "rework_note": "F-001：根级执行后子项状态已回写；40 个 worktrees 残留与 19 个 P02 子项由 pending 移入 executed（DELETED_WITH_PARENT）。"
 }
