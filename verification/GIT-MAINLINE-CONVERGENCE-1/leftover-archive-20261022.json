@@ -1,0 +1,22 @@
+[
+  {
+    "name": "P09-IMPORT-CORE",
+    "result": "COPIED rc=9 files=1719"
+  },
+  {
+    "name": "T2.2.1-zcode",
+    "result": "COPIED rc=1 files=2010"
+  },
+  {
+    "name": "T3.2.1-zcode-repair-13",
+    "result": "COPIED rc=1 files=1909"
+  },
+  {
+    "name": "TASK-024-zcode",
+    "result": "COPIED rc=1 files=647"
+  },
+  {
+    "name": "TASK-046-zcode",
+    "result": "COPIED rc=1 files=884"
+  }
+]

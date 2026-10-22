@@ -1,0 +1,35 @@
+{
+  "step": "clean+diag worktrees",
+  "entries": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE",
+      "exit": 255,
+      "stderr": "error: failed to delete 'G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE': Directory not empty",
+      "result": "REFUSED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2-2jWfPm",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v4-FTf6BC",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v5-WJGAfi",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    }
+  ]
+}

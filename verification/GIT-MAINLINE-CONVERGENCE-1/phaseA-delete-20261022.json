@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "action": "delete unmerged heads whose tip is preserved in refs/archive/*",
+  "entries": [
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "tip": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "archive_ref": "refs/archive/agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "tip": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "archive_ref": "refs/archive/agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "archive_ref": "refs/archive/agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "tip": "06990b7993d042ae5e74ab479e291e494b622588",
+      "archive_ref": "refs/archive/agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "tip": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "archive_ref": "refs/archive/agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "tip": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "archive_ref": "refs/archive/agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "archive_ref": "refs/archive/agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "archive_ref": "refs/archive/codex/P15-C1-FU2",
+      "deleted": true,
+      "stderr": ""
+    },
+    {
+      "branch": "codex/gov-residual-runtime-identity-impl-1",
+      "tip": "4d5e97108a28a6394c93823a7b8b9fe61c115f49",
+      "archive_ref": "refs/archive/codex/gov-residual-runtime-identity-impl-1",
+      "deleted": true,
+      "stderr": ""
+    }
+  ],
+  "heads_after": 55
+}

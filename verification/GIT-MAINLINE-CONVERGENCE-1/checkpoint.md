@@ -91,3 +91,13 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - 其余 **78 个工作树含独有内容**（证据/诊断输出/构建日志/数据库样本），自动化收敛**到此为止**。
 - 复验：声明审计 0 errors / 1946 保护根；治理检查 PASS；tracked 干净。
 - 当前：heads **64** / worktrees **81**；**仍未达到只剩 main**，剩余三类资源需逐项裁决。
+### 最终收敛 A+B+C（2026-10-22）
+
+- **A**：20 条未合并分支归档为 `refs/archive/*`（20/20 验证），删除未检出的 9 条 heads。
+- **B**：75 个工作树未提交内容**全量归档**（12,686 文件 / 2,605.7 MiB，逐文件 SHA-256 manifest），随后退出 71 个、拒 4 个（内容已归档）。
+- **B**：5 个残留目录归档（115.5 MiB，missing 0）后清理；剩余 clean 工作树与破损 checkout 全部退出。
+- **C**：归档 manifest 逐文件记录来源/大小/SHA-256，内容归属可追溯。
+- **最终**：`refs/heads` **2**（main + 明确保留的旧主线）；注册 worktree **1**；`refs/archive/*` **20**。
+- 复验：声明审计 **0 errors / 1946 保护根 / 273 warnings**；治理检查 PASS；tracked 干净。
+- 恢复：archive 引用 + 内容归档 manifest + 全 refs bundle 三路可逆。
+- 未执行：prune、GC、push、reset、stash；五广域根保护与 r212 不变；旧主线保留待裁决。

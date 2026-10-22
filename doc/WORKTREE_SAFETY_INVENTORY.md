@@ -321,3 +321,26 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 逐文件比对 81 个工作树的未提交内容与 main blob：SAFE_EXIT 3 / HAS_UNIQUE 78。3 个 SAFE_EXIT 已退出（`worktree remove --force`，唯一一次），worktree 84 → 81。
 
 **边界声明**：其余 78 个工作树含独有内容，自动化收敛到此为止；后续任何删除都需用户逐项裁决。
+
+## Stage 16 最终收敛执行（2026-10-22，用户 A+B+C 授权）
+
+| 步骤 | 动作 | 结果 |
+|---|---|---|
+| A | 20 条未合并分支 → `refs/archive/*` | 20/20 验证通过；删除未检出的 9 条 heads |
+| B | 75 个工作树未提交内容全量归档 | 12,686 文件 / 2,605.7 MiB，逐文件 SHA-256 |
+| B | 退出已归档工作树 | 71 移除 / 4 拒（内容已归档） |
+| B | 5 个残留目录归档后清理 | 115.5 MiB，missing 0 |
+| 收尾 | 剩余 clean 工作树与破损 checkout | 全部退出 |
+| 复验 | 声明审计 / 治理检查 | **0 errors / 1946 保护根**、PASS |
+
+### 最终状态
+
+- `refs/heads`：**2**（main + 明确保留的旧主线）
+- 注册 worktree：**1**（主 checkout）
+- `refs/archive/*`：20
+- 恢复：archive 引用 / 内容归档 manifest / 全 refs bundle 三路可逆
+
+### 未执行
+
+- 未删除旧主线 `antigravity/P09-AC3-DELETE-HARDEN-1`（需单独裁决）；
+- 未 prune、未 GC、未 push、未 reset、未 stash；未改五广域根保护与 r212。

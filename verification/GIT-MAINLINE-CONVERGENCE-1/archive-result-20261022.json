@@ -1,0 +1,610 @@
+{
+  "schema_version": 1,
+  "archive_root": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022",
+  "worktrees": 75,
+  "files": 12686,
+  "bytes": 2732234340,
+  "mib": 2605.7,
+  "entries": [
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2",
+      "detached": false,
+      "files": 8,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_M2-C1-dsh-review-7de1cd2-r2",
+      "bytes": 349047
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/m2-i2-review-a4705a9/New Manga",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_m2-i2-review-a4705a9_New_Manga",
+      "bytes": 159066
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r1",
+      "branch": null,
+      "detached": true,
+      "files": 4,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-current-prestart-review-dsh-r1",
+      "bytes": 334445
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r2",
+      "branch": null,
+      "detached": true,
+      "files": 6,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-current-prestart-review-dsh-r2",
+      "bytes": 251015
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r3",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-current-prestart-review-dsh-r3",
+      "bytes": 182088
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r4",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-current-prestart-review-dsh-r4",
+      "bytes": 336346
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5",
+      "branch": null,
+      "detached": true,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-current-prestart-review-dsh-r5",
+      "bytes": 284818
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5-followup",
+      "branch": null,
+      "detached": true,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-current-prestart-review-dsh-r5-followup",
+      "bytes": 257914
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/p02-d27-review-repair-review",
+      "branch": null,
+      "detached": true,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_p02-d27-review-repair-review",
+      "bytes": 7616
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_P02-preflight-r4-083d2b47-review-dsh",
+      "bytes": 28595
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout-review/New Manga",
+      "branch": null,
+      "detached": true,
+      "files": 7,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_p02-r2-docs-closeout-review_New_Manga",
+      "bytes": 128960
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/p02-r2-docs-fixes-review",
+      "branch": null,
+      "detached": true,
+      "files": 7,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_p02-r2-docs-fixes-review",
+      "bytes": 124815
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-exec-a6-antigravity/New Manga",
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_p02pre-r1h-r6-exec-a6-antigravity_New_Manga",
+      "bytes": 70801
+    },
+    {
+      "worktree": "C:/Users/49745/.codex/worktrees/p04-prod-command-concurrency-review",
+      "branch": null,
+      "detached": true,
+      "files": 7,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\C__Users_49745_.codex_worktrees_p04-prod-command-concurrency-review",
+      "bytes": 114401
+    },
+    {
+      "worktree": "G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1",
+      "branch": "GOV-PLAN-BUDGET-1",
+      "detached": false,
+      "files": 51,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga_.agents_worktrees_GOV-PLAN-BUDGET-1",
+      "bytes": 1731113
+    },
+    {
+      "worktree": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1",
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "detached": false,
+      "files": 51,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga_.agents_worktrees_GOV-RESOURCE-MANIFEST-JSON-1",
+      "bytes": 1731113
+    },
+    {
+      "worktree": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "detached": false,
+      "files": 20,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga_.agents_worktrees_GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "bytes": 1015712
+    },
+    {
+      "worktree": "G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1",
+      "branch": "P19-UI-MANIFEST-VIEW-1",
+      "detached": false,
+      "files": 51,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga_.agents_worktrees_P19-UI-MANIFEST-VIEW-1",
+      "bytes": 1731113
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "branch": "codex/EXPORT-REVEAL-1",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_EXPORT-REVEAL-1",
+      "bytes": 2553
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3",
+      "branch": "codex/FEAT-CREATE-3",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_FEAT-CREATE-3",
+      "bytes": 2551
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1",
+      "branch": "codex/FEAT-IMPORT-MULTI-1",
+      "detached": false,
+      "files": 242,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_FEAT-IMPORT-MULTI-1",
+      "bytes": 722826
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "detached": false,
+      "files": 88,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P02-NEW-TIME-BASELINE",
+      "bytes": 711295
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "bytes": 53480
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "bytes": 13240
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+      "detached": false,
+      "files": 25,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P02-NEW-TIME-X6-BUILD-CARGO",
+      "bytes": 290014
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "detached": false,
+      "files": 202,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "bytes": 5752889
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR",
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "detached": false,
+      "files": 2,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P02PRE-R1H-H2-COLLECTOR",
+      "bytes": 146089
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P14",
+      "branch": "codex/P14",
+      "detached": false,
+      "files": 4,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P14",
+      "bytes": 35122
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P14-review",
+      "branch": null,
+      "detached": true,
+      "files": 40,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P14-review",
+      "bytes": 331959
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "branch": "zcode/P15",
+      "detached": false,
+      "files": 2,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P15",
+      "bytes": 5145
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "branch": "codex/P15-CORE-1",
+      "detached": false,
+      "files": 7,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P15-CORE-1",
+      "bytes": 197103
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C",
+      "branch": "codex/P15-CORE-1C",
+      "detached": false,
+      "files": 2532,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P15-CORE-1C",
+      "bytes": 283557887
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2",
+      "branch": "codex/P15-HOST-2",
+      "detached": false,
+      "files": 3759,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P15-HOST-2",
+      "bytes": 67126098
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P15-review",
+      "branch": null,
+      "detached": true,
+      "files": 40,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P15-review",
+      "bytes": 331961
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-3",
+      "branch": "codex/P19-UI-FIX-3",
+      "detached": false,
+      "files": 2,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P19-UI-FIX-3",
+      "bytes": 7158
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1",
+      "branch": "codex/p22-rebase-1",
+      "detached": false,
+      "files": 25,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_P22-REBASE-1",
+      "bytes": 271777
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-REBASELINE",
+      "branch": "codex/project-roadmap-rebaseline",
+      "detached": false,
+      "files": 32,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_PROJECT-ROADMAP-REBASELINE",
+      "bytes": 950509
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1",
+      "branch": "codex/READER-IPC-1",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_READER-IPC-1",
+      "bytes": 2550
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1",
+      "branch": "agent/dsh/RUN-IPC-1",
+      "detached": false,
+      "files": 26,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_RUN-IPC-1",
+      "bytes": 12485
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1",
+      "branch": "codex/SEC-FIX-PATH-ECHO-1",
+      "detached": false,
+      "files": 2466,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.workspace_worktrees_SEC-FIX-PATH-ECHO-1",
+      "bytes": 268285067
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode",
+      "branch": "agent/zcode/M2-DERIVED-GC-2",
+      "detached": false,
+      "files": 24,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_DERIVED-GC-2-zcode",
+      "bytes": 269166
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-AC5-BUILD-FRESH-CHECKOUT-zcode",
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT",
+      "detached": false,
+      "files": 14,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-AC5-BUILD-FRESH-CHECKOUT-zcode",
+      "bytes": 253108
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5",
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "detached": false,
+      "files": 7,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-C1-deepseek-review-7d908a5",
+      "bytes": 324087
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2",
+      "detached": false,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-C1-dsh-review-7de1cd2",
+      "bytes": 68283
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2",
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2",
+      "detached": false,
+      "files": 2,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-C1-qoder-review-7de1cd2",
+      "bytes": 114636
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode",
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB",
+      "detached": false,
+      "files": 14,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-FIX-DIGEST-SEEK-2GIB-zcode",
+      "bytes": 253108
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-I2-review-0d6acc7",
+      "bytes": 301975
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode",
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL",
+      "detached": false,
+      "files": 6,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_M2-SETTINGS-IPC-CHANNEL-zcode",
+      "bytes": 10325
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P01-c8-review-dsh",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P01-c8-review-dsh",
+      "bytes": 222865
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P01-c9-review-antigravity",
+      "bytes": 270978
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P01-closeout-review-antigravity",
+      "branch": null,
+      "detached": true,
+      "files": 12,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P01-closeout-review-antigravity",
+      "bytes": 411691
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex",
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "detached": false,
+      "files": 10,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-hook-cache-isolation-plan-codex",
+      "bytes": 728562
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode",
+      "branch": "agent/zcode/P02-real-webview-harness",
+      "detached": false,
+      "files": 2657,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-real-webview-harness-zcode",
+      "bytes": 2088802198
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-failureprobe",
+      "branch": null,
+      "detached": true,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-172eee84-failureprobe",
+      "bytes": 10721
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-full",
+      "branch": null,
+      "detached": true,
+      "files": 8,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-172eee84-full",
+      "bytes": 37838
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-probe",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-172eee84-probe",
+      "bytes": 7631
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38672473-exact",
+      "branch": null,
+      "detached": true,
+      "files": 9,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-38672473-exact",
+      "bytes": 43113
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38959ba99-exact",
+      "branch": null,
+      "detached": true,
+      "files": 9,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-38959ba99-exact",
+      "bytes": 43346
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-5fa8a41f",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-5fa8a41f",
+      "bytes": 25913
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-9b82e97b",
+      "branch": null,
+      "detached": true,
+      "files": 5,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-9b82e97b",
+      "bytes": 18176
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-full",
+      "branch": null,
+      "detached": true,
+      "files": 7,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-cc1bd750-full",
+      "bytes": 35550
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-probe",
+      "branch": null,
+      "detached": true,
+      "files": 4,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P02-stage-a-validation-cc1bd750-probe",
+      "bytes": 6525
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P03-dsh-review-6d84b48",
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P03-dsh-review-6d84b48",
+      "bytes": 22801
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity",
+      "branch": "agent/antigravity/P03-packaged-sfx-entry",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P03-packaged-sfx-entry-antigravity",
+      "bytes": 13273
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+      "branch": "codex/P03-integration-4c04459",
+      "detached": false,
+      "files": 22,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P03-review-prep-85482c5b",
+      "bytes": 38140
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity",
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "detached": false,
+      "files": 57,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_P22-roundtrip-serialization-antigravity",
+      "bytes": 979252
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/PAGE-NAV-1",
+      "branch": "zcode/page-nav-projection-1",
+      "detached": false,
+      "files": 2,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_PAGE-NAV-1",
+      "bytes": 1901
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/RC4-domain-commands",
+      "branch": "codex/rc4-domain-commands",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_RC4-domain-commands",
+      "bytes": 303104
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/RC4-integration",
+      "branch": "codex/rc4-integration",
+      "detached": false,
+      "files": 21,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_RC4-integration",
+      "bytes": 264336
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1",
+      "detached": false,
+      "files": 4,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1",
+      "bytes": 162957
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2",
+      "bytes": 167562
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/T2.2.1-zcode",
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_T2.2.1-zcode",
+      "bytes": 8087
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13",
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_T3.2.1-zcode-repair-13",
+      "bytes": 331811
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/TASK-024-zcode",
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design",
+      "detached": false,
+      "files": 1,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_TASK-024-zcode",
+      "bytes": 4162
+    },
+    {
+      "worktree": "G:/CODEX/New Manga.worktrees/TASK-046-zcode",
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost",
+      "detached": false,
+      "files": 3,
+      "archive_dir": "G:/CODEX/New Manga.workspace/archive/worktree-content-20261022\\G__CODEX_New_Manga.worktrees_TASK-046-zcode",
+      "bytes": 28423
+    }
+  ]
+}
