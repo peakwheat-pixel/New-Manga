@@ -334,3 +334,54 @@ def test_environment_assertion_discrimination_probe(
             AssertionError, match="paddleocr unexpectedly present"
         ):
             test_no_model_runtime_is_installed_in_this_environment()
+
+# ---------------------------------------------------------------------------
+# SETTINGS-OPEN-B-1 review B1: ``descriptor()`` is the read-only declaration
+# reader used by the handlers (the provider instance does not repeat
+# ``requires_gpu`` / ``supports_cpu_fallback`` in production).
+# ---------------------------------------------------------------------------
+
+
+def test_descriptor_returns_the_static_declaration_or_none() -> None:
+    descriptor = ProviderDescriptor(
+        provider_id="local-ocr",
+        provider_type="local",
+        capabilities=frozenset({CAPABILITY_OCR}),
+        requires_gpu=True,
+        supports_cpu_fallback=True,
+    )
+    registry = ProviderRegistry()
+    registry.register(descriptor, lambda: object())
+
+    assert registry.descriptor("local-ocr") is descriptor
+    # an unknown id is a lookup miss, never a raise (resolution stays closed)
+    assert registry.descriptor("never-registered") is None
+
+
+def test_descriptor_honours_binding_aliases_per_capability() -> None:
+    descriptor = ProviderDescriptor(
+        provider_id="local-ocr",
+        provider_type="local",
+        capabilities=frozenset({CAPABILITY_OCR}),
+        requires_gpu=True,
+        supports_cpu_fallback=True,
+    )
+    registry = ProviderRegistry(
+        binding_aliases={
+            ("user-ocr-profile", CAPABILITY_OCR): "local-ocr",
+            ("user-translate-profile", CAPABILITY_TRANSLATION): "local-ocr",
+        }
+    )
+    registry.register(descriptor, lambda: object())
+
+    assert (
+        registry.descriptor("user-ocr-profile", capability=CAPABILITY_OCR)
+        is descriptor
+    )
+    # the alias is per capability: the same profile id does not resolve on the
+    # wrong capability, and the exact-id lookup only sees registry ids.
+    assert (
+        registry.descriptor("user-ocr-profile", capability=CAPABILITY_TRANSLATION)
+        is None
+    )
+    assert registry.descriptor("user-ocr-profile") is None

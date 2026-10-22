@@ -75,12 +75,24 @@ describe("ModelGpuSettingsPanel (SETTINGS-OPEN-B-1 §4.1)", () => {
     expect(q('[data-testid="model-gpu-settings-panel-effective"]')?.textContent).toContain(
       "优先 GPU",
     );
+    // Review-b1 M1: the persisted-value summary uses the adjudicated label —
+    // gpu is a validation/fallback preference, not a forced device.
+    expect(q('[data-testid="model-gpu-settings-panel-effective"]')?.textContent).toContain(
+      "GPU 不可用时按回退策略",
+    );
     expect(q('[data-testid="model-gpu-settings-panel-effect-note"]')?.textContent).toContain(
       "对之后启动的任务生效",
     );
-    // Read-only surface: ability probing is the Provider's job at Run time.
+    // Read-only surface: ability probing is the Provider's job at Run time, and
+    // the preference never forces the provider's internal device choice (M1).
     expect(q('[data-testid="model-gpu-settings-panel-runtime-note"]')?.textContent).toContain(
       "运行时探测",
+    );
+    expect(q('[data-testid="model-gpu-settings-panel-runtime-note"]')?.textContent).toContain(
+      "设备偏好用于 GPU 可用性校验与 CPU 回退决策，不强制 Provider 内部设备实现。",
+    );
+    expect(q('[data-testid="model-gpu-settings-panel-description"]')?.textContent).toContain(
+      "不强制 Provider 内部设备实现",
     );
     // Closed in this batch: GPU concurrency, model download / path management.
     const scopeNote = q('[data-testid="model-gpu-settings-panel-scope-note"]');
@@ -122,6 +134,15 @@ describe("ModelGpuSettingsPanel (SETTINGS-OPEN-B-1 §4.1)", () => {
       "auto",
       "cpu",
       "gpu",
+    ]);
+    // Review-b1 M1: the option labels carry the validation/fallback semantics;
+    // none of them promises a forced device.
+    expect(
+      Array.from(select("model-gpu-device-preference").options).map((o) => o.textContent),
+    ).toEqual([
+      "自动 (auto)",
+      "仅 CPU (cpu，跳过 GPU 校验)",
+      "优先 GPU (gpu，GPU 不可用时按回退策略)",
     ]);
 
     // The pure validator guards the same frozen domain (the Core re-validates).

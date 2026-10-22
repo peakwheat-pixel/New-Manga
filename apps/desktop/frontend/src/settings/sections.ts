@@ -513,10 +513,19 @@ export function describeTypesetSettings(draft: TypesetSettingsDraft | null): str
 export const MODEL_GPU_SECTION = "model_gpu";
 
 /**
- * §4.1: `auto` keeps the historical behaviour (no explicit device gate);
- * `cpu` / `gpu` are explicit preferences validated by `DeviceManager.plan`
- * at Run time. `gpu_concurrency` is intentionally absent — the single-slot
- * gate is an existing invariant, not a user setting (design §4.1 "未开放").
+ * §4.1 — `device_preference` is a VALIDATION / FALLBACK preference, not a
+ * device selector (review-b1 M1 adjudication):
+ *
+ *   auto — historical behaviour (no explicit device gate);
+ *   cpu  — skip the GPU availability check and run;
+ *   gpu  — validate GPU availability first; when it is unavailable the
+ *          `allow_cpu_fallback` + provider `supports_cpu_fallback` rule
+ *          decides between a CPU fallback and a typed DeviceUnavailable.
+ *
+ * The provider APIs expose no device parameter, so a preference never forces
+ * the provider's internal device implementation. `gpu_concurrency` is
+ * intentionally absent — the single-slot gate is an existing invariant, not
+ * a user setting (design §4.1 "未开放").
  */
 export type DevicePreference = "auto" | "cpu" | "gpu";
 
@@ -526,11 +535,23 @@ export const DEVICE_PREFERENCE_VALUES: readonly DevicePreference[] = [
   "gpu",
 ] as const;
 
+/**
+ * The labels carry the adjudicated semantics: the value only gates the GPU
+ * availability check and the CPU-fallback decision — it is not a hard device
+ * switch (the provider API has no device parameter).
+ */
 export const DEVICE_PREFERENCE_LABELS: Readonly<Record<DevicePreference, string>> = {
   auto: "自动 (auto)",
-  cpu: "仅 CPU (cpu)",
-  gpu: "优先 GPU (gpu)",
+  cpu: "仅 CPU (cpu，跳过 GPU 校验)",
+  gpu: "优先 GPU (gpu，GPU 不可用时按回退策略)",
 };
+
+/**
+ * Review-b1 M1 adjudication — the one sentence rendered next to the control
+ * so the value can never be read as a hard device switch.
+ */
+export const DEVICE_PREFERENCE_SEMANTICS_NOTE =
+  "设备偏好用于 GPU 可用性校验与 CPU 回退决策，不强制 Provider 内部设备实现。";
 
 export interface ModelGpuSettingsDraft {
   device_preference: DevicePreference;

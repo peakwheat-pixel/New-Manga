@@ -138,6 +138,29 @@ class ProviderRegistry:
             if capability in registration.descriptor.capabilities
         )
 
+    def descriptor(
+        self, provider_id: str, *, capability: str | None = None
+    ) -> ProviderDescriptor | None:
+        """The static declaration behind one provider id, or ``None``.
+
+        Read-only companion to :meth:`resolve`. Callers that need the declared
+        capability flags (``requires_gpu`` / ``supports_cpu_fallback``, D06
+        §82) must ask the descriptor: resolution returns the provider
+        *instance*, and implementations do not repeat those declarations.
+
+        When ``capability`` is given the same binding-alias translation
+        :meth:`resolve` applies is honoured, so a Run's frozen user-profile id
+        maps onto the fixed registry slot serving that capability. An unknown
+        id returns ``None`` instead of raising: this is a lookup, not a
+        resolution, and resolution keeps its fail-closed semantics.
+        """
+        if capability is not None:
+            provider_id = self.binding_aliases.get(
+                (provider_id, capability), provider_id
+            )
+        registration = self._registrations.get(provider_id)
+        return registration.descriptor if registration is not None else None
+
     def provider_ids(self) -> tuple[str, ...]:
         return tuple(self._registrations)
 

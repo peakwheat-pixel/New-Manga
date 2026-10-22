@@ -5,6 +5,7 @@ import { SettingsField, settingsSelectStyle } from "./SectionField";
 import {
   DEFAULT_MODEL_GPU_SETTINGS_DRAFT,
   DEVICE_PREFERENCE_LABELS,
+  DEVICE_PREFERENCE_SEMANTICS_NOTE,
   DEVICE_PREFERENCE_VALUES,
   MODEL_GPU_SECTION,
   describeModelGpuSettings,
@@ -43,6 +44,11 @@ function ReadonlyNote({ testId, children }: { testId: string; children: string }
  * Provider at Run time, and GPU concurrency / model download stay closed in
  * this batch (design §4.1 "未开放") — so this panel renders explanation only
  * for those, never a fake control (§2.4 "不伪造").
+ *
+ * Review-b1 M1 adjudication: `device_preference` is a validation / fallback
+ * preference (cpu = skip the GPU check; gpu = validate availability, then the
+ * fallback rule decides). Provider APIs expose no device parameter, so the
+ * labels and the read-only note must never imply "forces CPU" / "forces GPU".
  */
 export function ModelGpuSettingsPanel({ client }: { client: SettingsClient }) {
   const { phase, unset, effective, draft, setDraft, saving, loadError, saveError, save, reload } =
@@ -67,7 +73,7 @@ export function ModelGpuSettingsPanel({ client }: { client: SettingsClient }) {
     <SectionPanelFrame
       testId="model-gpu-settings-panel"
       title="模型 / GPU"
-      description="model_gpu.device_preference / model_gpu.allow_cpu_fallback — 设备偏好与 CPU 回退策略；auto 保持既有行为，显式偏好由 DeviceManager 在 Run 启动时校验。"
+      description={`model_gpu.device_preference / model_gpu.allow_cpu_fallback — 设备偏好与 CPU 回退策略。${DEVICE_PREFERENCE_SEMANTICS_NOTE}auto 保持既有行为，显式偏好由 DeviceManager 在 Run 启动时校验。`}
       phase={phase}
       loadError={loadError}
       onRetry={() => void reload()}
@@ -81,7 +87,7 @@ export function ModelGpuSettingsPanel({ client }: { client: SettingsClient }) {
       effectiveText={describeModelGpuSettings(effective)}
     >
       <ReadonlyNote testId="model-gpu-settings-panel-runtime-note">
-        只读说明：GPU / CPU 设备能力由 Provider 在运行时探测（此处不展示探测结果，也不提供设备状态面板）；本设置只表达偏好与回退策略。
+        {`只读说明：GPU / CPU 设备能力由 Provider 在运行时探测（此处不展示探测结果，也不提供设备状态面板）。${DEVICE_PREFERENCE_SEMANTICS_NOTE}`}
       </ReadonlyNote>
 
       <ReadonlyNote testId="model-gpu-settings-panel-scope-note">
@@ -91,7 +97,7 @@ export function ModelGpuSettingsPanel({ client }: { client: SettingsClient }) {
       <SettingsField
         id="model-gpu-device-preference"
         label="设备偏好 (device_preference)"
-        hint={`默认：${DEVICE_PREFERENCE_LABELS[DEFAULT_MODEL_GPU_SETTINGS_DRAFT.device_preference]}；auto 保持历史行为。`}
+        hint={`默认：${DEVICE_PREFERENCE_LABELS[DEFAULT_MODEL_GPU_SETTINGS_DRAFT.device_preference]}；cpu 跳过 GPU 校验，gpu 先校验 GPU 可用性、不可用时按回退策略执行或拒绝；不改变 Provider 内部设备实现。`}
       >
         <select
           id="model-gpu-device-preference"

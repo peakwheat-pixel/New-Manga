@@ -12,8 +12,8 @@ depends_on: [SETTINGS-OPEN-A-1]
 base_commit: da3b781d8971dcc36bd7bfd1165fa1a2f4519ea5
 branch: main
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: 7d19164f838607e68e2b6970bbbd57bee7bd5777
+delivery_head: 7d19164f838607e68e2b6970bbbd57bee7bd5777
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/SETTINGS-OPEN-B-1
@@ -81,7 +81,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - 2026-10-22：dsh 释放并登记；Core 由 `core-settings-b1`、前端由 `ui-settings-b1` 两个独立 writer 并行实现；Lead 独立复核 diff、重跑测试并组织集成。
-- 2026-10-22：交付 commit 待固定（`dsh` 集成）；独立 Review 由 `reviewer-settings-a`（非实现者）执行，结论落 `verification/SETTINGS-OPEN-B-1/review-r1.md`。
+- 2026-10-22：交付 commit `7d19164`（dsh 集成）；独立 Review 由 `reviewer-settings-a`（非实现者）执行，结论落 `verification/SETTINGS-OPEN-B-1/review-b1.md`（r1 `changes_requested`：B1 descriptor 来源 + m1；返修后复审）。B-2 批次在同一工作区并行时未进入本 Task 的交付 commit（`7d19164` 树干净可用 `git archive` 复核）；B-2 独立 Task 记录。
 - Lead 独立验证：`pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` → 1212 passed / 3 skipped；`npm --prefix apps/desktop/frontend test` → 39 files / 387 tests；`tsc --noEmit` exit 0。
 - 任务文本笔误：验收命令中的 `tests/infrastructure` 不存在；设备测试在 `tests/providers/test_devices.py`（已由 core-report §4.1 记录）。
 
@@ -89,7 +89,17 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| pending | pending | pending | pending | pending | CANONICAL |
+|EV-B1-CORE-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-report.md|7d19164f838607e68e2b6970bbbd57bee7bd5777|78abd18583d4cefff33ece6b5462f9bed12a7b7512319ab0be41d7611eb101f5|CANONICAL|
+|EV-B1-UI-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-1/ui-report.md|7d19164f838607e68e2b6970bbbd57bee7bd5777|518644f33ae4c642a479f60a38785a2d22d31d36bd4a9953a687996306ff6752|CANONICAL|
+|EV-B1-CORE-PYTEST-B1-TARGETED-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-b1-targeted-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|7ece5a5af1dc57a180ec3d53935d88af53a6ab7be52c41089a9d59d101e8daaf|CANONICAL|
+|EV-B1-CORE-PYTEST-CORE-PROVIDERS-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-core-providers-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|586670063529bb51546f7fb629d5b321c1f9f83579a9375b1b3fc0448822d6c9|CANONICAL|
+|EV-B1-CORE-PYTEST-FULL-SUITE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-full-suite-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|888168799a0a95e24b633480156933c587d9028eb20216b871eb76ab4908789e|CANONICAL|
+|EV-B1-CORE-PYTEST-GREEN-NO-ENV-MODULE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-green-no-env-module-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|0c1610e9068c4e3b8cb76dd66da635df1e9dfe4d71334a8b44d45b467537fc38|CANONICAL|
+|EV-B1-FRONTEND-NPM-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-npm-test-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|3926d8ee9acbe02dc8dd5ea32dcee3ab00234744cbb9f631a057e476605dcf1b|CANONICAL|
+|EV-B1-FRONTEND-TARGETED-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-targeted-test-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|64f300ea328c3baf40b4cb66fa039edaeb9e2d222e41e7e103ee96c7d084913b|CANONICAL|
+|EV-B1-FRONTEND-TSC-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-tsc-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|17cba47483e4bf23854c951231fee6eabbf067af4795ddc738375692c233ed12|CANONICAL|
+|EV-B1-PYTEST-BASELINE|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-baseline-before-change-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|53b5bd584f6259eed3c6f00477427214b2bb9870c6de7e12ce0ceb32f9214e7f|SOURCE_PIN|
+|EV-B1-PYTEST-REQUIRED-CMD|AC5|verification/SETTINGS-OPEN-B-1/core-pytest-required-command-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|d83c0ca6fe0aa432ab199f6f30dbff612282036f35f5737981d0616017b49ee1|SOURCE_PIN|
 
 ## Resource Manifest
 

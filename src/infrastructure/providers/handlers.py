@@ -934,6 +934,16 @@ class ProductionHandlers:
             return call(provider)
 
         if self.deps.heavy_runner is not None:
+            # Review B1: the GPU declarations live on the ``ProviderDescriptor``,
+            # not on the provider instance (``MangaOcrProvider`` et al. do not
+            # repeat them), so reading the resolved instance made
+            # ``supports_cpu_fallback`` permanently False for every production
+            # provider and the user's CPU-fallback switch a no-op. The descriptor
+            # is the single declaration source; a registry that cannot answer
+            # (test doubles) keeps the historical instance-attribute fallback.
+            descriptor = self.deps.registry.descriptor(
+                provider_id, capability=capability
+            )
             # SETTINGS-OPEN-B-1 AC2: the Run-frozen ``model_gpu`` section picks
             # the device. ``auto`` (and a missing/corrupted section) keeps the
             # historical call shape: ``preferred_device=None`` makes the
@@ -951,14 +961,22 @@ class ProductionHandlers:
             allow_cpu_fallback = (
                 raw_fallback if isinstance(raw_fallback, bool) else True
             )
+            requires_gpu = (
+                descriptor.requires_gpu
+                if descriptor is not None
+                else bool(getattr(provider, "requires_gpu", False))
+            )
+            supports_cpu_fallback = (
+                descriptor.supports_cpu_fallback
+                if descriptor is not None
+                else bool(getattr(provider, "supports_cpu_fallback", False))
+            )
             return self.deps.heavy_runner(
-                requires_gpu=bool(getattr(provider, "requires_gpu", False)),
+                requires_gpu=bool(requires_gpu),
                 call=invoke,
                 preferred_device=preferred_device,
                 allow_cpu_fallback=allow_cpu_fallback,
-                supports_cpu_fallback=bool(
-                    getattr(provider, "supports_cpu_fallback", False)
-                ),
+                supports_cpu_fallback=bool(supports_cpu_fallback),
             )
         return invoke()
 
@@ -976,7 +994,8 @@ class ProductionHandlers:
         can be replayed from older/corrupted storage: a numeric value is
         clamped into the accepted domain (the ``runtime._retry_policy``
         clamping discipline), and a non-numeric one is ignored (base value
-        kept) instead of crashing the step.
+        kept) instead of crashing the step. A snapshot that is not a mapping
+        (independent/replayed handler seam) is treated as an absent section.
         """
         base = self.deps.retry_policy
         section = self._section(run.settings_snapshot, "tasks")
@@ -1051,7 +1070,13 @@ class ProductionHandlers:
         return {str(key): str(value) for key, value in raw.items()}
 
     @staticmethod
-    def _section(settings: Mapping[str, Any], name: str) -> Mapping[str, Any]:
+    def _section(settings: Mapping[str, Any] | None, name: str) -> Mapping[str, Any]:
+        # Review m1: a handler is an independent seam -- a replayed/testing
+        # caller may hand over ``None``/a non-mapping snapshot. Every consumer
+        # documents "absent section = defaults", so a non-mapping snapshot is
+        # an absent section, never an AttributeError.
+        if not isinstance(settings, Mapping):
+            return {}
         section = settings.get(name)
         return section if isinstance(section, Mapping) else {}
 
