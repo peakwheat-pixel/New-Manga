@@ -45,3 +45,10 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - 新增证据：`worktree-inventory-20261022.json`、`unmerged-evidence-20261022.json`、`backup-all-refs-352410640.json`/`.log`；`delta-20261022.md` 追加 §9。
 - 真实删除/迁移/归档/GC/prune/push/reset/stash：0。
 - **仍未达到只剩 main**；等待 D-1（删 83 条已并入分支）/ D-2（保留 19 条）/ D-3（26 个工作树退出）的用户裁决。
+### 执行链修正（2026-10-22，第 2 轮）
+
+- 交叉核对 104 heads 后修正结论：**当前可安全 `git branch -d` 的分支为 0 条**；唯一技术上可删的 `antigravity/P09-AC3-DELETE-HARDEN-1` 是 WORKSPACE_GOVERNANCE 明确保留的旧主线。82 条已合并分支**仍被工作树检出**，Git 拒绝删除。
+- 正确顺序：**D-3（工作树退出）→ 重新核对 → D-1（分支删除）**。26 个 clean 候选中 20 个检出分支，退出后可使 20 条分支变为可删；6 个是 detached HEAD，退出后不释放分支。
+- `doc/WORKTREE_SAFETY_INVENTORY.md` 已追加 Stage 10（只读刷新，未删除/未移动/未 prune 任何工作树）；`delta-20261022.md` 追加 §10 执行链修正。
+- 证据：`branch-deletion-readiness-20261022.json`（104 heads 交叉核对）。
+- 真实删除/迁移/归档/GC/prune/push/reset/stash：0；**仍未达到只剩 main**。

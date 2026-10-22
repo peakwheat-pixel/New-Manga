@@ -223,3 +223,42 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 - 完整逐项清册与证据：[report](../verification/GIT-MAINLINE-CONVERGENCE-1/report.md)、[全部分支](../verification/GIT-MAINLINE-CONVERGENCE-1/branches.md)、[全部工作树](../verification/GIT-MAINLINE-CONVERGENCE-1/worktrees.md)。
 - 只读观测中的唯一无保护命中且无 dirty/untracked/ignored/unique 的表面候选是 WORKSPACE-CLEANUP-TOOL-HARDENING-1；全局禁令、解析错误与逐路径占用未知仍阻止删除。不得以本记录当作移除授权。
 - 本轮已执行删除/移动/merge/GC/prune：**0**；尚未达到只剩 main。
+
+## Stage 10 主线收敛增量只读刷新（2026-10-22，dsh epoch 10）
+
+本 Stage 只读、追加式；**未删除、未移动、未 prune 任何工作树**。本节承接 Stage 9，不覆盖任何历史记录，也不解除 r212 或五广域根保护。
+
+### 当前实测数量
+
+| 指标 | 值 |
+|---|---:|
+| 本地 refs/heads | 104 |
+| 注册 worktree（含主 checkout） | 142 |
+| 完全 clean 的工作树 | 38 |
+| 有 dirty/untracked 的工作树 | 104 |
+| 独有提交为 0 的工作树 | 118 |
+| 独有提交 >0 的工作树 | 24 |
+| 安全退出技术候选 | 26 |
+| 当前可直接 `git branch -d` 的分支 | 1 |
+
+### 删除前判定规则（继承 Stage 7，未改动）
+
+1. 该资源必须已被显式裁决为可退出（本会话为 D-3）；
+2. tracked/untracked/ignored 内容必须为空，或已另存且核销；
+3. 不得被任何进程占用；不得承载 Pin/Canonical Evidence 或未备份的独有提交；
+4. 具备经 `git bundle verify` 与空仓恢复实测的可恢复备份（`all-refs-352410640c.bundle`，221 refs，missing 0 / extra 0，fsck clean）。
+
+### 与分支删除的依赖
+
+已合并分支中 **82 条仍被工作树检出**，Git 会拒绝 `branch -d`；因此 D-3（工作树退出）必须在 D-1（分支删除）之前完成。26 个候选中 20 个检出分支，退出后可使 20 条分支变为可删。
+
+### 未执行项（如实声明）
+
+- 未运行 `git worktree prune`，未运行 `git worktree remove`，未删除任何分支；
+- 未移动/归档任何 workspace 子目录；未 GC；未 push。
+
+### 证据
+
+- `verification/GIT-MAINLINE-CONVERGENCE-1/worktree-inventory-20261022.json`（142/142 逐项）
+- `verification/GIT-MAINLINE-CONVERGENCE-1/branch-deletion-readiness-20261022.json`（104 heads 交叉）
+- `verification/GIT-MAINLINE-CONVERGENCE-1/backup-all-refs-352410640.json`（备份验证）
