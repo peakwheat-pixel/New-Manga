@@ -1,0 +1,1229 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "repo": "G:/CODEX/New Manga",
+  "examined": 81,
+  "safe_exit": [
+    "C:/Users/49745/.codex/worktrees/P02-preflight-r6-c85a041c-review-dsh",
+    "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1-review",
+    "G:/CODEX/New Manga.worktrees/M2-C2-zcode"
+  ],
+  "has_unique": 78,
+  "rows": [
+    {
+      "path": "C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2",
+      "detached": false,
+      "checked_files": 8,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 8,
+      "unique_samples": [
+        "doc/reviews/M2-C1-zcode-7de1cd2-dsh-r2.md",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2-r2/01-git-checks.log",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2-r2/02-link-and-reference-check-focused.log",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2-r2/02a-link-scan-full-tree.log",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2-r2/03-source-claim-verification.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/m2-i2-review-a4705a9/New Manga",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 4,
+      "unique": 1,
+      "unique_samples": [
+        "verification/M2-I2/review-a4705a9/semantic-probe.py"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r1",
+      "branch": null,
+      "detached": true,
+      "checked_files": 4,
+      "deleted_in_worktree": 0,
+      "redundant": 2,
+      "unique": 2,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-current-prestart-r1.stderr.log",
+        "verification/P02/dsh-review-p02-current-prestart-r1.stdout.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r2",
+      "branch": null,
+      "detached": true,
+      "checked_files": 6,
+      "deleted_in_worktree": 0,
+      "redundant": 2,
+      "unique": 4,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-current-prestart-r2.event-metadata.json",
+        "verification/P02/dsh-review-p02-current-prestart-r2.session.json",
+        "verification/P02/dsh-review-p02-current-prestart-r2.stderr.redir",
+        "verification/P02/dsh-review-p02-current-prestart-r2.stdout.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r3",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 2,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-current-prestart-r3.session.json",
+        "verification/P02/dsh-review-p02-current-prestart-r3.stderr.redir",
+        "verification/P02/dsh-review-p02-current-prestart-r3.stdout.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r4",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 2,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-current-prestart-r4.session.json",
+        "verification/P02/dsh-review-p02-current-prestart-r4.stderr.redir",
+        "verification/P02/dsh-review-p02-current-prestart-r4.stdout.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5",
+      "branch": null,
+      "detached": true,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-current-prestart-r5.exit",
+        "verification/P02/dsh-review-p02-current-prestart-r5.stderr.redir",
+        "verification/P02/dsh-review-p02-current-prestart-r5.stdout.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5-followup",
+      "branch": null,
+      "detached": true,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-current-prestart-r5-followup.exit",
+        "verification/P02/dsh-review-p02-current-prestart-r5-followup.stderr.redir",
+        "verification/P02/dsh-review-p02-current-prestart-r5-followup.stdout.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-d27-review-repair-review",
+      "branch": null,
+      "detached": true,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P02/RESUME.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/dsh-review-p02-preflight-r4-followup.exit.txt",
+        "verification/P02/dsh-review-p02-preflight-r4-followup.stderr.txt",
+        "verification/P02/dsh-review-p02-preflight-r4-followup.stdout.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r6-c85a041c-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r6-c85a041c",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 0,
+      "unique_samples": [],
+      "verdict": "SAFE_EXIT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout-review/New Manga",
+      "branch": null,
+      "detached": true,
+      "checked_files": 7,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 7,
+      "unique_samples": [
+        "dsh-p02-r2-closeout-review-r1.exit",
+        "dsh-p02-r2-closeout-review-r1.mount.exit",
+        "dsh-p02-r2-closeout-review-r1.mount.md",
+        "dsh-p02-r2-closeout-review-r1.mount.stderr.log",
+        "dsh-p02-r2-closeout-review-r1.prompt.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-fixes-review",
+      "branch": null,
+      "detached": true,
+      "checked_files": 7,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 7,
+      "unique_samples": [
+        "dsh-p02-r2-closeout-review-r2.exit",
+        "dsh-p02-r2-closeout-review-r2.mount.exit",
+        "dsh-p02-r2-closeout-review-r2.mount.md",
+        "dsh-p02-r2-closeout-review-r2.mount.stderr.log",
+        "dsh-p02-r2-closeout-review-r2.prompt.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-exec-a6-antigravity/New Manga",
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+        "verification/P02/p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+        "verification/P02/p02pre-r1h-round6-integrator-attempt6-20261012.ps1"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p04-prod-command-concurrency-review",
+      "branch": null,
+      "detached": true,
+      "checked_files": 7,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 7,
+      "unique_samples": [
+        "dsh-p04-owner-review-r1.exit",
+        "dsh-p04-owner-review-r1.mount.exit",
+        "dsh-p04-owner-review-r1.mount.md",
+        "dsh-p04-owner-review-r1.mount.stderr.log",
+        "dsh-p04-owner-review-r1.prompt.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2-2jWfPm",
+      "branch": null,
+      "detached": true,
+      "checked_files": 0,
+      "deleted_in_worktree": 2804,
+      "redundant": 0,
+      "unique": 0,
+      "unique_samples": [],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v4-FTf6BC",
+      "branch": null,
+      "detached": true,
+      "checked_files": 0,
+      "deleted_in_worktree": 2804,
+      "redundant": 0,
+      "unique": 0,
+      "unique_samples": [],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v5-WJGAfi",
+      "branch": null,
+      "detached": true,
+      "checked_files": 0,
+      "deleted_in_worktree": 2804,
+      "redundant": 0,
+      "unique": 0,
+      "unique_samples": [],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1",
+      "branch": "GOV-PLAN-BUDGET-1",
+      "detached": false,
+      "checked_files": 51,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 51,
+      "unique_samples": [
+        "archive/README.md",
+        "archive/history/2026-10-12/00_INDEX.md",
+        "archive/history/2026-10-12/12_ROADMAP.md",
+        "archive/history/2026-10-12/README.md",
+        "archive/history/2026-10-12/REBASELINE_PLAN.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1",
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "detached": false,
+      "checked_files": 51,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 51,
+      "unique_samples": [
+        "archive/README.md",
+        "archive/history/2026-10-12/00_INDEX.md",
+        "archive/history/2026-10-12/12_ROADMAP.md",
+        "archive/history/2026-10-12/README.md",
+        "archive/history/2026-10-12/REBASELINE_PLAN.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "detached": false,
+      "checked_files": 20,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 20,
+      "unique_samples": [
+        "archive/README.md",
+        "archive/history/2026-10-12/00_INDEX.md",
+        "archive/history/2026-10-12/12_ROADMAP.md",
+        "archive/history/2026-10-12/README.md",
+        "archive/history/2026-10-12/REBASELINE_PLAN.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1",
+      "branch": "P19-UI-MANIFEST-VIEW-1",
+      "detached": false,
+      "checked_files": 51,
+      "deleted_in_worktree": 1,
+      "redundant": 0,
+      "unique": 51,
+      "unique_samples": [
+        "archive/README.md",
+        "archive/history/2026-10-12/00_INDEX.md",
+        "archive/history/2026-10-12/12_ROADMAP.md",
+        "archive/history/2026-10-12/README.md",
+        "archive/history/2026-10-12/REBASELINE_PLAN.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "branch": "codex/EXPORT-REVEAL-1",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P04/diagnostic_p22_40684_1792151017412.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3",
+      "branch": "codex/FEAT-CREATE-3",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P04/diagnostic_p22_56852_1792239816040.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1",
+      "branch": "codex/FEAT-IMPORT-MULTI-1",
+      "detached": false,
+      "checked_files": 242,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 242,
+      "unique_samples": [
+        "verification/FEAT-IMPORT-MULTI-1/cargo-build.log",
+        "verification/FEAT-IMPORT-MULTI-1/chapter-created.uia.txt",
+        "verification/FEAT-IMPORT-MULTI-1/core-pytest.log",
+        "verification/FEAT-IMPORT-MULTI-1/create-book-dialog-open.uia.txt",
+        "verification/FEAT-IMPORT-MULTI-1/create-book.uia.txt"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "detached": false,
+      "checked_files": 88,
+      "deleted_in_worktree": 0,
+      "redundant": 3,
+      "unique": 85,
+      "unique_samples": [
+        "verification/P02-NEW-TIME-BASELINE/classify-i2-ac3-freeze-input.json",
+        "verification/P02-NEW-TIME-BASELINE/classify-i2-ac3-freeze-output.json",
+        "verification/P02-NEW-TIME-BASELINE/codex-ac3-branch-ref-blocker-20261014T0337.md",
+        "verification/P02-NEW-TIME-BASELINE/codex-ac3-freeze-blocker-20261014T0247.md",
+        "verification/P02-NEW-TIME-BASELINE/codex-i1-verify-r1.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-result.md",
+        "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-stderr.txt",
+        "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded.exit"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02-NEW-TIME-X6-AC1-AC7/integration-verify-i2/owner-evidence-manifest-i2-verify-record.json",
+        "verification/P02-NEW-TIME-X6-AC1-AC7/integration-verify-i2/owner-evidence-manifest-i2-verify.stdout.json",
+        "verification/P02-NEW-TIME-X6-AC1-AC7/integration-verify-i2/owner-evidence-manifest-i2.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+      "detached": false,
+      "checked_files": 25,
+      "deleted_in_worktree": 0,
+      "redundant": 22,
+      "unique": 3,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+        "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-schema-permission-integrity-r1.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "detached": false,
+      "checked_files": 202,
+      "deleted_in_worktree": 0,
+      "redundant": 6,
+      "unique": 196,
+      "unique_samples": [
+        "0",
+        "doc/REBASELINE_PLAN.md",
+        "doc/STATUS.md",
+        "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+        "doc/tasks/README.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR",
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "detached": false,
+      "checked_files": 2,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 2,
+      "unique_samples": [
+        "tools/p02/h1-raw-pre-run-selftest.ps1",
+        "tools/p02/h1-raw-pre-run.ps1"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14",
+      "branch": "codex/P14",
+      "detached": false,
+      "checked_files": 4,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 4,
+      "unique_samples": [
+        "doc/handoffs/P14-workbench.md",
+        "doc/tasks/P14.md",
+        "verification/P04/diagnostic_p22_21316_1792156787974.jsonl",
+        "verification/P14/checkpoint-20261016.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14-review",
+      "branch": null,
+      "detached": true,
+      "checked_files": 40,
+      "deleted_in_worktree": 0,
+      "redundant": 37,
+      "unique": 3,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+        "verification/P04/diagnostic_p22_15768_1792162475508.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "branch": "zcode/P15",
+      "detached": false,
+      "checked_files": 2,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 2,
+      "unique_samples": [
+        "verification/P04/diagnostic_p22_24136_1792167250223.jsonl",
+        "verification/P04/diagnostic_p22_8920_1792167135397.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "branch": "codex/P15-CORE-1",
+      "detached": false,
+      "checked_files": 7,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 7,
+      "unique_samples": [
+        "doc/handoffs/P15-CORE-1-blocked-c399b1ae.md",
+        "doc/tasks/P15-CORE-1.md",
+        "verification/P15-CORE-1/baseline-tests.log",
+        "verification/P15-CORE-1/coordinator-request.exit-code",
+        "verification/P15-CORE-1/coordinator-request.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C",
+      "branch": "codex/P15-CORE-1C",
+      "detached": false,
+      "checked_files": 400,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 400,
+      "unique_samples": [
+        "verification/P15-CORE-1C/pytest-tmp/pytest-of-49745/pytest-1/test_binding_rejects_unknown_p0/data/library.db",
+        "verification/P15-CORE-1C/pytest-tmp/pytest-of-49745/pytest-1/test_binding_rejects_unknown_pcurrent",
+        "verification/P15-CORE-1C/pytest-tmp/pytest-of-49745/pytest-1/test_capability_binding_resolu0/data/library.db",
+        "verification/P15-CORE-1C/pytest-tmp/pytest-of-49745/pytest-1/test_capability_binding_resolu0/data/settings/provider_capability_bindings.json",
+        "verification/P15-CORE-1C/pytest-tmp/pytest-of-49745/pytest-1/test_capability_binding_resolu0/data/settings/provider_profiles.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2",
+      "branch": "codex/P15-HOST-2",
+      "detached": false,
+      "checked_files": 400,
+      "deleted_in_worktree": 0,
+      "redundant": 54,
+      "unique": 346,
+      "unique_samples": [
+        ".vite/vitest/results.json",
+        "verification/P04/diagnostic_p22_18004_1792198418765.jsonl",
+        "verification/P04/diagnostic_p22_22488_1792198836820.jsonl",
+        "verification/P04/diagnostic_p22_25124_1792199718731.jsonl",
+        "verification/P04/diagnostic_p22_39668_1792199192746.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-review",
+      "branch": null,
+      "detached": true,
+      "checked_files": 40,
+      "deleted_in_worktree": 0,
+      "redundant": 37,
+      "unique": 3,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+        "verification/P04/diagnostic_p22_33292_1792167565060.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-3",
+      "branch": "codex/P19-UI-FIX-3",
+      "detached": false,
+      "checked_files": 2,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 1,
+      "unique_samples": [
+        "doc/tasks/P19-UI-FIX-3.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1",
+      "branch": "codex/p22-rebase-1",
+      "detached": false,
+      "checked_files": 25,
+      "deleted_in_worktree": 0,
+      "redundant": 22,
+      "unique": 3,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+        "verification/P22-REBASE-1/diagnostic_p22_10644_1792064236028.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-REBASELINE",
+      "branch": "codex/project-roadmap-rebaseline",
+      "detached": false,
+      "checked_files": 32,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 32,
+      "unique_samples": [
+        "verification/PROJECT-ROADMAP-REBASELINE/dsh-review-r1.md",
+        "verification/PROJECT-ROADMAP-REBASELINE/inputs/PROJECT-PROGRESS-20261015/all-project-progress.md",
+        "verification/PROJECT-ROADMAP-REBASELINE/inputs/PROJECT-PROGRESS-20261015/all-project-task-inventory.csv",
+        "verification/PROJECT-ROADMAP-REBASELINE/inputs/PROJECT-PROGRESS-20261015/all-project-task-inventory.json",
+        "verification/PROJECT-ROADMAP-REBASELINE/inputs/PROJECT-PROGRESS-20261015/all-project-task-ledger.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1",
+      "branch": "codex/READER-IPC-1",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P04/diagnostic_p22_672_1792153345329.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1",
+      "branch": "agent/dsh/RUN-IPC-1",
+      "detached": false,
+      "checked_files": 26,
+      "deleted_in_worktree": 0,
+      "redundant": 25,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P04/diagnostic_p22_38864_1792151352914.jsonl"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1-review",
+      "branch": null,
+      "detached": true,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 0,
+      "unique_samples": [],
+      "verdict": "SAFE_EXIT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1",
+      "branch": "codex/SEC-FIX-PATH-ECHO-1",
+      "detached": false,
+      "checked_files": 400,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 400,
+      "unique_samples": [
+        "verification/P04/diagnostic_p22_37432_1792248621098.jsonl",
+        "verification/P04/diagnostic_p22_42072_1792247284483.jsonl",
+        "verification/P04/diagnostic_p22_50468_1792247646476.jsonl",
+        "verification/P04/diagnostic_p22_61428_1792248161375.jsonl",
+        "verification/SEC-FIX-PATH-ECHO-1/tmp/node-compile-cache/v24.15.0-x64-cf738c9d/021bdfd0"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode",
+      "branch": "agent/zcode/M2-DERIVED-GC-2",
+      "detached": false,
+      "checked_files": 24,
+      "deleted_in_worktree": 0,
+      "redundant": 22,
+      "unique": 2,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-AC5-BUILD-FRESH-CHECKOUT-zcode",
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT",
+      "detached": false,
+      "checked_files": 14,
+      "deleted_in_worktree": 0,
+      "redundant": 12,
+      "unique": 2,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5",
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "detached": false,
+      "checked_files": 7,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 7,
+      "unique_samples": [
+        "doc/reviews/M2-C1-7d908a5.md",
+        "verification/M2-C1/dsh-review-events.jsonl",
+        "verification/M2-C1/dsh-review-stderr.log",
+        "verification/M2-C1/review-7d908a5/00-review-environment.log",
+        "verification/M2-C1/review-7d908a5/01-fixed-binding.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2",
+      "detached": false,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 5,
+      "unique_samples": [
+        "doc/reviews/M2-C1-zcode-7de1cd2-dsh.md",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2/00-environment-and-blocker.md",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2/01-as-is-verification.md",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2/02-link-assessment.md",
+        "verification/M2-C1/review-dsh-zcode-7de1cd2/03-findings-register.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2",
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2",
+      "detached": false,
+      "checked_files": 2,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 2,
+      "unique_samples": [
+        ".qoder-credits/M2-C1 Qoder Review 7de1cd2__31a451ce.canvas.tsx",
+        ".qoder-credits/report.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C2-zcode",
+      "branch": "agent/zcode/M2-C2-typed-ipc-contract-revision",
+      "detached": false,
+      "checked_files": 2,
+      "deleted_in_worktree": 0,
+      "redundant": 2,
+      "unique": 0,
+      "unique_samples": [],
+      "verdict": "SAFE_EXIT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode",
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB",
+      "detached": false,
+      "checked_files": 14,
+      "deleted_in_worktree": 0,
+      "redundant": 12,
+      "unique": 2,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 3,
+      "unique": 2,
+      "unique_samples": [
+        "verification/M2-I2/review-0d6acc7/full-suite-final.log",
+        "verification/M2-I2/review-0d6acc7/full-suite.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode",
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL",
+      "detached": false,
+      "checked_files": 6,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 6,
+      "unique_samples": [
+        "verification/M2-AC5/raw/cleanstart-ac1-run1-stdout.log",
+        "verification/M2-AC5/raw/cleanstart-ac1-run2-stdout.log",
+        "verification/M2-AC5/raw/cleanstart-gate.json",
+        "verification/M2-AC5/raw/cleanstart-probe-stdout.log",
+        "verification/M2-AC5/raw/cleanstart-production-stdout.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c8-review-dsh",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 4,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P01/dsh-review-c8-input.diff"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 4,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P01/agy-review-c9-input.diff"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-closeout-review-antigravity",
+      "branch": null,
+      "detached": true,
+      "checked_files": 12,
+      "deleted_in_worktree": 0,
+      "redundant": 11,
+      "unique": 1,
+      "unique_samples": [
+        "verification/P01/agy-review-d3-diff.patch"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex",
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "detached": false,
+      "checked_files": 10,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 10,
+      "unique_samples": [
+        "doc/REBASELINE_PLAN.md",
+        "doc/STATUS.md",
+        "doc/tasks/P02.md",
+        "verification/P02/dsh-review-scratch-build-isolation-plan-r3-20261009.stdout.jsonl",
+        "verification/P02/dsh-review-scratch-build-isolation-plan-r4-20261009.exit"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode",
+      "branch": "agent/zcode/P02-real-webview-harness",
+      "detached": false,
+      "checked_files": 400,
+      "deleted_in_worktree": 0,
+      "redundant": 22,
+      "unique": 378,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+        "verification/P02/cargo-target/.rustc_info.json",
+        "verification/P02/cargo-target/CACHEDIR.TAG",
+        "verification/P02/cargo-target/debug/.cargo-artifact-lock"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-failureprobe",
+      "branch": null,
+      "detached": true,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/probe-execution-probeonly.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-full",
+      "branch": null,
+      "detached": true,
+      "checked_files": 8,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 7,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/p02-harness-results.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution-full.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-probe",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 4,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/probe-execution-probeonly.log",
+        "verification/P02/static-control-report.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38672473-exact",
+      "branch": null,
+      "detached": true,
+      "checked_files": 9,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 8,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/p02-harness-results.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution-full.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38959ba99-exact",
+      "branch": null,
+      "detached": true,
+      "checked_files": 9,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 8,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/p02-harness-results.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution-full.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-5fa8a41f",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 5,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/p02-harness-results.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-9b82e97b",
+      "branch": null,
+      "detached": true,
+      "checked_files": 5,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 5,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/p02-harness-results.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-full",
+      "branch": null,
+      "detached": true,
+      "checked_files": 7,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 7,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/p02-harness-results.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution-full.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-probe",
+      "branch": null,
+      "detached": true,
+      "checked_files": 4,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 4,
+      "unique_samples": [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/env-identity-report.txt",
+        "verification/P02/probe-execution-probeonly.log",
+        "verification/P02/static-control-report.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-dsh-review-6d84b48",
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "doc/reviews/P03-PACKAGED-SFX-ENTRY-6d84b480-dsh.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity",
+      "branch": "agent/antigravity/P03-packaged-sfx-entry",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/P03-PACKAGED-SFX-ENTRY/antigravity-dispatch.json",
+        "verification/P03-PACKAGED-SFX-ENTRY/antigravity-dispatch.stderr.log",
+        "verification/P03-PACKAGED-SFX-ENTRY/antigravity-log-encoding-followup.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+      "branch": "codex/P03-integration-4c04459",
+      "detached": false,
+      "checked_files": 22,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 22,
+      "unique_samples": [
+        "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-catalog-initialize.log",
+        "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-run1-stdout.log",
+        "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-run2-stdout.log",
+        "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-gate.json",
+        "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-probe-stdout.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity",
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "detached": false,
+      "checked_files": 57,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 56,
+      "unique_samples": [
+        "INTERRUPTED by Codex before final report; no exit marker; partial JSONL preserved; not Review evidence",
+        "doc/tasks/P22.md",
+        "verification/P22/antigravity-owner-p22-r2-attempt2.exit",
+        "verification/P22/antigravity-owner-p22-r2-attempt2.prompt.md",
+        "verification/P22/antigravity-owner-p22-r2-attempt2.stderr.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PAGE-NAV-1",
+      "branch": "zcode/page-nav-projection-1",
+      "detached": false,
+      "checked_files": 2,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 2,
+      "unique_samples": [
+        "apps/desktop/frontend/npm-ci.log",
+        "apps/desktop/sidecar-build.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-domain-commands",
+      "branch": "codex/rc4-domain-commands",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        ".tmp-probe/data/library.db"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-integration",
+      "branch": "codex/rc4-integration",
+      "detached": false,
+      "checked_files": 21,
+      "deleted_in_worktree": 0,
+      "redundant": 19,
+      "unique": 2,
+      "unique_samples": [
+        "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+        "apps/desktop/src-tauri/gen/schemas/windows-schema.json"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1",
+      "detached": false,
+      "checked_files": 4,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 4,
+      "unique_samples": [
+        "doc/reviews/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38-dsh-r1.md",
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r1/dsh-cli-response.md",
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r1/dsh-cli-stderr.log",
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r1/dsh-r1-static-checks.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r2-cli-exit.txt",
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r2-cli-output.md",
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r2-cli-stderr.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-zcode",
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "verification/T2.2.1/zcode-report-df637df.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13",
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 1,
+      "unique": 2,
+      "unique_samples": [
+        "verification/T3.2.1/repair-13/dsh-review-prompt-4.txt",
+        "verification/T3.2.1/repair-13/dsh-review-run-4.log"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-zcode",
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design",
+      "detached": false,
+      "checked_files": 1,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 1,
+      "unique_samples": [
+        "verification/TASK-024/author-verification.md"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-046-zcode",
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost",
+      "detached": false,
+      "checked_files": 3,
+      "deleted_in_worktree": 0,
+      "redundant": 0,
+      "unique": 3,
+      "unique_samples": [
+        "doc/reviews/TASK-046-7bf476b.md",
+        "verification/TASK-046/review-7bf476b/post-integration-full-suite-2b40085.log",
+        "verification/TASK-046/review-7bf476b/run_suite_at.ps1"
+      ],
+      "verdict": "HAS_UNIQUE_CONTENT"
+    }
+  ]
+}
