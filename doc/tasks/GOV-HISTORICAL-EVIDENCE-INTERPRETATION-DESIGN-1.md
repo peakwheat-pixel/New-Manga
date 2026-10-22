@@ -13,7 +13,7 @@ base_commit: 8274d969706ee99acfdd9e26ae281882f5bbd6c7
 branch: codex/gov-historical-evidence-interpretation-design-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1
 integration_commit: null
-delivery_head: 88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9
+delivery_head: a4fd609b43db745f789251467907cbf69208d2e3
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1
@@ -53,13 +53,14 @@ planned：Python -B/UTF8对canonical源字节/当前scan、设计binding字段�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-|EV-1|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/.gitattributes|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
-|EV-2|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/binding-specimen.json|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|2111062dd98e730132ec2db4899a3efc399fe5fac5fffe09a8bff3aa2d0fbce3|CANONICAL|
-|EV-3|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/checkpoint.md|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|020f3426c22589a63a473282ce395095fe1a2bdfeac7cb4db98acdac4560ff4a|CANONICAL|
-|EV-4|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/design.md|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|0c94f6e8fabc2cf0b2400bf525a7023a57afd8d4cde3c575415e92fbe016cacc|CANONICAL|
-|EV-5|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/execution.json|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|d4303f95c5a4b4fec1cd051be087116173a3fc7ac840f8b46ec4958ef37b143f|CANONICAL|
-|EV-6|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/validate_design.py|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|838348a76c927c12c6c486ca59dca5270033ba98feb9f15f62ffee2512ed398a|CANONICAL|
-|EV-7|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/validation.json|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|0e61fca31c90e9f5927d70b93ef2203c7c457caf7eff65d3b973703379d36dbc|CANONICAL|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/.gitattributes|a4fd609b43db745f789251467907cbf69208d2e3|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/binding-specimen.json|a4fd609b43db745f789251467907cbf69208d2e3|1499ddcfddea281dec45e4ed146499725ea3e1e081ea2412b96829b9af274740|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/checkpoint.md|a4fd609b43db745f789251467907cbf69208d2e3|b6436ac4b82886f466a985f30518c33ea11a3f2bd60c5fcbdaaac46b80c585c2|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/deepseek-review-r1.md|a4fd609b43db745f789251467907cbf69208d2e3|260a15da00359285db7640cc78e89d85ab17f72cc7610712aed782469e3479fd|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/design.md|a4fd609b43db745f789251467907cbf69208d2e3|02d1e9e55ad0021d55481883c7067a2536c294ef03a7628ee3caeb4b1bf2f9b0|CANONICAL|
+|EV-6|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/execution.json|a4fd609b43db745f789251467907cbf69208d2e3|d6cc150df69037988079c844b0ae8eb70f2dfa817753792ff8c9b31efed0ec7d|CANONICAL|
+|EV-7|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/validate_design.py|a4fd609b43db745f789251467907cbf69208d2e3|838348a76c927c12c6c486ca59dca5270033ba98feb9f15f62ffee2512ed398a|CANONICAL|
+|EV-8|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/validation.json|a4fd609b43db745f789251467907cbf69208d2e3|f910cb214386ca5513f1498fcc97aa9db994664c9c8ae226aea448a7927fffaa|CANONICAL|
 
 ## Resource Manifest
 
@@ -75,4 +76,6 @@ planned：Python -B/UTF8对canonical源字节/当前scan、设计binding字段�
 
 实际分支创建base345c86857f6ea80153ead49271e84ff234a4963f，common目录一致，当前102heads/140WT；baseline12错误/1882保护根（含本Task两新资源），四源SHA与已审研究一致，6guard根均已有保护。新E只是设计样本与只读一致性断言，无运行配置/解析器改动；拟议12→7尚未运行。
 
-交付88a8a7b0f/真实Review diff base345c86857f6ea80153ead49271e84ff234a4963f。7EV raw/blob/pin固定；运行配置路径当前不存在、tools差异为空。样本canonical policy SHA-256=b7ce39be57d1e0ee4b682bbba5b7341a3448329f6f53c24b1eee359b0184cfd0（由严格JSON规范化计算，未来实现Task才冻结为代码常量）。设计数据assert/check/diff实际exit0；未来helper/12→7/+6声明/+4warning及T01–T18全NOT_RUN。当前真实12和四源原字节不变，102/140保留，父blocked/r212不变；下一固定head DeepSeek纯只读独审。
+交付88a8a7b0f/真实Review diff base345c86857f6ea80153ead49271e84ff234a4963f。7EV raw/blob/pin固定；运行配置路径当前不存在、tools差异为空。样本canonical policy SHA-256=3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d（由严格JSON规范化计算，未来实现Task才冻结为代码常量）。设计数据assert/check/diff实际exit0；未来helper/12→7/+6声明/+4warning及T01–T18全NOT_RUN。当前真实12和四源原字节不变，102/140保留，父blocked/r212不变；下一固定head DeepSeek纯只读独审。
+
+R1 DeepSeek approved ac0bd5a74（P0/P1=0）；R2修订集中处理P2快照字段/时点、broad active/no-op适用性，并明确原line227实目标末检及tracking仅用于配置/事实/源文件。未实施生产代码。新交付a4fd609b4/current8EV，canonical样本摘要3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d；设计数据assert再次exit0，原四源/正式12/旧保护不变。固定新head再由DeepSeek只读复审，不用旧批准覆盖新契约。
