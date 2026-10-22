@@ -5,6 +5,7 @@
 ## 当前 Task
 
 - 当前 Task：**无执行中的 Task（READY=无）**；唯一非终态保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书）；[GOV-DIRECTORY-CLEANUP-1](tasks/GOV-DIRECTORY-CLEANUP-1.md) 已 r1 approved 并 `done`（五根 171 项，净释放 426.3 MiB）。
+- [DEV-PREVIEW-1](tasks/DEV-PREVIEW-1.md)：done，`8ac00b97b`；B 档待 DSH 烟测。
 - 最近完成：**[GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1](tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md)** `done`；7项声明错误→0、APPDATA 用户数据受保护；随后完成 A+B+C 最终收敛（2.6GiB 内容归档可恢复）。
 - 父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)** `done`；r3 approved `6997733bf`；7项历史运行身份已由精确解释层归零。
 - 收敛结果：`refs/heads` 仅 `main`、注册 worktree 1、`refs/archive/*` 21、声明审计 0 errors；2.6GiB 内容归档可恢复。
