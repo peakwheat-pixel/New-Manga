@@ -547,11 +547,12 @@ export const DEVICE_PREFERENCE_LABELS: Readonly<Record<DevicePreference, string>
 };
 
 /**
- * Review-b1 M1 adjudication — the one sentence rendered next to the control
- * so the value can never be read as a hard device switch.
+ * Review-b1 M1 adjudication + review-r3 P2-2 — the one sentence rendered next
+ * to the control so the value can never be read as a hard device switch, and
+ * the M3 boundary (only GPU providers take the preference) is visible.
  */
 export const DEVICE_PREFERENCE_SEMANTICS_NOTE =
-  "设备偏好用于 GPU 可用性校验与 CPU 回退决策，不强制 Provider 内部设备实现。";
+  "设备偏好仅对声明需要 GPU 的 Provider 生效（远程/纯 CPU Provider 忽略此偏好）；它用于 GPU 可用性校验与 CPU 回退决策，不强制 Provider 内部设备实现。";
 
 export interface ModelGpuSettingsDraft {
   device_preference: DevicePreference;

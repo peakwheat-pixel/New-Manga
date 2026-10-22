@@ -2,7 +2,7 @@
 task_id: SETTINGS-OPEN-B-2
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
-base_commit: 7d19164f838607e68e2b6970bbbd57bee7bd5777
+base_commit: 81f822127f6c98a16b5456bf0595ef29bdd437f8
 delivery_head: 0e2e6233aa54363e49e992ba2353a00c665c3de0
 status: in_review
 ---

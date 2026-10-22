@@ -102,7 +102,7 @@
 
 | 键 | 类型 / 值域 | 默认 | 消费点 |
 |---|---|---|---|
-| `device_preference` | `auto` \| `cpu` \| `gpu` | `auto` | Run 执行时由 `handlers` 的 `heavy_runner` 读取 Run 快照并传给 `runtime.run_guarded`；`auto` 保持历史行为；`cpu` = 跳过 GPU 校验直接执行；`gpu` = 经 `DeviceManager.plan` 校验 GPU 可用性，不可用时按回退策略执行或抛 typed `DeviceUnavailable`。**不强制 Provider 内部设备实现**（provider API 无 device 参数；偏好只决定校验与回退） |
+| `device_preference` | `auto` \| `cpu` \| `gpu` | `auto` | Run 执行时由 `handlers` 的 `heavy_runner` 读取 Run 快照并传给 `runtime.run_guarded`；`auto` 保持历史行为；`cpu` = 跳过 GPU 校验直接执行；`gpu` = 经 `DeviceManager.plan` 校验 GPU 可用性，不可用时按回退策略执行或抛 typed `DeviceUnavailable`。**偏好仅作用于 descriptor 声明 `requires_gpu=True` 的 provider**；CPU-only/远程 provider（translation、vision OCR）忽略偏好并保持 `auto`，不会因用户选 `gpu` 而失败（review M3 裁决）。**不强制 Provider 内部设备实现**（provider API 无 device 参数；偏好只决定校验与回退） |
 | `allow_cpu_fallback` | bool | `true` | 与 **Provider descriptor** 的 `supports_cpu_fallback` **相与**：只有 descriptor 声明支持且用户允许时才回退 CPU（D06 §82 语义不变；handler 从 registry descriptor 读取，不回退到实例属性猜测） |
 
 - **未开放**：`gpu_concurrency`（单槽 gate 是既有不变量；开放需先裁决并改调度器）、模型下载/路径管理（D07 §84 另立 Task）、GPU 设备状态展示（需要新增 Tauri 只读命令，B-2 另行评估）。

@@ -82,7 +82,7 @@ allowed_paths:
 
 - 2026-10-22：dsh 释放并登记；Core 由 `core-settings-b1`、前端由 `ui-settings-b1` 两个独立 writer 并行实现；Lead 独立复核 diff、重跑测试并组织集成。
 - 2026-10-22：交付 commit `7d19164`（dsh 集成）；独立 Review 由 `reviewer-settings-a`（非实现者）执行，结论落 `verification/SETTINGS-OPEN-B-1/review-b1.md`（r1 `changes_requested`：B1 descriptor 来源 + m1；返修后复审）。B-2 批次在同一工作区并行时未进入本 Task 的交付 commit（`7d19164` 树干净可用 `git archive` 复核）；B-2 独立 Task 记录。
-- Lead 独立验证：`pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` → 1212 passed / 3 skipped；`npm --prefix apps/desktop/frontend test` → 39 files / 387 tests；`tsc --noEmit` exit 0。
+- Lead 独立验证：clean 快照（`git archive b521ad27`）`pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` → **1253 passed / 3 skipped**；全量 **2585 passed / 3 failed / 9 skipped**（3 个既有失败）；`npm --prefix apps/desktop/frontend test` → 39 files / 387 tests（B-1 树）；`tsc --noEmit` exit 0。证据 hash 口径：canonical 表按工作区字节 pin（CRLF），`git show <commit>:<path>` 的 blob hash 因 autocrlf 略有差异；`check.ps1` 两者都接受，clean 复核以 raw 内容计数为准（review-b1-r3 P2-3）。
 - 任务文本笔误：验收命令中的 `tests/infrastructure` 不存在；设备测试在 `tests/providers/test_devices.py`（已由 core-report §4.1 记录）。
 
 ## Canonical Evidence

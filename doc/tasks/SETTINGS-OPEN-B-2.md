@@ -9,7 +9,7 @@ suggested_owner: dsh
 owner: dsh
 reviewer: reviewer-settings-a
 depends_on: [SETTINGS-OPEN-B-1]
-base_commit: 7d19164f838607e68e2b6970bbbd57bee7bd5777
+base_commit: 81f822127f6c98a16b5456bf0595ef29bdd437f8
 branch: main
 worktree: null
 integration_commit: 0e2e6233aa54363e49e992ba2353a00c665c3de0
@@ -53,7 +53,7 @@ allowed_paths:
 - [x] **AC2 Tauri 命令面**：新增 production-only 命令 `cleanup_preview` / `cleanup_run` / `cleanup_retry_pending`（Core 转发、typed 错误映射沿用 `CORE_UNAVAILABLE`/`INVALID_REQUEST`），并在 `command_allowlist` 常量、`*_PRODUCTION_ONLY_COMMANDS`、`generate_handler!` 三处清单、capabilities 声明、build.rs manifest（如涉及）同一 commit 同步；probe/ac1 模式保持冻结形状。
 - [x] **AC3 前端面板**：`cache_revision` 分类 open；面板显示"可清理 N 个文件 / X MB"（预览）、"清理"与"重试挂起项"按钮、结果反馈（成功/失败/跳过计数与失败明细）、只读说明（Revision 保留策略/自动清理未开放）；加载失败/禁用态（无 Core）有明确提示；不显示假控件。
 - [x] **AC4 测试**：Core 单测（三命令 + 空预览/有缓存/失败后 pending/重试成功；安全前缀拒绝与既有 cleanup 测试不弱化）；Rust 单测（命令面同步断言/allowlist）；前端面板测试（预览/清理/重试/失败投影）；`cargo test` 与前端 `npm test`、`tsc` 全绿或明确记录环境性 NOT_RUN。
-- [ ] **AC5 证据**：固定 commit、evidence_dir 原始日志、独立 Review（非实现者）、GUI 烟测（打开缓存分类、预览、清理、重启后 pending 状态一致）或明确 NOT_RUN。
+- [x] **AC5 证据**：固定 commit `0e2e623`；evidence_dir 原始日志；独立 Review（非实现者，`review-b2.md`）；GUI 烟测 preview/clean/empty **PASS**（`gui-smoke.md` + screenshots/01..03），pending 失败重试与重启复查 **NOT_RUN**（由 `test_core_cleanup_wire.py` 覆盖）。证据 hash 口径同 B-1（worktree CRLF，check.ps1 双接受；clean 复核以计数为准）。
 
 ## 允许修改范围
 

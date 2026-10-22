@@ -2,8 +2,8 @@
 
 - Task: SETTINGS-OPEN-B-2（缓存/Revision 清理操作面，设计 `doc/design/SETTINGS_SECTION_SCHEMAS.md` §4.3）
 - 实现者: wire-settings-b2（DSH），实现日期: 2026-10-22
-- 基线 commit: `7d19164f838607e68e2b6970bbbd57bee7bd5777`（main）
-- 分支/工作区: `main`，本报告对应**未提交**工作区；同一工作区还包含其他 Agent 的未提交改动（`apps/desktop/frontend/src/settings/**`、`src/infrastructure/providers/*`、`doc/**` 等），不属于本报告范围
+- 基线 commit: `81f822127f6c98a16b5456bf0595ef29bdd437f8`（`main`，delivery commit 的 parent）
+- 分支/工作区: `main`；交付 commit `0e2e6233aa54363e49e992ba2353a00c665c3de0`（本报告记录该 commit 的实现与测试）；实现已提交，未 push。
 - 本报告只覆盖 **wire 面**（Core host 命令 + Tauri 命令面 + Rust/Python 测试）；前端面板见同目录 `ui-report.md`
 
 ## 1. 设计裁决（已由 Lead 确认）
@@ -150,4 +150,4 @@ cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml \
 2. 本 checkout 无法运行 `packaged_sidecar_tests`（缺 sidecar bundle），spawn 级 E2E 另由打包证据链覆盖；但在真实 sidecar 上 `cleanup.*` 只是 application envelope 命令，与 `settings.get` 同通道，风险等价。
 3. 默认线程 `cargo test` 的 2 个 worker-registry 失败为既有并行敏感项（串行/单跑全绿），Review 时按此复核；若要求默认线程也全绿，需要独立 Task 修既有测试隔离，不建议在本 Task 内扩大范围。
 4. 前端 `cleanup_preview/run/retry_pending` 契约以上文 §2 为准；若 UI 的防御解析发现差异，以本报告为准并回报 Lead。
-5. 未 commit / 未 push / 未 reset / 未 stash；同一工作区其他 Agent 的未提交改动不得混入本 Task 的集成 commit。
+5. 交付 commit `0e2e623`；未 push / reset / stash；同一工作区其他 Agent 的改动不得混入本 Task 的集成范围。

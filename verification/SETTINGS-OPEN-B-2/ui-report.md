@@ -1,12 +1,12 @@
 # SETTINGS-OPEN-B-2 前端 UI 报告（task-8，缓存/Revision 清理面板）
 
 - 任务：task-8 / SETTINGS-OPEN-B-2 AC3 + AC4（前端部分）
-- 基线：`main` @ `7d19164f838607e68e2b6970bbbd57bee7bd5777`（工作区中 `doc/**` 与 `src/**` 的未提交改动属于其他并行 Agent；本 Task 未写这些路径）
+- 基线：`main` @ `81f822127f6c98a16b5456bf0595ef29bdd437f8`（parent of the delivery commit）；交付 commit `0e2e6233aa54363e49e992ba2353a00c665c3de0`。
 - 角色：前端实现 agent（ui-settings-b2）
 - 日期：2026-10-22
 - 设计依据：`doc/design/SETTINGS_SECTION_SCHEMAS.md` §4.3；任务：`doc/tasks/SETTINGS-OPEN-B-2.md`
 - Wire 对齐：2026-10-22 收到 wire-settings-b2（task-7）的最终 JSON 投影确认并按此实现；task-7 已完成（Core + Tauri 均已落地，见 `verification/SETTINGS-OPEN-B-2/wire-report.md` §2），本报告已按最终实现复核。
-- 结论：前端实现与任务测试完成；wire 落地后复跑 `npm test`（41 files / 406 tests）与 `tsc --noEmit`（exit 0）仍全绿。GUI 烟测为 NOT_RUN——需要构建并运行 Tauri 应用，属于 AC5 集成验证（见 §7）。
+- 结论：前端实现与任务测试完成；wire 落地后复跑 `npm test`（41 files / 406 tests）与 `tsc --noEmit`（exit 0）仍全绿。GUI 烟测覆盖 preview / clean / empty 三态（Lead 执行，PASS，见 `gui-smoke.md` 与 screenshots/01..03）；pending 失败重试与重启复查为 NOT_RUN（由 `test_core_cleanup_wire.py` 覆盖）。
 
 ## 1. 变更清单
 
@@ -19,7 +19,7 @@
 | `apps/desktop/frontend/src/settings/CacheRevisionPanel.test.tsx` | 新增 | 11 个用例：面板行为、ruled wire mapping、兼容 items 数组、两种错误投影 |
 | `apps/desktop/frontend/src/settings/client.cleanup.test.ts` | 新增 | 8 个用例：命令名、无参数调用、三种投影解析与错误映射 |
 
-未改动：`src/**`（Python）、`apps/desktop/src-tauri/**`、`doc/**`；未加依赖；未 commit/push。
+未改动：`src/**`（Python）、`apps/desktop/src-tauri/**`、`doc/**`；未加依赖；实现已由 Lead 固定为 `0e2e623`（未 push）。
 
 ## 2. Wire 契约（前端侧，已与 task-7 确认）
 
@@ -148,7 +148,7 @@ tsc --noEmit exit code: 0
 
 - 未改 `src/**`（Python）、`apps/desktop/src-tauri/**`、`doc/**`（`git status` 中这些路径的改动均来自其他并行 Agent，本 Task 未写）。
 - 未新增依赖、未改 `package.json`/lockfile。
-- 未 commit / push / merge / rebase。
+- 未 push / merge / rebase；实现已提交为 `0e2e623`（Lead 集成）。
 - 无假控件：自动清理天数、Revision 保留策略均未出现控件，仅只读说明。
 - 未新增缓存删除路径：前端只调用固定三命令，实际删除语义完全在 `CleanupService`/安全前缀内。
 
@@ -156,7 +156,7 @@ tsc --noEmit exit code: 0
 
 1. **Wire 已全部落地**：task-7 已完成（wire-report 已写）。`src/application/maintenance/cleanup.py`（`CleanupPreview.to_dict()`）、`src/bootstrap/core_assembly.py`（组装 `CleanupService`）、`src/bootstrap/core_service.py`（`_CLEANUP_COMMANDS`、`handle_cleanup_preview/run/retry_pending`、`_cleanup_outcome_projection`、`CORE_UNAVAILABLE` 映射）与 `apps/desktop/src-tauri/**`（三命令、production-only 清单、allowlist、capabilities、build.rs）均已出现并与本报告的 §2 JSON 一致（本报告生成后已复核）。前端命令名/无参调用以 `client.cleanup.test.ts` 的 mock 断言固定，Tauri 侧逐字一致。
 2. **`pending_cleanups` 已确认**：`handle_cleanup_preview()` 返回 `preview().to_dict()` 并追加 `pending_cleanups = pending_cleanup_count()`；前端解析与 §2 一致。
-3. **GUI 烟测 NOT_RUN**：打开缓存分类 → 预览 → 清理 → 重启复查 pending 需要构建并运行 Tauri 应用（AC5），属集成验证，不在本前端 Task 内执行；建议 Lead 在集成阶段执行。
+3. **GUI 烟测**：preview / clean / empty 三态已由 Lead 在 dev preview 执行并通过（`gui-smoke.md`，截图 01..03，清理 3 文件→成功 3/失败 0/跳过 0→归零）；**pending 失败重试与重启复查 NOT_RUN**（失败态由 `tests/core/test_core_cleanup_wire.py` 覆盖）。
 4. 环境事实记录：`CleanupPreview.to_dict()` 原先不存在、`CleanupOutcome.to_dict()` 为 mapping 形式（cleanup.py:61/92），与任务文字描述不一致；本实现已多形状兼容并在 §2.1 留证，供 Lead/wire writer 收口。
 
 ## 8. 推荐下一步

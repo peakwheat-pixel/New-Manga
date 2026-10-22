@@ -23,11 +23,11 @@ status: in_review
 
 | 命令 | 结果 |
 |---|---|
-| `python -m pytest tests/core tests/providers -q --ignore=tests/providers/test_detection_manga_real.py` | 1212 passed / 3 skipped / exit 0（Lead 独立重跑一致） |
-| `python -m pytest tests -q`（全量） | 2544 passed / 3 failed（3 个均为既有环境/基线失败，见 core-report §5.4） |
-| `npm --prefix apps/desktop/frontend test` | 39 files / 387 tests passed |
+| `python -m pytest tests/core tests/providers -q --ignore=tests/providers/test_detection_manga_real.py` | **clean `b521ad27` 快照：1253 passed / 3 skipped / exit 0**（Lead 在 `git archive` 重录，排除 B-2 WIP；旧 dirty 口径 1212/1251 不再使用） |
+| `python -m pytest tests -q`（全量） | **clean：2585 passed / 3 failed / 9 skipped**（3 个均为既有环境/基线失败，见 core-report §5.4/§9） |
+| `npm --prefix apps/desktop/frontend test` | 39 files / 387 tests passed（B-1 树；B-2 加入后为 41/406） |
 | `tsc --noEmit` | exit 0 |
-| 新测试 | +108 pytest（60 settings / 38 handlers+runtime / 10 devices）、+20 vitest |
+| 新测试 | +108 pytest（60 settings / 38 handlers+runtime / 10 devices）、+2 M3 边界、+20 vitest |
 
 原始证据：[core-report.md](../../verification/SETTINGS-OPEN-B-1/core-report.md)、[ui-report.md](../../verification/SETTINGS-OPEN-B-1/ui-report.md)、`core-pytest-*.txt`、`frontend-*.txt`。
 

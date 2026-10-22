@@ -89,7 +89,7 @@ describe("ModelGpuSettingsPanel (SETTINGS-OPEN-B-1 §4.1)", () => {
       "运行时探测",
     );
     expect(q('[data-testid="model-gpu-settings-panel-runtime-note"]')?.textContent).toContain(
-      "设备偏好用于 GPU 可用性校验与 CPU 回退决策，不强制 Provider 内部设备实现。",
+      "设备偏好仅对声明需要 GPU 的 Provider 生效（远程/纯 CPU Provider 忽略此偏好）；它用于 GPU 可用性校验与 CPU 回退决策，不强制 Provider 内部设备实现。",
     );
     expect(q('[data-testid="model-gpu-settings-panel-description"]')?.textContent).toContain(
       "不强制 Provider 内部设备实现",

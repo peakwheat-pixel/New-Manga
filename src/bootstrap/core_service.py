@@ -480,14 +480,36 @@ class CleanupUnavailableError(RuntimeError):
     -- instead of crashing the sidecar or pretending an empty cleanup."""
 
 
+#: Fixed, path-free reasons for the cleanup wire (review-b2 P2-1). An
+#: ``OSError`` text may embed an absolute OS path (the managed root) and must
+#: never reach the WebView; the panel only needs to know *why* it failed.
+_CLEANUP_FAILED_REASON = "remove failed"
+_CLEANUP_SKIPPED_REASON = "outside safe cache prefixes"
+
+
 def _cleanup_outcome_projection(outcome: CleanupOutcome) -> dict[str, Any]:
     """SETTINGS-OPEN-B-2 AC1: the outcome wire projection is the frozen
-    ``CleanupOutcome.to_dict()`` mapping (relative path -> status/reason)
-    plus the three counts the settings panel displays. No OS path, no
-    absolute path and no user source file ever appears here: cleanup only
-    addresses ``cache/``-prefixed relative paths."""
+    ``CleanupOutcome.to_dict()`` shape (relative path -> status/reason) plus
+    the three counts the settings panel displays. No OS path, no absolute
+    path and no user source file ever appears here: cleanup only addresses
+    ``cache/``-prefixed relative paths, and failure reasons are fixed
+    path-free sentences (review-b2 P2-1)."""
+    items = outcome.to_dict()
+    projected: dict[str, dict[str, str]] = {}
+    for path, item in items.items():
+        status = str(item.get("status", ""))
+        projected[str(path)] = {
+            "status": status,
+            "reason": (
+                ""
+                if status == "ok"
+                else _CLEANUP_FAILED_REASON
+                if status == "failed"
+                else _CLEANUP_SKIPPED_REASON
+            ),
+        }
     return {
-        "items": outcome.to_dict(),
+        "items": projected,
         "removed": outcome.removed,
         "failed": outcome.failed,
         "skipped": outcome.skipped,

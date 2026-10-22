@@ -273,6 +273,14 @@ def test_failed_removal_is_persisted_as_pending(core) -> None:
     assert result["items"]["cache/webtoon-tiles/tile-fault-00000.png"][
         "status"
     ] == "failed"
+    # review-b2 P2-1: never project an OSError text (it may embed an absolute
+    # managed-root path) -- the wire reason is a fixed, path-free sentence.
+    assert (
+        result["items"]["cache/webtoon-tiles/tile-fault-00000.png"]["reason"]
+        == "remove failed"
+    )
+    assert "\\" not in result["items"]["cache/webtoon-tiles/tile-fault-00000.png"]["reason"]
+    assert "/" not in result["items"]["cache/webtoon-tiles/tile-fault-00000.png"]["reason"]
     # the failure is never silent: the shared ledger sees it immediately
     assert flaky.pending_cleanup_count() == 1
     assert tile.is_file(), "a failed removal must not pretend to succeed"

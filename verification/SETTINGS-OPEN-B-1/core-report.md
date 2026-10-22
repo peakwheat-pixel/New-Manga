@@ -248,7 +248,7 @@ FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_
 |---|---|---|
 | M1（`run_guarded` 丢弃 `DevicePlan`，显式偏好只校验不改变 provider 设备） | 待 Lead 裁决 | 本次未改：设计 §4.1 的消费点写的是"经 `DeviceManager.plan` 校验"，实现与原 AC 字面一致；按"最小且保守"原则不擅自把 plan 结果传进 provider（需新增设备传递装配点，超出本 Task AC）。若判定"只校验"，建议同步 UI"仅 CPU/优先 GPU"文案与设计说明并固化断言；若判定"真正强制设备"，另立 Task。 |
 | M2/M3/m2（治理/工作区/元数据） | Lead/流程侧 | 非本 agent 范围：canonical evidence/pin/Handoff、B-2 WIP 隔离与 Task Review 文件名由 Lead 统一处理；本报告未触碰 `doc/**`、未 commit。 |
-| 观察：远程 translate provider 的 descriptor 未声明 `supports_cpu_fallback` | 记录，未改 | `runtime.build_provider_registry` 中远程 OpenAI/Sakura descriptor 使用默认 `supports_cpu_fallback=False`；用户**显式**选择 `gpu` 且本机无 GPU 时，translate 会按 D06 §82 判为"无回退"并抛 `DeviceUnavailable`（`auto` 不受影响）。本地 OCR descriptor 已声明 `True`，Review B1 关注的回退场景可达。是否给远程 Provider 声明 CPU 回退属 Provider 声明面改动，需 Lead/设计裁决，本次未擅自修改。 |
+| 观察：远程 translate provider 的 descriptor 未声明 `supports_cpu_fallback` | 记录，未改 | `runtime.build_provider_registry` 中远程 OpenAI/Sakura descriptor 使用默认 `supports_cpu_fallback=False`；**已由 M3 裁决修复（见 §10 / review-b1-r3）**：非 `requires_gpu` provider 忽略 `device_preference`，远程 translate/vision OCR 保持 auto，不会因用户显式选 gpu 而 DeviceUnavailable；本地 OCR 的回退场景仍可达。 |
 | 真实 GPU 端到端 | NOT_RUN | 环境无 GPU/torch；用 `tests/providers/env_sim.py::gpu_state` 模拟 + 真实 `DeviceManager` 覆盖分支，真实 CUDA 验证留待集成环境。 |
 | GUI 烟测 | NOT_RUN | 由 Lead/集成阶段执行（同 §6）。 |
 
@@ -258,7 +258,7 @@ FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_
 - 未删除既有测试文件或降低断言强度；对既有测试的唯一改动是 §4.6 的根因适配（pass-through 列表 + 更强的拒绝断言）。
 - 未使用 `skip` / `xfail` / `only` 等绕过手段；未 commit/push/reset/stash。
 
-## 9. Lead clean 重录（Review r2 M2 处置，2026-10-22）
+## 10. Lead clean 重录（Review r2 M2 处置，2026-10-22）
 
 Review r2 指出 §8 的 r1 raw 来自 dirty 工作区（含未跟踪 B-2 的 28 个测试），clean commit 实际更低。本报告新增 clean 证据（git archive HEAD b521ad27 快照，排除 B-2 WIP）：
 
