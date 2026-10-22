@@ -3,14 +3,14 @@ task_id: GOV-DIRECTORY-CLEANUP-1
 author: dsh
 recipient: zcode
 base_commit: 9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31
-delivery_head: 9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31
+delivery_head: 40acf35b77b528c8b9aa0ad4608ba42074ba61a0
 status: in_review
 ---
 
 # Handoff：项目目录清理（执行完成，待独立审查）
 
 Coordinator / Owner：dsh（epoch 10，lease `37230d7822a141fcae8f46acd7841890`）；Reviewer：**zcode**（独立，未参与本次清理执行）。
-canonical 仓库 `G:/CODEX/New Manga`；branch `main`；交付 head `9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31`。
+canonical 仓库 `G:/CODEX/New Manga`；branch `main`；交付 head `40acf35b77b528c8b9aa0ad4608ba42074ba61a0`。
 
 ## 1. 授权与范围
 
