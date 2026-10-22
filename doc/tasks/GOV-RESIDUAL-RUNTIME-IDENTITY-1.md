@@ -81,6 +81,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md`。
+- 2026-10-22 / dsh / 自查返修：本 Task 首次提交的 Resource Manifest 含两行被声明审计拒绝的写法（`refs/heads/main` 触发 `DECL_RELATIVE_UNRESOLVED`；`C:/.../Temp/p19*（…）` 触发 `DECL_GLOB`），使全仓错误数由 7 变 9。已改为 `NOT_APPLICABLE` 并保留说明文字；原件与七项身份未被触碰。返修后重跑审计必须回到 7 个错误。
 - Review：待独立 Reviewer（ZCode）对固定 head 审查（本次取交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58`）。
 - 实际测试：见「测试要求」表与 `verification-log.txt`。
 - 2026-10-22 / dsh / base `43a7d73c8`：只读取证完成；7 项身份固定；唯一真实保护缺口为 `C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop`（用户数据，hits=0）。真实资源操作 0。
@@ -106,9 +107,9 @@ allowed_paths:
 |---|---|---|---|---|---|
 | agent-output | G:/CODEX/New Manga.workspace/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1 | PRESERVE_REFERENCED | 同路径 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/audit-run.log | 只读研究临时产物；仓库内已有等价 canonical 副本；保留不删 |
 | worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | 同路径 | doc/tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md | 本 Task 在 main 主 checkout 只读研究并仅写允许路径；未新建 branch/worktree |
-| branch | refs/heads/main | PRESERVE_REFERENCED | 同路径 | doc/STATUS.md | 未创建新分支 |
+| branch | NOT_APPLICABLE | NOT_APPLICABLE | — | doc/STATUS.md | 未创建新分支；无需分支资源核销 |
 | task-env/dataset/model/test-material | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 本 Task 不使用隔离环境、模型权重、数据集或测试物料 |
-| temp（系统 Temp） | C:/Users/49745/AppData/Local/Temp/p19*（11 个现存目录，约 1.9 MiB） | PRESERVE_UNKNOWN | 同路径 | historical-env-evidence.json | 非本 Task 产生；仅登记，不删除不迁移；清理需另行授权 |
+| temp（系统 Temp 遗留观察） | NOT_APPLICABLE | NOT_APPLICABLE | — | historical-env-evidence.json | 11 个 p19 测试隔离根为历史遗留，非本 Task 产生；仅登记，不删除不迁移；清理需另行授权 |
 
 ## Closeout Record
 

@@ -45,3 +45,16 @@ Review 范围：`matrix.md` 的七项结论、`historical-env-evidence.json` 的
 可直接转发给下一实施 Task 的 Lead：
 
 “从 `G:/CODEX/New Manga` 当前 `main` 先读 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、本 Handoff 与 `verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md`，核对 HEAD 与 epoch 10 租约。GOV-RESIDUAL-RUNTIME-IDENTITY-1 取证已给出七项结论：只有 `C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop`（E6/E7）存在真实保护缺口且为真实用户数据，其余五项无现存资源或无缺口。请冻结 `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1`（Owner dsh，Reviewer 由 route 独立选择，不得为 Owner），先固定 base/head 再建任务 branch/linked worktree（统一 `G:/CODEX/New Manga.workspace/worktrees/`）。范围限：扩展现有历史证据解释层（`tools/governance/historical-evidence-interpretation.json` 及其加载校验、精确数量断言、新 policy 摘要常量、对应测试），为七项逐项建立字节绑定的精确身份解释：E6/E7 必须新增对上述用户数据目录及其 catalog/data/derived 的保护根（只增不减），E1/E2/E3 绑定 workspace-relative 根与历史 `%TEMP%` 展开值并记 `ALREADY_ABSENT` 语义，E4 绑定为等价 `ALREADY_ABSENT`，E5 绑定为非身份 prose 或三个已存在目标路径。禁止：修改 `doc/tasks/P19.md`、两份 `resource-manifest.json` 或任何历史原件字节；全局忽略任何错误码；按变量名整体展开 `%TEMP%`/`%APPDATA%`；实施任何真实删除/迁移/归档/GC/prune/push/reset/stash；缩小既有保护集合或解除 r212。必须保留全部 7 项完整身份可审计、保留 1926 既有保护根为真子集、提供区分力负例（非绑定错误必须仍 fatal）、跑 `pwsh -NoProfile -File tools/governance/check.ps1` 与 `git diff --check` 并记录真实 EXIT，固定 head 交独立审查，集成复验后才 done。”
+
+## 6. 交付后自查返修（2026-10-22，dsh）
+
+首次交付（证据提交 ``bb04c78d4``、状态提交 ``56260c145``）的 Task Resource Manifest 含两行被声明审计拒绝的写法，使全仓错误数由 7 变 9：
+
+- `| branch | refs/heads/main | ... |` → DECL_RELATIVE_UNRESOLVED；改为 NOT_APPLICABLE（本 Task 未新建分支）。
+- `| temp（系统 Temp） | C:/Users/49745/AppData/Local/Temp/p19*（…） | ... |` → DECL_GLOB；改为 NOT_APPLICABLE（历史遗留观察，非本 Task 产生的资源）。
+
+修复后复跑 `python -B tools/governance/clean_workspace.py --audit-declarations`：**7 errors**，与取证结论一致。
+
+**计数时效说明**：matrix.md 中的 `2627 declarations / 1926 protected roots / 276 warnings` 是交付提交前的实测；本 Task 自身文档与证据入库后，同一时刻的实测为 `2636 / 1934 / 281`（新增声明来自本 Task 文件与证据引用）。**七项错误身份与逐项结论不变**，保护集合只增不减。此前"1926"若被后续实施 Task 引用，应以实施时的实时基线为准。
+
+此返修未改动任何历史原件、七项身份或证据字节（EV-01..EV-07 仍 pin 到 `bb04c78d4`）。
