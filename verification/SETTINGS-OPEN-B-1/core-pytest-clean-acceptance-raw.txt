@@ -1,0 +1,70 @@
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 22%]
+........................................................................ [ 28%]
+........................................................................ [ 34%]
+........................................................................ [ 40%]
+........................................................................ [ 45%]
+........................................................................ [ 51%]
+........................................................................ [ 57%]
+........................................................................ [ 63%]
+........................................................................ [ 68%]
+........................................................................ [ 74%]
+........................................................................ [ 80%]
+........................................................................ [ 86%]
+............................................................s........... [ 91%]
+........................................................................ [ 97%]
+..............................                                           [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  C:\Users\49745\AppData\Local\Temp\b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1253 passed, 3 skipped, 1 warning in 53.48s
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/b1clean-74b4cf9c5cf94bcb9affedce8fc0dd70/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null

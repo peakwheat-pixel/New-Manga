@@ -3,7 +3,7 @@ task_id: SETTINGS-OPEN-B-1
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: da3b781d8971dcc36bd7bfd1165fa1a2f4519ea5
-delivery_head: 3ec334f77405de08be2f276b10522a12ce3503cb
+delivery_head: b521ad27149f59c251f0e281b56d329e72a7ba78
 status: in_review
 ---
 
@@ -46,8 +46,12 @@ status: in_review
   - **M1（major）**：`DeviceManager.run_guarded` 调用 `plan` 后丢弃返回值。**裁决**：设备偏好是"校验/回退策略"而非强制设备（provider API 无 device 参数）；UI 文案与设计 §4.1 已同步（cpu=跳过 GPU 校验；gpu=校验可用性并按回退策略执行或拒绝；不强制 Provider 内部设备）。
   - **m1（minor）**：`_retry_policy_for_run` 对非 Mapping 快照应视为空节——`_section` 加 guard + 4 个参数化测试。
   - **M2/M3（治理）**：证据/pins/Handoff 已固定；B-2 批次在独立 Task 记录，其 WIP 未进入 B-1 交付 commit（可用 `git archive 3ec334f` 复核干净树）。
-- 修复 commit：`3ec334f`；证据刷新：`2fdcd5d`、`e9c3b5f`。修复后 `pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py` → **1251 passed / 3 skipped**（Lead 独立重跑 + core-report §8 原始日志）。
-- 待复审（review-b1 的 B1/m1 闭环确认）。
+- 修复 commit：`3ec334f`（B1 descriptor + m1 guard + M1 文案）；`b521ad27`（M3：非 GPU provider 忽略设备偏好，远程翻译/视觉 OCR 不会因用户选 gpu 而 `DeviceUnavailable`）。证据刷新：`2fdcd5d`、`e9c3b5f`。
+- **Review r2（`review-b2.md`，HEAD `81f8221`）**：`changes_requested`——代码修复已闭环（B1/m1/M1 无 blocker），剩余证据与边界：
+  - **M2 证据不可复现**：r1 raw 来自 dirty 工作区（含 B-2 的 28 测试），计数 1252 vs clean 1224。**已处置**：在 `git archive` clean 快照（HEAD `b521ad27`）重录 `core-pytest-clean-acceptance-raw.txt`（**1253 passed / 3 skipped**）与 `core-pytest-clean-full-raw.txt`（**2585 passed / 3 failed / 9 skipped**，3 个既有失败）；Task 测试表计数同步。
+  - **M3 边界（需裁决）**：显式 `gpu` 偏好会波及远程 provider。**已裁决并修复**：只对 `requires_gpu=True` 的 provider 应用偏好，远程/CPU provider 忽略偏好（保持 auto）；新增 `test_non_gpu_provider_ignores_the_device_preference` 并调整 OCR 端到端断言。
+  - **m1/m2（pins/计数）**：Task/Handoff/Plan 的 delivery pin 统一到 `b521ad27`，计数统一为 clean 数字；REBASELINE 行同步。
+- 待复审（review-b2 的 M2/M3/m1/m2 闭环确认）。
 
 ## 5. 推荐下一步
 

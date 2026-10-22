@@ -257,3 +257,13 @@ FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_
 - 仅修改/新增上表 §2 所列文件；未改 `apps/desktop/frontend/**`、`doc/**`、Schema/migration、依赖、缓存/回收站/备份/Plugin 代码。
 - 未删除既有测试文件或降低断言强度；对既有测试的唯一改动是 §4.6 的根因适配（pass-through 列表 + 更强的拒绝断言）。
 - 未使用 `skip` / `xfail` / `only` 等绕过手段；未 commit/push/reset/stash。
+
+## 9. Lead clean 重录（Review r2 M2 处置，2026-10-22）
+
+Review r2 指出 §8 的 r1 raw 来自 dirty 工作区（含未跟踪 B-2 的 28 个测试），clean commit 实际更低。本报告新增 clean 证据（git archive HEAD b521ad27 快照，排除 B-2 WIP）：
+
+- core-pytest-clean-acceptance-raw.txt：**1253 passed / 3 skipped**（tests/core + tests/providers，排除环境模块）
+- core-pytest-clean-full-raw.txt：**2585 passed / 3 failed / 9 skipped**（3 个既有失败：2 个 transformers 环境 + 1 个旧 PySide6 workbench，与 B-1 无关）
+
+Task 测试表与 Handoff 已统一为 clean 数字；此前的 1251/1252 为 dirty 工作区口径，不再作为验收依据。
+
