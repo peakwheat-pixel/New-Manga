@@ -47,5 +47,18 @@
   "product_build": "NOT_RUN",
   "old127_regression": "NOT_RUN; design only",
   "fixtures": "NOT_RUN; none created",
-  "full_resource_and_process_handle_inventory": "NOT_RUN; no disposal authorized"
+  "full_resource_and_process_handle_inventory": "NOT_RUN; no disposal authorized",
+  "initial_delivery_point": "Historical initial ac0bd5a74; original logs retained",
+  "r2_design_data": {
+    "command": [
+      "python",
+      "-B",
+      "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\validate_design.py",
+      "G:\\CODEX\\New Manga"
+    ],
+    "exit": 0,
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\design-data-r2.log",
+    "raw_sha256": "afa34f2951598983839a400742040fee80c2259a87e4f388ecd5e5a4467daf40",
+    "scope": "Only binding/current-source assertions; broad-active/final-real runtime cases remain PLANNED_NOT_RUN"
+  }
 }
