@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "purpose": "PRESERVE_EXACT_HISTORICAL_EVIDENCE",
+  "approved_design": {
+    "task_id": "GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1",
+    "design_file": "verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/design.md",
+    "design_raw_sha256": "02d1e9e55ad0021d55481883c7067a2536c294ef03a7628ee3caeb4b1bf2f9b0",
+    "source_facts_file": "verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/source-facts.json",
+    "source_facts_commit": "8a429a889768c18c6b0add5fc7e5c40b83f62746",
+    "source_facts_raw_sha256": "f4821be6b0766d899b69980d7351f7e2b519f39b6247f33ab0fd2e6e861a708c"
+  },
+  "template_bindings": [
+    {
+      "id": "HIE-T01",
+      "origin_file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "expected_tracking": "tracked",
+      "raw_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "byte_length": 23845,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "c0_bytes": [],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+        "normalized": "g:/codex/new manga/verification/p09-governance-debt-20261019/codex-closeout-p19-view-r12.md",
+        "real": "g:/codex/new manga/verification/p09-governance-debt-20261019/codex-closeout-p19-view-r12.md",
+        "keep": "PRESERVE_REFERENCED"
+      },
+      "parser_snapshot": {
+        "declarations": [
+          {
+            "raw": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+            "disposition": "PRESERVE_UNKNOWN",
+            "source_file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+            "locator": "line 6",
+            "normalized": "g:/codex/new manga/.agents/worktrees/gov-resource-manifest-same-location-1",
+            "real_normalized": "g:/codex/new manga/.agents/worktrees/gov-resource-manifest-same-location-1"
+          }
+        ],
+        "errors": [
+          {
+            "code": "DECL_UNKNOWN_DISPOSITION",
+            "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+            "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+            "locator": "line 7"
+          },
+          {
+            "code": "DECL_RELATIVE_UNRESOLVED",
+            "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+            "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+            "locator": "line 8"
+          }
+        ],
+        "warnings": [
+          {
+            "code": "DECL_DESTINATION_PROSE",
+            "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+            "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+            "locator": "line 6"
+          },
+          {
+            "code": "DECL_DESTINATION_PROSE",
+            "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+            "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+            "locator": "line 8"
+          }
+        ]
+      },
+      "errors": [
+        {
+          "code": "DECL_UNKNOWN_DISPOSITION",
+          "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+          "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+          "locator": "line 7"
+        },
+        {
+          "code": "DECL_RELATIVE_UNRESOLVED",
+          "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+          "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+          "locator": "line 8"
+        }
+      ],
+      "fence": {
+        "open_global_line": 117,
+        "close_global_line": 239,
+        "open_verbatim": "````markdown\n",
+        "close_verbatim": "````\n",
+        "open_raw_sha256": "d9d713034d111d07e2ccf78b4e7527eaee41c502f84667a182c2e36ecd302a8f",
+        "close_raw_sha256": "568c2a542806c5910d160a9f8efb5b816aff99d00f3e0350a0f057cf4140ee9f",
+        "draft_notice_global_line": 115,
+        "draft_notice_verbatim": "以下是可完整落盘的 Task 内容。Owner 为 Antigravity，Reviewer 为 DeepSeek Harness，二者不同；`base_commit` 采用主 checkout 当前 HEAD `0393ce44b08dd1562d7c404ce911d84934a8f54f`，该提交包含已集成 checker（集成提交 `3fe78a67cdf8e43a539e0de7ddc0ce6b8c0f8311` 是其祖先）。本内容是待 Codex 正式注册/释放的 Task payload；由于本轮只授权新增本报告，Task、Plan、STATUS 尚未实际写入，故它此刻不是已释放 Task。\n",
+        "draft_notice_raw_sha256": "2b0a0d0e87067c9237fd139055ae7acdf4bbc0be0a37342343360f2ad437c79a"
+      },
+      "rows": [
+        {
+          "id": "R25",
+          "global_line": 228,
+          "parser_locator": "line 7",
+          "verbatim": "| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` 或按实核实 | — | closeout 时复核 | 不假定存在；记录检查结果 |\n",
+          "raw_line_sha256": "5288ac14c35787b715dca935efbf6b15a7801f66743ef8bec0e1bede5cfa1ed2"
+        },
+        {
+          "id": "R26",
+          "global_line": 229,
+          "parser_locator": "line 8",
+          "verbatim": "| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | 原路径 | closeout 时计算 | 被回归套件/证据索引引用，保留 |\n",
+          "raw_line_sha256": "2a125700532c4c20e29e6ce7912ebc4415b34855782b45e5a186f6420027a7eb"
+        }
+      ]
+    }
+  ],
+  "raw_non_declaration_bindings": [
+    {
+      "id": "HIE-O01",
+      "origin_file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "expected_tracking": "tracked",
+      "raw_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "byte_length": 3288,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "c0_bytes": [
+        {
+          "offset": 286,
+          "byte": 0
+        }
+      ],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/P14/owner-initiated-dsh-self-review-r1.md",
+        "normalized": "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r1.md",
+        "real": "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r1.md",
+        "keep": "PRESERVE_REFERENCED"
+      },
+      "parser_snapshot": {
+        "declarations": [],
+        "errors": [],
+        "warnings": []
+      },
+      "errors": [
+        {
+          "code": "FILE_UNREADABLE",
+          "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+          "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+          "locator": null
+        }
+      ],
+      "nul_offsets": [
+        286
+      ]
+    },
+    {
+      "id": "HIE-O02",
+      "origin_file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "expected_tracking": "tracked",
+      "raw_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "byte_length": 3433,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "c0_bytes": [
+        {
+          "offset": 286,
+          "byte": 0
+        }
+      ],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/P14/owner-initiated-dsh-self-review-r2.md",
+        "normalized": "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r2.md",
+        "real": "g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r2.md",
+        "keep": "PRESERVE_REFERENCED"
+      },
+      "parser_snapshot": {
+        "declarations": [],
+        "errors": [],
+        "warnings": []
+      },
+      "errors": [
+        {
+          "code": "FILE_UNREADABLE",
+          "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+          "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+          "locator": null
+        }
+      ],
+      "nul_offsets": [
+        286
+      ]
+    },
+    {
+      "id": "HIE-O03",
+      "origin_file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "expected_tracking": "untracked",
+      "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "byte_length": 21531,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "c0_bytes": [
+        {
+          "offset": 12330,
+          "byte": 0
+        },
+        {
+          "offset": 20398,
+          "byte": 11
+        },
+        {
+          "offset": 20486,
+          "byte": 0
+        },
+        {
+          "offset": 20534,
+          "byte": 12
+        },
+        {
+          "offset": 20650,
+          "byte": 11
+        },
+        {
+          "offset": 21316,
+          "byte": 8
+        }
+      ],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+        "normalized": "g:/codex/new manga/verification/p22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+        "real": "g:/codex/new manga/verification/p22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+        "keep": "PRESERVE_UNKNOWN"
+      },
+      "parser_snapshot": {
+        "declarations": [],
+        "errors": [],
+        "warnings": []
+      },
+      "errors": [
+        {
+          "code": "FILE_UNREADABLE",
+          "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+          "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+          "locator": null
+        }
+      ],
+      "nul_offsets": [
+        12330,
+        20486
+      ]
+    }
+  ],
+  "reference_guards": [
+    {
+      "id": "HIE-REF01",
+      "origin_file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "origin_global_line": 229,
+      "origin_parser_locator": "line 8",
+      "path_rel": "tools/governance/tests",
+      "abs": "G:/CODEX/New Manga/tools/governance/tests",
+      "normalized": "g:/codex/new manga/tools/governance/tests",
+      "real": "g:/codex/new manga/tools/governance/tests",
+      "keep": "PRESERVE_REFERENCED"
+    },
+    {
+      "id": "HIE-REF02",
+      "origin_file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "origin_global_line": 229,
+      "origin_parser_locator": "line 8",
+      "path_rel": "verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "abs": "G:/CODEX/New Manga/verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "normalized": "g:/codex/new manga/verification/gov-resource-manifest-same-location-1",
+      "real": "g:/codex/new manga/verification/gov-resource-manifest-same-location-1",
+      "keep": "PRESERVE_REFERENCED"
+    }
+  ]
+}

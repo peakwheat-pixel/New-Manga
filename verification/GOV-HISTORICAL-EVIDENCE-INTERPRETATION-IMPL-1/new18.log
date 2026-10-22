@@ -1,0 +1,29 @@
+shell=Python subprocess (parent PowerShell); interpreter=C:\Python314\python.exe
+cwd=G:\CODEX\New Manga.workspace\worktrees\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1
+command=["C:\\Python314\\python.exe", "-B", "-m", "unittest", "discover", "-s", "verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1/tests", "-p", "test_*.py", "-v"]
+TMP=G:\CODEX\New Manga.workspace\agent-output\codex\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\test-temp\new18
+test_t01_positive_exact_atomic_effect (test_historical_evidence.HistoricalEvidenceTests.test_t01_positive_exact_atomic_effect) ... ok
+test_t02_direct_reader_and_unlisted_nul_still_reject (test_historical_evidence.HistoricalEvidenceTests.test_t02_direct_reader_and_unlisted_nul_still_reject) ... ok
+test_t03_policy_tracking_presence_git_and_read_failure (test_historical_evidence.HistoricalEvidenceTests.test_t03_policy_tracking_presence_git_and_read_failure) ... ok
+test_t04_schema_and_nested_mutations_unapproved (test_historical_evidence.HistoricalEvidenceTests.test_t04_schema_and_nested_mutations_unapproved) ... ok
+test_t05_digest_provenance_and_format (test_historical_evidence.HistoricalEvidenceTests.test_t05_digest_provenance_and_format) ... ok
+test_t06_all_four_source_byte_and_control_drift (test_historical_evidence.HistoricalEvidenceTests.test_t06_all_four_source_byte_and_control_drift) ... ok
+test_t07_missing_directory_and_real_identity (test_historical_evidence.HistoricalEvidenceTests.test_t07_missing_directory_and_real_identity) ... ok
+test_t08_tracking_changes (test_historical_evidence.HistoricalEvidenceTests.test_t08_tracking_changes) ... ok
+test_t09_template_boundary_and_row_checks (test_historical_evidence.HistoricalEvidenceTests.test_t09_template_boundary_and_row_checks) ... ok
+test_t10_original_declaration_and_parse_preserved (test_historical_evidence.HistoricalEvidenceTests.test_t10_original_declaration_and_parse_preserved) ... ok
+test_t11_references_missing_real_and_keep (test_historical_evidence.HistoricalEvidenceTests.test_t11_references_missing_real_and_keep) ... ok
+test_t12_nul_empty_parse_is_recomputed (test_historical_evidence.HistoricalEvidenceTests.test_t12_nul_empty_parse_is_recomputed) ... ok
+test_t13_each_error_identity_unique (test_historical_evidence.HistoricalEvidenceTests.test_t13_each_error_identity_unique) ... ok
+test_t14_staging_failures_publish_nothing (test_historical_evidence.HistoricalEvidenceTests.test_t14_staging_failures_publish_nothing) ... ok
+test_t15_final_inputs_tracking_and_seven_targets_rechecked (test_historical_evidence.HistoricalEvidenceTests.test_t15_final_inputs_tracking_and_seven_targets_rechecked) ... ok
+test_t16_three_actual_cli_share_rejection (test_historical_evidence.HistoricalEvidenceTests.test_t16_three_actual_cli_share_rejection) ... ok
+test_t17_scanned_metadata_and_original_containers (test_historical_evidence.HistoricalEvidenceTests.test_t17_scanned_metadata_and_original_containers) ... ok
+test_t18_broad_fatal_noop_and_exact_roles (test_historical_evidence.HistoricalEvidenceTests.test_t18_broad_fatal_noop_and_exact_roles) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 39.657s
+
+OK
+
+EXIT=0

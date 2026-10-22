@@ -1,0 +1,13 @@
+shell=Python subprocess; interpreter=C:\Python314\python.exe
+command=["C:\\Python314\\python.exe", "-B", "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\tools\\governance\\clean_workspace.py", "--repo", "G:\\CODEX\\New Manga", "--workspace-root", "G:\\CODEX\\New Manga.workspace", "--out", "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\candidate-audit", "--audit-declarations"]
+declaration audit: 2596 declaration(s), 1895 protected root(s), 7 error(s), 276 warning(s)
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER' [verification/ENV-BUNDLE-1-FU1/resource-manifest.json]
+  ERROR DECL_DESTINATION_UNRESOLVED: declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  report: G:/CODEX/New Manga.workspace/agent-output/codex/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1/candidate-audit/declaration-audit.json
+
+EXIT=2
