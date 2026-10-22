@@ -114,6 +114,14 @@ B 档完整回归：编译 8.69s、窗口启动、production allowlist 正常、
 - 桌面启动器（`C:\Users\49745\Desktop\New Manga 本地预览.cmd`，仓外本地文件）改为带日志：`*>&1 | Tee-Object` 捕获全部输出流到 `G:\CODEX\New Manga.workspace\dev-preview\launcher-last.log`（UTF-8，每次运行覆盖），窗口头部提示 `0xffffffff` 属正常结束。
 - 实测：日志 6149 字节、UTF-8 中文正常，含 dev-preview 提示行、cargo 警告、应用输出与「应用窗口已关闭…预览正常结束」收尾行；退出后 Vite 正常清理、5188 释放。
 
+### WebView2 隔离与单实例保护（同日，`8209e04a3`）
+
+真实故障（`launcher-last.log` 原文）：`WebView2 error: HRESULT(0x800700AA) "请求的资源在使用中"` 导致 `Failed to setup app` → exit 101；同时 `sqlite3.OperationalError: unable to open database file`。根因是上一实例被强制结束后的残留进程占用默认 WebView2 用户数据目录（`%LOCALAPPDATA%\com.newmanga.m2rc1.desktop\EBWebView`）与 SQLite 目录。
+
+- `dev-preview.ps1` 设置 `WEBVIEW2_USER_DATA_FOLDER = <dataRoot>\webview2-udd`，dev 预览与正式版、其他实例彻底隔离。
+- 新增单实例保护：检测到 `m2rc1-desktop` 正在运行即 fail-closed，明确提示先关闭现有窗口（避免 WebView2 0x800700AA / SQLite 锁冲突）。
+- 实测：正常启动（新 UDF 自动创建 `EBWebView`）；应用运行中再次启动 → 1 秒内拒绝并给出中文说明；`CloseMainWindow` 优雅关闭后无 `core_service` 残留、5188 释放、Vite 树清理。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
