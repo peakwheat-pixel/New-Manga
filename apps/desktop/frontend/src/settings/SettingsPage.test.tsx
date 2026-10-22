@@ -11,16 +11,23 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * frozen order, switching via React local state (no sub-route).
  *
  * SETTINGS-OPEN-A-1 AC3 — batch A opens OCR / translation parameters /
- * inpaint / typeset: those categories are now operable and host real panels;
- * only model/GPU, tasks/concurrency, cache/Revision, recycle bin,
- * backup/restore and plugins keep the disabled placeholder and the
- * "未开放" badge.
+ * inpaint / typeset.
+ * SETTINGS-OPEN-B-1 AC4 — batch B-1 opens model/GPU and tasks/concurrency.
+ * Only cache/Revision, recycle bin, backup/restore and plugins keep the
+ * disabled placeholder and the "未开放" badge (8 open / 4 closed).
  */
 
-const OPEN_CATEGORY_IDS = ["provider", "network", "ocr", "translation", "inpaint", "typeset"] as const;
-const CLOSED_CATEGORY_IDS = [
+const OPEN_CATEGORY_IDS = [
+  "provider",
+  "network",
+  "ocr",
+  "translation",
+  "inpaint",
+  "typeset",
   "model_gpu",
   "task_concurrency",
+] as const;
+const CLOSED_CATEGORY_IDS = [
   "cache_revision",
   "recycle_bin",
   "backup_restore",
@@ -143,7 +150,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
     expect(page.q('[data-testid="settings-category-nav"]')).toBe(navBefore);
   });
 
-  it("opens exactly the batch-A categories; only still-closed categories carry the 未开放 badge", () => {
+  it("opens exactly the batch-A + batch-B-1 categories; only still-closed categories carry the 未开放 badge", () => {
     page.mount();
     const openFlags = SETTINGS_CATEGORY_ORDER.map(
       (id) => (page.q(`[data-testid="settings-category-${id}"]`) as HTMLElement).dataset.open,
@@ -155,8 +162,8 @@ describe("SettingsPage layout & categories (AC1)", () => {
       "true", // translation (sfx.policy + translation params)
       "true", // inpaint — batch A
       "true", // typeset — batch A
-      "false", // model_gpu
-      "false", // task_concurrency
+      "true", // model_gpu — batch B-1
+      "true", // task_concurrency — batch B-1
       "false", // cache_revision
       "false", // recycle_bin
       "false", // backup_restore
@@ -248,27 +255,99 @@ describe("Batch A open categories host editable panels (AC3)", () => {
   it("keyboard navigation skips the still-closed categories", async () => {
     page.mount();
     const nav = page.q('[data-testid="settings-category-nav"]') as HTMLElement;
-    // provider → network → ocr → translation: the three closed-after-open
-    // transitions still land on open categories only.
-    for (let i = 0; i < 3; i += 1) {
+    const arrowDown = async () => {
       await act(async () => {
         nav.dispatchEvent(new page.dom.window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
         await Promise.resolve();
       });
+    };
+    // provider → network → ocr → translation: the closed-after-open
+    // transitions still land on open categories only.
+    for (let i = 0; i < 3; i += 1) {
+      await arrowDown();
     }
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
       "translation",
     );
 
     await page.activateOpenCategory("typeset");
+    await arrowDown();
+    // model/GPU is open since batch B-1, so it is the next stop (not skipped).
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "model_gpu",
+    );
+
+    await arrowDown();
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "task_concurrency",
+    );
+
+    // The four closed categories trail the open list: another ArrowDown is
+    // clamped to the last OPEN category and never lands on cache/Revision.
+    await arrowDown();
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "task_concurrency",
+    );
+  });
+
+  it("keyboard navigation never enters a closed category (ArrowUp from the first open one stays)", async () => {
+    page.mount();
+    const nav = page.q('[data-testid="settings-category-nav"]') as HTMLElement;
     await act(async () => {
-      nav.dispatchEvent(new page.dom.window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      nav.dispatchEvent(new page.dom.window.KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
       await Promise.resolve();
     });
-    // model/GPU (closed) is skipped — the last open category stays active.
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
-      "typeset",
+      "provider",
     );
+  });
+});
+
+describe("Batch B-1 open categories host editable panels (AC4)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
+
+  it("model/GPU category opens and renders ModelGpuSettingsPanel instead of the placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("model_gpu");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "model_gpu",
+    );
+    expect(page.q('[data-testid="settings-content-model-gpu"]')).not.toBeNull();
+    expect(page.q('[data-testid="model-gpu-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-model-gpu"]')).toBeNull();
+    // The panel loaded the real section through the shared channel.
+    expect(page.q('[data-testid="model-gpu-device-preference"]')).not.toBeNull();
+    expect(page.q('[data-testid="model-gpu-allow-cpu-fallback"]')).not.toBeNull();
+    // Read-only note: capability probing belongs to the Provider at Run time.
+    expect(page.q('[data-testid="model-gpu-settings-panel-runtime-note"]')?.textContent).toContain(
+      "运行时探测",
+    );
+  });
+
+  it("task/concurrency category opens TasksSettingsPanel with the serial-execution note", async () => {
+    page.mount();
+    await page.activateOpenCategory("task_concurrency");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "task_concurrency",
+    );
+    expect(page.q('[data-testid="settings-content-task-concurrency"]')).not.toBeNull();
+    expect(page.q('[data-testid="tasks-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-task-concurrency"]')).toBeNull();
+    expect(page.q('[data-testid="tasks-retry-max-attempts"]')).not.toBeNull();
+    expect(page.q('[data-testid="tasks-retry-backoff-seconds"]')).not.toBeNull();
+    // §4.2: concurrency count is a forced invariant — read-only note only.
+    expect(page.q('[data-testid="tasks-settings-panel-serial-note"]')?.textContent).toContain(
+      "任务串行执行",
+    );
+    expect(page.q('[data-testid="tasks-concurrency"]')).toBeNull();
   });
 });
 
@@ -295,23 +374,13 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
     expect(button.textContent).toContain("未开放");
   };
 
-  it("model/GPU category remains visible but cannot be invoked", async () => {
+  it("cache/Revision category remains visible but cannot be invoked", async () => {
     page.mount();
-    assertDisabledCategory("model_gpu", "模型/GPU");
-    await page.activateOpenCategory("model_gpu");
+    assertDisabledCategory("cache_revision", "缓存/Revision");
+    await page.activateOpenCategory("cache_revision");
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
       "provider",
     );
-  });
-
-  it("task/concurrency category remains visible but cannot be invoked", () => {
-    page.mount();
-    assertDisabledCategory("task_concurrency", "任务/并发");
-  });
-
-  it("cache/Revision category remains visible but cannot be invoked", () => {
-    page.mount();
-    assertDisabledCategory("cache_revision", "缓存/Revision");
   });
 
   it("recycle bin category remains visible but cannot be invoked", () => {
@@ -331,15 +400,10 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
 
   it("keeps a reasoned placeholder id for every still-closed partition", () => {
     page.mount();
+    // Batch B-1 closed two more placeholders: only B-2 (cache/Revision) and
+    // batch C (recycle bin, backup/restore, plugins) remain.
     expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(
-      [
-        "backupRestore",
-        "cacheRevision",
-        "modelGpu",
-        "plugins",
-        "recycleBin",
-        "taskConcurrency",
-      ].sort(),
+      ["backupRestore", "cacheRevision", "plugins", "recycleBin"].sort(),
     );
     // None of them is mounted while the page sits on an open category.
     for (const testId of Object.values(DISABLED_SECTION_TEST_IDS)) {

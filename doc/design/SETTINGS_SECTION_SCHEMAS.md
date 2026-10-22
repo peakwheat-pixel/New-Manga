@@ -96,36 +96,36 @@
 - 未知 section 保持现有透传（向后兼容），但 UI 不会提交白名单外的节；
 - 校验后仍走 `PipelineDefaultsService.save_settings_section`。
 
-## 4. 批次 B：运行环境与维护
+## 4. 批次 B：运行环境与维护（B-1 实现中，B-2 待释放）
 
-### 4.1 模型/GPU（section `model_gpu`）
+### 4.1 模型/GPU（section `model_gpu`，B-1）
 
-| 键（拟议） | 值域 | 默认 | 需要新增的消费点 |
+| 键 | 类型 / 值域 | 默认 | 消费点 |
 |---|---|---|---|
-| `device_preference` | `auto` \| `cpu` \| `gpu` | `auto` | `infrastructure/devices/manager.py` 设备选择（新增） |
-| `allow_cpu_fallback` | bool | `true` | Provider runtime 设备回退（新增） |
-| `gpu_concurrency` | `serial` \| `allow_concurrent` | `serial` | 单槽 gate（`manager.py` 现为默认单槽，需显式开关） |
+| `device_preference` | `auto` \| `cpu` \| `gpu` | `auto` | Run 执行时由 `handlers` 的 `heavy_runner` 读取 Run 快照并传给 `runtime.run_guarded`；`auto` 保持历史行为，`cpu`/`gpu` 显式时经 `DeviceManager.plan` 校验（GPU 不可用且不允许回退 → typed `DeviceUnavailable`） |
+| `allow_cpu_fallback` | bool | `true` | 与 Provider descriptor 的 `supports_cpu_fallback` **相与**：只有 Provider 声明支持且用户允许时才回退 CPU（D06 §82 语义不变） |
 
-- 模型下载/路径管理不在本分区（D07 §84 模型下载语义另立 Task）。
-- 只读展示：当前设备能力（`DeviceInfo`：kind/name/state/error_code）。
+- **未开放**：`gpu_concurrency`（单槽 gate 是既有不变量；开放需先裁决并改调度器）、模型下载/路径管理（D07 §84 另立 Task）、GPU 设备状态展示（需要新增 Tauri 只读命令，B-2 另行评估）。
+- 面板只读说明：设备能力由 Provider 运行时探测；此处设置偏好与回退策略。
 
-### 4.2 任务/并发（section `tasks`）
+### 4.2 任务/并发（section `tasks`，B-1）
 
-| 键（拟议） | 值域 | 默认 | 消费点（现状/新增） |
+| 键 | 类型 / 值域 | 默认 | 消费点 |
 |---|---|---|---|
-| `retry_max_attempts` | int，1–3 | `3` | `providers/runtime.py:_retry_policy` 读取 `settings["providers"]["retry"]`（现状），可迁移到 `tasks.retry`（新增映射） |
-| `retry_backoff_seconds` | float，0.1–30 | `1.0` | `RetryPolicy`（需扩展 runtime 读取） |
+| `retry_max_attempts` | int，1–3 | `3` | Run 执行时由 `handlers` 按 Run 快照构造 `RetryPolicy`（替代装配期固定 policy）；未设置时沿用 `runtime.DEFAULT_RETRY_POLICY` |
+| `retry_backoff_seconds` | float，0.1–30 | `1.0` | 同上 |
 
-- **并发数不开放**：`application/tasks/service.py` 明确 `max_parallel_pages=1` / `max_parallel_steps=1` 为强制不变量；UI 只显示"任务串行执行"的只读说明。若用户要求可调并发，需先裁决突破不变量并改调度器，另立 Task。
+- **并发数不开放**：`application/tasks/service.py` 的 `max_parallel_pages=1` / `max_parallel_steps=1` 是强制不变量；UI 只显示"任务串行执行"只读说明，不提供假控件。
+- 面板只读说明：任务串行执行；重试策略对之后启动的 Run 生效。
 
-### 4.3 缓存/Revision（section `cache`）
+### 4.3 缓存/Revision（B-2）
 
-| 键/操作（拟议） | 值域 | 默认 | 需要新增的消费点 |
-|---|---|---|---|
-| `auto_cleanup_days` | `never` \| `7` \| `30` \| `90` | `never` | 启动/定时清理调度（新增） |
-| 清理操作 | 预览 + 执行 + 重试挂起项 | — | `application/maintenance/cleanup.py`（已存在，需接 Core/Tauri wire） |
-
-- Revision 保留策略暂不开放（需要 revision 存储层语义与 GC 设计落地，见 `M2_DERIVED_PREVIEW_GC_DESIGN.md`）。
+- B-2 冻结的操作面（需要新增 Core/Tauri wire）：
+  - `GetCleanupPreview`（只读）：返回 `CleanupPreview`（可清理文件/相对路径/字节数，`application/maintenance/cleanup.py` 已实现）。
+  - `RunCleanup`：执行清理，返回 `CleanupOutcome`（removed/failed/skipped）；沿用 `pending_cleanups` 失败清单与重试。
+  - `RetryPendingCleanups`：重试挂起项。
+- **暂不开放**：自动清理天数与 Revision 保留策略（无调度/存储消费点；实现前不得出现假开关）。缓存分区在 B-2 以"预览 + 手动清理"为真实功能面。
+- 路径边界：清理只作用于 `CleanupService` 的安全缓存前缀，不触碰用户源文件与 current/pinned revision（既有语义）。
 
 ## 5. 批次 C：数据安全与扩展
 

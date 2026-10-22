@@ -136,8 +136,32 @@ class ProviderRuntime:
     def model_report(self) -> tuple[dict, ...]:
         return tuple(state.as_dict() for state in self.models.states())
 
-    def heavy_runner(self, *, requires_gpu: bool, call):
-        return self.devices.run_guarded(requires_gpu=requires_gpu, call=call)
+    def heavy_runner(
+        self,
+        *,
+        requires_gpu: bool,
+        call,
+        preferred_device: str | None = None,
+        allow_cpu_fallback: bool = True,
+        supports_cpu_fallback: bool = False,
+    ):
+        """Bridge one provider execution onto :meth:`DeviceManager.run_guarded`.
+
+        SETTINGS-OPEN-B-1 AC2: an explicit Run device preference (``cpu`` /
+        ``gpu``) is forwarded together with the D06 §82 fallback pair; with
+        ``preferred_device`` ``None`` (``auto``, the historical shape) the
+        call is exactly ``run_guarded(requires_gpu=..., call=...)`` so every
+        pre-B-1 caller keeps its byte-for-byte behaviour.
+        """
+        if preferred_device is None:
+            return self.devices.run_guarded(requires_gpu=requires_gpu, call=call)
+        return self.devices.run_guarded(
+            requires_gpu=requires_gpu,
+            call=call,
+            preferred_device=preferred_device,
+            allow_cpu_fallback=allow_cpu_fallback,
+            supports_cpu_fallback=supports_cpu_fallback,
+        )
 
     def status(self) -> dict:
         return {

@@ -3,10 +3,12 @@ import { SettingsClient } from "./client";
 import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
 import { DisabledSection } from "./DisabledSection";
 import { InpaintSettingsPanel } from "./InpaintSettingsPanel";
+import { ModelGpuSettingsPanel } from "./ModelGpuSettingsPanel";
 import { NetworkProfilePanel } from "./NetworkProfilePanel";
 import { OcrSettingsPanel } from "./OcrSettingsPanel";
 import { ProviderProfilePanel } from "./ProviderProfilePanel";
 import { SfxPolicyControl } from "./SfxPolicyControl";
+import { TasksSettingsPanel } from "./TasksSettingsPanel";
 import { TranslationParamsPanel } from "./TranslationParamsPanel";
 import { TypesetSettingsPanel } from "./TypesetSettingsPanel";
 import { tokens } from "../theme/tokens";
@@ -19,13 +21,13 @@ import { tokens } from "../theme/tokens";
  * sub-route.
  *
  * Editability: Provider (profiles + capability bindings), Network/Proxy,
- * SFX policy and — SETTINGS-OPEN-A-1 batch A (design
- * doc/design/SETTINGS_SECTION_SCHEMAS.md §3) — OCR, translation parameters /
- * context, inpaint and typeset default style are editable. The remaining
- * partitions (model/GPU, tasks/concurrency, cache/Revision, recycle bin,
- * backup/restore, plugins) still render the disabled placeholder with the
- * reason "等待 section schema 冻结"; the nav badge "未开放" only applies to
- * those still-closed categories.
+ * SFX policy, the four SETTINGS-OPEN-A-1 batch A sections (design
+ * doc/design/SETTINGS_SECTION_SCHEMAS.md §3) and — SETTINGS-OPEN-B-1 — the
+ * model/GPU (§4.1) and tasks/concurrency (§4.2) sections are editable. The
+ * remaining four partitions (cache/Revision, recycle bin, backup/restore,
+ * plugins) still render the disabled placeholder with the reason
+ * "等待 section schema 冻结"; the nav badge "未开放" only applies to those
+ * still-closed categories.
  */
 export const SETTINGS_CATEGORY_ORDER = [
   "provider",
@@ -55,8 +57,8 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
   { id: "translation", label: "翻译", open: true },
   { id: "inpaint", label: "图片修复", open: true },
   { id: "typeset", label: "排版样式", open: true },
-  { id: "model_gpu", label: "模型/GPU", open: false },
-  { id: "task_concurrency", label: "任务/并发", open: false },
+  { id: "model_gpu", label: "模型/GPU", open: true },
+  { id: "task_concurrency", label: "任务/并发", open: true },
   { id: "cache_revision", label: "缓存/Revision", open: false },
   { id: "recycle_bin", label: "回收站", open: false },
   { id: "backup_restore", label: "备份/恢复", open: false },
@@ -65,10 +67,11 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
 
 /** Every still-disabled partition with its placeholder test id — asserted
  * one by one in the AC2 tests. Batch A's ocr / translation-context / inpaint /
- * typeset placeholders are gone: those categories now host real panels. */
+ * typeset placeholders and batch B-1's model-GPU / task-concurrency
+ * placeholders are gone: those categories now host real panels. Only the B-2
+ * (cache/Revision) and batch C (recycle bin, backup/restore, plugins)
+ * partitions remain closed. */
 export const DISABLED_SECTION_TEST_IDS = {
-  modelGpu: "settings-disabled-section-model-gpu",
-  taskConcurrency: "settings-disabled-section-task-concurrency",
   cacheRevision: "settings-disabled-section-cache-revision",
   recycleBin: "settings-disabled-section-recycle-bin",
   backupRestore: "settings-disabled-section-backup-restore",
@@ -269,8 +272,16 @@ export function SettingsPage({ client }: SettingsPageProps) {
             </section>
           </div>
         )}
-        {activeCategoryId === "model_gpu" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.modelGpu} title="模型 / GPU" />}
-        {activeCategoryId === "task_concurrency" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.taskConcurrency} title="任务 / 并发" />}
+        {activeCategoryId === "model_gpu" && (
+          <div data-testid="settings-content-model-gpu">
+            <ModelGpuSettingsPanel client={activeClient} />
+          </div>
+        )}
+        {activeCategoryId === "task_concurrency" && (
+          <div data-testid="settings-content-task-concurrency">
+            <TasksSettingsPanel client={activeClient} />
+          </div>
+        )}
         {activeCategoryId === "cache_revision" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.cacheRevision} title="缓存 / Revision" />}
         {activeCategoryId === "recycle_bin" && (
           <DisabledSection

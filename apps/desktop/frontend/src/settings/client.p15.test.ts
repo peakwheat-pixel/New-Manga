@@ -216,8 +216,17 @@ describe("no untyped settings_update_section passthrough beyond the frozen secti
     expect(typeof clientAny.saveSection).toBe("function");
     expect(typeof clientAny.saveSfxPolicy).toBe("function");
     // m2（review r1）: the section argument is the frozen compile-time union —
-    // the runtime mirror must stay exactly the batch-A + sfx whitelist.
-    expect(EDITABLE_SETTINGS_SECTIONS).toEqual(["ocr", "translate", "inpaint", "typeset", "sfx"]);
+    // the runtime mirror must stay exactly the batch-A + sfx whitelist,
+    // extended by SETTINGS-OPEN-B-1's batch-B-1 sections (model_gpu, tasks).
+    expect(EDITABLE_SETTINGS_SECTIONS).toEqual([
+      "ocr",
+      "translate",
+      "inpaint",
+      "typeset",
+      "sfx",
+      "model_gpu",
+      "tasks",
+    ]);
     // The sfx channel still writes exactly "sfx" with {policy} — pinned by the
     // pre-existing client.test.ts.
   });
@@ -234,6 +243,6 @@ describe("no untyped settings_update_section passthrough beyond the frozen secti
     void (() => client.getSection("bogus_section"));
     // Positive control: every frozen member stays assignable.
     const accepted: EditableSettingsSection[] = [...EDITABLE_SETTINGS_SECTIONS];
-    expect(accepted).toHaveLength(5);
+    expect(accepted).toHaveLength(7);
   });
 });

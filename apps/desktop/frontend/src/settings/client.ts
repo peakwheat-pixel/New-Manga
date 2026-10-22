@@ -61,14 +61,22 @@ export const SETTINGS_UPDATE_SECTION_COMMAND = "settings_update_section";
 export const SFX_SECTION = "sfx";
 
 /**
- * SETTINGS-OPEN-A-1 m2（review r1）— the closed set of sections addressable
- * through the generic section read/write pair: the four batch-A sections
- * frozen by doc/design/SETTINGS_SECTION_SCHEMAS.md §3 plus the pre-existing
- * `sfx` section. Sections outside this union are a COMPILE-TIME error; the
- * Core stays fail-closed for unknown sections, but the UI must not even be
- * able to express one.
+ * The closed set of sections addressable through the generic section
+ * read/write pair: the four batch-A sections frozen by
+ * doc/design/SETTINGS_SECTION_SCHEMAS.md §3, the pre-existing `sfx` section,
+ * and — SETTINGS-OPEN-B-1 — the two batch-B-1 sections frozen by §4.1/§4.2
+ * (`model_gpu`, `tasks`). Sections outside this union are a COMPILE-TIME
+ * error; the Core stays fail-closed for unknown sections, but the UI must not
+ * even be able to express one.
  */
-export type EditableSettingsSection = "ocr" | "translate" | "inpaint" | "typeset" | "sfx";
+export type EditableSettingsSection =
+  | "ocr"
+  | "translate"
+  | "inpaint"
+  | "typeset"
+  | "sfx"
+  | "model_gpu"
+  | "tasks";
 
 /** Runtime mirror of {@link EditableSettingsSection} — a drift alarm pinned
  * in the structural guard test; never iterated to build requests. */
@@ -78,6 +86,8 @@ export const EDITABLE_SETTINGS_SECTIONS: readonly EditableSettingsSection[] = [
   "inpaint",
   "typeset",
   "sfx",
+  "model_gpu",
+  "tasks",
 ] as const;
 
 /* P15-C1 §2 — the frozen production-only Tauri command names for the new
@@ -251,7 +261,8 @@ export class SettingsClient {
    * this client only preserves the closed error projection.
    *
    * `section` is the frozen {@link EditableSettingsSection} union (m2): the
-   * UI cannot express a section outside the batch-A + sfx whitelist.
+   * UI cannot express a section outside the batch-A + batch-B-1 + sfx
+   * whitelist.
    */
   async saveSection(
     section: EditableSettingsSection,

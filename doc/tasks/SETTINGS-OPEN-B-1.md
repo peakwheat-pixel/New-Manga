@@ -1,0 +1,105 @@
+---
+id: SETTINGS-OPEN-B-1
+title: 设置分区开放批次 B-1：模型/GPU + 任务/并发
+kind: implementation
+governance_version: 2
+status: in_review
+approval: user_ruling_20261022_open_all_settings_partitions
+suggested_owner: dsh
+owner: dsh
+reviewer: reviewer-settings-a
+depends_on: [SETTINGS-OPEN-A-1]
+base_commit: da3b781d8971dcc36bd7bfd1165fa1a2f4519ea5
+branch: main
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
+evidence_dir: verification/SETTINGS-OPEN-B-1
+allowed_paths:
+  - doc/design/SETTINGS_SECTION_SCHEMAS.md
+  - doc/tasks/SETTINGS-OPEN-B-1.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
+  - doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+  - doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
+  - doc/handoffs/SETTINGS-OPEN-B-1-*.md
+  - verification/SETTINGS-OPEN-B-1/**
+  - apps/desktop/frontend/src/settings/**
+  - src/bootstrap/settings_sections.py
+  - src/infrastructure/devices/manager.py
+  - src/infrastructure/providers/runtime.py
+  - src/infrastructure/providers/handlers.py
+  - tests/core/**
+  - tests/providers/**
+---
+
+# SETTINGS-OPEN-B-1：模型/GPU + 任务/并发
+
+## 来源与目标
+
+用户 2026-10-22 裁决开放全部设置分区；批次 A（OCR/翻译/修复/排版）已 done（`6a303a9`）。本 Task 实现批次 B-1：设计 [SETTINGS 分区 Schema](../design/SETTINGS_SECTION_SCHEMAS.md) §4.1–§4.2。
+
+交付结果：设置页 **模型/GPU** 与 **任务/并发** 两个分类可编辑并保存；`model_gpu.device_preference` / `allow_cpu_fallback` 对之后启动的 Run 生效；`tasks.retry_max_attempts` / `retry_backoff_seconds` 对之后启动的 Run 生效；并发数不提供假控件，UI 显示"任务串行执行"只读说明。
+
+## Acceptance Criteria
+
+- [x] **AC1 Core 写入校验**：`settings.update_section` 对 `model_gpu`（`device_preference ∈ auto|cpu|gpu`、`allow_cpu_fallback: bool`）与 `tasks`（`retry_max_attempts` int 1–3、`retry_backoff_seconds` float 0.1–30）白名单校验；未知键/非法值 `INVALID_REQUEST` 且不落库（60 个新测试 + 既有 pass-through 列表根因适配）。
+- [x] **AC2 模型/GPU 消费点**：Run 执行时的 `heavy_runner` 路径读取 Run 快照的 `model_gpu` 节；`auto` 保持历史行为（不调用 `plan`，monkeypatch 断言）；`cpu`/`gpu` 显式偏好经 `DeviceManager.plan` 校验，GPU 不可用且 `allow_cpu_fallback=false`（或 Provider 不支持回退）时抛 typed `DeviceUnavailable`；回退语义与 D06 §82 一致（用户开关与 Provider `supports_cpu_fallback` 相与）。
+- [x] **AC3 任务/并发消费点**：Run 执行时按 Run 快照的 `tasks` 节构造 `RetryPolicy`（`max_attempts`、`backoff_seconds`），未设置时返回装配期 `deps.retry_policy` **同一对象**（逐位等价）；`retry_codes`/`retry_after_provider` 保留。
+- [x] **AC4 前端两面板**：`model_gpu` / `task_concurrency` 分类 open，渲染真实面板（下拉/开关/数字输入 + 保存 + 错误投影 + "对之后启动的任务生效"）；`task_concurrency` 面板显示串行执行只读说明；其余 4 个分区（cache_revision/recycle_bin/backup_restore/plugins）保持禁用断言（39 files / 387 tests）。
+- [ ] **AC5 测试与证据**：pytest（校验 + 两个消费点）与 vitest（两面板/分类矩阵）全绿；tsc 无错误；GUI 烟测（两分区保存 + 重启复查）；独立 Review 由非实现者执行；未跑项标 NOT_RUN。
+
+## 允许修改范围
+
+上列 allowed_paths。不动 Provider/Network/凭据/SFX 语义、不改 Schema/migration、不加依赖。
+
+## 禁止范围
+
+- 不开放并发数、GPU 并发策略、模型下载/路径管理、设备状态 wire（另立 Task）。
+- 不删用户源文件、不 push/merge/rebase。
+
+## 测试要求
+
+| 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC1 | `python -m pytest tests/core -k settings -q` | 本地 Python | PASS（60 个新校验测试 + 既有 settings 测试全绿） | core-report.md §5.2 |
+| AC2/AC3 | `python -m pytest tests/core tests/providers -q --ignore=tests/providers/test_detection_manga_real.py` | 同上 | PASS（1212 passed / 3 skipped，exit 0；Lead 独立重跑一致） | core-report.md §5.3/§5.4 |
+| AC4 | `npm --prefix apps/desktop/frontend test` | node_modules | PASS（39 files / 387 tests；tsc exit 0） | ui-report.md + raw logs |
+| 烟测 | dev preview 两分区保存 + 重启复查 | 构建可用 | NOT_RUN（需集成阶段真实 Tauri + Core） | — |
+| 全量回归 | `python -m pytest tests -q` | 同上 | 2544 passed / 3 failed（2 个既有 transformers 环境失败 + 1 个既有 PySide6 workbench 失败，均与 B-1 无关） | core-report.md §5.4 |
+
+## 依赖、风险与阻塞
+
+- 依赖 SETTINGS-OPEN-A-1（done）：白名单/面板模式与 `SettingsClient` 泛化 API。
+- 风险一：把 `auto` 偏好也接入 `plan` 会改变历史行为 → 仅显式偏好时校验，`auto` 直通。
+- 风险二：`tasks` 重试策略改为 per-run 后，既有 `DEFAULT_RETRY_POLICY` 行为必须保持；测试覆盖未设置时等值。
+- 风险三：`model_gpu` 在空库/无 Provider 时无法端到端验证 GPU 分支 → typed 单测 + NOT_RUN 说明。
+
+## 交付与运行记录
+
+- 2026-10-22：dsh 释放并登记；Core 由 `core-settings-b1`、前端由 `ui-settings-b1` 两个独立 writer 并行实现；Lead 独立复核 diff、重跑测试并组织集成。
+- 2026-10-22：交付 commit 待固定（`dsh` 集成）；独立 Review 由 `reviewer-settings-a`（非实现者）执行，结论落 `verification/SETTINGS-OPEN-B-1/review-r1.md`。
+- Lead 独立验证：`pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` → 1212 passed / 3 skipped；`npm --prefix apps/desktop/frontend test` → 39 files / 387 tests；`tsc --noEmit` exit 0。
+- 任务文本笔误：验收命令中的 `tests/infrastructure` 不存在；设备测试在 `tests/providers/test_devices.py`（已由 core-report §4.1 记录）。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| pending | pending | pending | pending | pending | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference check |
+|---|---|---|---|---|---|
+| NOT_APPLICABLE | — | NOT_APPLICABLE | — | — | 本 Task 不产生持久资源 |
+
+## Closeout Record
+
+- Closeout：待关闭。
+- canonical_evidence_status：pending；resource_closeout_status：pending。
+- 删除/迁移/归档：0。
+- 当前指针清理：STATUS/REBASELINE/LEDGER 已登记本 Task。

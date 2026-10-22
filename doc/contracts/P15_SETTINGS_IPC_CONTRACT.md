@@ -269,7 +269,7 @@ Capability 绑定的查询也可经 `ResolveCapabilityBinding` 单独读取；�
 
 “可编辑”指下列专用 wire 开放的精确键，不代表开放通用任意键写入。`settings_update_section` 既有整节替换/透传语义保持 M2-C1 §5.3 不变；P15 只能提交本表明列字段，未知节、未知键和下表以外的值域在 UI 禁用，说明“等待 section schema 冻结”。
 
-**增量修订（2026-10-22，SETTINGS-OPEN-A-1；授权：用户裁决"设置页全部禁用分区开放"）**：下表之后列出的"本次 P15 不开放"分区中，**OCR 参数、翻译参数/上下文策略、图片修复、排版样式**四节已在 SETTINGS-OPEN-A-1 批次 A 冻结并开放（键集/值域/每节消费点/验收见 [SETTINGS 分区 Schema 设计](../design/SETTINGS_SECTION_SCHEMAS.md) §3）；Core 对四节按白名单校验（M2-C1 §5.3 增量修订）。其余分区（模型/GPU、任务/并发、缓存/Revision、回收站、备份/恢复、Plugin/Hooks、阅读方向）仍未开放，待批次 B/C 逐节冻结。下方两张表保留为 P15 时点的历史记录，不因本修订删除。
+**增量修订（2026-10-22，SETTINGS-OPEN-A-1；授权：用户裁决"设置页全部禁用分区开放"）**：下表之后列出的"本次 P15 不开放"分区中，**OCR 参数、翻译参数/上下文策略、图片修复、排版样式**四节已在 SETTINGS-OPEN-A-1 批次 A 冻结并开放（键集/值域/每节消费点/验收见 [SETTINGS 分区 Schema 设计](../design/SETTINGS_SECTION_SCHEMAS.md) §3）；Core 对四节按白名单校验（M2-C1 §5.3 增量修订）。**追加（2026-10-22，SETTINGS-OPEN-B-1）**：**模型/GPU（`device_preference`/`allow_cpu_fallback`）与任务/并发（`retry_max_attempts`/`retry_backoff_seconds`）**两节已冻结并开放（设计 §4.1–§4.2）；GPU 并发策略、模型下载与并发数仍不开放。其余分区（缓存/Revision、回收站、备份/恢复、Plugin/Hooks、阅读方向）仍未开放，待批次 B-2/C 逐节冻结。下方两张表保留为 P15 时点的历史记录，不因本修订删除。
 
 | 分区 / 写面 | 开放键集与值域 | 依据来源 | Core/Host 验证方式 |
 |---|---|---|---|

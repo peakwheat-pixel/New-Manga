@@ -1,0 +1,554 @@
+
+ RUN  v2.1.9 G:/CODEX/New Manga/apps/desktop/frontend
+
+ ✓ src/settings/client.sections.test.ts (7 tests) 5ms
+ ✓ src/settings/client.p15.test.ts (14 tests) 6ms
+ ✓ src/settings/ModelGpuSettingsPanel.test.tsx (8 tests) 121ms
+ ✓ src/settings/TasksSettingsPanel.test.tsx (10 tests) 135ms
+stderr | src/settings/SettingsPage.test.tsx > SettingsPage layout & categories (AC1) > renders the fixed 200px category nav and the content panel
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+stderr | src/settings/SettingsPage.test.tsx > SettingsPage layout & categories (AC1) > renders the twelve categories in the frozen order with the frozen labels
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+stderr | src/settings/SettingsPage.test.tsx > SettingsPage layout & categories (AC1) > opens exactly the batch-A + batch-B-1 categories; only still-closed categories carry the 未开放 badge
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+stderr | src/settings/SettingsPage.test.tsx > Still-disabled partitions: visible, not operable, reasoned (AC2) > recycle bin category remains visible but cannot be invoked
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+stderr | src/settings/SettingsPage.test.tsx > Still-disabled partitions: visible, not operable, reasoned (AC2) > backup/restore category remains visible but cannot be invoked
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+stderr | src/settings/SettingsPage.test.tsx > Still-disabled partitions: visible, not operable, reasoned (AC2) > Plugin/Hooks category remains visible but cannot be invoked
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+stderr | src/settings/SettingsPage.test.tsx > Still-disabled partitions: visible, not operable, reasoned (AC2) > keeps a reasoned placeholder id for every still-closed partition
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ProviderProfilePanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\ProviderProfilePanel.tsx:37:33)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+Warning: An update to CapabilityBindingPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CapabilityBindingPanel (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\CapabilityBindingPanel.tsx:15:35)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:67:25)
+
+ ✓ src/settings/SettingsPage.test.tsx (17 tests) 278ms
+
+ Test Files  5 passed (5)
+      Tests  56 passed (56)
+   Start at  22:06:50
+   Duration  1.29s (transform 339ms, setup 0ms, collect 1.83s, tests 545ms, environment 1ms, prepare 689ms)
+
+[exit code 0]

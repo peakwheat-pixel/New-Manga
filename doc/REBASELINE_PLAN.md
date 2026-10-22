@@ -23,7 +23,8 @@
 |GIT-MAINLINE-CONVERGENCE-1|—|done（r3 approved 6997733bf；refs/heads 仅 main、worktree 1、21 条归档、2.6GiB 可恢复）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
 |GOV-DIRECTORY-CLEANUP-1|—|done（r1 approved 40acf35b7；五根 171 项，2 项归档后删除、净释放 426.3 MiB）|
-|SETTINGS-OPEN-A-1|P15、P15-C1|done（批次 A：OCR/翻译参数/图片修复/排版样式；r1 changes_requested → r2 approved，集成 6a303a9；批次 B/C 待登记）|
+|SETTINGS-OPEN-A-1|P15、P15-C1|done（批次 A：OCR/翻译参数/图片修复/排版样式；r1 changes_requested → r2 approved，集成 6a303a9）|
+|SETTINGS-OPEN-B-1|SETTINGS-OPEN-A-1|in_progress（批次 B-1：模型/GPU + 任务/并发；设计 §4.1–§4.2；独立 Review 待定）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
 READY 节点：**无**。批次 A 已关闭（SETTINGS-OPEN-A-1 done）；批次 B/C 待登记。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。

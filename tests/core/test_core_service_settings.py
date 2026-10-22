@@ -170,12 +170,12 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
         assert all(path not in serialized for path in forbidden)
 
     # Mirror the settings categories whose schema is not frozen yet, plus the
-    # generic SFX section. The four batch-A sections (ocr/translate/inpaint/
-    # typeset) are white-listed since SETTINGS-OPEN-A-1: they reject unknown
-    # keys before persistence, so a path payload can never even be stored --
-    # asserted separately below.
+    # generic SFX section. The batch-A sections (ocr/translate/inpaint/typeset)
+    # are white-listed since SETTINGS-OPEN-A-1 and ``model_gpu`` / ``tasks``
+    # since SETTINGS-OPEN-B-1: they reject unknown keys before persistence, so
+    # a path payload can never even be stored -- asserted separately below.
     sections = (
-        "provider", "network", "translation", "model_gpu", "task_concurrency",
+        "provider", "network", "translation", "task_concurrency",
         "cache_revision", "recycle_bin", "backup_restore", "plugins", "sfx",
     )
     values = {
@@ -214,11 +214,12 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
         for section in sections
     )
 
-    # SETTINGS-OPEN-A-1: the batch-A sections accept only their frozen key
-    # set, so the same path-shaped payload is rejected BEFORE persistence and
-    # never echoed -- a stronger guarantee than output redaction. (review r1
-    # m3: ``translate`` belongs to the same whitelisted batch-A set.)
-    for section in ("ocr", "translate", "inpaint", "typeset"):
+    # SETTINGS-OPEN-A-1/B-1: the white-listed sections accept only their
+    # frozen key set, so the same path-shaped payload is rejected BEFORE
+    # persistence and never echoed -- a stronger guarantee than output
+    # redaction. (review r1 m3: ``translate`` belongs to the same whitelisted
+    # batch-A set.)
+    for section in ("ocr", "translate", "inpaint", "typeset", "model_gpu", "tasks"):
         rejected = _request(
             server,
             "settings.update_section",

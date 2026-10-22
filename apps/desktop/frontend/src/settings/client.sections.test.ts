@@ -69,4 +69,30 @@ describe("SettingsClient generic section read/write (SETTINGS-OPEN-A-1)", () => 
       SettingsClientError,
     );
   });
+
+  it("addresses the batch-B-1 sections (model_gpu / tasks) through the same generic pair", async () => {
+    const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
+      if (command === "settings_get") {
+        expect(args).toEqual({ section: "tasks" });
+        return {
+          settings: { tasks: { retry_max_attempts: 2, retry_backoff_seconds: 2.5 } },
+        };
+      }
+      expect(command).toBe("settings_update_section");
+      expect(args).toEqual({
+        section: "model_gpu",
+        values: { device_preference: "gpu", allow_cpu_fallback: false },
+      });
+      return {};
+    });
+    const client = new SettingsClient(invoke);
+    await expect(client.getSection("tasks")).resolves.toEqual({
+      retry_max_attempts: 2,
+      retry_backoff_seconds: 2.5,
+    });
+    await client.saveSection("model_gpu", {
+      device_preference: "gpu",
+      allow_cpu_fallback: false,
+    });
+  });
 });

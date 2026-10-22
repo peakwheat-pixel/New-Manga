@@ -116,6 +116,11 @@ ARTIFACT_TRANSLATED = "translated"
 DEFAULT_CONTEXT_TOKEN_BUDGET = 2000
 DEFAULT_CONTEXT_PAGES = 1
 
+#: Batch B-1 (design §4.1): the explicit device preferences. ``auto`` is the
+#: historical behaviour and maps to ``preferred_device=None`` (no device
+#: planning at all); an unknown/corrupted value must not invent a preference.
+_EXPLICIT_DEVICE_PREFERENCES = frozenset({"cpu", "gpu"})
+
 
 class PageImageSource(Protocol):
     """Supplies decoded pixels; implemented by the bootstrap assembly."""
@@ -335,9 +340,12 @@ class ProductionHandlers:
         outcome = run_chain(
             chain,
             lambda provider_id: self._invoke_provider(
-                provider_id, CAPABILITY_OCR, lambda provider: provider.recognize(request)
+                provider_id,
+                CAPABILITY_OCR,
+                lambda provider: provider.recognize(request),
+                run=run,
             ),
-            policy=self.deps.retry_policy,
+            policy=self._retry_policy_for_run(run),
             payload_hash_provider=lambda: _payload_hash(request.image_bytes, request.region_id),
         )
         result = outcome.result
@@ -420,8 +428,9 @@ class ProductionHandlers:
                 provider_id,
                 CAPABILITY_TRANSLATION,
                 lambda provider: provider.translate(payload),
+                run=run,
             ),
-            policy=self.deps.retry_policy,
+            policy=self._retry_policy_for_run(run),
             payload_hash_provider=payload.payload_hash,
         )
         result = outcome.result
@@ -916,17 +925,82 @@ class ProductionHandlers:
         _header, mask = decode_mask_payload(payload)
         return mask
 
-    def _invoke_provider(self, provider_id: str, capability: str, call):
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
         provider = self.deps.registry.resolve(capability, provider_id)
 
-        def run():
+        def invoke():
             return call(provider)
 
         if self.deps.heavy_runner is not None:
-            return self.deps.heavy_runner(
-                requires_gpu=bool(getattr(provider, "requires_gpu", False)), call=run
+            # SETTINGS-OPEN-B-1 AC2: the Run-frozen ``model_gpu`` section picks
+            # the device. ``auto`` (and a missing/corrupted section) keeps the
+            # historical call shape: ``preferred_device=None`` makes the
+            # runtime pass straight through to ``run_guarded(requires_gpu,
+            # call)`` -- no ``DeviceManager.plan`` call, zero behaviour change.
+            settings = self._section(run.settings_snapshot, "model_gpu")
+            preference = settings.get("device_preference")
+            preferred_device = (
+                preference if preference in _EXPLICIT_DEVICE_PREFERENCES else None
             )
-        return run()
+            raw_fallback = settings.get("allow_cpu_fallback")
+            # D06 §82: the user switch ANDs with the provider's own declaration
+            # inside ``DeviceManager.plan``; an absent/malformed switch keeps
+            # the design default (allowed).
+            allow_cpu_fallback = (
+                raw_fallback if isinstance(raw_fallback, bool) else True
+            )
+            return self.deps.heavy_runner(
+                requires_gpu=bool(getattr(provider, "requires_gpu", False)),
+                call=invoke,
+                preferred_device=preferred_device,
+                allow_cpu_fallback=allow_cpu_fallback,
+                supports_cpu_fallback=bool(
+                    getattr(provider, "supports_cpu_fallback", False)
+                ),
+            )
+        return invoke()
+
+    def _retry_policy_for_run(self, run: PipelineRun) -> RetryPolicy:
+        """Derive this Run's retry policy from its frozen ``tasks`` section.
+
+        SETTINGS-OPEN-B-1 AC3 (design §4.2): ``retry_max_attempts`` /
+        ``retry_backoff_seconds`` replace the assembly-time policy for Runs
+        started after the write. An absent section (or an absent key) keeps
+        :attr:`HandlerDependencies.retry_policy`'s value, and with no usable
+        key at all the very same policy object is returned, so an unset
+        section is byte-for-byte equivalent to the historical behaviour.
+
+        The write gate already rejects out-of-range values, but a frozen Run
+        can be replayed from older/corrupted storage: a numeric value is
+        clamped into the accepted domain (the ``runtime._retry_policy``
+        clamping discipline), and a non-numeric one is ignored (base value
+        kept) instead of crashing the step.
+        """
+        base = self.deps.retry_policy
+        section = self._section(run.settings_snapshot, "tasks")
+        max_attempts = _clamped_int(
+            section.get("retry_max_attempts"), minimum=1, maximum=3
+        )
+        backoff_seconds = _clamped_number(
+            section.get("retry_backoff_seconds"), minimum=0.1, maximum=30.0
+        )
+        if max_attempts is None and backoff_seconds is None:
+            return base
+        return RetryPolicy(
+            max_attempts=(
+                base.max_attempts if max_attempts is None else max_attempts
+            ),
+            backoff_seconds=(
+                base.backoff_seconds if backoff_seconds is None else backoff_seconds
+            ),
+            # The UI exposes only the two knobs above: every other field of the
+            # assembled policy (explicit retry codes, the Retry-After consumer)
+            # stays exactly as it was.
+            retry_codes=base.retry_codes,
+            retry_after_provider=getattr(base, "retry_after_provider", None),
+        )
 
     def _chain(self, run: PipelineRun, step_type: str) -> FallbackChain:
         binding = run.provider_binding_snapshot.get(step_type)
@@ -1111,6 +1185,27 @@ def _bounded_number(value: Any, minimum: float, maximum: float) -> float | None:
     if not minimum <= number <= maximum:
         return None
     return number
+
+
+def _clamped_int(value: Any, *, minimum: int, maximum: int) -> int | None:
+    """Return ``value`` clamped into the inclusive bounds, else ``None``.
+
+    ``None`` (not a real integer: booleans, strings, absent keys) lets the
+    caller keep its own default; an out-of-range number is clamped like
+    ``runtime._retry_policy`` clamps the legacy ``providers.retry`` value.
+    """
+    if isinstance(value, bool) or not isinstance(value, int):
+        return None
+    return min(maximum, max(minimum, value))
+
+
+def _clamped_number(
+    value: Any, *, minimum: float, maximum: float
+) -> float | None:
+    """Float flavour of :func:`_clamped_int` (same ``None`` contract)."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return min(maximum, max(minimum, float(value)))
 
 
 def build_production_handlers(

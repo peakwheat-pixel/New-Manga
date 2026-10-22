@@ -1,8 +1,9 @@
-"""Per-section write validation for ``settings.update_section`` (SETTINGS-OPEN-A-1).
+"""Per-section write validation for ``settings.update_section``.
 
 The settings page opens its previously disabled categories in batches. Batch A
 (``doc/design/SETTINGS_SECTION_SCHEMAS.md`` §3.1-§3.4) freezes the key set and
-the value domains of ``ocr`` / ``translate`` / ``inpaint`` / ``typeset``; this
+the value domains of ``ocr`` / ``translate`` / ``inpaint`` / ``typeset``;
+batch B-1 (§4.1-§4.2) adds ``model_gpu`` and ``tasks``. This
 module is the Core-side gate that runs BEFORE
 ``PipelineDefaultsService.save_settings_section`` persists anything (design
 §2.2/§3.5, the M2-SFX-ENTRY r1 R4 fail-closed discipline: a value that would
@@ -85,13 +86,29 @@ _TYPESET_RULES: dict[str, _Rule] = {
     "manual_font_size": _Rule("nullable_float", minimum=1.0, maximum=500.0),
 }
 
-#: Frozen batch-A sections. Unknown names are NOT listed here: they stay on the
+#: Batch B-1 (design §4.1): the Run-time device preference and the user half of
+#: the D06 §82 CPU-fallback decision. ``auto`` is the historical behaviour.
+_MODEL_GPU_RULES: dict[str, _Rule] = {
+    "device_preference": _Rule("enum", frozenset({"auto", "cpu", "gpu"})),
+    "allow_cpu_fallback": _Rule("bool"),
+}
+
+#: Batch B-1 (design §4.2): the per-Run retry policy. Bounds match the retry
+#: contract ("1-3 attempts"): a larger value is not a user-facing capability.
+_TASKS_RULES: dict[str, _Rule] = {
+    "retry_max_attempts": _Rule("int", minimum=1, maximum=3),
+    "retry_backoff_seconds": _Rule("float", minimum=0.1, maximum=30.0),
+}
+
+#: Frozen sections. Unknown names are NOT listed here: they stay on the
 #: pre-existing pass-through (design §3.5, backwards compatibility).
 _SECTIONS: dict[str, dict[str, _Rule]] = {
     "ocr": _OCR_RULES,
     "translate": _TRANSLATE_RULES,
     "inpaint": _INPAINT_RULES,
     "typeset": _TYPESET_RULES,
+    "model_gpu": _MODEL_GPU_RULES,
+    "tasks": _TASKS_RULES,
 }
 
 _HEX_DIGITS = frozenset("0123456789abcdefABCDEF")
@@ -102,10 +119,10 @@ def validate_settings_section(
 ) -> dict[str, Any] | None:
     """Validate one section write and return its normalized values.
 
-    ``None`` means "section not frozen in batch A": the caller keeps the
-    historical whole-section upsert unchanged. A known section either returns
-    every key normalized, or raises :class:`SettingsSectionError`; there is no
-    partial acceptance.
+    ``None`` means "section not frozen in a settings batch": the caller keeps
+    the historical whole-section upsert unchanged. A known section either
+    returns every key normalized, or raises :class:`SettingsSectionError`;
+    there is no partial acceptance.
     """
     rules = _SECTIONS.get(section)
     if rules is None:

@@ -255,13 +255,41 @@ class DeviceManager:
             )
         return DevicePlan(DEVICE_CPU, requested)
 
-    def run_guarded(self, *, requires_gpu: bool, call):
+    def run_guarded(
+        self,
+        *,
+        requires_gpu: bool,
+        call,
+        preferred_device: str | None = None,
+        allow_cpu_fallback: bool = True,
+        supports_cpu_fallback: bool = False,
+    ):
         """Run ``call`` under the heavy gate with OOM isolation (AC-GPU-001/002).
 
         The OOM is converted into a typed :class:`ProviderOutOfMemory`; the
         gate slot is released by the context manager and the caller can mark
         the model unloaded and continue the Run.
+
+        SETTINGS-OPEN-B-1 AC2 (design §4.1): an explicit Run preference
+        (``preferred_device`` not ``None``) is validated through
+        :meth:`plan` first — a GPU preference that the user did not allow to
+        fall back (or a provider that cannot run on CPU) surfaces as the typed
+        :class:`DeviceUnavailable` *before* the call starts, and a CPU
+        preference is honoured as such. :meth:`plan` is the single device
+        authority; this method does not second-guess its outcome. With
+        ``preferred_device`` ``None`` (``auto``, every pre-B-1 caller) the
+        historical code path runs unchanged: no planning, same gate, same OOM
+        isolation.
         """
+        if preferred_device is not None:
+            # D06 §82: the user switch ANDs with the provider declaration.
+            self.plan(
+                requires_gpu=requires_gpu,
+                supports_cpu_fallback=(
+                    supports_cpu_fallback and allow_cpu_fallback
+                ),
+                preferred_device=preferred_device,
+            )
         if requires_gpu:
             with self.heavy_gate.slot():
                 return self._invoke(call)

@@ -1,13 +1,15 @@
 /**
- * SETTINGS-OPEN-A-1 batch A section schemas — the single front-end source of
- * truth for the four sections frozen by
- * doc/design/SETTINGS_SECTION_SCHEMAS.md §3:
+ * Section schemas — the single front-end source of truth for every settings
+ * section the UI may read/write, frozen by
+ * doc/design/SETTINGS_SECTION_SCHEMAS.md:
  *
- *   ocr        — §3.1 script / direction
- *   translate  — §3.2 context_pages / context_token_budget
+ *   ocr        — §3.1 script / direction (batch A)
+ *   translate  — §3.2 context_pages / context_token_budget (batch A)
  *   inpaint    — §3.3 preferred_quality / background_complexity /
- *                       dilate_radius / erode_radius
- *   typeset    — §3.4 default text style (font_family stays closed in batch A)
+ *                       dilate_radius / erode_radius (batch A)
+ *   typeset    — §3.4 default text style (font_family stays closed, batch A)
+ *   model_gpu  — §4.1 device_preference / allow_cpu_fallback (batch B-1)
+ *   tasks      — §4.2 retry_max_attempts / retry_backoff_seconds (batch B-1)
  *
  * Every default below is the documented Core default (design table, or the
  * Python constant it names) — the UI never invents values. A section read as
@@ -502,4 +504,170 @@ export function describeTypesetSettings(draft: TypesetSettingsDraft | null): str
     draft.auto_font_size ? "字号自动" : manual,
     `偏移 ${draft.font_size_offset}`,
   ].join(" · ");
+}
+
+/* --------------------------------------------------------------------------
+ * §4.1 Model / GPU (section `model_gpu`, SETTINGS-OPEN-B-1)
+ * ------------------------------------------------------------------------ */
+
+export const MODEL_GPU_SECTION = "model_gpu";
+
+/**
+ * §4.1: `auto` keeps the historical behaviour (no explicit device gate);
+ * `cpu` / `gpu` are explicit preferences validated by `DeviceManager.plan`
+ * at Run time. `gpu_concurrency` is intentionally absent — the single-slot
+ * gate is an existing invariant, not a user setting (design §4.1 "未开放").
+ */
+export type DevicePreference = "auto" | "cpu" | "gpu";
+
+export const DEVICE_PREFERENCE_VALUES: readonly DevicePreference[] = [
+  "auto",
+  "cpu",
+  "gpu",
+] as const;
+
+export const DEVICE_PREFERENCE_LABELS: Readonly<Record<DevicePreference, string>> = {
+  auto: "自动 (auto)",
+  cpu: "仅 CPU (cpu)",
+  gpu: "优先 GPU (gpu)",
+};
+
+export interface ModelGpuSettingsDraft {
+  device_preference: DevicePreference;
+  /**
+   * User half of the D06 §82 rule: falling back to CPU additionally requires
+   * the Provider descriptor's `supports_cpu_fallback` (the two are ANDed by
+   * the Core, this flag alone cannot force a fallback).
+   */
+  allow_cpu_fallback: boolean;
+}
+
+/** Core defaults (design §4.1): auto preference, CPU fallback allowed. */
+export const DEFAULT_MODEL_GPU_SETTINGS_DRAFT: ModelGpuSettingsDraft = {
+  device_preference: "auto",
+  allow_cpu_fallback: true,
+};
+
+export function normalizeModelGpuSettings(value: unknown): ModelGpuSettingsDraft {
+  const raw = asRecord(value);
+  return {
+    device_preference: pickOne(
+      raw.device_preference,
+      DEVICE_PREFERENCE_VALUES,
+      DEFAULT_MODEL_GPU_SETTINGS_DRAFT.device_preference,
+    ),
+    allow_cpu_fallback: pickBoolean(
+      raw.allow_cpu_fallback,
+      DEFAULT_MODEL_GPU_SETTINGS_DRAFT.allow_cpu_fallback,
+    ),
+  };
+}
+
+/**
+ * Both keys are closed enums / booleans, so the controls cannot produce an
+ * invalid draft; the check still runs before every write (the Core re-validates
+ * and remains the authority) and guards against a future widened control.
+ */
+export function validateModelGpuSettingsDraft(
+  draft: ModelGpuSettingsDraft,
+): Record<string, string> {
+  const errors: Record<string, string> = {};
+  if (!DEVICE_PREFERENCE_VALUES.includes(draft.device_preference)) {
+    errors.device_preference = "device_preference 必须是 auto / cpu / gpu";
+  }
+  if (typeof draft.allow_cpu_fallback !== "boolean") {
+    errors.allow_cpu_fallback = "allow_cpu_fallback 必须是布尔值";
+  }
+  return errors;
+}
+
+export function modelGpuSettingsValues(
+  draft: ModelGpuSettingsDraft,
+): Record<string, unknown> {
+  return {
+    device_preference: draft.device_preference,
+    allow_cpu_fallback: draft.allow_cpu_fallback,
+  };
+}
+
+export function describeModelGpuSettings(draft: ModelGpuSettingsDraft | null): string {
+  if (draft === null) return "未设置（按 Core 默认值运行）";
+  return `设备偏好 ${DEVICE_PREFERENCE_LABELS[draft.device_preference]} · CPU 回退 ${
+    draft.allow_cpu_fallback ? "允许" : "禁止"
+  }`;
+}
+
+/* --------------------------------------------------------------------------
+ * §4.2 Tasks / concurrency (section `tasks`, SETTINGS-OPEN-B-1)
+ * ------------------------------------------------------------------------ */
+
+export const TASKS_SECTION = "tasks";
+
+/** Core defaults (design §4.2; `runtime.DEFAULT_RETRY_POLICY`). */
+export const DEFAULT_RETRY_MAX_ATTEMPTS = 3;
+export const DEFAULT_RETRY_BACKOFF_SECONDS = 1.0;
+
+export const RETRY_MAX_ATTEMPTS_MIN = 1;
+export const RETRY_MAX_ATTEMPTS_MAX = 3;
+export const RETRY_BACKOFF_SECONDS_MIN = 0.1;
+export const RETRY_BACKOFF_SECONDS_MAX = 30;
+
+/**
+ * The concurrency count itself is NOT part of this section: the scheduler's
+ * `max_parallel_pages = 1` / `max_parallel_steps = 1` are forced invariants
+ * (design §4.2), so the panel renders a read-only "任务串行执行" note and
+ * never a fake control.
+ */
+export interface TasksSettingsDraft {
+  retry_max_attempts: string;
+  retry_backoff_seconds: string;
+}
+
+export const DEFAULT_TASKS_SETTINGS_DRAFT: TasksSettingsDraft = {
+  retry_max_attempts: String(DEFAULT_RETRY_MAX_ATTEMPTS),
+  // `1.0`, not `1`: the documented Core default is a float.
+  retry_backoff_seconds: DEFAULT_RETRY_BACKOFF_SECONDS.toFixed(1),
+};
+
+export function normalizeTasksSettings(value: unknown): TasksSettingsDraft {
+  const raw = asRecord(value);
+  return {
+    retry_max_attempts: String(pickInt(raw.retry_max_attempts, DEFAULT_RETRY_MAX_ATTEMPTS)),
+    retry_backoff_seconds: String(
+      pickNumber(raw.retry_backoff_seconds, DEFAULT_RETRY_BACKOFF_SECONDS),
+    ),
+  };
+}
+
+export function validateTasksSettingsDraft(draft: TasksSettingsDraft): Record<string, string> {
+  const errors: Record<string, string> = {};
+  const attempts = parseIntDraft(draft.retry_max_attempts);
+  if (
+    attempts === null ||
+    attempts < RETRY_MAX_ATTEMPTS_MIN ||
+    attempts > RETRY_MAX_ATTEMPTS_MAX
+  ) {
+    errors.retry_max_attempts = `retry_max_attempts 必须是 ${RETRY_MAX_ATTEMPTS_MIN}–${RETRY_MAX_ATTEMPTS_MAX} 的整数`;
+  }
+  const backoff = parseNumberDraft(draft.retry_backoff_seconds);
+  if (
+    backoff === null ||
+    backoff < RETRY_BACKOFF_SECONDS_MIN ||
+    backoff > RETRY_BACKOFF_SECONDS_MAX
+  ) {
+    errors.retry_backoff_seconds = `retry_backoff_seconds 必须在 ${RETRY_BACKOFF_SECONDS_MIN}–${RETRY_BACKOFF_SECONDS_MAX} 之间`;
+  }
+  return errors;
+}
+
+export function tasksSettingsValues(draft: TasksSettingsDraft): Record<string, unknown> {
+  return {
+    retry_max_attempts: parseIntDraft(draft.retry_max_attempts),
+    retry_backoff_seconds: parseNumberDraft(draft.retry_backoff_seconds),
+  };
+}
+
+export function describeTasksSettings(draft: TasksSettingsDraft | null): string {
+  if (draft === null) return "未设置（沿用 Core 默认重试策略）";
+  return `重试上限 ${draft.retry_max_attempts} 次 · 退避 ${draft.retry_backoff_seconds} 秒`;
 }
