@@ -1,0 +1,33 @@
+{
+  "generatedUtc": "2026-10-12 09:12:53 UTC",
+  "task": "P02PRE-R1H-R6-EXEC-A6",
+  "dshSession": "session-bf2596b1-c13a-4558-9d0d-d370cf1d27fa",
+  "exitCode": 0,
+  "finalEventCount": 1,
+  "finalReportChars": 17119,
+  "totalToolCalls": 41,
+  "toolCounts": {
+    "read": 40,
+    "grep": 1
+  },
+  "reviewManifestPath": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt6-r2-review-input-manifest-20261012.json",
+  "reviewManifestReadSeparately": true,
+  "pinnedPathCount": 35,
+  "expectedExactReadPathCount": 36,
+  "openedUniquePathCount": 33,
+  "unlistedPathCount": 0,
+  "unlistedPaths": [],
+  "unopenedAllowedPathCount": 3,
+  "unopenedAllowedPaths": [
+    "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-final-pre-run-20261012.stdout.log",
+    "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-integration-verify-20261012.json",
+    "G:\\CODEX\\New Manga\\verification\\P02\\zcode-p02-proxy-env-snapshot-20261012-154808-639.json"
+  ],
+  "unparsedToolInputCount": 0,
+  "unparsedTools": [],
+  "unexpectedToolCount": 0,
+  "unexpectedTools": [],
+  "readScopeMatches": false,
+  "supersedesEarlierCodexAudit": true,
+  "correctionNote": "Initial Codex audit read tool input.path only and omitted file_path and the separately requested review-manifest read. Corrected parser uses both file_path and path and includes the review manifest explicitly."
+}

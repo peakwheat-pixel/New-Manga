@@ -1,0 +1,66 @@
+{
+  "taskId": "P02PRE-R1H",
+  "round": "R6",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "/root/p02_r1h_remediation_review",
+  "integrator": "/root",
+  "branch": "agent/codex/P02PRE-R1H",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "baseCommit": "dd5d2e3bc8e0702da9d059131f6364a997897661",
+  "deliveryHead": "c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d",
+  "deliveryParent": "dd5d2e3bc8e0702da9d059131f6364a997897661",
+  "deliveryTree": "96e7273ddd5fd27bee567bba27f19453cabe0842",
+  "commonDir": "G:/CODEX/New Manga/.git",
+  "ownerControlledStatus": "empty",
+  "changedPaths": [
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-round6-handoff-20261012.md"
+  ],
+  "scopePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57812,
+      "sha256": "6BD9160854275DA94C61B8FC48B180CD16368AF56C2AF7D63D616490A1AB85A9"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-handoff-20261012.md",
+      "bytes": 3551,
+      "sha256": "700B79F3FA01308DFFEC374A4FFB92DAC69C2FD8355DE623F6A250E9F1511658"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    }
+  ],
+  "referencePins": [
+    {
+      "path": "G:/CODEX/New Manga/doc/tasks/P02PRE-R1H.md",
+      "bytes": 43604,
+      "sha256": "E613FFED6968A93AA76F652A17434D45B684F2E17D9CFEA9824AF71F2F8302F3"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-selfcheck-round5-20261012.json",
+      "bytes": 4076,
+      "sha256": "8F8127718FD1B07AD8031DC71CCE43A55258BF4B36D8694D1520A3197C77340C"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-engine-preflight-round5-20261012.json",
+      "bytes": 6990,
+      "sha256": "72FA81E395EE62A0D85F6333C8D5A05A976C6B6FEDC333217F322B0EC6375C2F"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-execution-20261012.json",
+      "bytes": 493429,
+      "sha256": "B750C772295B07BBD0DF571405F81A7DBCA967ECF005735C4B2F33D78F39E669"
+    }
+  ],
+  "diffCheckExit": 0,
+  "reviewerAction": "Read-only independent static review; no tests, no source edits, no integration; write only the assigned report",
+  "status": "FROZEN_FOR_INDEPENDENT_REVIEW"
+}

@@ -1,0 +1,235 @@
+{
+  "schema": "p02pre-r1h-attempt6-integration-verify-v1",
+  "task": "P02PRE-R1H-R6-EXEC-A6",
+  "recordedAtUtc": "2026-10-12T09:31:16.9783594Z",
+  "review": {
+    "verdict": "APPROVED_STATIC_CONTENT",
+    "adjudication": "ACCEPTED_STATIC_CONTENT_WITH_LIMITATIONS",
+    "unresolvedP0P1P2": 0,
+    "report": "verification/P02/codex-p02pre-r1h-attempt6-r2-review-adjudication-20261012.md"
+  },
+  "environment": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "edition": "Core",
+    "languageMode": "FullLanguage",
+    "psHome": "C:\\Program Files\\PowerShell\\7",
+    "workingDirectory": "G:\\CODEX\\New Manga",
+    "childProcessId": 43800
+  },
+  "command": {
+    "argv": [
+      "-NoLogo",
+      "-NoProfile",
+      "-NonInteractive",
+      "-EncodedCommand",
+      "JABFAHIAcgBvAHIAQQBjAHQAaQBvAG4AUAByAGUAZgBlAHIAZQBuAGMAZQA9ACcAUwB0AG8AcAAnAAoAJABlAHgAZQBjAHUAdABvAHIAPQAnAEMAOgBcAFUAcwBlAHIAcwBcADQAOQA3ADQANQBcAC4AYwBvAGQAZQB4AFwAdwBvAHIAawB0AHIAZQBlAHMAXABwADAAMgBwAHIAZQAtAHIAMQBoAC0AcgA2AC0AZQB4AGUAYwAtAGEANgAtAGEAbgB0AGkAZwByAGEAdgBpAHQAeQBcAE4AZQB3ACAATQBhAG4AZwBhAFwAdgBlAHIAaQBmAGkAYwBhAHQAaQBvAG4AXABQADAAMgBcAHAAMAAyAHAAcgBlAC0AcgAxAGgALQByAG8AdQBuAGQANgAtAGkAbgB0AGUAZwByAGEAdABvAHIALQBhAHQAdABlAG0AcAB0ADYALQAyADAAMgA2ADEAMAAxADIALgBwAHMAMQAnAAoAJABzAGUAbABmAGMAaABlAGMAawA9ACcARwA6AFwAQwBPAEQARQBYAFwATgBlAHcAIABNAGEAbgBnAGEAXAB2AGUAcgBpAGYAaQBjAGEAdABpAG8AbgBcAFAAMAAyAFwAcAAwADIAcAByAGUALQByADEAaAAtAHIAbwB1AG4AZAA2AC0AYQB0AHQAZQBtAHAAdAA0AC0AcwBlAGwAZgBjAGgAZQBjAGsALQAyADAAMgA2ADEAMAAxADIALgBwAHMAMQAnAAoAJAByAHUAbgB0AGkAbQBlAD0AWwBvAHIAZABlAHIAZQBkAF0AQAB7AHYAZQByAHMAaQBvAG4APQAkAFAAUwBWAGUAcgBzAGkAbwBuAFQAYQBiAGwAZQAuAFAAUwBWAGUAcgBzAGkAbwBuAC4AVABvAFMAdAByAGkAbgBnACgAKQA7AGUAZABpAHQAaQBvAG4APQAkAFAAUwBWAGUAcgBzAGkAbwBuAFQAYQBiAGwAZQAuAFAAUwBFAGQAaQB0AGkAbwBuADsAbABhAG4AZwB1AGEAZwBlAE0AbwBkAGUAPQAkAEUAeABlAGMAdQB0AGkAbwBuAEMAbwBuAHQAZQB4AHQALgBTAGUAcwBzAGkAbwBuAFMAdABhAHQAZQAuAEwAYQBuAGcAdQBhAGcAZQBNAG8AZABlAC4AVABvAFMAdAByAGkAbgBnACgAKQA7AHAAcwBIAG8AbQBlAD0AJABQAFMASABPAE0ARQB9AAoAVwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAoACcAUgBVAE4AVABJAE0ARQA9ACcAKwAgACgAQwBvAG4AdgBlAHIAdABUAG8ALQBKAHMAbwBuACAALQBJAG4AcAB1AHQATwBiAGoAZQBjAHQAIAAkAHIAdQBuAHQAaQBtAGUAIAAtAEMAbwBtAHAAcgBlAHMAcwApACkACgAkAHAAYQByAHMAZQA9AFsAbwByAGQAZQByAGUAZABdAEAAewB9AAoAZgBvAHIAZQBhAGMAaAAoACQAcAAgAGkAbgAgAEAAKAAkAGUAeABlAGMAdQB0AG8AcgAsACQAcwBlAGwAZgBjAGgAZQBjAGsAKQApAHsAJAB0AG8AawBlAG4AcwA9ACQAbgB1AGwAbAA7ACQAZQByAHIAbwByAHMAPQAkAG4AdQBsAGwAOwAkAG4AdQBsAGwAPQBbAE0AYQBuAGEAZwBlAG0AZQBuAHQALgBBAHUAdABvAG0AYQB0AGkAbwBuAC4ATABhAG4AZwB1AGEAZwBlAC4AUABhAHIAcwBlAHIAXQA6ADoAUABhAHIAcwBlAEYAaQBsAGUAKAAkAHAALABbAHIAZQBmAF0AJAB0AG8AawBlAG4AcwAsAFsAcgBlAGYAXQAkAGUAcgByAG8AcgBzACkAOwAkAHAAYQByAHMAZQBbACQAcABdAD0AWwBvAHIAZABlAHIAZQBkAF0AQAB7AGUAcgByAG8AcgBDAG8AdQBuAHQAPQBAACgAJABlAHIAcgBvAHIAcwApAC4AQwBvAHUAbgB0ADsAZQByAHIAbwByAHMAPQBAACgAJABlAHIAcgBvAHIAcwB8AEYAbwByAEUAYQBjAGgALQBPAGIAagBlAGMAdAB7AFsAbwByAGQAZQByAGUAZABdAEAAewBpAGQAPQAkAF8ALgBFAHIAcgBvAHIASQBkADsAbQBlAHMAcwBhAGcAZQA9ACQAXwAuAE0AZQBzAHMAYQBnAGUAOwBsAGkAbgBlAD0AJABfAC4ARQB4AHQAZQBuAHQALgBTAHQAYQByAHQATABpAG4AZQBOAHUAbQBiAGUAcgA7AGMAbwBsAHUAbQBuAD0AJABfAC4ARQB4AHQAZQBuAHQALgBTAHQAYQByAHQAQwBvAGwAdQBtAG4ATgB1AG0AYgBlAHIAfQB9ACkAfQB9AAoAVwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAoACcAUABBAFIAUwBFAFIAPQAnACsAIAAoAEMAbwBuAHYAZQByAHQAVABvAC0ASgBzAG8AbgAgAC0ASQBuAHAAdQB0AE8AYgBqAGUAYwB0ACAAJABwAGEAcgBzAGUAIAAtAEQAZQBwAHQAaAAgADgAIAAtAEMAbwBtAHAAcgBlAHMAcwApACkACgBpAGYAKABAACgAJABwAGEAcgBzAGUALgBWAGEAbAB1AGUAcwB8AFcAaABlAHIAZQAtAE8AYgBqAGUAYwB0AHsAJABfAC4AZQByAHIAbwByAEMAbwB1AG4AdAAgAC0AbgBlACAAMAB9ACkALgBDAG8AdQBuAHQAIAAtAG4AZQAgADAAKQB7AHQAaAByAG8AdwAgACcAUABvAHcAZQByAFMAaABlAGwAbAAgAHAAYQByAHMAZQByACAAZgBvAHUAbgBkACAAZQByAHIAbwByAHMALgAnAH0ACgAkAHMAbwB1AHIAYwBlAD0AWwBJAE8ALgBGAGkAbABlAF0AOgA6AFIAZQBhAGQAQQBsAGwAVABlAHgAdAAoACQAcwBlAGwAZgBjAGgAZQBjAGsALABbAFQAZQB4AHQALgBVAFQARgA4AEUAbgBjAG8AZABpAG4AZwBdADoAOgBuAGUAdwAoACQAZgBhAGwAcwBlACwAJAB0AHIAdQBlACkAKQAKACQAbwBsAGQAPQAnAHAAMAAyAHAAcgBlAC0AcgAxAGgALQByAG8AdQBuAGQANgAtAGkAbgB0AGUAZwByAGEAdABvAHIALQBhAHQAdABlAG0AcAB0ADQALQAyADAAMgA2ADEAMAAxADIALgBwAHMAMQAnADsAJABuAGUAdwA9ACcAcAAwADIAcAByAGUALQByADEAaAAtAHIAbwB1AG4AZAA2AC0AaQBuAHQAZQBnAHIAYQB0AG8AcgAtAGEAdAB0AGUAbQBwAHQANgAtADIAMAAyADYAMQAwADEAMgAuAHAAcwAxACcAOwAkAHAAYQByAHQAcwA9ACQAcwBvAHUAcgBjAGUALgBTAHAAbABpAHQAKABbAHMAdAByAGkAbgBnAFsAXQBdAEAAKAAkAG8AbABkACkALABbAFMAdAByAGkAbgBnAFMAcABsAGkAdABPAHAAdABpAG8AbgBzAF0AOgA6AE4AbwBuAGUAKQA7AGkAZgAoACQAcABhAHIAdABzAC4ATABlAG4AZwB0AGgAIAAtAG4AZQAgADIAKQB7AHQAaAByAG8AdwAgACIARQB4AHAAZQBjAHQAZQBkACAAbwBuAGUAIABlAHgAZQBjAHUAdABvAHIAIABwAGEAdABoACAAdABvAGsAZQBuACwAIABnAG8AdAAgACQAKAAkAHAAYQByAHQAcwAuAEwAZQBuAGcAdABoAC0AMQApAC4AIgB9ADsAJABzAG8AdQByAGMAZQA9ACQAcwBvAHUAcgBjAGUALgBSAGUAcABsAGEAYwBlACgAJABvAGwAZAAsACQAbgBlAHcAKQAKACQAbwBsAGQAVABhAHMAawA9ACcAUAAwADIAUABSAEUALQBSADEASAAtAFIANgAtAEEANAAnADsAJABuAGUAdwBUAGEAcwBrAD0AJwBQADAAMgBQAFIARQAtAFIAMQBIAC0AUgA2AC0ARQBYAEUAQwAtAEEANgAnADsAJABwAGEAcgB0AHMAPQAkAHMAbwB1AHIAYwBlAC4AUwBwAGwAaQB0ACgAWwBzAHQAcgBpAG4AZwBbAF0AXQBAACgAJABvAGwAZABUAGEAcwBrACkALABbAFMAdAByAGkAbgBnAFMAcABsAGkAdABPAHAAdABpAG8AbgBzAF0AOgA6AE4AbwBuAGUAKQA7AGkAZgAoACQAcABhAHIAdABzAC4ATABlAG4AZwB0AGgAIAAtAG4AZQAgADIAKQB7AHQAaAByAG8AdwAgACIARQB4AHAAZQBjAHQAZQBkACAAbwBuAGUAIABzAGUAbABmAGMAaABlAGMAawAgAHQAYQBzAGsAIABsAGEAYgBlAGwAIAB0AG8AawBlAG4ALAAgAGcAbwB0ACAAJAAoACQAcABhAHIAdABzAC4ATABlAG4AZwB0AGgALQAxACkALgAiAH0AOwAkAHMAbwB1AHIAYwBlAD0AJABzAG8AdQByAGMAZQAuAFIAZQBwAGwAYQBjAGUAKAAkAG8AbABkAFQAYQBzAGsALAAkAG4AZQB3AFQAYQBzAGsAKQAKACQAbwBsAGQAUgBvAG8AdAA9ACcAJABQAFMAUwBjAHIAaQBwAHQAUgBvAG8AdAAnADsAJABuAGUAdwBSAG8AbwB0AD0AIgAnAEMAOgBcAFUAcwBlAHIAcwBcADQAOQA3ADQANQBcAC4AYwBvAGQAZQB4AFwAdwBvAHIAawB0AHIAZQBlAHMAXABwADAAMgBwAHIAZQAtAHIAMQBoAC0AcgA2AC0AZQB4AGUAYwAtAGEANgAtAGEAbgB0AGkAZwByAGEAdgBpAHQAeQBcAE4AZQB3ACAATQBhAG4AZwBhAFwAdgBlAHIAaQBmAGkAYwBhAHQAaQBvAG4AXABQADAAMgAnACIAOwAkAHAAYQByAHQAcwA9ACQAcwBvAHUAcgBjAGUALgBTAHAAbABpAHQAKABbAHMAdAByAGkAbgBnAFsAXQBdAEAAKAAkAG8AbABkAFIAbwBvAHQAKQAsAFsAUwB0AHIAaQBuAGcAUwBwAGwAaQB0AE8AcAB0AGkAbwBuAHMAXQA6ADoATgBvAG4AZQApADsAaQBmACgAJABwAGEAcgB0AHMALgBMAGUAbgBnAHQAaAAgAC0AbgBlACAAMgApAHsAdABoAHIAbwB3ACAAIgBFAHgAcABlAGMAdABlAGQAIABvAG4AZQAgAFAAUwBTAGMAcgBpAHAAdABSAG8AbwB0ACAAdABvAGsAZQBuACwAIABnAG8AdAAgACQAKAAkAHAAYQByAHQAcwAuAEwAZQBuAGcAdABoAC0AMQApAC4AIgB9ADsAJABzAG8AdQByAGMAZQA9ACQAcwBvAHUAcgBjAGUALgBSAGUAcABsAGEAYwBlACgAJABvAGwAZABSAG8AbwB0ACwAJABuAGUAdwBSAG8AbwB0ACkACgBJAG4AdgBvAGsAZQAtAEUAeABwAHIAZQBzAHMAaQBvAG4AIAAkAHMAbwB1AHIAYwBlAA=="
+    ],
+    "scriptSha256": "9790C2D7355C79C7AEA42869F061096ABCE5838284714975E751C6D482EA77BE",
+    "script": "$ErrorActionPreference='Stop'\n$executor='C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1'\n$selfcheck='G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1'\n$runtime=[ordered]@{version=$PSVersionTable.PSVersion.ToString();edition=$PSVersionTable.PSEdition;languageMode=$ExecutionContext.SessionState.LanguageMode.ToString();psHome=$PSHOME}\nWrite-Output ('RUNTIME='+ (ConvertTo-Json -InputObject $runtime -Compress))\n$parse=[ordered]@{}\nforeach($p in @($executor,$selfcheck)){$tokens=$null;$errors=$null;$null=[Management.Automation.Language.Parser]::ParseFile($p,[ref]$tokens,[ref]$errors);$parse[$p]=[ordered]@{errorCount=@($errors).Count;errors=@($errors|ForEach-Object{[ordered]@{id=$_.ErrorId;message=$_.Message;line=$_.Extent.StartLineNumber;column=$_.Extent.StartColumnNumber}})}}\nWrite-Output ('PARSER='+ (ConvertTo-Json -InputObject $parse -Depth 8 -Compress))\nif(@($parse.Values|Where-Object{$_.errorCount -ne 0}).Count -ne 0){throw 'PowerShell parser found errors.'}\n$source=[IO.File]::ReadAllText($selfcheck,[Text.UTF8Encoding]::new($false,$true))\n$old='p02pre-r1h-round6-integrator-attempt4-20261012.ps1';$new='p02pre-r1h-round6-integrator-attempt6-20261012.ps1';$parts=$source.Split([string[]]@($old),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one executor path token, got $($parts.Length-1).\"};$source=$source.Replace($old,$new)\n$oldTask='P02PRE-R1H-R6-A4';$newTask='P02PRE-R1H-R6-EXEC-A6';$parts=$source.Split([string[]]@($oldTask),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one selfcheck task label token, got $($parts.Length-1).\"};$source=$source.Replace($oldTask,$newTask)\n$oldRoot='$PSScriptRoot';$newRoot=\"'C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02'\";$parts=$source.Split([string[]]@($oldRoot),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one PSScriptRoot token, got $($parts.Length-1).\"};$source=$source.Replace($oldRoot,$newRoot)\nInvoke-Expression $source",
+    "exit": 0,
+    "stderrBytes": 0,
+    "stdout": "RUNTIME={\"version\":\"7.6.6\",\"edition\":\"Core\",\"languageMode\":\"FullLanguage\",\"psHome\":\"C:\\\\Program Files\\\\PowerShell\\\\7\"}\r\nPARSER={\"C:\\\\Users\\\\49745\\\\.codex\\\\worktrees\\\\p02pre-r1h-r6-exec-a6-antigravity\\\\New Manga\\\\verification\\\\P02\\\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1\":{\"errorCount\":0,\"errors\":[]},\"G:\\\\CODEX\\\\New Manga\\\\verification\\\\P02\\\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1\":{\"errorCount\":0,\"errors\":[]}}\r\n{\"task\":\"P02PRE-R1H-R6-EXEC-A6\",\"status\":\"PASS\",\"parseErrors\":0,\"assertionsPassed\":73,\"definitionsCheck\":\"PASS\",\"typeBuilderCheck\":\"PASS\",\"processSelectionCheck\":\"PASS\",\"invokeChildFailClosedCheck\":\"PASS\",\"isolationConfirmed\":\"In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly.\"}",
+    "stderr": ""
+  },
+  "parserResults": {
+    "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1": {
+      "errorCount": 0,
+      "errors": []
+    },
+    "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1": {
+      "errorCount": 0,
+      "errors": []
+    }
+  },
+  "selfcheck": {
+    "task": "P02PRE-R1H-R6-EXEC-A6",
+    "status": "PASS",
+    "parseErrors": 0,
+    "assertionsPassed": 73,
+    "definitionsCheck": "PASS",
+    "typeBuilderCheck": "PASS",
+    "processSelectionCheck": "PASS",
+    "invokeChildFailClosedCheck": "PASS",
+    "isolationConfirmed": "In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly."
+  },
+  "harnessAttempts": [
+    {
+      "attempt": 1,
+      "result": "HARNESS_CAPTURE_ERROR",
+      "childPid": "NOT_CAPTURED",
+      "exit": "NOT_VERIFIED",
+      "stderr": "NOT_CAPTURED",
+      "summary": "Outer wrapper attempted assignment to read-only automatic variable $PID after Start(); no file write. The expected PowerShell-only Parser/selfcheck command had been started; completion is not asserted.",
+      "innerScriptSha256": "43CFBEC385F82C5DCD20D1247FCCC3ADDB1E0F6A23082BA171343C81D9D329AC"
+    },
+    {
+      "attempt": 2,
+      "result": "HARNESS_CONTEXT_ERROR",
+      "exit": 1,
+      "parserErrors": 0,
+      "selfcheckAssertionsReached": 0,
+      "stderrBytes": 575,
+      "summary": "The harness bound $PSScriptRoot to the main root where the untracked A6 candidate is absent; first path-exists assertion stopped before helper assertions.",
+      "innerScriptSha256": "43CFBEC385F82C5DCD20D1247FCCC3ADDB1E0F6A23082BA171343C81D9D329AC"
+    }
+  ],
+  "evidenceGenerationNote": "First JSON serialization invocation failed before FileStream.CreateNew because it treated parsed Parser JSON as a string. The target remained absent; this corrected writer rechecked target absence and unignored status before CreateNew.",
+  "sourcePins": {
+    "before": [
+      {
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+        "bytes": 43527,
+        "sha256": "1C8D6220E85608977BCDCC27B86E4DC227DBA11F5E7179A09328C142036502EE"
+      },
+      {
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+        "bytes": 14084,
+        "sha256": "DDDFDF58C5684B4F9992E09F45D7BB53CEEB733D1DA8277CA103F83CDA244142"
+      },
+      {
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+        "bytes": 13190,
+        "sha256": "6F1E908C64ADBEB99AA8E827B1E4B43CA804635B317DB5056514C613A943E949"
+      },
+      {
+        "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+        "bytes": 12582,
+        "sha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162"
+      }
+    ],
+    "after": [
+      {
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+        "bytes": 43527,
+        "sha256": "1C8D6220E85608977BCDCC27B86E4DC227DBA11F5E7179A09328C142036502EE",
+        "expectedSha256": "1C8D6220E85608977BCDCC27B86E4DC227DBA11F5E7179A09328C142036502EE",
+        "matchesExpected": true
+      },
+      {
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+        "bytes": 14084,
+        "sha256": "DDDFDF58C5684B4F9992E09F45D7BB53CEEB733D1DA8277CA103F83CDA244142",
+        "expectedSha256": "DDDFDF58C5684B4F9992E09F45D7BB53CEEB733D1DA8277CA103F83CDA244142",
+        "matchesExpected": true
+      },
+      {
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+        "bytes": 13190,
+        "sha256": "6F1E908C64ADBEB99AA8E827B1E4B43CA804635B317DB5056514C613A943E949",
+        "expectedSha256": "6F1E908C64ADBEB99AA8E827B1E4B43CA804635B317DB5056514C613A943E949",
+        "matchesExpected": true
+      },
+      {
+        "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+        "bytes": 12582,
+        "sha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162",
+        "expectedSha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162",
+        "matchesExpected": true
+      }
+    ],
+    "allUnchanged": true
+  },
+  "git": {
+    "rootHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "ownerHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "ownerBranch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+    "rootIndex": {
+      "before": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+      "after": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+      "unchanged": true
+    },
+    "ownerIndex": {
+      "path": "G:/CODEX/New Manga/.git/worktrees/New-Manga30/index",
+      "before": "A43185FDD81C8BADB3070BAE315410E5A1F5EBC54795C284FCCEE0A3BC0FA598",
+      "after": "A43185FDD81C8BADB3070BAE315410E5A1F5EBC54795C284FCCEE0A3BC0FA598",
+      "unchanged": true
+    },
+    "rootControlledStatusBeforeEvidence": {
+      "command": "git --no-optional-locks status --porcelain=v1 -z -- . :(exclude).tmp.driveupload",
+      "exit": 0,
+      "stderrBytes": 0,
+      "nulFields": 1127,
+      "bytes": 78535,
+      "sha256": "AAC0ABEC4BAF625A8E3210D54EAC8A7CED5B26005378B3096AEA4E231D2BCE5B"
+    },
+    "ownerControlledStatus": {
+      "command": "git --no-optional-locks status --porcelain=v1 -z -- . :(exclude).tmp.driveupload",
+      "exit": 0,
+      "stderrBytes": 0,
+      "entries": [
+        "?? verification/P02/p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+        "?? verification/P02/p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+        "?? verification/P02/p02pre-r1h-round6-integrator-attempt6-20261012.ps1"
+      ]
+    }
+  },
+  "outputTarget": {
+    "path": "verification/P02/codex-p02pre-r1h-attempt6-integration-verify-20261012.json",
+    "beforeRun": "ABSENT",
+    "gitCheckIgnoreExit": 1,
+    "unignored": true,
+    "createdWith": "FileMode.CreateNew",
+    "overwritePossible": false
+  },
+  "ownerDeliveryWhitespace": [
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+      "bytes": 43527,
+      "crByteCount": 0,
+      "hasFinalLf": true,
+      "trailingWhitespaceLineCount": 0
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+      "bytes": 14084,
+      "crByteCount": 0,
+      "hasFinalLf": true,
+      "trailingWhitespaceLineCount": 0
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+      "bytes": 13190,
+      "crByteCount": 0,
+      "hasFinalLf": true,
+      "trailingWhitespaceLineCount": 0
+    }
+  ],
+  "adaptations": [
+    {
+      "old": "p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "new": "p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+      "occurrences": 1
+    },
+    {
+      "old": "P02PRE-R1H-R6-A4",
+      "new": "P02PRE-R1H-R6-EXEC-A6",
+      "occurrences": 1
+    },
+    {
+      "old": "$PSScriptRoot",
+      "new": "'C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02'",
+      "occurrences": 1
+    }
+  ],
+  "scope": {
+    "executorDotSourced": false,
+    "executorInvoked": false,
+    "FileReplace": "NOT_RUN",
+    "nativeMethodsInvoked": false,
+    "liveProcessEnumeration": false,
+    "filesystemMutationByParserSelfcheck": false,
+    "persistentAssembly": false,
+    "OSAPI": "NOT_RUN",
+    "capture": "NOT_RUN",
+    "BuildCargo": "NOT_RUN",
+    "systemAC1toAC7": "BLOCKED / NOT_RUN",
+    "WindowsSandbox": "NOT_TOUCHED"
+  },
+  "limitations": [
+    "Attempt 1 wrapper child PID/exit/stdout/stderr were not captured; completion remains NOT_VERIFIED.",
+    "Attempt 2 Parser passed but selfcheck stopped at its first path assertion because the harness used the main root; no helper assertions ran.",
+    "This report proves syntax and pure-memory helper assertions only; it does not establish final-pre-run conditions, executor safety, Build Gate, or system AC results.",
+    "Owner Handoff Git-version discrepancy remains for final pre-run re-query."
+  ]
+}

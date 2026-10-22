@@ -1,0 +1,25 @@
+{
+  "head": "38672473f93971a4681aef682e5635e64b0bd896",
+  "tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
+  "parent": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+  "base": "5de8d44c784cbd20b23bcd41a8f1a7258c7addff",
+  "owner_status_clean": true,
+  "changed_path_count": 14,
+  "changed_paths": [
+    "doc/handoffs/P02-stage-a-foundation-handoff.md",
+    "doc/tasks/P02.md",
+    "verification/P02/RESUME.md",
+    "verification/P02/env-identity-report.json",
+    "verification/P02/env-identity-report.txt",
+    "verification/P02/harness/workbench_cdp_harness.py",
+    "verification/P02/microprobes/ps51-exception-handling.log",
+    "verification/P02/p02-harness-results.json",
+    "verification/P02/p02-harness-results.txt",
+    "verification/P02/probe-execution-full.log",
+    "verification/P02/probe-execution-probeonly.log",
+    "verification/P02/probe-execution.log",
+    "verification/P02/run-webview.ps1",
+    "verification/P02/static-control-report.json"
+  ],
+  "outside_frozen_allowlist": []
+}

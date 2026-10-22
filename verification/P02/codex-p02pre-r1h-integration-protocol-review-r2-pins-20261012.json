@@ -1,0 +1,144 @@
+{
+  "schema": "p02pre-r1h-integration-protocol-review-pins-v2",
+  "repository": "G:\\CODEX\\New Manga",
+  "task": "P02PRE-R1H",
+  "purpose": "Independent static review of the revised post-initial AC4 integration protocol only",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "delivery": {
+    "branch": "agent/codex/P02PRE-R1H",
+    "head": "dd5d2e3bc8e0702da9d059131f6364a997897661",
+    "parent": "7e7d0bce8dd86a2302d2a9eb278702d9c70354ff",
+    "tree": "8cf6cf2dec8b375746b4c423f3c00ffe611a60d7",
+    "controlledStatusBytes": 0,
+    "indexSha256": "DCBE24A2827B8465807C5627523DC6570346278935DA4A71BEF3FF969A9341FE"
+  },
+  "previousProtocolReview": {
+    "verdict": "CHANGES_REQUESTED",
+    "report": "verification/P02/codex-subagent-p02pre-r1h-integration-protocol-remediation5-review-20261012.md",
+    "sha256": "7CDAB7B6157C709C8BA6E4955A84F1285379AB4DDC952D6071076BACC8C9CF52"
+  },
+  "integrationPaths": {
+    "destination": {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "exists": true,
+      "bytes": 57623,
+      "sha256": "EEFB41141EBE162503047C20CAF4F41D5E8E01EEF2FCEE0C90DA7185A8164CF1",
+      "isReparse": false
+    },
+    "proposedStage": {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round5-stage-20261012.ps1",
+      "exists": false,
+      "ignored": false
+    },
+    "proposedRecovery": {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round4-recovery-20261012.ps1",
+      "exists": false,
+      "ignored": false
+    },
+    "proposedApiBackup": {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round4-integrated-backup-20261012.ps1",
+      "exists": false,
+      "ignored": false
+    },
+    "candidateWorkingTreeBytes": true
+  },
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4503,
+      "sha256": "46357DC8FA0153429C394C057BF5E51A76EF34BD6B11DACCDDC272CB90E53501"
+    },
+    {
+      "path": "doc/09_COLLABORATION.md",
+      "bytes": 19131,
+      "sha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D"
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 30202,
+      "sha256": "10CD84B847AD82D02BF3D1AD48711FDB095E17F703A27FB2EC6E7B51F9E1D108"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-remediation5-adjudication-20261012.md",
+      "bytes": 7015,
+      "sha256": "9A011D04459A377A8E8DD973705C447EB58FEBB4F20816927DA916993341F47D"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-integration-protocol-remediation5-review-20261012.md",
+      "bytes": 8791,
+      "sha256": "7CDAB7B6157C709C8BA6E4955A84F1285379AB4DDC952D6071076BACC8C9CF52"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation5-20261012.md",
+      "bytes": 8235,
+      "sha256": "F4AFD13627E2DA701DC6934FB827CC0D71FFC5454851E3DC94AE0B83BE8A6AEB"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-remediation5-review-input-pins-r2-20261012.json",
+      "bytes": 3941,
+      "sha256": "756279303267EE0C5381E395284AB038531E1AD7AEF15134CE32843C7B98136E"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round5-pins-20261012.json",
+      "bytes": 2371,
+      "sha256": "87F758FA8DD997CAE77BE3FDF441BE87D39F2629FE0496BC96571BEE7584E6E7"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-integration-round4-20261012.md",
+      "bytes": 3071,
+      "sha256": "95ADA3F55130CCEF7B98F46C4BD57912DEEC61310E4D285E48F09A6F5520F7D1"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round4-20261012.json",
+      "bytes": 3121,
+      "sha256": "1673CFF27EBC58CCFB64DFE5593E30F217E703CE1296DF59BA7ED3E70EE9EDFF"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-integration-protocol-remediation5-review-dispatch-20261012.prompt.md",
+      "bytes": 2854,
+      "sha256": "3E1B491390D973833272377E8EF76917F1B7A10F75C9A41C07BEEA929523134A"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-integration-protocol-remediation5-review-pins-20261012.json",
+      "bytes": 3793,
+      "sha256": "16ECD5CC8940703CF3C6C3E20DD6C7DD69AEE0A39632E9B457CDC63B61869DC0"
+    }
+  ],
+  "candidateFiles": [
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-capture.ps1",
+      "repoPath": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3",
+      "gitBlob": "011a4ca829bf83582e984e3b0a9ca2dea0311d58",
+      "crlfNormalizedBlobMatch": true
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-selfcheck.ps1",
+      "repoPath": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA",
+      "gitBlob": "b3fa71a371a7d7ea6b6152a174ee6fdd19fc0914",
+      "crlfNormalizedBlobMatch": true
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-handoff-20261012.md",
+      "repoPath": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 9505,
+      "sha256": "E13C7148B79740927692D9282C4F474FEE4AADD50BFBE256509CACA3052786B1",
+      "gitBlob": "74eedfcbfbc9fcfcb51b53db615c466efd31b9d2",
+      "crlfNormalizedBlobMatch": true
+    }
+  ],
+  "reviewer": {
+    "agent": "/root/p02_r1h_remediation_review",
+    "role": "non-author independent static reviewer",
+    "requiredModelEffort": "prefer gpt-6.1-sol/high if available; record actual, otherwise UNKNOWN",
+    "report": "verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-r2-20261012.md"
+  }
+}

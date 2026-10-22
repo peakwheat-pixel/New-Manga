@@ -1,0 +1,72 @@
+{
+  "task": "P02PRE-R1G",
+  "phase": "CODEX_POST_REVIEW_PARSER_AND_SELF_CHECK",
+  "result": "PASS",
+  "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "argumentList": [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-Command",
+    "$ErrorActionPreference='Stop'\n$sourcePath='G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1'\n$tokens=$null\n$parseErrors=$null\n$ast=[System.Management.Automation.Language.Parser]::ParseFile($sourcePath,[ref]$tokens,[ref]$parseErrors)\n$required=@('Test-UnreadUserDataStagingPath','Test-SafeRepositoryRelativePath','Get-LinkTypeEvidence','Get-InventoryAction','Test-ExpectedDetachedBranchResult','Assert-InventoryPolicySelfCheck','Assert-CommandSerializationSelfCheck','Get-GitNulPaths','Get-GitIndexModes','Assert-InventoryParserSelfCheck','Get-BoundedPhaseMap')\n$defs=@{}\nforeach($node in $ast.FindAll({param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst]},$true)){\n  if($required -contains $node.Name){if($defs.ContainsKey($node.Name)){throw \"Duplicate selected function: $($node.Name)\"};$defs[$node.Name]=$node}\n}\nif($parseErrors.Count -ne 0){throw \"Parser reported $($parseErrors.Count) errors\"}\nif($defs.Count -ne $required.Count){throw \"Selected function count mismatch: expected=$($required.Count); actual=$($defs.Count)\"}\nforeach($name in $required){Invoke-Expression $defs[$name].Extent.Text}\nAssert-InventoryPolicySelfCheck\nAssert-CommandSerializationSelfCheck\nAssert-InventoryParserSelfCheck\n$expectedKeys=@('identity','mainRepository','scratchRepository','environment','paths','wer','protectedHashes','aclStability')\n$phaseInput=[ordered]@{identity='COMPLETED';paths='FAILED';extra='MUST_NOT_ESCAPE'}\n$phaseMap=Get-BoundedPhaseMap $phaseInput\nif(($phaseMap.Keys -join '|') -ne ($expectedKeys -join '|')){throw 'Bounded phase map key set/order mismatch'}\nif($phaseMap.identity -ne 'COMPLETED' -or $phaseMap.paths -ne 'FAILED'){throw 'Bounded phase map did not preserve present phase values'}\nif($phaseMap.extra -or $phaseMap.Count -ne 8){throw 'Bounded phase map exposed an extra field'}\n$emptyMap=Get-BoundedPhaseMap ([ordered]@{})\n$nullMap=Get-BoundedPhaseMap $null\nforeach($key in $expectedKeys){if($emptyMap[$key] -ne 'NOT_REACHED' -or $nullMap[$key] -ne 'NOT_REACHED'){throw \"Missing phase default mismatch: $key\"}}\n$result=[ordered]@{\n  status='PASS'\n  engine=[ordered]@{version=$PSVersionTable.PSVersion.ToString();edition=$PSVersionTable.PSEdition;psHome=$PSHOME;languageMode=$ExecutionContext.SessionState.LanguageMode.ToString()}\n  sourcePath=$sourcePath\n  parseErrorCount=$parseErrors.Count\n  selectedFunctions=$required\n  assertions=[ordered]@{\n    inventoryPolicy='PASS'\n    commandSerialization='PASS'\n    inventoryParser='PASS'\n    boundedPhaseMapAllEightKeys='PASS'\n    boundedPhaseMapMissingAndNullDefault='PASS'\n    boundedPhaseMapExtraFieldExcluded='PASS'\n  }\n  captureScriptInvoked=$false\n  hostGetterInvoked=$false\n  registryAclProfileApiInvoked=$false\n  buildCargoAcInvoked=$false\n}\n[Console]::Out.WriteLine((ConvertTo-Json -InputObject $result -Depth 8 -Compress))\nexit 0"
+  ],
+  "workingDirectory": "G:\\CODEX\\New Manga",
+  "pid": 46780,
+  "exitCode": 0,
+  "source": {
+    "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+    "bytesBefore": 81991,
+    "sha256Before": "3C7D85AB3E20C023873197FE391B8F22DFB319038F43B7C554DC4F38927AADDF",
+    "bytesAfter": 81991,
+    "sha256After": "3C7D85AB3E20C023873197FE391B8F22DFB319038F43B7C554DC4F38927AADDF",
+    "matchesReviewedPin": true
+  },
+  "childStdout": {
+    "bytes": 916,
+    "sha256": "4F77484579A4A98AC027FC4F5575FC33673405659F8CE9FBE86F4B18967D4F8A"
+  },
+  "childStderr": {
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "childJsonError": null,
+  "childResult": {
+    "status": "PASS",
+    "engine": {
+      "version": "7.6.6",
+      "edition": "Core",
+      "psHome": "C:\\Program Files\\PowerShell\\7",
+      "languageMode": "FullLanguage"
+    },
+    "sourcePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+    "parseErrorCount": 0,
+    "selectedFunctions": [
+      "Test-UnreadUserDataStagingPath",
+      "Test-SafeRepositoryRelativePath",
+      "Get-LinkTypeEvidence",
+      "Get-InventoryAction",
+      "Test-ExpectedDetachedBranchResult",
+      "Assert-InventoryPolicySelfCheck",
+      "Assert-CommandSerializationSelfCheck",
+      "Get-GitNulPaths",
+      "Get-GitIndexModes",
+      "Assert-InventoryParserSelfCheck",
+      "Get-BoundedPhaseMap"
+    ],
+    "assertions": {
+      "inventoryPolicy": "PASS",
+      "commandSerialization": "PASS",
+      "inventoryParser": "PASS",
+      "boundedPhaseMapAllEightKeys": "PASS",
+      "boundedPhaseMapMissingAndNullDefault": "PASS",
+      "boundedPhaseMapExtraFieldExcluded": "PASS"
+    },
+    "captureScriptInvoked": false,
+    "hostGetterInvoked": false,
+    "registryAclProfileApiInvoked": false,
+    "buildCargoAcInvoked": false
+  },
+  "childOutputRaw": "{\"status\":\"PASS\",\"engine\":{\"version\":\"7.6.6\",\"edition\":\"Core\",\"psHome\":\"C:\\\\Program Files\\\\PowerShell\\\\7\",\"languageMode\":\"FullLanguage\"},\"sourcePath\":\"G:\\\\CODEX\\\\New Manga\\\\verification\\\\P02\\\\p02pre-r1g-capture.ps1\",\"parseErrorCount\":0,\"selectedFunctions\":[\"Test-UnreadUserDataStagingPath\",\"Test-SafeRepositoryRelativePath\",\"Get-LinkTypeEvidence\",\"Get-InventoryAction\",\"Test-ExpectedDetachedBranchResult\",\"Assert-InventoryPolicySelfCheck\",\"Assert-CommandSerializationSelfCheck\",\"Get-GitNulPaths\",\"Get-GitIndexModes\",\"Assert-InventoryParserSelfCheck\",\"Get-BoundedPhaseMap\"],\"assertions\":{\"inventoryPolicy\":\"PASS\",\"commandSerialization\":\"PASS\",\"inventoryParser\":\"PASS\",\"boundedPhaseMapAllEightKeys\":\"PASS\",\"boundedPhaseMapMissingAndNullDefault\":\"PASS\",\"boundedPhaseMapExtraFieldExcluded\":\"PASS\"},\"captureScriptInvoked\":false,\"hostGetterInvoked\":false,\"registryAclProfileApiInvoked\":false,\"buildCargoAcInvoked\":false}\r\n",
+  "childErrorRaw": "",
+  "outputCreation": "CreateNew after child exit"
+}

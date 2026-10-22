@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "task_id": "P02PRE-R1H-R6-ZCODE-H1",
+  "verified_by": "Codex /root (non-author)",
+  "status": "PASS",
+  "verified_at_utc": "2026-10-12T11:40:36.6698474+00:00",
+  "method": "Read-only file size and SHA-256 verification with fixed PowerShell 7.6.6; no executor, build, or dynamic process-closure method invoked.",
+  "pre_dispatch": {
+    "verified_all_13": true,
+    "completed_before_utc": "2026-10-12T11:30:10.0661069+00:00",
+    "pins": [
+      {
+        "label": "v2_json",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.json",
+        "bytes": 15768,
+        "sha256": "23AC80E2B671ACB616CD89A11FDEE5C0548547F97C8C529B1FC11AF67EDAF877",
+        "matchesExpected": true
+      },
+      {
+        "label": "v2_stdout",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.stdout.log",
+        "bytes": 82455,
+        "sha256": "87D03E50ADCF56DD512D97A26EB1964D605E8259AD8AC874E2B6B9DC810394B3",
+        "matchesExpected": true
+      },
+      {
+        "label": "v2_stderr",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.stderr.log",
+        "bytes": 532,
+        "sha256": "4476997D2D7278B3F4ADF890E94C553B67411B5AE21BAA85DFB626F8A9CDEC13",
+        "matchesExpected": true
+      },
+      {
+        "label": "v2_exit",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.exit",
+        "bytes": 2,
+        "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_json",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.json",
+        "bytes": 12984,
+        "sha256": "D698E5FB8E322D2D7459D09EA62A02D866C48B8F2B7DF9CDDB47ACC1FE812786",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_stdout",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.stdout.log",
+        "bytes": 3704,
+        "sha256": "61A3DD58DFE94DB714ED00115C934623BEE434C0148ABE16DF73ED47A4A5FC77",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_stderr",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.stderr.log",
+        "bytes": 1237,
+        "sha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_exit",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.exit",
+        "bytes": 2,
+        "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+        "matchesExpected": true
+      },
+      {
+        "label": "h1_task",
+        "path": "doc\\tasks\\P02PRE-R1H-R6-ZCODE-H1.md",
+        "bytes": 21762,
+        "sha256": "13D85D6B46F8904BCBD3AAB07657094D5BD8D9C1DA931449693FC30B2B14C009",
+        "matchesExpected": true
+      },
+      {
+        "label": "a6_task",
+        "path": "doc\\tasks\\P02PRE-R1H-R6-EXEC-A6.md",
+        "bytes": 25479,
+        "sha256": "43E72628968B0CC37C6F2C5EC897B3534AB558A65F4AD3878B4FDB76F2FBD390",
+        "matchesExpected": true
+      },
+      {
+        "label": "frozen_protocol",
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+        "bytes": 14084,
+        "sha256": "DDDFDF58C5684B4F9992E09F45D7BB53CEEB733D1DA8277CA103F83CDA244142",
+        "matchesExpected": true
+      },
+      {
+        "label": "frozen_handoff",
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+        "bytes": 13190,
+        "sha256": "6F1E908C64ADBEB99AA8E827B1E4B43CA804635B317DB5056514C613A943E949",
+        "matchesExpected": true
+      },
+      {
+        "label": "frozen_executor",
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+        "bytes": 43527,
+        "sha256": "1C8D6220E85608977BCDCC27B86E4DC227DBA11F5E7179A09328C142036502EE",
+        "matchesExpected": true
+      }
+    ]
+  },
+  "post_review": {
+    "verified_all_13": true,
+    "verified_at_utc": "2026-10-12T11:40:36.6698474+00:00",
+    "pins": [
+      {
+        "label": "v2_json",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.json",
+        "bytes": 15768,
+        "sha256": "23AC80E2B671ACB616CD89A11FDEE5C0548547F97C8C529B1FC11AF67EDAF877",
+        "matchesExpected": true
+      },
+      {
+        "label": "v2_stdout",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.stdout.log",
+        "bytes": 82455,
+        "sha256": "87D03E50ADCF56DD512D97A26EB1964D605E8259AD8AC874E2B6B9DC810394B3",
+        "matchesExpected": true
+      },
+      {
+        "label": "v2_stderr",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.stderr.log",
+        "bytes": 532,
+        "sha256": "4476997D2D7278B3F4ADF890E94C553B67411B5AE21BAA85DFB626F8A9CDEC13",
+        "matchesExpected": true
+      },
+      {
+        "label": "v2_exit",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.exit",
+        "bytes": 2,
+        "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_json",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.json",
+        "bytes": 12984,
+        "sha256": "D698E5FB8E322D2D7459D09EA62A02D866C48B8F2B7DF9CDDB47ACC1FE812786",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_stdout",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.stdout.log",
+        "bytes": 3704,
+        "sha256": "61A3DD58DFE94DB714ED00115C934623BEE434C0148ABE16DF73ED47A4A5FC77",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_stderr",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.stderr.log",
+        "bytes": 1237,
+        "sha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16",
+        "matchesExpected": true
+      },
+      {
+        "label": "attempt1_exit",
+        "path": "verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-20261012.exit",
+        "bytes": 2,
+        "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+        "matchesExpected": true
+      },
+      {
+        "label": "h1_task",
+        "path": "doc\\tasks\\P02PRE-R1H-R6-ZCODE-H1.md",
+        "bytes": 21762,
+        "sha256": "13D85D6B46F8904BCBD3AAB07657094D5BD8D9C1DA931449693FC30B2B14C009",
+        "matchesExpected": true
+      },
+      {
+        "label": "a6_task",
+        "path": "doc\\tasks\\P02PRE-R1H-R6-EXEC-A6.md",
+        "bytes": 25479,
+        "sha256": "43E72628968B0CC37C6F2C5EC897B3534AB558A65F4AD3878B4FDB76F2FBD390",
+        "matchesExpected": true
+      },
+      {
+        "label": "frozen_protocol",
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+        "bytes": 14084,
+        "sha256": "DDDFDF58C5684B4F9992E09F45D7BB53CEEB733D1DA8277CA103F83CDA244142",
+        "matchesExpected": true
+      },
+      {
+        "label": "frozen_handoff",
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-exec-handoff-20261012.md",
+        "bytes": 13190,
+        "sha256": "6F1E908C64ADBEB99AA8E827B1E4B43CA804635B317DB5056514C613A943E949",
+        "matchesExpected": true
+      },
+      {
+        "label": "frozen_executor",
+        "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+        "bytes": 43527,
+        "sha256": "1C8D6220E85608977BCDCC27B86E4DC227DBA11F5E7179A09328C142036502EE",
+        "matchesExpected": true
+      }
+    ]
+  },
+  "prompt": {
+    "file": "dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.prompt.md",
+    "bytes": 6107,
+    "sha256": "7E104CA0A995CA07BCC392A3A17EDB6FCF62A3FEFF0DB8E4C77B9EAD48BE9DC8"
+  },
+  "dsh_review": {
+    "availability_probe_version": "0.2.0-rc.2",
+    "invocation": "C:\\Program Files\\PowerShell\\7\\pwsh.exe -NoLogo -NoProfile -NonInteractive -File C:\\Users\\49745\\AppData\\Roaming\\npm\\dsh.ps1 headless <pinned prompt as sole argument>",
+    "shell_execution_session_id": "67562",
+    "dsh_session_id": "session-2e6e238c-1814-40b9-b0c6-b253f102296a",
+    "started_utc": "2026-10-12T11:30:10.0661069+00:00",
+    "finished_utc": "2026-10-12T11:36:34.8364687+00:00",
+    "exit_code": 0,
+    "mounted_in_workspace": true,
+    "verdict": "CHANGES_REQUESTED",
+    "finding_counts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 1,
+      "P3": 6
+    },
+    "outputs": [
+      {
+        "file": "dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.response.md",
+        "bytes": 14078,
+        "sha256": "6AAD7750AFABCCD5B159C69F40EF49149E3D3EBB1CA6613CD0FD91FDCB960C19"
+      },
+      {
+        "file": "dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.stdout.log",
+        "bytes": 14078,
+        "sha256": "6AAD7750AFABCCD5B159C69F40EF49149E3D3EBB1CA6613CD0FD91FDCB960C19"
+      },
+      {
+        "file": "dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.stderr.log",
+        "bytes": 146983,
+        "sha256": "36782CCED43D3F1F3816177770BAC1C0BFA62165EFFE9FFB77B43C727F8BA92C"
+      },
+      {
+        "file": "dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.exit",
+        "bytes": 3,
+        "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+      }
+    ],
+    "exit_file_text": "0",
+    "exit_file_raw_base64": "MA0K"
+  },
+  "v2": {
+    "verdict": "PRE_RUN_PASS",
+    "checks_total": 24,
+    "check_results": [
+      {
+        "result": "NOT_VERIFIED",
+        "count": 1
+      },
+      {
+        "result": "PASS",
+        "count": 23
+      }
+    ],
+    "evidence_groups": [
+      {
+        "evidence": "aclEvidence.S1",
+        "count": 1
+      },
+      {
+        "evidence": "aclEvidence.S2",
+        "count": 1
+      },
+      {
+        "evidence": "collection A",
+        "count": 5
+      },
+      {
+        "evidence": "collection B",
+        "count": 8
+      },
+      {
+        "evidence": "design",
+        "count": 1
+      },
+      {
+        "evidence": "measured 2026-10-12T10:50:18Z before any v2 write",
+        "count": 1
+      },
+      {
+        "evidence": "measured this session",
+        "count": 3
+      },
+      {
+        "evidence": "never launched",
+        "count": 1
+      },
+      {
+        "evidence": "never run",
+        "count": 1
+      },
+      {
+        "evidence": "v2 precheck",
+        "count": 1
+      },
+      {
+        "evidence": "write script guard",
+        "count": 1
+      }
+    ],
+    "previous_attempt_refs_match_attempt1_pins": true,
+    "previous_attempt_refs": [
+      {
+        "file": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-20261012.json",
+        "expectedBytes": 12984,
+        "expectedSha256": "D698E5FB8E322D2D7459D09EA62A02D866C48B8F2B7DF9CDDB47ACC1FE812786",
+        "jsonBytes": 12984,
+        "jsonSha256": "D698E5FB8E322D2D7459D09EA62A02D866C48B8F2B7DF9CDDB47ACC1FE812786",
+        "matches": true
+      },
+      {
+        "file": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-20261012.stdout.log",
+        "expectedBytes": 3704,
+        "expectedSha256": "61A3DD58DFE94DB714ED00115C934623BEE434C0148ABE16DF73ED47A4A5FC77",
+        "jsonBytes": 3704,
+        "jsonSha256": "61A3DD58DFE94DB714ED00115C934623BEE434C0148ABE16DF73ED47A4A5FC77",
+        "matches": true
+      },
+      {
+        "file": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-20261012.stderr.log",
+        "expectedBytes": 1237,
+        "expectedSha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16",
+        "jsonBytes": 1237,
+        "jsonSha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16",
+        "matches": true
+      },
+      {
+        "file": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-20261012.exit",
+        "expectedBytes": 2,
+        "expectedSha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+        "jsonBytes": 2,
+        "jsonSha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+        "matches": true
+      }
+    ],
+    "protected_files_pre_post_hash": {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck.ps1",
+      "firstRead": {
+        "bytes": 57648,
+        "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA",
+        "utc": "2026-10-12T10:51:07Z"
+      },
+      "postWriteRecheck": {
+        "bytes": 57648,
+        "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA",
+        "utc": "2026-10-12T11:04:51.4885731Z",
+        "unchanged": true
+      }
+    },
+    "dynamic_process_closure": "REQUIRES_ACTIVE_TEST / NOT_RUN"
+  },
+  "file_write": {
+    "method": "CreateNew",
+    "unignored_targets_prechecked": true,
+    "both_codex_targets_absent_prechecked": true
+  }
+}

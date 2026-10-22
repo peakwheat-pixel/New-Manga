@@ -1,0 +1,85 @@
+{
+  "task": "P02PRE-R1H",
+  "owner": "Antigravity",
+  "reviewer": "Codex non-author subagent fallback; pending new delivery",
+  "integrator": "Codex",
+  "dispatch": {
+    "cli": "Antigravity agy.exe",
+    "prompt_file": "verification/P02/antigravity-p02pre-r1h-remediation-followup-20261012.prompt.md",
+    "prompt_bytes": 5249,
+    "prompt_sha256": "95B833F8E28B4BB585B2F94B188A44F7B6C384B20804B1567C6D526485A6805F",
+    "stdout_file": "verification/P02/antigravity-p02pre-r1h-remediation-followup-20261012.stdout.log",
+    "stderr_file": "verification/P02/antigravity-p02pre-r1h-remediation-followup-20261012.stderr.log",
+    "exit_file": "verification/P02/antigravity-p02pre-r1h-remediation-followup-20261012.exit",
+    "cli_args": ["-p", "<frozen prompt>", "--project", "New Manga", "--output-format", "json", "--dangerously-skip-permissions"],
+    "host_shell": "Windows PowerShell 7.6.6/Core",
+    "model": "not specified / not verified"
+  },
+  "worktree": {
+    "path": "C:/Users/49745/.codex/worktrees/p02pre-r1g/New Manga",
+    "branch": "agent/antigravity/P02PRE-R1H",
+    "head": "256e3ea622cba7a658020ddcf015b18894d88b38",
+    "tree": "a1a36dcb71d1d8718b21eb12ba2f778a95955f29",
+    "base": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+    "controlled_status": "PASS_CLEAN; exit=0, stderr=0, records=0; exact exclude pathspec passed as separate argv"
+  },
+  "frozen_inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 10759,
+      "sha256": "8DE084E456DFAD6AB11ADA6E4EB26F57053C34E229B6CBA41F978698A530FCBE"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-20261012.md",
+      "bytes": 2308,
+      "sha256": "4BB1D8B8C8FACD96C4C087774756A71D79F832F10AD75026ADA3800579EE6688"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-review-adjudication-20261012.md",
+      "bytes": 1543,
+      "sha256": "20EA61BC98F5826BF7FDF487E01B3F34CF6FBA609E9C3999C242100920268497"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-review-input-pins-post-20261012.json",
+      "bytes": 2070,
+      "sha256": "9AA0A6783B9466BD146DB04A65FC61287144C6ADA5B6747AE5958538251BCDB4"
+    },
+    {
+      "path": "verification/P02/antigravity-p02pre-r1h-remediation-followup-20261012.prompt.md",
+      "bytes": 5249,
+      "sha256": "95B833F8E28B4BB585B2F94B188A44F7B6C384B20804B1567C6D526485A6805F"
+    }
+  ],
+  "write_scope": [
+    "verification/P02/p02pre-r1h-capture.ps1",
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-handoff-20261012.md"
+  ],
+  "previous_attempts": [
+    {
+      "agent": "Antigravity",
+      "status": "DISPATCH_STALLED / INTERRUPTED",
+      "session": "66982",
+      "result": "no stdout/stderr/exit, no output artifact; process tree stopped and old worktree verified clean"
+    },
+    {
+      "agent": "ZCode",
+      "status": "DISPATCH_FAILED / CONFIG_MISSING",
+      "exit": 1,
+      "stderr_sha256": "57ABC1656A64A7530E16AF40DEFEAB5B422F8762F817DEAE7474AF9069A39C00",
+      "result": "CLI could not locate zcode-builtin.json provider config; no response and no source edits"
+    }
+  ],
+  "acceptance": [
+    "Fix R1H-001 through R1H-004 only within the three-file candidate scope",
+    "If exact frozen status/index values are unavailable, retain STOP / UNPROVABLE and do not guess or modify manifest",
+    "No parser, self-check, tests, preflight, capture, getter, Build/Cargo, AC1-AC7, Windows feature, or Windows Sandbox operation",
+    "Commit new delivery and report exact branch/base/HEAD/tree/diff/controlled clean status/git diff --check/three file pins",
+    "Owner does not review or integrate own changes"
+  ]
+}

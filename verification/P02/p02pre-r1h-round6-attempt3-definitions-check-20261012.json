@@ -1,0 +1,26 @@
+{
+  "evidence": "PowerShell 7.6.6 in-memory verification of Round6 attempt3 Toolhelp definition-array shape",
+  "task": "P02PRE-R1H",
+  "reviewAttempt": 3,
+  "recordedAtUtc": "2026-10-12T02:08:20Z",
+  "commandSummary": "Evaluate the same four leading-comma nested-array definition entries from executor lines 166-180 under StrictMode Latest; inspect the first entry; pass its indexed fields to in-memory TypeBuilder.DefineMethod.",
+  "environment": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "edition": "Core",
+    "languageMode": "FullLanguage"
+  },
+  "outcome": {
+    "definitionCount": 4,
+    "firstDefinitionElementCount": 1,
+    "firstDefinitionNameType": "System.Object[]",
+    "firstDefinitionReturnType": "<null/out-of-range>",
+    "firstDefinitionParameterTypes": "<null/out-of-range>",
+    "defineMethodResult": "System.IndexOutOfRangeException: Index was outside the bounds of the array.",
+    "filesystemWrites": 0,
+    "nativeApiCalls": 0,
+    "persistedDynamicAssembly": false
+  },
+  "interpretation": "The attempt3 $definitions literal nests its first entry one level deeper than the remaining entries. InitializeProcessObserver fails on the first loop iteration before any Git child; this confirms the DSH attempt3 P2-1 as a deterministic execution blocker in PowerShell 7.6.6. It is not a run of the Round6 executor.",
+  "source": "verification/P02/p02pre-r1h-round6-integrator-20261012.ps1 lines 166-180"
+}

@@ -1,0 +1,586 @@
+verification/P02/env-identity-report.json:1: trailing whitespace.
++{
+verification/P02/env-identity-report.json:2: trailing whitespace.
++  "probe": "P02_READONLY_ENV_IDENTITY",
+verification/P02/env-identity-report.json:3: trailing whitespace.
++  "task_id": "P02",
+verification/P02/env-identity-report.json:4: trailing whitespace.
++  "owner": "Antigravity",
+verification/P02/env-identity-report.json:5: trailing whitespace.
++  "host_os": {
+verification/P02/env-identity-report.json:6: trailing whitespace.
++    "system": "Windows",
+verification/P02/env-identity-report.json:7: trailing whitespace.
++    "release": "11",
+verification/P02/env-identity-report.json:8: trailing whitespace.
++    "version": "10.0.26300",
+verification/P02/env-identity-report.json:9: trailing whitespace.
++    "machine": "AMD64",
+verification/P02/env-identity-report.json:10: trailing whitespace.
++    "platform": "Windows-11-10.0.26300-SP0"
+verification/P02/env-identity-report.json:11: trailing whitespace.
++  },
+verification/P02/env-identity-report.json:12: trailing whitespace.
++  "webview2_runtime": {
+verification/P02/env-identity-report.json:13: trailing whitespace.
++    "findings": {
+verification/P02/env-identity-report.json:14: trailing whitespace.
++      "HKLM_{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}": "154.0.4258.62",
+verification/P02/env-identity-report.json:15: trailing whitespace.
++      "HKLM_{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}": "154.0.4258.62",
+verification/P02/env-identity-report.json:16: trailing whitespace.
++      "HKLM_{F3C4FE00-EFD5-403B-9569-398A20F1BA4A}": "1.3.279.5",
+verification/P02/env-identity-report.json:17: trailing whitespace.
++      "FS_154.0.4258.62": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62"
+verification/P02/env-identity-report.json:18: trailing whitespace.
++    },
+verification/P02/env-identity-report.json:19: trailing whitespace.
++    "detected_version": "154.0.4258.62"
+verification/P02/env-identity-report.json:20: trailing whitespace.
++  },
+verification/P02/env-identity-report.json:21: trailing whitespace.
++  "runtimes": {
+verification/P02/env-identity-report.json:22: trailing whitespace.
++    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+verification/P02/env-identity-report.json:23: trailing whitespace.
++    "node": "v24.15.0",
+verification/P02/env-identity-report.json:24: trailing whitespace.
++    "npm": ""
+verification/P02/env-identity-report.json:25: trailing whitespace.
++  },
+verification/P02/env-identity-report.json:26: trailing whitespace.
++  "git_state": {
+verification/P02/env-identity-report.json:27: trailing whitespace.
++    "head": "5de8d44c784cbd20b23bcd41a8f1a7258c7addff",
+verification/P02/env-identity-report.json:28: trailing whitespace.
++    "tree": "f27d12a7f8db1a3946f5832d865653d1dcf380b3",
+verification/P02/env-identity-report.json:29: trailing whitespace.
++    "branch": "agent/antigravity/P02-real-webview-harness",
+verification/P02/env-identity-report.json:30: trailing whitespace.
++    "is_clean": false,
+verification/P02/env-identity-report.json:31: trailing whitespace.
++    "porcelain_status": "?? apps/desktop/frontend/e2e/\n?? verification/P02/env-identity-report.json\n?? verification/P02/env-identity-report.txt\n?? verification/P02/fixtures/\n?? verification/P02/harness/\n?? verification/P02/p02-harness-results.json\n?? verification/P02/p02-harness-results.txt\n?? verification/P02/probes/\n?? verification/P02/run-webview.ps1\n?? verification/P02/static-control-report.json\n?? verification/P02/static-control-report.txt"
+verification/P02/env-identity-report.json:32: trailing whitespace.
++  },
+verification/P02/env-identity-report.json:33: trailing whitespace.
++  "build_output_directories": {
+verification/P02/env-identity-report.json:34: trailing whitespace.
++    "frontend_dist": {
+verification/P02/env-identity-report.json:35: trailing whitespace.
++      "path": "G:\\CODEX\\New Manga.worktrees\\P02-real-webview-harness-antigravity\\apps\\desktop\\frontend\\dist",
+verification/P02/env-identity-report.json:36: trailing whitespace.
++      "exists": false,
+verification/P02/env-identity-report.json:37: trailing whitespace.
++      "is_dir": false,
+verification/P02/env-identity-report.json:38: trailing whitespace.
++      "entry_count": 0,
+verification/P02/env-identity-report.json:39: trailing whitespace.
++      "entries": []
+verification/P02/env-identity-report.json:40: trailing whitespace.
++    },
+verification/P02/env-identity-report.json:41: trailing whitespace.
++    "cargo_target": {
+verification/P02/env-identity-report.json:42: trailing whitespace.
++      "path": "G:\\CODEX\\New Manga.worktrees\\P02-real-webview-harness-antigravity\\verification\\P02\\cargo-target",
+verification/P02/env-identity-report.json:43: trailing whitespace.
++      "exists": false,
+verification/P02/env-identity-report.json:44: trailing whitespace.
++      "is_dir": false,
+verification/P02/env-identity-report.json:45: trailing whitespace.
++      "entry_count": 0,
+verification/P02/env-identity-report.json:46: trailing whitespace.
++      "entries": []
+verification/P02/env-identity-report.json:47: trailing whitespace.
++    }
+verification/P02/env-identity-report.json:48: trailing whitespace.
++  },
+verification/P02/env-identity-report.json:49: trailing whitespace.
++  "build_barrier": {
+verification/P02/env-identity-report.json:50: trailing whitespace.
++    "hard_barrier_active": true,
+verification/P02/env-identity-report.json:51: trailing whitespace.
++    "reason": "tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree."
+verification/P02/env-identity-report.json:52: trailing whitespace.
++  }
+verification/P02/env-identity-report.txt:1: trailing whitespace.
++=== P02 Read-Only Environment & Identity Report ===
+verification/P02/env-identity-report.txt:2: trailing whitespace.
++Host OS: Windows-11-10.0.26300-SP0
+verification/P02/env-identity-report.txt:3: trailing whitespace.
++WebView2 Detected Version: 154.0.4258.62
+verification/P02/env-identity-report.txt:4: trailing whitespace.
++Git Branch: agent/antigravity/P02-real-webview-harness
+verification/P02/env-identity-report.txt:5: trailing whitespace.
++Git HEAD: 5de8d44c784cbd20b23bcd41a8f1a7258c7addff
+verification/P02/env-identity-report.txt:6: trailing whitespace.
++Git Tree: f27d12a7f8db1a3946f5832d865653d1dcf380b3
+verification/P02/env-identity-report.txt:7: trailing whitespace.
++Git Clean Status: False
+verification/P02/env-identity-report.txt:8: trailing whitespace.
++frontend/dist Exists: False
+verification/P02/env-identity-report.txt:9: trailing whitespace.
++cargo-target Exists: False
+verification/P02/env-identity-report.txt:10: trailing whitespace.
++Hard Build Barrier Active: True
+verification/P02/env-identity-report.txt:11: trailing whitespace.
++Barrier Rationale: tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree.
+verification/P02/p02-harness-results.json:1: trailing whitespace.
++{
+verification/P02/p02-harness-results.json:2: trailing whitespace.
++  "task_id": "P02",
+verification/P02/p02-harness-results.json:3: trailing whitespace.
++  "owner": "Antigravity",
+verification/P02/p02-harness-results.json:4: trailing whitespace.
++  "stage": "STAGE_A_SAFE_FOUNDATION",
+verification/P02/p02-harness-results.json:5: trailing whitespace.
++  "git_state": {
+verification/P02/p02-harness-results.json:6: trailing whitespace.
++    "head": "5de8d44c784cbd20b23bcd41a8f1a7258c7addff",
+verification/P02/p02-harness-results.json:7: trailing whitespace.
++    "tree": "f27d12a7f8db1a3946f5832d865653d1dcf380b3",
+verification/P02/p02-harness-results.json:8: trailing whitespace.
++    "branch": "agent/antigravity/P02-real-webview-harness"
+verification/P02/p02-harness-results.json:9: trailing whitespace.
++  },
+verification/P02/p02-harness-results.json:10: trailing whitespace.
++  "host_platform": "Windows-11-10.0.26300-SP0",
+verification/P02/p02-harness-results.json:11: trailing whitespace.
++  "verdicts": [
+verification/P02/p02-harness-results.json:12: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:13: trailing whitespace.
++      "ac_id": "PRE-01",
+verification/P02/p02-harness-results.json:14: trailing whitespace.
++      "scenario": "synthetic_fixture_presence",
+verification/P02/p02-harness-results.json:15: trailing whitespace.
++      "status": "PASS",
+verification/P02/p02-harness-results.json:16: trailing whitespace.
++      "layer": "FILESYSTEM",
+verification/P02/p02-harness-results.json:17: trailing whitespace.
++      "exit_code": 0,
+verification/P02/p02-harness-results.json:18: trailing whitespace.
++      "details": {
+verification/P02/p02-harness-results.json:19: trailing whitespace.
++        "keys": [
+verification/P02/p02-harness-results.json:20: trailing whitespace.
++          "books",
+verification/P02/p02-harness-results.json:21: trailing whitespace.
++          "chapters",
+verification/P02/p02-harness-results.json:22: trailing whitespace.
++          "pages",
+verification/P02/p02-harness-results.json:23: trailing whitespace.
++          "regions",
+verification/P02/p02-harness-results.json:24: trailing whitespace.
++          "post_write_scenarios",
+verification/P02/p02-harness-results.json:25: trailing whitespace.
++          "visual_direction_f_tokens"
+verification/P02/p02-harness-results.json:26: trailing whitespace.
++        ],
+verification/P02/p02-harness-results.json:27: trailing whitespace.
++        "file": "verification\\P02\\fixtures\\workbench_synthetic_data.json"
+verification/P02/p02-harness-results.json:28: trailing whitespace.
++      },
+verification/P02/p02-harness-results.json:29: trailing whitespace.
++      "blocker_reason": null,
+verification/P02/p02-harness-results.json:30: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:31: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:32: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:33: trailing whitespace.
++      "ac_id": "PRE-02",
+verification/P02/p02-harness-results.json:34: trailing whitespace.
++      "scenario": "static_source_contract_check",
+verification/P02/p02-harness-results.json:35: trailing whitespace.
++      "status": "PASS",
+verification/P02/p02-harness-results.json:36: trailing whitespace.
++      "layer": "STATIC_AST",
+verification/P02/p02-harness-results.json:37: trailing whitespace.
++      "exit_code": 0,
+verification/P02/p02-harness-results.json:38: trailing whitespace.
++      "details": {
+verification/P02/p02-harness-results.json:39: trailing whitespace.
++        "stdout": "=== P02 Static Source Contract Control Report ===\nOverall Status: PASS\nWorkbenchPage Status: PASS\n  - resolveDebounceMs default 300: True\n  - regionDebounceMs default 300: True\nApp Navigation Status: PASS\n  - app-nav testid present: True\n  - nav-workbench testid present: True",
+verification/P02/p02-harness-results.json:40: trailing whitespace.
++        "stderr": ""
+verification/P02/p02-harness-results.json:41: trailing whitespace.
++      },
+verification/P02/p02-harness-results.json:42: trailing whitespace.
++      "blocker_reason": null,
+verification/P02/p02-harness-results.json:43: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:44: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:45: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:46: trailing whitespace.
++      "ac_id": "AC1",
+verification/P02/p02-harness-results.json:47: trailing whitespace.
++      "scenario": "real_webview2_harness_spawn",
+verification/P02/p02-harness-results.json:48: trailing whitespace.
++      "status": "BLOCKED",
+verification/P02/p02-harness-results.json:49: trailing whitespace.
++      "layer": "REAL_WEBVIEW2",
+verification/P02/p02-harness-results.json:50: trailing whitespace.
++      "exit_code": 126,
+verification/P02/p02-harness-results.json:51: trailing whitespace.
++      "details": {
+verification/P02/p02-harness-results.json:52: trailing whitespace.
++        "binary_hash": null,
+verification/P02/p02-harness-results.json:53: trailing whitespace.
++        "source_head": "5de8d44c784cbd20b23bcd41a8f1a7258c7addff"
+verification/P02/p02-harness-results.json:54: trailing whitespace.
++      },
+verification/P02/p02-harness-results.json:55: trailing whitespace.
++      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+verification/P02/p02-harness-results.json:56: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:57: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:58: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:59: trailing whitespace.
++      "ac_id": "AC2",
+verification/P02/p02-harness-results.json:60: trailing whitespace.
++      "scenario": "workbench_navigation_and_interaction",
+verification/P02/p02-harness-results.json:61: trailing whitespace.
++      "status": "BLOCKED",
+verification/P02/p02-harness-results.json:62: trailing whitespace.
++      "layer": "REAL_WEBVIEW2",
+verification/P02/p02-harness-results.json:63: trailing whitespace.
++      "exit_code": 126,
+verification/P02/p02-harness-results.json:64: trailing whitespace.
++      "details": {},
+verification/P02/p02-harness-results.json:65: trailing whitespace.
++      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+verification/P02/p02-harness-results.json:66: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:67: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:68: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:69: trailing whitespace.
++      "ac_id": "AC3",
+verification/P02/p02-harness-results.json:70: trailing whitespace.
++      "scenario": "quiet_period_300ms_and_invalidation",
+verification/P02/p02-harness-results.json:71: trailing whitespace.
++      "status": "BLOCKED",
+verification/P02/p02-harness-results.json:72: trailing whitespace.
++      "layer": "REAL_WEBVIEW2",
+verification/P02/p02-harness-results.json:73: trailing whitespace.
++      "exit_code": 126,
+verification/P02/p02-harness-results.json:74: trailing whitespace.
++      "details": {},
+verification/P02/p02-harness-results.json:75: trailing whitespace.
++      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+verification/P02/p02-harness-results.json:76: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:77: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:78: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:79: trailing whitespace.
++      "ac_id": "AC4",
+verification/P02/p02-harness-results.json:80: trailing whitespace.
++      "scenario": "post_write_refresh_immediate",
+verification/P02/p02-harness-results.json:81: trailing whitespace.
++      "status": "BLOCKED",
+verification/P02/p02-harness-results.json:82: trailing whitespace.
++      "layer": "REAL_WEBVIEW_MOCK_IPC",
+verification/P02/p02-harness-results.json:83: trailing whitespace.
++      "exit_code": 126,
+verification/P02/p02-harness-results.json:84: trailing whitespace.
++      "details": {
+verification/P02/p02-harness-results.json:85: trailing whitespace.
++        "operations_required": [
+verification/P02/p02-harness-results.json:86: trailing whitespace.
++          "retype",
+verification/P02/p02-harness-results.json:87: trailing whitespace.
++          "undo",
+verification/P02/p02-harness-results.json:88: trailing whitespace.
++          "restore"
+verification/P02/p02-harness-results.json:89: trailing whitespace.
++        ],
+verification/P02/p02-harness-results.json:90: trailing whitespace.
++        "note": "Per task contract, cannot be satisfied with NOT_RUN when blocked; remains BLOCKED."
+verification/P02/p02-harness-results.json:91: trailing whitespace.
++      },
+verification/P02/p02-harness-results.json:92: trailing whitespace.
++      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+verification/P02/p02-harness-results.json:93: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:94: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:95: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:96: trailing whitespace.
++      "ac_id": "AC5",
+verification/P02/p02-harness-results.json:97: trailing whitespace.
++      "scenario": "keyboard_and_focus_navigation",
+verification/P02/p02-harness-results.json:98: trailing whitespace.
++      "status": "BLOCKED",
+verification/P02/p02-harness-results.json:99: trailing whitespace.
++      "layer": "REAL_WEBVIEW2",
+verification/P02/p02-harness-results.json:100: trailing whitespace.
++      "exit_code": 126,
+verification/P02/p02-harness-results.json:101: trailing whitespace.
++      "details": {},
+verification/P02/p02-harness-results.json:102: trailing whitespace.
++      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+verification/P02/p02-harness-results.json:103: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:104: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:105: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:106: trailing whitespace.
++      "ac_id": "AC6",
+verification/P02/p02-harness-results.json:107: trailing whitespace.
++      "scenario": "f_token_mathematical_contrast_model",
+verification/P02/p02-harness-results.json:108: trailing whitespace.
++      "status": "PASS",
+verification/P02/p02-harness-results.json:109: trailing whitespace.
++      "layer": "TOKEN_MODEL",
+verification/P02/p02-harness-results.json:110: trailing whitespace.
++      "exit_code": 0,
+verification/P02/p02-harness-results.json:111: trailing whitespace.
++      "details": {
+verification/P02/p02-harness-results.json:112: trailing whitespace.
++        "primary_text_contrast": 13.87,
+verification/P02/p02-harness-results.json:113: trailing whitespace.
++        "primary_text_target": ">=4.5:1",
+verification/P02/p02-harness-results.json:114: trailing whitespace.
++        "muted_text_contrast": 6.01,
+verification/P02/p02-harness-results.json:115: trailing whitespace.
++        "muted_text_target": ">=3.0:1"
+verification/P02/p02-harness-results.json:116: trailing whitespace.
++      },
+verification/P02/p02-harness-results.json:117: trailing whitespace.
++      "blocker_reason": null,
+verification/P02/p02-harness-results.json:118: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:119: trailing whitespace.
++    },
+verification/P02/p02-harness-results.json:120: trailing whitespace.
++    {
+verification/P02/p02-harness-results.json:121: trailing whitespace.
++      "ac_id": "AC6",
+verification/P02/p02-harness-results.json:122: trailing whitespace.
++      "scenario": "runtime_computed_color_extraction",
+verification/P02/p02-harness-results.json:123: trailing whitespace.
++      "status": "BLOCKED",
+verification/P02/p02-harness-results.json:124: trailing whitespace.
++      "layer": "REAL_WEBVIEW2",
+verification/P02/p02-harness-results.json:125: trailing whitespace.
++      "exit_code": 126,
+verification/P02/p02-harness-results.json:126: trailing whitespace.
++      "details": {},
+verification/P02/p02-harness-results.json:127: trailing whitespace.
++      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+verification/P02/p02-harness-results.json:128: trailing whitespace.
++      "timestamp": "2026-10-09T06:27:05Z"
+verification/P02/p02-harness-results.json:129: trailing whitespace.
++    }
+verification/P02/p02-harness-results.json:130: trailing whitespace.
++  ],
+verification/P02/p02-harness-results.json:131: trailing whitespace.
++  "summary": {
+verification/P02/p02-harness-results.json:132: trailing whitespace.
++    "total": 9,
+verification/P02/p02-harness-results.json:133: trailing whitespace.
++    "pass": 3,
+verification/P02/p02-harness-results.json:134: trailing whitespace.
++    "fail": 0,
+verification/P02/p02-harness-results.json:135: trailing whitespace.
++    "blocked": 6,
+verification/P02/p02-harness-results.json:136: trailing whitespace.
++    "not_run": 0
+verification/P02/p02-harness-results.json:137: trailing whitespace.
++  },
+verification/P02/p02-harness-results.json:138: trailing whitespace.
++  "hard_build_barrier": {
+verification/P02/p02-harness-results.json:139: trailing whitespace.
++    "active": true,
+verification/P02/p02-harness-results.json:140: trailing whitespace.
++    "reason": "Cargo/Tauri builds prohibited in Owner worktree to prevent source-tree corruption. Awaiting Codex scratch worktree registration and independent Review."
+verification/P02/p02-harness-results.json:141: trailing whitespace.
++  }
+verification/P02/p02-harness-results.txt:1: trailing whitespace.
++=== P02 Real Workbench WebView2 Harness Verdict Report ===
+verification/P02/p02-harness-results.txt:2: trailing whitespace.
++Git HEAD: 5de8d44c784cbd20b23bcd41a8f1a7258c7addff
+verification/P02/p02-harness-results.txt:3: trailing whitespace.
++Git Tree: f27d12a7f8db1a3946f5832d865653d1dcf380b3
+verification/P02/p02-harness-results.txt:4: trailing whitespace.
++Branch: agent/antigravity/P02-real-webview-harness
+verification/P02/p02-harness-results.txt:5: trailing whitespace.
++Total Scenarios: 9
+verification/P02/p02-harness-results.txt:6: trailing whitespace.
++  PASS: 3
+verification/P02/p02-harness-results.txt:7: trailing whitespace.
++  FAIL: 0
+verification/P02/p02-harness-results.txt:8: trailing whitespace.
++  BLOCKED: 6
+verification/P02/p02-harness-results.txt:9: trailing whitespace.
++  NOT_RUN: 0
+verification/P02/p02-harness-results.txt:10: trailing whitespace.
++--- Scenario Details ---
+verification/P02/p02-harness-results.txt:11: trailing whitespace.
++[PRE-01] synthetic_fixture_presence: PASS (Layer: FILESYSTEM, Exit: 0)
+verification/P02/p02-harness-results.txt:12: trailing whitespace.
++[PRE-02] static_source_contract_check: PASS (Layer: STATIC_AST, Exit: 0)
+verification/P02/p02-harness-results.txt:13: trailing whitespace.
++[AC1] real_webview2_harness_spawn: BLOCKED (Layer: REAL_WEBVIEW2, Exit: 126) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+verification/P02/p02-harness-results.txt:14: trailing whitespace.
++[AC2] workbench_navigation_and_interaction: BLOCKED (Layer: REAL_WEBVIEW2, Exit: 126) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+verification/P02/p02-harness-results.txt:15: trailing whitespace.
++[AC3] quiet_period_300ms_and_invalidation: BLOCKED (Layer: REAL_WEBVIEW2, Exit: 126) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+verification/P02/p02-harness-results.txt:16: trailing whitespace.
++[AC4] post_write_refresh_immediate: BLOCKED (Layer: REAL_WEBVIEW_MOCK_IPC, Exit: 126) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+verification/P02/p02-harness-results.txt:17: trailing whitespace.
++[AC5] keyboard_and_focus_navigation: BLOCKED (Layer: REAL_WEBVIEW2, Exit: 126) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+verification/P02/p02-harness-results.txt:18: trailing whitespace.
++[AC6] f_token_mathematical_contrast_model: PASS (Layer: TOKEN_MODEL, Exit: 0)
+verification/P02/p02-harness-results.txt:19: trailing whitespace.
++[AC6] runtime_computed_color_extraction: BLOCKED (Layer: REAL_WEBVIEW2, Exit: 126) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+verification/P02/static-control-report.json:1: trailing whitespace.
++{
+verification/P02/static-control-report.json:2: trailing whitespace.
++  "probe": "P02_STATIC_SOURCE_CONTRACT_CONTROL",
+verification/P02/static-control-report.json:3: trailing whitespace.
++  "overall_status": "PASS",
+verification/P02/static-control-report.json:4: trailing whitespace.
++  "workbench_page": {
+verification/P02/static-control-report.json:5: trailing whitespace.
++    "status": "PASS",
+verification/P02/static-control-report.json:6: trailing whitespace.
++    "file": "apps\\desktop\\frontend\\src\\workbench\\WorkbenchPage.tsx",
+verification/P02/static-control-report.json:7: trailing whitespace.
++    "checks": {
+verification/P02/static-control-report.json:8: trailing whitespace.
++      "resolveDebounceMs_default_300": true,
+verification/P02/static-control-report.json:9: trailing whitespace.
++      "regionDebounceMs_default_300": true,
+verification/P02/static-control-report.json:10: trailing whitespace.
++      "client_references": {
+verification/P02/static-control-report.json:11: trailing whitespace.
++        "LibraryClient": true,
+verification/P02/static-control-report.json:12: trailing whitespace.
++        "RegionClient": true,
+verification/P02/static-control-report.json:13: trailing whitespace.
++        "ResourceChannelClient": true
+verification/P02/static-control-report.json:14: trailing whitespace.
++      },
+verification/P02/static-control-report.json:15: trailing whitespace.
++      "command_surface_references": {
+verification/P02/static-control-report.json:16: trailing whitespace.
++        "library_list_books": true,
+verification/P02/static-control-report.json:17: trailing whitespace.
++        "list_regions": true,
+verification/P02/static-control-report.json:18: trailing whitespace.
++        "set_region_type": true,
+verification/P02/static-control-report.json:19: trailing whitespace.
++        "restore_region_revision": true,
+verification/P02/static-control-report.json:20: trailing whitespace.
++        "resolve_page_resource": true,
+verification/P02/static-control-report.json:21: trailing whitespace.
++        "list_chapters": true,
+verification/P02/static-control-report.json:22: trailing whitespace.
++        "list_chapter_pages": true
+verification/P02/static-control-report.json:23: trailing whitespace.
++      },
+verification/P02/static-control-report.json:24: trailing whitespace.
++      "component_references": {
+verification/P02/static-control-report.json:25: trailing whitespace.
++        "PageListPanel": true,
+verification/P02/static-control-report.json:26: trailing whitespace.
++        "ViewerPanel": true,
+verification/P02/static-control-report.json:27: trailing whitespace.
++        "RegionInspector": true,
+verification/P02/static-control-report.json:28: trailing whitespace.
++        "WorkbenchToolbar": true,
+verification/P02/static-control-report.json:29: trailing whitespace.
++        "TaskProgressPanel": true,
+verification/P02/static-control-report.json:30: trailing whitespace.
++        "RelabelConfirmDialog": true
+verification/P02/static-control-report.json:31: trailing whitespace.
++      }
+verification/P02/static-control-report.json:32: trailing whitespace.
++    }
+verification/P02/static-control-report.json:33: trailing whitespace.
++  },
+verification/P02/static-control-report.json:34: trailing whitespace.
++  "app_navigation": {
+verification/P02/static-control-report.json:35: trailing whitespace.
++    "status": "PASS",
+verification/P02/static-control-report.json:36: trailing whitespace.
++    "file": "apps\\desktop\\frontend\\src\\App.tsx",
+verification/P02/static-control-report.json:37: trailing whitespace.
++    "checks": {
+verification/P02/static-control-report.json:38: trailing whitespace.
++      "has_app_nav_testid": true,
+verification/P02/static-control-report.json:39: trailing whitespace.
++      "has_nav_console_testid": true,
+verification/P02/static-control-report.json:40: trailing whitespace.
++      "has_nav_workbench_testid": true,
+verification/P02/static-control-report.json:41: trailing whitespace.
++      "has_workbench_mount": true,
+verification/P02/static-control-report.json:42: trailing whitespace.
++      "has_nav_chrome_toggle": true,
+verification/P02/static-control-report.json:43: trailing whitespace.
++      "has_interactive_view_state": true
+verification/P02/static-control-report.json:44: trailing whitespace.
++    }
+verification/P02/static-control-report.json:45: trailing whitespace.
++  },
+verification/P02/static-control-report.json:46: trailing whitespace.
++  "child_components": {
+verification/P02/static-control-report.json:47: trailing whitespace.
++    "workbench/PageListPanel.tsx": {
+verification/P02/static-control-report.json:48: trailing whitespace.
++      "exists": true,
+verification/P02/static-control-report.json:49: trailing whitespace.
++      "line_count": 188,
+verification/P02/static-control-report.json:50: trailing whitespace.
++      "has_keyboard_or_focus": false
+verification/P02/static-control-report.json:51: trailing whitespace.
++    },
+verification/P02/static-control-report.json:52: trailing whitespace.
++    "workbench/ViewerPanel.tsx": {
+verification/P02/static-control-report.json:53: trailing whitespace.
++      "exists": true,
+verification/P02/static-control-report.json:54: trailing whitespace.
++      "line_count": 291,
+verification/P02/static-control-report.json:55: trailing whitespace.
++      "has_keyboard_or_focus": true
+verification/P02/static-control-report.json:56: trailing whitespace.
++    },
+verification/P02/static-control-report.json:57: trailing whitespace.
++    "workbench/RegionInspector.tsx": {
+verification/P02/static-control-report.json:58: trailing whitespace.
++      "exists": true,
+verification/P02/static-control-report.json:59: trailing whitespace.
++      "line_count": 314,
+verification/P02/static-control-report.json:60: trailing whitespace.
++      "has_keyboard_or_focus": false
+verification/P02/static-control-report.json:61: trailing whitespace.
++    }
+verification/P02/static-control-report.json:62: trailing whitespace.
++  }
+verification/P02/static-control-report.txt:1: trailing whitespace.
++=== P02 Static Source Contract Control Report ===
+verification/P02/static-control-report.txt:2: trailing whitespace.
++Overall Status: PASS
+verification/P02/static-control-report.txt:3: trailing whitespace.
++WorkbenchPage Status: PASS
+verification/P02/static-control-report.txt:4: trailing whitespace.
++  - resolveDebounceMs default 300: True
+verification/P02/static-control-report.txt:5: trailing whitespace.
++  - regionDebounceMs default 300: True
+verification/P02/static-control-report.txt:6: trailing whitespace.
++App Navigation Status: PASS
+verification/P02/static-control-report.txt:7: trailing whitespace.
++  - app-nav testid present: True
+verification/P02/static-control-report.txt:8: trailing whitespace.
++  - nav-workbench testid present: True

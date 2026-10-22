@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0-rc.2",
+  "versionExit": 0,
+  "smokeExit": 0,
+  "sessionId": "session-8141b77b-687e-4b8e-8441-58d43e6330b8",
+  "answer": "收到收到",
+  "answerValid": true,
+  "status": "SUCCESS",
+  "stdoutLines": 7,
+  "stdoutBytes": 543,
+  "stderrBytes": 0
+}

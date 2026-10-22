@@ -1,0 +1,81 @@
+{
+  "task": "P02PRE-R1H",
+  "review": "Independent static review of complete candidate diff",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "/root/p02_r1h_review_fallback",
+  "integrator": "/root",
+  "repo": "G:\\CODEX\\New Manga",
+  "ownerWorktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "branch": "agent/codex/P02PRE-R1H",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "remediationBase": "256e3ea622cba7a658020ddcf015b18894d88b38",
+  "deliveryHead": "4a02811d6edf9ab423d299a36c51f103e62dd5f3",
+  "deliveryTree": "95eb4b2977bded814e667b392e46ce5f76015c9f",
+  "controlledStatus": {
+    "command": "git status --porcelain=v1 -z --untracked-files=all -- . ':(exclude).tmp.driveupload'",
+    "exit": 0,
+    "records": 0,
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "verifiedDiffCheck": {
+    "command": "git diff --check 946938bd0696dfddd01f87d61fe6723c63ecdc86..HEAD",
+    "exit": 0
+  },
+  "reviewPaths": [
+    "verification/P02/p02pre-r1h-capture.ps1",
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-handoff-20261012.md"
+  ],
+  "sourcePins": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 11538,
+      "sha256": "95AC04FABD0EBFC1B97AF1B0C37F8B24AF62B7E8C1346057E0826AEA726E85CA"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-20261012.md",
+      "bytes": 2308,
+      "sha256": "4BB1D8B8C8FACD96C4C087774756A71D79F832F10AD75026ADA3800579EE6688"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-review-adjudication-20261012.md",
+      "bytes": 1543,
+      "sha256": "20EA61BC98F5826BF7FDF487E01B3F34CF6FBA609E9C3999C242100920268497"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-review-input-pins-post-20261012.json",
+      "bytes": 2070,
+      "sha256": "9AA0A6783B9466BD146DB04A65FC61287144C6ADA5B6747AE5958538251BCDB4"
+    }
+  ],
+  "candidatePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 24452,
+      "sha256": "17202B6EDD5C3185432F90F7618ECDC689739492173AE2D4EA4E9D1AEF9CBCD8"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 4397,
+      "sha256": "2E4E9EA2930930BF4A2AD9F04AE3FD542635F384E7CB07A27349ADDDE6B6F0E0"
+    }
+  ],
+  "rules": {
+    "noParserSelfcheckPreflightCaptureGetter": true,
+    "noBuildCargoAC1toAC7OSMutationSandbox": true,
+    "reviewerMayWriteOnly": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation-20261012.md",
+    "reviewVerdictMustBeIndependentAndEvidenceBased": true,
+    "inspectCompleteDiffFromFrozenTaskBase": true
+  }
+}

@@ -1,0 +1,11 @@
+# P02PRE-R1H Round6 Independent Review — Attempt 2
+
+Role: independent non-author static Reviewer. Task=`P02PRE-R1H`; fixed delivery `agent/codex/P02PRE-R1H@c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d` in `C:\Users\49745\.codex\worktrees\p02pre-r1h-codex`; base=`dd5d2e3bc8e0702da9d059131f6364a997897661`.
+
+Attempt 1 was blocked solely because root edited the Task after dispatch; do not treat its static observations as approval. The Task and governance files are now finalized and frozen. Read the Task, REBASELINE_PLAN, STATUS, index, manifest, complete base-to-delivery diff, candidate capture, Round6 Handoff, Round5 failed selfcheck/engine evidence, integration evidence, and attempt-1 report. Recompute all 12 frozen input pins in `verification/P02/codex-p02pre-r1h-round6-review-pins-r2-20261012.json` before and after review; stop with `BLOCKED_BY_MISSING_EVIDENCE` on any mismatch. Verify the candidate worktree branch/HEAD/tree/common-dir/status and exact changed paths.
+
+Independently assess the fix against the real component loop and frozen Task acceptance: exact permitted AST indexes, rejection of extra/unknown indexes, preservation of fail-closed assertions and negative fixtures, scope and Handoff accuracy. Inspect code and relevant context; do not rely on the Owner explanation or attempt-1 report as a substitute for your own review.
+
+Read-only review only. Do not change candidate code, Task, manifest, governance docs, execution evidence or any file except the single report target `G:\CODEX\New Manga\verification\P02\codex-subagent-p02pre-r1h-static-review-round6-r2-20261012.md`. Do not run Parser/selfcheck/fixtures, capture/getters/API, Build/Cargo, AC1–AC7, OS dynamic verification or Windows Sandbox. Root performs execution only after this Review and separate Codex adjudication.
+
+Return verdict (`APPROVED_STATIC_CONTENT`, `CHANGES_REQUESTED`, `NOT_VERIFIED`, or `BLOCKED_BY_MISSING_EVIDENCE`), P0/P1/P2/P3 counts, findings with locations/triggers/impact/remediation, all pre/post pins, exact changed paths, scope coverage and residual unverified behavior. State reviewer model/effort only if actually known. Approval is static-content only and must not be reported as AC2/AC4/Gate/runtime PASS.

@@ -1,0 +1,9 @@
+# P02PRE-R0 DSH dispatch and mount record
+
+- dsh --version: exit 0; stdout 0.2.0-rc.2.
+- Probe dsh headless with prompt 只回复两个字：收到: exit 0; stdout 收到。此为通路探测，不是 Review。
+- Review prompt: verification/P02/dsh-p02pre-r0-review-20261011.prompt.md; dispatch loaded that prompt and ran dsh headless, redirecting stdout/stderr to the fixed files.
+- Review dispatch: exit 0; final stdout was saved as verification/P02/dsh-p02pre-r0-review-20261011.stdout.md and copied byte-for-byte to verification/P02/p02-readonly-preflight-r0-review-20261011.md.
+- Mount command: python C:\Users\49745\.agents\skills\dsh-dispatch\scripts\mount_session.py --latest; exit 0; mounted session session-a5935233-2e4b-41e4-a18a-08ab4c09a1d6 into workspace New Manga.
+- Mount command's localized console output contained replacement glyphs, so only the exit code, session ID, and successful mount indication are relied on.
+- DSH stderr capture was 149254 bytes, SHA-256 629F6415EB1396B59F3B69521DDEC179A89C337C52FCE909AD0DF823DBCE3684; it contained interim reasoning text, not a diagnostic error. To avoid retaining non-final reasoning, the .stderr.log file is replaced with this redaction record. The DSH final Review stdout remains unmodified and is authoritative.

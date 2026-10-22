@@ -1,0 +1,62 @@
+{
+  "schema": "codex-p02pre-r1h-owner-remediation-round5-pins-v1",
+  "repository": "G:\\CODEX\\New Manga",
+  "branch": "agent/codex/P02PRE-R1H",
+  "startingHead": "7e7d0bce8dd86a2302d2a9eb278702d9c70354ff",
+  "parent": "0ecada4182d624d4f352a253e09db3bdecbee5d1",
+  "tree": "c9afca4e9bfd8d1b6a6c3ad5a8a33e0e12c3d87b",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "controlledStatusRecords": 0,
+  "inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 22941,
+      "sha256": "45671AD744C2CD51D831F3513F16CE573D24E7A0CF679DC087E98A29B27A4486"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57623,
+      "sha256": "EEFB41141EBE162503047C20CAF4F41D5E8E01EEF2FCEE0C90DA7185A8164CF1"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-remediation4-adjudication-20261012.md",
+      "bytes": 3748,
+      "sha256": "10BCB055A7D25F61621A0D5AD6EEC705BFF681DB2A37D9C363D66E59BBC82F85"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation4-20261012.md",
+      "bytes": 8769,
+      "sha256": "0BE345FDA968A0F9194CA99ECD35D110F3F5F81C76116AFF65E7BAF574069C0F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round4-20261012.json",
+      "bytes": 3121,
+      "sha256": "1673CFF27EBC58CCFB64DFE5593E30F217E703CE1296DF59BA7ED3E70EE9EDFF"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-engine-preflight-round4-20261012.json",
+      "bytes": 5328,
+      "sha256": "C1D97BC9A2C06D0C0CEE704431C4AC735A85742233493BFFA36D42171210DBD6"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-integration-round4-20261012.md",
+      "bytes": 3071,
+      "sha256": "95ADA3F55130CCEF7B98F46C4BD57912DEEC61310E4D285E48F09A6F5520F7D1"
+    }
+  ]
+}

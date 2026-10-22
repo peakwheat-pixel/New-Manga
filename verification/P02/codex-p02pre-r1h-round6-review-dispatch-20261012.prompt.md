@@ -1,0 +1,11 @@
+# P02PRE-R1H Round6 Independent Review Dispatch
+
+Role: non-author static Reviewer. Task: `P02PRE-R1H`; review only the fixed delivery `agent/codex/P02PRE-R1H@c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d` in `C:\Users\49745\.codex\worktrees\p02pre-r1h-codex`, base `dd5d2e3bc8e0702da9d059131f6364a997897661`.
+
+Read the Task's current Round6 contract in `G:\CODEX\New Manga\doc\tasks\P02PRE-R1H.md`, the manifest, frozen delivery diff, candidate capture, Round6 Handoff, Round5 selfcheck failure evidence, engine preflight evidence, and frozen pin file `verification/P02/codex-p02pre-r1h-round6-review-pins-20261012.json`. Recompute pins before and after review. Confirm the complete diff changes only the two paths frozen there and that capture is unchanged.
+
+Assess whether the selfcheck fix precisely accepts the actual allowed component loop, still rejects unexpected indexes and unsafe control flow, preserves the existing fail-closed assertions/negative fixtures, and stays within Task scope. Check the Handoff against the delivery and explicitly state what remains unverified. Do not assume the owner's diagnosis is correct; independently compare the AST predicate with the real loop and failure evidence.
+
+This is a read-only static review. Do not modify source, Task, manifest, plan/status, execution evidence or any file except the single assigned report `G:\CODEX\New Manga\verification\P02\codex-subagent-p02pre-r1h-static-review-round6-20261012.md`. Do not run Parser/selfcheck/fixtures, capture, getters/APIs, Build/Cargo, AC1–AC7, OS dynamic checks or Windows Sandbox. Root will run verification after review and Codex adjudication.
+
+Return a Review bound to Task ID, base commit and reviewed HEAD. Record verdict (`APPROVED_STATIC_CONTENT`, `CHANGES_REQUESTED`, `NOT_VERIFIED`, or `BLOCKED_BY_MISSING_EVIDENCE`), P0/P1/P2/P3 counts, findings with file/line, trigger, impact and concrete remediation, reviewed pins before/after, scope/test coverage, remaining risks, and reviewer model/effort only if actually known. Static approval does not mean AC2, AC4, any Gate, or runtime behavior passed.

@@ -1,0 +1,48 @@
+{
+  "capturedAt": "2026-10-12T15:48:08.6915728+08:00",
+  "powershell": "7.6.6",
+  "cwd": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-attempt6-zcode\\New Manga",
+  "filter": "PROXY|ZCODE|BASE_URL|ANTHROPIC|OPENAI",
+  "rawValuesPersisted": false,
+  "variables": [
+    {
+      "name": "ALL_PROXY",
+      "present": true,
+      "length": 21,
+      "endpoint": "http://127.0.0.1:7890",
+      "userInfoPresent": false,
+      "valueSha256": "F1410CD719DCEE161D171A3729C50BFFABB9325546E31867D85DB2B0773DB22E"
+    },
+    {
+      "name": "HTTP_PROXY",
+      "present": true,
+      "length": 21,
+      "endpoint": "http://127.0.0.1:7890",
+      "userInfoPresent": false,
+      "valueSha256": "F1410CD719DCEE161D171A3729C50BFFABB9325546E31867D85DB2B0773DB22E"
+    },
+    {
+      "name": "HTTPS_PROXY",
+      "present": true,
+      "length": 21,
+      "endpoint": "http://127.0.0.1:7890",
+      "userInfoPresent": false,
+      "valueSha256": "F1410CD719DCEE161D171A3729C50BFFABB9325546E31867D85DB2B0773DB22E"
+    },
+    {
+      "name": "NO_PROXY",
+      "present": true,
+      "length": 23,
+      "entryCount": 3,
+      "valueSha256": "3EC16A3AC582EFE2C150D78CEC7B4FEF85D422DF5C7A147BF59C55B7F66BA93F"
+    },
+    {
+      "name": "ZCODE_HTTP_PROXY",
+      "present": true,
+      "length": 21,
+      "endpoint": "http://127.0.0.1:7890",
+      "userInfoPresent": false,
+      "valueSha256": "F1410CD719DCEE161D171A3729C50BFFABB9325546E31867D85DB2B0773DB22E"
+    }
+  ]
+}

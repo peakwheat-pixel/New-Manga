@@ -1,0 +1,89 @@
+dsh: reasoning:
+I have all the evidence I need. Now produce the final report in Simplified Chinese, concise (up to 2500 Chinese characters), with YAML header, decision, Architecture conclusion, Verification table, Findings table, remaining risks. No more tool calls.
+
+Let me carefully compose.
+
+Key content:
+
+YAML:
+---
+task_id: P02PRE-R1F-POSTRUN-20261011
+reviewer: DeepSeek Harness
+author: Codex /root
+base_commit: cddff58469b56e181019a8ddfeade80684bc7eb9
+reviewed_head: cddff58469b56e181019a8ddfeade80684bc7eb9
+decision: CHANGES_REQUESTED
+---
+
+Wait — decision choice: APPROVED only if the evidence package and its interpretation are sufficient for Codex to proceed to a successor Task. Is it sufficient? The evidence is internally consistent and correctly classified in the observed sense; the gaps are: stale state (expected, to be corrected by Codex), no post-run adjudication yet, and P2/P3 findings. The question: "sufficient for Codex to proceed to a successor Task"? I think yes for the evidence itself, but the stale state and the missing post-run record are exactly what Codex must fix first. The decision should reflect: the evidence is sufficient to select a safe successor, but state documents are stale and need correction, and one P2 design gap. Hmm.
+
+The instruction: "Use decision APPROVED only if the evidence package and its interpretation are sufficient for Codex to proceed to a successor Task; otherwise CHANGES_REQUESTED, NOT_VERIFIED, or BLOCKED_BY_MISSING_EVIDENCE."
+
+Given: evidence is internally consistent and sufficient to identify the stop condition, non-reach, and the successor shape; the deficiencies are documentation-state (P2) and granularity (P3), which Codex must fix in its post-run adjudication. If I choose APPROVED, I'd be saying proceed to successor. But requirement 5 asks me to identify stale state "to be corrected by Codex". The successor work cannot start before the post-run adjudication + state correction. Since those corrections are prerequisites that don't exist yet, and a P2 (stale state risking one-shot misinterpretation) is open, the template says P0/P1 unresolved or key verification missing → cannot approve. P2 open does not strictly block approval per template ("P0/P1 未解决或关键验证缺失时不可批准"). Hmm, my P2 isn't P0/P1. But there's also the fact that I could not recompute any pin (hash verification NOT_RUN by this reviewer) — is that "key verification missing"? The review is evidence-integrity review; my inability to recompute is a declared limitation, not a missing artifact (Codex recomputed them in the pre-run checkpoint). Hmm.
+
+I think CHANGES_REQUESTED is the honest decision: the evidence package is internally consistent, but the repository's state documents still assert the opposite (capture BLOCKED/NOT_RUN) and no post-run adjudication record exists; a successor Task cannot be safely dispatched until Codex records the run and corrects state. That's a change request, not a block on the evidence. Also the run's stop condition shows a real candidate defect requiring successor repair. So CHANGES_REQUESTED (0/0/2/1) maybe. Let me count findings: 2 P2 + 2 P3? Let me define:
+
+- R1F-POST-01 P2: stale state / missing post-run record across Plan/STATUS/Task/checkpoint; risk of re-release vs one-shot.
+- R1F-POST-02 P2: candidate lacked engine-capability preflight; one-shot consumed with zero new inventory; manifest:65 post-capture governance-path confirmation unattainable.
+- R1F-POST-03 P3: stopReason taxonomy granularity / no reached-not-reached markers / errors=[].
+- R1F-POST-04 P3: execution attestation gap (hard-coded command, self-reported process, no source-byte binding).
+
+So P0/P1/P2/P3 = 0/0/2/2.
+
+Decision: CHANGES_REQUESTED. Good — and explicitly "review approval is not Gate/AC pass".
+
+Now the report sections per template: 范围与依据 (scope+pins), Architecture 结论, Verification 表, Findings 表, 结论与剩余风险. Plus the required "exact capture stop condition", "whether any inventory/downstream getters ran", "distinguish from AC failure", "PS7 incompatibility", "minimum safe successor action", "Gate/AC states preserved".
+
+Character budget 2500 Chinese characters. That's tight with tables. I'll be terse. Let me draft compactly.
+
+I need to include exact states: private_registry_absence=UNPROVABLE; Technical Gate=NOT_SATISFIED; Owner Risk Acceptance=APPROVED; Gate Disposition=WAIVED_BY_OWNER; Build Authorization=AUTHORIZED_WITH_EXCEPTION; Build Gate=BLOCKED; Hard Build Barrier=EFFECTIVE; Build/Cargo=NOT_RUN; AC1–AC7=BLOCKED / NOT_RUN.
+
+Verification table rows (keep ~8 rows):
+
+| 检查 | 证据 | 结果 |
+1. 本次为真实 capture 而非 parse-only | evidence JSON t0/process/identity + exit=1 + stderr 抛错；R8 另件 captureScriptInvoked=false | PASS
+2. 实际运行器 | evidence JSON process.executablePath=…WindowsPowerShell\v1.0\powershell.exe, version 5.1.26100.9549, hostName ConsoleHost；command 字段为 ps1:24 硬编码；无 wrapper argv 旁证 | PASS（自报，附限制 R1F-POST-04）
+3. 首个阻断条件 | evidence JSON repository.main.state=GIT_INDEX_PREHASH_INVALID、errorOperation=Get-FileRecord(.git/index)、firstBlockingPath=G:\CODEX\New Manga\.git\index、errorType=System.Management.Automation.CommandNotFoundException、error="无法将"Get-FileHash"项识别为…"；对应 ps1:254-261/333-334 | PASS
+4. 失败关闭一致性 | stdout=0B；exit=1；stderr 内容与 ps1:912 throw 完全对应 | PASS
+5. 下游是否执行 | JSON 中 commands={}、fileInventory=[]、gitMetadata=[]、environment={}、paths={}、wer={}、protectedHashes={}，无 scratch 键、无 summary/homeEnvironmentCheck；whoami.exe(exit 0) 与 Get-Item/.NET 身份调用已执行 | PASS：仅身份 getter 运行，Git inventory/hash、scratch、路径/ACL、TEMP/cache、WER/registry、Build/Cargo、AC 均未到达
+6. Get-FileHash 缺失根因（模块发现/NoProfile/PSModulePath） | 无 PSModulePath/LanguageMode/模块清单记录；同一子进程 Get-Item 成功；无环境证明 | NOT_RUN / UNPROVABLE
+7. PowerShell 7 不兼容 | 7.6.6 仅为编排父 shell；capture 自报 5.1；无 PS7 运行证据 | NOT_RUN（无证据，不能证明不兼容）
+8. pin bytes/SHA 复算、重跑 capture | 审查禁止执行 | NOT_RUN（本次仅文本一致性）
+9. Plan/STATUS/Task 实际状态 | REBASELINE_PLAN.md:13/32/73/74/101、STATUS.md:5、P02PRE-R1F.md:36/40/115 均写 BLOCKED/NOT_RUN | FAIL（陈旧）
+10. Gate/Build/AC | 未运行 | NOT_RUN
+
+That's 10 rows; a bit long but okay. Maybe merge 7 and 6.
+
+Findings table 4 rows with ID/severity/file/impact/evidence/recommendation/status.
+
+Scope and pins: list the pinned inputs (concise, maybe one line listing names + hashes? The pins are already in the request; I'll summarize "12 个 frozen pins 见原请求；本次仅按给定 pins 阅读，未复算 bytes/SHA"). Should include pins maybe compactly. I'll state: 12 个 pinned 输入（Plan/STATUS/00_INDEX/09_COLLABORATION/Task/manifest/capture.ps1/R8/checkpoint/evidence JSON/stdout/stderr/exit），按原请求给定值使用；本次无执行权限故不复算 hash。Also note I read template doc/templates/REVIEW.md and 09_COLLABORATION.md §5.1.
+
+Architecture conclusion: executor contract (PS7 orchestrator / PS5.1 frozen executor) was followed; fail-closed stop contract worked (script stopped at first blocking condition, wrote unique CreateNew JSON, then threw → exit 1, no false PASS); one-shot/immutability contract (ps1:15 target-exists guard + CreateNew) protected; but candidate had no engine-capability precondition, so a single unavailable cmdlet consumed the entire one-shot with 0 new inventory; taxonomy coarse (same stopReason as R1's policy stop); attestation relies on self-report/hard-coded command; state documents not updated post-run → recovery point stale. Layering/契约/依赖/安全/持久化 all covered.
+
+Minimum safe successor action: (1) Codex 先做 post-run adjudication 到 verification/P02/p02pre-r1f-postrun-adjudication-20261011.md：记录本次 one-shot 已消耗、exit=1、首阻断、根因=UNPROVABLE、下游未到达；将 Plan/STATUS/Task/rolling checkpoint 的 "Capture=BLOCKED / NOT_RUN" 改为 "ONE_SHOT_CONSUMED / GIT_INDEX_PREHASH_INVALID (root cause UNPROVABLE)"；(2) 不得重跑 ps1、不得覆写 p02pre-r1f-evidence-20261011.json/stdout/stderr/exit；(3) 冻结 successor Task（新脚本 + 新 evidence/输出路径）并加入 engine capability preflight（记录 $PSVersionTable、PSModulePath、可用模块/LanguageMode、Get-Command Get-FileHash 等）+ 证据自绑定源码 SHA/argv；(4) 新候选须经非作者 Review + Codex pre-run adjudication 后才可再释放一次 capture；Gate/AC 不变。
+
+Also mention capture stop condition exactly: 在 main 仓库 baseline 的 .git/index pre-hash 步骤，脚本用 Get-FileHash 计算 .git\index SHA-256 时抛 CommandNotFoundException → Get-FileRecord 返回 QUERY_ERROR → state=GIT_INDEX_PREHASH_INVALID → stopReason=MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED → 脚本写出 JSON 后 throw（ps1:912）→ wrapper exit=1、stdout 0B、stderr 676B。是运行期命令解析失败，非 AC/测试失败（AC1–AC7 从未运行，无测试 harness、无 build/Cargo）。
+
+Also state: 不推断 module discovery/NoProfile 根因；并在同一子进程中 Get-Item（Management 模块）成功，说明并非全量命令/模块发现失效，但证据不足以定位 Get-FileHash 不可解析的原因 → UNPROVABLE。
+
+Also note limitation: reviewer 无法复算 hash；pin 一致性仅来自文档间交叉核对（checkpoint:38-41 与 Request pins 逐项一致；R8 source pin = capture.ps1 pin）。
+
+Also the empty errors=[] note.
+
+Remaining risks: (a) 一次 release 已消耗且无新 inventory，pre-run 检查的后捕获确认（manifest:59/65 的 fileInventory SHA 匹配）不可达成 → 该确认对本次运行 UNPROVABLE/FAILED；(b) 若后续 agent 仅因“环境问题”而直接重跑同一脚本，会撞 ps1:15 拒绝（fail-closed）但可能被误记为授权运行 → 必须由新 Task 承担；(c) 无 OS 级监视，写入闭包仍 UNPROVABLE_NOT_MONITORED_IN_R1F；(d) 本次审查未复算任何 pin。
+
+Also mention that I did not inspect .tmp.driveupload.
+
+Now length: aim ~2300-2500 Chinese chars. I'll write compactly. Note that the tables' ASCII content counts less; the user said "up to 2500 Chinese characters" — I'll interpret as roughly the body size.
+
+Also the AGENTS.md requires a recommended next step with §5.1 fields in the final reply. I'll include a compact §5.1 block: Task/Agent/Recovery point/Scope/Deliverables/Verification/Forwardable instruction. That may push length. The user asked concise and to identify the minimum safe successor action. I'll include a brief §5.1-style recommendation (owner Codex for adjudication + successor authoring; reviewer DSH different session) but keep short and mark "建议不等于释放".
+
+Careful: "Do not expose internal analysis" — I'll only present conclusions, no meta commentary about my process beyond evidence limitations.
+
+Also: language must be Chinese; keep identifiers English.
+
+Let me write the final answer now.
+
+One more check on decision semantics: "Use decision APPROVED only if the evidence package and its interpretation are sufficient for Codex to proceed to a successor Task". Hmm — one could argue the package IS sufficient. But requirement 5's stale-state correction and my P2 findings mean Codex must first act (adjudicate + correct state + design successor). Since the successor cannot be safely launched until then, CHANGES_REQUESTED is defensible and safer. I'll state rationale: 证据可支持后继选择，但文档状态记录与一次性消耗记录缺失、候选能力前置条件缺失，故 CHANGES_REQUESTED；非 BLOCKED_BY_MISSING_EVIDENCE，因为决定性事实均可从 pins 复现。
+
+Write it.

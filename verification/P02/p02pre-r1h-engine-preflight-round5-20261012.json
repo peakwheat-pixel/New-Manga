@@ -1,0 +1,156 @@
+{
+  "task": "P02PRE-R1H",
+  "phase": "AC4_ROUND5_NO_PROFILE_ENGINE_CAPABILITY_PREFLIGHT",
+  "result": "PASS",
+  "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "argumentList": [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-Command",
+    "$ErrorActionPreference='Stop'; $mods=@(Get-Module -ListAvailable Microsoft.PowerShell.Utility,Microsoft.PowerShell.Security | ForEach-Object {[ordered]@{name=$_.Name;version=$_.Version.ToString();path=$_.Path}}); $cmds=[ordered]@{}; foreach($n in @('Get-FileHash','Get-Acl')){$c=Get-Command -Name $n -ErrorAction Stop; $cmds[$n]=[ordered]@{commandType=$c.CommandType.ToString();source=$c.Source;version=[string]$c.Version}}; $o=[ordered]@{version=$PSVersionTable.PSVersion.ToString();edition=$PSVersionTable.PSEdition;psHome=$PSHOME;modulePath=$env:PSModulePath;languageMode=$ExecutionContext.SessionState.LanguageMode.ToString();modules=$mods;commands=$cmds}; ConvertTo-Json -InputObject $o -Depth 8 -Compress"
+  ],
+  "workingDirectory": "G:\\CODEX\\New Manga",
+  "pid": 45772,
+  "startedUtc": "2026-10-11T23:21:43.9371218Z",
+  "finishedUtc": "2026-10-11T23:21:44.4330409Z",
+  "exitCode": 0,
+  "checks": {
+    "exitZero": true,
+    "stderrEmpty": true,
+    "version": true,
+    "edition": true,
+    "psHome": true,
+    "languageMode": true,
+    "utilityModule": true,
+    "securityModule": true,
+    "getFileHash": true,
+    "getAcl": true,
+    "noProfile": true
+  },
+  "childResult": {
+    "version": "7.6.6",
+    "edition": "Core",
+    "psHome": "C:\\Program Files\\PowerShell\\7",
+    "modulePath": "C:\\Users\\49745\\Documents\\PowerShell\\Modules;C:\\Program Files\\PowerShell\\Modules;c:\\program files\\powershell\\7\\Modules;C:\\Users\\49745\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules",
+    "languageMode": "FullLanguage",
+    "modules": [
+      {
+        "name": "Microsoft.PowerShell.Security",
+        "version": "7.0.0.0",
+        "path": "C:\\program files\\powershell\\7\\Modules\\Microsoft.PowerShell.Security\\Microsoft.PowerShell.Security.psd1"
+      },
+      {
+        "name": "Microsoft.PowerShell.Utility",
+        "version": "7.0.0.0",
+        "path": "C:\\program files\\powershell\\7\\Modules\\Microsoft.PowerShell.Utility\\Microsoft.PowerShell.Utility.psd1"
+      }
+    ],
+    "commands": {
+      "Get-FileHash": {
+        "commandType": "Cmdlet",
+        "source": "Microsoft.PowerShell.Utility",
+        "version": "7.0.0.0"
+      },
+      "Get-Acl": {
+        "commandType": "Cmdlet",
+        "source": "Microsoft.PowerShell.Security",
+        "version": "7.0.0.0"
+      }
+    }
+  },
+  "childStdout": {
+    "bytes": 991,
+    "sha256": "C90A8D900E73B1CD7B4DCBF7DCF21BF623BFFCF6105E37FE0E1DBEDF7E1A46E8",
+    "raw": "{\"version\":\"7.6.6\",\"edition\":\"Core\",\"psHome\":\"C:\\\\Program Files\\\\PowerShell\\\\7\",\"modulePath\":\"C:\\\\Users\\\\49745\\\\Documents\\\\PowerShell\\\\Modules;C:\\\\Program Files\\\\PowerShell\\\\Modules;c:\\\\program files\\\\powershell\\\\7\\\\Modules;C:\\\\Users\\\\49745\\\\Documents\\\\WindowsPowerShell\\\\Modules;C:\\\\Program Files\\\\WindowsPowerShell\\\\Modules;C:\\\\WINDOWS\\\\system32\\\\WindowsPowerShell\\\\v1.0\\\\Modules\",\"languageMode\":\"FullLanguage\",\"modules\":[{\"name\":\"Microsoft.PowerShell.Security\",\"version\":\"7.0.0.0\",\"path\":\"C:\\\\program files\\\\powershell\\\\7\\\\Modules\\\\Microsoft.PowerShell.Security\\\\Microsoft.PowerShell.Security.psd1\"},{\"name\":\"Microsoft.PowerShell.Utility\",\"version\":\"7.0.0.0\",\"path\":\"C:\\\\program files\\\\powershell\\\\7\\\\Modules\\\\Microsoft.PowerShell.Utility\\\\Microsoft.PowerShell.Utility.psd1\"}],\"commands\":{\"Get-FileHash\":{\"commandType\":\"Cmdlet\",\"source\":\"Microsoft.PowerShell.Utility\",\"version\":\"7.0.0.0\"},\"Get-Acl\":{\"commandType\":\"Cmdlet\",\"source\":\"Microsoft.PowerShell.Security\",\"version\":\"7.0.0.0\"}}}\r\n"
+  },
+  "childStderr": {
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "raw": ""
+  },
+  "directParser": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "errorCount": 0,
+      "errors": []
+    }
+  ],
+  "inputPinsBefore": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 37658,
+      "sha256": "8FCAE13E983355719FB68E95AFC0047E0F9260D1281AC9CDBA83D2B470C9E887"
+    }
+  ],
+  "inputPinsAfter": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 37658,
+      "sha256": "8FCAE13E983355719FB68E95AFC0047E0F9260D1281AC9CDBA83D2B470C9E887"
+    }
+  ],
+  "inputPinsStable": true,
+  "mainIndexBefore": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+  "mainIndexAfter": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+  "controlledStatusBefore": {
+    "records": 987,
+    "bytes": 65998,
+    "sha256": "290F9059F1D6E920F44CACC781CB86CB9C78634BF8695C32C7A93E8C28EC7FD2"
+  },
+  "controlledStatusAfter": {
+    "records": 987,
+    "bytes": 65998,
+    "sha256": "290F9059F1D6E920F44CACC781CB86CB9C78634BF8695C32C7A93E8C28EC7FD2"
+  },
+  "integrityStable": true,
+  "captureInvoked": false,
+  "buildCargoInvoked": false,
+  "systemACInvoked": false,
+  "note": "No-profile capability discovery only."
+}

@@ -1,0 +1,13 @@
+# P02PRE-R1H Round6 Independent Review — Attempt 2
+
+Reviewer: `/root/p02_r1h_remediation_review` (non-author). Task=`P02PRE-R1H`. Fixed delivery branch/worktree/HEAD=`agent/codex/P02PRE-R1H` / `C:\Users\49745\.codex\worktrees\p02pre-r1h-codex` / `c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d`; base=`dd5d2e3bc8e0702da9d059131f6364a997897661`; parent matches base; tree=`96e7273ddd5fd27bee567bba27f19453cabe0842`.
+
+Review attempt 1 was blocked solely because root edited Task status after dispatch; its verdict is not approval. The later attempt-2 pin generator emitted JSON `null` due a bare PowerShell `false`; that invalid, undispatched artifact is preserved and pinned here for audit. The new attempt-2 pins were validated as JSON with 14 inputs, including the final Task and governance snapshot.
+
+Read the Task and pinned governance/manifest/evidence, prior blocked report, complete base-to-delivery diff, actual capture loop and Round6 Handoff. Independently assess the fix against the Task: exact approved AST indexes; rejection of extra or unknown indexes; preservation of fail-closed assertions and negative fixtures; scope and Handoff accuracy. Do not assume the Owner diagnosis or attempt-1 observations are correct; inspect the code and evidence yourself.
+
+Before and after the review, recompute all 14 file pins from `verification/P02/codex-p02pre-r1h-round6-review-pins-r3-20261012.json`. Also verify the candidate branch, HEAD, parent, tree, shared common-dir, clean controlled status and exact changed paths. If any frozen input or candidate state differs, stop and report `BLOCKED_BY_MISSING_EVIDENCE`; do not update pins during the review.
+
+This is read-only static review. Do not modify source, Task, manifest, Plan/STATUS/Index, evidence or any file except `G:\CODEX\New Manga\verification\P02\codex-subagent-p02pre-r1h-static-review-round6-r2-20261012.md`. Do not run Parser/selfcheck/fixtures, capture/getters/API, Build/Cargo, AC1–AC7, OS dynamic verification or Windows Sandbox. Root will run tests only after Review and separate Codex adjudication.
+
+Return verdict (`APPROVED_STATIC_CONTENT`, `CHANGES_REQUESTED`, `NOT_VERIFIED`, or `BLOCKED_BY_MISSING_EVIDENCE`), P0/P1/P2/P3 counts, findings with locations/triggers/impact/remediation, all pre/post pins, exact changed paths, coverage/limitations, and reviewer model/effort only if actually known. Static approval does not mean AC2, AC4, any Gate or runtime behavior passed.

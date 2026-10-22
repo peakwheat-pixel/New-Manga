@@ -1,0 +1,21 @@
+==========================================================
+P02 Probe Execution Log
+Date: 2026-10-09T17:10:41+08:00
+PowerShell: 5.1.26100.9549
+Worktree: G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38672473-exact
+Mode: Full Stage A
+LogFile: probe-execution-full.log
+Status: IN_PROGRESS
+==========================================================
+
+[UNHANDLED_EXCEPTION]
+Failed Step: Startup
+Failed Command:  
+Exception Type: System.Management.Automation.CommandNotFoundException
+Exception Message: The term 'python' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+Captured Process Output:
+UNAVAILABLE (exception occurred before process output stream could be captured)
+Stack Trace:
+at <ScriptBlock>, G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38672473-exact\verification\P02\run-webview.ps1: line 125
+Observed Child ExitCode: null (exception aborted execution before exit code could be observed)
+Status: FAILED

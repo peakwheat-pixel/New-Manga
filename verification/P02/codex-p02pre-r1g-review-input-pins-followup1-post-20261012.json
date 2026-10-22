@@ -1,0 +1,275 @@
+{
+  "artifact": "Codex post-dispatch evidence and invalidation record",
+  "date": "2026-10-12",
+  "task": "P02PRE-R1G",
+  "reviewAttempt": {
+    "reviewer": "DeepSeek Harness",
+    "sessionId": "session-d65775ad-9be3-4f16-892e-c08fb8c1c018",
+    "cliVersion": "0.2.0-rc.2",
+    "workingDirectory": "G:\\CODEX\\New Manga",
+    "expectedWorkingDirectory": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+    "workingDirectoryRule": "doc/09_COLLABORATION.md §6.1 requires dispatch from the reviewed linked worktree root",
+    "prompt": {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\dsh-p02pre-r1g-remediation-review-followup1-20261012.prompt.md",
+      "bytes": 7237,
+      "sha256": "3510E5B9C0CA57B0E9853E47281019B10E7DA6ECF39CEE5C4165FE09BE12E4CA"
+    },
+    "preDispatchPins": {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1g-review-input-pins-followup1-20261012.json",
+      "bytes": 4679,
+      "sha256": "46EC1777D269146CE8B902957F9ABFB98C10ADF871DC5A34710EE333D31FD14C"
+    },
+    "stdout": {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\dsh-p02pre-r1g-remediation-review-followup1-20261012.stdout.jsonl",
+      "bytes": 167850,
+      "sha256": "D8A5A1004BA5279B37AE211048B9B821E16F59D1B0A37F7FEE4096D45953842F",
+      "jsonlLines": 86,
+      "parsedEvents": 85,
+      "lastEventType": "tool_call",
+      "finalEventPresent": false
+    },
+    "stderr": {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\dsh-p02pre-r1g-remediation-review-followup1-20261012.stderr.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "exitMarker": {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\dsh-p02pre-r1g-remediation-review-followup1-20261012.exit",
+      "exists": false,
+      "actualDshExitCode": "NOT_OBSERVED"
+    },
+    "processStop": {
+      "reason": "Codex stopped exact DSH process tree after observing forbidden grep tool calls",
+      "pids": [
+        52472,
+        34048,
+        29612
+      ],
+      "remainingAtStop": 0
+    },
+    "trace": {
+      "toolCalls": 20,
+      "toolResults": 19,
+      "pendingCalls": 1,
+      "toolCounts": {
+        "grep": 4,
+        "read": 16
+      },
+      "calls": [
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\doc\\templates\\REVIEW.md",
+          "pattern": null,
+          "callId": "call_00_hf4rsjetkx8a0ggh34jwpw7r"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1G.md",
+          "pattern": null,
+          "callId": "call_01_ctvloz6pklebzi7drjj0qyvy"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-manifest-20261011.md",
+          "pattern": null,
+          "callId": "call_00_2e1yiq2ndijnzavyag4saa32"
+        },
+        {
+          "tool": "read",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-author-selfcheck-20261011.json",
+          "pattern": null,
+          "callId": "call_00_hgjs1opqcy6h9addtzijy3sc"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-adjudication-20261012.md",
+          "pattern": null,
+          "callId": "call_01_8ud9z5yys4oen6xgzmdxphx6"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-remediation-review-adjudication-20261012.md",
+          "pattern": null,
+          "callId": "call_00_eury876qz3ku1jau5lpymdbd"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-argumentlist-delivery-adjudication-20261012.md",
+          "pattern": null,
+          "callId": "call_01_xwrtkmi4kehld247g6vbqxzt"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1g-review-input-pins-followup1-20261012.json",
+          "pattern": null,
+          "callId": "call_00_ss4w83226nc7rpx140vhpy12"
+        },
+        {
+          "tool": "read",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-antigravity-handoff-20261011.md",
+          "pattern": null,
+          "callId": "call_01_iwoqwp2pk8e4jv75xi27rkhc"
+        },
+        {
+          "tool": "read",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+          "pattern": null,
+          "callId": "call_00_59or2ee62upsvdyf9em6dy20"
+        },
+        {
+          "tool": "read",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+          "pattern": null,
+          "callId": "call_00_tc5ff0xecr2kyhoh9wozkaqw"
+        },
+        {
+          "tool": "read",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+          "pattern": null,
+          "callId": "call_00_brm8k6wlu8ph7z7yu7wpxkwl"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+          "pattern": null,
+          "callId": "call_00_sxfy1qnbdw2ldqv5q6ka4gd8"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+          "pattern": null,
+          "callId": "call_00_ti89gktayds8iao98q550u7r"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+          "pattern": null,
+          "callId": "call_00_pqyw7k751tlwsuds6wgi0m41"
+        },
+        {
+          "tool": "read",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-manifest-20261011.md",
+          "pattern": null,
+          "callId": "call_00_7uos3ysnljomnyjzybk66dwc"
+        },
+        {
+          "tool": "grep",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+          "pattern": "^\\s*'(AGENTS\\.md|doc/|verification/[^']*)',?\\s*$",
+          "callId": "call_00_fvsvtr1q5iebarlq5zzfd74j"
+        },
+        {
+          "tool": "grep",
+          "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+          "pattern": "^\\s*'(AGENTS\\.md|doc/|verification/[^']*)',?\\s*$",
+          "callId": "call_01_v3uu8a5yudj4tedcnrsxlt2s"
+        },
+        {
+          "tool": "grep",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+          "pattern": "Start-Process|Invoke-Expression|Invoke-WebRequest|cmd\\.exe|python|cargo|Remove-Item|Set-Content|Out-File|Add-Content|\\[IO\\.File\\]::(Write|Delete|Move)|FileMode|RegistryKey|Set-Acl|New-Item|Get-Content|Copy-Item|Move-Item|\\.Arguments",
+          "callId": "call_00_rfk45vqejz5powfwf16wl4vg"
+        },
+        {
+          "tool": "grep",
+          "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+          "pattern": "Invoke-CapturedProcess|Invoke-Git |aclStability|stopReason|stopCategory",
+          "callId": "call_01_fd6nk5fkm6kep5jjg70qh8so"
+        }
+      ],
+      "pathsOutsidePromptTable": [
+        "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1g-review-input-pins-followup1-20261012.json"
+      ],
+      "containsFinalReview": false
+    },
+    "verdict": "NO_FINAL_VERDICT; INVALIDATED / NOT_A_REVIEW; NOT_ACCEPTED_FOR_AC4_RELEASE"
+  },
+  "postReviewPins": [
+    {
+      "key": "task",
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1G.md",
+      "bytes": 18910,
+      "sha256": "870278C6156A7AE08AAAB73AFC5A052E172EB8CC201B12CAFC9B52B16B80870A",
+      "matchesPre": true
+    },
+    {
+      "key": "manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-manifest-20261011.md",
+      "bytes": 17710,
+      "sha256": "B9A7546EE62246E530D2113FBBEB95369AC3E19DF2F410B315972C8C86EAFB55",
+      "matchesPre": true
+    },
+    {
+      "key": "candidate_script",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+      "bytes": 80593,
+      "sha256": "2CC9C49F0708B4D174749ACE5F3C92BCD6D6B2E2825CA908412BCE2B2436778F",
+      "matchesPre": true
+    },
+    {
+      "key": "author_selfcheck",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-author-selfcheck-20261011.json",
+      "bytes": 2462,
+      "sha256": "016FA5BA0FCA16FCDB63D62CD0BAF5B723DE5AEF0A6B392DA13C41D88230AEB6",
+      "matchesPre": true
+    },
+    {
+      "key": "owner_handoff",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-antigravity-handoff-20261011.md",
+      "bytes": 22604,
+      "sha256": "2996A3D05E9010C73F7D57B7249532EB3B33FE071E071FA009968B38DFE1D716",
+      "matchesPre": true
+    },
+    {
+      "key": "prior_review_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-adjudication-20261012.md",
+      "bytes": 6144,
+      "sha256": "493A2FE96C4534ED000D7A055F7E3C54CC4A1DC2C15B9D7303FC692A440D1673",
+      "matchesPre": true
+    },
+    {
+      "key": "round1_remediation_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-remediation-review-adjudication-20261012.md",
+      "bytes": 4618,
+      "sha256": "E31D021C5888AFBBDD99700FF4B8A092535BCDA6D0E78B56D964D3BF9734F5B0",
+      "matchesPre": true
+    },
+    {
+      "key": "round1_post_review_pin_evidence",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1g-review-input-pins-remediation-20261012.json",
+      "bytes": 4796,
+      "sha256": "4C0F166343F9A59B904A6D1E0BB1105D6AA8FA61494672C4C927DFEFBC4209CF",
+      "matchesPre": true
+    },
+    {
+      "key": "owner_delivery_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-argumentlist-delivery-adjudication-20261012.md",
+      "bytes": 4541,
+      "sha256": "9C99E69BB3B0BD849796C96455996BC901AD7760F40A233F123F065B70D15A04",
+      "matchesPre": true
+    },
+    {
+      "key": "review_template",
+      "path": "G:\\CODEX\\New Manga\\doc\\templates\\REVIEW.md",
+      "bytes": 3915,
+      "sha256": "048DD2C001BC16CE68B46460C2D23AA32BA1119091CA1E2ABA3EE4EE63ED4762",
+      "matchesPre": true
+    },
+    {
+      "key": "predecessor_script",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+      "bytes": 67582,
+      "sha256": "5A3FE118A8758CCDF0BEDBE170D31B34DA6C338101096EAA825DE80DF70E8316",
+      "matchesPre": true
+    },
+    {
+      "key": "predecessor_manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-manifest-20261011.md",
+      "bytes": 49783,
+      "sha256": "F91AF7B1785B77A57CEEAFE0FFD879345CF361FD85A5E147CD970CF5EF43717B",
+      "matchesPre": true
+    }
+  ],
+  "allPrePinsMatchPost": true,
+  "pathPolicyNote": "No observed read/grep path named .tmp.driveupload. This does not imply or claim any query of that path; Codex did not access it."
+}

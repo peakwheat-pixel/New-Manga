@@ -1,0 +1,3 @@
+Command attempt: Python subprocess invoked `dsh --profile headless --json -` by name.
+Result: exit 1 before DSH process creation; Python raised `FileNotFoundError: [WinError 2]` because `dsh` resolves as a PowerShell external script/shim and is not a directly executable process name for Python subprocess.
+No DSH session ID was created; no stdout/stderr artifact or review exists for this attempt. Corrected invocation uses the resolved npm `dsh.cmd` through `cmd.exe` and preserves UTF-8 prompt bytes on stdin.

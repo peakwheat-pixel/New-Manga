@@ -1,0 +1,23 @@
+# P02PRE-R1F Review Round 5 follow-up #2 — Codex adjudication
+
+日期=`2026-10-11`；Task=`P02PRE-R1F`；Repo=`G:/CODEX/New Manga`；branch=`main`；HEAD=`cddff58469b56e181019a8ddfeade80684bc7eb9`。Codex 为 Owner/Integrator/Adjudicator，DeepSeek Harness 是非作者 Reviewer。此报告 adjudicate follow-up #2；不表示 Task 完成或任何 Gate PASS。
+
+## 独立 Review 与输入 pins
+
+- DSH session=`session-ead06978-467a-4a44-8ef7-7326c4224dee`；headless CLI exit=`0`；Decision=`CHANGES_REQUESTED`；counts=`P0/P1/P2/P3=0/0/1/1`。
+- stdout=`verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.stdout.md`（`15009 bytes / SHA-256 C66500FC35D91892CA16B26E688F816E248C302CC2F6FA25A8F445ECFB1D36B7`）；stderr=`verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.stderr.log`（`156116 bytes / SHA-256 618E2219B11BB58741F4D3B1C080A9720806FCB23EBBC1ED9FD38A0D2E43987A`）；exit=`verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.exit`（`3 bytes / SHA-256 13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354`，内容 `0\r\n`）。
+- Review prompt=`verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.prompt.md`（`3640 bytes / SHA-256 8BB93D6D72223DBC2A210A8003776A5617F9348D98D44502A64B062129030E6A`）。Reviewer 声明只读所列输入，没有执行命令、getter、hash、capture 或文件系统探测；本报告由 Codex 独立 adjudicate。
+- 本轮 candidate pins：Task=`doc/tasks/P02PRE-R1F.md`（`21292 bytes / SHA-256 0AD1C9D20E70E24F6AD9D0BA37B869C6E56BB6F6C9F11E81FE2B148B671BF202`）；manifest=`verification/P02/p02pre-r1f-manifest-20261011.md`（`21114 bytes / SHA-256 FC1EF72A2058CB410251C221DE70788A1879CB581D9FAEF549AB64B71CB2CD53`）；script=`verification/P02/p02pre-r1f-capture.ps1`（`65533 bytes / SHA-256 6B7556C784607B9CA52EC0879895676C13FE1AD67E0639A0C64269C700240CD1`）；current self-check=`verification/P02/p02pre-r1f-r5-followupfix2-selfcheck-20261011.json`（`2308 bytes / SHA-256 1696B781A65D87D210F4CA909891FAF7ACCD088167091DF1EEB381E41A2CF1E2`).
+
+## Findings adjudication
+
+| Finding | Codex decision | Evidence and boundary |
+|---|---|---|
+| R5F2-F1 / conditional P2: a protected path is described as not created and would stop capture | `CLEARED_BY_CURRENT_HOST_EVIDENCE`; not accepted as a code defect | The pinned wrapper-attempt report=`verification/P02/p02pre-r1f-followupfix-selfcheck-wrapper-attempt1-20261011.md` (`1179 bytes / SHA-256 CABB770B21701E96A083D1FB22E55122ECD89CCA5EE86114A5393697027D9703`) accurately says that the target was absent after that failed attempt. The reviewer did not probe current host state. Codex then queried exactly `verification/P02/p02pre-r1f-r5-followupfix-selfcheck-20261011.json`: `Test-Path -LiteralPath ... -PathType Leaf`=`true`; `Get-Item` reports `Length=2307`, `LastWriteTimeUtc=2026-10-11 09:18:56`, `Attributes=Archive`; `Get-FileHash -Algorithm SHA256`=`FE2277D0410B6E9CAB84D2CF1551FBCF4886B57A8DE9E4EAE2B305FDC44F237C`. Its JSON phase is `R5_FOLLOWUPFIX_ISOLATED_SELFCHECK` and its source pin is an older candidate. It is a later-created protected artifact, not the failed attempt output, and remains in the 72-path protected list. This point-in-time observation is not the pre/post baseline and must be repeated before capture; absent or changed hash means stop.
+| R5F2-F2 / P3: `63 keys / 63 unique` is incorrect | `ACCEPTED / CORRECTED IN CURRENT TASK AND MANIFEST` | Independent static recount of the unchanged script enumerates two protected-key arrays: `2 blocks / 72 keys / 72 unique / 0 duplicates`. The prior follow-up #1 adjudication retains its historical transcription `63`; this report supersedes that count for current status. Current Task and manifest state `72/72 unique`; script/self-check bytes are unchanged.
+
+## Codex adjudication and next release condition
+
+- Follow-up #2 remains `CHANGES_REQUESTED`; the conditional path-presence concern is answered with current exact-path evidence, and the count documentation is corrected. No script code was changed. Existing Windows PowerShell 5.1 self-check remains pinned to the same script bytes; it is not an independent Review or Gate PASS.
+- Updated candidate must receive non-author DeepSeek Harness Review Round 5 follow-up #3=`APPROVED`, followed by Codex pin/range adjudication. Only then may Codex run parser R8 parse-only. Capture remains blocked until R8 and a separate Codex pre-run adjudication rechecks identity, roots, refs, status/index, output absence, all 72 protected paths and their hashes.
+- `private_registry_absence=UNPROVABLE`; Technical Gate=`NOT_SATISFIED`; Owner Risk Acceptance=`APPROVED`; Gate Disposition=`WAIVED_BY_OWNER`; Build Authorization=`AUTHORIZED_WITH_EXCEPTION`; Build Gate=`BLOCKED`; Hard Build Barrier=`EFFECTIVE`; Build/Cargo=`NOT_RUN`; AC1–AC7=`BLOCKED / NOT_RUN`. The technical condition is unmet and user explicitly accepted residual risk; this remains distinct from test results.

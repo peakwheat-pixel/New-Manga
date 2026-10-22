@@ -1,0 +1,31 @@
+{
+  "task": "P02PRE-R1F",
+  "sourcePath": "verification/P02/p02pre-r1f-capture.ps1",
+  "sourceBytes": 60725,
+  "sourceSha256": "80C8BC311CE372832BF1D4567ABDCF7E8AA2D7296CBE339FE95BAD65D63E5216",
+  "parserExecutable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "parentPowerShellVersion": "7.6.6",
+  "parseResult": "PARSE_OK",
+  "selfCheckResult": "PASS",
+  "functions": [
+    "Test-UnreadUserDataStagingPath",
+    "Test-ExpectedDetachedBranchResult",
+    "Get-InventoryAction",
+    "Assert-InventoryPolicySelfCheck"
+  ],
+  "selfCheckOutputCount": 0,
+  "captureScriptInvoked": false,
+  "hostGetterInvoked": false,
+  "stdout": "P02PRE_R1F_R5_SELFCHECK=PASS;PS=5.1.26100.9549;BYTES=60725;SHA256=80C8BC311CE372832BF1D4567ABDCF7E8AA2D7296CBE339FE95BAD65D63E5216;FUNCTIONS=4;OUTPUT=0;CAPTURESCRIPTINVOKED=false;HOSTGETTERINVOKED=false\r\n",
+  "stdoutBase64": "UDAyUFJFX1IxRl9SNV9TRUxGQ0hFQ0s9UEFTUztQUz01LjEuMjYxMDAuOTU0OTtCWVRFUz02MDcyNTtTSEEyNTY9ODBDOEJDMzExQ0UzNzI4MzJCRjFENDU2N0FCRENGN0U4QUEyRDcyOTZDQkUzMzlGRTk1QkFENjVENjNFNTIxNjtGVU5DVElPTlM9NDtPVVRQVVQ9MDtDQVBUVVJFU0NSSVBUSU5WT0tFRD1mYWxzZTtIT1NUR0VUVEVSSU5WT0tFRD1mYWxzZQ0K",
+  "stdoutSha256": "B0EC70E9E922BA2453192F839D624FD55820130CF046962F837CECE14D2947D9",
+  "stderr": "",
+  "stderrBase64": "",
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "childInputSha256": "80C8BC311CE372832BF1D4567ABDCF7E8AA2D7296CBE339FE95BAD65D63E5216",
+  "childReportedBytes": 60725,
+  "parentRecheckSha256": "80C8BC311CE372832BF1D4567ABDCF7E8AA2D7296CBE339FE95BAD65D63E5216",
+  "parentRecheckBytes": 60725,
+  "exitCode": 0,
+  "sourceMatchesParentRecheck": true
+}

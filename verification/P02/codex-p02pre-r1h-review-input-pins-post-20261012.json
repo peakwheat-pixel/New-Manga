@@ -1,0 +1,58 @@
+{
+  "schema": "codex-review-input-pins/1",
+  "task": "P02PRE-R1H code safety review",
+  "phase": "post-review",
+  "reviewer": "Codex subagent fallback",
+  "reviewerTask": "/root/p02_r1h_review_fallback",
+  "candidateBranch": "agent/antigravity/P02PRE-R1H",
+  "candidateHead": "256e3ea622cba7a658020ddcf015b18894d88b38",
+  "baseHead": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+  "prePins": "verification/P02/codex-p02pre-r1h-review-input-pins-pre-20261012.json",
+  "matchCount": 7,
+  "allMatch": true,
+  "files": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 7290,
+      "sha256": "388AA4FEF2F47EE1B3EC88BEEBD5A51FCE8C568DE30C7AF12F1D0C6EAA3766F8",
+      "matchesPre": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "matchesPre": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-manifest-20261011.md",
+      "bytes": 26657,
+      "sha256": "1111EB70AC8BCCA4A2D3C236E653553D6A52EA99F626670AE18D7FDDCDD430B8",
+      "matchesPre": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 83834,
+      "sha256": "F21CDAF68D5B357C655BB0D80E026BD78F990301E2529A5A853605AD560FA6D0",
+      "matchesPre": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 14130,
+      "sha256": "CCA362B7AE5D201C4A49AF614B677864EB0C7251F8B8A5EB60B62B0DBDDAFA86",
+      "matchesPre": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 13266,
+      "sha256": "20C87254B60EA029E4FAF48EB66DF5ED09869A0767DE73F4608680F47D65F7C6",
+      "matchesPre": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-capture.ps1",
+      "bytes": 81991,
+      "sha256": "3C7D85AB3E20C023873197FE391B8F22DFB319038F43B7C554DC4F38927AADDF",
+      "matchesPre": true
+    }
+  ]
+}

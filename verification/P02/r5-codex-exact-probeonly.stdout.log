@@ -1,0 +1,39 @@
+==========================================================
+ P02 Real Workbench WebView2 Verification Harness (Stage A r5)
+ Worktree: G:\CODEX\New Manga.worktrees\P02-stage-a-validation-172eee84-probe
+ Mode: ProbeOnly
+==========================================================
+
+[Step 1: Environment Identity Probe] Executing: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-stage-a-validation-172eee84-probe\verification\P02\probes\env_identity_probe.py...
+=== P02 Read-Only Environment & Identity Report ===
+Host OS: Windows-11-10.0.26300-SP0
+WebView2 Detected Version: 154.0.4258.62
+WebView2 Verified Key: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+Node Runtime: v24.15.0
+npm Tool: 12.0.1
+Python Executable: C:\Python314\python.exe
+Git Branch: 
+Source HEAD: 172eee84240e101186b12f1aa09e8a2f9ec92d68
+Source Tree: a5b1af3e0708463df6865c8e49c9679e57e3fa85
+Git Clean Status: False
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
+Porcelain Status:
+M verification/P02/probe-execution-probeonly.log
+frontend/dist Exists: False
+cargo-target Exists: False
+Hard Build Barrier Active: True
+Barrier Rationale: tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree.
+
+[Step 2: TypeScript Protocol Check] Executing: node G:\CODEX\New Manga\apps\desktop\frontend\node_modules\typescript\bin\tsc --noEmit --strict --skipLibCheck --target ES2021 --lib ES2021,DOM G:\CODEX\New Manga.worktrees\P02-stage-a-validation-172eee84-probe\apps\desktop\frontend\e2e\workbench_driver_protocol.ts...
+
+[Step 3: Static Source Contract Probe] Executing: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-stage-a-validation-172eee84-probe\verification\P02\probes\static_control_probe.py...
+=== P02 Static Source Contract Control Report ===
+Overall Status: PASS
+WorkbenchPage Status: PASS
+  - resolveDebounceMs default 300: True
+  - regionDebounceMs default 300: True
+App Navigation Status: PASS
+  - app-nav testid present: True
+  - nav-workbench testid present: True
+
+ProbeOnly specified; Stage A preflight probes complete (EXIT=0).

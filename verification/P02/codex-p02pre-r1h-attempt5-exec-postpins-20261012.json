@@ -1,0 +1,141 @@
+{
+  "schema": "p02pre-r1h-attempt5-exec-review-postpins-v1",
+  "task": "P02PRE-R1H-R6-EXEC-A5",
+  "dshCliVersion": "0.2.0-rc.2",
+  "verdict": "APPROVED_STATIC_CONTENT",
+  "counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 2,
+    "P3": 3
+  },
+  "reviewerIndependentHashes": "NOT_VERIFIED",
+  "codexPrePostPins": "12/12 MATCH",
+  "liveBase": {
+    "branch": "main",
+    "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "tree": "e12bd627c307d4bf3c851dc09d0b82f97c86ec63",
+    "indexSha256": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68"
+  },
+  "inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H-R6-EXEC-A5.md",
+      "expectedBytes": 7637,
+      "actualBytes": 7637,
+      "expectedSha256": "696D2E690E931EF3178273366ED2E93DEDACC1DB1E2C1F57A29BC2F13652F971",
+      "actualSha256": "696D2E690E931EF3178273366ED2E93DEDACC1DB1E2C1F57A29BC2F13652F971",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H-R6-EXEC-A4.md",
+      "expectedBytes": 9568,
+      "actualBytes": 9568,
+      "expectedSha256": "71705868D52296F49CAD441DEBE2301468A067E320E6101F0DBF8961E2432D61",
+      "actualSha256": "71705868D52296F49CAD441DEBE2301468A067E320E6101F0DBF8961E2432D61",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "expectedBytes": 65067,
+      "actualBytes": 65067,
+      "expectedSha256": "66C65AFAA7EF615D29B6BBA8D5C1E58BA7F506C7785191C7E2F8CF9D4F7D7144",
+      "actualSha256": "66C65AFAA7EF615D29B6BBA8D5C1E58BA7F506C7785191C7E2F8CF9D4F7D7144",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "expectedBytes": 4760,
+      "actualBytes": 4760,
+      "expectedSha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "actualSha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "expectedBytes": 43464,
+      "actualBytes": 43464,
+      "expectedSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "actualSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "expectedBytes": 11228,
+      "actualBytes": 11228,
+      "expectedSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "actualSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt5-20261012.ps1",
+      "expectedBytes": 43464,
+      "actualBytes": 43464,
+      "expectedSha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10",
+      "actualSha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt5-20261012.md",
+      "expectedBytes": 11503,
+      "actualBytes": 11503,
+      "expectedSha256": "3BA69EA42DC8E4CA1AF725292E21FBBFD700D12C9FCC24D950B290BA1456763C",
+      "actualSha256": "3BA69EA42DC8E4CA1AF725292E21FBBFD700D12C9FCC24D950B290BA1456763C",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+      "expectedBytes": 2283,
+      "actualBytes": 2283,
+      "expectedSha256": "2E3286776ED369A704DC12D41A22771BA0E4E09B081B8982A2DE8C7958416F15",
+      "actualSha256": "2E3286776ED369A704DC12D41A22771BA0E4E09B081B8982A2DE8C7958416F15",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-attempt4-review-adjudication-20261012.md",
+      "expectedBytes": 6063,
+      "actualBytes": 6063,
+      "expectedSha256": "05FDE48CD1AA2C4B5DDCEF107AA18D6FDDE7458FE9D1A4EAB8C9C7F41259351C",
+      "actualSha256": "05FDE48CD1AA2C4B5DDCEF107AA18D6FDDE7458FE9D1A4EAB8C9C7F41259351C",
+      "match": true
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt4-integration-verify-20261012.json",
+      "expectedBytes": 4400,
+      "actualBytes": 4400,
+      "expectedSha256": "76431EBDA71DE0E654709FDF4AAAFB4FA234C70EBA07FD2C82F08AF74A6C45CD",
+      "actualSha256": "76431EBDA71DE0E654709FDF4AAAFB4FA234C70EBA07FD2C82F08AF74A6C45CD",
+      "match": true
+    },
+    {
+      "path": "doc/09_COLLABORATION.md",
+      "expectedBytes": 19131,
+      "actualBytes": 19131,
+      "expectedSha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D",
+      "actualSha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D",
+      "match": true
+    }
+  ],
+  "reviewOutputs": [
+    {
+      "path": "verification/P02/dsh-p02pre-r1h-attempt5-exec-review-20261012.stdout.jsonl",
+      "bytes": 11387,
+      "sha256": "3DD4753A0B31C38A5B8079FF93918B8C91FBCED9BE9AF5AB33523997F969B45A"
+    },
+    {
+      "path": "verification/P02/dsh-p02pre-r1h-attempt5-exec-review-20261012.stderr.log",
+      "bytes": 32423,
+      "sha256": "1220B09F5D808845BBC6E80592D279978562AF958A4078F0D3D5C6DDEC79C61D"
+    },
+    {
+      "path": "verification/P02/dsh-p02pre-r1h-attempt5-exec-review-20261012.exit",
+      "bytes": 7,
+      "sha256": "19EAF43821A7660EC323A87C8457BF74823BEB296C39F5E01AA8A683AA50F061"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-attempt5-exec-review-20261012.md",
+      "bytes": 11387,
+      "sha256": "3DD4753A0B31C38A5B8079FF93918B8C91FBCED9BE9AF5AB33523997F969B45A"
+    }
+  ],
+  "methodDeviation": "DSH attempted host pwsh/Get-FileHash orchestration, but SetNamedSecurityInfoW failed with Win32 5 before the command ran; no independent input hashes were obtained. The read-only content review completed; no successful read outside pinned inputs or repository write was reported."
+}

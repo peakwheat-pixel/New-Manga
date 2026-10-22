@@ -1,0 +1,42 @@
+{
+  "task": "P02PRE-R1F",
+  "phase": "R5_FOLLOWUPFIX_ISOLATED_SELFCHECK",
+  "sourcePath": "verification/P02/p02pre-r1f-capture.ps1",
+  "sourceBytes": 65530,
+  "sourceSha256": "3B143481726246C9A57CC35468DFF28A7B4D7BF1E2CA94FEF7F24E754DFD32A3",
+  "parentEngine": "7.6.6",
+  "childExecutable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "childEngine": "Windows PowerShell",
+  "childEngineVersion": "5.1.26100.9549",
+  "childArguments": [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-EncodedCommand"
+  ],
+  "childExitCode": 0,
+  "parseResult": "PARSE_OK",
+  "parseErrorCount": 0,
+  "selectedFunctions": [
+    "Test-UnreadUserDataStagingPath",
+    "Test-SafeRepositoryRelativePath",
+    "Get-LinkTypeEvidence",
+    "Get-InventoryAction",
+    "Test-ExpectedDetachedBranchResult",
+    "Assert-InventoryPolicySelfCheck",
+    "Assert-CommandSerializationSelfCheck"
+  ],
+  "selfCheckResult": "PASS",
+  "selfCheckOutputCount": 0,
+  "childStdoutBytes": 610,
+  "childStdoutSha256": "70E8A69A9F96CA63A4BB01B2E92070926029F7C2353C3A50EEBF1457245FF1B0",
+  "childStdoutBase64": "eyJlbmdpbmUiOiJXaW5kb3dzIFBvd2VyU2hlbGwiLCJlbmdpbmVWZXJzaW9uIjoiNS4xLjI2MTAwLjk1NDkiLCJzb3VyY2VCeXRlcyI6NjU1MzAsInNvdXJjZVNoYTI1NiI6IjNCMTQzNDgxNzI2MjQ2QzlBNTdDQzM1NDY4REZGMjhBN0I0RDdCRjFFMkNBOTRGRUY3RjI0RTc1NERGRDMyQTMiLCJwYXJzZVJlc3VsdCI6IlBBUlNFX09LIiwicGFyc2VFcnJvckNvdW50IjowLCJzZWxlY3RlZEZ1bmN0aW9ucyI6WyJUZXN0LVVucmVhZFVzZXJEYXRhU3RhZ2luZ1BhdGgiLCJUZXN0LVNhZmVSZXBvc2l0b3J5UmVsYXRpdmVQYXRoIiwiR2V0LUxpbmtUeXBlRXZpZGVuY2UiLCJHZXQtSW52ZW50b3J5QWN0aW9uIiwiVGVzdC1FeHBlY3RlZERldGFjaGVkQnJhbmNoUmVzdWx0IiwiQXNzZXJ0LUludmVudG9yeVBvbGljeVNlbGZDaGVjayIsIkFzc2VydC1Db21tYW5kU2VyaWFsaXphdGlvblNlbGZDaGVjayJdLCJzZWxmQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImZhaWx1cmUiOm51bGwsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg==",
+  "childStderrBytes": 0,
+  "childStderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "childStderrBase64": "",
+  "sourceHashMatchedBetweenParentAndChild": true,
+  "captureScriptInvoked": false,
+  "hostGetterInvoked": false,
+  "registryOrAclWriteInvoked": false,
+  "createdUtc": "2026-10-11T09:18:56.9404062Z"
+}

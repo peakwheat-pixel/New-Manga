@@ -1,0 +1,187 @@
+{
+    "task":  "P02PRE-R1F",
+    "manifest":  "verification/P02/p02pre-r1f-manifest-20261011.md",
+    "t0Utc":  "2026-10-11T14:17:31.4544035Z",
+    "t0StopwatchTicks":  1664412211508,
+    "command":  "Windows PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File verification/P02/p02pre-r1f-capture.ps1",
+    "cwd":  "G:\\CODEX\\New Manga",
+    "process":  {
+                    "id":  15640,
+                    "startTimeUtc":  "2026-10-11T14:17:31.1547594Z",
+                    "executablePath":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                    "powerShellVersion":  "5.1.26100.9549",
+                    "hostName":  "ConsoleHost"
+                },
+    "identity":  {
+                     "name":  "HOME-MY\\49745",
+                     "sid":  "S-1-5-21-2196946971-914346751-4210154634-1001",
+                     "authenticationType":  "CloudAP",
+                     "impersonationLevel":  "None",
+                     "isSystem":  false,
+                     "isAdministrator":  false,
+                     "whoami":  {
+                                    "executable":  "C:\\Windows\\System32\\whoami.exe",
+                                    "arguments":  "/all",
+                                    "exitCode":  0,
+                                    "stdout":  "\r\n用户信息\r\n----------------\r\n\r\n用户名        SID                                          \r\n============= =============================================\r\nhome-my\\49745 S-1-5-21-2196946971-914346751-4210154634-1001\r\n\r\n\r\n组信息\r\n-----------------\r\n\r\n组名                                   类型   SID                                                                                                          属性                          \r\n====================================== ====== ============================================================================================================ ==============================\r\nMandatory Label\\Medium Mandatory Level 标签   S-1-16-8192                                                                                                                                \r\nEveryone                               已知组 S-1-1-0                                                                                                      必需的组, 启用于默认, 启用的组\r\nNT AUTHORITY\\本地帐户和管理员组成员    已知组 S-1-5-114                                                                                                    只用于拒绝的组                \r\nHOME-MY\\docker-users                   别名   S-1-5-21-2196946971-914346751-4210154634-1006                                                                必需的组, 启用于默认, 启用的组\r\nBUILTIN\\Administrators                 别名   S-1-5-32-544                                                                                                 只用于拒绝的组                \r\nBUILTIN\\Users                          别名   S-1-5-32-545                                                                                                 必需的组, 启用于默认, 启用的组\r\nNT AUTHORITY\\INTERACTIVE               已知组 S-1-5-4                                                                                                      必需的组, 启用于默认, 启用的组\r\nCONSOLE LOGON                          已知组 S-1-2-1                                                                                                      必需的组, 启用于默认, 启用的组\r\nNT AUTHORITY\\Authenticated Users       已知组 S-1-5-11                                                                                                     必需的组, 启用于默认, 启用的组\r\nNT AUTHORITY\\This Organization         已知组 S-1-5-15                                                                                                     必需的组, 启用于默认, 启用的组\r\nMicrosoftAccount\\497457839@qq.com      用户   S-1-11-96-3623454863-58364-18864-2661722203-1597581903-2125972117-2565484365-1866217827-321735973-1492340561 必需的组, 启用于默认, 启用的组\r\nNT AUTHORITY\\本地帐户                  已知组 S-1-5-113                                                                                                    必需的组, 启用于默认, 启用的组\r\nLOCAL                                  已知组 S-1-2-0                                                                                                      必需的组, 启用于默认, 启用的组\r\nNT AUTHORITY\\云帐户身份验证            已知组 S-1-5-64-36                                                                                                  必需的组, 启用于默认, 启用的组\r\n\r\n\r\n特权信息\r\n----------------------\r\n\r\n特权名                        描述                 状态  \r\n============================= ==================== ======\r\nSeShutdownPrivilege           关闭系统             已禁用\r\nSeChangeNotifyPrivilege       绕过遍历检查         已启用\r\nSeUndockPrivilege             从扩展坞上取下计算机 已禁用\r\nSeIncreaseWorkingSetPrivilege 增加进程工作集       已禁用\r\nSeTimeZonePrivilege           更改时区             已禁用\r\n\r\n",
+                                    "stdoutTextEncoding":  "gb2312",
+                                    "stdoutTextCodePage":  936,
+                                    "textDecodeNote":  "Console.OutputEncoding snapshot for display only; raw bytes are authoritative.",
+                                    "stdoutBase64":  "DQrTw7un0MXPog0KLS0tLS0tLS0tLS0tLS0tLQ0KDQrTw7unw/sgICAgICAgIFNJRCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0KPT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCmhvbWUtbXlcNDk3NDUgUy0xLTUtMjEtMjE5Njk0Njk3MS05MTQzNDY3NTEtNDIxMDE1NDYzNC0xMDAxDQoNCg0K1+nQxc+iDQotLS0tLS0tLS0tLS0tLS0tLQ0KDQrX6cP7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDA4NDNICAgU0lEICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIMr00NQgICAgICAgICAgICAgICAgICAgICAgICAgIA0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gPT09PT09ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCk1hbmRhdG9yeSBMYWJlbFxNZWRpdW0gTWFuZGF0b3J5IExldmVsILHqx6kgICBTLTEtMTYtODE5MiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQpFdmVyeW9uZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDS0daq1+kgUy0xLTEtMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgILHY0Oi1xNfpLCDG9NPD09rErMjPLCDG9NPDtcTX6Q0KTlQgQVVUSE9SSVRZXLG+tdjVyrunus253MDt1LHX6bPJ1LEgICAg0tHWqtfpIFMtMS01LTExNCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDWu9PD09q+3L74tcTX6SAgICAgICAgICAgICAgICANCkhPTUUtTVlcZG9ja2VyLXVzZXJzICAgICAgICAgICAgICAgICAgILHww/sgICBTLTEtNS0yMS0yMTk2OTQ2OTcxLTkxNDM0Njc1MS00MjEwMTU0NjM0LTEwMDYgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgsdjQ6LXE1+ksIMb008PT2sSsyM8sIMb008O1xNfpDQpCVUlMVElOXEFkbWluaXN0cmF0b3JzICAgICAgICAgICAgICAgICCx8MP7ICAgUy0xLTUtMzItNTQ0ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgINa708PT2r7cvvi1xNfpICAgICAgICAgICAgICAgIA0KQlVJTFRJTlxVc2VycyAgICAgICAgICAgICAgICAgICAgICAgICAgsfDD+yAgIFMtMS01LTMyLTU0NSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICCx2NDotcTX6SwgxvTTw9PaxKzIzywgxvTTw7XE1+kNCk5UIEFVVEhPUklUWVxJTlRFUkFDVElWRSAgICAgICAgICAgICAgINLR1qrX6SBTLTEtNS00ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgsdjQ6LXE1+ksIMb008PT2sSsyM8sIMb008O1xNfpDQpDT05TT0xFIExPR09OICAgICAgICAgICAgICAgICAgICAgICAgICDS0daq1+kgUy0xLTItMSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgILHY0Oi1xNfpLCDG9NPD09rErMjPLCDG9NPDtcTX6Q0KTlQgQVVUSE9SSVRZXEF1dGhlbnRpY2F0ZWQgVXNlcnMgICAgICAg0tHWqtfpIFMtMS01LTExICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICCx2NDotcTX6SwgxvTTw9PaxKzIzywgxvTTw7XE1+kNCk5UIEFVVEhPUklUWVxUaGlzIE9yZ2FuaXphdGlvbiAgICAgICAgINLR1qrX6SBTLTEtNS0xNSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgsdjQ6LXE1+ksIMb008PT2sSsyM8sIMb008O1xNfpDQpNaWNyb3NvZnRBY2NvdW50XDQ5NzQ1NzgzOUBxcS5jb20gICAgICDTw7unICAgUy0xLTExLTk2LTM2MjM0NTQ4NjMtNTgzNjQtMTg4NjQtMjY2MTcyMjIwMy0xNTk3NTgxOTAzLTIxMjU5NzIxMTctMjU2NTQ4NDM2NS0xODY2MjE3ODI3LTMyMTczNTk3My0xNDkyMzQwNTYxILHY0Oi1xNfpLCDG9NPD09rErMjPLCDG9NPDtcTX6Q0KTlQgQVVUSE9SSVRZXLG+tdjVyrunICAgICAgICAgICAgICAgICAg0tHWqtfpIFMtMS01LTExMyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICCx2NDotcTX6SwgxvTTw9PaxKzIzywgxvTTw7XE1+kNCkxPQ0FMICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgINLR1qrX6SBTLTEtMi0wICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgsdjQ6LXE1+ksIMb008PT2sSsyM8sIMb008O1xNfpDQpOVCBBVVRIT1JJVFlc1MbVyrunye233dHp1qQgICAgICAgICAgICDS0daq1+kgUy0xLTUtNjQtMzYgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgILHY0Oi1xNfpLCDG9NPD09rErMjPLCDG9NPDtcTX6Q0KDQoNCszYyKjQxc+iDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCszYyKjD+yAgICAgICAgICAgICAgICAgICAgICAgIMPoyvYgICAgICAgICAgICAgICAgINe0zKwgIA0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gPT09PT09PT09PT09PT09PT09PT0gPT09PT09DQpTZVNodXRkb3duUHJpdmlsZWdlICAgICAgICAgICC52LHVz7XNsyAgICAgICAgICAgICDS0b3708MNClNlQ2hhbmdlTm90aWZ5UHJpdmlsZWdlICAgICAgIMjGuf2x6cD6vOyy6SAgICAgICAgINLRxvTTww0KU2VVbmRvY2tQcml2aWxlZ2UgICAgICAgICAgICAgtNPAqdW5zuvJz8ihz8K8xsvju/og0tG9+9PDDQpTZUluY3JlYXNlV29ya2luZ1NldFByaXZpbGVnZSDU9rzTvfizzLmk1/e8ryAgICAgICDS0b3708MNClNlVGltZVpvbmVQcml2aWxlZ2UgICAgICAgICAgILj8uMTKscf4ICAgICAgICAgICAgINLRvfvTww0KDQo=",
+                                    "stdoutSha256":  "25C641BAA11A2D597E70DDB3A7A76ADBD1F1574BF81C0450BB768973A3000EB0",
+                                    "stderr":  "",
+                                    "stderrBase64":  "",
+                                    "stderrSha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                                    "processId":  51556
+                                }
+                 },
+    "repository":  {
+                       "main":  {
+                                    "name":  "main",
+                                    "root":  "G:\\CODEX\\New Manga",
+                                    "commands":  {
+
+                                                 },
+                                    "fileInventory":  [
+
+                                                      ],
+                                    "linkInventory":  [
+
+                                                      ],
+                                    "candidateCount":  0,
+                                    "candidateCountKnown":  false,
+                                    "processedCount":  0,
+                                    "regularFileHashCount":  0,
+                                    "skippedSymlinkCount":  0,
+                                    "unreadUserDataCount":  0,
+                                    "firstUnreadUserDataPath":  null,
+                                    "omittedCount":  null,
+                                    "firstBlockingPath":  "G:\\CODEX\\New Manga\\.git\\index",
+                                    "errorOperation":  "Get-FileRecord(.git/index)",
+                                    "error":  "无法将“Get-FileHash”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正确，然后再试一次。",
+                                    "gitMetadata":  [
+
+                                                    ],
+                                    "state":  "GIT_INDEX_PREHASH_INVALID",
+                                    "rootPathChain":  {
+                                                          "state":  "PRESENT",
+                                                          "queriedPath":  "G:\\CODEX\\New Manga",
+                                                          "components":  [
+                                                                             {
+                                                                                 "path":  "G:\\",
+                                                                                 "fullName":  "G:\\",
+                                                                                 "attributes":  "Hidden, System, Directory",
+                                                                                 "reparsePoint":  false
+                                                                             },
+                                                                             {
+                                                                                 "path":  "G:\\CODEX",
+                                                                                 "fullName":  "G:\\CODEX",
+                                                                                 "attributes":  "Directory",
+                                                                                 "reparsePoint":  false
+                                                                             },
+                                                                             {
+                                                                                 "path":  "G:\\CODEX\\New Manga",
+                                                                                 "fullName":  "G:\\CODEX\\New Manga",
+                                                                                 "attributes":  "ReadOnly, Directory",
+                                                                                 "reparsePoint":  false
+                                                                             }
+                                                                         ]
+                                                      },
+                                    "gitDirPathChain":  {
+                                                            "state":  "PRESENT",
+                                                            "queriedPath":  "G:\\CODEX\\New Manga\\.git",
+                                                            "components":  [
+                                                                               {
+                                                                                   "path":  "G:\\",
+                                                                                   "fullName":  "G:\\",
+                                                                                   "attributes":  "Hidden, System, Directory",
+                                                                                   "reparsePoint":  false
+                                                                               },
+                                                                               {
+                                                                                   "path":  "G:\\CODEX",
+                                                                                   "fullName":  "G:\\CODEX",
+                                                                                   "attributes":  "Directory",
+                                                                                   "reparsePoint":  false
+                                                                               },
+                                                                               {
+                                                                                   "path":  "G:\\CODEX\\New Manga",
+                                                                                   "fullName":  "G:\\CODEX\\New Manga",
+                                                                                   "attributes":  "ReadOnly, Directory",
+                                                                                   "reparsePoint":  false
+                                                                               },
+                                                                               {
+                                                                                   "path":  "G:\\CODEX\\New Manga\\.git",
+                                                                                   "fullName":  "G:\\CODEX\\New Manga\\.git",
+                                                                                   "attributes":  "ReadOnly, Hidden, Directory",
+                                                                                   "reparsePoint":  false
+                                                                               }
+                                                                           ]
+                                                        },
+                                    "gitMetadataBefore":  {
+                                                              "path":  "G:\\CODEX\\New Manga\\.git\\index",
+                                                              "state":  "QUERY_ERROR",
+                                                              "errorType":  "System.Management.Automation.CommandNotFoundException",
+                                                              "error":  "无法将“Get-FileHash”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正确，然后再试一次。",
+                                                              "pathChain":  [
+                                                                                {
+                                                                                    "path":  "G:\\",
+                                                                                    "fullName":  "G:\\",
+                                                                                    "attributes":  "Hidden, System, Directory",
+                                                                                    "reparsePoint":  false
+                                                                                },
+                                                                                {
+                                                                                    "path":  "G:\\CODEX",
+                                                                                    "fullName":  "G:\\CODEX",
+                                                                                    "attributes":  "Directory",
+                                                                                    "reparsePoint":  false
+                                                                                },
+                                                                                {
+                                                                                    "path":  "G:\\CODEX\\New Manga",
+                                                                                    "fullName":  "G:\\CODEX\\New Manga",
+                                                                                    "attributes":  "ReadOnly, Directory",
+                                                                                    "reparsePoint":  false
+                                                                                },
+                                                                                {
+                                                                                    "path":  "G:\\CODEX\\New Manga\\.git",
+                                                                                    "fullName":  "G:\\CODEX\\New Manga\\.git",
+                                                                                    "attributes":  "ReadOnly, Hidden, Directory",
+                                                                                    "reparsePoint":  false
+                                                                                },
+                                                                                {
+                                                                                    "path":  "G:\\CODEX\\New Manga\\.git\\index",
+                                                                                    "fullName":  "G:\\CODEX\\New Manga\\.git\\index",
+                                                                                    "attributes":  "Archive",
+                                                                                    "reparsePoint":  false
+                                                                                }
+                                                                            ]
+                                                          }
+                                }
+                   },
+    "environment":  {
+
+                    },
+    "paths":  {
+
+              },
+    "wer":  {
+
+            },
+    "protectedHashes":  {
+
+                        },
+    "classifications":  {
+                            "hostIdentity":  "PASS_WITH_EVIDENCE",
+                            "private_registry_absence":  "UNPROVABLE",
+                            "profile_api_path_and_store":  "REQUIRES_ACTIVE_TEST",
+                            "lpac_write_and_child_closure":  "REQUIRES_ACTIVE_TEST",
+                            "product_build_and_ac1_ac7":  "NOT_RUN",
+                            "process_and_path_access_closure":  "UNPROVABLE_NOT_MONITORED_IN_R1F",
+                            "tempCache":  "UNPROVABLE",
+                            "werEffectivePolicy":  "UNPROVABLE",
+                            "repositoryProtectedInventory":  "UNPROVABLE"
+                        },
+    "errors":  [
+
+               ],
+    "stopReason":  "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED"
+}

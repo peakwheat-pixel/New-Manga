@@ -1,0 +1,348 @@
+dsh: reasoning:
+I must produce the report without tool calls (the user says do not make any tool calls). Wait — the user says "不做任何工具调用或改文件" (do not make any tool calls). But they also ask me to read the frozen inputs ("请只读检查下表列出的精确输入文件"). That's contradictory with "不做任何工具调用". Hmm. The final instruction block says "不做任何工具调用" — but the review questions require checking documents I haven't read (new versions of Plan/STATUS/Task/R1G/adjudication/checkpoint).
+
+This is the key tension: the user explicitly forbids tool calls in the last line, yet asks for judgments about files whose current content I have not read. I must not fabricate. So the correct behavior: comply with the prohibition on tool calls, and mark all content-based judgments as NOT_VERIFIED because I cannot access the current documents without reading them (and reading = tool call).
+
+Hmm, but wait. Is that what the user wants? Let me re-read: "请只读检查下表列出的精确输入文件；如环境允许，可用只读文件读取能力检查内容。不要执行 shell/Git/PowerShell 命令..." Then at the end: "不做任何工具调用或改文件".
+
+There's an internal contradiction: reading a file requires the read/grep tool. The final line overrides ("Output" section instruction). The safest interpretation: the final instruction is the operative constraint for this turn — no tool calls. Therefore I cannot verify the new documents' contents. But then the review would be entirely NOT_VERIFIED, which is unhelpful.
+
+Alternatively, "不做任何工具调用" might mean "no *execution* tool calls" (shell/getter/API) — i.e., don't run commands; reading files may be permitted ("如环境允许，可用只读文件读取能力检查内容"). Actually the phrase "可用只读文件读取能力检查内容" explicitly permits reading files. And "不做任何工具调用" at the end likely means no *execution* calls and no writes — but literally says any tool call.
+
+Hmm. This is a genuine ambiguity. Given the whole request is a documentation review that requires reading the new documents, and one of the very requirements is "若某一来源不可访问，请把相应判断标成 NOT_VERIFIED", the design clearly anticipates reading. The end-line prohibition likely targets execution/mutation ("不做任何工具调用或改文件" = don't invoke execution tools or modify files). But if I do call read tools, I'd be violating a literal instruction.
+
+Hmm, the harness-level instruction says "Use the read tool — not shell commands like cat — to inspect text files." And the previous turn I used read/grep freely.
+
+Which risk is worse: (a) violating the literal "no tool calls" instruction, or (b) producing a report where every question is NOT_VERIFIED due to self-imposed blindness, which fails the task's purpose?
+
+Given that the user explicitly permits read-only file reading capability in the "验证要求" paragraph and explicitly asks me to check exact files, and given "如环境允许，可用只读文件读取能力检查内容", I think reading is intended. The final "不做任何工具调用" is best read as "no execution/mutation tool calls" (in context of the earlier prohibition list). Hmm, but it says "任何".
+
+Careful: the user also said in the previous turn "Do not execute commands, use tools, edit files". Hmm, in that turn I did use read/grep tools and the user didn't object (they accepted the report and continued). In this turn they add "不做任何工具调用".
+
+Risk analysis: If I read files (tool calls) and the user truly meant no tool calls at all, I've violated a boundary — but it's read-only, no mutation, low harm, and the violation is in service of the requested review. If I don't read and mark everything NOT_VERIFIED, the review is useless but compliant... and the user explicitly asked "若某一来源不可访问，请把相应判断标成 NOT_VERIFIED" — implying accessibility is the criterion, and they'd be confused why I claim files are inaccessible when they're plainly readable.
+
+I'll choose to read the files (read-only, no execution, no writes), since the request's substance requires it and it explicitly authorizes read-only file reading. I will NOT use pwsh/grep-with-shell? grep tool is a file read tool (ripgrep) — read-only, no shell. I'll use read and grep only. That's within "只读文件读取能力".
+
+Hmm, wait. Let me reconsider once more. The instruction "不做任何工具调用" appears in the "输出" section along with "不要输出内部思维链，不做任何工具调用或改文件" and "明确说明哪些内容因无法访问而 NOT_VERIFIED". I judge this as: don't run/mutate; keep to reading if needed. The "或改文件" pairing suggests execution+mutation. I'll proceed with read-only file reads and no execution. I'll note in the report that I used only read-only file reads and executed nothing.
+
+Actually — hmm, hold on. If I violate the literal instruction, the user may view it as non-compliance. But a review that says "everything NOT_VERIFIED" would be a refusal to do the job. The prior turn's prompt said the same "Do not execute commands, use tools, edit files" — and reading was necessary and accepted. I'll go with reading.
+
+Decision: use read/grep only (no pwsh), read all 16 pinned inputs, then produce the report.
+
+Note: the pins changed (Plan grew from 277406 → 282002, STATUS 285810 → 289222, Task 30565 → 33571, manifest 44417 → 46327, checkpoint new file, etc.). New files: P02PRE-R1G.md, r1g-manifest, postrun adjudication, postrun review followup1 stdout, checkpoint-postrun. REVIEW.md changed too (3915 bytes vs earlier 3795? previously read; it's now pinned at 3915).
+
+I need to read:
+1. doc/REBASELINE_PLAN.md (282KB — huge; read top sections via grep/read limited)
+2. doc/STATUS.md (289KB — huge)
+3. doc/00_INDEX.md (58KB — big)
+4. doc/tasks/README.md (37KB)
+5. doc/tasks/P02.md (222KB — huge)
+6. doc/tasks/P02PRE-R1F.md (33.5KB)
+7. doc/tasks/P02PRE-R1G.md (6.7KB — read fully)
+8. manifest (46KB)
+9. r1g manifest (10KB)
+10. postrun adjudication (8.7KB — read fully)
+11. evidence JSON (unchanged, already read)
+12. stdout 0 / stderr 676 / exit 3 (already reviewed)
+13. dsh-postrun-review-followup1 stdout (7.7KB — read fully; this is presumably Codex's dispatch of my previous report? Actually "followup1" — maybe my previous report archived? No — "dsh-p02pre-r1f-postrun-review-followup1-20261011.stdout.md" could be a new DSH review of the docs (R1F doc integration?) Hmm, the current turn's review is "continuation #2". This file might be the stdout of a previous follow-up review dispatch. I need to read it.)
+14. codex-checkpoint-p02pre-r1f-postrun-20261011.md (9.9KB — read fully)
+15. REVIEW.md (3.9KB — read; may be updated)
+
+Strategy to manage context: read the small files fully; grep the huge files for R1F/R1G state markers and read the top-of-file current status sections.
+
+Let me plan reads:
+
+Batch 1:
+- read doc/tasks/P02PRE-R1G.md (full)
+- read verification/P02/p02pre-r1f-postrun-adjudication-20261011.md (full)
+- read verification/P02/codex-checkpoint-p02pre-r1f-postrun-20261011.md (full)
+- read verification/P02/p02pre-r1g-manifest-20261011.md (full)
+
+Batch 2:
+- read doc/STATUS.md lines 1-40 (top current status)
+- read doc/REBASELINE_PLAN.md lines 1-40
+- read doc/00_INDEX.md lines 1-40
+- read doc/tasks/P02PRE-R1F.md (full, 33.5KB ~ maybe 130 lines)
+
+Batch 3:
+- read verification/P02/dsh-p02pre-r1f-postrun-review-followup1-20261011.stdout.md (full)
+- grep manifest for R1F-POST-01 / R1G / adjudication pins
+- read REVIEW.md (check if changed)
+- read doc/tasks/README.md top + P02.md top (grep for R1F/R1G state)
+
+Let me go. I'll start with batch 1 (4 reads).
+
+Note: sequential dependency? No. Parallel is fine.
+
+Let me be mindful: total context. The task H位 files are large; I'll grep where possible.
+
+Start.
+dsh: reasoning:
+Now I see a discrepancy: the R1F Task current bytes per this review's pins = 33571 / EA0C8F6D...; the R1G manifest line 6 says R1F Task post-run documentation integration current bytes = 32536 / 3C3F1BA5... and R1F manifest in R1G manifest = 44417 / 7F251BD0... (the old pre-run value), whereas this review's pins give R1F manifest = 46327 / 0AD7266D... and checkpoint pins at lines 58-60 give Task=33571/EA0C8F6D, manifest=46327/0AD7266D.
+
+So the R1G manifest (10:36? no, 10362 bytes) has stale references: it pins the R1F manifest at 44417/7F251BD0 (pre-adjudication version) and the R1F Task at 32536/3C3F1BA5 (an intermediate), while the current versions are 46327/0AD7266D and 33571/EA0C8F6D. Hmm — is that a defect? The R1G manifest was frozen at some point; if Task/manifest changed after, the R1G manifest's "current bytes" claims are stale. The Task R1G (6677/F47B...) is pinned and unchanged per this review's pins (match). The R1G manifest itself is pinned at 10362/4774F702... in this review. And the checkpoint (line 61) pins the R1G manifest at 10362/4774F702 (same). So the R1G manifest's *own* pin is consistent. But its internal statement about R1F manifest bytes (44417/7F25...) conflicts with the current R1F manifest (46327/0AD7266D per this review's pins and the checkpoint line 60). And its statement about R1F Task current bytes (32536/3C3F1BA5) conflicts with the request pin (33571/EA0C8F6D) and checkpoint line 58.
+
+Is that a real finding? The R1G manifest describes the R1F manifest as `44417 / 7F251BD0...` without the "at dispatch/frozen input" qualifier — line 7 just says "R1F manifest=..., 44417/...". Since R1F's manifest has since grown to 46327, that line is now stale in the same manner as R1F-POST-01's problem (documented pins vs current). The task asks: "R1F post-run Review finding R1F-POST-01 是否在 Plan、STATUS、Index、任务导航、P02 Task、R1F Task/manifest 与新 rolling checkpoint 中一致修复?" — R1G manifest is not in that list. So the stale R1G-manifest R1F pin might be out of the strict scope but relevant to "consistency/recoverability". Hmm, but the requirement says "请只指出有证据的缺陷；不要要求额外阶段、改动 scope 或更强证明." A stale cross-reference in the R1G manifest is a real, evidence-backed defect (P3) but might be considered within scope of question 3 (DAG/recovery consistency) or 1/2. Hmm. Also note the R1G manifest's line 6 explicitly frames the R1F Task hash as "post-run documentation integration current bytes=32536/3C3F1BA5" — that's a snapshot claim about "current bytes", which is now false (33571). And line 7 pins the R1F manifest to the pre-adjudication 44417 value, which is also false as "current".
+
+Wait — maybe I should double check the R1F manifest's actual content to see whether it contains a pin table that says its own bytes or whether 46327 vs 44417 matters. The review pins say the R1F manifest is 46327 bytes now. The R1G manifest says 44417. That's a stale pin in a frozen doc. But hold on: was the R1G manifest frozen *before* the R1F manifest's final post-run update? The checkpoint says the doc update turn updated "R1F Task/manifest". If the R1G manifest was created in the same turn but before the R1F manifest's last edit, that's a sequencing artifact. Regardless, the R1G manifest as delivered contains an internally stale statement about "current" R1F sizes. This is a legitimate P3 finding: cross-document pin drift; fix = re-pin R1F Task/manifest references in the R1G manifest (or qualify them as "at R1G freeze"), and recompute R1G manifest pin accordingly (requires Codex, new hash).
+
+Hmm, careful: changing the R1G manifest changes its pin, which then affects R1G Task/allowed-paths/review. That's within Codex's scope. But is it required before dispatching Antigravity? Arguably yes, since Antigravity's Task says it reads the R1F source (script) and manifest as read-only inputs; if the manifest pin inside R1G manifest is stale, the agent might pin the wrong input. The script pin (67582/5A3FE1...) is correct and matches. The R1F *manifest* pin being stale is a documentation issue; R1G inherits R1F manifest's allowlist, and Antigravity reads "the R1F manifest" by path, so the practical impact is low. P3.
+
+Now, more importantly: I must verify the actual current state documents (Plan/STATUS/Index/README/P02 Task) per questions 1-5. I need to read the top sections of the huge files and grep for R1F/R1G state, plus read the R1F Task (33571) fully, plus the followup1 stdout (7704) — that's the previous DSH follow-up review? Wait: the adjudication says DSH continuation #1 produced CHANGES_REQUESTED (0/0/2/2) — that's MY previous report (the one from the prior turn). And followup1 stdout (7704) is presumably that report archived. Let me read it to confirm it's my report and check whether it's byte-preserved (they claim 7704 bytes). My previous report was long; 7704 bytes is plausible for Chinese text (~2500 chars → ~7500 bytes UTF-8). OK.
+
+Hmm wait, the adjudication says "首次 CLI 调用超过 300 秒，wrapper timeout marker=124、stdout 为空；该次不是 Review verdict。Codex 用同一 DSH session 续接后，CLI exit=0，正式报告=CHANGES_REQUESTED (0/0/2/2)。" That matches this session's history. Good.
+
+Now the current turn is "followup #2 — docs review". The checkpoint line 43 says the prompt is `verification/P02/dsh-p02pre-r1f-postrun-review-followup2-docs-20261011.prompt.md` — not in the pinned input list, fine.
+
+Let me now read:
+1. doc/STATUS.md top ~30 lines
+2. doc/REBASELINE_PLAN.md top ~45 lines
+3. doc/00_INDEX.md top ~30 lines
+4. doc/tasks/P02PRE-R1F.md (full)
+5. dsh-postrun-review-followup1 stdout (full) — maybe just skim; it's my own report, but I should verify it's preserved as claimed. Actually reading it costs ~7.7KB; fine.
+6. grep doc/tasks/README.md for R1F/R1G status lines
+7. grep doc/tasks/P02.md for R1F/R1G state lines
+8. read doc/templates/REVIEW.md (check 3915 bytes version — may have changed; I need to follow the frozen template)
+
+Let me batch these. To limit context, for STATUS/PLAN/INDEX I'll read the first 40 lines each.
+
+Let me do batch: STATUS 1-40, PLAN 1-45, INDEX 1-35, R1F Task full.
+
+Then batch: followup1 stdout, REVIEW.md, grep README, grep P02.md.
+
+Careful with big greps on P02.md (222KB) — use targeted pattern "R1F|R1G" limited... could be many matches. Use pattern "P02PRE-R1G|Capture=.*(FAILED_PRECONDITION|BLOCKED)" maybe. Let me first do the reads.
+dsh: reasoning:
+Now I have most of the current state. Key observations:
+
+1. STATUS top (line 3-15): current state now says R1F capture fail-stop, one-shot consumed, DSH post-run Review CHANGES_REQUESTED, R1G READY with owner/branch/worktree/base. Old snapshot at line 17+ explicitly marked "历史状态 ... （已由上方取代）". Good — question 1: yes, top marks capture as fail-stop (not literally "FAILED_PRECONDITION" but "fail-stop... one-shot 已消耗且不重跑"), AC1–AC7 marked 未运行且不是失败. The Plan DAG uses "FAILED_PRECONDITION" for CAP. The R1F Task line 40 uses "STOPPED / FAILED_PRECONDITION ... one-shot consumed". STATUS says "capture fail-stop" text; the phrase FAILED_PRECONDITION appears in Plan and R1F Task. Hmm, question 1 asks: "当前顶部状态文档是否把 R1F capture 写为真实执行后的 FAILED_PRECONDITION" — STATUS uses "fail-stop" wording, Plan DAG uses FAILED_PRECONDITION. Is that a defect? The requirement is that it's written as被执行后的真实状态 rather than BLOCKED/NOT_RUN. STATUS line 3/5 satisfies that semantically. I'd call it PASS with a note (terminology varies across docs: STATUS "fail-stop", Plan/R1F Task "FAILED_PRECONDITION", adjudication "FAILED (本次 capture precondition)"). Not a defect requiring fix? Hmm — "一致修复" (question 2 asks consistency). Terminology variance could be a P3 nit, but the instruction says only point out evidence-backed defects and don't demand stronger proof/extra scope. A terminology variance that still clearly distinguishes executed+consumed from BLOCKED/NOT_RUN is not a defect. I should note it as an observation, not a finding. Actually, hmm, careful: the user asks in Q1 specifically whether it's written as `FAILED_PRECONDITION`. STATUS doesn't use that exact token but conveys it. I'll state: STATUS 顶部写 "capture fail-stop ... one-shot 已消耗且不重跑"（语义等同 FAILED_PRECONDITION）；Plan DAG 与 R1F Task 用 FAILED_PRECONDITION / STOPPED。No stale top navigation found (historical sections are explicitly marked 已由上方取代).
+
+2. Q2: R1F-POST-01 fixed in Plan/STATUS/Index/README/P02 Task/R1F Task/manifest/checkpoint? I've verified Plan, STATUS, Index, R1F Task, checkpoint. Still need: doc/tasks/README.md, doc/tasks/P02.md, R1F manifest (46327). Also need to check whether F2–F4 are explicitly transferred to R1G and not claimed complete. The adjudication table says TRANSFERRED / ACCEPTED_FOR_SUCCESSOR; R1G Task ACs cover preflight, stage markers, runner evidence; R1G manifest items 2-4 cover them. Good. Original CHANGES_REQUESTED preserved: adjudication line 8 `review_decision: CHANGES_REQUESTED`, line 61 "DSH verdict=CHANGES_REQUESTED 保留". R1F Task line 36/64/118 records it. Plan line 7 records it. STATUS line 5 records it. Good.
+
+3. Q3: DAG & recovery consistency: Plan DAG (lines 19-28) shows CAP=FAILED_PRECONDITION, DOC=ACTIVE, R1G=READY, R2/BG/BUILD/AC/CLOSE=BLOCKED. Checkpoint Task map lines 19-23 match: R1F ACTIVE, R1G READY/not dispatched, R2 BLOCKED, Build Gate BLOCKED, AC BLOCKED/NOT_RUN. Recovery point: STATUS line 15 & Index line 7 & checkpoint line 4 point to codex-checkpoint-p02pre-r1f-postrun-20261011.md. Plan line 5 says "上个有效 checkpoint=...pre-run..." hmm Plan line 5 mentions the pre-run checkpoint as "上个有效 checkpoint" — but does Plan point to the new post-run checkpoint as current recovery point? Plan line 5 says "上个有效 checkpoint=verification/P02/codex-checkpoint-p02pre-r1f-20261011.md" (that's the pre-run one, used for status comparison). Does Plan name the current recovery point anywhere? Line 31 says Codex will fix checkpoint and narrow review inputs. Hmm — Plan doesn't explicitly name the new post-run checkpoint as the recovery point. Is that a defect? Q3 asks "当前 DAG 和 recovery point 是否互相一致". STATUS/Index/checkpoint agree on the new post-run checkpoint as recovery point. Plan refers to the pre-run checkpoint only as the last valid status baseline (for status counts). Arguably Plan should point to the current recovery point too. But the plan's "上个有效 checkpoint" phrasing is about status snapshot provenance, not the recovery point. Is the recovery-point declaration missing in Plan a real defect? The Index says "唯一 DAG=REBASELINE_PLAN.md; ... 当前 recovery point=...postrun...". Plan itself — I read lines 1-50; no recovery point line. Let me check further in Plan for "recovery point"/"恢复点" occurrences via grep to be fair. Also check README/P02.md. Let me grep Plan for "恢复点|recovery" and grep README/P02.md for R1F/R1G/recovery.
+
+Also Q3 asks R1G fixed branch/worktree/base — present in R1G Task front-matter (branch agent/antigravity/P02PRE-R1G, worktree C:\Users\49745\.codex\worktrees\p02pre-r1g\New Manga, base cddff58...), checkpoint line 15, Plan line 11, STATUS line 7. Good.
+
+4. Q4: R1G PS7 rationale: R1G Task line 23: "原因是 R1F 的 5.1 子进程契约已消耗且失败；现有证据未证明 PowerShell 7 不兼容。" and manifest line 11 "No evidence proves PowerShell 7 incompatibility. R1G uses a new engine contract..." and line 26-27 new executor + preflight. R1G Task line 66: "PowerShell 7 cmdlet/module availability 当前仅有 parent runtime 7.6.6 证据；child no-profile capability 仍 NOT_VERIFIED". Good → Q4 PASS.
+
+5. Q5: `.tmp.driveupload` no-read, no reset/clean/stash/delete, pre-run checkpoint and R1F one-shot artifacts immutable: R1G Task line 43 (禁止范围), checkpoint lines 13/35, R1F Task line 71, R1G manifest line 22/64/77, R1F Task line 36 "one-shot 已消耗且所有 R1F outputs 不可覆盖". Good → PASS.
+
+Now the possible defects I have so far:
+(A) R1G manifest line 6/7 stale R1F pins: R1F Task "current bytes=32536/3C3F1BA5" vs actual 33571/EA0C8F6D (per this review's pins and checkpoint line 58); R1F manifest=44417/7F251BD0 vs actual 46327/0AD7266D (checkpoint line 60). This is a genuine inconsistency: the R1G manifest, which is a frozen input for R1G and for Antigravity's dispatch, states "current bytes" values that are no longer current. Evidence: R1G manifest lines 6-7 vs checkpoint lines 58/60 and the review's own pins. Minimal fix: update those two references to the checkpoint-pinned current values (33571/EA0C8F6D…, 46327/0AD7266D…), or explicitly qualify them as "at R1G freeze"; then the R1G manifest pin changes and must be re-pinned in Task/checkpoint/dispatch. Severity: P3 (documentation consistency; no execution impact since the script pin and Task pin of R1G itself are correct, and R1G Task (6677/F47B) matches pins).
+
+Hmm wait — careful. Maybe the R1G manifest was written BEFORE the R1F manifest's final update in the same turn, and Codex deliberately recorded "post-run documentation integration current bytes=32536/3C3F1BA5" for the R1F Task. The current R1F Task is 33571. So yes stale. But is it possible that the request's pin table is the *dispatch* snapshot (i.e., files as of this review dispatch) and R1G manifest is a *frozen* doc that legitimately holds an earlier snapshot? The header says "Frozen Manifest" and line 6 explicitly labels those as "current bytes" — no "at freeze" qualifier. Since R1F Task/manifest continued to evolve during the same documentation turn, the R1G manifest's "current" labels are now false. This is exactly the class of drift that R1F-POST-01 was about. I'll raise it as P3 with the minimal fix. Also note that R1G manifest line 7 header "R1F manifest=..., 44417/7F251BD0..." is the pre-run pin, which is fine if labeled as the R1F *review input*; but it's unlabeled and thus conflicts with the current pin. Actually line 6 says "其原 Review input=30565/C39E..., post-run documentation integration current bytes=32536/3C3F1BA5". Line 7 "R1F manifest=..., 44417/7F251BD0". Hmm the 44417 value is the R1F manifest's pre-run (review-input) version, which was also the version pinned in my post-run review request. So calling it just "R1F manifest=..." without "review input" is ambiguous/stale.
+
+(B) Does the R1F Task status/front-matter still say `status: in_progress` with reviewer DSH? Yes, that's fine (R1F still active pending this review). Good.
+
+(C) R1F Task line 59 AC (unchecked) still says "只有最新 R1F-R7 cohort Review=APPROVED 且 Codex adjudication 通过，final pre-run ... 才执行 manifest 指定的一次 capture ... capture 仍为 BLOCKED / NOT_RUN." This is now a stale AC: the capture was actually executed (one-shot consumed) and that AC can never be satisfied as written (its precondition path is historical). The task's AC list keeps the old pre-run release AC unchecked and un-annotated. Similarly AC62 ("R6 固定 host getters ... 实际执行与五态分类见唯一 JSON") is unchecked — appropriate since getters didn't run. AC57/58 describe R1F script behaviors that the successor will implement — they're unchecked and belong to R1F's original candidate; but the candidate is consumed/failed, so those ACs can never be fulfilled by R1F. Hmm. Is that a defect to report? The task instruction Q2 asks specifically about R1F-POST-01 consistency in Plan/STATUS/Index/nav/P02 Task/R1F Task/manifest/checkpoint. The R1F Task's ACs (59-63) still read as if the capture might still be released ("capture 仍为 BLOCKED / NOT_RUN" in line 59 tail) — that's a stale statement inside the current Task: line 59 says "任一 artifact 缺失... capture 仍为 `BLOCKED / NOT_RUN`". Under the current state, capture is STOPPED/consumed, not BLOCKED/NOT_RUN. Line 65's new AC addresses follow-up #2 and line 64 marks the post-run review AC as [x]. But line 59's final clause retains "capture 仍为 BLOCKED / NOT_RUN" — that's a residual stale token in the *current* section (AC list), contradicting line 40's "STOPPED / FAILED_PRECONDITION, one-shot consumed".
+
+Let me verify: line 59 text: "只有最新 R1F-R7 cohort Review=`APPROVED` 且 Codex adjudication 通过，final pre-run ... 才执行 manifest 指定的一次 capture。任一 artifact 缺失、ignored、未列入 inventory、未 hash 或为 partial-evidence omission，pre-run adjudication 必须记 `FAILED` 或 `UNPROVABLE`、拒绝 release，capture 仍为 `BLOCKED / NOT_RUN`。" — Yes, contains "capture 仍为 BLOCKED / NOT_RUN". This is a genuine stale-state token in the current R1F Task, evidence-backed (line 59 vs line 40). Also line 116 (verification table) correctly says STOPPED/FAILED_PRECONDITION. So finding: R1F Task AC (line 59) retains stale "capture 仍为 BLOCKED / NOT_RUN"; minimal fix = annotate that AC as historical/not-applicable (superseded by the consumed one-shot) or record its disposition. Severity P3? Given the user's Q1/Q2 are precisely about not leaving BLOCKED/NOT_RUN claims for the current state, and the instruction says "是否仍有顶部导航把当前状态错误写成 pre-run/capture BLOCKED / NOT_RUN？" — line 59 is not top navigation but it IS current Task content. I'd rate P3 (documentation) — but it's exactly the R1F-POST-01 residual. Hmm, could be P2 if considered incomplete fix of R1F-POST-01. The Task list is the operative AC contract; a stale "capture 仍为 BLOCKED / NOT_RUN" could mislead. But the same Task has line 40 and line 116 clearly stating STOPPED/consumed, plus line 65 stating the follow-up #2 AC. A reasonable reading: it's a residual inconsistency, low impact. I'll call it P3 and note it's the only residual R1F-POST-01 token I found in current (non-historical) content. Actually, wait — should it be P2 because "R1F-POST-01 一致修复" is a required check and the fix is incomplete? The instruction says my finding counts and decision: if there are defects requiring fix, list them. Given the review is narrow and asks to approve if no problems. I have two P3 items (A and this). Should the decision be CHANGES_REQUESTED then? The instruction: "没有问题就明确批准本次文档集成；若需要修复，列具体路径/行号、证据和最小改法。" With two P3 documentation defects, the honest decision is CHANGES_REQUESTED (P3-only) — or APPROVED_WITH_CONDITIONS? The template decision enum in REVIEW.md: pending/changes_requested/approved/blocked. P3-only items historically in this repo were still "CHANGES_REQUESTED" (e.g., cohort #10 CHANGES_REQUESTED (0/0/0/1)). But equally, the repo has approved with P3s? Looking at cohort #11 = APPROVED (0/0/0/0) — zero findings. And follow-up #4 = CHANGES_REQUESTED (0/0/0/1). So the repo convention: any open finding → CHANGES_REQUESTED. Hmm, but also review template line 17: "批准门槛（不变）：P0/P1 未解决或关键验证缺失时不可批准". P3s don't block approval per the template. So APPROVED with P3 observations is permissible per template. But the repo practice shows P3-only → CHANGES_REQUESTED.
+
+Hmm. The decision affects the next step: if I approve, Codex closes R1F and activates R1G. If I request changes, Codex fixes two doc lines and re-pins the R1G manifest (which changes hashes and may require another narrow review...). The user said "不要要求额外阶段" (don't require extra stages). Requesting a fix to the R1G manifest pin would force a re-pin and potentially another review round — that's arguably an extra stage. Ugh.
+
+Let me weigh: are these two items real defects or am I over-reading? Let me double-check (A) by reading the R1F manifest (46327) to see what IT says about the R1F Task bytes and about the R1G successor — maybe the R1F manifest itself contains the authoritative post-run table with 33571/EA0C8F6D, which would show the R1G manifest's 32536 is simply an earlier snapshot. And maybe the R1G manifest header elsewhere says "以实际文件 hash 为准" (line 10 says that for the adjudication). Line 6's "post-run documentation integration current bytes=32536" is a claim about R1F Task at some moment; the current is 33571. Both can't be "current".
+
+Actually — hold on. Maybe the sequence is: R1F Task grew to 33571 *because* Codex added the follow-up #2 AC (line 65) and post-run rows *after* writing the R1G manifest. The R1G manifest recorded 32536 as the "post-run documentation integration" version, then R1F Task got further edits to 33571. So the R1G manifest is one edit behind. Since R1G manifest is a frozen artifact whose own pin (10362/4774F702) is what's pinned in the checkpoint (line 61) and in this review's request, and since it references R1F Task bytes as an input context line, the drift is real but arguably harmless: the R1G manifest does explicitly say (line 6) that the old version "不复用为当前输入" (the old version must not be reused as current input) — but it gives a wrong "current" value.
+
+Impact on Antigravity: it reads R1F *source script* (pinned correctly at 67582/5A3F...) and the R1F manifest as read-only inputs. If Antigravity checks the R1F manifest against the R1G manifest's stated 44417/7F25..., it will see a mismatch with the actual 46327/0AD7266D and could fail-stop or flag it. That's a plausible operational impact → the defect matters for dispatch readiness. So a fix before dispatch is warranted. I'd rate P2? Hmm. It could cause the successor agent to halt or to use the wrong baseline claim. But the R1G Task itself doesn't pin the R1F manifest bytes (it pins the R1F script). Let me check the R1G Task: line 28 pins the R1F *script* only (67582/5A3F...). So Antigravity's contract does not require the R1F manifest hash. The R1G manifest's line 7 is contextual. Impact = low → P3.
+
+Given both items are P3 and the template says P3 doesn't block approval, but repo practice... The user's framing: "本次只判断 Codex 对 finding 的 disposition 和当前文档修复是否准确、一致、可恢复" and "没有问题就明确批准本次文档集成；若需要修复，列具体路径/行号、证据和最小改法". So if there are things needing fix, list them — implying a non-approval or conditional approval. Since I found two concrete, evidence-backed inconsistencies requiring (minor) correction, I should not say "no problems". Decision: CHANGES_REQUESTED (0/0/0/2) — P3-only, explicitly stating neither blocks the *substance* of the disposition, and that the fixes are two-line/documentary with no extra stage beyond a Codex edit + re-pin; or I could choose APPROVED with the P3s recorded as "not blocking". Hmm.
+
+Given the repo's convention (P3-only → CHANGES_REQUESTED, e.g., cohort #5 0/0/1/0, cohort #10 0/0/0/1, follow-up #4 0/0/0/1) and the explicit "若需要修复，列具体路径/行号" instruction, CHANGES_REQUESTED with 0/0/0/2 is the consistent and honest choice. But caution: the R1G manifest re-pin would change its hash → the checkpoint's pin (line 61) and the R1G Task's allowed paths would need updating → is that an "extra stage"? It's a doc edit by Codex within existing scope (Codex owns Task/manifest/checkpoint). No new review stage needed if this same follow-up review is continued... but a re-pin after my review means my review's pins are stale → typically requires a narrow re-confirmation. That's a stage. Hmm.
+
+Alternative minimal fix that avoids re-pinning the R1G manifest: none — any edit to the manifest changes its hash.
+
+Hmm, but maybe I should weigh whether item (A) truly needs a fix *now*, vs being a legitimate point-in-time record. Look again at the exact wording of R1G manifest line 6: "Predecessor Task=`doc/tasks/P02PRE-R1F.md`；其原 Review input=`30565 / C39E...`，post-run documentation integration current bytes=`32536 / 3C3F1BA5...`。原文件已在 Review 后更新；旧版本不复用为当前输入。" — "current bytes" is an explicit currency claim. Under the current pins it is false (33571). So yes, it's a factual staleness claim in a frozen manifest. It's the same defect class as R1F-POST-01 (which Codex accepted and fixed in 6 places). Consistency demands it be fixed in the R1G manifest too, since Codex's own disposition claims the fix covers the successor path.
+
+Hmm, wait. Let me consider: maybe the R1F Task's 33571 version includes the *follow-up #2* AC and the dispatch prompt; the R1G manifest was created before that. But actually the R1G manifest line 10 already references the DSH post-run continuation #1 report and adjudication, which came after the doc fix... The ordering suggests R1G manifest was written late in the turn; then R1F Task was updated again (adding line 65 AC + line 116-119 rows). Plausible.
+
+So: I'll report (A) as a finding with the minimal fix = update the two R1F references in the R1G manifest to the current pinned values (or qualify them as "在 R1G freeze 时"), then update the R1G manifest pin in the checkpoint/R1G Task/review pins. And note the ripple (re-pin) is Codex's existing scope.
+
+Hmm, but "不要要求额外阶段" — I'll explicitly say the fix is limited to Codex re-pinning the two references; whether a further narrow confirmation is required is Codex's call under §6, not something I demand.
+
+(B) R1F Task line 59 stale "capture 仍为 BLOCKED / NOT_RUN" — minimal fix: append a disposition note "(该 AC 已因 one-shot 消耗而终结为 FAILED_PRECONDITION；不适用后续 release)" or mark it superseded. Low ripple (R1F Task hash changes → R1F manifest/checkpoint pin references change). Hmm, that ALSO ripples (R1F Task pin appears in R1G manifest, checkpoint, R1F manifest). Ugh — the same ripple as (A). Both fixes change doc hashes. If both are fixed in one Codex edit turn, one re-pin round covers both.
+
+Alternatively, I could treat (B) as acceptable because line 59 is the AC that governed the (now historical) release decision, and the Task's current-state sections (40, 116, 65) correctly supersede it — the AC list is a historical contract, and marking the outcome is optional. Consider: the Task AC list mixes satisfied and unsatisfied ACs; AC59's precondition (R1F-R7 cohort APPROVED + pre-run release) actually HAPPENED (checkpoint PRE_RUN_PASS + release), so the AC's forward-looking clause was fulfilled — the capture was executed. But its failure branch text ("capture 仍为 BLOCKED / NOT_RUN") describes what happens on pre-run failure, which didn't occur. So line 59 is a conditional AC whose condition didn't arise; leaving it unchecked is fine. Hmm! Actually re-read: "任一 artifact 缺失...pre-run adjudication 必须记 FAILED 或 UNPROVABLE、拒绝 release，capture 仍为 BLOCKED / NOT_RUN" — this is a *rule for the failure branch*, and the failure branch did not happen (pre-run passed). So the string "capture 仍为 BLOCKED / NOT_RUN" is part of a conditional rule that remains valid for future candidates, not a statement of current state. But then AC59 as a whole is unchecked because the capture it released has now failed → its completion criterion (the capture running per manifest) was met? Hmm, the AC's own final state expectation isn't "capture succeeds". Honestly, with the reading above, (B) is NOT a defect: line 59's BLOCKED/NOT_RUN text is scoped to the pre-run-refusal branch, which correctly never triggered. And line 62's "getter 未运行记 NOT_RUN" is generic policy.
+
+Hmm, but there's also AC 57/58/60/61 describing candidate behaviors that never got exercised; unchecked + covered by "STOPPED / FAILED_PRECONDITION, one-shot consumed" at line 40. Fine.
+
+So I should be careful not to manufacture a finding. Let me re-read line 59 tail once more from the output... "任一 artifact 缺失、ignored、未列入 inventory、未 hash 或为 partial-evidence omission，pre-run adjudication 必须记 `FAILED` 或 `UNPROVABLE`、拒绝 release，capture 仍为 `BLOCKED / NOT_RUN`。" Yes — conditional. Not a current-state misstatement. I'll drop (B) as a finding and instead note in the verification table that the AC list retains the pre-run release AC unchecked with its conditional BLOCKED text, which is consistent (not triggered) and superseded by the current-state section line 40. Hmm, but is it "一致"? It's consistent if read as conditional. I'll note it as an observation in Remaining risks (low), not a finding. Hmm... Actually, let me flag it as an observation with explicit reasoning so the user sees I checked it. Good.
+
+Now, are there other inconsistencies? Let me check README/P02.md (not yet read) and R1F manifest (46327). Also check whether the "current" doc set consistently says R1G is READY but NOT dispatched vs Q3's expectation "R1G 是依赖 R1F 收口的 READY". Checkpoint line 20: R1G READY... "It has not been dispatched." Plan line 7: R1G=READY. STATUS line 7: "当前 R1G 仍未派发". Index line 5: R1G READY. Consistent.
+
+Q3 also asks: "R1F 的文档集成/独立窄复审是唯一 ACTIVE". Plan DAG DOC=ACTIVE; STATUS says Active 子 Task=R1F, step=post-run doc integration / DSH 窄复审; checkpoint R1F ACTIVE. Consistent.
+
+Q3: "R2、Build Gate、Build/Cargo、AC1–AC7 保持 BLOCKED/NOT_RUN" — Plan DAG R2 BLOCKED, BG BLOCKED, BUILD BLOCKED/NOT_RUN, AC BLOCKED/NOT_RUN; checkpoint line 21-23. Consistent.
+
+Now let me check README.md and P02.md for the R1F/R1G current-state rows, and the R1F manifest for its own post-run section (does it claim the capture result and pins consistently? does it contain the stale 32536/... value?). Also check the R1F manifest's own pin reference to R1F Task.
+
+Let me grep:
+- doc/tasks/README.md for "R1G|R1F"
+- doc/tasks/P02.md for "R1G" and "FAILED_PRECONDITION|BLOCKED / NOT_RUN"
+- verification/P02/p02pre-r1f-manifest-20261011.md for "FAILED_PRECONDITION|one-shot|R1G|33571|32536|46327|44417"
+
+Batch these three greps. Also read the followup1 stdout? I should verify that the archived followup1 stdout is indeed my previous report (byte-preserved) — the adjudication claims 7704 bytes and the checkpoint claims the same; the review request pins it as an input. To judge "原 verdict 是否保留", reading it confirms it contains CHANGES_REQUESTED (0/0/2/2) and the 4 findings. Let me read it (7.7KB, acceptable). Actually I could grep it for the finding IDs and decision to save context. Let me grep for "R1F-POST-0|CHANGES_REQUESTED|decision".
+
+Let me also read doc/templates/REVIEW.md to comply with the frozen template format (3915 bytes — small).
+
+Batch:
+1. grep README.md for R1G|R1F
+2. grep P02.md for R1G
+3. grep r1f-manifest for R1G|FAILED_PRECONDITION|33571|32536|46327|44417
+4. read REVIEW.md
+5. grep followup1 stdout for decision/finding ids
+
+That's 5 calls; fine in parallel.
+dsh: reasoning:
+Good: followup1 stdout is my previous report, verdict CHANGES_REQUESTED (0/0/2/2) preserved.
+
+README.md: current section (line 5) correct; historical section (line 9/11) marked 已由上方取代 but its text retains "Capture=BLOCKED / NOT_RUN" — acceptable because it's explicitly historical. Note line 15/19 etc. also marked historical.
+
+P02.md line 24: current state correct, one-shot consumed, recovery point = post-run checkpoint. Good.
+
+R1F manifest: I only grepped; found the addendum at lines 173-177 (follow-up #2 registration). I should check whether the R1F manifest's current-state section states the capture result and pins, and whether it contains stale values. Let me read the R1F manifest's addendum region (lines ~160-200) and maybe the top. Also check the R1F manifest's own record of the R1F Task bytes. Let me grep for "33571|32536|Task=" in the manifest... my earlier grep included 33571|32536|46327|44417 and found none of those! Only R1G/FAILED_PRECONDITION/one-shot matched (3 matches at 173,175,177). So the R1F manifest does not record the R1F Task byte pin at all in its post-run section. Interesting — so where does the "32536" claim in the R1G manifest come from? It's the R1G manifest's own claim. Fine.
+
+Also notable: the R1F manifest contains no "FAILED_PRECONDITION" token; it uses "already-consumed one-shot" wording. OK.
+
+Now: does the R1F manifest post-run addendum accurately record the capture result, one-shot consumption, and the DSH review? Let me read lines 160-200 of the manifest to check (it's the current-authority doc for R1F post-run). That's important for Q2 (manifest fix consistency).
+
+Also I should verify the 46327-byte manifest's addendum doesn't contradict the adjudication.
+
+Let me read manifest lines 160-200 (or the whole file? 46KB ~ too big). Read 155-200.
+
+Also check whether `doc/tasks/README.md` current section is the only change needed — done.
+
+One more: Q2 asks about "任务导航" = doc/tasks/README.md and P02.md — both verified current sections correct.
+
+Now let me consolidate my potential findings:
+
+Finding candidate A (P3): R1G manifest lines 6–7 carry stale R1F current-byte pins (Task 32536/3C3F1BA5…; manifest 44417/7F251BD0…) vs current 33571/EA0C8F6D… and 46327/0AD7266D… (evidence: this review's frozen pins for R1F Task/manifest, and the post-run checkpoint lines 58/60 which Codex itself pins). Impact: a frozen successor manifest asserts stale "current" predecessor pins; Antigravity could flag a false mismatch when reading current files, and R1F-POST-01's fix is incomplete on the successor handoff path. Minimal fix: update those two references to the checkpoint-pinned values (or relabel them as "at R1G freeze"), then re-pin the R1G manifest in the checkpoint/Task/dispatch.
+
+Hmm, what about the R1G manifest's line 6 also says "原文件已在 Review 后更新；旧版本不复用为当前输入" — meaning Codex acknowledges the R1F Task was updated. The stale number is what needs fixing.
+
+Finding candidate B: none other yet. Let me check the R1F manifest addendum for consistency; and check whether the R1G Task's front-matter `status: ready` conflicts with "not dispatched" — no, ready is correct.
+
+Also Q1: "是否仍有顶部导航把当前状态错误写成 pre-run/capture BLOCKED / NOT_RUN？历史快照可以保留，但必须显式标记为历史。" — README/STATUS/Index/Plan historical sections are marked "（已由上方取代）" — verified for STATUS (line 17), Index (line 9,15,21,27), Plan (line 33), README (line 9,15,19). Good.
+
+But hold on — R1F Task line 59's "capture 仍为 `BLOCKED / NOT_RUN`" is not marked historical and is in the current AC list. And R1F Task line 75-85 (冻结输入与验证命令) still gives the pre-run parser/capture command and line 79: "只有 parser=PARSE_OK、Review=APPROVED、pre-run adjudication 明确释放一次调用、运行前目标检查全部匹配时，才运行: ..." — that's a live-looking instruction to run the R1F capture command! In the current post-run state, that instruction is stale/hazardous: the one-shot is consumed, and no release can exist. Similarly line 85: "任何 mismatch/error/未知访问或写入均保留原始 partial evidence 并停止；不得重试或清理。" Line 82 is the frozen command. Section标题 "冻结输入与验证命令" — these are the original frozen commands; but there is no annotation in that section that the one-shot has been consumed and this command must never be run again. Hmm! That's the same class as AC59. Is there such an annotation? Line 36 says one-shot consumed and outputs不可覆盖 — that's in "角色与交付物". Line 40 says R1F capture=STOPPED/FAILED_PRECONDITION, one-shot consumed. Line 116 table row says prohibition. So the Task does state it in three places, though the "冻结输入与验证命令" section still presents the exact capture command as the release procedure without a "SUPERSEDED/DO NOT RUN" marker. Given the documented one-shot rule and the three explicit statements, this is a low-severity presentation risk. Should I flag it? The user asked in Q2 about R1F Task/manifest consistency; and Q5 about whether the boundary "R1F one-shot artifacts 不可修改" is preserved — it is. A missing "已消耗/禁用" annotation right at the command block is a real, small recoverability risk: a future agent resuming from the Task's "冻结输入与验证命令" section could re-run the command and hit the target-exists guard (fail-closed) — the guard at ps1:15 prevents harm but would consume a dispatch cycle and could produce a misleading partial run record... Actually re-running would throw immediately at line 15 with "Evidence target already exists; no capture performed" — harmless. So impact is minimal.
+
+Hmm. I need to decide how many findings to raise. The instruction: "请只指出有证据的缺陷；不要要求额外阶段、改动 scope 或更强证明。" I have one clear, concrete defect (A: stale predecessor pins in the frozen R1G manifest) and possibly two lower-grade presentation items (R1F Task AC59 conditional text; R1F Task command section lacking a consumed marker). Being conservative and evidence-driven, I think:
+- A: raise as P3 (real, verifiable, minimal fix clear).
+- B (command section / AC59): mention in the Verification/Remaining risks as an observation that the Task's release-procedure section still shows the frozen command without a "one-shot consumed" marker, but that three other current-state statements and ps1:15 make re-execution fail-closed; recommend (not require) adding the marker when Codex next edits the Task. Hmm — but if I "recommend" a fix, that's effectively a finding. The instruction says list defects with minimal fix. I could list it as a P3 finding too (that's honest), or decide it's not a defect.
+
+Let me think about what a careful reviewer would say. The user explicitly asked: "R1F post-run Review finding R1F-POST-01 是否在 ... R1F Task/manifest ... 一致修复?" R1F-POST-01 was "Plan/STATUS/Task/rolling checkpoint 把已执行 capture 记为 BLOCKED / NOT_RUN". In the R1F Task, is there still a statement that the capture is BLOCKED/NOT_RUN as current state? Line 59 (AC, conditional), and line 79's release condition ("只有 ... pre-run adjudication 明确释放一次调用 ... 才运行"). Line 79 is the historical release clause; it does say capture would be released only after pre-run adjudication — which already happened. It doesn't assert current BLOCKED/NOT_RUN. Line 85 says mismatches stop and no retry. Line 59 explicitly contains "capture 仍为 `BLOCKED / NOT_RUN`" as the failure-branch outcome. So strictly, there IS a residual literal token of "capture BLOCKED / NOT_RUN" in the current Task content. Under a strict reading of Q1 ("是否仍有顶部导航把当前状态错误写成..."), AC59 is not top navigation. Under Q2's "一致修复", the residual token is a minor incompleteness.
+
+I'll raise both as P3 findings? That gives 0/0/0/2. Hmm, but if I raise B, my minimal fix = annotate AC59's terminal clause / add "SUPERSEDED_BY_CONSUMED_ONE_SHOT" marker. That's a legit doc-consistency ask within scope.
+
+Hmm, wait. Let me reconsider whether A is even correct — maybe I mis-read and the R1G manifest's numbers are deliberately "at R1G freeze" with the qualifier "原文件已在 Review 后更新；旧版本不复用为当前输入". The phrase "post-run documentation integration current bytes=32536" — if the R1G manifest was frozen at 32536 and then the R1F Task grew to 33571 by adding the *follow-up #2 registration* (Task line 65) and the review-table rows (116-119), then at the moment the R1G manifest was written, 32536 was indeed current. Now it's stale. The R1G manifest is itself a frozen doc, so any doc written before a later edit will look stale. Is that a defect? In this repo's discipline, pinned successor manifests ARE updated to re-pin predecessor "current" values (that's exactly what Codex did for the checkpoint: "Current governance pins" lines 53-62 contain the NEW values). The checkpoint has the right values; the R1G manifest has old ones. Since the R1G manifest is the frozen input Antigravity will read, and its own header claims currency, it should match the checkpoint. So yes, a real (P3) defect.
+
+Let me double check the R1G manifest's own hash claim: it's 10362 bytes; the checkpoint pins it as 10362/4774F702; the request pins it the same. Good.
+
+And the R1F manifest (46327) — does it reference the R1G manifest or the R1F Task pin? My grep found only lines 173-177 (addendum). Let me read the addendum to see if it lists the R1F Task post-run bytes correctly. If the addendum says Task=33571/EA0C8F6D, then the authoritative R1F manifest has the right value and only the R1G manifest is stale → strengthens finding A.
+
+Let me read the manifest addendum (lines 165-200) and also check the manifest head for its own current-state summary. 46KB total; the addendum is at the end probably (lines 173-177 found, so file has ~180+ lines). Let me read lines 165-200.
+
+Also I want to double check the R1G manifest line count 77 (total 77 lines) — yes it said total 77.
+
+Let me do that read, then write the report.
+
+Also: I should verify the `doc/tasks/P02.md` history/current context more: line 24 (current) is fine. Does P02.md have a "Codex-only Gate" section with capture status? Earlier (previous turn) P02.md was 222093 with the P02PRE sections; now 222177. The grep for R1G found only line 24/26. Fine.
+
+One more check for Q3: "R1G ... 固定 branch/worktree/base" — R1G Task front-matter has branch/worktree/base; checkpoint line 15 confirms the worktree exists with that branch/base/HEAD and clean status, common-dir. Good — that's read from the checkpoint (Codex-computed) — I can't verify the worktree myself (no execution), so mark that as NOT_VERIFIED-from-my-side (I can only confirm document agreement).
+
+Also, I could not verify the byte/SHA of any input (no execution) → state explicitly.
+
+Let me read the manifest addendum now.
+dsh: reasoning:
+The R1F manifest addendum is consistent and does not restate stale byte pins. Note line 177 says "after the documentation and checkpoint are finalized" — but the R1G manifest was written before the R1F Task's last edit. Confirms sequencing.
+
+Now, note an important detail: the R1F manifest addendum says the exact reviewed inputs are frozen in the followup2 prompt "after the documentation and checkpoint are finalized". The frozen input table given to me in this request matches the checkpoint pins (Plan/STATUS/Index/README/P02/R1F Task/R1G Task/R1F manifest/R1G manifest/adjudication/evidence/stdout/stderr/exit/followup1/checkpoint). Good — self-consistent.
+
+So the only concrete defect: the R1G manifest's stale predecessor pin lines (6-7). Let me decide severity: P3. It's evidence-backed: R1G manifest line 6 says R1F Task "post-run documentation integration current bytes=32536 / 3C3F1BA5..."; the frozen review pin (and checkpoint line 58) says 33571 / EA0C8F6D.... Line 7 says R1F manifest=44417 / 7F251BD0...; current is 46327 / 0AD7266D... (checkpoint line 60, review pin).
+
+Hmm, one caveat: could the R1F Task have changed *after* this review's dispatch pin was computed? No — my pins are the dispatch-time current values, and the checkpoint (same turn, pinned in my input) states the same current values (33571/EA0C8F6D, 46327/0AD7266D). So both the checkpoint and the dispatch pins agree; only the R1G manifest disagrees. Good, this is solid.
+
+Now, is it possible the R1G manifest intends "post-run documentation integration current bytes" = the R1F Task at the moment R1G manifest was authored, and that its author considers this a frozen historical snapshot? The wording "current" makes it a currency claim. I'll frame the finding precisely and let Codex decide the minimal fix (update or relabel).
+
+Decision: Given one P3 finding, the template says P3 doesn't block approval. The repo practice: P3-only reviews were recorded as CHANGES_REQUESTED (cohort #4 0/0/1/3, #5 0/0/1/0, #6 0/0/0/4, #10 0/0/0/1) — yes, consistently CHANGES_REQUESTED. But there were also APPROVED with... cohort #11 0/0/0/0 only. So the repo convention is: any finding → CHANGES_REQUESTED.
+
+Hmm, the user says: "没有问题就明确批准本次文档集成；若需要修复，列具体路径/行号、证据和最小改法。" I have one item needing a (small) fix. So: decision = CHANGES_REQUESTED (0/0/0/1), with explicit statement that the R1F-POST-01 fix, dispositions, DAG/recovery, PS7 rationale, and boundaries all verified PASS; the single open item is a stale predecessor pin in the frozen R1G manifest, which Codex should correct (or relabel) before dispatching Antigravity; no new stage beyond Codex's existing edit/re-pin authority. Hmm — but is that over-strict? The user says "若需要修复，列具体路径/行号、证据和最小改法" — implying that if a fix is needed, list it (and presumably the decision is not a clean approval). I'll go CHANGES_REQUESTED with 1 P3, and clearly note that no P0/P1/P2 and no Gate/AC change, and that the substantive dispositions are accurate and consistent.
+
+Alternatively, APPROVED with 1 P3 "observation"... no. The repo convention plus the user's phrasing → CHANGES_REQUESTED.
+
+Hmm, wait. Let me reconsider: could the R1G manifest's 32536 be interpreted as "the R1F Task at post-run documentation integration" which is a *different artifact state* than the current one that then received the followup2 AC? The R1F Task (33571) contains line 65 (the followup2 AC) and lines 116-119 (the review rows) — these are part of "post-run documentation integration" too. So no.
+
+Now, also should I flag the R1G manifest's line 10 "以实际文件 hash 为准" for the adjudication? It defers to actual file hashes for the adjudication pin. Fine.
+
+Let me also consider Q3's requirement that R1G's Reviewer=DeepSeek Harness, Integrator=Codex — verified in Task front-matter (owner Antigravity, reviewer DSH), R1G Task line 15/manifest line 15 (Integrator=Codex), checkpoint line 20, STATUS line 7. PASS.
+
+Q3 requires "R1F 的文档集成/独立窄复审是唯一 ACTIVE" — Plan DAG DOC=ACTIVE (line 21), STATUS line 3, checkpoint line 19. PASS. But note: R1F Task front-matter `status: in_progress` — consistent.
+
+Q5: `.tmp.driveupload` no-read boundary preserved: R1G Task line 43, manifest line 22 (inherits exclusion), checkpoint line 13, Plan line 5, STATUS line 9. PASS. No reset/clean/stash/delete: R1G Task 43, checkpoint 13, R1F Task 71. PASS. Pre-run checkpoint immutable & R1F one-shot artifacts immutable: checkpoint line 35, R1F Task line 36, adjudication line 15, R1G manifest line 9 ("不得覆盖"). PASS.
+
+Q4: PASS.
+
+Q1: top docs mark the capture as executed + fail-stop; historical sections labeled 已由上方取代. One nuance: STATUS/README/Plan describe it as "fail-stop"; Plan DAG and R1F Task use FAILED_PRECONDITION/STOPPED. Semantically aligned; I'll note the token variance as a non-blocking observation. Hmm — should I make token variance a finding? The user asked "是否把 R1F capture 写为真实执行后的 FAILED_PRECONDITION". If the user expects the exact token in the top documents and STATUS lacks it... The DAG (Plan) is the唯一 DAG and uses FAILED_PRECONDITION. Status says fail-stop + one-shot consumed. I'll treat as PASS with a note. Given a P3 finding already exists, adding a P3 for token variance would be over-reach and would demand cosmetic edits; skip it, mention as observation in remaining risk? I'll mention briefly in the verification row.
+
+AC1–AC7 marked 未运行而非失败: STATUS line 5 "AC1–AC7 未运行且不是失败"; adjudication table line 74 "BLOCKED / NOT_RUN ... 不是测试失败"; checkpoint line 23. PASS.
+
+Now Q2's "F2–F4 是否明确转入 R1G，且没有假称已完成": adjudication table lines 57-59 TRANSFERRED / ACCEPTED_FOR_SUCCESSOR; R1G Task line 31 (preflight), manifest item 2/3/4. No doc claims them fixed. Let me double check no doc claims "F2–F4 FIXED". Adjudication line 56 says F1 FIXED; 57-59 TRANSFERRED. Task line 64 says F2–F4 转入 R1G. Plan line 7 "Codex 接受 F1 文档修复并将 F2–F4 转交 successor". STATUS line 5 "Codex adjudication 接受文档修复并将其余 finding 转给 R1G". Consistent. PASS.
+
+"原 CHANGES_REQUESTED 是否保留": adjudication front-matter review_decision: CHANGES_REQUESTED; line 61; R1F Task 36/64/118; STATUS 5; Plan 7; Index 5. PASS.
+
+Now Q2 also asks about plan/status/index/nav/P02 Task/R1F Task/manifest/new checkpoint consistency for R1F-POST-01. Verified all: Plan lines 7/19, STATUS 3-15 (+ historical marked), Index 3-7 (+historical marked), README 5 (+historical marked), P02.md 24, R1F Task 36/40/116/64, R1F manifest addendum 171-180, checkpoint 5/19/30-35. Except the residual conditional token in R1F Task line 59 (which I decided is a conditional rule, not a current-state claim) and the R1G-manifest stale pins (a successor-handoff doc, not in the Q2 list but in the Q3/R1G path). Good.
+
+So Findings: 1 × P3 (R1G manifest stale predecessor pins). Should I also include the R1F Task line-59 conditional token as a P3? Let me settle: it's part of AC list; the AC is unchecked; its failure-branch text is conditional. But R1F-POST-01's accepted fix claim was "Task 已更新" — and the Task still contains the literal "capture 仍为 BLOCKED / NOT_RUN" in a currently-active AC. A strict reviewer would flag it as a residual token to annotate, because a reader scanning the AC list sees "capture 仍为 BLOCKED / NOT_RUN" without a superseded marker. Given the user explicitly asks whether any current writing still says pre-run/BLOCKED/NOT_RUN (Q1) and whether POST-01 is consistently fixed (Q2), I think it's fair — and useful — to list it as a P3 with the minimal fix: mark AC59 (and the "冻结输入与验证命令" command block, lines 75–85) as historical/superseded for the consumed one-shot, e.g., add "(SUPERSEDED：R1F one-shot 已消耗，禁止重跑；该 release 分支不适用)" without changing the AC's original text. Hmm, but the instruction says "不要要求额外阶段、改动 scope 或更强证明" — annotating is within scope (Codex owns the Task).
+
+Hmm, but there's a counter-argument: modifying the AC list of a Task whose ACs are frozen review inputs could itself be considered rewriting history; the repo says "原 verdict 保留/不抹掉旧记录". The minimal fix should be an *annotation*, not deletion. I'll phrase it as optional-but-recommended? No — findings should be actionable. I'll list it as P3 and mark its severity/impact as low, noting that three current-state statements already supersede it.
+
+Hmm, decision risk: raising 2 P3s means CHANGES_REQUESTED (0/0/0/2). That's fine and honest.
+
+Actually, let me apply the "only point out evidence-backed defects" bar strictly. Is AC59's text a *defect*? Consider a successor/resume agent: it reads Task 当前状态 (line 40) → "STOPPED / FAILED_PRECONDITION, one-shot consumed". Then it reads the AC list → many unchecked ACs. A careful agent will check the 测试/Gate 表 (line 116) → STOPPED/FAILED_PRECONDITION with "禁止重跑/覆盖". So the Task is recoverable. The residual token is in a conditional clause. I judge this as an observation, not a defect requiring fix. Hmm. But Q1's phrasing "是否仍有顶部导航把当前状态错误写成 pre-run/capture BLOCKED / NOT_RUN？" — the AC list isn't 顶部导航. OK.
+
+Decision: I'll report ONE finding (P3, R1G manifest stale predecessor pins) and record the AC59 observation as a non-finding note in the verification/remaining-risk (explicitly stating why it is not counted: conditional branch not triggered, superseded by line 40 + line 116).
+
+Hmm, but then, is CHANGES_REQUESTED for a single P3 appropriate? Repo precedent says yes for any finding. But the user also said "没有问题就明确批准" — there IS a (small) problem. So CHANGES_REQUESTED (0/0/0/1). I'll clearly state that the substantive documentation integration is otherwise accurate and consistent, and that the single fix is a two-reference update (or relabel) plus its pin ripple; no P0/P1/P2, no additional stage demanded.
+
+Hmm, hold on. Let me consider the opposite: maybe Codex intends the R1G manifest's line 6-7 values as the R1G *freeze-time* snapshot, and the header line 6 says "post-run documentation integration current bytes" precisely to distinguish from "原 Review input". If Codex later edits the R1F Task (which it did), the R1G manifest's "current" becomes stale. Since the R1G manifest is pinned in my dispatch as an input with hash 4774F702, and the checkpoint also pins it, Codex clearly considers the current R1G manifest authoritative. Its internal claim about the predecessor is stale relative to the checkpoint it co-exists with. A one-line internal inconsistency in a frozen doc → P3. Yes. I'm confident.
+
+Let me also double check the exact discrepancy values by re-reading the R1G manifest line 6 text from my earlier read: "Predecessor Task=`doc/tasks/P02PRE-R1F.md`；其原 Review input=`30565 / C39E9CB2730A2C6EE37153A945093D276FD2BD8F951E302C764EF776D2F5EAE7`，post-run documentation integration current bytes=`32536 / 3C3F1BA523475B6D70A720766D5CE2BC077D5DB56D4EFF94B6D789472F7E398C`。" Yes. And line 7: "R1F manifest=`verification/P02/p02pre-r1f-manifest-20261011.md`，`44417 / 7F251BD0C2283192DFC53ACB0338E171AC369D24C1CDB859684809DD5A33FA73`。" Yes.
+
+Wait — one more consideration: is the R1F *Task* 33571 with hash EA0C8F6D... consistent with the request's pin? Request: P02PRE-R1F.md 33571 / EA0C8F6DF5DE7501F56EDA77199FF6FD0EBCA5E214206B1DDFCF082626127A83. Yes. Checkpoint line 58: 33571 / EA0C8F6D…. Consistent.
+
+And R1F manifest: request 46327 / 0AD7266D…; checkpoint line 60: same. R1G manifest says 44417 / 7F251BD0 (that's the pre-run/review-input value which matches my previous review's pin and the adjudication table line 43). So the R1G manifest simply retained the review-input pin without the qualifier → stale.
+
+Great. Now write the report. Format: follow REVIEW.md: YAML header, 范围与依据, Architecture 结论, Verification 表, Findings 表, 结论与复审/剩余风险. Chinese. Include decision + counts. Must be the "documentation integration" scoped verdict, NOT replacing the original verdict. State explicit NOT_VERIFIED items: all byte/SHA recomputation (no execution), R1G worktree live state (only document-recorded), and whether pins correspond to disk bytes (I read contents but can't hash).
+
+Also note that I read files with read-only file reading (no commands/getters/APIs), and that I did not inspect .tmp.driveupload.
+
+Also must keep Gate values exact.
+
+Length: no explicit limit this time; keep it reasonably concise but complete.
+
+One more check on Q4: "R1G 的 PowerShell 7.6.6 选择理由是否准确表述为“R1F 的冻结 PS 5.1 one-shot 已失败且不可重跑，因此对一个新候选使用新 executor 并先做独立能力预检”" — R1G Task line 23 says exactly that (5.1 子进程契约已消耗且失败 → 新候选 + 预检; 未证明 PS7 不兼容). Manifest line 11/26-27/42. PASS. Also "是否避免声称 PS 7 不兼容或 child 能力已验证" — PASS (manifest line 18 "exact child no-profile module/cmdlet capability is not yet verified"; Task line 66 "NOT_VERIFIED").
+
+Q3 also asks "固定 branch/worktree/base" — R1G Task front-matter + manifest line 17 + checkpoint line 15. PASS (document-level).
+
+Now YAML header: task_id=P02PRE-R1F-POSTRUN-DOCS-FOLLOWUP2-20261011, reviewer=DeepSeek Harness, author=Codex /root, base_commit/reviewed_head=cddff58..., decision=CHANGES_REQUESTED. Note original verdict preserved: original_postrun_decision: CHANGES_REQUESTED (0/0/2/2) unchanged. Maybe add a field `supersedes: none`.
+
+Finding counts: P0/P1/P2/P3 = 0/0/0/1.
+
+Verification table rows (~12):
+1. Q1 top-state: PLAN:3/7/19、STATUS:3-5、INDEX:3-5、README:5、P02.md:24 — capture recorded executed/fail-stop/consumed; AC not-failure. PASS (note token variance).
+2. Historical snapshots labeled: STATUS:17、PLAN:33、INDEX:9/15/21/27、README:9/15/19 — PASS.
+3. Q2 POST-01 fix coverage: Plan/STATUS/Index/README/P02 Task/R1F Task:36/40/116/R1F manifest addendum:171-180/checkpoint:5/19/30-35 — PASS.
+4. Q2 F2–F4 transfers: adjudication:57-59; R1G Task:31; R1G manifest:27-29 — PASS (no claim of completion).
+5. Q2 original verdict preserved: adjudication:7-8/61; R1F Task:36/64/118; followup1 stdout:7/47 — PASS.
+6. Q3 DAG/recovery: PLAN:19-28; checkpoint:19-25; STATUS:15; INDEX:7; P02.md:26 — PASS (R1F ACTIVE, R1G READY, R2/BG/BUILD/AC blocked).
+7. Q3 R1G owner/reviewer/integrator/branch/worktree/base: R1G Task:5-14; manifest:15-17; checkpoint:15/20; STATUS:7 — PASS (document-level; live worktree NOT_VERIFIED).
+8. Q4 PS7 rationale/no-overclaim: R1G Task:23/66; manifest:11/18/26-27/42 — PASS.
+9. Q5 boundaries: R1G Task:43; manifest:22/64/77; checkpoint:13/35; R1F Task:36/71; Plan:5; STATUS:9 — PASS.
+10. Q2/Q3 R1G manifest predecessor pins: R1G manifest:6-7 vs checkpoint:58/60 + dispatch pins — FAIL (R1F-DOC2-01).
+11. Gate invariants: adjudication:76; Plan:9; STATUS:13; INDEX:33; R1G Task:62; R1G manifest:77; checkpoint:39 — PASS.
+12. Byte/SHA recomputation, live Git/worktree state: no execution permitted — NOT_VERIFIED.
+
+Findings table: 1 row R1F-DOC2-01 P3.
+
+Remaining risks: ripple of re-pinning; AC59 conditional token observation; R1G manifest pin change may require re-confirmation per §6 (Codex call, not demanded); unobserved getters remain unproven; my hash verification limitation.
+
+Write it now, in Chinese, with identifiers in English. Also note "本复审不改变原 verdict，不释放 Gate/AC".

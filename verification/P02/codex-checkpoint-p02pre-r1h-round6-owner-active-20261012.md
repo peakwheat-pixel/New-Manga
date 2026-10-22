@@ -1,0 +1,19 @@
+# P02PRE-R1H Rolling Checkpoint — Round6 Owner Active
+
+- 时间：2026-10-11 23:26 UTC（2026-10-12 07:26 Asia/Shanghai）。
+- 仓库：`G:\CODEX\New Manga`；branch=`main`；HEAD=`cddff58469b56e181019a8ddfeade80684bc7eb9`；tree=`c25d051a4b9a0bd9773b50170e100f575ea19f2b`；common-dir=`G:/CODEX/New Manga/.git`。
+- `.git/index` SHA-256=`214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C`。
+- 本Checkpoint创建前受控状态：`989 records / 66127 bytes / 0E34A1B0A609F2771EE25CA74A3B88287F2C4410F816F4F17DB691053B02378A`；命令为`git status --porcelain=v2 -z --untracked-files=all --no-renames --ignore-submodules=none -- . :(exclude).tmp.driveupload`，exit=0、stderr=0。排除项为单独argv，未访问。此数值在文档改写后复核一致；checkpoint创建后状态会增加本文件一条未跟踪记录。
+- Root worktree包含原有未提交/未跟踪内容，除本轮明确创建的治理Checkpoint外，作者归属未知且原样保留；未执行reset/clean/stash/delete。
+- Active Task=`P02PRE-R1H`；Phase=`R6_OWNER_SELF_CHECK_REMEDIATION / ACTIVE`。Task=`doc/tasks/P02PRE-R1H.md`；唯一规划源=`doc/REBASELINE_PLAN.md`；status=`doc/STATUS.md`；索引=`doc/00_INDEX.md`；manifest=`verification/P02/p02pre-r1h-manifest-20261012.md`。
+- 任务目标：Owner在隔离linked worktree只修复`verification/P02/p02pre-r1h-selfcheck.ps1`的Round5 AST selfcheck假阴性，另交Round6 Handoff。禁止改capture、manifest、共享契约、主工作区或其他路径；禁止运行Parser/selfcheck/capture、getter、Build/Cargo、system AC；Owner只可运行`git diff --check`。
+- Owner=`/root/p02_r1h_codex_owner`；Reviewer=`/root/p02_r1h_remediation_review`（非作者）；Integrator/Adjudicator=`/root`。实际follow-up dispatch已发，Owner已确认开始只读诊断。
+- Owner worktree=`C:\Users\49745\.codex\worktrees\p02pre-r1h-codex`；branch=`agent/codex/P02PRE-R1H`；冻结HEAD=`dd5d2e3bc8e0702da9d059131f6364a997897661`；tree=`8cf6cf2dec8b375746b4c423f3c00ffe611a60d7`；controlled status clean。Owner确认Round6 Handoff最初不存在。Selfcheck基线=`57648 / 977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA`；capture基线=`93124 / 0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3`。
+- 已完成：Round5 candidate static Review=`APPROVED_STATIC_CONTENT`；integration protocol R2=`APPROVED_STATIC_PROTOCOL`；单次`File.Replace`由root adjudicate=`INTEGRATION_STATE_PASS_WITH_EVIDENCE`；Parser errors=0；PS7.6.6/Core no-profile selfcheck真实失败（AC2=`FAILED`）；engine capability preflight=`PASS`。Execution evidence=`verification/P02/p02pre-r1h-integration-execution-20261012.json`；Round5 selfcheck=`verification/P02/p02pre-r1h-selfcheck-round5-20261012.json`；engine preflight=`verification/P02/p02pre-r1h-engine-preflight-round5-20261012.json`。
+- Owner报告的具体AST根因（未独立核验）：selfcheck line 383要求path-loop只有一个`IndexExpressionAst` `$indexModes[$relative]`，因此错误拒绝真实capture组件循环的`$parts[$partIndex]`；拟只允许这两个精确表达式并保持未知索引fail-closed。Owner截至最近状态仍在只读诊断/未报告源码写入。
+- 最近失败证据：Round5 selfcheck PID 48356，exit=1、stderr 416 bytes、SHA-256=`8302CDA30C0359673F2873E58CC2D8E8549F675AECB8518A20B25FF86C019E40`；capture未调用。PS7 engine preflight PID 45772 exit=0。
+- 之前的Round5 `File.Replace` executor postcheck false-negative已保留并由root独立复核；调用恰好一次，不重试/回滚。status S1→S3只新增backup与两份验证证据，移除stage；详见Task和execution JSON。Round5 stage不存在，旧字节recovery与API backup保留。
+- Gate保持：`private_registry_absence=UNPROVABLE`；Technical Gate=`NOT_SATISFIED`；Owner Risk Acceptance=`APPROVED`；Gate Disposition=`WAIVED_BY_OWNER`；Build Authorization=`AUTHORIZED_WITH_EXCEPTION`；精确残余风险`technical condition unmet; user explicitly accepted residual risk`；Build Gate=`BLOCKED`；Hard Build Barrier=`EFFECTIVE`；Build/Cargo=`NOT_RUN`；system AC1–AC7=`BLOCKED / NOT_RUN`。
+- 唯一下一步：收到Owner固定commit与Handoff后，root复核路径/HEAD/status/pins并派非作者Reviewer审查该delivery；Review与Codex adjudication通过后另行冻结Round6集成协议，安全集成，再由root重跑相关PowerShell 7 parser/selfcheck/preflight。AC2修复未验证之前不运行capture/build/system AC。
+- 用户完整持续授权有效，允许必要的动态验证、Build/Cargo、AC1–AC7、修复、Review、重测和集成；不查询/安装/启用/启动Windows Sandbox。用户要求全部授权任务安全收尾后关机；目前Task仍Active，禁止关机。
+- Orchestrator模型/力度=`gpt-6-luna/max`；偏好`gpt-6.1-sol/high`当前不可用。Owner实际=`gpt-6-luna/xhigh`；Reviewer模型/力度=`UNKNOWN`。

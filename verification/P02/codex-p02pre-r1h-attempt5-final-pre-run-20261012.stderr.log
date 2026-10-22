@@ -1,0 +1,6 @@
+Codex pre-run harness deviations; these are not A5 executor stderr.
+Attempts 1-2: Git status helper passed a leading space before :(exclude).tmp.driveupload; exit 128; excluded-subtree access is NOT_VERIFIED.
+Attempt 3: Git helper used reserved PowerShell $args; Git exit 1 before valid query.
+Attempt 4: assignment to read-only PowerShell $Host stopped before whoami.
+Attempt 5: optional core.safecrlf query returned 1 because key/value is absent.
+No attempt wrote project files or invoked the A5 executor.

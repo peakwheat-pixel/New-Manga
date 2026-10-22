@@ -1,0 +1,1 @@
+exit=0; pid=3416; command=agy.exe -p <frozen-prompt> --project New Manga --output-format json --dangerously-skip-permissions; cwd=C:\Users\49745\.codex\worktrees\p02pre-r1h-r6-attempt4-antigravity

@@ -1,0 +1,370 @@
+dsh: reasoning:
+I need to do a read-only review. Let me read the fixed inputs. I should read files but not run shell/hash commands. Let me read the memo r7 first, plus the related files.
+
+Let me start by reading the key files.
+
+Note: I cannot run hash commands. I'll read text.
+
+Let me read files in parallel.
+
+Note the workspace is G:\CODEX\New Manga. Let me use read tool.
+
+Paths: verification/P02/... Let me first check the task file doc/tasks/P02.md is huge (123471 bytes) — I need specific line ranges :58–70, :382–386, plus line anchors. Let me read relevant portions.
+
+Let me start.
+dsh: reasoning:
+Now read prior DSH report r6, prior memo r6, r5 attempt1 adjudication, r5 DSH report, memo r5, contract r7, manifest r3, adjudication.
+
+Also need Task file doc/tasks/P02.md specific lines :58–70, :382–386, and :68–70. The current live Task is 120866 bytes per adjudication but the r7 Review pin is 123471 bytes / 5B8A.... Let me check the Task file lines. But note pin mismatch: live may have changed further.
+
+Let me read files.
+dsh: reasoning:
+Now read memo r5 and r5 adjudication and r5 DSH report to verify the r5:11 content claim.
+
+Also contract r7 lines 115, 156, 177; manifest r3; r7 adjudication line 52.
+
+And Task file doc/tasks/P02.md lines around 58-70, 382-386.
+dsh: reasoning:
+Now check the r5 DSH report to see the claim about r5:11 finding-ID括注. And read contract r7 lines 110-180, manifest r3, r7 adjudication.
+
+Also check Task file. Let me read doc/tasks/P02.md lines 50-80 and 375-395, and also the dispatch record sections near 500-520 to see if the r7 pin is registered (123471/5B8A...).
+
+Let me do parallel reads.
+dsh: reasoning:
+Now, important: r5:11 actual text. From memo r5 line 11: "…memo r4 以 attempt 3 固定 Review 对象 memo r3（SHA-256=`773476745C19A1996043819E514788290B17D4DC8BFD250449AD235E777BD701`）为修订基线；memo r5 只修正文档引用与契约载体说明。memo r3 与 r4 均保留原样。"
+
+So r5:11 contains one finding-ID括注? Actually wait — in the actual read of memo r5 line 11, I see NO finding-ID括注 at all: it ends with "memo r3 与 r4 均保留原样。" Hmm. Let me re-check. Line 11 of memo r5 as read: 
+
+"- 其他固定依据：contract r7 SHA-256=...；manifest r3 SHA-256=...；r7 Codex adjudication SHA-256=...。memo r4 以 attempt 3 固定 Review 对象 memo r3（SHA-256=`77347674...`）为修订基线；memo r5 只修正文档引用与契约载体说明。memo r3 与 r4 均保留原样。"
+
+So no RV括注. But r6 DSH report line 28 claims r5:11 original has two括注: `（SHA-256=77347674…）` and `（RV4-P3-02；RV5-P3-02）`. Hmm, that appears to be a fabrication by DSH r6 report — because r5:11 doesn't have RV4-P3-02;RV5-P3-02. Wait, that括注 appears in memo r5 line 19: "（RV4-P3-02；RV5-P3-02）". So the DSH r6 report claim about r5:11 is indeed a misquote.
+
+And the r5 attempt 1 adjudication line 18 says: "DSH 称 r5:11 将 RV5-P3-01 和 RV5-P3-03 放在同一括注，但该句没有任何 finding-ID 括注。" — that's the r5 attempt1 adjudication's own claim. Note: r5 attempt1 adjudication:18 says "该句没有任何 finding-ID 括注". But which句? The r5 attempt1 DSH report RV6-P3-01 claims r5:11 has the sentence with (RV5-P3-03)括注... Actually r5 attempt1 DSH report line 31 says: 同句前半「memo r5 只修正文档引用与契约载体说明…（RV5-P3-03）」；后半「本候选的版本无关自指同时承接 RV5-P3-01」也被系于同一 `(RV5-P3-03)` 括注。Hmm, it says the r5:11 has (RV5-P3-03)括注. But the actual r5:11 text I read has no such括注 either. Hmm — wait, this is memo r5 as currently on disk (fixed object 10401 bytes / 6E07EB66...). The DSH r5 attempt1 report claims r5:11 contains "(RV5-P3-03)" and "本候选的版本无关自指同时承接 RV5-P3-01" — neither appears in the actual r5:11.
+
+So the r5 attempt1 adjudication's rejection "该句没有任何 finding-ID 括注" appears correct relative to the actual text. Hmm, but wait, the r6 adjudication (line 14) says: "memo r5:11 的实际固定文本为『其他固定依据……』一行；该行不含 finding-ID 括注。DSH report 中关于 r5:11 含 `RV4-P3-02; RV5-P3-02` 括注的陈述亦不符合实际文本，作为误引拒绝。"
+
+Wait — the r6 DSH report (line 28) claimed r5:11 has `（RV4-P3-02；RV5-P3-02）`. But the actual r5 has that括注 at line 19, not 11. Hmm, but also note that r6 DSH report line 28 says "r5:11 原文只有两个括注：`（SHA-256=77347674…）` 与 `（RV4-P3-02；RV5-P3-02）`". Hmm.
+
+Hmm, there is an oddity: also the r6 DSH report line 33 says: "r6 全文（`:11`、`:19`）未提及该 finding 已被 REJECTED_AS_MISQUOTED … 仅靠 Task `:504` 承载。" And r6 report line 53 mentions ":19 末的 `（RV6-P3-03）…`". Also r6 report refers to r6:8 having括注 "（RV6-P3-02）（RV2-P3-02；RV-N-02；RV3-P3-05；RV4-P3-01）" — which matches actual r6:8. OK.
+
+Now, importantly, memo r5:11 in my read shows NO括注. But wait — is the file I read the same as the fixed object? The fixed pin is 10401 bytes / SHA-256=6E07EB6679... The read content ends at line 57. Plausibly matching.
+
+Hmm, but hold on. Is it possible the r5:11 in the actual fixed object DOES contain括注 but my read shows... no, I read it directly. Line 11 ends "memo r3 与 r4 均保留原样。" No括注.
+
+Hmm wait, but actually let me re-read memo r5 line 11 more carefully. From the r5 read output:
+
+Line 11: "- 其他固定依据：contract r7 SHA-256=7FBFFE65...；manifest r3 SHA-256=AC45329A...；r7 Codex adjudication SHA-256=6C585068...。memo r4 以 attempt 3 固定 Review 对象 memo r3（SHA-256=`773476745C19A1996043819E514788290B17D4DC8BFD250449AD235E777BD701`）为修订基线；memo r5 只修正文档引用与契约载体说明。memo r3 与 r4 均保留原样。"
+
+Yes no括注.
+
+Hmm, but note that memo r6 line 11 (r6's :11) is: "- 其他固定依据：...memo r3 与 r4 均保留原样。" with no括注 either. So the r6 DSH claim that r6:11 lacks the RV6-P3-01 annotation is correct.
+
+But hold on: The r5 attempt1 adjudication says r5:11 has no finding-ID括注, and cites the DSH claim as misquote about "RV5-P3-01 和 RV5-P3-03 放在同一括注". Fine.
+
+However, memo r7 line 11 says: "先前 r5 attempt 1 Review 的 RV6-P3-01 已由 Codex 裁决 `REJECTED_AS_MISQUOTED`（见 r5 attempt 1 adjudication）；该误引不产生 memo 修订义务。" Good — records the adjudication without modifying r5/r6.
+
+Now, one thing to check: r7 line 7 (基线) — it says "Task :58–62 与 :382–386 仍记录用户裁决本机 Windows 验证替代 Windows Sandbox" and the review prompt says memo r7 as r7 Review pin = 123471 bytes / 5B8A.... Memo r7 line 8 mentions "本轮 r6 Review prompt 的 Task dispatch snapshot=119770 bytes / SHA-256 3BAA..." and says "本轮 r7 Review 的 123471/5B8A... dispatch pin"? Let me check: memo r7 line 8 does NOT mention 123471/5B8A at all! Let me re-read line 8 of r7.
+
+r7:8: "- 用户授权及环境裁决：Task 行号最初以 memo r3 attempt 2 Review 派发快照（108405 bytes / SHA-256=`7521168C...`）为准；本轮在 attempt 3 Review pin（111260 bytes / SHA-256=`351EB291...`）下重新核对，`PROJECT_ORCHESTRATION_AUTHORIZATION` 段仍对应 :68–70，Task :58–62 与 :382–386 仍记录用户裁决本机 Windows 验证替代 Windows Sandbox。行号锚点仅在 attempt 3 pin（111260 bytes / SHA-256=`351EB291...`）上复核；这些历史行号不转用于其他 Task 快照。memo r5 attempt 1 Review 派发时的 Task pin 为 116853 bytes / SHA-256=`7CCFA05D...`，是独立对象；Codex 在该派发快照内容仍为 live 时复核了 :58–70、:382–386 的语义锚点。memo r6 候选形成时记录的 Task pin=`117485 bytes / SHA-256 C11BAEE4...`，是历史快照，不代表本轮 Review 对象。本轮 r6 Review prompt 的 Task dispatch snapshot=`119770 bytes / SHA-256 3BAA2499...`；Codex 从当前 Task 原始字节重构派发记录前缀并复算命中该 pin，在该固定快照复核 :58–70 与 :382–386 语义锚点。行号以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核；不同 pin 不互换。此项 Codex 核验不改变 DSH formal `object_binding=NOT_VERIFIED`。授权是范围许可，不是 OS 证据或 Gate PASS；不查询、安装、启用或启动 Windows Sandbox。（RV6-P3-02）（RV2-P3-02；RV-N-02；RV3-P3-05；RV4-P3-01）"
+
+Key issue: The r7 review requirement #1 says: 核对 memo r7 是否闭合 r6 DSH Review 中 Codex 接受的修订：把 117485/C11BA... 降格为 memo r6 候选形成时的历史 pin；明确 r6 Review 的 119770/3BAA... dispatch pin 与本轮 r7 Review 的 123471/5B8A... dispatch pin 是不同对象；说明 Task 行号锚点以对应 Review prompt 的固定 Task pin 为准，pin 变化须重核。
+
+So requirement #1 demands r7 explicitly state that the r6 Review 119770 pin and the current r7 Review 123471 pin are different objects. Does r7 do that? r7:8 says "本轮 r6 Review prompt 的 Task dispatch snapshot=119770 bytes..." — it calls 119770 "本轮 r6 Review prompt 的" dispatch snapshot. Hmm, that's the r6 dispatch. It says "行号以本轮 Review prompt 固定的 Task pin 为准" — "本轮 Review prompt" is ambiguous: is 本轮 referring to r6 or r7? In r7 context, "本轮" should mean r7. But the sentence order: it says "本轮 r6 Review prompt 的 Task dispatch snapshot=119770"—that labels 119770 as 本轮 (current round) r6 Review prompt, which is confusing since the memo is r7. Then "行号以本轮 Review prompt 固定的 Task pin 为准" — if 本轮 = r6, then the anchor authority would be 119770, not the r7 pin 123471. That's a genuine ambiguity / potential defect: r7 never registers its own dispatch pin 123471/5B8A....
+
+Wait — but maybe the r7 Review prompt (this prompt) gives pins, and the memo r7 was written before r7 dispatch? Actually memo r7 is the object being reviewed in the r7 Review. The r7 dispatch snapshot is 123471 bytes/5B8A... So memo r7, written as candidate, could not know its own Review dispatch pin. Hmm. But the requirement #1 in this Review prompt explicitly asks to check whether r7 "明确 r6 Review 的 119770/3BAA... dispatch pin 与本轮 r7 Review 的 123471/5B8A... dispatch pin 是不同对象". If r7 doesn't mention 123471 at all, that's a finding (P3 or P2?). Precedent: r6 had the same gap (R6R-P3-01/02 accepted) — r6:8 called 117485 "当前 live Task pin" but the actual r6 dispatch pin was 119770, i.e., r6 candidate was written before its own dispatch and mislabeled. Interesting: the same structural issue repeats in r7: r7:8 says "本轮 r6 Review prompt 的 Task dispatch snapshot=119770" — treated as 本轮 which is now stale (r7's 本轮 is 123471).
+
+Hmm, let's carefully weigh. Is r7's statement a defect? Requirement 1 says the memo should say that the r6 Review dispatch pin (119770) and this round's r7 Review dispatch pin (123471) are different objects. Since memo r7 was authored before the r7 pin existed (candidate), it cannot register the r7 pin; the r6 DSH finding R6R-P3-01/02 asked for registration of the *current review* pin, which Codex accepted and said "r7 将 117485 明确降为候选创建时的历史 pin，并登记本轮 pin 与锚点适用范围" (adjudication:20). "登记本轮 pin" — in the r6 adjudication, "本轮" = r6 round, but the fix lands in r7. Hmm, actually the r6 adjudication says r7 will register 本轮 pin = 119770. And r7:8 does register 119770 as "本轮 r6 Review prompt 的 Task dispatch snapshot". So the accepted fix (from r6's perspective) is implemented: 117485 demoted to historical, 119770 registered, priority rule stated ("以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核").
+
+But the r7 Review prompt's requirement asks specifically about distinguishing 119770 (r6 Review pin) from 123471 (r7 Review pin). Since r7 says "本轮 r6 Review prompt 的 Task dispatch snapshot=119770" — it uses "本轮" for a past round, and never mentions 123471. That leaves an ambiguity: a reader of r7 for the r7 review might read "本轮 Review prompt 固定的 Task pin" as 119770, while the actual r7 dispatch pin is 123471. Given the r6-round finding was precisely about "当前 live" mislabeling, this is arguably an analogous recurrence — P3 (traceability) or P2? The precedent level: R6R-P3-01/02 were both P3. So a similar new finding is P3 by consistency. But wait — was r7's 117485 handling "historical" properly? Yes: "memo r6 候选形成时记录的 Task pin=117485 bytes...，是历史快照，不代表本轮 Review 对象。" Good, matches requirement 1's first part.
+
+Hmm — "不代表本轮 Review 对象" — "本轮 Review" here = r7 round. So it says 117485 is not the current review object. Fine.
+
+Now the second requirement: "明确 r6 Review 的 119770/3BAA... dispatch pin 与本轮 r7 Review 的 123471/5B8A... dispatch pin 是不同对象". r7 doesn't mention 123471/5B8A. But is that a defect in r7, or is it impossible for a candidate to know its dispatch pin? The memo is a candidate authored before dispatch; the r6 candidate also couldn't know its dispatch pin — which is exactly why the r6 review flagged it? No: the r6 review flagged that r6:8 claimed 117485 was "当前 live" when the dispatch pin was 119770, and asked r6 (→r7) to register the dispatch pin. Codex accepted. So the standard applied was: candidate should register the *review* dispatch pin. That's only knowable... hmm, actually the candidate is written before dispatch, so the author can't know. But Codex did the fix in r7 by adding the r6 dispatch pin (119770) as historical fact. So the pattern is: each new memo registers the *previous* round's dispatch pin and states the priority rule. Then the current round's dispatch pin (123471) is registered by the reviewer/prompt. So maybe r7's approach is "register previous dispatch pin + priority rule" and that structurally satisfies the intent, avoiding recursion.
+
+But the requirement here explicitly asks whether r7 "明确 r6 Review 的 119770/3BAA... dispatch pin 与本轮 r7 Review 的 123471/5B8A... dispatch pin 是不同对象". Hmm. If r7 never mentions 123471, then strictly it does not "明确" the difference. But also note: r7 could not know 123471 because it was pinned at dispatch time... unless the memo was written after the prompt existed. Typically the memo is written before the prompt. Hmm. But note the r7 memo's line 8 says "本轮 r6 Review prompt 的 Task dispatch snapshot=119770" — this uses "本轮" to modify r6 Review prompt, which is a stale-rounds confusion. In fact in memo r7, "本轮" should refer to r7. So there is an internal inconsistency: line 8 first says "本轮在 attempt 3 Review pin...下重新核对" (here 本轮 = r7, the current revision round), then later "本轮 r6 Review prompt 的 Task dispatch snapshot=119770" (here 本轮 = r6 round). Two different referents for "本轮" in the same line/item. That's a genuine ambiguity worth flagging as P3 (possibly P2 if it misleads about the anchor authority). Actually it's a bit worse: the anchor authority sentence "行号以本轮 Review prompt 固定的 Task pin 为准" — ambiguous between r6's 119770 and the r7 dispatch pin. Given the entire r6 review round was about pin ambiguity, I'd flag it.
+
+Let me now check the Task file lines to independently verify the descriptions: r7 says `PROJECT_ORCHESTRATION_AUTHORIZATION` 段对应 :68–70, Task :58–62 与 :382–386 记录本机 Windows 验证替代 Windows Sandbox. Requirement 2 says: 独立核对 r7 对 `:58–70`、`:382–386` 的描述与固定 Task 输入文本是否一致.
+
+Wait — r7 describes :58–62 as the 本机验证替代 Sandbox 裁决, and :68–70 as PROJECT_ORCHESTRATION_AUTHORIZATION. The r7 review prompt requirement says check ":58–70". Let me read the Task file.
+
+Also check whether the current Task (123471 bytes) lines match. Let's read doc/tasks/P02.md around lines 50-80 and 375-395, and the tail (~495-540) for dispatch records.
+dsh: reasoning:
+The Task lines: :58–62 = the "2026-10-10 用户裁决：本机验证替代 Windows Sandbox 验证" section heading at :58 plus body :60, :62. Yes, :58 is the heading, :60 the 用户裁决 text, :62 continuation. So r7's description ":58–62 与 :382–386 仍记录用户裁决本机 Windows 验证替代 Windows Sandbox" is consistent: :382–386 is the "Codex continuation：本机验证用户裁决（2026-10-10）" section. Good.
+
+:68–70 = PROJECT_ORCHESTRATION_AUTHORIZATION heading (68) and body (70). Good.
+
+Now I need to see the tail of the Task for dispatch records — the r7 dispatch pin 123471/5B8A... should be recorded in the Task (as dispatch record) per the pattern. Let me read lines 400-528.
+
+Also I should check whether the Task's live content includes the r7 dispatch record with pin 123471 and the line anchors. Note: the file is 528 lines; the read said total 528. Let me read 400-528.
+dsh: reasoning:
+Important find: Task :524–528 records the r7 dispatch record: "本轮派发前 Task snapshot=123471 bytes / SHA-256 5B8AC7...". So the Task itself (live, now larger) contains the r7 dispatch pin. The memo r7 (written as candidate before dispatch) does not mention 123471.
+
+Now, requirement 1 says: 核对 memo r7 是否闭合 r6 DSH Review 中 Codex 接受的修订：(a) 把 117485/C11BA... 降格为 memo r6 候选形成时的历史 pin ✔ (r7:8 does); (b) 明确 r6 Review 的 119770/3BAA... dispatch pin 与本轮 r7 Review 的 123471/5B8A... dispatch pin 是不同对象 — r7 does NOT mention 123471; it labels 119770 as "本轮 r6 Review prompt 的 Task dispatch snapshot" and says "行号以本轮 Review prompt 固定的 Task pin 为准". So r7 does not explicitly differentiate the r7 dispatch pin; and the word "本轮" is used with two different referents.
+
+Hmm, but is that a fair finding? The r7 candidate was authored before the r7 dispatch record existed (Task lines 524–528 were appended when dispatching r7 review, after r7 candidate creation). So the memo author could not have registered 123471. Analogously, r6 candidate couldn't register 119770, yet the r6 DSH review demanded it, and Codex accepted (R6R-P3-01/02 ACCEPTED/PARTIALLY_ACCEPTED) with the fix landing in r7 as "登记本轮 119770 pin". So the process pattern is: fix in the next memo registers the prior round's dispatch pin. So r7's non-mention of 123471 is structurally consistent with the accepted fix — the accepted fix said "r7 ... 登记本轮 pin" where 本轮 in the r6 adjudication = 119770 (r6's dispatch pin).
+
+Hmm, wait. Let me re-read r6 adjudication line 20: "R6R-P3-01 ACCEPTED: 117485 pin 在 r6:8 被称为"当前 live"，但本轮派发 Task pin 是 119770。r7 将 117485 明确降为候选创建时的历史 pin，并登记本轮 pin 与锚点适用范围。" Here 本轮 = the r6 Review round (this adjudication is about the r6 round). So the required fix = demote 117485 + register 119770 + anchor scope. r7:8 does exactly that. ✔.
+
+But the r7 Review prompt requirement (b) asks to check whether r7 "明确 r6 Review 的 119770/3BAA... dispatch pin 与本轮 r7 Review 的 123471/5B8A... dispatch pin 是不同对象". Strictly, r7 does not mention the r7 pin (impossible pre-dispatch), but it does say "这些历史行号不转用于其他 Task 快照" and "行号以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核；不同 pin 不互换". This general rule covers distinctness of pins. However, the phrase "本轮 r6 Review prompt 的 Task dispatch snapshot" mislabels 119770 as "本轮"—in r7's context 本轮 = r7 round. That's a real (if mild) defect: it invites the reader to treat 119770 as the current round's dispatch pin, exactly the class of error (RV6-P3-02/R6R-P3-01) the review round is trying to close. And it means r7 does not state that the r7 dispatch pin (123471) differs from 119770 — which the review prompt asks to check.
+
+Now: is this a "new finding"? Reviewer task says: 对任何新增事实错误、引用错误、pin/行号歧义或安全/Gate 越界，给出 finding ID、级别、精确位置、证据与最小修正. This is a pin/行号歧义 — I think yes, P3 (traceability, matches precedent). Possibly P2? Precedent: r6-round similar issue was P3. I'll go P3, noting the aggravating factor of "本轮" double referent. Hmm, but is it "新增"? The r7 memo is a new object; the issue in r7:8 ("本轮 r6 Review prompt") is newly introduced wording in r7 (r6:8 said "当前 live Task pin"). So yes, it's a new defect introduced in r7 — reasonable as a new P3 finding.
+
+Wait, let me carefully consider whether it's fair given the memo was authored before the r7 dispatch. The prompt (requirement 1) explicitly asks the review to check whether r7 makes clear that the 119770 pin and the 123471 pin are different objects. If the memo cannot know 123471, then the answer is "r7 does not do this; instead it labels 119770 as '本轮 r6 Review prompt 的 Task dispatch snapshot' and issues a general rule". So: partially closed → record as a P3 finding (or note as "partially met"). I'll frame it as a finding but note it may be structurally inherent (candidate authored pre-dispatch) and give a minimal fix: replace "本轮 r6 Review prompt 的 Task dispatch snapshot" with "memo r6 Review（上一轮）派发时的 Task dispatch snapshot"，并加一句"本轮 r7 Review 的 Task dispatch pin 以 r7 Review prompt 为准（与 119770 不同对象）；本文不预登记该 pin，锚点须在该 pin 下重核"。This is a text-only fix, no scope change.
+
+Now let's also check other requirements.
+
+Requirement 2: 独立核对 r7 对 :58–70、:382–386 的描述与固定 Task 输入文本是否一致；检查其对 Codex 复算行为的归属是否清楚，是否错误暗示 DSH object_binding 已验证。
+
+r7:8 descriptions:
+- ":58–62 与 :382–386 仍记录用户裁决本机 Windows 验证替代 Windows Sandbox" — Verified against Task: :58 heading "### 2026-10-10 用户裁决：本机验证替代 Windows Sandbox 验证", :60 裁决, :62 continuation. :382–386 = "用户决定：本项目 P02/P04 本机 Windows 验证按验收口径等同于 Windows Sandbox 验证..." (:382), :383, :384, :385, :386. ✔ consistent.
+- "`PROJECT_ORCHESTRATION_AUTHORIZATION` 段仍对应 :68–70" ✔ (:68 heading, :70 body).
+
+Note requirement says ":58–70" — the range :58–70 includes both the user adjudication section (:58–62), the scratch-build boundary (:64–66), and the PROJECT_ORCHESTRATION_AUTHORIZATION (:68–70). r7 splits it as described. Consistent.
+
+Codex 复算 attribution: r7:8 says "Codex 从当前 Task 原始字节重构派发记录前缀并复算命中该 pin，在该固定快照复核 :58–70 与 :382–386 语义锚点。此项 Codex 核验不改变 DSH formal `object_binding=NOT_VERIFIED`。" ✔ clear attribution to Codex; explicitly says it doesn't upgrade DSH object_binding. Good — no false implication of DSH object_binding verification.
+
+Also r7:8 "Codex 在该派发快照内容仍为 live 时复核了 :58–70、:382–386 的语义锚点" for the 116853 pin. ✔ consistent with r5 adjudication:25.
+
+Requirement 3: 核对 r7 对先前 RV6-P3-01=`REJECTED_AS_MISQUOTED` 的记录是否准确。r7:11 says: "先前 r5 attempt 1 Review 的 RV6-P3-01 已由 Codex 裁决 `REJECTED_AS_MISQUOTED`（见 r5 attempt 1 adjudication）；该误引不产生 memo 修订义务。"
+
+Check: r5 attempt1 adjudication:18 records RV6-P3-01 REJECTED_AS_MISQUOTED with reason "该句没有任何 finding-ID 括注". ✔ Accurate. r7:11 links to the file name `codex-phase-a-method-blockers-review-r5-attempt1-adjudication.md` — which exists (I read it). ✔ Note that r7:11's parenthetical link text is [`r5 attempt 1 adjudication`](codex-phase-a-method-blockers-review-r5-attempt1-adjudication.md) — relative path from verification/P02/ → correct.
+
+Also r7:11 mentions "memo r3 与 r4 均保留原样" (from r5:11) — r7:11 preserved the original text plus the RV6-P3-01 record. ✔ Did it not reopen the finding or require modification of r5/r6? Correct — it says "不产生 memo 修订义务" and "RV6-P3-01 已由 Codex 裁决" and does not require changes. ✔
+
+One subtlety: r7:11 says "该误引不产生 memo 修订义务" — the misquote was DSH's, so no modification. Fine.
+
+But hmm: does r7:11's statement that RV6-P3-01 was rejected as misquoted risk being read as asserting r5:11 has no finding-ID括注 at all? It says "该误引" (the misquote) — neutral. Fine. The r5 attempt1 adjudication's stronger claim ("该句没有任何 finding-ID 括注") is retained in that fixed object; r7 doesn't repeat the stronger claim. Good — actually, DSH r6 report noted the stronger claim was incorrect because r5's line 19 had (RV4-P3-02；RV5-P3-02), but that's :19 not :11. For :11, actually there IS no finding-ID括注... wait, hold on. Hmm, but DSH r6 report claimed r5:11 has (RV4-P3-02；RV5-P3-02) which actually is at r5:19. Let me double-check r5:11 in the actual r5 file: no括注. Hmm, but then the r5 attempt1 adjudication's statement "该句没有任何 finding-ID 括注" would be TRUE for :11. Yet the r6 report says "但'该句没有任何 finding-ID括注'这一更强判断并不成立（句尾（RV4-P3-02；RV5-P3-02）是 finding-ID括注）" — that's the r6 DSH report misattributing :19's括注 to :11. So the r6 DSH report itself contains a second misquote! Interesting: the r6 DSH report claims r5:11 contains "（SHA-256=77347674…）" and "（RV4-P3-02；RV5-P3-02）". In fact r5:11 contains only the SHA括注 (77347674). The `（RV4-P3-02；RV5-P3-02）` is on r5:19. So the r6 DSH report's characterization of r5:11 as having two括注 is wrong.
+
+And Codex's r6 adjudication:14 says: "memo r5:11 的实际固定文本为"其他固定依据……"一行；该行不含 finding-ID 括注。DSH report 中关于 r5:11 含 `RV4-P3-02; RV5-P3-02` 括注的陈述亦不符合实际文本，作为误引拒绝。" ✔ Correct — Codex correctly identified the r6 DSH report's misquote. Good.
+
+So r7:11's record: "先前 r5 attempt 1 Review 的 RV6-P3-01 已由 Codex 裁决 REJECTED_AS_MISQUOTED". ✔ Accurate.
+
+Wait, but careful: RV6-P3-01 was a finding ID used in the r5 attempt 1 DSH report (line 29-33: "RV6-P3-01 · 修订谱系附注的 finding 指向错位"). And the r6 DSH report used R6R-P3-01..03. And the r6 adjudication (r6-attempt1) uses RV6-P3-01 as the REJECTED one... hmm, note there are two adjudications: `codex-phase-a-method-blockers-review-r5-attempt1-adjudication.md` (RV6-P3-01 REJECTED_AS_MISQUOTED) and `codex-phase-a-method-blockers-review-r6-attempt1-adjudication.md` (R6R-P3-01/02/03 and "RV6-P3-01（r5 attempt 1 DSH）REJECTED_AS_MISQUOTED（维持）").
+
+Hmm wait — there's an ID collision issue: In the r5 attempt1 DSH report, the new findings were labeled RV6-P3-01/02/03 (since it's reviewing memo r5 and predicting r6). And in the r6 attempt1 DSH report, the new findings are R6R-P3-01/02/03, and the prior RV6-P3-01..03 from the r5 report are the ones adjudicated in the r5 attempt1 adjudication. Hmm, but the r5 attempt1 adjudication table lists RV5-P3-01..03, RV6-P3-01, RV6-P3-02, RV6-P3-03 — where RV6-P3-01..03 come from the r5 attempt1 DSH report's "附加 finding". OK. And the r6 attempt1 DSH report line 28 discusses "RV6-P3-01 · r5:11 finding-ID 括注指向错位" → that's the r6 report's §2 referencing the r5-round finding RV6-P3-01. And r6 adjudication:22-23 handles RV6-P3-01 (r5 attempt1 DSH) REJECTED_AS_MISQUOTED (维持).
+
+OK so r7:11's reference is to RV6-P3-01 from the r5 attempt 1 DSH Review, rejected by Codex. ✔ Consistent with the r6 adjudication line 22-23 and requirement. Good.
+
+Note also the r7:11 says "该误引不产生 memo 修订义务" — matches r6 adjudication:22 "独立采纳可溯性建议：r7:11 记录先前 RV6-P3-01 已被 REJECTED_AS_MISQUOTED，不产生 memo 修订义务。" ✔ exactly closes R6R-P3-03.
+
+Requirement 4: 检查 r7 是否保留原 scope、禁令、11 项 Gate token 与证据状态；不得把授权、静态 Review、pin 复算或 memo 当作 OS measurement、测试结果、Phase A 执行许可或 Gate PASS；不得新增方法、路径、探测或数据读取。
+
+Compare r7 vs r6:
+- Scope/禁令 :35–36 identical to r6:35–36 ✔ (verified by reading both).
+- Gate 11 items :41–51 identical ✔.
+- Evidence status statements :3, :15, :37, :53, :57 present ✔.
+- Diff r7 vs r6: r7:8 rewritten; r7:11 extended with RV6-P3-01 rejection record. Also r7:15 (EA-01) — compare r6:15 and r7:15: identical? r6:15 and r7:15 look identical text. Yes.
+- r7:19 same as r6:19.
+- Any new methods/paths/probes? Let me diff carefully: r7 vs r6 line by line for all lines. Lines 1-7: identical? r7:1 "# P02 Phase A method blockers · memo r7 candidate" vs r6 r6 candidate ✔. r7:3 identical. r7:5 same heading. r7:7 identical. r7:8 modified. r7:9 identical to r6:9? r6:9: "- Task 修订快照：memo r1 首轮 DSH 派发时为 100139 bytes...；memo r2 复审派发时为 102674...；本 memo r3 候选创建时当前 Task 为 105252...。三个 Task snapshot 是不同历史修订；需以新 Review prompt 的 Task pin 为准，不能互换。（RV2-P3-02；RV-N-02；RV3-P3-02）" — r7:9 identical ✔ (says "本 memo r3 候选创建时" — historical, accepted).
+
+r7:10 identical to r6:10 ✔ (r2 review details). r7:11: r6:11 + appended sentence about RV6-P3-01. ✔ r7:13–r7:57 same as r6 except line 11/8. Line 53 identical "本次 memo 编写未运行..." ✔.
+
+So the only substantive changes are :8 and :11 — matches Codex's r6 adjudication claim ("r7 仅更新 r6 的 Task pin 叙述与既有误引裁决说明") ✔. And Task :520 claims same. Good.
+
+No new methods/paths/probes. ✔ No implication of OS measurement. ✔
+
+Now requirement 1 sub-item (a): "把 117485/C11BA... 降格为 memo r6 候选形成时的历史 pin" — r7:8: "memo r6 候选形成时记录的 Task pin=117485 bytes / SHA-256 C11BAEE4...，是历史快照，不代表本轮 Review 对象。" ✔ Good. Note formatting: "SHA-256 C11BAEE4..." without "=" — minor. In r7:8 several pins use "SHA-256 `...`" while others use "SHA-256=`...`"; also 119770 uses "SHA-256 3BAA..." (no =). Cosmetic, not a finding (or maybe worth a P3 note? Probably too trivial; but consistency... The r6 adjudication wrote "119770 bytes / SHA-256 3BAA2499...". I'll not raise it, or mention as an observation without a finding. Better: not a finding.)
+
+Now: is the 117485 pin statement accurate per the r5 attempt1 adjudication? r5 attempt1 adjudication:25 says "Codex 在当前 Task=117485 bytes / SHA-256 C11BAEE4... 下检查 :58–70 与 :382–386". So 117485 was the Task at the time of the r5 attempt1 adjudication, not at "memo r6 候选形成时". Hmm! r7:8 says "memo r6 候选形成时记录的 Task pin=117485 bytes..." — i.e., 117485 was the Task as recorded when memo r6 candidate was formed. Actually in r6:8 the text was "当前 live Task pin 为 117485". The r5 attempt1 adjudication (which produced r6) recorded current Task = 117485. So yes, at memo r6 candidate creation, the live Task was 117485. ✔ Accurate enough. And the r6-review dispatch pin was 119770, i.e., after r6 candidate creation the Task grew by 2285 bytes (the dispatch record). ✔ Consistent with r6 DSH R6R-P3-01 evidence.
+
+Hmm, but careful: r7:8 says "memo r6 候选形成时记录的 Task pin=117485" — right, that's how r6:8 recorded it ("当前 live"). Fine.
+
+Now requirement: "说明 Task 行号锚点以对应 Review prompt 的固定 Task pin 为准，pin 变化须重核" — r7:8 has "行号以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核；不同 pin 不互换。" ✔ present, though "本轮" ambiguous.
+
+Also check: does r7 anywhere imply that 119770 anchor check makes the memo's anchors valid for the r7 round? r7:8 says "在该固定快照复核 :58–70 与 :382–386 语义锚点" (for the 119770 snapshot). Then "行号以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核". Since the r7 pin is 123471, a reader might think the anchors were verified under the r7 pin. But it says "pin 变化须重核" which covers it. Still, the ambiguity of "本轮" could let a reader believe 119770 = the current round's pin. And per Task :526–528, the r7 dispatch record was appended after the 123471-byte snapshot; so the current live Task is larger than 123471. The r7 memo cannot state the 123471 pin. So the minimal fix: relabel 119770 as "上一轮（r6 Review）" and state that the r7 Review pin is fixed by the r7 prompt (distinct object), anchors to be re-checked there.
+
+Hmm, is there a possibility that memo r7 was authored AFTER the r7 prompt pin 123471 was known? The prompt file `dsh-phase-a-method-blockers-review-r7-attempt1.prompt.md` exists with SHA A82D... The memo r7 was frozen before dispatch (Task :526 "本轮派发前 Task snapshot=123471"). Since the memo is the review object fixed in the prompt, r7 candidate preceded dispatch. So it couldn't know. But note r6:8 DID reference "本轮 r6 Review prompt 的 Task dispatch snapshot=119770" — how could r6 candidate know 119770 if it preceded the r6 dispatch? Because r7 (not r6) contains that sentence. And r7 was written after the r6 dispatch. Right: r7:8's "本轮 r6 Review prompt" was written from r7's perspective referring to the previous round's dispatch. So "本轮" there is just wrong/loose: it should be "上一轮". That's the defect. Hmm, or maybe Codex wrote "本轮" meaning "the round just completed (r6)". Either way, in a memo for the r7 round, using "本轮 r6 Review prompt" and then "行号以本轮 Review prompt 固定的 Task pin 为准" is ambiguous — the second "本轮" would naturally read as r7 for a r7 review.
+
+Given the reviewer's task explicitly asks to check requirement 1 (which includes 明确 the two dispatch pins are different objects), I'll raise:
+
+New finding P3 (ID: R7R-P3-01): r7:8 用 "本轮" 同时指 r6 与 r7 两个 Review 轮次，并把 119770 标为 "本轮 r6 Review prompt 的 Task dispatch snapshot"；未登记/区分本轮 r7 Review 的 123471/5B8A... dispatch pin（现记录于 Task:526），因此要求 1 第二项只部分闭合。Minimal fix: 把该分句改为 "上一轮（memo r6 Review）派发时的 Task dispatch snapshot=119770...，与本轮 r7 Review 的 Task dispatch pin（由 r7 Review prompt 固定，见 Task 派发记录）是不同对象；本文不预登记该 pin" + 把 "行号以本轮 Review prompt 固定的 Task pin 为准" 改为 "行号以对应 Review prompt 固定的 Task pin 为准（本轮为 r7 prompt；上一轮为 r6 prompt），pin 变化须重核；不同 pin 不互换"。
+
+Hmm, but wait — should this be a finding against r7, or should I record it as "requirement 1 partially met due to structural impossibility"? The task says: "对任何新增事实错误、引用错误、pin/行号歧义或安全/Gate 越界，给出 finding ID、级别、精确位置、证据与最小修正". The "本轮" double-referent is a pin/行号歧义 in the new text. So yes, report as a new finding. Level: P3 (no Gate/scope impact; matches precedent R6R-P3-01/02). I should note it's arguably structurally inherent (candidate authored pre-dispatch) and that the general "不互换/pin 变化须重核" rule limits impact — so P3 not P2.
+
+Any other candidate findings? Let me look for other issues.
+
+1. r7:8 says "本轮在 attempt 3 Review pin（111260 bytes / ...351EB291...）下重新核对，`PROJECT_ORCHESTRATION_AUTHORIZATION` 段仍对应 :68–70，Task :58–62 与 :382–386 仍记录用户裁决..." — then "行号锚点仅在 attempt 3 pin（111260...）上复核；这些历史行号不转用于其他 Task 快照。" Hmm: "仅...复核" — but then it also describes Codex re-checking anchors under 116853 and 119770 pins. So "行号锚点仅在 attempt 3 pin 上复核" conflicts slightly with the later statements that Codex 复核了 :58–70、:382–386 at 116853 and 119770. Hmm — actually r6:8 had the same sentence and r6 DSH review didn't flag it. Reading closely: "行号锚点仅在 attempt 3 pin（111260 bytes）上复核" refers to the memo's own revision rounds ("本轮在 attempt 3 Review pin 下重新核对"). Then later it says Codex checked at 116853/119770. This is arguably contradictory: if anchors were re-checked at 116853 and 119770, then not "仅在 attempt 3 pin". Hmm, this existed in r6 too (same sentence). Since r6 DSH review's check table said "行锚点语义（在现行 Task 文本上）... 与 r6:8 一致", it didn't flag. Since the sentence is carried over unchanged from r6 (which the prior review round did not flag as a finding), raising it now would be a "new" finding on unchanged text — the review scope is r7, and unchanged text inherit...? The task says report new factual errors/ambiguities. Hmm. It's borderline. Actually is it a genuine contradiction? "行号锚点仅在 attempt 3 pin 上复核；这些历史行号不转用于其他 Task 快照。" — could be read as: the memo's *own* line-number anchoring was only re-verified at attempt 3 pin (and other pins checked by Codex separately). Then subsequent sentences describe Codex's checks at other pins. Given the explicit "此项 Codex 核验不改变 DSH formal object_binding", the distinction between "DSH/memo 复核" vs "Codex 复核" is blurred by "仅在...复核". A picky reviewer might flag it as P3. But it's carried over from r6 verbatim, and the earlier round's reviewer approved it. Hmm. The requirement 2 asks to check "其对 Codex 复算行为的归属是否清楚". The attribution IS clear (Codex 复核). The "仅在 attempt 3 pin 上复核" sentence's subject is ambiguous (who 复核?). Hmm.
+
+I think I should mention this as an observation/limit rather than a separate finding, or fold it into R7R-P3-01's minimal fix? Better: raise it as a second P3 finding? Let me think about what's most defensible.
+
+Actually, let me reconsider: in r7:8 the sentences:
+(a) "本轮在 attempt 3 Review pin（111260...）下重新核对，... 仍对应 :68–70，Task :58–62 与 :382–386 仍记录用户裁决..."
+(b) "行号锚点仅在 attempt 3 pin（111260...）上复核；这些历史行号不转用于其他 Task 快照。"
+(c) "...memo r5 attempt 1 Review 派发时的 Task pin 为 116853...；Codex 在该派发快照内容仍为 live 时复核了 :58–70、:382–386 的语义锚点。"
+(d) "...本轮 r6 Review prompt 的 Task dispatch snapshot=119770...；Codex 从当前 Task 原始字节重构派发记录前缀并复算命中该 pin，在该固定快照复核 :58–70 与 :382–386 语义锚点。"
+(e) "行号以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核；不同 pin 不互换。"
+
+(a)+(b) say the memo's own anchor re-check was on the 111260 pin. But wait — the r7 memo is a new revision round; requirement/expectation would be to re-check anchors under the r7 pin. (a) claims "本轮在 attempt 3 Review pin 下重新核对" — so r7's own re-check was at 111260, an old pin, NOT at the r7 pin (123471) nor at the r6 pin (119770). Then (e) states the authority rule. Combined with (d) (Codex checked at 119770), a reader has three different pins and no statement that anchors hold under the r7 pin. This is the crux of requirement 1's second item. So R7R-P3-01 covers it substantially. I'll make R7R-P3-01 comprehensive: covering (i) "本轮" dual referent, (ii) no registration of the r7 dispatch pin 123471, (iii) anchor authority statement's referent unclear.
+
+Should I add a separate finding for (b) "仅在 attempt 3 pin 上复核" vs (c)/(d) Codex checks at other pins? It's an internal tension that could be seen as a factual inconsistency within r7:8. But it existed in r6:8 verbatim... Actually wait, r6:8 says "行号锚点仅在 attempt 3 pin（111260...）上复核" — yes, same. Hmm, r6 DSH report's check table (line 22) says the anchors on the current Task text are consistent "但这是在派发快照=119770 bytes 这一我未做 hash 核对的读取副本上观察到". It didn't flag "仅在 attempt 3". OK.
+
+Given the review requirement emphasizes pin ambiguity, I could report it as a second P3 or fold into one. I think two P3 findings is defensible, but I worry about being over-picky on text carried over from r6 — the requirement says "对任何新增事实错误... pin/行号歧义". "新增" modifies fact errors/quote errors; pin ambiguity in r7's new text is fair game. Since (b) is carried over unchanged, it's not newly introduced. I'll mention it as a secondary observation within R7R-P3-01's evidence/impact rather than a separate ID? Hmm. Actually the more useful approach: report it as R7R-P3-01 (the "本轮" dual-referent / r7 pin non-registration) and mention (b) as an aggravating sub-point in the same finding's minimal fix, OR list it as R7R-P3-02 as "锚点复核 pin 归属表述自相矛盾（仅在 attempt 3 pin vs Codex 在 116853/119770 复核）" — hmm, but they're different subjects: memo's own check vs Codex's check. Not strictly contradictory.
+
+Let me decide: one new P3 finding (R7R-P3-01), plus note in "无新增 finding 的其他观察" that r6:8-inherited "仅在 attempt 3 pin 上复核" wording is inherited and could be misread as an exclusivity claim; recommend, if revised, clarifying. Hmm, but the format says give findings for any pin/行号歧义. Alternatively I list it as R7R-P3-02 with level P3. Two P3s is fine and shows thoroughness. I'll include it as a separate low-key P3? Let me weigh the risk of false positive. Is "行号锚点仅在 attempt 3 pin（111260 bytes）上复核" false? The memo's prior revision (r6) was checked... hmm, r6:8 said the same. If we ask: were the anchors verified at anything other than 111260 by the memo author? Yes — Codex verified at 116853 and 119770 (stated in the same paragraph). So saying "仅在 attempt 3 pin 上复核" while in the same paragraph reporting Codex's re-checks at two other pins is internally inconsistent on its face unless you read "锚点" narrowly as "the memo's line-number anchoring decision". A reader could conclude no check existed under 119770, contradicting the next sentence. I think this IS a genuine textual tension worth a P3 — but it's inherited verbatim from r6, and if I flag it, technically it's not "新增". The prompt says "对任何新增事实错误、引用错误、pin/行号歧义或安全/Gate 越界，给出 finding ID..." — I read "新增" as qualifying the finding (newly raised in this round), not necessarily newly introduced text. So flagging inherited ambiguity is allowed. But careful: flagging text carried over verbatim where the prior round's review found no issue risks "重开已拒绝 finding"? No — it wasn't raised before as a finding at all; it's not RV6-P3-01. Fine.
+
+Hmm, but there's a risk of being seen as scope creep / noise. I'll include it as R7R-P3-02 but explicitly note it is inherited from r6:8 (not newly introduced) and non-blocking, and that the minimal fix is a wording clarification. Actually — hmm. Let me reconsider: is it truly ambiguous? Sentence: "行号锚点仅在 attempt 3 pin（111260 bytes / ...）上复核；这些历史行号不转用于其他 Task 快照。" Given the paragraph then describes Codex's checks at 116853 and 119770, the "仅" is contradicted. I'm fairly comfortable flagging as P3. But I could also fold it as a sub-item of R7R-P3-01 since both stem from the same paragraph and the same minimal fix (clarify pin referents/authority). Hmm. To be cleanest and least noisy: I'll report R7R-P3-01 (pin referent/"本轮" + missing r7 pin) and R7R-P3-02 ("仅在 attempt 3 pin 上复核" 与同段 Codex 在 116853/119770 复核相抵触), both P3. The prompt asked for explicit listing of any pin/行号歧义; two items is fine.
+
+Hmm, wait. Let me consider whether R7R-P3-02 might be considered a re-litigation of R6R-P3-02/r6:9? No, unrelated.
+
+Let me double check r7:8's first sentence about the r6 dispatch: "本轮 r6 Review prompt 的 Task dispatch snapshot=119770 bytes / SHA-256 3BAA2499...；Codex 从当前 Task 原始字节重构派发记录前缀并复算命中该 pin，在该固定快照复核 :58–70 与 :382–386 语义锚点。" Hmm — "从当前 Task 原始字节重构派发记录前缀并复算命中该 pin". Note: the r7 review prompt pin is 123471; the current live Task is larger (contains r7 dispatch record). Reconstructing the 119770-byte prefix from the current file requires knowing the boundary; Codex claimed to do it. This is Codex's own claim — r7 records it with attribution ✔. Requirement 2 asks: "检查其对 Codex 复算行为的归属是否清楚，是否错误暗示 DSH object_binding 已验证" → attribution is clear (Codex), and explicitly "此项 Codex 核验不改变 DSH formal object_binding=NOT_VERIFIED" ✔. Good, no finding there.
+
+Another check: r7:8 says "memo r5 attempt 1 Review 派发时的 Task pin 为 116853 bytes / SHA-256=7CCFA05D...，是独立对象；Codex 在该派发快照内容仍为 live 时复核了 :58–70、:382–386 的语义锚点。" ✔ matches r5 attempt1 adjudication:25 (which said "Codex 在当前 Task=117485... 下检查 :58–70 与 :382–386"). Hmm — the r5 adjudication said Codex checked under the *117485* Task, not the 116853 dispatch pin! Let me re-read r5 attempt1 adjudication line 25: "Codex 在当前 Task=`117485 bytes / SHA-256 C11BAEE4...` 下检查 `:58–70` 与 `:382–386`：`PROJECT_ORCHESTRATION_AUTHORIZATION`、本机替代 Sandbox 裁决与 Gate 边界语义均命中，相关行号未被本轮仅追加的派发记录改动。该检查是 Codex 当前文件核验；不升级 DSH 的 `object_binding=NOT_VERIFIED`，也不把它倒推为对 r5 Review 快照的 DSH binding。"
+
+So the Codex check was at the current Task = 117485 (which is 116853 + dispatch record for r5 attempt 1). The 116853 pin was the r5 attempt-1 *dispatch snapshot* (the state at dispatch, before the dispatch record was appended). So r7:8 saying "Codex 在该派发快照（116853）内容仍为 live 时复核了 :58–70、:382–386 的语义锚点" — is that accurate? The check was at 117485, not at 116853. Hmm, but 117485 = 116853 + appended r5 dispatch record; the check covered the same semantic lines. r6:8 said: "Codex 在该派发快照内容仍为 live 时复核了 :58–70、:382–386 的语义锚点" — the phrase "该派发快照内容仍为 live 时" is vague: it means the content of that dispatch snapshot was still live/present when Codex checked. Since 117485 = 116853 content + appended metadata, the content was indeed still live. And the r5 adjudication says "相关行号未被本轮仅追加的派发记录改动" — i.e., line numbers unchanged by the append. Hmm, appending 2 lines at the end doesn't change :58–70 or :382–386 line numbers. ✔ So it's consistent-ish. Not a finding.
+
+Hmm, wait: 116853 → 117485 is +632 bytes; the r5 dispatch record (lines 495–499) is ~600+ bytes. Yes appended at the end. Line numbers before that are unchanged. ✔
+
+Now check whether r7 claims anything about the anchors being valid under the *r7* pin — no explicit claim. Fine.
+
+Next: check r7 for the 11 Gate tokens ✔ identical. Check requirement 4's "不得新增方法、路径、探测或数据读取" ✔ (diff shows only :8/:11 changed, both narrative).
+
+Check: does r7 introduce any new external links? Line 27, 29 have same links as r6. ✔ No new URLs.
+
+Now, another check: r7:3 says "本候选尚待新的非作者 Review" ✔. r7:15 mentions DSH r7 report SHA C1FADD... ✔ matches Task :400. r7:11's contract r7 SHA ✔ matches pin 7FBFFE65... ✔. manifest r3 SHA ✔ AC45329A... ✔. r7 adjudication SHA ✔ 6C585068... ✔.
+
+Also r7:10 mentions memo r1/r2 reviews — carried over ✔.
+
+One more: r7:7 repo main@cddff58... tree=c25d05... ✔ same as r6 and adjudications.
+
+Now let me double check the requirement 3 statement "不要把 DSH 曾错误声称 r5:11 有 finding-ID 括注的内容当事实". I verified r5:11 (actual read) has only a SHA-256括注 and no finding-ID括注. So the r6 DSH report's claim of `（RV4-P3-02；RV5-P3-02）` at r5:11 is wrong (it's at r5:19). And Codex's r6 adjudication correctly rejected that. r7:11 records the rejection neutrally ("该误引不产生 memo 修订义务"). ✔ Good — r7 doesn't assert the stronger (and also problematic) claim from the r5 attempt1 adjudication that "r5:11 没有任何 finding-ID 括注"? It doesn't repeat it. ✔ Fine. And r7 doesn't require modifying r5/r6 ✔ ("memo r3 与 r4 均保留原样" and r7:11's new sentence only records).
+
+Wait — one nuance: r7:11 writes "先前 r5 attempt 1 Review 的 RV6-P3-01 已由 Codex 裁决 `REJECTED_AS_MISQUOTED`". Hmm, the rejected finding RV6-P3-01 originated in the r5 attempt1 DSH report; the r5 attempt1 adjudication rejected it. But the *reason* Codex gave in that adjudication ("该句没有任何 finding-ID 括注") was itself—per the r6 DSH report—too strong, because... hmm, r6 DSH report claimed r5:11 has (RV4-P3-02；RV5-P3-02). We verified it doesn't. So the r6 DSH report's rebuttal is itself a misquote, and Codex's r6 adjudication:14 correctly re-stated: "memo r5:11 的实际固定文本为'其他固定依据……'一行；该行不含 finding-ID 括注" ✔ correct. So r5 attempt1 adjudication's "该句没有任何 finding-ID 括注" is actually correct for :11. Good, so no problem. I'll note this in the RV6-P3-01 verdict: the rejection is consistent with the fixed r5 text as I read it (r5:11 contains only the SHA-256 parenthetical; the RV括注 at r5:19 belongs to §5 标题段, not :11) → REJECTED_AS_MISQUOTED stands; r7:11 records it accurately and requires no modification of r5/r6. ✔
+
+But careful — I must not claim hash verification. Text observation only.
+
+Now, the R6R-P3-01/02/03 dispositions:
+
+- R6R-P3-01 (把 117485 标为"当前 live"误标；要求降格 + 登记本轮 pin): r7:8 demotes 117485 to "memo r6 候选形成时记录的 Task pin ... 是历史快照，不代表本轮 Review 对象" ✔ CLOSED.
+- R6R-P3-02 (未登记本轮派发 pin + 未写优先规则): r7:8 adds "本轮 r6 Review prompt 的 Task dispatch snapshot=119770..." + "行号以本轮 Review prompt 固定的 Task pin 为准，pin 变化须重核；不同 pin 不互换" → partially closed: the 119770 pin is registered and the priority rule added, but "本轮" referent ambiguity + no r7 pin. Per Codex adjudication:21 it was PARTIALLY_ACCEPTED with the fix shares R6R-P3-01's minimal fix. So disposition: mostly closed as to the accepted minimal fix (119770 registered, rule stated), but new ambiguity surfaced → R7R-P3-01. I'd say: 基本闭合（就 Codex 接受的最小修正而言），但落点措辞引入新歧义 → 见新 finding。
+- R6R-P3-03 (未保留 RV6-P3-01 的 REJECTED_AS_MISQUOTED 标注): r7:11 adds it ✔ CLOSED. Note: the minimal fix suggested by DSH r6 report was for :11 — r7 put it in :11 ✔.
+- RV6-P3-01: 维持 REJECTED_AS_MISQUOTED；r7 只登记，不重开，不要求改 r5/r6 ✔.
+
+Counts: P0=0, P1=0, P2=0, P3=2 (new). Hmm — should I add any P2? Let me consider severity of R7R-P3-01. The whole point of the r6 DSH review round and Codex acceptance was pin traceability. r7 partially closes it and introduces the "本轮" ambiguity. Does this mislead about the anchor authority such that a subsequent reader could treat 119770 as the r7 review pin? Possibly. Impact: a reader could believe anchors were verified under the r7 pin when they weren't (they were verified under 119770). If the r7 pin (123471) contained changes to :58–70 or :382–386... Did it? The Task grew from 119770 → 123471 (+3701 bytes) — that includes r6 result/adjudication/r7 candidate records (lines 515–522) plus the r7 dispatch record (524–528). Those are appended after :382–386, so line numbers of :58–70/:382–386 unchanged in the live file as I read it: :58–62 = 用户裁决; :68–70 = PROJECT_ORCHESTRATION_AUTHORIZATION; :382–386 = 本机验证裁决 ✔ (I verified by direct read of the live file, which is ≥123471 bytes). So the anchors do hold on the live text (text observation, no hash). So impact is traceability/ambiguity only, not a factual error. P3 justified. Good — and I can state that on the live text I read, the three anchors match r7's description (text observation, NOT_VERIFIED binding).
+
+Hmm, one more possible issue: r7:8 says "Codex 从当前 Task 原始字节重构派发记录前缀并复算命中该 pin". This describes a byte-level reconstruction. Is r7 asserting it as fact? It attributes to Codex ✔. Fine.
+
+Another possible issue: r7:8's phrase "本 memo r3 候选创建时当前 Task 为 105252 bytes" (in :9) — historical, accepted ✔.
+
+Another: does r7 anywhere claim the memo is "Review 通过"? No; :3 and :57 say pending review ✔.
+
+Does r7 expand scope? :35–36 same ✔. :21 same ✔.
+
+Check "不得新增方法、路径、探测或数据读取": no new paths. ✔
+
+Also requirement 4: "不得把授权、静态 Review、pin 复算或 memo 当作 OS measurement、测试结果、Phase A 执行许可或 Gate PASS" — r7:8 explicitly "授权是范围许可，不是 OS 证据或 Gate PASS"; "此项 Codex 核验不改变 DSH formal object_binding=NOT_VERIFIED"; :15 "仅为内容层结论、不是 exact-object 凭证"; :37 "全部是状态记录，不是 Gate 通过证据"; :53 "无测试失败记录" ✔. No violation.
+
+Now also I should double-check the claim in r7:15 about DSH r7 review of contract r7/manifest r3 = APPROVED 0/0/0/5 report SHA C1FADD... — consistent with r7 adjudication:24 and Task :400 ✔.
+
+Now: pins in the prompt vs what I read. The prompt gives sizes/hashes. I cannot verify bytes/hashes — must mark NOT_VERIFIED. I read the live Task (528 lines) which appears to be the current live version (larger than the 123471-byte dispatch pin). I should note: I read the live Task file; the described r7 dispatch pin 123471/5B8A... appears in Task:526 as "本轮派发前 Task snapshot" but I did not and cannot verify byte counts/hashes → NOT_VERIFIED.
+
+Also note: the prompt's pin list said memo r7 = 11808 bytes/14E8...; the file I read has 57 lines, content consistent. Fine.
+
+Let me also verify the referenced link paths in r7:11: [`r5 attempt 1 adjudication`](codex-phase-a-method-blockers-review-r5-attempt1-adjudication.md) — file exists ✔ (I read it). And r7's other links? Lines 27/29 external URLs ✔ (not fetched; treat as data — I could optionally check them, but they're carried from r6 and the prior review rounds verified the enumeration page. I might note that the Microsoft Learn links are carried over from r6 unchanged; external content not fetched in this review).
+
+Hmm — should I web_fetch the MS Learn links? The review is text-only; requirement doesn't ask. Prior reviews did check. It's optional; FILE_INFO_CLASS_MISMATCH claim: contract r7 §5 (r7:115) uses GetFileInformationByHandleEx(FileHardLinkInfo) which is indeed not a valid FILE_INFO_BY_HANDLE_CLASS value — I know FileHardLinkInfo is not in the enumeration (the enumeration has FileBasicInfo, FileStandardInfo, FileNameInfo, FileRenameInfo, FileDispositionInfo, ..., FileHardLinkInfo is actually... hmm. Let me recall: FILE_INFO_BY_HANDLE_CLASS includes FileIdBothDirectoryInfo, FileIdBothDirectoryRestartInfo, FileIoPriorityHintInfo, FileRemoteProtocolInfo, FileFullDirectoryInfo, FileFullDirectoryRestartInfo, FileStorageInfo, FileAlignmentInfo, FileIdInfo, FileIdExtdDirectoryInfo, ... I don't recall FileHardLinkInfo. Actually there's FILE_INFO_BY_HANDLE_CLASS = 0..N with FileMaximumInfo; FILE_STANDARD_INFO has NumberOfLinks. I'm fairly confident FileHardLinkInfo is not a valid class. Also note it's carried over from r6 unchanged, and the prior rounds established this. I'll accept without fetching (note as not re-verified this round).
+
+Hmm, since it's a factual claim in r7 (Phase B candidate defect), and requirement 5 asks about new factual errors. It's unchanged from r6, previously reviewed and accepted. I'll note it as carried over, not re-verified externally (no web fetch), consistent with my read-only, no-execution boundary. Actually I could fetch the MS page... web_fetch is allowed (not shell/Git/hash). The prompt's strict boundary prohibits shell/PowerShell/Git/hash/test/etc. but not web reading. Prior reviews did consult MS Learn. Fetching could strengthen. But it's about a carried-over claim; the r7 review's scope is r7's changes. I'll skip fetching to keep focus, and mark it as carried-over/previously-established, externally unverified this round. Hmm, but "独立核对" requirement 2 is about :58–70/:382–386 only. Fine.
+
+Actually, let me reconsider whether to fetch the FILE_INFO link — low cost, adds rigor for a factual claim newly... no, it's not new. Skip.
+
+Let me also double check r7's line-number claim "contract r7 §8.1 item 1（r7:156）" and "r7:177" — these are claims about the contract file. The prompt requirement doesn't ask to re-verify, but requirement 5 mentions 引用错误. Prior rounds verified r7:156/177. I could read the contract to confirm line numbers since I have it. That's cheap and strengthens the review. Let me read contract r7 around lines 150-180 and line 115. And manifest r3? Not strictly needed. Let me do it — read contract r7 lines 110-120 and 150-180.
+
+Let me do that to check r7:15, r7:19, r7:27 anchors.
+dsh: reasoning:
+Contract r7 verification:
+- r7:156 = §8.1 item 1 ✔ matches r7 memo's description ("DSH r7 Review、Codex adjudication 与逐文件 SHA-256/object pin 核对全部完成后，才可严格按该 manifest 测量；同项另行禁止调用 profile/private-registry API、创建 profile/file/dir、改 ACL/label/registry 或运行写 probe") ✔ Exact.
+- r7:177 = "精确下一步" item 3 with "仅当 Review、adjudication、object binding 和 Phase A manifest 均无歧义后" ✔.
+- r7:115 = §5 second bullet mentioning `GetFileInformationByHandleEx(FileHardLinkInfo)` ✔. Note r7 memo says "contract r7 §5（r7:115）" ✔ and "§5（r7:115）" — the contract header is "## 5. 禁止路径、规范化与访问判定" at line 112, bullet at 115 ✔.
+
+All quotes in memo r7 accurate.
+
+Now let me also check the manifest r3 quickly for the 23 env vars / scope claims? The requirement doesn't demand it. r7's claims about manifest r3 (23 items, no ProgramData, T0/T1) were verified in prior rounds; unchanged from r6. I'll skip to conserve effort? Hmm, requirement 2 only asks about :58–70/:382–386. Requirement 4 asks about scope/禁令/Gate tokens. I've done those. I could quickly grep manifest r3 for "ProgramData" to confirm absence and count env vars... that's an independent check of a carried-over claim. Let me do a quick grep for ProgramData in manifest r3 (grep tool, allowed — it's not shell). And maybe read manifest r3 to check the "23" claim. Let's do a targeted grep.
+
+Actually careful: reading is allowed. Let me grep "ProgramData" in verification/P02/appcontainer-readonly-preflight-r3.md.
+
+Also confirm the r7 memo's claim about manifest r3 "23 项环境变量中没有 ProgramData" and "T0/T1 读取次序" — consistent with prior rounds. Quick grep is cheap.
+
+Also I want to verify the FILE_INFO claim isn't a new issue... fine.
+
+Let me grep.
+dsh: reasoning:
+Confirmed: manifest r3 lists exactly 23 env vars (line 20) with no ProgramData; %ProgramData% appears only in the WER path list (lines 27–28), not in the env var set. ✔ r7:16 accurate. T0/T1 at line 22 ✔ (r3 requires T0 first). r7:15 says "r3 已规定的 T0/T1 读取次序不在缺口之列" ✔.
+
+Good. Now I have enough. Let me also verify the FILE_INFO link claims? Skip.
+
+One more check for requirement 4: "检查 r7 是否保留...11 项 Gate token 与证据状态" ✔ done; ":45 scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED" matches prompt's expected "scratch ACL/label=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED" ✔.
+
+Now compose the review. Format required (简体中文 Markdown), sections in order:
+1. 内容结论
+2. P0/P1/P2/P3 计数
+3. R6R-P3-01/02/03 与 RV6-P3-01 的裁决
+4. 新增 findings
+5. formal object_binding 限制
+6. 完整 Gate 边界
+
+Content conclusion: `APPROVED_WITH_CONDITIONS`（内容层文本 Review），with 2 new P3 (or 1?). Let me finalize the findings.
+
+Finding 1 — R7R-P3-01（P3）：r7:8 "本轮" 指代二义，且未登记/区分本轮 r7 Review 的 dispatch pin.
+- 位置：`verification/P02/codex-phase-a-method-blockers-20261010-r7.md:8`
+- 证据：(a) 同段先写"本轮在 attempt 3 Review pin 下重新核对"（本轮=r7），后写"本轮 r6 Review prompt 的 Task dispatch snapshot=119770 bytes / 3BAA…"（本轮=r6），同段两个"本轮"指向不同轮次；(b) 该段末句"行号以本轮 Review prompt 固定的 Task pin 为准"因此有二义：按前半句读=119770，按 r7 派发读=123471/5B8A…（该 pin 现记录于 Task:526，`本轮派发前 Task snapshot=123471 bytes / SHA-256 5B8AC72F…`，我未做 hash 核对）；(c) r7 全文（:8 及其余 56 行）不含 123471/5B8AC72F…，也未声明其与 119770 是不同对象。
+- 影响：不改变 Gate、范围或授权；但恰是 R6R-P3-01/02 要消除的 pin 歧义类型，读者按字面可能把 119770 当成本轮 r7 Review 的固定 pin。
+- 说明：r7 为派发前候选，无法预登记 123471 pin（同 r6 无法预登记 119770）；因此本条属"部分闭合 + 措辞二义"，非事实虚报。
+- 最小修正：:8 把 "本轮 r6 Review prompt 的 Task dispatch snapshot" 改为 "上一轮（memo r6 Review，attempt 1）派发时的 Task dispatch snapshot"；末句改为 "行号锚点以对应 Review prompt 固定的 Task pin 为准（上一轮=r6 prompt 的 119770，本轮=r7 prompt 固定的 Task pin，见 Task 派发记录）；不同 pin 不互换，pin 变化须重核"。
+
+Finding 2 — R7R-P3-02（P3）："行号锚点仅在 attempt 3 pin 上复核" 与同段 Codex 在 116853/119770 复核的记述相抵触。
+- 位置：r7:8
+- 证据：:8 先写"行号锚点仅在 attempt 3 pin（111260 bytes…）上复核"，同段随后写 Codex 在 116853 派发快照与 119770 固定快照复核了 :58–70、:382–386 语义锚点。若"复核"覆盖 Codex 检查，则"仅在 attempt 3 pin"不成立；若仅指 memo 自身锚点裁定，则应限定主语。
+- 影响：措辞级；不影响任何 Gate。
+- 最小修正：改为"memo 候选自身的行号锚点裁定复核于 attempt 3 pin；其后 Codex 在 116853/119770 快照的语义锚点复核见下句"。
+- 备注：该句沿用 r6:8 原文（非 r7 新引入），本轮提出为措辞歧义而非新事实错误。
+
+Hmm, is R7R-P3-02 too pedantic / risk of being viewed as a false positive? Let me double check the exact r7:8 text again: "行号锚点仅在 attempt 3 pin（111260 bytes / SHA-256=`351EB291...`）上复核；这些历史行号不转用于其他 Task 快照。"
+
+Then later: "Codex 在该派发快照内容仍为 live 时复核了 :58–70、:382–386 的语义锚点。" and "在该固定快照复核 :58–70 与 :382–386 语义锚点".
+
+So yes, the same paragraph claims checks at 116853 and 119770. "仅在 attempt 3 pin 上复核" is in tension. It's a real textual tension. I'll report as P3 with clear note it's inherited and non-blocking. Good — a fair reviewer reports it, marking inheritance.
+
+Hmm, should I merge into R7R-P3-01? They're distinct defects (referent ambiguity vs exclusivity claim). Keep separate, both P3. Count: 0/0/0/2.
+
+Also should I note "无新增安全/Gate 越界"? Yes.
+
+Additional observations (non-findings) worth stating:
+- r7:8 对 Codex 复算的归属清楚（"Codex 从当前 Task 原始字节重构…复算命中该 pin"），并明写"此项 Codex 核验不改变 DSH formal object_binding=NOT_VERIFIED"，未暗示 DSH object_binding 已验证 ✔。
+- r7 对齐 :58–70/:382–386 的描述与固定 Task 文本一致（文本观察）：:58 标题"2026-10-10 用户裁决：本机验证替代 Windows Sandbox 验证"、:60 裁决正文、:62 continuation；:68 标题"本轮 PROJECT_ORCHESTRATION_AUTHORIZATION：AppContainer 精确隔离范围"、:70 正文；:382–386 "本机验证用户裁决（2026-10-10）"段。均与 r7:8 描述相符。注明这是我在 workdir 中读到的 live Task 文本，非派发 pin 的 byte 绑定。
+- r7:15/:19/:27 对 contract r7 的锚点抽查一致：r7:115 确为 §5 含 `GetFileInformationByHandleEx(FileHardLinkInfo)` 的条目；r7:156 为 §8.1 item 1（三项前置 + 独立禁令）；r7:177 为"精确下一步"3（"均无歧义"）。
+- manifest r3 抽查：:20 明列 23 个变量（无 ProgramData），:26–28 的 WER 列表含 2 条 %ProgramData% 路径，:22 规定 T0/T1 次序 → r7:15/:16 一致。
+- 与 r6 逐行比对：实质变更只有 :8 与 :11（:11 追加 RV6-P3-01 记录）；:35–36、:41–51、:3/:15/:37/:53/:57 与 r6 逐字一致，未新增方法/路径/探测/读取。
+  - Caution: I compared r5 vs r6 earlier? No — I have both r6 and r7 contents read; comparing them: all lines identical except 8 and 11. Let me verify a few: r6:15 vs r7:15 — identical. r6:16 vs r7:16 identical. r6:17, 18, 19, 21, 25, 27, 29, 31, 35, 36, 37, 41-51, 53, 57 identical. And r7:9, :10 identical, :7 identical. ✔ So "only :8/:11 changed" — matches Codex's claim in r6 adjudication:25 and Task:520.
+
+Wait — one difference: r7:11 relative to r6:11: r6:11 ends "memo r3 与 r4 均保留原样。" r7:11 ends "…已由 Codex 裁决 `REJECTED_AS_MISQUOTED`（见 [`r5 attempt 1 adjudication`](codex-phase-a-method-blockers-review-r5-attempt1-adjudication.md)）；该误引不产生 memo 修订义务。" ✔ append only.
+
+Also confirm r7 title line 1 "memo r7 candidate" and r6:1 "memo r6 candidate" — changed obviously, plus r7:11 link. Fine — I'll say substantive changes limited to :1 title/:8/:11.
+
+Hmm, :1 header differs (r7 vs r6) — trivial.
+
+Now, RV6-P3-01 verdict: 维持 `REJECTED_AS_MISQUOTED`。理由（本 Review 独立核对固定对象原文）：r5:11 实际文本为"其他固定依据……memo r3 与 r4 均保留原样。"，句内只有 `（SHA-256=77347674…）` 一个括注，不含 `RV4-P3-02；RV5-P3-02`（该 finding-ID 括注位于 r5:19），也不含 `RV5-P3-01`/`RV5-P3-03`。故 r5 attempt 1 DSH review 的 RV6-P3-01 引文不成立；Codex 拒绝正确。r7:11 只登记该裁决、未重开、未要求修改 r5/r6 固定对象 ✔。补充：r6 DSH report 对 r5:11 "含两个括注"的描述亦不符（同属误引），Codex 在 r6 adjudication:14 已同样拒绝；r7 未采用该误引内容 ✔。
+
+Also note: I must not treat DSH's erroneous claim as fact ✔.
+
+R6R dispositions:
+- R6R-P3-01 `ACCEPTED`: 已闭合（r7:8 将 117485/C11BAEE4 降格为"memo r6 候选形成时记录的 Task pin……是历史快照，不代表本轮 Review 对象"）。✔ CLOSED（措辞级）。
+- R6R-P3-02 `PARTIALLY_ACCEPTED`: 就 Codex 接受的最小修正（登记 119770 + 优先规则）而言已落地 ✔；但 "本轮" 指代二义与未区分 r7 pin → 部分闭合，新 finding R7R-P3-01。
+- R6R-P3-03 `ACCEPTED_NARROWLY`: 已闭合（r7:11 记录 RV6-P3-01=REJECTED_AS_MISQUOTED，不产生修订义务）✔ CLOSED。
+
+Formal object_binding section: NOT_VERIFIED, list what wasn't done, and pins as transcription only. Include the prompt-listed pins as 转录值; note I read the live Task (528 lines) and its :526 records the 123471/5B8A pin; but byte/hash binding NOT_VERIFIED.
+
+Gate boundary: all 11 tokens exactly as specified in the required format.
+
+Also note: P02 AC1–AC7 = BLOCKED / NOT_RUN, not failed.
+
+Final line: Review 是内容意见，不是 Gate PASS、exact-object binding 或 Phase A 执行授权.
+
+Let me also mention in the conclusion whether requirement 1 is fully closed: (a) 117485 降格 ✔；(b) 明确 119770 vs 123471 是不同对象 ✗/部分 → R7R-P3-01；(c) 行号锚点以对应 Review prompt 的固定 Task pin 为准、pin 变化须重核 → 规则已在 r7:8 出现，但"对应"未写清（写作"本轮"）→ 部分。
+
+So content conclusion: `APPROVED_WITH_CONDITIONS`（P0/P1/P2/P3=0/0/0/2）。
+
+Now write it in 简体中文 Markdown. Keep it structured and reasonably concise but complete. Include the required order of sections.
+
+I should not create any files. Just reply.
+
+Let me write.

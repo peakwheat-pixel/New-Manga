@@ -1,0 +1,13 @@
+{
+  "tool": "dsh",
+  "version": "0.2.0-rc.2",
+  "launcher": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+  "probeExit": 0,
+  "responseTrimmed": "收到",
+  "stdoutBytes": 7,
+  "stdoutSha256": "79C4DB990267B503BAD5F4B51A9D771A74F4D74B58E55B380A02BA8B77FBAA7C",
+  "stderrBytes": 0,
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "observedAt": "2026-10-11T20:17:30.1798580Z"
+}

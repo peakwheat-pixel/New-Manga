@@ -1,0 +1,96 @@
+{
+  "task": "P02PRE-R1H",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "/root/p02_r1h_remediation_review",
+  "integrator": "/root",
+  "repository": "G:\\CODEX\\New Manga",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "branch": "agent/codex/P02PRE-R1H",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "startingHead": "92c90a9ba20f7a1b4ab090837f99c191745524f6",
+  "startingTree": "c70bd6c756b5d6931d07a483c958131cd2934a04",
+  "taskSha256": "2E28B894347FB796978396014E4BC33E4590EFDEDD2F2DE1BCB195056E467491",
+  "taskBytes": 21160,
+  "sourcePins": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 21160,
+      "sha256": "2E28B894347FB796978396014E4BC33E4590EFDEDD2F2DE1BCB195056E467491"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation2-20261012.md",
+      "bytes": 8812,
+      "sha256": "55A55133EF04FBED607F0754C9F5D75A25371BFF0EBCFF8E469CE40E68D08894"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-remediation2-adjudication-20261012.md",
+      "bytes": 4988,
+      "sha256": "1D691CB0842894CBF70E151140CFBAB8192C3832614D7370155B815FCFE66D98"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round2-20261012.prompt.md",
+      "bytes": 3777,
+      "sha256": "08F4BF3CBD552DF8ECB8FCA5E30FD0918A6A63BA261D2051394F92C1AD529023"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round2-pins-20261012.json",
+      "bytes": 3010,
+      "sha256": "B571D318C56482D93635C5CD12407044A0A82CAA51F6093673CD081FC61821C0"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-remediation2-review-input-pins-20261012.json",
+      "bytes": 3866,
+      "sha256": "1AF1D4815B0902B3149056BFA27842FB6EBA6C318709F3A66DFB7F5B0ACC0FB9"
+    }
+  ],
+  "startingCandidatePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 44619,
+      "sha256": "12986FC3A8B2972F72B3C2B3FFD1D00ED3ABE1367A1CEE7CE570D88ADC16DD75"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 6251,
+      "sha256": "40F6997F05625F90123717D4E12D5C9FE6E4340F04BDCADF15D091582F8AFC02"
+    }
+  ],
+  "allowedWrites": [
+    "verification/P02/p02pre-r1h-capture.ps1",
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-handoff-20261012.md"
+  ],
+  "onlyAllowedCheck": "git diff --check",
+  "prohibited": [
+    "PowerShell parser",
+    "candidate self-check",
+    "preflight",
+    "capture",
+    "getter/API",
+    "tests",
+    "Build/Cargo",
+    "AC1–AC7",
+    "OS dynamic validation",
+    "Windows Sandbox",
+    "editing Task/manifest/Plan/STATUS/index/pins/reports"
+  ],
+  "requiredDelivery": [
+    "new commit, parent, HEAD, tree",
+    "exact changed paths and diffstat against startingHead and frozenTaskBase",
+    "controlled status using the exact excluded pathspec",
+    "git diff --check exit",
+    "per-candidate bytes and SHA-256",
+    "commands run and limitations",
+    "no self-review, integration, or Gate/AC PASS claim"
+  ]
+}

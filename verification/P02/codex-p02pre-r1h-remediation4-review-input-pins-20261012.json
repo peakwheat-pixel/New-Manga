@@ -1,0 +1,103 @@
+{
+  "task": "P02PRE-R1H",
+  "review": "Independent static review of round-four Owner remediation for R1H-007",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "/root/p02_r1h_remediation_review",
+  "integrator": "/root",
+  "repository": "G:\\CODEX\\New Manga",
+  "ownerWorktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "branch": "agent/codex/P02PRE-R1H",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "previousHead": "0ecada4182d624d4f352a253e09db3bdecbee5d1",
+  "deliveryHead": "7e7d0bce8dd86a2302d2a9eb278702d9c70354ff",
+  "deliveryTree": "c9afca4e9bfd8d1b6a6c3ad5a8a33e0e12c3d87b",
+  "deliveryVerification": {
+    "mergeBaseEqualsFrozenTaskBase": true,
+    "frozenTaskBasePaths": [
+      "verification/P02/p02pre-r1h-capture.ps1",
+      "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "verification/P02/p02pre-r1h-handoff-20261012.md"
+    ],
+    "roundFourChangedPaths": [
+      "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "verification/P02/p02pre-r1h-handoff-20261012.md"
+    ],
+    "ownerControlledStatus": {
+      "exit": 0,
+      "records": 0,
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "diffCheck": {
+      "command": "git diff --check 0ecada4182d624d4f352a253e09db3bdecbee5d1..7e7d0bce8dd86a2302d2a9eb278702d9c70354ff",
+      "exit": 0
+    }
+  },
+  "sourcePins": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 22941,
+      "sha256": "45671AD744C2CD51D831F3513F16CE573D24E7A0CF679DC087E98A29B27A4486"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation3-20261012.md",
+      "bytes": 9545,
+      "sha256": "98E9C6F416518598865BCB1B6AD07FAB892868D2D95A9F38E2029DCD18BC03D8"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-remediation3-adjudication-20261012.md",
+      "bytes": 3715,
+      "sha256": "3CF705EBE1991ECD68F8027AE60C470FB751274F24D71FC4F8840E8767326383"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round4-20261012.prompt.md",
+      "bytes": 3793,
+      "sha256": "21D5490516EE218C7A6FE05DCE887B096EC6A2CEE4C9F007A94F1A318B65F899"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round4-20261012.pins.json",
+      "bytes": 2915,
+      "sha256": "86473746AED848FD70C820DD667C454875B487F13C847610BC8D2BD5DC528822"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round4-delivery-verification-20261012.md",
+      "bytes": 2800,
+      "sha256": "363438FCC6F4970A16AC778D8C80E5D3D39AF525D9448E0BFAF2ECC92EB34AD8"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-remediation4-review-dispatch-20261012.prompt.md",
+      "bytes": 3866,
+      "sha256": "2AB18C7E4A30A0AA1C84636E67AF702AACC45A32F61B21FED4A5E7493A51C392"
+    }
+  ],
+  "candidatePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57623,
+      "sha256": "EEFB41141EBE162503047C20CAF4F41D5E8E01EEF2FCEE0C90DA7185A8164CF1"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    }
+  ],
+  "rules": {
+    "reviewFullFrozenTaskBaseToDeliveryDiff": true,
+    "soleReviewWrite": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation4-20261012.md",
+    "noParserSelfcheckFixturesPreflightCaptureGetter": true,
+    "noTestsBuildCargoAC1toAC7OSDynamicOrSandbox": true,
+    "doNotTreatReviewAsIntegrationOrGatePass": true,
+    "reviewerMustDifferFromOwner": true
+  }
+}

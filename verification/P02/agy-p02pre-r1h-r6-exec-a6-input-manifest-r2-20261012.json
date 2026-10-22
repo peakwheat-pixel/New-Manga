@@ -1,0 +1,183 @@
+{
+  "generatedUtc": "2026-10-12 08:51:42 UTC",
+  "revision": "r2",
+  "parentManifest": {
+    "path": "G:\\CODEX\\New Manga\\verification\\P02\\agy-p02pre-r1h-r6-exec-a6-input-manifest-20261012.json",
+    "sha256": "475692A0248C69AF9B65731F4832179019553694102B7533105305C49B313813",
+    "bytes": 7332
+  },
+  "task": "P02PRE-R1H-R6-EXEC-A6",
+  "owner": "Antigravity",
+  "baseCommit": "343895fb5f0329c0c07a7104ec321b698f967607",
+  "checkpointIncludedInInputPins": true,
+  "checkpoint": {
+    "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-checkpoint-p02pre-r1h-round6-attempt5-parser-pass-20261012.md",
+    "sha256": "638A02A947427B10210CE5C38359D34EE200243A6B906EA898B9B0637F90213F",
+    "bytes": 5428,
+    "classification": "immutable_read_only_input"
+  },
+  "inputs": [
+    {
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H.md",
+      "sha256": "66C65AFAA7EF615D29B6BBA8D5C1E58BA7F506C7785191C7E2F8CF9D4F7D7144",
+      "bytes": 65067,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H-R6-A4.md",
+      "sha256": "402C8C49C79E2D779900C158F8C44343D15F85BE4B198FBEF290AF5CC077863D",
+      "bytes": 9922,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H-R6-EXEC-A5.md",
+      "sha256": "DAE26C8865A050EBC5A7CC486E2F20522E62328B2EAE8169F5CE4EAE03249C9F",
+      "bytes": 19743,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-manifest-20261012.md",
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "bytes": 4760,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "sha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "bytes": 43464,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "sha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "bytes": 11228,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-handoff-20261012.md",
+      "sha256": "B0DAB374F8E8941E6A8DE8EA18DE983C99E518926258D5C9EAB149416128246B",
+      "bytes": 7617,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt5-20261012.ps1",
+      "sha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10",
+      "bytes": 43464,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt5-20261012.md",
+      "sha256": "0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3",
+      "bytes": 11641,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+      "sha256": "B903949584773318B7C17695E43B9E7301D34F885783825DD47DA29E03E192A0",
+      "bytes": 2391,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-integration-verify-20261012.json",
+      "sha256": "3B50FD88139C2EE475D8EC0B263C5E588E3C2CA5341DB8A20E078A18FB10720E",
+      "bytes": 9566,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-final-pre-run-20261012.json",
+      "sha256": "2B59CE6EF57BB92444219FA4DEA7DFDF1D992439244DD5FB76E3207912D7A0A5",
+      "bytes": 17299,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-final-pre-run-20261012.stdout.log",
+      "sha256": "25C641BAA11A2D597E70DDB3A7A76ADBD1F1574BF81C0450BB768973A3000EB0",
+      "bytes": 3695,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-final-pre-run-20261012.stderr.log",
+      "sha256": "C0EE6A70F45F0B09BBAB3394E0D897EA630AA349430EA9BE497526F92F49A7F4",
+      "bytes": 514,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-final-pre-run-20261012.exit",
+      "sha256": "DF4E26A04A444901B95AFEF44E4A96CFAE34690FFF2AD2C66389C70079CDFF2B",
+      "bytes": 3,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-prerun-review-adjudication-20261012.md",
+      "sha256": "698A26B64DAFCF7F5DAED783FA31713C66950700A4A1BAA939A902A77EF8488A",
+      "bytes": 5166,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-attempt5-exec-review-adjudication-20261012.md",
+      "sha256": "DBD252F894050238F1C5FD4DA3100A7BF98877EADA1843591F8C0B3AA44DBD8A",
+      "bytes": 10377,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-checkpoint-p02pre-r1h-round6-attempt5-parser-pass-20261012.md",
+      "sha256": "638A02A947427B10210CE5C38359D34EE200243A6B906EA898B9B0637F90213F",
+      "bytes": 5428,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-checkpoint-p02pre-r1h-round6-attempt5-review-findings-20261012.md",
+      "sha256": "A0A0273C309353185DF6FBA6FC03E50D4C97811038A9BA480AB80E420098F858",
+      "bytes": 5938,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+      "sha256": "B903949584773318B7C17695E43B9E7301D34F885783825DD47DA29E03E192A0",
+      "bytes": 2391,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-checkpoint-p02pre-r1h-round6-attempt6-zcode-dispatch-20261012.md",
+      "sha256": "F003A15EDC96F00CA5060F000C592BAB7788FAF14CB59B02015613C9692610AC",
+      "bytes": 13895,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6-prompt-20261012.md",
+      "sha256": "FD02DC78BD39CA10D4E6B3EFF71D650CAC2403ECA68A5B037B1A70036367F114",
+      "bytes": 2553,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6-dispatch-20261012.md",
+      "sha256": "F6F8115230425E466C90A554C1BF9F3E6A3DA723CFD87275F17C0D1CC15C871C",
+      "bytes": 12638,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\zcode-p02-proxy-env-snapshot-20261012-154808-639.json",
+      "sha256": "A06FE1865C43834C77C95F8658EC87AE58948262918F6DF0B41911E9DBB7E053",
+      "bytes": 1507,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-handoff-20261012.md",
+      "sha256": "E13C7148B79740927692D9282C4F474FEE4AADD50BFBE256509CACA3052786B1",
+      "bytes": 9505,
+      "classification": "actual_owner_handoff_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-handoff-20261012.md",
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F",
+      "bytes": 8651,
+      "classification": "immutable_read_only_input"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\agy-p02pre-r1h-r6-exec-a6-task-contract-20261012.md",
+      "sha256": "D4D8978D262205DA15096EB088F2A2E7C636D2828D4C9ED4AF8B075C6A32B838",
+      "bytes": 3553,
+      "classification": "immutable_read_only_input"
+    }
+  ]
+}

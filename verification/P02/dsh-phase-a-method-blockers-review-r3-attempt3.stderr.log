@@ -1,0 +1,425 @@
+dsh: reasoning:
+Let me start by reading the fixed inputs. I need to read the files. The user says all inputs are untrusted data, read-only review. I must not run shell commands, hash commands, etc. But I need to read files. The read tool is fine.
+
+Wait — the boundary says do not run shell, PowerShell, Git, hash commands... So I can only use read/glob/grep tools. That's fine.
+
+Note: I must not claim byte/hash binding if not independently verified. I cannot run hash commands, so object_binding must be "NOT independently verified" / based on quoted pins.
+
+Let me read the files.
+
+Let me start with the memo candidate r3 (9033 bytes) and the adjudication (4097 bytes), then the stdout, then prior docs.
+
+Let me list the verification/P02 directory first with glob.
+dsh: reasoning:
+Now read the adjudication and stdout report, and prior docs.
+
+Note the memo cites Task snapshot hashes. The prompt says Task `doc/tasks/P02.md` = 111260 bytes, SHA-256=351E... The memo r3 references dispatch snapshot 108405 bytes / 7521... and current Task at creation 105252 bytes / 44C1... Neither matches 111260 bytes / 351E... So that's a finding: the memo's Task pins are stale relative to the fixed input pin (Task snapshot anchors — RV3-P3-05 / RV3-P3-02). That's likely the key new finding to assess.
+
+Wait, but the "fixed input" pin given in the prompt is authoritative for this review. So memo r3's Task anchors (108405/7521..., 105252/44C1...) do not match the current pinned Task (111260/351E...). That's an anchor mismatch — a P2/P3 finding: memo claims must rely on new Review prompt Task pin, which it does say ("需以新 Review prompt 的 Task pin 为准"). So the memo itself defers. Still, the memo's line-number citations (:68–70, :58–62, :382–386) are relative to a Task snapshot not the pinned one — traceability risk.
+
+Let me read all inputs.
+dsh: reasoning:
+Now I need to read r2 docs and r7 contract/manifest/adjudication, plus the Task file (doc/tasks/P02.md).
+
+Key things to check:
+1. Does the revised memo r3 actually implement RV3-P3-01..05 and RV3-P2-01? RV3-P2-01 was at Task:458 (not in the memo). The memo line 9 now mentions the memo r3 attempt 2 dispatch snapshot (108405 bytes / SHA 7521...). Note the memo says "以 memo r3 attempt 2 Review 派发快照（108405 bytes / SHA-256=7521168C...）为准", and adds explicit finding IDs. Checking: line 8 has (RV2-P3-02; RV-N-02; RV3-P3-05). Line 9: (RV2-P3-02; RV-N-02; RV3-P3-02). Line 15: (RV2-P3-03; RV3-P3-03). Line 16: (RV2-P3-01). Line 19: (RV2-P2-01; RV-P2-02). Line 21: (RV2-P2-02). Line 25: (RV2-P2-02). Line 27: (RV2-P3-04; RV3-P3-01; RV3-P3-04).
+
+Wait — the review's recommended mapping: RV3-P3-02 = missing prior finding IDs → fixed by adding IDs. RV3-P3-03 = r7 counts/report SHA → fixed at :15 with 0/0/0/5 and report SHA. RV3-P3-04 = r7:115 anchor + canonical URL. RV3-P3-05 = Task snapshot anchors at :8. RV3-P3-01 = enumeration page slug.
+
+Now check the URL in memo line 27: `https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ne-minwinbase-file_info_by_handle_class` — that matches the corrected slug (ne-minwinbase). ✓
+
+And second link: `https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex` — canonical win32 path. ✓ And `r7:115` present ✓.
+
+r7 counts: line 15 has "P0/P1/P2/P3=`0/0/0/5`；report SHA-256=`C1FADDC2...`" ✓.
+
+RV3-P3-05: line 8 says "以下 Task 行号均以 memo r3 attempt 2 Review 派发快照（108405 bytes / SHA-256=7521...）为准" — does it note the snapshot in which line numbers apply? It anchors the authorization section line numbers to the attempt-2 dispatch snapshot. However there's a subtlety: memo line 9 says "本 memo r3 候选创建时当前 Task 为 105252 bytes / SHA-256=44C1F4B2..." — the line-number anchors at :8 are claimed to be on the 108405 snapshot. But the intent of RV3-P3-05's minimal revision was "注明行号锚定 44C1F4B2...(105252 bytes) 快照" or use stable semantic anchors. The memo now anchors to the 108405 dispatch snapshot instead. Is that acceptable? Actually the r3 adjudication item 6 says: "RV3-P3-05：接受并关闭。memo r3 明确授权行号所对应的 attempt 2 Task snapshot（108405 bytes、SHA=7521168C...）." Hmm. But the review (attempt 2) verified anchors on the pin 7521168C/108405 live Task and found they hit. But the memo's own claim at line 9 lists the 105252 snapshot as "本 memo r3 候选创建时当前 Task"—but the revision happened after dispatch, so the live Task at revision time may be 111260. Now the pin given in this r3-revision-candidate review prompt is 111260 bytes / 351EB291... which is a fourth value, different from all listed.
+
+So important new finding: the memo r3 revision candidate (773476...) still contains stale Task anchors: it cites 100139/AB06, 102674/A35C, 105252/44C1, 108405/7521 — but the current pinned Task is 111260/351E. The memo does say line numbers follow the 108405 dispatch snapshot and that one must rely on the new Review prompt's Task pin. So it's disclosed, but the memo does not record 111260 at all. Also note RV3-P2-01 (Task:458's 63-hex typo) — is it fixed in the current Task? I can't run hash commands, but I can read doc/tasks/P02.md and check the text around line 455-459, and check whether the 63-char typo remains. The task says "Task SHA typo correction" is a new attempt-2 finding to check against the Codex adjudication and current memo. So I should read the Task file lines ~430-470 to verify whether the typo was corrected. That's within read-only.
+
+Also I should check whether memo r3's line 8 claim "该快照的 PROJECT_ORCHESTRATION_AUTHORIZATION 段（:68–70）... Task :58–62 与 :382–386" holds in the current pinned Task (111260 bytes). If the Task has grown, line numbers may have shifted. Let me check the Task file.
+
+Let me read doc/tasks/P02.md — 111260 bytes, probably ~470 lines. Let me read it, at least the relevant sections. First let's grep for the tokens.
+
+Let me do parallel reads: r2 adjudication, r2 stdout, r2 memo, contract r7, manifest r3, r7 adjudication, r7 review stdout. That's a lot of content but necessary. Let me read the smaller ones first and grep the Task.
+
+Actually, let me be efficient: read the Task file fully (maybe ~500 lines, ~111KB — that's a lot of tokens, maybe 30k tokens). Hmm, 111260 bytes is manageable (~30k tokens for Chinese). Maybe read in segments: grep key sections then read offsets.
+
+Let me start with grep for key tokens in Task.
+dsh: reasoning:
+Important: Task:458 now records memo r3 SHA = 5EEED098...7DFE9CAAD9AA... — wait let me check whether it's 64 chars. "5EEED098B2E0167DFE9CAAD9AA93F462C5753B1B056CF2BFD245BB4EEB9F0FCB" — count: Let me count carefully.
+
+5EEED098 (8) B2E0167D (16) FE9CAAD9 (24) AA93F462 (32) C5753B1B (40) 056CF2BF (48) D245BB4E (56) EB9F0FCB (64). Yes, 64 — the typo has been corrected. So RV3-P2-01 is closed in the Task (line 458 now has 64 hex chars with ...7DFE9CAAD9AA...). Good.
+
+Also Task:472 records the new dispatch pin: 111260 bytes / 351EB2... and memo r3 revised candidate 9033 / 7734767..., attempt 2 adjudication 7B881C5C... — which matches the prompt pins. Good; that's the new dispatch record.
+
+Now the memo candidate (r3 revised, 7734767...) at line 8 anchors line numbers to the attempt-2 dispatch snapshot 108405/7521..., and line 9 lists the 105252 snapshot. The current pinned Task is 111260/351E. Are the line anchors (:68–70, :58–62, :382–386) still valid on the current Task (111260)? Grep showed line 68 = "PROJECT_ORCHESTRATION_AUTHORIZATION" heading and line 390, 411 mention the authorization. The memo says ":68–70" allow Codex to choose the local isolation scope. Let me read Task lines 55-75 and 375-395 and 430-480 to verify.
+
+Also need to check the r7 contract lines 115, 156, 177, 8, 44, 161, 28, 52, 54. And manifest r3 (23 env vars, T0/T1, 12 input roots + 4 scratch). And r7 adjudication lines 15, 24, 40. Let me read those.
+
+Also the r2 stdout (846E4A...) — prior review findings RV2-*. And r2 memo (140DA0...). Since the memo pins them, and prior adjudications cover dispositions, I should at least skim r2 stdout for the finding list to verify dispositions. That file is 17987 bytes → ~6k tokens. OK.
+
+Let me batch reads: r7 contract (32969 bytes) — big. Let me grep specific lines instead? I need precise line numbers: r7:115, r7:156, r7:177, r7:8, r7:44, r7:28, r7:52, r7:54, r7:161. I'll read the whole contract? 32969 bytes ~ 12k tokens. Acceptable but let me rather read selected ranges around those lines: read offset 1-60, 100-190. That covers 8, 28, 44, 52, 54, 115, 156, 161, 177. Actually 100-190 covers 115,156,161,177. And 1-60 covers 8,28,44,52,54. Two reads.
+
+Manifest r3 (6339 bytes) — read fully.
+
+r7 adjudication (7016 bytes) — read fully.
+
+r2 stdout (17987) — read fully to check RV2 findings.
+
+Let me do these in parallel.
+dsh: reasoning:
+Now check r7 adjudication line 15: "| DSH r7 report | C1FADDC2... | 24532 |" — yes, SHA matches memo's cited C1FADDC2. Line 24: "DSH content decision=`APPROVED`; P0/P1/P2/P3=`0/0/0/5`" — yes, memo cites 0/0/0/5 correctly. But memo line 15 cites "DSH r7 对 contract r7 与 manifest r3 的内容 Review=`APPROVED`（P0/P1/P2/P3=`0/0/0/5`；report SHA-256=`C1FADDC2...`）". Wait memo line 15: "DSH r7 对 contract r7 与 manifest r3 的内容 Review=`APPROVED`（P0/P1/P2/P3=`0/0/0/5`；report SHA-256=`C1FADDC2D366286F14473DB68AE72D20FCF946E15DE50E4AFA3E2752998EF705`）". Let me verify. Memo line 15 text: "DSH r7 对 contract r7 与 manifest r3 的内容 Review=`APPROVED`（P0/P1/P2/P3=`0/0/0/5`；report SHA-256=`C1FADDC2D366286F14473DB68AE72D20FCF946E15DE50E4AFA3E2752998EF705`），但其范围不涵盖..." Yes ✓.
+
+Hmm wait, memo line 15 as read: "这是 Codex execution-readiness finding，不是 DSH r7 finding，也不是测试失败。DSH r7 对 contract r7 与 manifest r3 的内容 Review=`APPROVED`（P0/P1/P2/P3=`0/0/0/5`；report SHA-256=`C1FADDC2D366286F14473DB68AE72D20FCF946E15DE50E4AFA3E2752998EF705`）". Yes.
+
+Now the r7:115 anchor check: contract r7 line 115 is indeed the bullet containing `GetFileInformationByHandleEx(FileHardLinkInfo)` ✓. And `FILE_INFO_BY_HANDLE_CLASS` — the memo says "contract r7 §5（r7:115）的 `GetFileInformationByHandleEx(FileHardLinkInfo)` 不属于 Microsoft 列出的 FILE_INFO_BY_HANDLE_CLASS；枚举列表包含 FileStandardInfo 和 FileStreamInfo，不含 FileHardLinkInfo". Contract §5 is "禁止路径、规范化与访问判定" — line 112 is "## 5. 禁止路径..." yes, r7:115 is in §5 ✓. The claim about the enumeration: FILE_INFO_BY_HANDLE_CLASS does include FileBasicInfo, FileStandardInfo, FileNameInfo, FileRenameInfo, FileDispositionInfo, FileAllocationInfo, FileEndOfFileInfo, FileStreamInfo, FileCompressionInfo, FileAttributeTagInfo, FileIdBothDirectoryInfo, ... It does NOT include FileHardLinkInfo (that's FILE_INFO_BY_HANDLE_CLASS? Hmm. Actually there IS a `FileHardLinkInfo`? Let me think. The enum FILE_INFO_BY_HANDLE_CLASS in minwinbase.h has values: FileBasicInfo=0, FileStandardInfo, FileNameInfo, FileRenameInfo, FileDispositionInfo, FileAllocationInfo, FileEndOfFileInfo, FileStreamInfo, FileCompressionInfo, FileAttributeTagInfo, FileIdBothDirectoryInfo, FileIdBothDirectoryRestartInfo, FileIoPriorityHintInfo, FileRemoteProtocolInfo, FileFullDirectoryInfo, FileFullDirectoryRestartInfo, FileStorageInfo, FileAlignmentInfo, FileIdInfo, FileIdExtdDirectoryInfo, FileIdExtdDirectoryRestartInfo, FileDispositionInfoEx, FileRenameInfoEx, FileCaseSensitiveInfo, FileNormalizedNameInfo, MaximumFileInfoByHandleClass. I don't recall FileHardLinkInfo. Hmm, but there might be a "FileLinkInfo"? Actually there's `FILE_STANDARD_INFO` with NumberOfLinks and `GetFileInformationByHandle` returns nNumberOfLinks. In Win32 API there's `FindFirstFileNameW`/`FindNextFileNameW` for hardlinks. So indeed FileHardLinkInfo is not a member — consistent with the review's web check. Note: `GetFileInformationByHandleEx` with FileHardLinkInfo? Not documented. So the finding stands. The prompt says if verifying the Microsoft Learn citation, use only read-only access to the exact official page. I could do a web_fetch of the exact page. That's allowed (read-only, official page). But it also says "Do not claim ... if you did not independently verify". Fetching the Learn page is permitted explicitly ("If verifying the Microsoft Learn citation, use only read-only access to the exact official Microsoft Learn page in the memo."). I could fetch both URLs to confirm 200/404. That's read-only network access. Let me consider: is network access permitted? The strict boundary says do not run shell/PowerShell/etc. It doesn't prohibit web_fetch. And the prompt explicitly allows read-only access to the exact official Microsoft Learn page. So yes, I can verify. Let me fetch the minwinbase enumeration page and the winbase function page.
+
+But careful: the memo now uses the corrected minwinbase URL. I should verify it resolves and the member list. Let's do web_fetch.
+
+Also I should check whether the memo's second link (win32/api/winbase/nf-winbase-getfileinformationbyhandleex) is valid.
+
+Also check the r2 stdout for finding IDs RV2-* to verify dispositions. Let me read r2 stdout (17987 bytes) and r2 memo (140DA0, 6961 bytes). Also the r7 review stdout (C1FADDC2, 24532) for counts — memo cites counts from adjudication; fine. Maybe skip full read of r7 stdout, but I could grep for "0/0/0/5" to confirm the report says that. Let's grep.
+
+Let me also verify the Task sections: lines 55-75, 375-395, 405-415, 430-475. And check whether the Task's Gate token list at :439 etc. matches memo's 11 tokens. Let me read those ranges.
+
+Also check Task:472 dispatch record for this review (111260/351E, memo 9033/7734767, adjudication 7B881C5C) — confirmed by grep.
+
+Now key question: does the memo candidate (pinned 7734767...) still have stale anchors? Line 8 says line numbers are per the attempt-2 dispatch snapshot 108405/7521. The current pinned Task is 111260/351E. Grep showed line 68 still = PROJECT_ORCHESTRATION_AUTHORIZATION heading, line 390/411 mention it. Memo claims :68–70 is the authorization段 allowing Codex to choose the isolation scope; :58–62 and :382–386 record the user decision re local Windows verification replacing Sandbox. Let me read those lines in the current Task (111260) to test whether the anchors still hold — that's the "Task snapshot anchors" check requested.
+
+Let me batch: read Task lines 50-80, 375-420, 435-480; read r2 stdout; grep r7 stdout for counts.
+dsh: reasoning:
+Task now 473 lines, 111260 bytes (pinned). The memo's line anchors:
+- :68–70: line 68 is "#### 2026-10-10 本轮 PROJECT_ORCHESTRATION_AUTHORIZATION：AppContainer 精确隔离范围" ✓ and line 70 is the authorization body ✓. So :68–70 still hits on the current 111260 snapshot too.
+- :58–62: line 58 is "### 2026-10-10 用户裁决：本机验证替代 Windows Sandbox 验证" and line 60/62 are the decision body ✓.
+- :382–386: line 382 is the decision bullet ✓ (Codex continuation：本机验证用户裁决 2026-10-10 section, bullets 382-386) ✓.
+
+So the anchors still hold on the current pinned Task snapshot (111260/351E) — good, though the memo declares them relative to the 108405 snapshot. Note: memo line 8 says "以下 Task 行号均以 memo r3 attempt 2 Review 派发快照（108405 bytes / SHA-256=7521168C...）为准" — this is a declaration of the anchor baseline; the anchors happen to coincide on the current pinned snapshot (111260). I verified that by reading. So RV3-P3-05's minimal revision was implemented in a slightly different way than the review suggested (it anchored to 108405 instead of 105252/44C1 or stable semantic anchors), but it does declare the snapshot. Is that acceptable? The attempt-2 review's RV3-P3-05 minimal fix: "注明「行号锚定 44C1F4B2…（105252 bytes）快照；本次 Review pin 下复核仍一致」，或改用稳定语义锚点". The chosen fix anchors to the attempt-2 dispatch snapshot 108405, which is the snapshot in which the line numbers were actually verified by the attempt 2 review (the attempt-2 review said it verified on pin 7521168C/108405). Hmm, but the memo's own revision was made after that review, at which point the Task had grown to include lines 455-459 (which the attempt-2 review already saw per line 461 note: the live Task included lines 455-459 appended by Codex after dispatch pin). Hmm, actually if the live Task during attempt 2 already included lines 455–459, then the byte count of live was NOT 108405; it was larger. And the anchors verified by DSH attempt 2 were on the live task, not exactly on the 108405 pin. So the memo's claim that line numbers are "以 ... 派发快照（108405 bytes / SHA=7521168C...）为准" is technically inaccurate — those line numbers were verified against the live (physically larger) Task, not against the 108405-byte pin object. Since the anchors are absolute line numbers, they cannot be attributed to an object whose content the memo cannot demonstrate. This is a residual P3 precision issue: the anchor baseline declared (108405/7521) is not the object in which the anchors were actually verified (live Task, which per Task:461 contained appended lines 455–459 → different byte count/hash), and it is not the current pinned snapshot (111260/351E). Minimal correction: state that the anchors were verified against the attempt-2 live Task and re-verified against the current attempt-3 pin 111260/351E (and note double-checking on the current pinned snapshot), or use semantic anchors.
+
+Hmm, but is this a real finding or nitpicking? The r3-revision review's question explicitly asks to "Check new attempt 2 findings RV3-P2-01 and RV3-P3-01..05 against the Codex adjudication and current memo: ... Task snapshot anchors". So yes: assess whether RV3-P3-05 was properly closed. The right disposition: mostly closed but with a residual precision defect → PARTIAL, with a new P3 finding (or accept closure with note). I'll call it a new P3: RV4-P3-xx.
+
+Also the memo line 9 lists three Task snapshots (100139/AB06, 102674/A35C, 105252/44C1) as historical, and line 8 uses the 108405 snapshot for anchors. The memo does not list the current review pin. But the memo says "需以新 Review prompt 的 Task pin 为准，不能互换" — self-aware. That's acceptable. But note memo line 9 says "本 memo r3 候选创建时当前 Task 为 105252 bytes" — an assertion about the past; consistent with Task:444 ✓.
+
+Now RV3-P2-01: Task:458 now shows 64 hex chars: let me recount from the read: "5EEED098B2E0167DFE9CAAD9AA93F462C5753B1B056CF2BFD245BB4EEB9F0FCB". Group: 5EEED098 / B2E0167D / FE9CAAD9 / AA93F462 / C5753B1B / 056CF2BF / D245BB4E / EB9F0FCB = 64 ✓. And it matches Task:444, :450, :466, :472 and the attempt-2 pin. So the 63-char typo is corrected → RV3-P2-01 closed. But careful: I cannot recompute the hash of memo r3 (no hash commands) — the memo r3 file's actual SHA isn't independently verifiable by me. I can only verify the text is 64 hex chars and consistent across Task lines, and matches the prompt's pin string 773476745C19A1996043819E514788290B17D4DC8BFD250449AD235E777BD701 for the revised candidate (different value, as expected since memo was revised). Wait — the 5EEED0... value is the initial candidate; the revised candidate is 7734767... Both appear in Task. The prompt pins the revised candidate hash 7734767... for the memo. And Task:472 records the same. So text-level consistency ✓, but I cannot verify byte binding.
+
+Important check on byte counts: memo r3 revised candidate claimed 9033 bytes. I can't verify. The prompt asserts 9033 bytes. Fine — the prompt's pin states it, and I treat the prompt pin as fixed input; but I must not claim independent verification.
+
+Hmm, one nuance: the prompt says memo r3 = 9033 bytes SHA 7734767... Note: my read of the memo — does its content correspond to 57 lines as the attempt-2 report said (57 lines)? Yes, 57 lines. OK.
+
+Now check the r2 finding list for RV2-* dispositions. Need r2 stdout. Let me read it and r2 memo. Also verify the r2 adjudication's claim about RV-N-02/RV-P2-02 partial. And RV-P2-02 in the memo now cites r7 §8.1 (r7:156) and "精确下一步" 第 3 条 (r7:177) — verified in contract: line 156 is §8 item 1 (three admission conditions? Let's check: line 156 says "唯一 Phase A 候选范围为 ...；只有 DSH r7 Review、Codex adjudication 与逐文件 SHA-256/object pin 核对全部完成后，才可严格按该 manifest 测量。" Yes, three items ✓). r7:177 says "仅当 Review、adjudication、object binding 和 Phase A manifest 均无歧义后" ✓ contains "无歧义". r7 §8 item 3 (:158) is hash rule ✓ — memo doesn't misattribute now. Good.
+
+memo line 19: "contract r7 §8.1（r7:156）列出的三项准入与'精确下一步'第 3 条（r7:177）额外要求 manifest 无歧义" ✓.
+
+Now check RV2-P2-02 (stage mixing) closed: memo line 25 lists Phase B/Build Gate gaps ✓ and line 21 says Phase A excludes process tree etc ✓. Contract r7:44 confirms Phase A scope ✓.
+
+RV2-P3-01: `%ProgramData%` fallback → memo:16 ✓.
+
+RV2-P3-02: memo:9 lists three snapshots ✓ (but see residual anchor issue).
+
+RV2-P3-03: EA-01 attribution memo:15 ✓ matches r7 adjudication:40 ✓.
+
+RV2-P3-04: enumeration source — now with corrected URL (ne-minwinbase). The attempt-2 review marked partial because URL was 404; now corrected. Need to confirm the corrected URL is valid and the member claim. The adjudication says Codex browsed and confirmed. I can verify via web_fetch. Let me do that (allowed).
+
+Also RV-P2-02 and RV-N-02 dispositions: closed. RV-P2-02 = r1 finding "阻塞依据未锚定 r7 执行条款". Need to check r1 review's RV-P2-02 definition... The r2 stdout line shows RV-P2-02 in the r2 adjudication as "部分闭合. memo r2 识别出 r7 §8.1 与附录'精确下一步'条件冲突，但将后者误标为'§8 第 3 条'". Hmm — the attempt-2 review described RV-P2-02 as "r1：阻塞依据未锚定 r7 执行条款". Let me confirm from r2 stdout (which lists RV-P2-01..04, RV-P3-01..05, RV-N-01..03 dispositions). Let me read r2 stdout.
+
+Also need to check the r7 review counts in the r7 stdout: grep "0/0/0/5".
+
+Let me now do:
+1. read r2 stdout (full, 17987 bytes ≈ 6k tokens).
+2. read r2 memo (140DA0, 6961 bytes) — the memo r2 text, to see which findings it recorded. Maybe not strictly needed; the r2 stdout list is more useful. But the prompt pins it; I should at least skim for the finding IDs. Actually the memo r2 is the object of the r2 review; the r2 adjudication covers. I'll read r2 stdout and r2 memo both.
+3. grep r7 stdout for "0/0/0/5" and "APPROVED".
+4. web_fetch the two Learn pages.
+
+Let me batch.
+dsh: reasoning:
+Good: r7 stdout confirms APPROVED / 0/0/0/5 / object_binding NOT_VERIFIED.
+
+Now let me note RV2 findings from r2 stdout — the prior findings list: RV2-P2-01, RV2-P2-02, RV2-P3-01..04. Also r1's RV-N-02 (partial → RV2-P3-02) and RV-P2-02 (partial → RV2-P2-01). Hmm! Important subtlety: the attempt-2 review labeled the r1 findings as RV-P2-02 (r1) and RV-N-02 (r1), and the new r2 findings as RV2-P2-01/02, RV2-P3-01..04. Note in r2 stdout §2, the r1 finding IDs are RV-P2-01..04, RV-P3-01..05, RV-N-01..03. And the new findings were RV2-P2-01/02 and RV2-P3-01..04. Yes consistent.
+
+Now in the memo r3 revised, the citations are:
+- :8 → (RV2-P3-02; RV-N-02; RV3-P3-05)
+- :9 → (RV2-P3-02; RV-N-02; RV3-P3-02)
+- :15 → (RV2-P3-03; RV3-P3-03)
+- :16 → (RV2-P3-01)
+- :19 → (RV2-P2-01; RV-P2-02)
+- :21 → (RV2-P2-02)
+- :25 → (RV2-P2-02)
+- :27 → (RV2-P3-04; RV3-P3-01; RV3-P3-04)
+
+Hmm: is the mapping correct? Let's check:
+- :16 (%ProgramData% fallback) ← RV2-P3-01 ✓ (RV2-P3-01 was "fallback 落地位置").
+- :19 (contract precondition conflict) ← RV2-P2-01 ✓ and RV-P2-02 ✓ (r1's partial; the RV2-P2-01 was the anchor correction of RV-P2-02 → so citing both is defensible).
+- :21/:25 (stage separation) ← RV2-P2-02 ✓.
+- :15 (EA-01 attribution + r7 counts) ← RV2-P3-03 ✓ (EA-01 nature) and RV3-P3-03 (counts/SHA) ✓.
+- :8/:9 (Task snapshots + anchors) ← RV2-P3-02 ✓, RV-N-02 ✓ (r1 partial: Task revision scope + SHA explicit), RV3-P3-02 (finding-ID traceability — placed at :9, which is where snapshot IDs are listed; hmm RV3-P3-02 was "全文未标注前置 finding ID" so its citation could be anywhere; it's fine) and RV3-P3-05 (anchor snapshot declaration → at :8 ✓).
+- :27 (FILE_INFO_CLASS_MISMATCH) ← RV2-P3-04 ✓ (add enumeration page), RV3-P3-01 (URL slug) ✓, RV3-P3-04 (r7:115 anchor + canonical URL) ✓.
+- :9 also cites RV3-P3-02 ✓.
+
+Notably absent: RV2-P3-02's own disposition? cited. What about RV-N-01 / RV-N-03 / RV-P2-01, RV-P2-03, RV-P2-04, RV-P3-01..05 (r1)? Those were closed in r2 already; the memo need not cite them. The prompt asks to "verify the explicit finding-ID traceability" — the memo cites the IDs the attempt-2 review requested (RV2-P2-01/02, RV2-P3-01..04, RV-P2-02, RV-N-02) plus RV3-*. So RV3-P3-02 is closed. However, note that the memo does not include a dedicated "前轮 finding 处置对照" section; the IDs are inline. The attempt-2 review's minimal fix allowed either inline annotations or a section at the end. Inline IDs are present → closed. But is the traceability complete? Check: are all RV2 finding IDs cited somewhere in the memo? RV2-P2-01 ✓(:19), RV2-P2-02 ✓(:21,:25), RV2-P3-01 ✓(:16), RV2-P3-02 ✓(:8,:9), RV2-P3-03 ✓(:15), RV2-P3-04 ✓(:27). RV-P2-02 ✓(:19), RV-N-02 ✓(:8,:9). Yes, all 8 prior IDs from the r3 attempt-2 review's list appear. Good.
+
+Now, one more check: the memo's final section "下一步" and the Gate list. The memo lists 11 Gate tokens (lines 41-51) — matches Task:439 exactly? Task:439: Phase A=BLOCKED / NOT_RUN; private_registry_absence=UNPROVABLE / BLOCKED; profile=NOT_CREATED; ACL/registry=NOT_MODIFIED; scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED; OS isolation preflight=NOT_RUN; hook/cache/child-process closure=BLOCKED / NOT_VERIFIED; Build Gate=BLOCKED; build=NOT_AUTHORIZED / NOT_RUN; Hard Build Barrier=EFFECTIVE; AC1–AC7=BLOCKED / NOT_RUN. Memo lines 41-51 identical ✓. And Task:410/:395/:404 also same. Good.
+
+Now, is there anything in the memo that's inaccurate? Let's scrutinize memo claims:
+
+Line 8: "以下 Task 行号均以 memo r3 attempt 2 Review 派发快照（108405 bytes / SHA-256=7521168C...）为准。该快照的 PROJECT_ORCHESTRATION_AUTHORIZATION 段（:68–70）允许 Codex 在限定路径和权限内选择本机隔离范围；Task :58–62 与 :382–386 记录用户裁决本机 Windows 验证替代 Windows Sandbox。"
+
+Issue: the 108405-byte snapshot is defined only by hash+bytes; the line numbers can't be checked against it without that object. But the current pinned Task (111260) matches those anchors. So content is accurate for the current pin, but the declared baseline is unverifiable/possibly wrong object. Actually is it wrong? Task:461 says the live Task during attempt 2 contained lines 455–459 appended after the dispatch pin. If lines 455–459 were appended, then the live Task at that time had more bytes than 108405 — and hence the line numbers 68-70/58-62/382-386 were verified against a larger object, not 108405. But wait: maybe the 108405-byte pin already included lines 455–459? Task:458 is the dispatch record itself — a dispatch record can't include its own line... Actually line 458 says "派发时当前 Task SHA-256=7521168C... / 108405 bytes" — Codex wrote this after dispatch presumably. Hmm, if the dispatch pin 108405 was computed before writing line 457-458, then the pinned object had ≤ 457 lines, and then lines 455–459 were added → live object larger. Then the line numbers 68–70 etc. would still be the same if the appended content was only at the end (lines 455+). Since all anchors are ≤ 386, appending at the end doesn't shift them. So the anchors hold both in the 108405 pin and in the current 111260 pin. So declaring the baseline as the 108405 pin is not demonstrably wrong; the anchors are stable as long as edits occur after line 386. The memo's failure is only that it doesn't state whether the anchors were re-verified on the current pin (111260). But my independent read shows they hold on the current pin (111260). So residual defect is P3: the memo pins line anchors to a snapshot that (a) is not an object any reader can obtain (only the attempt-2 dispatch pin value), and (b) is not the current Review pin; minimal fix: state that the anchors were re-verified against the attempt-3 pin 111260/351E, or convert to semantic anchors.
+
+Hmm, but strictly: is the memo's declaration false? The memo asserts a normative mapping "以下 Task 行号均以 ... 108405 ... 为准". Since that object isn't available, the assertion is unverifiable but not falsified. However the attempt-2 review RV3-P3-05 asked for "注明行号锚定 X 快照" — the memo did declare a snapshot. Whether it's the right one is questionable. I'd rate it P3 (traceability precision), disposition: RV3-P3-05 = closed-with-residual / partial. I need to decide. Given the r3-adjudication claims "接受并关闭" and the memo does declare a snapshot, and my read confirms anchors hold on the current pin, I think the fair disposition is: **partially closed** with a new P3 finding (baseline snapshot declaration doesn't cover the current pin; anchors not re-anchored/re-verified), or "closed with a new P3 observation"? Hmm. The review asks to check "Task snapshot anchors". I'll mark RV3-P3-05 as **partial (residual P3)** and give a new finding ID, e.g. RV4-P3-01.
+
+Actually let me think about whether there's a more substantive issue with the memo's Task snapshot handling:
+
+Memo line 9 says: "本 memo r3 候选创建时当前 Task 为 105252 bytes / SHA-256=44C1F4B2...。三个 Task snapshot 是不同历史修订；需以新 Review prompt 的 Task pin 为准，不能互换。" Then line 8 says line numbers follow the 108405 snapshot — a fourth snapshot which is not among "三个". So the memo mentions four Task snapshots but says "三个 Task snapshot 是不同历史修订" — it counts only the three in line 9 and treats the 108405 one separately (as the anchor baseline). That's internally OK, though slightly confusing. Hmm — also the memo line 9 mentions three snapshots: 100139 (r1 dispatch), 102674 (r2 dispatch), 105252 (r3 candidate creation). It omits the attempt-1 dispatch pin 6B9F (bytes unknown) and the current 111260. That's fine since the prompt pin governs.
+
+Now another potential finding: memo line 8 says "该快照的 PROJECT_ORCHESTRATION_AUTHORIZATION 段（:68–70）允许 Codex 在限定路径和权限内选择本机隔离范围". Current Task:70 text: "用户在当前会话明确授权 Codex Lead 自主确定并执行本机 AppContainer profile、私有注册表状态、TEMP/cache、精确 scratch ACL、进程树隔离预检及清理。" The memo's summary ("允许 Codex 在限定路径和权限内选择本机隔离范围") is a conservative paraphrase — the attempt-2 review judged it conservative, not expanding. Fine, maybe note as non-finding.
+
+Another possible finding: memo line 8 says "Task :58–62 与 :382–386 记录用户裁决本机 Windows 验证替代 Windows Sandbox" — verified ✓ (:58 heading, :60/:62 body; :382-:386 bullets).
+
+Memo line 15: "r3 已规定的 T0/T1 读取次序不在缺口之列" — consistent with r2 review observation and r7 adjudication:47 (T0 bootstrap ordering is the actual gap). ✓
+
+Memo line 16: "r3 的 23 项环境变量中没有 ProgramData。依赖 %ProgramData% 的两个 WER 目录——ReportQueue 与 ReportArchive——只可在下一候选 manifest 标为 UNKNOWN / BLOCKED" ✓ matches manifest r3:20 (23 vars, no ProgramData) and :27-28 (the two %ProgramData% dirs). ✓
+
+Memo line 17 (NO_CHILD_NO_WRITE_EVIDENCE): consistent with r7 adjudication:48 and contract §8.1/EA-01. It says "r3 的 Phase A 是 controller-only 只读测量，不检查子进程、不写入、也不读取文件内容或 hash" ✓ (manifest r3:32).
+
+Memo line 18 (private registry): ✓ contract:28/:52/:54.
+
+Memo line 19 (contract precondition inconsistency): ✓ verified.
+
+Memo line 25 (Phase B/Build Gate gaps): ✓ contract:161 (Build Gate list) — includes "LPAC token+子进程身份、禁止访问拒绝、scratch 正/负 canary、MIC/DACL、TEMP/cache 子进程回读、WER、完整访问/写入闭包、hook/cache closure、所有受保护文件前后 hash 与安全项恢复" — memo mentions 完整主进程及所有后代的隔离身份、保护目录拒绝写入、scratch 正向写入权限、TEMP/cache 重定向、运行前后受保护文件 hash 一致及所需的进程/写入闭包 ✓.
+
+Memo line 27 (FILE_INFO_CLASS_MISMATCH): claims: contract r7 §5 (r7:115) uses GetFileInformationByHandleEx(FileHardLinkInfo); (r7:115) ✓ verified. The claim "枚举列表包含 FileStandardInfo 和 FileStreamInfo，不含 FileHardLinkInfo" — need to verify the Learn page (web_fetch). Also: is the correct conclusion maybe that FileHardLinkInfo is a valid value but defined in a different header? Hmm. Actually wait. I should check: is there a documented `FileHardLinkInfo`? Hmm, I'm not aware of one. But let me check the actual page. There's `FileLinkInfo`? Actually the Win32 `FILE_INFO_BY_HANDLE_CLASS` includes `FileIdInfo`... Let me fetch the page to be sure.
+
+Also memo line 27 says "这是 Phase B 的精确文件/链接检查候选缺陷；Phase A r3 不打开文件，故不新增 Phase A 调用。Phase B/Build Gate 前须先修正并另行 Review。" ✓ consistent.
+
+Memo line 29 mentions "现有 DEBUG_PROCESS、Job Object 与 ETW 等候选不能被当作完整后代与文件操作证明：Job completion-port 消息并不保证全部送达，NT Kernel Logger 已弃用且控制要求管理员或 LocalSystem，ETW 也记录丢失事件/缓冲计数。" consistent with r2 memo/r1 adjudication. Links: JobObject_AssociateCompletionPort, StartTrace, event-trace-properties. Need not verify all; the attempt-2 review verified them (200). I could verify one or two, but web_fetch of the exact Microsoft page: the prompt says "If verifying the Microsoft Learn citation, use only read-only access to the exact official Microsoft Learn page in the memo." So verifying the enumeration page and the function page is allowed. Do I need to verify the Job/ETW links? Optional. I'll verify the two FILE_INFO links (most important, since RV3-P3-01/04 concerns them) and maybe the ETW one for the "not guaranteed"/permissions claims. Keep it bounded: fetch 3 pages: minwinbase enumeration, winbase GetFileInformationByHandleEx, and maybe winnt jobobject_associate_completion_port. Actually the memo's line 29 links are `ns-winnt-jobobject_associate_completion_port` and `nf-evntrace-starttracea` and `/windows/desktop/ETW/event-trace-properties`. The last one uses the desktop path (legacy). Note: RV3-P3-04 asked to replace the legacy path only for the GetFileInformationByHandleEx link; the memo did that. The ETW link remains legacy `/windows/desktop/ETW/...` — is that a valid URL? The attempt-2 review verified "event-trace-properties 页 200" ✓. So fine.
+
+Hmm, but note the memo line 27 first link: `.../win32/api/minwinbase/ne-minwinbase-file_info_by_handle_class` (corrected). Let me fetch and confirm 200 + member list lacking FileHardLinkInfo.
+
+Then check the second link `.../win32/api/winbase/nf-winbase-getfileinformationbyhandleex`.
+
+Let me web_fetch both. Also maybe the job object one to confirm "not guaranteed" phrasing.
+
+One more consideration: the memo r3 was revised by Codex. The review should also check the boundary: does the memo contain any instruction that could be executed? No.
+
+Also: the memo line 3 says "评估对象状态：Phase A=`BLOCKED / NOT_RUN`". Fine.
+
+Another check: memo line 11 "其他固定依据：contract r7 SHA=7FBFFE65..., manifest r3 SHA=AC45329A..., r7 Codex adjudication SHA=6C585068..." — these match the pins for items 8, 9, 10 ✓ (text comparison). And line 10 pins r2 memo 140DA0, r2 DSH report 846E4A, r2 adjudication B49B855F — matches prompt items 5,6,7 ✓.
+
+Now, is there an issue: memo line 10 says "先前独立内容 Review：memo r1=`APPROVED_WITH_CONDITIONS`（0/0/4/5，object_binding=`NOT_VERIFIED`）". Hmm — is the r1 memo review count 0/0/4/5? Not in my fixed inputs (r1 stdout isn't pinned). The r1 adjudication (83EFF63D) isn't in the pinned inputs either. So this claim is not independently checkable from the fixed inputs. Is it consistent with anything? The r2 adjudication doesn't state r1 counts. Hmm. The r2 stdout says "r1 finding 关闭情况 closed 10 / partial 1". No counts. So memo line 10's "memo r1=APPROVED_WITH_CONDITIONS（0/0/4/5）" is unverifiable from the fixed inputs → a P3 traceability/verifiability observation? It's a claim about a prior report not in the fixed input set. Actually, is 0/0/4/5 plausible? r1 review produced RV-P2-01..04 (4 P2) and RV-P3-01..05 (5 P3) → 0/0/4/5 ✓ consistent with the r2 stdout's enumeration of r1 findings. Good, internally consistent. Also memo r2 counts 0/0/2/4 ✓ matches r2 adjudication:20 ("P0/P1/P2/P3=`0/0/2/4`"). Good.
+
+Wait, the memo line 10 says "memo r2=`APPROVED_WITH_CONDITIONS`（0/0/2/4，object_binding=NOT_VERIFIED）" ✓ matches.
+
+Now memo line 10 also states the r2 review object 6961 bytes / SHA 140DA0 ✓ matches r2 adjudication table (memo r2 | 6961 | 140DA0...) ✓. Good.
+
+Next: check the "11 项 Gate" count and Phase A token. Also check "Hard Build Barrier=EFFECTIVE" ✓.
+
+Now: possible additional finding about the memo's claim in line 15 "DSH r7 对 contract r7 与 manifest r3 的内容 Review=APPROVED ... 但其范围不涵盖 Codex 后续发现的执行就绪缺口，不能据此推出 r3 可执行". ✓.
+
+Another: memo line 21 "Phase A 的下一候选只能继续限定为经授权的 controller-only 只读对象与字段；必须先固定方法、顺序、错误和失败闭包，再经非作者 Review 与 Codex adjudication。" ✓.
+
+Now let's also consider: does the memo accurately say "本 memo r3 仅供新的非作者文本 Review。Review 或 Codex adjudication 均不会自动放行 Phase A"? ✓.
+
+Potential additional finding: the memo's own revision (adding finding IDs and the corrected URL) changed its bytes, so the initial candidate SHA 5EEED0 no longer represents the file; the memo line 9 mentions the attempt-2 dispatch snapshot but doesn't mention that it is a revised/self-superseded document, and it doesn't record its own current revision lineage (initial 5EEED0 → revised 7734767). Task:466/472 records it. Minor P3? The memo does say it's "memo r3 candidate" and "本候选尚待新的非作者 Review" — fine. Honestly not a finding.
+
+Another check: does the memo include any claim of byte/hash binding? Line 8/9/10/11 state hashes as pins; that's fine as long as no claim of verification. The memo doesn't claim it verified anything. Good.
+
+Now consider "RV-N-02 (r1)" disposition: r1's RV-N-02 was partial (Task revision range + SHA not explicit). The r2 review found memo r2 only gave Task SHA without bytes and used the r1 dispatch pin; RV2-P3-02 asked to add bytes and anchor the authorization section or note the snapshot. The memo r3 now lists bytes+SHA for three snapshots and anchors :68-70 to the 108405 snapshot. But hold on: RV-N-02's ask was "明确记录修订范围、字节数、SHA 和授权段落锚点 doc/tasks/P02.md:68-70". The memo r3 does record bytes/SHA for three snapshots and anchors the authorization paragraph. Does it record "修订范围"? It says "三个 Task snapshot 是不同历史修订" and describes the dispatch purpose of each (r1 dispatch, r2 复审 dispatch, r3 candidate creation). That's a reasonable scope statement. → closed ✓ (with the same residual anchor-baseline caveat).
+
+Now, additional independent findings I should consider raising:
+
+(a) **P2/P3: the memo anchors line numbers to a snapshot whose bytes/SHA cannot be tied to those line numbers, and does not re-anchor to the current pin** — new P3 (RV4-P3-01). Also note the memo pins the attempt-2 dispatch snapshot as the line-number baseline while the memo was written after the Task had already grown (Task:461 says live Task included lines 455–459) — so the memo cannot claim the line numbers are "以 108405 快照为准". This is exactly the kind of precision issue a P3 covers.
+
+(b) **The memo's `%LOCALAPPDATA%\CrashDumps` claim** — the attempt-2 review noted the two LocalDumps registry keys are literal paths without env vars (non-finding observation). The memo says "其余 WER 对象中，%LOCALAPPDATA%\CrashDumps 可由 r3 的 23 项集合解析" ✓ true since LOCALAPPDATA is in the 23. Fine, no finding. But the memo doesn't mention the two LocalDumps registry keys among the "其余 WER 对象" — it says "其余 WER 对象中，%LOCALAPPDATA%\CrashDumps 可由...解析" — it only accounts for one of the three remaining objects (CrashDumps); the other two are literal registry keys. Not inaccurate ("其中"), just incomplete. Could be a non-finding observation. I'll list as non-finding/observation (matching attempt-2's note).
+
+(c) **Task Gate token list includes Phase A token at :410/:439, contract r7:8 has 10** — non-issue.
+
+(d) Check: memo says at line 41-51 "当前 Gate 状态（11 项）" — Task:439 says "Gate 保持 11 项原值". ✓
+
+(e) The memo line 17 says NO_CHILD_NO_WRITE_EVIDENCE "当前没有通过 Review 的完整执行方法，因此仍 BLOCKED / NOT_VERIFIED" ✓.
+
+(f) Possible: the memo does not mention the unresolved `STATE_CONFLICT / NOT_VERIFIED` (Task:452) for the attempt-1 pin vs live Task. Is that a required item? The attempt-2 review §5 flagged it as a Codex responsibility, not a memo requirement. But the memo line 8 declares "以下 Task 行号均以 ... attempt 2 Review 派发快照 ... 为准" which implicitly ignores the conflict. Hmm. Since the fixed inputs include the r3 attempt-2 report and the Task, and the conflict remains open (Task:452/461), I could raise a new P3: the memo/this revision cycle still does not carry any statement about the unresolved attempt-1 `STATE_CONFLICT / NOT_VERIFIED`, so a reader of the memo alone cannot tell that the attempt-1 dispatch pin was never reconciled; minimal correction: note that the attempt-1 pin conflict remains historical/unresolved and is not used for binding (Task:461 already says this). Since Task:461 covers it, the memo needn't. I'll mention it as a non-blocking observation rather than a finding. Actually the prompt explicitly asks me to check "Task SHA typo correction" and "Task snapshot anchors" — and the object_binding status. I'll include the STATE_CONFLICT as an observation/O-status note.
+
+(g) The Gate token in the memo line 45: "scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED" ✓ matches Task.
+
+(h) Check the memo's statement in line 25: "当前无该证据，所以 Build Gate 仍关闭" ✓.
+
+Now: RV3-P2-01 disposition. The Task:458 typo has been corrected (64 hex). Can I verify the corrected value equals the pinned attempt-2 memo SHA 5EEED0...? Textually yes: "5EEED098B2E0167DFE9CAAD9AA93F462C5753B1B056CF2BFD245BB4EEB9F0FCB" matches the string in Task:444/:450/:459 (Task:459 doesn't have it...). And matches the value Codex says. But whether the memo r3 initial file actually has that hash — cannot verify (no hash). So disposition: closed at text-consistency level; object binding NOT_VERIFIED. Also note: as of the revised candidate, that 5EEED0 value no longer describes the live file (Task:466 notes this). Is there a residual risk that the Task now contains both the initial and revised SHAs without marking :458's as historical? Task:458 is inside the attempt-2 dispatch record (historical), and Task:466 explicitly says the initial SHA "保留为 attempt 2 固定输入，不再代表当前文件" ✓. So no finding. Good — that's a positive verification of the "Task SHA typo correction" item.
+
+Now let me verify the two URLs via web_fetch. Then check whether the r2 memo (140DA0) needs reading — the prompt pins it but I don't strictly need it since the r2 stdout and adjudication cover the dispositions. To be thorough about "corrected memo and prior adjudications", I have enough. But the r2 memo is a fixed input; maybe skim quickly to confirm the memo r3 revisions address RV2 items. The r2 stdout quotes memo r2 line numbers extensively, enough. I'll skip a full read to conserve, or do a quick grep for "FileHardLinkInfo" in r2 memo. Eh — the r2 stdout already references memo r2:19/:47 content. I'll skip. Actually, being an independent reviewer, reading the pinned r2 memo is cheap (6961 bytes). Let me read it to double check that the r2 review's quoted content matches and there's no misrepresentation. Let's do it along with web fetches.
+
+Let me fetch:
+1. https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ne-minwinbase-file_info_by_handle_class
+2. https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex
+3. https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_associate_completion_port
+
+And read r2 memo.
+
+Note: the web_fetch of Learn pages may return big content. Fine.
+dsh: reasoning:
+The enumeration page confirms: member list includes FileStandardInfo and FileStreamInfo, and NOT FileHardLinkInfo. So the memo's claim is correct and the corrected URL is live (HTTP 200). RV3-P3-01 closed ✓. Also, note the page's canonical "See also" links use /desktop/ paths, but that's fine.
+
+Interesting: the memo's corrected URL `.../windows/win32/api/minwinbase/ne-minwinbase-file_info_by_handle_class` → HTTP 200 ✓.
+
+Now the second link in the memo: `.../windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex` — let me verify it's 200. And optionally verify the Job object page. Let me fetch the GetFileInformationByHandleEx page (need to confirm Remarks table lacks FileHardLinkInfo and that the URL is valid).
+
+Also I might check whether `FileHardLinkInfo` appears anywhere in the GetFileInformationByHandleEx docs — the attempt-2 review says "Remarks 表同结论".
+
+Let me fetch that. Also fetch the legacy URL that was wrong (ne-winbase-...) to confirm 404? That would corroborate RV3-P3-01's basis. It's read-only. Maybe worth one fetch: https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ne-winbase-file_info_by_handle_class — expect 404. But careful: the prompt says use only read-only access to the exact official Microsoft Learn page in the memo — the memo's page is the corrected one. Fetching a 404 URL isn't "the exact page in the memo". I'll skip it; I don't need to confirm the prior 404 to assess closure (the current URL being 200 is what matters).
+
+Let me fetch the GetFileInformationByHandleEx page to verify the memo's claim about the enumeration (it claims the absent member; the enum page already proves that). Actually the enum page suffices for the core claim. But RV3-P3-04 asked for the canonical Win32 URL for the function page; I should verify that the new URL is valid (200). Let me fetch it.
+
+Also worth checking the job object page for the "not guaranteed" claim? The memo states it; the attempt-2 review verified. I'll fetch it too for independent verification of one supporting claim (bounded to 2-3 fetches). Actually, keep focus: the Core review question is about the corrected memo and finding dispositions, not re-verifying all links. I'll fetch the function page and the job-object page in parallel.
+
+After that, compose the review.
+
+Let me also double check one more thing in the memo: line 8 cites ":68–70" for authorization. On the current pinned Task, line 68 heading ✓, 69 blank, 70 body ✓. Fine.
+
+And "Task :58–62": line 58 heading, 60 body, 62 body ✓.
+
+":382–386": 382-386 bullets ✓.
+
+Now, additional finding candidates. Let me look for substantive issues in the memo that could be P2 (misreading Gate/stage/object binding):
+
+1. Placement of RV3-P3-02 at line 9 only — fine.
+
+2. Memo line 8 says "以下 Task 行号均以 ... 快照 ... 为准" but the memo also includes line 9's claim that the r3-candidate-creation Task was 105252 bytes. Both fine.
+
+3. Is there any statement in the memo that could be read as authorization? Line 8 "允许 Codex 在限定路径和权限内选择本机隔离范围" then immediately "授权是范围许可，不是 OS 证据或 Gate PASS". OK.
+
+4. Memo line 21: "Phase A 的下一候选只能继续限定为经授权的 controller-only 只读对象与字段" — consistent with r7:156 (only Phase A candidate = manifest r3) hmm, r7 §8.1 says the only Phase A candidate scope is manifest r3, and a new candidate manifest would need... The memo says the next candidate can only be controller-only read-only objects/fields — consistent with EA-01's resolution (freeze a new Phase A manifest). But note r7:156 says "唯一 Phase A 候选范围为 verification/P02/appcontainer-readonly-preflight-r3.md（待审）" — and the r7 adjudication's EA-01 resolution says "Freeze a new Phase A manifest". So r7 as written contemplates only manifest r3; a new manifest requires contract revision? Hmm — the memo doesn't address whether a new Phase A manifest requires a contract change (since r7:156 pins manifest r3 as the唯一 candidate). Actually r7:177 says "仅当 Review、adjudication、object binding 和 Phase A manifest 均无歧义后，才可执行其中列明的 controller-only 读取" — implies ambiguity blocks execution, and a new manifest is the EA-01 fix. But r7:156's "唯一 Phase A 候选范围" might conflict with producing a new manifest r4 without revising the contract. Is that a real gap? The memo says the next candidate must go through non-author Review and Codex adjudication, but does not note that r7:156 nominally pins manifest r3 as the *only* Phase A candidate, so a new Phase A manifest may require a contract amendment/adjudicated amendment. Hmm. The prior r7 adjudication itself directs "Freeze a new Phase A manifest and a minimal measurement procedure" — Codex as Integrator can update the contract via adjudication. This is a subtle governance point. Could be a legit new P3 (or P2?) finding: the memo's "下一候选" statement doesn't record the precedence question with r7:156, potentially leaving the new manifest without a contract basis. But is that over-reach? The contract r7:175 also says manifest r3 must be reviewed before freezing. Since Codex's own adjudication :52 explicitly authorizes freezing a new Phase A manifest, the basis exists. And the memo line 19 notes the contract has an internal inconsistency requiring a future unified precondition set. I think I can mention it as a non-blocking observation (P3-optional) or a low-priority finding. I'll include it as a P3 additional finding? The instruction says include "any additional findings" — so I should include genuine ones. I'll include it as a P3 with clear minimal correction: state that "下一 Phase A 候选 manifest" must be created by an explicit contract amendment/adjudicated contract update (since r7:156 names manifest r3 as the only Phase A candidate scope), so the new manifest has a traceable contract basis. Hmm — is it worth it? It's arguably a real traceability gap in the memo's "下一步". I'll include it as P3 with careful wording, flagging it as a governance-precedence note rather than a defect in the memo's claims. Hmm, but I should avoid inflating. Let me weigh: the review is asked to confirm "all current Gate tokens, phase boundaries, authorization, and prohibition language remain accurate". The phase-boundary item: memo's Phase A/Phase B split ✓ accurate. The "next candidate" wording: r7:156 pins manifest r3 as the only Phase A candidate; the memo says the next candidate (a new manifest) must be reviewed. These are consistent if the contract is amended. Since memo line 19 already flags the contract preconditions conflict, adding a sentence about the contract basis would be an improvement. I'll list it as a P3 (self-sufficiency) — RV4-P3-02.
+
+Hmm, let me reconsider. Am I sure r7:156 says "唯一 Phase A 候选范围"? Yes: "1. 唯一 Phase A 候选范围为 verification/P02/appcontainer-readonly-preflight-r3.md（待审）；manifest r3 SHA-256=...。只有 DSH r7 Review、Codex adjudication 与逐文件 SHA-256/object pin 核对全部完成后，才可严格按该 manifest 测量。" That's §8 item 1. And r7:177 (精确下一步 3) says execution allowed only when Review/adjudication/object binding/manifest unambiguous. So a new Phase A manifest would require a contract revision (r7 is a candidate contract itself — "本 r7 是 r6 的待审候选"; r7 was approved by DSH and adjudicated by Codex — so it's now the frozen contract? The r7 adjudication :36 says "No r7/r3 bytes were changed, so their pins remain valid". So r7 stands as the current contract; its §8.1 names manifest r3 as the only Phase A scope. Then EA-01's resolution (freeze a new Phase A manifest) implicitly requires a contract update — Codex's own adjudication is the Integrator's decision, so it's fine. But the memo should note this for traceability. I'll include it but mark it P3 and explicitly say it doesn't block the memo's content conclusion... Hmm, actually careful: is there a risk I'm wrong that this matters? It's a legitimate observation. Keep it as P3, clearly labeled as governance traceability, with minimal correction = one clause.
+
+5. Another candidate additional finding: memo line 27 says the mismatch "是 Phase B 的精确文件/链接检查候选缺陷；Phase A r3 不打开文件，故不新增 Phase A 调用。Phase B/Build Gate 前须先修正并另行 Review。" ✓ accurate. But note contract r7 still contains the defective API at r7:115 and the memo doesn't say who must amend the contract (contract text unchanged; per r7 §1.1 item 11 etc.). The memo says "须先修正" — no owner/subject specified. Minor; could fold into the same P3 about "contract amendment needed". Actually these are related: both concern "who fixes the contract and on what basis". I could combine into one P3 finding: "memo 未记录 contract r7 的两处需修订项（r7:115 的 FileHardLinkInfo、§8.1/精确下一步 前置条件冲突）需要契约修订/adjudication 作为下一候选的基础；memo 只写'须先修正并另行 Review'，未指明修订载体与授权路径". That's a decent single P3 finding about traceability of the remediation path. I'll do that as RV4-P3-02.
+
+6. Another candidate: the memo's "下一步" says "若后续完整进程/写入闭包需要管理员权限、驱动/内核过滤器、安装工具、扩大路径或改变 Gate 验收标准，超出现有授权；停止并请用户裁决。" ✓ good.
+
+7. Check the memo's claim in line 29 about ETW/StartTrace links using `/windows/desktop/ETW/event-trace-properties` — legacy but valid (verified 200 by attempt 2). Non-issue.
+
+8. One more tension: memo line 15 says "DSH r7 对 contract r7 与 manifest r3 的内容 Review=`APPROVED`（P0/P1/P2/P3=`0/0/0/5`...）". Correct per r7 stdout:19-21 ✓. But should the memo note that DSH r7's object_binding=NOT_VERIFIED (so "APPROVED" is content-only)? It does say "内容 Review" ✓ and later says the scope doesn't cover EA-01. Adding object_binding=NOT_VERIFIED for the r7 review would be nice-to-have (attempt-2 review only asked for counts+SHA). Non-finding observation: memo records object_binding=NOT_VERIFIED for r1/r2 reviews (line 10) but not for the r7 review; slight asymmetry. I could add that as a non-finding observation or fold into a P3. Hmm — it's a legit precision point: the r7 APPROVED citation should be scoped as content-only with object_binding=NOT_VERIFIED, per the prompt's ask "Confirm the r7 APPROVED citation is accurately scoped". The memo scopes it as "内容 Review" and "不涵盖 EA-01" but does not state object_binding=NOT_VERIFIED for the r7 review. Since the prompt explicitly asks about the r7 APPROVED citation scoping, I think this is worth a P3 finding: the citation lacks the r7 review's own formal `object_binding=NOT_VERIFIED` (r7 stdout:12), which is the very limitation the memo records for r1/r2 (memo:10). Minimal correction: add "（formal object_binding=NOT_VERIFIED）" at memo:15. Severity P3 (doesn't change conclusion, but prevents reading r7 APPROVED as object-bound). Hmm, could argue P2 ("可能被误读为对象绑定")? The memo already says "内容 Review" and elsewhere states static review ≠ binding. The r7 stdout is not in the memo's fixed inputs (the memo cites the r7 adjudication + report SHA). The r7 adjudication:20 says "DSH's formal object_binding=NOT_VERIFIED remains its own limitation". So the info is available. I'd rate it P3 (precision/self-sufficiency), since the memo's own line 10 sets the pattern. Given the prompt explicitly asks me to confirm the scoping, a P3 finding is appropriate. That gives me 2-3 new P3s.
+
+Let me now decide the new finding set:
+- RV4-P3-01: Task 行号锚点基线（memo:8）声明为 108405/7521 attempt-2 派发快照，但该对象在本轮固定输入中不是可核对对象，且当前 pin 为 111260/351E；未重锚/未注明在当前 pin 下复核（我已只读复核三处锚点在当前 pin 下仍命中）。→ RV3-P3-05 = partial。
+- RV4-P3-02: contract 修订载体/授权路径未记录（r7:115 缺陷修正与 §8.1 vs r7:177 前置条件统一），memo 只写"须先修正并另行 Review"（memo:19, :27），未说明下一 Phase A 候选 manifest 的契约基础须由契约修订/adjudication 产生（r7:156 把 manifest r3 定为"唯一 Phase A 候选范围"）。
+- RV4-P3-03: r7 APPROVED 引用未附该 Review 自身的 formal object_binding=NOT_VERIFIED（memo:15），与 memo:10 对 r1/r2 的记录粒度不一致。
+
+Hmm, is RV4-P3-03 too nitpicky? The prompt explicitly asks to confirm the r7 APPROVED citation is accurately scoped. I'll report it as P3 and also state explicitly that the scoping (content-only, doesn't cover EA-01) is accurate. Fine.
+
+Should RV4-P3-01 be P2? The prompt says P2 = "可能导致误读 Gate/阶段/对象绑定的实质缺陷". An anchor baseline declared against an unverifiable object could mislead a reader about object binding... but the memo explicitly says "需以新 Review prompt 的 Task pin 为准" and the anchors hold. I'll keep P3. Actually hmm — let me reconsider whether to mark RV3-P3-05 as "partial" or "closed". The minimal correction requested was: "注明「行号锚定 44C1F4B2…（105252 bytes）快照；本次 Review pin 下复核仍一致」，或改用稳定语义锚点". Codex instead noted the 108405 attempt-2 dispatch snapshot. Is that an acceptable implementation of "注明行号锚定 <快照>"? Partially: it names a snapshot, but not the one in which the anchors were verified (the attempt-2 review verified on the live task during attempt 2) and not the current pin. So "partial" with a residual P3 is a fair, defensible call. I'll say: RV3-P3-05 = partial (声明了基线快照，但基线对象与当前 pin 不一致且未声明在当前 pin 下复核)。And note my own verification: the three anchor groups do resolve on the current pinned Task (111260): :68/:70, :58–:62, :382–:386.
+
+Wait — I must be careful about claiming I "verified" the current Task snapshot: I read the file at doc/tasks/P02.md, which the prompt pins as 111260/351E. I read text and line numbers — I did verify line positions by read (which returns line numbers). I cannot verify it's 111260 bytes/351E hash. So I'll phrase: "在第一段固定输入所指向的 doc/tasks/P02.md 文本上，三处锚点分别命中 :68/:70、:58–:62、:382–:386（行号来自 read 工具；字节/SHA 未独立复核）". Good, that's honest.
+
+Now, prior finding dispositions:
+- RV2-P2-01: closed ✓ (memo:19 correctly cites r7:156 §8 item 1 three preconditions and r7:177 "无歧义"; r7 §8 item 3 = :158 is hash rule). Verified against the contract text.
+- RV2-P2-02: closed ✓ (memo:21/:25 split).
+- RV2-P3-01: closed ✓ (memo:16).
+- RV2-P3-02: closed ✓ (memo:9 lists bytes+SHA for three snapshots; memo:8 anchors authorization paragraph). With RV4-P3-01 caveat (anchor baseline).
+- RV2-P3-03: closed ✓ (memo:15 EA-01 attribution + r7 counts/SHA).
+- RV2-P3-04: closed ✓ now — the corrected URL is the official minwinbase enum page (HTTP 200, member list contains FileStandardInfo/FileStreamInfo, no FileHardLinkInfo). Since the attempt-2 review marked it partial solely because of the 404 slug, and the URL is corrected and independently verified now → closed.
+- RV-P2-02: closed ✓ (r1's finding; memo:19 records the conflict verbatim without overriding the contract). Hmm — RV-P2-02 (r1) was "部分闭合" in the r2 adjudication, and the r2 review noted "RV-P2-02: partial" at the time of r2. In memo r3, the wording at :19 matches the RV2-P2-01 minimal fix and states it doesn't override the contract. The attempt-2 review marked RV-P2-02 closed. I agree: closed (the conflict entity is recorded with correct anchors and no self-override).
+- RV-N-02: closed ✓ (memo:9 explicit revision scope + bytes + SHA; memo:8 anchor). Same caveat as RV2-P3-02.
+- RV3-P2-01: closed at text level — Task:458 now shows a 64-hex value identical to Task:444/:450/:466/:472 and to the attempt-2 pin; but I cannot recompute the hash. So: closed (text-level), with a note that I didn't verify bytes.
+- RV3-P3-01: closed ✓ (URL verified 200, member list correct).
+- RV3-P3-02: closed ✓ — all 8 prior IDs (RV2-P2-01/02, RV2-P3-01..04, RV-P2-02, RV-N-02) plus RV3 IDs appear inline at memo:8/:9/:15/:16/:19/:21/:25/:27.
+- RV3-P3-03: closed ✓ — memo:15 has 0/0/0/5 + report SHA C1FADDC2... matching r7 adjudication:15/:24 and r7 stdout:21 (via my read).
+- RV3-P3-04: closed ✓ — memo:27 has (r7:115) and canonical win32 function URL; I'll verify the function URL with a fetch.
+- RV3-P3-05: partial (residual RV4-P3-01).
+
+Also I should double check the count of the memo's Gate tokens vs Task:439: identical 11 ✓ (I read both).
+
+Also confirm the memo's claim that Phase A is not a test failure ✓ and "不构建" ✓.
+
+One more: objects pinned in the prompt: item 4 (attempt-2 stdout SHA 491469D7...) — matches r2 adjudication? The attempt-2 adjudication line 9 gives DSH report SHA 491469D7... and the Task:459 same ✓. Item 3 adjudication SHA 7B881C5C... matches Task:472 ✓. Item 2 memo SHA 7734767... matches Task:466/:472 ✓. Item 1 Task 111260/351E matches Task:472 ✓. Items 8,9,10 match memo:11 and r2 adjudication table ✓. Items 5,6,7 match memo:10 and r2 adjudication table ✓. So all 11 pins are textually consistent with the repository records — but not independently recomputed (no hash tool). object_binding = NOT_VERIFIED (I cannot and did not recompute).
+
+Note: item 6's r2 stdout SHA 846E4A and item 5's r2 adjudication B49B855F: the r2 adjudication file itself doesn't contain its own hash; Task:436/450 has 846E4A for the r2 report ✓; B49B855F appears in Task:450/:458 and memo:10 ✓.
+
+Now let me fetch the function page. Also, maybe verify the Job object page claim quickly. I'll do both in one batch.
+
+Then write the final review in Simplified Chinese with the required sections:
+(1) content conclusion + P0/P1/P2/P3 counts
+(2) each prior finding disposition
+(3) each attempt-2 finding disposition
+(4) additional findings with ID, severity, exact file/line, evidence, minimum correction
+(5) object_binding status
+(6) exact Gate boundary: Phase A=BLOCKED / NOT_RUN is not a test failure, Build Gate/Hard Build Barrier remain blocked/effective.
+
+Content conclusion: APPROVED_WITH_CONDITIONS? Let me determine the counts: new findings 0 P0, 0 P1, 0 P2, 3 P3 (RV4-P3-01..03). So content conclusion = APPROVED_WITH_CONDITIONS (0/0/0/3). Prior dispositions: RV2 ×6 closed, RV-P2-02 closed, RV-N-02 closed, RV3-P2-01 closed, RV3-P3-01..04 closed, RV3-P3-05 partial.
+
+Let me count prior findings: RV2-P2-01, RV2-P2-02, RV2-P3-01..04 (6), RV-P2-02, RV-N-02 (8), RV3-P2-01, RV3-P3-01..05 (6 more) = 14 total: 13 closed / 1 partial.
+
+Careful about my own object_binding statements: I read files only (read/grep/web_fetch). I did not verify any SHA/bytes. object_binding = NOT_VERIFIED. Also note the prompt's own pins are treated as fixed input claims.
+
+Also I should mention: no Gate PASS, no execution authorization inferred; no OS evidence.
+
+Let me fetch the function page now. Also the job-object page (to test the "not guaranteed" claim, supporting memo:29 accuracy). Two fetches.
+dsh: reasoning:
+Confirmed: canonical function page HTTP 200; valid class table includes FileStandardInfo and FileStreamInfo, no FileHardLinkInfo. So memo:27's claim is independently supported by the two official pages.
+
+Now I have everything. Optionally verify Job object page for memo:29's "not guaranteed" claim. The prompt allows read-only access to official Microsoft Learn pages. But the prompt says "If verifying the Microsoft Learn citation, use only read-only access to the exact official Microsoft Learn page in the memo." That's a constraint, not a mandate. Verifying the job-object page is one more fetch; it strengthens the review of memo:29 (a claim not raised as a finding). I'll do it to be thorough but it's optional. Let me do one fetch of the job object completion port page — bounded.
+
+Actually, is it needed? RV2-P3-03 (r2) covered those ETW/Job claims and was closed in r2. The memo:29 reproduces them. I could verify the "not guaranteed" claim. One fetch is cheap. Let's do it.
+dsh: reasoning:
+Confirmed "delivery to the completion port is not guaranteed" — memo:29's claim is accurate. Note the caveat: notifications for JobObjectNotificationLimitInformation ARE guaranteed; the memo's statement "Job completion-port 消息并不保证全部送达" matches the general rule ✓ (the memo doesn't claim all messages are unguaranteed).
+
+Now I'm ready to write the review. Let me structure it per the required response.
+
+I must also double-check the memo's Gate token #7 etc. once more (done) and note that Phase A=BLOCKED/NOT_RUN is not a test failure.
+
+Also confirm phase boundaries: memo:21, :25, :35 consistent with contract r7:44/:156-161 and manifest r3:32. ✓
+
+Also confirm the memo's prohibition language: memo:35-36 (no expansion, no profile, no ACL/registry/label, no probe, no elevation, no install, no test/Cargo/build/Sandbox) ✓ matches contract r7:18/:20/:114-118 and manifest r3:32/:34.
+
+Let me also verify the memo doesn't contain any instruction-like content or any wsb/Sandbox reactivation. Search "wsb|Sandbox" in the memo: line 8 says "不查询、安装、启用或启动 Windows Sandbox" ✓; line 53 mentions not running Windows Sandbox ✓; line 36 ✓. Good.
+
+Also should I check the memo for anything about the "16 roots"? line 35 "不扩大 T1 到额外 16 个根" ✓ consistent with r2 memo:27.
+
+Now, one consideration about "additional findings": the prompt says "(4) any additional findings with ID, severity, exact file/line, evidence, and minimum correction". I'll give RV4-P3-01..03. Should I include the "Contract 修订载体" finding as a real finding? Let me make sure the evidence is solid:
+
+Evidence: memo:19 says "memo 记录此合同原文冲突，不自行覆盖合同；未来候选契约需统一唯一前置条件集合。" — actually memo:19 DOES say "未来候选契约需统一唯一前置条件集合" (future candidate contract must unify). So for the precondition conflict, the memo does state the remediation vehicle ("未来候选契约"). Good. And memo:27 says for FILE_INFO_CLASS_MISMATCH "Phase B/Build Gate 前须先修正并另行 Review" — it doesn't say the vehicle is a contract revision (contract r7:115 is where the defect lives; r7 bytes are pinned). Hmm, so the gap: the defect is in contract r7 text; memo says "须先修正" but doesn't state that the correction must be made in a new contract revision (r8) with re-pin, or that memo/manifest cannot fix it. Also, r7:156's "唯一 Phase A 候选范围=manifest r3" vs EA-01's "freeze a new Phase A manifest" — the memo:21 says the next candidate can only be controller-only read-only objects/fields, but doesn't note that a new Phase A manifest needs a contract revision to displace r7:156, nor who owns it.
+
+Hmm, is that a defect worth a P3? The attempt-2 review's 4.3/step-7 didn't raise it. It is a genuine traceability point though. I'll include it but phrase it carefully as a "自足性/溯源" P3: the memo's two remediation statements (memo:19 existing "未来候选契约", memo:27 lacking vehicle) and the next-phase-A-candidate path (memo:21) do not record that r7:156 pins manifest r3 as the only Phase A candidate scope, so the memo alone doesn't show the contract basis for a new Phase A manifest. Minimal correction: one clause referencing r7:156 and Codex's adjudication :52.
+
+Hmm, but wait — is it accurate that r7:156 says that? Yes: "唯一 Phase A 候选范围为 verification/P02/appcontainer-readonly-preflight-r3.md（待审）". And the r7 adjudication:52 (EA-01 resolution) says "Freeze a new Phase A manifest and a minimal measurement procedure/source..." So the basis is Codex's adjudication, which is a Gate-owner decision. So the memo could cite that. Fine, P3.
+
+Actually, let me reconsider whether to also raise a P3 that the memo does not record the unresolved attempt-1 `STATE_CONFLICT / NOT_VERIFIED` (Task:452/461). The memo:8 declares the anchor baseline as the attempt-2 dispatch snapshot; the memo:9 lists "三个 Task snapshot" without mentioning the attempt-1 dispatch pin (Task:450 6B9F...) nor its conflict. Since Task:461 keeps the conflict as a historical NOT_VERIFIED and says it's not used for binding, and since the fixed input set includes the attempt-2 report which discusses it, is the memo required to carry it? The memo is a blocker memo; the conflict concerns the memo r3 review's object binding. Arguably relevant: the memo claims its own review lineage. But the r2 adjudication:11 covers it as "known subsequent documentation append" and the attempt-2 review §5 says the closing responsibility is Codex's. Hmm, the memo doesn't mention object_binding=NOT_VERIFIED for the attempt-2 review either — but the memo isn't the review report. 
+
+I think three P3 findings are enough; I'll list the STATE_CONFLICT and other items as non-finding observations to show thoroughness without inflating the count. Actually, hmm: the prompt says the earlier attempt 1 report had no `.exit` file and is not a completed Review gate — implying the reviewer should acknowledge that. I'll include it as an observation/O-item and confirm no current conclusion inherits attempt-1.
+
+Let me also decide the content conclusion. All prior findings closed except RV3-P3-05 partial; three new P3s; no P0/P1/P2. Content conclusion = APPROVED_WITH_CONDITIONS with 0/0/0/3. Should it instead be "APPROVED_WITH_CONDITIONS" or "APPROVED"? There are conditions (3 P3s + 1 partial), so APPROVED_WITH_CONDITIONS. And formally object_binding=NOT_VERIFIED, so the formal overall conclusion = NOT_VERIFIED (content-only). I'll state both clearly, as the attempt-2 report did.
+
+Also the required (6): exact Gate boundary statement. I'll restate the 11 tokens and the statement that Phase A=BLOCKED / NOT_RUN is not a test failure, and Build Gate=BLOCKED, Hard Build Barrier=EFFECTIVE, and that this content conclusion is not a Gate PASS or execution authorization, and does not infer OS evidence.
+
+Let me now write the final answer in Simplified Chinese, concise but complete. Include citations to files/lines.
+
+Structure:
+# P02 Phase A memo r3 修订候选 · 非作者只读复审（attempt 3）
+0. 审查边界（只读工具 read/grep/web_fetch；未运行 shell/hash/...）
+1. 内容结论与计数
+2. 前置 finding disposition（表格，14 项：13 closed / 1 partial）
+3. attempt 2 finding disposition（RV3-P2-01 与 RV3-P3-01..05）
+   — Actually section 2 and 3 overlap. The prompt wants (2) each prior finding disposition and (3) each attempt 2 finding disposition. So section 2 = RV2-*/RV-* (8 items), section 3 = RV3-* (6 items). Good.
+4. 新增 findings RV4-P3-01..03（+ 非 finding 观察）
+5. object_binding 状态
+6. Gate 边界与结论限制
+
+Plus recommended next step (the workspace AGENTS.md requires a recommended next step, and the task asks for the required response format; I'll add a brief "推荐下一步" at the end — the user asked for specific sections; adding the next step is consistent with repo rules and the harness instructions. Keep it short and read-only.)
+
+Let me write out the specific line numbers:
+
+memo r3 (= codex-phase-a-method-blockers-20261010-r3.md):
+- :3 状态；:7 基线；:8 授权锚点段；:9 三个 Task snapshot；:10 r1/r2 记录；:11 其他固定依据；:15 EA-01 + r7 APPROVED/计数/SHA；:16 ProgramData；:17 no-child/no-write；:18 private registry；:19 合同前置条件；:21 下一候选限定；:25 Phase B/Build Gate 缺口；:27 FILE_INFO_CLASS_MISMATCH；:29 Job/ETW；:31 NtOpenFile/PowerShell；:35-36 禁止项；:41-51 11 项 Gate；:53 未运行；:57 下一步。
+
+Evidence for RV4-P3-01: memo:8 vs Task:471-472 (pin 111260/351E) and Task:461.
+Evidence for RV4-P3-02: memo:19/:21/:27 vs contract r7:156, r7:177, r7:115, r7 adjudication:52.
+Evidence for RV4-P3-03: memo:15 vs r7 stdout:12/:21 and r7 adjudication:20.
+
+Let me double check the r7 stdout line numbers I cite: line 12 = object_binding NOT_VERIFIED statement; line 19 APPROVED; line 21 counts. ✓ (from grep).
+
+Now write. Keep it concise but complete. Tables are good.
+
+One more check on my claim that the memo's anchors hold on the pinned Task: I read doc/tasks/P02.md lines 58-70 and 380-386 and 435-473. Line 68 = "#### 2026-10-10 本轮 PROJECT_ORCHESTRATION_AUTHORIZATION：AppContainer 精确隔离范围" ✓; line 70 = authorization paragraph ✓; line 58 = "### 2026-10-10 用户裁决：本机验证替代 Windows Sandbox 验证" ✓; 60, 62 body ✓; 382-386 = the bullets ✓. Good.
+
+Also for the "Task SHA typo correction" check: Task:458 currently reads "5EEED098B2E0167DFE9CAAD9AA93F462C5753B1B056CF2BFD245BB4EEB9F0FCB" = 64 hex; Task:466/:472 record the revised candidate 7734767... So both the typo fix and the new dispatch pin are recorded. ✓ And Task:472 matches the prompt pin 111260/351E + 9033/7734767 + 7B881C5C. ✓
+
+Also check: is there an entry for this attempt-3 review's prompt? Task:471: prompt SHA F6124F90... The user's prompt to me doesn't give a prompt-file hash, and item 4 in the fixed inputs is the attempt-2 stdout. Fine — I won't claim my own prompt file identity (I am not told it). I should note that my own dispatch prompt identity isn't part of the fixed inputs... Actually Task:471 says the attempt-3 prompt is `verification/P02/dsh-phase-a-method-blockers-review-r3-attempt3.prompt.md` with SHA F6124F90. Whether the text I'm reviewing is that prompt, I cannot verify (I don't have the prompt file content beyond the user message). I can note this as an object_binding caveat: my dispatch prompt's byte/SHA is not verifiable by me; I only reviewed the fixed inputs listed in the request. Good—mention in section 5.
+
+Now write the final answer.

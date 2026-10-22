@@ -1,0 +1,35 @@
+==========================================================
+ P02 Real Workbench WebView2 Verification Harness (Stage A r4)
+ Worktree: G:\CODEX\New Manga.worktrees\P02-stage-a-validation-cc1bd750-probe
+ Mode: ProbeOnly
+==========================================================
+
+[Step 1: Environment Identity Probe] Executing: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-stage-a-validation-cc1bd750-probe\verification\P02\probes\env_identity_probe.py...
+=== P02 Read-Only Environment & Identity Report ===
+Host OS: Windows-11-10.0.26300-SP0
+WebView2 Detected Version: 154.0.4258.62
+WebView2 Verified Key: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+Node Runtime: v24.15.0
+npm Tool: 12.0.1
+Python Executable: C:\Python314\python.exe
+Git Branch: 
+Source HEAD: cc1bd7505f3fc48079db7ea2719040e77a8c58dd
+Source Tree: d2569f6c4854c05e18cf22fa363397525962eec8
+Git Clean Status: True
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
+frontend/dist Exists: False
+cargo-target Exists: False
+Hard Build Barrier Active: True
+Barrier Rationale: tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree.
+
+[Step 2: Static Source Contract Probe] Executing: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-stage-a-validation-cc1bd750-probe\verification\P02\probes\static_control_probe.py...
+=== P02 Static Source Contract Control Report ===
+Overall Status: PASS
+WorkbenchPage Status: PASS
+  - resolveDebounceMs default 300: True
+  - regionDebounceMs default 300: True
+App Navigation Status: PASS
+  - app-nav testid present: True
+  - nav-workbench testid present: True
+
+ProbeOnly specified; Stage A preflight probes complete (EXIT=0).

@@ -1,0 +1,7 @@
+=== P02PRE-R1H-R6-ZCODE-H1 final pre-run stderr summary (attempt6) ===
+All read-only helper invocations produced 0 stderr bytes (git --version, refs x14, status x3, check-ignore x7, whoami x1).
+INCIDENT: first write run ~2026-10-12T10:31Z emitted pwsh statement errors (return[pscustomobject] not recognized x14; GetString null x3; Get-History invalid Id caused by helper function name H colliding with built-in Get-History alias, alias>function resolution) and still reached the authorized CreateNew write, persisting a defective 3704-byte .stdout.log sha256 61A3DD58DFE94DB714ED00115C934623BEE434C0148ABE16DF73ED47A4A5FC77, preserved untouched per no-retry/no-clean/no-overwrite rule.
+A second truncated build attempt produced only a ParserError and no write. A forensic read-only run at 2026-10-12T10:32Z made no writes; its large output was persisted by the CLI tool harness outside the repository.
+Final report assembled with a staging file under C:\Users\49745\AppData\Local\Temp (outside repository) because the tool command-length limit truncated single-script builds; disclosed in the .json harnessNote.
+verdict: PRE_RUN_BLOCKED; dynamic process closure: REQUIRES_ACTIVE_TEST / NOT_RUN
+written utc: 2026-10-12T10:45:35.3453669Z

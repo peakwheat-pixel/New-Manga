@@ -1,0 +1,1 @@
+exit=0; pid=9028; command=pwsh7 -NoLogo -NoProfile -NonInteractive -File dsh.ps1 --profile headless --json <frozen-prompt>; cwd=C:\Users\49745\.codex\worktrees\p02pre-r1h-r6-attempt4-antigravity

@@ -1,0 +1,479 @@
+{
+  "schema": "P02PRE-R1H-R6-EXEC-A5-final-pre-run-v1",
+  "timestampUtc": "2026-10-12T04:14:45Z",
+  "task": "P02PRE-R1H-R6-EXEC-A5",
+  "state": "PRE_RUN_BLOCKED",
+  "decision": "STOP_BEFORE_EXECUTOR",
+  "scope": "Attempt5 integration only; this is not a P02 isolation, Build Gate, Cargo, or system AC result.",
+  "host": {
+    "utc": "2026-10-12T04:11:52.1434644Z",
+    "runtime": "7.6.6",
+    "edition": "Core",
+    "languageMode": "FullLanguage",
+    "processPath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "cwd": "G:\\CODEX\\New Manga",
+    "psLocation": "G:\\CODEX\\New Manga",
+    "user": "HOME-MY\\49745",
+    "sid": "S-1-5-21-2196946971-914346751-4210154634-1001",
+    "authenticationType": "CloudAP",
+    "impersonationLevel": "None",
+    "authenticated": true,
+    "system": false,
+    "guest": false,
+    "administrator": false,
+    "pid": 43800,
+    "processStartUtc": "2026-10-12T04:11:51.9536892Z"
+  },
+  "token": {
+    "user": "HOME-MY\\49745",
+    "sid": "S-1-5-21-2196946971-914346751-4210154634-1001",
+    "authenticationType": "CloudAP",
+    "impersonationLevel": "None",
+    "administrator": false,
+    "whoami": {
+      "path": "C:\\Windows\\System32\\whoami.exe",
+      "argv": [
+        "/all"
+      ],
+      "exit": 0,
+      "stdoutBytes": 3695,
+      "stdoutSha256": "25C641BAA11A2D597E70DDB3A7A76ADBD1F1574BF81C0450BB768973A3000EB0",
+      "stderrBytes": 0,
+      "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "rawStdoutLog": "verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.stdout.log"
+    }
+  },
+  "repositories": {
+    "root": {
+      "path": "G:\\CODEX\\New Manga",
+      "branch": "main",
+      "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+      "tree": "e12bd627c307d4bf3c851dc09d0b82f97c86ec63",
+      "commonDir": "G:/CODEX/New Manga/.git",
+      "indexSha256": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+      "indexStable": true
+    },
+    "owner": {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+      "branch": "agent/codex/P02PRE-R1H",
+      "head": "c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d",
+      "tree": "96e7273ddd5fd27bee567bba27f19453cabe0842",
+      "commonDir": "G:/CODEX/New Manga/.git",
+      "parent": "dd5d2e3bc8e0702da9d059131f6364a997897661"
+    }
+  },
+  "status": [
+    {
+      "repo": "root",
+      "utc": "2026-10-12T04:12:09.7028565Z",
+      "exit": 0,
+      "nulRecords": 1085,
+      "bytes": 73927,
+      "sha256": "724F8A342FA422B4E92ED77974BEAB4857547DF3A1FE8D5B554B5D776739B7F1",
+      "stderrBytes": 0,
+      "finalExcludeArg": ":(exclude).tmp.driveupload",
+      "excludeIsFinalArg": true,
+      "indexBefore": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+      "indexAfter": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68"
+    },
+    {
+      "repo": "owner",
+      "utc": "2026-10-12T04:12:10.0489262Z",
+      "exit": 0,
+      "nulRecords": 0,
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "stderrBytes": 0,
+      "finalExcludeArg": ":(exclude).tmp.driveupload",
+      "excludeIsFinalArg": true,
+      "indexBefore": null,
+      "indexAfter": null
+    }
+  ],
+  "files": [
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:57648"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:93124"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:8651"
+      ]
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-selfcheck.ps1",
+      "bytes": 57812,
+      "sha256": "6BD9160854275DA94C61B8FC48B180CD16368AF56C2AF7D63D616490A1AB85A9",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "88EDFECCC54C717E50CC2A984EDF1015AD7E2F59DB343117293BF1B756C72C4C",
+      "streams": [
+        ":$DATA:57812"
+      ]
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "88EDFECCC54C717E50CC2A984EDF1015AD7E2F59DB343117293BF1B756C72C4C",
+      "streams": [
+        ":$DATA:93124"
+      ]
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-handoff-20261012.md",
+      "bytes": 9505,
+      "sha256": "E13C7148B79740927692D9282C4F474FEE4AADD50BFBE256509CACA3052786B1",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "88EDFECCC54C717E50CC2A984EDF1015AD7E2F59DB343117293BF1B756C72C4C",
+      "streams": [
+        ":$DATA:9505"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt5-20261012.ps1",
+      "bytes": 43464,
+      "sha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:43464"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt5-20261012.md",
+      "bytes": 11641,
+      "sha256": "0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:11641"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+      "bytes": 2391,
+      "sha256": "B903949584773318B7C17695E43B9E7301D34F885783825DD47DA29E03E192A0",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:2391"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H-R6-EXEC-A5.md",
+      "bytes": 14493,
+      "sha256": "0EF728E121A4FDDF85E4AD54C9904764DCC91A221B0513DEADB67814371EFA3A",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:14493"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-attempt5-exec-review-adjudication-20261012.md",
+      "bytes": 10377,
+      "sha256": "DBD252F894050238F1C5FD4DA3100A7BF98877EADA1843591F8C0B3AA44DBD8A",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:10377"
+      ]
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt5-integration-verify-20261012.json",
+      "bytes": 9566,
+      "sha256": "3B50FD88139C2EE475D8EC0B263C5E588E3C2CA5341DB8A20E078A18FB10720E",
+      "attributes": "Archive",
+      "owner": "HOME-MY\\49745",
+      "aclSddlSha256": "68D9C8ED1F10EDE35D4C204A46CAF281366EB4311D5F93432A1E415442F5BB67",
+      "streams": [
+        ":$DATA:9566"
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "G:\\",
+      "reparse": false,
+      "attributes": "Hidden, System, Directory",
+      "owner": "NT AUTHORITY\\SYSTEM",
+      "streams": []
+    },
+    {
+      "path": "G:\\CODEX",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "G:\\CODEX\\New Manga",
+      "reparse": false,
+      "attributes": "ReadOnly, Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification",
+      "reparse": false,
+      "attributes": "ReadOnly, Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": [],
+      "aclSddl": "O:S-1-5-21-2196946971-914346751-4210154634-1001G:S-1-5-21-2196946971-914346751-4210154634-1001D:AI(A;OICIID;0x1301bf;;;S-1-5-21-2196946971-914346751-4210154634-1003)(A;OICIID;0x1301bf;;;S-1-5-21-884840046-396652784-710274065-85489587)(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;0x1301bf;;;AU)(A;OICIIOID;SDGXGWGR;;;AU)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;BU)"
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": []
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02",
+      "reparse": false,
+      "attributes": "Directory",
+      "owner": "HOME-MY\\49745",
+      "streams": [],
+      "aclSddl": "O:S-1-5-21-2196946971-914346751-4210154634-1001G:S-1-5-21-2196946971-914346751-4210154634-1001D:(A;OICIID;0x1200a9;;;S-1-5-21-2196946971-914346751-4210154634-1003)(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;S-1-5-21-2196946971-914346751-4210154634-1001)"
+    }
+  ],
+  "destinationAclMatchesFrozenSddl": true,
+  "volume": {
+    "name": "G:\\",
+    "ready": true,
+    "format": "NTFS"
+  },
+  "environment": {
+    "LOCALAPPDATA": {
+      "present": true,
+      "value": "C:\\Users\\49745\\AppData\\Local"
+    },
+    "TEMP": {
+      "present": true,
+      "value": "C:\\Users\\49745\\AppData\\Local\\Temp"
+    },
+    "TMP": {
+      "present": true,
+      "value": "C:\\Users\\49745\\AppData\\Local\\Temp"
+    },
+    "PSModulePath": {
+      "present": true,
+      "value": "C:\\Users\\49745\\Documents\\PowerShell\\Modules;C:\\Program Files\\PowerShell\\Modules;c:\\program files\\powershell\\7\\Modules;C:\\Users\\49745\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules"
+    },
+    "CARGO_HOME": {
+      "present": false,
+      "value": null
+    },
+    "CARGO_TARGET_DIR": {
+      "present": false,
+      "value": null
+    },
+    "NPM_CONFIG_CACHE": {
+      "present": false,
+      "value": null
+    },
+    "PYTHONPYCACHEPREFIX": {
+      "present": false,
+      "value": null
+    },
+    "XDG_CACHE_HOME": {
+      "present": false,
+      "value": null
+    },
+    "PYINSTALLER_CONFIG_DIR": {
+      "present": false,
+      "value": null
+    }
+  },
+  "outputTargets": [
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round6-stage-20261012.ps1",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round5-recovery-20261012.ps1",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round5-integrated-backup-20261012.ps1",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-handoff-20261012.md",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-integration-round6-execution-20261012.json",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck-round6-20261012.json",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-engine-preflight-round6-20261012.json",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.json",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.stdout.log",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.stderr.log",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.exit",
+      "absent": true,
+      "unignored": true,
+      "checkIgnoreExit": 1
+    }
+  ],
+  "appContainer": {
+    "moniker": "NewManga-P02-LPAC-20261010-cddff584",
+    "expectedSid": "S-1-15-2-834207331-3580931408-3204344528-2661602853-1083380287-3953930862-2134818854",
+    "profileFolderQuery": "NOT_RUN_AFTER_FAIL_STOP",
+    "registryGetter": "NOT_RUN; requires same-thread LPAC probe; A5 does not create/launch one",
+    "private_registry_absence": "UNPROVABLE",
+    "TechnicalGate": "NOT_SATISFIED",
+    "OwnerRiskAcceptance": "APPROVED",
+    "GateDisposition": "WAIVED_BY_OWNER",
+    "BuildAuthorization": "AUTHORIZED_WITH_EXCEPTION",
+    "residual": "technical condition unmet; user explicitly accepted residual risk"
+  },
+  "scratch": {
+    "path": "G:\\CODEX\\P02-scratch-build-source",
+    "state": "NOT_RUN_AFTER_FAIL_STOP"
+  },
+  "staticChecks": {
+    "DSH": "APPROVED_STATIC_CONTENT (P0/P1/P2/P3=0/0/0/4); reviewerIndependentHashes=NOT_VERIFIED",
+    "CodexReviewPins": "22/22 at reviewed snapshot; 21/22 post-review because Task metadata changed",
+    "parser": "0 errors; PowerShell 7.6.6/Core/FullLanguage",
+    "inMemorySelfcheck": "73 PASS",
+    "parserEvidence": "verification/P02/codex-p02pre-r1h-attempt5-integration-verify-20261012.json"
+  },
+  "blocker": {
+    "code": "OWNER_HANDOFF_PIN_MISMATCH",
+    "expected": {
+      "bytes": 3551,
+      "sha256": "700B79F3FA01308DFFEC374A4FFB92DAC69C2FD8355DE623F6A250E9F1511658"
+    },
+    "actual": {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex\\verification\\P02\\p02pre-r1h-handoff-20261012.md",
+      "bytes": 9505,
+      "sha256": "E13C7148B79740927692D9282C4F474FEE4AADD50BFBE256509CACA3052786B1"
+    },
+    "git": {
+      "headBlob": "74eedfcbfbc9fcfcb51b53db615c466efd31b9d2",
+      "headBlobBytes": 9408,
+      "filteredWorktreeBlobMatchesHead": true,
+      "pathStatusExit": 0,
+      "pathDiffExit": 0
+    },
+    "consequence": "A5 PrecheckFiles fails before executor CreateNew. Attempt5 was not invoked."
+  },
+  "harnessDeviations": [
+    "Two read-only root-status helper attempts passed a leading ASCII space before :(exclude).tmp.driveupload and exited 128; status paths were not captured; whether Git inspected the excluded subtree is NOT_VERIFIED.",
+    "A Git helper named its argument $args; PowerShell automatic-variable collision led to Git exit 1 before a valid query.",
+    "A host identity helper attempted assignment to read-only $Host and stopped before whoami.",
+    "An optional core.safecrlf config query returned exit 1 because the value is unset.",
+    "Fresh root and Owner status snapshots afterwards succeeded with exact final exclude argv, root 1085 NUL/73927 bytes and stable index, Owner clean 0 bytes."
+  ],
+  "gates": {
+    "private_registry_absence": "UNPROVABLE",
+    "TechnicalGate": "NOT_SATISFIED",
+    "OwnerRiskAcceptance": "APPROVED",
+    "GateDisposition": "WAIVED_BY_OWNER",
+    "BuildAuthorization": "AUTHORIZED_WITH_EXCEPTION",
+    "BuildGate": "BLOCKED",
+    "HardBuildBarrier": "EFFECTIVE",
+    "BuildCargo": "NOT_RUN",
+    "systemAC1toAC7": "BLOCKED / NOT_RUN"
+  },
+  "next": "Independent review of this stop evidence; then a new attempt6 must pin the actual Owner Handoff bytes and include that file in the review input pins."
+}

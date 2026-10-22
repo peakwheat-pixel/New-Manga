@@ -1,0 +1,102 @@
+dsh: reasoning:
+I need to review several documents with a read-only approach, so I'll locate the file paths first using glob or direct reads, then work through them systematically without running any shell commands or making modifications.
+dsh: reasoning:
+I need to continue reading through the P02.md file and then pull in the manifest r2 along with the r5 review and adjudication documents.
+dsh: reasoning:
+I need to read through the r5 review stdout and r5 adjudication files since they're fixed objects, likely the full outputs rather than excerpts.
+dsh: reasoning:
+I'm systematically reviewing the R5C-01 through R5C-09 items against the r6 contract to verify each one, starting with R5C-01 which deals with a P1 inconsistency between the contract's reading scope and manifest that makes the P1-02 exit unreachable, and the resolution accepted the second minimal fix option that clarifies Phase A and Phase B boundaries.
+
+Now I'm checking the r6 contract sections to confirm the fix is properly manifested: the header explicitly limits authorization scope to Codex-only isolation preflight with prerequisites defined in §8.1, §1.2 clearly delineates Phase A as strictly limited to controller-only reads with specific scope items, Phase B excludes the critical items like system loader/runtime ACLs, output-root contents, and Git state, which aligns with the second minimal fix approach.
+
+But I also need to verify that the r6 contract has removed or modified the earlier statements from r5 that flagged the system loader/runtime ACL and S-1-15-2-2 ACE check as mandatory — the r5 §3:71 requirement is what triggered the original finding, so the fix needs to explicitly remove those conflicting requirements from the contract text. I'm noticing the environment table grouping uses a generic description "Python/Torch/HF/Triton cache variables" rather than naming TRITON_CACHE_DIR directly, which creates a minor inconsistency with the manifest that explicitly requires reading that variable—the host category check might fail to map it properly, though it's acceptable since the manifest lists it separately. I'm verifying R5C-03 by checking the contract references — I need to confirm that r6 explicitly states the manifest path with its hash, and cross-reference this with the P02 document to see if there are multiple manifests or if the reference is consistent. I'm noticing the timing specification for WER snapshots T0 and T1 has shifted between versions — r6 §1.2 now frames it as "before and after" a single read operation, whereas r5 §1.1.8 emphasized establishing the exclusion manifest before any protected file digest. The language change is subtle but could affect how strictly the snapshot boundaries are interpreted relative to the actual file digests.
+
+I'm also flagging a potential ambiguity in manifest r2 §Phase A: it doesn't explicitly state whether T0 must be captured before the 12 input-root root-directory metadata reads or just before the environment variable reads, which could matter for establishing a clear causal chain in the evidence. And there's a more concrete P3 issue — the scratch root metadata references four specific directories, but I need to verify whether the manifest clearly defines what those four roots actually encompass.
+
+Actually, looking more carefully at the "four scratch roots" requirement, r6 §1.2 explicitly mentions "12 固定输入根与四个 scratch 目录的精确根元数据" — so the manifest does call out those four roots as part of the stable anchor requirement. That checks out.
+
+But now I'm seeing another P3: the manifest phase around line 19 lists 24 environment variables, and I need to cross-reference which ones the contract actually authorizes in its environment table. R5C-05 status token is now consistent with `private_registry_absence=UNPROVABLE / BLOCKED` and `OS isolation preflight=NOT_RUN` in r6:8. R5C-06 shows TRITON_CACHE_DIR is only generically described in r6's environment table but explicitly named in the manifest, which is a minor gap — I'll flag it as P3 for host category mapping. WER timing is fixed in r6 §1.2 and manifest lines 21-22.
+
+Actually, checking the WER directories more carefully: manifest lines 23-27 list 5 items (2 registry keys plus 3 directories), and r6 §1.1.8 refers to "these directories" — the 3 directories match. For R5C-07, the historical r4 status is preserved in P02.md lines 124-126 with the note that r4 is superseded and no longer a current candidate. R5C-08 checks that "profile root"/"profile 树" terminology is absent from r6. R5C-09 header now shows the authorization scope is limited to Codex-only isolation preflight with execution prerequisites in §8.1. Now examining B-01 more carefully — the Phase A manifest does include carve-outs for system loader/runtime ACLs, moniker/profile/local-data directories, output-root inventory, Git pins, and all the other exclusions.
+
+Verifying the Phase A scope against the task requirements: it covers controller/token, the 12 input roots plus 4 scratch roots metadata, controller environment variables, and WER T0/T1 snapshots. The manifest explicitly excludes file content and hashing. And I'm noticing that GetAppContainerFolderPath is also prohibited in Phase A, not just the registry location API — checking the r6 contract lines to confirm where that prohibition is documented. I'm noticing a critical gap in the manifest: it doesn't explicitly disclose that environment variable values could briefly appear in recorded output, even though it does have a redaction rule for private paths. A stronger privacy treatment would be to write only the category classification rather than the raw value itself, and the manifest stops short of that clearer specification.
+
+Now checking whether the contract, manifest, and task align on the manifest path — the task references the file by path and SHA, but I need to verify that all three documents use the exact same references without contradictions.
+
+In P02.md around line 85, there's a path spelled as a single token including the SHA hash, which differs from the header format. The Gate states look consistent across the documents — they're matching up correctly between the task, contract, and manifest sections where they appear.
+
+I need to be careful though: the manifest only represents the frozen plan state, not the actual gate status, but the text does handle that distinction properly. The r6 header correctly lists the authorization scope. The continuation sections in the task are properly marked as historical, with r4 no longer being a current candidate. When tracing back to step 4 in r6, I need to follow the exact sequence to see how it connects to the earlier phases.
+
+Looking at Phase A's reachability: the second minimal fix says Phase A doesn't evaluate P1-02, so it defers rather than makes it unreachable. The r6 exit clause has been updated to make this clear — only Phase B evidence or other proven blockers can support that decision. This advances the finding without leaving a dead exit.
+
+Now examining the r6 §8.1 constraint about profile and private registry APIs: the manifest does hit a read-only environment variable check that tests NPM_CONFIG_USERCONFIG and GIT_CONFIG_GLOBAL, which is already listed in the Phase A variable set. The r6 §6 mapping for these is deferred, and the manifest covers all the variables that r6 §6 lists, plus TRITON_CACHE_DIR.
+
+But I'm noticing a gap: the manifest doesn't actually read the critical environment variables needed to verify redirection closure — things like PYTHONPYCACHEPREFIX, PYTHONDONTWRITEBYTECODE, HF_ASSETS_CACHE, HF_XET_CACHE, and HF_TOKEN_PATH are missing from Phase A, which is a genuine issue.
+
+The contract specifies that all cache paths must stay within the exact scratch subtree, but without reading these variables, the evidence is incomplete. Though Phase A is explicitly limited to "列明的 controller 环境变量," so this might fall under the next phase.
+
+Given the existing P3 finding about the generic Triton description, I should flag this as one finding: the Phase A environment variable set is a subset of r6 §6, lacking explicit per-variable disposition. The contract doesn't actually claim the manifest captures all variables, but r6 §1.2's wording "列明的 controller 环境变量" is circular. A minimal fix would be to add a note in the manifest explaining that unlisted variables are deferred to Phase B with per-variable justification, or explicitly list the 24 variables as the complete Phase A set with the remainder deferred.
+
+Now I need to check whether the manifest's Phase A scope includes "four scratch roots' root metadata" as requirement 2 states. The four scratch directories are listed, but I should verify if the manifest properly covers all the required scratch roots from r6 §4—there are 13 scratch rows total, and Phase A only handles 4, so the others should be marked as deferred.
+
+I'm also checking whether r6 §4's statement about root-level metadata was properly narrowed from the earlier Phase B requirement. The text correctly limits to root metadata only, which aligns with the scope, but I should cross-reference r6 §5 and §8.4 for any leftover Phase A claims about git status or content enumeration. Checking the separators in the P02 document and verifying the environment naming conventions for OS isolation preflight across the contract, task, and manifest files — they're consistent, with r6 using "OS isolation preflight" while the task uses "OS isolation preflight=NOT_RUN". There's a minor lingering difference where the task still references "preflight start" elsewhere, but the main status line is aligned.
+
+Looking at the "Phase A 不可解开" check against Phase B requirements — the contract and manifest both confirm Phase A doesn't lift the initial policies or change the build gate, and they enforce that Phase B needs separate manifests with review and adjudication before any measurements can proceed.
+
+Now examining the historical status markers across the task files — the r4 authentication section is clearly marked as historical, and the r5 review adjudication is recorded as a completion from the previous round. The authorization statement itself doesn't double as a review or gate pass credential, and the manifest explicitly clarifies that the scope permission is separate from measurement results or gate approval.
+
+I'm also noting a potential gap where Phase A's manifest lacks an explicit statement that outputs go to stdout only and the process shouldn't write evidence during measurement, which is a constraint that should be clearly documented. The harness environment might have unexpected variables like CLOUDSDK, but those aren't Phase A's concern. I'm checking the Phase A admission criteria — r6 §8.1 requires the DSH review to complete before Codex adjudication can proceed, so Phase A is blocked until that happens. The manifest's status field still says NOT_RUN, which is consistent. For the WER snapshot scope, Phase A needs a T0/T1 pair to establish the baseline before writes and detect new entries after, which aligns with the requirements. I'm verifying whether the r6 contract and manifest r2 are actually consistent with each other regarding exact scope, checking that the four unnamed roots, the 13-row table, and the K items line up properly.
+
+Now I'm checking whether the r6 and manifest r2 remain compatible with the P02 Task's pre-existing constraints — specifically, the task already defines rules for the read-only canary alias, tracked file hashing in the scratch setup, and output directories, so the AppContainer isolation scope shouldn't contradict those earlier requirements. The r6 contract authenticates only the isolation and preflight reads, not the broader Build Gate requirements, and the scratch table's relative paths in r6 §4 are correctly scoped to G:\CODEX\P02-scratch-build-source as confirmed by the later sections.
+
+I notice there's some ambiguity in how the r6 contract and the Task handle the scratch path prefixes — one uses relative notation while the other specifies absolute paths — but both are consistent with their respective scopes, so this is a minor P3 finding about adding absolute-path clarification to the table caption. Now I'm looking at whether the r6 contract properly recognizes the P02 Task's explicit path deny in .task-envs. 现在我需要逐一确认这9个R5C问题是否真的都已修正。我逐一验证R5C-01到R5C-09的修订情况：R5C-01的契约范围进行了拆分并新增了Phase A/B边界定义，P1-02的出口条款也被同步更新，这些都标记为已关闭；R5C-02用稳定锚点替换了Task的行号引用，检查r6契约中是否还有"Task:79"或"Task:81"这样的表述。
+
+R5C-03的manifest路径和SHA已被写入r6 §8.1和Task第85行，现在需要确认manifest r2自身是否一致——检查其第6行是否引用了契约文件并确认r6文件中的SHA值是否正确对应。
+
+我还在验证Task的frontmatter提交哈希和其他细节，比如确认主仓基线哈希cddff584出现在r6第5行中，以及检查Task中关于manifest r2和r1的引用是否准确。同时需要验证r6是否仍然声称Phase A的授权范围。 中等优先级的问题包括 WER 快照的作用域和时间规范、环境变量子集在 manifest 中的明确性（以 24 个变量加延迟列表为最小修复），以及路径大小写规范化的一致性。较低优先级的是几个剩余问题：TRITON_CACHE_DIR 在表中仅被泛化描述，scratch 表的路径前缀在 r6 中未明确说明，manifest 没有说明额外变量会被延迟，还有关于排除 manifest 适用性和"四个 scratch 根"命名的表述差异。
+
+我需要重新评估整个报告结构，确保 P0/P1/P2/P3 的定义一致，测量项只纳入我能从文档内容推导出的问题，特别是围绕"明确排除"要求的风险点。
+
+现在检查 r6 对"工具链/build"的排除条款——第 20 行明确禁止产品构建、Cargo、Tauri、PyInstaller 等工具链操作，第 1.2 节也排除了子进程、工具链和构建。还要确认"写探针"和"ACL/注册表修改"在第 1、3 和第 2 节的反复条款中都有排除。
+
+对于第 3 项的检查基本通过了，但发现 r6 §1.2 只说明了 Phase A 排除什么，却没有明确列出它包含的内容——比如"工具链"虽然被列为排除项，但 Phase A 的读列表中也没有包含它，所以这在逻辑上没问题，只是形式上有轻微的不对称。
+
+现在继续审查第 4 项关于 Phase B 的要求...
+
+明确列出了必须冻结的清单、非作者审查和 Codex 裁决，尽管清单内容与 r6 §1.2/§8.2 有细微差异，但两者可以合并理解。第 5 项检查历史状态标记是否充分，以及是否避免了通过用户授权来声称审查通过。
+
+关键问题是 P02 任务的状态仍为 `in_progress`，而 Phase A 的执行取决于新的审核和裁决，这是正确的。不过注意到第 86 行的 Gate 令牌列表与 r6 §8 的一致，但没有明确说明这些 Gate 令牌是内容级别的，这需要在报告中标注。
+
+第 6 项涉及 scratch 叶子行、TRITON_CACHE_DIR、WER 采样、状态令牌和稳定锚点，这些都已在发现中找到。现在需要验证 r6 是否仍包含任何声称 "Phase A 检查系统 ACL" 的表述，通过搜索 P1-02 和系统 ACL 相关内容来确认。
+
+搜索结果显示 P1-02 在 r6 中出现多次，但 r6 §3 已明确说明这些检查属于 Phase B，不在 Phase A 范围内，且 P1-02 继续处于阻塞状态。关键问题是 r6 §3 第 77 行要求任何后续检查必须先在 Phase B 清单中固定精确的文件路径、读取 API、目标 ACE/mask 和失败判据，这与第 2 项的要求一致。
+
+现在检查 manifest 第 31 行的排除项：明确不读取系统加载器/运行时文件 DACL、不检查 moniker/profile/local-data-directory 存在性、不检查 scratch 输出根安全描述符或内容、不收集 Git 状态或克隆固定信息、不哈希文件。这意味着 manifest 和 r6 §1.2 在"不哈希"的表述上略有差异——manifest 第 31 行说"不哈希文件"，但第 31 行同时说不收集"clone pins"，而 manifest 第 12 行关于根元数据的部分说"不得...打开或哈希普通文件"，这里的"普通文件"限定词暗示可能有例外。
+
+这不会造成矛盾，因为 Phase A 中根本没有文件哈希，但严格来说这个限定词留下了理论上的歧义。这应该作为 P3 级别的问题。
+
+再看要求 6 中的"稳定 Task 语义锚点"——r6 第 22 行提到了"P02 Task 中'Smoke 的只读 canary alias'段落语义继续有效"，第 100 行也说"P02 Task'Smoke 的只读 canary alias'；不授予"，这些都是语义锚点的好例子。r6 第 81 行引用"clone 基线为 HEAD=7ce3c40...、tree=ce8056b8..."。
+
+现在检查 r6 第 34 行的路径引用——它提到"仅 §4.5 列出的精确 leaf 可按各自权限使用"，但实际上精确的 leaf 列表出现在 §4 的表格和 §4 的约束条款 5 中，而不是 §4.5。这是个错误，因为 r6 没有 §4.5 这样的编号，只有 §4 后面跟着四个编号的约束条款。这是一个可验证的悬空交叉引用问题，应该标记为 P3。
+
+现在我在检查 r6 §1.1.8 中提到的"这三个目录不属于摘要排除范围"——这应该是指 WER 文件，但 §1.1.9 中的排除清单涉及的是冻结的精确路径和理由，需要确认这两处的关联是否清晰。
+
+另外注意到 r6 §1.1.9 要求在任何受保护文件摘要前先建立排除清单 JSON 文件，但 Phase A 中并没有文件摘要操作，这个要求和第 4 项之间可能存在逻辑冲突，需要进一步核实。 Now I'm checking for contradictions across the three documents. The environment table specifies absolute scratch subtree paths, but I need to verify the Task's allowlist for verification output — specifically whether `appcontainer-readonly-preflight-r2.*` files fall under the permitted `verification/P02/**` scope or if there's a conflict with the exclusion rules.
+
+I'm also confirming that r6 aligns with Phase A's no-write constraint by explicitly stating no file creation, and noting that the reviewer prompt needs to pin the object hashes to ensure proper documentation.
+
+Now I need to structure the final report in Chinese with the required sections: reviewed objects and their binding status, the decision outcome, severity counts with open findings and minimal corrective suggestions, R5C status for each item, whether Phase A can proceed with all prerequisites, current gate state, and confirmation that no measurements or mutations were performed.
+
+I should note that I've independently verified the content through direct file reads but haven't recomputed hashes, so object_binding remains NOT_VERIFIED. Let me compile the open findings and their count now. 现在我在整理四个优先级的发现项。P2 级别有两个问题需要非作者处置：一个是关于 WER 快照作用域和时序的重复描述，另一个是环境变量清单的子集问题，缺少完整的变量枚举和未列项的处置规则。P3 级别包括五个项目，从 TRITON_CACHE_DIR 的登记不完整、到各个文档间的交叉引用和术语一致性问题。
+
+我还在检查是否存在其他矛盾，比如 r6 关于写入探针的禁令与 manifest 的限制条件是否一致，目前看起来是统一的。
+
+现在看到 r6 第 15 行的表述——它允许在满足特定条件后设置必要的安全描述符和标签，并在运行后恢复，但这与固定的 Gate 状态产生了张力，因为 Gate 目前是阻塞的，且没有定义任何解锁机制。这实际上暗示了隐式的已批准路径，需要在报告中标记为需要增强的地方，建议在 Gate 条件中明确说明 ACL 和标签修改的授权流程。
+
+同时检查了其他关键条款：第 108 条关于最小权限包的设置与第 18 条零 ACL 范围的协调性、第 109 条的安全描述符保存规则，以及第 15 行关于写入操作的禁令范围，这些都指向同一个改进点。
+
+现在需要验证第 13 行的"私有"声明与 manifest 中 API 排除列表的一致性，然后决定是否应该在报告中将这些细化问题单独标记为 P3，还是作为现有发现项的补充说明。
+
+我倾向于将其并入 G-01/G-04，并新增两个 P3 项：一个是关于 WER 快照与文件哈希的交互需要澄清，另一个是 ACL 写入路径应在 Gate 状态表中明确登记。最后确认整体决策为"需修改"。
+
+现在检查是否满足所有前提条件才能进入 Phase A：需要 DSH r6 内容审核完成、Codex 逐项裁定所有发现、以及修订后重新绑定哈希，但如果发现任何 P1/P2 都未解决，则不能进入。同时要指出内容审核通过并不等同于对象哈希验证通过。

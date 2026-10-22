@@ -1,0 +1,98 @@
+{
+  "capturedUtc": "2026-10-12 09:16:42 UTC",
+  "task": "P02PRE-R1H-R6-EXEC-A6",
+  "scope": "Static read-only snapshot, not final pre-run and not execution authorization",
+  "mainRoot": "G:\\CODEX\\New Manga",
+  "mainBranch": "main",
+  "mainHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+  "ownerWorktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga",
+  "ownerBranch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+  "ownerHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+  "gitExecutable": "C:\\Program Files\\Git\\cmd\\git.exe",
+  "gitVersionOutput": "git version 2.52.0.windows.1",
+  "gitVersionExit": 0,
+  "outputTargetNames": [
+    "p02pre-r1h-selfcheck-round6-attempt6-stage-20261012.ps1",
+    "p02pre-r1h-selfcheck-round6-attempt6-recovery-20261012.ps1",
+    "p02pre-r1h-selfcheck-round6-attempt6-integrated-backup-20261012.ps1",
+    "p02pre-r1h-round6-attempt6-handoff-20261012.md",
+    "p02pre-r1h-integration-round6-attempt6-execution-20261012.json",
+    "p02pre-r1h-selfcheck-round6-attempt6-20261012.json",
+    "p02pre-r1h-engine-preflight-round6-attempt6-20261012.json"
+  ],
+  "checks": [
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-stage-20261012.ps1",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-stage-20261012.ps1",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-recovery-20261012.ps1",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-recovery-20261012.ps1",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-integrated-backup-20261012.ps1",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-integrated-backup-20261012.ps1",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-handoff-20261012.md",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt6-handoff-20261012.md",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-integration-round6-attempt6-execution-20261012.json",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-integration-round6-attempt6-execution-20261012.json",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-20261012.json",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck-round6-attempt6-20261012.json",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "main-root",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-engine-preflight-round6-attempt6-20261012.json",
+      "state": "ABSENT"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-engine-preflight-round6-attempt6-20261012.json",
+      "state": "ABSENT"
+    }
+  ],
+  "allTargetsAbsent": true,
+  "protectedDestination": "verification/P02/p02pre-r1h-selfcheck.ps1",
+  "dshR2StaticApprovalDoesNotAuthorizeAnyWrite": true
+}

@@ -1,0 +1,436 @@
+dsh: reasoning:
+我需要审查这些文件。作为只读审查，我需要读取固定输入文件。让我开始读取 r10 memo、r9 adjudication、r9 report、r9 memo 等。
+
+先读关键文件。工作目录 G:\CODEX\New Manga。
+
+让我并行读取多个文件。注意 read 工具。
+
+先列一下需要读的：
+1. doc/tasks/P02.md — 很大(132KB)，可能需要部分读取，重点看候选差异记录部分
+2. verification/P02/codex-phase-a-method-blockers-20261010-r10.md (11825 bytes) — 主要对象
+3. r9 adjudication (3471 bytes)
+4. dsh r9 report (11572 bytes)
+5. memo r9 (11824 bytes)
+6. r8 adjudication (3348), dsh r8 (10356), memo r8 (11700)
+7. r7 adjudication (3874)
+8. r6 adjudication (4143)
+9. r5 adjudication (3464)
+10. contract r7
+11. manifest r3
+
+开始读。注意派发方说不能运行 shell/hash 命令，但读取文件是允许的（只读文本审查）。read 工具是允许的。
+
+我不能运行 shell 验证 hash。可以用 read 检查内容。
+
+先并行读 r10、r9 memo、r9 adjudication。
+dsh: reasoning:
+r10 line 1 = "# P02 Phase A method blockers · memo r10 candidate" ✓ 准确自称 memo r10 candidate。
+r9 line 1 = "# P02 Phase A method blockers · memo r8 candidate" — r9 memo 自称 r8 candidate（历史遗留错误，正是 R9R-P3-01 指出的问题）。
+
+现在比较 r10 与 r9 的完整差异。逐行对比：
+
+r10:1 r10 candidate; r9:1 r8 candidate — 差异
+r10:2-7 相同?
+r10:8 vs r9:8 — 看起来相同。需要仔细核对。r9:8 提到 "memo r7 Review pin（123471）的 Codex 前缀复算及锚点复核见 [memo r7 Review attempt 1 adjudication]" 相同。
+r10:9 = r9:9 同
+r10:10 = r9:10 同
+r10:11 = r9:11 同? r9:11 也提到 r7 Codex adjudication SHA-256=6C58... 相同。
+r10:13 = r9:13 同
+r10:15 = r9:15 同
+...
+r10 全部 57 行；r9 也是 57 行。
+
+任务要求说 "r10 相对 r9 仅 line 1 变化"。看起来确实如此。但需检查是否有细微差异，比如 line 8。任务说 "r10 相对 r8 的 line 1 与 line 8 变化"。
+
+r8 memo 需读取来对比。line 8 是"用户授权及环境裁决"行，r8→r9 可能增加了 memo r7 Review pin 的句子。
+
+让我读取 r8 memo、r9 adjudication、r8 adjudication、r7/r6/r5 adjudication，以及 dsh r9 report、dsh r8 report。还有 contract r7 和 manifest r3 的相关行（:115, :156, :177, :52）。
+
+先并行读几个小文件。
+dsh: reasoning:
+内容已获取。几个要点：
+
+r10:1 = memo r10 candidate ✓
+r9:1 = memo r8 candidate（历史错误，未改）。
+
+r9 memo 与 r8 memo 差异：line 1 相同（都是"memo r8 candidate"），line 8 不同。这解释了 "r10 相对 r8 的 line 1 与 line 8 变化"：r10 vs r8：line 1（r10 candidate）和 line 8（r9:8 的新版本）都变了。
+
+现在我需要看 P02.md Task 中对候选差异的记录。这是关键点 2。需要搜 P02.md 中关于 r10 / r9 / 候选差异的内容。
+
+P02.md 132449 bytes，很大。搜索 "r10"、"memo r10"、"line 1"、"line 8"。
+dsh: reasoning:
+关键点：Task 登记（P02.md line 567）说：
+
+"新 memo r10 candidate=verification/P02/codex-phase-a-method-blockers-20261010-r10.md，11824 bytes / SHA-256=37DC0E7C...；仅 r10 line 1 相对 r9 变更为正确自指。相对 r8，r10 的 line 1 与 line 8 有差异；r8/r9 均保留为固定 Review 对象。没有改变方法、路径、范围、授权或 Gate token。"
+
+但派发方给的 r10 pin 是 11825 bytes（不是 11824）。Task line 567 写 11824 bytes。这是差异！派发方 pin: `11825 bytes / SHA-256 37DC0E7CF5B...`。而 Task 登记 11824 bytes / 同 SHA-256 37DC0E7C...
+
+嗯，这可能是笔误（byte 数），但 SHA-256 相同。注意：不同字节数却 SHA-256 相同不可能——两个不同长度文件不能有相同 SHA-256（除非其中一个数字错）。所以要么 Task 里 11824 是错的，要么派发 pin 的 11825 是错的。二者至少一个错。
+
+这是本轮 Review 要报告的一个事实点：Task 对 memo r10 的 byte 数与派发 pin 不一致（11824 vs 11825）。而且注意 memo r9 = 11824 bytes，r10 相对 r9 只改 line 1（"r9"→"r10"，同样长度：'# P02 Phase A method blockers · memo r8 candidate' → '...memo r10 candidate'）。等等，r9:1 是 "memo r8 candidate"，r10:1 是 "memo r10 candidate"。从 "r8" 到 "r10" 增加了一个字符 '1'（"r8" 2 字符 → "r10" 3 字符）。所以 r10 应该比 r9 多 1 byte：11824 + 1 = 11825。呃，但 r9 的 line 1 是 "memo r8 candidate"，r10 是 "memo r10 candidate"。r9 line 1 长度比 r10 line 1 少 1 个字符。所以 r10 = 11825 bytes 是自洽的，而 Task:567 写 11824 bytes 是错的（复制自 r9 的字节数）。
+
+等等，但是要小心：也许 r9 文件不是 11824？派发 pin 说 memo r9 = 11824 bytes。派发方 r10 是 11825 bytes。这自洽：r10 比 r9 多 1 字节，正好是 line 1 的 "1"。
+
+而 Task:567 写 r10=11824 bytes 与派发 pin 11825 冲突。同时 Task:567 说 "仅 r10 line 1 相对 r9 变更为正确自指" —— 该描述本身正确。Hmm，但注意 11824 是 r9 的字节数，Task:550 也写 r9=11824。所以 Task:567 的 11824 很可能是从 r9 复制来的笔误。
+
+这是一个新 finding：Task 登记的 r10 字节数与派发 pin 不一致（P3，可能是 pin 转录歧义）。但需注意审查要求：核对 "Task 对候选差异的记录是否准确：r10 相对 r9 仅 line 1 变化；r10 相对 r8 的 line 1 与 line 8 变化；旧的 r9/r8 pins 保持为固定历史对象"。
+
+所以我要报告：差异描述（line 1 / line 8）准确；但 byte 数与派发 pin 冲突（11824 vs 11825）。这是新事实错误（P3）。
+
+再看：r10 相对 r8 的 line 1 与 line 8 变化 — 需验证 r10:8 是否与 r8:8 不同。是的，r8:8 使用了不同措辞（反引号包围 pin 等），r9/r10:8 是新版本。line 1 也不同。所以描述准确。
+
+但要检查一个细节：r10 相对 r8 是否只有 line 1 和 line 8 变化？r9 是 r8 的 line 8 变更 + line 1 未变。r10 = r9 的 line 1 变更。所以 r10 vs r8 = line 1 + line 8。✓。但我应该逐行核对 r9 与 r10 是否真的只有 line 1 变化。我从 read 输出比较：r9:2-57 与 r10:2-57 看起来相同。我没用工具做 diff（不能运行 shell），但可以人工比对已读内容。粗略看是一致的。特别是 line 8、line 11、line 19 等。看起来相同。
+
+r10:8 与 r9:8：两者文本看起来完全相同（都包含 "memo r7 Review pin（123471）..."）。是的。
+
+现在，注意要求 1 的另一个点："是否不再把 r9 固定对象误标为当前候选"。r10:1 = memo r10 candidate ✓。但 r10 是否在别处仍称 r9 为候选？grep r10 中 "r9" 出现吗？r10 文本中没有 "r9" 字样？让我检查：r10 行 8 提到 r6/r7，line 11 提到 r5/r3/r4。没有 "memo r9" 字样。实际上，一个问题是：r10 全文完全不含 "r9"，也不含"r10"除 line 1 外。也没有提到 "memo r9 candidate"。所以修好了。
+
+但另一个考量：r10 相对 r9 是多了一个字符的文件，Task 登记说 11824——如上。
+
+接下来要检查 r10:11 中的 "r7 Codex adjudication SHA-256=6C585068..."。派发 pin 列表中并没有给出这个值来核对；这是历史值，来自 r8/r9 相同文本，属保值。但注意，memo 里引用的 "r7 Codex adjudication" hash 与 adudication 文件名？在 r6/r7 adjudication 中可能登记。可以检查 r7 adjudication 文件以确认该 SHA 值与引用标签一致。
+
+另外要检查 line 12 提到 "memo r4 以 attempt 3 固定 Review 对象 memo r3（SHA-256=773476...）"。等等，这在 line 11 里。
+
+还需要检查 point 4：各历史 pin、行锚点适用范围、完整 adjudication 标签与引用仍准确；Codex hash 证据没有被表述为 DSH formal object_binding 或 exact-object binding。
+
+r10:8 说 "Codex 核验不改变 DSH formal object_binding=NOT_VERIFIED" ✓。
+r10:15 说 DSH r7 Review "formal object_binding=NOT_VERIFIED，仅为内容层结论、不是 exact-object 凭证" ✓。
+r10:11 说 "两轮 DSH object_binding 均保持 NOT_VERIFIED；前述静态 Review 结论不被继承为本候选批准" ✓。
+
+现在需要读 r5/r6/r7/r8 adjudication 以核对 disposition 与历史记录。要求说 R7R-P3-01/02、R6R-P3-01/02/03、RV6-P3-01 disposition 是否保留。r10:11 保留了 RV6-P3-01 = REJECTED_AS_MISQUOTED 的登记。但 r10 正文里没有显式列出 R7R/R6R 的 finding ID。检查 r8/r9 是否列出？也没有。r9 report 说这些 disposition 由 adjudication 保留。hmm，memo 文本中 line 8/11 保留 pin 与"误引不产生 memo 修订义务"。r10 与 r9 相同，所以"保留"含义是文本未回退。合理。
+
+但我应检查 r8 adjudication 中 R8R-P3-01/02 的裁决内容以及 r9 adjudication 的 R9R-P3-01 处置，确认 r10 的处置准确。r9 adjudication 已经说明 R9R-P3-01 ACCEPTED，要求新建 memo r10 把 H1 改成 memo r10 candidate，并在 Task 登记 r10 相对 r8 在 line 1 和 line 8 的差异。r10/Task 已做到（差异描述），只是字节数有出入。
+
+等等——再仔细看 r9 adjudication 的要求重复一遍："r9 固定对象不改；新建 memo r10，将 H1 改成「memo r10 candidate」，并在 Task 登记 r10 相对 r8 在 line 1 和 line 8 的差异。" Task:567 描述了 "相对 r8，r10 的 line 1 与 line 8 有差异" ✓。
+
+还有一个潜在问题：r9 adjudication 说 "r9 固定对象不改"，但 r10 与 r9 的实际关系是 r10 = r9 + line 1 修改，且 r9 保留为独立文件 — 需确认 r9 文件仍在且 line 1 仍为 "memo r8 candidate"（我读了 r9，line 1 = memo r8 candidate ✓）。r9 未被就地改写 ✓。
+
+现在检查要求 2 的第三点："旧的 r9/r8 pins 保持为固定历史对象"。Task:567 说 "r8/r9 均保留为固定 Review 对象" ✓。
+
+现在，还需检查 Task:550 是否更新——DSH r9 report 建议同步更新 line 550 的 "only line 8 differs from r8"。但 line 550 是 r9 的登记（历史），r10 登记在 567。line 550 描述的是 memo r9 对象，r9 确实相对 r8 只在 line 8 变化（line 1 相同）。所以 line 550 无需更新，仍准确。✓ 好。
+
+现在检查是否有其他新事实错误。需要注意的一点：r10 说 "仅 r10 line 1 相对 r9 变更为正确自指"（Task）。但 r10 的字节数 = 11825，而登记 11824。这是关键 finding。
+
+还有一个潜在问题：Task:574（派发登记）说 "memo r10=11825 bytes / SHA-256 37DC0E7C..." — 我 grep 到的 line 574 显示 "memo r10=11825 bytes"。等等，grep 输出 line 574:
+
+"- 派发前 Task snapshot=132449 bytes / SHA-256 50EEBBDF...；memo r10=11825 bytes / SHA-256 37DC0E7CF5B6EA10AF47D5B14AB327D7DD2990C8CA3F36C09E3C9431DA740D1E。"
+
+是的！line 574 说 11825 bytes，与派发 pin 一致。而 line 567 说 11824 bytes 与同一 SHA-256。所以 Task 内部自相矛盾：line 567 = 11824，line 574 = 11825，两者 SHA 相同。这是 Task 内的不一致（P3 pin 转录冲突）。这是本轮可以报告的新 finding（Task 文档事实错误，非 r10 对象内部）。
+
+但要注意审查范围：Review 对象是 r10 memo，要求 2 是"核对 Task 对候选差异的记录是否准确"。所以这个 Task 内部矛盾属于要求 2 范围内可报告项。级别 P3（不影响 Gate/方法/范围）。
+
+我应该读 P02.md 的 540-580 行上下文，准确引用并检查是否有更多内容（比如 r10 相对 r9 的差异描述、旧 pin 保留）。
+
+再看要求 5：不得新增方法、路径、探测或数据访问。r10 相对 r9 只改 line 1，未新增。✓
+
+要求 6：对任何新事实错误、引用错误、pin/行号歧义或安全/Gate 越界给出 finding ID、级别、精确位置、证据和最小修正。
+
+现在可能还需要检查 r10:19 中 "r7 adjudication（:52）" 的引用是否准确 — 需要读 contract r7 adjudication 文件 line 52。文件名是 codex-appcontainer-contract-r7-adjudication.md。r10:19 说 "r7 adjudication（:52）已明确不得执行 manifest r3"。需检查该文件存在及 :52。
+
+另外 r10:19 引用 "contract r7 §8.1 item 1（r7:156）" 和 "「精确下一步」第 3 条（r7:177）" — 需读 contract r7 的 156、177 行。还有 §5（r7:115）。
+
+也要核对 manifest r3 的 :20、:22、:26-28 等。以及 r7 Codex adjudication SHA-256=6C58... 是哪个文件。
+
+让我读取：
+- verification/P02/appcontainer-isolation-contract-r7.md 的 110-180 行
+- verification/P02/appcontainer-readonly-preflight-r3.md 的 15-30 行
+- r7 adjudication 与 r8 adjudication、r6/r5 adjudication
+- P02.md 540-580
+
+并行读取。注意 read 大文件用 offset/limit。
+
+先读 contract r7 相关行、manifest r3 相关行、P02.md 相关区块。
+dsh: reasoning:
+Contract r7 的 §5 是在 line 112-117 其实。r10 说 "contract r7 §5（r7:115）的 GetFileInformationByHandleEx(FileHardLinkInfo)"。line 115 确实含 GetFileInformationByHandleEx(FileHardLinkInfo) ✓。而 §5 标题在 line 112 "## 5. 禁止路径、规范化与访问判定"，所以 §5 对应 line 115 大致合理（line 115 在 §5 内）。✓
+
+§8.1 item 1 = line 156 ✓（"1. 唯一 Phase A 候选范围..."）。
+"精确下一步" 第 3 条 = line 177 ✓。
+r7:177 说 "仅当 Review、adjudication、object binding 和 Phase A manifest 均无歧义后，才可执行其中列明的 controller-only 读取" ✓ 与 r10:19 描述相符。
+
+现在检查 r10:19 引用 "r7 adjudication（:52）已明确不得执行 manifest r3"。需要读 codex-appcontainer-contract-r7-adjudication.md:52。
+
+也需确认该文件的确切名称。glob 找一下。
+
+另外检查 r8/r7/r6/r5 adjudication 内容以核对 disposition，尤其 R7R-P3-01/02、R6R-P3-01/02/03、R8R-P3-01/02、RV6-P3-01。
+
+也检查 r8 adjudication 关于 SC 的处置。
+
+并行读取：
+- codex-appcontainer-contract-r7-adjudication.md 附近 :45-60
+- r8 adjudication
+- r7 adjudication
+- r6 adjudication
+- r5 adjudication
+
+先 glob 找文件名。实际上我知道大致路径。直接读。
+
+注意读取时确保文件存在。用 read。
+
+同时也要核对 manifest r3 的 :20/:22/:26-28。
+
+让我批量读取。一次并行多个 read 调用。
+dsh: reasoning:
+好，disposition 记录一致。R7R-P3-01/02、R6R-P3-01/02/03、RV6-P3-01 的处置都被 r9 adjudication 描述为 CLOSED/REJECTED 维持。r10 只是 r9 的 line 1 修改，所以 disposition 保留。r10 文本中没有显式 finding-ID 列表（除了括注 RV2/RV3/RV4/RV5/RV6/RV-P2 等），这些是历史引注，与 r8/r9 相同。
+
+现在需要读 contract r7 adjudication 的 :52 确认。文件名？可能是 codex-appcontainer-contract-r7-adjudication.md。glob 检查。
+
+另外 manifest r3 的行锚点。以及检查 manifest r3 中 23 项环境变量与 ProgramData，:20/:22/:26-28。
+
+还要验证 r10 与 r9 除 line 1 外逐行一致——我人工比较已读取的两份全文。让我仔细核对一遍关键行。
+
+r9:
+1: memo r8 candidate
+2: **评估对象状态：** ...
+...
+8: - 用户授权及环境裁决：... （以 "（RV6-P3-02）（RV2-P3-02；RV-N-02；RV3-P3-05；RV4-P3-01）" 结尾）
+r10:8 相同结尾 ✓
+
+r9:11 结尾: "...该误引不产生 memo 修订义务。" r10:11 相同 ✓
+r9:15-19 与 r10:15-19：看起来相同 ✓
+r9:21 相同
+r9:25, 27, 29, 31 相同
+r9:35-37 相同
+r9:41-51 相同
+r9:53, 57 相同
+
+所以 r10 = r9 只有 line 1 差异 ✓（人工目视）。
+
+一个细节：r10 与 r9 的字节差 = 1（11825 vs 11824）。而 line 1 "memo r8 candidate" → "memo r10 candidate" 增加 1 字符。自洽 ✓。
+
+现在关键 finding：Task:567 说 r10=11824 bytes，与 Task:574 的 11825 及派发 pin 11825 冲突，同一 SHA-256。这是 P3 级别的 pin/字节数转录不一致（Task 文档内）。可报为新 finding。
+
+但等等：要求 2 说"核对 Task 对候选差异的记录是否准确"。用户可能在期待我报告这个不一致。派发 pin 明确给 r10 = 11825 bytes；Task:567 = 11824。冲突需报告，标记 NOT_VERIFIED（不能自行验证 hash）。
+
+另外，还要注意一个可能的更微妙问题：Task:567 的 "仅 r10 line 1 相对 r9 变更为正确自指" — 描述准确。但字节数 11824 是 r9 的。所以最小修正：把 Task:567 的 11824 改为 11825。
+
+还有其他检查点吗？
+
+要求 4：各历史 pin、行锚点适用范围、完整 adjudication 标签与引用仍准确。
+- r10:8 引用 "r6 adjudication" 链接文本是 "memo r6 Review attempt 1 adjudication"（完整全名）✓；r7 同理 ✓。
+- 但 r10:8 说 "memo r6 候选形成时的 Task pin=117485 ... 该 pin 的语义锚点检查见 r5 attempt 1 adjudication"。注意这里 "r5 attempt 1 adjudication" 是无链接短名。DSH r9 report 把它列为补充观察（非 finding）。r10 保留。可继续视为观察。
+- r10:11 "r7 Codex adjudication SHA-256=6C585068..." — 需确认该 SHA 对应哪个文件。可能是 codex-appcontainer-contract-r7-adjudication.md 的 hash。我无法验证 hash，但可以检查该文件是否存在，且其"r7 Codex adjudication"标签与 :19 的 "r7 adjudication（:52）" 指同一对象（contract r7 裁决）。如果 r10:11 的 SHA 是 contract r7 adjudication 的 hash，则与 r10:19 的 "r7 adjudication" 一致，无一名两指问题。
+
+让我 glob 找到文件名并读 line ~52 附近。
+
+要求还有：行锚点适用范围。r10:8 说 "各轮行号只适用于该轮 Review prompt 固定的 Task pin，pin 变化须重核" ✓，r3 锚点 :58–62、:68–70、:382–386 只挂在 memo r3 pin ✓。
+
+要求 5：scope/禁令/11 项 Gate token 与 evidence state。r10:35-37、41-51、53、57 与 r9/r8 一致 ✓。11 项 Gate token 与派发要求列出的一致 ✓。
+
+代码 hash 证据没有被表述为 DSH formal object_binding：
+- r10:8 "Codex 核验不改变 DSH formal object_binding=NOT_VERIFIED" ✓
+- r10:15 "formal object_binding=NOT_VERIFIED，仅为内容层结论、不是 exact-object 凭证" ✓
+- r10:11 "两轮 DSH object_binding 均保持 NOT_VERIFIED" ✓
+无越界 ✓。
+
+现在让我查 contract r7 adjudication 文件和 manifest r3 行。
+
+另外，要求 1 中问 "r10:1 是否准确自称 memo r10 candidate；是否不再把 r9 固定对象误标为当前候选"。r10:1 ✓。同时应确认 r10 全文没有把 r9 误标为当前候选 — 全文无 "r9" 字样。等等，实际上 r10 中不存在任何 "r9" 字符串吗？grep 一下确认（read 全文目视：没有 "r9"，除了 line 1 的 "r10"）。让我 grep r10 文件中 "r9|r8 candidate"。
+
+另外检查 r10:3 "本候选尚待新的非作者 Review" 仍然适用 ✓。
+
+还有一个点：r10 line 1 是 "memo r10 candidate"，文件名 codex-phase-a-method-blockers-20261010-r10.md ✓ 与 Task:567 注册一致 ✓。
+
+现在 glob 找 contract r7 adjudication 确切文件名。也可以用 grep 搜 "6C585068" 在 verification/P02 下的文件。
+
+并行：grep "6C585068"；grep r10 文件的 "r9"；读 manifest r3 部分行。
+dsh: reasoning:
+grep "6C585068..." 只在 r10:11 及历史文件中匹配（还有 r10 自己）。等等，grep 输出显示 "Found 20 matches"，其中包括 r10:11。它没有列出 codex-appcontainer-contract-r7-adjudication.md 本身。可能因为该文件不含自己的 hash。我已经从 r1 prompt 确认该 hash 对应 codex-appcontainer-contract-r7-adjudication.md ✓。所以 r10:11 的 "r7 Codex adjudication SHA-256=6C58..." 与该文件对应。
+
+但 r10:19 说 "r7 adjudication（:52）"。是否同一文件（contract r7 adjudication）？在 r1/r2 prompt 中 "r7 adjudication" = codex-appcontainer-contract-r7-adjudication.md。需要读该文件 :52 确认内容 "不得执行 manifest r3"。
+
+看 manifest r3 :20 确实列 23 个环境变量，无 ProgramData ✓；:22 是 T0/T1 ✓；:26-28 是 CrashDumps 与两条 %ProgramData% ✓。r10:16 描述准确 ✓。
+
+注意 r10:15 说 "manifest r3 没有冻结具体实现绑定...；r3 已规定的 T0/T1 读取次序不在缺口之列" ✓。
+
+现在读 codex-appcontainer-contract-r7-adjudication.md :45-60。
+
+另外，还有一个我要确认的：r10:19 说 contract r7 §8.1 item 1（r7:156）"规定开始测量前须完成三项：DSH r7 Review、Codex adjudication、逐文件 SHA-256/object pin 核对；同项另行禁止调用 profile/private-registry API、创建 profile/file/dir、改 ACL/label/registry 或运行写 probe" ✓ 与 line 156 一致。
+
+line 177 "精确下一步" 第 3 条 ✓。
+
+现在读 contract r7 adjudication 的 :52 附近。同时我还想检查 r10 是唯一"candidate"字样的地方 — grep 只在 line 1 命中的是 "candidate"（pattern r9|r8 candidate|candidate 命中 line 1）。等等，r10:3 里有 "本候选尚待新的非作者 Review" —— "候选" 是中文，pattern "candidate" 只匹配英文。OK。
+
+不过 r10:3 有 "本候选尚待新的非作者 Review" ✓。
+
+现在读 contract r7 adjudication。
+dsh: reasoning:
+确认：
+- contract r7 adjudication :52 内容为 "do not execute manifest r3" ✓，与 r10:19 的 "r7 adjudication（:52）已明确不得执行 manifest r3" 相符。
+- r10 全文不含任何字节数（除历史 pin 的 bytes），也没有自指任何字节数。这本身不是问题。
+
+现在，关键新 finding：Task:567 的 r10 byte 数 11824 vs 派发 pin / Task:574 的 11825。
+
+再仔细考虑：是否有其他新事实错误？
+
+1. r10:8 中 "memo r3 原始行号锚点在该 pin 上核对（:58–62、:68–70、:382–386）"。行锚点是否仍准确？r5 attempt 1 adjudication :25 说在 117485 Task 下检查 :58–70 与 :382–386；r6 adjudication :13 说 119770 前缀的 "该精确前缀的 :58–62 为本机验证替代 Sandbox 裁决、:68–70 为 PROJECT_ORCHESTRATION_AUTHORIZATION、:382–386 为本机验证裁决与 Gate 语义"。r10:8 说 "memo r3 原始行号锚点在该 pin（111260）上核对" — 这是历史陈述，保留自 r7/r8/r9。我不认为有新错误。但注意：assertion "memo r3 原始行号锚点在该 pin 上核对" 指 attempt 3 pin (111260)。历史 r9 report 认为符合。保留。
+
+2. r10:8 说 "（RV6-P3-02）（RV2-P3-02；RV-N-02；RV3-P3-05；RV4-P3-01）"，以及 line 11 末尾的括注等。这些是与 r8/r9 相同的引注，未变。
+
+3. 一个考虑：Task:567 声称 "仅 r10 line 1 相对 r9 变更为正确自指"。但注意 r9 line 1 是 "memo r8 candidate"，r10 line 1 是 "memo r10 candidate"，这确实是"正确自指" ✓。但严格说，r10 相对 r9 的差异只在该行 ✓（我人工核对）。
+
+4. 另一个考虑：line 3 的 "本候选尚待新的非作者 Review" 与 line 57 一致 ✓。
+
+5. Gate 11 项：r10:41-51 与派发要求的 11 项 token 一致：
+   1. Phase A=BLOCKED / NOT_RUN ✓
+   2. private_registry_absence=UNPROVABLE / BLOCKED ✓
+   3. profile=NOT_CREATED ✓
+   4. ACL/registry=NOT_MODIFIED ✓
+   5. scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED ✓
+   6. OS isolation preflight=NOT_RUN ✓
+   7. hook/cache/child-process closure=BLOCKED / NOT_VERIFIED ✓
+   8. Build Gate=BLOCKED ✓
+   9. build=NOT_AUTHORIZED / NOT_RUN ✓
+   10. Hard Build Barrier=EFFECTIVE ✓
+   11. AC1–AC7=BLOCKED / NOT_RUN ✓
+
+6. 检查是否有安全/Gate 越界：r10:53 说 "本次 memo 编写未运行 Windows API..." 这是否定陈述，没问题。r10:31 关于 NtOpenFile 的否定描述 ✓。r10:36 禁令 ✓。
+
+7. 检查 r10 是否把静态 Review/Codex hash/用户授权转成 measurement/PASS：line 3 "不是测试结果、OS measurement、实施许可或 Gate 决定" ✓；line 8 "用户授权是范围许可，不是 OS 证据或 Gate PASS" ✓；line 15 "仅为内容层结论、不是 exact-object 凭证" ✓；line 37 "全部是状态记录，不是 Gate 通过证据" ✓；line 57 "Review 或 Codex adjudication 均不会自动放行 Phase A" ✓。无越界。
+
+8. 是否有新增方法/路径/探测/数据访问？r10 = r9 + line 1，无新增 ✓。
+
+现在关于新 finding 的判定：
+
+Finding 1（R10R-P3-01）：`doc/tasks/P02.md:567` 登记 r10 = 11824 bytes，而同一文件的 r10 派发登记 `P02.md:574` 及派发 pin 均为 11825 bytes，且两处引用同一 SHA-256=37DC0E7C...。同一 SHA-256 对应两个不同长度不可能，故至少一处字节数错误。根据 r10 相对 r9 仅 line 1 变化且该变化增加 1 个字符（"r8"→"r10"），11825 与"仅 line 1 变化"自洽，11824 疑为沿用 r9 的值。级别 P3（文档可溯性/字节数转录歧义，不影响 Gate、方法、范围、授权）。
+
+严格来说这属于 Task 文档而非 r10 对象本身。审查要求 2 明确要核对 Task 记录准确性，所以可报。位置精确：`doc/tasks/P02.md:567`。最小修正：将 `:567` 的 `11824 bytes` 改为 `11825 bytes`（或注明与 :574 派发 pin 的差异并复算）。
+
+注意：我不能自己验证 hash，所以标记该结论基于所见转录值与字节数算术自洽性，属 NOT_VERIFIED 层的观察。
+
+还有没有其他 finding？让我再想想哪些细节可能有问题。
+
+a) r10:1 是 "memo r10 candidate" — 但是否应该提"the r10 file's H1 is now correct"？是的。
+
+b) r10:8 中 "memo r6 候选形成时的 Task pin=117485 bytes / C11BAE... 是历史候选快照，不是 Review dispatch；该 pin 的语义锚点检查见 r5 attempt 1 adjudication"。这里 "r5 attempt 1 adjudication" 无链接（短名），而 line 11 的同名标签有链接。这是 DSH r9 已记录的补充观察（非 finding）。r10 保留，故不新增。但我可以作为"维持观察"提及。
+
+c) 检查 Task:550 的 "only line 8 differs from r8" — r9 相对 r8：line 1 相同（都是 memo r8 candidate），line 8 不同 ✓。所以该历史陈述仍准确，无需更新（DSH r9 report 曾建议同步更新，但实际上 line 550 描述的是 r9 与 r8 的关系，而 r9 确实只有 line 8 不同；r10 的修正体现在 567）。
+
+等等，细看 r9 report  рекомендация: "最小修正：把 `:1` 改为 `# P02 Phase A method blockers · memo r9 candidate`；... 注意该修正会使「仅 `:8` 与 r8 不同」的陈述相应变为两行不同，`doc/tasks/P02.md:550` 的「only line 8 differs from r8」需同步更新。"
+
+是，如果就地改 r9，line 550 就要更新。但 Codex 选择新建 r10（r9 保持不变），所以 line 550 描述 r9 仍成立，无需更新 ✓。而新的 567 描述 r10 相对 r9/r8 的关系 ✓。所以 Codex 的做法自洽，且 567 已覆盖。
+
+d) 检查 r10:9 "本 memo r3 候选创建时当前 Task 为 105252 bytes" — 这是历史，保留自 r7/r8/r9，未改。虽是 "本 memo r3" 措辞在 r10 文件中出现（历史叙述），但上下文说明是 memo r3 创建时，无歧义。这是既有历史文本（r7 以来一直保留），非本轮新增，且不属于 R9R-P3-01 范围。可作观察但不构成新 finding？嗯，考虑一下：r10 是"memo r10 candidate"，而 line 9 说 "本 memo r3 候选创建时当前 Task 为..."。在 r10 文件中，"本 memo r3" 的说法把 "本 memo"（=r10）与 "r3" 混在一起。但语义是"本 memo r3 候选"= "本（文所源自的）memo r3 候选"。历史上 r7/r8/r9 都保留这句，且 DSH r7/r8/r9 三次 Review 都未视为 finding。上下文清楚（指 r3 修订快照的历史）。我不新增 finding，但可以放在观察中提一下措辞。
+
+e) 检查 r10 中 "RV2-P3-02；RV-N-02；RV3-P3-05；RV4-P3-01" 等括注是否与历史一致。这些是 r8/r9 相同文本，保留。RV-N-02 之类的 ID 在 r9 report 中未提及。历史上 r9 未变更。无需新 finding。
+
+f) 是否有 pin 行号歧义？r10:19 引用 "r7:115"、"r7:156"、"r7:177"、"r7 adjudication（:52）"。已验证 115/156/177 与 adjudication:52 内容相符 ✓。注意 "r7:115" 指的是 contract r7，而 line 115 确实在 §5（112 起）内 ✓。
+
+g) "contract r7 §5（r7:115）的 GetFileInformationByHandleEx(FileHardLinkInfo)" — 事实：line 115 含此调用 ✓。但 FILE_INFO_CLASS_MISMATCH 声称该值不在枚举中，属既有 finding 内容（历史），非本轮新增。r10 与 r9 相同。
+
+h) r10:27 说 "枚举列表包含 FileStandardInfo 和 FileStreamInfo，不含 FileHardLinkInfo"。这是历史内容，未改。我没义务重新核实 MS 文档（且不能联网？其实我可以用 web_fetch，但这是历史文本且三次 Review 已核。不需要）。
+
+实际上，作为独立 Reviewer，我应确认引文准确。r9 report :12 已抽查 contract r7 :115 等 ✓。我这次也核对 ✓。
+
+i) r10 是否保留了 R8R-P3-01/02 的处置？"处置" 在这些 memo 中体现为 line 8 的修正本身（把 117485 标为非派发 pin；用全名标签）。r10:8 保留 ✓。
+
+j) R7R-P3-01/02、R6R-P3-01/02/03、RV6-P3-01 disposition 是否保留：r10:8 保留各轮 pin 与行锚点适用范围规则与 "r5 attempt 1 adjudication" 的误引裁决登记（line 11）✓。
+
+k) 是否 "Codex hash 证据被表述为 DSH formal object_binding 或 exact-object binding"：无 ✓。
+
+现在再确认一个潜在问题：派发 pin 说 r10 memo = 11825 bytes，而 Task:567 = 11824。这是 Task 内部矛盾。但派发清单第 2 项说 "Review 对象 ... 11825 bytes / SHA-256 37DC..."。所以派发 pin 自身确认 11825。那么 Task:567 的 11824 是文档错误。是的，报 finding。
+
+另外，是否应该标记为"Task 对候选差异的记录不准确"？差异描述本身（line 1 / line 8）准确，只有字节数不准。所以 finding 是"字节数转录不一致"。
+
+级别：P3（不影响 Gate/范围/方法/授权；可由 SHA-256 与文件还原对象）。
+
+我还想检查是否有其他 Task 记录：Task:573 提到 prompt=5106 bytes，而 DSH r9 report 提到 prompt 5218 bytes（那是 r9 的 prompt）。无冲突。
+
+Task:574 "派发前 Task snapshot=132449 bytes / SHA-256 50EEBBDF..." 与派发 pin #1 一致 ✓。
+
+好。现在还要考虑：memo r10 的 H1 说 "memo r10 candidate"，而 Task:567 说 "仅 r10 line 1 相对 r9 变更为正确自指"。一致 ✓。
+
+一个更微妙的点：r10 与 r9 的差异仅 line 1。那 line 8 呢？Task:567 说 "相对 r8，r10 的 line 1 与 line 8 有差异"。r9:1 = r8:1（都是 memo r8 candidate），r9:8 ≠ r8:8。所以 r10 vs r8：line 1 ≠ 且 line 8 ≠ ✓。一致。
+
+再验证 r9:8 与 r10:8 逐字相同。读输出显示两者内容一致（我目视比较）。两侧都以 "（RV6-P3-02）（RV2-P3-02；RV-N-02；RV3-P3-05；RV4-P3-01）" 结尾 ✓。
+
+所以：r10 相对 r9 仅 line 1 ✓（我以 live 文本逐行目视比对，非 byte binding）。
+
+现在还要给出"既有 finding disposition"：
+- R9R-P3-01：CLOSED（文本层）—— r10:1 = memo r10 candidate；r9 固定对象未改（r9:1 仍为 memo r8 candidate），r10 不再把 r9 误标为当前候选。
+- R8R-P3-01/02：CLOSED（维持）—— r10:8 保留 r9 的修正（117485 独立标注、全名标签）。
+- R7R-P3-01/02、R6R-P3-01/02/03：CLOSED（维持）。
+- RV6-P3-01：REJECTED_AS_MISQUOTED（维持）。
+
+form al object_binding 限制：本轮 NOT_VERIFIED；全部 pin 为转录值，未复核；只读 read/grep/glob；未运行 shell/hash。
+
+Gate 边界：按要求的 11 项 + 说明。
+
+新 finding 数量：P0=0, P1=0, P2=0, P3=1（R10R-P3-01，Task 字节数不一致）。
+
+等等——但如果判定 P3 是"Task 文档"而非"r10 memo 对象"，那 r10 对象本身无新 finding。我应在格式中明确：r10 memo 文本本身未发现新错误；P3 出现在 Task 登记层（Review 要求 2 的核对范围）。
+
+Hmm，还有一种可能：Task:567 的 11824 也可能反映真实文件是 11824 而派发 pin 11825 错。但我无法验证。我只需要报告冲突并指出算术自洽性倾向 11825（因为 "r8"→"r10" 增加一个字符，r9=11824）。这给出最小修正方向，但标注 NOT_VERIFIED。
+
+另加观察（非 finding）：
+1. r10:8 的 "r5 attempt 1 adjudication" 短名无链接 vs r10:11 同名有链接 — 维持 DSH r9 的补充观察，非 finding。
+2. r10:9 "本 memo r3 候选创建时" 措辞在 r10 文件中的版本指代沿用 — 三次 Review 未列 finding，上下文唯一。
+
+我要不要真的端出这两个观察？可以，标注非 finding。
+
+还有一点要求："对任何新事实错误、引用错误、pin/行号歧义或安全/Gate 越界给出 finding ID、级别、精确位置、证据和最小修正；否则明确无新增 finding。" 所以我要明确说明。
+
+现在考虑是否 P3 应升级？规则：不影响 Gate/范围/方法/授权的文档可溯性问题 = P3（与历史 R8R/R9R 同级）。11824 vs 11825 是 pin 转录歧义，可能使后继 Review 无法用字节数唯一还原对象（尽管 SHA 相同）。P3 合适。
+
+再看有没有 P2/P1 可能：Task:567 与 574 对同一对象给出两个字节数——这是"pin 歧义"。但它可由 SHA-256 唯一还原对象，且不影响任何 Gate/方法/授权。P3。
+
+现在写最终回复。格式要求：简体中文 Markdown，依次给出：
+1. 内容结论
+2. P0/P1/P2/P3 数量
+3. 既有 finding disposition
+4. 新增 findings
+5. formal object_binding 限制
+6. Gate 边界（11 项，指定值）
+
+末尾加上 "Review 是内容意见，不是 Gate PASS、exact-object binding 或 Phase A 执行授权。"
+
+我应该引用具体位置。注意我不能声称验证 hash。
+
+让我组织内容结论：
+
+内容结论：APPROVED_WITH_CONDITIONS（仅文本/引用层）。理由：
+- R9R-P3-01 已修复：r10:1 = "# P02 Phase A method blockers · memo r10 candidate"；r9:1 仍为 "memo r8 candidate"，r9 固定对象未被就地改写（保留为独立历史对象）；r10 全文不含 "r9" 字符串（grep 命中仅 line 1 的 r10），不再把 r9 误标为当前候选。
+- 差异记录：r10 相对 r9 仅 line 1（逐行目视比对 2–57 行一致）；r10 相对 r8 的 line 1 与 line 8 差异（line 8 系 r9 引入的修正，line 1 系本轮修正）；r8/r9 均保留为固定历史对象（Task:567、memo r9:1 未改）。差异描述与 Task:567 一致。
+- 但 Task 登记存在 1 处字节数自相矛盾（P3 finding）。
+
+无新增方法/路径/探测/数据访问；Gate/scope 未变。
+
+我要注意 "r10 与 r9 的逐行一致" 是 live 文本观察，非 byte 级结论。
+
+写详细一点但不要太长。也许 900-1400 字。
+
+关于 finding 编号：R10R-P3-01。
+
+证据：
+(i) `doc/tasks/P02.md:567`：`新 memo r10 candidate=...r10.md，11824 bytes / SHA-256=37DC0E7C…`；
+(ii) 同一文件 `:574`：`memo r10=11825 bytes / SHA-256=37DC0E7C…`（同一 SHA-256）；
+(iii) 派发 pin #2 亦为 11825 bytes / 37DC0E7C…；
+(iv) 算术自洽性：memo r9 固定为 11824 bytes，r10 相对 r9 仅 line 1 变更，且 `memo r8 candidate`→`memo r10 candidate` 增加 1 个字符，故 11825 与"仅 line 1 变化"自洽，11824 疑为沿用 r9 的值。
+
+最小修正：将 `doc/tasks/P02.md:567` 的 `11824 bytes` 改为 `11825 bytes`，或改为引用 `:574` 的派发 pin 值；如需保留两值，必须注明其中一个为已废弃转录。
+
+标注：以上字节数/哈希为所见转录值，我无法运行 hash 复核，冲突判定建立在"同一 SHA-256 不可能对应两个不同长度"的算术约束上 → NOT_VERIFIED（就字节级身份而言）。
+
+另加条目：r10 memo 对象本身（除 Task 登记外）无新 finding。
+
+好，还要不要检查 r10:15 中 "report SHA-256=C1FADDC2..." 引用 DSH r7 report？历史值，未改。
+
+最后 Gate 边界列出 11 项按要求的确切文本：
+- Phase A=`BLOCKED / NOT_RUN`
+- private_registry_absence=`UNPROVABLE / BLOCKED`
+- profile=`NOT_CREATED`
+- ACL/registry=`NOT_MODIFIED`
+- scratch ACL/label=`AUTHORIZATION_PATH_DEFINED / NOT_APPROVED`
+- OS preflight=`NOT_RUN`
+- hook/cache/child closure=`BLOCKED / NOT_VERIFIED`
+- Build Gate=`BLOCKED`
+- build=`NOT_AUTHORIZED / NOT_RUN`
+- Hard Build Barrier=`EFFECTIVE`
+- AC1–AC7=`BLOCKED / NOT_RUN`
+
+好。还需要"推荐下一步"吗？派发格式没要求下一步，但 AGENTS.md 要求最终回复给出推荐下一步。可以加一句推荐给 Codex：把 :567 的字节数修正后重派 Review。但注意本 Review 内不要越界。可加简短"推荐下一步（给 Codex）"。
+
+不过格式要求"依次给出"六项，我可以在六项之后加推荐下一步（AGENTS 要求）。可以。
+
+写吧。注意不要声称执行了命令。我没运行 shell（确实没有——我只用了 read/grep）。声明只读 read/grep。
+
+开始写最终答复。注意用简体中文。避免过度冗长。

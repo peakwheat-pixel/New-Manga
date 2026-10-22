@@ -1,0 +1,802 @@
+dsh: reasoning:
+I need to do a new review of r2 head `9b82e97b8aadc5b6b8710e03b5128a608697f56e`. Read-only. Shell is broken (same environment presumably). Let me verify HEAD binding again via refs/reflog, then read the changed files.
+
+Plan:
+1. Verify HEAD via loose ref + worktree reflog (should show 972049f9 → 9b82e97b).
+2. Read the prior review `doc/reviews/P02-972049f9-dsh-review.md`.
+3. Read the changed artifacts: harness, fixture, probes, run-webview.ps1, reports (p02-harness-results.json/txt, env-identity-report.json/txt, static-control-report.*), probe-execution.log, handoff, doc/tasks/P02.md, RESUME.md.
+4. Compare against base where needed (root worktree = 5de8d44c = base).
+5. Try pwsh once to confirm shell still unavailable (I should test, since claiming "cannot run" requires evidence — and it might now work). Let me try one pwsh call.
+
+Let me start with the git binding + a pwsh probe in parallel.
+
+Note: the user says prior review is at `doc/reviews/P02-972049f9-dsh-review.md` — earlier this file appeared in the root manifest as `??|doc/reviews/P03-PACKAGED-SFX-ENTRY-6d84b480-dsh.md` (P03). Now a P02 review file. Need to check if it exists in the candidate worktree or only root. Let me glob.
+
+Let me batch: pwsh probe, read loose ref, read reflog.
+dsh: reasoning:
+Head binding confirmed: r2 = 9b82e97b, parent 972049f9, diff base 5de8d44c (live main still = base). Shell still unavailable (same error). Good — I can compare against the root worktree (base) as before.
+
+Now read the artifacts. First, the prior review and the new/changed files. Let me glob verification/P02 and doc/reviews to see the new file set.
+
+Let me batch:
+- glob verification/P02/**/*
+- read doc/reviews/P02-972049f9-dsh-review.md (may be in root only; check candidate path first via glob? just try reading candidate path, and if it fails, read root)
+- read p02-harness-results.json (candidate)
+
+Let me start with glob + prior review.
+dsh: reasoning:
+The prior review file is not in the candidate worktree; it's presumably in the root `doc/reviews/` (untracked there — the root manifest had `??|doc/reviews/P03-PACKAGED-SFX-ENTRY-6d84b480-dsh.md`). Let me read the root copy.
+
+Also note new files in r2: `verification/P02/probe-execution.log` (new). No `doc/handoffs/...r2` visible yet — need to check doc/handoffs and doc/tasks. Let me glob doc/handoffs for P02*.
+
+Let me batch:
+1. read root doc/reviews/P02-972049f9-dsh-review.md
+2. glob candidate doc/handoffs P02*
+3. read candidate verification/P02/p02-harness-results.json
+4. read candidate verification/P02/probe-execution.log
+
+Let me do these.
+dsh: reasoning:
+Now I have the r2 report. Key observations already:
+
+1. `provenance.source_head = 972049f9` (r1 head!) and `source_tree = 657095fa` (r1 tree). But this is the r2 delivery at 9b82e97b / 7fe67d0f. So r2's evidence still reports the **r1** head/tree, not the r2 head/tree. That's F-05 partially addressed at best: they now record a `provenance` block with source_head/source_tree/behavior_baseline, but the values are **stale** — they point to r1 (the previous commit), while the reviewed r2 commit is 9b82e97b/7fe67d0f. And "evidence_carrier" is self-referential.
+
+Critically: the harness was run at r2 time (probe log date 2026-10-09T15:03:12+08:00 = 07:03:12Z), and it recorded head=972049f9... but wait — how did the harness compute source_head=972049f9 when the worktree HEAD at run time... Let me check: the r2 commit 9b82e97b was created at epoch 1791529598. Let me convert: 1791529598 - 1767225600 = 24303998 s = 281 d + 25598 s = 281d + 7h 6m 38s → 2026-10-09T07:06:38Z = 15:06:38+08. The probe ran at 15:03:12+08 (07:03:12Z), i.e., ~3.5 minutes BEFORE the r2 commit. So at run time HEAD was still 972049f9 (r1) and the r2 edits were uncommitted dirty files. That's consistent and honest — the harness reads `git rev-parse HEAD` at run time, giving 972049f9.
+
+So the r2 evidence again describes the *pre-commit* state: it reports source_head=972049f9 (r1) while the actual tested bytes were the r1 commit + r2 working-tree modifications (harness, fixture, probes, runner, reports). The user explicitly raises this: "`env_identity_report.git_state.is_clean=false`, its porcelain includes the r2 modified harness/report files, and `probe-execution.log` records the probe run before final commit. Decide whether the report identifies the actual tested bytes and binds them to the r2 delivery without a self-reference cycle. A Git HEAD/tree alone does not describe dirty working files."
+
+So the answer: **No** — the report does not identify the actual tested bytes. It names the r1 HEAD/tree, which does NOT contain the r2 changes (the harness/fixture being tested are r2-only content). Worse, it now *creates a self-reference cycle*: `provenance.evidence_carrier = verification/P02/p02-harness-results.json` — the report names itself as the evidence carrier, i.e., it references its own (dirty, not-yet-committed) content, and the file's own bytes are exactly the thing that changes between runs. And since I must check its `git_state`: the env report's porcelain now includes the r2 modified harness/report files (need to verify by reading env-identity-report.json).
+
+Also note: the claims of F-05's fix (source_head/source_tree present) are **misleading in a new way**: recording `source_head=972049f9`+`source_tree=657095fa` next to evidence produced by r2-uncommitted code invites the reader to bind the evidence to r1 — but the r1 tree's harness (657095fa) did NOT produce these PRE-03/palette outputs. So this is arguably *worse* than r1: now there's an explicit provenance block whose values are wrong.
+
+Wait — but is there also a possibility that the r2 harness run reported the head correctly and it *is* the delivery? No: r2 delivery HEAD is 9b82e97b. So the evidence's provenance names a different commit than the delivery. And 657095fa (r1 tree) cannot contain the r2 harness that generated the PRE-03 palettes. Actually careful: the evidence file itself is *in* the r2 commit; the harness that produced it is the r2 working-tree version. If a reader checked out 657095fa, they'd get the r1 harness which cannot produce this file's content. That's a demonstrable contradiction → F-05 remains open (or partially closed at best), plus a NEW finding (self-reference and false provenance binding).
+
+Let me now read the key changed files: harness, fixture, env probe, static probe, run-webview.ps1, env-identity-report.json/txt, p02-harness-results.txt, handoff, P02.md, RESUME.md, and the TS protocol. I need to check each F-01..F-12 hunk.
+
+Let me batch reads: harness (probably ~450 lines now), fixture, env-identity-report.json.
+
+Then: probes, runner, handoff, P02.md, RESUME, txt reports, TS protocol.
+
+Let me go.
+dsh: reasoning:
+Excellent. This is very informative.
+
+**F-01**: CLEARLY CLOSED. The harness docstring now says "Stage A preflight and verdict report generator. NOTE: Interactive CDP and live WebView2 behavioral driving are NOT yet active in Stage A (held BLOCKED...)". `target_exe`/`cdp_port` removed (`__init__(self)` only). Dead imports `os`/`urllib.request` removed (imports now json, platform, subprocess, sys, time, pathlib). No `build_barrier_active` hard-coded flag — now `register_runtime_blocked_scenarios()` explicitly named. So the capability claim mismatch is fixed in the harness. Need to check handoff + P02.md wording and the TS protocol header to see if they were also fixed. Let me read those.
+
+**F-02**: fixture now has both `visual_direction_f_tokens` AND `live_inline_palette` sections; need to read the fixture to confirm the F tokens are the real ones (`#ececee` etc. from tokens-cand-f.json) and the inline palette is separately labeled with source file:line. The report shows `direction_f_tokens_evaluated` with ink/ink_2/ink_3/ink_dis/accent = #ececee/#a9a9b3/#91919c/#70707b/#4d63e8 → these ARE the real F tokens ✓. And `live_inline_palette_evaluated` with `source` fields ✓. So F-02 appears CLOSED (need to verify fixture content + that #58a6ff/#2a3038 are gone or properly sourced: report shows #2a3038 with source App.tsx:488 — need to verify App.tsx:488 actually has #2a3038! In r1 I grepped src for `2a3038` and got no match. The r2 report claims source `apps/desktop/frontend/src/App.tsx:488`. Hmm! r1 grep on src for `58a6ff|101418|d8e0e8|8b949e|161b22` did not include 2a3038... wait, it did not include 2a3038. Let me re-check: my r1 grep pattern was `58a6ff|101418|d8e0e8|8b949e|161b22` — no `2a3038`. The r1 F-02 claim said "#58a6ff、#2a3038 在 src/** 中完全不存在" — that was based on... hmm, did I verify 2a3038? In the r1 review I wrote that from the finding text. Actually in the r1 addendum I wrote "accent_active: #58a6ff 与 border_subtle: #2a3038 在 src/** 中完全不存在（无来源）". The grep I ran in r1 was for `58a6ff|101418|d8e0e8|8b949e|161b22` — that didn't test 2a3038. So that r1 claim about #2a3038 may have been wrong/unverified. Hmm. That's a problem for my r2 review: I should verify now whether `#2a3038` and `#58a6ff` exist in src. The r2 report says #2a3038 source = App.tsx:488. Let me verify by grep in root (base src = candidate src, since src unchanged).
+
+Also #8a94a2 claimed source PageListPanel.tsx:53, and #0b0e12 claimed ViewerPanel.tsx:152. Need to verify those too — if they're wrong, new finding: fabricated provenance lines.
+
+So: grep the src for those hex + line numbers. Important check. Note the src is unchanged from base (r1 verified 37 files identical), so grep on root is valid.
+
+**F-03**: handoff numbers — need to read handoff r2.
+**F-04**: CLOSED-ish: PRE-03 now separate scenario_id, AC6 is now only the runtime BLOCKED row ✓. token_mapping and contrast_result fields now emitted ✓. BUT: the `min_required` threshold logic at harness:230 is suspicious: `min_target = 4.5 if "text" in token_info["role"] and "primary" in token_info["role"] else 3.0`. Roles from the report: primary_text→4.5 ✓, secondary_text→3.0 (!), tertiary_text→3.0, disabled_text→3.0, interactive_accent→3.0. Per AC6: "文本至少 4.5:1，禁用文字/非文本至少 3.0:1". Secondary/tertiary text are TEXT, not disabled → should be 4.5:1, not 3.0. So the threshold for `secondary_text` (#a9a9b3 → 7.45, passes 4.5 anyway) and `tertiary_text` (#91919c → 5.57, passes 4.5 anyway) would still pass, so verdict unchanged. But the *recorded* `min_required` value (3.0) misstates the contract threshold → a defect (P3-level, since results don't flip). Also `interactive_accent` as 3.0 is arguably right (non-text). Need to check AC6 wording: "文本至少 4.5:1，禁用文字/非文本至少 3.0:1". So label-mismatch: secondary/tertiary text should be 4.5. I'll make this a finding (P3) — misapplied threshold label, no verdict impact. Also note the AC6 requirement "只要实际前景、背景及必要的合成底色可确定，就必须计算 contrast ratio" — this model does compute; fine.
+
+Also: PRE-03 evaluates F tokens against `bg_page` from the fixture, and the live palette against hard-coded `live_bg_hex = "#101418"` (harness:242) — hard-coded background rather than read from the palette/fixture. That's a partial regression of F-08 (the fixture's live palette presumably declares the App base background #101418 as one of its colors; the harness hard-codes it). Let me check the fixture: if `live_inline_palette.colors` includes a #101418 entry with role "app_base_background", then the harness should use it; hard-coding is a (minor) decoupling. F-08 was about hard-coded token RGB — that's now fixed (hex_to_rgb from fixture). But a new hard-coded `#101418` appears. I'd call F-08 "closed for tokens, partially closed overall" or note a residual. Let me verify the fixture content first.
+
+Also the harness now computes `contrast_ratio` only against the page background for every token — for `interactive_accent` (a non-text accent), comparing to bg_page is one valid pair. AC6 also demands the *real* composed background for badges (alpha compositing). The harness implements `blend_alpha` and uses it only when fg is 4-tuple RGBA — but does the fixture provide any rgba tokens with alpha? The report's evaluated entries all have `hex` and no alpha → `blend_alpha` may never be exercised in the real evaluation path except in `self_test_contrast_math()` which unit-tests it with a synthetic (0,0,0,0.5). So: alpha compositing is implemented and self-tested but **never applied to any actual fixture token**. Need to verify: does the fixture contain any rgba/alpha token? The report's `direction_f_tokens_evaluated` shows only hex→rgb (no alpha) and `live_inline_palette_evaluated` also only hex. So no alpha compositing happens for real tokens. AC6 says "只要实际前景、背景及必要的合成底色可确定，就必须计算 contrast ratio" — the model doesn't need alpha if no token has alpha. But the F contract's `*-soft` badges ARE rgba (per UI_UX_GUI_DESIGN.md §7.2: "*-soft 是 rgba，以 alpha 叠加 panel 合成后与文字令牌比较"). So a real F-token audit requires the `*-soft` composed backgrounds; this model omits them entirely. That's a substantive gap: the model evaluates only 5 fg tokens against one opaque bg, and claims `token_mapping: MAPPED` for all. Given AC6's threshold rules ("不另定阈值") and the contract's badge rule (4.5:1 for badges on composed `*-soft`), the model is incomplete. Is it a *finding*? AC6 runtime is BLOCKED, and PRE-03 is labeled a model — but PRE-03 claims "Visual Direction F token mathematical contrast model with alpha blending" (docstring:11) while alpha blending is never applied to actual tokens. That's an overclaim → new/partial finding. I'll report it as a new finding (P2 or P3). Given it's a preflight model explicitly not real WebView evidence, and the alpha path is dead for real tokens, I'd say P3 — but the docstring's "with alpha blending" is an unsupported claim similar to F-01's class. Hmm. Let me call it P3 (model incompleteness/unsupported "alpha blending" claim), noting it does not flip any verdict and AC6 remains BLOCKED.
+
+Wait, but I should check the fixture first — maybe it has rgba tokens including `*-soft` that the harness *would* handle but the report doesn't show because... the loop at 225-238 only reads `token_info["hex"]`; if a token had `rgba`, `hex_to_rgb` would fail → exception → PRE-03 FAIL. Since PRE-03 PASSed, all F tokens in the fixture have `hex` only. So the fixture provides exactly 6 tokens (bg_page + 5). Real F contract has 42 color tokens × 2 themes. So the model covers 5 of 42 (dark only). That's a coverage limitation worth stating. It's labeled as a model; but "Visual Direction F token mathematical contrast model" with `token_mapping: MAPPED` for 5 tokens could mislead. I'll report as a P3 finding with precise wording: 5/42 tokens, no `*-soft` composition, no light theme, `min_required` thresholds wrong for secondary/tertiary text.
+
+**F-05**: still open / worse — as analyzed. New sub-issue: `evidence_carrier` self-reference (harness:330), and `source_head/source_tree` = r1 while the evaluated content is r2. Actually, wait. Let me think again about whether this is truly "wrong". At run time (15:03:12+08), HEAD was 972049f9 (r1) and the working tree had r2 modifications. The harness honestly reports HEAD=972049f9 and tree=657095fa. So the report *is* accurate about the commit at run time, and `is_clean: false` + porcelain (listing the r2 modified files) tells the reader the working tree was dirty. So the report does disclose dirtiness, and the porcelain enumerates the dirty files. Does that "identify the actual tested bytes"? No — it identifies the file *paths* that were dirty but not their content/hashes. And the recorded head/tree describe r1, which does not contain the tested r2 content.
+
+Crucially for the r2 delivery review: the evidence is produced from **uncommitted r2 content**, and the delivered r2 commit (`9b82e97b`/`7fe67d0f`) is not referenced anywhere. So F-05 is **still open** (partially addressed: provenance block added; but values stale + new self-reference). The user's question: "Decide whether the report identifies the actual tested bytes and binds them to the r2 delivery without a self-reference cycle." Answer: no — it does neither; and it introduces a self-reference cycle (the report's `evidence_carrier` points at itself, and its own bytes changed between runs, so the pointer cannot pin the tested bytes).
+
+Also: the harness could plausibly record the *r2* head if the run happened after commit; the Owner ran before commit. A robust fix: record `HEAD` + `git status --porcelain` + per-artifact SHA-256, or re-run post-commit.
+
+Additionally: AC1–AC6 details embed `source_head=972049f9` (r1) as the "source" of scenarios that were never executed — harmless but reinforces the wrong binding.
+
+**F-06**: partially/fully addressed? Now `exit_code: null` for blocked (harness:306) and txt prints "Exit: null"; `main()` returns 0 if preflight ok, and runner exit 0. Plus NEW: `probe-execution.log` with Date, PowerShell 5.1.26100.9549, Python exe, Node, npm, and EXIT per step. That's a big improvement — it provides a run log with EXIT and shell/Node versions. Need to check: does it include a *shell header* with the actual shell? It says "PowerShell: 5.1.26100.9549". Q-009 wants "EXIT 与 shell/venv 头" ✓ satisfied. However: the log was produced by whom — run-webview.ps1 presumably (need to read the r2 runner to confirm it writes the log). Also: the log's per-step EXIT values are recorded after each command; good. But note the log does not record the observed exit code of the *runner as a whole* (the harness returned 0; the log ends with "EXIT: 0" for step 3). Good enough. So F-06 appears **closed**: exit_code null ✓, run log with EXIT/shell header ✓. Need to verify the runner actually writes this log and that the log's "npm: 12.0.1" vs report's npm 12.0.1 consistent ✓. And check the handoff no longer claims "退出码 126" (handoff to read).
+
+Hmm, one caveat: `probe-execution.log` is `??` (untracked) at the time of the probe run per porcelain line 32 — meaning the log was created during the run but *not* committed? But the r2 commit should include it — the glob shows `verification/P02/probe-execution.log` exists in the worktree. Is it committed in r2? The porcelain at run time said `?? verification/P02/probe-execution.log` — that was at the time of the *env probe* run (step 1), which ran before the log was fully written (chicken-and-egg: the log is written by the runner, and the env probe's porcelain captured it as untracked). Since the log exists now and the r2 commit message mentions "whitespace diagnostics", the log is probably in r2 (it's not in the r1 file list). It's in the worktree; whether committed I can't verify without git. I'll note: it appears in the worktree and is new vs r1; its committed status is unverifiable without git.
+
+Wait — actually the log is in the r2 worktree and wasn't in r1's file list, so it's r2 content. But is it *tracked* in r2? The porcelain shown inside the env report is from before the log was written (step 1 ran before steps 2-3 and before log finalization)... hmm, actually the log is written *during* step 1 (header written first). The porcelain inside the env report was captured during step 1, at which point the log file existed but was untracked (because r2 hadn't been committed yet). That's consistent.
+
+**F-07 RESUME**: need to read the r2 RESUME.md to see if updated.
+**F-09**: env probe now records `verified_client_guid` and `{F3017226-FE2A-...}`; GUID literal fixed presumably; npm now "12.0.1" ✓ (so npm invocation fixed); python_executable recorded ✓. Need to read env_identity_probe.py to check `run_cmd` error handling, GUID fix, and whether the static probe is still run twice (runner step 2 + harness line 205). Harness still runs the static probe at :205 → so if runner also runs it, still twice. Need to read run-webview.ps1.
+**F-10**: fixture internal consistency — need to read the fixture (has_regions for page 102, undo operation naming, readback expectations, $schema removal).
+**F-11**: TS protocol layer union — need to read the TS file.
+**F-12**: P02.md test table — need to read P02.md.
+
+Also new: the report's `p02-harness-results.txt`? I read the log which echoes the txt. Fine.
+
+Also `static-control-report.json/txt` modified (porcelain) — need to check consistency (report says stdout matches). Let me read the txt files quickly.
+
+Also need: handoff r2 (does a new handoff exist? `doc/handoffs/P02-stage-a-foundation-handoff.md` only — same file, presumably updated). And `doc/tasks/P02.md`.
+
+Let me now batch-read: fixture, run-webview.ps1, handoff, and the TS protocol. Then probes + P02.md + RESUME + static reports.
+
+Let me be efficient: 4 reads now.
+dsh: reasoning:
+Fixture r2:
+- pages: synth-page-102 now `has_regions: true` AND regions has synth-page-102 entry (synth-reg-03) ✓ → F-10 ① CLOSED.
+- `$schema` removed from top ✓ → F-10 ④ CLOSED.
+- regions now use real wire-ish shape: `region_id`, `region_type` ("speech"/"sfx"/"narration"), `sfx_policy`, `origin`, `revision_no`, `geometry.bbox` normalized [x,y,w,h], `polygon`, `revisions[]` with `region_revision_id`, `review_state`, `is_pinned`, `restored_from_revision_id` ✓ — need to check against the actual wire shape (region/client.ts) to verify. This addresses user point 4.
+- post_write_scenarios: retype/undo/restore now distinguished:
+  - retype: operation_name retype_region, ipc_write set_region_type with camelCase args {regionId, newRegionType, expectedRevision}, expected_result revision_no 2, post_write_readback list_regions with expected_sequence + max_quiet_period_delay_ms ✓
+  - undo: operation_name undo_retype, `ui_action: "trigger_undo"` + ipc_write restore_region_revision with args {regionId, revisionNo:1, expectedRevision:2}, expected revision_no 3 ✓ — now clearly marked as a UI action with the underlying IPC ✓ F-10 ② CLOSED (as long as the IPC arg names match the real contract).
+  - restore: restore_region_revision {regionId, revisionNo:1, expectedRevision:3} → revision_no 4 ✓
+  - readback included for all three ✓ F-10 ③ CLOSED.
+  
+  BUT: are the args correct? The real client uses `setRegionType(region_id, type, expected_revision)` etc. The wire arg NAMES matter (Tauri commands use snake_case or camelCase per the frozen contract). Need to check `region/client.ts` for the actual arg keys: In r1 grep I saw `SET_REGION_TYPE_COMMAND = "set_region_type"` and calls like `invoke(SET_REGION_TYPE_COMMAND, {...})`. Need the exact keys. Let me read region/client.ts around lines 100-200 to see the invoke payload keys. Also check that `expectedRevision` vs `expected_revision` — the fixture uses camelCase while the r1 code used `expected_revision` in prose ("the optimistic `expected_revision` guard"). If the wire uses `expected_revision`, the fixture's camelCase is wrong → new finding. Must verify.
+
+  Also semantic check: undo restores revision 1 with expectedRevision 2 → new revision_no 3. Then restore restores revision 1 with expectedRevision 3 → revision_no 4. Plausible (each write creates a new revision). ✓ reasonable.
+  
+  Hmm, one issue: for `retype` the description says "Change region type from speech to narration" — fixture region synth-reg-01 is `region_type: "speech"` ✓ consistent. `expected_result` includes `sfx_policy: "skip"` — is that right? Changing region type might change sfx_policy default. Unverifiable; not a finding.
+
+  Another: `undo` uses restore_region_revision to revision 1 — but semantically "undo" in the UI (`undoRetype`) may call `set_region_type` back rather than `restore_region_revision`. Need to check WorkbenchPage.tsx undoRetype implementation. In r1 I saw `undoRetype` at :673-718 with `beginOperation("undo")`, and it called something. If the UI's undo actually calls `restoreRegionRevision`, then the fixture is right. Let me check WorkbenchPage.tsx:673-718.
+
+- visual_direction_f_tokens: now uses real F tokens #1a1a1d/#ececee/#a9a9b3/#91919c/#70707b/#4d63e8 ✓ with description "Visual Direction F token specifications per design contract §7.2 / §9" — need to verify these exactly match tokens-cand-f.json's dark mode. r1 verified tokens-cand-f.json has bg-page #1a1a1d, ink #ececee, ink-2 #a9a9b3, ink-3 #91919c, ink-dis #70707b, accent #4d63e8 ✓ — all six match. So F-02's core defect (wrong reference set) is CLOSED. 
+  But note: the fixture description says "per design contract §7.2 / §9" — the F tokens come from `tokens-cand-f.json` (contract §6C/§5), and §7.2/§9 define the *thresholds* and the three-fold encoding rule. Minor description imprecision; probably acceptable. Also it's only dark mode (the contract says F/A has light+dark; A's light accent #4356d6). The model doesn't evaluate light theme. Note as a coverage limitation (P3) — AC6 says "React 当前无浅色主题入口时记录 NOT_APPLICABLE" — the frontend has no light theme, so dark-only is defensible ✓. Good, so no finding for light theme (AC6 explicitly allows NOT_APPLICABLE for light).
+  Hmm, actually: does the model record `token_mapping` NOT_APPLICABLE for light? It records MAPPED for the 5 dark tokens; light theme isn't mentioned. AC6 says "React 当前无浅色主题入口时记录 `NOT_APPLICABLE`" — the model doesn't record a light-theme token_mapping at all. Minor; I'd fold into the P3 threshold/coverage finding.
+
+- live_inline_palette: 7 colors with source_file/line, including #2a3038 (App.tsx:488) and #8a94a2 (PageListPanel.tsx:53) and #0b0e12 (ViewerPanel.tsx:152). Need to VERIFY these lines actually contain those hex values. If wrong → fabricated provenance (new finding, and it would mean F-02 is only partially closed). Must grep the src.
+
+Note the r1 report claimed 8b949e for muted; r2 changed to #8a94a2 at PageListPanel.tsx:53 — suspicious (did the author correct it?). Let me verify with grep on the actual src. Also #101418 at App.tsx:475 ✓ (r1 saw `background: "#101418"` at 475 ✓), #d8e0e8 at 474 ✓, #161b22/#1c2430 at 486 ✓. #2a3038 at 488? Need to check. #0b0e12 at ViewerPanel.tsx:152? Need to check.
+
+Let me grep App.tsx 470-500 and PageListPanel 45-60 and ViewerPanel 145-160.
+
+- run-webview.ps1 r2: writes probe-execution.log ✓ with header (Date, PowerShell version, Python exe+version, Node, npm) and per-step Command/OUTPUT/EXIT ✓; failure propagation: `if ($exitCode -ne 0) { Write-Error; exit $exitCode }` ✓ (F-09 ③ improved). `$PythonExe = (Get-Command python).Source` — single interpreter for all three steps ✓ (F-09 ③ interpreter unification: runner uses one python; but the harness itself at :205 still calls `sys.executable` for the static probe → still runs the static probe twice if the runner runs step 2 AND the harness). Yes: runner Step 2 runs static probe, and harness `run_preflight_checks` :203-216 runs it again → **双重执行仍然存在** (F-09 ③ partially open). Also the harness's PRE-02 record duplicates runner Step 2. So F-09: GUID ✓ closed, npm ✓ closed (npm.cmd), interpreter ✓ mostly (harness still uses sys.executable but that's the same python), double-probe ✗ still open → F-09 = partially closed.
+
+Hmm, is double execution a real problem? It writes static-control-report.json twice (identical content) and costs a second run. Minor. But it's now *worse* in one way: the runner logs Step 2's EXIT: 0 from the direct run, and the harness's internal re-run's stdout is embedded in the JSON. Not a correctness issue. Keep as P3 partially open.
+
+Also: `$NpmVer = try { (npm.cmd -v) } catch { "UNAVAILABLE" }` ✓ fixed. But note: `$ErrorActionPreference = "Stop"` + `try/catch` ✓.
+
+Also new: `Set-Content -Path $LogPath ... -Encoding utf8` — PowerShell 5.1's `-Encoding utf8` writes a **BOM**. The r2 commit message mentions "whitespace diagnostics". The log file thus starts with a UTF-8 BOM (EF BB BF). Is that a problem? For a .log file, minor. But if the Owner claims "pure LF" and the file has a BOM, that's a whitespace/hygiene note. Also `Add-Content ... -Encoding utf8` in PS 5.1 appends without BOM per call. The harness writes JSON with `newline="\n"` and `encoding="utf-8"` (no BOM) ✓ — so `p02-harness-results.json` is LF-only, but `env-identity-report.json`/`probe-execution.log` are written by... the probe uses `encoding="utf-8"` (no BOM, LF). The log is written by PS 5.1 → BOM + CRLF? `Set-Content`/`Add-Content` on Windows PowerShell 5.1 use CRLF line terminators. So `probe-execution.log` is CRLF+BOM. Given the whole repo's LF discipline and the r2 commit's "whitespace diagnostics" claim, I should check: does the log have CRLF? I can detect via grep for `\r$`. Let me grep the log for CR. That's a legitimate check of the r2 claim "whitespace diagnostics".
+
+Actually the commit message says "fix(P02): address DSH Stage A review findings and whitespace diagnostics (r2)". So they claim whitespace diagnostics addressed. Let me check whether the *delivered files* are LF: the harness writes LF ✓; probe writes LF ✓ (open with encoding utf-8, no newline param → Python default newline translation on Windows writes \r\n! Careful: `open(path,"w",encoding="utf-8")` without `newline=""` translates "\n" to os.linesep on Windows → CRLF. The probe (env_identity_probe.py) — need to read its write calls to see if it sets newline. In r1 the probes used `open(...,"w",encoding="utf-8")` without newline → CRLF on Windows. The harness r2 added `newline="\n"` explicitly ✓ ("with pure LF line endings"). So maybe the probes were also updated in r2 (porcelain shows env_identity_probe.py, static_control_probe.py modified). Let me read the probes.
+
+So: read env_identity_probe.py and static_control_probe.py (r2), plus grep for CR in delivered files, plus verify the inline palette hex/line provenance, plus read the handoff/P02.md/RESUME/TS protocol.
+
+Let me batch: probes (2 reads).
+
+Then: handoff, P02.md, RESUME, TS protocol, static reports, txt files, and the greps.
+
+Token budget is a concern but let's proceed. Priority: probes, handoff, P02.md, TS, then greps for palette provenance + CR.
+
+Let me do probes + handoff now (4 reads max per block is fine).
+dsh: reasoning:
+env_identity_probe r2:
+- GUID fixed: only queries the verified GUID subkey ✓ (F-09 ① CLOSED).
+- npm: `get_npm_version()` uses `shutil.which("npm.cmd")` and returns "ERROR: exit=..., stderr=..." on failure ✓ (F-09 ② CLOSED). Report shows npm 12.0.1 ✓.
+- node error surfaced ✓.
+- writes with `newline="\n"` ✓ → LF.
+- BUT: the detection loop at :125-131 — findings keys are now `HKLM_SOFTWARE\...\Clients\{GUID}` and `FS_...`. The loop checks `k.startswith("FS_")` first; dict insertion order: registry keys were inserted first (HKLM subkey), then FS. So the first iteration is the HKLM key → `{GUID}` in k → detected_ver = pv = "154.0.4258.62" ✓ correct value via the *registry* path (now the verified GUID branch works). Good.
+- `import os` still present at :11 but unused? Let me check: `os` — I don't see any use of `os` in the file now (it uses shutil.which, Path, sys, winreg, platform, json, subprocess). So `import os` is a **dead import remaining** (r1 had it too). Minor P3 nit — F-01 mentioned dead imports in the harness (now removed); the probe still has one. Worth a one-line note (or fold into a P3). Also `REPO_ROOT` used ✓.
+- Note: the probe no longer dumps all EdgeUpdate clients — good.
+
+static_control_probe r2: `newline="\n"` ✓. Content otherwise same as r1 (the same checks). Still `os`? no. Fine.
+
+Remaining: the harness still re-runs the static probe (double execution) → F-09 ③ partially open.
+
+Now I need:
+- handoff r2
+- doc/tasks/P02.md r2 (esp. test table + execution record)
+- RESUME.md r2
+- TS protocol r2 (layer union, header claims)
+- txt reports (p02-harness-results.txt, env-identity-report.txt, static-control-report.txt) — consistency check
+- verify inline palette provenance hex/line in src (App.tsx:474/475/486/488, PageListPanel.tsx:53, ViewerPanel.tsx:152)
+- verify region wire shape/arg names in region/client.ts and WorkbenchPage undo path
+- check CR in probe-execution.log (whitespace claim)
+- check whether `doc/reviews/...` is in candidate? No (root only) — the deliverable list doesn't include it. Fine.
+- check doc/handoffs: only the r1-named file `P02-stage-a-foundation-handoff.md` (updated in place). Need to read it.
+
+Let me batch: handoff, P02.md, RESUME.md (3 reads). Then TS + txts. Then greps.
+
+Given budget, let me prioritize: handoff (F-01/F-03/F-05/F-06 claims), P02.md (F-12 + execution record), TS protocol (F-11 + F-01 claims), RESUME (F-07), and the greps for palette provenance + wire shape (user's point 4/5) + CR check.
+
+Let me do handoff + P02.md now.
+dsh: reasoning:
+Now let me read the rest of P02.md (110-120), the RESUME.md, the TS protocol, and the txt reports. Also do the palette-provenance greps and the wire-shape check.
+
+Key new observations from handoff r2:
+- Handoff frontmatter now has `reviewed_head_r1: 972049f9...` and `dsh_decision_r1: changes_requested`, but **NO `reviewed_head`/`reviewed_tree` for r2 itself** — F-05's requested fix ("handoff frontmatter 增补 reviewed_head/reviewed_tree") was NOT done for r2. So the handoff still doesn't bind to the r2 delivery commit 9b82e97b/7fe67d0f. F-05 remains open.
+- Handoff F-05 claim: "报告明确区分行为基线 241ff3b7…、被测源码 commit 与 tree、测试命令及工件 hash。在探针中准确采集并记录当前检出对象。" — **"工件 hash" is false**: no artifact hash appears anywhere (I've seen the report and probe log; no SHA-256 of any artifact). And "准确采集并记录当前检出对象" is only true in the sense that it recorded HEAD=972049f9 (r1) — which is NOT the tested object (the tested bytes include r2 dirty files) and NOT the delivery commit. So the F-05 disposition claim is **overstated/unsupported** → this is a NEW finding (misleading closure claim) or a strengthening of F-05. I'll treat F-05 as still open and add a new finding about the false closure claim (F-13?) — or fold it into F-05 as "still open + closure claim unsupported". The user asked to add new findings as needed. I think a separate new finding is cleaner: the handoff §2 F-05 row asserts artifact hashes are recorded; they are not. Impact: integrator believes provenance is fixed. That's a P2-class "misleading claim" (same class as r1 F-01). Let me add F-13 (P2).
+
+Hmm, but also careful: F-03's disposition claims handoff now links machine values ✓ — handoff §3 does reference the JSON and quotes 14.72/7.45/5.57/3.55/3.53 and 13.87 — need to verify those match the JSON: JSON says ink 14.72 ✓, ink_2 7.45 ✓, ink_3 5.57 ✓, ink_dis 3.55 ✓, accent 3.53 ✓, d8e0e8 13.87 ✓. So F-03 CLOSED ✓ (handoff numbers now match the machine report). Good. But note handoff §3 labels `PRE-03` PASS with "方向 F Token 真实计算" ✓ correct labeling.
+
+Hmm — but wait: are those numbers *correct*? I should verify a couple by hand:
+- #ececee on #1a1a1d: I computed 14.80 in r1 using the WCAG 0.03928 threshold. The harness uses 0.04045. For #1a1a1d, min channel = 26/255 = 0.10196 > 0.04045 → same formula. Let me recompute carefully.
+  #ececee = (236,238,238).
+  236/255 = 0.9254902; (0.9254902+0.055)/1.055 = 0.9804902/1.055 = 0.9293746; ^2.4: ln(0.9293746) = ?
+  ln(0.9293746): ln(0.93) = -0.0725707; 0.9293746/0.93 = 0.9993275; ln ≈ -0.0006727; total ≈ -0.0732434. ×2.4 = -0.1757842. e^-0.1757842 = 0.838819.
+  238/255 = 0.9333333; (0.9333333+0.055)/1.055 = 0.9883333/1.055 = 0.9368098; ^2.4: ln(0.9368098) = ln(0.9368) ≈ -0.0652845 (since ln(0.9368): ln(0.94)=-0.0618754, 0.9368/0.94=0.9965957, ln≈-0.0034103 → -0.0652857). ×2.4 = -0.1566857. e^-0.1566857 = 0.8549699.
+  L_ink = 0.2126*0.838819 + 0.7152*0.8549699 + 0.0722*0.8549699 = 0.178332 + 0.611475 + 0.061729 = 0.851536.
+  #1a1a1d = (26,26,29).
+  26/255 = 0.1019608; (0.1569608)/1.055 = 0.1487780; ^2.4: ln(0.1487780) = -1.9052046 (ln(0.15)=-1.89712, 0.148778/0.15=0.9918533, ln=-0.0081798 → -1.9053). ×2.4 = -4.5727. e^-4.5727 = 0.010323.
+  29/255 = 0.1137255; (0.1687255)/1.055 = 0.1599294; ^2.4: ln(0.1599294) = ln(0.16)=-1.8325815, 0.1599294/0.16=0.9995588, ln=-0.0004413 → -1.8330228. ×2.4 = -4.3992547. e^-4.3992547: e^-4.4 = 0.0122773, ×e^0.0007453=1.0007456 → 0.0122865.
+  L_bg = 0.2126*0.010323 + 0.7152*0.010323 + 0.0722*0.0122865 = 0.0021947 + 0.0073830 + 0.0008871 = 0.0104648.
+  Wait: R and G are both 26 → both 0.010323. So L = 0.2126*0.010323 + 0.7152*0.010323 + 0.0722*0.0122865 = (0.2126+0.7152)*0.010323 + 0.0008871 = 0.9278*0.010323 + 0.0008871 = 0.0095777 + 0.0008871 = 0.0104648.
+  Contrast = (0.851536+0.05)/(0.0104648+0.05) = 0.901536/0.0604648 = 14.910.
+  
+  Hmm! I get 14.91, but the report says 14.72. Let me recheck. My r1 computation gave 14.80 — also not 14.72. Let me redo more carefully.
+
+Hmm, my r1 computation: I used bg #1a1a1d → L=0.010917 (I had computed 0.010917 in r1, different from 0.0104648 now). Let me redo #1a1a1d very carefully.
+
+#1a1a1d: R=0x1a=26, G=0x1a=26, B=0x1d=29.
+
+s_R = 26/255 = 0.10196078...
+Is s_R <= 0.04045? No. So linear = ((s+0.055)/1.055)^2.4.
+(s+0.055) = 0.15696078; /1.055 = 0.14877704.
+Now 0.14877704^2.4: 
+ln(0.14877704) = ?
+ln(0.14877704) = ln(1.4877704e-1) = ln(1.4877704) - ln(10) = 0.3971653 - 2.3025851 = -1.9054198.
+Hmm, ln(1.4877704): ln(1.5) = 0.4054651; 1.4877704/1.5 = 0.9918469; ln(0.9918469) = -0.0081854. So ln(1.4877704) = 0.4054651 - 0.0081854 = 0.3972797. Then ln(0.14877704) = 0.3972797 - 2.3025851 = -1.9053054.
+×2.4 = -4.5727330.
+e^-4.5727330: e^-4.5 = 0.011108997; e^-0.0727330 = 0.9298476. → 0.011108997 × 0.9298476 = 0.0103296.
+
+s_B = 29/255 = 0.11372549; +0.055 = 0.16872549; /1.055 = 0.15992938.
+ln(0.15992938) = ln(1.5992938) - 2.3025851. ln(1.6) = 0.4700036; 1.5992938/1.6 = 0.9995586; ln = -0.0004415. → 0.4695621. minus 2.3025851 = -1.8330230.
+×2.4 = -4.3992552. e^-4.3992552 = e^-4.4 × e^0.0007448 = 0.01227734 × 1.0007451 = 0.01228649.
+
+L_bg = 0.2126(0.0103296) + 0.7152(0.0103296) + 0.0722(0.01228649)
+= 0.00219607 + 0.00738773 + 0.00088709
+= 0.01047089.
+
+Hmm so L_bg ≈ 0.0104709. My r1 figure 0.010917 was wrong. OK.
+
+L_ink: #ececee = (236,238,238).
+s_R = 236/255 = 0.92549020; +0.055 = 0.98049020; /1.055 = 0.92937460.
+ln(0.92937460) = ln(1 - 0.0706254) ≈ -0.0732256 (use ln(0.93) = -0.0725707 plus -0.0006727 → -0.0732434; let me do more precisely: ln(0.9293746). Let u = 0.9293746. ln(u) = -∫... let me use: ln(0.9293746) = ln(0.9) + ln(1.0326384) = -0.1053605 + 0.0321173 = -0.0732432. (ln(1.0326384) ≈ 0.0326384 - 0.0005326 + 0.0000117 = 0.0321175.) So ln = -0.0732430.
+×2.4 = -0.1757832. e^-0.1757832 = 1 - 0.1757832 + 0.0154499 - 0.0009052 + 0.0000398 = 0.8388013.
+s_G = s_B = 238/255 = 0.93333333; +0.055 = 0.98833333; /1.055 = 0.93680980.
+ln(0.93680980) = ln(0.9) + ln(1.0408998) = -0.1053605 + 0.0400866 = -0.0652739. (ln(1.0408998) ≈ 0.0408998 - 0.0008364 + 0.0000228 = 0.0400862.) → -0.0652743.
+×2.4 = -0.1566583. e^-0.1566583 = 1 - 0.1566583 + 0.0122709 - 0.0006407 + 0.0000251 = 0.8549970.
+
+L_ink = 0.2126(0.8388013) + 0.7152(0.8549970) + 0.0722(0.8549970)
+= 0.17832916 + 0.61149394 + 0.06172079
+= 0.85154389.
+
+Contrast = (0.85154389 + 0.05) / (0.01047089 + 0.05) = 0.90154389 / 0.06047089 = 14.9086.
+
+So I get **14.91**, but the harness reports **14.72**. Discrepancy! Hmm. That means either my arithmetic or the harness's is off. Let me sanity check with a known reference: WCAG contrast of #ececee on #1a1a1d... 
+
+Hmm, let me double check the harness's blend/round path: For ink, `fg_rgb = hex_to_rgb("#ececee")` = (236,238,238); `bg_page_rgb` = hex_to_rgb("#1a1a1d") = (26,26,29). `calculate_contrast(fg_rgb, bg_page_rgb)` — len(fg_rgba)==3 → effective_fg = fg_rgb. Then luminance. So no blending. So the harness computes the same thing I do... unless its `calculate_luminance` differs. It's `0.2126*rs + 0.7152*gs + 0.0722*bs` ✓ same.
+
+So why 14.72? Let me recheck: maybe I mis-assigned; maybe bg is not #1a1a1d but something else. The fixture `bg_page.hex = "#1a1a1d"` ✓. Hmm.
+
+Let me recompute more carefully using a cleaner method. Actually, let me re-verify my linearization of 26/255.
+
+((0.10196078 + 0.055)/1.055)^2.4 = (0.15696078/1.055)^2.4 = (0.14877704)^2.4.
+
+Check: 0.14877704^2 = 0.02213460. 0.14877704^0.4 = e^{0.4 ln 0.14877704} = e^{0.4 × (-1.9053054)} = e^{-0.7621222} = 0.466637. So 0.02213460 × 0.466637 = 0.010328. ✓ 0.0103296. OK.
+
+And 0.92937460^2.4: 0.9293746^2 = 0.863737; ^0.4 = e^{0.4 × (-0.0732430)} = e^{-0.0292972} = 0.971132. → 0.863737 × 0.971132 = 0.838805 ✓.
+
+0.93680980^2.4: ^2 = 0.877612; ^0.4 = e^{0.4×(-0.0652743)} = e^{-0.0261097} = 0.974229. → 0.877612 × 0.974229 = 0.854997 ✓.
+
+L_ink = 0.851544. L_bg = 0.010471. Ratio = 14.91.
+
+So the harness's 14.72 is NOT what this math produces. Unless... the harness's `calculate_contrast` rounds to 2 → 14.72 vs my 14.91. That's a big difference, not rounding.
+
+Hmm, wait. Maybe the harness's PRE-03 evaluated `ink` against a *different* bg. Look at the code: it iterates `for token_name, token_info in f_tokens.items(): if token_name == "bg_page": continue`. So bg is bg_page ✓.
+
+Hmm, so is the *report* value 14.72 inconsistent with the code+fixture? That would be a significant finding: the recorded value doesn't match what the delivered code produces from the delivered fixture. But I can't run the code. Let me check whether 14.72 could come from a slightly different bg, e.g. if bg were #101418: contrast(#ececee, #101418)?
+L for #101418: R=16→(0.0627451+0.055)/1.055=0.1116067^2.4: ln(0.1116067)= -2.1928266; ×2.4 = -5.2627838; e^-5.2627838 = 0.0051825. G=20→0.0784314; +0.055=0.1334314; /1.055=0.1264753; ^2.4: ln=-2.0678844; ×2.4=-4.9629226; e^-4.9629226=0.0069916. B=24→0.0941176;+0.055=0.1491176;/1.055=0.1413437;^2.4: ln=-1.9565271; ×2.4=-4.6956650; e^-4.6956650=0.0091293.
+L=0.2126(0.0051825)+0.7152(0.0069916)+0.0722(0.0091293)=0.0011018+0.0050004+0.0006591=0.0067613.
+Contrast = 0.901544/0.0567613 = 15.883. Not 14.72.
+
+Hmm. What gives 14.72? Solve for L_bg: 0.901544/x = 14.72 → x = 0.061246 → L_bg = 0.011246. Hmm, L_bg = 0.011246 — what hex? Between #1a1a1d (0.010471) and #1c2430 (0.017223). E.g., #1c1c20? Let me test #1b1b1f: R=27,G=27,B=31.
+27/255=0.1058824; +0.055=0.1608824;/1.055=0.1524951; ^2.4: ln=-1.8806; ×2.4=-4.51344; e^=0.010963.
+31/255=0.1215686;+0.055=0.1765686;/1.055=0.1673636; ^2.4: ln(0.1673636)=-1.7874191; ×2.4=-4.2898058; e^-4.2898058=0.0137065.
+L=0.9278(0.010963)+0.0722(0.0137065)=0.0101715+0.0009896=0.0111611. Contrast=0.901544/0.0611611=14.740. Close to 14.72! So #1b1b1f-ish.
+
+Hmm, that suggests the recorded 14.72 was computed against a bg with L≈0.01125, not #1a1a1d. Which hex gives exactly 14.72 → L_bg = 0.901544/14.72 - 0.05 = 0.0612460 - 0.05 = 0.0112460.
+
+Candidates: #1c1c20: R=28,G=28,B=32.
+28/255=0.1098039;+0.055=0.1648039;/1.055=0.1562122; ^2.4: ln=-1.8565; ×2.4=-4.4556; e^=0.0116197.
+32/255=0.1254902;+0.055=0.1804902;/1.055=0.1710808; ^2.4: ln(0.1710808)=-1.7655735; ×2.4=-4.2373764; e^=0.0144694.
+L=0.9278(0.0116197)+0.0722(0.0144694)=0.0107805+0.0010447=0.0118252 → contrast=0.901544/0.0618252=14.58. Not it.
+
+Hmm, so 14.72 doesn't correspond to a clean hex either. Something else may be going on. 
+
+Alternatively my assumption about which token maps to "ink" could be off, or the harness's report was generated by a *different* version of the code/fixture than the one committed (i.e., the dirty-vs-committed divergence!). That is precisely the F-05 risk materializing as a *numerical* inconsistency.
+
+Hold on. Let me reconsider: maybe the report values were computed against bg_page = "#1a1a1d" but with the WCAG threshold bug... no, threshold doesn't matter here.
+
+Let me recompute the ratio using a different, independent formulation to double-check my luminance for #ececee. Actually, let me sanity-check with a known pair: #ffffff on #000000 = 21 ✓ trivially. Let me check a known value: #767676 on #ffffff = 4.54 (a well-known WCAG example). 
+#767676 = (118,118,118). 118/255=0.4627451; +0.055=0.5177451;/1.055=0.4907537; ^2.4: ln(0.4907537)=-0.7118479; ×2.4=-1.7084349; e^-1.7084349=0.1811399. L=0.9278(0.1811399)+0.0722(0.1811399)=0.1811399. Contrast vs white = 1.05/0.2311399=4.542 ✓ matches the known 4.54. My method is correct.
+
+So for #ececee on #1a1a1d I'm confident: ~14.91, not 14.72.
+
+Let me double check #a9a9b3 on #1a1a1d → report says 7.45.
+#a9a9b3 = (169,169,179).
+169/255=0.6627451; +0.055=0.7177451;/1.055=0.6803271; ^2.4: ln(0.6803271)= ?
+ln(0.68)=-0.3856625; 0.6803271/0.68=1.0004810; ln=+0.0004809 → -0.3851816. ×2.4=-0.9244358. e^-0.9244358 = ?
+e^-0.9 = 0.4065697; e^-0.0244358 = 0.9758613 → 0.3967033.
+179/255=0.7019608; +0.055=0.7569608;/1.055=0.7174984; ^2.4: ln(0.7174984) = ln(0.7175)≈-0.3319357 (ln(0.72)=-0.3285041; 0.7174984/0.72=0.9965256; ln=-0.0034804 → -0.3319845). Let me settle: -0.3319845. ×2.4=-0.7967628. e^-0.7967628 = e^-0.8 × e^0.0032372 = 0.4493290 × 1.0032425 = 0.4507858.
+L = 0.2126(0.3967033) + 0.7152(0.3967033) + 0.0722(0.4507858) = 0.9278(0.3967033) + 0.0325467 = 0.3680493 + 0.0325467 = 0.4005960.
+Contrast = 0.4505960/0.0604709 = 7.452. Report says 7.45 ✓ MATCHES!
+
+Interesting! So #a9a9b3 on #1a1a1d = 7.45 ✓ matches the report, using L_bg = 0.0104709 → 0.4505960/0.0604709 = 7.452 ✓. So the bg luminance IS 0.0104709, consistent with #1a1a1d ✓. Then for ink (#ececee), the report's 14.72 implies L_ink = 14.72×0.0604709 - 0.05 = 0.890132 - 0.05 = 0.840132. But I computed L_ink = 0.851544. Difference 0.0114.
+
+Hmm, so the report's ink ratio looks wrong while ink_2 matches. Let me recompute L_ink once more, very carefully, maybe I made an error with the G/B channels.
+
+#ececee: "ec"=236, "ec"=236, "ee"=238. Wait! #ececee = (236,236,238), not (236,238,238)! Let me re-read: e-c-e-c-e-e → R=ec=236, G=ec=236, B=ee=238. I misread it as (236,238,238). Let me redo with (236,236,238).
+
+s_R = s_G = 236/255 = 0.9254902 → linear 0.8388013 (computed above).
+s_B = 238/255 = 0.9333333 → linear 0.8549970.
+L_ink = 0.2126(0.8388013) + 0.7152(0.8388013) + 0.0722(0.8549970)
+= (0.9278)(0.8388013) + 0.0617208
+= 0.7782399 + 0.0617208 = 0.8399607.
+Contrast = (0.8399607+0.05)/(0.0604709) = 0.8899607/0.0604709 = 14.717 → **14.72** ✓ MATCHES!
+
+So the report's 14.72 is correct; my earlier r1 computation of 14.80 used the wrong channel decomposition. Also my r1 numbers for the *fixture* pairs (#d8e0e8/#101418 = 13.87, #8b949e/#101418 = 6.01) — those used distinct R,G,B so they were fine ✓.
+
+Let me also verify ink_3 (#91919c on #1a1a1d → report 5.57):
+(145,145,156). 145/255=0.5686275; +0.055=0.6236275;/1.055=0.5911161; ^2.4: ln(0.5911161)=-0.5256... let me compute: ln(0.59) = -0.5276327; 0.5911161/0.59=1.0018917; ln=+0.0018899 → -0.5257428. ×2.4=-1.2617827. e^-1.2617827 = e^-1.26 × e^-0.0017827 = 0.2836540 × 0.9982188 = 0.2831488.
+156/255=0.6117647; +0.055=0.6667647;/1.055=0.6320054; ^2.4: ln(0.6320054) = ln(0.632)=-0.4588672; 0.6320054/0.632=1.0000085 → -0.4588587. ×2.4=-1.1012609. e^-1.1012609 = 0.3324618.
+L = 0.9278(0.2831488) + 0.0722(0.3324618) = 0.2627045 + 0.0240038 = 0.2867083.
+Contrast = 0.3367083/0.0604709 = 5.568 → 5.57 ✓ MATCHES.
+
+Verify ink_dis (#70707b → report 3.55):
+(112,112,123). 112/255=0.4392157;+0.055=0.4942157;/1.055=0.4684500; ^2.4: ln(0.46845)=-0.7582287; ×2.4=-1.8197489; e^-1.8197489=0.1620596.
+123/255=0.4823529;+0.055=0.5373529;/1.055=0.5093393; ^2.4: ln(0.5093393)=-0.6745945; ×2.4=-1.6190268; e^-1.6190268=0.1981159.
+L=0.9278(0.1620596)+0.0722(0.1981159)=0.1503559+0.0143040=0.1646599.
+Contrast=0.2146599/0.0604709=3.550 → 3.55 ✓ MATCHES.
+
+Verify accent (#4d63e8 → report 3.53):
+(77,99,232). 77/255=0.3019608;+0.055=0.3569608;/1.055=0.3383515; ^2.4: ln(0.3383515)=-1.0839... ln(0.34)=-1.0788097; 0.3383515/0.34=0.9951515; ln=-0.0048609 → -1.0836706. ×2.4=-2.6008094. e^-2.6008094=0.0742305.
+99/255=0.3882353;+0.055=0.4432353;/1.055=0.4201283; ^2.4: ln(0.4201283)=-0.8672... ln(0.42)=-0.8675006; 0.4201283/0.42=1.0003055; ln=+0.0003055 → -0.8671951. ×2.4=-2.0812682. e^-2.0812682=0.1248138.
+232/255=0.9098039;+0.055=0.9648039;/1.055=0.9145051; ^2.4: ln(0.9145051)=-0.0893727; ×2.4=-0.2144945; e^-0.2144945=0.8069594.
+L=0.2126(0.0742305)+0.7152(0.1248138)+0.0722(0.8069594)
+=0.0157814+0.0892669+0.0582625=0.1633108.
+Contrast=0.2133108/0.0604709=3.527 → 3.53 ✓ MATCHES.
+
+Excellent — all five F-token ratios reproduce exactly. So PRE-03's numbers are internally consistent with the committed fixture + committed harness. That's a strong verification result (and it means the dirty-vs-committed divergence did not corrupt these numbers).
+
+Now let me also verify one live palette number to test the *background* choice: report says #d8e0e8 → 13.87 against live_bg #101418.
+#d8e0e8 = (216,224,232) → I computed L = 0.737352 in r1. L_bg(#101418) = 0.0067613 (computed above).
+Contrast = (0.737352+0.05)/(0.0567613) = 0.787352/0.0567613 = 13.871 → 13.87 ✓ MATCHES.
+
+And #8a94a2 → report 6.02 against #101418: (138,148,162).
+138/255=0.5411765;+0.055=0.5961765;/1.055=0.5650962; ^2.4: ln(0.5650962)=-0.5707... ln(0.565)=-0.5708560; 0.5650962/0.565=1.0001703; ln=+0.0001703 → -0.5706857. ×2.4=-1.3696457. e^-1.3696457=0.2542055.
+148/255=0.5803922;+0.055=0.6353922;/1.055=0.6022675; ^2.4: ln(0.6022675)=-0.5070... ln(0.6)=-0.5108256; 0.6022675/0.6=1.0037792; ln=+0.0037721 → -0.5070535. ×2.4=-1.2169284. e^-1.2169284=0.2961755.
+162/255=0.6352941;+0.055=0.6902941;/1.055=0.6543072; ^2.4: ln(0.6543072)=-0.4242... ln(0.65)=-0.4307829; 0.6543072/0.65=1.0066265; ln=+0.0066046 → -0.4241783. ×2.4=-1.0180279. e^-1.0180279=0.3613275.
+L=0.2126(0.2542055)+0.7152(0.2961755)+0.0722(0.3613275)
+=0.0540441+0.2118274+0.0260878=0.2919593.
+Contrast=0.3419593/0.0567613=6.024 → 6.02 ✓ MATCHES.
+
+And #161b22 → 1.07? (22,27,34). L computed in r1 = 0.010697. Contrast vs #101418 = 0.060697/0.0567613 = 1.069 → 1.07 ✓.
+#1c2430 → 1.18: L=0.017223; 0.067223/0.0567613=1.184 → 1.18 ✓.
+#2a3038 → 1.39: (42,48,56). 42/255=0.1647059;+0.055=0.2197059;/1.055=0.2082521; ^2.4: ln(0.2082521)=-1.5691... ln(0.2)=-1.6094379; 0.2082521/0.2=1.0412605; ln=+0.0404324 → -1.5690055. ×2.4=-3.7656132. e^-3.7656132=0.0231669.
+48/255=0.1882353;+0.055=0.2432353;/1.055=0.2305548; ^2.4: ln(0.2305548)=-1.4671... ln(0.23)=-1.4696759; 0.2305548/0.23=1.0024122; ln=+0.0024093 → -1.4672666. ×2.4=-3.5214398. e^-3.5214398=0.0295573.
+56/255=0.2196078;+0.055=0.2746078;/1.055=0.2602918; ^2.4: ln(0.2602918)=-1.3458... ln(0.26)=-1.3470736; 0.2602918/0.26=1.0011223; ln=+0.0011217 → -1.3459519. ×2.4=-3.2302846. e^-3.2302846=0.0395511.
+L=0.2126(0.0231669)+0.7152(0.0295573)+0.0722(0.0395511)
+=0.0049253+0.0211394+0.0028556=0.0289203.
+Contrast=0.0789203/0.0567613=1.390 → 1.39 ✓.
+#0b0e12 → 1.05: (11,14,18). 11/255=0.0431373;+0.055=0.0981373;/1.055=0.0930212; ^2.4: ln(0.0930212)=-2.3749... ln(0.093)= -2.3751560; 0.0930212/0.093=1.0002280 → -2.3749280. ×2.4=-5.6998272. e^-5.6998272=0.0033471.
+14/255=0.0549020;+0.055=0.1099020;/1.055=0.1041725; ^2.4: ln(0.1041725)=-2.2616... ln(0.104)=-2.2633643; 0.1041725/0.104=1.0016587; ln=+0.0016573 → -2.2617070. ×2.4=-5.4280968. e^-5.4280968=0.0043900.
+18/255=0.0705882;+0.055=0.1255882;/1.055=0.1190410; ^2.4: ln(0.1190410)=-2.1283... ln(0.119)=-2.1286316; 0.1190410/0.119=1.0003445; ln=+0.0003444 → -2.1282872. ×2.4=-5.1078893. e^-5.1078893=0.0060526.
+L=0.2126(0.0033471)+0.7152(0.0043900)+0.0722(0.0060526)
+=0.0007116+0.0031397+0.0004370=0.0042883.
+Contrast=0.0542883/0.0567613=0.9564 → **0.96**, but the report says **1.05**! 
+
+Hmm! Let me double check. #0b0e12 = (11,14,18). L = 0.0042883. bg #101418 L = 0.0067613. Since fg is darker than bg: brighter=0.0067613, darker=0.0042883. Ratio = (0.0067613+0.05)/(0.0042883+0.05) = 0.0567613/0.0542883 = 1.0456 → **1.05** ✓. I forgot to order brighter/darker. Right — the harness takes max/min, and the value is 1.05 ✓ MATCHES. Good.
+
+And #161b22 (1.07): fg (0.010697) brighter than bg (0.0067613): 0.060697/0.0567613 = 1.069 ✓.
+#1c2430 (1.18): 0.067223/0.0567613 = 1.1843 ✓.
+#2a3038 (1.39): 0.0789203/0.0567613 = 1.390 ✓.
+
+All live palette numbers reproduce exactly. 
+
+So PRE-03's reported numbers are fully reproducible from the committed fixture + committed harness algorithm. That's a strong positive finding — it also means F-03 is genuinely closed (single source of truth) and F-02's real-token requirement is met.
+
+IMPORTANT NEW ISSUE though: the live palette evaluation compares **non-text colors** (button background #161b22, border #2a3038, viewer background #0b0e12) against the app base background and marks them `contrast_result: FAIL` with `min_required` implied 3.0 (code uses `>= 3.0` hard-coded at :255). For "nav_inactive_button_background" vs page background — that's a *background vs background* comparison, which is not a meaningful WCAG text-contrast pair. The AC6 rule: "只要实际前景、背景及必要的合成底色可确定，就必须计算 contrast ratio；token 未映射或 CSS fallback 不得跳过计算" and "状态不得仅靠颜色表达"; thresholds: 文本 ≥4.5, 禁用文字/非文本 ≥3.0. Comparing a *button background* to the *page background* at ≥3.0 is arguably a legitimate non-text contrast check (UI component boundaries, WCAG 1.4.11 non-text contrast requires 3:1 against adjacent colors) — so it's defensible. But the pairs are mis-specified: e.g. #8a94a2 (pagelist muted TEXT) is marked PASS at 6.02 with threshold 3.0 — again the text threshold should be 4.5 (passes anyway). And #d8e0e8 primary text PASS at 13.87 with threshold 3.0 (should be 4.5; passes anyway). So the live palette uses a **uniform 3.0 threshold** for everything including text → same class as the F-token `min_required` mislabeling (secondary/tertiary text 3.0 instead of 4.5). And crucially: the recorded FAILs (1.07/1.18/1.39/1.05) are on background-vs-background/border pairs, which the `token_mapping: UNMAPPED` + FAIL labeling may invite a reader to interpret as *text contrast failures in the product*. AC6/AC7 require product gaps to be registered as findings separately, not inferred. The report marks them FAIL in the model without distinguishing pair semantics (`role` does say nav_inactive_button_background etc., so it's not hidden). I'd call this a legitimate area for a P3 finding: threshold selection is hard-coded to 3.0 for all live colors and 4.5-only-if-"primary"+text for F tokens, misstating the contract's text threshold (secondary/tertiary/muted text = 4.5), no alpha/`*-soft` composition for real tokens, and the "FAIL" rows are background-vs-background pairs whose semantics aren't stated. None of these flip a PASS→FAIL verdict in a way that changes AC6 (which is BLOCKED), so P3.
+
+Wait, careful: does the threshold mislabeling flip anything? For F tokens all five pass at 3.0 and also at 4.5? ink 14.72 ✓, ink_2 7.45 ✓, ink_3 5.57 ✓, ink_dis 3.55 → 3.55 < 4.5! If ink_dis (disabled text) were held to 4.5 it would FAIL, but disabled text is explicitly allowed 3.0 per AC6 ("禁用文字/非文本至少 3.0:1") ✓ so 3.0 is correct for ink_dis. accent 3.53 → non-text 3.0 ✓ correct. So the only mislabeled ones are ink_2 (3.0 instead of 4.5) and ink_3 (3.0 instead of 4.5), both of which pass 4.5 anyway (7.45, 5.57). ✓ So no verdict flips. P3 confirmed.
+
+Hmm, for the live palette: #d8e0e8 text (3.0 threshold, would pass 4.5) ✓ no flip; #8a94a2 text (3.0, fails 3.0? 6.02 passes; would pass 4.5) ✓ no flip. Background pairs: 1.07/1.18/1.39/1.05 all <3.0 → FAIL either way ✓. So no verdict flips anywhere. Good: P3.
+
+Now the remaining checks:
+1. TS protocol r2 (F-11 + header claims).
+2. RESUME.md r2 (F-07).
+3. p02-harness-results.txt/env txt/static txt consistency (AC7: text/JSON consistency).
+4. Inline palette provenance: verify App.tsx:474/475/486/488, PageListPanel.tsx:53, ViewerPanel.tsx:152 hex values.
+5. Region wire shape/arg names: verify against region/client.ts and the RegionSummary type.
+6. probe-execution.log CRLF/BOM whitespace claim; `git diff --check` evidence claim (handoff says EXIT=0 — is there a log? No git diff --check evidence file in verification/P02! The handoff claims "git diff --check 返回 EXIT=0" but there's no log artifact. Hmm — F-06/Q-009 evidence discipline: a claim without an artifact. That's a new finding (claim without evidence) OR part of F-05/F-06. Let me check if any file records `git diff --check`. The verification/P02 listing has no such log. So the handoff's whitespace claim is unsupported by an artifact → new finding (P3): "whitespace/`git diff --check` EXIT=0 声明无证据文件"。Also since the Owner's environment has git, they could have produced a log. I'll note it.
+
+Let me now do the palette provenance grep + wire shape read. Batch: grep App.tsx for the hexes with line numbers (already know 474/475/486 from r1, need 488), grep PageListPanel.tsx for 8a94a2, grep ViewerPanel.tsx for 0b0e12, and read region/client.ts (region arg names + RegionSummary type).
+
+Let me do greps in root (base src) for `2a3038|8a94a2|0b0e12` in the frontend src. And read region/client.ts lines ~1-140.
+
+Also need the TS protocol and RESUME. Let me batch 4 calls: grep src hexes, read region/client.ts, read TS protocol, read RESUME.
+
+Actually token budget: region/client.ts may be ~200 lines; TS protocol ~180 lines; RESUME ~35 lines. OK.
+
+Let me go.
+dsh: reasoning:
+Palette provenance verified:
+- App.tsx:474 `#d8e0e8` ✓, :475 `#101418` ✓, :486 `#1c2430`/`#161b22` ✓, :488 `#2a3038` ✓ — all accurate!
+- PageListPanel.tsx:53 `#8a94a2` ✓ (r1's claim that #2a3038/#58a6ff were unsourced was partly wrong; #2a3038 does exist at App.tsx:488. Also #8b949e in r1 was wrong — the actual muted color is #8a94a2. So r1's fixture had a wrong value; r2 corrected it. Good — I should note that F-02's r1 statement about #2a3038 "无来源" was inaccurate and r2 has now sourced it correctly. Honest self-correction.)
+- ViewerPanel.tsx:152 `var(--bg-canvas, #0b0e12)` ✓ — the hex is a CSS *fallback*, not the effective value. The fixture records #0b0e12 as "viewer_background" without noting it's a `var()` fallback. Given the React app has no token CSS (per P02.md:35), the fallback IS the effective value in practice. Minor: the fixture's source line correctly points to it; AC6 says "token 未映射或 CSS fallback 不得跳过计算" ✓ so recording the fallback and computing is CORRECT per AC6. Good, no finding. Actually this is a positive: they followed AC6's rule.
+- #58a6ff is gone from the fixture ✓ (no longer present) → F-02 closed.
+
+RESUME r2: updated ✓ — new "当前检查点" section with r2 status, F-01..F-12 dispositions, and next step. F-07 CLOSED. But: RESUME line 8 says "以及 Codex 独立 Review 发现的 293 条 trailing-whitespace 诊断" — 293 trailing-whitespace diagnostics. Handoff line 22 doesn't give a number. Hmm, "293 条" — is that plausible? The r1 files had CRLF... Hmm, trailing whitespace ≠ CRLF. Actually if the files were written with CRLF and git core.autocrlf=false, then `git diff` might show CR as trailing whitespace → each line flagged. That could produce hundreds of "trailing whitespace" diagnostics. So 293 could be the CR-at-EOL count across the r2 files. Plausible. And they claim to have fixed by converting to pure LF. I can verify: do the delivered r2 files have CR? Let me grep for `\r$` in the verification/P02 r2 artifacts. That's a direct check of the whitespace claim. Let me do it.
+
+Also RESUME line 14: "F-05: 纠正 provenance，明确区分行为基线、被测 source commit、tree 与交付 commit" — claims the *delivery* commit is distinguished. But the artifacts contain no delivery commit (9b82e97b) — the report's provenance.source_head is 972049f9 (r1) and there's no "delivery commit" field anywhere. So RESUME's F-05 claim is also overstated → strengthens the new finding about false closure claims (F-13), now with two instances (handoff §2 F-05 row + RESUME:14).
+
+Also RESUME:22 claims `git diff --check` 通过 (EXIT=0) with no artifact.
+
+Now remaining checks:
+1. TS protocol r2 (F-11) — read.
+2. Text/JSON consistency of the three report pairs (F-06/AC7) — read p02-harness-results.txt, env-identity-report.txt, static-control-report.txt. I have the log's echo of the harness txt and env txt (from probe-execution.log) — they match the JSON fields? Let me verify: log line 17 "WebView2 Verified Key: {F3017226-...}" ✓ matches JSON's verified_client_guid; log line 19 "npm Tool: 12.0.1" ✓; line 22-24 Source HEAD/Tree/Behavior Baseline ✓ match JSON. The harness txt in the log lines 47-66 echoes the JSON ✓ (PRE-03 included, six BLOCKED with Exit: null ✓). So text/JSON consistency ✓. But I should read the actual .txt files to confirm they're not stale vs JSON (the log is the runner's capture, which is generated at the same run; the .txt files on disk should match). Given the log echoes them and the porcelain shows both .txt modified, likely consistent. Let me read the two txt files quickly to confirm (cheap, ~20 lines each). Actually the log already shows identical content to what should be in the txt files (the harness prints the same lines it writes; the probe prints the same lines it writes). I'll verify the JSON↔txt consistency claim by reading p02-harness-results.txt (19 lines) and env-identity-report.txt. Let me do it — it's cheap and directly addresses "report text/JSON consistency" in the request.
+3. `probe-execution.log` whitespace: check for CR.
+4. `git diff --check` evidence: absent → new finding.
+5. Does `doc/tasks/P02.md` frontmatter change? Need to check lines 1-20 of r2 P02.md for status/base_commit/scope hash integrity (F-12 closure requires the table updated but frontmatter unchanged). Let me read lines 1-40 + 110-120.
+
+Let me batch: TS protocol, p02-harness-results.txt, env-identity-report.txt, and read P02.md lines 1-30.
+
+Also need to check the region wire shape: the fixture uses `region_id`, `region_type: speech/narration/sfx`, `sfx_policy`, `origin`, `revision_no`, `geometry.bbox`, `revisions[].region_revision_id/review_state/is_pinned/restored_from_revision_id`, and IPC args camelCase `{regionId, newRegionType, expectedRevision}`. I should verify against region/client.ts + region/types.ts. Let me grep region/types.ts for the RegionSummary fields and client.ts for the invoke payload keys. Let me do a targeted grep on region/ for `regionId|newRegionType|expectedRevision|expected_revision|region_id|sfx_policy|review_state|restored_from_revision_id`.
+
+That's the most important remaining semantic check (user's point 4). Let me batch:
+(a) read TS protocol
+(b) grep src/region for the wire keys
+(c) read p02-harness-results.txt
+(d) grep the r2 artifacts for CR
+
+Let me do (a)+(b) now, then (c)+(d).
+
+Actually to save turns: (a) read TS, (b) grep region wire keys, (c) read results txt. Then (d) grep CR + P02.md head.
+
+Let me go with 3 calls.
+dsh: reasoning:
+Wire contract verification:
+- `set_region_type` args: `{regionId, newRegionType, expectedRevision?}` ✓ matches fixture's retype ipc_write args exactly ✓ (`regionId: "synth-reg-01"`, `newRegionType: "narration"`, `expectedRevision: 1`).
+- `restore_region_revision` args: `{regionId, revisionNo, expectedRevision}` ✓ (client.ts:165-173 and client.test.ts:229) matches fixture's undo `{regionId, revisionNo: 1, expectedRevision: 2}` ✓ and restore `{regionId, revisionNo:1, expectedRevision:3}` ✓.
+- RegionSummary fields: `region_id`, `sfx_policy`, `revision_no`, `geometry.bbox`, and (line 60-64 region_id/sfx_policy/revision_no) — the fixture uses `region_id`, `region_type`, `sfx_policy`, `origin`, `revision_no`, `geometry.bbox`, `polygon`. Need to confirm `region_type`, `origin`, `polygon` exist in types.ts (lines 60-65 area). The grep shows line 60 region_id, 62 sfx_policy, 64 revision_no — line 61 and 63 likely `region_type` and `origin`. Plausible ✓.
+- RegionRevision fields: `revision_no`, `review_state`, `is_pinned`, `restored_from_revision_id` ✓ (types.ts:96-100), and `region_revision_id`? The grep didn't show `region_revision_id` — hmm! The fixture uses `region_revision_id` in revisions[]. The grep pattern didn't include `region_revision_id`, so absence of a match proves nothing. I need to check whether the revision type has an id field named `region_revision_id`. Let me check types.ts lines 92-105.
+
+Hmm, this matters for "fixture must match actual wire shape". Let me read region/types.ts lines 40-140.
+
+Also `RegionType` enum values: fixture uses "speech"/"sfx"/"narration". Need to verify RegionType includes those (r1 fixture used "dialogue"/"thought" which were fake). Let me check types.ts for RegionType.
+
+And `SfxPolicy` values: "skip"/"translate" ✓ plausible.
+And `origin`: "user"/"machine" ✓ plausible.
+
+Let me read region/types.ts (targeted, lines 1-140).
+
+Also the TS protocol r2: layer union now includes FILESYSTEM/STATIC_AST/TOKEN_MODEL ✓ → F-11 CLOSED. Header now says "specifies Stage A data contracts... Full interactive CDP / WebView behavioral driving is NOT yet active" ✓ → F-01 TS-side closed. `exitCode: number | null` ✓. Header no longer claims AC2-AC5 routines ✓. Also `calculateContrastRatio` now always blends alpha (fgRgba required) — note: for opaque fg (a=1.0) blending is a no-op ✓ correct. And `evaluateContrast` threshold `role === "text" ? 4.5 : 3.0` — "large_text" gets 3.0 ✓ correct per AC6 (禁用文字/非文本 3.0; large text 3.0 is the WCAG rule and the fixture's contrast_thresholds lists large_text_min_ratio 3.0 ✓). OK.
+
+Hmm, one issue in TS: `calculateContrastRatio(fgRgba ...)` requires 4-tuple; but `parseCssColor` returns 4-tuple ✓. Fine.
+
+Now, remaining: types.ts read (wire shape), results/environment txt files, CR check, P02.md head, and the `git diff --check` evidence absence.
+
+Let me batch: read region/types.ts (lines 40-140), read p02-harness-results.txt, grep the r2 artifacts for CR (`\r$`).
+
+Actually for the CR check, grep with pattern `\r` in the files under verification/P02 (r2 artifacts). ripgrep pattern `\r` should work. Let me grep `\r$` in verification/P02/harness, probes, run-webview.ps1, *.json, *.txt, *.log. Use path=verification/P02 and include pattern... The grep tool takes one include glob. Let me just grep path=verification/P02 pattern `\r$` (all files). It might match many historical files (which are LF?). Hmm, historical files might be CRLF too. To be targeted, I'll grep the specific r2 deliverables. I can do one grep per file or use include. Let me do path=verification/P02 with pattern `\r$` and see counts; but that muddies. Better: grep the log + one harness file. Actually the key claim is "all delivered files are pure LF, no trailing whitespace". Let me check the most likely offenders: probe-execution.log (written by PS 5.1 Set-Content/Add-Content), and run-webview.ps1, and the harness .py.
+
+Let me use grep with path pointing to verification/P02 and pattern `\r$` but restricted by include `*.log`? The include glob applies to which files to search. I'll do: path=verification/P02, include="*.log", pattern "\r$" → finds CR in logs (probe-execution.log + historical logs). Then separately check run-webview.ps1 and the harness via targeted greps. Hmm, that's 3+ calls.
+
+Alternative: read probe-execution.log is already done — but the read tool strips/normalizes line endings? The read output showed clean lines; can't tell CR from that. I need grep.
+
+Let me do a single grep: path = `G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02`, include = `*.log`, pattern = `\r`. Plus a second grep for the harness/probes/runner/ts files? I'll instead grep the whole verification/P02 with pattern `\r$` and include `*.{py,ps1,json,txt,log}` — the include glob may support braces. The tool says "One glob filter ... (e.g. \"*.ts\", \"*.{js,jsx}\")" → braces supported ✓.
+
+Let me do that. And batch with types.ts read + results txt read.
+
+That's 3 calls. Go.
+dsh: reasoning:
+Excellent results:
+
+**Wire shape verification (user point 4)**: 
+- `RegionSummary`: `region_id`, `region_type`, `sfx_policy`, `origin`, `revision_no`, `geometry?{bbox,polygon}` ✓ — the fixture matches EXACTLY (region_id, region_type, sfx_policy, origin, revision_no, geometry.bbox, geometry.polygon) ✓✓
+- `RevisionSummary`: `region_revision_id`, `revision_no`, `origin`, `review_state`, `is_pinned`, `restored_from_revision_id`, `created_at`, `region_type`, `sfx_policy`, `is_current` — the fixture's revisions[] have region_revision_id, revision_no, origin, review_state, is_pinned, restored_from_revision_id but **omit** `created_at`, `region_type`, `sfx_policy`, `is_current`. So the fixture's revision objects are a **subset** (missing 4 fields). Is that a finding? The fixture is synthetic input data for driving the UI; incomplete revision objects could be fine if the UI/type only requires those fields at runtime — but `is_current` is used by RegionInspector (`revision.is_current` at :250) to decide disabled state, and `created_at`/`region_type`/`sfx_policy` are rendered. If a future CDP driver feeds these fixture objects into the UI, missing fields would render `undefined`. Since the fixture specifies "expected readback", not literal UI props, it's a P3 nit. Hmm. Given the user asked to check "Fixture must match actual wire shape", I should report that the fixture's `revisions[]` entries are missing 4 of the 10 `RevisionSummary` fields (`created_at`, `region_type`, `sfx_policy`, `is_current`) → partial match. P3.
+
+Also `RegionType`: need to confirm it includes "speech"/"narration"/"sfx". The grep didn't show the RegionType definition (it's above line 30). Let me check — I read from line 30; RegionType is defined before line 30. The fixture uses "speech", "narration", "sfx". r2 handoff claims "真实 enum（speech/narration/sfx 等，清除 dialogue/thought 假名）". I should verify RegionType. Quick read of types.ts lines 1-30. That's cheap and important (it was F-10's core claim).
+
+Also `SfxPolicy = "skip" | "translate" | "manual"` ✓ fixture uses skip/translate ✓. `RegionOrigin = "machine" | "user" | "imported" | "restored"` ✓ fixture uses user/machine ✓.
+
+**Text/JSON consistency**: p02-harness-results.txt matches JSON exactly (Source HEAD/Tree/Baseline, 9 scenarios, PRE-03, Exit: null) ✓ consistent. Note the txt's "Source HEAD: 972049f9..." — same stale value as JSON (consistent with each other, wrong for r2 delivery) ✓ text/JSON consistent.
+
+**Whitespace claim**: grep for `\r$` in verification/P02 (py/ps1/json/txt/log/md/ts) → **No matches found**! So no CR in any of those files, including probe-execution.log (written by PS 5.1 Set-Content...). Interesting — that means either the log was normalized/converted after generation, or PS `Set-Content -Encoding utf8` wrote LF... Actually PowerShell 5.1's Set-Content uses CRLF; but the file may have been converted to LF afterwards (the handoff claims conversion to pure LF). So the delivered bytes are LF ✓ — the whitespace claim holds for line endings.
+
+Hmm, but `Set-Content -Path $LogPath -Value $LogHeader -Encoding utf8` in PS 5.1 writes a **BOM**. If they later converted line endings, the BOM may or may not remain. A BOM at the start of a .log file is a minor hygiene issue. I can't easily verify BOM presence with grep... Actually I can: grep for `^\xEF\xBB\xBF` — ripgrep pattern `^\x{FEFF}`. Hmm, ripgrep supports `\x{FEFF}`. Let me test with pattern `^\x{FEFF}` on probe-execution.log. If matched, there's a BOM. This is a real "whitespace diagnostics" claim under scrutiny. Worth one grep.
+
+Also: does the delivered `run-webview.ps1` still write CRLF if re-run? Yes — PS 5.1 Set-Content/Add-Content produce CRLF, so re-running the runner would regenerate `probe-execution.log` with CRLF, i.e. the "pure LF" state is not reproducible from the committed tooling. That's a legitimate finding (P3): the log's LF state was achieved by post-hoc conversion, not by the committed generator; re-running the documented command (`run-webview.ps1`) will reintroduce CRLF (and `git diff --check` would then fail). Hmm, is that definitely true? In PowerShell 5.1, `Set-Content -Encoding utf8` writes CRLF line endings (PS 7 `-Encoding utf8` also CRLF? In PS 7, Set-Content still uses `[Environment]::NewLine` = CRLF on Windows). So yes, both would produce CRLF. Unless the repo's `.gitattributes` normalizes on commit (the R2 commit's stored blob would be LF if .gitattributes says `* text=auto` and the file was committed with normalization... but core.autocrlf=false means Git doesn't convert on commit either — actually `text=auto` in .gitattributes *does* normalize to LF in the index on commit regardless of autocrlf). Hmm! If `.gitattributes` has `* text=auto eol=lf` or similar, then the *blob* is LF while the *worktree* file is CRLF. Then `git diff --check` would not flag it (diff is against the normalized index?). This is getting deep.
+
+Key uncertainty: I verified the *worktree* files as delivered have no CR (grep found none). So the delivered files as I read them are LF ✓. Whether re-running the runner reintroduces CRLF is a plausible but unverified inference. I should state it as a *risk* rather than a finding, or as a P3 finding with careful wording ("the committed generator uses PowerShell Set-Content/Add-Content which on Windows emit CRLF, so the LF state of probe-execution.log appears to be a post-generation conversion and may not reproduce; re-running then `git diff --check` may reintroduce CR diagnostics"). Given I cannot run it, I'll frame it as an observation/risk in the findings with explicit uncertainty — actually better: mention in residual risks, not as a hard finding. Hmm. But it is checkable-ish: `probe-execution.log` at the time of the *probe run* was listed as `??` in porcelain and the header says PowerShell 5.1. The fact that grep finds no CR now means someone converted it (or the .gitattributes normalized it on checkout — no, it's untracked/committed? If it's tracked in r2 and .gitattributes normalizes... the worktree file would still be CRLF unless eol=lf is forced).
+
+I'll put it as a P3 finding with honest uncertainty: "证据链：该日志由 PS 5.1 的 Set-Content/Add-Content 生成，Windows 上默认 CRLF；当前工作区副本无 CR，表示存在事后转换或强制 eol=lf 的属性；提交的生成器本身不能产出纯 LF 日志，故 `git diff --check EXIT=0` 的可复现性未被证据支持。" And note the missing evidence file for the `git diff --check` claim (no artifact).
+
+Also I still need:
+- RegionType check (types.ts 1-30).
+- P02.md frontmatter (lines 1-30) + tail 110-120.
+- static-control-report.txt (consistency) — optional; the log echoes it and matches.
+- env-identity-report.txt — the log echoes the probe's printed lines; the JSON has more fields. The txt omits `is_clean` (r1 had "Git Clean Status: False"; r2 replaced it with "Python Executable"/"Source HEAD"/"Source Tree"/"Behavior Baseline" and dropped the clean-status line!). Hmm: r2's env txt (log lines 14-28) does NOT include a "Git Clean Status" line, while the JSON has `is_clean: false`. That's a text/JSON inconsistency in disclosure: the text report hides the dirty state that the JSON records. Given F-05's theme (provenance), hiding `is_clean=false` from the human-readable report is a legitimate P2/P3 finding. It's the human-readable artifact that an integrator reads. I'd call it P3 (JSON has it; txt omits), but arguably P2 given the request focuses on whether the report identifies tested bytes. Hmm. The r1 txt *did* print "Git Clean Status: False" — r2 removed that line. So this is a regression in disclosure. I'll make it part of the provenance finding and/or a separate P3.
+
+Let me verify the r2 env-identity-report.txt content directly (not via the log) to be precise. Let me read it.
+
+Let me batch: read types.ts 1-30, read env-identity-report.txt, grep for BOM.
+
+Then read P02.md 1-30 and 110-120.
+
+Let me go.
+dsh: reasoning:
+RegionType verified: `["speech","narration","sfx","title","note","other"]` ✓ — the fixture's "speech"/"narration"/"sfx" are real values ✓ and the fake "dialogue"/"thought" are gone ✓ → F-10's enum claim CLOSED.
+
+env-identity-report.txt r2: no "Git Clean Status" line ✓ (regression vs r1 which printed it). So the human-readable report omits `is_clean: false`. Finding: txt/JSON disclosure inconsistency.
+
+P02.md: frontmatter unchanged ✓ (status in_progress, base_commit, scope_contract_sha256, branch, worktree, integration_commit: null) ✓. Test table updated (lines 68-83) with PASS/BLOCKED rows and evidence links ✓ → F-12 CLOSED. Execution record lines 105-119 updated ✓.
+
+Hmm, but note P02.md:119 claims "git diff --check 通过 (EXIT=0)" — again no artifact. And it's a Test-table row at :78 claiming the runner `-ProbeOnly` PASS/EXIT=0 with evidence probe-execution.log — the log shows 3 steps including Step 3 (harness), so the log was from a full run (not ProbeOnly). The Task row says the command was `run-webview.ps1 -ProbeOnly` but the log clearly contains "--- [Step 3: Stage A Verdict Harness] ---" → so the recorded command does NOT match the log. That's an "actual command/result consistency" defect (user's point 5). P2/P3. Given AC7 requires command/result correspondence and Q-009 evidence discipline, I'd rate P3 (it's a documentation mismatch but the log is from a full run which is a superset). Hmm, actually it's a factual mismatch between the recorded command and the evidence: the Task claims the log evidences a `-ProbeOnly` run; the log is a full run. A reviewer/integrator checking "命令" would be misled. I'll make it a finding (P3).
+
+Also P02.md:68 row for the env probe says "PASS / EXIT=0；真实 GUID 探测" — must not be read as AC1 pass; it's labeled "环境与身份探针（AC1-PRE）" ✓ acceptable labeling.
+
+Now, one more important check: does the log's Step 3 command match? "Command: C:\Python314\python.exe ...\harness\workbench_cdp_harness.py" ✓ — and the Task row 78 says the runner was invoked with -ProbeOnly, but the log has Step 3. So mismatch confirmed.
+
+Also: the log header says "Date: 2026-10-09T15:03:12+08:00" and the JSON timestamps are 2026-10-09T07:03:13Z = 15:03:13+08:00 ✓ consistent. And the r2 commit was at 1791529598 = ? Let me convert: 1791529598 - 1767225600 = 24303998 s = 281 d + 25598 s = 281d + 7h 6m 38s → 2026-10-09T07:06:38Z = 15:06:38+08. So the probe ran at 15:03:12-15:03:13, ~3.5 min before the r2 commit at 15:06:38. Consistent with "evidence generated from dirty pre-commit r2 tree" ✓. So the F-05 analysis is solid: the tested bytes were r1 commit + r2 working-tree edits; the run recorded HEAD=972049f9 (r1) and never the r2 delivery commit 9b82e97b.
+
+Wait — one more consideration on F-05: is `source_head=972049f9` + `source_tree=657095fa` actively *wrong*? It's the HEAD at run time. But the report's `provenance.source_head` label means "the source revision of the tested bytes". Since the tested bytes were dirty, that claim is false. And the r2 delivery (9b82e97b) is never referenced anywhere. So F-05 remains OPEN. Plus the new self-reference: `provenance.evidence_carrier = "verification/P02/p02-harness-results.json"` — the report names itself; combined with the fact that the report's own bytes are part of the dirty set (its own porcelain entry!), the provenance block cannot pin the tested bytes: at the moment the harness wrote the file, the file's content didn't yet exist (it was being written), and it differs from the committed version only by these values... hmm, actually the committed version equals what was written (assuming no post-hoc edit). But the *cycle*: the report claims its tested-source is a commit (972049f9) that does not contain the report itself, while the report itself is the evidence carrier for content that only exists in the r2 working tree/commit. That's precisely a self-reference cycle: to know what bytes were tested you must read the evidence carrier, but the evidence carrier is one of the tested bytes.
+
+Good. Now let me also verify the `git diff --check` claim absence: no artifact among the r2 deliverables. Confirmed from the file list (no diff-check log). And the handoff/RESUME/Task all assert EXIT=0.
+
+One more: does the `verification/P02` glob show any new r2 evidence for the whitespace claim, e.g. `git-diff-check.log`? No — the listing has no such file ✓.
+
+Let me also double check `static-control-report.txt` / `.json` for consistency (the harness's PRE-02 stdout matches it, and the runner's Step 2 regenerates it). The harness runs the static probe → rewrites static-control-report.* → then reads stdout. Both consistent. Fine. But NOTE: because the harness re-runs the probe, the *runner's* Step 2 output and the harness's embedded stdout are from two runs; both identical. Minor.
+
+Now let me think about whether there are any remaining *new* substantive findings:
+
+NEW-1 (F-05 still open + self-reference): P2. As analyzed. Includes: evidence binds to r1 head/tree; no r2 delivery commit anywhere; `evidence_carrier` self-reference; runtime ACL scenario details also embed r1 as "source_head".
+
+NEW-2: Handoff §2 (F-05 row) and RESUME:14 assert provenance now distinguishes "被测 source commit、tree 与交付 commit" and "工件 hash" — but no delivery commit and **no artifact hash** appear anywhere in the evidence. Unsupported closure claim. P2 (misleading claim about delivered evidence).
+
+NEW-3: `env-identity-report.txt` omits the dirty-working-tree fact (`is_clean=false` present only in JSON) — the human-readable report hides that the tested bytes ≠ HEAD. Actually the txt never had is_clean in r2 (r1's txt had "Git Clean Status: False"). Regression in disclosure. P3 (or fold into NEW-1). I'll make it its own P3.
+
+NEW-4: `git diff --check EXIT=0` (whitespace) claimed in Handoff/RESUME/Task but **no evidence artifact**; and the committed generator (`run-webview.ps1` via PS 5.1 `Set-Content`/`Add-Content`) emits CRLF on Windows, so the currently LF `probe-execution.log` state is not reproducible from the committed tooling (uncertain without running). P3.
+
+NEW-5: Task test-table row (P02.md:78) records the command as `run-webview.ps1 -ProbeOnly` but `probe-execution.log` contains "Step 3: Stage A Verdict Harness" → command/evidence mismatch. P3.
+
+NEW-6: PRE-03 threshold semantics: harness:230 assigns 4.5 only when role contains both "text" and "primary"; secondary_text/tertiary_text get 3.0 although AC6 requires ≥4.5 for text (disabled text and non-text → 3.0). Recorded `min_required` therefore misstates the contract for ink_2/ink_3. Verdicts don't flip (7.45/5.57 ≥ 4.5). Also live palette uses a uniform 3.0 (harness:255) including for `#d8e0e8`/`#8a94a2` text colors, and runs background-vs-background pairs (`nav_inactive_button_background`, `nav_button_border`, `viewer_background`) whose semantics (UI-boundary non-text contrast vs text contrast) are not stated. P3.
+
+NEW-7: Alpha blending is implemented + self-tested but **never applied to any real fixture token** (all F tokens and live palette entries are opaque hex); no `*-soft`/rgba composed-background tokens are evaluated, so the docstring claim "Evaluates Visual Direction F token mathematical contrast model with alpha blending" (harness:11) and §3/P02.md:114 "带 Alpha Blending 底色合成" overstate the model's actual coverage; the model covers 5 of the contract's 42 F color tokens (dark only) and 0 badge-composed pairs, while the contract's §7.2 badge audit (4.5:1 on `*-soft` composites) is exactly the case needing alpha. P3 (AC6 remains BLOCKED; no PASS claim about product).
+
+NEW-8 (P3): fixture `revisions[]` entries are missing 4 of the 10 `RevisionSummary` fields (`created_at`, `region_type`, `sfx_policy`, `is_current`) → fixture is a partial wire shape; if a driver feeds these into the UI, `is_current`/`created_at` would be undefined (RegionInspector:250 uses `revision.is_current`). P3.
+
+Hmm, NEW-7 and NEW-6 both concern PRE-03. Could merge into one P3 "PRE-03 model coverage/threshold". I'll keep two rows for actionability? The template wants per-finding rows. I'll merge into one PRE-03 finding with two clauses to keep the report tight... Actually, better to keep them separate since they need different fixes (threshold logic vs. adding rgba/composite tokens). I'll produce two P3 findings.
+
+Also: F-09 residuals: the harness still re-invokes the static probe (double execution) → F-09 partially closed. And `import os` is still unused in env_identity_probe.py:11 → part of F-09 (dead import) — the handoff's F-09 claim "不重复调用静态探针" is FALSE (harness:203-216 calls it; runner Step 2 calls it) → unsupported closure claim. Fold into F-09 disposition (partially closed) + note the false claim.
+
+Also F-06: closed? exit_code null ✓, run log with EXIT + versions ✓, failure propagation ✓ (`if ($exitCode -ne 0) { exit $exitCode }`). Runner exits 0 on the observed run ✓ observed. One residual: no log artifact for `git diff --check`; and the log lacks the runner's own final exit code line (the log ends with "EXIT: 0" for step 3, which is the harness's exit; the runner's own exit is implied 0 and echoed by "P02 Stage A Safe Foundation Execution Complete (EXIT=0)" in the console but not written to the log). Minor. I'll call F-06 **closed** with a residual note (the log's final EXIT line belongs to step 3; the runner's aggregate exit isn't recorded in the log). Hmm, the handoff claims "run-webview.ps1 聚合子探针退出码并传播失败" ✓ true by code. Fine: closed, with P3 residual about the missing aggregate exit line + diff-check evidence (folded into NEW-4).
+
+F-08: closed? "从夹具实际读取 hex" ✓ (hex_to_rgb from fixture); "实现包含 Alpha Blending 底色合成的 WCAG 2.1 相对亮度与对比度计算算法" ✓ implemented (blend_alpha) + self_test ✓; "改动夹具色值能直接联动改变计算结果" ✓ for hex values (live_bg hard-coded #101418 at :242 — hmm! The live palette background is hard-coded in the harness rather than taken from the fixture's `#101418` entry (which exists with role app_base_background at fixture:258-263). So changing the fixture's app_base_background would NOT change the live-palette results. That's a partial regression of F-08's own acceptance criterion ("改动夹具色值能直接联动改变计算结果"). → F-08 PARTIALLY CLOSED. Good catch; that's a concrete, checkable defect: harness:242 hard-codes `live_bg_hex = "#101418"` while the fixture declares it at :259 with source App.tsx:475.
+
+So: F-08 = partially closed (P3 residual, still open as a finding? The r1 F-08 was P3). I'll mark F-08 "partially closed" with the residual hard-coded background.
+
+Now F-02: closed? Real F tokens ✓, live palette separated with sources ✓, unsourced colors removed ✓ (#58a6ff gone; #2a3038 now correctly sourced at App.tsx:488), UNMAPPED ✓. The description still says "per design contract §7.2 / §9" for the F tokens — the F token *values* come from `tokens-cand-f.json` (contract §6C/§5), while §7.2/§9 are the threshold/encoding rules; minor. Also the fixture's `contrast_thresholds` block remains (unused by the harness, which hard-codes thresholds) — dead config. Minor. I'll mark F-02 **closed** with two P3 nits folded elsewhere (or note them). I'd rather mark it closed and mention the nits in the residual-risk section... but the unused `contrast_thresholds` while thresholds are hard-coded is the same class as F-08's hard-coding. I'll mention it inside the F-08 residual.
+
+F-01: closed ✓ (harness/TS/handoff/P02.md all re-worded; dead params/imports removed). Verify handoff/TS wording ✓ done. Also `run-webview.ps1` header says "Stage A preflight verification harness" ✓. P02.md:107 ✓. CLOSED.
+  Hmm, one nit: the *file name* remains `workbench_cdp_harness.py` though it no longer does CDP — the file is named "cdp_harness". The handoff's file list links it as is. Is that a finding? The docstrings are corrected; the filename still implies CDP. Minor P3 nit — I'll mention it in the F-01 disposition as a residual (rename in Stage B), not a new finding.
+
+F-03: closed ✓ (handoff quotes machine values; all reproduce).
+F-04: closed ✓ (PRE-03 separate; AC6 only BLOCKED; token_mapping/contrast_result emitted).
+F-05: OPEN (still) + NEW self-reference.
+F-06: closed (with residuals).
+F-07: closed ✓ (RESUME updated with new checkpoint; history retained ✓).
+F-08: partially closed (hard-coded live bg).
+F-09: partially closed (GUID ✓, npm ✓, interpreter ✓, but static probe still run twice → handoff claim false; `import os` dead).
+F-10: closed ✓ (regions 102 present; real enum; IPC request/response/readback defined; $schema removed) — with the wire-shape completeness nit (NEW-8: revisions[] missing 4 fields) and the semantic question of whether UI `undo` really maps to `restore_region_revision`. Let me check that! WorkbenchPage.tsx undoRetype at :673-718 — what does it invoke? In r1 grep I saw lines 673-718 but not the invoke. Let me check: does undoRetype call `restoreRegionRevision` or `setRegionType`? This matters for the fixture's claim "UI undo action restoring previous revision using restore_region_revision IPC". If the UI's undo actually calls set_region_type back, the fixture's mapping is wrong → new finding. Let me grep WorkbenchPage.tsx around 673-720 for `restoreRegionRevision|setRegionType|clients.region`.
+
+That's important for user point 4 ("AC4 retype/undo/restore must be clearly distinguished and have meaningful expected readback" and "match UI operations"). Let me check.
+
+Also need to double check the F-12 closure: P02.md test table updated ✓ closed.
+
+And F-11 closed ✓.
+
+Let me do the undo-path check now. Also maybe check `PageListPanel.tsx` note... not needed.
+
+Let me grep WorkbenchPage.tsx for the undo function body.
+dsh: reasoning:
+AC4 undo path verified: `undoRetype` → `clients.region.restoreRegionRevision(regionId, previousRevisionNo, expectedRevision)` ✓ — so the fixture's claim that the UI undo action's underlying IPC is `restore_region_revision` is **correct** ✓ F-10's undo mapping is validated. And the fixture's undo args `{regionId, revisionNo: 1, expectedRevision: 2}` mirror the signature (regionId, revisionNo, expectedRevision) ✓.
+
+And `restore` (explicit history restore) → `restoreHistoryRevision` at :720 → also restore_region_revision presumably ✓.
+
+So retype = set_region_type; undo (UI action) = restore_region_revision; restore (explicit) = restore_region_revision. Note that undo and restore now use the **same** IPC command and differ only in the UI entry point + expected revision numbers. Is that "clearly distinguished"? The fixture distinguishes them via `operation_name` (undo_retype vs restore_revision), `ui_action: trigger_undo` for undo, and different expected revisions (undo: revisionNo 1, expectedRevision 2 → result revision_no 3; restore: revisionNo 1, expectedRevision 3 → result revision_no 4) ✓. They're sequential, consistent with each write creating a new revision. Reasonable ✓. Good — the user's point 4 is satisfied.
+
+BOM check: `^\x{FEFF}` → No matches; `ProbeOnly` → no matches in the log. So:
+- No BOM in probe-execution.log ✓ (so either not PS 5.1 Set-Content, or converted).
+- The log does NOT mention ProbeOnly ✓ → confirms the Task table's recorded command `run-webview.ps1 -ProbeOnly` is inconsistent with the log's Step 3 (NEW-5 confirmed).
+
+Good. I now have enough to write the review. Let me also quickly consider: is there any *new* scope/forbidden-path issue in r2? The r2 diff touched: doc/handoffs (allowlist), doc/tasks/P02.md (allowlist), verification/P02/** (allowlist), apps/desktop/frontend/e2e/workbench_driver_protocol.ts (allowlist). The env report's porcelain lists exactly 12 modified + 1 untracked, all under verification/P02 or frontend/e2e ✓ — that's the r2 dirty set, and all are allowlisted. So no forbidden path touched. Note: r2 modified `doc/tasks/P02.md` (allowed for execution records — it changed the test table + execution record, which is "实际执行/交付/Review 记录" ✓ within the allowlist; AC/基线/范围 sections unchanged — I verified lines 1-22 frontmatter unchanged and lines 60-83 запрет/table; the AC1–AC7 section at 37-45 — I didn't re-read it. Hmm. Let me consider: r1's base comparison established AC at 39-45; r2 read showed lines 60+ unchanged in structure. To be safe I should state that I verified frontmatter (1-18) and the forbidden-range/table sections, but did not line-by-line re-verify AC1–AC7 (lines 23-59) against base in this r2 pass. Hmm — that's a coverage gap I should either close cheaply or declare. Closing it: read P02.md lines 23-59 (37 lines) and compare mentally with the r1 copy I have in context (I read the full r1 file earlier: lines 1-100 of the r1 version). Let me do that — it's cheap and it's the "scope must not change" check. Actually I already read r2 lines 60-83 and 1-22. I need 23-59. Let me read it.
+
+Also I should double check `doc/handoffs` — only one handoff file (updated in place) ✓ no new handoff for r2 (fine).
+
+Let me read P02.md 23-59 and then write the review. Also maybe check `static-control-report.txt` quickly? The harness regenerates it; consistent. Skip.
+
+One more: the review prompt asks about "probe command/output/exit/code versions" ✓ done (log has PowerShell 5.1.26100.9549, Python 3.14.6 + executable, Node v24.15.0, npm 12.0.1, per-step EXIT, outputs). And "failure propagation" ✓ code-level. And "WebView2 runtime identity" ✓ verified GUID + FS path + detected_version consistent.
+
+Let me read P02.md:23-59.
+dsh: reasoning:
+AC1–AC7 (lines 37-45) and allow/forbidden scope (47-59) are byte-identical to r1/base ✓ — no AC/baseline/scope change. Confirmed.
+
+Now I have everything needed. Let me also confirm no new files outside allowlist in r2: the porcelain in env report lists 12 M + 1 ?? — all within allowlist ✓. Plus doc/handoffs + doc/tasks/P02.md which were modified in the r2 commit but NOT shown in the porcelain because... hmm! The porcelain was captured at 15:03:13 during the run, and it lists the frontend/e2e TS as modified and verification/P02 files, but NOT doc/handoffs or doc/tasks/P02.md. That means at run time the docs hadn't been edited yet (they were edited between 15:03:13 and the commit at 15:06:38) ✓ same pattern as r1.
+
+So r2's changed set: 12 modified under verification/P02 + frontend/e2e/ts + probe-execution.log (new) + doc/handoffs + doc/tasks/P02.md. All allowlisted ✓.
+
+Now let me write the r2 Review. Structure per template:
+- Frontmatter-ish metadata table (base/head/tree/decision/counts)
+- §1 审查范围与覆盖（+ 未能覆盖）
+- §2 只读取证与对象绑定（含 shell 不可用）
+- §3 F-01–F-12 disposition table + per-finding detail
+- §4 新增 findings
+- §5 Architecture 结论
+- §6 Verification 结论（含复算证据）
+- §7 逐 AC 状态
+- §8 范围/禁止路径
+- §9 限制
+- §10 Codex 治理下一步
+- §11 final verdict
+
+Counts: prior findings F-01..F-12, all at their original severities (P1: F-01; P2: F-02..F-07; P3: F-08..F-12). Dispositions:
+- F-01 CLOSED
+- F-02 CLOSED
+- F-03 CLOSED
+- F-04 CLOSED
+- F-05 **STILL OPEN** (P2)
+- F-06 CLOSED
+- F-07 CLOSED
+- F-08 PARTIALLY CLOSED → I need to decide: is a "partially closed" P3 counted as open? Yes — for the tally, partially closed = still open (not closed). So F-08 remains open as P3 (with reduced scope).
+- F-09 PARTIALLY CLOSED → open P3.
+- F-10 CLOSED
+- F-11 CLOSED
+- F-12 CLOSED
+
+New findings:
+- G-01 (P2): Handoff §2 F-05 row + RESUME:14 assert provenance now distinguishes the delivery commit and records artifact hashes — neither exists. (unsupported closure claim)
+- G-02 (P3): env-identity-report.txt omits `is_clean: false` (JSON-only), hiding that the tested bytes ≠ recorded HEAD (regression from r1's txt).
+- G-03 (P3): `git diff --check (EXIT=0)` claimed in 3 places with no evidence artifact; and the committed generator emits CRLF on Windows so the LF state of probe-execution.log isn't reproducible from the committed tooling (uncertainty declared).
+- G-04 (P3): P02.md:78 records the command as `run-webview.ps1 -ProbeOnly` but probe-execution.log contains Step 3 (full run) → command/evidence mismatch.
+- G-05 (P3): PRE-03 threshold semantics — ink_2/ink_3 recorded `min_required 3.0` though AC6 requires ≥4.5 for text; live palette uses a uniform 3.0 including for text colors, and includes background-vs-background pairs whose pair semantics aren't stated (no verdict flips).
+- G-06 (P3): PRE-03 "with alpha blending" overstates coverage — blend_alpha is never applied to any fixture token (all opaque hex); no `*-soft`/rgba composed pairs; 5 of the contract's 42 F color tokens, dark only; the §7.2 badge-composite audit (which needs alpha) is not covered.
+- G-07 (P3): fixture `revisions[]` omit 4 of 10 RevisionSummary fields (`created_at`, `region_type`, `sfx_policy`, `is_current`).
+- G-08 (P3): harness:242 hard-codes the live-palette background `#101418` although the fixture declares it (app_base_background, App.tsx:475) → changing the fixture does not change live-palette results (residual of F-08's own acceptance criterion).
+- G-09 (P3): harness:203-216 re-invokes the static probe that the runner already ran in Step 2 → the static probe/report is produced twice per run; the handoff's F-09 claim "不重复调用静态探针" is false. (Could fold into F-09 disposition; I'll keep it inside F-09 to avoid duplicate rows... Hmm, the user asked to add new findings as needed. I'll fold G-09 into F-09's disposition and NOT create a row, to avoid double counting. Similarly the `import os` dead import → fold into F-09.)
+- G-10 (P3?): the harness file is still named `workbench_cdp_harness.py` although it no longer drives CDP — fold into F-01 residual, no row.
+
+Hmm, I should keep the new-finding list meaningful and non-duplicative. Let me finalize new findings as G-01..G-08 (with G-09 folded into F-09).
+
+Severity for G-01: it's an unsupported claim about delivered evidence in a frozen Handoff + RESUME → same class as r1's F-01 (P1) but narrower (no capability overstatement, just provenance). Since the underlying defect (F-05) is P2, and G-01 is a false closure claim that could cause an integrator to accept the slice, I'll rate it **P2**. So counts: P0=0, P1=0, P2 = F-05 + G-01 = 2, P3 = F-08 + F-09 + G-02..G-08 = 2 + 7 = 9. Total open = 11. Closed = F-01,02,03,04,06,07,10,11,12 = 9.
+
+Wait: F-05 is P2 (still open), G-01 is P2 → 2. F-08 P3, F-09 P3 → plus G-02..G-08 (7) → P3 = 9. Total = 11 open. Let me double check G-02..G-08 = 7 items ✓.
+
+Hmm, is that too many P3s? It's fine — they're concrete. But let me consider dropping/merging the weakest: G-07 (fixture revisions[] missing 4 fields) — legit wire-shape mismatch per user point 4 → keep. G-04 (command mismatch) — legit per user point 5 → keep. G-03 (diff-check evidence) — legit per user point 5 → keep.
+
+Decision: since F-05 (P2) and G-01 (P2) remain open, but no P0/P1 remains... The template says "P0/P1 未解决或关键验证缺失时不可批准". With zero P1 and P2s remaining, is approval possible? The template's gate is P0/P1 → so with P0=0,P1=0 the slice *could* be approved. Hmm! That's an important judgment call.
+
+Let me think carefully. The r1 decision was changes_requested with a P1. In r2, the P1 is closed. Remaining: 2×P2 (one is the core provenance defect F-05, one is the false closure claim G-01) and 9×P3.
+
+Per the repo template, only P0/P1 block approval. But the user's instruction: "Approve this slice only if..." — wait, that was r1's prompt. This r2 prompt says: "State for every finding whether closed, partially closed, or still open, with exact evidence. Add any new findings. Follow the repo Review template... decision..." — decision is left to me.
+
+Hmm. F-05 is the central question the user asked about (item 1). My analysis: the evidence does NOT identify the tested bytes and does NOT bind to the r2 delivery; the provenance block is misleading (names r1 while the tested content is r2-only) and self-referential. That's a verification-evidence integrity defect in a task whose AC7 is entirely about evidence provenance ("源码/二进制 Hash"). AC7 requires "逐场景记录 ... 源码/二进制 Hash" — the delivered evidence provides no hash of the tested artifacts and names a commit whose tree does not contain the tested code. So AC7 remains non-compliant.
+
+Is that "关键验证缺失" (key verification missing)? AC7 is the evidence-integrity AC of this very slice; the slice's own deliverable is evidence. I'd argue the P2 provenance defect is *material* but the template's hard gate is P0/P1.
+
+Options:
+(a) decision = changes_requested (F-05 + G-01 open; AC7 evidence still not bound to the reviewed revision; also a false closure claim in a frozen handoff).
+(b) decision = approved_with_conditions (no P0/P1; conditions = fix F-05/G-01 + P3s at the next head).
+
+The template's decision vocabulary: "decision 为 pending / changes_requested / approved / blocked". `approved_with_conditions` is used elsewhere in this repo (e.g., r8 Review) but isn't in the template's list; the template lists pending/changes_requested/approved/blocked. Hmm, prior reviews in this repo used approved_with_conditions (per RESUME:46). I could use `changes_requested` to stay within the template's vocabulary.
+
+Which is right? The r1 prompt said approve "only if its current implementation and recorded evidence are internally consistent, within scope, and safe to continue from". For r2: implementation is now much better; recorded evidence is *internally* consistent (JSON↔txt↔log agree; numbers reproduce) — the remaining inconsistency is that the recorded source_head/tree describe r1 rather than the tested r2 bytes, plus a false closure claim. "Internally consistent" — the report says source_head=972049f9 while its own PRE-03 payload could not have been produced by that revision's harness (the r1 harness had no PRE-03/palette). That IS an internal contradiction between the recorded provenance and the recorded content. So "internally consistent" fails → changes_requested.
+
+Also G-01 is a false statement in a delivered document about what the evidence contains ("工件 hash" recorded — it is not). In r1 I treated the analogous overstatement as P1. Consistency of my own standard suggests treating a false closure claim seriously; but its blast radius is smaller (provenance, not capability). P2 + changes_requested is defensible and I'll be explicit about the reasoning: the blocking reason is that the evidence artifact does not bind to the reviewed revision and the closure table overstates what was recorded, i.e. AC7 remains unmet — while noting that no P0/P1 remains and the remaining P3s are non-blocking.
+
+Hmm, but I want to be careful not to be unreasonable: is it *fair* to require the Owner to re-run after committing? They cannot record a commit hash for content that isn't committed yet — a chicken-and-egg. The correct fix is to record per-artifact SHA-256 of the tested working-tree files (a hash of the delivered bytes), which is exactly what AC7 asks for ("源码/二进制 Hash") and what the handoff falsely claims exists. Alternatively re-run post-commit and record the new HEAD (the evidence files themselves would then differ from the committed ones... no: you can re-run and record HEAD=r2, then commit the *regenerated* evidence as r3 — a second commit, which is the normal pattern; slight recursion but resolvable by hashing artifacts). So a fix is feasible; requiring it is reasonable for a verification task whose product IS evidence.
+
+So: decision = changes_requested, P0/P1 = 0/0, P2 = 2, P3 = 9.
+
+Hmm, wait. Let me reconsider once more whether to count F-05 as *partially closed* and whether to keep it P2. The r2 owner added a provenance block (improvement) and added behavior_baseline; the defect is the values + self-reference. So "partially closed, still open" ✓ and severity unchanged (P2) — I won't change severity (the user said don't change severities... that was for the r1 report. For r2 I can re-grade, but there's no need).
+
+Now the final verdict must also state P02 remains in_progress, AC1–AC6 runtime BLOCKED, no product AC passed.
+
+Let me also record the verification I did NOT do: no shell → no git/diff/hash/re-run; the delivery tree 7fe67d0f unverified; scope SHA unverified; r2 changed-path set inferred from the evidence's own porcelain + file inspection rather than `git diff`; the whitelist/forbidden-path comparison for r2 was *not* re-done by full-tree content diff against base (r1 did that thoroughly); for r2 I verified that all files the r2 porcelain lists as modified are inside the allowlist, and I spot-verified that src/**, doc/contracts, package.json etc. are untouched by r2 (the porcelain shows only the 12 verification/P02 + e2e files; plus docs edited post-run). Hmm — should I re-verify that r2 didn't touch forbidden paths beyond the porcelain? The porcelain is the r2-run snapshot; it lists every modified tracked file at that time, all allowlisted. Docs edited after. So the r2 changed set ⊆ allowlist ✓ — good, and that's evidence-based. I'll state that: r2's forbidden-path check relies on the run-time porcelain (which enumerates all modified tracked files) + my direct inspection of the r2 files; I did not re-run the full base↔head tree comparison for r2 (r1's per-file comparisons remain valid for the *base* side since base is unchanged; and no src/** file appears in the r2 porcelain).
+
+Wait, one caveat: the porcelain's `M` entries are for *tracked* files; a *new* untracked file outside the allowlist would appear as `??`. The porcelain shows exactly one `??`: verification/P02/probe-execution.log ✓. So r2 introduced no new file outside verification/P02 ✓. And deletions would appear as ` D` — none ✓. Good, that's a solid forbidden-path argument for r2.
+
+Also I should mention: the r2 env report's porcelain itself is *evidence* that the run happened with those 12 files dirty — which is exactly why the provenance is wrong. Nice to cite.
+
+AC table for r2: same as r1 (BLOCKED for AC1-AC6 runtime; PRE-01/02/03 PASS as preflight; AC6 runtime BLOCKED; AC7 partially met → now "机制更完整但仍未绑定被审修订").
+
+Let me write the report now. It should be complete and in Chinese, with the required elements. Length: substantial but organized.
+
+Let me draft the F-01..F-12 disposition table with: ID | 原级别 | r2 处置 | 结论 | 关键证据.
+
+Then details for each.
+
+Then G-01..G-08.
+
+Let me be precise with line numbers:
+- F-01: harness:1-14 (docstring), :112 (no target_exe), imports :18-23; ts:1-8, :35-52; handoff:28; P02.md:107. Residual: filename still "cdp_harness".
+- F-02: fixture:219-253 (F tokens), :254-301 (live palette); harness:220-256; report:54-140; verified provenance greps.
+- F-03: handoff:44,50 vs json:59,67,75,83,91,101; my recomputation.
+- F-04: json:49-53 (PRE-03), :221-234 (AC6 BLOCKED only); harness:258-268, :297; P02.md:110.
+- F-05: json:5-11 (provenance, source_head=972049f9), :308-310 (per-scenario source_head), env-report:26-32 (head/tree/is_clean/porcelain), handoff:11-15 (base_commit + reviewed_head_r1, no r2 head/tree).
+- F-06: harness:124 (exit_code: int|None), :306, :371 (Exit: null), :383-388 (main returns 0/1); run-webview:39-65 (Execute-Step + exit propagation), :19-37 (log header); probe-execution.log:1-67.
+- F-07: RESUME:3-29 (new checkpoint).
+- F-08: harness:51-55 (hex_to_rgb), :58-68 (blend_alpha), :71-93, :96-108 (self test); residual :242 hard-coded live bg.
+- F-09: env probe:59-85 (GUID), :103-110 (npm), :129 (GUID branch), :173/194 (LF writes); residual harness:203-216 double-run; dead `import os` :11.
+- F-10: fixture:31-140 (pages/regions), :141-218 (post_write), :1 (no $schema); verified enums via types.ts:14-21, :33, :37, and wire fields :59-66, :94-105; client.ts:110-120, :165-173; WorkbenchPage.tsx:684.
+- F-11: ts:39-45; json layer values.
+- F-12: P02.md:66-83, :105-119.
+
+Good. Now write it.
+
+For §7 AC table, keep as in r1 but updated for r2.
+
+Also I must give the "concise final verdict" at the end.
+
+One more consideration on G-03: the `git diff --check` claim. Actually, wait: the handoff says "所有变更/新生成文件统一转换为纯 LF 并去除行尾空格，`git diff --check` 返回 `EXIT=0`". The r1 review's F-06 cited Q-009 requiring run logs with EXIT and shell header. The whitespace claim has no log → same class. But is the claim even true? I verified no CR in the r2 deliverables under verification/P02 (grep `\r$` → no matches) ✓ and no BOM in the log ✓. But `git diff --check` also flags trailing whitespace and conflict markers. I could grep for trailing spaces (` $`) in the r2 files. Let me not — I already ran a grep for `\r$`. Hmm, trailing spaces (without CR) would still fail diff --check. Should I check? It's one grep: pattern ` +$` on the r2 deliverables. That would strengthen G-03 (either confirming clean or finding residual trailing whitespace). Worth it — it's cheap and directly tests a claimed-but-unevidenced assertion. Let me do that grep with include for the r2 files, path verification/P02 (may hit historical files with trailing spaces, so I'll restrict include to the specific names? The include glob is one pattern; I could use `{workbench_cdp_harness.py,env_identity_probe.py,static_control_probe.py,run-webview.ps1,p02-harness-results.json,p02-harness-results.txt,env-identity-report.json,env-identity-report.txt,static-control-report.json,static-control-report.txt,probe-execution.log,workbench_synthetic_data.json}` — braces with multiple names should work as a glob. Hmm, the include filter is "One glob filter" — a brace expansion of filenames should be acceptable. But the files live in different subdirs; the glob matches basenames at any depth per the doc. Let me try: include = `{workbench_cdp_harness.py,env_identity_probe.py,static_control_probe.py,run-webview.ps1,p02-harness-results.*,env-identity-report.*,static-control-report.*,probe-execution.log,workbench_synthetic_data.json}`.
+
+Also need the TS file (outside verification/P02) — separate path. Skip or do one more grep on the e2e file.
+
+Let me do one grep for trailing whitespace on those files. If clean → G-03 narrows to "claim lacks an artifact; generator emits CRLF" (the latter uncertain). If dirty → a stronger finding.
+
+Let me run it.
+dsh: reasoning:
+No trailing whitespace in the r2 verification deliverables (and the TS file wasn't matched since it's outside the path — the include filter applies within the given path, so the TS under apps/... wasn't searched). Let me quickly check the TS file for trailing whitespace too. Actually, one grep on the TS file path. Cheap. Let me do it and then write the review.
+
+Actually, I can combine: grep path = the e2e dir, include = workbench_driver_protocol.ts, pattern `[ \t]+$`. One call. Let me also use it to check the docs (handoff/P02.md)? Those are in doc/; separate path. Hmm, `git diff --check` covers all changed paths including docs. I could grep doc/handoffs + doc/tasks. Let me do two greps in one block: e2e TS, and doc/{handoffs,tasks}. Path can only be one dir per call, so: path=apps/desktop/frontend/e2e and path=...\doc with include for the two md files (P02*.md pattern would catch tasks/P02.md and handoffs/P02-stage-a...). Pattern `[ \t]+$` on path=doc, include=`P02*.md` → matches any P02*.md at any depth under doc/ ✓.
+
+Let me do both greps, then write. This is the last verification step.
+dsh: reasoning:
+No trailing whitespace anywhere in the r2 changed files (verification/P02 deliverables, e2e TS, doc P02*.md) ✓. So the whitespace claim is *substantively* true (the LF + no-trailing-whitespace state holds in the delivered worktree bytes), only the *evidence* for `git diff --check EXIT=0` is missing (no artifact), and the reproducibility concern (PS 5.1 Set-Content/Add-Content emit CRLF → re-running the runner would regenerate probe-execution.log with CRLF) remains a declared uncertainty. So G-03 downgrades to: claim is verifiable-by-inspection and I confirm it holds in the delivered bytes, but no `git diff --check` artifact exists and the committed generator may reintroduce CRLF on a fresh run. That's a fair, precise P3.
+
+Hmm — actually since I verified the whitespace claim holds, maybe G-03 should be narrower: "no artifact for the diff-check claim; generator reproducibility unverified". Keep P3.
+
+Now I have everything. Let me write the final r2 Review in Chinese.
+
+Let me structure and be careful with the counts:
+
+Prior findings (F-01–F-12) dispositions:
+- F-01 (P1) → CLOSED
+- F-02 (P2) → CLOSED
+- F-03 (P2) → CLOSED
+- F-04 (P2) → CLOSED
+- F-05 (P2) → **STILL OPEN**
+- F-06 (P2) → CLOSED (残余：日志只记各步骤 EXIT，未记 runner 聚合退出码；`git diff --check` 无 artifact → 见 G-03)
+- F-07 (P2) → CLOSED
+- F-08 (P3) → **PARTIALLY CLOSED（仍开）**: live bg hard-coded
+- F-09 (P3) → **PARTIALLY CLOSED（仍开）**: static probe仍被跑两次；`import os` 死导入；handoff 断言"不重复调用静态探针"不成立
+- F-10 (P3) → CLOSED
+- F-11 (P3) → CLOSED
+- F-12 (P3) → CLOSED
+
+New findings (G-01–G-08):
+- G-01 (P2) false closure claim re: F-05 provenance/artifact hashes (handoff:32, RESUME:14)
+- G-02 (P3) env txt omits is_clean=false (JSON-only)
+- G-03 (P3) `git diff --check EXIT=0` no artifact; generator CRLF reproducibility unverified
+- G-04 (P3) P02.md:78 command (-ProbeOnly) vs log (Step 3) mismatch
+- G-05 (P3) PRE-03 threshold semantics (ink_2/ink_3 min_required 3.0 vs AC6 4.5 text; live palette uniform 3.0 incl. text; bg-vs-bg pairs)
+- G-06 (P3) "with alpha blending" overstates coverage (blend_alpha never exercised on real tokens; no *-soft composites; 5/42 tokens, dark only)
+- G-07 (P3) fixture revisions[] missing 4/10 RevisionSummary fields
+- G-08 (P3) harness:242 hard-coded live palette background (same root as F-08 residual) — hmm, this IS the F-08 residual. Making it both F-08-residual and G-08 double counts. Let me fold G-08 into F-08's residual and drop it as a separate new finding. Then new findings = G-01..G-07 (7 items).
+
+Counts:
+- Closed: 9 (F-01,02,03,04,06,07,10,11,12)
+- Partially closed / still open: F-05 (P2), F-08 (P3), F-09 (P3)
+- New: G-01 (P2), G-02..G-07 (P3 ×6)
+
+Totals: P0 = 0, P1 = 0, P2 = 2 (F-05, G-01), P3 = 9 (F-08, F-09, G-02, G-03, G-04, G-05, G-06, G-07 = 8). 
+
+Hmm: F-08, F-09 = 2, plus G-02..G-07 = 6 → 8 P3. Let me recount: F-08, F-09, G-02, G-03, G-04, G-05, G-06, G-07 → that's 8. So P3 = 8, not 9. Total open = 2 + 8 = 10.
+
+Decision: changes_requested (F-05 open P2: evidence does not bind to the reviewed revision; G-01 open P2: false closure claim in a frozen handoff/RESUME; plus 8 P3). No P0/P1 → I must state explicitly that the hard gate (P0/P1) is now clear, and justify changes_requested on the grounds that AC7 (the slice's own evidence AC) is still unmet and the closure table misstates what was recorded. I'll be explicit and transparent about that judgment, and note the alternative reading (approve with conditions) so Codex can overrule.
+
+Hmm, this is important: should I instead use `approved_with_conditions`? Let me think about which is more defensible given the user's framing: they ask me to "Reconcile each prior finding F-01–F-12 individually against the changed code and evidence; do not accept the Owner's closure table without checking the hunk." and point 1 asks me to "Decide whether the report identifies the actual tested bytes and binds them to the r2 delivery without a self-reference cycle."
+
+If my answer to point 1 is "no", then the slice's central deliverable (evidence) still fails AC7 → changes_requested is coherent. Also F-05 was P2, and the template gate is only P0/P1 — but the template also says "关键验证缺失时不可批准" (cannot approve when key verification is missing). AC7's evidence binding is arguably a key verification for a verification task. I'll cite that clause to justify changes_requested. Good — that's grounded in the repo template (line 17/53).
+
+So: decision = changes_requested, with the explicit note that P0=0/P1=0 and that the block rests on `关键验证缺失/证据不可绑定` (AC7) rather than on a P1.
+
+Now write. I'll keep the per-finding detail reasonably tight but complete (user wants exact evidence per finding).
+
+Also §6 should record the independent recomputation results (strong evidence): all 5 F-token ratios and all 6 live-palette ratios reproduce from the committed fixture+algorithm; WCAG math verified; falsified/verified items listed.
+
+Also record verification NOT performed: no git/diff/hash/re-run; tree 7fe67d0f unverified; scope SHA unverified; `git diff --check` not run by me (I inspected bytes instead); no full base↔head tree comparison re-done for r2 (relied on r2 porcelain + r1's base-side comparisons + spot checks).
+
+Let me write the final answer now. It'll be long; that's appropriate for an archival Review.
+
+One more detail for accuracy: the r2 commit message "fix(P02): address DSH Stage A review findings and whitespace diagnostics (r2)" and reflog epoch 1791529598 = 2026-10-09T07:06:38Z = 15:06:38+08. Scoreboard: probe run 15:03:12–13, commit 15:06:38. ✓
+
+Also the handoff created_at 15:05:00+08 — between the run (15:03:13) and the commit (15:06:38) ✓ consistent.
+
+Let me write.

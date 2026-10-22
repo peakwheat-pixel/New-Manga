@@ -1,0 +1,76 @@
+{
+  "schema": "codex-review-input-pins/1",
+  "task": "P02PRE-R1G post-run evidence review",
+  "phase": "pre-dispatch",
+  "reviewer": "/root/p02_r1g_verification_docs_review",
+  "candidateHead": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "mainHeadAtCapture": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+  "files": [
+    {
+      "path": "doc/tasks/P02PRE-R1G.md",
+      "bytes": 28569,
+      "sha256": "FA29CE9E42328425588494A100BA1ABD07D0EBB6ADD8508CAB7D26404A417B8A"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-manifest-20261011.md",
+      "bytes": 26657,
+      "sha256": "1111EB70AC8BCCA4A2D3C236E653553D6A52EA99F626670AE18D7FDDCDD430B8"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-capture.ps1",
+      "bytes": 81991,
+      "sha256": "3C7D85AB3E20C023873197FE391B8F22DFB319038F43B7C554DC4F38927AADDF"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-runner-evidence-20261011.json",
+      "bytes": 33238,
+      "sha256": "690BFB6072272D69B953B6CC01038402167230F676E64C11EC7447582945FE08"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-evidence-20261011.json",
+      "bytes": 9025567,
+      "sha256": "E3601767D19D70C19AF8168548A2B7D9894D4414532232F9493331966A7838EE"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-capture-20261011.stdout.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-capture-20261011.stderr.log",
+      "bytes": 398,
+      "sha256": "91C80EFC3E6BB2E443DEDAADE3C54E39BE090B603591B2CACBBD713085D762D7"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-capture-20261011.exit",
+      "bytes": 3,
+      "sha256": "F1B2F662800122BED0FF255693DF89C4487FBDCF453D3524A42D4EC20C3D9C04"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1g-review-followup3-20261012.md",
+      "bytes": 3900,
+      "sha256": "E528A6437F371247A18E8763D0D672C3423DB54653C6B8976D11BE52FFF9782F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1g-review-followup3-adjudication-20261012.md",
+      "bytes": 1817,
+      "sha256": "82FE9194E30CCE0BDE59B9BFD2E87E581B68ECBF1C8FB0250B591E0B07B69EE0"
+    },
+    {
+      "path": "verification/P02/codex-checkpoint-p02pre-r1g-20261012.md",
+      "bytes": 29023,
+      "sha256": "14B8B4AF2E6DFAA7F1E645117A7E617F74468F344C30068C0252A69A642F081D"
+    },
+    {
+      "path": "doc/templates/REVIEW.md",
+      "bytes": 3915,
+      "sha256": "048DD2C001BC16CE68B46460C2D23AA32BA1119091CA1E2ABA3EE4EE63ED4762"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1g-postrun-review-20261012.prompt.md",
+      "bytes": 4089,
+      "sha256": "32F320BDEF8685D76450652D401A36F0A038E216A1DCEE1E94578ECCBBCC2433"
+    }
+  ]
+}
+

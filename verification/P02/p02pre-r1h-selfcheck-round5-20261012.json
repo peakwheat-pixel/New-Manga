@@ -1,0 +1,125 @@
+{
+  "task": "P02PRE-R1H",
+  "phase": "ROUND5_SELF_CHECK_FAILED",
+  "result": "FAILED",
+  "host": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "edition": "Core",
+    "pid": 48356
+  },
+  "directParser": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "errorCount": 0,
+      "errors": []
+    }
+  ],
+  "execution": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "argumentList": [
+      "-NoLogo",
+      "-NoProfile",
+      "-NonInteractive",
+      "-File",
+      "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-selfcheck.ps1"
+    ],
+    "workingDirectory": "G:\\CODEX\\New Manga",
+    "pid": 48356,
+    "startedUtc": "2026-10-11T23:20:28.5763752Z",
+    "finishedUtc": "2026-10-11T23:20:29.2461689Z",
+    "exitCode": 1,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "raw": ""
+    },
+    "stderr": {
+      "bytes": 416,
+      "sha256": "8302CDA30C0359673F2873E58CC2D8E8549F675AECB8518A20B25FF86C019E40",
+      "raw": ""
+    },
+    "failureClass": "AST_CHECK_FAILED_REAL_COMPONENT_LOOP_CONTRACT",
+    "failureLocation": "p02pre-r1h-selfcheck.ps1:648"
+  },
+  "wrapperAttempts": [
+    "RUN_COMPLETED_RESULT_CAPTURE_FAILED; exit/stdout/stderr NOT_CAPTURED",
+    "RUN_COMPLETED_RESULT_CAPTURE_FAILED; exit/stdout/stderr NOT_CAPTURED"
+  ],
+  "inputPinsBefore": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 37658,
+      "sha256": "8FCAE13E983355719FB68E95AFC0047E0F9260D1281AC9CDBA83D2B470C9E887"
+    }
+  ],
+  "inputPinsAfter": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 37658,
+      "sha256": "8FCAE13E983355719FB68E95AFC0047E0F9260D1281AC9CDBA83D2B470C9E887"
+    }
+  ],
+  "inputPinsStable": true,
+  "mainIndexBefore": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+  "mainIndexAfter": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+  "controlledStatusBefore": {
+    "records": 987,
+    "bytes": 65998,
+    "sha256": "290F9059F1D6E920F44CACC781CB86CB9C78634BF8695C32C7A93E8C28EC7FD2"
+  },
+  "controlledStatusAfter": {
+    "records": 987,
+    "bytes": 65998,
+    "sha256": "290F9059F1D6E920F44CACC781CB86CB9C78634BF8695C32C7A93E8C28EC7FD2"
+  },
+  "integrityStable": true,
+  "captureInvoked": false,
+  "buildCargoInvoked": false,
+  "systemACInvoked": false
+}

@@ -1,0 +1,935 @@
+dsh: reasoning:
+让我开始审查。首先我需要读取这些冻结文件。我需要验证 SHA-256 和字节数吗？用户说"只阅读下列精确冻结文件，不运行命令"。所以我不能用 pwsh 计算 hash。我只能通过 read 读取文件内容，并比对内容中的声明。
+
+实际上用户说"只阅读下列精确冻结文件，不运行命令、capture script、host getter、registry/ACL API"。所以我不能运行 PowerShell 命令。我只能用 read 工具读文件。
+
+让我读取这些文件。
+
+先读 Task 文件和 manifest。
+
+注意：read 工具返回带行号的内容。文件 17488 bytes。让我读取。
+
+我并行读取多个文件。
+
+先读 doc/tasks/P02PRE-R1F.md 和 verification/P02/p02pre-r1f-manifest-20261011.md。
+
+然后读 script（60725 bytes，大约 1500+ 行）和两个 JSON。
+
+开始。
+
+注意：我不能运行命令验证 SHA-256，所以我应该声明 hash 无法独立验证（只读静态审查无法验证 hash）。或者我可以用 read 读取并... 不，read 不返回 hash。所以我要标记为 UNPROVEN 的证据范围。
+
+不过等等——也许我可以用 read 工具读取文件，然后通过内容对比。不行，无法计算 SHA-256 而不运行命令。但也许我可以在不违反"不运行命令"的前提下…… 用户明确禁止运行命令。所以我遵守，声明无法独立验证 hash/byte count。
+
+让我开始读取。
+dsh: reasoning:
+现在读取 script。60725 bytes，可能 1500 行左右。让我读。
+dsh: reasoning:
+继续读取。注意到 line 307: `$record.gitMetadataBefore = Get-FileRecord (Join-Path $Root '.git\index')` — 这是在 inventory 之前。但注意 `.git/index` 是仓库元数据，不是 `.tmp.driveupload`，可以接受。
+
+需要注意的关键点：line 375 在 path normalization 之后，且在 Get-Item 之前。看起来符合。但需要检查顺序：`Test-UnreadUserDataStagingPath` 在 `$full.StartsWith($rootFull)` 检查之后。Task 要求 "先 normalize path 并验证仍在 repo root 内，然后如果恰好是 .tmp.driveupload 或后代则排除"。符合。
+
+但注意 line 373-374 的边界检查是 `$full.StartsWith($rootFull, OrdinalIgnoreCase)`。而 `$currentRelativePath` 用作 blocking path。潜在问题：`Join-Path $Root $relative` 之后 `GetFullPath`，如果 `$relative` 是绝对路径（例如 Git 输出的路径以 `/` 开头，或 `C:/...`），则 Join-Path 会……实际上 PowerShell 的 Join-Path 对以 `\` 或 `/` 开头的第二参数会拼接，但对于 `C:\...` 这种绝对路径，Join-Path 会拒绝吗？在 PS 5.1 中，Join-Path -Path 'C:\a' -ChildPath 'C:\b' 会报错？实际上 Join-Path 在 PS 5.1 中允许 childPath 为绝对路径，会直接返回 childPath? 让我想。PowerShell Join-Path: "If the ChildPath parameter specifies an absolute path, Join-Path ... " 在 PS 6+ 中 -Resolve 之类。我记忆中 PS 5.1 的 Join-Path 会直接把两者拼起来：Join-Path 'C:\a' 'C:\b' 返回 'C:\a\C:\b'？实际上不是。让我回忆：Join-Path "C:\win*" "System*" 返回 C:\win*\System*。对于 child 是绝对路径的情况，PS 5.1 中会返回 child 本身吗？我认为在 PowerShell 5.1，Join-Path -Path 'C:\a' -ChildPath 'C:\b' 返回 'C:\a\C:\b'，这是无效路径，然后 GetFullPath 会抛异常…… 实际上 GetFullPath('C:\a\C:\b') 会正常返回 'C:\a\C:\b'（中间冒号只在驱动器位置合法）。嗯，这可能绕过边界检查吗？不，因为 StartsWith($rootFull) 仍然需要。
+
+关键安全性质：如果 Git 返回的 path 是绝对路径如 `C:\Windows\...`，则 `Join-Path $Root $relative`：
+- PS 5.1 中，Join-Path 的实现使用 `Path.Combine`? 不，它用的逻辑是拼接。事实上 PowerShell 的 Join-Path 在 PS Core 6.0+ 对 rooted child path 会直接返回 childPath（有个 -Resolve 差异）。在 PS 5.1 里我记得行为是：如果 childPath 是 rooted，则 Join-Path 忽略 parent 并返回 childPath。是的！我比较确定 PS 5.1 的 Join-Path 使用 `[System.IO.Path]::Combine`？Path.Combine('C:\a','C:\b') 返回 'C:\b'（.NET Framework 的 Path.Combine 在第二参数为 rooted 时返回第二参数，会丢弃第一参数）。所以 Join-Path 会返回 'C:\b'。然后 GetFullPath => 'C:\b'，StartsWith('G:\CODEX\New Manga\') = false → throw，fail-stop。所以边界检查会捕获。好。
+
+但如果 Git 返回 path 带前导 `\` 如 `\Windows\x`？Path.Combine('C:\a', '\Windows\x') 在 .NET Framework 返回 '\Windows\x'？实际上 Path.Combine 在第二参数以 '\' 开头但不是完整限定（无驱动器）时…… .NET Framework 的 Path.Combine: "If path2 includes a root, path2 is returned." 对于 '\Windows\x'，IsPathRooted 返回 true，所以返回 '\Windows\x'。GetFullPath('\Windows\x') 会解析为当前驱动器根（如 G:\Windows\x），StartsWith 失败 → throw。好。
+
+而 `.tmp.driveupload` 排除在边界检查之后，所以绝对路径不会误判为排除项。好。
+
+还有一个细节：StartsWith OrdinalIgnoreCase 的边界。`$rootFull` 带尾随 `\`。所以 `G:\CODEX\New MangaXYZ\...` 不会误通过。好。
+
+但注意：大小写不敏感的比较可能允许 `g:\codex\new manga\` 内的路径通过——这是同一目录，Windows 语义，可接受。
+
+另一个问题：line 374 的检查允许 `$full` 等于 `$rootFull`（去掉尾随 `\`）？`$full` 是 GetFullPath 的结果，没有尾随 `\`（除非是根）。对于 relative='.' 之类。不相关。
+
+现在关键点：Test-UnreadUserDataStagingPath 使用前缀 `.tmp.driveupload/` 和 `.tmp.driveupload\`。Git 输出的 path 使用 `/` 分隔符。所以 `.tmp.driveupload/x` 匹配。若某条 path 恰好是 `.tmp.driveupload` 本身，Equals 匹配。好。
+
+但是：如果 Git 返回的 path 是 `.tmp.driveupload//foo` 或 `./.tmp.driveupload/x` 呢？Git ls-files 输出通常规范化。但攻击面：如果 path 为 `.tmp.driveupload/.` 或 `.tmp.driveupload/../other`？由于这里的判断只用于排除，前缀匹配失败则会被纳入 inventory 并 hash——但那仍然在 repo root 内（边界检查通过），所以最多是 hash 一个不算用户暂存的仓库内文件。真正的风险是：一个实际位于 `.tmp.driveupload` 下的文件以不匹配前缀的形式出现，从而被 hash → 读取用户数据。例如 Git 输出 `.tmp.driveupload` 下路径时会不会有别的前缀形式？比如尾随空格？或 Windows 上 Git 用 `/`。假设仓库中真实目录名为 `.tmp.driveupload`（小写），Git 保留原样。大小写由 OrdinalIgnoreCase 覆盖。所以 `.TMP.DriveUpload/x` 匹配。
+
+那么未覆盖的形式：`.tmp.driveupload` 后跟非 `/` 或 `\`，比如 `.tmp.driveupload-x/y`（不同目录名）——这本身不是该子树，正确不排除。还有 `.tmp.driveupload/x` 之前有多余的 `./` 前缀：Git 不会输出。所以我认为路径分类足够。
+
+不过还有一个潜在规避：Windows 的路径规范化，例如路径组件以尾随点或空格结尾：`.tmp.driveupload.` 或 `.tmp.driveupload `。Windows 的 Win32 API 会剥离尾随点和空格，因此 `.tmp.driveupload.` 实际指向 `.tmp.driveupload` 目录！但 Git 的 ls-files 是否会输出这样的路径？只有仓库里真有这样一个条目（如果它在 index 里）。Git for Windows 有 core.protectNTFS 与路径检查，通常拒绝这类名称（NTFS 危险路径）。但注意 Git 输出的是 index 中的字面路径；如果 index 中有一条 `.tmp.driveupload./x`（Git for Windows 默认 core.protectNTFS=true 会拒绝 checkout 但 index 条目可能来自其他平台）。那么在 Get-Item 时 Win32 会把它当作 `.tmp.driveupload\x`，读取到用户暂存数据——而路径分类因前缀不匹配（`.tmp.driveupload./x` 不以 `.tmp.driveupload/` 开头）未排除 → hash 用户数据！这是一个真实的边界绕过。不过：Git 的 `ls-files` 输出这种条目，需要 index 中存在该名称。是否可能？Git for Windows 会阻止添加吗？`core.protectNTFS` 默认 true，它会阻止 checkout 和 add 落入 NTFS 名称（如 `.git.`）但 `.tmp.driveupload.` 不是保留名，protectNTFS 针对的是 8.3 短名、尾随点/空格? 实际上 Git for Windows 有 `core.protectNTFS`（防止 NTFS 特殊文件）和 mingw 层的路径处理。在 Windows 上 add 一个目录 `.tmp.driveupload.` 需要 Get-Item 能打到它，而 Win32 会规范化到 `.tmp.driveupload`，所以实际上你在磁盘上无法区分。也就是说在 Windows 上创建 `.tmp.driveupload.` 目录实际会创建/访问 `.tmp.driveupload`。因此 index 中可能（通过跨平台或 --path 添加）存在 `.tmp.driveupload./x` 条目，它指向真实的用户暂存文件。
+
+严重程度：这是 P2/P3 级别的理论边界问题？考虑到目标是"不读取用户上传暂存数据"，这是 exclusion 绕过的可能途径。但需要 index 中存在尾随点/空格的路径，这需要构造。Git for Windows 是否会在 `ls-files` 中输出？如果 index 有该条目，会。现实中 `.tmp.driveupload` 由某个 sync 客户端创建，其 index 条目由 Git for Windows 添加，所以路径是规范的 `.tmp.driveupload/xxx`。风险很低，但作为 reviewer 我应该指出，并给最小修复：在排除判断前对相对路径逐段应用 Windows 尾随点/空格规范化，或对每段执行等价于 Win32 规范化的比较，或在匹配失败时若规范化后落在子树内则 fail-stop。
+
+不过要小心：我不能过度声称 ! 让我实际验证 Git for Windows 行为？我不能运行命令。所以我应标为 UNPROVEN 的静态推论，等级 P3 或 P2，并说明这是需要 Codex adjudication 的理论路径。
+
+嗯，但用户特别要求审查 "path separator、大小写和路径形式"，所以这个点正是要审的。
+
+另外还有一个更明显的点：排除判断用的是 `$relative`（Git 输出原样），而实际的 filesystem 访问用的是 `Join-Path $Root $relative` + Get-Item。两者语义差异即上述。另一个差异：Git 路径中的 `/` 与 `\` 都处理了。
+
+再看 `$relative` 为 `.tmp.driveupload/..` 之类：`Join-Path` → `G:\CODEX\New Manga\.tmp.driveupload\..` → GetFullPath → `G:\CODEX\New Manga`，StartsWith 通过（等于 rootFull 去掉 `\`？`$full` = 'G:\CODEX\New Manga'，`$rootFull` = 'G:\CODEX\New Manga\'，StartsWith false → throw）。好。
+
+现在继续读脚本剩余部分。还要读两个 self-check JSON。
+
+需要检查：
+- line 108 函数用 `$RelativePath.Equals(...)` — 若 `$RelativePath` 为 $null 会 NRE；但 Git path 解析丢弃空项，所以不会 null。OK。
+- Get-InventoryAction 的参数传递：line 393 `Get-InventoryAction $gitMode $reparse $isLeaf ([bool]$item.PSIsContainer)`。若 `$gitMode` 为 `$null`，位置参数绑定到 [string] 类型参数时 null 会转成空字符串？在 PowerShell 中，把 $null 传给 [string] 参数会得到 ''（空字符串），而不是 $null！那么 line 118 `$null -ne $GitMode` 恒为 true（因为 GitMode 是 ''，不是 $null），然后 `''-notin @('100644','100755')` 为 true → 返回 'STOP'。
+
+等一下：Get-InventoryAction 的签名是 `[string]$GitMode`。传 $null 时，PowerShell 参数绑定会把 $null 转为 [string]::Empty？对强类型为 [string] 的参数，$null 会被转换成空字符串 ''。是的，这是 PowerShell 的已知行为（[string]$x = $null → ''）。所以 line 118 的 `$null -ne $GitMode` 检查永远成立，untracked 文件（不在 index 中，例如 `--others` 的未跟踪文件）会得到 GitMode='' → 返回 'STOP' → fail-stop！
+
+等等，这很重要。`ls-files --cached --others --exclude-standard -z` 会包含未跟踪文件（--others）。这些文件不在 `ls-files --stage` 输出中，所以 `$indexModes.ContainsKey($relative)` 为 false → `$gitMode = $null`。然后 line 393 调用 Get-InventoryAction，`$gitMode` 被绑成 ''。自检里 line 125 测的是 `(Get-InventoryAction $null $true $true $false)` — 这里也把 $null 传进去，同样会变成 ''。line 125 断言返回 'STOP' → 通过（因为 '' 不在允许列表）。所以自检与实现一致，但语义上：对于普通未跟踪 regular file（常见！工作树 dirty，有未提交内容），line 392-393 会给 action 'STOP' → line 402 throw → repository stop！
+
+嗯，等一下。未跟踪文件（untracked, not ignored）在 `ls-files --cached --others --exclude-standard` 中确实会出现。Task 说 Git inventory 用该命令，并且"仅允许 regular-file mode=100644/100755"，untracked 文件没有 index mode。那脚本会 fail-stop 吗？
+
+再看 manifest line 37: "若仅 leaf 同时满足 Git index mode=120000 且 Get-Item 返回 leaf attribute 含 ReparsePoint..."；line 38: "mode=120000 但 leaf 非 ReparsePoint、reparse leaf mode 不等于 120000、untracked reparse、reparse parent、directory、mode=160000 submodule 或其它非 regular Git mode（仅允许 regular-file mode=100644/100755）、路径越界、query/hash异常，均 fail-stop。"
+
+"untracked reparse" 是指未跟踪的 reparse point。那么未跟踪的普通 regular file 呢？它不是 reparse，也没有 mode。按 line 117-118 的实现，mode 未提供 → STOP。而 manifest 说仅允许 regular-file mode=100644/100755 —— 未跟踪文件没有 mode，所以严格按字面会被 fail-stop。但这样 capture 几乎必然失败，因为工作树 dirty 且有未跟踪文件（Task 说"当前工作树 dirty，既有未提交内容保持不变"）。
+
+这可能是真实缺陷：对未跟踪普通文件缺少处理路径。但也可能设计上就是：任何 untracked 文件都 fail-stop，因为 untracked 的 inventory 无法证明。
+
+嗯，但要小心。R1 的原始 manifest (p02pre-r1-manifest) 可能定义了 inventory 语义。我不能读？我可以读——它在冻结输入列表之外，但用户说"只阅读下列精确冻结文件"。严格来说，我只能读列出的文件。不要越界。虽然 R1 manifest 被引用，但用户明确限定了读取范围。我应遵守，并在 UNPROVEN 处说明。
+
+不过，line 118 的 `$null -ne $GitMode` 在 GitMode 是 [string] 类型参数时实际上是死代码/永真。这是一个代码质量问题，说明作者可能期望 $null 能传进去。而自检 line 125 的注释说 "untracked reparse leaf must stop"，意图是 untracked（无 index mode）→ STOP。所以这是有意的：无 index mode 即 STOP。那对于未跟踪的普通 regular file 也是 STOP，因为无法区分？不，line 117 先检查 reparse，若 untracked regular file 则不是 reparse，也不是 container，mode='' → 返回 STOP。所以任何未跟踪文件都会导致整个 capture fail-stop。
+
+这可能是重大缺陷（P1）：capture 在 dirty 工作树上必然 fail-stop，从而 `repositoryProtectedInventory` 无法得到，Task 的实际目标（完整宿主机取证）无法达成。但反过来，也可以论证这是"安全优先"的保守行为，且 Task 说 "任何 mismatch/error/未知访问或写入均保留原始 partial evidence 并停止"。谁对？看 manifest line 39: "正常 `processedCount=regularFileHashCount+skippedSymlinkCount+unreadUserDataCount`"。并且 line 42: "只有两个仓 inventory 查询完整、无 skip link、无 user-data exclusion，才可将该项记 PASS_WITH_EVIDENCE"。
+
+再想：repositoryProtectedInventory 的目的是对受保护文件集合（Git 管理的文件）做 hash 证明。未跟踪文件不属于"受保护库存"？但 inventory 用 `--cached --others`，明确包含 untracked。若设计要包含 untracked 并 hash 它们，则需要处理无 mode 情况。line 402 对无 mode 的 untracked regular file 抛 STOP，这会让 capture 在第一次遇到未跟踪文件时停止。
+
+考虑到工作树 dirty（"既有未提交内容保持不变"），几乎肯定有未跟踪文件（例如 verification/P02 下的新 artifact 都是未跟踪的！`p02pre-r1f-capture.ps1`、manifest、self-check JSON 等 —— 若未提交，它们是 untracked）。所以 capture 一定会 STOP。这似乎是一个实质缺陷。
+
+但等等——line 392 中 `$gitMode` 为 $null 时会不会真的变 ''？让我再确认 PowerShell 语义。
+
+```powershell
+function f([string]$s) { if ($null -eq $s) { 'null' } else { "non-null: '$s'" } }
+f $null
+```
+在 PowerShell 中，`[string]$s` 参数，传入 $null：参数绑定器会将其转换为 $null 还是 ''？我记得 `[string]$x = $null` 结果是 $null 还是 ''？在 PowerShell 中：
+```
+PS> [string]$x = $null
+PS> $null -eq $x
+True
+```
+嗯，实际上我记得 `[string]$x = $null` 得到 $null？让我想。PowerShell 的 `[string]` 转换：`[string]$null` 是 ''（空字符串）。但变量赋值时的类型约束转换：`[string]$x = $null` → 我认为结果是 $null，因为 PowerShell 对 $null 的赋值会保留 $null，除非有 explicit cast？实际测试记忆：`[string]$x = $null; $x -eq ''` → True。我比较确定 PowerShell 将 $null 转成 [string] 时返回空字符串。LanguagePrimitives.ConvertTo($null, [string]) 返回 ''? 文档说：`[string]$null` 是 ''。是的，`[string]$null` 产生空字符串。而 `$null -eq [string]$null` → False，`'' -eq [string]$null` → True。
+
+对于函数参数绑定，同样会调用转换。所以 `f $null` 中 $s = ''。嗯，但是实际上我记得有个细节：PowerShell 参数绑定对 $null 传给 [string] 类型参数确实转换为 ''。是的，例如 `function g([string]$p){$p.GetType().Name}; g $null` → String，值为空。
+
+不过我要谨慎：也有说法是 PowerShell 对函数参数 $null → [string] 会保留 $null 直到被使用时转换。不管怎样，`$null -ne $GitMode` 的结果取决于 $GitMode 是否为 $null。若绑定保留 $null，则 line 118 为 false，跳过，然后返回 'HASH_REGULAR_FILE'（对 untracked regular file）。若绑定转 ''，则返回 'STOP'。
+
+这个差异决定 capture 是否会因 untracked 文件 fail-stop。我不能运行命令来验证（用户禁止）。但我可以静态推理：PowerShell 语言规范中，参数绑定到 [string] 类型参数时，$null 会被转换成 [string]::Empty。实际上我相当确信：在 PowerShell 中，`function t([string]$s) { $s -eq $null }` → `t $null` 返回 False。因为 [string] 的类型转换将 $null 变 ''。
+
+嗯，我需要更确定。想一想常见现象：`function foo([string]$bar) { $null -eq $bar }`，很多人发现传入 $null 后 $bar 是 ''。是的，这是 PowerShell 的已知陷阱（"$null becomes empty string for [string] parameters"）。我采用这个结论，但把它标为需要 Codex 用实际 PS 5.1 验证的点（UNPROVEN 部分）。因为在 self-check 中 line 125 用 $null 传入并断言 STOP，而 self-check 在实际 PS 5.1 中 PASS（据 self-check artifact），这本身就证明：在该环境下 `Get-InventoryAction $null ...` 返回了 'STOP'。等等！这非常关键。
+
+line 125: `if ((Get-InventoryAction $null $true $true $false) -ne 'STOP') { throw ... }`。self-check 报告 PASS。所以在此环境（PS 5.1.26100.9549）中，传入 $null 确实返回 'STOP'。可能是因为绑定转 ''（则 line 118 触发 STOP），也可能是因为 line 116/117 先触发。line 125 的参数：GitMode=null, IsReparsePoint=$true, IsLeaf=$true, IsContainer=$false。line 116: leaf & mode -eq '120000'? mode 若是 ''，则不成立。line 117: IsReparsePoint=true → STOP。啊！line 125 的样例 IsReparsePoint=$true，所以 line 117 就 STOP 了，根本到不了 line 118。所以 self-check PASS 无法区分 line 118 的行为。
+
+同样 line 126: Get-InventoryAction '120000' $false $true $false → line 116 需要 reparse true，不成立；line 117: mode -eq '120000' → STOP。也测不到 line 118。
+
+而 line 128: Get-InventoryAction '100644' $false $true $false → HASH_REGULAR_FILE，中间没有 null 情形。所以 self-check 根本没有覆盖"index 中缺失 mode（untracked）的 regular file"这一情形。这是一个 self-check 覆盖缺口 + 潜在行为分歧（P1）。
+
+好，这是一个重要发现的候选。我需要确定它是否真会导致 fail-stop 或 hash。两种情况下行为差异：
+- 若 $null 被转成 ''：untracked regular file（不可忽略）→ STOP → capture 停止。以 dirty 树（很可能有 untracked 文件）→ capture 不能完成。这是 P1（Task 目标不可达 / 自检未覆盖）。
+- 若 $null 保留：untracked regular file → HASH_REGULAR_FILE → 被 hash（可接受？manifest 未明确 untracked regular file 应 hash 还是 stop；但 line 38 说仅允许 mode=100644/100755，未跟踪文件无 mode，字面上应 fail-stop；且 hash untracked 文件可能读取用户未跟踪内容——虽然不含 .tmp.driveupload）。
+
+无论哪种，都构成与 manifest 的语义不一致或未证明的分歧。而且 Task AC line 48 说 "Strict UTF-8 与 NUL/结构解析失败须落入显式 repository stop state" 等，未提 untracked regular file。
+
+我应把它列为 P1 finding，写明两种绑定后果，并给出最小修复：显式处理 `$indexModes.ContainsKey()` 为 false 的情形（例如独立参数 `[bool]$HasIndexMode` 或传空串并在函数内用 `[string]::IsNullOrEmpty` 判断），并在 self-check 中加入 untracked（无 index mode）regular file 的断言，明确其预期动作。
+
+这个非常符合用户要求的"计数分类不实 / 边界绕过"。
+
+继续读剩余脚本，看 line 450+ 的内容，尤其是 main 流程、CreateNew 写入、命令记录、JSON 输出。
+
+另外，line 185-187 self-check 中 `$parsedModes.modes['symbolic-link']` —— 用的是 Dictionary 索引器，PS 中 `$dict['key']` 可以。OK。
+
+line 153: `if ($emptyCount -ne 1 -or $segments[-1].Length -ne 0 -or $nulCount -ne $paths.Count)`。对于 "alpha\0beta\0"：segments = alpha,beta,'' → emptyCount=1, last='' length 0, nulCount=2, paths.Count=2 → OK。但注意：若某个 path 本身为空字符串（内部空路径，如 "a\0\0b\0"），segments = a,'',b,'' → emptyCount=2 → throw。好，符合 manifest "内部空路径...必须停止"。
+
+但有个漏洞：如果路径本身包含 NUL？不可能（Git 用 NUL 分隔）。
+
+还有 line 153 的 `$segments[-1]` 在 $segments 只有一个元素时？decoded 非空且无 NUL → segments=['x']，emptyCount=0 → 第一个条件就 true → throw。OK。
+
+现在继续读。
+dsh: reasoning:
+还需要看 line 639 被截断的部分（protectedHashes 列表第一段）。读取 line 635-645 的完整内容。read 工具会截断超长行。我用 grep 或分段读。也许 read 时该行被截断到 2000 字符。我需要看完整列表吗？它对判断有帮助（哪些路径被纳入 protected hash）。line 642-662 有第二部分。截断的部分我可以通过 grep 查找特定内容，但难以获得整行。
+
+我可以尝试用 grep 搜 pattern 来获取，但同样会截断吗？grep 返回匹配行，可能也截断。也许可以用 read 但 offset 精确到那一行——依然截断。
+
+我可以接受这个限制，并在证据范围中说明：line 639 超长列表被读取工具截断为 2000 字符，无法完整核对 protected-hash 清单的全部条目（UNPROVEN 的部分）。
+
+不过也许我可以用不同的方法：比如读取文件时用 grep 搜索 "dsh-p02pre-r1f-review" 等，看是否能把整行输出。grep 输出通常也限制行长度。试试看。
+
+现在继续关键分析。
+
+先看几个重点：
+
+**A. 未跟踪文件的 index mode 缺失（line 392-393, 117-118）**
+
+前面分析了。补充：`Get-InventoryAction` 的 `$GitMode` 是 `[string]` 参数，`$null` 会变成 `''`（PowerShell 类型转换）。所以 untracked regular file（无 index mode）→ 返回 'STOP' → line 402 throw → `Set-RepositoryStop 'PROTECTED_HASH_FAILED'`... 实际上 catch 在 line 413，state='PROTECTED_HASH_FAILED'，operation='Get-Item path component'，blockingPath=该相对路径。
+
+关键：主仓 worktree dirty 且有未提交/未跟踪文件（Task 说"当前工作树 dirty"）。例如 `verification/P02/p02pre-r1f-*.json`（新生成的自检、parser artifact）若未提交，就是 untracked → Git inventory 包含它们（--others --exclude-standard）→ `$indexModes` 无该键 → STOP。
+
+这几乎肯定导致 main repo 在第一个 untracked 文件处停止 → `repositoryProtectedInventory='FAILED'`，capture 记录 QUERY_ERROR... 实际上 stopReason='MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED'。
+
+这是不是一个 bug 或有意？manifest line 38 说 "其它非 regular Git mode（仅允许 regular-file mode=100644/100755）...均 fail-stop"。所以如果 index 中没有 mode（untracked），按此文字也必须 fail-stop？"仅允许 regular-file mode=100644/100755" 意味着只允许这两个 mode；untracked 没有 mode，所以 fail-stop。但 line 37 说 "Git inventory reports 2,148 candidate paths under root-relative `.tmp.driveupload/`"——这些候选来自 `--others`（未跟踪！暂存上传文件通常 untracked）。所以 `.tmp.driveupload` 下的 2148 个候选几乎肯定是 untracked 文件。这些路径在 line 375 就被 `Test-UnreadUserDataStagingPath` 排除，不会走到 mode 检查。所以排除机制掩盖了 untracked 的 mode 缺失问题。
+
+但排除之外，正常项目里的 untracked 文件（比如新写的 verification artifact、doc 更新）会触发 STOP。这可以说是 fail-stop 设计（保守），但它与"完整宿主取证"目标冲突，并且 Task 并未说明 capture 预期在 dirty worktree 上成功。Task line 31 说 "当前工作树 dirty，既有未提交内容保持不变"。而 AC line 46 要求"运行前重新核对...pre-hash/status"。如果 status 非空也无所谓（status 只是记录）。
+
+所以这是一个真正的可复现缺陷：只要 main 仓存在任何未跟踪（且未被 .gitignore 忽略）的文件，capture 就会在 protected hash 阶段 fail-stop，无法产生完整 evidence。这点应该是 P1：使 Task 预期的一次 capture 无法达成 CAPTURED 状态，并且 self-check 未覆盖 untracked regular file 的决策。
+
+需要谨慎：也许作者意图就是 untracked 也应该 hash（它们属于"受保护库存"？）。但 line 118 的 `$null -ne $GitMode` 表明作者认为可以区分 $null（untracked）与具体 mode，并期望 untracked → STOP（self-check line 125 注释 "untracked reparse leaf must stop"）。而实际上 `$null -ne $GitMode` 永远为真（因为 [string] 强制转换），所以对于任何 mode 不在 {100644,100755} 的路径都 STOP。包括 untracked regular file。这与作者可能想表达的"untracked reparse → STOP；untracked regular → hash?"不一致？作者 self-check 中没有 untracked regular 断言，说明作者没考虑到。所以这是缺陷：需要明确 untracked regular file 的处理并在 self-check 覆盖。等级 P1。
+
+而且，另一个细节：如果作者本意是"所有非 index 路径都 STOP"，那 line 117 的 `$IsContainer` 与 118 的顺序无所谓。但这样 capture 几乎不可能成功——除非所有 untracked 文件都被 .gitignore 忽略（--exclude-standard 会排除 ignored）。可能项目 .gitignore 忽略了很多，但 verification/P02 下的新 JSON 一般是 tracked？R1F 是 verification artifact，可能作者会 git add。不确定。但我可以指出：只要存在任何 untracked-and-not-ignored 路径，行为是 STOP；并且由于 `[string]` 参数绑定，`$null -ne $GitMode` 是死条件，代码与 manifest 的"untracked"语义存在歧义。这是 P1/P2。我倾向 P1（会阻断整个 capture 目标，且 self-check 未覆盖）。
+
+嗯，但等等。让我再确认 PowerShell 参数绑定 $null → [string]。这一点如果错了，finding 就不同。为了严谨，我可以在 finding 中写：无论绑定为 `$null` 还是 `''`，(a) 若为 `''` 则 untracked regular file → STOP，capture 在 dirty 树上必然失败；(b) 若为 `$null` 则 untracked regular file → HASH_REGULAR_FILE，即对未跟踪文件也会读取并哈希其内容——这与 manifest line 38 "仅允许 regular-file mode=100644/100755" fail-stop 规则冲突，且未在 AC/self-check 中声明。两种情形之一必为真，均构成与 manifest 不一致或未证明。最小修复：显式传入 `HasIndexMode` 布尔或在函数内用 `[string]::IsNullOrEmpty`，并把该情形加入 self-check 断言，同时把 manifest/Task 措辞明确到 untracked regular file。
+
+这样写很稳。不过实际后果 (a) 更可能，因为我倾向绑定会转 ''。我会在 finding 里说明"当前 PS 5.1 绑定会把 $null 归一为 ''（因此 untracked 路径落入 line 118 的 STOP）——这需要 Codex 用 PS 5.1 实测确认；两种可能后果分别是..."。等级 P1。
+
+**B. `.tmp.driveupload` 排除的路径形式绕过**
+
+- 尾随点/空格（`.tmp.driveupload./x`）绕过 prefix 匹配，而 Win32 Get-Item 会解析为 `.tmp.driveupload\x` → 会 hash 用户暂存数据。且 line 373-374 的 rootFull 边界检查仍通过（路径在 repo 内）。这是排除绕过的直接路径。需要 index 中存在该名称条目。风险真实但需要构造。等级 P2（潜在用户数据读取路径）。
+  另外还有 `/` vs `\` 已覆盖；大小写已覆盖；`./` 前缀形式：`./.tmp.driveupload/x` 不匹配前缀，而 Get-Item 的 Join-Path+相对路径 `./.tmp.driveupload/x` 会解析到同目录 → hash。Git 通常不输出 `./`，但 manifest 声明的是"路径字符串规范化后"排除——实现并没有真正 normalization（只做了 Join-Path+GetFullPath 用于边界检查，没有对 relative 本身做规范化再匹配）。Task line 25 说"在两仓对 `.tmp.driveupload` 根路径及其后代执行规范化/仓库边界字符串校验后"。实现里 `$relative` 从未被规范化（没有 GetFullPath 归一化后与 root 比较得出 canonical relative）。这是一个实现与 Task 措辞的偏差。等级 P2。
+
+  最小修复：对每个 candidate 计算 `$canonicalRelative = $full.Substring($rootFull.Length)`（即规范化后的相对路径，使用 `\` 统一）然后对 canonical 做 `Test-UnreadUserDataStagingPath`；或至少对每段做 Windows 尾随点/空格规范化后再比较，并在任何无法确定的情况下 fail-stop。
+
+  注意：如果改用 canonical relative，那 `.tmp.driveupload./x` → `$full` = `G:\CODEX\New Manga\.tmp.driveupload.\x`？GetFullPath 不剥离尾随点（它不做 Win32 规范化，不做文件系统访问）。所以 GetFullPath 无法识别这种等价。真正的 Win32 规范化需要 P/Invoke 或在任一 Get-Item 前判定——但在 Get-Item 前又必须排除。所以更稳的最小修复是：若 canonical（GetFullPath 后）相对路径的任何一段以 `.` 或空格结尾、或匹配 `.tmp*` 近似，则 fail-stop（拒绝而不是尝试访问）。或者用 `[IO.Path]::GetFullPath` + 每段拒绝尾随点/空格。
+
+  我给出最小修复建议：在 line 375 之前增加"危险路径形式拒绝"：任何段以 `.` 或空格结尾、包含 `:`（ADS）、或以 `..` 结尾，即 fail-stop（或对尾随点/空格段做去除后再比较子树，并在比较命中时按暂存排除且不访问文件系统）。并加 self-check。
+
+- ADS（备用数据流）：路径 `file.txt:stream` —— Git 在 Windows 上能追踪含 ADS 的路径吗？core.protectNTFS 会阻止。但同样需要条目存在。风险低，可归入同一条 finding 的"路径形式"建议里。
+
+**C. detached symbolic-ref 接受条件**
+
+line 111-113 `Test-ExpectedDetachedBranchResult`：
+```
+$CommandRecord.exitCode -eq 128 -and $CommandRecord.stdoutBase64 -eq '' -and $CommandRecord.stderrBase64 -ceq 'ZmF0...'
+```
+- `-ceq` 区分大小写，好。
+- `$CommandRecord.stdoutBase64 -eq ''`：`-eq` 对字符串不区分大小写，但这里比较空串，无所谓。
+- 但 `-eq` 在左侧为数组时会做过滤返回数组！如果 `stdoutBase64` 是数组，`-eq ''` 返回匹配元素数组，在 `-and` 中真值判断会…… 由于是 `[pscustomobject]` 属性，正常是字符串。OK。
+- 条件：exitCode=128 且 stdout 空且 stderr 精确匹配。它没有检查 exitCode 是否为「exit 128 但 stdout 非空」——那会被拒（stdoutBase64 -eq '' 为 false）→ `$branchQueryFailed = (exit -ne 0 -and -not detached)` = true → stop。好。
+
+line 313-324：`$detachedBranchResponse = ($ExpectedBranch -eq 'DETACHED' -and (Test-ExpectedDetachedBranchResult ...))`。参数是 `$ExpectedBranch`（字符串字面量 'DETACHED'，main 时为 'main'）。好。main 时 exit 0 → `$branchQueryFailed = ($exit -ne 0 -and ...)` = false → 继续；`$record.branch = stdout.Trim()` = 'main'；targetMatches 检查等于 'main'。好。
+
+问题：`Test-ExpectedDetachedBranchResult` 未验证 `stderrBase64` 为精确 38 字节？Base64 常量本身就是 38 bytes 的编码，`-ceq` 精确。好。
+
+还有一个点：未验证 stdout/stderr 的 SHA-256。因为它比较 Base64，等价。OK。
+
+另一个：`$CommandRecord.exitCode -eq 128` —— 若 exitCode 是字符串 '128' 也能匹配，但 exitCode 来自 Process.ExitCode，是 int。OK。
+
+再一个潜在问题：若 Git 返回 exit 128 且 stderr 空、stdout 空，则被拒绝 → stop。好，fail-stop。
+
+所以第 3 项基本 PASS。但有一个次要点：自检只覆盖"精确匹配接受"和"exit/stderr 不同拒绝"，没有覆盖 "exit=128 + stdout 非空" 与 "exit=0 但 ..." 的情形；不过 line 133-135 只有两个样本。可以提 P3（self-check 覆盖不足），但这不是缺陷本身，函数逻辑是严格的（要求三个条件全部精确）。我会在核对第 3 项时说明。
+
+**D. main branch 必须正常精确匹配**：line 324 使用 `([string]$record.commands.branch.stdout).Trim()`；如果 Git 输出 'main\r\n' → Trim → 'main'。若输出 'main\n'，OK。若输出 'main \n'（不会）。若 stdout 含额外行如 'main\nother' → Trim 得 'main\nother' ≠ 'main' → mismatch → stop。好。
+
+但注意：`$record.branch.$` 的赋值使用 `([string]...).Trim()`，未验证 stdout 原始 bytes 是否只有一行。可以接受。
+
+**E. 计数自洽**
+
+- line 375-379：unreadUserDataCount++ 且 processedCount++（记录排除决策）。符合 manifest line 36。
+- line 394-400：skippedSymlinkCount++ 且 processedCount++。
+- line 407-410：hash 后 regularFileHashCount++ 且 processedCount++。
+- line 414-415：processedCount 必须等于 candidateCount。
+- `omittedCount = Max(0, candidateCount - processedCount)`。
+- 成功时 omittedCount 应为 0。line 415 若不等则 stop。OK。
+
+但：如果某个 candidate 是 `.tmp.driveupload` 分支，`continue` 跳过，processedCount 已 +1，OK。
+
+一个细节：line 415 的检查 `$record.processedCount -ne $record.candidateCount`。若出现重复 candidate 路径（`ls-files --cached --others` 可能同一路径出现两次？比如 `--cached` 与 `--others` 不会重复，因为 cached 的不算 others）。OK。
+
+- `regularFileHashCount` 是否会在 line 405 `continue` 后与 fileInventory 不匹配？不。
+
+- 关于"不把 skipped user files 或 symlink target 报作已验证 hash"：line 395 明确 `targetRead='NOT_ATTEMPTED'`、`targetHash='NOT_CAPTURED'`；line 399 注释 `A skipped symlink must not receive any further path, target, hash, or ACL query`。但注意 line 395 记录 `attributes` 和 `linkType` —— 这需要 `Get-Item`（已调用，line 389），返回的属性元数据包括 LinkType。这属于"轻量 metadata"，manifest line 37 允许记录 attributes 与 LinkType。OK。
+
+**F. symlink leaf 的祖先检查**
+
+line 385-404：逐段 Get-Item；对每个组件计算 action。注意 `$gitMode = if ($indexModes.ContainsKey($relative)) {...}`。变量 `$relative` 是整条 candidate 路径，而 action 的 GitMode 是整条路径的 mode —— 在中间组件上使用整条路径的 mode 是可以接受的（中间组件必须是普通目录）。
+
+问题：line 393 对每个组件都调用 Get-InventoryAction 并检查 'SKIP_TRACKED_SYMLINK'。若 leaf 是 mode=120000 且 reparse → SKIP（先 break，不管祖先是否已检查过——祖先在之前的循环迭代已检查过，若祖先是 reparse 会先 STOP）。OK。
+
+但注意：如果 leaf 是 mode=120000 但祖先中某个组件是 reparse，前面迭代会 throw STOP。好。
+
+问题：`IsContainer` 传入 `[bool]$item.PSIsContainer`。line 117：`if ($IsReparsePoint -or $GitMode -eq '120000' -or $IsContainer) { return 'STOP' }`。对于中间目录（container）——但 tree 的每个中间组件都是目录！等等，line 116 先判断 `$IsLeaf -and ...`；对中间组件 IsLeaf=false，然后 line 117 `$IsContainer`=true → 返回 'STOP'！
+
+哦！这意味着遍历到任何中间目录组件时，action='STOP' → line 402 throw！因为 line 393 对每个 part 都调用 Get-InventoryAction，而中间 part 是容器 → IsContainer=true → line 117 返回 'STOP'。
+
+这会导致：任何路径深度 >1 的 regular file（比如 `verification/P02/xxx.json`，parts = verification, P02, xxx.json）在第一个中间组件 `verification` 处 IsLeaf=false 且 PSIsContainer=true → action='STOP' → throw "Unsupported reparse or non-regular object in protected inventory"。
+
+那 capture 在第一个多级路径上就 fail-stop！这是一个严重 bug（P0/P1）。
+
+等等，让我重新读 line 385-404：
+
+```powershell
+for ($partIndex = 0; $partIndex -lt $parts.Count; $partIndex++) {
+    $part = $parts[$partIndex]
+    $cursor = Join-Path $cursor $part
+    $currentOperation = 'Get-Item path component'
+    $item = Get-Item -LiteralPath $cursor -Force -ErrorAction Stop
+    $isLeaf = ($partIndex -eq ($parts.Count - 1))
+    $reparse = [bool]($item.Attributes -band [IO.FileAttributes]::ReparsePoint)
+    $gitMode = if ($indexModes.ContainsKey($relative)) { $indexModes[$relative] } else { $null }
+    $action = Get-InventoryAction $gitMode $reparse $isLeaf ([bool]$item.PSIsContainer)
+    if ($action -eq 'SKIP_TRACKED_SYMLINK') { ... }
+    if ($action -eq 'STOP') { throw "Unsupported reparse or non-regular object in protected inventory: $relative; ..." }
+    if (-not $isLeaf -and -not $item.PSIsContainer) { throw "Non-directory parent in protected inventory: $relative" }
+}
+```
+
+是的，对中间组件，`$IsContainer=true` → Get-InventoryAction 返回 'STOP'（因为 line 117 `$IsContainer` 条件）。除非 line 116 匹配（需要 IsReparsePoint=true 且 mode=120000 且 IsLeaf=true），不匹配。所以 → STOP → throw。
+
+这似乎是致命的：任何包含子目录的路径都会立即 STOP。除了根级文件（如 `AGENTS.md`, `.gitignore`）。
+
+repository inventory 里的 candidate 几乎肯定包含 `verification/P02/...`、`doc/...`、`apps/desktop/...` 等深层路径。因此 capture 会在第一个深层路径（按 Git 输出排序）处停止。实际上 Git 输出按路径排序，第一个可能是 `.codex/...` 或 `.gitignore` 之类。无论如何，只要存在任何一个带子目录的 regular file → STOP。
+
+这是 P0 级别？它不会读取用户数据，不会误接受，但它让 capture 必然失败（不可达成 AC）。而且 self-check 中 `Get-InventoryAction` 的断言没有覆盖"中间目录组件"这一情形（line 123-128 只测 leaf 情形，且 IsContainer 只与 IsReparsePoint=true 组合）。所以 self-check PASS 掩盖了这个 bug。
+
+等等，我是否误读参数位置？`Get-InventoryAction([string]$GitMode, [bool]$IsReparsePoint, [bool]$IsLeaf, [bool]$IsContainer)`。调用 `Get-InventoryAction $gitMode $reparse $isLeaf ([bool]$item.PSIsContainer)` — 位置正确。
+
+line 117: `if ($IsReparsePoint -or $GitMode -eq '120000' -or $IsContainer) { return 'STOP' }`。
+
+对于中间目录：IsReparsePoint=false, GitMode=该 leaf 的 index mode（例如 '100644'）, IsContainer=true → 'STOP'。
+
+对！这是致命缺陷。action='STOP' → throw。
+
+但等等，line 402 的 throw 只在 `$action -eq 'STOP'`。而 line 403 的检查 `if (-not $isLeaf -and -not $item.PSIsContainer)` 是想处理"非目录父组件"，那是在 action 检查之后的兜底，实际上不可达（因为 container 已 STOP）。
+
+所以设计意图可能是：Get-InventoryAction 应只在 leaf 调用，或 IsContainer 应仅对 leaf 有意义。显然 line 117 里的 `$IsContainer` 是打算表达 "leaf 是容器（目录）→ STOP"，即应当写 `($IsLeaf -and $IsContainer)`。这是一个实现缺陷：意图是"目录作为 leaf 时 STOP"，写成任何 container 都 STOP，与逐组件遍历冲突。
+
+影响：capture 在任何多级路径上 fail-stop → state PROTECTED_HASH_FAILED / errorOperation='Get-Item path component' → repo failure → stopReason=MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED → repositoryProtectedInventory='FAILED'。即 capture 无法产生 CAPTURED。这是 P1（严重，阻断 Task 目标），也可能是 P0（如果 P0 定义为阻断性/数据安全）。
+
+不过，等一下 —— 用户任务定义 P0/P1 未明。我按严重性定义：
+- P0 = 直接导致用户数据泄露/错误接受/不可控写入的缺陷；
+- P1 = 使 Task 目标不可达成或证据不实的实质缺陷；
+- P2 = 边界/理论绕过或明确不一致；
+- P3 = 文档/措辞/自检覆盖等次要问题。
+
+这个 bug 使 capture 无法运行成功 → P1（不是数据安全）。但它也意味着"若代码照此运行，会在自己的 protected inventory 上停止"——不是不安全，而是不可用。P1。
+
+Hmm，但是等等。我需要再确认 Git 的 `ls-files --cached --others --exclude-standard -z` 输出顺序和内容。它输出所有 cached 文件和 untracked 文件。cached 文件包含 `doc/tasks/P02PRE-R1F.md` 等深层路径。是的。
+
+除非…… 所有 index 中的路径都是根级？不可能。
+
+所以 capture 必然 STOP。除非 `$indexModes.ContainsKey($relative)` 为 false 时 `$gitMode=$null` → 绑定为 '' → line 117 中 `$GitMode -eq '120000'` false，但 `$IsContainer` 仍 true → STOP。无论如何 STOP。
+
+结论：这是一个确定的 static bug。信心高。
+
+再看：这是否意味着 R1 的旧 script 也有同样问题？R1 已运行过（partial，662 hashes）。所以 R1 script 大概没有 this bug（它写在 R1F 的 delta 里）。R1F 的 delta 引入了逐组件检查。是的，manifest line 37 说 "每个 candidate 逐段检查祖先路径，任何 parent ReparsePoint 立即停止"。作者实现为逐组件调用同一函数，但该函数的 IsContainer 分支导致 parent 目录 STOP。
+
+好，这是最强 finding。ID 我给 F1，等级 P1。
+
+我应该给出精确行号：line 117（`Get-InventoryAction` 的 `$IsContainer` 条件）与 line 385-402（逐组件循环调用），以及自检 line 123-128 未覆盖。
+
+最小修复：把 line 117 的容器判定限定为 leaf：`if ($IsReparsePoint -or $GitMode -eq '120000' -or ($IsLeaf -and $IsContainer)) { return 'STOP' }`；并在 `Assert-InventoryPolicySelfCheck` 中加入"parent 目录组件（IsLeaf=false, IsContainer=true）必须返回非 STOP（继续遍历）"和"leaf 是目录必须 STOP"两条断言，再加一条"深层 regular file 端到端决策"断言。
+
+好。继续找其它问题。
+
+**G. `Assert-CommandSerializationSelfCheck` 与"每条子进程命令记录必须是单一命名对象"**
+
+line 138-143 只测了 ConvertTo-Json 的形状。line 101-105 `Assert-SingleCommandRecord` 检查 `-is [System.Management.Automation.PSCustomObject]`。Invoke-CapturedProcess 返回 `[pscustomobject][ordered]@{...}`。OK。Assert 在 revParse/branch/status/files/indexStages/whoami 处调用。
+
+问题：`Invoke-CapturedProcess` 返回的单对象——如果函数内部的 `return $captured` 被 PowerShell 展开为数组（因为函数内其它语句产生输出）？检查函数体：line 49-87。`$info = New-Object ...` 无输出；`$process.Start()` 的返回值被 if 条件吸收（`if (-not $process.Start())`），OK；`$stdoutTask = ...CopyToAsync(...)` 赋值，无输出；`$null = $process.WaitForExit()` OK；`$null = $stdoutTask.GetAwaiter().GetResult()` OK；`$null = $stdoutBuffer.Dispose()` OK。所以只有一个输出。好。
+
+但 `$encoding = if (...) {...} else {...}` 是赋值。OK。
+
+`Get-ByteHash` 调用在 hashta ble 内。OK。
+
+**H. `$record.status` 在失败路径的 null 处理**
+
+line 740：`repositoryStatusRawBytes = (@($repoRecords | ForEach-Object { $_.status.rawByteCount } | Measure-Object -Sum).Sum)`。若某 repo 在 status 之前就 stop（例如 GIT_BASELINE_QUERY_FAILED），`$record.status` 不存在 → `$null.rawByteCount` = $null → Measure-Object -Sum 忽略 null → 结果为 0 或 null。这不影响太多，但如果两个 repo 都失败…… line 762 会 stop。但 summary 计算发生在可能 stop 之后（line 722+ 在 line 762 之前）。如果 main repo 失败，line 591 设 stopReason，line 593 `if (-not $Result.stopReason)` 跳过 scratch，于是 `$Result.repository.scratch` 为 $null。然后 line 698 `@($Result.repository.main, $Result.repository.scratch)` 包含 $null → line 710 `$_..state` 对 $null 使用 `-ne 'CAPTURED'` → $null -ne 'CAPTURED' = true → repoFailureCount 包含它。line 711 `$_.candidateCount` → $null → Measure-Object -Sum 会报错吗？Measure-Object -Sum 对 $null 输入：`$null | Measure-Object -Sum` 会产生 Count=0，Sum 为 $null？在 PS 5.1 中 Measure-Object 对 null 输入的 Sum 属性为 $null。然后 `.Sum` 得 $null。OK，不抛错。
+
+但注意：如果 main repo 失败（state != CAPTURED），line 591 设 stopReason='MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED'，则 line 593 跳过 scratch 采集。这意味着 scratch 完全未采集（`$Result.repository.scratch` 为 $null），而 `New-PartialEvidence` line 543 `Get-PartialRepository $Result.repository.scratch 1000` — 对 $null → line 469 `if ($null -eq $Record ...) return @{state='NOT_CAPTURED'}`。OK。
+
+但 summary 在 line 699-752 只在 `-not $Result.stopReason` 的 else 块内执行（因为 line 598 `if (-not $Result.stopReason) { ... }`）。是的，line 616-762 都在该块内。所以若 main 失败，summary 为 $null，classifications 保持初始。OK。
+
+**I. `repositoryProtectedInventory` 分类**
+
+line 753：repoFailureCount>0 → 'FAILED'；否则有 skip/unread → 'UNPROVABLE'；否则 'PASS_WITH_EVIDENCE'。
+
+manifest line 42：只有当"两个仓 inventory 查询完整、无 skip link、无 user-data exclusion"才可 PASS_WITH_EVIDENCE。实现一致。
+
+但 line 753 的 `PASS_WITH_EVIDENCE` 分支：当 repoFailureCount=0 且无 skip/unread。repoFailureCount 基于 state -ne 'CAPTURED'，包含 'TARGET_OR_INDEX_MISMATCH' 等。OK。
+
+Task AC line 44 说 "若 count>0，`repositoryProtectedInventory=UNPROVABLE`"。一致。
+
+**J. 一次性 CreateNew evidence**
+
+line 15 检查存在即 throw。line 788 使用 CreateNew。line 25 manifest 声明一致。line 787-800：写失败则 throw。OK。
+
+但注意：line 15 的 `if (Test-Path -LiteralPath $EvidencePath) { throw ... }` 在 try 块之外（line 15 独立于 line 559 的 try）。throw 会在脚本层面产生 stderr、exit 1，无 evidence 写入。符合"文件已存在即零采集停止"。
+
+另外，line 802 `if ($Result.stopReason) { throw ... }` 在写入之后 → evidence 已写入（partial），exit 1。符合。
+
+**K. 是否提前/未授权调用 capture？** 脚本自身就是 capture。无子进程调用其它脚本。子进程只有 git.exe 和 whoami.exe。检查是否有其它进程调用：Invoke-CapturedProcess 被调用的地方：Invoke-Git（git.exe）、line 573（whoami）。是的。没有 shell、没有 powershell 子进程。OK。
+
+**L. 环境变量列表 36 个**：manifest 说 36 个环境变量。line 599 的列表：数一下：
+LOCALAPPDATA, TEMP, TMP, APPDATA, USERPROFILE, HOME, HOMEDRIVE, HOMEPATH, PYTHONPYCACHEPREFIX, PYTHONDONTWRITEBYTECODE, PYTHONUSERBASE, PYTHONNOUSERSITE, TRITON_CACHE_DIR, PYINSTALLER_CONFIG_DIR, TORCH_HOME, TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, HF_HOME, HF_HUB_CACHE, HF_ASSETS_CACHE, HF_XET_CACHE, HF_TOKEN_PATH, HF_HUB_DISABLE_IMPLICIT_TOKEN, TRANSFORMERS_CACHE, PIP_CACHE_DIR, UV_CACHE_DIR, CARGO_HOME, CARGO_TARGET_DIR, NPM_CONFIG_CACHE, NPM_CONFIG_USERCONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT = 35 个。
+
+数一下：1 LOCALAPPDATA,2 TEMP,3 TMP,4 APPDATA,5 USERPROFILE,6 HOME,7 HOMEDRIVE,8 HOMEPATH,9 PYTHONPYCACHEPREFIX,10 PYTHONDONTWRITEBYTECODE,11 PYTHONUSERBASE,12 PYTHONNOUSERSITE,13 TRITON_CACHE_DIR,14 PYINSTALLER_CONFIG_DIR,15 TORCH_HOME,16 TORCHINDUCTOR_CACHE_DIR,17 TORCH_EXTENSIONS_DIR,18 XDG_CACHE_HOME,19 XDG_DATA_HOME,20 HF_HOME,21 HF_HUB_CACHE,22 HF_ASSETS_CACHE,23 HF_XET_CACHE,24 HF_TOKEN_PATH,25 HF_HUB_DISABLE_IMPLICIT_TOKEN,26 TRANSFORMERS_CACHE,27 PIP_CACHE_DIR,28 UV_CACHE_DIR,29 CARGO_HOME,30 CARGO_TARGET_DIR,31 NPM_CONFIG_CACHE,32 NPM_CONFIG_USERCONFIG,33 GIT_CONFIG_GLOBAL,34 GIT_CONFIG_NOSYSTEM,35 GIT_TERMINAL_PROMPT。
+
+= 35。manifest 说 36 个环境变量（继承自 R1）。差 1。但 manifest 的"36 个环境变量"来自 R1 manifest，我无法读 R1 manifest（未在允许列表）。所以这是 UNPROVEN，我不应声称缺陷。但可以提 P3：无法在本次只读范围内核对 R1 allowlist 的 36 变量与实现的 35 个是否一致（需要 R1 manifest 对照）。这是合理的 P3 finding？它基于我数出 35。但也许 R1 的 36 计数包含别的（例如 manifest 讲 36 但 R1F 只声明的 delta 不含 env）。R1F manifest line 8 说 "36 个环境变量 ... 逐项沿用，均以该固定文件为准"。若 script 只有 35 个，则与 R1 allowlist 不一致（少了一项）。这可能是缺失一个变量的采集。作为 P3（证据缺口/无法核对），或者如果确认 R1 有 36 个且 script 少一个，则是 P2（继承范围被缩小）。
+
+我可以提为 P3 并说明需要 R1 manifest 对照，标 UNPROVEN。合理且克制。
+
+**M. 输入根 12 个**：line 616-629 列出 12 个：Python312, m2ac5-build, M2-DOCTR-QUAL-C4/weights, M2-SFX-DETECT/weights-v2b, nodejs, rustup, VS BuildTools, VS Installer, Windows Kits, Git cmd, Git mingw64, $Scratch = 12。✓
+
+**N. scratch output leaves 13 个**：line 631：apps/desktop/frontend/node_modules, dist, target/core-sidecar, target/pyinstaller-work, gen/schemas, permissions/autogenerated, verification/P02/cargo-target, npm-cache, cargo-home, tmp/appdata, tmp/home, python-cache, pyinstaller-config = 13。✓
+
+**O. canary leaves 3 个**：line 633 ✓。这些只做 Get-ExactDirectoryRecord（不写）。符合"无 canary write"。
+
+**P. WER 目录 3 个** ✓ line 635。
+
+**Q. registry 两 view/value**：line 436-437 两个 hive LocalMachine + CurrentUser，两个 view → 4 组合。manifest 说 "两个 LocalDumps key × 两 RegistryView × 四 value"。实现是本机 + 当前用户 hive（两个 key）。✓ 四 value：DumpFolder, DumpCount, DumpType, CustomDumpFlags ✓。
+
+注意：line 455 使用 `GetValueKind`，若无值会怎样？`$key.GetValueKind($valueName)` 对不存在的值抛 IOException → catch [System.IO.IOException] → state='ABSENT'。OK。
+
+但 `GetValue(..., DoNotExpandEnvironmentNames)` 对 REG_EXPAND_SZ 不展开，OK。
+
+**R. protected files 列表**：line 639（被截断）+ 640-662。这部分无法完全核对。可提及证据范围限制。
+
+**S. stopReason 与 CAPTURE_EXCEPTION**
+
+line 765-768：catch 记录错误，stopReason 若空设 'CAPTURE_EXCEPTION'。注意 line 802 会 throw 输出。OK。
+
+**T. 关于 `Get-GitNulPaths` 的严格 UTF-8**：line 147 `[Text.UTF8Encoding]::new($false, $true)`（throwOnInvalidBytes=true）。✓
+
+**U. `Get-GitIndexModes` 的 NUL 数与结构**：line 167 `$nulCount -ne ($segments.Count - 1)` ✓。
+
+line 174 校验 metadata[1] `^[0-9a-f]{40,64}$` —— 允许 40 或 64（SHA-1/SHA-256 repo）。注意 `{40,64}` 允许任意长度 40-64，稍宽松但可接受。P3 可选：精确应为 `^[0-9a-f]{40}$|^[0-9a-f]{64}$`。
+
+line 174 metadata[2] `^[0-3]$` stage 允许 0-3。Git stage 只有 0，合并冲突时 1-3。可接受。
+
+**V. mode 检查 `$metadata[0] -notmatch '^(100644|100755|120000|160000)$'`** ✓ 与 manifest 一致。
+
+**W. line 175-176 重复路径检测**：`$modes.ContainsKey($path)`（OrdinalIgnoreCase）→ 大小写碰撞 fail-stop ✓ 符合 manifest line 37/48。
+
+**X. `Get-RepositoryRecord` 的 `.git` 路径链**：line 288 用 `Join-Path $Root '.git'`。对于 linked worktree，`.git` 是文件而非目录！main 仓 `G:\CODEX\New Manga\.git` 是普通目录（manifest 说 common-dir=G:/CODEX/New Manga/.git）。但注意 line 302 要求 `$gitDirItem.PSIsContainer`，若 `.git` 是 worktree 的 gitdir 文件 → NOT container → REPOSITORY_ROOT_OR_GITDIR_INVALID → stop。main 是主仓，`.git` 目录。scratch 也是。OK。但 Task line 31 说分支 main，工作目录是主仓。OK。
+
+不过：manifest line 6 说 common-dir=`G:/CODEX/New Manga/.git`，而脚本 line 325 比较 `$record.gitCommonDir.TrimEnd('\') -eq [IO.Path]::GetFullPath($ExpectedCommonDir).TrimEnd('\')`。rev-parse --git-common-dir 输出可能是相对路径 '.git'，line 321 处理了 rooted 与否（相对则 Join-Path $Root）。✓
+
+`--show-toplevel --git-common-dir HEAD "HEAD^{tree}"` 输出 4 行。line 319 用 `-split '\r?\n'`。若 stdout 有尾随换行，最后一行为空 → refs.Count=5，前四个正确。OK。但 `[IO.Path]::GetFullPath($refs[0])` 若 refs[0] 为空（stdout 以换行开头）→ GetFullPath('') 抛异常 → catch → CAPTURE_EXCEPTION。可接受（fail-stop）。
+
+**Y. `$record.branch` 与 `$ExpectedBranch`**：line 324 若 exit 0 用 stdout Trim。对 scratch 期望 'DETACHED'，但若 scratch 实际是 attached branch 且 stdout='main' → targetMatches false → stop。✓
+
+**Z. path normalization 顺序 vs 排除 vs 边界**
+
+line 372-374：`$full = GetFullPath(Join-Path $Root $relative)`；边界检查；然后 line 375 排除判断。符合 Task 要求（先规范化+边界，再排除）。
+
+但注意：`Test-UnreadUserDataStagingPath` 用的是 `$relative`（原始 Git 输出），不是规范化后的相对路径。这就是 B finding 的核心。Task line 25 说"对 `.tmp.driveupload` 根路径及其后代执行规范化/仓库边界字符串校验后...按 path-only 方式跳过"。实现的"规范化"只用于边界检查，不用于排除匹配。
+
+**AA. `firstUnreadUserDataPath` 只记首个** ✓ 符合 manifest。
+
+**AB. 是否读取了 `.tmp.driveupload` 下任何 metadata？**
+
+在排除前，脚本对该路径做了什么？
+- `git ls-files ... -z` 输出路径名（不访问文件系统）✓
+- line 352 解析 ✓
+- line 373-374 GetFullPath（纯字符串，不访问 FS）✓
+- line 375 排除 → continue ✓
+
+但 `.git/index` 的 hash（line 307/417）是 git 元数据，不涉及用户暂存内容。✓
+以及 `git status --porcelain`（line 327）会读取工作树以计算 status —— Git status 需要 lstat 所有 untracked 文件（包括 `.tmp.driveupload` 下的 2148 个文件），并且 `--untracked-files=all` 会递归列出它们。这算"metadata 访问"吗？manifest line 37 明确说 "Git `status` 与 index metadata 仍按继承的 R1 exact getters 采集"，所以是被允许的（且是继承的 R1 行为）。Git status 不读取内容（除可能的 racily-clean 时 hash 文件内容！）。
+
+嗯，这是一个值得注意的点：`git status` 对于 racily clean 的文件会重新 hash 内容以判断是否修改。touch 后文件 size/mtime 变化 → Git 可能读取内容计算 blob hash。这是 Git 内部行为，不是脚本直接 getter，但确实可能导致读取用户暂存文件内容（用于判定 clean/dirty）。不过 untracked 文件不参与 racily-clean 检查（untracked 只列名）。`.tmp.driveupload` 下的文件是 untracked（否则会被 `--exclude-standard` 排除？不，untracked 仍列出）。若某个上传暂存文件被 index 追踪（unlikely），status 会 hash 其内容。
+
+Task AC line 50 说"不读取用户漫画、数据库..."；manifest 允许继承的 status getter。我认为这属于"已知且被继承允许的间接访问"，可作为 P3 观察项（明确记录 Git status 对 racily-clean tracked 文件可能产生内容读取），建议在 evidence/manifest 中显式说明该间接边界。这可能有点过度，但用户要求"寻找会造成用户数据读取的缺陷"，作为 P3 提出是合理的观察，同时明确它不是新引入的绕过（是继承的 R1 行为）。
+
+嗯，但要注意 `--untracked-files=all` 会递归进入目录（Enumeration）——会 lstat 每个文件。这不读取内容。可接受。
+
+我要小心不要制造 no-point findings。我会把 racily-clean 作为一个 P3 观察（附最小修复：证据中记录该间接读取边界说明，或在 manifest 中声明 status 可能对 tracked-but-racily-clean 文件读取内容）。
+
+其实这一点比较有价值，因为用户明确问了 `.tmp.driveupload` 排除是否"在任何 Get-Item、Get-FileHash、Get-Acl 或其他文件内容/元数据访问前"。Git status 发生在 inventory 之前（line 327 vs line 370+），它会对整个工作树 lstat。严格说这已在任何排除之前访问了元数据（这是必然的，因为 Git status 是 Git 自己做的，未通过脚本的 Get-Item）。这是设计允许的（manifest 明确）。但"metadata"访问确实发生。我应指出：排除保证仅覆盖脚本自身的 getter 序列，不覆盖 Git status 的内部 lstat/潜在内容 hash；这在 manifest 中已被豁免但应明确。P3。
+
+**AC. `.tmp.driveupload` 的大小写**：manifest 说 root-relative `.tmp.driveupload/`。✓
+
+**AD. repository boundary 中的 OrdinalIgnoreCase 与 `TrimEnd('\')`**：line 366 `$rootFull = GetFullPath($Root).TrimEnd('\') + '\'`。若 $Root 是 'G:\' 则 TrimEnd 得 'G:' + '\' = 'G:\'。OK。
+
+**AE. Task/manifest 叙述一致性**
+
+- Task line 34 说 R5 要求 self-check 与 script 一同 review。✓
+- manifest line 12 说 self-check 断言四个函数：inventory decision、user-staging path classification、exact detached-ref result、aggregate inventory-policy self-check。脚本中的函数：Get-InventoryAction、Test-UnreadUserDataStagingPath、Test-ExpectedDetachedBranchResult、Assert-InventoryPolicySelfCheck。✓ 4 个。但 self-check JSON 里怎么写的？需要读 self-check retry JSON。
+
+- Task line 38 说 "Windows PowerShell 5.1.26100.9549 对 exact script bytes parse，并只运行四个抽取函数的 in-memory assertion"。需要核对 self-check JSON 内容（是否真的 parse exact bytes 且未调用 capture）。
+
+**AF. self-check JSON** 需读取。尤其要检查它是否宣称的 source hash 与用户给的 pin 一致（60725 / 80C8BC...E5216）。JSON 里会写。
+
+**AG. Task line 42/91 的 AC**：line 42 要求 Reviewer 确认 `.tmp.driveupload` 后代在任何 getter 前跳过 + 报告排除计数 + UNPROVABLE；确认 DETACHED 条件。我作为 reviewer 需要给出结论。
+
+现在读取两个 self-check JSON。
+
+还需注意 line 639 被截断的 protected hash 列表 —— 我可以尝试 grep 一下特定 pattern 以获取更多内容，但 grep 也会截断长行。也许用 grep pattern 'p02pre-r1f-review' 会返回该行但仍截断。可以试试 grep 用更窄的 pattern，比如 `p02pre-r1f-parser-20261011.json` 看是否在列表中。这只是辅助。
+
+先读 JSON。
+dsh: reasoning:
+注意：失败的 self-check JSON 记录 sourceBytes=60662 / SHA AA99D7...，而 retry 记录 60725 / 80C8BC...。所以第一次 helper 跑的是不同的（较早的）脚本字节 60662，然后脚本被更新为 60725（增加了内容）。Task line 34 说 R5 候选 60725；line 38 说"第一次 wrapper 尝试因 PS 5.1 不支持 SHA API 在解析前退出"。而 manifest line 11 说 "Codex helper incorrectly used SHA256.HashData ... exited 1 before parsing/self-check"，没有提到第一次尝试的 source 是 60662 bytes（与当前 60725 不同的字节！）。
+
+这是一个证据一致性问题：第一次失败的 helper 绑定的是 60662 bytes 的旧 candidate，而 Task/manifest 的叙述暗示"首次 helper 失败"是针对同一候选（只是 harness 错）。Task line 89 说 "R5 self-check wrapper，首次尝试 | Windows PowerShell 5.1 helper 使用不兼容的 SHA256.HashData，解析/自检前退出 | HARNESS_FAILURE / NOT_A_SCRIPT_RESULT | `p02pre-r1f-r5-selfcheck-20261011.json`，2975 bytes...；exit=1；未运行 capture/getter，原样保留"。没有提到 source 是 60662/AA99… 与当前 60725/80C8… 不同。
+
+用户自己也说："首次 helper 失败是 harness 自身在解析前使用 PS 5.1 不支持的 SHA256.HashData，不得描述成脚本 parse 或自检失败。" 这是给定的背景，我应尊重。但作为独立 reviewer，我应指出：该失败 artifact 的 sourceBytes/SHA（60662 / AA99D7…）与当前 frozen script（60725 / 80C8BC…）不同，说明失败尝试发生在脚本字节变化之前；Task/manifest 应明确记录这一点，否则读者可能误以为失败 artifact 绑定了当前候选。这是 P3（叙述/证据一致性），且是对用户给定背景的补充，不是反驳。
+
+嗯，用户说"不得描述成脚本 parse 或自检失败"——我不会那样说。但我要报告字节不同这一事实（这也是"清楚区分代码静态结论、Codex 自检证据与实际 host/Gate 证据"的要求）。这确实是有价值的观察：manifest line 11 把该 artifact 列为 "R5 self-check wrapper first attempt"，但未标注其 source pin 不同于 R5 当前候选。这会导致 pin 混淆。P3 finding。
+
+现在还需要检查 script 的当前 bytes 是否真的 803 行、60725 bytes。我无法验证字节数（不能运行命令）。read 显示 803 行。声明 UNPROVEN。
+
+另外一个重要点：self-check retry JSON 的 parentPowerShellVersion=7.6.6（父进程 PS 7.6.6），子进程是 Windows PowerShell 5.1.26100.9549（stdout 里 PS=5.1.26100.9549）。OK，说明是通过 PS7 启动 PS 5.1 子进程。合理。
+
+但注意 self-check JSON line 19 stdout 是子进程 stdout。selfCheckOutputCount=0 表示断言函数输出为 0。这符合"只运行四个抽取函数的 in-memory assertion"。但注意 `functions` 列表包含 `Assert-InventoryPolicySelfCheck`——它是自检聚合函数，本身会调用 Test-UnreadUserDataStagingPath、Get-InventoryAction、Test-ExpectedDetachedBranchResult。OK。
+
+现在，self-check 是否真的执行了？JSON 自述执行了。这属于 Codex 自检证据，非独立验证。我标为 UNPROVEN（独立无法验证 host 运行），但可以指出其内部自洽性。
+
+再检查 self-check retry JSON 内部自洽：
+- sourceBytes 60725, sourceSha256 80C8BC...E5216，与用户给的 pin 一致 ✓
+- childInputSha256 = parentRecheckSha256 = 80C8BC... ✓
+- exitCode 0 ✓
+- stderrBase64 "" ✓
+- stdoutSha256 声明 B0EC70E9...。我可以静态验证吗？stdoutBase64 解码后的 SHA256 —— 我无法计算（不能运行命令）。不过 stdoutBase64 解码应等于 stdout 字段。stdout 字段是 "P02PRE_R1F_R5_SELFCHECK=PASS;PS=5.1.26100.9549;BYTES=60725;SHA256=80C8...;FUNCTIONS=4;OUTPUT=0;CAPTURESCRIPTINVOKED=false;HOSTGETTERINVOKED=false\r\n"。Base64 以 "UDAyUFJFX1IxRl9SNV9TRUxGQ0hFQ0s9UEFTUztQUz01LjEuMjYxMDAuOTU0OTtCWVRFUz02MDcyNTtTSEEyNTY9ODBDOEJDMzExQ0UzNzI4MzJCRjFENDU2N0FCRENGN0U4QUEyRDcyOTZDQkUzMzlGRTk1QkFENjVENjNFNTIxNjtGVU5DVElPTlM9NDtPVVRQVVQ9MDtDQVBUVVJFU0NSSVBUSU5WT0tFRD1mYWxzZTtIT1NUR0VUVEVSSU5WT0tFRD1mYWxzZQ0K" 开始。我可以手工解码部分验证一致性？"UDAyUFJFX1IxRl9SNV9TRUxGQ0hFQ0s9" 解码：UDAy = "P02"? 让我快速验证：Base64 "UDAy" → bytes 0x50 0x30 0x32 = "P02"。接着 "UFJFX1IxRl9SNV9TRUxGQ0hFQ0s9" → "PRE_R1F_R5_SELFCHECK="。合并 "P02PRE_R1F_R5_SELFCHECK="。✓ 与 stdout 前缀一致。好，内部自洽。
+
+我也可以验证 stdoutBase64 以 "DQo" 结尾 = "\r\n" ✓。
+
+OK。
+
+现在还有一个我应验证的点：self-check 的 functions 断言是否覆盖 .tmp.driveupload 排除的"深度后代"（line 130 覆盖 `.TMP.DRIVEUPLOAD/nested/item`，多级 ✓）以及"普通项目证据保留"（line 131）✓。但没有覆盖 `.tmp.driveupload/x` 中间目录 STOP 的回归（这属于我 F1 的修复建议）。
+
+还有：`Test-UnreadUserDataStagingPath` 是否覆盖了反斜杠形式？line 108 支持 `\`。self-check 只测 `/` 与大小写。可提 P3：缺少反斜杠形式断言（实现里有）。次要。
+
+现在，我需要再仔细考虑 F1（IsContainer STOP bug）是否真的成立。让我重新审视 `Get-InventoryAction` 的调用点是否只对 leaf 调用…… line 385-404 是逐 part 循环，line 393 每次都调用。确认。
+
+那么，是否可能所有 leaf 都是根级文件？不可能。`verification/P02/p02pre-r1f-capture.ps1` 本身就是 candidate（若无 .gitignore 忽略）→ parts = verification, P02, file → 第一个 part "verification" IsLeaf=false, PSIsContainer=true → line 117 → STOP → throw。
+
+所以确定成立。除非 `[bool]$item.PSIsContainer` 对目录返回…… true。确定。
+
+所以 action='STOP' → throw "Unsupported reparse or non-regular object in protected inventory: $relative"。是的。
+
+这是 P1（阻断），我甚至可论 P0 因为"capture 从设计上不可完成，AC 无法满足"，但它不造成数据损坏或误接受。按数据安全导向的 P0 定义，我给 P1。不过考虑到它使整个交付物不可用且 self-check 给出虚假 PASS 信心，也许 P1 是恰当的。我会说明理由。
+
+嗯，等等。还有个可能：作者是否打算让 `$gitMode` 在中间 part 时传入 $null 从而使 line 117 只由 IsContainer 触发 STOP？不，无论 mode 如何，IsContainer=true 都 STOP。
+
+好，F1 确认。
+
+接下来我再找其它潜在缺陷。
+
+**AH. 关于 `line 403` 的兜底检查**
+
+`if (-not $isLeaf -and -not $item.PSIsContainer) { throw "Non-directory parent in protected inventory" }` — 不可达，因为 line 117 已对 container 和 reparse STOP；非 container 非 reparse 的中间组件（普通文件在路径中间）会走到这里 → throw。OK（虽然不可达不了，但语义正确）。实际上：中间组件是普通文件（非 container、非 reparse）→ line 117 不触发 → 到 line 403 → throw ✓。可达！好，我之前说不可达不准确：line 117 触发的是 container。所以对于"中间组件是普通文件"，line 403 触发。正确。
+
+对于中间组件是目录 → line 117 STOP（bug）。对于中间组件是 reparse → line 117 STOP ✓（符合 manifest）。
+
+**AI. `Get-InventoryAction` 的 `$GitMode -eq '120000'` 对中间组件** —— 中间组件传的是整条路径的 mode，如果是 symlink leaf 的 mode（120000），但中间组件是目录…… 第一次迭代时（partIndex=0, 目录）已 STOP。所以只有单级路径（根级文件）能走到 leaf。也就是说 bug 让深层路径在第一层就停。
+
+**AJ. line 407 Get-FileHash 使用 `$full`** — `$full` 由 Join-Path+GetFullPath 得到，与遍历的 `$cursor` 一致？`$cursor` 从 $Root 开始 Join-Path 每个 part；`$full` = GetFullPath(Join-Path $Root $relative)。对于普通路径两者相同。对于含 `..` 的路径可能不同，但 Git 不输出。OK。
+
+但注意：line 405 `if ($linkSkipped) { continue }`，line 407 使用 `$item`（最后一次循环迭代的 item = leaf）✓。
+
+**AK. `$record.fileInventory` 记录 `$item.Length`** — leaf item 已 Get-Item，OK。
+
+**AL. `Get-RepositoryRecord` 的 `.git/index` pre-hash**（line 307）：调用 `Get-FileRecord` → `Get-PathChain` → 逐组件 Get-Item。OK。
+
+**AM. aclStability 与 line 664：`foreach ($path in $Result.paths.Keys)`** — `$Result.paths` 是 ordered dictionary，Keys 是路径字符串。对每个路径的 before 记录（来自 Get-ExactDirectoryRecord）使用了 Get-Acl。line 267 Get-Acl 在 Get-ExactDirectoryRecord 中执行。这些路径是 input roots/output leaves/canary leaves，不含 `.tmp.driveupload` ✓。但注意 outputLeaves 在 scratch 下，例如 `tmp/home`。OK。
+
+**AN. line 664-685 的 ACL recheck 只对 `$Result.paths` 和 werDirs，不含 wer registry** ✓。且 line 692 scope 说明诚实 ✓。
+
+**AO. line 749 `queryErrorCount` 包含 repoFailureCount 等** ✓。
+
+**AP. 关于 `$Result.summary.exactPathObjects` 等** ✓。
+
+**AQ. line 721 `$Result.homeEnvironmentCheck.matchesHostUserProfile`** — 若 homeEnvironmentCheck 是 ordered dict 没有该键（line 615 的 else 分支只有 state/missingVariable/futureLpacMappingState）→ `$null -eq $true` false，`$null -eq $false` false → 'UNPROVABLE' ✓。好。
+
+**AR. line 599 `$envNames = '...'.Split(',')`** 得到 array。✓
+
+**AS. `$Result.environment[$name]`** ordered dict 赋值 ✓。
+
+**AT. line 602-603 `$homeDrive`/`$homePath` 引用 `$Result.environment.HOMEDRIVE`** ✓。
+
+**AU. line 631 outputLeaves 与 line 700 `$Result.paths[(Join-Path $Scratch $leaf)]`** — Join-Path 生成与 line 632 相同的键 ✓。
+
+**AV. 写入范围**：脚本只写 $EvidencePath（CreateNew）。没有其它写操作。`Get-FileHash`、`Get-Acl` 只读。`git status` 会不会写 `.git/index`（refresh index）？作者用了 `--no-optional-locks` 和 `core.fsmonitor=false`、`core.untrackedCache=false`，这防止 git 更新 index（optional locks 禁止它写 index）。✓ 好。这是重要的只读保证，实现到位。
+
+但 `git status` 仍可能写 `.git/` 下的其他东西？`--no-optional-locks` 阻止 optional lock 更新。OK。
+
+**AW. `Get-Acl` 是否只读** ✓。
+
+**AX. `[Security.Principal.WindowsIdentity]::GetCurrent()`** — 只读身份 ✓。manifest 说 getter 允许。`$identity.Dispose()` ✓。
+
+**AY. `$principal.IsInRole`** 只读 ✓。
+
+**AZ. `[Diagnostics.Process]::GetCurrentProcess().MainModule.FileName`** 只读 ✓。
+
+**BA. 现在检查是否存在"提前执行 capture"的路径** — 脚本第一步是 Test-Path evidence 存在性检查；然后做身份/仓库检查；`Get-RepositoryRecord` 里做 inventory+hash。也就是说一旦脚本被调用，它马上开始采集（包括 hash 整个仓库）。这与 Task 要求的"只有 pre-run adjudication 明确释放一次调用后才运行"一致——释放由外部流程控制，脚本本身不做 gate。这不是缺陷（Task 明确脚本是唯一 capture，外部流程负责释放）。
+
+**BB. `Assert-InventoryPolicySelfCheck` 中 line 129-131 覆盖 `.tmp.driveupload/183728`（数字目录名）。** OK。
+
+**BC. 关于"任何排除都使 repository inventory 为 UNPROVABLE"** — line 753 ✓。但注意：如果 unreadUserDataCount>0，line 753 返回 'UNPROVABLE'，而 Task AC line 44 说 "若 count>0，repositoryProtectedInventory=UNPROVABLE" ✓。
+
+但再看：line 427 `$record.state = if ($record.targetMatches -and $record.indexStable) { 'CAPTURED' } else {...}`。所以含 user-staging 排除的 repo 仍可 state='CAPTURED'，而 classification='UNPROVABLE' ✓ 符合 AC（不虚报 PASS）。
+
+**BD. 现在一个潜在问题：line 416 对 `.git\HEAD`、`.git\index`、`.git\config` 做 Get-FileRecord。若仓库使用 worktree，`.git` 可能是文件 → 已在 line 302 拒绝。OK。
+
+**BE. line 417 gitMetadataAfter** — `.git/index` hash 在 hash 全部文件之后再做，检测 index 稳定性 ✓。
+
+**BF. 关于 `$record.indexStable` 比较 sha256** ✓。
+
+**BG. 潜在问题：`Get-PathChain` 对 root 的处理**
+
+line 206-210：先 Get-Item root（如 'G:\'）。对 scratch 是 'G:\'。line 211 遍历 components。`$full.Substring($root.Length)` — 若 $full = 'G:\CODEX\...' 且 $root='G:\'，Substring(3) = 'CODEX\...' ✓。
+
+若路径不在同驱动器？无关。
+
+**BH. `Get-PathChain` 中 `$this.Exception -is [Management.Automation.ItemNotFoundException]`** — PS 5.1 类型名 `System.Management.Automation.ItemNotFoundException`，简写 [Management.Automation.ItemNotFoundException] 解析 ✓。
+
+**BI. `catch { if (...PathNotFound|FileNotFound|ObjectNotFound) { ABSENT } ... }`** — 好，区分 ABSENT 与 QUERY_ERROR ✓。
+
+**BJ. line 264 `Get-ChildItem -LiteralPath $Path -Force`** 对 output leaves 计数直接子项数 —— 这是对 scratch 目录的枚举，manifest 允许（"不递归读取目录"，直接子项计数）。用量 `Measure-Object` ✓。
+
+注意：`Get-ChildItem` 只列子项名称/属性，不读取内容 ✓。
+
+**BK. 现在是关于"不读取用户暂存数据"的另一个角度**：line 264 的 Get-ChildItem 等只作用于 allowlist 路径 ✓。
+
+**BL. 计数分类不实**的另一个角度：line 733 `repositoryFileInventoryRecords` = fileInventory 计数之和 = regularFileHashCount 之和 ✓（一致）。但 summary 里没有 `repositoryRegularFileHashCount` 单独字段，只有 repositoryFileInventoryRecords。可接受。
+
+**BM. summary 缺 `repositorySkippedSymlinks`?** line 736 有 ✓。
+
+**BN. line 740 `repositoryStatusRawBytes`** — 若某 repo 无 status（早期 stop）→ $null → Sum 忽略；但该块只在两 repo 都非 stop 时才执行（line 593/598 的门），所以 status 一定存在。除非 main CAPTURED 且 scratch CAPTURED。所以 OK。
+
+**BO. Task AC line 48 要求记录 `candidateCountKnown`、`candidateCount`、`processedCount`、`regularFileHashCount`、`skippedSymlinkCount`、`unreadUserDataCount`、`firstUnreadUserDataPath`、`omittedCount`、`firstBlockingPath`、`errorOperation`** — record 初始化 line 286 包含全部 ✓。`inventoryNulTerminatorCount`、`emptySplitArtifactCount`、index stage entry/NUL counts ✓。
+
+注意：record 初始化字典里没有 `errorOperation`！line 286: `... omittedCount = $null; firstBlockingPath = $null; gitMetadata = ...; state = 'STARTED' }` — 没有 `errorOperation` 键，也没有 `error` 键。它们只在 Set-RepositoryStop 时添加，或在成功路径不添加。那么成功时 JSON 中 record 就没有 errorOperation 字段（AC 要求记录 `errorOperation`）。这是小问题：AC line 48 说 "记录 ... errorOperation"。成功的 repo record 不会包含 errorOperation=null 字段（Get-PartialRepository line 514 引用 `$Record.errorOperation` → $null，输出 null ✓ 在 partial 中；但完整 JSON 直接序列化 $record，没有该键）。所以成功 evidence 的 repository.main 不含 errorOperation 键。轻微不一致（P3）。同理 `error`。
+
+嗯，这也影响 `Get-PartialRepository` line 514 —— 对 IDictionary 访问不存在的键返回 $null，不抛错 ✓。
+
+P3：record 初始化缺 `errorOperation`/`error` 键，导致成功路径的完整 JSON 缺少 AC 明确列举的字段名（值应为 null）。最小修复：在 line 286 初始化中加 `errorOperation = $null; error = $null`。
+
+**BP. 再看 line 286 是否有 `candidateCountKnown`** ✓ 有。
+
+**BQ. `omittedCount` 初始 $null，line 359 设 = candidateCount** ✓（列表已解析但未处理）✓。
+
+**BR. Task line 48 说 "列表尚未解析时 candidateCountKnown=false 且 omittedCount=null"** ✓ line 286-287。
+
+**BS. 现在检查 `Set-RepositoryStop` 的 `$Record.omittedCount` 计算**（line 282）：若 candidateCountKnown 为 true，`Max(0, candidateCount - processedCount)` ✓ 符合"每条停止路径均给出可计算的未处理数"。
+
+**BT. line 285 的参数 `$ExpectedCommonDir` 是 main='G:\CODEX\New Manga\.git'，scratch='G:\CODEX\P02-scratch-build-source\.git'**，与 manifest line 6/7 一致 ✓。
+
+**BU. 关于 `$record.gitCommonDir` 的比较使用 Ordinal 的 `-eq`（PowerShell -eq 对字符串不区分大小写）** — PowerShell 的 `-eq` 对字符串是 case-insensitive。这允许大小写不同的 common-dir 通过。Windows 语义下可接受 ✓。
+
+**BV. Task/manifest 一致性检查项**：
+
+- Task line 33 说 "新鲜执行结果=`verification/P02/p02pre-r1f-evidence-20261011.json`，唯一 `CreateNew` 目标" ✓ 与脚本 line 5/788 一致。
+- Task line 34 说 R5 后 R8 artifact path `p02pre-r1f-parser-windows-powershell-5.1-r8-20261011.json` ✓。
+- manifest line 22 argv 与脚本 line 24 记录的 command 字符串（去掉前缀）一致 ✓。
+- Task line 64 说 parser 计划命令。✓ 但注意 Task 表格 line 92 说 "final artifact=`p02pre-r1f-parser-windows-powershell-5.1-r8-20261011.json`" ✓。
+- Task line 80 提到 r4 parser artifact；manifest line 18 提到 R4/R6 等。Task 表格 line 82 说 "final artifact target r6"，而 manifest line 18 最后说应产生 R7。这是历史 R4 finding F3（已修）。line 82 仍写 "final artifact target r6"！
+
+看 Task line 82: `| Windows PowerShell parse | Windows PowerShell 5.1 parse-only ScriptBlock::Create，frozen Round 3 bytes after Review | NOT_RUN | final artifact target r6 |`
+
+这与 line 92（final artifact = r8）和 manifest line 18（R4 follow-up 后产生 R7）矛盾。R4 retry 的 P3-F3 正是"陈旧 R6 行"。manifest line 18 说 "其 P3-F3 指出本行最后句仍引用 R6，已更新为..."——指 manifest 的那行已更新。但 Task line 82 仍说 "final artifact target r6"。这就是陈旧残留！R4 retry F3 说 "陈旧 R6 行" 已修正——但在 Task 文件里还有一处。
+
+我应把它列为 finding：Task line 82 仍将 R6 称为 final artifact target，与 line 92（今 R8）和 line 34 矛盾；这正是 R4-F3 类陈旧引用在 Task 中的残留。等级 P3（文档一致性）。最小修复：把 "final artifact target r6" 改为 "NOT_RUN; superseded; R8 is the final parse artifact"。
+
+不过要谨慎：line 82 描述的是"frozen Round 3 bytes after Review"这一历史场景，其 artifact target 当时确实是 r6。语义上它记录的是历史计划。但用词 "final artifact target r6" 与当前验收（R8 final）冲突，容易误导。作为 P3 合理。
+
+- Task line 81 说 "R5 是预定 artifact target，但 Round 2=CHANGES_REQUESTED，未创建该文件；20C9…3CBF9F script pin 不匹配当前修订" — 这里的 "R5 是预定 artifact target" 指的是 parser 的 Round 5（不是 Review round 5）。而 "R5" 在本 Task 中大量用于 Review Round 5。歧义。manifest line 18 说 "R5 (`20C9…3CBF9F`) 是 Round 2 预定 parser target"。命名冲突（R5 parser vs R5 review round）。这属于可读性/证据混淆风险（P3）。考虑到 Task 现有 R5 = Review round（line 34/91/92），而表格 line 81 的 "R5" 指 parser round，容易被误认为"R5 self-check"或"R5 Review"。我可以合并进一个 P3 finding（编号命名的歧义）。
+
+嗯，这个可能算 P3 no-point。但考虑到之前轮次已产生过 pin 混淆（R3 SHA 漏 7、F3 陈旧 R6），指出命名歧义是有价值的。我会写但保持简短。
+
+- Task line 79 提到 r2 self-check artifact 1548 bytes / SHA FE19...；manifest line 17 同样 ✓ 一致。
+
+- Task line 89 vs manifest line 11：失败 artifact 2975 bytes / SHA 7C0F... ✓ 一致。但两者都没提它的 source pin = 60662/AA99D7…（与当前不同）。→ P3 finding（我会写）。
+
+- manifest line 12 说 self-check retry 断言四函数，"四个函数 (inventory decision, user-staging path classification, exact detached-ref result, aggregate inventory-policy self-check)"。但 JSON 的 functions 列表含 `Assert-InventoryPolicySelfCheck`（聚合），且 Test-UnreadUserDataStagingPath、Test-ExpectedDetachedBranchResult、Get-InventoryAction ✓ 4 个。一致 ✓。
+
+- Task line 90 说 self-check retry source=60725 / 80C8...E5216 ✓ 与 JSON 一致。
+
+- manifest line 16 说 "Current R5 candidate adds only a path-only exclusion for that root-relative subtree and strict recognition of the known Git detached-branch response。" ✓ 与脚本实现大体一致。
+
+- Task line 25 说 "在两仓对 `.tmp.driveupload` 根路径及其后代执行规范化/仓库边界字符串校验后" — 实现有规范化（GetFullPath）但排除匹配用原始 relative → 见 P2 finding。
+
+**BW. 还有一点**：manifest line 36 说 "for each candidate, first normalize the path string and verify it remains within the repository root, then if it is exactly `.tmp.driveupload` or a descendant, increment..."。实现顺序一致 ✓（但匹配输入未规范化，同 P2）。
+
+**BX. 关于 `.tmp.driveupload` 的匹配是否应该在 canonical 形式下比较** —— 已在 B 讨论。
+
+**BY. 潜在问题：`Test-UnreadUserDataStagingPath` 对 `$relative` 为单元素 `.tmp.driveupload`（根目录本身）** — Git 通常不输出目录条目（只输出文件）。若输出 `.tmp.driveupload` 作为文件条目 → Equals 命中 → 排除 ✓。
+
+**BZ. 另一个绕过**：Windows 8.3 短名（`.tmp.dr~1`）？如果 Git 输出短名形式？不会，Git 用长名。但若某文件实际位于该目录而 index 里是不同路径形式（如 `.tmp.driveupload` 的中文/Unicode 等价形式 NFC/NFD）？Windows 上 NTFS 不做 Unicode 规范化，所以 NFD 形式是另一个文件名，不会指向同一文件。✓ 无风险。
+
+**CA. 目录 junction 替换攻击**：`.tmp.driveupload` 目录本身是普通目录（若是 reparse → 在遍历时 Get-Item STOP；但排除发生在遍历之前，所以 reparse 的 `.tmp.driveupload` 会被直接排除，不会 STOP）。这符合"不访问"。但注意：如果 `.tmp.driveupload` 是 reparse 而某个非该子树的路径经由它……不可能。
+
+真正的绕过：某路径 `.tmp.driveupload/x` 被排除，但另一个路径 `y/z` 中 `y` 是指向 `.tmp.driveupload` 的 junction → 遍历 y 时 Get-Item 发现 reparse → STOP ✓ 好（fail-stop，不读取）。✓
+
+**CB. 关于 line 374 边界检查的 OrdinalIgnoreCase**：Windows 下 DLL 语义 ✓。
+
+**CC. 现在检查是否存在"错误接受 Git 响应"的其它地方**：
+
+- line 315：`if ($record.commands.revParse.exitCode -ne 0 -or $branchQueryFailed)`。revParse 必须 exit 0，但脚本未验证 revParse 的 stdout 行数 ≥4！line 319-323 用 `if ($refs.Count -ge N) ... else { $null }`，若 stdout 只有 2 行 → head=$null、tree=$null → targetMatches 为 false（因为 `$record.head -eq $ExpectedHead` 为 false）→ stop ✓。安全。
+
+- line 325：targetMatches 的 `$record.gitTopLevel.TrimEnd('\') -eq [IO.Path]::GetFullPath($Root).TrimEnd('\')` ✓。
+
+- line 332-340 status 记录：`nulSegmentCountApprox` 命名诚实 ✓。
+
+- status 的 stdout 用 `$record.commands.status.stdoutBase64`（原始）✓。
+
+- line 335 rawByteCount ✓。
+
+**CD. status exit code 的检查在 line 345**；但 line 329-340 在检查之前执行（解析 base64）。若 exit != 0，仍会解析 stdout（可能是空）→ statusBytes 为空 → nulSegments=0 ✓ 不抛错。OK。
+
+**CE. line 341-344 调用 files/indexStages 在两个 repo 都执行**。若 status 失败仍继续调用 ls-files（在 line 345 检查之前）。轻微（多执行了只读命令）。可接受。
+
+**CF. 现在检查"误触发 capture"**：Task 要求 R1F 不提前调用 capture。脚本是 capture 本身；没有其它脚本调用它（我无法 grep 整个仓库，用户限定只读这些文件）。在允许范围内，只读文件不含引用捕获调用的代码。标 UNPROVEN（因为我未检查仓库其它文件）。
+
+**CG. 一个关键点：脚本 line 15 的 evidence 存在检查发生在 self-check 之前**。若 evidence 已存在 → throw，不写。✓
+
+**CH. `$Result.command` 字符串**（line 24）与 manifest argv 一致 ✓。
+
+**CI. 分类五态**：line 33-43 初始 classifications 有 9 项；line 588 设 hostIdentity PASS；line 753 repositoryProtectedInventory；line 755 hostPathSnapshots；line 756 hostAclSnapshots；line 757 effectiveAccessAndWriteClosure；line 758 hostHomeConsistency；line 759 tempCache='UNPROVABLE'；line 760 werQueriedFields；line 761 fullProtectedInvariantsAndDynamicWriteClosure。OK。Task line 49 要求 "getter 未运行记执行状态 NOT_RUN"。line 38 product_build_and_ac1_ac7='NOT_RUN' ✓；line 36/37 REQUIRES_ACTIVE_TEST ✓。
+
+注意 `private_registry_absence` 保持 'UNPROVABLE' ✓ 符合 Task line 51。
+
+**CJ. Task line 51 说 "`private_registry_absence` 仍=`UNPROVABLE`，技术条件仍=`NOT_SATISFIED`"** — 脚本没有改 technical gate ✓（写成 classifications，不改文档）。
+
+**CK. 检查是否写入 registry/ACL** — 只有 RegistryKey.OpenBaseKey/OpenSubKey(read) 和 Get-Acl ✓。
+
+**CL. `[Microsoft.Win32.RegistryKey]::OpenBaseKey`** — 只读 ✓。
+
+好。现在整理 findings。
+
+Findings 候选：
+1. **F1 (P1)**：逐组件遍历时中间目录触发 `Get-InventoryAction` 的 `$IsContainer` → 'STOP'，导致任何含子目录的 candidate 都 fail-stop；capture 实际不可完成；self-check 未覆盖该情形（给出虚假 PASS）。文件：script line 117 + 385-402；self-check line 123-128 缺断言。
+2. **F2 (P1)**：untracked（无 index mode）candidate 的决策路径依赖 `Get-InventoryAction` 的 `[string]$GitMode` 绑定；`$null -ne $GitMode`（line 118）是永真死条件，因为 `$null` 被归一为 `''` → untracked regular file 落到 'STOP'（使 dirty 工作树的 capture 必然失败）；若绑定保留 $null 则 untracked regular file 会被 Get-FileHash（与 manifest line 38 "仅允许 mode=100644/100755" 及 AC line 44 的语义冲突）。self-check 只有 IsReparsePoint=true 的 untracked 样本（line 125），未覆盖 untracked regular file。
+   - 这两条有部分重叠（都会让 capture 失败），但根因不同（一为容器判定，一为 null/mode 缺失）。我可以合并为 F1 与 F2，或者把 F2 降为 P2？F1 使 capture 无论如何都失败，F2 在 F1 修好后仍会失败（因为 dirty 树有 untracked 文件）。所以两条独立且都需修。F2 我给 P1？它的后果（capture 无法完成）与 F1 相同量级，且会导致"哈希未跟踪文件"或"误停"。但严格说，若作者意图就是 untracked → STOP（保守），那 F2 只是"文档未明确 + self-check 未覆盖"，即 P2。为了不夸大，我给 F2 = P2，并在描述中说明若意图是 untracked regular file 应 hash，则是 P1。
+
+   嗯，但如果作者意图 untracked → STOP，那 Task 目标（对整仓 mesa 库存 hash 证据）在 dirty 树上无法达成——这仍是实质问题。不过它可能是设计可接受的（capture 停止并保留 partial，这就是 fail-stop 设计）。manifest line 39 说 "正常结束时 omittedCount=0"，并未说必须成功。而 Task line 93 "当前 host capture | BLOCKED / NOT_RUN"。所以设计上允许失败并保留 partial？但 AC line 42-51 期望得到完整 evidence JSON（五态分类）。若必然 fail-stop，则 AC line 49 的 getter 证据不存在。
+
+   我倾向 F2 = P2（结论取决于作者意图，需 Codex 裁定），并明确指出无论哪种意图，self-check 都必须覆盖 untracked regular file 并且 manifest/Task 需明确措辞。
+
+3. **F3 (P2)**：`.tmp.driveupload` 排除判断使用 Git 原始 relative 字符串，未使用已规范化的相对路径；Win32 会将尾随点/空格的路径段（如 `.tmp.driveupload./x`、`.tmp.driveupload /x`）解析到同一目录，从而在排除判定后仍会对用户暂存文件执行 Get-Item/Get-FileHash。也覆盖 `./` 前缀形式。最小修复：对每个 candidate 的规范化相对路径逐段做拒绝（段尾 `.`/空格、`:`、`..` → fail-stop 或按子树排除），或改用规范化相对路径匹配 + 危险形式 fail-stop，并加 self-check。文件：script line 373-379、107-109。
+4. **F4 (P3)**：Task line 82 仍称 "final artifact target r6"，与 line 34/92（R8 final）及 manifest line 18 矛盾（R4-F3 陈旧引用残留）。
+5. **F5 (P3)**：Task line 89 / manifest line 11 记录首次 helper 失败 artifact（2975 bytes / 7C0F2E…）时未标注其 source pin = 60662 bytes / AA99D7C4…，与当前 frozen script（60725 / 80C8BC…）不同；该 artifact 绑定的是被替换前的候选字节。建议在两个文件里显式记录其 source pin 与"非当前候选"标注。
+   这是基于我读到的 JSON 事实（60662/AA99D7 vs 60725/80C8BC）✓ 可复现。
+6. **F6 (P3)**：repository record 初始化（line 286）缺 `errorOperation`/`error` 键，成功路径的完整 JSON 不会输出 AC line 48 要求的 `errorOperation` 字段（应为 null）。
+7. **F7 (P3)**：`Get-GitIndexModes` 的 OID 正则 `^[0-9a-f]{40,64}$` 过宽（接受 41–63 位），可收紧为 `^(?:[0-9a-f]{40}|[0-9a-f]{64})$`。
+8. **F8 (P3)**：env allowlist 实为 35 项而 manifest line 8 声明继承 R1 的 36 个环境变量；本次只读范围不允许打开 R1 manifest，故无法判定是 R1F 少采集一项还是 manifest 计数错误 → 需 Codex 用 R1 manifest 对照。标 UNPROVEN 证据。
+9. 可能 **F9 (P3)**：Git `status --porcelain --untracked-files=all` 会对 tracked-but-racily-clean 文件重新读取内容计算 blob 比较，并对整个工作树（含 `.tmp.driveupload/`）做 lstat；manifest 已豁免该继承 getter，但 Task/manifest 未把"排除只覆盖脚本自身 getter 序列、不覆盖 Git status 内部访问"写明。建议在 manifest 的 user-staging 段落显式加一句边界说明。
+
+   这条是"用户数据读取"角度的诚实边界，值得写。但需注意它可能被视为 over-claim。我会谨慎表述为"证据边界需明确"，P3。
+
+10. **F10 (P3)**：R5 编号歧义：Task 中 "R5" 既指 Review Round 5（line 34/91/92）又指 parser round 5（line 81），manifest line 18 同。建议在表格里使用 "Review Round 5" / "parser R5" 消歧。
+
+P0/P1/P2/P3 计数：P0=0, P1=1（F1）, P2=2（F2, F3）, P3=7（F4–F10）。等等 F2 我定为 P2，F3 P2。P3 有 F4,F5,F6,F7,F8,F9,F10 = 7。
+
+Hmm，是否 F1 该 P0？P0 我会保留给"会造成用户数据泄露或误接受"。F1 不是。所以 P0=0。
+
+不过要小心：用户要求"寻找会造成用户数据读取、错误接受 Git 响应、计数分类不实、边界绕过或误触发 capture 的缺陷"。F1 是"计数分类不实"吗？在某种意义上：self-check PASS 报告被用来支撑 R5 候选安全性，但它没覆盖中间目录路径 → 自检给出的信心不实。我会这样表述。核心是阻断性缺陷。
+
+决策：CHANGES_REQUESTED（因为 F1 是实质阻断缺陷）。是的。
+
+现在，我要重新验证 F1 的推理链，确保没有遗漏让中间目录不进入 Get-InventoryAction 的条件。
+
+```powershell
+$parts = $relative -split '[\\/]'
+```
+对于 `verification/P02/x.json` → parts = 3 个。
+
+partIndex=0, part='verification', cursor='G:\CODEX\New Manga\verification', item=Get-Item → 目录, isLeaf=false, reparse=false, gitMode='100644'(若 index 有该文件), action = Get-InventoryAction '100644' $false $false $true。
+line 116: IsLeaf false → skip。
+line 117: `$IsReparsePoint -or $GitMode -eq '120000' -or $IsContainer` → false or false or true → 'STOP'。
+→ line 402 throw。✓ 确认。
+
+除非…… PowerShell 的 `-split '[\\/]'` 对 `verification/P02/x.json` 给出 3 段 ✓。
+
+确认 F1。
+
+再检查：line 393 的 `[bool]$item.PSIsContainer` — 对目录，PSIsContainer=$true ✓。
+
+好，F1 确凿。
+
+再确认 F2 的 PowerShell 绑定行为。我说"`$null -ne $GitMode` 永真"这一点依赖于 `[string]` 绑定把 $null → ''。我应该表述得严谨：
+
+"由于 `Get-InventoryAction` 的第 1 参数声明为 `[string]`，PowerShell 在参数绑定/类型转换时会把 `$null` 归一为 `[string]::Empty`（PS 5.1 行为），因此 line 118 的 `$null -ne $GitMode` 分支不可达为假；对 index 中不存在的 candidate（`--others` 的未跟踪文件）返回 'STOP'。若该环境实际保留 `$null`，则返回 'HASH_REGULAR_FILE'，即对未跟踪文件执行 Get-FileHash。两种可能都必须在 self-check 中固定并写进 manifest。Codex 应以 PS 5.1 实测确认并二选一。"
+
+这个表述既给了结论又标了需要实测的点。好。
+
+此外，self-check line 125 的样本 `Get-InventoryAction $null $true $true $false` 因 line 117 的 IsReparsePoint 先触发，无法区分 line 118 的行为——这是可复现的静态事实 ✓。
+
+好。
+
+现在再核对用户的 6 项：
+
+1. `.tmp.driveupload` 根和任意深度后代在任何 getter 前排除；只保存聚合计数和首个相对路径；任何排除使 inventory UNPROVABLE。
+   - 排除点位于 line 375，在任何 Get-Item/Get-FileHash/Get-Acl 之前 ✓（对该 candidate 而言）。
+   - 只记 unreadUserDataCount + firstUnreadUserDataPath ✓（line 376-377）。不记每项 metadata ✓。
+   - line 753 使 UNPROVABLE ✓。
+   - 但：F3 的路径形式绕过（尾随点/空格、`./`）意味着"任意深度后代"在特定路径形式下不被排除 → 该项不能给纯 PASS。所以第 1 项我标 PASS_WITH_CAVEAT？用户要求标 PASS/FAIL/UNPROVEN。我可以标 `PASS（附 P2/F3 条件）`——但必须选一个。严格说存在边界绕过 → 我标 `PASS*`？格式要求 PASS/FAIL/UNPROVEN。既然 F3 是"需要构造的非规范路径形式"，而脚本对规范 Git 输出（`/` 分隔、无尾随点）是正确的，我会标 **PASS（限定：规范路径形式下）**，并在说明中引用 F3 作为未覆盖形式。嗯，但也可以标 FAIL 因为"任意深度后代"字面上不成立。
+
+   我认为最诚实的做法：标 `PASS（仅限 Git 规范输出的路径形式）`，并明确说明 F3 未覆盖的形式使该断言在非规范路径形式下不成立。用 PASS 但加限定，同时在 findings 里给出 F3。
+   
+   嗯，但"PASS/FAIL/UNPROVEN 三选一"——我选 PASS 并加限定条件。不过如果限定条件下不成立，更严格是 FAIL。考虑到审查目的是安全，我认为标 FAIL 会过于激进（正常 Git 输出路径都是规范的）。我选择 PASS 并明确 caveat。为了让 review 有价值，我会写 `PASS（caveat：见 F3）`。
+
+   实际上，让我再想一下 `.tmp.driveupload./x` 是否可能出现在 `git ls-files` 输出。Git for Windows 默认 `core.protectNTFS=true`，它会拒绝 checkout 这类路径，但 `ls-files` 会照实输出 index 中的条目。Git 在 Windows 上 `git add` 一个目录 `.tmp.driveupload.`（用户无法在资源管理器创建，但可用 `\\?\` 前缀或 Git 的 update-index --add --cacheinfo 手工构造）会写入该条目。这是一个真实的（虽需人为构造）绕过。既然这是"用户暂存数据 no-read"的安全属性，我认为报告为 P2 finding 并让 Codex 裁定是合理的。
+
+2. path normalization 与 repo boundary 校验先于排除且有正确边界；separator/大小写/路径形式。
+   - 顺序 ✓（line 373-374 先于 375）。
+   - 边界 ✓（rootFull 带尾随 `\`、OrdinalIgnoreCase）。
+   - separator：`/` 与 `\` 都覆盖（line 108），split 用 `[\\/]` ✓。
+   - 大小写：OrdinalIgnoreCase ✓（且 self-check line 130 覆盖）。
+   - 路径形式：FAIL/未覆盖（F3）→ 我标 FAIL？这一项问的就是路径形式。既然发现未覆盖形式，标 `FAIL（部分）`。嗯，格式只允许 PASS/FAIL/UNPROVEN。我用 `FAIL` 并说明只是"路径形式"子项未覆盖，其余通过。这样清晰。
+   
+   嗯，或者标 `PASS` 但在 F3 里记 finding。用户要求"单独核对上述 1–6 项，标 PASS/FAIL/UNPROVEN 并说明证据范围"。第 2 项包含"路径形式"，所以给 FAIL 更精确（存在未覆盖形式，且这直接影响第 1 项的安全性）。我用 FAIL，并明确范围：normalization+边界顺序通过，separator/大小写通过，路径形式（尾随点/空格/`./`）未通过。
+
+   为一致性，第 1 项我应标 FAIL 还是 PASS？第 1 项的范围是"根和任意深度后代在任何 getter 前被排除"——在非规范形式下不成立 → FAIL？但 F3 已归入第 2 项。为避免重复计账，我让第 1 项 `PASS（caveat F3）`、第 2 项 `FAIL`（F3 归属项）。嗯，但"任意深度后代被排除"确实不是无条件成立。我选择：
+   - 第 1 项：`PASS`（对 Git 规范输出路径，且仅脚本自身 getter 序列；caveat 见 F3 与 F9）
+   - 第 2 项：`FAIL`（F3）
+   这样清晰不重复。
+
+3. detached symbolic-ref 只在完全吻合时接受，其他 fail-stop；main 精确匹配。
+   - line 111-113 + 313-326 ✓。fail-stop ✓。
+   - main 路径 ✓（exit 0 → Trim → 'main' 精确比较）。
+   - self-check 覆盖接受 + 拒绝另一种 stderr ✓；未覆盖 stdout 非空/其他 exit 的组合（函数逻辑本身要求三者同时满足，所以"其他"必然被拒）——但 self-check 未断言"exit=0 但 stdout 非空"等。可标 PASS 并在说明中提到 self-check 覆盖有限（不新增 finding，或作为 P3）。我不新增 finding（逻辑上严格），但说明。
+   - 结论 PASS。
+
+4. counters/失败路径/self-check/JSON 自洽；不把 skipped user files 或 symlink target 报作已验证 hash。
+   - 计数自洽 ✓（line 375-415）。symlink target 明确 NOT_ATTEMPTED/NOT_CAPTURED ✓，且 line 399 break 后 continue，不再查询 ✓。
+   - 但 F6（缺 errorOperation 键）与 F8（env 计数）属于自洽性/一致性小问题 → 我给 `PASS（附 F6/F7 小项）`。嗯，F6 是"JSON 输出字段"问题，属于第 4 项范围。所以第 4 项应标 FAIL？F6 是 P3 的字段缺失，与 AC line 48 明文字段要求不符 → 严格说该项 FAIL。
+   
+   嗯。我不想因为一个 null 字段把整项判 FAIL……但审查应严格。折中：第 4 项标 `PASS（caveat：F6 缺字段、F7 正则过宽、F8 env 计数待对账）`。用户允许我说明证据范围，所以我可以在 PASS 后附 caveat。但格式要求"标 PASS/FAIL/UNPROVEN"——我可以在括号里加 caveat。对于第 2 项我给 FAIL 是因为它直接影响安全属性；第 4 项的 caveat 是元数据完整性，我保留 PASS 并注明。嗯，不够一致。
+
+   让我统一原则：若该核对项的安全/交付属性存在实质不成立 → FAIL；仅有文档/字段级瑕疵 → PASS 附 caveat。这样：
+   - 1 PASS（caveat F3/F9）
+   - 2 FAIL（F3）
+   - 3 PASS
+   - 4 PASS（caveat F6/F7/F8）
+   - 5 ? 
+   - 6 ?
+
+5. R1F 仍限于 manifest 精确只读 allowlist 与一次性 CreateNew；无绕过身份/目标校验、未知子进程、范围外写入或提前 capture 路径。
+   - 身份校验 ✓（line 585-588）。
+   - 目标校验 ✓（line 325-326）。
+   - 子进程仅 git.exe / whoami.exe ✓（line 91-92、573）。无 shell/network/COM。
+   - 写入仅 CreateNew evidence ✓（line 788）。git 用 --no-optional-locks 防 index 写 ✓。
+   - 无提前 capture（脚本自身即 capture；外部 gate 控制调用）——在只读文件范围内未发现其它调用点，但我未审计全仓（UNPROVEN 部分）。
+   - 结论 `PASS`（范围仅限本次读取的 4 个文件；未审计仓库其它文件中的调用点，该子项 UNPROVEN）。
+   
+   嗯，用户要求标 PASS/FAIL/UNPROVEN。我可以说 `PASS（限于已读文件；"无其它调用点"未验证 → 子项 UNPROVEN）`。我倾向标 PASS 并明确证据范围限制。
+
+6. Task/manifest/script/自检 artifact 的叙述、参数、限制、禁止项、验收标准相互一致；区分静态结论/自检证据/host 证据。
+   - 存在不一致：F4（r6 final残留）、F5（失败 artifact source pin 未标）、F8（36 vs 35）、F10（R5 歧义）→ 标 `FAIL`（轻微但确实是叙事一致性）。嗯，或者 PASS 附 caveat？既然发现 4 处不一致，标 FAIL 更合适。
+   
+   但请注意 F4 与 F8/F10 是"文档陈旧/计数/歧义"，F5 是证据 pin 标注。这些都属第 6 项。给 FAIL 是诚实的。
+
+   嗯，但是否太严？R4 的 F3 已修 manifest 一行，Task 仍有一处 → 这是真实残留，值得 FAIL 引起注意。好，标 FAIL。
+
+   哦等等，还有 Task line 25 说 "在两仓对 `.tmp.driveupload` 根路径及其后代执行规范化/仓库边界字符串校验后，...按 path-only 方式跳过" 与实现的"规范化后的路径不用于匹配"——这属第 6 项一致性（也可归 F3）。已在 F3 说明。
+
+Decision: CHANGES_REQUESTED。
+
+counts: P0=0, P1=1, P2=2, P3=7 → 0/1/2/7。
+
+嗯，7 个 P3 有点多。让我复核哪些可以合并或删掉：
+- F4（r6 残留）keep P3
+- F5（失败 artifact source pin）keep P3 —— 有价值
+- F6（errorOperation 缺键）keep P3
+- F7（OID 正则过宽）—— 这是吹毛求疵。40-64 位 hex 接收本身不造成安全影响（后续 `$modes[$path]` 只用于 mode 比较）。可以删掉或并入 F6。我倾向删除 F7，避免噪声。删。
+- F8（env 36 vs 35）keep P3（需对账）
+- F9（Git status 间接访问边界）keep P3 —— 有价值（用户数据读取角度）
+- F10（R5 编号歧义）—— keep? 与 F4 同类（文档清晰度）。可以合并到 F4 里作为同一条"命名/引用陈旧与歧义"。合并 → 减少噪声。
+
+这样 P3 = F4, F5, F6, F8, F9 = 5。counts = 0/1/2/5。
+
+嗯，F5 与 F4 也算同类（证据/文档一致性）。但 F5 涉及 pin 事实，值得独立条目。保留。
+
+最终 findings：
+- F1 P1：容器判定导致深层路径 fail-stop（script line 117 / 385-402；self-check 缺口）
+- F2 P2：untracked 无 index mode 的决策未定义/未覆盖（script line 118 / 392-393；self-check line 125）
+- F3 P2：`.tmp.driveupload` 排除匹配使用未规范化的原始 relative（script line 107-109 / 373-379）
+- F4 P3：Task line 82 "final artifact target r6" 与 R8 冲突；"R5" 编号歧义（line 81 vs 34/91/92）
+- F5 P3：首次 helper 失败 artifact 的 source pin（60662/AA99D7…）与当前冻结脚本（60725/80C8BC…）不同，Task line 89 / manifest line 11 未标注
+- F6 P3：repository record 初始化缺 `errorOperation`/`error` 键（script line 286），与 AC line 48 列举字段不一致
+- F7 P3：env allowlist 实为 35 项，manifest line 8 称继承 36 个（UNPROVEN，需 R1 manifest 对账）
+- F8 P3：Git status 对工作树（含 `.tmp.driveupload/`）的内部 lstat/潜在 racily-clean 内容读取未被排除保证覆盖，manifest 未显式声明该边界
+
+counts: 0/1/2/5。
+
+P3 计数=5（F4,F5,F6,F7,F8）。总 findings 8 条。
+
+放宽重命名：用 F1..F8 顺序。
+
+再考虑是否应该把 F7（env）标 UNPROVEN 而非 P3 finding？作为 finding 可以，等级 P3，并注明证据范围。OK。
+
+现在，行号引用：
+- F1: `verification/P02/p02pre-r1f-capture.ps1` L117（条件）、L385–402（循环调用）、L123–128（self-check 未覆盖）
+- F2: L118、L392–393、L107–109；self-check L125
+- F3: L107–109、L373–379
+- F4: `doc/tasks/P02PRE-R1F.md` L82（与 L34、L92 冲突）；L81（"R5" 歧义）；`p02pre-r1f-manifest-20261011.md` L18
+- F5: `doc/tasks/P02PRE-R1F.md` L89；`p02pre-r1f-manifest-20261011.md` L11；`p02pre-r1f-r5-selfcheck-20261011.json` L4–5（60662 / AA99D7C4D9E38EE8FF14315AAE968226AE1FA67935283408F294603619B2A884）对比 `p02pre-r1f-r5-selfcheck-retry-20261011.json` L4–5（60725 / 80C8BC…）
+- F6: `p02pre-r1f-capture.ps1` L286；AC 在 `doc/tasks/P02PRE-R1F.md` L48
+- F7: `p02pre-r1f-manifest-20261011.md` L8；`p02pre-r1f-capture.ps1` L599
+- F8: `p02pre-r1f-capture.ps1` L327、L370–380；`p02pre-r1f-manifest-20261011.md` L36–37
+
+证据范围声明：
+- 只读了列出的 5 个文件（Task、manifest、script、2 个 JSON）。未运行任何命令/脚本/getter/capture；未访问 `.tmp.driveupload`；未修改任何文件。
+- SHA-256/字节数无法在只读静态审查中独立复算 → 我采用用户提供的 pins，并把"字节数/SHA 独立复核"标为 UNPROVEN（需 Codex adjudication 用 Get-FileHash 完成）。这是重要的诚实声明。
+- script line 639 超长行被读取工具截断为 2000 字符，protected-hash 清单首段未能逐条核对 → 该子项 UNPROVEN。
+- 未对照 R1 manifest（不在允许清单内）→ R1 继承 allowlist 的逐项等价性（12 roots/13 leaves/3 canary/36 env/2 keys×2 views×4 values/保护文件集合）只能部分静态核对 → 标 UNPROVEN。
+
+关于"不得把本次 Review 说成 Gate PASS"和"不得建议跳过 R8"：我会在结尾明确说明。
+
+我还要给出推荐下一步：按 AGENTS.md，最终回复必须给出基于当前仓库状态的推荐下一步。这里：Codex 应修复 F1–F3（至少）后重新冻结并重新 Review；不得跳过 R8 与 Codex pre-run adjudication。
+
+现在写 Review。要用简体中文，结构固定。
+
+关于 counts 格式：`P0/P1/P2/P3 = 0/1/2/5`。
+
+我还要再确认 F1 的一个反面可能：也许 `Get-Item` 对目录返回的对象 `PSIsContainer` 在某些 PS 5.1 情况下…… 一定是 true。确定。
+
+另外我还想到一个可能的反驳：也许 `$parts.Count` 对根级文件是 1，因此只有深层文件受影响——是的，这正是我描述的。
+
+再检查一处：line 385 循环里，如果 candidate 是 `.tmp.driveupload/...`，line 375 已 continue，不会进入循环 ✓。
+
+再检查 line 394-400：`SKIP_TRACKED_SYMLINK` 记录后 `break`，然后 line 405 `if ($linkSkipped) { continue }` ✓。
+
+好。还有一点值得检查：`Get-InventoryAction` 对 leaf 目录（candidate 是目录，例如 submodule 已由 mode 拦截；但 untracked 目录会被 `ls-files --others` 列出吗？`--others` 默认列文件；加 `--directory` 才列目录。所以不会。但 `--untracked-files=all` 的 status 会列目录内文件）。leaf 目录且 mode=null → line 117 IsContainer → STOP ✓ 合理。
+
+再一点：`--exclude-standard` 使 ignored 文件不出现 ✓。
+
+好，我开始写。
+
+关于"无 findings 才写无 open findings"——我有 findings，所以列出。
+
+我还要在 findings 里写"可复现的具体原因"和"最小修复建议"。
+
+写 F1：
+- 现象：任何深度 ≥2 的 candidate 在第一个中间目录组件处 `Get-InventoryAction` 返回 `STOP`（L117 的 `$IsContainer` 短路），L402 抛异常 → L413 `Set-RepositoryStop 'PROTECTED_HASH_FAILED'` → main repo state ≠ CAPTURED → L591 stopReason=MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED。因为 Git inventory（`ls-files --cached --others`）必然包含 `verification/...`、`doc/...` 等深层路径，capture 不可能达到 CAPTURED，AC「完整宿主只读取证」不可达成。
+- 与 Task/manifest 对照：manifest L37 要求"逐段检查祖先路径，任何 parent ReparsePoint 立即停止"，并未要求普通 parent 目录 STOP；L402 的错误文本 "Unsupported reparse or non-regular object" 也表明作者的意图是 reparse/非普通对象，而非普通目录。
+- 自检为何未阻止：L123–128 的断言中 IsContainer=true 只与 IsReparsePoint=true 同时出现（L123、L124），无法区分"leaf 是目录"与"parent 是目录"，因此 self-check 报 PASS 掩盖了该缺陷。
+
+修复：把容器判定限定在 leaf：`if ($IsReparsePoint -or $GitMode -eq '120000' -or ($IsLeaf -and $IsContainer)) { return 'STOP' }`；并新增断言：`Get-InventoryAction '100644' $false $false $true` 必须返回 `HASH_REGULAR_FILE`（或至少非 STOP），`Get-InventoryAction $null $false $true $true` 必须 STOP；再加一条端到端断言：对 `a/b/c.txt` 形态的 3 段路径决策必须走到 leaf 的 HASH_REGULAR_FILE。
+
+好。
+
+F2 写清楚两种绑定后果。
+
+F3 写清楚。
+
+F4、F5、F6、F7、F8。
+
+对第 5 项，我要提"未知子进程"的核对：脚本只有 git.exe / whoami.exe；无 cmd/powershell/wscript 等。PASS。
+
+对"范围外写入"：只有 L788 CreateNew；git 用 `--no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false`（L91）避免 index 刷新写。PASS。
+
+对"提前执行 capture"：脚本本身是 capture；在被调用前不执行任何采集，但一旦被调用没有内部 gate（L15 只检查 evidence 存在）。这是符合 manifest 的（release 由外部 adjudication 控制），但意味着任何调用都会立即 hash 两仓。我会在说明中提到这一点，标为设计约定而非缺陷。
+
+好，现在写最终输出。要控制长度但完整。
+
+另外注意：不要用 emoji 之类。保持专业。
+
+还有一个我应写入"证据范围"的重要内容：我无法独立复算 SHA-256/字节数（静态只读、不运行命令），因此对于 pins 匹配只能标注"与用户给定 pins 字面一致"（self-check retry JSON 内的 sourceBytes/SHA 与用户 pin 一致；Task/manifest 文本中的 pins 与用户 pin 一致）。实际上：
+- Task 提到 script 60725/80C8BC? Task line 34 说 "Round 5 必须独立 Review 新 Task/manifest/script/self-check"，line 38 说 60725。line 90 说 source=60725/80C8...
+- manifest line 12 说 script 60725/80C8... ✓
+- self-check retry JSON L4-5 ✓
+所以 pins 三处字面一致 ✓（这本身是一个一致性 PASS 点，值得提）。
+
+同时 Task/manifest 自身文件的 SHA pin 由用户提供（0795FA… / 5B5C37…），我无法复算 → UNPROVEN。
+
+好，开始写。
+
+我应把"我未运行命令"的声明放在开头或结尾明确位置。用户要求"明确声明"。我会在 Review 末尾"证据范围与声明"里写。
+
+结构：
+- Decision
+- counts
+- findings（表格 + 逐条详述）
+- 逐项核对 1–6
+- 证据范围与声明
+- 下一步
+
+写吧。注意行号要用实际文件行号。
+
+关于 findings 表格：用户要求"每条 finding：ID、等级、文件/行号、可复现的具体原因、最小修复建议"。我用小标题逐条写，每条含这些字段，清晰。
+
+长度会比较长，但这是必要的。开始。

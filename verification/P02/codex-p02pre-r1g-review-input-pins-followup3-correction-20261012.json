@@ -1,0 +1,38 @@
+{
+  "artifact": "Codex correction to follow-up 3 pre-review pin evidence status count only",
+  "date": "2026-10-12",
+  "supersedesMetadataIn": "verification/P02/codex-p02pre-r1g-review-input-pins-followup3-20261012.json",
+  "originalEvidence": {
+    "bytes": 5171,
+    "sha256": "360DBB2DECEFE44C788CCA796A5E3031DFD4C5C5BF1F17CC65ED03E805A48ADB"
+  },
+  "correction": {
+    "field": "mainGit.controlledStatus.nulRecords",
+    "incorrectValue": 0,
+    "correctedValueAtFreeze": 873,
+    "reason": "The status byte stream and its byte count/SHA-256 were captured correctly, but the Python summary counted the two-character escape spelling instead of a NUL byte.",
+    "freezeSnapshot": {
+      "exit": 0,
+      "nulRecords": 873,
+      "bytes": 57307,
+      "sha256": "CD465B9C708F0394965AFE839372315A59F753C06BCB9A798EF1B1B0FDCCC9E2",
+      "stderrBytes": 0,
+      "excludedNameInOutput": false
+    }
+  },
+  "currentRehashOfOriginal11Inputs": {
+    "count": 11,
+    "matchesOriginalPins": true,
+    "mismatches": []
+  },
+  "currentLiveControlledStatusAfterPrePinArtifact": {
+    "command": "git status --porcelain=v1 -z --untracked-files=all --no-renames --ignore-submodules=none -- . :(exclude).tmp.driveupload",
+    "exit": 0,
+    "nulRecords": 874,
+    "bytes": 57386,
+    "sha256": "5B81752412359C7D81AF22411403F2AC0E0D98DAA84F0706BAFA507173B4EA23",
+    "stderrBytes": 0,
+    "excludedNameInOutput": false
+  },
+  "impact": "Only the mainGit controlledStatus nulRecords summary field is corrected. All 11 frozen content input byte counts and SHA-256 pins remain unchanged and currently match."
+}

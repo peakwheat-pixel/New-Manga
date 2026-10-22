@@ -1,0 +1,330 @@
+{
+  "taskId": "P02PRE-R1H",
+  "round": "Round6",
+  "reviewAttempt": 3,
+  "createdUtc": "2026-10-12T01:48:46.5279034Z",
+  "reviewer": "DeepSeek Harness CLI; non-author; static only",
+  "protocolAuthor": "Codex /root",
+  "owner": "/root/round6_executor",
+  "integratorAdjudicator": "Codex /root",
+  "reviewVerdict": "PENDING",
+  "scope": "Static review of the exact attempt3 executor and protocol plus pinned task/governance/source/evidence only. No executor or OS operation is authorized by this review.",
+  "inputs": [
+    {
+      "path": "G:/CODEX/New Manga/AGENTS.md",
+      "bytes": 4503,
+      "sha256": "46357DC8FA0153429C394C057BF5E51A76EF34BD6B11DACCDDC272CB90E53501"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/09_COLLABORATION.md",
+      "bytes": 19131,
+      "sha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/tasks/P02.md",
+      "bytes": 226649,
+      "sha256": "FA1B94304433A9414B52621F7B5F848BA297A1F5D1A744B78CF9CF396DF25B21"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/tasks/P02PRE-R1H.md",
+      "bytes": 57574,
+      "sha256": "F58796B1C6C226443E5A14AD33669CE8DDD709E6BCD59A7F452534D42E835551"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/REBASELINE_PLAN.md",
+      "bytes": 304143,
+      "sha256": "500FB3857040958C8C2297357505BBF5DE884CBC08C8A05D3FD4D86C76E680FC"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/STATUS.md",
+      "bytes": 303311,
+      "sha256": "93EC1CFE964B3B8C2E9D874733FB98D12E339F603368215313BF27FE6658E4BF"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/00_INDEX.md",
+      "bytes": 64116,
+      "sha256": "5B328C87CD637BA677167CE149EC898ADCDD55F5EA587B3305DEA5EDFA6B748F"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-selfcheck-round5-20261012.json",
+      "bytes": 4076,
+      "sha256": "8F8127718FD1B07AD8031DC71CCE43A55258BF4B36D8694D1520A3197C77340C"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-engine-preflight-round5-20261012.json",
+      "bytes": 6990,
+      "sha256": "72FA81E395EE62A0D85F6333C8D5A05A976C6B6FEDC333217F322B0EC6375C2F"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-execution-20261012.json",
+      "bytes": 493429,
+      "sha256": "B750C772295B07BBD0DF571405F81A7DBCA967ECF005735C4B2F33D78F39E669"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-r2-20261012.md",
+      "bytes": 9375,
+      "sha256": "1D8D78A479887470B0B2065F68E4DC5073493C141868320C231B55198F2F3E7C"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-protocol-r2-adjudication-20261012.md",
+      "bytes": 4247,
+      "sha256": "B6115EABF14381FADC7609863FDCB090FE33947DEA1C5F4E86766B139E40BBC6"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-static-review-round6-r2-20261012.md",
+      "bytes": 7200,
+      "sha256": "59CBFED415C6D50AE9AB9FDA29E26F36CFE217823548107AE5C64D3EFA673829"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-review-adjudication-20261012.md",
+      "bytes": 3516,
+      "sha256": "EE6E45D0E969A3E7F183B5D73D9EC13F09BA2BAF96B12B6121EBC4B29FCB9429"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-round6-review-pins-r3-20261012.json",
+      "bytes": 4198,
+      "sha256": "E9A82F1EC8A0447298A71390E1CEEB24BFAC35E855321CF61480459609270505"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-round6-review-dispatch-r3-20261012.prompt.md",
+      "bytes": 2450,
+      "sha256": "B1CCC0EC6742DFB877C82C7519E2AD75D07E96A33D00BBF30EB94E306974CCA9"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02-human-required-decision-20261010.md",
+      "bytes": 11173,
+      "sha256": "F4ABC6C0EF1087184D01319A7C4A43B031EDD489E5A7B4D3B333B806A8EB41E5"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-integration-protocol-attempt1-20261012.md",
+      "bytes": 11184,
+      "sha256": "9FE8AB32823BE853673A873E2F590E0DEC2C123BFF6C3EB07185D217B3D699D4"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-20261012.md",
+      "bytes": 8463,
+      "sha256": "BD62DA56B8D819D8231B4F642F6F067186A376F7AF22A239BCF6BD3623C53A1A"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-20261012.md",
+      "bytes": 2806,
+      "sha256": "92A978DEF7DBBDCC61312E56A5D789583D18506BB8A09DBE33B59554D8500D8B"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-pins-round6-20261012.json",
+      "bytes": 8712,
+      "sha256": "3AAECFEB5A0530C5B8B844BABF5003E639AED121A075F36752AB1729684D2A18"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-dispatch-round6-20261012.prompt.md",
+      "bytes": 3178,
+      "sha256": "D4AC2E1880E2F33028F02DF87CBC59086D59E602E2186085F34790B877586895"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-integration-protocol-20261012.md",
+      "bytes": 16310,
+      "sha256": "26E152C31EF9111ECA55BAB96C3783F249329C5DE111909E9B8C55B2DD666697"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-pins-round6-attempt2-20261012.json",
+      "bytes": 12457,
+      "sha256": "E53BAFA801115B8CFEDF66EC956A0AD313C1CE8EBF61EFA1CBD973302595E563"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-dispatch-round6-attempt2-20261012.prompt.md",
+      "bytes": 4990,
+      "sha256": "9DA692FC125DB2D056C41750972BF26FA88117216A9B2A20A17A633B5B5933A8"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-attempt2-20261012.md",
+      "bytes": 8278,
+      "sha256": "B544A230C38232C5D485177C11ED9F83ADC40B7800E71C69C9A1FB5700A411DA"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-attempt2-20261012.md",
+      "bytes": 3826,
+      "sha256": "516A17AFE9C5F9704AFFDA8BFC0F9054F728148845DEB18D2813DB4E5085F84D"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-integrator-20261012.ps1",
+      "bytes": 40604,
+      "sha256": "DACDD544784A035E980F74250207D8EB561E13D0C5A06AA9F810DA9A1B29F222"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-integration-protocol-attempt3-20261012.md",
+      "bytes": 11730,
+      "sha256": "CAA5984BDAC01DE4A81E10154A9677D04F9A48DB40CB96804B6ECF8DA7F35313"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-checkpoint-p02pre-r1h-round6-integration-protocol-review-attempt3-active-20261012.md",
+      "bytes": 4957,
+      "sha256": "CACF3333F6F0CBDEF7F114D916C59AD5E63C64BE8E4C0B5CA176DE385F6C35C5"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/dsh-review-channel-probe-20261012.stdout.jsonl",
+      "bytes": 496,
+      "sha256": "E5A16E72BBA738814B5A1E66C74A3E86C30238739EC67397D79EF65845D50960"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/dsh-review-channel-probe-20261012.stderr.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/dsh-review-channel-probe-20261012.exit.txt",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57812,
+      "sha256": "6BD9160854275DA94C61B8FC48B180CD16368AF56C2AF7D63D616490A1AB85A9"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-round6-handoff-20261012.md",
+      "bytes": 3551,
+      "sha256": "700B79F3FA01308DFFEC374A4FFB92DAC69C2FD8355DE623F6A250E9F1511658"
+    }
+  ],
+  "inputCount": 40,
+  "main": {
+    "branch": "main",
+    "head": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+    "tree": "c25d051a4b9a0bd9773b50170e100f575ea19f2b",
+    "commonDir": "G:/CODEX/New Manga/.git",
+    "indexPath": "G:\\CODEX\\New Manga\\.git\\index",
+    "indexSha256": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+    "controlledStatus": {
+      "path": "G:\\CODEX\\New Manga",
+      "pid": 22868,
+      "exit": 0,
+      "nul": 1021,
+      "bytes": 68807,
+      "sha256": "271930A1AC97316B26CFF16B4845BD3259CF69739C0DFED70AFB1E7E54D628BB",
+      "stderr": ""
+    }
+  },
+  "candidate": {
+    "branch": "agent/codex/P02PRE-R1H",
+    "worktree": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex",
+    "head": "c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d",
+    "tree": "96e7273ddd5fd27bee567bba27f19453cabe0842",
+    "controlledStatus": {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex",
+      "pid": 40096,
+      "exit": 0,
+      "nul": 0,
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "stderr": ""
+    }
+  },
+  "reviewTargets": [
+    {
+      "exists": false,
+      "pid": 7396,
+      "path": "verification/P02/codex-p02pre-r1h-integration-protocol-pins-round6-attempt3-20261012.json",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 39988,
+      "path": "verification/P02/codex-p02pre-r1h-integration-protocol-dispatch-round6-attempt3-20261012.prompt.md",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 37644,
+      "path": "verification/P02/dsh-p02pre-r1h-integration-protocol-review-round6-attempt3.stdout.jsonl",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 34132,
+      "path": "verification/P02/dsh-p02pre-r1h-integration-protocol-review-round6-attempt3.stderr.log",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 41704,
+      "path": "verification/P02/dsh-p02pre-r1h-integration-protocol-review-round6-attempt3.exit",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 50636,
+      "path": "verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-attempt3-20261012.md",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 50008,
+      "path": "verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-attempt3-20261012.md",
+      "checkIgnoreExit": 1
+    },
+    {
+      "exists": false,
+      "pid": 46580,
+      "path": "verification/P02/dsh-p02pre-r1h-integration-protocol-review-round6-attempt3.mount.log",
+      "checkIgnoreExit": 1
+    }
+  ],
+  "execution": {
+    "executorInvoked": false,
+    "fileReplace": false,
+    "parser": false,
+    "selfcheck": false,
+    "capabilityQuery": false,
+    "captureOrGetter": false,
+    "profileRegistryAclApi": false,
+    "dynamicIsolation": false,
+    "buildCargo": false,
+    "systemAc1Ac7": false,
+    "windowsSandbox": false
+  },
+  "gate": {
+    "private_registry_absence": "UNPROVABLE",
+    "technicalGate": "NOT_SATISFIED",
+    "ownerRiskAcceptance": "APPROVED",
+    "gateDisposition": "WAIVED_BY_OWNER",
+    "buildAuthorization": "AUTHORIZED_WITH_EXCEPTION",
+    "residual": "technical condition unmet; user explicitly accepted residual risk",
+    "buildGate": "BLOCKED",
+    "hardBuildBarrier": "EFFECTIVE",
+    "buildCargo": "NOT_RUN",
+    "systemAC1_AC7": "BLOCKED / NOT_RUN"
+  },
+  "limitations": [
+    "Toolhelp process snapshots are sampled and cannot prove that sub-10ms descendants never existed.",
+    "The static Review is not runtime evidence or a Gate/AC PASS."
+  ],
+  "powerShell": "7.6.6/Core",
+  "preferredModel": "gpt-6.1-sol/high",
+  "actualReviewerModel": "UNKNOWN_NOT_EXPOSED",
+  "checkpointExcludedFromInputPins": true
+}

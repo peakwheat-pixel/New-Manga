@@ -1,0 +1,769 @@
+dsh: reasoning:
+Let me start by understanding the task. I'm acting as a non-author Reviewer for document P02PRE-R0S2. I need to perform a static review of the specified documents and frozen candidate. I must NOT run any manifest code, OS/API/registry/WER/path/environment/token/ACL queries, and must NOT modify Owner files.
+
+Let me first read the review inputs. Let me start by reading the task file and the verification documents.
+
+Let me check the repo state and read the files. I should be careful — read-only. Let me use read tool.
+
+Let me begin by listing the files to confirm they exist, then read them.
+
+Let me read multiple files. First, let me check the task doc.
+
+I'll batch reads. Let me start with the main task doc and the R0S2 manifest.
+dsh: reasoning:
+Now let me read the rest of the fixed review inputs. Let me batch reads.
+dsh: reasoning:
+Let me continue reading the remaining fixed inputs: R0 manifest, R0 evidence, P02M9 research, R6 manifest, R6 adjudication.
+dsh: reasoning:
+The R0 evidence is large. I've read enough for context. Let me now read the remaining two: P02M9 research and R6 manifest and R6 adjudication. These are important for cross-checking the waiver states and the "old candidate string" point.
+
+Let me read the R6 manifest and adjudication and P02M9 research.
+dsh: reasoning:
+Now let me read the R6 adjudication.
+dsh: reasoning:
+Now I have all fixed review inputs. Let me now analyze the frozen candidate thoroughly.
+
+The core task: static review of P02PRE-R0S2, with focus on:
+1. Whether the candidate strictly falls within the 2026-10-11 user-authorized side-effect-free read-only scope; must not treat R6 old candidate strings as authorization, must not expand this round's user authorization into waiver or Gate PASS.
+2. `RegistryKey.OpenBaseKey(LocalMachine, Registry32/Registry64)` + `OpenSubKey(exactSubkey,false)` call-by-call, parameters, permissions, exceptions/null and handle Dispose; confirm no reads of values/subkeys/other objects, not treating null as absence PASS.
+3. PowerShell startup, profile/module, command subprocess and exact execution boundary — sufficient to prove no state modification? `login=false` != `-NoProfile`; if cannot safely prove, declare `NOT_SAFE_FOR_R0`, don't suggest executing.
+4. Identity failure/view exception stop logic, output completeness, the limit that two views can't infer different physical objects or WER actual reader.
+5. Task/manifest/base/head/hash pin and user waiver states accurate; which remaining conditions are `UNPROVABLE`/`REQUIRES_ACTIVE_TEST`/`NOT_SAFE_FOR_R0`.
+
+Let me now carefully examine the manifest body for issues.
+
+Let me re-read the PowerShell body carefully:
+
+```powershell
+$ErrorActionPreference = 'Stop'
+$capturePid = $PID
+$expectedName = 'HOME-MY\49745'
+$expectedSid = 'S-1-5-21-2196946971-914346751-4210154634-1001'
+$identity = $null
+$threadIdentity = $null
+$identityError = $null
+try {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent($false)
+    $threadIdentity = [Security.Principal.WindowsIdentity]::GetCurrent($true)
+} catch {
+    $identityError = $_.Exception.GetType().FullName
+}
+$actualName = if ($null -ne $identity) { $identity.Name } else { '' }
+$actualSid = if ($null -ne $identity -and $null -ne $identity.User) { $identity.User.Value } else { '' }
+$authenticated = ($null -ne $identity -and $identity.IsAuthenticated)
+if ($null -ne $identityError -or $actualName -ne $expectedName -or $actualSid -ne $expectedSid -or -not $authenticated -or $null -ne $threadIdentity) {
+    [Console]::Out.WriteLine(('STOP|CapturePid={0}|Status=STOP_IDENTITY_UNPROVABLE_OR_MISMATCH|Name={1}|Sid={2}|Authenticated={3}|ThreadIdentityPresent={4}|IdentityError={5}' -f $capturePid, $actualName, $actualSid, $authenticated, ($null -ne $threadIdentity), $identityError))
+    return
+}
+[Console]::Out.WriteLine(('IDENTITY|CapturePid={0}|Name={1}|Sid={2}|Authenticated={3}|ThreadIdentityPresent=false' -f $capturePid, $actualName, $actualSid, $authenticated))
+$subkey = 'SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps'
+foreach ($entry in @(
+    [pscustomobject]@{ Name = 'Registry32'; View = [Microsoft.Win32.RegistryView]::Registry32 },
+    [pscustomobject]@{ Name = 'Registry64'; View = [Microsoft.Win32.RegistryView]::Registry64 }
+)) {
+    $queryStartUtc = [DateTimeOffset]::UtcNow.ToString('o')
+    $baseKey = $null
+    $targetKey = $null
+    try {
+        $baseKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $entry.View)
+        $targetKey = $baseKey.OpenSubKey($subkey, $false)
+        $state = if ($null -eq $targetKey) { 'RETURNED_NULL' } else { 'OPENED_READ_ONLY' }
+        [Console]::Out.WriteLine(('QUERY|View={0}|Hive=LocalMachine|Subkey={1}|StartUtc={2}|State={3}' -f $entry.Name, $subkey, $queryStartUtc, $state))
+    } catch {
+        $errorType = $_.Exception.GetType().FullName
+        $errorHresult = '0x{0:X8}' -f [uint32]$_.Exception.HResult
+        [Console]::Out.WriteLine(('STOP|View={0}|Hive=LocalMachine|Subkey={1}|StartUtc={2}|State=ERROR|ExceptionType={3}|HResult={4}' -f $entry.Name, $subkey, $queryStartUtc, $errorType, $errorHresult))
+        return
+    } finally {
+        if ($null -ne $targetKey) { $targetKey.Dispose() }
+        if ($null -ne $baseKey) { $baseKey.Dispose() }
+    }
+}
+[Console]::Out.WriteLine(('COMPLETE|CapturePid={0}|EndUtc={1}' -f $capturePid, [DateTimeOffset]::UtcNow.ToString('o')))
+```
+
+Now let me look for issues.
+
+**Issue A: `return` inside `foreach` in a script body.** The manifest says the body is passed as `cmd` to `functions.exec_command`. In PowerShell, if the cmd is run as a script block or via `-Command`, a `return` at the top level exits the script. But here `return` appears inside a `foreach` loop — in PowerShell, `return` inside a loop in the top-level script scope exits the entire script (the current scope). Actually, `return` inside a `foreach` exits the current scope, which is the script scope since foreach doesn't create a new scope. So it works, returns from the script. But wait — if the cmd is executed as a command string via `-Command`, the behavior: `return` exits the script block. Hmm, actually there's a subtlety: if the body is passed to `powershell.exe -Command "..."`, the string is treated as a script. `return` at top level of a script exits it. Inside foreach, still the same scope, so it exits the script. OK.
+
+But there's a real risk: In `-Command` mode with the command being a string, PowerShell wraps it. Hmm. Actually, this is probably fine. But there's a subtle issue regarding whether the `return` prevents the `COMPLETE` line correctly. In the identity STOP case, `return` at line 53 executes; the rest is skipped. Good. In the per-view error case, `return` at line 73 inside the catch; but note that the `finally` block runs before the return completes. Good.
+
+However — a critical subtlety: `return` inside a `foreach` loop that is inside a `try` — the `finally` will run. Fine.
+
+But wait: there's a subtle behavior in PowerShell: `return` inside a `try`/`catch` with a `finally` — the finally executes, then the function/script returns. OK.
+
+**Issue B: The STOP-on-error `return` inside `foreach` when the FIRST view errors.** The try/catch emits a `STOP|View=...` line then `return`. But: if the FIRST view succeeds and the SECOND errors, the output has QUERY for 32 then STOP for 64. Fine. The manifest says "第一个 view 任一异常或无法完整输出：STOP，不运行第二个 view". That's satisfied.
+
+But actually wait — there is a subtle bug: if the first view's `OpenSubKey` returns null (RETURNED_NULL), the loop continues to the second view. That's consistent with the manifest ("一个 view 正常返回 handle/null 后关闭句柄，再继续第二个 view"). OK.
+
+**Issue C: `$identity.User` may throw?** `$identity.User` returns a `SecurityIdentifier`; `.Value` is fine.
+
+**Issue D: `[Security.Principal.WindowsIdentity]::GetCurrent($false)` vs `GetCurrent($true)`.** `GetCurrent(bool ifImpersonating)` — if `true`, returns the impersonation token if the thread is impersonating; if `false`, returns the process token. The manifest records thread identity presence. Fine.
+
+**Issue E: Handle dispose of `$targetKey`.** `.Dispose()` on RegistryKey. Fine. `$baseKey.Dispose()`. Fine. Both in finally.
+
+**Issue F: Does `OpenSubKey($subkey, $false)` do a "read"?** `OpenSubKey(string name, bool writable)` with `writable=false` requests read-only access and opens the subkey. It does query the key. It doesn't enumerate values/subkeys. OK.
+
+**Issue G: `OpenBaseKey` signature.** `RegistryKey.OpenBaseKey(RegistryHive hKey, RegistryView view)`. Correct. `[Microsoft.Win32.RegistryHive]::LocalMachine` — the enum member is `LocalMachine`. Correct. `[Microsoft.Win32.RegistryView]::Registry32` / `Registry64`. Correct.
+
+Now, one important technical point: **On a 64-bit OS, `RegistryView.Registry32` opens the 32-bit view. On a 32-bit OS, requesting `RegistryView.Registry64` throws `ArgumentException`?** Actually, per Microsoft docs, if you request Registry64 on a 32-bit OS, `OpenBaseKey` may throw... Let me recall. Docs for RegistryView: "Registry64 — The 64-bit registry view." And OpenBaseKey: "If the requested view is not available, ...". Hmm. Actually the documented behavior: On 32-bit Windows, `RegistryView.Registry64` — the registry redirector is not present, so... I recall that `RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)` on 32-bit OS does NOT throw; it just returns the same key as Default. Hmm, actually I'm not 100% sure. Let me think about what matters: the manifest's catch block catches exceptions and records ERROR/unprovable. So even if it throws, it's handled. Good — that's within scope, and the manifest says "view 参数不支持" → UNPROVABLE and stop. Actually the task L44 says "view 参数不支持...均为 UNPROVABLE 并停止，不重试另一种 API、视图、进程或路径". OK, that's consistent.
+
+But wait — there's an important nuance about this exact point that the review focus #2 mentions: "确认...未将 null 当 absence PASS". The candidate records `RETURNED_NULL` as `PASS_WITH_EVIDENCE` per manifest L86: "`OPENED_READ_ONLY` 或 `RETURNED_NULL` 都仅是该 view、该时点的精确 API 观察，按 `PASS_WITH_EVIDENCE` 记载". Hmm. This is a potential P2 issue: recording `RETURNED_NULL` as `PASS_WITH_EVIDENCE` could be misread. But the manifest says it's "仅是该 view、该时点的精确 API 观察" and explicitly states absence remains `UNPROVABLE`. So it's a classification-label concern, similar to R0S1 F-03. Let me consider raising a P2/P3.
+
+Actually, let me consider more carefully whether `PASS_WITH_EVIDENCE` for a null return is appropriate. The task's own classification (task L65): "只允许将查询本身的准确观察标 `PASS_WITH_EVIDENCE`". So the observation "OpenSubKey returned null at this time under this view" is an accurate observation. Labeling it PASS_WITH_EVIDENCE for "the query itself" is arguably consistent with the task text. But the practical risk is that a reader could interpret `PASS_WITH_EVIDENCE` as "absence proven". The manifest mitigates by explicitly saying absence remains UNPROVABLE. So I'd raise a P3 (documentation clarity) rather than P2. Hmm, but actually, the review focus specifically asks to confirm "未将 null 当 absence PASS". The candidate does NOT treat null as absence PASS — it explicitly says absence stays UNPROVABLE. But it does label the null observation as PASS_WITH_EVIDENCE. Is that "将 null 当 absence PASS"? No, because PASS is scoped to "该 view、该时点的精确 API 观察", not to absence. I'll note it as a P3 finding with a suggested dual-label clarification. Actually, let me think about whether it's stronger. Given the R0S1 adjudication drew a distinction (predicate vs runner-safety), and given that this is exactly the kind of label-semantics issue that the previous review flagged as P3, I'll rate it P3 but mention it clearly.
+
+Hmm, wait. Let me reconsider. There may be a more serious issue.
+
+**Issue H: The critical problem — `login=false` and shell startup/profile side effects.** The review focus #3 explicitly says: `login=false` 不自动等于 `-NoProfile`; if cannot safely prove, declare `NOT_SAFE_FOR_R0`, don't suggest executing. The candidate manifest L18 acknowledges: "这些来源说明方法用途与访问模式；不构成对 PowerShell shell startup、profile、runtime module、外部进程或整个进程无副作用的证明。Reviewer 必须对此独立裁定。若候选执行环境/启动行为不满足只读安全要求，结果应为 `NOT_SAFE_FOR_R0` 且不得运行。" And task L50 says the same.
+
+So: can the candidate prove PowerShell shell startup/profile effects are side-effect-free? The candidate provides NO evidence about:
+- Whether `powershell.exe` is launched with `-NoProfile` / `-NoLogo` / `-NonInteractive`.
+- Whether the profile scripts exist and what they do.
+- Whether modules auto-load.
+- Whether `$PROFILE` / machine profile / user profile / all-users profile run.
+
+The R0S1 evidence established: `login=false` does not prove `-NoProfile`, and shell startup/profile effects were `UNPROVABLE`. The R0S1 adjudication accepted `shell profile startup effects = UNPROVABLE`. So per the frozen facts, the candidate cannot prove no-side-effect startup. Under the task's own rule (L50), the Reviewer MUST judge `NOT_SAFE_FOR_R0` and must not allow execution.
+
+But wait — is that the right call? Let me think. PowerShell profile scripts typically can write files (history, PSReadLine history, etc.). Launching `powershell.exe` can create/modify console host state. Also, `powershell.exe` startup may write to the PSReadLine history file (`ConsoleHost_history.txt`) only in interactive mode; in `-Command` non-interactive mode, PSReadLine isn't loaded typically. But that's a "预计" (expected) argument, which the task explicitly forbids using to pass: "不得以'预计没有 profile'放行" (L50). So the Reviewer must not pass based on expectation.
+
+Therefore the correct static decision: the shell startup/profile portion cannot be proven safe from the frozen inputs → the candidate method overall = `NOT_SAFE_FOR_R0` for the R0 read-only purpose (or at minimum, the PowerShell-launch wrapper is `NOT_SAFE_FOR_R0` and thus execution must not be authorized).
+
+Hmm, but careful: is the whole candidate `NOT_SAFE_FOR_R0`, or is the registry-query portion safe while the shell wrapper is not? The task says "若无法安全证明，明确 `NOT_SAFE_FOR_R0`，不得建议执行". Since the shell is the runner, and it cannot be proven no-side-effect, the entire candidate is not safe to run. The manifest L88 says "若 reviewer 认为 shell startup/profile 或本地过程状态不能证明满足只读约束，整个候选=`NOT_SAFE_FOR_R0`，不得执行。" So the candidate itself instructs that outcome.
+
+So my Review decision should be: the documents are internally consistent and honest, the registry API portion is correctly bounded, BUT the shell startup/profile side-effect boundary is `UNPROVABLE`, and per the frozen rules the candidate method must be classified `NOT_SAFE_FOR_R0` and must NOT be executed. This is a P1 (blocking) finding — because the review asks: report `NOT_SAFE_FOR_R0` if unresolved.
+
+Also there's the "module auto-loading" issue: `[Security.Principal.WindowsIdentity]` and `[Microsoft.Win32.RegistryKey]` are .NET types; the assembly load may trigger... Actually type resolution for `Microsoft.Win32.RegistryKey` is in `Microsoft.Win32.Registry.dll`, part of the runtime; `Security.Principal.WindowsIdentity` is in `System.Security.Principal.Windows.dll`. These are part of the default PowerShell runtime, so no module autoload. But `-Command` with a script string might trigger command discovery. Not a huge issue.
+
+However, there is a *more* concrete issue: **PowerShell's `$ErrorActionPreference = 'Stop'` combined with `[Console]::Out.WriteLine`** — no issue.
+
+**Issue I: The `foreach` loop uses `return` — but does `return` at the top level of a `-Command` script exit the process with code 0?** Hmm. Not a safety issue.
+
+**Issue J: The manifest says "不启动子进程" and "不加载 module" and "不用注册表 provider".** Let's check: The body uses only .NET static calls and `[Console]::Out.WriteLine`. It does not use `Get-Item`/registry PSDrive. Good. But `[Microsoft.Win32.RegistryKey]` — type resolution could load assembly, not a module. Fine.
+
+**Issue K: Output completeness.** The `finally` Dispose could throw? `Dispose` on RegistryKey generally doesn't throw. But if it did, with `$ErrorActionPreference='Stop'`... Actually `.Dispose()` throwing inside `finally` would replace the return. Not a big deal.
+
+**Issue L: `$baseKey.OpenSubKey($subkey, $false)` — is `OpenSubKey(String, Boolean)` valid on a `RegistryKey` obtained from `OpenBaseKey`?** Yes.
+
+**Issue M: Permissions.** `OpenBaseKey` requires the caller to have permission; if access is denied, `SecurityException`/`UnauthorizedAccessException` is thrown → caught → recorded ERROR → return. Good.
+
+**Issue N: Is `OpenSubKey(name, false)` actually "writable=false"?** Yes, `writable: false` means read-only. Actually the docs: "writable: true if the key is to be opened for write access; otherwise, false." But note that even `writable=false` opens with read access including `KEY_READ`. This is not a write. Fine. But the manifest claims "只读打开". Confirmed.
+
+**Issue O: Registry32 on 64-bit OS: is the LocalDumps key actually under a shared/redirected path?** The two views: `SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps` under HKLM — per WOW64 registry redirector, `HKLM\SOFTWARE` is a redirected key, so Registry32 view maps to `HKLM\SOFTWARE\WOW6432Node\...` in the native view; Registry64 maps to `HKLM\SOFTWARE\...`. So the two views may indeed be different physical keys. This is why the manifest says re: not claiming they point to different physical keys. Actually the manifest says "不得声称它们指向不同物理 key" — hmm, that's cautious. Actually under WOW64 they typically DO map to different physical keys, but on ARM or when views are shared they might not, and neither is guaranteed. The candidate's caution is correct and matches P02M9 §2. Good.
+
+But wait — the review focus asks "两个 view 不能推断不同物理对象或 WER 实际 reader 的限制" — the candidate correctly encodes this. Good.
+
+**Issue P: The task says the body "首先读取 process/thread Windows identity 并核验固定 SID/name；失败则在任何 registry API 前停止。"** The body does that. Good.
+
+**Issue Q: The fixed SID/name.** `$expectedName = 'HOME-MY\49745'`; matches R6 fixed host user. `$expectedSid` matches. Good. But note: hardcoding the expected identity in the body means the runner is bound to a specific host user. That's intentional and matches R6 L49.
+
+Hmm, but there's a subtlety: the identity check compares `$identity.Name` (NetBIOS domain\user) to `HOME-MY\49745`. Fine.
+
+**Issue R: `$null -ne $threadIdentity` check.** `GetCurrent($true)` returns the impersonation identity if the thread is impersonating; else returns the process identity (NOT null!). Wait — this is important. `WindowsIdentity.GetCurrent(bool ifImpersonating)`: "if true, the method returns the identity of the thread if it is impersonating; otherwise it returns the identity of the process." Hmm, actually let me recall precisely.
+
+From .NET docs: `WindowsIdentity.GetCurrent(Boolean ifImpersonating)`:
+- "ifImpersonating: true to return the WindowsIdentity only if the thread is currently impersonating; false to return the WindowsIdentity of the thread even if it is not impersonating."
+
+Actually the real doc: "ifImpersonating — true to return the WindowsIdentity only if the thread is currently impersonating; false to return the WindowsIdentity even if the thread is not impersonating." Hmm. Wait, let me get this right.
+
+Actually the documented behavior: 
+- `GetCurrent()` (no arg) → equivalent to `GetCurrent(false)`.
+- `GetCurrent(false)` → returns the identity of the process/thread, i.e., the WindowsIdentity of the current thread (which for most threads is the process token).
+- `GetCurrent(true)` → returns the identity of the current thread only if it is impersonating; if the thread is not impersonating, it returns... 
+
+Hmm. I recall the actual .NET behavior: `GetCurrent(true)` returns the impersonation identity if impersonating, otherwise returns the process identity. Actually no — I recall from the .NET source:
+
+```csharp
+public static WindowsIdentity GetCurrent(bool ifImpersonating)
+{
+    ...
+}
+```
+
+Let me think about the Win32: `GetCurrent` uses `OpenThreadToken` when `ifImpersonating` is true... The documented remark in Microsoft Learn: "ifImpersonating: true to return the WindowsIdentity only if the thread is currently impersonating; false to return the WindowsIdentity of the thread even if it is not impersonating."
+
+Hmm, "only if" — suggests it might return null/invalid if not impersonating. Actually, I believe the behavior is: `GetCurrent(true)` returns the thread's impersonation token if it exists; if the thread is not impersonating, it returns the process token (same as `GetCurrent(false)`). Let me verify by memory of .NET source:
+
+```csharp
+public static WindowsIdentity GetCurrent(bool ifImpersonating)
+{
+    return GetCurrentInternal(ifImpersonating ? TokenAccessLevels.Read : ...);
+}
+```
+
+Hmm. Actually there's `GetCurrent(TokenAccessLevels desiredAccess)`.
+
+Let me think about the actual semantics used in security code: A common pattern to detect impersonation is:
+```powershell
+$threadIdentity = [Security.Principal.WindowsIdentity]::GetCurrent($true)
+$processIdentity = [Security.Principal.WindowsIdentity]::GetCurrent($false)
+```
+and check if the SIDs differ. I'm fairly confident that `GetCurrent($true)` when NOT impersonating returns the same identity as `GetCurrent($false)` (i.e., the process token), NOT null.
+
+Hmm, but the R0S1 evidence says "thread identity present=false" and the body checks `$null -ne $threadIdentity`. If `GetCurrent($true)` never returns null, then the check `$null -ne $threadIdentity` is ALWAYS true → the candidate would ALWAYS STOP with STOP_IDENTITY_UNPROVABLE_OR_MISMATCH! Wait, but R0 evidence L22 says thread identity present=false, and R0S1 evidence established `ThreadIdentityPresent=False`. So in R0S1's body, how was "ThreadIdentityPresent" determined? It must have compared SIDs or used a different API.
+
+Hmm, this is a significant potential defect. Let's examine: In R0S1, the body apparently computed `Identity=@{...}` with `ThreadIdentityPresent=False`. We don't have R0S1's body. But in R0 evidence L22: "thread identity present=`false`". And the R0 manifest L21 only lists `WindowsIdentity.GetCurrent(Boolean)` as the allowed API. So R0 must have determined "thread identity present" somehow.
+
+Now, let me determine the true semantics of `WindowsIdentity.GetCurrent(true)`. 
+
+From Microsoft Learn (System.Security.Principal.WindowsIdentity.GetCurrent(Boolean)):
+> ifImpersonating: true to return the WindowsIdentity only if the thread is currently impersonating; false to return the WindowsIdentity of the thread even if it is not impersonating.
+
+Hmm, "only if" strongly implies that when the thread is not impersonating, the method may return a null reference or throw. Actually, I've seen code that relies on `GetCurrent(true)` returning null when not impersonating. Let me search my memory of the .NET runtime source:
+
+```csharp
+public static WindowsIdentity GetCurrent(bool ifImpersonating)
+{
+    if (ifImpersonating)
+    {
+        IntPtr threadToken = ... OpenThreadToken ...
+        if (threadToken == IntPtr.Zero) return null; // not impersonating
+        ...
+    }
+    ...
+}
+```
+
+Hmm, actually I now recall the .NET Framework implementation:
+
+```csharp
+public static WindowsIdentity GetCurrent(bool ifImpersonating) {
+    return GetCurrentInternal(ifImpersonating ? TokenAccessLevels.Read : TokenAccessLevels.Read);
+}
+```
+
+That doesn't help. Let me instead reason from documented behavior and from the fact that R0/R0S1 got "false" with this API. Since the frozen evidence (R0) recorded thread identity present=false using (per manifest) `GetCurrent(Boolean)`, it's empirically consistent that `GetCurrent(true)` returns null when not impersonating. Actually, hold on — R0 manifest L21 lists `WindowsIdentity.GetCurrent(Boolean)` as allowed but doesn't say exactly how presence was determined. It's plausible R0 compared name/SID or used `GetCurrent(true)` returning null.
+
+Hmm, this is a detail I should be careful about. Since I'm told NOT to run any API queries, I cannot empirically verify. And I must not overclaim. Let me consider: is this a finding? The candidate's identity logic:
+- If `GetCurrent(true)` returns the process identity when not impersonating → `$threadIdentity` non-null → always STOP → the runner can never proceed to registry queries → the candidate is functionally a no-op that always stops. That would make it useless (but safe).
+- If `GetCurrent(true)` returns null when not impersonating → works as intended.
+
+The docs are ambiguous/have been interpreted both ways. Under a static review with "不得以'预计'放行", I should flag the ambiguity: the body's thread-impersonation detection depends on `GetCurrent(true)` returning null, whose semantics are not established by any frozen source in the inputs. This affects whether the runner can ever reach the registry query, and more importantly it's an unproven behavior. This is a P2 finding (functional/correctness gap), and it reinforces `NOT_SAFE_FOR_R0`/needs clarification. Actually, it's not a *safety* issue (if it always stops, it's safe but useless). It's a P2 "functional/claim" issue.
+
+Hmm, but wait. Let me reconsider. I want to be accurate. Let me recall harder. There's a well-known StackOverflow: "WindowsIdentity.GetCurrent(true) returns null if the thread is not impersonating". Yes — I'm now fairly confident: `GetCurrent(true)` returns `null` when the thread is not impersonating. The .NET Framework source:
+
+```csharp
+public static WindowsIdentity GetCurrent(bool ifImpersonating) {
+    return GetCurrentInternal(ifImpersonating ? TokenAccessLevels.Read : TokenAccessLevels.Read);
+}
+```
+
+No. Let me recall the actual source of `WindowsIdentity.GetCurrent(bool)`:
+
+```csharp
+[SecuritySafeCritical]
+public static WindowsIdentity GetCurrent(bool ifImpersonating)
+{
+    return GetCurrentInternal(TokenAccessLevels.Read, ifImpersonating ? true : false);
+}
+```
+
+Hmm, not quite. There's `GetCurrentInternal(TokenAccessLevels desiredAccess, bool threadOnly)`:
+
+```csharp
+internal static WindowsIdentity GetCurrentInternal(TokenAccessLevels desiredAccess, bool threadOnly)
+{
+    ...
+    if (threadOnly)
+    {
+        if (!OpenThreadToken(...)) { ... return null; }
+    }
+    ...
+}
+```
+
+Yes! I'm now confident: the internal `GetCurrentInternal(TokenAccessLevels, bool threadOnly)` is used with `threadOnly=true` for `GetCurrent(true)`, and it calls `OpenThreadTokenEx`; if the thread isn't impersonating, `OpenThreadToken` fails with `ERROR_NO_TOKEN` and the method returns `null`. So `GetCurrent(true)` returns `null` when not impersonating. 
+
+Wait, but the parameter is named `ifImpersonating`, and the docs say "true to return the WindowsIdentity only if the thread is currently impersonating". This matches returning null when not impersonating. So the body is correct. Good — no finding there. Phew. I'll note it as a verified-correct item but with an explicit "static assumption" caveat? I think I can note it as consistent with R0 empirical evidence (thread identity present=false). Actually the safest is to note that the semantics used (null when not impersonating) are consistent with R0's recorded `threadIdentityPresent=false`, but that this is a static inference not independently re-derived here. I'll mention it in the coverage section rather than as a finding. Hmm, actually, hold on.
+
+Hmm, wait. Actually I need to double check. In .NET (Core) `WindowsIdentity.GetCurrent(bool ifImpersonating)`:
+
+```csharp
+public static WindowsIdentity GetCurrent(bool ifImpersonating)
+{
+    return GetCurrentInternal(ifImpersonating ? TokenAccessLevels.Read : TokenAccessLevels.Read);
+}
+```
+
+Ugh, I keep making up code. Let me just rely on the documented semantics: "true to return the WindowsIdentity only if the thread is currently impersonating". The phrase "only if" means: it returns the identity only in the impersonating case; otherwise (not impersonating) it returns null. This is the standard interpretation, and it matches R0's `threadIdentityPresent=false`. So the check is sound. I'll treat it as consistent. But I should note that the manifest does not cite this semantic from a frozen source — it relies on the API behavior, and if the actual behavior were "returns process identity", the runner would always STOP (safe, but the candidate would be non-executable/useless). That's a P3 documentation/verification item at most. Actually, I could fold it into a P3 finding: "thread identity null-semantics 未在冻结来源中固定；建议在 manifest 中明确该语义或改用显式 SID 比较". That's a fair, minimal finding. Let me include it as P3.
+
+Hmm, but careful: I shouldn't invent problems. The R0 evidence DID record threadIdentityPresent=false using the same API family, which is empirical support. So it's not a real risk. I'll mention it at P3 with low severity, or maybe just include in coverage notes. Let me decide later.
+
+**Issue S: `finally` + `return` ordering — the STOP line for the FIRST view error is printed, then `return`.** But note: the `finally` runs. Fine.
+
+**Issue T: The `foreach` loop body declares `$state` only in the success path.** Fine.
+
+**Issue U: `[Console]::Out.WriteLine`** — writes to stdout directly, bypassing PowerShell's output stream. Good for raw capture. No file writes.
+
+**Issue V: `[DateTimeOffset]::UtcNow.ToString('o')`** — pure computation. Fine.
+
+**Issue W: `$ErrorActionPreference = 'Stop'`** — sets a preference variable in-process only. No persistent state. Fine.
+
+Now the important **scope** questions:
+
+**Scope 1: Is the candidate within the 2026-10-11 user read-only authorization?** The user authorized "对已冻结对象做无副作用只读查询". The candidate queries HKLM LocalDumps via two views — a read-only query. It's within the described authorization IF the query is truly side-effect-free. The shell startup caveat is the remaining gap. Also, the manifest correctly states the authorization is not a waiver/Gate PASS. Good.
+
+**Scope 2: Is the R6 old candidate string being treated as authorization?** The candidate references R6 for the *risk values* and for the *historical candidate object list*, not as authorization. Manifest L9 records the risk原值 matching R6. Task L23 same. The candidate explicitly says the old "两键三目录" candidate strings are "不是本轮读取许可" in R6 L66, and R0S2 restricts to HKLM LocalDumps only under two views. So no expansion. Good. I should verify the candidate doesn't claim HKCU authorization — it only uses HKLM. Good.
+
+**Scope 3: Waiver/Gate states accurate?** Compare:
+- Task L23: `private_registry_absence=UNPROVABLE`; Technical Gate=`NOT_SATISFIED`; Owner Risk Acceptance=`APPROVED`; Gate Disposition=`WAIVED_BY_OWNER`; Build Authorization=`AUTHORIZED_WITH_EXCEPTION`; fixed text `technical condition unmet; user explicitly accepted residual risk`.
+- Manifest L9: same.
+- R6 L14/L16: same.
+- R6 adjudication L19-24: same.
+- R0 manifest L13: same.
+- R0 evidence L14: same.
+- R0S1 adjudication L47: same.
+All consistent. 
+
+But note one thing: R6 L18 says "15:21 UTC 最新风险例外取代旧 B 的准入裁决". The candidate doesn't reference "旧 B" — fine.
+
+Also note: the candidate Task `approval: user_authorized_p02pre_read_only_20261011`. Fine as a front-matter field.
+
+**Now check base/head/hash pins.**
+
+Candidate claims:
+- Repo `G:/CODEX/New Manga`; branch `main`; base/head `cddff58469b56e181019a8ddfeade80684bc7eb9`; tree `c25d051a4b9a0bd9773b50170e100f575ea19f2b`.
+- R0/R0S1/R6 all use the same HEAD/tree. Consistent across docs.
+- The candidate does NOT provide bytes/SHA-256 pins for the Task or manifest itself (unlike R0S1 adjudication which pinned Task/manifest bytes/SHA, and unlike R6 which pinned bytes/SHA). This is a gap: the Review is asked to "固定 Task/manifest SHA" (task AC L63: "非作者 Review 固定 Task/manifest SHA、base/head"). Neither the Task nor the manifest contains their own bytes/SHA pins. So the reviewer cannot (and is not allowed to run hash queries to) compute them. This is a P2/P3 binding gap: the frozen candidate does not self-pin its own artifact hashes, so object binding strength is weak (same class as R0S1 F-05). I should flag this as P2 or P3. Given the AC explicitly requires the reviewer to pin Task/manifest SHA, and the review inputs don't contain them, and I'm forbidden from running hash commands, I must record this as a `NOT_VERIFIED` limitation. I'd rate it P2 because it's an explicit AC item left unsatisfiable by the candidate. Hmm, but is it the candidate's fault? The dispatch should provide pins. Since the dispatch (the user's request) does NOT provide bytes/SHA for the review inputs, I cannot verify them. I'll flag it as P2 (binding gap) and mark as `NOT_VERIFIED`, requiring Codex to supply pins or authorize a read-only hash computation in a separate step.
+
+Actually, let me re-read the task AC L63: "非作者 Review 固定 Task/manifest SHA、base/head，并确认 runner 的每一个 API/参数和输出均在范围内". "固定 ... SHA" means the review should record/fix the SHA. Since I'm not allowed to run any hash query, I cannot compute it. But maybe the intent is that the *dispatch* provides pins and the reviewer records them. The dispatch given to me provides only base/head, not bytes/SHA. So this is an unmet AC at the dispatch level → I must report it as a binding limitation, and it cannot be "fixed" without either the Owner providing pins or an authorized read-only hash query. This is a real finding (P2).
+
+Hmm, wait — is reading file bytes with `read` tool allowed? The dispatch says "不要运行 manifest 代码、任何 OS/API/registry/WER/path/environment/token/ACL 查询". Computing a SHA-256 would require running a command (Get-FileHash) — that's arguably a "path/hash query" which R0S1's review explicitly treated as forbidden (`NOT_RUN` for "4 个 pin 的 bytes/SHA-256 复算"). The prompt here says "不要运行...任何 OS/API/registry/WER/path/environment/token/ACL 查询". Hash computation of a repo doc is a file read, not exactly an OS/API query, but R0S1's precedent treated hash recomputation as forbidden by dispatch. To be safe and consistent, I will NOT compute hashes. I'll record pins as `NOT_VERIFIED` and note that the review inputs contain no bytes/SHA pins for the Task/manifest. Good.
+
+Actually, hold on. I could read the files (I did) and that's allowed. Reading doesn't give me SHAs. Computing SHAs requires a command. I won't. Good.
+
+**Now, broadly: Internal consistency checks between Task and manifest.**
+
+Task L39-40 (query order): 
+1. OpenBaseKey(LocalMachine, Registry32) → OpenSubKey(exactSubkey, false).
+2. If first completes without exception, then Registry64 same.
+
+Manifest L24-25: same. Body: foreach over [Registry32, Registry64] in order, with `return` on exception. Note: if the first view returns null, the loop continues to the second. The task says "若第一项完成且没有异常" — null is "completed without exception", so continuing is correct. Good.
+
+Task L42: "所有返回 RegistryKey handle 在 `finally` 中 Dispose；不输出句柄值。两个 view 的结果分别记载；不得声称它们指向不同物理 key，也不得由此断定 WER reader 使用哪个 view." Manifest L27: same. Body: Dispose in finally; output State only. Good.
+
+Task L44: "OpenSubKey(..., false) 返回非 null 时，仅记为该指定请求成功打开只读 key。返回 null 时仅记为 RETURNED_NULL；不得仅凭 null 断言不存在... 异常、身份不符、缺少 PID/时间/输出、view 参数不支持或结果不完整，均为 UNPROVABLE 并停止，不重试另一种 API、视图、进程或路径。" Manifest L82-88: consistent. Body: consistent.
+
+Task L48 (execution boundary): `functions.exec_command` single sync call, `shell="powershell.exe"`, `login=false`, cmd = fenced body directly; no script, no external executable, no subprocess, no module, no registry provider, no directory/environment/file state queries. Manifest L32: consistent. Body: consistent (only .NET calls).
+
+Task L50: `login=false` not proof of `-NoProfile`; shell startup/profile effects if unprovable → `NOT_SAFE_FOR_R0`. Manifest L18 and L88: consistent.
+
+Task L51: no protected-path write test; no read/list key values/subkeys; no per-image keys, HKCU, other WER policy key, directories or dump files. Manifest L26, L92: consistent. Body: no such reads.
+
+Task L56 (禁止): matches manifest L92 and body. Note: Task L56 prohibits "手写 `Wow6432Node` 路径" — body uses RegistryView enums, not Wow6432Node. Good.
+
+Task L57: prohibits `GetAppContainerFolderPath`, `GetAppContainerRegistryLocation`, token P/Invoke, `Add-Type`, extra getter/API/module/executable/process, WER/TEMP/cache/path/environment/path ancestry/hash queries. Body: none. Good.
+
+Task L58: no protected-path writes, no profile/ACL/registry/file state modification, no Windows feature/Sandbox query, no build/Cargo, no AC1–AC7. Body: none. Good.
+
+Task L59: no user manga/DB/Lock/Revision/credential/model/dump content. Body: none. Good.
+
+Task L68-71 (allowed writes): Task, plan/status/index/P02.md, `verification/P02/p02-readonly-preflight-r0s2-*` and `codex-p02pre-r0s2-*`, DSH review dispatch logs. Not modifying R0/R0S1/R6/other agents' files. As Reviewer, my deliverable should be the review content (per R0S1 precedent, the reviewer's file is archived by Codex). But wait — the task says allowed writes include `verification/P02/p02-readonly-preflight-r0s2-*`. Hmm, that pattern would cover "p02-readonly-preflight-r0s2-review-20261011.md"? The R0S1 review file was `p02-readonly-preflight-r0s1-review-20261011.md` — matches the `p02-readonly-preflight-r0s1-*` pattern. So my review file would be `verification/P02/p02-readonly-preflight-r0s2-review-...`. However, the user's instruction here says "对以下精确文档与冻结候选执行静态 Review" and "不要修改 Owner 文件". It doesn't explicitly ask me to write a file. Also, the workspace is workspace-write, and the review file pattern is allowed. Hmm. Should I write the review file? 
+
+The R0S1 review precedent: the reviewer did NOT create the file; DSH output was archived by Codex byte-for-byte ("**未创建** `verification/P02/p02-readonly-preflight-r0s1-review-20261011.md`；按 Task L65，Reviewer 唯一交付对象为 Review 内容，由 Codex 将 stdout byte-for-byte 归档"). L65 of R0S1 task presumably said the reviewer only delivers review content. Let me check R0S2 Task L63-66 — it doesn't explicitly say the reviewer only delivers content; L70 says allowed writes include `p02-readonly-preflight-r0s2-*`. Hmm.
+
+The user's instruction: "请作为 P02PRE-R0S2 的非作者 Reviewer，对以下精确文档与冻结候选执行静态 Review ... 请报告：Review 决策、P0/P1/P2/P3 计数、逐条 findings..." — "请报告" (report) suggests output in the response. And "不要修改 Owner 文件" — the Owner files are the review inputs (Task/manifest etc.). Writing my own review file isn't modifying Owner files. But given ambiguity and the conservative read-only posture, and that this is a *static review* where the reviewer's deliverable is the review content, I think the safest is to deliver the review in my response and NOT create files, OR create the review file since it's allowed. Hmm.
+
+Let me think about what's most useful and least risky. The task L70 explicitly allows the reviewer to write `verification/P02/p02-readonly-preflight-r0s2-*`. But it says "允许写入范围" for the Task as a whole (Owner's scope). For the reviewer specifically... The R0S1 task apparently had an explicit L65 saying reviewer delivers only content (per R0S1 review L25: "按 Task L65，Reviewer 唯一交付对象为 Review 内容，由 Codex 将 stdout byte-for-byte 归档"). Our R0S2 Task does not contain such a clause. So the reviewer's output could be archived by Codex, or the reviewer could write it.
+
+Given the user says "请报告" and this is a dispatch through the harness (Codex will archive the stdout), I'll deliver the review in the response and NOT write files. That is the most conservative (zero side effects) and matches the R0S1 precedent of "Reviewer 唯一交付对象为 Review 内容". Also, I must be careful: writing a file is a "state modification" — but the reviewer's own output file is authorized. Still, to be safe and avoid any chance of overwriting something, I'll not write. Hmm, but then the deliverable might be lost. Actually the harness captures my response; Codex adjudicates. I'll state clearly that I did not create files (Reviewer side effects = ZERO) and the review content is the deliverable.
+
+Hmm, but actually let me reconsider — many review dispatches expect a written review file. The user's instruction says report in the response. I'll go with response-only and explicitly note it, leaving archival to Codex. That matches precedent and the "无副作用" posture. Good.
+
+Now, let me reconsider the **P1 finding** more carefully, because it determines the decision.
+
+The review focus #3 says: "PowerShell 启动、profile/module、命令子进程与准确执行边界是否足以证明无状态修改。`login=false` 不自动等于 `-NoProfile`；如无法安全证明，明确 `NOT_SAFE_FOR_R0`，不得建议执行。"
+
+So this is a directive: if the shell startup/profile boundary can't be safely proven, declare `NOT_SAFE_FOR_R0`. Can it be proven from the frozen inputs? The inputs explicitly say it CANNOT (manifest L18, task L50, R0S1 evidence L28, R0S1 adjudication L17: "shell startup/profile effects 仍=`UNPROVABLE`"). Therefore: **`NOT_SAFE_FOR_R0`** is mandated.
+
+This is the central outcome. It's a P1 (blocking) finding because it blocks execution authorization.
+
+Now, is there anything else that's blocking? Let me think about **module auto-loading** in the candidate body. The body uses `[Security.Principal.WindowsIdentity]` and `[Microsoft.Win32.RegistryKey]` — .NET types. In PowerShell, referencing a .NET type doesn't require a module. `[pscustomobject]` is built-in. `[Console]`, `[DateTimeOffset]` built-in. So no module load. But PowerShell's startup could auto-load modules listed in `$PSModuleAutoLoadingPreference`; with `-Command`, no explicit module commands are invoked, so autoloading shouldn't trigger. But again, that's an "expected" argument, which the task forbids as the basis for passing. So the startup boundary remains unprovable, not because of a specific defect but because no evidence is provided.
+
+Actually — here's a thought: could the candidate be *made* safe by specifying `-NoProfile -NonInteractive`? The manifest says `shell="powershell.exe"`, `login=false`, `cmd` = body. It doesn't specify `-NoProfile`. But the candidate could add `powershell.exe -NoProfile -NonInteractive -NoLogo -Command <body>`. However, `-NoProfile` alone doesn't prove zero side effects (e.g., PSReadLine history, module analysis cache `ModuleAnalysisCache`, `ConsoleHost_history.txt` are written by PowerShell under certain conditions even with -NoProfile). Indeed, PowerShell writes `$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\ModuleAnalysisCache` and the PSReadLine history file. Hmm — `ModuleAnalysisCache` is written by the module analysis cache during command discovery, which may occur. That is a filesystem write side effect! This is exactly why "shell startup effects" are unprovable without evidence. So even adding -NoProfile wouldn't be fully provable statically from these inputs. This strengthens the `NOT_SAFE_FOR_R0` conclusion.
+
+So: P1 finding = shell startup/profile/module-analysis-cache side effects not provable → `NOT_SAFE_FOR_R0`; must not execute.
+
+Now, are there other P1s? Let me consider:
+
+**P1 candidate: The candidate's `OpenSubKey(..., false)` uses `RegistryKey` which requires the process to have permission; but does merely opening HKLM\...\LocalDumps read? No write.** Not a P1.
+
+**P1 candidate: The `functions.exec_command` tool itself may have side effects (spawning a shell, writing logs).** The R0S1 precedent treated the tool's own startup as `UNPROVABLE` for shell startup; that's the same point.
+
+**P1 candidate: `login=false` semantics.** The manifest explicitly says it's not proof. Covered by the same P1.
+
+I think there is exactly one P1: the unprovable shell-startup/profile side-effect boundary → `NOT_SAFE_FOR_R0`.
+
+Hmm, but should I also raise a P1 for the fact that the Task's own AC L63 (reviewer must fix Task/manifest SHA) is unsatisfiable because no pins are provided? That's a binding gap but not a safety blocker. I'd call it P2.
+
+Now let me also consider whether the candidate's *registry query semantics* have a P2 issue:
+
+**P2 candidate 1: `RETURNED_NULL` labeled `PASS_WITH_EVIDENCE`.** As discussed, the manifest L86 says both `OPENED_READ_ONLY` and `RETURNED_NULL` are recorded as `PASS_WITH_EVIDENCE`. The task L65 says "只允许将查询本身的准确观察标 `PASS_WITH_EVIDENCE`". So it's consistent with the task text, but the label is risky: a null return is *indeterminate* (could be absence, could be access failure, could be other). Labeling it `PASS_WITH_EVIDENCE` while the same sentence says absence is `UNPROVABLE` creates the same label-semantics conflict flagged in R0S1 F-03. I'd raise this as P2 (label conflict that could be misread), with minimal fix: split the label into "observation complete" vs "predicate" columns, or explicitly use `OBSERVED_RETURNED_NULL` as a non-PASS observation class. Actually, hmm. The task itself instructs this labeling, so the manifest is faithful to the task. The finding would be against the Task as well: the Task's own L65 permits PASS_WITH_EVIDENCE only for "查询本身的准确观察", and L44 says null → `RETURNED_NULL` and "不得仅凭 null 断言不存在". Reading them together, labeling RETURNED_NULL as PASS_WITH_EVIDENCE for the *observation* is arguably fine and does not assert absence. But to prevent misreading, I'll raise it as P2 with a dual-label recommendation. This is a judgment call; P2 seems right given the review's emphasis on "未将 null 当 absence PASS". Actually — the review focus asks to *confirm* no such conflation. I can say: confirmed no conflation in the predicate sense, BUT the PASS_WITH_EVIDENCE label applied to a null return is a residual misreading risk → P2. Hmm, or is that too harsh? Let me consider P3. 
+
+The previous R0S1 review rated a similar label conflict as P3 (F-03), and the R0S1 adjudication accepted it as "ACCEPT / CLARIFY". Given consistency with precedent and that the manifest *does* explicitly disclaim absence, I'll rate it **P3**. Hmm. But the review instruction #2 says "确认...未将 null 当 absence PASS" — if the candidate does not do that, there's no finding, just a confirmation. I think the cleaner approach: confirm the substantive point (no absence PASS), and raise a P3 for the residual PASS_WITH_EVIDENCE-on-null labeling risk. Let me do P3.
+
+Hmm, actually, let me reconsider whether it deserves P2. The failure mode: Codex/Owner later cites "HKLM LocalDumps under Registry32: PASS_WITH_EVIDENCE" in the P02PRE classification table, which could be read as "the key was observed present". But `RETURNED_NULL` is the *absence-ish* result. If it returned null and was labeled PASS_WITH_EVIDENCE, someone could conflate "query passed" with "absence confirmed". The manifest explicitly guards against this. I'll go P3 with a strong recommendation. Hmm, hmm. Let me split the difference: rate it **P2** because the review explicitly asks about null/absence PASS and because the classification will flow into the P02PRE state table. Actually no — being a reviewer, I should avoid inflating. The manifest is explicit. I'll make it P3 but list it prominently. Hmm.
+
+Let me think about it differently: which is more useful to Codex? A P2 says "must fix before the doc can be accepted". A P3 says "improve". Since this is a *static document review* and the doc's substantive safety claim is correct, P3 is appropriate for a labeling nit. But the task L63 AC says "确认 runner 的每一个 API/参数和输出均在范围内" — labeling doesn't change API scope. So P3. OK, P3.
+
+**P2 candidate 2: The manifest does not include the required "Review 固定 Task/manifest SHA" pins.** The review inputs lack bytes/SHA. I'll raise P2.
+
+**P2 candidate 3: The candidate body's identity check uses `$identity.Name` — the manifest/Task hardcode `HOME-MY\49745`.** If the host user's domain rendering differs (e.g., machine renamed) it would STOP. That's safe. Not a finding.
+
+**P2 candidate 4: `OpenBaseKey` on 32-bit OS with Registry64.** Docs: On 32-bit Windows, `RegistryView.Registry64` is not available; `OpenBaseKey` throws `ArgumentException`? Actually, .NET docs for RegistryView: "Registry64: ... This field is not supported on 32-bit operating systems." Hmm, if you request Registry64 on a 32-bit OS, `OpenBaseKey` throws `ArgumentException("The specified RegistryView is not supported on this platform")`? Or it may just return the 32-bit view. Either way, the catch handles it → ERROR → UNPROVABLE → stop. And the task L44 handles "view 参数不支持" → UNPROVABLE. So it's within scope. Not a safety finding. But note: the review focus #2 asks to confirm "Registry32/Registry64 是否可安全请求" — the candidate handles unsupported views via catch. Also, requesting Registry32/64 on a 64-bit OS is fine. On a 32-bit OS, `OpenBaseKey(..., Registry64)` might throw — handled. And `OpenBaseKey(..., Registry32)` on 32-bit OS is fine. Also on ARM64 there are views; `Registry32`/`Registry64` are supported for x86/x64 emulation contexts. Fine. So no P-level finding; report as covered.
+
+Hmm, but there's a subtle *static* concern: if `Registry64` is unsupported and throws, the manifest says "view 参数不支持...均为 UNPROVABLE 并停止" (task L44) and the body `return`s. But then the `COMPLETE` line is NOT emitted, and the process exits 0 with partial output. The evidence criterion requires "完整 stdout" else UNPROVABLE (manifest L87). Consistent. Good.
+
+**P2 candidate 5: Does the candidate write anything?** No. But PowerShell startup might. Covered by P1.
+
+**P2 candidate 6: The candidate's `$ErrorActionPreference='Stop'` and `[Console]::Out.WriteLine` are fine. But `$PID` is the PowerShell process PID.** The manifest requires PID recorded. Good. `$PID` is available. Fine.
+
+**P3 candidates:**
+- P3-a: No self-referential bytes/SHA pins in Task/manifest (I'll make this P2 actually... let me decide: the AC explicitly requires the reviewer to fix Task/manifest SHA; the candidate provides none; and I can't compute. This is a binding gap affecting the review's ability to meet its own AC. I'll rate P2.)
+- P3-b: `RETURNED_NULL` labeled PASS_WITH_EVIDENCE (P3).
+- P3-c: `login=false` semantics not further specified (P3) — actually this is part of P1; I can fold it in or separate. I'll fold the `login=false`≠`-NoProfile` into P1 and not double-count.
+- P3-d: The manifest cites Microsoft Learn `OpenSubKey(String, Boolean)` page which "同时说明 key 不存在时返回 null，也把 null 描述为操作失败结果". Accurate-ish; the docs say OpenSubKey returns null "if the specified subkey does not exist" and throws exceptions for errors. Actually the docs say: "Returns: The subkey requested, or null if the operation failed." Hmm. The manifest's framing is acceptable.
+- P3-e: thread identity null-semantics not pinned to a frozen source (P3). Include.
+- P3-f: The candidate says "不加载 module、不用注册表 provider" — but PowerShell may auto-load the `Microsoft.PowerShell.Management`/`Utility` modules? Not needed for these calls. But the R0S1 experience showed module auto-load state mattered for *that* runner because it used Get-PSDrive/Get-Module/Get-ChildItem. This runner uses none of those. So module autoload risk is lower, but `-Command` script startup may still import modules if a profile does. Covered by P1.
+- P3-g: The manifest's status says `NOT_AUTHORIZED_TO_CAPTURE` and Task `status: in_review`, `approval: user_authorized_p02pre_read_only_20261011`. The front-matter `approval` field could be misread as execution authorization. Worth a P3: clarify that `approval` denotes the read-only *stage* authorization, not this candidate's execution authorization. Hmm, the task L25 explicitly says "本 Task 仅为待 Review 的候选冻结...不得运行任何命令或目标查询." So it's mitigated. Maybe a P3 note.
+- P3-h: The Task L70 allowed-write range lists `doc/REBASELINE_PLAN.md`, `doc/STATUS.md`, etc. as writable, but as of the candidate's freeze none have been updated; not a finding.
+- P3-i: Manifest L16 cites the Microsoft Learn pages; the URLs are external. I shouldn't fetch them (web allowed? The instruction says no OS/API queries; web fetch of docs is not prohibited explicitly, but the R0S1 precedent allowed only document reading; also "不要运行 manifest 代码、任何 OS/API/registry/WER/path/environment/token/ACL 查询". A web fetch of learn.microsoft.com is not an OS query. Hmm, should I verify the docs? The task is static document review. Fetching external docs would be a network operation — allowed by the harness but arguably beyond "静态文档 Review" and the previous reviewer did not fetch. I'll avoid network fetches to stay conservative and note the API semantics as "documented per manifest citation, not independently re-fetched". Actually, being a good reviewer, I could verify the OpenSubKey docs. But the prompt says "不要运行 ... 任何 OS/API ... 查询" — a web fetch isn't OS. Hmm. But it also says the review should be static on the frozen docs. I'll not fetch; I'll note it as an unverified external citation. Actually, let me reconsider: the review is more credible if I verify the cited API semantics. But the instructions emphasize not running queries and not modifying Owner files. Web fetch is read-only and external. The R0S1 review did NOT fetch. I'll stay consistent: no web fetch; mark citations as adopted-from-manifest.
+
+Hmm, actually, I want to double-check one API semantics claim because it's central: `OpenSubKey` null semantics. The manifest says the page "同时说明 key 不存在时返回 null，也把 null 描述为操作失败结果". The actual .NET doc for `RegistryKey.OpenSubKey(String, Boolean)` says: "Returns: The requested subkey, or null if the subkey does not exist." Hmm, actually I recall: "null if the specified subkey does not exist." Hmm. But the manifest says the page also describes null as a failure result. There's an older doc line: "Returns null if the operation failed." Hmm.
+
+I'll avoid asserting either way from memory; I'll note that the manifest's own conservative treatment (null ≠ absence) is the right posture regardless of doc wording. That's a safe review position.
+
+Let me also double check: **Does `OpenBaseKey` + `OpenSubKey` "read value/subkey/other objects"?** `OpenSubKey` by itself does not enumerate. But does opening a key read its security descriptor / trigger anything? It performs a registry open (NtOpenKey). No write. Fine.
+
+**One more: the body doesn't verify that `$baseKey` is non-null before calling `$baseKey.OpenSubKey(...)`.** `OpenBaseKey` returns non-null or throws. If it returned null (unlikely), `.OpenSubKey` on null would throw a `NullReferenceException`? In PowerShell, calling a method on `$null` throws `RuntimeException: You cannot call a method on a null-valued expression`, which is a terminating error caught by the `try/catch`? PowerShell method invocation on null raises a `RuntimeException` that IS caught by try/catch. The catch records `$_.Exception.GetType().FullName` = `System.Management.Automation.RuntimeException` and HResult. Fine. So no finding.
+
+**Does `catch` handle non-terminating errors?** With `$ErrorActionPreference='Stop'`, .NET method exceptions are terminating anyway. Fine.
+
+**`[uint32]$_.Exception.HResult`** — HResult is an int; casting to uint32 and formatting X8. Fine. Note: `'0x{0:X8}' -f [uint32]$_.Exception.HResult` — if HResult is negative, `[uint32]` conversion works. Fine.
+
+**Potential issue: `return` inside `foreach` in a `-Command` string.** Let me think again. When PowerShell runs `-Command <string>`, it compiles the string as a script block and runs it. `return` at the top level of a script block invoked with `&` or as a script: `return` exits the *current scope*. For a script block executed via `-Command`, the scope is the global/script scope... Actually, there's a subtlety: If the command string is executed, `return` exits the script. I believe it works. But there's a known gotcha: `return` inside a `foreach` inside a `switch` etc. still exits the script. So fine.
+
+Hmm, but a *real* gotcha: `functions.exec_command`'s `cmd` parameter — is the body passed to `powershell.exe -Command "<body>"`, or written to a temp `.ps1` and run? The manifest says "cmd 直接使用下方冻结 manifest fenced body；不写脚本". If the tool passes it via `-Command`, then `return` works as script return. If the tool wraps it differently (e.g., `-EncodedCommand`), still a script. OK.
+
+Now let me also verify: **the body contains no `Write-Output`/pipeline output that could go to stderr or be reformatted.** `[Console]::Out.WriteLine` writes directly to stdout. Good — this is a deliberate choice to produce exact raw lines. Fine.
+
+**Missing stderr handling**: The manifest says "工具 shell exit" is recorded, but doesn't specify capturing stderr. R0S1 established stderr unavailable. The manifest L87 mentions "完整 stdout" but not stderr. The review focus #4 asks about output completeness. Is the lack of a stderr requirement a finding? The Task L42 requires recording "工具 shell exit" and the identity/query fields; stderr isn't required. The manifest says output completeness (PID/query/start/end/完整 stdout) missing → UNPROVABLE. Since PowerShell errors are caught and printed to stdout, stderr may still carry CLIXML/errors from the host (e.g., startup errors from a profile). Hmm — a profile error would go to stderr and could be missed, and that's precisely the unprovable startup region. I'll fold into P1 (startup effects) and mention stderr as a related gap. Maybe a separate P3: "manifest 未要求归档 stderr，profile/startup 错误可能只出现在 stderr 而不被捕获；建议将 stderr 缺失列为 UNPROVABLE 条件". Good, P3.
+
+Now let me also check: **the candidate claims "两个 view 的结果分别记载；不得声称它们指向不同物理 key"** — good, matches focus #4.
+
+**"Output completeness" and two-view limitation**: The manifest L86 correctly says both views are observations at a point in time and don't prove WER's effective reader/view. Good.
+
+Now let me also examine whether the candidate **expands the user's authorization**. The user authorized "对已冻结对象做无副作用只读查询" for P02PRE's controlled read-only phase. The candidate restricts to one HKLM key under two views. It does not read HKCU, per-image keys, values, directories. It does not run Create/Delete/profile APIs. It does not modify anything (assuming shell startup is safe, which it isn't provable). So scope-wise it's *narrower* than the R0 candidate set. Good. No scope creep. However, the one thing: the Task's L21 says "当前唯一可考虑继续冻结的 WER 查询是对已登记 HKLM LocalDumps 全局键". Good.
+
+Also verify the candidate does not treat the R6 candidate strings as authorization: manifest L24-26 define the object; R6 L66 says the strings "不是本轮读取许可". The R0S2 candidate references R6 only for the object list + limits. Good. The manifest L11-15 (静态来源) cite R0 manifest/evidence and P02M9. No claim that R6 or its old candidates themselves authorize. Good. I'll report this as a passed check.
+
+Now the **waiver state**: all five values + fixed text match across Task/manifest/R6/R0/R0S1. And the candidate correctly says this authorization is not a new waiver or Gate PASS (Task L21, manifest L7). Good.
+
+**Remaining conditions classification** — I need to report which are `UNPROVABLE`/`REQUIRES_ACTIVE_TEST`/`NOT_SAFE_FOR_R0`. Based on R0S1 adjudication + R6 + P02M9:
+- `private_registry_absence = UNPROVABLE` (waived by owner).
+- `wer_view_destination_binding = NOT_RESOLVED / BLOCKED` (P02M9 §2, R6 L66).
+- `t0_bootstrap_safe_order = NOT_RESOLVED / BLOCKED`.
+- `host_wer_configuration = NOT_READ / NOT_VERIFIED`.
+- `wer_per_image_rules = PARTIALLY_DOCUMENTED`.
+- `profile_folder_no_side_effect = UNPROVABLE / BLOCKED`.
+- `zero_capability_getter_eligibility = NOT_RESOLVED / BLOCKED`.
+- `getter_effective_write_boundary = NOT_RESOLVED / BLOCKED`.
+- `getter_success_failure_no_write = NOT_RESOLVED / BLOCKED`.
+- shell startup/profile effects = `UNPROVABLE` → candidate method `NOT_SAFE_FOR_R0`.
+- scratch leaf emptiness = `UNPROVABLE`.
+- canary write boundary = `REQUIRES_ACTIVE_TEST`.
+- appcontainer profile folder exact path = `NOT_SAFE_FOR_R0`.
+- token/elevation/LPAC capability = `NOT_SAFE_FOR_R0`.
+- path ancestry/canonical identity/file ID/hardlink/ADS/full protected-invariants = `UNPROVABLE`.
+- controller/probe/subprocess/COM/broker/WER/write closure = `REQUIRES_ACTIVE_TEST`.
+- two views' physical identity / WER reader view = `UNPROVABLE` (even after execution).
+- Registry key existence under each view = only "精确 API 观察", and even that only if executed; absence stays `UNPROVABLE`.
+
+Now let me also verify: does the R0S2 manifest claim any of the R0/R0S1 results as authorization or as re-use? It says R0 evidence L27 recorded the getter on `RegistryView.Default` for two historical candidate keys. It doesn't claim R0S1's stop affects this. The manifest doesn't mention R0S1's module failure at all — hmm, is that a gap? The R0S1 runner stopped because module trust failed (it needed `Get-Module`/Management module). The R0S2 runner does NOT use modules at all (pure .NET), so the R0S1 blocker doesn't directly apply. But the shell-startup/module-analysis remains relevant. The manifest L18 mentions "runtime module" among unproven shell startup aspects. Good. But the task doesn't reference R0S1's outcome except `depends_on: [P02PRE-R0, P02PRE-R0S1]`. Is that a finding? Not materially. Maybe a P3 note: the Task should state explicitly that R0S1's `NOT_SAFE_FOR_R0` module-trust finding does not carry into this pure-.NET runner, or does it? Hmm, actually the R0S1 adjudication's F-01/F-02 acceptances: (a) `Get-ChildItem` inventory method = NOT_SAFE_FOR_R0; (b) module trust precondition NOT_SAFE_FOR_R0. The R0S2 runner avoids `Get-ChildItem` and `Get-Module`, so those specific blockers don't recur. But the *feature* used (PowerShell as runner) is the same, and its startup remains unprovable. Worth a P3: "Task/manifest 未显式说明 R0S1 的 module-trust/Get-ChildItem 停止项如何映射到本候选（本候选不使用这些 cmdlet）；建议加一句映射说明以避免读者误以为 R0S1 结论已被解除". Actually that could be P2? No, it's documentation linkage; P3.
+
+Hmm, let me also verify the "旧候选字符串" concern: R6's old candidate strings are `HKLM\...\LocalDumps`, `HKCU\...\LocalDumps`, and three directories. The R0S2 candidate only uses the HKLM one under two views, explicitly not HKCU/directories. So no reuse of the old candidate string as authorization. Good. I'll confirm.
+
+Now let me think about whether there's a **P0**. A P0 would be an authorization violation or an outright unsafe instruction. Does the candidate instruct execution? No — it says execution is not authorized until review+adjudication. Does it claim a Gate PASS? No. Does it propose a write? No. So no P0.
+
+Could the P1 (shell startup unprovable) be considered P0? It's a blocking safety gap, but the candidate itself already flags it and defers to the reviewer. So P1 is right.
+
+Now, is the decision `NOT_SAFE_FOR_R0`? The review decision enum: The task says if unresolved, require `NOT_SAFE_FOR_R0` or `BLOCKED`, don't pass. So my decision: **`NOT_SAFE_FOR_R0`** for the execution method, while the *documents themselves* are internally consistent and honest. I need to phrase the decision carefully:
+
+Option: Decision = `NOT_SAFE_FOR_R0` (候选方法不得执行) + the documents are `ACCEPTED_AS_STATIC_DOCUMENT_ONLY_WITH_FINDINGS`. Hmm. The review should give a single decision. Given the focus #3 mandate, the decision must be `NOT_SAFE_FOR_R0`. But I can add a secondary characterization: the static documents are internally consistent/honest, but the method is not safe to execute. Let me structure:
+
+- 主决策：`NOT_SAFE_FOR_R0`（不得执行；P1 未解决）。
+- 文档完整性：静态文本与范围冻结基本自洽、未扩权、未把 R6 旧候选当授权、未把 null 当 absence PASS；但存在 P2 绑定缺口（无自 SHA pin）等。
+
+I think a single clear decision of `NOT_SAFE_FOR_R0` is correct and follows "任何问题未解决时请要求 `NOT_SAFE_FOR_R0` 或 `BLOCKED`，不要放行".
+
+Now count findings:
+- P0 = 0
+- P1 = 1 (shell startup/profile/module & exact execution boundary unprovable → NOT_SAFE_FOR_R0)
+- P2 = ? Let me list:
+  - P2-1: Task/manifest/runner 无自 bytes/SHA pin，Reviewer 无法（且被禁止运行查询）固定 Task/manifest SHA → 违反 Task AC L63 的绑定要求。
+  - P2-2: 无 stderr 归档要求 + profile/startup 错误可能只在 stderr；输出完整性条件未覆盖 stderr。Hmm, is this P2 or P3? The output completeness criterion (manifest L87) says "PID、query/start/end time 或完整 stdout 缺失 → UNPROVABLE". It omits stderr. Given startup is already P1, stderr is a sub-issue. I'll make it P2 because if the candidate were ever approved (after resolving P1), the missing stderr requirement would let a profile-error or host warning slip by. Hmm, but stderr isn't a "read-only" safety issue per se. I'll make it P3 to avoid inflation. Hmm. Let me think about what matters: The reviewer's job is to find material issues. stderr omission is minor → P3.
+  - P2-2 (real): The candidate's `RETURNED_NULL`→`PASS_WITH_EVIDENCE` mapping. P3 as decided.
+  - P2-3: The manifest L86 says `PASS_WITH_EVIDENCE` for both null and opened. Also the task L65. Hmm, same as above.
+  - P2-4: `RegistryView.Registry64` unsupported-view behavior is handled by catch, but the manifest's claim "不重试...view 参数不支持...UNPROVABLE 并停止" is fine. No finding.
+  - P2-5: The candidate hardcodes expected name/SID; if the host user differs the runner stops safely. No finding.
+  - P2-6: The manifest declares "命令不写临时文件，不调用 module/provider/external executable，不启动子进程，不写任何状态" (L32) — this is an unproven claim about the tool's own behavior (exec_command) → same as P1. Fold in.
+  - P2-7: `login=false` is not a documented guarantee; folded into P1.
+
+Hmm, so I need more than one P2? Not necessarily — counts can be small. But let me look for a genuine second P2.
+
+**Genuine P2 candidate**: The R0S2 manifest/Task define the result classification `PASS_WITH_EVIDENCE` for a successful observation, but the Task AC L65 says "只允许将查询本身的准确观察标 PASS_WITH_EVIDENCE；WER effective view/policy/destination/T0 继续 UNPROVABLE". The manifest L86 also says "关于真实物理 key absence、WER 有效 view、policy、destination、T0 仍=UNPROVABLE". So consistent. Not a finding.
+
+**Genuine P2 candidate**: The Task's front-matter `approval: user_authorized_p02pre_read_only_20261011` combined with `status: in_review` could be misread as execution authorization; but L25 explicitly forbids execution. Maybe P3.
+
+**Genuine P2 candidate**: The manifest does not freeze/cite the exact PowerShell invocation flags (`-NoProfile`, `-NonInteractive`, `-ExecutionPolicy`, `-Command` vs `-File`), so even the *text* of the runner is under-specified: `shell="powershell.exe"`, `login=false`, `cmd` = body. If the host tool decides to run `powershell.exe -Command <body>` vs `powershell.exe -File temp.ps1`, the behavior differs (and `-File` would write a temp file!). The manifest claims "不写脚本" and "不写临时文件", but since the exact argv is not frozen, this claim is unproven. This is a real gap and arguably a second P1/P2. I'd fold the "exact argv not frozen" into P1 (exact execution boundary). Hmm — the focus #3 says "命令子进程与准确执行边界是否足以证明无状态修改" — so the "exact execution boundary" includes argv. The manifest does not freeze the full argv; it relies on the host tool's `shell`/`login` params. This is part of the P1 (unprovable exact execution boundary + startup). I'll make P1 broad covering: shell selector semantics, argv/profile/module, host-tool behavior, and the "不写临时文件/不启动子进程/不写任何状态" claims being unproven. Good — that's one comprehensive P1.
+
+Then P2: the SHA-pin binding gap (AC L63 unmet). That's a solid P2.
+
+Another P2? **The manifest's "静态来源及可证明范围" cites R0 evidence L27 as "既有执行证据" for the getter on `RegistryView.Default` for "两个历史候选键". But R0 evidence L27 records HKLM=PRESENT, HKCU=ABSENT for `RegistryView.Default`. Using this as evidence that the *getter combination* is read-only is fine; but the candidate is now using explicitly-requested Registry32/Registry64 views, for which there is NO prior execution evidence. The manifest acknowledges this. Not a finding per se, but I could note that the *view-specific* getter calls are `REQUIRES_ACTIVE_TEST` for their actual outcome — which is the point of the query. Fine.
+
+Another P2: **The task/manifest say "view 参数不支持...均为 UNPROVABLE 并停止" — but on a 32-bit host, requesting Registry64 could silently return the *same* 32-bit view rather than throwing.** If it silently succeeds, the runner would record `OPENED_READ_ONLY` for "Registry64" when in fact it read the 32-bit view → the two views could be the SAME physical view, and the manifest's caution "不得声称它们指向不同物理 key" partially covers this, but the *output* would mislabel the view. Hmm — does OpenBaseKey throw or silently fall back on 32-bit OS? Per .NET docs for `RegistryView`: "Registry64 — ... On 32-bit operating systems, this field is ignored"? Hmm. Let me recall. Actually I believe: on a 32-bit OS, `RegistryView.Registry64` causes `OpenBaseKey` to throw `ArgumentException`. Hmm, or maybe the docs say "If you request a view that is not supported, the default view is used". I'm not certain. Given uncertainty, the safest review note: the manifest should state the host OS architecture binding (the frozen inputs establish the host is 64-bit? R0 evidence had `E:\Program Files\nodejs`, `C:\Program Files (x86)\...` — presence of `Program Files (x86)` suggests 64-bit Windows). Since the host architecture isn't pinned in the R0S2 docs, and the behavior of requesting an unsupported view isn't pinned, there's an ambiguity. I'll make this a P2: "host OS architecture / view-availability 未在候选内固定，且 `RegistryView.Registry64` 在不支持的平台上行为（抛异常 vs 回退）未由冻结来源固定；建议在 manifest 明确 host 为 64-bit（有 `Program Files (x86)`）并声明若 view 不可用则按 ERROR/UNPROVABLE 停止；否则记录 'Registry64' 可能名不副实". Hmm. Is that overreach? The catch handles exceptions; the silent-fallback case is the concern. Let me include it as P2 with careful wording, or P3. 
+
+Hmm, let me weigh: the review focus explicitly asks "Registry32/Registry64 是否可安全请求". So I should address it. The candidate's handling of exceptions is fine; the silent-fallback/architecture ambiguity is a genuine residual. I'll rate P2 because mislabeling a view could corrupt the evidence classification (the whole point of querying two views), and it's cheap to fix (pin host arch + assert view availability). Actually... would it corrupt? If Registry64 silently maps to the same view, both lines would report the same STATE and the manifest already forbids concluding "different physical keys". So the damage is limited. Hmm. I'll go P2 but note limited impact. Actually, let me make it P3 to be measured. Hmm.
+
+Let me settle on a defensible set. I'll aim for: P0=0, P1=1, P2=3, P3=4 or similar. Let me define:
+
+**P1 (1):**
+- RP-01 (P1): PowerShell 启动/profile/module-analysis 与 host tool 的精确执行边界无法证明无副作用；`login=false` 不等价于 `-NoProfile`；manifest 未冻结 argv；manifest 自身也承认不可证 → 按 Task L50/L51、manifest L88，整个候选 = `NOT_SAFE_FOR_R0`，不得执行。
+
+**P2 (3):**
+- RP-02 (P2): 冻结对象绑定不足：Task/manifest/runner 均无自身 bytes/SHA-256 pin；Reviewer 被禁止运行 hash/path 查询且派发未提供 pin，导致 Task AC L63 的"固定 Task/manifest SHA"无法满足；`cmd` 与 manifest fenced body 的字节一致性无独立绑定（沿用 R0S1 F-05 的同类缺口）。建议 Codex 在 pre-query checkpoint 登记实际 `cmd` 原文 + bytes/SHA，并给出 Task/manifest pins。
+- RP-03 (P2): `Registry32/Registry64` 可请求性未完全固定：host OS 架构/view 可用性未固定；不支持的平台上是抛异常还是回退到默认视图未由冻结来源固定。若静默回退，"Registry64" 标签可能名不副实（虽然 manifest 已禁止据此推断不同物理 key）。建议 manifest 固定 host 为 64-bit（或明确记录架构核验方式），并声明 view 不可用时按 ERROR/UNPROVABLE 停止，且不得把两个 view 的相同结果解读为同一或不同物理对象。
+- RP-04 (P2): 身份/线程判定依赖未冻结语义 + 结果口径。Hmm, combine? Let me instead make P2-4 = "null 语义与 PASS_WITH_EVIDENCE 标签" ... that's P3 in my plan. Hmm.
+
+Let me reconsider and find the genuinely strongest P2s:
+
+(a) SHA/bytes binding gap → P2. Strong.
+(b) Exact execution boundary/argv/startup → P1.
+(c) View availability ambiguity → P2 (moderate).
+(d) `RETURNED_NULL` as PASS_WITH_EVIDENCE label conflict → P3.
+(e) thread-identity null semantics not pinned → P3.
+(f) stderr not covered by output-completeness criterion → P3.
+(g) R0S1 module-trust/Get-ChildItem findings mapping not stated → P3.
+(h) `approval:` front-matter could be misread → P3.
+
+That's P0=0, P1=1, P2=2, P3=4. Hmm, (c) I could demote to P3. Let me keep P2=2, P3=4? Or P2=3 with (d) elevated? 
+
+Hmm, actually, let me reconsider (d) more seriously because the review's focus #2 explicitly demands confirming "未将 null 当 absence PASS". If I find the manifest maps null→PASS_WITH_EVIDENCE, that's directly responsive. The manifest says the PASS label is for the *observation*, not absence, and explicitly keeps absence UNPROVABLE. So it does NOT violate. A reviewer should confirm compliance and optionally note the label risk. I'll keep it P3 (label hygiene) and explicitly state the substantive requirement is *satisfied*.
+
+Let me settle: P0=0, P1=1, P2=2, P3=4. Total 7 findings.
+
+Hmm, wait. Let me reconsider whether there's another real P1/P2 I'm missing regarding **the `finally` + `return` inside `foreach` and output ordering**: If the first view errors, the catch prints STOP, then `finally` disposes, then `return` exits the script — the second view is skipped. Correct.
+
+But there's a subtle issue: **if `OpenBaseKey` for view 1 throws, `$baseKey` is null; catch prints STOP; finally skips both disposes.** Fine. If `OpenSubKey` throws, `$baseKey` non-null but `$targetKey` null; finally disposes `$baseKey`. Fine.
+
+**One more subtle issue**: The body's identity check `-not $authenticated`. `$identity.IsAuthenticated` for a normal user is true. Fine.
+
+**And**: `[Security.Principal.WindowsIdentity]::GetCurrent($false)` — in PowerShell, `$false` binds to bool. Fine.
+
+**And**: The STOP identity branch uses `return`, which exits before the foreach. Good.
+
+Now, an important question: **does `return` inside the top-level script actually exit the script when the script is passed via `-Command`?** There's a known PowerShell behavior where `return` in a script block invoked by `-Command` works. But if `functions.exec_command` runs the cmd as a *pipeline* or wraps it in `& { ... }`, `return` exits the scriptblock but subsequent statements in the wrapper would continue. Since we don't know the tool's wrapping, there's a risk the `return` doesn't stop the second view. Hmm! That's actually a meaningful concern for the "STOP" semantics: the "stop logic" correctness depends on `return` semantics in an unknown host wrapper. If the host wraps cmd in `& { <cmd>; ... }`, the `return` exits early. If it appends nothing, fine. But if the host were to run the cmd in a way where `return` only exits the foreach... no, `return` never means "break" in PowerShell (`break` does). `return` always exits the current scope (script/function), even inside foreach. So even if wrapped in a function/scriptblock, `return` exits that scope. The only risk is if the host appends statements *after* the cmd at the same scope level — then those would run. But those would be host code, not the manifest body. The manifest's claim "STOP → 不运行第二个 view" is within the body, and `return` guarantees it within the body. Good. Not a finding, though I could note that STOP relies on `return`-exits-scope semantics; since the manifest fenced body ends at the return, it's fine.
+
+Hmm, but the output evidence: if `return` exits the script, only the lines printed before it appear. Good.
+
+Let me now also double check: **the manifest says "调用 2：仅当调用 1 正常完成后"** and the body's loop continues after a null result — "正常完成" includes null. Good.
+
+Now let me verify one more scope item: **the Task says the body must not "执行任何目录/环境/文件状态查询"**. The body calls `[DateTimeOffset]::UtcNow` (time) and `[Console]::Out` (stdout). Those aren't directory/environment/file state queries. It also reads identity. The Task explicitly permits identity. Good. Hmm, `[DateTimeOffset]::UtcNow` reads the system clock — is that a "状态查询"? It's a time read, explicitly required by the Task (query start/end UTC). Fine.
+
+Does the body read environment variables? No. Good.
+
+Does the body use `$PID`? That's a process property, not an OS query per se, and the Task requires recording PID. Fine.
+
+Now — **does the body write anything to disk?** No file writes. But PowerShell startup might. P1.
+
+OK. Now let me also check the **allowed-write range** for the Review: Task L70 says allowed writes include `verification/P02/p02-readonly-preflight-r0s2-*` and `verification/P02/codex-p02pre-r0s2-*`. My review content, if archived by Codex, would be `p02-readonly-preflight-r0s2-review-*.md`. Consistent. Good.
+
+Now let me also confirm: **the review must not modify Owner files** — I haven't and won't.
+
+Let me also double-check the R0 evidence L27 vs the manifest's citation: manifest L14 says "R0 evidence L27 记录该 getter 在 `RegistryView.Default` 上对两个历史候选键的既有执行证据." R0 evidence L27 indeed: "`RegistryKey.OpenBaseKey + OpenSubKey(path, false)` | 仅 `RegistryView.Default` 两个 LocalDumps 候选：HKLM=`PRESENT`、HKCU=`ABSENT`". Correct citation. Good.
+
+Manifest L13 cites R0 manifest L21/L65/L90. Let me verify: R0 manifest L21 lists `RegistryKey.OpenBaseKey` + `OpenSubKey(path,false)` as allowed; L65 pins `RegistryView.Default` and `OpenSubKey(...,false)`; L90 cites the Learn `OpenSubKey(String, Boolean)` page. Correct. Good.
+
+Manifest L15 cites P02M9 §2 — P02M9 §2 indeed covers WOW64 views. Correct.
+
+Task L31 cites R0 evidence L27 and R0 manifest L21/L65/L90 — same. Good.
+
+Task L32 cites P02M9 §1–2. §1 is per-image/hive, §2 is view/architecture. Candidate cites "§1–2". The manifest cites "§2". Slight difference but both fine.
+
+Now let me verify the **risk values string** exactly matches:
+R6 L14: `private_registry_absence=UNPROVABLE`；Technical Gate=`NOT_SATISFIED`；Owner Risk Acceptance=`APPROVED`；Gate Disposition=`WAIVED_BY_OWNER`；Build Authorization=`AUTHORIZED_WITH_EXCEPTION`。and L16 the quote.
+R6 adjudication L19-24: same list + quote.
+R0 manifest L13: same + quote.
+R0 evidence L14: same + quote.
+R0S1 adjudication L47: same + quote.
+R0S2 Task L23: same + quote.
+R0S2 manifest L9: same + quote.
+All consistent. 
+
+Now, one more check: **Task front-matter `status: in_review`** vs manifest L6 `status=in_review`, execution state `NOT_AUTHORIZED_TO_CAPTURE`. Consistent. And Task L25 says no execution before review+adjudication. Good.
+
+**Task `integration_commit: null`** — fine.
+
+**Task `depends_on: [P02PRE-R0, P02PRE-R0S1]`** — consistent.
+
+Now let me consider: does the Task/manifest erroneously imply the *review* authorizes execution? Task L64: "Codex 对 Review 独立 adjudicate；只有 Review 无未解决 P0/P1、且 Codex 明确记载执行边界安全，Task 才转 ready". Good — review alone doesn't authorize. And Task L74 (Review 后的自动接力) says if unsafe → `NOT_SAFE_FOR_R0`; if approved → next action is checkpoint + execute once. Given P1 unresolved, the "unsafe" branch applies. Good.
+
+Now, the user asks: "即使 Review 批准静态文档，也不表示执行已经授权；只有 Codex adjudication 可决定是否将 Task 转为可执行." So my output must state this. Good.
+
+Now let me think about whether to raise a finding about the **Task's AC checkbox state**: all AC are `- [ ]` unchecked, consistent with in_review. R0S1's review noted AC unchecked. Fine, no finding.
+
+Let me also consider **the manifest's claim in L32: "命令不写临时文件，不调用 module/provider/external executable，不启动子进程，不写任何状态."** The body itself doesn't. But the *host tool* launching `powershell.exe` may write a temp profile/PSReadLine history/ModuleAnalysisCache, and the tool may write logs. The manifest's claim is thus *stronger than provable*. This is part of P1 — I'll cite manifest L32 explicitly. Good.
+
+Now let me draft the review. Structure (mirroring R0S1 review style, in Chinese):
+
+# P02PRE-R0S2 独立 Review（非作者 Reviewer：DeepSeek Harness）
+## 0. Metadata (Review ID, Task, Owner, Reviewer, repo/branch, reviewed HEAD/tree, pins, method, decision enum, finding counts, gate effect)
+## 1. 范围与限制 (what I reviewed, what I did NOT run, capability limits)
+## 2. 逐项审查结论 (map to the 5 focus areas)
+   2.1 授权范围/R6 旧候选字符串/waiver 与 Gate 效力
+   2.2 Registry API 逐调用、参数、权限、异常/null、Dispose、未读 value/subkey、null≠absence
+   2.3 PowerShell 启动/profile/module/精确执行边界 → NOT_SAFE_FOR_R0
+   2.4 身份停止逻辑、输出完整性、两 view 与 WER reader 限制
+   2.5 Task/manifest/base/head/hash pin 与 waiver 状态
+## 3. Findings (P0/P1/P2/P3 table)
+## 4. 覆盖与未覆盖 (coverage matrix + verification table)
+## 5. 决策与剩余风险 + 建议的下一动作
+## 6. 剩余条件分类 (UNPROVABLE / REQUIRES_ACTIVE_TEST / NOT_SAFE_FOR_R0)
+## 7. 未核验声明 & Reviewer 副作用 = ZERO
+
+Let me make sure I include a clear "Review 决策". Given the user says "任何问题未解决时请要求 `NOT_SAFE_FOR_R0` 或 `BLOCKED`，不要放行", my decision is `NOT_SAFE_FOR_R0`.
+
+Let me also give the "建议的下一动作": 
+1. 不执行本候选；不派发 capture。
+2. 将 R0S2 的 shell-startup/执行边界项标 `NOT_SAFE_FOR_R0`，保持 `private_registry_absence=UNPROVABLE`、waiver/Gate 原值。
+3. 若 Owner 仍希望推进，必须先解决 P1：要么（a）提供可证明无副作用的非 PowerShell、非 shell 的只读 runner（例如已冻结的 native/.NET 控制台程序，另建 Task、重新静态 Review）——但注意 manifest L57/L92 明确禁止额外 executable，所以这需要新的用户授权与 Codex 范围冻结；要么（b）由 Codex 给出 shell startup/profile 无副作用的可审查证据（例如固定 argv 含 `-NoProfile -NonInteractive -NoLogo` 且证明 ModuleAnalysisCache/PSReadLine history 不会写入）——但静态上仍难证明，故当前不放行。实际上更诚实的是：本候选无法在 R0 只读阶段安全证明 → 保持 NOT_SAFE_FOR_R0。
+4. 修复 P2（pins、view 可用性）与 P3（标签、stderr、映射说明）供未来候选使用。
+5. Review 不授权执行；只有 Codex adjudication 能决定是否转 ready，且在 P1 未解决前不得转。
+
+Also state: 本轮 Review 未创建/修改任何文件；未运行任何命令。
+
+Let me now double-check one thing about the claim "R6 的旧候选字符串" — R6 L66 says the strings are historical candidates, not read permission. The R0S2 manifest L24-26 defines the object from the WER historical candidate list. Does the manifest explicitly say it's *not* using R6 as authorization? Manifest L13-15 cite R0/P02M9 as static sources; L7 says user authorization is the basis and it's not a new waiver/Gate PASS. The Task L21 says the authorization is the user's, and the object is derived from R0/R6 history. Hmm — does the Task explicitly state that the R6 old candidate string is not itself authorization? Not verbatim. But R6 itself L66 says so, and the candidate doesn't claim otherwise. I'll confirm compliance and add a P3 note recommending an explicit sentence ("本候选对象引自 R6 历史候选，但授权来自 2026-10-11 用户只读批准，非 R6"). Actually this is exactly review focus #1's concern ("不得把 R6 的旧候选字符串当成授权"). Since the candidate's Task L21 says "用户 2026-10-11 批准...允许对已冻结对象做无副作用只读查询；此授权不是新风险豁免，也不代表 Gate PASS。R0S1 已完成...静态顾问指出，当前唯一可考虑继续冻结的 WER 查询是..." — so the authorization basis is correctly attributed to the user, and the object choice is attributed to the advisor. It doesn't cite R6 as authorization. Good, substantively compliant. I'll add a minor P3 for explicitness. Maybe fold into the P3 list.
+
+Let me finalize findings:
+
+- **RP-01 (P1)** — 执行边界/启动副作用不可证 → `NOT_SAFE_FOR_R0`。
+- **RP-02 (P2)** — 自绑定 pins 缺失（Task/manifest/runner 无 bytes/SHA；`cmd` 字节一致性无绑定；AC L63 的 SHA 固定无法满足）。
+- **RP-03 (P2)** — 视图可用性/主机架构未固定，`RegistryView.Registry64` 在不支持平台上的行为未固定；存在"标签名不副实"的残余风险（即使 manifest 已禁止据此推断不同物理 key）。
+- **RP-04 (P3)** — `RETURNED_NULL` 归入 `PASS_WITH_EVIDENCE` 的标签冲突风险；建议双列/脚注（谓词证据 vs 观察完整性）。
+- **RP-05 (P3)** — stderr 未纳入输出完整性判定；profile/startup 错误可能只在 stderr。
+- **RP-06 (P3)** — thread identity 判定依赖 `GetCurrent(true)` 未在冻结来源中固定的 null 语义；建议在 manifest 注明该语义或改为显式 SID 比较。
+- **RP-07 (P3)** — R0S1 的 `NOT_SAFE_FOR_R0` 停止项（module trust / `Get-ChildItem` inventory）与本候选的映射未显式说明；建议加一句，避免读者误以为已解除。
+
+Counts: P0=0, P1=1, P2=2, P3=4. Total 7.
+
+Hmm, should RP-03 be P2? I'll keep P2.
+
+Also, should I raise a P3 about the `approval:` front-matter? I have 4 P3s; adding a 5th might be noise. Let me fold the R6-authorization-attribution explicitness into RP-07's recommendation or mention it in 2.1 as "满足，但建议明示". Actually focus #1 is important; I'll add a short P3:
+
+- **RP-08 (P3)** — Task/manifest 未逐字写明"R6 旧候选字符串不是本候选授权来源"；虽语义上正确（授权来自 2026-10-11 用户批准），建议显式一句以防后续轮次误用。
+
+Hmm, that gives P3=5. That's fine; R0S1 had 5 P3s. Let me keep 5 P3s? Let me count: RP-04, RP-05, RP-06, RP-07, RP-08 = 5. Total 8 findings. That's reasonable and not inflated.
+
+Hmm, actually, let me reconsider RP-06. Is it a real risk? If `GetCurrent(true)` returned the process identity when not impersonating, the runner would always STOP (safe but useless). That's a functional bug, not a safety bug. It's worth noting. But it could also be seen as speculative. Since R0 evidence has threadIdentityPresent=false with the same API, the semantics are empirically consistent. I'll keep it as P3 but phrase it as "语义未在冻结来源中固定；虽有 R0 经验旁证" — low severity, documentation clarity. OK.
+
+Actually, let me reconsider: maybe drop RP-06 to avoid speculation, and instead mention it in coverage. Hmm. The review is supposed to be thorough. I'll keep it but clearly mark it P3 and note the empirical support. Actually... hmm, if I'm wrong about the semantics and it actually returns process identity, then the candidate would ALWAYS stop — making the whole candidate non-functional, which is a bigger deal. If I'm right, it's fine. Either way, "pin the semantics" is a reasonable P3. Keep.
+
+Now, one more: should there be a finding that the candidate's registry read is *not* within the user's "no-side-effect read-only" authorization because opening a registry key could have side effects (e.g., last-access time)? Registry keys don't have meaningful last-access tracking like files (Windows doesn't update registry key last-write on read). So no. Not a finding.
+
+And: could `OpenSubKey` on a non-existent key have side effects? No.
+
+OK. Let me also make sure I address "哪些剩余条件仍是 UNPROVABLE / REQUIRES_ACTIVE_TEST / NOT_SAFE_FOR_R0" explicitly with a table.
+
+Let me also state coverage/uncovered explicitly:
+Covered: 9 fixed inputs read (Task + manifest + R0S1 review + R0S1 adjudication + R0 manifest + R0 evidence + P02M9 + R6 manifest + R6 adjudication). I read R0 evidence only partially (capped at line 553, but I got the critical lines 1-30 and the classification table was beyond? Actually I read lines 1-553; the classification table is at lines 251-268 which I did get (yes, lines 251-268 are within 1-553). Wait, the output capped at line 553, and I saw lines 251-268? Let me check: I saw lines 1-30, then 41-... yes I saw "## P02PRE 剩余条件分类" at line 251-268. Yes it's within 1-553. Good. So I read R0 evidence lines 1-553 of ~? total (the file continues with the JSON). I did not read lines 554+. That's fine; the JSON is machine-readable capture, not essential. I'll declare that.
+
+Uncovered: no runtime execution; no hash recomputation; no git status/HEAD independent verification; no external doc fetch; no stderr; no clock.
+
+Now the "Review 决策" phrasing. Let me give:
+- 决策：**`NOT_SAFE_FOR_R0`**（本候选方法不得执行；P1 未解决）。
+- 文档层评价：静态文本在范围冻结、API 参数、停止逻辑、分类与 waiver/Gate 表述上**基本自洽且无扩权**；未发现 P0；但绑定与执行边界存在未解决项。
+- Gate 效力：无。不授权执行、不放行任何 Gate。
+
+I should also answer the user's explicit request: "请报告：Review 决策、P0/P1/P2/P3 计数、逐条 findings（或明确无发现）、覆盖与未覆盖内容、建议的下一动作。"
+
+Good.
+
+Let me also make sure to note: "即使 Review 批准静态文档，也不表示执行已经授权；只有 Codex adjudication 可决定是否将 Task 转为可执行。" → I'll state this.
+
+Now, about whether to write a file: I'll state I did not create files (Reviewer 副作用 = ZERO), and my review content is the deliverable for Codex to archive. Actually, hmm — the task L70 allows the reviewer to write `p02-readonly-preflight-r0s2-*`. Should I write the review file to be helpful? The user's request says "请报告" — report. And R0S1 precedent: reviewer didn't create the file. I'll not write. But I should be explicit so Codex knows to archive.
+
+Hmm, wait. Let me reconsider. Actually, there's a risk that not writing the file means the review isn't captured in the repo. But the dispatch is from Codex (per the task structure), and Codex archives stdout. Also, the user explicitly framed this as a review to "报告". I'll go with response-only. If the user wanted a file, they'd say so. Also, the instruction "不要修改 Owner 文件" and the read-only posture support response-only. Good.
+
+Let me now also double-check one potential P1 sub-point: the task says the cmd is `functions.exec_command` with `shell="powershell.exe"`. The R0S1 evidence showed the actual process was `pwsh` 7 (per F-06), i.e., `shell="powershell.exe"` was a *nominal selector* and the actual executable was pwsh. This matters: if the actual shell is pwsh 7, the startup/profile behavior differs from Windows PowerShell 5.1, and the manifest's frozen assumption "powershell.exe" may be inaccurate. The R0S1 review flagged this as P3 (F-06) with "无安全影响" because the check derived from `$PSHOME`. But for R0S2, the *startup side effects* of the actual executable are relevant to P1. I'll cite this: the "shell selector vs actual executable" gap (R0S1 F-06) compounds the P1 startup uncertainty — the manifest freezes `shell="powershell.exe"` but the actual interpreter identity is not established, so neither profile location nor startup behavior can be pinned. Good, this strengthens P1. I'll mention it.
+
+Now let me write the final answer in Chinese, well-structured, with tables. It'll be long but that's appropriate for a formal review.
+
+Let me make sure the counts are clear: P0=0, P1=1, P2=2, P3=5. Total 8.
+
+Wait, let me finalize P3 list: RP-04, RP-05, RP-06, RP-07, RP-08 → 5. Yes.
+
+Let me write it.
+
+One more consideration: the user asked "确认没有读取 value/subkey/其他对象". Let me verify the body doesn't enumerate. It calls `OpenSubKey($subkey, $false)` — one open. It does not call `GetValue`, `GetSubKeyNames`, `GetValueNames`, `GetSubKeyCount`, `ValueCount`, `GetAccessControl`, `GetSecurityDescriptor`. Correct — no value/subkey reads. Also no `RegistryView.Default`. Good. Confirm.
+
+Also "权限": `writable=false` → read-only access. Note: `OpenSubKey(name, false)` requests read access; it does not request write. But note the docs: this overload with `writable=false` still requires read permission; permission denied → exception → handled. Confirm.
+
+Also "句柄 Dispose": both baseKey and targetKey disposed in finally. Confirm. No handle values output. Confirm.
+
+Also "异常/null": caught, recorded, return. null → RETURNED_NULL, not absence. Confirm.
+
+Also "不重试": no retry loop. Confirm.
+
+Now "身份失败/视图异常停止逻辑": identity check before any registry call; on failure prints STOP and returns (no registry). View exception → STOP + return (no second view; no retry). Confirm. One nuance: identity STOP uses `return` at top level — exits before the foreach. Confirm.
+
+"输出完整性": PID, identity, per-view StartUtc, State, COMPLETE EndUtc. Note: there is no per-view *end* UTC, only query start. The Task L42 requires "查询开始/结束 UTC" — hmm! Task L42 says "仅记录请求 view、精确键路径、查询开始/结束 UTC、PID、...". The body records `$queryStartUtc` per view but never records a per-view query *end* time. It only records a global `EndUtc` in COMPLETE. So the Task requires per-query start/end; the manifest body provides per-view start but no per-view end (only a global COMPLETE end). Is that a finding? Yes — a concrete requirement/implementation mismatch: Task L42 requires "查询开始/结束 UTC" (per query). The manifest L42-... hmm, manifest L42 in the Task; the manifest file's own body: records `StartUtc` per view and `EndUtc` only in COMPLETE. The manifest L86 says "PID、query/start/end time 或完整 stdout 缺失 → UNPROVABLE". So the manifest *expects* query start/end times, but the body only emits a per-view start and one global end. This is a genuine P2 finding (requirement/implementation gap): the per-view query end UTC is not emitted, so the "查询结束 UTC" requirement cannot be met from the frozen body. 
+
+Let me double check the body:
+- `$queryStartUtc = [DateTimeOffset]::UtcNow.ToString('o')` per view.
+- QUERY line includes `StartUtc={2}`.
+- COMPLETE line: `EndUtc={1}` — this is after both views.
+There's no per-view end. So yes, the Task's "查询开始/结束 UTC" per-view requirement is only half-implemented. This is a solid P2. Let me add it as RP-04 (P2), shifting others.
+
+Revised findings:
+- RP-01 (P1): startup/exec boundary → NOT_SAFE_FOR_R0.
+- RP-02 (P2): pins/binding gap (Task/manifest/runner no bytes/SHA; cmd byte binding).
+- RP-03 (P2): per-view query end UTC not emitted (Task L42 requirement unmet by frozen body).
+- RP-04 (P2): view availability/host arch ambiguity.
+- RP-05 (P3): RETURNED_NULL → PASS_WITH_EVIDENCE label risk.
+- RP-06 (P3): stderr not in output-completeness criterion.
+- RP-07 (P3): thread-identity null semantics not pinned.
+- RP-08 (P3): R0S1 stop-item mapping not stated.
+- RP-09 (P3): R6-as-authorization attribution not explicit.
+
+Counts: P0=0, P1=1, P2=3, P3=5. Total 9. Good, that's a thorough review.
+
+Hmm, RP-03: is "查询开始/结束 UTC" really per-view end? Task L42: "仅记录请求 view、精确键路径、查询开始/结束 UTC、PID、实际用户/SID/authenticated/thread identity、OpenSubKey 是否返回 handle 或 null、异常类型/HResult 与工具 shell exit。" This is a list of fields to record per the query. "查询开始/结束 UTC" — could be read as the start and end of the whole query sequence. The body has a global start (per view) and a global end (COMPLETE). Hmm. Ambiguous. But the natural reading is per-query start and end. The manifest L86's "query/start/end time" similarly ambiguous. Given ambiguity, maybe P3 rather than P2. Hmm. But note: the body's COMPLETE EndUtc covers the whole run, and per-view StartUtc covers each view's start. So "查询结束" for view 1 is not recorded; only view 2's implicit end ≈ COMPLETE. I'll rate it P2 because the Task explicitly enumerates "查询开始/结束 UTC" as fields and the frozen body doesn't emit a per-view end — a concrete, checkable mismatch. Actually, to be fair and avoid overreach, I'll rate P2 but note the ambiguity and the minimal fix (add `EndUtc` to each QUERY line). That's a cheap, concrete fix. OK, P2.
+
+Hmm, but wait, does this matter if the candidate is already NOT_SAFE_FOR_R0? It matters for any future revised candidate. Fine.
+
+Let me also double check: does the body record "工具 shell exit"? That's the tool's return, not the body's. The body can't record it. The Task says record it; the manifest L32 says "Review 只审查文本和边界" and the tool exit is recorded by the dispatch. Fine.
+
+Does the body record "精确键路径"? QUERY line includes `Subkey={1}`. Yes.
+
+Does the body record PID? IDENTITY line has CapturePid; COMPLETE has CapturePid. Yes.
+
+OK.
+
+Now let me write the final answer. I'll keep it organized and in Chinese. I'll include the decision, counts, findings table, coverage, remaining-condition classification, and next actions.
+
+I should be careful to phrase the P1 as the deciding factor and explicitly say the candidate method = NOT_SAFE_FOR_R0.
+
+Also I must explicitly answer: "不得把 R6 的旧候选字符串当成授权" → confirmed the candidate does not; authorization correctly attributed to the 2026-10-11 user approval. "不得把本轮用户授权扩大成 waiver 或 Gate PASS" → confirmed the candidate says this explicitly.
+
+Let me write.
+
+Regarding the review ID: I'll use `P02PRE-R0S2-REVIEW-20261011-DSH-01`.
+
+Also note: the reviewed HEAD/tree are adopted from the dispatch (not independently verified). I'll mark that.
+
+Let me produce the final response now. It should be thorough but readable. I'll use tables.
+
+Let me be careful about one detail: I said I'd treat "login=false ≠ -NoProfile" as mandated NOT_SAFE_FOR_R0. Let me quote the exact rules: Task L50, manifest L18/L88. Yes.
+
+Also the user's focus #3: "如无法安全证明，明确 NOT_SAFE_FOR_R0，不得建议执行。" Done.
+
+Final answer time.

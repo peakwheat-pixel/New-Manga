@@ -1,0 +1,1 @@
+exit=0; pid=34656; command=pwsh7 dsh --profile headless --json

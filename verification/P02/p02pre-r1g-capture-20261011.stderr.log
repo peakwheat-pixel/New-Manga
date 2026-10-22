@@ -1,0 +1,6 @@
+Exception: G:\CODEX\New Manga\verification\P02\p02pre-r1g-capture.ps1:1186
+Line |
+1186 |  бн opReason) { throw "P02PRE-R1G stopped: $($Result.stopReason); evidenc бн
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | P02PRE-R1G stopped: SCRATCH_BASELINE_OR_HASH_FAILED; evidence=G:\CODEX\New
+     | Manga\verification\P02\p02pre-r1g-evidence-20261011.json

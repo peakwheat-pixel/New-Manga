@@ -1,0 +1,115 @@
+{
+  "artifact": "P02PRE-R1G remediation review follow-up 1 pre-dispatch pins",
+  "createdAtLocalDate": "2026-10-12",
+  "reviewer": "DeepSeek Harness (non-author)",
+  "task": "P02PRE-R1G",
+  "repository": "G:\\CODEX\\New Manga",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+  "branch": "agent/antigravity/P02PRE-R1G",
+  "base": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+  "head": "6e1c00fee3db07805c92c25cdc311af9279ceb51",
+  "gitCommonDir": "G:/CODEX/New Manga/.git",
+  "controlledStatus": {
+    "commandArgs": [
+      "status",
+      "--porcelain=v1",
+      "-z",
+      "--untracked-files=all",
+      "--no-renames",
+      "--ignore-submodules=none",
+      "--",
+      ".",
+      ":(exclude).tmp.driveupload"
+    ],
+    "nulRecords": 0,
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "clean": true
+  },
+  "diffNames": [
+    "verification/P02/p02pre-r1g-antigravity-handoff-20261011.md",
+    "verification/P02/p02pre-r1g-author-selfcheck-20261011.json",
+    "verification/P02/p02pre-r1g-capture.ps1"
+  ],
+  "expectedDiffNames": [
+    "verification/P02/p02pre-r1g-antigravity-handoff-20261011.md",
+    "verification/P02/p02pre-r1g-author-selfcheck-20261011.json",
+    "verification/P02/p02pre-r1g-capture.ps1"
+  ],
+  "inputPins": [
+    {
+      "key": "task",
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1G.md",
+      "bytes": 18910,
+      "sha256": "870278C6156A7AE08AAAB73AFC5A052E172EB8CC201B12CAFC9B52B16B80870A"
+    },
+    {
+      "key": "manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-manifest-20261011.md",
+      "bytes": 17710,
+      "sha256": "B9A7546EE62246E530D2113FBBEB95369AC3E19DF2F410B315972C8C86EAFB55"
+    },
+    {
+      "key": "candidate_script",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+      "bytes": 80593,
+      "sha256": "2CC9C49F0708B4D174749ACE5F3C92BCD6D6B2E2825CA908412BCE2B2436778F"
+    },
+    {
+      "key": "author_selfcheck",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-author-selfcheck-20261011.json",
+      "bytes": 2462,
+      "sha256": "016FA5BA0FCA16FCDB63D62CD0BAF5B723DE5AEF0A6B392DA13C41D88230AEB6"
+    },
+    {
+      "key": "owner_handoff",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-antigravity-handoff-20261011.md",
+      "bytes": 22604,
+      "sha256": "2996A3D05E9010C73F7D57B7249532EB3B33FE071E071FA009968B38DFE1D716"
+    },
+    {
+      "key": "prior_review_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-adjudication-20261012.md",
+      "bytes": 6144,
+      "sha256": "493A2FE96C4534ED000D7A055F7E3C54CC4A1DC2C15B9D7303FC692A440D1673"
+    },
+    {
+      "key": "round1_remediation_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-remediation-review-adjudication-20261012.md",
+      "bytes": 4618,
+      "sha256": "E31D021C5888AFBBDD99700FF4B8A092535BCDA6D0E78B56D964D3BF9734F5B0"
+    },
+    {
+      "key": "round1_post_review_pin_evidence",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1g-review-input-pins-remediation-20261012.json",
+      "bytes": 4796,
+      "sha256": "4C0F166343F9A59B904A6D1E0BB1105D6AA8FA61494672C4C927DFEFBC4209CF"
+    },
+    {
+      "key": "owner_delivery_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-argumentlist-delivery-adjudication-20261012.md",
+      "bytes": 4541,
+      "sha256": "9C99E69BB3B0BD849796C96455996BC901AD7760F40A233F123F065B70D15A04"
+    },
+    {
+      "key": "review_template",
+      "path": "G:\\CODEX\\New Manga\\doc\\templates\\REVIEW.md",
+      "bytes": 3915,
+      "sha256": "048DD2C001BC16CE68B46460C2D23AA32BA1119091CA1E2ABA3EE4EE63ED4762"
+    },
+    {
+      "key": "predecessor_script",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+      "bytes": 67582,
+      "sha256": "5A3FE118A8758CCDF0BEDBE170D31B34DA6C338101096EAA825DE80DF70E8316"
+    },
+    {
+      "key": "predecessor_manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-manifest-20261011.md",
+      "bytes": 49783,
+      "sha256": "F91AF7B1785B77A57CEEAFE0FFD879345CF361FD85A5E147CD970CF5EF43717B"
+    }
+  ],
+  "reviewerHashResponsibility": "Codex computes pins; reviewer read tool is not asked to compute or verify file hashes. Codex rehashes every same input after review.",
+  "excludedPathPolicy": "No access to .tmp.driveupload; all Git status queries use :(exclude).tmp.driveupload."
+}

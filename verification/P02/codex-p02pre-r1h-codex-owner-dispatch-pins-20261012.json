@@ -1,0 +1,85 @@
+{
+  "task": "P02PRE-R1H",
+  "owner": "/root/p02_r1h_codex_owner",
+  "role": "Executor",
+  "reviewer": "/root/p02_r1h_review_fallback (independent; pending this delivery)",
+  "integrator": "/root Codex",
+  "agent_configuration": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "xhigh",
+    "source": "Executor role configuration; gpt-6.1-sol/high unavailable for this role; no claim of using preferred setting"
+  },
+  "worktree": {
+    "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex",
+    "branch": "agent/codex/P02PRE-R1H",
+    "head": "256e3ea622cba7a658020ddcf015b18894d88b38",
+    "tree": "a1a36dcb71d1d8718b21eb12ba2f778a95955f29",
+    "base": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+    "controlled_status": "PASS_CLEAN; exit=0, stderr=0, 0 records; exact exclude pathspec passed as a separate argv"
+  },
+  "dispatch": {
+    "prompt": "verification/P02/codex-p02pre-r1h-owner-remediation-20261012.prompt.md",
+    "prompt_bytes": 5740,
+    "prompt_sha256": "48A63D82F989D7F7368C8FF6EEC7897C2C09C54B6104E3B5DB71F91D9562F34E",
+    "write_scope": [
+      "verification/P02/p02pre-r1h-capture.ps1",
+      "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "verification/P02/p02pre-r1h-handoff-20261012.md"
+    ],
+    "delivery": "new commit on the assigned branch; owner does not review or integrate"
+  },
+  "frozen_inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 11538,
+      "sha256": "95AC04FABD0EBFC1B97AF1B0C37F8B24AF62B7E8C1346057E0826AEA726E85CA"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-20261012.md",
+      "bytes": 2308,
+      "sha256": "4BB1D8B8C8FACD96C4C087774756A71D79F832F10AD75026ADA3800579EE6688"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-review-adjudication-20261012.md",
+      "bytes": 1543,
+      "sha256": "20EA61BC98F5826BF7FDF487E01B3F34CF6FBA609E9C3999C242100920268497"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-review-input-pins-post-20261012.json",
+      "bytes": 2070,
+      "sha256": "9AA0A6783B9466BD146DB04A65FC61287144C6ADA5B6747AE5958538251BCDB4"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 85038,
+      "sha256": "B236D70F235D14ACE16544CE361B8CC979100635C3EC738D32ED379EDA086C95"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 14375,
+      "sha256": "3A3779FBE299815FE7176B55E02F13E32D707610BB25908F192AF28F4B29B972"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 13408,
+      "sha256": "7F04106FD22655D238AC5A44AE34C6B93EE2C3E120C9E28AD139948734E9AD31"
+    }
+  ],
+  "previous_dispatches": {
+    "zcode": "DISPATCH_FAILED / CONFIG_MISSING; exit=1; no response or source edits",
+    "antigravity_initial": "DISPATCH_STALLED / INTERRUPTED after about 16 min; no output; process tree stopped; worktree clean",
+    "antigravity_followup": "DISPATCH_STALLED / INTERRUPTED after 10 min; stdout/stderr empty; exit=-1 timed_out=true; PID 9900 tree stopped; worktree clean"
+  },
+  "acceptance": [
+    "Fix R1H-001 through R1H-004 only in the frozen three-file scope",
+    "If exact frozen status/index baselines are unavailable, fail-stop STOP / UNPROVABLE; do not guess or change manifest",
+    "Do not run parser, self-check, tests, preflight, capture, getters, Build/Cargo, AC1-AC7, ACL/profile/registry operations, or Windows Sandbox",
+    "Report exact branch/base/HEAD/tree/diff, controlled clean status, git diff --check, and candidate bytes/SHA-256 pins",
+    "Owner must not self-review or integrate"
+  ]
+}

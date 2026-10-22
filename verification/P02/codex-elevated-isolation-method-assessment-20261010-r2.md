@@ -1,0 +1,102 @@
+# P02 提权观测/强制方案评估 r2
+
+**状态：**`DRAFT_FOR_INDEPENDENT_REVIEW`。本报告落实用户 2026-10-10 对决策包选项 3 的选择：授权评估管理员/LocalSystem、ETW、驱动/内核过滤器等方案。它不是实现授权、OS 证据、测试结果或 Gate 通过凭证。
+
+r2 仅修正 `IRP_MJ_SET_SECURITY` 的 Microsoft Learn 链接；技术结论、权限与执行边界均沿用 r1，不扩展授权。
+
+## 结论
+
+1. **管理员 ETW + Job Object 不足以放行 Build Gate。** ETW 是补充诊断观测；丢失计数为零也只能证明该 trace 没报告已知丢失，不能证明所有目标进程/文件操作都由已启用的 provider 覆盖。Job 默认覆盖普通 `CreateProcess` 后代，但微软明确列出 `Win32_Process.Create` 例外；Job completion-port 消息也不保证全部送达。因此不能把“本轮没看到事件”当作“全部后代在隔离中”或“OS 拒绝了所有越界写入”。
+2. **在固定 Windows 实验环境中的有限候选是定制内核观察/强制驱动**：进程创建回调能观察进程创建，回调数据允许特定拒绝；File System Minifilter 只对已注册 operation 和已附着 volume 的 I/O 执行回调。它们不会自动覆盖任意 broker、线程 impersonation、句柄复制、既有共享映射或其他内核驱动。`IRP_MJ_ACQUIRE_FOR_SECTION_SYNCHRONIZATION` 对 `SyncTypeOther` 不允许 minifilter 失败；对 `SyncTypeCreateSection`，文档只列出内存不足时 `STATUS_INSUFFICIENT_RESOURCES`，不能据此承诺通用拒绝可写映射。要证明目标写入闭包，还须固定文件系统/volume/filter stack、请求者与对象 provenance，并处理缓存、paging、fast I/O、FSCTL、raw-device 和 brokered I/O。管理员 ETW、进程回调和 minifilter 不能自动给代理请求建立因果归属。当前没有固定、审查过、已签名的项目驱动、精确的部署/卸载路径或独立测试环境。**这是受限实验候选，不是当前主机可执行方案，也没有安全 `READY` 状态。**
+3. **内核方案仍不能解决 profile 创建前的 private-registry 缺失证明。** `GetAppContainerRegistryLocation` 文档称其返回“current profile”的 registry storage，并要求调用者运行在或 impersonate 可访问该 profile 的用户下；它没有定义目标 profile 不存在时的结果或副作用。`CreateAppContainerProfile` 会创建 profile/data store，且明确包含 per-user/per-app folders 和 registry storage，不能作为无副作用探针。该项继续 `UNPROVABLE / BLOCKED`。
+
+在新增产品/驱动 Task、独立 Review、精确安装/清理契约和可接受的隔离执行环境确定之前，不加载驱动、不启用 test signing、不启动管理员或 LocalSystem observer，不运行 OS preflight、build、Cargo 或 AC1–AC7。P02 所有 Gate 保持原值。
+
+## 用户裁决和本次准确范围
+
+用户选择“授权评估提权方案”。本次只允许 Codex 静态研究 Microsoft 一手文档、写入本报告与规定的 Task/治理状态、并取得非作者 Review。**未授权本次安装或启动任何工具、driver/service、ETW session，也未授权修改 BCD、Secure Boot、driver signing、registry、ACL、label、profile、cache/TEMP 或运行目录。**选项 3 不把设计评估本身转成 Build Gate PASS，也不改变 AC、P02 Owner allowlist 或已有 scratch 输出 allowlist。
+
+本次文档写入范围：
+
+- Codex：`doc/tasks/P02.md`（仅追加用户裁决与评估结果）、本报告、决策包的追加裁决记录、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/00_INDEX.md` 和 P02 rolling Checkpoint。
+- 非作者 Reviewer：只写独立 Review 报告 `verification/P02/codex-elevated-isolation-method-assessment-review-20261010-r2.md`。
+- 禁止范围：产品代码/测试、共享契约/Schema/依赖、现有 Task 固定证据、Windows Sandbox、任何实际 OS/账户/驱动操作，任何超出 P02 verification 的路径。
+
+## 方案比较
+
+| 候选 | 观测/强制能力 | 特权与副作用 | 结论 |
+|---|---|---|---|
+| 普通 Job + 用户态进程记录 | Job 约束一般 `CreateProcess` 后代；无文件路径写白名单，通知也非完整审计 | 普通用户可管理自有 Job，但现有上下文的 WMI/broker/Job 层次需逐一证明 | 保留作纵深防御和进程收尾；单独不满足 Gate |
+| 管理员 ETW/NT Kernel Logger + Job | 可提供系统级时间线；不能在违规写入前拒绝；provider 范围和 lost counters 有限 | `StartTrace` 创建系统级 session；管理员/LocalSystem 权限要求按 Task 既有材料记录；trace 会占用全系统 ETW 资源并产生包含进程/路径信息的 `.etl` | 仅作补充诊断。一次短命、同名 session；启用最少 provider/事件，设置有限内存 buffer 与最大文件尺寸，ETW 前后核对 `EventsLost`、`LogBuffersLost`、`RealTimeBuffersLost`；任何非零/无法读取均阻断。即使全零也不是完整性证明 |
+| Process-create callback 驱动 + Minifilter | 进程回调可观察创建并按 callback data 决定特定拒绝；Minifilter 只处理已注册 operation/attached volume。Section callback 对 `SyncTypeOther` 不可失败；对 `SyncTypeCreateSection` 文档只列内存不足错误 | `FilterLoad` 要求 `SeLoadDriverPrivilege`；process callback image 需 `IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY`；64-bit Windows 驱动还受版本相关签名策略。驱动注册/DriverStore/服务 registry 等落点由 Windows/驱动包管理，当前未按主机版本固定 | 仅适用于另行批准的固定实验环境原型，不是当前主机 READY 路径；要求独立 driver Task、固定签名包、固定 filter stack、覆盖矩阵、对象/请求者 provenance、失败关闭且不影响系统的策略，以及恢复/卸载验收 |
+
+Microsoft 对 `PS_CREATE_NOTIFY_INFO` 明确提供父 PID 与 creator PID 两种身份，二者不保证相同；驱动还可修改 `CreationStatus` 阻止创建。`PsSetCreateProcessNotifyRoutineEx` 注册还要求驱动映像带 `IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY`。对 I/O，`FltGetRequestorProcess` 可以返回 NULL；Minifilter 预操作可在特定上下文由系统 worker thread 调用。`FltGetRequestorProcess` 返回的进程不能单独证明原始操作归属；必须用固定 handle/file/stream provenance 连接被授权 run 与延迟 I/O，不能只按 PID、线程、进程名称、父 PID、命令行或 worker thread 放行。未知或无法归因的系统事件不能触发全局拒绝：只对可确认为目标 run 的操作或已由目标 run 建立 provenance 的对象实施拒绝；归属不明时停止目标 run、保留证据并记 `BLOCKED`。若无法同时限制作用对象、volume 和副作用，驱动方案不得在共享主机运行。
+
+Minifilter 的操作清单至少需要覆盖：`IRP_MJ_CREATE` 中的 write/delete/append/open disposition；`IRP_MJ_WRITE`；`IRP_MJ_SET_INFORMATION` 中的 end-of-file/allocation/disposition/rename/hard-link/short-name；`IRP_MJ_SET_SECURITY`；section/memory-map callbacks；可能修改对象或命名空间的 relevant FSCTL、目录操作与 raw-device I/O。还须固定 fast I/O、attached volumes 和 filter stack/altitude；处理目标路径与源路径两个端点、reparse、volume/device alias、hard link、alternate stream、既有 writable handle、cached/paging I/O 与 lazy writer 的 provenance。不能因为当前写线程属于系统 worker 或 cache manager 就放行未经归因的延迟写入。Filter Manager 允许注册特定回调，不会自动证明未注册的请求都被覆盖；minifilter 自生成 I/O 只经过选定 instance 以下的过滤器。不同 callback 对失败/同步另有规则。当前没有对这些 file-system operation 的固定实现矩阵和可验证 driver，故不声称覆盖闭合。
+
+## 精确未来路径与最小权限边界（仅设计，不创建）
+
+### 测试进程可写范围
+
+沿用 P02 已冻结的 scratch clone，不新增可写路径：`G:\CODEX\P02-scratch-build-source`。未来 LPAC 可写范围仍仅为 contract r7 §4 的列举叶子：
+
+- `apps/desktop/frontend/node_modules/`、`apps/desktop/frontend/dist/`
+- `apps/desktop/src-tauri/target/core-sidecar/`、`apps/desktop/src-tauri/target/pyinstaller-work/`
+- `apps/desktop/src-tauri/gen/schemas/`、`apps/desktop/src-tauri/permissions/autogenerated/`
+- `verification/P02/cargo-target/`、`npm-cache/`、`cargo-home/`、`tmp/`、`python-cache/`、`pyinstaller-config/`
+- canary 只允许已有 contract 列出的 `verification/P02/tmp/lpac-write-control/` 精确 leaf；只读/拒绝控制继续按 contract 的独立 leaf 策略。
+
+其余 `G:\CODEX\New Manga` 主仓、`G:\CODEX\New Manga.worktrees` 全部 worktree、12 个输入根及祖先安全描述符保持只读、不变；Task-env 只允许契约列出的精确 Python/model toolchain 路径只读。所有非 allowlisted path 由受测进程树视作拒写；包括 user manga library、数据库、Lock、current/pinned Revision、凭据和其它用户文件。漫画库等当前未给出精确路径，不能猜路径、扫描用户文件或据此做本机执行；此为独立的 `UNKNOWN / BLOCKED` 条件。
+
+### 观测器输出、临时和缓存
+
+若后续经单独 Task 选择 file-mode ETW 补充诊断，其唯一拟议日志位置为 `G:\CODEX\New Manga\verification\P02\privileged-observer-runs\<run-id>\kernel.etl`；先确认 run 目录不存在并盘点现存父目录/祖先的 owner、ACL 与继承。只有新 Task 明确授权创建时，才建立该 run 目录并立即核验它的 owner/ACL；核验不符就停止且不得启动 trace。不要把 trace 写入主机 TEMP、repo root、用户 profile、`ProgramData` 或 host-wide cache。此处 `.etl` 是一种候选保存方式，不代表 ETW 必须落盘或必须使用该模式；若选用则显式固定 `LogFileName`、有限 buffer 和最大文件尺寸，不另建 cache。trace 可能包含进程和路径信息，默认仅授权当前验证负责人和 `SYSTEM` 读取；进入独立证据前先 hash、最小化/脱敏，不覆盖既有文件。当前 Task 既有 AppContainer `TEMP/TMP` 与工具 cache 映射保持原样，具体以 contract r7 §4–5 为准；本报告不新增环境变量或 cache leaf。
+
+如需 Minifilter driver，可能涉及签名 `.sys`/catalog、DriverStore package staging、服务项/Minifilter `Instances` registry 配置、filter load/altitude 以及挂载 volume。此类位置/注册值是 Windows 版本、签名 package 和 INF 决定的 system-managed targets；本轮未读取本机 OS 版本、driver inventory、服务、registry 或 filter list，故不能填造 exact destination，更不能预授权写入。出现上述任一项时，后续 Task 必须先由 Codex 按实际 OS/固定 package 冻结精确路径、registry values、ACL、签名/供应链、driver/service account、启动范围和清理反向步骤，并再做非作者 Review；缺一项就不 install/load。
+
+### 身份、会话和失败关闭
+
+- Observer 优先临时、显式启动/停止、仅本轮进程；不建立常驻 service。不得用 `LocalSystem` 作为默认 observer。仅当具体 Windows API 明确要求，且可证明管理员运行令牌具有最小所需权限时才评估 elevated admin；管理员 ETW 仍不形成完整 Gate 证据。
+- Driver candidate 仅能在另行批准、可恢复的固定 Windows 实验环境中评估。`FilterLoad` 要求 `SeLoadDriverPrivilege`，process callback 注册还要求 callback 所在 image 有 `IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY`；固定签名包仍不是驱动安全性的证明。不得默认用 `LocalSystem`。不允许 `TESTSIGNING`、禁用签名校验、BCD/启动项变化、boot-start driver、脆弱/不受信 driver、添加自签根证书或禁用 Secure Boot。若必须改变其中任一项，当前路径判定不适用并继续 BLOCKED。
+- Controller/driver 通信接口只接受固定 run ID、固定测试根/allowlist 和 stop command；接口 ACL/IOCTL、管理员句柄、驱动服务 SD/registry 配置需在 implementation Task 固定。不得接受 arbitrary path、任意 ETW provider、任意文件 hash、任意命令行或任意进程加入。
+- 对可确认为目标 run 的进程/操作或已有目标 run provenance 的对象，遇到未知子进程、requestor=NULL、事件/ETW 丢失、未覆盖文件操作、路径/对象身份不确定、reparse/硬链接/代理无法证明或非 allowlisted 写入时，拒绝该目标操作、停止目标 run 并保持 `BLOCKED`。无法归因到该 run 的系统事件不能触发全局拒绝；若无法在不影响系统的前提下界定目标 run，方案本身即不适用。停止后先保留现场与证据，不做可能破坏证据的清理。
+
+### 清理提议
+
+- ETW: `ControlTrace(...STOP)` 停止同一个描述性 session；关闭 consumer/controller handles；停止后确认同名 session 不再活动；若选择保存 `.etl`，保留为只读证据并记录 SHA-256，不删除或覆盖。
+- Driver: 先停止目标测试进程，关闭其 mappings/handles 并排空已知 pending/cached/paging I/O；再按驱动的注册生命周期注销 process callback、卸载 filter 并确认本轮 attachment/service 状态；最后只移除本轮明确创建的 package/service/registry 值。若卸载失败、filter manager 仍有未完成 I/O、残留实例/服务值来源不明或需重启才能恢复，记 `CLEANUP_BLOCKED` 并保留现场。仅 `FltUnloadFilter` 成功不能证明系统状态已完全恢复。禁止通配、递归删 DriverStore、删除既有证书/注册表项、修改 BCD 或系统安全配置。
+- AppContainer profile、private registry、ACL、label 和 scratch canary 仍按当前 P02 Task 各自前置条件处理；本方案不会绕过 profile absent blocker，也不授权当前创建/清理这些对象。
+
+## 主要技术依据
+
+- [Microsoft Job Objects](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)：普通 `CreateProcess` 子进程默认纳入 Job；`Win32_Process.Create` 是例外；breakaway 影响成员资格；completion-port 消息存在不保证送达的情形。
+- [Microsoft `PS_CREATE_NOTIFY_INFO`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_ps_create_notify_info) 与 [`PsSetCreateProcessNotifyRoutineEx`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-pssetcreateprocessnotifyroutineex)：process creation callback 字段、父/creator PID 差异、可修改 `CreationStatus`、回调生命周期与内核驱动要求。
+- [Microsoft minifilter pre/post-operation callbacks](https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/registering-preoperation-and-postoperation-callback-routines)、[`FltGetRequestorProcess`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fltkernel/nf-fltkernel-fltgetrequestorprocess)、[pre-operation callback execution context](https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/writing-preoperation-callback-routines)：回调只覆盖驱动注册的 operation；请求者可为 NULL/与创建线程进程不同；系统 worker context 可出现。
+- [Microsoft `IRP_MJ_SET_INFORMATION`](https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/irp-mj-set-information) 与 [`IRP_MJ_ACQUIRE_FOR_SECTION_SYNCHRONIZATION`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/flt-parameters-for-irp-mj-acquire-for-section-synchronization)：metadata、rename/link 等操作及可写 section 路径需要单独纳入 coverage matrix。
+- [`FLT_PARAMETERS` for `IRP_MJ_SET_SECURITY`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/flt-parameters-for-irp-mj-set-security)：DACL、owner/group、SACL 变更需要不同访问权，也是未来 object-operation matrix 必须显式裁定的安全边界。
+- [Minifilter-generated I/O](https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/i-o-requests-generated-by-the-minifilter-driver)：driver-generated I/O 只经过指定 instance 以下的 minifilters/legacy filters，故需固定 filter stack 与 altitude 并验证此类 I/O 的 provenance。
+- [`FilterLoad`](https://learn.microsoft.com/en-us/windows/win32/api/fltuser/nf-fltuser-filterload) 与 [`PsSetCreateProcessNotifyRoutineEx`](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-pssetcreateprocessnotifyroutineex)：`FilterLoad` 需要 `SeLoadDriverPrivilege`；进程回调映像需 `IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY`，卸载前须移除注册 callback。
+- [Loading and unloading a minifilter](https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/loading-and-unloading)：unload 流程需完成/取消 pending work，Filter Manager 等待未完成 I/O；不能把一次卸载调用当成清理证明。
+- [Microsoft `EVENT_TRACE_PROPERTIES`](https://learn.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_properties) 与 [`StartTrace`](https://learn.microsoft.com/en-us/windows/win32/api/evntrace/nf-evntrace-starttracea)：ETW lost/event/buffer counters；系统级 session 是有限资源，应缩短采集、限制 provider/buffer，并在明确目录写 trace。
+- [Microsoft `GetAppContainerRegistryLocation`](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-getappcontainerregistrylocation) 与 [`CreateAppContainerProfile`](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-createappcontainerprofile)：前者只说明当前 profile 的 registry location；后者会创建 data store、folders 和 registry storage。未说明的 absent-state 语义保持未知。
+- [Microsoft kernel-mode code-signing requirements](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-requirements--windows-vista-and-later-) 与 [test-signing boot option](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option)：64-bit 驱动加载受 signing policy 控制；启用 test signing 需管理员且会修改 boot configuration，因此本报告排除此路线。
+
+## Gate、执行记录与结论
+
+| Gate | 本报告结束时状态 |
+|---|---|
+| Phase A | `BLOCKED / NOT_RUN` |
+| `private_registry_absence` | `UNPROVABLE / BLOCKED` |
+| profile | `NOT_CREATED` |
+| ACL/registry | `NOT_MODIFIED` |
+| scratch ACL/label | `AUTHORIZATION_PATH_DEFINED / NOT_APPROVED` |
+| OS preflight | `NOT_RUN` |
+| hook/cache/child-process closure | `BLOCKED / NOT_VERIFIED` |
+| Build Gate | `BLOCKED` |
+| build | `NOT_AUTHORIZED / NOT_RUN` |
+| Hard Build Barrier | `EFFECTIVE` |
+| AC1–AC7 | `BLOCKED / NOT_RUN`，尚未测试，不是失败 |
+
+本轮只做文档与一手来源评估；未运行 Windows API、ETW、Process Monitor、driver/service、registry、ACL、label、profile、OS probe、build、Cargo、产品测试或 Windows Sandbox。没有读取用户漫画库、数据库或凭据。报告不具有实施或 Gate 放行效力。
+
+**建议处置：**保留当前验收标准和数据边界；管理员 ETW 可在未来经独立 Task 作为辅助时间线，不作为 negative proof；custom kernel driver 需要新的 driver implementation/security review Task 与单独的签名/测试环境计划，当前主机不应为此启用 `TESTSIGNING` 或改启动安全策略。即使未来解决 driver 端，private-registry absent 仍是单独阻塞，须有另一项无副作用、文档化的精确读取证据或由用户裁决验收变更。

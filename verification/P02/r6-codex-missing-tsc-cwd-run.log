@@ -1,0 +1,50 @@
+==========================================================
+P02 Probe Execution Log
+Date: 2026-10-09T17:08:12+08:00
+PowerShell: 5.1.26100.9549
+Worktree: G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38672473-exact
+Mode: ProbeOnly
+LogFile: probe-execution-probeonly.log
+Status: IN_PROGRESS
+==========================================================
+Python: C:\Python314\python.exe (Python 3.14.6)
+Node: v24.15.0
+npm: 12.0.1
+
+--- [Step 1: Environment Identity Probe] ---
+Command: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38672473-exact\verification\P02\probes\env_identity_probe.py
+OUTPUT:
+=== P02 Read-Only Environment & Identity Report ===
+Host OS: Windows-11-10.0.26300-SP0
+WebView2 Detected Version: 154.0.4258.62
+WebView2 Verified Key: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+Node Runtime: v24.15.0
+npm Tool: 12.0.1
+Python Executable: C:\Python314\python.exe
+Git Branch: 
+Source HEAD: 38672473f93971a4681aef682e5635e64b0bd896
+Source Tree: 2aa967bbf961a0e9e58dd3e1489d74635491e28f
+Git Clean Status: False
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
+Porcelain Status:
+M verification/P02/env-identity-report.json
+ M verification/P02/env-identity-report.txt
+ M verification/P02/p02-harness-results.json
+ M verification/P02/p02-harness-results.txt
+ M verification/P02/probe-execution-full.log
+ M verification/P02/probe-execution-probeonly.log
+ M verification/P02/probe-execution.log
+ M verification/P02/static-control-report.json
+ M verification/P02/static-control-report.txt
+frontend/dist Exists: False
+cargo-target Exists: False
+Hard Build Barrier Active: True
+Barrier Rationale: tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree.
+EXIT: 0
+
+--- [Step 2: TypeScript Protocol Check] ---
+[FAILURE] TypeScript compiler (tsc) not found in worktree (G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38672473-exact) or git common root (fail-closed per R5-04).
+EXIT: 1
+
+[FAILURE] [Step 2: TypeScript Protocol Check] Failed with exit code 1
+Status: FAILED (EXIT=1)

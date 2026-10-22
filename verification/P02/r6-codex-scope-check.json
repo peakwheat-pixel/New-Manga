@@ -1,0 +1,29 @@
+{
+  "base": "5de8d44c784cbd20b23bcd41a8f1a7258c7addff",
+  "head": "38672473f93971a4681aef682e5635e64b0bd896",
+  "changed_path_count": 19,
+  "changed_paths": [
+    "apps/desktop/frontend/e2e/workbench_driver_protocol.ts",
+    "doc/handoffs/P02-stage-a-foundation-handoff.md",
+    "doc/tasks/P02.md",
+    "verification/P02/RESUME.md",
+    "verification/P02/env-identity-report.json",
+    "verification/P02/env-identity-report.txt",
+    "verification/P02/fixtures/workbench_synthetic_data.json",
+    "verification/P02/harness/workbench_cdp_harness.py",
+    "verification/P02/microprobes/ps51-exception-handling.log",
+    "verification/P02/p02-harness-results.json",
+    "verification/P02/p02-harness-results.txt",
+    "verification/P02/probe-execution-full.log",
+    "verification/P02/probe-execution-probeonly.log",
+    "verification/P02/probe-execution.log",
+    "verification/P02/probes/env_identity_probe.py",
+    "verification/P02/probes/static_control_probe.py",
+    "verification/P02/run-webview.ps1",
+    "verification/P02/static-control-report.json",
+    "verification/P02/static-control-report.txt"
+  ],
+  "outside_frozen_allowlist": [],
+  "scope_sha256": "27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425",
+  "all_in_scope": true
+}

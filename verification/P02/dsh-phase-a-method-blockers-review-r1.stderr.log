@@ -1,0 +1,646 @@
+dsh: reasoning:
+Let me start by reading the input files. First verify hashes, then read content.
+
+Let me do this carefully. I'm asked to be a read-only reviewer. I should verify SHA-256 of the input files, read them, and produce a review.
+
+Let me start with hash verification and reading the files.
+
+Note: I need to be careful not to run code/tests/builds. Reading files and computing hashes is fine (hashing is read-only, not "OS measurement").
+
+Let me plan todos.
+
+Let me first get hashes.
+dsh: reasoning:
+The sandbox tried to grant write access and failed. Let me retry with read-only commands... Hmm, the workspace-write mode apparently fails to set ACL. Let me try again — maybe it's transient. Or use the read tool directly, which resolves via filesystem backend.
+
+The error suggests the harness tries to grant write permission on workspace and fails with access denied. This is an environment issue. Let me try a different approach: use `read` tool for the files, and use glob to check existence. For hashes, maybe I can't run pwsh at all.
+
+Let me try read tool first.
+dsh: reasoning:
+Now read the r7 contract, r3 manifest, r7 adjudication, and the rest of P02.md (from line 227).
+
+Also verify hashes — pwsh failed due to sandbox ACL grant. Let me try pwsh again; maybe the sandbox write-grant fails consistently. Let me test with a simpler command.
+
+Actually the error was on the sandbox setup itself (grantWrite workspace). Both calls failed. So pwsh is unusable. I could use `Get-FileHash`... no. Alternative: verify hash via read tool? No hashing capability.
+
+Hmm, maybe I can retry pwsh — perhaps transient. Let me try once with a trivial command. If it fails again, I'll note that hash independent verification is unavailable and rely on... Actually I might be able to compute SHA-256 differently. Let me try again.
+
+Let me read remaining files first, in parallel.
+dsh: reasoning:
+Now read r7 adjudication, and the rest of P02.md (lines 227+).
+dsh: reasoning:
+Now I have the full picture. Let me verify hashes. pwsh is failing due to sandbox ACL grant. Let me try again — maybe it's transient or maybe read-only mode works. Let me test.
+
+Actually, the file sandbox is workspace-write and tries to grant write on G:\CODEX\New Manga, fails with Win32 5. Let me try running pwsh again to see if it's persistent.
+
+Also I could try reading via the read tool — that works. For hash verification, maybe I can spawn a subagent with... no, same sandbox.
+
+Let me try pwsh once more with a trivial command.
+dsh: reasoning:
+pwsh is unusable in this session — the sandbox cannot grant write on the workspace. So I cannot independently recompute SHA-256. I must record that as a verifiability boundary: object_binding = NOT_VERIFIED (same limitation as prior DSH rounds, which also hit `SetNamedSecurityInfoW failed (Win32 5)` per P02.md line 245).
+
+Interestingly, P02.md line 245 documents exactly this: "DSH 因 Windows 沙箱 SetNamedSecurityInfoW failed (Win32 5) 未能执行 tree/scope hash/Git diff/runner". So this is a known, documented DSH environment limitation. Good — consistent.
+
+Now, the review questions:
+
+1. r7 §5 `FileHardLinkInfo` consistency with Microsoft's official `FILE_INFO_BY_HANDLE_CLASS` list.
+
+Let me check my knowledge. `FILE_INFO_BY_HANDLE_CLASS` enum values:
+- FileBasicInfo = 0
+- FileStandardInfo = 1
+- FileNameInfo = 2
+- FileRenameInfo = 3
+- FileDispositionInfo = 4
+- FileAllocationInfo = 5
+- FileEndOfFileInfo = 6
+- FileStreamInfo = 7
+- FileCompressionInfo = 8
+- FileAttributeTagInfo = 9
+- FileIdBothDirectoryInfo = 10
+- FileIdBothDirectoryRestartInfo = 11
+- FileIoPriorityHintInfo = 12
+- FileRemoteProtocolInfo = 13
+- FileFullDirectoryInfo = 14
+- FileFullDirectoryRestartInfo = 15
+- FileStorageInfo = 16
+- FileAlignmentInfo = 17
+- FileIdInfo = 18
+- FileIdExtdDirectoryInfo = 19
+- FileIdExtdDirectoryRestartInfo = 20
+- FileDispositionInfoEx = 21
+- FileRenameInfoEx = 22
+- FileCaseSensitiveInfo = 23
+- FileNormalizedNameInfo = 24
+- MaximumFileInfoByHandleClass = 25
+
+There is no `FileHardLinkInfo`. There IS `FileLinkInfo` — no. Actually there's `FILE_LINK_INFORMATION` struct used with NtSetInformationFile... Hmm. There's `FileLinkInfo` = ... no wait. Let me recall: `FILE_INFO_BY_HANDLE_CLASS` does not include FileHardLinkInfo. Correct. There's `FILE_LINK_INFO`? Actually, `FILE_LINK_INFORMATION` is a structure for `SetFileInformationByHandle` with `FileLinkInfo` — hmm, `FileLinkInfo` = 18? No, FileIdInfo = 18.
+
+Hmm, actually I recall `FileLinkInfo` exists in the FILE_INFO_BY_HANDLE_CLASS enum? Let me think. The enum documentation lists:
+FileBasicInfo, FileStandardInfo, FileNameInfo, FileRenameInfo, FileDispositionInfo, FileAllocationInfo, FileEndOfFileInfo, FileStreamInfo, FileCompressionInfo, FileAttributeTagInfo, FileIdBothDirectoryInfo, FileIdBothDirectoryRestartInfo, FileIoPriorityHintInfo, FileRemoteProtocolInfo, FileFullDirectoryInfo, FileFullDirectoryRestartInfo, FileStorageInfo, FileAlignmentInfo, FileIdInfo, FileIdExtdDirectoryInfo, FileIdExtdDirectoryRestartInfo, FileDispositionInfoEx, FileRenameInfoEx, FileCaseSensitiveInfo, FileNormalizedNameInfo, MaximumFileInfoByHandleClass.
+
+Indeed no FileHardLinkInfo. So the memo's claim appears correct. However, the memo says it "proposes" FileHardLinkInfo, and the cited MS Learn link. Since I cannot access the web (well — I could use web_fetch! The instructions say to cite URLs when using web content. The task says "若无法自行访问网页，说明未独立验证". I have web_fetch and web_search tools. Should I use them? The task's constraint is not to run code/tests/builds/OS APIs/ETW/etc. Web fetch is not in the forbidden list. The reviewer question explicitly asks to check the Microsoft Learn link/contract text. Using web_fetch to check the official doc is a read-only, non-OS-measurement action on external docs. That seems appropriate and improves the review. But caution: web content is untrusted data. Fine.
+
+Let me fetch the MS Learn page for GetFileInformationByHandleEx to independently verify the enum list. Note that learn.microsoft.com pages are often JS-rendered; web_fetch may return partial content. Let's try.
+
+Also verify the other claims:
+- Process creation flags: DEBUG_PROCESS — "The debug chain ends when another process in that chain is created with DEBUG_PROCESS"? Actually the documented statement: "If this flag is specified, and the process being created is a child of a process that is being debugged, the debugger is not notified..." Hmm. Let me recall the actual doc text for DEBUG_PROCESS: "The calling thread starts and debugs the new process and all child processes created by the new process. It can function as a powerful callback API. ... If the calling thread is not the only... " Actually there's a documented note in DEBUG_PROCESS: "The debugger... A process created with DEBUG_PROCESS... The debug chain... " There's a documented statement: "If this flag is specified, and the process being created is a child process of a process being debugged, then the debugger of the parent..." Hmm.
+
+Let me recall the actual note in CreateProcess docs (dwCreationFlags), DEBUG_PROCESS section:
+"The calling thread starts and debugs the new process and all child processes created by the new process. It can function as a powerful callback API... 
+If the calling thread is not the only thread in the debugger process... 
+Note that the debugger must be attached... 
+**If you specify DEBUG_PROCESS and the new process is a child of a process already being debugged, the debugger ... **"
+
+Actually there's this text in the "Debugging" section of CreateProcess: "If the specified process is a child of a process being debugged by a debugger, the DEBUG_PROCESS flag ... The debugger ... A debug chain..." Hmm.
+
+Actually the well-known documented limitation is in the "Remarks" of CreateProcess: "The DEBUG_PROCESS and DEBUG_ONLY_THIS_PROCESS flags ... If the process being created is a child of a process being debugged, and ... " 
+
+Let me recall: The `Debugging a Subprocess` / `DEBUG_PROCESS` doc states: "If you create a process with DEBUG_PROCESS, all child processes are also debugged... However, if a child process is created with DEBUG_PROCESS by another process, the original debugger's chain is broken." Hmm. There's an explicit statement in the Windows docs for `CreateProcess`:
+
+"DEBUG_PROCESS: The calling thread starts and debugs the new process and all child processes created by the new process. ... **If the calling thread is itself being debugged, ...**"
+
+Hmm. Actually, the documented statement I'm confident about is in the `DebugActiveProcess`/`WaitForDebugEvent` docs: "If a process is created with DEBUG_PROCESS, its children are also debugged, unless one of them is created with DEBUG_PROCESS, in which case..." 
+
+I'm not confident. The memo's claim — "Microsoft's process creation documentation says the debug chain ends when another process in that chain is created with DEBUG_PROCESS" — sounds close to a real documented statement. Actually I recall: "**The debugger of a process created with DEBUG_PROCESS... If a child process is created with DEBUG_PROCESS, then the new process becomes the root of a new debug chain.**" Hmm.
+
+Actually, here's the real text from CreateProcess dwCreationFlags docs:
+
+"DEBUG_PROCESS
+0x00000001
+The calling thread starts and debugs the new process and all child processes created by the new process. It can function as a powerful callback API. If the calling thread is already being debugged, the debugger is not notified of the debugging events of the new process..."
+
+Hmm no.
+
+And there's this note elsewhere in the docs (Process Creation Flags page — the "Debugging" section):
+"If you specify DEBUG_PROCESS, ... **A debugger can only debug one debug chain at a time; if a process in the chain creates another process with DEBUG_PROCESS, that new process starts a new debug chain and is not debugged by the original debugger.**"
+
+Hmm. There is a documented statement in `CreateProcess`: "Note that the debugger must have the SE_DEBUG_NAME privilege..." not that.
+
+Let me just fetch the pages. That's the safest. Let me fetch:
+1. https://learn.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-getfileinformationbyhandleex
+2. https://learn.microsoft.com/en-us/windows/desktop/ProcThread/process-creation-flags
+3. https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects
+4. https://learn.microsoft.com/en-us/windows/win32/api/evntrace/nf-evntrace-starttracea
+5. https://learn.microsoft.com/en-us/windows/desktop/ETW/event-trace-properties
+
+Note: for the `Win32_Process.Create` claim — Job Object docs mention that a process created with CREATE_BREAKAWAY_FROM_JOB may escape, but the more relevant fact is WMI's Win32_Process.Create creates the process via the WMI service (CIM provider running in a separate service process, e.g., WmiPrvSE.exe), so the child's parent is the provider, not the caller — so it doesn't inherit the caller's job. That's a well-known fact, though whether MS docs state it explicitly in the Job Objects page is doubtful. Let me check the job-objects page text.
+
+Actually the Job Objects doc says: "A process can be associated with more than one job... Processes created by a process associated with a job are associated with the job by default, unless the CREATE_BREAKAWAY_FROM_JOB flag..." The Win32_Process.Create point is about the WMI provider process being the parent. Microsoft docs for Win32_Process.Create do note that it's executed by the WMI service. The Job Objects page itself may not state it.
+
+So the memo's phrasing "Job Object defaults do not cover children created using Win32_Process.Create" — this is a true technical claim (the created process is spawned by the WMI provider process, which is not in the caller's job; also, if the caller's job has JOB_OBJECT_LIMIT_BREAKAWAY_OK, it can break away). Whether it's *documented* at the cited link is the question. The memo cites the Job Objects page for that claim. That could be a P3/P2 citation-precision issue: the cited page supports the general "children are in the job by default" rule, not the WMI-specific exception. But the substantive claim is correct.
+
+Also "NT Kernel Logger control requires admin or LocalSystem" — StartTrace doc: for the NT Kernel Logger session, "you must be a member of the Administrators group or... " Actually the doc states: "Users must have administrative privileges... To start a private session, the user must be a member of the Administrators group or have been granted... Starting with Windows Vista, ... " Hmm. The StartTrace doc says: "The caller must have administrative privileges... **Note: To create a trace session... the user must be a member of the Administrators group, the Performance Log Users group, or have SeSystemProfilePrivilege**"? 
+
+Actually the StartTrace doc "Remarks": "Only users who are members of the Administrators group, the Performance Log Users group, or who have the SeSystemProfilePrivilege can start an NT Kernel Logger session." Something like that. More precisely, the doc says: "Starting with Windows Vista: ... The user must be a member of the Administrators group or the Performance Log Users group, or have SeSystemProfilePrivilege..." Hmm, and for NT Kernel Logger specifically, the doc states: "To start an NT Kernel Logger session, the user must be a member of the Administrators group or have the SeSystemProfilePrivilege privilege" — hmm, no, "you must be a member of the Administrators group or... LocalSystem account."
+
+The actual text: "**Only users who are members of the Administrators group can start an NT Kernel Logger session. In addition, the user must be a member of the Performance Log Users group...**" Hmm.
+
+Let me actually fetch. The memo claims "NT Kernel Logger control requires admin or LocalSystem". If the doc says Administrators group members can, and that the session name must be KERNEL_LOGGER_NAME and the caller must have SeSystemProfilePrivilege, then "requires admin or LocalSystem" might be an over-simplification but not wrong in the non-elevated context: a non-elevated standard user cannot. However, "LocalSystem" — the doc does mention that starting a kernel session requires being in the Administrators group... hmm, or does it allow the LocalSystem account? There's a documented nuance: "The user must be a member of the Administrators group, or the caller must be running as LocalSystem (SYSTEM)."
+
+Let me fetch the pages to be accurate. Also note the memo says "ETW exposes event/buffer loss counters" citing event-trace-properties — the EVENT_TRACE_PROPERTIES struct does have `EventsLost` and `BuffersLost` fields (for query). Actually `EVENT_TRACE_PROPERTIES` has `EventsLost` and `BuffersLost` (in the WNODE_HEADER? no). Let me check: EVENT_TRACE_PROPERTIES contains Wnode, BufferSize, MinimumBuffers, MaximumBuffers, MaximumFileSize, LogFileMode, FlushTimer, EnableFlags, AgeLimit, NumberOfBuffers, FreeBuffers, EventsLost, BuffersWritten, LogBuffersLost, RealTimeBuffersLost, LoggerThreadId, LogFileNameOffset, LoggerNameOffset. Yes — EventsLost, LogBuffersLost, RealTimeBuffersLost exist. So the claim is supported.
+
+Let me fetch these pages. I'll use web_fetch in parallel. Risk: learn.microsoft.com may return JS-heavy content. Let's try.
+
+Also, I need to check `FileStreamInfo` enumerates streams for the opened handle — FILE_STREAM_INFO: "Contains the stream information for a file... used with GetFileInformationByHandleEx(FileStreamInfo)". The query returns all streams, paged; you may need to repeat with the returned NextEntryOffset / or call again with larger buffer. Correct-ish. Also note: `FindFirstStreamW` enumerates streams — including the default data stream. Fine.
+
+One nuance: `FileStandardInfo`'s `NumberOfLinks` — is it populated reliably? FILE_STANDARD_INFO has AllocationSize, EndOfFile, NumberOfLinks, DeletePending, Directory. NumberOfLinks is documented as "The number of hard links to the file." OK.
+
+Another nuance: the memo's conservative candidate "block whenever NumberOfLinks > 1". That's a suggestion. However, note a subtlety: hardlinks can be created after the check (TOCTOU), and NumberOfLinks is a point-in-time snapshot; also the check doesn't tell you *which* other paths. But the memo explicitly says these are advisory/unreviewed candidates. Fine.
+
+Now, a bigger point: the memo says "contract r7 §5, line 115 proposes GetFileInformationByHandleEx(FileHardLinkInfo)". Let me verify line 115 exactly. From my read: line 115 = "- 输入路径必须使用固定 DOS 路径；... 对实际访问文件用 `GetFinalPathNameByHandleW`、volume/file ID、`FindFirstStreamW` 与 `GetFileInformationByHandleEx(FileHardLinkInfo)` 枚举 ADS/hardlink。枚举失败、超出登记根或有未解释别名即阻断。" Yes, line 115 contains it. Good — memo's citation is accurate to the file (line 115).
+
+Wait — is the file's line numbering stable? I read the file with the read tool which gives line numbers. Line 115 indeed. Good.
+
+Now other review questions:
+
+2. memo descriptions of METHOD_BOOTSTRAP, PROGRAMDATA_EQUIVALENCE, NO_CHILD_NO_WRITE_EVIDENCE, PRIVATE_REGISTRY_ABSENCE: do they have input-file evidence, and are BLOCKED/NOT_RUN properly distinguished from test failure?
+
+- METHOD_BOOTSTRAP (memo line 14): claims r3 doesn't freeze exact implementation binding, startup sequence, native struct/layout, handle flags, access masks, error mapping for token/security/file-ID queries. Evidence: r3 line 10 ("记录... TokenUser, TokenGroups... 字段" without method), line 12 (metadata fields without API), line 38 ("仅读取当前 controller 进程中的 PowerShell/.NET API" — no exact API). Yes, r3 indeed doesn't name GetTokenInformation or handle access masks. Supported. Aligns with r7 adjudication EA-01 (line 40-52). Good.
+- PROGRAMDATA_EQUIVALENCE (memo line 15): "r3's 23-variable allowlist omits ProgramData, while WER targets require a %ProgramData% path." Evidence: r3 lines 20 (23 vars list — indeed no ProgramData), lines 27-28 (WER dirs use %ProgramData%). Supported. And "Do not read a 24th variable or guess the mapping" matches EA-01 resolution (adjudication line 52). Good. Note memo says "No allowed evidence currently establishes that a special-folder resolver equals this process's environment mapping" — accurate, since r3 says only PowerShell/.NET API reads and prohibits unlisted reads; `Environment.GetFolderPath` would be a special-folder resolver (Codex adjudication line 50 mentions it) — arguably allowed? It's a .NET API, not an environment variable read. The r3 restriction line 32: "未列出的变量、路径、对象或字段一律不读取". `Environment.GetFolderPath(SpecialFolder.CommonApplicationData)` returns the ProgramData path — it's not reading an env var per se, but it may consult env vars internally. So it's ambiguous → BLOCKED is a defensible conservative call. The memo's framing "Do not read a 24th variable or guess the mapping" is consistent with adjudication.
+   One nuance: memo says "r3's 23-variable allowlist omits ProgramData" — precise. Also could note: `%ProgramData%` is technically `%ALLUSERSPROFILE%`/CSIDL_COMMON_APPDATA; the actual env var name is `ProgramData` and `ALLUSERSPROFILE`. The 23-var list omits both. Minor P3 note.
+- NO_CHILD_NO_WRITE_EVIDENCE (memo line 16): "r3 forbids child-process checks and defines no external OS observation or enforcement that covers short-lived descendants and all write attempts." Evidence: r3 line 32 ("不启动或检查子进程"), line 34 (no writes), line 38. "The selected API handles being read-only is not proof that the whole host process tree wrote nothing." Supported as a logical statement. r7 §7 (line 148-150) requires a Job Object and per-descendant token checks — but r7 is a *future* LPAC measurement contract, not Phase A; Phase A is a controller-only read. So the memo's point is: Phase A has no coverage mechanism. That's consistent with r7 §1.2 (Phase A excludes child processes). Good. Note: this creates a slight tension — r7 §7's Job Object machinery is for the LPAC run (Phase B/build), not for Phase A. The memo correctly restricts to Phase A. Hmm, but memo #3 says "r3 forbids child-process checks and defines no external OS observation or enforcement" — for Phase A this is a design gap only if Phase A must prove no-child. r3's state claim "不启动或检查子进程" is an instruction to the operator, not evidence. So memo is right that Phase A cannot *prove* no child/write. And this is the reason r3 execution is blocked. Reasonable.
+   However: is it over-reaching? The memo says the missing evidence is a blocker for Phase A execution. Strictly, Phase A's *read* operations are controller-only and the requirement is "no writes, no children" — the design gap is that there's no way to demonstrate compliance. That's a legit readiness blocker, not a test failure. But one could argue this is an *evidence* gap rather than a *safety* blocker: an unproven-but-likely-safe measurement could proceed... The memo says "If that cannot be demonstrated within the user's authorization and available local capabilities, retain BLOCKED / NOT_RUN." Conservative and consistent with r7 §8.1/§1.2 which require exact method freeze before execution. Acceptable.
+- PRIVATE_REGISTRY_ABSENCE (memo line 17): "remains UNPROVABLE / BLOCKED under the currently approved method. Do not create a profile or query speculative private-registry paths." Evidence: r7 §1.1.1 (line 28), §2 (line 52), r3 line 32. Consistent. Good.
+
+Is "BLOCKED / NOT_RUN" properly distinguished from test failure? Memo line 3 says "This is a design-readiness assessment, not a test result, OS measurement, or Gate decision." Line 27 & 33: "No tests, Cargo, build, profile/ACL/registry operation, Windows Sandbox operation, or OS measurement was performed for this memo." Line 33: "These are newly discovered design blockers, not test failures." Good. Consistent with Task P02.md line 410 ("当前不是测试失败").
+
+3. DEBUG_PROCESS / Job Object / WMI / NT Kernel Logger / ETW counters accuracy and non-over-assertion.
+
+Need to verify against docs. Points:
+- "the debug chain ends when another process in that chain is created with DEBUG_PROCESS" — need doc support.
+- "Job Object defaults do not cover children created using Win32_Process.Create" — technically true; doc support questionable on the Cited Job Objects page.
+- "NT Kernel Logger control requires admin or LocalSystem" — need doc check.
+- "ETW exposes event/buffer loss counters" — EVENT_TRACE_PROPERTIES has EventsLost/BuffersLost. Supported.
+
+Also potential over-assertion: the memo says "Thus this candidate cannot certify every transient descendant and every file operation under the current non-elevated, path-limited scope." That's a conclusion; reasonable, but note ETW could still provide *evidence* even with loss counters (you'd need to prove `EventsLost==0`). Actually the memo implies loss counters make it untrustworthy — but strictly, if you *read* the counters and they are 0, plus the counter check itself is reliable, the loss counter mechanism could serve as a check. However NT Kernel Logger file I/O events are notoriously lossy (FileIo events are not guaranteed; docs warn that FileIo events can be lost). Also the "every file operation" claim: NT Kernel Logger `EVENT_TRACE_FLAG_FILE_IO` (FileIo, FileIoInit) documents that FileIo events are "not guaranteed"/can be lost. So the memo's thrust is right. But to be precise I'd flag as P3: the memo should state that the blocker is (a) privilege requirement and (b) lossiness, and that a hypothetical zero-loss observation would need separate proof — the memo says "cannot certify", which is a design conclusion, acceptable but should not be read as a documented impossibility. Let me check whether the docs support.
+
+Another point: DEBUG_PROCESS claim — even if the chain breaks, the debuggable-process flag... Also there's the well-documented fact that a process created with DEBUG_PROCESS has a debugger attached, but the debugger only receives events for processes in its debug chain; child processes created by debugged processes are automatically debugged UNLESS they are created with DEBUG_PROCESS themselves (which would attach a different debugger... but the child doesn't have its own debugger — DEBUG_PROCESS means "the *calling* thread debugs the new process"). Hmm, so if a debugged child calls CreateProcess with DEBUG_PROCESS, the *child* becomes the debugger of its own child. Then the original debugger doesn't get events for the grandchild. That's a real documented behavior. I recall the exact doc statement in CreateProcess:
+
+"**DEBUG_PROCESS** ... The calling thread starts and debugs the new process and all child processes created by the new process. It can function as a powerful callback API. ... **Note** that the debugger is not notified when a process in the debug chain creates a new process with DEBUG_PROCESS; the new process becomes the root of a new debug chain."
+
+Hmm. Actually — I'm now fairly sure the doc text is in the "Process Creation Flags" page or CreateProcess Remarks: "If a process is created with DEBUG_PROCESS, the new process and its children are debugged. If the new process creates another process with DEBUG_PROCESS, the original debugger is not notified and the new process starts a new debug chain." Let me just fetch.
+
+Let me fetch the pages now. Use web_fetch for the two most critical (GetFileInformationByHandleEx, process-creation-flags), plus job-objects, starttrace, event-trace-properties. Note that the legacy URLs (windows/desktop/api/winbase/...) redirect to windows/win32/api/... Let's fetch the win32 forms.
+
+Let me do parallel fetches.
+
+4. Are these analyses sufficient to prove r3 should not be executed and Build Gate / Hard Build Barrier cannot be released? Any static revisions possible under current authorization and least privilege?
+
+- The memo + adjudication EA-01 establish the method gap. Combined with r7 §8.1 (execution requires frozen exact manifest + review + adjudication + hash pins), and contract r7 line 156: "只有 DSH r7 Review、Codex adjudication 与逐文件 SHA-256/object pin 核对全部完成后，才可严格按该 manifest 测量。" Actually the r7 review + adjudication DID complete and got APPROVED. So r7 §8.1's stated gate is arguably satisfied... Hmm! This is an important observation: r7 §8.1 says Phase A can execute after DSH r7 Review + Codex adjudication + hash/object pin check. Those three happened (Task P02.md line 400: DSH content APPROVED + Codex independently recomputed hashes). But the adjudication recorded EA-01 (execution readiness) blocking, and the memo further blocks. So there is a documented tension: the r7 contract's own §8.1 execution precondition literally appears satisfied, while the adjudication + memo declare BLOCKED for method-readiness reasons that are NOT enumerated in r7 §8.1.
+
+This is a genuine, citable review finding (P1 or P2 level): the blocker basis rests on an out-of-band Codex "execution-readiness" finding (EA-01) plus an ExpertAdvisor opinion, not on a contract-enumerated precondition; the contract text as written would permit execution. For the readiness chain to be self-consistent, the next candidate contract/manifest must state the method-freeze requirement as an explicit precondition (or the memo must be recorded as a scope amendment by the gate owner). Also, the memo's own status (`BLOCKED / NOT_RUN`) is a Codex self-assessment, and the Task P02.md lines 407-417 record it *after* the r7 review. Since the memo is a Codex-authored readiness assessment rather than a contract text, "sufficient to prove r3 should not execute" is a governance/conservatism judgment, not a proof. I should state that clearly: the memo shows that r3 is *not an executable manifest* (lacks method detail), which is a sufficient basis to withhold execution under a "no unenumerated method" reading — but it is not a *proof* of impossibility; and the r7 §8.1 textual precondition is on its face satisfied, so a written reconciliation is needed.
+
+Hmm, is that right? Let me re-read r7 §1.2 line 44: "Phase A 严格限于待审 manifest r3 列明的 controller-only 读取". And r7 line 22: "本 r7 是 r6 的待审候选；只有完成独立 Review、Codex adjudication 与对象 hash 核对后，才可作为后续隔离测量契约。" And §8.1: "唯一 Phase A 候选范围为 ...（待审）；manifest r3 SHA-256=...。只有 DSH r7 Review、Codex adjudication 与逐文件 SHA-256/object pin 核对全部完成后，才可严格按该 manifest 测量。"
+
+Yes — those conditions were completed (per Task line 400 and adjudication line 20). So on the face of r7 §8.1, Phase A becomes executable. The adjudication's EA-01 adds a new requirement not present in r7 §8.1 ("Freeze a new Phase A manifest and a minimal measurement procedure/source"). The adjudication does have authority as Gate owner's resolution, but it doesn't amend the contract text; and the memo then relies on EA-01 + advisor. That's a legitimate P1/P2 finding for document consistency: the contract's own execution gate text is now stale relative to the adjudication/memo; it should be explicitly superseded (a new candidate contract/manifest revision), otherwise a future reader could argue Phase A is authorized.
+
+That's a strong, useful review finding. Also note r7 "精确下一步" §2 line 176 says DSH must review, and §3 line 177 "仅当 Review、adjudication、object binding 和 Phase A manifest 均无歧义后，才可执行". "均无歧义" (unambiguous) — EA-01's point is precisely that r3 is ambiguous/underspecified. So §7 line 177 does provide a textual hook for the block ("均无歧义"). Good — so the contract does have a textual basis: "ambiguity" is a precondition. That weakens my "tension" finding to a P2/P3 documentation-clarity note: §8.1's condition list omits "method unambiguity", while 精确下一步 §3 includes it. So there's an internal inconsistency within r7 between §8.1 and 精确下一步 §3. That's a fair P2 finding for the next candidate revision: state the 4 conditions uniformly.
+
+Let me nail that as a finding: r7 §8.1 (line 156) enumerates 3 conditions; 精确下一步 §3 (line 177) enumerates 4 including "均无歧义". Memo/EA-01 relies on the 4th. Recommend the next candidate make the precondition set uniform. This is a legit static revision suggestion — allowed under current authorization (document-only, Codex-only verification/P02/** path, no OS action).
+
+5. Check user data boundary, path scope, Windows Sandbox prohibition, and `profile=NOT_CREATED`, ACL/registry unmodified, no OS measurement statements consistency.
+
+- Memo line 27 lists Gate state identical to r7 line 8 / Task line 410 except memo omits `scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED`. Memo line 27: profile=NOT_CREATED; ACL/registry=NOT_MODIFIED; OS isolation preflight=NOT_RUN; Build Gate=BLOCKED; build=NOT_AUTHORIZED/NOT_RUN; Hard Build Barrier=EFFECTIVE; AC1–AC7=BLOCKED/NOT_RUN. Yes, it omits `scratch ACL/label mutation=...` and `private_registry_absence=UNPROVABLE / BLOCKED` and `hook/cache/child-process closure=BLOCKED / NOT_VERIFIED` in the "Gate state" block — though PRIVATE_REGISTRY_ABSENCE appears as finding #4. So the Gate-state block is an incomplete subset. That's a P2/P3 finding: the memo's Gate state must match the authoritative full token set (Task P02.md line 410 / adjudication line 58) to avoid a reader inferring the omitted tokens changed. Specifically omitted: `private_registry_absence=UNPROVABLE / BLOCKED` (mentioned in findings but not in the Gate block), `scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED`, `hook/cache/child-process closure=BLOCKED / NOT_VERIFIED`. Good catch → P2.
+
+- Memo line 8: "user authorization allows Codex to select precise local isolation scope but is not evidence or Gate approval." Consistent with Task line 70/411 and r7 line 12.
+- Memo doesn't mention Windows Sandbox at all except "No ... Windows Sandbox operation was performed" (line 27, 33). Task line 60-62 user ruling replaced Sandbox. The memo doesn't assert Sandbox prohibition explicitly, but it states no Sandbox operation performed. Is that a gap? The review asks to check that "Windows Sandbox 禁止遵循" (the prohibition on following the old Sandbox instructions is respected). The memo mentions Windows Sandbox operation not performed in lines 27 and 33 — so it's consistent, and it doesn't re-instate any wsb instruction. Acceptable. Minor: the memo does not restate the 2026-10-10 user ruling that local validation replaces Sandbox validation, so a reader could wonder whether the old Sandbox-boundary basis still applies. P3.
+- User data boundary: memo doesn't explicitly restate the user-data/protected-path deny list (manga library, DB, Lock, current/pinned Revision, credentials). It relies on r7 §5/r3 line 34. The review questions asks whether the statements are consistent. The memo's scope statements are consistent with r7/r3, but the memo itself is thin on the deny-list. Since the memo is a readiness memo for the codex-only isolation scope, and it defers to r7/r3, I'd rate P3: "memo does not restate deny-list; acceptable by reference but the next candidate should carry the deny list explicitly."
+- `profile=NOT_CREATED`, `ACL/registry=NOT_MODIFIED`, no OS measurement: consistent with r7 line 8, r3 line 4/48, Task lines 70/410, adjudication line 56-58. And the memo line 10 says the ExpertAdvisor "made no file changes and ran no APIs or measurements" — but that's an unverifiable third-party claim (an LLM advisor). The memo asserts it as fact. Since it's an "ExpertAdvisor" (a model/config `gpt-6.1-sol/high`), the claim "It made no file changes and ran no APIs or measurements" is an assertion about a tool that by construction cannot act — acceptable, but it should be labeled as a property of the advisor being non-acting rather than as independently verified evidence. P3, and important for object_binding: the memo's fourth "input" (the advisor) has no byte-level pin, no session id, no transcript hash → not independently verifiable. That's a real verifiability gap: the memo's findings #1-#3 partly derive from an unpinned, non-reviewable source. Should be P2: the advisor consultation is an unpinned input (no SHA, no session/transcript evidence) unlike every other input in this project's Review convention; if its conclusion materially supports METHOD_BOOTSTRAP etc., the memo should either reduce reliance to what r3/r7 text itself shows, or pin the transcript.
+
+Actually careful — do findings #1-#3 depend on the advisor? Reading them: they read as text-based observations about r3 (method not frozen; ProgramData missing; no child/write evidence). Each is verifiable directly from r3 text. The advisor is only credited for API candidates and the DEBUG_PROCESS/Job/ETW analysis (the second half). So the unpinned-source issue attaches mainly to the API-candidate section and the ETW section. But note: the ETW/DEBUG_PROCESS analysis is what's cited in Task P02.md line 416 as a blocking rationale. If that analysis rests on an unpinned LLM (admit: `gpt-6.1-sol/high` — likely a fictional/placeholder name), then the blocking rationale is weakly bound. However the memo does cite MS Learn primary sources for those claims, so the claims are independently checkable against the cited docs. That mitigates it.
+
+So: P2 for unpinned advisor input, mitigated by cited primary sources.
+
+Another check: memo line 21 lists candidate APIs including `FileIdExtdDirectoryInfo` — note `FileIdExtdDirectoryInfo` requires `GetFileInformationByHandleEx` with a directory handle and returns FILE_ID_EXTD_DIR_INFO (for ReFS); it doesn't return hardlink info. Also the advisor list includes `NtOpenFile` with `OBJ_DONT_REPARSE` — that's undocumented/Nt* API and would need ntdll; the memo correctly marks it as unapproved candidate. Note also: r7 line 115 mentions rejecting short names, UNC aliases, etc. — `OBJ_DONT_REPARSE` is related. Also worth noting: using `NtOpenFile` would require direct ntdll P/Invoke, which the memo already flags as unapproved. Good.
+
+Also the memo says "r3 does not freeze ... native structure/layout handling" — fine.
+
+Now let me also check: does the memo's `FILE_INFO_CLASS_MISMATCH` description of r7 §5 accurately quote the class name? r7 line 115 says `GetFileInformationByHandleEx(FileHardLinkInfo)`. Yes.
+
+Also: is `FileHardLinkInfo` perhaps a real thing in a different API? There's `FILE_LINK_INFORMATION` structure used by `NtSetInformationFile` with `FileLinkInformation` class. And `FSCTL_GET_...`? There's also `FileHardLinkFullIdInformation`? Not in FILE_INFO_BY_HANDLE_CLASS. There IS `FILE_ID_EXTD_DIR_INFO` and `FILE_LINK_ENTRY_INFORMATION` (for ReFS/`FSCTL_READ_FILE_USN_DATA`?). Actually `FILE_LINK_ENTRY_INFORMATION` is used with `NtQueryInformationFile(FileLinkInformation)`? Hmm — there IS a documented structure `FILE_LINK_ENTRY_INFORMATION` used by `FSCTL_...`? Let me think: `FILE_LINK_ENTRY_INFORMATION` is documented under `ntifs.h` and used with `NtQueryInformationFile` with the info class `FileLinkInformation`... no. Hmm: In ntddk/ntifs there's `FileLinkInformation` (0x0B) for setting links, and `FileLinkInformationEx`. For *querying* links, there's `FileHardLinkInformation` — used with `NtQueryInformationFile`? Actually yes! `FILE_LINKS_INFORMATION` is queried via `NtQueryInformationFile` with the FILE_INFORMATION_CLASS value `FileHardLinkInformation` (0x3E?). Hmm — I recall `FileHardLinkInformation` being a real FILE_INFORMATION_CLASS member for `NtQueryInformationFile`, returning `FILE_LINKS_INFORMATION` (list of `FILE_LINK_ENTRY_INFORMATION`). Yes! That's real: FileHardLinkInformation (class 0x68?) with FILE_LINKS_INFORMATION. So the *name* "FileHardLinkInfo" in r7 resembles the NT-level `FileHardLinkInformation` FILE_INFORMATION_CLASS, which is NOT part of the Win32 `FILE_INFO_BY_HANDLE_CLASS` enum and is not usable via `GetFileInformationByHandleEx`. So the r7 line likely conflated the NT info class with the Win32 API. That strengthens the finding and gives a precise recommendation: either use `FileStandardInfo.NumberOfLinks` (Win32) or, if true link enumeration is needed, it requires the NT-level class, which is out of scope/undocumented-for-this-purpose. I should note that `FileHardLinkInformation`/`FILE_LINKS_INFORMATION` is an NT `FILE_INFORMATION_CLASS`, and their availability/behavior is not covered by the cited Win32 primary sources — so r7 must not adopt it without its own review. Good nuance. But I should be careful: I'm fairly confident `FILE_LINKS_INFORMATION` exists in ntifs.h with `FileHardLinkInformation` class. Let me verify via web search maybe. If uncertain, I can phrase conditionally: "a similarly named NT-level class exists; it is not a Win32 FILE_INFO_BY_HANDLE_CLASS value."
+
+Let me do the web fetches now.
+
+Then also verify the claim "Microsoft's valid FILE_INFO_BY_HANDLE_CLASS table lists FileStandardInfo, FileStreamInfo, and directory/file ID classes, but not FileHardLinkInfo."
+
+Let me fetch. I'll batch several fetches.
+
+After that, I'll compose the review. Also need:
+- 逐项 blocker/mismatch disposition with exact path + line numbers.
+- P0/P1/P2/P3 counts.
+- Content decision.
+- object_binding status.
+- Verifiability boundary (no hashing possible due to sandbox).
+- Explicit statement this is text/design readiness review only.
+
+Decision: Likely `APPROVED_WITH_CONDITIONS` or `CHANGES_REQUESTED`. Considerations: The memo is a readiness memo whose conclusions (BLOCKED/NOT_RUN, don't execute) I agree with. But it has: (a) a stale/partial Gate-state token set (P2), (b) r7 §5 defect correctly identified (memo is right, so r7 needs r8), (c) internal inconsistency between r7 §8.1 and §3 preconditions not flagged by memo (P2 - memo should flag it since its whole point is blocking execution on a precondition not enumerated in §8.1), (d) unpinned advisor input (P2), (e) citation precision for the WMI/Job claim and the "requires admin or LocalSystem" simplification (P3), (f) memo omits the deny-list/Sandbox ruling restatement (P3), (g) memo's own header says "Status: BLOCKED / NOT_RUN" but doesn't state it's a Codex-only assessment not yet non-author reviewed (it says it's a design-readiness assessment — fine).
+
+Since these are document-quality issues within a readiness memo, and none of them cause a wrong *authorization* conclusion (the memo is conservative, doesn't authorize anything, doesn't claim Gate evidence), `APPROVED_WITH_CONDITIONS` with P0=0, P1=1? Let me decide counts.
+
+Hmm — is there any P1? P1 = blocking-in-scope issue short of P0. The r7 §5 `FileHardLinkInfo` defect is a P1 for the *r7 contract* (which was previously APPROVED, but the user said this round must not overturn/expand the old review's object scope). The r7 contract is a fixed input here; the memo correctly reports the mismatch. So the mismatch disposition: memo finding = CONFIRMED (memo is right), and the *item* remains an open blocker on r7 → next candidate must fix. That's a P1 item on the r7 contract, not a defect of the memo.
+
+For the memo itself: I'd say P0=0, P1=0 (nothing in the memo wrongly authorizes or wrongly claims evidence), P2=3–4, P3=4–5. But then decision could be APPROVED_WITH_CONDITIONS. Hmm, but the user asks "内容决策（APPROVED / APPROVED_WITH_CONDITIONS / CHANGES_REQUESTED）". Is there any condition that must be fixed before the memo is usable as the basis for the next candidate? The most important is the stale/partial Gate token set and the §8.1-vs-§3 precondition inconsistency, plus the unpinned advisor basis being relied on by Task line 416.
+
+I think P2 findings that affect the document's authoritative status → APPROVED_WITH_CONDITIONS is right, provided conditions are explicit and non-blocking to the *conclusion*. But wait: is the memo's central conclusion "r3 must not execute" adequately supported? Yes, supported by r3's own text (no method freeze). So the memo's conclusion survives. However, the memo over-reaches slightly in one place: line 23 "A new executable manifest must first define ... and a separately reviewed OS mechanism that can observe/enforce every descendant and write boundary without unenumerated writable paths. If that cannot be demonstrated ... retain BLOCKED / NOT_RUN." Is "every descendant and write boundary" observation *required* for Phase A? Per r7 §1.2, Phase A excludes child-process checks and is controller-only reads; r7 §8.6 requires the process/write closure evidence for the *Build Gate*, not for Phase A. So requiring a descendant/write-observation mechanism as a precondition for Phase A may exceed the frozen Phase A scope. Hmm! That's a substantive point: for Phase A (controller-only, no write, no child), the requirement should be a *no-write/no-child-negative* attestation method, not a full descendant observation/enforcement mechanism (which belongs in Phase B/Build Gate per r7 §8.6). The memo bundles Phase A readiness with the Build-Gate-grade closure requirement, which could over-expand Phase A's precondition set (contradicting §1.2 / §8.1 and the user's note that this round must not expand the old review's object scope). This is a genuine P1-level finding on the memo: it should scope the requirement to "a method that establishes the controller run itself performed no writes and spawned no children" (or explicitly say the negative claim is UNPROVABLE within Phase A and therefore Phase A is retained BLOCKED), rather than demanding a descendant-observation/enforcement mechanism as a Phase A prerequisite.
+
+Hmm, but careful: memo #3 says r3 "forbids child-process checks and defines no external OS observation or enforcement that covers short-lived descendants and all write attempts." — the subject is "covers short-lived descendants and all write attempts" of *what*? Presumably of the Phase A process tree. But wait — Phase A has no child processes and writes nothing; the actual risk is that PowerShell/CLR may *unintentionally* spawn children (e.g., Add-Type csc.exe!) or write files (e.g., caches, __pycache__). That's exactly METHOD_BOOTSTRAP's point: "A native API call plan does not establish that PowerShell/CLR loading and execution cause no undeclared file access, child launch, or cache write." So yes — for Phase A, the concern is that the *tooling itself* (PowerShell, .NET, Add-Type→Roslyn csc) might spawn children or write. So demanding observation of descendants is in fact relevant to Phase A's own claim of "no write / no child". OK, so memo #3 is coherent: the Phase A claim "不启动或检查子进程" and "不得创建...文件" is an instruction, and Phase A outputs would claim compliance; but nothing can *verify* compliance, so any Phase A result would carry an unproven assumption.
+
+Still, memo line 23's demand — "a separately reviewed OS mechanism that can observe/enforce every descendant and write boundary without unenumerated writable paths" — is one resolution. Alternative resolution within current authorization: (a) design the measurement so its bootstrap is deterministic and *no* native/compile step is used (e.g., pure PowerShell cmdlets / .NET BCL calls, avoiding Add-Type), (b) declare the residual negative claim as UNPROVEN and mark it as an explicit non-claim in the Phase A output, (c) treat "no-child/no-write" as an operator preflight with a *negative* attestation plus an after-the-fact cost-free check (e.g., re-read the same 12 roots + 4 scratch roots metadata T1 to see no file appeared — but that's already Phase A metadata... though r3 says T1 covers only WER objects). Hmm — a static revision suggestion: extend the T1 sample to the 12 input roots + 4 scratch roots to detect newly-created objects, using the already-authorized metadata fields → that's within the current read authorization (root metadata only), doesn't need a new API, and gives partial negative evidence. That's a defensible "static revision suggestion within current authorization and least privilege". But careful: adding T1 re-reads of roots is still just metadata reads already permitted (r3 line 12 allows reading root metadata of the 12 roots and 4 scratch roots). Repeating them at T1 is arguably within the same enumeration of allowed objects — though r3 doesn't say "twice". And it uses no new API. So it's a legitimate, low-risk suggestion to be *proposed* (not executed). Good — I can offer it as a candidate revision for the next manifest, subject to Review/adjudication, and explicitly label it as a proposal, not an authorized method.
+
+Also: a second static revision suggestion: the 23-variable set omits `ProgramData`/`ALLUSERSPROFILE`; rather than reading a 24th variable, the WER `%ProgramData%` paths can be *unconditionally* marked `UNKNOWN / BLOCKED` for Phase A (i.e., delete those two directory objects from the T0/T1 set and record the token as BLOCKED), which avoids needing a resolver — this is exactly the adjudication's alternative ("or mark it UNKNOWN / BLOCKED"). Memo should state this option explicitly (adjudication line 52 has it; memo line 23 only says "must first define..."). So memo under-reports an already-frozen, in-authorization resolution. That's a P2 finding on completeness: the adjudication already provides a fallback that keeps the manifest executable-with-a-blocked-token; the memo presents only the demanding path.
+
+Similarly for METHOD_BOOTSTRAP: the resolution could be to *pin the exact cmdlets* (Get-Acl, Get-Item, [System.IO.File]::... ) rather than native APIs — PowerShell cmdlets are .NET; the "no child/no write" property of a specific cmdlet set is a documented-ish property of PowerShell 7 (Add-Type compiles in-memory by default per the cited Add-Type doc). So a static revision can reduce, though not eliminate, the gap. The memo's line 21 advisor candidates are native APIs, but nothing forces native APIs. Memo doesn't offer the "pin pure cmdlet/BCL surface and declare residual bootstrap risk as UNPROVEN" option. That's a P2 completeness finding — an in-authorization static revision exists and the memo doesn't mention it (except implicitly at line 23's "If that cannot be demonstrated ... retain BLOCKED").
+
+OK. Also check: memo line 14 says r3 does not freeze "handle flags, access masks" — r3 line 12 lists allowed fields but not access masks; correct. Note r3 line 38 says only PowerShell/.NET API; the .NET `File.GetAttributes`/`new FileInfo` don't expose DACL — you need `Get-Acl` (System.Security.AccessControl) → requires READ_CONTROL. The memo's point stands.
+
+Another: memo line 15 says "r3's 23-variable allowlist omits ProgramData" — verify count 23 in r3 line 20. Let me count: LOCALAPPDATA, TEMP, TMP, APPDATA, USERPROFILE, HOME, PYTHONUSERBASE, PYTHONNOUSERSITE, PIP_CACHE_DIR, UV_CACHE_DIR, HF_HOME, HF_HUB_CACHE, TRANSFORMERS_CACHE, TORCH_HOME, TRITON_CACHE_DIR, CARGO_HOME, CARGO_TARGET_DIR, NPM_CONFIG_CACHE, NPM_CONFIG_USERCONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT, PYINSTALLER_CONFIG_DIR = let me count: 
+1 LOCALAPPDATA
+2 TEMP
+3 TMP
+4 APPDATA
+5 USERPROFILE
+6 HOME
+7 PYTHONUSERBASE
+8 PYTHONNOUSERSITE
+9 PIP_CACHE_DIR
+10 UV_CACHE_DIR
+11 HF_HOME
+12 HF_HUB_CACHE
+13 TRANSFORMERS_CACHE
+14 TORCH_HOME
+15 TRITON_CACHE_DIR
+16 CARGO_HOME
+17 CARGO_TARGET_DIR
+18 NPM_CONFIG_CACHE
+19 NPM_CONFIG_USERCONFIG
+20 GIT_CONFIG_GLOBAL
+21 GIT_CONFIG_NOSYSTEM
+22 GIT_TERMINAL_PROMPT
+23 PYINSTALLER_CONFIG_DIR
+= 23. ✓ And no ProgramData. ✓ 
+
+Also cross-check r7 §1.2 line 44 says "Phase A 完整集合 23 个 controller 环境变量" ✓ consistent.
+
+Also check memo line 15 "while WER targets require a %ProgramData% path" — r3 lines 27-28 use `%ProgramData%\...`. ✓
+
+Now, one more consistency check: the memo's baseline (line 7) main@cddff58469b56e181019a8ddfeade80684bc7eb9 / tree identical to r7 line 5 and adjudication line 4. ✓ But note Task P02.md current line 62/70 references profile moniker with cddff584 — consistent.
+
+And P02 Task frontmatter... The task's own SHA input is given as AB0635... — I can't verify. Also the adjudication table line 11 says "P02 Task（派发时）AC200DA1D9565BD612420C0518752D4CCCDFB32FA62C85CDD01449BDCE81FF72, 94063 bytes" — which differs from the review's given SHA AB0635...! The prompt says P02 Task SHA-256 = AB06351028B0E22ABC01E4D920946D10E17D45C2E1386D7A289CB4D77A43D160. And the r7 adjudication (a fixed input) records the Task as AC200DA1... at dispatch. These differ. That's expected if the Task file has been edited since (it now includes the r7/Phase A continuations at lines 398-417, which postdate the adjudication). But this is a material object-binding observation: the Task bytes reviewed in the r7 round ≠ the Task bytes given to me in this round. Since the memo is dated 2026-10-10 and the Task lines 407-417 reference the memo, the Task has changed after the r7 review. I must record: (a) I cannot verify the given Task SHA (no hashing capability); (b) the value differs from the r7 adjudication's recorded dispatch hash AC200DA1..., which is consistent with post-r7 Task edits but means the "P02 Task" object referenced by the memo's authorization basis is not byte-identical to the one the r7 Review approved. That's a legitimate object_binding finding (P2): the memo relies on `PROJECT_ORCHESTRATION_AUTHORIZATION` recorded in the Task; the Task changed since r7 approved it; so the authorization text the memo cites should be pinned (line range + hash) rather than "the Task".
+
+Hmm — is this a real problem? The user explicitly said "P02 r7 contract 内容之前获 APPROVED，但没有执行 Phase A。本轮 memo 是后续 readiness analysis，不得因此推翻或扩大旧 Review 的对象范围." So the user acknowledges the memo is later. And the given Task SHA differs from the r7-era one. So noting it is right, and I should note it's expected, not a defect — but the memo's line 8 claim about the authorization should be pinned. Also, the memo does not carry the Task SHA it read; it only carries the repo HEAD/tree (line 7). So the memo's own object binding is incomplete: it pins main HEAD/tree but not the Task/contract/manifest bytes it read... Actually it links r7 contract and r3 manifest, and r7 line 156 pins r3's SHA. r7 contract SHA is pinned in Task/adjudication, not in the memo. So the memo's input pins: r7 contract SHA is nowhere in the memo → object binding gap (P2). Actually is it in r7 itself? No, r7 doesn't self-pin (per §1.1.10: contract doesn't self-embed SHA; Codex puts SHA in the Review prompt/checkpoint). Fine — so the memo referencing "contract r7" without a SHA is consistent with the project convention (SHA lives in the review prompt). But the memo is going to be a reviewed object itself; the next review prompt should pin the memo, r7, r3 SHAs. I'll state that.
+
+Also note: r7 §1.1.10 (line 37) says the contract does not self-embed a full file SHA and Codex writes final SHA/byte count into a separate Review prompt and checkpoint; DSH records object_binding=NOT_VERIFIED when it cannot recompute. So my object_binding=NOT_VERIFIED is the expected, convention-compliant outcome. 
+
+Now, one more: the memo line 27 omits `hook/cache/child-process closure`. Let me note precisely: Task line 410 lists 10 tokens; memo line 27 lists 7 (profile, ACL/registry, OS isolation preflight, Build Gate, build, Hard Build Barrier, AC1–AC7). Missing: private_registry_absence (in findings), scratch ACL/label mutation, hook/cache/child-process closure. So memo Gate-state = incomplete. P2.
+
+Let me also check the memo header/status line 3: "Status: `BLOCKED / NOT_RUN`. This is a design-readiness assessment, not a test result, OS measurement, or Gate decision." Good. But there's no explicit "not an implementation authorization" phrase — line 8 covers authorization. OK.
+
+Also check for the "不得自行提出未审查的系统 API 作为已可执行方案" constraint: the memo line 21 explicitly labels candidate APIs as advisory/unapproved ✓, line 30 "These are design suggestions only; no API was called and r7 requires correction/re-review" ✓, line 31 "Do not elevate, install a tool, or widen write paths" ✓. So the memo complies well. Good — that's a positive disposition.
+
+Now let me consider whether memo's finding #1's phrasing "startup sequence, native structure/layout handling" etc. has evidence: r3 line 38 "仅读取当前 controller 进程中的 PowerShell/.NET API" — actually this *does* constrain the mechanism to PowerShell/.NET (no native P/Invoke?). "PowerShell/.NET API" — Add-Type P/Invoke is arguably .NET. Hmm, r3 line 38 says "仅读取当前 controller 进程中的 PowerShell/.NET API。不得调用会创建文件、cache、index 或产生网络流量的命令。" So r3 does restrict to PowerShell/.NET APIs. The memo's claim "r3 does not freeze the exact implementation binding, startup sequence, native structure/layout handling, handle flags, access masks, or error mapping" — accurate: r3 doesn't name which cmdlets/APIs, doesn't say how to read DACL or the mandatory label_policy, doesn't define error mapping. ✓ Evidence: r3 lines 10, 12, 38. Good.
+
+Let me also double check r3 line 12: allowed fields include owner, DACL, mandatory label — but retrieving DACL via `Get-Acl` works; "mandatory label" via Get-Acl returns the label ACE in the SACL? Actually the mandatory label is in the *system access control list* (SACL) as a SYSTEM_MANDATORY_LABEL_ACE with LABEL_SECURITY_INFORMATION. `Get-Acl` in .NET retrieves owner, group, DACL, audit rules (SACL) — mandatory label appears as an audit rule? In .NET, `FileSecurity.GetAccessRules` returns DACL; `GetAuditRules` returns SACL rules, and the mandatory label ACE is a SYSTEM_MANDATORY_LABEL_ACE which .NET surfaces as `SystemAuditRule`? Hmm, historically .NET's FileSecurity exposes the label via `GetAccessRules`? Actually the integrity label ACE is a *mandatory label ACE* in the SACL; .NET's `FileSystemAccessRule` doesn't represent it, and you typically read it via `GetNamedSecurityInfo`/`GetSecurityInfo` with LABEL_SECURITY_INFORMATION (native) or via the registry. Windows PowerShell 5.1's Get-Acl returns a FileSecurity with the label ACE? I believe `Get-Acl` includes the label as an audit rule only if you have SeSecurityPrivilege to read the SACL — and r7 §4.1 line 106 says LABEL_SECURITY_INFORMATION query requires READ_CONTROL (not SeSecurityPrivilege)... hmm, actually r7 line 106 asserts "LABEL_SECURITY_INFORMATION 查询/设置分别需要 READ_CONTROL/WRITE_OWNER". Is that right? The MS doc for SECURITY_INFORMATION says: "LABEL_SECURITY_INFORMATION (0x00000010): ... The handle must have READ_CONTROL access to query the SACL... " Hmm. Let me recall the actual doc text: 
+
+From SECURITY_INFORMATION docs:
+- OWNER_SECURITY_INFORMATION: requires WRITE_OWNER to set... READ_CONTROL to query.
+- GROUP_SECURITY_INFORMATION: same.
+- DACL_SECURITY_INFORMATION: READ_CONTROL/WRITE_DAC.
+- SACL_SECURITY_INFORMATION: requires SE_SECURITY_NAME privilege (AccessSystemSecurity). 
+- LABEL_SECURITY_INFORMATION: "The resource's mandatory integrity label... Requires READ_CONTROL for query and WRITE_OWNER for set." 
+
+Hmm, I think the docs say for LABEL_SECURITY_INFORMATION: "To read the SACL... you need READ_CONTROL"; actually the doc note: "SACL_SECURITY_INFORMATION ... requires the SE_SECURITY_NAME privilege. ... LABEL_SECURITY_INFORMATION ... does not require the SE_SECURITY_NAME privilege; READ_CONTROL is sufficient to query and WRITE_OWNER to set." I'm fairly confident that's right (that's why r7 says it). Fine — r7 line 106 is likely accurate. Not part of my review questions directly, but it's in the fixed input and relevant to "does r3 have evidence for mandatory label reads". Actually — r3 doesn't say how; memo #1 covers it. OK.
+
+I should be careful not to make claims I can't support. Since I can fetch MS docs, let me verify SECURITY_INFORMATION too if cheap. It's not required. I'll keep it as "not independently checked" or check it if the fetch is easy. Given the review asks specifically about FILE_INFO_BY_HANDLE_CLASS, DEBUG_PROCESS, Job Objects, StartTrace, EVENT_TRACE_PROPERTIES, let me fetch those 5-6 pages.
+
+Let me fetch now.
+
+I'll run web_fetch calls in parallel. Note web_fetch returns untrusted content — treat as data.
+
+Let me also consider using a subagent to fetch/summarize? Not necessary; direct fetch is fine and cheap.
+
+Let's go.
+dsh: reasoning:
+Excellent. Key confirmations:
+
+1. GetFileInformationByHandleEx valid classes table: FileBasicInfo, FileStandardInfo, FileNameInfo, FileStreamInfo, FileCompressionInfo, FileAttributeTagInfo, FileIdBothDirectoryInfo, FileIdBothDirectoryRestartInfo, FileRemoteProtocolInfo, FileFullDirectoryInfo, FileFullDirectoryRestartInfo, FileStorageInfo, FileAlignmentInfo, FileIdInfo, FileIdExtdDirectoryInfo, FileIdExtdDirectoryRestartInfo. **No FileHardLinkInfo.** ✓ Memo's FILE_INFO_CLASS_MISMATCH is CONFIRMED.
+
+Note also: the table does NOT include FileRenameInfo, FileDispositionInfo, FileAllocationInfo, FileEndOfFileInfo, FileIoPriorityHintInfo, FileCaseSensitiveInfo, FileNormalizedNameInfo (those are set-only or query-in-other-function). Importantly, `FileStandardInfo` (1) and `FileStreamInfo` (7) are present. ✓ Memo's claim accurate.
+
+Also note that the memo says "Microsoft's valid FILE_INFO_BY_HANDLE_CLASS table lists FileStandardInfo, FileStreamInfo, and directory/file ID classes, but not FileHardLinkInfo" — matches. ✓
+
+Also: the page I fetched is the "Remarks" table for the function; the enum page (FILE_INFO_BY_HANDLE_CLASS) is a separate page. The memo cites the function page — good enough. But strictly, the authoritative enum list is at ne-minwinbase-file_info_by_handle_class. I could fetch that to be thorough. Memo cites the function page and that page's table — sufficient. I might note that the memo's assertion is verified against the function's Remarks table (which is the page it cites) — good.
+
+2. process-creation-flags DEBUG_PROCESS: "A process that uses DEBUG_PROCESS becomes the root of a debugging chain. This continues until another process in the chain is created with DEBUG_PROCESS." ✓ Memo's claim CONFIRMED verbatim-ish. 
+
+3. Job Objects: "by default any child processes it creates using CreateProcess are also associated with the job. **(Child processes created using Win32_Process.Create are not associated with the job.)**" ✓ Memo's claim CONFIRMED — and it IS on the cited Job Objects page. Great, so no citation-precision defect there. 
+
+4. StartTrace: "Only users with administrative privileges, users in the Performance Log Users group, and services running as LocalSystem, LocalService, NetworkService can control event tracing sessions. ... **Only users with administrative privileges and services running as LocalSystem can control an NT Kernel Logger session.**" ✓ Memo's claim "NT Kernel Logger control requires admin or LocalSystem" CONFIRMED exactly.
+
+Also note: NT Kernel Logger session is documented as **deprecated** ("To specify an NT Kernel Logger session (deprecated)"). That's an additional accuracy point the memo could add — a strengthening, not a defect. Actually it's a relevant addition: the memo cites it as a candidate; the doc marks it deprecated in favor of SystemTraceProvider. This could be a P3 completeness note (the memo misses the deprecation, which further weakens the candidate). Nice, adds value.
+
+Also the Job Objects page says "delivery of messages to the completion port is not guaranteed; failure of a message to arrive does not necessarily mean that the event did not occur." That directly supports the memo's caution; and r7 line 149 requires recording lost notification counts. Good — memo could cite this for the "not guaranteed" point. Note memo says "ETW exposes event/buffer loss counters" — I still need to verify EVENT_TRACE_PROPERTIES counters.
+
+Let me fetch event-trace-properties to verify EventsLost/BuffersLost and any documented statement about lost events. Also maybe fetch FILE_INFO_BY_HANDLE_CLASS enum page. And maybe the CreateProcess page (not necessary). Let me fetch two more.
+dsh: reasoning:
+All verified:
+- FILE_INFO_BY_HANDLE_CLASS enum: no FileHardLinkInfo. ✓ CONFIRMED (memo's finding correct).
+- EVENT_TRACE_PROPERTIES has EventsLost, LogBuffersLost, RealTimeBuffersLost, and "the session discards incoming events until a buffer becomes available. Each session keeps a record of the number of events discarded (see the EventsLost member)." ✓ CONFIRMED — the memo's "ETW exposes event/buffer loss counters" is accurate, and the doc explicitly states events are discarded on buffer exhaustion. That's strong support.
+- DEBUG_PROCESS chain root statement ✓ CONFIRMED.
+- Job Objects: Win32_Process.Create children not associated ✓ CONFIRMED, and it's on the cited page. Also "delivery of messages to the completion port is not guaranteed" — supports caution.
+- StartTrace: "Only users with administrative privileges and services running as LocalSystem can control an NT Kernel Logger session." ✓ CONFIRMED. Plus: NT Kernel Logger session is marked **deprecated** — a strengthening point the memo omits (P3).
+
+So the memo's technical/citation accuracy on the second half is high — all four claims verified against the cited primary sources. Good.
+
+Now: `GetFileInformationByHandleEx` page's Remarks table doesn't include FileHardLinkInfo either. And the enum page confirms. Also the memo says "and directory/file ID classes" — accurate.
+
+One more thing to check for the memo's FILE_INFO_CLASS_MISMATCH finding: memo says "a conservative unreviewed candidate is to block whenever it exceeds 1" (regarding FILE_STANDARD_INFO.NumberOfLinks). Let me double check FILE_STANDARD_INFO.NumberOfLinks semantics — I'm confident it exists. Should I fetch? It's cited. Quick fetch would round out verification. Let me fetch it — cheap. Actually, the memo's claim is that NumberOfLinks "exposes a link count". I'm confident enough, but the review's job includes verifying cited claims. Let me fetch it to be rigorous. Also, FILE_STREAM_INFO to confirm "enumerates streams for the opened handle" and the paging behavior (NextEntryOffset / ERROR_HANDLE_EOF / ERROR_MORE_DATA). Let me fetch both.
+
+Actually, let me be efficient: fetch FILE_STANDARD_INFO and FILE_STREAM_INFO in parallel. Also maybe the SECURITY_INFORMATION page to check r7 line 106's READ_CONTROL/WRITE_OWNER claim — that's relevant since the memo's METHOD_BOOTSTRAP concerns "handle flags, access masks". It would strengthen my review to verify r7 §4.1 line 106. Let me fetch three.
+
+Let me also consider: should I verify `FILE_LINKS_INFORMATION` / NT-level `FileHardLinkInformation`? A web search could confirm that the name exists at the NT level (NtQueryInformationFile). This matters for my recommendation: "the name r7 used resembles an NT-level FILE_INFORMATION_CLASS value (FileHardLinkInformation / FILE_LINKS_INFORMATION), which is not reachable through GetFileInformationByHandleEx". If I'm not sure, I should phrase conditionally. A quick web_search can settle it. Let me include a search.
+
+Let me do: 3 web_fetch + 1 web_search in parallel.
+
+Hmm, but careful about scope creep. These are cheap and improve accuracy. Let's do it.
+dsh: reasoning:
+Web search is unavailable (401). I have enough from the primary docs. For the NT-level name question, I'll phrase it conditionally and not assert — I'll say: "The name resembles an NT-level `FILE_INFORMATION_CLASS` value (there are NT-level link-information classes reported by community/kernel headers), which is not part of the Win32 `FILE_INFO_BY_HANDLE_CLASS`; I could not independently verify any NT-level equivalent because web_search was unavailable in this session — treat that as an unverified note, not a finding." Actually better: keep it as a reviewer note with explicit "not independently verified". Since the memo doesn't claim it, it's just context for the recommendation. I'll mark it clearly as unverified.
+
+Also, SECURITY_INFORMATION confirms: LABEL_SECURITY_INFORMATION query requires READ_CONTROL, set requires WRITE_OWNER. r7 line 106 is accurate ✓. And SACL query requires ACCESS_SYSTEM_SECURITY — r7 line 106 says it doesn't query the full audit SACL ✓. Good, so r7 §4.1 line 106 is consistent with MS docs. That's a positive note (not asked, but supports that r7's access-mask claims are, where specified, accurate — indeed r7 specifies access masks in §4.1 but r3 doesn't; memo #1's claim that r3 lacks access masks is right, though r7 §4.1 partially supplies them for ACL/label — nuance!).
+
+Hmm wait, that's an important nuance for memo finding #1: memo says "r3 does not freeze the exact implementation binding, ... handle flags, access masks, or error mapping for token/security/file-ID queries." But r7 §4.1 line 106 DOES state access-mask requirements for DACL/label query (READ_CONTROL) — even though r3 doesn't. The memo's finding targets r3 (the executable manifest). Since r3, not r7, is the execution object, the finding stands. But the memo should note that r7 §4.1 partially supplies access-mask semantics, so the gap is narrower than "no access masks anywhere" — the missing part is r3-level binding. This is a P3 precision note: memo finding #1 attributes the gap to r3, which is right, but a reader may not notice r7 §4.1/§5 supply some access-mask semantics (READ_CONTROL / WRITE_DAC / WRITE_OWNER, AccessCheck fields). Recommend the memo cite the r7 §4.1/§5 mask statements and state the residual gap precisely (per-API binding, handle open flags like FILE_READ_ATTRIBUTES / FILE_FLAG_OPEN_REPARSE_POINT, and error mapping).
+
+Actually that's a genuinely useful, precise reviewer contribution. Note r7 §5 line 117 requires AccessCheck fields to be recorded; §4.1 line 106 gives mask semantics. So the contract does have some of what the memo says r3 lacks. The gap is real but should be described as "r3 lacks the per-call binding that r7 §4.1/§5 only partially constrains".
+
+Also important: r7 §5 line 115 requires enumerating ADS/hardlink for "实际访问文件" (actually accessed files) — which in Phase A doesn't happen (Phase A doesn't open files or enumerate contents). So r7 §5's file-ID/ADS/hardlink requirements belong to Phase B/Build Gate (r7 §8.3 line 158: "每个实际被 LPAC 访问的输入文件留 canonical path、file ID、SHA-256" — that's about the LPAC run). So the `FileHardLinkInfo` defect in §5 is in a clause that governs the *LPAC* write/access boundary, not Phase A. Its correction is still needed before r7 can be used as the measurement contract for Phase B/Build Gate — but it is not a Phase A execution precondition. That's a useful scoping clarification: the memo lists FILE_INFO_CLASS_MISMATCH as a blocker; strictly it blocks the *Build Gate/Phase B* method, not Phase A. The memo doesn't claim Phase A is blocked by it — it lists it under "Additional method defects and OS observation limits". But Task P02.md line 415 turns it into "新增阻塞 FILE_INFO_CLASS_MISMATCH". Given r7 §5's path-identity rule is described as applying to actual access during the LPAC run, calling it a Phase A blocker would be an over-reach. Worth a finding: the memo should scope FILE_INFO_CLASS_MISMATCH to the §5 path-identity/LPAC access boundary (Phase B/Build Gate), and state it does not by itself gate Phase A — it gates r7's re-review before Phase B/Build use. That's a P2 scoping finding. 
+
+Hmm — but careful: the memo's own text (line 30) says "r7 requires correction/re-review" — it does NOT say Phase A is blocked by it. Task P02.md line 415 says "新增阻塞" without scoping. So the memo itself is mostly fine; the Task's paraphrase is broader. Since I'm reviewing the memo (and its input files/derivation), I'll note this as P3 for the memo (recommend it state the applicable phase explicitly) and note Task P02.md:415 as the place where the scope is over-generalized — but the Task is not my review object... Actually the review's question list includes "这些分析是否足以证明当前 r3 不应执行" — so scope matters. I'll flag it as a scoping precision item against the memo, and note the Task line as an observation for Codex.
+
+Now let me also double-check the claim in memo line 30: "FILE_STANDARD_INFO.NumberOfLinks exposes a link count; a conservative unreviewed candidate is to block whenever it exceeds 1." ✓ verified (NumberOfLinks = "The number of links to the file"). Note the doc doesn't say "hard links" explicitly — it says "links". Minor: .NET's `FileInfo` has no link count; the Win32 struct is the way. Also note: on ReFS/directories NumberOfLinks semantics differ. Fine, memo says "unreviewed candidate".
+
+Memo line 30: "FileStreamInfo enumerates streams for the opened handle" ✓ verified ("used to enumerate the streams for a file"). Also the GetFileInformationByHandleEx page says if `FileStreamInfo` succeeds but no streams returned, GetLastError = ERROR_HANDLE_EOF — a detail the *next candidate* must pin for error mapping. That's a great concrete static revision input for the memo/next manifest: the error-mapping table must include ERROR_HANDLE_EOF (FileStreamInfo no-streams), ERROR_MORE_DATA (buffer too small, for stream enumeration), and the paging via NextEntryOffset. This is exactly the "error mapping" gap the memo names, so I can supply the concrete primary-source-backed items. Excellent value-add.
+
+Also: `FileIdInfo` requires Windows 8+ (per enum page: FileIdInfo not supported before Win8) — target is Windows 11 ✓. And `GetFileInformationByHandleEx` requires a handle with appropriate access; for FileStandardInfo the handle needs FILE_READ_ATTRIBUTES? Not documented on this page. The docs say "A handle to the file that contains the information to be retrieved. This handle should not be a pipe handle." So access mask isn't documented per class → supports memo's "access masks not frozen" as a real gap that must be resolved by design choice rather than doc. Good nuance: the memo's demand for "handle flags, access masks" cannot be satisfied by the cited docs alone; the next candidate must *choose* them (e.g. FILE_READ_ATTRIBUTES | SYNCHRONIZE, FILE_FLAG_OPEN_REPARSE_POINT for the reparse-safe open, and share flags) and justify no-write. Also `FILE_FLAG_OPEN_REPARSE_POINT` is directly relevant to r7 §5's "拒绝...未解析 reparse point" and is a documented CreateFile flag — but is proposing it "提出未审查的系统 API 作为已可执行方案"? The user says: "不要自行提出未审查的系统 API 作为已可执行方案。" So I must NOT present new APIs as executable. I can only *name the gap* and note that resolving it requires a reviewed candidate. Hmm. I should be careful: naming `FILE_FLAG_OPEN_REPARSE_POINT` as a suggestion would violate the instruction. I'll avoid proposing new APIs; I'll instead say "a future candidate must, under separate review, pin the open flags/access masks; this review does not propose concrete API choices." The r7 §5 already mentions `GetFinalPathNameByHandleW`/`FindFirstStreamW`/`GetFileInformationByHandleEx` — those are already in the fixed input, so discussing them is not proposing *new* unreviewed APIs. Fine.
+
+Also note the memo's own list of candidate APIs (GetTokenInformation, NtOpenFile with OBJ_DONT_REPARSE, GetSecurityInfo, RegOpenKeyExW, FileIdExtdDirectoryInfo) is properly labelled advisory. But one issue: `NtOpenFile` + `OBJ_DONT_REPARSE` is an *undocumented* NT API — the memo notes these are "unapproved candidates only" and "have not been independently reviewed", and line 31 says don't elevate/install/widen. However, listing `NtOpenFile` at all, even as advisory, risks later being read as a sanctioned option. Since the review instruction says the memo must not present unreviewed APIs as executable, and the memo does label them, I'd rate this P3 (recommend the memo state explicitly that `NtOpenFile`/ntdll-level calls are outside the r3 "PowerShell/.NET API" restriction and therefore cannot be admitted without a contract change — otherwise the candidate list itself becomes an informal scope expansion). Actually this is a good, precise point: r3 line 38 restricts Phase A to "PowerShell/.NET API" in the controller process, so ntdll direct calls are *out of scope by the manifest's own text*; the memo should record that these candidates are not merely "unapproved" but "inadmissible under the current r3 restriction". That's a P2/P3. I'd say P3 → but it's a meaningful correctness point about the candidate list. Let me make it P2 since it's about whether the memo's advisory list could be mistaken for a scope basis. Hmm, the memo already says "unapproved candidates only" and "do not solve the gaps". I'll rate P3.
+
+Let me now also consider whether the memo has any *error* (not just incompleteness). Candidates:
+(a) Line 15: "r3's 23-variable allowlist omits ProgramData, while WER targets require a %ProgramData% path." Accurate.
+(b) Line 16: "r3 forbids child-process checks and defines no external OS observation or enforcement that covers short-lived descendants and all write attempts." Accurate per r3 line 32/34.
+(c) Line 21: "`GetSecurityInfo` limited to owner/DACL/label" — fine.
+(d) Line 23: "A new executable manifest must first define ... a separately reviewed OS mechanism that can observe/enforce every descendant and write boundary without unenumerated writable paths." → This is the one arguable over-reach: it implies Phase A needs descendant-observation/enforcement. But is descendant observation required for Phase A? Phase A's claim is "controller-only reads, no writes, no children". To *prove* the negative you'd need observation. Alternatively you can *design away* the risk (no child-spawning/compiling mechanism) and declare the residual as an explicit non-claim. The memo presents only the first option. So: incomplete, not wrong. P2 (completeness) — and this matters because "demanding an enforcement mechanism" could push toward elevation/tool installation, which the memo itself forbids (line 31) — creating an internal tension with line 23. Actually it's not contradictory — it says if it can't be demonstrated, retain BLOCKED. So the consequence is "Phase A may never be executable", which is a legitimate outcome but should be stated as such. I'll frame it: the memo should state explicitly that, on current authorization, the most likely terminal outcome is `BLOCKED / NOT_RUN` indefinitely (a permanent blocker vs. a fixable design gap), and separate the two classes. That's a substantive P2.
+
+(e) Line 27: incomplete Gate token set (P2).
+(f) Line 7: pins repo HEAD/tree but no input SHAs (per convention, contract doesn't self-pin; but the memo should list the read object pins it relied on, especially since the memo is a new reviewable object). P2/P3.
+(g) Line 10: ExpertAdvisor unpinned, and "It made no file changes and ran no APIs or measurements" is an unverifiable assertion. P2 (given it materially grounds half the memo), mitigated by primary-source citations.
+
+Also (h): the memo line 3 says "Status: BLOCKED / NOT_RUN" — but the memo's own object status (a candidate document) isn't stated (e.g., CANDIDATE/待审 vs FROZEN). r3 line 4 states its status explicitly; r7 line 22 states it's a pending candidate. The memo lacks such a state line for itself (e.g., "CANDIDATE / NOT_REVIEWED"). P3.
+
+(i) The memo doesn't reference the r7 adjudication EA-01 by ID — actually it cites the adjudication as an input (line 9) but findings #1-#3 substantially duplicate EA-01 without cross-referencing EA-01 by name. Duplication without cross-reference creates two parallel finding IDs for the same gap (EA-01 vs METHOD_BOOTSTRAP/PROGRAMDATA_EQUIVALENCE). A reader could treat them as independent blockers. P2 (finding-ID hygiene / non-duplication) — recommend mapping METHOD_BOOTSTRAP/PROGRAMDATA_EQUIVALENCE to EA-01 bullets explicitly, as done for PRIVATE_REGISTRY_ABSENCE↔P1-01 style.
+
+That's a solid finding.
+
+(j) Check: memo says "PROGRAMDATA_EQUIVALENCE ... No allowed evidence currently establishes that a special-folder resolver equals this process's environment mapping." Note r3 line 20 allows reading LOCALAPPDATA (an env var) — `%ProgramData%` ≠ %LOCALAPPDATA%. And `%ProgramData%` is normally read from the env var `ProgramData` (or ALLUSERSPROFILE). Since ProgramData is not in the 23, resolution requires an unlisted read → BLOCKED. ✓ Right. But there is a subtlety: r3 line 27-28 uses `%LOCALAPPDATA%\CrashDumps` for T0/T1 — and LOCALAPPDATA IS in the 23-var set. So only the two `%ProgramData%` WER directories are unresolvable. Memo line 15 says "while WER targets require a %ProgramData% path" — should say "two of the five WER objects". Minor precision → P3. Actually the memo says "WER targets require a %ProgramData% path" (plural targets), acceptable. But for precision the memo should note T0/T1 cover 5 objects, of which 3 are resolvable via listed vars/files and 2 are not, and that the unresolvable 2 must be tokenized `UNKNOWN / BLOCKED` (adjudication line 52's own fallback). P2 as noted.
+
+Now, is the finding-set sufficient to prove "r3 不应执行"? My assessment:
+- Direct text evidence in r3 is sufficient to establish that r3 is not an *exact* manifest: it names fields but not the read mechanism, handle flags/access masks per call, path-resolution order, or error mapping; and it forbids the very child-process checks that would be needed to substantiate its "no child" claim. Under r7 §精确下一步 3 ("仅当 Review、adjudication、object binding 和 Phase A manifest 均无歧义后，才可执行") and r7 §8.1, an ambiguous manifest cannot be executed. So YES, a readiness-based withholding of Phase A execution is textually grounded — provided the basis is stated as the *unambiguity* precondition, not merely as EA-01's authority.
+- But the memo does NOT establish that r3 is *unsafe* or that Phase A would violate data protection; it establishes *unauditability*. And it does not prove impossibility (only that the proposed mechanism set is insufficient). So the memo's evidence supports "do not execute now", not "cannot ever execute".
+- Build Gate / Hard Build Barrier: memo and adjudication state them unchanged/BLOCKED, which is consistent with r7 §8.6 (Build Gate needs LPAC token/descendant/canary/MIC/WER/closure evidence — none exists). The memo's analysis strengthens (not weakens) that Build Gate cannot be released: no OS measurement of any kind was performed, so no Build Gate condition is met. This is *sufficient* to show Build Gate cannot be released *by this memo*, but the memo doesn't attempt to prove it — and correctly does not claim to. Good: I'll note the Gate state is preserved, and no evidence in this round could release it.
+
+Static revisions possible within current authorization & least privilege (document-only):
+R1. Next candidate must add the r7-§8.1-vs-§3 uniform precondition set (4 conditions incl. "no ambiguity") and an explicit phase scope for each blocker token.
+R2. TokenizeGate state with the full 10-token set, byte-identical to Task P02.md:410 / adjudication:58.
+R3. For PROGRAMDATA_EQUIVALENCE, adopt the adjudication's already-frozen fallback: mark the two `%ProgramData%` WER objects `UNKNOWN / BLOCKED` and remove them from the T0/T1 obligatory set (or keep them with an explicit BLOCKED token), so the remaining 3 WER objects + resolvable paths can proceed under a new manifest. This resolves the blocker without reading a 24th variable and without new APIs.
+R4. Error/field mapping must be pinned from the primary sources already cited: for `FileStreamInfo`, `GetLastError()==ERROR_HANDLE_EOF` when no streams are returned; buffer-too-small paging via `NextEntryOffset`; `FileStandardInfo.NumberOfLinks`. But careful — using `GetFileInformationByHandleEx` at all is a Win32 API; r3 line 38 restricts to "PowerShell/.NET API". Is Win32 P/Invoke via Add-Type "PowerShell/.NET API"? Ambiguous → that ambiguity itself is part of METHOD_BOOTSTRAP. So R4 must be framed as "the next candidate must resolve whether Add-Type/P-Invoke is admissible under r3's 'PowerShell/.NET API' wording; this Review does not authorize it."
+   Important: the user says don't propose unreviewed system APIs as executable. So R4 should be: fix the *error/field mapping table* in the candidate using the cited docs, and resolve the admissible-mechanism question explicitly.
+R5. Add a T1 re-read of the 12 input roots + 4 scratch roots (same already-authorized metadata fields, no new API) so Phase A can at least detect new root objects appearing during the run. Must be approved by Review/adjudication before use. Hmm — is re-reading roots a scope expansion? r3 line 12 allows reading those 16 roots' metadata once ("仅对契约 §3 列出的 12 个 Task 输入根，以及下列四个精确 scratch 目录读取根目录元数据"). Adding a second (T1) read of the same objects/fields doesn't add objects or fields — but it does add an operation. A conservative reviewer should propose it as a *candidate* for the next manifest with explicit acknowledgment that it slightly extends r3's single-shot reading and therefore needs adjudication. I'll include it as a proposal clearly marked.
+   Alternatively: adding T1 re-reads of the *same* fields is not a new object; I'll present it as a "candidate for Codex to evaluate, not an authorized method".
+R6. Record each blocker's terminal class: FIXABLE_BY_MANIFEST_REVISION vs PERMANENTLY_BLOCKED_ON_CURRENT_AUTHORIZATION (private registry is the latter; METHOD_BOOTSTRAP likely fixable-by-binding; NO_CHILD_NO_WRITE may be the latter absent an admissible observer).
+R7. Remove or explicitly scope-out the advisory native/NT API list (NtOpenFile) as inadmissible under r3's PowerShell/.NET restriction (needs a contract change to admit).
+R8. Pin the memo itself (SHA-256/bytes) in the next Review prompt and pin the input objects the memo read (contract r7 SHA, manifest r3 SHA, Task revision range) — because the Task changed after r7 (r7 adjudication recorded Task=AC200DA1…; this round's dispatch pins AB0635…), so the authorization basis must be pinned by revision.
+
+Hmm — careful with that last one: I can't verify the hashes. The difference between AC200DA1… (r7 adjudication, line 11) and AB0635… (this round's dispatch) is factual from the supplied texts; I'll report it as an observation, not a defect, since the Task necessarily changed after r7 (it now contains r7/Phase A continuations per Task lines 398-417, which are exactly the post-r7 additions).
+
+Now `object_binding`: NOT_VERIFIED, because (1) this Review could not execute any shell/hash tooling — pwsh fails with `SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga)` (the same documented DSH limitation as P02.md:245); (2) no independent byte/hash recomputation was performed; (3) the object binding relies on the dispatcher's supplied SHAs. And per r7 §1.1.10 this must be recorded as `object_binding=NOT_VERIFIED`, and content Review must not be claimed as exact-hash Review. ✓
+
+Verifiability boundary:
+- Verified by direct file read (content, with line numbers): the 5 inputs' text.
+- Verified against Microsoft primary sources via web_fetch (6 pages): FILE_INFO_BY_HANDLE_CLASS(no FileHardLinkInfo), GetFileInformationByHandleEx Remarks table, FILE_STANDARD_INFO, FILE_STREAM_INFO, process-creation-flags (DEBUG_PROCESS chain), job-objects (Win32_Process.Create exclusion), StartTrace (NT Kernel Logger admin/LocalSystem), EVENT_TRACE_PROPERTIES (EventsLost/LogBuffersLost/RealTimeBuffersLost + discard-on-buffer-exhaustion), SECURITY_INFORMATION (LABEL query READ_CONTROL / set WRITE_OWNER).
+- NOT verified: any SHA-256/byte count; any filesystem/Git state; any OS/registry/ACL/profile state; the ExpertAdvisor's existence/config/behavior; the NT-level `FileHardLinkInformation` naming (web_search unavailable, HTTP 401).
+- web_fetch content is external untrusted data; used only as documentation evidence.
+
+Also note: the fetched pages show "Last updated" dates; the enum page (2021-06-02) is older than the function page (2024-02-22) — so the authoritative-check should be on the enum page; both agree. Fine.
+
+One more possible check: does `GetFileInformationByHandleEx` page mention `FileHardLinkInfo`? No. Confirmed.
+
+Let me also reconsider: is there any chance `FileHardLinkInfo` is valid in newer SDK? The enum page reflects minwinbase.h current content; no. ✓
+
+Now — disposition table. Let me structure the output:
+
+1. 审查结论摘要 (decision, counts, object_binding, scope disclaimer)
+2. 输入与校验状态 (hash verification could not run; explain)
+3. 逐项 disposition (每项: ID, 对象, 引用路径:行号, 判定, 依据)
+4. Microsoft primary source 独立核对结果 (with URLs)
+5. 逐审查问题的回答 (5 questions)
+6. P0/P1/P2/P3 明细
+7. 可验证性边界
+8. 静态修订建议（在现有授权内，不提出未审查 API 为可执行方案）
+9. 明确不构成 Gate/OS preflight/实施授权
+10. object_binding 状态
+
+Decision: I'll go with APPROVED_WITH_CONDITIONS. Conditions: (C1) Gate token set completion; (C2) finding-ID mapping to EA-01 + phase scoping of FILE_INFO_CLASS_MISMATCH; (C3) record each blocker's terminal class + adopt adjudication's already-frozen ProgramData fallback; (C4) pin memo + input objects. Hmm — but should it be CHANGES_REQUESTED? The memo's *conclusion* is right and it correctly refuses to authorize anything. The defects are completeness/precision, not wrong authorization. But given this project's review culture (r2 CHANGES_REQUESTED at 2/5/8/7; r5 CHANGES_REQUESTED at 0/1/2/6 — a single P1 triggered CHANGES_REQUESTED!), and the convention that P1 = blocking. Do I have a P1? Let me decide strictly.
+
+Is there a P1 (blocking-in-scope defect)? Consider the memo's function: it is the readiness basis for retaining Phase A BLOCKED. Its central claims are correct and verified. Its defects: incomplete Gate token set (could mislead about status), missing unification with r7 §8.1 precondition, unpinned advisor, duplicated-unmapped EA-01, phase-scoping of FILE_INFO_CLASS_MISMATCH. None of these makes the memo's conclusion wrong or authorizes anything. However — the *Gate state block* being an incomplete subset in a document that becomes the authoritative "current state" reference is, in this project's convention, treated seriously (r5-04 was a P3 for a missing hook/cache line in the Index; no P1). Hmm, that suggests token-set incompleteness was rated P3 before. But here it's the memo's own Gate block, which readers will quote. I'll rate it P2 (higher than r5-04's P3 because it's the Gate-state block of the memo itself, not a summary elsewhere).
+
+So with P0=0, P1=0, P2=4, P3=5 → APPROVED_WITH_CONDITIONS fits (r4 was APPROVED_WITH_CONDITIONS at 0/0/3/6). Good, consistent with project precedent. I'll use APPROVED_WITH_CONDITIONS with 0 P1, and make the conditions mandatory for the next candidate revision (not for the memo's conclusion).
+
+Hmm, but the user's question "这些分析是否足以证明当前 r3 不应执行" — I answer: 在 r7 既有文本的"无歧义"前置条件下，足以支持"暂不执行"；但不足以证明"不可执行"。And I note the memo does not itself claim impossibility. Good.
+
+Let me carefully assemble exact line numbers for every citation. Let me list the key references:
+
+memo = verification/P02/codex-phase-a-method-blockers-20261010.md
+- L3 status
+- L7 baseline HEAD/tree
+- L8 authorization
+- L9 inputs
+- L10 ExpertAdvisor
+- L14 METHOD_BOOTSTRAP
+- L15 PROGRAMDATA_EQUIVALENCE
+- L16 NO_CHILD_NO_WRITE_EVIDENCE
+- L17 PRIVATE_REGISTRY_ABSENCE
+- L21 candidate APIs advisory
+- L23 new manifest must define... retain BLOCKED
+- L27 Gate state
+- L30 FILE_INFO_CLASS_MISMATCH
+- L31 DEBUG_PROCESS/Job/ETW
+- L33 not test failures
+
+r7 = appcontainer-isolation-contract-r7.md
+- L5 baseline
+- L8 current state tokens
+- L18 zero-ACL range
+- L22 candidate status
+- L28 P1-01 private registry
+- L29 P1-02 system ACL
+- L30 P1-03 scratch/MIC
+- L37 P2-08 object binding
+- L44 Phase A/Phase B boundary
+- L46 Phase B
+- L50 LPAC setup
+- L52 pre-creation state
+- L60 12 roots
+- L77 system ACL Phase B
+- L106 DACL/label access rights
+- L110 three leaves
+- L114 deny set
+- L115 path normalization + FileHardLinkInfo
+- L116 SeChangeNotifyPrivilege
+- L117 AccessCheck
+- L121 env block
+- L148-150 Job Object/descendants/token
+- L149 job completion port lost notification
+- L152 WER
+- L156 §8.1
+- L157 §8.2
+- L158 §8.3
+- L160 §8.5 cleanup
+- L161 §8.6 Build Gate
+- L175-178 精确下一步
+
+r3 = appcontainer-readonly-preflight-r3.md
+- L4 status CANDIDATE
+- L10 token fields
+- L12 root metadata fields, no recursion
+- L14-18 four scratch roots
+- L20 23 env vars
+- L22 T0/T1 + 5 WER objects
+- L24-28 WER keys/dirs
+- L32 exclusions, no child-process checks, forbidden APIs
+- L34 no create/modify/probe, no Sandbox
+- L38 PowerShell/.NET only, stdout only
+- L40-44 evidence paths
+- L48 limits + Build Gate BLOCKED
+
+Task P02.md
+- L14 scope_contract_sha256
+- L42 AC4
+- L56 validator path & scope-review-r4
+- L60-62 user ruling local validation replaces Sandbox
+- L64-66 Codex-only scratch boundary
+- L68-70 AppContainer authorization + current status
+- L398-404 r7 review/adjudication
+- L407-412 Phase A method blockers continuation
+- L413-417 FILE_INFO_CLASS_MISMATCH + ETW continuation
+- L245 DSH sandbox failure precedent
+- L410 Gate token list (10 tokens)
+
+adjudication
+- L4 baseline
+- L11 Task SHA at dispatch (AC200DA1…) 94063 bytes
+- L12 contract r7 SHA / L13 manifest r3 SHA
+- L20 DSH r7 exit/session
+- L24 23-var correction
+- L30-34 P3-01..05 deferrals
+- L40 EA-01
+- L44-48 sub-gaps
+- L50 sources
+- L52 resolution
+- L56-58 Gate state + full token list
+- L60 next action
+
+Good. Now count P2/P3 findings precisely. Let me enumerate my findings:
+
+**P2 (4):**
+- RV-P2-01: memo L27 Gate-state block is an incomplete subset (7 of 10 tokens) vs Task L410 / adjudication L58 — missing `private_registry_absence`, `scratch ACL/label mutation`, `hook/cache/child-process closure`.
+- RV-P2-02: memo L14/L15 duplicate EA-01 bullets without mapping to EA-01 (adjudication L40/L44-48), creating parallel finding IDs for one gap; also memo does not flag that r7 §8.1 (L156) enumerates only 3 execution preconditions while r7 精确下一步 3 (L177) enumerates 4 (incl. "均无歧义"); the memo's blocking basis rests on the 4th, which is only in the "next steps" section, not the execution clause. → the next candidate must unify.
+- RV-P2-03: memo L23 requires a reviewed OS mechanism to observe/enforce every descendant and write boundary as a precondition, but does not state the already-frozen alternative (adjudication L52: mark `%ProgramData%` WER objects `UNKNOWN / BLOCKED`) nor classify which blockers are FIXABLE_BY_MANIFEST_REVISION vs PERMANENTLY_BLOCKED under current authorization; result: the memo understates the executable-with-blocked-token path and overstates the observer requirement relative to r7 §1.2 (L44) / §8.1 (L156).
+- RV-P2-04: memo L10 ExpertAdvisor is an unpinned, non-hashable input (no session/transcript/SHA), while half the memo's blocking rationale (L21, L31-adjacent) derives from its advice; and the memo's own object pins are absent (only repo HEAD/tree at L7). → require pinning memo + inputs; and scope the advisor's contribution to what the cited primary sources support.
+
+Hmm, RV-P2-02 contains two things (finding-ID mapping AND §8.1/§3 inconsistency). Maybe split: make §8.1-inconsistency its own P2 and finding-ID mapping a P3. Let me restructure:
+
+**P2 (4):**
+- RV-P2-01 Gate token set incomplete (memo L27).
+- RV-P2-02 r7 internal precondition inconsistency: §8.1 L156 (3 conditions, and it states they are all completed) vs 精确下一步 L177 (4 conditions incl. no-ambiguity); the memo's blocking basis is not anchored to the contract's execution clause; if the next candidate/contract isn't revised, the memo's basis is a Codex out-of-band finding rather than a contract-enumerated precondition.
+- RV-P2-03 Blocker class + alternative resolution not recorded (adjudication L52 fallback; FIXABLE vs PERMANENT split); memo L23 demands an observer/enforcement mechanism as a precondition.
+- RV-P2-04 Unpinned ExpertAdvisor input + missing memo/input object pins (memo L10, L7).
+
+**P3 (5):**
+- RV-P3-01 finding-ID hygiene: METHOD_BOOTSTRAP/PROGRAMDATA_EQUIVALENCE/NO_CHILD_NO_WRITE_EVIDENCE should be mapped to EA-01 bullet-level IDs (adjudication L44-48) to avoid double-counting blockers.
+- RV-P3-02 phase scoping of FILE_INFO_CLASS_MISMATCH: r7 L115 governs actual file access enumeration (LPAC run, cf. r7 L158 §8.3) → it gates r7 re-review for Phase B/Build Gate use; the memo (L30) says "r7 requires correction/re-review" but does not state the applicable phase; Task L415's "新增阻塞" reads as Phase A-wide.
+- RV-P3-03 citation precision / completeness: memo L31 could add that StartTrace documents the NT Kernel Logger session as deprecated (the fetched page says "(deprecated)"); and memo L15 should specify 2 of the 5 WER objects are unresolvable (the `%LOCALAPPDATA%` one is covered by the listed LOCALAPPDATA variable).
+- RV-P3-04 candidate-API list admissibility: memo L21 lists ntdll-level `NtOpenFile` (OBJ_DONT_REPARSE) which is outside r3 L38's "PowerShell/.NET API" restriction, so it is not merely unapproved but inadmissible without a contract change; the memo should say so.
+- RV-P3-05 memo self-status / deny-list restatement: memo lacks its own document status line (cf. r3 L4's `CANDIDATE / NOT_RUN / NOT_AUTHORIZED_FOR_EXECUTION`) and does not restate the user-data/protected-path deny list or the 2026-10-10 local-validation ruling (Task L60-62); consistent by reference to r7/r3 but not self-contained.
+
+Total: P0=0, P1=0, P2=4, P3=5. Decision APPROVED_WITH_CONDITIONS.
+
+Blocker/mismatch dispositions (the 5 memo findings + the mismatch):
+- METHOD_BOOTSTRAP: CONFIRMED (evidence: r3 L10, L12, L38; r7 adjudication EA-01 L44) — text-supported; note residual narrowing (r7 L106/L117 do pin some mask semantics) → P3 addendum.
+- PROGRAMDATA_EQUIVALENCE: CONFIRMED (r3 L20 23-var list has no ProgramData/ALLUSERSPROFILE; r3 L27-28 use %ProgramData%) — but resolution incomplete → RV-P2-03.
+- NO_CHILD_NO_WRITE_EVIDENCE: CONFIRMED as an evidence/auditability gap (r3 L32, L34, L38) — and note this is a *negative-claim* gap, not a demonstrated write; the memo correctly does not assert any write occurred.
+- PRIVATE_REGISTRY_ABSENCE: CONFIRMED and consistent with r7 L28/L52 and r3 L32 — the strongest-grounded item; no change.
+- FILE_INFO_CLASS_MISMATCH: CONFIRMED by independent primary-source check (enum page has no FileHardLinkInfo; function page's Remarks table likewise) — memo is right; r7 L115 must be corrected in a new candidate (r8) before it is used as a measurement contract; phase scoping per RV-P3-02.
+- DEBUG_PROCESS / Job / WMI / NT Kernel Logger / ETW counters: all four sub-claims CONFIRMED verbatim against cited pages (process-creation-flags DEBUG_PROCESS bullet; job-objects "Child processes created using Win32_Process.Create are not associated with the job"; StartTrace ERROR_ACCESS_DENIED text; EVENT_TRACE_PROPERTIES EventsLost/LogBuffersLost/RealTimeBuffersLost + discard-on-buffer-exhaustion). Not over-asserted. Two P3 additions available (deprecation; guarantee caveat for job completion-port messages at job-objects "delivery ... is not guaranteed").
+- Gate/state consistency (profile=NOT_CREATED, ACL/registry=NOT_MODIFIED, no OS measurement, no Sandbox): CONSISTENT with r7 L8, r3 L4/L48, adjudication L56-58, Task L410 — except memo L27's subset (RV-P2-01).
+
+Now note one more: is "no OS measurement" consistent with the memo's claim that it consulted an ExpertAdvisor "actual configuration gpt-6.1-sol/high"? Consulting an LLM is not an OS measurement. ✓ consistent.
+
+Also check: memo says (L27) "No tests, Cargo, build, profile/ACL/registry operation, Windows Sandbox operation, or OS measurement was performed for this memo." And L33 repeats. Consistent with r3 L34's prohibition on Sandbox. ✓ And it respects Task L62's supersession (doesn't re-instate wsb). ✓
+
+One more consistency check — Task L60 says the 2026-10-10 ruling changed P02/P04 Sandbox validation to local; the memo doesn't touch it. Fine.
+
+Also: r7 L18 "零 ACL/label 修改范围" and memo L27 "ACL/registry=NOT_MODIFIED" ✓.
+
+Also: does the memo claim any Gate evidence? L3 explicitly denies. L11 "not an independent Review or Gate". ✓
+
+OK. One more thing worth checking: the user asks "是否存在可在当前记录授权和最小权限下继续的静态修订建议？" — I'll give the list R1-R8 above, clearly marked as proposals subject to Codex adjudication + non-author Review, and explicitly not executable now.
+
+Also, "不要自行提出未审查的系统 API 作为已可执行方案" — I must ensure my suggestions don't do that. My R-items: document text edits; adopting an already-frozen adjudication fallback; pinning; adding T1 re-reads of already-authorized objects/fields (flagged as needing adjudication because it's a second read). I should NOT propose e.g. "use GetFileInformationByHandleEx with FILE_STANDARD_INFO" as an executable method. I can mention that the *contract text* needs a corrected class name, and that the memo's own conservative candidate (block when NumberOfLinks>1) is doc-verifiable — but as a *design suggestion requiring review*, echoing the memo. Better: I'll say the next candidate's error/field mapping table must be fixed using the cited primary sources (naming the documented facts: FileStreamInfo no-stream = ERROR_HANDLE_EOF; NextEntryOffset paging; NumberOfLinks field), and explicitly state this Review does not authorize any API call or choose the mechanism. That respects the boundary while being useful. I'll be careful to phrase "候选文本修订建议" not "执行方案".
+
+Now also the "P0/P1/P2/P3 计数" — provide both for the memo (my findings) and note the disposition of the inherited/old findings.
+
+Also I should note the memo's overall positive aspects: it does not authorize, it labels candidates advisory, it doesn't touch user data, it's consistent with the BLOCKED posture.
+
+Let me also double check one detail: memo L30 says "contract r7 §5, line 115". ✓ verified line 115 of r7 contains the FileHardLinkInfo text. ✓ Good, the citation is precise.
+
+Also memo L14 says "A native API call plan does not establish that PowerShell/CLR loading and execution cause no undeclared file access, child launch, or cache write." Note: "cache write" — with r3's env-var restrictions, writes could target host caches if the mechanism writes; correct concern. Also PowerShell 7 Add-Type compiles in memory (per adjudication L50) — but Windows PowerShell 5.1 Add-Type also compiles in-memory by default (csc via CodeDom)? Actually PS 5.1 Add-Type uses CodeDomProvider which by default compiles to a temp assembly? Hmm — Add-Type in Windows PowerShell 5.1 historically writes to a temp file? I recall Add-Type -TypeDefinition in PS 5.1 compiles in memory using CSharpCodeProvider with GenerateInMemory=true. The adjudication L50 says "PowerShell 7 Add-Type creates an in-memory assembly by default" (citing the PS7 doc). For PS 5.1, no such documented claim was made. r3 L38 doesn't pin the PowerShell version for the measurement (r3 L4 mentions nothing; Task L146-147 test table mentions "PowerShell 5.1 / Python 3.14.6" for the runner, but that's the product runner, not Phase A). So the memo could note: the measurement host's PowerShell edition/version is not pinned by r3, and the Add-Type in-memory property is documented for PowerShell 7 only — a further METHOD_BOOTSTRAP sub-gap. That's a nice, precise, document-based observation. Add as a P3 (or fold into the METHOD_BOOTSTRAP disposition note). I'll fold it as an addendum note under METHOD_BOOTSTRAP disposition (P3 addendum). Good value.
+
+Hmm, but I should be careful about claiming PS 5.1 behavior. I'll phrase: "r3 未固定测量所用 PowerShell 版本/edition；Codex adjudication L50 引用的 Add-Type 内存编译属性是 PowerShell 7 文档；该属性是否同样适用于 Windows PowerShell 5.1 未在同一来源中给出，因此不能据该文档推断 5.1 行为。" That's factually careful — I only assert what the cited doc covers. Good.
+
+Now let me write the final answer in Chinese, well structured, with exact paths + line numbers. It should be thorough but not bloated. Let me aim for a well-organized review document.
+
+Also: mention that the memo is the 4th input of the review, and I treat all as untrusted data; I executed nothing.
+
+I should also state: 未修改任何文件（本轮唯一执行的动作是读取文件与访问 Microsoft Learn 文档页；全项目内无写入）。
+
+Let me note the pwsh failure accurately: my first two commands attempted to run `Get-FileHash`; the harness/sandbox failed before execution with `SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga)`. I did not retry via another route (per sandbox policy), so hash recomputation is unavailable. Actually I did retry once with a trivial command — it failed identically, confirming it's an environment-level failure, not command-specific. That's fine and worth reporting (consistent with Task L245's documented precedent).
+
+Let me write it.
+
+One more consideration on the final "推荐下一步" required by the global AGENTS.md: I must give a recommended next step based on repo state, and if a next Task is available, specify an Agent and a forwardable instruction. Here, the next step within P02: Codex should freeze the next candidate manifest (r4) incorporating EA-01 + the memo; Reviewer = DeepSeek Harness (non-author), but I am DSH — the same agent; note that another round must be a fresh review (not self-review of my own recommendations). Actually I'm producing a review, so the next step is Codex adjudication of my findings. I'll state: 下一步 = Codex 对本 Review 逐项 adjudicate，并在新候选 manifest 中落实 RV-P2-01..04；不得在改动前执行 Phase A。And provide a forwardable instruction for Codex (Lead/Integrator) per the collaboration protocol. Since I'm the reviewer and Codex is the integrator, I'll give the instruction text.
+
+Let me write the final answer now. Keep it organized with headings. Use 简体中文. Include the counts and object_binding prominently.
+
+Length: this is a formal review; thorough is warranted. I'll aim for a compact but complete structure.
+
+Let me make sure about the "Gate token" list count: Task L410 tokens:
+1. Phase A=BLOCKED / NOT_RUN
+2. private_registry_absence=UNPROVABLE / BLOCKED
+3. profile=NOT_CREATED
+4. ACL/registry=NOT_MODIFIED
+5. scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED
+6. OS isolation preflight=NOT_RUN
+7. hook/cache/child-process closure=BLOCKED / NOT_VERIFIED
+8. Build Gate=BLOCKED
+9. build=NOT_AUTHORIZED / NOT_RUN
+10. Hard Build Barrier=EFFECTIVE
+11. AC1–AC7=BLOCKED / NOT_RUN
+That's 11 items (I said 10 earlier). adjudication L58 has the same 11. So memo L27 has 7 of 11: profile, ACL/registry, OS isolation preflight, Build Gate, build, Hard Build Barrier, AC1–AC7 → 7. Missing 4: Phase A=BLOCKED/NOT_RUN, private_registry_absence, scratch ACL/label mutation, hook/cache closure. Note memo L3 header says "Status: BLOCKED / NOT_RUN" which partially covers "Phase A"; and L4 header covers private_registry as a finding. So strictly missing from the Gate block: Phase A explicit token (partly covered by the memo's own status line), private_registry_absence, scratch ACL/label mutation, hook/cache closure. I'll say: 7/11 显式列全，缺 4 项（其中 Phase A 状态由 memo 自身 Status 行部分覆盖，private_registry 在 findings 中出现，但 scratch ACL/label mutation 与 hook/cache closure 全文未出现）。Let me verify that hook/cache never appears in the memo: searching memo text — "hook" doesn't appear. Correct, never appears. And "scratch ACL" — memo L16 mentions... no, L16 says "r3 forbids child-process checks and defines no external OS observation or enforcement that covers short-lived descendants and all write attempts". No scratch ACL/label mutation token. Right. And "AUTHORIZATION_PATH_DEFINED" appears nowhere in the memo. Correct.
+
+Good, that's a precise, citable finding: 2 tokens appear nowhere in the memo (scratch ACL/label mutation; hook/cache/child-process closure), 2 appear only partially (Phase A via status line; private_registry in findings).
+
+Also note that the memo is titled "Status: BLOCKED / NOT_RUN" which for a *document* means its own state, not the Gate's — potential confusion with "Phase A=BLOCKED / NOT_RUN". Minor.
+
+Now write.
+
+Regarding details of the fetched pages, I'll cite them as markdown links with the specific facts.
+
+Let me write the answer.

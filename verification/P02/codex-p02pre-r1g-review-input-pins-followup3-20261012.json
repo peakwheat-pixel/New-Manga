@@ -1,0 +1,121 @@
+{
+  "artifact": "Codex pre-review input pin evidence for P02PRE-R1G follow-up 3",
+  "date": "2026-10-12",
+  "task": "P02PRE-R1G",
+  "reviewer": "Codex Reviewer sub-agent (non-author)",
+  "integrator": "Codex /root",
+  "repository": "G:\\CODEX\\New Manga",
+  "mainGit": {
+    "branch": "main",
+    "head": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+    "tree": "c25d051a4b9a0bd9773b50170e100f575ea19f2b",
+    "indexSha256": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+    "controlledStatus": {
+      "command": "git status --porcelain=v1 -z --untracked-files=all --no-renames --ignore-submodules=none -- . :(exclude).tmp.driveupload",
+      "exit": 0,
+      "nulRecords": 0,
+      "bytes": 57307,
+      "sha256": "CD465B9C708F0394965AFE839372315A59F753C06BCB9A798EF1B1B0FDCCC9E2",
+      "stderrBytes": 0,
+      "excludedNameInOutput": false
+    }
+  },
+  "candidate": {
+    "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+    "branch": "agent/antigravity/P02PRE-R1G",
+    "base": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+    "head": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+    "tree": "09c8241cb0f4af509004eed070a10bb292d933c7",
+    "gitCommonDir": "G:/CODEX/New Manga/.git",
+    "controlledStatusClean": true,
+    "statusRecords": 0,
+    "statusBytes": 0,
+    "statusSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "statusStderrBytes": 0,
+    "changedPaths": [
+      "verification/P02/p02pre-r1g-antigravity-handoff-20261011.md",
+      "verification/P02/p02pre-r1g-author-selfcheck-20261011.json",
+      "verification/P02/p02pre-r1g-capture.ps1"
+    ],
+    "expectedPaths": [
+      "verification/P02/p02pre-r1g-antigravity-handoff-20261011.md",
+      "verification/P02/p02pre-r1g-author-selfcheck-20261011.json",
+      "verification/P02/p02pre-r1g-capture.ps1"
+    ],
+    "diffCheckExit": 0
+  },
+  "reviewPrompt": {
+    "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-subagent-p02pre-r1g-review-followup3-20261012.prompt.md",
+    "bytes": 3294,
+    "sha256": "C49A71AE2B5C66A2FD74826BE995D76877016E306833254FE9A45B7F1E9E535D"
+  },
+  "inputPins": [
+    {
+      "key": "task",
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1G.md",
+      "bytes": 24716,
+      "sha256": "0A05F73A36D959966B496882057467C7CC09045545794825483BD56F4EB4B00B"
+    },
+    {
+      "key": "manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-manifest-20261011.md",
+      "bytes": 23262,
+      "sha256": "74F17354451A66329929094D1AF5881C4EFBF05C763617AFA3EC395B2F506CE7"
+    },
+    {
+      "key": "candidateScript",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+      "bytes": 81991,
+      "sha256": "3C7D85AB3E20C023873197FE391B8F22DFB319038F43B7C554DC4F38927AADDF"
+    },
+    {
+      "key": "candidateSelfCheck",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-author-selfcheck-20261011.json",
+      "bytes": 2462,
+      "sha256": "54D71B4F10F4520F12D7EB41389BE750301A6A726ECCE8655A3D7CCDEAC4B20C"
+    },
+    {
+      "key": "candidateHandoff",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-antigravity-handoff-20261011.md",
+      "bytes": 18665,
+      "sha256": "F221C8020F47C64544476DCB3AFCFAE1FAEC0F31E1B0767856FA4AC17A10B770"
+    },
+    {
+      "key": "priorReview",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-subagent-p02pre-r1g-review-followup2-20261012.md",
+      "bytes": 6016,
+      "sha256": "B84B1A6183D2727420D04CF51EC916BEB5567C8E07E15CA02C79A7D8387F5AF9"
+    },
+    {
+      "key": "priorAdjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-followup2-adjudication-20261012.md",
+      "bytes": 3091,
+      "sha256": "DA6270AD689AB9DEA60122194F301EA348438965AC4DE9F21602C429A4528412"
+    },
+    {
+      "key": "ownerPrompt",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\antigravity-p02pre-r1g-review-fixes3-20261012.prompt.md",
+      "bytes": 3495,
+      "sha256": "902CDE94377D0714DDDBC79540568FC95B46B9D0E519B163240C4D5E7302D58A"
+    },
+    {
+      "key": "ownerResult",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\antigravity-p02pre-r1g-review-fixes3-20261012.stdout.json",
+      "bytes": 13503,
+      "sha256": "16B51CD430BD84AB0FF49C5B951C658104B5EDD07C91800E6909BC21F01C00E8"
+    },
+    {
+      "key": "deliveryAdjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-r009-r010-delivery-adjudication-20261012.md",
+      "bytes": 3832,
+      "sha256": "8F020377B5BDA73DF12A0123600CD3D52F6A9A23FDB0D3A3E2F9F125E1EEDAE7"
+    },
+    {
+      "key": "reviewTemplate",
+      "path": "G:\\CODEX\\New Manga\\doc\\templates\\REVIEW.md",
+      "bytes": 3915,
+      "sha256": "048DD2C001BC16CE68B46460C2D23AA32BA1119091CA1E2ABA3EE4EE63ED4762"
+    }
+  ],
+  "reviewContract": "Reviewer reads the 11 exact content inputs in the prompt only; no commands, tests, hashes, search, enumeration, writes, or excluded-path access. Root computes pre/post pins and adjudicates."
+}

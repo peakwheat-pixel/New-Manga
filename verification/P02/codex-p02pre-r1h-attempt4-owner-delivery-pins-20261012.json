@@ -1,0 +1,147 @@
+{
+  "schema": "codex.p02pre-r1h-attempt4-owner-delivery-pins.v1",
+  "createdAtUtc": "2026-10-12T02:41:12.2437390Z",
+  "task": "P02PRE-R1H-R6-A4",
+  "owner": "Antigravity",
+  "reviewer": "DeepSeek Harness (non-author)",
+  "integrator": "Codex /root",
+  "baseCommit": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+  "reviewedHead": "c7c7879e8ae90ad23b29d9d8cc6ea97e3eff5427",
+  "reviewedTree": "e12bd627c307d4bf3c851dc09d0b82f97c86ec63",
+  "reviewedParent": "237c25d734d78609d2d9933d5e94ecfb8b3ee1db",
+  "branch": "agent/antigravity/P02PRE-R1H-R6-A4",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-attempt4-antigravity",
+  "worktreeControlledStatus": {
+    "command": "git status --porcelain=v1 -z --untracked-files=all --no-renames --ignore-submodules=none -- . :(exclude).tmp.driveupload",
+    "exit": 0,
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "checkpointIncludedInInputPins": false,
+  "inputCount": 16,
+  "inputs": [
+    {
+      "scope": "root",
+      "path": "AGENTS.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\AGENTS.md",
+      "bytes": 4503,
+      "sha256": "46357DC8FA0153429C394C057BF5E51A76EF34BD6B11DACCDDC272CB90E53501"
+    },
+    {
+      "scope": "root",
+      "path": "doc/09_COLLABORATION.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\doc\\09_COLLABORATION.md",
+      "bytes": 19131,
+      "sha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D"
+    },
+    {
+      "scope": "root",
+      "path": "doc/tasks/P02PRE-R1H-R6-A4.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H-R6-A4.md",
+      "bytes": 8346,
+      "sha256": "3E0F19BC2E638DCBE8D60F9934535A5474E57B6F90EA5ECDB4288AD4B7C0E557"
+    },
+    {
+      "scope": "root",
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H.md",
+      "bytes": 61060,
+      "sha256": "02ED753435A155D35D35748414B6A8FC8188AF60B33EEB74C21BFAC3621DE7ED"
+    },
+    {
+      "scope": "root",
+      "path": "doc/tasks/P02.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\doc\\tasks\\P02.md",
+      "bytes": 228833,
+      "sha256": "975E264572463AEDB4125E770048EF829EE470DFE3CCF8AFC7859D809C3C0D81"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-20261012.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-20261012.md",
+      "bytes": 16310,
+      "sha256": "26E152C31EF9111ECA55BAB96C3783F249329C5DE111909E9B8C55B2DD666697"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/p02pre-r1h-round6-integrator-20261012.ps1",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-20261012.ps1",
+      "bytes": 40604,
+      "sha256": "DACDD544784A035E980F74250207D8EB561E13D0C5A06AA9F810DA9A1B29F222"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt3-20261012.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt3-20261012.md",
+      "bytes": 11730,
+      "sha256": "CAA5984BDAC01DE4A81E10154A9677D04F9A48DB40CB96804B6ECF8DA7F35313"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-attempt3-20261012.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\codex-subagent-p02pre-r1h-integration-protocol-review-round6-attempt3-20261012.md",
+      "bytes": 27576,
+      "sha256": "26D68A4573EA77D573F8169F149788D1F50FE7567EB64E7427DE7C922689B13B"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-attempt3-20261012.md",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-integration-protocol-review-adjudication-round6-attempt3-20261012.md",
+      "bytes": 6886,
+      "sha256": "8EADB35CE481D34D88191272360FD89F09312E7FC2AD867AA5A0EDFDB25A6FC4"
+    },
+    {
+      "scope": "root",
+      "path": "verification/P02/p02pre-r1h-round6-attempt3-definitions-check-20261012.json",
+      "absolutePath": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt3-definitions-check-20261012.json",
+      "bytes": 1502,
+      "sha256": "0787E5C18E2CE1D6D8B319DF74928649A09F590F0B9EB92A26F323C6E9E38740"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "absolutePath": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-attempt4-antigravity\\verification\\P02\\p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "bytes": 43464,
+      "sha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "absolutePath": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-attempt4-antigravity\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "bytes": 11228,
+      "sha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+      "absolutePath": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-attempt4-antigravity\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+      "bytes": 12582,
+      "sha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162"
+    },
+    {
+      "scope": "owner-worktree",
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-handoff-20261012.md",
+      "absolutePath": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-attempt4-antigravity\\verification\\P02\\p02pre-r1h-round6-attempt4-handoff-20261012.md",
+      "bytes": 7617,
+      "sha256": "B0DAB374F8E8941E6A8DE8EA18DE983C99E518926258D5C9EAB149416128246B"
+    }
+  ],
+  "gateState": {
+    "private_registry_absence": "UNPROVABLE",
+    "technicalGate": "NOT_SATISFIED",
+    "ownerRiskAcceptance": "APPROVED",
+    "gateDisposition": "WAIVED_BY_OWNER",
+    "buildAuthorization": "AUTHORIZED_WITH_EXCEPTION",
+    "buildGate": "BLOCKED",
+    "hardBuildBarrier": "EFFECTIVE",
+    "buildCargo": "NOT_RUN",
+    "systemAC1toAC7": "BLOCKED / NOT_RUN"
+  }
+}

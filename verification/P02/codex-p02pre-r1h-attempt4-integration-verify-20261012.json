@@ -1,0 +1,102 @@
+{
+  "integrationCommits": [
+    {
+      "owner": "237c25d734d78609d2d9933d5e94ecfb8b3ee1db",
+      "integrated": "6a0d97d3f26a4b3919f765ec85f73afbfadb423b"
+    },
+    {
+      "owner": "c7c7879e8ae90ad23b29d9d8cc6ea97e3eff5427",
+      "integrated": "343895fb5f0329c0c07a7104ec321b698f967607"
+    }
+  ],
+  "integrationBase": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+  "integrationHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+  "integratedPathSet": [
+    "verification/P02/p02pre-r1h-round6-attempt4-handoff-20261012.md",
+    "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+    "verification/P02/p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+    "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1"
+  ],
+  "task": "P02PRE-R1H-R6-A4",
+  "gitDiffCheckExit": 0,
+  "parserResults": [
+    {
+      "errorCount": 0,
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "errors": []
+    },
+    {
+      "errorCount": 0,
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+      "errors": []
+    }
+  ],
+  "verificationStatus": "PASS_WITH_EVIDENCE",
+  "recordedAtUtc": "2026-10-12T02:57:45.5613284Z",
+  "selfcheck": {
+    "exit": 0,
+    "summary": {
+      "task": "P02PRE-R1H-R6-A4",
+      "status": "PASS",
+      "parseErrors": 0,
+      "assertionsPassed": 73,
+      "definitionsCheck": "PASS",
+      "typeBuilderCheck": "PASS",
+      "processSelectionCheck": "PASS",
+      "invokeChildFailClosedCheck": "PASS",
+      "isolationConfirmed": "In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly."
+    },
+    "stderrBytes": 0,
+    "arguments": [
+      "-NoLogo",
+      "-NoProfile",
+      "-File",
+      "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1"
+    ],
+    "stderr": "",
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "jsonValid": true,
+    "stdout": "{\"task\":\"P02PRE-R1H-R6-A4\",\"status\":\"PASS\",\"parseErrors\":0,\"assertionsPassed\":73,\"definitionsCheck\":\"PASS\",\"typeBuilderCheck\":\"PASS\",\"processSelectionCheck\":\"PASS\",\"invokeChildFailClosedCheck\":\"PASS\",\"isolationConfirmed\":\"In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly.\"}\r\n"
+  },
+  "ownerFilePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "bytes": 43464,
+      "match": true,
+      "expectedSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "expectedBytes": 43464,
+      "sha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "bytes": 11228,
+      "match": true,
+      "expectedSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "expectedBytes": 11228,
+      "sha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+      "bytes": 12582,
+      "match": true,
+      "expectedSha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162",
+      "expectedBytes": 12582,
+      "sha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-handoff-20261012.md",
+      "bytes": 7617,
+      "match": true,
+      "expectedSha256": "B0DAB374F8E8941E6A8DE8EA18DE983C99E518926258D5C9EAB149416128246B",
+      "expectedBytes": 7617,
+      "sha256": "B0DAB374F8E8941E6A8DE8EA18DE983C99E518926258D5C9EAB149416128246B"
+    }
+  ],
+  "scope": "Parser plus the exact AST-extracted pure in-memory selfcheck only. Attempt4 executor, File.Replace, native/OS/API calls, live process enumeration, dynamic isolation, Build/Cargo, system AC1-AC7 and Windows Sandbox were not run.",
+  "schema": "p02pre-r1h-attempt4-integration-verify-v1",
+  "parserRuntime": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6"
+  },
+  "integrationTree": "e12bd627c307d4bf3c851dc09d0b82f97c86ec63"
+}

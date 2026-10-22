@@ -1,0 +1,36 @@
+{
+  "schema": "new-manga.p02pre-r1h.attempt5.prerun-review-pins.v1",
+  "task": "P02PRE-R1H-R6-EXEC-A5",
+  "review_scope": "evidence-only; no executor, OS/API, build, or AC execution",
+  "root": {
+    "branch": "main",
+    "head": "343895fb5f0329c0c07a7104ec321b698f967607"
+  },
+  "inputs": [
+    {"path":"verification/P02/p02pre-r1h-round6-integrator-attempt5-20261012.ps1","bytes":43464,"sha256":"9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10"},
+    {"path":"verification/P02/p02pre-r1h-round6-integration-protocol-attempt5-20261012.md","bytes":11641,"sha256":"0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3"},
+    {"path":"verification/P02/p02pre-r1h-round6-attempt5-exec-handoff-20261012.md","bytes":2391,"sha256":"B903949584773318B7C17695E43B9E7301D34F885783825DD47DA29E03E192A0"},
+    {"path":"verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.json","bytes":17299,"sha256":"2B59CE6EF57BB92444219FA4DEA7DFDF1D992439244DD5FB76E3207912D7A0A5"},
+    {"path":"verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.stdout.log","bytes":3695,"sha256":"25C641BAA11A2D597E70DDB3A7A76ADBD1F1574BF81C0450BB768973A3000EB0"},
+    {"path":"verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.stderr.log","bytes":514,"sha256":"C0EE6A70F45F0B09BBAB3394E0D897EA630AA349430EA9BE497526F92F49A7F4"},
+    {"path":"verification/P02/codex-p02pre-r1h-attempt5-final-pre-run-20261012.exit","bytes":3,"sha256":"DF4E26A04A444901B95AFEF44E4A96CFAE34690FFF2AD2C66389C70079CDFF2B"},
+    {"path":"C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-handoff-20261012.md","bytes":9505,"sha256":"E13C7148B79740927692D9282C4F474FEE4AADD50BFBE256509CACA3052786B1","worktree_head":"c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d","controlled_status":"clean"}
+  ],
+  "expected_pin_in_attempt5_executor": {
+    "owner_handoff_bytes": 3551,
+    "owner_handoff_sha256": "700B79F3FA01308DFFEC374A4FFB92DAC69C2FD8355DE623F6A250E9F1511658"
+  },
+  "execution_facts": {
+    "final_pre_run_disposition": "PRE_RUN_BLOCKED",
+    "attempt5_executor": "NOT_RUN",
+    "build_cargo": "NOT_RUN",
+    "system_ac1_ac7": "BLOCKED / NOT_RUN",
+    "private_registry_absence": "UNPROVABLE",
+    "technical_gate": "NOT_SATISFIED",
+    "owner_risk_acceptance": "APPROVED",
+    "gate_disposition": "WAIVED_BY_OWNER",
+    "build_authorization": "AUTHORIZED_WITH_EXCEPTION",
+    "build_gate": "BLOCKED",
+    "hard_build_barrier": "EFFECTIVE"
+  }
+}

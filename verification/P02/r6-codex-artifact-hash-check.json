@@ -1,0 +1,100 @@
+{
+  "head": "38672473f93971a4681aef682e5635e64b0bd896",
+  "tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
+  "replay_status": "PENDING_CODEX_EXACT_HEAD_REPLAY",
+  "finalization_status": "FINALIZED",
+  "typescript_contract_gate": {
+    "file": "apps/desktop/frontend/e2e/workbench_driver_protocol.ts",
+    "sha256": "7889e24e047e0f05d272442c13510f2823e49c206c038406c15c0c8e4e21db45",
+    "tsc_binary_found": true,
+    "tsc_path": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\node_modules\\typescript\\bin\\tsc",
+    "gate_status": "PASS"
+  },
+  "summary": {
+    "total": 9,
+    "pass": 3,
+    "fail": 0,
+    "blocked": 6,
+    "not_run": 0
+  },
+  "verdicts": [
+    {
+      "id": "PRE-01",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "id": "PRE-02",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "id": "PRE-03",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "id": "AC1",
+      "status": "BLOCKED",
+      "exit_code": null
+    },
+    {
+      "id": "AC2",
+      "status": "BLOCKED",
+      "exit_code": null
+    },
+    {
+      "id": "AC3",
+      "status": "BLOCKED",
+      "exit_code": null
+    },
+    {
+      "id": "AC4",
+      "status": "BLOCKED",
+      "exit_code": null
+    },
+    {
+      "id": "AC5",
+      "status": "BLOCKED",
+      "exit_code": null
+    },
+    {
+      "id": "AC6",
+      "status": "BLOCKED",
+      "exit_code": null
+    }
+  ],
+  "artifact_hashes": [
+    {
+      "file": "verification/P02/env-identity-report.json",
+      "expected": "19536edc4eeaf90846fd4c48287ccebf8b8ff5a7cec45519cd8d6fdc0d4cf3b1",
+      "actual": "19536edc4eeaf90846fd4c48287ccebf8b8ff5a7cec45519cd8d6fdc0d4cf3b1",
+      "match": true
+    },
+    {
+      "file": "verification/P02/static-control-report.json",
+      "expected": "564283c7ce5ca93ccc661cd413cf39df94769e14f96bdd210e881a6fc6790fa8",
+      "actual": "564283c7ce5ca93ccc661cd413cf39df94769e14f96bdd210e881a6fc6790fa8",
+      "match": true
+    },
+    {
+      "file": "verification/P02/p02-harness-results.txt",
+      "expected": "f7d21ee1ddde92c1dc02ed3ceb154b22e20f2b3834e9e1c4d002af7b6515aa14",
+      "actual": "f7d21ee1ddde92c1dc02ed3ceb154b22e20f2b3834e9e1c4d002af7b6515aa14",
+      "match": true
+    },
+    {
+      "file": "verification/P02/probe-execution-probeonly.log",
+      "expected": "4315f4c1972ce246082ec30f54d1e06e404082188410e2845782c211b02bb10c",
+      "actual": "4315f4c1972ce246082ec30f54d1e06e404082188410e2845782c211b02bb10c",
+      "match": true
+    },
+    {
+      "file": "verification/P02/probe-execution-full.log",
+      "expected": "a37f76aeb4df996fb725e895994b40f56b93b63325e7613317c437421c2ff46d",
+      "actual": "a37f76aeb4df996fb725e895994b40f56b93b63325e7613317c437421c2ff46d",
+      "match": true
+    }
+  ],
+  "all_hashes_match": true
+}

@@ -1,0 +1,158 @@
+{
+  "task": "P02PRE-R1H-R6-A4",
+  "phase": "PRE_REVIEW",
+  "recordedAtUtc": "2026-10-12T02:42:01.2605948Z",
+  "reviewedHead": "c7c7879e8ae90ad23b29d9d8cc6ea97e3eff5427",
+  "inputCount": 16,
+  "matches": 16,
+  "result": "MATCH",
+  "pinManifestPath": "verification/P02/codex-p02pre-r1h-attempt4-owner-delivery-pins-20261012.json",
+  "pinManifestBytes": 6890,
+  "pinManifestSha256": "7C19B698BD34E495799EBB926337D3AEA43F225F9A4667C89AAC286544A40374",
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "scope": "root",
+      "expectedBytes": 4503,
+      "actualBytes": 4503,
+      "expectedSha256": "46357DC8FA0153429C394C057BF5E51A76EF34BD6B11DACCDDC272CB90E53501",
+      "actualSha256": "46357DC8FA0153429C394C057BF5E51A76EF34BD6B11DACCDDC272CB90E53501",
+      "match": true
+    },
+    {
+      "path": "doc/09_COLLABORATION.md",
+      "scope": "root",
+      "expectedBytes": 19131,
+      "actualBytes": 19131,
+      "expectedSha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D",
+      "actualSha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H-R6-A4.md",
+      "scope": "root",
+      "expectedBytes": 8346,
+      "actualBytes": 8346,
+      "expectedSha256": "3E0F19BC2E638DCBE8D60F9934535A5474E57B6F90EA5ECDB4288AD4B7C0E557",
+      "actualSha256": "3E0F19BC2E638DCBE8D60F9934535A5474E57B6F90EA5ECDB4288AD4B7C0E557",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "scope": "root",
+      "expectedBytes": 61060,
+      "actualBytes": 61060,
+      "expectedSha256": "02ED753435A155D35D35748414B6A8FC8188AF60B33EEB74C21BFAC3621DE7ED",
+      "actualSha256": "02ED753435A155D35D35748414B6A8FC8188AF60B33EEB74C21BFAC3621DE7ED",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02.md",
+      "scope": "root",
+      "expectedBytes": 228833,
+      "actualBytes": 228833,
+      "expectedSha256": "975E264572463AEDB4125E770048EF829EE470DFE3CCF8AFC7859D809C3C0D81",
+      "actualSha256": "975E264572463AEDB4125E770048EF829EE470DFE3CCF8AFC7859D809C3C0D81",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "scope": "root",
+      "expectedBytes": 4760,
+      "actualBytes": 4760,
+      "expectedSha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "actualSha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-20261012.md",
+      "scope": "root",
+      "expectedBytes": 16310,
+      "actualBytes": 16310,
+      "expectedSha256": "26E152C31EF9111ECA55BAB96C3783F249329C5DE111909E9B8C55B2DD666697",
+      "actualSha256": "26E152C31EF9111ECA55BAB96C3783F249329C5DE111909E9B8C55B2DD666697",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-20261012.ps1",
+      "scope": "root",
+      "expectedBytes": 40604,
+      "actualBytes": 40604,
+      "expectedSha256": "DACDD544784A035E980F74250207D8EB561E13D0C5A06AA9F810DA9A1B29F222",
+      "actualSha256": "DACDD544784A035E980F74250207D8EB561E13D0C5A06AA9F810DA9A1B29F222",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt3-20261012.md",
+      "scope": "root",
+      "expectedBytes": 11730,
+      "actualBytes": 11730,
+      "expectedSha256": "CAA5984BDAC01DE4A81E10154A9677D04F9A48DB40CB96804B6ECF8DA7F35313",
+      "actualSha256": "CAA5984BDAC01DE4A81E10154A9677D04F9A48DB40CB96804B6ECF8DA7F35313",
+      "match": true
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-attempt3-20261012.md",
+      "scope": "root",
+      "expectedBytes": 27576,
+      "actualBytes": 27576,
+      "expectedSha256": "26D68A4573EA77D573F8169F149788D1F50FE7567EB64E7427DE7C922689B13B",
+      "actualSha256": "26D68A4573EA77D573F8169F149788D1F50FE7567EB64E7427DE7C922689B13B",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-attempt3-20261012.md",
+      "scope": "root",
+      "expectedBytes": 6886,
+      "actualBytes": 6886,
+      "expectedSha256": "8EADB35CE481D34D88191272360FD89F09312E7FC2AD867AA5A0EDFDB25A6FC4",
+      "actualSha256": "8EADB35CE481D34D88191272360FD89F09312E7FC2AD867AA5A0EDFDB25A6FC4",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt3-definitions-check-20261012.json",
+      "scope": "root",
+      "expectedBytes": 1502,
+      "actualBytes": 1502,
+      "expectedSha256": "0787E5C18E2CE1D6D8B319DF74928649A09F590F0B9EB92A26F323C6E9E38740",
+      "actualSha256": "0787E5C18E2CE1D6D8B319DF74928649A09F590F0B9EB92A26F323C6E9E38740",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "scope": "owner-worktree",
+      "expectedBytes": 43464,
+      "actualBytes": 43464,
+      "expectedSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "actualSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "scope": "owner-worktree",
+      "expectedBytes": 11228,
+      "actualBytes": 11228,
+      "expectedSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "actualSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+      "scope": "owner-worktree",
+      "expectedBytes": 12582,
+      "actualBytes": 12582,
+      "expectedSha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162",
+      "actualSha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt4-handoff-20261012.md",
+      "scope": "owner-worktree",
+      "expectedBytes": 7617,
+      "actualBytes": 7617,
+      "expectedSha256": "B0DAB374F8E8941E6A8DE8EA18DE983C99E518926258D5C9EAB149416128246B",
+      "actualSha256": "B0DAB374F8E8941E6A8DE8EA18DE983C99E518926258D5C9EAB149416128246B",
+      "match": true
+    }
+  ]
+}

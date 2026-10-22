@@ -1,0 +1,304 @@
+{
+  "taskId": "P02PRE-R1H",
+  "round": "R6-AC4-INTEGRATION-PROTOCOL",
+  "reviewAttempt": 2,
+  "reviewer": "/root/p02_r1h_remediation_review",
+  "protocolAuthor": "/root",
+  "owner": "/root/p02_r1h_codex_owner",
+  "integrator": "/root",
+  "priorProtocolApproval": false,
+  "status": "FROZEN_FOR_INDEPENDENT_PROTOCOL_REVIEW_ROUND6_ATTEMPT2",
+  "inputCount": 29,
+  "inputs": [
+    {
+      "path": "G:/CODEX/New Manga/AGENTS.md",
+      "bytes": 4503,
+      "sha256": "46357DC8FA0153429C394C057BF5E51A76EF34BD6B11DACCDDC272CB90E53501"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/09_COLLABORATION.md",
+      "bytes": 19131,
+      "sha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/tasks/P02PRE-R1H.md",
+      "bytes": 52076,
+      "sha256": "C694663C63FA954423F030FB000A29FDE2351ED16858AFB3AABFB1349AF23EC9"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/REBASELINE_PLAN.md",
+      "bytes": 299416,
+      "sha256": "D34E8F0FAFB45B571E5D955C34FCA0DAF954B467961F33324EBE3E4DB2B64EEA"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/STATUS.md",
+      "bytes": 300596,
+      "sha256": "0000502295B786B57B8C102272CB78190E2F934505DD8B5D1441B36A839C9900"
+    },
+    {
+      "path": "G:/CODEX/New Manga/doc/00_INDEX.md",
+      "bytes": 63143,
+      "sha256": "05BE0C56B011EE788C67DC19C411A881ABF65588E6AE0BE382F4B03123C050E1"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-selfcheck-round5-20261012.json",
+      "bytes": 4076,
+      "sha256": "8F8127718FD1B07AD8031DC71CCE43A55258BF4B36D8694D1520A3197C77340C"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-engine-preflight-round5-20261012.json",
+      "bytes": 6990,
+      "sha256": "72FA81E395EE62A0D85F6333C8D5A05A976C6B6FEDC333217F322B0EC6375C2F"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-execution-20261012.json",
+      "bytes": 493429,
+      "sha256": "B750C772295B07BBD0DF571405F81A7DBCA967ECF005735C4B2F33D78F39E669"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-r2-20261012.md",
+      "bytes": 9375,
+      "sha256": "1D8D78A479887470B0B2065F68E4DC5073493C141868320C231B55198F2F3E7C"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-protocol-r2-adjudication-20261012.md",
+      "bytes": 4247,
+      "sha256": "B6115EABF14381FADC7609863FDCB090FE33947DEA1C5F4E86766B139E40BBC6"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-static-review-round6-r2-20261012.md",
+      "bytes": 7200,
+      "sha256": "59CBFED415C6D50AE9AB9FDA29E26F36CFE217823548107AE5C64D3EFA673829"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-review-adjudication-20261012.md",
+      "bytes": 3516,
+      "sha256": "EE6E45D0E969A3E7F183B5D73D9EC13F09BA2BAF96B12B6121EBC4B29FCB9429"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-round6-review-pins-r3-20261012.json",
+      "bytes": 4198,
+      "sha256": "E9A82F1EC8A0447298A71390E1CEEB24BFAC35E855321CF61480459609270505"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-round6-review-dispatch-r3-20261012.prompt.md",
+      "bytes": 2450,
+      "sha256": "B1CCC0EC6742DFB877C82C7519E2AD75D07E96A33D00BBF30EB94E306974CCA9"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 8651,
+      "sha256": "394CCF80E58017798CA2994C0505F2F5B5BB571143D21C655CEFC77B6173520F"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57648,
+      "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02-human-required-decision-20261010.md",
+      "bytes": 11173,
+      "sha256": "F4ABC6C0EF1087184D01319A7C4A43B031EDD489E5A7B4D3B333B806A8EB41E5"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-integration-protocol-attempt1-20261012.md",
+      "bytes": 11184,
+      "sha256": "9FE8AB32823BE853673A873E2F590E0DEC2C123BFF6C3EB07185D217B3D699D4"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-20261012.md",
+      "bytes": 8463,
+      "sha256": "BD62DA56B8D819D8231B4F642F6F067186A376F7AF22A239BCF6BD3623C53A1A"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-20261012.md",
+      "bytes": 2806,
+      "sha256": "92A978DEF7DBBDCC61312E56A5D789583D18506BB8A09DBE33B59554D8500D8B"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-pins-round6-20261012.json",
+      "bytes": 8712,
+      "sha256": "3AAECFEB5A0530C5B8B844BABF5003E639AED121A075F36752AB1729684D2A18"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-dispatch-round6-20261012.prompt.md",
+      "bytes": 3178,
+      "sha256": "D4AC2E1880E2F33028F02DF87CBC59086D59E602E2186085F34790B877586895"
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-round6-integration-protocol-20261012.md",
+      "bytes": 16310,
+      "sha256": "26E152C31EF9111ECA55BAB96C3783F249329C5DE111909E9B8C55B2DD666697"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57812,
+      "sha256": "6BD9160854275DA94C61B8FC48B180CD16368AF56C2AF7D63D616490A1AB85A9"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex/verification/P02/p02pre-r1h-round6-handoff-20261012.md",
+      "bytes": 3551,
+      "sha256": "700B79F3FA01308DFFEC374A4FFB92DAC69C2FD8355DE623F6A250E9F1511658"
+    }
+  ],
+  "main": {
+    "branch": "main",
+    "head": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+    "tree": "c25d051a4b9a0bd9773b50170e100f575ea19f2b",
+    "commonDir": "G:/CODEX/New Manga/.git",
+    "indexSha256": "214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C",
+    "controlledStatus": {
+      "records": 1012,
+      "bytes": 68049,
+      "sha256": "C672D6E508F303696440D7BF66973915E68CC5593EF0B9B123C9B7DAB4BF9F4F"
+    }
+  },
+  "candidate": {
+    "branch": "agent/codex/P02PRE-R1H",
+    "worktree": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex",
+    "base": "dd5d2e3bc8e0702da9d059131f6364a997897661",
+    "head": "c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d",
+    "parent": "dd5d2e3bc8e0702da9d059131f6364a997897661",
+    "tree": "96e7273ddd5fd27bee567bba27f19453cabe0842",
+    "commonDir": "G:/CODEX/New Manga/.git",
+    "controlledStatus": "empty",
+    "changedPaths": [
+      "verification/P02/p02pre-r1h-round6-handoff-20261012.md",
+      "verification/P02/p02pre-r1h-selfcheck.ps1"
+    ]
+  },
+  "execution": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "edition": "Core",
+    "languageMode": "FullLanguage",
+    "user": "HOME-MY\\49745",
+    "sid": "S-1-5-21-2196946971-914346751-4210154634-1001",
+    "administrator": false,
+    "preferredModel": "gpt-6.1-sol/high unavailable",
+    "actualModel": "gpt-6-luna/max"
+  },
+  "target": {
+    "path": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-selfcheck.ps1",
+    "type": "System.IO.FileInfo",
+    "attributes": "Archive",
+    "bytes": 57648,
+    "sha256": "977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA",
+    "sddl": "O:S-1-5-21-2196946971-914346751-4210154634-1001G:S-1-5-21-2196946971-914346751-4210154634-1001D:AI(A;ID;0x1301bf;;;S-1-5-21-2196946971-914346751-4210154634-1003)(A;ID;0x1301bf;;;S-1-5-21-884840046-396652784-710274065-85489587)(A;ID;FA;;;BA)(A;ID;FA;;;SY)(A;ID;0x1301bf;;;AU)(A;ID;0x1200a9;;;BU)",
+    "streams": [
+      {
+        "length": 57648,
+        "name": ":$DATA"
+      }
+    ]
+  },
+  "integrationOutputs": [
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-selfcheck-round6-stage-20261012.ps1",
+      "pid": 49444,
+      "ignored": false,
+      "existsBeforeReview": false
+    },
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-selfcheck-round5-recovery-20261012.ps1",
+      "pid": 9596,
+      "ignored": false,
+      "existsBeforeReview": false
+    },
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-selfcheck-round5-integrated-backup-20261012.ps1",
+      "pid": 50016,
+      "ignored": false,
+      "existsBeforeReview": false
+    },
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-round6-handoff-20261012.md",
+      "pid": 35412,
+      "ignored": false,
+      "existsBeforeReview": false
+    },
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-integration-round6-execution-20261012.json",
+      "pid": 37600,
+      "ignored": false,
+      "existsBeforeReview": false
+    },
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-selfcheck-round6-20261012.json",
+      "pid": 12548,
+      "ignored": false,
+      "existsBeforeReview": false
+    },
+    {
+      "checkIgnoreExit": 1,
+      "path": "verification/P02/p02pre-r1h-engine-preflight-round6-20261012.json",
+      "pid": 36576,
+      "ignored": false,
+      "existsBeforeReview": false
+    }
+  ],
+  "review": {
+    "pinsPath": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-pins-round6-attempt2-20261012.json",
+    "promptPath": "G:/CODEX/New Manga/verification/P02/codex-p02pre-r1h-integration-protocol-dispatch-round6-attempt2-20261012.prompt.md",
+    "reportTarget": "G:/CODEX/New Manga/verification/P02/codex-subagent-p02pre-r1h-integration-protocol-review-round6-attempt2-20261012.md",
+    "reportTargetAbsentBeforeDispatch": true,
+    "reportTargetIgnored": false,
+    "reportTargetCheckIgnoreExit": 1,
+    "reportTargetCheckIgnorePid": 44476,
+    "adjudicationTarget": "G:/CODEX/New Manga/verification/P02/p02pre-r1h-integration-protocol-review-adjudication-round6-attempt2-20261012.md",
+    "adjudicationTargetAbsentBeforeDispatch": true,
+    "adjudicationTargetIgnored": false,
+    "adjudicationTargetCheckIgnoreExit": 1,
+    "adjudicationTargetCheckIgnorePid": 41496
+  },
+  "freeze": {
+    "timestamp": "2026-10-12",
+    "rootStatusCommand": "git --no-pager -c core.fsmonitor=false -c core.hooksPath=NUL --no-optional-locks status --porcelain=v2 -z --untracked-files=all --no-renames --ignore-submodules=none -- . :(exclude).tmp.driveupload",
+    "rootStatusPid": 45504,
+    "rootStatusExit": 0,
+    "rootStatusStdoutBytes": 68049,
+    "rootStatusNulRecords": 1012,
+    "rootStatusSha256": "C672D6E508F303696440D7BF66973915E68CC5593EF0B9B123C9B7DAB4BF9F4F",
+    "ownerStatusPid": 11056,
+    "ownerStatusExit": 0,
+    "ownerStatusStdoutBytes": 0,
+    "ownerStatusSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "previousCheckpointStatus": {
+      "records": 1004,
+      "bytes": 67310,
+      "sha256": "A64F0FBD748822E9DAABF2B63DE6212131E7AA0C038F5288BE4DAF347F34FBE7"
+    },
+    "deltaFromPreviousCheckpoint": {
+      "records": 8,
+      "bytes": 739
+    },
+    "newStatusRecordsSincePreviousCheckpoint": [
+      "attempt1 protocol Review pins/prompt and report",
+      "attempt1 protocol archive and Codex adjudication",
+      "attempt2 pins/prompt",
+      "attempt2 checkpoint"
+    ]
+  },
+  "checkpointExcludedFromInputPins": true
+}

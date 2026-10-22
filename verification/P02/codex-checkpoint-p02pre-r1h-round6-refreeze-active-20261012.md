@@ -1,0 +1,20 @@
+# P02PRE-R1H Rolling Checkpoint — Re-freeze After Review Pin Drift
+
+- 时间：2026-10-11 23:26 UTC（2026-10-12 07:26 Asia/Shanghai）。
+- 仓库：`G:\CODEX\New Manga`；branch=`main`；HEAD=`cddff58469b56e181019a8ddfeade80684bc7eb9`；tree=`c25d051a4b9a0bd9773b50170e100f575ea19f2b`；common-dir=`G:/CODEX/New Manga/.git`。
+- `.git/index` SHA-256=`214767403C469B15D2BDEE786080E58B4D78BF12C541B9FFB7E8A7FA08F3B89C`。
+- 本checkpoint创建前状态=`994 records / 66511 bytes / B0F4F518D3729264C2A2345E0B2EBBC6DCB15EDE6896805EE4B66AFF42117E73`；命令=`git status --porcelain=v2 -z --untracked-files=all --no-renames --ignore-submodules=none -- . :(exclude).tmp.driveupload`，exit=0/stderr=0；排除pathspec为独立argv且未访问。HEAD/index稳定；与Round6 Review attempt 1返回前的S5=`993/66433/FE2AD4D29FE0030BD65A35176D394C5F9027CCFDB02D1F2DF86BC7C692C304E0`相比，只新增Reviewer报告一条记录（+78 bytes）。
+- Task=`doc/tasks/P02PRE-R1H.md`，当前固定bytes/hash=`44568 / 8930F8EEF0E4D2CB52E94038D706467BA5F33D62CB8BF7E4CFE9D097D8F271F2`；Plan=`doc/REBASELINE_PLAN.md` SHA=`76228549E0F715717490BAD2E5F7E6825472BBEF800B7417DDC5E8970C985CEC`；STATUS=`doc/STATUS.md` SHA=`A464B8F1065DF64FC38A331E65A5D4D3C61AC77C1579CE1B879E152D9634504C`；Index=`doc/00_INDEX.md` SHA=`5405FD401C01B8F264161ACD4DD6DBF71589F28C0E3CD1059C111890F9618B02`。相关文档状态已刷新，attempt 2 pins将在此后冻结；冻结完成前不发起新Review。
+- 本轮唯一Active产品Task=`P02`；唯一Active子Task=`P02PRE-R1H`；phase=`R6_REFREEZE_AFTER_REVIEW_PIN_DRIFT / ACTIVE`。根计划唯一源`REBASELINE_PLAN.md`；manifest=`verification/P02/p02pre-r1h-manifest-20261012.md`。
+- Round6 Owner delivery固定：branch=`agent/codex/P02PRE-R1H`，worktree=`C:\Users\49745\.codex\worktrees\p02pre-r1h-codex`；base/parent=`dd5d2e3bc8e0702da9d059131f6364a997897661`；HEAD=`c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d`；tree=`96e7273ddd5fd27bee567bba27f19453cabe0842`；controlled status empty；只改selfcheck并新增Round6 Handoff；capture unchanged；Owner `git diff --check`=0，root独立范围/diff-check核验=0。无集成。
+- Review attempt1由非作者`/root/p02_r1h_remediation_review`执行，报告=`verification/P02/codex-subagent-p02pre-r1h-static-review-round6-20261012.md`，7100 bytes / SHA-256=`18819EA08EA84C3904E94286F7448FE9E491AF9CB8A41E924C25FBCA61F4CF1D`。Verdict=`INPUT_PIN_MISMATCH / BLOCKED_BY_MISSING_EVIDENCE`，pre8/8、post7/8，代码finding `0/0/0/0`不构成批准。唯漂移：Task预期`43604 / E613FFED6968A93AA76F652A17434D45B684F2E17D9CFEA9824AF71F2F8302F3`，后测`43654 / 2A27B01C770D6A2FE2829FD6FC0F723E2ABAAD4AD703AC3040AF8DD0C0F93D06`。
+- 根因已查明为主Agent流程错误：review dispatch后root继续编辑Task，将ready状态更为ACTIVE并记入dispatch，造成Task pin漂移。该改变没有修改Owner候选，但review批准必须撤回。Review报告和原始attempt1 prompt/pins均保留；未集成、未运行任何Round6测试。
+- 本轮刷新Task/Plan/STATUS/Index，现新冻结前的文件hash如上；将新建attempt2 pins/prompt覆盖完整Task/Plan/Status/Index、manifest、delivery、自check/capture/Handoff、失败和既有集成证据、attempt1报告；随后派同一非作者Reviewer重新审查，不再修改任何被冻结文件。
+- Round5状态保留：single File.Replace调用1次正常返回并由root adjudicate=`PASS_WITH_EVIDENCE`；PS7 parser=`PASS`；selfcheck/AC2真实`FAILED`；engine capability preflight=`PASS`；AC4=`BLOCKED_BY_AC2`。capture未调用。
+- Gate保持：`private_registry_absence=UNPROVABLE`；Technical Gate=`NOT_SATISFIED`；Owner Risk Acceptance=`APPROVED`；Gate Disposition=`WAIVED_BY_OWNER`；Build Authorization=`AUTHORIZED_WITH_EXCEPTION`；exact residual=`technical condition unmet; user explicitly accepted residual risk`；Build Gate=`BLOCKED`；Hard Build Barrier=`EFFECTIVE`；Build/Cargo=`NOT_RUN`；system AC1–AC7=`BLOCKED / NOT_RUN`。
+- 恢复下一步：检查新pins完整且Main HEAD/index稳定 → 实际follow-up独立Review → 根Agent审后重算pins并adjudicate → 只有审查通过后才编制/Review新的Round6 integration protocol。禁止在attempt2 Review期间再改任何已冻结输入。
+- 用户持续授权包括动态隔离、Build/Cargo、AC1–AC7及必要修复/Review/重测；不碰Windows Sandbox。任务链未完成，关机继续延后。
+- 实际模型：root=`gpt-6-luna/max`，Owner=`gpt-6-luna/xhigh`，Reviewer agent config未能通过本地输出确认。
+## Checkpoint post-write snapshot
+
+- 创建Checkpoint后，同一受控porcelain-v2命令复核=`995 records / 66593 bytes / SHA-256 C176AD180BF47F56B7AD68193C4FE497D5DF0BD011DA51FC5A32A09C0AE7B177`，exit=0/stderr=0。相较创建前S6仅新增本Checkpoint一条未跟踪记录（+82 bytes）；HEAD/index不变。排除`.tmp.driveupload`为独立argv且未访问。

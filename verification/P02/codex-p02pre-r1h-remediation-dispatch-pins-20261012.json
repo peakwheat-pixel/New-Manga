@@ -1,0 +1,41 @@
+{
+  "schema": "codex-dispatch-input-pins/1",
+  "task": "P02PRE-R1H owner remediation",
+  "agent": "Antigravity",
+  "branch": "agent/antigravity/P02PRE-R1H",
+  "base": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "head": "256e3ea622cba7a658020ddcf015b18894d88b38",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+  "inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 8324,
+      "sha256": "09081A45535BB92529118E59D85739C029B23C6982E7E54F9225B95F64652E55"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-20261012.md",
+      "bytes": 2308,
+      "sha256": "4BB1D8B8C8FACD96C4C087774756A71D79F832F10AD75026ADA3800579EE6688"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-review-adjudication-20261012.md",
+      "bytes": 1543,
+      "sha256": "20EA61BC98F5826BF7FDF487E01B3F34CF6FBA609E9C3999C242100920268497"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-review-input-pins-post-20261012.json",
+      "bytes": 2070,
+      "sha256": "9AA0A6783B9466BD146DB04A65FC61287144C6ADA5B6747AE5958538251BCDB4"
+    },
+    {
+      "path": "verification/P02/antigravity-p02pre-r1h-remediation-20261012.prompt.md",
+      "bytes": 5353,
+      "sha256": "202C94F84F43EC269B380B50ABDBA4DCA5FFF28E0CFE6FE9F8A2681464B2667C"
+    }
+  ]
+}

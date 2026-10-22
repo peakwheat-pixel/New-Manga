@@ -1,0 +1,24 @@
+{
+  "schema": "codex-dispatch-input-pins/1",
+  "task": "P02PRE-R1H Antigravity owner dispatch",
+  "baseHead": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "branch": "agent/antigravity/P02PRE-R1H",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+  "files": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 7290,
+      "sha256": "388AA4FEF2F47EE1B3EC88BEEBD5A51FCE8C568DE30C7AF12F1D0C6EAA3766F8"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/antigravity-p02pre-r1h-implementation-20261012.prompt.md",
+      "bytes": 3434,
+      "sha256": "28542B9E05030319696326B20EAD427884CA87188ADDE40A90E959F8D10334E1"
+    }
+  ]
+}

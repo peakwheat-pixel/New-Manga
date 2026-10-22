@@ -1,0 +1,152 @@
+{
+  "schema": "p02pre-r1h-attempt5-integration-verify-v1",
+  "task": "P02PRE-R1H-R6-EXEC-A5",
+  "recordedAtUtc": "2026-10-12T03:53:06.3303107Z",
+  "environment": {
+    "callingShell": "PowerShell 7.6.6 Core",
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "edition": "Core",
+    "languageMode": "FullLanguage",
+    "workingDirectory": "G:\\CODEX\\New Manga",
+    "childRuntime": {
+      "version": "7.6.6",
+      "edition": "Core",
+      "languageMode": "FullLanguage",
+      "psHome": "C:\\Program Files\\PowerShell\\7"
+    },
+    "childRuntimeQueryExit": 0
+  },
+  "command": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "argv": [
+      "-NoLogo",
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      "$ErrorActionPreference='Stop'\n$executor='G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt5-20261012.ps1'\n$selfcheck='G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1'\n$parse=@{}\nforeach($p in @($executor,$selfcheck)){$tokens=$null;$errors=$null;$null=[Management.Automation.Language.Parser]::ParseFile($p,[ref]$tokens,[ref]$errors);$parse[$p]=[ordered]@{errorCount=@($errors).Count;errors=@($errors|ForEach-Object{[ordered]@{id=$_.ErrorId;message=$_.Message;line=$_.Extent.StartLineNumber;column=$_.Extent.StartColumnNumber}})}}\nWrite-Output ('PARSER='+ (ConvertTo-Json -InputObject $parse -Depth 8 -Compress))\nif(@($parse.Values|Where-Object{$_.errorCount -ne 0}).Count -ne 0){throw 'PowerShell parser found errors.'}\n$source=[IO.File]::ReadAllText($selfcheck,[Text.UTF8Encoding]::new($false,$true))\n$old='p02pre-r1h-round6-integrator-attempt4-20261012.ps1';$new='p02pre-r1h-round6-integrator-attempt5-20261012.ps1';$parts=$source.Split([string[]]@($old),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one executor path token, got $($parts.Length-1).\"};$source=$source.Replace($old,$new)\n$oldTask='P02PRE-R1H-R6-A4';$newTask='P02PRE-R1H-R6-EXEC-A5';$parts=$source.Split([string[]]@($oldTask),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one selfcheck task label token, got $($parts.Length-1).\"};$source=$source.Replace($oldTask,$newTask)\n$oldRoot='$PSScriptRoot';$newRoot=\"'G:\\CODEX\\New Manga\\verification\\P02'\";$parts=$source.Split([string[]]@($oldRoot),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one PSScriptRoot token, got $($parts.Length-1).\"};$source=$source.Replace($oldRoot,$newRoot)\nInvoke-Expression $source"
+    ],
+    "exit": 0,
+    "stderrBytes": 0,
+    "stdout": "PARSER={\"G:\\\\CODEX\\\\New Manga\\\\verification\\\\P02\\\\p02pre-r1h-round6-integrator-attempt5-20261012.ps1\":{\"errorCount\":0,\"errors\":[]},\"G:\\\\CODEX\\\\New Manga\\\\verification\\\\P02\\\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1\":{\"errorCount\":0,\"errors\":[]}}\r\n{\"task\":\"P02PRE-R1H-R6-EXEC-A5\",\"status\":\"PASS\",\"parseErrors\":0,\"assertionsPassed\":73,\"definitionsCheck\":\"PASS\",\"typeBuilderCheck\":\"PASS\",\"processSelectionCheck\":\"PASS\",\"invokeChildFailClosedCheck\":\"PASS\",\"isolationConfirmed\":\"In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly.\"}\r\n",
+    "script": "$ErrorActionPreference='Stop'\n$executor='G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt5-20261012.ps1'\n$selfcheck='G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1'\n$parse=@{}\nforeach($p in @($executor,$selfcheck)){$tokens=$null;$errors=$null;$null=[Management.Automation.Language.Parser]::ParseFile($p,[ref]$tokens,[ref]$errors);$parse[$p]=[ordered]@{errorCount=@($errors).Count;errors=@($errors|ForEach-Object{[ordered]@{id=$_.ErrorId;message=$_.Message;line=$_.Extent.StartLineNumber;column=$_.Extent.StartColumnNumber}})}}\nWrite-Output ('PARSER='+ (ConvertTo-Json -InputObject $parse -Depth 8 -Compress))\nif(@($parse.Values|Where-Object{$_.errorCount -ne 0}).Count -ne 0){throw 'PowerShell parser found errors.'}\n$source=[IO.File]::ReadAllText($selfcheck,[Text.UTF8Encoding]::new($false,$true))\n$old='p02pre-r1h-round6-integrator-attempt4-20261012.ps1';$new='p02pre-r1h-round6-integrator-attempt5-20261012.ps1';$parts=$source.Split([string[]]@($old),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one executor path token, got $($parts.Length-1).\"};$source=$source.Replace($old,$new)\n$oldTask='P02PRE-R1H-R6-A4';$newTask='P02PRE-R1H-R6-EXEC-A5';$parts=$source.Split([string[]]@($oldTask),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one selfcheck task label token, got $($parts.Length-1).\"};$source=$source.Replace($oldTask,$newTask)\n$oldRoot='$PSScriptRoot';$newRoot=\"'G:\\CODEX\\New Manga\\verification\\P02'\";$parts=$source.Split([string[]]@($oldRoot),[StringSplitOptions]::None);if($parts.Length -ne 2){throw \"Expected one PSScriptRoot token, got $($parts.Length-1).\"};$source=$source.Replace($oldRoot,$newRoot)\nInvoke-Expression $source",
+    "scriptSha256": "94C1E70226CC2139BAB32163DB8A5E1406AC05999F3AB0F2531BBC78791248D3"
+  },
+  "parserResults": {
+    "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt5-20261012.ps1": {
+      "errorCount": 0,
+      "errors": []
+    },
+    "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1": {
+      "errorCount": 0,
+      "errors": []
+    }
+  },
+  "selfcheck": {
+    "task": "P02PRE-R1H-R6-EXEC-A5",
+    "status": "PASS",
+    "parseErrors": 0,
+    "assertionsPassed": 73,
+    "definitionsCheck": "PASS",
+    "typeBuilderCheck": "PASS",
+    "processSelectionCheck": "PASS",
+    "invokeChildFailClosedCheck": "PASS",
+    "isolationConfirmed": "In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly."
+  },
+  "inMemoryAdaptations": [
+    {
+      "occurrences": 1,
+      "token": "p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "replacement": "p02pre-r1h-round6-integrator-attempt5-20261012.ps1"
+    },
+    {
+      "occurrences": 1,
+      "token": "P02PRE-R1H-R6-A4",
+      "replacement": "P02PRE-R1H-R6-EXEC-A5"
+    },
+    {
+      "occurrences": 1,
+      "token": "$PSScriptRoot",
+      "reason": "Invoke-Expression from -Command has no source-file script root; restore the selfcheck file-directory base in memory.",
+      "replacement": "'G:\\CODEX\\New Manga\\verification\\P02'"
+    }
+  ],
+  "sourcePins": {
+    "before": [
+      {
+        "path": "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+        "bytes": 12582,
+        "sha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162"
+      },
+      {
+        "path": "verification/P02/p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+        "bytes": 2391,
+        "sha256": "B903949584773318B7C17695E43B9E7301D34F885783825DD47DA29E03E192A0"
+      },
+      {
+        "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt5-20261012.md",
+        "bytes": 11641,
+        "sha256": "0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3"
+      },
+      {
+        "path": "verification/P02/p02pre-r1h-round6-integrator-attempt5-20261012.ps1",
+        "bytes": 43464,
+        "sha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10"
+      }
+    ],
+    "after": [
+      {
+        "path": "verification/P02/p02pre-r1h-round6-attempt4-selfcheck-20261012.ps1",
+        "bytes": 12582,
+        "sha256": "B8770D55702CB5E71F5AD252290B377E9E1BE9DB5906A0C4C051A487DD328162"
+      },
+      {
+        "path": "verification/P02/p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+        "bytes": 2391,
+        "sha256": "B903949584773318B7C17695E43B9E7301D34F885783825DD47DA29E03E192A0"
+      },
+      {
+        "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt5-20261012.md",
+        "bytes": 11641,
+        "sha256": "0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3"
+      },
+      {
+        "path": "verification/P02/p02pre-r1h-round6-integrator-attempt5-20261012.ps1",
+        "bytes": 43464,
+        "sha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10"
+      }
+    ],
+    "allUnchanged": true
+  },
+  "gitIndex": {
+    "before": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+    "after": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+    "unchanged": true
+  },
+  "priorHarnessAttempts": [
+    {
+      "result": "HARNESS_CONTEXT_ERROR",
+      "exit": 1,
+      "attempt": 1,
+      "reason": "Empty PSScriptRoot caused the first path-exists assertion to fail before helper assertions."
+    },
+    {
+      "result": "HARNESS_CONTEXT_ERROR",
+      "exit": 1,
+      "attempt": 2,
+      "reason": "Assigning PSScriptRoot in -Command scope did not change its value inside Invoke-Expression; same path assertion failed before helper assertions."
+    }
+  ],
+  "scope": {
+    "executorDotSourced": false,
+    "executorInvoked": false,
+    "FileReplace": "NOT_RUN",
+    "nativeMethodsInvoked": false,
+    "liveProcessEnumeration": false,
+    "filesystemMutationByChild": false,
+    "OSAPI": "NOT_RUN",
+    "BuildCargo": "NOT_RUN",
+    "systemAC1toAC7": "BLOCKED / NOT_RUN",
+    "WindowsSandbox": "NOT_TOUCHED"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "command": "python3 scripts/current_model.py",
+  "exit_code": 0,
+  "output": {
+    "status": "ok",
+    "task_id": "01a1248e-52cb-7ab2-97c4-4804958180f9",
+    "model": "gpt-6-luna",
+    "effort": "max",
+    "observed_at": "2026-10-11T00:51:56.615000+00:00",
+    "source": "local_codex_session_trace"
+  }
+}

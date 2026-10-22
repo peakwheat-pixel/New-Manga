@@ -1,0 +1,98 @@
+# Independent Review：P02PRE-R1F（tracked symlink no-follow，pre-run 契约审查）
+
+reviewer: DeepSeek Harness（非作者）
+author/owner/integrator/adjudicator: Codex `/root`
+base_commit: `cddff58469b56e181019a8ddfeade80684bc7eb9`
+reviewed_head: `cddff58469b56e181019a8ddfeade80684bc7eb9`
+decision: **`CHANGES_REQUESTED`**
+计数：P0=`0` / P1=`1` / P2=`2` / P3=`2`
+
+## 一、范围与冻结输入 pin
+
+| 对象 | bytes / SHA-256（prompt pin；我未独立复算） | 我读到的内容 |
+|---|---|---|
+| `doc/tasks/P02PRE-R1F.md` | `8,939 / B6624F8CFFF9D40A91B3ED01FA5618951B9CBB93B8E1617D217F8D355FA3DA41` | 72 行全文（AC1–AC8、写入范围、释放程序） |
+| `verification/P02/p02pre-r1f-manifest-20261011.md` | `8,882 / 11CB16047CEB54419EAE7D17505DC36566E6EF119979E0C15645DAD19C5C758E` | 42 行全文（delta、inventory 规则、分类、释放程序） |
+| `verification/P02/p02pre-r1f-capture.ps1` | `49,977 / 0A421B5FB6D7BA9AECDB5475459E1D2E385508A5664996C43DA0F2000BFCC9BC` | 701 行全文（逐函数核对） |
+| `verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r3-20261011.json` | `1,766 / EC7E24D63AE28F2A2EA135DFC5A35A851C214C67BF8C95A64105410913A6257F` | 20 行全文 |
+| 继承来源（按需）：`p02pre-r1-manifest-20261011.md`、`p02pre-r1-adjudication-20261011.md` | — | 用于核对 delta 与 F-01…F-04 处置 |
+
+**未读取**：R1 旧 JSON 的任何 Base64 与路径清单（按其不可变要求回避）、用户漫画/数据库/权重/凭据、`.codex/skills/*` 链接目标。`verification/P02/p02pre-r1f-evidence-20261011.json` 与 capture stdout/stderr/exit **均不存在**（glob 实测），符合“尚未运行”。
+
+---
+
+## 二、Architecture / 安全面结论
+
+| 项 | 结论 | 依据 |
+|---|---|---|
+| 唯一写入 | `PASS_WITH_EVIDENCE` | 全文仅 `:686` 一处 `[IO.File]::Open(..., FileMode::CreateNew, Write, None)` = Manifest `:17` 唯一目标；`New-Item/Out-File/Set-Content/Add-Content/Remove-Item/Set-Acl/Set-ItemProperty/Add-Type/Registry::/Set-*` 检索零命中 |
+| 子进程 allowlist 未扩张 | `PASS_WITH_EVIDENCE` | 仅 `git.exe`（`:264` rev-parse、`:266` symbolic-ref、`:280` status、`:294` ls-files、`:296` ls-files --stage）与 `whoami.exe /all`（`:496`）；`UseShellExecute=$false`（`:52`） |
+| Git 参数逐字与 Manifest `:16` 一致 | `PASS_WITH_EVIDENCE` | `:91` 前缀 `--no-optional-locks -c core.quotepath=false -c core.fsmonitor=false -c core.untrackedCache=false -C "<root>"`；五条命令与 Manifest 所列相同 |
+| registry 只读 / ACL 仅查询 | `PASS_WITH_EVIDENCE` | `:369` `OpenSubKey($subPath, $false)`；`:382` `DoNotExpandEnvironmentNames`；`:241`/`:579` 仅 `Get-Acl`；无写/改 ACE |
+| 无 profile / canary / build / Sandbox | `PASS_WITH_EVIDENCE` | 全文无相关 API；`:39` 明示 R1F 未监测访问闭包 |
+| 受保护清单 no-follow 决策 | `PASS_WITH_EVIDENCE` | `:107-112` 决策矩阵：**仅** `isLeaf ∧ mode=120000 ∧ ReparsePoint` → `SKIP_TRACKED_SYMLINK`（`:329-335`，记 `gitMode/attributes/linkType/targetRead=NOT_ATTEMPTED/targetHash=NOT_CAPTURED` 后 `break`，未调用 `Get-FileHash`/`Get-Content`/`Get-Acl`）；parent reparse、untracked/unknown reparse、mode≠120000 的 reparse、`160000`、非 `100644/100755`、非目录 parent、路径越界均 `STOP`（`:336`、`:337`、`:316`） |
+| 自检存在且在任何查询之前 | `PASS_WITH_EVIDENCE` | `:483-485` 依次调用 inventory 策略、命令序列化、NUL/index 解析三个内存 self-check（定义于 `:114-121`、`:123-128`、`:166-173`），位于身份/Git 查询之前 |
+| 单命令对象断言 | `PASS_WITH_EVIDENCE` | `:69` 用 `[pscustomobject][ordered]` 构造；`:101-105` 断言单对象且含 `exitCode`；对 `revParse/branch/status/files/indexStages/whoami` 共 6 处调用（`:265/267/281/295/297/497`）→ 消除 R1 的占位空对象数组（F-04） |
+| 五态分类未被“洗白” | `PASS_WITH_EVIDENCE` | `:35` `private_registry_absence=UNPROVABLE`、`:41` `werEffectivePolicy=UNPROVABLE`、`:40`/`:657` `tempCache=UNPROVABLE`、`:39`/`:649` `process_and_path_access_closure=UNPROVABLE_NOT_MONITORED_IN_R1F`、`:36-37`/`:655`/`:659` `REQUIRES_ACTIVE_TEST`、`:38` `product_build_and_ac1_ac7=NOT_RUN` |
+| 未声明证明 registry absence / profile / 有效 WER policy / 瞬时闭包 / hardlink/ADS / 动态子进程 / Build | `PASS_WITH_EVIDENCE` | Task `:23`/`:41`、Manifest `:32`/`:36`/`:38`、脚本分类块一致；`:594` ACL scope 明示“不证明瞬时变化/file-ID/hardlink/ADS” |
+| Windows PowerShell 5.1 静态兼容 | `PASS_WITH_EVIDENCE`（语法层） | 仅 5.1 可用构造：`if` 表达式赋值、`[ordered]@{}`、`[Text.UTF8Encoding]::new(...)`、`ConvertTo-Json -Depth`、`Get-Acl -LiteralPath`、`Dictionary[string,string]::new(comparer)`；未用 PS7-only API（R2 因 `SHA256.HashData` 失败的教训已避开） |
+
+---
+
+## 三、Verification 结论（逐项，按冻结五态口径）
+
+| # | 检查项 | 结论 | 依据 |
+|---|---|---|---|
+| 1 | 清单/脚本/parser 的 exact bytes 与 SHA 绑定 | `REQUIRES_ACTIVE_TEST`（我无法复算） | 见 §六 |
+| 2 | PS 5.1 `ScriptBlock::Create` parse-only、`captureScriptInvoked=false` | `PASS_WITH_EVIDENCE`（artifact 自述，未由我复现） | parser JSON `:4-5` `sourceBytes=49977`/`sourceSha256=0A42…C9BC`、`:8-10` `exit 0`/`PARSE_OK`/`false`、`:16-17` child/parent 同 hash、`:11` 子进程 stdout 报 `PS=5.1.26100.9549` |
+| 3 | inventory 决策矩阵 self-check | `PASS_WITH_EVIDENCE`（源码） | `:114-121` 六条断言覆盖 skip/各类 STOP/hash |
+| 4 | NUL/index 解析 self-check | `PASS_WITH_EVIDENCE`（源码） | `:166-173` 断言 `alpha\0beta\0` → 2 candidates、1 终止空段；`--stage` 单条解析正确 |
+| 5 | 命令记录单对象序列化 self-check | `PASS_WITH_EVIDENCE`（源码） | `:123-128` JSON 往返断言非数组、含 name/exitCode |
+| 6 | candidate / NUL / 终止空段分离计数 | `PASS_WITH_EVIDENCE`（源码） | `:130-142` `nulTerminatorCount`、`emptySplitArtifactCount` 单独计算，空段不计入 `paths`；`:301-304` 写入记录 |
+| 7 | 部分停止时保留 first blocker 与未处理数 | **`FAILED`（契约未满足）** | 仅 `:346` 一个分支设置 `firstBlockingPath`+`omittedCount`；`:255/259/263/269/279/298/348/354` 各 fail-stop 分支均未设置 → 见 **R1F-F1** |
+| 8 | `--stage` 输出的 strict UTF-8 校验 | **`FAILED`（不一致）** | `:147` 用 `new($false,$true)` 会影响函数级；而 `$decoded` 使用严格模式，替换字符会掩盖非法字节 → 见 **R1F-F2** |
+| 9 | 实际 capture 运行、唯一 evidence JSON 与五态落地 | `NOT_RUN` | Task `:69`、Manifest `:18`；`p02pre-r1f-evidence-20261011.json` 不存在（glob） |
+| 10 | 12 输入根 / 13 输出叶 / 3 canary / TEMP-cache / WER / 注册表 getter 的实际执行与分类 | `NOT_RUN` | 同上（尚未运行） |
+| 11 | main+scratch protected inventory 实际闭合、`repositoryProtectedInventory` 实际取值 | `NOT_RUN` | 同上；按 R1 经验与 index 实况，`skippedSymlinkCount>0` 时该项按 `:651` 必为 `UNPROVABLE` |
+| 12 | ACL 端点前后比较、ACL endpoint 变化/不可核验分类 | `NOT_RUN` | 同上 |
+| 13 | 有效权限 / 瞬时 ACL 与写入闭包 / file-ID/hardlink/ADS / 动态子进程闭包 | `REQUIRES_ACTIVE_TEST` | `:594`、`:649`、`:655`、`:659`；Manifest `:32`/`:36` |
+| 14 | `private_registry_absence` / profile API 与 store / 有效 WER policy | `UNPROVABLE` | `:35`、`:36`、`:41`；Manifest `:38` |
+| 15 | Build / Cargo / AC1–AC7 | `NOT_RUN` | `:38`；Task `:70` |
+| 16 | Windows Sandbox | N/A（按既有用户决定在范围外） | 无相关对象 |
+| 17 | `NOT_SAFE_FOR_R0` | N/A（历史分类） | Manifest 未列（R0 已结束） |
+
+---
+
+## 四、Findings
+
+| ID | 级别 | 文件/行 | 触发与影响 | 需要的最小修正 |
+|---|---|---|---|---|
+| **R1F-F1** | **P1** | `p02pre-r1f-capture.ps1:252`、`:255/259/263/269/279/298/348/354`、`:346`；对照 `manifest:30`、`task:38` | **Manifest 声明与实现不符（正是 F-02 修复的目标失效模式）**：只有 inventory 循环抛错（`:346`）才写 `firstBlockingPath`+`omittedCount`。路径链无效、`.git`/root reparse、index pre-hash、Git baseline、target mismatch、status/inventory 失败、`--stage` 解析异常、`PROTECTED_INVENTORY_INCOMPLETE`、`GIT_METADATA_INVALID` **全部早退且不写 first blocker 与 omittedCount**（`omittedCount` 保持 0，而 candidateCount 已算出）。若 main 仓在这类分支停机（`stopReason=MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED`），实际 evidence 只含 `state` 与（部分分支的）`error`，**没有 first blocker、没有 omittedCount**，与 manifest `:30` 的“部分停止时准确保留 first blocker 和未处理数”逐字不符。安全侧无影响（仍 fail-stop、不越界、不写第二份证据） | 在上述每个 fail-stop 分支返回前显式写 `firstBlockingPath`（当时的 path/组件）与 `omittedCount = max(0, candidateCount - processedCount)`（candidateCount 尚未算出时置 `null` 并说明），并使 manifest `:30` 的措辞与实际一致（或改为“在已完成计数后”） |
+| **R1F-F2** | **P2** | `p02pre-r1f-capture.ps1:147`（对照 `:132`） | `ls-files --stage -z` 的输出用 `[Text.UTF8Encoding]::new($false,$true)` **严格**解码——一旦字节非法 UTF-8，会先抛 `DecoderFallbackException` 而不是走 `:152/:159` 的结构校验分支，异常语义与 manifest `:26` 声明的“结构不符即 fail-stop”不同；同时 `:145` 的 `Dictionary[string,string](Ordinal)` 使大小写不同的路径被视为两个不同条目，与 Git 的路径语义可能存在差异。 | 把 `--stage` 的非法 UTF-8 与结构错误显式归并到同一 fail-stop 记录（写清 `state`/`errorOperation`/`firstBlockingPath`），或对 `--stage` 也采用“严格解码失败即 `INDEX_QUERY_ERROR`”的显式分支；并明确大小写敏感性判断（如需大小写不敏感，改用 `OrdinalIgnoreCase` 并记录该选择） |
+| **R1F-F3** | **P2** | `p02pre-r1f-manifest-20261011.md:8`；`verification/P02/p02pre-r1-...`（`p02pre-r1-adjudication-20261011.md:27` 同） | **hash 字面值错误**：`A5510774B47C17EB29C5BF5D73FE7B755C72E2726FC5280E7EF11A91A23C67A7` 为 **65** 个十六进制字符（正确值末尾为 `…C67A`，即 R1 Task `:52` 所用的 `A5510774…A23C67A`）。manifest 是 R1F 自己的“delta 基线声明”，pin 不可解析会被读成 hash 校验失败或 R1 文件异常。注意：双方在别处（`p02pre-r1-adjudication-20261011.md:27` 表格）**同样带**尾部 `7`，属同一复制错误，不可据此认定 R1 文件被改动。 | 把 manifest `:8`（及 adjudication 中引用处）改为正确的 64 位值 `A5510774B47C17EB29C5BF5D73FE7B755C72E2726FC5280E7EF11A91A23C67A`；`12615 bytes` 等其它 pin 不变 |
+| **R1F-F4** | **P3** | `p02pre-r1f-capture.ps1:330`；对照 `manifest:28` | skip 链接记录字段名与 manifest 声明不同：脚本写 `gitMode`（值 `120000`），manifest 字面要求“登记相对 path、**mode**、attributes、LinkType、`targetRead=NOT_ATTEMPTED`、`targetHash=NOT_CAPTURED`、`SKIPPED_SYMLINK_NOT_FOLLOWED`”。内容等价、语义正确（`targetRead`/`targetHash` 均存在，`:330`），但字段名不符会削弱“冻结 delta 可机械对照”的可审计性 | 将字段名改为 `mode`（或同时在 manifest 中登记 `gitMode` 等价命名），保持其余字段与状态串不变 |
+| **R1F-F5** | **P3** | `p02pre-r1f-capture.ps1:30`、`:35`；对照 `manifest:32` | R1F 未显式声明“当前实现是否属 `mode=120000` 就会被跳过、也不会因模式不匹配而失败”的边界条件——实际逻辑（`:107-112`）与 manifest 一致，但脚本与 manifest 都没把“skip 后不再对该 path 做任何查询”写成可检查的断言；若将来 Git 在不改 mode 的情况下将该路径改为真实目录，将静默变成 `HASH_REGULAR_FILE`。建议增加一条 self-check 或注释锁定“SKIP 即完全终止该 candidate 的处理”。 | 增加显式断言/注释：`SKIP_TRACKED_SYMLINK` 后不得对该 path 调用任何 `Get-*`/hash；或在 manifest 说明该不变量 |
+
+---
+
+## 五、结论
+
+**decision：`changes_requested`**
+
+- **不能通过**：R1F-F1 使 manifest 对失败分支证据完整性的声明不成立（正是 F-02 要修的问题），R1F-F2 使一条新命令的错误语义偏离声明，R1F-F3 是可被误读为 hash 失败的 pin 错误。
+- 其余面向**质量良好**：写入面收敛为唯一 `CreateNew`（`:686`）、子进程 allowlist 与五条 Git 命令逐字受控、no-follow 决策矩阵与三个 pre-query self-check 齐备、五态分类未被拔高、明确不宣称 registry absence/profile/有效 WER policy/瞬时闭包/hardlink/ADS/动态子进程/Build。
+- **修正后复审范围可以很窄**：只改 `Get-RepositoryRecord` 的 fail-stop 分支计数与 `--stage` 错误归类两处代码、manifest `:8` 一字与 `:28`/`:30` 措辞、可选字段名对齐；**不需要**重开 allowlist/子进程/写入面审查，但仍**必须**在改后重新冻结 bytes/SHA 并重出 PS 5.1 parse-only artifact，再由非作者复审 + Codex pre-run adjudication。
+
+**严重级别说明（供 Codex 处裁）**：R1F-F1 定为 P1 的理由是——它使 manifest 中一条**明确的事实性声明**在实现中不成立，且该分支正是 R1 已发生过的失败模式（main 仓 fail-stop），而 F-02/F-03/F-04 的设计目的正是让该模式留下可裁决的计数证据。若 Codex 判定“`state`+`error` 已足够、计数非必需”，可下调为 P2 并在 adjudication 中显式接受——但**不应**保持现状文字不动。
+
+---
+
+## 六、限制与不可核验项
+
+1. **未独立复算任何 bytes/SHA-256**：本会话 `pwsh` 工具仍在沙箱准备阶段失败（`SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga)`）。prompt 与 manifest 声明的 `.NET SHA256`/`Get-FileHash`/`certutil` 三方一致**属 Codex 的本机结果**，我未复现；文件内字符串一致性（parser JSON 的 `sourceBytes/sourceSha256/child/parent`）我仅作**文本级**核对。**无文件不可达**：四个 pin 文件均成功读取全文。
+2. **未运行任何命令**：未执行/解析 capture 脚本、未调用 PowerShell/Git/OS/token/path/ACL/environment/registry/WER、未建 profile、未写 canary、未 build/Cargo、未跑 AC1–AC7；未编辑任何文件（本报告由派发方保存）。
+3. **未读取**：R1 旧 JSON 的 Base64/路径清单、用户漫画/数据库/Lock/Revision/权重/凭据、任何链接目标内容或其解析结果。
+4. **静态契约审查不能替代运行证据**：parser JSON 只证明“能解析、未执行 capture”；脚本是否真的按此运行、宿主身份/仓库/ACL/WER 等条件是否满足，均**未被本 Review 验证**（consumer 相关项在 §三.9–§三.11 记 `NOT_RUN`）。
+5. **本 Review 不是 capture release、不是 Gate PASS、不是 Build 授权、也不是任何 AC 结果**。建议保持不变：`private_registry_absence=UNPROVABLE`；Technical Gate=`NOT_SATISFIED`；Owner Risk Acceptance=`APPROVED`；Gate Disposition=`WAIVED_BY_OWNER`；Build Authorization=`AUTHORIZED_WITH_EXCEPTION`；`technical condition unmet; user explicitly accepted residual risk`；Build Gate=`BLOCKED`；Hard Build Barrier=`EFFECTIVE`；Build/Cargo=`NOT_RUN`；AC1–AC7=`BLOCKED / NOT_RUN`。
+
+**下一 Task 建议**：无需新 Task；由 Codex 在本 Task 内按 §四的最小修正冻结新 bytes，并以原非作者 Reviewer 做一次窄范围复审（仅 F1/F2/F3/F4/F5 与重出的 PS 5.1 parse artifact）。

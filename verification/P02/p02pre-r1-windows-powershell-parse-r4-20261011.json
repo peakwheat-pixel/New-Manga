@@ -1,0 +1,33 @@
+{
+  "evidenceType": "P02PRE-R1 Windows PowerShell 5.1 read-only parse",
+  "generatedUtc": "2026-10-11T06:36:39.9404887Z",
+  "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "workingDirectory": "G:\\CODEX\\New Manga",
+  "childParseResult": {
+    "powershellVersion": "5.1.26100.9549",
+    "parser": "[System.Management.Automation.ScriptBlock]::Create",
+    "inputPath": "verification/P02/p02pre-r1-capture.ps1",
+    "inputByteCount": 38729,
+    "inputSha256": "97400A9EF16E47242DA3C4E53C8265F16BA9A70853B26D3905748B9CA69884AB",
+    "parseStatus": "PARSE_OK",
+    "captureScriptInvoked": false,
+    "processExitCode": 0,
+    "parseError": null
+  },
+  "parentRecheck": {
+    "inputByteCount": 38729,
+    "inputSha256": "97400A9EF16E47242DA3C4E53C8265F16BA9A70853B26D3905748B9CA69884AB",
+    "matchesChildInput": true
+  },
+  "childStdout": {
+    "byteCount": 351,
+    "sha256": "86F484B11324B9E04BD66B54403317CD1B26F590F03E98D2B81406A8B4680D80",
+    "utf8": "{\"powershellVersion\":\"5.1.26100.9549\",\"parser\":\"[System.Management.Automation.ScriptBlock]::Create\",\"inputPath\":\"verification/P02/p02pre-r1-capture.ps1\",\"inputByteCount\":38729,\"inputSha256\":\"97400A9EF16E47242DA3C4E53C8265F16BA9A70853B26D3905748B9CA69884AB\",\"parseStatus\":\"PARSE_OK\",\"captureScriptInvoked\":false,\"processExitCode\":0,\"parseError\":null}"
+  },
+  "childStderr": {
+    "byteCount": 382,
+    "sha256": "4F2B6B3ED9201CA459DB2DD042E0A137C4E58BFE8E15A068E45AD8535FA5B1EF",
+    "base64": "IzwgQ0xJWE1MDQo8T2JqcyBWZXJzaW9uPSIxLjEuMC4xIiB4bWxucz0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9wb3dlcnNoZWxsLzIwMDQvMDQiPjxPYmogUz0icHJvZ3Jlc3MiIFJlZklkPSIwIj48VE4gUmVmSWQ9IjAiPjxUPlN5c3RlbS5NYW5hZ2VtZW50LkF1dG9tYXRpb24uUFNDdXN0b21PYmplY3Q8L1Q+PFQ+U3lzdGVtLk9iamVjdDwvVD48L1ROPjxNUz48STY0IE49IlNvdXJjZUlkIj4xPC9JNjQ+PFBSIE49IlJlY29yZCI+PEFWPtX91NrXvLG4yte0zsq508PEo7/poaM8L0FWPjxBST4wPC9BST48TmlsIC8+PFBJPi0xPC9QST48UEM+LTE8L1BDPjxUPkNvbXBsZXRlZDwvVD48U1I+LTE8L1NSPjxTRD4gPC9TRD48L1BSPjwvTVM+PC9PYmo+PC9PYmpzPg=="
+  },
+  "processExitCode": 0
+}

@@ -1,0 +1,80 @@
+{
+  "task": "P02PRE-R1H",
+  "round": "Owner remediation round 4 / R1H-007",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "/root/p02_r1h_remediation_review",
+  "integrator": "/root",
+  "repository": "G:\\CODEX\\New Manga",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "branch": "agent/codex/P02PRE-R1H",
+  "requiredStartingHead": "0ecada4182d624d4f352a253e09db3bdecbee5d1",
+  "requiredStartingTree": "06986f47ac8363a32ecbf2d0e41ec1d680510940",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "inputPins": [
+    {
+      "kind": "source",
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 22941,
+      "sha256": "45671AD744C2CD51D831F3513F16CE573D24E7A0CF679DC087E98A29B27A4486"
+    },
+    {
+      "kind": "source",
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "kind": "source",
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation3-20261012.md",
+      "bytes": 9545,
+      "sha256": "98E9C6F416518598865BCB1B6AD07FAB892868D2D95A9F38E2029DCD18BC03D8"
+    },
+    {
+      "kind": "source",
+      "path": "verification/P02/p02pre-r1h-remediation3-adjudication-20261012.md",
+      "bytes": 3715,
+      "sha256": "3CF705EBE1991ECD68F8027AE60C470FB751274F24D71FC4F8840E8767326383"
+    },
+    {
+      "kind": "source",
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round4-20261012.prompt.md",
+      "bytes": 3793,
+      "sha256": "21D5490516EE218C7A6FE05DCE887B096EC6A2CEE4C9F007A94F1A318B65F899"
+    },
+    {
+      "kind": "candidate",
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "kind": "candidate",
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57615,
+      "sha256": "D9F33E544390C5056D6AAB77042BB2F34E7D6BA10773B449DD76E87DF9F8B1A7"
+    },
+    {
+      "kind": "candidate",
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 7622,
+      "sha256": "DAE7A8540868A3E2AFA4EE6935577ADF37B6C13C49F10302976E5AAC300F3FD7"
+    }
+  ],
+  "authorizedWritePaths": [
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-handoff-20261012.md"
+  ],
+  "allowedCheck": "git diff --check only",
+  "prohibited": [
+    "PowerShell parser/selfcheck/preflight/capture",
+    "getter/API",
+    "tests",
+    "Build/Cargo",
+    "AC1-AC7",
+    "OS dynamic verification",
+    "Windows Sandbox",
+    "integration or review by Owner",
+    "changes to Task/manifest/Plan/STATUS/index/pins/gates/checkpoints"
+  ],
+  "deliverable": "Fixed commit on same branch with parent equal to requiredStartingHead, new Handoff, path/hash/status evidence and truthful execution limits"
+}

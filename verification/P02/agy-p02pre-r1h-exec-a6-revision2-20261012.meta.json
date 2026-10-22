@@ -1,0 +1,14 @@
+{
+  "startedUtc": "2026-10-12T08:53:56.5159111Z",
+  "endedUtc": "2026-10-12T08:58:45.0524556Z",
+  "cwd": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga",
+  "conversationId": "9b4f9905-d447-4a27-9e88-715a4c95bbda",
+  "priorFormalConversation": "9b4f9905-d447-4a27-9e88-715a4c95bbda",
+  "exitCode": 0,
+  "promptPath": "G:\\CODEX\\New Manga\\verification\\P02\\agy-p02pre-r1h-exec-a6-revision2-prompt-20261012.md",
+  "stdoutPath": "G:\\CODEX\\New Manga\\verification\\P02\\agy-p02pre-r1h-exec-a6-revision2-20261012.stdout.json",
+  "stderrPath": "G:\\CODEX\\New Manga\\verification\\P02\\agy-p02pre-r1h-exec-a6-revision2-20261012.stderr.log",
+  "invokedConversationId": "9b4f9905-d447-4a27-9e88-715a4c95bbda",
+  "status": "SUCCESS",
+  "metadataCorrectionNote": "Initial Codex metadata serialization contained a conversation ID transcription typo (9b4f9905-d447-4a27-9e88-2f6d54c7a662); corrected against raw Antigravity JSON before use."
+}

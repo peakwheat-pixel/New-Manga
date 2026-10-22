@@ -1,0 +1,110 @@
+{
+  "evidenceId": "P02PRE-R1G-CODEX-REVIEW-INPUT-PINS-20261012",
+  "taskId": "P02PRE-R1G",
+  "purpose": "Codex post-review rehash of all frozen dispatch inputs; establishes that exact reviewed paths still match the prompt pins after DSH finished.",
+  "verificationPhase": "POST_REVIEW_RECHECK",
+  "observedUtc": "2026-10-11T17:35:54.579965+00:00",
+  "verifier": "Codex /root (Integrator/Adjudicator)",
+  "runtime": {
+    "executable": "C:\\Python314\\python.exe",
+    "pythonVersion": "3.14.6"
+  },
+  "method": "For each exact path explicitly frozen in the prompt, read file bytes once with pathlib.Path.read_bytes(), compute byte length and SHA-256 with hashlib.sha256, and compare to the dispatch prompt value. No directory traversal or globbing was used.",
+  "dispatchPrompt": {
+    "path": "verification/P02/dsh-p02pre-r1g-remediation-review-20261012.prompt.md",
+    "bytes": 5115,
+    "sha256": "EE66C5BCC9D77A88D017B56305996F7DAA2B6C96D27FDBFC60B2EDB2F4309975"
+  },
+  "reviewRun": {
+    "sessionId": "session-a35eed45-d8d3-4676-8955-03bd630f9927",
+    "cliVersion": "0.2.0-rc.2",
+    "cwd": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga",
+    "exitCode": 0,
+    "stdout": {
+      "path": "verification/P02/dsh-p02pre-r1g-remediation-review-20261012.stdout.jsonl",
+      "bytes": 115873,
+      "sha256": "6F851C569ECF5AFA067E9FCC0880EF2D1CF4EE0D61DB0A6A7156F5348BB03441"
+    },
+    "stderr": {
+      "path": "verification/P02/dsh-p02pre-r1g-remediation-review-20261012.stderr.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "exitMarker": {
+      "path": "verification/P02/dsh-p02pre-r1g-remediation-review-20261012.exit",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+    }
+  },
+  "inputs": [
+    {
+      "role": "Task",
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1G.md",
+      "bytes": 15205,
+      "sha256": "A16AE096FC5481F41077EA4FED241EAE796845592212187B20A3A92AE064FA84",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-manifest-20261011.md",
+      "bytes": 14952,
+      "sha256": "EB0544ED7AEC961DFFD76CA17AA01B93F18F1EED9B4E3728AA85968B0A0F77D7",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "candidate_script",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+      "bytes": 80199,
+      "sha256": "4146E9EF6D6E7A8D69F480DF6E24AA396CBC2FBBFF8DA8067FF9C6E666E98067",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "author_selfcheck",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-author-selfcheck-20261011.json",
+      "bytes": 2462,
+      "sha256": "CE25D22045031627E1B9D0CA5A46D154E6FFF401EDA84335BEA60ABFCBC82AB2",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "handoff",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-antigravity-handoff-20261011.md",
+      "bytes": 18883,
+      "sha256": "CF707C9B90800AE156000A0EE83C36B2045F2302495DD663C40344FCC9B73169",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "prior_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-adjudication-20261012.md",
+      "bytes": 6144,
+      "sha256": "493A2FE96C4534ED000D7A055F7E3C54CC4A1DC2C15B9D7303FC692A440D1673",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "review_template",
+      "path": "G:\\CODEX\\New Manga\\doc\\templates\\REVIEW.md",
+      "bytes": 3915,
+      "sha256": "048DD2C001BC16CE68B46460C2D23AA32BA1119091CA1E2ABA3EE4EE63ED4762",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "predecessor_script",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+      "bytes": 67582,
+      "sha256": "5A3FE118A8758CCDF0BEDBE170D31B34DA6C338101096EAA825DE80DF70E8316",
+      "matchesFrozenDispatch": true
+    },
+    {
+      "role": "predecessor_manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-manifest-20261011.md",
+      "bytes": 49783,
+      "sha256": "F91AF7B1785B77A57CEEAFE0FFD879345CF361FD85A5E147CD970CF5EF43717B",
+      "matchesFrozenDispatch": true
+    }
+  ],
+  "result": "ALL_FROZEN_INPUTS_MATCH_POST_REVIEW",
+  "limitations": [
+    "This recheck proves the current file bytes match the frozen prompt pins after the DSH run; DSH itself did not independently compute those pins.",
+    "It does not prove what bytes an OS mapped into any process.",
+    "No parser, self-check, engine preflight, capture, host getter, Build/Cargo, or AC was run."
+  ]
+}

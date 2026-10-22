@@ -1,0 +1,69 @@
+{
+  "task": "P02PRE-R1G",
+  "phase": "CODEX_NO_PROFILE_ENGINE_CAPABILITY_PREFLIGHT",
+  "result": "PASS",
+  "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "argumentList": [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-Command",
+    "$ErrorActionPreference='Stop'; $mods=@(Get-Module -ListAvailable Microsoft.PowerShell.Utility,Microsoft.PowerShell.Security | ForEach-Object {[ordered]@{name=$_.Name;version=$_.Version.ToString();path=$_.Path}}); $cmds=[ordered]@{}; foreach($n in @('Get-FileHash','Get-Acl')){$c=Get-Command -Name $n -ErrorAction Stop; $cmds[$n]=[ordered]@{commandType=$c.CommandType.ToString();source=$c.Source;version=[string]$c.Version}}; $o=[ordered]@{version=$PSVersionTable.PSVersion.ToString();edition=$PSVersionTable.PSEdition;psHome=$PSHOME;modulePath=$env:PSModulePath;languageMode=$ExecutionContext.SessionState.LanguageMode.ToString();modules=$mods;commands=$cmds}; ConvertTo-Json -InputObject $o -Depth 8 -Compress"
+  ],
+  "workingDirectory": "G:\\CODEX\\New Manga",
+  "pid": 33564,
+  "exitCode": 0,
+  "checks": {
+    "version": true,
+    "edition": true,
+    "psHome": true,
+    "languageMode": true,
+    "utilityModulePresent": true,
+    "securityModulePresent": true,
+    "getFileHashCommand": true,
+    "getAclCommand": true
+  },
+  "childResult": {
+    "version": "7.6.6",
+    "edition": "Core",
+    "psHome": "C:\\Program Files\\PowerShell\\7",
+    "modulePath": "C:\\Users\\49745\\Documents\\PowerShell\\Modules;C:\\Program Files\\PowerShell\\Modules;c:\\program files\\powershell\\7\\Modules;C:\\Users\\49745\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules",
+    "languageMode": "FullLanguage",
+    "modules": [
+      {
+        "name": "Microsoft.PowerShell.Security",
+        "version": "7.0.0.0",
+        "path": "C:\\program files\\powershell\\7\\Modules\\Microsoft.PowerShell.Security\\Microsoft.PowerShell.Security.psd1"
+      },
+      {
+        "name": "Microsoft.PowerShell.Utility",
+        "version": "7.0.0.0",
+        "path": "C:\\program files\\powershell\\7\\Modules\\Microsoft.PowerShell.Utility\\Microsoft.PowerShell.Utility.psd1"
+      }
+    ],
+    "commands": {
+      "Get-FileHash": {
+        "commandType": "Cmdlet",
+        "source": "Microsoft.PowerShell.Utility",
+        "version": "7.0.0.0"
+      },
+      "Get-Acl": {
+        "commandType": "Cmdlet",
+        "source": "Microsoft.PowerShell.Security",
+        "version": "7.0.0.0"
+      }
+    }
+  },
+  "childJsonError": null,
+  "childStdout": {
+    "bytes": 991,
+    "sha256": "C90A8D900E73B1CD7B4DCBF7DCF21BF623BFFCF6105E37FE0E1DBEDF7E1A46E8"
+  },
+  "childStderr": {
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "childOutputRaw": "{\"version\":\"7.6.6\",\"edition\":\"Core\",\"psHome\":\"C:\\\\Program Files\\\\PowerShell\\\\7\",\"modulePath\":\"C:\\\\Users\\\\49745\\\\Documents\\\\PowerShell\\\\Modules;C:\\\\Program Files\\\\PowerShell\\\\Modules;c:\\\\program files\\\\powershell\\\\7\\\\Modules;C:\\\\Users\\\\49745\\\\Documents\\\\WindowsPowerShell\\\\Modules;C:\\\\Program Files\\\\WindowsPowerShell\\\\Modules;C:\\\\WINDOWS\\\\system32\\\\WindowsPowerShell\\\\v1.0\\\\Modules\",\"languageMode\":\"FullLanguage\",\"modules\":[{\"name\":\"Microsoft.PowerShell.Security\",\"version\":\"7.0.0.0\",\"path\":\"C:\\\\program files\\\\powershell\\\\7\\\\Modules\\\\Microsoft.PowerShell.Security\\\\Microsoft.PowerShell.Security.psd1\"},{\"name\":\"Microsoft.PowerShell.Utility\",\"version\":\"7.0.0.0\",\"path\":\"C:\\\\program files\\\\powershell\\\\7\\\\Modules\\\\Microsoft.PowerShell.Utility\\\\Microsoft.PowerShell.Utility.psd1\"}],\"commands\":{\"Get-FileHash\":{\"commandType\":\"Cmdlet\",\"source\":\"Microsoft.PowerShell.Utility\",\"version\":\"7.0.0.0\"},\"Get-Acl\":{\"commandType\":\"Cmdlet\",\"source\":\"Microsoft.PowerShell.Security\",\"version\":\"7.0.0.0\"}}}\r\n",
+  "childErrorRaw": "",
+  "outputCreation": "CreateNew after child exit"
+}

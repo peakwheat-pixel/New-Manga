@@ -1,0 +1,54 @@
+=== P02PRE-R1H-R6-ZCODE-H1 final pre-run raw stdout log (attempt6) ===
+author: Codex dispatched by ZCode conversation; final-pre-run-author; read-only checks; helpers: bash heredoc | pwsh -NoLogo -NoProfile -NonInteractive -Command -
+git exe frozen: C:\Program Files\Git\cmd\git.exe; observed git version 2.52.0.windows.1 (handoff-claimed 2.48.1; protocol does not freeze version equality); child env GIT_OPTIONAL_LOCKS=0 GIT_TERMINAL_PROMPT=0; inherited GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE/GIT_COMMON_DIR/GIT_PREFIX/GIT_CEILING_DIRECTORIES/GIT_EXTERNAL_DIFF/GIT_CONFIG*/GIT_TRACE*: none observed
+written utc: 2026-10-12T10:30:31.4962694Z
+
+--- helper: git --version ---
+argv: []
+--- helper: whoami.exe /all ---
+argv: []
+cwd: G:\CODEX\New Manga
+exit: 
+stdout: 3695 bytes, sha256 25C641BAA11A2D597E70DDB3A7A76ADBD1F1574BF81C0450BB768973A3000EB0 (byte-identical to the A5 record); raw bytes are local OEM codepage, not strict UTF-8; decoded text intentionally not embedded; reproduce by re-running argv and comparing sha256
+stderr: 0 bytes
+
+--- root refs (cwd G:\CODEX\New Manga) ---
+
+--- owner worktree refs (cwd C:\Users\49745\.codex\worktrees\p02pre-r1h-codex) ---
+
+--- agy delivery worktree refs (cwd C:\Users\49745\.codex\worktrees\p02pre-r1h-r6-exec-a6-antigravity\New Manga) ---
+
+--- root controlled status ---
+argv: ['--no-pager', '-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=NUL', '--no-optional-locks', 'status', '--porcelain=v1', '-z', '--', ':(exclude).tmp.driveupload']
+cwd: G:\CODEX\New Manga
+exit:   stderr-bytes: 0
+stdout: 0 bytes, sha256 ; earlier A-phase snapshot: 78983 bytes sha256 D06C76A33DA159D6A03539F432AED35A1D2383C004463C799BC3DC6FCE0F9550
+stdout verbatim (NUL-separated records, one per line):
+--- end root status verbatim ---
+
+--- owner worktree controlled status (must be clean) ---
+argv: ['--no-pager', '-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=NUL', '--no-optional-locks', 'status', '--porcelain=v1', '-z', '--', ':(exclude).tmp.driveupload']
+cwd: C:\Users\49745\.codex\worktrees\p02pre-r1h-codex
+--- agy delivery worktree controlled status ---
+argv: ['--no-pager', '-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=NUL', '--no-optional-locks', 'status', '--porcelain=v1', '-z', '--', ':(exclude).tmp.driveupload']
+cwd: C:\Users\49745\.codex\worktrees\p02pre-r1h-r6-exec-a6-antigravity\New Manga
+exit:   stdout-bytes: 0  sha256   stderr-bytes: 0
+stdout verbatim:
+--- end agy status verbatim ---
+
+--- check-ignore probes, four pre-run output targets (root cwd) ---
+
+--- root .git/index raw reads ---
+first read utc 2026-10-12T10:24:21.9362694Z: 973207 bytes, sha256 C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68 (matches frozen reference)
+after-status read utc 2026-10-12T10:25:04.4060533Z: 973207 bytes, sha256 C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68
+
+--- registry read-only view (no stdout command) ---
+query: [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey(SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps), read-only
+observed utc 2026-10-12T10:26:29.3692071Z: keyExists=true; subKeys=ArmouryCrate.exe, ArmouryCrate.Service.exe, ArmouryCrate.UserSessionHelper.exe, AsusFanControlService.exe, atkexComSvc.exe, LightingService.exe, ROGLiveService.exe; valueNames=(empty)
+
+--- protected file raw read ---
+path: G:\CODEX\New Manga\verification\P02\p02pre-r1h-selfcheck.ps1
+observed utc 2026-10-12T10:24:22.1258172Z: 57648 bytes, sha256 977C99434C2ED10AD5EAEDF34271781DA330AF495AD78D2F9DD593BD88DBD6EA, attributes Archive
+
+--- excluded path access scope ---
+.tmp.driveupload: never accessed, never queried; access scope NOT_VERIFIED by design

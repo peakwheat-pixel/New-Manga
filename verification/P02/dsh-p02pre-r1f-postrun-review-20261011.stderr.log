@@ -1,0 +1,654 @@
+dsh: reasoning:
+Let me start by understanding the task. I'm the reviewer, DeepSeek Harness, doing a read-only independent review of P02PRE-R1F post-run evidence. I must not execute shell commands, scripts, tests, getters, APIs, Git, builds, or ACs. Read-only. Do not modify or create files.
+
+But I need to read the repository REVIEW template and the pinned evidence files. Reading is allowed (read tool, grep, glob). The instruction says "Do not execute shell commands" — so no pwsh. Use read/grep/glob only.
+
+Let me first find the REVIEW template.
+
+Let me use glob to find doc/templates/REVIEW.md.
+
+Then read pinned files: doc/REBASELINE_PLAN.md (277406 bytes — huge), doc/STATUS.md (285810 bytes — huge), doc/00_INDEX.md, doc/09_COLLABORATION.md, doc/tasks/P02PRE-R1F.md, verification files.
+
+I need to be smart about context. The large files should be read selectively via grep for relevant sections.
+
+Let me plan:
+1. glob for template REVIEW.md
+2. read the template
+3. read pinned JSON files (small ones): parser r8 json (2595 bytes), evidence json (23131 bytes), stderr log (676 bytes), exit (3 bytes), stdout (0 bytes)
+4. read task file (30565 bytes) fully
+5. read capture.ps1 (67582 bytes) — large, read selectively
+6. read manifest (44417 bytes) — read selectively
+7. read checkpoint (57630 bytes) — read selectively
+8. grep Plan/STATUS for R1F state
+
+Let me start. Note: workspace-write policy, but I will only read.
+
+I should probably use todo_write to plan. Let's begin with parallel independent reads.
+
+Actually, first let me check the file layout.
+
+Let me do several calls in one block: glob for REVIEW template, glob verification/P02 files, and read the small evidence files.
+
+Note the read tool requires reading before editing—irrelevant since I won't edit.
+
+Let me go.
+
+Also consider: should I use create_goal? The task is a long-running review, but it's a single review deliverable. The instructions say create_goal for long-running objectives across continuation rounds. This review is a single-turn deliverable, though large. I think I can manage without a goal. Hmm, but it says "Use it when the direct human request is a long-running objective, even if the user did not say 'goal'; not for single-turn work." This is arguably single-turn (produce a review report). I'll skip create_goal and use todo_write.
+
+Wait — but there's a concern about output: the report must be delivered to the user as the final answer (I cannot write files). The task says "Do not modify or create any file." So the report goes in my final message. Also YAML header etc.
+
+Let me start reading.
+
+Language: The global instructions require all user-facing output in Simplified Chinese. The report is a review document... The user's request is in English. The global AGENTS.md says output must be Simplified Chinese regardless. But the report content includes technical terms. Hmm. The user explicitly asks for a YAML header with specific fields and sections. I should write the report in Chinese (per repo instruction 默认输出语言) while keeping machine-readable fields/status enums in English. That satisfies both. The repo's AGENTS.md says "所有面向用户的人类可读输出默认使用简体中文，包括 ... Review". So write in Chinese, keeping statuses in English.
+
+Let me begin.
+dsh: reasoning:
+The stderr log is not valid UTF-8. Likely UTF-16LE (PowerShell 5.1 native stderr redirect produces UTF-16LE? Actually with `2>` redirect in PowerShell 5.1 from cmd, it's often... Let me think). I cannot run shell commands. But grep tool may be able to search it. Let me try grep on the file for a pattern like "Get-FileHash" — ripgrep might handle UTF-16 with BOM detection. Let me try.
+
+Also read the evidence JSON (23131 bytes) and the task file. Let's do that in parallel.
+
+Note: I need to determine what the stderr says. The primary evidence: rerun script itself (capture.ps1) wrapper, evidence JSON likely contains the stderr content. Let's read evidence JSON.
+
+Also read REVIEW template.
+dsh: reasoning:
+The stderr log grep found no matches; ripgrep may have treated it as binary or failed to decode. Hmm, "No matches found" - ripgrep skips binary files? Actually ripgrep searches binary files but with a note. Let me try grep with a broader pattern like "." to see if anything matches.
+
+Actually the file is 676 bytes, not UTF-8. It's likely UTF-16LE. ripgrep auto-detects UTF-16 with BOM. If it's UTF-16LE without BOM, ripgrep won't detect and searches bytes with NUL → treats as binary, so no match reported.
+
+I can't use shell commands. Hmm. But I could... The read tool failed. Are there other options? The evidence JSON line 61 contains the error text which matches. But requirement 2 asks me to independently determine from the raw stderr. I need to read the stderr content somehow.
+
+Options: grep with patterns that would match raw UTF-16LE bytes as if they were... impossible for ASCII regex against UTF-16 (bytes interleaved with NUL). But maybe I can grep for a pattern with `\x00`? ripgrep regex supports `\x00`. E.g. pattern "G\x00e\x00t\x00" — ripgrep in binary mode? ripgrep by default stops at NUL detection... Actually ripgrep treats files with NUL as binary and suppresses output unless -a (--text). The grep tool here doesn't expose -a flag.
+
+Alternative: the checkpoint file (57630 bytes) likely quotes the stderr verbatim. Also the manifest may contain it. Let me check via grep for "无法将" in the verification directory and other files.
+
+Let me also try reading stderr with the read tool... failed due to invalid UTF-8. Maybe the file is UTF-16LE with BOM (FF FE) → the read tool decoded it? No, it said invalid UTF-8, so no BOM detection.
+
+Hmm, maybe it's actually GB2312-encoded (Chinese Windows console codepage 936) — the error message is in Chinese, so stderr redirected in PowerShell 5.1 with `2>` from cmd would be... Actually the harness (DSH pwsh) runs PowerShell 7 (pwsh) and the capture script was invoked as `Windows PowerShell ... -File capture.ps1 2>stderr.log`. PowerShell 7's native command output redirection pipes bytes through, and stderr bytes from Windows PowerShell 5.1 would be encoded in the console output codepage (936 = GB2312) or OEM. So the stderr log is likely GBK-encoded Chinese, which is invalid UTF-8. Indeed! The evidence JSON's whoami stdout was "gb2312" decode with codepage 936.
+
+So the stderr log is a 676-byte GB2312 text. I cannot read it as UTF-8. Hmm.
+
+Can grep decode it? ripgrep only handles UTF-8/UTF-16/BOM. Pattern matching on GB2312 bytes for ASCII substrings would still work for ASCII portions (e.g., "Get-FileHash" appears as ASCII bytes in GB2312 stream). Wait — grep for "Get-FileHash" found no matches. Maybe because ripgrep treats the file as binary due to invalid UTF-8 and suppresses matches. Ripgrep's default: binary detection based on NUL byte, not invalid UTF-8. Invalid UTF-8 without NUL: ripgrep searches but prints with lossy conversion? Actually ripgrep uses its own regex engine on bytes; it can search invalid UTF-8 in "bytes" mode when the pattern is valid UTF-8... hmm, in default mode (not -a, not --binary), ripgrep will search and report matches in files with invalid UTF-8? I believe ripgrep reports matches but converts; it may treat as binary if it detects NUL early.
+
+Hmm, no match for "Get-FileHash" suggests either binary suppression or the text uses full-width characters / different name. The error message says "无法将“Get-FileHash”项识别为..." — contains ASCII "Get-FileHash". Unless the stderr log contains a different message.
+
+Let me test with grep patterns: "CommandNotFound", "Unable", ":" etc. Already tried Get-FileHash|CommandNotFound|NoProfile|Module → nothing. Let me try a single-character pattern to test whether the tool can read anything at all: pattern "e" — if it returns matches, the file is searchable and simply lacks those strings.
+
+Let me also grep the manifest and checkpoint for the stderr quote.
+
+Let me run several greps.
+dsh: reasoning:
+Now I have the Task file. Key claim in the Task: capture = BLOCKED / NOT_RUN. But evidence exists: p02pre-r1f-evidence-20261011.json exists with a stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED and process id 15640, Windows PowerShell 5.1.26100.9549, and the stderr log shows the wrapper threw the stop reason exception. So the capture WAS attempted (one actual frozen R1F capture attempt), the script ran, and failed at the first blocking path G:\CODEX\New Manga\.git\index due to Get-FileHash CommandNotFoundException.
+
+Wait — interesting. Get-FileHash is a Microsoft.PowerShell.Utility cmdlet available in PowerShell 5.1 normally. CommandNotFoundException at .git/index, specifically in "Get-FileRecord(.git/index)". The error is Chinese "无法将"Get-FileHash"项识别为..." Which suggests the function Get-FileRecord called Get-FileHash but the command wasn't found. Why? Notably the script was run with -NoProfile... Get-FileHash is part of Microsoft.PowerShell.Utility module, which is auto-loaded. Unless module autoloading is disabled ($PSModuleAutoLoadingPreference = 'None') or the module path env var (PSModulePath) is broken/empty, or the process ran with a restricted environment.
+
+Hmm, but the evidence JSON's process block itself called things... Actually the top of the evidence JSON shows the process captured identity, whoami, etc. Then repository.main.fileInventory is empty and candidateCountKnown false, firstBlockingPath = .git\index, errorOperation = "Get-FileRecord(.git/index)". So the first blocking condition: hashing the .git/index file via Get-FileHash failed with CommandNotFoundException.
+
+But wait: was the module import failure caused by the harness environment? The wrapper (parent) invoked Windows PowerShell 5.1 via -NoProfile. Get-FileHash is in Microsoft.PowerShell.Utility. With -NoProfile, module autoloading is still default-on. So CommandNotFoundException for Get-FileHash is anomalous. Possible causes: PSModulePath not set in the child env (the parent harness may have passed a sanitized environment), or $env:PSModulePath was empty. The task says "do not infer a root cause for module discovery or NoProfile unless the evidence establishes it."
+
+Hmm — but wait. There's a subtlety: the evidence JSON contains many empty sections (environment, paths, wer, protectedHashes) and the "process" block about identity. Actually re-reading: the evidence JSON's top-level "process" is the capture process itself (pid 15640), with executablePath = Windows PowerShell 5.1. So the capture did run under Windows PowerShell 5.1 as intended. The .exit file says 1. The stdout log is 0 bytes. stderr = 676 bytes with the thrown RuntimeException "P02PRE-R1F stopped: MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED; evidence=...".
+
+Hmm wait, but actually who reported the error? The stderr says the script threw "P02PRE-R1F stopped: $($Result.stopReason); evidence=..." — that's from the wrapper script's own throw after the result came back. So the capture ran, produced the evidence JSON with stopReason, and then threw to signal failure.
+
+Now, key question: which runtime actually invoked? The evidence JSON's process.executablePath = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe with version 5.1.26100.9549 and hostName ConsoleHost. And the command recorded: "Windows PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File verification/P02/p02pre-r1f-capture.ps1". So this was the attempted capture (not parse-only). Distinguish from R8 parse-only json which has captureScriptInvoked=false.
+
+Wait — but there's a subtlety! Does the evidence JSON's "process" reflect the *wrapper* process or the *capture* process? The command recorded is the full powershell.exe command line, cwd G:\CODEX\New Manga, t0Utc 2026-10-11T14:17:31.4544035Z, process start 14:17:31.1547594Z. Hmm, the process start is before t0? t0 = 14:17:31.4544, process startTime = 14:17:31.1547 (about 300ms earlier). So the process self-reports its own identity — the process IS the capture script's host process. So the capture script ran under Windows PowerShell 5.1 as intended. 
+
+So this is the actual one-shot capture attempt. The wrapper (PS 7.6.6 per the R8 json parentPowerShellVersion) launched it.
+
+Hmm, wait. Actually is the evidence JSON written by the capture script (create-new target)? Yes: "新鲜执行结果=verification/P02/p02pre-r1f-evidence-20261011.json，唯一 CreateNew 目标". The evidence JSON exists → the script got far enough to write it. And t0StopwatchTicks.
+
+Now check: The evidence JSON has "identity" block with whoami executed (pid 51556). So host identity getter DID run — whoami.exe with exit 0, raw bytes captured, stdout base64, sha256. That's a child process executed. So "hostIdentity: PASS_WITH_EVIDENCE" is evidence-backed.
+
+Then main repository block: fileInventory empty, candidateCount 0, candidateCountKnown false, processedCount 0, regularFileHashCount 0, skippedSymlinkCount 0, unreadUserDataCount 0, firstUnreadUserDataPath null, omittedCount null, firstBlockingPath .git\index, errorOperation Get-FileRecord(.git/index), error = CommandNotFoundException for Get-FileHash, gitMetadata [], state GIT_INDEX_PREHASH_INVALID. rootPathChain PRESENT, gitDirPathChain PRESENT, and gitMetadataBefore {path .git/index, state QUERY_ERROR, errorType System.Management.Automation.CommandNotFoundException}.
+
+So the first blocking condition: pre-hash of .git/index requires Get-FileHash, which was not found on the engine → CommandNotFoundException. The capture stopped before any Git status/inventory/hash.
+
+Interesting nuance for requirement 2/3: The stopReason is MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED — classified as repository baseline/hash failure, not an AC test failure. It's a harness/runtime (engine capability) failure: the command Get-FileHash was not resolvable in that child process. This is not an AC1–AC7 test failure (ACs never ran; Build/Cargo NOT_RUN).
+
+Now: does the evidence prove PowerShell 7 incompatibility? No — the evidence shows the capture ran on Windows PowerShell 5.1 (as frozen) and failed with CommandNotFoundException for Get-FileHash. That doesn't establish PS7 incompatibility. The Task line 33 explicitly says "仓库没有证明 PowerShell 7 不兼容" — consistent. But I must independently verify. The pinned evidence: R8 artifact shows parentPowerShellVersion 7.6.6 (parent = orchestrating shell) and parser/child = 5.1. So 7.6.6 was used only as the parent orchestration shell, not to run the capture. The capture invoked 5.1. So no evidence about PS7 running the script.
+
+Does the evidence establish the root cause of Get-FileHash missing? It shows CommandNotFoundException. It does NOT show PSModulePath, module autoloading preference, or -NoProfile effects. The evidence JSON "environment" section is empty {} — no environment captured. So root cause of module discovery is NOT established. Good — I must not infer.
+
+Hmm, wait. There is an important subtlety worth checking: was command "Get-FileHash" possibly invoked with a scope issue where the function Get-FileRecord is defined... Actually could Get-FileHash be shadowed? No.
+
+Another subtlety: could the script be using `Microsoft.PowerShell.Utility\Get-FileHash`? Let me check the capture script for Get-FileHash usage and the environment/PSModulePath handling. I need to read the script (67582 bytes, ~1500 lines?). Let me grep for Get-FileHash, PSModulePath, Requires, #requires, Set-StrictMode, etc.
+
+Also I need to check requirement 2: whether any Git inventory/hash, scratch, path/ACL, TEMP/cache, WER, registry/profile getter, Build/Cargo, or AC ran. From evidence JSON: repository.main.fileInventory empty, commands {} — so no Git inventory commands recorded. But rootPathChain/gitDirPathChain and gitMetadataBefore path chains show Get-Item attribute queries ran (path getters). scratch: "repository" only has "main" — no scratch block → scratch getters NOT_RUN? Actually the JSON's repository has only main. Hmm, the script probably stops at main before scratch. paths/environment/wer/protectedHashes all empty. So TEMP/cache, WER, registry/profile: NOT_RUN. Build/Cargo: NOT_RUN. AC: NOT_RUN.
+
+But wait — the evidence JSON has "classifications" with private_registry_absence UNPROVABLE etc. And "errors": [] and stopReason. The classification "hostIdentity": "PASS_WITH_EVIDENCE".
+
+Now, are there any other child processes? whoami.exe (pid 51556). Also the stopwatch. Let me check the script to see the order of operations and what runs before the repository baseline. Specifically, maybe WER/registry getters run after the repository block. Let's read the script's main flow.
+
+Also need: requirement 5 — check Plan/STATUS/Task actual-document state vs evidence. Task still claims "Capture 仍=BLOCKED / NOT_RUN" (lines 36, 40, 115) while evidence shows an actual capture attempt occurred with exit 1. So stale state to be corrected by Codex. Need to check Plan/STATUS too. Let me grep for R1F in doc/REBASELINE_PLAN.md and doc/STATUS.md.
+
+Also requirement about manifest and checkpoint: need to check what the manifest says about capture BLOCKED/NOT_RUN and whether it says the capture succeeded, plus the post-run review prompt (dsh-p02pre-r1f-postrun-review-20261011.prompt.md) — wait, that file exists! Interesting: verification/P02/dsh-p02pre-r1f-postrun-review-20261011.prompt.md — that's presumably the dispatch prompt for this very review. It's not in the pinned list, but it's related evidence. The pinned list includes evidence json etc. Hmm, the grep output showed line 21 of that prompt mentioning the stderr log pin. That is this session's prompt presumably. I should be careful: the prompt file may be this review's own dispatch prompt. I can read it as context but it's not a pinned input. Actually it could be helpful to confirm what the dispatch expected. But it's the same as my instructions? The instructions say review the frozen evidence listed. Reading the prompt is fine (read-only). But careful: it's not in the pins; if I rely on it I should mark it non-pinned. Let me read it anyway — it may reveal whether the capture was attempted per Codex's adjudication.
+
+Let me also read the checkpoint file (57630 bytes) — codex-checkpoint-p02pre-r1f-20261011.md — this is the rolling checkpoint, presumably documents the actual capture run. That's a key pinned input.
+
+And manifest (44417 bytes) — pinned.
+
+Let me plan reads carefully to manage context. The checkpoint is 57KB (~ maybe 700 lines?). Let me grep first for key markers in manifest/checkpoint: "capture", "BLOCKED", "NOT_RUN", "Get-FileHash", "CommandNotFound", "MAIN_REPOSITORY_BASELINE".
+
+Let me do targeted greps.
+
+Also requirement 1 says read the repository REVIEW template and follow its required Architecture and Verification sections — done (template read). Note the template requires: YAML header, 范围与依据, Standards(optional), Spec(optional), Findings table, 验证 table, 结论与复审. My report must include Architecture conclusion and Verification section.
+
+Let me now grep the script for relevant pieces and grep manifest/checkpoint.
+
+Plan of greps:
+1. grep in capture.ps1 for "Get-FileHash"
+2. grep in capture.ps1 for "PSModulePath|AutoLoading|Requires|#requires"
+3. grep in checkpoint for "Get-FileHash|MAIN_REPOSITORY|BLOCKED|NOT_RUN|exit"
+4. grep manifest for "capture|BLOCKED|NOT_RUN|Get-FileHash"
+
+Let me batch a few. grep tool returns up to 250 matches; for large files that could be huge. Use precise patterns.
+
+Let me start with the script.
+dsh: reasoning:
+Important: the checkpoint still claims capture = BLOCKED / NOT_RUN (line 253, 279). But this checkpoint might be the pre-run checkpoint, written before the capture run. Wait, but the checkpoint is 57630 bytes and its SHA is pinned. It may be the rolling checkpoint frozen at pre-run. Hmm, but the task's post-run review requires a checkpoint that records the actual run... Let me look at the checkpoint more carefully — grep found "Line 350" and "Line 53" etc. Let me check the structure: maybe the checkpoint has multiple sections appended, with a later section documenting the actual run. Let me look at the checkpoint's line count and headings.
+
+Let me grep for headings "^#" in checkpoint, and for "14:1" timestamps or "T0".
+
+Also note: is there a separate post-run checkpoint? Let me glob verification/P02 for postrun files.
+
+Let me do:
+- grep "^#" checkpoint
+- glob "verification/P02/*postrun*"
+- grep "^#" manifest
+
+Also read the checkpoint lines around 240-300 and 300-360.
+
+Let me be efficient: read checkpoint in chunks. 57630 bytes ≈ maybe 400 lines (Chinese chars are multi-byte). grep said line 350 exists. Let's read the whole checkpoint? That's ~57KB → maybe 20k tokens. That's heavy but this is the central evidence. Maybe read selectively: headings first.
+dsh: reasoning:
+The checkpoint's line 1 says "PRE_RUN_PASS；capture released for one read-only run" — so this checkpoint is the pre-run checkpoint that released the capture. It was frozen before the capture run (it doesn't know about the run result). Its "current state" claims capture BLOCKED/NOT_RUN from section at line 253 which is a later section? Wait: line 253 is within "Final pre-run adjudication — 2026-10-11" section (starts line 59, ends ~247?). Hmm line 247 starts "## 当前 READY 与安全边界" again, 255 "## Live Git...". Confusing: there appear to be two sets of sections. Let me read the checkpoint to understand. It's important for requirement 5 and to determine whether the checkpoint records the actual run.
+
+Let me read lines 1-100 and 240-290 of the checkpoint.
+
+Also the checkpoint is a pinned input with SHA 2549011927E49C70D5ACEDEB08C3A45BC3151E7623C8171AA6B4F22C0ACA0973. The fact that it says "capture released for one read-only run" and the state claim "Capture=BLOCKED / NOT_RUN" — those might coexist: released (authorized) but not yet run at time of the checkpoint. But then after the run, is there a post-run checkpoint? The glob shows only the prompt file for postrun, no postrun checkpoint. The Task says post-run adjudication path = p02pre-r1f-postrun-adjudication-20261011.md (doesn't exist yet). And rolling checkpoint = codex-checkpoint-p02pre-r1f-20261011.md, which is pinned — has it been updated post-run? Its SHA is pinned as 2549011... The task line 36 says "当前只补齐审查及 post-run 证据路径". Hmm.
+
+Let me check whether there is any document that records the post-run state. Let me glob verification/P02 for files modified recently... glob returns by modification-time order? "Returns up to 100 paths in modification-time order" — earlier glob of p02pre-r1f* listed many files; order seemed roughly alphabetical/grouped, not clearly mtime. Hmm.
+
+Key question for requirement 5: "Check actual-document state against evidence. If Plan/STATUS/Task still claim capture BLOCKED / NOT_RUN, identify that as stale state to be corrected by Codex."
+
+So I need to verify whether Plan/STATUS/Task claim BLOCKED/NOT_RUN. Task: yes (lines 36, 40, 115). Let me grep Plan and STATUS for R1F.
+
+Let me grep doc/REBASELINE_PLAN.md and doc/STATUS.md for "R1F" occurrences (limited).
+
+Also read checkpoint sections.
+
+Let me batch:
+1. read checkpoint lines 1-100
+2. read checkpoint lines 240-290
+3. grep Plan for R1F
+4. grep STATUS for R1F
+
+Grep for R1F in Plan/STATUS may return many matches (plan 277KB). Let me use pattern "R1F" with include the file; up to 250 matches. Might be large. Let's try with a more specific pattern "R1F.*(BLOCKED|NOT_RUN|capture)" — ripgrep regex is per-line. Chinese text lines may be long. Risky but fine.
+
+Actually the files are large with long lines potentially. Let me just grep "P02PRE-R1F" in both, and control output by reading the spill file if needed.
+
+Let me do it.
+dsh: reasoning:
+STATUS.md line 5 (current top state, 2026-10-11): "Capture=`BLOCKED / NOT_RUN`；下一步为 final pre-run." But the checkpoint top says final pre-run PASS, capture released and (per the pinned evidence) actually executed once with exit 1. So STATUS is stale in two ways: (a) it says capture BLOCKED/NOT_RUN and next step = final pre-run, while the pre-run was already adjudicated PASS and the capture was already executed (failed). Hmm — the STATUS top state seems to be from before the final pre-run adjudication (cohort #11 adjudicated). The checkpoint (which is the recovery point) records the final pre-run PASS and release.
+
+Wait, but maybe STATUS was updated to the state at cohort #11 adjudication, and the final pre-run + capture happened after the STATUS edit. The pinned STATUS SHA 1ABBEF71... matches the checkpoint's "current integrated source pins" line 38 → so STATUS as pinned = 285810 bytes matches. And the checkpoint's final pre-run adjudication section is at line 59+, which was written as line 1-58 = frozen part? Confusing: the checkpoint file has header (lines 1-58) then "## Final pre-run adjudication — 2026-10-11" (line 59) then historical sections. Wait line 58 is "## Historical checkpoint:` 及其后历史记录..." — weird formatting. So the file seems to have a new top section (lines 1-58) prepended to the old checkpoint content, and the "Final pre-run adjudication" section at line 59 is part of the older content? Hmm no. Let me re-read: line 1 title says PRE_RUN_PASS. Lines 5-56 are current. Line 58 looks like a corrupted heading "## Historical checkpoint:` 及其后历史记录，不声称旧文字全部未改。" then line 59 "## Final pre-run adjudication — 2026-10-11". Then line 247 "## 当前 READY 与安全边界" etc. (older sections), line 283 "## Historical checkpoint: P02PRE-R1F R5 Review 已派发", line 329 "## Historical checkpoint: P02PRE-R1F Round 3 Review 之前".
+
+So the file: newest at top (lines 1-57), then a section "Final pre-run adjudication" (lines 59-246) which precedes the "当前 READY 与安全边界" (line 247) — that older block says Capture=BLOCKED/NOT_RUN (line 253) meaning at that older time. Actually chronologically: line 247-282 block is older (pre-final-pre-run), and the final pre-run adjudication (59-246) is newer. But it's placed after line 58? That doesn't fit "newest first". Hmm, whatever — the ordering may be: top block newest; then the final pre-run adjudication section (which is new, inserted); then older Historical checkpoints. Line 58 heading is likely a mangled insertion point heading. Anyway.
+
+Key: checkpoint line 253 says "Capture=`BLOCKED / NOT_RUN`；final pre-run 未释放" — but that's in the older block (which is now historical). Line 19 (top, newest) says "Capture=`RELEASED_FOR_ONE_READ_ONLY_CAPTURE / NOT_RUN`；pre-run=`PASS_WITH_EVIDENCE`。capture 尚未执行。" So at checkpoint write time the capture had NOT yet run. The capture ran after the checkpoint was frozen (T0 14:17:31Z). So the checkpoint is pre-run evidence and does not reflect the run — expected, not necessarily a defect. But requirement 5 mentions Plan/STATUS/Task claiming BLOCKED/NOT_RUN as stale.
+
+Now the actual run: was there any post-run record besides evidence JSON + wrapper logs? The task says post-run adjudication path = verification/P02/p02pre-r1f-postrun-adjudication-20261011.md which doesn't exist yet (per glob). The postrun review prompt exists (dsh-p02pre-r1f-postrun-review-20261011.prompt.md) — the dispatch prompt for me.
+
+Let me read that prompt file to understand what Codex states about the run (it's an unpinned dispatch artifact, but useful). Note requirement says review only the frozen evidence listed and the repository records. The prompt IS a repository record. I'll read it, and mark its status as non-pinned.
+
+Also I should check the capture script's flow to determine what ran before the block and what the script does after (to know which downstream classifications were "not reached"). Especially:
+- Where Get-FileHash at line 260 is used (probably Get-FileRecord's hash helper) and line 436-437.
+- The order: identity getters (whoami, token), then main repo baseline (git commands, index pre-hash), then scratch, then path/ACL getters, TEMP/cache, WER, registry.
+- The errorOperation "Get-FileRecord(.git/index)" indicates it happened during the "git metadata before" step (gitMetadataBefore query for .git/index). Wait: gitMetadataBefore queries .git/index state, and error type CommandNotFoundException. Actually pathChain in gitMetadataBefore goes down to .git/index, state QUERY_ERROR. And repository.main.firstBlockingPath = .git\index, errorOperation = "Get-FileRecord(.git/index)".
+
+Hmm interesting: but the evidence JSON shows the wrapper's own identity getters ran and provided whoami stdout; then repository.main started, did rootPathChain (Get-Item on root components), gitDirPathChain, then gitMetadataBefore for .git/index → Get-FileRecord → Get-FileHash → CommandNotFoundException.
+
+Wait, but before hashing .git/index, the script should run Git commands (git status, etc.) to get inventory? The evidence shows commands {} empty and gitMetadata [] and fileInventory [] — so no Git child process ran for main? Hmm, "commands": {} — the record is an ordered dictionary that stayed empty. That suggests the main repository baseline flow failed before running Git commands... or Git commands are recorded elsewhere. Let me check the script to understand the main repository baseline order. Possibly the order is: root path chain → gitdir chain → .git/index pre-hash (gitMetadataBefore) → then git commands. If pre-hash failed, nothing else ran. That matches "state": "GIT_INDEX_PREHASH_INVALID" and stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED.
+
+Also "protectedHashes": {} empty → protected-hash step not reached. environment {}, paths {}, wer {} → TEMP/cache/path/ACL/WER/registry getters not reached.
+
+Let me now read the script around those lines and the main flow to confirm order and to determine which getters are ordered before/after. Let me grep for function definitions and the main orchestration section.
+
+Also check: does the script have a `$psVersion`/engine check? Does it capture $env:PSModulePath? Let me grep for 'PSModulePath' → no match. So the environment section ({}) is presumably filled by getters later.
+
+Let me look at the script structure: grep for '^function ' and 'Get-FileRecord'.
+
+Also grep for "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED" in the script to see classification logic.
+
+Let me also check whether the script includes a self-check or "assert" that would have prevented run. Not needed.
+
+Let me batch greps.
+dsh: reasoning:
+The prompt matches my instructions exactly. Good.
+
+Now let me examine the script's main flow to answer requirement 2 precisely. Let me read key parts:
+- lines 1-50 (header, params)
+- lines 90-135 (Invoke-Git, Get-ByteHash)
+- lines 227-340 (Get-PathChain, Get-FileRecord, Get-RepositoryRecord start)
+- lines 560-700 (main orchestration: evidence assembly, stopReason)
+
+Let me read the script lines 227-340 and 560-700 or wherever main flow is. First check total line count. The script is 67582 bytes; grep showed line 621 exists. Let me read around 580-700.
+
+Let me batch: read 240-340, read 590-700.
+dsh: reasoning:
+Now the flow is clear:
+
+Main flow:
+1. Self-checks (in-memory assertions) — Assert-InventoryPolicySelfCheck, Assert-CommandSerializationSelfCheck, Assert-InventoryParserSelfCheck. These ran (script continued).
+2. $Result.process — the host process identity: pid, startTimeUtc, executablePath, powerShellVersion, hostName. Evidence JSON shows these.
+3. whoami /all via Invoke-CapturedProcess → ran, exit 0.
+4. identity → PASS_WITH_EVIDENCE (line 618). Matches evidence classifications.hostIdentity=PASS_WITH_EVIDENCE.
+5. Get-RepositoryRecord 'main' → line 313 rootPathChain (Get-PathChain on G:\CODEX\New Manga → PRESENT), line 314 gitDirPathChain (→ PRESENT), 321-322 Get-Item, 328 checks, 333 Get-FileRecord(.git\index) → Get-FileHash → CommandNotFoundException caught at line 261 → state QUERY_ERROR with errorType CommandNotFoundException → line 334 → Set-RepositoryStop GIT_INDEX_PREHASH_INVALID, errorOperation 'Get-FileRecord(.git/index)', firstBlockingPath .git\index → return.
+6. line 621 → stopReason = MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED.
+7. line 623: since stopReason set, scratch repo block skipped; environment/paths/WER/registry/protected-hash blocks all skipped.
+8. Evidence JSON written (CreateNew) with classifications and stopReason.
+9. Wrapper threw RuntimeException with "P02PRE-R1F stopped: MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED; evidence=..." → stderr log 676 bytes; exit 1.
+
+Wait: the evidence JSON lacks the "homeEnvironmentCheck", "aclStability", "summary" fields? It has classifications and stopReason, errors []. The evidence JSON I read has top-level keys: task, manifest, t0Utc, t0StopwatchTicks, command, cwd, process, identity, repository, environment, paths, wer, protectedHashes, classifications, errors, stopReason. No homeEnvironmentCheck, no summary. Consistent with stopping before those.
+
+Important: "command" field in evidence JSON: "Windows PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File verification/P02/p02pre-r1f-capture.ps1" — matches the frozen command in Task line 81 (minus full path prefix). Note: the script's $Result.command is presumably built from script params. Let me check how "command" is set — probably a fixed string or from $MyInvocation. Let's check lines 700-913 for the evidence write and how command/cwd are set, and where the wrapper writes stdout/stderr/exit.
+
+Also need to verify: does the evidence JSON's "t0Utc" get set at start? Yes probably.
+
+Now, was the process recorded as Windows PowerShell 5.1? The evidence JSON process.executablePath = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe; powerShellVersion 5.1.26100.9549; hostName ConsoleHost. That is self-reported by the capture process. Good — but note: self-reported, not independently verified by the wrapper. However the R8 parse-only artifact separately confirms 5.1 for parser child. For the capture run, evidence JSON's process block is the process's own self-report (MainModule.FileName). That is reasonably strong. Also the wrapper command recorded in evidence JSON "command" field states the Windows PowerShell invocation.
+
+Hmm — but is there an independent wrapper-side record of the actual executable/argv? The wrapper logs are stdout (0 bytes) and stderr (676 bytes with the throw) and exit (1). The wrapper presumably wrote nothing else. Where is the wrapper script itself? Is there a wrapper PS1? The task mentions "Capture wrapper 原始输出". The wrapper might be an inline command in the Codex orchestration. Hmm. Let me check the manifest for the exact capture command and wrapper details. Let me grep manifest for "stdout.log" / "wrapper".
+
+Actually requirement 2 asks: "which executable/runtime was actually invoked". Evidence: evidence JSON process block (self-report) + command string. Is there any independent record? The stderr log was produced by the parent wrapper (PS 7.6.6?) — the throw text has PowerShell error formatting. Actually the stderr's CategoryInfo "OperationStopped" and the code line `+ ... opReason) { throw "P02PRE-R1F stopped: $($Result.stopReason); evidenc ...` — this is a throw inside a script, formatted by the parent shell's error formatter. Which shell produced this stderr? If the wrapper ran under pwsh 7 with `powershell.exe ... 2> file`, stderr bytes would be whatever powershell.exe wrote to its stderr — i.e., the child's own error stream. Since the child (Windows PowerShell 5.1) threw an unhandled exception, the child wrote the error to stderr, and the parent redirected to file. The `+ ...` source-line excerpt would show the child script's line. But the excerpt shows `opReason) { throw "P02PRE-R1F stopped: ...` — that's in the child script (capture.ps1) presumably at the end. Let me verify by grepping capture.ps1 for 'P02PRE-R1F stopped'.
+
+Wait, actually the throw might be inside the capture script itself, after writing the evidence JSON. Let me check the tail of the script (lines 850-913).
+
+Hmm, but then who wrote the exit file with "1\r\n"? The wrapper. The stdout 0 bytes because everything goes to the JSON/stderr.
+
+Note: the error text in the stderr excerpt is preceded by "(line is not valid UTF-8)" in the grep output — the grep tool decoded some lines. The 676-byte stderr likely contains a mix: UTF-8? Actually the grep output showed lines 1-2, 4-8 with mojibake absent — the text appears ASCII/latin. It said "(line is not valid UTF-8)" at line 3, probably a Chinese character line (the error message in Chinese from Get-FileHash? No, the thrown message is ASCII). Interesting: line 3 might contain the Chinese "无法将..." no... Actually the throw message is ASCII. Hmm, line 3 could be the line with `+ FullyQualifiedErrorId` etc. Wait line 3 says "(line is not valid UTF-8)" meaning that line had bytes not valid UTF-8 — probably a Chinese-character-containing line, e.g. "所在位置 行:1 字符: 1" (PowerShell 5.1 Chinese localizes error headers). Actually the grep results show lines 1,2 then "(line is not valid UTF-8)" then 4..9. So the file has ~10 lines, some in GBK.
+
+So the stderr content: 
+Line1: "P02PRE-R1F stopped: MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED; evidence=G:\CODEX\New Manga\verification\P02\p02pre-r1f-ev" 
+Line2: "idence-20261011.json"
+Line3: invalid UTF-8 (likely localized header like "所在位置 行:1 字符: 1")
+Line4: "+ ... opReason) { throw "P02PRE-R1F stopped: $($Result.stopReason); evidenc ..."
+Line5: "+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+Line6: "+ CategoryInfo : OperationStopped: (P02PRE-R1F stop...e-20261011.json:String) [], RuntimeException"
+Line7: "+ FullyQualifiedErrorId : P02PRE-R1F stopped: MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED; evidence=G:\CODEX\New Manga "
+Line8: "   \verification\P02\p02pre-r1f-evidence-20261011.json"
+Line9: " "
+
+So the throw is indeed in the child script, and the two-sentence message wrapped. The excerpt `+ ... opReason) { throw "P02PRE-R1F stopped: $($Result.stopReason); evidenc ...` shows source code with "opReason) { throw" — likely from a line like:
+
+if ($Result.stopReason) { throw "P02PRE-R1F stopped: $($Result.stopReason); evidence=$EvidencePath" }
+
+Let me verify the tail of the script. Read lines 850-913.
+
+Also I want to check the "command" field construction and the evidence write, and whether the script itself records the invoked command line. Let me read 780-913.
+
+Also check where the t0/stopwatch/command/cwd come from — probably param defaults at top. Let me read lines 1-60 too maybe. Actually the "command" string in evidence JSON is a parameter? Let me grep for "t0StopwatchTicks" and "cwd".
+
+Also need requirement 5: grep Plan for R1F state. Let's do that.
+
+Batch:
+1. read capture.ps1 lines 840-913
+2. grep capture.ps1 for "t0Utc|cwd|command =" 
+3. grep doc/REBASELINE_PLAN.md for R1F
+4. grep manifest for "wrapper|stdout.log|exit" — maybe too many; use "capture-20261011"
+dsh: reasoning:
+Confirmed: the Plan still contains "R1F 单次只读取证 capture · BLOCKED / NOT_RUN" and the current Active step = final pre-run (line 13). This is stale relative to the actual run: final pre-run was adjudicated PASS and the capture ran once (exit 1). Also line 54 is a historical block.
+
+Now the tail of the script: line 912 `if ($Result.stopReason) { throw "P02PRE-R1F stopped: $($Result.stopReason); evidence=$EvidencePath" }` — exactly matches the stderr line 4 excerpt ("opReason) { throw "P02PRE-R1F stopped: ..." — hmm, the excerpt starts with "opReason)" which could be "$Result.stopReason)" truncated). Yes! Line 912 has `$($Result.stopReason)` then `; evidence=$EvidencePath`. The `+ ... opReason) { throw ...` matches "…stopReason) { throw …". So the stderr is from the child script's own unhandled throw. 
+
+So the child ran to completion of the evidence write and then threw deliberately because a stopReason existed. Exit code 1 from powershell.exe due to unhandled terminating error. stdout 0 bytes because the only Write-Output (line 913) was not reached. This is fully consistent: stdout empty, exit 1, stderr = the exception record.
+
+This is strong internal consistency evidence. 
+
+Now: is there an independent wrapper record of the child's argv/executable? The evidence JSON `command` field = "Windows PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File verification/P02/p02pre-r1f-capture.ps1". Let me check how `command` and `cwd` are set — grep showed only t0 lines; let me check lines 1-47 (param block) for $Command/$Cwd params.
+
+Let me read lines 1-48.
+
+Also, I should verify the manifest's capture command (exact argv) to compare with the evidence JSON's command string — the manifest freezes the exact command. Let me grep the manifest for "powershell.exe".
+
+Also need to check the manifest for what it says about the wrapper exit/stdout/stderr paths and whether post-run evidence paths are registered (Task line 68 says all new paths must be registered in Task/manifest). The manifest pinned version is pre-run, so post-run files (evidence JSON, stdout/stderr/exit) were presumably registered as planned targets. That's fine.
+
+Also requirement: "which downstream classifications are evidence-backed versus not reached" — from evidence JSON classifications: hostIdentity PASS_WITH_EVIDENCE (evidence-backed by whoami record); the rest: private_registry_absence UNPROVABLE, profile_api_path_and_store REQUIRES_ACTIVE_TEST, lpac_write_and_child_closure REQUIRES_ACTIVE_TEST, product_build_and_ac1_ac7 NOT_RUN, process_and_path_access_closure UNPROVABLE_NOT_MONITORED_IN_R1F, tempCache UNPROVABLE, werEffectivePolicy UNPROVABLE, repositoryProtectedInventory UNPROVABLE. Note the plan/script would compute some of these later (lines 863-871) with FAILED/PASS logic; but since the script stopped early, those computed values were never assigned. The classifications present in the JSON match the initial defaults set at line ~19-40 presumably. Let me read lines 1-47 to see the initial classifications defaults — this is important: are these UNPROVABLE/REQUIRES_ACTIVE_TEST values *defaults* (i.e., set before any work) rather than measured results? If yes, then their "evidence-backed" status is: they are the declared pre-run defaults, not post-measurement conclusions, and the JSON's stopReason explains they were never reached. That's a crucial verification point: are the classifications in the JSON honestly representing "not reached" or do they look like measured results? They are UNPROVABLE/NOT_RUN etc., which is the conservative default. But do they say "not reached"? The JSON has stopReason=MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED and empty repository/environment/paths/wer/protectedHashes, and errors=[] (empty!). Hmm, errors is empty but the stop was recorded via stopReason and the repository record's error. That's fine.
+
+One possible finding: the evidence JSON does not contain an explicit "captureStatus" field or a per-step "reached" marker; a reader must infer which steps ran from empty sections. But the structure is quite explicit (empty fileInventory/commands + state GIT_INDEX_PREHASH_INVALID + stopReason). Also it omits `summary` and `homeEnvironmentCheck` — the absence is itself informative but not self-documenting. Hmm. Is this a P2/P3 finding? Possibly a P3: the JSON does not enumerate which getters ran vs not-run; downstream classification values (UNPROVABLE / REQUIRES_ACTIVE_TEST / NOT_RUN) appear without an explicit "NOT_REACHED" marker, so an independent reader must reconstruct reachability from empty sections. But the details do support it. I'd make it P3.
+
+Let me read lines 1-47 to see defaults and params.
+
+Also I should check the manifest for the exact expected argv and check the evidence JSON's process/command match. Let me grep manifest for "WindowsPowerShell" or "powershell.exe".
+dsh: reasoning:
+Excellent. Now I have:
+- Script line 15: preflight check `Test-Path $EvidencePath` → target absent at run start (else it would throw before T0). Actually the throw at line 15 happens before T0/Result. Since the evidence JSON was created with CreateNew successfully and has t0Utc, the target was absent before the run. Additional evidence that this was the first/only write to that path.
+- Script line 24: `command` is a hard-coded string, not the actual $MyInvocation. So the evidence JSON's "command" field is a declared contract string, NOT an independent record of the actual argv. Important nuance for requirement 2: the evidence JSON's process block (self-reported powerShellVersion/executablePath) is the capture script's own in-process observation; the command string is hard-coded in the script. So independent confirmation of the invoked runtime comes from: (a) the process self-report, (b) R8 parse-only artifact (separate run, confirms 5.1 parser), (c) the wrapper logs (stderr shows the child script's line 912 throw — proving the child script ran under PowerShell; the error format is Windows PowerShell style). Hmm — is the stderr error format distinguishable between PS 5.1 and PS 7? PS 7 error format also uses "+ CategoryInfo / + FullyQualifiedErrorId" for script exceptions. Actually both do. But the key point: the wrapper's own log shows the child's throw, and the JSON's process record self-reports 5.1.
+
+Also note: `$Host.Name` = ConsoleHost (both 5.1 and 7 report ConsoleHost, so not discriminating), but powerShellVersion 5.1.26100.9549 is self-reported.
+
+Is there an independent record of the exact executable invoked by the wrapper? The wrapper is external (Codex orchestration). No wrapper script in the repo? Let me check: is there a wrapper script artifact? Task line 35 says "Capture wrapper 原始输出=...". The wrapper may be an ad-hoc command from Codex's shell. Its exact command isn't in the pinned evidence. Hmm. The evidence JSON command field (hard-coded) matches the manifest-exact argv. The process self-report gives the executable path and version inside the child. Since a 5.1 process reports 5.1, and the JSON was written by that child, the child's runtime is established to reasonable confidence by self-report.
+
+Caveat: self-reported values by the same process being examined are not independent verification. But combined with R8 artifact (child executable path for parser = the same powershell.exe path, version 5.1.26100.9549) and the wrapper's redirection of that exact command, it's sufficient. I can note this as a limitation (P3) about self-report vs independent attestation, if the evidence package claims independent verification. Does any document claim the capture's runtime was independently verified? The Task says "冻结 capture/parser executor 为 Windows PowerShell 5.1.26100.9549". The evidence JSON's process block is self-report. I'll note as a P3 or just an observation (verification limitation), not a blocking finding.
+
+Hmm, careful: the requirement says "Independently determine ... which executable/runtime was actually invoked". I can determine to a reasonable degree: Windows PowerShell 5.1 (powershell.exe). I should state the basis and the limitation.
+
+Now, let me check the manifest for the post-run classification expectations — does the manifest/Task prescribe how a failed capture should be classified (five-state)? Task says post-run adjudication by Codex with five-state classification. The evidence JSON's stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED — is that the right classification, vs. e.g. HARNESS_FAILURE like the earlier self-check wrapper failures (which were labeled HARNESS_FAILURE / NOT_A_SCRIPT_RESULT in the Task's test table)? Key question in requirement 3: distinguish capture/harness runtime failure from AC test failure.
+
+The failure occurred inside the capture script's own repository baseline step: it needed Get-FileHash (a standard Microsoft.PowerShell.Utility cmdlet) and the engine reported CommandNotFoundException. Two readings:
+(a) Harness/runtime environment failure: the child process's module environment lacked Get-FileHash (e.g., PSModulePath not propagated, module autoloading disabled by group policy/registry, or constrained language mode). Since the parent passed -NoProfile, module autoloading is still on by default; but $env:PSModulePath is normally set at process start by the OS/registry, not by profile. So a missing Get-FileHash suggests environment (PSModulePath) or language mode issue, or something in that particular child.
+(b) Script failure: the script depends on Get-FileHash without verifying the cmdlet's availability — arguably a script design gap (no engine capability preflight). But the script had passed R8 parse-only (parse ≠ runtime command availability).
+
+Neither is an AC test failure. AC1–AC7 were not run. The capture is a pre-Gate host evidence collection, not an AC test.
+
+The evidence does NOT establish why Get-FileHash was unavailable: the JSON has no environment block (empty {}), no PSModulePath record, no module list, no LanguageMode record. So root cause = UNKNOWN; the classification MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED is accurate as an observed stop but silent on locus (script vs environment). So I should state: the observed condition is accurately recorded as a stop with CommandNotFoundException; but the evidence does not identify the locus/root cause, and Codex must not attribute it to PowerShell 7 (PS7 wasn't the executor) nor to a script logic error vs environment. 
+
+Wait — actually, note the R8 parse-only child and this capture child both ran under powershell.exe 5.1. The R8 parse-only child successfully ran `ScriptBlock::Create` (a .NET method) and JSON export — did it use Get-FileHash? The R8 artifact records sourceSha256 computed by the parent in-process? "parentRecheckSha256" and child "childInputSha256". The child computed the SHA of the file — how? Maybe via Get-FileHash. If the parse-only child successfully used Get-FileHash under the same harness environment, that would be evidence that the cmdlet was available in the parser child but not in the capture child → environment inheritance difference. That's an interesting inference! Let me examine the R8 JSON: it has "childInputSha256" and the stdout JSON includes sourceSha256 — the child code "source bytes not passed"; the child read the source path and computed hash. How? Perhaps using [System.Security.Cryptography.SHA256] or Get-FileHash. I don't have the parser child code (frozen code not in repo? The parentPowerShellVersion 7.6.6, parserArguments has "<frozen parse-only child code; source path passed, source bytes not passed>"). So the child code isn't recorded. Can't tell.
+
+But wait: the self-check artifacts (r5-followupfix5-selfcheck) mention "Child read the exact source path; source bytes were not passed on command line or stdin" and parseResult PARSE_OK. If those child snippets used Get-FileHash, then Get-FileHash worked in that environment. Hmm, still the child code isn't retained. Let me check one self-check JSON to see if there's a hash method recorded. Actually not necessary.
+
+Important potential finding: the capture child's environment may have differed from the parse-only child's environment (both launched by PS 7.6.6 parent). If the parse child could hash and the capture child couldn't, the difference is unexplained. But do we have evidence the parse child used Get-FileHash? Not from the pinned evidence. The Task/manifest state the parent-side hashing used .NET/Get-FileHash/certutil in separate contexts.
+
+Hmm — also relevant: the manifest line 27 says the parser target/executor = powershell.exe; the parser artifact records parentPowerShellVersion 7.6.6. So the same PS7 parent launched powershell.exe children successfully multiple times. The CommandNotFoundException is therefore local to the capture child's environment/module state. Since evidence lacks the child environment record, root cause remains UNKNOWN/UNPROVABLE. That's the honest classification.
+
+Let me now consider: could the CommandNotFoundException be caused by the script itself? Look at context: line 260 inside function Get-FileRecord. Functions defined in the same scope; Get-FileHash is a cmdlet, not the function. Is there any chance the script defines a function named Get-FileHash... no. Is there a possibility that the script's own `Get-FileRecord` shadowing? No.
+
+Another possibility: `-NoProfile` + PowerShell 5.1 + a policy "Turn off module autoloading"? Not evidenced.
+
+Also worth noting: the earlier R5 self-check wrapper attempt #1 had "PS 7 parent passed full Base64 source on command line; child launch failed at command-length limit" → HARNESS_FAILURE. So the project has a precedent of distinguishing HARNESS_FAILURE from script results.
+
+Now: Was this invocation "the attempted capture" (one-shot)? Yes: evidence JSON target absent-precheck passed (line 15) and CreateNew write succeeded; t0 recorded. So the one-shot was consumed. The .exit=1, stdout 0 bytes, stderr = deliberate throw. And the evidence JSON's presence means the capture ran and produced the (partial/stopped) evidence.
+
+Hmm, wait. One important consistency check: requirement says "the one actual frozen R1F capture attempt". And the Task line 34 says evidence JSON is "唯一 CreateNew 目标". Also the Task's AC (line 59) says a pre-run release is required. The checkpoint says PRE_RUN_PASS/released. So the run was authorized. Good.
+
+But hold on: STATUS (pinned, line 5) says "Capture=BLOCKED / NOT_RUN；下一步为 final pre-run" while the checkpoint (pinned, line 1, 15, 19) says PRE_RUN_PASS and capture RELEASED_FOR_ONE_READ_ONLY_CAPTURE. These two pinned documents contradict each other on whether the final pre-run happened. Both are pinned in this review's input list, so the pinned set is internally inconsistent regarding the pre-run state — that IS a finding (P2/P3?): the frozen input set itself contains contradictory state (Plan/STATUS stale vs checkpoint). The review prompt anticipates this (requirement 5), so it's a known stale-state item to be corrected by Codex, likely P3 or P2. Since the review's requirement 5 explicitly asks to identify it, I'll record it as a finding with severity P3 (documentation staleness; no safety impact) — or P2 because a reader/next agent could be misled into thinking the capture never ran and could re-release a second capture against the one-shot rule. Hmm, that's a real risk: if STATUS says capture BLOCKED/NOT_RUN, a successor might re-run the capture with the same script/output target → violating the one-shot rule and immutability. I'd rate P2: state documents contradict the actual executed one-shot; correction needed before any successor dispatch.
+
+Also check: does the Task itself, despite line 40/115 saying BLOCKED/NOT_RUN, contain any post-run section? Task line 36 says "当前只补齐审查及 post-run 证据路径" — it mentions post-run evidence paths. Let me check whether the Task lists the post-run review/adjudication paths (line 64 yes: post-run Review paths + adjudication path, and rolling checkpoint). Line 68 (write scope) includes "post-run Review 的 prompt/stdout/stderr/exit、p02pre-r1f-postrun-adjudication-20261011.md、rolling checkpoint". So the Task anticipates post-run artifacts but its state fields do not record the run.
+
+Let me check whether the Task's "测试、Gate 和阻塞" table has a row for the actual capture run — line 115 says "当前 host capture ... BLOCKED / NOT_RUN | R8 parse-only is complete; ...仍需 final pre-run adjudication 明确释放". So no row for the executed run. Confirm: only lines 90-114 rows. So Task lacks the run record.
+
+Now: does any repo record post-run state? Let me search for "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED" across the repo (excluding .tmp.driveupload) to find all documents that mention it. If only the evidence JSON, then no document records the run → the state is unrecorded everywhere except raw evidence. That's the "post-run adjudication pending" situation. This is expected for the review (Codex will adjudicate after this review). But requirement 5 asks specifically about Plan/STATUS/Task claims.
+
+Let me grep repo-wide for MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED and for "GIT_INDEX_PREHASH_INVALID".
+
+Also grep for the stderr/exit filenames in Task/manifest (whether registered).
+
+Also: is the evidence JSON referenced anywhere (e.g., in checkpoint/manifest as expected absent)? The manifest expects it absent pre-run.
+
+Let me batch greps:
+1. grep "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED" pattern across repo (include *.md, *.json) — but exclude .tmp.driveupload? The grep tool doesn't support exclusion; it globs "*.md". .tmp.driveupload may contain files; the instruction says don't inspect .tmp.driveupload contents or metadata. A repo-wide grep might read them. Safer: grep specific directories/files. Let me grep in doc/ and verification/P02/.
+
+Let me grep path verification/P02 and doc with include "*.md".
+
+2. grep verification/P02 for "GIT_INDEX_PREHASH_INVALID".
+
+Also I want to check the manifest's pinned catalog of expected outputs and whether wrapper stdout/stderr/exit and evidence JSON expected-absent targets are listed with exact paths (line 59 says Task lists them). Task line 35 lists them. Good.
+
+Let me also verify the 0-byte stdout claim: stdout log read gave... I didn't read it; the glob/read attempt: I read exit (1) and stderr (invalid UTF-8). Let me read the stdout log (0 bytes) — read tool on empty file returns empty; fine, but the pin says 0 bytes = empty hash E3B0... consistent with SHA-256 of empty string. I know E3B0C442... is the empty-string SHA-256. Good.
+
+Exit file: content "1" (3 bytes: "1\r\n"). Hmm! Task line 55 mentions exit pins like "3 / 13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354" for content "0\r\n". Our exit file SHA is F1B2F662800122BED0FF255693DF89C4487FBDCF453D3524A42D4EC20C3D9C04 with 3 bytes and content "1". Let me verify: SHA-256 of "1\r\n" — I can't compute without shell. But I can sanity check plausibility: the read showed "1". The pin says 3 bytes. "1\r\n" = 3 bytes. Consistent. Since I can't recompute hashes (no shell allowed), I must note pin re-computation as NOT_RUN / N/A for me? Hmm — requirement says reviewer must not execute commands, so hash re-computation is impossible for me; I should state that pin byte/hash re-computation was not performed by this reviewer (sandbox/instruction constraint) and that I verified the pinned sizes/hashes only by reading the documents and cross-referencing internal consistency. Actually wait — can I verify hashes another way? No.
+
+Hmm, but this is a key limitation: "independently determine from the pinned JSON, raw stderr/stdout/exit..." — I can read contents; I cannot recompute hashes. I must declare that clearly: evidence-integrity verification of hash values = NOT_RUN (reviewer cannot execute). The prior DSH reviews had similar limitations (sandbox Win32 5). I must not claim hash verification.
+
+But I can do internal consistency checks:
+- The evidence JSON claims t0Utc 2026-10-11T14:17:31.4544035Z, process start 14:17:31.1547594Z — process start precedes t0 by ~300ms. Consistent ordering (process starts, script sets T0 slightly later). Good.
+- The evidence JSON command string equals Task/manifest exact argv modulo the full exe path. Good.
+- cwd = G:\CODEX\New Manga matches manifest CWD.
+- stdout 0 bytes + stderr throw at script line 912 + exit 1: consistent with the script's logic (Write-Output only on success; throw on stopReason).
+- The stderr's source excerpt matches capture.ps1 line 912 text exactly.
+- The evidence JSON's identity block: name/SID match script constants ($ExpectedUser/$ExpectedSid) and checkpoint's pre-run identity (HOME-MY\49745, SID S-1-5-21-...-1001, CloudAP, impersonation None, isSystem false, isAdministrator false). Also whoami stdout SHA 25C641BAA11A2D597E70DDB3A7A76ADBD1F1574BF81C0450BB768973A3000EB0 and processId 51556 — the checkpoint line 63 records the pre-run whoami stdout SHA 25C641... 3695 raw bytes exit 0. MATCH across two independent runs. Strong consistency. (Different PID 51556 vs pre-run PID unknown, fine.)
+- The evidence JSON repository.main.rootPathChain shows G:\CODEX\New Manga attributes "ReadOnly, Directory"?? Wait: component for G:\CODEX\New Manga: attributes "ReadOnly, Directory". Hmm, the directory has the ReadOnly attribute set — on Windows, directories with ReadOnly+Desktop.ini semantics; the ReadOnly attribute on a directory is common and not meaningful. Not an issue. But note .git attributes "ReadOnly, Hidden, Directory" and .git/index "Archive". Fine. Note: the root dir is NOT a reparse point → passed.
+- The evidence JSON shows no "summary", no "homeEnvironmentCheck", no "aclStability" keys → consistent with early stop.
+- classifications.repositoryProtectedInventory = UNPROVABLE (default) — but wait, the script's line 863 would compute it; in the stop case it remains the default UNPROVABLE. Is that accurate? The run never enumerated inventory → UNPROVABLE is honest (arguably should be NOT_RUN, but UNPROVABLE is conservative and the Task prescribes repositoryProtectedInventory=UNPROVABLE for the .tmp.driveupload exclusion case). Hmm, one could argue the honest state is "NOT_RUN/NOT_REACHED". The classification set has no NOT_REACHED. The JSON's stopReason + empty fileInventory disclose it. I'd note as P3: classification values are conservative defaults carried over from initialization, not measured outcomes, and the JSON has no explicit "not_reached" marker; readers must infer. This matters for requirement 2's "which downstream classifications are evidence-backed versus not reached". I'll be explicit in the review.
+
+- hostIdentity=PASS_WITH_EVIDENCE: evidence-backed (whoami record in same JSON, exit 0, identity matches expected, and matches checkpoint pre-run identity). Note "PASS_WITH_EVIDENCE" here is a JSON-internal classification, not a Gate/AC pass; and the capture's own script set it (line 618) before the stop. Also note the identity check didn't verify the checkpoint's token group count etc. Fine.
+
+Now the critical classification question: is stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED the correct classification? Per script line 621, this stopReason is assigned whenever main repo state != CAPTURED. Here state=GIT_INDEX_PREHASH_INVALID. So the stopReason is derived from the script's own logic — internally consistent and accurate at the level it operates. But it does lump different kinds of failures (hash capability failure vs hash mismatch vs path failure). For the successor selection, a more precise sub-classification (e.g., "ENGINE_CMD_NOT_FOUND at index pre-hash") would help. The repository record does carry state/errorOperation/errorType/error, so the finer detail is present. Good enough; maybe a P3 recommendation to add an explicit sub-state/capability preflight.
+
+Now requirement 3: "Check whether the evidence supports distinguishing a capture/harness runtime failure from an AC test failure." Evidence: the failing step is a host repository baseline pre-hash inside the capture script; no product/test/build was invoked; AC1–AC7 not run; no test harness output. So it's clearly not an AC test failure. It IS a runtime failure of the capture script's dependency resolution (CommandNotFoundException). Whether the locus is the harness environment vs the script's unguarded cmdlet use is NOT determined by evidence → both remain open; the classification "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED" describes the observation, not the locus. And: the current files do NOT prove PowerShell 7 incompatibility — PS7.6.6 was only the orchestrating parent; the capture ran (self-reported) under 5.1.26100.9549; no PS7 execution of the script was attempted. Conversely, the files also do not prove PS7 compatibility. So "PS7 incompatibility" = NOT_VERIFIED / no evidence either way. The Task line 33 and manifest line 27 already assert this; my independent reading concurs.
+
+Now requirement 4: one-shot rule. Evidence: script line 15 refuses if evidence target exists; Task/manifest require a single run; manifest line 59 "仅...调用一次"; Task line 84 "任何 mismatch/error/未知访问或写入均保留原始 partial evidence 并停止；不得重试或清理"; checkpoint line 53 same. So yes: the failed invocation must be preserved immutable; the evidence JSON, stdout, stderr, exit are now frozen artifacts; repair = successor Task with new script and new output targets (new evidence JSON path, new stdout/stderr/exit paths), plus new Review/adjudication, because the frozen R1F candidate can't be silently edited (its hash is pinned in Task/manifest/checkpoint and the released-for-one-run contract was consumed). Also the successor must first record the post-run adjudication in the current Task (five-state classification of this run) — minimum safe next action.
+
+Minimum safe next action from evidence (without implementing): Codex performs a post-run adjudication recording: (1) the invocation happened under the released one-shot, (2) exit=1/stdout=0/stderr throw, (3) first blocking condition = Get-FileHash CommandNotFoundException at .git/index pre-hash, locus UNKNOWN (no root-cause attribution), (4) all downstream getters NOT_REACHED, (5) capture one-shot consumed → no retry of p02pre-r1f-capture.ps1 or reuse of p02pre-r1f-evidence-20261011.json; update Plan/STATUS/Task/checkpoint to replace BLOCKED/NOT_RUN with "ONE_SHOT_CONSUMED / CAPTURE_FAILED (GIT_INDEX_PREHASH_INVALID)" while keeping Gates/AC unchanged; then freeze a successor Task (new script + new output paths) with an added engine-capability preflight (e.g., verify Get-FileHash/module availability and record PSModulePath/LanguageMode) before any new single run, under new independent Review. This is a recommendation, not implementation.
+
+Careful: I must not decide Gates/ACs. And I must not instruct running anything.
+
+Now, do I need to check the manifest for the wrapper output pins and whether the post-run files are registered? Let me grep the manifest for "p02pre-r1f-capture-20261011" — earlier grep with "capture-20261011" returned no matches in manifest! Wait, my grep pattern was `powershell\.exe|GIT_OPTIONAL_LOCKS|capture-20261011` and the results shown were 4 matches, none containing "capture-20261011". Hmm, the manifest may reference the wrapper outputs using a different naming (e.g., `p02pre-r1f-capture-20261011.stdout.log`)? The grep found no such line, so the manifest may not list the wrapper output paths explicitly (Task line 35 does list them). Let me double check with a grep for "stdout" in the manifest.
+
+Actually, wait: the Task's write scope (line 68) says "所有新路径必须先登记在 Task/manifest" (all new paths must first be registered in Task/manifest). The Task (line 35) registers the three wrapper paths. The manifest may register them too in a target list. Let me grep manifest for "stdout".
+
+Let me also grep manifest for "OFF" / "expected absent" / "targets absent".
+
+Batch:
+1. grep manifest for "stdout|stderr|exit"
+2. grep verification/P02/*.md for "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED"
+3. grep doc/ for "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED"
+
+Careful about .tmp.driveupload: restricting to doc/ and verification/P02/ avoids it (though .tmp.driveupload could exist inside those dirs? The manifest says ".tmp.driveupload/" at repo root — "两仓各有 2148 个此类候选" in each repo root). The instruction says don't inspect .tmp.driveupload contents/metadata. Grep by path doc/ shouldn't descend into it since it's at root. OK.
+
+Let me run.
+dsh: reasoning:
+Very useful. Notably:
+- No document in doc/ or verification/P02 (md) records the R1F capture run's result except the evidence JSON itself and the postrun prompt (which mentions the pins). Specifically, no adjudication yet for the R1F run; no checkpoint update. So Plan/STATUS/Task are stale (claim capture BLOCKED/NOT_RUN).
+- The R1 precedent (P02PRE-R1) is illuminating: the R1 partial capture also ended with stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED but for a different reason (reparse leaf at .codex/skills/ask-matt), and R1's Task line 103 records the run and exit=1. So the project's precedent is: after the one-shot capture, Task/adjudication record the actual run. R1F's successor Task should follow the same pattern.
+
+- Manifest line 132: post-run Review paths registered; post-run artifacts "are not capture-child writes and are not expected in the R1F T0 repository inventory". Good — the postrun prompt exists; stdout/stderr/exit for this review will be added by Codex.
+
+- Manifest line 30: script's evidence target rules; wrapper stdout/stderr/exit written by outer executor with CreateNew, not script writes. Good.
+
+Now, notable new observation: the R1 comparison shows that R1's stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED was for a *script policy* stop (reparse leaf in protected inventory). The R1F run's stop is a *command availability* failure (Get-FileHash CommandNotFoundException) — a different failure class from the same stopReason. That supports my finding that the coarse stopReason lumps distinct classes; a successor should add a precise sub-state/capability preflight. Also: it suggests the label "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED" is accurate but under-specified.
+
+Now, requirement 3's "harness runtime failure vs AC test failure": also relevant precedent in the Task table: earlier wrapper failures were labeled HARNESS_FAILURE / NOT_A_SCRIPT_RESULT (e.g., the R5 self-check wrapper attempt #1: PS7 parent passed Base64 on command line → child launch failed). Here it's different: the child DID start and execute the script (evidence JSON written by the child + stderr shows the child's own throw at line 912). So this is NOT a "child not started" harness failure; it's a runtime failure inside the child run (command resolution), i.e., "script invoked successfully, hit an in-run blocking condition". So classification should be something like CAPTURE_RUN_FAILED_CLOSED / BLOCKED (one-shot consumed), not HARNESS_FAILURE (not launched). Important distinction for the successor: the release was consumed by a real run; the failure is not a dispatch failure.
+
+Hmm — an important consideration: is it possible the CommandNotFoundException is a *harness environment* artifact (e.g., the wrapper launched powershell.exe with a restricted token / no PSModulePath)? The evidence JSON's environment {} is empty (defaults untouched because the env getter block wasn't reached). So PSModulePath in the child is not recorded. The whoami child process ran fine (external exe, no module needed). $PSVersionTable worked (automatic variable, no module). Get-Item/Get-Acl/Get-FileHash are all Microsoft.PowerShell.Management/Utility *cmdlets*; but Get-PathChain used Get-Item successfully! Look: rootPathChain and gitDirPathChain show Get-Item results with attributes → Get-Item worked (it's in Microsoft.PowerShell.Management). So module autoloading worked for Management but Get-FileHash (Microsoft.PowerShell.Utility) failed?! That's a strong internal signal: Get-Item (Management module) resolved, Get-FileHash (Utility module) did not. Hmm interesting. That would suggest autoloading generally works, but the Utility module specifically failed to load — or that Get-FileHash lives in Microsoft.PowerShell.Utility which was somehow missing/unavailable (e.g., a broken module path for that one module, or ConstrainedLanguage mode? In ConstrainedLanguage, cmdlets still work; only types/methods restricted. But wait — the script uses [IO.File]::Open, [Diagnostics.Process]::GetCurrentProcess(), [Security.Principal.WindowsIdentity]::GetCurrent() — these all worked (process block, identity block). So NOT ConstrainedLanguage (in CLM, those .NET calls would fail; also New-Object would be blocked). Actually in CLM, `New-Object Security.Principal.WindowsPrincipal` would be blocked. And it worked. So language mode was FullLanguage. Therefore the failure is specific to resolving the Get-FileHash command.
+
+Hmm, but hold on: did Get-Item actually succeed in the child? rootPathChain components include attributes strings → yes, Get-Item ran. And $Hash...
+
+So the evidence DOES constrain the locus somewhat: within the failing child, general cmdlet resolution (Get-Item, Get-PathChain) worked, .NET type calls worked, but the command name Get-FileHash was not recognized. Possible local explanations: (i) Microsoft.PowerShell.Utility module unavailable/failed to load in that process; (ii) PSModulePath missing entries; (iii) command discovery cache issue; (iv) the Get-FileHash command was shadowed/blocked by a policy. The evidence does not record module inventory or PSModulePath → cannot choose. I must not infer root cause. But I can note the *bounded* observation: other commands in the same child resolved, so "the whole session was command-broken" is not supported; and no evidence records which modules were available.
+
+Careful: is Get-Item also in Utility? No: Get-Item = Microsoft.PowerShell.Management. Get-FileHash = Microsoft.PowerShell.Utility. Correct.
+
+Hmm wait, one more thought: is it possible that Get-Item in Get-PathChain was NOT run in the child but... no, the JSON has the attributes.
+
+Another thought: could the harness have used `-Command`/`-File` with a *sanitized* environment where PSModulePath is empty → then BOTH Management and Utility modules would fail to autoload. But Get-Item worked... Unless Get-Item was resolved from the *initial* module snapshot loaded at startup. Hmm: at process start, PowerShell loads a default set of snapin/modules? In PS 5.1, Microsoft.PowerShell.Management and Utility are "core" modules... Actually in PS 5.1, the engine loads Microsoft.PowerShell.Core + some modules at startup? The default startup includes a set of modules (Microsoft.PowerShell.Core, Management?, Utility?) — not necessarily. Hmm. In PS 5.1, `Get-Command Get-FileHash` works out of the box via autoloading from PSModulePath.
+
+But here's a thought: what if $env:PSModulePath was inherited as empty AND the modules are loaded lazily — then Get-Item would also fail. It didn't. So autoloading worked at least for Management. Interesting but not conclusive: maybe the Management module was already loaded at startup (it is one of the modules loaded by default in some hosts? Actually Microsoft.PowerShell.Management IS loaded by default in powershell.exe? Hmm — the default Windows PowerShell console does have Get-ChildItem available without autoload because the Management module... I believe autoloading handles it).
+
+I should not speculate. I'll state: evidence shows another Management-module cmdlet (Get-Item) resolved in the same process, so a total absence of cmdlet/module discovery is not supported; but the evidence records no module/PSModulePath state, so the specific cause of Get-FileHash being unresolved is UNPROVABLE from the pinned set. This is a legitimate observation, and it's grounded: rootPathChain/gitDirPathChain contain Get-Item-derived attributes.
+
+Wait, one caveat: Get-PathChain also calls [IO.Path]::GetFullPath and Get-Item. If Get-Item had failed, state would be QUERY_ERROR for the root. It's PRESENT. So yes, Get-Item worked.
+
+Also Get-Item was called at line 257 for the index file *before* the hash: `$item = Get-Item -LiteralPath $Path ...` — that succeeded (no QUERY_ERROR from Get-Item, since the returned record has pathChain and the error is Get-FileHash's). Actually the returned record for gitMetadataBefore has pathChain but no attributes (line 261's return doesn't include attributes) — consistent with the Get-FileHash catch. And the Get-Item at 257 succeeded (otherwise the catch at 258 would have produced a different errorType). So Get-Item worked twice. Good.
+
+So the first blocking condition precisely: at capture step "main repository .git/index pre-hash", command `Get-FileHash` was not recognized by the child engine → CommandNotFoundException → Get-FileRecord returned state QUERY_ERROR → Get-RepositoryRecord set state GIT_INDEX_PREHASH_INVALID / errorOperation Get-FileRecord(.git/index) / firstBlockingPath G:\CODEX\New Manga\.git\index → script's main flow set stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED and skipped scratch + all downstream getters → wrote the JSON → threw (line 912) → wrapper exit 1, stdout empty, stderr 676 bytes.
+
+Now let me double check "which downstream classifications are evidence-backed versus not reached":
+Evidence-backed (measured in this run):
+- process identity/version/executable/host (self-report) — recorded.
+- identity/whoami (exit 0, bytes) — recorded; classifications.hostIdentity=PASS_WITH_EVIDENCE assigned by the script at line 618 after matching ExpectedUser/ExpectedSid.
+- main root/gitdir path chains and .git/index query error — recorded.
+Not reached (no records): repository.main fileInventory/commands/gitMetadata/status; scratch repository (absent key); environment; homeEnvironmentCheck (absent); paths; wer; protectedHashes; aclStability; summary (absent). And classifications for those remain at initialization defaults (UNPROVABLE / REQUIRES_ACTIVE_TEST / NOT_RUN / UNPROVABLE_NOT_MONITORED_IN_R1F) — which are not measurements of those conditions but honest conservative placeholders; the JSON's stopReason and empty sections disclose non-reach. I'll flag that as a P3 documentation-clarity item: the JSON has no explicit "reached/not-reached" per section and no `captureStatus`, and `errors=[]` while a stop occurred (the stop is only in stopReason + repository record), which could invite misreading that everything listed was actually evaluated. Hmm, is that fair? The classifications being conservative means no overclaim. The risk is under-information, not overclaim. P3.
+
+Now, one more important check: requirement 2 asks whether any Git inventory/hash ran. Evidence: repo.main.commands = {} (empty ordered dict) → the script's Invoke-Git results (revParse, branch, status, ls-files) were never recorded → Git child processes were not invoked for main (line 335 comes after line 334's return). Actually careful: could Git commands have run but not been recorded? The record structure records each command in $record.commands; the stop occurred at line 334 before line 335. So no Git child process ran in this capture. Note: the capture script does not use Get-FileHash for inventory hashing only; also line 436-437 in the inventory loop (not reached).
+
+But also: the script's `Invoke-Git` uses $GitExe = 'C:\Program Files\Git\mingw64\bin\git.exe' — not reached. And the evidence JSON records no Git command records. So: no Git inventory, no Git status, no protected hashes, no scratch, no path/ACL, no TEMP/cache, no WER/registry, no build/Cargo, no AC. Only whoami.exe (a child process) and in-process .NET calls + Get-Item.
+
+Hmm — the whoami child process: pid 51556, exit 0, stdout 3695 raw bytes with SHA 25C641... — that's a real child process execution. So "whether any ... ran": only the host identity getter (whoami) ran; plus filesystem metadata queries (Get-Item) on G:\, G:\CODEX, repo root, .git, .git\index. No file *content* read except... Get-FileHash didn't run. So no file content was read at all (the JSON write is the only write). Actually Get-Item doesn't read content. So no user content was read — but wait, is that verified? The script also did `Test-Path $EvidencePath` at line 15. Nothing else. And the .tmp.driveupload exclusion never became relevant (inventory not reached). Important: the capture DID NOT read .tmp.driveupload (session didn't reach inventory) — supports the no-read discipline. Good, and I didn't inspect it either.
+
+Another check: could the run have created/modified anything besides the evidence JSON? The wrapper wrote stdout/stderr/exit files (0/676/3 bytes) — those are wrapper-side CreateNew writes, documented as such (manifest line 30). The script itself wrote only the evidence JSON via CreateNew. It did not write registry/ACL/profile. Evidence for "no other writes": the script's design (only CreateNew target) + the stop occurred before all getter blocks (which are read-only anyway). But there's no independent (OS-level) monitoring → the manifest already declares "Git internals are not OS-instrumented" and access closure UNPROVABLE_NOT_MONITORED_IN_R1F. So "no other writes" is not OS-proven; it's argued from the frozen script + stop point, and the script itself is pinned. That's a reasonable level: script-execution-level proven, not OS-monitored. I'll state that exactly.
+
+Now requirement 1: Architecture section. What's "Architecture" for this task? Template: 分层/契约/依赖/安全/持久化. For a read-only evidence capture task, architecture review covers: process/executor contract (PS7 orchestrator vs PS5.1 frozen executor), output/artifact contract (unique CreateNew targets, immutability), fail-closed stop contract (stopReason propagation, no partial-success claims), the classification taxonomy (five-state), and the harness/child boundary. Findings: the executor contract was followed (5.1 invoked); the fail-closed design worked (script stopped, no false PASS, exit 1); the dependency on an unguarded external cmdlet (Get-FileHash) with no capability preflight is an architectural gap in the candidate (the contract had no engine-capability precondition) → this is what broke the one-shot; the coarse stopReason taxonomy conflates distinct failure classes; and there is no post-run state persistence in status docs.
+
+Also: "one-shot" immutability contract vs. the need to repair → the candidate's own immutability design means the repair must be a successor Task with new script/output targets. That's an architecture-level conclusion: the frozen-candidate/hash-pinning model requires successor versioning, consistent with the repo's existing pattern (R1 → R1F).
+
+Now the Verification table: distinguish evidence-integrity review (what I could verify by reading) from actual task checks (what I could not execute). Rows:
+1. Pin bytes/SHA re-computation → NOT_RUN (reviewer prohibited from executing).
+2. Evidence JSON internal consistency (stopReason vs repository state vs empty sections) → PASS.
+3. stderr ↔ script line 912 correspondence → PASS.
+4. stdout empty + exit 1 consistency with stopReason → PASS.
+5. Runtime identification (5.1.26100.9549 self-report + R8 parity) → PASS_WITH_LIMITATION (self-report, no independent wrapper argv attestation). Hmm, the required statuses are PASS/FAIL/BLOCKED/NOT_RUN/N/A. I'll use PASS with note, or BLOCKED? I'd say PASS (evidence-backed) with a limitation noted in findings.
+6. Whether this was capture vs parse-only → PASS (capture; parse-only R8 is a distinct artifact with captureScriptInvoked=false).
+7. First blocking condition identification → PASS.
+8. Downstream non-reach determination (Git inventory/scratch/paths/ACL/TEMP/WER/registry/Build/AC) → PASS (not reached).
+9. Root-cause locus (module discovery / NoProfile) → NOT_RUN / UNPROVABLE (evidence does not establish).
+10. PS7 incompatibility → NOT_RUN / no evidence.
+11. Actual capture re-execution / hashes recomputation → NOT_RUN (prohibited).
+12. Plan/STATUS/Task state vs evidence → FAIL (staleness) — that's the finding.
+13. AC1–AC7 / Build / Cargo / Gate → NOT_RUN.
+14. Post-run adjudication record → NOT_RUN (absent).
+15. One-shot immutability preserved (evidence artifact not overwritten; target absent pre-check) → PASS (script line 15 + CreateNew succeeded + no competing record).
+16. Wrapper output artifacts registered in manifest/Task → PASS (Task line 35, manifest lines 30/59/132).
+
+Findings table with IDs, severity, file/line, trigger/impact, evidence, recommendation, status.
+
+Findings:
+- R1F-POST-01 (P2): Plan/STATUS/Task still state capture BLOCKED/NOT_RUN + "next = final pre-run" while the one-shot release was consumed and the capture ran (evidence JSON + exit 1 + stderr). Impact: a successor agent could re-release/re-run the frozen capture against the one-shot rule, or treat the R1F run as never having happened; the post-run adjudication record is absent so no document states the one-shot is consumed. Evidence: doc/REBASELINE_PLAN.md:13,32,73,74,101; doc/STATUS.md:5; doc/tasks/P02PRE-R1F.md:36,40,115; verification/P02/codex-checkpoint-p02pre-r1f-20261011.md:19,253 (the checkpoint itself is pinned pre-run and line 19 says capture NOT_RUN / 尚未执行). Note the checkpoint at line 19 says RELEASED.../NOT_RUN and was frozen before the run — so the checkpoint isn't wrong about its own time, but it is now the pinned recovery point and remains the only "current state" doc, which is stale post-run. Also the STATUS top block is pre-final-pre-run (says next step = final pre-run) — doubly stale.
+Recommendation: Codex post-run adjudication + state refresh; no file change by me.
+- R1F-POST-02 (P2 or P3): Stop classification is coarse; stopReason MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED covers at least two distinct classes (R1 reparse-policy stop vs R1F command-resolution failure). The repo record does carry state=GIT_INDEX_PREHASH_INVALID/errorType, but no locus classification (harness/engine capability vs script policy vs data mismatch) exists in the frozen taxonomy; the JSON has no `captureStatus` and no per-section reached/not-reached marker, and `errors=[]` while the run stopped. Impact: successor selection cannot be automated from the JSON alone; a reader must reconstruct reachability. Recommendation: successor adds explicit engine-capability preflight + a precise sub-state + reached/not-reached markers; this run's adjudication records locus=UNPROVABLE. Severity P2? I'd say P2 — actually this affects the ability to "select a safe successor" cleanly, but the info is present. I'll rate P3 for the JSON clarity and P2 for the missing capability preflight? Hmm. Let me split:
+  - R1F-POST-02 (P2): Candidate lacked an engine-capability precondition/preflight for Get-FileHash (the one-shot's first hashing dependency) → a single missing cmdlet consumed the entire one-shot, producing 0 new inventory evidence. Impact: candidate is unusable as-is; repair must be a successor. Recommendation: successor preflight (Get-Command Get-FileHash / record $PSVersionTable, PSModulePath, module inventory, LanguageMode) before any getter, plus fail-fast with a distinct stop state.
+  - R1F-POST-03 (P3): Coarse stopReason + no reached/not-reached markers + errors empty. 
+- R1F-POST-04 (P3, verification limitation): runtime identity rests on in-process self-report (process block) and the hard-coded `command` string (script line 24), not on independent wrapper argv attestation; and reviewer could not recompute any pinned hash/byte count. Impact: pin integrity is asserted by documents only in this review; Codex should recompute in its adjudication.
+- R1F-POST-05 (P3): No post-run adjudication artifact exists yet (expected — this review precedes it), so the five-state classification of the run is pending; Task line 64 prescribes the path. Actually this overlaps with R1F-POST-01. Maybe merge into 01 or list as a separate "pending action" not a finding. I'll fold the missing adjudication into finding 01's recommendation, or make it a separate P3 informational row. The template says no placeholder rows; real findings only. I'll keep 4 findings: 01 (P2 stale state/missing post-run record), 02 (P2 candidate capability gap → successor), 03 (P3 classification granularity/readability), 04 (P3 verification limitations of this review/self-reported runtime).
+
+Hmm, should the stale-state be P2 or P1? P1 would be if it blocks or risks damage. Risk: a successor could re-run the capture. The manifest's preflight requires target absent; the evidence target now exists, so the script itself would throw at line 15 (fail-closed) — good, the one-shot is protected by the target-exists guard. But a successor could create a new script/output and inadvertently count it as R1F's authorized run, or Codex could mistakenly re-release. Since the guard exists and the impact is mainly bookkeeping/interpretation, P2 is right (not P1). But there's a real risk of a *false* successor decision (e.g., "only the environment was broken; just re-run"). The one-shot rule + target guard make re-run of the frozen candidate impossible without a successor; so P2.
+
+Also: is there a finding about "the failure is correctly classified as not-an-AC-failure"? That's a conclusion, not a finding.
+
+Let me now also double-check the doc/00_INDEX.md and doc/09_COLLABORATION.md pins: requirement says scope & evidence pins. I have their pins from the task; I don't need to read them fully. But requirement 1 says follow the REVIEW template; 09_COLLABORATION is the review protocol; maybe I should check §5.1 (task completion next-task suggestion) since AGENTS.md requires a recommended next step with agent + forwardable instruction. The repo AGENTS.md says the final reply must give a recommended next step, and when a Task completes, specify the agent and a directly-forwardable instruction per 09_COLLABORATION §5.1. My final answer should include a recommended next action with the instruction field format. Let me read 09_COLLABORATION §5.1 to format it properly.
+
+Let me grep 09_COLLABORATION for "5.1" section.
+
+Also, the review must mention the pinned input list and that I could not recompute hashes.
+
+One more check: is there a "five-state classification" definition I should align with? The Task mentions "五态分类" (line 64: 实际执行的 getter 可标 PASS_WITH_EVIDENCE; 未运行记执行状态 NOT_RUN, 未证条件归 UNPROVABLE/REQUIRES_ACTIVE_TEST). The five states probably: PASS_WITH_EVIDENCE, FAILED, NOT_RUN, UNPROVABLE, REQUIRES_ACTIVE_TEST. Let me check the Task/manifest for the five-state definition to cite precisely. Grep for "五态" in Task/manifest.
+
+Let me batch:
+1. grep doc/09_COLLABORATION.md for "5.1" heading
+2. grep Task/manifest for 五态/REQUIRES_ACTIVE_TEST definition
+
+Then I'm nearly done. Also consider whether to verify the R8 artifact's internal consistency (parse-only, captureScriptInvoked=false) — done by reading it.
+
+Let me also confirm that the stdout log file is truly empty by reading it (the read tool on a 0-byte file returns empty content). I'll include it in the next batch.
+dsh: reasoning:
+stdout confirmed 0 bytes.
+
+Let me read 09_COLLABORATION §5.1 and §6 for the review/next-task rules to cite properly and to format the next-step instruction.
+
+Let me read lines 82-160.
+dsh: reasoning:
+I have what I need for the next-step suggestion format.
+
+Now let me double-check a couple of remaining consistency items to be thorough:
+
+1. Exit file content "1" with 3 bytes and pin SHA F1B2F66... — I can't recompute. But is "1\r\n" consistent with a wrapper writing "1\r\n"? Yes, similar to the "0\r\n" pattern (13BF7B... for 3 bytes). Fine.
+
+2. Evidence JSON size 23131 bytes and SHA DCB22B8E... — can't recompute.
+
+3. The evidence JSON's "t0Utc" and process start: startTimeUtc 14:17:31.1547594Z, t0Utc 14:17:31.4544035Z. t0StopwatchTicks 1664412211508. Hmm — Stopwatch.GetTimestamp() on Windows = QPC (100ns? no, it's performance counter ticks). 1.664e12 ticks: if frequency is 10,000,000 (typical QPC on Windows 10+ with TSC at 10MHz), 1664412211508 / 1e7 = 166441.22 seconds ≈ 46.2 hours of system uptime. Plausible. Can't verify frequency without executing. Fine — no claim.
+
+4. Does the evidence JSON show `omit` of scratch key? repository = { main: {...} } only — yes matches the skip at line 624.
+
+5. The evidence JSON `classifications` order matches script init order exactly, with hostIdentity changed to PASS_WITH_EVIDENCE. Values otherwise identical to init defaults. This confirms my "defaults, not measurements" point. 
+
+Wait, one discrepancy: the script's init has classifications keys: hostIdentity, private_registry_absence, profile_api_path_and_store, lpac_write_and_child_closure, product_build_and_ac1_ac7, process_and_path_access_closure, tempCache, werEffectivePolicy, repositoryProtectedInventory. The JSON's classifications has exactly these 9 keys in the same order, with hostIdentity=PASS_WITH_EVIDENCE. Confirmed. Note the JSON does NOT include `repositoryProtectedInventoryNote`, `hostPathSnapshots`, etc. → those lines (863-871) never executed. Perfect evidence that the main flow stopped before the summary block (line 740-ish? Actually the summary/classifications block around 800-873 never ran; only the early assignment at line 618 ran).
+
+Hmm wait, careful: line 618 assignment happens inside the main try at line 617-622, then line 619 Get-RepositoryRecord → stop at 621. So the later classification block (lines ~863+) indeed didn't run. Good.
+
+6. One more check: the evidence JSON's repository.main.errorOperation = "Get-FileRecord(.git/index)" and state GIT_INDEX_PREHASH_INVALID — matches script line 334 exactly. And firstBlockingPath = "G:\\CODEX\\New Manga\\.git\\index" matches Join-Path $Root '.git\index' = "G:\CODEX\New Manga\.git\index". Good.
+
+7. The JSON's gitMetadata = [] (empty list) and fileInventory = [] and commands = {} (empty object) and candidateCount 0 / candidateCountKnown false. All initialization defaults → consistent.
+
+8. The identity block: name "HOME-MY\\49745", sid matches, isAdministrator false, authenticationType CloudAP, impersonationLevel None — matches checkpoint line 63 pre-run identity. Good.
+
+9. The whoami record processId 51556, exitCode 0 — matches.
+
+10. Now, R8 artifact vs capture: R8 says parentPowerShellVersion 7.6.6 and parentProcessId 51680, child 5.1.26100.9549 PID 48292, captureScriptInvoked=false, parseResult PARSE_OK, source matches review (67582 / 5A3F...). The pinned capture.ps1 hash matches the R8's expectedSourceSha256 → consistency: the script that was parsed is the same bytes as pinned. Good. But note: R8's childInputSha256 is computed by... the child (self-reported) with `sourceMatchesReview: true` set by the parent. Fine.
+
+11. Is there evidence that the capture invocation used the *same* script bytes? The script's own JSON doesn't record its own file hash. The wrapper didn't record the script's hash at T0 in the pinned evidence... Wait: manifest line 59 says capture JSON's main fileInventory will provide the final checkpoint hash, and the pre-run verified script hash = 5A3F.... The capture's fileInventory is empty (never enumerated), so the capture never independently re-hashed the script. Hmm! Interesting: the pre-run checkpoint verified the script hash before the run; the run happened "immediately after". But the capture's own evidence does not bind the executed script bytes (no self-hash, and the inventory that would have hashed verification/P02/p02pre-r1f-capture.ps1 was never reached). So: "which exact bytes ran" is established only by the pre-run checkpoint verification and the temporal adjacency, plus R8 parse of the same pinned bytes. Is there any independent record that the file wasn't modified between the pre-run hash check and the invocation? The manifest requires "紧邻一致性核验" and says wrapper stdout/stderr/exit written with CreateNew. The checkpoint line 52-53 records the intent. The capture's failure happened within seconds (T0 14:17:31). There's no post-run proof that the script bytes at T0 were 5A3F....
+
+Hmm — this is a genuine verification gap worth a finding: the one-shot run's evidence does not self-bind the executed script bytes (the design relied on the main fileInventory which was never produced because the script stopped at the first step, and the script itself doesn't record its own hash). So "the actual frozen R1F script ran" rests on: (a) pre-run pin check recorded in the checkpoint (before the run), and (b) the stderr error text matching the frozen script's line 912 throw — which is behavioral evidence that a script with that exact throw ran. Actually (b) is meaningful: the stderr excerpt shows the source line text from the executing script, which matches the frozen script's line 912. But an excerpt is not a hash.
+
+Given the evidence: the script's *behavior* matched the frozen script exactly (stopReason logic, JSON structure with init defaults, throw text). That's strong, but not byte-binding. I'll record as P3 finding: no self-binding of executed script bytes; the post-run adjudication should either state this limitation or (in a successor) have the script record its own source hash / the wrapper record the source hash at T0. Also note the wrapper's stdout/stderr/exit do not contain the argv or source hash.
+
+Actually wait — could the wrapper have recorded the command somewhere? The stdout is 0 bytes. So no. The evidence JSON's `command` field is hard-coded (script line 24) — it can't attest what was actually passed. This is a real, if minor, gap. Combine with finding 04 (self-report limitations). Let me structure:
+
+R1F-POST-04 (P3): Execution attestation gap: the run's artifacts do not independently bind (i) the child's actual argv/executable, and (ii) the executed script bytes. `command` is a hard-coded string (ps1:24); the process block is in-process self-report (ps1:596-602); stdout is empty; the inventory step that would have hashed the script was never reached (manifest:59 expected the capture fileInventory to provide the checkpoint hash). Recommendation: successor records source-file SHA-256 inside the evidence JSON (or wrapper-side T0 hash + argv) and the adjudication states the limitation for this run.
+
+That's a good, evidence-grounded finding. Severity P3 (no overclaim occurred; the run's behavior matches the frozen script; the pre-run pin check recorded 5A3F... in the checkpoint at line 40).
+
+12. Another check: manifest line 65 says after capture, if any pre-run governance path lacks a matching non-null file inventory SHA-256, record FAILED/UNPROVABLE. With the empty inventory, this criterion → FAILED/UNPROVABLE for the review-path verification. That is a downstream classification that Codex's post-run adjudication must handle: the 56/56 checklist paths cannot be matched against repository.main.fileInventory (empty) → per manifest:65 the post-capture verification of governance paths = FAILED/UNPROVABLE; and the "final checkpoint hash" from the capture inventory is unavailable. That's an important evidence-backed downstream consequence. It means the pre-run check's post-capture confirmation cannot be completed as designed. I should state that in the review (verification conclusion): the capture's empty inventory means manifest:65's post-capture condition is not satisfied → the governance-path verification is UNPROVABLE/FAILED for this run, and the checkpoint cannot receive the "final checkpoint hash". This supports finding 02 (candidate design gap) or a distinct finding. I'd merge into finding 02 as an impact: "one-shot consumed with zero new inventory evidence; manifest:65 post-capture confirmation unattainable".
+
+Also note manifest line 30: "Capture wrapper 的 stdout/stderr/exit 由外层执行器分别用独立 CreateNew 文件留证，不属于脚本写入" — consistent with the files existing.
+
+13. The Task's AC list: AC marked [x] vs [ ] — the unchecked ones include the .tmp.driveupload exclusion item, detached branch mapping, pre-run release condition, inventory counters, getters classification, no-write discipline, post-run review artifact. Since capture ran and failed, none of those get checked. Fine, no finding.
+
+14. Requirement 5 also says "If Plan/STATUS/Task still claim capture BLOCKED / NOT_RUN, identify that as stale state to be corrected by Codex". Done.
+
+15. Let me double check STATUS top-of-file line 3-5 is really the "current" section: "## 2026-10-11 当前状态：P02PRE-R1F cohort #11 已 adjudicate；final pre-run ACTIVE" and line 5 says Capture=BLOCKED/NOT_RUN, next step = final pre-run. And the checkpoint (newer, pinned) says final pre-run PASS + released. So STATUS is even one step behind the checkpoint, and both are behind the run. Given the pinned STATUS hash matches the checkpoint's integration pin line 38, STATUS was current at checkpoint-freeze time. So the checkpoint at freeze time (line 38-41) recorded STATUS with pre-final-pre-run state; the final pre-run adjudication section (lines 59+) was added to the checkpoint... wait, if the final pre-run section was added to the checkpoint, the checkpoint's own hash would change; line 84 records the pre-freeze input hash 320B09... (26764 bytes) and says the final hash will be recorded by capture T0. The pinned checkpoint is 57630 bytes ≠ 26764. So the checkpoint file is the *post-freeze* version (57KB) which includes both the frozen pre-run section AND the older historical content + the top block. Hmm, so the frozen-at-pre-run artifact (26764 bytes / 320B09...) is NOT the pinned 57630-byte file! The pinned checkpoint (57KB) is the file as it exists at review time, which apparently = pre-freeze content + appended sections? Let me examine: line 86 says "本 checkpoint 自身在写入本节前为 26764 bytes / 320B09A5..." So at the time of writing that section, the file was 26764 bytes; after writing, larger. Then line 38-41 (top block) is "当前集成后 source pins" — the top block (lines 1-58) seems to be a newer addition prepended. Hmm, so was the file modified after the pre-run freeze (which said "不得再改" / must not change after recording)?
+
+Manifest line 59: "Codex 在 rolling checkpoint 记录 PRE_RUN_PASS / RELEASED_FOR_ONE_READ_ONLY_CAPTURE 和实际检查证据；随后立即做最后一致性核验... Checkpoint 一旦完成该记录不得再改" — the checkpoint must not change after completing that record. But the pinned checkpoint (57KB) contains a top block (lines 1-58) that mentions cohort #11 and "final pre-run 已 adjudicate PASS_WITH_EVIDENCE；capture 已释放一次但尚未执行" (line 15) and references the post-run review paths (manifest line 132). Hmm, and line 37-41 "当前集成后 source pins（不含 checkpoint 自身）" listing the Task/manifest/Plan/STATUS pins that match this review's pinned inputs (Task 30565/C39E..., manifest 44417/7F25..., Plan 277406/7C27..., STATUS 285810/1ABBEF...). Those are exactly the review pins! So the top block was written as part of the pre-run release, after the docs were frozen at those hashes.
+
+So the checkpoint's structure: it looks like the *new* pre-run content was inserted at/near the top (lines 1-58) and the "## Final pre-run adjudication — 2026-10-11" section (lines 59-246) follows, then older historical checkpoints. But line 86 (inside the final pre-run section) says "this checkpoint itself before writing this section was 26764 bytes". If the top block were written after the final pre-run section, then at the time of writing the top block the file was bigger than 26764. The 26764 figure presumably refers to the file just before appending the final pre-run adjudication section (i.e., the pre-final-pre-run file = the top block + historical?). Hmm, this suggests the top block (lines 1-58) existed BEFORE the final pre-run adjudication was written, i.e., the top block is the cohort-#11-adjudicated checkpoint (which says capture RELEASED.../NOT_RUN and final pre-run PASS — wait, line 15 says "最终 pre-run 已 adjudicate PASS_WITH_EVIDENCE；capture 已释放一次但尚未执行"). Hmm, that already reflects the final pre-run. But the final pre-run section (59+) also says PRE_RUN_PASS. So the top block was written after the final pre-run section added. Then line 86's 26764 refers to an earlier state... 
+
+This ordering puzzle is probably: the file is assembled with the newest section at top, but the "final pre-run adjudication" section itself contains the line about the pre-write size (26764) referencing the file state before that section was added — and then the top block was added later, prepending more content, so the final pinned file is 57630. The "checkpoint 一旦完成该记录不得再改" constraint may have been violated by later edits (adding the top block/summary). Is that a finding? It's about internal process discipline. The top block explicitly says "## Historical checkpoint:` 及其后历史记录，不声称旧文字全部未改" (line 58) — a disclaimer that old text may not be unchanged. Hmm, that heading is malformed and reads like a disclaimer that history sections were edited.
+
+Given the requirement 5 scope (stale state), and that I must not over-reach, I could note as P3: the pinned checkpoint's internal self-reference (line 84/86: pre-freeze 26764 bytes / 320B09...) does not match the pinned current file (57630 bytes), so the "checkpoint frozen and not further modified" expectation in manifest:59 cannot be verified from the artifact; the checkpoint was evidently extended after the pre-run record. Impact: the recovery point's freeze integrity is unverified. Hmm, but is the "must not change" rule about the pre-run section only? Manifest line 59 says "Checkpoint 一旦完成该记录不得再改" (once the record is complete it must not be changed). The existence of a top block that references "capture 已释放一次但尚未执行" plus post-run paths suggests it was written at release time — possibly the same release action, i.e., the same edit event that the 26764 line is embedded in. Ugh, hard to reconstruct without more careful reading. Let me read checkpoint lines 240-290 to see the older section boundaries and understand whether the top block is newer than the final pre-run section (line 247 "## 当前 READY 与安全边界" says capture BLOCKED/NOT_RUN final pre-run 未释放 — that's clearly OLDER). So the order in the file is: [top block: newest?] ... [final pre-run adjudication: line 59-246] [older: 247-282 capture BLOCKED] [older: 283...]. If sections are ordered newest-first, top = newest. The final pre-run section is newer than the 247 block (pre-run) ✓. And the top block is newer than the final pre-run section ✓ (since it says "final pre-run 已 adjudicate PASS" and adds the post-run artifact expectations). And line 86's "26764 before this section" refers to the file before the final pre-run section was inserted — meaning at insertion, the file had the top block? No: if the top block is the newest, it wasn't there when the final pre-run section was written. Contradiction. Unless the 26764 figure refers to the file *with* the top block but before the final pre-run section... i.e., the top block was written BEFORE the final pre-run section. But then the top block should appear below the final pre-run section under newest-first ordering — unless the writer prepends newer content without strict ordering, or inserted the final pre-run section in the middle.
+
+Given line 58's odd disclaimer heading ("## Historical checkpoint:` 及其后历史记录，不声称旧文字全部未改。"), it looks like a marker inserted right after the new top block to say "everything after this is historical". And the "Final pre-run adjudication" section (59+) sits after that marker... which would make it historical. But it's the most recent adjudication. Confusing.
+
+I think the safest treatment: note as a P3 observation/finding that the pinned checkpoint is an append-only rolling document whose internal self-reference (pre-freeze 26764 bytes / 320B09A5…) does not correspond to the pinned 57630-byte artifact, and its section ordering makes the "current" state ambiguous (top block says capture RELEASED…/NOT_RUN and pre-run PASS; an internal later block still says capture BLOCKED / NOT_RUN and "final pre-run 未释放"); no post-run section exists. Impact: the single recovery point cannot currently be read as an unambiguous current-state record after the run; Codex's post-run roll must add a clearly timestamped top section and mark the superseded ones. Severity P3 (documentation) — but it partly overlaps finding 01. I'll merge this into finding 01's evidence (mention checkpoint lines 19 and 253 contradiction) rather than a separate finding. Actually finding 01 is about Plan/STATUS/Task. Adding the checkpoint's internal contradiction strengthens it. But careful: is it a *defect* that the pre-run frozen section says BLOCKED? It was accurate at its time; the defect is the absence of any post-run state record and the ambiguity. I'll fold it in and mention explicitly that the checkpoint is legitimately pre-run frozen, and the missing piece is the post-run record.
+
+Hmm, but the pinned checkpoint top block (line 19) says "Capture=RELEASED_FOR_ONE_READ_ONLY_CAPTURE / NOT_RUN；pre-run=PASS_WITH_EVIDENCE。capture 尚未执行。" While line 253 (older section) says "Capture=BLOCKED / NOT_RUN；final pre-run 未释放。" Both are historical/pre-run statements. So the checkpoint is not internally wrong, just pre-run. The real issue: after the run, no document says the one-shot was consumed. OK.
+
+I'll not claim the checkpoint violates the no-change rule (can't establish ordering). I'll say: the pinned checkpoint is pre-run evidence and deliberately lacks post-run state; combined with Plan/STATUS/Task staleness, no repository document currently records the consumed one-shot.
+
+Now let me also verify the claim "no other R1F run record exists" — grep for "p02pre-r1f-evidence-20261011" occurrences to see which docs reference it (should be Task, manifest, checkpoint as absent-target expectations). Let me grep doc/ and verification/P02 md for "p02pre-r1f-evidence-20261011". That will show whether any doc describes it as existing. Good check for finding 01.
+
+Let me run that grep. Also grep for "p02pre-r1f-capture-20261011" across md to see references.
+
+Then write the report.
+
+One more: requirement to "Identify the minimum safe next action from evidence". I'll formulate: Codex post-run adjudication (record one-shot consumed; classification of the run; locus UNPROVABLE) → refresh docs/state → freeze successor Task with new script + new output targets + engine capability preflight; no re-run of the frozen R1F script; gates unchanged. And provide the forwardable instruction per §5.1 (but the actual next Task is Codex's own adjudication + successor authoring; the owner is Codex). Since this review cannot release work, I'll present the recommendation in §5.1 format with Owner=Codex (authoring the successor) and Reviewer=DeepSeek Harness (different session).
+
+Wait — the successor task authoring and implementation owner: Codex is the integrator; the capture script revision could be authored by Codex (as it was for R1F). Reviewer must be a non-author (DSH). Fine.
+
+Let me do the final greps.
+dsh: reasoning:
+Confirmed: no document (other than my own dispatch prompt) records the R1F capture run. The R1F adjudication (p02pre-r1f-adjudication-20261011.md:42) says "R1F capture=NOT_RUN；唯一结果目标 ... 尚未创建" — that's the historical R1F adjudication from earlier rounds (pre-run). So it's stale.
+
+Now I have everything I need. Let me also double check my claim that the first blocking condition was the index pre-hash, i.e., no Git child process ran. One nuance: the script's `Get-RepositoryRecord` at line 313-314 calls Get-PathChain twice (4 Get-Item calls). Then line 321-322 Get-Item x2. Then line 333 Get-FileRecord → Get-PathChain (5 Get-Item: G:\, G:\CODEX, root, .git, .git\index) + Get-Item on index + Get-FileHash fails. Wait — the JSON's gitMetadataBefore.pathChain has 5 components including .git\index → so Get-PathChain enumerated all the way to the index successfully. Then line 257 Get-Item succeeded, line 260 Get-FileHash failed. Actually hold on: the JSON for gitMetadataBefore does NOT include `attributes` — line 261's return doesn't include attributes; consistent. But wait, it does include pathChain → yes.
+
+Interesting: pathChain for gitMetadataBefore includes .git\index with attributes "Archive" → that came from Get-PathChain's Get-Item. So Get-Item on the index file succeeded → the file exists and is readable (metadata). The hash command is what failed.
+
+So the first blocking condition = Get-FileHash unavailable (CommandNotFoundException). Precisely.
+
+Another check: the evidence JSON has no `state` field for repository.main besides the state key = GIT_INDEX_PREHASH_INVALID. Right.
+
+Now, regarding requirement 2's "whether this was the attempted capture or parse-only": the R8 artifact is parse-only (captureScriptInvoked=false) and is a *different* run. The evidence JSON + wrapper outputs = the actual capture attempt. Distinguish clearly.
+
+One more useful check: the R8 artifact's parent was PID 51680 and the capture process was PID 15640 — different processes/runs. And process start 14:17:31.1547Z. Fine.
+
+Now also verify: does the evidence JSON contain `manifest` = 'verification/P02/p02pre-r1f-manifest-20261011.md'? Yes (line 3). Good.
+
+Now, one thing to double check for the "AC test failure" distinction: are AC1–AC7 defined as product acceptance criteria? Yes, AC1–AC7 = BLOCKED / NOT_RUN. The R1F Task's own AC list (the checkboxes) is a different AC set (AC1–AC7 in R1F? The Task has 18 checkboxes; AC1–AC7 likely refers to the product P02 ACs). Hmm. The Task's own AC items are the bullet list lines 44-64. The review prompt says keep "AC1–AC7=BLOCKED / NOT_RUN" — those are the P02 ACs. Either way, the R1F run failed before any of the R1F acceptance items could be satisfied.
+
+I'm ready to write the report. Format: Chinese body with English status enums, YAML header as required.
+
+Decision: APPROVED or CHANGES_REQUESTED? The review's job: "Review whether the one actual frozen R1F capture attempt and its evidence are internally consistent, correctly classified, and sufficient to select a safe successor." And "Use decision APPROVED only if the evidence package and its interpretation are sufficient for Codex to proceed to a successor Task".
+
+Assessment:
+- Internally consistent? Yes, strongly.
+- Correctly classified? Mostly: the stop is faithfully recorded; but the taxonomy is coarse (locus not classified), and documents still claim BLOCKED/NOT_RUN (stale), and no post-run adjudication exists yet. The classification "MAIN_REPOSITORY_BASELINE_OR_HASH_FAILED" is accurate but not sufficient to distinguish the failure class (engine capability) from e.g. hash mismatch; the repo record carries detail.
+- Sufficient to select a safe successor? Yes — the evidence is sufficient to conclude: one-shot consumed, no inventory evidence produced, repair must be a successor Task with a new script/targets + capability preflight + new review. That is a safe, determinate next action.
+
+The findings are P2/P3, none P0/P1. The stale state is a documentation defect that Codex must fix before/with the post-run adjudication, but it doesn't invalidate the evidence or prevent determining the successor. Hmm — but my own framework says "APPROVED only if the evidence package and its interpretation are sufficient for Codex to proceed to a successor Task". They are. The findings can be dispositioned within the adjudication.
+
+However, one could argue CHANGES_REQUESTED because the state documents are stale and no post-run adjudication exists → the "interpretation" (documented classification) is not yet recorded. The review's decision is about whether Codex can proceed. I think APPROVED with required actions (P2 items to be handled in the adjudication) is defensible: the evidence and interpretation are sufficient; the staleness is exactly what the adjudication must correct. The prompt says "A review approval is not a Gate or AC pass."
+
+Hmm. Let me weigh: the required report says decision APPROVED only if "the evidence package and its interpretation are sufficient for Codex to proceed to a successor Task; otherwise CHANGES_REQUESTED, NOT_VERIFIED, or BLOCKED_BY_MISSING_EVIDENCE."
+
+Is the evidence package sufficient? Yes. Is "its interpretation" sufficient? The interpretation provided in the pinned docs is stale (BLOCKED/NOT_RUN) — but my review supplies the correct interpretation, and it's determinate. The evidence package = the pinned artifacts. The interpretation = the classification of the run. Codex needs to record it. There's no missing evidence needed for the successor decision: we know the one-shot failed on a command-resolution gap and produced no inventory; the successor must add a capability preflight. No further evidence is required to select that safe successor.
+
+But strictly: the "correctly classified" requirement — the run is NOT yet classified in any repository document (no adjudication). The run's in-artifact classification (stopReason) is faithful but coarse. Does that mean the interpretation is insufficient? No, my review's interpretation suffices.
+
+I lean APPROVED with 2×P2 findings requiring disposition in the Codex post-run adjudication before any successor release. Hmm, but a P2 open at review time — the template says "P0/P1 未解决或关键验证缺失时不可批准" (cannot approve if unresolved P0/P1 or key verification missing). P2s don't block approval per the template. Key verification is missing in the sense that I could not recompute hashes — but that's a reviewer-sandbox limitation which the repo explicitly parks with Codex ("Codex must independently complete those records"). So APPROVED is consistent with the template's threshold (no P0/P1).
+
+Hmm, but is hash-pin integrity "关键验证缺失"? The pinned hash

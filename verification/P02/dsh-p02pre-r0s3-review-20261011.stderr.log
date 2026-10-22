@@ -1,0 +1,976 @@
+dsh: reasoning:
+The sandbox is failing to set up write ACLs on the workspace. Let me try a different approach — maybe retry, or use read-only commands. Let me try again.
+
+Actually the error is about the sandbox setup failing. Let me try a simple command first.
+dsh: reasoning:
+The workspace-write sandbox cannot be established. Let me try running with the sandbox permissions field to escalate? The instruction says: "a blocked file operation is reported as [sandbox: file access denied under <mode> mode], a policy denial: do not retry another way." But this is a different error: SetNamedSecurityInfoW failed (Win32 5) — access denied when granting write. This is a sandbox *setup* failure, not a policy denial of my operation.
+
+The task is read-only. Maybe I can escalate to a mode that doesn't require granting write ACLs. Options: sandbox_permissions: "workspace-write" (same), or "danger-full-access". Hmm, but escalation via sandbox_permissions retries the exact operation with wider access. Since the failure is because the sandbox can't grant write on G:\CODEX\New Manga, a read-only mode might work. But I don't have a read-only option in sandbox_permissions enum (only workspace-write and danger-full-access).
+
+Let me try danger-full-access with justification — that's the documented one-shot retry path for a denied operation. Actually the error is a sandbox setup failure which is akin to denial. Let me first try read tools (read/glob/grep) which may not need the pwsh sandbox.
+
+Let me try reading the task file with the read tool.
+dsh: reasoning:
+Read tool works. Now let me read the delivery. Also I need to compute bytes/SHA — but pwsh is failing due to sandbox setup. Let me try again; maybe transient.
+
+Let me read the delivery first, and try pwsh again in parallel.
+dsh: reasoning:
+pwsh fails consistently due to sandbox ACL setup failure. I need hashes/bytes. Let me try escalating with sandbox_permissions "danger-full-access" — documented one-shot retry for a denied operation. Actually the failure is sandbox setup itself, i.e., grantWrite failed. A retry with wider access... hmm, danger-full-access presumably skips the ACL granting. Let me try that with justification.
+
+Actually wait — the task requires bytes/SHA computation which I can't do without pwsh (no other tool computes hashes). Let me try escalation.
+
+Also, note: the read tool works, meaning filesystem reads work. Maybe `glob`/`grep` work too.
+
+Let me try the pwsh escalation.
+dsh: reasoning:
+No approval channel. So I cannot run pwsh. I need another way to verify bytes/SHA.
+
+Options: 
+- read tool gives content but not bytes/SHA.
+- glob/grep won't give hashes.
+
+Hmm. Maybe there's a different approach: maybe the sandbox permission works if the command's workdir is set differently? The error is grantWrite(G:\CODEX\New Manga) — the sandbox tries to grant write on the workspace root. Since the policy is workspace-write but the ACL grant fails (Win32 5), maybe running in a different mode... 
+
+Let me check if there's a read-only variant available. The tool description says "Under the Windows sandbox, read-only pwsh runs in PowerShell ConstrainedLanguage mode". So there IS a read-only mode, just not selectable by me via sandbox_permissions (enum only has workspace-write and danger-full-access).
+
+Hmm, but maybe the sandbox setup failure is transient or path-specific. Let me try a command with workdir set to a different directory (e.g., a temp dir)? The grantWrite targets the session workspace though.
+
+Let me try once more plain — maybe it was transient.
+
+Actually, let me reconsider: maybe the file ACL on G:\CODEX\New Manga denies the sandbox from granting write. There's a skill `diagnose-windows-sandbox-acl` for ACL problems. But the user explicitly said don't do ACL operations. That skill inspects and repairs ACLs — the user forbade ACL operations. So no.
+
+The user said: "不要执行任何 OS/API、Registry/WER、profile、token、ACL、path、TEMP/cache、scratch、protected hash、Build、Cargo 或 AC 操作" — that refers to the R0 target-machine query operations being reviewed (宿主 API 操作), I think. Hmm, "ACL" there is about the target OS ACL queries. But running git rev-parse is clearly expected — the review demands pin recomputation.
+
+Anyway, I can't run pwsh at all. Let me try a couple more times / variations to see if anything gets through.
+
+Let me try with run_in_background? Probably same setup path.
+
+Let me try workdir set to a different folder.
+dsh: reasoning:
+pwsh is entirely unusable. So HEAD/tree and byte-level SHA cannot be independently recomputed by me. That's a hard limitation — I must report `NOT_VERIFIED` for those, per the output format instruction ("无法核实则 NOT_VERIFIED").
+
+Hmm, but wait. Maybe I can still verify content-level consistency by reading files, and detect drift by checking whether the pin table's referenced files exist and their content matches claims. Bytes/SHA can't be recomputed.
+
+Interesting: there's already `verification\P02\dsh-p02pre-r0s3-review-20261011.stdout.md` and `.prompt.md`. That may be a previous run of this same review! Let me check — it might be the dispatch harness's prompt file. Actually the user said "不要创建本地 Review 文件，我会归档你的 stdout" — so the .prompt.md/.stdout.md are from the dispatch mechanism (ZCode → DSH). Let me read them, but careful: reading the prompt file is fine; it's my own task prompt. The stdout.md may be empty or a prior attempt.
+
+Wait — actually this is important. If `dsh-p02pre-r0s3-review-20261011.stdout.md` already contains a review, that could be a prior attempt's output. But per the task, Review file name is `verification/P02/dsh-p02pre-r0s3-review-20261011.md` (in the Task line 30). The .stdout.md is the dispatch artifact. Let me check its size/content.
+
+Let me now plan the actual substantive review. I need to read the referenced source files to spot-check the pin table and verify the classification claims:
+
+Key files to check:
+1. `verification/P02/p02-readonly-preflight-r0s1-evidence-20261011.md` — verify "stops before any G: path query", STOP_UNTRUSTED_OR_UNAVAILABLE_BUILTIN_MODULE.
+2. `verification/P02/p02-readonly-preflight-r0s1-review-20261011.md`
+3. `verification/P02/codex-p02pre-r0s1-adjudication-20261011.md`
+4. `verification/P02/p02-readonly-preflight-r0s2-review-20261011.md` — RP-01, NOT_SAFE_FOR_R0
+5. `verification/P02/codex-p02pre-r0s2-adjudication-20261011.md`
+6. M7/M8/M9/M10/M11 adjudications.
+7. r6 manifest.
+8. Check the user's verbatim verdict strings exist somewhere (probably in the waiver manifest / unwaived gate feasibility).
+
+Let me be efficient. Use grep to find key strings, and read the smaller files fully.
+
+Also note a red flag I already see: the pin table lists `verification/P02/codex-p02-profile-folder-versioned-contract-adjudication-20261010.md` (3985 bytes) for M7, and `codex-p02-zero-capability-registry-getter-adjudication-20261010.md` (4259) for M8, `codex-p02-wer-per-image-bootstrap-adjudication-20261010.md` (3127) for M9. But where are M10 and M11's adjudication files? The table has `codex-p02-owner-risk-waiver-manifest-r6-adjudication-20261011.md` (5560) — maybe M10. M11 might be `codex-p02-owner-risk-waiver-manifest-r6-adjudication`. Hmm, need to check the actual M7–M11 task files to see which adjudication corresponds.
+
+Let me grep for M7/M8/M9/M10/M11 identifiers.
+
+Also check: does the pin table miss `doc/tasks/P02PRE-R0.md`? The task depends on P02PRE-R0. The table includes r0 evidence, review, adjudication, and R0S1/R0S2 task files, R0S1 manifest, R0S2 manifest. Not P02PRE-R0.md task file. That's a P3 maybe (r0 task file not pinned). Also M7/M8/M9/M10/M11 task files not pinned, only adjudications. Hmm, may be P3/P2.
+
+Let me start reading. First, check the existing stdout/prompt files and grep for the enumeration and key strings.
+
+Let me batch: read r0s1 evidence (5489 bytes ~ 100 lines), r0s2 review (19235), r0s1 review (21262). These are moderately large. Let me read the small ones fully and grep the large ones.
+
+Let me first grep for the five enums and key phrases across verification/P02.
+dsh: reasoning:
+Interesting: `verification\P02\dsh-p02pre-r0s3-review-20261011.stdout.md` — grep did not show matches from it. Let me check whether it exists with content. The glob listed it. grep didn't return matches from it, so probably empty or contains no matching lines. Let me read it.
+
+Now, important finding spotted: the Delivery's row for the two scratch leaves cites R0S1 evidence "STOP_UNTRUSTED_OR_UNAVAILABLE_BUILTIN_MODULE" — verified in evidence L21/L35. Good.
+
+Also Delivery line 26 says "R0S1 runner 在 G: 路径查询前以 STOP_UNTRUSTED... 停止" — verified by adjudication L13.
+
+Now let me check my recollection on key nitpicks:
+
+1. Delivery line 28: "M7 adjudication：`profile_folder_no_side_effect=UNPROVABLE / BLOCKED`" — need to verify the M7 file `codex-p02-profile-folder-versioned-contract-adjudication-20261010.md` indeed contains that. Let me grep.
+
+2. Delivery line 30: "M9 adjudication 的 view/destination 与 T0 条件仍 NOT_RESOLVED / BLOCKED；M11 未建立全闭包" — need to check M9/M11 files. Which files are M9/M10/M11?
+
+Let me list the verification/P02 directory to see M7–M11 files.
+
+Also need to check the r6 manifest for the user verdict verbatim and Gate states.
+
+Let me also check `doc/tasks/P02PRE-R0.md` and `doc/tasks/P02M7..M11.md` naming.
+
+Let me glob verification/P02/*.md and doc/tasks/*.
+
+Also verify the M7/M8/M9/M10/M11 task files exist and the mapping of adjudication names.
+
+Let me batch several tool calls.
+dsh: reasoning:
+Only P02PRE-R0, R0S1, R0S2, R0S3 and P02 task files exist in doc/tasks. So M7/M8/M9/M10/M11 are "milestones" not task files — they're likely referenced in the r6 manifest as M7...M11 items. Let me grep for "M7" / "M10" / "M11" in verification/P02 to find their definitions.
+
+Let me search the r6 manifest for the M-milestone structure and user verdict.
+dsh: reasoning:
+The stdout.md is empty — so this is the dispatch artifact for my own review. Good; no prior review content. But note the task said Review file = `verification/P02/dsh-p02pre-r0s3-review-20261011.md` — the dispatcher created .prompt.md/.stdout.md wrapper. Fine.
+
+Key finding from r6 grep: r6 manifest is Task=`P02M10`. So:
+- M7 = `codex-p02-profile-folder-versioned-contract-adjudication-20261010.md`?
+- M8 = `codex-p02-zero-capability-registry-getter-adjudication-20261010.md`?
+- M9 = `codex-p02-wer-per-image-bootstrap-adjudication-20261010.md`?
+- M10 = r6 manifest (`p02-owner-risk-waiver-execution-manifest-r6-20261011.md`) + `codex-p02-owner-risk-waiver-manifest-r6-adjudication-20261011.md`
+- M11 = ?
+
+Let me find M11. Grep for "M11" across verification/P02 and doc.
+
+The Delivery cites "M11 未建立全闭包" and "M9/M10/M11 + R6". Need to identify M11's evidence file. Let me grep.
+
+Also I should verify the pin table file list covers these. The pin table has:
+- r0 evidence, r0 review, r0 adjudication
+- r0s1 evidence, review, adjudication
+- doc/tasks/P02PRE-R0S1.md
+- r0s1 manifest
+- doc/tasks/P02PRE-R0S2.md
+- r0s2 manifest, review, adjudication
+- r6 manifest
+- profile-folder-versioned-contract-adjudication (M7?)
+- zero-capability-registry-getter-adjudication (M8)
+- wer-per-image-bootstrap-adjudication (M9)
+- owner-risk-waiver-manifest-r6-adjudication (M10)
+- unwaived-gate-feasibility + its review + adjudication (M11?)
+
+So M11 might be `codex-p02-unwaived-gate-feasibility-20261011.md`. Let me verify by grep.
+
+Missing from pin table: `doc/tasks/P02PRE-R0.md`, `doc/tasks/P02.md`, M7/M8/M9/M10/M11 task/owner/review files, the M7/M8/M9 owner & review (non-adjudication) files, `verification/P02/p02-owner-risk-waiver-execution-manifest-r6-review-20261011.md`. Those may be P3 completeness findings (pin table not fully covering all cited sources). Note the Delivery says "抽查 Delivery 的源文件 pin 表" — spot check. The reviewer requirement #1 says "抽查 Delivery 的源文件 pin 表" (spot-check).
+
+Also important: check whether the M7/M8/M9 adjudication files' SHA/bytes pins are correct. I cannot compute SHA without pwsh. That's a P1... no, it's a NOT_VERIFIED limitation, not a finding about the delivery. I must report `NOT_VERIFIED` for bytes/SHA.
+
+Hmm, but wait. Maybe I can get file sizes another way? The `read` tool gives line counts. No byte counts. Hmm.
+
+Actually — maybe I should try pwsh once more; sometimes the ACL setup failure could be due to a concurrent process. Let me try a few more times in the background of my work. Actually let me try once with a different approach: maybe the sandbox needs to create something in the workspace... Let me just retry twice.
+
+Let me continue gathering evidence while retrying pwsh.
+
+Next steps:
+1. Find M11 definition/file.
+2. Verify the verbatim user verdict exists in r6 manifest and unwaived-gate-feasibility.
+3. Check the r0 evidence/Review/adjudication for the PASS_WITH_EVIDENCE scope ("limited time point").
+4. Check whether Delivery's claim "R0S2 Registry query=NOT_RUN" is consistent.
+5. Check whether Delivery line 26's citation of the scratch-leaf method is accurate.
+6. Check the missing M10 "complete protected set" claim: line 31 cites "R6 manifest 与 M10 adjudication 的完整保护与 evidence 项仍未满足" — verify.
+7. Check line 32 REQUIRES_ACTIVE_TEST cites "R6/M10 与 M11". The r0s2 review line 166-167 cites R0 evidence L259-260 & L268 for REQUIRES_ACTIVE_TEST. OK.
+
+Let me grep for M11 and for the exact verdict string in unwaived-gate-feasibility.
+dsh: reasoning:
+pwsh is fully unavailable — 4 attempts failed. I'll treat HEAD/tree bytes/SHA recomputation as NOT_VERIFIED with an explicit blocking note. Actually wait — the delivery pin table claims `codex-p02-unwaived-gate-feasibility-20261011.md` = 27825 bytes / SHA 15736303... and the R0 checkpoint (line 71) independently records the same 27825 / 15736303..., and r0 manifest L9 too. So there's cross-document consistency, but not an independent recomputation by me. I can report content-level consistency as supporting evidence but must mark the *recomputation* as NOT_VERIFIED.
+
+Hmm — can I find another way to compute hashes? There's no other tool. What about the `read` tool on a binary? No.
+
+Hmm, what about job/pwsh with `run_in_background`? The sandbox setup happens before running. Unlikely to help. Let me try one variant: maybe the failure is tied to writing into the workspace root specifically and a non-existent workdir outside... I already tried G:\CODEX. Let me try workdir = C:\Windows\Temp or similar? Actually the message "grantWrite(G:\CODEX\New Manga)" suggests it always grants on the session workspace. workdir change didn't matter.
+
+Let me try one more: run_in_background true.
+
+Actually, one more idea: maybe the sandbox mode is determined by whether the command looks read-only. Some harnesses apply read-only sandbox for commands deemed read-only... no, policy is workspace-write.
+
+Let me just try run_in_background once, then move on.
+
+Now, let's dig into substance. Key verification points:
+
+A. Five classifications completeness: The Delivery's table includes rows for each of the five enums:
+- PASS_WITH_EVIDENCE (R0 limited time point)
+- UNPROVABLE (many)
+- REQUIRES_ACTIVE_TEST (LPAC/token/etc.)
+- NOT_SAFE_FOR_R0 (several)
+- FAILED (row: "实际失败的 P02PRE AC / R0 查询 | FAILED | 没有" — value is FAILED = ∅)
+All five present. Good. But note: the FAILED row assigns 条件分类=`FAILED` to a row whose content is "没有" (none). That's arguably a labeling quirk: the row header puts `FAILED` in the 条件分类 column for a non-existent condition. Is that a mislabel? It says 分类针对"条件"或"当前采集方法". Using `FAILED` as a label for an empty set is a bit odd but explicitly states `FAILED = ∅` and clarifies NOT_RUN ≠ failure. This is consistent with the R0S2 adjudication table (line 48) which does the same ("所有本轮未执行的条件 | FAILED | 无"). So it's precedented. I could raise P3 for potential misreading.
+
+B. Condition vs method separation: The table has 条件分类 column and 方法/证据边界 column. In some rows, the 条件分类 is UNPROVABLE while the method is NOT_SAFE_FOR_R0 — good separation. However, check row for "M7 GetAppContainerFolderPath 和 M8 GetAppContainerRegistryLocation 候选 getter" — 条件分类 = NOT_SAFE_FOR_R0. Here the row is about the *method* (getter), and the condition classification column is filled with the method classification. Compare: the "尚未创建 profile 的 exact folder path / absence" row is UNPROVABLE. So the split exists: condition row UNPROVABLE, method row NOT_SAFE_FOR_R0. OK, that's actually good separation. But the column heading is "条件分类" while several rows are methods — a presentation inconsistency (P3 at most), and the R0S2 adjudication L45 shows "NOT_SAFE_FOR_R0 / UNPROVABLE" dual labeling for profile-folder.
+
+Wait — there IS a substantive discrepancy: the Delivery row for profile folder (line 28) says 条件分类=`UNPROVABLE` citing "M7 adjudication：profile_folder_no_side_effect=UNPROVABLE / BLOCKED". The r6 manifest L31 says: "profile folder | 只候选 API 返回 exact folder + 直接 Temp；无猜 SID 路径/其它子树 grant | M7 profile_folder_no_side_effect=UNPROVABLE / BLOCKED；实际 path/absence/canonical ID/ACL/Temp NOT_FROZEN / BLOCKED". So consistent. However R0S2 review L163 lists "appcontainer profile exact path / pre-create absence | NOT_SAFE_FOR_R0 | R0 manifest L51、R0 evidence L262". So there's a documented divergence: R0S2 review classifies the profile exact path/pre-create absence as NOT_SAFE_FOR_R0, while the R0S3 Delivery classifies it UNPROVABLE (citing M7). The R0S3 Delivery does list M7/M8 getter as NOT_SAFE_FOR_R0 separately. Is this a real inconsistency that should be flagged? The R0S3 Delivery's 条件 column = UNPROVABLE for the condition (path/absence unknown), and the method row = NOT_SAFE_FOR_R0. That's arguably an intentional separation and defensible. But the source R0S2 review labeled the condition itself NOT_SAFE_FOR_R0. Hmm. Per requirement 2, condition and method must be separated — the Delivery does separate them. I'd note as P3 "与 R0S2 Review L163 的标签不一致，建议加脚注说明映射" — a traceability nit. Good finding: cite R0S2 review L163.
+
+C. R0S1 stopped before any G: path query — verified: r0s1 evidence L35, adjudication L13 ("控制流在 Get-PSDrive、任何 G: path Get-Item 与 leaf Get-ChildItem 之前停止"). Delivery line 26 states STOP_UNTRUSTED_OR_UNAVAILABLE_BUILTIN_MODULE before G: path query. ✔
+
+D. R0S2 NOT_SAFE_FOR_R0 with Registry query NOT_RUN; Delivery line 29 says exactly that, cites RP-01. ✔ And line 15 says "不尝试更换 Python、Node、cmd 或其它 runner" ✔ (no retry/shell swap suggested). Check the whole Delivery for any suggestion to retry — line 15 "任何新 runner 都必须先单独冻结并 Review 启动和 wrapper 边界" — this is a conditional future requirement, not a retry recommendation. Acceptable. Requirement 3 says "不要建议重试或换 shell/runtime" — the Delivery doesn't recommend it. ✔
+
+E. R0 PASS_WITH_EVIDENCE limited: line 25 "仅适用于 R0 原记录的进程、对象清单和时间点；不能外推到完整保护集、未来状态、有效访问或子进程" ✔. Check R0 adjudication for the same scope. Also M7-M11 unresolved not promoted to PASS: Delivery rows for M7/M8/M9/M10/M11 all UNPROVABLE/NOT_SAFE_FOR_R0/REQUIRES_ACTIVE_TEST. ✔ Need to check there's no PASS claim for M-items elsewhere in the Delivery. Line 30,31,32,35,37 all fine.
+
+F. Verbatim verdict preserved: lines 44-49 match exactly the six strings. ✔ Verified against r6 manifest L9/L14/L16 and M11 adjudication L21. Let me verify `private_registry_absence=UNPROVABLE` etc. appear verbatim in r6 manifest. The grep earlier from r0s1 manifest L14 etc. Yes.
+
+Wait: the six items in requirement 5 are listed as 5 + 1 sentence. Delivery lines 44-49 list all six exactly:
+- `private_registry_absence=UNPROVABLE` ✔
+- Technical Gate=`NOT_SATISFIED` ✔
+- Owner Risk Acceptance=`APPROVED` ✔
+- Gate Disposition=`WAIVED_BY_OWNER` ✔
+- Build Authorization=`AUTHORIZED_WITH_EXCEPTION` ✔
+- `technical condition unmet; user explicitly accepted residual risk` ✔
+✔
+
+G. Execution state line 51: P02PRE=BLOCKED; profile=NOT_CREATED; ACL/registry=NOT_MODIFIED; Build Gate=BLOCKED; Hard Build Barrier=EFFECTIVE; build/Cargo=NOT_RUN; AC1–AC7=BLOCKED / NOT_RUN ✔ consistent with r6 adjudication/r0s1 adjudication L47.
+
+H. Now the pin table spot-check. Files cited in the classification table:
+- R0 evidence/review/adjudication ✔ pinned
+- R0S1 evidence/review/adjudication ✔
+- R0S2 review/adjudication ✔ (R0S2 evidence? there's no r0s2 evidence file; manifest pinned)
+- r6 manifest ✔
+- M7 adjudication ✔
+- M8 adjudication ✔
+- M9 adjudication ✔
+- M10 adjudication (= codex-p02-owner-risk-waiver-manifest-r6-adjudication) ✔
+- M11 report + review + adjudication ✔
+
+Missing pins for sources cited:
+- `verification/P02/p02-owner-risk-waiver-execution-manifest-r6-review-20261011.md` — is it cited? Delivery line 31 cites "R6 manifest 与 M10 adjudication". Not the r6 review. So maybe not needed.
+- `doc/tasks/P02PRE-R0.md` — cited? Not directly in Delivery. The task's depends_on includes P02PRE-R0 but Delivery doesn't cite the R0 task file.
+- M9's "M9 adjudication" — pinned file `codex-p02-wer-per-image-bootstrap-adjudication-20261010.md`. Need to verify that this file is indeed M9's adjudication and that it says wer_view_destination_binding=NOT_RESOLVED / BLOCKED and t0 NOT_RESOLVED. Let me check.
+- M7 adjudication file `codex-p02-profile-folder-versioned-contract-adjudication-20261010.md` should say profile_folder_no_side_effect=UNPROVABLE / BLOCKED.
+- M8 adjudication `codex-p02-zero-capability-registry-getter-adjudication-20261010.md` should say zero_capability_getter_eligibility / getter_effective_write_boundary / getter_success_failure_no_write = NOT_RESOLVED / BLOCKED.
+- M10 adjudication `codex-p02-owner-risk-waiver-manifest-r6-adjudication-20261011.md` should have "完整保护与 evidence 项仍未满足".
+
+Let me read those four small adjudication files (3985, 4259, 3127, 5560 bytes) — all small. And also check the R0S1 task file pin (8763) vs the actual file — can't hash but can check it exists and reviewer line.
+
+Also requirement 1: "校验 Task 与 Delivery pins、HEAD/tree、Owner/Reviewer 分离". Owner/Reviewer separation: Task says owner=Codex, reviewer=DeepSeek Harness; Delivery says Owner/Author=Codex, Reviewer=DeepSeek Harness. I am DSH. ✔ Separation OK. But note: M7/M8/M9 reviews and M10/M11 reviews were done by Codex /root (self-review? r6 says Owner=/root/orchestration_docs_review, Reviewer=/root/p02_isolation_advisor — different agents; M11 Review=Codex /root which is the Integrator, not the Owner /root/p02_gate_feasibility — so non-author). Fine.
+
+Potential real finding: Delivery line 9 says Root runtime model/effort=`gpt-6-luna / max`, from local session trace 2026-10-11T00:51:56.615Z. Task line 31 says the same. This is an Owner self-report without an independently verifiable artifact — the Delivery admits "顾问 advice 未独立绑定". I can't verify. That's a NOT_VERIFIED item, not necessarily a finding. But requirement: report actual runtime model/effort for myself; cannot verify → NOT_VERIFIED. Also note the Delivery's own runtime model claim is unverifiable statically — I should state that.
+
+Hmm, also interesting: the Task line 31 says Owner runtime trace=`gpt-6-luna / max`. Is `gpt-6-luna` a plausible model id? It's unusual (looks fictional/placeholder). But I have no ground truth. I should flag as P3/NOT_VERIFIED: the model identifier is self-reported, no verifiable trace artifact; cannot be confirmed; also note that per M11 adjudication "Owner final handoff 与实际 runtime model/effort 没有可核验记录，仍=NOT_VERIFIED" — precedent that such claims are NOT_VERIFIED. Actually wait: if the project's own precedent (M11 adjudication L17) says runtime model/effort without verifiable record = NOT_VERIFIED, then the R0S3 Delivery asserting `gpt-6-luna / max` "由 local session trace 报告" might conflict with that precedent unless a trace is pinned. The Delivery doesn't pin a trace artifact (no bytes/SHA for a trace). That's a legitimate P3 finding: either pin the trace or mark NOT_VERIFIED per M11 precedent. Good.
+
+Let me now read the small M7/M8/M9/M10 adjudication files.
+
+Also check `verification/P02/dsh-p02pre-r0s3-review-20261011.prompt.md` to know exactly what was asked (already grepped, matches the user's message).
+
+Let's read the four adjudications.
+dsh: reasoning:
+M7 adjudication confirms `profile_folder_no_side_effect=UNPROVABLE / BLOCKED` ✔ and verbatim verdict ✔.
+M9 adjudication confirms `wer_view_destination_binding=NOT_RESOLVED / BLOCKED` and `t0_bootstrap_safe_order=NOT_RESOLVED / BLOCKED` ✔.
+
+Note: M7 and M9 adjudications use "technical condition unmet; user explicitly accepted residual risk" as the "必须逐字保留" string. Note the requirement 5 lists `technical condition unmet; user explicitly accepted residual risk`. ✔
+
+Now M8 and M10 adjudications. Let me read them.
+
+Also I want to check R0 evidence's PASS_WITH_EVIDENCE scope statements and R0 adjudication. And check R0S2 Task file for L50/L51 (the NOT_SAFE_FOR_R0 兜底). And the R0S1 task file pin.
+
+Also: an important check — the Delivery pin table lists `doc/tasks/P02PRE-R0S1.md` (8763 bytes) and `doc/tasks/P02PRE-R0S2.md` (9015). But are the current live files actually those sizes? Can't verify. I can at least sanity-check plausibility: P02PRE-R0S3.md is 58 lines; R0S1 at 8763 bytes would be ~150 lines; R0S2 ~160 lines. Let me read them to confirm they exist with that scale (a rough plausibility check, not byte verification).
+
+Let me read M8 and M10 adjudications next.
+dsh: reasoning:
+Excellent — M10 adjudication L44 gives a verifiable precedent that Root actual = `gpt-6-luna / max`, via `scripts/usage_by_model.py`. So the Delivery's runtime model claim is consistent with M10 adjudication's recorded usage report. Still, the Delivery itself relies on "local session trace" without pinning. But the cross-document corroboration is strong. So a P3 at most, or arguably no finding. I'll mention it as a P3 traceability note: the Delivery cites "local session trace 于 2026-10-11T00:51:56.615Z" without pinning an artifact; cross-check with M10 adjudication L44 corroborates `gpt-6-luna / max`. Good.
+
+M8 adjudication confirms the three NOT_RESOLVED/BLOCKED conditions ✔ and verbatim verdict ✔.
+M10 adjudication confirms the full-protection unmet list ✔ (L28) and r6 pin 44307/626E000A... matches the Delivery's pin table row for r6 manifest ✔ (44607? no: Delivery says 44307 and 626E000A94C8C3561DBB13BFA4C5BC66DA315001B9F50B5AC1669339407009DE — matches M10 adjudication L11 exactly ✔).
+
+Wait! Important: M10 adjudication L12 says r6 Review = `23380 bytes / A8C0C124...`. But the r6 manifest section in my earlier grep of `p02-owner-risk-waiver-execution-manifest-r6-20261011.md` L237 mentions Review file `p02-owner-risk-waiver-execution-manifest-r6-review-20261011.md`. The Delivery pin table does NOT include the r6 review. Delivery line 31 cites "R6 manifest 与 M10 adjudication". So no need. But the Delivery is about "完整保护与 evidence 项仍未满足" citing R6 manifest and M10 adjudication — fine.
+
+Hmm, wait. Actually there's a discrepancy: earlier in the r0 manifest L69 it lists "r6 manifest、r6 Review、r6 adjudication" as hashed governance docs. Not relevant.
+
+Now let me check the M11 pin: Delivery says `codex-p02-unwaived-gate-feasibility-20261011.md` = 27825 / 15736303C3241E0C14106EFCAFB8583DF719A566D1879B7A7144B6D079A04A1F. R0 checkpoint says the same (27825 / 15736303...) ✔ and r0 manifest L9 too ✔. Cross-document consistency.
+
+Also the M11 review pin: Delivery says `codex-p02-unwaived-gate-feasibility-review-20261011.md` = 5857 / F3578C9D041C8FAE91AAF329B4385A4AC94E1E44DF73633765C18DD82C2B7905. And M11 adjudication says the Review bound 16 sources with 12 matching, 4 drifted (M11R-01). Need to check whether the M11 review file itself records its own... hmm, let me check the M11 review and adjudication for pin consistency. And M11 adjudication pin — Delivery says 4101 / 5317DB37... Need to verify against adjudication file? The adjudication file would be self-referencing. Let me check the r0 evidence or manifest for these pins.
+
+Let me grep for "5317DB37" and "F3578C9D" and "5857" across verification. Also grep for "15736303".
+
+Also need to check M11R-01's 4 drifted pins — does the R0S3 Delivery pin table include any of those 4 drifted files? If so, and it records drifted values, that could be a P2. Let me read the M11 review/adjudication fully (5857 and 4101 bytes = small).
+
+Let me read those two.
+
+Also, key: is there a potential issue with the Delivery pinning `codex-p02-unwaived-gate-feasibility-review-20261011.md` with values that were current at Delivery time? Since M11R-01 says 4 governance/task docs drifted after the M11 owner report. The Delivery's own pin table pins `codex-p02-unwaived-gate-feasibility-20261011.md` (the Owner report, 27825) — consistent.
+
+Let me read the M11 review + adjudication.
+dsh: reasoning:
+Important: M11 adjudication L8 pins the M11 review but doesn't give bytes/SHA. The Delivery pin table gives `5857 / F3578C9D041C8FAE91AAF329B4385A4AC94E1E44DF73633765C18DD82C2B7905` for the M11 review and `4101 / 5317DB37...` for the M11 adjudication. I can't recompute. But note: the M11 review file I just read has 47 lines; 5857 bytes plausible. M11 adjudication 29 lines; 4101 bytes plausible. OK.
+
+Hmm, one thing: the Delivery pin table's row for M11 adjudication (`codex-p02-unwaived-gate-feasibility-adjudication-20261011.md`, 4101 bytes) — the adjudication file itself would be modified when integrated? No.
+
+Now the R0S2 review shares the "M11 report中普通 git status" note... not relevant.
+
+Now let me verify the R0 evidence/adjudication scope and the R0S1/R0S2 task file claims:
+- R0 evidence is 99592 bytes (per pin) — large. Let me grep for PASS_WITH_EVIDENCE scope statements in R0 adjudication (11145 bytes, ~40 lines) and R0 review (29404).
+
+Let me read `codex-p02pre-r0-adjudication-20261011.md` fully (small).
+
+Also check R0S1 task file and R0S2 task file to verify Delivery's claims about L50/L51 (R0S2 task禁止换 runner) and that P02PRE-R0S1 task pins are ~8763 bytes. Also the Delivery's own claim "本轮没有新的目标机 READY 查询" and Task AC "不得重放 R0S2 Registry query".
+
+Let me read the R0 adjudication and grep the R0S1/R0S2 task files for the relevant lines.
+
+Additionally, I should check the Task file (`doc/tasks/P02PRE-R0S3.md`) against the Delivery:
+- Task line 30 says Review=`verification/P02/dsh-p02pre-r0s3-review-20261011.md`; the actual created files are `.prompt.md`/`.stdout.md` — the final `.md` doesn't exist yet (I'm told the user archives my stdout). So the Review file will be named by the user. Minor: the pinned review path in the Task is a claim about a future artifact; not a finding. Actually — hmm, is there a risk that the dispatcher created `.stdout.md` instead of `.md`, meaning the promised artifact path won't be produced? That's the dispatcher/user's choice; the user said they'll archive stdout. I could note as P3 that the Review artifact will be named `...stdout.md`/`.md` depending on the archiver and the Task's declared path `dsh-p02pre-r0s3-review-20261011.md` must be satisfied at integration. That's a legitimate P3 integration note.
+
+Also Task AC line 37: "固定相关 Task、manifest、evidence、Review、adjudication 的 bytes/SHA；Review 前核对 base/head 与 pins。" — The Delivery pin table lacks:
+  - its own Task file `doc/tasks/P02PRE-R0S3.md` pin (it says "Reviewer 应自行重算 Task 与 Delivery pin" at line 55 — so it explicitly delegates; but AC says 固定相关 Task bytes/SHA). Hmm: Delivery line 55 says "下表记录交付基线时的精确输入；独立 Reviewer 应自行重算 Task 与 Delivery pin，并抽查完整分类所引用的源文件 pins." So the Delivery does NOT include the Task/Delivery pins itself. AC3 requires "固定相关 Task、manifest、evidence、Review、adjudication 的 bytes/SHA". The Task pin itself is not in the table → possible AC3 partial non-satisfaction (P2?). Let me consider: The table has doc/tasks/P02PRE-R0S1.md and P02PRE-R0S2.md but NOT doc/tasks/P02PRE-R0S3.md, NOT doc/tasks/P02PRE-R0.md, NOT doc/tasks/P02.md. And no Review/adjudication files for R0S3 (expected — they come after). Also no M7/M8/M9/M10/M11 Owner reports or Reviews (only adjudications). And no r6 Review.
+
+  Which of these are "相关 Task"? AC3 says "固定相关 Task、manifest、evidence、Review、adjudication 的 bytes/SHA". The Delivery pins R0 evidence, R0 review, R0 adjudication, R0S1 evidence/review/adjudication/manifest, R0S2 manifest/review/adjudication, doc/tasks/P02PRE-R0S1.md, doc/tasks/P02PRE-R0S2.md. Missing: doc/tasks/P02PRE-R0.md (the R0 task), doc/tasks/P02PRE-R0S3.md (its own Task), and all the M7–M10 Owner reports + Reviews that the classification rows depend on. The table includes M7/M8/M9/M10/M11 adjudications but not their underlying reports/reviews. Is that a real gap? The Delivery's classification cites adjudications for M7/M8/M9/M10/M11 — and adjudications are the authoritative integration decisions, so pinning adjudications suffices for the classification's evidentiary basis. But AC asks for "Review" pins too — the Delivery pins R0 review and R0S1 review and R0S2 review, but not M7R/M8R/M9R/M10R/M11R reviews. Given the M-items are cited only via their adjudications, this is defensible; I'd raise P3 (not P2), recommending explicit note that M-item interdependencies are cited via adjudication only.
+
+  Actually hold on — is `doc/tasks/P02PRE-R0S1.md` truly a "相关 Task"? Yes it's pinned. And P02PRE-R0.md is a dependency (`depends_on: [P02PRE-R0, ...]`) yet not pinned. That's an asymmetry worth a P2/P3 finding. I'd say P3 (documentation completeness), since the classification doesn't depend on the R0 task file text directly... Actually line 25's citation is "R0 evidence 与其 Review/adjudication 接受为有限采集证据" — not the R0 task. And line 37 cites "M9/M10/M11 + R6". So R0 task file isn't a cited source. P3.
+
+Wait, actually let me reconsider: The Delivery line 55 explicitly says the Reviewer should recompute the Task and Delivery pins. It's a self-aware delegation, arguably making AC3 satisfied by the Reviewer. But AC3 is a Task AC; if the Delivery doesn't pin the Task, the Owner relies on the Reviewer. The Task AC line 37 says "Review 前核对 base/head 与 pins" — so the AC requires the *Review* to check. Hmm, ambiguous. I'll note it as P3 with recommendation.
+
+Now, a possibly more significant issue: Delivery line 9 says Root runtime model/effort = `gpt-6-luna / max`, "由 local session trace 于 2026-10-11T00:51:56.615Z 报告". Timestamp 2026-10-11T00:51:56.615Z = 08:51:56 Asia/Shanghai. But the Delivery timestamp = 2026-10-11 08:55 Asia/Shanghai = 00:55:00Z. Task line 31 also says 00:51:56 UTC. Consistent internally. And M10 adjudication (earlier, before R0S3) recorded Root = gpt-6-luna / max from the usage report. So plausible and corroborated. Also note: M10 adjudication is dated 20261011 and covers sessions since 2026-10-10T15:16:14Z; R0S3 at 00:51:56Z 10-11 falls within. Wait, that time is 10-11 00:51 UTC, and the usage window started 10-10 15:16 UTC — includes it. Nice corroboration (but the M10 usage report was for a different task id/session). Fine, P3/NOT_VERIFIED.
+
+Hmm, but there's a subtlety: the M10 adjudication says the usage report ran `--task-id current --since 2026-10-10T15:16:14.429000Z`, and R0S3 happened on 2026-10-11 00:51Z which is after M10's adjudication? M10 adjudication is dated 2026-10-11 (Asia/Shanghai date). Its time isn't given. If M10 adjudication was produced at, say, 2026-10-11 01:00Z+... Actually M11 adjudication came after and is dated 20261011. R0S3 Delivery timestamp 08:55 Shanghai = 00:55Z. Hmm, so R0S3's stated runtime trace at 00:51:56Z would be *before* 00:55Z Delivery — consistent. But M10 adjudication must have been completed before R0S3 was dispatched (since R0S3 depends on M10). R0S3's trace at 00:51:56Z... M10 adjudication's usage report covered `--since 2026-10-10T15:16:14Z`. So M10 adjudication happened between 10-10 15:16Z and 10-11 00:51Z. Plausible. Fine — no contradiction.
+
+Now let me check the R0 adjudication + R0S1/S2 task files. Let me read R0 adjudication (11145 bytes ~ 30-40 lines) and grep R0S2 task for "NOT_SAFE_FOR_R0"/"login=false".
+
+Actually, I realize I should also double-check one potentially real issue in the Delivery: line 26 says the scratch-leaf row cites "R0S1 evidence/Review/adjudication；`Get-ChildItem` direct-child inventory 方法另列 `NOT_SAFE_FOR_R0`". But per R0S1 Review F-03 and R0S1 adjudication F-03, the frozen body would serialize both leaves as `NOT_SAFE_FOR_R0` in the commonFailure branch. The Delivery lists the *condition* as UNPROVABLE and separately lists the *method* as NOT_SAFE_FOR_R0 — matching the adjudication's "两种分类描述不同对象" (L25). ✔ Good — this is exactly the required separation. 
+
+Now check whether the Delivery omits the R0S1 capture-level `UNPROVABLE` items (精确时间/profile effects) — those are covered by the method row? The Delivery table doesn't have a row for "capture 精确时间、shell profile startup effects、实际 executable identity、cmd bytes binding = UNPROVABLE" (R0S1 adjudication L39). Hmm — that's an R0S1 condition that the Delivery doesn't classify. The Delivery's R0S2 row covers "PowerShell startup/profile/... side effects" for R0S2. The R0S1-specific items (capture 精确开始/结束时间、shell profile startup effects、实际 executable identity、cmd bytes binding) are absent from the Delivery table. Requirement 2 asks whether the five classifications are 完整 (complete). So this could be a genuine completeness gap: R0 left the exact timestamps/profile-effects/executable-identity/cmd-bytes-binding as UNPROVABLE (R0S1 evidence L38, adjudication L39), and the R0S3 Delivery's classification table does not have a row for them.
+
+Hmm, but the Delivery's row "R0 固定时点的..." covers R0's PASS items; there is a row "R0S2 PowerShell startup/profile/wrapper runner..." (method). And the scratch-leaf row's 方法 column mentions the stop. But the R0S1 capture's exact time / cmd bytes binding / actual executable identity are not classified anywhere in the Delivery table. Let me check: does the Delivery mention "R0S1" capture metadata anywhere? Line 26 (scratch leaf row) and line 33/34 (R0S1 predicate/getter method rows). No row for "R0S1 capture 精确时间/实际 executable/cmd bytes binding = UNPROVABLE".
+
+Is that a real omission? The R0S3 Task's goal is "将每项剩余条件与用于观测的方法分开分类，五个规定枚举均有明确记录；没有证据的项不得猜测" — "每项剩余条件". The remaining conditions list should include R0S1's evidence-quality gaps. R0S1 adjudication L39 explicitly lists "capture 精确时间、shell profile startup effects、实际 executable identity、cmd bytes binding | UNPROVABLE". The R0S3 Delivery doesn't carry that row. However, one could argue the R0S2 row's method column covers "精确 executable、argv、profile/cache/history 与 wrapper/temp/log side effects 未证明无副作用" for R0S2. But R0S1's capture metadata gaps are distinct and are conditions of the R0S1 evidence.
+
+I'll raise this as P2 (completeness of the classification set relative to R0S1 adjudication L39) — recommendation: add one row classifying R0S1 capture metadata (精确时间/executable identity/cmd bytes binding/profile startup effects) as UNPROVABLE, or add an explicit statement that R0S3 supersedes/re-scopes it. Hmm, but is it "superseded" by the R0S3 conclusion that there is no further READY capture? The R0S3 Delivery's conclusion addresses future captures, not the historical R0S1 evidence quality. I think P2 is fair but let me be careful: is this a "condition" in the P02PRE condition set, or an evidence-quality gap? R0S1 adjudication L39 lists it in its own classification table alongside real conditions. The R0S3 Delivery table is titled "剩余条件分类" (remaining conditions) and claims to reclassify "P02PRE 剩余条件". So it should include it. I'll call it P2 — completeness gap. Actually, hmm. Let me weigh: could a reviewer reasonably say the R0S1 capture-metadata items are subsumed by the R0S2 row's method description ("PowerShell startup/profile... side effects 未证明无副作用")? Partly — shell profile startup effects yes; exact capture time, cmd bytes binding, actual executable identity, stderr availability — no. Those are distinctly missing. And R0S1 evidence L16 explicitly says stderr not claimed empty; L28 profile effects UNPROVABLE.
+
+Given the review explicitly asks "判断五种规定分类是否完整", I'll report it as P2 with precise citations. Hmm, but I must be careful not to overstate. I'll phrase it as a completeness/consistency finding: the Delivery's table does not carry the R0S1-level `UNPROVABLE` items recorded in R0S1 adjudication L39; thus "每项剩余条件" is not fully enumerated. P2 seems right (it's a documentation completeness defect, not a safety-claim defect). Actually, since it doesn't cause any false PASS or authorization, and the classification enum values used are correct... The impact: readers may believe the R0S1 UNPROVABLE items were resolved/absorbed. I'll keep P2 but note low severity impact... P2 means important but not blocking. Fine.
+
+Let me also check: does the Delivery classify the R0S1 "capture 的 exit=0 归属" issue? R0S1 review F-07. Not a condition. Skip.
+
+Another check: Delivery line 25 says "R0 固定时点的实际进程用户/SID 身份..." — cited to "R0 evidence 与其 Review/adjudication 接受为有限采集证据". Need to verify R0 adjudication says PASS_WITH_EVIDENCE for those with limited scope. Let me read the R0 adjudication.
+
+Another check on requirement 4: "M7/M8/M9/M10/M11 的 unresolved 条件没有被提升为 PASS" — checked ✔. But also: does the Delivery anywhere treat the M-items' DONE status as gate progress? Line 28 cites M7 adjudication UNPROVABLE/BLOCKED ✔.
+
+Now let me also verify the Task↔Delivery consistency on the "五枚举均有明确记录" AC and the mention that `REQUIRES_ACTIVE_TEST` is used. ✔ line 32.
+
+One more: The Task says "交付=`verification/P02/codex-p02pre-r0s3-classification-20261011.md`；Review=`...dsh-p02pre-r0s3-review-20261011.md`；adjudication=...". Delivery exists at the named path ✔.
+
+Also: Delivery line 11 says "Delivery timestamp=`2026-10-11 08:55 Asia/Shanghai`" matching Task L56 ✔.
+
+Another potential issue: Delivery line 51 says "AC1–AC7=`BLOCKED / NOT_RUN`". The requirement said AC1-AC7 states must remain identical to Task start. ✔
+
+Also check: Delivery says "本 Task 不授权 API/Create/Build/AC，也不查询、安装、启用或启动 Windows Sandbox" ✔ good.
+
+Now, does the Delivery anywhere suggest "重试" for R0S2? Line 15: "任何新 runner 都必须先单独冻结并 Review 启动和 wrapper 边界" — that's a condition, not a retry recommendation. And it says "不尝试更换 Python、Node、cmd 或其它 runner". Requirement 3 says "不要建议重试或换 shell/runtime". ✔ Compliant.
+
+Hmm, but note the nuance: requirement 3 says R0S2's getter body is read-only candidate but the *runner* is unsafe; the Delivery's line 15 says "R0S2 的 getter body 尽管是只读候选" — consistent.
+
+Now let me check the R0 adjudication and R0S1/R0S2 task files. And also check `doc/tasks/P02PRE-R0.md` for whether R0S3's `depends_on` and the M-item references are consistent.
+
+Let me read the R0 adjudication.
+dsh: reasoning:
+R0 adjudication confirms the PASS_WITH_EVIDENCE limited-scope rows ✔ and notably its own classification table (L35-51) is the authoritative source for R0's condition classifications. Note R0 adjudication L47: profile folder exact path / getter no-side-effect / pre-create absence = `NOT_SAFE_FOR_R0`. The R0S3 Delivery line 28 classifies "尚未创建 profile 的 exact folder path / absence" as `UNPROVABLE` citing M7. This IS a divergence from the R0 adjudication's own classification (which put it in NOT_SAFE_FOR_R0, citing "路径未知；getter 不调用"). The R0S2 review L163 also says profile exact path/pre-create absence = NOT_SAFE_FOR_R0. So the R0S3 Delivery re-classifies it as UNPROVABLE — an unexplained category change from the R0 adjudication.
+
+Hmm, is it defensible? M7 adjudication says `profile_folder_no_side_effect=UNPROVABLE / BLOCKED`. r6 manifest L31 says "实际 path/absence/canonical ID/ACL/Temp NOT_FROZEN / BLOCKED". So the *absence/path predicate* is UNPROVABLE/NOT_FROZEN, while "getter 方法" = NOT_SAFE_FOR_R0. So the Delivery's separation (condition=UNPROVABLE, method=NOT_SAFE_FOR_R0 in a separate M7/M8 getter row) is arguably more faithful to M7+r6 than R0 adjudication L47's conflated row. So it's a defensible refinement, but it *changes* a classification relative to the R0 adjudication without an explicit note. Requirement 4 says M7/M8/M9/M10/M11 unresolved conditions must not be promoted to PASS — UNPROVABLE is not a promotion to PASS, and NOT_SAFE_FOR_R0 → UNPROVABLE could be seen as a *downgrade in safety-labeling strictness* (UNPROVABLE is less alarming than NOT_SAFE_FOR_R0). Hmm. Actually for "the predicate is unknown", UNPROVABLE is the correct label; NOT_SAFE_FOR_R0 applies to the *method*. The R0S3 Delivery properly keeps the method row. But a reader comparing to R0 adjudication L47/R0S2 review L163 will see a changed label. This warrants a P2 finding: request an explicit mapping/justification note (traceability), not a reversal. I'll raise it as P2 with the note that the classification itself is defensible and consistent with M7/r6, but the change from the R0 adjudication must be disclosed (silent reclassification of a previously `NOT_SAFE_FOR_R0` item).
+
+Hmm, careful — is it truly silent? Delivery line 28's 状态依据 cites M7 adjudication. It doesn't mention that R0 adjudication had it as NOT_SAFE_FOR_R0. So yes, silent relative to R0 adjudication. P2 seems right, maybe P3. Given the review's emphasis on separation of condition vs method and not promoting, and that the change direction is *less* restrictive... I'd rate P2 because a category change of a safety-labeled unresolved condition without disclosure is exactly the kind of thing this review is checking, and Codex's own integration conventions require acknowledging deltas from prior adjudications. Hmm, but requirement 2's spirit: "NOT_RUN、安全停止不得写成 FAILED" and "条件状态和采集方法状态必须分开". The Delivery does separate. The divergence is with a prior adjudication, and requirement 4 only bars promotion to PASS.
+
+I'll rate it P2 and clearly state it's a disclosure/traceability defect, not a false PASS. Actually let me reconsider P2 vs P3. P0 = must fix before anything / safety-critical false claim. P1 = blocking correctness defect. P2 = significant but non-blocking. P3 = nit. A silent classification change vs prior adjudication on an unresolved safety condition = significant documentation defect → P2. OK, I'll use P2 but clearly mark the impact as disclosure-only.
+
+Wait, I want to double-check whether R0 adjudication L47's label really covers the same object as R0S3 Delivery L28. R0 adjudication L47: "profile folder exact path / getter no-side-effect / pre-create absence | NOT_SAFE_FOR_R0 | 路径未知；getter 不调用。" That's a conflated row containing three items: exact path, getter no-side-effect, pre-create absence. R0S3 splits: condition row (exact path/absence) = UNPROVABLE; method row (M7/M8 getters) = NOT_SAFE_FOR_R0. So the split assigns UNPROVABLE to "exact path / absence" — R0 adjudication assigned that same item NOT_SAFE_FOR_R0 (because 路径未知). Yeah. Divergence confirmed. Good finding.
+
+Also R0S2 review L163 explicitly listed "appcontainer profile exact path / pre-create absence | NOT_SAFE_FOR_R0". So two prior artifacts. Good.
+
+Now, next: the second issue I identified — R0S1 capture metadata UNPROVABLE items not enumerated. Let me double check by grepping the Delivery for "executable identity". Delivery line 36 mentions "精确 executable、argv、profile/cache/history" for R0S2. R0S1's own capture metadata (精确时间, cmd bytes binding, executable identity, stderr) is not present. R0S1 adjudication L39 lists: "capture 精确时间、shell profile startup effects、实际 executable identity、cmd bytes binding | UNPROVABLE". Delivery has no row. Also R0S1 evidence L38 "本 capture 精确开始/结束时间及 PowerShell profile 启动影响 | UNPROVABLE". And R0S1 evidence L16 stderr.
+
+So: P2 finding — incomplete enumeration of remaining conditions (R0S1 capture-level UNPROVABLE items absent). Recommend adding a row.
+
+Hmm, one could argue the Delivery's scope is "剩余条件" (remaining conditions, i.e., conditions still blocking), and the R0S1 capture metadata are evidence-quality gaps of a closed Task, not open P02PRE conditions. The Task says "将每项剩余条件与用于观测的方法分开分类，五个规定枚举均有明确记录". R0S1's capture 精确时间/profile effects are arguably still-open conditions (they're recorded as UNPROVABLE in the R0S1 classification table, and R0S2's RP-01 built on the profile-effects UNPROVABLE). Actually the Delivery line 29 does capture "login=false 不证明 -NoProfile" in the R0S2 row. Hmm, so shell startup/profile effects IS represented (via R0S2 row). What's definitely missing: R0S1 capture 精确开始/结束时间、实际 executable identity、cmd bytes binding、stderr 不可得. I'll narrow the finding to those specific items → P3? Hmm. The Delivery's R0S1 rows (33, 34) are about the runner predicate and the getter method. So R0S1's UNPROVABLE capture-metadata conditions are indeed absent.
+
+Given "完整性" is an explicit review axis, I'll report as P2 but with the precise list. Hmm, let me settle: I'll call it P2 (completeness gap in the enumeration core to AC1). AC1: "将每项剩余条件与用于观测的方法分开分类，五个规定枚举均有明确记录；没有证据的项不得猜测。" Since AC1 requires EVERY remaining condition, an omission is an AC1 shortfall → P2. Good, that gives me a solid P2 with AC citation.
+
+Let me now count findings:
+- P0: 0
+- P1: 0? Let me consider whether the byte/SHA non-verification should be P1. No — it's an environmental limitation of my review, reported as NOT_VERIFIED, and the deliverable includes pins cross-corroborated by other versioned documents.
+- P2: (1) R0S1 capture-metadata UNPROVABLE items missing from classification table (AC1 completeness). (2) profile-folder exact path/pre-create absence reclassified NOT_SAFE_FOR_R0→UNPROVABLE without disclosure vs R0 adjudication L47 / R0S2 review L163.
+- P3: 
+  (a) 条件分类 column contains method rows (M7/M8 getter, R0S1 method rows, R0S2 runner row) — column semantics inconsistent; suggest splitting or renaming to "对象分类" (the R0S2 adjudication L45 used dual labels).
+  (b) FAILED row: assigning `FAILED` as the 条件分类 value of a row whose content is "没有/∅" invites misreading; precedent exists in R0S2 adjudication L48, but suggest marking the enum as "已覆盖（空集）" instead.
+  (c) Pin table omits `doc/tasks/P02PRE-R0.md` and its own Task pin `doc/tasks/P02PRE-R0S3.md` (AC3 says 固定相关 Task bytes/SHA; Delivery L55 delegates to Reviewer). Also M7R/M8R/M9R/M10R/M11R Review files and their Owner reports are not pinned, only adjudications.
+  (d) Runtime model/effort for Root relies on unpinned "local session trace"; cross-corroborated by M10 adjudication L44 usage report, but M11 precedent marks unverifiable model claims NOT_VERIFIED — recommend pinning the usage artifact or marking NOT_VERIFIED.
+  (e) Task declares Review artifact path `verification/P02/dsh-p02pre-r0s3-review-20261011.md`; the dispatch produced `.prompt.md`/`.stdout.md` (stdout empty at review time). Integration must materialize the declared path, else Task L30/AC5 mapping breaks.
+  (f) Delivery L26 says "`Get-ChildItem` direct-child inventory 方法另列 NOT_SAFE_FOR_R0" — fine. Maybe not needed.
+  (g) Task AC checkboxes all unchecked `[ ]` while run record says Delivery frozen and IN_REVIEW — status/AC hygiene. Hmm, that's about the Task file, and AC line 39 "没有 Review / adjudication 的条件不标 DONE" — checkboxes unchecked is consistent with in_review. Not a finding.
+  (h) Delivery L11 "本 Review 绑定 Delivery 内容及下表当时的源文件 pins" — fine.
+
+Let me also verify: Delivery L30 cites "M9 adjudication 的 view/destination 与 T0 条件仍 NOT_RESOLVED / BLOCKED；M11 未建立全闭包" — M9 ✔ (wer_view_destination_binding, t0_bootstrap_safe_order). "M11 未建立全闭包" — M11 adjudication L17 says ALL_UNWAIVED_PRECONDITIONS=UNRESOLVED / BLOCKED ✔.
+
+Delivery L31 cites "R6 manifest 与 M10 adjudication 的完整保护与 evidence 项仍未满足" — M10 adjudication L28 lists "protected pre/post hashes；证据分配、停机及清理实现" as unmet ✔.
+
+Delivery L32 cites "R6/M10 与 M11：实现、对象和执行链未闭合" ✔ (M10 L34 "P02PRE 仍因上述依赖未满足而 BLOCKED"; M11 L15-17).
+
+Delivery L33 cites "R0S1 evidence/Review/adjudication" for the trusted-module predicate ✔ (evidence L35, review L85, adjudication L37).
+
+Delivery L34 cites "R0S1 Review/adjudication" ✔ (review F-01/L86-ish; adjudication L23, L38).
+
+Delivery L35 cites "M7、M8 adjudication" ✔ (M7 L17; M8 L17).
+
+Delivery L36 cites "R0S2 independent Review RP-01 与 Codex adjudication" ✔ (review L101; adjudication L15).
+
+Delivery L37 cites "M9/M10/M11 + R6" ✔.
+
+Delivery L38 "FAILED = ∅" ✔.
+
+Now Delivery L27 "目标 private registry storage 创建前缺失 | UNPROVABLE" with verbatim verdict ✔.
+
+One more check on requirement 5: "Build Authorization=AUTHORIZED_WITH_EXCEPTION" ✔ present L48.
+
+Also requirement 5's "Gate Disposition=WAIVED_BY_OWNER" ✔ L47.
+
+Now requirement 6: don't treat this Review as Gate PASS, no new authorization, no inference about target machine current state. My output must comply.
+
+Also I should double check the Task file's own pins vs Delivery: Task L28 says tree=`c25d051a...` and base. Delivery L6 same. R0/R0S1/R0S2/R6/M7-M11 all cite the same HEAD/tree — consistent. But I cannot verify against git (pwsh dead). Report NOT_VERIFIED for HEAD/tree re-derivation, with the note that 8+ versioned documents consistently record HEAD=cddff58... and tree=c25d051..., and git objects (commit/tree) can't be recomputed without a shell.
+
+Hmm — actually, can I verify HEAD/tree without pwsh? There might be files like `.git/HEAD` readable via the read tool! Let me try reading `G:\CODEX\New Manga\.git\HEAD` and then the ref file `.git\refs\heads\main`. If .git is a directory (not a file), that works. r6 says common-dir=G:/CODEX/New Manga/.git. Let's try read on `.git/HEAD` and `.git/refs/heads/main`. That would let me verify HEAD's commit SHA! And the tree SHA is inside the commit object (zlib-compressed) — can't read directly. But I could check `.git/refs/heads/main`.
+
+Let me try. Also `git` may use packed-refs. Let's read .git/HEAD first.
+
+That would be a genuine independent verification of HEAD. Let me do it.
+
+Also for bytes/SHA: no way. Unless... the read tool returns total lines only. No.
+
+Hmm, what about `git` describing via files: `.git/logs/HEAD` might exist but not needed.
+
+Let me try reading .git/HEAD.
+
+Also: maybe I can read the index? No.
+
+Let's try.
+dsh: reasoning:
+.git/HEAD = ref: refs/heads/main. But refs/heads/main doesn't exist as a loose file → packed refs. Let me read `.git/packed-refs` and grep for refs/heads/main.
+
+Also, maybe `.git/refs` exists but glob pattern didn't match because glob returns files not dirs and maybe refs/heads is empty. Let's grep packed-refs.
+dsh: reasoning:
+Whoa. `.git/packed-refs` line 294 says `refs/heads/main = 4de7fb444d0abfb62c3eec327a7071a18f8ad90c`, NOT `cddff58469b56e181019a8ddfeade80684bc7eb9`.
+
+But packed-refs can be stale — however, if there is no loose `.git/refs/heads/main` file, then packed-refs is authoritative for read-only resolution (glob found no files under .git/refs/heads/*, though glob may fail on directories — glob "matches file paths"; if refs/heads/main existed it should match).
+
+Hmm wait, careful. glob returned "No files found" for `.git/refs/heads/*`. Two possibilities: (1) the directory doesn't exist / is empty → packed-refs authoritative → HEAD = 4de7fb44... ≠ cddff58...; (2) glob ignores `.git` paths? But it did find `.git/packed-refs` via grep (grep doesn't use glob). And the glob for `.git/*` returned nothing, even though `.git/packed-refs` clearly exists and is readable! So glob is NOT searching `.git` (it's likely gitignored/hidden filtering, despite the tool claiming to include hidden and ignored files). So glob results for `.git` are unreliable → I cannot conclude refs/heads/main is absent.
+
+So the packed-refs entry could be stale, with a newer loose ref at .git/refs/heads/main. Let me try reading it directly with the read tool.
+
+Also I could read `.git/logs/HEAD` (reflog) which records ref updates with old/new SHAs and would show whether main moved to cddff58 or 4de7fb44. Let me try both.
+
+This is a significant potential finding: if HEAD is actually 4de7fb44... rather than cddff58..., then the Delivery's base/head pin is wrong — that'd be P0/P1. But I must be careful: packed-refs being stale is completely normal when a branch has been updated (git writes loose ref and leaves packed-refs stale). So I need more evidence.
+
+Let me read .git/refs/heads/main directly and .git/logs/HEAD.
+dsh: reasoning:
+Loose ref `.git/refs/heads/main` = `cddff58469b56e181019a8ddfeade80684bc7eb9` ✔ — matches the claimed HEAD. packed-refs entry is stale (expected). Good: HEAD pin independently verified by reading loose ref.
+
+Now can I verify the tree SHA `c25d051a4b9a0bd9773b50170e100f575ea19f2b`? That requires reading the commit object (zlib). Not accessible with read tool (binary/compressed). Hmm.
+
+Alternative: check the reflog tail for the last entry matching cddff58 — the reflog's last line should be `... cddff58...` with a message. Let me read the tail (offset ~1000). That confirms HEAD movement. The tree isn't in reflog.
+
+Another idea: `.git/refs/heads/main` is verified HEAD; the tree can be cross-checked via... hmm, the COMMIT_EDITMSG / ORIG_HEAD? No tree there.
+
+Could I find a versioned document that records both HEAD and tree independently? Many do (r0 evidence, r6 manifest, M7/M8/M9/M10/M11 adjudications all state tree=c25d051a...). And there's the "最初读取 Plan/STATUS 16:31 UTC 顶部 tree 尾字 ...19f2f 与 Git 和 r5/M7/M8 裁决的 ...19f2b 冲突；已交 Integrator... 已确认 Codex 将其纠正为 ...19f2b" (r6 manifest L6). So there was a documented typo incident, resolved. That corroborates tree=c25d051a...19f2b.
+
+So: HEAD verified via loose ref; tree NOT independently verifiable (needs object read); bytes/SHA NOT verifiable. I'll report accordingly: HEAD=VERIFIED (via .git/refs/heads/main, packed-refs stale at 4de7fb44 — a normal, non-material staleness worth a P3 note? Hmm. Should I report the stale packed-refs as a finding? It's normal Git behavior, not a defect of the Delivery. But worth a P3 informational note because a reviewer reading only packed-refs would report a false P0. Actually that's useful information for the archiver. I'll include it as an informational note (P3) — "packed-refs 陈旧属正常，但会误导仅读 packed-refs 的核查者；建议 Reviewer 记录解析路径"。Eh, that's noise. I'll put it in the "pins 结果" section rather than as a finding. Better: mention in pins section, and count zero findings for it. Hmm, but it is genuinely valuable. I'll put it in pins/verification results with the resolution. Not a finding.
+
+Let me now read the reflog tail to see the latest entries (confirm cddff58 is the current tip and see if any post-Delivery commit exists). Actually, the reflog's last line = current HEAD. Let me read offset 995.
+
+Also worth checking: does `doc/STATUS.md` say something consistent (P02PRE-R0S3 IN_REVIEW)? Requirement asks about "不推断目标机当前状态" — reading repo docs is fine. Let me check STATUS for the active task and to confirm the HEAD/tree there.
+
+Let me batch: read reflog tail; grep doc/STATUS.md for P02PRE-R0S3 / HEAD / tree.
+dsh: reasoning:
+Important: `doc/STATUS.md` line 7 still says "当前 Active 子任务=`P02PRE-R0S2`" and describes R0S2 as in_review with DSH review dispatched — i.e., STATUS has NOT been updated for R0S3. Hmm. Note the Delivery pin table doesn't include `doc/STATUS.md`, and P02PRE-R0S2.md line 79-83 says R0S2 final status = blocked / NOT_SAFE_FOR_R0. So STATUS L7 appears stale relative to R0S2's own final state (blocked/NOT_SAFE_FOR_R0) AND relative to R0S3 being the active task.
+
+Wait — maybe STATUS L7 is an older checkpoint section. STATUS.md is large with historical sections. Line 7 is near the top → likely the "current" section. Let me read the top of STATUS.md to see the current section and whether it names P02PRE-R0S3.
+
+This matters for requirement 1/4? The review is about the Task and Delivery, not STATUS. But AC/requirement "M7/M8/M9/M10/M11 的 unresolved 条件没有被提升为 PASS" and "不推断目标机当前状态". Hmm. But a stale STATUS is a real integration-consistency issue worth reporting — however, is it in scope? The Task's allowed-modification range includes `doc/STATUS.md` for integration. The Delivery doesn't claim STATUS was updated. The Delivery L11 says status=IN_REVIEW. Hmm, but the requirement 1 says verify "Task 与 Delivery pins、HEAD/tree、Owner/Reviewer 分离". STATUS staleness is adjacent. Since AGENTS.md says STATUS is the single source for the current active task, and R0S3's Task itself is IN_REVIEW, a STATUS that still points at R0S2 as the active subtask is a genuine finding (P2/P3) for Codex integration — but it's arguably out of the Owner Delivery's scope... Actually no: if STATUS still shows R0S2 as active, then the project's declared current state contradicts R0S3's existence as the active in-review task. That's a legitimate P3 (integration hygiene) or P2.
+
+Let me read the top of doc/STATUS.md to confirm lines 1-20 are the "current" section.
+
+Let me read the first 30 lines of STATUS.md.
+dsh: reasoning:
+Confirmed: `doc/STATUS.md` top section is dated "2026-10-11 08:47 Asia/Shanghai 当前状态：R0S1 已审结，R0S2 manifest Review 在途" and names `P02PRE-R0S2` as the current active subtask. But:
+- R0S2 is already finally closed as `blocked / NOT_SAFE_FOR_R0` (P02PRE-R0S2.md L79–L85), and the R0S2 adjudication exists (Codex accepted RP-01).
+- R0S3 exists as `status: in_review` with a frozen Delivery at 08:55 (8 minutes after the STATUS timestamp).
+- Moreover STATUS L13 says `P02M11=BLOCKED / NOT_VERIFIED ... 没有完成独立 Review/adjudication`, while M11 review + adjudication DO exist (DONE / ACCEPTED_AS_STATIC_FEASIBILITY_REPORT_WITH_LIMITS). And L9 says R0S1 review SHA `2F27B72F...0E7A0` — wait, the R0S1 review pin in the R0S3 Delivery table is `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0` (21262 bytes). STATUS L9 says SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. Hmm! Compare:
+- STATUS L9: `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`
+- Delivery pin: `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`
+Let me align character by character.
+
+STATUS: 2F27B72F B40D43F7 B4DD4092 5E75283A 151EC7E7 2327D1FD 2542F613 5DC0E7A0
+Delivery: 2F27B72F B40D43F7 B4DD4092 5E75283A 151EC7E7 2327D1FD 2542F613 5DC0E7A0
+
+Delivery pin row 63: `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`
+STATUS L9: `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`
+
+Hmm the STATUS line has "...2542F6135DC0E7A0" and ends. Let me count lengths: a SHA-256 is 64 hex chars.
+Delivery: 2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0 → count: 2F27B72F(8) B40D43F7(16) B4DD4092(24) 5E75283A(32) 151EC7E7(40) 2327D1FD(48) 2542F613(56) 5DC0E7A0(64). Yes 64.
+STATUS: same string? "2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0" — looks identical. Hmm wait, in the earlier R0S2 review grep it referenced R0S1 review. And earlier grep of STATUS showed `SHA-256=2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. Hmm, actually let me re-read the exact text from the STATUS read output line 9:
+
+"非作者 DSH Review=`APPROVED_AS_READ_ONLY_EVIDENCE_DELIVERY_ONLY`（P0/P1/P2/P3=`0/0/2/5`，SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`）"
+
+Delivery row: `verification/P02/p02-readonly-preflight-r0s1-review-20261011.md` | 21262 | `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`
+
+Hmm, wait. Let me carefully compare the substring after "151EC7E7": STATUS has "2327D1FD", Delivery has "2327D1FD". Same.
+
+Hmm, but earlier in my grep output for STATUS there was `SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`` — hmm, actually the grep output at line 9 read: "SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`". Wait no, looking at the grep result for STATUS line 9: it says `SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0``. Hmm, I see in the actual output: 
+
+"非作者 DSH Review=`APPROVED_AS_READ_ONLY_EVIDENCE_DELIVERY_ONLY`（P0/P1/P2/P3=`0/0/2/5`，SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`）"
+
+Hold on, the raw grep text was: `SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`` — Hmm, I need to double-check whether it's "2327D1F" vs "2327D1F"... Let me just say they appear identical. Actually the Delivery pin is `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. And STATUS L9: `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. Wait, in the STATUS read output I see "151EC7E72327D1FD2542F6135DC0E7A0". OK identical. Wait, but there's a subtle difference: STATUS read shows `...E7E7 2327D1FD 2542F613 5DC0E7A0`, and Delivery shows `...E7E7 2327D1FD 2542F613 5DC0E7A0`. Identical. Fine — no drift there. Hmm, actually hold on: In the STATUS read output, I recall reading "2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0" — but let me recount from the actual text: "SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`". Hmm, "2F6135DC0E7A0" vs Delivery's "2F6135DC0E7A0". Same. OK. Moving on — these match.
+
+Hmm wait, actually let me look again very carefully at the two strings as printed:
+
+STATUS line 9 (from read): `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`
+
+Hmm, in the read output above I actually see: "SHA-256=`2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`" — hmm, no. The read output shows: `SHA-256=``2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0``. 
+
+I'm going in circles. Both are 64 hex chars and appear to be the same value `2F27B72F...5DC0E7A0`. Wait — the Delivery says `...F6135DC0E7A0` (12 chars at end: "2542F6135DC0E7A0" = 16). STATUS says "2542F6135DC0E7A0"? The read output literally shows "2542F6135DC0E7A0". Hmm, but I notice the read output has "2542F6135DC0E7A0" while the Delivery row has "2542F6135DC0E7A0". Wait, actually looking at the Delivery row 63 text again: `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. 
+
+Hmm, hold on! I notice the Delivery has "5E75283A" and STATUS has "5E75283A". OK, they're the same. Let me stop.
+
+Hmm, but wait — there IS a subtle difference I should check: Delivery row 63 = `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. STATUS = `2F27B72FB40D43F7B4DD40925E75283A151EC7E72327D1FD2542F6135DC0E7A0`. Yeah same. Good — consistent (and both match STATUS, so R0S1 review pin is corroborated).
+
+Now — the substantive finding regarding STATUS: the current STATUS top section (08:47) predates the R0S3 Delivery (08:55) and it (a) still names R0S2 as current active subtask, (b) says R0S2 Task/manifest=in_review + "DSH 静态 Review 已 dispatch", while R0S2 is actually already adjudicated as `blocked / NOT_SAFE_FOR_R0`, and (c) says P02M11=`BLOCKED / NOT_VERIFIED` with no independent Review/adjudication, while M11 review+adjudication exist and M11 is DONE. Also (d) STATUS L13 says "它不阻塞 R0S2" — fine.
+
+That's significant: STATUS (the single source for current task state per AGENTS.md) is materially stale relative to the R0S2/R0S3/M11 artifacts. Is that within my review scope? The review requirements focus on the Task+Delivery. But requirement 1 asks to validate "Task 与 Delivery pins、HEAD/tree、Owner/Reviewer 分离". Requirement 4 asks that M7–M11 unresolved conditions aren't promoted to PASS. STATUS L11's classification summary matches the Delivery's classification exactly! Compare:
+
+STATUS L11: "P02PRE 分类：已有 R0 固定时点与精确对象 evidence=`PASS_WITH_EVIDENCE`；scratch emptiness、private registry absence、profile/path absence、WER effective policy/view/destination/T0、完整保护集身份/祖先/hash=`UNPROVABLE`；profile getter、R0S1 trusted-module/child-name 方法=`NOT_SAFE_FOR_R0`；effective LPAC/canary 与未来 child/cache/TEMP/write closure=`REQUIRES_ACTIVE_TEST`。没有对象标记 `FAILED`；R0S1 不完整 capture 不是测试失败。"
+
+This is essentially the same classification set as the Delivery table, and importantly it includes "profile/path absence = UNPROVABLE" — same reclassification. So the Delivery's classification apparently *originates* from the 08:47 STATUS block (which predates the 08:55 Delivery). Interesting: so the R0S3 Delivery reuses STATUS's classification. That explains the NOT_SAFE_FOR_R0→UNPROVABLE shift on profile path/absence: it came from... hmm, but STATUS L11 lists "profile getter" as NOT_SAFE_FOR_R0 and "profile/path absence" as UNPROVABLE. So STATUS already made that split. And R0 adjudication L47 had the conflated NOT_SAFE_FOR_R0. So where did the R0S3 Delivery get it? From STATUS L11 (08:47) or from r6/M7. Either way, it's a prior-existing split. That weakens my P2 finding: the split isn't novel to this Delivery — STATUS L11 (an already-versioned governance projection) contains it. Hmm. But it's still a divergence from the R0 adjudication's authoritative table, and my job is to check the Delivery. I'll downgrade to P3 with the note that STATUS L11 already carries the same split (so it's a project-wide labeling convention rather than a new invention), and recommend a footnote mapping (like R0S1's F-03 double-label practice) to avoid readers thinking the R0 adjudication's `NOT_SAFE_FOR_R0` was reversed.
+
+Hmm, that's more accurate and fair. Let me reconsider severity: Since R0S2 Review explicitly listed "appcontainer profile exact path / pre-create absence = NOT_SAFE_FOR_R0" and R0 adjudication L47 too, and R0S3 lists only "尚未创建 profile 的 exact folder path / absence = UNPROVABLE", a reader could conclude the path/absence predicate is merely unproven rather than unsafe-to-obtain. This does slightly understate risk labeling. But the method row (M7/M8 getter = NOT_SAFE_FOR_R0) preserves the safety signal. I'll go with P3... Hmm. Actually, let me think about what a rigorous reviewer should do here. The review's chief concern (requirement 4) is that unresolved conditions aren't promoted to PASS. UNPROVABLE ≠ PASS. So no violation. The dual-label practice is exactly what R0S1 adjudication F-03 recommended ("两种分类描述不同对象，不互相替代"). The Delivery follows that. I'll report as P3 "建议加映射脚注" — reasonable and defensible.
+
+Now the STATUS staleness: this IS a real, material inconsistency in the live governance layer, and the R0S3 Delivery/its pin table doesn't include STATUS at all (so the Reviewer can't see the drift from pins alone). Given AGENTS.md makes STATUS the single source of "当前唯一 Active Task", and STATUS says the active subtask is R0S2 (already closed) and M11 not reviewed (already reviewed/adjudicated), while R0S3 exists as in_review — I'd rate this P2 (needs Codex action at integration; not a false security claim). Hmm, is it the Delivery's fault? The Task's allowed-modification range includes STATUS for integration, and integration happens after Review. The Delivery doesn't claim STATUS updated. So it's arguably a pre-existing/staged condition. But requirement 1 asks me to validate Task/Delivery pins — STATUS is not pinned, and its drift means the pin set is not "complete for the current-state documents". I'll report as P2 with framing: "非 Delivery 文本缺陷，但影响本次交付的基线与 pin 完整性；建议 Codex 在 adjudication 中同步 STATUS，或明确本 Review 之后才更新". Hmm, P2 might be heavy. Let me reconsider: what's the actual harm? A future agent reading STATUS would think R0S2 review is still pending and M11 unreviewed, and would not know R0S3 exists. That's a genuine recovery/coordination defect (the project's documented recovery mechanism relies on STATUS). But it's *outside* the Delivery's declared scope and the Owner Delivery explicitly states R0S3 status=IN_REVIEW and its own timestamp 08:55 > STATUS 08:47. The Task's allowed range explicitly permits updating STATUS "为集成本 Task 结果" — i.e., after adjudication. So the natural reading: STATUS update comes at integration; nothing is wrong yet. Under that reading, this is at most P3 (note that STATUS at 08:47 still names R0S2 as active, and M11 as unreviewed; recommend Codex refresh during integration; also note the M11 statement is already stale in a way not caused by R0S3).
+
+Hmm, but the M11 staleness predates R0S3's delivery but not R0S3's Task creation. Since M11 review+adjudication exist (both dated 20261011), and R0S3 (created after) cites them, STATUS L13's claim "没有完成独立 Review/adjudication" is factually contradicted by M11's own review/adjudication files. R0S3's Delivery *does* cite M11 review+adjudication as pinned sources, thereby implying they exist — consistent with reality, inconsistent with STATUS. So R0S3's Delivery and STATUS conflict; per AGENTS.md, "发现事实与文档不一致，在 Task 中留下证据并交 Codex 处理" — the Delivery doesn't flag this conflict. That's a legitimate P2/P3 finding: the Delivery should flag the STATUS contradiction it creates/depends on.
+
+I'll rate P2 for the STATUS-vs-Delivery/M11 contradiction (documented fact conflict not flagged, and STATUS is the declared current-state source), with a recommendation that Codex's adjudication resolve it. Hmm... Let me think about how many findings and their weight. I want the verdict to be reasonable. 
+
+Let me consider the overall verdict. The Delivery: pins present, classification uses all five enums, condition/method separated, no FAILED mislabeling, verbatim verdict preserved, no retry/shell-swap suggestion, R0 limited-scope disclaimer present, M7–M11 not promoted to PASS, no new authorization. The core requirements 1–6 are met at the content level. My findings are documentation-completeness/disclosure issues (P2/P3), no P0/P1.
+
+Hmm, but if verdict is APPROVED, the P2s don't block. Should it be APPROVED with findings, or CHANGES_REQUESTED? Given:
+- P2 #1: AC1 completeness (R0S1 capture-metadata UNPROVABLE rows missing).
+- P2 #2: STATUS↔Delivery/M11 contradiction not flagged.
+Both are non-safety-critical documentation gaps. The project's own precedent: R0 Review = APPROVED_AS_READ_ONLY_EVIDENCE_DELIVERY_ONLY with P2=5/P3=6. R0S1 review = APPROVED... with P2. So APPROVED with P2s is consistent with project convention.
+
+Hmm, but wait. Let me double check P2 #1 more rigorously, since it's my main P2. Is the R0S1 "capture 精确时间/profile effects/executable identity/cmd bytes binding" a "剩余条件" of P02PRE? R0S1 adjudication L39 lists them in "P02PRE 当前条件分类" table? Let me re-read: R0S1 adjudication lines 35-41:
+
+| R0 既有的 host identity、... | PASS_WITH_EVIDENCE |
+| 两个登记 scratch leaf 的当前 empty-or-absent | UNPROVABLE |
+| 本次 R0S1 runner 的可信模块前置条件 | NOT_SAFE_FOR_R0 |
+| R0S1 冻结 Get-ChildItem direct-child inventory 操作 | NOT_SAFE_FOR_R0 |
+| capture 精确时间、shell profile startup effects、实际 executable identity、cmd bytes binding | UNPROVABLE |
+| effective LPAC/canary ... | REQUIRES_ACTIVE_TEST 或沿用 R0 的 UNPROVABLE |
+| profile-folder no-side-effect/path、... | NOT_SAFE_FOR_R0 或 UNPROVABLE |
+
+So yes — R0S1 adjudication's classification table has a row "capture 精确时间、shell profile startup effects、实际 executable identity、cmd bytes binding = UNPROVABLE". The R0S3 Delivery's table lacks this row. Let me verify by grepping the Delivery for "cmd bytes" / "精确时间" / "executable identity".
+
+Delivery rows: line 25 (R0 PASS), 26 (scratch leaf), 27 (private registry), 28 (profile path), 29 (HKLM LocalDumps), 30 (WER), 31 (protected inventory), 32 (LPAC/token = REQUIRES_ACTIVE_TEST), 33 (R0S1 trusted-module), 34 (R0S1 Get-ChildItem), 35 (M7/M8 getter), 36 (R0S2 runner), 37 (unfrozen WER getters), 38 (FAILED).
+
+Line 36 covers "R0S2 PowerShell startup/profile/wrapper runner 与未冻结的替代 shell/runtime | NOT_SAFE_FOR_R0". R0S1's capture-level `UNPROVABLE` items (精确时间、实际 executable identity、cmd bytes binding, stderr) are not present. Also R0 evidence's own UNPROVABLE items? R0 adjudication L29-33 mentions index_side_effect=NOT_VERIFIED etc. The R0S3 Delivery doesn't include the R0 `index_side_effect=NOT_VERIFIED` either.
+
+So P2 #1 stands as an AC1-completeness finding. Good. It's precise and citable.
+
+Now, is there anything that should be P1 or P0? Let me scan for potential false statements in the Delivery one more time:
+
+Delivery L15: "R0S2 的 getter body 尽管是只读候选，PowerShell 实际 executable/argv、profile、module analysis cache、PSReadLine history 与 exec_command wrapper/temp/log 行为仍无无副作用证明" ✔ matches R0S2 review L101 + adjudication L15.
+
+Delivery L15: "因此 runner=NOT_SAFE_FOR_R0，HKLM LocalDumps 两视图查询=NOT_RUN，键当前状态=UNPROVABLE" ✔ matches R0S2 Task L83.
+
+Delivery L17: "R0S1 在任何 G: path query 前安全停止" ✔.
+
+Delivery L25: R0 PASS items ✔ (R0 adjudication L39-46). But the Delivery's L25 lumps "WER 候选目录快照" — R0 adjudication L50 says "当前三个 WER 候选 directory/key 的只读 snapshot = PASS_WITH_EVIDENCE" ✔.
+
+Delivery L29: "HKLM LocalDumps Registry32/Registry64 的当前 API 打开结果 | UNPROVABLE | 目标 query=NOT_RUN" ✔.
+
+Delivery L31: "完整 protected-file/invariant inventory、两仓动态 Git 集合..." — "两仓动态 Git 集合" (two-repo dynamic Git set) — is that from R6/M10? r6 manifest mentions "完整动态 protected-invariants" and R0 evidence L249 mentions "主仓/scratch 的动态完整 protected-invariants 文件集合". "两仓" = root repo + scratch repo. Plausible ✔. M10 adjudication L28 lists "protected pre/post hashes" ✔.
+
+Delivery L37: "未冻结的 WER raw-value、per-image、环境展开、完整 hash/identity getter 与任何新 host query | NOT_SAFE_FOR_R0" — is "完整 hash/identity getter = NOT_SAFE_FOR_R0" consistent? R0 adjudication L49: "token elevation/capabilities、reparse ancestors/file IDs/hardlink/ADS、完整动态 protected invariants | UNPROVABLE / NOT_SAFE_FOR_R0" ✔ dual. And R0 evidence L265 (per R0S2 review L168) = UNPROVABLE for "path ancestry / canonical identity / file ID / hardlink / ADS / 完整 protected-invariants pre-post hash". Hmm! R0S2 review L168 says those = `UNPROVABLE`, but the R0S3 Delivery L31 says the full protected-file/invariant inventory = UNPROVABLE (✔ same) and L37 says "完整 hash/identity getter ... = NOT_SAFE_FOR_R0" (the *getter/method*, not the condition). So consistent with the condition/method split. ✔ OK.
+
+Delivery L32 REQUIRES_ACTIVE_TEST row: "实际 LPAC/effective token access、canary allow/deny、child/broker/WER process tree、future TEMP/cache/scratch/output 写闭包、停机与清理行为" and 状态依据 "R6/M10 与 M11：实现、对象和执行链未闭合；Build Barrier 仍有效" — R0 evidence L268 per R0S2 review L167: "controller/probe/子进程/COM/broker/WER 短命进程与 build descendants 强制闭包 = REQUIRES_ACTIVE_TEST" ✔.
+
+OK. So no P0/P1 content falsehood found.
+
+Now: requirement 3 says R0S2 Registry query=NOT_RUN — verified. Requirement also: "不要建议重试或换 shell/runtime" — Delivery complies. ✔
+
+Requirement 4: R0 limited PASS not extrapolated ✔; M7–M11 unresolved not promoted ✔.
+
+Requirement 5: verbatim ✔ (all six). Let me do a final character-exact comparison for the six strings against the Delivery lines 44-49:
+- `private_registry_absence=UNPROVABLE` ✔
+- Technical Gate=`NOT_SATISFIED` ✔
+- Owner Risk Acceptance=`APPROVED` ✔
+- Gate Disposition=`WAIVED_BY_OWNER` ✔
+- Build Authorization=`AUTHORIZED_WITH_EXCEPTION` ✔
+- `technical condition unmet; user explicitly accepted residual risk` ✔ (Delivery L49 exactly this string, and it matches M7 L18, M8 L18, M9 L23, M10 L24, M11 L21, R6 L9.) ✔
+
+Requirement 6: My review must not be a Gate PASS etc. ✔ (I'll state it.)
+
+Now pins: 
+- HEAD: `cddff58469b56e181019a8ddfeade80684bc7eb9` — INDEPENDENTLY VERIFIED by reading `.git/refs/heads/main` (loose ref) and reflog tip (line 1011: 24a0b98 → cddff58 "docs(P04): checkpoint resumed R2 review"). Note `.git/packed-refs` L294 shows stale `4de7fb444d0abfb62c3eec327a7071a18f8ad90c refs/heads/main` — normal Git staleness (packed-refs not rewritten), must not be read as the live value. Good, valuable.
+- branch main: verified via .git/HEAD → ref: refs/heads/main ✔.
+- tree `c25d051a4b9a0bd9773b50170e100f575ea19f2b`: NOT independently verified (would need to read the commit object; zlib-compressed, no shell available). Cross-corroborated by ~10 versioned documents including doc/STATUS.md L5/L21/... and r6/m7-m11.
+- bytes/SHA: NOT_VERIFIED for all 20 rows (no shell). But cross-corroboration:
+  - r0 evidence 99592/AE16... ✔ matches R0 adjudication L6 and STATUS L23.
+  - r0 review 29404/427F... ✔ matches R0 adjudication L7 and STATUS L23.
+  - r0 adjudication 11145/E661... — need corroboration. Unknown. Not cross-checked.
+  - r0s1 evidence 5489/05C2DD... — unknown.
+  - r0s1 review 21262/2F27B72F... ✔ matches STATUS L9.
+  - r0s1 adjudication 9413/6A4B53... — unknown.
+  - r6 manifest 44307/626E000A... ✔ matches M10 adjudication L11.
+  - M7 adj 3985/DFE1F6... — unknown.
+  - M8 adj 4259/7AA91859... — unknown.
+  - M9 adj 3127/F59409... — unknown.
+  - M10 adj 5560/01E556... — unknown.
+  - M11 report 27825/15736303... ✔ matches STATUS L25, M11 review L7, M11 adjudication L7, R0 checkpoint L71, R0 manifest L9.
+  - M11 review 5857/F3578C9D... — unknown.
+  - M11 adj 4101/5317DB... — unknown.
+  - doc/tasks/P02PRE-R0S1.md 8763/C16483... — unknown.
+  - r0s1 manifest 22925/CA293C... — unknown.
+  - doc/tasks/P02PRE-R0S2.md 9015/B9A7EF... — unknown.
+  - r0s2 manifest 7710/589DCD... — unknown.
+  - r0s2 review 19235/4EE88F... — unknown.
+  - r0s2 adjudication 8604/8D1D39... — unknown.
+  
+  So 6 of 20 rows corroborated by other versioned documents; 14 unverifiable without a shell. I can also sanity check byte counts vs line counts: e.g., M7 adj = 26 lines / 3985 bytes → ~153 B/line. Plausible for CJK-heavy markdown (CJK chars are 3 bytes in UTF-8). M8 adj 26 lines/4259 ✔. M9 adj 29 lines/3127 — that's ~108 B/line, plausible (fewer CJK per line? it has long CJK lines... hmm, 29 lines with long CJK lines would be more than 3127 bytes). Let me estimate: M9 adjudication L8 is a long line with ~400 CJK chars → ~1200 bytes alone. L23 ~300 CJK chars → 900 bytes. L10 ~200→600. Total CJK across the file roughly: L5 60, L6 40, L7 30, L8 400, L9 250, L10 200, L14-17 30 each, L18 120, L19 80, L23 300, L25 90, L29 90 → ~1500 CJK chars ≈ 4500 bytes. That exceeds 3127 bytes! So the pinned 3127 bytes for M9 adjudication might be wrong.
+
+  Hmm, that's a rough estimate — let me compute more carefully. Actually my estimate of 1500 CJK chars is crude. Let me count more carefully by estimating each line's byte length from what I read.
+
+  M9 adjudication content (29 lines):
+  L1: "# P02M9 Codex adjudication：WER per-image / views / T0 静态合同研究" ≈ 20 ascii + 20 CJK ≈ 20+60=80
+  L2: blank
+  L3: "## 裁决" = 2+6=8... "## " 3 + 2 CJK (6) + newline = ~10
+  L4: "- Task=`P02M9`；结论=`ACCEPTED_AS_STATIC_RESEARCH_ONLY`；Task 状态=`DONE`（仅静态合同研究）。" ≈ ascii ~55 + CJK 12*3=36 → ~95
+  L5: "- Owner=`/root/p02_manifest_reviewer`；非作者 Reviewer=`/root/p02_isolation_advisor`；Integrator=`Codex /root`。" ≈ ascii 90 + CJK 8*3=24 → ~120
+  L6: "- 基线 branch=`main`；base/reviewed HEAD=`cddff...`。" ≈ 70+15=85
+  L7: "- Owner report=`verification/P02/codex-p02-wer-per-image-bootstrap-contract-research-20261010.md`，`17105 bytes`，SHA-256=`6207483E...`。" ≈ ascii 100+64+40 = ~210
+  L8: long: "Independent Review=`verification/P02/codex-p02-wer-per-image-bootstrap-contract-research-review-20261010.md`，`13059 bytes`，SHA-256=`E5E7...`；Verdict=`APPROVED_AS_STATIC_RESEARCH_ONLY`，P0/P1/P2/P3=`0/0/0/0`。" ≈ ascii ~110+64+45+... ~270
+  L9: blank? Actually the read shows L9 = "- Codex 已读取报告与 Review，并核对其对象 pin、作者/Reviewer 分离、固定 HEAD 及声明范围；按 Microsoft 官方文档验证 per-image precedence、LocalDumps 字段不支持 HKCU、通用 WOW64 view 规则与其适用边界。Review 同意报告没有把通用 registry view 外推为 WER 内部 reader 事实，也没有把公开规则当作本机配置或 T0 无副作用证据。" → ~130 CJK ≈ 390 + ascii 60 → ~450
+  ...
+  
+  Summing lines 9,10 (~450+?), L14-17, L18, L19, L23, L25, L28, L29: Let me sum roughly:
+  L1 80, L3 10, L4 95, L5 120, L6 85, L7 210, L8 270, L9 450, L10 400 (wait, L10 in the read output — there's no L10 shown as separate content? The read shows lines 1-29 with content. Let me recheck mapping: the read output lines:
+  1 title
+  2 blank
+  3 ## 裁决
+  4 Task=...结论=...
+  5 Owner=...
+  6 基线 branch...
+  7 Owner report...
+  8 Independent Review...
+  9 Codex 已读取报告...
+  10 blank
+  11 ## 保留的技术状态
+  12 blank
+  13 - wer_per_image_rules=...
+  14 - host_wer_configuration=...
+  15 - wer_view_destination_binding=...
+  16 - t0_bootstrap_safe_order=...
+  17 - 本机 policy... (long ~150 CJK + ascii)
+  18 - 没有调用 OS/API... (~80 CJK + ascii)
+  19 blank
+  20 ## Gate 与用户风险裁决
+  21 blank
+  22 `private_registry_absence=UNPROVABLE` 保持技术事实；... (~100 CJK + ascii + the long English sentence 72 chars)
+  23 = "因此 P02 Build Gate 仍=`BLOCKED`；..." 
+  24 blank
+  25 ## 接续
+  26 blank
+  27 P02M9 的静态合同研究与独立 Review 已完成；... (~70 CJK)
+  28 blank
+  29 (- 本次本地核验... ) hmm
+
+  Ugh, I mixed up. The displayed read had 29 lines total and the last content line was line 29 = "- 未运行测试..."? Let me recount from the actual read output for M9:
+  line 1 title
+  2 blank
+  3 "## 裁决"
+  4 "- Task=`P02M9`；结论=..."
+  5 "- Owner=..."
+  6 "- 基线 branch=..."
+  7 "- Owner report=..."
+  8 "- Independent Review=..."
+  9 "- Codex 已读取报告与 Review，并核对其对象 pin..."
+  10 blank
+  11 "## 保留的技术状态"
+  12 blank
+  13 "- `wer_per_image_rules=PARTIALLY_DOCUMENTED`。"
+  14 "- `host_wer_configuration=NOT_READ / NOT_VERIFIED`。"
+  15 "- `wer_view_destination_binding=NOT_RESOLVED / BLOCKED`。"
+  16 "- `t0_bootstrap_safe_order=NOT_RESOLVED / BLOCKED`。"
+  17 "- 本机 policy、所有实际 WER 目的地、映像/view、environment expansion actor 和 bootstrap 期间的完整进程/写入边界均未核实。M9 不修改或扩大执行 manifest 的授权。"
+  18 "- 没有调用 OS/API、读取本机 registry/WER 目录/environment/token/profile/path/ACL，没有运行 Sandbox、build、Cargo 或 AC；没有产生 profile、registry、ACL 或文件写入证据。"
+  19 blank
+  20 "## Gate 与用户风险裁决"
+  21 blank
+  22 "`private_registry_absence=UNPROVABLE` 保持技术事实；Technical Gate=`NOT_SATISFIED`；...；必须逐字保留：`technical condition unmet; user explicitly accepted residual risk`。该例外只覆盖创建前无副作用证明目标 private registry storage 不存在，不覆盖 WER、profile-folder、T0、identity/SID、ACL、TEMP/cache、scratch/input/output、子进程/写入闭包、protected-file/hash 或其他安全要求。"
+  23 blank
+  24 "因此 P02 Build Gate 仍=`BLOCKED`；Hard Build Barrier=`EFFECTIVE`；build/Cargo=`NOT_RUN`；AC1–AC7=`BLOCKED / NOT_RUN`（尚未执行，不是失败）。本 adjudication 不构成 Build Gate PASS，也不授权 API 调用。"
+  25 blank
+  26 "## 接续"
+  27 blank
+  28 "P02M9 的静态合同研究与独立 Review 已完成；WER view/destination 与安全 T0 仍是未解决的执行前条件。下一步由 Codex 在唯一规划事实源和 P02 Task 中释放一个独立、只做静态文档冻结的 manifest reconciliation Task；在其交付和独立 Review 完成前，不进入 OS/API preflight、Create、Build 或 AC。"
+
+  Hmm, but the read output showed "total 29 lines" with the last line "- 未运行测试..."? No — the M9 read ended at line 29? Let me look: the M9 output ended with:
+  "27: P02M9 的静态合同研究与独立 Review 已完成；..."
+  Hmm, actually in my read result for M9 I see lines up to 29 and the final displayed line was:
+  "29: P02M9 的静态合同研究与独立 Review 已完成；WER view/destination 与安全 T0 仍是未解决的执行前条件。下一步由 Codex 在唯一规划事实源和 P02 Task 中释放一个独立、只做静态文档冻结的 manifest reconciliation Task；在其交付和独立 Review 完成前，不进入 OS/API preflight、Create、Build 或 AC。"
+  
+  Wait, the read output showed line numbers 1..29 for M9 and I see "19: - 没有调用..." "21: `private_registry_absence=...`" "23: / 25:" etc. I don't remember exactly. This byte estimate is too fragile — I should NOT claim a pin is wrong based on rough byte estimation. Absolutely not: that would be irresponsible. I cannot verify bytes. I'll mark all as NOT_VERIFIED, with corroboration where available.
+
+  Actually — hold on. There IS a way to estimate bytes: the read tool gives line count; not bytes. No.
+
+  Hmm, but here's a thought: M9's pin is 3127 bytes, and M7's is 3985 for 26 lines, M8 4259 for 26 lines. M9's 29 lines at 3127 is plausible if lines are shorter than I estimate (M7/M8 have long lines too). Fine — no basis for a finding. Drop it.
+
+So: pins conclusion = all 20 rows NOT_VERIFIED for independent recomputation; 6 rows corroborated by other versioned documents; Task/Delivery pins themselves (the two required by the task) also NOT independently verifiable — this is the one gap I must report honestly. HEAD independently verified; branch verified; tree NOT verified.
+
+Now, given I cannot recompute the two required pins (Task bytes/SHA and Delivery bytes/SHA), should the verdict be NOT_VERIFIED instead of APPROVED? The task's output format lists `APPROVED | CHANGES_REQUESTED | NOT_VERIFIED | BLOCKED_BY_MISSING_EVIDENCE`. Requirement 1 explicitly says "校验 Task 与 Delivery pins" and "请独立重算 bytes/SHA". I could not do it due to an infrastructure failure (sandbox can't establish write ACL on the workspace; escalation needs approval and no approval channel exists). That's a genuine inability to satisfy a core review requirement.
+
+Hmm. What's the right call? The content review is complete and favorable (0 P0/P1). But a required verification step (independent recomputation of the two governing pins) is unfulfilled. Per the spirit of the task, I should report `NOT_VERIFIED`? Or `APPROVED` with an explicit NOT_VERIFIED item?
+
+Let me weigh: The review's decision enum is about the delivery. The review found no blocking content defects. However, I cannot attest that the pinned bytes/SHA of the Task and Delivery match the files I read (well — I read the files, so their *content* is known; only the byte counts/hashes are unknown). Also I could not verify tree SHA. A reviewer who cannot verify the mandated pins cannot issue an unqualified approval of pin fidelity. But the review's substantive conclusions (classification, verbatim verdict, scope limits) are content-based and fully verifiable — and I did verify them.
+
+The instruction says: "输出格式 ... 实际 runtime model/effort（无法核实则 NOT_VERIFIED）" — so NOT_VERIFIED is expected for unverifiable *sub-items*. That suggests the top-level decision can still be APPROVED while individual items are NOT_VERIFIED. Hmm, but requirement 1 is a core review requirement.
+
+I think the most honest and useful answer: decision = `NOT_VERIFIED` would block Codex from integrating and signals the pin check failed for environmental reasons. Alternatively `APPROVED` with P0=0/P1=0 and an explicit "未覆盖项: bytes/SHA 与 tree 未独立重算".
+
+Hmm. Consider the user's own framing: "只做静态审查" and the enum includes NOT_VERIFIED. Given that:
+- HEAD/tree verification: HEAD ✔ verified, tree ✘.
+- Task & Delivery bytes/SHA: ✘ not recomputed (explicitly requested).
+
+I'll go with `NOT_VERIFIED` as the top-level conclusion? Hmm, that feels like it under-delivers: I did verify nearly all substantive requirements. But the task literally says "请独立重算 bytes/SHA" for both Task and Delivery — a 2-item mandatory check I could not perform. If I say APPROVED, I'd be implying the pins were validated. Codex's adjudication depends on byte-level binding (in this project, every artifact is bound by bytes/SHA). Claiming APPROVED without the byte binding would be exactly the kind of "not verifying what you assert" the project guards against.
+
+Hmm, but there's a middle path used elsewhere in this repo: e.g., r0s1 review said "我未独立核验 HEAD/tree、对象 hash... 全部标 NOT_VERIFIED/NOT_RUN/UNPROVABLE" while still giving a decision `APPROVED_AS_READ_ONLY_EVIDENCE_DELIVERY_ONLY`. So the precedent exists: decision on the *object's content*, with hash verification explicitly marked NOT_VERIFIED. But in that case the Reviewer's inability was self-imposed scope (it declared no hashing), and the R0 adjudication did the hashing itself (Codex L6-L7 recomputed).
+
+Given precedent, I'll choose `APPROVED` for the substantive content... Hmm, no. Let me think once more about what maximizes correctness and usefulness.
+
+Actually, let me reconsider: is it possible I'm wrong that pwsh is unusable? The failure is at sandbox ACL setup for the *workspace write grant*. The skill `diagnose-windows-sandbox-acl` exists for exactly this ("unexpected DSH sandbox access denials: workspace writes or listing fail"). But the user forbade ACL operations ("不要执行任何...ACL...操作") and told me not to run OS operations. So I must not repair ACLs. Right — and the skill would modify ACLs on the repo, which is forbidden. So no.
+
+Given the user forbade ACL operations, the user presumably knows the review must be conducted without shell? Hmm, the user said don't execute OS/API/Registry/... operations — those are the *reviewed* target-machine query classes. git rev-parse and Get-FileHash are not in the forbidden list explicitly... Actually the user's forbidden list: "不执行任何 OS/API、Registry/WER、profile、token、ACL、path、TEMP/cache、scratch、protected hash、Build、Cargo 或 AC 操作". Hmm — "protected hash" is forbidden! That means hashing protected files. But hashing the Task/Delivery docs is explicitly requested ("请独立重算 bytes/SHA"). So "protected hash" refers to the target-machine protected-file hashes. Compute hashes of Task/Delivery is fine and required.
+
+So the intent was clearly that I could run a shell for hashing. The environment broke. Therefore the honest outcome is: I could not perform a mandated step → the review cannot be a full APPROVED; but the content-level review is complete.
+
+Decision: I'll use `NOT_VERIFIED` ... hmm, no, wait. `NOT_VERIFIED` as a *review decision* typically means "the object could not be verified at all". I verified a lot. The cleanest communication: decision = `APPROVED` with a hard caveat? Or decision = `CHANGES_REQUESTED` (because pins must be added/completed)? No — CHANGES_REQUESTED would blame the Owner for my environment.
+
+Hmm, let me re-read the requested output format: "用简体中文交付结论 `APPROVED | CHANGES_REQUESTED | NOT_VERIFIED | BLOCKED_BY_MISSING_EVIDENCE`、P0/P1/P2/P3 计数、每个 finding 的证据与修正建议、pins/HEAD 结果、未覆盖项和实际 runtime model/effort（无法核实则 NOT_VERIFIED）".
+
+"未覆盖项" is a required section — so the format anticipates that some things may not be covered even with a decision. And "pins/HEAD 结果" is its own section where I report NOT_VERIFIED for the sub-items.
+
+`BLOCKED_BY_MISSING_EVIDENCE` — that describes exactly my situation for the pin requirement? "Missing evidence" here = I lack the ability to produce the byte/SHA evidence. Hmm, BLOCKED_BY_MISSING_EVIDENCE usually means the delivery lacks required evidence. The Delivery does include pins; I just can't recompute them.
+
+I think the most defensible: **结论 = `NOT_VERIFIED`**, with an explicit statement: 内容层面审查完成且未发现 P0/P1（因此不是 CHANGES_REQUESTED）；但要求 1 的强制项“独立重算 Task 与 Delivery bytes/SHA”以及 tree 只能由 shell 完成，而本环境 pwsh 因沙箱 ACL 建立失败（SetNamedSecurityInfoW Win32 5）全部不可用、升级需审批且无审批通道，故 pin 重算 = NOT_VERIFIED。Codex adjudication 必须自行重算这两个 pin（或先修复沙箱）后再集成。
+
+Hmm, but is NOT_VERIFIED too strong? It's the honest top-line: I cannot certify the pin binding. And it gives Codex a clear action. Also the task explicitly says requirement 1 is to verify pins — an unmet mandatory requirement should surface in the conclusion, not be buried.
+
+Hmm, hmm. Let me reconsider one more time... The user is going to archive my stdout and Codex will adjudicate. If I say NOT_VERIFIED, Codex will likely have to re-run the review or recompute pins itself and accept with limits. If I say APPROVED with a caveat, Codex might integrate on the strength of my approval without re-deriving pins — a risk, though I'd state it explicitly.
+
+Given the project's culture (byte-binding discipline, "no PASS without evidence"), I'll go with `NOT_VERIFIED` and make crystal clear: 0 P0/P1, all substantive items satisfied, the sole reason for NOT_VERIFIED is the inability to independently recompute the mandated pins (environment), plus the tree SHA. That is precise, honest, actionable. And I'll note that if Codex recomputes the pins and finds them matching, the substantive review supports approval (my content findings being P2/P3 only) — but I must not myself issue a Gate PASS or new authorization.
+
+Hmm, wait. Actually, let me reconsider whether to make the top-level `APPROVED`. The risk of NOT_VERIFIED: the archiver/user may treat the whole review as wasted. The benefit: honesty about the mandated pin check. The instructions to me (developer message): "Non-zero exits are reported as [exit code: N] markers; investigate failures before moving on." I investigated: sandbox setup failure, no approval channel. 
+
+I think there's a strong argument for a *conditional* framing, which r0s1 review used: decision = APPROVED_AS_..._ONLY (approved only as X). I can do: `APPROVED`（仅限内容层面：`APPROVED_AS_STATIC_DOCUMENT_ONLY_WITH_PINS_NOT_VERIFIED`）... but the enum must be one of the four. Using `NOT_VERIFIED` with a clear explanation seems most faithful to "结论" requirement while conveying that content checks passed.
+
+Hmm, let me decide by asking: which single label best describes the review outcome? The review's *decision on the delivery* — is the delivery acceptable? On content: yes, with P2s. On binding: unverifiable. 
+
+I'll go with `NOT_VERIFIED`。Rationale in the output: 强制 pin 重算未完成 → 不能给出 APPROVED；同时内容层面无 P0/P1、无 CHANGES_REQUESTED 理由。I'll present it as `NOT_VERIFIED（内容层面通过，pin 强制项未完成）`. That's honest and actionable, and it doesn't create a Gate PASS.
+
+Hmm, hold on. Let me reconsider ONE more time. The user's fixed-object statement gives the pins (base/head/tree) as *given* facts of the task ("固定对象与基线 Repo=...; base/head=cddff58...; tree=c25d051a..."). They also say "Task=...(请独立重算 bytes/SHA)". So they expect me to recompute. I verified HEAD equals the given value via .git/refs/heads/main — that's a real independent verification of the most important pin. The tree I can't. Task/Delivery bytes/SHA I can't.
+
+Decision: NOT_VERIFIED. Final.
+
+Hmm, actually... let me consider being slightly more useful: report the decision as `NOT_VERIFIED` and immediately note "若 Codex 自行复算 Task/Delivery pin 且匹配，则本 Review 的内容结论支持 `APPROVED`（0 P0/P1，仅 P2/P3）". Yes. Good.
+
+Wait — one more consideration. Maybe I should double check whether there's some other way to get file sizes: the `read` tool's spill files? No. `glob` output? No. Hmm, what about reading the file with the read tool and... no byte counts.
+
+What about the DSH spill file for glob results? It's in TEMP — reading a TEMP file is a "TEMP/cache operation"? The user forbade TEMP/cache operations (in the target-machine sense). Reading my own spill file is harmless but gives no hashes anyway. Skip.
+
+OK. Now let me also double-check my P2 finding #2 (STATUS contradiction) framing, and consider whether to also flag that the Delivery does not pin `doc/STATUS.md` even though STATUS carries the same classification set (L11) that the Delivery's table mirrors. That's actually a *good* point: the Delivery's classification table closely mirrors STATUS L11 (08:47), but the Delivery doesn't cite/pin STATUS as a source. If STATUS is the origin, the Delivery should pin it (and note that STATUS will be superseded at integration). This strengthens the P2: (a) unpinned upstream source that the classification mirrors; (b) STATUS's stale claims (R0S2 active; M11 not reviewed/adjudicated) contradict the Delivery's own cited sources.
+
+Hmm, is STATUS L11 really the origin? "P02PRE 分类：已有 R0 固定时点与精确对象 evidence=PASS_WITH_EVIDENCE；scratch emptiness、private registry absence、profile/path absence、WER effective policy/view/destination/T0、完整保护集身份/祖先/hash=UNPROVABLE；profile getter、R0S1 trusted-module/child-name 方法=NOT_SAFE_FOR_R0；effective LPAC/canary 与未来 child/cache/TEMP/write closure=REQUIRES_ACTIVE_TEST。没有对象标记 FAILED" — this is essentially a condensed version of the Delivery table. And it's dated 08:47, before Delivery 08:55. So yes, the Delivery's classification is consistent with STATUS L11 (and likely derived from it). Notably STATUS L11 also lacks the R0S1 capture-metadata row — consistent with my P2 #1 (the enumeration gap inherited from STATUS). 
+
+Now, one more check for completeness of my "五种枚举均有明确记录" verification: Does the Delivery use `FAILED` correctly (only for actually-executed-and-failed tests)? Only as ∅. ✔
+
+And is any condition mislabeled as `PASS_WITH_EVIDENCE` beyond R0's limited observation? Only row 25 (R0 limited) — ✔ with the non-extrapolation caveat. Good. And the r0s2 manifest's candidate view observations were never executed, so no PASS there ✔.
+
+Let me also verify the claim "本轮没有新的目标机 READY 查询" (Task AC) against the Delivery: the Delivery says no host queries were run — self-reported, unverifiable statically, and the Task's run record says the advisor did read-only candidate screening. Note: `verification/P02/dsh-p02pre-r0s3-review-20261011.prompt.md` exists in the repo (dispatcher artifact) — meaning running the review itself created files in the repo (the .prompt.md/.stdout.md/.stderr.log/.mount.log). Wait — the Review task says "不要创建本地 Review 文件". But the dispatcher (user's side) already created `.prompt.md`, `.stdout.md`, `.stderr.log` in verification/P02/. Hmm, those are dispatch artifacts, not mine. The user said they'll archive my stdout, so they probably created these. Not my concern, but worth noting in 未覆盖项: the declared Review path `verification/P02/dsh-p02pre-r0s3-review-20261011.md` does not exist; only `.prompt.md`/`.stdout.md`/`.stderr.log` exist (and `.stdout.md` was empty at review start). Also NOTE: the R0 review's artifacts used the same pattern and the R0 adjudication recorded a stderr redaction + byte-for-byte comparison between the report and DSH stdout. So there's precedent. I'll report this as a P3 integration note: 归档时必须把 stdout 落成 Task 声明的 `verification/P02/dsh-p02pre-r0s3-review-20261011.md`，否则 Task L30/AC5 的 Review 绑定路径缺失。
+
+Hmm, but is it a "finding"? It's about integration, and it exists because the Review is in flight. I'll list it as a P3.
+
+Also: should I flag that `verification/P02/dsh-p02pre-r0s3-review-20261011.stderr.log` exists? Let me check its content size... can't (no shell), but I can read it. Reading it is fine (it's in the repo). The R0 note said raw stderr bytes were intermediate reasoning text and were redacted. If the r0s3 stderr.log contains reasoning text, that's not a finding about the Delivery. Let me peek quickly to see if it's empty or has content — relevant only for informing Codex about dispatch artifacts. Eh — the user said don't create Review files; they handle archiving. I'll do a quick read to be able to mention it accurately. Actually, it might contain my own chain-of-thought — not worth it and potentially confusing. Skip; I'll just note the file inventory from glob (which showed .prompt.md, .stdout.md, .stderr.log; no .mount.log or .exit for r0s3 yet).
+
+From the earlier glob: `dsh-p02pre-r0s3-review-20261011.prompt.md`, `.stdout.md`, `.stderr.log` — no `.exit`, no `.mount.log` (for R0/R0S1/R0S2 those exist). So the r0s3 dispatch lacks `.exit`/`.mount.log` — consistent with the review still running (mine). Fine.
+
+Now let me also double check requirement 1's "Owner/Reviewer 分离": Task owner=Codex, reviewer=DeepSeek Harness; Delivery restates. And the Delivery's cited M7–M11 reviews: M7 Reviewer=/root/orchestration_docs_review (≠ Owner /root/...?) — M7 adjudication L7 says Reviewer=/root/orchestration_docs_review. Who was M7's Owner? Not stated in the adjudication (it says "Owner 报告=..."). M10 Owner=/root/orchestration_docs_review, Reviewer=/root/p02_isolation_advisor — so for M7, the Reviewer (/root/orchestration_docs_review) might have been the Owner of M10 but that's a different task. Fine, separation is per-task. For M11: Owner=/root/p02_gate_feasibility, Reviewer=Codex /root. For R0S1: Owner=Codex? R0S1 task says owner? Let me check P02PRE-R0S1.md briefly for owner/reviewer to confirm DSH is Reviewer and not author. And R0S2 similar. Actually the R0S3 task says reviewer: DeepSeek Harness. Fine.
+
+Hmm — one more possible finding: the R0S1 Review was performed by DSH (me/another DSH session) and R0S2 Review also by DSH. R0S3 (this review) is also DSH. No self-review issue since Codex owns all three.
+
+But here's a subtle one: the R0S3 Delivery cites "R0S2 independent Review=NOT_SAFE_FOR_R0；Codex 接受 P1 RP-01" ✔. And it cites R0S1 Review/adjudication ✔. No conflict.
+
+Another check: Delivery L10 says the advisor's opinion has no independent file/bytes/SHA pin "故只作为规划线索" — but the Task's run record (L57) says the advisor "未写文件、未查询宿主状态，消息仅作建议". Consistent ✔. Hmm, but is there a file for the advisor opinion? glob for r0s1_manifest_advisor... Let me not bother; Delivery's statement is consistent with Task L57.
+
+Hmm, one thing: Task L57 says "`/root/r0s1_manifest_advisor` 做只读候选筛查并反馈'当前无可释放新 capture'" — and the R0S3 Delivery L10 says the advisor opinion "认为无可释放的新 R0 capture". ✔ Consistent.
+
+Interesting: R0S1's advisor was `/root/r0s1_manifest_advisor`. Task L57 attributes it. And STATUS L23 says the R0S1 advisor's actual config = gpt-6.1-sol/high. The R0S3 Task L31 says "本轮未使用 `gpt-6.1-sol / high`，不作该配置声明". Fine.
+
+Now let me finalize the finding list and severity:
+
+P0: 0
+P1: 0
+P2:
+ 1. AC1 completeness: R0S1 capture-level `UNPROVABLE` items absent from the classification table (R0S1 adjudication L39, R0S1 evidence L16/L38); also R0 `index_side_effect=NOT_VERIFIED` (R0 adjudication L30) absent. Recommendation: add rows (condition=UNPROVABLE / method=n.a.) or state explicitly which prior-artifact items are intentionally out of scope and why.
+ 2. Live `doc/STATUS.md` 顶部当前状态段（2026-10-11 08:47）与 Delivery/其引用来源冲突：L7 仍称当前 Active 子任务=R0S2（R0S2 已由独立 Review + Codex adjudication 收口为 blocked / NOT_SAFE_FOR_R0，见 P02PRE-R0S2.md L79/L83）；L13 仍称 P02M11=BLOCKED / NOT_VERIFIED 且"没有完成独立 Review/adjudication"（实际 M11 Review + adjudication 已存在并被本 Delivery pin）。Delivery 未把 STATUS 列入 pins，也未披露该冲突。Recommendation: Codex 在 adjudication/integration 中同步 STATUS（或声明 STATUS 更新由 integration 步骤承担），并在 Delivery 中显式记录该 drift；Delivery 分类表与 STATUS L11 高度一致，应把 STATUS 作为上游来源 pin 或明确其被本 Delivery 取代。
+
+P3:
+ 3. `条件分类` 列语义混用：多行填的是"采集方法"（R0S1 trusted-module predicate、Get-ChildItem inventory、M7/M8 getter、R0S2 runner、未冻结 getter），与列名"条件分类"不一致；建议改为"对象分类"或分列，并沿用 R0S1 adjudication F-03 的双标注（谓词=X；方法=Y）。
+ 4. `FAILED` 行（L38）把 `FAILED` 填进了"条件分类"列、内容却是"没有"：虽然 `FAILED=∅` 表述正确且与 R0S2 adjudication L48 一致，仍易被读成"存在被标 FAILED 的对象"；建议该行改为"已覆盖（空集）/无对象"或移出枚举列。
+ 5. profile exact path / pre-create absence 的条件标签从 R0 adjudication L47 与 R0S2 Review L163 的 `NOT_SAFE_FOR_R0` 变为 `UNPROVABLE`（Delivery L28）。方向为"更不告警"且未披露；虽然与 M7 adjudication L17、r6 L31、STATUS L11 的分列口径一致且未升级为 PASS，仍建议加映射脚注（沿用 R0S1 F-03 做法）。
+ 6. Pin 表未包含 `doc/tasks/P02PRE-R0.md`、本 Task `doc/tasks/P02PRE-R0S3.md`、`doc/STATUS.md`，也未包含 M7R/M8R/M9R/M10R/M11R 的 Owner 报告与 Review（仅 pin 了 adjudication）。AC3 要求固定"相关 Task、manifest、evidence、Review、adjudication" 的 bytes/SHA；Delivery L55 把 Task/Delivery pin 的重算委派给 Reviewer。建议补齐或在表下加一行"引用经 adjudication 传递"的范围声明。
+ 7. Root runtime model/effort=`gpt-6-luna / max` 仅有"local session trace"（时间戳 2026-10-11T00:51:56.615Z）自述，无 pinned 工件；M11 先例（M11 adjudication L17）把无可核验记录的 model/effort 记为 `NOT_VERIFIED`。交叉旁证：M10 adjudication L44 的 usage report 记录 Root=`gpt-6-luna / max`。建议 pin usage 工件或按 M11 先例标注。
+ 8. Review 归档路径：Task L30 声明 `verification/P02/dsh-p02pre-r0s3-review-20261011.md`；当前只存在 `.prompt.md`/`.stdout.md`/`.stderr.log`（Review 开始时 `.stdout.md` 为空、无 `.exit`/`.mount.log`）。归档时须落成声明路径，否则 AC5 的"非作者 Review 记录"绑定缺失。
+
+Hmm, 6 P3s + 2 P2s = 8 findings. That's a lot but each is precise. Maybe merge 3 and 4 (both column-semantics nits)? Keep separate but concise. Maybe merge 5 into 3? No, 5 is a category-change disclosure issue (different from column naming). Keep.
+
+Should #2 be P1? It's a live-governance contradiction (STATUS says M11 unreviewed & R0S2 active). Impact: a resuming agent could re-dispatch R0S2 or treat M11 as unreviewed. But the Delivery isn't the cause and the Task's allowed range covers STATUS only "为集成本 Task 结果". Also the Delivery is dated 8 min after STATUS, so it's normal that STATUS lags until integration. I'll keep P2 and explicitly say it's an integration-time action, not a Delivery text defect. Hmm, but then it's not a "finding against the Delivery"... The review is of the delivery in the repo context, so flagging it is right. Keep P2 but label it "integration/handoff 项".
+
+Hmm, wait. Is STATUS's M11 claim really wrong? STATUS L13: "P02M11=`BLOCKED / NOT_VERIFIED`：报告文件存在，但 Owner Agent 因额度中断未返回可核验 handoff/model；没有完成独立 Review/adjudication。" M11's own review (codex-p02-unwaived-gate-feasibility-review-20261011.md) and adjudication exist. Their dates: 20261011. But are they *committed*? Not necessarily — the working tree holds many uncommitted files. STATUS was authored 08:47; the M11 review/adjudication might have been written after 08:47? Hmm! When was M11 reviewed? The M11 adjudication references R0S2 as already NOT_SAFE_FOR_R0 (L27: "P02PRE-R0S2 因独立 Review RP-01 已定为 NOT_SAFE_FOR_R0"), and R0S2's adjudication is in the R0S3 pin table. R0S2 task L79 says reviewer DSH result + Codex accepted P1. So M11 review/adjudication came after R0S2's adjudication. R0S2's Review+adjudication happened between 08:47 (STATUS) and 08:55 (R0S3 Delivery)? R0S2 manifest is pinned at 7710 bytes; the R0S2 review exists. Hmm, the 08:47 STATUS says "R0S2 Task/manifest=in_review，DSH 静态 Review 已 dispatch" — so at 08:47 R0S2's DSH review was in flight. Then R0S2 review + adjudication + M11 review + M11 adjudication + R0S3 Task+Delivery all completed by 08:55?? That's 8 minutes for 4 artifacts. Possible if agents were parallel, but tight. Hmm, wait: perhaps the STATUS timestamp "2026-10-11 08:47" is when that section was written, and the R0S3 delivery is 08:55 — so yes, everything R0S2-review→adjudication→M11-review→adjudication→R0S3 happened in ≤8 min? M11's review is 47 lines, adjudication 29 lines; R0S2 review 19k, adjudication 8.6k. Written by different agents in parallel — plausible in a fast multi-agent setup, but suspicious.
+
+Alternatively the STATUS top section might have been written at 08:47 but describe a state as of earlier, and the R0S2/M11 work happened between... no, timestamps must be monotonic.
+
+Hmm, another possibility: STATUS's "08:47" section was authored earlier and the M11 review/adjudication were created BEFORE 08:47 too. Then STATUS L13's claim would be flatly contradicted at its own authoring time. Let's test: M11 adjudication L27 says "相较 R0S1 checkpoint，M11 report 由 quota-interrupted Owner 补齐了可独立 Review 的静态交付；Codex 完成 M11R 与本 adjudication。P02PRE-R0S2 因独立 Review RP-01 已定为 NOT_SAFE_FOR_R0". Hmm — this mentions R0S2's review outcome, so M11 adjudication was written after R0S2's review+adjudication. And R0S3's Task/run record says at 08:55 the Delivery was frozen. So sequence: R0S2 review → R0S2 adjudication → M11 review → M11 adjudication → R0S3 Task → R0S3 Delivery, all in ~8 minutes (08:47→08:55) plus however long before 08:47 for R0S2 review. Actually R0S2 review could have started before 08:47 (dispatched), and the 08:47 STATUS says R0S1 已审结 + R0S2 review in flight. So maybe R0S2 review landed at ~08:48, adjudication 08:49, M11 review 08:50, M11 adjudication 08:51, R0S3 Task 08:52, Delivery 08:55. Plausible for fast agents. OK, so STATUS L7/L13 being stale at 08:55 is a natural lag (STATUS updated at checkpoint boundaries only). Since STATUS is only updated at checkpoints and the Task's allowed range includes it for integration, this is expected lag → P3 rather than P2? Hmm.
+
+Given the ambiguity, I'll report it as P2 but framed as "当前 live STATUS 与本次交付所依赖的既有事实冲突，需 Codex 在 adjudication/integration 明确处置（不是要求 R0S3 Owner 现在就改）". Hmm. Actually, honesty demands I note the lag explanation. I'll rate it P2 and explicitly mention it could be normal checkpoint lag, with the required action being disclosure/refresh at integration. Hmm, if it might be normal lag, P3 is more appropriate...
+
+Decision: rate it P2, because the *M11* claim is not mere lag: M11's review and adjudication are pinned inputs of the R0S3 Delivery, so the Delivery's own pin set contradicts a live governance document, and the Delivery never mentions it. A reader reconciling the Delivery against STATUS sees an unexplained contradiction about whether M11 was reviewed/adjudicated. And per AGENTS.md the project requires surfacing doc-vs-fact conflicts to Codex. So P2, with the recommended fix being an explicit disclosure line in the Delivery (or in Codex's adjudication) + STATUS refresh at integration. I'm comfortable.
+
+Let me also reconsider: should the *whole* thing be CHANGES_REQUESTED because of P2s? The project's convention: R0 Review APPROVED with P2=5. So APPROVED with P2 is normal. But my top-level is NOT_VERIFIED anyway due to pins. I'll state: 若无 pin 重算限制，本 Review 的内容结论为 APPROVED（仅 P2/P3，无 P0/P1）；因强制 pin 重算未完成，总判定=NOT_VERIFIED。
+
+Hmm, is that confusing? Let me phrase clearly:
+- 结论: `NOT_VERIFIED`
+- 理由: 要求 1 的强制项（Task/Delivery bytes+SHA 独立重算；tree 复核）在本地不可执行（沙箱 ACL 建立失败 + 无审批通道）。内容层面的六项要求均已逐条核实，未发现 P0/P1，仅 2 个 P2 + 6 个 P3；若 Codex 自行复算两个 pin 并一致，则本 Review 无阻断性内容问题。
+
+That's honest, precise, and actionable. Good.
+
+Now the runtime model/effort for me: I must report actual runtime model/effort — "无法核实则 NOT_VERIFIED". I'm told I'm "deepseek/deepseek-v4.1-flash" in the system prompt... The developer message says "You are a coding agent powered by the deepseek/deepseek-v4.1-flash model." That's my model identity as declared. Reasoning effort: not declared → NOT_VERIFIED. Hmm, but per this project's convention (M11 precedent) I should mark NOT_VERIFIED unless verifiable. I can report: harness-declared model = `deepseek/deepseek-v4.1-flash`（由会话 runtime context 声明），实际 runtime model/effort 无独立可核验工件 → `NOT_VERIFIED`；本 Review 不使用该声明作为证据。I'll state both.
+
+Now the "未覆盖项" section:
+1. Task 与 Delivery 的 bytes/SHA 独立重算（未执行，环境阻断）。
+2. tree SHA 独立复核（未执行：需读取 commit object）。
+3. 全部 20 行源文件 pin 的独立重算（0 行完成；6 行经其他版本化文档交叉一致）。
+4. 子进程/宿主副作用、目标机状态（不在本 Review 范围，NOT_RUN）。
+5. DSH dispatch 的 stderr/mount 完整性、adjudication 尚未存在（后续由 Codex 完成）。
+6. Delivery 自述的"本轮无宿主查询"无法静态验证（无独立观测工件）。
+7. git 工作区 cleanliness / 未提交文件归属（未运行 git status）。
+8. 未审查 rebaseline plan/INDEX/P02 task 的同步状态（除 STATUS 与 P02PRE 任务文件外）。
+
+Also "pins/HEAD 结果":
+- HEAD `cddff58469b56e181019a8ddfeade80684bc7eb9`: 独立核实一致（.git/HEAD → refs/heads/main；.git/refs/heads/main 内容即该值；.git/logs/HEAD 第 1011 条 reflog 末条 24a0b98→cddff58）。
+- branch `main`: 一致（.git/HEAD）。
+- tree `c25d051a...19f2b`: NOT_VERIFIED（无法读取 commit object）；与 STATUS L5 及 R0/R0S1/R0S2/R6/M7–M11 adjudications 一致。
+- `.git/packed-refs` L294 记录 `refs/heads/main=4de7fb444d0abfb62c3eec327a7071a18f8ad90c`：陈旧（loose ref 覆盖），不得作为 HEAD；提示后续核查者。
+- Task `doc/tasks/P02PRE-R0S3.md`、Delivery `...classification-20261011.md`：bytes/SHA 未重算 → NOT_VERIFIED。
+- 20 行 pin 表：无法重算；交叉一致 6 行（r0 evidence, r0 review, r0s1 review, r6 manifest, M11 report, + STATUS 对 r0s1 review 的引用）— let me recount carefully which of the 20 rows have corroboration:
+  1. r0 evidence 99592/AE16... ← R0 adjudication L6 ✔ + STATUS L23 ✔
+  2. r0 review 29404/427F... ← R0 adjudication L7 ✔ + STATUS L23 ✔
+  3. r0 adjudication 11145/E661... ← none found
+  4. r0s1 evidence 5489/05C2DD... ← none
+  5. r0s1 review 21262/2F27B72F... ← STATUS L9 ✔
+  6. r0s1 adjudication 9413/6A4B53... ← none
+  7. doc/tasks/P02PRE-R0S1.md 8763/C16483... ← none
+  8. r0s1 manifest 22925/CA293C... ← none
+  9. doc/tasks/P02PRE-R0S2.md 9015/B9A7EF... ← none
+  10. r0s2 manifest 7710/589DCD... ← none
+  11. r0s2 review 19235/4EE88F... ← none (R0S2 task L79 gives decision but not hash)
+  12. r0s2 adjudication 8604/8D1D39... ← none
+  13. r6 manifest 44307/626E000A... ← M10 adjudication L11 ✔
+  14. M7 adj 3985/DFE1F6... ← none
+  15. M8 adj 4259/7AA91859... ← none
+  16. M9 adj 3127/F59409... ← none
+  17. M10 adj 5560/01E556... ← none
+  18. M11 report 27825/15736303... ← M11 review L7 ✔, M11 adj L7 ✔, STATUS L25 ✔, R0 manifest L9 ✔
+  19. M11 review 5857/F3578C9D... ← none
+  20. M11 adj 4101/5317DB... ← none
+  So 5 rows cross-corroborated (1,2,5,13,18). Let me state 5.
+
+Hmm, also I should double check #17's pin isn't corroborated: M10 adjudication file itself is self-referential; the r0 manifest L69 lists r6 adjudication as hashed but I didn't read its hash table. Let me quickly grep r0 manifest for "8D1D39" / "4EE88F" / "01E556" / "6A4B53" / "05C2DD" to find more corroborations. That's worthwhile — it could turn several NOT_VERIFIED rows into cross-corroborated. Let me grep across verification/P02 for these hashes.
+
+Let me do a targeted grep for a few pin hashes.
+dsh: reasoning:
+Excellent — now far more rows are cross-corroborated:
+- r0 adjudication 11145/E661... ← r0s1 checkpoint L30 ✔, r0s1 review prompt L12 ✔
+- r0s1 evidence 5489/05C2DD... ← r0s1 adjudication L7 ✔, r0s1 review prompt L11 ✔
+- r0s2 review 19235/4EE88F... ← r0s2 adjudication L8 ✔
+- r0s1 adjudication 9413/6A4B53... ← only r0s3 (self). Not corroborated.
+- M7 adj 3985/DFE1F6... ← M11 report L115 ✔, r6 review L101 ✔, r6 manifest L209 ✔
+- M8 adj 4259/7AA91859... ← M11 report L116 ✔, r6 review L104 ✔, r6 manifest L212 ✔
+- M9 adj 3127/F59409... ← M11 report L117 ✔, r6 review L107 ✔, r6 manifest L215 ✔
+- M10 adj 5560/01E556... ← r6 reconciliation checkpoint L34 ✔, M11 report L120 ✔, R0 evidence L245/L1695 ✔, R0 review L32 ✔
+- M11 adj 4101/5317DB... ← only r0s3 (self). Not corroborated.
+- r0s1 manifest 22925/CA293C... ← r0s1 adjudication L7 ✔ (manifest 22925/CA293C...)
+- r0s2 adjudication 8604/8D1D39... ← only r0s3 (self, plus grep hits at self). Hmm the first grep listed it? The first grep pattern included 8D1D39 and 4EE88F. Matches were in r0s3 (self) and r0s2 adjudication L8 for 4EE88F. So 8D1D39 only self. Not corroborated.
+
+Also interesting from r0s1 adjudication L7: "Review 前冻结对象：Task `8303 bytes / BD73A543...`". The R0S3 Delivery pins `doc/tasks/P02PRE-R0S1.md` as `8763 bytes / C1648322...`. These differ (8303/BD73A543 vs 8763/C1648322). Is that a conflict? The r0s1 adjudication's 8303/BD73A543 is the Task pin *before Review* (pre-query). The R0S3 Delivery's 8763/C1648322 is the Task's bytes/SHA at R0S3 delivery time. The Task file may legitimately have grown (its 运行记录/status updated from in_review→blocked, plus adjudication references) → different bytes/SHA. So not necessarily drift. Hmm, but it's a notable difference (8303 → 8763, +460 bytes) consistent with added status/run-record text. Plausible and expected (mutable Task docs, exactly the M11R-01 pattern). I should NOT flag it as an error, but I can mention it as an observation: the R0S1 Task pin changed between the R0S1 adjudication (8303/BD73A543…) and the R0S3 Delivery (8763/C1648322…), consistent with the documented "Task/governance docs are live-mutable" convention (r6 L200, M11R-01). Good context for pins section — and it demonstrates why byte pins of live docs need re-computation. Worth a P3? Or just an observation in the pins section. I'll put it in the pins section as an observation with impact = none (live doc), and also recommend the Delivery footnote that live Task docs are mutable (r6 L200 already says so). Not a finding. Hmm, actually it IS relevant: requirement 1 asks to "抽查 Delivery 的源文件 pin 表" — showing that one pinned Task row differs from a prior adjudication's Task pin, explained by mutability, is exactly the spot-check output. I'll include it in the pins section as a spot-check observation with the conclusion "无 drift 证据；活文档可变性已由 r6 L200/M11R-01 记录".
+
+Wait, careful: if the R0S1 Task was pinned at 8303 bytes at R0S1 review time and is 8763 now, and the R0S3 Delivery states 8763 — that's self-consistent with "current value at Delivery time". Fine. But here's the subtlety M11R-01 raised: pinning a live mutable doc means the pin can't be re-verified later. Not a defect per se. I'll note it.
+
+Also, I noticed the r0s1 review prompt (a dispatch artifact) contains a background pin list — the R0/R0S1 pin chain. Cross-corroboration from prompts is weaker (they're dispatch inputs, not versioned evidence), but they corroborate the same numbers as the versioned adjudications/checkpoints, so fine. I'll cite the versioned ones primarily (r0s1 checkpoint L30, r0s1 adjudication L7, r0s2 adjudication L8, M11 report L115-117/L120, r6 manifest L209-215, r6 review L101-107, R0 evidence L245, R0 review L32).
+
+Hmm, note: R0 evidence L245 has a table with two columns of the same hash ("一致") — that's the R0 pre/post hash comparison table. And L1695/L1762 are JSON entries. So R0 evidence itself pins M10 adjudication ✔.
+
+Now count corroborated rows out of 20:
+1. r0 evidence 99592/AE16... ← R0 adjudication L6, STATUS L23, r0s1 prompt ✔
+2. r0 review 29404/427F... ← R0 adjudication L7, STATUS L23 ✔
+3. r0 adjudication 11145/E661... ← r0s1 checkpoint L30 ✔
+4. r0s1 evidence 5489/05C2DD... ← r0s1 adjudication L7 ✔
+5. r0s1 review 21262/2F27B72F... ← STATUS L9 ✔
+6. r0s1 adjudication 9413/6A4B53... ← 未找到其他来源
+7. doc/tasks/P02PRE-R0S1.md 8763/C1648322... ← 未找到（r0s1 adjudication 记 8303/BD73A543，为 R0S1 Review 前值，不同）
+8. r0s1 manifest 22925/CA293C... ← r0s1 adjudication L7 ✔
+9. doc/tasks/P02PRE-R0S2.md 9015/B9A7EF... ← 未找到
+10. r0s2 manifest 7710/589DCD... ← 未找到
+11. r0s2 review 19235/4EE88F... ← r0s2 adjudication L8 ✔
+12. r0s2 adjudication 8604/8D1D39... ← 未找到
+13. r6 manifest 44307/626E000A... ← M10 adjudication L11 ✔
+14. M7 adj 3985/DFE1F6... ← M11 report L115, r6 review L101, r6 L209 ✔
+15. M8 adj 4259/7AA91859... ← M11 report L116, r6 review L104, r6 L212 ✔
+16. M9 adj 3127/F59409... ← M11 report L117, r6 review L107, r6 L215 ✔
+17. M10 adj 5560/01E556... ← r6 reconciliation checkpoint L34, M11 report L120, R0 evidence L245, R0 review L32 ✔
+18. M11 report 27825/15736303... ← M11 review L7, M11 adj L7, STATUS L25, R0 manifest L9 ✔
+19. M11 review 5857/F3578C9D... ← 未找到
+20. M11 adj 4101/5317DB... ← 未找到
+
+So 15/20 rows cross-corroborated by at least one other versioned document; 5 rows have no independent corroboration found (6, 7, 9, 10, 12, 19, 20 — wait that's 7). Let me recount uncorroborated: 6 (r0s1 adv), 7 (R0S1 task), 9 (R0S2 task), 10 (r0s2 manifest), 12 (r0s2 adv), 19 (M11 review), 20 (M11 adj) = 7 uncorroborated; 13 corroborated. Let me recount corroborated: 1,2,3,4,5,8,11,13,14,15,16,17,18 = 13. Yes 13 corroborated, 7 not.
+
+Good. That's a meaningful spot-check result: no contradictions found among the 13; 7 unverified.
+
+Note: I should double check that there's no *conflict* among corroborations — e.g., row 7's Task pin differs from r0s1 adjudication's (8303/BD73A543). Explain as live-doc mutation. Also check row 3's r0 adjudication 11145/E661: corroborated by r0s1 checkpoint L30 ✔ same value. Row 4: r0s1 adjudication L7 5489/05C2DD ✔ same. Row 8: r0s1 adjudication L7 manifest 22925/CA293C ✔ same. Row 11: r0s2 adjudication L8 = "Reviewer 的最终 stdout=19235 bytes/4EE88F..." and says archived Review is byte-identical with same SHA ✔ → same as R0S3's row 11 (r0s2 review file) ✔. Row 17: 5560/01E556 matches M11 report L120 and R0 evidence L245 ✔.
+
+One more possible conflict to check: row 5 (r0s1 review 21262/2F27B72F) vs STATUS L9 which reports the same SHA. ✔ And note that R0S2 review L47/etc. Fine.
+
+Great. Now, do I have enough to write the review? Let me also quickly double-check the Task's `status: in_review` and that the Delivery's "状态=IN_REVIEW" matches ✔.
+
+One more: requirement 1 "抽查 Delivery 的源文件 pin 表" — done (13 corroborated / 7 unverified).
+
+Let me also check `doc/tasks/P02PRE-R0.md` exists (yes) and whether R0S3's declared allowed-modification range is respected by the Delivery (only creates verification/P02/codex-p02pre-r0s3-*). The Delivery file matches `verification/P02/codex-p02pre-r0s3-classification-20261011.md` ✔ within range.
+
+Hmm, and did the Owner modify anything outside range? I can't run git status. Note in 未覆盖项.
+
+Now, also: the user asked to check "不新增授权". Delivery L51 says "本 Task 不授权 API/Create/Build/AC" ✔ no new authorization. And it doesn't extend the waiver (L27 says 用户风险例外只接受该残余风险) ✔.
+
+Also check: Delivery L25 "R0 evidence 与其 Review/adjudication 接受为有限采集证据" ✔.
+
+I think I'm ready. One more sanity check on the claim in requirement 3: "R0S2 因 ... 无法证明而 NOT_SAFE_FOR_R0，Registry query=NOT_RUN" ✔ verified. "不要建议重试或换 shell/runtime" — verified Delivery doesn't. But note Delivery L15's last sentence: "任何新 runner 都必须先单独冻结并 Review 启动和 wrapper 边界" — could be read as a path forward, but it's conditioned on new Task + Review, consistent with R0S2 adjudication and M11 adjudication L27. Not a violation. I'll note explicitly in the compliance section that this is a boundary statement, not a retry recommendation — good reviewer value.
+
+Now the P2 finding about R0S1 capture metadata: let me make sure I'm right that it's not covered. Delivery rows again: 25 R0 PASS; 26 scratch leaf; 27 private registry; 28 profile path; 29 Registry LocalDumps; 30 WER; 31 protected inventory; 32 LPAC/token REQUIRES_ACTIVE_TEST; 33 R0S1 trusted-module; 34 R0S1 Get-ChildItem; 35 M7/M8 getter; 36 R0S2 runner; 37 unfrozen getters; 38 FAILED. 
+
+Right: no row for R0S1 capture 精确时间/profile effects/实际 executable identity/cmd bytes binding (R0S1 adjudication L39) and no row for R0 evidence's `index_side_effect=NOT_VERIFIED` (R0 adjudication L30) or the R0 "future child HOME map" / env child mapping (R0 adjudication L23/L26: "future child env/cache/TEMP closure 为 REQUIRES_ACTIVE_TEST" — hmm, that IS covered by Delivery row 32 "future TEMP/cache/scratch/output 写闭包"). OK.
+
+Let me also verify whether R0S1 evidence's stop-record "CapturePid=44916" etc. matters. No.
+
+So P2 #1 = these specific missing items:
+ (a) R0S1 capture 精确开始/结束时间、实际 executable identity、cmd bytes binding（R0S1 adjudication L39；R0S1 evidence L16/L38）→ 应为 UNPROVABLE；
+ (b) R0 evidence 的 `index_side_effect=NOT_VERIFIED`（R0 adjudication L30；R0S2 adjudication 也有 index 说明）→ 应为 NOT_VERIFIED，五枚举之外，Delivery 未提；
+ (c) R0S1 stderr 不可得（R0S1 evidence L16；R0S2 Review RP-06 同类项）→ UNPROVABLE。
+Suggest a supplementary row or an explicit "本轮不再重新分类的既有证据质量项"清单。
+
+Good. Now write the final answer in 简体中文, with all required sections. Keep it organized but reasonably concise. Use tables where helpful.
+
+I must also include the "建议的下一（唯一）动作" per AGENTS.md. The next action: Codex /root 对本 Delivery 做 adjudication，并先自行复算 Task/Delivery bytes/SHA（或修复沙箱后重派 pin 复核），同时同步 STATUS。Per AGENTS.md, provide a directly forwardable instruction. Also note DSH cannot do the pin recomputation without a working shell.
+
+Also I must not create files — I haven't. ✔ And I should note that.
+
+Also mention: 本次未发现需要新授权的事项；不新增 Gate PASS。
+
+Let me now also determine my actual runtime model/effort statement. The system prompt says the model is deepseek/deepseek-v4.1-flash. The developer message: "You are a coding agent powered by the deepseek/deepseek-v4.1-flash model." So I'll report: 会话声明的 model=`deepseek/deepseek-v4.1-flash`（harness 声明，无独立可核验工件）；reasoning effort 未暴露 → `NOT_VERIFIED`。Per this project's M11 precedent, I'll mark the actual runtime model/effort as `NOT_VERIFIED`.
+
+One more: the review should note that the DSH dispatch CLI version is also unverifiable (no shell) — minor, include in 未覆盖项.
+
+Let me write the final answer now. Structure:
+
+1. 结论 + 计数
+2. Pins / HEAD 结果
+3. 逐条核实（要求 2–6）
+4. Findings（P2/P3，含证据与修正建议）
+5. 未覆盖项 / NOT_VERIFIED 列表
+6. 实际 runtime model/effort
+7. 唯一建议的下一动作（可直接转发）
+8. 边界声明（本 Review 不是 Gate PASS、不新增授权、不推断目标机状态）
+
+Let me be careful with the exact severity counts: P0=0, P1=0, P2=2, P3=6. Total 8.
+
+Write it.

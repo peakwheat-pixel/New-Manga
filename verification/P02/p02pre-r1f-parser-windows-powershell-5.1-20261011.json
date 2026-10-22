@@ -1,0 +1,18 @@
+{
+  "task": "P02PRE-R1F",
+  "sourcePath": "verification/P02/p02pre-r1f-capture.ps1",
+  "sourceBytes": 49589,
+  "sourceSha256": "BB0A720069885A0BC425DC6A57A6CB71B1352E0DA871F4E9EF03A52F6F24DC77",
+  "parserExecutable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "parserVersion": "5.1.26100.9549",
+  "parserPid": 47852,
+  "parserExitCode": 0,
+  "parseResult": "PARSE_OK",
+  "captureScriptInvoked": false,
+  "stdout": "P02PRE_R1F_PARSE=PARSE_OK;PS=5.1.26100.9549;BYTES=49589;SHA256=BB0A720069885A0BC425DC6A57A6CB71B1352E0DA871F4E9EF03A52F6F24DC77;CAPTURESCRIPTINVOKED=false\r\n",
+  "stderr": "#< CLIXML\r\n<Objs Version=\"1.1.0.1\" xmlns=\"http://schemas.microsoft.com/powershell/2004/04\"><Obj S=\"progress\" RefId=\"0\"><TN RefId=\"0\"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N=\"SourceId\">1</I64><PR N=\"Record\"><AV>����׼���״�ʹ��ģ�顣</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj></Objs>",
+  "childInputSha256": "BB0A720069885A0BC425DC6A57A6CB71B1352E0DA871F4E9EF03A52F6F24DC77",
+  "parentRecheckSha256": "BB0A720069885A0BC425DC6A57A6CB71B1352E0DA871F4E9EF03A52F6F24DC77",
+  "parentRecheckBytes": 49589,
+  "exitCode": 0
+}

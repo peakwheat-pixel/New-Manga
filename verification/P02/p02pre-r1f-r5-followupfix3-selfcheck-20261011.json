@@ -1,0 +1,43 @@
+{
+  "task": "P02PRE-R1F",
+  "phase": "R5_FOLLOWUPFIX3_ISOLATED_SELFCHECK",
+  "sourcePath": "verification/P02/p02pre-r1f-capture.ps1",
+  "sourceBytes": 66560,
+  "sourceSha256": "F55F195E0A746B8D6B1EA19A7FA212495FDFA4F4FEAB6CF281BECE65173AC8E8",
+  "parentEngine": "7.6.6",
+  "childExecutable": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "childEngine": "Windows PowerShell",
+  "childEngineVersion": "5.1.26100.9549",
+  "childArguments": [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-EncodedCommand"
+  ],
+  "sourceTransport": "child read the exact pinned file path; no source on command line or stdin",
+  "childExitCode": 0,
+  "parseResult": "PARSE_OK",
+  "parseErrorCount": 0,
+  "selectedFunctions": [
+    "Test-UnreadUserDataStagingPath",
+    "Test-SafeRepositoryRelativePath",
+    "Get-LinkTypeEvidence",
+    "Get-InventoryAction",
+    "Test-ExpectedDetachedBranchResult",
+    "Assert-InventoryPolicySelfCheck",
+    "Assert-CommandSerializationSelfCheck"
+  ],
+  "selfCheckResult": "PASS",
+  "selfCheckOutputCount": 0,
+  "childStdoutBytes": 595,
+  "childStdoutSha256": "44A624A29094A20D744397163997CC80E8BE132696A23782D310E91F1AECAF47",
+  "childStdoutBase64": "eyJlbmdpbmUiOiJXaW5kb3dzIFBvd2VyU2hlbGwiLCJlbmdpbmVWZXJzaW9uIjoiNS4xLjI2MTAwLjk1NDkiLCJzb3VyY2VCeXRlcyI6NjY1NjAsInNvdXJjZVNoYTI1NiI6IkY1NUYxOTVFMEE3NDZCOEQ2QjFFQTE5QTdGQTIxMjQ5NUZERkE0RjRGRUFCNkNGMjgxQkVDRTY1MTczQUM4RTgiLCJwYXJzZVJlc3VsdCI6IlBBUlNFX09LIiwicGFyc2VFcnJvckNvdW50IjowLCJzZWxlY3RlZEZ1bmN0aW9ucyI6WyJUZXN0LVVucmVhZFVzZXJEYXRhU3RhZ2luZ1BhdGgiLCJUZXN0LVNhZmVSZXBvc2l0b3J5UmVsYXRpdmVQYXRoIiwiR2V0LUxpbmtUeXBlRXZpZGVuY2UiLCJHZXQtSW52ZW50b3J5QWN0aW9uIiwiVGVzdC1FeHBlY3RlZERldGFjaGVkQnJhbmNoUmVzdWx0IiwiQXNzZXJ0LUludmVudG9yeVBvbGljeVNlbGZDaGVjayIsIkFzc2VydC1Db21tYW5kU2VyaWFsaXphdGlvblNlbGZDaGVjayJdLCJzZWxmQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg==",
+  "childStderrBytes": 404,
+  "childStderrSha256": "821020161208F807E91B67BA4ADD7B4B0A659459C070046085D1BFED51BDA719",
+  "childStderrBase64": "IzwgQ0xJWE1MDQo8T2JqcyBWZXJzaW9uPSIxLjEuMC4xIiB4bWxucz0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9wb3dlcnNoZWxsLzIwMDQvMDQiPjxPYmogUz0icHJvZ3Jlc3MiIFJlZklkPSIwIj48VE4gUmVmSWQ9IjAiPjxUPlN5c3RlbS5NYW5hZ2VtZW50LkF1dG9tYXRpb24uUFNDdXN0b21PYmplY3Q8L1Q+PFQ+U3lzdGVtLk9iamVjdDwvVD48L1ROPjxNUz48STY0IE49IlNvdXJjZUlkIj4xPC9JNjQ+PFBSIE49IlJlY29yZCI+PEFWPu+/ve+/ve+/ve+/vde877+977+977+917Tvv73Kue+/ve+/vcSj77+96aGjPC9BVj48QUk+MDwvQUk+PE5pbCAvPjxQST4tMTwvUEk+PFBDPi0xPC9QQz48VD5Db21wbGV0ZWQ8L1Q+PFNSPi0xPC9TUj48U0Q+IDwvU0Q+PC9QUj48L01TPjwvT2JqPjwvT2Jqcz4=",
+  "sourceHashMatchedBetweenParentAndChild": true,
+  "captureScriptInvoked": false,
+  "hostGetterInvoked": false,
+  "registryOrAclWriteInvoked": false,
+  "createdUtc": "2026-10-11T09:48:29.1268738Z"
+}

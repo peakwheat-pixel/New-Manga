@@ -1,0 +1,5 @@
+=== P02PRE-R1H-R6-ZCODE-H1 final pre-run stderr summary (attempt6 v2) ===
+All read-only helper invocations produced 0 stderr bytes (git --version, refs x14, status x3, check-ignore x8, whoami x1).
+Every pinned value re-collected and re-verified against the pre-assembled template before any repository write (flat-statement scripts with final guards; no multi-line try blocks, no builtin-alias function names).
+verdict: PRE_RUN_PASS; dynamic process closure: REQUIRES_ACTIVE_TEST / NOT_RUN
+written utc: 2026-10-12T11:04:13.5042503Z

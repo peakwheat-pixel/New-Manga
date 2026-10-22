@@ -1,0 +1,16 @@
+{
+  "task": "P02PRE-R1F",
+  "command": "Windows PowerShell 5.1 ScriptBlock::Create over exact file bytes",
+  "cwd": "G:\\CODEX\\New Manga",
+  "powerShellVersion": "7.6.6",
+  "processId": 40964,
+  "sourcePath": "verification/P02/p02pre-r1f-capture.ps1",
+  "sourceBytes": 49515,
+  "sourceSha256": "FCFDACDE1A1BE36FD213B0AFBBFEFF2FA7E033A205BF0F16849D86691EDB8BAA",
+  "parentRecheckBytes": 49515,
+  "parentRecheckSha256": "FCFDACDE1A1BE36FD213B0AFBBFEFF2FA7E033A205BF0F16849D86691EDB8BAA",
+  "parseResult": "PARSE_OK",
+  "captureScriptInvoked": false,
+  "parseError": null,
+  "exitCode": 0
+}

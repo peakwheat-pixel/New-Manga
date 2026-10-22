@@ -1,0 +1,109 @@
+# P02PRE-R1H-R6-EXEC-A5 Final Pre-run Evidence Review（只读）
+
+## 0. 本次 Review 的方法与自身偏差披露
+
+- 我未修改任何文件，未运行 executor、自检、File.Replace、Build/Cargo、AC、profile/registry/ACL 操作，未访问 `.tmp.driveupload`。
+- 我尝试了 2 次只读 PowerShell 辅助调用（`Get-ChildItem`、`Get-FileHash`），均以 `SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga)` 在沙箱权限设置阶段失败，命令**未执行**、无任何输出与状态变更。该失败模式正是 `p02pre-r1h-round6-integration-protocol-attempt5-20261012.md:102`（P3-1）明文预告并已接受的条件，因此本次 Review 只能做**内容级**核对，无法重算任何 SHA-256 → `reviewerIndependentHashes=NOT_VERIFIED` 必须维持。
+- 我另做了 1 次只读路径发现（`glob`，仅列文件名，不读内容），用于确认协议引用的 pin 文件与 attempt4 继承物是否存在。
+
+## 1. 结论
+
+- **verdict: `CHANGES_REQUESTED`**
+- **P0 / P1 / P2 / P3 = 0 / 2 / 3 / 4**
+- 关键限定：**`PRE_RUN_BLOCKED` 与 executor `NOT_RUN` 的停手决定本身是正确的、必须保留**；`CHANGES_REQUESTED` 针对的是 pin manifest / 证据完整性与披露，不是推翻停手结论。
+
+## 2. 逐项回答
+
+### Q1 Owner Handoff 的 size/hash pin 核对
+
+不一致**真实存在**，且是唯一 blocker：
+
+- 冻结执行器内嵌期望值：`verification/P02/p02pre-r1h-round6-integrator-attempt5-20261012.ps1:25`（`$HandoffHash='700B79F3…'`）与 `:440` `AssertPin (…\p02pre-r1h-handoff-20261012.md) 3551 $HandoffHash`（另见 `:512/:516/:524/:551/:605`）。
+- 实际只读取得：`codex-p02pre-r1h-attempt5-prerun-review-pins-20261012.json:17` 与 `codex-p02pre-r1h-attempt5-final-pre-run-20261012.json:446-450` 一致记为 **9505 / E13C7148…**；我实际读到的该 worktree 文件是 97 行的 Round5 remediation handoff，与 3551 字节版本无关。
+- 交叉自洽：`…final-pre-run….json:451-457` 记 `headBlobBytes=9408`、`filteredWorktreeBlobMatchesHead=true`；9505−9408=97，恰好等于该文件行数，与"CRLF 检出、blob 为 LF"一致，说明 9505 这一数字内部自洽。
+- 该不一致**足以也不得不** fail-stop，而不是调用 executor，理由有三：
+  1. 执行器自身会在 `PrecheckFiles` 的 `:440` 抛 `Pin mismatch`，且 `PrecheckFiles`（`:484`）在 `CreateNew`（`:493`）之前 → `…final-pre-run….json:458` 的 "PrecheckFiles fails before executor CreateNew" 与代码相符；调用只会得到一个 BLOCKED，且会先启动 P/Invoke Toolhelp/身份观察等系统读取。
+  2. 除该 pin 外，`PrecheckFiles` 的所有 pin 都被已记录实际值满足（`:436`→JSON `:97`；`:438`→`:130`；`:439`→`:144`；`:441`→`:111`；`:442`→`:119`；`:445`→`:53`）→ blocker 定位精确、无其它隐藏前置失败。
+  3. 该路径同时是**写源**：`:516` 会把 owner handoff 字节写入 `p02pre-r1h-round6-handoff-20261012.md`。按失效 pin 执行会把未经本次冻结/审阅的字节写进输出，因此停手正是安全边界要求。
+
+### Q2 fail-stop 边界与是否被调用
+
+- `PRE_RUN_BLOCKED` / `NOT_RUN` 有支持：`…final-pre-run….json:5-6`、`prerun-review-pins….json:24-27`、`…final-pre-run….stderr.log:6`、以及协议自身的放行条件 `protocol:107`（须 `PRE_RUN_PASS`）未满足。
+- 无证据显示 attempt5 executor / 文件替换被调用，且有**结构性反证**：目标 `p02pre-r1h-selfcheck.ps1` 仍是**旧**字节 57648 / `977C9943…`（`…final-pre-run….json:95-97`），而新字节为 57812 / `6BD91608…`（`:130`）；`stage`、`apiBackup`、`recovery`、`round6-handoff`、`integration-round6-execution.json`、`selfcheckEvidence`、`engineEvidence` 全部 `absent=true`（`:349-415`）；root index 前后不变（`:76-77`、`:54`）。
+- 未把 Codex helper 错误写成产品测试失败：`stderr.log:1`（"these are not A5 executor stderr"）、`…final-pre-run….json:460`（`harnessDeviations`）与 `protocol:16`（"precondition BLOCKED state, not a test failure"）均处置正确；同时也没有把 BLOCKED 写成 PASS。
+- Cargo/AC：`gates` 保持 `BuildCargo=NOT_RUN`、`systemAC1toAC7=BLOCKED / NOT_RUN`（`:475-476`），`CARGO_HOME/CARGO_TARGET_DIR present:false`（`:324-331`）为辅助旁证。
+
+### Q3 其它状态/证据的自洽性
+
+自洽：受保护输入的当前值与执行器 `PrecheckFiles` 的 pin 逐个相符（见上）；host/身份与执行器 `AssertHost` 的冻结期望完全一致（`…final-pre-run….json:8-26` vs `executor:156-158`），owner HEAD/tree/parent（`:50-63`）与 `executor:366-373` 一致；四份文档的 Gate 字符串完全一致（`protocol:88-96`、`p02pre-r1h-round6-attempt5-exec-handoff-20261012.md:13`、`…final-pre-run….json:467-477`、`prerun-review-pins….json:23-35`）。
+
+明确**实际未检查**、必须保持 `NOT_VERIFIED`/`UNPROVABLE` 的项目见第 4 节；其中三项是记录已自行披露但未能自洽收口的：`codex-p02pre-r1h-attempt5-exec-review-pins-20261012.json`（`protocol:18` 引用的"当前冻结状态/hash 证据"）不是我本次的输入、也未被 pin，因此协议所依赖的另一份 pin manifest 与本次 pins 是否一致无法确认；`p02pre-r1h-attempt5-exec-review-adjudication-20261012.md`（`:205-214`）同样未在输入内。
+
+### Q4 helper 方法偏差与 `.tmp.driveupload` 访问范围
+
+- 披露充分且方向正确：`stderr.log:2` 与 `…final-pre-run….json:461` 均写明"leading space 导致 exit 128、status paths 未捕获、whether Git inspected the excluded subtree is **NOT_VERIFIED**"。三处偏差（`$args`、只读 `$Host`、`core.safecrlf` 未设置）在两份文件中描述一致（`stderr.log:2-5` vs `…final-pre-run….json:461-465`），并与执行器内 `historicalDeviations`（`executor:36-39`）一致。
+- 合格的边界处理：已接受的两次快照记录 `finalExcludeArg=":(exclude).tmp.driveupload"`、`excludeIsFinalArg=true`（`:74-75`、`:87-88`），与 `executor:390` 的"末位独立 pathspec"布局一致；**未**把失败 helper 推断为"未访问"。
+- 唯一残留：失败 helper 的原始 argv(stdout/stderr/exit) 未留存（P3-2），且 `protocol:18` 的"No filesystem API or tool may query anything under that excluded path"是规范句，不应被读作合规事实。
+
+## 3. Findings
+
+**P0（0）**：无。未发现任何写入、替换、PASS 误标或 Gate 被放行的证据。
+
+**P1-1 期望 Owner Handoff pin 无 provenance，错误 pin 已固化进冻结执行器**
+- 证据：`executor:25,440,512,516,524,551,605`；`prerun-review-pins….json:17`；`…final-pre-run….json:441-459`；`p02pre-r1h-round6-attempt5-exec-handoff-20261012.md:6-11`。
+- 理由：exec handoff 只声明 executor pin（43464/`9B52BEA5…`）与 protocol pin（11641/`0E80C831…`），**从未声明**它内嵌的 Owner Handoff 期望 pin；`3551/700B79F3…` 在全部固定输入中找不到任何可追溯来源，却已写死在一个被冻结的执行器里（且位于写源路径）。结论：blocker 记录准确，但该 pin 属冻结物的实质缺陷，attempt6 必须以实际字节重新 pin 并把该文件纳入 review 输入 pin 集。
+
+**P1-2 审后 pin 漂移被检出但未处置，且与 handoff 的 fail-stop 判据不对称**
+- 证据：`…final-pre-run….json:435`（`22/22 at reviewed snapshot; 21/22 post-review because Task metadata changed`）、`:194-203`（Task 文件仅给当前 hash `0EF728E1…`）、`:433-434`（DSH `APPROVED_STATIC_CONTENT`）；`p02pre-r1h-round6-attempt5-exec-handoff-20261012.md:11`（协议由 11503/`3BA69E…` 改为 11641/`0E80C831…`）。
+- 理由：与 P1-1 同属"冻结 pin 与已审字节不符"，但此处只作说明、未 fail-stop，也未给出漂移文件的路径、旧/新 hash、是否落在授权写入边界内、adjudication 结论。即使"仅元数据"成立也无法核实，因而"已审快照 = 冻结快照"未被建立。
+
+**P2-1 profile/registry/ACL 非写入属声明，不属已验证**
+- 证据：`…final-pre-run….json:417-432`（`profileFolderQuery=NOT_RUN_AFTER_FAIL_STOP`、`registryGetter=NOT_RUN`）、`:458`、`stderr.log:6`。
+- 理由：可结构化支持的只是"未产生任何执行器输出文件 / File.Replace 未发生"；"没有 profile/registry/ACL/系统状态变更"没有任何独立反向检查（连 LPAC profile 是否存在都未查询）。应显式记为 `NOT_VERIFIED`，而不是隐含成立。
+
+**P2-2 关键静态断言证据未 pin，且措辞与冻结协议冲突**
+- 证据：`…final-pre-run….json:433-439`（`parser: 0 errors`、`inMemorySelfcheck: 73 PASS`）→ 其 `parserEvidence` 为 `verification/P02/codex-p02pre-r1h-attempt5-integration-verify-20261012.json`（`:216-218` 有 hash，但不在 `prerun-review-pins….json:9-18` 内）；`protocol:16` 断言 attempt5 阶段 "No attempt5 invocation, parser, selfcheck … has run"。
+- 理由：这些是**static 阶段**结果还是本 pre-run 的成果未标注，证据文件不可核验；表面上与协议"parser/selfcheck 未运行"矛盾。执行器自身的 Parser/selfcheck 子阶段确未运行（`selfcheckEvidence/engineEvidence` absent，`:381-391`），但记录未做该区分，容易被读成产品自检结论或反向被读成失败。
+
+**P2-3 继承与变更范围不可验证**
+- 证据：`protocol:12`（继承 attempt4 协议 `EE8F26EC…`）；`p02pre-r1h-round6-attempt5-exec-handoff-20261012.md:6-7`（"6 narrowly scoped text changes only: attempt marker/header/schema/failure label plus root HEAD/tree/index pins"）；`executor:442` 的 `rootOldHandoff`（`G:\…\p02pre-r1h-handoff-20261012.md` 8651/`394CCF80…`，见 `…final-pre-run….json:117-126`）。
+- 理由：attempt4 执行器/协议在磁盘上存在（`verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1`、`…protocol-attempt4-20261012.md`，经只读 glob 发现）但未进入本次 pin 集，故"仅 6 处改动"、继承关系均无法核对；且其自述的变更类别按枚举实为 7 项（marker、header、schema、failure label + HEAD/tree/index），与"6"不一致。另有一个执行器 pin 的受保护输入（root old handoff）未进 review pins。
+
+**P3-1 `destinationAclMatchesFrozenSddl: true` 不可复算**
+- 证据：`…final-pre-run….json:301`；`files[]` 只给 `aclSddlSha256`（`:100,111,122,166,177,188,199,210,221`）；明文期望 SDDL只存在于 `executor:27`。
+- 理由：该断言依赖 hash 比较，但证据里既无文件级 SDDL 明文、也无冻结期望值，无法从记录重导；建议记录明文 SDDL。
+
+**P3-2 失败 status helper 的原始记录未留存**
+- 证据：`…final-pre-run….json:461`、`stderr.log:2`。范围判定本身正确（`NOT_VERIFIED`），但 argv/stderr/exit 字节未附，无法审计偏差的确切形态。
+
+**P3-3 pin manifest 缺 `checkpointIncludedInInputPins` 声明**
+- 证据：`protocol:105-106`（P3-2 要求）；`prerun-review-pins….json` 无该字段且 inputs 中无 checkpoint。条件虽未触发，但缺少显式布尔值使"是否漏挂 checkpoint"不可审计。
+
+**P3-4 报告自指、退出码与编号歧义**
+- 证据：`…final-pre-run….json:393-415` 把报告自身 4 个输出仍记为 `absent=true`（未标注为写前快照相位）；`codex-p02pre-r1h-attempt5-final-pre-run-20261012.exit` 内容为 `2`（3 字节），全部固定输入均未定义其语义；`stderr.log:2-5` 的 helper "Attempts 1–5" 与任务 "attempt5" 混用同一编号词。
+
+## 4. 无法独立验证的项目（必须保持 `NOT_VERIFIED` / `UNPROVABLE`）
+
+1. 所有 SHA-256 与字节数（本环境无可用哈希工具；pwsh 沙箱失败，见第 0 节）。仅 `stderr.log` 514 字节可由文本核算复现（502 字符 + 6×CRLF = 514），属算术旁证而非哈希核对。
+2. `…final-pre-run….stdout.log`（非 UTF-8，疑为 UTF-16LE 的 `whoami /all` 原始输出）内容未读、3695 字节/`25C641BA…` 未核。
+3. `codex-p02pre-r1h-attempt5-integration-verify-20261012.json`（parser 0 errors / 73 PASS 的证据）——未在输入与 pin 集内。
+4. `p02pre-r1h-attempt5-exec-review-adjudication-20261012.md` 与 `codex-p02pre-r1h-attempt5-exec-review-pins-20261012.json`（`protocol:18` 引用）——存在但未在任何输入内，跨 manifest 一致性未核。
+5. attempt4 执行器/协议内容 → 继承关系与"仅 6 处改动"不可核。
+6. 期望 Owner Handoff pin `3551/700B79F3…` 的来源。
+7. `destinationAclMatchesFrozenSddl` 与文件级 SDDL 明文。
+8. 失败 status helper 是否访问过 `.tmp.driveupload`：必须保持 `NOT_VERIFIED`，**不得推断为未访问**。
+9. 是否存在 profile/registry/ACL/系统状态变更：无独立反向证据，`private_registry_absence=UNPROVABLE` 必须原样维持；LPAC profile 是否存在亦未查询。
+10. Owner `.git/index`（`status[].indexBefore/indexAfter=null`，`:89-90`）→ owner 侧 index/工作树完整性无 pin。
+11. `…exit` 的退出码 `2` 语义、`codex-…-final-pre-run-….json` 自身的字节/hash（未自记录）。
+12. 21/22 漂移是否"仅元数据"、以及被漂移 pin 的身份。
+13. 时间戳（`2026-10-12T…`）所依赖的主机时钟。
+
+## 5. 放行声明
+
+本 Review **不放行** attempt5 executor，**不放行** attempt6 executor，**不放行** Build Gate（`BuildGate=BLOCKED`、`HardBuildBarrier=EFFECTIVE`），也**不放行** `AC1–AC7`（`BLOCKED / NOT_RUN`）；`private_registry_absence=UNPROVABLE`、`TechnicalGate=NOT_SATISFIED`、`OwnerRiskAcceptance=APPROVED`、`GateDisposition=WAIVED_BY_OWNER`、`BuildAuthorization=AUTHORIZED_WITH_EXCEPTION` 必须原样保持。
+
+## 6. 推荐下一步
+
+在 attempt6 之前，先做一次**只读 pin/handoff 收口**（不运行任何执行器）：以实际 Owner Handoff 字节重新 pin 并把该文件纳入 review 输入 pin 集；在记录中补齐 P1-2 的漂移文件名/旧新 hash 与处置、把 P2-1/P2-2 改成显式 `NOT_VERIFIED` 并区分 static 阶段与执行器阶段、为 P2-3 的继承物补 pin。该步骤应作为独立 Task 按 `doc/09_COLLABORATION.md §5.1` 的字段规范派发（本次 Review 未读取该文档，未据其生成正式指令模板），Owner 建议为 Codex `/root`（pin/handoff 作者），Reviewer 由非该实现作者担任。
+
+**无需我作为 Reviewer 的下一步执行动作**（除上述建议 Task 外）；我不具备在只读审查角色下执行 executor、自检或 Gate 放行的授权。

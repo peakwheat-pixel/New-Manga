@@ -1,0 +1,103 @@
+{
+  "task": "P02PRE-R1H",
+  "owner": "ZCode",
+  "reviewer": "Codex non-author subagent fallback; pending new delivery",
+  "integrator": "Codex",
+  "dispatch": {
+    "cli": "ZCode 0.16.9",
+    "mode": "yolo",
+    "locale": "zh-CN",
+    "arguments": ["--prompt", "--cwd", "--mode yolo", "--locale zh-CN"],
+    "json_flag": "not used; absent from actual --help output",
+    "model": "not specified / not verified",
+    "prompt_file": "verification/P02/zcode-p02pre-r1h-remediation-20261012.prompt.md",
+    "prompt_bytes": 5547,
+    "prompt_sha256": "02212BE47841B73088547402DFDCF87D42507CD343E5C6B2EB41B5C92693D709",
+    "stdout_file": "verification/P02/zcode-p02pre-r1h-remediation-20261012.stdout.log",
+    "stderr_file": "verification/P02/zcode-p02pre-r1h-remediation-20261012.stderr.log",
+    "exit_file": "verification/P02/zcode-p02pre-r1h-remediation-20261012.exit"
+  },
+  "result": {
+    "status": "DISPATCH_FAILED / CONFIG_MISSING",
+    "exit": 1,
+    "stdout_bytes": 0,
+    "stdout_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "stderr_bytes": 154,
+    "stderr_sha256": "57ABC1656A64A7530E16AF40DEFEAB5B422F8762F817DEAE7474AF9069A39C00",
+    "exit_file_bytes": 3,
+    "exit_file_sha256": "F1B2F662800122BED0FF255693DF89C4487FBDCF453D3524A42D4EC20C3D9C04",
+    "error": "Unable to locate CLI ZCode Built-in Provider Config: E:\\Program Files\\ZCode\\resources\\glm\\provider\\zcode-builtin.json, E:\\config\\provider\\zcode-builtin.json",
+    "worktree_after": "unchanged; dispatch failed before response or source edits"
+  },
+  "worktree": {
+    "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-zcode",
+    "branch": "agent/zcode/P02PRE-R1H",
+    "head": "256e3ea622cba7a658020ddcf015b18894d88b38",
+    "tree": "a1a36dcb71d1d8718b21eb12ba2f778a95955f29",
+    "base": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+    "controlled_status": "PASS_CLEAN; status exit=0, stderr=0, records=0; exact exclude pathspec passed as a separate argv"
+  },
+  "frozen_inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 10277,
+      "sha256": "28BA063D8096C6027B61BBB49069C2EEE77AAF06AB67AF8DD565101FE81D79B6"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-20261012.md",
+      "bytes": 2308,
+      "sha256": "4BB1D8B8C8FACD96C4C087774756A71D79F832F10AD75026ADA3800579EE6688"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-review-adjudication-20261012.md",
+      "bytes": 1543,
+      "sha256": "20EA61BC98F5826BF7FDF487E01B3F34CF6FBA609E9C3999C242100920268497"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-review-input-pins-post-20261012.json",
+      "bytes": 2070,
+      "sha256": "9AA0A6783B9466BD146DB04A65FC61287144C6ADA5B6747AE5958538251BCDB4"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 85038,
+      "sha256": "B236D70F235D14ACE16544CE361B8CC979100635C3EC738D32ED379EDA086C95"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 14375,
+      "sha256": "3A3779FBE299815FE7176B55E02F13E32D707610BB25908F192AF28F4B29B972"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 13408,
+      "sha256": "7F04106FD22655D238AC5A44AE34C6B93EE2C3E120C9E28AD139948734E9AD31"
+    }
+  ],
+  "write_scope": [
+    "verification/P02/p02pre-r1h-capture.ps1",
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-handoff-20261012.md"
+  ],
+  "prior_dispatch": {
+    "agent": "Antigravity",
+    "process_tree": "stopped and verified absent",
+    "outer_session": "66982",
+    "exit": 1,
+    "result": "DISPATCH_STALLED / INTERRUPTED; no stdout/stderr/exit evidence files; not an implementation or test failure",
+    "last_candidate_head": "256e3ea622cba7a658020ddcf015b18894d88b38",
+    "last_candidate_status": "clean"
+  },
+  "acceptance": [
+    "Fix findings R1H-001 through R1H-004 within the three-file scope",
+    "If exact frozen status/index values are unavailable, fail-stop as STOP / UNPROVABLE; do not guess or modify the frozen manifest",
+    "Do not run parser, self-check, test, preflight, capture, getter, Build/Cargo, AC1-AC7, or Windows Sandbox operations",
+    "Commit a new delivery on agent/zcode/P02PRE-R1H and report exact branch/base/HEAD/tree/diff, clean controlled status, git diff --check, and new candidate hashes",
+    "Owner does not perform Review or integration"
+  ]
+}

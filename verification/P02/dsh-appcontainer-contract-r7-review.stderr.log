@@ -1,0 +1,811 @@
+dsh: reasoning:
+Let me start by reading the documents. I need to read the specified files only. Let me read them.
+
+Note: the user asked for read-only review. I should not use shell/hash. I can use the read tool and grep? grep is a search tool - the constraint says "不得使用 shell、PowerShell、Git、hash、Windows API 或外部网络". grep via ripgrep tool... it's a content search. It's probably acceptable but the constraint says "只读查看上述确切文档". grep is read-only. I'll primarily use read. Maybe grep for line numbers counts is fine but let me just use read with line numbers.
+
+Let me read the files.
+dsh: reasoning:
+Now let me read the other documents: r6 DSH report, Codex r6 adjudication, r2 manifest, r6 contract, P02.md task.
+
+Let me read them in parallel.
+dsh: reasoning:
+Now let me read r2 manifest and r6 contract, and P02.md task.
+
+The key count verification: count named variables in r2 manifest line 19 (or wherever). And in r3 manifest line 20 count 23.
+
+Let me read r2 manifest.
+dsh: reasoning:
+Now I need to count the variables in r2 manifest line 19 precisely, and in r3 manifest line 20.
+
+r2 manifest line 19 list:
+LOCALAPPDATA、TEMP、TMP、APPDATA、USERPROFILE、HOME、PYTHONUSERBASE、PYTHONNOUSERSITE、PIP_CACHE_DIR、UV_CACHE_DIR、HF_HOME、HF_HUB_CACHE、TRANSFORMERS_CACHE、TORCH_HOME、TRITON_CACHE_DIR、CARGO_HOME、CARGO_TARGET_DIR、NPM_CONFIG_CACHE、NPM_CONFIG_USERCONFIG、GIT_CONFIG_GLOBAL、GIT_CONFIG_NOSYSTEM、GIT_TERMINAL_PROMPT、PYINSTALLER_CONFIG_DIR
+
+Count:
+1 LOCALAPPDATA
+2 TEMP
+3 TMP
+4 APPDATA
+5 USERPROFILE
+6 HOME
+7 PYTHONUSERBASE
+8 PYTHONNOUSERSITE
+9 PIP_CACHE_DIR
+10 UV_CACHE_DIR
+11 HF_HOME
+12 HF_HUB_CACHE
+13 TRANSFORMERS_CACHE
+14 TORCH_HOME
+15 TRITON_CACHE_DIR
+16 CARGO_HOME
+17 CARGO_TARGET_DIR
+18 NPM_CONFIG_CACHE
+19 NPM_CONFIG_USERCONFIG
+20 GIT_CONFIG_GLOBAL
+21 GIT_CONFIG_NOSYSTEM
+22 GIT_TERMINAL_PROMPT
+23 PYINSTALLER_CONFIG_DIR
+
+= 23. Confirmed: r2 manifest lists 23 named variables, not 24.
+
+r3 manifest line 20:
+LOCALAPPDATA、TEMP、TMP、APPDATA、USERPROFILE、HOME、PYTHONUSERBASE、PYTHONNOUSERSITE、PIP_CACHE_DIR、UV_CACHE_DIR、HF_HOME、HF_HUB_CACHE、TRANSFORMERS_CACHE、TORCH_HOME、TRITON_CACHE_DIR、CARGO_HOME、CARGO_TARGET_DIR、NPM_CONFIG_CACHE、NPM_CONFIG_USERCONFIG、GIT_CONFIG_GLOBAL、GIT_CONFIG_NOSYSTEM、GIT_TERMINAL_PROMPT、PYINSTALLER_CONFIG_DIR
+
+Same 23. Identical. Good.
+
+So r3 preserves the original set exactly (23), declares it "该集合是 Phase A 完整集合" (complete set), leaves r7 §6 remaining variables as NOT_RUN/Phase B, and didn't expand. Good — DSH-R6A-02 CLOSED.
+
+Wait, but note: the R6 report at line 49 said 24 items. The r6 report's minimal fix says "所列 24 个变量即 Phase A 全集". Codex adjudication says DSH counted 24 but the actual r2 manifest lists 23. So the DSH report itself had an error. Let me verify: in r6 report line 49, it lists variables that are NOT in the 24: HF_ASSETS_CACHE/HF_XET_CACHE/PYTHONPYCACHEPREFIX/PYTHONDONTWRITEBYTECODE/HF_TOKEN_PATH/HF_HUB_DISABLE_IMPLICIT_TOKEN. It says "manifest r2 :19 中 Phase A 只读 24 个具名变量，其中 ... 不在 24 项内". Hmm, that sentence is a bit odd. Anyway, the actual count is 23. Good.
+
+Now, one thing to check: does r3's declared 23-set actually correspond to a "完整集合" claim while r7 §6 has other variables? r7 §6 lists: LOCALAPPDATA, TEMP, TMP, APPDATA, USERPROFILE, HOME, HOMEDRIVE, HOMEPATH, PYTHONPYCACHEPREFIX, PYTHONDONTWRITEBYTECODE, PYTHONUSERBASE, PYTHONNOUSERSITE, TRITON_CACHE_DIR, PYINSTALLER_CONFIG_DIR, TORCH_HOME, TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, HF_HOME, HF_HUB_CACHE, HF_ASSETS_CACHE, HF_XET_CACHE, HF_TOKEN_PATH, HF_HUB_DISABLE_IMPLICIT_TOKEN, TRANSFORMERS_CACHE, PIP_CACHE_DIR, UV_CACHE_DIR, CARGO_HOME, CARGO_TARGET_DIR, NPM_CONFIG_CACHE, NPM_CONFIG_USERCONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT, PATH.
+
+Variables in §6 not in the 23: HOMEDRIVE, HOMEPATH, PYTHONPYCACHEPREFIX, PYTHONDONTWRITEBYTECODE, TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, HF_ASSETS_CACHE, HF_XET_CACHE, HF_TOKEN_PATH, HF_HUB_DISABLE_IMPLICIT_TOKEN, PATH. 13 more.
+
+Interesting: r3 line 20's category definition says `HOST_SYSTEM`=精确契约 §3 的系统/工具根且不在用户配置目录下. Hmm, that's about classifying values. Fine.
+
+Now check objective 3: WER T0/T1. r7 §1.1.8 line 35: "Phase A 在同一测量进程内，任何 Phase A 读取前采集 T0、所有 Phase A 读取完成后且进程退出前采集 T1；两次均覆盖同一 5 个对象：两条精确 LocalDumps 配置键及 %LOCALAPPDATA%\CrashDumps、%ProgramData%\Microsoft\Windows\WER\ReportQueue、ReportArchive 三个目录。" ✓
+
+r7 §1.2 line 44: "以及同一测量进程内的 WER T0/T1（两次均覆盖相同 5 个 WER 对象）" ✓
+
+manifest r3 line 22: "在同一测量进程内，T0 必须是任何 Phase A 读取开始前的第一项读取；T1 必须在全部 Phase A 读取完成后、测量进程退出前立即采集。T0 与 T1 均覆盖下列全部 5 个 WER 对象：2 条精确配置键和 3 个目录。" ✓
+
+Hmm, one nuance: "T0 必须是任何 Phase A 读取开始前的第一项读取" — T0 reads registry keys and directories, which are themselves reads. Is T0 the first read? It says T0 must be the FIRST read before any Phase A read begins. That's slightly self-referential but understandable: T0 is the first read. Actually there is a subtle issue: T0 itself is a read; "任何 Phase A 读取开始前的第一项读取" is contradictory-ish, but the intent is clear (T0 is the first item). Not a blocker. Could be a P3 wording nit. Hmm, but the r7 contract says "任何 Phase A 读取前采集 T0" which is consistent. I might note as a P3 minor ambiguity: T0's own reads are reads, so "任何 Phase A 读取前" must be read as "除 T0 自身外". Actually the manifest says T0 必须是任何 Phase A 读取开始前的第一项读取 — meaning T0 is executed first, before other reads. It's fine, mild.
+
+Also check: the 5 objects — WER directories: `%LOCALAPPDATA%\CrashDumps`. But for the controller, LOCALAPPDATA is the controller's own local appdata (not the LPAC one). In Phase A, the environment variable set includes LOCALAPPDATA - reading the controller's value. Hmm, `%LOCALAPPDATA%\CrashDumps` — whose LOCALAPPDATA? Since Phase A is controller-only, it's the controller's LOCALAPPDATA. But wait — r7 §6 table says LOCALAPPDATA = GetAppContainerFolderPath returned local-data directory (only after future reviewed profile creation). For Phase A, it's the controller current value. Potential ambiguity: the WER object `%LOCALAPPDATA%\CrashDumps` could be read as either the controller's or the (nonexistent) LPAC profile's LOCALAPPDATA. But since Phase A is controller-only and no profile exists, it's the controller's. This is a minor ambiguity worth noting as P3 maybe. Actually it was inherited from r2 unchanged. Hmm. It could be a genuine ambiguity but low impact: the controller's CrashDumps is the one that matters for detecting dumps from the host. Given the LPAC process doesn't exist in Phase A, the only interpretation consistent with Phase A is controller LOCALAPPDATA. I'll note as P3 (non-blocking) observation maybe. Let me consider whether to raise it. The review objective 3 asks: "检查 WER T0/T1 是否明确为同一测量进程、T0 在任何 Phase A read 前、T1 在全部 read 后进程退出前，并在两次均覆盖同一 5 个对象（2 个精确键 + 3 个目录）". So the answer: yes, all satisfied. I can bonus-note the LOCALAPPDATA referent as P3.
+
+Now objective 4: check environment category/privacy handling, TRITON_CACHE_DIR, unlisted variables/paths/fields, dangling §4.5, scratch ACL/label mutation NOT_APPROVED, Phase A root metadata not including child items/content inventory, scratch relative path base, four scratch roots, exclusion manifest Phase B-only, no opening or hashing any file.
+
+Check each:
+- environment category/privacy: r3 line 20 defines `SCRATCH_EXPECTED`, `HOST_SYSTEM`, `USER_PRIVATE`, `UNDETERMINED`; "只输出类别标签，不输出任何原始值或路径". ✓ DSH-R6A-04 closed.
+- TRITON_CACHE_DIR: r7 §6 line 132 has its own row `| TRITON_CACHE_DIR | scratch python-cache/triton/ |`. ✓ DSH-R6A-03 closed.
+- unlisted variables/paths/fields: r3 line 32 "未列出的变量、路径、对象或字段一律不读取并记 NOT_RUN；任何扩展项须通过 Phase B exact manifest、非作者 Review 与 Codex adjudication。" ✓ DSH-R6A-05 closed.
+- dangling §4.5: r7 line 34 now reads "仅 §4 scratch 表与 §4 约束 5 列出的三条精确 leaf 可按各自权限使用。" ✓ DSH-R6A-06 closed. Verify r7 has no other "§4.5": let me grep. I'll search the r7 file for "4.5". Also check other dangling refs. Use grep tool — allowed? It's read-only content search. The constraint prohibits shell/PowerShell/Git/hash/Windows API/network. grep tool uses ripgrep internally... it's a file-content read operation, not shell. I think it's fine and within "只读查看". But to be safe and strict, I could carefully re-read. Actually the instruction says "只读查看上述确切文档" — using grep on those exact documents is read-only viewing. I'll use it sparingly for cross-reference checks. Hmm, but the tool description says "Search file contents with a ripgrep regular expression". It's not shell/PowerShell/Git/hash/Windows API. I'll use it. Actually, risk: a reviewer claim "本会话未运行任何命令" — grep tool isn't a shell command; it's a harness read tool. The prior r6 report said "用 read 工具逐份读取". To be safe I can mention I only used read/grep content tools. Let me just do the reads carefully; the documents are small enough. I've read them fully. For dangling references and consistency, I can verify by looking at what I've read.
+
+Let me check r7 for "§4.5": In the r7 text I read, line 34: "仅 §4 scratch 表与 §4 约束 5 列出的三条精确 leaf". No §4.5 elsewhere. §1.1.9 referenced as "§1.1.9 的 exclusion manifest"? In r7 line 36 item 9 is the exclusion manifest item (numbered 9) — r6 line 36 had "任何保护文件 digest 前…". r7 line 36: "**Exclusion manifest（P2-07）：**仅在 Phase B 或后续 Gate 需要保护文件 digest 时，才先建立并 Review 精确 exclusion manifest，冻结路径、理由、scope、开始时间与 SHA-256。Phase A 不做任何受保护文件 digest，因此不适用该 manifest。" ✓ DSH-R6A-11 closed.
+
+Note: r7 removed the explicit file path `verification/P02/appcontainer-preflight-exclusions-r1.json` that r6 line 36 had. That's arguably fine — it now says "精确 exclusion manifest" without naming a file. Hmm, this could be a minor regression: the prior contract pinned the exclusion manifest filename; r7 dropped it. Is that a finding? It's Phase B-only anyway and requires its own exact manifest + review. Dropping the filename doesn't create unauthorized scope; if anything it defers naming. I could note as P3 observation (non-blocking). Let me think whether it creates ambiguity: "先建立并 Review 精确 exclusion manifest" — the manifest must be precisely frozen with path, reason, scope, start time, SHA-256. Naming the file is part of "精确". Without a pinned name, an executor in Phase B would have to name it — but Phase B requires a separate frozen manifest anyway. So non-blocking. I might mention as informational/P3.
+
+- scratch ACL/label mutation NOT_APPROVED: r7 line 8 includes `scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED`. ✓ DSH-R6A-07 closed. Also manifest r3? The manifest doesn't mention the token, but the requirement was that r7 §1 line 8 have a machine-readable anchor. Fine. Cross-check with adjudication line 31 and line 49. ✓
+- Phase A root metadata not including child items/content inventory: r7 line 44 "根元数据不包含任何子项或内容 inventory；所有子项及内容信息均属 Phase B。" ✓ DSH-R6A-08 closed. Also r3 line 12 "读取根目录元数据…不得递归、枚举子项". ✓
+- scratch relative path base: r7 line 83 "下表全部相对路径均以固定 scratch clone `G:\CODEX\P02-scratch-build-source` 为根，主仓对应路径保持 deny。" ✓ DSH-R6A-09 closed.
+- four scratch roots: r3 line 14 "以下四项是 Phase A 唯一的四个 scratch 根". ✓ DSH-R6A-10 closed.
+- exclusion manifest Phase B-only: ✓ (above).
+- no opening or hashing any file: r3 line 12 "不得递归、枚举子项、打开或哈希任何文件"; r3 line 12 says "打开或哈希任何文件". r7? Let me check r7 for "普通文件". Search: r7 line 44 says "Phase A 不检查文件内容或 hash". I didn't see "普通文件" in r7. In r6 line 34 the old "仅 §4.5" — fixed. So DSH-R6A-12 closed: r3 line 12 uses "打开或哈希任何文件" (from "打开或哈希普通文件" → "打开或哈希任何文件"). ✓ Confirmed line 12: "不得递归、枚举子项、打开或哈希任何文件，也不得跟随 reparse point。"
+
+Also r3 line 34: "不得读取或哈希漫画、用户文件、数据库…" and line 34 "不得读取或哈希…模型文件或源码内容". OK.
+
+Wait: r3 line 12 says "打开或哈希任何文件" — but there's a subtlety: the Phase A reads include registry keys and directory metadata; reading directory metadata requires opening the directory handle. "不得…打开或哈希任何文件" — directories are not files, so opening a directory for metadata is allowed. Good, it's consistent with root metadata reading.
+
+Now objective 5: Phase A still candidate not frozen/run; blocking profile/private-registry API, ACL/registry/label mutation, write probe, toolchain/build, Sandbox; maintaining states.
+
+- r3 line 4: 状态：CANDIDATE / NOT_RUN / NOT_AUTHORIZED_FOR_EXECUTION ✓
+- r7 line 8 states; r3 line 47: Build Gate BLOCKED, Hard Build Barrier EFFECTIVE.
+- r3 line 32 blocks CreateAppContainerProfile, DeleteAppContainerProfile, GetAppContainerRegistryLocation, GetAppContainerFolderPath. ✓
+- ACL/registry/label mutation: r3 line 34 ✓
+- write probe/toolchain: r3 line 33/32 ✓
+- Sandbox: r3 line 34 ✓
+- private_registry_absence=UNPROVABLE / BLOCKED: r7 line 8 ✓; r3 line 47 says "Phase A 不能证明 private-registry 创建前不存在性" ✓
+- profile=NOT_CREATED: r7 line 8 ✓
+- OS isolation preflight=NOT_RUN: r7 line 8 ✓
+- AC1-AC7=BLOCKED/NOT_RUN: r7 line 8 ✓
+
+Hmm, does r3 manifest itself restate private_registry_absence=UNPROVABLE/BLOCKED or profile=NOT_CREATED explicitly? It says "Phase A 不能证明 private-registry 创建前不存在性… 上述事项继续 UNKNOWN / BLOCKED / NOT_RUN" and "也不派生、创建或复用任何 profile". The r6 report's R5C-05 said r6:8 tokens are consistent with P02.md:86 and manifest r2:4/47. So the manifest's state line 4 (CANDIDATE / NOT_RUN) and line 47. r3 line 47 says Build Gate BLOCKED, Hard Build Barrier EFFECTIVE — but does not restate `profile=NOT_CREATED` or `AC1–AC7=BLOCKED / NOT_RUN`. Minor: manifest r3 line 47 doesn't enumerate the full token set; the contract r7 line 8 does. Is that a finding? Consistency requirement 6 says check Contract/manifest/Task consistency. The manifest r3 doesn't contradict; it just omits. Given the previous round accepted manifest r2 for the same pattern, it's not a new issue. Could note as P3 informational: manifest r3 line 47 states only Build Gate/Hard Build Barrier, relying on contract §; if a machine reader expects the full token set in the manifest, it's absent. That's a nit; the r6 report considered manifest r2's partial statement acceptable. I'll mention as P3 non-blocking observation, maybe.
+
+Now objective 1: DSH-R6A-01..12 disposition. Need per-item CLOSED/OPEN with evidence line numbers.
+
+Let me now check each item precisely with line numbers in r7 and r3.
+
+DSH-R6A-01 (P2 WER): r7:35, r7:44, r3:22. CLOSED.
+- Check: "同一测量进程" in r7:35 ✓; T0 before any Phase A read ✓; T1 after all reads before process exit ✓; both cover same 5 objects ✓. r7:44 repeats "同一测量进程内的 WER T0/T1（两次均覆盖相同 5 个 WER 对象）" ✓.
+
+DSH-R6A-02 (P2 env set): r3:20 "该集合是 Phase A 完整集合"; "r7 §6 其余映射变量一律 `NOT_RUN / Phase B`"; "本 Phase A 环境读取不构成 cache 重定向或写入闭包证据" ✓. r7:44 "Phase A 完整集合 23 个 controller 环境变量...r7 §6 其余映射变量一律 NOT_RUN / Phase B；Phase A 不构成 cache 重定向或写入闭包证据" ✓. CLOSED.
+
+DSH-R6A-03 (TRITON_CACHE_DIR own row): r7:132 ✓ CLOSED.
+
+DSH-R6A-04 (category/privacy): r3:20 categories + "只输出类别标签，不输出任何原始值或路径" ✓ CLOSED. Also adjudication says USER_PRIVATE not a gate failure — r3:20 says "此分类本身不构成 Gate failure" ✓.
+
+DSH-R6A-05 (unlisted not read): r3:32 ✓ CLOSED. Also r7:44 "r7 §6 其余映射变量一律 NOT_RUN / Phase B".
+
+DSH-R6A-06 (§4.5 dangling): r7:34 fixed ✓ CLOSED. Need to confirm no other "§4.5" occurrence. I'll grep.
+
+DSH-R6A-07 (scratch ACL/label mutation token): r7:8 ✓ CLOSED.
+
+DSH-R6A-08 (content inventory/root metadata): r7:44, r7:83 "output-root 安全快照和既有内容/子项清单属于 Phase B" ✓; r3:12 ✓ CLOSED.
+Actually r7:83 says "output-root 安全快照和既有内容/子项清单属于 Phase B" — good, includes 子项清单.
+
+DSH-R6A-09 (relative path base): r7:83 ✓ CLOSED.
+
+DSH-R6A-10 (four scratch roots named in manifest): r3:14 ✓ CLOSED.
+
+DSH-R6A-11 (exclusion manifest Phase A inapplicable): r7:36 ✓ CLOSED. Also r7:159 (line 159) §8.4 mentions exclusion manifest.
+
+DSH-R6A-12 ("任何文件"): r3:12 ✓ CLOSED.
+
+So all 12 CLOSED? Let me double-check r7:36 wording: "**Exclusion manifest（P2-07）：**仅在 Phase B 或后续 Gate 需要保护文件 digest 时，才先建立并 Review 精确 exclusion manifest，冻结路径、理由、scope、开始时间与 SHA-256。Phase A 不做任何受保护文件 digest，因此不适用该 manifest。冻结后新出现的路径一律 `UNKNOWN / BLOCKED`；profile/private-registry 不存在性未证实前不得列为"本轮允许新增"。" ✓
+
+Now, I should look for new findings. Since I need to be an independent reviewer and not just rubber-stamp. Let me look for genuine issues in r7/r3.
+
+Potential issues:
+
+1. r7 §6 环境变量表: `TRITON_CACHE_DIR` row added. But r7 §6 table row for `PYTHONPYCACHEPREFIX` includes `PYTHONDONTWRITEBYTECODE=1` inline (line 129). Fine.
+
+2. r7 line 7 says: "DSH 建议中的 Phase A 环境变量"24 项"与 manifest r2 实列 23 项不符，r7 按原清单实列的 23 项完整集合修订。" This documents the real count. Good, matches my count of 23. Also the r6 DSH report line 49 claimed 24 — that was DSH's own error. I should report: real count = 23 in both r2 and r3; identical set; r7 documents the discrepancy correctly. Also note the r6 report's numbered "24" claim is factually wrong — I should state it as a self-correction: the prior DSH report's count of 24 was incorrect; adjudication's correction to 23 is right. This is part of objective 2.
+
+3. Check r3 line 20 category `HOST_SYSTEM`: "精确契约 §3 的系统/工具根且不在用户配置目录下". Hmm: §3 has 12 roots, two of which are under C:\Users\49745\ (Python base, rustup). Those are user-config directories. Fine.
+
+But there's a subtle thing: the 23 variables are all read as "controller 当前值". Many of these in the controller's real environment are likely actual host values (e.g., LOCALAPPDATA=C:\Users\49745\AppData\Local) → classified USER_PRIVATE. That's expected.
+
+4. Potential issue: r3 line 20 says "只读取当前 controller 的以下 23 个环境变量（该集合是 Phase A 完整集合）". But r7 §1.2 line 44 says "Phase A 完整集合 23 个 controller 环境变量" — consistent ✓. And contract r7 §8.1 line 156 says "唯一 Phase A 候选范围为 verification/P02/appcontainer-readonly-preflight-r3.md（待审）；manifest r3 SHA-256=AC45329A...". ✓
+
+5. r7 line 5 baseline: main@cddff584..., tree=c25d051a... — same as r6 line 5. Consistent. Task P02.md needs checking for consistency of version/status/Gate/authorization. I need to read P02.md (386 lines per r6 report). The task file is the Live Task. Let me read it. It's ~386+ lines. I should read it to check consistency (objective 6). Let me read it fully.
+
+6. Potential dangling reference in r7: line 26 "r4 本轮 Review findings 的处置记录另见独立 adjudication" — fine. Line 22 "本 r7 是 r6 的待审候选；只有完成独立 Review、Codex adjudication 与对象 hash 核对后，才可作为后续隔离测量契约。r2/r3/r4/r5/r6 与各自报告保留为历史证据。" ✓
+
+7. r7 line 5 says "本契约定义的授权范围限于 Codex-only 隔离预检（执行前置见 §8.1）". §8.1 is line 156, item 1 under §8. ✓
+
+8. Potential issue: r7 line 15 item 2 still says "只有相关 Review、只读预检与后续 Gate 均明确放行后，才可对这些输出叶子和本轮新建的 canary 目录按逐对象 security-descriptor 快照设置必要的 Package SID DACL ACE 与 Low mandatory label". Combined with line 8 token NOT_APPROVED. ✓
+
+9. r7 line 18: "**零 ACL/label 修改范围**：12 个只读输入根、任何祖先目录、主仓/其他 worktree/其他 clone、Windows 系统/loader/runtime 对象和用户目录。" ✓
+
+10. Check r7 §1.1 item numbering: 1..11, with item 9 being exclusion manifest. r7 line 24 §1.1 header says "r4 对 r3 Review 的执行性修订（r5/r6 继承）". Contains 11 items. Fine.
+
+11. Objective 3 also: "T1 在全部 read 后进程退出前". r3 line 22 ✓.
+
+12. Objective 4 mentions "悬空 §4.5". Fixed. But let me double check there are no other dangling section refs in r7: references to §8.1 (exists), §4 约束 5 (exists: item 5 at line 110), §1.1.1 (exists as item 1), §1.1.8 (§1.1 item 8? now line 35 is item 8), §1.2 (exists), §6, §3, §4. r7 line 44 references r7 §6. All exist.
+
+But wait — r7 line 7 refers to "§6" etc. Let me check r7 line 52: "§1.1.1" — item 1 in §1.1, fine. r7 line 34 references "§4 scratch 表与 §4 约束 5" ✓.
+
+Hmm, what about r7 line 44's "r7 §6 其余映射变量一律 NOT_RUN / Phase B" — fine.
+
+13. Potential new finding: r7 §1.1 item 9 dropped the exclusion manifest's pinned filename (`verification/P02/appcontainer-preflight-exclusions-r1.json`) present in r6:36. Informational only; Phase B requires its own frozen manifest. P3 non-blocking. Actually, could this weaken traceability? r6:36 named the file; r7 now says "精确 exclusion manifest". Since Phase A doesn't apply it and Phase B requires separate manifest + review, the loss of the name is harmless. I'll list as P3 (non-blocking, no safety/scope impact).
+
+14. Potential new finding: r3 line 12 lists allowed fields "存在性、对象类型、volume/file ID、reparse 属性、owner、DACL、mandatory label" for the 12 input roots + 4 scratch roots. r7 §1.2 line 44 says "12 个固定输入根与 manifest 明列的四个精确 scratch 根目录元数据". Consistent.
+
+But hold on — there's a subtle scope question: r3 line 12 says "仅对契约 §3 列出的 12 个 Task 输入根，以及下列四个精确 scratch 目录读取根目录元数据". Reading root metadata for the 12 input roots includes DACL reading which requires READ_CONTROL. The input roots include `G:\CODEX\P02-scratch-build-source` (the scratch clone) — that's root #12. And the four scratch roots are beneath it. Fine.
+
+15. Potential issue: r3 line 38 "仅读取当前 controller 进程中的 PowerShell/.NET API。" But constraint says no PowerShell commands — this is about the future Phase A execution (the controller uses PowerShell/.NET APIs to read). That's for the executor, not for me. Fine.
+
+16. Consistency between r7 line 156 ("不得调用 profile/private-registry API...不运行写 probe 或工具链") and r3 line 32-34. ✓
+
+17. Check whether r7 line 156 still says "只有 DSH r7 Review、Codex adjudication 与逐文件 SHA-256/object pin 核对全部完成后，才可严格按该 manifest 测量" ✓. And r7 line 175-178 precise next steps ✓.
+
+18. Now objective 5: "是否完整阻止 profile/private-registry API、ACL/registry/label mutation、写 probe、工具链/build、Sandbox". r3 line 32: blocks CreateAppContainerProfile/DeleteAppContainerProfile/GetAppContainerRegistryLocation/GetAppContainerFolderPath and derive/create/reuse profile; line 33 blocks create/delete/move/modify/probe files/dirs, ACL/DACL/owner/label/policy modification, elevation, take ownership, network; line 33... wait line 34 blocks Sandbox. Let me recheck: r3 line 32 includes profile API block; line 33 (which is line 33? Let me recheck: r3 lines 32-34):
+
+Line 32: Phase A 不读取系统 loader/runtime... 禁止调用 CreateAppContainerProfile、DeleteAppContainerProfile、GetAppContainerRegistryLocation、GetAppContainerFolderPath，也不派生、创建或复用任何 profile。不得访问 private profile registry storage 或猜测 key/view。
+
+Line 33: 不得创建、删除、移动、修改或探测文件/目录；不得修改 ACL/DACL/owner/label/policy、提权、take ownership 或联网；不得查询、安装、启用或启动 Windows Sandbox。不得读取或哈希漫画、用户文件、数据库、Lock、current/pinned Revision、凭据、生产数据、模型文件或源码内容。
+
+Wait, in the read output, the numbering was:
+32: Phase A 不读取系统 loader/runtime 文件 DACL... 
+33: 不得创建、删除、移动、修改或探测文件/目录... Windows Sandbox...
+34: 不得读取或哈希漫画、用户文件...
+
+Hmm, actually the output shows:
+```
+32: Phase A 不读取系统 loader/runtime 文件 DACL，... 不得访问 private profile registry storage 或猜测 key/view。
+33: 
+34: 不得创建、删除、移动、修改或探测文件/目录；...不得查询、安装、启用或启动 Windows Sandbox。不得读取或哈希漫画、用户文件、数据库、Lock、current/pinned Revision、凭据、生产数据、模型文件或源码内容。
+```
+Wait let me recheck the actual output:
+
+```
+30: ## Phase A 明确排除项
+31: 
+32: Phase A 不读取系统 loader/runtime 文件 DACL，不检查 moniker/profile/local-data-directory 是否存在，不检查 scratch output-root 安全描述符或内容，不采集 Git 状态或 clone pins，不哈希文件；除上述两个 WER 精确键外不查询任何 registry key；除三个 WER 目录外不枚举输入根或 scratch 根的子项；不启动或检查子进程，不执行写入、探针或工具链操作。未列出的变量、路径、对象或字段一律不读取并记 `NOT_RUN`；任何扩展项须通过 Phase B exact manifest、非作者 Review 与 Codex adjudication。禁止调用 CreateAppContainerProfile、DeleteAppContainerProfile、GetAppContainerRegistryLocation、GetAppContainerFolderPath，也不派生、创建或复用任何 profile。不得访问 private profile registry storage 或猜测 key/view。
+33: 
+34: 不得创建、删除、移动、修改或探测文件/目录；不得修改 ACL/DACL/owner/label/policy、提权、take ownership 或联网；不得查询、安装、启用或启动 Windows Sandbox。不得读取或哈希漫画、用户文件、数据库、Lock、current/pinned Revision、凭据、生产数据、模型文件或源码内容。
+35: 
+36: ## 命令和证据边界
+```
+
+Yes so line 34 blocks Sandbox and mutation. Good. Slight correction: line 34, not 33. Good.
+
+Also "工具链" is blocked at line 32 ("不执行写入、探针或工具链操作"). Build? r3 line 47 "Build Gate 保持 BLOCKED". Hmm, does r3 explicitly block build/Cargo/Tauri? Line 32 says "不执行写入、探针或工具链操作". r7 line 20 says "不授权 P02 产品 build、Cargo、Tauri、PyInstaller、Smoke 或 AC1–AC7". r3 doesn't name Cargo/Tauri/build explicitly except "工具链". Is that adequate? The prior r6 report at line 127 accepted manifest r2's "工具链" as blocking build. Hmm, r3 line 47 says Build Gate BLOCKED. I think it's adequate; could note as P3 informational (manifest doesn't enumerate build/Cargo/Tauri by name, but "工具链操作" + Build Gate BLOCKED covers it; contract names them).
+
+19. Objective 6: check Contract/manifest/Task consistency. Need to read P02.md.
+
+Let me also consider: r7 line 7 says "DSH 建议中的 Phase A 环境变量'24 项'与 manifest r2 实列 23 项不符". Good.
+
+But r6 report line 183 in its recommendation says "所列 24 个变量即 Phase A 全集". Codex chose 23 per source. Good.
+
+Now let me read P02.md to verify Task-side consistency: Task SHA claimed AC200D..., contract r7 §8.1 pins manifest r3 SHA AC4532..., Task references the manifest path and version?
+
+Let me read P02.md.
+dsh: reasoning:
+Continue reading P02.md from 227.
+dsh: reasoning:
+Now I have the Task P02.md fully (396 lines). Let me check consistency items.
+
+Task lines 388-396: r6 Review result and r7 candidate — includes contract r7 SHA, manifest r3 SHA, adjudication SHA, 23 variables, states, Gate tokens. Good consistency.
+
+Now key checks:
+
+1. Task line 393: "新候选 contract r7 SHA-256=`7FBFFE65...`；Phase A manifest r3 SHA-256=`AC45329A...`" — matches prompt's claimed SHAs (which I don't recompute). Contract r7 line 156 pins manifest r3 SHA=AC45329A... ✓ consistent with prompt/task.
+
+2. Task line 392: adjudication SHA=103CBD5F... matches prompt claimed. ✓
+
+3. Task frontmatter: status: in_progress, owner: Antigravity, reviewer: DeepSeek Harness, integrator: Codex. Contract r7 line 4: "Task：P02；Owner=Antigravity；独立 Reviewer=DeepSeek Harness；Integrator/Gate owner=Codex." ✓
+
+4. Task line 70: current state tokens: profile=NOT_CREATED, ACL/registry=NOT_MODIFIED, OS preflight=NOT_RUN, Build Gate=BLOCKED, build=NOT_AUTHORIZED/NOT_RUN, Hard Build Barrier=EFFECTIVE, AC1–AC7=BLOCKED/NOT_RUN. ✓ (line 70 lacks scratch ACL/label token and hook/cache token; but lines 76, 86 include hook/cache; line 395 has the full set including scratch ACL/label mutation.)
+
+5. Check: contract r7 line 7 says Codex r2-independent recompute etc. Fine.
+
+Now potential inconsistencies to hunt:
+
+A. Contract r7 line 5 baseline: main@cddff584..., tree=c25d051a4b9a0bd9773b50170e100f575ea19f2b. Task frontmatter base_commit: 241ff3b7..., integration_commit: 89413f45.... The contract's "主仓基线" differs from Task frontmatter base_commit — but that's the appcontainer preflight baseline (main@cddff584), consistent with r6 and adjudication line 7. The Task's base_commit refers to P02 product baseline. Not a contradiction per se, but a reader may confuse two different "baseline" notions. The r6 review previously accepted this. Hmm — is there a live-main discrepancy? Task line 364 says main HEAD=54a39770... at a checkpoint; contract r7 line 5 says main@cddff584. These are different commits. Contract pins baseline main@cddff58469... The Task's later continuation entries mention main@4183e7f7, then integrated to main, etc. The contract's baseline may be stale relative to current main. But that's the design: the contract pins the baseline at time of writing. This is a potential P3 note: the contract r7 §baseline main@cddff584 (same as r6) may not match the latest main referenced in Task (line 364: main HEAD=54a39770...). But since Task's own "Codex continuation" is r7 candidate written at same time, and its task file's line 5-6 header doesn't state main HEAD... Actually the contract says "主仓基线：main@cddff584..." and Task file line 396 says next step review. If main has advanced, the contract's baseline is a pin, not a claim about current HEAD. This is not necessarily a defect. But requirement 6 says check consistency of versions. Hmm — I should note it as a P3 observation (non-blocking, non-safety): contract r7 line 5 still declares main@cddff584..., whereas the Task records later main HEADs (e.g., 54a39770 at line 364, integrated merges) — this is a pin-of-record and does not change authorization scope, but if Codex intends r7 to bind "current HEAD", the two differ. Actually let me check: r6 contract also had main@cddff584, and it was reviewed in r6 without an issue on this. The r6 report's R5C-01 etc. didn't flag it. I'll mention it as P3 informational.
+
+Hmm, but careful: is cddff584 the main commit at the time? The Task line 88 references clone source commit 7ce3c40..., which is the scratch clone. The contract line 81 says clone baseline HEAD=7ce3c40..., consistent with Task line 88 and line 116. ✓
+
+B. Contract r7 line 156 §8.1: "唯一 Phase A 候选范围为 verification/P02/appcontainer-readonly-preflight-r3.md（待审）；manifest r3 SHA-256=AC45329A..." ✓ Task line 393 ✓.
+
+C. Contract r7 line 44 refers to "Phase A 完整集合 23 个 controller 环境变量"; manifest r3 line 20 says 23 and enumerates. ✓
+
+D. Contract r7 §6 table (lines 123-142) includes variables not in the Phase A 23 set: HOMEDRIVE/HOMEPATH, PYTHONPYCACHEPREFIX (+PYTHONDONTWRITEBYTECODE), TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, HF_ASSETS_CACHE, HF_XET_CACHE, HF_TOKEN_PATH, HF_HUB_DISABLE_IMPLICIT_TOKEN, PATH. r3 line 20 says these are NOT_RUN/Phase B. ✓ Consistent. But note: contract r7 line 44 says "r7 §6 其余映射变量一律 NOT_RUN / Phase B" — so the contract itself acknowledges. ✓
+
+E. Potential issue: r3 line 20 category `SCRATCH_EXPECTED` = "规范化路径落在契约明确映射的 scratch 子树". But in Phase A, the controller's current env values are the host controller's actual env, which will typically NOT be scratch paths (they're the real user environment). That's expected and classified USER_PRIVATE/HOST_SYSTEM/UNDETERMINED. Fine.
+
+F. Potential issue: r3 line 20 says "只读取当前 controller 的以下 23 个环境变量" and "只输出类别标签，不输出任何原始值或路径". But the classification of `HOST_SYSTEM` requires checking whether the value is under a §3 root — that itself requires reading the value; output is only the label. Fine.
+
+G. Potential issue: r3 line 12 allowed fields include "owner、DACL、mandatory label" — reading DACL requires READ_CONTROL which is allowed. But the constraint says no ACL mutation. Fine.
+
+H. Now check objective 3 carefully: "T0 在任何 Phase A read 前、T1 在全部 read 后进程退出前，并在两次均覆盖同一 5 个对象（2 个精确键 + 3 个目录）". r3 line 22 ✓. But wait: r3 line 22 says "T0 必须是任何 Phase A 读取开始前的第一项读取". Hmm — the T0 read itself is a read. So "任何 Phase A 读取开始前" literally includes T0 itself, which is a self-reference. Semantically it means T0 is first. Also r7 line 35 says "任何 Phase A 读取前采集 T0". Same. This is fine but I can note a P3 wording nit (self-referential). Actually the more meaningful point: T0's registry/directory reads could themselves change... no, they're reads.
+
+Another subtle point: T0/T1 WER directory checks read "直接子项的名称、类型、长度、last-write time、file ID". This is enumerating child items of the WER directories — but r3 line 32 says "除三个 WER 目录外不枚举输入根或 scratch 根的子项". So enumerating the three WER dirs is allowed by line 22 and consistent with line 32. ✓ Good — that's a deliberate carve-out. Is that consistent with requirement "Phase A root metadata 不含子项/内容 inventory"? The WER directories are third-party system dirs, not the 12 input roots or 4 scratch roots; the requirement specifically concerns Phase A root metadata for input/scratch roots. The WER snapshot explicitly includes direct-child names per r7 §1.1.8 and r3 line 22. Consistent.
+
+Hmm, but wait — there's a possible tension: r3 line 32 says "除三个 WER 目录外不枚举输入根或 scratch 根的子项". And line 12 says for the 12 input roots + 4 scratch roots, "不得递归、枚举子项". So the WER enumeration is the documented exception. ✓
+
+I. Check "不得打开或哈希任何文件" vs. WER directory enumeration: enumerating directory entries doesn't open/哈希 files. ✓
+
+J. Objective 4 also asks about "Phase A root metadata 不含子项/内容 inventory" ✓ (r7:44, r3:12).
+
+K. "四个 scratch roots" ✓ r3:14-18.
+
+L. "exclusion manifest Phase B-only" ✓ r7:36. But note: r7:36 says exclusion manifest is only needed "仅在 Phase B 或后续 Gate 需要保护文件 digest 时" — good. Also note removal of the filename. I'll note as P3.
+
+M. Now, is there any place where r7 r3 claims something inconsistent with "不得打开或哈希任何文件"? r3 line 22 WER dirs: "不得读取 dump 内容、复制或哈希 dump" ✓.
+
+N. Check "scratch ACL/label mutation 当前 NOT_APPROVED 状态" ✓ r7:8.
+
+O. Check whether r7 still contains a now-stale statement: r7 line 15 item 2 says ACL/label ops allowed only after Review+preflight+Gate. Combined with NOT_APPROVED. ✓
+
+P. Check r7 line 22: "正向 canary 使用不同的新路径，禁止复用 alias。" ✓
+
+Q. Potential new finding: r7 line 7 says "Codex 接受全部 12 项；处置见 codex-appcontainer-contract-r6-adjudication.md。DSH 建议中的 Phase A 环境变量"24 项"与 manifest r2 实列 23 项不符，r7 按原清单实列的 23 项完整集合修订。" Good. My independent count confirms 23. So DSH-R6A-02's "24" in the r6 report was an error; Codex's correction is right. Wait — but is it possible the r6 report's "24" referred to counting differently, e.g. counting `PYTHONDONTWRITEBYTECODE` or `HF_HOME/HF_HUB_CACHE`? No, the report explicitly listed the 24 set as manifest r2:19. The r2:19 list has 23. Confirmed by direct count. Good.
+
+Also let me double check the count of the set enumerated in r6 report line 49's exclusion list: "HF_ASSETS_CACHE/HF_XET_CACHE/PYTHONPYCACHEPREFIX/PYTHONDONTWRITEBYTECODE/HF_TOKEN_PATH/HF_HUB_DISABLE_IMPLICIT_TOKEN 不在 24 项内". Let me verify each is absent from r2:19 list:
+- HF_ASSETS_CACHE: absent ✓
+- HF_XET_CACHE: absent ✓
+- PYTHONPYCACHEPREFIX: absent ✓
+- PYTHONDONTWRITEBYTECODE: absent ✓
+- HF_TOKEN_PATH: absent ✓
+- HF_HUB_DISABLE_IMPLICIT_TOKEN: absent ✓
+Yes. But actually there are MORE §6 variables absent from the 23 set: HOMEDRIVE, HOMEPATH, TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, PATH. The r6 report only listed 6, and it also omitted noting that TORCHINDUCTOR_CACHE_DIR etc. are absent. That's a completeness nit in the old report, not in r7/r3. r7 line 44 now says "r7 §6 其余映射变量一律 NOT_RUN / Phase B" which covers all. So fine.
+
+Now: is there a NEW finding about r3 line 20's claim "该集合是 Phase A 完整集合"? The set is the complete set of env vars Phase A reads — yes, and unlisted → NOT_RUN. ✓ And it does NOT expand reading scope to force 24. ✓
+
+R. Requirement 2 also asks: "将 r7 §6 未列变量留为 NOT_RUN / Phase B" — hmm, the phrasing in the prompt is "将 r7 §6 未列变量留为 NOT_RUN / Phase B". Actually r7 §6 列出的变量中未被 Phase A 读取的那些留为 NOT_RUN/Phase B. r3 line 20 says exactly that. ✓
+
+S. Now, look for genuinely new findings. Let me scan r7 for any internal inconsistency:
+
+- r7 line 8 current status includes `scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED`. ✓
+- r7 line 20: "本契约不授权 Windows Sandbox 查询..." ✓
+- r7 line 34: "所有路径均相对 `G:\CODEX\P02-scratch-build-source`；主仓对应目录保持 deny。`G:\CODEX\New Manga.task-envs` 与 `.worktrees` 都是主仓兄弟目录；仅登记的 task-env 子路径可只读，worktrees 全部 deny。" ✓
+- r7 line 38 item 11: "...当前没有 profile，不运行写探针或 MIC 探针；符合 §8.1 的只读测量不受此禁令限制。" ✓
+- r7 line 50: LPAC process creation. Fine.
+- r7 line 83: "下表全部相对路径均以固定 scratch clone `G:\CODEX\P02-scratch-build-source` 为根，主仓对应路径保持 deny。" ✓ DSH-R6A-09.
+
+Hmm wait: r7 line 83 §4 sentence structure: "以下为未来 Gate 的 LPAC 输出根；Phase A 不授权或执行写入。下表全部相对路径均以固定 scratch clone... 为根，主仓对应路径保持 deny。output-root 安全快照和既有内容/子项清单属于 Phase B，具体目录、对象层级、直接子项字段及采集方法必须由 Phase B manifest 固定。根以外均只读。" ✓ DSH-R6A-08, 09 both addressed.
+
+- r7 line 99-102 table rows: three leaves. ✓
+- r7 line 106: constraint 1 "仅限 Phase B..." ✓
+- r7 line 108: constraint 3. ✓
+- r7 line 110: constraint 5. ✓
+
+T. Now check the "TRITON_CACHE_DIR" row: r7 line 132 `| TRITON_CACHE_DIR | scratch python-cache/triton/ |`. ✓ But note r7 line 97 in §4 table still has the generic "python-cache/" row with the description "Python/Torch/HF cache 根目录。" — the r6 row description "包括 TRITON_CACHE_DIR 映射到 python-cache/triton" was removed in r7's §4 table (r7 line 97 just says "Python/Torch/HF cache 根目录。"). That's fine since §6 now has the explicit row. But hmm: r7 §4 scratch table's `python-cache/` row description no longer mentions Triton. Minor, non-blocking; §6 row covers it. Could mention as informational? Probably unnecessary.
+
+U. Check: r7 line 129 `PYTHONPYCACHEPREFIX` row includes `PYTHONDONTWRITEBYTECODE=1`. r7 §6 row for PYTHONDONTWRITEBYTECODE is embedded. Neither is in Phase A 23 set → NOT_RUN/Phase B. ✓
+
+V. Now let me carefully check requirement 5's list: "是否完整阻止 profile/private-registry API、ACL/registry/label mutation、写 probe、工具链/build、Sandbox". 
+
+- r3 line 32 blocks: CreateAppContainerProfile, DeleteAppContainerProfile, GetAppContainerRegistryLocation, GetAppContainerFolderPath; derive/create/reuse profile; private registry storage access.
+- r3 line 34 blocks: create/delete/move/modify/probe files/dirs; ACL/DACL/owner/label/policy modify; elevate; take ownership; network; Windows Sandbox query/install/enable/start.
+- r3 line 32 blocks "写入、探针或工具链操作". 
+- Build: r3 line 47 "Build Gate 保持 BLOCKED"; r3 line 32 "工具链操作". The word "build"/Cargo/Tauri/PyInstaller not literally in r3. Is that a gap? The contract r7 line 20 names them. The manifest is the execution-scope doc; "工具链操作" arguably covers Cargo/Tauri/PyInstaller/build. But strict reading: "不执行写入、探针或工具链操作" — one could argue build = 工具链操作. I'd rate this P3 informational: recommend r3 explicitly name build/Cargo/Tauri/PyInstaller to match contract §1. But not blocking. Hmm. Actually, would that be a P2? The criterion for P2 in this project seems to be ambiguity that hinders unambiguous execution. Given the manifest says toolchain operations are not executed and Build Gate remains BLOCKED, and the contract names the specific tools, I think this is at most P3. I'll list it as a P3 observation with non-blocking status.
+
+Actually, let me reconsider. The review objectives demand a decision. If everything is CLOSED with no P0/P1/P2, then decision = APPROVED or APPROVED_WITH_CONDITIONS. The Gate: "任一 P0/P1/P2 open finding 必须阻止 Phase A." Since I'll likely have 0 P1/P2, decision could be APPROVED (with P3s) — but should object_binding=NOT_VERIFIED prevent APPROVED? In the project's custom, content decisions are separate from object binding. The r6 report used "CHANGES_REQUESTED" for content. Prior rounds: r4 content=APPROVED_WITH_CONDITIONS. Given all 12 findings closed and only P3 non-blocking nits, I'd say APPROVED_WITH_CONDITIONS might be more accurate if I raise conditions, or APPROVED if the P3s are merely informational. 
+
+Let me think about whether there's at least one real P3 that warrants "conditions". The conditions would be non-blocking. In prior precedent, DSH gave APPROVED with P0/P1/P2/P3=0/0/0/x (e.g., R5F = APPROVED with 0/0/0/3). So a content APPROVED with P3-only findings is precedented. So I can give **APPROVED_WITH_CONDITIONS** or **APPROVED**. Hmm.
+
+Let me hunt harder for something substantive, since a reviewer should be thorough. Potential real issues:
+
+(1) r3 line 20: The 23 variables include `GIT_CONFIG_GLOBAL`, `NPM_CONFIG_USERCONFIG`, `GIT_CONFIG_NOSYSTEM`, `GIT_TERMINAL_PROMPT`, `PYINSTALLER_CONFIG_DIR`, `CARGO_HOME`, `CARGO_TARGET_DIR`, `NPM_CONFIG_CACHE`, `TRITON_CACHE_DIR`, `TORCH_HOME`, `TRANSFORMERS_CACHE`, `HF_HOME`, `HF_HUB_CACHE`, `PIP_CACHE_DIR`, `UV_CACHE_DIR`, `PYTHONUSERBASE`, `PYTHONNOUSERSITE`, plus the 6 profile/home ones = 23. Let me recount grouping: 
+profile/home: LOCALAPPDATA, TEMP, TMP, APPDATA, USERPROFILE, HOME = 6
+python: PYTHONUSERBASE, PYTHONNOUSERSITE = 2 (total 8)
+pip/uv: PIP_CACHE_DIR, UV_CACHE_DIR = 2 (10)
+HF: HF_HOME, HF_HUB_CACHE = 2 (12)
+ML: TRANSFORMERS_CACHE, TORCH_HOME, TRITON_CACHE_DIR = 3 (15)
+Rust/Node: CARGO_HOME, CARGO_TARGET_DIR, NPM_CONFIG_CACHE = 3 (18)
+config files: NPM_CONFIG_USERCONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT = 4 (22)
+PyInstaller: PYINSTALLER_CONFIG_DIR = 1 (23). ✓ 23.
+
+Contract §6 lists for these 23 (checking the contract's mappings): LOCALAPPDATA ✓, TEMP/TMP ✓, APPDATA/USERPROFILE/HOME ✓, PYTHONUSERBASE ✓, PYTHONNOUSERSITE ✓, PIP_CACHE_DIR ✓ (line 139), UV_CACHE_DIR ✓, HF_HOME ✓, HF_HUB_CACHE ✓, TRANSFORMERS_CACHE ✓, TORCH_HOME ✓, TRITON_CACHE_DIR ✓, CARGO_HOME ✓, CARGO_TARGET_DIR ✓, NPM_CONFIG_CACHE ✓, NPM_CONFIG_USERCONFIG ✓, GIT_CONFIG_GLOBAL ✓, GIT_CONFIG_NOSYSTEM ✓, GIT_TERMINAL_PROMPT ✓, PYINSTALLER_CONFIG_DIR ✓. All 23 are in §6. ✓ So the Phase A 23 set is a strict subset of §6's variables (which also has 13 more). Good coverage/consistency.
+
+Wait — is GIT_CONFIG_NOSYSTEM mapped in §6? Line 141: "`NPM_CONFIG_USERCONFIG`, `GIT_CONFIG_GLOBAL` | ...；另设 `GIT_CONFIG_NOSYSTEM=1`、`GIT_TERMINAL_PROMPT=0`". So GIT_CONFIG_NOSYSTEM and GIT_TERMINAL_PROMPT are mentioned in the mapping cell but not as left-column variable names. Hmm — r6 report's DSH-R6A-02 was about which §6 variables are in the 24 set. r7 §1.2 line 44 says "r7 §6 其余映射变量一律 NOT_RUN / Phase B" — those variables that appear only in the mapping cell (GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT, PYTHONDONTWRITEBYTECODE) are still §6-registered. Since they're in Phase A's 23 (GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT), fine. PYTHONDONTWRITEBYTECODE is only referenced inside PYTHONPYCACHEPREFIX's cell → Phase B. Fine.
+
+So r3's 23 ⊆ §6 named variables. Good.
+
+(2) A subtle scope question: r3 line 20 reads "只读取当前 controller 的以下 23 个环境变量". The contract §6 defines mappings for the *LPAC child* environment. Reading the controller's current values for these 23 is a read of host state, not the LPAC env. r3 explains "这些是 controller 当前值，不代表 profile 或子进程环境回读." ✓ So no conflation.
+
+(3) A real potential issue: r3 line 22's WER check includes `HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps`. The allowlisted registry reads: r3 line 32 says "除上述两个 WER 精确键外不查询任何 registry key". ✓ consistent.
+
+(4) Another possible issue: r3 line 12 says allowed fields for the roots include "DACL" — reading DACL of the scratch roots requires READ_CONTROL. That is a read of security descriptors, allowed. ✓ But requirement 4 mentions "Phase A root metadata 不含子项/内容 inventory" — DACL is metadata, fine.
+
+(5) Potential issue: r7 §1.2 line 44 enumerates Phase A as "controller 身份/token 字段、12 个固定输入根与 manifest 明列的四个精确 scratch 根目录元数据、Phase A 完整集合 23 个 controller 环境变量，以及同一测量进程内的 WER T0/T1". This matches r3. ✓ But does r3 include "controller 身份/token 字段" (line 10)? Yes: TokenUser, TokenGroups, TokenPrivileges, TokenIntegrityLevel, TokenMandatoryPolicy. Note: TokenCapabilities is NOT in Phase A's controller list (r3 line 10 lists 5 fields), while r7 §6 line 144 / §7 line 150 mention TokenCapabilities for LPAC. Is the controller token field list consistent? r7 §1.2 line 44 says "controller 身份/token 字段" generically, r3 specifies 5. The Gate requires "TokenCapabilities 空集快照" but for LPAC (Phase B). Phase A controller-only might reasonably not include TokenCapabilities. Fine, no contradiction. Could be P3 informational: r7 §1.2 doesn't enumerate which token fields; r3 does (5 fields). Minor.
+
+(6) Check the "5 objects" WER requirement says "2 个精确键 + 3 个目录" ✓.
+
+(7) Any contradiction about whether Phase A reads "12 input roots" — r3 line 12 "仅对契约 §3 列出的 12 个 Task 输入根". Contract §3 table has 12 rows? Let me count: Python base, P02 pinned sidecar venv, Detector weights, SFX weights, Node/npm, Rust stable MSVC, VS Build Tools, VS Installer, Windows SDK, Git cmd, Git mingw64, scratch clone = 12 ✓. Note the scratch clone root is one of the 12 input roots AND the four scratch dirs are beneath it. Slight overlap: the scratch clone root is read as an input root (root metadata) and its subdirs (4 scratch roots) are also read. That's 12+4 = 16 roots read, with r7 §1.2 saying "12 个固定输入根与...四个精确 scratch 根目录元数据". Consistent.
+
+(8) Hmm, one thing: r3 line 14 says "以下四项是 Phase A 唯一的四个 scratch 根；均为固定 scratch clone `G:\CODEX\P02-scratch-build-source` 下的精确路径。主仓对应目录保持 deny。" ✓ DSH-R6A-10.
+
+(9) Potential real finding: r3 line 44 evidence output paths: `verification/P02/appcontainer-readonly-preflight-r3.stdout.md`, `.exit`, `.meta.json`. These are under Codex's verification/P02/** governance write. ✓ Contract r7 §8? Contract doesn't list evidence filenames for Phase A. Is that a gap? r7 line 44 says Phase A is the manifest's reads; the manifest specifies output paths. The contract §8.1 requires object pin. Fine. But hmm: r7 line 44 doesn't mention evidence output paths; manifest does. Not a conflict.
+
+(10) A more substantive potential finding: r3 line 4 "冻结日期：2026-10-10" + "状态：CANDIDATE / NOT_RUN / NOT_AUTHORIZED_FOR_EXECUTION". The word "冻结日期" (freeze date) in a CANDIDATE document could be misread as the manifest being frozen. In r2, line 3-4 were "冻结日期" + "FROZEN_PLAN / NOT_RUN". In r3 it's "冻结日期" + CANDIDATE. The term "冻结日期" is slightly inconsistent with CANDIDATE/NOT_AUTHORIZED. This is a genuine (minor) P3 wording finding: rename to "拟冻结日期" or "候选日期" to avoid a machine/human reading "frozen". Hmm, is this worth raising? It could be considered a real ambiguity given the project's heavy emphasis on frozen vs candidate. The r6 report didn't flag it for r2 (r2 was FROZEN_PLAN, so "冻结日期" was apt). Now r3 is CANDIDATE, so "冻结日期" is arguably a leftover. I'll raise it as P3 (non-blocking, does not affect safety/scope), with minimal fix: change line 3 to "候选日期" or "拟冻结日期（尚未冻结）". That's a legitimate new finding. Good.
+
+(11) Another: r3 line 6 says "契约须 pin 本清单路径和最终 SHA-256；只有 DSH r7 Review、Codex adjudication 与逐文件 hash/object 核对完成后才可执行。" and contract r7 line 156 pins it. ✓ consistent. But note r3 line 6 says "契约须 pin ... 最终 SHA-256" — and the *actual* r3 file's SHA is claimed in contract. But if a P3 fix edits r3 (e.g., "冻结日期"), the SHA changes and the contract's pin breaks → requiring re-pin. That's exactly why I mark the P3 as non-blocking but note that adopting it invalidates the pinned SHA and requires re-pin + re-review. Actually careful: the reviewer's P3 condition would change the object. Given the prompt says the SHA is computed by Codex before the call and I must not recompute, and "任一 P0/P1/P2 open finding 必须阻止 Phase A. P3 逐项标明阻断性和是否影响安全或范围." So P3s don't block Phase A per se. But if Codex adopts a P3, the SHA changes → new pin needed. I should note the trade-off: this P3 is cosmetic; if adopted, it invalidates AC45329A... and requires re-review/pin; therefore recommend deferring it to a later manifest revision (r4) rather than editing the currently-pinned candidate. Good — that's a nice, precise, minimal recommendation.
+
+Hmm, but if I recommend deferral, then it's not a condition on this candidate. Good.
+
+(12) Another potential: r7 line 7 says "r7/manifest r3 均为待审候选" ✓ and r3 line 4 CANDIDATE ✓.
+
+(13) r3 line 22 "T0 必须是任何 Phase A 读取开始前的第一项读取" — self-referential wording. Another possible P3. Minimal fix: "T0 必须是本清单的第一项读取，且早于除 T0 自身外的任何 Phase A 读取". Hmm, that's pedantic. I could combine (10) and (13) plus the LOCALAPPDATA referent (14) into the P3 list. But too many pedantic P3s dilute the review. Let me pick the meaningful ones.
+
+(14) LOCALAPPDATA referent ambiguity in WER object `%LOCALAPPDATA%\CrashDumps`: In Phase A (controller-only), `%LOCALAPPDATA%` = controller's own LOCALAPPDATA (which is also one of the 23 read variables). But r7 §6 maps LOCALAPPDATA to the LPAC profile folder. Since r3 says "这些是 controller 当前值" and Phase A is controller-only, the object should be explicitly defined as the *controller* LOCALAPPDATA. Is that stated? r3 line 22 says "T0 与 T1 均覆盖下列全部 5 个 WER 对象" and lists `%LOCALAPPDATA%\CrashDumps`. The referent of %LOCALAPPDATA% isn't explicitly tied to the controller. r3 line 10-12 establish controller-only context, and line 20 says the env reads are controller values. A careful executor would use the controller's LOCALAPPDATA. But given r7 §6 defines LOCALAPPDATA as the LPAC profile folder, there's a genuine cross-document ambiguity: which LOCALAPPDATA does the WER path use in Phase A? Since Phase A creates no profile, the only possible referent is the controller's. I'd raise this as **P3** (bounded, resolvable by context, non-blocking) with minimal fix: in r3 line 22 write "`%LOCALAPPDATA%`（本 Phase A 指当前 controller 的 LOCALAPPDATA）". Hmm — but is this more than P3? It could cause the executor to look at the wrong path if a profile existed — but no profile exists in Phase A and profile creation is forbidden. So impact is bounded → P3 non-blocking. Actually wait: could it cause the executor to try to resolve the LPAC profile folder path and thus call a profile API? r3 forbids GetAppContainerFolderPath. So no. P3.
+
+Hmm, I want to decide whether to make these P3s or note them as "observations". The prompt wants "任何新 finding（分级/精确文件行/最小修正）" and "P3 逐项标明阻断性和是否影响安全或范围". So listing 3-4 P3s is fine and expected of a thorough reviewer.
+
+Let me also double-check for a possible P2-level issue I might be missing. Consider objective 3's requirement: "T1 在全部 read 后进程退出前". r3:22 ✓, r7:35 ✓. Both same process ✓.
+
+Consider objective 2's requirement: "r3 是否准确保留原集合、明确'完整集合'、将 r7 §6 未列变量留为 NOT_RUN / Phase B，且未为凑数扩展读取范围". ✓ all satisfied. Count = 23 in both r2 and r3; identical. So DSH-R6A-02 CLOSED, and the prior "24" claim in the r6 report was wrong. I must state this clearly: 实数核验 = 23（r2 与 r3 完全同集同序），r7:7 / Task:392 的校正正确，未扩大范围。Also I should self-identify that the "24" originated in the prior DSH r6 report (dsh-appcontainer-contract-r6-review.stdout.md:49 and :183) — that's an error in the previous DSH artifact; r7's characterization ("DSH 建议中的 Phase A 环境变量'24 项'") is accurate and fair.
+
+Now, is there any risk that the correct count is actually 24 because `TEMP, TMP` counts as 2 (I did count as 2) — yes I counted TEMP and TMP separately. 23. Also `HF_HOME、HF_HUB_CACHE` = 2, etc. Let me recount from the raw string carefully with a different method — count commas/顿号 separators. The r2 line 19 sequence has 22 顿号 separators → 23 items. Let me count the 顿号 in the enumeration: "LOCALAPPDATA、TEMP、TMP、APPDATA、USERPROFILE、HOME、PYTHONUSERBASE、PYTHONNOUSERSITE、PIP_CACHE_DIR、UV_CACHE_DIR、HF_HOME、HF_HUB_CACHE、TRANSFORMERS_CACHE、TORCH_HOME、TRITON_CACHE_DIR、CARGO_HOME、CARGO_TARGET_DIR、NPM_CONFIG_CACHE、NPM_CONFIG_USERCONFIG、GIT_CONFIG_GLOBAL、GIT_CONFIG_NOSYSTEM、GIT_TERMINAL_PROMPT、PYINSTALLER_CONFIG_DIR". Separators: between the 23 items there are 22. ✓ 23.
+
+Now let's check r3's set char-identical? r3 line 20 list: same order: LOCALAPPDATA、TEMP、TMP、APPDATA、USERPROFILE、HOME、PYTHONUSERBASE、PYTHONNOUSERSITE、PIP_CACHE_DIR、UV_CACHE_DIR、HF_HOME、HF_HUB_CACHE、TRANSFORMERS_CACHE、TORCH_HOME、TRITON_CACHE_DIR、CARGO_HOME、CARGO_TARGET_DIR、NPM_CONFIG_CACHE、NPM_CONFIG_USERCONFIG、GIT_CONFIG_GLOBAL、GIT_CONFIG_NOSYSTEM、GIT_TERMINAL_PROMPT、PYINSTALLER_CONFIG_DIR. ✓ Identical to r2. 
+
+So the set is preserved exactly — no additions, no removals. Those 23 are all present in the §6 table (I verified). Good.
+
+Now, requirement 1: per-item CLOSED/OPEN with evidence line numbers. I'll produce a table.
+
+Now let me also verify claim in r7 line 7 that Codex r6 adjudication exists and its content matches (I read it: all 12 accepted, mapping table lines 25-36). ✓ And the adjudication's stated SHA in Task:392 = 103CBD5F... matches prompt claim. ✓ (not recomputed).
+
+Requirement 6: check Contract/manifest/Task consistency on paths, versions, counts, Gate, authorization, status; list ambiguities/overreach.
+
+Consistency table:
+- Version: contract r7 / manifest r3 / Task state r7 candidate+manifest r3 candidate. Task:393 names r7 SHA 7FBFFE65..., manifest r3 SHA AC45329A.... Contract r7:156 pins manifest r3 path+SHA AC45329A.... ✓
+- Path: contract r7:156 "verification/P02/appcontainer-readonly-preflight-r3.md" ✓; r3:6 "appcontainer-isolation-contract-r7.md" ✓; adjudication referenced from r7:7 and Task:392 as codex-appcontainer-contract-r6-adjudication.md ✓.
+- Count: 23 in contract r7:7, r7:44, r3:20, Task:392, Task:394 ✓. Notably Task:394 "23 个具名环境变量" ✓.
+- 4 scratch roots: contract r7:44, r3:14, Task:394 "4 个精确 scratch 根" ✓.
+- 5 WER objects: r7:35, r7:44 "相同 5 个 WER 对象", r3:22, Task:394 "同一 5 个对象" ✓.
+- 12 input roots: contract §3, r3:12, Task:394 ✓.
+- Gate tokens: contract r7:8, adjudication:49, Task:395 — compare token-by-token:
+  contract r7:8: private_registry_absence=UNPROVABLE / BLOCKED；profile=NOT_CREATED；ACL/registry=NOT_MODIFIED；scratch ACL/label mutation=AUTHORIZATION_PATH_DEFINED / NOT_APPROVED；OS isolation preflight=NOT_RUN；hook/cache/child-process closure=BLOCKED / NOT_VERIFIED；Build Gate=BLOCKED；build=NOT_AUTHORIZED / NOT_RUN；Hard Build Barrier=EFFECTIVE；AC1–AC7=BLOCKED / NOT_RUN.
+  adjudication:49: same 10 tokens.
+  Task:395: same 10 tokens.
+  r3:4/47: CANDIDATE/NOT_RUN/NOT_AUTHORIZED_FOR_EXECUTION + Build Gate BLOCKED + Hard Build Barrier EFFECTIVE. Does not restate the other 8 tokens. Is that an inconsistency? No contradiction; the manifest defers. But requirement 5 asks whether manifest maintains `private_registry_absence=UNPROVABLE / BLOCKED`, `profile=NOT_CREATED`, `OS isolation preflight=NOT_RUN`, `Build Gate=BLOCKED`, `Hard Build Barrier=EFFECTIVE`, `AC1–AC7=BLOCKED / NOT_RUN`. 
+  - r3:47 "Phase A 不能证明 private-registry 创建前不存在性... 上述事项继续 UNKNOWN / BLOCKED / NOT_RUN。... Build Gate 保持 BLOCKED，Hard Build Barrier 保持 EFFECTIVE。" — It expresses private-registry non-existence as unprovable and continues BLOCKED, but does not use the exact token `private_registry_absence=UNPROVABLE / BLOCKED`.
+  - r3:32 forbids creating profile → implies profile NOT_CREATED. But no explicit token.
+  - r3:4 "NOT_RUN / NOT_AUTHORIZED_FOR_EXECUTION" covers OS preflight NOT_RUN implicitly.
+  - AC1–AC7: r3 doesn't mention AC1–AC7 at all. Hmm! Does r3 mention AC1–AC7? Searching the text I read: line 32-47... "AC1–AC7" doesn't appear in r3. It says "Build Gate 保持 BLOCKED，Hard Build Barrier 保持 EFFECTIVE" but not AC1–AC7. Requirement 5 explicitly asks whether the manifest maintains `AC1–AC7=BLOCKED / NOT_RUN`. The contract r7:8 and Task have it. The manifest r3 omits it entirely.
+  
+  Is that a finding? In r6's review, R5C-05 was declared CLOSED on the basis of r6:8 + P02.md:86 + manifest r2:4/47 token-wise consistency. The r6 report claimed "与 P02.md:86、manifest :4/:47 逐 token 一致". Hmm, manifest r2:47 also didn't include AC1–AC7 or the full set; the r6 report was somewhat generous. For r3, the manifest still only partially restates tokens. Given objective 5 explicitly asks me to check that the manifest maintains these states, I should report: r3 does not enumerate the full Gate token set; it states CANDIDATE/NOT_RUN/NOT_AUTHORIZED_FOR_EXECUTION (line 4), forbids profile creation (line 32), and states Build Gate=BLOCKED / Hard Build Barrier=EFFECTIVE (line 47). It does not restate private_registry_absence=UNPROVABLE/BLOCKED, profile=NOT_CREATED, OS isolation preflight=NOT_RUN, or AC1–AC7=BLOCKED/NOT_RUN as explicit tokens. No contradiction, but a machine-readable token comparison across the three docs won't match. Minimal fix: in manifest r3 line 47 add the full token set (copy contract r7:8/Task:395). Severity: P3 (non-blocking: no safety/scope impact; the contract and Task carry the authoritative tokens and the manifest doesn't claim anything contrary). Since r7 is the contract and r3 is the execution manifest, and the manifest's job is scope definition, this is a documentation-completeness nit.
+
+Hmm, but objective 5 phrasing "是否保持 private_registry_absence=UNPROVABLE / BLOCKED、profile=NOT_CREATED、OS isolation preflight=NOT_RUN、Build Gate=BLOCKED、Hard Build Barrier=EFFECTIVE、AC1–AC7=BLOCKED / NOT_RUN" — I should answer per token:
+- In contract r7: all present (line 8) ✓
+- In Task: all present (line 395) ✓
+- In manifest r3: Build Gate + Hard Build Barrier explicitly; profile/private-registry/OS-preflight/AC1–AC7 only implied or absent.
+So the honest answer: cross-document "保持" holds at the contract+Task level; manifest r3 has partial token coverage → P3.
+
+Actually hold on. Would this rise to P2? The r6 report's DSH-R6A-07 (P3) was precisely about adding the scratch-ACL mutation token to r7:8 so that write authorization has a machine-readable anchor. By the same logic, the manifest's missing tokens are a machine-readable completeness issue, not an execution ambiguity (nothing in r3 implies AC1–AC7 are unblocked). So P3 is right. I'll frame it as P3 with explicit note that it does not block Phase A and does not affect safety/scope, but if Codex wants the "逐 token 一致" property claimed for the prior round, it should add the tokens — noting that any edit changes the pinned SHA.
+
+Hmm, careful about consistency claims: the r6 report line 108 claimed manifest r2:4/47 tokens were consistent with r6:8. If I now say r3 doesn't have them, am I contradicting the prior report? The prior report's claim was about the tokens that existed being consistent (P02.md:86, manifest :4/:47). It's fine — I'll phrase precisely: 无矛盾，但 r3 未逐 token 复述完整 Gate 集合；这属于可机读性缺口，不影响执行语义。
+
+Now, are there other new findings?
+
+Let me re-scan the r7 contract for any leftover stale sentence:
+- r7:7 mentions "r7 按原清单实列的 23 项完整集合修订" ✓.
+- r7:22 "本 r7 是 r6 的待审候选" ✓ (states r7 candidate, r6 superseded pending).
+- r7:24 header "r4 对 r3 Review 的执行性修订（r5/r6 继承）" — should it say "（r5/r6/r7 继承）"? Since r7 inherits it, the parenthetical says r5/r6 inherit; r7 also inherits by being a r6 candidate. Minor. Could be a P3 wording nit: the header doesn't mention r7. Minimal fix: "（r5/r6/r7 继承）". This is very pedantic. Hmm. But it's exactly the kind of version-consistency nit objective 6 asks for ("版本"). I'll include it as a minor P3 or as a sub-item. Maybe fold into one P3 "版本性措辞" item. Let me think: is it misleading? §1.1 title says these clauses were inherited by r5/r6; r7 = r6 content + revisions, so the clauses are also in r7. A reader wouldn't be misled into thinking they don't apply to r7 since the clauses are physically present in r7. So purely cosmetic. I'll mention it as an informational note rather than a numbered finding... Actually the prompt wants "任何新 finding（分级/精确文件行/最小修正）". I can list it as P3 but mark "informational, no blocking, no safety/scope impact". Let me limit to 4 P3 findings total to keep signal high:
+
+N-01 (P3): r3:3 "冻结日期" in a CANDIDATE doc.
+N-02 (P3): r3:47 incomplete Gate token set (machine-readable).
+N-03 (P3): r3:22 `%LOCALAPPDATA%` referent not pinned to controller.
+N-04 (P3): r3:22 "T0 必须是任何 Phase A 读取开始前的第一项读取" self-referential wording.
+N-05 (P3, informational): r7:24 header "（r5/r6 继承）" doesn't name r7.
+N-06 (P3, informational): r7:36 dropped the exclusion manifest filename present in r6:36.
+N-07 (P3, informational): r3:32 "工具链操作" doesn't name build/Cargo/Tauri/PyInstaller explicitly (contract r7:20 does).
+
+That's 7 P3s. Maybe that's fine, but I should prioritize and mark which are worth adopting. The prompt says P3 items must each state blocking status and safety/scope impact. I'll present them ordered, with clear "non-blocking; no safety/scope impact" labels, and split into "worth adopting in a future revision" vs "informational, recommend no edit".
+
+Hmm, wait. Let me reconsider N-04: r7:35 says "任何 Phase A 读取前采集 T0" and r3:22 "T0 必须是任何 Phase A 读取开始前的第一项读取". Actually is there a genuine gap: does the doc require T0 to be captured BEFORE the controller identity/token fields read (r3:10)? r3:22 says "任何 Phase A 读取开始前". Yes, that includes the controller identity read. ✓ So ordering is unambiguous: T0 first, then identity/roots/env, then T1. Good. The "self-reference" nit is trivial. Maybe I should drop N-04 or fold it. I'll keep it as a very minor informational note, or drop it to avoid noise. Hmm. The prompt explicitly asks to verify T0 is before any Phase A read and T1 after all reads before exit — I can state that's satisfied and not raise N-04. I think dropping N-04 is better (it's not a real ambiguity). Actually, let me keep a brief mention in the "verified" section, noting the self-referential phrasing but concluding it's unambiguous in intent. I'll not count it as a finding.
+
+Similarly N-05 (header r5/r6) — very cosmetic. I might mention it as an observation but not count it. Hmm, but the prompt wants counts. Let me finalize: count P3 = 4 (N-01..N-04) where:
+
+P3-01: r3:3 "冻结日期" for a CANDIDATE.
+P3-02: r3:47 partial Gate token set.
+P3-03: r3:22 %LOCALAPPDATA% referent.
+P3-04: r3:32 "工具链操作" not naming build/Cargo/Tauri (scope naming).
+Plus two informational observations (not counted? no—better count all as P3 and mark informational). Hmm, the counts should be defensible. Let me count P3 = 5: the four above + r7:36 exclusion manifest filename dropped. And mention r7:24 header and §4 python-cache description as "非 finding 的编辑性观察（不计数）". Hmm, that's a bit arbitrary.
+
+Actually, simpler and more honest: raise P3 findings that a reasonable integrator would consider. I'd say:
+- P3-01 (r3:3 冻结日期) — real, cheap fix.
+- P3-02 (r3:47 Gate token completeness) — real, matches the r6 round's own standard.
+- P3-03 (r3:22 %LOCALAPPDATA% referent) — real potential ambiguity.
+- P3-04 (r7:36 exclusion manifest filename) — regression vs r6:36 but harmless.
+- P3-05 (r3:32 build/toolchain naming) — completeness.
+And list r7:24 header and r7:97 python-cache description as "editorial notes, not findings".
+
+Hmm, P3-04: is dropping the filename actually a problem? r6:36 named `verification/P02/appcontainer-preflight-exclusions-r1.json`. In r7 it's unnamed. Since it's Phase B-only and any Phase B needs its own frozen manifest reviewed, the name isn't binding. I'd mark as informational P3, recommending no edit (or defer). Similarly P3-05 could be informational.
+
+Let me decide the overall Decision. All 12 DSH-R6A items CLOSED. New P0/P1/P2 = 0. P3 = 3..5 (non-blocking). Therefore content Decision = **APPROVED_WITH_CONDITIONS** or **APPROVED**. 
+
+Precedent: r4 DSH gave APPROVED_WITH_CONDITIONS with P3 findings. The Gate rule in the prompt: "任一 P0/P1/P2 open finding 必须阻止 Phase A。P3 逐项标明阻断性". So P3 doesn't block. Since I have P3-only findings that don't block, "APPROVED_WITH_CONDITIONS" would imply conditions; but my conditions are non-blocking recommendations. Given the project semantics where APPROVED_WITH_CONDITIONS implies conditions that should be addressed, and here the P3s are optional/editorial with the recommendation to defer them to avoid invalidating the pinned SHA, I think **APPROVED**（内容层）with 0 P0/P1/P2 and P3 findings is the right call — but I must be careful: is it appropriate for a non-author reviewer to APPROVE while object_binding=NOT_VERIFIED? Prior precedent (r6 report §2): content decision can be CHANGES_REQUESTED; final formal conclusion NOT_VERIFIED. The r6 report also said "object_binding=NOT_VERIFIED（不可核验 ≠ mismatch）不单独否定内容结论". So I can say: 内容 Decision = APPROVED（0 P0/P1/P2, N P3, none blocking）; formal/整体结论 = NOT_VERIFIED due to object_binding=NOT_VERIFIED. Hmm, but would APPROVED be overstepping? The instruction says I'm not the Gate releaser. I'll be explicit: 内容层 APPROVED ≠ Gate/执行授权; Phase A 仍须 Codex adjudication + object pin.
+
+Hmm, let me reconsider whether to say APPROVED_WITH_CONDITIONS given P3 items exist. The task says P3 must state whether blocking. If I say APPROVED but list P3s, that's consistent with prior precedent (e.g., P02.md:378 "DSH 对 exact D29 的 follow-up Review=APPROVED ... P0/P1/P2/P3=0/0/0/0" — that one had 0 P3; and line 355 "Review=APPROVED，P0/P1/P2/P3=0/0/0/3" — YES! line 355: DSH R5 follow-up Review = APPROVED with P0/P1/P2/P3=0/0/0/3. So APPROVED with P3s is precedented in this project. Great. Also line 293: "APPROVED，P0/P1/P2/P3=0/0/0/2". And line 245: "正式 Review=approved ... P0/P1/P2/P3=0/0/0/1". So APPROVED with P3 findings is well precedented.
+
+So: **Decision = APPROVED**（内容层，0 P0/P1 = 0；P2 = 0；P3 = N），formal object_binding = NOT_VERIFIED.
+
+Hmm, but wait. Let me be careful about one more thing: is there any *substantive* gap that should be P2? Let me stress-test a few areas:
+
+(a) Objective 3: "T1 在全部 read 后进程退出前" — satisfied. But note: r3:40 says "测量输出仅写 stdout；测量进程运行期间不得写 evidence。进程退出后，Codex 可将输出保存到..." So T1 must be in-process. ✓ And r3:22 requires T1 before process exit. ✓ Consistent. Good — no conflict between r3:22 (T1 before exit) and r3:40 (no evidence writes during run).
+
+(b) Objective 4: "不得打开或哈希任何文件" ✓ r3:12; and r7:44 "Phase A 不检查文件内容或 hash". ✓
+
+(c) "scratch 相对路径基准" ✓ r7:83.
+
+(d) "exclusion manifest Phase B-only" ✓ r7:36.
+
+(e) privacy: r3:20 "只输出类别标签，不输出任何原始值或路径" ✓; line 10 "不输出凭据材料或 token handle" ✓; line 34 "不得读取或哈希漫画、用户文件、数据库..." ✓; line 22 WER "不得读取 dump 内容...不暴露 registry 原始数据" ✓. Good privacy coverage.
+
+(f) Is there any overreach in r3? E.g., does r3 authorize writing the three evidence files? r3:40-44 says Codex may save stdout to those Task-local paths — that's within Codex's verification/P02/** governance write scope, explicitly stated as not scratch/LPAC write permission. ✓ Not overreach.
+
+(g) Does r3 read anything beyond contract §3's 12 roots + 4 scratch roots + 23 env + 5 WER objects + controller token fields? Let me enumerate all reads in r3:
+  - controller process: elevated flag, OS/build, identity & PID, 5 token fields (line 10).
+  - 12 input roots + 4 scratch roots root metadata (line 12).
+  - 23 env vars (line 20).
+  - 2 registry keys + 3 directories (line 22).
+  That's the whole scope. Contract r7:44 matches ("controller 身份/token 字段、12 个固定输入根与...四个精确 scratch 根目录元数据、Phase A 完整集合 23 个 controller 环境变量，以及同一测量进程内的 WER T0/T1"). ✓ No overreach.
+
+Hmm — one subtle overreach question: r3:10 records "OS/build" — reading OS version/build. Is that within contract r7:44's "controller 身份/token 字段"? "OS/build" isn't a token field. r7:44 doesn't mention OS/build. Does that matter? It's a benign read of OS version. Contract §1.1 item 3? No. Hmm, r7:44 enumerates Phase A scope and doesn't include OS/build; r3:10 includes OS/build. Is this a scope inconsistency (manifest reads something the contract's Phase A enumeration doesn't list)? It's an extremely benign read (OS version/build), and prior rounds (r2:10, r6 report) treated it as part of the controller identity record. Would I raise it? Contract r7:8 states and §1.2 line 44 says "严格限于待审 manifest r3 列明的 controller-only 读取" — note "严格限于 manifest r3 列明的" — i.e., the contract defers to the manifest's enumeration, then parenthetically summarizes. The summary "controller 身份/token 字段" could arguably include OS/build as part of the identity record. I'd call it a P3-level documentation nit at most: contract r7:44's summary doesn't name OS/build while r3:10 collects it. Minimal fix: r7:44 add "OS/build" to the enumeration, or r3:10 justify it as controller identity metadata. Impact: none (OS version is non-sensitive, no file writes). I'll include as a P3 informational finding. Hmm, that adds to the count. Let me decide: include as P3-04 maybe, merged with the token-field enumeration gap (r3:10 lists 5 token fields incl. TokenIntegrityLevel/TokenMandatoryPolicy, while r7:44 says "controller 身份/token 字段" generically). So P3: r7:44's Phase A enumeration vs r3:10's actual fields (OS/build + 5 token fields) — the parenthetical summary omits OS/build. Non-blocking.
+
+OK so final P3 list (5):
+1. r3:3 "冻结日期" vs CANDIDATE status.
+2. r3:47 partial Gate token set (private_registry_absence/profile/OS preflight/AC1–AC7 not restated).
+3. r3:22 `%LOCALAPPDATA%` referent not explicitly the controller's.
+4. r7:36 exclusion manifest filename dropped vs r6:36 (Phase B-only; harmless).
+5. r7:44 Phase A enumeration omits OS/build and the 5 specific token fields that r3:10 collects (benign).
+
+Hmm, and maybe 6. r3:32 "工具链操作" doesn't name build/Cargo/Tauri/PyInstaller. I could fold this into a note rather than a finding. Let me include it as part of finding 2? No, different. I'll mention it under "无 finding 的观察" section to keep counts crisp. Actually the prompt says "任何新 finding（分级/精确文件行/最小修正）" — findings should be listed; observations can be listed separately. I'll put the toolchain-name and r7:24 header and r7:97 description as "非阻断观察（不计入 finding 计数）".
+
+Hmm, but I worry that listing 5 P3s and saying APPROVED is fine (precedent 0/0/0/3). Fine.
+
+Now let me also verify the "Gate 与 Review 不构成的授权边界" section: I must state this review does not authorize profile creation, ACL/label/registry mutation, Phase A execution, build, Sandbox, and does not release any Gate.
+
+Also required: "正式 object_binding=NOT_VERIFIED，不声称独立核验 SHA". I'll include a boundary section: I used only content-read tools; did not use shell/PowerShell/Git/hash/Windows API/network; did not run measurements; did not modify files. Note that I did not read .git. Also note I read the exact documents listed; I did not re-read r3/r4 contract history (though I read r2 manifest and r6 contract for count verification, as instructed).
+
+Wait — I also read r6 contract (instructed as source history) and r2 manifest (instructed). Good. I did not read r3/r4/r5 contracts or their reports; I should note that limitation (like the r6 report did in §11.5). The prompt asked to verify DSH-R6A dispositions "不假定 Codex adjudication 自证正确" — I verified against r7/r3 text themselves, plus r6 contract/r2 manifest for the delta. Good.
+
+One more check: the prompt lists Source history for count verification: r2 manifest and r6 contract. I read both. r6 contract §6 did NOT have TRITON_CACHE_DIR as its own row (r6:97 generic). r7:132 adds it. ✓
+
+Let me now also verify DSH-R6A-03's fix doesn't create a duplicate mapping: r7 §6 line 132 `TRITON_CACHE_DIR | scratch python-cache/triton/`. And §4 line 97 `python-cache/` — no conflict. ✓
+
+And DSH-R6A-09's fix: r7:83 ✓. But note r7:34 also states the base ("所有路径均相对 G:\CODEX\P02-scratch-build-source") — that's §1.1 item 7 (the canary paths), which is fine.
+
+Also check r7 §4 table rows 99-102 use paths without the `G:\CODEX\P02-scratch-build-source` prefix (relative), consistent with the base declared at line 83. ✓ And r7:99 is `verification/P02/tmp/` (the parent, no write grant) ✓, and the three leaves 100-102 ✓.
+
+Now, one more possible substantive issue: r7 §4 line 99 row for `verification/P02/tmp/` says "仅为 controller evidence 父目录；不授予 LPAC 对父目录写入权。" But the manifest r3:15 lists `G:\CODEX\P02-scratch-build-source\verification\P02\tmp\` as one of the four scratch roots to read root metadata. ✓ Consistent — reading parent metadata is allowed; writing denied. ✓
+
+And r3:15-18 four paths match r7 §4 table leaves exactly:
+- r7:99 `verification/P02/tmp/` ↔ r3:15 ✓
+- r7:100 `verification/P02/tmp/smoke-readonly-probe/` ↔ r3:16 ✓
+- r7:101 `verification/P02/tmp/lpac-write-control/` ↔ r3:17 ✓
+- r7:102 `verification/P02/tmp/lpac-write-deny-control/` ↔ r3:18 ✓
+✓ Four roots consistent.
+
+Also contract r7 §8.4 line 159 names three controls consistently ✓.
+
+Now check the three-leaf policy consistency between r7:34, r7:100-102, r7:110, r3:16-18:
+- smoke-readonly-probe: 只读 alias; no Package SID write ACE / no label change; write success → BLOCKED ✓ (r7:100, r7:110, r3:16, Task:95 ✓).
+- lpac-write-control: 正向 canary; Phase B Gate only; one unique file; keep file+SHA-256 ✓.
+- lpac-write-deny-control: negative DACL control; no ACE/label; Phase B Gate only; only real LPAC token + ERROR_ACCESS_DENIED counts; MIC refusal = INCONCLUSIVE/BLOCKED ✓ (r7:102, r7:110, r7:32).
+✓ consistent.
+
+Now check §8.4 (r7:159) "三个 control 分别为 P02 Task 的 Smoke 只读 alias、正向 canary verification/P02/tmp/lpac-write-control/、负向 DACL control verification/P02/tmp/lpac-write-deny-control/。Phase A 不枚举其内容。" ✓
+
+Now check that r3 doesn't enumerate scratch root children: r3:12 "不得递归、枚举子项"; r3:32 "除三个 WER 目录外不枚举输入根或 scratch 根的子项" ✓.
+
+Check "Phase A 不检查受保护文件 digest" ✓ r7:36, r7:44, r3:32/47.
+
+Check "不得读取源码内容/模型文件" ✓ r3:34.
+
+OK. Now also verify requirement 1 claims: "r7 contract/r3 manifest" — each DSH-R6A item's disposition is actually present. I'll give the evidence line numbers. Let me fix exact line numbers:
+
+DSH-R6A-01: r7:35 (§1.1.8), r7:44 (§1.2), r3:22. CLOSED.
+DSH-R6A-02: r7:7, r7:44, r3:20. CLOSED (with count correction 23).
+DSH-R6A-03: r7:132. CLOSED.
+DSH-R6A-04: r3:20 (类别枚举 + 只输出类别标签); r7: not needed? The adjudication said "定义 ... 只输出类别标签" in manifest. r6 report's minimal fix targeted the manifest. r3:20 ✓. Also r7:44 doesn't discuss categories. CLOSED. Maybe also r3:10 privacy.
+DSH-R6A-05: r3:32; also r7:44. CLOSED.
+DSH-R6A-06: r7:34. CLOSED.
+DSH-R6A-07: r7:8; also adjudication:49, Task:395. CLOSED.
+DSH-R6A-08: r7:44, r7:83; r3:12. CLOSED.
+DSH-R6A-09: r7:83. CLOSED.
+DSH-R6A-10: r3:14. CLOSED.
+DSH-R6A-11: r7:36; also r7:159. CLOSED.
+DSH-R6A-12: r3:12. CLOSED.
+
+Great, all 12 CLOSED.
+
+Now I should double-check DSH-R6A-04's requirement precisely: "manifest :19 的 REDACTED 谓词与'类别归类'要求互相牵引" — fix: define category enum and require only labels. r3:20 defines the 4 categories and says only labels are output. ✓ CLOSED.
+
+DSH-R6A-05: "manifest 未声明'额外变量一律不读取'的延迟规则" — r3:32 "未列出的变量、路径、对象或字段一律不读取并记 NOT_RUN；任何扩展项须通过 Phase B exact manifest、非作者 Review 与 Codex adjudication。" ✓ CLOSED.
+
+Now I also need to report "数量差异的实数核验" explicitly: 23 vs 24. Provide my count and location. Also note that r3's 23-item list is character-identical in content and order to r2's, and all 23 are present in r7 §6; the other §6 variables (13 by my count) are NOT_RUN/Phase B. Let me recount the §6-only variables: HOMEDRIVE, HOMEPATH, PYTHONPYCACHEPREFIX, PYTHONDONTWRITEBYTECODE, TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, HF_ASSETS_CACHE, HF_XET_CACHE, HF_TOKEN_PATH, HF_HUB_DISABLE_IMPLICIT_TOKEN, PATH = 13. Let me double check §6 has any other variable not counted: rows: LOCALAPPDATA(1); TEMP,TMP(2); APPDATA,USERPROFILE,HOME(3); HOMEDRIVE,HOMEPATH(2); PYTHONPYCACHEPREFIX + PYTHONDONTWRITEBYTECODE(2); PYTHONUSERBASE(1); PYTHONNOUSERSITE(1); TRITON_CACHE_DIR(1); PYINSTALLER_CONFIG_DIR(1); TORCH_HOME,TORCHINDUCTOR_CACHE_DIR,TORCH_EXTENSIONS_DIR(3); XDG_CACHE_HOME,XDG_DATA_HOME(2); HF_HOME,HF_HUB_CACHE,HF_ASSETS_CACHE,HF_XET_CACHE(4); HF_TOKEN_PATH(1); HF_HUB_DISABLE_IMPLICIT_TOKEN(1); TRANSFORMERS_CACHE,PIP_CACHE_DIR,UV_CACHE_DIR(3); CARGO_HOME,CARGO_TARGET_DIR,NPM_CONFIG_CACHE(3); NPM_CONFIG_USERCONFIG,GIT_CONFIG_GLOBAL(2) + GIT_CONFIG_NOSYSTEM,GIT_TERMINAL_PROMPT(2); PATH(1).
+Total = 1+2+3+2+2+1+1+1+1+3+2+4+1+1+3+3+2+2+1 = let's sum: 1+2=3; +3=6; +2=8; +2=10; +1=11; +1=12; +1=13; +1=14; +3=17; +2=19; +4=23; +1=24; +1=25; +3=28; +3=31; +2=33; +2=35; +1=36.
+So §6 registers 36 distinct named variables (if GIT_CONFIG_NOSYSTEM and GIT_TERMINAL_PROMPT are counted as named within the mapping cell). 36 − 23 = 13 not in Phase A. Matches my list of 13. ✓ Good.
+
+Now, careful: r7:44 says "Phase A 完整集合 23 个 controller 环境变量" and "r7 §6 其余映射变量一律 NOT_RUN / Phase B". So 13 variables are Phase B. I can state: 36 − 23 = 13. That's a useful concrete number.
+
+Now let's compose the review. Structure:
+
+# P02 AppContainer contract r7 / Phase A manifest r3 独立内容 Review（DSH 非作者）
+
+## 0. 审查范围与工具边界
+- objects and read method; object_binding=NOT_VERIFIED; no shell/git/hash/API/network; no writes; no OS measurement. Note the SHA claims are Codex's and not recomputed.
+- Note I additionally read r2 manifest and r6 contract for count/delta verification (as authorized source history).
+
+## 1. 内容 Decision
+- APPROVED（内容层）; 0 P0 / 0 P1 / 0 P2 / 5 P3; DSH-R6A-01..12 全部 CLOSED; 无 P0/P1/P2 open → 不构成对 Phase A 的执行阻断（但 Phase A 仍需 Codex adjudication + object pin，本 Review 不授权执行）。
+- formal object_binding = NOT_VERIFIED → 整体正式结论仍 NOT_VERIFIED.
+
+## 2. DSH-R6A-01..12 逐项判定表
+table: Finding | 严重度 | 判定 | 证据（文件:行）
+
+## 3. 数量差异实数核验（环境变量集合）
+- r2:19 count = 23 (list); r3:20 = same 23, same order; all 23 ∈ r7 §6; §6 total 36; 13 → NOT_RUN/Phase B. Prior report's "24" at r6 report:49/183 is a counting error; r7:7 & Task:392's correction is accurate; no scope expansion. Conclude: r3 accurately preserves, declares complete set, defers rest, no padding.
+
+## 4. Objectives 3–5 verification (WER, §4 items, Phase A boundaries/states)
+- WER T0/T1: satisfied with evidence r7:35, r7:44, r3:22 — explicitly same process, T0 first, T1 after all reads before exit, same 5 objects (2 keys + 3 dirs).
+- environment/privacy, TRITON, unlisted, §4.5, NOT_APPROVED token, root metadata, relative base, 4 roots, exclusion manifest Phase B-only, no open/hash any file: list with line evidence, all satisfied.
+- Phase A candidate; per-token state table across contract r7 / manifest r3 / Task.
+
+## 5. 新 finding（P3）
+P3-01 .. P3-05 with file:line, 最小修正, blocking?, safety/scope impact? Each: 非阻断，不影响安全或范围. Plus note: adopting any edit invalidates the pinned SHA → re-pin/re-review needed; recommend deferring to r4 unless Codex wants them now.
+Plus a short "非 finding 的编辑性观察" list (r7:24 header; r7:97 python-cache description; r3:32 toolchain naming) — mark as not counted... hmm, but I earlier considered making toolchain naming a P3. Let me just fold r3:32 toolchain naming into observations since r3:32 does block "工具链操作" and Build Gate is separately BLOCKED. Actually, to be safe and thorough, maybe make it P3-05 and move something else to observations. Let me settle the final list:
+
+P3-01: r3:3 "冻结日期" (candidate doc).
+P3-02: r3:47 partial Gate token set.
+P3-03: r3:22 `%LOCALAPPDATA%` referent.
+P3-04: r7:44 enumeration omits OS/build & the 5 token fields collected by r3:10.
+P3-05: r7:36 dropped exclusion manifest filename (r6:36 had it).
+Observations (not counted): r7:24 header "（r5/r6 继承）" not naming r7; r3:32 "工具链操作" not naming build/Cargo/Tauri/PyInstaller (contract r7:20 does); r7:97 python-cache row no longer mentions Triton (covered by r7:132).
+
+All P3: 非阻断；不影响安全或范围. Note P3-02/P3-03 touch machine-readability/small ambiguity but bounded and non-safety.
+
+## 6. 需求 6：三文档一致性核对
+Table of item | contract r7 | manifest r3 | Task | verdict.
+Include: version/paths, 23/4/5/12 counts, Gate tokens, authorization (scope-only, not Gate credential), status (candidate/not run), clone pin 7ce3c40/ce8056b8, moniker, three leaves, evidence output paths.
+Ambiguities/overreach: none material; list the P3s + observations. Also note the contract's "主仓基线 main@cddff584" vs Task's later main references (Task:364 etc.) — this is a pin-of-record vs live HEAD distinction; verify Task/contract don't claim it's live HEAD... hmm, r7:5 says "主仓基线：main@cddff584...". Task:364 says main HEAD=54a39770... The contract's baseline differs from the latest main recorded in Task. Since the contract's authorized scope doesn't depend on main HEAD (it's a scratch-clone preflight with clone pin 7ce3c40), this is not a scope problem. Mention as observation: if Codex wants r7 to bind "current main", it should re-pin; otherwise the baseline is a historical pin and should not be read as live HEAD. I'll put this as an observation too (or P3?). Hmm — it doesn't affect Phase A scope at all (the phase A reads are from the scratch clone, not main). I'll list it under observations with a note.
+
+Actually careful: does the contract baseline matter? r7:5 says the authorization scope is limited to Codex-only isolation preflight; the baseline line is contextual. It's fine. Observation.
+
+## 7. 当前 Gate 与 Review 不构成的授权边界
+- list tokens; state that this review does not: authorize Phase A execution, profile creation/reuse, any profile/private-registry API, ACL/label/registry mutation, write probes/MIC probes, toolchain/build/Cargo/Tauri/PyInstaller/Smoke, AC1–AC7, Windows Sandbox; does not release private_registry_absence/P1-01/P1-02/Build Gate/Hard Build Barrier; does not establish object binding.
+- note the three controls remain NOT_RUN.
+
+## 8. 推荐下一步（单一可转发指令）
+Per AGENTS.md, must give a recommended next step. Recommend: Codex to adjudicate this r7 Review (which is content APPROVED with 5 P3 non-blocking), re-pin object hashes (Task/contract r7/manifest r3 + this report), decide whether to adopt P3s in r4 or defer; then, and only then, Phase A may run. Since Phase A requires review+adjudication+object pin, my APPROVED means no P0/P1/P2 barrier remains, but Codex still owns the Gate decision. Provide a forwardable instruction for Codex (owner) — in text form. Note: AGENTS.md says specify the appropriate agent and a forwardable instruction. I'll give a block for Codex.
+
+Also I must state my final answer's recommended next step based on repo state. Good.
+
+One more consideration: the user asked "Review objectives 1..6" explicitly, plus output requirements: "内容 Decision（APPROVED / APPROVED_WITH_CONDITIONS / CHANGES_REQUESTED）、P0/P1/P2/P3 计数、DSH-R6A-01..12 每项 CLOSED/OPEN 与证据行号、任何新 finding（分级/精确文件行/最小修正）、数量差异的实数核验、当前 Gate 与 Review 不构成的授权边界". I'll make sure all are present.
+
+Should the decision be APPROVED or APPROVED_WITH_CONDITIONS? Given I have 5 P3 findings, none blocking, and precedent supports APPROVED with P3s. But do any of my P3s warrant being "conditions"? The definition of conditions in this project (APPROVED_WITH_CONDITIONS) — e.g., r4 said APPROVED_WITH_CONDITIONS with 3 P2s. Here nothing is P2. So plain **APPROVED** is most accurate: content-level approval with non-blocking P3 recommendations. However, one might argue that since the P3s are optional and I recommend deferring, APPROVED is right.
+
+Hmm, but there's a nuance: the prompt's own framing implies a decision and says "任一 P0/P1/P2 open finding 必须阻止 Phase A". If I say APPROVED with 0 P0/P1/P2, that implies Phase A is not blocked by content review — but Phase A still requires Codex adjudication + object pin per the contract's own §8.1/精确下一步. I'll state that clearly.
+
+Wait, actually, let me reconsider P3-02 (Gate token set in the manifest). Is it possibly more than P3 because requirement 5 explicitly asks whether the manifest "保持" those states? The manifest doesn't contradict; the authoritative states live in the contract/Task. So no. P3.
+
+And should P3-03 be P2 (ambiguity hindering unambiguous execution)? The executor must identify `%LOCALAPPDATA%` for CrashDumps. In Phase A, the controller's own env has LOCALAPPDATA (one of the 23 vars read). There's only one sensible referent (the controller's), since no profile exists and profile APIs are forbidden. So execution remains determinate → P3 at most. I'll note explicitly why it's not P2: because Phase A forbids profile APIs and no profile exists, the only resolvable referent is the controller's value; the ambiguity cannot change scope or safety.
+
+OK. Also I should mention explicitly for objective 3 that "T0 在任何 Phase A read 前" and "T1 在全部 read 后进程退出前" are satisfied, including that r3:40's "不得在运行期间写 evidence" doesn't conflict.
+
+Let me also double check: does r3 require T0 to precede the controller identity read (r3:10)? r3:22 says "T0 必须是任何 Phase A 读取开始前的第一项读取" — yes, T0 precedes all reads including the identity read. And §"Phase A 允许读取" ordering in the document lists identity/roots/env first and WER snapshot paragraph after, but line 22 says T0 must be first — text overrides narrative order. Good, no conflict since the WER paragraph explicitly states ordering. ✓ Also r7:35 "任何 Phase A 读取前采集 T0". ✓
+
+Now also: is the WER T0/T1 in r3 explicitly "同一测量进程"? r3:22 "在同一测量进程内" ✓.
+
+Alright. One more: the prompt's claimed SHAs vs documents' internal claims. The contract r7:7 doesn't claim its own SHA (by design, §1.1.10). Task:393 claims contract r7 SHA=7FBFFE65... and manifest r3 SHA=AC45329A..., matching the prompt's claimed values. Contract r7:156 claims manifest r3 SHA=AC45329A... matching. So the internal claims are mutually consistent with the prompt (I can't verify bytes). Note: contract r7 does NOT claim the Task's SHA or its own SHA (per §1.1.10); Task claims the contract and manifest SHAs. Cross-check: prompt says Task SHA=AC200DA1... — does any document reference the Task SHA? Task:87 (r6 section) says "固定更新后的 P02 Task SHA" but doesn't state a value for the current file. Task:392-393 doesn't state the Task's own SHA. So the Task SHA is externally supplied. Note that as an observation: the r7 contract/Task don't self-embed the Task SHA (consistent with §1.1.10's rule that Codex writes final SHA into the Review prompt/checkpoint). ✓ Consistent with precedent.
+
+Also note: contract r7:7 says "Codex 于 2026-10-10 用 Get-FileHash ... 独立复算契约=8D84DA22... Task=4915CE24..." — those are r2-era values (repeated from r6:6). Fine, historical.
+
+Now the "P0/P1/P2/P3 计数" — report 0/0/0/5.
+
+Let me write the report. It should be detailed but well-organized, in Simplified Chinese, with file:line evidence. It's a long answer; that's appropriate.
+
+Let me get precise line numbers for evidence:
+r7 (= appcontainer-isolation-contract-r7.md):
+- :5 baseline
+- :7 r6 findings/count correction
+- :8 Gate tokens incl. scratch ACL/label mutation
+- :15 ACL/label authorization path
+- :20 no Sandbox/build
+- :22 candidate status
+- :34 §4 scratch table/constraint 5 reference (DSH-R6A-06 fix)
+- :35 WER T0/T1 (§1.1.8)
+- :36 exclusion manifest Phase B-only (DSH-R6A-11)
+- :44 §1.2 Phase A boundary incl. 23 env vars, root metadata no children, WER same 5
+- :50-56 identity/profile creation conditions
+- :52 profile pre-state / private registry blocker
+- :54 ban on GetAppContainerRegistryLocation
+- :77 system ACL Phase B; P1-02 BLOCKED
+- :81 clone pins Phase B; clone baseline
+- :83 relative path base + content/child inventory Phase B (DSH-R6A-08/09)
+- :99-102 three leaves + parent
+- :106-110 §4 constraints 1-5
+- :114 deny paths
+- :121-142 §6 env table; :132 TRITON row; :129 PYTHONPYCACHEPREFIX; :135 HF; :141 GIT_CONFIG_NOSYSTEM/GIT_TERMINAL_PROMPT; :142 PATH
+- :144 capability denial
+- :156 §8.1 Phase A candidate + manifest r3 SHA
+- :157 §8.2 Phase B
+- :158 §8.3 no reading comic data/hash
+- :159 §8.4 exclusion manifest + three controls
+- :161 §8.6 Build Gate
+- :177 精确下一步 3
+
+r3 (= appcontainer-readonly-preflight-r3.md):
+- :3 冻结日期
+- :4 CANDIDATE / NOT_RUN / NOT_AUTHORIZED_FOR_EXECUTION
+- :5 authorization scope-only
+- :6 contract pin requirement
+- :10 controller identity + 5 token fields; privacy
+- :12 four scratch root metadata rules; 12 input roots; allowed fields; no recursion/enumeration/opening/hashing any file; UNKNOWN/BLOCKED
+- :14 four scratch roots statement
+- :15-18 the four paths
+- :20 the 23 env vars; 完整集合; categories; labels-only; r7 §6 rest NOT_RUN/Phase B; not cache closure evidence
+- :22 WER same-process T0/T1; 5 objects; reading rules
+- :24-28 the 5 objects
+- :32 exclusions incl. unlisted → NOT_RUN; profile API bans; no registry except 2 keys
+- :34 no file/dir mutation; no ACL/label mutation; no Sandbox; no reading/hashing comic/user files
+- :38 read-only controller API only
+- :40-44 evidence paths
+- :46 governance write scope
+- :47 Phase A cannot prove ... ; Build Gate BLOCKED; Hard Build Barrier EFFECTIVE
+
+P02.md:
+- :5 status in_progress
+- :7 owner Antigravity, :9 reviewer DSH, :11 integrator Codex
+- :70 authorization + state tokens
+- :76 Gate tokens (partial: no scratch ACL/label)
+- :88 clone source commit pins
+- :95 smoke readonly alias semantics
+- :388-396 r6 Review result and r7 candidate
+- :391 r6 review stats
+- :392 adjudication + count correction 23
+- :393 r7/manifest r3 SHAs, candidate
+- :394 scope summary 23 vars/4 roots/5 WER objects
+- :395 full Gate tokens
+- :396 next step
+
+r6 report (dsh-appcontainer-contract-r6-review.stdout.md):
+- :33-35 counts 0/0/2/10
+- :41-45 DSH-R6A-01
+- :47-51 DSH-R6A-02 (24 claim at :49)
+- :55-98 DSH-R6A-03..12
+- :183 recommendation "24 个变量"
+- :188 user decision point
+
+Codex adjudication:
+- :21-36 mapping table
+- :26 count correction note
+- :49 Gate tokens
+
+r2 manifest:
+- :19 the 23-var list
+- :12 "打开或哈希普通文件"
+r6 contract:
+- :34 "§4.5" dangling
+- :36 exclusion manifest filename
+- :97 python-cache generic row
+
+Good.
+
+Let me now also double check the claim about "13" variables not in Phase A. I'll present as "§6 表共登记 36 个具名变量（含仅在映射列出现的 GIT_CONFIG_NOSYSTEM、GIT_TERMINAL_PROMPT），其中 23 个即 Phase A 集合，其余 13 个为 NOT_RUN / Phase B". Let me list the 13: HOMEDRIVE、HOMEPATH、PYTHONPYCACHEPREFIX、PYTHONDONTWRITEBYTECODE、TORCHINDUCTOR_CACHE_DIR、TORCH_EXTENSIONS_DIR、XDG_CACHE_HOME、XDG_DATA_HOME、HF_ASSETS_CACHE、HF_XET_CACHE、HF_TOKEN_PATH、HF_HUB_DISABLE_IMPLICIT_TOKEN、PATH. ✓ 13.
+
+Note: PYTHONDONTWRITEBYTECODE appears only in the mapping cell of PYTHONPYCACHEPREFIX (r7:129), and GIT_CONFIG_NOSYSTEM/GIT_TERMINAL_PROMPT appear only in the mapping cell of line 141 — but the latter two ARE in Phase A's 23. I'll note this precisely: the §6 table's left column has 34 rows-names; adding the 2 in-cell names gives 36. Let me count left-column names: LOCALAPPDATA, TEMP, TMP, APPDATA, USERPROFILE, HOME, HOMEDRIVE, HOMEPATH, PYTHONPYCACHEPREFIX, PYTHONUSERBASE, PYTHONNOUSERSITE, TRITON_CACHE_DIR, PYINSTALLER_CONFIG_DIR, TORCH_HOME, TORCHINDUCTOR_CACHE_DIR, TORCH_EXTENSIONS_DIR, XDG_CACHE_HOME, XDG_DATA_HOME, HF_HOME, HF_HUB_CACHE, HF_ASSETS_CACHE, HF_XET_CACHE, HF_TOKEN_PATH, HF_HUB_DISABLE_IMPLICIT_TOKEN, TRANSFORMERS_CACHE, PIP_CACHE_DIR, UV_CACHE_DIR, CARGO_HOME, CARGO_TARGET_DIR, NPM_CONFIG_CACHE, NPM_CONFIG_USERCONFIG, GIT_CONFIG_GLOBAL, PATH = 33. Plus in-cell PYTHONDONTWRITEBYTECODE, GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT = 3 → 36. Wait, so left column = 33, in-cell = 3, total 36. Let me recount left column:
+1 LOCALAPPDATA
+2 TEMP
+3 TMP
+4 APPDATA
+5 USERPROFILE
+6 HOME
+7 HOMEDRIVE
+8 HOMEPATH
+9 PYTHONPYCACHEPREFIX
+10 PYTHONUSERBASE
+11 PYTHONNOUSERSITE
+12 TRITON_CACHE_DIR
+13 PYINSTALLER_CONFIG_DIR
+14 TORCH_HOME
+15 TORCHINDUCTOR_CACHE_DIR
+16 TORCH_EXTENSIONS_DIR
+17 XDG_CACHE_HOME
+18 XDG_DATA_HOME
+19 HF_HOME
+20 HF_HUB_CACHE
+21 HF_ASSETS_CACHE
+22 HF_XET_CACHE
+23 HF_TOKEN_PATH
+24 HF_HUB_DISABLE_IMPLICIT_TOKEN
+25 TRANSFORMERS_CACHE
+26 PIP_CACHE_DIR
+27 UV_CACHE_DIR
+28 CARGO_HOME
+29 CARGO_TARGET_DIR
+30 NPM_CONFIG_CACHE
+31 NPM_CONFIG_USERCONFIG
+32 GIT_CONFIG_GLOBAL
+33 PATH
+Yes 33 left-column names. In-cell: PYTHONDONTWRITEBYTECODE (line 129), GIT_CONFIG_NOSYSTEM, GIT_TERMINAL_PROMPT (line 141) = 3. Total 36. 36 − 23 = 13. ✓ consistent with my earlier sum (I had counted PATH as separate and got 36). Good.
+
+So the 13 = 33+3−23. Fine.
+
+Now, hmm: is `GIT_CONFIG_NOSYSTEM` / `GIT_TERMINAL_PROMPT` "§6 registered"? They're in the mapping cell, so yes registered. And they're in Phase A's 23. So they're not among the 13. The 13 list above doesn't include them. ✓
+
+Also PYTHONDONTWRITEBYTECODE is in the 13 (Phase B). ✓
+
+Alright. Now compose. I need to be careful about the statement "我未复算 SHA". Also should mention I did not read r3/r4/r5 contract/report originals (boundary).
+
+Also, per the "Non-zero exits" instruction — not relevant.
+
+Also, per role: I'm the reviewer, not the Gate releaser. State that.
+
+Also note: "只读查看上述确切文档" — I used read tool only. I should mention I used only the read tool on the pinned documents (plus the two authorized source-history files), no shell. Actually I didn't use grep. Good — I can truthfully say I only used the read tool. ✓ (I did not call grep.)
+
+Now, one more careful verification: the prompt says "前轮 Review：r6 DSH report ... SHA-256=D8821DF6...". I read that file; its content matches (CHANGES_REQUESTED, 0/0/2/10, 12 open). ✓ Its internal §12 gives the "24 项" recommendation at line 183 and the 24 claim at line 49. ✓
+
+And "Codex r6 adjudication：... 声称 SHA-256=103CBD5F..." — I read it; content: accepts all 12, maps them, notes 23-vs-24, Gate at line 49. ✓
+
+Now let me write the final answer. It'll be long but structured. Use tables where helpful.
+
+I should also give the "DSH-R6A-01..12 每项 CLOSED/OPEN 与证据行号" table.
+
+Let me draft.
+
+Also, per AGENTS.md final-reply requirement: give a recommended next step with a forwardable instruction. I'll include a forwardable block addressed to Codex.
+
+Let me write it now.
+
+Length: aim for comprehensive but not bloated. Maybe ~200 lines of markdown.
+
+One more consideration on the Decision wording: The prompt lists "APPROVED / APPROVED_WITH_CONDITIONS / CHANGES_REQUESTED". I'll pick **APPROVED**（内容层），with a note that if Codex prefers to treat P3-01..05 as binding conditions, the equivalent reading is APPROVED_WITH_CONDITIONS; but since none is blocking and I recommend deferral to r4, plain APPROVED is the accurate content verdict. Hmm, is that hedging? I'll state clearly: 内容 Decision = APPROVED. And note the P3s are recommendations, not conditions. Maybe add: "若 Codex 决定在本轮落实 P3-01..05，则应视同新字节并重新 pin/Review；本 Review 的 APPROVED 只绑定当前读到的 r7/r3 文本。" Good.
+
+Let me make sure to mention "任一 P0/P1/P2 open finding 必须阻止 Phase A" → since 0, no content-review barrier; but Phase A still needs Codex adjudication + object pin (contract r7:156, r7:175-177).
+
+Write it.

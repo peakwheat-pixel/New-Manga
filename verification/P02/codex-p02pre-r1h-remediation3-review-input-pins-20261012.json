@@ -1,0 +1,93 @@
+{
+  "task": "P02PRE-R1H",
+  "review": "Independent static review of round-three Owner remediation delivery",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "/root/p02_r1h_remediation_review",
+  "integrator": "/root",
+  "repo": "G:\\CODEX\\New Manga",
+  "ownerWorktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "branch": "agent/codex/P02PRE-R1H",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "previousHead": "92c90a9ba20f7a1b4ab090837f99c191745524f6",
+  "deliveryHead": "0ecada4182d624d4f352a253e09db3bdecbee5d1",
+  "deliveryTree": "06986f47ac8363a32ecbf2d0e41ec1d680510940",
+  "integratorVerification": {
+    "controlledStatus": {
+      "command": "git status --porcelain=v1 -z --untracked-files=all -- . ':(exclude).tmp.driveupload'",
+      "exit": 0,
+      "records": 0,
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "roundThreeDeltaPaths": [
+      "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "verification/P02/p02pre-r1h-handoff-20261012.md"
+    ],
+    "allowedCheck": {
+      "command": "git diff --check 92c90a9ba20f7a1b4ab090837f99c191745524f6..0ecada4182d624d4f352a253e09db3bdecbee5d1",
+      "exit": 0
+    }
+  },
+  "sourcePins": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 22941,
+      "sha256": "45671AD744C2CD51D831F3513F16CE573D24E7A0CF679DC087E98A29B27A4486"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation2-20261012.md",
+      "bytes": 8812,
+      "sha256": "55A55133EF04FBED607F0754C9F5D75A25371BFF0EBCFF8E469CE40E68D08894"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-remediation2-adjudication-20261012.md",
+      "bytes": 4988,
+      "sha256": "1D691CB0842894CBF70E151140CFBAB8192C3832614D7370155B815FCFE66D98"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round3-20261012.prompt.md",
+      "bytes": 3975,
+      "sha256": "7B7589D7CAD6B383B5697820C8CCAB87BE54E34AE225FE9508F7D6130DF2AB6A"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-owner-remediation-round3-20261012.pins.json",
+      "bytes": 3440,
+      "sha256": "100DAFBD5CA10ADC2689EAB3553504DD18D73CA31E0FE2B863637272F1CBE335"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-remediation2-review-input-pins-20261012.json",
+      "bytes": 3866,
+      "sha256": "1AF1D4815B0902B3149056BFA27842FB6EBA6C318709F3A66DFB7F5B0ACC0FB9"
+    }
+  ],
+  "candidatePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 57615,
+      "sha256": "D9F33E544390C5056D6AAB77042BB2F34E7D6BA10773B449DD76E87DF9F8B1A7"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 7622,
+      "sha256": "DAE7A8540868A3E2AFA4EE6935577ADF37B6C13C49F10302976E5AAC300F3FD7"
+    }
+  ],
+  "rules": {
+    "inspectCompleteDiffFromFrozenTaskBase": true,
+    "reviewerMayWriteOnly": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation3-20261012.md",
+    "noParserSelfcheckPreflightCaptureGetter": true,
+    "noTestsBuildCargoAC1toAC7OSDynamicOrSandbox": true,
+    "doNotTreatDeliveryAsReviewOrGatePass": true,
+    "reviewerAndOwnerMustDiffer": true
+  }
+}

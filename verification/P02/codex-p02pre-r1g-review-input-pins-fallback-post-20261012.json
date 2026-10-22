@@ -1,0 +1,116 @@
+{
+  "artifact": "Codex post-review pin evidence for independent Codex Reviewer sub-agent",
+  "date": "2026-10-12",
+  "task": "P02PRE-R1G",
+  "preEvidence": {
+    "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1g-review-input-pins-fallback-20261012.json",
+    "bytes": 4587,
+    "sha256": "1470088FA8E92326829B9B036ADD26DD5A9C5AA7CCCD41651E83FBA1D7B75592"
+  },
+  "review": {
+    "reviewer": "/root/p02_r1g_review_fallback",
+    "role": "Codex Reviewer",
+    "verdict": "CHANGES_REQUESTED",
+    "findings": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 2,
+      "P3": 0
+    },
+    "reviewedHead": "6e1c00fee3db07805c92c25cdc311af9279ceb51",
+    "trace": "subagent report states 12 exact files read; no writes, commands, tests, hash computation, or excluded-path query"
+  },
+  "candidateAfterReview": {
+    "branch": "agent/antigravity/P02PRE-R1G",
+    "head": "6e1c00fee3db07805c92c25cdc311af9279ceb51",
+    "clean": true,
+    "statusRecords": 0
+  },
+  "postReviewPins": [
+    {
+      "key": "task",
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1G.md",
+      "bytes": 20397,
+      "sha256": "F3E23A4BDF0396211AF2DA7A102E8627285F66A1C56EEC9B31ACD01BE6433522",
+      "matchesPre": true
+    },
+    {
+      "key": "manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-manifest-20261011.md",
+      "bytes": 18983,
+      "sha256": "702C966DFEF91FC23AF1E4B8BD92E33CA2D0F3B4A9A4313030D6ABC192098FBC",
+      "matchesPre": true
+    },
+    {
+      "key": "candidate_script",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-capture.ps1",
+      "bytes": 80593,
+      "sha256": "2CC9C49F0708B4D174749ACE5F3C92BCD6D6B2E2825CA908412BCE2B2436778F",
+      "matchesPre": true
+    },
+    {
+      "key": "author_selfcheck",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-author-selfcheck-20261011.json",
+      "bytes": 2462,
+      "sha256": "016FA5BA0FCA16FCDB63D62CD0BAF5B723DE5AEF0A6B392DA13C41D88230AEB6",
+      "matchesPre": true
+    },
+    {
+      "key": "owner_handoff",
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1g\\New Manga\\verification\\P02\\p02pre-r1g-antigravity-handoff-20261011.md",
+      "bytes": 22604,
+      "sha256": "2996A3D05E9010C73F7D57B7249532EB3B33FE071E071FA009968B38DFE1D716",
+      "matchesPre": true
+    },
+    {
+      "key": "prior_review_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-adjudication-20261012.md",
+      "bytes": 6144,
+      "sha256": "493A2FE96C4534ED000D7A055F7E3C54CC4A1DC2C15B9D7303FC692A440D1673",
+      "matchesPre": true
+    },
+    {
+      "key": "round1_remediation_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-remediation-review-adjudication-20261012.md",
+      "bytes": 4618,
+      "sha256": "E31D021C5888AFBBDD99700FF4B8A092535BCDA6D0E78B56D964D3BF9734F5B0",
+      "matchesPre": true
+    },
+    {
+      "key": "invalid_dsh_followup_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-review-followup1-dispatch-adjudication-20261012.md",
+      "bytes": 4151,
+      "sha256": "45D8E99A39D1DC3D6090DDBC8182E85C896D21FAEBA0DACAB8263716F75FD39D",
+      "matchesPre": true
+    },
+    {
+      "key": "owner_delivery_adjudication",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1g-argumentlist-delivery-adjudication-20261012.md",
+      "bytes": 4541,
+      "sha256": "9C99E69BB3B0BD849796C96455996BC901AD7760F40A233F123F065B70D15A04",
+      "matchesPre": true
+    },
+    {
+      "key": "review_template",
+      "path": "G:\\CODEX\\New Manga\\doc\\templates\\REVIEW.md",
+      "bytes": 3915,
+      "sha256": "048DD2C001BC16CE68B46460C2D23AA32BA1119091CA1E2ABA3EE4EE63ED4762",
+      "matchesPre": true
+    },
+    {
+      "key": "predecessor_script",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-capture.ps1",
+      "bytes": 67582,
+      "sha256": "5A3FE118A8758CCDF0BEDBE170D31B34DA6C338101096EAA825DE80DF70E8316",
+      "matchesPre": true
+    },
+    {
+      "key": "predecessor_manifest",
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\p02pre-r1f-manifest-20261011.md",
+      "bytes": 49783,
+      "sha256": "F91AF7B1785B77A57CEEAFE0FFD879345CF361FD85A5E147CD970CF5EF43717B",
+      "matchesPre": true
+    }
+  ],
+  "allPrePinsMatchPost": true
+}

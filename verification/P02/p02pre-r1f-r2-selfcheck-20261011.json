@@ -1,0 +1,29 @@
+{
+  "capturedAtUtc": "2026-10-11T08:01:38.0597141Z",
+  "task": "P02PRE-R1F Round 2 F1 isolated function self-check",
+  "processPath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "processArguments": "-NoLogo -NoProfile -NonInteractive -EncodedCommand <in-memory source>",
+  "childExitCode": 0,
+  "stdout": "{\"sourcePath\":\"verification/P02/p02pre-r1f-capture.ps1\",\"sourceBytes\":55603,\"sourceSha256\":\"4FB853E696D2BDF86BA48D5C7C45E006D90356C66EB450D6856AD55B89F37D54\",\"powershellVersion\":\"5.1.26100.9549\",\"parsedErrors\":0,\"extractedFunctions\":[\"Get-InventoryAction\",\"Assert-InventoryPolicySelfCheck\"],\"policySelfcheck\":\"PASS\",\"capturedPipelineOutputCount\":0,\"captureScriptInvoked\":false,\"hostGetterInvoked\":false,\"registryOrAclWriteInvoked\":false,\"result\":\"PASS_WITH_EVIDENCE\"}\r\n",
+  "stdoutBytes": 469,
+  "stderr": "",
+  "stderrBytes": 0,
+  "childResult": {
+    "sourcePath": "verification/P02/p02pre-r1f-capture.ps1",
+    "sourceBytes": 55603,
+    "sourceSha256": "4FB853E696D2BDF86BA48D5C7C45E006D90356C66EB450D6856AD55B89F37D54",
+    "powershellVersion": "5.1.26100.9549",
+    "parsedErrors": 0,
+    "extractedFunctions": [
+      "Get-InventoryAction",
+      "Assert-InventoryPolicySelfCheck"
+    ],
+    "policySelfcheck": "PASS",
+    "capturedPipelineOutputCount": 0,
+    "captureScriptInvoked": false,
+    "hostGetterInvoked": false,
+    "registryOrAclWriteInvoked": false,
+    "result": "PASS_WITH_EVIDENCE"
+  },
+  "noCaptureOrHostGetterClaim": true
+}

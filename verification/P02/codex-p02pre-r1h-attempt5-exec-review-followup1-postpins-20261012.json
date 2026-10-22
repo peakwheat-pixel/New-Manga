@@ -1,0 +1,161 @@
+{
+  "schema": "p02pre-r1h-attempt5-exec-review-followup-postpins-v1",
+  "task": "P02PRE-R1H-R6-EXEC-A5",
+  "dshCliVersion": "0.2.0-rc.2",
+  "dshSession": "session-ba3bfaaf-a735-42d5-aa68-0c3bbbd3deee",
+  "dshModel": "UNKNOWN",
+  "dshChannel": "CLI --profile headless --json",
+  "exitCode": 0,
+  "verdict": "CHANGES_REQUESTED",
+  "reviewerIndependentHashes": "NOT_VERIFIED; prompt prohibited hash commands",
+  "codexPrePostPins": "15/15 MATCH",
+  "inputs": [
+    {
+      "path": "doc/tasks/P02PRE-R1H-R6-EXEC-A5.md",
+      "expectedBytes": 9073,
+      "actualBytes": 9073,
+      "expectedSha256": "7FCFF7A1E95DE1A8C97E21B16305407E696A776852F9DCD4929CB20BCF09D3FE",
+      "actualSha256": "7FCFF7A1E95DE1A8C97E21B16305407E696A776852F9DCD4929CB20BCF09D3FE",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H-R6-EXEC-A4.md",
+      "expectedBytes": 9568,
+      "actualBytes": 9568,
+      "expectedSha256": "71705868D52296F49CAD441DEBE2301468A067E320E6101F0DBF8961E2432D61",
+      "actualSha256": "71705868D52296F49CAD441DEBE2301468A067E320E6101F0DBF8961E2432D61",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "expectedBytes": 65067,
+      "actualBytes": 65067,
+      "expectedSha256": "66C65AFAA7EF615D29B6BBA8D5C1E58BA7F506C7785191C7E2F8CF9D4F7D7144",
+      "actualSha256": "66C65AFAA7EF615D29B6BBA8D5C1E58BA7F506C7785191C7E2F8CF9D4F7D7144",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "expectedBytes": 4760,
+      "actualBytes": 4760,
+      "expectedSha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "actualSha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt4-20261012.ps1",
+      "expectedBytes": 43464,
+      "actualBytes": 43464,
+      "expectedSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "actualSha256": "B9EF5E474AA1E8DA2526BED97A6C6D881F162A421DB982D33B6D36E3492347B2",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt4-20261012.md",
+      "expectedBytes": 11228,
+      "actualBytes": 11228,
+      "expectedSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "actualSha256": "EE8F26ECB5C0C894609F2EC0357BCA237BEE72E55E7836E48B6CB1B145E46F7D",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integrator-attempt5-20261012.ps1",
+      "expectedBytes": 43464,
+      "actualBytes": 43464,
+      "expectedSha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10",
+      "actualSha256": "9B52BEA5FD108FADC78141318337A98C74C77ED18CDA9D31B8748CB6BDEEAA10",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-integration-protocol-attempt5-20261012.md",
+      "expectedBytes": 11641,
+      "actualBytes": 11641,
+      "expectedSha256": "0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3",
+      "actualSha256": "0E80C83100DB997E7ED81AFF87F058927246D24222931CED54AA44A7809C6AF3",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-round6-attempt5-exec-handoff-20261012.md",
+      "expectedBytes": 2283,
+      "actualBytes": 2283,
+      "expectedSha256": "2E3286776ED369A704DC12D41A22771BA0E4E09B081B8982A2DE8C7958416F15",
+      "actualSha256": "2E3286776ED369A704DC12D41A22771BA0E4E09B081B8982A2DE8C7958416F15",
+      "match": true
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-attempt4-review-adjudication-20261012.md",
+      "expectedBytes": 6063,
+      "actualBytes": 6063,
+      "expectedSha256": "05FDE48CD1AA2C4B5DDCEF107AA18D6FDDE7458FE9D1A4EAB8C9C7F41259351C",
+      "actualSha256": "05FDE48CD1AA2C4B5DDCEF107AA18D6FDDE7458FE9D1A4EAB8C9C7F41259351C",
+      "match": true
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt4-integration-verify-20261012.json",
+      "expectedBytes": 4400,
+      "actualBytes": 4400,
+      "expectedSha256": "76431EBDA71DE0E654709FDF4AAAFB4FA234C70EBA07FD2C82F08AF74A6C45CD",
+      "actualSha256": "76431EBDA71DE0E654709FDF4AAAFB4FA234C70EBA07FD2C82F08AF74A6C45CD",
+      "match": true
+    },
+    {
+      "path": "doc/09_COLLABORATION.md",
+      "expectedBytes": 19131,
+      "actualBytes": 19131,
+      "expectedSha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D",
+      "actualSha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D",
+      "match": true
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt5-exec-review-pins-20261012.json",
+      "expectedBytes": 3204,
+      "actualBytes": 3204,
+      "expectedSha256": "8CC7B0F69835889701DDE90E17CC7F3DF6F65B48E34222AEF8BCA88BEBEB4598",
+      "actualSha256": "8CC7B0F69835889701DDE90E17CC7F3DF6F65B48E34222AEF8BCA88BEBEB4598",
+      "match": true
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-attempt5-exec-review-20261012.md",
+      "expectedBytes": 11387,
+      "actualBytes": 11387,
+      "expectedSha256": "3DD4753A0B31C38A5B8079FF93918B8C91FBCED9BE9AF5AB33523997F969B45A",
+      "actualSha256": "3DD4753A0B31C38A5B8079FF93918B8C91FBCED9BE9AF5AB33523997F969B45A",
+      "match": true
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt5-exec-postpins-20261012.json",
+      "expectedBytes": 6018,
+      "actualBytes": 6018,
+      "expectedSha256": "34F8BB92E04819F5D9D43A25978F4066D3F40CA6C46B4B94CBADF259120BCF79",
+      "actualSha256": "34F8BB92E04819F5D9D43A25978F4066D3F40CA6C46B4B94CBADF259120BCF79",
+      "match": true
+    }
+  ],
+  "outputs": {
+    "promptSha256": "C1ACA86ADFBC9C3C6C45203DDDA469E0676A826FD7CC66C1691434C6360A7306",
+    "pinManifestSha256": "7CD696C7531D48301D7AC454CAC73BA5662E9CF552213A4139D06374798D83FE",
+    "stdout": {
+      "bytes": 217044,
+      "sha256": "3B76F332B617AEA6CD1CA5277ACCBA7C422F3C859ACC178E65D4EE9E4349596D"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "report": {
+      "bytes": 19583,
+      "sha256": "5BD07049170BDE17169ADE658B2021F51AEA98D4765764EC0B1F9B7CB5266872"
+    }
+  },
+  "gateState": {
+    "private_registry_absence": "UNPROVABLE",
+    "TechnicalGate": "NOT_SATISFIED",
+    "OwnerRiskAcceptance": "APPROVED",
+    "GateDisposition": "WAIVED_BY_OWNER",
+    "BuildAuthorization": "AUTHORIZED_WITH_EXCEPTION",
+    "BuildGate": "BLOCKED",
+    "HardBuildBarrier": "EFFECTIVE",
+    "BuildCargo": "NOT_RUN",
+    "SystemAC1toAC7": "BLOCKED / NOT_RUN"
+  }
+}

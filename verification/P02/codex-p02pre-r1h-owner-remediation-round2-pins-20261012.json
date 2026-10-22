@@ -1,0 +1,81 @@
+{
+  "task": "P02PRE-R1H",
+  "owner": "/root/p02_r1h_codex_owner",
+  "reviewer": "non-author Codex Reviewer; assigned after delivery",
+  "integrator": "/root",
+  "repository": "G:\\CODEX\\New Manga",
+  "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-codex",
+  "branch": "agent/codex/P02PRE-R1H",
+  "frozenTaskBase": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+  "currentDeliveryBase": "4a02811d6edf9ab423d299a36c51f103e62dd5f3",
+  "taskSha256": "F028AB523DB3D909BC85CFE5FBCD30B242C68E07691F5FD3EE099460DA87F5AB",
+  "ownerPromptSha256": "08F4BF3CBD552DF8ECB8FCA5E30FD0918A6A63BA261D2051394F92C1AD529023",
+  "promptPath": "verification/P02/codex-p02pre-r1h-owner-remediation-round2-20261012.prompt.md",
+  "scope": [
+    "verification/P02/p02pre-r1h-capture.ps1",
+    "verification/P02/p02pre-r1h-selfcheck.ps1",
+    "verification/P02/p02pre-r1h-handoff-20261012.md"
+  ],
+  "sourcePins": [
+    {
+      "path": "doc/tasks/P02PRE-R1H.md",
+      "bytes": 15735,
+      "sha256": "F028AB523DB3D909BC85CFE5FBCD30B242C68E07691F5FD3EE099460DA87F5AB"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-manifest-20261012.md",
+      "bytes": 4760,
+      "sha256": "28E0313B1300AB571C268A32101C4B8ABACEA9855FD5CED563A4535A8F1E3D74"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation-20261012.md",
+      "bytes": 7949,
+      "sha256": "2BF89EE77D3552C3DC11008F1C3A98F5ED143D711949705303CD133A22AC6021"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-remediation-review-adjudication-20261012.md",
+      "bytes": 5928,
+      "sha256": "1D169382E956371E731854AE31D665506A655A61AD6C039636B6014023FB82F7"
+    },
+    {
+      "path": "verification/P02/codex-subagent-p02pre-r1h-static-review-remediation-pin-addendum-20261012.md",
+      "bytes": 5003,
+      "sha256": "F68DAC3C01CCC7E3445CCC1EE6A190BE5E8ADFC29A9D42A23AAC4EA04953BCC0"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-review-followup-pin-reconciliation-20261012.json",
+      "bytes": 4052,
+      "sha256": "516C202248B2347BE790707AB71465B57BC26A3C8F056FE82BF25354441BB4E2"
+    }
+  ],
+  "startingCandidatePins": [
+    {
+      "path": "verification/P02/p02pre-r1h-capture.ps1",
+      "bytes": 93124,
+      "sha256": "0BD41442800BA2336B277C3F8C16C41D4DDF983B2B5D5967378A9EF564078DA3"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-selfcheck.ps1",
+      "bytes": 24452,
+      "sha256": "17202B6EDD5C3185432F90F7618ECDC689739492173AE2D4EA4E9D1AEF9CBCD8"
+    },
+    {
+      "path": "verification/P02/p02pre-r1h-handoff-20261012.md",
+      "bytes": 4397,
+      "sha256": "2E4E9EA2930930BF4A2AD9F04AE3FD542635F384E7CB07A27349ADDDE6B6F0E0"
+    }
+  ],
+  "onlyAllowedCheck": "git diff --check",
+  "prohibited": [
+    "PowerShell parser",
+    "self-check",
+    "preflight",
+    "capture",
+    "getter/API",
+    "tests",
+    "Build/Cargo",
+    "AC1–AC7",
+    "OS dynamic validation",
+    "Sandbox"
+  ]
+}

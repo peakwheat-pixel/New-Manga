@@ -1,0 +1,24 @@
+## agent/antigravity/P04-prod-command-concurrency
+ M doc/tasks/P04.md
+?? verification/P04/antigravity-owner-revision-r1-followup.exit
+?? verification/P04/antigravity-owner-revision-r1-followup.prompt.md
+?? verification/P04/antigravity-owner-revision-r1-followup.stderr.log
+?? verification/P04/antigravity-owner-revision-r1-followup.stdout.json
+?? verification/P04/codex-antigravity-r4.exit
+?? verification/P04/codex-antigravity-r4.prompt.md
+?? verification/P04/codex-antigravity-r4.response.md
+?? verification/P04/codex-antigravity-r4.stderr.log
+?? verification/P04/codex-antigravity-r4.stdout.json
+?? verification/P04/codex-dsh-owner-r4-review.prompt.md
+?? verification/P04/codex-dsh-owner-r4-review.stderr.log
+?? verification/P04/codex-dsh-owner-r4-review.stdout.md
+?? verification/P04/dsh-availability-probe-20261010.exit
+?? verification/P04/dsh-availability-probe-20261010.stderr.log
+?? verification/P04/dsh-availability-probe-20261010.stdout.jsonl
+?? verification/P04/dsh-p04-owner-review-r3-resume2.exit
+?? verification/P04/dsh-p04-owner-review-r3-resume2.prompt.md
+?? verification/P04/dsh-p04-owner-review-r3-resume2.stderr.log
+?? verification/P04/dsh-p04-owner-review-r3-resume2.stdout.jsonl
+?? verification/P04/dsh-p04-owner-review-r3.exit
+?? verification/P04/dsh-p04-owner-review-r3.stdout.jsonl
+?? verification/P04/dsh-p04-owner-review-r3.stdout.md

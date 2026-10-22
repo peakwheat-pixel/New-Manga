@@ -1,0 +1,834 @@
+dsh: reasoning:
+Let me start by understanding the task. I'm a read-only reviewer for Task P02PRE-R1F Review Round 5 follow-up #4. I need to review exactly 11 pinned files, no other paths, no shell/grep/rg/PowerShell commands, no writing.
+
+Wait — but the boundary says I may only read those 11 files. I can use the `read` tool. I must not run shell commands. I should not use glob/grep either? The boundary says "不运行 shell/grep/rg/PowerShell 命令". The grep tool is ripgrep-based... so I should avoid grep tool too. I should only use `read` on the 11 pinned files.
+
+Let me read all 11 files. Let me start.
+
+Actually, first let me consider creating a goal — the instructions say create_goal for long-running objectives. This is a long review task. Hmm, it's a single deliverable review; might be reasonable but it says "not for single-turn work". This is a review that requires reading 11 files — probably a multi-step but single-turn task. I'll skip goal creation, or maybe create one since it's a big analysis. The runtime says use goal when the direct human request is a long-running objective. This is a bounded review — I'll just do it.
+
+Let me read the files. Note the sizes: script is 66560 bytes, stderr log is 119856 bytes (~120KB). Large but manageable.
+
+Let me read them in parallel batches.
+
+Note: `.stdout.md` 14724 bytes, `.prompt.md` 3438 bytes, `.stderr.log` 119856 bytes.
+
+Let me start reading.
+dsh: reasoning:
+Now I need to read the remaining files: manifest (23135 bytes), capture.ps1 (66560 bytes), stdout.md (14724), stderr.log (119856).
+
+The critical part: verify the two protected-key arrays in the script contain all the listed paths, count 84 keys / 84 unique, and that the 12 new paths don't duplicate the old 72.
+
+Let me read the manifest and script. The script is 66560 bytes — probably around 1000-1500 lines. Let me read it fully.
+
+Also need the stdout.md for review focus (follow-up #3 report) and stderr.log (119856 bytes, likely noise).
+
+Let me read the script first.
+dsh: reasoning:
+Now the script — the critical piece. 66560 bytes. Let me read it. It's probably ~1500 lines. read default limit 2000 lines. Let me read it in full.
+
+Wait — a concern: the byte count. The read tool returns lines with line numbers; bytes may differ. I cannot compute hashes (no shell). I can't verify SHA-256. I must rely on content comparison.
+
+Key verification: the two protected-key arrays. Let me read the script.
+dsh: reasoning:
+Continue reading the script.
+dsh: reasoning:
+Continue reading lines 701-901.
+dsh: reasoning:
+Now I need to enumerate the two protected-key arrays and count.
+
+Array 1: lines 669-741 (from `foreach ($key in @(` at line 669 to `)) {` at 741). Let me list entries.
+
+Array 1 entries (in order, with line numbers):
+670: AGENTS.md
+671: doc/REBASELINE_PLAN.md
+672: doc/00_INDEX.md
+673: doc/STATUS.md
+674: doc/09_COLLABORATION.md
+675: doc/tasks/P02.md
+676: doc/tasks/P02PRE-R0S6.md
+677: doc/tasks/P02PRE-R1.md
+678: doc/tasks/P02PRE-R1F.md
+679: verification/P02/p02-owner-risk-waiver-execution-manifest-r6-20261011.md
+680: verification/P02/p02pre-r1-manifest-20261011.md
+681: verification/P02/p02pre-r1-capture.ps1
+682: verification/P02/p02pre-r1-evidence-20261011.json
+683: verification/P02/p02pre-r1f-manifest-20261011.md
+684: verification/P02/p02pre-r1f-capture.ps1
+685: verification/P02/p02pre-r1f-r2-selfcheck-20261011.json
+686: verification/P02/p02pre-r1f-r5-selfcheck-20261011.json
+687: verification/P02/p02pre-r1f-r5-selfcheck-retry-20261011.json
+688: verification/P02/p02pre-r1f-parser-20261011.json
+689: verification/P02/p02pre-r1f-parser-windows-powershell-5.1-20261011.json
+690: verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r2-20261011.json
+691: verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r3-20261011.json
+692: verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r4-20261011.json
+693: verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r6-20261011.json
+694: verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r7-20261011.json
+695: verification/P02/dsh-p02pre-r1f-review-20261011.prompt.md
+696: verification/P02/dsh-p02pre-r1f-review-20261011.stdout.jsonl
+697: verification/P02/dsh-p02pre-r1f-review-20261011.stderr.log
+698: verification/P02/dsh-p02pre-r1f-review-20261011.exit
+699: verification/P02/dsh-p02pre-r1f-review-20261011.md
+700: verification/P02/dsh-p02pre-r1f-review-r2-20261011.prompt.md
+701: verification/P02/dsh-p02pre-r1f-review-r2-20261011.stdout.md
+702: verification/P02/dsh-p02pre-r1f-review-r2-20261011.stderr.log
+703: verification/P02/dsh-p02pre-r1f-review-r2-20261011.exit
+704: verification/P02/dsh-p02pre-r1f-review-r3-20261011.prompt.md
+705: verification/P02/dsh-p02pre-r1f-review-r3-20261011.stdout.md
+706: verification/P02/dsh-p02pre-r1f-review-r3-20261011.stderr.log
+707: verification/P02/dsh-p02pre-r1f-review-r3-20261011.exit
+708: verification/P02/dsh-p02pre-r1f-review-r5-20261011.prompt.md
+709: verification/P02/dsh-p02pre-r1f-review-r5-20261011.stdout.md
+710: verification/P02/dsh-p02pre-r1f-review-r5-20261011.stderr.log
+711: verification/P02/dsh-p02pre-r1f-review-r5-20261011.exit
+712: verification/P02/p02pre-r1f-adjudication-20261011.md
+713: verification/P02/codex-checkpoint-p02pre-r1f-20261011.md
+714: verification/P02/p02pre-r0s6-checkpoint-20261011.md
+715: verification/P02/p02pre-r1f-r5-reviewfix-selfcheck-20261011.json
+716: verification/P02/p02pre-r1f-followupfix-selfcheck-wrapper-attempt1-20261011.md
+717: verification/P02/dsh-p02pre-r1f-review-r5-followup-20261011.prompt.md
+718: verification/P02/dsh-p02pre-r1f-review-r5-followup-20261011.stdout.md
+719: verification/P02/dsh-p02pre-r1f-review-r5-followup-20261011.stderr.log
+720: verification/P02/dsh-p02pre-r1f-review-r5-followup-20261011.exit
+721: verification/P02/p02pre-r1f-r5-adjudication-20261011.md
+722: verification/P02/p02pre-r1f-r5-followupfix-selfcheck-20261011.json
+723: verification/P02/p02pre-r1f-r5-followupfix2-selfcheck-20261011.json
+724: verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.prompt.md
+725: verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.stdout.md
+726: verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.stderr.log
+727: verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.exit
+728: verification/P02/p02pre-r1f-r5-followup2-adjudication-20261011.md
+729: verification/P02/p02pre-r1f-r5-followup2-review-adjudication-20261011.md
+730: verification/P02/dsh-p02pre-r1f-review-r5-followup3-20261011.prompt.md
+731: ...stdout.md
+732: ...stderr.log
+733: ...exit
+734: verification/P02/p02pre-r1f-r5-followup3-review-adjudication-20261011.md
+735: verification/P02/p02pre-r1f-r5-followupfix3-selfcheck-20261011.json
+736: verification/P02/dsh-p02pre-r1f-review-r5-followup4-20261011.prompt.md
+737: ...stdout.md
+738: ...stderr.log
+739: ...exit
+740: verification/P02/p02pre-r1f-r5-followup4-review-adjudication-20261011.md
+
+Count array 1: lines 670-740 inclusive = 71 entries. Let me count carefully:
+670-678: 9 entries (AGENTS.md, REBASELINE_PLAN, 00_INDEX, STATUS, 09_COLLABORATION, P02.md, P02PRE-R0S6, P02PRE-R1, P02PRE-R1F) = 9
+679-694: 16 entries (679,680,681,682,683,684,685,686,687,688,689,690,691,692,693,694) = 16 → total 25
+695-699: 5 → total 30
+700-703: 4 → total 34
+704-707: 4 → total 38
+708-711: 4 → total 42
+712-716: 5 (adjudication, codex-checkpoint, r0s6-checkpoint, r5-reviewfix-selfcheck, followupfix-wrapper-attempt1) → total 47
+717-720: 4 → total 51
+721: r5-adjudication → 52
+722: r5-followupfix-selfcheck → 53
+723: r5-followupfix2-selfcheck → 54
+724-727: 4 → 58
+728: r5-followup2-adjudication → 59
+729: r5-followup2-review-adjudication → 60
+730-733: 4 → 64
+734: r5-followup3-review-adjudication → 65
+735: r5-followupfix3-selfcheck → 66
+736-739: 4 → 70
+740: r5-followup4-review-adjudication → 71
+
+So array 1 = 71 keys.
+
+Array 2: lines 744-758:
+745: parser r8
+746: r4 prompt
+747: r4 stdout
+748: r4 stderr
+749: r4 exit
+750: r4-retry prompt
+751: r4-retry stdout
+752: r4-retry stderr
+753: r4-retry exit
+754: r4-followup prompt
+755: r4-followup stdout
+756: r4-followup stderr
+757: r4-followup exit
+= 13 keys (745-757).
+
+Total 71 + 13 = 84. 
+
+Now check: are these two `foreach` blocks actually both "protected-key arrays"? Yes: both assign `$Result.protectedHashes[$key]`, so combined dict = 84 keys. Need uniqueness across both: array 1 contains r4? Let me check array1 for any r4 entries. Array 1 lines 670-740: no 'r4-*' entries present (I listed them: r2, r3, r5, r5-followup, r5-followup2, r5-followup3, r5-followup4). No r4. Good — no duplicates between arrays.
+
+Now duplicates within array 1? Need to verify. Let me check unique filenames mentally, sorted. Distinct names:
+- AGENTS.md
+- doc/REBASELINE_PLAN.md
+- doc/00_INDEX.md
+- doc/STATUS.md
+- doc/09_COLLABORATION.md
+- doc/tasks/P02.md
+- doc/tasks/P02PRE-R0S6.md
+- doc/tasks/P02PRE-R1.md
+- doc/tasks/P02PRE-R1F.md
+- p02-owner-risk-waiver-execution-manifest-r6
+- p02pre-r1-manifest
+- p02pre-r1-capture.ps1
+- p02pre-r1-evidence
+- p02pre-r1f-manifest
+- p02pre-r1f-capture.ps1
+- p02pre-r1f-r2-selfcheck
+- p02pre-r1f-r5-selfcheck
+- p02pre-r1f-r5-selfcheck-retry
+- p02pre-r1f-parser-20261011.json
+- p02pre-r1f-parser-windows-powershell-5.1-20261011.json
+- ...-r2-, -r3-, -r4-, -r6-, -r7-
+- dsh review prompt/stdout.jsonl/stderr/exit/md (r1)
+- r2 prompt/stdout/stderr/exit
+- r3 prompt/stdout/stderr/exit
+- r5 prompt/stdout/stderr/exit
+- p02pre-r1f-adjudication
+- codex-checkpoint-p02pre-r1f
+- p02pre-r0s6-checkpoint
+- p02pre-r1f-r5-reviewfix-selfcheck
+- followupfix-wrapper-attempt1
+- r5-followup prompt/stdout/stderr/exit
+- p02pre-r1f-r5-adjudication
+- r5-followupfix-selfcheck
+- r5-followupfix2-selfcheck
+- r5-followup2 prompt/stdout/stderr/exit
+- r5-followup2-adjudication
+- r5-followup2-review-adjudication
+- r5-followup3 ×4
+- r5-followup3-review-adjudication
+- r5-followupfix3-selfcheck
+- r5-followup4 ×4
+- r5-followup4-review-adjudication
+
+All distinct. 71 unique.
+
+Array 2: r8 + r4 + r4-retry + r4-followup = 1 + 4 + 4 + 4 = 13, distinct.
+
+Total 84 unique. Consistent with claim `84/84 unique`. Good.
+
+Now the 12 new paths claimed in manifest §"Additional protected Review evidence": list at manifest lines 63-74:
+1. p02pre-r1f-r5-followup2-review-adjudication-20261011.md → in script line 729 ✓
+2. dsh-...-followup3.prompt.md → 730 ✓
+3. ...stdout.md → 731 ✓
+4. ...stderr.log → 732 ✓
+5. ...exit → 733 ✓
+6. p02pre-r1f-r5-followup3-review-adjudication-20261011.md → 734 ✓
+7. p02pre-r1f-r5-followupfix3-selfcheck-20261011.json → 735 ✓
+8. dsh-...followup4.prompt.md → 736 ✓
+9. ...stdout.md → 737 ✓
+10. ...stderr.log → 738 ✓
+11. ...exit → 739 ✓
+12. p02pre-r1f-r5-followup4-review-adjudication-20261011.md → 740 ✓
+
+All 12 present in script. And 12 new + 72 old = 84. Old = 72 means array 1 minus these 12 = 71 - ? Wait: array 1 has 71 entries including 11 of the 12 new paths? Let's check: the 12 new paths include 11 in array 1 (items 1-7 and 12 → 729,730,731,732,733,734,735,740 = 8 entries) hmm.
+
+Let me recount. New paths appearing in array 1: 
+- line 729 (followup2-review-adjudication)
+- 730,731,732,733 (followup3 x4)
+- 734 (followup3-review-adjudication)
+- 735 (followupfix3-selfcheck)
+- 736,737,738,739 (followup4 x4)
+- 740 (followup4-review-adjudication)
+That's 1+4+1+1+4+1 = 12. Wait 736-739 are 4, plus 740 = 1. So: 729(1) + 730-733(4) + 734(1) + 735(1) + 736-739(4) + 740(1) = 12. Yes! All 12 new are in array 1 (lines 729-740 are exactly 12 lines). 
+
+So array 1 = 71, of which 12 are new → 59 old in array 1. Array 2 = 13 old. Total old = 59 + 13 = 72 ✓. Great, consistent: 72 old + 12 new = 84.
+
+Hmm wait — but the manifest claims the 12 new were "appended to the existing 72-key protected inventory". The script ordering: lines 729-740 are contiguous at the end of array 1, which is consistent with appending but placing before array 2's block. Fine.
+
+Now check the old 72 didn't already contain e.g. `p02pre-r1f-r5-followup2-adjudication` (line 728) vs new `p02pre-r1f-r5-followup2-review-adjudication` (729) — distinct names, no dup ✓. This is precisely the mismatch Codex found (L728 listed the different file). Confirmed.
+
+Now the review focus also asks: "特别确认本轮 Codex adjudication、follow-up #2 adjudication、follow-up #3 prompt/stdout/stderr/exit、自检3，以及预定 follow-up #4 prompt/stdout/stderr/exit/adjudication 是否都在冻结脚本中".
+
+- 本轮 Codex adjudication `p02pre-r1f-r5-followup3-review-adjudication-20261011.md` → line 734 ✓
+- follow-up #2 adjudication: which one? The prompt pin #5 = `p02pre-r1f-r5-followup2-review-adjudication-20261011.md` → line 729 ✓. And also `p02pre-r1f-r5-followup2-adjudication-20261011.md` (line 728) is present too. Both present ✓.
+- follow-up #3 prompt/stdout/stderr/exit → 730-733 ✓
+- 自检3 = followupfix3-selfcheck → 735 ✓
+- follow-up #4 prompt/stdout/stderr/exit/adjudication → 736-740 ✓
+
+But wait: what about follow-up #2 prompt/stdout/stderr/exit? Those are lines 724-727 ✓. And the follow-up #4 exit → line 739 ✓. And the 12-新增 includes `p02pre-r1f-r5-followup2-review-adjudication` — yes.
+
+Hmm, but note the 12 new list in the manifest does NOT include `p02pre-r1f-r5-followup2-adjudication-20261011.md` (line 728) — right, because that was already in the old 72 presumably. And it does not include the follow-up #2 self-check (followupfix2-selfcheck, line 723) — already old. OK.
+
+Now, is `p02pre-r1f-r5-followupfix-selfcheck-20261011.json` (pin #8) in the script? Line 722 ✓.
+Is `p02pre-r1f-followupfix-selfcheck-wrapper-attempt1-20261011.md` (pin #10) in script? Line 716 ✓.
+Is `p02pre-r1f-r5-followup2-review-adjudication-20261011.md` (pin #9) → 729 ✓.
+Is `p02pre-r1f-r5-followup3-review-adjudication-20261011.md` (pin #5) → 734 ✓.
+Is `dsh-...followup3.stdout.md` (pin #6) → 731 ✓.
+Is `dsh-...followup3.prompt.md` (pin #7) → 730 ✓.
+Is `dsh-...followup3.stderr.log` (pin #11) → 732 ✓.
+Is current self-check pin #4 (`p02pre-r1f-r5-followupfix3-selfcheck`) → 735 ✓.
+Is Task pin #1 (`doc/tasks/P02PRE-R1F.md`) → 678 ✓.
+Is manifest pin #2 → 683 ✓.
+Is script pin #3 (`p02pre-r1f-capture.ps1`) → 684 ✓.
+
+All 11 pinned inputs are covered by the protected list (the `.exit` for follow-up3 isn't a pin but is also protected at 733).
+
+Now — potential issue: the follow-up #4 `.exit` path is listed at line 739 — yes, included in manifest's 12 list item 11. ✓
+
+Wait, the manifest 12 list order: (1) followup2-review-adjudication, (2) followup3 prompt, (3) stdout, (4) stderr, (5) exit, (6) followup3-review-adjudication, (7) followupfix3-selfcheck, (8) followup4 prompt, (9) stdout, (10) stderr, (11) exit, (12) followup4-review-adjudication. And script lines 729-740 in the same order: 729 (1), 730 prompt (2), 731 stdout (3), 732 stderr (4), 733 exit (5), 734 adjudication (6), 735 selfcheck (7), 736 prompt (8), 737 stdout (9), 738 stderr (10), 739 exit (11), 740 adjudication (12). Perfect order match ✓.
+
+Now the other review focuses:
+
+1. Manifest wording re listed Review artifacts; structured skip counts; old self-check pin #8; PS 5.1 self-check source/transport/exit evidence; Task release ordering vs script.
+
+Manifest line 57: "R8, the enumerated Review artifacts and adjudications through follow-up #4, and review-fix self-checks are in the current protected inventory." Is that accurate? The protected inventory includes R8 (line 745), review artifacts through follow-up #4 — let's check all review artifacts: r1 (695-699), r2 (700-703), r3 (704-707), r4 (746-757), r5 (708-711), r5-followup (717-720), r5-followup2 (724-727), r5-followup3 (730-733), r5-followup4 (736-739). Yes all through follow-up #4 ✓. Review-fix self-checks: r2-selfcheck (685), r5-selfcheck (686), r5-selfcheck-retry (687), r5-reviewfix-selfcheck (715), followupfix-selfcheck (722), followupfix2-selfcheck (723), followupfix3-selfcheck (735). ✓ 
+
+Note: `p02pre-r1f-r5-followup2-review-adjudication` is included. But what about adjudications: `p02pre-r1f-adjudication-20261011.md` (712), `p02pre-r1f-r5-adjudication-20261011.md` (721), `p02pre-r1f-r5-followup2-adjudication` (728), `p02pre-r1f-r5-followup2-review-adjudication` (729), `p02pre-r1f-r5-followup3-review-adjudication` (734), `p02pre-r1f-r5-followup4-review-adjudication` (740). ✓
+
+Hmm, one thing to check: manifest §59-61 heading says "Additional protected Review evidence — Round 5 follow-up #2–#4" and "These 12 exact repository-relative paths are appended to the existing 72-key protected inventory (84 total, all unique)." 72+12=84 ✓. But the heading says follow-up #2–#4 — the 12 include followup2-review-adjudication, followup3 artifacts, followup4 artifacts ✓.
+
+Is there any missing Review artifact among the ones named in Task/manifest that's referenced but not protected? E.g., Task mentions `dsh-p02pre-r1f-review-r5-followup2-20261011.stdout.md` etc. Fine.
+
+What about `p02pre-r1f-r5-followupfix-selfcheck-20261011.json`? present.
+What about `verification/P02/p02pre-r1f-r5-followupfix2-selfcheck-20261011.json`? present (723).
+What about `verification/P02/p02pre-r1f-parser-windows-powershell-5.1-r5-...`? Not present — but manifest says R5 parser artifact was never created (line 23: "parser R5 (`20C9…3CBF9F`) 是 Round 2 预定 parser target，但因 Review Round 2=`CHANGES_REQUESTED` 未创建"). Task line 81 says "未创建该文件". So absence is intentional. However the protected list requires every listed path to exist before capture ("they must exist and hash successfully before capture, or capture stops"). Wait — actually `Get-FileRecord` returns state ABSENT for missing files, and `$invalidHashCount` counts records with state ne 'PRESENT'; if >0 then stopReason = QUERY_ERROR... So the protected list can't include nonexistent files except the planned future ones (R8, follow-up #4 outputs, follow-up4 adjudication) which will exist by capture time. Fine.
+
+Hmm — but wait: the protected list includes r4-review artifacts (746-749) which per Task line 84 say `dsh-p02pre-r1f-review-r4-20261011.stdout.md`=`0 bytes` — exists (0 bytes) but `Get-FileRecord` on a 0-byte file → state PRESENT, hash of empty. OK. Also `.exit` for r4 attempt 1: "CLI exit 未采到" (line 84). Does `dsh-p02pre-r1f-review-r4-20261011.exit` exist? Task says stderr 与 `.exit` 保留, but CLI exit 未采到 — ambiguous. If the `.exit` file doesn't exist, the capture would stop. But that's a pre-run condition Codex will check; not necessarily a defect in this candidate. Hmm, but is it a finding? The protected list requires existence; Task says "stderr 与 DSH 写入的 `.exit` 保留" — DSH wrote the .exit, so it exists presumably. I cannot verify existence (read-only boundary, no path access beyond the 11 pins). Note: I can't check file existence. So I should not claim it's missing. Under the boundary, membership verification is possible (textual), existence is not. The instruction says: "若无法在该读取边界内完成 path membership 核验，报告 BLOCKED / REVIEW_SCOPE_LIMITATION". Path membership — I did complete it textually. Existence verification is explicitly a Codex pre-run duty, not the reviewer's. So fine.
+
+2. Now the structured skip counts requirement: manifest line 20/47 says "结构化汇总已有 `repositorySkippedSymlinks` 数字，note 负责说明原因". Manifest line 47: "数量由结构化 `repositorySkippedSymlinks` / `repositoryUnreadUserDataPaths` 字段记录，note 不需重复数字". Script line 834-835 has `repositorySkippedSymlinks = $repoSymlinkSkipCount` and `repositoryUnreadUserDataPaths = $repoUnreadUserDataCount` ✓. And note at 852 uses `$repoUnreadUserDataCount` and `$repoSymlinkSkipCount` — hmm, note DOES include the numbers ("excluded=$repoUnreadUserDataCount", "skipped=$repoSymlinkSkipCount"). Manifest says note 不需重复数字 — not prohibited, just not required. The wording "note 不需重复数字" (need not) is consistent with the note also including numbers. Not a contradiction. Hmm, the manifest §20 (adjudication item) says "note 负责说明原因，避免声称自然语言 note 必须重复数字" — fine.
+
+3. Old self-check pin #8: pin #8 = `p02pre-r1f-r5-followupfix-selfcheck-20261011.json` `2307 bytes / SHA-256 FE2277...`. Manifest line 78 pins it exactly: `2307 bytes / SHA-256 FE2277D0410B6E9CAB84D2CF1551FBCF4886B57A8DE9E4EAE2B305FDC44F237C` ✓ and describes phase and old source pin. The file content I read: sourceBytes 65530, sourceSha256 3B143481726246C9... , phase R5_FOLLOWUPFIX_ISOLATED_SELFCHECK ✓ matches manifest claim "phase=`R5_FOLLOWUPFIX_ISOLATED_SELFCHECK`，source pin belongs to an older candidate" ✓. Note the follow-up #2 adjudication says "Get-Item reports Length=2307" ✓ consistent.
+
+4. Current PS 5.1 self-check evidence: self-check3 JSON says sourceBytes 66560, sourceSha256 F55F195... matching script pin and manifest/Task. childExitCode 0, parseResult PARSE_OK, parseErrorCount 0, selfCheckResult PASS, selfCheckOutputCount 0, captureScriptInvoked false, hostGetterInvoked false, registryOrAclWriteInvoked false. sourceTransport "child read the exact pinned file path; no source on command line or stdin". childArguments include -EncodedCommand — hmm! If the child was launched with `-EncodedCommand`, what was the encoded command? It's the self-check harness script, not the source. The claim "no source on command line or stdin" is about the source not being passed. But the self-check wrapper reads the source path itself. Consistent with manifest line 77 "Child read the exact source path; source bytes were not passed on command line or stdin." Plausible. But note the follow-up #3 adjudication item: "retry 使用 redirected stdin 的证据粒度：保留为 `UNPROVEN / NON_BLOCKING`；下一 self-check artifact 会明确记录本轮实际 source transport 与进程参数" — the new artifact does record `sourceTransport` and `childArguments` ✓. But wait: it says "-EncodedCommand" and sourceTransport says child read the exact file. Fine.
+
+Also verify the childStdoutBase64 decodes to a JSON matching the fields. Let me decode mentally? That's hard but I can partially check: the base64 begins "eyJlbmdpbmUiOiJXaW5kb3dzIFBvd2VyU2hlbGwiLCJlbmdpbmVWZXJzaW9uIjoiNS4xLjI2MTAwLjk1NDkiLCJzb3VyY2VCeXRlcyI6NjY1NjAsInNvdXJjZVNoYTI1NiI6IkY1NUYxOTVFMEE3NDZCOEQ2QjFFQTE5QTdGQTIxMjQ5NUZERkE0RjRGRUFCNkNGMjgxQkVDRTY1MTczQUM4RTgi..." = {"engine":"Windows PowerShell","engineVersion":"5.1.26100.9549","sourceBytes":66560,"sourceSha256":"F55F195E0A746B8D6B1EA19A7FA212495FDFA4F4FEAB6CF281BECE65173AC8E8","parseResult":"PARSE_OK","parseErrorCount":0,...}. Good, matches.
+
+Note that the decodable base64 for selfcheck3 lacks a "failure" field? Let me check: `...InNlbGYQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg==` → "selfCheckResult":"PASS","selfCheckOutputCount":0,"captureScriptInvoked":false,"hostGetterInvoked":false,"registryOrAclWriteInvoked":false}\r\n. Wait, but in my decoded string: `...InNlbGY` — let me carefully decode the tail: "c2VsZkNoZWNrUmVzdWx0IjoiUEFTUyIsInNlbGZDaGVja091dHB1dENvdW50IjowLCJjYXB0dXJlU2NyaXB0SW52b2tlZCI6ZmFsc2UsImhvc3RHZXR0ZXJJbnZva2VkIjpmYWxzZSwicmVnaXN0cnlPckFjbFdyaXRlSW52b2tlZCI6ZmFsc2V9DQo=" → `"selfCheckResult":"PASS","selfCheckOutputCount":0,"captureScriptInvoked":false,"hostGetterInvoked":false,"registryOrAclWriteInvoked":false}\r\n`. Hmm, but in the raw base64 I saw earlier for selfcheck3 the substring was `InNlbGYQ2hlY2tSZXN1bHQi...`? Let me look again at line 34 of selfcheck3:
+
+"...,InNlbGYQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg=="
+
+Hmm, actually from the tool output: `InNlbGYQ2hlY2tSZXN1bHQi` — wait the actual text was:
+`...LCJzZWxlY3RlZEZ1bmN0aW9ucyI6WyJUZXN0LVVucmVhZFVzZXJEYXRhU3RhZ2luZ1BhdGgiLCJUZXN0LVNhZmVSZXBvc2l0b3J5UmVsYXRpdmVQYXRoIiwiR2V0LUxpbmtUeXBlRXZpZGVuY2UiLCJHZXQtSW52ZW50b3J5QWN0aW9uIiwiVGVzdC1FeHBlY3RlZERldGFjaGVkQnJhbmNoUmVzdWx0IiwiQXNzZXJ0LUludmVudG9yeVBvbGljeVNlbGZDaGVjayIsIkFzc2VydC1Db21tYW5kU2VyaWFsaXphdGlvblNlbGZDaGVjayJdLCJzZWxmQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg==`
+
+I shouldn't hand-decode such long strings; it's risky. The base64 I decode: `InNlbGYQ2hlY2tSZXN1bHQi` doesn't look right — "InNlbGY" + "Q2hlY2t..." hmm. Actually "c2VsZkNoZWNrUmVzdWx0" = "selfCheckResult". The sequence in the output appears as `LCJzZWxmQ2hlY2tSZXN1bHQi`? Let me re-read the exact characters from the read output. I can re-read the file with read tool (allowed). Base64 decoding by eye is error-prone; but I could double-check by re-reading. Actually, deciphering isn't essential: the JSON fields at top-level already state values; the base64 is a duplicate. But the review focus asks checking "PS 5.1 self-check 的 source/transport/exit 证据". I've confirmed the fields.
+
+Hmm — but one thing: selfcheck3's `childStdoutBytes: 595` while the followupfix (old) selfcheck had 610 and included a `"failure":null` field. The decoded fields differ; new one omits `failure`. Not a contradiction.
+
+Also note: selfcheck3 `childStderrBytes: 404` with base64 that decodes to a CLIXML progress record with mojibake (`77+9` = U+FFFD). The manifest line 77 claims "child stderr=0"! Let me check. Manifest line 77: "parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false." But the selfcheck3 JSON says `childStderrBytes: 404` and non-empty base64. And Task line 38 doesn't mention stderr. Hmm! Task line 38: "Windows PowerShell `5.1.26100.9549` 对该 exact script 完成 7 个纯函数 self-check=`PASS`，parse errors=0、assert output=0、capture/getter/registry/ACL write=false". No stderr claim in Task. But manifest line 77 says "child stderr=0".
+
+Wait — is that a factual error? The selfcheck3 artifact reports childStderrBytes=404 and childStderrBase64 non-empty (a CLIXML progress record). So "child stderr=0" in the manifest would be false — unless "child stderr=0" refers to something else, e.g., "child exit=0"? The text: "parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false". Hmm. Given the artifact, childStderrBytes=404, so "child stderr=0" is inconsistent with the pinned self-check artifact #4.
+
+Hmm, but maybe the CLIXML was written... no, it's stderr of the child, 404 bytes. Unless the manifest means "child stderr decode=0 exit code"? No.
+
+Actually, hold on. Let me compare with the old self-check (followupfix2, 2308 bytes, not in my pins but referenced): its structure... not in my pins. The old followupfix (pin #8) has childStderrBytes 0 and childStderrSha256 E3B0C442... (empty). So for the follow-upfix2 self-check, stderr was 0. For the new followupfix3, stderr=404.
+
+So manifest line 77 statement "child stderr=0" conflicts with pin #4 (selfcheck3: childStderrBytes=404, non-empty base64). This is a document-vs-evidence inconsistency. Severity? It's a P3 (documentation accuracy) or P2? Consider: does it affect release correctness? It's a claim in the frozen manifest about the current self-check evidence that is contradicted by the pinned artifact in the same 11-file set. The review focus explicitly asks to check "当前 PS 5.1 self-check 的 source/transport/exit 证据...是否与 script 一致". This is a real discrepancy. However — careful. Maybe the 404 bytes of stderr is a PowerShell progress-record artifact that is not a script failure; the substantive claims (exit 0, PARSE_OK, no exception) hold. But "child stderr=0" is literally false given pin #4.
+
+Hmm, wait. Is it possible that the manifest's "child stderr=0" refers to the followupfix2 self-check (previous), and the sentence at line 77 is about the current one (fix3)? Line 77 clearly is about current exact-script self-check = followupfix3. Yes: "Current exact-script self-check=`verification/P02/p02pre-r1f-r5-followupfix3-selfcheck-20261011.json` ... Windows PowerShell `5.1.26100.9549` parsed source `66560 ...` and passed the seven selected pure-function assertions; parse errors=0, assertion output=0, child stderr=0, ...". So it asserts stderr=0 for fix3, but fix3's own JSON says 404 bytes.
+
+That's a genuine finding. Let me double check pin #4 content again: line 35-37:
+"childStderrBytes": 404,
+"childStderrSha256": "821020161208F807E91B67BA4ADD7B4B0A659459C070046085D1BFED51BDA719",
+"childStderrBase64": "IzwgQ0xJWE1MDQo8T2JqcyBWZXJzaW9uPSIxLjEuMC4xIiB4bWxucz0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9wb3dlcnNoZWxsLzIwMDQvMDQiPjxPYmogUz0icHJvZ3Jlc3Mi...".
+
+Yes, 404 bytes, beginning `#< CLIXML\r\n<Objs Version="1.1.0.1" ...` — this is a progress record (a PSCustomObject from Write-Progress? Actually it's the serialized `System.Management.Automation.PSCustomObject` progress record). Note that the script's Assert functions use `throw`... no. Hmm, where would a progress record come from? Possibly from `Get-FileHash`? No, self-check doesn't run getters. Actually the CLIXML content: `<Obj S="progress" RefId="0"><TN RefId="0"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>?????...` — the AV contains mojibake characters. This is a progress record written to stderr.
+
+Interesting: it might come from the wrapper's own progress display or from `ConvertTo-Json`? Actually a CLIXML progress record on stderr in Windows PowerShell occurs when the parent uses `-EncodedCommand` and the child writes progress; powershell.exe serializes progress to stderr as CLIXML when stderr is redirected. Hmm, but which cmdlet wrote progress? In the fixed script self-check, functions only throw/return. Maybe the harness script itself emitted Write-Progress, or maybe `Get-FileHash`... not invoked. Whatever.
+
+Point: manifest claim "child stderr=0" contradicts pin #4. This is a documentation-vs-artifact inconsistency, similar in kind to the R5F2-F1/F2 findings. Severity: P3? P2? The prior round treated count/documentation mismatches as P2 (R5F3-CI1 was P2 because a protected path was missing → release-blocking). Here, the mismatch is a descriptive claim about stderr byte count; it doesn't release anything or lose path coverage. But is there a risk it masks a real failure? The stderr CLIXML is a progress record; the child exit=0 and PARSE_OK. If manifest says stderr=0 and pre-run verification is expected to compare... Actually the risk: Codex pre-run adjudication might rely on manifest claims. But the artifact is pinned, so it's discoverable. I'd rate P3 (documentation inaccuracy) — or possibly P2 if we consider it "unverified claim in frozen manifest that misstates evidence about the current candidate". Hmm.
+
+Wait, maybe I should think again: maybe "child stderr=0" in manifest means "childStderr... = 0"? No other plausible reading: bytes count 0. But could it mean "child stderr 中无 parse error"? The phrase is a list: "parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false". Given the artifact has childStderrBytes=404, the claim is factually wrong.
+
+But hold on — is the manifest maybe describing the *stderr content being ignorable progress noise, i.e. no error lines*? The reading "child stderr=0" is about count. Since the artifact explicitly reports a nonzero byte count and a hash, the manifest statement is inconsistent with pin #4. Also Task line 38 avoids claiming stderr=0 (it says parse errors=0、assert output=0、capture/getter/registry/ACL write=false) — Task omits stderr. So only manifest is inconsistent.
+
+Also check: manifest line 77 says "Child read the exact source path; source bytes were not passed on command line or stdin." But selfcheck3 reports childArguments include `-EncodedCommand`, and sourceTransport says "child read the exact pinned file path; no source on command line or stdin". Consistent-ish. However, if the child was launched with `-EncodedCommand <base64 of harness>`, the harness script must have been passed on the command line — but the *source* (capture script) was not. The manifest statement is about source bytes. OK.
+
+Hmm, but here's a subtlety: the old follow-up #2 adjudication (pin #9, line 21) says: "retry 使用 redirected stdin 的证据粒度：保留为 `UNPROVEN / NON_BLOCKING`；下一 self-check artifact 会明确记录本轮实际 source transport 与进程参数，不将旧 artifact 字段扩写成未见事实。" The next self-check artifact (fix3) records `sourceTransport` and `childArguments` = [...,-EncodedCommand] but does NOT record the harness's encoded command nor any stdin usage. Is "sourceTransport: child read the exact pinned file path; no source on command line or stdin" an over-claim (narrative, not machine-derived)? It's a string field written by the harness, so it's the harness's own claim. The adjudication said it "会明确记录本轮实际 source transport 与进程参数" — it does record them as declared strings. But note: with `-EncodedCommand` the source could not come via stdin easily... Actually the child reading the exact file path is plausible (the encoded command instructs it). Fine—not a defect I can prove from pins.
+
+Let me also check the wrapper-attempt1 report (pin #10): it says "Retry will stream source bytes through redirected stdin after starting the child, then retain the attempt-2 result at the unique target." But the actual retry (fix2/fix3) used "-EncodedCommand" per the artifacts. Is that a discrepancy? Pin #10 says retry will stream source through redirected stdin. The fix3 artifact says the child read the exact pinned file path and no source on stdin. So the *plan* stated in pin #10 differs from what the later artifacts describe. But pin #10 is a historical attempt-1 note ("Retry will...") — a forward-looking statement that was superseded. Is that a finding? It's a prediction/plan that didn't materialize exactly. Since the manifest says "归类为 parent command-line length harness failure ... 不是 script failure" and the follow-up2 adjudication handled the F1 point (cleared by current host evidence), and follow-up2-review-adjudication line 16 says the wrapper report "accurately says that the target was absent after that failed attempt". The mismatch between "stdin" plan and "child read file path / -EncodedCommand" actual is a documentation-vs-later-evidence inconsistency. Severity P3 at most. Hmm, does the adjudication claim anything about stdin? Follow-up2-review-adjudication line 21 says "retry 使用 redirected stdin 的证据粒度：保留为 `UNPROVEN / NON_BLOCKING`；下一 self-check artifact 会明确记录本轮实际 source transport 与进程参数，不将旧 artifact 字段扩写成未见事实。" It refers to "retry 使用 redirected stdin" as an unproven detail. The new artifact's transport claim ("child read the exact pinned file path; no source on command line or stdin") contradicts the attempt-1 note's stated retry plan (stdin). Since the artifacts now declare a specific transport, and the older note predicted stdin, there's an inconsistency in the record — but the newer artifact supersedes. It's arguably a P3 documentation nit. But careful: is the new artifact's transport claim itself unverifiable? The reviewer boundary prevents checking. I'd mention as P3 at most, or maybe not report since it's not "可复现的问题" affecting release. Hmm. The instruction: "只报告可从这 11 个 pins 直接复现的问题". This is directly reproducible from pins #10 and #4. It's a real textual inconsistency. I'll report as P3 with minimal fix (annotate the attempt-1 note as superseded, or clarify that the retry used a child-side file read rather than stdin, or keep as historical plan). Actually — wait. The wrapper-attempt note says "Retry will stream source bytes through redirected stdin after starting the child". Was there an attempt 2 using stdin that failed? The followupfix (pin #8, 2307 bytes, created 09:18:56) exists and has childArguments -EncodedCommand with sourceTransport not recorded. Hmm. Then fix2 self-check (2308) at later time. So the "retry" that produced pin #8 used -EncodedCommand, contradicting the note's plan. Unless the note's "Retry" refers to a different retry that indeed used stdin and produced... no, pin #8's childArguments include -EncodedCommand and it has no sourceTransport field. Hmm! Actually pin #8 (followupfix selfcheck) records `childArguments: [-NoLogo,-NoProfile,-NonInteractive,-EncodedCommand]` — so the retry that produced pin #8 did NOT stream source via stdin; it used -EncodedCommand. And the follow-up2 adjudication's line 21 refers to "retry 使用 redirected stdin 的证据粒度" — which the new artifact then overwrites with "no source ... on stdin".
+
+Hmm, wait. Maybe in attempt 2 the harness passed -EncodedCommand (a small launcher) and then streamed the source bytes to the child via redirected stdin, with the child reading stdin. In that case "stream source through redirected stdin" would be true, and the fix3 artifact's claim "no source on command line or stdin" would be false. But fix3 says "child read the exact pinned file path". These two statements can't both be true unless the retry plan changed between attempt 2 and fix3. Since pin #8 lacks the transport field, we can't tell for attempt 2.
+
+So: there IS an unresolved inconsistency about source transport across the artifacts, and the follow-up2-review-adjudication explicitly said the next self-check would record the actual transport. It did — as a narrative string that contradicts the earlier stated retry plan (stdin) and is not independently verifiable from the pins. Is this a P2 or P3? Given the reviewer cannot verify, and Codex adjudication marked it NON_BLOCKING/UNPROVEN, I'd report P3: "manifest/self-check transport claim conflicts with the attempt-1 note's stated retry method; either annotate the historical note as superseded or explain".
+
+Hmm, but is it worth flagging? The review focus asks to verify "当前 PS 5.1 self-check 的 source/transport/exit 证据 ... 是否与 script 一致" and "检查 ... 旧 self-check pin #8". The task instructions want a decision: APPROVED with 0/0/0/0 if no open issues, else P0/P1/P2/P3 findings with minimal fixes.
+
+Given the manifest's "child stderr=0" is flatly contradicted by pin #4, that's a concrete P3 (documentation accuracy) or P2. Let me weigh severity definitions. No explicit severity rubric in the pins. Previous rounds: P2 = release-blocking path coverage gap; P3 = stale wording/count mismatches. A false statement in the frozen manifest about the current self-check's stderr is documentation inaccuracy → I'd call P2? Hmm. Consider impact: If the manifest overstates "child stderr=0" while the child actually emitted 404 bytes of CLIXML progress noise, a reader (or a future gate reviewer) could wrongly conclude the self-check had a clean stderr channel. It doesn't affect protected path coverage or release ordering. It's exactly the class of thing previous rounds labelled P3 when it was "stale parser wording" and "count corrected" — actually the follow-up #2 F2 (a wrong count) was rated P3, and the follow-up #1 four findings were all P3. So a wrong stderr count in the manifest ≈ P3.
+
+Hmm, wait. But follow-up #3's review reported APPROVED with the manifest already saying "child stderr=0"? Let's see: the follow-up #3 prompt pins manifest at 21114 bytes (previous candidate). At that time, was the fix3 self-check already existing? The follow-up #3 prompt's pins didn't include fix3 self-check (pins: Task, manifest, script 65533, followupfix2-selfcheck, followup2-review-adjudication, followup2 stdout, wrapper-attempt1, followupfix-selfcheck). So the manifest at follow-up #3 time = the 21114-byte version, which per line 17 said current script = 66560...? Hmm, no: manifest at 21114 bytes might already mention 65533. The current manifest is 23135 bytes. Actually the current manifest line 17 says current script=66560. The follow-up #3 manifest pin was 21114 bytes — the earlier version, before the 12 paths were added (the "Additional protected Review evidence" section and the fix3 mention were added later). So the "child stderr=0" text in line 77 is new in this round's manifest.
+
+Hmm — but is "child stderr=0" perhaps true for the *child process's* stderr as measured... no, artifact says 404.
+
+Wait wait. Let me re-read manifest line 77 exactly:
+"Current exact-script self-check=`...followupfix3-selfcheck...json`（`2927 bytes / SHA-256 18BD...`）；Windows PowerShell `5.1.26100.9549` parsed source `66560 bytes / SHA-256 F55F...` and passed the seven selected pure-function assertions; parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false. Child read the exact source path; source bytes were not passed on command line or stdin."
+
+And pin #4 (the same file):
+childStderrBytes: 404, childStderrSha256: 821020161208F807E91B67BA4ADD7B4B0A659459C070046085D1BFED51BDA719, childStderrBase64 non-empty.
+
+Yes, contradiction. Unless "child stderr=0" means "child exit code from stderr"? No.
+
+Hmm, one more possibility: maybe the manifest means "child stderr [decode error] = 0"? Too charitable.
+
+Alternatively maybe the manifest writer intended "child stderr bytes that indicate failure = 0". Still an inaccurate shorthand.
+
+So finding F1 (P3 or P2). I'll report as P2? Let me think about "影响" and "最小修复". Minimal fix: change "child stderr=0" to "child stderr=404 bytes of CLIXML progress noise (no error output); childExitCode=0" or remove the stderr claim. Impact: manifest misstates current self-check evidence — a frozen document asserted to be pinned; future pre-run adjudication/NNN relies on it.
+
+I think P3 is defensible; but P2 would be "documented evidence claim contradicts pinned artifact" — the task's own reviewer instruction says report with P0/P1/P2/P3, precise file/position, impact, minimal fix. Given the previous round treated a wrong count (63 vs 72) as P3 in the follow-up #2 adjudication... Actually the follow-up #2 F2 was raised by the reviewer as P3 (per follow-up2 adjudication line 17: "R5F2-F2 / P3: `63 keys / 63 unique` is incorrect"). So a wrong number in docs = P3 precedent. I'll use P3 for stderr=0.
+
+Hmm, but hold on. Does this block APPROVED? The task says: "无开放问题时给 APPROVED 与 0/0/0/0." If I report a P3, decision = CHANGES_REQUESTED (0/0/0/1)? The instruction: "只报告可从这 11 个 pins 直接复现的问题，给 P0/P1/P2/P3、精确文件/位置、影响和最小修复。无开放问题时给 APPROVED 与 0/0/0/0." So if there is an open P3, I report it and the decision would be CHANGES_REQUESTED (0/0/0/1). Hmm, but is a P3 documentation nit "open issue" that blocks? In previous rounds, P3 findings led to CHANGES_REQUESTED and Codex fixed them. So yes, precedent: report CHANGES_REQUESTED with the P3.
+
+But wait — I must be careful not to produce a false positive. Let me consider whether "child stderr=0" could be a legitimate description of... Hmm, maybe the manifest is describing the *fix2* self-check (2308 bytes) which had childStderrBytes 0 and... no, fix2 was `child stderr=0`? I don't have fix2 in pins, but the old followupfix (pin #8) had stderr 0. Which artifact had stderr 0? Pin #8 has childStderrBytes 0, childStderrSha256 E3B0... (empty). The fix3 artifact (pin #4) has 404. So "child stderr=0" would be true for the *previous* self-check (pin #8) and false for the *current* one (pin #4). Since line 77 is explicitly about the current exact-script self-check = fix3, it's a false claim — likely a copy-paste from the previous round's manifest line. This is exactly the "stale/copy-paste evidence claim" class. Good, that makes the finding solid and explains the origin.
+
+Hmm, also the manifest line 77 says "passed the seven selected pure-function assertions" — pin #4 selectedFunctions has 7 entries ✓ and selfCheckResult PASS ✓. parse errors=0 ✓ (parseErrorCount 0). assertion output=0 ✓ (selfCheckOutputCount 0). capture/getter/registry/ACL write=false ✓. So only the "child stderr=0" claim is wrong.
+
+Now let me continue checking other aspects before finalizing. Other things to verify:
+
+(a) Manifest line 17 says "新增 12 个唯一保护路径后静态总计=`84 keys / 84 unique / 0 duplicates`" ✓ matches my count.
+
+(b) Task line 38 says "静态 protected keys=`84/84 unique`" ✓.
+
+(c) Release order: Task line 25: "新 candidate 必须经非作者 follow-up #4=`APPROVED`，再以 R8 做 Windows PowerShell 5.1 parse-only，之后 Codex pre-run adjudication 才可释放一次 capture." Manifest line 57: "Only after follow-up #4=`APPROVED` and Codex pin/path-membership adjudication may Codex run Windows PowerShell 5.1 `ScriptBlock::Create` parse-only and store unique parser R8 (captureScriptInvoked=false). ... A separate pre-run adjudication must recheck exact pins, identity/SID/token, roots/refs, output absence, status/index stability, exact path scope, and all 84 protected-file hashes. Only then may the exact manifest argv run once." ✓ consistent with the requested release order: follow-up #4 APPROVED + Codex pin/path adjudication → R8 parse-only → Codex pre-run adjudication (84 paths existence + hash) → single capture. ✓
+
+(d) Waiver/Build/AC status not misrecorded as PASS: Task line 38 "Build/Cargo=`NOT_RUN`；AC1–AC7=`BLOCKED / NOT_RUN`"; line 51 the AC list; manifest line 53 states private_registry_absence=UNPROVABLE, Technical Gate=NOT_SATISFIED, Owner Risk Acceptance=APPROVED, Gate Disposition=WAIVED_BY_OWNER, Build Authorization=AUTHORIZED_WITH_EXCEPTION, Build Gate=BLOCKED, Hard Build Barrier=EFFECTIVE ✓. Adjudication pin #5 line 29 same ✓. Task line 51 also lists `private_registry_absence` 仍=`UNPROVABLE`，技术条件仍=`NOT_SATISFIED`. ✓ no misrecord.
+
+Also Task line 34 and 43 mention parser R8 path; script line 745 includes it ✓.
+
+(e) AC in Task lines 42-51 vs script behavior: AC5 says "只有在运行前重新核对当前用户/SID、main 和 scratch repo root/HEAD/tree/branch、输入与输出路径、pre-hash/status 与唯一证据目标 absent 后" — script does: Test-Path evidence target (line 15), identity check (615-616), repo target matches (351). ✓
+
+(f) AC3: script excludes staging before getters (405-410) ✓, rejects `~[0-9]` (114) ✓, records only count + first path ✓, `repositoryProtectedInventory=UNPROVABLE` when unread>0 (851) ✓, status pathspec exclude (353) ✓.
+
+(g) AC4: detached mapping exact base64 (126, 339-350) ✓.
+
+(h) AC6 symlink: LinkType evidence fallback (119-123, 425) ✓.
+
+(i) AC7 counters: script record init (312) includes candidateCountKnown, candidateCount, processedCount, regularFileHashCount, skippedSymlinkCount, unreadUserDataCount, firstUnreadUserDataPath, omittedCount, firstBlockingPath, errorOperation, error ✓.
+
+(j) manifest structured skip counts: line 47 ✓ and script fields ✓.
+
+Now — one more important check requested: "确认新加 12 个路径与旧 72 条无重复" ✓ done.
+
+Another: "切勿依据旧报告的行号或相似文件名推断路径相同" — I did textual literal comparison. Note the codex adjudication said capture script "L728" actually lists a different file. In the current script, line 728 = `p02pre-r1f-r5-followup2-adjudication-20261011.md` and 729 = `...followup2-review-adjudication...`. Consistent with the adjudication ✓.
+
+Now let's double-check whether the new 12 exactly match the manifest's list, including a subtle issue: manifest's list includes `p02pre-r1f-r5-followup2-review-adjudication-20261011.md` (item 1) — the follow-up #2 adjudication... wait, manifest item 1 is "review-adjudication" (pin #9). Yes.
+
+Hmm, but consider: is the pin #9 file (`p02pre-r1f-r5-followup2-review-adjudication-20261011.md`) already in the script before this round? The Codex finding said the follow-up #2 adjudication referenced in prompt pin #5 was missing (script listed the different one). So it's new. ✓
+
+Now, is `p02pre-r1f-r5-followupfix-selfcheck-20261011.json` (pin #8) already in old 72? Yes line 722 — it's listed as a protected path, and the follow-up #2 adjudication already said "it remains in the 72-path protected list" ✓. Good—so pin #8 is covered, consistent.
+
+Now check the "12 new" don't include `p02pre-r1f-r5-followup2-adjudication-20261011.md` (line 728) — the manifest's additional list doesn't include it, implying it's part of old 72. Was it? The follow-up #2 adjudication (pin #9) says its own path... hmm, pin #9 is a *different* file. Which document said the script L728 lists `p02pre-r1f-r5-followup2-adjudication-20261011.md`? Pin #5 line 15 says "capture script L728 实际列的是不同文件 `verification/P02/p02pre-r1f-r5-followup2-adjudication-20261011.md`" — and indeed line 728 in the current script is that file. So it was already in the old 72 ✓ (as the Codex finding said, "本轮 `rg` 输出只找到旧路径").
+
+But hmm — the manifest §59-61 says the "Additional protected Review evidence — Round 5 follow-up #2–#4" heading, but item 1 is follow-up #2's *review* adjudication. The heading says follow-up #2–#4, fine. However, the manifest text says "These 12 exact repository-relative paths are appended to the existing 72-key protected inventory" — but earlier, manifest line 57 says "R8, the enumerated Review artifacts and adjudications through follow-up #4 ... are in the current protected inventory". Also the manifest line 57 states "its exact Task/manifest/script/self-check/adjudication pins require a read-only DeepSeek Harness follow-up #4" — ✓.
+
+Now, is `p02pre-r1f-r5-followup4-review-adjudication-20261011.md` (line 740) the planned adjudication? Yes ✓ (also Task line 55 lists it in write scope ✓).
+
+Another check: Task line 38 says new Task/manifest/script/self-check/adjudication pins need follow-up #4 approval before R8/capture ✓.
+
+Now the stderr.log and stdout.md pins: I should read them to check for anything relevant (e.g., the follow-up #3 report's claims, and stderr for evidence of exit code). The pin #5 adjudication says exit artifact content `0\r\n`. The prompt focus mentions "follow-up #3 prompt/stdout/stderr/exit". The exit file isn't among my 11 pins (it's not pin #11 — pin #11 is the stderr.log). Wait: pins list #11 = stderr.log. The `.exit` file is not a pin. OK.
+
+Let me read stdout.md (14724 bytes) — needed to check the report's own claims? The review focus doesn't require me to re-review the report, but "检查 manifest 关于已列 Review artifact 的措辞" — I should check manifest's description of follow-up #3 review (line 57: "Follow-up #3 DSH Review=`APPROVED (0/0/0/0)`") against the report. Also pin #5 says DSH's claim of scanning 8 inputs and its out-of-scope grep. Let me read the stdout to verify the manifest/Task descriptions are consistent.
+
+Let me read stdout.md and stderr.log. stderr.log 119856 bytes — mostly noise; read a bit to check it's a stderr log and maybe the tail. Let me read stdout fully, then the stderr head/tail.
+
+Also I should double check the base64 decoding of the selfcheck3 stdout to confirm no contradiction... I can do that by reading via... I can't run commands (no PowerShell allowed). Hmm, decoding base64 manually is error-prone but I did partially. The top-level JSON fields are authoritative enough.
+
+Let me read the remaining two files.
+dsh: reasoning:
+Now the report's non-blocking observation #4: "manifest 缺 pin #8 的 pin 行" — the current manifest now has line 78 with the pin#8 bytes/SHA ✓ (fixed). Observation #1: manifest L57 coverage wording — current manifest line 57 rewritten: "R8, the enumerated Review artifacts and adjudications through follow-up #4, and review-fix self-checks are in the current protected inventory." Now that follow-up #3 and #4 artifacts are in the list, this is accurate ✓. Observation #2: symlink-only note count — manifest line 47 now says "note 不需重复数字", and script unchanged. The report said script L840's symlink-only branch doesn't include the count. Manifest now explicitly documents that the note need not repeat numbers ✓ (consistent with follow-up3 adjudication line 20). Observation #3: transport — new artifact adds sourceTransport. Hmm, as discussed, the new transport claim conflicts with pin #10's stated stdin plan. Note: the new claim "child read the exact pinned file path; no source on command line or stdin" vs pin #10 "Retry will stream source bytes through redirected stdin". This is exactly non-blocking observation #3 in the follow-up #3 report ("pin #7 声明的 retry 机制未被结果 artifact 直接见证"). The new candidate addresses it by adding a transport field, and the adjudication (pin #5 line 21) says "下一 self-check artifact 会明确记录本轮实际 source transport 与进程参数，不将旧 artifact 字段扩写成未见事实". But then the new artifact *does* make a claim that contradicts pin #10's plan. Is that "扩写成未见事实"? The transport field asserts a negative: "no source on command line or stdin". How was that observed? Unclear. Hmm. This could be a finding: the new self-check artifact asserts a transport method that contradicts the plan recorded in pin #10, without evidence in the artifact (no stdin field, no recorded encoded command). Given the reviewer can't verify, this is at least a documentation inconsistency. Severity P3.
+
+Hmm, is that too aggressive? The instruction for this follow-up: "检查 manifest 关于已列 Review artifact 的措辞、structured skip counts、旧 self-check pin #8、当前 PS 5.1 self-check 的 source/transport/exit 证据与 Task release 顺序是否与 script 一致." So source/transport evidence is explicitly in scope. The transport claim contradicts pin #10. And note the added value of the artifact: it doesn't record stdin usage counts, and it doesn't record the encoded command. So "no source on command line or stdin" is a narrative claim, not a measured field. And also note: the childArguments includes `-EncodedCommand`, which means the harness was passed on the command line; if the harness was passed via -EncodedCommand, and the harness reads the source path, fine. But could the source have been embedded (Base64) inside the -EncodedCommand? That's exactly what failed at attempt 1 due to length (66560 bytes → ~88KB base64 → too long). So embedding is implausible; the harness must read the file. So the claim is plausible. But then pin #10's "retry will stream source bytes through redirected stdin" wasn't followed. Hmm, but that plan was for the retry producing attempt-2 result; maybe the retry DID use stdin (creating pin #8 at 09:18:56), and then the fix3 harness (created 09:48:29) changed the transport to file read. In that case no contradiction with the attempt-2 retry: pin #8's artifacts did use stdin. But fix3's field claims about *its own* run ("child read the exact pinned file path") are then fine — and they contradict only the *plan* for fix2, not for fix3. Wait, but the reviewer's observation was "pin #7 声明的 retry 机制未被结果 artifact 直接见证" — the fix2 artifact lacks the stdin field, so the stdin plan is unproven for fix2. The fix3 artifact added its own transport claim about fix3. So there's no direct contradiction for fix3 — just an over-claim risk: fix3's field says "no source on command line or stdin" but does not document how it was measured (e.g., no stdin byte count). Since childArguments contains `-EncodedCommand`, a reader may notice the harness command itself was on the command line. Hmm, that's about the harness, not the source.
+
+I think flagging this as a P3 finding is defensible but weaker than the stderr one. Alternatively report it as a non-blocking observation. The task says report problems that are directly reproducible from the 11 pins. The stderr=0 claim is a hard contradiction. The transport thing is a soft inconsistency (plan vs later practice; ambiguous). I'll report the stderr one as the main finding, and mention transport as a secondary P3? Careful: over-reporting risks false positives. Let me evaluate the transport issue once more against pin #10's exact text: "Retry will stream source bytes through redirected stdin after starting the child, then retain the attempt-2 result at the unique target." The "attempt-2 result" at the unique target = `p02pre-r1f-r5-followupfix-selfcheck-20261011.json` (pin #8), created 09:18:56, with childArguments `-EncodedCommand`. If the retry streamed source bytes through redirected stdin but the harness was launched with -EncodedCommand (the harness reading stdin), then pin #8 is consistent with the plan. Pin #8 records `sourceHashMatchedBetweenParentAndChild: true` and no stdin evidence. So no contradiction. For fix3 (pin #4), the transport field says the child read the exact pinned file path — different mechanism, no contradiction with the earlier plan (it's a later run). So the transport claim is internally consistent with what the artifact records (childArguments -EncodedCommand + file read). The only nit: "no source on command line or stdin" is not verifiable and no stdin-byte field exists — but it's consistent with attempt-1's failure mode (source too long for command line). I'll classify as non-blocking observation, not a finding. Hmm, but the DSH follow-up #3 report item #3 flagged the transport granularity as non-blocking. The new artifact addresses it by adding the field. Given ambiguity, I'd say: the field is a narrative claim, not a measured value; not a finding. I'll mention in observations.
+
+Hmm, but wait. There's something more interesting: is the stderr=404 CLIXML progress record evidence of anything? The mojibake (<AV> contains U+FFFD chars) suggests a progress record with Chinese text garbled. Could this indicate the fix3 harness emitted progress output — meaning the harness wrote to stderr. In Windows PowerShell, when a child process's stderr is redirected, PowerShell serializes progress records to stderr as CLIXML — this happens when the *parent* engine is PS7 and the child is remoting? No — actually the CLIXML progress record appears when a PowerShell process writes progress while its stderr is redirected... Actually the CLIXML-to-stderr behavior occurs for the child powershell.exe when `-EncodedCommand`... hmm, more precisely: powershell.exe writes serialized progress records to stderr when stderr is redirected and the ETS progress serialization is enabled (this is the documented behavior for "powershell.exe -EncodedCommand" with redirected stderr? It's the `-OutputFormat`/remoting serialization). Anyway, the presence of a progress record means some cmdlet in the harness produced progress (e.g., `Get-FileHash`? no getters allowed... maybe `CopyToAsync`? no). Something like `Write-Progress` from the harness. It doesn't prove script execution.
+
+Note the old fix2 artifact (per the follow-up #3 report, pin #4 there) — its stderr? The report says pin #4 (fix2 selfcheck 2308 bytes) — I don't have its content. The old pin #8 has childStderrBytes 0. So the change fix2→fix3 added a progress record. Perhaps because fix3's harness used a different launching approach (file read). Not important.
+
+So the manifest "child stderr=0" is likely a copy-paste from the description of the *previous* self-check (which had stderr 0), and it's now false. Solid finding.
+
+Now, are there other discrepancies? Let me cross-check numbers across pins:
+
+1. Pin #4 selfcheck3: bytes claim 2927. The file I read has 43 lines. Manifest line 77 and Task line 38 both say `2927 / 18BD55A9...`. Consistent among docs; I can't recompute. Note the JSON contains a 595-byte stdout base64 and 404-byte stderr base64; size 2927 plausible.
+
+2. Pin #8: 2307 bytes / FE2277... consistent with manifest line 78 and adjudication line 16 ✓.
+
+3. Pin #9: 4950 / EBBF2696... consistent with follow-up3 prompt pin #5 and pin #5 adjudication? Pin #5 adjudication line 8 references the follow-up2 stdout/stderr/exit hashes; the follow-up2-review-adjudication is pin #9 itself (self-pin). Pin #7 (followup3 prompt) pin #5 = `p02pre-r1f-r5-followup2-review-adjudication-20261011.md` — `4950 bytes / SHA-256 EBBF2696...575B` ✓ matches this round's pin #9 exactly. Good — the new prompt reuses the same pin values.
+
+4. Pin #10: 1179 / CABB770B... consistent with manifest line 16, pin #5 adjudication line 16, follow-up2-review-adjudication line 16 ✓, pin #7 line 13 ✓.
+
+5. Pin #6: 14724 / B69904CA... consistent with pin #5 adjudication line 8 ✓.
+
+6. Pin #11: 119856 / C5F45CBD... consistent with pin #5 adjudication line 8 ✓.
+
+7. Pin #1 Task: 21390 bytes / 3C83EA41... — Task sys says new pin. No other doc in the 11 pins references the current Task's bytes (manifest line 19 references Round 2 old Task bytes; line 20 Round 3). The follow-up #4 prompt is not among pins. So no cross-check possible for #1. Fine.
+
+8. Pin #2 manifest: 23135 bytes / 9D008645... — referenced nowhere else in pins. Fine.
+
+9. Pin #3 script: 66560 / F55F195... — cross-checked: Task line 38 ✓, manifest line 17 �this can't be — manifest says 66560 ✓ and line 77 ✓, pin #4 selfcheck sourceBytes 66560 ✓ sourceSha256 F55F... ✓. 
+
+Now check Task line 38's claim "`p02pre-r1f-r5-followupfix3-selfcheck-20261011.json`（`2927 / 18BD55A9...`）" ✓ matches pin #4. Also Task says "`84/84 unique`" ✓, "7 个纯函数" ✓ (pin #4 selectedFunctions = 7).
+
+Now the review focus mentions "旧 self-check pin #8" — manifest line 78 now pins it with phase and source note ✓. Task line 97 mentions follow-up #2... hmm, Task line 97: "Review Round 5 follow-up #3 ... APPROVED (0/0/0/0); Codex integration found P2 path-coverage mismatch" ✓.
+
+Now check Task AC and state wording consistency: Task line 38 says "Build/Cargo=`NOT_RUN`；AC1–AC7=`BLOCKED / NOT_RUN`" ✓; no PASS misrecord. Task line 25 mentions "Release 顺序" implicitly: "新 candidate 必须经非作者 follow-up #4=`APPROVED`，再以 R8 做 Windows PowerShell 5.1 parse-only，之后 Codex pre-run adjudication 才可释放一次 capture" ✓.
+
+Now, Task line 31: "tree=`c25d051a...`" matches manifest line 6 ✓. HEAD ✓.
+
+Now: "manifest 关于已列 Review artifact 的措辞" — current manifest line 57: "R8, the enumerated Review artifacts and adjudications through follow-up #4, and review-fix self-checks are in the current protected inventory." Is that now strictly accurate? What about the follow-up #2 prompt/stdout/stderr/exit (724-727) — yes in list. Follow-up #1 (717-720) ✓. Round 5 initial (708-711) ✓. r4 artifacts (746-757) ✓. Also "review-fix self-checks": r5-reviewfix-selfcheck (715) ✓, followupfix (722), followupfix2 (723), followupfix3 (735), r2-selfcheck (685), r5-selfcheck (686), r5-selfcheck-retry (687) ✓. Adjudications through follow-up #4: 712, 721, 728, 729, 734, 740 ✓. Also `p02pre-r1f-adjudication` (712) ✓. Are there any Review artifacts named in Task line 55's writable list that are NOT protected? Task line 55 lists: supplemental/historical parser files, R2/R5/review-fix/follow-up-fix self-check artifacts (including the four named), wrapper-attempt1, PS 5.1 parser R6/R7/R8 paths, evidence JSON, capture stdout/stderr/exit, Review Round 5 首轮/follow-up #1/#2/#3/#4 prompt/stdout/stderr/exit, 既有 R1F Review artifacts, 既有 adjudications, new followup2/3/4-review-adjudications, postrun adjudication, rolling checkpoint.
+
+Potentially unprotected: "capture stdout/stderr/exit" and "postrun adjudication" and "evidence JSON" and "rolling checkpoint" — e.g. `verification/P02/p02pre-r1f-evidence-20261011.json` is not in the protected list (it's the script's output target, not hashed — appropriate). Capture wrapper stdout/stderr/exit artifact names are not in protected list — but they don't exist yet at capture time (they're created by the outer wrapper around/after capture) so they can't be protected. Rolling checkpoint / postrun adjudication — not yet existing. Are they named in the protected list? Task says "postrun adjudication、rolling checkpoint" are writable, but they're post-capture artifacts (created after capture). The manifest line 57 says "R8, the enumerated Review artifacts and adjudications through follow-up #4, and review-fix self-checks are in the current protected inventory" — it does not claim postrun/rolling checkpoint are included. So the wording is now accurate and appropriately scoped ("through follow-up #4"). ✓ This fixes the follow-up #3 observation #1.
+
+Hmm, one thing: are all "existing R1F Review artifacts" protected? Let's see what Review artifacts exist per Task/manifest: r1 stdout.md mentioned (verification/P02/dsh-p02pre-r1f-review-20261011.md wrapper and .jsonl, .prompt.md, .stderr.log, .exit) — lines 695-699 ✓. Round 2: 700-703 ✓. Round 3: 704-707 ✓. R4 attempt1/retry/followup: 746-757 ✓. Round 5: 708-711 ✓. followup: 717-720 ✓. followup2: 724-727 ✓. followup3: 730-733 ✓. followup4: 736-739 ✓. Also `dsh-p02pre-r1f-review-r5-followup3-20261011.exit` (733) ✓ and its prompt/stdout/stderr ✓. 
+
+What about `verification/P02/dsh-p02pre-r1f-review-20261011.prompt.md` (695) — is there also a `.md` wrapper? 699 `...review-20261011.md` ✓.
+
+Now, one more category: the manifest's own path `verification/P02/p02pre-r1f-manifest-20261011.md` (683) and Task (678) and script (684) are self-referential protections ✓.
+
+Now let me check whether the protected list includes the follow-up #4 prompt path that presumably will be created by the dispatcher — the current *this* review's prompt would be `dsh-p02pre-r1f-review-r5-followup4-20261011.prompt.md` (736) ✓. And stdout (737), stderr (738), exit (739), adjudication (740) ✓.
+
+Thus the path coverage gap (R5F3-CI1) is closed: 84 unique, all 11 pins covered.
+
+But hold on — an important check: is the *this-round* prompt file itself (the one the user pasted) matching path naming? The user's prompt says verification/P02/dsh-p02pre-r1f-review-r5-followup3-20261011.prompt.md is pin #7 (the previous round's prompt). And the planned follow-up #4 prompt path is in the script ✓. Fine.
+
+Now: "确认新加 12 个路径与旧 72 条无重复，合计 `84/84 unique`" ✓ verified.
+
+Now, are there other issues? Let me check the script's two arrays count vs. the claim "84 keys". But does the script actually have exactly two `foreach ($key in @(` blocks? From my reading, I saw `foreach ($key in @(` at 669 and 744. The follow-up #3 report says grep confirmed no third. In my full read of lines 1-901, I saw only these two. Let me double-check by scanning my memory of the file: line 396 `foreach ($relative in $record.paths)`, 415 `for`, 466 `foreach ($hive ...)`, 484 `foreach ($valueName ...)`, 503 `foreach ($commandName in $Record.commands.Keys)`, 629 split, 630 `foreach ($name in $envNames)`, 660 `foreach ($path in $inputRoots)`, 662, 664, 666, 669 `foreach ($key in @(`, 744 second, 762, 765, 798, 809-812, 847... Yes only two protected-hash loops. ✓ And `$Result.protectedHashes` assignments appear only in those two loops (line 742 and 759). ✓ So 84 keys.
+
+Hmm, but note: dictionary keys are case-sensitive by default? `$Result.protectedHashes` is an `[ordered]@{}` (OrderedDictionary), which by default is case-insensitive for string keys! OrderedDictionary created via `[ordered]@{}` in PowerShell uses case-insensitive comparer by default. So if two paths differed only in case, the dict would collapse to 83 keys while the literal count is 84. Is there any case-only duplicate among the 84? Let me check: all paths use consistent casing. E.g., `verification/P02/...` all lowercase 'v'/'P02'. `AGENTS.md` vs `agents.md`? Only one. `doc/...` lowercase. I don't see case-only duplicates. Also `p02pre-r1f-parser-windows-powershell-5.1-r4-...` vs `-r7-`? distinct. So 84 unique both as literals and as case-insensitive keys ✓. Good, the "84/84 unique" claim holds under either comparer.
+
+Now the structured skip counts check: script emits `repositorySkippedSymlinks` (834) and `repositoryUnreadUserDataPaths` (835) ✓; manifest line 47 consistent ✓. Also manifest line 20 (adjudication item) about note not needing numbers ✓ consistent with script line 852 which actually does include numbers in two of three branches; the third branch (symlink-only) lacks the number — manifest line 47's statement "数量由结构化字段记录，note 不需重复数字" covers it ✓.
+
+Wait, actually check the script's note branches:
+- both >0: includes both numbers ✓
+- only unread>0: includes excluded count and first path ✓
+- only symlink>0: text without number (the follow-up #3 observation #2) — manifest says note need not repeat numbers ✓ resolved by documentation.
+
+Now Task wording re manifest: Task line 25 says "Round 5 follow-up #1/#2/#3 的 Review 与 Codex adjudication 均归档；#3=`APPROVED` 后 Codex 集成发现 protected list 漏列最新 adjudication/Review artifact，已新增前瞻固定路径。" ✓ consistent with pin #5.
+
+Another check requested: "确认所有 owner waiver / Build / AC 状态没有被误记为 PASS" — I checked Task line 51, manifest line 53, pin #5 line 29. Also check the report stdout: it says waiver not miswritten ✓ (line 72). Also verify script's classifications don't mark things as PASS incorrectly: script line 618 sets hostIdentity PASS_WITH_EVIDENCE after identity match (that's evidence-based, fine). Line 851 repositoryProtectedInventory. Line 858 werQueriedFields PASS_WITH_EVIDENCE if no query error — fine. No Gate claims in script. The script doesn't set private_registry_absence to PASS (line 35 UNPROVABLE) ✓. AC1–AC7 not run ✓ (no build commands).
+
+Now let me also verify the "release order" wording in the manifest vs the Task vs the user's stated order:
+User: follow-up #4 APPROVED + Codex pin/path adjudication → Windows PowerShell 5.1 parser R8 parse-only → Codex pre-run adjudication (verify 84 paths existence and hash) → single capture.
+Manifest line 57: follow-up #4=APPROVED and Codex pin/path-membership adjudication → R8 parse-only → "A separate pre-run adjudication must recheck exact pins, identity/SID/token, roots/refs, output absence, status/index stability, exact path scope, and all 84 protected-file hashes" → capture once ✓.
+Task line 38: "新 Task/manifest/script/self-check/adjudication pins 需经 follow-up #4 独立批准前不得运行 R8/capture" ✓; line 43: R8 then... Task line 46 (AC5) requires pre-run recheck before capture ✓. Order consistent ✓.
+
+Note manifest line 57 says "all 84 protected-file hashes" ✓ updated from 72. Task line 43 doesn't mention a count. Pin #9 (follow-up2 adjudication line 22) says "all 72 protected paths and their hashes" — historical (72 then). That's a historical document, fine; it's superseded. Hmm, but it's still "current"? Pin #9 line 22: "Capture remains blocked until R8 and a separate Codex pre-run adjudication rechecks ... all 72 protected paths and their hashes." Since the protected list is now 84, a reader of pin #9 alone would see 72. But pin #9 is dated/historical for the previous candidate (it adjudicates follow-up #2 with the 65533 script). Task line 97 and manifest line 57 both describe follow-up #3's finding. Task line 96 (follow-up #2 row) says "F2 count corrected to 72". So the historical 72 references are consistent with the history. Not a finding.
+
+Hmm, but one thing: Task line 96 says "Review Round 5 follow-up #2 | ... | CHANGES_REQUESTED (0/0/1/1); Codex adjudicated | F1 current path evidence; F2 count corrected to 72". OK.
+
+Now the pin #5 adjudication line 15's expected count: "预期 72+12=`84 keys / 84 unique / 0 duplicates`" ✓ verified.
+
+So the only concrete issue I've found is manifest line 77's "child stderr=0" vs pin #4's childStderrBytes=404.
+
+Let me double check there isn't also a Task-level claim about stderr for fix3. Task line 38: "Windows PowerShell `5.1.26100.9549` 对该 exact script 完成 7 个纯函数 self-check=`PASS`，parse errors=0、assert output=0、capture/getter/registry/ACL write=false". No stderr claim ✓. So only manifest.
+
+Also check manifest line 77's other claim: "parsed source ... and passed the seven selected pure-function assertions; parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false. Child read the exact source path; source bytes were not passed on command line or stdin." The last sentence matches pin #4's sourceTransport ✓.
+
+Also, "child stderr=0" might have been intended as "child stderr 无错误" but the frozen artifact shows bytes. I'll report as P3 with minimal fix: change to "child stderr=404 bytes (CLIXML progress noise, no error text)" or delete the clause; do not change script bytes.
+
+Hmm, should severity be P2? Consider that the manifest is a frozen input to the pre-run adjudication and the "current self-check evidence" claim is meant to support the release decision. A false claim about stderr could mask a harness irregularity... but the artifact itself is pinned and shows the stderr content; nothing is hidden. Precedent: wrong count in docs = P3. I'll go P3.
+
+Hmm, wait. Let me reconsider whether there might be an argument that "child stderr=0" refers to `childStderrBytes` after decode... The stderr content is a CLIXML progress record. Was it written *before* the child's main output? Doesn't matter.
+
+Actually — hmm, there's a subtlety worth checking: could the CLIXML stderr record indicate that the child *did* run something beyond the pure functions (e.g., a cmdlet that emits progress)? In Windows PowerShell, CLIXML progress serialization to stderr happens when a cmdlet calls Write-Progress and the host is non-interactive with redirected stderr. Functions in the script don't call Write-Progress. But the harness (the code that parses the script, extracts functions, runs assertions) might use `Select-String`/`Get-Content` (no progress) or `Copy-Item`... Hmm, `Write-Progress` is used by some cmdlets like `Invoke-WebRequest`, `Get-ChildItem`? No. Which built-in cmdlets emit progress? `Write-Progress`, `Copy-Item`? Not typically serialized... Actually in Windows PowerShell, `Get-FileHash` does NOT emit progress. Hmm, maybe the harness emitted `Write-Progress` itself for the phases, or the parent (PS7.6.6) remoting? Note: the child is powershell.exe 5.1 launched from a PS 7.6.6 parent with -EncodedCommand. If the parent used `Start-Process`/Process.Start with redirected stderr — the CLIXML progress output to stderr is a known behavior of PowerShell when `$ProgressPreference` and stderr redirection... Actually the known behavior: when powershell.exe's stderr is redirected, progress records are serialized as CLIXML because the progress stream is written to the host's stderr. Hmm, actually on Windows PowerShell 5.1, `Write-Progress` output goes to the console host (stdout-ish), and when there's no console but stderr redirected, it serializes CLIXML to stderr. So *something* wrote progress.
+
+Is there something in the harness that writes progress? Unknown — the harness isn't in the pins. So the "child stderr=0" claim is definitely wrong, and the 404 bytes are progress noise. The right characterization: stderr non-empty but only a serialized progress record; no error/exception text. The manifest's "child stderr=0" is inaccurate; the adjudication (pin #5) said the next self-check artifact "会明确记录本轮实际 source transport 与进程参数" — it doesn't mention stderr. Task doesn't claim stderr.
+
+Hmm, hold on. Let me reconsider: maybe the manifest line 77's "child stderr=0" was written to claim "child stderr exit"? Let me look at pin #4's fields once more: childExitCode 0, childStderrBytes 404. The list "parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false" — the writer probably copied from the fix2 description where stderr was 0. Indeed for the *old* followupfix (pin #8), childStderrBytes=0. And followupfix2 (2308), per the adjudication's mention? Unknown but likely 0 too. So copy-paste stale claim. Definitely a finding.
+
+Now — is there anything else? Let me check the "childStdoutBytes: 595" vs the base64 length. base64 of 595 bytes = ceil(595/3)*4 = 199*4 = 796 chars. Let me estimate the base64 string length in pin #4 line 34... hard by eye. Not needed.
+
+Hmm, actually let me verify the base64 decodes to valid JSON with matching fields — this is a good cross-check for internal consistency of pin #4 (the review focus asks about self-check evidence). I can decode a prefix by eye: "eyJlbmdpbmUiOiJXaW5kb3dzIFBvd2VyU2hlbGwiLCJlbmdpbmVWZXJzaW9uIjoiNS4xLjI2MTAwLjk1NDkiLCJzb3VyY2VCeXRlcyI6NjY1NjAsInNvdXJjZVNoYTI1NiI6IkY1NUYxOTVFMEE3NDZCOEQ2QjFFQTE5QTdGQTIxMjQ5NUZERkE0RjRGRUFCNkNGMjgxQkVDRTY1MTczQUM4RTgiLCJwYXJzZVJlc3VsdCI6IlBBUlNFX09LIiwicGFyc2VFcnJvckNvdW50IjowLCJzZWxlY3RlZEZ1bmN0aW9ucyI6WyJUZXN0LVVucmVhZFVzZXJEYXRhU3RhZ2luZ1BhdGgiLCJUZXN0LVNhZmVSZXBvc2l0b3J5UmVsYXRpdmVQYXRoIiwiR2V0LUxpbmtUeXBlRXZpZGVuY2UiLCJHZXQtSW52ZW50b3J5QWN0aW9uIiwiVGVzdC1FeHBlY3RlZERldGFjaGVkQnJhbmNoUmVzdWx0IiwiQXNzZXJ0LUludmVudG9yeVBvbGljeVNlbGZDaGVjayIsIkFzc2VydC1Db21tYW5kU2VyaWFsaXphdGlvblNlbGZDaGVjayJdLCJzZWxmQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg=="
+
+Careful — the read output line 34 as displayed: I'll trust the field values. Note that the displayed base64 for fix3 appears *shorter* than the one for pin #8? Pin #8's base64 (line 33 of that file) is 610 bytes → ~816 chars; fix3's 595 → ~796. Fine.
+
+Hmm, interesting: earlier I noticed in fix3's base64 the substring `InNlbGYQ2hlY2tSZXN1bHQi`? Let me re-read the actual characters from the output above:
+
+fix3 line 34: "...LCJzZWxlY3RlZEZ1bmN0aW9ucyI6WyJUZXN0LVVucmVhZFVzZXJEYXRhU3RhZ2luZ1BhdGgiLCJUZXN0LVNhZmVSZXBvc2l0b3J5UmVsYXRpdmVQYXRoIiwiR2V0LUxpbmtUeXBlRXZpZGVuY2UiLCJHZXQtSW52ZW50b3J5QWN0aW9uIiwiVGVzdC1FeHBlY3RlZERldGFjaGVkQnJhbmNoUmVzdWx0IiwiQXNzZXJ0LUludmVudG9yeVBvbGljeVNlbGZDaGVjayIsIkFzc2VydC1Db21tYW5kU2VyaWFsaXphdGlvblNlbGZDaGVjayJdLCJzZWxmQ2hlY2tSZXN1bHQiOiJQQVNTIiwic2VsZkNoZWNrT3V0cHV0Q291bnQiOjAsImNhcHR1cmVTY3JpcHRJbnZva2VkIjpmYWxzZSwiaG9zdEdldHRlckludm9rZWQiOmZhbHNlLCJyZWdpc3RyeU9yQWNsV3JpdGVJbnZva2VkIjpmYWxzZX0NCg=="
+
+Hmm wait, in the actual tool output for fix3 I see "...dGVzdC1FeHBlY3RlZERldGFjaGVkQnJhbmNoUmVzdWx0IiwiQXNzZXJ0LUludmVudG9yeVBvbGljeVNlbGZDaGVjayIsIkFzc2VydC1Db21tYW5kU2VyaWFsaXphdGlvblNlbGZDaGVjayJdLCJzZWxmQ2hlY2tSZXN1bHQiOiJQQVNTIi..." — the earlier displayed string had `InNlbGYQ2hlY2tSZXN1bHQi`? I can't reliably re-derive from memory. Let me re-read pin #4 to inspect the base64 carefully? That doesn't help me decode by hand either.
+
+Actually — hmm, I realize the displayed fix3 base64 in the tool output contains "Q2hlY2tSZXN1bHQi" (selfCheckResult) — consistent. Also it ends with "DQo=" (\r\n). And notably, the fix3 stdout JSON (decoded) does NOT include a "failure" field, unlike pin #8 which has "failure":null. Fine.
+
+Should I worry that the decoded stdout lacks the failure field and the review expects it? No.
+
+Another cross-check: pin #4's `sourceHashMatchedBetweenParentAndChild: true` and the transport claim. Fine.
+
+Now let me also consider: does pin #4's childStdout base64 field itself claim `captureScriptInvoked:false` etc.? Yes.
+
+Now, one more potential issue: manifest line 77 says "child stderr=0" AND the follow-up #3 report (pin #6) at line 73 says "pin #4 自身三字段 `false`". Those refer to fix2's fields (fix2 self-check 2308 bytes, which per follow-up2 adjudication also had 3 false fields). Fine.
+
+Now let me read the stderr.log (pin #11) at least partially, to check the exit/behaviour and whether it contains anything about the follow-up #3 run that contradicts manifest/pin#5 (e.g., exit code, errors, truncation). 119856 bytes. It's likely DSH CLI stderr noise (progress bars etc.). Read head 60 lines and tail 60 lines. The read tool counts lines; the file may have few very long lines. Let me read with limit 50 first.
+
+Actually, is reading it necessary? The review focus: "follow-up #3 prompt/stdout/stderr/exit ... 是否都在冻结脚本中" — membership only. But I should also check "当前 PS 5.1 self-check 的 source/transport/exit 证据" — different. And "检查 manifest 关于已列 Review artifact 的措辞" — the manifest doesn't describe stderr.log content beyond bytes/SHA (line 57 + pin list). Pin #5 line 8 pins stderr bytes/SHA. To be diligent, I'll skim the stderr log to confirm it's DSH stderr and check for any evidence of the out-of-scope grep or errors. Let me read a portion.
+
+Let me read first 40 lines and last part. The file may be one giant blob with CR. Let's try.
+dsh: reasoning:
+This is the DSH reasoning log for the previous round. Not needed in detail. Let me check the tail for the exit-related info, and whether stderr contains anything about the out-of-scope grep. Let me read the last ~60 lines.
+
+Actually, it's fine — the stderr.log is a reasoning trace. It documents that the previous reviewer planned the out-of-scope grep. Interesting: line 40 mentions "I need to read the two arrays. Let me grep for the arrays first? ... the constraint says 不要执行任何命令 — tools like grep/read are read operations, fine." That's the scope violation root. The report disclosed it.
+
+I don't need more of the stderr. But let me check the tail to see if it ended cleanly (which relates to exit=0). Let me read offset 700 limit 40.
+dsh: reasoning:
+The stderr.log is the DSH reasoning trace; 739 lines. It corroborates the report. Note: line 720-722 shows the previous reviewer's claim that all 8 pins are in the 72 protected list, with line numbers L728 for pin #5 — but actually L728 was the *wrong* file (`p02pre-r1f-r5-followup2-adjudication-...`), and the actual pin #5 (`...-review-adjudication-...`) was NOT in the list. Wait — the stderr line 722 says "pin #5 at L728" — and the Codex finding says the reviewer's coverage assertion was wrong: L728 was a different file. So the reviewer mapped pin #5 to L728 by *similar filename*, exactly the error Codex found. Good — this confirms the Codex finding and that the new candidate fixes it by adding the correct path at L729.
+
+Also note the stderr line 700 O1 recommendation: "Do NOT add them to the script (changing bytes would invalidate pin #4 and this review)." But Codex DID add them (correctly, since the protection requirement outweighs the review-pin invalidation — a new review round is required anyway). The new candidate requires follow-up #4. Fine. Not a contradiction, since the reviewer's constraint was about not invalidating that round's review, and Codex re-pinned.
+
+Now, are there additional findings? Let me reconsider the "child stderr=0" claim once more and check the follow-up #2 manifest wording (pin #9's candidate manifest = 21114 bytes) — not available. But the *current* manifest line 77 is what matters.
+
+Wait, actually, let me look again more carefully: is "child stderr=0" perhaps true and pin #4's childStderrBytes=404 refers to something else? No. Definitely contradictory.
+
+Hmm, but hold on. Let me reconsider whether the fix3 self-check stderr 404 could have arisen *after* the JSON's own claim? No, pin #4 records it.
+
+Now let me also verify the claim in manifest line 77: "`2927 bytes / SHA-256 18BD55A9119ADD7253CAD00D87843EEF4A6B047900BB1D47964437E23E465B97`" matches pin #4's stated size from the request (2927 / 18BD...). ✓ Both docs and the task's pin list agree.
+
+Additionally, Task line 38 says "artifact=`p02pre-r1f-r5-followupfix3-selfcheck-20261011.json`（`2927 / 18BD55A9...`）" ✓.
+
+Now consider whether there might be a second finding: the manifest says (line 77) "child stderr=0" AND (line 61) "Follow-up #4 outputs and adjudication are planned paths; they must exist and hash successfully before capture, or capture stops." ✓ fine.
+
+Another check: manifest line 57 says "The new script includes 12 additional fixed paths (84 total)". ✓
+
+Another: manifest line 17 says "新增 12 个唯一保护路径后静态总计=`84 keys / 84 unique / 0 duplicates`" ✓.
+
+Another potential issue: the R8 path is in the protected list (line 745) and the manifest says R8 must exist before capture. But R8 is created by Codex before capture ✓.
+
+Another: does the protected list include the follow-up #4 *prompt* path? yes 736. But the actual file name for this round's prompt: the user's header says "P02PRE-R1F Review Round 5 follow-up #4"; the planned path in the script is `dsh-p02pre-r1f-review-r5-followup4-20261011.prompt.md` ✓ consistent naming with prior rounds.
+
+Now consider: the review focus asks "特别确认本轮 Codex adjudication `p02pre-r1f-r5-followup3-review-adjudication-20261011.md`、follow-up #2 adjudication、follow-up #3 prompt/stdout/stderr/exit、自检3，以及预定 follow-up #4 prompt/stdout/stderr/exit/adjudication 是否都在冻结脚本中" — all confirmed present at lines 729-740 ✓.
+
+Hmm, note: "自检3" = followupfix3-selfcheck ✓ line 735. Also the round-3 self-check? Fine.
+
+Now, is there any *missing* Review artifact? What about `p02pre-r1f-r5-followup3-... .exit`? line 733 ✓ (the user's 11 pins don't include it but the manifest's 12 list does).
+
+What about the `dsh-p02pre-r1f-review-r5-followup2-review-adjudication`... no. What about the follow-up #2 *self-check* (followupfix2) ✓ 723.
+
+What about `p02pre-r1f-r5-selfcheck-...` etc ✓.
+
+What about the R4-followup review artifacts ✓ 754-757.
+
+What about `dsh-p02pre-r1f-review-r4-20261011.stdout.md` ✓ 747.
+
+Are there other dsh review artifact families, like `dsh-p02pre-r1f-review-r2-...stderr.log` ✓ 702. R3 ✓. Fine.
+
+Now what about the "codex-checkpoint-p02pre-r1f-20261011.md" (713) and "p02pre-r0s6-checkpoint" (714) ✓.
+
+OK. So coverage looks complete: 84 unique.
+
+Now — the "8 个输入均在 protected list" assertion from last round: now with 84 paths, all 11 of this round's pins are in the list. Let me verify each of the 11 pins against the script list explicitly (mapping, not by similar name):
+
+Pin 1 `doc/tasks/P02PRE-R1F.md` → script L678 exact string ✓
+Pin 2 `verification/P02/p02pre-r1f-manifest-20261011.md` → L683 ✓
+Pin 3 `verification/P02/p02pre-r1f-capture.ps1` → L684 ✓
+Pin 4 `verification/P02/p02pre-r1f-r5-followupfix3-selfcheck-20261011.json` → L735 ✓
+Pin 5 `verification/P02/p02pre-r1f-r5-followup3-review-adjudication-20261011.md` → L734 ✓
+Pin 6 `verification/P02/dsh-p02pre-r1f-review-r5-followup3-20261011.stdout.md` → L731 ✓
+Pin 7 `verification/P02/dsh-p02pre-r1f-review-r5-followup3-20261011.prompt.md` → L730 ✓
+Pin 8 `verification/P02/p02pre-r1f-r5-followupfix-selfcheck-20261011.json` → L722 ✓
+Pin 9 `verification/P02/p02pre-r1f-r5-followup2-review-adjudication-20261011.md` → L729 ✓
+Pin 10 `verification/P02/p02pre-r1f-followupfix-selfcheck-wrapper-attempt1-20261011.md` → L716 ✓
+Pin 11 `verification/P02/dsh-p02pre-r1f-review-r5-followup3-20261011.stderr.log` → L732 ✓
+
+All 11 ✓.
+
+Now, severity decision. The task says: "只报告可从这 11 个 pins 直接复现的问题，给 P0/P1/P2/P3、精确文件/位置、影响和最小修复。无开放问题时给 `APPROVED` 与 `0/0/0/0`."
+
+Given one P3, the decision should be CHANGES_REQUESTED (0/0/0/1)? Hmm. Let me think about whether an "APPROVED with observations" is acceptable per the instruction. The instruction says give APPROVED + 0/0/0/0 when there are no open issues. Since I found an issue, I should report it as a finding. A P3 finding is an open issue in this framework (previous rounds treated P3s as requiring fixes and issued CHANGES_REQUESTED). So decision = CHANGES_REQUESTED, counts 0/0/0/1.
+
+But is "child stderr=0" worth blocking the release? The release is already blocked on follow-up #4 approval. If I approve with a P3 doc nit, Codex could fix it and we'd need another round (churn). But precedent: R5F2-F2 was a P3 count error → CHANGES_REQUESTED (0/0/1/1) — wait, follow-up #2 was CHANGES_REQUESTED with P2(1)... hmm, pin #9 shows counts `0/0/1/1` = P2=1, P3=1. The P2 was F1 (conditional path presence), the P3 was F2 (count). So yes, a P3 alone → CHANGES_REQUESTED in this project's practice.
+
+Hmm, but the reviewer instruction here says "无开放问题时给 APPROVED 与 0/0/0/0" — implying if there are open issues, give findings (and presumably not APPROVED). I'll issue CHANGES_REQUESTED (0/0/0/1) with the single P3, precise location, impact, minimal fix.
+
+Hmm, wait. Let me be extra careful: is the manifest's "child stderr=0" maybe describing the *fix2* self-check in a sentence that I mis-attributed? Re-read manifest lines 61-78:
+
+Line 61: "These 12 exact repository-relative paths are appended ..."
+Lines 63-74: the 12 paths.
+Line 76: blank.
+Line 77: "- Current exact-script self-check=`verification/P02/p02pre-r1f-r5-followupfix3-selfcheck-20261011.json`（`2927 bytes / SHA-256 18BD...`）；Windows PowerShell `5.1.26100.9549` parsed source `66560 bytes / SHA-256 F55F...` and passed the seven selected pure-function assertions; parse errors=0, assertion output=0, child stderr=0, capture/getter/registry/ACL write=false. Child read the exact source path; source bytes were not passed on command line or stdin. This is Codex self-check evidence, not independent Review or Gate PASS."
+Line 78: "- Prior self-check path cited by follow-up #2 F1=`...followupfix-selfcheck...`（`2307 ...`），phase=..., source pin belongs to an older candidate. A 2026-10-11 point query found `PRESENT` with `Attributes=Archive`; it remains a protected path and must be rechecked with its hash before capture."
+
+Yes, line 77 is the fix3 self-check. "child stderr=0" is false per pin #4 (404 bytes). Confirmed finding.
+
+Hmm, one more consideration: is pin #4's `childStderrBytes: 404` consistent with pin #4's claim "childStderrSha256": "821020..."? Yes 404 bytes → non-empty hash. And also the annotation in the review prompt pin list says pin #4 is 2927 bytes. Fine.
+
+Additionally I might note the stderr content: base64 begins `IzwgQ0xJWE1MDQo` = "#< CLIXML\r\n" → a PowerShell serialized progress record. So it's noise, not an error. The minimal fix should say exactly that.
+
+Now: should I also raise the transport claim as P3? Let me decide. The follow-up #3 reviewer's O3 said the stdin mechanism was not witnessed; the new artifact (pin #4) adds `sourceTransport: "child read the exact pinned file path; no source on command line or stdin"`. Is this consistent with pin #10's plan? Pin #10 says the *retry* would stream source bytes through redirected stdin, to produce the attempt-2 result at pin #8's target. Pin #4 is a *later* artifact (fix3, created 09:48:29). So pin #4's transport describes the fix3 run, not the fix2 retry. No contradiction. And the claim "no source on command line or stdin" is consistent with pin #4's `childArguments` containing only `-EncodedCommand` (the harness, not the source) — though the source-in-command-line claim is about the source. Given pin #10's plan for stdin applied to fix2, not fix3, I see no contradiction. Good — don't report. But I might mention as a non-blocking observation that pin #4's transport field is a narrative self-report (not a measured field), and that the fix2 retry's stdin mechanism (pin #8) remains unwitnessed per the follow-up3 O3 — already recorded as UNPROVEN/NON_BLOCKING in pin #5 (line 21). So nothing new. I'll mention in observations to show I checked, but not as a finding.
+
+Hmm, hold on. Let me check pin #5 (this round's Codex adjudication... no, pin #5 = follow-up #3 adjudication) line 21 again: "retry 使用 redirected stdin 的证据粒度：保留为 `UNPROVEN / NON_BLOCKING`；下一 self-check artifact 会明确记录本轮实际 source transport 与进程参数，不将旧 artifact 字段扩写成未见事实。" The new artifact (pin #4) records `sourceTransport` and `childArguments` ✓ — it "明确记录本轮实际 source transport 与进程参数". Does the artifact possibly "扩写成未见事实"? The sourceTransport string asserts a negative about stdin. Since the harness is external and not pinnable, we can't verify. But it is the harness's own record of its invocation. I'll note it as a non-blocking observation with the suggestion that the field is a self-report.
+
+Hmm, actually — maybe I should examine whether pin #4's sourceTransport conflicts with pin #4's own childArguments in a way that's provable. `-EncodedCommand` means the harness code was passed on the command line; the claim is that the *source bytes* weren't. That's consistent with pin #10's failure mode (source too long for the command line). So no contradiction. Fine.
+
+One more thing to check: "structured skip counts" — the manifest requirement is that counts live in structured fields `repositorySkippedSymlinks` / `repositoryUnreadUserDataPaths`. Script line 834-835 ✓. But does the *manifest* itself report the numbers? Line 41 mentions 2148 candidates. Fine.
+
+Now let me also double check the Task's claim "Windows PowerShell `5.1.26100.9549` 对该 exact script 完成 7 个纯函数 self-check=`PASS`" — pin #4 childEngineVersion 5.1.26100.9549 ✓, 7 functions ✓, PASS ✓, and the script is parsed from the exact pinned file path (sourceBytes/SHA match) ✓.
+
+And Task line 38: "parse errors=0、assert output=0、capture/getter/registry/ACL write=false" ✓ matches pin #4.
+
+Now also check: does pin #4 record `childExitCode: 0` ✓ (exit evidence).
+
+OK. Another possible finding: manifest line 77 says "passed the seven selected pure-function assertions". The self-check selected 7 functions, but the script has 9 functions (Assert-InventoryParserSelfCheck and others were selected only partially). Actually pin #4 selectedFunctions lists 7: Test-UnreadUserDataStagingPath, Test-SafeRepositoryRelativePath, Get-LinkTypeEvidence, Get-InventoryAction, Test-ExpectedDetachedBranchResult, Assert-InventoryPolicySelfCheck, Assert-CommandSerializationSelfCheck. The script also defines Assert-InventoryParserSelfCheck (line 207) which is not in the selected 7 — but the script calls it at runtime (line 592). Hmm, "seven selected pure-function assertions" — that's accurate as a description of the self-check artifact. But note the fix3 self-check does NOT cover `Assert-InventoryParserSelfCheck` even though the script runs it before anything. Is that a coverage gap? The prior fix2 self-check also had 7 selected functions (per manifest line 17: "passed the seven selected pure-function assertions"). Hmm, Task line 92 (r5-reviewfix) says 6 functions. So the sets evolved. Not a new defect; and the self-check isn't a Gate anyway. Not reporting.
+
+Hmm, but wait — is there a discrepancy: the follow-up #2 adjudication (pin #9, line 17) says the static recount found "2 blocks / 72 keys". Now with 12 added, "84 keys". Fine.
+
+Now think about whether the "84/84 unique" claim could be challenged by the OrderedDictionary case-insensitivity... I checked no case-only duplicates. Let me double check a couple: `verification/P02/dsh-p02pre-r1f-review-r5-followup2-20261011.prompt.md` vs `...followup3...` distinct. `p02pre-r1f-r5-followup3-review-adjudication` vs `p02pre-r1f-r5-followup2-review-adjudication` distinct. Yes.
+
+Also: array 1 line 728 `p02pre-r1f-r5-followup2-adjudication-20261011.md` and line 729 `p02pre-r1f-r5-followup2-review-adjudication-20261011.md` — distinct strings, no case-only relationship ✓.
+
+Now, one more consideration on the 12 new paths: the manifest says "appended to the existing 72-key protected inventory". In the script, the 12 new are placed at the END of array 1 (lines 729-740). Is 729 new? `p02pre-r1f-r5-followup2-review-adjudication` — yes new (per Codex finding). And 728 was pre-existing. So the "12 appended" appear at 729-740, contiguous — consistent with appending within array 1 rather than creating a third block. The follow-up #3 report predicted "不要把它们加进 script" but that was advisory for that round. Fine.
+
+Also verify: the total protected-path count claim in the *adjudication* pin #5 line 15 says "预期 72+12=`84 keys / 84 unique / 0 duplicates`" ✓.
+
+Now, is there any issue with the manifest's heading "Additional protected Review evidence — Round 5 follow-up #2–#4" but the 12 include followup3 adjudication + fix3 selfcheck + followup4 planned? Yes covers #2–#4 ✓.
+
+Another angle: the review focus says "确认所有 owner waiver / Build / AC 状态没有被误记为 PASS". Check the script for any classification that could be misread: line 618 hostIdentity = PASS_WITH_EVIDENCE (identity getter actually ran → allowed). Line 851 repositoryProtectedInventory. Line 858 werQueriedFields. These are getter-result classifications, not Gate. The Task AC list is unchecked `[ ]` (lines 42-51) — good, no AC marked done. And Task line 38 says Build/Cargo=NOT_RUN; AC1–AC7=BLOCKED/NOT_RUN ✓.
+
+Also Task front matter: `status: in_progress`, `approval: user_authorized`, `integration_commit: null` ✓ — no false completion.
+
+OK. One more: does anything in the 11 pins claim "R8 已通过" for the new candidate? Task line 38/43 say NOT_RUN; row 99 says NOT_RUN. Row 88 says R7 PARSE_OK (historical candidate). Manifest line 23 says R7 binds previous candidate. Consistent ✓. Pin #4 is a self-check, not R8 ✓.
+
+And capture status: Task line 100 "BLOCKED / NOT_RUN" ✓; line 38 "capture=`BLOCKED / NOT_RUN`" ✓.
+
+Now, let me also double check the claim in pin #5 line 9 (the follow-up #3 reviewer's out-of-scope grep) vs pin #6 line 86-88 — consistent ✓ (both disclose the same out-of-scope grep). Manifest line 23 (the adjudication's item) says "DSH 范围外 grep 返回的历史行：已在本轮派发后同步当前 STATUS/Plan/索引/checkpoint". Hmm — that's in the follow-up3 adjudication (pin #5) line 23: "DSH 范围外 grep 返回的历史行：已在本轮派发后同步当前 STATUS/Plan/索引/checkpoint；没有把过期搜索结果作为当前事实。" But the follow-up #3 stderr (pin #11) line 706 says those governance files still contain `63/63 unique` and `R5_FOLLOWUP2_REVIEW_ACTIVE`. If Codex synced them after dispatch, fine (the stderr predates the sync). Can I verify? The governance files are not in my read boundary. So I can't check. Non-issue for me (out of scope). Note: pin #5 line 23 asserts the sync happened; unverifiable within the 11 pins. I could flag as an observation: the claim "已同步" cannot be verified from the 11 pins. But the review boundary says report only problems reproducible from the 11 pins. An unverifiable claim is not a reproducible problem; it's a residual limitation. I'll list it as a residual limitation.
+
+Hmm, but note also: the manifest line 57 says follow-up #4's pins require... fine.
+
+Now, should I also consider the possibility that the *Task* file's pin (21390 bytes) differs from what the *script* would hash... no, irrelevant.
+
+Let me also double check the Task statement at line 25: "已新增前瞻固定路径" and line 34: "当前 Task/manifest/script/self-check/adjudication 的新 exact pins 必须由非作者 Reviewer follow-up #4=`APPROVED`" ✓.
+
+One more potential finding candidate: Task row 97 says follow-up #3 = "APPROVED (0/0/0/0); Codex integration found P2 path-coverage mismatch" ✓ matches pin #5.
+
+Task row 98: "Review Round 5 follow-up #4 | ... | ACTIVE / DISPATCH_PENDING | 84 protected paths; exact Task/manifest/script/self-check/adjudication pins; approval required before R8" ✓.
+
+Task row 96: follow-up #2 "CHANGES_REQUESTED (0/0/1/1); Codex adjudicated | F1 current path evidence; F2 count corrected to 72" ✓ matches pin #9.
+
+Task row 95: follow-up #1 "CHANGES_REQUESTED (0/0/0/4)" ✓ matches pin #9 line 15 (manifest line 15 also: 4 P3).
+
+Task row 89-90: r5 selfcheck wrapper first attempt / retry ✓ consistent with manifest lines 11-12.
+
+Now Task row 79 says r2-selfcheck 1548 bytes / FE1989875... ✓ manifest line 22 same ✓.
+
+Task row 92: r5-reviewfix-selfcheck 2694 / F2FCE66E... ✓ manifest line 14 same ✓.
+
+Task row 94: followupfix2-selfcheck 2308 / 1696B781... ✓ manifest line 17 same ✓, pin #7 (follow-up3 prompt) #4 ✓.
+
+Task row 93: wrapper attempt1 ✓.
+
+Task row 87: r4-followup APPROVED ✓.
+
+Task row 84: r4 attempt1 DISPATCH_INTERRUPTED, `dsh-p02pre-r1f-review-r4-20261011.stdout.md`=0 bytes ✓ and that path is protected (line 747) — note: 0-byte file will hash as empty (state PRESENT) — fine.
+
+Hmm — but wait: row 84 says "stderr 与 DSH 写入的 `.exit` 保留；CLI exit 未采到". Yet the protected list includes `dsh-p02pre-r1f-review-r4-20261011.exit` (line 749). If the CLI exit wasn't captured, does that `.exit` file exist? Task says "DSH 写入的 `.exit` 保留" — so DSH (the harness itself) wrote an .exit artifact during the interrupted attempt. Whether it exists, I can't verify (out of boundary). But if it doesn't exist, the capture would stop at `invalidHashCount`; the pre-run adjudication checks existence. This is a potential pre-run risk, not a finding I can reproduce. Hmm — should I flag it? The reviewer boundary explicitly excludes file existence probing, so I can only state the residual: existence/hash of all 84 paths is Codex's pre-run duty. Also the pins for this round imply the 12 new planned paths must exist. I'll note it as a residual limitation, not a finding.
+
+Hmm, although — is it a *problem* that the protected list includes a path that Task says had no CLI exit captured? Let me re-read Task row 84: "`dsh-p02pre-r1f-review-r4-20261011.stdout.md`=`0 bytes`；stderr 与 DSH 写入的 `.exit` 保留；CLI exit 未采到". Ambiguous: "stderr 与 DSH 写入的 `.exit` 保留" = "stderr and the `.exit` written by DSH are retained"; "CLI exit 未采到" = the CLI exit code wasn't captured. So an .exit file exists (written by DSH). OK, no issue. Fine, skip.
+
+Now: do I need to double check whether the two protected arrays' keys count as "84 paths" while the *first* array's self-referential inclusion of the script itself (L684) creates an interesting property: the script hashes itself. That's fine.
+
+Let me now also sanity check that the current script's protected list includes the fix3 self-check AND that manifest line 61's requirement ("Follow-up #4 outputs and adjudication are planned paths; they must exist and hash successfully before capture, or capture stops") is consistent with script behavior: absent → Get-FileRecord state ABSENT → invalidHashCount>0 → stopReason ✓. Good.
+
+So final: one P3 finding (manifest line 77 "child stderr=0" contradicts pin #4). Decision: CHANGES_REQUESTED (0/0/0/1)? Hmm, hold on. Let me reconsider severity and whether the finding is actually material to release.
+
+Consider the impact: The manifest is one of the frozen pins; the Codex pre-run adjudication will use exact pins and hashes but the self-check stderr claim isn't used in any mechanical check. The claim's falsity doesn't cause a capture to proceed when it shouldn't. So P3 = documentation accuracy. In the project's convention, P3 findings were still reported and fixed (e.g., follow-up #1's four P3s → repaired). So the correct output is CHANGES_REQUESTED (0/0/0/1) with the minimal fix. Actually hmm — since this finding does not affect the script bytes, the minimal fix is a doc edit in the manifest → which changes the manifest bytes → which invalidates all the current pins → requiring... well, that's Codex's problem. Which suggests severity P3 with the note that fixing it changes manifest bytes and therefore re-pins are needed (Codex's call: either fix now and re-pin, or record it as a superseded/historical statement). Hmm, that's a real consequence: any doc change now invalidates pins #2 and requires re-dispatch. That's exactly why a P3 here costs a round. But the alternative (approving a frozen manifest containing a false evidence claim) is worse for the audit trail, and precedent shows Codex prefers to fix and re-pin (that's the whole point of this slow process).
+
+Hmm, wait. But let me reconsider: maybe I should classify it P2 because a false claim in the *current self-check evidence description* used to justify not re-running the self-check... no. The truthful statement is available in the pinned JSON. I'll go P3, and explicitly note the pin-invalidation consequence and give Codex two minimal-fix options (correct the sentence to match pin #4 and re-pin; the manifest byte change invalidates pin #2 and requires a fresh follow-up round — or explicitly mark it as a known stale clause superseded by pin #4). Hmm, the second option (marking as stale) also changes bytes. So either way the manifest bytes change. Unless Codex adjudicates the finding as "no change, recorded in adjudication" — which would still leave the false claim in the frozen manifest. I'll present the minimal fix as the doc correction and note the re-pin consequence.
+
+Hmm, hmm. Let me reconsider one more time whether "child stderr=0" could be defended as "stderr contains no error, i.e. zero error output"? The phrase in a list of numeric zero claims ("parse errors=0, assertion output=0, child stderr=0") reads as a count. And the previous round's manifest presumably had the same clause for the fix2 self-check where stderr bytes were 0 — I can't confirm. But even a charitable reading requires "child stderr error count=0", which the manifest doesn't say. I'm confident enough.
+
+Let me also double check the Task line 38 omission — consistent with the idea that the Task author knew stderr wasn't 0? Or just brevity. Either way, my finding stands on the manifest vs pin #4.
+
+Now — before finalizing, let me make sure I haven't missed a second, more serious issue: the review focus says "逐字核对 script 的两个 protected-key arrays" — done, 71 + 13 = 84 unique. But wait: is array 1 really 71? Let me recount very carefully with the actual line listing, because this is the crux.
+
+Lines 670-740 inclusive = 71 lines (740-670+1 = 71). Yes, if every line 670..740 is a path literal and none is a blank/comment. Looking at the read output, lines 670-740 are all `'...'` path literals with trailing commas (740 last, no comma). Yes, 71 entries.
+
+Lines 745-757 = 13 entries (757-745+1 = 13) ✓.
+
+71+13 = 84 ✓.
+
+Old 72 = 84 - 12 ✓ and the 12 new = lines 729-740 (729,730,...,740 = 12 lines) ✓.
+
+Hmm, and are 729-740 exactly the 12 manifest-listed paths in order? 
+729: p02pre-r1f-r5-followup2-review-adjudication-20261011.md = manifest item 1 ✓
+730: dsh-...-followup3.prompt.md = item 2 ✓
+731: stdout = item 3 ✓
+732: stderr.log = item 4 ✓
+733: exit = item 5 ✓
+734: p02pre-r1f-r5-followup3-review-adjudication = item 6 ✓
+735: followupfix3-selfcheck = item 7 ✓
+736: followup4 prompt = item 8 ✓
+737: stdout = 9 ✓
+738: stderr = 10 ✓
+739: exit = 11 ✓
+740: followup4-review-adjudication = 12 ✓
+Perfect.
+
+Now, the "old 72" — the reviewer in the previous round counted 59 + 13 = 72 with array 1 keys L670–L728 (59 entries: 728-670+1 = 59) ✓ and array 2 L733–L745 (13) ✓. That matches my count of the old list (array 1 pre-append = lines 670-728 = 59). ✓ Consistent. Great: the 12 new lines are exactly 729-740, so the old list = 59+13 = 72 ✓. Everything coheres.
+
+Now also confirm no duplicate between old 72 and the 12: the 12 new paths, are any of them already in the old list (670-728 or 745-757)? Check each:
+1. followup2-review-adjudication — old has followup2-adjudication (728) but not the -review- one ✓ new.
+2. followup3 prompt/stdout/stderr/exit — old had none (old max was followup2 at 724-727) ✓.
+3. followup3-review-adjudication ✓ new.
+4. followupfix3-selfcheck ✓ new.
+5. followup4 ×4 ✓ new.
+6. followup4-review-adjudication ✓ new.
+No duplicates ✓. Total unique 84 ✓.
+
+Good. Also the manifest claims "0 duplicates" ✓.
+
+Now, additional residual verifications I should state honestly:
+- The reviewer's pins give sizes/SHA for the 11 files but I cannot recompute them (no hash tool use allowed); so bytes/SHA remain UNPROVEN from my side. I did not compute; I only cross-checked the recorded values against each other.
+- Existence/hash of all 84 paths at pre-run is Codex's duty.
+
+Wait — actually, hmm: can I verify byte counts by reading? The `read` tool reports "(End of file - total N lines)" and content. No byte counts. So no.
+
+Hmm, one more: the task's pin #2 says manifest = 23135 bytes; my read shows 78 lines — plausible.
+
+Now let me think about whether to also flag the discrepancy between Task line 97 and manifest line 17 ("READY / DISPATCH_PENDING") — the follow-up #3 report noted Task L97 `ACTIVE / DISPATCH_PENDING` vs manifest L17 `READY / DISPATCH_PENDING` as non-material. In the current pins: Task line 98 says follow-up #4 "ACTIVE / DISPATCH_PENDING"; manifest line 17 says... let me check: manifest line 17 doesn't contain "READY / DISPATCH_PENDING" anymore? Line 17 is about the script/self-check. Hmm, in the current manifest, where was "READY / DISPATCH_PENDING"? The follow-up #3 report referenced manifest L17. Current manifest L17: "R5 follow-up-fix2 self-check（历史 candidate）=..."; no status wording. So the manifest was rewritten to remove it. Fine, no issue. Let me grep mentally: current manifest has "ACTIVE / DISPATCH_PENDING"? Line 57 mentions follow-up #4; no status enum. Task line 98 "ACTIVE / DISPATCH_PENDING". Manifest line 57 doesn't state a status enum. So no inconsistency remains. ✓ (I should double-check the manifest text for "DISPATCH_PENDING"— scanning lines 1-78: line 13 "首轮不释放", line 21, 23, ... I didn't see "DISPATCH_PENDING" anywhere. Right, lines 55-57 don't contain it. OK.)
+
+Now: the manifest's line 57 wording "Follow-up #3 DSH Review=`APPROVED (0/0/0/0)`, but Codex integration adjudication=`...` found the new adjudication/review outputs were not all in the script protected list; this candidate is therefore not released." ✓ consistent with pin #5.
+
+Alright, let me also double check Task line 5-14 front matter vs manifest line 5-7 identity: Task branch main ✓, base_commit ✓, reviewer DeepSeek Harness ✓, owner Codex ✓.
+
+One more: manifest line 5 says "非作者 Reviewer=`DeepSeek Harness`，session=`session-a98bffe4-...`". That's the R1F manifest's original session. Fine.
+
+Now the Decision and format. Per AGENTS.md, output in Simplified Chinese. Provide: Decision, counts, scope/read list, verification of path membership (the 84 count with the array breakdown and the 11-pin mapping table), release-order/Gate checks, findings (P3), residual limitations, and a forwarded next-step instruction for Codex per AGENTS.md (must give a recommended next step; and since this is a review being handed back, provide a forwardable instruction).
+
+Wait: "每次 Task 完成或关闭时，如存在安全且已授权或可立即释放的下一 Task，必须指定合适 Agent 并提供可直接转发的指令；否则明确写'无需下一步操作'." I'm the reviewer; the next step is Codex fixing the manifest + re-pin. I'll provide a forwardable instruction block.
+
+Decision wording: The instruction says "无开放问题时给 APPROVED 与 0/0/0/0". With one P3 open: `CHANGES_REQUESTED` with counts `P0/P1/P2/P3 = 0/0/0/1`. Hmm, is a P3 enough to withhold APPROVED? Let me reconsider... In the project's history: follow-up #1 = CHANGES_REQUESTED (0/0/0/4) — all P3. Yes, P3-only ⇒ CHANGES_REQUESTED. Confirmed by Task row 95. So CHANGES_REQUESTED (0/0/0/1).
+
+Hmm, but hold on. Let me weigh a subtlety: is the false clause in the manifest a "finding against the candidate" or should it be handled as a non-blocking observation? The difference matters for the release: a P3 forces Codex to re-edit the manifest (bytes change) → new pins → another review round. The review focus explicitly asked me to check the manifest's description of the current self-check evidence ("当前 PS 5.1 self-check 的 source/transport/exit 证据") — and this is exactly such a description being wrong. So it's squarely in scope and should be reported as a finding, not buried as an observation. Severity P3.
+
+Actually, hmm, wait. Let me reconsider P2: definitions in this project aren't written in the pins, but R5F3-CI1 was P2 because it was a protected-path coverage gap (release-blocking). A wrong stderr count in a doc is not release-blocking, but it IS a false evidence claim in a frozen pin. The follow-up #2 F2 (wrong count 63 vs 72 in Task/manifest) was P3 while the *same count* being used in a release decision... it was P3. So P3 ✓.
+
+Let me write the report now. Structure:
+
+# P02PRE-R1F Review Round 5 follow-up #4 — 独立只读复核
+## Decision: CHANGES_REQUESTED; counts 0/0/0/1
+## 1. 阅读范围与边界声明（11 pins；未运行命令/hash；字节与 SHA 未复算）
+## 2. protected-key membership 核验（核心）
+ - 两数组：L669-741（71 keys, L670-L740，其中 L729-L740 为本轮新增 12 条）与 L744-760（13 keys, L745-L757）；合计 84；无重复；OrderedDictionary 大小写不敏感键下仍 84。
+ - 11 pins mapping table with exact script line. Note explicitly: 用逐字字符串匹配，不用行号/相似文件名推断；并指出上一轮把 pin#5 误映射到 L728（相似名）正是本轮修复点，现正确路径在 L729。
+ - 新增 12 条与 manifest L63-L74 逐条同序对应；旧 72 = 59 + 13，无交集。
+ - Note: the 12 include the planned R8/evidence? no. R8 at L745 (array 2, old). Follow-up #4 planned artifacts at L736-740 ✓.
+## 3. 文档/证据一致性核验
+ - Task/manifest/adjudication counts 84; pin #8 now has a manifest pin line (L78) ✓; structured skip counts ✓; release order ✓; Gate/waiver/AC not misrecorded ✓; R8 not claimed run ✓; capture NOT_RUN ✓.
+## 4. Findings
+ - F1 / P3: manifest L77 "child stderr=0" contradicts pin #4 childStderrBytes=404 + non-empty Base64 (#< CLIXML progress). Impact; minimal fix.
+## 5. 非阻塞观察（不计 finding）
+ - O1: pin #4 `sourceTransport` 为叙述性自报字段（未记录 stdin 字节数/命令行长度），pin #10 的 stdin retry 机制仍未被直接见证；pin #5 L21 已记 NON_BLOCKING → 可保留，但建议后续 artifact 增加可测字段。
+ - O2: manifest L57 的覆盖措辞已收窄为 "through follow-up #4"，与 84 条一致（上一轮 O1 关闭）✓ — actually this is a positive check, put it in section 3.
+ - O2: 我无法验证 84 条路径在 pre-run 时全部存在/哈希；尤其 Task L84 记录的 r4 中断轮 `.exit`（L749）与 planned follow-up#4 paths(736-740)、R8(L745) 的存在性是 Codex pre-run 职责。
+ - O3: 治理层同步（pin #5 L23 声称已同步 STATUS/Plan/索引/checkpoint）无法在这 11 pins 内验证。
+## 6. 残余限制（bytes/SHA 未复算等）
+## 7. 不授权声明
+## 推荐下一步（可转发给 Codex）
+
+Also mention the special note: I did NOT infer path identity from line numbers/similar names (the Codex instruction), and I found the previous round's L728 error mechanism.
+
+Let me also state that the new 12 paths, old 72, 84/84 unique claim is VERIFIED.
+
+Also the earliest requested item: "特别确认本轮 Codex adjudication、follow-up #2 adjudication、follow-up #3 prompt/stdout/stderr/exit、自检3、follow-up #4 prompt/stdout/stderr/exit/adjudication 是否都在冻结脚本中" — table.
+
+Be careful with exact quotes/paths. Also cite: script 全 901 行 — I read all lines? I read 1-400, 401-700, 701-901 ✓ full.
+
+Let me double check the line numbers of the arrays: first `foreach ($key in @(` at line 669, entries 670-740, closing `)) {` at 741. Second at 744, entries 745-757, closing `)) {` at 758. Good.
+
+Let me verify line 741 text from the output: "        )) {" ✓. And 758: "        )) {" ✓.
+
+Now, one more check on the "32" line — line 32 is `protectedHashes = [ordered]@{}` ✓.
+
+Now writing the final answer in Chinese. Keep it precise but not excessively long. Include the P3 finding with exact location: `verification/P02/p02pre-r1f-manifest-20261011.md` L77 (the clause `child stderr=0`), contradicted by pin #4 (`p02pre-r1f-r5-followupfix3-selfcheck-20261011.json`) L35-37 (`childStderrBytes: 404`, `childStderrSha256: 82102016…`, non-empty `childStderrBase64` decoding to `#< CLIXML` progress record).
+
+Minimal fix: replace `child stderr=0` with `child stderr=404 bytes (CLIXML progress record only; no error text)` or remove the clause; do NOT change script bytes; note that editing the manifest changes its bytes and therefore invalidates this round's pins #2 (23135 / 9D008645…) and requires re-pin + fresh review round (or Codex records the correction in its pin adjudication with an explicit re-pin).
+
+Also I should mention the estimated decision counts: `P0/P1/P2/P3 = 0/0/0/1`.
+
+Let me write it.
