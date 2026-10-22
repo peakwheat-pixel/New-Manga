@@ -222,7 +222,14 @@ try {
         Remove-Item Env:M2RC1_DEV_PREVIEW -ErrorAction SilentlyContinue
     }
     if ($exit -ne 0) {
-        Write-Warning "[dev-preview] cargo tauri dev 退出码 $exit"
+        # 0xFFFFFFFF (-1)：应用窗口被用户关闭（或进程被结束），Tauri CLI 会打印一条
+        # `error: process didn't exit successfully ... (exit code: 0xffffffff)`。
+        # 这是正常结束路径，不是编译失败；此处明确区分，避免误导。
+        if ($exit -eq -1 -or $exit -eq 4294967295) {
+            Write-Host '[dev-preview] 应用窗口已关闭（Tauri 退出码 -1 / 0xffffffff），预览正常结束。'
+        } else {
+            Write-Warning "[dev-preview] cargo tauri dev 退出码 $exit —— 编译或启动失败，请查看上方报错原文。"
+        }
     }
 } finally {
     if ($null -ne $viteProcess) {
