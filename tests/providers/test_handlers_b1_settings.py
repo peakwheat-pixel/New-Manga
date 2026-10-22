@@ -468,6 +468,26 @@ def test_heavy_runner_forwarded_cpu_fallback_switch(
     assert runner.calls[0]["allow_cpu_fallback"] is expected_allow
 
 
+def test_non_gpu_provider_ignores_the_device_preference() -> None:
+    """Review M3: a remote / CPU-only provider must not fail on a user gpu pick.
+
+    Translation / vision OCR descriptors declare ``requires_gpu=False`` and
+    ``supports_cpu_fallback=False``; a Run-wide ``gpu`` preference must not
+    turn their calls into ``DeviceUnavailable``.
+    """
+    runner = _RecordingHeavyRunner()
+    handlers = _handlers(
+        heavy_runner=runner,
+        registry=_registry(_Provider()),  # descriptor requires_gpu=False
+    )
+
+    _invoke(handlers, _run({"model_gpu": {"device_preference": "gpu"}}))
+
+    forwarded = runner.calls[0]
+    assert forwarded["preferred_device"] is None
+    assert forwarded["requires_gpu"] is False
+
+
 def test_descriptor_flags_win_over_conflicting_instance_attributes() -> None:
     """Review B1: the descriptor is the declaration source of truth."""
 
@@ -557,7 +577,7 @@ def test_handle_ocr_forwards_the_descriptor_cpu_support_end_to_end() -> None:
     assert result.outputs["ocr_text"] == "こんにちは"
     assert len(runner.calls) == 1
     forwarded = runner.calls[0]
-    assert forwarded["preferred_device"] == "cpu"
+    assert forwarded["preferred_device"] is None  # review M3: remote/CPU provider
     assert forwarded["allow_cpu_fallback"] is False
     assert forwarded["requires_gpu"] is False
     # review B1: the descriptor flag was forwarded although the instance has

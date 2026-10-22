@@ -971,6 +971,13 @@ class ProductionHandlers:
                 if descriptor is not None
                 else bool(getattr(provider, "supports_cpu_fallback", False))
             )
+            # Review M3: a remote / CPU-only provider never uses the local
+            # device, so an explicit ``gpu`` preference must not turn its
+            # calls into ``DeviceUnavailable`` (translation / vision OCR are
+            # remote). Only GPU providers take the preference; every other
+            # provider keeps the historical auto path.
+            if not requires_gpu:
+                preferred_device = None
             return self.deps.heavy_runner(
                 requires_gpu=bool(requires_gpu),
                 call=invoke,
