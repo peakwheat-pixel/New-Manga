@@ -1664,6 +1664,309 @@ def _apply_broad_preservation(index, scanned):
         return _finish_declaration_scan(index, scanned)
 
 
+HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
+HISTORICAL_EVIDENCE_DIGEST = (
+    "3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d")
+
+
+HISTORICAL_BROAD_DEPENDENCY_DIGEST = (
+    "0d19cd0fa0374b7970a128d7af845541efd4c86e14b158bd6185dbbc261708b3")
+
+
+def _apply_historical_evidence_interpretation(index, scanned):
+    """Preserve four exact raw sources before interpreting their five errors."""
+    if any(e["file"] == BROAD_PRESERVATION_POLICY for e in index.errors):
+        return index, scanned
+
+    def require(condition, code, message):
+        if not condition:
+            fail(code, message)
+
+    def exact(value, keys):
+        require(type(value) is dict and set(value) == set(keys.split()),
+                "POLICY_INVALID", "unexpected historical policy fields")
+
+    def sha(raw):
+        return hashlib.sha256(raw).hexdigest()
+
+    def absolute(relative):
+        require(isinstance(relative, str) and not is_abs_path(relative)
+                and "\\" not in relative and not GLOB_RE.search(relative)
+                and not ENV_RE.search(relative)
+                and all(p not in ("", ".", "..") for p in relative.split("/")),
+                "POLICY_INVALID", "invalid historical relative path")
+        return os.path.join(index.repo_root.replace("/", os.sep),
+                            relative.replace("/", os.sep))
+
+    def tracked(relative):
+        output = git_checked(index.repo_root, "ls-files", "-z", "--", relative,
+                             what="git ls-files historical input")
+        return relative in output.split("\x00")
+
+    snapshots = {}
+    tracking = {}
+    targets = {}
+    directory_targets = set()
+
+    def read(relative, expected_tracking="tracked"):
+        path = absolute(relative)
+        require(os.path.isfile(path) and not _is_link(path), "SOURCE_DRIFT",
+                "historical input is not a regular file: %s" % relative)
+        normalized = norm_abs(path)
+        require(resolve_real_target(normalized, "historical input") == normalized,
+                "REAL_DRIFT", "historical input has a different real target")
+        require(tracked(relative) == (expected_tracking == "tracked"),
+                "SOURCE_DRIFT", "historical input tracking changed: %s" % relative)
+        with io.open(path, "rb") as handle:
+            raw = handle.read()
+        if relative in snapshots:
+            require(snapshots[relative] == raw, "SOURCE_DRIFT",
+                    "historical input changed during scan: %s" % relative)
+        snapshots[relative], tracking[relative] = raw, expected_tracking
+        targets[normalized] = normalized
+        return raw
+
+    def declaration_dict(d):
+        return {key: getattr(d, key) for key in Declaration.__slots__}
+
+    def snapshot(i):
+        return dict(declarations=[declaration_dict(d) for d in i.declarations],
+                    errors=i.errors, warnings=i.warnings)
+
+    def contains(i, frozen):
+        return (any(declaration_dict(d) == frozen for d in i.declarations)
+                and all(any(declaration_dict(d) == frozen
+                            for d in i.protected.get(root, [])) for root in
+                        (frozen["normalized"], frozen["real_normalized"])))
+
+    def guard_identity(guard, relative, keep, directory=False):
+        exact(guard, "abs normalized real keep")
+        require(guard["keep"] == keep and is_abs_path(guard["abs"])
+                and not any(p in (".", "..") for p in
+                            guard["abs"].replace("\\", "/").split("/")),
+                "POLICY_INVALID", "invalid historical preservation guard")
+        expected = norm_abs(absolute(relative))
+        require(norm_abs(guard["abs"]) == guard["normalized"] == expected,
+                "REAL_DRIFT", "historical guard lexical identity changed")
+        lexical, real = index._resolve_identity(guard["abs"], None, None,
+                                               warn_alias=False)
+        require(lexical == real == guard["real"] == expected, "REAL_DRIFT",
+                "historical guard real identity changed")
+        require(os.path.isdir(absolute(relative)) if directory else
+                os.path.isfile(absolute(relative)), "SOURCE_DRIFT",
+                "historical guard target missing or wrong type")
+        targets[lexical] = real
+        if directory:
+            directory_targets.add(absolute(relative))
+        return guard
+
+    try:
+        present = os.path.lexists(absolute(HISTORICAL_EVIDENCE_POLICY))
+        enabled = tracked(HISTORICAL_EVIDENCE_POLICY)
+        if not present and not enabled:
+            return index, scanned
+        require(enabled, "POLICY_UNTRACKED", "historical policy must be tracked")
+        require(present, "POLICY_MISSING", "tracked historical policy is missing")
+        policy = json.loads(read(HISTORICAL_EVIDENCE_POLICY).decode("utf-8"),
+                            object_pairs_hook=_unique_preservation_object)
+        exact(policy, "schema_version purpose approved_design template_bindings "
+              "raw_non_declaration_bindings reference_guards")
+        require(type(policy["schema_version"]) is int
+                and policy["schema_version"] == 1
+                and policy["purpose"] == "PRESERVE_EXACT_HISTORICAL_EVIDENCE",
+                "POLICY_INVALID", "unsupported historical policy version/purpose")
+        canonical = json.dumps(policy, ensure_ascii=False, sort_keys=True,
+                               separators=(",", ":")).encode("utf-8")
+        # The approved digest binds every nested key, type, ID and source set.
+        require(sha(canonical) == HISTORICAL_EVIDENCE_DIGEST,
+                "POLICY_DIGEST_MISMATCH", "historical policy is not approved")
+
+        require(os.path.isfile(absolute(BROAD_PRESERVATION_POLICY))
+                and tracked(BROAD_PRESERVATION_POLICY), "DEPENDENCY_INACTIVE",
+                "broad preservation policy is not active")
+        broad = json.loads(read(BROAD_PRESERVATION_POLICY).decode("utf-8"),
+                           object_pairs_hook=_unique_preservation_object)
+        require(sha(json.dumps(broad, ensure_ascii=False, sort_keys=True,
+                               separators=(",", ":")).encode("utf-8")) ==
+                HISTORICAL_BROAD_DEPENDENCY_DIGEST, "DEPENDENCY_INACTIVE",
+                "broad preservation dependency is not the approved policy")
+        expected_warnings = []
+        for b in broad["bindings"]:
+            require(b["root_normalized"] in index.protected,
+                    "DEPENDENCY_INACTIVE", "broad root is not protected")
+            for role, keep in (("source", b["source_keep"]),
+                               ("destination", "DESTINATION_PIN")):
+                frozen = dict(raw=b["root_abs"], disposition=keep,
+                              source_file=b["origin_file"],
+                              locator=b["parser_locator"],
+                              normalized=b["root_normalized"],
+                              real_normalized=b["root_real_expected"])
+                warning = dict(code="DECL_BROAD_ROOT_PRESERVED",
+                    message="role=%s policy=%s origin=%s locator=%s root=%s source_keep=%s"
+                    % (role, BROAD_PRESERVATION_POLICY, b["origin_file"],
+                       b["parser_locator"], b["root_normalized"], b["source_keep"]),
+                    file=b["origin_file"], locator=b["parser_locator"])
+                require(sum(declaration_dict(d) == frozen for d in
+                            index.declarations) == 1 and contains(index, frozen)
+                        and index.warnings.count(warning) == 1,
+                        "DEPENDENCY_INACTIVE", "broad role proof is not unique")
+                expected_warnings.append(warning)
+        markers = [w for w in index.warnings
+                   if w["code"] == "DECL_BROAD_ROOT_PRESERVED"]
+        require(len(expected_warnings) == len(markers) == 12
+                and all(w in expected_warnings for w in markers)
+                and len({b["root_normalized"] for b in broad["bindings"]}) == 5,
+                "DEPENDENCY_INACTIVE", "incomplete broad preservation proof")
+
+        approved = policy["approved_design"]
+        exact(approved, "task_id design_file design_raw_sha256 source_facts_file "
+              "source_facts_commit source_facts_raw_sha256")
+        for prefix in ("design", "source_facts"):
+            require(sha(read(approved[prefix + "_file"])) ==
+                    approved[prefix + "_raw_sha256"], "SOURCE_DRIFT",
+                    "approved historical provenance changed")
+        blob = subprocess.check_output(
+            ["git", "show", approved["source_facts_commit"] + ":" +
+             approved["source_facts_file"]], cwd=index.repo_root,
+            stderr=subprocess.PIPE)
+        require(sha(blob) == approved["source_facts_raw_sha256"], "SOURCE_DRIFT",
+                "approved historical facts blob changed")
+        require(len(policy["template_bindings"]) == 1
+                and len(policy["raw_non_declaration_bindings"]) == 3
+                and len(policy["reference_guards"]) == 2, "POLICY_INVALID",
+                "historical binding set changed")
+        bindings = policy["template_bindings"] + policy["raw_non_declaration_bindings"]
+        require([b["id"] for b in bindings] ==
+                ["HIE-T01", "HIE-O01", "HIE-O02", "HIE-O03"],
+                "POLICY_INVALID", "historical binding IDs changed")
+        removed, pending, warnings, existing = [], [], [], []
+        for number, b in enumerate(bindings):
+            exact(b, "id origin_file expected_tracking raw_sha256 byte_length "
+                  "strict_utf8 utf8_bom c0_bytes source_guard parser_snapshot errors "
+                  + ("fence rows" if number == 0 else "nul_offsets"))
+            origin = b["origin_file"]
+            require(b["expected_tracking"] ==
+                    ("untracked" if number == 3 else "tracked"), "POLICY_INVALID",
+                    "historical source tracking policy changed")
+            raw = read(origin, b["expected_tracking"])
+            require(sha(raw) == b["raw_sha256"]
+                    and type(b["byte_length"]) is int and len(raw) == b["byte_length"]
+                    and b["strict_utf8"] is True and type(b["utf8_bom"]) is bool
+                    and b["utf8_bom"] == raw.startswith(b"\xef\xbb\xbf"),
+                    "SOURCE_DRIFT", "historical raw identity changed: %s" % origin)
+            controls = [{"offset": n, "byte": c} for n, c in enumerate(raw)
+                        if c < 32 and c not in (9, 10, 13)]
+            require(json.dumps(b["c0_bytes"], sort_keys=True) ==
+                    json.dumps(controls, sort_keys=True), "SOURCE_DRIFT",
+                    "historical control-byte identity changed")
+            text = raw.decode("utf-8", errors="strict")
+            isolated = ProtectionIndex(index.repo_root, index.ws_root)
+            parse_markdown_declarations(isolated, text, origin)
+            require(snapshot(isolated) == b["parser_snapshot"], "RECORD_DRIFT",
+                    "historical isolated parse changed: %s" % origin)
+            keep = "PRESERVE_UNKNOWN" if number == 3 else "PRESERVE_REFERENCED"
+            guard = guard_identity(b["source_guard"], origin, keep)
+            locator = b["id"] + "/raw-file"
+            pending.append(Declaration(guard["abs"], keep, origin, locator,
+                                       guard["normalized"], guard["real"]))
+            if number == 0:
+                require(len(isolated.declarations) == 1
+                        and len(isolated.errors) == len(isolated.warnings) == 2
+                        and len(b["errors"]) == 2, "RECORD_DRIFT",
+                        "historical template parse shape changed")
+                lines = raw.splitlines(keepends=True)
+                f = b["fence"]
+                exact(f, "open_global_line close_global_line open_verbatim "
+                      "close_verbatim open_raw_sha256 close_raw_sha256 "
+                      "draft_notice_global_line draft_notice_verbatim draft_notice_raw_sha256")
+                for prefix in ("open", "close", "draft_notice"):
+                    n = f[prefix + "_global_line"]
+                    require(type(n) is int and 1 <= n <= len(lines)
+                            and lines[n - 1].decode("utf-8") == f[prefix + "_verbatim"]
+                            and sha(lines[n - 1]) == f[prefix + "_raw_sha256"],
+                            "RECORD_DRIFT", "historical template boundary changed")
+                require(len(b["rows"]) == 2, "RECORD_DRIFT", "template rows changed")
+                for row in b["rows"]:
+                    exact(row, "id global_line parser_locator verbatim raw_line_sha256")
+                    n = row["global_line"]
+                    require(type(n) is int and 1 <= n <= len(lines)
+                            and lines[n - 1].decode("utf-8") == row["verbatim"]
+                            and sha(lines[n - 1]) == row["raw_line_sha256"],
+                            "RECORD_DRIFT", "historical template row changed")
+                existing = [declaration_dict(d) for d in isolated.declarations]
+                require(all(contains(index, d) for d in existing), "RECORD_DRIFT",
+                        "historical template original protection missing")
+                for d in existing:
+                    targets[d["normalized"]] = d["real_normalized"]
+            else:
+                require(snapshot(isolated) == dict(declarations=[], errors=[], warnings=[])
+                        and b["nul_offsets"] == [c["offset"] for c in controls
+                                                 if c["byte"] == 0]
+                        and len(b["errors"]) == 1
+                        and b["errors"][0]["code"] == "FILE_UNREADABLE"
+                        and b["errors"][0]["locator"] is None,
+                        "RECORD_DRIFT", "historical raw source is not declaration-free")
+            for error in b["errors"]:
+                exact(error, "code message file locator")
+                require(error["file"] == origin and index.errors.count(error) == 1
+                        and error not in removed, "ERROR_MISMATCH",
+                        "historical error identity is missing, duplicated or changed")
+                removed.append(error)
+            warning_locator = ("global 228,229/line 7,8/" + b["id"] if number == 0
+                               else b["id"] + "/bytes " +
+                               ",".join(str(n) for n in b["nul_offsets"]))
+            warnings.append((origin, warning_locator, b, keep))
+        for n, ref in enumerate(policy["reference_guards"], 1):
+            exact(ref, "id origin_file origin_global_line origin_parser_locator "
+                  "path_rel abs normalized real keep")
+            require(ref["id"] == "HIE-REF%02d" % n
+                    and ref["origin_file"] == bindings[0]["origin_file"],
+                    "POLICY_INVALID", "historical reference context changed")
+            guard = guard_identity({k: ref[k] for k in ("abs", "normalized", "real", "keep")},
+                                   ref["path_rel"], "PRESERVE_REFERENCED", directory=True)
+            locator = "global %s/%s/%s" % (ref["origin_global_line"],
+                                          ref["origin_parser_locator"], ref["id"])
+            pending.append(Declaration(guard["abs"], guard["keep"], ref["origin_file"],
+                                       locator, guard["normalized"], guard["real"]))
+        require(len(removed) == 5 and len(pending) == 6, "POLICY_INVALID",
+                "incomplete historical preservation batch")
+        staged = copy.copy(index)
+        staged.declarations = list(index.declarations)
+        staged.protected = {root: list(items) for root, items in index.protected.items()}
+        staged.non_protective = list(index.non_protective)
+        staged.errors = [e for e in index.errors if e not in removed]
+        staged.warnings = list(index.warnings)
+        staged._repo_tops = set(index._repo_tops) if index._repo_tops is not None else None
+        for d in pending:
+            staged._register_protective(d)
+        for origin, locator, b, keep in warnings:
+            roots = [d.normalized for d in pending if d.source_file == origin]
+            staged.add_warning("DECL_HISTORICAL_EVIDENCE_PRESERVED",
+                "mode=%s policy=%s origin=%s locator=%s raw_sha256=%s keep=%s original_codes=%s guard_roots=%s"
+                % ("template" if b is bindings[0] else "raw-nondeclaration",
+                   HISTORICAL_EVIDENCE_POLICY, origin, locator, b["raw_sha256"], keep,
+                   ",".join(e["code"] for e in b["errors"]), json.dumps(roots)),
+                origin, locator)
+        result = _finish_declaration_scan(staged, scanned)
+        for relative in list(snapshots):
+            read(relative, tracking[relative])
+        for path in directory_targets:
+            require(os.path.lexists(path) and os.path.isdir(path), "SOURCE_DRIFT",
+                    "historical reference directory changed during scan")
+        for root, real in targets.items():
+            require(resolve_real_target(root, "historical final target") == real,
+                    "REAL_DRIFT", "historical real target changed during scan")
+        require(all(contains(staged, d) for d in existing), "RECORD_DRIFT",
+                "historical original protection changed during staging")
+        return result
+    except Exception as exc:
+        code = exc.code if isinstance(exc, GuardError) else "POLICY_INVALID"
+        # Avoid emitting raw historical text/control bytes on unexpected failure.
+        message = exc.message if isinstance(exc, GuardError) else "historical policy validation failed"
+        index.add_error(code, message, HISTORICAL_EVIDENCE_POLICY)
+        return _finish_declaration_scan(index, scanned)
+
+
 def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
     """Build the protection index from ``doc/tasks/**`` and ``verification/**``.
 
@@ -1751,7 +2054,8 @@ def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
                     % (source_kind, exc.message), relative)
                 continue
             parse_json_declarations(index, data, relative)
-    return _apply_broad_preservation(index, scanned)
+    index, scanned = _apply_broad_preservation(index, scanned)
+    return _apply_historical_evidence_interpretation(index, scanned)
 
 
 # ---------------------------------------------------------------------------
