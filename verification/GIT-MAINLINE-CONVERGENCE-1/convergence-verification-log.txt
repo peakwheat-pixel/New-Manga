@@ -1,0 +1,33 @@
+
+== git rev-parse HEAD ==
+db2e5b1f03c55b51026d555590e26497dd1eed65
+
+== git for-each-ref refs/heads ==
+main db2e5b1f03c55b51026d555590e26497dd1eed65
+
+== git worktree list ==
+G:/CODEX/New Manga  db2e5b1f0 [main]
+
+== git for-each-ref refs/archive (count) ==
+count=21
+
+== pwsh -NoProfile -File tools/governance/check.ps1 ==
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GIT-MAINLINE-CONVERGENCE-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2932 bytes / 29 lines
+Governance check: PASS (2 warnings)
+EXIT_CODE=0
+
+== git diff --check ==
+EXIT_CODE=0
+
+== python -B tools/governance/clean_workspace.py --audit-declarations ==
+declaration audit: 2656 declaration(s), 1946 protected root(s), 0 error(s), 273 warning(s)
+  report: G:/CODEX/New Manga.workspace/temp/gmc-final/declaration-audit.json
+EXIT_CODE=0
+
+== git status --porcelain (tracked only) ==
+tracked_dirty=0
+untracked_roots=1247
+stash=0
