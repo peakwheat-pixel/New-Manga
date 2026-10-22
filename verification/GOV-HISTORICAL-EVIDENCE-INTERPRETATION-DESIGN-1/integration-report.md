@@ -1,0 +1,15 @@
+# 五项精确解释设计集成报告
+
+DeepSeek R2 approved e6f400101d39e466d44278f08163ed1e4c1c234a，diff base345c86857f6ea80153ead49271e84ff234a4963f，deliverya4fd609b43db745f789251467907cbf69208d2e3。正常merge20dff6381eaa7d660961b3eb104b94189c93f201，无冲突；R1两个P2已在R2闭合：统计明确快照、自己的policy启用但broad未active时拒绝，不允许24→19。额外明确原line227第7实目标末检与tracking作用域，不改变新增6声明/4warning计划。
+
+当前只有设计与静态样本，生产tools差异为空，运行policy不存在，拟议helper未实现。正式12完整错误身份不变，四源原字节/原路径和P22 untracked身份不变，原1882保护根全集不减；6guard根本来已保护，旧line227保护保持。canonical policy SHA=3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d，设计rawSHA/研究facts固定blob/来源与行fence/parse快照均一致，validate_design.py主线实测exit0。8EV raw/blob/pin及实际登记通过（追加集成证据前快照）。
+
+设计冻结严格schema/canonical摘要、1模板两精确行+3原始NUL/C0空parse、2引用目录guard、原子暂存与失败输入+1fatal；不全文件/围栏忽略、不去NUL/转码、不接管P22。四源保留，未来只解释5项、其余7历史身份不变。12→7/+6声明/+4warning、broad-inactive拒绝、line227末检与T01–T18全部PLANNED_NOT_RUN，不能说已实现或运行矩阵通过。
+
+R2独审P0/P1=0；P2要求实现Task冻结broad精确匹配键，因两来源文件所有声明为83，不能只数来源文件或warning数量。Codex集成后按broad已审6绑定×source/destination计算完整expected warning及Declaration：warning的file/locator/role/root/policy/source_keep，对应Declaration的raw/source_file/locator/normalized/real_normalized/disposition；12角色每条warning和Declaration均唯一，完整记录在integration-validation.broad_dependency_current_proof。它是当前已存在broad数据的只读证明，不是新HIE helper测试。实现Handoff明确继承该匹配键并覆盖伪造/缺失/重复/未生效场景，不修改已批准设计原文或旧策略。
+
+Owner对1882全保护集合实际比较通过；Reviewer未独立重建该全集，独审实际校验当前12、8EV、四源/6guard/旧line227、设计/schema/摘要/快照、check/diff与tools空差异。产品构建/旧127/fixture/全102/140资源与进程句柄盘点NOT_RUN，研究无实现/处置，不据此授权删除。
+
+本Task开始前101heads/139WT，按协议新增一组隔离任务资源后102/140；本轮集成前后102/140，全部保留。自己branch codex/gov-historical-evidence-interpretation-design-1/WT固定e6f400101、clean、PRESERVE_REFERENCED；自己的agent-output原始日志/DSH会话恢复材料原位保留，原四源继续前置研究Manifest保护；六旧探针不触碰内容/ACL。删除/迁移/归档/GC/prune/push/reset/stash/Legacy均0，父blocked/r212/五广域根整体保护有效，尚未只剩main。旧bundle不覆盖新提交/untracked，不用bundle替代原件备份，未删除故未做恢复演练。
+
+下一建议仅proposed：Codex冻结GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1，DeepSeek独审，先固定最终canonical摘要和broad匹配键/自有fixture边界，按Handoff完整scope实施并至少新18+旧127=145、双15拒绝、真实同数据12→7/旧保护和四源不变验证；实际实现需另走生命周期，设计通过不授权当前运行或真实清理。

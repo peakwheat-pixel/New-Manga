@@ -1,0 +1,382 @@
+{
+  "timestamp": "2026-10-22T00:15:40.510950+00:00",
+  "integration_commit": "20dff6381eaa7d660961b3eb104b94189c93f201",
+  "reviewed_head": "e6f400101d39e466d44278f08163ed1e4c1c234a",
+  "delivery": "a4fd609b43db745f789251467907cbf69208d2e3",
+  "design_only": true,
+  "canonical_policy_sha256": "3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d",
+  "production_code_unchanged": true,
+  "runtime_policy_absent": true,
+  "proposed_helper_absent": true,
+  "formal_errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "error_count": 12,
+  "error_identities_unchanged": true,
+  "old_protected_count": 1882,
+  "current_protected_count": 1890,
+  "old_protected_subset": true,
+  "sources": [
+    {
+      "path": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "raw_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+      "unchanged": true,
+      "protected": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "raw_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+      "unchanged": true,
+      "protected": true
+    },
+    {
+      "path": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "raw_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+      "unchanged": true,
+      "protected": true
+    },
+    {
+      "path": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
+      "unchanged": true,
+      "protected": true
+    }
+  ],
+  "all_six_guard_roots_protected": true,
+  "pins_verified": 8,
+  "actual_evidence_pin_registered": 8,
+  "pin_count_basis": "before appending independent Review and this integration evidence",
+  "branches_before": 101,
+  "branches_after": 102,
+  "worktrees_before": 139,
+  "worktrees_after": 140,
+  "design_data_assertions_exit": 0,
+  "design_data_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1\\integrated-design-check.log",
+  "design_data_log_sha256": "d59f01d964c9b592428b48f82b51d6ea07368d34f3c647621c6bc94683c6def7",
+  "future_runtime_T01_T18": "PLANNED_NOT_RUN",
+  "future_12_to_7": "NOT_IMPLEMENTED_NOT_RUN",
+  "product_build": "NOT_RUN",
+  "real_resource_operations": 0,
+  "parent": "blocked",
+  "r212": "UNCHANGED",
+  "sole_main": "NOT_ACHIEVED",
+  "broad_dependency_current_proof": {
+    "basis": "Codex post-merge read-only proof for R2 P2; not execution of proposed HIE helper",
+    "source_file_total_declarations": 83,
+    "exact_role_contexts": 12,
+    "matching_keys": "warning(file,locator,role,root,policy,source_keep) to declaration(raw,source_file,locator,normalized,real_normalized,disposition); full expected warning object must match once",
+    "contexts": [
+      {
+        "binding_id": "BPR-01",
+        "role": "source",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/SEC-FIX-PATH-ECHO-1.md locator=line 5 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+          "locator": "line 5"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace",
+          "disposition": "PRESERVE_REFERENCED",
+          "source_file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+          "locator": "line 5",
+          "normalized": "g:/codex/new manga.workspace",
+          "real_normalized": "g:/codex/new manga.workspace"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-01",
+        "role": "destination",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/SEC-FIX-PATH-ECHO-1.md locator=line 5 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+          "locator": "line 5"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace",
+          "disposition": "DESTINATION_PIN",
+          "source_file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+          "locator": "line 5",
+          "normalized": "g:/codex/new manga.workspace",
+          "real_normalized": "g:/codex/new manga.workspace"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-02",
+        "role": "source",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 10 root=g:/codex/new manga.workspace/task-envs source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 10"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/task-envs",
+          "disposition": "PRESERVE_REFERENCED",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 10",
+          "normalized": "g:/codex/new manga.workspace/task-envs",
+          "real_normalized": "g:/codex/new manga.workspace/task-envs"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-02",
+        "role": "destination",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 10 root=g:/codex/new manga.workspace/task-envs source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 10"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/task-envs",
+          "disposition": "DESTINATION_PIN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 10",
+          "normalized": "g:/codex/new manga.workspace/task-envs",
+          "real_normalized": "g:/codex/new manga.workspace/task-envs"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-03",
+        "role": "source",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 11 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 11"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace",
+          "disposition": "PRESERVE_REFERENCED",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 11",
+          "normalized": "g:/codex/new manga.workspace",
+          "real_normalized": "g:/codex/new manga.workspace"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-03",
+        "role": "destination",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 11 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 11"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace",
+          "disposition": "DESTINATION_PIN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 11",
+          "normalized": "g:/codex/new manga.workspace",
+          "real_normalized": "g:/codex/new manga.workspace"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-04",
+        "role": "source",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 12 root=g:/codex/new manga.workspace/worktrees source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 12"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/worktrees",
+          "disposition": "PRESERVE_REFERENCED",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 12",
+          "normalized": "g:/codex/new manga.workspace/worktrees",
+          "real_normalized": "g:/codex/new manga.workspace/worktrees"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-04",
+        "role": "destination",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 12 root=g:/codex/new manga.workspace/worktrees source_keep=PRESERVE_REFERENCED",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 12"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/worktrees",
+          "disposition": "DESTINATION_PIN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 12",
+          "normalized": "g:/codex/new manga.workspace/worktrees",
+          "real_normalized": "g:/codex/new manga.workspace/worktrees"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-05",
+        "role": "source",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 14 root=g:/codex/new manga.workspace/review-scratch source_keep=PRESERVE_UNKNOWN",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 14"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/review-scratch",
+          "disposition": "PRESERVE_UNKNOWN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 14",
+          "normalized": "g:/codex/new manga.workspace/review-scratch",
+          "real_normalized": "g:/codex/new manga.workspace/review-scratch"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-05",
+        "role": "destination",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 14 root=g:/codex/new manga.workspace/review-scratch source_keep=PRESERVE_UNKNOWN",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 14"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/review-scratch",
+          "disposition": "DESTINATION_PIN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 14",
+          "normalized": "g:/codex/new manga.workspace/review-scratch",
+          "real_normalized": "g:/codex/new manga.workspace/review-scratch"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-06",
+        "role": "source",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 15 root=g:/codex/new manga.workspace/temp source_keep=PRESERVE_UNKNOWN",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 15"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/temp",
+          "disposition": "PRESERVE_UNKNOWN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 15",
+          "normalized": "g:/codex/new manga.workspace/temp",
+          "real_normalized": "g:/codex/new manga.workspace/temp"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      },
+      {
+        "binding_id": "BPR-06",
+        "role": "destination",
+        "warning_expected": {
+          "code": "DECL_BROAD_ROOT_PRESERVED",
+          "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 15 root=g:/codex/new manga.workspace/temp source_keep=PRESERVE_UNKNOWN",
+          "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 15"
+        },
+        "declaration_expected": {
+          "raw": "G:/CODEX/New Manga.workspace/temp",
+          "disposition": "DESTINATION_PIN",
+          "source_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "locator": "line 15",
+          "normalized": "g:/codex/new manga.workspace/temp",
+          "real_normalized": "g:/codex/new manga.workspace/temp"
+        },
+        "unique_declaration_match_count": 1,
+        "unique_warning_match_count": 1
+      }
+    ]
+  }
+}
