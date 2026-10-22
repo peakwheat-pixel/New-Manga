@@ -22,6 +22,7 @@
 |GOV-PATH-HEADER-COMPAT-1|WORKSPACE-DECLARATION-REMEDIATION-1|done（9cae94142；单一固定别名，无资源处置授权）|
 |GIT-MAINLINE-CONVERGENCE-1|—|done（r3 approved 6997733bf；refs/heads 仅 main、worktree 1、21 条归档、2.6GiB 可恢复）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
+|GOV-DIRECTORY-CLEANUP-1|—|in_review（五根 66 GB 盘点；2 项归档后删除、净释放 426 MiB；待 zcode 独审）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
 READY 节点：**无**。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
