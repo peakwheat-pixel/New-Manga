@@ -3,7 +3,7 @@ id: GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1
 title: 五项历史证据精确解释与原子保全实现
 kind: implementation
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: user_next_step_20261022
 suggested_owner: Codex
 owner: Codex
@@ -89,3 +89,8 @@ planned：新Task tests unittest discover；前置broad18、declaration29、hard
 Reality Check：main cc6387d660d6970c4e71c996f479e9e7c6af8674 tracked clean，common G:/CODEX/New Manga/.git；Codex epoch9租约有效，RESUME_SAFE。来源base与实际创建base分记；当前102heads/140WT，创建后预计103/141。正式12错误；父blocked、尚未只剩main。
 
 实际创建base d760caeb6；交付c4c44d4978c68879aed83537926ff184cd9ebb54；145 passed/0 skipped，双回放各15REJECT/0deleted/0violations，候选真实12→7/+6/+4且原1895保护根全集保持；正式main尚12。固定head待DeepSeek独审，未审核自己的实现。
+
+## R1 裁决与修订范围冻结
+
+DeepSeek R1 changes_requested固定090bed6f6，P1-1引用目录发布末检存在性/类型缺失，禁止merge。Codex在原共享seam范围修复：发布前对两个reference目录再次验证lexists+isdir，补T15验证后删除/替换为文件的全容器回滚；不增加声明或改变+6/+4。同时冻结前置broad当前已批准配置canonical SHA-256 0d19cd0fa0374b7970a128d7af845541efd4c86e14b158bd6185dbbc261708b3，在本helper内作依赖摘要校验；不改broad配置/helper、不缩小保护，不增加生产开关；合成fixture仅内存mock该常量。
+R1 P2时点：1895为本Task EV登记前的原保护集合快照；21EV后实时保护1916，新增EV不会使原集合失保，后续计数随证据变化。line227契约仍是原完整Declaration/lexical与real保护+最终real身份复核；不追溯增加目录存在性/类型合同，也不赋予退出权限。两个新增reference目录是本Task明确存在/目录类型/real合同，必须末检。修订后全145/0、双回放与同数据候选复验，固定新head交DeepSeek R2。

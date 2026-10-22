@@ -22,7 +22,7 @@ test_t17_scanned_metadata_and_original_containers (test_historical_evidence.Hist
 test_t18_broad_fatal_noop_and_exact_roles (test_historical_evidence.HistoricalEvidenceTests.test_t18_broad_fatal_noop_and_exact_roles) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 39.657s
+Ran 18 tests in 44.958s
 
 OK
 

@@ -6,7 +6,7 @@ test_ac1_triage_same_locator_multiple_codes_prefers_exact_code (test_declaration
 test_ac1_triage_transition_codes (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_transition_codes) ... ok
 test_ac1_triage_unlisted_multi_code_is_ambiguous (test_declaration_remediation.DeclarationRemediationFixture.test_ac1_triage_unlisted_multi_code_is_ambiguous) ... ok
 test_ac2_exception_with_wrong_sha_does_not_apply (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_exception_with_wrong_sha_does_not_apply) ... ok
-test_ac2_explicit_path_sha_exception_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_explicit_path_sha_exception_is_warning) ... G:\CODEX\New Manga.workspace\worktrees\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\tests\test_declaration_remediation.py:86: ResourceWarning: unclosed file <_io.BufferedReader name='G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\test-temp\\declaration29\\wc-decl-sehuaw17\\repo\\verification\\runner.stdout.json'>
+test_ac2_explicit_path_sha_exception_is_warning (test_declaration_remediation.DeclarationRemediationFixture.test_ac2_explicit_path_sha_exception_is_warning) ... G:\CODEX\New Manga.workspace\worktrees\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\verification\WORKSPACE-DECLARATION-REMEDIATION-1\tests\test_declaration_remediation.py:86: ResourceWarning: unclosed file <_io.BufferedReader name='G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\test-temp\\declaration29\\wc-decl-qxrp0lio\\repo\\verification\\runner.stdout.json'>
   return hashlib.sha256(open(full, "rb").read()).hexdigest()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ok
@@ -41,7 +41,7 @@ test_ac5_narrative_table_without_identity_columns_is_warning (test_declaration_r
 test_ac5_single_identity_columns_still_pass (test_declaration_remediation.DeclarationRemediationFixture.test_ac5_single_identity_columns_still_pass) ... ok
 
 ----------------------------------------------------------------------
-Ran 29 tests in 15.178s
+Ran 29 tests in 15.634s
 
 OK
 

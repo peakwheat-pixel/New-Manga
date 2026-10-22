@@ -1669,6 +1669,10 @@ HISTORICAL_EVIDENCE_DIGEST = (
     "3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d")
 
 
+HISTORICAL_BROAD_DEPENDENCY_DIGEST = (
+    "0d19cd0fa0374b7970a128d7af845541efd4c86e14b158bd6185dbbc261708b3")
+
+
 def _apply_historical_evidence_interpretation(index, scanned):
     """Preserve four exact raw sources before interpreting their five errors."""
     if any(e["file"] == BROAD_PRESERVATION_POLICY for e in index.errors):
@@ -1702,6 +1706,7 @@ def _apply_historical_evidence_interpretation(index, scanned):
     snapshots = {}
     tracking = {}
     targets = {}
+    directory_targets = set()
 
     def read(relative, expected_tracking="tracked"):
         path = absolute(relative)
@@ -1751,6 +1756,8 @@ def _apply_historical_evidence_interpretation(index, scanned):
                 os.path.isfile(absolute(relative)), "SOURCE_DRIFT",
                 "historical guard target missing or wrong type")
         targets[lexical] = real
+        if directory:
+            directory_targets.add(absolute(relative))
         return guard
 
     try:
@@ -1779,6 +1786,10 @@ def _apply_historical_evidence_interpretation(index, scanned):
                 "broad preservation policy is not active")
         broad = json.loads(read(BROAD_PRESERVATION_POLICY).decode("utf-8"),
                            object_pairs_hook=_unique_preservation_object)
+        require(sha(json.dumps(broad, ensure_ascii=False, sort_keys=True,
+                               separators=(",", ":")).encode("utf-8")) ==
+                HISTORICAL_BROAD_DEPENDENCY_DIGEST, "DEPENDENCY_INACTIVE",
+                "broad preservation dependency is not the approved policy")
         expected_warnings = []
         for b in broad["bindings"]:
             require(b["root_normalized"] in index.protected,
@@ -1939,6 +1950,9 @@ def _apply_historical_evidence_interpretation(index, scanned):
         result = _finish_declaration_scan(staged, scanned)
         for relative in list(snapshots):
             read(relative, tracking[relative])
+        for path in directory_targets:
+            require(os.path.lexists(path) and os.path.isdir(path), "SOURCE_DRIFT",
+                    "historical reference directory changed during scan")
         for root, real in targets.items():
             require(resolve_real_target(root, "historical final target") == real,
                     "REAL_DRIFT", "historical real target changed during scan")

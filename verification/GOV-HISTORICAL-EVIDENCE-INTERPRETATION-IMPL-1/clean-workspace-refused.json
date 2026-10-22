@@ -2,7 +2,7 @@
   "schema_version": 1,
   "tool": "clean_workspace.py",
   "mode": "dry_run",
-  "generated_at": "2026-10-22T08:36:36+08:00",
+  "generated_at": "2026-10-22T08:53:06+08:00",
   "repo_root": "g:/codex/new manga",
   "workspace_root": "g:/codex/new manga.workspace",
   "declaration_integrity": "FAILED",
