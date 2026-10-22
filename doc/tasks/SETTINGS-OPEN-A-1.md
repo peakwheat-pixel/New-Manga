@@ -98,18 +98,31 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-A-IMPL | AC1/AC2/AC3/AC4/AC5 | 仓库 commit（实现+测试） | `6a303a9d2c66f6ffbfee2aec6ebde359312a6b33` | 见 git | CANONICAL |
-| EV-A-REVIEW-R1 | AC5 | `verification/SETTINGS-OPEN-A-1/review-r1.md` | `6a303a9` | 见 git | CANONICAL |
-| EV-A-REVIEW-R2 | AC5 | `verification/SETTINGS-OPEN-A-1/review-r2.md` | `6a303a9`（将在证据提交中固定） | 见 git | CANONICAL |
-| EV-A-REPORTS | AC1–AC4 | `verification/SETTINGS-OPEN-A-1/core-report.md`、`ui-report.md`、`gui-smoke.md`、`*.txt` | `6a303a9` | 见 git | CANONICAL |
-| EV-A-SCREENS | AC3/AC5 | `verification/SETTINGS-OPEN-A-1/screenshots/01..10` | `6a303a9` | 见 git | CANONICAL |
-| EV-A-B1-OLD | AC2 | `verification/SETTINGS-OPEN-A-1/core-r2-b1-old-impl-failure.txt` | `6a303a9` | 见 git | CANONICAL |
+|EV-A-CORE-R2-B1-OLD-IMPL-FAILURE|AC1-AC5|verification/SETTINGS-OPEN-A-1/core-r2-b1-old-impl-failure.txt|ec2e18b92e08291c1266ebe52abf053fca3670ba|13799774b47f20a124bd14211b1942c2bf48315cea539363ff9708a7b66c0c42|CANONICAL|
+|EV-A-CORE-REPORT|AC1-AC5|verification/SETTINGS-OPEN-A-1/core-report.md|ec2e18b92e08291c1266ebe52abf053fca3670ba|22bd49abb216d7945a419684449a3363c683bba5945c0ebc2dda9a869a19ece5|CANONICAL|
+|EV-A-FRONTEND-NPM-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-A-1/frontend-npm-test-raw.txt|ec2e18b92e08291c1266ebe52abf053fca3670ba|fe508a0626e8be9d34f169b1040887557a13cfc1ee7594f4fc5fcdd147a71f1f|CANONICAL|
+|EV-A-FRONTEND-PNPM-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-A-1/frontend-pnpm-test-raw.txt|ec2e18b92e08291c1266ebe52abf053fca3670ba|f2723e4dd660893ca72f4fbb0b5d9c875e6c12091d06e66e17b7e9ebbad5f0bf|CANONICAL|
+|EV-A-FRONTEND-TSC-RAW|AC1-AC5|verification/SETTINGS-OPEN-A-1/frontend-tsc-raw.txt|ec2e18b92e08291c1266ebe52abf053fca3670ba|7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6|CANONICAL|
+|EV-A-GUI-SMOKE|AC1-AC5|verification/SETTINGS-OPEN-A-1/gui-smoke.md|ec2e18b92e08291c1266ebe52abf053fca3670ba|6996a80f82162ec673e7bbde9a40b4d4b0ca0c12ae26096fb99cf0e6675708a2|CANONICAL|
+|EV-A-REVIEW-R1|AC1-AC5|verification/SETTINGS-OPEN-A-1/review-r1.md|ec2e18b92e08291c1266ebe52abf053fca3670ba|69669945538e4e6e21961d95e093c653f79a21f042f0ac7e0a5e5f92a9d0d922|CANONICAL|
+|EV-A-REVIEW-R2|AC1-AC5|verification/SETTINGS-OPEN-A-1/review-r2.md|ec2e18b92e08291c1266ebe52abf053fca3670ba|760552a6d82c6883210c352c6aed2f988a8336d3ec471b6cbfa74d11de231a7f|CANONICAL|
+|EV-A-01-SETTINGS-CATEGORIES|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/01-settings-categories.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|d18398984379ef4a8f8be867580457360ea0c4a170bd4534304e1b20d58f7b52|CANONICAL|
+|EV-A-02-OCR-PANEL|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/02-ocr-panel.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|a2e0e661079aacc078cc071607c08ef2c3f748532ab07fc013863e269d7e2a9f|CANONICAL|
+|EV-A-03-TRANSLATION-PARAMS-PANEL|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/03-translation-params-panel.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|cdd33531037390c2eae1a55eaac1e26ec081ccb2c5f5350fb00f4c5c4c3fcfeb|CANONICAL|
+|EV-A-04-INPAINT-PANEL|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/04-inpaint-panel.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|dfd9cd253e1fc8bd987da4647660947192647aef61e67a8339ad3077f6d711c9|CANONICAL|
+|EV-A-05-INPAINT-SAVED-PERSISTED|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/05-inpaint-saved-persisted.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|d72611713c19a4e274969e915f0ddecdd9ad3d95b0700fe60bb4ededda6fd3f8|CANONICAL|
+|EV-A-06-TYPESET-PANEL|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/06-typeset-panel.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|899fcf42e6539ef005b23a5d4f24b23a9198867e19ec3d445740bf8d13a42a63|CANONICAL|
+|EV-A-07-RESTART-PERSISTED|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/07-restart-persisted.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|43572460a4c0d22bb8a68208348b3709d63919963118743c479e846e543b7279|CANONICAL|
+|EV-A-08-OCR-SAVED|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/08-ocr-saved.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|f7f0aec28fb0e9ed48ea7136d1b1d1b5ad62c6f9f6dcb84d64f6f9a1817648dd|CANONICAL|
+|EV-A-09-TYPESET-SAVED|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/09-typeset-saved.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|d2edb1e5803a413eb587741b0893295d3f3be9e0709b429839b1554e0d69ce34|CANONICAL|
+|EV-A-10-TYPESET-PANEL-R2|AC1-AC5|verification/SETTINGS-OPEN-A-1/screenshots/10-typeset-panel-r2.png|ec2e18b92e08291c1266ebe52abf053fca3670ba|73aa0cc023cff17fbff55818d5bb79a4afafb13513b00b080a61cbfa99ca375f|CANONICAL|
+|EV-A-UI-REPORT|AC1-AC5|verification/SETTINGS-OPEN-A-1/ui-report.md|ec2e18b92e08291c1266ebe52abf053fca3670ba|bc6d584ea260db1fa30244aa932dd20954939018ae06aa9bc490f3a883c65ec0|CANONICAL|
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference check |
 |---|---|---|---|---|---|
-| NOT_APPLICABLE | — | — | — | — | 本 Task 不产生 worktree/artifact；dev-preview 隔离数据根仅本机验证用，不在仓库内 |
+| NOT_APPLICABLE | — | NOT_APPLICABLE | — | — | 本 Task 不产生 worktree/artifact；dev-preview 隔离数据根仅本机验证用，不在仓库内 |
 
 ## Closeout Record
 
