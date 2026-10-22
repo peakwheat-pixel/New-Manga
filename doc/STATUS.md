@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：**[SETTINGS-OPEN-C-1-DESIGN](tasks/SETTINGS-OPEN-C-1-DESIGN.md)** `in_review`（批次 C 契约设计：回收站/备份恢复/Plugin-Hooks；待用户裁决 D1–D11）；保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
-- 最近完成：**[SETTINGS-OPEN-B-2](tasks/SETTINGS-OPEN-B-2.md)** `done`（缓存清理；`0e2e623`）；**[SETTINGS-OPEN-B-1](tasks/SETTINGS-OPEN-B-1.md)** `done`（模型/GPU + 任务/并发；`b521ad27`）；**[SETTINGS-OPEN-A-1](tasks/SETTINGS-OPEN-A-1.md)** `done`（批次 A；`6a303a9`）。设置页 9 开 3 关（回收站/备份恢复/Plugin 待批次 C 裁决）。
+- 当前 Task：**[SETTINGS-OPEN-C-1-RECYCLE](tasks/SETTINGS-OPEN-C-1-RECYCLE.md)** `in_progress`（设置页回收站查看+清空；复用既有 wire；待独立 Review + GUI 烟测）；保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
+- 最近完成：**[SETTINGS-OPEN-C-1-DESIGN](tasks/SETTINGS-OPEN-C-1-DESIGN.md)** `done`（批次 C 设计 + 裁决 D1–D11）；**[SETTINGS-OPEN-B-2](tasks/SETTINGS-OPEN-B-2.md)** `done`（缓存清理；`0e2e623`）；**[SETTINGS-OPEN-B-1](tasks/SETTINGS-OPEN-B-1.md)** `done`（模型/GPU + 任务/并发；`b521ad27`）；**[SETTINGS-OPEN-A-1](tasks/SETTINGS-OPEN-A-1.md)** `done`（批次 A；`6a303a9`）。设置页 10 开 2 关（备份恢复/Plugin 待 C-2/C-3）。
 - [DEV-PREVIEW-1](tasks/DEV-PREVIEW-1.md)：done，`8ac00b97b`。
 - 最近完成：**[GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1](tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md)** `done`；声明错误 7→0、APPDATA 用户数据受保护；A+B+C 收敛（2.6GiB 归档可恢复）。
 - 父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)** `done`，r3 approved `6997733bf`；历史运行身份已归零。

@@ -230,7 +230,7 @@
 
 宿主同步纪律（沿 M2-C1 §5.3）：Tauri `command_allowlist` / `generate_handler!` / `build.rs` manifest / capabilities 同 commit 同步；probe/ac1 模式冻结；前端 commandSurface pin 更新。
 
-## 6. 决策清单（**需要用户裁决**）
+## 6. 决策清单（**用户裁决 2026-10-23：D1–D11 全部接受推荐值**）
 
 每条：问题 → 选项 → 推荐 → 影响。裁决前不得实现。
 
@@ -260,6 +260,15 @@
   - 推荐：**确认**（四组；detect 两组后续）。
 - **D11 回收站/备份/Plugin 三节的 `settings_update_section` 是否永久拒绝**：确认"操作面 ≠ 设置键"（本文件结论）？
   - 推荐：**确认**（避免为写而写的假键）。
+
+### 6.1 裁决记录
+
+- **2026-10-23**：用户回复"确认 SETTINGS_SECTION_C_SCHEMAS.md 的 D1–D11 裁决"（未提出改动）→ **D1–D11 全部按推荐值通过**，立即生效。
+- 生效结果：
+  - D1 回收站清空 = 对话框二次确认（复用既有"我理解不可恢复"勾选 + Core 强校验）；D2 不新增 `deleted_at`；D11 三节 `settings_update_section` 永久拒绝。
+  - D3 备份包全量含 managed；D4 固定备份根 + 可选导出；D5 覆盖 + 强制 pre_restore；D6 running Run 时拒绝恢复。
+  - D7 Plugin 仅本地目录；D8 外部进程隔离；D9 默认全禁用 + 首发仅无权限插件；D10 首批四组 Hook。
+- 释放顺序：`SETTINGS-OPEN-C-1-RECYCLE`（立即）→ `SETTINGS-OPEN-C-2-BACKUP` → `SETTINGS-OPEN-C-3-PLUGIN`。
 
 ## 7. 实现分期与依赖
 

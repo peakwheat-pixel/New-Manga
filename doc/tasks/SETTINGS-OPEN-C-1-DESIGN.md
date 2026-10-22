@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-1-DESIGN
 kind: design
-status: in_review
+status: done
 owner: dsh
 reviewer: user（D1–D11 产品裁决）；独立 Review 待裁决后由 Codex 指派
 created: 2026-10-23
@@ -69,7 +69,7 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout：待用户裁决 D1–D11 后关闭；关闭时登记裁决结果并释放 `SETTINGS-OPEN-C-1-RECYCLE`（或按用户选择的分期顺序）。
+- Closeout：2026-10-23 关闭（用户确认 D1–D11 全部接受推荐值）；已释放 `SETTINGS-OPEN-C-1-RECYCLE`，C-2/C-3 按分期顺序另行释放。
 - canonical_evidence_status：pending；resource_closeout_status：pending。
 - 删除/迁移/归档：0。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 已登记本 Task。

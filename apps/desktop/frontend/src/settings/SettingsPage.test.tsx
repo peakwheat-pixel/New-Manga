@@ -14,9 +14,11 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * inpaint / typeset.
  * SETTINGS-OPEN-B-1 AC4 — batch B-1 opens model/GPU and tasks/concurrency.
  * SETTINGS-OPEN-B-2 AC3/AC4 — batch B-2 opens cache/Revision (preview +
- * manual cleanup + pending retry). Only recycle bin, backup/restore and
- * plugins keep the disabled placeholder and the "未开放" badge (9 open /
- * 3 closed).
+ * manual cleanup + pending retry).
+ * SETTINGS-OPEN-C-1-RECYCLE — batch C-1 opens the recycle bin (view + clear
+ * operation surface; no settings write section). Only backup/restore and
+ * plugins keep the disabled placeholder and the "未开放" badge (10 open /
+ * 2 closed).
  */
 
 const OPEN_CATEGORY_IDS = [
@@ -29,8 +31,9 @@ const OPEN_CATEGORY_IDS = [
   "model_gpu",
   "task_concurrency",
   "cache_revision",
+  "recycle_bin",
 ] as const;
-const CLOSED_CATEGORY_IDS = ["recycle_bin", "backup_restore", "plugins"] as const;
+const CLOSED_CATEGORY_IDS = ["backup_restore", "plugins"] as const;
 
 function makeInvoke() {
   return vi.fn(async (command: string) => {
@@ -45,6 +48,8 @@ function makeInvoke() {
         return { network_profile_id: null, mode: "Direct", source: "direct" };
       case "cleanup_preview":
         return { targets: [], total_bytes: 0, pending_cleanups: 0 };
+      case "library_list_recycle_bin_books":
+        return [];
       default:
         return {};
     }
@@ -150,7 +155,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
     expect(page.q('[data-testid="settings-category-nav"]')).toBe(navBefore);
   });
 
-  it("opens exactly the batch-A + batch-B-1 + batch-B-2 categories; only still-closed categories carry the 未开放 badge", () => {
+  it("opens exactly the batch-A + B-1 + B-2 + C-1 categories; only still-closed categories carry the 未开放 badge", () => {
     page.mount();
     const openFlags = SETTINGS_CATEGORY_ORDER.map(
       (id) => (page.q(`[data-testid="settings-category-${id}"]`) as HTMLElement).dataset.open,
@@ -165,7 +170,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
       "true", // model_gpu — batch B-1
       "true", // task_concurrency — batch B-1
       "true", // cache_revision — batch B-2
-      "false", // recycle_bin
+      "true", // recycle_bin — batch C-1
       "false", // backup_restore
       "false", // plugins
     ]);
@@ -288,11 +293,17 @@ describe("Batch A open categories host editable panels (AC3)", () => {
       "cache_revision",
     );
 
-    // The three batch C closed categories trail the open list: another
+    // The recycle bin is open since batch C-1, so it is the next stop.
+    await arrowDown();
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "recycle_bin",
+    );
+
+    // The two still-closed batch C categories trail the open list: another
     // ArrowDown is clamped to the last OPEN category and never lands on them.
     await arrowDown();
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
-      "cache_revision",
+      "recycle_bin",
     );
   });
 
@@ -392,6 +403,33 @@ describe("Batch B-2 open category hosts the cache/Revision cleanup surface (AC3)
   });
 });
 
+describe("Batch C-1 open category hosts the recycle-bin surface (AC3)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
+
+  it("recycle bin category opens RecycleBinSettingsPanel instead of the placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("recycle_bin");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "recycle_bin",
+    );
+    expect(page.q('[data-testid="settings-content-recycle-bin"]')).not.toBeNull();
+    expect(page.q('[data-testid="recycle-bin-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-recycle-bin"]')).toBeNull();
+    // §2.4: the retention policy is a read-only note, never a fake control.
+    expect(page.q('[data-testid="recycle-bin-settings-policy-note"]')?.textContent).toContain(
+      "没有调度器",
+    );
+  });
+});
+
 describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () => {
   let page: ReturnType<typeof useMountedPage>;
 
@@ -415,11 +453,6 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
     expect(button.textContent).toContain("未开放");
   };
 
-  it("recycle bin category remains visible but cannot be invoked", () => {
-    page.mount();
-    assertDisabledCategory("recycle_bin", "回收站");
-  });
-
   it("backup/restore category remains visible but cannot be invoked", () => {
     page.mount();
     assertDisabledCategory("backup_restore", "备份/恢复");
@@ -432,10 +465,9 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
 
   it("keeps a reasoned placeholder id for every still-closed partition", () => {
     page.mount();
-    // Batch B-2 closed the cache/Revision placeholder: only batch C
-    // (recycle bin, backup/restore, plugins) remains.
+    // Batch C-1 opened the recycle bin: only backup/restore and plugins remain.
     expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(
-      ["backupRestore", "plugins", "recycleBin"].sort(),
+      ["backupRestore", "plugins"].sort(),
     );
     // None of them is mounted while the page sits on an open category.
     for (const testId of Object.values(DISABLED_SECTION_TEST_IDS)) {
