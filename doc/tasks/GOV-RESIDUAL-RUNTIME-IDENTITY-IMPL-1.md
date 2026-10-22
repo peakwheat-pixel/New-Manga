@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1
 title: 七项历史运行身份的精确解释层实现（含用户数据保护补齐）
 kind: feature
 governance_version: 2
-status: in_progress
+status: in_review
 approval: user_authorization_20261022_dsh_coordinator_takeover
 suggested_owner: dsh
 owner: dsh
@@ -13,8 +13,8 @@ base_commit: 8e31aaa1dff113e5f95ca7db5ece0de00126059a
 branch: null
 worktree: G:/CODEX/New Manga（主 checkout 交付；开发区为 linked worktree G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1）
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: d4ac5452514f54147cff2bfd087ecf36305db947
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1
 allowed_paths:
@@ -89,13 +89,20 @@ allowed_paths:
 - Handoff：doc/handoffs/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md。
 - 2026-10-22 / dsh / base 8e31aaa1d：实现完成。生产声明审计 7 项历史错误降为 0（2639/1936/7/285 → 2648/1939/0/292，exit 2→0）；保护集合旧 1936 根为新 1939 根真子集，新增 APPDATA catalog/data/derived 三根；无通配或环境变量展开；新增 12/12 测试与既有治理测试全绿；治理检查 PASS(2 warnings)、git diff --check exit 0。真实资源操作 0/0/0。
 
-- Review：待独立 Reviewer（Antigravity）。
+- Review：待独立 Reviewer（Antigravity）审查固定 head；本表在交付提交 `d4ac5452514f54147cff2bfd087ecf36305db947` 上回填。
 - 实际测试：待填。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-01 | AC3/AC5 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/protection-delta.json | `d4ac5452514f54147cff2bfd087ecf36305db947` | `98b08f0863b004571817bb9497d4c8af5c8240fe1fac387e61322d3b60406123` | CANONICAL |
+| EV-02 | AC7 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/verification-log.txt | `d4ac5452514f54147cff2bfd087ecf36305db947` | `7cdb25e85659b7368206930ae23b128ddf3ed9fee633170a34f26680aa69b849` | CANONICAL |
+| EV-03 | AC5 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/raw/audit-baseline/declaration-audit.json | `d4ac5452514f54147cff2bfd087ecf36305db947` | `f4c77a86de9f269aa8bcce7a1b3b452a958eebdf7f0068b4f9c8f9afb77fd01f` | CANONICAL |
+| EV-04 | AC5 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/raw/audit-resolved/declaration-audit.json | `d4ac5452514f54147cff2bfd087ecf36305db947` | `060637cc68ce4298a9dc7635cc3ba1e6240aa86c7590884a88cc0d227ccaf984` | CANONICAL |
+| EV-05 | AC1 | tools/governance/residual-runtime-identity.json | `d4ac5452514f54147cff2bfd087ecf36305db947` | `2ce5cc2ef67725ed68efbaac908abc51bbc0115d4ec752d33047820fe07dc384` | CANONICAL |
+| EV-06 | AC2/AC3 | tools/governance/clean_workspace.py | `d4ac5452514f54147cff2bfd087ecf36305db947` | `a9b329597ebd81941de6e1de0b0941b7b7bb582745326c62304dcca942d1b295` | CANONICAL |
+| EV-07 | AC1-AC6 | tools/governance/tests/test_residual_runtime_identity.py | `d4ac5452514f54147cff2bfd087ecf36305db947` | `03cd671d9ebd05b36fd67719269b19264e6c62400ec21aa2446630e41f06a7c2` | CANONICAL |
 
 ## Resource Manifest
 
