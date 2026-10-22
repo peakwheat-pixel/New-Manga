@@ -1,0 +1,318 @@
+> 归档说明：本报告正文来自 DeepSeek Harness 会话 `session-9ab84346-f806-42f3-9f90-30245d488e65` 的完整续写，原始事件流见 `verification/P02/implementation-stage-a-972049f9-dsh-review-complete-followup-worktree.stdout.jsonl`（EXIT=0）；同一会话的纯计数复核见 `verification/P02/implementation-stage-a-972049f9-dsh-review-count-reconciliation.stdout.jsonl`（EXIT=0）。该复核确认逐项级别未变，汇总更正为 `P0/P1/P2/P3=0/1/6/5`，没有新增或删除 finding。DSH 无 shell，无法独立复核 reviewed tree 与 scope SHA；限制见 §9。
+
+# Review：P02 Stage A Safe Foundation（真实 Workbench WebView2 验证 harness 安全基底）
+
+| 字段 | 值 |
+|---|---|
+| task_id | `P02`（Task 状态：`in_progress`，本 Review **不代表** P02 完成） |
+| kind | verification（实施切片 Review，非范围 Review） |
+| reviewer | DeepSeek Harness（非作者） |
+| author / Owner | Antigravity（conversation `054911c9-b133-4514-b471-143b80249fce`） |
+| integrator | Codex |
+| repository / worktree | `G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity` |
+| branch | `agent/antigravity/P02-real-webview-harness` |
+| base_commit（diff base / task checkpoint） | `5de8d44c784cbd20b23bcd41a8f1a7258c7addff` |
+| reviewed_head | `972049f991b5c119555647eeea816e89dd4769f3` |
+| reviewed_tree（作者声明） | `657095fa6790b6d21091dd58f9f862bc08818455`（**本次未能独立复核**，见 §9.1） |
+| P02 行为基线 | `241ff3b70b6fc0490ea238efd486cc707f849031`（Task frontmatter 未变） |
+| scope contract SHA-256 | `27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`（**未能独立复核**） |
+| decision | **`changes_requested`**（仅限本 Stage A 切片） |
+| findings | **P0/P1/P2/P3 = 0 / 1 / 6 / 5**，F-01–F-12 全部 `open` |
+| 审查方式 | 纯只读：源码/证据/文档阅读 + 只读 Git 元数据 + base↔HEAD 逐文件内容比对；**未运行** Cargo/Tauri/sidecar build、UI 自动化、测试；**未修改/创建/删除/暂存任何项目文件**；**未接触**任何用户漫画库、SQLite 生产数据、Lock、Revision 或凭据 |
+
+---
+
+## 1. 只读取证与对象绑定
+
+### 1.1 HEAD / base 绑定证据
+
+本会话 `pwsh` 完全不可用（见 §9.1），因此对象绑定通过**只读 Git 元数据文件**完成，而非 `git rev-parse`：
+
+| 证据 | 内容 |
+|---|---|
+| `.git`（worktree 指针） | `gitdir: G:/CODEX/New Manga/.git/worktrees/P02-real-webview-harness-antigravity` |
+| `.git/worktrees/…/HEAD` | `ref: refs/heads/agent/antigravity/P02-real-webview-harness` |
+| `.git/refs/heads/agent/antigravity/P02-real-webview-harness` | `972049f991b5c119555647eeea816e89dd4769f3` ✔ 与 reviewed HEAD 逐字一致 |
+| `.git/worktrees/…/logs/HEAD`（reflog） | `… → 3c651f502d49de32f5b050cfefc1ea056354f663 … 3c651f50 → 5de8d44c784cbd20b23bcd41a8f1a7258c7addff "merge main: Fast-forward"`；紧接 `5de8d44c → 972049f9 "commit: feat(P02): implement Stage A safe foundation and verification harness"`（epoch `1791527284 +0800` = `2026-10-09T06:28:04Z`） |
+| `.git/refs/heads/main` + `.git/packed-refs` | `main = 5de8d44c784cbd20b23bcd41a8f1a7258c7addff` —— **live `main` 恰好停在 diff base** |
+
+**推论**：HEAD 为 base 的**单提交**子节点；`base..HEAD` 无中间提交。**tree `657095fa…` 无法独立复核**（无 shell、无 hash 工具）。
+
+### 1.2 关键取证方法：以根工作区替代 `git diff base..HEAD`
+
+由于 live `main` = `5de8d44c` = 本片 diff base，根工作区 `G:\CODEX\New Manga` 就是**本片的 base 检出**。因此用「根工作区 vs 候选工作区」逐文件内容比对，等价于 `git diff base..HEAD` 的内容面（不含 blob 哈希）。所有比对均据此完成，覆盖全部 Owner 禁止路径（结论见 §8）。
+
+### 1.3 读取/检索过的对象（只读）
+
+候选侧：`doc/tasks/P02.md`（+ base 双份逐行）、`doc/handoffs/P02-stage-a-foundation-handoff.md`、`verification/P02/p02-harness-results.{json,txt}`、`env-identity-report.{json,txt}`、`static-control-report.{json,txt}`、`RESUME.md`、`harness/workbench_cdp_harness.py`、`probes/env_identity_probe.py`、`probes/static_control_probe.py`、`run-webview.ps1`、`fixtures/workbench_synthetic_data.json`、`apps/desktop/frontend/e2e/workbench_driver_protocol.ts`、`tauri-build-side-effects-investigation-r1.md`、`verification/P01/root-dirty-manifest-pre-ff.txt`。
+base 侧：`doc/contracts/UI_UX_GUI_DESIGN.md`、`doc/design/tokens-cand-f.json`、`doc/templates/REVIEW.md`、`doc/09_COLLABORATION.md`、`apps/desktop/frontend/{tsconfig.json,vite.config.ts,package.json}`、`src/App.tsx`、`src/workbench/WorkbenchPage.tsx`、`src/region/client.ts`、根工作区 `verification/P02/build-preflight-lf-r1.md`。
+另有全树路径清单（候选 7519 路径）与 hex/字符串检索若干。
+
+### 1.4 时间线（reflog 换算）
+
+`14:19:34+08` main 记录接单 → **`14:27:05+08` 证据文件生成**（`p02-harness-results.json` 时间戳 `06:27:05Z`）→ **`14:28:04+08` Stage A 提交**。即证据与提交相隔约 **59 秒**，且运行期 `git status --porcelain`（`env-identity-report.json:30-31`）显示当时**零个被跟踪文件被修改**、仅 11 条 `??` Stage A 路径。这是 F-05「内容很可能就是被测内容」的减轻依据。
+
+---
+
+## 2. Decision
+
+```
+decision: changes_requested
+```
+
+**仅针对 P02 Stage A 切片。** 切片**在范围内、无危险操作**（禁止路径零触碰、零构建产物、零新增依赖、零用户数据访问、零危险进程调用），但存在 1 项未解决的 **P1（F-01）**，且记录在案的证据内部不一致（F-02/F-03/F-04/F-05/F-06/F-07）。按 `doc/templates/REVIEW.md:17`「P0/P1 未解决或关键验证缺失时不可批准」，本 head **不可交 Codex 集成**。**P02 保持 `in_progress`；6 个运行时场景保持 `BLOCKED`；Cargo/Tauri/WebView 运行时 AC 不接受为 passed。**
+
+---
+
+## 3. Findings（F-01 – F-12，全部 `open`）
+
+| ID | 级别 | 文件/行 | 状态 |
+|---|---|---|---|
+| F-01 | **P1** | `verification/P02/harness/workbench_cdp_harness.py:71-73,151-162,318-323`；`apps/desktop/frontend/e2e/workbench_driver_protocol.ts:1-12,56-74`；`doc/handoffs/P02-stage-a-foundation-handoff.md:30`；`doc/tasks/P02.md:99` | open |
+| F-02 | P2 | `verification/P02/fixtures/workbench_synthetic_data.json:140-157` | open |
+| F-03 | P2 | `doc/handoffs/P02-stage-a-foundation-handoff.md:48` vs `verification/P02/p02-harness-results.json:112-115` | open |
+| F-04 | P2 | `verification/P02/p02-harness-results.json:105-119` vs `doc/tasks/P02.md:44` | open |
+| F-05 | P2 | `env-identity-report.json:5-9,26-31`；`p02-harness-results.json:5-9,53`；`handoff:11` | open |
+| F-06 | P2 | `harness:164-261`、`harness:318-323`；`run-webview.ps1:57`；`handoff:43-49`；标准 `doc/templates/REVIEW.md:51` | open |
+| F-07 | P2 | `verification/P02/RESUME.md:12,14-16` | open |
+| F-08 | P3 | `harness/workbench_cdp_harness.py:223-228` | open |
+| F-09 | P3 | `probes/env_identity_probe.py:112,116`；`env-identity-report.json:14-17,24`；`run-webview.ps1:28` vs `harness:139` | open |
+| F-10 | P3 | `fixtures/workbench_synthetic_data.json:2,32-68,118-139` | open |
+| F-11 | P3 | `apps/desktop/frontend/e2e/workbench_driver_protocol.ts:43` | open |
+| F-12 | P3 | `doc/tasks/P02.md:68-72` | open |
+
+**P0：无。**
+
+### F-01（P1）交付文档声称的「CDP 验证 Harness」能力在代码中不存在
+
+- **级别**：P1 ｜ **状态**：open
+- **文件/行**：`verification/P02/harness/workbench_cdp_harness.py:1-16`（docstring）、`:71-73`、`:153`、`:164-261`、`:318-323`；`apps/desktop/frontend/e2e/workbench_driver_protocol.ts:1-12`、`:56-74`；`doc/handoffs/P02-stage-a-foundation-handoff.md:30`；`doc/tasks/P02.md:99`
+- **问题与影响**：handoff §2 把该文件描述为「结构化调度 AC1–AC7 场景，**管理 CDP 通信**并输出符合固定格式的判定证据文件」，Task 记录称其为「CDP 验证 Harness」，模块 docstring 进一步声称覆盖「AC2: Navigation & interaction via native mouse/keyboard events」等全部 AC。实际代码中**不存在任何 CDP 客户端**：`__init__(target_exe, cdp_port)`（`:71-73`）的两个参数从未被读取；`urllib.request`（`:26`）与 `os`（`:21`）是死导入；AC1–AC6 全部分支由**硬编码常量** `build_barrier_active = True`（`:153`）无条件短路，`main()`（`:318-323`）不接收也不探测任何目标进程/窗口。TS 侧「前端 E2E 驱动协议」只实现了 AC1 环境探测（`:56-74`）与 AC6 颜色数学（`:80-168`），**没有** AC2/AC3/AC4/AC5 任何例程，且被 `apps/desktop/frontend/tsconfig.json:19 "include": ["src"]` 排除、全库无任何代码 import（检索命中仅出现在文档中），因此既不参与构建也不参与测试。影响：交付物对**已交付能力**的表述与代码不符；集成方或下一阶段可能误认为 AC1–AC7 的驱动脚手架已就绪。
+- **已有证据**：上述文件逐行读取；`tsconfig.json:19`；`grep workbench_driver_protocol` 全库命中仅文档（`doc/tasks/P02.md:50,99`、`doc/handoffs/…:29`、历史 prompt 文件）；`harness:153` 字面量 `True`。
+- **最小修正**：把 handoff / `P02.md:99` 的称谓改为「判定与报告生成器（CDP 客户端尚未实现）」，删除未使用的 `target_exe`/`cdp_port` 参数与死导入；TS 协议注明当前仅含 AC1 探测 + AC6 数学，或在 Stage B 明确登记 CDP 驱动范围后再实现。
+- **状态**：open
+
+### F-02（P2）夹具 `visual_direction_f_tokens` 来源标注不实
+
+- **级别**：P2 ｜ **状态**：open
+- **文件/行**：`verification/P02/fixtures/workbench_synthetic_data.json:140-157`（`visual_direction_f_tokens.description` 与 `reference_tokens`）
+- **问题与影响**：该组被描述为「UI/UX GUI Design Contract §7.2 / §9 and Visual Direction F token specifications」，但 7 个值与冻结的 F 契约 token **完全不符**：`doc/design/tokens-cand-f.json` 中 `#101418`、`#d8e0e8`、`#8b949e`、`#58a6ff`、`#161b22`、`#1c2430`、`#2a3038` **7 项全无命中**；该文件的真实 F 值是 `bg-page #1a1a1d`、`ink #ececee`、`ink-2 #a9a9b3`、`ink-3 #91919c`、`ink-dis #70707b`、`accent #4d63e8`（契约 `UI_UX_GUI_DESIGN.md:151` 载明 F 色彩逐值继承 A）。夹具实际取值中 5 个是**前端内联硬编码色**（`src/App.tsx:474-504`、`PageListPanel.tsx:45,92`、`ViewerPanel.tsx:131,220,227,252-273`、`RegionInspector.tsx:86-281`、`LibraryPanel.tsx:50,83-148`、`SettingsPanel.tsx:108-203`、`WorkbenchToolbar.tsx:29`、`TaskProgressPanel.tsx:23`、`RelabelConfirmDialog.tsx:58-96`、`RelabelContextMenu.tsx:57-72`、`WorkbenchPage.tsx:938-968`），而 `accent_active: #58a6ff` 与 `border_subtle: #2a3038` 在 `src/**` 中**完全不存在**（无来源）。影响：AC6 的 `token_mapping`（`MAPPED`/`UNMAPPED`/`NOT_APPLICABLE`）判定与 handoff 所称「对照已选 F token」建立在错误参照集与两个无出处值之上。
+- **已有证据**：对 `doc/design/tokens-cand-f.json` 做 hex 检索（命中 `#1a1a1d/#ececee/#a9a9b3/#91919c/#70707b/#4d63e8/#4356d6`，夹具 7 值 0 命中）；对 `apps/desktop/frontend/src` 做同一 hex 集合检索（命中 5 值、未见 `58a6ff`/`2a3038`）；契约 `UI_UX_GUI_DESIGN.md:57,151`。
+- **最小修正**：把组名改为 `live_inline_palette`（并逐值标注来源文件:行），或替换为 `doc/design/tokens-cand-f.json` 的真实 F 值；删除无出处的 `accent_active`/`border_subtle` 或注明其来源。
+- **状态**：open
+
+### F-03（P2）handoff 的对比度数值与生成报告互相矛盾
+
+- **级别**：P2 ｜ **状态**：open
+- **文件/行**：`doc/handoffs/P02-stage-a-foundation-handoff.md:48` vs `verification/P02/p02-harness-results.json:112-115`
+- **问题与影响**：同一场景两组数值不一致——handoff 写正文对比度 `14.28:1`、次要文本 `5.76:1`；机器生成的报告写 `13.87`、`6.01`。我按 WCAG 2.1 独立复算：`#d8e0e8` on `#101418` = **13.87**，`#8b949e` on `#101418` = **6.01**（与报告一致）；用真实 F 值复算 `#ececee` on `#1a1a1d` = **14.80**、`#a9a9b3` on `#1a1a1d` = **7.40**。即 handoff 的 `14.28/5.76` **既非报告值、也非任何 F token 配对值**，无 artifact 支持。影响：AC6 证据自相矛盾；以 handoff 为准的读者会得到错误数字。**该两数的具体出处在本会话证据中无法恢复/复现**（我未推测其来源）。
+- **已有证据**：三组 WCAG 复算（阈值 `0.03928`/`0.04045` 对本例色值无影响，因最小通道 `16/255=0.0627` 高于两者）；两文件逐行对照；harness 数学 `workbench_cdp_harness.py:53-67` 复算一致。
+- **最小修正**：handoff 直接引用报告值（或删除重复叙述，改为链接 `p02-harness-results.json`）。
+- **状态**：open
+
+### F-04（P2）AC6 用 `ac_id=AC6` + `status=PASS` 记录前置模型检查，且缺 AC6 强制字段
+
+- **级别**：P2 ｜ **状态**：open
+- **文件/行**：`verification/P02/p02-harness-results.json:105-119`（`f_token_mathematical_contrast_model`，`ac_id: "AC6"`, `status: "PASS"`, `layer: "TOKEN_MODEL"`）vs `doc/tasks/P02.md:44`
+- **问题与影响**：Task AC6 明确定义为「采集真实 WebView2 代表性状态的 computed foreground/background」，并要求把 `token_mapping`（`MAPPED`/`UNMAPPED`/`NOT_APPLICABLE`）与 `contrast_result`（`PASS`/`FAIL`/`NOT_VERIFIABLE`）**分开记录**。该 TOKEN_MODEL 记录**两个字段均缺失**，且全库无任何 artifact 产出这两个字段（TS 协议 `ContrastSample:28-37` 定义了它们，但无人实现——与 F-01 同源）。影响：按 AC 聚合的读者或自动化会读出「AC6 = PASS」，与 AC6 未被执行的事实冲突。
+- **已有证据**：`json:105-119`；`P02.md:44`；对 `token_mapping`/`contrast_result` 的全库检索（仅 TS 类型定义处出现，无产出）。
+- **最小修正**：把 `ac_id` 改为 `PRE-03`/`AC6-PRECHECK`（AC6 只保留 BLOCKED 行），并在真实运行时补出 `token_mapping`/`contrast_result`。
+- **状态**：open
+
+### F-05（P2）证据自绑定到 diff base，交付 HEAD/tree 在全部 artifact 中零出现
+
+- **级别**：P2 ｜ **状态**：open
+- **文件/行**：`verification/P02/env-identity-report.json:5-9,26-31`；`verification/P02/p02-harness-results.json:5-9,53`；`doc/handoffs/P02-stage-a-foundation-handoff.md:11`
+- **问题与影响**：全部证据记录 `head = 5de8d44c784cbd20b23bcd41a8f1a7258c7addff`、`tree = f27d12a7f8db1a3946f5832d865653d1dcf380b3`（**即 diff base 的提交与树**），并自述 `is_clean: false`，`porcelain_status` 列出 Stage A 路径当时仍为 `??` 未跟踪；`p02-harness-results.json:53` 的 `source_head` 同为 base。**交付 HEAD `972049f9…` 与 tree `657095fa…` 在全部 artifact 中零出现**，handoff frontmatter 只有 `base_commit`、无 `reviewed_head`/tree。另外记录的行为基线口径也不一致：证据记 `5de8d44c`，而 Task 声明的 P02 行为基线是 `241ff3b7…`。影响：AC7 要求的「源码 Hash」无法把 PASS/BLOCKED 绑定到被审修订，AGENTS.md 要求交接引用实际文件与 commit。**减轻事实**：证据生成（`06:27:05Z`）与提交（`06:28:04Z`）相隔 59 秒，且未跟踪清单与交付物集合完全一致，故**内容很可能就是被测内容**——缺陷在记录口径而非被测对象。
+- **已有证据**：`grep 972049f9|657095fa|f27d12a7` 全库命中仅 base 值出现在两个 report 内（`972049f9` 零命中）；reflog 时间戳换算；`env-identity-report.json:30-31`。
+- **最小修正**：提交后复跑一次并记录交付 HEAD/tree，或补记被测 artifact 的 SHA-256；handoff frontmatter 增补 `reviewed_head/reviewed_tree`。
+- **状态**：open
+
+### F-06（P2）BLOCKED 场景的 `exit_code` 是硬编码常量，且全片无带 EXIT 的运行日志
+
+- **级别**：P2 ｜ **状态**：open
+- **文件/行**：`verification/P02/harness/workbench_cdp_harness.py:164-261`（各 `record_verdict(..., 126, ...)`）、`:318-323`（`main()` 返回 0）；`verification/P02/run-webview.ps1:57`（`exit 0`）；`doc/handoffs/P02-stage-a-foundation-handoff.md:43-49`（表格「退出码 126」列）；在案标准 `doc/templates/REVIEW.md:51`
+- **问题与影响**：6 条 BLOCKED 判定的 `exit_code` 全部是硬编码字面量 `126`（`:169,200,214,259` 等），handoff 表格也印「退出码 126」，但这些场景**没有任何命令被执行**——`main()` 返回 0，runner `exit 0`。也就是说表格中的「退出码」是**被断言的测量值而非被观察到的测量值**。同时全片**没有任何带 EXIT 与 shell 头的运行日志**（无 runner 调用记录，无 stdout/stderr 捕获），与仓库在案证据纪律 `doc/templates/REVIEW.md:51`（Q-009：运行日志必须带 EXIT 与 shell/venv 头且逐次入库；判别力 artefact 缺失即记 `NOT_RUN`，不得以散文替代）不符。影响：AC7 要求的「命令/退出码」不成立。
+- **已有证据**：`harness` 中 `126` 字面量位置；`main()` `return 0` 与 `run-webview.ps1:57 exit 0`；全库检索未发现任何 run log/transcript 文件（`verification/P02/*` 仅有探针与 harness 自身写出的报告）。
+- **最小修正**：记录实际执行命令与观察到的退出码（0）；未尝试场景的 `exit_code` 置 `null`/省略；把探针与 harness 的调用日志（含 EXIT 与 shell/Node 版本头）落盘。
+- **状态**：open
+
+### F-07（P2）恢复入口 `RESUME.md` 未随交付更新，仍指向已完成的动作
+
+- **级别**：P2 ｜ **状态**：open
+- **文件/行**：`verification/P02/RESUME.md:12`（仍称 AC1–AC7/Vitest/Cargo/Tauri/sidecar build/真实 WebView2/GUI/键盘/对比度「均 `NOT_RUN`」）、`:14-16`（「下一条直接执行」仍要求发送 formal implementation prompt，并称「实现消息尚未发送前不声称 Owner 已开始改代码」）
+- **问题与影响**：`RESUME.md` 是 Task 指定的恢复入口，但**与 base 逐字相同、未随 Stage A 交付更新**：其「下一条直接执行」要求发送的正式实现消息已发送且已交付（HEAD `972049f9`），却仍写成待办。影响：下一会话按恢复点会误判 P02 状态并可能重复派发/重复实现，违反「任务可恢复性」保护要求。`verification/P02/**` 属 Owner allowlist 内的「Task-local recovery/checkpoint」，Owner 有能力更新。
+- **已有证据**：与 base 根工作区 `verification/P02/RESUME.md` 逐行对照（第 1–32 行完全相同，含 `:12`、`:14-16`）。
+- **最小修正**：更新「当前检查点」为 Stage A 交付 head、本 Review 决策与下一步，历史段保留不动。
+- **状态**：open
+
+### F-08（P3）harness 加载夹具 token 后从未使用，判定实为常量断言
+
+- **级别**：P3 ｜ **状态**：open
+- **文件/行**：`verification/P02/harness/workbench_cdp_harness.py:223`（`tokens = fix_data["fixtures"]["visual_direction_f_tokens"]["reference_tokens"]`）、`:226`、`:228`（由注释中的字面量元组 `(216,224,232)`/`(16,20,24)`/`(139,148,158)` 计算）
+- **问题与影响**：变量 `tokens` 被赋值后**从未被引用**；对比度由硬编码 RGB 计算。影响：TOKEN_MODEL 检查与夹具解耦——修改 `workbench_synthetic_data.json` 的 token 值**不会改变判定**，属「看似校验、实为常量断言」，也掩盖了 F-02 的来源问题。
+- **已有证据**：上述行逐行读取；`tokens` 在全文件仅出现一次；`details` 未记录任何取值来源。
+- **最小修正**：从夹具 hex 解析 RGB（TS 已有 `parseCssColor`，Python 亦可 5 行实现），或删除死加载并在 `details` 中记录实际取值及其出处。
+- **状态**：open
+
+### F-09（P3）环境探针的 WebView2 识别回退失效、`npm` 版本静默为空、运行器解释器不统一且静态探针被跑两遍
+
+- **级别**：P3 ｜ **状态**：open
+- **文件/行**：`verification/P02/probes/env_identity_probe.py:116`（GUID 字面量）、`:112`（`npm -v`）、`:24-37`（`run_cmd` 吞掉异常）；`verification/P02/env-identity-report.json:14-17,24`；`verification/P02/run-webview.ps1:28`（`& python`）vs `harness:139`（`sys.executable`）、`run-webview.ps1:34-39` 与 `harness:139`（同一静态探针被执行两次）
+- **问题与影响**：① 探针用字面量 `F3017226-9E4A-4437-B3B1-FD94E1568A91` 匹配 WebView2 客户端，但探针**自身采集到的**键是 `{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`，故「优先取 WebView2 Runtime」分支为**死代码**，`detected_version` 实际来自 `FS_` 文件系统回退；若主机无 `C:\Program Files (x86)\Microsoft\EdgeWebView\Application`，会静默退化为 EdgeUpdate 下的任意客户端值（例如报告中的 `1.3.279.5`），使 AC1 环境证据失真。② `npm` 在 Windows 是 `.cmd`，`subprocess.run(["npm","-v"])` 抛出的异常被 `run_cmd` 捕获后丢弃，报告留下 `"npm": ""` 且无错误字段。③ runner 用 PATH 中的 `python`，harness 用 `sys.executable`，两者可能不是同一解释器；静态探针在一次运行中被执行两遍并两次覆写同一报告。
+- **已有证据**：探针代码与**其自身输出**的 GUID 对照（报告 `:14-15` 含 `{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`，代码字面量与之不符）；报告 `runtimes.npm` 为空字符串；`run-webview.ps1:28,34-39` 与 `harness:139`。
+- **最小修正**：修正 GUID 并显式回退（无匹配时记 `UNKNOWN`）、在报告中记录 subprocess 错误、统一解释器、静态探针只由一处执行。
+- **状态**：open
+
+### F-10（P3）合成夹具内部不一致，且混用 UI 动作名与冻结 IPC 命令名
+
+- **级别**：P3 ｜ **状态**：open
+- **文件/行**：`verification/P02/fixtures/workbench_synthetic_data.json:32-68`（`pages`）、`:70-117`（`regions`）、`:118-139`（`post_write_scenarios`）、`:2`（`"$schema"`）
+- **问题与影响**：① `synth-page-102` 标 `"has_regions": true`，但 `regions` 映射**没有该页条目**（只有 `synth-page-101`），合成状态自相矛盾。② AC4 的 `undo` 场景用 `"operation": "undo_retype"`，**不是冻结命令面中的命令**——`apps/desktop/frontend/src/region/client.ts:44-47` 只有 `set_region_type`、`list_region_revisions`、`restore_region_revision`；`undoRetype` 是 UI 回调（`WorkbenchPage.tsx:673`）。同一 `operation` 字段里 `retype`/`restore` 用的是真实 IPC 名而 `undo` 用 UI 动作名，语义混杂，后续阶段按夹具驱动会去找不存在的命令。③ 三个写场景只编码了写操作，**未编码 AC4 所需的「write 返回 → 随后 `list_regions`」次序/单调时钟期望**。④ 该文件是**数据**文件，却在顶层使用 `"$schema": "http://json-schema.org/draft-07/schema#"`，声明了一个它并非的文档类型。
+- **已有证据**：夹具逐行读取；`region/client.ts:44-47` 与 `WorkbenchPage.tsx:121,673` 命令/动作面检索；AC4 原文 `doc/tasks/P02.md:42`。
+- **最小修正**：补齐 `synth-page-102` 的区域或改 `has_regions:false`；把 `undo` 明确标注为 UI 动作并给出其实际 IPC 序列（`set_region_type` 回写）；为每场景补 read 步骤与次序期望；移除或替换顶层 `$schema`。
+- **状态**：open
+
+### F-11（P3）「固定格式」的 layer 契约未覆盖实际产出的层
+
+- **级别**：P3 ｜ **状态**：open
+- **文件/行**：`apps/desktop/frontend/e2e/workbench_driver_protocol.ts:43`（`layer: "REAL_WEBVIEW2" | "REAL_WEBVIEW_MOCK_IPC" | "BLOCKED_NO_BUILD"`）
+- **问题与影响**：候选证据实际产出的层是 `FILESYSTEM`、`STATIC_AST`、`TOKEN_MODEL`（`p02-harness-results.json:16,36,109`），均不在该联合类型内；`BLOCKED_NO_BUILD` 从未被使用。影响：所述「结构化调度…符合固定格式」的契约与实际证据格式不一致，格式契约无法作为校验依据。
+- **已有证据**：类型定义与 `p02-harness-results.json` 的 `layer` 取值逐项对照。
+- **最小修正**：扩展联合类型使其覆盖实际层，或按 F-01 的建议删除这份冗余 TS 契约。
+- **状态**：open
+
+### F-12（P3）Task 的「测试要求」表未随交付证据更新，与自身证据互相矛盾
+
+- **级别**：P3 ｜ **状态**：open
+- **文件/行**：`doc/tasks/P02.md:68-72`（AC1/AC2+AC5/AC3+AC4/AC6/前端控制组 五行的 `实际结果` 仍为 `NOT_RUN`、`证据` 仍为 `无`）
+- **问题与影响**：Task 自身的证据索引表与本次交付证据（6 项 `BLOCKED` + blocker 原因 + 报告路径）互相矛盾。base↔head 文件级比对显示该文件**唯一改动是在 `:99` 新增一条执行记录**（99 行 → 100 行，其余行、frontmatter、AC1–AC7、allowlist、禁止范围、表格全部逐行相同），即执行记录已补、证据索引表未同步。影响：读者无法从 Task 表定位 BLOCKED 的证据文件。
+- **已有证据**：与 base `doc/tasks/P02.md` 全文件逐行对照（base 84–99 行 = 候选 84–98 与 100 行，唯一插入点为候选 `:99`）。
+- **最小修正**：把相关行 `实际结果` 改为 `BLOCKED（Hard Build Barrier）` 并链接 `p02-harness-results.*`；或明确注明该列仅为「计划运行时场景，未执行」。
+- **状态**：open
+
+---
+
+## 4. Architecture 结论
+
+**分层、契约、依赖、安全：通过。**
+
+- **范围**：变更集合完全落在 Owner allowlist 内，未发现任何 scope creep（详见 §8）。
+- **零产品源码/契约/依赖扩张**：`apps/desktop/frontend/src/**`、`package.json`/`package-lock.json`、`apps/desktop/src-tauri/**`、Python Core、共享 IPC/Schema 契约、依赖清单、设计 token、P03 runner、已打包产物均**未被触碰**（逐文件内容比对，见 §8）。
+- **无新增依赖**：Python 侧仅用标准库（`json/os/platform/subprocess/sys/time/urllib.request/pathlib/winreg/re`）；TS 文件零 import；`package.json` 未变。
+- **数据隔离**：夹具全部为 `synth-*` 合成数据（无真实书名/路径/用户数据），探针与 harness 不读取任何用户漫画库、SQLite 生产数据、Lock、Revision 或凭据。
+- **进程/数据访问安全**：仅只读操作——注册表 `HKLM/HKCU …EdgeUpdate\Clients`、只读列举 `C:\Program Files (x86)\Microsoft\EdgeWebView\Application`、只读 `git rev-parse/status`、`node -v`/`npm -v`，以及 `sys.executable` 调用本仓探针；无 `shell=True`、无网络、无删除/移动、无任意路径写入。写操作仅限 `verification/P02/`。
+- **分层隔离**：`apps/desktop/frontend/e2e/**` 属允许路径；该 TS 文件被 `tsconfig.json:19` 排除且无人 import，不会进入产物或测试面（副作用是它同时是惰性代码，见 F-01/F-11）。`run-webview.ps1` 明确不调用 Cargo/Tauri（`:7` 注释与实现一致）。
+- **唯一架构级缺陷**：F-01（文档声称的 CDP/行为驱动能力在代码中不存在）。这是**表述与实现的缺口**，不是越界或危险设计；修正表述后本切片的架构方向可安全继续。
+
+---
+
+## 5. Verification 结论
+
+**标签纪律与 BLOCKED 判定：认可。记录证据的可追溯性与内部一致性：不通过。**
+
+**认可的部分**
+
+1. **无冒充**：全片**没有任何** `REAL_WEBVIEW2`/`REAL_WEBVIEW_MOCK_IPC` 层场景被记 `PASS`；`PASS` 仅出现在 `FILESYSTEM`、`STATIC_AST`、`TOKEN_MODEL` 前置层。符合 Task 禁止范围「不得把 Legacy QML、PySide6、普通浏览器/Vite、mock IPC、JSDOM、SSR 或 fake timers 冒称为真实 Core 端到端证据」。
+2. **BLOCKED 判定成立且有独立依据**：`verification/P02/tauri-build-side-effects-investigation-r1.md`（Codex 只读调查）载明 `apps/desktop/src-tauri/build.rs → tauri_build::try_build` 会向源码树写 `gen/schemas/**` 与 permission TOML，且 `CARGO_TARGET_DIR` 无法重定向该写入；`build-preflight-lf-r1.md` 载明 fail-closed 的 sidecar 输入 `apps/desktop/src-tauri/target/core-sidecar/core-sidecar` 缺失。我独立确认候选树中 `apps/desktop/src-tauri/target/` **整个不存在**（该目录只在根工作区存在且被 `.gitignore` 排除），即 sidecar 输入确实不可用。因此把 AC1–AC5 与 AC6 运行时记 `BLOCKED` 是**正确处置而非逃避**。
+3. **PRE-01 属实**：夹具顶层 6 个键与 `p02-harness-results.json:19-26` 记录一致。
+4. **PRE-02 的实质断言已由我独立复现**（在 base 侧）：`WorkbenchPage.tsx:85` 确为 `resolveWork… resolveDebounceMs = 300, regionDebounceMs = 300`；`App.tsx:479`、`:482`、`:499` 确有 `app-nav`/`nav-console`/`nav-workbench` 三个 `data-testid`。
+5. **harness 的 WCAG 数学正确**：我复算 `#d8e0e8`/`#101418` = 13.87、`#8b949e`/`#101418` = 6.01，与 `p02-harness-results.json:112-115` 完全一致（其 `0.04045` 阈值与本例色值无影响）。
+6. **构建屏障被真实遵守**：候选全树 7519 个路径中 `node_modules`、`apps/desktop/frontend/dist`、`verification/P02/cargo-target`、`*.exe`/`*.dll`/`*.msi` **命中数为 0**，与 `env-identity-report.json:33-47` 的 `exists:false` 一致。
+
+**不可批准的部分**：记录证据自身不一致且不可追溯——F-01（能力表述不实）、F-02/F-04（AC6 参照集与标签错误）、F-03（handoff 数值与生成报告矛盾）、F-05（证据绑定到 base 修订）、F-06（退出码为常量、无 EXIT 日志）、F-07（恢复点过期）。这些均无需重跑构建即可修正，但必须在**新的固定 head** 上修完并复审。
+
+---
+
+## 6. 逐 AC 状态（保留 BLOCKED；P02 保持 `in_progress`）
+
+| AC | 层级（layer） | Stage A 记录状态 | 本次 Review 判定 |
+|---|---|---|---|
+| AC1 真实 WebView2 harness | `REAL_WEBVIEW2` | BLOCKED | **维持 BLOCKED**（无受信可运行二进制；未演示） |
+| AC2 导航与操作 | `REAL_WEBVIEW2` | BLOCKED | **维持 BLOCKED** |
+| AC3 300ms quiet-period/失效窗口 | `REAL_WEBVIEW2` | BLOCKED | **维持 BLOCKED** |
+| AC4 写后刷新（retype/undo/restore） | `REAL_WEBVIEW_MOCK_IPC` | BLOCKED | **维持 BLOCKED**（符合 AC4「不得以 `NOT_RUN` 满足」的要求） |
+| AC5 键盘与焦点 | `REAL_WEBVIEW2` | BLOCKED | **维持 BLOCKED** |
+| AC6 F token/对比度 | `TOKEN_MODEL`（前置模型）+ `REAL_WEBVIEW2`（运行时） | PASS（模型）/ BLOCKED（运行时） | 模型 PASS **不构成 AC6 证据**（F-02/F-03/F-04）；**AC6 维持 BLOCKED** |
+| AC7 固定证据与发现处置 | 证据机制 | 部分 | 机制存在，但 provenance/标签/退出码不合规（F-05/F-06），**未达标** |
+| PRE-01 夹具存在性（前置） | `FILESYSTEM` | PASS | 认可 |
+| PRE-02 静态源码契约（前置） | `STATIC_AST` | PASS | 认可（断言已独立复现） |
+
+**明确声明**：P02 保持 `in_progress`；**Cargo/Tauri/WebView 运行时 AC 一律不接受为 passed**；6 个运行时场景（AC1–AC5、AC6 运行时）保持 `BLOCKED`；`TOKEN_MODEL` 的 PASS 与 PRE-01/PRE-02 仅为前置控制组，**不代表任何产品 AC 通过**；「测试脚手架 Gate PASS 不等于产品 UI 质量 PASS」。
+
+---
+
+## 7. 范围与禁止路径结论
+
+`base 5de8d44c → reviewed HEAD 972049f9` 的变更集合**完全落在 allowlist 内**：
+
+- `verification/P02/**`：新增 11 项（fixture、2 个探针、harness、runner、4 份 report.{json,txt}/results.{json,txt}）。
+- `apps/desktop/frontend/e2e/workbench_driver_protocol.ts`：新建；`e2e/` 目录在 base 无任何已跟踪文件，未扰动既有测试。
+- `doc/handoffs/P02-stage-a-foundation-handoff.md`：新建（base 侧 `doc/handoffs/` 下**无任何 `P02*` 文件**，未触碰其他 handoff）。
+- `doc/tasks/P02.md`：**唯一改动为新增 1 条执行记录**（99 → 100 行，其余逐行相同；frontmatter `status: in_progress`、`base_commit`、`scope_contract_sha256`、AC1–AC7、allowlist、禁止范围、测试表均未变）。
+- 构建输出：`apps/desktop/frontend/dist`、`verification/P02/cargo-target` **不存在**，未纳入提交。
+
+**禁止路径逐文件内容比对结果（全部通过）**
+
+| 禁止/受限面 | 结果 |
+|---|---|
+| `apps/desktop/frontend/src/**` | 两侧各 **37 文件**，逐行相同（唯一差异为行尾 CRLF↔LF） |
+| `package.json` / `package-lock.json` / `tsconfig.json` / `vite.config.ts` / `index.html` | 相同（`package-lock.json` 2749 行中 **2062 行**逐行核对，含 188 个包键、189 个 `version`、187 个 `resolved`、187 个 sha512 `integrity` 全同） |
+| `apps/desktop/src-tauri/**` | 全部相同，含 `src/main.rs` **2254 行全覆盖**；`Cargo.toml`/`Cargo.lock`/`build.rs`/`tauri.conf.json`/`capabilities`/`gen/schemas`/22 个 `permissions/autogenerated/*.toml` |
+| Python Core `src/**` | 两侧均 **41861 行**，逐文件/行一致 |
+| 依赖清单 | `requirements.txt`(48)、`requirements-dev.txt`(13)、`pytest.ini`(4)、`packaging/m2ac5/requirements-build.txt`(59) 相同 |
+| 共享契约 `doc/contracts/**` | **7 文件**（含 `M2-C1_TYPED_IPC_CONTRACT.md`、`UI_UX_GUI_DESIGN.md` 等）全文相同 |
+| Codex-only 治理路径 `verification/PROJECT-ROADMAP-20261008/**` | **14 文件**（含 `verify_plan.py`、`ROADMAP.md`、`task-inventory.csv`）全文相同——**Owner 未触碰** |
+| 设计 token/契约 `doc/design/**` | **8/9 文件全文相同**（`tokens-cand-a~f.json` 各 140 行、`M2-UI1_…VISUAL_CONTRACT.md` 283、`M2-SFX-MISROUTE-UI-MITIGATION/design.md` 343）；`ui-reference.html` 为 **PARTIAL**（见 §9.3） |
+| P03 runner `packaging/**` | **16 个受控文件全部相同**，含 `m2ac5/run_clean_start_e2e.py`(1197) 与 `release-gate/run_release_gate.py`(1170) |
+| `experiments/M2-S3/probe/**` | 10 文件相同 |
+| 已打包 EXE/dist | 两侧均 **0 个** `*.exe`/`*.dll`/`*.msi`；候选无 `dist/`、无 `build/`、无 `node_modules/`、无 `target/` |
+| 治理标准 | `AGENTS.md`(39)、`doc/09_COLLABORATION.md`(185)、`doc/AD-001_…`(48)、`doc/templates/{TASK,HANDOFF,REVIEW}.md`(52/48/57) 全文相同 |
+
+**唯一系统性字节差异**：候选 worktree 本地 `core.autocrlf=false`（`RESUME.md:5` 记录、`build-preflight-lf-r1.md` 载明为既定缓解措施）导致的整树 **CRLF→LF 检出效应**，非内容改动，`git status` 视其为 clean。
+**给 Integrator 的操作提醒**：直接用根工作区与候选工作区比对会把**整树**显示为改动，必须使用 `--ignore-cr-at-eol` 或同等配置。
+**根工作区差异不归属本片**：根侧多出的 `apps/desktop/src-tauri/target/**`（约 8153 个 gitignored 构建产物）、`packaging/**/__pycache__/*.pyc` 与 P01 冻结的 24 项 dirty/untracked（均在 `.qoder-credits/`、`doc/reviews/`、`verification/M2-*`、`verification/P03-*`、`verification/P08/`，与本片比对范围无交集）均属根工作区既存状态，不作为候选改动。
+
+---
+
+## 8. 结论：固定 head 是否可交集成
+
+**不可交 Codex 集成。** 理由：存在 1 项未解决 P1（F-01：交付文档对已交付的 CDP/行为驱动能力的表述与代码不符）与 6 项 P2（记录证据内部不一致/不可追溯，F-02–F-07）；另有 5 项 P3（F-08–F-12）随本次修正一并登记。剩余风险：若在未修正表述与 provenance 的情况下继续，下一阶段可能基于「已有 CDP harness」的错误前提规划，或以错误的 F token 参照集建立 AC6 映射。切片本身**无越界、无危险操作**，修正项均为**无需构建的本地编辑**，因此修正成本低、风险可控。
+
+---
+
+## 9. DSH 自身未能复核的限制
+
+1. **无 shell（根本限制）**：本会话 `pwsh` 完全不可用——沙箱在准备 workspace 授权时失败（`SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity)`，对任意 workdir 均复现）；按技能规定尝试的一次 `danger-full-access` 修复被拒（`sandbox escalation to "danger-full-access" requires approval, but no approval channel is available`）。因此我**无法**运行 `git diff/log/status/rev-parse/hash-object`、**无法计算任何 SHA-256**、**无法复跑**探针或 harness（后二者亦受只读禁令）。**后果**：
+   - tree `657095fa6790b6d21091dd58f9f862bc08818455` **未能独立复核**；
+   - scope contract SHA-256 `27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425` **未能独立复核**；
+   - `base` 提交的 tree `f27d12a7…`（证据自述值）**未能独立复核**；
+   - HEAD 与 base 的关系仅由**松散引用 + worktree reflog + `refs/heads/main`** 三者交叉确认（结论：单提交、base 为直接父节点）。
+2. **工作区 vs 提交**：我读取的是**工作区内容**；无法用 `git status` 证明候选工作区与 `972049f9` 提交逐字节一致。间接证据：`env-identity-report.json:30-31` 的未跟踪清单与交付物集合完全一致，且证据与提交相隔约 59 秒。
+3. **未达逐字节全覆盖的比对**：
+   - `doc/design/ui-reference.html`（1575 行）为中段裁剪所限，78–730（CSS 令牌层）、817–1321（页面主体）、1413–1553（JS）**未逐行显示**；已比对块首尾 1–77、731–816、1322–1412、1554–1575 一致，并以 line-class 探针补偿（`id="` 双侧各 46 处、`--card-w` 各 8 处、`data-cand="f"` 各 4 处，命中行号与内容逐条一致），另有其机器可读副本 `tokens-cand-*.json`（6 份）字节一致作旁证——**未观察到差异，但未达逐字节全覆盖**。
+   - `package-lock.json`：2749 行中 **687 行**（各块内部的取值字面量：依赖版本区间、`engines` 约束、`funding` 的 `type`/`url`、`bin` 路径、`os`/`cpu`）**未逐行读取**。
+   - `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md:20` 为超长单行，read/grep 在 2000 字符处截断，**尾部约 72–79 字符**两侧均无法显示（两侧可见前缀逐字一致，长度探测差 1 字符 = CR，符合行尾效应）。
+   - 二进制文件（`apps/desktop/src-tauri/icons/icon.ico`、`experiments/M2-S3/probe/icons/icon.ico`）**仅比对存在性**，无法做内容比对。
+   - `apps/desktop/src-tauri/target/**`（约 8153 个构建产物）**未做全量内容比对**，仅报告存在性与文件数。
+4. **未独立复核的环境事实**：WebView2 Runtime 版本 `154.0.4258.62` 与主机 OS 信息直接采信探针报告，我未重新读取注册表核对。
+5. **未审计范围**：P02 之外的历史 Task/证据、`test_assets/**`（约 21557 文件，多为图片）、`wiki/**`、`.codewiki/**`、`verification/**` 中与本片无关的历史目录，均未比对；未打开任何用户数据。
+6. **未能恢复的具体细节**：F-03 中 handoff 的 `14.28:1` / `5.76:1` 两数的**出处**在本会话证据中无法恢复，我未推测其来源。**除该项外，F-01–F-12 的全部内容均自本会话已完成的审查证据恢复，无需要标注「会话记录未能恢复」的条目。**
+7. **本会话未执行**：Cargo/Tauri/sidecar build、UI 自动化、任何测试、任何写操作；未修改/创建/删除/暂存任何项目文件（ACL 修复脚本因审批不可用而未运行，故也未产生任何恢复目录或备份文件）。
+
+---
+
+## 10. 必须由 Codex 处理的治理下一步
+
+以下均在 Owner allowlist **之外**，本 Review 不要求 Owner 处理，但为解除 Stage B 阻塞与状态一致性所必需：
+
+1. **登记本片与解除构建阻塞**：在 `STATUS` / `REBASELINE_PLAN` / `ROADMAP` 登记 P02 Stage A 交付 head 与本 Review 决策；按 `build-preflight-lf-r1.md` 的结论，**先**登记隔离 scratch worktree、可信 sidecar 输入来源/临时路径与 Hash 复算方式、以及准确构建命令，**再**开放 Cargo/Tauri 构建。在该登记与独立审查完成前，**不得**在 Owner worktree 运行 Cargo/Tauri/sidecar build。
+2. **状态文档同步**：当前以下文件仍称「正式实现启动消息待本状态 checkpoint 集成后发送」且「AC1–AC7 全部 `NOT_RUN`」，与 Stage A 已交付不一致，而它们不在 Owner allowlist 内：`doc/STATUS.md:3`、`doc/REBASELINE_PLAN.md:3`、`doc/12_ROADMAP.md:3`、`doc/00_INDEX.md:3`、`doc/tasks/README.md:5`、`verification/PROJECT-ROADMAP-20261008/ROADMAP.md:3,5`。同步时须保持 P02 `in_progress` 与「运行时 AC 未执行」的口径，不得把 `BLOCKED`/`NOT_RUN` 写成 `PASS`。
+3. **集成口径**：跨工作区比对须使用 `--ignore-cr-at-eol`（候选 worktree 为 `core.autocrlf=false` 的 LF 检出），否则整树显示为改动。
+4. **不得据此释放 P07**：本片未证实任何用户可见产品缺口（AC1–AC6 运行时未执行），按 Task「无缺口则不制造实现 Task」处理。
+
+---
+
+## 11. 建议的复审口径（供新 head 使用）
+
+Owner 在同一 branch 的新固定 head 上完成 F-01–F-07 的表述/标签/provenance 修正（F-08–F-12 为 P3，可一并处理）后，本 Reviewer 将对**新 head** 复审，并按仓库惯例**追加新 head 与对应 findings disposition，不抹掉本记录**；复审清单：F-01–F-12 的逐条处置与文件:行证据、新 head 的 tree/artifact SHA-256（若 Owner 环境可产出）、`run-webview.ps1 -ProbeOnly` 的带 EXIT 与 shell/Node 版本头日志、以及「AC1–AC5/AC6 运行时保持 `BLOCKED`」的口径确认。集成后的测试由 Codex 另行记录。
