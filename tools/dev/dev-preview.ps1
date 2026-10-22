@@ -158,13 +158,15 @@ try {
 }
 
 $stale = @()
+# 持有锁后：父进程已死的 Core sidecar 一定是崩溃孤儿。
 $stale += Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue | Where-Object {
     $_.CommandLine -match 'bootstrap\.core_service|infrastructure\.resource_channel\.host_bridge' -and
     -not (Get-Process -Id $_.ParentProcessId -ErrorAction SilentlyContinue)
 }
+# 持有锁后：任何使用本 UDF 的 WebView2 进程都不可能是合法实例（合法实例已被锁排除），
+# 它们会锁住 profile 导致下一次创建报 0x800700AA，因此全部清理。
 $stale += Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" -ErrorAction SilentlyContinue | Where-Object {
-    $_.CommandLine -match 'dev-preview\\data\\webview2-udd' -and
-    -not (Get-Process -Id $_.ParentProcessId -ErrorAction SilentlyContinue)
+    $_.CommandLine -match 'dev-preview\\data\\webview2-udd'
 }
 foreach ($proc in $stale) {
     Write-Host "[dev-preview] 清理上次崩溃残留进程: pid $($proc.ProcessId) $($proc.Name)"
@@ -244,9 +246,15 @@ try {
     }
 
     if ($ViteOnly) {
-        Write-Host "[dev-preview] -ViteOnly：浏览器打开 http://localhost:$VitePort 即可（假数据预览）"
+        $url = "http://localhost:$VitePort"
+        Write-Host "[dev-preview] -ViteOnly：浏览器打开 $url 即可（假数据预览）"
+        try {
+            Start-Process $url | Out-Null
+        } catch {
+            Write-Warning "[dev-preview] 自动打开浏览器失败，请手动访问 $url"
+        }
         if ($null -ne $viteProcess) {
-            Write-Host "[dev-preview] 按 Ctrl+C 结束；结束后 Vite 会被停止"
+            Write-Host '[dev-preview] 已尝试自动打开浏览器；按 Ctrl+C 结束，结束后 Vite 会被停止'
             while ($true) { Start-Sleep -Seconds 1 }
         }
         return
@@ -261,8 +269,29 @@ try {
     try {
         Push-Location $srcTauriDir
         try {
-            & cargo tauri dev --config $devConfPath
-            $exit = $LASTEXITCODE
+            # WebView2 在 profile 被残留进程占用时会立刻返回 0x800700AA（资源忙），
+            # 属于瞬时故障：清理该 UDF 的 WebView2 进程后重试一次即可恢复。
+            $attempt = 0
+            $maxAttempts = 2
+            do {
+                $attempt++
+                $captured = [System.Collections.Generic.List[string]]::new()
+                & cargo tauri dev --config $devConfPath 2>&1 | ForEach-Object {
+                    $captured.Add("$_")
+                    $_
+                }
+                $exit = $LASTEXITCODE
+                $joined = $captured -join "`n"
+                if ($exit -ne 0 -and $attempt -lt $maxAttempts -and $joined -match '0x800700AA') {
+                    Write-Host "[dev-preview] WebView2 报告资源忙（0x800700AA），清理残留后自动重试（第 $($attempt + 1)/$maxAttempts 次）…"
+                    Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" -ErrorAction SilentlyContinue |
+                        Where-Object { $_.CommandLine -match 'dev-preview\\data\\webview2-udd' } |
+                        ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+                    Start-Sleep -Seconds 3
+                    continue
+                }
+                break
+            } while ($true)
         } finally {
             Pop-Location
         }
