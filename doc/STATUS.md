@@ -4,10 +4,10 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)**（`in_review`；候选145/0与12→7已实测，正式main仍12，待DeepSeek独审；READY无）。
-- 最近完成：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md)** `done`；R2 e6f400101独审，集成20dff6381；仅设计，正式12不变。
+- 当前 Task：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)**（`in_review`；DeepSeek独审中；正式12，READY无）。
+- 最近完成：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md)** `done`；设计已集成。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式12错误（7历史身份/2模板/3NUL），原保护与STATUS-r212禁令有效。
-- 收敛基线97/135；当前103本地分支/141工作树（本实现Task创建后）（新增任务资源按禁令保留）；**尚未达到只剩main**。
+- 收敛基线97/135；当前103本地分支/141工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
 - **WORKSPACE-CONSOLIDATION-1 已关闭**：`closed_with_limitations`（r212 批准）；18 资源 limitation；不得再清理/GC/prune；工具修复未实施。
