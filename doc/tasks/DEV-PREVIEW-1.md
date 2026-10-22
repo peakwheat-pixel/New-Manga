@@ -108,6 +108,12 @@ created: 2026-10-22
 B 档完整回归：编译 8.69s、窗口启动、production allowlist 正常、关闭后 5188 释放且无 node/cmd 残留、脚本 `exit 0`。
 语法检查 `ERRCOUNT=0`，`git diff --check` 无输出。
 
+### 启动器日志化（同日，`d003785b3`）
+
+- `tools/dev/dev-preview.ps1`：把应用正常关闭导致的 Tauri 退出码 `-1 / 0xffffffff` 识别为正常结束（提示「应用窗口已关闭，预览正常结束」），不再显示为失败警告；其余非零退出码仍报「编译或启动失败」。
+- 桌面启动器（`C:\Users\49745\Desktop\New Manga 本地预览.cmd`，仓外本地文件）改为带日志：`*>&1 | Tee-Object` 捕获全部输出流到 `G:\CODEX\New Manga.workspace\dev-preview\launcher-last.log`（UTF-8，每次运行覆盖），窗口头部提示 `0xffffffff` 属正常结束。
+- 实测：日志 6149 字节、UTF-8 中文正常，含 dev-preview 提示行、cargo 警告、应用输出与「应用窗口已关闭…预览正常结束」收尾行；退出后 Vite 正常清理、5188 释放。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
