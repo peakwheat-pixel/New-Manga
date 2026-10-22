@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[SETTINGS-OPEN-B-1](tasks/SETTINGS-OPEN-B-1.md)** `in_progress`（批次 B-1：模型/GPU + 任务/并发；设计 §4.1–§4.2；实施中）；保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
+- 当前 Task：**[SETTINGS-OPEN-B-1](tasks/SETTINGS-OPEN-B-1.md)** `in_review`（批次 B-1：模型/GPU + 任务/并发；修复 `3ec334f`，review r1 的 B1/m1 已闭环，待复审）；并行 **[SETTINGS-OPEN-B-2](tasks/SETTINGS-OPEN-B-2.md)** `in_progress`（缓存清理操作面：Core cleanup + Tauri 三命令 + 前端面板；实现待提交）。保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
 - 最近完成：**[SETTINGS-OPEN-A-1](tasks/SETTINGS-OPEN-A-1.md)** `done`（批次 A：OCR/翻译参数/图片修复/排版样式；独立 Review r2 approved，集成 `6a303a9`）。
 - [DEV-PREVIEW-1](tasks/DEV-PREVIEW-1.md)：done，`8ac00b97b`。
 - 最近完成：**[GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1](tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md)** `done`；声明错误 7→0、APPDATA 用户数据受保护；A+B+C 收敛（2.6GiB 归档可恢复）。

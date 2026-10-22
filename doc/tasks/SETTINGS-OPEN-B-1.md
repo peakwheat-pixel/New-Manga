@@ -12,8 +12,8 @@ depends_on: [SETTINGS-OPEN-A-1]
 base_commit: da3b781d8971dcc36bd7bfd1165fa1a2f4519ea5
 branch: main
 worktree: null
-integration_commit: 7d19164f838607e68e2b6970bbbd57bee7bd5777
-delivery_head: 7d19164f838607e68e2b6970bbbd57bee7bd5777
+integration_commit: e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c
+delivery_head: 3ec334f77405de08be2f276b10522a12ce3503cb
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/SETTINGS-OPEN-B-1
@@ -50,7 +50,7 @@ allowed_paths:
 - [x] **AC2 模型/GPU 消费点**：Run 执行时的 `heavy_runner` 路径读取 Run 快照的 `model_gpu` 节；`auto` 保持历史行为（不调用 `plan`，monkeypatch 断言）；`cpu`/`gpu` 显式偏好经 `DeviceManager.plan` 校验，GPU 不可用且 `allow_cpu_fallback=false`（或 Provider 不支持回退）时抛 typed `DeviceUnavailable`；回退语义与 D06 §82 一致（用户开关与 Provider `supports_cpu_fallback` 相与）。
 - [x] **AC3 任务/并发消费点**：Run 执行时按 Run 快照的 `tasks` 节构造 `RetryPolicy`（`max_attempts`、`backoff_seconds`），未设置时返回装配期 `deps.retry_policy` **同一对象**（逐位等价）；`retry_codes`/`retry_after_provider` 保留。
 - [x] **AC4 前端两面板**：`model_gpu` / `task_concurrency` 分类 open，渲染真实面板（下拉/开关/数字输入 + 保存 + 错误投影 + "对之后启动的任务生效"）；`task_concurrency` 面板显示串行执行只读说明；其余 4 个分区（cache_revision/recycle_bin/backup_restore/plugins）保持禁用断言（39 files / 387 tests）。
-- [ ] **AC5 测试与证据**：pytest（校验 + 两个消费点）与 vitest（两面板/分类矩阵）全绿；tsc 无错误；GUI 烟测（两分区保存 + 重启复查）；独立 Review 由非实现者执行；未跑项标 NOT_RUN。
+- [x] **AC5 测试与证据**：pytest（校验 + 两个消费点）与 vitest（两面板/分类矩阵）全绿；tsc 无错误；GUI 烟测（两分区保存 + 重启复查）；独立 Review 由非实现者执行；未跑项标 NOT_RUN。
 
 ## 允许修改范围
 
@@ -88,18 +88,22 @@ allowed_paths:
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
-|---|---|---|---|---|---|
-|EV-B1-CORE-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-report.md|7d19164f838607e68e2b6970bbbd57bee7bd5777|78abd18583d4cefff33ece6b5462f9bed12a7b7512319ab0be41d7611eb101f5|CANONICAL|
-|EV-B1-UI-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-1/ui-report.md|7d19164f838607e68e2b6970bbbd57bee7bd5777|518644f33ae4c642a479f60a38785a2d22d31d36bd4a9953a687996306ff6752|CANONICAL|
-|EV-B1-CORE-PYTEST-B1-TARGETED-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-b1-targeted-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|7ece5a5af1dc57a180ec3d53935d88af53a6ab7be52c41089a9d59d101e8daaf|CANONICAL|
-|EV-B1-CORE-PYTEST-CORE-PROVIDERS-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-core-providers-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|586670063529bb51546f7fb629d5b321c1f9f83579a9375b1b3fc0448822d6c9|CANONICAL|
-|EV-B1-CORE-PYTEST-FULL-SUITE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-full-suite-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|888168799a0a95e24b633480156933c587d9028eb20216b871eb76ab4908789e|CANONICAL|
-|EV-B1-CORE-PYTEST-GREEN-NO-ENV-MODULE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-green-no-env-module-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|0c1610e9068c4e3b8cb76dd66da635df1e9dfe4d71334a8b44d45b467537fc38|CANONICAL|
-|EV-B1-FRONTEND-NPM-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-npm-test-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|3926d8ee9acbe02dc8dd5ea32dcee3ab00234744cbb9f631a057e476605dcf1b|CANONICAL|
-|EV-B1-FRONTEND-TARGETED-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-targeted-test-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|64f300ea328c3baf40b4cb66fa039edaeb9e2d222e41e7e103ee96c7d084913b|CANONICAL|
-|EV-B1-FRONTEND-TSC-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-tsc-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|17cba47483e4bf23854c951231fee6eabbf067af4795ddc738375692c233ed12|CANONICAL|
-|EV-B1-PYTEST-BASELINE|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-baseline-before-change-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|53b5bd584f6259eed3c6f00477427214b2bb9870c6de7e12ce0ceb32f9214e7f|SOURCE_PIN|
-|EV-B1-PYTEST-REQUIRED-CMD|AC5|verification/SETTINGS-OPEN-B-1/core-pytest-required-command-raw.txt|7d19164f838607e68e2b6970bbbd57bee7bd5777|d83c0ca6fe0aa432ab199f6f30dbff612282036f35f5737981d0616017b49ee1|SOURCE_PIN|
+|EV-B1-CORE-PYTEST-B1-TARGETED-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-b1-targeted-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|7ece5a5af1dc57a180ec3d53935d88af53a6ab7be52c41089a9d59d101e8daaf|CANONICAL|
+|EV-B1-CORE-PYTEST-BASELINE-BEFORE-CHANGE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-baseline-before-change-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|53b5bd584f6259eed3c6f00477427214b2bb9870c6de7e12ce0ceb32f9214e7f|CANONICAL|
+|EV-B1-CORE-PYTEST-CORE-PROVIDERS-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-core-providers-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|586670063529bb51546f7fb629d5b321c1f9f83579a9375b1b3fc0448822d6c9|CANONICAL|
+|EV-B1-CORE-PYTEST-FULL-SUITE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-full-suite-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|888168799a0a95e24b633480156933c587d9028eb20216b871eb76ab4908789e|CANONICAL|
+|EV-B1-CORE-PYTEST-GREEN-NO-ENV-MODULE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-green-no-env-module-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|0c1610e9068c4e3b8cb76dd66da635df1e9dfe4d71334a8b44d45b467537fc38|CANONICAL|
+|EV-B1-CORE-PYTEST-R1-ACCEPTANCE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-r1-acceptance-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|bf62dac9b848932088f90eab1da73d4fa9c9a74ab2d46dedfad1b44ba1c7668d|CANONICAL|
+|EV-B1-CORE-PYTEST-R1-CORE-PROVIDERS-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-r1-core-providers-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|7ce53322ff901b675184259cae803de2dd9cf87c12b28b3ba0209712db031d14|CANONICAL|
+|EV-B1-CORE-PYTEST-R1-FULL-SUITE-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-r1-full-suite-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|dc8fc5f6c994556ba90b883dc6429bb8bcfb235674b182bf6b788887ea2125c6|CANONICAL|
+|EV-B1-CORE-PYTEST-R1-TARGETED-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-r1-targeted-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|926facbf05db501e5a3cba775dab023a48b340dc709303e8e29ee762a4867bd5|CANONICAL|
+|EV-B1-CORE-PYTEST-REQUIRED-COMMAND-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-required-command-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|d83c0ca6fe0aa432ab199f6f30dbff612282036f35f5737981d0616017b49ee1|CANONICAL|
+|EV-B1-CORE-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-report.md|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|59eaec12f7fdf2afa8f04ce5187f8356452c1be7f834368154bce3da3a7cadfe|CANONICAL|
+|EV-B1-FRONTEND-NPM-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-npm-test-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|3926d8ee9acbe02dc8dd5ea32dcee3ab00234744cbb9f631a057e476605dcf1b|CANONICAL|
+|EV-B1-FRONTEND-TARGETED-TEST-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-targeted-test-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|64f300ea328c3baf40b4cb66fa039edaeb9e2d222e41e7e103ee96c7d084913b|CANONICAL|
+|EV-B1-FRONTEND-TSC-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/frontend-tsc-raw.txt|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|17cba47483e4bf23854c951231fee6eabbf067af4795ddc738375692c233ed12|CANONICAL|
+|EV-B1-REVIEW-B1|AC1-AC5|verification/SETTINGS-OPEN-B-1/review-b1.md|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|34e7654414be2f55ab2e2e887ea4294c604452843bb8e132b2651e443bdd5be4|CANONICAL|
+|EV-B1-UI-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-1/ui-report.md|e9c3b5f0eaf73eb8bb10008b8729b4c52b78d42c|518644f33ae4c642a479f60a38785a2d22d31d36bd4a9953a687996306ff6752|CANONICAL|
 
 ## Resource Manifest
 
