@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)**（`in_progress`；Codex实施，DeepSeek独审；READY无）。
+- 当前 Task：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)**（`in_review`；候选145/0与12→7已实测，正式main仍12，待DeepSeek独审；READY无）。
 - 最近完成：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md)** `done`；R2 e6f400101独审，集成20dff6381；仅设计，正式12不变。
 - 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式12错误（7历史身份/2模板/3NUL），原保护与STATUS-r212禁令有效。
 - 收敛基线97/135；当前103本地分支/141工作树（本实现Task创建后）（新增任务资源按禁令保留）；**尚未达到只剩main**。
