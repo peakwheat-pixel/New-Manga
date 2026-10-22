@@ -1,0 +1,5 @@
+# 主线集成复验
+
+DeepSeek R2 approved固定head b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5；正常merge 45748520755841ad14c46f64458249cec1df9bef。main生产两文件blob与被审head完全一致，无行为冲突。主线同数据对照正式12→7，只有5已审错误被精确解释，+6声明/+4warning，1895原保护根全集和四原件rawSHA保持，P22仍untracked；新增保护来源不产生真实清理权限。
+候选145 passed/0 skipped及双15REJECT/0deleted/0violations适用于被审代码，主线blob相等；主线另实际运行verify_effect.py与audit/clean/remove，全部7完整identity一致，三入口预期exit2拒绝。原始stdout日志在agent-output，canonical LF日志在本E。最终pin/check/diff在closeout单独记录。
+资源处置0，103heads/141WT全部保留；任务WT固定被审head clean；父blocked、r212和五广域根整体保护有效，尚未只剩main。产品测试/canonical全盘consolidate/全部资源进程句柄盘点NOT_RUN。本Task不解除这些限制。
