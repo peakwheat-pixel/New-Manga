@@ -63,7 +63,7 @@ created: 2026-10-22
 | AC2 | `cargo build --no-default-features`，设置预览变量并经 `TAURI_CONFIG` 加载 overlay | `apps/desktop/src-tauri` | PASS，EXIT 0 | Handoff |
 | AC3 | 清除预览变量后重复 Cargo build，再恢复变量编译 | sidecar 缺失 | 反向检查预期 EXIT 101 且 panic 明确；恢复 EXIT 0 | Handoff |
 | AC5 | `pwsh -NoProfile -File tools/governance/check.ps1`、`git diff --check` | 仓库根 | PASS，EXIT 0；治理输出在集成记录 | 本 Task 检查与 Handoff |
-| 完整 B 档桌面窗口 | `pwsh -NoProfile -File tools/dev/dev-preview.ps1` | DSH 在固定提交上执行 | 本轮 NOT_RUN（按用户要求），作为接收后的烟测步骤 | Handoff 下一任务指令 |
+| 完整 B 档桌面窗口 | `pwsh -NoProfile -File tools/dev/dev-preview.ps1` | DSH 在固定提交上执行 | PASS：编译 3.37s、窗口渲染四页、真实 IPC + Python Core、HMR 立即生效、退出无残留；详见下方 DSH 记录 | 本地证据（`G:/CODEX/New Manga.workspace/dev-preview/shots/`，未入库） |
 
 ## 依赖、风险与阻塞
 
@@ -74,7 +74,23 @@ created: 2026-10-22
 - 2026-10-22 / Codex：实现提交 `8ac00b97b644cdf6dcfb3124c9099c6e994e8b22`（main）；仅 5 个代码路径。
 - Handoff：[DEV-PREVIEW-1-8ac00b97b](../handoffs/DEV-PREVIEW-1-8ac00b97b.md)。
 - Review：[DEV-PREVIEW-1-8ac00b97b](../reviews/DEV-PREVIEW-1-8ac00b97b.md)，`approved`，P1 清零，保留 P2。
-- 完整 B 档窗口烟测：未运行；交 DSH 在固定提交上完成。
+- 完整 B 档窗口烟测：**DSH 已完成（PASS）**，见下方 DSH 记录。
+
+## DSH 独立烟测记录（2026-10-22，固定代码提交 `8ac00b97b`）
+
+执行者：DeepSeek Harness（独立验证，未修改本提交代码）。命令：`pwsh -NoProfile -File tools/dev/dev-preview.ps1`。
+
+| 检查项 | 结果 |
+|---|---|
+| 编译（`M2RC1_DEV_PREVIEW=1` + `--config` dev overlay） | PASS，`Finished dev profile in 3.37s` |
+| 占位目录风险（原 P1） | PASS，`target/core-sidecar/core-sidecar` 全程不存在，未创建占位 |
+| 桌面窗口与四页 | PASS，`m2rc1-desktop.exe` 窗口 1180x890；书架页、工作台页真实渲染（截图 `shots/p1-fixed-window.png`） |
+| 真实 IPC + Python Core | PASS，production allowlist 正常公告；隔离目录内 `catalog.sqlite`、`library.db` 由真实 Core 生成 |
+| HMR（改完即见） | PASS，改 `tokens.ts` 的 `accent.primary` 蓝→红，未刷新未重启窗口立即变色（`shots/p1-fixed-hmr.png`）；随后已还原，`git status` 无残留 |
+| 正常退出清理 | PASS，关闭窗口后脚本 `exit 0`，停 Vite、释放 5188、无遗留进程 |
+| 生产语义反向验证 | PASS，未设 `M2RC1_DEV_PREVIEW` 时 `cargo build --no-default-features` 仍 `exit 101` 并输出 `missing sidecar bundle` 原诊断 |
+
+结论：原 P1 修复真实有效，B 档在固定提交上端到端可用。4 项 P2（启动器进程/端口健壮性）仍为遗留，不影响本次验收。
 
 ## Canonical Evidence
 
