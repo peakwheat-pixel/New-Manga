@@ -1,5 +1,26 @@
 [
   {
+    "name": "new18",
+    "command": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1/tests",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
+    "exit": 0,
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\r2-new18.raw.log",
+    "raw_sha256": "571f18b13102decc5895aeb84932794437cd13aac9fa9160117432c7ecb7617e",
+    "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\new18.log",
+    "canonical_sha256": "1a44e343d89eb4a454540ea7092f38d267f008b5ce8ea86bd9f7f1397f372ccf"
+  },
+  {
     "name": "broad18",
     "command": [
       "C:\\Python314\\python.exe",
@@ -15,10 +36,10 @@
     ],
     "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
     "exit": 0,
-    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\broad18.raw.log",
-    "raw_sha256": "0fbb7435b7f61493d4cc3a70c190abaf98e41fabe06dffe15d7994775a368d5b",
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\r2-broad18.raw.log",
+    "raw_sha256": "0022e0e7b50f4e435f26512a96f184e333877430bf222ab2ad0d6f8fceca35b0",
     "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\broad18.log",
-    "canonical_sha256": "476ecdaadf4168603afdec48d525811c53339e5c3029bf47f397b3866baa2e85"
+    "canonical_sha256": "ac95fcba00eabf5d474301161664a92ffa984b5ff62b6fb06e93cf35e125ec37"
   },
   {
     "name": "declaration29",
@@ -32,10 +53,10 @@
     ],
     "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\tests",
     "exit": 0,
-    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\declaration29.raw.log",
-    "raw_sha256": "64a87dbbd2483b63b43ba03bc0c8f67c4fb2823a1438c4f01891e13a6065593f",
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\r2-declaration29.raw.log",
+    "raw_sha256": "1e6a8c9aee382a3623fbb91f2518f8756bcf512ccf6c5d0b9b73e85ddb7ea20d",
     "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\declaration29.log",
-    "canonical_sha256": "f2a79a50063aff42625d1f8024188b0901dab2e3e0d638b93cbd0468d604827a"
+    "canonical_sha256": "ad7042580129b9d3abca3f480004c5d8a2ec8b7f4ba2d8b331ad2b2ad826ef29"
   },
   {
     "name": "hardening80",
@@ -46,10 +67,10 @@
     ],
     "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\WORKSPACE-CLEANUP-TOOL-HARDENING-1\\tests",
     "exit": 0,
-    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\hardening80.raw.log",
-    "raw_sha256": "a4ce9a163f34b1dfc534fa7b7c4a1f7a2922ff3cb3e0e32622e03037c5446b4e",
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\r2-hardening80.raw.log",
+    "raw_sha256": "a93ba5aef59808bd6aff13ed73e38dd687ed031cf9b0ca9dd9321d4d9ff4381f",
     "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\hardening80.log",
-    "canonical_sha256": "97369d2758c1e3925ff3bce9eca2f150d0356be2f95978c032a0ea1e4a560fd3"
+    "canonical_sha256": "c1e8e8eb43a759cba42b93bbd491d4d6babc5c2b3926ec1deb6dc7833e954ceb"
   },
   {
     "name": "replay-clean",
@@ -64,7 +85,7 @@
     ],
     "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
     "exit": 0,
-    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\replay-clean.raw.log",
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\r2-replay-clean.raw.log",
     "raw_sha256": "3b4c27fc4c948c57d986fe52bc8f2a0201b3493be4b8d8044932c2b779c47b87",
     "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\replay-clean.log",
     "canonical_sha256": "505b0e9ce42b4f4818ce46620236293efc2a5ef4a6d342e793fef365644061de"
@@ -82,30 +103,9 @@
     ],
     "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
     "exit": 0,
-    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\replay-remove.raw.log",
+    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\r2-replay-remove.raw.log",
     "raw_sha256": "f86c854075398e819c1537aeb933bc1aced0122b38bad19708f04d600be46064",
     "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\replay-remove.log",
     "canonical_sha256": "a7cd2348cee14f881e3f08fc22b7c488ddb6b38f72ac3814aeea2748b7e09a11"
-  },
-  {
-    "name": "new18",
-    "command": [
-      "C:\\Python314\\python.exe",
-      "-B",
-      "-m",
-      "unittest",
-      "discover",
-      "-s",
-      "verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1/tests",
-      "-p",
-      "test_*.py",
-      "-v"
-    ],
-    "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
-    "exit": 0,
-    "raw_log": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\new18.raw.log",
-    "raw_sha256": "639beeeafebe8d589c83138b9750702df47cc8f4b842aa8b701f1b7d913e6934",
-    "canonical_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\verification\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\new18.log",
-    "canonical_sha256": "15ad054f9c18a4f22e5dcb56aadae92b36bdd7b42b055bc8950ce6d61aed98b4"
   }
 ]

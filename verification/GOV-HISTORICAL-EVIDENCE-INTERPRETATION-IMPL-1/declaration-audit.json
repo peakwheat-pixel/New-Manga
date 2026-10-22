@@ -2,26 +2,26 @@
   "schema_version": 1,
   "tool": "clean_workspace.py",
   "mode": "declaration_audit",
-  "generated_at": "2026-10-22T08:36:32+08:00",
+  "generated_at": "2026-10-22T08:53:02+08:00",
   "scan": {
-    "markdown": 2352,
-    "json": 1241,
+    "markdown": 2354,
+    "json": 1248,
     "unparsable_json": 0,
     "json_non_declaration": 69,
     "json_parse_fatal": 0,
-    "tracked_declaration_files": 7651,
+    "tracked_declaration_files": 7672,
     "untracked_declaration_files": 1504,
-    "declarations": 2596,
+    "declarations": 2617,
     "errors": 7,
     "warnings": 276
   },
   "counts": {
-    "declarations": 2596,
-    "protected_roots": 1895,
+    "declarations": 2617,
+    "protected_roots": 1916,
     "by_disposition": {
       "DELETE_SAFE": 2,
       "DESTINATION_PIN": 391,
-      "EVIDENCE_PIN": 1761,
+      "EVIDENCE_PIN": 1782,
       "NOT_APPLICABLE": 5,
       "PRESERVE_REFERENCED": 386,
       "PRESERVE_UNKNOWN": 35,
@@ -1732,5 +1732,5 @@
       "locator": "HIE-O03/bytes 12330,20486"
     }
   ],
-  "report_sha256": "53a50c54e8d45f6969cbf44feec7d0e376f15d2cc40076a37b42211692690d10"
+  "report_sha256": "2f8d0e9e224267004c7b4f46e2ad8c7a70f5150f1511b2b109217c252a960725"
 }

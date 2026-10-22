@@ -1,6 +1,6 @@
 shell=Python subprocess; interpreter=C:\Python314\python.exe
 command=["C:\\Python314\\python.exe", "-B", "G:\\CODEX\\New Manga.workspace\\worktrees\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\tools\\governance\\clean_workspace.py", "--repo", "G:\\CODEX\\New Manga", "--workspace-root", "G:\\CODEX\\New Manga.workspace", "--out", "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1\\candidate-audit", "--audit-declarations"]
-declaration audit: 2596 declaration(s), 1895 protected root(s), 7 error(s), 276 warning(s)
+declaration audit: 2617 declaration(s), 1916 protected root(s), 7 error(s), 276 warning(s)
   ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
   ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
   ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]

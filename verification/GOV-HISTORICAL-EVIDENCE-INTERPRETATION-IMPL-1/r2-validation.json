@@ -1,0 +1,218 @@
+{
+  "status": "PASS",
+  "old_scan": {
+    "markdown": 2354,
+    "json": 1248,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7672,
+    "untracked_declaration_files": 1504,
+    "declarations": 2611,
+    "errors": 12,
+    "warnings": 272
+  },
+  "new_scan": {
+    "markdown": 2354,
+    "json": 1248,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7672,
+    "untracked_declaration_files": 1504,
+    "declarations": 2617,
+    "errors": 7,
+    "warnings": 276
+  },
+  "old_counts": {
+    "declarations": 2611,
+    "protected_roots": 1916,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 391,
+      "EVIDENCE_PIN": 1782,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 381,
+      "PRESERVE_UNKNOWN": 34,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 12,
+    "warnings": 272
+  },
+  "new_counts": {
+    "declarations": 2617,
+    "protected_roots": 1916,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 391,
+      "EVIDENCE_PIN": 1782,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 386,
+      "PRESERVE_UNKNOWN": 35,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 7,
+    "warnings": 276
+  },
+  "counterfactual_errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "remaining_errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    }
+  ],
+  "five_removed": [
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource 'G:/CODEX/New Manga.workspace/ 对应 Task 子目录' has unknown disposition '`NOT_APPLICABLE` 或按实核实'",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path '本 Task tools/governance/tests/ 与 verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r1.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P14\\owner-initiated-dsh-self-review-r2.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": null
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": null
+    }
+  ],
+  "original_protected_roots": 1895,
+  "original_protection_subset": true,
+  "guard_roots_added": 0,
+  "original_raw_sha256": {
+    "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
+    "verification/P14/owner-initiated-dsh-self-review-r1.md": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
+    "verification/P14/owner-initiated-dsh-self-review-r2.md": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
+    "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9"
+  },
+  "P22_still_untracked": true,
+  "real_resource_operations": 0
+}

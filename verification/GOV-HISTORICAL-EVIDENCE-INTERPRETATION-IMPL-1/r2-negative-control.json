@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "mode": "PURE_MEMORY_NO_WRITES",
+  "cases": [
+    {
+      "reference": "tools/governance/tests",
+      "mutation": "missing",
+      "before_r1": {
+        "errors": 7,
+        "last_code": "DECL_ENV",
+        "original_index_returned": false
+      },
+      "after_r2": {
+        "errors": 13,
+        "last_code": "SOURCE_DRIFT",
+        "original_index_returned": true
+      }
+    },
+    {
+      "reference": "tools/governance/tests",
+      "mutation": "regular-file",
+      "before_r1": {
+        "errors": 7,
+        "last_code": "DECL_ENV",
+        "original_index_returned": false
+      },
+      "after_r2": {
+        "errors": 13,
+        "last_code": "SOURCE_DRIFT",
+        "original_index_returned": true
+      }
+    },
+    {
+      "reference": "verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "mutation": "missing",
+      "before_r1": {
+        "errors": 7,
+        "last_code": "DECL_ENV",
+        "original_index_returned": false
+      },
+      "after_r2": {
+        "errors": 13,
+        "last_code": "SOURCE_DRIFT",
+        "original_index_returned": true
+      }
+    },
+    {
+      "reference": "verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "mutation": "regular-file",
+      "before_r1": {
+        "errors": 7,
+        "last_code": "DECL_ENV",
+        "original_index_returned": false
+      },
+      "after_r2": {
+        "errors": 13,
+        "last_code": "SOURCE_DRIFT",
+        "original_index_returned": true
+      }
+    }
+  ]
+}

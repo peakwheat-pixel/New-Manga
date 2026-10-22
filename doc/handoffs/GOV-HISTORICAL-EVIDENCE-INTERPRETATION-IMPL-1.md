@@ -14,3 +14,7 @@ AC1–3候选已实测满足；AC4待真实独审/正常集成复验。变更只
 5. Deliverables：7完整错误identity/引用/归属与历史实际路径是否可证明的矩阵、明确事实/未知、待用户裁决对象及影响、Handoff；不因研究自动增加运行例外。
 6. Verification：只读scan保持7完整identity，原件SHA/旧保护不减；pwsh -NoProfile -File tools/governance/check.ps1和git diff --check；DeepSeek独审后Codex正常集成；NOT_RUN/BLOCKED如实列。
 7. Forwardable instruction：请Codex从G:/CODEX/New Manga/main当前最终HEAD先读取STATUS/Plan和本Handoff，确认本实现done后冻结GOV-RESIDUAL-RUNTIME-IDENTITY-1（Owner Codex/Reviewer DeepSeek）。先记实际base/head再创建自有branch/WT；按Scope只读七项历史身份并交付自身矩阵、证据与Handoff。保留原七错/原字节/全部保护和r212，禁止猜环境变量、改旧源或真实处置；运行check/diff，固定head交DeepSeek独审，集成复验后才done。此建议不等于释放。
+
+## R2 当前交付
+
+R1 changes_requested 090bed6f6已修，最新delivery bb769d273f18ff895c72244558645fed167a81f8；P1引用目录最终存在/类型复核+T15与4例修前/后判别；P2固定broad canonical SHA0d19cd0fa0374b7970a128d7af845541efd4c86e14b158bd6185dbbc261708b3、1895快照与实时分列、line227仅原real/保护合同均已冻结。生产修订后全145/0和双15/0/0重跑；正式main仍12，待新head真实DeepSeek R2。

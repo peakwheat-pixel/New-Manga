@@ -111,7 +111,7 @@ class HistoricalEvidenceTests(unittest.TestCase):
 
     def apply(self, policy=None, index=None, scanned=None):
         policy = policy or self.policy
-        with mock.patch.object(guard, 'HISTORICAL_EVIDENCE_DIGEST', digest(policy)):
+        with mock.patch.object(guard, 'HISTORICAL_EVIDENCE_DIGEST', digest(policy)), mock.patch.object(guard, 'HISTORICAL_BROAD_DEPENDENCY_DIGEST', digest(self.broad.policy)):
             return guard._apply_historical_evidence_interpretation(
                 index or copy.deepcopy(self.base), dict(scanned or self.scanned))
 
@@ -152,7 +152,7 @@ class HistoricalEvidenceTests(unittest.TestCase):
             with self.assertRaises(guard.GuardError):
                 guard.read_text(str(self.repo/b['origin_file']),'raw')
         self.f.write('verification/unlisted.md','ordinary\x00text')
-        with mock.patch.object(guard,'HISTORICAL_EVIDENCE_DIGEST',digest(self.policy)):
+        with mock.patch.object(guard,'HISTORICAL_EVIDENCE_DIGEST',digest(self.policy)), mock.patch.object(guard,'HISTORICAL_BROAD_DEPENDENCY_DIGEST',digest(self.broad.policy)):
             i,_=guard.scan_repo_declarations(self.f.repo,self.f.ws)
         self.assertEqual(len(i.errors),8)
         self.assertTrue(any(e['file']=='verification/unlisted.md' for e in i.errors))
@@ -309,6 +309,21 @@ class HistoricalEvidenceTests(unittest.TestCase):
                 path.write_bytes(raw+b' ');return finish(i,s)
             with mock.patch.object(guard,'_finish_declaration_scan',side_effect=mutate):self.rejected(code='SOURCE_DRIFT')
             path.write_bytes(raw)
+        for ref in self.policy['reference_guards']:
+            path=self.repo/ref['path_rel']
+            self.assertTrue(path.resolve().is_relative_to(Path(self.f.tmp).resolve()))
+            for replacement in ('missing','file'):
+                changed=[False]
+                def replace_directory(i,s):
+                    if not changed[0]:
+                        path.rmdir()
+                        if replacement=='file':path.write_bytes(b'fixture replacement')
+                        changed[0]=True
+                    return finish(i,s)
+                with mock.patch.object(guard,'_finish_declaration_scan',side_effect=replace_directory):
+                    self.rejected(code='SOURCE_DRIFT')
+                if replacement=='file':path.unlink()
+                path.mkdir()
         # Change each of the six new guards and original line227 only after counts.
         original=guard.resolve_real_target
         roots=[b['source_guard']['normalized'] for b in self.bindings]+[r['normalized'] for r in self.policy['reference_guards']]+[self.bindings[0]['parser_snapshot']['declarations'][0]['normalized']]
@@ -323,10 +338,11 @@ class HistoricalEvidenceTests(unittest.TestCase):
     def test_t16_three_actual_cli_share_rejection(self):
         launcher=("import sys;sys.path.insert(0,sys.argv.pop(1));import clean_workspace as g;"
                   "g.HISTORICAL_EVIDENCE_DIGEST=sys.argv.pop(1);"
+                  "g.HISTORICAL_BROAD_DEPENDENCY_DIGEST=sys.argv.pop(1);"
                   "m=__import__(sys.argv.pop(1));raise SystemExit(m.main(sys.argv[1:]))")
         inventory=Path(self.f.out)/'empty.json';inventory.write_text('{"worktrees":[],"protected_worktree_names":{}}')
         for module in ('clean_workspace','remove_worktrees','consolidate'):
-            args=[sys.executable,'-B','-c',launcher,str(ROOT/'tools/governance'),digest(self.policy),module,
+            args=[sys.executable,'-B','-c',launcher,str(ROOT/'tools/governance'),digest(self.policy),digest(self.broad.policy),module,
                   '--repo',self.f.repo,'--workspace-root',self.f.ws,'--out',str(Path(self.f.out)/module)]
             if module=='remove_worktrees':args+=['--inventory',str(inventory)]
             if module=='consolidate':args+=['--mainline','main']
@@ -368,9 +384,15 @@ class HistoricalEvidenceTests(unittest.TestCase):
             i._register_protective(guard.Declaration('fixture-%d'%n,'PRESERVE_REFERENCED',broad_fixture.FIRST,'extra%d'%n,guard.norm_abs(str(self.repo/('extra%d'%n)))))
         self.assertEqual(len(self.apply(index=i)[0].errors),7)
         path=self.repo/guard.BROAD_PRESERVATION_POLICY
-        self.f.git('rm','--cached','--',guard.BROAD_PRESERVATION_POLICY);path.unlink()
+        original=path.read_bytes()
+        replaced=copy.deepcopy(self.broad.policy)
+        replaced['bindings'][0]['origin_raw_sha256']='0'*64
+        path.write_bytes(json.dumps(replaced).encode())
         self.rejected(code='DEPENDENCY_INACTIVE')
-        with mock.patch.object(guard,'HISTORICAL_EVIDENCE_DIGEST',digest(self.policy)):
+        path.write_bytes(original)
+        self.f.git('rm' ,'--cached','--',guard.BROAD_PRESERVATION_POLICY);path.unlink()
+        self.rejected(code='DEPENDENCY_INACTIVE')
+        with mock.patch.object(guard,'HISTORICAL_EVIDENCE_DIGEST',digest(self.policy)), mock.patch.object(guard,'HISTORICAL_BROAD_DEPENDENCY_DIGEST',digest(self.broad.policy)):
             inactive,_=guard.scan_repo_declarations(self.f.repo,self.f.ws)
         self.assertEqual(len(inactive.errors),25)
         self.assertEqual(inactive.errors[-1]['code'],'DEPENDENCY_INACTIVE')

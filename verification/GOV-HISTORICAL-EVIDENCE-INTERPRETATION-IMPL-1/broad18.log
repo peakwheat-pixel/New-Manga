@@ -22,7 +22,7 @@ test_t17_ruling_reference_and_bytes_are_not_substitutable (test_broad_preservati
 test_t18_untracked_activation_and_cli_bypass_are_not_available (test_broad_preservation.BroadPreservationTests.test_t18_untracked_activation_and_cli_bypass_are_not_available) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 15.606s
+Ran 18 tests in 16.081s
 
 OK
 

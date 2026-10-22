@@ -2,7 +2,7 @@
   "schema_version": 1,
   "tool": "remove_worktrees.py",
   "mode": "dry_run",
-  "generated_at": "2026-10-22T08:36:40+08:00",
+  "generated_at": "2026-10-22T08:53:10+08:00",
   "repo_root": "g:/codex/new manga",
   "workspace_root": "g:/codex/new manga.workspace",
   "declaration_integrity": "FAILED",
