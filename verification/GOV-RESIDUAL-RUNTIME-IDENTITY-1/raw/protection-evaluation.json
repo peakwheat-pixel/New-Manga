@@ -1,0 +1,278 @@
+{
+  "counts": {
+    "declarations": 2636,
+    "protected_roots": 1934,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 391,
+      "EVIDENCE_PIN": 1799,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 388,
+      "PRESERVE_UNKNOWN": 35,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 9,
+    "warnings": 281
+  },
+  "errors": [
+    {
+      "code": "DECL_RELATIVE_UNRESOLVED",
+      "message": "declared relative path 'refs/heads/main' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "doc/tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_GLOB",
+      "message": "declared path 'C:/Users/49745/AppData/Local/Temp/p19*（11 个现存目录，约 1.9 MiB）' contains a glob wildcard",
+      "file": "doc/tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    }
+  ],
+  "evaluations": [
+    {
+      "raw": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop",
+      "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop",
+      "exists": true,
+      "hits": []
+    },
+    {
+      "raw": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog",
+      "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/catalog",
+      "exists": true,
+      "hits": []
+    },
+    {
+      "raw": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data/library.db",
+      "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/data/library.db",
+      "exists": true,
+      "hits": []
+    },
+    {
+      "raw": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived",
+      "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/derived",
+      "exists": true,
+      "hits": []
+    },
+    {
+      "raw": "C:/Users/49745/AppData/Local/pyinstaller",
+      "normalized": "c:/users/49745/appdata/local/pyinstaller",
+      "exists": false,
+      "hits": [
+        {
+          "kind": "exact_source_path",
+          "root": "c:/users/49745/appdata/local/pyinstaller",
+          "dispositions": [
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[5].disposition"
+          ]
+        }
+      ]
+    },
+    {
+      "raw": "C:/Users/49745/AppData/Local/Temp/p19-ac2-r1",
+      "normalized": "c:/users/49745/appdata/local/temp/p19-ac2-r1",
+      "exists": false,
+      "hits": []
+    },
+    {
+      "raw": "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1",
+      "normalized": "g:/codex/new manga.workspace/worktrees/p19-ac3-1",
+      "exists": false,
+      "hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        }
+      ]
+    },
+    {
+      "raw": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1/apps/desktop/src-tauri/target/core-sidecar",
+      "normalized": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-1/apps/desktop/src-tauri/target/core-sidecar",
+      "exists": true,
+      "hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-1",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ]
+    },
+    {
+      "raw": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1/apps/desktop/frontend/dist",
+      "normalized": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-1/apps/desktop/frontend/dist",
+      "exists": true,
+      "hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-1",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ]
+    },
+    {
+      "raw": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1/apps/desktop/src-tauri/target/debug/resources",
+      "normalized": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-1/apps/desktop/src-tauri/target/debug/resources",
+      "exists": true,
+      "hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-1",
+          "dispositions": [
+            "DESTINATION_PIN",
+            "PRESERVE_REFERENCED"
+          ],
+          "sources": [
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P19-UI-FIX-1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1736 @@
+{
+  "schema_version": 1,
+  "tool": "clean_workspace.py",
+  "mode": "declaration_audit",
+  "generated_at": "2026-10-22T09:15:18+08:00",
+  "scan": {
+    "markdown": 2357,
+    "json": 1251,
+    "unparsable_json": 0,
+    "json_non_declaration": 69,
+    "json_parse_fatal": 0,
+    "tracked_declaration_files": 7682,
+    "untracked_declaration_files": 1504,
+    "declarations": 2627,
+    "errors": 7,
+    "warnings": 276
+  },
+  "counts": {
+    "declarations": 2627,
+    "protected_roots": 1926,
+    "by_disposition": {
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 391,
+      "EVIDENCE_PIN": 1792,
+      "NOT_APPLICABLE": 5,
+      "PRESERVE_REFERENCED": 386,
+      "PRESERVE_UNKNOWN": 35,
+      "PRESERVE_USER_DATA": 16
+    },
+    "errors": 7,
+    "warnings": 276
+  },
+  "errors": [
+    {
+      "code": "DECL_RELATIVE_AMBIGUOUS",
+      "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+      "file": "doc/tasks/P19.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_UNKNOWN_DISPOSITION",
+      "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ENV",
+      "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 25 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/ARCH-DOC-REBASELINE.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 13 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/EVENTS-FWD-1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 9 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/EXPORT-IPC-1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 16 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/EXPORT-REVEAL-1.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-BROAD-ROOT-PRESERVATION-DESIGN-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '不存在' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '仓外 agent-output，非本 Task 交付物' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '仓外 agent-output，非本 Task 交付物' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-EOL-PIN-1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-NDJSON-EXCEPTION-CONFIG-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-NDJSON-EXCEPTION-CONFIG-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-NDJSON-NONDECL-IDENTITY-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-NDJSON-NONDECL-IDENTITY-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-NONRESOURCE-MANIFEST-FORMAT-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '仓外 agent-output，非本 Task 产物' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-PLAN-BUDGET-1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-RESIDUAL-24-DECISION-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-RESIDUAL-24-DECISION-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '仓外 agent-output，非本 Task 产物' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'CON' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '仓外 agent-output，非本 Task 交付物' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 22 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 8 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/M2-PROD-DETECT-ENV-1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 16 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02-MAINLINE-INTEGRATION.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 46 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 5 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 9 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_RESOURCE_MANIFEST",
+      "message": "table at line 23 does not declare resource/evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 24 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 34 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 115 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 13"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 24 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 26 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 28 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 30 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 39 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 47 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 52 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 59 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 29 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P09-AC3-DELETE-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 8 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P09-FU1.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '本路径' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 25 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P09.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 19 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P14.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 10 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-C1-FU1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 9 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-C1-FU2.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 6 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-C1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 24 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-CORE-1A.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 22 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-CORE-1B.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 19 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-CORE-1C.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 12 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-HOST-1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 15 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15-HOST-2.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 12 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P15.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 13 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P17.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '仓外 agent-output，非本 Task 产物' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P19-UI-MANIFEST-VIEW-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P20-AC4-FPS-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 25 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P20-CLOSE-BOUND-1.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '不适用（临时输出未纳入版本控制）' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 12 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/P20.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P22-REBASE-1.md",
+      "locator": "line 16"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/P22-REBASE-1.md",
+      "locator": "line 17"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 9 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/READER-IPC-1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 5 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/RUN-IPC-1.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored bundle in task worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored bundle in main worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[2].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored dist in task worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[3].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored dist in main worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[4].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same existing isolated build venv' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[5].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored node_modules in task worktree' is descriptive text, not a path; it is not protection",
+      "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "locator": "$.resources[6].destination_path"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1/apps/desktop/frontend/node_modules' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/node_modules is protected as well",
+      "file": "verification/EVENTS-FWD-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EVENTS-FWD-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/EXPORT-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EXPORT-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EXPORT-REVEAL-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'junctions to the coordinator-provided main-repo build artifacts' is descriptive text, not a path; it is not protection",
+      "file": "verification/HOST-ISSUER-1/resource-manifest.json",
+      "locator": "$.resources[2].destination_path"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/HOST-TTL-BOUNDARY-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r1.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'none yet' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'dsh-bounded-review-i2-r1.stdout.jsonl（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'codex-i2-verify-adjudication-r1.md（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'codex-ac3-branch-ref-blocker-20261014T0337.md（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'convergence-post-i2-ac3-branch-output-20261014T0337.json（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'none yet' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'dsh-bounded-review-i2-r1.stdout.jsonl（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'codex-i2-verify-adjudication-r1.md（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'codex-ac3-branch-ref-blocker-20261014T0337.md（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path 'convergence-post-i2-ac3-branch-output-20261014T0337.json（父 Task Owner worktree）' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (Reviewed fixed NDJSON evidence (R23); meta/observation/closed values yield zero current resource declaration nodes. Original evidence and its references remain preserved; hash drift must lose this exception.)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (Reviewed fixed NDJSON evidence (R24); meta/observation/closed values yield zero current resource declaration nodes. Original evidence and its references remain preserved; hash drift must lose this exception.)",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0915CST-p02-admission-r2.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/runner-execution.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac6-contrast/runner-execution.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/antigravity-dispatch-r1.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "FILE_ENCODING_LEGACY",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P02\\dsh-p02-r2-closeout-review-r1.mount.md is not valid UTF-8; decoded as GB18030 (legacy history, bytes preserved)",
+      "file": null,
+      "locator": null
+    },
+    {
+      "code": "FILE_ENCODING_LEGACY",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P02\\dsh-p02-r2-closeout-review-r2.mount.md is not valid UTF-8; decoded as GB18030 (legacy history, bytes preserved)",
+      "file": null,
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-dispatch-env-smoke-20261012-152149.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-dispatch-smoke-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-dispatch-smoke-after-restore-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-desktop-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable untracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (truncated runner/tool output; no declaration tokens))",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 13"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 24 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 26 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 28 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 30 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 39 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 47 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 52 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 59 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "FILE_ENCODING_LEGACY",
+      "message": "tracked markdown g:\\codex\\new manga\\verification\\P04\\dsh-p04-owner-review-r1.mount.md is not valid UTF-8; decoded as GB18030 (legacy history, bytes preserved)",
+      "file": null,
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '待释放后记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '待释放后记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '无或待核实' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '释放后据实记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '据实记录；无则核实后填 NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '释放后据实记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '释放后据实记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '据实记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '据实记录' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '释放后按实际路径记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '据实逐项记录；仅经核实从未适用才可填 NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '据实填写' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path '实际 Handoff 路径' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-p19-view-r10.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_EVIDENCE_NOT_A_PATH",
+      "message": "evidence path '实际 Review 路径' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-p19-view-r10.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '据实记录' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 4"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source '据实记录；无则核实 NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P12/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P12/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P14/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P14/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15-C1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P15-C1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15-C1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P15-C1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/node_modules' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/node_modules is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P19-BOOT-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same source location' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[3].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same shared build environment' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[4].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same local cache location' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[5].destination_path"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same main-repository paths' is descriptive text, not a path; it is not protection",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[6].destination_path"
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac5-20261018-1555/ac5-metadata.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac1-overlay-bound.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac1-shutdown-writes.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-child-fallback-post-deadline.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-resilient-channel.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac3-stdio-channel-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-child-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-fallback-spawn-failure.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-inner-lock-fallback-timeout.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-pending-lock-contention.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-poisoned-child-lock.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-reader-guard.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-reentrant-child-reap-check.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-taskkill-fault-injection.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-wait-timeout-or-kill.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac4-writer-pipe-overflow.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-is-down-write-routing.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-max-retries-3.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-pipe-overflow-2mb.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r003-cycle-break-and-reap.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r006-error-presentation.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-r008-heartbeat-recovery.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-resilient-suite-9-tests.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-shutdown-writes-suite.meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P20-CLOSE-BOUND-HARDEN-1/ac8-stdio-channel-drop.meta.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P22-REBASE-1/integration/resource-closeout-manifest.json",
+      "locator": "$.resources[12].disposition"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
+      "file": "verification/P22-REBASE-1/integration/resource-closeout-manifest.json",
+      "locator": "$.resources[13].disposition"
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P22-REBASE-1/mutation-report.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P22-REBASE-1/test-run-meta.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/P22-REBASE-1/test-run-summary.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/READER-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/READER-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/RUN-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/RUN-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs-argparse-fail-attempt1/cold-start-results.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs/cold-start-results.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/default-data-root-probe/default-data-root-probe.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun2/logs/post-exit-check.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun2/logs/process-exit.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NON_DECLARATION",
+      "message": "unparsable tracked JSON explicitly exempted by path+sha256 in the non-declaration manifest (non-declaration JSON artifact (parses after BOM strip; no declaration objects))",
+      "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/rerun3/logs/process-exit.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/SEC-FIX-PATH-ECHO-1.md locator=line 5 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/SEC-FIX-PATH-ECHO-1.md locator=line 5 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 10 root=g:/codex/new manga.workspace/task-envs source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 10 root=g:/codex/new manga.workspace/task-envs source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 11 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 11 root=g:/codex/new manga.workspace source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 12 root=g:/codex/new manga.workspace/worktrees source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 12 root=g:/codex/new manga.workspace/worktrees source_keep=PRESERVE_REFERENCED",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 14 root=g:/codex/new manga.workspace/review-scratch source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 14 root=g:/codex/new manga.workspace/review-scratch source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=source policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 15 root=g:/codex/new manga.workspace/temp source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_BROAD_ROOT_PRESERVED",
+      "message": "role=destination policy=tools/governance/broad-root-preservation.json origin=doc/tasks/WORKSPACE-CONSOLIDATION-1.md locator=line 15 root=g:/codex/new manga.workspace/temp source_keep=PRESERVE_UNKNOWN",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_HISTORICAL_EVIDENCE_PRESERVED",
+      "message": "mode=template policy=tools/governance/historical-evidence-interpretation.json origin=verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md locator=global 228,229/line 7,8/HIE-T01 raw_sha256=dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa keep=PRESERVE_REFERENCED original_codes=DECL_UNKNOWN_DISPOSITION,DECL_RELATIVE_UNRESOLVED guard_roots=[\"g:/codex/new manga/verification/p09-governance-debt-20261019/codex-closeout-p19-view-r12.md\", \"g:/codex/new manga/tools/governance/tests\", \"g:/codex/new manga/verification/gov-resource-manifest-same-location-1\"]",
+      "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
+      "locator": "global 228,229/line 7,8/HIE-T01"
+    },
+    {
+      "code": "DECL_HISTORICAL_EVIDENCE_PRESERVED",
+      "message": "mode=raw-nondeclaration policy=tools/governance/historical-evidence-interpretation.json origin=verification/P14/owner-initiated-dsh-self-review-r1.md locator=HIE-O01/bytes 286 raw_sha256=df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608 keep=PRESERVE_REFERENCED original_codes=FILE_UNREADABLE guard_roots=[\"g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r1.md\"]",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
+      "locator": "HIE-O01/bytes 286"
+    },
+    {
+      "code": "DECL_HISTORICAL_EVIDENCE_PRESERVED",
+      "message": "mode=raw-nondeclaration policy=tools/governance/historical-evidence-interpretation.json origin=verification/P14/owner-initiated-dsh-self-review-r2.md locator=HIE-O02/bytes 286 raw_sha256=122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a keep=PRESERVE_REFERENCED original_codes=FILE_UNREADABLE guard_roots=[\"g:/codex/new manga/verification/p14/owner-initiated-dsh-self-review-r2.md\"]",
+      "file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
+      "locator": "HIE-O02/bytes 286"
+    },
+    {
+      "code": "DECL_HISTORICAL_EVIDENCE_PRESERVED",
+      "message": "mode=raw-nondeclaration policy=tools/governance/historical-evidence-interpretation.json origin=verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md locator=HIE-O03/bytes 12330,20486 raw_sha256=7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9 keep=PRESERVE_UNKNOWN original_codes=FILE_UNREADABLE guard_roots=[\"g:/codex/new manga/verification/p22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md\"]",
+      "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
+      "locator": "HIE-O03/bytes 12330,20486"
+    }
+  ],
+  "report_sha256": "b9f921037b9dc633b61ba2aea700fc3fcb7565f0e1ec998f07fab13d3515ae22"
+}

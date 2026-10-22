@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "task_id": "GOV-RESIDUAL-RUNTIME-IDENTITY-1",
+  "captured_at": "2026-10-22",
+  "repo": "G:/CODEX/New Manga",
+  "base_commit": "43a7d73c850f669cc2595343a1747a661c277f2e",
+  "method": "Read-only. Historical expansions are taken from tracked evidence files produced while the tasks ran, then cross-checked against current on-disk SHA-256 of the referenced data. The current %TEMP%/%APPDATA% values are recorded for contrast only and are NOT used as proof of the historical value.",
+  "current_env_observed_for_contrast_only": {
+    "TEMP": "C:/Users/49745/AppData/Local/Temp",
+    "APPDATA": "C:/Users/49745/AppData/Roaming",
+    "LOCALAPPDATA": "C:/Users/49745/AppData/Local",
+    "note": "Recorded for contrast. Not evidence. See env_expansions[*].evidence for the actual proof."
+  },
+  "env_expansions": [
+    {
+      "token": "%TEMP%",
+      "claimed_value": "C:/Users/49745/AppData/Local/Temp",
+      "class": "FACT",
+      "why_fact": "Two independent tracked task artifacts created months apart record the expanded absolute path on this machine and user, and neither depends on the declaration under audit.",
+      "evidence": [
+        {
+          "path": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+          "line": 167,
+          "quote": "P03 隔离演练在系统 Temp 建 bare repo（`C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f`；20 files / 26,469 B ...）",
+          "file_sha256": "e95bdfa832d3719be14d8ca2ddf01265a7527fd68459f0cf94bb8a1a7ef8c6a8",
+          "file_bytes": 32777
+        },
+        {
+          "path": "verification/M2-AC5/raw/cleanstart-ac1-run1-stdout.log",
+          "line": 4,
+          "quote": "QFontDatabase: Cannot find font directory C:/Users/49745/AppData/Local/Temp/m2ac5-cleanstart/install/resources/core-sidecar/_internal/PySide6/lib/fonts.",
+          "note": "Expanded path appears in a program's own stderr, i.e. produced by the OS, not by the task author."
+        }
+      ]
+    },
+    {
+      "token": "%APPDATA%",
+      "claimed_value": "C:/Users/49745/AppData/Roaming",
+      "class": "FACT",
+      "why_fact": "Two independent tracked gate JSON files from different tasks record the expanded host path, and the data files currently at that path are byte-identical to the hashes recorded by P19-UI-FIX-1 while that task ran.",
+      "evidence": [
+        {
+          "path": "verification/M2-AC5/raw/cleanstart-gate.json",
+          "line": 9,
+          "quote": "\"host_real_appdata\": \"C:\\\\Users\\\\49745\\\\AppData\\\\Roaming\\\\com.newmanga.m2rc1.desktop\"",
+          "file_sha256": "fe15380fd8a2f4443a6334d1b989b29bd622327d894c0f8606b34322570f0523",
+          "file_bytes": 8197
+        },
+        {
+          "path": "verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-gate.json",
+          "line": 9,
+          "quote": "\"host_real_appdata\": \"C:\\\\Users\\\\49745\\\\AppData\\\\Roaming\\\\com.newmanga.m2rc1.desktop\"",
+          "file_sha256": "5efea85c80774d10a51ca8c466dddf4b38358599ea4d853716f9cca366786842",
+          "file_bytes": 8257
+        },
+        {
+          "path": "verification/M2-AC5/raw/cleanstart-r1-final.log",
+          "line": 41,
+          "quote": "[PASS] CS-Z4-host-real-appdata-untouched: {\"changed_entries\": [], \"files\": 2, ... \"root\": \"C:\\\\Users\\\\49745\\\\AppData\\\\Roaming\\\\com.newmanga.m2rc1.desktop\"}",
+          "file_sha256": "28645c815cca046cd7d50a9685d687d9b53ec14364502d9e4777520ee4461aa9",
+          "file_bytes": 4298
+        }
+      ]
+    }
+  ],
+  "byte_cross_checks": [
+    {
+      "target": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data/library.db",
+      "current_bytes": 311296,
+      "current_sha256": "7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4",
+      "recorded_sha256": "7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4",
+      "recorded_in": "verification/P19-UI-FIX-1/appdata-source-before.json + appdata-source-preservation-check.json",
+      "equal": true
+    },
+    {
+      "target": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data/library.db.run-owner.lock",
+      "current_bytes": 1,
+      "current_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "recorded_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "recorded_in": "verification/P19-UI-FIX-1/appdata-source-before.json",
+      "equal": true
+    },
+    {
+      "target": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived/.preview-lifecycle.lock",
+      "current_bytes": 325,
+      "current_sha256": "c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a",
+      "recorded_sha256": "c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a",
+      "recorded_in": "verification/P19-UI-FIX-1/appdata-source-preservation-check.json",
+      "equal": true
+    },
+    {
+      "target": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog/catalog.sqlite",
+      "current_bytes": 24576,
+      "current_sha256": "b16c8a30e2b78bb730f3da9e0655af46402897c3200ab7b6babf75e7a6433ced",
+      "recorded_sha256": "0f094275808e51bce2d10812fff389670f4f129d93e7ef84802dbe6a04aeb5cd",
+      "recorded_in": "verification/P19-UI-FIX-1/appdata-source-before.json",
+      "equal": false,
+      "delta_note": "Recorded later modification by subsequent tasks (mtime 2026-10-18). The root path identity is still proven by the three unchanged files above; this file only shows the data set evolved after P19-UI-FIX-1, which the manifest does not claim otherwise."
+    }
+  ],
+  "existence_checks": {
+    "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop": "EXISTS (dir, mtime 2026-09-29 10:37)",
+    "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog": "EXISTS",
+    "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data": "EXISTS",
+    "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived": "EXISTS",
+    "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/managed": "EXISTS (not named by the declarations)",
+    "C:/Users/49745/AppData/Local/Temp/p19-ac2-r1": "MISSING",
+    "C:/Users/49745/AppData/Local/Temp/p19-ac2-main-1": "MISSING",
+    "G:/CODEX/New Manga/worktrees": "MISSING (repo has no worktrees top-level entry)",
+    "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1": "MISSING",
+    "C:/Users/49745/AppData/Local/pyinstaller": "MISSING (not one of the 7 errors; already protected as PRESERVE_REFERENCED by an absolute-path declaration)"
+  },
+  "residual_temp_observation": {
+    "class": "FACT about current disk, NOT a proof about 2026-10-17/18 state",
+    "path": "C:/Users/49745/AppData/Local/Temp",
+    "p19_star_directories": [
+      "p19-smoke-442ff86a (2026-10-18 11:44, 2 files, 311297 B)",
+      "p19-smoke-93a37a56 (2026-10-20 04:44, 2 files, 311297 B)",
+      "p19-smoke-fb25d6a4 (2026-10-18 11:48, 2 files, 311297 B)",
+      "p19fx (2026-10-17 21:18, 2 files, 70062 B)",
+      "p19v2-23a479ed (2026-10-17 16:15, 3 files, 311880 B)",
+      "p19v2-becf12c3 (2026-10-17 16:15, 2 files, 311297 B)",
+      "p19v3-087ba376 (2026-10-18 00:54, 3 files, 311880 B)",
+      "p19v3-87219ef9 (2026-10-18 00:50, 3 files, 311880 B)",
+      "p19v3-c28a5235 (2026-10-18 00:55, 3 files, 311880 B)",
+      "p19view-final2 (2026-10-19 23:44, 1 file, 11325 B)",
+      "p19view-stage (2026-10-19 23:34, 2 files, 11750 B)"
+    ],
+    "total_bytes": 1943068,
+    "not_in_scope": "Neither the 7 audited declarations nor the audited cleanup tool's four managed roots cover these. They are test isolation data, not user originals. Cleanup is prohibited by the standing clearing ban and is NOT requested by this task.",
+    "needs_user_decision": false,
+    "note": "Registered so a later authorised cleanup task has a factual starting point. No deletion performed or proposed here."
+  },
+  "unknowns": [
+    {
+      "id": "U-1",
+      "statement": "The exact 22 + 12 temporary root names removed by the 2026-10-18 Coordinator cleanup are not enumerated in any tracked file that this audit could locate; only the two aggregate declarations and the closure checklist reference remain.",
+      "impact": "No impact: both aggregate declarations are DELETE_SAFE and the targets are absent.",
+      "class": "UNKNOWN"
+    },
+    {
+      "id": "U-2",
+      "statement": "Whether any of the 11 currently-present Temp p19* directories were ever named by a tracked declaration is not determinable from tracked evidence.",
+      "impact": "No impact on the 7 identities; noted for any future cleanup authorisation.",
+      "class": "UNKNOWN"
+    }
+  ]
+}

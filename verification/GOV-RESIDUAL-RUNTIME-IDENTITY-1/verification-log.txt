@@ -1,0 +1,131 @@
+# GOV-RESIDUAL-RUNTIME-IDENTITY-1 验证日志
+
+执行者：dsh（Coordinator epoch 10，lease `37230d7822a141fcae8f46acd7841890`）
+执行时间：2026-10-22（Asia/Shanghai）
+主机 / shell：Windows / pwsh 7.6.6（`pwsh -NoProfile`）
+Python 解释器：`C:\Python314\python.exe` 3.14.6（以 `python -B` 调用，不生成 `__pycache__`）
+仓库：`G:/CODEX/New Manga`，branch `main`，base commit `43a7d73c850f669cc2595343a1747a661c277f2e`
+工作区状态：tracked 干净，预存 untracked/ignored 用户内容原样保留
+
+本日志记录的每条命令均实际运行；未运行项不会被写成 PASS。
+
+---
+
+## 1. AC1 生产声明审计复现
+
+```
+$ python -B tools/governance/clean_workspace.py --audit-declarations --out "G:/CODEX/New Manga.workspace/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1/audit"
+declaration audit: 2627 declaration(s), 1926 protected root(s), 7 error(s), 276 warning(s)
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER' [verification/ENV-BUNDLE-1-FU1/resource-manifest.json]
+  ERROR DECL_DESTINATION_UNRESOLVED: declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  report: G:/CODEX/New Manga.workspace/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1/audit/declaration-audit.json
+EXIT_CODE=2
+```
+
+结论：PASS。7 项错误完整复现；计数 2627/1926/7/276；`--audit-declarations` 为只读模式，未删除任何文件。
+原始产物：`raw/audit-run.log`、`raw/declaration-audit.json`。
+
+## 2. AC2 历史环境取证
+
+只读命令（无副作用）：
+
+```
+$ Get-FileHash -Algorithm SHA256 <当前用户数据文件>
+$ Test-Path -LiteralPath <每个候选路径>
+$ git grep -n "com.newmanga.m2rc1.desktop|Roaming/com.newmanga.m2rc1.desktop" -- verification doc
+$ Get-ChildItem $env:TEMP -Directory -Filter "p19*"
+EXIT_CODE=0
+```
+
+结论：PASS。`%TEMP%` 展开值有 2 条独立 tracked 证据；`%APPDATA%` 展开值有 3 条独立 tracked 证据；4 个关键数据文件中 3 个当前 SHA-256 与历史记录完全相等、1 个 delta 已解释。
+复算命令（可复现）：
+
+```
+$ (Get-FileHash -LiteralPath "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data/library.db" -Algorithm SHA256).Hash
+7809968C4AE9F12CA4E5936A875CE027A5C7FB8E6C19AA79E5A786A9692768E4
+```
+与 `verification/P19-UI-FIX-1/appdata-source-before.json` 的 `before_sha256` 一致（大小写归一为小写）。
+证据：`historical-env-evidence.json`。
+
+## 3. AC3/AC5 路径存在性与归属
+
+```
+$ git worktree list --porcelain | Select-String 'P19'
+EXIT_CODE=0   → 无 P19-AC3-1 注册
+$ Test-Path 'G:/CODEX/New Manga/worktrees'            → False
+$ Test-Path 'G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1' → False
+$ Test-Path 'C:/Users/49745/AppData/Local/Temp/p19-ac2-r1'      → False
+$ Test-Path 'C:/Users/49745/AppData/Local/Temp/p19-ac2-main-1'  → False
+$ Test-Path 'C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog' → True
+$ Test-Path 'C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data'    → True
+$ Test-Path 'C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived' → True
+EXIT_CODE=0
+```
+
+结论：PASS。证据：`matrix.md` 逐项表。
+
+## 4. AC4 只读保护评估
+
+```
+$ python -B verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/probe-protected.py
+COUNTS {"by_disposition": {...}, "declarations": 2627, "errors": 7, "protected_roots": 1926, "warnings": 276}
+...
+C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop                     hits=0  exists=True
+C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog             hits=0  exists=True
+C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data/library.db     hits=0  exists=True
+C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived             hits=0  exists=True
+C:/Users/49745/AppData/Local/pyinstaller                                      hits=1  exists=False
+C:/Users/49745/AppData/Local/Temp/p19-ac2-r1                                  hits=0  exists=False
+G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1                             hits=2  exists=False
+G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1/apps/desktop/src-tauri/target/core-sidecar   hits=3  exists=True
+G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1/apps/desktop/frontend/dist                  hits=3  exists=True
+G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1/apps/desktop/src-tauri/target/debug/resources hits=3  exists=True
+WROTE .../raw/protection-evaluation.json
+EXIT_CODE=0
+```
+
+结论：PASS。唯一保护缺口为 APPDATA 真实用户数据目录（hits=0）。
+说明：探针仅将 `ProtectionIndex.finalize` 置为 no-op 以读取已建索引；生产 `clean_workspace.py` 未被修改（本 Task 前后 `git diff -- tools/governance/clean_workspace.py` 为空）。
+
+## 5. AC6 治理检查与空白检查
+
+```
+$ python -B tools/governance/task_ledger.py --write
+  wrote doc\TASK_LEDGER.md
+EXIT_CODE=0
+
+$ pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GOV-RESIDUAL-RUNTIME-IDENTITY-1.md
+WARN: 存在 14 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2843 bytes / 29 lines
+Governance check: PASS (2 warnings)
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+$ git diff --cached --check
+EXIT_CODE=0
+```
+
+结论：PASS（2 warnings，均为既有口径：非终态 Task 计数为台账事实、STATUS 处于 80% 预警区但未超 3200 bytes/45 lines 硬预算）。
+
+## 6. 未运行 / 不适用项
+
+| 项 | 状态 | 原因 |
+|---|---|---|
+| 产品测试套件（pytest / vitest / cargo） | NOT_RUN | 本 Task 为只读治理研究，未改产品代码或共享契约，无可判别的产品回归面 |
+| `clean_workspace.py --apply` | NOT_RUN | 清理禁令有效且本 Task 无删除授权；运行会真实删除资源 |
+| 独立 Review | PENDING | 由 ZCode 对固定 head 执行，结果另记 |
+| 集成复验 | PENDING | Review approved 后由 dsh 在 main 复验并核销 |
+
+## 7. 真实资源操作
+
+删除 0、迁移 0、归档 0、GC 0、prune 0、push 0、reset 0、stash 0、ACL 变更 0。
+仅新增本 Task 的 Task/Handoff/证据文件与权威导航同步；未触碰任何历史原件、用户未提交内容或既有保护。

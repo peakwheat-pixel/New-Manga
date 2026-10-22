@@ -1,0 +1,11 @@
+CMD=python -B tools/governance/clean_workspace.py --audit-declarations --out G:\CODEX\New Manga.workspace\temp\GOV-RESIDUAL-RUNTIME-IDENTITY-1\audit
+declaration audit: 2627 declaration(s), 1926 protected root(s), 7 error(s), 276 warning(s)
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER' [verification/ENV-BUNDLE-1-FU1/resource-manifest.json]
+  ERROR DECL_DESTINATION_UNRESOLVED: declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  report: G:/CODEX/New Manga.workspace/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1/audit/declaration-audit.json
+EXIT_CODE=2
