@@ -138,10 +138,40 @@ foreach ($dir in $dirs.Values) {
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
 }
 
-# --- 单实例保护 --------------------------------------------------------------
-# 开发预览共用同一份 WebView2 用户数据目录与 SQLite 目录：两个实例并发启动时
-# 必然互相锁死（WebView2 0x800700AA「请求的资源在使用中」/ sqlite unable to
-# open database file）。与其让用户看到一堆底层报错，不如在入口 fail-closed。
+# --- 单实例锁 + 残留清理 ------------------------------------------------------
+# 开发预览共用同一份 WebView2 用户数据目录与 SQLite 目录；两个实例并发启动会
+# 互相锁死（WebView2 0x800700AA「请求的资源在使用中」/ sqlite unable to open
+# database file）。另外应用 panic 时 Python Core 子进程可能成为孤儿并继续占用
+# catalog.sqlite，所以启动前先清理「父进程已死」的本项目残留，再用文件锁阻止并发。
+$lockPath = Join-Path $dataRoot '.dev-preview.lock'
+try {
+    $script:devPreviewLock = [System.IO.File]::Open(
+        $lockPath,
+        [System.IO.FileMode]::OpenOrCreate,
+        [System.IO.FileAccess]::ReadWrite,
+        [System.IO.FileShare]::None)
+} catch {
+    throw @"
+[dev-preview] 另一个预览实例正在启动或运行（锁文件被占用：$lockPath）。
+请先关闭已打开的预览窗口，等待其完全退出后再试。
+"@
+}
+
+$stale = @()
+$stale += Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue | Where-Object {
+    $_.CommandLine -match 'bootstrap\.core_service|infrastructure\.resource_channel\.host_bridge' -and
+    -not (Get-Process -Id $_.ParentProcessId -ErrorAction SilentlyContinue)
+}
+$stale += Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" -ErrorAction SilentlyContinue | Where-Object {
+    $_.CommandLine -match 'dev-preview\\data\\webview2-udd' -and
+    -not (Get-Process -Id $_.ParentProcessId -ErrorAction SilentlyContinue)
+}
+foreach ($proc in $stale) {
+    Write-Host "[dev-preview] 清理上次崩溃残留进程: pid $($proc.ProcessId) $($proc.Name)"
+    Stop-Process -Id $proc.ProcessId -Force -ErrorAction SilentlyContinue
+}
+if ($stale.Count -gt 0) { Start-Sleep -Milliseconds 800 }
+
 $running = Get-Process -Name 'm2rc1-desktop' -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($running) {
     throw @"
@@ -255,5 +285,9 @@ try {
         if (Test-PortListening -Port $VitePort) {
             Write-Warning "[dev-preview] 清理后 $VitePort 仍被占用；脚本不按端口反查进程（防误杀）。若并非你手动起的其它服务，请确认：Get-NetTCPConnection -LocalPort $VitePort -State Listen"
         }
+    }
+    if ($script:devPreviewLock) {
+        try { $script:devPreviewLock.Dispose() } catch { }
+        $script:devPreviewLock = $null
     }
 }
