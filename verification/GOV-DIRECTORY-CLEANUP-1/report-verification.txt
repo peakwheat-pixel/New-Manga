@@ -1,0 +1,9 @@
+WARN: 存在 1 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3061 bytes / 29 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+CHECK_EXIT=0
+declaration audit: 2696 declaration(s), 1983 protected root(s), 0 error(s), 274 warning(s)
+  report: G:/CODEX/New Manga.workspace/agent-output/dsh/GOV-DIRECTORY-CLEANUP-1/audit/declaration-audit.json
+AUDIT_EXIT=0
+DIFFCHECK_EXIT=0

@@ -1,0 +1,2742 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "task_id": "GOV-DIRECTORY-CLEANUP-1",
+  "roots": [
+    {
+      "root": "G:/CODEX/New Manga",
+      "exists": true,
+      "bytes": 15270936121,
+      "mib": 14563.5,
+      "files": 44662,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": ".git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      }
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "exists": true,
+      "bytes": 25813961420,
+      "mib": 24618.1,
+      "files": 224231,
+      "git": null,
+      "in_main_history": null
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "exists": true,
+      "bytes": 27302740695,
+      "mib": 26037.9,
+      "files": 241817,
+      "git": null,
+      "in_main_history": null
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "exists": true,
+      "bytes": 757775499,
+      "mib": 722.7,
+      "files": 59917,
+      "git": null,
+      "in_main_history": null
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "exists": true,
+      "bytes": 420845689,
+      "mib": 401.3,
+      "files": 7656,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": ".git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      }
+    }
+  ],
+  "entries": [
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/--help",
+      "name": "--help",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.agents",
+      "name": ".agents",
+      "bytes": 2,
+      "mib": 0.0,
+      "files": 1,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.claude",
+      "name": ".claude",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.codewiki",
+      "name": ".codewiki",
+      "bytes": 1594956,
+      "mib": 1.5,
+      "files": 20,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.codex",
+      "name": ".codex",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.dsh",
+      "name": ".dsh",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.dsh-mode-29c6eed9",
+      "name": ".dsh-mode-29c6eed9",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.gemini",
+      "name": ".gemini",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.git",
+      "name": ".git",
+      "bytes": 1256129679,
+      "mib": 1197.9,
+      "files": 5484,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": ".",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.orchestrator",
+      "name": ".orchestrator",
+      "bytes": 359882,
+      "mib": 0.3,
+      "files": 83,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.pytest_cache",
+      "name": ".pytest_cache",
+      "bytes": 256762,
+      "mib": 0.2,
+      "files": 5,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.qoder",
+      "name": ".qoder",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.qoder-credits",
+      "name": ".qoder-credits",
+      "bytes": 4081321,
+      "mib": 3.9,
+      "files": 35,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.superpowers",
+      "name": ".superpowers",
+      "bytes": 2277,
+      "mib": 0.0,
+      "files": 3,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.tmp.driveupload",
+      "name": ".tmp.driveupload",
+      "bytes": 131654202,
+      "mib": 125.6,
+      "files": 2148,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.workbuddy",
+      "name": ".workbuddy",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.zcode",
+      "name": ".zcode",
+      "bytes": 1212811,
+      "mib": 1.2,
+      "files": 63,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/apps",
+      "name": "apps",
+      "bytes": 12411462557,
+      "mib": 11836.5,
+      "files": 24414,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/archive",
+      "name": "archive",
+      "bytes": 1013927,
+      "mib": 1.0,
+      "files": 21,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/doc",
+      "name": "doc",
+      "bytes": 16614531,
+      "mib": 15.8,
+      "files": 1103,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/docs",
+      "name": "docs",
+      "bytes": 36220,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-36zy1stn",
+      "name": "dsh-probe-36zy1stn",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-6lu_0g3w",
+      "name": "dsh-probe-6lu_0g3w",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-dagqohp7",
+      "name": "dsh-probe-dagqohp7",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-npzn41rw",
+      "name": "dsh-probe-npzn41rw",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-ut0j1y6p",
+      "name": "dsh-probe-ut0j1y6p",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/experiments",
+      "name": "experiments",
+      "bytes": 3928913,
+      "mib": 3.7,
+      "files": 284,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/output",
+      "name": "output",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/packaging",
+      "name": "packaging",
+      "bytes": 326476,
+      "mib": 0.3,
+      "files": 20,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/src",
+      "name": "src",
+      "bytes": 7375527,
+      "mib": 7.0,
+      "files": 655,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/test_assets",
+      "name": "test_assets",
+      "bytes": 1049310330,
+      "mib": 1000.7,
+      "files": 355,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/tests",
+      "name": "tests",
+      "bytes": 20154017,
+      "mib": 19.2,
+      "files": 854,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/tools",
+      "name": "tools",
+      "bytes": 685414,
+      "mib": 0.7,
+      "files": 22,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/training_data",
+      "name": "training_data",
+      "bytes": 137168659,
+      "mib": 130.8,
+      "files": 157,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/verification",
+      "name": "verification",
+      "bytes": 217085836,
+      "mib": 207.0,
+      "files": 8889,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/weights",
+      "name": "weights",
+      "bytes": 5544453,
+      "mib": 5.3,
+      "files": 1,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/wiki",
+      "name": "wiki",
+      "bytes": 4886347,
+      "mib": 4.7,
+      "files": 27,
+      "is_git_repo": true,
+      "git": {
+        "head": "9ae8aab0a05a447b6330a86efd12a8b2d0ff9a31",
+        "branch": "main",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 1235,
+        "commits_all_refs": 4007
+      },
+      "in_main_history": {
+        "refs": 139,
+        "all_in_main": false,
+        "missing": [
+          "refs/codex/turn-diffs/captures/1791821778851/4a0cff2c-586f-41c5-81fd-39501a5e51c6/base 4d65ce5daf41e2276fdae5a05b3bc41d997d85ff",
+          "refs/codex/turn-diffs/checkpoints/31a6ecd41f8eec9d43c685f2bc9d5e98/7521ca1498e1aaf23330973945bddd25/1791533084873/38dddcc3-59fd-47b6-971f-429f8a61f82a 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/400d7870a77225fc5fa55b7ff09ccb4e/6c7a9f7cebcb3d6392fc47fcf8b95693/1791533049872/763a522c-6870-4b26-ba88-3c85aa3e9abd 1b624045962a11c648adc42699bb0ade55ff7af6",
+          "refs/codex/turn-diffs/checkpoints/829323a1062c3cc60140722c32ffa269/02d4534d7e6745f37d7b9e3e16ff1c53/1791545229057/443d4283-8627-40fa-b4fd-77ba628dd170 7ee65352609dc41541e423349087d29f088c3879",
+          "refs/codex/turn-diffs/checkpoints/8e04d16e6c3dfce6f1972a509b48f946/7bf618d2d245f4941c1730a81ba4b920/1791307420305/a69766a7-a0cf-419b-97fb-4d14dec3d7ae 702fcd0647427c2349eced85e42103fd08ed06b5"
+        ]
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DETECT-WEBTOON-DIAG",
+      "name": "M2-DETECT-WEBTOON-DIAG",
+      "bytes": 466255,
+      "mib": 0.4,
+      "files": 7,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DETECT-WEBTOON-TILING",
+      "name": "M2-DETECT-WEBTOON-TILING",
+      "bytes": 254338,
+      "mib": 0.2,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DETECTION-HYGIENE",
+      "name": "M2-DETECTION-HYGIENE",
+      "bytes": 1051796,
+      "mib": 1.0,
+      "files": 14,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL",
+      "name": "M2-DOCTR-QUAL",
+      "bytes": 167836684,
+      "mib": 160.1,
+      "files": 2,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1",
+      "name": "M2-DOCTR-QUAL-C1",
+      "bytes": 23265515,
+      "mib": 22.2,
+      "files": 74,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4",
+      "name": "M2-DOCTR-QUAL-C4",
+      "bytes": 175594048,
+      "mib": 167.5,
+      "files": 40,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312",
+      "name": "M2-DOCTR-QUAL-gpu-py312",
+      "bytes": 4979482837,
+      "mib": 4748.8,
+      "files": 29723,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-wheels",
+      "name": "M2-DOCTR-QUAL-wheels",
+      "bytes": 2762774229,
+      "mib": 2634.8,
+      "files": 2,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work",
+      "name": "M2-DOCTR-QUAL-work",
+      "bytes": 232182283,
+      "mib": 221.4,
+      "files": 569,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-IMPORT-ALLOC-LIMIT",
+      "name": "M2-IMPORT-ALLOC-LIMIT",
+      "bytes": 371768,
+      "mib": 0.4,
+      "files": 7,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-OCR-PADDLE3X-1",
+      "name": "M2-OCR-PADDLE3X-1",
+      "bytes": 316357,
+      "mib": 0.3,
+      "files": 12,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1",
+      "name": "M2-PROD-DETECT-1",
+      "bytes": 327380,
+      "mib": 0.3,
+      "files": 8,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1-work",
+      "name": "M2-PROD-DETECT-1-work",
+      "bytes": 7575,
+      "mib": 0.0,
+      "files": 3,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2",
+      "name": "M2-PROD-DETECT-2",
+      "bytes": 1664281,
+      "mib": 1.6,
+      "files": 8,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-3",
+      "name": "M2-PROD-DETECT-3",
+      "bytes": 607589,
+      "mib": 0.6,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-QUAL-DETERM-CALIB",
+      "name": "M2-QUAL-DETERM-CALIB",
+      "bytes": 478716,
+      "mib": 0.5,
+      "files": 7,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-REGISTRY-ENV",
+      "name": "M2-REGISTRY-ENV",
+      "bytes": 15755,
+      "mib": 0.0,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SETTINGS-IPC-CHANNEL",
+      "name": "M2-SETTINGS-IPC-CHANNEL",
+      "bytes": 546100,
+      "mib": 0.5,
+      "files": 10,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT",
+      "name": "M2-SFX-DETECT",
+      "bytes": 124803643,
+      "mib": 119.0,
+      "files": 76,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT-EVAL",
+      "name": "M2-SFX-DETECT-EVAL",
+      "bytes": 965179,
+      "mib": 0.9,
+      "files": 8,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-E2E-MATERIAL",
+      "name": "M2-SFX-E2E-MATERIAL",
+      "bytes": 445540059,
+      "mib": 424.9,
+      "files": 285,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-FINETUNE-gpu-py312",
+      "name": "M2-SFX-FINETUNE-gpu-py312",
+      "bytes": 5417951889,
+      "mib": 5167.0,
+      "files": 31189,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-GPU-EP-1-cpu-verify",
+      "name": "M2-SFX-GPU-EP-1-cpu-verify",
+      "bytes": 135233282,
+      "mib": 129.0,
+      "files": 3438,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-PROD-1",
+      "name": "M2-SFX-PROD-1",
+      "bytes": 390170,
+      "mib": 0.4,
+      "files": 8,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-SEM-1",
+      "name": "M2-SFX-SEM-1",
+      "bytes": 180013,
+      "mib": 0.2,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-SYNTH-BG-AUTO",
+      "name": "M2-SFX-SYNTH-BG-AUTO",
+      "bytes": 60326975,
+      "mib": 57.5,
+      "files": 621,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-T4-SWITCH",
+      "name": "M2-SFX-T4-SWITCH",
+      "bytes": 20032557,
+      "mib": 19.1,
+      "files": 50,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu",
+      "name": "M2-SFX-T5-TILE-gpu",
+      "bytes": 237714224,
+      "mib": 226.7,
+      "files": 6720,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-TILE-WIDTH-CALIB-1",
+      "name": "M2-SFX-TILE-WIDTH-CALIB-1",
+      "bytes": 191664962,
+      "mib": 182.8,
+      "files": 16,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-TRANSLATE-ENTRY",
+      "name": "M2-SFX-TRANSLATE-ENTRY",
+      "bytes": 182747,
+      "mib": 0.2,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B",
+      "name": "M2-TA3-B",
+      "bytes": 374528441,
+      "mib": 357.2,
+      "files": 2426,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B-ocr",
+      "name": "M2-TA3-B-ocr",
+      "bytes": 2347073683,
+      "mib": 2238.3,
+      "files": 59901,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B2",
+      "name": "M2-TA3-B2",
+      "bytes": 844244,
+      "mib": 0.8,
+      "files": 10,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B2-KO-RERUN",
+      "name": "M2-TA3-B2-KO-RERUN",
+      "bytes": 694553,
+      "mib": 0.7,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B3-KO-FULLRUN",
+      "name": "M2-TA3-B3-KO-FULLRUN",
+      "bytes": 2695,
+      "mib": 0.0,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TASKS-BACKFILL-MULTIREGION",
+      "name": "M2-TASKS-BACKFILL-MULTIREGION",
+      "bytes": 374117,
+      "mib": 0.4,
+      "files": 8,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TASKS-PRIMARY-SFX-GATE",
+      "name": "M2-TASKS-PRIMARY-SFX-GATE",
+      "bytes": 343899,
+      "mib": 0.3,
+      "files": 9,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-WEIGHTS-SOP",
+      "name": "M2-WEIGHTS-SOP",
+      "bytes": 301044,
+      "mib": 0.3,
+      "files": 7,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "name": "T1.1.1-impl-py312",
+      "bytes": 1611702678,
+      "mib": 1537.0,
+      "files": 43463,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-integration-real-9ba3901d7ff24f1c95f0034a09218e49",
+      "name": "T1.1.1-integration-real-9ba3901d7ff24f1c95f0034a09218e49",
+      "bytes": 19908664,
+      "mib": 19.0,
+      "files": 10,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-models",
+      "name": "T1.1.1-models",
+      "bytes": 94669756,
+      "mib": 90.3,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-work",
+      "name": "T1.1.1-work",
+      "bytes": 2849836379,
+      "mib": 2717.8,
+      "files": 20,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T2.2.1-integration-smoke-20260922",
+      "name": "T2.2.1-integration-smoke-20260922",
+      "bytes": 266240,
+      "mib": 0.3,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T2.2.1-qoder-smoke-20260922",
+      "name": "T2.2.1-qoder-smoke-20260922",
+      "bytes": 266240,
+      "mib": 0.3,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T2.2.1-zcode-smoke-20260922",
+      "name": "T2.2.1-zcode-smoke-20260922",
+      "bytes": 266240,
+      "mib": 0.3,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/m2ac5-build",
+      "name": "m2ac5-build",
+      "bytes": 1493841058,
+      "mib": 1424.6,
+      "files": 42709,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/sfx-synth-exp",
+      "name": "sfx-synth-exp",
+      "bytes": 2036662392,
+      "mib": 1942.3,
+      "files": 2744,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/DETECT-TILING-1",
+      "name": "DETECT-TILING-1",
+      "bytes": 313627,
+      "mib": 0.3,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1",
+      "name": "GOV-PIN-LINEAGE-1",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P02-DOC-DISPOSAL-20261018",
+      "name": "P02-DOC-DISPOSAL-20261018",
+      "bytes": 565657,
+      "mib": 0.5,
+      "files": 21,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION",
+      "name": "P06-GC-DISTRIBUTION-MIGRATION",
+      "bytes": 1905019,
+      "mib": 1.8,
+      "files": 14,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch",
+      "name": "P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch",
+      "bytes": 42899106,
+      "mib": 40.9,
+      "files": 2489,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3",
+      "name": "P20-AC4-FPS-1-AC3",
+      "bytes": 4665,
+      "mib": 0.0,
+      "files": 1,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run1",
+      "name": "P20-AC4-FPS-1-AC3-run1",
+      "bytes": 270296,
+      "mib": 0.3,
+      "files": 12,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run2",
+      "name": "P20-AC4-FPS-1-AC3-run2",
+      "bytes": 22866,
+      "mib": 0.0,
+      "files": 9,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run3",
+      "name": "P20-AC4-FPS-1-AC3-run3",
+      "bytes": 15108,
+      "mib": 0.0,
+      "files": 7,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run4",
+      "name": "P20-AC4-FPS-1-AC3-run4",
+      "bytes": 254660,
+      "mib": 0.2,
+      "files": 11,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-samples",
+      "name": "P20-AC4-FPS-1-samples",
+      "bytes": 6293496,
+      "mib": 6.0,
+      "files": 2,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/agent-output",
+      "name": "agent-output",
+      "bytes": 690357372,
+      "mib": 658.4,
+      "files": 16880,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/archive",
+      "name": "archive",
+      "bytes": 4489520904,
+      "mib": 4281.5,
+      "files": 25508,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/artifacts",
+      "name": "artifacts",
+      "bytes": 977454374,
+      "mib": 932.2,
+      "files": 10219,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/builds",
+      "name": "builds",
+      "bytes": 6324918867,
+      "mib": 6031.9,
+      "files": 17374,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/data-registry",
+      "name": "data-registry",
+      "bytes": 21394710,
+      "mib": 20.4,
+      "files": 2,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/datasets",
+      "name": "datasets",
+      "bytes": 918669664,
+      "mib": 876.1,
+      "files": 2933,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/exchange",
+      "name": "exchange",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/handoff",
+      "name": "handoff",
+      "bytes": 32826,
+      "mib": 0.0,
+      "files": 3,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/models",
+      "name": "models",
+      "bytes": 251517244,
+      "mib": 239.9,
+      "files": 11,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch",
+      "name": "review-scratch",
+      "bytes": 0,
+      "mib": 0.0,
+      "files": 0,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/scratch",
+      "name": "scratch",
+      "bytes": 351365746,
+      "mib": 335.1,
+      "files": 11191,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/task-envs",
+      "name": "task-envs",
+      "bytes": 3880296828,
+      "mib": 3700.5,
+      "files": 104117,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/tasks",
+      "name": "tasks",
+      "bytes": 3039426701,
+      "mib": 2898.6,
+      "files": 31984,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/temp",
+      "name": "temp",
+      "bytes": 3204296855,
+      "mib": 3055.9,
+      "files": 17640,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/test-materials",
+      "name": "test-materials",
+      "bytes": 3021477556,
+      "mib": 2881.5,
+      "files": 149,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/tmp",
+      "name": "tmp",
+      "bytes": 79277750,
+      "mib": 75.6,
+      "files": 1228,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/worktrees",
+      "name": "worktrees",
+      "bytes": 532,
+      "mib": 0.0,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive",
+      "name": "M2-I1-r1-review-archive",
+      "bytes": 27473629,
+      "mib": 26.2,
+      "files": 1805,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO",
+      "name": "M2-SFX-SYNTH-BG-AUTO",
+      "bytes": 24987,
+      "mib": 0.0,
+      "files": 5,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex-dsh-review-logs",
+      "name": "P02-hook-cache-isolation-plan-codex-dsh-review-logs",
+      "bytes": 596761,
+      "mib": 0.6,
+      "files": 4,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation",
+      "name": "T1.1.1-detector-evaluation",
+      "bytes": 22242421,
+      "mib": 21.2,
+      "files": 1795,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel",
+      "name": "T1.2.1-settings-ui-viewmodel",
+      "bytes": 25083379,
+      "mib": 23.9,
+      "files": 2002,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-qoder",
+      "name": "T2.2.1-qoder",
+      "bytes": 21675657,
+      "mib": 20.7,
+      "files": 1903,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging",
+      "name": "T3.2.1-antigravity-packaging",
+      "bytes": 24811328,
+      "mib": 23.7,
+      "files": 2009,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10",
+      "name": "T3.2.1-antigravity-repair-10",
+      "bytes": 24609142,
+      "mib": 23.5,
+      "files": 1890,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11",
+      "name": "T3.2.1-antigravity-repair-11",
+      "bytes": 23219298,
+      "mib": 22.1,
+      "files": 1807,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14",
+      "name": "T3.2.1-antigravity-repair-14",
+      "bytes": 29368511,
+      "mib": 28.0,
+      "files": 1966,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3",
+      "name": "T3.2.1-antigravity-repair-3",
+      "bytes": 23757952,
+      "mib": 22.7,
+      "files": 1986,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4",
+      "name": "T3.2.1-antigravity-repair-4",
+      "bytes": 23779571,
+      "mib": 22.7,
+      "files": 1989,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5",
+      "name": "T3.2.1-antigravity-repair-5",
+      "bytes": 19970144,
+      "mib": 19.0,
+      "files": 1647,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6",
+      "name": "T3.2.1-antigravity-repair-6",
+      "bytes": 19999608,
+      "mib": 19.1,
+      "files": 1651,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7",
+      "name": "T3.2.1-antigravity-repair-7",
+      "bytes": 20815903,
+      "mib": 19.9,
+      "files": 1766,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9",
+      "name": "T3.2.1-antigravity-repair-9",
+      "bytes": 24583002,
+      "mib": 23.4,
+      "files": 1886,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout",
+      "name": "T3.2.1-codex-release-gate-closeout",
+      "bytes": 22481501,
+      "mib": 21.4,
+      "files": 1693,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10",
+      "name": "T3.2.1-deepseek-review-10",
+      "bytes": 28451544,
+      "mib": 27.1,
+      "files": 2035,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11",
+      "name": "T3.2.1-deepseek-review-11",
+      "bytes": 22542597,
+      "mib": 21.5,
+      "files": 1698,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12",
+      "name": "T3.2.1-deepseek-review-12",
+      "bytes": 22525892,
+      "mib": 21.5,
+      "files": 1698,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e",
+      "name": "T3.2.1-deepseek-review-740503e",
+      "bytes": 18571780,
+      "mib": 17.7,
+      "files": 1631,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5",
+      "name": "T3.2.1-deepseek-review-7d687f5",
+      "bytes": 18536118,
+      "mib": 17.7,
+      "files": 1640,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9",
+      "name": "T3.2.1-deepseek-review-9",
+      "bytes": 27864156,
+      "mib": 26.6,
+      "files": 2007,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c",
+      "name": "T3.2.1-deepseek-review-92c9307c",
+      "bytes": 18578053,
+      "mib": 17.7,
+      "files": 1637,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f",
+      "name": "T3.2.1-deepseek-review-cdc0b6f",
+      "bytes": 19915446,
+      "mib": 19.0,
+      "files": 1638,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd",
+      "name": "T3.2.1-deepseek-review-d79d7dd",
+      "bytes": 22035646,
+      "mib": 21.0,
+      "files": 1835,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0",
+      "name": "T3.2.1-deepseek-review-f39ddc0",
+      "bytes": 18566976,
+      "mib": 17.7,
+      "files": 1632,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383",
+      "name": "T3.2.1-deepseek-review-f6dc383",
+      "bytes": 20070060,
+      "mib": 19.1,
+      "files": 1655,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14",
+      "name": "T3.2.1-deepseek-review-repair-14",
+      "bytes": 28561046,
+      "mib": 27.2,
+      "files": 1960,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2",
+      "name": "T3.2.1-deepseek-review-repair-14-r2",
+      "bytes": 29389144,
+      "mib": 28.0,
+      "files": 1968,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7",
+      "name": "T3.2.1-deepseek-review-repair-7",
+      "bytes": 18855573,
+      "mib": 18.0,
+      "files": 1655,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13",
+      "name": "T3.2.1-qoder-repair-13",
+      "bytes": 22517626,
+      "mib": 21.5,
+      "files": 1699,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review",
+      "name": "TASK-004-deepseek-review",
+      "bytes": 274171,
+      "mib": 0.3,
+      "files": 59,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-013-qoder",
+      "name": "TASK-013-qoder",
+      "bytes": 17031664,
+      "mib": 16.2,
+      "files": 1460,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc",
+      "name": "TASK-015-deepseek-posthoc",
+      "bytes": 3345613,
+      "mib": 3.2,
+      "files": 439,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc",
+      "name": "TASK-017-deepseek-posthoc",
+      "bytes": 3631959,
+      "mib": 3.5,
+      "files": 461,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc",
+      "name": "TASK-024-deepseek-posthoc",
+      "bytes": 3041014,
+      "mib": 2.9,
+      "files": 427,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode",
+      "name": "TASK-045-posthoc-zcode",
+      "bytes": 5982330,
+      "mib": 5.7,
+      "files": 829,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-047-qoder",
+      "name": "TASK-047-qoder",
+      "bytes": 10539465,
+      "mib": 10.1,
+      "files": 870,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review",
+      "name": "TASK-061-qoder-review",
+      "bytes": 7303760,
+      "mib": 7.0,
+      "files": 1179,
+      "is_git_repo": false,
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.codewiki",
+      "name": ".codewiki",
+      "bytes": 1594956,
+      "mib": 1.5,
+      "files": 20,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.codex",
+      "name": ".codex",
+      "bytes": 292,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.dsh",
+      "name": ".dsh",
+      "bytes": 292,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.gemini",
+      "name": ".gemini",
+      "bytes": 292,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.git",
+      "name": ".git",
+      "bytes": 179221375,
+      "mib": 170.9,
+      "files": 26,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": ".",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.qoder",
+      "name": ".qoder",
+      "bytes": 292,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.qoder-credits",
+      "name": ".qoder-credits",
+      "bytes": 4024896,
+      "mib": 3.8,
+      "files": 34,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.tmp.driveupload",
+      "name": ".tmp.driveupload",
+      "bytes": 131654202,
+      "mib": 125.6,
+      "files": 2148,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.workbuddy",
+      "name": ".workbuddy",
+      "bytes": 292,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/apps",
+      "name": "apps",
+      "bytes": 1077371,
+      "mib": 1.0,
+      "files": 81,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/doc",
+      "name": "doc",
+      "bytes": 12859377,
+      "mib": 12.3,
+      "files": 805,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/docs",
+      "name": "docs",
+      "bytes": 36803,
+      "mib": 0.0,
+      "files": 6,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/experiments",
+      "name": "experiments",
+      "bytes": 3107039,
+      "mib": 3.0,
+      "files": 222,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/packaging",
+      "name": "packaging",
+      "bytes": 181783,
+      "mib": 0.2,
+      "files": 16,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/src",
+      "name": "src",
+      "bytes": 1839961,
+      "mib": 1.8,
+      "files": 228,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/test_assets",
+      "name": "test_assets",
+      "bytes": 7187471,
+      "mib": 6.9,
+      "files": 86,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/tests",
+      "name": "tests",
+      "bytes": 2029180,
+      "mib": 1.9,
+      "files": 182,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/verification",
+      "name": "verification",
+      "bytes": 71129077,
+      "mib": 67.8,
+      "files": 3736,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/wiki",
+      "name": "wiki",
+      "bytes": 4888187,
+      "mib": 4.7,
+      "files": 27,
+      "is_git_repo": true,
+      "git": {
+        "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+        "branch": "",
+        "git_common_dir": "../.git",
+        "tracked_dirty": 0,
+        "untracked": 0,
+        "commits_all_refs": 2225
+      },
+      "in_main_history": {
+        "refs": 1,
+        "all_in_main": true,
+        "missing": []
+      },
+      "has_dot_git": false
+    }
+  ]
+}

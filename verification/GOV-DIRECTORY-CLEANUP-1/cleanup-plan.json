@@ -1,0 +1,1400 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "task_id": "GOV-DIRECTORY-CLEANUP-1",
+  "executed": [
+    {
+      "path": "G:/CODEX/P02-scratch-build-source",
+      "mib": 401.3,
+      "files": 7656,
+      "disposition": "ARCHIVE",
+      "reason": "已归档并删除；归档 G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\P02-scratch-build-source.tar.gz，SHA-256 be8ea5e9def65435…",
+      "executed": true,
+      "result": "DELETED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/*",
+      "mib": 708.3,
+      "files": 59917,
+      "disposition": "ARCHIVE",
+      "reason": "已归档并删除；归档 G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\New-Manga.worktrees-residue.tar.gz，SHA-256 69ea26de2b07152b…",
+      "executed": true,
+      "result": "DELETED"
+    }
+  ],
+  "pending": [
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/--help",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.agents",
+      "mib": 0.0,
+      "files": 1,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.claude",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.codewiki",
+      "mib": 1.5,
+      "files": 20,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.codex",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.dsh",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.dsh-mode-29c6eed9",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.gemini",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.git",
+      "mib": 1197.9,
+      "files": 5484,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.orchestrator",
+      "mib": 0.3,
+      "files": 83,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.pytest_cache",
+      "mib": 0.2,
+      "files": 5,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.qoder",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.qoder-credits",
+      "mib": 3.9,
+      "files": 35,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.superpowers",
+      "mib": 0.0,
+      "files": 3,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.tmp.driveupload",
+      "mib": 125.6,
+      "files": 2148,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.workbuddy",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/.zcode",
+      "mib": 1.2,
+      "files": 63,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/apps",
+      "mib": 11836.5,
+      "files": 24414,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/archive",
+      "mib": 1.0,
+      "files": 21,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/doc",
+      "mib": 15.8,
+      "files": 1103,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/docs",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-36zy1stn",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-6lu_0g3w",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-dagqohp7",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-npzn41rw",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/dsh-probe-ut0j1y6p",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/experiments",
+      "mib": 3.7,
+      "files": 284,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/output",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/packaging",
+      "mib": 0.3,
+      "files": 20,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/src",
+      "mib": 7.0,
+      "files": 655,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/test_assets",
+      "mib": 1000.7,
+      "files": 355,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/tests",
+      "mib": 19.2,
+      "files": 854,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/tools",
+      "mib": 0.7,
+      "files": 22,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/training_data",
+      "mib": 130.8,
+      "files": 157,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/verification",
+      "mib": 207.0,
+      "files": 8889,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/weights",
+      "mib": 5.3,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga",
+      "path": "G:/CODEX/New Manga/wiki",
+      "mib": 4.7,
+      "files": 27,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DETECT-WEBTOON-DIAG",
+      "mib": 0.4,
+      "files": 7,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DETECT-WEBTOON-TILING",
+      "mib": 0.2,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DETECTION-HYGIENE",
+      "mib": 1.0,
+      "files": 14,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL",
+      "mib": 160.1,
+      "files": 2,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1",
+      "mib": 22.2,
+      "files": 74,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4",
+      "mib": 167.5,
+      "files": 40,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312",
+      "mib": 4748.8,
+      "files": 29723,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-wheels",
+      "mib": 2634.8,
+      "files": 2,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work",
+      "mib": 221.4,
+      "files": 569,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-IMPORT-ALLOC-LIMIT",
+      "mib": 0.4,
+      "files": 7,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-OCR-PADDLE3X-1",
+      "mib": 0.3,
+      "files": 12,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1",
+      "mib": 0.3,
+      "files": 8,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1-work",
+      "mib": 0.0,
+      "files": 3,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2",
+      "mib": 1.6,
+      "files": 8,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-3",
+      "mib": 0.6,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-QUAL-DETERM-CALIB",
+      "mib": 0.5,
+      "files": 7,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-REGISTRY-ENV",
+      "mib": 0.0,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SETTINGS-IPC-CHANNEL",
+      "mib": 0.5,
+      "files": 10,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT",
+      "mib": 119.0,
+      "files": 76,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT-EVAL",
+      "mib": 0.9,
+      "files": 8,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-E2E-MATERIAL",
+      "mib": 424.9,
+      "files": 285,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-FINETUNE-gpu-py312",
+      "mib": 5167.0,
+      "files": 31189,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-GPU-EP-1-cpu-verify",
+      "mib": 129.0,
+      "files": 3438,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-PROD-1",
+      "mib": 0.4,
+      "files": 8,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-SEM-1",
+      "mib": 0.2,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-SYNTH-BG-AUTO",
+      "mib": 57.5,
+      "files": 621,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-T4-SWITCH",
+      "mib": 19.1,
+      "files": 50,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu",
+      "mib": 226.7,
+      "files": 6720,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-TILE-WIDTH-CALIB-1",
+      "mib": 182.8,
+      "files": 16,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-TRANSLATE-ENTRY",
+      "mib": 0.2,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B",
+      "mib": 357.2,
+      "files": 2426,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B-ocr",
+      "mib": 2238.3,
+      "files": 59901,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B2",
+      "mib": 0.8,
+      "files": 10,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B2-KO-RERUN",
+      "mib": 0.7,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TA3-B3-KO-FULLRUN",
+      "mib": 0.0,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TASKS-BACKFILL-MULTIREGION",
+      "mib": 0.4,
+      "files": 8,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-TASKS-PRIMARY-SFX-GATE",
+      "mib": 0.3,
+      "files": 9,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/M2-WEIGHTS-SOP",
+      "mib": 0.3,
+      "files": 7,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "mib": 1537.0,
+      "files": 43463,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-integration-real-9ba3901d7ff24f1c95f0034a09218e49",
+      "mib": 19.0,
+      "files": 10,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-models",
+      "mib": 90.3,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T1.1.1-work",
+      "mib": 2717.8,
+      "files": 20,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T2.2.1-integration-smoke-20260922",
+      "mib": 0.3,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T2.2.1-qoder-smoke-20260922",
+      "mib": 0.3,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/T2.2.1-zcode-smoke-20260922",
+      "mib": 0.3,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/m2ac5-build",
+      "mib": 1424.6,
+      "files": 42709,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.task-envs",
+      "path": "G:/CODEX/New Manga.task-envs/sfx-synth-exp",
+      "mib": 1942.3,
+      "files": 2744,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "Task 隔离环境（可能含模型/数据/唯一产物）；可重建性未经逐项验证，需在下一轮按任务归属逐项核对后再定"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/DETECT-TILING-1",
+      "mib": 0.3,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P02-DOC-DISPOSAL-20261018",
+      "mib": 0.5,
+      "files": 21,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION",
+      "mib": 1.8,
+      "files": 14,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch",
+      "mib": 40.9,
+      "files": 2489,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3",
+      "mib": 0.0,
+      "files": 1,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run1",
+      "mib": 0.3,
+      "files": 12,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run2",
+      "mib": 0.0,
+      "files": 9,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run3",
+      "mib": 0.0,
+      "files": 7,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-AC3-run4",
+      "mib": 0.2,
+      "files": 11,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/P20-AC4-FPS-1-samples",
+      "mib": 6.0,
+      "files": 2,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/agent-output",
+      "mib": 658.4,
+      "files": 16880,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/archive",
+      "mib": 4281.5,
+      "files": 25508,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/artifacts",
+      "mib": 932.2,
+      "files": 10219,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "构建/发布产物，可能被证据引用"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/builds",
+      "mib": 6031.9,
+      "files": 17374,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "派生构建/临时产物；本次未逐项验证是否含唯一诊断结果，留待下一轮按文件清单核对"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/data-registry",
+      "mib": 20.4,
+      "files": 2,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/datasets",
+      "mib": 876.1,
+      "files": 2933,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/exchange",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/handoff",
+      "mib": 0.0,
+      "files": 3,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/models",
+      "mib": 239.9,
+      "files": 11,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch",
+      "mib": 0.0,
+      "files": 0,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/scratch",
+      "mib": 335.1,
+      "files": 11191,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "派生构建/临时产物；本次未逐项验证是否含唯一诊断结果，留待下一轮按文件清单核对"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/task-envs",
+      "mib": 3700.5,
+      "files": 104117,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/tasks",
+      "mib": 2898.6,
+      "files": 31984,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/temp",
+      "mib": 3055.9,
+      "files": 17640,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "派生构建/临时产物；本次未逐项验证是否含唯一诊断结果，留待下一轮按文件清单核对"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/test-materials",
+      "mib": 2881.5,
+      "files": 149,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/tmp",
+      "mib": 75.6,
+      "files": 1228,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "派生构建/临时产物；本次未逐项验证是否含唯一诊断结果，留待下一轮按文件清单核对"
+    },
+    {
+      "root": "G:/CODEX/New Manga.workspace",
+      "path": "G:/CODEX/New Manga.workspace/worktrees",
+      "mib": 0.0,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive",
+      "mib": 26.2,
+      "files": 1805,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO",
+      "mib": 0.0,
+      "files": 5,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex-dsh-review-logs",
+      "mib": 0.6,
+      "files": 4,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation",
+      "mib": 21.2,
+      "files": 1795,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel",
+      "mib": 23.9,
+      "files": 2002,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-qoder",
+      "mib": 20.7,
+      "files": 1903,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging",
+      "mib": 23.7,
+      "files": 2009,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10",
+      "mib": 23.5,
+      "files": 1890,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11",
+      "mib": 22.1,
+      "files": 1807,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14",
+      "mib": 28.0,
+      "files": 1966,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3",
+      "mib": 22.7,
+      "files": 1986,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4",
+      "mib": 22.7,
+      "files": 1989,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5",
+      "mib": 19.0,
+      "files": 1647,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6",
+      "mib": 19.1,
+      "files": 1651,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7",
+      "mib": 19.9,
+      "files": 1766,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9",
+      "mib": 23.4,
+      "files": 1886,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout",
+      "mib": 21.4,
+      "files": 1693,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10",
+      "mib": 27.1,
+      "files": 2035,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11",
+      "mib": 21.5,
+      "files": 1698,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12",
+      "mib": 21.5,
+      "files": 1698,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e",
+      "mib": 17.7,
+      "files": 1631,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5",
+      "mib": 17.7,
+      "files": 1640,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9",
+      "mib": 26.6,
+      "files": 2007,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c",
+      "mib": 17.7,
+      "files": 1637,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f",
+      "mib": 19.0,
+      "files": 1638,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd",
+      "mib": 21.0,
+      "files": 1835,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0",
+      "mib": 17.7,
+      "files": 1632,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383",
+      "mib": 19.1,
+      "files": 1655,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14",
+      "mib": 27.2,
+      "files": 1960,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2",
+      "mib": 28.0,
+      "files": 1968,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7",
+      "mib": 18.0,
+      "files": 1655,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13",
+      "mib": 21.5,
+      "files": 1699,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review",
+      "mib": 0.3,
+      "files": 59,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-013-qoder",
+      "mib": 16.2,
+      "files": 1460,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc",
+      "mib": 3.2,
+      "files": 439,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc",
+      "mib": 3.5,
+      "files": 461,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc",
+      "mib": 2.9,
+      "files": 427,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode",
+      "mib": 5.7,
+      "files": 829,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-047-qoder",
+      "mib": 10.1,
+      "files": 870,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/New Manga.worktrees",
+      "path": "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review",
+      "mib": 7.0,
+      "files": 1179,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.codewiki",
+      "mib": 1.5,
+      "files": 20,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.codex",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.dsh",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.gemini",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.git",
+      "mib": 170.9,
+      "files": 26,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.qoder",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.qoder-credits",
+      "mib": 3.8,
+      "files": 34,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.tmp.driveupload",
+      "mib": 125.6,
+      "files": 2148,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/.workbuddy",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "未取得可删依据，按保守原则保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/apps",
+      "mib": 1.0,
+      "files": 81,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/doc",
+      "mib": 12.3,
+      "files": 805,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/docs",
+      "mib": 0.0,
+      "files": 6,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/experiments",
+      "mib": 3.0,
+      "files": 222,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/packaging",
+      "mib": 0.2,
+      "files": 16,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/src",
+      "mib": 1.8,
+      "files": 228,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/test_assets",
+      "mib": 6.9,
+      "files": 86,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/tests",
+      "mib": 1.9,
+      "files": 182,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/verification",
+      "mib": 67.8,
+      "files": 3736,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    },
+    {
+      "root": "G:/CODEX/P02-scratch-build-source",
+      "path": "G:/CODEX/P02-scratch-build-source/wiki",
+      "mib": 4.7,
+      "files": 27,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "项目源码/证据/数据集/模型/工具配置，默认保留"
+    }
+  ],
+  "totals": {
+    "examined": 173,
+    "executed": 2,
+    "pending": 171
+  }
+}

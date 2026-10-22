@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "task_id": "GOV-DIRECTORY-CLEANUP-1",
+  "authorisation": "user 2026-10-22 目录清理授权",
+  "archive_dir": "G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022",
+  "recovery": {
+    "method": "tar -xzf <archive> -C <parent>",
+    "note": "P02-scratch-build-source 全部 Git 历史同时存在于主仓库 main；worktrees 残留无 .git、不被 Git 管理"
+  },
+  "operations": [
+    {
+      "candidate": "A",
+      "path": "G:/CODEX/P02-scratch-build-source",
+      "archive": "G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\P02-scratch-build-source.tar.gz",
+      "archive_bytes": 342961510,
+      "archive_sha256": "be8ea5e9def65435cb5261ea7e1b4c1d4bd4859d0cd449fac19bb3b0b09ed104",
+      "source_bytes": 420793548.8,
+      "source_files": 7656,
+      "result": "DELETED"
+    },
+    {
+      "candidate": "B",
+      "path": "G:/CODEX/New Manga.worktrees/*",
+      "archive": "G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\New-Manga.worktrees-residue.tar.gz",
+      "archive_bytes": 373490486,
+      "archive_sha256": "69ea26de2b07152b243d2152f4046df2085e0a970da3861a7c3e4c0fedb22dd0",
+      "source_bytes": 742706380.8,
+      "source_files": 59917,
+      "result": "DELETED"
+    }
+  ],
+  "freed_bytes": 1163499929.6,
+  "removed_residue_dirs": 40,
+  "kept_residue_dirs": [],
+  "verification": {
+    "A_exists": false,
+    "B_root_children": 1
+  }
+}

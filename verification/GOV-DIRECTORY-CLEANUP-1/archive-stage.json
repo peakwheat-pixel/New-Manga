@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "task_id": "GOV-DIRECTORY-CLEANUP-1",
+  "operations": [
+    {
+      "candidate": "A",
+      "path": "G:/CODEX/P02-scratch-build-source",
+      "action": "ARCHIVE_THEN_DELETE",
+      "archive": "G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\P02-scratch-build-source.tar.gz",
+      "archive_bytes": 342961510,
+      "archive_sha256": "be8ea5e9def65435cb5261ea7e1b4c1d4bd4859d0cd449fac19bb3b0b09ed104",
+      "files_before": 7656,
+      "files_listed_in_tar": 7656,
+      "tar_exit": 0,
+      "list_exit": 0,
+      "verified": true
+    },
+    {
+      "candidate": "B",
+      "path": "G:/CODEX/New Manga.worktrees/*",
+      "action": "ARCHIVE_THEN_DELETE",
+      "archive": "G:/CODEX/New Manga.workspace/archive/directory-cleanup-20261022\\New-Manga.worktrees-residue.tar.gz",
+      "archive_bytes": 373490486,
+      "archive_sha256": "69ea26de2b07152b243d2152f4046df2085e0a970da3861a7c3e4c0fedb22dd0",
+      "files_before": 59917,
+      "files_listed_in_tar": 59917,
+      "tar_exit": 0,
+      "list_exit": 0,
+      "verified": true
+    }
+  ]
+}
