@@ -122,6 +122,14 @@ B 档完整回归：编译 8.69s、窗口启动、production allowlist 正常、
 - 新增单实例保护：检测到 `m2rc1-desktop` 正在运行即 fail-closed，明确提示先关闭现有窗口（避免 WebView2 0x800700AA / SQLite 锁冲突）。
 - 实测：正常启动（新 UDF 自动创建 `EBWebView`）；应用运行中再次启动 → 1 秒内拒绝并给出中文说明；`CloseMainWindow` 优雅关闭后无 `core_service` 残留、5188 释放、Vite 树清理。
 
+### 并发实例文件锁（同日，`2cc724e94`）
+
+重复失败的根因判定为**并发启动窗口**：进程检测到 `m2rc1-desktop` 之前的瞬间即可通过，两个实例同时创建 WebView2 / 打开 SQLite 会互相报 `0x800700AA` 与 `unable to open database file`（日志中两者总是成对出现）。
+
+- `dev-preview.ps1` 增加 `data/.dev-preview.lock` 独占文件锁（`FileShare.None`，进程退出由 OS 自动释放），并发实例在启动第一步即被拒绝，不再进入 Vite/编译/WebView2 阶段。
+- 启动前清理「父进程已死」的本项目残留（`python -m bootstrap.core_service` / `infrastructure.resource_channel.host_bridge` 孤儿、使用本 UDF 的孤儿 `msedgewebview2`），实测强杀应用后 Core 子进程会自行退出，因此该清理为防御性措施。
+- 实测：实例 A 运行时锁被持有；实例 B 1 秒内退出且 A 不受影响；A 优雅关闭后锁释放。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
