@@ -7,31 +7,29 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 344 |
-| terminal | 341 |
-| non-terminal | 3 |
-| non-terminal named in the plan | 3 |
+| terminal | 343 |
+| non-terminal | 1 |
+| non-terminal named in the plan | 1 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 344 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 3 |
+| non-terminal tracked by git | 1 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 272 | yes |
+| `done` | 274 | yes |
 | `closed_with_limitations` | 34 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `in_review` | 3 | no |
+| `in_review` | 1 | no |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
-| `SETTINGS-OPEN-B-1` | `in_review` | own row |
-| `SETTINGS-OPEN-B-2` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 
 ## What this ledger does not say

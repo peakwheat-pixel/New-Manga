@@ -3,7 +3,7 @@ id: SETTINGS-OPEN-B-2
 title: 设置分区开放批次 B-2：缓存/Revision 清理操作面
 kind: implementation
 governance_version: 2
-status: in_review
+status: done
 approval: user_ruling_20261022_open_all_settings_partitions
 suggested_owner: dsh
 owner: dsh
@@ -14,8 +14,8 @@ branch: main
 worktree: null
 integration_commit: 0e2e6233aa54363e49e992ba2353a00c665c3de0
 delivery_head: 0e2e6233aa54363e49e992ba2353a00c665c3de0
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/SETTINGS-OPEN-B-2
 allowed_paths:
   - doc/design/SETTINGS_SECTION_SCHEMAS.md
@@ -91,21 +91,22 @@ allowed_paths:
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
-|EV-B2-GUI-SMOKE|AC1-AC5|verification/SETTINGS-OPEN-B-2/gui-smoke.md|02f1752dcf558e9aaacb352864e8c93e28c4c697|a4506241c6baf0dfcbe6ef07f137c0ac619e42a9a873a3f891540838297f62a6|CANONICAL|
-|EV-B2-REVIEW-B2|AC1-AC5|verification/SETTINGS-OPEN-B-2/review-b2.md|02f1752dcf558e9aaacb352864e8c93e28c4c697|838605c9cd0bcb63a485db4f3c4ea3e9d3de0cb389a80cdfe041fbfb2c79e996|CANONICAL|
-|EV-B2-01-CACHE-PREVIEW-3-FILES|AC1-AC5|verification/SETTINGS-OPEN-B-2/screenshots/01-cache-preview-3-files.png|02f1752dcf558e9aaacb352864e8c93e28c4c697|b584300db49a6718866f3178f47b86bb932441e203ae64bb57f2ad38a531bc9f|CANONICAL|
-|EV-B2-02-CACHE-CLEANED|AC1-AC5|verification/SETTINGS-OPEN-B-2/screenshots/02-cache-cleaned.png|02f1752dcf558e9aaacb352864e8c93e28c4c697|89c283acc92b8f654ded2b61840c274176d00e076e7ace2fea8142c8cac3f244|CANONICAL|
-|EV-B2-03-CACHE-EMPTY-IDLE|AC1-AC5|verification/SETTINGS-OPEN-B-2/screenshots/03-cache-empty-idle.png|02f1752dcf558e9aaacb352864e8c93e28c4c697|dcd09faacc0b4e9f7c1b767d786cafceade57f9502b4f529ec45a448f105f5c8|CANONICAL|
-|EV-B2-UI-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-report.md|02f1752dcf558e9aaacb352864e8c93e28c4c697|7e016d5cd779bd683f6a7d2848ab59f2386bcf609ef6c62fb779c321694042fd|CANONICAL|
-|EV-B2-UI-TEST-FRONTEND|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-test-frontend.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|be1b136943ea09ea7336c5025362b2ec82489be7f1747395d9b6b6dc84776b6d|CANONICAL|
-|EV-B2-UI-TEST-TARGETED|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-test-targeted.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|f35b56932ae3039c4f26fe66c55ea6e2f27a48fed6ebfb375b38e0503bd1acef|CANONICAL|
-|EV-B2-UI-TSC|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-tsc.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|a419d8d72338a478b07d1f043fceaa320b06fde9b824029951635ca130dc3654|CANONICAL|
-|EV-B2-WIRE-CARGO-TEST-DEFAULT-THREADS|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cargo-test-default-threads.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|9494ba0e738afd15a1f9468c49cc8c9d370f3a9f193b18431e0541e9420f69d8|CANONICAL|
-|EV-B2-WIRE-CARGO-TEST-ISOLATED-FLAKY-RERUN|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cargo-test-isolated-flaky-rerun.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|d8225ee3fccdeeca6c12170d826574f2048a010bdb81aca8c8470f200a901a3e|CANONICAL|
-|EV-B2-WIRE-CARGO-TEST-SERIAL|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cargo-test-serial.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|d7416b4eb342f55e5dead29fb00a332bb697be618b88dbb0cbe203eb5d097ba6|CANONICAL|
-|EV-B2-WIRE-CLEANUP-TARGETED-PYTEST|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cleanup-targeted-pytest.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|51940eef75338210b3e4c917427889d9b37eaeb3e53daeda12398834ec300434|CANONICAL|
-|EV-B2-WIRE-CORE-PYTEST-FULL|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-core-pytest-full.log|02f1752dcf558e9aaacb352864e8c93e28c4c697|42e3b613e53f6c6bde376db5062d58f2917f9d0b118468c63a28dedf03b9b7c1|CANONICAL|
-|EV-B2-WIRE-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-report.md|02f1752dcf558e9aaacb352864e8c93e28c4c697|72b34fe1b9621e595f9b434afaa84a643e53f6368f80b9f9c697bafb472080f6|CANONICAL|
+|EV-B2-GUI-SMOKE|AC1-AC5|verification/SETTINGS-OPEN-B-2/gui-smoke.md|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|a4506241c6baf0dfcbe6ef07f137c0ac619e42a9a873a3f891540838297f62a6|CANONICAL|
+|EV-B2-REVIEW-B2-FOLLOWUP|AC1-AC5|verification/SETTINGS-OPEN-B-2/review-b2-followup.md|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|6532daf1d08c9da1d5cce821de62f4d0f0af4e3b536575588584593535921de7|CANONICAL|
+|EV-B2-REVIEW-B2|AC1-AC5|verification/SETTINGS-OPEN-B-2/review-b2.md|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|838605c9cd0bcb63a485db4f3c4ea3e9d3de0cb389a80cdfe041fbfb2c79e996|CANONICAL|
+|EV-B2-01-CACHE-PREVIEW-3-FILES|AC1-AC5|verification/SETTINGS-OPEN-B-2/screenshots/01-cache-preview-3-files.png|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|b584300db49a6718866f3178f47b86bb932441e203ae64bb57f2ad38a531bc9f|CANONICAL|
+|EV-B2-02-CACHE-CLEANED|AC1-AC5|verification/SETTINGS-OPEN-B-2/screenshots/02-cache-cleaned.png|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|89c283acc92b8f654ded2b61840c274176d00e076e7ace2fea8142c8cac3f244|CANONICAL|
+|EV-B2-03-CACHE-EMPTY-IDLE|AC1-AC5|verification/SETTINGS-OPEN-B-2/screenshots/03-cache-empty-idle.png|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|dcd09faacc0b4e9f7c1b767d786cafceade57f9502b4f529ec45a448f105f5c8|CANONICAL|
+|EV-B2-UI-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-report.md|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|7e016d5cd779bd683f6a7d2848ab59f2386bcf609ef6c62fb779c321694042fd|CANONICAL|
+|EV-B2-UI-TEST-FRONTEND|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-test-frontend.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|be1b136943ea09ea7336c5025362b2ec82489be7f1747395d9b6b6dc84776b6d|CANONICAL|
+|EV-B2-UI-TEST-TARGETED|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-test-targeted.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|f35b56932ae3039c4f26fe66c55ea6e2f27a48fed6ebfb375b38e0503bd1acef|CANONICAL|
+|EV-B2-UI-TSC|AC1-AC5|verification/SETTINGS-OPEN-B-2/ui-tsc.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|a419d8d72338a478b07d1f043fceaa320b06fde9b824029951635ca130dc3654|CANONICAL|
+|EV-B2-WIRE-CARGO-TEST-DEFAULT-THREADS|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cargo-test-default-threads.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|9494ba0e738afd15a1f9468c49cc8c9d370f3a9f193b18431e0541e9420f69d8|CANONICAL|
+|EV-B2-WIRE-CARGO-TEST-ISOLATED-FLAKY-RERUN|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cargo-test-isolated-flaky-rerun.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|d8225ee3fccdeeca6c12170d826574f2048a010bdb81aca8c8470f200a901a3e|CANONICAL|
+|EV-B2-WIRE-CARGO-TEST-SERIAL|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cargo-test-serial.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|d7416b4eb342f55e5dead29fb00a332bb697be618b88dbb0cbe203eb5d097ba6|CANONICAL|
+|EV-B2-WIRE-CLEANUP-TARGETED-PYTEST|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-cleanup-targeted-pytest.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|51940eef75338210b3e4c917427889d9b37eaeb3e53daeda12398834ec300434|CANONICAL|
+|EV-B2-WIRE-CORE-PYTEST-FULL|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-core-pytest-full.log|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|42e3b613e53f6c6bde376db5062d58f2917f9d0b118468c63a28dedf03b9b7c1|CANONICAL|
+|EV-B2-WIRE-REPORT|AC1-AC5|verification/SETTINGS-OPEN-B-2/wire-report.md|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|72b34fe1b9621e595f9b434afaa84a643e53f6368f80b9f9c697bafb472080f6|CANONICAL|
 
 ## Resource Manifest
 
@@ -115,7 +116,7 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout：待关闭。
-- canonical_evidence_status：pending；resource_closeout_status：pending。
+- Closeout date / Codex：2026-10-22 / dsh（Lead 集成；用户授权）。
+- canonical_evidence_status：complete；resource_closeout_status：complete。
 - 删除/迁移/归档：缓存清理为产品功能，不是资源处置；本 Task 不执行清理。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 已登记本 Task。
