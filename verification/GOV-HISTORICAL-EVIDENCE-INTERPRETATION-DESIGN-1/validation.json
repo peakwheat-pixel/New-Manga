@@ -1,6 +1,6 @@
 {
   "status": "DESIGN_DATA_ASSERTIONS_PASSED",
-  "canonical_policy_sha256": "b7ce39be57d1e0ee4b682bbba5b7341a3448329f6f53c24b1eee359b0184cfd0",
+  "canonical_policy_sha256": "3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d",
   "binding_ids": [
     "HIE-T01",
     "HIE-O01",
@@ -22,13 +22,13 @@
   "template_original_declaration_preserved": true,
   "production_helper": "NOT_IMPLEMENTED_NOT_RUN",
   "runtime_matrix_T01_T18": "PLANNED_NOT_RUN",
-  "counts": {
-    "declarations": 2575,
-    "protected_roots": 1882,
+  "counts_snapshot": {
+    "declarations": 2582,
+    "protected_roots": 1889,
     "by_disposition": {
       "DELETE_SAFE": 2,
       "DESTINATION_PIN": 389,
-      "EVIDENCE_PIN": 1750,
+      "EVIDENCE_PIN": 1757,
       "NOT_APPLICABLE": 5,
       "PRESERVE_REFERENCED": 379,
       "PRESERVE_UNKNOWN": 34,
@@ -37,24 +37,26 @@
     "errors": 12,
     "warnings": 272
   },
-  "scan": {
-    "markdown": 2347,
-    "json": 1238,
+  "scan_snapshot": {
+    "markdown": 2349,
+    "json": 1240,
     "unparsable_json": 0,
     "json_non_declaration": 69,
     "json_parse_fatal": 0,
-    "tracked_declaration_files": 7639,
-    "untracked_declaration_files": 1508,
-    "declarations": 2575,
+    "tracked_declaration_files": 7646,
+    "untracked_declaration_files": 1505,
+    "declarations": 2582,
     "errors": 12,
     "warnings": 272
   },
   "design_only": true,
   "baseline_head": "345c86857f6ea80153ead49271e84ff234a4963f",
+  "measurement_basis": "SNAPSHOT_BEFORE_R2_FINAL_PINS; evidence registration may grow after this measurement",
+  "registered_evidence_pins_at_measurement": 7,
   "errors_unchanged": true,
   "original_protected_subset": true,
   "old_protected_count": 1882,
-  "current_protected_count": 1882,
+  "snapshot_protected_count": 1889,
   "source_raw_changes": 0,
   "production_code_changes": 0,
   "actual_runtime_policy_created": false,

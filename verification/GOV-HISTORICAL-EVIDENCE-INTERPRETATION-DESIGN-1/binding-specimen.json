@@ -4,7 +4,7 @@
   "approved_design": {
     "task_id": "GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1",
     "design_file": "verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/design.md",
-    "design_raw_sha256": "0c94f6e8fabc2cf0b2400bf525a7023a57afd8d4cde3c575415e92fbe016cacc",
+    "design_raw_sha256": "02d1e9e55ad0021d55481883c7067a2536c294ef03a7628ee3caeb4b1bf2f9b0",
     "source_facts_file": "verification/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1/source-facts.json",
     "source_facts_commit": "8a429a889768c18c6b0add5fc7e5c40b83f62746",
     "source_facts_raw_sha256": "f4821be6b0766d899b69980d7351f7e2b519f39b6247f33ab0fd2e6e861a708c"
