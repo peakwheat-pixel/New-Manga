@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "branches": [
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "unique_commit_count": 15,
+      "unique_commits_head": [
+        "c763efa27|2026-10-13|docs(P02): record R7 repair delivery and handoff for H2 collector",
+        "a4766131b|2026-10-13|fix(P02): close R6 findings (R6-CX-01, R6-CX-02) for H2 collector R7 per source-review-r6-adjudication",
+        "39ff1d3f9|2026-10-13|docs(P02): record R6 repair delivery and handoff for H2 collector",
+        "3e3fcae4a|2026-10-13|fix(P02): close R5 findings (R5-CX-01, R5-CX-03) for H2 collector R6 per source-review-r5-adjudication",
+        "6a59d82c6|2026-10-13|docs(P02): clarify R5 worktree byte hash semantics"
+      ],
+      "changed_files_vs_merge_base": 24,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "tools/p02/h1-raw-pre-run-selftest.ps1",
+        "tools/p02/h1-raw-pre-run.ps1",
+        "verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r4.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r5.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r6.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r7.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T124646-pwsh766-zcode.md"
+      ]
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "unique_commit_count": 10,
+      "unique_commits_head": [
+        "4a707db80|2026-10-10|docs(P22): update revision metadata to R9, add R8 pins, and clarify scope in handoff",
+        "791f1c9bb|2026-10-10|docs(P22): specify unambiguous root path for Owner worktree relative documents in handoff",
+        "a99d092fb|2026-10-10|docs(P22): address R7 review findings with explicit distinction between worktree and main repo evidence roots in handoff",
+        "bcbe8632b|2026-10-10|docs(P22): address R6 review findings with R5 review details and untracked protection list update in handoff",
+        "a61e2979d|2026-10-10|docs(P22): address R5 review findings with scheduling caveat, task sha snapshot note, and gate status in handoff"
+      ],
+      "changed_files_vs_merge_base": 3,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "apps/desktop/src-tauri/src/library_bridge.rs",
+        "verification/P04/deterministic_concurrent_sidecar.py",
+        "verification/P22/antigravity-owner-p22.handoff.md"
+      ]
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "unique_commit_count": 3,
+      "unique_commits_head": [
+        "4569093db|2026-10-13|docs(p02): finalize forensic recovery checkpoint",
+        "b22956c59|2026-10-13|docs(p02): close H1 forensic recovery",
+        "666465804|2026-10-13|docs(p02): integrate H1 forensic recovery evidence"
+      ],
+      "changed_files_vs_merge_base": 11,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY-R2.md",
+        "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+        "verification/P02PRE-R1H-FORENSIC-RECOVERY/adjudication.md",
+        "verification/P02PRE-R1H-FORENSIC-RECOVERY/checkpoint.md",
+        "verification/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r1.md",
+        "verification/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.md",
+        "verification/P02PRE-R1H-FORENSIC-RECOVERY/method-manifest.json",
+        "verification/P02PRE-R1H-FORENSIC-RECOVERY/method-summary.md"
+      ]
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "unique_commit_count": 4,
+      "unique_commits_head": [
+        "a6f33f7be|2026-10-13|docs(p02): finalize H1 review checkpoint",
+        "516c5a762|2026-10-13|docs(p02): close H1 applicability review",
+        "a715b2497|2026-10-13|docs(p02): integrate H1 applicability review evidence",
+        "c676274d2|2026-10-13|evidence(P02PRE-R1H-H1-CURRENT-INPUT-REVIEW): freeze review inputs"
+      ],
+      "changed_files_vs_merge_base": 16,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/applicability-matrix-r1.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/checkpoint.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r1.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r2.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/dsh-applicability-review-r1.md",
+        "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/dsh-review-request-r1.md"
+      ]
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "unique_commit_count": 3,
+      "unique_commits_head": [
+        "06990b799|2026-10-13|evidence(P02PRE-R1H-H2-RUN): record terminal closeout checkpoint",
+        "e24abda53|2026-10-13|evidence(P02PRE-R1H-H2-RUN): close out resources and handoff",
+        "70eff7226|2026-10-13|evidence(P02PRE-R1H-H2-RUN): integrate reviewed runtime evidence"
+      ],
+      "changed_files_vs_merge_base": 17,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "verification/P02PRE-R1H-H2-RUN/checkpoint.md",
+        "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1-input-verification.json",
+        "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md",
+        "verification/P02PRE-R1H-H2-RUN/codex-handoff-r1.md",
+        "verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md",
+        "verification/P02PRE-R1H-H2-RUN/dsh-result-review-r1.md",
+        "verification/P02PRE-R1H-H2-RUN/dsh-result-review-r2.md",
+        "verification/P02PRE-R1H-H2-RUN/dsh-result-review-r3.md"
+      ]
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "unique_commit_count": 18,
+      "unique_commits_head": [
+        "23bec747d|2026-10-13|docs(P02PRE-R1H): close external harness trace task",
+        "6dffaa6cd|2026-10-13|docs(P02PRE-R1H): prepare resource closeout",
+        "dd62b28b0|2026-10-13|docs(P02PRE-R1H): record integration approval",
+        "1c10a4e1a|2026-10-13|docs(P02PRE-R1H): record Codex integration gate",
+        "1829a910f|2026-10-13|Merge branch 'agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE' into codex/integration-p02pre-r1h-p2-1-external-harness-trace"
+      ],
+      "changed_files_vs_merge_base": 28,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+        "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json",
+        "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md",
+        "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r1.md",
+        "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r2.md",
+        "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-exit-r1.txt"
+      ]
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "unique_commit_count": 60,
+      "unique_commits_head": [
+        "7ab5b7d05|2026-10-14|P02: record new-time baseline evidence",
+        "d285908f0|2026-10-14|docs: count P02 evidence refresh",
+        "6bb07e33f|2026-10-14|docs: refresh P02 baseline reentry state",
+        "5b4f7ff90|2026-10-14|docs(P02): reopen baseline after resolution integration",
+        "071ed5d0c|2026-10-14|evidence(P02): record resolution integration and selftest"
+      ],
+      "changed_files_vs_merge_base": 217,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R1.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R2.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R3.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE.md"
+      ]
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "unique_commit_count": 31,
+      "unique_commits_head": [
+        "10c35daed|2026-10-14|docs: close P02 resolution resource inventory",
+        "3f60ff19c|2026-10-14|docs(P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION): finalize canonical evidence closeout",
+        "ad55029d8|2026-10-14|docs(P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION): close integrated resolution",
+        "0ffcd4d03|2026-10-14|docs(P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION): classify closeout metadata",
+        "f298467ad|2026-10-14|docs(P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION): record bounded review and verification"
+      ],
+      "changed_files_vs_merge_base": 93,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R1.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R2.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R3.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE.md"
+      ]
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "unique_commit_count": 78,
+      "unique_commits_head": [
+        "0af898088|2026-10-14|docs: close P02 AC3 resolution task",
+        "d77aa934d|2026-10-14|evidence(P02): inventory referenced resolution resources",
+        "c9c0974f0|2026-10-14|docs(P02): adjudicate and approve resolution integration",
+        "2210b5190|2026-10-14|evidence(P02): adjudicate bounded DSH resolution review",
+        "df205d6e9|2026-10-14|docs(P02): pin final DSH review snapshot and preflight"
+      ],
+      "changed_files_vs_merge_base": 257,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION-R1.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R1.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R2.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R3.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md"
+      ]
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "unique_commit_count": 43,
+      "unique_commits_head": [
+        "14da1e814|2026-10-14|docs(P02): close helper output resolution task",
+        "3188a58ad|2026-10-14|evidence(P02): inventory preserved resolution resources",
+        "53d765ebf|2026-10-14|docs(P02): record verified helper integration",
+        "bd7538789|2026-10-14|docs(P02): record parent integration selftest",
+        "f7f3fd259|2026-10-14|docs(P02): record approved bounded helper review"
+      ],
+      "changed_files_vs_merge_base": 129,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION-6420653c.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R1.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R2.md",
+        "doc/handoffs/P02-NEW-TIME-BASELINE-R3.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+        "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE.md"
+      ]
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "unique_commit_count": 4,
+      "unique_commits_head": [
+        "4a90d820a|2026-10-13|docs(P02): P02PRE-R1H-H2-COLLECTOR R2 task record and handoff",
+        "72145184b|2026-10-13|fix(P02): H2 collector R2 repair per source-review-r1-adjudication",
+        "af151e790|2026-10-13|docs(P02): P02PRE-R1H-H2-COLLECTOR task in_review and ZCode handoff",
+        "831e368b2|2026-10-13|feat(P02): P02PRE-R1H-H2-COLLECTOR proposed H1 raw-evidence collector and pure selftest"
+      ],
+      "changed_files_vs_merge_base": 9,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "tools/p02/h1-raw-pre-run-selftest.ps1",
+        "tools/p02/h1-raw-pre-run.ps1",
+        "verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T124646-pwsh766-zcode.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T134255-pwsh766-zcode-r2.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T124646-pwsh766-zcode.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T134255-pwsh766-zcode-r2.md",
+        "verification/P02PRE-R1H-H2-COLLECTOR/zcode-p02pre-r1h-h2-collector-handoff-20261013-r2.md"
+      ]
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "unique_commit_count": 1,
+      "unique_commits_head": [
+        "df637df1f|2026-09-22|test(t2.2.1): pin reader workbench functional seams"
+      ],
+      "changed_files_vs_merge_base": 2,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "tests/ui_shell/test_bookshelf_viewmodel.py",
+        "tests/workbench/test_command_error_surface.py"
+      ]
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "unique_commit_count": 64,
+      "unique_commits_head": [
+        "13ae23f65|2026-09-25|docs(evidence): T3.2.1-REPAIR-13 C2 follow-up — F-1 screenshot extension, F-3 RED-log trailing whitespace (evidence-only)",
+        "66a13f8a5|2026-09-25|docs(handoff): T3.2.1-REPAIR-13 final handoff for delivery aed0094 — F-13-2/F-13-4 fixed, AC4 unblocked via local two-page export verification",
+        "aed009405|2026-09-25|fix(ui): T3.2.1-REPAIR-13 F-13-4 give the output path TextField its id",
+        "9d6e3b881|2026-09-25|fix(ui): T3.2.1-REPAIR-13 F-13-2 show() the export window (open() is not a Window method)",
+        "c47e6dab3|2026-09-25|docs(review): second DSH dispatch for base 8738c41 -> c0aba79 also 401; review stays pending"
+      ],
+      "changed_files_vs_merge_base": 154,
+      "legacy_paths": [
+        "src/ui/qml/Main.qml",
+        "src/ui/qml/bookshelf/BookDetailPanel.qml",
+        "src/ui/qml/bookshelf/BookshelfToolbar.qml",
+        "src/ui/qml/bookshelf/BookshelfView.qml",
+        "src/ui/qml/common/ChapterPicker.qml",
+        "src/ui/qml/reader/ReaderView.qml",
+        "src/ui/qml/windows/ExportWindow.qml",
+        "verification/T3.2.1/clean-sandbox-ac3-20260924/loadlibrary-pyside.log"
+      ],
+      "legacy_path_count": 8,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/00_INDEX.md",
+        "doc/09_COLLABORATION.md",
+        "doc/REBASELINE_PLAN.md",
+        "doc/STATUS.md",
+        "doc/handoffs/T3.2.1-REPAIR-10-be5200e.md",
+        "doc/handoffs/T3.2.1-REPAIR-12-a2f6695.md",
+        "doc/handoffs/T3.2.1-REPAIR-13-2f18e78.md",
+        "doc/handoffs/T3.2.1-REPAIR-13-aed0094.md"
+      ]
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "unique_commit_count": 7,
+      "unique_commits_head": [
+        "ceca2446d|2026-10-09|docs(P02): address isolation review r3 conditions",
+        "09d592a09|2026-10-09|docs(P02): bind r3 isolation review state",
+        "d6dbf9821|2026-10-09|docs(P02): address isolation review r2 findings",
+        "e80a7eff8|2026-10-09|docs(P02): prepare isolation plan review r2",
+        "088473190|2026-10-09|docs(P02): address sandbox isolation review r1"
+      ],
+      "changed_files_vs_merge_base": 45,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/REBASELINE_PLAN.md",
+        "doc/STATUS.md",
+        "doc/tasks/P02.md",
+        "verification/P02/RESUME.md",
+        "verification/P02/codex-adjudication-scratch-isolation-review-r1.md",
+        "verification/P02/codex-adjudication-scratch-isolation-review-r2.md",
+        "verification/P02/codex-checkpoint-after-hook-cache-closure.md",
+        "verification/P02/codex-checkpoint-after-scratch-isolation-review-r1.md"
+      ]
+    },
+    {
+      "branch": "codex/P14",
+      "unique_commit_count": 2,
+      "unique_commits_head": [
+        "41c320694|2026-10-16|docs(P14): archive R3 review and R4 evidence",
+        "2222ed99c|2026-10-16|fix(P14): localize remaining region errors"
+      ],
+      "changed_files_vs_merge_base": 13,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "apps/desktop/frontend/src/bookshelf/error.ts",
+        "apps/desktop/frontend/src/workbench/RegionInspector.tsx",
+        "apps/desktop/frontend/src/workbench/ViewerPanel.tsx",
+        "apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx",
+        "apps/desktop/frontend/src/workbench/WorkbenchPage.tsx",
+        "verification/P14/boundary-evidence.md",
+        "verification/P14/checkpoint-20261016.md",
+        "verification/P14/disabled-entry-evidence.md"
+      ]
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "unique_commit_count": 2,
+      "unique_commits_head": [
+        "0aa01eddc|2026-10-17|docs(P15-C1-FU2): refresh handoff evidence pin",
+        "b0a056314|2026-10-17|docs(P15-C1-FU2): fix review head handoff"
+      ],
+      "changed_files_vs_merge_base": 2,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/handoffs/P15-C1-FU2-26fb0e7.md",
+        "doc/tasks/P15-C1-FU2.md"
+      ]
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "unique_commit_count": 1,
+      "unique_commits_head": [
+        "000cbfe99|2026-10-15|docs: prepare unreleased whole-product roadmap rebaseline"
+      ],
+      "changed_files_vs_merge_base": 40,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/00_INDEX.md",
+        "doc/12_ROADMAP.md",
+        "doc/REBASELINE_PLAN.md",
+        "doc/STATUS.md",
+        "doc/tasks/PROJECT-ROADMAP-REBASELINE.md",
+        "doc/tasks/README.md",
+        "verification/PROJECT-ROADMAP-REBASELINE/.gitattributes",
+        "verification/PROJECT-ROADMAP-REBASELINE/REPORT.md"
+      ]
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "unique_commit_count": 4,
+      "unique_commits_head": [
+        "e6fc3a59b|2026-09-26|docs(m2-c1): record fixed handoff commit",
+        "d18c86d91|2026-09-26|docs(m2-c1): hand off typed IPC contract for review",
+        "7d908a526|2026-09-26|docs(m2-c1): freeze typed IPC contract",
+        "b1915a324|2026-09-26|docs(m2-c1): register typed IPC contract task"
+      ],
+      "changed_files_vs_merge_base": 12,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/00_INDEX.md",
+        "doc/REBASELINE_PLAN.md",
+        "doc/STATUS.md",
+        "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "doc/handoffs/M2-C1-7d908a5.md",
+        "doc/tasks/M2-C1.md",
+        "doc/tasks/README.md",
+        "verification/M2-C1/01-release-preflight.log"
+      ]
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "unique_commit_count": 1,
+      "unique_commits_head": [
+        "daab1996b|2026-10-08|review: approve runner guard revision (DSH r2)"
+      ],
+      "changed_files_vs_merge_base": 2,
+      "legacy_paths": [],
+      "legacy_path_count": 0,
+      "referenced_by": [],
+      "sample_changed_files": [
+        "doc/reviews/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-8b867e02-dsh-r2.md",
+        "verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/review-dsh-r2/dsh-r2-static-checks.md"
+      ]
+    }
+  ]
+}
