@@ -30,7 +30,7 @@
 | `src/infrastructure/providers/runtime.py` | `ProviderRuntime.heavy_runner` 增加 `preferred_device=None / allow_cpu_fallback=True / supports_cpu_fallback=False` 关键字；`preferred_device is None` 时**原样**调用 `self.devices.run_guarded(requires_gpu=requires_gpu, call=call)`（零行为变化），否则转发扩展参数 |
 | `src/infrastructure/devices/manager.py` | `DeviceManager.run_guarded` 增加同三关键字；`preferred_device is not None` 时先调用 `self.plan(requires_gpu=..., supports_cpu_fallback=supports_cpu_fallback and allow_cpu_fallback, preferred_device=preferred_device)` 并让 `DeviceUnavailable` 直接传播，然后走既有 heavy gate / OOM 路径；`preferred_device is None` 时旧代码路径逐行不变 |
 | `tests/core/test_settings_b1_sections.py` | **新建**（60 tests）：白名单合法/规范化/边界；非法值、未知键、bool/int；`settings.update_section` 真实装配下的落库/拒绝/未设置 null 投影；保存后下一 Run 快照冻结（AC2/AC3 的前置条件） |
-| `tests/providers/test_handlers_b1_settings.py` | **新建**（r1 后 47 tests）：`_retry_policy_for_run` 有无 `tasks` 节/部分键/越域/非数字/非 Mapping 快照；两个 `run_chain` 调用点的 policy 来源；真实重试循环次数随 `tasks.retry_max_attempts` 变化；`_invoke_provider` → `heavy_runner` 偏好/回退参数矩阵（r1 起断言的 flags 来自 **descriptor**，替身实例不带属性）；OCR 端到端偏好 + descriptor `supports_cpu_fallback` 传递；真实 `DeviceManager` 链路回归（descriptor True + 无 GPU + 用户允许 → 实际执行；用户拒绝/descriptor False → `DeviceUnavailable` 且 call 未执行；`auto` 仍走未计划旧路径） |
+| `tests/providers/test_handlers_b1_settings.py` | **新建**（r1 后 48 tests）：`_retry_policy_for_run` 有无 `tasks` 节/部分键/越域/非数字/非 Mapping 快照；两个 `run_chain` 调用点的 policy 来源；真实重试循环次数随 `tasks.retry_max_attempts` 变化；`_invoke_provider` → `heavy_runner` 偏好/回退参数矩阵（r1 起断言的 flags 来自 **descriptor**，替身实例不带属性）；OCR 端到端偏好 + descriptor `supports_cpu_fallback` 传递；真实 `DeviceManager` 链路回归（descriptor True + 无 GPU + 用户允许 → 实际执行；用户拒绝/descriptor False → `DeviceUnavailable` 且 call 未执行；`auto` 仍走未计划旧路径）；OCR handler 端到端 CPU 回退实际执行 |
 | `tests/providers/test_devices.py` | 追加 10 tests：gpu 偏好 + GPU 不可用 + 不允许回退（用户关闭 / Provider 不支持 / 两者）→ `DeviceUnavailable` 且 call 未执行；允许回退 → 正常返回；CPU 偏好 → 正常返回且不探测 GPU；`auto` 不调用 `plan`；`auto` 保留历史"未计划 GPU 路径"；偏好路径保留 OOM 隔离 |
 | `tests/providers/test_registry_readiness.py` | **r1 返修追加 2 tests**：`descriptor()` 返回静态声明、未知 id 返回 `None`；binding alias 按 capability 翻译（错误 capability 与裸 id 不命中） |
 | `tests/core/test_core_service_settings.py` | 既有测试根因修复：`test_settings_commands_redact_paths_in_every_section` 的 pass-through 节列表移除已冻结的 `model_gpu`，并把 `model_gpu` / `tasks` 加入"路径形状 payload 在持久化前被拒绝"的强断言循环（§4.6） |
@@ -184,7 +184,7 @@ FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_
      - 同一 descriptor 但 `allow_cpu_fallback=False` → typed `DeviceUnavailable` 且 call **未执行**；
      - descriptor `supports_cpu_fallback=False` 且用户 `True` → 仍 `DeviceUnavailable`（相与语义，用户开关不能放大 Provider 能力）；
      - `auto`（无 `model_gpu` 节）+ descriptor 声明 GPU 要求 → 仍走旧未计划路径，实际执行（零行为变化非回归）；
-   - OCR handler 端到端：`FakeOcrProvider`（无 `supports_cpu_fallback` 属性）+ descriptor 声明 `True` → 断言送达 `heavy_runner` 的 `supports_cpu_fallback=True` 且 `requires_gpu=False`；
+   - OCR handler 端到端：`FakeOcrProvider`（无 `supports_cpu_fallback` 属性）+ descriptor 声明 `True` → 断言送达 `heavy_runner` 的 `supports_cpu_fallback=True` 且 `requires_gpu=False`；另一条用真实 `DeviceManager` + `gpu_state(available=False)` 走完整 `handle_ocr`：`gpu` 偏好 + `allow_cpu_fallback=True` → OCR 步骤**实际完成**（provider 被调用一次、`ocr_text` 产出），而非 `DeviceUnavailable`；
    - descriptor 与实例属性冲突时 descriptor 胜出；registry 无 descriptor 时实例属性作为后备；
    - `tests/providers/test_registry_readiness.py` 追加 2 tests：`descriptor()` 静态声明/未知 id、binding alias 按 capability 翻译。
 
@@ -199,11 +199,11 @@ FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_
 
 ```text
 PS> python -m pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q
-1251 passed, 3 skipped, 1 warning in 48.87s
+1252 passed, 3 skipped, 1 warning in 49.73s
 [exit code 0]
 ```
 
-原始输出：`core-pytest-r1-acceptance-raw.txt`。说明：当前工作区还包含 B-2 WIP 的未跟踪测试 `tests/core/test_core_cleanup_wire.py`（28 tests，非本 Task 范围，未改动）；B-1 自身的 r1 后子集为 **140 passed / 1 skipped**（下条），相较 r1 前 1212 passed 净增 39（B-1 新增 11 + B-2 WIP 28）。
+原始输出：`core-pytest-r1-acceptance-raw.txt`。说明：当前工作区还包含 B-2 WIP 的未跟踪测试 `tests/core/test_core_cleanup_wire.py`（28 tests，非本 Task 范围，未改动）；B-1 自身的 r1 后子集为 **141 passed / 1 skipped**（下条），相较 r1 前 1212 passed 净增 40（B-1 新增 12 + B-2 WIP 28）。
 
 目标子集（B-1 Core 文件 + registry descriptor 新用例）：
 
@@ -211,11 +211,11 @@ PS> python -m pytest tests/core tests/providers --ignore=tests/providers/test_de
 PS> python -m pytest tests/core/test_settings_b1_sections.py \
       tests/providers/test_handlers_b1_settings.py tests/providers/test_devices.py \
       tests/providers/test_registry_readiness.py -q
-140 passed, 1 skipped in 1.80s
+141 passed, 1 skipped in 2.55s
 [exit code 0]
 ```
 
-原始输出：`core-pytest-r1-targeted-raw.txt`。分文件：settings 校验 60、handlers/runtime 47（r1 前 38）、devices 21、registry readiness 12 + 1 既有 skip（其中新增 `descriptor()` 用例 2 条）。
+原始输出：`core-pytest-r1-targeted-raw.txt`。分文件：settings 校验 60、handlers/runtime 48（r1 前 38）、devices 21、registry readiness 12 + 1 既有 skip（其中新增 `descriptor()` 用例 2 条）。
 
 不含 ignore 的整目录结果（确认只剩既有环境失败）：
 

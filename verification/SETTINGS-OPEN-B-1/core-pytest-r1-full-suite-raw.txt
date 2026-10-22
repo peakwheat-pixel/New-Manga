@@ -23,7 +23,7 @@
 ........................................................................ [ 63%]
 ........................................................................ [ 66%]
 ........................................................................ [ 69%]
-.................................................s...................... [ 72%]
+..................................................s..................... [ 72%]
 ........................................................................ [ 74%]
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
@@ -386,8 +386,8 @@ file:///G:/CODEX/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeErr
 file:///G:/CODEX/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
 ........................................................................ [ 94%]
 ........................................................................ [ 97%]
-.....................................F.................................. [ 99%]
-.                                                                        [100%]
+......................................F................................. [ 99%]
+..                                                                       [100%]
 ================================== FAILURES ===================================
 ________________ test_real_detection_returns_block_candidates _________________
 
@@ -804,7 +804,7 @@ E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detecto
 src\infrastructure\providers\detection_manga.py:535: ProviderError
 ______________ test_pause_shows_optimistic_feedback_immediately _______________
 
-qapp_ = <PySide6.QtGui.QGuiApplication(0x1cb8ec02e60) at 0x000001CB8E714740>
+qapp_ = <PySide6.QtGui.QGuiApplication(0x22141bb7c30) at 0x0000022132011C40>
 
     def test_pause_shows_optimistic_feedback_immediately(qapp_):
         """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
@@ -836,7 +836,7 @@ qapp_ = <PySide6.QtGui.QGuiApplication(0x1cb8ec02e60) at 0x000001CB8E714740>
             qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
         )
 E       assert False
-E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x1cb8ec02e60) at 0x000001CB8E714740>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000001CBC3727ED0>, timeout_ms=15000)
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x22141bb7c30) at 0x0000022132011C40>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000022175E58510>, timeout_ms=15000)
 
 tests\workbench\test_workbench_viewmodel.py:210: AssertionError
 ============================== warnings summary ===============================
@@ -853,4 +853,4 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
 FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
 FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
-3 failed, 2583 passed, 9 skipped, 2 warnings in 188.11s (0:03:08)
+3 failed, 2584 passed, 9 skipped, 2 warnings in 172.73s (0:02:52)
