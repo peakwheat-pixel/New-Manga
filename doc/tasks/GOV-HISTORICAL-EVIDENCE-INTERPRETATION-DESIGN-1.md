@@ -3,7 +3,7 @@ id: GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1
 title: 五项历史证据精确解释与原子保全设计
 kind: design
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_next_step_20261022_design_only
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: 8274d969706ee99acfdd9e26ae281882f5bbd6c7
 branch: codex/gov-historical-evidence-interpretation-design-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1
 integration_commit: null
-delivery_head: null
+delivery_head: 88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1
@@ -40,9 +40,9 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1** 有界复核四源/五完整错误身份/原SHA、NUL/C0与模板上下文；正式12完整identity不变、旧保护集合不减。 <<PARTIAL: 待核>>
-- [ ] **AC2** 冻结精确schema/来源与行绑定、整源及原line227保护、三NUL空声明复核、原子发布与审计warning/恢复和拒绝矩阵，严禁通用忽略；binding specimen仅设计、不加载。 <<PARTIAL: 待设计>>
-- [ ] **AC3** 设计绑定与当前真实来源一致的只读assert校验、EV raw/blob/pin及实际登记、check/diff；planned运行测试不冒称executed，NOT_RUN分列。 <<PARTIAL: 待验证>>
+- [x] **AC1** 有界复核四源/五完整错误身份/原SHA、NUL/C0与模板上下文；正式12完整identity不变、旧保护集合不减。 <<MET>>
+- [x] **AC2** 冻结精确schema/来源与行绑定、整源及原line227保护、三NUL空声明复核、原子发布与审计warning/恢复和拒绝矩阵，严禁通用忽略；binding specimen仅设计、不加载。 <<MET>>
+- [x] **AC3** 设计绑定与当前真实来源一致的只读assert校验、EV raw/blob/pin及实际登记、check/diff；planned运行测试不冒称executed，NOT_RUN分列。 <<MET>>
 - [ ] **AC4** 固定head DeepSeek非作者Review通过、Codex集成/复验、资源原位保留核销与Task/STATUS/Plan/Handoff/恢复指针一致。 <<PARTIAL: 待审集成>>
 
 ## 验证计划
@@ -53,6 +53,13 @@ planned：Python -B/UTF8对canonical源字节/当前scan、设计binding字段�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+|EV-1|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/.gitattributes|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da|CANONICAL|
+|EV-2|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/binding-specimen.json|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|2111062dd98e730132ec2db4899a3efc399fe5fac5fffe09a8bff3aa2d0fbce3|CANONICAL|
+|EV-3|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/checkpoint.md|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|020f3426c22589a63a473282ce395095fe1a2bdfeac7cb4db98acdac4560ff4a|CANONICAL|
+|EV-4|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/design.md|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|0c94f6e8fabc2cf0b2400bf525a7023a57afd8d4cde3c575415e92fbe016cacc|CANONICAL|
+|EV-5|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/execution.json|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|d4303f95c5a4b4fec1cd051be087116173a3fc7ac840f8b46ec4958ef37b143f|CANONICAL|
+|EV-6|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/validate_design.py|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|838348a76c927c12c6c486ca59dca5270033ba98feb9f15f62ffee2512ed398a|CANONICAL|
+|EV-7|AC1/AC2/AC3/AC4|verification/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1/validation.json|88a8a7b0fb78c2ec04d74caca49cf2ce736a94f9|0e61fca31c90e9f5927d70b93ef2203c7c457caf7eff65d3b973703379d36dbc|CANONICAL|
 
 ## Resource Manifest
 
@@ -65,3 +72,7 @@ planned：Python -B/UTF8对canonical源字节/当前scan、设计binding字段�
 ## 运行与恢复
 
 冻结前main8274d9697，common G:/CODEX/New Manga/.git；Codex epoch9租约有效，先前dsh停止主控写入授权持续。旧作者文件不动，tracked clean；101heads/139WT，创建本Task资源后预计102/140，按r212全保留，父blocked且尚未只剩main。Task来源base和实际branch创建base分别记账；新WT缺untracked源，不替代canonical。可镜像自己的新E/Task/Handoff到main以精确pin/check，不镜像或改写旧源。
+
+实际分支创建base345c86857f6ea80153ead49271e84ff234a4963f，common目录一致，当前102heads/140WT；baseline12错误/1882保护根（含本Task两新资源），四源SHA与已审研究一致，6guard根均已有保护。新E只是设计样本与只读一致性断言，无运行配置/解析器改动；拟议12→7尚未运行。
+
+交付88a8a7b0f/真实Review diff base345c86857f6ea80153ead49271e84ff234a4963f。7EV raw/blob/pin固定；运行配置路径当前不存在、tools差异为空。样本canonical policy SHA-256=b7ce39be57d1e0ee4b682bbba5b7341a3448329f6f53c24b1eee359b0184cfd0（由严格JSON规范化计算，未来实现Task才冻结为代码常量）。设计数据assert/check/diff实际exit0；未来helper/12→7/+6声明/+4warning及T01–T18全NOT_RUN。当前真实12和四源原字节不变，102/140保留，父blocked/r212不变；下一固定head DeepSeek纯只读独审。
