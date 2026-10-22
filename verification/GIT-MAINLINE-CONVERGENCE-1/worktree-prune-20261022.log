@@ -1,0 +1,22 @@
+== before ==
+admin_dirs=41 (all orphans: gitdir file missing, ReadOnly attribute)
+worktrees=1 heads=1 archive_refs=21
+
+== attrib -R .git\worktrees\* /S /D ==
+cleared ReadOnly on 41 orphan admin dirs
+
+== git worktree prune -v (retry) ==
+Removing worktrees/<41 names>: gitdir file does not exist (all 41 removed)
+EXIT_CODE=0
+
+== after ==
+admin_dirs=0
+worktrees=1
+heads=1
+archive_refs=21
+tracked_dirty=0
+stash=0
+
+== integrity ==
+G:/CODEX/New Manga  9cb31430e [main]
+main

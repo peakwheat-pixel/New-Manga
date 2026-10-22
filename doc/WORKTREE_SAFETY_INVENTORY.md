@@ -349,3 +349,19 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 用户追加裁决删除旧主线 `antigravity/P09-AC3-DELETE-HARDEN-1`。核实已并入 main（独有提交 0）、未被检出后，先建 `refs/archive/antigravity/P09-AC3-DELETE-HARDEN-1` 保护引用（回验通过），再用 `git branch -d` 删除。
 
 **最终**：`refs/heads` 仅 **main**；注册 worktree 1；`refs/archive/*` 21。
+## Stage 18 孤儿工作树元数据 prune（2026-10-22，用户批准）
+
+用户批准执行 `git worktree prune`。执行前：`.git/worktrees` 下 **41 个 admin 目录全部为孤儿**（gitdir 文件不存在，对应工作树早已退出），但均带 ReadOnly 属性，首次 prune 全部 `Permission denied`。
+
+处置：`attrib -R .git\worktrees\* /S /D` 清除只读属性（只改属性，不删内容）→ 重试 `git worktree prune -v`：
+
+| 步骤 | 结果 |
+|---|---|
+| 首轮 prune | 41/41 失败（Permission denied） |
+| 清除只读属性 | 41 个目录属性改为普通 Directory |
+| 重试 prune | **41/41 删除成功**，EXIT 0 |
+| 终态 | `.git/worktrees` admin 目录 **0**；worktree 1；heads 1；archive refs 21 |
+
+**完整性复验**：`git worktree list` 仅主 checkout；`refs/heads` 仅 main；`refs/archive/*` 21 不变；tracked 工作区干净；声明审计 0 errors / 1983 保护根；治理检查 PASS。
+
+**未触碰**：未删除任何 Git 对象、ref 或工作树目录；仅清理已无对应工作树的元数据。
