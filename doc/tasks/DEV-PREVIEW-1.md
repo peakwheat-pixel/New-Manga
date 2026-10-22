@@ -130,6 +130,16 @@ B 档完整回归：编译 8.69s、窗口启动、production allowlist 正常、
 - 启动前清理「父进程已死」的本项目残留（`python -m bootstrap.core_service` / `infrastructure.resource_channel.host_bridge` 孤儿、使用本 UDF 的孤儿 `msedgewebview2`），实测强杀应用后 Core 子进程会自行退出，因此该清理为防御性措施。
 - 实测：实例 A 运行时锁被持有；实例 B 1 秒内退出且 A 不受影响；A 优雅关闭后锁释放。
 
+### WebView2 残留清理 + 自动重试 + A 档浏览器启动器（同日，`3190cc420`）
+
+用户实机连续失败，日志显示 `0x800700AA` 与 `unable to open database file` 成对出现。根因判定为 WebView2 profile 被残留 `msedgewebview2.exe` 锁住（崩溃或强杀后进程未退出），SQLite 错误是同一时刻的连带失败。
+
+- 启动前（持锁后）清理**所有**使用本 UDF 的 `msedgewebview2.exe`：持锁即证明不存在合法实例，故全量清理安全；不再只清理「父进程已死」者。
+- `cargo tauri dev` 退出码非 0 且输出含 `0x800700AA` 时，清理残留并**自动重试一次**（瞬时资源忙可自愈）。
+- `-ViteOnly` 就绪后自动打开浏览器；新增桌面启动器 `New Manga 浏览器预览.cmd`（A 档：不编译 Rust、不碰 WebView2/SQLite）。
+- 实测：B 档修复后正常启动（pid 6856）→ 优雅关闭 → 5188 释放、文件锁释放、无残留 pwsh；A 档 `http://localhost:5188` 返回 200 且 `index.html` 引用 `/src/main.tsx`。
+- 已知环境事实：Vite 在该机器上仅监听 IPv6 `::1`，`localhost` 可访问、`127.0.0.1` 不可达；`Test-OurVite` 的双栈探测已覆盖。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
