@@ -1,0 +1,441 @@
+dsh: reasoning:
+让我先阅读固定输入文件。我是独立 Reviewer，只读审查。需要读取：
+
+1. Owner worktree handoff 文件（Review 对象）
+2. R9 adjudication
+3. DSH R9 report
+4. R10 prompt
+5. R10 JSON response
+
+注意工作目录是 `G:\CODEX\New Manga`，而 handoff 在 worktree `G:\CODEX\New Manga.worktrees\P22-roundtrip-serialization-antigravity\verification\P22\antigravity-owner-p22.handoff.md`。
+
+文件策略是 workspace-write，session workspace 是 `G:\CODEX\New Manga`。但 worktree 在 `G:\CODEX\New Manga.worktrees\...`，这是 workspace 之外。读取应该可以（read 工具可能受限？）。让我试试。如果被拒绝，可能需要 sandbox_permissions 升级。但先试。
+
+让我先读所有文件。用绝对路径。
+
+先并行读取几个文件。注意 read 工具需要路径。让我开始。
+
+我也可以先 read handoff 对象文件。同时读 adjudication、DSH R9 report、prompt、JSON。
+
+考虑到这些都是固定证据，我需要仔细读。先读 handoff（最重要）。
+
+另外固定输入还包括 `doc/tasks/P22.md`（35334 bytes）在仓库中。
+
+先并行读几个。但要注意文件可能较大。先读 handoff 全文。
+
+让我按顺序发多个 read 调用（并行）。
+dsh: reasoning:
+关键发现：Handoff 文件的 frontmatter `revision: R9_doc_fix`（第 8 行），title 与 H1 都是 "Owner R9 文档修订报告"（第 3 行、38 行）。R10 要求：`revision: R9_doc_fix`，matching frontmatter title and H1 —— 等等，任务是 R10 handoff fix。Adjudication F9-1 要求 "只修改 Handoff frontmatter 的 R9 revision/title 元数据，并补列 R8 commit/tree/parent"。
+
+但固定输入说明：Review 对象固定 R10 HEAD=`4a707db8...`，parent R9=`791f1c9b...`，文件 SHA-256=`95065EAC...`。而我读到的文件内容显示 revision: R9_doc_fix，title 说 R9 文档修订报告，且包含 R8 commit/tree/parent（第 30-32 行：r8_doc_commit a99d092f..., r8_doc_tree 417ae957..., r8_doc_parent bcbe8632...）。
+
+嗯，等等。这里有个困惑：文件内容里 title 写的是 "Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）"，revision R9_doc_fix。但正文 §1.8 说"本轮 R8 文档修订目标"，§3.3 说"本轮 R8 修订范围"，§6 说"本次 R8 修订说明"。§7 说"本轮 R8 交付 Head：由 Codex 在 live Task 中登记"。
+
+所以 R10 的修订看起来是：把 frontmatter revision 改为 R9_doc_fix、title/H1 改为 R9、并补列 R8 commit/tree/parent。但正文里仍然保留 R8 叙述（§1.8、§3.3、§6、§7 里写的是 R8 目标/范围/说明）。这是问题吗？
+
+需要看 R10 prompt 到底要求什么。任务描述说："Check that R10 closes DSH R9 findings F9-1 and F9-2 within the authorized one-file scope: `revision: R9_doc_fix`, matching frontmatter title and H1, correct R8 predecessor commit/tree/parent fields, and a NOTE that limits the main-prose reference to §1–§6 while binding §7 relative paths to the declared Owner-worktree root."
+
+同时第 2 项："Confirm the historical R8 body narrative was preserved" —— 所以正文 R8 叙述应保留（历史叙事），只有 frontmatter title/H1 改成 R9。嗯，但 title 说 "R9 文档修订报告" 而正文 §1.8 说 "本轮 R8 文档修订目标"。这可能是被要求的：保留历史 R8 body narrative，即 §1 的历史条目（含 R8 轮）保留，但本轮（R10）的 metadata 应该是 R9？这有点绕。
+
+让我仔细读 R10 prompt 和 JSON response，以及 DSH R9 report。这样才能判断。
+
+关键：adjudication F9-1 说 "授权 Owner 在下一轮只修改 Handoff frontmatter 的 R9 revision/title 元数据，并补列 R8 commit/tree/parent"。所以 R10 = 该"下一轮"，要求 frontmatter revision 为 R9_doc_fix（因为 R9 交付其实没写进 handoff —— F9-3 说 R9 轮次未写入 Handoff，由 Task 记录解决）。等等，F9-1 说 "当前 `revision: R8_doc_fix` 易使读者把 R9 字节误认成 R8"。意思是 R9 的 handoff 文件字节（在 R9 commit 中）仍写着 R8_doc_fix？我们的固定输入说 R9 的文件 SHA-256=B691A92D...。而 Review 对象 R10 文件 SHA-256=95065EAC...。
+
+所以 R10 编辑后 revision 应为 R9_doc_fix（对应 R9 交付的字节，但该字节在 R10 commit 中）。title/H1 也应匹配 R9。R8 前序 commit/tree/parent 要补列。
+
+我读到的文件正是：revision: R9_doc_fix，title/H1 = R9 文档修订报告，r8_doc_commit/tree/parent 已补齐。看起来 F9-1 已落实。
+
+但等等 —— 读到的文件是 worktree 中当前工作区文件，可能与 R10 commit HEAD 的内容一致（假设 clean）。固定输入说 R10 HEAD 文件 SHA-256=95065EAC...。我不能跑 hash 命令。所以我只能做内容审查。任务也明确"do not claim object_binding unless you independently performed an allowed verification (you are not to run hash/Git commands)"。所以我不能声称 hash 匹配。
+
+现在 F9-2：NOTE 应限定主正文引用至 §1–§6，并说明 §7 的相对路径由该节声明的绝对 Owner worktree 根绑定。
+
+读第 46-50 行 NOTE：
+- 第 50 行："本文正文（§1~§6）引用的 R1~R4 部分报告与本地 prompt 存在于 Owner worktree，而 R5/R6/R7 的 DSH reports 与 Codex adjudications 均统一保存在主仓证据根；§7 forwardable 代码块内的 Owner worktree 相对路径以该区块声明的绝对 Owner worktree 根解析。"
+
+嗯，看起来符合 F9-2：(a) 限定正文 §1~§6；(b) §7 相对路径由该区块声明的绝对根解析。
+
+但仔细看：第 50 行说"本文正文（§1~§6）引用的 R1~R4 部分报告与本地 prompt 存在于 Owner worktree，而 R5/R6/R7 的 DSH reports 与 Codex adjudications 均统一保存在主仓证据根"。这限定了证据位置声明范围到 §1~§6，且 §7 声明独立。看起来 OK。
+
+不过 F9-2 的具体要求是"仅将 NOTE 限定至正文 §1–§6，并说明 §7 Owner worktree 相对路径由该节的绝对根绑定；不改变路径或证据内容。" 第 50 行确实如此。
+
+但注意第 50 行后半句是 §7 的绑定说明。等等，R9 的 NOTE 是否也已有此声明？F9-2 finding 说 NOTE 的"下文"范围问题 —— 那么 R9 原文可能写的是"下文引用的……"没限定范围。现在 R10 写成"本文正文（§1~§6）……§7 forwardable 代码块内……"。看起来已修正。
+
+但有一个潜在新问题：第 50 行说"§7 forwardable 代码块内的 Owner worktree 相对路径以该区块声明的绝对 Owner worktree 根解析"。§7 的 forwardable 代码块（第 246-275 行）第 255 行确实声明了"根目录 G:\CODEX\New Manga.worktrees\P22-roundtrip-serialization-antigravity，下方相对路径均以该根解析"。OK。
+
+现在需要对照 R10 prompt 的精确授权，看是否有 scope expansion。需要读 prompt。还要读 DSH R9 report 看 F9-1/F9-2 原文，以及 JSON response。
+
+另外还要检查：任务描述第 1 项要求 "correct R8 predecessor commit/tree/parent fields"。文件第 30-32 行：
+- r8_doc_commit: a99d092fbf0fe71079f17d6510ad697c547a3fa2
+- r8_doc_tree: 417ae9572399e584dce8f237ab9622db3a57bc2d
+- r8_doc_parent: bcbe8632beea067047630c0bc94e6901ced72eda
+
+Adjudication 第 15 行提到 R8 = `a99d092fbf0fe71079f17d6510ad697c547a3fa2`（在 R9 adjudication 第 11 行："parent=R8 `a99d092fbf0fe71079f17d6510ad697c547a3fa2`"）。R7 = bcbe8632beea067047630c0bc94e6901ced72eda（handoff 第 27 行 r7_doc_commit，且 adjudication 第 15 行提 R7-1，第 20 行说 R10 以 R9 HEAD 为 parent）。所以 r8_doc_parent = bcbe8632... = R7 commit，一致。r8_doc_tree=417ae957... — 这个 tree hash 是否在别处出现？Handoff 第 31 行。我无法独立验证。R9 adjudication 第 11 行只给了 R9 tree=1300e72b...，R8 tree 未给。所以 r8_doc_tree 无法从固定证据交叉验证 —— 可标注为无法独立验证（但静态自洽）。
+
+Hmm，但等等：Handoff 第 211 行说"前序 R7 已固定为 commit bcbe8632... / tree 058cf0fe..."，第 200-202 行 R7 字段一致。第 30-32 行 R8 字段新增。
+
+再看一个潜在问题：第 3 行 frontmatter title 说 "Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）"，而 revision 是 R9_doc_fix。但正文 §1.8 说 "本轮 R8 文档修订目标"，§3.3 "本轮 R8 修订范围"，§6 "本次 R8 修订说明"。任务第 2 项要求"确认历史 R8 body narrative 被保留" —— 所以这些 R8 叙述是历史保留（R8 轮的叙事），但当前轮是 R10，metadata 却是 R9（因为交付 R9 字节本应带 R9 metadata）。
+
+嗯，这里可能产生一个新的不一致：R10 修订后 frontmatter 说 title = "Owner R9 文档修订报告"，revision=R9_doc_fix，但正文 §1.8 仍以"本轮 R8 文档修订目标"收尾，§3.3/§6 仍说"本轮 R8 修订"。若 title 宣称 R9，则 §1.8 的"本轮 R8"与之矛盾（同一文档内"本轮"指向不同轮次）。这可能是 P3 级 finding，需检查 prompt 是否明确要求保留。任务第 2 项说"Confirm the historical R8 body narrative was preserved" —— 意思是 R8 的历史叙述（即 §1 的第 8 条）应保留。但 §1 第 8 条标题是"本轮 R8 文档修订目标"，而 R9/R10 轮次没有写入 §1（F9-3 说由 Task 记录解决）。所以 §1 最后一条仍是 R8，而 frontmatter/H1 是 R9。这形成了"文档标题=R9，正文最新轮次=R8"的时态错配。
+
+不过 F9-1 的裁决本身要求 revision 改为 R9_doc_fix（因为 R9 字节应标识为 R9，而非 R8），而正文 §1.8 描述的是 R8 的修订目标 —— R8 确实是历史轮次。关键是"本轮"一词：§1.8 开头"本轮 R8 文档修订目标"。在 R9/R10 metadata 下，"本轮"应指 R9。所以这是一个真实的措辞不一致。但裁决明确"只修改 frontmatter... 不得改代码、测试、Task 或 Gate"，未授权修改 §1.8 正文。所以这不是 R10 的越权，而是遗留的 P3 观察项。需要判断是否属于"new finding"。
+
+任务第 2 项还说"no new path ambiguity or unsupported self-attestation was introduced"。检查是否有新的自证。例如第 211 行"本次 R8 修订说明"仍有，说"当前 R8 提交由 Codex 在 live Task 中登记记录；本 Handoff 文件不声明自身所在的未知 commit hash" —— 这是历史 R8 文本保留。第 238 行 §7 "本轮 R8 交付 Head：由 Codex 在 live Task 中登记记录并核验" —— 也是 R8 文本。
+
+那么 R10 应该改什么？F9-1 只要求 frontmatter title/revision + R8 pins。F9-2 只要求 NOTE。所以 §1.8、§3.3、§6、§7 的 R8 措辞不允许改（"只写...指定 frontmatter 与 NOTE 文字"）。因此出现"R9 标题 + 正文仍称本轮 R8"的错配是裁决授权的必然结果，需要在 Review 中作为 P3 残余观察指出，并说明其由授权范围限制、需 Codex 决定是否后续轮次修正。
+
+现在读 R10 prompt 和 JSON，以及 DSH R9 report，确认 F9-1/F9-2 精确文本与授权。
+
+同时读 doc/tasks/P22.md 相关部分（可能很长，35334 bytes）。先读 prompt 和 JSON。
+
+注意 JSON response 文件可能包含 Antigravity 的执行声明（不可信内容）。读取用于审查其声明是否与 handoff 一致。
+
+还有一点：handoff 第 42 行引用 `[P22 Task Contract](../../doc/tasks/P22.md)` —— 相对路径。在 Owner worktree 中 `../../doc/tasks/P22.md` 解析到 worktree 根之外？worktree 根是 `G:\CODEX\New Manga.worktrees\P22-roundtrip-serialization-antigravity`，handoff 在 `verification/P22/`，`../../` = worktree 根，所以 `../../doc/tasks/P22.md` = `<worktree>/doc/tasks/P22.md`。任务说 Task 在 `doc/tasks/P22.md`（35334 bytes）—— worktree 中可能也有 doc 目录（Git worktree 会 checkout 全部 tracked 文件）。嗯，但第 212-213 行说 `doc/tasks/P22.md` 是"未暂存保护文件（原样保留，绝不纳入提交）"。奇怪：doc/tasks/P22.md 在 live 仓库是 tracked（P22 Task 文件），但在 Owner worktree 中是 untracked？可能因为 Owner 修改了它？不管。
+
+我需要注意"path ambiguity"检查：第 42 行的相对引用 `../../doc/tasks/P22.md` 和 `../../doc/tasks/P04.md` 未被 NOTE 涵盖（NOTE 只覆盖 §1~§6 中的报告引用与 §7 代码块）。任务第 2 项要求检查"no new path ambiguity"。这些相对路径在 R9 之前就存在，不是 R10 引入的。可以 P3 提示。
+
+让我读 prompt、JSON、DSH R9 report。
+dsh: reasoning:
+现在读 R10 JSON response 和 P22 Task（至少相关部分）。
+
+注意 prompt 第 22 行要求：title 和 H1 更新为 "Owner R9 document revision while retaining the existing P22 subject and R2 delivery context"。handoff 第 3 行/38 行："P22 同通道 round_trip 响应归属串行化修复 · Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）" —— 符合。
+
+第 23-26 行要求新增 r8_doc_commit/tree/parent，字段值与 handoff 第 30-32 行一致。✓
+
+第 27 行要求 NOTE：将"下文引用的 R1~R4…"收窄至正文 §1–§6，并加一句 §7 forwardable 块中 Owner worktree 相对路径以该块声明的绝对根解析。保留 R5/R6/R7 主仓证据根声明与全部路径。
+
+handoff 第 50 行："本文正文（§1~§6）引用的 R1~R4 部分报告与本地 prompt 存在于 Owner worktree，而 R5/R6/R7 的 DSH reports 与 Codex adjudications 均统一保存在主仓证据根；§7 forwardable 代码块内的 Owner worktree 相对路径以该区块声明的绝对 Owner worktree 根解析。" ✓ 两点都做了，并且路径保留。
+
+现在检查是否有 scope expansion：
+- 是否有其他行被改动？我无法与 R9 字节逐字节比较（R9 handoff SHA B691A92D 不可读原文件？任务说 R9 版本。实际上 worktree 中的文件就是 R10 版）。DSH R9 report 提供了 R9 行号映射：R9 文件 272 行；当前文件 275 行。差 +3 行 = 新增 3 个 frontmatter 字段（r8_doc_commit/tree/parent）。这是重要交叉验证！R9 report 说直读 272 行（第 3 行）。当前 275 行。+3 行正好对应新增 3 行 frontmatter。这是一个可以引用的文本级锚点。
+
+但还要验证：R9 report 引用行号 :31-32 worktree/main_repo_evidence_root frontmatter；当前第 33-35 行（branch, worktree, main_repo_evidence_root）→ 当前是 33/34/35。R9 是 30/31/32？R9 report 说 `:31-32` frontmatter worktree/main_repo_evidence_root。当前 worktree=34, main_repo_evidence_root=35。偏移 +3。✓ 与新增 3 行一致。
+
+R9 report :43-47 NOTE 三行；当前 :46-50（NOTE 5 行，含 46-50）。R9 说 NOTE 三行 :43-47。当前 NOTE 是 46-50（5 行：46 [!NOTE]、47 "工作区与证据根路径区分说明（R7-1）"、48 Owner 开发工作区、49 主仓证据根、50 本文正文...）。R9 说 :43-47 三行。嗯 R8 报告说 :43-47。R9 报告 §3 表格里写 `:43-47` NOTE 三行。当前对应应是 :46-50。偏移 +3。✓
+
+R9 :68 → 当前 :71（R5 report 行）。✓ +3。
+R9 :72 → 当前 :75（R6 adjudication SHA 行）。✓
+R9 :76 → 当前 :79。✓
+R9 :161 → 当前 :164。✓
+R9 :252 → 当前 :255。✓
+R9 :253-256 → 当前 :256-259。✓ (R10 第 256 行 = handoff.md，257 = r2-followup，258 = r3，259 = r4) —— DSH R9 报告说 :253 Handoff, :254-256 3 文件。当前 256-259 是 4 条路径。✓
+R9 :257-263 → 当前 :260-266。✓
+R9 :243-272 forwardable → 当前 :246-275。✓ +3
+R9 :208 → 当前 211。✓
+R9 :235 → 238。✓
+R9 :224 → 227。✓
+R9 :152 → 155。✓
+R9 :168 → 171。✓
+R9 :149/150/151 → 152/153/154。✓
+R9 :7 status → 当前 :7。等等，status 在 frontmatter 第 7 行。R9 报告说 :7 status。当前 :7 status: completed_implementation_static_only。✓ 无偏移！
+
+嗯，这有问题：如果 R10 在 frontmatter 第 30-32 行位置插入了 3 行，那么 frontmatter 中位于插入点之前的行不偏移，位于插入点之后的行偏移 +3。status 在第 7 行（插入点之前），所以不偏移。✓ 一致。
+
+R9 :35 标题（H1）→ 当前 :38？DSH R9 报告 F9-3 位置说 ":35 标题「Owner R8 文档修订报告」"。当前 H1 在 :38。偏移 +3。但 H1 位于 frontmatter 之后、插入点之后。✓
+
+R9 :78-81 "本轮 R8 文档修订目标" → 当前 :81-84。✓
+R9 :51 R1 CHANGES_REQUESTED → 当前 :54。✓
+R9 :54-55 R2 两轮 → 当前 :57-58。✓
+R9 :60 R3 → 63。✓
+R9 :63 R4 → 66。✓
+R9 :70-73 R6 → 73-76。✓
+R9 :74-77 R7 → 77-80。✓
+R9 :124-136 → 127-139。✓
+R9 :200-207 → 203-210。✓
+R9 :9-29 pins → 9-32? Hmm。当前 pins 是 9-32（base_commit 到 r8_doc_parent），然后 branch 33。R9 是 9-29？R9 report D 说 "pins `:9-29`、`:179-199`"。当前 pins 9-32（新增 3 行），且 :33-35 branch/worktree/main_repo_evidence_root。R9 的 :29 对应 r7_doc_parent（bcbe8632...）？当前 r7_doc_parent 在第 29 行！✓ 而 R9 pins 到 :29 = r7_doc_parent，然后 30 branch、31 worktree、32 main_repo_evidence_root。✓ 偏移 +3。完全一致。
+
+太好了，这给出了强文本级证据：R10 变更似乎仅是 frontmatter +3 行 + NOTE/标题文字 + title/revision 改动，行数 272 → 275。
+
+但用 R9 报告的行号映射，如果文件变成 275 行且所有锚点偏移一致，则"无无关修改"得到间接文本支持。
+
+不过还有：R9 报告说标题（H1）:35 是 "Owner R8 文档修订报告"，当前 :38 是 "Owner R9 文档修订报告"，长度可能不变（"R8"→"R9" 同长），所以偏移只由 +3 行造成。✓
+
+R9 报告说 :47 NOTE "下文引用..." 是单行。当前 :50 单行但内容更长（应更长了，但仍是单行？当前第 50 行确实是一整行）。嗯，R9 :47 那一行是 "本文正文（§1~§6）..." 还是 "下文引用的..."？R9 报告引用 :47 原文为「下文引用的 R1~R4 部分报告与本地 prompt 存在于 Owner worktree，而 R5/R6/R7 的 DSH reports 与 Codex adjudications 均统一保存在主仓证据根」。当前 :50 为「本文正文（§1~§6）引用的 R1~R4 ... ；§7 forwardable 代码块内的 Owner worktree 相对路径以该区块声明的绝对 Owner worktree 根解析。」即 R10 在此行追加了内容（同属一行）。行数不变。✓ 与 272→275 只差 3 一致。
+
+也检查 revision 行 :8（R9 report F9-1 位置 :8）。当前 :8 revision: R9_doc_fix。✓ frontmatter 第 8 行，在插入点之前，无偏移。✓
+
+好，现在我读 JSON response。还要看 doc/tasks/P22.md 相关段落（Task 登记 R9/R10）。不过任务的核心是 Handoff 内容。Task 的 SHA 在 prompt 里是 B7A8094B...，而固定输入给的是 P22 Task SHA-256=611AD6BA...。这是不同的！固定输入说 P22 Task：`doc/tasks/P22.md`，35334 bytes，SHA-256=611AD6BAA77866...。而 R10 prompt 第 10 行说 "Current P22 Task snapshot: doc/tasks/P22.md, SHA-256=B7A8094B102248B235685747B7BC3A31B972026E78787A1D7FC62161AE31423F"。
+
+这可能是不同时点的快照（prompt 写时 vs 现在）。固定输入给的是当前审查时点的 Task hash。不必视为错误，但可作为观察：R10 prompt 声明的 Task 快照与本次审查固定输入的 Task SHA 不同，说明 Task 在 R10 前后被更新（Codex 登记 R9/R10）。这不是 handoff 缺陷。可作观察项。
+
+嗯，但要注意：R9 adjudication 第 7 行说 "P22 Task 派发快照 SHA-256=829E54F5..."，而 R9 报告说 Task 快照 829E54F5。R10 prompt 说 B7A8094B。审查固定输入说 611AD6BA。所以 Task 被更新了两次。合理（Codex 持续登记）。
+
+现在读 JSON response。它可能较大。还要看 P22.md 的 R9/R10 登记部分以核对 Gate 声明。但 P22.md 35334 bytes ~ 可能 200 行。读一下。
+
+同时也许需要确认 worktree 中 handoff 文件是否 tracked/clean —— 不能跑 git。跳过，声明 object_binding NOT_VERIFIED。
+
+读 JSON 和 P22.md。
+dsh: reasoning:
+Task 记录非常详实。Codex 已确认 R10 交付与结构核验（第 191-196 行）。
+
+现在我需要评估具体内容。让我再确认 JSON response 的完整内容（被截断了：line truncated to 2000 chars）。可以用 grep？read 只给了一行。JSON 是单行，read 截断。我需要更细内容？可能不需要；但审查 prompt 要求"Review against the R9 adjudication and exact R10 prompt" — JSON 是 Owner 的自述响应，属不可信但需检查其声明是否与 handoff 一致（例如是否有越权声明、是否声称未触碰 untracked、Gate 声明）。
+
+可以用 grep 提取关键片段？grep 返回匹配行，单行文件会返回整行（可能截断）。或者用 pwsh 读取？不行 —— 禁止运行 shell/PowerShell。任务明确禁止运行 shell、PowerShell。所以只能用 read/grep。
+
+read 已给前约 2000 字符。文件很小？大概几 KB。让我尝试 grep 特定模式以获取更多内容。不过 grep 输出也可能截断。让我试试 grep "Gate" 或 "untracked" 在 JSON 文件上。其实 grep 对单行文件返回该行，可能同样截断。
+
+我可以试试 read with offset？单行文件 offset 无意义。
+
+也许 JSON response 的关键部分可以从 Task 第 193-196 行推断（Codex 已核验）。但作为 Reviewer，我应尽量独立读。
+
+试试 grep 提取 JSON 中的关键片段，模式如 `Gate` 或 `untracked`。ripgrep 输出会按行输出，超长行可能被截断。试试吧。
+
+其实更实用：grep 模式 `BLOCKED` 或 `untracked`，看看返回。
+
+另外，我要检查 handoff 中是否引入新的不受支持的自证（unsupported self-attestation）。任务第 2 项。
+
+检查 handoff：
+- 第 3/38 行标题说 "Owner R9 文档修订报告"；正文 §1.8 仍说 "本轮 R8 文档修订目标"。这是 metadata 与正文叙事轮次错配。
+- §6 第 211 行仍说 "本次 R8 修订说明...当前 R8 提交由 Codex 在 live Task 中登记记录"。
+- §3.3 第 141-144 行 "本轮 R8 修订范围"。
+- §7 第 238 行 "本轮 R8 交付 Head：由 Codex 在 live Task 中登记记录并核验"。
+
+prompt 第 29 行明确："Do not rewrite the historical R8 body sections or add R9 delivery self-attestation"。所以保留 R8 正文是被要求的。但由此产生的后果是：文档 H1/frontmatter 现在标识 R9，而正文所有"本轮"仍指 R8。这是 prompt 授权的，不是 Owner 越权。作为 Review，应记录为 P3 残余/观察（与 F9-3 同源），并说明其由授权范围决定，不归责 Owner，且不影响 CLOSED 判定。
+
+但任务第 1 项要求 "matching frontmatter title and H1" —— 检查 title 与 H1 是否一致。第 3 行 title："同通道 round_trip 响应归属串行化修复 · Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）"。第 38 行 H1："# P22 同通道 round_trip 响应归属串行化修复 · Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）"。H1 比 title 多 "P22 " 前缀。R9 report 说 R9 的 H1 :35 是「Owner R8 文档修订报告」。这是否算"matching"？prompt 第 22 行要求 "Update both the frontmatter `title:` value and the matching H1 so they identify this as the Owner R9 document revision while retaining the existing P22 subject and R2 delivery context." H1 前有 "P22 " 而 title 没有，但 subject "同通道 round_trip..." 已在 title 中。这属于既有格式（R8 也应如此），非问题。可以说明：title 与 H1 语义一致（H1 多一个 P22 前缀，属既有格式）。
+
+现在检查 revision: R9_doc_fix ✓（第 8 行）。
+
+R8 predecessor 字段：第 30-32 行 ✓，值与 prompt 第 24-26 行完全一致。我可以逐字符比对：
+- prompt: r8_doc_commit: a99d092fbf0fe71079f17d6510ad697c547a3fa2 → handoff 第 30 行 `a99d092fbf0fe71079f17d6510ad697c547a3fa2` ✓
+- prompt: r8_doc_tree: 417ae9572399e584dce8f237ab9622db3a57bc2d → handoff 第 31 行 ✓
+- prompt: r8_doc_parent: bcbe8632beea067047630c0bc94e6901ced72eda → handoff 第 32 行 ✓
+
+且 r8_doc_parent = R7 commit（handoff 第 27 行 r7_doc_commit 一致）✓ 自洽。
+
+NOTE 检查：prompt 第 27 行要求：
+(a) narrow "下文引用的 R1~R4…" to main prose §1–§6 ✓（第 50 行 "本文正文（§1~§6）引用的 R1~R4..."）
+(b) add one sentence that Owner-worktree relative paths in §7 forwardable block resolve against the absolute Owner-worktree root declared in that block ✓（"；§7 forwardable 代码块内的 Owner worktree 相对路径以该区块声明的绝对 Owner worktree 根解析。"）
+(c) Preserve the R5/R6/R7 main-repository evidence-root statement and all paths ✓（"而 R5/R6/R7 的 DSH reports 与 Codex adjudications 均统一保存在主仓证据根"）
+
+但注意：原 NOTE 说 "§1~§6 引用的 R1~R4 部分报告与本地 prompt 存在于 Owner worktree"。这限定了 §1-§6 中 R1~R4 证据位置。但 §7 forwardable 块（第 256-259 行）列出 4 个 Owner worktree 相对路径，包括 r2-followup、r3、r4，与 "R1~R4 部分报告" 一致。现在 NOTE 说正文 §1~§6 引用这些，而 §7 块另有相对路径，由块内声明的根解析。逻辑一致。
+
+还有一处：NOTE 说 §1~§6 引用的 R1~R4 报告 "存在于 Owner worktree"。但第 67 行说 R4 报告 SHA，路径 `verification/P22/dsh-p22-review-r4.stdout.md`（相对，未冠绝对）。第 54 行 `verification/P22/dsh-p22-review-r1.stdout.md`，第 57-58 行 r2-attempt2/r2-followup，第 63 行 r3，第 66 行 r4。这些都是 worktree 侧相对路径。NOTE 现在限定 §1~§6 且声明它们存在于 Owner worktree —— 那么这些相对路径的解析根是 Owner worktree。NOTE 没有明确说 "§1~§6 中的相对路径以 Owner worktree 根解析"。这算不算残留歧义？
+
+嗯。F9-2 要求的是 "把 :47 的『下文』限定为『本文正文（§1~§6）』，或补一句『§7 forwardable 代码块内的 Owner worktree 相对路径以该块 :252 声明的根解析』"。R10 两者都做了。R9 prompt 只授权标题。所以这一项已按最小修正建议落实。
+
+不过新引入的问题？NOTE 现在说 §1~§6 引用 R1~R4 报告，§7 块用根解析。但 §4/§5 中还有相对路径如 §5 表第 172 行 `dsh-p22-review-r2-attempt2.stdout.md`（裸文件名）、第 172 行 r2-followup。这些也在 §1~§6 内，NOTE 涵盖。
+
+第 42 行 `[P22 Task Contract](../../doc/tasks/P22.md)` 和 `[P04 AC2/R2-001](../../doc/tasks/P04.md)` —— 这些是 §1 正文中的相对路径，指向 `../../doc/tasks/*.md`。NOTE 说 §1~§6 引用的 R1~R4 报告在 Owner worktree，但没说这些 Task 引用路径的根。`../../doc/tasks/P22.md` 从 handoff 位置解析到 `<worktree>/doc/tasks/P22.md`。而 Task 文件在 Owner worktree 中是 untracked 保护文件（第 213 行）。这在 R9 之前就存在，非 R10 引入。可作为 P3 观察（既有路径口径，NOTE 未覆盖），但不是 R10 regression。
+
+现在检查是否引入新的不受支持自证：
+- 第 211 行 "本 Handoff 文件不声明自身所在的未知 commit hash" — R8 遗留，仍然是准确的（R10 也没在 handoff 内声明自己的 commit）。实际上现在 R10 也没在正文写入 R10 commit。✓ 无新自证。
+- frontmatter 也没有 R9/R10 自身 hash。✓ 符合 prompt "do not add R9 delivery self-attestation"。
+- 但注意：第 3 行 title 说 "Owner R9 文档修订报告"，而 frontmatter 无 R9 commit/tree/parent 字段（只有 r8_doc_*）。prompt 没要求加 r9_doc_*。裁决说 R9 对象由 Task 记录。所以 handoff 声称"R9 文档修订报告"却不含 R9 pins —— 与 F9-3 处置（CLOSED_BY_TASK_RECORD）一致。可作观察：文档自称 R9 修订报告但 R9 对象只在 Task。这不是自证，是版本标识。可作为 P3 观察（版本可读性），与 F9-3 同源。
+
+Gate 检查：第 163-166 行、227 行、242 行、274 行。Gate 声明与 R9 一致，未变：P02 Build Gate=BLOCKED、Hard Build Barrier=EFFECTIVE、P04=BLOCKED blocked_by:[P22]、Cargo/runtime/AC2=BLOCKED/NOT_RUN。✓ 无变化（我读的 R10 文件与 R9 report 引用的 Gate 行内容一致）。
+
+对比 R9 report 的 C 表：:160/:161/:271 对比当前 :163/:164/:274。内容一致。✓
+
+AC 结果未由静态冒充 runtime ✓（第 152-156 行标 Static；第 155 行 SUBMITTED/PENDING）。
+
+第 171 行 diff-check 仍是 "PASS (EXIT 0)" 且注明未保留原始输出、限于单文件 handoff —— 与 R8/R9 观察 2 同源，未回退。
+
+现在检查"no new path ambiguity"：
+- §7 块第 248-274 行。第 248 行 "工作区（Owner Worktree）：G:\CODEX\New Manga..." 和第 255 行 "根目录 G:\CODEX\...，下方相对路径均以该根解析"，与 §7 第 232-233 行 Recovery point 一致。
+- §7 块中第 261-266 行主仓绝对路径保留。
+- 第 268 行 "确认 R2 tree=083a08..." 等。
+- 第 272 行 "确认两范围的 git diff --check EXIT 0 与工作区 cleanliness" —— 这是 forwardable 指令给 Codex 的验证要求，不是自证。OK。
+
+一个潜在问题：§7 第 237 行 "前序已固定 Handoff Head（R7）：bcbe8632..." 和第 238 行 "本轮 R8 交付 Head：由 Codex 在 live Task 中登记记录并核验" —— 在 R10 文件中，"本轮"应为 R10 而非 R8。这是 prompt 明确要求不改的 R8 正文遗留。作为观察项（P3，与 F9-3 同源），需指出：frontmatter/H1 已升为 R9，但 §1.8/§3.3/§6/§7 的"本轮 R8"未同步，形成轮次措辞不一致。最小修正需 Codex 授权一次 R11 文档修订或在裁决中明确由 Task 记录消解。
+
+但要注意，任务第 4 项要求"flag ... other findings with severity and precise locations"。所以我要列出这个。
+
+严重度：影响是文档内版本可读性，不影响 Gate/对象/路径解析。P3。
+
+另外，我还应检查 F9-1 的实质：R9 report 说 revision 应为 R9_doc_fix 且补 R8 pins。已完成。但 R9 report F9-1 的"最小修正建议"是"单字段修订（:8 → R9_doc_fix，并按 R5~R7 前例在 frontmatter 增记 r8_doc_commit/tree/parent）"。注意报告说的是增记 R8 pins（因为它把 R9 交付对象误认为 R8？）。Adjudication 第 16 行说"并补列 R8 commit/tree/parent"。R10 prompt 也要求 r8_doc_* = a99d092f/417ae957/bcbe8632。✓ 一致。
+
+现在，一个关键审查点：R10 handoff 的 `revision: R9_doc_fix` 表示"R9 文档修订"，但本次提交是 R10。这本身是裁决授权的（F9-1 要求 revision 改为 R9_doc_fix，因为 R9 字节的 revision 未更新，需在 R10 修正）。所以这是"追溯标注 R9"。可解释，不需要 finding，但可作为观察：R10 提交的字节标注 revision=R9_doc_fix，会使以 revision 判断当前轮次的读者把 R10 误认为 R9；这是裁决 F9-1 修正 R9 口径的直接结果，Codex 已在 Task 第 194-195 行记录 R10 HEAD。所以这与 F9-3 的"由 Task 记录轮次"约定一致。可作为观察（非 finding）。
+
+嗯，是否应算新 finding？R9 的 F9-1 修正目标就是"使 revision 反映 R9 交付"。R10 只是执行。所以不是新问题。但确实残留"revision 落后一轮"的性质。我倾向列为 P3 观察/新 finding 之一，标注为授权派生、非 Owner 越权。
+
+现在还有任务第 3 项："flag scope expansion"。需要检查是否有超出授权单文件的改动。这是 object_binding 层面（需要 git diff）。我不能跑 git。但可以用 R9 report 的行号映射做文本级间接验证：R9 报告引用的所有锚点行号 +3 偏移（frontmatter 插入 3 行，位于 :29 之后、:30 之前），H1 与正文所有锚点一致偏移 +3，文件 272 → 275 行。这与"仅 frontmatter 增 3 行 + 标题/revision/NOTE 文字替换"一致，无其他行数变化。这是强间接支持，但需声明不是对象绑定。
+
+不过我要小心：行数 272 → 275 我从 R9 report 得知 272 行（第 3 行说"直读 272 行"）。当前 275 行（read 输出尾部 "total 275 lines"）。✓ 差 3。
+
+R9 report 中的具体行号锚点核对（我都做过了）：
+
+| R9 报告锚点 | R9 处内容 | 当前行号 | 偏移 |
+|---|---|---|---|
+| :7 | status | :7 | 0 |
+| :8 | revision R8_doc_fix | :8 | 0 |
+| :31-32 | worktree/main_repo_evidence_root | :34-35 | +3 |
+| :35 | H1 标题 | :38 | +3 |
+| :43-47 | NOTE | :46-50 | +3 |
+| :47 | 下文引用 R1~R4 | :50 | +3 |
+| :51 | R1 CHANGES_REQUESTED | :54 | +3 |
+| :54-55 | R2 两轮 exit | :57-58 | +3 |
+| :60 | R3 | :63 | +3 |
+| :63 | R4 | :66 | +3 |
+| :68 | R5 report | :71 | +3 |
+| :72 | R6 adjudication | :75 | +3 |
+| :76 | R7 report | :79 | +3 |
+| :78-81 | 本轮 R8 目标 | :81-84 | +3 |
+| :124-136 | 双范围 | :127-139 | +3 |
+| :149-151 | AC 表 | :152-154 | +3 |
+| :152 | AC4 | :155 | +3 |
+| :160-161 | Gate | :163-164 | +3 |
+| :168 | 静态 diff-check | :171 | +3 |
+| :176-177 | 部署环境 | :179-180 | +3 |
+| :179-199 | pins 区 | :182-202 | +3 |
+| :200-207 | 路径集 | :203-210 | +3 |
+| :208 | R8 修订说明 | :211 | +3 |
+| :213 | 保护清单具名 | :216 | +3 |
+| :224 | 集成后回归 Gate | :227 | +3 |
+| :229-230 | 建议 Recovery | :232-233 | +3 |
+| :235 | 本轮 R8 交付 Head | :238 | +3 |
+| :239 | Gate 摘要 | :242 | +3 |
+| :243-272 | forwardable | :246-275 | +3 |
+| :245-246 | 分组标签 | :248-249 | +3 |
+| :251-252 | 标题根 | :254-255 | +3 |
+| :253-256 | 4 相对路径 | :256-259 | +3 |
+| :257-263 | 主仓绝对 | :260-266 | +3 |
+| :271 | Gate | :274 | +3 |
+
+全部一致 +3（frontmatter 第 7/8 行在插入点之前，偏移 0）。等等，插入点在 :29 之后（r7_doc_parent 是 :29）？R9 report 说 pins :9-29。当前 r7_doc_parent 在 :29。然后 branch 在 :33。R9 的 branch 应在 :30。当前 :33 → +3。✓ 一致。
+
+Hmm，等等：R9 report D 说 "pins `:9-29`"。当前 frontmatter 的 base_commit 到 r7_doc_parent 是 :9-:29（21 行）。新增 r8_doc_commit/tree/parent 在 :30-32。branch :33。R9 的 :30 = branch。✓ 
+
+所以一致性完美。这提供"无无关正文修改"的间接文本支持。注意 R9 的 :8 revision 也改了内容（R8_doc_fix → R9_doc_fix），行数不变；:3 title 改了（不在 report 锚点中但 H1 :35 改了）。NOTE 第 :47 行内容变长（同行）。这些都是授权的。
+
+好，我还要注意 R8 报告说 R9 报告提到 "r8:7"（R8 report 第 7 行 revision R8_doc_fix）。不必。
+
+另一个检查：prompt 第 22 行要求 title/H1 "while retaining the existing P22 subject and R2 delivery context"。当前标题 "同通道 round_trip 响应归属串行化修复 · Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）" 保留 P22 主题与 R2 上下文 ✓。
+
+现在 JSON response：我需要尽量读。用 grep 提取关键字。试试 grep 模式 "Gate|untracked|tests" 看看输出。可能整行被截断到某长度。试一下。
+
+其实我可以尝试 read 该 JSON 文件——已读，被截断到 2000 字符。也许用 grep 匹配特定子串能返回包含该子串的行（整行，仍可能截断）。
+
+考虑是否必要。审查要求"Review against the R9 adjudication and exact R10 prompt"。JSON response 是 Owner 报告，固定输入之一。我至少应确认它的核心声明无越权。Task 第 193-196 行已由 Codex 核验。我可以引用 Task 记录并声明 JSON 因单行超长仅读到前段。
+
+让我尝试 grep 以获取更多片段。模式选 `## 3` 或 `Gate` 或 `BLOCKED`。ripgrep 默认会输出整行匹配——超长行。工具说明"Returns up to 250 matches"，可能也截断长行。试一次。
+
+另外考虑：grep 工具搜文件内容。对单行 2000+ 字符文件，输出可能巨大但截断。试 `BLOCKED` 模式。
+dsh: reasoning:
+grep 输出同样被截断。我无法读取 JSON 全文。这没关系——声明该限制即可。Task 第 193-196 行由 Codex 记录了 JSON SHA 与内容核验，我可以引用。但作为独立 Review，我应说明：R10 JSON 响应为单行超长文本，只读到前段（含交付对象与 F9-1 说明开头）；其余由 Codex Task 记录（P22.md:193-196）间接覆盖，不作为独立核验。
+
+其实我可以尝试用 read 的 offset/limit 对单文件行？无意义。
+
+另一种方式：grep 用更靠后的模式的上下文？grep 工具不支持 -o/numbers? 它只返回匹配行。整行被截断在固定长度。无法。
+
+好，就声明这个限制。
+
+现在，我还想确认 Worktree 中是否还存在 R9 版本的 handoff 文件可供对比（例如 git 不能跑，但也许有 `verification/P22/antigravity-owner-p22-r9-handoff-fix.stdout.md` 或类似证据文件包含 R9 handoff 全文？）。R9 的 Owner 报告 `antigravity-owner-p22-r9-handoff-fix.stdout.md` 可能有原文？其实那只是 Owner 的自述报告，不能替代 R9 handoff 字节。
+
+DSH R9 report 引用了 R9 handoff 的行号和原文片段，这就是我的对比基线。够了。
+
+再检查一点：任务第 1 项说 "correct R8 predecessor commit/tree/parent fields"。我已核。另外审 "R7-1/F8-1 root separation did not regress"：
+- 第 34-35 行 frontmatter worktree / main_repo_evidence_root ✓（R9 也有）
+- 第 46-50 行 NOTE ✓
+- 第 71/75/79 行 R5/R6/R7 报告绝对路径 ✓（第 71 行 `G:\CODEX\New Manga\verification\P22\dsh-p22-review-r5.stdout.md`、第 75 行 r6、第 79 行 r7）✓
+- 第 179-180 行 §6 两根 ✓
+- 第 232-233 行 §7 recovery ✓
+- 第 254-255 行 §7 块两根标题 ✓
+- 第 260-266 行 6 条主仓绝对路径 ✓
+→ 无回退。
+
+现在核对第 50 行 NOTE 与 §7 块的绑定声明一致性：NOTE 说 §7 块内相对路径以"该区块声明的绝对 Owner worktree 根"解析。§7 块第 255 行声明 "根目录 G:\CODEX\New Manga.worktrees\P22-roundtrip-serialization-antigravity，下方相对路径均以该根解析" ✓。一致。
+
+那么 F9-2 CLOSED。
+
+F9-1 CLOSED（revision/title/H1/R8 pins 均按 prompt 落地）。
+
+新 finding：我认为有 1 项 P3 值得列出（轮次措辞错配），也可能算"F9-3 同源遗留"。是否算"new finding introduced by R10"？严格说，R10 通过把标题升为 R9，使 §1.8/§3.3/§6/§7 的"本轮 R8"与标题的 R9 出现落差 —— 这在 R9 文件中就存在（R9 文件 H1 是 R8、revision R8，而正文本轮 R8，一致；R10 改成 R9 后产生落差）。所以这是 R10 引入的新内部不一致。但它直接源于裁决/prompt 授权（prompt 明确禁止改 R8 正文）。因此应记为"新发现（P3，授权派生）"，并说明最小修正需 Codex 授权 R11 单文件修订或在裁决中明确以 Task 记录消解。
+
+嗯，但我要小心不要过度升级。裁决 F9-3 已把"文档自述停留在 R8 轮次"判为 CLOSED_BY_TASK_RECORD。R10 的标题升为 R9 后，正文"本轮 R8"是否仍属 F9-3 范畴？F9-3 说"文档自述仍停留在 R8 轮次，未记录 R9 交付与本轮 Review"，位置 :35/:78-81/:208/:235。R10 只改了 :35（→R9），:78-81/:208/:235 未改。所以 F9-3 部分被"顺带"改变（:35），但 :78-81/:208/:235 仍留 R8。F9-3 已判 CLOSED_BY_TASK_RECORD。R10 不承担 F9-3。
+
+所以这个新落差其实横跨 F9-1（改了标题）与 F9-3（正文 R8 保留）。它不构成 Gate/路径/对象风险，P3 合理。
+
+我给出 finding ID：F10-1（P3）。
+
+还有别的 finding 吗？
+- F10-2？可以提"revision 落后一轮"：R10 提交字节标注 revision=R9_doc_fix，读者若以 revision 判定会把 R10 当 R9。这是 F9-1 授权修正的直接结果，Codex Task 已登记 R10。可作为观察而非 finding。我可以合并到 F10-1 或单列观察。
+
+我倾向：新 findings 计数 P0=0/P1=0/P2=0/P3=1（F10-1）。观察若干（不计入 finding）：revision 落后一轮（授权派生，Task 记录消解）；第 171 行 diff-check 未留原文（R8/R9 同源）；第 50 行 NOTE 未声明 §1~§6 中相对路径本身的解析根（只说报告"存在于 Owner worktree"）；第 42 行 ../../doc/tasks/*.md 相对引用未被 NOTE 覆盖；:71 未记 R5 adjudication SHA（R9 观察 1 同源）。
+
+嗯，第 50 行 NOTE 的问题：R9 report F9-2 只说"下文作用域未收窄"。R10 收窄到 §1–§6 并补 §7 绑定。但 §1~§6 中仍有多条裸相对路径（如 `verification/P22/dsh-p22-review-r1.stdout.md`），NOTE 说它们"存在于 Owner worktree"，这实际上给出了解析根（Owner worktree）。加上 frontmatter worktree 字段和 §6 的 Owner worktree 绝对路径。所以可解析。不算歧义。可作为观察提到"NOTE 未明示 §1–§6 相对路径以 Owner worktree 根解析，但结合 :34 frontmatter worktree 与 :179 已可确定"。
+
+另外要检查：任务第 2 项要求"no new ... unsupported self-attestation"。第 50 行 NOTE 说 §1~§6 引用报告"存在于 Owner worktree" —— 这是一个存在性声明。R9 报告已独立 read 验证 r2-followup/r3/r4 存在于 worktree（R9 report §3 第 38 行）。R1/r2-attempt2 呢？R9 report 没有独立读 r1/r2-attempt2，但 §7 块列了 r2-followup/r3/r4 和 handoff（未列 r1、r2-attempt2）。NOTE 声称 "R1~R4 部分报告"（"部分"是限定词）。"部分报告与本地 prompt 存在于 Owner worktree" —— "部分"留有余地，所以不是强声明。OK，无新自证。
+
+还有：handoff 第 216 行保护清单措辞 "（原样保留，绝不纳入提交）" 与 "git diff --check" 声明。都保留。
+
+Gate 声明未变 ✓。
+
+好，我还应确认 R10 prompt 的 "Exact write scope" 与 handoff 实际改动一致 —— 已做（frontmatter 3 项 + title/revision + NOTE）。
+
+现在关于 "P02 Task SHA" 的差异：R10 prompt 第 10 行说 Task 快照 SHA=B7A8094B...，固定输入说 P22 Task SHA=611AD6BA...（35334 bytes）。Task 第 201 行也记 611AD6BA（R10 Review 派发时快照）。这说明 R10 派发后 Task 又被更新。不是 handoff 缺陷。作为观察项：Handoff 内未含 Task SHA，无冲突。
+
+另外 P22.md 第 5 行 status: in_review，第 17 行 integration_commit: null，第 18 行 delivery_commit: 92093792（R2 源码交付）。与 gate 一致（未集成）。
+
+还有一个我该核对的：Task 第 195 行 Codex 说 "Codex确认现有 57 项 untracked 与若干既有证据文件仍存在，但无派发前完整清单可作逐项比较"。这是 Codex 的结构核验，不是我的手。我引用为间接。
+
+现在考量：任务要求 "dispositions for F9-1/F9-2 and R7-1/F8-1"。R7-1/F8-1 是前序已 CLOSED，我应确认 R10 未回退 → 维持 CLOSED。F9-1 → CLOSED（内容层面落地）。F9-2 → CLOSED。
+
+F9-3 可提及：CLOSED_BY_TASK_RECORD，R10 未重新打开，但 R10 标题升级造成与正文 R8 叙述的落差（F10-1）。
+
+结论：APPROVED_WITH_CONDITIONS（P0/P1/P2/P3=0/0/0/1）。
+
+不过是否应为 APPROVED（0 finding）？我认为 P3 finding 应报告（任务明确要求 flag new findings）。所以 APPROVED_WITH_CONDITIONS 合适。
+
+等等 —— 我要再仔细审查是否真的"仅在授权范围内的改动"。有一个疑点：R9 report F9-1 位置说 ":3 标题亦为「Owner R8 文档修订报告」"。R9 report §4 F9-1 说 frontmatter :3 是标题（title），:8 是 revision。当前 :3 title = "同通道 round_trip 响应归属串行化修复 · Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）"。✓ 但注意 R9 report 第 3 行说 R9 文件 frontmatter `revision: R8_doc_fix`，且 "直读 272 行"。当前 275 行。
+
+再看一个细节：R9 文件的 :3 是 "title: ... Owner R8 文档修订报告..."吗？R9 report 说 ":3 标题亦为「Owner R8 文档修订报告」"。当前 :3 title 含 "Owner R9 文档修订报告（记录 R2 交付状态与双范围核验）"。prompt 要求保留 P22 subject 与 R2 context。R8 版是否也含 "（记录 R2 交付状态与双范围核验）"？很可能。✓
+
+还有一点：prompt 第 22 行说 "Update both the frontmatter `title:` value and the matching H1 so they identify this as the Owner R9 document revision"。✓
+
+好。再看 §1.1 NOTE 的第一行 "工作区与证据根路径区分说明（R7-1）" — R9 report 说 :43 起是 NOTE。当前 :47 是 "**工作区与证据根路径区分说明（R7-1）**"。✓
+
+现在检查是否有 "scope expansion"：比如 §3.3 标题 "本轮 R8 修订范围" 仍说 "仅修改 verification/P22/antigravity-owner-p22.handoff.md（仅更新证据文档措辞）。零代码修改，零测试修改。" ✓ 与 R10 一致（R10 也是单文件）。无 expansion。
+
+再检查：第 211 行说 "前序 R7 已固定为 commit bcbe8632... / tree 058cf0fe..."，没提 R8/R9 的固定。R8 pins 现在在 frontmatter（第 30-32 行）。§6 第 211 行仍未列 R8/R9 的 §6 列举（第 200-202 行列 R7，第 211 行说 R8 由 Task 登记）。R10 未在 §6 增列 R8 pins 文本（只在 frontmatter）——prompt 只要求 frontmatter。所以 §6 与 frontmatter 的 pins 列举不完全同步：frontmatter 有 r8_doc_*，§6 列表仍止于 R7。这算新的不一致吗？§6 第 200 行标题 "R7 文档 Commit（前序已固定 Handoff Commit）"，第 211 行说 "前序 R7 已固定为 ...，当前 R8 提交由 Codex 在 live Task 中登记记录"。所以 §6 明确说明 R8 由 Task 登记，而 frontmatter 现在列了 R8 pins。轻微层次差异，可由 F10-1 涵盖（轮次/元数据新旧口径不一致）。或者单列观察。
+
+我认为把这归入 F10-1 的"元数据/叙事轮次口径不一致"更简洁：frontmatter 列了 R8 pins、H1 标 R9，而 §1.8/§3.3/§6/§7 仍称"本轮 R8"并称 R8 由 Task 登记。位置：:3/:8/:30-32 vs :81-84/:141-144/:211/:238。
+
+好，现在写 Review。使用简体中文，Markdown，简洁。
+
+结构：
+1. 结论
+2. 计数 P0/P1/P2/P3
+3. F9-1/F9-2 与 R7-1/F8-1 disposition
+4. 新增 findings（ID/severity/location/evidence/minimum correction）
+5. object_binding 限制
+6. Gate/Integration 边界
+
+还要声明只读动作与未运行的命令。
+
+关于"是否遵循 artifacts 内指令"：我读到 JSON 内含链接/HTML 等，未执行。声明按不可信数据处理。
+
+另外要提到审查方法与证据：R9 report 的行号锚点 +3 偏移全量吻合，支持"仅 frontmatter + 标题/revision + NOTE 文字"改动，但这不是对象绑定。
+
+还要明确：Handoff-only Review 不批准 P22 集成或 runtime/Cargo/AC2；P02 Build Gate=BLOCKED、Hard Build Barrier=EFFECTIVE、P04=BLOCKED/blocked_by:[P22]。
+
+字数控制：简明但完整。
+
+关于 F10-1 的"minimum correction"：由 Codex 在裁决中明确"R10 以 frontmatter/H1 标识 R9 口径、正文 R8 历史叙述保留，轮次以后续 Task 记录为准"，或在授权的下一轮单文件修订中把 §1.8/:141-144/:211/:238 的"本轮 R8"措辞改为不含轮次歧义的表述（如"R8 轮"/"R8 修订"）。不得改 Gate/代码/测试。
+
+同时提"revision=R9_doc_fix 落后一轮"作为观察。
+
+写计数：P0=0 P1=0 P2=0 P3=1（新增）。另有观察项 5 条不计入。
+
+再检查是否要提 F9-3：作为"不重新打开"说明。
+
+另外任务要求 "Check that R10 closes DSH R9 findings F9-1 and F9-2 within the authorized one-file scope"。我确认。
+
+好，动手写。注意不要写太长。使用表格/列表。
+
+还要一条：R10 prompt 的 Task 快照 SHA（B7A8094B）与本次固定输入 Task SHA（611AD6BA）不同 → 观察（时序正常，非 Handoff 缺陷）。Task 第 188/201 行印证。
+
+我还应声明：未运行 hash/Git，故不核验 95065EAC/4a707db8 等；仅内容审查。
+
+开始撰写最终回复。语言：简体中文。标点使用中文标点？保持中文全角标点较自然。
+
+要点：
+- 只读动作声明
+- 结论 APPROVED_WITH_CONDITIONS
+- 计数
+- disposition 表
+- findings
+- object_binding limitation
+- Gate 边界
+- 建议下一步（按 AGENTS.md：最终回复必须给出推荐下一步）。可以给：Codex adjudicate R10；不释放集成。
+
+写吧。

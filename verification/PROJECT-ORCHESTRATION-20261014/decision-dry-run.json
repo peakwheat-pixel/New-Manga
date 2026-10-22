@@ -1,0 +1,34 @@
+{
+  "task_id": "P02PRE-R1H-P2-1-EVIDENCE-CLOSURE",
+  "further_implementation_repair_allowed": true,
+  "forbid_implementation_repair_beyond": null,
+  "task_outcome": "BLOCKED_WAITING_EXTERNAL_DECISION",
+  "actions": [
+    "WAIT_EXTERNAL_DECISION"
+  ],
+  "wait_external": true,
+  "external_conditions": {
+    "blocker_on_critical_path": true,
+    "no_other_ready_task": true,
+    "ai_cannot_resolve": true,
+    "continuation_harmful_or_needs_user_only_input": true
+  },
+  "unmet_external_conditions": [],
+  "create_followups": [],
+  "duplicate_findings_no_new_followup": [],
+  "resolution_task": {
+    "create": false,
+    "inherits_finding": [],
+    "deps_policy": "inherit the blocked task's upstream deps; MUST NOT depend on the blocked task itself (no dependency cycle)",
+    "enters_dag": true
+  },
+  "backlog": [],
+  "continue_ready": [],
+  "replan_dag": false,
+  "reasons": [
+    "implementation repairs used 0/2",
+    "all four external conditions met (request #5-D)"
+  ],
+  "mode": "converge",
+  "dry_run": true
+}

@@ -1,0 +1,138 @@
+{
+  "schema_version": "task-resource-closeout/v1",
+  "task_id": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "phase": "closed",
+  "captured_at": "2026-10-13T22:46:10+08:00",
+  "authorization": "Task Lifecycle Governance v2 §4.2 approved integration window; Task resource manifest declares DELETE_SAFE after checks.",
+  "main_checkout": {
+    "path": "G:\\CODEX\\New Manga",
+    "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "index_sha256": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+    "note": "Main checkout and index are not modified by the integration commits; existing user changes are preserved."
+  },
+  "integration_worktree": {
+    "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-INTEGRATION",
+    "branch": "codex/integration-p02pre-r1h-p2-1-external-harness-trace",
+    "observed_head": "6dffaa6cd3748a74dbbe89e408ccaad3ea4fd10c",
+    "clean_before_closeout": true,
+    "submodule_status": [],
+    "disposition": "DELETE_SAFE",
+    "retained_branch": "codex/integration-p02pre-r1h-p2-1-external-harness-trace",
+    "removed": true,
+    "removal_command": "git worktree remove <absolute integration worktree path>",
+    "force_used": false,
+    "prune_used": false,
+    "branch_ref_retained": true,
+    "branch_ref_at_removal": "6dffaa6cd3748a74dbbe89e408ccaad3ea4fd10c"
+  },
+  "task_worktree": {
+    "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+    "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+    "observed_head": "6dffaa6cd3748a74dbbe89e408ccaad3ea4fd10c",
+    "clean_before_closeout": true,
+    "disposition": "PRESERVE_REFERENCED",
+    "reason": "The mounted DSH R2 workspace uses this exact Task worktree path and session registration; keep it available for user restart."
+  },
+  "agent_output": {
+    "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+    "disposition": "DELETE_SAFE",
+    "file_count": 9,
+    "total_bytes": 125739,
+    "files": [
+      {
+        "path": "dsh-probe/probe.exit.txt",
+        "bytes": 1,
+        "sha256": "5FECEB66FFC86F38D952786C6D696C79C2DBC239DD4E91B46729D73A27FB57E9"
+      },
+      {
+        "path": "dsh-probe/probe.stderr.log",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "path": "dsh-probe/probe.stdout.log",
+        "bytes": 8,
+        "sha256": "0D4E49CB97C1DA06CEDA344892C72E0C919C580B02592A3BBE365173EF767671"
+      },
+      {
+        "path": "dsh-probe/version.log",
+        "bytes": 12,
+        "sha256": "BE45752595DB3ECC6CA4A98D6879DB3D6574C1BAB7D579FDA75EDC24FE53BE37"
+      },
+      {
+        "path": "dsh-review-r1/dsh-review-r1.exit.txt",
+        "bytes": 1,
+        "sha256": "5FECEB66FFC86F38D952786C6D696C79C2DBC239DD4E91B46729D73A27FB57E9"
+      },
+      {
+        "path": "dsh-review-r1/dsh-review-r1.stderr.log",
+        "bytes": 58306,
+        "sha256": "AED07B2CD3329CA796B16FB8087C602AD50372FAB3BC2A36E6A396ADDA7B0F3B"
+      },
+      {
+        "path": "dsh-review-r2/exit.txt",
+        "bytes": 2,
+        "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA"
+      },
+      {
+        "path": "dsh-review-r2/prompt.md",
+        "bytes": 989,
+        "sha256": "1917FFD85398ABA40FDC15B5959261B72E2B731F9E999AA48811DBC4D9BFDA99"
+      },
+      {
+        "path": "dsh-review-r2/stderr.log",
+        "bytes": 66420,
+        "sha256": "452B190F7C33FEB601163BF151DA9C735B2A028FC9D0D3244481B6EED54CC2A8"
+      }
+    ],
+    "deletion_status": "removed_after_sha256_match"
+  },
+  "preserved_user_data": [
+    {
+      "path": "C:\\Users\\49745\\.codex",
+      "disposition": "PRESERVE_USER_DATA",
+      "inventory": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json",
+      "inventory_sha256": "9084A9F37A696C3F55999EFBF08B0D39E4FE9D55D68A40E054E8307BF94978F5"
+    },
+    {
+      "path": "C:\\Users\\49745\\.dsh\\sessions\\--G-CODEX-New~0020Manga--\\session-0d8247ab-4125-4b25-8212-bdfbb049e58b\\session.v4.jsonl.zstd",
+      "bytes": 124617,
+      "sha256": "5556B6058DC2D403B270265A46144C5D42A87E60C7313E51C5AF5CA894118D38",
+      "verified_at_closeout": true
+    },
+    {
+      "path": "C:\\Users\\49745\\.dsh\\sessions\\--G-CODEX-New~0020Manga.workspace-worktrees-P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE--\\session-1a2300e3-122f-4e74-80b3-7d74dbb44852\\session.v4.jsonl.zstd",
+      "bytes": 147166,
+      "sha256": "2BD1AB41AE4CA85E4472C02859AEC81D145D20A26D67247AA0F80F907EE2627A",
+      "verified_at_closeout": true
+    },
+    {
+      "path": "C:\\Users\\49745\\.dsh\\storages\\workspace.json",
+      "sha256": "070CD7ED3154316528D2946591D55DE43C2CF5998DBC35B67DA3796666D41865",
+      "verified_at_closeout": true
+    }
+  ],
+  "worktree_inventory": {
+    "path": "doc/WORKTREE_SAFETY_INVENTORY.md",
+    "pre_removal_sha256": "FA0B0E7EEF10EE18EE29863F65F06228AD1CAB1095976184434D2135B92950E2",
+    "final_sha256": "E52B78259A53DA8BEE0D74238FA20F1155132651B68AE0FF60DAE692E2E5263F",
+    "pre_removal_worktree_count": 151,
+    "post_removal_worktree_count": 150,
+    "local_branch_count_before": 343,
+    "local_branch_count_after": 343,
+    "refreshed_and_read_before_removal": true,
+    "updated_and_read_after_removal": true
+  },
+  "post_removal": {
+    "worktree_removed": true,
+    "agent_output_removed": true,
+    "integration_branch_ref_retained": true,
+    "task_worktree_preserved": true,
+    "worktree_count": 150,
+    "local_branch_count": 343,
+    "main_head_preserved": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "main_index_sha256": "C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68",
+    "governance_task_path_check": "PASS; exit 0; 0 warnings; TaskPath check after final pointer synchronization",
+    "no_argument_current_pointer_check": "not_run_no_active_task_after_user_requested_pause"
+  }
+}

@@ -1,0 +1,30 @@
+[21:42:22.552] START fresh iso
+[21:42:26.705] book
+[21:42:32.841] chapter
+[21:42:47.166]   import done at 5s
+[21:42:52.253]   import: no dialog
+[21:42:52.281] page_files=1
+[21:42:52.295]   btn '阅读' en=True
+[21:42:52.314] clicked=阅读
+[21:42:56.363]     Document|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True
+[21:42:56.368]     Text|NM|en=True
+[21:42:56.372]     Button|📚 书架|en=True
+[21:42:56.377]     Button|🛠️ 工作台|en=True
+[21:42:56.382]     Button|📖 阅读器|en=True
+[21:42:56.385]     Button|⚙️ 设置|en=True
+[21:42:56.390]     Button|← 返回书架|en=True
+[21:42:56.395]     Text|章节: 4f1bd8f7b0194b508f1538def89ed4ee|en=True
+[21:42:56.399]     Button|下一页 (←)|en=False
+[21:42:56.404]     Text|1|en=True
+[21:42:56.409]     Text| / |en=True
+[21:42:56.413]     Text|1|en=True
+[21:42:56.418]     Button|上一页 (→)|en=False
+[21:42:56.422]     Button|继续|en=True
+[21:42:56.427]     Button|从头开始|en=True
+[21:42:56.431]     Button|原文 (Original)|en=True
+[21:42:56.435]     Button|译文 (Translated)|en=True
+[21:42:56.439]     Button|Next page|en=True
+[21:42:56.443]     Image|Page 1|en=True
+[21:42:56.447]     Button|Previous page|en=True
+[21:42:59.571] cleaned_left=0
+[21:42:59.576] RUN end

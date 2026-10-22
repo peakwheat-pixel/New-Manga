@@ -1,0 +1,137 @@
+{
+  "schema": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.pre-pins.v1",
+  "taskId": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+  "verifiedAtUtc": "2026-10-13T11:43:38Z",
+  "manifestPath": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/review-inputs-r1.json",
+  "manifestSha256": "39829a5b11a041e91f196ee2374b7cc06dea9518d84419167fa9ba3dc1ed0ad7",
+  "allInputsPresent": true,
+  "inputCount": 14,
+  "inputs": [
+    {
+      "id": "task-contract",
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "sourcePath": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "bytes": 8351,
+      "sha256": "22279d925be06bef56613ace28da5600590dc771fed037d9d46acd611e17094b",
+      "sourceCommit": null,
+      "role": "Frozen review scope"
+    },
+    {
+      "id": "h1-subject-task",
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h1-subject-task-r1.md",
+      "sourcePath": "doc/tasks/P02PRE-R1H-R6-ZCODE-H1.md",
+      "bytes": 25016,
+      "sha256": "e4582dfb8248ebf903c691af571b2ba571065aa93e0a4f29fe9be8f9aa44f02b",
+      "sourceCommit": null,
+      "role": "H1 acceptance criteria and current historical status"
+    },
+    {
+      "id": "h1-v2-result",
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.json",
+      "sourcePath": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.json",
+      "bytes": 15768,
+      "sha256": "23ac80e2b671acb616cd89a11fdee5c0548547f97c8c529b1fc11af67edaf877",
+      "sourceCommit": null,
+      "role": "Exact H1 v2 result containing the 15 generic evidence references"
+    },
+    {
+      "id": "h1-dsh-review",
+      "path": "verification/P02/dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.response.md",
+      "sourcePath": "verification/P02/dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.response.md",
+      "bytes": 14078,
+      "sha256": "6aad7750afabccd5b159c69f40ef49149e3d3ebb1ca6613cd0fd91fdcb960c19",
+      "sourceCommit": null,
+      "role": "Independent H1 Review with P2-1 and P3 findings"
+    },
+    {
+      "id": "h1-codex-adjudication",
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-adjudication-20261012.md",
+      "sourcePath": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-adjudication-20261012.md",
+      "bytes": 7665,
+      "sha256": "9d4b95da5263b0c52a3621748e875760caaadf153ed5c39bda5955520df57232",
+      "sourceCommit": null,
+      "role": "Codex decision accepting P2-1 as OPEN"
+    },
+    {
+      "id": "h1-review-input-verification",
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-input-verification-20261012.json",
+      "sourcePath": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-input-verification-20261012.json",
+      "bytes": 14002,
+      "sha256": "7b823a05313da2b053c76b81744667bf041b8fd9af0933f1162dcdadfb372515",
+      "sourceCommit": null,
+      "role": "H1 Review input pin verification"
+    },
+    {
+      "id": "h2-run-task",
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "sourcePath": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "bytes": 25680,
+      "sha256": "e9e3277488e9d054fb9d5612da19c1f3b44b44dfe958e2d2971823887c59ff24",
+      "sourceCommit": null,
+      "role": "H2 new-time and non-substitution boundary"
+    },
+    {
+      "id": "h2-runtime-json",
+      "path": "verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.json",
+      "sourcePath": "verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.json",
+      "bytes": 3370,
+      "sha256": "ef97ce90c9ed7c9ab693930bfc9c15ce220dbe921a916112cbbd951689c130e3",
+      "sourceCommit": "70eff7226cc7c2fcd4c286837e7f06e6fdd237ef",
+      "role": "Approved H2 runtime summary and explicit new-time limitation"
+    },
+    {
+      "id": "h2-runtime-report",
+      "path": "verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.md",
+      "sourcePath": "verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.md",
+      "bytes": 3253,
+      "sha256": "f4a1a2cc67b92585c41a8b78890e7583324c9704a50f2477fca319d6905129a0",
+      "sourceCommit": "70eff7226cc7c2fcd4c286837e7f06e6fdd237ef",
+      "role": "Approved H2 runtime summary"
+    },
+    {
+      "id": "h2-dsh-review-r3",
+      "path": "verification/P02PRE-R1H-H2-RUN/dsh-result-review-r3.md",
+      "sourcePath": "verification/P02PRE-R1H-H2-RUN/dsh-result-review-r3.md",
+      "bytes": 7098,
+      "sha256": "8995028a950e082465fcae293e33028b85fa6a549f90292a943ed04ed21291a2",
+      "sourceCommit": "06990b7993d042ae5e74ab479e291e494b622588",
+      "role": "Nonauthor Review of corrected H2 result"
+    },
+    {
+      "id": "h2-codex-adjudication",
+      "path": "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md",
+      "sourcePath": "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md",
+      "bytes": 4836,
+      "sha256": "259d980bfafff0b654725b648db636a5d234704f8a826994f20a358aa93bba2e",
+      "sourceCommit": "70eff7226cc7c2fcd4c286837e7f06e6fdd237ef",
+      "role": "Approved H2 exact-result adjudication"
+    },
+    {
+      "id": "h2-codex-pin-verification",
+      "path": "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1-input-verification.json",
+      "sourcePath": "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1-input-verification.json",
+      "bytes": 4426,
+      "sha256": "efaa288cbc366e8a0e9e17ef8b4590b5a2ba53887ffe31c0a63254f0925e1154",
+      "sourceCommit": "70eff7226cc7c2fcd4c286837e7f06e6fdd237ef",
+      "role": "H2 raw/count/pointer and DSH pre/post pin assertions"
+    },
+    {
+      "id": "h2-handoff-r2",
+      "path": "verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md",
+      "sourcePath": "verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md",
+      "bytes": 3008,
+      "sha256": "9329c9ad883268f8f766a1c4595ba8391e7231651d7348176d4d7cd8ae5a31d5",
+      "sourceCommit": "e24abda53baff2807bc5a236c91ddbc403a44505",
+      "role": "H2 downstream instruction and non-substitution boundary"
+    },
+    {
+      "id": "h2-raw-ndjson",
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/run-h2-20261013-de77a42fccca4193925767ba4e414970.json",
+      "sourcePath": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/run-h2-20261013-de77a42fccca4193925767ba4e414970.json",
+      "bytes": 788029,
+      "sha256": "32cd72b710857bb0f19eb92d2c01f2ff6aa13778f10836965c8619ebbf5a2179",
+      "sourceCommit": null,
+      "role": "Raw new-time H2 collector output; inspect only for applicability if needed"
+    }
+  ]
+}

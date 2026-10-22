@@ -1,0 +1,118 @@
+{
+  "main_head": "343895fb5f0329c0c07a7104ec321b698f967607",
+  "closeout_head": "23bec747df77e67e93ec1fa9fd859d077219e941",
+  "root_mirror_paths": [
+    {
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+      "match": true
+    },
+    {
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+      "match": true
+    },
+    {
+      "path": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r1.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r2.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-exit-r1.txt",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-stderr-r1.log",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-stdout-r1.log",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-version-r1.log",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-dispatch-r2.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r1.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r2.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r2.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/existing-pins-validation-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/input-freeze-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r2.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/pre-review-pins-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/r1-commit-normalization-map-r1.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r2.md",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json",
+      "match": true
+    }
+  ],
+  "helper_selftest": {
+    "command": "python C:/Users/49745/.agents/skills/multi-agent-project-orchestrator/scripts/run-selftests.py",
+    "exit": 0,
+    "tests": 65,
+    "failures": 0,
+    "errors": 0
+  },
+  "repairs_note": "Historical I/T/E counts not reconstructed; zero implementation repairs for the evidence-closure slice. No new repair or duplicate lineage task created."
+}

@@ -1,0 +1,61 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "command": "pwsh -NoProfile -File tools/p02/p02-new-time-baseline-selftest.ps1",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE",
+  "shell": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "psVersion": "7.6.6",
+  "edition": "Core",
+  "languageMode": "FullLanguage",
+  "startedUtc": "2026-10-13T22:08:44.607794Z",
+  "finishedUtc": "2026-10-13T22:08:46.597284Z",
+  "argv": [
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline-selftest.ps1",
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline.ps1",
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline-selftest.ps1",
+    "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE",
+    "20261014-060844"
+  ],
+  "collectorSha256": "BF9F69CFB291C6E7609A861821FC458C32C7A3C7AD93898953E3AD2DB26D567A",
+  "selftestSummary": {
+    "assertsPassed": 220,
+    "assertsFailed": 0,
+    "assertsSkipped": [
+      {
+        "name": "live-collector-run",
+        "reason": "Task: live collector execution is NOT authorized in this Owner delivery round; requires Codex freeze of commit/hash/argv/CWD/RunId/targets plus AC2/AC3 gates first."
+      },
+      {
+        "name": "live-git-child",
+        "reason": "Forbidden here: no git child process during the pure selftest; git argv builders are verified as pure functions."
+      },
+      {
+        "name": "live-whoami-child",
+        "reason": "Forbidden here: no whoami child during the pure selftest; identity comparison stays a documented live-scope check."
+      },
+      {
+        "name": "live-registry-acl-profile-getter",
+        "reason": "Forbidden here: no registry/ACL/profile API at all in this Task scope (read or write)."
+      },
+      {
+        "name": "executor-dynamic-process-enumeration",
+        "reason": "Forbidden scopes: attempt6 executor (never referenced/read/executed), Toolhelp/Process32*/Get-Process enumeration — all NOT_RUN by Task forbidden scope."
+      },
+      {
+        "name": "x6-post-run-review-build-cargo-ac-sandbox",
+        "reason": "Forbidden scopes: X6, post-run Review, Build/Cargo, product AC1-AC7, Windows Sandbox — later Gates, never released by this Task; all NOT_RUN."
+      },
+      {
+        "name": "historical-input-access",
+        "reason": "Forbidden scopes: no H1/P2-1 historical input, conclusion, finding or missing-source record is read, rewritten, backfilled or re-awarded; history isolation is enforced statically."
+      }
+    ],
+    "liveQueriesExecuted": false,
+    "liveCollectorExecuted": false,
+    "gitChildExecuted": false,
+    "historicalInputAccessed": false
+  },
+  "raw_output_dir": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE\\source-selftest-r2-20261014-060844",
+  "stdout_sha256": "B3A2ABFA7B8837B6B1FE8BC62E67A80E6938E197941C9F1D5F24BFD848B1B6B7",
+  "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "exit": "0"
+}

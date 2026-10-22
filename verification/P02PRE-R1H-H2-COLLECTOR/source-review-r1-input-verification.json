@@ -1,0 +1,65 @@
+{
+  "reviewed_code_head": "831e368b2d564a27859a188e5efa575c8ff7fb7e",
+  "reviewed_doc_head": "af151e79043e93d8e71f83886ac8732685310f42",
+  "source_review_session": "session-bb74c298-dcd7-4db7-bd22-4198854737f3",
+  "verified_before_state_update": true,
+  "all11_pre_post_sha_matched": true,
+  "pins": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\tools\\p02\\h1-raw-pre-run.ps1",
+      "bytes": 65776,
+      "sha256": "44e7654cdf30e905d893ebcf290ea825cfab899de581f85e93e747ae92132989"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\tools\\p02\\h1-raw-pre-run-selftest.ps1",
+      "bytes": 26679,
+      "sha256": "6b5b942f505d03c65af849fbd702b6257a37bccd63f8be4ecdcb8e3a862e2f5b"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H-H2-COLLECTOR.md",
+      "bytes": 13484,
+      "sha256": "3a73fd74fb3621202beee69a5813d3a7a00a1d7c6f2a854f75b5cd8b549eef3e"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\verification\\P02PRE-R1H-H2-COLLECTOR\\zcode-p02pre-r1h-h2-collector-handoff-20261013.md",
+      "bytes": 10548,
+      "sha256": "05d8c659ab33d4bb0650bfa966733760b701d2a30865996cd267f0b93e84275a"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\verification\\P02PRE-R1H-H2-COLLECTOR\\parser-only-20261013T124646-pwsh766-zcode.md",
+      "bytes": 858,
+      "sha256": "8ecd55a183f5fc3a6c0bb317028fd3d49e30f0cebf475ce32851207b58ac5290"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\verification\\P02PRE-R1H-H2-COLLECTOR\\pure-selftest-20261013T124646-pwsh766-zcode.md",
+      "bytes": 9789,
+      "sha256": "0f42200e3cdedadbc6edeee36de8473458504f239647a2e68d8290887d8aabe0"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\codex-verification.json",
+      "bytes": 4962,
+      "sha256": "5017ef1f7b89935922e65feb05c8a5c0b58ca73bf226a41210de0330c4b0482f"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\delivery-intake.json",
+      "bytes": 3947,
+      "sha256": "84a3989088446c0000d1b1957badcfebdea0350ff9c487a00f04d45d935b3d82"
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integration-protocol-attempt6-20261012.md",
+      "bytes": 14084,
+      "sha256": "dddfdf58c5684b4f9992e09f45d7bb53ceeb733d1da8277ca103f83cda244142"
+    },
+    {
+      "path": "C:\\Users\\49745\\.codex\\worktrees\\p02pre-r1h-r6-exec-a6-antigravity\\New Manga\\verification\\P02\\p02pre-r1h-round6-integrator-attempt6-20261012.ps1",
+      "bytes": 43527,
+      "sha256": "1c8d6220e85608977bcdcc27b86e4dc227dba11f5e7179a09328c142036502ee"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02\\codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.json",
+      "bytes": 15768,
+      "sha256": "23ac80e2b671acb616cd89a11fdee5c0548547f97c8c529b1fc11af67edaf877"
+    }
+  ],
+  "note": "Mutable root Task was updated only AFTER these 11 pins were rechecked; current source changes_requested does not extend old approval."
+}

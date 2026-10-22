@@ -1,0 +1,8 @@
+{
+  "changes_runtime_behavior": false,
+  "touches_tests_only": true,
+  "alters_review_input_semantics": false,
+  "alters_technical_evidence": false,
+  "alters_runtime_result": false,
+  "alters_acceptance_conclusion": false
+}

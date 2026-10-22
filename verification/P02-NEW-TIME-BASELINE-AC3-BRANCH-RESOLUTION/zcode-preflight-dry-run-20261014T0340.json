@@ -1,0 +1,99 @@
+{
+  "agent": {
+    "name": "zcode",
+    "cli": [
+      "node",
+      "E:/Program Files/ZCode/resources/glm/zcode.cjs"
+    ],
+    "role": "heavy executor",
+    "required_commands": [
+      "node"
+    ],
+    "may_review": false
+  },
+  "dry_run": true,
+  "checks": [
+    {
+      "check": "python_runtime",
+      "status": "PASS",
+      "detail": "3.14.6 (stdlib-only helpers)",
+      "mandatory": true
+    },
+    {
+      "check": "cli_on_path",
+      "status": "PASS",
+      "detail": "node E:/Program Files/ZCode/resources/glm/zcode.cjs: E:\\Program Files\\nodejs\\node.EXE",
+      "mandatory": true
+    },
+    {
+      "check": "cli_version",
+      "status": "SKIP",
+      "detail": "dry-run never spawns a child process",
+      "mandatory": true
+    },
+    {
+      "check": "required_commands",
+      "status": "PASS",
+      "detail": "['node'] all resolvable",
+      "mandatory": true
+    },
+    {
+      "check": "git_on_path",
+      "status": "PASS",
+      "detail": "git required for frozen-evidence checks",
+      "mandatory": true
+    },
+    {
+      "check": "repo_worktree_exists",
+      "status": "PASS",
+      "detail": "git root G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION (filesystem discovery; dry-run spawns nothing)",
+      "mandatory": true
+    },
+    {
+      "check": "branch_exists",
+      "status": "SKIP",
+      "detail": "requires git invocation; dry-run spawns nothing",
+      "mandatory": true
+    },
+    {
+      "check": "worktree_state_known",
+      "status": "SKIP",
+      "detail": "requires git invocation; dry-run spawns nothing",
+      "mandatory": true
+    },
+    {
+      "check": "write_scope_known",
+      "status": "PASS",
+      "detail": "all write-scope dirs exist (resolved: ['G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION\\\\tools/p02', 'G:\\\\CODEX\\\\New Manga\\\\doc/tasks', 'G:\\\\CODEX\\\\New Manga\\\\doc/handoffs', 'G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION\\\\verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION'])",
+      "mandatory": true
+    },
+    {
+      "check": "fallback_agent_available",
+      "status": "PASS",
+      "detail": "dsh, antigravity",
+      "mandatory": false
+    },
+    {
+      "check": "quota_status",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    },
+    {
+      "check": "permission_mode",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    },
+    {
+      "check": "conversation_usable",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    }
+  ],
+  "overall": "NEEDS_VERIFICATION",
+  "dispatch_allowed": false,
+  "fallback_suggested": "dsh",
+  "verdict": "dry-run only; a dry run never counts as a live dispatch"
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "P02-NEW-TIME-BASELINE-freeze-manifest-1",
+  "task": "P02-NEW-TIME-BASELINE",
+  "runId": "baseline-20261014T0430CST-ac3fix",
+  "deliveryHead": "360d7286e32b4d7b766aa434c0e31f210100ec18",
+  "baseCommit": "23bec747df77e67e93ec1fa9fd859d077219e941",
+  "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+  "cwd": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+  "worktree": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+  "outputDir": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-BASELINE",
+  "outputTargets": [
+    "run-baseline-20261014T0430CST-ac3fix.json"
+  ],
+  "identity": {
+    "name": "home-my\\49745",
+    "sid": "S-1-5-21-2196946971-914346751-4210154634-1001"
+  },
+  "tools": {
+    "pwshExe": "C:/Program Files/PowerShell/7/pwsh.exe",
+    "gitExe": "C:/Program Files/Git/cmd/git.exe",
+    "whoamiExe": "C:/Windows/System32/whoami.exe"
+  },
+  "expectedRuntime": {
+    "psVersion": "7.6.6",
+    "psEdition": "Core",
+    "languageMode": "FullLanguage",
+    "gitVersion": "git version 2.52.0.windows.1"
+  },
+  "contractPins": [
+    {
+      "name": "collaboration-contract",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/09_COLLABORATION.md",
+      "size": 19131,
+      "sha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D"
+    },
+    {
+      "name": "target-architecture",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
+      "size": 7454,
+      "sha256": "2E59AD6ADF049DA7450F11EB4BD420739FBA8E3E979261CA712902FEF7F3C3C0"
+    },
+    {
+      "name": "task-template",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/templates/TASK.md",
+      "size": 1541,
+      "sha256": "EBD10E49E50BB76281D5626523997D5A56307072FC2B967166FD8A67E3D4A278"
+    },
+    {
+      "name": "handoff-template",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/templates/HANDOFF.md",
+      "size": 1800,
+      "sha256": "164BC78F3C5D80673D5D31CB4A22547D6CD8DF6A3B6EDCAD143729A3959D69E4"
+    },
+    {
+      "name": "review-template",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/templates/REVIEW.md",
+      "size": 3972,
+      "sha256": "CB7FBE0C5B610405CF391AE4D86C6F473B69A0F110B4A12DD7E8432E19C40F1A"
+    },
+    {
+      "name": "p02-task",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/tasks/P02-NEW-TIME-BASELINE.md",
+      "size": 11391,
+      "sha256": "463BDE6D925BE3CF892A84E9E8BFB5C1903C17602A58F722CEC79B0EA57854A4"
+    }
+  ],
+  "taskDeliverablePins": [
+    {
+      "name": "collector-source",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/tools/p02/p02-new-time-baseline.ps1",
+      "size": 98185,
+      "sha256": "F55FB778BBFE5307135A7C7943B587F59DFE94139B4B6138F89DDCED7CD49B90"
+    },
+    {
+      "name": "selftest-source",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/tools/p02/p02-new-time-baseline-selftest.ps1",
+      "size": 66827,
+      "sha256": "FF473C94074758C3C870E095C8885EEDA52F226AE735BF4C6FB29EEB3CF44E28"
+    },
+    {
+      "name": "owner-handoff",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE/doc/handoffs/P02-NEW-TIME-BASELINE-R3.md",
+      "size": 13265,
+      "sha256": "BD2E2D738946C379AEC4646531D5729C3392784BB176F641897179C06483210B"
+    }
+  ],
+  "mutableObservationPaths": [
+    "G:/CODEX/New Manga/doc/STATUS.md",
+    "G:/CODEX/New Manga/doc/REBASELINE_PLAN.md",
+    "G:/CODEX/New Manga/doc/00_INDEX.md"
+  ]
+}

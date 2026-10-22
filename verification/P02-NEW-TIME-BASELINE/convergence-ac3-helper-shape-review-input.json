@@ -1,0 +1,19 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "implementation_repairs_used": 2,
+  "max_implementation_repairs": 2,
+  "open_blockers": [
+    {"id":"AC3-WHOAMI-HELPER-OUTPUT-SHAPE","severity":"P1","splittable":false,"independent_of_current_ac":false,"already_has_followup":false,"ai_resolvable":true},
+    {"id":"AC3-SELFTEST-HELPER-SHAPE-COVERAGE-GAP","severity":"P2","splittable":false,"independent_of_current_ac":false,"already_has_followup":false,"ai_resolvable":true}
+  ],
+  "nonblockers": [
+    "AC3-FREEZE-PIN-P02TASK-POST-RUN-STALE",
+    "AC3-RESULT-PROTECTION-RECHECK-NOT-RUN",
+    "AC3-RESULT-RAW-MATERIAL-STDOUT-ENCODING"
+  ],
+  "delivery_safely_integrable": false,
+  "other_ready_tasks": [],
+  "blocker_on_critical_path": true,
+  "continuation_harmful": false,
+  "needs_user_only_input": false
+}

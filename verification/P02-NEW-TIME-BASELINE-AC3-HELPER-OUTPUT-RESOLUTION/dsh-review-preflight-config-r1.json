@@ -1,0 +1,13 @@
+{
+  "agents": [
+    {
+      "name": "dsh",
+      "cli": "dsh",
+      "required_commands": [
+        "git"
+      ],
+      "role": "independent reviewer",
+      "may_review": true
+    }
+  ]
+}

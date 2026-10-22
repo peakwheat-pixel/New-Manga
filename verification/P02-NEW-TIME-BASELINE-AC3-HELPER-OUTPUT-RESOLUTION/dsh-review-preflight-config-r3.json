@@ -1,0 +1,1 @@
+{"agents":[{"name":"dsh","cli":"dsh","required_commands":["git"],"role":"independent reviewer","may_review":true},{"name":"antigravity","cli":"agy","required_commands":[],"role":"independent reviewer fallback (not selected; author is ZCode)","may_review":true}]}

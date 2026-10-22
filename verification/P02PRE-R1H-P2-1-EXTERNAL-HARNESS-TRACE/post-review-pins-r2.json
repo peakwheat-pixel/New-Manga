@@ -1,0 +1,221 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "reviewer": "DeepSeek Harness",
+  "reviewedHead": "54a710a1f6e0df937e7164e7d135fa98c735b36a",
+  "verdict": "APPROVED_STATIC_CONTENT",
+  "exactReviewInputCount": 21,
+  "pinnedInputCount": 20,
+  "selfExcludedPath": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
+  "requestManifestPathParity": "PASS",
+  "postReviewPinAndGitBlobValidation": "PASS",
+  "files": [
+    {
+      "bytes": 14351,
+      "sha256": "1628C3DB780464CFD8D051555BBACFD79A5027E840AC81D06A06F3A52DC0264C",
+      "declaredSha256": "1628C3DB780464CFD8D051555BBACFD79A5027E840AC81D06A06F3A52DC0264C",
+      "gitBlobOid": "3d723fa95f34c96298bf26c41be8d540399d81e6",
+      "reviewedHeadBlobOid": "3d723fa95f34c96298bf26c41be8d540399d81e6",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md"
+    },
+    {
+      "bytes": 6452,
+      "sha256": "DCEAE82C930930045A6A82E2914CD801CF590D41A704E15C138C75F284B33AFD",
+      "declaredSha256": "DCEAE82C930930045A6A82E2914CD801CF590D41A704E15C138C75F284B33AFD",
+      "gitBlobOid": "325d819db6f320e715289661232c17a8fa073604",
+      "reviewedHeadBlobOid": "325d819db6f320e715289661232c17a8fa073604",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    },
+    {
+      "bytes": 3859,
+      "sha256": "084C4226F8A58243F4B8E131DD348D46DC82F6A9506D0202D20D7C9A565D7F60",
+      "declaredSha256": "084C4226F8A58243F4B8E131DD348D46DC82F6A9506D0202D20D7C9A565D7F60",
+      "gitBlobOid": "935589fc8078c979aa8bd09dcbab9d6bcdf59704",
+      "reviewedHeadBlobOid": "935589fc8078c979aa8bd09dcbab9d6bcdf59704",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md"
+    },
+    {
+      "bytes": 3980,
+      "sha256": "B39DDB52E08199BE25EE7333594554AE0AA1C08396CDF2EE02C6CE81DC7BCD2D",
+      "declaredSha256": "B39DDB52E08199BE25EE7333594554AE0AA1C08396CDF2EE02C6CE81DC7BCD2D",
+      "gitBlobOid": "bc264dd601bd6e233fa6f1ee52775e49029a3cc7",
+      "reviewedHeadBlobOid": "bc264dd601bd6e233fa6f1ee52775e49029a3cc7",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/input-freeze-r1.json"
+    },
+    {
+      "bytes": 3144,
+      "sha256": "0EBB32273F0E458F393C3219223BF07A1BD6C3FCD5C67C134653CED40D3307E0",
+      "declaredSha256": "0EBB32273F0E458F393C3219223BF07A1BD6C3FCD5C67C134653CED40D3307E0",
+      "gitBlobOid": "5e123b04486ed7cc3c633a26b41cdf2ca8adcf97",
+      "reviewedHeadBlobOid": "5e123b04486ed7cc3c633a26b41cdf2ca8adcf97",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/existing-pins-validation-r1.json"
+    },
+    {
+      "bytes": 16880,
+      "sha256": "9084A9F37A696C3F55999EFBF08B0D39E4FE9D55D68A40E054E8307BF94978F5",
+      "declaredSha256": "9084A9F37A696C3F55999EFBF08B0D39E4FE9D55D68A40E054E8307BF94978F5",
+      "gitBlobOid": "1033180e16a5b0b88ac3387d81e6d24d15ae8ece",
+      "reviewedHeadBlobOid": "1033180e16a5b0b88ac3387d81e6d24d15ae8ece",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json"
+    },
+    {
+      "bytes": 1171,
+      "sha256": "F5D430DC732399FC6794FD94F95597853B0FD67D479F6A386713515448E0FB7B",
+      "declaredSha256": "F5D430DC732399FC6794FD94F95597853B0FD67D479F6A386713515448E0FB7B",
+      "gitBlobOid": "d5a0db329924edf1388fdb7446da2b3c70d7c371",
+      "reviewedHeadBlobOid": "d5a0db329924edf1388fdb7446da2b3c70d7c371",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json"
+    },
+    {
+      "bytes": 2728,
+      "sha256": "8F3059009009F85C6F6F5F9F4888D6A576E6986753522F23DA613049B8B12813",
+      "declaredSha256": "8F3059009009F85C6F6F5F9F4888D6A576E6986753522F23DA613049B8B12813",
+      "gitBlobOid": "d8e00515771fbf0be9d6c03a8fb888058f3fe889",
+      "reviewedHeadBlobOid": "d8e00515771fbf0be9d6c03a8fb888058f3fe889",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/pre-review-pins-r1.json"
+    },
+    {
+      "bytes": 2062,
+      "sha256": "679ACA661D355755FDD86D043F92FF824649E933781B8573A4D5CC8F250EA312",
+      "declaredSha256": "679ACA661D355755FDD86D043F92FF824649E933781B8573A4D5CC8F250EA312",
+      "gitBlobOid": "fad200bbc15cc66c363f28d262de59834c9bf202",
+      "reviewedHeadBlobOid": "fad200bbc15cc66c363f28d262de59834c9bf202",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md"
+    },
+    {
+      "bytes": 9481,
+      "sha256": "0221712CCEFD54CCFA4EB8DE220512505870B2BE11DFD33DE61F8C7DF9277125",
+      "declaredSha256": "0221712CCEFD54CCFA4EB8DE220512505870B2BE11DFD33DE61F8C7DF9277125",
+      "gitBlobOid": "350c1d5365765d0c2a131841e1068481db60a40b",
+      "reviewedHeadBlobOid": "350c1d5365765d0c2a131841e1068481db60a40b",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r1.md"
+    },
+    {
+      "bytes": 3871,
+      "sha256": "89F154F73BF2065B05C7C1161E11D26EFD5188077D8B5B628FB44C157B53566E",
+      "declaredSha256": "89F154F73BF2065B05C7C1161E11D26EFD5188077D8B5B628FB44C157B53566E",
+      "gitBlobOid": "5e0fc496ece7eb67eee1319b5081d782c967bf25",
+      "reviewedHeadBlobOid": "5e0fc496ece7eb67eee1319b5081d782c967bf25",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r1.json"
+    },
+    {
+      "bytes": 1344,
+      "sha256": "B13FEB8EE41B55CE58F75006600F4830C1DAFB02E3BC0BFE19E9B8ECA4BBFA94",
+      "declaredSha256": "B13FEB8EE41B55CE58F75006600F4830C1DAFB02E3BC0BFE19E9B8ECA4BBFA94",
+      "gitBlobOid": "237d6504c46b0a57bc43898500be988c4f97a575",
+      "reviewedHeadBlobOid": "237d6504c46b0a57bc43898500be988c4f97a575",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r1.json"
+    },
+    {
+      "bytes": 2289,
+      "sha256": "669CC774D7EB5A0928751608CE14909F4851CA07F158D9B0CFE0ACDAC56BA217",
+      "declaredSha256": "669CC774D7EB5A0928751608CE14909F4851CA07F158D9B0CFE0ACDAC56BA217",
+      "gitBlobOid": "4f4c55d381ecbdf1ba287bd50892afe9b7898a79",
+      "reviewedHeadBlobOid": "4f4c55d381ecbdf1ba287bd50892afe9b7898a79",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r1.md"
+    },
+    {
+      "bytes": 7402,
+      "sha256": "2FF686841484BA8F430DC5440D6B963DC89C0E7CBCBFF06496A72BC1D3678CFE",
+      "declaredSha256": "2FF686841484BA8F430DC5440D6B963DC89C0E7CBCBFF06496A72BC1D3678CFE",
+      "gitBlobOid": "8ca046777e1253d6cc9fb9f1fcb44a1139e53c69",
+      "reviewedHeadBlobOid": "8ca046777e1253d6cc9fb9f1fcb44a1139e53c69",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/r1-commit-normalization-map-r1.json"
+    },
+    {
+      "bytes": 12,
+      "sha256": "BE45752595DB3ECC6CA4A98D6879DB3D6574C1BAB7D579FDA75EDC24FE53BE37",
+      "declaredSha256": "BE45752595DB3ECC6CA4A98D6879DB3D6574C1BAB7D579FDA75EDC24FE53BE37",
+      "gitBlobOid": "dc6ed4f4c044e29ce088a7e04fb500a8d2d22c84",
+      "reviewedHeadBlobOid": "dc6ed4f4c044e29ce088a7e04fb500a8d2d22c84",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-version-r1.log"
+    },
+    {
+      "bytes": 8,
+      "sha256": "0D4E49CB97C1DA06CEDA344892C72E0C919C580B02592A3BBE365173EF767671",
+      "declaredSha256": "0D4E49CB97C1DA06CEDA344892C72E0C919C580B02592A3BBE365173EF767671",
+      "gitBlobOid": "3e1e07f2fbb7d367d98d8cdcb82edb1d47bc6d44",
+      "reviewedHeadBlobOid": "3e1e07f2fbb7d367d98d8cdcb82edb1d47bc6d44",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-stdout-r1.log"
+    },
+    {
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "declaredSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "gitBlobOid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "reviewedHeadBlobOid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-stderr-r1.log"
+    },
+    {
+      "bytes": 1,
+      "sha256": "5FECEB66FFC86F38D952786C6D696C79C2DBC239DD4E91B46729D73A27FB57E9",
+      "declaredSha256": "5FECEB66FFC86F38D952786C6D696C79C2DBC239DD4E91B46729D73A27FB57E9",
+      "gitBlobOid": "c227083464fb9af8955c90d2924774ee50abb547",
+      "reviewedHeadBlobOid": "c227083464fb9af8955c90d2924774ee50abb547",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-exit-r1.txt"
+    },
+    {
+      "bytes": 1893,
+      "sha256": "16C98AEF7378D3512A68B381DB435A1D29EB2730B09C5119BD6BF49C0338705E",
+      "declaredSha256": "16C98AEF7378D3512A68B381DB435A1D29EB2730B09C5119BD6BF49C0338705E",
+      "gitBlobOid": "c8d2403aa670f2d93860ad6c3791ddac5b445838",
+      "reviewedHeadBlobOid": "c8d2403aa670f2d93860ad6c3791ddac5b445838",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md"
+    },
+    {
+      "bytes": 3346,
+      "sha256": "F32EC9BDB5990B86951DC3B8907CD29EA1F55E351F6AD371275D3C5F06DEC1CA",
+      "declaredSha256": "F32EC9BDB5990B86951DC3B8907CD29EA1F55E351F6AD371275D3C5F06DEC1CA",
+      "gitBlobOid": "4bc0f6fb87a859ee37f312fc894cd1b6931e7478",
+      "reviewedHeadBlobOid": "4bc0f6fb87a859ee37f312fc894cd1b6931e7478",
+      "workingTreeHashMatch": true,
+      "gitBlobMatch": true,
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r2.md"
+    }
+  ],
+  "selfExcludedManifest": {
+    "bytes": 4667,
+    "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
+    "rawSha256": "B08B1BE155EAEDC5FB9E316100598D61986A979B38B1E4E9BBC9D4C965676A08",
+    "gitBlobOid": "d3b1020c8534ee7c8664b8bfc4409adfff331796",
+    "reviewedHeadBlobOid": "d3b1020c8534ee7c8664b8bfc4409adfff331796",
+    "gitBlobMatch": true
+  }
+}

@@ -1,0 +1,10 @@
+# Codex deterministic source VERIFY — P02-NEW-TIME-BASELINE
+
+- Task: `P02-NEW-TIME-BASELINE`；exact source review/delivery HEAD: `50c60755a59a714729b8371b07acce9ff535a3c1`；current worktree HEAD at verification: `5ebaa30a1698bffded1e108a8baa2600c9166720` (docs-only descendant).
+- Official source Review manifest: `dsh-source-review-manifest-r2.json`, SHA-256 `3D5B1A135A1DCB68E3C6D7B44E2F49C27A586EB43FAF996FC91C189C759EB473`；generator `verify=PASS`, 2/2.
+- Manifest source pins: collector SHA-256 `BF9F69CFB291C6E7609A861821FC458C32C7A3C7AD93898953E3AD2DB26D567A`, blob `461896e48ff6da87ebf42c41e339257e02689fd8`; selftest SHA-256 `26C5F50EC3C7CD447A7BC116B1038AE57777FCDA38E3B95E74232A2ACAF2F73F`, blob `690a5634944ac7b2bf4eacc93437378ffe756d70`.
+- `git diff --exit-code 50c60755a59a714729b8371b07acce9ff535a3c1 -- tools/p02/p02-new-time-baseline.ps1 tools/p02/p02-new-time-baseline-selftest.ps1`: exit 0; current source paths equal the exact reviewed HEAD.
+- `git diff-tree --no-commit-id --name-only -r 50c60755^ 50c60755`: exactly the two allowed Task source paths above. Their blobs equal the previously reviewed resolution HEAD `b87ef080f1a7a5fb7a930753b26b5ab1e83efe49`.
+- DSH `AGENT_PREFLIGHT` returned `overall=PASS` / `dispatch_allowed=true`. Its `worktree_state_known` detail says `1 dirty entries`, but the helper retains only the first line of `git status --porcelain`; treat this as status-command success, not an exact dirty-entry count. Pre-existing untracked evidence was preserved.
+- Current-source selftest command: `pwsh -NoProfile -File tools/p02/p02-new-time-baseline-selftest.ps1`; PowerShell 7.6.6; exit 0; 220 PASS / 0 FAIL / 7 SKIP. Raw evidence: `codex-source-selftest-r2.stdout.log`, `.stderr.log`, `.exit.txt`, `.environment.json`, and `-fixture-inventory.json`. Three synthetic fixture files (105 bytes total) are preserved. The structured result records no live queries, collector, Git child, or historical-input access.
+- Verification is limited to exact source pins, allowed-path scope, and the pure selftest. It does not verify a live collector result or any downstream gate.

@@ -1,0 +1,137 @@
+{
+  "schema": "P02PRE-R1H-FORENSIC-RECOVERY.resource-closeout.v2",
+  "taskId": "P02PRE-R1H-FORENSIC-RECOVERY",
+  "checkedAtUtc": "2026-10-13T12:19:54Z",
+  "root": {
+    "path": "G:/CODEX/New Manga",
+    "branch": "main",
+    "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "indexSha256": "c5ca88842173a8fe4b9c6b6b675528347eecbdc73f85600aba06f11e3a692b68",
+    "disposition": "PRESERVE_USER_DATA",
+    "modifiedOrStagedEntries": 30,
+    "untrackedEntries": 1319,
+    "stagedEntries": 0,
+    "result": "All existing and task-generated main-checkout changes remain unstaged and untouched."
+  },
+  "integrationWorktree": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+    "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+    "head": "66646580476378da4ed876e545b6ca5afbbb5855",
+    "state": "clean at evidence integration commit",
+    "disposition": "PRESERVE_REFERENCED",
+    "reason": "Contains the exact integrated diagnostic package and Task record."
+  },
+  "sourceSessions": {
+    "path": "C:/Users/49745/.codex/sessions/2026/10/12",
+    "disposition": "PRESERVE_UNKNOWN",
+    "methodManifest": "verification/P02PRE-R1H-FORENSIC-RECOVERY/method-manifest.json",
+    "methodManifestSha256": "e1e145aedab9c6f1a33ca0b7df21e04cff7638a4263e22df45a16ebde5fc19b2",
+    "expectedPinnedFiles": 23,
+    "verifiedPinnedFiles": 23,
+    "pinMismatches": [],
+    "reason": "Read-only source sessions include other user/task records; only the exact 23 pinned files were rehashed, and no session content was copied or modified."
+  },
+  "agentOutput": {
+    "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY",
+    "fileCount": 15,
+    "inventorySha256": "331b7fe41268bc9f0867dc67ad035c3912b2d72ede0e7a6010f99e5aabc0044b",
+    "files": [
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.exit",
+        "bytes": 1,
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.prompt.md",
+        "bytes": 2382,
+        "sha256": "bd25b9433614b9b84e4837dd13afe38f3a53f9ba318387d3e46fb483ee877aff"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.stdout.jsonl",
+        "bytes": 45796,
+        "sha256": "eb60434d6e048f68f3bafb35b2e0e4cd1fa2cfe15d99a1c3750660dfe7d625ea"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review.exit",
+        "bytes": 1,
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review.prompt.md",
+        "bytes": 2657,
+        "sha256": "34d82d4ff94b2763f13e8ddb7e0077c6fa8ccaf0cd67f747530dd2b89c17b157"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review.stdout.jsonl",
+        "bytes": 215997,
+        "sha256": "4ae30082d97350ff674447dbaae66ae1c7ecfe4da950ec36e49a2d907bb44cc9"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/locator-report.md",
+        "bytes": 4572,
+        "sha256": "65b34f4f6cee215be4a5f30d81334fdf58bb06e152f3ab34b8bf1bda0ab82d89"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/resume-input-verification.json",
+        "bytes": 28177,
+        "sha256": "50364b3230e5072c2a7cd29feb9ecead35eeacb0e573cb9e9f09a9853c5379d5"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/resume-status.bin",
+        "bytes": 89373,
+        "sha256": "a7172e6097f69c75bd7fd34a65b9b58cbc8ae0ac0e54adbad2d566af0f92270e"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/review-input-pins.json",
+        "bytes": 1295,
+        "sha256": "e74a16f9c14d0471d622316ac9c0f3a94bf7f08cb58f203442c2f9bf3ba9f232"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/review-r2-input-pins.json",
+        "bytes": 1027,
+        "sha256": "b7335aa99f060faff9f86c180b7e4e17de7f9c93305751d19a30fb098f0042af"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/usage-checkpoint.json",
+        "bytes": 20295,
+        "sha256": "964b7c3e76443d14e2cb66d8f990e21751b5023a9fb1d4d7e766ef80a90ac6d5"
+      },
+      {
+        "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY/usage-turn-report.json",
+        "bytes": 20297,
+        "sha256": "d8f5193f5f2c72c6eb2a48e31542dcf148ec76834c8646ebc9bb292be375c783"
+      }
+    ],
+    "disposition": "PRESERVE_REFERENCED",
+    "reason": "Original locator output, DSH prompts/responses, and exact input pin records remain referenced."
+  },
+  "processCheck": {
+    "query": "Win32_Process command lines matching this DSH session or forensic review invocation",
+    "matches": 0,
+    "matchingProcesses": [],
+    "checkedAtUtc": "2026-10-13T12:19:54Z"
+  },
+  "notApplicable": [
+    "task-env: none created",
+    "dataset/model/test-material: none created",
+    "artifact/temp/exchange: no task-owned resources created"
+  ],
+  "actions": {
+    "deletedItems": 0,
+    "deletedBytes": 0,
+    "migratedItems": 0,
+    "archivedItems": 0,
+    "cleanupRequired": false
+  },
+  "boundary": "No original H1 v2 source was recovered. P2-1 remains OPEN; H1 stays CHANGES_REQUESTED; X6, executor, Build/Cargo and AC1-AC7 remain blocked/not run."
+}

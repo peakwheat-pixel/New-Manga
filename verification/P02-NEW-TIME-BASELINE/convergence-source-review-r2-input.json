@@ -1,0 +1,18 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "implementation_repairs_used": 2,
+  "max_implementation_repairs": 2,
+  "open_blockers": [],
+  "nonblockers": [
+    "P02-NTB-SOURCE-R2-P3-1-ORPHAN-IDENTITY-POINTER",
+    "P02-NTB-SOURCE-R2-P3-2-UNUSED-GIT-TREE-OBSERVATION",
+    "P02-NTB-SOURCE-R2-P4-1-STALE-OLD-SHAPE-FIXTURES",
+    "P02-NTB-SOURCE-R2-P4-2-REGEX-ASSERTION-COUPLING",
+    "P02-NTB-SOURCE-R2-P4-3-MEMORYSTREAM-INIT-EDGE"
+  ],
+  "delivery_safely_integrable": true,
+  "other_ready_tasks": [],
+  "blocker_on_critical_path": false,
+  "continuation_harmful": false,
+  "needs_user_only_input": false
+}

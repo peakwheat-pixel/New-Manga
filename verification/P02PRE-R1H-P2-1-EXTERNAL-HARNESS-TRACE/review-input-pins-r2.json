@@ -1,0 +1,112 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "phase": "pre-review-r2-corrected",
+  "reviewer": "DeepSeek Harness",
+  "exactReviewInputCount": 21,
+  "pinnedInputCount": 20,
+  "selfExcludedPath": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
+  "taskFileIncluded": true,
+  "files": [
+    {
+      "path": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "bytes": 14351,
+      "sha256": "1628C3DB780464CFD8D051555BBACFD79A5027E840AC81D06A06F3A52DC0264C"
+    },
+    {
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+      "bytes": 6452,
+      "sha256": "DCEAE82C930930045A6A82E2914CD801CF590D41A704E15C138C75F284B33AFD"
+    },
+    {
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md",
+      "bytes": 3859,
+      "sha256": "084C4226F8A58243F4B8E131DD348D46DC82F6A9506D0202D20D7C9A565D7F60"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/input-freeze-r1.json",
+      "bytes": 3980,
+      "sha256": "B39DDB52E08199BE25EE7333594554AE0AA1C08396CDF2EE02C6CE81DC7BCD2D"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/existing-pins-validation-r1.json",
+      "bytes": 3144,
+      "sha256": "0EBB32273F0E458F393C3219223BF07A1BD6C3FCD5C67C134653CED40D3307E0"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json",
+      "bytes": 16880,
+      "sha256": "9084A9F37A696C3F55999EFBF08B0D39E4FE9D55D68A40E054E8307BF94978F5"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json",
+      "bytes": 1171,
+      "sha256": "F5D430DC732399FC6794FD94F95597853B0FD67D479F6A386713515448E0FB7B"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/pre-review-pins-r1.json",
+      "bytes": 2728,
+      "sha256": "8F3059009009F85C6F6F5F9F4888D6A576E6986753522F23DA613049B8B12813"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md",
+      "bytes": 2062,
+      "sha256": "679ACA661D355755FDD86D043F92FF824649E933781B8573A4D5CC8F250EA312"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r1.md",
+      "bytes": 9481,
+      "sha256": "0221712CCEFD54CCFA4EB8DE220512505870B2BE11DFD33DE61F8C7DF9277125"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r1.json",
+      "bytes": 3871,
+      "sha256": "89F154F73BF2065B05C7C1161E11D26EFD5188077D8B5B628FB44C157B53566E"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r1.json",
+      "bytes": 1344,
+      "sha256": "B13FEB8EE41B55CE58F75006600F4830C1DAFB02E3BC0BFE19E9B8ECA4BBFA94"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r1.md",
+      "bytes": 2289,
+      "sha256": "669CC774D7EB5A0928751608CE14909F4851CA07F158D9B0CFE0ACDAC56BA217"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/r1-commit-normalization-map-r1.json",
+      "bytes": 7402,
+      "sha256": "2FF686841484BA8F430DC5440D6B963DC89C0E7CBCBFF06496A72BC1D3678CFE"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-version-r1.log",
+      "bytes": 12,
+      "sha256": "BE45752595DB3ECC6CA4A98D6879DB3D6574C1BAB7D579FDA75EDC24FE53BE37"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-stdout-r1.log",
+      "bytes": 8,
+      "sha256": "0D4E49CB97C1DA06CEDA344892C72E0C919C580B02592A3BBE365173EF767671"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-stderr-r1.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-probe-exit-r1.txt",
+      "bytes": 1,
+      "sha256": "5FECEB66FFC86F38D952786C6D696C79C2DBC239DD4E91B46729D73A27FB57E9"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md",
+      "bytes": 1893,
+      "sha256": "16C98AEF7378D3512A68B381DB435A1D29EB2730B09C5119BD6BF49C0338705E"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r2.md",
+      "bytes": 3346,
+      "sha256": "F32EC9BDB5990B86951DC3B8907CD29EA1F55E351F6AD371275D3C5F06DEC1CA"
+    }
+  ],
+  "completeness": "PASS: every exact input except this manifest itself is pinned exactly once"
+}

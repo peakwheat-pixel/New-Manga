@@ -1,0 +1,18 @@
+{
+  "continuation_harmful": false,
+  "blocker_on_critical_path": true,
+  "delivery_safely_integrable": true,
+  "task_id": "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+  "open_blockers": [],
+  "nonblockers": [
+    {
+      "severity": "P4",
+      "id": "F-03",
+      "note": "DSH stderr stream includes diagnostic reasoning; preserve as raw provenance and do not treat as acceptance evidence."
+    }
+  ],
+  "other_ready_tasks": [],
+  "implementation_repairs_used": 0,
+  "max_implementation_repairs": 2,
+  "needs_user_only_input": false
+}

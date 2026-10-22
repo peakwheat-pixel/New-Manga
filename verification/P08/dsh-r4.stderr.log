@@ -1,0 +1,1068 @@
+dsh: reasoning:
+Let me start by verifying the environment: HEAD, status, worktree root, common-dir.
+
+Let me plan the review. This is a long read-only review task. Let me start with git verification.
+
+Let me do the first batch of commands.
+dsh: reasoning:
+The DSH pwsh ACL initialization failed with exactly the predicted error: `SetNamedSecurityInfoW failed (Win32 5)`. Per the prompt, I must record the corresponding check as NOT_RUN and explain the reason, without escalation. Hmm, but wait — maybe I can retry with a different approach? The prompt says: "若DSH `pwsh` ACL初始化失败（如`SetNamedSecurityInfoW failed (Win32 5)`），将对应检查记为`NOT_RUN`并说明原因；不提权，不将Codex结果计作DSH执行。"
+
+So all pwsh checks are NOT_RUN. But I still have `read`, `glob`, `grep` tools which are filesystem backend-based — those may still work. Let me test whether read/glob work. Also maybe there's another way... but the instruction says not to escalate. Let me try once more perhaps with a trivial command to confirm it consistently fails (it's an ACL init failure, not workspace-specific). Actually the error happened at grantWrite on the worktree root, which is the sandbox init. Let me try a single trivial command once to confirm.
+
+Actually, let's just try one simple pwsh command to see if it's a persistent failure.
+
+Then I must rely on file reads (which use the filesystem backend, may work independently of pwsh). Let me check.
+
+The review requires reading a lot of files: AGENTS.md, doc/09_COLLABORATION.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/tasks/P08.md, verification/P08/RESUME.md, verification/P08/AC_COVERAGE.md, verification/P08/SCOPE_DRAFT.md, R1/R2/R3 reports, doc/04_USER_FLOW.md, doc/08_ACCEPTANCE_CRITERIA.md, doc/AD-001..., doc/13_ACCEPTANCE_TRACEABILITY.md, verification/P08/verify_scope.py, doc/handoffs/P08-*.md.
+
+Let me test read/glob first.
+
+Given this is a large review, I should consider delegating reading to subagents to save context. But the final report needs to be authored by me with actual evidence. Since pwsh is unavailable, my verification tools are read/glob/grep only. That's a significant constraint: I cannot run git commands myself. Everything git-related will be NOT_RUN, and I can only cite file contents at the checked-out head (the worktree files are the head's tree if clean — but I can't confirm clean without git).
+
+Let me first see if read works.
+
+Actually I should think about whether grep/glob work under workspace-write file sandbox... they use the filesystem backend, probably fine.
+
+Let me try.
+dsh: reasoning:
+pwsh is consistently unavailable (ACL init failure). The lexical/file tools work, so I can read files. Note: the glob results show the worktree at that path contains verification/P08 files. However I cannot verify HEAD/status via git. I must record those as NOT_RUN.
+
+Wait — but maybe there's another way to determine HEAD: `.git` file in the worktree contains `gitdir: ...` path, and the worktree's gitdir has `HEAD` file. Since read tool can read files anywhere (resolved by filesystem backend)... Let me try reading `G:\CODEX\New Manga.worktrees\P08-dsh-review-16fb07a9-r4\.git` — that's a file (gitdir pointer) for linked worktrees. Then read the corresponding `HEAD`, `commondir`, and maybe `refs`. That would give me HEAD/ref info without running git. That's read-only inspection, not running git — legitimate and it's my own DSH-executed evidence.
+
+Also, `git status` clean cannot be determined by reading alone... Actually I could compare file mtimes? Not reliable. But I can note the presence of `index` — no, checking cleanliness requires hashing. Hmm. But I can at least verify HEAD commit hash from the worktree's gitdir HEAD file.
+
+Let me do that.
+
+Also the common dir: the prompt expects `G:/CODEX/New Manga/.git` — I can check via `commondir` file in the worktree gitdir.
+
+Let's read.
+
+Also, maybe the pwsh failure is a sandbox init issue; perhaps the approval policy "ask" could allow escalation with sandbox_permissions: danger-full-access? The instruction explicitly says 不提权 (do not escalate). So no.
+
+Hmm, but actually, wait. The error is "grantWrite(...)" failing — this is the sandbox trying to grant write ACL on the workspace root and failing. That's the documented DSH ACL initialization failure scenario. The prompt anticipated it. So: NOT_RUN for all pwsh-based checks.
+
+Let me now read the git plumbing files directly.
+dsh: reasoning:
+The worktree gitdir is `G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-16fb07a9-r4`. Let me read its HEAD, commondir, and gitdir files.
+
+Also read the main repo's HEAD? The worktree HEAD file gives the current commit.
+
+Let me read:
+- G:\CODEX\New Manga\.git\worktrees\P08-dsh-review-16fb07a9-r4\HEAD
+- ...\commondir
+- ...\gitdir
+
+Also, for cleanliness, presence of a locked index etc. Cleanliness can't be verified without git. However, I might partially infer by comparing file content hashes... too heavy. I'll mark `git status` as NOT_RUN (pwsh unavailable) and note that file-tree reads at the expected paths are consistent with the delivery head's descriptions.
+
+Actually — could I get some evidence about the checkout state? The worktree's `.git` gitdir contains `ORIG_HEAD`, `logs/HEAD` if reflog enabled... Actually per-worktree reflog is at gitdir/logs/HEAD. Reading that log's last line gives the last checkout/commit operation and would show whether HEAD moved and whether commit 16fb07a9 is HEAD. That's good read-only evidence. Let me read those.
+
+Also the index file is binary; skip.
+
+Let me read the git plumbing.
+dsh: reasoning:
+HEAD is detached at exactly 16fb07a973b36b0b129945bc3a85f9ae51234982 (HEAD file contains the raw SHA, meaning detached). Reflog shows one entry: created at that commit (branch checkout with `-b`? no, detached). timestamps: 1791471617 epoch = let me compute: 1791471617 s. 1791471617 / 31556952 ≈ 56.77 years after 1970 → ~2026-10. Yes, 2026-10-08 likely.
+
+commondir `../..` from `G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-16fb07a9-r4` → `G:/CODEX/New Manga/.git`. ✓ matches expectation.
+
+Cleanliness: cannot run git status. But I could check whether the worktree contains an `.git`-ignored modifications... Not determinable. I'll record git status as NOT_RUN and note the reflog shows a single entry with no subsequent operations, and that no `MERGE_HEAD`/`rebase-merge`/`rebase-apply`/`CHERRY_PICK_HEAD` markers exist in the worktree gitdir — that's partial evidence for "no in-progress operation". Let me list the gitdir files with glob.
+
+Let me now also confirm that the commit object exists for base and head and read the commit metadata? Commit objects are zlib-compressed — can't read directly. Hmm. But I can read `G:\CODEX\New Manga\.git\packed-refs` for branch refs, and check the objects exist via glob on `.git/objects`. Not needed much.
+
+Actually — one important thing: can I determine the diff content without git? Yes: for text files I can read both versions... no, I can't read the base version without git. Only the head version is in the worktree. Hmm. But the commit diff content is what N-07/N-08 checks target, and they're about current file content (AC_COVERAGE.md and verify_scope.py at head) plus cross-checks against doc/08. The prompt says "审查完整差量 base..head" — I can't produce the diff myself. However, maybe there are stored diff artifacts, e.g. verification/P08 folders with prompts. Also `git diff` was run by Codex and its evidence may be in validation.log.
+
+Wait — is there another route? Maybe git is available as a portable binary at some path and pwsh simply cannot start? No, pwsh itself cannot even initialize its sandbox, so I can't run any process. So all command execution is NOT_RUN.
+
+So this review will be a document/content review based on reading files at the head tree, which is legitimate static review. I must be explicit: no diff-level verification of what changed (which files/commits are in the delta) — NOT_VERIFIED/NOT_RUN. But I can still verify file content claims (N-07/N-08) if the head tree contains the files, since the worktree tree should equal the head tree if clean.
+
+Hmm, but one important cross-check: are the files in the worktree identical to the head commit? If the worktree had uncommitted modifications, my reading of AC_COVERAGE.md may not reflect the head. Reflog shows only creation. I cannot verify cleanliness. I'll state this as a boundary: content verified against worktree files at detached HEAD 16fb07a9; `git status` NOT_RUN, so uncommitted modification cannot be excluded (residual risk).
+
+Let me check the gitdir for in-progress markers and also read packed-refs to see refs (read-only). And look at whether there's a `.git/worktrees/.../index` and whether the file mtimes are later than the reflog time... mtime comparison could hint at modifications. Actually I could use `read` — no mtime. `glob` returns "modification-time order" for the 100-result list. Hmm, glob returns up to 100 paths in modification-time order; the first paths are... "a larger result keeps the first paths" — In the earlier glob for verification/P08/*, order was alphabetical-ish, not mtime. Hmm, it says modification-time order but the result looked alphabetical. Whatever.
+
+Alternative: I can use glob on the whole worktree to list files, but nothing about mtimes.
+
+OK. Let me proceed to read the key documents. This is a big reading job. Strategy: I should read the most important docs myself for the final judgment (AC_COVERAGE.md, SCOPE_DRAFT.md, verify_scope.py, doc/08_ACCEPTANCE_CRITERIA.md relevant parts, doc/13_ACCEPTANCE_TRACEABILITY.md, R3 review, RESUME.md, P08.md, STATUS.md), and delegate the bulk of "old finding closure" reading (R1/R2/R3 reports, handoffs) to subagents to save context.
+
+Given the volume, using subagents is wise. But subagents share the same pwsh limitation — they can still read files. I'll delegate:
+
+1. Subagent A: Read R1 report (review-dsh-31c2638.md? or which are R1/R2/R3?), preliminary-review.md, R2/R3 reports, and produce a table of all findings N-01..N-08 and 4×P1 with status claims and evidence references.
+2. Subagent B: Cross-check doc/08_ACCEPTANCE_CRITERIA.md AC-EXPORT-001 text, D08 task file, SCOPE_DRAFT.md, AC_COVERAGE.md — specifically N-07.
+3. Subagent C: verify_scope.py analysis + doc/handoffs/P08-*.md listing — N-08.
+
+But careful: subagents' outputs are inputs; final judgment mine. Also I need raw evidence (file/line) to quote. Subagents can return quotes with line numbers. Good.
+
+However, there's risk of subagent inaccuracy. For the must-verify findings (N-07/N-08), I should read the files myself too. N-07 and N-08 core files are small (AC_COVERAGE.md, verify_scope.py). Let me read them myself.
+
+Let me first identify the files. Which are R1/R2/R3 formal reports? Candidates: review-dsh-1ad05d99-r3.md, review-dsh-31c2638.md, review-dsh-490f9bd.md. And preliminary-review.md. And DSH-REVIEW-PROMPT*.md are prompts.
+
+Let me glob doc/tasks/P08*, verification/P08, doc/handoffs/P08-*, and read AC_COVERAGE.md + verify_scope.py.
+
+Let me batch reads. First: verify_scope.py and AC_COVERAGE.md.
+dsh: reasoning:
+Excellent. Now I have verify_scope.py and AC_COVERAGE.md.
+
+N-07 assessment: Line 142 (AC-EXPORT-001 row):
+- "建议实现切片（未认领）" column: "P16/P17；D08"单图"到PNG的映射按D1/D2用户选择并由P16契约冻结"
+- 决策处理 column: "INCLUDED：D08 AC-EXPORT-001列单图/ZIP/CBZ/PDF/文本五项；D1/D2将"单图"选为PNG，首发映射由P16契约冻结；D08未限定PNG"
+
+So it does say D08 lists five items (单图、ZIP、CBZ、PDF、文本) and that PNG mapping is attributed to D1/D2 (user) + P16 contract freeze, and explicitly states "D08未限定PNG". That looks like N-07 satisfied. Need cross-check with doc/08_ACCEPTANCE_CRITERIA.md AC-EXPORT-001 original text to confirm the five items, and SCOPE_DRAFT.md.
+
+N-08 assessment: verify_scope.py lines 74-84:
+```python
+handoffs = sorted(path.relative_to(ROOT).as_posix()
+                  for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
+assert handoffs, "P08 Handoff scope must not be empty"
+checked = subprocess.run(["git", "-C", str(ROOT), "diff", "--check", BASE, "--",
+                          "verification/P08", "doc/tasks/P08.md", "doc/REBASELINE_PLAN.md",
+                          "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md",
+                          "doc/tasks/README.md", *handoffs,
+                          "verification/PROJECT-ROADMAP-20261008"],
+                         capture_output=True, text=True)
+assert checked.returncode == 0, ...
+print(f"PASS: ... ({len(handoffs)} Handoffs)")
+```
+So it dynamically globs doc/handoffs/P08-*.md and includes them all in the `git diff --check` invocation. The PASS message prints len(handoffs). The glob found 3 handoffs: P08-1ad05d99-dsh-r3.md, P08-31c26389-dsh-r2.md, P08-490f9bd9.md — these are R1/R2/R3 handoffs. Good: covered.
+
+Boundary when new handoff added: glob is evaluated at runtime so new handoffs are auto-included (good). But note: the diff --check range is BASE..worktree, so handoffs must exist at head; a handoff added after head... irrelevant. Also the assertion `assert handoffs` ensures non-empty. Edge: handoffs nested in subdirectories of doc/handoffs would not be matched (glob is non-recursive, "P08-*.md"). Also a Handoff whose filename doesn't start with "P08-" (e.g., lowercase or different prefix) would be missed. Also if the author saved the handoff outside doc/handoffs (e.g., verification/P08/), it wouldn't be in the handoffs list — but verification/P08 is already covered by the diff --check paths anyway. Note also that a new handoff added in a later commit could be missed? No.
+
+One more edge: the PASS message says "(3 Handoffs)" dynamically - accurate. Note: the `git diff --check` on the worktree side compares BASE to working tree (not to HEAD). Since `git diff --check BASE` (without second commit) compares BASE with working tree. So it covers uncommitted state too. Fine.
+
+Another boundary: If a handoff file is added but not committed (untracked), `git diff --check` doesn't consider untracked files → untracked handoff would not be checked... well `git diff --check BASE` diffs base vs worktree tracked files; an untracked new file wouldn't appear. Hmm, actually for a new file added to index it would appear in `git diff BASE` (index+worktree vs base). If untracked, no. So an untracked handoff is not checked but also isn't part of delivery. That's a reasonable boundary. Also: if handoffs directory contains a P08 handoff from a different task (e.g., P08 handoff for a different purpose), they'd be included — conservative, fine.
+
+Also should check whether the three handoffs are indeed R1/R2/R3: P08-490f9bd9.md (R1), P08-31c26389-dsh-r2.md (R2), P08-1ad05d99-dsh-r3.md (R3). Likely.
+
+Now the review reports: verification/P08/review-dsh-31c2638.md? Hmm, the glob showed review-dsh-31c2638.md, review-dsh-490f9bd.md, review-dsh-1ad05d99-r3.md, and preliminary-review.md. Note the handoff filenames differ slightly: 490f9bd9 vs review-dsh-490f9bd; 31c26389 vs review-dsh-31c2638; 1ad05d99 both.
+
+Let me now read the other required docs. Strategy for context: I need to read:
+- AGENTS.md (already partially via system reminder, but read the file)
+- doc/09_COLLABORATION.md (long)
+- doc/REBASELINE_PLAN.md (long)
+- doc/STATUS.md
+- doc/tasks/P08.md
+- verification/P08/RESUME.md
+- verification/P08/SCOPE_DRAFT.md
+- R1/R2/R3 reports
+- doc/04_USER_FLOW.md (relevant parts)
+- doc/08_ACCEPTANCE_CRITERIA.md (long)
+- doc/AD-001 (long)
+- doc/13_ACCEPTANCE_TRACEABILITY.md (long)
+- doc/handoffs/P08-*.md (3)
+- doc/templates/REVIEW.md
+
+That's a lot. I can delegate. But subagents are also context-limited but separate. Given the need for accurate quoting for N-07/N-08 and the overall verdict, I'll read core ones myself and delegate bulk cross-checking.
+
+Actually, let me think about efficiency. The final report must include: frontmatter per template, fixed base/head, scope, Architecture & Verification conclusions, per-Finding table, verification matrix, NOT_RUN boundaries, risks, conclusion. Much of the content (R1's 4×P1, N-01..N-06 closure) I need to summarize accurately.
+
+Plan for delegation (parallel, one message):
+1. Subagent A: Extract full inventory of R1 findings (4×P1 + P2/P3) and N-01..N-06 with their claimed closure evidence from R1/R2/R3 reviews and handoffs; return structured summary with file:line quotes.
+2. Subagent B: Cross-check D08 AC-EXPORT-001 original text + D1/D2 decisions in SCOPE_DRAFT.md + related N-07 claims; return exact quotes with line numbers.
+3. Subagent C: Check doc/09_COLLABORATION.md §5.1 + P08 task file + RESUME + STATUS + REBASELINE_PLAN consistency for P08 status/reviewer/approval/reviewed_head; and check protected-path claims.
+4. Subagent D: doc/templates/REVIEW.md template structure (so I can format the report).
+
+Hmm, D is small; I can read it myself.
+
+But wait — maybe I should be careful about subagent reliability. I'll do the critical N-07/N-08 verification myself (mostly done for N-08; need doc/08 text for N-07).
+
+Let me now read a batch of files myself: doc/08_ACCEPTANCE_CRITERIA.md — it's long, but I need the AC-EXPORT-001 section and the D08 gates 68-79 text. Let me grep for AC-EXPORT-001 first to find line numbers, then read around.
+
+Let me also read SCOPE_DRAFT.md, RESUME.md, templates/REVIEW.md, doc/tasks/P08.md.
+
+Given the volume, I'll launch subagents in parallel now while I read core files.
+
+Let me write careful prompts. Each subagent must be self-contained: give repo path, read-only rule, and ask for structured output with exact quotes and line numbers.
+
+Subagent A prompt: read verification/P08/review-dsh-490f9bd.md (R1), review-dsh-31c2638.md (R2), review-dsh-1ad05d99-r3.md (R3), preliminary-review.md, plus doc/handoffs/P08-*.md, and produce:
+- R1's four P1 findings: IDs, titles, file:line, resolution claimed in R2/R3.
+- R2 findings N-01..N-06: each with level, description, evidence of closure in R3 (quote).
+- N-07/N-08 status in R3 (what R3 said).
+- Any P2/P3 from R1 and their disposition.
+Return concise structured markdown with quotes and line numbers. Also note reviewer names/authorship.
+
+Subagent B: doc/08_ACCEPTANCE_CRITERIA.md AC-EXPORT-001 section text (quoted verbatim), §53/§68-79 header list, D1-D7 decisions in SCOPE_DRAFT.md (verbatim table), and whether any text limits 单图 to PNG. Also check doc/13_ACCEPTANCE_TRACEABILITY.md lines about AC-EXPORT-001 and the 12 Legacy PASS items and §74/75/79 advisory statements.
+
+Subagent C: doc/tasks/P08.md frontmatter & body key claims; doc/STATUS.md current P08 status; doc/REBASELINE_PLAN.md P08 row + successors; verification/P08/RESUME.md; doc/09_COLLABORATION.md §5.1 and task-state block; verify consistency: does P08 claim review pending, reviewer DSH, reviewed_head=16fb07a9? Any contradictions? Also check whether P08 handoff files exist and their content summary (commit refs).
+
+Subagent D: Doc Rebaseline gate: doc/13_ACCEPTANCE_TRACEABILITY.md AC-DOC-001..003 mapping (§66), and AD-001 architecture relevance; also check doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md for consistency with P08 (since those are in the diff --check list).
+
+Hmm, this may overlap. Let me consolidate to 3 subagents to reduce noise: A (review history findings), B (D08 AC + D1-D7 + doc/13), C (governance: P08 task file, STATUS, Plan, RESUME, collaboration §5.1, scope draft D1-D7 might overlap with B — give D1-D7 table to B).
+
+Actually SCOPE_DRAFT is central to D1-D7 non-expansion check; assign to B.
+
+Then I read myself: AC_COVERAGE.md (done), verify_scope.py (done), REVIEW template, SCOPE_DRAFT.md, doc/tasks/P08.md, RESUME.md, doc/08 AC-EXPORT-001 region, R1/R2/R3 review reports (at least skim key sections). Actually that's a lot; subagents cover them, but I should spot-check key quotes myself for the findings I must judge (N-07, N-08, N-01..N-06 closure).
+
+Let me launch the 3 subagents in background (default true) and meanwhile read files myself. Good use of parallelism.
+
+Note: subagents run in the same workspace? They have their own working dir presumably the session workspace. I'll give absolute paths.
+
+Let me launch.
+dsh: reasoning:
+While they run, let me read core files myself: the REVIEW template, doc/tasks/P08.md, SCOPE_DRAFT.md, AC_EXPORT section of doc/08, and R3 review. Let me do grep for AC-EXPORT-001 in doc/08 to locate lines.
+
+Let me batch: read template REVIEW.md, grep AC-EXPORT-001 in doc/08.
+dsh: reasoning:
+Interesting: doc/tasks/P08.md line 80 says N-07 is still open pending R4 confirmation, and the AC_COVERAGE.md line 142 has already been revised. So P08.md tracks N-07 as open (correct behavior — reviewer decides).
+
+Let me read the doc/tasks/P08.md findings table fully and its frontmatter. And doc/08 lines 2040-2100.
+
+Let me read P08.md fully.
+dsh: reasoning:
+Confirmed: doc/08 AC-EXPORT-001 (line 2054-2064) lists exactly 5 formats: 单图, ZIP, CBZ, PDF, 文本. No PNG mention. So AC_COVERAGE.md line 142's decision column ("D08 AC-EXPORT-001列单图/ZIP/CBZ/PDF/文本五项；D1/D2将"单图"选为PNG，首发映射由P16契约冻结；D08未限定PNG") is accurate and correctly attributes PNG to D1/D2 + P16. N-07 appears closed.
+
+Wait — need to double check the "建议实现切片" column too: "P16/P17；D08"单图"到PNG的映射按D1/D2用户选择并由P16契约冻结" — accurate: attributes to D1/D2 user selection and P16 contract freeze. Good, doesn't imply D08 limited to PNG.
+
+Also need to verify against SCOPE_DRAFT.md whether D1/D2 say PNG and PDF. Subagent B will confirm, but let me read SCOPE_DRAFT myself since it's key (also for D1-D7 non-expansion and the P08-FMT table).
+
+Also note P08.md line 80 states N-07 as the R3 finding "DSH发现状态列仍称D08"只写单图/ZIP"" — so the fix has been applied in AC_COVERAGE.md:142. And it stays "open直至R4独立确认" which is correct process.
+
+Important: P08.md status = changes_requested, reviewed_head = 1ad05d99... (R3 head), not the current head 16fb07a9. The prompt says P08.md records reviewed_head and the verify_scope.py asserts reviewed_head is a full 40-hex. Now at delivery head 16fb07a9, the reviewed_head still points to R3's head, and review_report points to R3 report. There is a new R4 prompt (verification/P08/DSH-REVIEW-PROMPT... which one? glob earlier showed DSH-REVIEW-PROMPT.md, -R2.md, -R3.md — no R4 file!). Hmm. Wait, the current task says "追加R4 Prompt/Handoff". Let me check: glob of verification/P08/* showed: AC_COVERAGE.md, DSH-REVIEW-PROMPT-R2.md, DSH-REVIEW-PROMPT-R3.md, DSH-REVIEW-PROMPT.md, preliminary-review.md, RESUME.md, review-dsh-1ad05d99-r3.md, SCOPE_DRAFT.md, review-dsh-31c2638.md, review-dsh-490f9bd.md, validation.log, verify_scope.py.
+
+No DSH-REVIEW-PROMPT-R4.md and no R4 handoff (doc/handoffs/P08-* only 3 files). Hmm! But the R4 prompt exists — it's given to me in the chat, presumably from Codex. Wait, the prompt says "当前被审head的R1/R2/R3三份Handoff均被覆盖" — so R4 expects 3 handoffs. And "N-07/N-08已按R3最小建议修订；当前candidate提交后记录固定head并追加R4 Prompt/Handoff，再由DSH非作者复审". So possibly the R4 prompt file wasn't added (the R4 prompt was delivered via chat). Hmm, is that an issue? The verify_scope.py line 25-31 checks all links in verification/P08/*.md resolve. It doesn't require an R4 prompt file.
+
+But wait: is the head 16fb07a9 the candidate that contains N-07/N-08 fixes? Let's think: R3 head = 1ad05d99. Delivery head = 16fb07a9. The delta from base to 16fb07a9 includes commits after 1ad05d99 which should contain: AC_COVERAGE.md:142 fix, verify_scope.py handoff glob change, and presumably a new prompt/handoff for R4 plus governance updates? Let me check whether doc/handoffs has an R4 handoff... glob showed only 3 P08 handoffs. Hmm, so maybe the R4 prompt is DSH-REVIEW-PROMPT.md? No—that's likely R1's prompt.
+
+Hold on. Let me re-check the glob: `doc/handoffs/P08-*` returned:
+- P08-1ad05d99-dsh-r3.md
+- P08-31c26389-dsh-r2.md
+- P08-490f9bd9.md
+
+So no R4 handoff. But the review prompt at hand says: "Codex会核验并归档你的原样最终报告" — implying the handoff may be created after this review. Also the prompt itself mentions R4 as "正式 Review Prompt R4" delivered to me, and R4 handoff might not be required before the review. Actually P08.md says workflow: "当前candidate提交后记录固定head并追加R4 Prompt/Handoff，再由DSH非作者复审" — so the R4 handoff should exist by now if the process was followed. Its absence could be a minor process gap... but maybe the handoff is created after the review (as with R3: handoff P08-1ad05d99-dsh-r3.md exists at head; was it created before or after R3 review? It's at the R3 head, so created before/with it).
+
+Hmm, but careful: maybe the R4 handoff exists with a name not matching `P08-*`? Let me glob doc/handoffs/*16fb* or check for R4 files anywhere.
+
+Let me search for "16fb07a9" across the repo to see which files reference the delivery head. That's an excellent check: if a handoff/prompt referencing 16fb07a9 exists, glob would have found it. Let's grep.
+
+Also: N-08's concern — verify_scope.py dynamically collects doc/handoffs/P08-*.md. At this head, 3 handoffs exist. If the R4 handoff is missing, then the R4 prompt file (if it were added under verification/P08) would be covered by the "verification/P08" path anyway.
+
+Let me grep for 16fb07a9 across the whole worktree.
+
+Also I want to check git state/cleanliness more. Another idea to partially verify cleanliness without git: the `.git/worktrees/.../index` mtime vs files. Can't read binary meaningfully. Hmm.
+
+Actually! Interesting idea: I could check the worktree's index file... no.
+
+Alternative: For "clean" determination, I could compare the count of files? No.
+
+OK, another approach for diff scope: the task says review the full delta base..head. I can't run git diff. But maybe there are artifacts that record the changed file list: validation.log, RESUME.md, and the review prompts. Let me read validation.log and RESUME.md myself (small). Those were Codex-run evidence.
+
+Let me also grep for "16fb07a9" to find all references.
+
+Batch:
+1. grep -r "16fb07a9" in worktree
+2. read verification/P08/RESUME.md
+3. read verification/P08/validation.log
+4. read verification/P08/SCOPE_DRAFT.md (may be long — let me check size first; grep for D1 table). I'll just read it; if long, ok.
+dsh: reasoning:
+Key finding: `grep 16fb07a9` returns NO matches anywhere in the worktree. That means the delivery head 16fb07a9 is not referenced by any document — not by P08.md (reviewed_head still 1ad05d99), not by validation.log (last entry line 324 says main_HEAD_before_delivery=1d6cfa27...), not by RESUME.md, and there is no R4 Handoff/Prompt file at this head.
+
+Hmm wait. This is a very significant issue for the review: the delivery head 16fb07a9 has no recorded validation and no R4 Handoff/Prompt; the repo documents still describe state as "candidate ... R4 independent review pending" at main_HEAD_before_delivery=1d6cfa275230c9986d0cc8c984e8b166cac6387b.
+
+But careful: RESUME.md line 7 says candidate基于主线HEAD=1d6cfa27..., N-07/N-08修订尚未提交. And line 27: "current enumeration=3 Handoffs" — that matches verify_scope.py at the head globbing 3 handoffs. And validation.log line 326 says "3 P08 Handoffs dynamically included".
+
+So: is 16fb07a9 the commit that contains the N-07/N-08 fixes? Very likely yes (it's the "candidate" commit). The delta base..16fb07a9 includes all P08 work.
+
+Now, is it a problem that no doc references 16fb07a9? For R4 review, arguably the R4 Handoff and prompt should be added and bound to the delivery head. P08.md line 85 says "N-07/N-08已按R3最小建议修订；当前candidate提交后记录固定head并追加R4 Prompt/Handoff，再由DSH非作者复审。" So per the task's own process, the R4 Prompt/Handoff should have been added before dispatching R4. But there's no R4 Prompt file and no R4 Handoff in doc/handoffs. The R4 prompt was delivered to me via chat (dispatch), which may be acceptable... but the process requirement says "追加R4 Prompt/Handoff". The absent R4 handoff means the delivery head isn't formally recorded in the repo.
+
+Hmm, wait. Let me be careful: maybe the R4 prompt/handoff exist but the grep failed because they don't contain the string "16fb07a9"? No — grep for 16fb07a9 found nothing, and glob doc/handoffs/P08-* found only 3. Let me double check by globbing doc/handoffs for anything with "r4" or "16fb". And check DSH-REVIEW-PROMPT.md content (which prompt is it? maybe it's the R1 prompt). Also check whether a new prompt file was added under verification/P08 — glob showed no R4.
+
+Also interesting: verification/P08 glob earlier did NOT include any R4 prompt. So indeed no R4 artifacts.
+
+Hmm, but hold on: is it possible that the P08.md/RESUME.md/validation.log at the head 16fb07a9 are exactly as I read them? Yes — I read them from the worktree at the detached head, assuming clean. And they say "R4 independent review pending" and mention the candidate. So the author did NOT update P08.md's reviewed_head to 16fb07a9 before dispatch. That's consistent with the process: reviewed_head is updated after the review returns (R3's reviewed_head=1ad05d99 was recorded after R3 returned). Indeed for R3, the handoff and prompt were created at the R3 commit *before* review, and P08.md was later updated. Look at R3: P08.md line 17 reviewed_head=1ad05d99 (R3's head), review_report=R3 report. And RESUME/logs mention R3 handoff/prompt prepared at the R3 commit before dispatch.
+
+For R4, the analogous artifacts (R4 prompt file + R4 handoff) are missing. Hmm, but is the R4 Handoff maybe part of the delivery? The prompt given to me references "R1/R2/R3正式报告" and expects the current head's R1/R2/R3 handoffs. It doesn't mention an R4 handoff. And the prompt says "不要创建报告文件，Codex会核验并归档你的原样最终报告" — meaning after my report, Codex archives it. Perhaps the R4 handoff is created together with archiving.
+
+So: the R4 head has no R4 Handoff/Prompt file. Is that a finding? It's a process/traceability gap: the delivery head 16fb07a9 is not referenced by any repository document; the last recorded delivery/navigation state points to candidate at 1d6cfa27 / R3 head. For a formal review, the reviewer cannot confirm the head was "fixed, recorded and traceable" from repo evidence. I should report this as a new finding (let's call it R4-01 or N-09). Level: P3 (traceability/process), possibly P2? Let's think.
+
+The review criteria mention "新问题使用唯一ID、级别、具体文件/行、触发、影响、复现证据与建议". So I should create new findings with unique IDs, e.g. R4-01.
+
+Now, is it truly true that no file mentions 16fb07a9? My grep was over the whole worktree path — includes doc/, verification/, etc. It found nothing. That's strong evidence. But note: grep tool might skip binary/hidden files or respect ignore files (like .gitignore)? Ripgrep by default respects .gitignore. Files in the worktree that are gitignored wouldn't be searched. But doc and verification are tracked. Also, ripgrep skips files ignored... The worktree's verification files are tracked. So fine.
+
+Wait, hold on. Maybe the grep tool's `path` searches only tracked...? No, ripgrep searches files on disk honoring .gitignore. Good enough. Let me additionally grep for "R4" in verification/P08 and doc to see if any R4 references exist.
+
+Also I should verify the worktree is clean. Hmm — here's a thought: the presence of the R4 prompt in chat but not in repo could also indicate the worktree is dirty with the R4 prompt as an untracked file... but grep found nothing for 16fb07a9, and glob didn't list an R4 prompt. So no.
+
+Another important thing: the delivery head 16fb07a9 vs RESUME.md's "candidate ... 尚未提交" and "main_HEAD_before_delivery=1d6cfa27". If 16fb07a9 is a commit made after those docs, the docs at 16fb07a9 would still say "N-07/N-08修订尚未提交" (RESUME line 7) — which would be stale/contradictory at the delivery head: RESUME says "R3结果同步及N-07/N-08修订尚未提交" and "candidate仍待固定delivery commit", but at head 16fb07a9 the fixes ARE committed and the delivery commit is fixed. Also RESUME line 27 says "candidate仍待固定delivery commit。提交后追加R4 Handoff/Prompt并派发非作者复审" — at head 16fb07a9, the fix is committed and R4 was dispatched, so RESUME.md is stale relative to its own head. That's an inconsistency worth reporting (stale recovery checkpoint). Hmm — but wait: maybe the commit 16fb07a9 includes only RESUME/log updates... no, RESUME says not committed, so at 16fb07a9 RESUME wasn't updated after commit. Since RESUME.md is the "当前工作点与下一精确步骤", having it say "尚未提交" while its own head is a commit is a stale-state inconsistency. Level P3 (documentation staleness), non-blocking.
+
+Hmm, but careful: RESUME.md could legitimately be describing the state at the time of writing and the delivery commit came right after with no doc change. Still, as a recovery checkpoint it's now wrong about "尚未提交"/"待固定delivery commit". This is a real, if minor, inconsistency. However — is RESUME.md in the allowed paths? Yes (verification/P08/**). And verify_scope.py doesn't check RESUME for that.
+
+Also: does the delivery head actually contain the N-07/N-08 fixes? I verified the fixed content exists in the worktree (AC_COVERAGE:142 and verify_scope.py glob). If the worktree is clean at 16fb07a9, then yes, the fixes are in the delivery. I can't run git status, so this rests on the assumption of clean. The reflog has a single entry and no way to confirm. I must state this boundary.
+
+Hmm, wait. Actually I realize I might be able to get partial cleanliness evidence: the worktree gitdir may contain an `index` file plus `HEAD`; git doesn't store cleanliness. But `git status` also is not stored. So no.
+
+Alternative: check for the presence of files that git would show as untracked... can't.
+
+OK. Now, another thought about N-07/N-08 verification at head: the "PASS文案与真实范围是否一致" for N-08 — the print says "full P08 subtree/task governance diff is whitespace-clean ({len(handoffs)} Handoffs)". The真实范围 includes verification/P08, doc/tasks/P08.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, all P08 handoffs, verification/PROJECT-ROADMAP-20261008. The PASS text says "full P08 subtree/task governance diff is whitespace-clean (N Handoffs)" — reasonably consistent, though "full P08 subtree" might overstate: it does not include doc/13, doc/08 etc. (which are in the read-only guard with --name-only check, not whitespace check). Hmm, the protected-path guard (line 65-73) uses `git diff --name-only` — no whitespace check for those. Is "full P08 subtree/task governance diff" accurate? The list covers P08-owned files: verification/P08 (the P08 subtree), P08.md, Plan, STATUS, index, roadmap, tasks/README, handoffs, derived roadmap dir. I'd call the PASS wording acceptable but slightly loose: it omits that doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md are governance files and that verification/PROJECT-ROADMAP-20261008 is a derived roadmap dir. Not a defect.
+
+The key N-08 question: "是否从doc/handoffs/P08-*.md动态收集所有P08 Handoff并将其加入git diff --check范围，PASS文案与真实范围是否一致；确认当前被审head的R1/R2/R3三份Handoff均被覆盖，并评估新增Handoff时的边界。"
+
+Answer: yes, dynamic glob at lines 74-75; the 3 handoffs are P08-490f9bd9.md (R1), P08-31c26389-dsh-r2.md (R2), P08-1ad05d99-dsh-r3.md (R3) — all matched by P08-*.md. So covered. Boundaries: (a) non-recursive glob → handoffs in subdirectories missed; (b) filename prefix must literally be `P08-` (case-sensitive on Windows? pathlib.glob on Windows is case-insensitive for matching? Actually Python's Path.glob uses fnmatch-like normalization; on Windows, `glob` is case-insensitive... hmm, Python's pathlib glob delegates to os.scandir + fnmatch; fnmatch on Windows normalizes case (os.path.normcase). So `P08-*.md` would match `p08-foo.md` on Windows but not on Linux. Repo is Windows-only, minor.); (c) untracked handoff not yet committed wouldn't appear in `git diff BASE` (diff of base vs worktree covers tracked/index; untracked ignored) — but a handoff created by the task and committed is covered; (d) the whitespace check only flags whitespace errors, not content; (e) `assert handoffs` only ensures non-empty, not that it equals expected set — if a handoff were renamed to something not starting with P08- (e.g. moved to verification/P08/), it's still covered by verification/P08 path. If someone stored the R4 handoff under doc/handoffs/ with a different prefix (e.g. `P08R4-...md`), it would be silently excluded — but such a name is unlikely given convention. Also note: an important boundary — if a NEW P08 handoff is added *barely before* this script runs but the file name collides... nah.
+
+Another boundary worth noting: the dynamic collection means the *PASS message count changes* but there's no assertion that all P08 handoffs recorded in P08.md's 交付与运行记录 are covered. Minor.
+
+So N-08 → closed (with residual boundary notes, non-blocking).
+
+Now N-07: closed — AC_COVERAGE.md:142 states all five formats and attributes PNG to D1/D2 + P16, explicitly "D08未限定PNG". Cross-check with SCOPE_DRAFT pending subagent. Also need to verify no other place still says D08 limits to 单图/ZIP (the R3 finding said "状态列仍称D08'只写单图/ZIP'"). Let me grep AC_COVERAGE.md for "只写" or "单图" to see all occurrences. Let me grep "单图" and "ZIP" in verification/P08.
+
+Let me also read SCOPE_DRAFT.md myself (needed for D1-D7 non-expansion, P08-FMT, D5 threshold).
+
+Also check the R3 report itself (review-dsh-1ad05d99-r3.md) to confirm N-07/N-08 wording — the subagent is doing it, but I want to verify the finding text for N-07 to confirm the fix addresses the finding precisely. The findings text is quoted in P08.md line 80-81.
+
+Let me now: grep 单图/ZIP in verification/P08; read SCOPE_DRAFT.md.
+
+Also, I should check whether doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, doc/STATUS.md, doc/REBASELINE_PLAN.md are consistent (claiming R4 pending etc.) — subagent C covers.
+
+Let me batch: grep for 单图 and R4 in verification/P08, and read SCOPE_DRAFT.md.
+dsh: reasoning:
+Very important discoveries:
+
+1. R3 review (line 136) explicitly demanded: "建立新的固定 delivery head 与新 `doc/handoffs/P08-<new-head>-dsh-r4.md`、`verification/P08/DSH-REVIEW-PROMPT-R4.md`，再派发 DeepSeek Harness 非作者 R4 复审". And R3 line 132: "修订提交后固定新 reviewed_head，并在其后的文档提交中追加 Handoff/Prompt 与 validation.log 条目（09_COLLABORATION.md:90）".
+
+At the delivery head 16fb07a9:
+- No `doc/handoffs/P08-<new-head>-dsh-r4.md` exists (only 3 handoffs: R1/R2/R3).
+- No `verification/P08/DSH-REVIEW-PROMPT-R4.md` exists.
+- No validation.log entry referencing the new head (16fb07a9 absent everywhere; last entries reference candidate at 1d6cfa27 baseline and "R4 independent review pending").
+- P08.md's 测试要求 table still documents head 31c26389 for the validator runs; the newest entries in RESUME/validation.log describe the *candidate working tree* (uncommitted) with EXIT=0.
+
+So the R4 delivery head is not recorded anywhere, no R4 Handoff/Prompt per the R3-mandated process, and the mandated "validation.log 条目" for the new fixed head is absent. This is a genuine new finding.
+
+Is it blocking? Consider: The review can still be performed (the files at the head contain the fixes). But the mandate from R3 was explicit, and the collaboration protocol §5.1 / 09_COLLABORATION.md:90 (referenced) presumably requires a Handoff binding the fixed head. Let me verify 09_COLLABORATION.md:90 to see what it requires. Subagent C covers §5.1; but let me read that line myself.
+
+Also note SCOPE_DRAFT.md line 102 still links DSH-REVIEW-PROMPT.md as "Review指令" and says "当前未派发/认领" — fine.
+
+Also SCOPE_DRAFT.md line 3 says "首轮非作者正式Review为`changes_requested`，正按findings修订" — stale relative to R4 head (it's now round 4). Minor staleness. Hmm, was that already noted? Not in the findings list. It says "首轮" which is outdated after R3. This is a staleness issue in SCOPE_DRAFT (P3-ish). But careful: is it in scope of the review to flag? Yes, "识别R3以后的新增问题". It's minor.
+
+Also doc/00_INDEX.md line 3, doc/12_ROADMAP.md, doc/REBASELINE_PLAN.md line 3/39, doc/STATUS.md line 3/7/20, verification/PROJECT-ROADMAP-20261008/{ROADMAP.md,RESUME.md,REPORT.md} all say "N-07 P2/N-08 P3已修订、待R4确认" — that's consistent with a pending R4 review. Good — these are accurate at the R4 head (R4 review is what I'm doing). So governance docs are NOT stale in that respect. 
+
+The stale bits are:
+- RESUME.md: "N-07/N-08修订尚未提交" (line 7), "candidate仍待固定delivery commit" (line 27), "R4 Prompt与Handoff待固定delivery commit后创建" (line 29). At head 16fb07a9 (a commit that contains the fixes), these statements are false. Unless... 16fb07a9 doesn't contain the fixes? But the worktree does contain them. Since the worktree is at detached HEAD 16fb07a9 (assuming clean), the fixes are IN 16fb07a9. So RESUME.md at 16fb07a9 contradicts itself.
+
+Wait — I must double check this assumption. What if the worktree is dirty with the fixes uncommitted? Then RESUME.md's claims would be accurate and the delivery head wouldn't contain the fixes. That's a critical fork. The reflog has one entry: creation at 16fb07a9. If Codex created the worktree at 16fb07a9 and the fixes are in 16fb07a9, then everything's committed. If instead the fixes were uncommitted in the main worktree and this review worktree was created at 16fb07a9 without them, then AC_COVERAGE.md:142 wouldn't show the fix... but it DOES show the fix. So either (a) 16fb07a9 contains the fix (committed) — then RESUME.md is stale; or (b) 16fb07a9 doesn't contain the fix, and this review worktree's copy was somehow modified — but then the worktree is dirty, which violates "detached clean" expectation, and my whole review target would be wrong.
+
+Hmm. Which is it? Evidence: the review prompt (from Codex) says: "Codex已在该精确head的clean linked worktree运行... verification/P08/verify_scope.py". If 16fb07a9 lacked the fixes, verify_scope.py at that head would still have the old hardcoded 2-handoff version. But I read verify_scope.py from this worktree and it HAS the dynamic glob. So the fix is present in the worktree at HEAD 16fb07a9. Combined with the claim "clean" (Codex's), the fix is committed in 16fb07a9. Therefore RESUME.md's "尚未提交/待固定delivery commit" is stale. Also P08.md's 测试要求 table (line 109) cites the validator run at head 31c26389 — the head binding for the *latest* fix round is missing (N-08's own point: the last recorded verification is bound to an older head).
+
+Hmm, actually wait. Let's reconsider: maybe P08.md/RESUME.md/validation.log at head 16fb07a9 are the *pre-fix* versions and the fix commit 16fb07a9 changed ONLY AC_COVERAGE.md and verify_scope.py, not the governance docs. That's consistent: the author fixed the two files, committed as 16fb07a9, and had not yet updated RESUME/P08.md/validation.log/P08.md-handoff — because per R3's instruction the Handoff/Prompt/validation.log entries are added "在其后的文档提交中" (in a subsequent *document* commit) after fixing the reviewed_head. Hmm, R3 said: "修订提交后固定新 reviewed_head，并在其后的文档提交中追加 Handoff/Prompt 与 validation.log 条目，... 逐项登记 N-07/N-08 的 disposition；届时派发 R4 非作者复审." So the sequence: fix commit → then a doc commit adding handoff/prompt/validation.log entries → then dispatch R4. 
+
+At the delivery head 16fb07a9, the doc commit appears not to include the R4 handoff/prompt/validation.log entries. But maybe 16fb07a9 IS the doc commit and the handoff/prompt files were added... no, they're absent.
+
+Hold on, let me reconsider whether maybe the R4 handoff exists but is named differently — e.g. `doc/handoffs/P08-16fb07a9-dsh-r4.md` would have matched my glob `doc/handoffs/P08-*` and would contain "16fb07a9" in the filename and content — grep found no "16fb07a9" anywhere, so it doesn't exist. Definitive.
+
+So: the R4 delivery head has no Handoff, no R4 Prompt file, no validation.log entry, no P08.md record of the revision head. That's the main new finding. Level: this is a process/traceability requirement explicitly mandated by R3 (an unresolved P2's fix must be traceable). Since N-07/N-08 fixes ARE in place and verifiable in the tree, the missing artifacts are non-blocking for the *technical* content, but they do break the mandated traceability chain and the "命令/EXIT 绑定固定 head" discipline that was R1's P1-1 (the very first P1 finding: "验证日志未绑定固定head").
+
+Hmm, this is important: R1's P1-1 was about the validation log not being bound to a fixed head. Now at R4, again the validation log lacks any entry for the delivery head 16fb07a9 (the most recent entry describes a working-tree candidate at 1d6cfa27 with "尚未提交"). So this is a recurrence of the P1-1 failure mode at the new head — though milder, because the *review* is being bound to 16fb07a9 by the prompt itself.
+
+Wait, actually, I should be careful: the prompt says the review is of the exact delivery head 16fb07a9. Perhaps Codex will archive my report and then add the R4 handoff + validation.log entry. The absence might be intentional sequencing ("Codex会核验并归档你的原样最终报告"). Hmm. But R3's mandate was explicit about creating those artifacts *before* dispatching R4. And P08.md line 85 says "当前candidate提交后记录固定head并追加R4 Prompt/Handoff，再由DSH非作者复审" — the order is: commit → record fixed head → append R4 Prompt/Handoff → dispatch. So at the time of dispatch, they should exist.
+
+So I'll raise it as a new finding: severity P2 (process/traceability: the R4 delivery head is unrecorded; R3's explicit discharge instructions not fully executed; revalidation of the P1-1 discipline). Is P2 right? Let's think about the severity ladder used in this project: P0 blocking correctness, P1 must fix before approval, P2 should fix (non-blocking but tracked), P3 minor/robustness. Given: (1) the review is still possible; (2) the technical fixes are present; (3) the missing artifacts are exactly the ones R3 required; (4) the "reviewed_head"/validation binding is the project's core integrity mechanism. I'd call this P2 (non-blocking, but must be recorded before R4 can be considered adequately closed), possibly P1 if the delivery head cannot even be confirmed. Hmm.
+
+Actually — hold on. There's a deeper problem: because no repo document records 16fb07a9, and I can't run git, I cannot independently confirm that 16fb07a9 is a real commit containing these files, nor that the worktree is clean. The prompt asserts the base/head and Codex asserts clean. My verification is limited to: worktree `.git` → gitdir, HEAD file = 16fb07a9 (detached), reflog single entry = 16fb07a9, commondir = ../.. = G:/CODEX/New Manga/.git. That's decent HEAD evidence but not "the commit exists and tree matches".
+
+So my finding should be: the delivery head is not referenced by any versioned document; R3's mandated R4 Handoff/Prompt/validation.log entries are absent; consequently the head binding rests solely on the chat prompt + external Codex claim, and I cannot independently verify the head via repo evidence (not even reachable via documents). Recommend: add doc/handoffs/P08-16fb07a9-dsh-r4.md + verification/P08/DSH-REVIEW-PROMPT-R4.md + validation.log entry bound to 16fb07a9, then archive the R4 report.
+
+Hmm, but wait. Let me reconsider whether this should block approval. The decision options: pending / changes_requested / approved / blocked. The instruction: "未解决P0/P1、D1–D7/数据保护回退或关键证据缺失时不得批准". Is this "关键证据缺失"? The key evidence for the *content* (N-07 fix, N-08 fix) is present and I verified it statically. The missing piece is head-binding traceability. Given the project's own history (P1-1 was exactly "验证日志未绑定固定head" and it was treated as P1), a recurrence at R4 is arguably a P1... but it's not identical: the reviewed head IS fixed by the dispatch prompt and this review binds its own commands/NOT_RUN to it, and the final report will be archived by Codex, which re-establishes traceability. Hmm.
+
+Let me hold judgment until I see the subagent results and read 09_COLLABORATION.md:90 and §5.1 myself. Let me read the relevant portion of 09_COLLABORATION.md now.
+
+Also: I noticed SCOPE_DRAFT.md line 40 says "P16冻结用户已选择的PNG与D08"单图"对应实现" — good. And it says D04 §37 lists five formats. Consistent with N-01 closure.
+
+Wait, one more thing on N-07: the R3 finding said AC_COVERAGE.md:142 "状态列" (结果列/决策处理列) wrote "D08原文只写单图/ZIP". The current text is fixed. Also R3's minimum revision: "改为与SCOPE_DRAFT.md:40/doc/08:2054-2064一致，例如'INCLUDED：D08 AC-EXPORT-001 列单图/ZIP/CBZ/PDF/文本五项；单图到PNG的映射由用户D1/D2选定并由P16契约冻结'". Current: "INCLUDED：D08 AC-EXPORT-001列单图/ZIP/CBZ/PDF/文本五项；D1/D2将"单图"选为PNG，首发映射由P16契约冻结；D08未限定PNG" — matches and adds explicit "D08未限定PNG". Closed.
+
+Also need to check R3's advisory: "顺带 grep 全 verification/P08/** 是否还有'只写/仅写'式的来源收缩表述" — I grepped 只写|单图|PNG in verification/P08 and found only AC-RFULL-002 "只写目标 Region" (unrelated, legitimate) and the correct mentions. So no residual narrowing. Good, I can state I independently performed that check (read/grep is a DSH-executed check!).
+
+Let me now read 09_COLLABORATION.md relevant parts (§5.1, line ~90, DSH role, review independence).
+
+Let me grep for "09_COLLABORATION.md:90"-referenced content — i.e., read lines 70-110. And §5.1. Let me grep for "§5.1" and read around; and grep for "Handoff" requirements.
+
+Let me do: read doc/09_COLLABORATION.md lines 60-120, and grep for "^## " headings to navigate.
+dsh: reasoning:
+Excellent, subagent B gave thorough evidence. Key confirmations:
+- D08 AC-EXPORT-001 = 5 formats, zero "PNG" in doc/08 (grep no matches).
+- 193 ACs, §1-79 continuous.
+- D1/D2 confirm PNG mapping; D5 = release threshold; D6 = deferred extensions.
+- doc/13's 12 Legacy PASS rows confirmed; §74/75 advisory at doc/13:242.
+- doc/13 does NOT use "Gate" wording for §66 — the "§66 开发前 Gate" wording comes from SCOPE_DRAFT/AC_COVERAGE. Interesting nuance: doc/13 line 242 says §74/§75 are 建议性 and 不作为独立验收项, covered by ACG-RELEASECHECK/ACG-READY. And doc/13 line ~228 for §67 mentions Gate. So AC_COVERAGE's claim that "§74/75与§79是建议性内容" — §79 is advisory by its own title ("下一阶段建议"), and doc/13 doesn't say it in the same sentence but the substance holds. Not a finding.
+
+Now N-07: fully closed. Also the "只写/仅写" residual scan: done by R3 and by me (grep over verification/P08) — no residual narrowing.
+
+Now let me wait for subagents A and C. Meanwhile, let me check a few more things myself:
+
+1. Does `verify_scope.py` count assertion `len(rows) == len(expected) + 1 + 12` work? rows = lines starting with "| AC-" or "| D08-": AC rows (193) + D08-AC-SMOKE (1) + 12 D08-GATE-*. = 193+1+12 = 206. Wait, `expected` = AC headers in doc/08 = 193. And rows also includes "| D08-GATE-..." lines: 12 of them (68..79). So len(rows) = 193 + 1 (SMOKE) + 12 = 206 = 193+1+12 ✓.
+
+Hmm, but careful: rows includes any line starting with "| AC-", including AC-EXT-* (8 P2), yes they're part of 193.
+
+2. `assert sum("DEFERRED" in row for row in rows) == 6` — the 6 deferred are AC-EXT-PLUGIN-001/002/003, FONT-001/002, SAKURA-001. ✓ (lines 194-199).
+
+3. `assert all(line.endswith("| NOT_RUN |") for line in rows)` — all rows end with NOT_RUN ✓.
+
+4. gates 68..79 sorted == range(68,80) ✓ (all 12 rows present).
+
+5. `assert "| D08-AC-SMOKE |" in coverage` ✓.
+
+6. AC_COVERAGE.md also has header rows starting with "| D08项 |" (line 5) and "|---|" — not matched.
+
+7. Line 53: `assert "AC-REGION-001..004" in coverage and "AC-DOC-001/002/003" in coverage` ✓ (line 3).
+
+8. Line 54: "ACG主题" and "Architecture Documentation Rebaseline Task" in coverage ✓.
+
+9. Lines 55-57: AC-WIN-00i rows contain "ZCode" and "P12/P14/P15/P17" ✓ (lines 10-15).
+
+10. Line 48: SCOPE_DRAFT D1-D7 = 7 rows matching `^\| D[1-7] \|` ✓ (lines 17-23).
+
+11. Line 58-59: P08-FMT-{MOBI,CBZ,PDF,TEXT} in scope ✓ (lines 53-56).
+
+12. Line 62: `f"| P08 | {state} |"` in REBASELINE_PLAN — P08.md state is `changes_requested`; Plan line 39: `| P08 | changes_requested | ...`. ✓
+
+13. Line 63: `len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20` — need to verify the Plan has 20 such rows. Hmm, note the Plan's table format at line 28-39 seems to be `| ID | 状态 | 链接 | ... |`, with status column values like `changes_requested` and `proposed / 未释放`. Subagent C is checking the count. But note the regex requires the row to START with `| Pnn | proposed / 未释放 |` — that's the status in the second column. Let me verify myself with a grep count.
+
+14. Lines 85-89: comparing old vs new Plan/STATUS after marker "## 2026-10-08 完成：" — asserts the historical part is preserved.
+
+15. Line 73: protected paths diff --name-only must be empty (src, apps, tests, packaging, doc/contracts, doc/reviews, AGENTS.md, 09_COLLABORATION, 01-08 docs, 13, AD-001, verification/PROJECT-ROADMAP-.../task-inventory.csv). Note: doc/08 IS in the protected list — good.
+
+Now, for N-08 evaluation, I should note one thing: verify_scope.py line 77-81 passes `*handoffs` (absolute-ish relative paths) — fine.
+
+Another consideration for N-08: "确认当前被审head的R1/R2/R3三份Handoff均被覆盖". The glob gives 3 files: P08-490f9bd9.md, P08-31c26389-dsh-r2.md, P08-1ad05d99-dsh-r3.md. Yes.
+
+But hmm — there's a subtlety: `ROOT / "doc/handoffs"` glob is evaluated — files exist at head. ✓
+
+"评估新增Handoff时的边界": new handoff named `P08-<head>-dsh-r4.md` would be auto-included. Good. But there's a genuine boundary: the R4 handoff (per R3's demand) is expected to be added *after* the fix commit (文档提交). If the R4 handoff were added in a *later* commit than the delivery head being reviewed, then at the reviewed head the handoff doesn't exist → it's not covered. But it also doesn't exist in the delivery, so nothing to check. That's a real boundary worth stating: the dynamic collection covers handoffs present **at the reviewed tree**, so the mandated R4 handoff, if added after this head, will only be covered at the next head. Reasonable.
+
+Also: the PASS message counts handoffs — but it does not verify that the enumerated handoffs correspond to the handoffs referenced in P08.md. Minor.
+
+Now, the bigger new finding: no R4 Handoff/Prompt/validation entry at the delivery head. Let me verify via the R3 report that Codex's own mandated next step is unmet. I have quotes from R3 lines 132/136 (via grep output). Let me read those lines in context to be precise, plus the R3 report's frontmatter/decision for the record. Also read the R1/R2/R3 report headers myself (the per-Finding table) — subagent A is doing it, but let me at least read R3's beginning and end.
+
+Let me also count the Plan's "proposed / 未释放" rows.
+
+Batch:
+- read review-dsh-1ad05d99-r3.md lines 1-60 and 120-140
+- grep count in REBASELINE_PLAN for proposed rows (grep with pattern "^| P[0-9]{2} | proposed / 未释放 |")
+
+Actually grep tool returns matches with line numbers; counting is easy.
+
+Let me batch these.
+dsh: reasoning:
+The Plan grep found 21 matches: lines 32-52 minus line 39 (P08 = changes_requested). Let me count "proposed / 未释放" rows: the regex matched both alternatives. Lines 32-38 = 7 rows (P01-P07), line 39 = P08 changes_requested, lines 40-52 = 13 rows (P09-P21). So proposed = 7 + 13 = 20 ✓ matches verify_scope.py's assertion of 20. Good.
+
+Also confirmed Plan line 39: `| P08 | changes_requested |` ✓.
+
+Now R3's mandate (line 132/136) is explicit: "修订提交后固定新 reviewed_head，并在其后的文档提交中追加 Handoff/Prompt 与 validation.log 条目（09_COLLABORATION.md:90）" and the forwardable instruction: "建立新的固定 delivery head 与新 doc/handoffs/P08-<new-head>-dsh-r4.md、verification/P08/DSH-REVIEW-PROMPT-R4.md，再派发 DeepSeek Harness 非作者 R4 复审".
+
+At the delivery head 16fb07a9:
+- No `doc/handoffs/P08-16fb07a9-dsh-r4.md` (grep "16fb07a9" → 0 hits; glob doc/handoffs/P08-* → 3 files).
+- No `verification/P08/DSH-REVIEW-PROMPT-R4.md` (glob verification/P08/* → no R4 file).
+- No `validation.log` entry bound to 16fb07a9 (grep 0 hits).
+- P08.md `reviewed_head` still 1ad05d99 (R3), and its 测试要求 table has no row for the new head; P08.md line 80 keeps N-07 open pending R4 — that part is fine/expected.
+
+Note R3's own §2 line 20 reasoning: "Handoff 在交付 head 之后以文档提交追加…与 09_COLLABORATION.md:90 一致，不构成缺陷". So the *handoff* legitimately lands in a commit AFTER the reviewed head. For R3, the R3 handoff (`P08-1ad05d99-dsh-r3.md`) is in commit e56ac2c (the child). Interesting — so for R3, the handoff was NOT at the R3 head either! Let me re-check: R3's reviewed_head=1ad05d99, and grep/glob shows doc/handoffs/P08-1ad05d99-dsh-r3.md EXISTS in the current worktree. But it was added in e56ac2c (child of 1ad05d99), per R3 report line 19-20. So at the R3 head, that handoff didn't exist yet.
+
+That means the project's convention is: reviewed head = 修订提交; the Handoff/Prompt for that round is added in a following doc commit. So for R4: the reviewed head is 16fb07a9 (the 修订提交 for N-07/N-08), and the R4 Handoff/Prompt/validation.log entry are expected in a *following* doc commit — which will also archive my R4 report. So the absence at 16fb07a9 is CONSISTENT with the established convention (and 09_COLLABORATION.md:90's "避免要求文件包含自己的 commit hash").
+
+Hmm! This reframes my finding significantly. Let me check where the R3 handoff/prompt sit relative to 1ad05d9 — the R3 report says they're in e56ac2c which is a child of 1ad05d9. And the R3 review was dispatched... when? validation.log line 283-288: "P08 R3 dispatch started UTC=2026-10-08T14:42:40; command=dsh headless <verification/P08/DSH-REVIEW-PROMPT-R3.md contents>". And line 270-282: "P08 R3 fixed-head validation and dispatch preparation ... Dispatch state=R3 Handoff/Prompt prepared". So the R3 handoff/prompt were prepared at the R3 head+1 commit and then dispatch happened. Then R3 returned, and the *next* commit updated P08.md etc.
+
+Hmm wait, that's odd: if R3's handoff/prompt were in e56ac2c and R3's reviewed_head=1ad05d9, then the R3 worktree at 1ad05d9 wouldn't contain DSH-REVIEW-PROMPT-R3.md. But R3's report §1 line 16 lists "verification/P08/{...,review-dsh-31c2638.md}" as pre-read, not the R3 prompt. Fine.
+
+But now: R3's report line 19 says main tip = e56ac2c = "prepare third DSH review" and that it carries "R3 Handoff/Prompt 与 Codex 证据". Right.
+
+So for R4: the analogous structure should be: 16fb07a9 = fix commit (N-07/N-08), then a child commit adding `doc/handoffs/P08-16fb07a9-dsh-r4.md` + `verification/P08/DSH-REVIEW-PROMPT-R4.md` + validation.log entries; then dispatch R4 with the *fix head* 16fb07a9 as reviewed_head.
+
+That's exactly what's missing at 16fb07a9 — but per convention, those artifacts belong to the NEXT commit, and the review worktree is at 16fb07a9 (the fix head). So the absence is NOT a defect by the project's own convention... 
+
+Hmm, but R4 must still be dispatchable: Codex dispatched R4 (this prompt) — but the prompt is not in the repo. Is the R4 prompt file required to exist before dispatch? For R3, the prompt file existed (prepared) before dispatch. But since it lives in the child commit, and the *review* happens at the parent head, the reviewer's prompt need not exist in the reviewed tree. So the missing R4 prompt in the reviewed tree is expected/normal.
+
+Wait, but then the situation at 16fb07a9 is: is it a "fix commit" whose child commit (R4 pre-dispatch doc commit) exists in main? I can't check main's HEAD (can't run git)... Actually, can I? The main repo's `.git/logs/HEAD` is readable! R3 did exactly that: "主仓 .git/logs/HEAD:929-943 还原提交链". That's a read-only file-layer check I CAN do. Let me read `G:\CODEX\New Manga\.git\logs\HEAD` and look at the tail to see the commit chain and whether 16fb07a9 has children.
+
+That's excellent evidence: it will let me confirm the delivery head 16fb07a9 exists as a commit, see its message, and see whether there's a subsequent commit adding the R4 handoff/prompt.
+
+Let me read the tail of that file. It may be long (900+ lines). Let me read with offset near the end. First, count lines — I can't run wc. Let me just read the last portion using offset, or grep for "16fb07a9" in that file.
+
+grep for "16fb07a9" in .git/logs/HEAD — but grep tool might skip because .git is... let me try. glob/grep with explicit path to the .git dir. The earlier grep over the worktree didn't cover .git (worktree has no .git dir, only a file). Let me grep `G:\CODEX\New Manga\.git\logs\HEAD` for "16fb07a9" and also read the last ~30 lines.
+
+Actually, the reflog line format: `<old> <new> <ident> <ts> <tz>\t<message>`. Reading the tail will give the commit chain and messages.
+
+Let me first grep for 16fb07a9 in that file, then read tail.
+
+To read the tail, I need the line count. Let me use grep with pattern matching everything? Hmm, grep returns matches (up to 250) with line numbers — I could grep `^` ... that'd be 900+ matches, truncated. Better: grep for the specific hashes to find line numbers, then read around.
+
+Let me grep for "16fb07a9|1ad05d99" in the main reflog.
+
+Also the per-worktree reflog for the review worktree only has 1 line, so no info. And worktrees have their own HEAD logs.
+
+Let me do it.
+dsh: reasoning:
+Excellent! This is decisive:
+
+- Line 945: `1d6cfa27 → 16fb07a9` commit message: "docs(P08): record R3 review and fixes". So 16fb07a9 is the commit that records R3 review results AND the N-07/N-08 fixes. It's the reviewed fix head.
+- Line 946: `16fb07a9 → 1ec14aa2` commit message: "docs(P08): prepare R4 review handoff". So the R4 handoff/prompt commit EXISTS on main as 1ec14aa2, the direct child of the delivery head.
+
+This corroborates the convention: the R4 Handoff/Prompt are in the child commit 1ec14aa2, which is exactly why they're absent from the reviewed tree 16fb07a9 — consistent with 09_COLLABORATION.md:90 and with R3's precedent (e56ac2c child carried R3 handoff/prompt).
+
+So my earlier "new finding" is largely defused. Good thing I checked. However: there are still real observations:
+1. At the reviewed head 16fb07a9, `doc/tasks/P08.md` (line 85) says "当前candidate提交后记录固定head并追加R4 Prompt/Handoff" — and RESUME.md line 7/27 says the fixes are "尚未提交"/"candidate仍待固定delivery commit". Since 16fb07a9 IS now a commit recording those fixes, RESUME.md's "尚未提交" text is stale at that head. But careful: 16fb07a9's message is "record R3 review and fixes" — this commit itself contains the fixes; so at 16fb07a9, RESUME.md saying "尚未提交" is indeed stale-by-one-commit. In R3's case, the analogous reviewed head 1ad05d99 also had RESUME.md in "pre-commit" wording? R3 report line 34 said: "旁证与 1ad05d9 树一致（P08.md/RESUME/validation.log 均处 R2 记录态...)" — i.e., at the R3 head, the governance docs were in the *previous* round's state, and R3 accepted that as normal for a "fix commit". Indeed R3 explicitly reasoned that the binding docs are added in the following commit. So this staleness is a *known and accepted* property of the fix head, not a finding. R3 didn't flag it. To be consistent with the series' precedent, I should NOT raise it as a finding; I should note it as an accepted convention and not a defect (and note that the R4 artifacts presumably live in 1ec14aa2, which I cannot read from this worktree).
+
+Hmm, wait — can I verify 1ec14aa2's content? I can't read its tree without git. But I can verify the R4 prompt file exists in main's working tree? The main worktree at G:/CODEX/New Manga — its checked-out state may be at main tip. I could read `G:\CODEX\New Manga\verification\P08\DSH-REVIEW-PROMPT-R4.md` and `G:\CODEX\New Manga\doc\handoffs\P08-16fb07a9-dsh-r4.md` directly! That's read-only file access outside my workspace (read permission seems ok). Let me try. Actually the file sandbox is workspace-write for my session workspace; reading outside might be denied. Let me try — it's read-only, likely allowed (the tool earlier read G:\CODEX\New Manga\.git\... fine).
+
+If those files exist in the main worktree, that confirms the R4 handoff/prompt were prepared (in 1ec14aa2), removing the concern entirely. And it would let me check the R4 handoff's content (which may define the reviewed head as 16fb07a9 and record things).
+
+Careful: main's working tree may have advanced beyond 1ec14aa2 (e.g., more commits, possibly a child 1ec14aa2 with the report archived...). Since R4 is running now (my session), main's tip is likely 1ec14aa2 plus maybe uncommitted changes. Let me check the reflog tail beyond line 946 to see if there are further commits after 1ec14aa2 (the grep result showed 946 as the last matching line for those patterns, but there may be lines 947+ with other hashes). Let me read lines 940-960 of that file.
+
+Let me also read the main worktree's R4 handoff & prompt if they exist.
+
+Batch:
+1. read G:\CODEX\New Manga\.git\logs\HEAD lines 940-960
+2. glob G:\CODEX\New Manga\verification\P08\* (main worktree listing)
+
+Let me do it.
+dsh: reasoning:
+Interesting: glob on `G:\CODEX\New Manga` returned "No files found" — because the tool's `path` parameter resolves relative to the session workspace... or the file sandbox blocks listing outside the workspace. Hmm, but read of `G:\CODEX\New Manga\.git\worktrees\...` worked earlier. Maybe glob's `path` param is treated differently (it may be restricted to the workspace root). Let me try glob with pattern including the absolute drive? No. Let me try reading the specific expected file path directly:
+- G:\CODEX\New Manga\verification\P08\DSH-REVIEW-PROMPT-R4.md
+- G:\CODEX\New Manga\doc\handoffs\P08-16fb07a9-dsh-r4.md
+
+If read works outside the workspace, that confirms existence.
+
+Also, note the reflog has exactly 946 lines and ends at 1ec14aa2 ("prepare R4 review handoff") — so main tip = 1ec14aa2 (no further commits yet).
+
+So the R4 handoff/prompt commit is 1ec14aa2, the direct child of the delivery head. This resolves the concern and matches precedent.
+
+Let me try reading those two files in the main worktree.
+
+If they exist, I should read the R4 handoff — it likely records base/head, allowed paths, and the disposition table. But careful: is the R4 handoff part of "the delivery"? It's a child commit, so not in the reviewed delta. Still, reading it is useful context (it may bind the review). But note the instruction "只读审查精确delivery head ... 审查worktree=...". Reading main's files is additional read-only evidence; fine, and I must not treat chat as fact — but the handoff is a repo file. However, is main's working tree clean at 1ec14aa2? Likely, but if dirty, contents may differ from the commit. I'll note that.
+
+Let me try.
+dsh: reasoning:
+The R4 Handoff and Prompt DO exist in the main worktree — in commit 1ec14aa2 (the child of the delivery head). This matches the project convention (docs(P08): prepare R4 review handoff). So:
+
+- The delivery head 16fb07a9 is a "fix + record R3" commit; the R4 Handoff/Prompt is intentionally in the child commit 1ec14aa2, consistent with 09_COLLABORATION.md:90 ("Handoff 在交付 head 之后以文档提交追加；避免要求文件包含自己的 commit hash") and with R3 precedent (e56ac2c).
+- Therefore the "no R4 artifact at reviewed head" is expected, NOT a defect. 
+
+But note the R4 Handoff line 22 claims: "clean linked worktree HEAD=16fb07a9" and "全部3份head内P08 Handoff覆盖通过" with the log `verification/P08/validation.log`. The validation.log I read at 16fb07a9 has NO entry referencing 16fb07a9 (grep: 0 hits). Since the handoff is in the child commit (1ec14aa2), maybe 1ec14aa2 also updated validation.log with a 16fb07a9-bound entry. Let me check main's validation.log tail for a 16fb07a9 entry — that would confirm the evidence chain. If main's validation.log HAS the entry, then the R4 handoff's claim is supported (in the child commit), and the reviewed tree simply lacks it — same as R3.
+
+Hmm, but the handoff says the evidence log is validation.log, and the handoff itself is in 1ec14aa2. If validation.log's new entry is also in 1ec14aa2, consistent.
+
+Let me check main's validation.log tail (grep for 16fb07a9 in G:\CODEX\New Manga\verification\P08\validation.log).
+
+Also read the rest of the handoff (lines 40-54) for the next-task suggestion.
+
+Then I have everything for the git/head story. The remaining key question for my review: can I confirm the worktree is clean and == 16fb07a9's tree? I have:
+- HEAD file = 16fb07a9 (detached) ✓
+- reflog of the review worktree: single entry created at 16fb07a9 ✓
+- main reflog: 16fb07a9 is a real commit whose message is "docs(P08): record R3 review and fixes"; its child is 1ec14aa2 ✓
+- worktree tree contains the N-07/N-08 fixes ✓ (so the tree matches the "fixes" commit description)
+- `git status` clean: NOT_RUN (pwsh). Cannot verify. But: if the worktree had uncommitted changes, they'd have to be exactly the N-07/N-08 fixes, and HEAD 16fb07a9 is described as containing fixes; also the review worktree was created at 16fb07a9 by Codex, and its reflog shows only creation.
+
+Hmm — I realize there might be a way to detect dirty state: compare the mtime of files vs the reflog timestamp... not reliable, and read tool doesn't give mtimes.
+
+Alternatively: is there a `.git/worktrees/.../ORIG_HEAD` or `MERGE_HEAD`? Not needed.
+
+I'll record: HEAD/commondir/detached confirmed by file layer; `git status`(clean) NOT_RUN/ NOT_VERIFIED — rely on Codex claim + tree content consistency; the risk is low because the reviewed fixes are present in the tree.
+
+Now, one more genuine check for N-08's "PASS文案与真实范围是否一致": the script's print at line 84: "PASS: frozen product docs unchanged; full P08 subtree/task governance diff is whitespace-clean (N Handoffs)". Wait, line 84 in verify_scope.py — let me re-read: 
+
+```
+print(f"PASS: frozen product docs unchanged; full P08 subtree/task governance diff is whitespace-clean ({len(handoffs)} Handoffs)")
+```
+Yes. And line 90: "PASS: zero production/contracts/Review/inventory changes; historical Plan/Status preserved". Hmm — line 84's message says "frozen product docs unchanged" but the *assert immediately before* (line 73) is the protected-paths name-only check; that's fine. And the whitespace check (line 77-83) covers `verification/P08`, P08.md, Plan, STATUS, 00_INDEX, 12_ROADMAP, tasks/README.md, *handoffs, verification/PROJECT-ROADMAP-20261008. The message "full P08 subtree/task governance diff is whitespace-clean" is a fair summary with the handoff count. Accurate enough. One nuance: line 84's message doesn't mention that handoffs are included except via the count — acceptable.
+
+Potential N-08 residual boundary (to report as non-blocking observation, not a finding): 
+(a) non-recursive glob → handoffs in `doc/handoffs/**` subdirs excluded; 
+(b) `git diff --check BASE` compares BASE to *worktree* (tracked files), so an untracked handoff isn't whitespace-checked; 
+(c) the script only asserts non-empty, so a handoff renamed without the `P08-` prefix (or placed outside `doc/handoffs/`) is silently dropped from the list — but that would be unusual, and any P08-owned doc under `verification/P08` is still covered by that path; 
+(d) the check verifies whitespace only, not that the handoff exists for the current round — that's inherent.
+Also (e): the message prints the count, so a silent drop would be *visible* (count changes) — decent mitigation. Actually not exactly: if a handoff is replaced (R3's hardcoded two → dynamic three), the count going 2→3 is visible. If a handoff is renamed out of the pattern, count decreases — visible in the PASS line. Good.
+
+Now, does the *whole* diff get whitespace-checked? No: the script's scope is P08-owned + governance paths; `doc/04`, `doc/08`, `doc/13`, `AD-001` are only name-only guarded (must be unchanged), so no whitespace check needed (they're unchanged). `AGENTS.md`, `doc/09` likewise name-only. `doc/01,02,03,05,06,07` name-only. `doc/contracts`, `doc/reviews`, `src/apps/tests/packaging`, task-inventory.csv name-only. So the only changed paths not covered by either check... hmm, let me think: the delivery changes (base..head) include doc/tasks/P08.md, verification/P08/**, doc/handoffs/P08-*.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, verification/PROJECT-ROADMAP-20261008/**. All of these appear in the whitespace-check path list. Plus read-only ones (unchanged). So the union covers the full delta. Nice — that means the script's coverage claim "full P08 subtree/task governance diff is whitespace-clean" is essentially complete for the delta, assuming the delta contains nothing else. I cannot verify the delta file list myself (no git) — the R4 handoff's `git diff --name-only` protected-path check and Codex's R3 validation.log line 191-194 (19 files changed at 31c2638) are the evidence. So: the completeness of whitespace coverage depends on Codex's unverified claim that no other paths changed. I should note that as a residual NOT_VERIFIED.
+
+Hmm, that's a good point to make: verify_scope.py's whitespace check enumerates an explicit path list; if the delivery delta touched any path outside those lists (and outside the name-only protected list), CI would be silent. The name-only protected-path list + whitespace list do cover a wide surface, but there's no assertion enumerating the *complete* delta (e.g., `git diff --name-only BASE..HEAD` compared against an allowlist). Actually wait — is there? Line 73 checks protected paths have no diff. Line 77 checks whitespace on P08 paths. There's no assertion that the delta is a *subset* of allowed paths. This is a real (if minor) boundary: the allowlist compliance is enforced only by negating a protected list, not by positively confirming every changed path is in the P08 allowed set. Hmm, R3's §6 line 113 called it "24 个受保护路径零差量 … 只能引用 producer 断言". A "positive allowlist" gap: e.g., if the delivery also modified `doc/10_CURRENT_STATE_AND_GAPS.md` or `doc/11_ARCHITECTURE_MAPS.md` (not in the protected list!), no check would fire. Let me verify: the protected list (lines 65-72) includes doc/01,02,03,04,05,06,07,08,13, AD-001, 09, AGENTS.md, contracts, reviews, task-inventory.csv. It does NOT include doc/10, doc/11, doc/00_INDEX (00_INDEX is in the whitespace list, which means it's expected to change = allowed), doc/12_ROADMAP, doc/tasks/* (other than P08), doc/templates/*, doc/design, doc/fixtures, other verification/* dirs, tests/**? tests is included. So e.g., a change to doc/10 or doc/11 or another task file or doc/templates/REVIEW.md would not be caught. Is that a *finding*? It's a boundary of the guard. Given the reviewed delta is small and R3/R4 already accepted the guard design, I'd report this as a P3 observation/robustness note (not previously raised: hmm, was it? R1's P2-6 "保护路径/whitespace检查不完整" → N-03/N-04 addressed README/P08 handoff/derived roadmap + AGENTS/doc/09. So the residual "no positive allowlist for the rest of doc/**" wasn't specifically raised).
+
+Should I raise it? The task says "识别R3以后的新增问题或遗漏影响范围". This is an "遗漏影响范围" observation about the guard's completeness. But careful: is it *material*? The Task's allowed range (P08.md lines 97-99) permits only doc/tasks/P08.md, verification/P08/**, own handoff, plus Codex-updated Plan/STATUS/00_INDEX/12_ROADMAP/tasks/README and derived REPORT/ROADMAP/RESUME/verify_plan.py. So the allowed set is itself narrow, and the guard doesn't positively verify it. A change to doc/10 would be out-of-scope but undetected. I'd rate P3 (robustness, non-blocking) since no evidence of such a change exists and the reviewer has no evidence of violation. Actually, I must not claim a violation. I'll frame it as a guard-completeness boundary (P3, deferred/observation).
+
+Hmm, but hold on: is it worth adding a new finding at P3? The prompt asks for new problems with unique IDs. A P3 robustness observation is fine and valuable. But I should be careful not to inflate. I'll add it as R4-01 (P3) with clear evidence and note it's non-blocking, and that the same boundary was implicitly present in R3 (§6). Hmm — but then, is it "new"? R1's P2-6 covered "保护路径…不完整" and was closed via N-02/N-03/N-04 by *extending* the list (README, handoffs, derived roadmap, AGENTS, doc/09). The residual is "no positive allowlist". I'll report it as a new P3 boundary finding, explicitly noting it's a design boundary rather than a defect, and recommend either a positive allowlist assertion or documenting the boundary.
+
+Hmm, let me reconsider. Adding marginal findings can be noise. But the review prompt explicitly asks to "识别R3以后的新增问题或遗漏影响范围" — a guard-completeness boundary is a legitimate "遗漏影响范围". I'll include it, clearly marked non-blocking/deferred-able, with a low severity (P3).
+
+Now, what about the stale RESUME.md/P08.md state at the reviewed head? Given the established "fix head" convention (docs added in the child commit), the staleness is expected and R3 established that precedent (R3 §2 line 34 "P08.md/RESUME/validation.log 均处 R2 记录态"). So not a finding. But one nuance: RESUME.md at 16fb07a9 says "N-07/N-08修订尚未提交" — since 16fb07a9's message is "record R3 review and fixes", this specific sentence is contradicted *within the same commit*. Hmm. But per R3's precedent the same held (at 1ad05d99, RESUME said round-two findings "仍open for author repair" while 1ad05d99 was the repair commit). R3 explicitly accepted it as the normal fix-commit shape. So I'll note it as an accepted convention, not a finding — and mention it in the risks/notes so the reader sees I considered it. Actually, let me double check R3's characterization: R3 report line 34: "旁证与 1ad05d9 树一致（P08.md/RESUME/validation.log 均处 R2 记录态，SCOPE_DRAFT/AC_COVERAGE/两校验器已含 R3 修订，恰为「fix 提交」形态）". Yes — accepted. Consistent handling: I accept the same shape for 16fb07a9 (P08.md/RESUME/validation.log in R3-recorded state; AC_COVERAGE/verify_scope.py contain R4 fixes).
+
+Good. Now let me verify the R4 handoff's remaining lines and main's validation.log tail to complete the evidence chain. Also check whether 1ec14aa2 updated validation.log with a 16fb07a9 entry (evidence chain completeness).
+
+Also: the R4 prompt file content exactly matches the prompt I received (identical text)? Line 3 matches the user's message start. Yes, appears identical — good, so the dispatched prompt = repo-bound prompt (traceability). I can note that the prompt I received matches `verification/P08/DSH-REVIEW-PROMPT-R4.md` verbatim (I compared the first sections; they match).
+
+Let me now read: main's doc/handoffs/P08-16fb07a9-dsh-r4.md lines 40-54, and grep main's validation.log for 16fb07a9.
+
+Also I still await subagents A and C. Let me proceed.
+dsh: reasoning:
+Now the picture is complete:
+- Main's validation.log (in commit 1ec14aa2, post-delivery) contains the R4 fixed-delivery validation bound to 16fb07a9 with `git diff --exit-code HEAD -- .` EXIT=0; clean (line 340). And it explicitly states R4 Prompt/Handoff are post-delivery documents that do not change reviewed_head. 
+- So the missing artifacts at the reviewed head are by design and documented (line 341, 350).
+
+I should read those lines 333-352 in main's validation.log for exact wording; grep gave me the essentials. Let me read that block to quote precisely.
+
+Now the findings:
+- N-07: closed (verified independently: AC_COVERAGE.md:142 now lists five formats, attributes PNG to D1/D2+P16, explicitly "D08未限定PNG"; doc/08:2054-2064 confirms five formats and zero PNG mentions; SCOPE_DRAFT:40 consistent; grep over verification/P08 shows no residual "只写/仅写" narrowing — only AC-RFULL-002's legitimate "只写目标 Region").
+- N-08: closed (verify_scope.py:74-84 dynamically globs doc/handoffs/P08-*.md, adds *handoffs to the diff --check path list, PASS text prints the count; the three handoffs present at head are exactly R1/R2/R3: P08-490f9bd9.md, P08-31c26389-dsh-r2.md, P08-1ad05d99-dsh-r3.md; new handoffs auto-included; boundaries: non-recursive glob, requires `P08-` prefix, only tracked changes appear in diff --check, only asserts non-empty, count printed makes silent drops visible). Non-blocking boundary notes.
+- R1's 4×P1: closed at R2, not regressed at R3; need subagent A to confirm no regression and that content is still present at R4 head. Hmm — "本轮没有退化" requires me to check that the R1 P1 fixes are still in place at 16fb07a9. Since 16fb07a9 = child of the R3 review flow, and the R4 delta (16fb07a9 vs 1ad05d99) changed AC_COVERAGE + verify_scope per the R3 mandate, regression risk is low. Subagent A will give details on what the R1 P1s required; I can then spot-check the corresponding text at the head. Let me do that when A reports.
+- R1's P2-1..P2-6 and P3 observations: P08.md claims closed (R2/R3). Need verification of the key ones:
+  - P1-1 验证日志绑定固定head → validation.log now has fixed-head entries (R2: 31c26389, R3: 1ad05d99 in main's log? At 16fb07a9, validation.log's last block line 324-331 is candidate-level at 1d6cfa27... hmm, and the R3 fixed-head validation for 1ad05d99 is in main's log lines 270-282 (which was committed in e56ac2c, before 1ad05d99? no...). Hmm wait. This is getting confusing. Let me reconstruct:
+    - 1ad05d99 = "address DSH round-two findings" (fixes N-01..N-06)
+    - e56ac2c = "prepare third DSH review" (adds R3 Handoff/Prompt + validation.log entries incl. fixed-head validation for 1ad05d99)
+    - 1d6cfa27 = "mark third DSH review in progress"
+    - 16fb07a9 = "record R3 review and fixes" — records R3 result, P08.md/STATUS/Plan/Index/Roadmap sync, N-07/N-08 fixes, RESUME update? (RESUME line 7 says candidate not committed — the RESUME revision presumably was written before committing 16fb07a9? RESUME line 324 in validation.log: "P08 N-07/N-08 candidate final navigation and validation sync ... main_HEAD_before_delivery=1d6cfa27" — that block is in at 16fb07a9 and describes the candidate state.)
+    - 1ec14aa2 = "prepare R4 review handoff" — adds R4 Handoff/Prompt + validation.log R4 entries (lines 333-350).
+  So at 16fb07a9, validation.log's newest block (lines 323-331) is the pre-commit candidate sync, and RESUME.md is in "candidate not yet committed" state. In the child 1ec14aa2, validation.log gets the R4 fixed-delivery validation bound to 16fb07a9 (lines 333+), which closes P1-1-style traceability for the R4 round.
+
+So: at the reviewed head, the "R4 fixed-head validation" evidence lives in the child commit — consistent with convention. R3 precedent accepted the same. So no finding. Good.
+
+Everything considered, the delivery looks approvable — decision `approved`? Let's carefully evaluate whether any P0/P1 remains open:
+- No unresolved P0/P1 per R3, and R4 shows N-07/N-08 closed with no regression found so far.
+- The only new items are P3-level boundary observations.
+- Data protection/D1-D7: no regression found (docs unchanged; no product change).
+- Architecture Documentation Rebaseline Gate: still not registered; correctly recorded as blocking P09/P18/P20 — that's a pre-existing blocking *for successors*, not for P08's own approval. P08's completion gate doesn't require the Rebaseline Task itself, only its registration before P09 release. ✓ (SCOPE_DRAFT:49,71; AC_COVERAGE:3,189-191.)
+
+But hold on — one thing I should check independently: the prompt says "检查AC逐项对应D08" — verify_scope.py asserts AC_COVERAGE's row order/IDs exactly equal doc/08's `^## AC-...` order, which I can verify statically: count 193 in both (subagent B counted 193 in doc/08; AC_COVERAGE has rows lines 7-212 minus the D08-AC-SMOKE and 12 gates). Let me count AC_COVERAGE's `| AC-` rows… The script does it at runtime; I could approximate by counting from the file I read: rows from line 7 to line 199 are AC-* rows (193?), then line 200 D08-AC-SMOKE, lines 201-212 gates (12). Total file lines 212; rows start at 7 → line 199 is the last AC row (AC-EXT-SAKURA-001). 199-7+1 = 193 ✓. And gate rows 201..212 = 12 ✓. Good — static count confirms 193 AC rows exactly, matching doc/08's 193. And the ID set: does AC_COVERAGE include all doc/08 IDs in the same order? I can't fully verify order without the doc/08 list; subagent B gave the ordered list of doc/08 IDs with tags. Spot-checking a few: doc/08 order per B: NAV(215),241,256; WIN286...; coverage lines 7-15: NAV-001,002,003, WIN-001..006 ✓ matches. Then LIB-001..004 ✓ (lines 16-19), CH-001..004 ✓ (20-23), IMPORT-001..005 ✓ (24-28), PAGE-001..003 ✓ (29-31), WEBTOON-001..005 ✓ (32-36), REGION-001..004 ✓, OCR-001..004 ✓, SFX-001..003 ✓, CONSTRAINT-001..004 ✓, TM-001..004 ✓, TRANS-001..004 ✓, LOCK-001..005 ✓, REV-001..004 ✓, STYLE-001..005 ✓, INPAINT-001..004 ✓, RENDER-001..002 ✓, RFULL-001..005 ✓, CMD-001..004 ✓, PIPE-001..004 ✓, PAUSE-001..003 ✓, STOP-001..003 ✓, CRASH-001..003 ✓, RETRY-001..002 ✓, PROGRESS-001..007 ✓, PROVIDER-001..004 ✓, FALLBACK-001..002 ✓, NET-001..004 ✓, SEC-001..005 ✓, ART-001..003 ✓, DB-001..005 ✓, BACKUP-001..004 ✓, TRASH-001..004 ✓, EXPORT-001..003 ✓, READ-001..005 ✓, PERF-001..006 ✓, CAP-001..004 ✓, MEM-001..003 ✓, GPU-001..003 ✓, CACHE-001..003 ✓, DISK-001 ✓, LOG-001..003 ✓, NFR-UI-001..002 ✓, PKG-001..003 ✓, OPTIONAL-001..002 ✓, MODEL-001..002 ✓, CONFLICT-001..002 ✓, CLEAN-001..003 ✓, CLOSE-001..002 ✓, DOC-001..003 ✓, EXT-IMPORT-003/004, EXT-PLUGIN-001..003, FONT-001..002, SAKURA-001 ✓ (8). Plus in doc/08 order: are AC-EXT-* after AC-DOC? Yes (§78 after §66). ✓ 
+
+So the AC mapping is order-preserving and complete — verified statically by me (count + spot-check order against subagent B's list). Good.
+
+Also "AC逐项对应D08" includes tags: AC_COVERAGE has a column "原标题/要求" with the D08 tag like "[P0] 默认进入书架". Spot-checks match doc/08 titles (e.g., AC-EXPORT-001 "[P0] 格式" ✓ line 2054; AC-NAV-001 "[P0] 默认进入书架"). I verified AC-EXPORT-001 and TRASH-003/004 (lines 2038/2044 vs coverage 140/141 "[P0] 永久删除确认"/"[P0] 源文件安全" ✓). Reasonable coverage.
+
+Now the D5 threshold check: SCOPE_DRAFT line 21 D5 = keep D08 thresholds (P0/P1 all pass + AC-SMOKE all pass); line 49 "D5确认的门槛数值和P0/P1等级不变"; AC_COVERAGE rows for AC-PKG-001/002/003, OPTIONAL-001, GATE-69 say "用户D5门槛/优先级不变" ✓. And 12 Legacy PASS口径: AC_COVERAGE line 3 says the 12 Legacy PASS remain bound to historical commits and are not repeated; and it explicitly says AC-DOC-001..003 historical PASS doesn't auto-close the new-architecture Gate ✓. Verified against doc/13 lines quoted by subagent B (9 rows bound to f9e5977 + 3 AC-DOC rows) ✓.
+
+§74/75/79 advisory: AC_COVERAGE line 3 + rows 207/208/212 "ADVISORY ONLY" ✓; doc/13:242 confirms §74/75 advisory ✓. Note the AC_COVERAGE rows still show 结果=NOT_RUN for advisory rows — mild oddity (advisory items are not verifiable, so NOT_RUN is arguably a placeholder). Hmm: D08-GATE-74/75/79 rows end with "| NOT_RUN |" while the 决策处理 column says "ADVISORY ONLY：…不是独立Gate或单独PASS". Is `NOT_RUN` appropriate for a non-acceptance advisory item? It could be read as "not executed", which for an advisory format suggestion is odd but harmless — and the verify_scope.py assertion `all(line.endswith("| NOT_RUN |") for line in rows)` actually *requires* it. Could I flag this as a P3 wording inconsistency (advisory items should not carry an execution result column value at all)? It's defensible either way; the decision column clarifies. This is exactly the kind of thing R3's P1-2 (AC真值/路由冲突) addressed by requiring explicit NOT_RUN rather than PASS. So NOT_RUN is the conservative choice the project demanded. I'll mention it as a considered-and-not-a-defect note, or maybe as a low-severity observation. I think I'll note it in the risk/notes section rather than as a finding, to avoid noise. Hmm. Actually, I might fold it into a P3 finding about advisory rows... no. I'll list it as "observation, not a finding" in the notes. Let me keep new findings minimal and defensible:
+
+R4-01 (P3): guarded whitespace/read-only scope has no positive allowlist assertion — full delta allowlist compliance rests on Codex's diff command claims (NOT_RUN for DSH); paths such as doc/10, doc/11, doc/templates/**, other doc/tasks/** are neither in the protected name-only list nor in the whitespace path list. Non-blocking; recommend either a positive allowlist check or explicit boundary documentation.
+
+Hmm, is that really worth a finding? It's a genuine "遗漏影响范围" (scope-guard gap). I'll include it as P3 and mark it "deferred acceptable" — I will NOT let it block approval.
+
+Wait — one more potential new finding: does `verify_scope.py` verify that `reviewed_head`/P08.md state is consistent with the *current* head? At 16fb07a9, P08.md's reviewed_head=1ad05d99 (R3 head) — which is by design (the new reviewed_head gets recorded when R4 returns). Fine. And the script asserts `reviewed_head` exists and is 40-hex, and that "approval: user_scope_confirmed_review_pending" is present ✓ (P08.md line 7). And `state != done or integration != null` — state is changes_requested ✓.
+
+Also P08.md line 15 says `worktree: G:/CODEX/New Manga` and branch main — consistent with the design ("本Task由Codex在主工作区串行维护"). Fine.
+
+Now, let me also check the task-state set assertion: verify_scope.py TASK_STATES = 9 states; it extracts protocol states from the block starting "状态：proposed" up to "Task 的开发状态". From 09_COLLABORATION.md lines 66-76, the states listed with `- x：` are: proposed, ready, in_progress, blocked, in_review, changes_requested, approved, done, closed_with_limitations = 9 ✓. And the regex `^- ([a-z_]+)：` — line 66 is "状态：proposed → ready → ..." (no leading "-"), lines 68-76 are "- proposed：..." etc. ✓ 9 matches. Good.
+
+Now let me wait for subagents A and C. Let me check if they're done... I haven't received notifications yet. Let me do useful work: read doc/templates/REVIEW.md to format my report.
+
+Let me read the template now.
+dsh: reasoning:
+Excellent — subagent A gave a thorough finding history. Now I have almost everything. Key new items from A:
+
+1. Inconsistency #5: R1 handoff specified report archive paths (doc/reviews/P08-... or verification/P08/review-dsh-r1.md) which don't match actual (verification/P08/review-dsh-490f9bd.md). That's a historical R1-round inconsistency — was it addressed? Hmm. It's about the R1 handoff file (doc/handoffs/P08-490f9bd9.md) which is in the reviewed delta. Should I raise it? It's a minor historical doc mismatch. Note the R4 prompt says "重新核实R1的4×P1、R1的P2/P3处置及R2 N-01..N-06 closure；重点确认N-01..N-06在R3已独立关闭，本轮没有退化". So R1's P2/P3 dispositions matter. Was the "R1 handoff report path mismatch" ever registered? Not in N-01..N-06. It's an unresolved minor inconsistency in a file within the delivery delta (doc/handoffs/P08-490f9bd9.md:37). Hmm, was R1's handoff itself reviewed? R1's handoff was created before R1 (as part of the R1 delivery). Its allowed-path line mentions report paths that were never used. Since the actual report is archived at verification/P08/review-dsh-490f9bd.md, the handoff's stated path is wrong/stale. This is a P3 documentation-consistency issue in the reviewed delta. Should I raise it as a new finding? It's genuinely a mismatch, verifiable, and within the delivery scope (doc/handoffs/** is P08-owned). But is it material? Very low. Also, maybe P08.md line 123 references [首轮DSH报告](../../verification/P08/review-dsh-490f9bd.md) — correct actual path. So the only wrong place is the R1 handoff's allowed-path line. Hmm.
+
+But careful: is that actually wrong? "允许修改路径：仅doc/reviews/P08-490f9bd9-dsh-r1.md及verification/P08/review-dsh-r1.md（其余只读）" — this was the R1 prompt/handoff's allowance for the *reviewer's* report location. The actual report was placed at verification/P08/review-dsh-490f9bd.md, which is NOT one of the two allowed paths. So the reviewer (DSH R1) placed its report outside the handoff's declared allowed paths. That's a governance nit about the R1 round, discovered now. Since R1's report is produced by DSH and P08's allowed paths include verification/P08/**, it's fine in substance (P08.md's allowed range covers verification/P08/**; the R1 handoff was narrower). Hmm — do I want to raise this? It's a real, if trivial, inconsistency. It could be recorded as a P3 observation. Given the prompt wants "识别R3以后的新增问题或遗漏影响范围" — this isn't an R3+ issue; it's historical R1-round residue. But the prompt also says to re-verify R1's P2/P3 dispositions. R1 P3 observation (4) was "SCOPE_DRAFT.md:100-102 下一步指令缺 7 项字段、交付内没有任何文件固定 reviewed_head" — closed in R2.
+
+I think I'll mention the R1-handoff report-path mismatch as an additional low-severity (P3) new observation, since it's factual and within scope, and it's the kind of thing a Review should record rather than omit. But I must weigh noise. Let me decide after seeing subagent C's cross-check (which may surface more).
+
+2. Another important item from subagent A: Inconsistency #2: RESUME.md:15 claims commands ran "在上述精确head" but command 3's range ends at 31c26389 (R2 head). Hmm — at the reviewed head 16fb07a9, RESUME.md is in the "candidate" state describing the pre-R3-commit state... Actually RESUME.md:11-19: line 11 says R2 findings revision head = 1ad05d99; line 15 "Codex在上述精确head与干净Review worktree中执行"; line 19 command 3 diff --check base..31c26389. So RESUME.md's "已完成与验证" section is stale (from R2 round) while its header says R2 findings head 1ad05d99. This is internal inconsistency in RESUME.md at the reviewed head. R3 accepted the "fix-commit shape" but R3's §2 line 34 explicitly noted RESUME "处 R2 记录态" as consistent with the fix-commit shape. Hmm, R3 accepted it. Since the reviewed head 16fb07a9 is again a fix-commit shape (RESUME awaiting the R4 post-delivery doc commit), the same acceptance applies.
+
+Wait, actually: is that right? At 16fb07a9, RESUME.md:3 says "N-07/N-08修订验证已通过，准备固定delivery head" and :7 says candidate HEAD=1d6cfa27 with fixes uncommitted. And the R4 handoff's validation entry (line 333+, in the child 1ec14aa2) provides the fixed-head evidence. So the post-delivery doc commit is where RESUME would be updated? Actually RESUME.md at 1ec14aa2 might have been updated? No — main's RESUME.md is at commit... I read the worktree copy at 16fb07a9. Main's copy (at 1ec14aa2) might differ. Let me check whether main's RESUME.md was updated in 1ec14aa2 (i.e., does main's RESUME still say "尚未提交"?). If main's RESUME also says "尚未提交", then it's stale even at main tip. Let me grep main's RESUME.md for "尚未提交". That's a quick check. If main's RESUME is updated to fixed-head state, then the convention holds fully (post-delivery doc commit updates RESUME too) and there's nothing to report except the expected fix-commit shape.
+
+Let me do that check: read main's verification/P08/RESUME.md lines 1-12 and 25-35, or grep "尚未提交|delivery commit".
+
+3. Also from A: "R2 :36 受审 head 全树中不存在字符串 31c26389 ... 与 09_COLLABORATION.md:90 一致... 不构成缺陷" — consistent precedent, again supporting my conclusion that the R4 shape is fine.
+
+Let me now do the main-RESUME check and wait for subagent C.
+
+Actually, subagent C is still running. Let me do the RESUME check plus maybe check that doc/handoffs/P08-490f9bd9.md:37 line content myself (to quote precisely if I report it).
+
+Let me batch: read main RESUME.md (grep for 尚未提交/固定 delivery), read worktree doc/handoffs/P08-490f9bd9.md around line 30-45.
+dsh: reasoning:
+Now I have main's RESUME.md (at 1ec14aa2), which IS updated to the R4-派发 state and references delivery=16fb07a9. So the post-delivery doc commit updates RESUME as well — the "fix-commit shape" is fully consistent with the convention. Therefore:
+- At the reviewed head 16fb07a9, RESUME.md/P08.md/validation.log are in R3-recorded state — expected, matching R3's precedent.
+- The R4 Handoff/Prompt + fixed-head validation + RESUME update are in the child 1ec14aa2.
+
+So there's no finding on missing R4 artifacts. 
+
+Now, item 5 from subagent A: R1 handoff (doc/handoffs/P08-490f9bd9.md:37) declared allowed paths `doc/reviews/P08-490f9bd9-dsh-r1.md` and `verification/P08/review-dsh-r1.md`, but the actual R1 report is archived at `verification/P08/review-dsh-490f9bd.md`. Is that a problem? That R1 handoff is in the reviewed delta; it's a mismatched pointer. Both paths are within P08's overall allowed range (P08.md line 99: "仅doc/tasks/P08.md、verification/P08/**、本Task自有Handoff"). Hmm, actually doc/reviews/** is in P08's *forbidden*/read-only set per verify_scope.py line 65 (doc/reviews listed among paths with "not diff" assertion) — meaning doc/reviews must be unchanged. So the R1 handoff's suggestion to place the report in doc/reviews/ would actually have violated the P08 guard! The actual placement (verification/P08/review-dsh-490f9bd.md) was correct and compliant. So the handoff line is a stale/incorrect pointer, but the outcome was correct. Impact: a future reader following the handoff would look for the report at a non-existent path or would place reports in a protected directory. That's a genuine (minor) documentation defect in the delivery. Severity P3. Recommend: fix the R1 handoff's allowed-path pointer to the actual archive path (or note it as historical), OR record that the R1 handoff is superseded.
+
+Hmm, but is this within my remit? The prompt says identify new problems after R3. This is a pre-existing R1-round artifact, never flagged by R1/R2/R3. It's a real inconsistency. I'll include it as a P3 new finding (R4-01?), since the R4 prompt also says "重新核实R1的...处置" — R1's P3-4 observation was about SCOPE_DRAFT's instruction fields; not this.
+
+Hmm, actually wait. Let me reconsider: was the R1 handoff's "允许修改路径" perhaps written before the DSH R1 report and the actual report path was agreed differently in the R1 prompt (DSH-REVIEW-PROMPT.md)? Let me check verification/P08/DSH-REVIEW-PROMPT.md for the report path it specifies. If the prompt says verification/P08/review-dsh-490f9bd.md, then the handoff line is simply out of sync with the prompt. Let me grep DSH-REVIEW-PROMPT.md for "report" / path. Actually SCOPE_DRAFT.md:102 links DSH-REVIEW-PROMPT.md as the review instruction for the R1 head (490f9bd). Let me grep it for "doc/reviews" or "review-dsh".
+
+Let me check.
+
+Also, I should decide on the "no positive allowlist" finding (my earlier R4 candidate). Given the guard's design and that this was implicitly accepted in R3 (and N-03/N-04 extended it), I could report it as a P3 boundary note. Hmm. Let me weigh: the review prompt asks to check "允许/禁止路径" and "识别R3以后的新增问题或遗漏影响范围". A P3 note that the guard negates a protected list rather than positively asserting the delta ⊆ allowed paths is legitimate and useful. But is it accurate? Let me re-examine: is there any positive assertion? Lines 65-73 use `git diff --name-only BASE -- <protected paths>` must be empty. Lines 74-84 whitespace-check an enumerated set. There's no `git diff --name-only BASE` → compare to allowlist. Correct: no positive allowlist. And notably the P08 allowed range includes only a few paths; a change to, e.g., `doc/11_ARCHITECTURE_MAPS.md` or `doc/templates/REVIEW.md` or `doc/handoffs/OTHER-TASK.md` would be silently outside both checks.
+
+Hmm, wait: `doc/handoffs/P08-*.md` are whitespace-checked (tracked via glob). A change to `doc/handoffs/M2-FOO.md` — hmm, is doc/handoffs in the protected list? No. So it wouldn't be caught. Right.
+
+I'll report this as a P3 robustness finding (R4-02) with severity P3 and "非阻断；建议下一轮或集成时补正向 allowlist 断言". Since it's non-blocking, decision can still be approved.
+
+Actually hold on. Let me be careful about one thing: is it appropriate for me to approve when there are open P3 items? Per the template: "P0/P1 未解决或关键验证缺失时不可批准" — P3 doesn't bar approval. R3 precedent: R3 was changes_requested with an open P2. N-08 P3 was non-blocking ("非阻断"). So approving with P3 findings is consistent, as long as I mark them deferred/for-next-round. Hmm, but should approval require the P3s to be fixed first? The R3 report said N-08 was non-blocking. I'd give `approved` with the P3s recorded as deferred recommendations... 
+
+But hold on — is `approved` the right decision given I could not run ANY dynamic verification (no verify_scope.py execution, no git diff)? The template says "P0/P1 未解决或关键验证缺失时不可批准". Is there "关键验证缺失"? My review is static-only because DSH's shell is broken — the same condition as R2 and R3, which still returned changes_requested for content reasons and explicitly accepted static review + Codex-attributed evidence. R3's §6 listed NOT_RUN for all shell checks yet reached a content decision. So a static-only review can still approve if the content facts are independently verifiable by file reading — which for a document-only task they largely are: I verified the actual text of AC_COVERAGE:142, verify_scope.py logic, doc/08 source text, doc/13, SCOPE_DRAFT, the Plan row/count via file reads.
+
+What remains NOT_VERIFIED: that the worktree tree == commit 16fb07a9's tree (cleanliness), and that the base..head delta contains no other changed paths. These are supported by: Codex's validation.log:340 (`git diff --exit-code HEAD -- .` EXIT=0 clean) in commit 1ec14aa2 (attributed to Codex, not DSH), the reflog, and the tree content matching the commit messages. 
+
+Hmm, `git diff --exit-code HEAD -- .` EXIT=0 — that's in the child commit's validation.log, which itself is Codex's claim. So the "clean" property is Codex-attributed. R3 handled this as NOT_VERIFIED for DSH but proceeded. I'll do the same: approve based on static content verification, with the cleanliness/delta-completeness marked NOT_VERIFIED (Codex-attributed), and note that no evidence of any problem was found.
+
+Is approving appropriate at all? Let me check the decision semantics: R3 returned changes_requested because of an open P2 (content contradiction). Now N-07/N-08 are fixed and verified. No P0/P1 open. So `approved` is the natural conclusion, assuming my new P3s don't warrant changes_requested. The prompt says: "未解决P0/P1、D1–D7/数据保护回退或关键证据缺失时不得批准". I have no unresolved P0/P1; no D1-D7/data-protection regression; and no *key evidence* missing for the content claims I must judge (I read the actual files). The head-binding evidence is Codex-attributed but structurally consistent with the R2/R3 precedent that the series already accepted. Hmm — "关键证据缺失" — I'd say the head-identity evidence is present via the gitdir HEAD file + reflog (DSH-executed reads!) which is stronger than R3 had. Clean/status is NOT_VERIFIED but corroborated.
+
+So decision = approved, with:
+- R4-01 (P3): R1 handoff report-path pointer mismatch (needs verification of the prompt first).
+- R4-02 (P3): no positive allowlist assertion for the delta; guard is negation-based.
+- possibly R4-03 (P4/P3): RESUME.md/P08.md/validation.log at the reviewed head remain in R3-recorded state — per convention, not a defect; I'll cover it in notes rather than a finding. Hmm, but is it worth a finding? The precedent (R3:20) explicitly says it's not a defect. I'll put it in the "notes/not a defect" section.
+
+Wait, also: should I flag that `verify_scope.py`'s assertion `all(line.endswith("| NOT_RUN |") for line in rows)` forces ADVISORY rows (GATE-74/75/79) to carry `NOT_RUN` even though they're not executable acceptance items? That's arguably a slight semantic oddity but the conservative direction. Not a finding; mention in notes.
+
+Also `assert sum("DEFERRED" in row for row in rows) == 6` — brittle: it counts rows containing "DEFERRED" anywhere. If a future row's 建议切片 mentions "DEFERRED" in prose, the count breaks. That's a brittleness observation (P3-ish). Hmm. It's a doc-validation script; brittleness is low-impact because failure is loud (assert error), not silent. Not worth a finding.
+
+One more thing to verify for N-08 closure: the prompt asks "PASS文案与真实范围是否一致". The PASS text says "full P08 subtree/task governance diff is whitespace-clean (3 Handoffs)" and the actual path list is: verification/P08, doc/tasks/P08.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, 3 handoffs, verification/PROJECT-ROADMAP-20261008. Is "full P08 subtree/task governance diff" an accurate label? It doesn't include `doc/00_INDEX.md`, `doc/12_ROADMAP.md`, `doc/tasks/README.md` in the wording but says "task governance" — the enumerated set is P08-owned + governance. I'd call the wording acceptable but slightly loose. I'll note that in the N-08 assessment: PASS文案与真实范围一致（集合内），但"full"字样未列出全部路径，属措辞宽松而非虚假；and note verification/P08 includes RESUME.md etc. Actually "full P08 subtree" = verification/P08/** — verify_scope.py passes the directory, so all files inside are covered ✓. Good.
+
+Hmm, one genuine subtlety on N-08: the handoffs glob is `(ROOT / "doc/handoffs").glob("P08-*.md")` — files only in the top level. If a future P08 handoff is placed in `doc/handoffs/P08/` subdir, missed. Also, `R3` noted the new R3 handoff (`P08-1ad05d99-dsh-r3.md`) was added in a later commit; with the glob fix, at head 16fb07a9 all 3 are included (validation.log:326 says 3 handoffs included; main's preflight line 346 says 4 handoffs in whitespace scope once the R4 handoff is staged — showing the glob picks up the new one dynamically ✓). That's a nice independent confirmation of the dynamic behavior: line 346 "4 P08 Handoffs dynamically in whitespace scope" on main with the R4 handoff staged. Good — N-08 verified closed including the "new handoff" boundary behavior.
+
+Now let me check the R1 prompt report path (grep DSH-REVIEW-PROMPT.md) to decide R4-01.
+
+Then subagent C is still pending. Let me check its status via list_agents? I'll just wait for the notification. Meanwhile, do the grep.
+
+Also, I want to double-check one aspect of the "AC逐项对应D08" claim: AC_COVERAGE row count 193 and the verify assertion `actual == expected` requires exact order equality. I spot-checked order; good.
+
+Let me also verify the 12 gates list: rows 201-212 = GATE-68..79 = 12 ✓, and verify_scope asserts sorted == range(68,80) ✓.
+
+And `assert "| D08-AC-SMOKE |" in coverage` ✓.
+
+Let me grep the R1 prompt now.
+dsh: reasoning:
+Subagent C surfaced several inconsistencies. Let me evaluate which are real findings vs explained-by-convention vs already-handled.
+
+I-1: The delivery head 16fb07a9 is not recorded in the reviewed tree's files. Explained: the reviewed tree is the fix commit; the recording happens in the child 1ec14aa2 (which does record reviewed_head=16fb07a9 in P08.md + R4 handoff + prompt + validation entries). Per 09_COLLABORATION.md:90 and R3 precedent (§2 line 20/34), NOT a defect. ✔ Not a finding.
+
+I-2: Task status differs between the reviewed head (changes_requested) and child (in_review). Per 09_COLLABORATION.md:73, "changes_requested：Reviewer 要求修订，修订后回到 in_review". At the review head, status=changes_requested is the correct *pre-review* state: the author has fixed the findings, and the transition to in_review happens when the new fixed head + Handoff are ready (the child commit). Indeed the child sets in_review. So at the reviewed head, changes_requested is arguably correct/acceptable — the fix commit precedes the state transition. Hmm, but strictly: at the moment the fixed head exists, the task should be in_review; the same commit that fixes also keeps changes_requested and the child flips it to in_review (after the fact). This is the same "fix commit shape" the R3 report accepted for 1ad05d99 (at which... hmm, at 1ad05d99 what did P08.md say? Probably changes_requested too, and the child e56ac2c set in_review). Yes: e56ac2c = "prepare third DSH review" → that's where status became in_review. So identical pattern, previously accepted. Not a finding. ✔
+
+I-3: RESUME.md declares the fixes "尚未提交" at a head that IS that commit. Same fix-commit-shape convention; R3 accepted the analogous state (R3:34 "RESUME/validation.log 均处 R2 记录态…恰为「fix 提交」形态"). Not a finding; note as accepted convention. However, I should mention it explicitly since it's the most visible "self-contradiction" at the reviewed head, and explain why it's not a defect (convention + child commit updates it). Good for review transparency.
+
+I-4: RESUME.md:15 claims commands ran "在上述精确head" (1ad05d99) but command 3 ends at 31c26389 (R2 head). This is a genuine internal inconsistency in RESUME.md as of the reviewed head. Hmm. But wait: is it actually inconsistent? Let me look at RESUME.md lines 13-19 again:
+
+```
+13: ## 已完成与验证
+15: Codex在上述精确head与干净Review worktree中执行：
+17: 1. `python ... verify_scope.py`: EXIT=0 ... P08=changes_requested
+18: 2. `python ... verify_plan.py`: EXIT=0 ...
+19: 3. `git diff --check ab2f813... 31c26389... -- ...`: EXIT=0
+```
+And line 11: "R2 findings修订head=1ad05d99... 第三轮精确Review worktree=...1ad05d99-r3..., detached clean... DSH R3 session=..., decision=changes_requested".
+
+So the "已完成与验证" section lists three commands; #1 and #2 are head-agnostic (they read the worktree), #3 is bound to 31c26389 (R2 head) — inconsistent with "在上述精确head" if 上述 refers to line 11's 1ad05d99.
+
+Hmm, but this exact text existed at the R3 head too? At R3 head 1ad05d99, this RESUME text would have been... The version I read is at 16fb07a9. Subagent A said R3's report §2 line 34: "P08.md/RESUME/validation.log 均处 R2 记录态". So yes, this RESUME text is the R2-era record. And R3 accepted it. Hmm, but did R3 notice the command-3-vs-head mismatch? Apparently not explicitly. It's the kind of stale-resume detail.
+
+Is it a *finding* at the R4 head? The point of RESUME is a recovery checkpoint. It says the R2-head command ran "在上述精确head". A reader could be misled about which head the whitespace check covered. However: the RESUME at the R4 head is superseded by the child commit's RESUME (main's RESUME is fully updated and accurate: it says command evidence for 16fb07a9). So the reviewed head's RESUME is a stale checkpoint whose authoritative replacement is in the child. Per convention, at the reviewed head the recovery docs are one round behind. So again: convention-covered.
+
+Hmm, but the convention (09_COLLABORATION.md:90) covers *Handoff* placement; the "recovery docs one round behind at the fix head" is an emergent property that R3 accepted. I think the cleanest treatment: report these as ONE P3 observation (documentation staleness at the reviewed fix head, e.g., RESUME's three-command list mixes R2-bound command with R3 head wording; P08.md's 测试要求 table binds validators to 31c26389 while reviewed_head=1ad05d99), noting R3 accepted the fix-head shape but that these specific head-mixing details were never explicitly dispositioned, and recommend the author make the post-delivery RESUME/P08.md update (already done in 1ec14aa2 per main's copies) plus, going forward, label stale checkpoint sections.
+
+Hmm, is that fair? Actually, let me check whether main's P08.md 测试要求 table (at 1ec14aa2) fixed the R3-head binding. Subagent C said main's P08.md frontmatter is updated (reviewed_head=16fb07a9, review_worktree=...-r4, review_session=pending, review_report=verification/P08/review-dsh-16fb07a9-r4.md). Did it also update the 测试要求 table's head? Let me check main's P08.md lines 100-125. If the table still cites 31c26389, then even the post-delivery doc leaves the I-5 head-mixing unresolved. That would make it a more substantive (P3) finding: "P08.md 测试要求表在 reviewed_head=16fb07a9 时仍把 validator 行绑定 31c26389，与 R4 的 fixed-head 验证（validation.log:333-338 中另外记录）不呼应".
+
+Let me check main's P08.md 测试要求 table.
+
+I-6: STATUS.md:10 says "当前21个规划节点沿用 P01–P21，状态为 proposed / 未释放" while the same file says P08=changes_requested. That's a genuine internal contradiction in STATUS.md — but is it? Line 10 is the "2026-10-08 最新编号裁决" section meaning "the numbering ruling: 21 nodes are numbered P01-P21, status proposed/未释放" — this refers to the *candidate* nodes other than P08, or was written at the moment of the numbering ruling before P08 was registered as a formal task... Hmm. Actually R1's P2-1 was exactly about STATUS contradictions ("同日状态自相矛盾") and it was closed in R2. Hmm! Was line 10 included in that? R1 P2-1 pointed at STATUS.md:20 vs :3/:7/:10. Yes! R1 cited ":3/:7/:10" as the other side of the contradiction, and the recommended fix was to change :20. So line 10's wording was known and accepted as "the numbering ruling" for P01–P21 (all 21 as candidates at that moment). Hmm, but at the R4 head, line 10 still says all 21 are proposed/未释放 while :3 says 20 are. Since R1 P2-1 cited :10 as part of the contradiction... The R2 closure claim was "STATUS/Plan/INDEX/ROADMAP/README 均 changes_requested 一致". If line 10 still says 21 proposed, is P2-1 fully closed? Hmm. R1's finding was about :20 specifically ("等待D1–D7和DSH正式Review" issue). Let me look at the actual STATUS.md line 10 wording in context to judge. Let me read STATUS.md lines 1-25 myself — I haven't read STATUS directly (subagent quoted it). Given I'm the reviewer and this is a P2-1 closure question, I should read it myself.
+
+Let me read doc/STATUS.md lines 1-30.
+
+I-7/I-8: STATUS.md's "无 Active" statements are qualified as "产品Task" (product task) and are inside historical M2 sections (lines 234-239 "Live execution state" table is a historical M2 section, line 388 similar). The doc explicitly says at line 3/7 that P08 is the current changes_requested/ACTIVE task. Is the "Live execution state" table at :234 stale (it says Current Active Task = 无 Active)? It's labeled "Live execution state" — that's potentially misleading, but the surrounding text (:236) says "Branch / audit base | main; M2-TA2C fixed base=...". So it's an M2-era section. R1's P2-1 addressed STATUS同日矛盾 and it was closed. Are lines 234/388 part of that? R1 cited :3/:7/:10/:20 only. Hmm.
+
+This is a "STATUS has historical sections claiming no active task while P08 is active" issue. But STATUS.md is enormous with historical checkpoints (the header of each section says "以下各ready/blocked段落继续作为历史恢复证据" at line 20). Actually line 20 says "下方各ready/blocked段落继续作为历史恢复证据" — so historical sections are explicitly marked. Let me verify that the :234 section is under a historical heading. Subagent C quoted :234 "## Live execution state" and :236 branch base M2-TA2C. Since line 20 declares below-sections as historical recovery evidence, the "Live execution state" table at :234 is within that historical scope. Hmm, but the heading says "Live execution state" which is self-contradictory with "historical". It's a pre-existing (pre-P08) artifact. Not in the P08 delta (STATUS.md changes since base are only the P08 section at top? verify_scope.py lines 85-89 assert that everything after the marker "## 2026-10-08 完成：" is preserved — hmm, that's about the new section being inserted before). 
+
+Wait: verify_scope.py asserts `old.split(marker,1)[1] == new.split(marker,1)[1]` where marker = "## 2026-10-08 完成：". So STATUS's content after that marker is unchanged from base. That means everything below the 2026-10-08 section (including the historical M2 sections) is untouched by P08. So any staleness in those sections is pre-existing and out of the P08 delta — cannot be attributed to this delivery, and D08/D1-D7 aren't affected. R1 apparently accepted this (its P2-1 only concerned the top state lines). So: not a P08 finding. But it IS worth a boundary note: "STATUS 下方的历史段落（含 'Live execution state' 表）仍写 Current Active Task=无 Active；由于在本交付中逐字保留（verify_scope.py:85-89 断言历史段不变），属 P08 之外的历史证据，不计入本交付缺陷。" Hmm, wait: if the whole region after the marker is preserved, then R1's P2-1 fix must have been applied *above* the marker (in the 2026-10-08 current-work section). Right.
+
+Hmm, but careful: line 10 (the 编号裁决段) — is it after the marker? The marker is "## 2026-10-08 完成：" whereas line 5 heading is "## 2026-10-08 当前工作：...". So STATUS.md has two 2026-10-08 sections: "当前工作" (updated each round) and "完成：" (historical marker). Content after "## 2026-10-08 完成：" is frozen. Line 10 would be inside the "当前工作" section (before the 完成 marker) — so line 10 IS part of the mutable current-state section, and could have been updated. Hmm, so I-6 (line 10 says 21 proposed while line 3 says 20+P08 changes_requested) is inside the current-work section.
+
+Let me read STATUS.md lines 1-25 to assess whether line 10 is a genuine contradiction or has a qualifier (e.g., "P01–P21 编号沿用...其中P08已建立正式Task"). Subagent C quoted: "2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。" That reads as: the numbering ruling — 21 planned nodes use P01–P21 numbering; (their) status is proposed/未释放; the ruling only unifies numbering. At the time of the ruling (before P08's formal task registration?) that was true. Now P08 is changes_requested. So line 10 is stale-by-design (it records the ruling). R1's P2-1 included :10 in its citation list — meaning R1 flagged the same class of contradiction, and the fix targeted :20. Hmm, so R2 closed P2-1 while :10 still says 21 proposed?
+
+Let me read STATUS.md myself and decide. If it's a genuine unresolved contradiction in the mutable section, it's a P3 (documentation consistency) finding — a *residual* of R1 P2-1 that was declared closed. That's exactly the kind of thing this R4 review should catch ("R1的P2/P3处置" re-verification). Hmm, but I must be careful: claiming "P2-1 regression" could be wrong if the wording is defensible. Let me read it.
+
+Let me read STATUS.md 1-22 and main's P08.md 100-125. Also check the marker line presence in STATUS (grep "## 2026-10-08 完成：").
+
+Let me batch these reads.
+dsh: reasoning:
+Now I have main's post-delivery P08.md: it adds a row (line 113) "N-07/N-08固定delivery head复核 ... HEAD=16fb07a9" and line 114 for the R4 dispatch, and frontmatter updated to reviewed_head=16fb07a9 / status in_review. So the post-delivery doc commit resolves the head-binding/traceability concerns. Good.
+
+Also note main's P08.md line 85 now says: "N-07/N-08作者修订固定于delivery head `16fb07a9...` ... R4 Prompt与Handoff已按collaboration §90在delivery之后提交。DSH R4已从该精确worktree启动..." — accurate.
+
+Now STATUS.md line 10: "2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。"
+
+At the reviewed head, line 3 says "P系列完成0/21、changes_requested 1、proposed / 未释放20" and line 20 says "P08 changes_requested，其余20项proposed / 未释放". So line 10's "当前21个规划节点...状态为 proposed / 未释放" directly contradicts lines 3 and 20 *in the same mutable section*. Is line 10 within the frozen region? The frozen marker is "## 2026-10-08 完成：" at line 22. Line 10 is before it → mutable. So this is an internally inconsistent statement that the author wrote/kept in the mutable current-state region and did not update when P08 became changes_requested.
+
+Was it flagged? R1's P2-1 cited STATUS :3/:7/:10 vs :20 — so R1 did point at line 10 as part of the "同日状态自相矛盾" finding. R1's minimal fix was only to change :20's wording. Hmm, so R1's fix addressed the :20 side. But :10's "21 nodes all proposed/未释放" is, on its face, a "编号裁决" statement — arguably it means "the numbering ruling covers all 21 nodes as candidates (proposed/未释放)". It's a historical ruling record dated 2026-10-08. But it says "当前21个规划节点...状态为proposed/未释放" — "当前" (currently) makes it a present-tense claim, contradicted by lines 3/20.
+
+So: is this a *new* finding or a residual of R1 P2-1 that R2 declared closed? R2's closure for P2-1 was "STATUS/Plan/INDEX/ROADMAP/README 均 changes_requested 一致". If line 10 still says all 21 proposed, that closure claim is arguably incomplete. Hmm, but R1's P2-1 target was ":20" and the recommended fix was for :20. R2 verified :20's fix. So P2-1's specific target is closed; line 10 wasn't R1's target (it was cited only as part of the inconsistency pair).
+
+Hmm, I need to be careful and fair: could "21个规划节点" in line 10 legitimately exclude P08? "当前21个规划节点沿用P01–P21" — it says the 21 nodes are numbered P01–P21 and their status is proposed/未释放. P08 is node #8 of those 21. So it's a contradiction with lines 3/20. But given the sentence's function (recording the numbering ruling), and that it also says "仅统一编号，不释放实施" — the "状态为 proposed/未释放" describes the ruling's effect at that time. It IS stale/inconsistent in a mutable section.
+
+Given the review prompt says to "重新核实...R1的P2/P3处置", I think the right treatment is: report as a new P3 finding (a residual wording inconsistency in STATUS.md's mutable section that R1's P2-1 cited but R2's closure did not fully sweep). This is defensible and specific, with file:line evidence and a concrete fix. Severity P3 (non-blocking; STATUS is navigation, and no product/data impact).
+
+Hmm, but careful: is the line actually saying all 21 are proposed/未释放 *currently*? "2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。" I read it as: "Latest numbering ruling of 2026-10-08: the current 21 planned nodes use P01–P21; (their) status is proposed / 未释放; this only unifies numbering...". Yes, present tense.
+
+But hmm — could the intended meaning be that the 21 nodes were each proposed/未释放 *at that ruling moment*, which was before P08's registration as a formal task? P08 was registered on 2026-10-08 too, and P08 is changes_requested. Since line 3 also dates 2026-10-08, the section is meant to be current. So it's a stale line. It's minor (P3).
+
+Actually, hold on: is this STATUS line even in the P08 delta? Yes — STATUS.md is in the delivery delta (P08 modified its top section). verify_scope.py preserves only the region after "## 2026-10-08 完成：" (line 22). Lines 1-21 are P08-modified. So line 10 is within P08's authorized edit region and was left stale. Legit finding.
+
+Also I-4 (RESUME command 3 bound to R2 head while claiming "上述精确head" = R3 head) and I-5 (P08.md 测试要求 table's validator row bound to 31c26389 while frontmatter reviewed_head=1ad05d99 at the reviewed head). At the reviewed head these are the "R3-recorded state". Are they defects? R3 explicitly accepted the "fix commit shape" for P08.md/RESUME/validation.log. And the post-delivery commit (main's P08.md) now adds line 113 binding the R4 head. Interesting: main's P08.md keeps line 109 (validator row with HEAD=31c26389) and line 111 (diff-check bound 31c26389) and adds 113/114 for R4. So the cumulative record keeps per-round rows — that's actually the intended structure ("逐次入库"): each round's command evidence stays bound to its own head. So I-5 is not a defect: the table's rows are per-round evidence records, and row :112 documents the R3 DSH review at 1ad05d99. Hmm, but the header "草案覆盖..." row #109 says HEAD=31c26389 which was the R2 head — and the row was presumably created in the R2 round. So per-round binding is fine. I-5 is not a finding. Good call to check.
+
+I-4 (RESUME's command list): RESUME.md at the reviewed head is the R2-era text (line 11 R2 findings head=1ad05d99 added later? Hmm, line 11 mentions 1ad05d99 and R3 worktree, so RESUME was partly updated after R3). Let me look again at the RESUME lines: line 7 mentions main HEAD=1d6cfa27 candidate; line 9-11 history; line 15 "Codex在上述精确head与干净Review worktree中执行"; lines 17-19 three commands with #3 bound to 31c26389. So the "上述精确head" is ambiguous — it likely refers to the R2 worktree (31c26389) since the three commands are the R2-round runs. Line 10 says "首轮Finding修订固定head=31c26389... 精确Review worktree=P08-dsh-review-31c2638". So "上述精确head" most plausibly = 31c26389 (the R2 round). Then lines 17-19 are consistent with the R2 round. But line 11 then introduces 1ad05d99/R3. Hmm, so the ordering means "上述" (immediately above) = line 11's 1ad05d99, which is inconsistent with command #3. Subagent A flagged this.
+
+Is this actually a defect worth reporting? The section header at line 13 is "## 已完成与验证" and it lists the R2-round commands while the Reality Check lists the R3 head. A reader could mis-attribute the R2-bound whitespace check to the R3 head. However, at the R4 head, the child commit's RESUME is fully rewritten (main's RESUME:3/7/27/33 accurately binds R4, and its "已完成与验证" section is presumably rewritten too). Let me check main's RESUME's "已完成与验证" section to see if it now binds correctly. If main's RESUME fixed it, then the stale version exists only at the fix head — accepted convention. Hmm, but the convention allows docs to lag one round, so no finding.
+
+Hmm, this is getting deep. Let me decide a clean, defensible finding set:
+
+Findings (new, unique IDs):
+- **R4-01 (P3)**: STATUS.md:10 (mutable current-state section) states the 21 planned nodes are all `proposed / 未释放`, contradicting STATUS.md:3 and :20 in the same section (P08=changes_requested, proposed/未释放20). Residual wording not swept by R1 P2-1/R2 closure; navigation-only impact; fix: qualify line 10 (e.g., "编号裁决仅统一编号；P08 已登记为正式 Task，状态以本节开头为准") or update to 20+P08.
+- **R4-02 (P3)**: verify_scope.py's scope guard is negation-based: it asserts a protected path list has zero diff and whitespace-checks an enumerated path list, but never positively asserts that the delta is a subset of P08's allowed paths. Paths neither listed (e.g., doc/10, doc/11, doc/templates/**, doc/handoffs/*非P08, other verification/* dirs) could change without any check firing. Non-blocking; recommend adding a positive allowlist delta assertion or documenting the boundary. Evidence: verify_scope.py:65-73 vs :74-84; the delta-completeness claim rests on Codex's `git diff --name-only` command (validation.log:339, Codex-attributed; DSH NOT_RUN).
+- **R4-03 (P3)**: doc/handoffs/P08-490f9bd9.md:37 declares the reviewer's report allowed paths as `doc/reviews/P08-490f9bd9-dsh-r1.md` and `verification/P08/review-dsh-r1.md`; neither exists; the actual R1 report is `verification/P08/review-dsh-490f9bd.md`. Also `doc/reviews/**` is in the *protected* zero-diff set (verify_scope.py:65), so following the handoff pointer could have violated the guard. Impact: traceability of round-1 evidence; historical artifact within P08's allowed range. Fix: correct the pointer or add a note that it is superseded.
+
+Hmm, is R4-03 fair? Careful: `doc/reviews/P08-490f9bd9-dsh-r1.md` — the text is "仅doc/reviews/P08-490f9bd9-dsh-r1.md及verification/P08/review-dsh-r1.md". Maybe the intent was "the reviewer writes its report to one of these two places". The actual placement was a third path. As a historical record of the R1 round, it's a mismatch. And glob confirmed no doc/reviews/P08-* file. Let me double check that no `P08-490f9bd9-dsh-r1.md` exists anywhere and no `review-dsh-r1.md`. Let me grep/glob to be sure. Subagent A said glob showed doc/reviews has 304 files, none P08-*. Let me verify quickly with glob patterns:
+- glob "doc/reviews/P08*" 
+- glob "verification/P08/review-dsh-r1.md"
+
+Let me run those to be certain before asserting.
+
+Also, should R4-03 be considered out of scope (historical, pre-R4)? The prompt asks to check R1's P2/P3 dispositions and to identify "遗漏影响范围". A wrong pointer in the R1 handoff is a small traceability gap in the delivery. I'll include it but mark it as P3/low with "deferred acceptable" and offer the option to just record it.
+
+Hmm, alternatively I could fold R4-03 into a "historical residue" note rather than a finding, to keep the finding list focused. But the prompt explicitly wants new problems with IDs and specifics. I'll include it as a P3 finding with a clear note that it does not affect N-07/N-08 or the product.
+
+Wait, one more consideration on R4-01/03: am I sure these weren't already dispositioned somewhere? Let me grep P08.md (reviewed head) and the R1/R2/R3 reports for "P08-490f9bd9-dsh-r1.md" to see if there's a note. And for STATUS line 10, grep in reviews for ":10" mention. R1's P2-1 mention of :10 is in review-dsh-490f9bd.md. Let me check whether the R1 report's P2-1 details line 10 and whether the disposition covers it. Let me read R1's P2-1 section (lines 145-150).
+
+Let me batch:
+1. glob doc/reviews/P08* (in worktree)
+2. glob verification/P08/review-dsh-r1.md
+3. read R1 report lines 144-152
+
+Let me do it.
+dsh: reasoning:
+All three subagents done. Now let me finalize my findings and decision.
+
+Deciding on new findings — I want them defensible, specific, and correctly severity-rated:
+
+**R4-01 (P3)** — `doc/STATUS.md:10` states the current 21 planned nodes are all `proposed / 未释放`, contradicting STATUS.md:3 and :20 in the same mutable section (P08=changes_requested; 20 unreleased). This is within P08's authorized edit region (content after `## 2026-10-08 完成：` is frozen by verify_scope.py:85-89; line 10 precedes it). R1's P2-1 cited `:10` as part of the same-day status contradiction; R2 declared P2-1 closed by fixing `:20` — the `:10` wording was never reconciled. Impact: navigation/state-source ambiguity for recovering agents (STATUS is the "运行状态唯一事实源" per 00_INDEX:81). Non-blocking (no product/data impact; the authoritative counts at :3/:20 are correct). Evidence: STATUS.md:3, :10, :20; REBASELINE_PLAN.md:28/:39; verify_scope.py:85-89. Fix: qualify line 10 (numbering ruling only; P08 status per section head) or write 20+P08.
+
+**R4-02 (P3)** — `verification/P08/verify_scope.py:65-84`: the scope guard is negation-based (protected-path zero-diff + enumerated whitespace set); it never asserts the delta is a subset of P08's allowed paths. Paths like `doc/10`, `doc/11`, `doc/templates/**`, non-P08 `doc/handoffs/*`, or other `verification/*` dirs are in neither list, so a change there would pass silently. Delta completeness therefore rests on Codex's `git diff --name-only` claims (validation.log:339; handoff :25), which DSH could not re-run (NOT_RUN). Non-blocking; recommend a positive allowlist assertion (`git diff --name-only BASE` ⊆ allowed set) or documenting the boundary.
+
+Hmm, is R4-02 accurate? Let me double check the whitespace path list covers the actual delta. The actual delta (base..16fb07a9) per the R3-era record: 19 files at 31c26389 across doc/tasks/P08.md, Plan, STATUS, 00_INDEX, 12_ROADMAP, tasks/README, verification/P08/**, verification/PROJECT-ROADMAP-20261008/**, doc/handoffs/P08-*.md. All covered by either whitespace list or protected list. So no evidence of a gap — it's a *potential* gap (boundary). I'll phrase it as a robustness boundary, explicitly "未发现违规证据".
+
+**R4-03 (P3)** — `doc/handoffs/P08-490f9bd9.md:37` declares the R1 reviewer's allowed report paths as `doc/reviews/P08-490f9bd9-dsh-r1.md` 及 `verification/P08/review-dsh-r1.md`; neither path exists (glob: no `doc/reviews/P08*`, no `verification/P08/review-dsh-r1.md`); the actual archived R1 report is `verification/P08/review-dsh-490f9bd.md` (RESUME.md:9; validation.log:95). Additionally `doc/reviews` is in the protected zero-diff set (verify_scope.py:65), so the handoff pointer actually named a location the P08 guard forbids writing. Impact: round-1 evidence pointer is wrong (traceability), and a future decoder following it could misplace a report outside allowed paths. Non-blocking historical residue. Fix: correct the pointer to the real archive path or annotate as superseded (and keep doc/reviews read-only).
+
+Is R4-03 within the reviewed delta? doc/handoffs/P08-490f9bd9.md is P08-owned and inside the delta. Yes.
+
+Now: is there anything that should be P2 or block approval? Let me re-scan the prompt's checklist:
+
+1. "重新核实R1的4×P1、R1的P2/P3处置及R2 N-01..N-06 closure；重点确认N-01..N-06在R3已独立关闭，本轮没有退化。" → Verified: R1 P1-1..P1-4 content present at head (P1-2: AC_COVERAGE:3 reconciliation paragraph ✓; P1-3: AC-WIN rows point to P12/P14/P15/P17 with ZCode ✓ lines 10-15; P1-4: SCOPE_DRAFT:49 legacy disposition + Architecture Documentation Rebaseline Gate ✓; P1-1: validation.log fixed-head entries for R2/R3 heads ✓ + per-round rows in P08.md). N-01..N-06 content re-verified: N-01 SCOPE_DRAFT:40 ✓; N-02 TASK_STATES 9 states + protocol block ✓; N-03 whitespace scope incl. tasks/README + handoffs + derived roadmap ✓; N-04 AGENTS.md + doc/09 in protected set ✓ (line 66); N-05 AC_COVERAGE:3 lists ACG-EXT-DETECT/CONTRACT/NFR ✓; N-06 SCOPE_DRAFT:78/81 distinguishes 现存可复用 vs 拟议 ✓. No regression found.
+
+2. "检查AC逐项对应D08" ✓ (193 rows, same IDs/order as doc/08's 193 `## AC-` headers; tags/titles spot-checked).
+
+3. "D1–D7未扩写" ✓ (SCOPE_DRAFT:17-23 seven rows; PNG mapping attributed to D1/D2; D5 threshold preserved; D6 deferred; no re-decision requested anywhere; prompts forbid reopening).
+
+4. "D5门槛" ✓ (SCOPE_DRAFT:21,:49; AC_COVERAGE AC-PKG/GATE-69 rows "用户D5门槛不变").
+
+5. "12条Legacy PASS口径" ✓ (AC_COVERAGE:3 + doc/13 rows 45-48/50/64-65/75-76/197-199 bound to historical commits; doc/13:150 AC-EXPORT-001 = NOT_RUN/无应用测试; no historical PASS inherited into new-architecture PASS).
+
+6. "§74/75/79 advisory" ✓ (doc/13:242 for §74/75; §79's own title "下一阶段建议"; AC_COVERAGE:3 + GATE-74/75/79 rows "ADVISORY ONLY"). Note doc/13 doesn't itself call §79 advisory in the same sentence; AC_COVERAGE does — substantively correct (§79 title = 建议). Not a defect.
+
+7. "全库备份" ✓ (D4 row SCOPE_DRAFT:20; AC-BACKUP-001..004 rows 134-137; P15 dependency on P13 stop-write/drain; "DB-only不能替代").
+
+8. "源文件/人工修改/Lock/current/pinned保护" ✓ (SCOPE_DRAFT:62 safety thresholds; AC_COVERAGE AC-IMPORT-002, AC-TRANS-002/004, AC-LOCK-*, AC-REV-*, AC-CLEAN-001/002 rows all INCLUDED and NOT_RUN; no relaxation).
+
+9. "Architecture Documentation Rebaseline前置Gate" ✓ (SCOPE_DRAFT:49,:58,:71; AC_COVERAGE:3 + AC-PKG-001/003, AC-OPTIONAL-001, GATE-69 rows; Plan P09/P18/P20 dependencies — REBASELINE_PLAN:40,:49,:51).
+
+10. "允许/禁止路径" — allowed range declared in P08.md:97-99; delivery touches only P08-owned + authorized governance/nav paths (per Codex evidence; DSH cannot re-run diff → NOT_VERIFIED). No protected path changed per producer evidence; independently I verified doc/01-08, doc/13, AD-001, AGENTS.md, doc/09 contents are... hmm, I can't verify they're unchanged vs base without git. I can only note that they read as legacy/unchanged in content. Actually — one thing I CAN do: the R3 report (produced at 1ad05d99) quoted doc/08:2054-2064 and doc/13 lines:242 etc., matching what I read now at 16fb07a9. That's weak cross-round evidence that those frozen files didn't change between R3 and R4 heads. Good enough to mention as corroboration (cross-session content consistency), while marking the base..head zero-diff as Codex-attributed.
+
+Also "§74/75/79" — done. "AD-001" — the legacy-baseline handling.
+
+Now the decision. No P0/P1 open; N-07/N-08 verified closed; R1 4×P1 and R2 N-01..N-06 show no regression; D1–D7 untouched; D5 intact; data protection intact; product tests NOT_RUN as appropriate for a docs task. New findings are P3-level, non-blocking, recommendable for the post-delivery/integration round.
+
+Should the P3s block approval? R3 precedent: it returned changes_requested because of an open P2 content contradiction. Here my new items are (a) a stale STATUS line, (b) a guard-design boundary, (c) a historical handoff pointer. None affects the product scope, AC mapping, or data protection; none makes the delivery self-contradictory in a way that misleads AC sourcing (unlike N-07). So `approved` is appropriate — with the P3s recorded as deferred/minor and recommended for the integration round. Hmm, but is "approved" too generous given I found three issues? Let me think about the project's norms: M2-AC1 r4 was `approved` with R4-01..R4-05 non-blocking; M2-IPC1 used approved_with_conditions (a status not in this template's allowed set: pending/changes_requested/approved/blocked). The allowed set here is only four values. Given the P3s are non-blocking and the template says P0/P1 unresolved or key verification missing blocks approval, `approved` is the right call.
+
+Hmm, one more consideration: since I could not run ANY command, is "关键验证缺失" triggered? The template also says review must cover Verification (actual run checks, per-item PASS/FAIL/BLOCKED/NOT_RUN). I did record NOT_RUN for all shell checks. R2/R3 did the same and still issued content decisions. For a documentation-only Task, the decisive verification (does AC_COVERAGE list the five D08 formats?) is a file-content fact that I verified by reading — a legitimate execution of DSH's file-layer checks. So "key verification" is not missing for what I must decide; the diff-level checks are Codex-attributed and marked NOT_VERIFIED. I'll approve but state precisely which approvals rest on Codex-attributed evidence, so Codex's integration gate re-runs them.
+
+Let me make sure I flag: decision approved is for the reviewed head 16fb07a9 only, does not mean P08=done; Codex integration Gate still required; P09-P20 remain unreleased.
+
+Also I must record the environment: DSH pwsh failed with SetNamedSecurityInfoW Win32 5 on grantWrite(<worktree>) for every attempt; no escalation attempted; no files modified.
+
+Now, one last verification detail for N-08: "确认当前被审head的R1/R2/R3三份Handoff均被覆盖". The three handoff files: P08-490f9bd9.md (R1), P08-31c26389-dsh-r2.md (R2), P08-1ad05d99-dsh-r3.md (R3). ✓ All match `P08-*.md` glob. And the R4 handoff is in the child commit 1ec14aa2 and was shown to be picked up (main's validation.log:346 "4 P08 Handoffs dynamically in whitespace scope"). Excellent — that's strong evidence the dynamic collection works on new handoffs.
+
+Also N-08's "PASS文案与真实范围是否一致": verify_scope.py:84 prints "(N Handoffs)" with N=len(handoffs) — dynamic and accurate. The only wording looseness: "full P08 subtree/task governance diff" doesn't enumerate the paths, but the enumerated set is exactly the delta's changed paths; the count is printed. I'll judge it consistent (with the caveat that completeness depends on the delta containing nothing outside those lists → ties to R4-02).
+
+One more check I should do for rigor: does verify_scope.py's whitespace list include `doc/tasks/README.md` (N-03's demand)? Line 80: "doc/tasks/README.md" ✓. And `verification/PROJECT-ROADMAP-20261008` ✓ line 81. And handoffs via *handoffs ✓ line 80. Good.
+
+And N-04: line 66-67 includes "AGENTS.md", "doc/09_COLLABORATION.md" ✓.
+
+And N-02: TASK_STATES at lines 9-10 has 9 states ✓; line 34-37 extracts from protocol ✓; and verify_plan.py is asserted to be consistent — I can't verify verify_plan.py's content (not read). Hmm! N-02's closure mentions verify_plan.py:41/47-48/52-55 needed to accept all 9 states. I haven't verified verify_plan.py myself. Subagent A quoted R3's closure as closed, and R3 says "verify_scope.py:9-10 TASK_STATES=9态...协议核实". But R2's N-02 was about both files. Let me quickly check verify_plan.py's state set to ensure no regression (it's cheap). Let me grep verify_plan.py for the state labels/keys.
+
+Let me do that, plus double-check that `verification/PROJECT-ROADMAP-20261008/verify_plan.py` has the P08 labels and the 9-state handling.
+
+Then write the report.
+
+Let me grep verify_plan.py for "approved|in_review|changes_requested|STATUS_LABELS|TASK_STATES".
+dsh: reasoning:
+N-02 closure verified: verify_plan.py:11-24 has the full 9-state TASK_STATES matching the protocol, STATUS_LABELS covers all 9 with `assert set(STATUS_LABELS) == TASK_STATES` (line 24), and line 78 sets p08_label from STATUS_LABELS[state] (so `approved` would map correctly). No regression: N-02 closed.
+
+Now I have everything. Let me write the final review report in Chinese, following doc/templates/REVIEW.md structure:
+- frontmatter (task_id, reviewer, author, base_commit, reviewed_head, decision)
+- title
+- 范围与依据
+- Architecture 结论
+- Verification 结论 (with 验证矩阵)
+- Findings (逐 Finding 表: N-07/N-08 + R1/R2 history + new R4-01..03)
+- NOT_RUN/NOT_VERIFIED 边界
+- 风险与结论
+- 下一任务建议 (per AGENTS.md/§5.1: since P08 not done, next step is Codex integration gate; must give forwardable instruction)
+
+Let me carefully compose. Key content:
+
+Frontmatter:
+```
+---
+task_id: P08
+reviewer: DeepSeek Harness（非作者；作者/Integrator=Codex）
+author: Codex
+base_commit: ab2f813c0ce311a6712002cafd852b9e7a258380
+reviewed_head: 16fb07a973b36b0b129945bc3a85f9ae51234982
+decision: approved
+---
+```
+
+环境与元数据核验表:
+- worktree: G:/CODEX/New Manga.worktrees/P08-dsh-review-16fb07a9-r4
+- .git file → gitdir: G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-16fb07a9-r4
+- HEAD file: 16fb07a9... (detached, raw SHA)
+- logs/HEAD (worktree): 1 line: 0000...→16fb07a9... peakwheat-pixel 1791471617 +0800
+- commondir: ../.. → G:/CODEX/New Manga/.git
+- main .git/logs/HEAD:944-946 chain: e56ac2c→1d6cfa27 (mark third DSH review in progress) → 16fb07a9 (record R3 review and fixes) → 1ec14aa2 (prepare R4 review handoff)
+- git status clean: NOT_RUN (pwsh ACL failure)
+
+Verification matrix rows:
+1. pwsh/ACL init: NOT_RUN — `SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga.worktrees\P08-dsh-review-16fb07a9-r4)` for `git rev-parse HEAD`, `git status`, retry; no escalation attempted.
+2. HEAD identity: PASS (file-layer) — HEAD file == reviewed_head; detached.
+3. worktree creation integrity: PASS — reflog single entry at 16fb07a9, no checkout/commit/rebase.
+4. common-dir: PASS — commondir=../.. → G:/CODEX/New Manga/.git.
+5. commit chain & R4 artifact placement: PASS — main reflog :945/:946.
+6. worktree tree == commit tree / clean: NOT_VERIFIED (DSH) — Codex evidence validation.log (child commit) :335/:340.
+7. verify_scope.py execution: NOT_RUN (DSH); Codex EXIT=0 (validation.log:336).
+8. verify_plan.py execution: NOT_RUN (DSH); Codex EXIT=0 (:337).
+9. git diff --check / protected-path diff: NOT_RUN (DSH); Codex EXIT=0 (:338/:339).
+10. Static AC mapping count/order: PASS (DSH read/grep) — 193 rows vs 193 doc/08 headers; gates 68-79 = 12.
+11. N-07 content: PASS by file-layer read.
+12. N-08 content: PASS by file-layer read; 3 handoffs enumerated; dynamic pickup corroborated by main's preflight (4 incl. R4 handoff).
+13. Product pytest/cargo/vitest/GUI/build/model: NOT_RUN (correct for docs task).
+
+Findings table:
+| N-07 | P2 | R3 | closed | ... |
+| N-08 | P3 | R3 | closed | ... |
+| R1 P1-1..P1-4 | P1 | R1 | closed (R2), no regression at R4 |
+| R1 P2-1..P2-6 | P2 | R1 | closed (R2/R3); P2-5/P2-6 via N-01/N-02..N-04 |
+| R1 P3-1..5 | P3 | R1 | closed (R2) |
+| R2 N-01..N-06 | P2×2,P3×4 | R2 | closed (R3), no regression at R4 |
+| R4-01 | P3 | new | STATUS:10 contradiction |
+| R4-02 | P3 | new | no positive allowlist |
+| R4-03 | P3 | new | R1 handoff report path wrong |
+
+For the R4-0x new findings, include file/line, trigger, impact, evidence, suggestion, and status (open, non-blocking, deferred to integration round).
+
+I need to be careful and precise about N-07/N-08 verification evidence with line numbers:
+- AC_COVERAGE.md:142 full row text (quote).
+- doc/08:2052-2064 (header + 5 formats); doc/08 has zero "PNG" (grep no match in doc/08; verified by subagent B — I should attribute: my own grep? I did not grep PNG in doc/08 myself; subagent B did. Hmm — I should either run it or attribute it. I can quickly run a grep myself to make it a first-hand DSH check. Let me do that: grep "PNG" in doc/08_ACCEPTANCE_CRITERIA.md. Also grep "^## AC-" count in doc/08 to make the 193 count first-hand, and count "| AC-" rows in AC_COVERAGE. That strengthens my Verification matrix as first-hand. Let me do these three greps now.
+
+Actually the grep tool returns up to 250 matches with a count message ("Found N matches"). For "^## AC-" in doc/08 → should report 193 matches. And for AC_COVERAGE "^| AC-" → 193. And "PNG" in doc/08 → No matches. Let me run them.
+
+Also grep doc/13 for the 12 legacy rows? Subagent B did. I'll cite B's evidence but could also verify first-hand with a grep for "f9e5977" in doc/13 (9 matches expected). Cheap. Let me include.
+
+Let me run these 4 greps in one batch.
+dsh: reasoning:
+All first-hand checks done:
+- doc/08: zero "PNG" matches; 193 `## AC-... [P0/P1/P2]` headers; AC-EXPORT-001 at line 2054 with the 5 formats (2059-2063).
+- AC_COVERAGE.md: exactly 193 `| AC-... |` rows (lines 7–199), plus D08-AC-SMOKE (200) and 12 gates (201–212).
+- doc/13: 9 rows bound to Review f9e5977 (REGION-001..004, OCR-002, TRANS-001/002, REV-003/004) → the 12 Legacy PASS = those 9 + AC-DOC-001..003 (doc/13:197-199, verified by subagent B with verbatim quotes).
+- verify_plan.py: 9-state TASK_STATES + STATUS_LABELS with `assert set(STATUS_LABELS) == TASK_STATES`.
+- verify_scope.py: TASK_STATES 9 states; protocol block includes the `blocked` state (line 70) — note AGENTS.md/verify_scope consistency.
+
+Now I'm ready to write the report. Let me also double check the AC ordering equality claim: doc/08 order (193) vs AC_COVERAGE order (193) — I compared the lists above: they match exactly (same sequence of IDs). Verified first-hand by reading both greps side by side. Good.
+
+One point: AC_COVERAGE rows use `| AC-EXT-... |` after AC-DOC-003 — matches doc/08 order (DOC at 2823-2862 then EXT at 3167+). ✓
+
+Now compose the final report. It must be the complete Review body in Chinese, with frontmatter, and it is my final answer. Structure per template:
+
+---
+task_id: P08
+reviewer: ...
+author: Codex
+base_commit: ...
+reviewed_head: ...
+decision: approved
+---
+
+# Review：P08（DSH R4 非作者正式 Review）
+
+## 1. 范围与依据
+- 受审交付 base..head; worktree; 只读声明
+- 先读文件清单
+- 差量定位方法（shell 不可用 → .git 文件层）
+- 未审到/未验证部分
+
+## 2. Architecture 面结论
+- 分层/契约/依赖/安全/持久化: N/A 产品面（文档 Task）；但治理与架构决策面:
+  - AD-001/legacy baseline handling: PASS (SCOPE_DRAFT:49; AC_COVERAGE:175-179,189-191; Plan P09/P18/P20 deps)
+  - 一级页面约束: 四页 only, no expansion (AC_COVERAGE NAV-002; SCOPE_DRAFT:31)
+  - 数据保护边界: 源文件/人工/Lock/current/pinned preserved & NOT_RUN (rows)
+  - Architecture Documentation Rebaseline Gate: correctly blocking, not bypassed
+  - No production/contract/schema change claimed; DSH NOT_VERIFIED (Codex evidence)
+  - decision on architecture plane: no architecture-layer defect found in the record scope.
+
+## 3. Verification 面结论 (verification matrix + NOT_RUN boundaries)
+
+## 4. Findings（逐 Finding 表）
+4.1 N-07 (P2) closed — evidence & reasoning
+4.2 N-08 (P3) closed — evidence, boundaries
+4.3 旧 Finding closure 复核表 (R1 P1×4, R1 P2×6/P3×5, R2 N-01..N-06) — closed / no regression
+4.4 本轮新增 Finding R4-01..R4-03 (P3)
+4.5 复核后判定为非缺陷的项 (state/fix-head shape; per-round head binding; advisory rows NOT_RUN; §66 wording)
+
+## 5. NOT_RUN / NOT_VERIFIED 边界
+
+## 6. 风险与结论 (decision: approved; conditions/notes; 固定 head 声明)
+
+## 7. 下一任务建议（可直接转发）
+
+Also AGENTS.md requires: final reply must give a recommended next step, and since this closes a review slice, must provide the forwardable instruction per §5.1.
+
+Length: this will be long but that's expected for a formal review. Let me write it carefully and completely, in Chinese, using the exact evidence.
+
+Regarding the reviewer field: "DeepSeek Harness（非作者；作者/Integrator=Codex）".
+
+I must be careful to not overstate: state which checks are DSH-executed vs Codex-attributed.
+
+For the "验证矩阵" table, include: 场景 | 命令或手工步骤 | 环境/commit | 结果 | 证据.
+
+Rows:
+1. 审查 worktree 绑定（.git 文件层） | 读 `.git` 文件、`.../worktrees/P08-dsh-review-16fb07a9-r4/HEAD`、`logs/HEAD`、`commondir` | DSH read（无 shell） | PASS | 见 §3.1
+2. HEAD == reviewed_head | 同上 | PASS
+3. detached | HEAD 文件为裸 SHA | PASS
+4. worktree 自创建未被推进 | logs/HEAD 单行 | PASS
+5. common-dir | commondir=../.. → G:/CODEX/New Manga/.git | PASS
+6. 提交链/交付 head 身份 | 主仓 .git/logs/HEAD:944-946 | PASS
+7. `git status` clean / `rev-parse` | `git rev-parse HEAD`、`git status --porcelain=v1 --branch` | pwsh | NOT_RUN（ACL）
+8. worktree 工作树 == 16fb07a9 树 | — | NOT_VERIFIED (DSH)；Codex: validation.log:340 `git diff --exit-code HEAD -- .` EXIT=0（子提交 1ec14aa2）
+9. verify_scope.py | `python -B -X utf8 verification/P08/verify_scope.py` | NOT_RUN (DSH)；Codex EXIT=0（validation.log:336 等）
+10. verify_plan.py | NOT_RUN (DSH)；Codex EXIT=0（:337）
+11. git diff --check / protected diff | NOT_RUN (DSH)；Codex EXIT=0（:338/:339；handoff:24/:25）
+12. AC 覆盖计数与顺序 | grep `^## AC-`（193）vs grep `^\| AC-`（193），逐项顺序比对 | DSH read/grep | PASS
+13. D08 AC-EXPORT-001 原文与 PNG | read doc/08:2052-2064 + grep PNG（0 命中） | PASS
+14. N-07 状态列措辞 | read AC_COVERAGE:142 | PASS
+15. N-08 动态 Handoff 范围 | read verify_scope.py:74-84 + glob doc/handoffs/P08-*（3 件） | PASS
+16. 12 条 Legacy PASS 口径 | grep f9e5977（9 命中）+ read doc/13:197-199 + AC_COVERAGE:3 | PASS
+17. 协议状态集（N-02） | read 09_COLLABORATION:66-76 + verify_scope.py:9-10,34-37 + verify_plan.py:11-24 | PASS
+18. 产品 pytest/cargo/vitest/GUI/build/model | 未运行 | NOT_RUN（正确）
+
+OK. Writing now. I'll keep it organized and complete but not bloated. Given the audience (Codex archiving it), thoroughness matters more than brevity, but I'll avoid padding.
+
+One more decision: R4-02's severity. I'll keep P3 and mark 处理状态 as `open（非阻断，建议集成轮或下一轮收口）`. Hmm — for the finding table's "处理状态/修订 commit" column: new findings are `open（非阻断）`.
+
+Also note: I should state explicitly that the three new P3 findings do NOT block approval per the template's threshold (P0/P1 open or key verification missing), and that I chose `approved` deliberately — with the reasoning that no P0/P1 is open, N-07/N-08 are independently confirmed closed, no D1–D7/data-protection regression, and the P3s are documentation/robustness items addressable during the integration round.
+
+Hmm, wait. Let me reconsider `approved` vs `changes_requested` once more. Consider the strongest argument for changes_requested: R4-01 (STATUS:10 contradicts STATUS:3/:20) is a "same-delivery self-contradiction in the state fact source" — structurally the same *class* as R1 P2-1 (which was a P2) and analogous to N-07 (which R3 treated as blocking-worthy P2 because a P0 AC's source was narrowed). Is STATUS:10's contradiction in the same class? R1 P2-1 was rated P2 and did NOT block by itself (R2 was changes_requested mainly due to... hmm, R1 was changes_requested because of 4×P1). R1's P2s were "建议同轮收口" (non-blocking). So a STATUS line contradiction is P2-class at worst, and here it's narrower (line 10 is a historical numbering-ruling sentence). Also, the P2-1 issue that R1 raised was about a *different* line and *was* fixed. And at the R4 head, STATUS:3/:20 (the authoritative current-state lines) are correct and consistent with Plan/Index/Roadmap.
+
+Given the project's history: P2 items were treated as "close before or in the same round, non-blocking for approval"? Hmm, actually R3 refused approval for an open P2 (N-07). That's a precedent that an open P2 can block. Should I then treat R4-01 (P3, not P2) as blocking? I rated it P3. Let me reconsider its level honestly: Does STATUS:10 mislead a recovering agent about P08's state? STATUS:3 and :20 are the prominent current-state statements at the top; line 10 is a short ruling note. The risk of misreading is low. P3 is defensible. I'll explicitly justify the P3 rating (and note that if the author/Codex prefers, it can be swept in the integration commit which will anyway update STATUS to the R4 outcome — indeed main's STATUS at 1ec14aa2 now says in_review, but does it still have the stale line 10? Probably yes. I could check main's STATUS line 10... Let me not add another read; I'll phrase the recommendation to sweep it during the integration/state sync commit.)
+
+Hmm, actually it's worth one quick check: if main's STATUS line 10 was updated in 1ec14aa2, then R4-01 is already fixed post-delivery and I can say so (making it trivially non-blocking). Let me grep main's STATUS.md for the 编号裁决 line. Quick.
+
+Let me do that, then write.
+dsh: reasoning:
+Confirmed: even at main (1ec14aa2), STATUS:10 still says all 21 are proposed/未释放 while STATUS:3 will say P08=in_review. So R4-01 persists post-delivery; it's a genuine open (P3) item to sweep during integration state sync.
+
+Now write the final report. I'll be comprehensive but organized.
+
+Let me draft it now.
+
+Note on quoting: I should quote file:line precisely. Also mention my read-only declaration: I created/modified nothing, ran no git-mutating command; the only operations were read/glob/grep plus attempts to run `git rev-parse`/`git status` via pwsh which failed at ACL init before executing anything.
+
+Actually — did my pwsh attempts modify anything? They failed during sandbox ACL initialization, i.e., before the command ran. So no. I'll state that.
+
+Final decision: approved.
+
+Let me write the report.

@@ -1,0 +1,32 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "review": "R1",
+  "reviewer": "DeepSeek Harness",
+  "reviewedHead": "c3cbb067362b24c79f93d014be5b414b816bfb4c",
+  "exitCode": 0,
+  "sessionId": "session-0d8247ab-4125-4b25-8212-bdfbb049e58b",
+  "sessionPath": "C:\\Users\\49745\\.dsh\\sessions\\--G-CODEX-New~0020Manga--\\session-0d8247ab-4125-4b25-8212-bdfbb049e58b",
+  "sessionFile": {
+    "path": "session.v4.jsonl.zstd",
+    "bytes": 124617,
+    "sha256": "5556B6058DC2D403B270265A46144C5D42A87E60C7313E51C5AF5CA894118D38",
+    "disposition": "PRESERVE_USER_DATA"
+  },
+  "workspaceRegistration": {
+    "path": "C:\\Users\\49745\\.dsh\\storages\\workspace.json",
+    "beforeSha256": "90EDB9F78B2FDF161A4A7F58E90C823AF9A86B880BA48B6BF15E890184568A3C",
+    "afterSha256": "67CFB827523CAFB5BBDFA04BFDF851D25E134DB69A6D793B360DF48D59C93FFB",
+    "sessionMounted": true,
+    "workspacePath": "G:\\CODEX\\New Manga"
+  },
+  "report": {
+    "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r1.md",
+    "bytes": 9481,
+    "sha256": "0221712CCEFD54CCFA4EB8DE220512505870B2BE11DFD33DE61F8C7DF9277125"
+  },
+  "stderr": {
+    "bytes": 58306,
+    "sha256": "AED07B2CD3329CA796B16FB8087C602AD50372FAB3BC2A36E6A396ADDA7B0F3B",
+    "disposition": "DELETE_SAFE_AFTER_REVIEW_EVIDENCE_COMMIT"
+  }
+}

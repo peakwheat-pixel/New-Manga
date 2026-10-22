@@ -1,0 +1,743 @@
+dsh: reasoning:
+The sandbox is failing with Win32 5 as anticipated. Let me try again — maybe it's a transient. The prompt says if Windows ACL still reports SetNamedSecurityInfoW Win32 5, record NOT_RUN at the real boundary, don't escalate. But let me try running commands in a different workdir to see if that helps... Actually the workdir itself triggers grantWrite. Let me try running with workdir default (session workspace) which is the same path. Hmm.
+
+Maybe try `-Command` without workdir, using git -C. Actually the sandbox applies to the session workspace regardless. Let me try running from a temp dir maybe.
+
+Let me try a read-only command via the read tool first, and try pwsh without touching the workspace.
+
+Actually let me try again — the failure might be about applying ACL to the workspace. Perhaps the sandbox tries to grant write on the whole worktree. Try specifying workdir as the parent? Let's test.
+dsh: reasoning:
+Shell is fully blocked: every pwsh call fails with SetNamedSecurityInfoW Win32 5. So all Git/command verification will be NOT_RUN. I must do a file-layer read-only review.
+
+Let me confirm whether pwsh is entirely unusable — yes, even `echo test` failed. So all independent command verification = NOT_RUN. I still can do file-level review using read/glob/grep.
+
+But wait — I need Git evidence for the diff `16fb07a..af1ddeec`. Without shell, I cannot run git. Are there ways? Maybe read .git files directly. The common-dir is `G:/CODEX/New Manga/.git`. I could read commit objects, but they're zlib-compressed — can't decompress without shell. Hmm.
+
+However, there may be existing verification logs / evidence files in the worktree that record the diff. But the prompt says don't cite Codex's validation.log EXIT results as DSH's own execution. I can cite file contents as evidence but must be clear they're producer-provided.
+
+Let me first check whether the worktree actually contains the reviewed head. The worktree files exist (I read STATUS.md). But whether HEAD == af1ddeec... I cannot run git rev-parse. Let me check for .git file in worktree (linked worktrees have a `.git` file pointing to gitdir).
+
+Let me try reading `.git` in the worktree.
+
+Also possible: maybe there's another shell available? Only pwsh tool. Let me try once more — maybe transient. Actually let me try with a different workdir like C:\ to see if it's workspace-specific.
+dsh: reasoning:
+The `.git` file confirms common-dir = `G:/CODEX/New Manga/.git`, and the worktree is a linked worktree named `P08-dsh-review-af1ddeec-r5` (which includes the head prefix af1ddeec). Good — that's file-level evidence for common-dir.
+
+Now, HEAD: in a linked worktree, HEAD is at `G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-af1ddeec-r5/HEAD`. I can read that file directly! That gives file-layer evidence of HEAD. Let's read it. Also `ORIG_HEAD`, `index` (binary, can't parse easily), `gitdir`, `commondir`.
+
+Also I can check whether the worktree is clean — without running git, I cannot. `git status` needs the index. I could compare index mtime vs files... too weak. I'll record NOT_VERIFIED for clean tree, though I might partially reason: actually the sandbox failing on grantWrite suggests the sandbox tried to grant write. Hmm, that failure itself doesn't tell cleanliness.
+
+Let me read the worktree HEAD file.
+
+Also for the diff 16fb07a..af1ddeec, maybe there are evidence files in verification/P08/ produced by the author (e.g., a diff log). Let me explore the repo structure — verification/P08, doc/handoffs, doc/tasks.
+
+Let me plan a todo list and then gather files.
+
+Key files to review:
+- doc/STATUS.md (R4-01)
+- doc/handoffs/P08-490f9bd9.md (R4-03 mentions R1 Handoff pointing to actual report)
+- doc/tasks/P08.md
+- verification/P08/verify_scope.py (R4-02)
+- verification/P08/review-dsh-16fb07a9-r4.md (R4 report)
+- verification/P08/review-dsh-490f9bd.md (R1 report)
+- verification/PROJECT-ROADMAP-20261008/verify_plan.py
+- doc/templates/REVIEW.md
+- doc/09_COLLABORATION.md §5.1
+- doc/REBASELINE_PLAN.md
+- doc/AD-001... maybe
+- doc/D08? Let me find.
+
+Let me start with a broad glob of verification/P08 and doc/handoffs.
+
+Also, crucially, the review target is the *diff* 16fb07a..af1ddeec. Without git I can't compute it. But maybe the repo contains a post-delivery commit evidence. Alternatively, I can inspect file contents and check whether R4-01..03 fixes are present in the current worktree files, and rely on the worktree HEAD file to confirm HEAD == af1ddeec. Then the remaining question is whether the diff includes unauthorized files. Without git diff I can't enumerate changed paths — but maybe there's a committed evidence file like `verification/P08/*.log` recording `git diff --name-only`. That's producer evidence, citable as such but not independent.
+
+Hmm, but maybe I can do better: I can read the git objects? They're zlib deflate. Without any shell/compression tool... The `read` tool reads text. Commit objects are binary zlib. Not readable.
+
+Alternative: Is there a packed-refs / refs I can read to map the commit? refs only give hashes.
+
+Could there be an objects/info/alternates? Not helpful.
+
+So: the fixed-delta enumeration is NOT_VERIFIED independently. I must state that clearly. But I should try hard: check if there's any evidence file, e.g. `verification/P08/` containing a diff summary from the author's R5 revision commit.
+
+Let me look at the tree.
+
+Let me set up todos and gather.
+dsh: reasoning:
+HEAD file confirms af1ddeec1b998f2ddaf121a85f5fd382561aae1e and detached (a raw hash rather than "ref: refs/heads/..." = detached HEAD). Good: that's file-layer evidence for detached HEAD and exact head.
+
+Also check `ORIG_HEAD`? Not needed. Let me check the worktree dir listing for `index`, `logs/HEAD` (reflog) — reflog would give me the commit history/checkouts! Reading `G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-af1ddeec-r5/logs/HEAD` would show reflog entries, potentially showing from which commit it was checked out. That's useful evidence.
+
+Let me glob the worktree git dir.
+
+Also check `packed-refs` and refs to see if 16fb07a is a ref. Not decisive.
+
+Let me now explore repo files.
+dsh: reasoning:
+The glob of the git worktree admin dir returned nothing — maybe glob only searches within workspace and the .git dir is outside the session workspace ("G:\CODEX\New Manga\.git" vs workspace "G:\CODEX\New Manga.worktrees\P08-dsh-review-af1ddeec-r5"). But `read` worked on it. glob may be restricted to workspace. Fine — use read on specific paths.
+
+Note: the prompt says I must not modify/create/delete project files. Writing a report — the prompt says produce a formal report but "不修改项目文件". In previous rounds (R4), the report exists at verification/P08/review-dsh-16fb07a9-r4.md — which IS a project file. But this round says "本轮只读审查固定交付；不要修改、创建或删除任何项目文件". Also "正式报告格式" requires a report. Contradiction: The instruction says don't create project files, yet asks for a formal report. Given the sandbox is read-only-ish (workspace-write but ACL fails anyway → all writes likely fail), I'll output the report in my final response rather than writing a file. Actually the workspace-write policy... writes would fail due to the same ACL issue presumably. Let me not attempt writes; I'll deliver the report in the chat response. That satisfies "不修改项目文件" and the report requirement (report content delivered). I should note in the report that it was not written to the repo due to read-only instruction and ACL boundary.
+
+Now let me read the key files. Priority: verify_scope.py (full), review-dsh-16fb07a9-r4.md, validation.log (author evidence for R5 revision), doc/handoffs/P08-490f9bd9.md, doc/tasks/P08.md, STATUS.md lines 1-20 (done), doc/09_COLLABORATION.md §5.1, doc/templates/REVIEW.md.
+
+Let me start with verify_scope.py and the R4 report.
+
+Also check the git admin dir: logs/HEAD via read.
+dsh: reasoning:
+Now analyze verify_scope.py against R4-02 expectations.
+
+Key observations:
+
+1. Line 8: `BASE = "ab2f813c0ce311a6712002cafd852b9e7a258380"` — that's the P08 *task* base, not the review base 16fb07a. Wait: the prompt's review base is `16fb07a973b36b0b129945bc3a85f9ae51234982`. But verify_scope BASE = ab2f813c. Hmm. The P08 Task base is ab2f813c (per STATUS.md: "base=`ab2f813c...`"). So verify_scope's `BASE..HEAD` covers the whole P08 delivery from its task base, not just the R4→R5 delta. That's actually broader and thus stronger.
+
+But important: the review scope is 16fb07a..af1ddeec. verify_scope checks ab2f813c..HEAD. Since 16fb07a is presumably a descendant of ab2f813c, checking the wider range is a superset. But careful: it's the whole range from the frozen task base — which includes earlier commits that were already reviewed in R1-R4. Fine.
+
+2. Positive allowlist: `allowed(path)` covers:
+   - `allowed_files`: 10 exact files — doc/tasks/P08.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, and 4 files under verification/PROJECT-ROADMAP-20261008/ (REPORT.md, ROADMAP.md, RESUME.md, verify_plan.py).
+   - `path.startswith("verification/P08/")` — any file under verification/P08/ at any depth. This is broader than "P08 allowed paths" strictly? The prompt asks "路径集合是否精确对应P08允许路径". Hmm — is `verification/P08/**` recursive allowed a scope escape? A nested path like `verification/P08/../../src/foo` wouldn't come from git diff names (git outputs normalized paths without `..`). So recursive allowance under verification/P08/ is OK-ish. But it allows `verification/P08/<anything>` including e.g. `verification/P08/evil/anything.json`. The prompt's R4-02 criterion says "嵌套/外部文档和非P08 handoff是否会被拒绝". For handoffs, the predicate: `path.startswith("doc/handoffs/P08-") and path.endswith(".md") and "/" not in path[len(handoff_prefix):]`. So `doc/handoffs/P08/nested.md` → doesn't start with `doc/handoffs/P08-` → rejected ✓. What about `doc/handoffs/P08-x/nested.md`? startswith "doc/handoffs/P08-" ✓, endswith ".md" ✓, but remainder "x/nested.md" contains "/" → rejected ✓. Good.
+   
+   R4-03 says "明确 doc/reviews/** 为受保护只读路径" — and R4-02's allowlist check in the test asserts `not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")`. Is there an assertion that `doc/reviews/...` is rejected? Line 90 only tests doc/10. Hmm — the prompt asks whether the path predicate tests both allowed and rejected samples. Line 89 tests 2 allowed samples; lines 90-91 test 2 rejected samples (one external doc, one nested handoff). There's no explicit rejected sample for `doc/reviews/X.md` or for a nested verification/P08 path or for `doc/handoffs/OTHER-task.md` (non-P08 handoff). Wait — "非P08 handoff是否会被拒绝": `doc/handoffs/OTHER.md` → doesn't start with prefix → rejected. But it's not *tested* by an assertion. Hmm, is that a finding? R4-02 asked: "路径谓词是否同时测试允许与拒绝样例；嵌套/外部文档和非P08 handoff是否会被拒绝". The predicate does reject them by construction; only doc/10 and nested P08 are explicitly asserted. Is that sufficient? The R4-02 requirement is "同时测试允许与拒绝样例" — 2 allowed + 2 rejected samples satisfies "同时测试允许与拒绝样例" literally. Whether it's exhaustive is a judgment. I should evaluate whether the *predicate* rejects all listed categories, and note the assertion coverage.
+
+   Also earlier (line 73) there's a separate frozen-path check: `git diff --name-only BASE -- <forbidden paths>` must be empty — includes src, apps, tests, packaging, doc/contracts, doc/reviews, AGENTS.md, doc/09, product docs 01-08, 13, AD-001, inventory.csv. That's the negative/forbidden list. Combined with positive allowlist, good.
+
+   Note: `doc/10_CURRENT_STATE_AND_GAPS.md`, `doc/11_*`, `doc/templates/**`, `doc/handoffs/**` other tasks, `wiki/**`, etc. — anything not in allowed_files and not verification/P08/** and not P08-*.md handoff is rejected by `outside_scope`. Good, that's a true positive allowlist.
+
+3. Line 63: `assert len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20` — this requires REBASELINE_PLAN to still have 20 rows "proposed / 未释放". And line 62 asserts P08's state row. This is consistent with "20 successors unreleased". But note: if the plan's row text changes (e.g. "proposed / 未释放" wording), the assert breaks. That's a fragile coupling but it protects the claim.
+
+   Important R4-02/R4-01 interplay: verify_scope requires the literal string `| P08 | {state} |` and 20 rows of `proposed / 未释放`. Meanwhile STATUS.md must not claim "所有节点都 proposed/未释放". Hmm, but STATUS.md line 20 says "当前后续整体树以Plan顶部P01–P21 候选任务为准，P08 approved，其余20项proposed / 未释放." That's a *plan-top* authority statement. Line 3 (the header) says "P系列完成0/21、approved 1、proposed / 未释放20". R4-01 was: STATUS.md 的 P01–P21 编号说明是否只说明编号、不再声称所有节点都 proposed / 未释放，且实时状态有明确权威来源.
+
+   Line 10: "2026-10-08 最新编号裁决：规划任务ID沿用 `P01–P21`；本句仅说明编号，不表达节点状态或任务释放。当前状态与授权以本文件开头的Active Task及REBASELINE_PLAN顶部为准。原始审计、台账与历史验证日志保留为固定快照。" — This appears to be the R4-01 fix. It says the sentence only explains numbering, and authority = this file's top Active Task + REBASELINE_PLAN top. Good.
+
+   But does STATUS.md still elsewhere claim all nodes proposed/unreleased? Line 3 says "P系列完成0/21、approved 1，proposed / 未释放20" — that's a count statement with P08 approved 1, so it does NOT claim all are proposed. It says 20 proposed/unreleased + 1 approved = 21. That's consistent.
+
+   Hmm wait — "P系列完成0/21" (0 of 21 completed) and "approved 1". OK.
+
+   Line 20: "P08 approved，其余20项proposed / 未释放" — explicit. OK.
+
+   Need to check whether there's a remaining sentence like "P01–P21 全部 proposed/未释放". Let me grep STATUS.md for "proposed" and "P01–P21"/"P01-P21".
+
+4. R4-03: R1 Handoff → check doc/handoffs/P08-490f9bd9.md points to verification/P08/review-dsh-490f9bd.md (which exists ✓ per glob) and states doc/reviews/** protected read-only.
+
+Now I need R4 report to know the exact R4-01..03 text. Let me read review-dsh-16fb07a9-r4.md.
+
+Also validation.log for R5 evidence (producer).
+
+Also need the diff: since git is unusable, maybe validation.log contains `git diff --name-only` output for 16fb07a..af1ddeec. Let me read the R4 report and validation.log.
+
+Let me also read doc/handoffs listing.
+dsh: reasoning:
+Now I have R4-01..03 pinned:
+- R4-01: doc/STATUS.md:10 residual contradictory sentence.
+- R4-02: verify_scope.py lacking positive allowlist assertion.
+- R4-03: doc/handoffs/P08-490f9bd9.md:37 wrong paths.
+
+Now check current state of those three in head af1ddeec:
+- STATUS.md:10 → now the "最新编号裁决" sentence. ✓ appears fixed.
+- verify_scope.py:74-97 → positive allowlist added ✓. And rejected samples.
+- doc/handoffs/P08-490f9bd9.md:37 → need to read.
+
+Also note R4-03 asked also to mark doc/reviews/** as protected read-only.
+
+Now, the diff 16fb07a..af1ddeec. Git unavailable. But the R4 report shows how R4 did it: read main repo `.git/logs/HEAD` to get the commit chain. I can do the same! Read `G:/CODEX/New Manga/.git/logs/HEAD` and find commits after 16fb07a. That gives commit subjects (not file lists, but subjects). That's file-layer evidence of the commit chain.
+
+Let me read the main repo logs/HEAD tail. It might be long. Let me read it with offset near end. First check length via read? read returns total lines. Let me read with a large offset, e.g. offset 900.
+
+Also there might be `logs/refs/heads/main`. And the worktree's own reflog shows only creation.
+
+Additionally, per-commit changed files can't be derived without git. But maybe validation.log in the *main* workspace (G:/CODEX/New Manga/verification/P08/validation.log) contains R5 entries. But I must only review the fixed worktree. Still, the R4 report used main repo files as evidence. Reading main repo files is allowed (read-only) — the prompt says fixed worktree for review, but R4 precedent read main .git logs. I'll read main repo's logs/HEAD for the commit chain, and note it.
+
+Hmm, careful: "不得根据聊天记录推断项目事实" — git logs are fine.
+
+But is reading the main workspace's files beyond "精确审查 worktree"? The prompt says 在精确 worktree 尝试执行 git commands. Reading the main .git is necessary to recover the commit chain, as R4 did. I'll use it as supporting evidence and label it as such (file-layer, main common-dir).
+
+Let me read main repo .git/logs/HEAD (need offset). Let's first read the worktree's validation.log too.
+
+Plan next batch:
+1. read G:/CODEX/New Manga/.git/logs/HEAD (offset ~900)
+2. read doc/handoffs/P08-490f9bd9.md
+
+Let me do these.
+dsh: reasoning:
+R4-03 fix: line 37 now says "DSH正式报告实际归档于`verification/P08/review-dsh-490f9bd.md`。`doc/reviews/**`与不存在的`verification/P08/review-dsh-r1.md`均非写入目标；其余文件只读。" ✓ Both requirements met: points to actual report, and marks doc/reviews/** as protected read-only (non-write target).
+
+Commit chain (file-layer evidence from main .git/logs/HEAD):
+- 16fb07a (R4 reviewed head) → 1ec14aa2 "prepare R4 review handoff" → 893df221 "record active R4 review checkpoint" → 0c209deb "archive approved R4 review" → **af1ddeec "docs(P08): address R4 P3 integration findings"** → bfd70958 "prepare R5 review handoff".
+
+So the reviewed head af1ddeec is exactly the commit that "address R4 P3 integration findings". Its parent is 0c209deb, not 16fb07a. So the fixed delta 16fb07a..af1ddeec includes: 1ec14aa2, 893df221, 0c209deb, af1ddeec = 4 commits. Hmm! The prompt says: "R5 Prompt/Handoff在post-delivery提交中，不属于被审head." Indeed bfd70958 is post-delivery (R5 prompt/handoff), and is NOT in the reviewed head. Good — af1ddeec's child bfd70958 contains R5 prompt/handoff, excluded.
+
+But the delta 16fb07a..af1ddeec includes 1ec14aa2 (prepare R4 review handoff), 893df221 (record active R4 checkpoint), 0c209deb (archive approved R4 review). These are the R4 round's process commits — they were presumably reviewed/excluded in R4 as "post-delivery". The prompt's item 1 says "以文件/Git证据确定16fb07a..af1ddeec固定差量，逐项检查doc/STATUS.md、doc/handoffs/P08-490f9bd9.md、doc/tasks/P08.md、verification/P08/verify_scope.py。确认没有越权文件或范围扩大；R5 Prompt/Handoff在post-delivery提交中，不属于被审head。"
+
+So the expectation: 16fb07a..af1ddeec contains the R4-01..03 fixes plus R4 round archival. I cannot enumerate changed files without git. But I can bound it: verify_scope.py's own check covers BASE..HEAD (ab2f813c..HEAD) with positive allowlist — that's the author's check. My independent check is NOT_VERIFIED.
+
+Wait — maybe I can do better. Since the worktree tree content for those files is available, and 0c209deb archived the R4 report... The R4 report is in the tree (verification/P08/review-dsh-16fb07a9-r4.md). That file was added by 0c209deb presumably (archive approved R4 review). Note R4 report says sha256 9259F9B0... I can't compute SHA256 without shell. NOT_VERIFIED.
+
+Hmm, is there any chance to compute SHA256? No shell. Could I use `read` to read binary? No hashing tool.
+
+Let me now check whether the main workspace has a validation.log for R5 with the file list — but that would be in the main checkout, and bfd70958 (R5 handoff) may have added it. Reading main repo files: I can read them since they're just files. Let me check the main repo's verification/P08/validation.log tail and doc/handoffs for R5 handoff. Actually the R5 handoff would be `doc/handoffs/P08-af1ddeec-dsh-r5.md` in the main workspace (post-delivery). That's not part of the reviewed head, but as *producer evidence* it may list the diff.
+
+But careful: the prompt says "R5 Prompt/Handoff在post-delivery提交中，不属于被审head" — I should verify that claim, which I can via commit chain: af1ddeec → bfd70958 "prepare R5 review handoff". ✓ And verify that the reviewed head does NOT contain an R5 prompt file: glob of verification/P08 showed only DSH-REVIEW-PROMPT.md, -R2, -R3, -R4 — no R5 ✓. Good, that's strong file-layer evidence.
+
+Now, the remaining big gap: enumerating changed files in 16fb07a..af1ddeec. Let me think about whether the main repo's files can help. The main workspace HEAD = bfd70958 presumably. `G:/CODEX/New Manga/.git/logs/HEAD` last line is bfd70958. Let me check main repo's verification/P08/validation.log — does it contain a section for the R5 revision round listing `git diff --name-only` output? That's producer evidence. I can cite it as producer assertion, clearly labeled.
+
+Let me read the validation.log in the reviewed worktree (head af1ddeec version) — it will contain R4 round entries. Then also read the main repo's version (post-delivery bfd70958) for the R5 round entries. Wait — is main repo at bfd70958? The logs/HEAD last entry commit is bfd70958, and it wasn't followed by a checkout line. So main HEAD = bfd70958. Reading main's validation.log is reading a file *outside* the reviewed head (post-delivery). That's acceptable as producer evidence but must be labeled. Actually the R4 report did exactly this ("主仓 validation.log:346").
+
+Hmm, but the instruction says the fixed worktree is the review target. Reading the main worktree's post-delivery file to understand the diff is a form of evidence-gathering; I'll label it clearly as post-delivery producer evidence, not part of the reviewed head.
+
+Let me read both validation.logs. First the reviewed worktree's validation.log (it's in the head, so it's R4-round content). Let me check its size.
+
+Let me read the tail of the worktree validation.log.
+
+Also need: doc/tasks/P08.md, doc/REBASELINE_PLAN.md relevant rows, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, SCOPE_DRAFT.md, AC_COVERAGE.md, doc/09_COLLABORATION.md §5.1, doc/templates/REVIEW.md.
+
+That's a lot. Let me parallelize with subagents? The task is read-only analysis; subagents could read files and report. But context economy: I could delegate R4-01/R4-02/R4-03 detailed verification. However I need first-hand evidence for the report. I can read key files myself; there are maybe ~8 files.
+
+Let me be efficient: read doc/tasks/P08.md and validation.log next.
+
+Actually let me first grep STATUS.md for "proposed" and "P01" to fully assess R4-01 (including whether line 10 is the only residual).
+
+Batch:
+1. grep "proposed" in doc/STATUS.md
+2. read doc/tasks/P08.md
+3. read worktree validation.log (tail)
+
+Let me also grep for "未释放" in STATUS.md.
+
+I'll do grep + read P08.md in one message, then validation.log.
+dsh: reasoning:
+Important observations:
+
+1. `doc/tasks/P08.md` at head af1ddeec still has:
+   - `status: approved` (line 5)
+   - `reviewed_head: 16fb07a9...` (line 17) — that's the R4 head, NOT af1ddeec. Expected: at the delivery head the task records the *previous* reviewed head; the R5 reviewed_head would be set in the post-delivery commit bfd70958. That's the established pattern (R4 report §4.5 explained the same). So not a defect, but I should note it and verify that the pattern holds — the R5 reviewed_head update is in bfd70958 (post-delivery, not in scope).
+   - `integration_commit: null` ✓
+   - Lines 40-42: unchecked ACs including "Codex最终集成检查及Task done" ✓ not done.
+   - Line 132: current state described.
+
+2. Note line 121: test table still binds verify_scope to `31c26389` (R2 head) — R4 report §4.5 item 3 said "该表按轮次逐条入库（R4 行由 :113 补充）" — here that's lines 121-126, each row bound to its own round head. Consistent.
+
+3. Line 94-96: R4-01..03 dispositions claim author fixed them, "open至新fixed head经R5独立确认" ✓ — appropriate; author did NOT claim closed.
+
+Now, R4-01 residual check: STATUS.md line 10 now is the new sentence. R4-01 said the problematic text was at STATUS.md:10 in the R4 head claiming "当前21个规划节点…状态为 proposed / 未释放". Now line 10 is replaced by the 编号裁决 sentence. ✓ Fixed.
+
+But wait: is line 10 the R4-01 target? In R4 head, line 10 was at the same position (line 10). The new line 10 says "本句仅说明编号，不表达节点状态或任务释放。当前状态与授权以本文件开头的Active Task及REBASELINE_PLAN顶部为准。" ✓ Exactly the recommended fix.
+
+Also check: does STATUS.md elsewhere still claim all 21 nodes proposed/unreleased? Grep shows lines 3, 7, 10, 20 — line 3 says "approved 1，proposed / 未释放20" ✓; line 20 "P08 approved，其余20项proposed / 未释放" ✓. Line 7 is the long current section: "P08状态=approved（待Codex集成）" ✓. No residual "21 个规划节点...proposed" claim. 
+
+Hmm, but note line 7 says "R4-01..03三项P3待集成收口" — consistent.
+
+Let me double check there's no other line in STATUS.md claiming all nodes proposed. The grep pattern included "proposed|未释放|P01|P21" and returned 25 matches; the ones in the active region are lines 3,7,10,20. Others (24,95,109,...) are historical frozen sections. Good.
+
+Wait — is line 3/7/10/20 region "可变段" (above the freeze marker `## 2026-10-08 完成：` at line 22)? Line 22 is "## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD". So lines 1-21 are variable; 22+ frozen. Lines 3,7,10,20 all in variable region ✓. verify_scope.py:109-113 asserts the frozen part (after the "## 2026-10-08 完成：" marker) is byte-identical to BASE. So changes to lines 1-21 are the mutable part. Good.
+
+Hmm — careful: does the R4-01 fix at line 10 constitute a change to the mutable region only? Yes, line 10 < 22.
+
+But one thing to verify: line 10's content — is it a *new* sentence replacing the old, or an added paragraph? Either way it's in the mutable region.
+
+Now R4-02: verify_scope.py lines 74-97 implemented positive allowlist.
+- allowed_files set: 10 files.
+- allowed(path) predicate.
+- Self-tests: line 89 `assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")` — wait, does `doc/handoffs/P08-r5.md` pass? handoff_prefix = "doc/handoffs/P08-"; remainder = "r5.md"; "/" not in "r5.md" ✓, endswith ".md" ✓. Yes.
+- line 90 `assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")` ✓ (external doc rejected)
+- line 91 `assert not allowed("doc/handoffs/P08/nested.md")` ✓ (nested rejected)
+- lines 93-96: actual `git diff --name-only --no-renames BASE HEAD` → outside_scope must be empty ✓ positive allowlist over committed delta.
+- line 101-107: `git diff --check BASE -- <P08 subtree + handoffs + derived dir>` ✓.
+
+Assessment of R4-02: implemented. Now the review questions:
+(a) Is the path set exactly corresponding to P08 allowed paths? 
+   P08.md:111 allowed: doc/tasks/P08.md, verification/P08/**, 本Task自有Handoff (doc/handoffs/P08-*.md), doc/REBASELINE_PLAN.md, STATUS.md, 00_INDEX.md, 12_ROADMAP.md, tasks/README.md, and derived REPORT/ROADMAP/RESUME/verify_plan.py.
+   verify_scope allowed_files matches these exactly: doc/tasks/P08.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, verification/PROJECT-ROADMAP-20261008/REPORT.md, ROADMAP.md, RESUME.md, verify_plan.py + prefix verification/P08/ + doc/handoffs/P08-*.md (non-nested). ✓ Exact correspondence. Good — no widening (e.g., doesn't allow the whole doc/ or whole verification/).
+(b) Path predicate tests allowed and rejected samples: yes, 2 allowed + 2 rejected explicitly asserted. Rejected categories covered: external/non-P08 doc (doc/10) and nested handoff (doc/handoffs/P08/nested.md). Not explicitly asserted: non-P08 handoff (doc/handoffs/OTHER.md) and nested verification/P08 path (verification/P08/sub/x.md is *allowed* by design), and doc/reviews/** rejection. Is the absence of a doc/reviews assertion a finding? R4-02's prompt asks "路径谓词是否同时测试允许与拒绝样例；嵌套/外部文档和非P08 handoff是否会被拒绝". By construction: `doc/reviews/X.md` → not in allowed_files, not verification/P08/, not doc/handoffs/P08- → rejected ✓. Non-P08 handoff `doc/handoffs/M2-x.md` → rejected ✓. So the predicate rejects them; they're just not covered by explicit self-test assertions. I could raise this as a minor observation (P3/observation) — a strengthening: add `assert not allowed("doc/reviews/x.md")` and `assert not allowed("doc/handoffs/P08-x/y.md")` etc. Let me check if such assertions exist elsewhere... Lines 89-91 only. So I'll note it as a non-blocking observation (maybe N-new P3? The prompt says "任何新的P2及以上问题须明确决策和影响。非阻断P3也逐项列明"). I'd classify as P3 observation or just note. Since R4-02 asked specifically whether the predicate tests both allowed and rejected samples — it does, for the two named categories. Non-P08 handoff rejection is not asserted, but is implied by the same prefix check already asserted via nested case. Hmm: the nested-handoff assertion tests the "/" clause; the non-P08 handoff rejection tests the prefix clause, which is *not* covered by any assertion (the nested one passes the prefix test). So the prefix clause has no negative test. That's a genuine small gap → I'll record as R5-01 P3 (non-blocking, robustness of self-test coverage).
+
+Actually wait. Is it truly uncovered? `assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")` covers the "not in allowed_files && not verification/P08 && not handoff prefix" path but for a doc/ path. A `doc/handoffs/M2-...md` would take the same branch (fails prefix) → same code path as doc/10 rejection. So logically the prefix-negative is exercised by an equivalent branch. It's the same `and` short-circuit result. So it's arguably duplicative. I'll note it as an observation with low value, not inflate it. I'll list it as a P3 observation but explicitly say the predicate itself rejects the category (verified by reading), only the self-test bullet doesn't name it.
+
+(c) Does using BASE..HEAD instead of dirty worktree diff avoid attributing main workspace's uncommitted author changes to P08? Yes — `git diff BASE HEAD` compares commits, ignoring working tree. The comment at line 92 says exactly that. ✓ Note: it uses `HEAD` (the checked-out commit) rather than an explicit pinned SHA. Since verify_scope is run in a worktree at a pinned head, HEAD = the reviewed head. But if run in the main workspace at a different HEAD, it validates whatever HEAD is there — the script doesn't self-verify that HEAD == the intended delivery head. That's a pre-existing design property (also `BASE` is hardcoded). Risk: running it in main workspace where HEAD=bfd70958 would validate a different range. Is that a scope-boundary hole? The prompt asks: "是否仍存在会漏过的路径边界". Let me enumerate possible leakage paths:
+   1. `verification/P08/**` recursive: any file under it is allowed, including arbitrary new subdirs/files (e.g. `verification/P08/raw/anything.bin`). Since P08.md:111 allows `verification/P08/**` too, this matches. Not a leak vs Task scope.
+   2. Renames: `--no-renames` is used → a rename shows as delete+add of both paths; both must be allowed. Good, no bypass.
+   3. File *deletions*: `--name-only` lists deleted files too → deletion of an allowed doc is permitted by the guard (e.g., deleting doc/STATUS.md would pass the allowlist). But deleting a file wouldn't be caught... plausible but the frozen-part assertion reads the file. Minor.
+   4. Mode-only changes / no content? --name-only still lists.
+   5. The guard only checks paths, not *content* beyond diff --check whitespace in the P08 subtree and the frozen-tail equality for REBASELINE_PLAN.md/STATUS.md. So a P08-allowed file could be rewritten arbitrarily (e.g., STATUS.md mutable region claiming completion). Content integrity is covered partially by other assertions (line 62-63: plan must show P08's state and 20 proposed rows). OK.
+   6. Path-prefix spoofing: `verification/P08/../PROJECT-ROADMAP.../x` — git never emits such; and line 19 of allowed() has no normalization. `git diff --name-only` emits paths relative to repo root, normalized. So no.
+   7. Case sensitivity: on Windows, git paths are case-sensitive in the index but the filesystem isn't. `Verification/P08/x.md` would have startswith("verification/P08/") False → rejected (conservative). Fine.
+   8. Symlinks: a symlink file inside verification/P08/ pointing outside — allowed path, but content is outside; git diff --name-only lists the symlink path. Could a committed symlink under verification/P08/ leak? On Windows with core.symlinks=false, a symlink becomes a regular file containing the target path. Theoretical; extremely marginal. Probably not worth listing. Maybe mention as residual boundary in NOT_VERIFIED.
+   9. Untracked/uncommitted files: not covered (by design; the Task's guard only covers committed delta). The dirty main workspace content belongs to other authors. But note: an *uncommitted* new file inside the reviewed head's worktree would not be caught — that's why the clean-tree check matters (DSH can't verify). I should state this as residual risk.
+
+   Also: `allowed()` does not enforce that `doc/tasks/P08.md` etc. actually exist — irrelevant.
+
+   Another: The pre-existing forbidden-path check at line 73 uses `git diff --name-only BASE -- *paths` — that covers protected dirs. Combined with the positive allowlist, coverage is now two-sided. ✓
+
+(d) BASE is `ab2f813c` (task base) not the R4 review base `16fb07a`. The prompt asks verifier implements positive allowlist over "固定 BASE..HEAD 已提交差量". Using the P08 task base is a superset of 16fb07a..af1ddeec (assuming linear descent: is 16fb07a a descendant of ab2f813c? From logs chain: ...31c26389 → cefbc137 → 0a7a1ac5 → 77ba9b38 → 1ad05d99 → e56ac2c6 → 1d6cfa27 → 16fb07a → ... So all these are a linear chain going back; ab2f813c is the declared task base. I can't verify ab2f813c is an ancestor without git, but the Task records base=ab2f813c and R4 report says base=ab2f813c for the whole delivery. So BASE..HEAD ⊇ 16fb07a..HEAD. ✓ Stronger.
+
+Hmm, one caveat: is ab2f813c an ancestor of 16fb07a? If not (e.g., base was on a different lineage), then BASE..HEAD diff would be a two-dot diff = changes on HEAD side since merge-base... Actually `git diff BASE HEAD` (two-commit form) compares trees directly regardless of ancestry! `git diff A B` = diff between the two trees. So `git diff --name-only BASE HEAD` lists all paths differing between the BASE tree and HEAD tree — not "commits since". That's important: it compares full trees. So if BASE tree and HEAD tree differ in some file that was changed by another author between them (on main), it would appear in the list and — since it must be an allowed path — it would flag. Actually that's *stronger*: it means the diff must be entirely within allowed paths. But it could also produce false positives if other authors committed changes to allowed paths. Anyway, it's the tree difference, so it captures everything by construction. Since all four P08 fix commits are on main lineage and BASE=ab2f813c is the recorded task base, the tree diff = entire P08 delivery. Good.
+
+Wait, this means the R4-02 check `changed = git diff --name-only BASE HEAD` catches ALL differences between the P08 base tree and HEAD tree — including any changes committed by others in between on shared paths. So it's a strict positive allowlist over the whole delta. 
+
+(e) One more: the prompt asks "说明用BASE..HEAD而非脏工作树差量能否避免把主工作区原作者未提交修改归入P08". The script's comment says exactly that. Using commit-to-commit tree diff avoids dirt. But the script is run *in the main workspace* per Task line 121 environment "clean linked worktree HEAD=31c26389" — so Codex ran it in a linked worktree. OK.
+
+(f) Potential concern: `changed` uses `HEAD`, and if a stray commit were added to the worktree HEAD... but the worktree is detached at a pinned SHA and reflog shows no movement. ✓
+
+Now, R4-03 — verified fixed ✓.
+
+Now the item 1 check: "确认没有越权文件或范围扩大". I cannot independently enumerate the delta. Producer evidence: validation.log. Let me read the worktree's validation.log to see R5-relevant entries (it's at head af1ddeec, so it contains R4 round entries; R5 entries would be in bfd70958). Let me read the tail of it.
+
+Also need: doc/09_COLLABORATION.md §5.1 (for the next-task recommendation format), doc/templates/REVIEW.md (report format), REBASELINE_PLAN rows for P08/P09-P20, 00_INDEX/12_ROADMAP/tasks/README P08 status consistency, AC_COVERAGE.md and SCOPE_DRAFT.md for D08 coverage/architecture gates, doc/13:242 etc.
+
+That's a lot of reading. I could delegate some to subagents to save context, but I need reliable first-hand evidence. Given the report needs concrete line-level evidence, and I've done R4-01/02/03 myself, I can delegate the "historical finding regression + D08 coverage + navigation consistency" sweep to a subagent that reads files and returns line-cited facts. But subagent results are also derived from files; that's fine and standard.
+
+Actually, to keep control and accuracy, let me read the essential ones myself but selectively:
+- doc/09_COLLABORATION.md around §5.1 and :66-76, :90 (statuses/handoff rule)
+- doc/templates/REVIEW.md
+- doc/REBASELINE_PLAN.md lines ~20-60 (P08 + P09-P21 rows)
+- verification/P08/AC_COVERAGE.md (big? lines 1-10, 140-145, 175-215)
+- verification/P08/SCOPE_DRAFT.md
+- doc/00_INDEX.md P08 mention, doc/12_ROADMAP.md P08 mention, doc/tasks/README.md P08 mention
+- validation.log tail
+
+Let me also delegate a subagent for a cross-check of navigation consistency (00_INDEX/12_ROADMAP/tasks/README) to save my context? Hmm, subagents "run in background by default"; I'd need to wait. I'll just read.
+
+Let me batch reads: grep P08 in 00_INDEX, 12_ROADMAP, README; and read REBASELINE_PLAN relevant region.
+
+Let me first check sizes via grep to target lines.
+
+Batch 1:
+- read verification/P08/AC_COVERAGE.md lines 1-20 and 138-146, 170-215 (separate calls, offsets)
+- grep "P08" in doc/REBASELINE_PLAN.md
+
+Let me do a few parallel calls now.
+dsh: reasoning:
+That was a big grep. I have enough for navigation consistency:
+- doc/00_INDEX.md:3 — P08 approved (等待Codex集成), R4-01..03 待集成收口 ✓
+- doc/12_ROADMAP.md:3, :9 — same ✓
+- doc/tasks/README.md:3, :5 — same ✓
+- doc/REBASELINE_PLAN.md:3, :28, :39 — P08 approved; 其余20项 proposed/未释放 ✓; line 39 P08 row approved ✓ and note R4-01..03 pending ✓
+- P09–P21 all `proposed / 未释放` (lines 40–52) ✓ 20 rows: P01–P07 (7) + P09–P21 (13) = 20 ✓
+
+Wait: verify_scope line 63 asserts exactly 20 rows matching `^\| P\d{2} \| proposed / 未释放 \|`. From grep of REBASELINE_PLAN: lines 32–38 = P01–P07 (7 rows), line 39 = P08 approved, lines 40–52 = P09–P21 (13 rows). Total proposed = 20 ✓. Consistent.
+
+Important discovery: doc/REBASELINE_PLAN.md:28 says "以下 `P01–P21` 中 **P08为approved…**，其余20项为proposed / 未释放" — that's the plane's authority statement, not claiming all proposed. And STATUS.md:10 now points to it. Good.
+
+Now, R4-01's fix quality: The R4-01 recommendation was to limit :10 to "仅统一编号" and point to the section head. The new line 10 says exactly that. ✓ But is line 10 still inside the same "可变段" as :3/:20? Yes (before line 22 freeze marker).
+
+Hmm, one nuance: verify_scope.py:109-113 asserts that the part of STATUS.md after "## 2026-10-08 完成：" is byte-identical to BASE. But what if line 10's fix shifted lines? The frozen-part comparison is on split by marker, so content-based; fine.
+
+But here's a potential issue: R4-01's finding said STATUS.md:10 is in the mutable region; the fix changed the mutable region. But wait — verify_scope's frozen-tail assertion compares `old.split(marker,1)[1] == new.split(marker,1)[1]`. `old` = BASE:doc/STATUS.md. Fine.
+
+Now, another R4-01 check: does the *frozen* portion of STATUS.md still contain the old contradictory sentence? R4-01's finding was at :10 which was mutable. Not an issue.
+
+Now let me verify the "no scope expansion" / "no unauthorized files" claim as best I can, and the D08 coverage + architecture boundaries. Let me read the validation.log tail (R4/R5 round evidence) and the AC_COVERAGE head/tail and SCOPE_DRAFT relevant lines.
+
+Actually — for the reviewed head, validation.log's last entries should be the R4-round evidence. Let me read the tail. Also let's read AC_COVERAGE.md lines 1-10 and 138-146 and 195-215, and SCOPE_DRAFT.md lines 1-20, 40-72.
+
+Let me also check whether verify_scope.py is what R5 claims (already read).
+
+Also I should check doc/templates/REVIEW.md for the required frontmatter/format, and doc/09_COLLABORATION.md §5.1 for the next-task instruction fields (7 fields). And :90 for handoff rule, :66-76 statuses (already seen partially via R4).
+
+Let me batch:
+1. read doc/templates/REVIEW.md
+2. read doc/09_COLLABORATION.md (offset ~60, limit 60) — covers statuses + handoff rules + §5.1 region? §5.1 might be at :100-111 per R1 report. Let me read offset 60 limit 60, and separately offset 95 limit 30.
+
+Let me do that plus validation.log tail.
+
+Let me check line counts: I'll just read with offsets and see.
+dsh: reasoning:
+I have §5.1 (7 fields) and status machine. Now I need to check the AC coverage / D08 items and architecture gates, plus the producer validation log tail.
+
+Let me read validation.log tail and AC_COVERAGE.md key sections.
+
+Also note: `doc/09_COLLABORATION.md:66` status machine, and verify_scope TASK_STATES = 9 states ✓ (proposed, ready, in_progress, blocked, in_review, changes_requested, approved, done, closed_with_limitations). Protocol line 36 in verify_scope searches block starting `^状态：proposed` until `^Task 的开发状态`. The protocol line 66 begins "状态：proposed → ready → ..." ✓ and the block includes bullets `- proposed：`, `- ready：`, ..., `- closed_with_limitations：` ✓ 9 items.
+
+Now read validation.log (probably long). Let me get its line count via read with big offset? Simpler: read last ~120 lines by first checking total. I'll read offset 300 limit 120 and adjust. Actually let me just read the file from offset 300 to see. Hmm, risky. Let me read with offset 1 limit 40 first? Better: use grep to find "R5" / "af1ddeec" / "outside_scope" / "committed BASE..HEAD" in validation.log.
+
+Let's grep validation.log for key markers.
+dsh: reasoning:
+Note: validation.log in the reviewed head ends at line ~395 with entries for 893df221 (R4 archive checkpoint). Let me check the very end of the file to see the last entries and whether R5 revision entries exist (they'd be in bfd70958 post-delivery). Let me read the tail (offset 396).
+
+Also I want to verify the claim about "R5 Prompt/Handoff in post-delivery commit, not in the reviewed head": confirmed by glob (no DSH-REVIEW-PROMPT-R5.md in head) and by commit chain (bfd70958 = "prepare R5 review handoff" is af1ddeec's child).
+
+Let me check the end of validation.log and also read the main repo's validation.log tail for the R5 round (post-delivery producer evidence) — that would tell me what the author claims about the delta (e.g., whether they list the changed files for 16fb07a..af1ddeec). This is producer evidence.
+
+Also need AC_COVERAGE lines 140-145 (N-07 fix), 195-212 (gates), and SCOPE_DRAFT lines 60-72 for architecture gate. And D08 doc/08 line 2052-2064 (already verified in R4; I could spot-check).
+
+Let me batch: read validation.log offset 396; read AC_COVERAGE offset 205 limit 8; read SCOPE_DRAFT offset 44 limit 30.
+
+Actually to be economical: I mainly need to (a) confirm no regression in N-07 (AC_COVERAGE:142) and (b) architecture gate statements. Let me read AC_COVERAGE lines 138-146 and SCOPE_DRAFT 44-72.
+dsh: reasoning:
+N-07 fix intact at AC_COVERAGE.md:142 ✓ (matches R4 verification: "D08 AC-EXPORT-001列单图/ZIP/CBZ/PDF/文本五项；D1/D2将"单图"选为PNG，首发映射由P16契约冻结；D08未限定PNG").
+
+validation.log in the head ends at line 396 with the R4-round evidence; and line 396 says "R4 raw temporary files unstaged". So the head's log doesn't have R5 entries (they'd be in bfd70958).
+
+Now: is the reviewed head's validation.log missing any content that R5 revision should have? The R5 revision commit af1ddeec is "address R4 P3 integration findings". Its validation.log entries would be added in... wait, af1ddeec IS the R5 revision commit. If the author ran validators for the R5 revision, the log entries would be either in af1ddeec or in the post-delivery bfd70958. In the reviewed head's validation.log the last entry is 893df221 (R4 archive). So the R5-round validation evidence is NOT in the reviewed head — it must be in bfd70958 (post-delivery), consistent with the pattern.
+
+Hmm, but this is worth checking: does the post-delivery commit contain the R5 validation evidence? Let me read the main workspace's validation.log tail. That's producer evidence for the R5 revision, which I can cite as producer-only.
+
+Let me read G:/CODEX/New Manga/verification/P08/validation.log tail. It's the main workspace file at bfd70958. Read offset 396.
+
+Also read the R5 handoff in main: doc/handoffs/P08-af1ddeec-dsh-r5.md — it may list `git diff --name-only` output for 16fb07a..af1ddeec. This would let me (as producer evidence) state the claimed delta.
+
+Wait, careful: is the R5 handoff named P08-af1ddeec-dsh-r5.md? Let me glob main's doc/handoffs.
+
+These are outside the reviewed head but useful as producer evidence. I'll label them clearly.
+
+Let me do that.
+dsh: reasoning:
+Interesting. Main workspace's validation.log lines 398-409 is the R5 dispatch preparation checkpoint (post-delivery, written by Codex at bfd70958 presumably — actually the R5 handoff commit). Key producer claims:
+- main_HEAD=af1ddeec; delivery_base=16fb07a; reviewed_head=af1ddeec.
+- Line 404: "committed BASE..HEAD allowlist 28 files" (BASE=ab2f813c, HEAD=af1ddeec) — so the whole P08 delivery touches 28 files, all within allowed paths.
+- Line 407: `git diff --name-only 16fb07a af1ddeec -- src apps tests packaging` EXIT=0 empty → no product paths changed in the fixed delta. Good producer evidence.
+- Line 408: R4-01..03 remain open pending R5 confirmation; R5 Prompt/Handoff prepared.
+
+But note: it says "R5 Prompt/Handoff prepared" while main_HEAD=af1ddeec at line 400 — the handoff/commit bfd70958 was probably created after this log entry (self-consistent: log written while preparing).
+
+However, the glob for main repo doc/handoffs/P08-* returned "No files found" — because glob's `path` may be restricted to the session workspace (G:\CODEX\New Manga.worktrees\...). Earlier glob on `G:\CODEX\New Manga\.git\worktrees\...` also returned nothing. So glob is restricted to the session workspace. I must use read with explicit paths for outside-workspace files.
+
+Let me try reading G:\CODEX\New Manga\doc\handoffs\P08-af1ddeec-dsh-r5.md. If it doesn't exist, try listing? I can't list outside workspace without glob. Let me guess names: the R5 handoff likely `P08-af1ddeec-dsh-r5.md`. Try read.
+
+Also, what about the fixed delta file list? Producer says the fixed delta (16fb07a..af1ddeec) changed src/apps/tests/packaging = empty. But it doesn't list the actual changed files for the fixed delta. The fixed delta contains 4 commits: 1ec14aa2 (R4 prompt/handoff), 893df221 (R4 checkpoint), 0c209deb (archive R4 review), af1ddeec (R4 P3 fixes). Files changed: verification/P08/DSH-REVIEW-PROMPT-R4.md, doc/handoffs/P08-16fb07a9-dsh-r4.md, doc/tasks/P08.md, verification/P08/validation.log, verification/P08/RESUME.md, doc/STATUS.md, doc/REBASELINE_PLAN.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, verification/P08/review-dsh-16fb07a9-r4.md, doc/handoffs/P08-490f9bd9.md, verification/P08/verify_scope.py.
+
+I can partially confirm by checking which files in the worktree reference the R4 head (16fb07a9) — those were necessarily touched by the R4/R5 process commits. E.g., grep for "16fb07a9" in the worktree gives files that contain R4 records. That's a decent proxy: files containing 16fb07a9 = files updated during/after R4. Let me grep "16fb07a9" across the worktree.
+
+Also grep "af1ddeec" in the worktree — should be ~zero (since R5 records are post-delivery). Wait: doc/tasks/P08.md has reviewed_head: 16fb07a9 — no af1ddeec. STATUS.md doesn't mention af1ddeec. So grep af1ddeec in the reviewed head should return nothing → confirming R5 prompt/handoff/records are not in the head. That's a strong check for the scope claim.
+
+Let me do:
+1. grep "af1ddeec" in worktree (exclude .git—not in workspace anyway)
+2. grep "16fb07a9" in worktree
+3. read main R5 handoff (try P08-af1ddeec-dsh-r5.md)
+
+For grep of the whole worktree, that may be large (repo has lots of files). Use include "*.md"? The R5 prompt would be .md. Let me grep with include *.md,*.py,*.log? include takes one glob only, e.g. "*.{md,py,log}". Let me use that.
+dsh: reasoning:
+Excellent. The R5 handoff (post-delivery, main workspace bfd70958) states:
+- Line 22: "变更只涉及`doc/STATUS.md`、`doc/handoffs/P08-490f9bd9.md`、`doc/tasks/P08.md`和`verification/P08/verify_scope.py`" — that's the af1ddeec commit's changes (4 files). Note this refers to the R5 revision commit af1ddeec specifically, not the whole 16fb07a..af1ddeec delta.
+- Line 28: 28 files in BASE..HEAD allowlist.
+- Line 42: R5 Prompt at verification/P08/DSH-REVIEW-PROMPT-R5.md (post-delivery, not in the head) ✓ consistent with my grep: no `af1ddeec` in the head's tracked text files (so no R5 prompt/handoff/records in head) ✓.
+
+Wait: line 42 says R5 Prompt is `verification/P08/DSH-REVIEW-PROMPT-R5.md` in the main workspace. glob in the worktree showed no R5 prompt ✓ (post-delivery). Good.
+
+So the reviewed head af1ddeec contains 4 P08 handoffs per producer claim (line 28: "固定head含4份P08 Handoff"). But my glob of the worktree's doc/handoffs showed only 4 P08 files: P08-16fb07a9-dsh-r4.md, P08-1ad05d99-dsh-r3.md, P08-31c26389-dsh-r2.md, P08-490f9bd9.md ✓ = 4 ✓ consistent.
+
+Now — the critical outstanding item: enumerate the fixed delta 16fb07a..af1ddeec file list. I can't run git. Producer evidence:
+- handoff line 22: af1ddeec changed exactly 4 files (STATUS.md, P08-490f9bd9.md, doc/tasks/P08.md, verify_scope.py).
+- commits 1ec14aa2/893df221/0c209deb are R4-round process commits (prompt, handoff, checkpoint, report archive, RESUME/log updates).
+- validation.log:407 shows product-path delta empty for the fixed range (producer).
+- The new verify_scope allowlist assertion (BASE..HEAD ⊆ allowlist) covers the wider range and producer reports 28 files all allowed.
+
+For my own independent contribution, I can verify file-layer that:
+(a) the R4-01..03 fix texts are present in the head (done),
+(b) the head contains no reference to af1ddeec / no R5 artifacts (grep, done),
+(c) the R4 report is present in-head (read, done) — so 0c209deb's archive is visible,
+(d) navigation consistency across Plan/Status/Index/Roadmap/README/Task (done).
+(e) whether the head's changed files could escape the allowlist: I can enumerate the *set of files that mention the R4 head 16fb07a9*, which is exactly the set that R4-round commits necessarily touched. Let me grep "16fb07a9" in the worktree to get that list — then check each is within P08 allowed paths. That's a decent independent proxy for "no unauthorized file touched by the fixed delta".
+
+Let me run that grep.
+
+Also, I should double-check the one thing that could be a real finding: verify_scope.py's allowlist and the *frozen source protection*. The prompt item 6: "共享契约/源文件保护" — verify_scope line 65-73 covers doc/01-08, doc/13, AD-001, src/apps/tests/packaging, doc/contracts, doc/reviews, AGENTS.md, doc/09. Good.
+
+Another item: "Architecture Documentation Rebaseline Gate" — present in SCOPE_DRAFT:49/:71, AC_COVERAGE:3, Plan rows P09/P18/P20 ✓ (grep showed). And "未释放的P09–P20没有被绕过" — Plan rows all proposed/未释放 ✓; P08 row says not releasing ✓.
+
+Also item 6: "四个一级页面" — AC_COVERAGE:8 AC-NAV-002 [P0] 一级页面只有四个 ✓; SCOPE_DRAFT:31 "不扩一级页面" — let me verify that line. And "D08逐项覆盖" — verify_scope asserts 193 AC + gates; I read AC_COVERAGE head; R4 verified 193 count by grep. I can spot-verify the count myself: grep `^\| AC-[A-Z0-9-]+ \|` in AC_COVERAGE and count. Let me do that to independently confirm ~193 and compare to doc/08's `^## AC-...` count. That's a strong independent check (R4 did it via grep). Let me do both greps and count — but grep tool returns matches (up to 250). doc/08 has 193 matches + others. The tool truncates at 250 — 193 is under 250, OK. But it will print 193 lines (huge). That would flood context. Better: I could ask for a count via... no shell. Hmm.
+
+Alternative: read the doc/08 headers list? Also huge.
+
+Given R4 already independently counted 193 with grep and I confirmed AC_COVERAGE:3 text and the smoke/gate rows, plus verify_scope's assert ties coverage rows to doc/08 headers exactly (actual == expected and len(set)==len), I can rely on the script's logic + producer EXIT. But the prompt asks me to independently verify... My independent ability is limited by no shell. I'll record: 193-AC equality is asserted by verify_scope.py:14-17 (logic read by me) and was producer-EXIT=0; my own recount via grep would flood; I can do a partial: grep AC_COVERAGE for the count of `^| AC-` … Actually the grep tool result says "Found N matches" then lists. For 193 it'd list all 193 lines — too big. But there's a spill file mechanism. The first line "Found 250 of 354 matches" then huge output with truncation. Risky but maybe acceptable? I'd rather avoid.
+
+Alternative approach: use `grep` with a pattern that matches only a few — e.g., check the *tail* rows to confirm row count via the file's last lines and the gate rows 68-79. Let me read AC_COVERAGE.md lines 195-212 to see the gates and smoke row and the advisory rows. That gives me the tail evidence.
+
+Let me read AC_COVERAGE.md offset 195 (18 lines). And SCOPE_DRAFT.md offset 25 limit 20 to check the four-page boundary statement. And grep "16fb07a9" for the touched-file proxy.
+
+Let me batch these three.
+dsh: reasoning:
+Very useful. The `16fb07a9` grep shows which head files carry R4-round records: doc/12_ROADMAP.md, doc/00_INDEX.md, doc/REBASELINE_PLAN.md, doc/tasks/README.md, doc/tasks/P08.md, doc/handoffs/P08-16fb07a9-dsh-r4.md, doc/STATUS.md, verification/PROJECT-ROADMAP-20261008/{ROADMAP,RESUME,REPORT}.md, verification/P08/validation.log, verification/P08/review-dsh-16fb07a9-r4.md, verification/P08/RESUME.md, verification/P08/DSH-REVIEW-PROMPT-R4.md. All of these are within P08 allowed paths (doc/tasks/P08.md, Plan/Status/Index/Roadmap/README, doc/handoffs/P08-*.md, verification/P08/**, verification/PROJECT-ROADMAP-20261008/{REPORT,ROADMAP,RESUME}). ✓ Consistent with the allowlist. This is a strong independent proxy for the fixed delta's file set: every file mentioning the R4 head is an allowed path, and no file outside the allowlist references it.
+
+Note: doc/handoffs/P08-490f9bd9.md doesn't mention 16fb07a9 but was changed by af1ddeec (the R4-03 fix at :37). It's still an allowed path (doc/handoffs/P08-490f9bd9.md matches handoff prefix rule). ✓
+
+Also verify_scope.py doesn't contain 16fb07a9 (it has BASE only) but was changed by af1ddeec ✓ allowed.
+
+So the union {files with 16fb07a9} ∪ {STATUS.md, P08-490f9bd9.md, P08.md, verify_scope.py} ⊆ allowed set. And the allowed set is precisely the Task's allowed paths. So no unauthorized file appears in the R4/R5 window. Combined with: any file *outside* the allowlist that changed would not have to mention 16fb07a9 — so this proxy isn't airtight. But combined with the new positive allowlist assertion (BASE..HEAD ⊆ allowed) and producer EXIT=0 at 28 files, plus the protected-path emptiness, the risk is low. I'll state the residual clearly as NOT_VERIFIED for the full enumeration.
+
+Hmm — wait. There is one more angle. I can partially bound the delta by checking *which head files are newer than others*? No, mtimes aren't reliable for git checkout (worktree checkout writes all files at creation time... actually git checkout writes files at worktree creation, so all have similar mtime). Not useful.
+
+Let me also check: does the head contain a stale `verification/P08/DSH-REVIEW-PROMPT-R4.md` referencing things? Fine.
+
+Now: R5-01 potential finding I identified — the self-test doesn't assert a non-P08 handoff rejection or doc/reviews rejection. Let me judge severity: P3 observation. It's within R4-02's requested scope ("路径谓词是否同时测试允许与拒绝样例"), and the predicate does reject those categories by construction (I read the code). The task says "非阻断P3也逐项列明" and "任何新的P2及以上问题须明确决策和影响". I'll report R5-01 as P3 observation with explicit note that it's a test-coverage nit, not a guard hole.
+
+Are there other findings? Let me examine more carefully for real issues:
+
+1. `verify_scope.py:19` `gates = re.findall(r"^\| D08-GATE-(\d+) \|", coverage)`, asserts sorted == range(68,80) → 12 gates ✓ (I saw 68-79 in AC_COVERAGE lines 201-212 ✓).
+
+2. Line 22: `assert len(rows) == len(expected) + 1 + 12`. rows = lines starting with "| AC-" or "| D08-". expected = doc/08 headers. +1 = D08-AC-SMOKE, +12 = gates. Careful: rows includes "| D08-AC-SMOKE |" ✓ and "| D08-GATE-nn |" 12 ✓. But also, would `| AC-...` rows include the header row "| D08项 |"? No, header starts "| D08项 |" not "| D08-"... wait "| D08项 |" — pattern is startswith("| D08-") → "| D08项" doesn't have "-" → not matched ✓. And rows must all end with "| NOT_RUN |" ✓ (line 23) — verified trailing column for the 14 rows I read ✓.
+
+3. Line 25-30: link check for all HERE/*.md plus doc/tasks/P08.md. Note: it does NOT check links in doc/handoffs/P08-*.md (Handoff files). Hmm — the link check covers verification/P08/*.md and doc/tasks/P08.md. The R4-03 fix was in doc/handoffs/P08-490f9bd9.md — a file whose links are NOT link-checked. Interesting: R4-03's defect was exactly a broken/wrong path pointer in a Handoff, and the guard still doesn't validate links in doc/handoffs/*.md. Is that a finding? The R4-03 fix was manual (text correction). The guard is a task-doc/verification-link checker; extending it to handoffs would be an enhancement. Since the R4-03 error type (dangling path pointers in Handoffs) is not machine-guarded, a future Handoff could regress the same way. That's a legitimate observation → P3 (non-blocking), arguably a more meaningful one than R5-01. Actually: verify_scope includes handoffs in `git diff --check` (whitespace) but not link resolution. I'll record this as R5-02 P3 (robustness gap: the class of defect R4-03 fixed has no machine guard).
+
+Hmm, but careful not to inflate. Both are P3 observations. The prompt says non-blocking P3 should be listed. Fine — two P3 observations, both explicitly judged non-blocking and outside the blocking criteria.
+
+4. Another: `git diff --check BASE -- ... *handoffs` uses `*handoffs` from a filesystem glob of doc/handoffs/P08-*.md. Filesystem glob → includes untracked files too. If an untracked P08-*.md existed, `git diff --check BASE -- <untracked path>` would just show nothing (untracked isn't in the diff) — no failure. Not a problem, though the count printed may overstate coverage. Minor. Actually, the printed count "5 filesystem P08 Handoffs covered" (validation.log:404) — 5 handoffs in the filesystem at main (4 in head + R5 handoff). Fine.
+
+Hmm wait: line 100 `assert handoffs` — non-empty. Then `git diff --check` with untracked paths present: git errors? `git diff --check BASE -- path` where path exists but untracked → git treats as no matching pathspec? Actually pathspec matches the working tree file; `git diff <commit> -- <path>` compares commit vs working tree? No — `git diff BASE -- <path>` (one commit + paths) compares BASE tree to the **working tree** for those paths! Hmm! That's important.
+
+`git diff <commit> -- <path>` compares commit to the working tree (not to HEAD). Yes: "git diff [<options>] <commit> [--] [<path>…]" = view the changes in the working tree relative to the named commit. So `git diff --check BASE -- <paths>` includes uncommitted working-tree changes! Whereas `git diff --name-only BASE HEAD` (two commits) is commit-to-commit.
+
+Hmm, so line 101-107 `git diff --check BASE -- <paths>` checks BASE vs working tree, which WOULD include the main workspace's uncommitted changes to those paths. But those are P08-owned paths, so it's a whitespace check — including the author's own uncommitted edits. That's fine/not a scope violation, though it means the whitespace result isn't purely about the committed delta. The comment on line 92 explains the *allowlist* uses committed delta; the whitespace check at :101 uses BASE..worktree. Since the intent is "P08 subtree diff is whitespace-clean", including uncommitted P08 edits is conservative (stricter), not a hole.
+
+Wait, but is it? If the main workspace has dirty non-P08 files, they're not in the path list → excluded ✓. Good.
+
+And line 73: `git diff --name-only BASE -- <protected paths>` = BASE vs working tree for protected paths. So if the main workspace had uncommitted modifications to protected paths (e.g. another author's dirty report.json) — hmm, that would FAIL the script. In the reviewed worktree, working tree = commit, so fine. But if run in the main workspace with other authors' dirty files under e.g. `doc/reviews/` or `src/`, the script would fail. R2 notes said main-workspace dirty `.qoder-credits/report.json` exists — not in protected paths list ✓. OK. But this is a design property worth noting: the protected-path check is affected by the working tree, so a clean-tree precondition is needed for its meaning ("受保护路径零差量" claim holds only for a clean worktree). For the reviewed head this is exactly why the clean check matters. I'll fold this into the residual/NOT_VERIFIED discussion rather than a new finding... Actually it's a substantive observation about the guard's semantics: line 73's check is BASE-vs-worktree, so the "zero delta" conclusion requires a clean working tree; the script never asserts cleanliness. Combined with the new line 93-96 committed allowlist (which is commit-based), the guard is now partly commit-based and partly worktree-based. Given the R5 Prompt explicitly asks "说明用BASE..HEAD而非脏工作树差量能否避免把主工作区原作者未提交修改归入P08；是否仍存在会漏过的路径边界" — this is exactly the answer: the *allowlist* is commit-based (avoids attributing dirt), but the *protected-path* and *whitespace* checks at :73/:101 are BASE-vs-worktree, so they are sensitive to the working tree in both directions: (i) they don't catch committed deviations beyond... no wait, they do catch committed deviations too (commit tree differences are part of BASE-vs-worktree). They catch both committed and uncommitted. So they're a superset — no leak, just possible false positives requiring a clean tree. So the leak-risk direction is nil; the risk is a spurious failure in a dirty main workspace, which is arguably desirable (fails closed).
+
+Hmm, one genuine leak in the same family: the *allowlist* check at :93 uses BASE..HEAD (committed only), so **uncommitted additions** under a non-allowed path (e.g. someone drops `doc/11_foo.md` uncommitted into the worktree) would NOT be caught by the allowlist, and `doc/11` is not in the protected list → no assertion fires. This is precisely the "会漏过的路径边界": uncommitted files outside allowed paths are invisible to the positive allowlist. In the P08 workflow the *task's own* changes are committed, and uncommitted content belongs to other authors (deliberately excluded). So this is by design, but it means the guard alone cannot certify the worktree equals the commit tree — which is exactly the DSH `NOT_VERIFIED` clean-tree gap. Worth stating explicitly in the report as the residual boundary (already flagged as R4-02 note in R4's report). I'll present it as an explicit boundary, not a new P2.
+
+5. Check: does verify_scope assert that the *new* allowlist covers doc/handoffs/P08-490f9bd9.md? Yes via prefix rule ✓ (self-test line 89 covers doc/handoffs/P08-r5.md).
+
+6. `allowed_files` includes `doc/tasks/README.md` etc. ✓ matches Task allowed paths.
+
+7. Does the allowlist include `verification/P08/DSH-REVIEW-PROMPT-R5.md`? It would (prefix verification/P08/) — that's for the post-delivery commit; fine.
+
+8. BASE hardcoded = ab2f813c; the R5 prompt's fixed delta base is 16fb07a. The script validates the wider ab2f813c..HEAD range. Since the script uses two-dot tree comparison, it captures everything between the base tree and the head tree — including the R4/R5 process commits. So the guard covers the R5 fixed delta as a subset ✓. I'll note that the script does not self-assert HEAD == the intended delivery head (it trusts the checked-out HEAD), so its evidence is only as strong as the worktree pinning — which for this review is verified at file layer (HEAD file = af1ddeec, reflog single line).
+
+Wait, reflog: the worktree's logs/HEAD has exactly 1 line: `0000... af1ddeec`. So the worktree was created directly at af1ddeec, never checked out anything else ✓. Good, strong.
+
+9. D1–D7: The prompt says D1–D7 are user-confirmed decisions; don't reopen. I checked SCOPE_DRAFT:13 and AC_COVERAGE mention. Also verify_scope asserts 7 rows in SCOPE_DRAFT table `^\| D[1-7] \|` ✓. I might spot check SCOPE_DRAFT lines 15-25 for D1–D7 rows. Let me read SCOPE_DRAFT lines 15-30 to confirm the seven decision rows and the four-page/format statements. Also line 31 "不扩一级页面" and line 40 (N-01 fix), line 49 architecture.
+
+Let me read SCOPE_DRAFT.md lines 9-50 to have concrete evidence (one read, 42 lines).
+
+Also I should check doc/12_ROADMAP.md and 00_INDEX are indexed correctly — done via grep.
+
+One more: the prompt asks to check "四个一级页面" — AC-NAV-002 [P0] "一级页面只有四个" ✓ (AC_COVERAGE:8) and no expansion. And "目标架构边界": SCOPE_DRAFT:49 + Plan P09/P18/P20 gate rows ✓.
+
+Let me read SCOPE_DRAFT.md lines 9-50.
+
+Then I'll also quickly verify the R5 prompt's claim that verify_plan.py passes — can't run. I could read verify_plan.py to check it doesn't reference anything broken by the R5 revision (e.g., P08 label). The R5 revision changed verify_scope.py but not verify_plan.py. Status label P08=approved must map in verify_plan's STATUS_LABELS. R4 verified p08_label mapping. Let me spot check verify_plan.py lines 10-60 to confirm `approved` is in the label map (since P08 is now approved, the script must not KeyError). This is a real risk: R2's N-02 found the state set too narrow; R3 fixed it. Since P08 is now `approved`, verify_plan.py must handle approved. Producer log:392-393 says both validators EXIT=0 at the approved state. Let me verify by reading verify_plan.py's label map myself — that's an independent check on a real failure mode.
+
+Let me do: read SCOPE_DRAFT 9-50; read verify_plan.py 1-70.
+dsh: reasoning:
+verify_plan.py:13-24 STATUS_LABELS includes "approved": "approved / Review通过待Codex集成" ✓ — so P08=approved is supported (N-02 closed, no regression). Line 61-63: plan rows' labels must be in allowed set ✓. Line 65: 21 nodes ✓. Line 67: consecutive P01–P21 ✓.
+
+Note line 61 reads `current` = plan text before "## 2026-10-08 完成：" — so the plan's current section rows. And the P08 row is `| P08 | approved | ...` ✓.
+
+One risk: line 63 allowed_plan_states = {proposed/未释放} ∪ TASK_STATES-{proposed} = all 9 labels ✓.
+
+SCOPE_DRAFT confirmed:
+- D1–D7 table at lines 17-23 (7 rows) ✓, each with user-confirmed decision and implementation/testing placement.
+- Line 31: four pages must + "四页定义见D04§1.1" ✓ (no expansion).
+- Line 40: N-01 fix intact ✓.
+- Line 49: architecture rebaseline gate ✓.
+- Line 17: D1 "保留四个一级页面" ✓.
+
+Now, item 6 of the review goals: "检查D08逐项覆盖、四个一级页面、目标架构边界、共享契约/源文件保护、Architecture Documentation Rebaseline Gate及未释放的P09–P20没有被绕过" — all have evidence.
+
+One more check: "共享契约/源文件保护" — verify_scope.py:65-72 protected list includes doc/contracts, doc/reviews, doc/01–08, doc/13, AD-001, AGENTS.md, doc/09, src/apps/tests/packaging, task-inventory.csv ✓. And SCOPE_DRAFT:49 claims D08 source unchanged; AC_COVERAGE:3 states P08 doesn't modify. Also verify_scope line 73 asserts zero delta on those. I verified the paths in the code.
+
+Now — is there any real P2+ issue? Let me think harder about the R4-02 fix correctness, since that's the meat.
+
+Potential correctness issue in the new code:
+
+```python
+allowed_files = {...}
+handoff_prefix = "doc/handoffs/P08-"
+
+def allowed(path):
+    return (path in allowed_files or path.startswith("verification/P08/")
+            or (path.startswith(handoff_prefix) and path.endswith(".md")
+                and "/" not in path[len(handoff_prefix):]))
+```
+
+Then:
+```python
+changed = subprocess.check_output([... "diff","--name-only","--no-renames",BASE,"HEAD"], text=True).splitlines()
+outside_scope = [path for path in changed if not allowed(path)]
+assert not outside_scope, ...
+```
+
+Semantics: BASE tree vs HEAD commit tree, name-only, no-renames ✓ commit-based ✓.
+
+Any issue with `text=True` and Windows newlines? splitlines handles \r\n ✓.
+
+Now, is `--no-renames` meaningful with `--name-only`? Yes, rename detection can collapse delete+add into a single R entry with two paths; with --name-only and renames, git prints... actually with -M and --name-only, a rename prints both old and new paths on one line? For `--name-only` with rename detection, git prints both names (as "old\nnew"? or "old" then "new"?). Using --no-renames avoids ambiguity ✓. Good design.
+
+Another: does the allowlist allow `verification/P08/` itself (a directory)? Only files appear in diffs ✓.
+
+Now the deeper question the Prompt asks: "路径集合是否精确对应P08允许路径". Task:111 says allowed = doc/tasks/P08.md, verification/P08/**, 本Task自有Handoff, plus Codex updates REBASELINE_PLAN.md, STATUS.md, 00_INDEX.md, 12_ROADMAP.md, tasks/README.md, and the derived REPORT/ROADMAP/RESUME/verify_plan.py. The allowlist has exactly these ✓. Note the derived dir is `verification/PROJECT-ROADMAP-20261008/` and only 4 named files are allowed from it — but the whole directory is also in the *protected* list (line 72 lists only task-inventory.csv as protected within it). Hmm: `verification/PROJECT-ROADMAP-20261008/task-inventory.csv` is protected ✓; other files in that dir (REPORT/ROADMAP/RESUME/verify_plan.py) are allowed ✓; any *other* file in that dir (e.g. plan-audit.md, core-audit.md, desktop-audit.md, planning-check.md, REPORT-linked details, ROADMAP) — e.g. `plan-audit.md` — is NOT in allowed_files → rejected ✓. That matches Task scope (only the 4 derived files are updatable). Good precision. This is worth calling out: the allowlist is precise enough to reject sibling files in the roadmap dir that are not authorized.
+
+Wait — but Task:111 says "当前派生REPORT/ROADMAP/RESUME/verify_plan.py的P08导航/状态" — yes exactly 4 files ✓.
+
+Now R5-01 (self-test coverage nit) and R5-02 (handoff links not machine-checked). Are these worth P3? The prompt says list non-blocking P3s. I'll report them as P3 observations, clearly labeled non-blocking, with the note that neither is a guard hole for path scope.
+
+Hmm, but careful about R5-02: verify_scope.py:25-30 link check covers `HERE.glob("*.md")` + doc/tasks/P08.md. Handoffs are not covered. R4-03's defect class (dangling path in handoff) therefore has no machine guard. That's a fair, modest observation. I'll mark P3.
+
+Should I mark them as "new findings R5-01/R5-02"? The prompt says "非阻断P3也逐项列明". Yes.
+
+Now — decision. Is `approved` supported? Requirements for approval: no unclosed P0/P1, no missing critical verification, and only if actual evidence for the head supports it. 
+
+Key limitation: I could not run any commands. R4 approved under the same constraint (documentation-only Task, file-layer verified). The R4-01..03 fixes are verified by file-layer reading at the exact head; R4-01 and R4-03 are pure text, fully verifiable at file layer. R4-02's fix is code, verifiable by reading (logic + assertions + coverage of the categories). What I cannot verify is the runtime EXIT of the two validators and the actual delta enumeration — those remain producer-only. R4's precedent approved with those as NOT_RUN/NOT_VERIFIED, since the blocking criteria concern content correctness, which I did verify. Also P08 is a docs-only Task with no product code.
+
+But: is there a "关键验证缺失" that must block approval? The R4-02 fix's whole point is a machine guard over the committed delta; its value depends on the guard actually running and passing. Producer logs report EXIT=0 at exactly this head (validation.log:404-407, which is the post-delivery main file — careful: the reviewed head's validation.log ends at 396; the R5-round entries are in the post-delivery commit bfd70958). Hmm — that means the R5-round evidence (including "committed BASE..HEAD allowlist 28 files") is NOT in the reviewed head. Is that a problem? It's the established protocol pattern (handoff after delivery head, §90). R4 treated the same situation as non-defect. So consistent.
+
+However, there's a subtlety worth reporting: the reviewed head contains no record of the R5 revision's own validation (the head's validation.log ends with the R4 archive checkpoint at 893df221), so a consumer reading only the head cannot see the R5-round EXIT evidence; it lives in the post-delivery commit. That's protocol-consistent (§90) and matches R2/R3/R4 precedent. Not a finding; I'll note it as a boundary in the report (like R4 §4.5).
+
+Given: 0 P0/P1, R4-01..03 all fixed and verified at file layer, no regressions, two new P3 observations → decision `approved` for the fixed head, with the explicit caveats that command-level evidence is producer-only and I did not run anything.
+
+Hmm, let me reconsider whether "approved" is right given the prompt says "只有对被审head的实际证据支持时才标approved". My actual evidence: file contents at the exact head (HEAD file + reflog + commondir verified at file layer). That's the same standard as R4. The R4 findings I was asked to verify are all text/code-level and I verified them by reading the exact head content. So approved is supported. I'll be explicit about which claims are NOT_VERIFIED.
+
+Alternatively I could give `approved` but note residual risk. Yes.
+
+Now, one more check I should do to be thorough on the "no scope expansion" claim: check that no *product/contract* file changed in the fixed delta. Producer: validation.log:407 empty; handoff:32 empty. I can't verify. But I can do a file-layer cross-check: the frozen source docs (doc/08, doc/13, AD-001, doc/04) — do they contain any reference to the R4/R5 process? If untouched, they wouldn't. grep for "16fb07a9" didn't show doc/08, doc/13, doc/04, AD-001 → consistent with untouched (weak). R4 cross-checked doc/08:2054-2064 against R3's quote. I could spot-check doc/08 AC-EXPORT-001 text to confirm N-07's source fact still holds (D08 lists 5 formats, no PNG). That's an independent verification of the N-07 basis at this head. Let me do it: read doc/08_ACCEPTANCE_CRITERIA.md around line 2052-2064.
+
+Also grep "PNG" in doc/08 to confirm 0 occurrences (R4 did this). A grep "PNG" in doc/08 would return few lines. Let me do that — cheap and strong.
+
+Let me run: read doc/08 lines 2050-2066; grep "PNG" in doc/08_ACCEPTANCE_CRITERIA.md.
+
+Also grep "doc/reviews" is protected — already in verify_scope.
+
+Let me also double check the four first-level pages claim source: doc/08 AC-NAV-002 [P0] 一级页面只有四个 — the AC_COVERAGE:8 row says so; the source doc/08 line for AC-NAV-002. Not strictly needed.
+
+Let's do the two calls.
+dsh: reasoning:
+Confirmed independently at this head: doc/08 AC-EXPORT-001 lists 单图/ZIP/CBZ/PDF/文本 (5 items) and doc/08 contains no "PNG" at all → N-07's fixed wording in AC_COVERAGE.md:142 is accurate. No regression.
+
+Now I have enough. Let me do a final couple of checks for completeness before writing:
+
+1. R1 report exists at verification/P08/review-dsh-490f9bd.md ✓ (glob).
+2. Does R4 report's SHA256 match what the head contains? Can't compute. NOT_VERIFIED.
+3. doc/09_COLLABORATION.md:66-76 statuses ✓ (read).
+4. 00_INDEX:81 "STATUS 是运行状态唯一事实源"? R1 report cited it. Not needed.
+
+Let me also double check the worktree admin dir for `commondir` and `gitdir` files to complete the environment verification (R4 also read commondir). I read .git (gitdir line) and HEAD and logs/HEAD. Let me read the `commondir` and `gitdir` files for completeness.
+
+Also verify the worktree name/dir matches the reviewed head prefix (af1ddeec) ✓.
+
+Let me read those two small files, then write the report.
+
+Also I should double-check whether `doc/handoffs/P08-af1ddeec-dsh-r5.md` in main is the only R5 artifact and that the head has 4 handoffs — the R5 handoff says "固定head含4份P08 Handoff" and I counted 4 ✓. And validation.log:404 says "5 filesystem P08 Handoffs covered" (main had 5 at that moment — 4 in head + R5 handoff) ✓ internally consistent.
+
+Let me read the two git files quickly.
+dsh: reasoning:
+All environment facts verified at file layer:
+- HEAD file = af1ddeec (detached)
+- logs/HEAD single line: 0000→af1ddeec, author peakwheat-pixel, ts 1791473109
+- commondir = ../.. → G:/CODEX/New Manga/.git
+- gitdir → back-reference to this worktree's .git
+- .git file = gitdir: G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-af1ddeec-r5
+
+Commit chain (main .git/logs/HEAD): 16fb07a → 1ec14aa2 (prepare R4 review handoff) → 893df221 (record active R4 review checkpoint) → 0c209deb (archive approved R4 review) → af1ddeec (address R4 P3 integration findings) → bfd70958 (prepare R5 review handoff).
+
+So the fixed delta 16fb07a..af1ddeec = 4 commits, and the R5 Prompt/Handoff commit bfd70958 is a child of the reviewed head → NOT part of it ✓ verified by git file-layer evidence.
+
+Wait: I should double check that the R5 prompt file doesn't exist in the head — grep "af1ddeec" found no matches in .md/.py/.log in the worktree ✓, and glob of verification/P08 showed only up to R4 prompt ✓. Also glob doc/handoffs/P08-* showed 4 files ✓. Solid.
+
+Also: the review worktree creation timestamp 1791473109 = the af1ddeec commit time? The commit af1ddeec has ts 1791473082; the worktree reflog entry ts 1791473109 (~27s later). Consistent with worktree created right after that commit ✓. Good — supports that the worktree was made for this head.
+
+Let me convert: 1791473109 epoch → not needed.
+
+Now, one more consideration about the fixed delta enumeration. I can strengthen with another independent proxy: the R4 report file exists in the head with the exact R4 content (I read it). Files that must have been added/changed between 16fb07a and af1ddeec include review-dsh-16fb07a9-r4.md (added by 0c209deb) — and it's in the allowed path verification/P08/ ✓.
+
+I think I have a complete picture. Let me now also confirm: are there any files in the head under paths NOT in the allowlist that changed? Unknown → NOT_VERIFIED. I'll be explicit.
+
+One more thought on a possible real finding: the allowlist `allowed_files` includes `doc/12_ROADMAP.md`, `doc/00_INDEX.md`, `doc/tasks/README.md`, `doc/REBASELINE_PLAN.md`, `doc/STATUS.md` — matching Task:111 ✓. But it does NOT include `doc/tasks/P08.md`? Let me check: allowed_files = {"doc/tasks/P08.md", "doc/REBASELINE_PLAN.md", "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md", "doc/tasks/README.md", 4 roadmap files}. Yes it includes doc/tasks/P08.md ✓.
+
+Anything else? The allowlist doesn't include `AGENTS.md` — correct, it's prohibited ✓ (and protected).
+
+Now write the report. Format per doc/templates/REVIEW.md: frontmatter (task_id, reviewer, author, base_commit, reviewed_head, decision) + sections: 范围与依据, Architecture, Verification matrix, Findings, NOT_RUN/NOT_VERIFIED, 结论与复审, 下一任务建议. The prompt also requires: 范围与依据、Architecture结论、Verification矩阵、R4-01..03逐项处置与复现证据、历史Finding回归、NOT_RUN/NOT_VERIFIED边界、风险与结论、§5.1下一任务建议及可直接转发指令.
+
+Since I must not create project files, I deliver the report in this reply and note it wasn't written to the repo (the R4 report ends with the same statement). Report file naming would be verification/P08/review-dsh-af1ddeec-r5.md for Codex to archive.
+
+Let me be careful about facts and citations. Let me compose the report in Chinese.
+
+Key content:
+
+Frontmatter:
+task_id: P08
+reviewer: DeepSeek Harness（非作者；作者/Integrator=Codex）
+author: Codex
+base_commit: 16fb07a973b36b0b129945bc3a85f9ae51234982
+reviewed_head: af1ddeec1b998f2ddaf121a85f5fd382561aae1e
+decision: approved
+
+§1 范围与依据
+- 受审交付: 16fb07a..af1ddeec（固定 review base 由本轮 Prompt 指定；P08 Task base=ab2f813c）
+- worktree: G:/CODEX/New Manga.worktrees/P08-dsh-review-af1ddeec-r5
+- 文件层环境核验: .git file, gitdir, commondir, HEAD, logs/HEAD
+- 提交链（读主仓 .git/logs/HEAD:946-950）: 16fb07a9(R3 record) → 1ec14aa2 → 893df221 → 0c209deb → af1ddeec「docs(P08): address R4 P3 integration findings」→ bfd70958「prepare R5 review handoff」
+- 因此 R5 Prompt/Handoff 位于 af1ddeec 的子提交 bfd70958，不属于被审 head：head 内 grep `af1ddeec` 0 命中；verification/P08 无 R5 Prompt；doc/handoffs 只有 4 份 P08 Handoff（R1–R4）。✓ 与 Prompt 陈述一致。
+- 差量定位：DSH shell 不可用 → 无法 git diff 枚举；使用文件层代理（grep 16fb07a9 的 13 个文件集合 + head 内 4 份 Handoff + verify_scope.py + STATUS.md）全部落在 P08 允许路径内；完整枚举为 NOT_VERIFIED。
+- 只读声明：未修改/创建/删除任何项目文件；未 stage/commit/checkout。唯一命令尝试全部在沙箱 ACL 阶段失败。
+- 未使用聊天记录作为事实。
+
+§2 Architecture 结论
+- 产品面 N/A（纯文档 Task）。
+- 四页边界未扩：SCOPE_DRAFT:31、:17、AC_COVERAGE:8（AC-NAV-002 P0 一级页面只有四个）
+- AD-001/Legacy→目标架构口径：SCOPE_DRAFT:49、AC_COVERAGE:3、:202、Plan P09:40/P18:49/P20:51
+- 数据保护/源文件：SCOPE_DRAFT:20(备份):42、:35；AC_COVERAGE 全表 INCLUDED+NOT_RUN
+- 受保护路径集合：verify_scope.py:65-73（含 doc/contracts、doc/reviews、AGENTS.md、doc/09、doc/01–08、doc/13、AD-001、task-inventory.csv、src/apps/tests/packaging）
+- P09–P20 未释放：Plan:40-52 全部 proposed / 未释放；P08 行 approved 且明示未释放
+- 结论：未发现架构/契约/保护边界回退。
+
+§3 Verification 矩阵（DSH 实际执行 = 文件层 read/grep；命令 = NOT_RUN）
+
+Table with rows:
+1. HEAD == reviewed_head: read HEAD → PASS
+2. worktree detached & 自创建未推进: logs/HEAD 1 行 → PASS
+3. common-dir 正确: commondir/gitdir/.git → PASS
+4. 被审 head 不含 R5 交付物: grep af1ddeec 0 命中 + glob → PASS
+5. 固定差量提交链定位: 主仓 logs/HEAD:946-950 → PASS
+6. 命令级（git rev-parse/status、两 validator、diff --check、受保护路径差量）→ NOT_RUN（DSH）
+7. 工作树 == 提交树（clean）→ NOT_VERIFIED
+8. 差量 allowlist 合规（16fb07a..af1ddeec 全枚举）→ NOT_VERIFIED（producer 断言）
+9. N-07 源文事实 → PASS（doc/08:2054-2064 五项、全文 0 次 PNG）
+10. 产品测试 → NOT_RUN（正确）
+
+§4 R4-01..03 逐项处置
+R4-01: STATUS.md:10 现文本（quote）；检查点：第 10 行位于可变段（冻结标记 `## 2026-10-08 完成：` 在 :22，verify_scope.py:112 使用该标记）；不再声称全部节点状态；权威来源明确（本文件页首 Active Task + REBASELINE_PLAN 顶部）；同文件 :3/:20 计数一致（approved 1 + 20 proposed/未释放 = 21，Plan:28/:39 一致）→ closed（DSH 独立，文件层）
+R4-02: verify_scope.py:74-97 正向 allowlist；逐点分析（路径集合精确性、谓词允许/拒绝样例、嵌套/外部/非P08 handoff 行为、BASE..HEAD vs 脏工作树、残留边界）→ closed（含 2 条新 P3 观察 R5-01/R5-02）
+R4-03: P08-490f9bd9.md:37 现文本 → 指向真实报告 + doc/reviews/** 非写入目标 → closed
+
+§5 历史 Finding 回归
+- N-07: AC_COVERAGE:142 现文 + doc/08 源文 → 无回退（closed，独立复核）
+- N-08: verify_scope.py:98-108 glob 动态枚举 + 计数文案；head 内 4 份 Handoff → 无回退
+- R1 4×P1 / 6×P2 / P3、R2 N-01..N-06：抽样（N-01→SCOPE_DRAFT:40、N-02→verify_plan.py:11-24 STATUS_LABELS 含 approved、N-03/N-04→verify_scope.py:101-106 含 README/handoffs/roadmap 与 :66-67 AGENTS/doc09、N-05→AC_COVERAGE:3 含 ACG-EXT-*、N-06→SCOPE_DRAFT:78/:81 现存/拟议）→ 无回退
+- D1–D7 未重开：SCOPE_DRAFT:17-23 七行表；未发现把 D1–D7 改写为 Reviewer 裁决。
+
+§6 NOT_RUN / NOT_VERIFIED 边界（table）
+
+§7 风险与结论
+- decision approved，理由；剩余风险。
+- 明确：不等于 P08 done；不释放 P09–P20；不改变 Architecture Documentation Rebaseline 未登记状态。
+
+§8 下一任务建议（§5.1 七字段 + 可直接转发指令）
+
+Findings table: R5-01 P3, R5-02 P3.
+
+Let me define the two P3s precisely:
+
+R5-01 | P3 | verification/P08/verify_scope.py:89-91 | allowlist 自检只断言 2 个允许样例（verification/P08/review-example.md、doc/handoffs/P08-r5.md）与 2 个拒绝样例（doc/10…、doc/handoffs/P08/nested.md）；未对「非 P08 Handoff」（如 doc/handoffs/M2-x.md）与「doc/reviews/**」给出显式负例。谓词本身按读码确实拒绝这两类（prefix/成员判断均不命中），故非守卫漏洞，仅为自检覆盖不含名 | 复现：读 :84-91 | 建议：补 `assert not allowed("doc/reviews/x.md")` 与 `assert not allowed("doc/handoffs/M2-x.md")` | open（非阻断）
+
+R5-02 | P3 | verification/P08/verify_scope.py:25-30 vs doc/handoffs/** | 18 个文件 68 处 `16fb07a9` 引用全在允许路径内（见矩阵行 5 的代理证据）。Wait, that's not it. R5-02 is: 链接检查只覆盖 verification/P08/*.md 与 doc/tasks/P08.md，不覆盖 doc/handoffs/P08-*.md；R4-03 正是 Handoff 内路径指针失真的缺陷类别，该类缺陷仍无机器守卫（:101-107 只做 whitespace） | 复现：读 :25-30、:101-107；对照 R4-03 位置 | 建议：把 Handoff 也纳入本地链接解析检查 | open（非阻断）
+
+Both non-blocking; neither affects product scope, AC sources, data protection, or release gates.
+
+Also I should mention explicitly the residual path-boundary answer the Prompt asked for in R4-02 item: "是否仍存在会漏过的路径边界" → Yes, enumerate:
+(a) 未提交（untracked/modified）文件不进入 BASE..HEAD，故允许集断言对工作区脏文件不可见（by design；这也是 clean-tree 必须独立核验的原因）；
+(b) 脚本不校验 HEAD 是否等于预期 delivery head（BASE 亦硬编码），其结论强度依赖 worktree pinning；本次已在文件层核验 pinning；
+(c) :73 与 :101 的保护/空白检查是 `git diff BASE -- <paths>`（BASE 对工作树，非 BASE..HEAD），会同时包含提交与未提交内容 → 不会漏，但在脏主工作区可能误报（fail-closed，可接受）；本次两处均在干净 worktree 内由 producer 执行；
+(d) 删除文件也视为路径变更，在允许路径内的删除不会被拒绝（内容完整性另由 :62-63 与 :109-113 的状态/冻结段断言部分约束）；
+(e) 大小写/符号链接等平台边界未取正（保守拒绝，不构成漏过）。
+
+That's a thorough answer.
+
+Also note: I should verify (a) claim about :73/:101 being BASE-vs-worktree. `git diff <commit> -- <path>` compares commit to working tree. Yes, that's git semantics: "git diff [<options>] <commit> [--] [<path>...]" shows changes in the working tree relative to the named commit. Correct.
+
+Hmm, but careful: at line 101 the command is `["git","-C",ROOT,"diff","--check",BASE,"--", *paths]` → BASE vs working tree ✓. And line 73 `["git",...,"diff","--name-only",BASE,"--",*paths]` → BASE vs working tree ✓. And line 93 explicitly BASE HEAD (committed) ✓ with comment at :92. Good — so the design deliberately mixes: allowlist = committed; protection/whitespace = working tree. I'll state that accurately.
+
+Wait, is that right for line 73? The R4-02 finding said "范围守卫是否定式（受保护集零差量…）" and R4's report described :65-73 as the protected set. If it's BASE-vs-worktree, then in the main workspace with other authors' dirty files under src/, it would fail. Producer ran it in a clean linked worktree (validation.log:335 status=detached clean) → fine.
+
+OK. Also for the "28 files" claim: validation.log:404 (post-delivery) says "committed BASE..HEAD allowlist 28 files". Since BASE=ab2f813c and HEAD=af1ddeec, 28 files over the whole P08 delivery.
+
+Now let me write the final report. It should be thorough but readable. I'll cite file:line throughout.
+
+One more precision: the worktree reflog line 1: `0000000000000000000000000000000000000000 af1ddeec1b998f2ddaf121a85f5fd382561aae1e peakwheat-pixel <peak.wheat@gmail.com> 1791473109 +0800`. Note it lacks a "commit:"/"checkout:" message suffix — typical for worktree creation reflog. I'll describe it as "单行、无 checkout/commit/rebase 记录".
+
+Also note: the R4 worktree used by R4 report had reflog with a checkout message? It said "仅 1 行". Fine.
+
+Let me now also confirm no other P08 review worktrees claim this head... not needed.
+
+Write the answer now. Also mark todos complete.
+
+Let me update todos then produce the report. Actually I'll just produce the report; todo update via tool call first (cheap).
+
+I'll include a note that the report is delivered in the reply only (not written to the repo), per the read-only instruction, and suggest Codex archive it as verification/P08/review-dsh-af1ddeec-r5.md.
+
+Length: comprehensive. Let's write.

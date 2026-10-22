@@ -1,0 +1,47 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "further_implementation_repair_allowed": false,
+  "forbid_implementation_repair_beyond": "I2",
+  "task_outcome": "BLOCKED",
+  "actions": [
+    "CREATE_RESOLUTION_TASK",
+    "REPLAN_DAG",
+    "BACKLOG_NONBLOCKERS"
+  ],
+  "wait_external": false,
+  "external_conditions": {
+    "blocker_on_critical_path": true,
+    "no_other_ready_task": true,
+    "ai_cannot_resolve": false,
+    "continuation_harmful_or_needs_user_only_input": false
+  },
+  "unmet_external_conditions": [
+    "ai_cannot_resolve",
+    "continuation_harmful_or_needs_user_only_input"
+  ],
+  "create_followups": [],
+  "duplicate_findings_no_new_followup": [],
+  "resolution_task": {
+    "create": true,
+    "inherits_finding": [
+      "AC3-WHOAMI-HELPER-OUTPUT-SHAPE",
+      "AC3-SELFTEST-HELPER-SHAPE-COVERAGE-GAP"
+    ],
+    "deps_policy": "inherit the blocked task's upstream deps; MUST NOT depend on the blocked task itself (no dependency cycle)",
+    "enters_dag": true
+  },
+  "backlog": [
+    "AC3-FREEZE-PIN-P02TASK-POST-RUN-STALE",
+    "AC3-RESULT-PROTECTION-RECHECK-NOT-RUN",
+    "AC3-RESULT-RAW-MATERIAL-STDOUT-ENCODING"
+  ],
+  "continue_ready": [],
+  "replan_dag": true,
+  "reasons": [
+    "implementation repairs used 2/2",
+    "blocker directly prevents safe integration (request #5-C)",
+    "repair budget exhausted; AI-resolvable without READY tasks -> resolution task, AUTO continues (request #5-C/#31)"
+  ],
+  "mode": "converge",
+  "dry_run": true
+}

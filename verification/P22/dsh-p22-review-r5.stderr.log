@@ -1,0 +1,534 @@
+dsh: reasoning:
+Let me start by reading the three files.
+
+Note: the task says only read those three files. Let me read them.
+
+Let me also check line counts. The task says R5 Handoff is 217 lines; I should verify by reading.
+
+Let me read the files.
+dsh: reasoning:
+Now read R4 Review.
+
+Also I need to verify line count: the file read says total 217 lines. Good — matches Task's record of 217.
+
+Wait, but "code fence" on line 201 opens ```markdown and closes at 217. Yes 217 lines total.
+
+Now read R4 review.
+dsh: reasoning:
+Wait — the R4 Review file I just read has 141 lines total, but it references Handoff 207 lines and Task 207 lines, and lines like `:127-129`, `:133`... Hmm, the R4 review references handoff line numbers like `:87`, `:91-96`, `:117`, `:134`, `:184`, `:192-206`. Those correspond to R4 handoff (207 lines). OK.
+
+But wait — the R4 review header says Handoff is 207 lines with `revision: R4_doc_fix`. And the R5 handoff is 217 lines. That's consistent with R4→R5 adding ~10 lines. Hmm, but the R4 review references `:134` "静态 Whitespace / Diff 检查（限定声明，P3-1）" — in R5 that is `:138`. Good, +4 lines. And `:117` AC2 row in R4 → in R5 AC2 row is `:121` (+4). And `:38` follow-up → R5 `:41` (+3). Hmm, frontmatter added r4_doc_commit/r4_doc_tree/r4_doc_parent = 3 lines. So R5 frontmatter has 3 more lines (18-20), shifting by +3. Then R4 `:87` §3 title → R5 `:91` (but R5 §3 is at line 91: "## 3. 授权变更路径清单"). +4? Let me check: R4 review §3.1 said Handoff `:87` = §3 标题. R5 line 91 = "## 3. 授权变更路径清单（明确区分两种 Diff 范围，P2-1）". So +4. Hmm, why +4? Because §1.1 R5 line 41 (N4 fix) might be multi-line vs single line in R4, adding 1 extra line. R4 `:38` was a single line (§1.1 item 2 sub-bullet) but R5 line 41 is a single line too... Let me think: R4 `:38` "follow-up 提出 2 点文档收口项：..." single line; R5 `:41` "**精确记录 DSH R2 follow-up 收口历史（N4）**：..." single line. Hmm.
+
+Actually I can't compare directly without the R4 handoff file, which I'm not allowed to read (only the three fixed objects). Well, the boundary says "只读上述 Task、R5 Handoff、R4 Review". So I should not read the R4 handoff itself. Fine.
+
+Wait, but R4 review mentions R4 handoff line numbers. The R4 review's own line-number citations are for the R4 handoff (207 lines). I can't verify those against R5. That's fine.
+
+Hmm, but interesting: the R4 review claims the Task was 207 lines ("绝对路径直读 live 版本，207 行"), while the current Task is 104 lines. That's because Codex rebuilt the Task (N1 fix) — the malformed snapshot was 207 lines, and the rebuilt version is 104 lines. Actually R4 review says Task :204-206 and :132, :206-207 — those are beyond 104, so indeed the live Task changed after R4. And the Task now records R5 Handoff as 217 lines. OK.
+
+Now let me carefully do the review.
+
+Key checks:
+
+### 1. R4 N2/N3/N4 落实核对
+
+**N2** (R4 review §4): Handoff 未绑定本轮 R4 自身 commit/tree. 位置 R4 handoff :16-17 frontmatter 无 r4_doc_commit/r4_doc_tree; :151 §6 仅列 R3 文档 Commit; :184 §7 "本轮交付 Head：待提交本次 commit"; :192-206 forwardable instruction 未含本轮交付 Head.
+
+Wait — careful. N2 was described in the Task as "增加先前 R4 delivery pins". Hmm: R4 review N2 says "Handoff 未绑定本轮 R4 自身 commit/tree" — i.e., the R4 handoff delivered at R4 didn't pin its own R4 commit/tree (r4_doc_commit). The Task摘要 at :96 says "DSH N2/N3/N4 是 Handoff 的三项非阻断 finding：增加先前 R4 delivery pins、修正 AC2 调度依赖措辞、校准 R2 follow-up finding/收口项计数". And R5 handoff line 168 says "N2（补齐 R4 前序 delivery pins）".
+
+Hmm, there's a subtlety: The R4 N2 minimum fix option (b) said Owner 补 r4_doc_commit/r4_doc_tree to frontmatter, §6, §7 instruction, and change :184 "待提交本次 commit" to actual HEAD, noting "文件不能自证其所在 commit 的哈希，故推荐 (a)".
+
+Now in R5 handoff:
+- frontmatter lines 18-20: r4_doc_commit / r4_doc_tree / r4_doc_parent ✓ added.
+- §6 line 157-159: "R4 文档 Commit（前序已固定 Handoff Commit，N2）" + R4 Tree + R4 Parent ✓
+- §7 line 192: "前序已固定 Handoff Head（R4）：0e46ec7e...（Tree fb84...）" ✓
+- §7 line 193: "本轮 R5 交付 Head：由 Codex 在 live Task 中登记记录并核验" — this replaces "待提交本次 commit" with a statement that R5's own head is registered by Codex in live Task. And line 168 explains this rationale.
+- forwardable instruction line 207: "前序已固定 Handoff Head（R4）：0e46ec7e..." ✓ included.
+
+But note: the forwardable instruction (lines 202-217) does NOT include the R5 delivery HEAD — it says only R4 head. That's consistent with the rationale that the file cannot self-declare its own commit. However, the Task itself records R5 HEAD=7229ef5b2f6925115b91d28900bffe377513f5cd / tree=712da4becaff2b5f3519e88261cb515c80b54a1f. So the R5 head exists in the Task. Is N2 closed? N2's core ask was binding the R4 delivery pins — satisfied. The residual: R5's own pins are not in the file, but that's inherent (a file cannot contain its own commit hash reliably; also Owner is not authorized to change Task). The R5 handoff explicitly discloses this (line 168: "本 Handoff 文件不声明自身所在的未知 commit hash"). That's a reasonable and honest handling. I'd call N2 CLOSED with a note.
+
+Hmm, but one issue: line 168's parenthetical mapping of finding names. Let's check: "用于落实 DSH R4 Review 提出的 N2（补齐 R4 前序 delivery pins）、N3（AC2 调度依赖措辞精确化）、N4（校准 R2 follow-up 收口项历史）". Good, matches R4 review.
+
+**N3**: R4 handoff :117 AC2 row "Beta 在 Alpha 确定持锁期间显式执行 try_lock() 断言 WouldBlock，并在 Alpha 读完前阻塞于锁；双原子标志位保证时序". Minimum fix: change to "并在常规调度下先于 Alpha 完成读而阻塞于锁（调度依赖边界见 §2.2）" or add "(非形式化保证)".
+
+R5 line 121 (AC2 row): "Beta 在 Alpha 确定持锁期间显式执行 `try_lock()` 断言 `WouldBlock`（锁缺失/未生效时为严格硬确定性失败）；并在常规调度下先于 Alpha 完成读取而阻塞于锁排队（双原子标志位时序与提前解锁漏检调度依赖边界详见 §2.2 说明，非形式化全变体保证，N3）。" ✓ — "常规调度下" + "非形式化全变体保证" + §2.2 reference. Also §2.2 at R5 line 85 retains 调度依赖边界说明. N3 CLOSED.
+
+But wait — R5 line 63 says "探测成功后 Beta 才发送 beta_calling_tx，彻底杜绝 Alpha 提前释放锁的可能" — hmm, that's in §2.1 and it's the same as R2 report. Then line 64: "随后 Beta 进入 round_trip，在事务锁入口排队等待 Alpha 完成。" This is similar to the unconditional phrasing that N3 flagged... but §2.2 line 84 says "在绝大多数常规调度下，Beta 此时已在竞争锁". Hmm, line 64 says "在事务锁入口排队等待 Alpha 完成" — that's the intended design but scheduling-dependent. Is this a residual? R4 N3 specifically flagged the AC2 row. §2.2 already bounds it. Line 61-64 describes the test's intent. There's a mild tension: line 63 "彻底杜绝 Alpha 提前释放锁的可能" refers to the try_lock probe window (structurally deterministic) which is defensible. Line 64 describes Beta entering round_trip and queueing — this is the design intent. The §2.2 boundary note covers the extreme starvation case. I could raise this as a minor P3 residual observation (N3 partially closed / residual wording), but the R4 finding's precise requested fix was on the AC2 row and it's done. I'll note line 64 as a low-severity residual observation (P3) — hmm, but should I add new findings? The instruction says "标出任何新 finding 的级别、精确文件/行号、影响和最小修复". I should be judicious. Let me keep listing only defensible new findings.
+
+Let me consider: is line 64 inconsistent enough to warrant a P3? It says "随后 Beta 进入 round_trip，在事务锁入口排队等待 Alpha 完成。" — in normal scheduling yes. §2.2 explicitly gives the boundary. Given the document explicitly declares the boundary twice (line 85, line 121), a P3 nit at line 64 is arguably redundant but could be flagged as "residual wording" P3. I'll include it as an observation, marked P3, but note it's non-blocking and arguably covered by §2.2. Actually, to be careful about not inflating findings, I might list it under "残余观察（不计入 finding 计数）". Hmm. R4 review did similar: "残余（不构成 finding，记入 §6）". I'll do that: list as 观察 A (不计入 P 计数) or as a P3. Let me decide after checking everything.
+
+**N4**: R4 handoff :38 "follow-up 提出 2 点文档收口项：P3-1（未记录 R2 source head/tree/parent）、观察 A". Minimum fix: "follow-up 维持 P3-1/P3-2/P3-3 并新增观察 A；其中 Owner 侧文档收口为（P3-1+P3-2）与观察 A".
+
+R5 line 41: "**精确记录 DSH R2 follow-up 收口历史（N4）**：follow-up 复核维持 P3-1、P3-2、P3-3 并新增观察 A，其中：(1) Owner 侧文档收口项为 P3-1（补记 R2 source pins 与 changed paths）与 P3-2（明确 diff-check 输出留存情况）；(2) 观察 A 为调度依赖语义校准（校准"锁提前释放"时依赖调度的表述）；(3) P3-3（request_id 加固）属测试代码侧加强项，须由 Codex 先冻结范围。" ✓ Fully matches the requested fix. N4 CLOSED.
+
+Hmm, but is the claim accurate vs R4 review's citation of followup :152-155 §8? R4 review says: Owner 侧收口实为 (1) P3-1 + P3-2（补记 head/tree/parent/changed paths 并留存 diff --check 输出）、(2) 观察 A、(3) P3-3 request_id 加固. R5 line 41 agrees. ✓. But R5 line 41 attributes P3-2 as "明确 diff-check 输出留存情况" — matches "留存 diff --check 输出". ✓
+
+I can't read the followup report (not in the allowed list). So I take R4 review's citation as the reference. Note that as a limitation: N4 closure verified against R4 Review's citation, not the original follow-up report.
+
+Wait, actually — is the R4 review citing followup :152-155? The followup report is 157 lines per R4 review §2 item 6. Yes consistent.
+
+### 2. R5 Handoff 自身检查
+
+**(a) 前序对象 pins**:
+- frontmatter: base_commit + base_tree ✓; r1_head_commit + r1_head_tree ✓ (lines 11-12); r2_source_head_commit/tree/parent ✓ (13-15); r3_doc_commit/tree ✓ (16-17); r4_doc_commit/tree/parent ✓ (18-20). branch, worktree ✓.
+
+Are these values consistent with Task? Task :14 base_commit=faea1a2c... ✓ matches line 9. Task :32 P04 tree=eb0cc832531005a40d7a7294daf12cd0baa30a3d is P04's tree, but R5 handoff line 10 labels `base_tree: eb0cc832531005a40d7a7294daf12cd0baa30a3d`. Hmm! Is the base tree the tree of base commit faea1a2c? Task line 32: "P04 Owner R4 delivery=`faea1a2c9e19f4817fd792290e91324f047529f9` / tree=`eb0cc832531005a40d7a7294daf12cd0baa30a3d`". So yes, `faea1a2c` is P04's R4 delivery commit and its tree is eb0cc832. Consistent. Cab, but note: Task line 14 calls base_commit faea1a2c... and it's P22's code base. ✓
+
+- R1 head tree `ab81c2182eef2b8d3be26d75a45c252fe3b882e4` — Task doesn't record r1 tree... Task :62 records r1 head=680e3830... Hmm, Task :63 records r2 parent=680e3830, HEAD=92093792 / tree=083a08f5. R1 tree not in Task. So the R1 tree value can't be cross-checked with the Task. Is it verified anywhere in the allowed set? R4 review §1 lists R4 pins only. So r1_head_tree=`ab81c21...` is unverified in the allowed set — but also it's the same value recorded in earlier rounds presumably. Not a finding per se; just note it's not cross-checkable. Actually, hold on — is it consistent with anything? R1 report SHA etc. not relevant.
+
+Hmm, but there is one thing worth checking: R5 line 34 says R1 tree `ab81c2182eef2b8d3be26d75a45c252fe3b882e4`. Earlier Task records exist? Task :62 "P22 r1 delivery static review" — no tree. Task :78 mentions r1 base/head/tree 核验 by Codex but doesn't give the tree value. So no conflict.
+
+- Task :85 R3: HEAD=3038fe03... / tree=9f6bb91b... ✓ matches R5 lines 16, 43, 155-156.
+- Task :92-93 R4: HEAD=0e46ec7e..., tree=fb84f616..., parent=3038fe03... ✓ matches R5 lines 18-20, 46, 157-159.
+- Task :101-102 R5: HEAD=7229ef5b... / tree=712da4be... / parent=R4 0e46ec7e... — R5 handoff does NOT include its own head (deliberate).
+
+**(b) 行号/行数自洽**:
+R5 handoff says nothing about its own line count? Let me check: line 52 "并核对修正自引行号与行数" (goal statement). Hmm, does the R5 handoff anywhere claim a specific total line count? Task :103 says "Owner 报告声称 Handoff 218 行；Codex 实读计数为 217 行". But the R5 handoff file itself... searching for "行" in the content: line 52 mentions 行号与行数. Hmm, I don't see a "全文共 N 行" claim in R5 handoff. Let me re-scan lines 1-217... Line 52: "逐项落实 DSH R4 findings N2、N3、N4，并核对修正自引行号与行数。" That's it. No explicit line count. So the "218 行" claim is in the Owner report (the raw JSON/dispatch response), not in this Handoff. Hmm, wait — Task :103 says "Owner 报告声称 Handoff 218 行" and there's a separate file `antigravity-owner-p22-r5-handoff-fix.*`? Actually Task :101 says raw JSON SHA and R5 Owner Handoff SHA. The owner's response (CLI JSON response) claims 218 lines. The Task says Codex 实读计数为 217 行. My read = 217 lines. So Codex's count matches mine. Good — I should report: 我读到 217 行（含最后一行 217 无结尾空行的计算口径：以 `read` 的分行计数，文件末尾第 217 行是闭合 code fence ```），与 Codex 实读一致；Owner 报告的 218 行可能是把末尾换行计为额外一行，或把 code fence 后的空行计入。That's the 计算口径 explanation requested.
+
+Also I should check internal self-references: does R5 handoff cite its own line numbers anywhere? Let me grep mentally: §2.2 reference at line 121 "详见 §2.2 说明" — section reference, fine. No line-number self-citations. Good, so no 行号自洽 problem. But hold on: R4 review's N1 noted the R4 Task had line-range citations (":173-208" etc.) — those were in the Task, not handoff. And R5 handoff §7 forwardable instruction has no line ranges. OK.
+
+However, one thing: R5 handoff line 168 says "前序 R4 已固定为 commit ... / tree ...，当前 R5 提交由 Codex 在 live Task 中登记记录；本 Handoff 文件不声明自身所在的未知 commit hash。" Good, consistent with Task :101-102.
+
+**(c) Review 状态时态**:
+- frontmatter line 7: `status: completed_implementation_static_only`. R4 review N2 residual note (line 100) suggested aligning frontmatter status with AC4's `SUBMITTED / PENDING REVIEW & ADJUDICATION`. R5 did NOT change status (still completed_implementation_static_only). Hmm — that was part of N2's optional "(顺带)" suggestion. Not required. Is `completed_implementation_static_only` a 时态超前 (status overclaim)? It says implementation completed static-only — that's accurate for implementation (R2 code delivered, static only). AC4 is pending. The status field is about the handoff's own state... arguably `completed_implementation_static_only` is fine. But in R5 context, the doc is a review-pending revision. Hmm. This is the same as R4, and R4 review only suggested it as an optional alignment ("可顺带"). Since Owner didn't do it, should I raise it? R4 N2 was closed by adding pins; the optionality means no new finding required. But per instruction 4, I must give R4 findings CLOSED/OPEN. N2 = CLOSED (核心要求已落实)，可附条件：可选对齐未做（不阻断）。
+
+Actually, is there a real 时态 issue in R5? Line 123 AC4 = "SUBMITTED / PENDING REVIEW & ADJUDICATION" ✓ (not claiming review done). Line 183 "本轮文档交付已提交，待独立 Review 和 Codex adjudication（P3-2）" ✓. Task :103 says "DSH R5 非作者内容 Review 待派发". Consistent.
+
+But hmm — AC4 line 123 says "待独立 Review 和 Codex adjudication（P3-2）" — references P3-2 which was R3's finding. Slightly odd in R5 context but it's a historical tag. Fine, minor.
+
+- Line 47: R4 review conclusion APPROVED_WITH_CONDITIONS (P0/P1/P2/P3=0/0/1/3) ✓ matches R4 review line 11-12. Note R4 review's P2=1 is N1 (Codex 侧 Task 记录), and P3=3 = N2/N3/N4. R5 line 49 says "DSH 提出 3 项非阻断文档缺口：N2（...）、N3（...）、N4（...）" ✓ — but omits the P2 N1 (Codex-side Task defect). Hmm, line 48 mentions N1: "Codex 已单独修复 Task 记录侧缺陷 N1 并更新 Task SHA-256 为 549F08F153890B5C5041B04AB82FA80B9EA17C0532EA86279AA139B458DFC451". 
+
+⚠️ Now that's interesting: R5 line 48 claims Codex updated the Task SHA-256 to `549F08F1...`. But the review mandate says the live Task SHA-256 = `EFD7BD29FB369FDCD1C44FBCB923FF990B7EB16D256933E18A79AFB01804A724`. Hmm — the mandated value is the "声称值" recorded at dispatch. The handoff claims the Task SHA-256 is 549F08F1.... These conflict — but with different times: handoff line 48 refers to the Task SHA after Codex's N1 fix (before R5 Task record was appended), while the dispatch claims EFD7BD29... which presumably reflects the Task after appending R5 record (lines 99-104). So the Task SHA changed again. So line 48's value is stale relative to the current Task, but that's expected since the Task was updated after the handoff was written. Not a finding per se, but I should note it: line 48's Task SHA claim cannot be verified this round (object_binding=NOT_VERIFIED) and is by construction stale (Task 在 R5 后被追加记录). Also note R4 review line 22 cited the pre-fix Task SHA 7EBD7D40... (the malformed snapshot). So there's a chain: 7EBD7D40 (malformed) → 549F08F1 (Codex rebuild) → EFD7BD29 (with R5 record). I should note this as an observation (not a finding) since the handoff cannot be expected to track post-hoc Task edits. Hmm, but the handoff author knew Codex would append; stating a Task SHA that is already stale is a minor record-integrity point. Actually R5 handoff line 48 says "Codex 已单独修复 Task 记录侧缺陷 N1 并更新 Task SHA-256 为 549F08F1..." — recording a point-in-time value is acceptable, but a reviewer should note the current live Task SHA is different (per dispatch claim EFD7BD29...), so this pin is historical, not current. I'll note as 观察 (non-blocking) — arguably P3. Hmm. Actually, wait. Is it even the same object? The mandate says Task SHA-256 = EFD7BD29FB369FDCD1C44FBCB923FF990B7EB16D256933E18A79AFB01804A724. I cannot verify. But the discrepancy is worth flagging as a P3 finding? It could confuse future readers into thinking the Task hash is 549F08F1. Given the R5 Task record (lines 99-104) was added after, the mismatch is explainable. I'll flag it as 观察 O-1 / P3-adjacent non-blocking, noting the value is time-stamped and superseded. Let me decide whether to count it. I think I'll list it as a P3 finding since it's a concrete textual pin that is now stale/contradicted by the dispatch claim — with minimal fix being to add "（截至 R4 修复时；此后 Task 因登记 R5 记录再次变更）". Hmm, but that risks being over-strict. The R4 review itself noted that Codex updated the Task SHA. Since the handoff correctly attributes it as Codex's action at that time, and the Task format includes timestamps... I'll classify it as P3 (record precision) with low blocking weight. Actually let me be careful: the review asks me to check "Review 状态时态" and "前序对象 pins". A Task SHA pin that is stale is a legit finding at P3. I'll include it.
+
+Hmm, wait. Let me reconsider. Actually is it stale? The dispatch wrote: Task SHA-256=EFD7BD29... "这些 SHA 是 Codex 派发时记录的声称值". The dispatch presumably happened after Codex appended the R5 record (Task :99-104). Handoff line 48's 549F08F1 pins the Task at the N1-fix moment. Both can be true at different times. The handoff text says "更新 Task SHA-256 为 549F08F1..." without a timestamp qualifier. Since R4 N1 fix happened before R5, this is a historical pin. A reviewer can note it without severity. I'll call it P3 — "pins 语义需限定为时点值".
+
+Also line 48: "R3 的 4 项 findings 全部 CLOSED" — R3 report had P2-1, P3-1, P3-2, P3-3 = 4 findings, all closed per R4 review line 13. ✓ Consistent.
+
+Line 44: "指出 4 项 open findings：P2-1（未区分累计 3 路径与 R2 增量 2 路径）、P3-1（diff-check 声明未限定范围且无输出留存）、P3-2（状态时态超前）、P3-3（未披露 R2 Review 限制）" and "结论为 CHANGES_REQUESTED（P0/P1/P2/P3=0/0/1/3）" — consistent with Task :86 which says R3 review CHANGES_REQUESTED, P0/P1/P2/P3=0/0/1/3, P2-1/P3-1/P3-2/P3-3 all open. ✓
+
+Line 35: R1 review报告 `verification/P22/dsh-p22-review-r1.stdout.md`，4 findings (F1 P1, F2~F4 P3) — Task :62 says CHANGES_REQUESTED (P0/P1/P2/P3=`0/1/0/3`) ✓ consistent.
+
+Line 37: R2 head 92093792 / tree 083a08f5 / parent 680e3830 ✓ Task :63, :76.
+Line 38: 初次 R2 Review CLI exit=1 ✓ Task :64 (CLI exit=1).
+Line 39: follow-up CLI exit=0, static PASS ✓ Task :64.
+
+**(d) 授权范围**:
+Line 111: "仅修改 verification/P22/antigravity-owner-p22.handoff.md" ✓ within Task allowed range (:47 `verification/P22/**`, and doc/handoffs).
+Line 112: "零代码修改，零测试修改" ✓.
+Line 169-177: 未暂存保护文件清单. Note line 170 lists `doc/tasks/P22.md` as "未暂存保护文件（原样保留，绝不纳入提交）". Hmm — in the P22 worktree, `doc/tasks/P22.md` may be a tracked file that is locally modified (by Codex in the main repo?). Labeling it "uncommitted protected" is fine. But is the statement "未暂存保护文件" accurate/authorized? It's a claim about the worktree, not verifiable this round. Also `verification/P04/dsh-p04-owner-review-r4.stdout.md`, `codex-start-checkpoint.md`, review stdout files — these are untracked evidence. Task :102 says "worktree tracked 状态 clean，既有 untracked evidence 全部保留" ✓ consistent.
+
+Hmm, but the glob patterns listed as literal paths: `verification/P22/dsh-p22-review-r1*.stdout.md` etc. — fine as patterns.
+
+Now, does the R5 handoff's §7 forwardable instruction fall within Owner's authorization? The task guidance says a handoff should give a next-step suggestion per 协作协议 §5.1. R5 handoff line 183-198 suggests Codex do Git object verification & integration organization, and instructs not to run Cargo if barrier effective ✓ — does not suggest crossing the build barrier ✓.
+
+Check requirement 3 items in R5 handoff:
+- P02 Build Gate=BLOCKED: line 131 "P02 Build Gate 当前仍为 BLOCKED（build=NOT_AUTHORIZED / NOT_RUN）" ✓
+- Hard Build Barrier=EFFECTIVE: line 131 ✓
+- Cargo/runtime/AC2=BLOCKED / NOT_RUN: line 137 ✓, line 140 ✓, line 133 ✓
+- P22 未集成: Hmm — does the R5 handoff explicitly say "P22 未集成"? Search: line 183 "本轮文档交付已提交，待独立 Review 和 Codex adjudication" and "并在 P02 Build Gate 解除后组织后续集成" — implies not yet integrated. Line 123 AC4 "最终集成取决于 Codex..." implies pending. Is there an explicit "P22 未集成" statement? I don't see one in the handoff. The Task (:97, :103, :88, :98) states P22 未集成. Hmm — the R5 handoff lacks an explicit "未集成" statement but implies it. Since no claim of integration is made, the risk is low. Note as 观察? The instructions say "分别核对 P02 Build Gate=BLOCKED、Hard Build Barrier=EFFECTIVE、Cargo/runtime/AC2=BLOCKED / NOT_RUN、P22 未集成、P04=BLOCKED 且 blocked_by:[P22]" — 分别核对 means check each. If some item is absent from the handoff, I should note it. But careful: the R5 handoff is a Handoff for the R5 doc revision; does it need to restate P22 not integrated? Task :88 (R3 outcome) records Gate 未变 including P22 未集成 as Task-side record. The handoff line 183 says Codex should "在 P02 Build Gate 解除后组织后续集成" which implies integration hasn't occurred. I'd call it "隐含覆盖、无显式声明" — a P3 at most? Hmm.
+- P04=BLOCKED 且 blocked_by:[P22]: R5 handoff — search "P04": line 171 (file path), line 29 (P04 AC2/R2-001). Line 122 AC3 mentions nothing about P04 status. Does the handoff state P04=BLOCKED, blocked_by:[P22]? I don't see it. Hmm. Task :97/:103 state it. So in the handoff, P04 dependency status isn't restated. Is that required? R4 N-findings didn't require it. But my mandate item 3 says "分别核对 ... P04=`BLOCKED` 且 `blocked_by:[P22]`" — I interpret: check that R5 handoff (and Task) don't contradict these states, and don't suggest crossing the barrier. R5 handoff doesn't contradict. I should report: Task 侧完整记录 (..:97/:103)；Handoff 侧未显式复述 P04 状态与 P22 未集成，但也没有相反声明（无 contradictory claim）→ 记为非阻断观察/P3。
+
+Hmm, careful about naming the reference: line 29 mentions "P04 AC2/R2-001" and 来源. Fine.
+
+Also important: the handoff §1 line 29 says "实施了最小化的单通道事务互斥锁（Transaction Mutex）修复，并将原 P04 AC3 负向复现器转换为常规确定性回归测试" — 时态 uses 完成时 for implementation; that's the R2 code delivery (static). Acceptable given status `completed_implementation_static_only` and AC4 pending. Could be seen as claiming code change complete — it is complete (delivered statically). OK.
+
+**(e) Task 一致性**:
+- Task :96 says "Antigravity 原 Owner 正在接收 R5 Handoff-only 修订；P22 Task 与其他文件不在 Owner 写入范围" ✓ matches.
+- Task :103 states R5 revisions targeted N2/N3/N4 and mentions the 218 vs 217 line discrepancy, left for DSH R5 content review ✓.
+- Task :101-102 R5 pins: prompt SHA 775152FD..., raw JSON 22FAA3E2..., handoff SHA F896FCA8... — the mandate says handoff SHA = F896FCA815067451C11FE102E818C3A8349A5BFD0895062F1604370F9419182D ✓ matches Task :101.
+- Hmm: Task :101 gives prompt/raw/handoff SHAs but no "owner response SHA" for R5 (unlike R4 :92). Minor.
+- Task :103 says "Owner 报告声称 Handoff 218 行；Codex 实读计数为 217 行" — my read = 217 ✓.
+
+Now the R5 handoff's own claim about previous rounds: line 37 says R2 tree `083a08f532afa7019a296ec96c805eeefd8b8805` ✓.
+
+Is there any other inconsistency? Let's check frontmatter `title` vs heading: line 3 and line 25 both "Owner R5 文档修订报告（记录 R2 交付状态与双范围核验）" ✓ consistent.
+
+Line 7 `status: completed_implementation_static_only`; line 8 `revision: R5_doc_fix` ✓.
+
+Hmm, `reviewer: DeepSeek Harness` and `integrator: Codex` ✓ match Task :9-11.
+
+Missing frontmatter fields vs HANDOFF template? The template (doc/templates/HANDOFF.md) — I'm not allowed to read other files? The boundary says "只读上述 Task、R5 Handoff、R4 Review". So I shouldn't read the template. Hmm, R4 review apparently read more files (it listed 6 files read including r3 report, adjudication). But my mandate explicitly says 只读上述三份. I'll stick to three and declare that template conformance is out of scope (unread).
+
+Now, the "行号/行数自洽" check: R5 handoff contains no explicit line-count claim and no line-number self-citations, so internally self-consistent. But there's a subtle one: line 52 claims the revision "核对修正自引行号与行数" — hmm, "自引行号" implies the doc references line numbers. It doesn't. Eh, that's a goal statement; fine. Actually R4 handoff had line-number citations in Task, not handoff. Fine — I'll note that no self-citations exist, so nothing to be inconsistent, and that the claim in §1.5 is vacuous-ish. Not a finding.
+
+Let me now also verify §3.1 and §6 路径集 consistency within R5: §3.1 (lines 95-100) 3 paths ✓; §3.2 (102-107) 2 paths ✓; §6 (160-167) ✓ same; §7 Scope (196) "核验两种 diff 范围（累计 3 路径 vs R2 增量 2 路径）" ✓; forwardable instruction (211-213) ✓. Consistent.
+
+One inconsistency check: line 99 says sidecar "修改为即时回包并优先读取 P22_DIAGNOSTIC_LOG" and §2.1 line 74 says sidecar "优先读取 P22、回退读取 P04" ✓ consistent. R4 N2's... wait, R4 review's F4/N1? The Task :72 mentions R1 findings F2–F4 included "诊断日志父目录与双环境变量说明" ✓ covered in §2.1 line 73-74.
+
+Now line 44's P3-1 description: "P3-1（diff-check 声明未限定范围且无输出留存）". Task :86 says R3 review P2-1... "P3-1、P3-2、P3-3 全部 open" — Task doesn't describe them, but R4 review §3.2 says P3-1 = "限定 diff-check 授权/执行范围；无 raw output 时明确未保存" ✓ consistent. R4 review §3.3 P3-2 = 状态时态 ✓ matches R5 line 44 "状态时态超前". §3.4 P3-3 = object_binding/exit 码 ✓ matches "未披露 R2 Review 限制". 
+
+Now let me think about whether R5 introduced any new problem relative to R4 — e.g., R4 review flagged line numbers :134, :117, :38 for the R4 handoff. In R5, these are :138, :121, :41. The R5 handoff's §1.1 line 41 says "P3-1（补记 R2 source pins 与 changed paths）". R4 review §4 N4 said "P3-1（未记录 R2 source head/tree/parent）" — R5's rewording adds "changed paths" which matches R4 review's own expanded description "补记 head/tree/parent/changed paths". OK fine.
+
+Now, potential real findings:
+
+**F1 (verify)**: line 121 AC2 row says "并在常规调度下先于 Alpha 完成读取而阻塞于锁排队（双原子标志位时序与提前解锁漏检调度依赖边界详见 §2.2 说明，非形式化全变体保证，N3）". Good. But line 85 §2.2 says "若在极端调度下 Beta 被连续饿死一个完整 IPC 往返，直到 Alpha 读完响应才被调度取锁，则双原子断言可能碰巧通过。因此，本回归用例不声称能硬确定性捕捉所有"提前解锁"变体". Fine.
+
+But hmm: §2.2 item 1 (line 81) says "若 round_trip 移除或未获取 transaction_lock，Beta 的 try_lock() 探测必定返回 Ok，断言立即 panic 失败。此项为严格的结构性硬确定性保证。" Is that accurate? If the lock is removed, `chan_beta_probe.transaction_lock.try_lock()` — the probe references the field... if the field is removed, the code wouldn't compile; if it's not acquired in round_trip, then try_lock would succeed → assert fails ✓. Also is there a race: Beta probes after receiving alpha_locked_tx signal which Alpha sends *after* acquiring lock (line 61). If round_trip never acquires, Alpha wouldn't signal either (the hook fires after acquiring). Then Beta would hang until recv_bounded timeout (10s) and fail — still a failure, so detection holds. Fine, not a finding. Well, actually recv_bounded is a bounded wait (10s) and failing = panic. OK.
+
+Now: does the document claim "不得用 sleeps"? line 121 says 零 sleep ✓.
+
+**Potential finding**: AC2 acceptance criterion (Task :37) requires "不得用 sleeps 或概率循环；必须调用真实 round_trip". Handoff claims compliance. Fine (static claim).
+
+**Potential finding about "SATISFIED (Static)" for AC2**: line 121 marks AC2 = SATISFIED (Static) while the test cannot run (BLOCKED/NOT_RUN). Is that an overclaim? The handoff qualifies with (Static) and §5 records BLOCKED/NOT_RUN. Task AC3 says 测试运行状态必须如实记录. R4 review explicitly found no runtime overclaim with AC1/AC2/AC5 marked (Static). So consistent with prior review; not a new finding.
+
+Hmm, but AC3 row line 122 says result "**SATISFIED**" without "(Static)" — AC3 is about scope compliance, static is fine.
+
+**Potential finding about line 138 diff-check row**: R4 review §3.2 noted residual "（及对应 commit 范围）". In R5, line 138 command column is `git diff --check verification/P22/antigravity-owner-p22.handoff.md` and environment "本机 Git（仅限 Owner 被授权执行的单文件 handoff 检查）" — the "（及对应 commit 范围）" phrase is now GONE. Let me re-read line 138: "| **静态 Whitespace / Diff 检查（限定声明，P3-1）** | `git diff --check verification/P22/antigravity-owner-p22.handoff.md` | 本机 Git（仅限 Owner 被授权执行的单文件 handoff 检查） | **PASS (EXIT 0)** | 零 whitespace 错误；**未保留原始输出文件**（仅在 CLI 执行并核验退出码）；不得推广为全范围验证声明；Codex 独立核验留在 Codex adjudication |"
+
+So the R5 version tightened it: single-file only, no commit-range claim. Nice — actually that removes R4's residual concern. But wait: does the R5 revision introduce tension with Task :102 which says Codex independently verified `git diff --check` EXIT 0 for R4..R5? No, that's Codex's action.
+
+Hmm, but careful: the R5 handoff line 138's "PASS (EXIT 0)" for the R5 file — is this a claim about the R5 file's diff which couldn't be checked before it's committed? The check runs against the working tree file. It's a whitespace check on the file content; fine. It says it's the Owner's own executed check with no retained raw output. R4 review accepted this pattern with the range limitation. Now limited to single file ✓. OK.
+
+Hmm, but is there an issue: line 138 says the command is `git diff --check <file>` but git diff --check on an untracked/unstaged modified file... whatever, not my scope (no git verification).
+
+**Potential finding**: line 139 table row title "P22 R2 exact-head review（披露限制，P3-3）" ✓.
+
+Now let me look for the "R2 follow-up 收口历史计数" requirement explicitly: R4 N4 asked for precise counting. R5 line 41 does it ✓. But does it also correctly state the follow-up's finding counts? R4 review line 114: followup `:0` findings 行记 "P3 = 3（前报告 3 条全部维持）". R5 line 41 says "follow-up 复核维持 P3-1、P3-2、P3-3 并新增观察 A" — consistent (3 P3 maintained + observation A) ✓. But it doesn't state "P0/P1/P2 = 0" counts. Acceptable.
+
+Now the Task's description of N4 at :96: "校准 R2 follow-up finding/收口项计数" ✓.
+
+Now, let me consider the discrepancy: Task :41 in R5? No wait, Task lines. Task :96 and :103 describe N2/N3/N4 ✓ match R4 review naming (N2 pins, N3 AC2 wording, N4 counts) ✓.
+
+Now check Task :103's claim "R5 针对 DSH R4 的 N2/N3/N4：补齐 R4 commit/tree/parent pins，并说明 R5 自身由 Codex 在 live Task 登记；将 AC2 时序描述限定为常规调度并引用 §2.2 边界；准确记录 P3-1/P3-2/P3-3 与观察 A 的 follow-up 关系" ✓ verified against handoff lines 18-20/157-159/192-193/168, 121/85, 41.
+
+So N2/N3/N4 all CLOSED.
+
+Now — new findings to consider:
+
+1. **Task SHA pin at line 48 (549F08F1...) vs dispatch-claimed current Task SHA (EFD7BD29...)** → record-precision issue. Actually careful: I must not claim to have verified any SHA. I'll phrase: "Handoff :48 将 live Task SHA-256 pin 为 549F08F1…；派发单记录的本轮 Task SHA-256 为 EFD7BD29…。二者不一致只能说明 :48 是 R4 时点快照（之后 Codex 追加了 R5 记录），但文本未标注时点/易被误用为当前值。" Severity: P3. Minimal fix: 加时点限定，或由 Codex 在 Task 侧维护最新 hash。
+
+2. **P22 未集成 / P04=BLOCKED、blocked_by:[P22] 未在 Handoff 显式复述** → the Handoff §5/§7 states barrier and BLOCKED/NOT_RUN but does not restate "P22 未集成" and "P04=BLOCKED, blocked_by:[P22]". Not a contradiction. Severity P3 as record completeness (it's a Gate-status section that Task :88/:97/:103 lists fully). Minimal fix: 在 §5 IMPORTANT 块补一行 Gate 摘要。Non-blocking.
+
+Hmm, is #2 too nitpicky? The R4 review didn't require it, and R4 review §5 checked "未发现误述" without demanding P04 restatement. But my mandate explicitly asks me to 核对 these items in R5. So reporting "Handoff 未复述，Task 侧完整，无相反声明" is appropriate; I'll present it as an observation with P3 level and note it's not a R4 carryover. Actually, since the mandate says "分别核对", maybe the cleanest is: give a table of the five Gate items, each with "Task 记录 / Handoff 覆盖 / 判定", and only escalate genuinely contradictory or missing-required items. If Handoff coverage is implicit for two items, I'd best list them as P3 findings so they're tracked. I'll list them as one P3 finding (合并) — "R5 Handoff §5 Gate 摘要缺少 P22 未集成 与 P04=BLOCKED/blocked_by:[P22] 两项显式声明". Hmm, merging two items into one finding is fine.
+
+3. **frontmatter `status: completed_implementation_static_only` vs AC4 `SUBMITTED / PENDING REVIEW & ADJUDICATION`** — R4 N2's optional suggestion not implemented. Since N2's mandatory part is done, I'd mark N2 CLOSED and note this as a non-blocking residual observation (not counted), consistent with R4 review's "可顺带" phrasing. Hmm, or count as P3? The R4 review itself said it's 顺带 (incidental). I'll keep it as a residual observation, not counted, to avoid inflating. But wait — the instruction says give P0/P1/P2/P3 counts. If I list an observation-not-finding, I mirror R4's style (§6 residual). OK.
+
+Actually hold on. Let me consider whether `status: completed_implementation_static_only` is a 时态问题 in R5 context: The handoff is a revised document now pending review. "completed_implementation_static_only" describes implementation delivery state, which remains accurate (implementation delivered, static only). Not a 超前 claim of review. Fine → residual observation.
+
+4. **§2.1 line 63-64 措辞与 §2.2 边界**: line 63 "彻底杜绝 Alpha 提前释放锁的可能" and line 64 "在事务锁入口排队等待 Alpha 完成" — residual scheduling-dependency wording similar to N3 but in §2.1, not bounded by a "常规调度" qualifier at that point. §2.2 comes later and bounds it globally. Is line 63 actually a deterministic claim? "探测成功后 Beta 才发送 beta_calling_tx，彻底杜绝 Alpha 提前释放锁的可能" — the point is: Alpha holds the lock while waiting at beta_calling_rx, so Alpha cannot release before Beta's probe. That IS structurally deterministic for that window (Alpha is blocked at recv_bounded(10s) while holding the guard). Hmm, actually can Alpha time out after 10s and release? recv_bounded(10s) → if Beta doesn't respond in 10s, Alpha proceeds (times out) and might release. But Beta responds after probe. This is fine. Line 64 "Beta 在事务锁入口排队等待 Alpha 完成" — in normal scheduling. I think this is a legit tiny P3 residual since N3 only fixed the AC2 row, and §2.1 still asserts the queueing as unconditional. Hmm, but §2.1 is describing the intended test design; §2.2 explicitly provides the boundary. R4 N3's minimal fix targeted only the AC2 row. I'll record it as a residual observation (不计入 finding) OR as P3. Let me count it as a P3? I worry about being over-aggressive. Let's think about the reviewer's value: flagging that the same over-strong wording persists at line 64 (N3's class of issue, different location) is genuinely useful and cheap to fix. The mandate says "标出任何新 finding 的级别". If I don't classify it, it's just an observation. R4 review style: it listed a residual under §6 as non-finding. I'll do similarly but explicitly note that the same-class wording at :64 remains unbounded; classify as P3 because it is a concrete, actionable wording gap of the same class as N3. Hmm.
+
+Decision: I'll list it as a P3 finding (N3-residual), since the R4 review's N3 rationale ("属措辞一致性问题") applies equally at :64. That keeps me honest and it's non-blocking. Actually wait — is it really the same? N3 was about the AC2 row's "保证时序". At §2.1 item 1, the fourth bullet says "随后 Beta 进入 round_trip，在事务锁入口排队等待 Alpha 完成。" This asserts Beta will queue behind Alpha — which the §2.2 boundary says may not hold under extreme starvation. Yes, same class. P3.
+
+Hmm, but I could also fold it into "N3 CLOSED with 残余". Let me present: N3 = CLOSED (指定位置已修), 但发现同类残余措辞在一处（:64）→ 新 finding P3-1. That's clean and satisfies both "逐项 CLOSED/OPEN" and "标出新 finding".
+
+5. **Any claim in Handoff about "Codex 已独立核验" of R5?** Line 138 says Codex 独立核验留在 Codex adjudication (future). Line 168 says "当前 R5 提交由 Codex 在 live Task 中登记记录". Task :102 says Codex did verify R4..R5 single-path change and diff-check. The Handoff doesn't claim Codex verified R5 — it defers. Consistent ✓.
+
+6. **Line 47**: "DSH 对 R4 文档修订开展独立审查（报告 ... SHA-256=17E2C882...）" ✓ matches mandate's R4 review SHA 17E2C882422305A30616C7E282618D48953E8453901D60A6FB8B99319D6A2B98 ✓ — exact match. Good, that's a cross-checkable pin I can verify textually (though not cryptographically).
+
+7. **Line 168 mention of N2 mapping**: "N2（补齐 R4 前序 delivery pins）" — hmm, this is a slight reframing: R4's N2 was "Handoff 未绑定本轮 R4 自身 commit/tree" i.e., at R4 time, the handoff lacked its own pins. R5 fixed by adding r4_doc_commit/tree/parent (which at R5 time are "前序"). Reframing as "R4 前序 delivery pins" is accurate from R5's perspective ✓.
+
+8. Check that the R5 handoff doesn't modify code claims: line 112 "零代码修改，零测试修改" ✓ within Task's allowed range (verification/P22/** and doc/handoffs).
+
+Hmm, one thing: Task :47 allows `doc/handoffs/P22-*.md` and `doc/reviews/P22-*.md` — but P22's handoff lives at `verification/P22/antigravity-owner-p22.handoff.md` in the worktree, while Task :76 says Owner Handoff: `verification/P22/antigravity-owner-p22.handoff.md`. Task :47 lists `doc/handoffs/P22-*.md`. So the actual handoff path (`verification/P22/**`) is allowed via line 46 ✓. Consistent enough; the "doc/handoffs/P22-*.md" allowance is unused. Fine.
+
+9. **R5 handoff line 193**: "本轮 R5 交付 Head：由 Codex 在 live Task 中登记记录并核验" — Task :102 indeed records HEAD=7229ef5b... ✓ consistent.
+
+10. **Line 139's claim about the R2 review reports' exit codes** ✓ Task :64.
+
+11. Any 越权 next-step? Line 185-187: Task "P22 集成验证与 Gate 闭合", Agent Codex ✓. Recovery point ✓. Scope includes "组织集成或等待构建屏障解除" — careful: "组织集成" while the barrier is effective? Line 140 row says 集成后回归 BLOCKED/NOT_RUN, and line 183 says "在 P02 Build Gate 解除后组织后续集成" ✓ so conditionality is present. But line 198 Scope: "组织集成或等待构建屏障解除" — conditional-ish ("或"). And instruction item 5 says if barrier effective, keep BLOCKED/NOT_RUN and don't run unauthorized Cargo ✓. So no barrier-crossing suggestion ✓. Good.
+
+12. Consultation: does the handoff's forwardable instruction include the R5 head? No (deliberate). Task :87 (R3 outcome) asked "新 head 再由 Codex 核 Git、DSH 非作者复审" — consistent.
+
+13. Check "Review 状态时态" for R3 claim line 44: "DSH 对 R3 文档修订开展独立审查（报告 verification/P22/dsh-p22-review-r3.stdout.md），结论为 CHANGES_REQUESTED..." — Task :86 confirms. ✓ And R4 review read r3 report (106 lines). Fine.
+
+14. Hmm, one possible inconsistency: line 44 says the R3 report is at `verification/P22/dsh-p22-review-r3.stdout.md`; Task :86 doesn't give the path but §5 of Task records R3 outcome. Fine.
+
+15. Line 35 says R1 report path `verification/P22/dsh-p22-review-r1.stdout.md` ✓ Task :62 references the same file.
+
+16. Another check on the "行数" angle: R5 handoff line 52 claims it will check 行号/行数 — and Task :103 records the 218 vs 217 discrepancy. The handoff does NOT contain the "218 行" claim nor the correction. So the line-count metadata discrepancy lives only in the Owner CLI report (raw JSON), which is out of my read scope. I'll report: 我实读 217 行（read 工具计数，最后一行 217 = closing code fence ``` ），与 Codex 实读一致；Owner 报告 218 行 的差异最可能来自末尾换行/末尾空行计数口径（CRLF vs LF、或 fence 后空行）。Hmm — actually why would 218? If the file ends with a newline after line 217, some counters (wc -l) report 217 (count of newline chars) or the owner's tool counted 218 lines meaning there's a trailing empty line making 218 "lines" in a split sense (split("\n") gives 218 elements if the content ends with \n: 217 lines + 1 empty). Yes! `content.split("\n").length` = 218 when the file ends with a newline and has 217 lines. That's the likely 口径: "行数" 定义为 `split("\n")` 元素数（含末尾空串）= 218；而 read/wc -l 口径 = 217。Good explanation. I'll state both possibilities: (a) 以换行符计数 = 217；(b) 以 split 后元素含末尾空元素 = 218。And note that within my read, no trailing blank line exists beyond line 217's content... Actually I can't tell whether there's a trailing newline. I'll phrase carefully: 我的 read 结果 total = 217 行，末行为第 217 行的代码围栏闭合行 `` ``` ``；如果文件末尾存在换行，则按 `split("\n")` 口径会得到 218 个元素，这最可能是 Owner 报告"218 行"的来源。判读：Codex 的 217 行与我的计数一致，属口径差异而非内容缺失。
+
+Now, requirement 4: R4 findings 逐项 CLOSED/OPEN + Decision + P counts.
+
+R4 findings: P2-1, P3-1, P3-2, P3-3 (R3's, closed by R4), N1 (P2, Codex-side), N2 (P3), N3 (P3), N4 (P3).
+
+Hmm — "对 R4 findings 逐项给出 CLOSED/OPEN". R4 review's open findings at the time: N1 (P2), N2, N3, N4 (P3). The R3 findings were already closed in R4. So I should enumerate: R3 的 4 项（P2-1/P3-1/P3-2/P3-3）在 R4 已 CLOSED，本轮连同 R5 一并复核：是否被 R5 修订回归（regression）？ R5 changed :38/:117/:134 areas — need to check the R5 revision didn't regress P2-1/P3-1/P3-2/P3-3 closures. Let's verify:
+- P2-1 (two diff ranges distinguished): §3.1/§3.2/§6/§7 ✓ still present (lines 95-107, 160-167, 196, 211-213) → remains CLOSED.
+- P3-1 (diff-check scope limitation + no raw output): line 138 ✓ still limited → CLOSED.
+- P3-2 (状态时态): line 123, 183, 193 ✓ → CLOSED.
+- P3-3 (object_binding/exit 披露): lines 38-40, 139 ✓ → CLOSED.
+- N1: Codex-side Task record defect. Task :95 says Codex rebuilt the Task per literal values, saved malformed snapshot. Current Task lines 90-97 look well-formed (R4 record: line 92-94 with real SHAs and values, line 95 mentions N1 snapshot SHA). Let me verify: Task :92 has real hashes (8F999C9E..., 92E18359..., E17AF89E..., C23B510B...), :93 real commits, :94 real SHA. No `$promptHash` residue, no missing leading chars, no "erification". Task :95 mentions the snapshot file. Task :97 Gate line. So N1 = CLOSED on the Task side (as read). Note: the Task was 207 lines at R4 and is now 104 lines — Codex rebuilt it. Within allowed read, N1 looks fixed. But careful: Task :95's snapshot file name `verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md` with SHA 7EBD7D40... matches R4 review's cited Task SHA 7EBD7D40E7334C9422F4BF126A29B3D0F49300E2BDBAC86CEDFDB1ED74EE98C9 ✓ nice consistency.
+  Hmm also check: R4 review said Task :132 claimed 208 lines etc. — now irrelevant.
+  So N1 = CLOSED (内容层，基于直读；不核验对象绑定).
+- N2 = CLOSED (pins added: frontmatter 18-20, §6 157-159, §7 192, instruction 207; R5's own head deferred to Task with explicit rationale :168/:193). 
+- N3 = CLOSED (AC2 row :121 已限定 "常规调度下" + "非形式化全变体保证" + 引 §2.2). But 新 finding: §2.1 :64 同类残余.
+- N4 = CLOSED (:41 精确记录).
+
+New findings:
+- P3-A: §2.1 :64 同类调度依赖措辞未限定（N3 同类残余）。
+- P3-B: :48 Task SHA pin 时点未限定/已过期（与派发声称的 EFD7BD29… 不同）。
+- P3-C: §5 Gate 摘要缺 "P22 未集成" 与 "P04=BLOCKED、blocked_by:[P22]" 显式声明（Task 侧 :88/:97/:103 完整）。
+
+That's P0=0, P1=0, P2=0, P3=3. Then Decision: APPROVED? R4 was APPROVED_WITH_CONDITIONS with P2=1/P3=3. Now the R4 findings all closed, and I have 3 new non-blocking P3s. R4 review's own decision style: it gave APPROVED_WITH_CONDITIONS with 1 P2 + 3 P3. Hmm. Given zero P0/P1/P2 and three P3 documentation-polish items, I could give APPROVED_WITH_CONDITIONS (conditions = the 3 P3 fixes, non-blocking) or APPROVED. 
+
+The mandate asks for a decision among three. Since the three P3s are non-blocking but real record-precision items, and the precedent (R4) used APPROVED_WITH_CONDITIONS for a similar profile, I'll give APPROVED_WITH_CONDITIONS with P0/P1/P2/P3 = 0/0/0/3, and explicitly state all conditions are non-blocking and none gates AC2/runtime/integration. Alternatively APPROVED. Hmm.
+
+Which is more useful? The R5 revision's whole purpose was to close N2/N3/N4, which it did. The residual P3s don't affect the R5 objective. But condition C (Gate restatement) and B (stale SHA) are minor doc issues that should ideally be fixed in a next touch. APPROVED_WITH_CONDITIONS communicates "content acceptable; 3 P3 polish items recommended, none blocking". I'll choose APPROVED_WITH_CONDITIONS. Both defensible; I'll clearly say "三项 P3 均非阻断，不构成 CHANGES_REQUESTED 理由"。
+
+Hmm, but consider: does APPROVED_WITH_CONDITIONS risk implying a gate? I'll explicitly say 内容层决定 ≠ Review Gate PASS ≠ 集成批准. Good.
+
+Now also required item 3: "不得建议越过构建屏障" — my findings/recommendations must not cross it. ✓
+
+Also mandated: "正式 object_binding=NOT_VERIFIED；不声称核验 commit/tree、变更路径、diff、工作区或 SHA" ✓ declare.
+
+Let me double-check a few line numbers I'll cite:
+
+R5 handoff:
+- 3, 25: title
+- 7: status
+- 9-20: frontmatter pins
+- 29: 概述
+- 35: R1
+- 37-41: R2 (38-39 CLI exits, 40 limitations, 41 N4)
+- 44: R3
+- 46-49: R4 (47 R4 review conclusion+SHA, 48 N1 fix + Task SHA, 49 N2/N3/N4)
+- 52: R5 goals
+- 61-64: §2.1 items (63 try_lock probe, 64 queue)
+- 67-68: atomic hooks
+- 70-71: seam
+- 73-74: logs/env
+- 81: hard determinism
+- 83-85: scheduling boundary (85 = the boundary statement)
+- 95-100: §3.1
+- 102-107: §3.2
+- 109-112: §3.3
+- 120-124: AC table
+- 121: AC2
+- 122: AC3
+- 123: AC4
+- 130-133: IMPORTANT block (131 barrier/gate, 132 discipline, 133 principle)
+- 135-140: evidence table (137 AC2 blocked, 138 diff-check, 139 R2 review, 140 post-integration)
+- 146-149: env
+- 157-159: R4 pins
+- 160-167: path ranges
+- 168: R5 revision note
+- 169-177: protected untracked files
+- 183: §7 opening
+- 185-198: suggestion
+- 192-193: recovery points
+- 202-217: forwardable instruction (207 R4 head, 208 references, 215 object_binding, 216 barrier)
+
+Let me verify line 64 content: "    - 随后 Beta 进入 `round_trip`，在事务锁入口排队等待 Alpha 完成。" ✓ line 64.
+Line 63: "    - 探测成功后 Beta 才发送 `beta_calling_tx`，彻底杜绝 Alpha 提前释放锁的可能；" ✓.
+
+Line 48: "    - R3 的 4 项 findings 全部 CLOSED；Codex 已单独修复 Task 记录侧缺陷 N1 并更新 Task SHA-256 为 `549F08F153890B5C5041B04AB82FA80B9EA17C0532EA86279AA139B458DFC451`；" ✓ line 48.
+
+Line 131: "> **Hard Build Barrier 状态**：`EFFECTIVE`。P02 Build Gate 当前仍为 `BLOCKED`（`build=NOT_AUTHORIZED / NOT_RUN`）。" ✓.
+
+Line 137: AC2 row BLOCKED/NOT_RUN ✓. Line 140 集成后回归 BLOCKED/NOT_RUN ✓.
+
+P04: search "blocked_by" in handoff — not present. "P04": lines 29, 74, 99, 171. None state P04=BLOCKED. ✓ my finding is accurate. And "集成" statements: lines 123, 140, 183, 186, 198 — line 140 集成后回归 BLOCKED/NOT_RUN; line 183 "待...并在 P02 Build Gate 解除后组织后续集成" → implies not integrated but never states "P22 未集成".
+
+So finding P3-C is fair, though I should note it's implicit. Actually, hmm, is the absence of an explicit "P22 未集成" statement a genuine defect for a Handoff? A reader could infer. I'll frame it as "Gate/集成状态摘要不完整（可推断但未显式声明）" and keep P3, non-blocking. And in my Gate 核对 table I'll mark Handoff coverage as 隐含 for those two rows.
+
+Let me also double check the R5 handoff has no statement contradicting "P22 未集成" — line 183 "在 P02 Build Gate 解除后组织后续集成" implies future. ✓
+
+Now check the AC4 row line 123 once more fully: "| **AC4** | 固定交付 commit 与 Handoff；由 DeepSeek Harness 进行非作者独立 Review；Codex 经 Review 与 Gate 后集成 | 本轮文档交付已提交，待独立 Review 和 Codex adjudication（P3-2）。R2 代码已获 DSH 静态 PASS（`object_binding=NOT_VERIFIED`），最终集成取决于 Codex 对 Git 对象、两种差量及 Gate 的判定。 | **SUBMITTED / PENDING REVIEW & ADJUDICATION** |" ✓ 时态正确.
+
+Hmm, one more consideration on 时态: line 123 says "R2 代码已获 DSH 静态 PASS" — R2 follow-up gave PASS. ✓ Task :64 says R2 报告=PASS (0/0/0/3). ✓ consistent.
+
+Also note: line 39 says follow-up 静态内容结论为 PASS（0 项阻断项）✓.
+
+Another check — AC1 row line 120 says "零依赖增加" — a factual code claim; out of scope (no code verification), previously presumably reviewed in R2. Fine, but I should note that code-level facts (transaction_lock field, hooks, sidecar behavior) are not re-verified this round (static claims accepted as-text, object_binding NOT_VERIFIED).
+
+Another possible finding: line 120 AC1 mark "SATISFIED (Static)" — fine.
+
+Now, also requirement 2: "授权范围" check. Handoff §3.3 (109-112) says only the handoff file changed. Task :102 confirms Codex verified R4..R5 only that path. ✓ Also the handoff doesn't claim to have modified Task. ✓ It does reference §7 "下一步任务建议（按协作协议 §5.1）" ✓.
+
+One more: the handoff's §7 recommendation says Agent=Codex for "集成验证与 Gate 闭合". Per AGENTS.md/协作协议, the next-task suggestion should be a forwardable instruction; R5 provides one ✓. Does it suggest assigning work to a non-authorized agent? No.
+
+Potential issue: §7 recovery point line 190 "基线：faea1a2c..." ✓; line 191 R2 source head ✓; line 192 R4 head ✓; line 193 R5 head deferred ✓.
+
+Also forwardable instruction line 206 lacks "R5" head; line 207 has R4 head ✓ consistent with the deferral.
+
+Now let me also check the R2 source pins in frontmatter (13-15) and Task :63/:76 ✓.
+
+r3_doc_commit/parent: line 16-17 r3_doc_commit/tree; r3 parent is r2 head 92093792 — Task :85 says R3 parent=92093792... but frontmatter doesn't include `r3_doc_parent`. Task :85 records it. Minor asymmetry: frontmatter has r4_doc_parent but not r3_doc_parent. Is that a P3? Hmm, it's a completeness nuance. The chain is still derivable (r4_doc_parent = r3_doc_commit; r2_source_head = r3 parent implied by Task). I could mention as residual observation. Might be over-fitting. I'll mention in 残余观察 (non-finding) that frontmatter pins r4_doc_parent but not r3_doc_parent/r1*/r2* parents except r2_source_parent — the chain is nonetheless reconstructible from :15/:20 plus Task :85. Non-blocking, no count.
+
+Hmm, but hold on. Is there a real risk that the frontmatter pin set is incomplete in a way that matters? R4's N2 asked specifically for R4 pins. Done. Fine → residual observation.
+
+Now let me also double check whether R5 handoff asserts anywhere "Handoff 218 行" — no. ✓ So requirement 2's "行号/行数自洽" answer: no self line-count claim; 217 lines by my read; explains 218 口径.
+
+Also "行号自洽": no internal line-number citations, so nothing to be off-by-one (the R4-side off-by-one issue was in the Task, now rebuilt; current Task cites no handoff line ranges ✓ — let me verify: Task :62-65 no line ranges; Task :86-88 no handoff line ranges; Task :92-97 no line ranges ✓). Good, so the R4 off-by-one problem is gone.
+
+Hmm, one more: Task :103 says "Owner 报告声称 Handoff 218 行；Codex 实读计数为 217 行，记为交付报告元数据差异，Handoff 本文待 DSH R5 内容 Review。" — the Task itself flags it for me. My answer: 217 confirmed; the 218 is a counting-convention artifact of the Owner's report (likely `split("\n")` including trailing empty element), not a missing content line. Since I can't read the Owner raw report (out of scope), I present it as the most likely explanation and note the alternative that a trailing blank line after line 217 was intended/removed.
+
+Wait, careful: if there were a trailing blank line making the file 218 lines under read's counting, read would show 218. read showed 217 total. So under read's convention (count of lines, where a final newline does not create an extra line), 217. If the file ends with "\n" after the fence, `wc -l` = 217, `split('\n').length` = 218. So the Owner's 218 is almost certainly split-count or an editor counting the final newline as line 218. Good.
+
+Now, also should I check R4 review's claim that R4 handoff was 207 lines and Task 207 lines — Task is now 104 lines. Note this as a structural fact: the live Task was rebuilt by Codex (N1 fix), so R4 review's Task line citations (:91/:204-206) no longer map to the current Task; the current Task records the malformed snapshot SHA. I should note that the Task's R4 record now (lines 92-97) is well-formed — N1 CLOSED. ✓
+
+Let me also sanity check Task :92 values vs R4 review's N1 description: R4 review said the malformed Task lost leading chars ("e46ec7e8..." without 0, "b84f616..." without f) and had "erification" and "$promptHash". Current Task :92 has "8F999C9EA98D6E84C5F4598176B492838A324F0F077AA0322796EC9A7F8C8A62" etc. and :93 "HEAD=0e46ec7e8c23a1fc0ba793745f5101813b388ea3，tree=fb84f616886c73e645eb94eb451dcb46a11fb54b，parent=3038fe03..." ✓ all fixed. :94 "报告 SHA-256=17E2C882...，prompt SHA-256=7A0195DD..." — hmm, R4 review itself is the "报告" and its SHA claim is 17E2C882 ✓ matches mandate. ✓
+
+Task :79 mentions "DSH R2 内容报告返回 PASS，但 CLI exit=1 且 object binding=NOT_VERIFIED；只读 content follow-up 在途。" — "在途" (in-flight) is stale wording since follow-up concluded (Task :64 records it). Task :79 is in the 交付与运行记录 section reflecting an older state; Task :64 records the follow-up result. Is that an internal Task inconsistency? It's a historical record; :64 is newer. Hmm, the Task is Codex-owned, not the Handoff. My mandate item 2 includes "授权范围及 Task 一致性" — Task-side inconsistencies are in scope to note? The mandate says check "R5 Handoff 自身的前序对象 pins、行号/行数自洽、Review 状态时态、授权范围及 Task 一致性" — i.e., Handoff vs Task consistency. Task :79's stale "follow-up 在途" is a Task-internal staleness, worth a P3 observation? It's contradicted by Task :64 and Task :81 ("下一动作：...再由 DSH 对固定新 head 作非作者 Review" — also stale historical). Since Task :79/:81 are inside the "交付与运行记录" section written at R2 time and later sections (R3/R4/R5 outcomes) supersede them, this is a historical-record layering convention. R4 review didn't flag it. Hmm, I could note as non-blocking observation: Task :79 "只读 content follow-up 在途" 与 :64 已完成的 follow-up 结果并存，读者需按时间顺序理解；建议若下次触碰 Task 时把 :79/:81 标注为 R2 时点快照。That's Task-side, and my scope is Handoff-focused; but "Task 一致性" invites it. I'll include as a residual observation (not counted) to keep findings focused on the Handoff. Hmm, or as P3-D? 
+
+The mandate says "标出任何新 finding 的级别、精确文件/行号". A Task-side staleness is a new finding with a precise location (doc/tasks/P22.md:79/:81). I think it's fair to list it as P3 since it's a concrete record-consistency issue. But then P3 count becomes 4. Hmm. Is it really a defect? The Task's 交付与运行记录 section is a running log; :79 says at that time the follow-up was in flight, then :64 (in the 测试要求 table) records final results, and later sections record R3-R5. Actually wait: the table :62-65 appears BEFORE :79 in the file, and :64 already records both R2 report and follow-up results. So :79 stating "follow-up 在途" is inconsistent with :64 within the same document (both present in the current live Task). That's a mild internal inconsistency → P3 is defensible. Given the mandate emphasizes checking Task consistency, I'll include it as P3-D with a note that it's Task-side (Codex-owned, outside Owner's write scope) and non-blocking.
+
+Hmm, but I want to be careful not to manufacture findings. Let me weigh: :79 text: "DSH R2 内容报告返回 `PASS`，但 CLI exit=`1` 且 object binding=`NOT_VERIFIED`；只读 content follow-up 在途。" Yes it says follow-up 在途 while :64 (table) and the whole R3 process already happened. It's a stale historical line that could mislead. I'll report as P3 (低危，记录层)，明确 Codex 侧。And note it is not part of R4's N-findings.
+
+Hmm, actually — could :79 be intentionally preserved as a point-in-time record? The Task's structure is: 交付与运行记录 (R2-time), then dated sections 2026-10-10 R3/R4/R5 outcomes. Within 交付与运行记录, :79 describes R2 state. Since later dated sections supersede, a reader can figure it out. The risk is low. I'll still flag as P3 with low severity and explicitly say "若该段定位为 R2 时点快照，则只需加时点前缀即可闭合".
+
+OK. Total: P0=0, P1=0, P2=0, P3=4. Decision APPROVED_WITH_CONDITIONS.
+
+Hmm, let me reconsider whether P3-B (stale Task SHA pin at :48) and P3-D (:79) might better be folded into one "record precision" finding. No, separate locations/owners. Keep separate but concise.
+
+Let me also reconsider whether there might be a P2-level issue I'm missing. Let me re-scan the R5 handoff for anything that overstates or conflicts.
+
+- Line 29: "实施了最小化的单通道事务互斥锁（Transaction Mutex）修复，并将原 P04 AC3 负向复现器转换为常规确定性回归测试" — AC5 said R4 中 `#[ignore]` 的负向复现器; "原 P04 AC3 负向复现器" ✓ consistent with Task :26/:40.
+- Line 61: "Alpha 在 round_trip 内获取 transaction_lock 后触发 TEST_AFTER_TRANSACTION_LOCK_HOOK，通过 alpha_locked_tx 通知 Beta，并在 beta_calling_rx 处通过 recv_bounded（10s）挂起" ✓.
+- Line 70: "将原 post-stdin seam (TEST_AFTER_STDIN_HOOK) 重命名并前移至事务锁后、stdin 写入前" ✓ matches F2 reflection in Task :72.
+- Line 85: boundary ✓.
+- Line 131: gate ✓.
+- Line 168: "N2（补齐 R4 前序 delivery pins）" ✓.
+
+Anything about "Integration" claims? Line 183 "本轮文档交付已提交，待独立 Review 和 Codex adjudication（P3-2）" ✓.
+
+What about line 47's R4 conclusion — R4 review line 11 says APPROVED_WITH_CONDITIONS ✓ and P0/P1/P2/P3 = 0/0/1/3 ✓.
+
+What about line 49: "DSH 提出 3 项非阻断文档缺口：N2、N3、N4" — R4 review §4 has N1 (P2) + N2/N3/N4 (P3). R5 says "3 项非阻断文档缺口" and separately line 48 covers N1 as Codex-side Task defect, correctly labeled "Task 记录侧缺陷 N1". Note: R4 review called N1 "Codex 记录侧，不在 Owner 写入范围" and it's P2 — is N1 "非阻断"? R4 review line 92 says "此项不阻断 Handoff 内容批准". So N1 is P2 but non-blocking. R5 line 49's phrasing "3 项非阻断文档缺口" excludes N1, implicitly classifying N1 as not a "Handoff 文档缺口" but a Task defect — accurate ✓.
+
+So no P2 issues. 
+
+One more possible check: does R5 handoff correctly avoid claiming that DSH approved R5? Line 183 "待独立 Review 和 Codex adjudication" ✓.
+
+Another: line 52 "逐项落实 DSH R4 findings N2、N3、N4，并核对修正自引行号与行数" — claims 核对行号/行数 but no line numbers cited; and the 218/217 discrepancy was left to DSH. Fine.
+
+Now, one more requirement: "检查 R5 Handoff 自身的前序对象 pins" — I should also verify that the pins claimed match the R4 Review's/ Task's values:
+- R4 pins 0e46ec7e.../fb84f616.../3038fe03... ✓ Task :93 and R4 review §1 (HEAD/tree/parent) ✓ all three match.
+- R3 pins 3038fe03.../9f6bb91b... ✓ Task :85.
+- R2 pins 92093792.../083a08f5.../680e3830... ✓ Task :63/:76 and R4 review doesn't list R2 but Task :63 does.
+- R1 pin 680e3830... (+tree ab81c218... not in Task).
+- base pins faea1a2c.../eb0cc832... ✓ Task :14 + :32.
+
+Cross-match count: all match. Only r1_head_tree is not cross-checkable in the allowed set → note as limitation, not finding (since R1 tree also isn't contradicted).
+
+Hmm, wait. Is it possible the r1_head_tree value is wrong and I could detect it? No source in scope. Note it.
+
+Also: base_tree `eb0cc832...` — Task :32 attributes it to P04 R4 delivery, so it IS the tree of faea1a2c ✓ consistent labeling as base_tree.
+
+OK. Also requirement: "Review 状态时态" — also check R5 handoff line 7 status field once more and line 44's "结论为 CHANGES_REQUESTED" (past, R3) ✓.
+
+Now let me think about whether to present the "各行号" mapping table for N2/N3/N4 with R4 location → R5 location. That's helpful. R4 positions (per R4 review):
+- N2: R4 handoff :16-17, :151, :184, :192-206 → R5: :18-20, :157-159, :192-193 (+:168 rationale), :207.
+- N3: R4 :117 → R5 :121 (同时 :85 边界保留).
+- N4: R4 :38 → R5 :41.
+Note the +3/+4 line shift consistent with added frontmatter lines and §1.1 expansion. Hmm, R4 :16-17 → R5 :18-20: shift +2/+3 because R5 inserted r4 pins at 18. And R4 :38 → R5 :41 = +3. R4 :117 → R5 :121 = +4. R4 :151 → R5 :157 = +6? Hmm: R4 :151 "§6 仅列 R3 文档 Commit" → R5 :155 "R3 文档 Commit" and :157 R4 文档 Commit. So the R3 line moved +4 (151→155). R4 :184 "本轮交付 Head：待提交本次 commit" → R5 :193 (+9). R4 :192-206 instruction → R5 :202-217. +10 at the end. And total 207→217 = +10 ✓ consistent with a cumulative +10 from R4 start to R5 end (3 frontmatter lines + 1 in §1.1? let's see: R4 :38→R5 :41 is +3; R4 :117→R5 :121 is +4, so one more line was added between :41 and :121 — where? Possibly §2.1 bullets or §2.2. R4 :117→R5 :121 is +4 while R4 :151→:155 is +4 and R4 :184→:193 is +9 (with §6 gaining 2 lines for R4 pins: :157-159 = 3 lines replacing... hmm). Let me not over-derive. The net +10 is consistent with what Codex reported (207→217) and my read (217). Good enough; I can state: 行数增量 +10 与 R5 的三处修订/N2 补 pin 相符（我以 R4 Review 引用的 R4 行号与 R5 直读行号对照，偏移量单调不减），未发现"引用了不存在的行"之类问题——但我不能核验 R4 版原文（不在授权读取清单），故该偏移分析以 R4 Review 的引用行号为基准。
+
+Hmm, careful: I should be transparent that I did not read the R4 handoff (not in the fixed objects), so cross-round line shifts are inferred from R4 Review's citations. Good.
+
+Wait, actually: is reading the R4 handoff disallowed? The mandate says "只读上述 Task、R5 Handoff、R4 Review". So yes, disallowed. I'll note this as a limitation (can't diff R5 against R4 text; N2/N3/N4 closure judged from R4 Review's quoted old text vs R5 current text).
+
+That's an important limitation: R4 Review quotes the old R4 text (e.g., N3's old AC2 sentence, N4's old :38 sentence). So I CAN compare quoted-old vs current. ✓ That's exactly what I did.
+
+Now, output format. Structured Chinese report:
+
+# P22 R5 非作者内容 Review（R5）
+## 0. 结论摘要 (table: 对象/Reviewer/object_binding/内容决策/findings 计数/R4 findings 收口/Gate 状态)
+## 1. 固定对象与只读声明 (pins as claimed, NOT verified; files read; limitations)
+## 2. R4 N2/N3/N4 逐项落实核验 (table + detail)
+   also R3 4 项 regression check
+## 3. R5 Handoff 自洽性检查
+   3.1 前序 pins 一致性
+   3.2 行号/行数自洽（217 vs 218 口径）
+   3.3 Review 状态时态
+   3.4 授权范围
+   3.5 Task 一致性
+## 4. Gate / 屏障 / 范围核对（表格，五项）
+## 5. findings 清单（P0/P1/P2/P3），每条: 级别/位置/事实/影响/最小修复/是否阻断
+## 6. R4 findings 逐项 CLOSED/OPEN
+## 7. 内容决策与计数
+## 8. 未验证限制
+## 9. 建议下一步（不越屏障）
+
+Since the user asked for a structured report with all findings and blocking status. Let me write it in 简体中文, with English identifiers preserved.
+
+Also must include: "不得以静态 Review 代替运行 PASS" restatement, and "内容 Review 不等于 Codex adjudication、AC2 runtime PASS、Task 完成或集成批准".
+
+Also per AGENTS.md: 最终回复必须给出基于当前仓库状态的推荐下一步；没有可执行下一步时明确写"无需下一步操作". I'll give a recommend next step: Codex adjudication of R5 (content-layer) then, barrier permitting... but careful: no crossing the barrier. Recommend: Codex 对 R5 作 adjudication，并把 R5 head 7229ef5b... 登记/核验（Codex 侧动作），Owner 无需再改（除非 Codex 要求把三项 P3 一并修）。Also state 无 runtime 动作可执行 (Cargo BLOCKED).
+
+Let me draft findings precisely:
+
+**P3-1（对象：R5 Handoff §2.1 :64）** — 同类调度依赖措辞残余。
+- 事实：:64 "随后 Beta 进入 `round_trip`，在事务锁入口排队等待 Alpha 完成。" 为无条件表述；:85 §2.2 已自认极端饿死调度下该窗口可能不成立；:121 AC2 行已按 N3 加限定。
+- 影响：同一类"过强表述"仍存一处，未来引用 §2.1 复现设计时可能被读成硬保证；不改变静态结论。
+- 最小修复：:64 末尾加"（常规调度下；边界见 §2.2）"。
+- 阻断性：非阻断。
+
+**P3-2（对象：R5 Handoff :48）** — Task SHA pin 未标时点、已被后续登记取代。
+- 事实：:48 pin live Task SHA-256=`549F08F1…`；本轮派发单记录 Task SHA-256=`EFD7BD29…`（声称值，均未复算）。差异可由 Codex 之后追加 R5 记录段（live Task :99-104）解释，但 :48 文本未标时点。
+- 影响：读者可能把 `549F08F1…` 当作当前 Task 指纹引用，导致对象引用歧义。
+- 最小修复：:48 改为"（截至 R4 N1 修复时）Codex … 更新 Task SHA-256 为 …；此后随 R5 登记再次变更"。
+- 非阻断。
+
+**P3-3（对象：R5 Handoff §5 :130-133/:135-140）** — Gate 摘要缺两项显式声明。
+- 事实：:131 有 Hard Build Barrier=EFFECTIVE 与 P02 Build Gate=BLOCKED；:137/:140 有 BLOCKED / NOT_RUN；但全文无"P22 未集成"与"P04=BLOCKED、blocked_by:[P22]"的显式句子（P04 仅出现在 :29/:74/:99/:171 的语境中）。Task :88/:97/:103 三项齐全。
+- 影响：Handoff 单独流转时 Gate 全景不完整（可推断但不可直接引用）。
+- 最小修复：在 :133 后加一行 Gate 摘要（P22 未集成；P04=BLOCKED、blocked_by:[P22]；Cargo/runtime/AC2=BLOCKED / NOT_RUN）。
+- 非阻断。且不得因此建议运行任何 Cargo/构建。
+
+**P3-4（对象：live Task :79；Codex 侧）** — R2 时点"follow-up 在途"与同文档 :64 已收口结果并存。
+- 事实：Task :79 "只读 content follow-up 在途"；:64 已记录 follow-up 报告与 CLI exit=0/PASS。
+- 影响：live Task 内出现时点错位，读者可能误判 R2 follow-up 未完成。
+- 最小修复：:79 加"（R2 时点快照）"或改为"follow-up 后续已收口，见 :64"。
+- 非阻断；Codex 写入范围。
+
+Then R4 findings CLOSED/OPEN table:
+- R3 P2-1 CLOSED (R4 已闭，R5 未回归)
+- R3 P3-1 CLOSED
+- R3 P3-2 CLOSED
+- R3 P3-3 CLOSED
+- N1 (P2, Codex 侧) CLOSED — 基于直读 live Task :90-97（无占位符残渣、无丢字符、无 erification、blocked_by 拼写正确），但不核验对象绑定。
+- N2 (P3) CLOSED
+- N3 (P3) CLOSED（指定位置；同类残余见 P3-1）
+- N4 (P3) CLOSED
+
+Decision: APPROVED_WITH_CONDITIONS; P0/P1/P2/P3 = 0/0/0/4. Conditions = the four P3s (all non-blocking; none gates AC2/runtime/integration). Hmm — with 4 P3 and 0 P2, is APPROVED_WITH_CONDITIONS right? Precedent R4: 0/0/1/3 → APPROVED_WITH_CONDITIONS. Mine: 0/0/0/4. I'll go APPROVED_WITH_CONDITIONS, explicitly noting: 若 Codex 认为三项（P3-1..P3-3）属文档打磨且不要求 Owner 再次触碰，可将其降级为"随下次触碰顺带修正"，不改变 R5 内容可在内容层通过的判定。
+
+Actually, maybe cleaner: state "内容决策 = APPROVED_WITH_CONDITIONS（条件均为非阻断 P3 记录精度项；不影响 R5 目标达成）". Good.
+
+Let me now also make explicit the mandated statement: 正式 object_binding=NOT_VERIFIED；未核验 SHA/commit/tree/路径/diff/工作区；本轮未运行任何 shell/PowerShell/Git/hash/测试/Cargo/Sandbox；未写入/暂存/删除任何文件。
+
+Also mention I only used read on the three files.
+
+Also the 217/218 explanation and note that data values in the handoff that I "cross-checked" are textual equality only, not hash verification.
+
+Let me write it. Keep it structured but not bloated. Use tables.
+
+One more check on requirement 1: "R4 source pins" — R4 N2 是关于绑定 R4 自身 commit/tree。R5 落实为 r4_doc_commit/tree/parent（:18-20）+ §6（:157-159）+ §7 recovery（:192）+ instruction（:207）。✓
+
+Also I should double check the claim in R5 :47 that the R4 report SHA is 17E2C882... matches the mandate's R4 Review SHA ✓ and Task :94 ✓. That's a nice triple consistency.
+
+Also R5 :48's R4 N1 snapshot SHA? Not mentioned in handoff. Task :95 has 7EBD7D40... R5 :48 doesn't mention the snapshot. Not required.
+
+Let me also verify the mandate's Task SHA claim EFD7BD29FB369FDCD1C44FBCB923FF990B7EB16D256933E18A79AFB01804A724 — I use it only as "派发声称值". ✓
+
+Now, "P22 未集成" also appears in Task :97/:103 ✓.
+
+Let me write the final report. Length: substantial but organized. Use headings, tables.
+
+For the Gate 核对 table (requirement 3):
+
+| Gate/状态项 | Task 记录 | R5 Handoff 覆盖 | 判定 |
+|---|---|---|---|
+| P02 Build Gate=BLOCKED | :54, :61, :88, :97, :103/:104 | :131"P02 Build Gate 当前仍为 BLOCKED（build=NOT_AUTHORIZED / NOT_RUN）"、:137 | ✅ 一致，无相反声明 |
+| Hard Build Barrier=EFFECTIVE | :54, :61, :71, :88, :97, :104 | :131"EFFECTIVE"、:132 执行纪律、:216 指令第5条 | ✅ 一致 |
+| Cargo/runtime/AC2=BLOCKED / NOT_RUN | :61, :65, :80, :88, :97, :104 | :133、:137、:140（集成后回归亦 BLOCKED / NOT_RUN）、:121 AC2 标 (Static) | ✅ 一致，未把静态写成 PASS |
+| P22 未集成 | :65, :79, :88, :97, :104 | 隐含（:123 待 adjudication、:140 集成后回归 BLOCKED、:183 待屏障解除后组织集成），无显式句 | ⚠ 未显式复述 → P3-3（非阻断） |
+| P04=BLOCKED 且 blocked_by:[P22] | :32, :39, :88, :97, :104 | 无（P04 仅 :29/:74/:99/:171 语境出现） | ⚠ 未复述 → P3-3（非阻断） |
+| 未建议越过构建屏障 | :52-54 禁止范围 | :132、:140、:183、:198、:216 | ✅ 未发现 |
+
+Good.
+
+Also mention 静态检查 PASS (EXIT 0) at :138 是受限声明 ✓ 不构成 runtime。
+
+Now writing. I'll be careful with the final "推荐下一步" per AGENTS.md.
+
+Recommendation: 
+1. Codex：接收本 R5 内容 Review 报告，作为 adjudication 输入；登记/核验 R5 head=`7229ef5b2f6925115b91d28900bffe377513f5cd`（Task :102 已记）——Codex 侧动作，Owner 无写入范围。
+2. Owner（Antigravity）：本轮无需再交付；若 Codex 要求一次性收口 P3-1/P3-2/P3-3 措辞，则仍限 `verification/P22/antigravity-owner-p22.handoff.md`，新固定 head 后再非作者复审。
+3. P22 runtime/集成/P04 解阻塞：继续阻塞于 P02 Hard Build Barrier；在 Gate 解除与 AC2 实测证据出现前无可执行 runtime 动作 → 「无需下一步操作」对 runtime 而言。
+
+Order format should be 中文 with the forwardable instruction block since AGENTS.md requires specifying a suitable agent + directly forwardable instruction. Let me include a forwardable instruction for Codex.
+
+Let me draft the final answer now.
+
+I should keep the report tight but complete. Also include the "口径" explanation for 217/218.
+
+Write it.

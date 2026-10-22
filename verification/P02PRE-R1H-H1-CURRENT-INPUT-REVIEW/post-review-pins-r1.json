@@ -1,0 +1,120 @@
+{
+  "schema": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.post-pins.v1",
+  "taskId": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+  "verifiedAtUtc": "2026-10-13T11:49:39Z",
+  "manifestPath": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/review-inputs-r1.json",
+  "manifestSha256": "39829a5b11a041e91f196ee2374b7cc06dea9518d84419167fa9ba3dc1ed0ad7",
+  "preManifestSha256": "39829a5b11a041e91f196ee2374b7cc06dea9518d84419167fa9ba3dc1ed0ad7",
+  "dshPromptSha256": "ce30dbdc8896e89e507229041d960bbcab51f94706eb06c9f815544c0fa1653e",
+  "dshSessionId": "session-fff6de81-c2ef-4200-b449-6d1326cc29e2",
+  "dshExitCode": 0,
+  "dshStdoutBytes": 12868,
+  "dshStdoutSha256": "090cbc077d621091fd5a1b164a43e9e2203827ac3d3c5d36df366024a13a148a",
+  "canonicalReportPath": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/dsh-applicability-review-r1.md",
+  "canonicalReportSha256": "090cbc077d621091fd5a1b164a43e9e2203827ac3d3c5d36df366024a13a148a",
+  "dshStderrBytes": 73726,
+  "dshStderrSha256": "910254a68f1a151ff692f976f9ab85d367ec7eccd3f228ee9102b5ba2e66a5d7",
+  "dshExitMarkerSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+  "inputCount": 14,
+  "matchedCount": 14,
+  "inputs": [
+    {
+      "id": "task-contract",
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "bytes": 8351,
+      "sha256": "22279d925be06bef56613ace28da5600590dc771fed037d9d46acd611e17094b",
+      "match": true
+    },
+    {
+      "id": "h1-subject-task",
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h1-subject-task-r1.md",
+      "bytes": 25016,
+      "sha256": "e4582dfb8248ebf903c691af571b2ba571065aa93e0a4f29fe9be8f9aa44f02b",
+      "match": true
+    },
+    {
+      "id": "h1-v2-result",
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-v2-20261012.json",
+      "bytes": 15768,
+      "sha256": "23ac80e2b671acb616cd89a11fdee5c0548547f97c8c529b1fc11af67edaf877",
+      "match": true
+    },
+    {
+      "id": "h1-dsh-review",
+      "path": "verification/P02/dsh-p02pre-r1h-attempt6-zcode-h1-final-pre-run-review-20261012.response.md",
+      "bytes": 14078,
+      "sha256": "6aad7750afabccd5b159c69f40ef49149e3d3ebb1ca6613cd0fd91fdcb960c19",
+      "match": true
+    },
+    {
+      "id": "h1-codex-adjudication",
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-adjudication-20261012.md",
+      "bytes": 7665,
+      "sha256": "9d4b95da5263b0c52a3621748e875760caaadf153ed5c39bda5955520df57232",
+      "match": true
+    },
+    {
+      "id": "h1-review-input-verification",
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-input-verification-20261012.json",
+      "bytes": 14002,
+      "sha256": "7b823a05313da2b053c76b81744667bf041b8fd9af0933f1162dcdadfb372515",
+      "match": true
+    },
+    {
+      "id": "h2-run-task",
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "bytes": 25680,
+      "sha256": "e9e3277488e9d054fb9d5612da19c1f3b44b44dfe958e2d2971823887c59ff24",
+      "match": true
+    },
+    {
+      "id": "h2-runtime-json",
+      "path": "verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.json",
+      "bytes": 3370,
+      "sha256": "ef97ce90c9ed7c9ab693930bfc9c15ce220dbe921a916112cbbd951689c130e3",
+      "match": true
+    },
+    {
+      "id": "h2-runtime-report",
+      "path": "verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.md",
+      "bytes": 3253,
+      "sha256": "f4a1a2cc67b92585c41a8b78890e7583324c9704a50f2477fca319d6905129a0",
+      "match": true
+    },
+    {
+      "id": "h2-dsh-review-r3",
+      "path": "verification/P02PRE-R1H-H2-RUN/dsh-result-review-r3.md",
+      "bytes": 7098,
+      "sha256": "8995028a950e082465fcae293e33028b85fa6a549f90292a943ed04ed21291a2",
+      "match": true
+    },
+    {
+      "id": "h2-codex-adjudication",
+      "path": "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md",
+      "bytes": 4836,
+      "sha256": "259d980bfafff0b654725b648db636a5d234704f8a826994f20a358aa93bba2e",
+      "match": true
+    },
+    {
+      "id": "h2-codex-pin-verification",
+      "path": "verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1-input-verification.json",
+      "bytes": 4426,
+      "sha256": "efaa288cbc366e8a0e9e17ef8b4590b5a2ba53887ffe31c0a63254f0925e1154",
+      "match": true
+    },
+    {
+      "id": "h2-handoff-r2",
+      "path": "verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md",
+      "bytes": 3008,
+      "sha256": "9329c9ad883268f8f766a1c4595ba8391e7231651d7348176d4d7cd8ae5a31d5",
+      "match": true
+    },
+    {
+      "id": "h2-raw-ndjson",
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/run-h2-20261013-de77a42fccca4193925767ba4e414970.json",
+      "bytes": 788029,
+      "sha256": "32cd72b710857bb0f19eb92d2c01f2ff6aa13778f10836965c8619ebbf5a2179",
+      "match": true
+    }
+  ]
+}

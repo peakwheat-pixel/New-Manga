@@ -1,0 +1,9 @@
+{
+  "revision_type": "I",
+  "counts_toward_repair_budget": true,
+  "reviewer_needed": true,
+  "review_scope": "BOUNDED_REVIEW",
+  "rationale": "runtime behavior changed -> implementation repair (max I1/I2)",
+  "mode": "classify-revision",
+  "dry_run": false
+}

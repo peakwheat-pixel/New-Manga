@@ -1,0 +1,104 @@
+{
+  "task": "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+  "kind": "owner-source-delivery-manifest",
+  "revision": "ac3-branch-res-r1",
+  "generatedBy": "ZCode",
+  "generatedUtc": "2026-10-13T19:50:59.7786965Z",
+  "baseCommit": "210b8bc64e055f93a3b899a8e619b5e02b917cdf",
+  "deliveryHead": "b29828e48d848b4dfeab8f8be92948fe43d86971",
+  "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+  "fixScope": "Inherited finding AC3-BRANCH-REF-MISMATCH (P2) only: git-branch-matches-freeze short-name/full-ref comparison via new pure Test-BranchRefMatchesManifest; manifest short-branch-name contract and binding unchanged",
+  "note": "sha256 values cover the working-tree bytes at delivery time; the manifest itself is part of the delivery docs commit and therefore carries no self hash. tools/p02 files match fix commit b29828e48d848b4dfeab8f8be92948fe43d86971 bytes. No live collector run, no collector output created, X6/post-run/Build/Cargo/AC1-AC7/Windows Sandbox not released. Parent-task docs, historical H1/P2-1 content and other shared contracts untouched.",
+  "files": [
+    {
+      "path": "tools/p02/p02-new-time-baseline.ps1",
+      "bytes": 98185,
+      "sha256": "F55FB778BBFE5307135A7C7943B587F59DFE94139B4B6138F89DDCED7CD49B90"
+    },
+    {
+      "path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "bytes": 66827,
+      "sha256": "FF473C94074758C3C870E095C8885EEDA52F226AE735BF4C6FB29EEB3CF44E28"
+    },
+    {
+      "path": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+      "bytes": 7821,
+      "sha256": "ACD092EAFCC834B317C8E4468F8E759B45AB7DD156082375402DD4FD1A13A597"
+    },
+    {
+      "path": "doc/handoffs/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+      "bytes": 7459,
+      "sha256": "BE1C1AA9F815D9D7C554DE8CE744CC9B451BEF512852F2C0CF3883C5593FFE60"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.command.txt",
+      "bytes": 89,
+      "sha256": "2E2716BC0C504A766D4B9F903D915A7DF0A06C485E07CC7A61A5E7B9411A6129"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.env.txt",
+      "bytes": 867,
+      "sha256": "B464613CDE08855E5ADB20B27C64252D0CC78CD8CCDF3A873F783918CDBD204C"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.exit",
+      "bytes": 2,
+      "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.stdout.txt",
+      "bytes": 17131,
+      "sha256": "92838472210541E02997EECBE6D1AD08411099B25C683D95977412C12021CC1B"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.summary.md",
+      "bytes": 5567,
+      "sha256": "FD5C9846D6CE0E84AB4243E4E79B621391B00C4562963B57C04B8669A2FD0842"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-agent-preflight-20261014T0341.exit",
+      "bytes": 1,
+      "sha256": "5FECEB66FFC86F38D952786C6D696C79C2DBC239DD4E91B46729D73A27FB57E9"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-agent-preflight-20261014T0341.json",
+      "bytes": 2929,
+      "sha256": "AF46948EC703401EEAEB72B569242B7AEC8DC5C63618D4A124FEBE0D7493E65A"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-attestation.json",
+      "bytes": 88,
+      "sha256": "A40AC4F05793BFA8DFF9F6DE20130E4627DA555C741B8EA48BBA46E4E614CDE7"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-config.json",
+      "bytes": 595,
+      "sha256": "6AEDAB79020D51B65272DA9DD0553A0F077D5D856183CDD145E31AC9E3CB63C6"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0340.exit",
+      "bytes": 1,
+      "sha256": "6B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0340.json",
+      "bytes": 2952,
+      "sha256": "D739F36851DDDE11F4998A97643B0CBD192CB39402FB4F296C81F987CA260B22"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0341.exit",
+      "bytes": 1,
+      "sha256": "6B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B"
+    },
+    {
+      "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0341.json",
+      "bytes": 3092,
+      "sha256": "6288D7F5BA18C1C9A47A15C9D1EECB5C513B1EE1B4301FA76C377F9ECF973132"
+    }
+  ]
+}

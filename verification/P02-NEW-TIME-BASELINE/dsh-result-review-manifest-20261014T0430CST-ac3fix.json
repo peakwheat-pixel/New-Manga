@@ -1,0 +1,34 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "generated_at": "2026-10-13T20:36:24+00:00",
+  "source_commit": "83588bbdca96a3c2d52a0ccae73f3710eda296c1",
+  "review_head": "83588bbdca96a3c2d52a0ccae73f3710eda296c1",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline.ps1",
+      "sha256": "f55fb778bbfe5307135a7c7943b587f59dfe94139b4b6138f89ddced7cd49b90",
+      "bytes": 98185,
+      "git_blob": "6408bface8a1bc42342dd37dd25b9594486d8972",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE/freeze/baseline-20261014T0430CST-ac3fix.freeze.json",
+      "sha256": "37b2d607dc44944b085561f8c17db0fba512589af9d0bc3e3f270b42e9ed9535",
+      "bytes": 3728,
+      "git_blob": "31944083ee5ac826b509868fad7a48bdee835dc8",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "sha256": "fbdf1e9c4aeb76e327c3c143c7b24c5f98dc27840d774741d442c24cd3728c49",
+      "bytes": 24207,
+      "git_blob": "4d725cabfdfcb8d9afa8824268493847bb91e5ca",
+      "artifact_type": "data"
+    }
+  ]
+}

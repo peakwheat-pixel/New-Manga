@@ -1,0 +1,94 @@
+{
+  "agent": {
+    "name": "dsh",
+    "cli": "dsh",
+    "role": "independent reviewer",
+    "required_commands": [],
+    "may_review": true
+  },
+  "dry_run": false,
+  "checks": [
+    {
+      "check": "python_runtime",
+      "status": "PASS",
+      "detail": "3.14.6 (stdlib-only helpers)",
+      "mandatory": true
+    },
+    {
+      "check": "cli_on_path",
+      "status": "PASS",
+      "detail": "dsh: C:\\Users\\49745\\AppData\\Roaming\\npm\\dsh.CMD",
+      "mandatory": true
+    },
+    {
+      "check": "cli_version",
+      "status": "PASS",
+      "detail": "0.2.0-rc.2",
+      "mandatory": true
+    },
+    {
+      "check": "required_commands",
+      "status": "PASS",
+      "detail": "none declared all resolvable",
+      "mandatory": true
+    },
+    {
+      "check": "git_on_path",
+      "status": "PASS",
+      "detail": "git required for frozen-evidence checks",
+      "mandatory": true
+    },
+    {
+      "check": "repo_worktree_exists",
+      "status": "PASS",
+      "detail": "git root G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "mandatory": true
+    },
+    {
+      "check": "branch_exists",
+      "status": "PASS",
+      "detail": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "mandatory": true
+    },
+    {
+      "check": "worktree_state_known",
+      "status": "PASS",
+      "detail": "1 dirty entries",
+      "mandatory": true
+    },
+    {
+      "check": "write_scope_known",
+      "status": "PASS",
+      "detail": "all write-scope dirs exist (resolved: ['G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION\\\\verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/'])",
+      "mandatory": true
+    },
+    {
+      "check": "fallback_agent_available",
+      "status": "NEEDS_VERIFICATION",
+      "detail": "only non-reviewer CLIs on PATH (codex, antigravity); an author/executor must not review -- orchestrator must verify or appoint an independent reviewer fallback",
+      "mandatory": false
+    },
+    {
+      "check": "quota_status",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    },
+    {
+      "check": "permission_mode",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    },
+    {
+      "check": "conversation_usable",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    }
+  ],
+  "overall": "PASS",
+  "dispatch_allowed": true,
+  "fallback_suggested": null,
+  "verdict": "dispatch"
+}

@@ -1,0 +1,68 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "phase": "pre-review",
+  "capturedAt": "2026-10-13T12:53:46.414Z",
+  "reviewer": "DeepSeek Harness",
+  "reviewTarget": {
+    "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+    "deliveryHead": "016bdad2ad63754bf2b63eff80d8598832e0ef7e",
+    "status": "in_review metadata commit will follow"
+  },
+  "files": [
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/input-freeze-r1.json",
+      "bytes": 3980,
+      "sha256": "B39DDB52E08199BE25EE7333594554AE0AA1C08396CDF2EE02C6CE81DC7BCD2D"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/existing-pins-validation-r1.json",
+      "bytes": 3144,
+      "sha256": "0EBB32273F0E458F393C3219223BF07A1BD6C3FCD5C67C134653CED40D3307E0"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json",
+      "bytes": 16880,
+      "sha256": "9084A9F37A696C3F55999EFBF08B0D39E4FE9D55D68A40E054E8307BF94978F5"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json",
+      "bytes": 1171,
+      "sha256": "F5D430DC732399FC6794FD94F95597853B0FD67D479F6A386713515448E0FB7B"
+    },
+    {
+      "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md",
+      "bytes": 2062,
+      "sha256": "679ACA661D355755FDD86D043F92FF824649E933781B8573A4D5CC8F250EA312"
+    },
+    {
+      "path": "verification/P02PRE-R1H-FORENSIC-RECOVERY/recovery-report-r2.md",
+      "bytes": 6443,
+      "sha256": "C38C70245A913570155BF6E3135D79293BFB156239AFD88B08533C3E1801AAAE"
+    },
+    {
+      "path": "verification/P02PRE-R1H-FORENSIC-RECOVERY/adjudication.md",
+      "bytes": 1973,
+      "sha256": "A35269761CF85E8B9DCC4C16D550C604F93260563D26049309B2087CB31CDE6A"
+    },
+    {
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md",
+      "bytes": 3954,
+      "sha256": "C0B86E1B58DDD50325110642764FD241CF0022F3455346C76546F718E0CF090B"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-20261012.stderr.log",
+      "bytes": 1237,
+      "sha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-adjudication-20261012.md",
+      "bytes": 7665,
+      "sha256": "9D4B95DA5263B0C52A3621748E875760CAAADF153ED5C39BDA5955520DF57232"
+    },
+    {
+      "path": "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md",
+      "bytes": 6452,
+      "sha256": "DCEAE82C930930045A6A82E2914CD801CF590D41A704E15C138C75F284B33AFD"
+    }
+  ]
+}

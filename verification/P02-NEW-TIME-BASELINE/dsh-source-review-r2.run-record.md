@@ -1,0 +1,9 @@
+# DSH source Review run record — P02-NEW-TIME-BASELINE
+
+- Task / exact review HEAD: `P02-NEW-TIME-BASELINE` / `50c60755a59a714729b8371b07acce9ff535a3c1`.
+- Frozen source manifest: `dsh-source-review-manifest-r2.json`; SHA-256 `3D5B1A135A1DCB68E3C6D7B44E2F49C27A586EB43FAF996FC91C189C759EB473`; Codex generator verify `PASS`, 2/2 files.
+- Reviewer: DSH (`dsh 0.2.0-rc.2`), `AGENT_PREFLIGHT` exit 0 / dispatch allowed; reviewer was independent from Owner ZCode.
+- Dispatch: `dsh headless` from the P02 task worktree, read-only bounded source Review; exit 0. DSH verdict `APPROVED` for source review only, no P0/P1/P2; two P3 and three P4 findings recorded in the review. DSH could not execute PowerShell or recompute Git pins; Codex performs those deterministic checks separately.
+- Canonical report: `dsh-source-review-r2.md`; SHA-256 `3D332B3E5AA4C60744A3C54D28BDC36F2EE18FB3AF77407DCDA486510675514B`.
+- Raw output preserved under `G:\CODEX\New Manga.workspace\agent-output\dsh\P02-NEW-TIME-BASELINE\source-review-r2-20261014-060107`: stdout SHA-256 `3D332B3E5AA4C60744A3C54D28BDC36F2EE18FB3AF77407DCDA486510675514B`; stderr `88011` bytes, SHA-256 `C40F479C57115FAB9348B0BB439B07BFCA292C66F43E79EBE6FDEF95EC184D20`; exit `0`. Raw stderr remains only in the external agent-output directory. A duplicate stderr copy in the repository verification directory was removed after this record was written; the original raw file remains preserved and no Task reference points to the duplicate.
+- Session `session-f98aa34e-f0de-42a6-aa98-fa35f2699a04` mounted successfully with `mount_session.py --latest`; DSH desktop shows it after its next restart (no restart performed).

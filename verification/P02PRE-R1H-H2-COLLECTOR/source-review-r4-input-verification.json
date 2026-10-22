@@ -1,0 +1,106 @@
+{
+  "taskId": "P02PRE-R1H-H2-COLLECTOR",
+  "reviewedCodeCommit": "b2cea30d05fd66b731bf8caf18358912eb66ebe6",
+  "reviewedBranchHead": "b2cea30d05fd66b731bf8caf18358912eb66ebe6",
+  "reviewer": "DeepSeek Harness",
+  "reviewType": "R4 exact-head static source re-review",
+  "reviewExitCode": 0,
+  "manifestPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\repair-r4\\independent-review\\review-input-manifest-r4.json",
+  "manifestSha256": "0190c59f152e2a71a351a6357f6b5ef9f48de1a2756373bde2ac85aec9978a60",
+  "reviewReportPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\dsh-source-review-r4.md",
+  "reviewReportBytes": 17785,
+  "reviewReportSha256": "83e0a431c64785ac6549ac185ec3c420e37a6b7440bf73cb5738aa11261579dc",
+  "postCheckedUtc": "2026-10-13T07:39:47.4459890Z",
+  "inputCount": 8,
+  "allBytesMatch": true,
+  "allSha256Match": true,
+  "allCodeBlobsMatch": true,
+  "inputs": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+      "role": "reviewed R4 collector",
+      "bytes": 107299,
+      "expectedBytes": 107299,
+      "bytesMatch": true,
+      "sha256": "3824ad50c935662f968a8385bb2d47136ab5a17372473717333879574de0efcc",
+      "expectedSha256": "3824ad50c935662f968a8385bb2d47136ab5a17372473717333879574de0efcc",
+      "sha256Match": true,
+      "gitBlobCurrent": "2f0660610939cfca33d44fac3c4bf1745cfe81d6",
+      "gitBlobExpected": "2f0660610939cfca33d44fac3c4bf1745cfe81d6",
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run-selftest.ps1",
+      "role": "reviewed R4 selftest",
+      "bytes": 57555,
+      "expectedBytes": 57555,
+      "bytesMatch": true,
+      "sha256": "aa68881f9b9de3933ed9703afd4bde03ab1fe5fe6ef2867f078e12baf2e53dd7",
+      "expectedSha256": "aa68881f9b9de3933ed9703afd4bde03ab1fe5fe6ef2867f078e12baf2e53dd7",
+      "sha256Match": true,
+      "gitBlobCurrent": "fd109a0faaece9a32c11865bfe8d5b0d68e50aab",
+      "gitBlobExpected": "fd109a0faaece9a32c11865bfe8d5b0d68e50aab",
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r3.md",
+      "role": "prior DSH R3 review",
+      "bytes": 18631,
+      "expectedBytes": 18631,
+      "bytesMatch": true,
+      "sha256": "a620e6eefe4498f7ce5eff3823ff13dae5415e61fc66c82e117680deb0cdf419",
+      "expectedSha256": "a620e6eefe4498f7ce5eff3823ff13dae5415e61fc66c82e117680deb0cdf419",
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/source-review-r3-adjudication.md",
+      "role": "Codex R3 adjudication and R4 requirements",
+      "bytes": 4304,
+      "expectedBytes": 4304,
+      "bytesMatch": true,
+      "sha256": "09d5ce7a2314232292a78bfe20f2ff28954629cad6b10bafa0c7e11abc50600d",
+      "expectedSha256": "09d5ce7a2314232292a78bfe20f2ff28954629cad6b10bafa0c7e11abc50600d",
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/source-review-r3-input-verification.json",
+      "role": "R3 reviewer input pins",
+      "bytes": 4195,
+      "expectedBytes": 4195,
+      "bytesMatch": true,
+      "sha256": "b3b12b1ab5d9b9bc2066a1c893bc3f2bfcc2c0a620e83c2b726c45ebbe966217",
+      "expectedSha256": "b3b12b1ab5d9b9bc2066a1c893bc3f2bfcc2c0a620e83c2b726c45ebbe966217",
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r4/independent-review/codex-r4-14468d913ffe44329ed0b117e29d221b-run-record.json",
+      "role": "Codex independent R4 test record",
+      "bytes": 1819,
+      "expectedBytes": 1819,
+      "bytesMatch": true,
+      "sha256": "9eae8e9291c34c85216e6fb98596a6ad0549bdfe6cafcbe6836428953d3a7de9",
+      "expectedSha256": "9eae8e9291c34c85216e6fb98596a6ad0549bdfe6cafcbe6836428953d3a7de9",
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r4/independent-review/codex-r4-14468d913ffe44329ed0b117e29d221b-parser.log",
+      "role": "Codex independent Parser output",
+      "bytes": 316,
+      "expectedBytes": 316,
+      "bytesMatch": true,
+      "sha256": "871043156411fe903e75ee2025e43b57adc658a04f1b889cc50bbe11dd91e7ee",
+      "expectedSha256": "871043156411fe903e75ee2025e43b57adc658a04f1b889cc50bbe11dd91e7ee",
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r4/independent-review/codex-r4-14468d913ffe44329ed0b117e29d221b-selftest.log",
+      "role": "Codex independent pure selftest output",
+      "bytes": 14328,
+      "expectedBytes": 14328,
+      "bytesMatch": true,
+      "sha256": "3956864544bbcd704c3945664254754aa5949ad13e8312afd53b58dc68032f44",
+      "expectedSha256": "3956864544bbcd704c3945664254754aa5949ad13e8312afd53b58dc68032f44",
+      "sha256Match": true
+    }
+  ]
+}

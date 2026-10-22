@@ -1,0 +1,142 @@
+{
+  "taskId": "P02PRE-R1H-H2-COLLECTOR",
+  "revision": "R7",
+  "result": "PASS_STATIC_ONLY",
+  "codeCommit": "a4766131ba7962583a846117e123fb3376ca37de",
+  "docsHead": "c763efa27db0f10949a52416f1374e88173a31e2",
+  "baseCodeHead": "3e3fcae4a578e68adaa1aed929b69ddbb5c89304",
+  "ownerBranch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+  "worktree": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+  "worktreeHeadBeforeRun": "c763efa27db0f10949a52416f1374e88173a31e2",
+  "worktreeHeadAfterRun": "c763efa27db0f10949a52416f1374e88173a31e2",
+  "worktreeCleanAfterRun": true,
+  "environment": {
+    "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "edition": "Core"
+  },
+  "sourceArtifacts": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+      "role": "R7 collector source, unchanged from R6",
+      "bytes": 110261,
+      "sha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+      "gitBlob": "482240dfcc4f618768a2a11416c7514b9e4f01bd",
+      "gitBlobBytes": 108391
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run-selftest.ps1",
+      "role": "R7 pure selftest source",
+      "bytes": 67896,
+      "sha256": "e7ad2b19508d8aae0943e4b42e6830d6fc16bec53b757b62d745c017645ad96c",
+      "gitBlob": "e8c479ac4f43753c983759bcd717f588eb7565d6",
+      "gitBlobBytes": 67051
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T172200-pwsh766-antigravity-r7.md",
+      "role": "Owner R7 Parser log",
+      "bytes": 993,
+      "sha256": "f70cbb09b395f838e688fb389b209961778f5552d83657cfb4b8bf895b59b49c",
+      "gitBlob": "bd3ed4c35ae512d821e3709638b94c2bc598104a",
+      "gitBlobBytes": 975
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T172200-pwsh766-antigravity-r7.md",
+      "role": "Owner R7 pure selftest log",
+      "bytes": 16715,
+      "sha256": "52cd8bc0886cdbab126d65228b05290937a03a3ddbb9843ae301f34d0beeb433",
+      "gitBlob": "e0839765eb2c51bb186be3c26022e169718c5703",
+      "gitBlobBytes": 16460
+    }
+  ],
+  "codexParser": {
+    "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe -NoLogo -NoProfile -NonInteractive -Command Parser::ParseFile for both scripts",
+    "exitCode": 0,
+    "errors": 0,
+    "log": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-parser.log",
+      "role": "Codex independent Parser log",
+      "bytes": 263,
+      "sha256": "f54a1313306f06ff2a6e6d53a871264ff0b27fe2a77c0174e0278486fd0903ed"
+    },
+    "stderr": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-parser.stderr.log",
+      "role": "Codex Parser stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "codexPureSelftest": {
+    "command": "pwsh.exe -NoLogo -NoProfile -NonInteractive -File tools/p02/h1-raw-pre-run-selftest.ps1 -CollectorPath <R7 collector> -SelfPath <R7 selftest> -TempRoot G:/CODEX/New Manga.workspace/temp/P02PRE-R1H-H2-COLLECTOR -Stamp codex-r7-20261013-172924-50381",
+    "exitCode": 0,
+    "assertsPassed": 200,
+    "assertsFailed": 0,
+    "assertsSkipped": [
+      {
+        "name": "live-collector-run",
+        "reason": "Contract: live collector execution is NOT authorized in this Owner task; requires a separately frozen Codex run Task (contract item 7)."
+      },
+      {
+        "name": "live-registry-wer-getter",
+        "reason": "Forbidden here: no live registry/WER query during pure selftest."
+      },
+      {
+        "name": "live-acl-sddl-getter",
+        "reason": "Forbidden here: no live ACL/SDDL getter during pure selftest."
+      },
+      {
+        "name": "live-profile-moniker-getter",
+        "reason": "Forbidden here: no live profile/Packages/AppContainer API during pure selftest."
+      },
+      {
+        "name": "live-git-child",
+        "reason": "Forbidden here: no git child process during pure selftest; status/check-ignore argv are verified statically and via pure argv-builder functions."
+      },
+      {
+        "name": "executor-processobserver-build-ac-sandbox",
+        "reason": "Forbidden scopes: frozen executor execution, ProcessObserver/Toolhelp, Build/Cargo, AC1-AC7, Windows Sandbox — all NOT_RUN by contract."
+      }
+    ],
+    "liveCollectorExecuted": false,
+    "liveQueriesExecuted": false,
+    "fixtureDir": "G:\\CODEX\\New Manga.workspace\\temp\\P02PRE-R1H-H2-COLLECTOR\\codex-r7-20261013-172924-50381-pure-selftest",
+    "log": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-selftest.log",
+      "role": "Codex independent pure selftest log",
+      "bytes": 15754,
+      "sha256": "c822abe779537820f1b8b7989ae17c5d8a72ea282b61eb5873cd77450590151a"
+    },
+    "stderr": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-selftest.stderr.log",
+      "role": "Codex selftest stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "ownerParser": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T172200-pwsh766-antigravity-r7.md",
+    "role": "Owner R7 Parser evidence",
+    "bytes": 993,
+    "sha256": "f70cbb09b395f838e688fb389b209961778f5552d83657cfb4b8bf895b59b49c",
+    "gitBlob": "bd3ed4c35ae512d821e3709638b94c2bc598104a",
+    "gitBlobBytes": 975
+  },
+  "ownerSelftest": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T172200-pwsh766-antigravity-r7.md",
+    "role": "Owner R7 selftest evidence",
+    "bytes": 16715,
+    "sha256": "52cd8bc0886cdbab126d65228b05290937a03a3ddbb9843ae301f34d0beeb433",
+    "gitBlob": "e0839765eb2c51bb186be3c26022e169718c5703",
+    "gitBlobBytes": 16460
+  },
+  "forbiddenScope": {
+    "collector": "NOT_RUN",
+    "getter": "NOT_RUN",
+    "registryWer": "NOT_RUN",
+    "aclSddl": "NOT_RUN",
+    "profileAppContainer": "NOT_RUN",
+    "gitChild": "NOT_RUN",
+    "executorProcessObserverBuildACSandbox": "NOT_RUN",
+    "tmpDriveupload": "NOT_ACCESSED"
+  }
+}

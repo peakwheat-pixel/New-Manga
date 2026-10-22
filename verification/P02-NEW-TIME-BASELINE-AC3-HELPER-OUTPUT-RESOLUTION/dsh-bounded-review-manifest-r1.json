@@ -1,0 +1,132 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+  "generated_at": "2026-10-13T21:13:01+00:00",
+  "source_commit": "b87ef080f1a7a5fb7a930753b26b5ab1e83efe49",
+  "review_head": "b87ef080f1a7a5fb7a930753b26b5ab1e83efe49",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline.ps1",
+      "sha256": "bf9f69cfb291c6e7609a861821fc458c32c7a3c7ad93898953e3ad2db26d567a",
+      "bytes": 98697,
+      "git_blob": "461896e48ff6da87ebf42c41e339257e02689fd8",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "sha256": "26c5f50ec3c7cd447a7bc116b1038ae57777fcda38e3b95e74232a2acaf2f73f",
+      "bytes": 70915,
+      "git_blob": "690a5634944ac7b2bf4eacc93437378ffe756d70",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "doc/handoffs/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION-6420653c.md",
+      "sha256": "4dd3f765c3189399cf3c51dbddd7259e7dd57c0ae1be5a9639ee616681e15abc",
+      "bytes": 8018,
+      "git_blob": "746ba0529d088095e3833909523c9bcdc20fde60",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/selftest-20261014T0506+0800-stdout.log",
+      "sha256": "f242304ec8090bfcfda6530895d3cf111c15d86fcaa595cb9539fb75a50298f9",
+      "bytes": 17695,
+      "git_blob": "65e73d7474e8af2f283444e74b4bf1531aea768f",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/selftest-run-record-20261014T0506+0800.md",
+      "sha256": "c179678cc1c767db05ed76577d10fef7ef9c7c6f706fb307a1e38015089fa9e5",
+      "bytes": 4577,
+      "git_blob": "ade1b153cc31ee26be1c1ab73263ac7d0d2d3ee6",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-20261014T050945-stdout.log",
+      "sha256": "92ca9348946b74089224d83133a3759e7ffb3a626a95c37149b1f1b90b6f7f04",
+      "bytes": 17695,
+      "git_blob": "c5e963a36370148e8e696d6e3c547bb05b9b3908",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-20261014T050945-exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "git_blob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+      "artifact_type": "text"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-20261014T050945-environment.json",
+      "sha256": "b6843c8478ea88ce0074319892ee2cab7b1fc6c1e84769b833c09b8b92e5a579",
+      "bytes": 706,
+      "git_blob": "aabfc7606d3056a648c2280b3a4d70d04cf5948f",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-run-record-20261014T050945.md",
+      "sha256": "c22cd31eca6c9529ab90c74da614b3d33229c3da430e99e0c8267a9ac77bdbfe",
+      "bytes": 1627,
+      "git_blob": "6fc9e1394838484148ac674eeb35b8808fc018c3",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-verify-r1-20261014.md",
+      "sha256": "57c43ad9c38cdbfcd55efa97caea8c3334cc2e9b88a162c710529f539aa0d448",
+      "bytes": 3295,
+      "git_blob": "8415e7bdb725f982980bf543e4e84ce6c817487a",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/revision-classification-I1-input.json",
+      "sha256": "ae9886f843a190b73d53c09a8b85d56736021e7c33fa44a8548a926669dad861",
+      "bytes": 231,
+      "git_blob": "6e2bdf6b26a9d5f69ac0a8bc2882d0e5a071e889",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/revision-classification-I1-output.json",
+      "sha256": "e6a2b63d2c9fa540fa2e71815fc8ff7555c3c54433f6f8485d89ec1fcea794ec",
+      "bytes": 269,
+      "git_blob": "03f0eaf13b7cb91c1ef6ffb6f788adb1f86ef7de",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/revision-classification-T1-input.json",
+      "sha256": "19fe1303040e781be411d6fd847dc6c3597465d7f50f1a5f107fca58fafa8898",
+      "bytes": 231,
+      "git_blob": "93531ab68e936156e3ab92aeaa8af36de62e1a86",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/revision-classification-T1-output.json",
+      "sha256": "596ff488c9f8b8bdd6f2a0323886e2f487ffec9c1cabcbc9a04ec5986fc5a53b",
+      "bytes": 268,
+      "git_blob": "b2239bda738e7b6261d8c4c192e364fac7b5067f",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/revision-classification-E1-input.json",
+      "sha256": "4d73c2d20330e5a361959d2103d507507eac6b9d01d7375aae5b0ed6751906ae",
+      "bytes": 231,
+      "git_blob": "d38302347ad0a4f0c1f1a855fef7f10d747d9b34",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/revision-classification-E1-output.json",
+      "sha256": "42b63044ed6f182f462d8c29ce328302dce85b1d02ad601bdff155e4589a77e6",
+      "bytes": 377,
+      "git_blob": "09480eb12c8bfb5081d6e84a20d59b3f0c6e42a1",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/selftest-fixture-inventory-r1.json",
+      "sha256": "f19f51566c48f374ccd0d38ea06972a5b6c1f13ee4e01486ff3c2bca9440514f",
+      "bytes": 1745,
+      "git_blob": "f23b37722bb9ac7c8ae7a64ba340199403767bdd",
+      "artifact_type": "data"
+    }
+  ]
+}

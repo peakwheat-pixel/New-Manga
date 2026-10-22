@@ -1,0 +1,1 @@
+pwsh -NoProfile -File tools/p02/p02-new-time-baseline-selftest.ps1

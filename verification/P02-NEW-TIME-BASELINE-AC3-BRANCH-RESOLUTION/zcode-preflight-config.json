@@ -1,0 +1,30 @@
+{
+  "agents": [
+    {
+      "cli": [
+        "node",
+        "E:/Program Files/ZCode/resources/glm/zcode.cjs"
+      ],
+      "required_commands": [
+        "node"
+      ],
+      "name": "zcode",
+      "may_review": false,
+      "role": "heavy executor"
+    },
+    {
+      "cli": "dsh",
+      "required_commands": [],
+      "name": "dsh",
+      "may_review": true,
+      "role": "independent reviewer"
+    },
+    {
+      "cli": "agy",
+      "required_commands": [],
+      "name": "antigravity",
+      "may_review": false,
+      "role": "fallback executor"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"agents":[{"name":"zcode","cli":["node","E:/Program Files/ZCode/resources/glm/zcode.cjs"],"required_commands":["node"],"role":"task owner","may_review":false},{"name":"dsh","cli":"dsh","required_commands":[],"role":"independent reviewer","may_review":true}]}

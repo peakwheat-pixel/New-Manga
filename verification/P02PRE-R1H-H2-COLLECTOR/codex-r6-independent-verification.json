@@ -1,0 +1,107 @@
+{
+  "taskId": "P02PRE-R1H-H2-COLLECTOR",
+  "revision": "R6",
+  "result": "PASS_STATIC_ONLY",
+  "reviewedCodeCommit": "3e3fcae4a578e68adaa1aed929b69ddbb5c89304",
+  "reviewedDocsHead": "39ff1d3f94d98165c603c7c0f5e051ebcae3feae",
+  "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+  "worktree": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+  "worktreeHead": "39ff1d3f94d98165c603c7c0f5e051ebcae3feae",
+  "worktreeClean": true,
+  "environment": {
+    "shell": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "psVersion": "7.6.6",
+    "edition": "Core"
+  },
+  "sourceAtCodeCommit": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+      "role": "R6 collector source",
+      "bytes": 110261,
+      "sha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+      "gitBlob": "482240dfcc4f618768a2a11416c7514b9e4f01bd",
+      "gitBlobBytes": 108391
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run-selftest.ps1",
+      "role": "R6 pure selftest source",
+      "bytes": 65874,
+      "sha256": "11737e6eaa613c9ea9b66b3e1da1188e0637c5cea8929b1b82a10389679307aa",
+      "gitBlob": "af3df7dc8e8e606fd3bc82873a1e7151bfb092d2",
+      "gitBlobBytes": 65050
+    }
+  ],
+  "parser": {
+    "command": "pwsh.exe -NoLogo -NoProfile -NonInteractive -Command Parser::ParseFile over both R6 scripts",
+    "exitCode": 0,
+    "errors": 0,
+    "log": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r6/independent-review/codex-r6-independent-parser.log",
+      "role": "Codex independent Parser log",
+      "bytes": 412,
+      "sha256": "8b9a1a88b2ee8944043cb7cd68bc81cf814153079d74fe6848d0dd16026d866c"
+    },
+    "stderr": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r6/independent-review/codex-r6-independent-parser.stderr.log",
+      "role": "Codex independent Parser stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "pureSelftest": {
+    "command": "pwsh.exe -NoLogo -NoProfile -NonInteractive -File tools/p02/h1-raw-pre-run-selftest.ps1 -CollectorPath <R6 collector> -SelfPath <R6 selftest> -TempRoot G:/CODEX/New Manga.workspace/temp/P02PRE-R1H-H2-COLLECTOR -Stamp codex-r6-164852-57803",
+    "exitCode": 0,
+    "assertsPassed": 196,
+    "assertsFailed": 0,
+    "assertsSkipped": [
+      {
+        "name": "live-collector-run",
+        "reason": "Contract: live collector execution is NOT authorized in this Owner task; requires a separately frozen Codex run Task (contract item 7)."
+      },
+      {
+        "name": "live-registry-wer-getter",
+        "reason": "Forbidden here: no live registry/WER query during pure selftest."
+      },
+      {
+        "name": "live-acl-sddl-getter",
+        "reason": "Forbidden here: no live ACL/SDDL getter during pure selftest."
+      },
+      {
+        "name": "live-profile-moniker-getter",
+        "reason": "Forbidden here: no live profile/Packages/AppContainer API during pure selftest."
+      },
+      {
+        "name": "live-git-child",
+        "reason": "Forbidden here: no git child process during pure selftest; status/check-ignore argv are verified statically and via pure argv-builder functions."
+      },
+      {
+        "name": "executor-processobserver-build-ac-sandbox",
+        "reason": "Forbidden scopes: frozen executor execution, ProcessObserver/Toolhelp, Build/Cargo, AC1-AC7, Windows Sandbox — all NOT_RUN by contract."
+      }
+    ],
+    "liveQueriesExecuted": false,
+    "liveCollectorExecuted": false,
+    "log": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r6/independent-review/codex-r6-independent-selftest.log",
+      "role": "Codex independent pure selftest log",
+      "bytes": 15683,
+      "sha256": "d1956195a1a30cbb6cc32701d7b6a7d234527e34b974b705fd83827a22535172"
+    },
+    "stderr": {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r6/independent-review/codex-r6-independent-selftest.stderr.log",
+      "role": "Codex independent pure selftest stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fixtureDir": "G:\\CODEX\\New Manga.workspace\\temp\\P02PRE-R1H-H2-COLLECTOR\\codex-r6-164852-57803-pure-selftest"
+  },
+  "forbiddenScope": {
+    "liveCollector": "NOT_RUN",
+    "registryWer": "NOT_RUN",
+    "aclSddl": "NOT_RUN",
+    "profileAppContainer": "NOT_RUN",
+    "gitChild": "NOT_RUN",
+    "executorProcessObserverBuildACSandbox": "NOT_RUN",
+    "tmpDriveupload": "NOT_ACCESSED"
+  }
+}

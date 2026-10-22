@@ -1,0 +1,618 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "capturedAt": "2026-10-13T12:38:21.504Z",
+  "root": "C:\\Users\\49745\\.codex",
+  "enumeration": "immediate children only; no recursion; names and metadata only",
+  "count": 87,
+  "children": [
+    {
+      "name": ".sandbox",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-12T01:52:57.640Z"
+    },
+    {
+      "name": ".sandbox-bin",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-11T01:46:38.210Z"
+    },
+    {
+      "name": ".sandbox-secrets",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-21T09:18:09.033Z"
+    },
+    {
+      "name": ".tmp",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-13T00:56:36.433Z"
+    },
+    {
+      "name": "agents",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-29T02:07:38.493Z"
+    },
+    {
+      "name": "ambient-suggestions",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-09T08:35:01.215Z"
+    },
+    {
+      "name": "archived_sessions",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-04T00:56:00.043Z"
+    },
+    {
+      "name": "attachments",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-12T14:20:00.129Z"
+    },
+    {
+      "name": "automations",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-13T04:11:32.887Z"
+    },
+    {
+      "name": "browser",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-08T06:36:51.476Z"
+    },
+    {
+      "name": "cache",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-24T02:32:31.123Z"
+    },
+    {
+      "name": "code-review-plugin",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-01T15:16:50.058Z"
+    },
+    {
+      "name": "computer-use",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-13T04:06:21.813Z"
+    },
+    {
+      "name": "dictation-history",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-01T14:36:31.592Z"
+    },
+    {
+      "name": "generated_images",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-06T15:37:57.040Z"
+    },
+    {
+      "name": "goals",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-08T02:20:01.439Z"
+    },
+    {
+      "name": "mcp",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-22T00:59:35.561Z"
+    },
+    {
+      "name": "mcp-oauth-locks",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-03T10:29:58.333Z"
+    },
+    {
+      "name": "node_repl",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-04T17:25:04.025Z"
+    },
+    {
+      "name": "packages",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-08T07:08:11.071Z"
+    },
+    {
+      "name": "pets",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-01T15:51:12.751Z"
+    },
+    {
+      "name": "plugins",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-10T22:32:26.402Z"
+    },
+    {
+      "name": "project-metadata-locks",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-09T08:34:55.767Z"
+    },
+    {
+      "name": "rules",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-03T10:43:04.700Z"
+    },
+    {
+      "name": "secrets",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-03T10:30:02.208Z"
+    },
+    {
+      "name": "sessions",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-19T09:04:05.752Z"
+    },
+    {
+      "name": "skills",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-07T14:44:12.058Z"
+    },
+    {
+      "name": "sqlite",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-10T00:02:36.968Z"
+    },
+    {
+      "name": "thread-writer-locks",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-13T04:08:39.455Z"
+    },
+    {
+      "name": "tmp",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-08T02:44:49.718Z"
+    },
+    {
+      "name": "vendor_imports",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-07-14T01:04:23.853Z"
+    },
+    {
+      "name": "visualizations",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-09-01T16:02:49.685Z"
+    },
+    {
+      "name": "worktrees",
+      "type": "directory",
+      "attributes": "Directory",
+      "length": null,
+      "lastWriteTimeUtc": "2026-10-12T12:09:45.166Z"
+    },
+    {
+      "name": "..codex-global-state.json.bak.tmp-1790729785005-12c15a10-a9fa-456b-b4cb-5dbd96aeec44",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 851468,
+      "lastWriteTimeUtc": "2026-09-30T00:56:25.015Z"
+    },
+    {
+      "name": "..codex-global-state.json.tmp-1788431448482-408b742a-53a6-41d9-b538-6c974cc8d1d8",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 8530,
+      "lastWriteTimeUtc": "2026-09-03T10:30:48.509Z"
+    },
+    {
+      "name": "..codex-global-state.json.tmp-1790828184084-5fe6578d-65cb-4d80-bb8b-63fd17b7eac9",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 853719,
+      "lastWriteTimeUtc": "2026-10-01T04:16:24.092Z"
+    },
+    {
+      "name": "..codex-global-state.json.tmp-1790897833527-d905be6d-b369-4dcb-82bd-a8494f0e0130",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 1048576,
+      "lastWriteTimeUtc": "2026-10-01T23:37:13.544Z"
+    },
+    {
+      "name": "..codex-global-state.json.tmp-1790927736153-238db448-6518-4d7c-b9ba-c77931c4e3ce",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 1368255,
+      "lastWriteTimeUtc": "2026-10-02T07:55:36.172Z"
+    },
+    {
+      "name": ".codex-global-state.json",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 1292374,
+      "lastWriteTimeUtc": "2026-10-13T12:37:35.186Z"
+    },
+    {
+      "name": ".codex-global-state.json.bak",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 1292374,
+      "lastWriteTimeUtc": "2026-10-13T12:37:35.190Z"
+    },
+    {
+      "name": ".codex-global-state.json.bak-mount-20260927-234320",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 792509,
+      "lastWriteTimeUtc": "2026-09-27T15:43:06.358Z"
+    },
+    {
+      "name": ".codex-global-state.json.bak-mount-20260927-235743",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 792550,
+      "lastWriteTimeUtc": "2026-09-27T15:55:22.568Z"
+    },
+    {
+      "name": ".codex-global-state.json.reset-20260928-0904",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 5988,
+      "lastWriteTimeUtc": "2026-09-28T01:12:05.929Z"
+    },
+    {
+      "name": ".codex-provisioning-4798d68b643e7d81.guard",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-09T02:25:58.550Z"
+    },
+    {
+      "name": ".codex-provisioning-7e2e0bfc4366fd12.guard",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-06T12:30:27.505Z"
+    },
+    {
+      "name": ".codex-provisioning-856e6496ff94dfd5.guard",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-09-27T02:39:33.948Z"
+    },
+    {
+      "name": ".codex-provisioning-afba6a2d4325f7cc.guard",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-08T12:40:22.611Z"
+    },
+    {
+      "name": ".codex-provisioning-c8c7b8d81659781b.guard",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-13T00:55:46.988Z"
+    },
+    {
+      "name": ".codex-provisioning-d5956d18def0040b.guard",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-08T00:35:51.448Z"
+    },
+    {
+      "name": ".env",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 136,
+      "lastWriteTimeUtc": "2026-10-13T00:56:22.856Z"
+    },
+    {
+      "name": ".personality_migration",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 3,
+      "lastWriteTimeUtc": "2026-07-14T01:04:24.099Z"
+    },
+    {
+      "name": ".sandbox_migration",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 3,
+      "lastWriteTimeUtc": "2026-09-01T16:02:09.590Z"
+    },
+    {
+      "name": ".sqlite-maintenance.lock",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-03T15:09:24.641Z"
+    },
+    {
+      "name": "AGENTS.md",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 564,
+      "lastWriteTimeUtc": "2026-09-24T14:30:43.379Z"
+    },
+    {
+      "name": "auth.json",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 3971,
+      "lastWriteTimeUtc": "2026-10-11T15:38:08.735Z"
+    },
+    {
+      "name": "cap_sid",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 1693,
+      "lastWriteTimeUtc": "2026-10-04T00:57:01.063Z"
+    },
+    {
+      "name": "cc-switch-model-catalog.json",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 119998,
+      "lastWriteTimeUtc": "2026-09-20T00:46:21.596Z"
+    },
+    {
+      "name": "chrome-native-hosts-v2.json",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 2062,
+      "lastWriteTimeUtc": "2026-10-10T22:32:27.788Z"
+    },
+    {
+      "name": "config.toml",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 7587,
+      "lastWriteTimeUtc": "2026-10-13T04:06:20.333Z"
+    },
+    {
+      "name": "config.toml.bak-fix-20260919",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 3233,
+      "lastWriteTimeUtc": "2026-09-19T10:07:31.898Z"
+    },
+    {
+      "name": "config.toml.bak-openviking-20260911-223626",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 5884,
+      "lastWriteTimeUtc": "2026-09-11T14:02:03.278Z"
+    },
+    {
+      "name": "config.toml.bak-tdai",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 6625,
+      "lastWriteTimeUtc": "2026-09-13T12:57:50.655Z"
+    },
+    {
+      "name": "goals_1.sqlite",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 49152,
+      "lastWriteTimeUtc": "2026-10-13T12:22:44.568Z"
+    },
+    {
+      "name": "goals_1.sqlite-shm",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 32768,
+      "lastWriteTimeUtc": "2026-10-13T12:23:03.519Z"
+    },
+    {
+      "name": "goals_1.sqlite-wal",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 32,
+      "lastWriteTimeUtc": "2026-10-13T12:23:03.524Z"
+    },
+    {
+      "name": "history.jsonl",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 83,
+      "lastWriteTimeUtc": "2026-09-11T14:58:21.063Z"
+    },
+    {
+      "name": "installation_id",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 36,
+      "lastWriteTimeUtc": "2026-07-14T01:04:24.100Z"
+    },
+    {
+      "name": "logs_2.sqlite",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 93782016,
+      "lastWriteTimeUtc": "2026-10-13T12:38:07.559Z"
+    },
+    {
+      "name": "logs_2.sqlite-shm",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 32768,
+      "lastWriteTimeUtc": "2026-10-13T12:26:27.577Z"
+    },
+    {
+      "name": "logs_2.sqlite-wal",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 4602072,
+      "lastWriteTimeUtc": "2026-10-13T12:38:17.542Z"
+    },
+    {
+      "name": "memories_1.sqlite",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 45056,
+      "lastWriteTimeUtc": "2026-10-07T15:29:44.556Z"
+    },
+    {
+      "name": "models_cache.json",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 423398,
+      "lastWriteTimeUtc": "2026-10-13T12:37:51.740Z"
+    },
+    {
+      "name": "queue_1.sqlite",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 40960,
+      "lastWriteTimeUtc": "2026-09-28T01:27:26.043Z"
+    },
+    {
+      "name": "queue_1.sqlite-shm",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 32768,
+      "lastWriteTimeUtc": "2026-10-13T00:56:27.531Z"
+    },
+    {
+      "name": "queue_1.sqlite-wal",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 1940552,
+      "lastWriteTimeUtc": "2026-10-12T16:16:17.823Z"
+    },
+    {
+      "name": "sandbox.2026-09-08.log",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 576,
+      "lastWriteTimeUtc": "2026-09-08T08:17:47.761Z"
+    },
+    {
+      "name": "sandbox.2026-09-11.log",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 192,
+      "lastWriteTimeUtc": "2026-09-11T14:58:19.285Z"
+    },
+    {
+      "name": "session_index.jsonl",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 26738,
+      "lastWriteTimeUtc": "2026-10-13T04:06:27.320Z"
+    },
+    {
+      "name": "state_5.sqlite",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 6782976,
+      "lastWriteTimeUtc": "2026-10-13T12:38:02.761Z"
+    },
+    {
+      "name": "state_5.sqlite-shm",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 32768,
+      "lastWriteTimeUtc": "2026-10-13T04:06:09.728Z"
+    },
+    {
+      "name": "state_5.sqlite-wal",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 4181832,
+      "lastWriteTimeUtc": "2026-10-13T12:38:10.676Z"
+    },
+    {
+      "name": "state_5.sqlite.bak-mount-20260927-235743",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 5435392,
+      "lastWriteTimeUtc": "2026-09-27T15:57:43.678Z"
+    },
+    {
+      "name": "thread_history_1.sqlite",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 999153664,
+      "lastWriteTimeUtc": "2026-10-13T12:38:10.687Z"
+    },
+    {
+      "name": "thread_history_1.sqlite-shm",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 32768,
+      "lastWriteTimeUtc": "2026-10-13T12:12:28.552Z"
+    },
+    {
+      "name": "thread_history_1.sqlite-wal",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 4152992,
+      "lastWriteTimeUtc": "2026-10-13T12:38:11.730Z"
+    },
+    {
+      "name": "transcription-history.jsonl",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 0,
+      "lastWriteTimeUtc": "2026-10-08T13:24:33.174Z"
+    },
+    {
+      "name": "version.json",
+      "type": "file",
+      "attributes": "Archive",
+      "length": 105,
+      "lastWriteTimeUtc": "2026-09-19T09:35:05.097Z"
+    }
+  ]
+}

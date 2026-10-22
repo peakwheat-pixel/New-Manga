@@ -1,0 +1,491 @@
+{
+  "period": "task 01a1205f-33ae-7992-8709-4b2fc22ea8d0 since 2026-10-10T06:00:34.757000Z",
+  "task_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+  "requested_task_or_session_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+  "since": "2026-10-10T06:00:34.757000Z",
+  "date_filter_basis": "event_timestamp_utc",
+  "sessions_root": "C:\\Users\\49745\\.codex\\sessions",
+  "archived_sessions_root": "C:\\Users\\49745\\.codex\\archived_sessions",
+  "files_scanned": 618,
+  "session_files_included": 3,
+  "malformed_lines_skipped": 0,
+  "missing_usage_sessions": [],
+  "all_included_sessions_have_usage_events": true,
+  "credit_rates_as_of": "2026-10-09",
+  "credit_rate_source": "https://learn.chatgpt.com/docs/pricing",
+  "credit_rates": [
+    {
+      "model": "gpt-6-astra",
+      "credits_per_million_tokens": {
+        "uncached_input": 250.0,
+        "cached_input": 25.0,
+        "output": 1250.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 4000.0,
+        "cached_input": 40000.0,
+        "output": 800.0
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "credits_per_million_tokens": {
+        "uncached_input": 50.0,
+        "cached_input": 2.5,
+        "output": 250.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 20000.0,
+        "cached_input": 400000.0,
+        "output": 4000.0
+      }
+    },
+    {
+      "model": "gpt-6-sol",
+      "credits_per_million_tokens": {
+        "uncached_input": 50.0,
+        "cached_input": 5.0,
+        "output": 250.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 20000.0,
+        "cached_input": 200000.0,
+        "output": 4000.0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "credits_per_million_tokens": {
+        "uncached_input": 2.5,
+        "cached_input": 0.25,
+        "output": 12.5
+      },
+      "tokens_per_credit": {
+        "uncached_input": 400000.0,
+        "cached_input": 4000000.0,
+        "output": 80000.0
+      }
+    },
+    {
+      "model": "gpt-5.5",
+      "credits_per_million_tokens": {
+        "uncached_input": 125.0,
+        "cached_input": 12.5,
+        "output": 750.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 8000.0,
+        "cached_input": 80000.0,
+        "output": 1333.3333333333333
+      }
+    },
+    {
+      "model": "gpt-daybreak-blue-latest",
+      "credits_per_million_tokens": {
+        "uncached_input": 100.0,
+        "cached_input": 10.0,
+        "output": 500.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 10000.0,
+        "cached_input": 100000.0,
+        "output": 2000.0
+      }
+    },
+    {
+      "model": "gpt-daybreak-red-latest",
+      "credits_per_million_tokens": {
+        "uncached_input": 312.5,
+        "cached_input": 31.25,
+        "output": 1875.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 3200.0,
+        "cached_input": 32000.0,
+        "output": 533.3333333333334
+      }
+    },
+    {
+      "model": "gpt-rosalind-research",
+      "credits_per_million_tokens": {
+        "uncached_input": 125.0,
+        "cached_input": 12.5,
+        "output": 625.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 8000.0,
+        "cached_input": 80000.0,
+        "output": 1600.0
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "credits_per_million_tokens": {
+        "uncached_input": 5.0,
+        "cached_input": 0.5,
+        "output": 30.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 200000.0,
+        "cached_input": 2000000.0,
+        "output": 33333.333333333336
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "credits_per_million_tokens": {
+        "uncached_input": 50.0,
+        "cached_input": 5.0,
+        "output": 300.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 20000.0,
+        "cached_input": 200000.0,
+        "output": 3333.3333333333335
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "credits_per_million_tokens": {
+        "uncached_input": 100.0,
+        "cached_input": 10.0,
+        "output": 500.0
+      },
+      "tokens_per_credit": {
+        "uncached_input": 10000.0,
+        "cached_input": 100000.0,
+        "output": 2000.0
+      }
+    }
+  ],
+  "summary": {
+    "token_events": 73,
+    "total_processed_tokens": 8403624,
+    "input_tokens": 8316028,
+    "cached_input_tokens": 7831040,
+    "uncached_input_tokens": 484988,
+    "output_tokens": 87596,
+    "reasoning_output_tokens": 45214,
+    "estimated_standard_credits": 10.291621,
+    "estimated_standard_credits_complete": true,
+    "known_processed_tokens": 8403624,
+    "effective_processed_tokens_per_credit": 816550.0847728458,
+    "unpriced_models": [],
+    "unpriced_processed_tokens": 0,
+    "unpriced_token_events": 0
+  },
+  "models": [
+    {
+      "name": "gpt-6-luna",
+      "token_events": 63,
+      "total_processed_tokens": 7635334,
+      "input_tokens": 7552669,
+      "cached_input_tokens": 7137024,
+      "uncached_input_tokens": 415645,
+      "output_tokens": 82665,
+      "reasoning_output_tokens": 44401,
+      "estimated_standard_credit_breakdown": {
+        "uncached_input": 1.0391125,
+        "cached_input": 1.784256,
+        "output": 1.0333125
+      },
+      "estimated_standard_credits": 3.856681,
+      "effective_processed_tokens_per_credit": 1979768.095935339,
+      "known_credit_share_percent": 37.47398976312867
+    },
+    {
+      "name": "gpt-6.1-sol",
+      "token_events": 10,
+      "total_processed_tokens": 768290,
+      "input_tokens": 763359,
+      "cached_input_tokens": 694016,
+      "uncached_input_tokens": 69343,
+      "output_tokens": 4931,
+      "reasoning_output_tokens": 813,
+      "estimated_standard_credit_breakdown": {
+        "uncached_input": 3.46715,
+        "cached_input": 1.73504,
+        "output": 1.23275
+      },
+      "estimated_standard_credits": 6.43494,
+      "effective_processed_tokens_per_credit": 119393.49861847973,
+      "known_credit_share_percent": 62.52601023687134
+    }
+  ],
+  "agents": [],
+  "sessions": [
+    {
+      "name": "main �� gpt-6-luna",
+      "token_events": 54,
+      "total_processed_tokens": 7103291,
+      "input_tokens": 7025028,
+      "cached_input_tokens": 6657024,
+      "uncached_input_tokens": 368004,
+      "output_tokens": 78263,
+      "reasoning_output_tokens": 43294,
+      "estimated_standard_credit_breakdown": {
+        "uncached_input": 0.92001,
+        "cached_input": 1.664256,
+        "output": 0.9782875
+      },
+      "estimated_standard_credits": 3.5625535,
+      "effective_processed_tokens_per_credit": 1993876.3024892118,
+      "session_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+      "task_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+      "parent_thread_id": null,
+      "agent_role": "main",
+      "agent_path": null,
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "cwd": "G:\\CODEX\\New Manga",
+      "started_at": "2026-10-10T06:00:34.757000Z",
+      "ended_at": "2026-10-10T06:14:06.968000Z",
+      "elapsed_seconds": 812.211,
+      "terminal_status": "incomplete",
+      "final_report_present": false,
+      "task_complete": false,
+      "last_turn_final_report_present": false,
+      "interrupted_count": 0,
+      "skipped_duplicate_events": 5,
+      "effective_sandbox": [
+        "danger-full-access"
+      ],
+      "approval_policy": [
+        "never"
+      ],
+      "depth": 0,
+      "known_credit_share_percent": 34.61605805343979
+    },
+    {
+      "name": "Explorer �� gpt-6-luna",
+      "token_events": 9,
+      "total_processed_tokens": 532043,
+      "input_tokens": 527641,
+      "cached_input_tokens": 480000,
+      "uncached_input_tokens": 47641,
+      "output_tokens": 4402,
+      "reasoning_output_tokens": 1107,
+      "estimated_standard_credit_breakdown": {
+        "uncached_input": 0.1191025,
+        "cached_input": 0.12,
+        "output": 0.055025
+      },
+      "estimated_standard_credits": 0.2941275,
+      "effective_processed_tokens_per_credit": 1808885.602332322,
+      "session_id": "01a12467-4880-7572-94e6-de21e76de2a9",
+      "task_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+      "parent_thread_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+      "agent_role": "Explorer",
+      "agent_path": "/root/r3_code_refresh",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "cwd": "G:\\CODEX\\New Manga",
+      "started_at": "2026-10-10T06:01:51.288000Z",
+      "ended_at": "2026-10-10T06:02:45.234000Z",
+      "elapsed_seconds": 53.946,
+      "terminal_status": "completed",
+      "final_report_present": true,
+      "task_complete": true,
+      "last_turn_final_report_present": true,
+      "interrupted_count": 0,
+      "skipped_duplicate_events": 0,
+      "effective_sandbox": [
+        "danger-full-access"
+      ],
+      "approval_policy": [
+        "never"
+      ],
+      "depth": 1,
+      "known_credit_share_percent": 2.857931709688882
+    },
+    {
+      "name": "ExpertAdvisor �� gpt-6.1-sol",
+      "token_events": 10,
+      "total_processed_tokens": 768290,
+      "input_tokens": 763359,
+      "cached_input_tokens": 694016,
+      "uncached_input_tokens": 69343,
+      "output_tokens": 4931,
+      "reasoning_output_tokens": 813,
+      "estimated_standard_credit_breakdown": {
+        "uncached_input": 3.46715,
+        "cached_input": 1.73504,
+        "output": 1.23275
+      },
+      "estimated_standard_credits": 6.43494,
+      "effective_processed_tokens_per_credit": 119393.49861847973,
+      "session_id": "01a12467-397a-7d73-a64b-69ea1e210995",
+      "task_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+      "parent_thread_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+      "agent_role": "ExpertAdvisor",
+      "agent_path": "/root/r3_planning_refresh",
+      "model": "gpt-6.1-sol",
+      "effort": "high",
+      "cwd": "G:\\CODEX\\New Manga",
+      "started_at": "2026-10-10T06:01:47.475000Z",
+      "ended_at": "2026-10-10T06:04:21.560000Z",
+      "elapsed_seconds": 154.085,
+      "terminal_status": "completed",
+      "final_report_present": true,
+      "task_complete": true,
+      "last_turn_final_report_present": true,
+      "interrupted_count": 0,
+      "skipped_duplicate_events": 0,
+      "effective_sandbox": [
+        "danger-full-access"
+      ],
+      "approval_policy": [
+        "never"
+      ],
+      "depth": 1,
+      "known_credit_share_percent": 62.52601023687134
+    }
+  ],
+  "session_status_counts": {
+    "completed": 2,
+    "interrupted": 0,
+    "incomplete": 1
+  },
+  "max_subagent_depth": 1,
+  "diagnostics": {
+    "duplicate_session_files": 20,
+    "session_files_deduplicated": 20,
+    "session_file_overwrites": [
+      {
+        "session_id": "01a0fd30-c8df-79e1-b452-daadc8a57842",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\10\\02\\rollout-2026-10-02T23-20-33-01a0fd30-c8df-79e1-b452-daadc8a57842_01a0fd33-ea34-72f1-b911-7be959c5ec13.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\10\\02\\rollout-2026-10-02T23-17-07-01a0fd30-c8df-79e1-b452-daadc8a57842.jsonl"
+      },
+      {
+        "session_id": "01a10251-66ae-7d93-b63b-3cce5c62d7eb",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\10\\03\\rollout-2026-10-03T23-44-00-01a10251-66ae-7d93-b63b-3cce5c62d7eb_01a1026f-bf4f-7802-bab7-65466871d83e.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\10\\03\\rollout-2026-10-03T23-10-51-01a10251-66ae-7d93-b63b-3cce5c62d7eb.jsonl"
+      },
+      {
+        "session_id": "01a11aca-523d-76f0-b634-ff2a82bc5982",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\10\\08\\rollout-2026-10-08T20-02-34-01a11aca-523d-76f0-b634-ff2a82bc5982_01a11b64-d00a-78d0-b4bf-235f033d7e41.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-13-49-01a11aca-523d-76f0-b634-ff2a82bc5982.jsonl"
+      },
+      {
+        "session_id": "01a06ea0-bc49-7500-8a1f-3f5b9fec5800",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T06-54-01-01a06ea0-bc49-7500-8a1f-3f5b9fec5800_01a06ea1-058b-7030-83ba-5024f0594556.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T06-53-42-01a06ea0-bc49-7500-8a1f-3f5b9fec5800.jsonl"
+      },
+      {
+        "session_id": "01a09b22-b814-7872-aba0-776cbc292076",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\13\\rollout-2026-09-13T22-48-49-01a09b22-b814-7872-aba0-776cbc292076_01a09b3e-0a13-7130-810b-edef478b93f7.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\13\\rollout-2026-09-13T22-18-59-01a09b22-b814-7872-aba0-776cbc292076.jsonl"
+      },
+      {
+        "session_id": "01a0d85b-2143-7170-bd28-b93e82845b9c",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\26\\rollout-2026-09-26T02-41-10-01a0d85b-2143-7170-bd28-b93e82845b9c_01a0d9df-12b4-72a3-a56a-f3c7dd063269.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\25\\rollout-2026-09-25T19-37-26-01a0d85b-2143-7170-bd28-b93e82845b9c.jsonl"
+      },
+      {
+        "session_id": "01a0dc39-07f3-7510-ae1a-d7760fb86790",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\26\\rollout-2026-09-26T13-47-50-01a0dc39-07f3-7510-ae1a-d7760fb86790_01a0dc41-6b70-7dd2-af92-4c21bbb1f18e.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\26\\rollout-2026-09-26T13-38-40-01a0dc39-07f3-7510-ae1a-d7760fb86790.jsonl"
+      },
+      {
+        "session_id": "01a0eacb-d33d-7a43-8f59-4e9337295b4a",
+        "kept": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\29\\rollout-2026-09-29T09-34-37-01a0eacb-d33d-7a43-8f59-4e9337295b4a_01a0eacc-af66-71c1-8048-bf6462c68411.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\sessions\\2026\\09\\29\\rollout-2026-09-29T09-33-41-01a0eacb-d33d-7a43-8f59-4e9337295b4a.jsonl"
+      },
+      {
+        "session_id": "01a06b8c-fdbf-7071-9a61-79940231420a",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-04T16-34-30-01a06b8c-fdbf-7071-9a61-79940231420a_01a06b8e-1c27-7af3-a808-331546c837ab.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-04T16-33-17-01a06b8c-fdbf-7071-9a61-79940231420a.jsonl"
+      },
+      {
+        "session_id": "01a09804-8bf4-76e2-9a6e-3b047f522a74",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-13T22-40-09-01a09804-8bf4-76e2-9a6e-3b047f522a74_01a09b36-1bea-73c0-b2d1-0f94b63a170d.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-13T07-47-09-01a09804-8bf4-76e2-9a6e-3b047f522a74.jsonl"
+      },
+      {
+        "session_id": "01a09804-8bf4-76e2-9a6e-3b047f522a74",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-14T16-50-11-01a09804-8bf4-76e2-9a6e-3b047f522a74_01a09f1c-1080-7d63-a916-672142d7bb29.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-13T22-40-09-01a09804-8bf4-76e2-9a6e-3b047f522a74_01a09b36-1bea-73c0-b2d1-0f94b63a170d.jsonl"
+      },
+      {
+        "session_id": "01a09804-8bf4-76e2-9a6e-3b047f522a74",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-15T00-02-50-01a09804-8bf4-76e2-9a6e-3b047f522a74_01a0a0a8-289c-7a01-8a49-976c4e794bd8.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-14T16-50-11-01a09804-8bf4-76e2-9a6e-3b047f522a74_01a09f1c-1080-7d63-a916-672142d7bb29.jsonl"
+      },
+      {
+        "session_id": "01a0ad99-aee5-7f60-8b00-fd22a1ee9bee",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T12-34-12-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0ada4-c6d7-79b2-a324-72db8259b765.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T12-22-05-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee.jsonl"
+      },
+      {
+        "session_id": "01a0ad99-aee5-7f60-8b00-fd22a1ee9bee",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T12-35-18-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0ada5-cb53-7f01-ad79-2e6e3b0201b7.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T12-34-12-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0ada4-c6d7-79b2-a324-72db8259b765.jsonl"
+      },
+      {
+        "session_id": "01a0ad99-aee5-7f60-8b00-fd22a1ee9bee",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T14-06-58-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0adf9-b798-7642-a573-12769f4db741.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T12-35-18-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0ada5-cb53-7f01-ad79-2e6e3b0201b7.jsonl"
+      },
+      {
+        "session_id": "01a0ad99-aee5-7f60-8b00-fd22a1ee9bee",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T14-09-01-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0adfb-94e0-72a3-97d1-99c17f253e75.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T14-06-58-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0adf9-b798-7642-a573-12769f4db741.jsonl"
+      },
+      {
+        "session_id": "01a0ad99-aee5-7f60-8b00-fd22a1ee9bee",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-19T01-05-49-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0b57b-448b-7711-853b-35b4e4fcc87a.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-17T14-09-01-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0adfb-94e0-72a3-97d1-99c17f253e75.jsonl"
+      },
+      {
+        "session_id": "01a0ad99-aee5-7f60-8b00-fd22a1ee9bee",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-19T08-09-39-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0b6ff-4b40-7741-99b1-501dc83345d8.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-19T01-05-49-01a0ad99-aee5-7f60-8b00-fd22a1ee9bee_01a0b57b-448b-7711-853b-35b4e4fcc87a.jsonl"
+      },
+      {
+        "session_id": "01a0b566-bca8-7ff2-aec7-c75238f68ce6",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-19T20-37-09-01a0b566-bca8-7ff2-aec7-c75238f68ce6_01a0b9ab-a785-7020-a4cc-aea897c1b7c9.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-19T00-43-24-01a0b566-bca8-7ff2-aec7-c75238f68ce6.jsonl"
+      },
+      {
+        "session_id": "01a0c6f1-8098-7670-97d6-87a8481125a3",
+        "kept": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-22T10-37-33-01a0c6f1-8098-7670-97d6-87a8481125a3_01a0c6f9-c8fa-7d33-a639-a63a579e6a9b.jsonl",
+        "discarded": "C:\\Users\\49745\\.codex\\archived_sessions\\rollout-2026-09-22T10-28-31-01a0c6f1-8098-7670-97d6-87a8481125a3.jsonl"
+      }
+    ],
+    "session_statuses": [
+      {
+        "session_id": "01a1205f-33ae-7992-8709-4b2fc22ea8d0",
+        "terminal_status": "incomplete",
+        "depth": 0,
+        "task_complete": false,
+        "final_report_present": false,
+        "last_turn_final_report_present": false
+      },
+      {
+        "session_id": "01a12467-397a-7d73-a64b-69ea1e210995",
+        "terminal_status": "completed",
+        "depth": 1,
+        "task_complete": true,
+        "final_report_present": true,
+        "last_turn_final_report_present": true
+      },
+      {
+        "session_id": "01a12467-4880-7572-94e6-de21e76de2a9",
+        "terminal_status": "completed",
+        "depth": 1,
+        "task_complete": true,
+        "final_report_present": true,
+        "last_turn_final_report_present": true
+      }
+    ],
+    "skipped_duplicate_events": 5
+  },
+  "limitations": [
+    "Local retained sessions only; ephemeral and unavailable remote sessions are excluded.",
+    "--days filters session creation dates in local time and sums retained session usage; it is not an event-time daily bill. Use --task-id or --all for older resumed tasks.",
+    "Credits use configured Standard rates; local token traces do not establish the billed service tier.",
+    "A --since report excludes earlier events and the final answer being written after the report.",
+    "Account limits and resets remain authoritative in Codex /usage.",
+    "Runtime fields come from local trace events; completed means only that the session has task_complete, not that artifact quality is assured."
+  ]
+}

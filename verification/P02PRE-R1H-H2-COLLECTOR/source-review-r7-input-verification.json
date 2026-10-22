@@ -1,0 +1,253 @@
+{
+  "taskId": "P02PRE-R1H-H2-COLLECTOR",
+  "reviewedCodeCommit": "a4766131ba7962583a846117e123fb3376ca37de",
+  "reviewedDocsHead": "c763efa27db0f10949a52416f1374e88173a31e2",
+  "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+  "worktreeHead": "c763efa27db0f10949a52416f1374e88173a31e2",
+  "worktreeClean": true,
+  "codeParent": "39ff1d3f94d98165c603c7c0f5e051ebcae3feae",
+  "docsParent": "a4766131ba7962583a846117e123fb3376ca37de",
+  "codeChangedPaths": [
+    "tools/p02/h1-raw-pre-run-selftest.ps1"
+  ],
+  "docsChangedPaths": [
+    "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+    "verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r7.md",
+    "verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T172200-pwsh766-antigravity-r7.md",
+    "verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T172200-pwsh766-antigravity-r7.md"
+  ],
+  "manifestPath": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/review-input-manifest-r7.json",
+  "manifestSha256": "b2db670aeee85bb224fdebcb9fe94562b110533a2e8b17612bc1ae0db7981b7f",
+  "reviewer": "DeepSeek Harness",
+  "dshVerdict": "APPROVED_STATIC_CONTENT",
+  "dshExitCode": 0,
+  "inputCount": 20,
+  "inputsMatched": 20,
+  "result": "PASS",
+  "checks": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+      "role": "R7 production collector source (unchanged from R6)",
+      "preBytes": 110261,
+      "postBytes": 110261,
+      "preSha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+      "postSha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+      "bytesMatch": true,
+      "sha256Match": true,
+      "preGitBlob": "482240dfcc4f618768a2a11416c7514b9e4f01bd",
+      "postGitBlob": "482240dfcc4f618768a2a11416c7514b9e4f01bd",
+      "gitBlobBytes": 108391,
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run-selftest.ps1",
+      "role": "R7 pure selftest source",
+      "preBytes": 67896,
+      "postBytes": 67896,
+      "preSha256": "e7ad2b19508d8aae0943e4b42e6830d6fc16bec53b757b62d745c017645ad96c",
+      "postSha256": "e7ad2b19508d8aae0943e4b42e6830d6fc16bec53b757b62d745c017645ad96c",
+      "bytesMatch": true,
+      "sha256Match": true,
+      "preGitBlob": "e8c479ac4f43753c983759bcd717f588eb7565d6",
+      "postGitBlob": "e8c479ac4f43753c983759bcd717f588eb7565d6",
+      "gitBlobBytes": 67051,
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "role": "Owner R7 Task snapshot",
+      "preBytes": 48421,
+      "postBytes": 48421,
+      "preSha256": "b8a1ed1cdbf25cd83f98de6cd1af0d0773c7a204b6794430e62f09232dfba008",
+      "postSha256": "b8a1ed1cdbf25cd83f98de6cd1af0d0773c7a204b6794430e62f09232dfba008",
+      "bytesMatch": true,
+      "sha256Match": true,
+      "preGitBlob": "8bf233f3bc0b72bd81f9f3d7f81b78a8aa73e34a",
+      "postGitBlob": "8bf233f3bc0b72bd81f9f3d7f81b78a8aa73e34a",
+      "gitBlobBytes": 48203,
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r7.md",
+      "role": "Owner R7 Handoff",
+      "preBytes": 7828,
+      "postBytes": 7828,
+      "preSha256": "8be29313665f0c66940d5d0ff26a8f72d78913fd5aad6c510a7ec69cd8c25320",
+      "postSha256": "8be29313665f0c66940d5d0ff26a8f72d78913fd5aad6c510a7ec69cd8c25320",
+      "bytesMatch": true,
+      "sha256Match": true,
+      "preGitBlob": "12c9ba4ce8849fc8a199afd794bd2707722e7eaa",
+      "postGitBlob": "12c9ba4ce8849fc8a199afd794bd2707722e7eaa",
+      "gitBlobBytes": 7828,
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T172200-pwsh766-antigravity-r7.md",
+      "role": "Owner R7 Parser log",
+      "preBytes": 993,
+      "postBytes": 993,
+      "preSha256": "f70cbb09b395f838e688fb389b209961778f5552d83657cfb4b8bf895b59b49c",
+      "postSha256": "f70cbb09b395f838e688fb389b209961778f5552d83657cfb4b8bf895b59b49c",
+      "bytesMatch": true,
+      "sha256Match": true,
+      "preGitBlob": "bd3ed4c35ae512d821e3709638b94c2bc598104a",
+      "postGitBlob": "bd3ed4c35ae512d821e3709638b94c2bc598104a",
+      "gitBlobBytes": 975,
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T172200-pwsh766-antigravity-r7.md",
+      "role": "Owner R7 pure selftest log",
+      "preBytes": 16715,
+      "postBytes": 16715,
+      "preSha256": "52cd8bc0886cdbab126d65228b05290937a03a3ddbb9843ae301f34d0beeb433",
+      "postSha256": "52cd8bc0886cdbab126d65228b05290937a03a3ddbb9843ae301f34d0beeb433",
+      "bytesMatch": true,
+      "sha256Match": true,
+      "preGitBlob": "e0839765eb2c51bb186be3c26022e169718c5703",
+      "postGitBlob": "e0839765eb2c51bb186be3c26022e169718c5703",
+      "gitBlobBytes": 16460,
+      "gitBlobMatch": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/codex-r7-independent-verification.json",
+      "role": "Codex R7 independent Parser/selftest verification",
+      "preBytes": 6911,
+      "postBytes": 6911,
+      "preSha256": "35e08595793d74a43ac8f0e73b88328e960db59c18025243938641b9275b72c1",
+      "postSha256": "35e08595793d74a43ac8f0e73b88328e960db59c18025243938641b9275b72c1",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-parser.log",
+      "role": "Codex R7 Parser raw output",
+      "preBytes": 263,
+      "postBytes": 263,
+      "preSha256": "f54a1313306f06ff2a6e6d53a871264ff0b27fe2a77c0174e0278486fd0903ed",
+      "postSha256": "f54a1313306f06ff2a6e6d53a871264ff0b27fe2a77c0174e0278486fd0903ed",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-parser.stderr.log",
+      "role": "Codex R7 Parser stderr",
+      "preBytes": 0,
+      "postBytes": 0,
+      "preSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "postSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-selftest.log",
+      "role": "Codex R7 pure selftest raw output",
+      "preBytes": 15754,
+      "postBytes": 15754,
+      "preSha256": "c822abe779537820f1b8b7989ae17c5d8a72ea282b61eb5873cd77450590151a",
+      "postSha256": "c822abe779537820f1b8b7989ae17c5d8a72ea282b61eb5873cd77450590151a",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/independent-review/codex-r7-independent-selftest.stderr.log",
+      "role": "Codex R7 selftest stderr",
+      "preBytes": 0,
+      "postBytes": 0,
+      "preSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "postSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r6.md",
+      "role": "DSH R6 exact-head Review",
+      "preBytes": 13834,
+      "postBytes": 13834,
+      "preSha256": "1867ac8b0627b02c82df500b44c5e545259f8401291176986805341619feab13",
+      "postSha256": "1867ac8b0627b02c82df500b44c5e545259f8401291176986805341619feab13",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/source-review-r6-input-verification.json",
+      "role": "Codex R6 post-review pins",
+      "preBytes": 11114,
+      "postBytes": 11114,
+      "preSha256": "3d91a117c35dfa55a2e73d1a6fa0a5cc83a45bf23c86207a48b38758ed828a38",
+      "postSha256": "3d91a117c35dfa55a2e73d1a6fa0a5cc83a45bf23c86207a48b38758ed828a38",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/verification/P02PRE-R1H-H2-COLLECTOR/source-review-r6-adjudication.md",
+      "role": "Codex R6 adjudication",
+      "preBytes": 3195,
+      "postBytes": 3195,
+      "preSha256": "fa3ea67d0dfc95c519e08840516c8293cc60b29b96bb1a9f10f98df3fabf08b1",
+      "postSha256": "fa3ea67d0dfc95c519e08840516c8293cc60b29b96bb1a9f10f98df3fabf08b1",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/antigravity-r7-owner-prompt.md",
+      "role": "R7 Owner instruction",
+      "preBytes": 3298,
+      "postBytes": 3298,
+      "preSha256": "8514a562a162e4e46d5d9e26a7c7e046a4070cf6204ff4af01ecb4412ea89e81",
+      "postSha256": "8514a562a162e4e46d5d9e26a7c7e046a4070cf6204ff4af01ecb4412ea89e81",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/r7-owner-input-manifest.json",
+      "role": "R7 Owner input manifest",
+      "preBytes": 4829,
+      "postBytes": 4829,
+      "preSha256": "d55ad81127fc37d7f377d99ecb2bdba9a9bdbef4240e1c9a45458325fca8aaa9",
+      "postSha256": "d55ad81127fc37d7f377d99ecb2bdba9a9bdbef4240e1c9a45458325fca8aaa9",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/antigravity-r7.dispatch.json",
+      "role": "Antigravity R7 dispatch metadata",
+      "preBytes": 1879,
+      "postBytes": 1879,
+      "preSha256": "5e737d130d8c4f0db6fb796e10df94f2f16c8d026baeba94cfd81b6be3cb40a5",
+      "postSha256": "5e737d130d8c4f0db6fb796e10df94f2f16c8d026baeba94cfd81b6be3cb40a5",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/antigravity-r7.stdout.json",
+      "role": "Antigravity R7 response; outer API EOF recorded",
+      "preBytes": 8540,
+      "postBytes": 8540,
+      "preSha256": "d6c8a29c0d48362a1ce5cd7b71efce54afc70a946a5395dfc4bbad8a6425d0bb",
+      "postSha256": "d6c8a29c0d48362a1ce5cd7b71efce54afc70a946a5395dfc4bbad8a6425d0bb",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/antigravity-r7.stderr.log",
+      "role": "Antigravity R7 stderr",
+      "preBytes": 0,
+      "postBytes": 0,
+      "preSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "postSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/antigravity-r7.exit",
+      "role": "Antigravity R7 outer exit marker",
+      "preBytes": 1,
+      "postBytes": 1,
+      "preSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "postSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytesMatch": true,
+      "sha256Match": true
+    }
+  ]
+}

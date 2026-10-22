@@ -1,0 +1,1 @@
+pwsh -NoProfile -File tools/p02/p02-new-time-baseline-selftest.ps1 -Stamp 20261013T1947Z

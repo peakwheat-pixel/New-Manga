@@ -1,0 +1,22 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "run_id": "source-selftest-r2-20261014-060844",
+  "fixture_dir": "G:\\CODEX\\New Manga.workspace\\temp\\P02-NEW-TIME-BASELINE\\20261014-060844-pure-selftest",
+  "files": [
+    {
+      "relative_path": "collision.bin",
+      "bytes": 5,
+      "sha256": "74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0"
+    },
+    {
+      "relative_path": "exclusive.bin",
+      "bytes": 1,
+      "sha256": "559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD"
+    },
+    {
+      "relative_path": "partial-run.json",
+      "bytes": 99,
+      "sha256": "6E8D8DCB09220F31316075389DBE28BBA0B7A9482675E6542A7254579C8E6D11"
+    }
+  ]
+}

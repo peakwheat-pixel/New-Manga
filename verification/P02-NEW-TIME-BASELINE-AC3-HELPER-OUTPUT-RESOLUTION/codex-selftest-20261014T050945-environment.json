@@ -1,0 +1,16 @@
+{
+  "task": "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+  "command": "pwsh -NoProfile -File tools/p02/p02-new-time-baseline-selftest.ps1",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/p02/p02-new-time-baseline-selftest.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+  "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+  "head": "c8434a8e74d5dd211cfad673f9fd46f9d4d73e0f",
+  "startedUtc": "2026-10-13T21:09:45.5559671Z",
+  "shell": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "taskBoundary": "pure selftest only; no collector/live query/git child/whoami child"
+}

@@ -1,0 +1,77 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "validation": "Existing canonical evidence pins",
+  "checkedAt": "2026-10-13T12:47:48.663Z",
+  "count": 8,
+  "result": "PASS",
+  "files": [
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-final-pre-run-20261012.stderr.log",
+      "bytes": 1237,
+      "expectedSha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16",
+      "actualSha256": "990FAAF1A2E35F5D5486EFD36CD4D82BA081F81E42499320D8B689DBB9F42C16",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02/codex-p02pre-r1h-attempt6-zcode-h1-review-adjudication-20261012.md",
+      "bytes": 7665,
+      "expectedSha256": "9D4B95DA5263B0C52A3621748E875760CAAADF153ED5C39BDA5955520DF57232",
+      "actualSha256": "9D4B95DA5263B0C52A3621748E875760CAAADF153ED5C39BDA5955520DF57232",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02PRE-R1H-FORENSIC-RECOVERY/recovery-report-r2.md",
+      "bytes": 6443,
+      "expectedSha256": "C38C70245A913570155BF6E3135D79293BFB156239AFD88B08533C3E1801AAAE",
+      "actualSha256": "C38C70245A913570155BF6E3135D79293BFB156239AFD88B08533C3E1801AAAE",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02PRE-R1H-FORENSIC-RECOVERY/adjudication.md",
+      "bytes": 1973,
+      "expectedSha256": "A35269761CF85E8B9DCC4C16D550C604F93260563D26049309B2087CB31CDE6A",
+      "actualSha256": "A35269761CF85E8B9DCC4C16D550C604F93260563D26049309B2087CB31CDE6A",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02PRE-R1H-FORENSIC-RECOVERY/method-manifest.json",
+      "bytes": 206933,
+      "expectedSha256": "E1E145AEDAB9C6F1A33CA0B7DF21E04CFF7638A4263E22DF45A16EBDE5FC19B2",
+      "actualSha256": "E1E145AEDAB9C6F1A33CA0B7DF21E04CFF7638A4263E22DF45A16EBDE5FC19B2",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md",
+      "bytes": 3954,
+      "expectedSha256": "C0B86E1B58DDD50325110642764FD241CF0022F3455346C76546F718E0CF090B",
+      "actualSha256": "C0B86E1B58DDD50325110642764FD241CF0022F3455346C76546F718E0CF090B",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/post-review-pins-r1.json",
+      "bytes": 4974,
+      "expectedSha256": "97822D3C906E57BC1F9D9E898B429C2C52F65A24AA94DA22B137FB2186D0169D",
+      "actualSha256": "97822D3C906E57BC1F9D9E898B429C2C52F65A24AA94DA22B137FB2186D0169D",
+      "result": "PASS"
+    },
+    {
+      "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h1-subject-task-r1.md",
+      "bytes": 25016,
+      "expectedSha256": "E4582DFB8248EBF903C691AF571B2BA571065AA93E0A4F29FE9BE8F9AA44F02B",
+      "actualSha256": "E4582DFB8248EBF903C691AF571B2BA571065AA93E0A4F29FE9BE8F9AA44F02B",
+      "result": "PASS"
+    }
+  ],
+  "dependentTaskGovernance": [
+    {
+      "taskId": "P02PRE-R1H-FORENSIC-RECOVERY",
+      "result": "PASS",
+      "warnings": 0
+    },
+    {
+      "taskId": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "result": "PASS",
+      "warnings": 0
+    }
+  ]
+}

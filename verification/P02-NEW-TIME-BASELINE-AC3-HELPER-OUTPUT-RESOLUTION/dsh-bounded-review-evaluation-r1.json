@@ -1,0 +1,12 @@
+{
+  "transport_status": "SUCCESS",
+  "agent_status": "BLOCKED",
+  "artifact_status": "COMPLETE",
+  "verification_status": "NOT_RUN",
+  "decision": "VERIFY_OR_REPAIR",
+  "rerun_owner": false,
+  "discard": false,
+  "rationale": "artifact complete but verification not green",
+  "mode": "evaluate-result",
+  "dry_run": false
+}

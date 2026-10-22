@@ -1,0 +1,6 @@
+{
+  "quota_status": "OK",
+  "permission_mode": "OK",
+  "conversation_usable": true,
+  "basis": "Same task DSH result-review dispatch completed with exit 0; no write permission requested for this bounded read-only review."
+}

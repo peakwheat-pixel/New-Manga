@@ -1,0 +1,91 @@
+{
+  "taskId": "P02PRE-R1H-H2-RUN",
+  "runId": "h2-20261013-de77a42fccca4193925767ba4e414970",
+  "createdUtc": "2026-10-13T11:15:23.7227384Z",
+  "adjudication": "APPROVED",
+  "baseCommit": "343895fb5f0329c0c07a7104ec321b698f967607",
+  "reviewedHead": "1924fbb4fbff6044205e4f8b52adb6aaff879e2a",
+  "reviewRounds": [
+    {
+      "round": "r1",
+      "reportPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\dsh-result-review-r1.md",
+      "reportSha256": "db1707cb23bc3d54fe83ed686eff210b70c85d326a73e36a26b34fb51686aa92",
+      "inputManifestPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r1\\review-inputs-r1.json",
+      "inputManifestSha256": "a045e128fb30f6b85eb9b76133e574622a99f2ab74dd19430bb6719fd547bd4e",
+      "inputCount": 16,
+      "allInputsUnchanged": true,
+      "postPinsPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\result-review-r1-post-pins.json",
+      "postPinsSha256": "958ff3b97c28d0686af966a48f6e10f4fe89308fda00175ef726af64428aacd3"
+    },
+    {
+      "round": "r2",
+      "reportPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\dsh-result-review-r2.md",
+      "reportSha256": "f5bfcf3014d3d66d64122e0313d7af2f1b0c2ef3beb642ca6a647a71ef7d41ff",
+      "inputManifestPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r2\\review-inputs-r2.json",
+      "inputManifestSha256": "445be97928347ee504b7fa6d64cdd3134c35b0313e0b2f6114bffd45a5280478",
+      "inputCount": 8,
+      "allInputsUnchanged": true,
+      "postPinsPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\result-review-r2-post-pins.json",
+      "postPinsSha256": "ce706a63cfdc41581a0aed271e78fbd6d62ee3506f88f324f4191e770f089dce"
+    },
+    {
+      "round": "r3",
+      "reportPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\dsh-result-review-r3.md",
+      "reportSha256": "8995028a950e082465fcae293e33028b85fa6a549f90292a943ed04ed21291a2",
+      "inputManifestPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r3\\review-inputs-r3.json",
+      "inputManifestSha256": "1824d3bcdc4a9bb402e4ce91beae53f8d4343252fbc07dcf506f170a25341529",
+      "inputCount": 6,
+      "allInputsUnchanged": true,
+      "postPinsPath": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\result-review-r3-post-pins.json",
+      "postPinsSha256": "73dbd38bdece76e84d366ccdcf75038cdfd2d18e610e1387df37cae2357b90ad"
+    }
+  ],
+  "codexRawVerification": {
+    "rawResultBytes": 788029,
+    "rawResultSha256": "32cd72b710857bb0f19eb92d2c01f2ff6aa13778f10836965c8619ebbf5a2179",
+    "recordCount": 80,
+    "observationCount": 78,
+    "checks": 55,
+    "pass": 55,
+    "fail": 0,
+    "notVerified": 0,
+    "notRunChecks": 0,
+    "pointersResolved": 55,
+    "malformedPointers": 0,
+    "unresolvedPointers": 0,
+    "disposition": "COLLECTED_NEW_TIME_EVIDENCE",
+    "evidenceClass": "NEW_TIME_EVIDENCE",
+    "substitution": "CANNOT_SUBSTITUTE_V2_TIME_EVIDENCE"
+  },
+  "currentRuntimeSummary": {
+    "jsonSha256": "ef97ce90c9ed7c9ab693930bfc9c15ce220dbe921a916112cbbd951689c130e3",
+    "markdownSha256": "f4a1a2cc67b92585c41a8b78890e7583324c9704a50f2477fca319d6905129a0",
+    "notRunCheckCount": 0,
+    "notRunScopeItemCount": 7,
+    "notRunScopeItems": [
+      "profileLpacLiveProbe",
+      "dynamicProcessClosure",
+      "executor",
+      "buildCargo",
+      "ac1_ac7",
+      "windowsSandbox",
+      "processObserverToolhelp"
+    ]
+  },
+  "frozenState": {
+    "rootHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "mainHead": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "rootIndexSha256": "c5ca88842173a8fe4b9c6b6b675528347eecbdc73f85600aba06f11e3a692b68",
+    "integrationHead": "1924fbb4fbff6044205e4f8b52adb6aaff879e2a",
+    "integrationWorktreeClean": true,
+    "collectorSourceSha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+    "selftestSourceSha256": "e7ad2b19508d8aae0943e4b42e6830d6fc16bec53b757b62d745c017645ad96c"
+  },
+  "findings": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "p3": 0,
+    "disposition": "All R1 P3 findings resolved in R2/R3; no unresolved finding."
+  }
+}

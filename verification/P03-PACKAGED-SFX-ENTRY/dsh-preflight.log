@@ -1,0 +1,12 @@
+DSH version: 0.1.7-rc.2
+Command: dsh --profile headless --json '只回复两个字：收到'
+EXIT=0
+STDOUT:
+{"type":"session","sessionId":"session-f3e3ded7-4d55-4436-886e-e7db7bd87d54","cwd":"G:\\CODEX\\New Manga.worktrees\\P03-dsh-review-6d84b48"}
+{"type":"status","phase":"turn_start","turn":1}
+{"type":"status","phase":"step_start","turn":1,"step":1}
+{"type":"text","text":"收到"}
+{"type":"status","phase":"step_end","turn":1,"step":1,"usage":{"inputTokens":9957,"outputTokens":2,"totalTokens":9959}}
+{"type":"status","phase":"turn_end","turn":1,"reason":{"kind":"completed"}}
+{"type":"final","text":"收到"}
+STDERR:

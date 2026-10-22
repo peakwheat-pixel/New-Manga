@@ -1,0 +1,1703 @@
+dsh: reasoning:
+Let me start by understanding the task. I'm the P08 DSH Reviewer for R6. I need to do a read-only review of a fixed delivery.
+
+Let me set up a todo list and start gathering evidence.
+
+First, let me check the worktree state, git info, and read the relevant files.
+
+Let me start with basic git commands.
+
+Note: I'm in workspace-write mode for the review worktree. I must not modify project files. Read-only commands are fine.
+
+Let me begin.
+dsh: reasoning:
+The sandbox setup failed. Let me try again, maybe with a read-only command or a different workdir. Let me retry.
+dsh: reasoning:
+The sandbox cannot grant write to the worktree. Let me try running from the default workspace (which may be the same). The session workspace is "G:\CODEX\New Manga.worktrees\P08-dsh-review-ecb3b520-r6". Hmm.
+
+Maybe I can run pwsh with the default workdir (session workspace) - same thing. Let me try without workdir param.
+dsh: reasoning:
+The sandbox fails on any pwsh command because it tries to grant write access to the workspace. Perhaps I can retry with sandbox_permissions to escalate? The error is a sandbox setup failure (Win32 5 = access denied), not a denial of the specific operation. Per instructions: "a blocked file operation is reported as [sandbox: file access denied under <mode> mode]". This is different — setup failure.
+
+Let me try the read tool / glob first, which use the filesystem backend, maybe they work.
+dsh: reasoning:
+The read tool works. The glob works. But pwsh fails due to sandbox setup. Let me try pwsh with escalation (sandbox_permissions: danger-full-access)? The policy says approval may be asked. The error is a sandbox setup failure grantWrite. Let me try read-only-ish escalation. Actually the sandbox_permissions param is meant for retry of the exact operation the sandbox just denied. Here the sandbox failed to set up. Let me try workspace-write first.
+
+Actually, let me think: the error "SetNamedSecurityInfoW failed (Win32 5): grantWrite(...)" occurs because it tries to grant write on the workspace dir but fails. Perhaps because that directory has restrictive ACLs or is read-only for us. Hmm.
+
+Let me try requesting danger-full-access for a single read command.
+dsh: reasoning:
+No approval channel. So pwsh is unavailable entirely? Let me test whether pwsh works with run_in_background or some other setting. Maybe the failure only occurs when workdir is the workspace... Actually it failed even without workdir. The grantWrite is on the session workspace regardless.
+
+Hmm, maybe I can pass a workdir outside the workspace? The sandbox still grants write on the workspace. Let's test.
+
+Actually, maybe the sandbox setup issue is transient — retry. Let me test a trivial command.
+dsh: reasoning:
+pwsh is entirely unavailable. So I cannot run git commands directly. I must rely on file reading tools (read, glob, grep) and possibly reading git metadata files directly via the filesystem backend.
+
+Hmm — the filesystem backend may resolve paths outside the workspace too (read tool worked on the worktree which IS the workspace). Let me test reading a file in the main repo, e.g. the R6 handoff and prompt. And maybe I can read .git files directly to determine HEAD.
+
+Git worktree: G:/CODEX/New Manga.worktrees/P08-dsh-review-ecb3b520-r6/.git is typically a file containing "gitdir: G:/CODEX/New Manga/.git/worktrees/<name>". Let me read it.
+
+Then HEAD is in that gitdir. Let me read.
+
+Also, the main repo G:/CODEX/New Manga — can I read outside the workspace? The policy is workspace-write, meaning writes restricted; reads may be broader or denied. Let's test.
+
+Let me try reading the R6 prompt at G:/CODEX/New Manga/verification/P08/DSH-REVIEW-PROMPT-R6.md — wait, the prompt says it's saved at main workspace `G:/CODEX/New Manga/verification/P08/DSH-REVIEW-PROMPT-R6.md`. And the worktree has DSH-REVIEW-PROMPT-R5.md etc. but glob showed no R6 in the worktree. Right — consistent with "not part of fixed delivery".
+
+Let me try.
+dsh: reasoning:
+I can read outside the workspace. Good. So my main tool is read/glob/grep, plus reading git metadata files directly.
+
+I can determine HEAD by reading the gitdir HEAD file, and the commit object (zlib compressed - can't decompress with read tool though... it's binary). Hmm. Let me check: gitdir = G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-ecb3b520-r6. HEAD file there contains the ref or SHA.
+
+Let me read:
+- G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-ecb3b520-r6/HEAD
+- .../gitdir (points to the worktree)
+- .../commondir (should be ../..)
+
+Also I can verify the commit content via the object database, but that's binary. Alternative: use refs. Actually if HEAD contains the raw SHA (detached), that's direct evidence of HEAD == reviewed head. But the task says "命令无法执行时如实记NOT_RUN/NOT_VERIFIED，不要记PASS". Reading the HEAD file is file evidence, not command. I can report it as file-based evidence: "通过直接读取 worktree gitdir 的 HEAD 文件". That's legitimate file evidence, but I should be careful: it doesn't verify worktree cleanliness or that the worktree content matches HEAD.
+
+Can I inspect the worktree content vs the commit? For the diff, I could read files and compare with... hmm, without git objects I can't. But maybe I can read the git index? Binary.
+
+Alternative: Is there a way to run commands? Let me think about other options:
+1. Maybe pwsh fails only due to the sandbox grantWrite on the workspace. Could I set workdir to something else? The grant is on the session workspace always. Already tried without workdir → same error.
+2. Maybe the glob/grep/read tools use a different backend that works.
+
+Actually — maybe I can invoke a subagent? Subagents run in the same sandbox presumably. The workflow tool's agents run subagents... same environment likely.
+
+Hmm, what about write tool? It requires workspace. Not needed.
+
+Let me check if there's any other way to execute. The `pwsh` tool is the only shell. It's blocked by sandbox setup failure. This is an environment problem: the worktree directory ACL doesn't allow the sandbox to grant write. Possibly because G: drive or directory permissions. 
+
+Maybe I can retry a couple of times — transient? Already 4 attempts. Let me try once more with a totally trivial command and maybe run_in_background... no, same setup.
+
+Let me try `sandbox_permissions: workspace-write` explicitly (as a one-shot retry). It said escalation to danger-full-access requires approval. workspace-write is the current mode, so the retry would be the same.
+
+OK. Let me also test whether the bash-like functionality exists elsewhere... no.
+
+So: pwsh = NOT_RUN (environment failure). I must do a file-evidence-based review as thoroughly as possible, and clearly document the boundary. The prompt says: "命令无法执行时如实记NOT_RUN/NOT_VERIFIED，不要记PASS". So R6 may end up reporting shell/git as NOT_RUN. But the review still needs to verify the two P3 fixes, which I can do by reading the fixed worktree's verify_scope.py (the delivered file). And I can verify the diff scope by comparing base and head versions of files... Actually I can read base versions? The base commit's file content is in the object database (binary). But wait: the worktree files at HEAD are the head versions. For base versions, I might find copies in the main workspace (currently at some commit + dirty). Hmm.
+
+Alternative: maybe there are uncommitted/committed versions available. Actually, git stores compressed objects; the read tool would show garbage.
+
+Hmm, but maybe I can use `git` via a different mechanism... What if I use the `write` tool? No.
+
+Let me reconsider: is there any chance the pwsh sandbox failure is because of the specific session workspace path having a space or special ACL? The error is on grantWrite to the workspace. Maybe I can pass `workdir` to a different directory AND the sandbox uses workdir as the grant target... It already used the session workspace when no workdir. When I passed workdir = the same path it was the same. Let me try workdir = G:/CODEX/New Manga (main repo) — maybe the sandbox grants write there and succeeds? The message said grantWrite(G:\CODEX\New Manga.worktrees\P08-dsh-review-ecb3b520-r6), which is the session workspace, not the workdir. But worth testing.
+
+Actually, maybe the file sandbox grants write to BOTH the workspace and the workdir. Let's test workdir in main repo... but that's outside workspace, and the policy is workspace-write so writes outside would be denied. Test anyway — it's read-only git.
+
+Hmm, risky? No, it's fine.
+
+Let me try.
+dsh: reasoning:
+HEAD file = ecb3b520... (detached). Good file evidence.
+
+Now read commondir, gitdir, index (binary but maybe has a header), ORIG_HEAD, and the refs.
+
+Also check the main repo's HEAD to know current branch/commit for post-delivery state.
+
+Let me read:
+- G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-ecb3b520-r6/commondir
+- G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-ecb3b520-r6/gitdir
+- G:/CODEX/New Manga/.git/HEAD
+
+And check for other worktrees.
+dsh: reasoning:
+glob with path outside workspace returned nothing? Hmm, earlier glob on verification/P08/** worked (relative to workspace). The glob with path "G:/CODEX/New Manga" pattern ".git/worktrees/**/HEAD" found nothing — maybe hidden dirs or path resolution. Let me try pattern "**/.git" ... Actually glob searches for files. Let me try pattern "worktrees/**" with path "G:/CODEX/New Manga/.git".
+
+Actually, note glob default excludes nothing ("including hidden and ignored files"). Maybe the path form with a space is fine. Let me try listing .git/worktrees directory.
+dsh: reasoning:
+glob on absolute path outside workspace seems to not work (returns nothing), while read works on absolute paths. Maybe glob's `path` must be inside workspace. Let me test glob with path "G:/CODEX/New Manga" pattern "*.md" — to see if outside-workspace glob works at all.
+
+Alternatively, I know the worktree name from .git file. Let's just read specific known files.
+
+Let me now list the worktrees directory via... hmm, I can't list. Maybe read the directory? read on a directory probably fails.
+
+Let me check the git config / worktree list: G:/CODEX/New Manga/.git/worktrees/ subdirs. I could guess names. Not critical.
+
+Now, key: verify cleanliness and diff scope without git commands. 
+
+Approach for diff scope verification (does base..head touch only P08 authorized paths?): I can compare the fixed worktree (head content) against base content. Base content isn't directly readable... but maybe the main workspace has an unmodified copy? The main workspace is at some post-delivery state (possibly with new commits + dirty files). Not reliable.
+
+Alternative: The R5 review report (in the fixed worktree at verification/P08/review-dsh-af1ddeec-r5.md) documents the R5 findings and the previous diff. Let me read it — it's part of the delivery (added at R5? Actually it's in the worktree, so it's committed at head or at base...). Wait, the R5 worktree was af1ddeec. The R5 report file verification/P08/review-dsh-af1ddeec-r5.md is in HEAD (ecb3b520) worktree. Is it in base af1ddeec? The R5 report was likely committed after R5 delivery (i.e., in base af1ddeec, since base is the R5 delivery head). Let me check: base = af1ddeec = R5 delivery head. The file name review-dsh-af1ddeec-r5.md suggests it's named after af1ddeec, so likely committed at af1ddeec... but wait, base af1ddeec is "R5 delivery head" — the R5 report was written by DSH and archived by Codex afterwards, which would be a commit after af1ddeec? Hmm. Base for R6 = af1ddeec, described in R6 prompt as "base：af1ddeec...". The R5 report is referenced as "R5报告：verification/P08/review-dsh-af1ddeec-r5.md" and it might be in committed state at af1ddeec or after.
+
+Anyway, I can't run git. Let me focus:
+
+Deliverable of R6: review the fixed base..head diff (which per handoff is two P3 fixes to verify_scope.py). To verify the diff, I need base versions of the changed files. Which files changed between af1ddeec and ecb3b520? Per handoff: only verify_scope.py presumably. Let me try to obtain the base version.
+
+Idea: git object files are zlib-compressed binary; read tool would fail/garble. But maybe there's a packed/loose object and I can't decompress. So no.
+
+Alternative idea: the main workspace (G:/CODEX/New Manga) may contain a copy of verify_scope.py at a state that includes post-delivery changes (the two fixes were made where? The delivery head ecb3b520 is in main branch; Codex made the fixes and committed to main then created worktree? Actually worktrees point to specific commits).
+
+Actually wait: maybe the R5 verification copy exists in the main repo's worktree at an older commit? Let's compare.
+
+Practical approach: I have strong file evidence in HEAD worktree. For the diff, I can:
+1. Read the R5 report and R5 prompt (in worktree) to know what R5 delivered/observed.
+2. Read the current verify_scope.py (head) and check the R5-01/R5-02 fixes are present.
+3. To establish that nothing else changed, I need base content. Hmm.
+
+Could I read the base blob path? Loose objects: .git/objects/xx/yyyy... binary zlib. Not text.
+
+Hmm, but maybe I can check whether the verified "193 items D08 AC" etc. hold by reading the files (AC_COVERAGE.md, 08_ACCEPTANCE_CRITERIA.md) and manually replicating the assertions. That's what "独立复算" means: independently recompute the two P3 revisions. I can do the link-resolution check manually with grep/read: check all markdown links in verification/P08/*.md, doc/tasks/P08.md, doc/handoffs/P08-*.md resolve to existing files.
+
+And for R5-01, verify the allowed() function asserts the negatives (lines 93-94) — yes present. And that the committed BASE..HEAD diff assertion (line 96-99) uses BASE...HEAD (not worktree dirty) — present.
+
+But "既有正向allowlist是否仍约束固定BASE..HEAD已提交差量且排除他人未提交dirty" — the code uses git diff BASE HEAD, which excludes untracked/dirty. That's verifiable by reading code, but running it needs git. I can report code-level confirmation and mark the runtime as NOT_RUN.
+
+However, I can partially verify scope by checking the *current* file listing of the worktree for suspicious files... not the diff.
+
+Hmm, is there any other execution channel? Let's think about the `subagent` tool — subagents are separate agents; do they have the same sandbox? Likely same host policy. They'd have the same pwsh failure. Could try one subagent to run a git command; cheap to test? It costs a subagent run. Might be worth trying once — if the subagent's sandbox works (maybe different workspace?), no, subagent runs in same session workspace.
+
+Actually, maybe I could try the `write` tool to create a script... irrelevant without execution.
+
+Let me reconsider the pwsh failure. "SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga.worktrees\P08-dsh-review-ecb3b520-r6)". Win32 5 = ERROR_ACCESS_DENIED. The harness tries to grant write ACE on the workspace dir. On G: drive maybe not NTFS ACL-capable? Or the DSH process lacks WRITE_DAC permission on that directory. R5 had the same problem ("R5的DSH自身shell/git/python检查曾因SetNamedSecurityInfoW Win32 5为NOT_RUN/NOT_VERIFIED"). So this is a persistent known environment limitation. Indeed the handoff says R5's DSH shell/git/python checks were NOT_RUN/NOT_VERIFIED because of exactly this.
+
+So the expectation is: R6 may also hit this. The prompt says record it honestly. Possibly the R6 worktree was created to fix it (new worktree name) but same issue.
+
+Let me try a different approach: maybe the pwsh tool works if the command is executed with read-only mode? There's no read-only option; policy is workspace-write and the sandbox tries to grantWrite. Hmm.
+
+Maybe I can request workspace-write escalation explicitly? That's the current mode; the retry would ask approval → "no approval channel available". Already saw that for danger-full-access. Let me try sandbox_permissions: workspace-write to see if it behaves differently. Probably will try to grant and fail again or ask approval.
+
+Let me try once.
+dsh: reasoning:
+Confirmed: pwsh unavailable. So no command execution at all. All shell/git/python = NOT_RUN. I'll do a document/file-evidence review.
+
+Now let me gather all evidence from the fixed worktree:
+1. verification/P08/verify_scope.py (done)
+2. verification/P08/AC_COVERAGE.md
+3. verification/P08/SCOPE_DRAFT.md
+4. verification/P08/review-dsh-af1ddeec-r5.md (R5 report)
+5. verification/P08/DSH-REVIEW-PROMPT-R5.md (R5 prompt, part of fixed delivery? It's in the worktree so yes committed)
+6. doc/tasks/P08.md
+7. doc/REBASELINE_PLAN.md (P08 row)
+8. doc/STATUS.md
+9. doc/handoffs/P08-*.md files
+10. doc/00_INDEX.md, doc/12_ROADMAP.md maybe
+11. verification/P08/validation.log
+12. verification/P08/preliminary-review.md
+13. doc/08_ACCEPTANCE_CRITERIA.md (to recompute AC list)
+14. verification/P08/RESUME.md
+
+Post-delivery state docs in main workspace: doc/STATUS.md, doc/tasks/P08.md, doc/REBASELINE_PLAN.md (updated to in_review). I'll compare with the head versions.
+
+Let me start reading. Also list doc/handoffs/P08-*.md in the worktree.
+dsh: reasoning:
+Now I have the R5 report. Good.
+
+Now let me read the current head's key files:
+- verification/P08/AC_COVERAGE.md
+- verification/P08/SCOPE_DRAFT.md
+- doc/tasks/P08.md
+- doc/REBASELINE_PLAN.md
+- doc/STATUS.md
+- doc/handoffs P08 files list
+- verification/P08/validation.log
+
+Let me also grep for the R5-01/R5-02 fixes. The verify_scope.py at head lines 93-94 show the new negative assertions:
+```
+assert not allowed("doc/handoffs/M2-x.md")
+assert not allowed("doc/reviews/x.md")
+```
+Yes present at lines 93-94.
+
+And R5-02: line 25 `handoffs = list((ROOT / "doc/handoffs").glob("P08-*.md"))` and line 26 iterates `for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"] + handoffs:` — includes handoffs in link resolution. Confirmed.
+
+Plus line 101-103 `handoffs = sorted(...)` and assert handoffs; used in diff --check. Note there's a variable shadowing (handoffs reassigned) — fine.
+
+Now, note a subtlety for R5-02: the link resolution now includes doc/handoffs/P08-*.md. But which P08 handoffs exist in the head worktree? Let me glob doc/handoffs/P08-*.
+
+Also the internal: the link check regex `\]\(([^)]+)\)` finds markdown links. In handoff files, there may be links to paths not existing? The producer says all resolve. I should independently check each link in those files.
+
+Let me first list P08 handoffs and read them.
+
+Also check whether the R6 handoff is in the worktree — it should NOT be (glob earlier showed no P08-ecb3b520 in the worktree? Let me verify).
+
+Let me glob "doc/handoffs/P08-*".
+dsh: reasoning:
+Note the grep only found one match line, but the link regex `\]\(([^)]+)\)` — let me list all links across the five P08 handoffs and verification/P08/*.md and doc/tasks/P08.md. I'll do this manually via reading each file, or via grep for `](`.
+
+Actually to independently recompute R5-02, I need to extract all local links from:
+- verification/P08/*.md (glob: AC_COVERAGE.md, DSH-REVIEW-PROMPT{,-R2..-R5}.md, preliminary-review.md, RESUME.md, review-dsh-*.md, SCOPE_DRAFT.md)
+- doc/tasks/P08.md
+- doc/handoffs/P08-*.md (5 files)
+
+And check each resolves relative to the containing file.
+
+Note: line 14 link `../../verification/P08/SCOPE_DRAFT.md` — relative to doc/handoffs/ → repo root/verification/P08/SCOPE_DRAFT.md. Exists ✓.
+
+Let me grep all `](` occurrences in these files. Use grep with pattern `\]\(` over the directory. But grep returns lines; I need the full links. Let me grep with pattern `\]\([^)]+\)` and read results. The output may be long but manageable.
+
+Let me do it per file group.
+
+Also note the trick: the regex in the script strips `#` fragments and `<>`.
+
+Let me run grep on the worktree for `\]\(` in files under verification/P08 and doc/handoffs/P08-* and doc/tasks/P08.md. grep tool takes one include glob and one path. Let me run several greps.
+
+Path: G:/CODEX/New Manga.worktrees/.../verification/P08, include *.md, pattern `\]\([^)]+\)`.
+
+Then path doc/tasks, include P08.md — include glob "P08.md". Then doc/handoffs include "P08-*".
+
+Let me do them.
+dsh: reasoning:
+Now I need to check every link target resolves.
+
+Links found:
+
+verification/P08/SCOPE_DRAFT.md:
+- line 9: `../PROJECT-ROADMAP-20261008/core-audit.md` → verification/PROJECT-ROADMAP-20261008/core-audit.md
+- line 9: `../PROJECT-ROADMAP-20261008/desktop-audit.md`
+- line 27: `AC_COVERAGE.md`
+- line 102: `DSH-REVIEW-PROMPT.md`
+
+verification/P08/DSH-REVIEW-PROMPT.md:
+- line 5: `../../doc/handoffs/P08-490f9bd9.md`
+
+verification/P08/AC_COVERAGE.md:
+- line 3: `../../doc/08_ACCEPTANCE_CRITERIA.md`
+- line 3: `../../doc/13_ACCEPTANCE_TRACEABILITY.md`
+
+doc/handoffs/P08-490f9bd9.md:
+- line 14: `../../verification/P08/SCOPE_DRAFT.md`
+
+doc/handoffs/P08-16fb07a9-dsh-r4.md:
+- line 28: `../../verification/P08/review-dsh-1ad05d99-r3.md`
+
+doc/tasks/P08.md:
+- line 25: `../../verification/P08/review-dsh-1ad05d99-r3.md`
+- line 25: `../../verification/P08/validation.log`
+- line 29: `../REBASELINE_PLAN.md`
+- line 29: `../../verification/PROJECT-ROADMAP-20261008/REPORT.md`
+- line 46: `../../verification/P08/review-dsh-490f9bd.md`
+- line 63: `../../verification/P08/validation.log`
+- line 85: `../../verification/P08/review-dsh-1ad05d99-r3.md`
+- line 90: `../../verification/P08/review-dsh-16fb07a9-r4.md`
+- line 104: `../../verification/P08/review-dsh-af1ddeec-r5.md`
+- line 154: `../../verification/P08/SCOPE_DRAFT.md`, `../../verification/P08/AC_COVERAGE.md`, `../../verification/P08/RESUME.md`, `../../verification/P08/review-dsh-490f9bd.md`, `../../verification/P08/preliminary-review.md`, `../handoffs/P08-490f9bd9.md`, `../handoffs/P08-31c26389-dsh-r2.md`, `../../verification/P08/review-dsh-31c2638.md`, `../handoffs/P08-1ad05d99-dsh-r3.md`, `../../verification/P08/DSH-REVIEW-PROMPT-R3.md`
+
+Wait — but grep only returns lines with matches; the R5/R6 review reports also have `](` links? The grep for verification/P08/*.md returned only 3 files (SCOPE_DRAFT, DSH-REVIEW-PROMPT, AC_COVERAGE). The review-dsh-*.md files apparently have no markdown links... Well, review-dsh-af1ddeec-r5.md has backticked paths, not markdown links. OK.
+
+But wait, the grep result shows "Found 5 matches" — 2 in SCOPE_DRAFT (lines 9, 27, 102 = 3 lines but multiple links on line 9), etc. Fine.
+
+Also — important: verification/P08/DSH-REVIEW-PROMPT-R4.md and R5.md — do they have links? grep says no matches in them. Hmm, but R4/R5 prompts likely have links like `[Handoff](../../doc/handoffs/...)`. Let me double check — maybe the grep pattern `\]\([^)]+\)` failed on them because... no, it should match. Wait, the grep output listed files in order: SCOPE_DRAFT.md, DSH-REVIEW-PROMPT.md, AC_COVERAGE.md. It says "Found 5 matches" but listed 5 lines (9,27,102 in SCOPE; 5 in PROMPT; 3 in AC_COVERAGE). So R2-R5 prompts have no `](` patterns. Possible; maybe they use plain backticks.
+
+Hmm, but the R5 prompt (DSH-REVIEW-PROMPT-R5.md) supposedly references the R5 handoff. It might use backticks. Let me verify by reading it. Actually, it matters for R5-02: "扩展后验证当前五份P08 Handoff链接均可解析" — the claim is that the five P08 Handoffs' links resolve.
+
+Actually wait. The five handoffs: P08-490f9bd9, P08-31c26389-dsh-r2, P08-1ad05d99-dsh-r3, P08-16fb07a9-dsh-r4, P08-af1ddeec-dsh-r5. The grep found matches only in P08-490f9bd9 and P08-16fb07a9-dsh-r4. So R2/R3/R5 handoffs have no markdown links? Let me verify by grepping each file for `](` separately... The include glob "P08-*" should match all. Hmm, unless grep's include glob matching for "P08-*" is fine.
+
+Wait, could it be that the grep tool returned only some? It says "Found 2 matches". So indeed only 2.
+
+Hmm, but hold on: R6 handoff (main workspace) has links? It's not in the worktree.
+
+Let me verify by reading the handoff files, at least R5, R2, R3 briefly to confirm no `](` links and to see their content (for regression checks and for the "P08 Handoff链接" claim).
+
+Actually, more importantly for R5-02 correctness: the head's verify_scope.py iterates handoffs = glob("doc/handoffs/P08-*.md"), and asserts each local link resolves. I need to confirm that all links in all 5 handoffs resolve to existing files. Two links exist:
+- ../../verification/P08/SCOPE_DRAFT.md (from doc/handoffs) → G:/CODEX/New Manga/worktree/verification/P08/SCOPE_DRAFT.md ✓ exists
+- ../../verification/P08/review-dsh-1ad05d99-r3.md ✓ exists (glob showed it)
+
+Both resolve. Good.
+
+Now, wait: there's a subtlety in the script. `target = target.strip("<>").split("#", 1)[0]`. For links with angle brackets. Also `.strip("<>")` strips only leading/trailing. Fine.
+
+Another subtlety: the script asserts `(doc.parent / target).is_file()`. For SCOPE_DRAFT.md line 9: `../PROJECT-ROADMAP-20261008/core-audit.md` → verification/PROJECT-ROADMAP-20261008/core-audit.md. Does that exist in the head worktree? Need to check. If not, the script would fail... but producer says EXIT=0. Let me check these files exist.
+
+Let me glob verification/PROJECT-ROADMAP-20261008/*.
+
+Also check that the R5 report file exists (it does).
+
+Now the critical part: the diff base..head. Since I can't run git, I need alternative evidence for what changed. Options:
+1. Compare head worktree files with base versions. Base = af1ddeec. Is there another worktree pinned at af1ddeec? The R5 worktree was G:/CODEX/New Manga.worktrees/P08-dsh-review-af1ddeec-r5 — it may still exist! If so, its files are the base versions. Then I could diff read-only by comparing files via read. That would be excellent evidence.
+
+Let me check whether that directory exists: read G:/CODEX/New Manga.worktrees/P08-dsh-review-af1ddeec-r5/verification/P08/verify_scope.py — if it exists, compare with head.
+
+Even better: the base worktree's files = base tree (if clean). Then a full recursive comparison is impractical manually, but for the key file (verify_scope.py) I can compare directly.
+
+Let me check existence.
+
+2. Also the R5 handoff in main workspace may list changed files.
+
+Let me proceed:
+- read base worktree verify_scope.py (if exists)
+- glob verification/PROJECT-ROADMAP-20261008
+- read doc/tasks/P08.md
+- read doc/REBASELINE_PLAN.md (P08 row + counts)
+- read doc/STATUS.md
+- read main workspace versions for post-delivery comparison
+
+Let me batch.
+dsh: reasoning:
+Excellent! Key finding: the base R5 worktree (af1ddeec-r5) still exists and contains verify_scope.py at base version (115 lines). Comparing with head version (118 lines):
+
+Base lines 25: `for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"]:`
+Head lines 25-26: 
+```
+handoffs = list((ROOT / "doc/handoffs").glob("P08-*.md"))
+for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"] + handoffs:
+```
+That's R5-02 fix. +2 lines.
+
+Base lines 89-91:
+```
+assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+assert not allowed("doc/handoffs/P08/nested.md")
+```
+Head lines 89-94:
+```
+89 assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+90 assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91 assert not allowed("doc/handoffs/P08/nested.md")
+92 assert not allowed("doc/handoffs/M2-x.md")
+93 assert not allowed("doc/reviews/x.md")
+94 # Check the fixed commit range ...
+```
+Wait the head reads:
+```
+89:    assert allowed(...) and allowed(...)
+90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92: # hmm no
+```
+Let me re-check head lines 90-96:
+```
+90:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+91:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+92:    assert not allowed("doc/handoffs/P08/nested.md")
+93:    assert not allowed("doc/handoffs/M2-x.md")
+94:    assert not allowed("doc/reviews/x.md")
+95:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+96:    changed = subprocess.check_output(...)
+```
+Yes (from the read: lines 90-94). Base has those at 89-91 (only 3 lines: 89 allow, 90 doc/10, 91 nested). Then base line 92 comment, 93-94 changed. So the diff adds 2 lines (M2-x, doc/reviews) and adds 2 lines for handoffs at top and... let me count: base 115 lines, head 118 lines = +3 lines net.
+
+Head additions relative to base:
+1. line 25 (new): `handoffs = list((ROOT / "doc/handoffs").glob("P08-*.md"))` (+1 line)
+2. line 26 modified to add `+ handoffs`
+3. lines 93-94 new negative asserts (+2 lines)
+Total +3 lines. ✓ 115+3 = 118. ✓
+
+So the diff is exactly the two P3 fixes, and nothing else (at least in verify_scope.py). But I need to confirm no other file changed between base and head.
+
+Since the R5 worktree (base) still exists, I can compare all files in the head worktree against the base worktree! That's a full tree comparison available via file reads. But comparing ~thousands of files by hand is impractical. However, I can compare the R5 handoff/report... hmm.
+
+Better: I can determine which files differ by checking file sizes? I don't have a shell. The read tool gives content. glob gives paths and modification-time ordering.
+
+Alternative: The key claim is that the diff touches only P08 authorized paths. I need evidence. Options:
+
+(a) Check that all files outside P08 authorized paths are byte-identical between base and head. Without hashing, I can't. But maybe I can use the main workspace: the main workspace (G:/CODEX/New Manga) is at the head commit + possibly later commits + dirty files. Hmm, actually the R6 handoff and R6 prompt are in the main workspace, meaning it's ahead of ecb3b520 (post-delivery commits or dirty). Let me check the main repo's HEAD ref: .git/HEAD → refs/heads/main → read .git/refs/heads/main or packed-refs. Then read the main repo's logs/HEAD to see commits after ecb3b520. That gives me the commit chain — useful for establishing that base and head are consecutive commits and what happened after.
+
+Actually! Great idea: read G:/CODEX/New Manga/.git/logs/HEAD — the reflog lists commits with messages. And packed-refs/refs to get current main SHA. From the reflog I can see the commit sequence including base af1ddeec → ecb3b520 (message) → post-delivery commits (R6 handoff etc.).
+
+That gives me the commit graph, and possibly commit messages describing what each commit did. If base..head is a single commit (ecb3b520) whose message says "address R5 P3 findings", and the R5 handoff said base af1ddeec is the R5 delivery head... good.
+
+Even better: I can read the worktree's logs/HEAD for the review worktree to confirm no checkout happened (like R5 did).
+
+Additionally, I might be able to compare file content between the base worktree and head worktree for the specific authorized files by reading both, and spot differences. But identifying which files changed across the whole tree requires per-file comparison. 
+
+Hmm — but wait. There might be a smarter trick: git's index file is binary, but the object IDs... no.
+
+Alternative: use the R5 worktree (base) + head worktree and compare directory listings by modification time? glob returns paths in modification-time order. If the file's mtime differs... not necessarily tied to commit.
+
+Hmm, actually the write of a worktree checkout sets mtimes to checkout time. Both worktrees were checked out at different times, so mtimes are all different. Not useful.
+
+Let me think about what's verifiable and sufficient:
+
+1. HEAD == ecb3b520: verified via admin HEAD file (detached).
+2. common-dir = G:/CODEX/New Manga/.git: verified via commondir/gitdir.
+3. Worktree clean & not advanced: verify via logs/HEAD (1 line) → worktree created at ecb3b520 and never advanced. Cleanliness (no local modifications) cannot be proven from files alone... The R5 report claimed "worktree 未推进" via logs/HEAD. I can do the same. Cleanliness remains NOT_VERIFIED (no git status).
+4. diff base..head scope: I have the base worktree files. I can compare specific files, and use the reflog to identify the single commit. But full enumeration of changed files is not possible without git.
+
+Hmm, is it truly impossible? Let me think... Could I compare the two trees by reading all files? The repo is large (many docs, src). Reading all files is infeasible manually, but maybe I can use grep to detect differences in specific spots.
+
+Wait — actually there's another possibility: maybe pwsh works if the workspace grantWrite fails but... no.
+
+What about using the `workflow` tool? Its subagents might run in a different sandbox? No, same host.
+
+What about `subagent`? same.
+
+What about the `create_goal`/`todo_write`? no.
+
+OK. Let me accept shell = NOT_RUN.
+
+But I can do a lot with file evidence:
+
+For the diff scope, an effective approach: since the changed file in the single commit is verify_scope.py (per handoff), and I verified the two fixes exist, I still need to rule out other changes. A strong proxy: 
+- Compare the head worktree's files under protected paths (src, apps, tests, packaging, doc/contracts, doc/reviews, doc/01–08, doc/13, AD-001, AGENTS.md, doc/09) against the base worktree — but that's many files.
+
+Hmm, what about using grep to find any mention of the head SHA "ecb3b520" inside the head worktree — that would reveal files updated for this delivery. And grep "af1ddeec" in head worktree to see legacy mention. The R5 approach used similar proxies.
+
+Also, git logs: read G:/CODEX/New Manga/.git/logs/HEAD to see the commit chain; if there's exactly one commit between af1ddeec and ecb3b520 with a message like "address R5 P3 findings", and the R5 delivery already included everything else, then base..head is that single commit. But I can't see the diff of that commit without git.
+
+Hmm, but maybe I can find the commit message in a "COMMIT_EDITMSG" or in logs/HEAD which includes messages. Let me read logs/HEAD.
+
+Actually here's a thought: the main workspace's working tree is currently at some commit ≥ ecb3b520 (with R6 handoff committed or dirty?). The head worktree and the main workspace may share most files. Not helpful.
+
+Another angle for full-diff verification: I can compare the base worktree and head worktree directory file lists! If the set of files is identical and... no, content changes wouldn't show.
+
+Hmm, but combined evidence:
+- File lists identical between base and head trees (no added/deleted files) — verifiable by comparing glob outputs? Both globs would need to enumerate the whole tree (100-path limit, spill file). Possible but heavy: glob "**/*" on each worktree, then compare. That's 2 globs with spill files. Then diff the lists manually? The lists would be huge (thousands of files). The spill file holds up to some size; I could grep the spill file for lines... but comparing two large lists without a shell is hard. Actually, I could use grep on the spill file paths. Hmm, too convoluted.
+
+Alternative: use grep to search for a distinguishing feature. E.g., in the base worktree, all files equal to head except verify_scope.py... no marker.
+
+OK, practical approach: I'll verify the scope claim at the level achievable:
+(a) code-level: the delivered verify_scope.py asserts committed BASE..HEAD diff ⊆ allowlist (I confirm the assertion exists and its semantics).
+(b) producer (Codex) recorded EXIT=0 and 31 files — I report it as Codex evidence, not DSH.
+(c) DSH proxy: read the main repo reflog to establish the commit chain; grep head worktree for the head SHA to identify files updated in this delivery commit (P08.md, validation.log, handoff...). And compare the restricted set of P08-authorized files between base and head where feasible.
+
+Actually, here's a very strong proxy available to me: **compare each P08-authorized file between the base worktree and head worktree**. The changed files in the delivery commit must be within P08 paths. If I compare all authorized paths' contents (that's ~30 files: verification/P08/*, doc/tasks/P08.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, doc/handoffs/P08-*.md, verification/PROJECT-ROADMAP-20261008/{REPORT,ROADMAP,RESUME}.md, verify_plan.py), I'd know exactly which authorized files changed. But I still can't prove no *unauthorized* file changed.
+
+Hmm. But wait — maybe I can prove it! git stores a snapshot; there's another way: **the head worktree's `.git` index**? Binary.
+
+What about `G:/CODEX/New Manga/.git/worktrees/.../ORIG_HEAD`, `MERGE_HEAD`? Not helpful.
+
+Hmm, what about packed-refs containing the head? Let me read refs to get main's SHA. Also maybe there are tags.
+
+Another thought: the commit object for ecb3b520 might be loose; the tree hash is in it. Without zlib decompression I can't read it. The read tool might display binary garbage — actually maybe the read tool would error on binary. Let me test reading a loose object? If git wrote it loose: G:/CODEX/New Manga/.git/objects/ec/b3b520.... Let me try glob for that pattern... glob's path must be in workspace? Earlier glob with path outside workspace returned "No files found" — maybe because glob path outside workspace isn't allowed. Let me test glob with path "G:/CODEX/New Manga/.git/objects/ec" pattern "*". If it returns nothing, glob is workspace-limited.
+
+Actually earlier glob "G:/CODEX/New Manga/.git" pattern "worktrees/**" returned nothing, while .git/worktrees definitely has entries (we read HEAD there). So glob is workspace-limited (silently returns nothing outside). So I can't list outside dirs. But read works on absolute paths.
+
+So I can read known paths outside. For loose objects I'd need the exact filename (38 hex chars after 2-char dir). I can't guess.
+
+Hmm! But actually — can I read the commit object using the `read` tool if the path exists? I'd need the object id... For ecb3b520, loose object path = .git/objects/ec/b3b520ce68c2ddcc0c5ec94596e2f50a17f369. Let me try reading that! If it's loose (not packed), the file exists and read will show zlib-binary (garbled). If it's packed, read fails. The read might fail on binary content. Let's try — worth one call. If it returns binary garbage, no help anyway (can't decompress). Skip.
+
+OK so full diff enumeration is NOT_VERIFIED. That matches R5's approach and the prompt's allowance ("命令无法执行时如实记NOT_RUN/NOT_VERIFIED").
+
+But hold on — maybe I can do better with the base worktree for the *specific* question: "是否仅在P08授权路径内". A decent proxy used by R5: grep the base/head SHA across the tree. Let me think about what would be strongest:
+
+**Proxy A**: grep for "ecb3b520" in the head worktree (*.md, *.py, *.log) → shows files referencing this delivery. 
+**Proxy B**: grep for "af1ddeec" in head worktree → legacy references.
+**Proxy C**: Compare base vs head for all P08-authorized files to enumerate the actual changed set within authorization.
+**Proxy D**: Compare base vs head for a sample of protected-path files (e.g., doc/08, doc/13, AD-001, AGENTS.md, doc/09, src/*, tests/*) to show identical.
+
+Hmm, Proxy C: comparing ~35 files' full contents manually is heavy but I can be smart: read both versions and diff mentally? That's a lot of tokens. 
+
+Alternative smart approach for Proxy C: since the only intended change is verify_scope.py (+3 lines), Codex's post-delivery files in the main workspace would record the delivery. Actually! I can compare the head worktree against the MAIN workspace copy for files that didn't change after delivery... but main has moved on (R6 handoff added, P08 updated to in_review). 
+
+Wait, actually here's the key: the **main workspace's committed state** — hmm.
+
+Let me reconsider. Maybe there is a much better source: the R5 worktree at base af1ddeec, and the R6 head worktree. I could compare file *listings* to detect added/removed files, using glob "**/*" on both... glob is workspace-limited, so I can only glob the R6 workspace (head). For base, I can read files by path but not list. Hmm, glob with path=base worktree returned? Let me test: glob path "G:/CODEX/New Manga.worktrees/P08-dsh-review-af1ddeec-r5/verification/P08" pattern "*.md". If that works, then glob does allow outside paths and my earlier ".git" glob failure was due to hidden-dir handling. Let me test — valuable.
+
+Let me test glob outside workspace.
+
+Also read the main repo reflog and my worktree's logs/HEAD.
+
+Let me batch these.
+dsh: reasoning:
+Big discoveries:
+1. glob DOES work outside workspace. So I can enumerate the base worktree's file list. 
+2. The worktree `.git` is a file, so logs/HEAD is at G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-ecb3b520-r6/logs/HEAD.
+3. Main refs/heads/main = e9795470ac0d2a02604509895dc4a37e45fe0d57 (post-delivery).
+
+Now — with glob working outside the workspace, I can enumerate files in both base worktree and head worktree, and compare lists. But content comparison still needs reads. However, wait: maybe I can now find loose git objects... still can't decompress.
+
+Hmm! But here's a thought: **glob can enumerate the base worktree's files**. And the head worktree. If the file lists are identical (same file set), and I compare content of each file... no.
+
+Wait, actually, there's a much better idea: I can compare content using grep! E.g., grep for a pattern in both trees... no.
+
+Hmm, what about this: is there any tool that hashes? No.
+
+But actually — maybe glob's modification-time ordering plus the spill file? Not reliable.
+
+Alternatively: **the main worktree at commit e9795470** — but the main workspace also has dirty files.
+
+Let me think about the strongest feasible evidence for "base..head only touches P08 authorized paths":
+
+Approach: Compare the two worktrees' file listings (base vs head). If identical, no file was added/removed in base..head. Then, to detect content modifications, I can compare the *content* of the files. To do that efficiently... 
+
+Wait — I realize glob returns files in modification-time order. Not helpful.
+
+Alternative content-diff technique using grep: For each candidate file, I could grep a distinctive string... too vague.
+
+Hmm, actually here's a trick: **grep with a pattern that matches any non-empty line** on a whole tree returns up to 250 matches with line numbers — useless for diffing.
+
+OK. Another idea: maybe there are other agents' cached copies of the base/head diff, e.g., validation.log in the main workspace might contain the output of `git diff --stat` or the file count. Also the R6 handoff says "31个BASE..HEAD提交文件在allowlist内" (31 files in allowlist) — so the BASE..HEAD diff has 31 files (BASE = ab2f813c, not af1ddeec). Wait: the script's allowlist check is BASE..HEAD where BASE=ab2f813c (P08 task base). So the committed diff from ab2f813c to ecb3b520 = 31 files. R5's was 28 files. So +3 files... hmm, 28 → 31 = +3 files. Interesting: the R5 delivery had 28 files; now 31. So three more files were added/changed between af1ddeec and ecb3b520. Which ones? Probably: verification/P08/DSH-REVIEW-PROMPT-R5.md, doc/handoffs/P08-af1ddeec-dsh-r5.md (R5 prompt+handoff, committed after af1ddeec), and verification/P08/review-dsh-af1ddeec-r5.md (the R5 report archive). That's 3 files! But wait, base for R6 = af1ddeec, and R5's prompt/handoff/report were committed after af1ddeec (post-delivery), so they'd be inside base..head? No! They're in commits between af1ddeec and ecb3b520, which ARE within base..head (af1ddeec..ecb3b520). Hmm! That means the "fixed delivery" diff af1ddeec..ecb3b520 includes the R5 prompt/handoff/report archive commits plus the P3 fixes.
+
+Hmm wait, the prompt says: "Prompt与本R6 Handoff是delivery之后追加，不属于被审head" — regarding the R6 ones. And "确认没有产品、测试、共享契约、Schema、依赖、冻结需求或用户数据改动" — the R5 archive files are within P08-authorized paths (verification/P08/**, doc/handoffs/P08-*.md), so fine.
+
+So the diff af1ddeec..ecb3b520 likely includes:
+- verification/P08/DSH-REVIEW-PROMPT-R5.md (exists in head worktree ✓ per earlier glob; not in base worktree glob ✓ — confirmed! base worktree's verification/P08 listing lacks R5 prompt and lacks review-dsh-af1ddeec-r5.md, and has no R5 report)
+- doc/handoffs/P08-af1ddeec-dsh-r5.md (need to check base worktree)
+- verification/P08/review-dsh-af1ddeec-r5.md (confirmed absent in base)
+- verify_scope.py modification
+- P08.md/STATUS.md/Plan/etc. updates for R5 archive + R5-01/02 handling.
+
+That's consistent with 31 vs 28 = +3 files (R5 prompt, R5 handoff, R5 report). 
+
+So now I can enumerate the changed file set by comparing base and head worktree file listings! If the file *sets* differ by exactly 3 added files, that's evidence of no additions/deletions elsewhere. Then content-only changes must be checked differently.
+
+Let me do this: glob "**/*" on base worktree and on head worktree, then compare. The results will be huge (probably >10k files, spill to file). The glob tool reports up to 100 paths and saves the complete list to a spill file which I can then read/grep. Comparing two spill files without a shell... I can grep the spill files. Hmm, diffing two large lists via grep is hard.
+
+Alternative: The repo's worktree contains maybe ~2000-5000 files (src, apps, tests, docs, verification, models?). Actually a Python/React project could have many. The R5 report mentioned 196 nodes in the roadmap (not files).
+
+Hmm, but there's a neat trick: I know the head file list. For the base list, I could... hmm.
+
+Actually, wait! Better idea for content comparison: **Git's index (binary) is not needed — but the worktree directory might contain no unexpected files.**
+
+Honestly, a cleaner approach to verify "no unauthorized changes": let me check whether the R6 head worktree contains any file whose content references "ecb3b520" (the delivery SHA) — that's the P08 convention of recording the head. grep for "ecb3b520" across *.md,*.py,*.log,*.json in the head worktree. The hits would list the files updated for this delivery. Combined with comparing those files against base versions, I can enumerate the delivery's content changes. If all hits are in P08 authorized paths and the changed content is limited to the 2 P3 fixes + status records, that's decent evidence. Not proof (a silent change without the SHA wouldn't show), but combined with the code-level allowlist assertion, it's reasonable.
+
+Additionally, I can compare base vs head file lists restricted to... hmm.
+
+Hmm, actually, here's another thought: what about `git status`-like cleanliness? The worktree's index file vs HEAD. Can't read.
+
+But WAIT. Big idea: **`G:/CODEX/New Manga/.git/worktrees/P08-dsh-review-ecb3b520-r6/logs/HEAD`** — I can read reflog; and for cleanliness, the worktree was created by `git worktree add --detach <path> <sha>`, which sets index = HEAD. To detect local modifications I'd need git status. NOT_VERIFIED.
+
+Another idea for detecting content changes across the whole tree: **file size / mtime ordering is unavailable**. Hmm.
+
+Hmm, what about the **`.git/worktrees/<name>/index`** file? Binary but maybe readable as text in parts? Git index v2 format includes path names as plain text! The index lists all tracked files with their blob SHAs and paths. I could read the index file of the HEAD worktree and extract paths + blob hashes... but the read tool would choke on binary bytes (nulls). The combined-index extension has a SHA-1 checksum trailer. Hmm, but if the read tool returns the raw content with escapes, I might be able to parse the path strings. Actually the index contains binary SHA bytes and NUL padding, so read output would be mostly escaped garbage. Hard, and paths would be interleaved with binary padding. Not practical.
+
+BUT the pack index files (.idx) are also binary. No.
+
+OK here's yet another idea: **`git` may be available via a different program**: e.g., is there a Node.js? No shell at all. All execution tools are gone. There's no "exec" other than pwsh.
+
+Hmm, what about `web_fetch` with a file:// URL? Interesting hack: web_fetch fetches HTTP(S) URLs — probably not file://. And it says HTTP(S). Even so, git objects are compressed.
+
+OK, let me accept. But hmm, wait — maybe I should test whether pwsh works with a *different* session workspace... can't change it.
+
+Let me reconsider the earlier failure: maybe the ACL grant fails because the directory is on G: with inheritance disabled... Whatever. One more idea: `run_in_background: true` might spawn the process differently. The sandbox setup happens before spawn presumably. Quick test costs little. Let me try it once.
+
+Also, let me reconsider: maybe the file sandbox in workspace-write mode fails to grant write, but if I set sandbox_permissions to "workspace-write" with justification, it asks approval and there's no channel → fail. Already know.
+
+Let me try run_in_background once, and also try a command with a temp workdir + no writes... it's the setup that fails.
+
+Actually, let me look at this from a different angle: maybe the harness's sandbox grantWrite failure is because the workspace path has a space and some quoting bug, or because the worktree dir is a Git worktree with special ACLs. Not actionable.
+
+Let me just try run_in_background once.
+
+Meanwhile, plan the file-list comparison. Actually, I realize there might be a smarter way to compare the two trees' contents: compare **aggregate line counts**? Not available.
+
+Alternatively: check the base worktree for absence of the R5/R6 materials and presence of everything else — combined with the head worktree listing. If the two file lists are identical except for the 3 R5-archive files (added), then any content-only modification... 
+
+Honestly, let me try a different, quite powerful technique for content comparison: **grep for a pattern present in the changed file**. For the allowed-path files, I can compare base vs head by reading them — but only for the small set that plausibly changed (those mentioning ecb3b520, or referencing R5/R6).
+
+Actually, here's a really good approach to enumerate changes with high confidence: use grep to search the head worktree for strings that only exist in the new versions: "ecb3b520", "R6", "R5-01", "R5-02", "review-dsh-af1ddeec-r5". Files that mention these are candidate changed files. Then for candidate files, compare base content (read from base worktree) with head. If a file differs but doesn't mention the new SHA, it wouldn't be in candidates — residual risk. But files outside P08 paths are unlikely to be touched by a doc-only delivery.
+
+Additionally, I can do the reverse: check that files in the protected set (src, tests, doc/08, etc.) are byte-identical between base and head by comparing... hmm, only by reading both.
+
+Wait wait wait. NEW IDEA: **use grep to compare content by searching for a pattern that would match in either version and checking equality of match counts** — too weak.
+
+Hmm, but actually there IS a decent trick: for a given file, `read` returns the full content. If I read both versions and they're identical, the outputs are identical. I can do this for the protected-path files one by one, but that's expensive. Instead, focus on the diff enumeration via the head-SHA proxy + the fact that the delivery consisted of a single commit whose intent is documented.
+
+Hmm, but hold on: is af1ddeec..ecb3b520 a single commit? Let me read the main repo's logs/HEAD to see the commit chain. That's crucial: it tells me how many commits are in the range and their messages, and whether R5 archive commits are in between.
+
+Let me read G:/CODEX/New Manga/.git/logs/HEAD. It could be long (R5 report mentioned line 946-950). Let me read the tail. I'll read with offset ~930.
+
+Also read the R6 worktree's logs/HEAD.
+
+Let me batch: 
+1. read main .git/logs/HEAD (offset 930)
+2. read worktree logs/HEAD
+3. pwsh run_in_background test.
+dsh: reasoning:
+The background job also failed. Confirmed: shell unavailable entirely.
+
+Now I have the commit chain:
+- af1ddeec (base) "docs(P08): address R4 P3 integration findings"
+- bfd70958 "docs(P08): prepare R5 review handoff" (R5 Prompt + Handoff)
+- ecb3b520 (head) "docs(P08): address R5 verifier findings"
+- 547894f5 "docs(P08): record R6 review checkpoint"
+- e9795470 "docs(P08): anchor R6 dispatch checkpoint" (current main)
+
+So base..head = {bfd70958, ecb3b520}: exactly 2 commits. One prepares R5 handoff (post-delivery R5 archive/prompt), one addresses R5 verifier findings.
+
+Hmm, so the "fixed delivery diff" af1ddeec..ecb3b520 contains the R5 prompt/handoff (added by bfd70958) plus the R5-01/02 fixes (ecb3b520) plus possibly R5 report archive. Wait, the R5 report (review-dsh-af1ddeec-r5.md) — when was it committed? It's in head worktree but not base. It could be in bfd70958 (prepare R5 review handoff — no, the report comes after the review). Hmm, the R5 report was produced by DSH during R5 and archived by Codex. The commits: 0c209deb "archive approved R4 review" was the R4 archive. For R5: bfd70958 "prepare R5 review handoff" would contain the R5 Prompt + Handoff (and maybe pre-recorded report?). Then ecb3b520 "address R5 verifier findings" could include the R5 report archive + P3 fixes + status sync.
+
+Hmm, wait: the R5 report is a DSH-produced file archived by Codex after R5. Given bfd70958 was before R5's DSH run... Actually let me look at timestamps: af1ddeec at 1791473082, bfd70958 at 1791473644 (9 min later), ecb3b520 at 1791474493 (~14 min later). And the R6 worktree created at 1791474521 (28s after ecb3b520). Hmm, so R5's DSH run happened before ecb3b520 commit? That's odd: "prepare R5 review handoff" then DSH ran R5, then "address R5 verifier findings" committed. But the R5 prompt/handoff must have existed before DSH ran R5 — yes, bfd70958 prepared them. Then DSH ran R5 (out-of-band, producing the report), then Codex committed ecb3b520 which addresses R5's P3 findings AND archives the R5 report? Hmm, but "record R6 review checkpoint" 547894f5 is after ecb3b520, which would be the R6 prompt/handoff/checkpoint. And the R5 report archive... 
+
+Wait, the R5 report must be in the worktree at ecb3b520. Which commit added it? Possibly bfd70958 ("prepare R5 review handoff") — no, the report didn't exist then. Hmm. Unless Codex wrote a placeholder/report afterwards. Let me check: git log of the file isn't available. But I can check the main workspace file mtimes? No.
+
+Actually, it doesn't matter much. The important point: base..head = 2 commits: bfd70958 (R5 handoff prep, post-R5-delivery materials) and ecb3b520 (address R5 verifier findings).
+
+Hmm, wait. There's a subtlety: R5's reviewed_head was af1ddeec, and the R5 prompt/handoff were prepared at bfd70958 *after* af1ddeec — consistent with "delivery之后追加". So base af1ddeec..head ecb3b520 includes the R5 post-delivery materials. Good; those are in allowed paths.
+
+Now the R5 report archive file: must have been added by ecb3b520 (since it's the R5 result, archived after R5). Also, the R5 report is listed in the head worktree but not base → within diff. Consistency: the script's allowlist allows verification/P08/** → fine.
+
+Now the files that changed in base..head. Let me enumerate by comparing base vs head worktree file listings for the relevant directories, and by grepping for the new SHAs.
+
+Plan: 
+1. grep head worktree for "ecb3b520" across *.md,*.py,*.log,*.csv,*.json → lists files referencing the delivery head.
+2. grep head worktree for "bfd70958" similarly.
+3. glob base worktree "**/*" and head worktree "**/*" and compare counts + spill files. Actually comparing lists is the hard part. But maybe I can do something clever: glob both, get counts. The glob tool reports up to 100 paths and saves the complete list to a spill file. If both spill files are readable, I can compare them... but diffing thousands of lines manually is infeasible. However, I could compare *counts* and then compare by grepping the spill file for specific patterns.
+
+Hmm, alternatively: since dirs like src/apps/tests are big, maybe I limit the comparison to the whole tree but use the trick of comparing the two lists via... no tool.
+
+Hmm, hold on! Idea: I can read the *base* worktree's file listing via glob with a path and pattern, then for head likewise. But there's another trick — grep can search a spill file (the tool said "Or grep this path to search within it"). So I could:
+- glob base "**/*" → spill file A (full sorted list)
+- glob head "**/*" → spill file B
+Then to find entries in A not in B: grep B... I can't do set difference with grep alone. But I could grep B for each of A's 100 first-listed... no.
+
+Alternative: Since paths are sorted by mtime in glob output, not helpful.
+
+Hmm, what about using grep on spill file A with a pattern that matches lines containing the R5-only filenames? Eh.
+
+Realistically, the file-list comparison is overkill. Let me instead use a targeted approach based on the *purpose* of the delivery and the strong structural evidence:
+
+Evidence chain for "no unauthorized changes":
+(E1) The commit chain shows exactly 2 commits in base..head, with messages "prepare R5 review handoff" and "address R5 verifier findings" — consistent with the declared scope.
+(E2) The delivered verify_scope.py (head) contains a positive allowlist assertion over `git diff --name-only --no-renames BASE HEAD` (BASE=ab2f813c, the P08 task base) — i.e., the whole committed P08 diff, which is a superset of base..head — and Codex reports EXIT=0 with 31 files. Codex evidence, not DSH.
+(E3) DSH file-layer proxy: enumerate files that reference the new heads (ecb3b520/bfd70958) and confirm all are within P08 allowed paths; compare base-vs-head content for those files; confirm the substantive code delta in verify_scope.py is exactly the two P3 fixes (+3 lines).
+(E4) Cross-check the base and head trees for the R5-archive materials: exactly the 3 new files (R5 prompt, R5 handoff, R5 report) are expected; verify base lacks them (done for verification/P08; need doc/handoffs check).
+
+Hmm, E3 requires grep results.
+
+Actually, hmm, wait. Let me reconsider comparing full file lists. There might be a way to make it cheap: the repo file count. Let me just glob "**/*" on the R6 worktree and see how many files and whether the spill file is a text list. Then read the spill file's head. If the repo has e.g. 3000 files, the spill file is 3000 lines — I could read it in chunks but comparing with base would need the same for base. That's ~6000 lines of reading — maybe 100k tokens. Too much but... Actually, maybe I can be smarter: I can grep the *spill files* for path prefixes that are unauthorized (e.g., "src/", "tests/", "doc/08") and count — but that only tells me which files exist, not whether they changed.
+
+Truly, without hashes or timestamps tied to commits, content-diff across the tree is not feasible. The git index would give blob hashes... 
+
+WAIT. The git index! Actually here's a thought: I could read the git index binary and extract blob SHAs poorly. No.
+
+Hmm, but here's another one: **`.git/worktrees/<name>/ORIG_HEAD`**? Only set by some commands. **`.git/worktrees/<name>/MERGE_HEAD`** no.
+
+What about the main workspace's `.git/index`? Same problem.
+
+OK, one more idea: Are there any *cached* artifacts in the repo that record the base..head diff, e.g., validation.log in the head worktree? Let me read verification/P08/validation.log — it likely contains the R6 command outputs (Codex's). Let me read the tail. Also PROJECT-ROADMAP's validation.log. These give Codex evidence (31 files). And maybe the actual list of 31 files is in the log! If validation.log lists the diff names, I can check them against allowlist myself. Let me look.
+
+Let me read verification/P08/validation.log tail.
+dsh: reasoning:
+Interesting: the grep for "ecb3b520|bfd70958" in the head worktree found only 7 matches, and NONE of them is in doc/tasks/P08.md or doc/STATUS.md! Wait — but P08.md at head references... let me check: P08.md line 102-113 mentions R5 delivery af1ddeec and R6 but maybe doesn't include "ecb3b520". Indeed, the head P08.md says reviewed_head: af1ddeec and status in_progress — it does NOT record ecb3b520 as delivery head. Hmm, interesting. And doc/STATUS.md?
+
+So the head worktree's docs do not mention ecb3b520 anywhere. That's consistent with "P08 frontmatter与Plan快照仍记为in_progress" (pre-delivery state as recorded at delivery time).
+
+Wait, but the handoff says the delivery head is ecb3b520 and R6 review. The R6 handoff (post-delivery, main workspace) records it. The head worktree docs record P08 as in_progress with previous_status: approved, reviewed_head: af1ddeec, review_session: R5's session. OK, that matches the prompt's expectation #5: "固定delivery head ecb3b520中的P08 frontmatter与Plan快照仍记为in_progress，属于交付时的前置状态".
+
+Hmm, but wait: P08.md head line 113 says "R5批准只适用于固定head=af1ddeec。Codex已在当前delivery修订R5-01/R5-02，二者保持open直至新head经R6非作者复核" — it implies a new delivery head but doesn't name it.
+
+So grep for ecb3b520 gives 0 hits in the head worktree — fine, but it means my "proxy A" (grep for the delivery SHA) doesn't enumerate changed files. Only validation.log has a line about bfd70958... hmm, wait, no: grep found "bfd70958" in validation.log:419 and in the R5 report (which was written pre-head? no, the R5 report is in head... it mentions bfd70958 as the child commit of af1ddeec). OK.
+
+Wait, validation.log:419 mentions "on main worktree HEAD=bfd70958... with R5-01/R5-02 working-tree fixes; EXIT=0; ... 30 committed allowlist files". That's Codex's pre-commit run. And RESUME.md:7 mentions HEAD=bfd70958.
+
+Hmm, so at head, RESUME.md still records the recovery point as bfd70958 — i.e., not updated to ecb3b520? Let me read RESUME.md fully. It says "R5结果与导航同步尚未提交" — that suggests RESUME wasn't updated in ecb3b520. Hmm, that's a stale-state note but within allowed paths.
+
+Let me now read validation.log around lines 380-430 to get the Codex R6 evidence (28→31 files etc.).
+
+Also, the important question of the actual base..head file change set. Let me use the glob comparison after all — but smartly:
+
+Since I have glob on both worktrees, I can glob for specific directories of interest and compare. For the crucial claim "no product/test/contract/schema/dependency/frozen-requirement/user-data changes", the protected set is: src, apps, tests, packaging, doc/contracts, doc/reviews, AGENTS.md, doc/09_COLLABORATION.md, doc/01-08, doc/13, AD-001, task-inventory.csv.
+
+I can verify these are unchanged between base and head by... reading both versions of each. That's ~20 files if I count the doc files (01-08 are huge). Hmm, huge files (doc/08 is 2000+ lines).
+
+Alternative: **compare file sizes indirectly**? Not available.
+
+Hmm, hmm. What about this neat trick: use `grep` with a pattern that matches every line and count matches? The grep tool caps at 250 matches and reports "Found N matches" — capped. Not a size measure.
+
+But wait: grep reports up to 250 matches, and for larger results saves the full list. Hmm.
+
+Alternative for equality testing: grep for a string in the file; if both versions have the same match count... still not equality.
+
+OK, let me think about whether there's a fundamentally better approach to verify tree equality... 
+
+Idea: **Git worktree HEAD + the fact that the head worktree was created by `git worktree add` at ecb3b520 and never modified** — no.
+
+Idea: The commit ecb3b520's tree vs af1ddeec's tree. If I could read the commit objects I'd get tree SHAs, and then read tree objects (also compressed). No.
+
+So: NOT_VERIFIED for full enumeration. That's acceptable and honest.
+
+Still, I can strengthen with a **directory-level listing comparison** for the most sensitive directories. How? glob base worktree "**/*" gives the full sorted file list in a spill file. Same for head. Then, I can't diff, but I CAN check for additions/deletions by counting: if the head list is exactly base list size + 3 (R5 prompt, R5 handoff, R5 report), and the 3 extras are known... Hmm, but I need the size and the extra entries.
+
+Actually, maybe I can compare with grep on the spill files! Here's the trick: read the head spill file fully (it's a plain text list of paths, maybe ~2000-4000 lines; glob says "up to 100 paths returned; the complete list was saved"). If I read both spill files, I could then spot-check by grepping: e.g., grep base-spill for a specific head-only filename. To find set differences, I'd need to iterate over the smaller list and check membership in the other — that's N greps. Too many.
+
+Unless... I use grep with an alternation of many paths? E.g., pattern with 50 paths joined by |, run against the other spill file; count matches. That's 1 grep per 50 paths; for 3000 paths, 60 greps per direction. Too heavy.
+
+OK, decision: Accept the limitation. Report:
+- DSH executed: file-layer evidence (HEAD, commondir, reflog, base-vs-head direct comparison of the single code artifact, cross-tree globs for R5-material presence, link resolution for all five P08 handoffs, recomputation of the two validators' *logic* against source files).
+- DSH NOT_RUN: all shell/git/python commands.
+- DSH NOT_VERIFIED: worktree clean status, full enumeration of base..head diff, protected-path zero-diff, validator actual EXITs.
+
+Hmm, wait. Actually, hold on. Let me reconsider the "glob both trees and compare" idea once more, because there IS a way to diff cheaply: the *spill file* is a text file I can grep. If I glob head "**/*" and base "**/*", and the repo has, say, 1500 files, then the spill files have 1500 lines each. I can read both (3000 lines ≈ maybe 30-60k tokens... too much).
+
+Alternatively, use grep to count lines in each spill file? grep pattern "" ... no, grep with pattern "^" returns 250 matches max, but it might report the total? Ripgrep reports counts as "Found N matches" possibly capped at 250 displayed. Hmm, the tool said "Returns up to 250 matches; a larger result reports where the complete match list was saved." So the count shown might be capped/unknown.
+
+Hmm, what about glob's own report: it says "Returns up to 100 paths in modification-time order; a larger result keeps the first paths and reports where the complete list was saved." So the spill file's path is reported, but not the total count. 
+
+I think we're at the limit. Let me now do the substantive verification work that IS possible:
+
+1. R5-01 recomputation: read head verify_scope.py lines 84-99 (done). Confirm:
+   - `assert not allowed("doc/handoffs/M2-x.md")` present at line 93 ✓
+   - `assert not allowed("doc/reviews/x.md")` present at line 94 ✓
+   - Positive allowlist still present and uses `git diff --name-only --no-renames BASE HEAD` (committed range only, excludes dirty) at lines 96-99 ✓
+   - Self-check allows positive samples at line 90 ✓
+   - The `allowed()` predicate: check doc/reviews/x.md → not in allowed_files (allowed_files has no doc/reviews), doesn't start with "verification/P08/", doesn't start with "doc/handoffs/P08-" → rejected ✓. Note doc/reviews/x.md — wait, "doc/reviews/x.md" doesn't start with handoff_prefix → rejected ✓. And "doc/handoffs/M2-x.md" → doesn't start with "doc/handoffs/P08-" → rejected ✓.
+   
+   Also I should verify these assertions are actually evaluated at runtime: they're inside `if __name__ == "__main__":` and before the diff assertion — yes, module-level code in the main guard, executed sequentially. ✓ And note: assertions run before the git diff call? Lines 90-94 are before line 96's subprocess call. So even if git failed, the negatives are checked first. Fine.
+
+2. R5-02 recomputation: 
+   - Head line 25: `handoffs = list((ROOT / "doc/handoffs").glob("P08-*.md"))` — includes handoffs ✓
+   - Line 26: loop includes `+ handoffs` ✓
+   - All local links in the 5 P08 handoffs: I found only 2 handoff files with links (P08-490f9bd9: ../../verification/P08/SCOPE_DRAFT.md; P08-16fb07a9-dsh-r4: ../../verification/P08/review-dsh-1ad05d99-r3.md). Both targets exist in the head worktree ✓ (SCOPE_DRAFT.md confirmed via glob; review-dsh-1ad05d99-r3.md confirmed via glob).
+   - But I should double check the R2/R3/R5 handoffs really contain no markdown links, and also check for angle-bracket links and reference-style links (the script only handles inline `](...)`). The script's coverage is limited to inline links; reference-style links `[x]: path` are not checked. That's a residual limitation worth noting (an observation, likely P3/informational). Let me grep for `^\s*\[.*\]:` in the handoffs and verification/P08 files to check if any reference-style links exist (which would be unchecked).
+   - Also `[text](<path with spaces>)` handled by strip("<>").
+
+3. Historical findings regression: R4-01 (STATUS.md line 10 text), R4-02 (verify_scope.py allowlist), R4-03 (P08-490f9bd9.md:37), N-07 (AC_COVERAGE.md:142), N-08 (handoffs glob + diff check). Let me verify each in head.
+
+4. D1–D7 unchanged (7 rows in SCOPE_DRAFT, D5 threshold etc.).
+
+5. P09–P20 unreleased: verify Plan has 20 rows "proposed / 未释放" and P08 row status matches frontmatter (in_progress). Since the script asserts `| P08 | {state} |` in plan and 20 proposed rows, I can independently verify by reading the plan.
+
+6. Post-delivery state in main workspace: read doc/STATUS.md, doc/tasks/P08.md, doc/REBASELINE_PLAN.md from main and confirm P08 = in_review, reviewed_head=ecb3b520, review_session=pending.
+
+7. Check the head worktree does NOT contain R6 prompt/handoff: glob verification/P08 (done — no R6 prompt) and doc/handoffs (5 P08 handoffs, no R6) ✓.
+
+8. AC coverage counts: verify 193 numbered ACs? The script asserts len(actual)==len(expected) and rows count. I could recompute: count `^## (AC-...)\s+` in doc/08 and `^\| (AC-...)\s*\|` in AC_COVERAGE. I can use grep... but grep caps at 250. 193 < 250 so grep would show all lines (193 lines) — that's a lot of output but maybe the tool reports "Found 193 matches"? It returns matching lines. Hmm, that would dump 193 lines. Actually the header says results are truncated to tail for pwsh; for grep, "Returns up to 250 matches". 193 lines is manageable-ish but noisy. Alternatively I can count via reading the files. Maybe better: grep for `^## AC-` in doc/08 with include — and see the count reported ("Found 193 matches"). The grep tool's header says "Found N matches" — for 193 it would print all matched lines. Hmm.
+
+Actually, for the scope of R6 (recompute the two P3 revisions), I don't need to re-verify the entire AC matrix (that was R5's job and remains valid unless the head changed those files). The prompt says: "独立复算这两项P3修订，不沿用作者自述" — focus on the two revisions. Plus regression checks on historical findings.
+
+But since the head is a new commit, I should at least confirm that the AC coverage files are unchanged from base (or if changed, review the change). Since base worktree is available, I can read base AC_COVERAGE.md and compare with head. Both may be large (200+ lines). Hmm, reading both is ~400 lines — acceptable? AC_COVERAGE.md is probably ~210 lines. Doable but costly. Since the script asserts `actual == expected` and all rows end with NOT_RUN, and my grep of links showed AC_COVERAGE line 3... 
+
+A cheaper comparison: use grep on base AC_COVERAGE.md and head AC_COVERAGE.md with a common pattern to compare counts? Eh.
+
+Hmm, let me think about what's most valuable within token budget:
+
+Priority 1: verify the two P3 fixes at head (done, need base comparison — done: I read base verify_scope.py fully and head fully; the diff is exactly +3 lines, R5-01 lines and R5-02 lines).
+
+Wait, actually I should double check the diff more carefully between base and head verify_scope.py line by line. Base lines 1-115 vs head 1-118:
+
+Base 25: `for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"]:`
+Head 25: `handoffs = list((ROOT / "doc/handoffs").glob("P08-*.md"))`
+Head 26: `for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"] + handoffs:`
+
+Base 89-91:
+```
+assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+assert not allowed("doc/handoffs/P08/nested.md")
+```
+Head 90-94:
+```
+assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+assert not allowed("doc/handoffs/P08/nested.md")
+assert not allowed("doc/handoffs/M2-x.md")
+assert not allowed("doc/reviews/x.md")
+```
+Wait, base line 89 → head line 90 (offset +1 from the earlier +1 and +... let me verify: head line 89 is `assert allowed(...)`? From my read of head:
+
+```
+88:                    and "/" not in path[len(handoff_prefix):]))
+89:    
+90:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+91:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+92:    assert not allowed("doc/handoffs/P08/nested.md")
+93:    assert not allowed("doc/handoffs/M2-x.md")
+94:    assert not allowed("doc/reviews/x.md")
+```
+Base:
+```
+87:                    and "/" not in path[len(handoff_prefix):]))
+88:    
+89:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92:    # Check the fixed commit range ...
+93:    changed = subprocess.check_output(...)
+```
+So yes: +1 line at the top block (line 25), +2 lines at the negatives. All other lines are identical (offset by +1/+3). I compared the whole file text visually; the rest matches exactly. Let me be rigorous and check a few regions: base lines 60-75 vs head 61-76 (offset +1) — from the reads:
+base 61: `plan = ...` head 62: `plan = ...` ✓
+base 63: `assert len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20` head 64 same ✓
+base 73: `assert not subprocess.check_output(["git", ...])` head 74 same ✓
+base 74-82 allowed_files → head 75-83 ✓ same content
+base 84-88 predicate → head 85-89 ✓
+base 92-99 → head 95-102? base 92 comment → head 95 comment? Let me check: base line 92 `# Check the fixed commit range...` at base 92; head has that comment at line 95. Head 96-99 = changed/outside_scope/assert/print. Base 93-97 = changed/outside_scope/assert/print. So offset +3 after the added lines ✓ consistent (head 96 = base 93).
+base 98-100 handoffs sorted... head 101-103. base 101-107 → head 104-110. base 108 print → head 111. base 109-113 → head 112-116. base 114 print → head 117. base 115 print → head 118. ✓ Perfect alignment: net +3.
+
+So the verify_scope.py change is exactly the two P3 fixes. 
+
+Now, are there other changed files in base..head? The other changed files are likely: verification/P08/DSH-REVIEW-PROMPT-R5.md (new), doc/handoffs/P08-af1ddeec-dsh-r5.md (new), verification/P08/review-dsh-af1ddeec-r5.md (new), validation.log (appended), RESUME.md, P08.md, REBASELINE_PLAN.md, STATUS.md, 00_INDEX.md, 12_ROADMAP.md, tasks/README.md, handoffs... 
+
+Wait, but R5's report says its own recommendations; those files were changed in the R5→R6 process. Hmm, but base=af1ddeec was the R5 *delivery* head, and the R5 prompt/handoff/archive/status sync were all committed after af1ddeec (in bfd70958 and ecb3b520). So base..head legitimately includes all the R5 report archive and status sync + the two P3 fixes.
+
+Now, for a proper R6 review I should verify these files are coherent and that no unauthorized file changed. I can enumerate the changed files by comparing base and head content for the *candidate* set (files under P08 allowed paths). That's feasible: glob base and head for:
+- verification/P08/*  (16 files head vs 13 base → 3 new: R5 prompt, R5 report... wait base glob showed 12 md files + verify_scope.py + validation.log. Let me list base verification/P08: AC_COVERAGE, DSH-REVIEW-PROMPT-R2/R3/R4, DSH-REVIEW-PROMPT, RESUME, SCOPE_DRAFT, preliminary-review, review-dsh-16fb07a9-r4, review-dsh-1ad05d99-r3, review-dsh-31c2638, review-dsh-490f9bd (12 md) + verify_scope.py + validation.log. Head has those plus review-dsh-af1ddeec-r5.md and DSH-REVIEW-PROMPT-R5.md (14 md) → 2 new md files in verification/P08. Plus modified: verify_scope.py, validation.log, maybe RESUME.md.
+
+Expected diff count from Codex: 31 files BASE(ab2f813c)..HEAD. R5 said 28. So +3 new files in R5→R6: DSH-REVIEW-PROMPT-R5.md, review-dsh-af1ddeec-r5.md, doc/handoffs/P08-af1ddeec-dsh-r5.md. That matches exactly 3 new files! And existing files' modifications don't change the count. 
+
+So the R5→R6 delta added exactly 3 files (consistent with the R5 prompt/handoff/report) — I can verify this by checking base vs head presence for those 3 paths. And content modifications are in the governance docs + verify_scope.py + validation.log.
+
+I can verify presence/absence:
+- base doc/handoffs/P08-af1ddeec-dsh-r5.md should NOT exist; head has it (glob confirmed head has 5 P08 handoffs). Let me confirm base has 4. 
+
+Let me glob base doc/handoffs/P08-*.
+
+Then, content comparison base vs head for: RESUME.md, P08.md, STATUS.md, REBASELINE_PLAN.md, 00_INDEX.md, 12_ROADMAP.md, README.md, validation.log, AC_COVERAGE.md, SCOPE_DRAFT.md, review-dsh-af1ddeec-r5.md (new; but it's the R5 report — I read it; it's the R5 report content — matches R5's findings).
+
+That's a lot of reading. Given budget, focus on the most decision-relevant:
+- doc/STATUS.md (head) — check R4-01 fix retained.
+- doc/REBASELINE_PLAN.md (head) — P08 row + 20 unreleased.
+- doc/tasks/P08.md (head) — read ✓ (in_progress, reviewed_head=af1ddeec, R5-01/02 open).
+- P08-490f9bd9.md line 37 — R4-03 fix.
+- AC_COVERAGE.md line 142 — N-07 fix.
+- verification/P08/validation.log tail — Codex R6 runs.
+- post-delivery main workspace: STATUS.md, P08.md, REBASELINE_PLAN.md.
+
+Let me batch reads now.
+
+Also, note an interesting discrepancy to check: RESUME.md at head still says "恢复核验前的提交HEAD=bfd70958...R5结果与导航同步尚未提交" — if ecb3b520 committed them, RESUME.md is stale. Not necessarily a finding (observations), but worth noting? It's in the delivery. Hmm, RESUME.md is a recovery doc; its staleness could be a minor P3 observation. Let me read it fully.
+
+Let me read:
+1. verification/P08/validation.log (tail, from line ~380)
+2. doc/STATUS.md (head)
+3. doc/REBASELINE_PLAN.md (head) — probably long; read relevant portion
+4. doc/handoffs/P08-490f9bd9.md (line 30-45)
+
+Let me start with validation.log tail and STATUS.md.
+dsh: reasoning:
+Key info:
+- STATUS.md head line 3: "P08=in_progress... proposed/未释放20" ✓
+- line 10: R4-01 fix retained ✓
+- R5-01/R5-02 open pending R6 ✓
+- N-07/N-08 not mentioned here but in P08.md.
+
+validation.log lines 398-422: Codex evidence for R5 and the fixes. Line 419: run on main HEAD=bfd70958 with working-tree fixes, 30 committed allowlist files. Line 421: diff --name-only af1ddeec -- protected paths (from af1ddeec to working tree) EXIT=0 empty. Hmm, but there's no explicit "31 files BASE..HEAD" run recorded in validation.log for head=ecb3b520? The R6 handoff says "31个BASE..HEAD提交文件在allowlist内". Let me check the rest of validation.log — it ends at 422. Hmm, so where is the R6 (ecb3b520) run recorded? Maybe in the main workspace's copy of validation.log (post-delivery commits 547894f5/e9795470). Since validation.log at head ends at 422 with the pre-commit run. Let me check the main workspace's validation.log tail to see if there are more entries (post-delivery).
+
+Wait, actually the R5→R6 process: Codex modified files in working tree at bfd70958, ran verify_scope.py (line 419, 30 files), then committed ecb3b520. Then "record R6 review checkpoint" (547894f5) and "anchor R6 dispatch checkpoint" (e9795470) — those probably added the R6 prompt/handoff and updated STATUS/P08 to in_review + maybe appended validation.log entries with head=ecb3b520 runs (31 files).
+
+So the fixed delivery head ecb3b520's validation.log records only up to line 422 (the pre-commit run). The post-delivery runs (31 files) would be in main's later commits. That's a nuance: the Codex-evidence "31 files" claim is post-delivery, not in the head. Fine.
+
+Now let me check the main workspace copies:
+- G:/CODEX/New Manga/verification/P08/validation.log (tail) — to see post-delivery runs.
+- G:/CODEX/New Manga/doc/STATUS.md (head lines)
+- G:/CODEX/New Manga/doc/tasks/P08.md (frontmatter)
+- G:/CODEX/New Manga/doc/REBASELINE_PLAN.md (P08 row)
+
+These give the post-delivery state (in_review, reviewed_head=ecb3b520, review_session=pending).
+
+Let me read those. To save tokens, read targeted offsets.
+
+Also still to verify:
+- base worktree doc/handoffs/P08-* (4 handoffs, no R5 handoff) — glob.
+- head verification/P08/RESUME.md (stale?).
+- doc/handoffs/P08-490f9bd9.md line 37 (R4-03).
+- AC_COVERAGE.md line 142 (N-07).
+- doc/REBASELINE_PLAN.md (head) relevant lines.
+- SCOPE_DRAFT D1-D7 rows.
+
+Let me batch a few.
+dsh: reasoning:
+Post-delivery state confirmed:
+- main doc/tasks/P08.md: status=in_review, reviewed_head=ecb3b520..., review_worktree=R6, review_session=pending, review_report=verification/P08/review-dsh-ecb3b520-r6.md ✓ (matches prompt item 5)
+- main doc/STATUS.md: P08=in_review, R6 reviewed_head=ecb3b520, session待派发 ✓
+- base worktree doc/handoffs has 4 P08 handoffs (no R5 handoff) → the R5 handoff was added in bfd70958 within base..head ✓. And head has 5.
+
+Now let me check:
+1. main doc/REBASELINE_PLAN.md P08 row + the 20 proposed rows.
+2. head doc/REBASELINE_PLAN.md (should have P08 in_progress).
+3. head doc/00_INDEX.md, 12_ROADMAP.md, tasks/README.md (quick check of P08 state consistency).
+4. head SCOPE_DRAFT.md D1-D7 rows + P08-FMT.
+5. head AC_COVERAGE.md line 142 (N-07) and structure.
+6. head doc/handoffs/P08-490f9bd9.md:37 (R4-03).
+7. head RESUME.md.
+8. main validation.log tail (post-delivery R6 runs).
+
+Let me batch reads with offsets. First, find the P08 row in REBASELINE_PLAN (head and main). Let me grep.
+dsh: reasoning:
+Confirmed:
+- Head (ecb3b520) Plan: P08 = in_progress; line 3 in_progress; 20 rows proposed/未释放 ✓. (Note head Plan line 10 still says "21个规划节点沿用 P01–P21，状态为 proposed / 未释放" — wait, that's the OLD sentence in the head! Let me look: head grep line 10: "2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施..." Hmm! That's the Plan's line 10 in head, which still contains the contradictory phrasing "状态为 proposed / 未释放" — the R4-01 issue was about doc/STATUS.md:10, and the Plan has a parallel sentence that was NOT fixed? Let me compare: main's Plan line 10 now says "规划节点编号沿用 `P01–P21`；当前P08=`in_review`，其余20项=`proposed / 未释放`" — so it was fixed in the post-delivery commit (547894f5/e9795470), not in the delivery head.
+
+Hmm wait, was the Plan's line-10 sentence part of R4-01? R5's report §4.1 says R4-01 was about doc/STATUS.md:10. The Plan line-10 carried the same contradiction in the head. Is that a regression/finding? Interesting: the head's Plan line 10 says "当前21个规划节点沿用 P01–P21，状态为 proposed / 未释放" which is self-contradictory with line 3 (P08 in_progress) and line 28 (P08 in_progress). That's exactly the same class of defect as R4-01 but in a different file (REBASELINE_PLAN.md:10). In the head, this contradiction exists.
+
+Hold on. Let me verify by reading the head Plan lines 1-13 to be precise. The grep output for head:
+
+"Line 10: 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。"
+
+Hmm, wait. The first grep was on the HEAD worktree path and the second on main. The FIRST grep result (head) line 10 shows the old text. Wait, which one came first? The first grep call was on the worktree path (head). Its output header: "Found 47 matches" and lists `doc\REBASELINE_PLAN.md` (relative path = head worktree). Its line 3: "...P系列完成0/21，in_progress 1..." → head. Line 10: "状态为 proposed / 未释放" → head.
+
+Second grep on main: line 3 "...in_review 1..." and line 10 "...当前P08=in_review，其余20项=proposed / 未释放" → main (post-delivery).
+
+So YES: in the delivery head ecb3b520, REBASELINE_PLAN.md:10 still contains the wording "当前21个规划节点…状态为 proposed / 未释放", which contradicts the same file's line 3 ("in_progress 1") and line 28. Hmm! But wait — was this sentence also present in the base (af1ddeec)? Probably yes (unchanged since R4). If unchanged, it's a pre-existing issue not introduced by this delivery — but is it a *regression* of R4-01? R4-01 found the analogous contradiction in STATUS.md:10 and it was fixed there. The Plan line 10 wasn't flagged. So it's a *new observation* (R6 finding candidate, likely P3) — the same class of defect in a sibling file.
+
+Hmm, but careful: R5's report claimed (line 79) ④: "`:10` 位于可变段（冻结标记 `## 2026-10-08 完成：` 在 `:22`）——即修订未触碰 `verify_scope.py:112` 断言逐字不变的冻结历史段". That was about STATUS.md. For Plan, the corresponding marker is also "## 2026-10-08 完成：". Plan line 10 is before line 22 → mutable段. So fixing Plan:10 is allowed.
+
+Also note the asymmetry: the post-delivery main commit fixed Plan:10 (now "当前P08=in_review，其余20项=proposed/未释放"). So Codex noticed and fixed it post-delivery. But at the reviewed head ecb3b520, the contradiction remained.
+
+Is this a blocking finding? No — P3 level, same class as R4-01. But it's a legit new finding for R6: P08 review must note that the head's Plan line 10 self-contradicts. Hmm, but wait — should I double check whether it truly contradicts? Line 10 says "当前21个规划节点沿用 P01–P21，状态为 proposed / 未释放". With P08 = in_progress in the same file (line 3 and line 28 and line 39), that's a contradiction. Yes.
+
+Hmm, but hold on: is line 10's sentence perhaps intended as "编号裁决" only? R4-01's fix to STATUS.md:10 added "本句仅说明编号，不表达节点状态或任务释放". The Plan's version lacks that qualifier and actively says "状态为 proposed / 未释放". So yes, Plan:10 is the unfixed twin. Interesting and worth reporting as R6-01 (P3, non-blocking).
+
+Wait, but I should double check whether the base (af1ddeec) had the same sentence, to determine "pre-existing vs new". Since the sentence exists in head and (per main's post-delivery fix) it was the same before, likely unchanged from base. Let me verify by reading base worktree Plan line ~10.
+
+Also, now I realize: this Plan:10 sentence was in the R5-reviewed head too (af1ddeec)? R5 approved and said R4-01 was closed (STATUS only). If Plan:10 also had it at af1ddeec, R5 missed it. So R6 correctly reports a new non-blocking observation. Fine.
+
+Let me verify the base Plan line 10.
+
+Additionally, I need to check:
+- head Plan line 3 says in_progress — consistent with P08.md frontmatter in_review? No: P08.md frontmatter in head = in_progress ✓ (I read it). And main P08.md = in_review. Consistent with the prompt's expectation.
+- The script asserts `| P08 | {state} |` in plan where state = frontmatter status (in_progress at head) → matches ✓.
+
+Now, other things to verify:
+1. head SCOPE_DRAFT.md D1-D7 rows (7 rows) and P08-FMT entries.
+2. head AC_COVERAGE.md line 142 (N-07) and row structure/counts.
+3. head doc/handoffs/P08-490f9bd9.md:37 (R4-03).
+4. head RESUME.md (recovery point).
+5. Reference-style links check in the handoffs (unchecked by the script).
+6. AC coverage count recomputation (193 numbered D08 ACs + SMOKE + 12 gates = 206 rows) — maybe verify count via grep on doc/08 for "^## AC-".
+
+Let me do the targeted reads now.
+
+Also I should verify the "R5-02 independent recomputation": I need to enumerate all local links in the 5 head handoffs and confirm resolution. Done for the 2 files that have links. But let me be thorough: grep each handoff for `](`. Already did: only 2 matches across P08-* . OK. But maybe some handoffs use reference-style or HTML links. Let me grep for `^\s*\[[^]]+\]:` in doc/handoffs/P08-* to detect reference definitions.
+
+Also the loop includes verification/P08/*.md — I should check those links resolve: 
+- SCOPE_DRAFT.md: line 9 `../PROJECT-ROADMAP-20261008/core-audit.md` and `desktop-audit.md` (exist per glob ✓), line 27 `AC_COVERAGE.md` ✓, line 102 `DSH-REVIEW-PROMPT.md` ✓.
+- DSH-REVIEW-PROMPT.md: `../../doc/handoffs/P08-490f9bd9.md` ✓.
+- AC_COVERAGE.md: `../../doc/08_ACCEPTANCE_CRITERIA.md` ✓, `../../doc/13_ACCEPTANCE_TRACEABILITY.md` ✓.
+- doc/tasks/P08.md links: verified above list; check each exists:
+  - ../../verification/P08/review-dsh-1ad05d99-r3.md ✓
+  - ../../verification/P08/validation.log ✓
+  - ../REBASELINE_PLAN.md ✓
+  - ../../verification/PROJECT-ROADMAP-20261008/REPORT.md ✓
+  - ../../verification/P08/review-dsh-490f9bd.md ✓
+  - ../../verification/P08/review-dsh-16fb07a9-r4.md ✓
+  - ../../verification/P08/review-dsh-af1ddeec-r5.md ✓
+  - ../../verification/P08/SCOPE_DRAFT.md ✓
+  - ../../verification/P08/AC_COVERAGE.md ✓
+  - ../../verification/P08/RESUME.md ✓
+  - ../../verification/P08/preliminary-review.md ✓
+  - ../handoffs/P08-490f9bd9.md ✓
+  - ../handoffs/P08-31c26389-dsh-r2.md ✓
+  - ../../verification/P08/review-dsh-31c2638.md ✓
+  - ../handoffs/P08-1ad05d99-dsh-r3.md ✓
+  - ../../verification/P08/DSH-REVIEW-PROMPT-R3.md ✓
+  All exist per the head worktree glob (verification/P08 listing showed review-dsh-31c2638.md, etc.). Wait — the head glob for verification/P08/*.md listed: AC_COVERAGE, DSH-REVIEW-PROMPT-R2/R3/R4/R5, DSH-REVIEW-PROMPT, RESUME, preliminary-review, review-dsh-16fb07a9-r4, review-dsh-1ad05d99-r3, review-dsh-31c2638, review-dsh-490f9bd, review-dsh-af1ddeec-r5, SCOPE_DRAFT. Yes all ✓. And doc/13, doc/08, REBASELINE_PLAN, REPORT.md, handoffs P08-* ✓.
+
+But wait: the loop iterates `HERE.glob("*.md")` for verification/P08 — including the DSH-REVIEW-PROMPT-R2/R3/R4/R5 files; I need their links too. The grep across verification/P08 *.md found matches only in SCOPE_DRAFT, DSH-REVIEW-PROMPT, AC_COVERAGE. So R2-R5 prompts have no `](` links. Hmm, that seems odd for prompts that reference handoffs. Let me verify by reading DSH-REVIEW-PROMPT-R5.md quickly — it's the R5 prompt (in the head, committed in bfd70958). It's also useful to compare with R6 prompt. Let me read it.
+
+Wait, but careful: the grep with include "*.md" and path ".../verification/P08" — did it search all *.md recursively? It found 5 matches in 3 files. If R5.md had links, it would have shown. Let me spot check by reading the R5 prompt file.
+
+Actually hold on, there's a subtlety: the grep tool's `include` glob is "one glob filter" — `*.md` — should match basenames. Fine.
+
+OK let me now do a batch of reads:
+1. head doc/REBASELINE_PLAN.md lines 1-13 (confirm line 10 + line 3).
+2. base doc/REBASELINE_PLAN.md lines 1-13 (compare).
+3. head SCOPE_DRAFT.md (full? ~100 lines) — read lines 1-60 and 90-105.
+4. head AC_COVERAGE.md lines 135-150 (N-07) + lines 1-10.
+5. head doc/handoffs/P08-490f9bd9.md lines 30-40.
+6. head RESUME.md (full, short).
+7. head DSH-REVIEW-PROMPT-R5.md.
+
+That's a lot. Let me prioritize and batch 4 at a time.
+dsh: reasoning:
+Confirmed:
+- Head Plan line 10 = same as base Plan line 10 (base has identical sentence). So it's pre-existing, not introduced by this delivery. And in the head (reviewed delivery), P08 status moved from `approved` (base line 3) to `in_progress` (head line 3), which makes line 10's "状态为 proposed / 未释放" more visibly contradictory (at base, P08 was approved, also contradicting). Either way, it's a pre-existing wording defect in Plan:10, same class as R4-01 (STATUS.md:10). Worth reporting as a non-blocking P3 observation (R6-01), noting it's not introduced by this delivery but that R4-01's fix class was not applied to the Plan twin; and noting Codex already fixed it post-delivery in main (line 10 now reads "当前P08=in_review，其余20项=proposed / 未释放"), which confirms the defect was real.
+
+Hmm, careful: R4-01 as described in R5's report was about STATUS.md:10 claiming "21个规划节点…状态为proposed/未释放" contradicting its own line 3/20. The Plan's line 10 is the same sentence. So it IS the same defect class in a sibling file. R5 approved af1ddeec without flagging it. As R6 reviewer I should flag it (P3, non-blocking) — it doesn't change the two P3 fixes' correctness.
+
+Wait, but hold on. Is it truly contradictory *within the head's own Plan*? Head Plan line 3: "in_progress 1, proposed / 未释放20" and line 39 `| P08 | in_progress |`. Line 10 says "当前21个规划节点沿用 P01–P21，状态为 proposed / 未释放". Yes, contradictory. Confirmed.
+
+- RESUME.md at head: line 7 says "恢复核验前的提交HEAD=bfd70958…R5结果与导航同步尚未提交，恢复时以实时Git status为准" — while at head, the R5结果与导航同步 IS committed (in ecb3b520) — hmm, actually RESUME was written before the final commit; its checkpoint is bfd70958 with the note "尚未提交". Since RESUME.md is itself inside ecb3b520 (does it differ from base? At base, RESUME.md existed with R5-era content... hmm, base af1ddeec's RESUME? Let me think: RESUME.md is present in both; the head version says TaskStatus=in_progress and mentions R5-01/R5-02 as revised pending R6 — so it was updated in ecb3b520 (or in bfd70958). It says HEAD=bfd70958 which is the parent of ecb3b520 — slightly stale but it explicitly says "恢复时以实时Git status为准". Minor. I could note it as informational (RESUME.md checkpoint records parent commit bfd70958, not the delivery head; explicitly defers to live git status). Not a finding worth a P-level? Could be an N-observation (P4/nit). I'll mention as an observation.
+
+- P08-490f9bd9.md:37 → R4-03 fix retained ✓ ("doc/reviews/**与不存在的 verification/P08/review-dsh-r1.md 均非写入目标").
+
+Now let me check AC_COVERAGE.md (N-07 at line 142) and SCOPE_DRAFT D1-D7 + P08-FMT, plus doc/00_INDEX.md / 12_ROADMAP.md / tasks/README.md P08 state consistency at head.
+
+Also I want to verify the numbers: 193 AC + AC-SMOKE + 12 gates = 206 rows.
+
+Let me read AC_COVERAGE.md around lines 1-5 and 135-150, and grep for "^## AC-" count in doc/08... Actually grep with 193 matches would dump a lot. Instead, I can verify the count differently: the script asserts `actual == expected` (coverage rows ordered equal to source headings) — I can spot-check rather than fully recount. Hmm, but "独立复算这两项P3修订" is the mandate; the AC matrix isn't part of the two P3 revisions. R5 already verified N-07 etc. For regression, I check N-07's line 142 text and that document/AC_COVERAGE.md is unchanged vs base (I can read base line 142 too and compare).
+
+Let me batch:
+1. head AC_COVERAGE.md lines 138-148
+2. base AC_COVERAGE.md lines 138-148
+3. head SCOPE_DRAFT.md lines 1-35 (D1-D7 rows)
+4. head SCOPE_DRAFT.md lines 90-105 (P08-FMT?)
+
+Let me do that.
+dsh: reasoning:
+N-07 fix retained at line 142 ✓ (identical in base and head — unchanged).
+
+D1-D7 rows at lines 17-23 (7 rows) ✓ unchanged from base presumably.
+
+Now, verification of R5-02's claim "扩展后验证当前五份P08 Handoff链接均可解析": I confirmed 5 handoffs exist at head and the only 2 markdown links resolve.
+
+Let me read the remaining pieces efficiently:
+1. head doc/00_INDEX.md & doc/12_ROADMAP.md & doc/tasks/README.md P08 status lines (quick greps).
+2. head DSH-REVIEW-PROMPT-R5.md (to check no links + confirm content).
+3. main validation.log tail (post-delivery R6 runs — Codex evidence for 31 files).
+4. main doc/handoffs/P08-ecb3b520-dsh-r6.md — read ✓.
+5. Check reference-style links in handoffs.
+
+Also, I should double-check the R5-02 fix's *actual effect*: adding handoffs to the link loop — but note the loop reads `handoffs` captured at line 25 BEFORE the later reassignment at line 98. Fine.
+
+One potential issue in the R5-02 fix: the new `handoffs` variable at line 25 shadows/none — later at line 98 it's reassigned. No bug.
+
+Another consideration: does the link loop now double-check the R5 handoff (doc/handoffs/P08-af1ddeec-dsh-r5.md)? Yes, via glob. And that file has links? The grep across doc/handoffs P08-* found only 2 matches → R5 handoff has no `](` links. Let me verify the R5 handoff content briefly (it's the handoff for R5, and its content should match R5's report claims, e.g., "五份P08 Handoff"? no that's head R6 handoff). Let me read it to check for inconsistencies (e.g., it might claim things about the R5-01/02 state). Given it's part of the delivery, I should at least skim it. Let me read doc/handoffs/P08-af1ddeec-dsh-r5.md.
+
+Let me batch these reads/greps.
+dsh: reasoning:
+Head documentation state is consistent: P08 in_progress everywhere; 20 unreleased. Good.
+
+Now remaining verification items:
+1. main validation.log tail (post-delivery R6 Codex runs) — optional but useful for reporting Codex evidence.
+2. doc/08 AC count (193) — not strictly needed.
+3. Reference-style link check in handoffs/verification docs (limitation of the link check).
+4. Check the head worktree contains no R6 prompt/handoff ✓ (glob).
+5. Check R5 prompt content (in head) — let me read it to confirm it doesn't reference the R6 stuff, and to confirm it's a post-delivery file. Also to see whether it has links (grep said no). Quick read.
+
+Actually, more important for R6 quality: verify that the base..head diff's *content* is limited to the intended files. Since I can't list the diff, let me at least enumerate the files under P08 allowed paths and compare base vs head for the governance files I haven't yet compared. The ones most likely changed: doc/tasks/P08.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, verification/P08/*, verification/PROJECT-ROADMAP-20261008/{REPORT,ROADMAP,RESUME}.md, verify_plan.py, doc/handoffs/P08-*.md.
+
+For each, comparing full contents is expensive. But I can be selective: the changes are the R5 archive + status sync + the 2 P3 fixes. The status docs at head already read consistently (in_progress, R5 closed, R5-01/02 pending R6).
+
+An additional cheap check: grep the head worktree for "review-dsh-af1ddeec-r5" and "R5-01"/"R5-02" to enumerate files carrying the R5/R6 integration text. Let me do that — it lists the files updated for this delivery. If all are in allowed paths → good proxy.
+
+Let me also check the file listing delta between base and head for the whole repo, at least by count. Hmm, I could get counts by globbing "**/*" on both and reading the spill files' line counts... The glob tool doesn't report the total count. But the spill file: I could grep the spill file with pattern "$" or "^" — ripgrep would report "Found N matches" but capped at 250 display. Hmm, when >250 matches, the tool says "a larger result reports where the complete match list was saved" — it doesn't give the count. Actually the header says "Found N matches" — maybe it does report the true count even when truncating? Let me test: grep pattern "." on the spill file of a large glob... but I don't have a large spill file yet.
+
+Honestly, let me try the glob on the head worktree "**/*" — this will give a spill file. Then I can read a bit of it and maybe grep. But comparing is the issue.
+
+Hmm, wait. Actually there's a clever trick for set comparison using grep! I can grep the *head* spill file for lines NOT... no, ripgrep supports negative lookahead? Rust regex doesn't support lookahead. No.
+
+Alternative: I can compare *specific directory* listings where changes are plausible. E.g., glob head "verification/P08/*" and base "verification/P08/*" — done (2 files added). glob head "doc/handoffs/P08-*" (5) vs base (4) — done (1 added). That accounts for the +3 files exactly matching the R5 prompt/handoff/report expectation and Codex's 28→31 count. That's a solid consistency check!
+
+Indeed: 28 (BASE..af1ddeec) + 3 new files = 31 (BASE..ecb3b520) — matches Codex's reported 31 in the R6 handoff. Wait, the R6 handoff says "31个BASE..HEAD提交文件在allowlist内" — and the base..head (af1ddeec..ecb3b520) delta added exactly 3 files (R5 prompt, R5 handoff, R5 report), which are new relative to af1ddeec but were they new relative to BASE(ab2f813c)? They were created after ab2f813c, so yes, +3 to the count. And the count went 28→31. ✓ Consistent. 
+
+That's a nice independent corroboration: the number of new files introduced between af1ddeec and ecb3b520 (as visible by comparing the two worktree listings for the P08 dirs and handoffs dir) equals 3, and the reported BASE..HEAD file count increased by exactly 3. If some unauthorized file had been added in base..head, the count would have increased by more (unless a file was also deleted...). This is a proxy, not proof.
+
+Let me also check: are there other new files in base..head outside these dirs? Can't tell. But the count arithmetic is a decent proxy: Codex's reported count 31 for BASE..HEAD vs validation.log:404's 28 for BASE..af1ddeec, and my file-add evidence = 3. (Codex runs are Codex evidence though.)
+
+Hmm, one more check: doc/00_INDEX.md line 3 in head says R5 approved etc. — consistent.
+
+Now let me look at the remaining verification: the main workspace validation.log tail to see the post-delivery R6 record (31 files). And check the main workspace's verification/P08 dir listing (should include review-dsh-ecb3b520-r6.md? No—the R6 report doesn't exist yet since we're producing it; P08.md says review_report=verification/P08/review-dsh-ecb3b520-r6.md as the expected archive path). Let me check the R6 prompt file exists in main and skim it to confirm it matches the CLI prompt (the prompt says the CLI receives the full prompt text). Actually, comparing the main R6 prompt with what I received: I have the prompt in my context. Let me read the file to verify identity — good evidence for "Prompt读取位置" and that it's post-delivery (not in worktree).
+
+Let me batch:
+1. read main verification/P08/DSH-REVIEW-PROMPT-R6.md (skim head, maybe 40 lines)
+2. read main verification/P08/validation.log tail (offset from ~420 to end)
+3. glob main verification/P08/*
+4. read main doc/handoffs/P08-ecb3b520-dsh-r6.md — already read ✓.
+
+Let me do 1-3.
+dsh: reasoning:
+Very useful. Notes:
+
+1. The R6 prompt file in main matches the prompt I received (line 3 says "本Prompt与R6 Handoff是delivery之后追加的审查材料" — but my received prompt says "本Prompt与R6 Handoff是delivery之后追加的审查材料，保存在主工作区". Hmm! Let me compare carefully.
+
+Received prompt (in my system/user message) line 3: "你是P08 Task的非作者Reviewer。本轮只读审查固定交付；... 中文返回完整Review报告。本Prompt与R6 Handoff是delivery之后追加的审查材料，保存在主工作区；它们不属于固定交付，也不应复制进或要求存在于干净的Review worktree。CLI会收到本Prompt全文。"
+
+File line 3: "你是P08 Task的非作者Reviewer。本轮只读审查固定交付；不要创建、修改、删除或暂存任何项目文件，不要checkout或commit，不得根据聊天记录推断事实。中文返回完整Review报告。本Prompt与R6 Handoff是delivery之后追加的审查材料，保存在主工作区；它们不属于固定交付，也不应复制进或要求存在于干净的Review worktree。CLI会收到本Prompt全文。"
+
+They match (I abbreviated in my head). Good. Rest of sections look identical based on headings. The file is 28 lines; my received prompt appears the same content. I can note that the CLI-delivered prompt text matches the file at that path (spot-checked lines 1-30 + section headings) — actually I only read lines 1-30 which is the whole file (28 lines). So the entire file was read! And it matches my received prompt (which I can compare). Let me note identity as "逐行内容与CLI收到文本一致（本人核对）". Good.
+
+2. main validation.log line 428: Codex ran verify_scope.py in the exact R6 worktree → 31 committed allowlist files, EXIT=0. Line 431: protected diffs empty. Line 439: post-delivery main run → 31 files. Line 442: a read-only Reviewer subagent found and Codex corrected stale P08 in_review state, R4 N-07/N-08 disposition, **outdated 21-proposed wording** ... — this confirms my observation about the "21 proposed / 未释放" wording! Codex corrected it post-delivery ("outdated 21-proposed wording"). Note: it says "stale P08 in_review state" — hmm, "found and Codex corrected stale P08 in_review state" means the state was stale (in_progress) and corrected to in_review. Yes.
+
+So the Plan:10 wording defect I found was independently found by a Codex review subagent (post-delivery) and corrected in 547894f5. In the fixed delivery head ecb3b520, it remains. This supports reporting it as a real (non-blocking) finding at the reviewed head.
+
+Hmm — but wait. Should this be a Finding at all? The R6 review scope says check R4-01/R4-02/R4-03 and previous findings for regression. The Plan:10 wording is the same class as R4-01 but was NOT part of R4-01's fix... R5's report §4.1 examined only doc/STATUS.md:10. Did R4-01 mention the Plan? R5's report says "R4 缺陷：doc/STATUS.md:10 在同一可变段内称...". So the Plan twin was never flagged. It's a pre-existing issue, unchanged between base and head. As R6 Reviewer, I can report it as a new non-blocking P3 observation (R6-01), noting it's pre-existing (not introduced by this delivery), that the delivery head still contains it, and that post-delivery main (547894f5) already corrected it. Level: P3 non-blocking (documentation consistency, same class as R4-01; no product impact).
+
+Hmm, is it a "regression of R4-01"? Not exactly — R4-01 was scoped to STATUS.md. But the fix's *intent* ("同一可变段" contradiction) clearly applies to the twin sentence. I'd call it "同类残留（非本交付引入）". Since decision is about whether the delivery is approvable: a non-blocking P3 doesn't block approval (R4/R5 precedent: P3 non-blocking → approved). So decision = approved with a new P3 observation, consistent with precedent.
+
+But wait — I should be careful. Does the head's Plan line 10 actually contradict? In the head, P08 = in_progress. Line 10 says "当前21个规划节点沿用 P01–P21，状态为 proposed / 未释放". Yes, it asserts all 21 nodes are proposed/未释放 while P08 is in_progress. Contradiction confirmed. And R4-01's fix wording in STATUS.md:10 explicitly avoided that. So R6-01 = P3 non-blocking, same class.
+
+3. dsh-r6.stdout.md and dsh-r6.stderr.log exist in main verification/P08 — these are the raw outputs of my (R6) CLI run, untracked/unstaged. Interesting: the dispatcher already created them. They should contain my session output. I shouldn't rely on them (they're the live run's output). Also, note they exist in main — meaning the harness writes there. Not project files I should touch.
+
+Hmm wait, actually this matters: dsh-r6.stdout.md exists as an untracked file in the main workspace, presumably being written as I run. Not my concern (I must not modify project files; the harness writes it, not me).
+
+4. main verification/P08 listing shows no `review-dsh-ecb3b520-r6.md` yet ✓ (report not yet archived).
+
+Now, remaining: 
+- Verify R5 prompt file in head has no links and is a post-delivery artifact: it IS in the head (committed at bfd70958). The prompt says Prompt/Handoff are "delivery之后追加" for R6; the R5 prompt was added after R5's delivery (af1ddeec) but is *inside* the R6 reviewed range (base af1ddeec..head ecb3b520). That's expected and authorized (verification/P08/**).
+
+Wait, careful: the R6 prompt says "Prompt与本R6 Handoff是delivery之后追加，不属于被审head" — about the R6 ones. The R5 prompt/handoff are inside the reviewed head — is that a problem? The R6 handoff says the reviewed delivery base=af1ddeec includes those post-R5-delivery materials. The reviewer (me) should note that base..head contains the R5 post-delivery Prompt/Handoff/report archive, which are authorized paths but are process artifacts, not product changes. That's worth stating explicitly in the report (scope description). Not a finding.
+
+Hmm, but should the R5 prompt/handoff have been included in the reviewed diff? The convention (doc/09 §90) says handoffs are added after delivery. So including them in the next round's base..head is a natural consequence. The prompt's review target 1 says "检查是否仅在P08授权路径内" — they are within verification/P08/** and doc/handoffs/P08-*.md ✓.
+
+- Check doc/09_COLLABORATION.md §90 to confirm the handoff-after-delivery convention (and to cite it). Let me grep for that section quickly. It's in the protected set (unchanged). Actually I can read the relevant lines. R5's report cited `doc/09_COLLABORATION.md:90`. Let me grep for "Handoff" in doc/09 to find the line about post-delivery appending. Low priority but good for the report. Let me do a quick grep.
+
+- Verify rows count in AC_COVERAGE (212 lines; rows = 193 + 1 + 12 = 206). Hmm, the file is 212 lines: header lines + 206 rows = plausible ✓ (lines 1-6 header, 206 rows would exceed 212... let me check: 212 total lines, rows start somewhere around line 5. 212 - 206 = 6 header/blank lines. Consistent.) I can verify the last row is D08-GATE-79 and the file ends around 212. Let me read the tail (lines 195-212) to confirm structure and count roughly. Also verify doc/08 has 193 `^## AC-` headings... I could grep -c but grep tool caps. Let me instead trust + spot check? Hmm, "独立复算" was for the two P3 revisions only. The AC matrix was R5's coverage. But R5-02's fix touched the link loop — I've recomputed that.
+
+Actually, let me do a reasonable independent check on the AC count using grep with a pattern that yields a manageable number: count `^## AC-` in doc/08 — if it returns "Found 193 matches" with 193 lines dumped, that's ~15k tokens. Too much. Alternative: I can't count without dumping. Skip; note as not independently recomputed (or use the fact that AC_COVERAGE is unchanged from base and R5 verified it).
+
+Hmm, actually there IS a way: grep for a pattern matching only the *tail* portion? No.
+
+I could read AC_COVERAGE.md's first lines to see if it states the count. Let me read lines 1-6 of AC_COVERAGE.md.
+
+Let me also check the tail (lines 200-212).
+
+Let me batch:
+1. read AC_COVERAGE.md lines 1-8
+2. read AC_COVERAGE.md lines 203-212
+3. grep doc/09_COLLABORATION.md for "Handoff" / "交付" section
+4. read head DSH-REVIEW-PROMPT-R5.md (quick, ~30 lines) to confirm no links + content.
+
+Let me do it.
+dsh: reasoning:
+Good. AC_COVERAGE structure: lines 7-200 = 194 rows? Let's compute: rows from line 7 to line 212 inclusive = 206 rows. That matches expected(193) + AC-SMOKE(1) + 12 gates = 206. ✓ (Assuming lines 7..200 are the 193 AC rows: 200-7+1 = 194 — hmm, 194 ≠ 193. Let me see: line 201-212 = 12 gates (GATE-68..79). So AC rows are lines 7-200 = 194 rows. That includes AC-SMOKE (1) + 193 numbered = 194 ✓. Total 206 ✓. Consistent with the script's assertion len(rows) == len(expected)+1+12.
+
+Good, that's an independent structural recomputation! The row count matches (194 AC rows incl. SMOKE + 12 gate rows = 206). I verified GATE rows: lines 201-212 (12 consecutive GATE-68..79) ✓ and the last row is GATE-79 ✓.
+
+Hmm, but I should verify line 200 is the SMOKE row or the last AC row. Let me read lines 196-202 to confirm the boundary. Quick read.
+
+Also note: doc/08's `## AC-...` heading count = 193 assumption. I can verify differently: the AC_COVERAGE rows are asserted equal to the source headings; I can spot check the first (AC-NAV-001) and the ordering. Full recount is expensive. I'll note partial recomputation.
+
+Hmm, actually maybe I can verify 193 by grepping doc/08 for "^## AC-" — it would return 193 lines... too much output. Let me think: is there a cheaper way? grep with a pattern that captures only, say, every heading — no. Skip; note as NOT independently fully recomputed but structurally consistent.
+
+Actually, I *can* do it: read doc/08 lines around the AC section and count? The ACs are spread over ~2000 lines. No.
+
+Alternatively, I can use grep with the pattern `^## AC-[A-Z]+-\d+ ` and include a set of... no.
+
+OK, accept.
+
+Now let me do the final checks:
+1. Read AC_COVERAGE.md lines 196-202 (boundary).
+2. Check doc/09_COLLABORATION.md for the post-delivery Handoff convention (§90) and §5.1 — to cite in the report. Let me read the relevant lines (grep for "交付 head" or "§5.1").
+3. Check reference-style links in the handoffs (limitation).
+4. Check whether D1–D7 rows appear in SCOPE_DRAFT lines 15-23 ✓ (done, 7 rows: D1..D7 at lines 17-23).
+
+Also, I should double check the R5-02 claim about "其余链接范围是否正确" — the loop covers HERE.glob("*.md") + doc/tasks/P08.md + handoffs. Note: it does NOT cover other docs (e.g., doc/STATUS.md, doc/REBASELINE_PLAN.md, doc/00_INDEX.md, doc/12_ROADMAP.md, doc/tasks/README.md, verification/PROJECT-ROADMAP-*/**.md). That was already the case before (N-08/whitespace only). Is that a gap? The link check scope is P08-owned docs. Could be an observation (P4/nit) — but it matches the declared scope ("P08 local links"). I'll mention as residual coverage boundary, not a finding.
+
+Another residual: the link check only handles inline links `](...)`, not reference-style `[label]: target` or bare HTML/`<...>` links, and it treats any `](...)` including images `![alt](path)` (which are also checked — fine). Also it doesn't verify anchors (#fragment) beyond stripping them — fine.
+
+Another potential issue with the R5-02 fix: `handoffs` at line 25 uses `(ROOT / "doc/handoffs").glob("P08-*.md")` — includes ALL P08 handoffs in the head at run time. If a future handoff contains a broken link, the validator fails — that's the intent. But note: the loop asserts every link target is a file *at the current working tree*. Since handoffs contain links to parent-relative paths, fine.
+
+Wait, one more thing: R4-03's fix mentions `verification/P08/review-dsh-r1.md` in backticks (not a markdown link) — so no link resolution issue ✓ (line 37 uses backticks).
+
+Now, is there any P08 handoff link that would fail? The R6 handoff (main, post-delivery) has links? Not in the worktree, irrelevant.
+
+Let me also double check the other handoffs (R2, R3) for links — grep said none. But let me be careful: maybe they contain links with parentheses inside... The grep pattern `\]\([^)]+\)` requires no `)` inside the target. A link like `[x](a(b).md)` wouldn't match — but such paths are unusual. Fine.
+
+Let me also verify there are no reference-style link definitions in the P08 handoffs, since the script wouldn't check them:
+grep for `^\s*\[[^\]]+\]:` in doc/handoffs/P08-* and verification/P08/*.md.
+
+Let me batch:
+1. read AC_COVERAGE 196-202
+2. grep reference-style links
+3. grep doc/09_COLLABORATION.md for the Handoff post-delivery rule.
+
+Then write the report.
+
+Also, one more scope item: "确认没有产品... 改动" — I should at least compare a protected file between base and head as a spot check. E.g., compare doc/08_ACCEPTANCE_CRITERIA.md? Huge. Instead, compare AGENTS.md (small-ish) between base and head? Or doc/09_COLLABORATION.md? Hmm, these are large too.
+
+A cheaper approach: grep both base and head for the same distinctive content... no.
+
+Alternative: compare file *existence* and a few line samples. Hmm.
+
+Actually, here's a thought: I can compare the *base* and *head* versions of small protected files by reading both, e.g., `verification/PROJECT-ROADMAP-20261008/task-inventory.csv` — no, big.
+
+Hmm, what about using grep with a pattern that matches all lines but limiting output? The grep tool returns up to 250 matches; if a file has >250 lines, it returns the *first* 250 and a spill path? It says "Returns up to 250 matches; a larger result reports where the complete match list was saved." So for a file with 1000 lines, grep "^" would return... hmm, maybe it returns the first 250 and the spill file has all. Then I could compare the first 250 lines of base vs head for a protected file! That's a cheap equality proxy for large files: if the first 250 lines are identical... still not proof of full equality.
+
+I think the honest approach is: report the protected-path zero-diff as NOT_VERIFIED by DSH (no git), with Codex evidence cited, plus the structural proxy. The prompt explicitly allows that: "命令无法执行时如实记NOT_RUN/NOT_VERIFIED".
+
+But hmm, I can do a targeted content comparison for the *most sensitive* small protected files: AGENTS.md, doc/09_COLLABORATION.md. Let me read base and head for AGENTS.md (how big?). AGENTS.md is maybe 100 lines. doc/09 is maybe 150 lines. That's ~250 lines of reading each pair = manageable? It's 4 reads ~ 500 lines ≈ 10k tokens. Hmm, moderate. Value: demonstrates protected files unchanged at a sample level.
+
+Actually, my glob-based evidence can do better: for the protected paths I can check whether the *base* worktree and *head* worktree have identical file listings in those directories (src, apps, tests, packaging, doc/contracts, doc/reviews). Identical listings prove no files added/deleted, but not content. Combined with the count arithmetic (31 = 28 + 3 new) — the 3 new files are all in P08 allowed paths (verified) — content modifications within protected dirs would not change the count. So content modification in protected dirs remains unverified (unless the deliverer lied). 
+
+I'll do one spot check: compare a couple of protected files' first lines / sizes... Actually here's a neat trick for size comparison: read with a large offset! E.g., `read(file, offset=1000)` returns "file has fewer lines" or content. If base and head have different line counts, reading beyond the end behaves differently. E.g., read(file, offset=500, limit=1) → if base has 400 lines, it returns something like "offset beyond end"? Hmm, the read tool with offset beyond EOF — behavior unknown; might return empty. That's a weak size test but cheap: for a set of protected files, I could compare the result of reading at a fixed large offset. If both return the same "out of range" style result or the same line content, sizes are similar. Too hacky and ambiguous.
+
+Better: protection claim is essentially about the *committed diff*. I'll report NOT_VERIFIED with Codex evidence and note the residual risk clearly. That matches R5 precedent and the prompt.
+
+Hmm, but wait. Let me reconsider one more time whether I can enumerate the base..head diff... 
+
+IDEA: The main workspace (G:/CODEX/New Manga) is at e9795470 (post-delivery). The R6 worktree is at ecb3b520. The R5 worktree is at af1ddeec. What if there's ANOTHER worktree pinned at a commit that could help? E.g., a worktree at 547894f5 or e9795470... The main is at e9795470. 
+
+IDEA 2: The `.git/worktrees/<name>/index` for the R6 worktree contains the staged (i.e., HEAD) entries; the *main* repo index corresponds to e9795470. Not useful.
+
+IDEA 3: **`git diff` output might exist in the dsh-r5.stdout.md / raw logs?** No.
+
+OK, done deliberating. Let me finish the remaining checks and write the report.
+
+One more important item: the prompt says to check "R4-01/R4-02/R4-03、N-07/N-08及此前P0/P1/P2 Finding是否回退". I've verified:
+- R4-01: STATUS.md:10 fixed text retained ✓ (read head STATUS.md:10).
+- R4-02: allowlist retained at head lines 90-102 ✓ (the R5-01 fix only added negatives).
+- R4-03: P08-490f9bd9.md:37 ✓.
+- N-07: AC_COVERAGE.md:142 ✓ (identical to base).
+- N-08: handoffs glob at head line 101-103 ✓ (with `assert handoffs` and inclusion in diff --check).
+- N-01..N-06: need light regression check:
+  - N-01: SCOPE_DRAFT.md mentions D04 §37 / D08 AC-EXPORT-001 five formats — let me check SCOPE_DRAFT around line 40 (mentioned in R5 as :40). Let me grep SCOPE_DRAFT for "AC-EXPORT-001" / "五项".
+  - N-02: verify_plan.py STATUS_LABELS includes approved/in_progress/in_review and equals 9 TASK_STATES. Let me check verify_plan.py lines 1-30.
+  - N-03/N-04: whitespace scope includes README + handoffs + roadmap dir (head lines 104-108) ✓ and protected set includes AGENTS.md + doc/09 (lines 66-67) ✓.
+  - N-05: AC_COVERAGE.md:3 mentions ACG-EXT-DETECT/CONTRACT/NFR ✓ (read line 3).
+  - N-06: SCOPE_DRAFT distinguishes existing vs proposed paths — R5 cited :78/:81. Let me spot check via grep for "拟议" in SCOPE_DRAFT.
+
+Let me run these greps and the verify_plan.py read. Also the reference-link grep and doc/09 §90.
+
+Batch:
+1. read verification/PROJECT-ROADMAP-20261008/verify_plan.py lines 1-30 (head worktree)
+2. grep SCOPE_DRAFT.md for "P08-FMT|AC-EXPORT-001|拟议|五项"
+3. grep "^\\s*\\[[^]]+\\]:" in doc/handoffs + verification/P08 for reference links... Actually grep tool pattern is regex: `^\s*\[[^\]]+\]:` — include *.md, path head verification/P08. And separately doc/handoffs P08-*.
+4. read doc/09_COLLABORATION.md around line 85-95.
+
+Let me do 1-3 and 4 in two batches.
+dsh: reasoning:
+- N-02 regression: verify_plan.py STATUS_LABELS has all 9 states and assert equality ✓ (unchanged).
+- N-01/N-06: SCOPE_DRAFT line 40 shows the five formats + PNG mapping ✓; line 71/83 distinguish 现存可复用 vs 拟议新增 ✓.
+- P08-FMT entries present (MOBI/CBZ/PDF/TEXT) ✓.
+- No reference-style link definitions in doc/handoffs/*.md ✓ (so the unchecked-link-style residual is empty in practice).
+
+Now the doc/09 §90 convention. Let me grep for it. Also check for any reference-style links in verification/P08/*.md.
+
+And read AC_COVERAGE lines 196-202 to confirm the AC/gate boundary.
+
+Then I'm ready to write the report.
+
+Actually also: the head worktree also contains DSH-REVIEW-PROMPT-R4.md etc. Does the link loop include them? Yes (HERE.glob("*.md") covers all 14 md files). And they have no links except those found. Fine.
+
+Let me also confirm: does the head worktree contain any file named like R6 (e.g., P08-ecb3b520-dsh-r6.md)? glob doc/handoffs/P08-* gave 5 files, none R6 ✓. And verification/P08 has no R6 prompt ✓.
+
+One more thing to verify for target 1: "确认没有产品、测试、共享契约、Schema、依赖、冻结需求或用户数据改动" — I can add a file-level proxy: glob the head worktree for the protected directories and compare with base. E.g., glob `doc/contracts/**` base vs head? That's many files but I just need counts... can't count easily. Hmm. Actually glob reports up to 100 paths — if a directory has <100 files, I get the complete list for both, and I can visually compare (the lists are sorted by mtime, not alphabetical, but content is the same set). For small dirs: doc/reviews/** (many files? probably 100+), doc/contracts (few?), packaging (few), tests (?), src (?), apps (?). Let me try glob `doc/contracts/*` on base and head — if both return <100 entries, compare sets visually. But sorted by mtime order differs between worktrees... the sets should look the same though. Comparing two 30-line lists visually is feasible.
+
+Hmm, but is this worth it? It only proves no file additions/deletions in those dirs, not content changes. Marginal value. And given the count arithmetic (28+3=31 with the 3 identified new files) already gives a strong-ish proxy... 
+
+Hmm, actually wait. The 28/31 counts are Codex's. My independent contribution: file-set comparison in verification/P08 (13→16 files) and doc/handoffs/P08-* (4→5). The +3 files observed: review-dsh-af1ddeec-r5.md, DSH-REVIEW-PROMPT-R5.md, P08-af1ddeec-dsh-r5.md. And Codex's count delta is +3. If Codex's 31 is accurate, and my observed +3 new files are all in allowed paths, then no *added* file is outside allowed paths (given Codex's count is small: if an unauthorized file had been added, then some authorized file must have been deleted to keep the count... possible but implausible). This is a reasonable proxy. I'll present it carefully as a proxy, not proof.
+
+Let me do the doc/09 grep and AC boundary read, then also glob doc/contracts in both worktrees as an extra proxy (cheap, 2 calls), and maybe src/apps/tests but those are large dirs with >100 files → limited usefulness. Let me do doc/contracts and packaging (likely small) for both.
+
+Actually, top-level `src` and `apps` and `tests` and `packaging` — I could glob `packaging/*` (small). And `doc/reviews/*` (maybe ~50). Let me just do doc/contracts and packaging.
+
+Hmm, let me limit tool calls. I'll do:
+- grep doc/09 for the handoff rule
+- read AC_COVERAGE 196-202
+- glob base & head for doc/contracts/* (2 calls) — hmm, glob path outside workspace works.
+
+Let me batch 4 calls (2 globs + grep + read).
+dsh: reasoning:
+doc/contracts: identical 7-file set in base and head ✓ (no adds/deletes). Content equality not proven.
+
+doc/09 line 90 confirms the convention ✓.
+
+AC_COVERAGE boundary: line 200 = D08-AC-SMOKE, 201-212 = GATE-68..79 (12) ✓. So numbered AC rows = lines 7..199 = 193 ✓✓ — that's an independent recomputation of the 193 count from the coverage file layout! Lines 7-199 inclusive = 193 rows. ✓ Matches "193条D08编号AC". 
+
+And rows with NOT_RUN: all rows end with "| NOT_RUN |" — I've seen consistent columns. The script asserts all rows end with NOT_RUN. Spot-checked several ✓.
+
+Also D08-GATE-69 mentions the Architecture Documentation Rebaseline Gate → not bypassed ✓. P09 row (Plan line 40) has the gate as prerequisite ✓. P18 (line 49) and P20 (line 51) mention the mapping prerequisite ✓. The Task is not registered/released ✓ (no task file; Plan says 未登记).
+
+Let me also verify there's no file for that Architecture Documentation Rebaseline Task in doc/tasks. Quick glob for "*Rebaseline*" or check doc/tasks listing... Let me grep the head for "Architecture Documentation Rebaseline" to see where it appears and whether any Task file exists. Actually R5 did this. I'll do a quick glob of doc/tasks/R*.md? Let me skip; the Plan statements suffice, plus verify_scope asserts nothing fabricated.
+
+Hmm, one more: "P09–P20仍未释放" — confirmed 20 rows "proposed / 未释放" at head (the script asserts exactly 20; my grep showed P01-P07, P09-P21 rows all "proposed / 未释放" = 20 rows ✓ (P01..P07 =7, P09..P21=13 → 20 ✓).
+
+Now the D1–D7 rows: 7 rows ✓ (lines 17-23), D5 threshold retained ✓.
+
+Now, let me also double check the "R5-01" requirement: "allowed()自检是否明确断言拒绝非P08 Handoff（如doc/handoffs/M2-x.md）和doc/reviews/**（如doc/reviews/x.md）" → head lines 93-94 exactly ✓.
+
+"既有正向allowlist是否仍约束固定BASE..HEAD已提交差量且排除他人未提交dirty" → head lines 96-99 unchanged from base: `git diff --name-only --no-renames BASE HEAD`; BASE=ab2f813c (line 8) ✓; comment at line 95 "without attributing pre-existing worktree dirt" ✓. Note: BASE..HEAD covers the whole P08 task range (superset of the reviewed af1ddeec..ecb3b520) — so it constrains the reviewed delta as well ✓. And it excludes uncommitted dirt by construction (commits only) ✓. Also line 74's protected-path check uses `git diff BASE -- paths` (BASE vs working tree, fail-closed) ✓.
+
+One subtlety worth reporting: the allowlist's `allowed()` returns True for ANY path starting with "verification/P08/" — including e.g. "verification/P08-evil/x" ? No: "verification/P08/" prefix requires the slash. "verification/P08-evil/x" doesn't start with "verification/P08/" ✓. Good.
+
+Another subtlety: `allowed()` accepts "doc/handoffs/P08-.md" (empty middle)? path = "doc/handoffs/P08-.md" → starts with prefix, endswith .md, rest = ".md" has no "/" → allowed. Harmless (a weird but authorized-name file).
+
+Also note: the positive allowlist check at line 96-99 runs *after* the negative asserts (order fine), and the assertion on line 99 only reports outside_scope.
+
+Now R5-02: "本地Markdown链接解析循环是否包含doc/handoffs/P08-*.md" → head lines 25-26 ✓. "其余链接范围是否正确" → HERE.glob("*.md") + doc/tasks/P08.md retained ✓. "固定head中所有P08 Handoff链接是否可解析" → the 5 handoffs, 2 links, both resolve in the head worktree ✓ (verified by reading target paths' existence via glob/read). Also verification/P08 md links + P08.md links all resolve ✓ (16 links).
+
+Wait — I should double check one: doc/tasks/P08.md line 25 links to `../../verification/P08/review-dsh-1ad05d99-r3.md` ✓ exists; line 29 `../REBASELINE_PLAN.md` ✓; line 29 `../../verification/PROJECT-ROADMAP-20261008/REPORT.md` ✓; line 154 `../handoffs/P08-490f9bd9.md` ✓, `../handoffs/P08-31c26389-dsh-r2.md` ✓, `../handoffs/P08-1ad05d99-dsh-r3.md` ✓, `../../verification/P08/DSH-REVIEW-PROMPT-R3.md` ✓, `../../verification/P08/review-dsh-31c2638.md` ✓, `../../verification/P08/preliminary-review.md` ✓, `../../verification/P08/RESUME.md` ✓, `../../verification/P08/review-dsh-490f9bd.md` ✓, `../../verification/P08/review-dsh-16fb07a9-r4.md` ✓, `../../verification/P08/review-dsh-af1ddeec-r5.md` ✓, `../../verification/P08/SCOPE_DRAFT.md` ✓, `../../verification/P08/AC_COVERAGE.md` ✓, line 35 has no links? It's a bullet list. line 44? line 46 ✓. All good.
+
+Hmm, one thing: doc/tasks/P08.md line 35 mentions "P09–P20契约→Core/Host→UI→验收切片" — fine.
+
+Now, is there anything in the "link loop" that might newly FAIL at head? The loop now includes the 5 handoffs. If any handoff had a broken link, the script would fail. Codex reports EXIT=0. My independent check found both links resolve ✓. So R5-02's fix is consistent and non-breaking.
+
+Also — one more potential issue with the R5-02 fix: performance/behavior — no.
+
+Now, let me consider whether to raise any additional findings:
+
+Finding candidates:
+1. R6-01 (P3, non-blocking, pre-existing at base and head): doc/REBASELINE_PLAN.md:10 still says "当前21个规划节点…状态为 proposed / 未释放", contradicting the same file's line 3 (in_progress 1) / line 28 / line 39 (P08 in_progress). Same defect class as R4-01 (STATUS.md:10), which was fixed. Evidence: head Plan:3/:10/:28/:39; base Plan:10 identical; post-delivery main Plan:10 corrected (main repository file, commit 547894f5 recorded in validation.log:442 "outdated 21-proposed wording"). Impact: reader may misread P08 as unreleased; no product/AC impact. Disposition: non-blocking; already corrected post-delivery in main, so no new head needed for this alone.
+
+Hmm wait. Careful: if it's already corrected post-delivery, does it still need to be a finding? Yes as an observation of the reviewed head's state. But since the correction happened after the reviewed head, a strict reviewer would say "the reviewed head contains the contradiction; it should be fixed in the integration commit". Decision remains approved (P3 non-blocking) — but I must state that approving the head does not imply the head's Plan:10 text is correct.
+
+Hmm, is R6-01 really a defect *of this delivery*? The delivery (base..head) didn't introduce it. But the R6 review target 5 asks to check Plan/Task/STATUS state consistency. So reporting it is appropriate.
+
+2. R6-02 (P4/nit or P3?): verification/P08/RESUME.md:7 records "恢复核验前的提交HEAD=bfd70958…R5结果与导航同步尚未提交" while the same commit (ecb3b520) commits the sync; the file itself says "恢复时以实时Git status为准". Also RESUME.md:3 says TaskStatus=in_progress/ACTIVE which matches head. Minor staleness. I'd call it P4 (nit) — or fold into observations. Given precedent (P3/P4 both used), I'll list as R6-02 P4 建议性.
+
+Hmm, also RESUME.md line 19 says "已按最小范围修改verification/P08/verify_scope.py…扩展后validator已EXIT=0" ✓ consistent.
+
+3. R6-03 (P4): local markdown link check only covers inline `](...)` links, not reference-style definitions (`[label]: path`) or HTML links; I verified there are currently zero reference-style definitions in the covered files (grep 0 matches in doc/handoffs/*.md; need also verification/P08 and P08.md). Let me quickly grep verification/P08 for reference-style too — I did grep doc/handoffs only. Let me run one more grep on verification/P08 + P08.md for `^\s*\[[^\]]+\]:\s*\S`. Minor; could skip and state "未检查引用式链接样式（本次范围内未发现该样式）" only for handoffs... Better to actually check to avoid an inaccurate claim. Let me run it.
+
+Also, the link check's file scope = P08-owned docs only (verification/P08, doc/tasks/P08.md, P08 handoffs) — doesn't cover Plan/STATUS/00_INDEX/12_ROADMAP/tasks-README links. That's a coverage boundary (P4 observation). Those other docs' links could break (e.g., main STATUS links). Worth noting as a residual gap but explicitly out of the P08 validator's declared scope.
+
+Hmm, but careful: adding too many nitpicks dilutes. The prompt wants findings with levels and dispositions. I'll report:
+- R6-01 P3 (Plan:10 wording; non-blocking, pre-existing, already fixed post-delivery in main).
+- Observations (P4/信息): RESUME checkpoint staleness; link-check style/scope boundary.
+
+Decision: approved (0 open P0/P1/P2; the two R5 P3s independently confirmed fixed; no regressions of R4-01..03/N-07/N-08; the new R6-01 is a non-blocking P3 documentation-inconsistency, same class as R4-01, already corrected post-delivery).
+
+Hmm, wait. Let me reconsider decision strictness. R5 approved with 2 new non-blocking P3s → approved. Precedent: non-blocking P3 doesn't block. R6-01 is analogous → approved. Also note the prompt's format: decision approved/changes_requested. I'll go approved with the explicit caveat that R5-01/R5-02 are confirmed closed (so they can be marked closed after R6), and R6-01 opens as a new non-blocking P3 for the integration commit to carry (already done in main).
+
+Hmm, but hold on. Should R5-01/R5-02 be marked "closed" by R6? Yes — target 2 and 3 ask to confirm; I confirmed both. So R5-01/R5-02 → closed (DSH independently confirmed).
+
+But careful about R5-02: the requirement was "扩展后验证当前五份P08 Handoff链接均可解析" — the head has 5 P08 handoffs, and all their links resolve. BUT: at head, is the R5 handoff (P08-af1ddeec-dsh-r5.md) present? Yes, 5 handoffs: 490f9bd9, 31c26389-r2, 1ad05d99-r3, 16fb07a9-r4, af1ddeec-r5. ✓ 5 files. Good. Note that the R6 handoff is NOT in the worktree (correctly, since it's post-delivery) — and if it were added later, the validator would check it too (fine).
+
+Now, one more consideration for R5-02 closure: the fix's design means the *next* committed handoff (R6) will be included when the validator runs post-delivery; at head it's 5. Fine.
+
+Now let me also double-check that lines 25-26's `handoffs` includes only files (glob could match a directory named P08-*.md? no).
+
+Now, about the DSH execution boundary. Let me compile the exact list of what I did:
+DSH executed (file-layer, read/glob/grep only):
+1. read worktree admin HEAD → ecb3b520 (detached, bare SHA)
+2. read commondir (../..) and gitdir (points back to worktree .git), and worktree .git file → gitdir
+3. read admin logs/HEAD → 1 line, created at ecb3b520
+4. read main .git/logs/HEAD:920-953 → commit chain; base=af1ddeec, then bfd70958, then head=ecb3b520, then 547894f5, e9795470
+5. read main .git/refs/heads/main → e9795470
+6. read base worktree verify_scope.py (115 lines) vs head (118 lines) → exactly +3 lines = the 2 fixes
+7. read head verify_scope.py full; base full → line-by-line alignment
+8. glob head/base file sets for verification/P08, doc/handoffs/P08-*, doc/contracts
+9. grep links across verification/P08/*.md, doc/tasks/P08.md, doc/handoffs/P08-*
+10. read R5 report, R5 handoff, R5 prompt, head docs (P08.md, STATUS.md, Plan head/base, 00_INDEX, 12_ROADMAP, tasks/README, SCOPE_DRAFT, AC_COVERAGE, RESUME, P08-490f9bd9, validation.log)
+11. read main post-delivery P08.md, STATUS.md, Plan, validation.log, R6 prompt, R6 handoff
+12. AC_COVERAGE row-count recomputation (lines 7-199 = 193 numbered AC; 200 = SMOKE; 201-212 = 12 gates; total 206)
+
+DSH NOT_RUN: git rev-parse/status/diff/check/show, python validators (2), any shell (pwsh). Evidence: 5 attempts (incl. alternate workdir C:\Windows\Temp, background job pwsh-8) all failed at sandbox ACL setup with the exact error; escalation denied (no approval channel).
+
+DSH NOT_VERIFIED:
+- worktree clean (no git status)
+- full enumeration of af1ddeec..ecb3b520 changed-file set; therefore "no unauthorized change" not proven by DSH
+- protected-path zero-diff (src/apps/tests/packaging/doc/contracts/doc/reviews/doc/01-08/doc/13/AD-001/AGENTS.md/doc/09/inventory)
+- validator EXIT=0 (Codex evidence only)
+- R5 report SHA256 recomputation (no Get-FileHash)
+- content equality between base and head for files outside the compared set
+
+Also: the working tree == commit tree equality NOT_VERIFIED.
+
+Coverage/evidence boundaries to state:
+- Content-level equality of protected files not proven; only file-set equality for doc/contracts (7 files identical) and P08 dirs (delta = 3 known files), plus commit-chain messages.
+- The reviewed range af1ddeec..ecb3b520 contains 2 commits: bfd70958 (R5 prompt/handoff prep) and ecb3b520 (R5 verifier findings); both P08-authorized paths.
+- Post-delivery commits 547894f5/e9795470 are outside the reviewed head.
+
+Also note: the R6 Prompt text I received matches the main-workspace file byte-for-byte? I can only say content-wise (I read all 28 lines and compared). I'll say "逐行内容一致（人工比对）；未做hash（无 Get-FileHash）".
+
+Hmm, one more check to strengthen R6-01: is the "21 proposed" wording perhaps in a frozen section of the Plan? The Plan's frozen marker "## 2026-10-08 完成：" — where is it in the Plan? verify_scope asserts `old.split(marker,1)[1] == new.split(marker,1)[1]` for Plan and STATUS, i.e., everything after the marker is frozen. In STATUS the marker is at line 22. In the Plan, the marker is presumably much later (line ~60+). Line 10 is before any marker → mutable ✓. Let me verify the Plan's marker location quickly with grep for "## 2026-10-08 完成：" in the head Plan. If the first occurrence is after line 10, then line 10 is mutable ✓.
+
+Let me run: grep "2026-10-08 完成" in head Plan.
+
+Also run the reference-style link grep on verification/P08 + P08.md.
+
+Then write the final report.
+dsh: reasoning:
+Plan's first "## 2026-10-08 完成：" marker is at line 60 → line 10 is in the mutable region ✓ (so the fix at main is legitimate and the validator's frozen-section assertion doesn't cover line 10).
+
+No reference-style links in verification/P08/*.md or doc/tasks/P08.md ✓.
+
+I think I have enough. Let me also quickly confirm that the head worktree doesn't have uncommitted-looking artifacts... can't.
+
+One more: verify the head worktree's doc/00_INDEX.md and doc/12_ROADMAP.md — grep showed they're consistent (in_progress). ✓
+
+Also the "P09–P20仍未释放" — Plan shows 20 rows proposed/未释放; but note prompt says "P09–P20仍未释放" while the Plan has P01–P21 (20 proposed rows include P01–P07 and P09–P21). Fine, P09–P21 unreleased (superset).
+
+Let me now also double check the R4-02 allowlist still "约束固定BASE..HEAD已提交差量" — one nuance: BASE=ab2f813c is the P08 Task base, not the reviewed base af1ddeec. So the allowlist covers BASE..HEAD ⊇ reviewed range ✓ (stricter). Worth stating.
+
+Now: the R5-01/R5-02 fixes are in verify_scope.py, which is a *validator* — running it is Codex evidence (DSH NOT_RUN). My recomputation is static (code reading) + data-level (link targets, path predicate semantics).
+
+Let me explicitly recompute the predicate semantics for the four negative samples:
+- "doc/10_CURRENT_STATE_AND_GAPS.md": not in allowed_files; doesn't start with "verification/P08/"; doesn't start with "doc/handoffs/P08-" → False ✓ (assert not → passes)
+- "doc/handoffs/P08/nested.md": starts with prefix "doc/handoffs/P08-"? The path is "doc/handoffs/P08/nested.md" — does it start with "doc/handoffs/P08-"? No! It's "doc/handoffs/P08/" (slash, not hyphen). So the first condition fails; not in allowed_files; not verification/P08/ → False ✓ rejected (R5-01 previously said the nested case is rejected "由 '/' not in ... 子句拒绝" — hmm, actually that's incorrect in R5's report: for "doc/handoffs/P08/nested.md", the prefix check itself fails because prefix is "doc/handoffs/P08-" with a hyphen. Let me recheck: handoff_prefix = "doc/handoffs/P08-". "doc/handoffs/P08/nested.md".startswith("doc/handoffs/P08-") → False (char at index 17 is '/' vs '-'). So it's rejected by the prefix condition, not the "/" clause. R5's report line 91 said "拒绝 doc/handoffs/P08/nested.md（嵌套 Handoff，由 "/" not in path[len(prefix):] 子句拒绝）" — that's a misattribution in R5's report, though the outcome is the same. Interesting nit but not worth a finding; maybe mention as a minor note? It's about R5 report accuracy, not the delivery. I could mention in passing. Actually, hmm, is it worth noting? The R5 report is part of the delivery (verification/P08/review-dsh-af1ddeec-r5.md is in the head). A minor factual misattribution in an archived review report. It doesn't affect the decision. I'll mention it as an informational note (R6-03, P4/info) — shows independent recomputation. Keep it brief.
+
+- "doc/handoffs/M2-x.md": prefix fails ("P08-" vs "M2-x") → False ✓
+- "doc/reviews/x.md": not allowed_files ("doc/reviews" not in allowed_files — allowed_files has no doc/reviews), doesn't match other branches → False ✓
+
+And positives:
+- "verification/P08/review-example.md": startswith "verification/P08/" ✓ True
+- "doc/handoffs/P08-r5.md": prefix + .md + rest "r5.md" no "/" ✓ True
+
+Great — the predicate semantics check out.
+
+Also, note: `allowed_files` includes "verification/PROJECT-ROADMAP-20261008/verify_plan.py" etc. and the whitespace check includes the whole `verification/PROJECT-ROADMAP-20261008` directory (line 108) — so a *new* file added under that dir would be whitespace-checked but the allowlist (line 96) would reject it unless named. That's the "rejects unauthorized siblings" property ✓.
+
+Now, final piece: the reviewed range includes the R5 prompt/handoff/report (new files). Are those "authorized"? Per doc/tasks/P08.md:126 (允许修改范围: verification/P08/** and 本Task自有Handoff) ✓.
+
+Alright. One more: the prompt asks "报告需列明来源和提交边界" for the post-delivery state docs. I'll cite:
+- Source: main workspace absolute paths: G:/CODEX/New Manga/doc/tasks/P08.md:1-21 (status in_review, reviewed_head=ecb3b520, review_worktree=R6, review_session=pending, review_report=verification/P08/review-dsh-ecb3b520-r6.md), G:/CODEX/New Manga/doc/STATUS.md:3/:5, G:/CODEX/New Manga/doc/REBASELINE_PLAN.md:3/:10/:28/:39, G:/CODEX/New Manga/verification/P08/DSH-REVIEW-PROMPT-R6.md, G:/CODEX/New Manga/doc/handoffs/P08-ecb3b520-dsh-r6.md.
+- Commit boundary: main .git/logs/HEAD:951-953 → ecb3b520 (reviewed head) → 547894f5 "docs(P08): record R6 review checkpoint" → e9795470 "docs(P08): anchor R6 dispatch checkpoint". So the post-delivery state lives in 547894f5/e9795470, outside the reviewed head. The reviewed head's own frontmatter/Plan record in_progress (pre-delivery state). Not a contradiction ✓.
+
+Also note: main refs/heads/main = e9795470.
+
+Now let me write the report. It should be a complete Chinese review report following the structure: frontmatter, 范围与依据, Architecture结论, Verification矩阵 (分列DSH实际执行/NOT_RUN/NOT_VERIFIED), R5-01/R5-02逐项处置, 历史Finding回归, 文档状态与提交边界, Findings表, NOT_RUN/NOT_VERIFIED边界, 风险与结论, 下一任务建议 (§5.1) + 可直接转发指令.
+
+Decision: approved.
+
+Let me now also double-check the exact head line numbers for citations:
+- verify_scope.py head:
+  - line 8: BASE
+  - lines 25-26: handoffs link loop
+  - lines 74-83: allowed_files
+  - lines 85-89: allowed()
+  - line 90: positive samples
+  - lines 91-94: negatives (91 doc/10, 92 nested, 93 M2-x, 94 doc/reviews/x)
+  - lines 95-99: committed range allowlist (96-99: changed/outside_scope/assert... wait: 96-99 = line 96 comment? Let me re-derive from the read:
+```
+92:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+93:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+94:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+95:    outside_scope = [path for path in changed if not allowed(path)]
+96:    assert not outside_scope, f"committed P08 diff escapes allowed paths: {outside_scope}"
+97:    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
+98:    handoffs = sorted(path.relative_to(ROOT).as_posix()
+99:                      for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
+100:    assert handoffs, "P08 Handoff scope must not be empty"
+```
+Hmm! Wait. The head read showed lines 90-100 as:
+```
+90:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+91:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+92:    assert not allowed("doc/handoffs/P08/nested.md")
+93:    assert not allowed("doc/handoffs/M2-x.md")
+94:    assert not allowed("doc/reviews/x.md")
+95:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+96:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+97:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+98:    outside_scope = [path for path in changed if not allowed(path)]
+99:    assert not outside_scope, f"committed P08 diff escapes allowed paths: {outside_scope}"
+100:    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
+101:    handoffs = sorted(...)
+102:                      for path in ...
+103:    assert handoffs, "P08 Handoff scope must not be empty"
+104:    checked = subprocess.run(["git", ... "diff", "--check", BASE, "--", ...])
+```
+Yes, from the original head read: 90 assert allowed, 91 doc/10, 92 nested, 93 M2-x, 94 doc/reviews, 95 comment, 96-97 changed, 98 outside_scope, 99 assert, 100 print, 101-102 handoffs sorted, 103 assert handoffs, 104-109 checked run (104-108 args, 109 capture), 110 assert returncode, 111 print. Let me re-read the head file lines to be exact... From my first read of head verify_scope.py:
+
+```
+88:                    and "/" not in path[len(handoff_prefix):]))
+89:    
+90:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+91:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+92:    assert not allowed("doc/handoffs/P08/nested.md")
+93:    assert not allowed("doc/handoffs/M2-x.md")
+94:    assert not allowed("doc/reviews/x.md")
+95:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+96:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+97:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+98:    outside_scope = [path for path in changed if not allowed(path)]
+99:    assert not outside_scope, f"committed P08 diff escapes allowed paths: {outside_scope}"
+100:    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
+101:    handoffs = sorted(path.relative_to(ROOT).as_posix()
+102:                      for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
+103:    assert handoffs, "P08 Handoff scope must not be empty"
+104:    checked = subprocess.run(["git", "-C", str(ROOT), "diff", "--check", BASE, "--",
+105:                              "verification/P08", "doc/tasks/P08.md", "doc/REBASELINE_PLAN.md",
+106:                              "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md",
+107:                              "doc/tasks/README.md", *handoffs,
+108:                              "verification/PROJECT-ROADMAP-20261008"],
+109:                             capture_output=True, text=True)
+110:    assert checked.returncode == 0, checked.stdout + checked.stderr
+111:    print(f"PASS: frozen product docs unchanged; ...")
+112:    for name in ("REBASELINE_PLAN.md", "STATUS.md"):
+113:        old = subprocess.check_output([... "show", f"{BASE}:doc/{name}"])...
+114:        new = (ROOT / "doc" / name).read_text(...)
+115:        marker = "## 2026-10-08 完成："
+116:        assert old.split(marker, 1)[1] == new.split(marker, 1)[1], name
+117:    print("PASS: zero production/contracts/Review/inventory changes; historical Plan/Status preserved")
+118:    print("Product tests/build/GUI/model calls: NOT_RUN (document preparation only)")
+```
+Yes — the original read output for the head file shows exactly these line numbers (90-118). Good. Wait, in the very first read the head showed line 92 as `# Check the fixed commit range...`? Let me scroll back: The first read output (head verify_scope.py) shows:
+
+```
+89:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92:    assert not allowed("doc/handoffs/M2-x.md")
+93:    assert not allowed("doc/reviews/x.md")
+94: # Check...
+```
+Hmm no. Let me carefully re-read the first tool result. It listed:
+
+```
+84:    def allowed(path):
+85:        return (path in allowed_files or path.startswith("verification/P08/")
+86:                or (path.startswith(handoff_prefix) and path.endswith(".md")
+87:                    and "/" not in path[len(handoff_prefix):]))
+88:
+89:    
+90:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+91:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+92:    assert not allowed("doc/handoffs/P08/nested.md")
+93:    assert not allowed("doc/handoffs/M2-x.md")
+94:    assert not allowed("doc/reviews/x.md")
+95:    # Check the fixed commit range ...
+```
+Hmm, the actual first read output was:
+
+```
+84:    def allowed(path):
+85:        return (path in allowed_files or path.startswith("verification/P08/")
+86:                or (path.startswith(handoff_prefix) and path.endswith(".md")
+87:                    and "/" not in path[len(handoff_prefix):]))
+88:
+89:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92:    assert not allowed("doc/handoffs/M2-x.md")
+93:    assert not allowed("doc/reviews/x.md")
+94:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+95:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+96:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+97:    outside_scope = [path for path in changed if not allowed(path)]
+98:    assert not outside_scope, ...
+99:    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
+```
+Hmm! Which is it? I need to check the actual first read output. Let me look again at the top of the conversation: the first read of verify_scope.py gave content ending with:
+
+```
+84:    def allowed(path):
+85:        return (path in allowed_files or path.startswith("verification/P08/")
+86:                or (path.startswith(handoff_prefix) and path.endswith(".md")
+87:                    and "/" not in path[len(handoff_prefix):]))
+88:
+89:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92:    assert not allowed("doc/handoffs/M2-x.md")
+93:    assert not allowed("doc/reviews/x.md")
+94:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+95:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+96:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+```
+Wait — the first read did NOT show line 92 as the comment; it showed:
+
+"90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92: # hmm"
+
+I must be precise. Let me re-read the actual output text from the first tool call:
+
+```
+74:    allowed_files = {
+...
+83:    handoff_prefix = "doc/handoffs/P08-"
+84:
+85:    def allowed(path):
+86:        return (path in allowed_files or path.startswith("verification/P08/")
+87:                or (path.startswith(handoff_prefix) and path.endswith(".md")
+88:                    and "/" not in path[len(handoff_prefix):]))
+89:
+90:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+91:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+92:    assert not allowed("doc/handoffs/P08/nested.md")
+93:    assert not allowed("doc/handoffs/M2-x.md")
+94:    assert not allowed("doc/reviews/x.md")
+95:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+96:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+97:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+98:    outside_scope = [path for path in changed if not allowed(path)]
+99:    assert not outside_scope, f"committed P08 diff escapes allowed paths: {outside_scope}"
+100:    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
+101:    handoffs = sorted(path.relative_to(ROOT).as_posix()
+102:                      for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
+103:    assert handoffs, "P08 Handoff scope must not be empty"
+104:    checked = subprocess.run(["git", "-C", str(ROOT), "diff", "--check", BASE, "--",
+105:                              "verification/P08", "doc/tasks/P08.md", "doc/REBASELINE_PLAN.md",
+106:                              "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md",
+107:                              "doc/tasks/README.md", *handoffs,
+108:                              "verification/PROJECT-ROADMAP-20261008"],
+109:                             capture_output=True, text=True)
+110:    assert checked.returncode == 0, checked.stdout + checked.stderr
+111:    print(...)
+112:    for name in ("REBASELINE_PLAN.md", "STATUS.md"):
+...
+```
+
+Yes! Looking at the actual first read output again (the text I have): lines 84-88 def allowed, 89 blank, 90 assert allowed (positives), 91 doc/10, 92 nested, 93 M2-x, 94 doc/reviews, 95 comment, 96-97 changed, 98 outside_scope, 99 assert, 100 print, 101-102 handoffs sorted, 103 assert handoffs, 104-109 checked, 110 assert returncode, 111 print, 112-116 frozen compare, 117-118 prints. Total 118 lines ✓ and the R5/head diff = +1 line ("handoffs = list(...)") at 25 and +2 lines (M2-x, doc/reviews) = +3 ✓.
+
+Hmm, but wait: the first read showed line 89 as blank? It showed:
+```
+88:                    and "/" not in path[len(handoff_prefix):]))
+89: 
+90:    assert allowed(...
+```
+Hmm, in the actual output I see:
+
+"88:                    and \"/\" not in path[len(handoff_prefix):]))
+89:    
+90:    assert allowed(\"verification/P08/review-example.md\") and allowed(\"doc/handoffs/P08-r5.md\")
+91:    assert not allowed(\"doc/10_CURRENT_STATE_AND_GAPS.md\")
+92:    assert not allowed(\"doc/handoffs/P08/nested.md\")
+93:    assert not allowed(\"doc/handoffs/M2-x.md\")
+94:    assert not allowed(\"doc/reviews/x.md\")
+95:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+96:    changed = subprocess.check_output([\"git\", \"-C\", str(ROOT), \"diff\", \"--name-only\",
+97:                                       \"--no-renames\", BASE, \"HEAD\"], text=True).splitlines()
+98:    outside_scope = [path for path in changed if not allowed(path)]
+99:    assert not outside_scope, f\"committed P08 diff escapes allowed paths: {outside_scope}\"
+100:    print(f\"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)\")"
+
+Yes — that matches the original output I received (I can recall it: the head had `outside_scope` at line 98 and `print` at 100, and the negative asserts at 91-94 — hmm, but earlier in my analysis I wrote "93-94 新增负例". Let me settle it: In the FIRST tool result (head verify_scope.py), the lines were:
+
+```
+89:    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+90:    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+91:    assert not allowed("doc/handoffs/P08/nested.md")
+92:    assert not allowed("doc/handoffs/M2-x.md")
+93:    assert not allowed("doc/reviews/x.md")
+94:    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+95:    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+96:                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+97:    outside_scope = [path for path in changed if not allowed(path)]
+98:    assert not outside_scope, f"committed P08 diff escapes allowed paths: {outside_scope}"
+99:    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
+100:    handoffs = sorted(path.relative_to(ROOT).as_posix()
+101:                      for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
+102:    assert handoffs, "P08 Handoff scope must not be empty"
+103:    checked = subprocess.run(["git", ...])
+```
+
+Argh. I'm not certain. Given the ambiguity, I should re-read the specific line range from the file to get exact line numbers for citation. Let me do that — read verify_scope.py lines 84-118 in the head worktree. That resolves it definitively.
+
+Also I realize I should double check the total line count 118 and the R5-01 assert lines.
+
+Let me just re-read lines 84-118.
+dsh: reasoning:
+Confirmed exact line numbers:
+- Head verify_scope.py: line 25 (new handoffs list), line 26 (loop includes handoffs), lines 90-94 (positive/negative self-checks), line 93 (M2-x), line 94 (doc/reviews/x), lines 95-100 (committed BASE..HEAD allowlist).
+- Base verify_scope.py: 115 lines; line 25 = `for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"]:`; lines 89-91 = the 3 original asserts; line 92-96 = changed/outside_scope/assert/print.
+
+So the delta: +1 line at 25, +2 lines at 93-94 (the new negative asserts) = +3 lines total. And no other differences (verified by full read of both). Good.
+
+Now I'm ready to write the report. It must be in Chinese, complete, with all sections.
+
+Let me be careful to:
+- State fixed base = af1ddeec..., reviewed head = ecb3b520...
+- decision: approved
+- Separate DSH-executed vs NOT_RUN vs NOT_VERIFIED.
+- Findings: R6-01 (P3, new, non-blocking), and observations (R6-O1 RESUME staleness P4; R6-O2 link-check coverage boundary P4; R6-O3 R5 report misattribution nit P4/info).
+- R5-01 → closed; R5-02 → closed.
+- Historical: R4-01/02/03 closed (no regression), N-07/N-08 no regression, R1/R2 findings no regression (spot-checked).
+- D1–D7 kept as user facts.
+- P09–P21 unreleased; Architecture Documentation Rebaseline Gate not bypassed.
+- Post-delivery state at 547894f5/e9795470 documented with sources.
+- Next task suggestion per §5.1.
+
+Also mention the reviewed base..head contains 2 commits: bfd70958 + ecb3b520, both P08-authorized; the R5 prompt/handoff (bfd70958) and R5 report + fixes (ecb3b520).
+
+Wait — I should double check which of the 2 commits added the R5 report. I inferred it's in ecb3b520 (since it must be after R5's DSH run, which happened between bfd70958 and ecb3b520 by timestamps: bfd70958 at 1791473644, ecb3b520 at 1791474493, worktree created 1791474521). Actually the R5 DSH run happened before ecb3b520? The R5 report's session exists and the report is in head; the handoff "prepare R5 review handoff" is before the review; the "address R5 verifier findings" commit is after the R5 review returned. So the R5 report archive is in ecb3b520. But I can't verify which commit added it without git. I'll state it as: the reviewed range holds 2 commits whose subjects are R5 handoff prep and R5 verifier findings; the R5 prompt/handoff/report files are all present at head and absent at base. I'll avoid asserting exactly which commit added which file.
+
+Hmm, actually I can partially verify: bfd70958 "prepare R5 review handoff" — the R5 prompt/handoff would come from it. And ecb3b520 "address R5 verifier findings" — the verify_scope.py changes + report archive + status updates. But I can't prove the split. I'll note it as inference from commit subjects.
+
+Also worth noting: the R5 handoff's frontmatter says `status: delivered_review_approved` and base_commit=16fb07a9, delivery_head=af1ddeec ✓ consistent with base of R6.
+
+And the R5 handoff contains two markdown renderings of links? No links. ✓
+
+One more consideration for the report: the prompt's item 1 asks to confirm no user-data changes. File-level: no evidence of user data files in the repo; the delivery touched only docs/validator. I can note that user data (books/, models, secrets) is not part of the repo tree and the reviewed paths show no such files; plus Codex evidence of protected-path zero-diff. NOT fully verified by DSH.
+
+Let me also mention the sandbox failure precisely: 5 pwsh attempts: (1)(2) default workdir, (3) workdir=C:\Windows\Temp, (4) workspace-write escalation retry, (5) danger-full-access escalation (denied: no approval channel), (6) background job pwsh-8 failed identically. Exact error string. Not escalated further.
+
+Let me now write the final report. It will be long. I'll structure it well.
+
+Note on "R6-01" evidence: head Plan line 10 vs base Plan line 10 identical; main Plan line 10 corrected. I'll give exact quotes.
+
+Also I should double check: does the head Plan's line 3 or line 28 contradict line 10 — yes as quoted.
+
+Let me also state the row count recomputation: AC_COVERAGE.md lines 7-199 = 193 numbered AC rows; line 200 = D08-AC-SMOKE; lines 201-212 = D08-GATE-68..79 (12) → total 206 rows; all sampled rows end with `| NOT_RUN |`. (I sampled, didn't verify all 206 end with NOT_RUN.) To be accurate: I verified the ends for the rows I read (lines 7-8, 136-147, 196-212). I'll say "抽验 30 行均以 | NOT_RUN | 结尾；未逐行核验 206 行".
+
+Alright, also mention the grep results for links: 
+- verification/P08/*.md: 5 markdown links across 3 files (SCOPE_DRAFT 3, DSH-REVIEW-PROMPT 1, AC_COVERAGE 2 — that's 6? Let me recount: SCOPE_DRAFT line 9 has 2 links (core-audit, desktop-audit) + line 27 has 1 + line 102 has 1 = 4; DSH-REVIEW-PROMPT line 5 has 1; AC_COVERAGE line 3 has 2. Total 7 links. The grep said "Found 5 matches" = 5 matching *lines*, not links. Right — grep counts lines. So: 5 lines with links in verification/P08 (SCOPE_DRAFT 3 lines, DSH-REVIEW-PROMPT 1, AC_COVERAGE 1) = 7 links total; all resolve.
+- doc/handoffs/P08-*: 2 lines, 2 links, both resolve.
+- doc/tasks/P08.md: 8 lines with links; each line may have multiple; all resolve.
+
+Let me enumerate link targets verified: 
+verification/P08: ../PROJECT-ROADMAP-20261008/core-audit.md, ../PROJECT-ROADMAP-20261008/desktop-audit.md, AC_COVERAGE.md, DSH-REVIEW-PROMPT.md, ../../doc/handoffs/P08-490f9bd9.md, ../../doc/08_ACCEPTANCE_CRITERIA.md, ../../doc/13_ACCEPTANCE_TRACEABILITY.md → 7 ✓ all exist.
+handoffs: ../../verification/P08/SCOPE_DRAFT.md, ../../verification/P08/review-dsh-1ad05d99-r3.md → 2 ✓.
+P08.md: 16 targets → all exist ✓ (listed earlier).
+
+Total 25 link targets checked, all resolve. Good.
+
+Hmm, the P08.md line 154 has 5 links + line 25 (2), 29 (2), 46 (1), 63 (1), 85 (2), 90 (1), 104 (1) = 15... let me count precisely from the grep:
+- line 25: [DSH R3 Review], [验证日志] = 2
+- line 29: [Plan], [整体审计] = 2
+- line 46: [DSH报告] = 1
+- line 63: [验证日志] = 1
+- line 85: [DSH R3 Review] = 1
+- line 90: [DSH Review R4] = 1
+- line 104: [DSH Review R5] = 1
+- line 154: [范围草案], [D08逐项覆盖], [恢复点], [首轮DSH报告], [预审记录], [首轮Handoff], [DSH R2 Handoff], [报告], [DSH R3 Handoff], [Prompt] = 10
+Total = 19. All exist ✓ (I verified each target path exists via the earlier globs).
+
+Fine. I'll say "19 处链接目标全部存在".
+
+Now write the final answer. I'll keep it comprehensive but organized.
+
+One last item: next-task suggestion per §5.1 with a directly forwardable instruction. Since P08 R6 returns approved, the next step: Codex integration Gate (rerun validators at the new fixed head if any change, carry R6-01 fix which is already in main, update Task to done only after integration checks + post-integration verification). Reviewer for any new head = DSH (non-author). Include a forwardable instruction in Chinese.
+
+Note: I must not claim the integration is done. And note the R6-01 fix already exists in main (547894f5) — so the integrator just needs to confirm the fix and record it, plus decide whether to re-review a new head (if a new head is produced containing the fix, strictly it would need a new review per "head变动后不得延用"; but since the fix is already in main post-delivery commits and was found by R6, the integrator should either (a) treat R6-01 as closed by the post-delivery commit with evidence, or (b) re-review. I'll recommend: record the fix in the integration commit, and if the reviewed artifacts change materially beyond P08-01 wording, a short R7 confirmation may be needed; otherwise the integration gate can close it with the R6-01 fix evidence — but per the template, P3 non-blocking doesn't gate. I'll phrase it carefully: the integration Gate should confirm the Plan:10 wording fix (already in 547894f5) and, if a new delivery head is produced for other reasons, get an independent new-head confirmation.
+
+Let me write it now.
+
+Also state explicitly: this report itself was produced without writing any file (no create/modify/delete/stage/checkout/commit).
+
+Length: aim for a thorough but readable report. Let's go.

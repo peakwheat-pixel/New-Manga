@@ -1,0 +1,24 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "capturedAt": "2026-10-13T12:39:37.714Z",
+  "status": "NO_PRECISE_STORE_PATH",
+  "inventory": {
+    "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json",
+    "bytes": 16880,
+    "sha256": "9084A9F37A696C3F55999EFBF08B0D39E4FE9D55D68A40E054E8307BF94978F5",
+    "immediateChildren": 87
+  },
+  "candidateRule": "A top-level name/metadata must clearly identify a dedicated Codex tool/harness output/result/capture store; generic sessions, worktrees, plugins, caches, databases, and temp folders are excluded.",
+  "candidatePaths": [],
+  "exactMarkerSearch": "NOT_RUN",
+  "stopReason": "No precise dedicated tool/harness-output candidate path appeared in the immediate-child name/metadata inventory. The Task explicitly requires stopping here.",
+  "nextAction": "STOP; preserve P2-1 OPEN, H1 CHANGES_REQUESTED, X6 BLOCKED.",
+  "scopeAssertions": {
+    "recursiveEnumeration": false,
+    "fileContentsRead": false,
+    "credentialsRead": false,
+    "sourceModified": false,
+    "previous23SessionFilesReenumerated": false,
+    "tempFilesResearched": false
+  }
+}

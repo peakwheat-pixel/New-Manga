@@ -1,0 +1,72 @@
+{
+  "reviewedCodeCommit": "f8ea2edc7c2097f6f87676cafe7a3e2377a3f050",
+  "reviewedBranchHead": "8bba48bd9c0f08ffe6e81a5fd2277514595d0d27",
+  "reviewInputManifest": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\repair-r3\\independent-review\\review-input-manifest-r3.json",
+  "manifestSha256": "5f9e604d964c3700727b8589af58831149ebd8928654ba9fa5d081602adcc607",
+  "inputs": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+      "expected": "ab8a92ed60607bb3f0a80df027940839fa58e06c55ca15cc71538ba028285a7c",
+      "actual": "ab8a92ed60607bb3f0a80df027940839fa58e06c55ca15cc71538ba028285a7c",
+      "match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run-selftest.ps1",
+      "expected": "0744549dfb10ab5188eeca8ccc97b616fde3440f77bc657a9b74f813a8543e82",
+      "actual": "0744549dfb10ab5188eeca8ccc97b616fde3440f77bc657a9b74f813a8543e82",
+      "match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "expected": "bd3fa7bff776774eaaa1e488eb346e85a85836a94f295a01008a6ac32ec0799c",
+      "actual": "bd3fa7bff776774eaaa1e488eb346e85a85836a94f295a01008a6ac32ec0799c",
+      "match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/zcode-p02pre-r1h-h2-collector-handoff-20261013-r3.md",
+      "expected": "0e738f1bb7e0291dbee0fe6a66ae948455513dacbcfa8df87cfe10028a549aa2",
+      "actual": "0e738f1bb7e0291dbee0fe6a66ae948455513dacbcfa8df87cfe10028a549aa2",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r2.md",
+      "expected": "7bcae3844dd9c0eb3bdc2859842135a6f9e7a2f6336f529f48f80665b030817f",
+      "actual": "7bcae3844dd9c0eb3bdc2859842135a6f9e7a2f6336f529f48f80665b030817f",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-H2-COLLECTOR/source-review-r2-adjudication.md",
+      "expected": "5b5c46c5f142924fc23694a48eed64676deaa3cb4ef2a34000936bc9940fe9db",
+      "actual": "5b5c46c5f142924fc23694a48eed64676deaa3cb4ef2a34000936bc9940fe9db",
+      "match": true
+    },
+    {
+      "path": "verification/P02PRE-R1H-H2-COLLECTOR/source-review-r2-input-verification.json",
+      "expected": "9c13c40f4a6c7d918aee9e51c190e27b1fa48e31fbf0e789ee52f01784a9b59d",
+      "actual": "9c13c40f4a6c7d918aee9e51c190e27b1fa48e31fbf0e789ee52f01784a9b59d",
+      "match": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r3/independent-review/codex-r3-9fb4e2897b874003a9a988aaf7665f96-run-record.json",
+      "expected": "4ef65b4b61e2b30431e8dc960f5aaec8acc30d39c9c32df4c0030e5098dd1cc7",
+      "actual": "4ef65b4b61e2b30431e8dc960f5aaec8acc30d39c9c32df4c0030e5098dd1cc7",
+      "match": true
+    }
+  ],
+  "matchedInputs": 8,
+  "inputCount": 8,
+  "reviewStdout": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\repair-r3\\independent-review\\dsh-r3-20261013T065738Z.stdout.jsonl",
+  "reviewStdoutBytes": 18631,
+  "reviewStdoutSha256": "a620e6eefe4498f7ce5eff3823ff13dae5415e61fc66c82e117680deb0cdf419",
+  "reviewStderr": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\repair-r3\\independent-review\\dsh-r3-20261013T065738Z.stderr.log",
+  "reviewStderrBytes": 180263,
+  "reviewStderrSha256": "669b026fc77a7efe4f686c429e444b0f62f3894921368bc0bc87c919eb6b96b1",
+  "reviewExit": "0\r\n",
+  "reviewExitSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+  "collectorGitBlob": "b3fb4b625bf8fc34d0f1f672785922c7bccc6968",
+  "selftestGitBlob": "ae89e89b6409c596563156c3eb174d6f156688ec",
+  "collectorWorktreeBlob": "b3fb4b625bf8fc34d0f1f672785922c7bccc6968",
+  "selftestWorktreeBlob": "ae89e89b6409c596563156c3eb174d6f156688ec",
+  "blobMatches": true,
+  "verifiedUtc": "2026-10-13T07:10:18.5749903Z"
+}

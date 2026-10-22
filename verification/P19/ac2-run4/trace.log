@@ -1,0 +1,28 @@
+[21:38:59.952] dialog='打开'
+[21:38:59.996] ComboBox count=0
+[21:39:00.053] Edit count=73
+[21:39:00.061]    [0] name='名称' id=System.ItemNameDisplay cls=UIProperty en=True
+[21:39:00.067]    [1] name='修改日期' id=System.DateModified cls=UIProperty en=True
+[21:39:00.071]    [2] name='类型' id=System.ItemTypeText cls=UIProperty en=True
+[21:39:00.076]    [3] name='大小' id=System.Size cls=UIProperty en=True
+[21:39:00.081]    [4] name='名称' id=System.ItemNameDisplay cls=UIProperty en=True
+[21:39:00.086]    [5] name='修改日期' id=System.DateModified cls=UIProperty en=True
+[21:39:00.140] Button count=9
+[21:39:00.146]    [0] name='帮助(&H)' id=HelpButton cls=Button3d en=True
+[21:39:00.152]    [1] name='视图滑块' id=SplitMenuButton cls=Button3d en=True
+[21:39:00.157]    [2] name='组织​​' id={7DDC1264-7E4D-4F74-BBC0-D191987C8D0F} cls=AJOSplitButton en=True
+[21:39:00.162]    [3] name='新建​​文件夹​​' id={E44616AD-6DF1-4B94-85A4-E465AE8A19DB} cls=AJOSplitButton en=True
+[21:39:00.168]    [4] name='筛选器下拉列表' id=DropDown cls=Button en=True
+[21:39:00.174]    [5] name='筛选器下拉列表' id=DropDown cls=Button en=True
+[21:39:00.262]   文件名框未找到
+[21:39:01.220]   IDOK 未找到
+[21:39:14.265] [1] t=5s busy=True
+[21:39:19.302] [2] t=10s busy=True
+[21:39:24.343] [3] t=15s busy=True
+[21:39:29.378] [4] t=20s busy=True
+[21:39:34.416] [5] t=25s busy=False
+[21:39:34.422] === final ===
+[21:39:34.455]   总页数
+[21:39:34.476] page_files=1 db=311296
+[21:39:37.515] cleaned_left=0
+[21:39:37.521] RUN end

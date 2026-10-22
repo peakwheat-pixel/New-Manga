@@ -1,0 +1,115 @@
+diff --git a/tools/p02/p02-new-time-baseline-selftest.ps1 b/tools/p02/p02-new-time-baseline-selftest.ps1
+index b2c66adf..690a5634 100644
+--- a/tools/p02/p02-new-time-baseline-selftest.ps1
++++ b/tools/p02/p02-new-time-baseline-selftest.ps1
+@@ -18,10 +18,15 @@
+     classification mapping, RunId validation, the exact frozen git argv, and
+     the git-branch-matches-freeze short-name/full-ref branch comparison
+     (AC3-BRANCH-REF-MISMATCH resolution: the runtime symbolic-ref full ref
+     must match the manifest short branch name via the refs/heads/ prefix;
+     wrong branch, non-heads namespace and detached-HEAD all fail closed).
++    Adds the pure static helper-observation envelope regression
++    (AC3-WHOAMI-HELPER-OUTPUT-SHAPE resolution): BOTH Invoke-HelperProcess
++    producer paths (success and exception) must emit
++    output.value.{stdout,stderr} verbatim ConvertTo-RawBytesRecord records —
++    the same envelope every consumer and /output/value/... pointer reads.
+     Runs NO live collector, NO git child, NO whoami child, NO executor, NO
+     dynamic process enumeration, NO profile/registry/ACL write API, NO
+     X6/post-run Review/Build/Cargo/AC1-AC7/Windows Sandbox — those are recorded
+     as explicitly SKIPPED.
+ 
+@@ -220,10 +225,36 @@ Assert-True ($collectorText.Contains($gitPrefixDollar)) 'ast-git-prefix-literal-
+ # a full ref against a short name must never come back.
+ $branchCompareCall = '$branchOk = Test-BranchRefMatchesManifest -BranchRef $branchRef -ManifestBranch $manifestBranch'
+ Assert-True ($collectorText.Contains($branchCompareCall)) 'ast-branch-ref-compare-via-pure-helper' 'git-branch-matches-freeze must route the runtime symbolic-ref through Test-BranchRefMatchesManifest'
+ Assert-True (-not $collectorText.Contains('$branchRef -ceq $manifestBranch')) 'ast-branch-ref-no-direct-full-vs-short-compare' 'a direct case-sensitive compare of the full runtime ref against the manifest short name is the fixed defect and must stay removed'
+ 
++# --- helper-process observation output envelope (AC3-WHOAMI-HELPER-OUTPUT-SHAPE
++#     resolution): BOTH Invoke-HelperProcess producer paths (the success path
++#     right after exit capture AND the exception path inside the catch guard)
++#     must build output.value.{stdout,stderr} carrying the verbatim
++#     ConvertTo-RawBytesRecord records — the SAME envelope Invoke-InProcessGetter
++#     emits and every existing consumer and /output/value/... JSON pointer
++#     reads. Pure static source assertions only: no collector, git child,
++#     whoami child or live query is ever started here.
++$helperFnAst = $collectorAst.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $args[0].Name -ceq 'Invoke-HelperProcess' }, $true) | Select-Object -First 1
++Assert-True ($null -ne $helperFnAst) 'helper-shape-producer-function-found' 'Invoke-HelperProcess definition not found in the collector AST'
++$helperFnText = if ($null -ne $helperFnAst) { $helperFnAst.Extent.Text } else { '' }
++$helperConstructions = [regex]::Matches($helperFnText, '\$obs\.output = \[ordered\]@\{')
++Assert-True (@($helperConstructions).Count -eq 2) 'helper-shape-exactly-two-producer-constructions' ("constructions=$(@($helperConstructions).Count); expected exactly one success path and one exception path, no more")
++$helperWrapped = [regex]::Matches($helperFnText, '\$obs\.output = \[ordered\]@\{\s+value = \[ordered\]@\{')
++Assert-True (@($helperWrapped).Count -eq 2) 'helper-shape-both-constructions-value-wrapped' ("wrapped=$(@($helperWrapped).Count); every output construction must open with value = [ordered]@{")
++$helperLegacy = [regex]::Matches($helperFnText, '\$obs\.output = \[ordered\]@\{\s+stdout')
++Assert-True (@($helperLegacy).Count -eq 0) 'helper-shape-no-legacy-unwrapped-output' 'the legacy unwrapped output.{stdout,stderr} construction (the AC3-WHOAMI-HELPER-OUTPUT-SHAPE defect) must stay removed from both paths'
++$successEnvelope = [regex]::Match($helperFnText, '\$obs\.output = \[ordered\]@\{\s+value = \[ordered\]@\{\s+stdout = ConvertTo-RawBytesRecord -Bytes \(\$stdoutMs\.ToArray\(\)\)\s+stderr = ConvertTo-RawBytesRecord -Bytes \(\$stderrMs\.ToArray\(\)\)\s+\}\s+\}\s+if \(\$AllowedExit -contains \$process\.ExitCode\)')
++Assert-True $successEnvelope.Success 'helper-shape-success-path-value-envelope' 'the success path (directly before the AllowedExit state decision) must emit output.value.{stdout,stderr} verbatim ConvertTo-RawBytesRecord records'
++$exceptionEnvelope = [regex]::Match($helperFnText, 'if \(\$null -eq \$obs\.output\) \{\s+(?:#[^\r\n]*\s*)*\$obs\.output = \[ordered\]@\{\s+value = \[ordered\]@\{\s+stdout = ConvertTo-RawBytesRecord -Bytes \(\$stdoutMs\.ToArray\(\)\)\s+stderr = ConvertTo-RawBytesRecord -Bytes \(\$stderrMs\.ToArray\(\)\)')
++Assert-True $exceptionEnvelope.Success 'helper-shape-exception-path-value-envelope' 'the exception path (inside the catch output guard) must emit the SAME output.value.{stdout,stderr} envelope — no second producer shape'
++$valueConsumerReads = [regex]::Matches($collectorText, '\.observation\.output\.value\.stdout\.')
++Assert-True ((@($valueConsumerReads).Count -ge 9) -and $collectorText.Contains('$whoami.observation.output.value.stdout.text')) 'helper-shape-consumers-read-value-envelope' ("reads=$(@($valueConsumerReads).Count); whoami and all git helper consumers must keep reading output.value.stdout")
++$helperValuePointers = [regex]::Matches($collectorText, '/output/value/stdout')
++Assert-True (@($helperValuePointers).Count -ge 4) 'helper-shape-json-pointers-target-value-envelope' ("pointers=$(@($helperValuePointers).Count); the git-pin checks /output/value/stdout pointers must stay intact")
++
+ # --- history isolation static bans (Task forbidden scope) ---
+ Write-Output '--- history isolation static bans ---'
+ foreach ($banned in @('attempt6', 'agent-output/codex/P02PRE', 'agent-output/zcode/P02PRE', 'verification/P02PRE', 'P02PRE-R1H-H1-CURRENT', 'p02pre-r1h-round6')) {
+     Assert-True (-not $collectorText.Contains($banned)) "history-ban-source-must-not-reference:$banned" 'collector source must not reference historical inputs/outputs/conclusions'
+ }
+@@ -761,11 +792,11 @@ Assert-True ([IO.File]::Exists($partialPath)) 'partial-preservation-file-not-del
+ # ---------------------------------------------------------------------------
+ $finishedUtc = [DateTime]::UtcNow.ToString('o')
+ $summary = [ordered]@{
+     task = 'P02-NEW-TIME-BASELINE'
+     kind = 'pure-selftest-summary'
+-    revision = 'i2-r3+ac3-branch-res'
++    revision = 'i2-r3+ac3-branch-res+ac3-helper-value-shape'
+     collectorPath = $CollectorPath
+     collectorSha256 = (Get-FileHash -LiteralPath $CollectorPath -Algorithm SHA256).Hash
+     selfPath = $SelfPath
+     fixtureDir = $fixtureDir
+     shell = $pwshExePath
+diff --git a/tools/p02/p02-new-time-baseline.ps1 b/tools/p02/p02-new-time-baseline.ps1
+index 6408bfac..461896e4 100644
+--- a/tools/p02/p02-new-time-baseline.ps1
++++ b/tools/p02/p02-new-time-baseline.ps1
+@@ -1279,13 +1279,18 @@ function Invoke-HelperProcess {
+         $errCopy = $process.StandardError.BaseStream.CopyToAsync($stderrMs)
+         $process.WaitForExit()
+         $outCopy.Wait()
+         $errCopy.Wait()
+         $obs.exit = $process.ExitCode
++        # Unified helper observation envelope (AC3-WHOAMI-HELPER-OUTPUT-SHAPE):
++        # output.value.{stdout,stderr} matches Invoke-InProcessGetter's
++        # output.value shape read by every consumer and /output/value/... pointer.
+         $obs.output = [ordered]@{
+-            stdout = ConvertTo-RawBytesRecord -Bytes ($stdoutMs.ToArray())
+-            stderr = ConvertTo-RawBytesRecord -Bytes ($stderrMs.ToArray())
++            value = [ordered]@{
++                stdout = ConvertTo-RawBytesRecord -Bytes ($stdoutMs.ToArray())
++                stderr = ConvertTo-RawBytesRecord -Bytes ($stderrMs.ToArray())
++            }
+         }
+         if ($AllowedExit -contains $process.ExitCode) { $obs.state = 'OK' } else { $obs.state = 'UNEXPECTED_EXIT' }
+         if ($null -ne $PostProcess) {
+             # A PostProcess exception never clobbers the captured OS exit.
+             try {
+@@ -1300,13 +1305,17 @@ function Invoke-HelperProcess {
+                 $obs.state = 'POST_PROCESS_ERROR'
+             }
+         }
+     } catch {
+         if ($null -eq $obs.output) {
++            # Same output.value.{stdout,stderr} envelope as the success path;
++            # the exception path must never emit a second producer shape.
+             $obs.output = [ordered]@{
+-                stdout = ConvertTo-RawBytesRecord -Bytes ($stdoutMs.ToArray())
+-                stderr = ConvertTo-RawBytesRecord -Bytes ($stderrMs.ToArray())
++                value = [ordered]@{
++                    stdout = ConvertTo-RawBytesRecord -Bytes ($stdoutMs.ToArray())
++                    stderr = ConvertTo-RawBytesRecord -Bytes ($stderrMs.ToArray())
++                }
+             }
+         }
+         # An exception path must not erase an exit the process already returned;
+         # exit stays $null only when the process never got that far.
+         $null = Add-ObservationException -Observation $obs -Stage 'invoke' -ErrorRecord $_

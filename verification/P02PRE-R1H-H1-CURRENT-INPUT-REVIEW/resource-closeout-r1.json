@@ -1,0 +1,81 @@
+{
+  "schema": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.resource-closeout.v1",
+  "taskId": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+  "checkedAtUtc": "2026-10-13T12:08:11Z",
+  "root": {
+    "path": "G:/CODEX/New Manga",
+    "branch": "main",
+    "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "indexSha256": "c5ca88842173a8fe4b9c6b6b675528347eecbdc73f85600aba06f11e3a692b68",
+    "disposition": "PRESERVE_USER_DATA",
+    "modifiedOrStagedEntries": 30,
+    "untrackedEntries": 1318,
+    "stagedEntries": 0,
+    "result": "Pre-existing and task-generated main-checkout changes remain unstaged and untouched."
+  },
+  "worktrees": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "head": "a715b249718a4119a428d56975c308642ff47b00",
+      "state": "clean at evidence integration checkpoint",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "The isolated H1 applicability review branch contains the canonical input package and integrated Review evidence; retained."
+    }
+  ],
+  "retainedArtifacts": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "fileCount": 5,
+      "inventorySha256": "5173120a4bebb3fd0140cce69be2d94b1285df11343eb98855366d472311478e",
+      "files": [
+        {
+          "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/r1/dsh-review-r1.exit",
+          "bytes": 3,
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/r1/dsh-review-r1.meta.json",
+          "bytes": 557,
+          "sha256": "024aed03618e11f1de8a8799b9fe67e548dc806c2373fce9583232376d85762f"
+        },
+        {
+          "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/r1/dsh-review-r1.stderr.log",
+          "bytes": 73726,
+          "sha256": "910254a68f1a151ff692f976f9ab85d367ec7eccd3f228ee9102b5ba2e66a5d7"
+        },
+        {
+          "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/r1/dsh-review-r1.stdout.md",
+          "bytes": 12868,
+          "sha256": "090cbc077d621091fd5a1b164a43e9e2203827ac3d3c5d36df366024a13a148a"
+        },
+        {
+          "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/r1/review-request-r1.md",
+          "bytes": 2652,
+          "sha256": "ce30dbdc8896e89e507229041d960bbcab51f94706eb06c9f815544c0fa1653e"
+        }
+      ],
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Exact DSH request, response, process exit, stderr and metadata support the canonical Review."
+    }
+  ],
+  "processCheck": {
+    "query": "Win32_Process command lines matching the DSH session id or this review invocation",
+    "matches": 0,
+    "checkedAtUtc": "2026-10-13T12:08:11Z",
+    "matchingProcesses": []
+  },
+  "notApplicable": [
+    "task-env: none created",
+    "dataset/model/test-material: none created",
+    "separate artifact/temp/exchange: none created"
+  ],
+  "actions": {
+    "deletedItems": 0,
+    "deletedBytes": 0,
+    "migratedItems": 0,
+    "archivedItems": 0,
+    "cleanupRequired": false
+  },
+  "boundary": "H2 remains new-time evidence only; H1 P2-1 remains OPEN; X6, executor, Build/Cargo and AC1-AC7 remain blocked/not run."
+}

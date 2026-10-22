@@ -1,0 +1,27 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "generated_at": "2026-10-13T22:00:40+00:00",
+  "source_commit": "50c60755a59a714729b8371b07acce9ff535a3c1",
+  "review_head": "50c60755a59a714729b8371b07acce9ff535a3c1",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline.ps1",
+      "sha256": "bf9f69cfb291c6e7609a861821fc458c32c7a3c7ad93898953e3ad2db26d567a",
+      "bytes": 98697,
+      "git_blob": "461896e48ff6da87ebf42c41e339257e02689fd8",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "sha256": "26c5f50ec3c7cd447a7bc116b1038ae57777fcda38e3b95e74232a2acaf2f73f",
+      "bytes": 70915,
+      "git_blob": "690a5634944ac7b2bf4eacc93437378ffe756d70",
+      "artifact_type": "code"
+    }
+  ]
+}

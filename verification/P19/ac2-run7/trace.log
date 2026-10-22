@@ -1,0 +1,13 @@
+[21:43:50.334] START
+[21:44:02.595] book+chapter
+[21:44:09.692] dialog=True
+[21:44:17.001] import done at 5s
+[21:44:17.022] page_files=1
+[21:44:17.051] clicked 阅读
+[21:44:21.086] 下一页(←) en=False  Next page en=True
+[21:44:21.117] before: 1  /  1
+[21:44:21.140] clicked Next page
+[21:44:24.166] after : 1  /  1
+[21:44:24.188] images=Page 1
+[21:44:27.229] cleaned_left=0
+[21:44:27.236] RUN end

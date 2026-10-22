@@ -1,0 +1,80 @@
+{
+  "reviewer": "DeepSeek Harness",
+  "session_id": "session-bb74c298-dcd7-4db7-bd22-4198854737f3",
+  "external_exit_code": 0,
+  "raw_stdout_jsonl_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\r2\\dsh-review-r2.stdout.jsonl",
+  "raw_stdout_jsonl_bytes": 195570,
+  "raw_stdout_jsonl_sha256": "43aa8410cd779a5a7c4aa06661e8a1e573df374533c4e66e1ca74f4be62885a9",
+  "reviewed_code_head": "72145184b7664f8dcc660db5329fa217320b2be4",
+  "reviewed_doc_head": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+  "review_output_path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\dsh-source-review-r2.md",
+  "review_output_sha256": "7bcae3844dd9c0eb3bdc2859842135a6f9e7a2f6336f529f48f80665b030817f",
+  "input_pins": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\tools\\p02\\h1-raw-pre-run-selftest.ps1",
+      "bytes": 38852,
+      "sha256": "10f9135d99516db6d0ba3942de5bfff92c9764917ec5c600437d7dacf3bcf371",
+      "expectedBytes": 38852,
+      "expectedSha256": "10f9135d99516db6d0ba3942de5bfff92c9764917ec5c600437d7dacf3bcf371",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\tools\\p02\\h1-raw-pre-run.ps1",
+      "bytes": 88345,
+      "sha256": "f297f62cef98fd6d1eaccf7bb73d8154141355fcd4c2363744fb95c0bfad325a",
+      "expectedBytes": 88345,
+      "expectedSha256": "f297f62cef98fd6d1eaccf7bb73d8154141355fcd4c2363744fb95c0bfad325a",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR\\verification\\P02PRE-R1H-H2-COLLECTOR\\zcode-p02pre-r1h-h2-collector-handoff-20261013-r2.md",
+      "bytes": 9056,
+      "sha256": "302041cd2c83a67f49074102158f414c80105a39fea53fab2163aefba149ca52",
+      "expectedBytes": 9056,
+      "expectedSha256": "302041cd2c83a67f49074102158f414c80105a39fea53fab2163aefba149ca52",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\doc\\tasks\\P02PRE-R1H-H2-COLLECTOR.md",
+      "bytes": 16292,
+      "sha256": "65a7ce78ff4d0b924c5a7ebc19a10747e686fb10d44f661f8ca685b3d65d017b",
+      "expectedBytes": 16292,
+      "expectedSha256": "65a7ce78ff4d0b924c5a7ebc19a10747e686fb10d44f661f8ca685b3d65d017b",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\dsh-source-review-r1.md",
+      "bytes": 14868,
+      "sha256": "42bccc816f8be8febe37c18ad7426fa192559a89095820973afcaf030ddd8aab",
+      "expectedBytes": 14868,
+      "expectedSha256": "42bccc816f8be8febe37c18ad7426fa192559a89095820973afcaf030ddd8aab",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\source-review-r1-adjudication.md",
+      "bytes": 3390,
+      "sha256": "c62a115b48e020f79e5a04a9048a57ec72572c525d10b7b74a2e57bec0072b56",
+      "expectedBytes": 3390,
+      "expectedSha256": "c62a115b48e020f79e5a04a9048a57ec72572c525d10b7b74a2e57bec0072b56",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\r2\\verification.json",
+      "bytes": 8184,
+      "sha256": "422ce640b8d5593b1ccb2643e66626ef9cf660b1435984c7d345a2ed95c216b6",
+      "expectedBytes": 8184,
+      "expectedSha256": "422ce640b8d5593b1ccb2643e66626ef9cf660b1435984c7d345a2ed95c216b6",
+      "match": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\r2\\additional-regressions.json",
+      "bytes": 4147,
+      "sha256": "2d89b2b952e5349c202540d06d55c95a844236d26039b994e7e0bfb65366de8e",
+      "expectedBytes": 4147,
+      "expectedSha256": "2d89b2b952e5349c202540d06d55c95a844236d26039b994e7e0bfb65366de8e",
+      "match": true
+    }
+  ],
+  "all_input_pins_match": true,
+  "codex_pre_post_hash_check": "PASS"
+}

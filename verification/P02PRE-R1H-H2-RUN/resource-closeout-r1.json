@@ -1,0 +1,101 @@
+{
+  "schema": "P02PRE-R1H-H2-RUN.resource-closeout.v1",
+  "taskId": "P02PRE-R1H-H2-RUN",
+  "checkedAtUtc": "2026-10-13T11:27:02Z",
+  "root": {
+    "path": "G:/CODEX/New Manga",
+    "branch": "main",
+    "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+    "indexSha256": "c5ca88842173a8fe4b9c6b6b675528347eecbdc73f85600aba06f11e3a692b68",
+    "disposition": "PRESERVE_USER_DATA",
+    "stagedChanges": 0,
+    "result": "Existing dirty and untracked user/previous-task content retained without staging, rewriting, or cleanup."
+  },
+  "worktrees": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION",
+      "head": "1924fbb4fbff6044205e4f8b52adb6aaff879e2a",
+      "state": "clean",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Pinned collector source and selftest used by H2-RUN."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+      "head": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "state": "clean",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Owner delivery/source Review evidence remains referenced by H2 collector Task."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "head": "70eff7226cc7c2fcd4c286837e7f06e6fdd237ef",
+      "state": "clean before closeout supplement",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Canonical runtime evidence integration and Task source pins."
+    }
+  ],
+  "retainedArtifacts": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-RUN/preflight-h2-20261013-de77a42fccca4193925767ba4e414970",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Failed preflight proves collector was not called on attempt 1."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-RUN/preflight2-h2-20261013-de77a42fccca4193925767ba4e414970",
+      "manifestSha256": "1333b1e74e4a5a90752c744c151b812410a4ba2d22a842678991f8b104add929",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "43/43 live preflight and raw observations pinned by the Task."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/run-h2-20261013-de77a42fccca4193925767ba4e414970.json",
+      "bytes": 788029,
+      "sha256": "32cd72b710857bb0f19eb92d2c01f2ff6aa13778f10836965c8619ebbf5a2179",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Unique new-time collector result, reviewed and integrated."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-RUN/run-h2-20261013-de77a42fccca4193925767ba4e414970",
+      "stdoutBytes": 29817,
+      "stdoutSha256": "8a6d80eadd27af3ebc6198edabda79c76ef849a392e44302ff0b4d5b24ea3814",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Binary launch records/logs and reviewer-round outputs are pinned."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-RUN/run-h2-20261013-de77a42fccca4193925767ba4e414970/result-review-r1..r3",
+      "rounds": 3,
+      "inputsPrePost": "16/16, 8/8, 6/6",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "DSH prompts, manifests, stdout/stderr/exit and Codex pin audits retained."
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-RUN/run-h2-20261013-de77a42fccca4193925767ba4e414970/one-shot.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "activeProcessMatches": 0,
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "Unique invocation guard retained with run audit evidence."
+    }
+  ],
+  "processCheck": {
+    "query": "Win32_Process command lines matching collector filename and unique RunId",
+    "matches": 0,
+    "checkedAtUtc": "2026-10-13T11:27:02Z"
+  },
+  "notApplicable": [
+    "task-env: none created",
+    "dataset/model/test-material: none created",
+    "exchange: none created"
+  ],
+  "actions": {
+    "deletedItems": 0,
+    "deletedBytes": 0,
+    "migratedItems": 0,
+    "archivedItems": 0,
+    "cleanupRequired": false
+  },
+  "boundary": "H2 is new-time evidence only; historical H1 v2 and P2-1 remain unchanged/open. No X6, executor, Build/Cargo, or AC1-AC7 authorization is created."
+}

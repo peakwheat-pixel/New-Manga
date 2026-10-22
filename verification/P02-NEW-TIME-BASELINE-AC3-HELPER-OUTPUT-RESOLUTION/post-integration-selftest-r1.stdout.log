@@ -1,0 +1,255 @@
+=== P02-NEW-TIME-BASELINE pure selftest ===
+shell: C:\Program Files\PowerShell\7\pwsh.exe
+pwsh version: 7.6.6 Core / FullLanguage
+os: Microsoft Windows 10.0.26300
+startedUtc: 2026-10-13T21:45:09.2756321Z
+argv: G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELINE\tools\p02\p02-new-time-baseline-selftest.ps1 | G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELINE\tools\p02\p02-new-time-baseline.ps1 | G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELINE\tools\p02\p02-new-time-baseline-selftest.ps1 | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE | 20261014-054650-integration-50c60755
+collectorPath: G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELINE\tools\p02\p02-new-time-baseline.ps1
+selfPath: G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELINE\tools\p02\p02-new-time-baseline-selftest.ps1
+fixtureDir: G:\CODEX\New Manga.workspace\temp\P02-NEW-TIME-BASELINE\20261014-054650-integration-50c60755-pure-selftest
+
+[SKIP] live-collector-run :: Task: live collector execution is NOT authorized in this Owner delivery round; requires Codex freeze of commit/hash/argv/CWD/RunId/targets plus AC2/AC3 gates first.
+[SKIP] live-git-child :: Forbidden here: no git child process during the pure selftest; git argv builders are verified as pure functions.
+[SKIP] live-whoami-child :: Forbidden here: no whoami child during the pure selftest; identity comparison stays a documented live-scope check.
+[SKIP] live-registry-acl-profile-getter :: Forbidden here: no registry/ACL/profile API at all in this Task scope (read or write).
+[SKIP] executor-dynamic-process-enumeration :: Forbidden scopes: attempt6 executor (never referenced/read/executed), Toolhelp/Process32*/Get-Process enumeration — all NOT_RUN by Task forbidden scope.
+[SKIP] x6-post-run-review-build-cargo-ac-sandbox :: Forbidden scopes: X6, post-run Review, Build/Cargo, product AC1-AC7, Windows Sandbox — later Gates, never released by this Task; all NOT_RUN.
+[SKIP] historical-input-access :: Forbidden scopes: no H1/P2-1 historical input, conclusion, finding or missing-source record is read, rewritten, backfilled or re-awarded; history isolation is enforced statically.
+--- parser ---
+[ASSERT PASS] parser-collector-zero-errors
+[ASSERT PASS] parser-selftest-zero-errors
+--- static AST contract (collector source, never executed) ---
+[ASSERT PASS] ast-required-pure-functions-present
+[ASSERT PASS] ast-no-forbidden-member-invocations
+[ASSERT PASS] ast-no-shell-launch-eval-or-write-commands
+[ASSERT PASS] ast-no-get-process-anywhere
+[ASSERT PASS] ast-filemode-create-new-only
+[ASSERT PASS] ast-fileshare-none-only
+[ASSERT PASS] ast-no-file-replace-invocation
+[ASSERT PASS] ast-literal-present:GIT_OPTIONAL_LOCKS
+[ASSERT PASS] ast-literal-present:GIT_TERMINAL_PROMPT
+[ASSERT PASS] ast-literal-present:GIT_TRACE
+[ASSERT PASS] ast-literal-present:GIT_CONFIG
+[ASSERT PASS] ast-literal-present:NEW_TIME_EVIDENCE
+[ASSERT PASS] ast-literal-present:CANNOT_SUBSTITUTE_H1_P2_1_TIME_EVIDENCE
+[ASSERT PASS] ast-literal-present:P02-NEW-TIME-BASELINE-collector-1
+[ASSERT PASS] ast-literal-present:P02-NEW-TIME-BASELINE-freeze-manifest-1
+[ASSERT PASS] ast-literal-present:agent-output/zcode/P02-NEW-TIME-BASELINE
+[ASSERT PASS] ast-literal-present:FreezeManifestPath
+[ASSERT PASS] ast-literal-present:FreezeManifestSha256
+[ASSERT PASS] ast-literal-present:FREEZE_MANIFEST_INVALID
+[ASSERT PASS] ast-literal-present:INPUT_NOT_FROZEN
+[ASSERT PASS] ast-literal-present:HISTORY_SCOPE_VIOLATION
+[ASSERT PASS] ast-literal-present:BLOCKED_OUTPUT_PRECHECK
+[ASSERT PASS] ast-literal-present:BLOCKED_INPUT_NOT_FROZEN
+[ASSERT PASS] ast-literal-present:BLOCKED_SOURCE_PIN_DRIFT
+[ASSERT PASS] ast-literal-present:BLOCKED_BY_FAILED_CHECKS
+[ASSERT PASS] ast-literal-present:BLOCKED_EXCEPTION_FAIL_CLOSED
+[ASSERT PASS] ast-literal-present:core.hooksPath=NUL
+[ASSERT PASS] ast-literal-present:core.fsmonitor=false
+[ASSERT PASS] ast-literal-present:--no-optional-locks
+[ASSERT PASS] ast-literal-present:porcelain=v2
+[ASSERT PASS] ast-literal-present:NOT_RUN
+[ASSERT PASS] ast-literal-present:23bec747df77e67e93ec1fa9fd859d077219e941
+[ASSERT PASS] i2-ban-source-embeds:FrozenDeliveryHead
+[ASSERT PASS] i2-ban-source-embeds:FrozenCwd
+[ASSERT PASS] i2-ban-source-embeds:task-document
+[ASSERT PASS] i2-sentinel-token-only-in-detection-scan
+[ASSERT PASS] i2-ban-source-embeds-64hex-literals
+[ASSERT PASS] ast-git-prefix-literal-exact
+[ASSERT PASS] ast-branch-ref-compare-via-pure-helper
+[ASSERT PASS] ast-branch-ref-no-direct-full-vs-short-compare
+[ASSERT PASS] helper-shape-producer-function-found
+[ASSERT PASS] helper-shape-exactly-two-producer-constructions
+[ASSERT PASS] helper-shape-both-constructions-value-wrapped
+[ASSERT PASS] helper-shape-no-legacy-unwrapped-output
+[ASSERT PASS] helper-shape-success-path-value-envelope
+[ASSERT PASS] helper-shape-exception-path-value-envelope
+[ASSERT PASS] helper-shape-consumers-read-value-envelope
+[ASSERT PASS] helper-shape-json-pointers-target-value-envelope
+--- history isolation static bans ---
+[ASSERT PASS] history-ban-source-must-not-reference:attempt6
+[ASSERT PASS] history-ban-source-must-not-reference:agent-output/codex/P02PRE
+[ASSERT PASS] history-ban-source-must-not-reference:agent-output/zcode/P02PRE
+[ASSERT PASS] history-ban-source-must-not-reference:verification/P02PRE
+[ASSERT PASS] history-ban-source-must-not-reference:P02PRE-R1H-H1-CURRENT
+[ASSERT PASS] history-ban-source-must-not-reference:p02pre-r1h-round6
+[ASSERT PASS] runid-param-validatepattern
+[ASSERT PASS] add-check-resolves-pointer-at-runtime
+[ASSERT PASS] freeze-validator-is-pure:Test-FreezeManifestShape
+[ASSERT PASS] freeze-validator-is-pure:Test-FreezeManifestBinding
+[ASSERT PASS] freeze-bytes-binding-uses-shared-hash
+[ASSERT PASS] freeze-manifest-sha-param-validatepattern
+[ASSERT PASS] i2-freeze-gate-and-output-exists-precede-createnew
+[ASSERT PASS] capture-before-createnew-before-postfacts
+[ASSERT PASS] catch-calls-shared-classification
+[ASSERT PASS] partial-preservation-stream-flushes-every-line
+[ASSERT PASS] partial-preservation-finally-only-disposes
+[ASSERT PASS] exit-code-reported-separately
+--- extract pure functions from collector AST (in-memory definitions only) ---
+[ASSERT PASS] extract-function-present:Require
+[ASSERT PASS] extract-function-present:Get-Sha256HexFromBytes
+[ASSERT PASS] extract-function-present:ConvertTo-SafeUtf8Text
+[ASSERT PASS] extract-function-present:Split-NulRecords
+[ASSERT PASS] extract-function-present:ConvertTo-RawBytesRecord
+[ASSERT PASS] extract-function-present:Resolve-JsonPointer
+[ASSERT PASS] extract-function-present:New-PathProbeAbsentValue
+[ASSERT PASS] extract-function-present:New-PathProbeErrorValue
+[ASSERT PASS] extract-function-present:Get-PathProbeValueFromAttributes
+[ASSERT PASS] extract-function-present:Get-ProbeCheckResult
+[ASSERT PASS] extract-function-present:Get-CollectorFailureClassification
+[ASSERT PASS] extract-function-present:Test-PathContainsHistorySegment
+[ASSERT PASS] extract-function-present:Assert-TaskPathIsolation
+[ASSERT PASS] extract-function-present:Test-FreezeManifestBytes
+[ASSERT PASS] extract-function-present:Get-ManifestField
+[ASSERT PASS] extract-function-present:Test-PathOutsideRepository
+[ASSERT PASS] extract-function-present:Test-FreezeManifestShape
+[ASSERT PASS] extract-function-present:Test-FreezeManifestBinding
+[ASSERT PASS] extract-function-present:New-GitPrefixArgv
+[ASSERT PASS] extract-function-present:New-StatusArgv
+[ASSERT PASS] extract-function-present:New-CheckIgnoreArgv
+[ASSERT PASS] extract-function-present:Test-BranchRefMatchesManifest
+[ASSERT PASS] extract-function-present:New-ObservationRecord
+[ASSERT PASS] extract-function-present:Add-ObservationException
+[ASSERT PASS] extract-function-present:New-CheckRecord
+[ASSERT PASS] extract-function-present:Get-VolumeEvidence
+[ASSERT PASS] extract-function-present:Test-PathAncestorsOrdinary
+[ASSERT PASS] extract-function-present:New-OutputPreflightCapture
+[ASSERT PASS] extract-function-present:New-OutputPostCreateFacts
+[ASSERT PASS] extract-function-present:Open-ExclusiveCreateNew
+[ASSERT PASS] extract-function-present:New-MetaLineObject
+[ASSERT PASS] extract-function-present:New-ClosedLineObject
+--- raw-output fidelity (NUL-inclusive) ---
+[ASSERT PASS] raw-empty-not-missing
+[ASSERT PASS] raw-sha256-known-vector-abc
+[ASSERT PASS] raw-utf8-text-lossless
+[ASSERT PASS] raw-nul-counts
+[ASSERT PASS] raw-nul-text-omitted-with-reason
+[ASSERT PASS] raw-nul-base64-roundtrip-byte-exact
+[ASSERT PASS] raw-invalid-utf8-text-null
+[ASSERT PASS] raw-invalid-utf8-base64-retained
+[ASSERT PASS] split-two-records
+[ASSERT PASS] split-record-texts-exact
+[ASSERT PASS] split-join-roundtrip-byte-exact
+[ASSERT PASS] split-unterminated-trailing-recorded
+[ASSERT PASS] split-zero-length-records-verbatim
+[ASSERT PASS] split-invalid-utf8-text-null
+--- json pointer integrity ---
+[ASSERT PASS] pointer-resolve-nested-value
+[ASSERT PASS] pointer-dangling-index-not-found
+[ASSERT PASS] pointer-missing-leading-slash-rejected
+[ASSERT PASS] pointer-rfc6901-escape-tokens
+[ASSERT PASS] pointer-all-check-pointers-resolve
+--- fail-closed check factory and observation records ---
+[ASSERT PASS] check-factory-rejects-unparseable-label
+[ASSERT PASS] check-factory-rejects-empty-pointer
+[ASSERT PASS] check-factory-rejects-empty-id
+[ASSERT PASS] check-factory-rejects-empty-expected
+[ASSERT PASS] check-factory-rejects-unknown-result
+[ASSERT PASS] check-factory-valid-record-shape
+[ASSERT PASS] observation-factory-rejects-unknown-kind
+[ASSERT PASS] observation-factory-initial-state
+[ASSERT PASS] observation-factory-rejects-empty-id
+[ASSERT PASS] observation-exception-shape
+--- probe classification ---
+[ASSERT PASS] probe-genuine-absence-shape
+[ASSERT PASS] probe-inner-file-not-found-unwrapped
+[ASSERT PASS] probe-non-absence-error-shape
+[ASSERT PASS] probe-inner-error-unwrapped
+[ASSERT PASS] probe-error-maps-to-not-verified
+[ASSERT PASS] probe-attribute-exists-shape
+[ASSERT PASS] probe-ok-maps-to-pass
+--- history path isolation ---
+[ASSERT PASS] isolation-clean-task-path-passes
+[ASSERT PASS] isolation-segment-hit-detected
+[ASSERT PASS] isolation-case-insensitive-segment-hit
+[ASSERT PASS] isolation-real-family-h2-collector-hits
+[ASSERT PASS] isolation-real-family-p2-1-trace-hits
+[ASSERT PASS] isolation-real-family-h1-current-hits
+[ASSERT PASS] isolation-real-family-h1-current-short-hits
+[ASSERT PASS] isolation-real-family-case-insensitive-hits
+[ASSERT PASS] isolation-superstring-not-segment
+[ASSERT PASS] isolation-family-prefix-without-delimiter-not-matched
+[ASSERT PASS] isolation-empty-inputs-safe
+[ASSERT PASS] isolation-manifest-counts
+[ASSERT PASS] isolation-manifest-names-hit-path
+[ASSERT PASS] isolation-manifest-full-shape
+[ASSERT PASS] isolation-manifest-clean-passes
+[ASSERT PASS] isolation-manifest-names-real-family-hit
+--- freeze manifest input seam ---
+[ASSERT PASS] freeze-manifest-valid-shape-passes
+[ASSERT PASS] freeze-manifest-valid-binding-passes
+[ASSERT PASS] freeze-manifest-missing-field-fails:deliveryHead
+[ASSERT PASS] freeze-manifest-missing-field-fails:cwd
+[ASSERT PASS] freeze-manifest-missing-field-fails:outputTargets
+[ASSERT PASS] freeze-manifest-missing-field-fails:contractPins
+[ASSERT PASS] freeze-manifest-missing-field-fails:taskDeliverablePins
+[ASSERT PASS] freeze-manifest-missing-field-fails:mutableObservationPaths
+[ASSERT PASS] freeze-manifest-missing-field-fails:identity
+[ASSERT PASS] freeze-manifest-sentinel-residue-fails
+[ASSERT PASS] freeze-manifest-head-40hex-format-fails
+[ASSERT PASS] freeze-manifest-incomplete-pin-fails
+[ASSERT PASS] freeze-manifest-binding-runid-mismatch-fails
+[ASSERT PASS] freeze-manifest-binding-base-mismatch-fails
+[ASSERT PASS] freeze-manifest-binding-missing-collector-self-pin-fails
+[ASSERT PASS] freeze-manifest-hash-mismatch-fails
+[ASSERT PASS] freeze-manifest-hash-match-passes
+[ASSERT PASS] freeze-manifest-malformed-json-fails
+[ASSERT PASS] freeze-manifest-history-violating-paths-fail-closed
+[ASSERT PASS] freeze-manifest-outside-repo-accepted
+[ASSERT PASS] freeze-manifest-inside-repo-rejected
+[ASSERT PASS] freeze-manifest-worktree-root-rejected
+[ASSERT PASS] freeze-manifest-invalid-maps-to-exit-3
+[ASSERT PASS] reversal-manifest-invalid-not-5-or-6
+--- failure classification & exit/disposition mapping ---
+[ASSERT PASS] precheck-maps-to-exit-2
+[ASSERT PASS] not-frozen-maps-to-exit-3
+[ASSERT PASS] drift-maps-to-exit-4
+[ASSERT PASS] history-violation-maps-to-exit-5
+[ASSERT PASS] fixed-chain-maps-to-exit-5
+[ASSERT PASS] chain-fallback-blocked-reason-maps-to-exit-5
+[ASSERT PASS] unknown-maps-to-exit-6
+[ASSERT PASS] reversal-not-frozen-only-exit-3
+[ASSERT PASS] reversal-unknown-not-exit-5
+[ASSERT PASS] reversal-history-not-exception-class
+[ASSERT PASS] reversal-precheck-not-3-or-4
+[ASSERT PASS] reversal-drift-not-5-or-6
+[ASSERT PASS] unrelated-blocked-reason-stays-exit-6
+--- meta/closed line factory shapes ---
+[ASSERT PASS] meta-shape-core-fields
+[ASSERT PASS] meta-shape-frozen-inputs
+[ASSERT PASS] meta-shape-freeze-manifest-triple
+[ASSERT PASS] meta-shape-notrun-table
+[ASSERT PASS] meta-shape-history-segments
+[ASSERT PASS] meta-shape-manifest-deliverable-pins
+[ASSERT PASS] meta-json-roundtrip
+[ASSERT PASS] closed-shape-core-fields
+[ASSERT PASS] closed-shape-counts
+[ASSERT PASS] closed-line-check-pointer-resolves-to-nul-raw
+[ASSERT PASS] closed-shape-blocked-variant
+--- git argv builders ---
+[ASSERT PASS] git-prefix-exact
+[ASSERT PASS] status-argv-frozen-form
+[ASSERT PASS] status-argv-readonly-verbs-only
+[ASSERT PASS] check-ignore-argv-shape
+--- branch ref matching (git-branch-matches-freeze) ---
+[ASSERT PASS] branch-ref-full-ref-matches-manifest-short-name
+[ASSERT PASS] branch-ref-wrong-branch-fails-closed
+[ASSERT PASS] branch-ref-unrelated-branch-fails-closed
+[ASSERT PASS] branch-ref-non-heads-namespace-fails-closed
+[ASSERT PASS] branch-ref-bare-short-name-not-a-runtime-ref
+[ASSERT PASS] branch-ref-empty-detached-head-fails-closed
+[ASSERT PASS] branch-ref-compare-stays-case-sensitive
+--- create-new collision and partial preservation (temp fixtures) ---
+[ASSERT PASS] createnew-conflict-throws
+[ASSERT PASS] createnew-conflict-preserves-existing-bytes
+[ASSERT PASS] fileshare-none-blocks-second-opener
+[ASSERT PASS] exclusive-write-survives-dispose
+[ASSERT PASS] createnew-missing-parent-fails-closed
+[ASSERT PASS] partial-preservation-classification-still-works
+[ASSERT PASS] partial-preservation-lines-survive
+[ASSERT PASS] partial-preservation-lines-parse
+[ASSERT PASS] partial-preservation-file-not-deleted
+
+=== SUMMARY-JSON ===
+{"task":"P02-NEW-TIME-BASELINE","kind":"pure-selftest-summary","revision":"i2-r3+ac3-branch-res+ac3-helper-value-shape","collectorPath":"G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline.ps1","collectorSha256":"BF9F69CFB291C6E7609A861821FC458C32C7A3C7AD93898953E3AD2DB26D567A","selfPath":"G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline-selftest.ps1","fixtureDir":"G:\\CODEX\\New Manga.workspace\\temp\\P02-NEW-TIME-BASELINE\\20261014-054650-integration-50c60755-pure-selftest","shell":"C:\\Program Files\\PowerShell\\7\\pwsh.exe","psVersion":"7.6.6","edition":"Core","languageMode":"FullLanguage","startedUtc":"2026-10-13T21:45:09.2756321Z","finishedUtc":"2026-10-13T21:45:10.7935236Z","argv":["G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline-selftest.ps1","G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline.ps1","G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline-selftest.ps1","G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE","20261014-054650-integration-50c60755"],"assertsPassed":220,"assertsFailed":0,"assertsSkipped":[{"name":"live-collector-run","reason":"Task: live collector execution is NOT authorized in this Owner delivery round; requires Codex freeze of commit/hash/argv/CWD/RunId/targets plus AC2/AC3 gates first."},{"name":"live-git-child","reason":"Forbidden here: no git child process during the pure selftest; git argv builders are verified as pure functions."},{"name":"live-whoami-child","reason":"Forbidden here: no whoami child during the pure selftest; identity comparison stays a documented live-scope check."},{"name":"live-registry-acl-profile-getter","reason":"Forbidden here: no registry/ACL/profile API at all in this Task scope (read or write)."},{"name":"executor-dynamic-process-enumeration","reason":"Forbidden scopes: attempt6 executor (never referenced/read/executed), Toolhelp/Process32*/Get-Process enumeration — all NOT_RUN by Task forbidden scope."},{"name":"x6-post-run-review-build-cargo-ac-sandbox","reason":"Forbidden scopes: X6, post-run Review, Build/Cargo, product AC1-AC7, Windows Sandbox — later Gates, never released by this Task; all NOT_RUN."},{"name":"historical-input-access","reason":"Forbidden scopes: no H1/P2-1 historical input, conclusion, finding or missing-source record is read, rewritten, backfilled or re-awarded; history isolation is enforced statically."}],"liveQueriesExecuted":false,"liveCollectorExecuted":false,"gitChildExecuted":false,"historicalInputAccessed":false}

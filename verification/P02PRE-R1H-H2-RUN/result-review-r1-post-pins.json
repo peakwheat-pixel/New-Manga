@@ -1,0 +1,171 @@
+{
+  "taskId": "P02PRE-R1H-H2-RUN",
+  "reviewRound": "r1",
+  "runId": "h2-20261013-de77a42fccca4193925767ba4e414970",
+  "manifestPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r1\\review-inputs-r1.json",
+  "manifestSha256": "a045e128fb30f6b85eb9b76133e574622a99f2ab74dd19430bb6719fd547bd4e",
+  "dshExitCode": 0,
+  "dshStdout": {
+    "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r1\\dsh-review.stdout.md",
+    "bytes": 15351,
+    "sha256": "db1707cb23bc3d54fe83ed686eff210b70c85d326a73e36a26b34fb51686aa92"
+  },
+  "dshStderr": {
+    "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r1\\dsh-review.stderr.log",
+    "bytes": 189509,
+    "sha256": "6cb91c4f4df54f74257f4273b31eb5af191c9c5298cc67914a3b5cf4e5c19e6e"
+  },
+  "canonicalReport": {
+    "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\dsh-result-review-r1.md",
+    "bytes": 15351,
+    "sha256": "db1707cb23bc3d54fe83ed686eff210b70c85d326a73e36a26b34fb51686aa92"
+  },
+  "inputCount": 16,
+  "allInputsUnchanged": true,
+  "inputs": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\result-review-r1\\review-request-r1.md",
+      "role": "review request",
+      "preBytes": 2679,
+      "postBytes": 2679,
+      "preSha256": "39a60afa3e11234140871c2aade39aab7fbb6095f338adf26082c5c1abf6b02c",
+      "postSha256": "39a60afa3e11234140871c2aade39aab7fbb6095f338adf26082c5c1abf6b02c",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\runtime-verification-r1.md",
+      "role": "Codex runtime report",
+      "preBytes": 3140,
+      "postBytes": 3140,
+      "preSha256": "c107fd99cf154ed0c911d3985eaaf103cfd60080a85aab71ec7b4d6c3f8a2297",
+      "postSha256": "c107fd99cf154ed0c911d3985eaaf103cfd60080a85aab71ec7b4d6c3f8a2297",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\runtime-verification-r1.json",
+      "role": "Codex machine-readable runtime assertions",
+      "preBytes": 3119,
+      "postBytes": 3119,
+      "preSha256": "30845dd99832d4a774dd5104633bd5de3f9c436231e1981702426125e5189566",
+      "postSha256": "30845dd99832d4a774dd5104633bd5de3f9c436231e1981702426125e5189566",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-COLLECTOR\\run-h2-20261013-de77a42fccca4193925767ba4e414970.json",
+      "role": "raw collector NDJSON",
+      "preBytes": 788029,
+      "postBytes": 788029,
+      "preSha256": "32cd72b710857bb0f19eb92d2c01f2ff6aa13778f10836965c8619ebbf5a2179",
+      "postSha256": "32cd72b710857bb0f19eb92d2c01f2ff6aa13778f10836965c8619ebbf5a2179",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\launch-result.json",
+      "role": "launcher capture metadata",
+      "preBytes": 1339,
+      "postBytes": 1339,
+      "preSha256": "228fe9e6b35d630b0732e0ad27b0495fbcb39d2ce07d4c8ebfa6ca0032883262",
+      "postSha256": "228fe9e6b35d630b0732e0ad27b0495fbcb39d2ce07d4c8ebfa6ca0032883262",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\launch-start.json",
+      "role": "launcher start metadata",
+      "preBytes": 1240,
+      "postBytes": 1240,
+      "preSha256": "7a098fe77d91547dc319b5b361bc8e8898a01d073c2e09c6377e2fcd0a9b9b3f",
+      "postSha256": "7a098fe77d91547dc319b5b361bc8e8898a01d073c2e09c6377e2fcd0a9b9b3f",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\collector.stdout.bin",
+      "role": "raw collector stdout",
+      "preBytes": 29817,
+      "postBytes": 29817,
+      "preSha256": "8a6d80eadd27af3ebc6198edabda79c76ef849a392e44302ff0b4d5b24ea3814",
+      "postSha256": "8a6d80eadd27af3ebc6198edabda79c76ef849a392e44302ff0b4d5b24ea3814",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\collector.stderr.bin",
+      "role": "raw collector stderr",
+      "preBytes": 0,
+      "postBytes": 0,
+      "preSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "postSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\run-h2-20261013-de77a42fccca4193925767ba4e414970\\collector.exit",
+      "role": "raw collector OS exit marker",
+      "preBytes": 3,
+      "postBytes": 3,
+      "preSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "postSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR-INTEGRATION\\tools\\p02\\h1-raw-pre-run.ps1",
+      "role": "approved collector source",
+      "preBytes": 110261,
+      "postBytes": 110261,
+      "preSha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+      "postSha256": "69dbe8ffd57a4e182f6f79817d2351d519724f69188f2ea7840da187714edc61",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-H2-COLLECTOR-INTEGRATION\\tools\\p02\\h1-raw-pre-run-selftest.ps1",
+      "role": "approved collector selftest source",
+      "preBytes": 67896,
+      "postBytes": 67896,
+      "preSha256": "e7ad2b19508d8aae0943e4b42e6830d6fc16bec53b757b62d745c017645ad96c",
+      "postSha256": "e7ad2b19508d8aae0943e4b42e6830d6fc16bec53b757b62d745c017645ad96c",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-RUN\\preflight-freeze-r1.md",
+      "role": "frozen preflight report",
+      "preBytes": 7466,
+      "postBytes": 7466,
+      "preSha256": "da04e54a2a6acf48025625a1d9a090d53caef975ffc565032cccf76a95790373",
+      "postSha256": "da04e54a2a6acf48025625a1d9a090d53caef975ffc565032cccf76a95790373",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02PRE-R1H-H2-RUN\\preflight2-h2-20261013-de77a42fccca4193925767ba4e414970\\preflight.json",
+      "role": "raw 43-check preflight",
+      "preBytes": 156261,
+      "postBytes": 156261,
+      "preSha256": "1333b1e74e4a5a90752c744c151b812410a4ba2d22a842678991f8b104add929",
+      "postSha256": "1333b1e74e4a5a90752c744c151b812410a4ba2d22a842678991f8b104add929",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\dsh-source-review-r7.md",
+      "role": "independent source review",
+      "preBytes": 11869,
+      "postBytes": 11869,
+      "preSha256": "b3ff51a9fd499a1eb0067846cc8b83f03e5759f23cfe1468d9f547325f9be233",
+      "postSha256": "b3ff51a9fd499a1eb0067846cc8b83f03e5759f23cfe1468d9f547325f9be233",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\source-review-r7-adjudication.md",
+      "role": "Codex source adjudication",
+      "preBytes": 2920,
+      "postBytes": 2920,
+      "preSha256": "c0d5236f6937ac518d8d862975a050ca86a62b980ed58a4c39ae6081e27150ce",
+      "postSha256": "c0d5236f6937ac518d8d862975a050ca86a62b980ed58a4c39ae6081e27150ce",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\CODEX\\New Manga\\verification\\P02PRE-R1H-H2-COLLECTOR\\integration-verification-r7.md",
+      "role": "approved integration report",
+      "preBytes": 2141,
+      "postBytes": 2141,
+      "preSha256": "13939aea005629c591974fa07befd08c34e9f716eee19bd85eea04a6789c1a7d",
+      "postSha256": "13939aea005629c591974fa07befd08c34e9f716eee19bd85eea04a6789c1a7d",
+      "unchanged": true
+    }
+  ]
+}

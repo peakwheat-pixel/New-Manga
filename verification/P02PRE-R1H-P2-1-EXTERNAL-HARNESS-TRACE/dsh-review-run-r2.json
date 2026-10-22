@@ -1,0 +1,53 @@
+{
+  "taskId": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "reviewer": "DeepSeek Harness",
+  "dispatchCommand": "dsh headless <self-contained R2 prompt>",
+  "workingDirectory": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+  "requestPath": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r2.md",
+  "reviewedHead": "54a710a1f6e0df937e7164e7d135fa98c735b36a",
+  "exitCode": 0,
+  "reviewVerdict": "APPROVED_STATIC_CONTENT",
+  "reviewerFindingCount": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 4
+  },
+  "dispatchPrompt": {
+    "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-dispatch-r2.md",
+    "bytes": 989,
+    "sha256": "1917FFD85398ABA40FDC15B5959261B72E2B731F9E999AA48811DBC4D9BFDA99"
+  },
+  "report": {
+    "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r2.md",
+    "bytes": 9493,
+    "sha256": "2DA4DC4FFB2300EC8827BFD2235610B8802175269B8314EE924A650889FC2935"
+  },
+  "stderrDiagnostic": {
+    "workspacePath": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r2/stderr.log",
+    "bytes": 66420,
+    "sha256": "452B190F7C33FEB601163BF151DA9C735B2A028FC9D0D3244481B6EED54CC2A8",
+    "versioned": false
+  },
+  "exitEvidence": {
+    "workspacePath": "G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-r2/exit.txt",
+    "bytes": 2,
+    "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA",
+    "versioned": false
+  },
+  "dshVersion": "0.2.0-rc.2 (reused from pinned R1 availability probe; not reprobed)",
+  "session": {
+    "id": "session-1a2300e3-122f-4e74-80b3-7d74dbb44852",
+    "path": "C:\\Users\\49745\\.dsh\\sessions\\--G-CODEX-New~0020Manga.workspace-worktrees-P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE--\\session-1a2300e3-122f-4e74-80b3-7d74dbb44852\\session.v4.jsonl.zstd",
+    "bytes": 147166,
+    "sha256": "2BD1AB41AE4CA85E4472C02859AEC81D145D20A26D67247AA0F80F907EE2627A",
+    "mounted": true,
+    "workspaceId": "601ad288621a414292a148020d7f9f6b",
+    "workspaceName": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+    "workspaceRegistryPath": "C:\\Users\\49745\\.dsh\\storages\\workspace.json",
+    "workspaceRegistryAfterSha256": "070CD7ED3154316528D2946591D55DE43C2CF5998DBC35B67DA3796666D41865",
+    "workspaceRegistryBeforeSha256": "not-captured-before-mount",
+    "desktopVisibility": "available after DSH desktop restart"
+  },
+  "postReviewInputVerification": "PASS: all 20 declared pins and the self-excluded manifest map to the exact reviewed-head Git blobs after configured line-ending normalization"
+}

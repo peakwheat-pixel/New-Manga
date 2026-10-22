@@ -1,0 +1,462 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+  "generated_at_local": "2026-10-14T05:54:38+08:00",
+  "policy": "PRESERVE_ONLY_NO_DELETE_NO_MIGRATION",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "original_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "exists": true,
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "head": "53d765ebf2b9c4dd8be764c5874fe2af9295c00a",
+      "status_entries": 0,
+      "status_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "resource_type": "zcode-owner-agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/owner-i1-dispatch-1-20261014T0502CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/owner-i1-dispatch-1-20261014T0502CST",
+      "original_path": null,
+      "exists": true,
+      "file_count": 4,
+      "total_bytes": 6415,
+      "files": [
+        {
+          "relative_path": "exit.txt",
+          "bytes": 2,
+          "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA"
+        },
+        {
+          "relative_path": "prompt.md",
+          "bytes": 2599,
+          "sha256": "8040BC3FE7FFDA78C1B4BDDB8964A2A2B8B444FFADD221C08E0F198017F9DE6B"
+        },
+        {
+          "relative_path": "stderr.log",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "stdout.json",
+          "bytes": 3814,
+          "sha256": "BF979BD556B7BDDF235CAC955D2A20ADCBA77686BE2964AC288A28137EB1621F"
+        }
+      ]
+    },
+    {
+      "resource_type": "codex-verify-agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/verify-20261014-050945",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/verify-20261014-050945",
+      "original_path": null,
+      "exists": true,
+      "file_count": 10,
+      "total_bytes": 20010,
+      "files": [
+        {
+          "relative_path": "environment.json",
+          "bytes": 706,
+          "sha256": "B6843C8478EA88CE0074319892EE2CAB7B1FC6C1E84769B833C09B8B92E5A579"
+        },
+        {
+          "relative_path": "evidence-E1.input.json",
+          "bytes": 231,
+          "sha256": "4D73C2D20330E5A361959D2103D507507EAC6B9D01D7375AAE5B0ED6751906AE"
+        },
+        {
+          "relative_path": "evidence-E1.output.json",
+          "bytes": 377,
+          "sha256": "42B63044ED6F182F462D8C29CE328302DCE85B1D02AD601BDFF155E4589A77E6"
+        },
+        {
+          "relative_path": "implementation-I1.input.json",
+          "bytes": 231,
+          "sha256": "AE9886F843A190B73D53C09A8B85D56736021E7C33FA44A8548A926669DAD861"
+        },
+        {
+          "relative_path": "implementation-I1.output.json",
+          "bytes": 269,
+          "sha256": "E6A2B63D2C9FA540FA2E71815FC8FF7555C3C54433F6F8485D89EC1FCEA794EC"
+        },
+        {
+          "relative_path": "selftest.exit.txt",
+          "bytes": 2,
+          "sha256": "9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA"
+        },
+        {
+          "relative_path": "selftest.stderr.log",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "selftest.stdout.log",
+          "bytes": 17695,
+          "sha256": "92CA9348946B74089224D83133A3759E7FFB3A626A95C37149B1F1B90B6F7F04"
+        },
+        {
+          "relative_path": "test-T1.input.json",
+          "bytes": 231,
+          "sha256": "19FE1303040E781BE411D6FD847DC6C3597465D7F50F1A5F107FCA58FAFA8898"
+        },
+        {
+          "relative_path": "test-T1.output.json",
+          "bytes": 268,
+          "sha256": "596FF488C9F8B8BDD6F2A0323886E2F487FFEC9C1CABCBC9A04EC5986FC5A53B"
+        }
+      ]
+    },
+    {
+      "resource_type": "temp-fixture",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-050608-pure-selftest",
+      "destination_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-050608-pure-selftest",
+      "original_path": null,
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 105,
+      "files": [
+        {
+          "relative_path": "collision.bin",
+          "bytes": 5,
+          "sha256": "74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0"
+        },
+        {
+          "relative_path": "exclusive.bin",
+          "bytes": 1,
+          "sha256": "559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD"
+        },
+        {
+          "relative_path": "partial-run.json",
+          "bytes": 99,
+          "sha256": "6E8D8DCB09220F31316075389DBE28BBA0B7A9482675E6542A7254579C8E6D11"
+        }
+      ]
+    },
+    {
+      "resource_type": "temp-fixture",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-050945-pure-selftest",
+      "destination_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-050945-pure-selftest",
+      "original_path": null,
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 105,
+      "files": [
+        {
+          "relative_path": "collision.bin",
+          "bytes": 5,
+          "sha256": "74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0"
+        },
+        {
+          "relative_path": "exclusive.bin",
+          "bytes": 1,
+          "sha256": "559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD"
+        },
+        {
+          "relative_path": "partial-run.json",
+          "bytes": 99,
+          "sha256": "6E8D8DCB09220F31316075389DBE28BBA0B7A9482675E6542A7254579C8E6D11"
+        }
+      ]
+    },
+    {
+      "resource_type": "dsh-agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "original_path": null,
+      "exists": true,
+      "file_count": 8,
+      "total_bytes": 163173,
+      "files": [
+        {
+          "relative_path": "bounded-review-followup-r1-20261014T0533CST\\exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "bounded-review-followup-r1-20261014T0533CST\\prompt.md",
+          "bytes": 2017,
+          "sha256": "98765FF4BBA894739EF2FF8865E0A5D29F10B0248B85ABF5E58416AAE73C9667"
+        },
+        {
+          "relative_path": "bounded-review-followup-r1-20261014T0533CST\\stderr.log",
+          "bytes": 85848,
+          "sha256": "B658F3505CA73347591B6A30ACD7E7A1C90C6CE049A84C103453D4109FD08456"
+        },
+        {
+          "relative_path": "bounded-review-followup-r1-20261014T0533CST\\stdout.md",
+          "bytes": 13964,
+          "sha256": "F39F770616E8501292E991BD944C73FC4592516D66730E98A775C5A5B5664782"
+        },
+        {
+          "relative_path": "bounded-review-r1-20261014T0522CST\\exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "bounded-review-r1-20261014T0522CST\\prompt.md",
+          "bytes": 2825,
+          "sha256": "D17EBDF064F5F14FDCCBCCD671B924E8E33BB2E0F801630865372B5B9E44ADD5"
+        },
+        {
+          "relative_path": "bounded-review-r1-20261014T0522CST\\stderr.log",
+          "bytes": 50762,
+          "sha256": "95B4FABCB736D8A37B862AF9AD5899218FD3574A9DA10301262BF0BF06FAA0C2"
+        },
+        {
+          "relative_path": "bounded-review-r1-20261014T0522CST\\stdout.md",
+          "bytes": 7751,
+          "sha256": "B4F41C615A6FF34FEA236B351A328AD87FD61661E2BD53BE672B8F19F378496F"
+        }
+      ]
+    },
+    {
+      "resource_type": "dsh-preflight-r3",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r3-20261014T0520CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r3-20261014T0520CST",
+      "original_path": null,
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 2543,
+      "files": [
+        {
+          "relative_path": "attestation.json",
+          "bytes": 88,
+          "sha256": "20DB2EFBB71B757AB0456433B7C9F07C54DB7188E58D00F8CBF5BF9C939201F8"
+        },
+        {
+          "relative_path": "stderr.txt",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "stdout.json",
+          "bytes": 2455,
+          "sha256": "5C9D580A05D6166B5B4776AD9AE04F1EE38551A07D68C0CBA7C660061572D61E"
+        }
+      ]
+    },
+    {
+      "resource_type": "dsh-blocked-review-attempt1",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/bounded-review-r1-20261014T0522CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/bounded-review-r1-20261014T0522CST",
+      "original_path": null,
+      "exists": true,
+      "file_count": 4,
+      "total_bytes": 61341,
+      "files": [
+        {
+          "relative_path": "exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "prompt.md",
+          "bytes": 2825,
+          "sha256": "D17EBDF064F5F14FDCCBCCD671B924E8E33BB2E0F801630865372B5B9E44ADD5"
+        },
+        {
+          "relative_path": "stderr.log",
+          "bytes": 50762,
+          "sha256": "95B4FABCB736D8A37B862AF9AD5899218FD3574A9DA10301262BF0BF06FAA0C2"
+        },
+        {
+          "relative_path": "stdout.md",
+          "bytes": 7751,
+          "sha256": "B4F41C615A6FF34FEA236B351A328AD87FD61661E2BD53BE672B8F19F378496F"
+        }
+      ]
+    },
+    {
+      "resource_type": "codex-review-binding",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-binding-r1-20261014T0535CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-binding-r1-20261014T0530CST",
+      "original_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-binding-r1-20261014T0535CST",
+      "exists": true,
+      "file_count": 6,
+      "total_bytes": 529,
+      "files": [
+        {
+          "relative_path": "evaluation.exit",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "evaluation.json",
+          "bytes": 336,
+          "sha256": "FC779F663A8C70644FDE7F3C8900FBDA490CA8918995FC350FF28034F6299E40"
+        },
+        {
+          "relative_path": "evaluation.stderr",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "manifest-verify.exit",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "manifest-verify.stderr",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "manifest-verify.stdout.json",
+          "bytes": 187,
+          "sha256": "A0B55AD97903793FE1685F473455EF31DBD9970F4306B004DC290BD073E62ED1"
+        }
+      ]
+    },
+    {
+      "resource_type": "dsh-preflight-r4",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r4-20261014T0540CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r4-20261014T0530CST",
+      "original_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r4-20261014T0540CST",
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 2458,
+      "files": [
+        {
+          "relative_path": "exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "stderr.txt",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "stdout.json",
+          "bytes": 2455,
+          "sha256": "5C9D580A05D6166B5B4776AD9AE04F1EE38551A07D68C0CBA7C660061572D61E"
+        }
+      ]
+    },
+    {
+      "resource_type": "dsh-preflight-r5",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r5-20261014T0550CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r5-20261014T0533CST",
+      "original_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-preflight-r5-20261014T0550CST",
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 2458,
+      "files": [
+        {
+          "relative_path": "exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "stderr.txt",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "stdout.json",
+          "bytes": 2455,
+          "sha256": "93886A7771CA49E656DC19FAECD453CB1D7E83A0944E734F8A1131517A7745AF"
+        }
+      ]
+    },
+    {
+      "resource_type": "dsh-approved-followup",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/bounded-review-followup-r1-20261014T0551CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/bounded-review-followup-r1-20261014T0533CST",
+      "original_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/bounded-review-followup-r1-20261014T0551CST",
+      "exists": true,
+      "file_count": 4,
+      "total_bytes": 101832,
+      "files": [
+        {
+          "relative_path": "exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "prompt.md",
+          "bytes": 2017,
+          "sha256": "98765FF4BBA894739EF2FF8865E0A5D29F10B0248B85ABF5E58416AAE73C9667"
+        },
+        {
+          "relative_path": "stderr.log",
+          "bytes": 85848,
+          "sha256": "B658F3505CA73347591B6A30ACD7E7A1C90C6CE049A84C103453D4109FD08456"
+        },
+        {
+          "relative_path": "stdout.md",
+          "bytes": 13964,
+          "sha256": "F39F770616E8501292E991BD944C73FC4592516D66730E98A775C5A5B5664782"
+        }
+      ]
+    },
+    {
+      "resource_type": "codex-path-correction-manifest",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/path-correction-manifest-r1.json",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/path-correction-manifest-r1.json",
+      "original_path": null,
+      "exists": true,
+      "file_count": 1,
+      "total_bytes": 4350,
+      "files": [
+        {
+          "relative_path": "path-correction-manifest-r1.json",
+          "bytes": 4350,
+          "sha256": "0213AFD1159C3CCC21C84CDC1F81A2CF18756F648AD8A59AAA1DA42CA1D21C5F"
+        }
+      ]
+    },
+    {
+      "resource_type": "post-integration-selftest-output",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/post-integration-selftest-20261014T0546CST",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/post-integration-selftest-20261014T0546CST",
+      "original_path": null,
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 17492,
+      "files": [
+        {
+          "relative_path": "exit.txt",
+          "bytes": 3,
+          "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+        },
+        {
+          "relative_path": "stderr.log",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "relative_path": "stdout.log",
+          "bytes": 17489,
+          "sha256": "9C2510F58281164BB488715BA3B0131EE92D24D731B7A988AA4423A6B5645EF8"
+        }
+      ]
+    },
+    {
+      "resource_type": "post-integration-selftest-fixtures",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-054650-integration-50c60755-pure-selftest",
+      "destination_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-054650-integration-50c60755-pure-selftest",
+      "original_path": null,
+      "exists": true,
+      "file_count": 3,
+      "total_bytes": 105,
+      "files": [
+        {
+          "relative_path": "collision.bin",
+          "bytes": 5,
+          "sha256": "74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0"
+        },
+        {
+          "relative_path": "exclusive.bin",
+          "bytes": 1,
+          "sha256": "559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD"
+        },
+        {
+          "relative_path": "partial-run.json",
+          "bytes": 99,
+          "sha256": "6E8D8DCB09220F31316075389DBE28BBA0B7A9482675E6542A7254579C8E6D11"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "P02PRE-R1H-P2-1-EVIDENCE-CLOSURE",
+  "implementation_repairs_used": 0,
+  "max_implementation_repairs": 2,
+  "open_blockers": [
+    {
+      "id": "H1/P2-1",
+      "severity": "P2",
+      "splittable": false,
+      "independent_of_current_ac": false,
+      "already_has_followup": true,
+      "ai_resolvable": false
+    }
+  ],
+  "nonblockers": [],
+  "delivery_safely_integrable": false,
+  "other_ready_tasks": [],
+  "blocker_on_critical_path": true,
+  "continuation_harmful": true,
+  "needs_user_only_input": true
+}

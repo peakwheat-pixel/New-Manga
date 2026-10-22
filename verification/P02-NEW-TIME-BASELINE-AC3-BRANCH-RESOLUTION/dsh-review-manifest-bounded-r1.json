@@ -1,0 +1,27 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+  "generated_at": "2026-10-13T19:56:24+00:00",
+  "source_commit": "b29828e48d848b4dfeab8f8be92948fe43d86971",
+  "review_head": "b29828e48d848b4dfeab8f8be92948fe43d86971",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline.ps1",
+      "sha256": "f55fb778bbfe5307135a7c7943b587f59dfe94139b4b6138f89ddced7cd49b90",
+      "bytes": 98185,
+      "git_blob": "6408bface8a1bc42342dd37dd25b9594486d8972",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "sha256": "ff473c94074758c3c870e095c8885eeda52f226ae735bf4c6fb29eeb3cf44e28",
+      "bytes": 66827,
+      "git_blob": "b2c66adf9c068a3e6177e079cb6372cfb3a2babd",
+      "artifact_type": "code"
+    }
+  ]
+}

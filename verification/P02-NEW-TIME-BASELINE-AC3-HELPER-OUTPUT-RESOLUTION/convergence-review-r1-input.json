@@ -1,0 +1,1 @@
+{"task_id":"P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION","implementation_repairs_used":1,"max_implementation_repairs":2,"open_blockers":[],"nonblockers":[{"id":"P4-1","severity":"P4"},{"id":"P4-2","severity":"P4"}],"delivery_safely_integrable":true,"other_ready_tasks":[],"blocker_on_critical_path":false,"continuation_harmful":false,"needs_user_only_input":false}

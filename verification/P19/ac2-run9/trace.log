@@ -1,0 +1,12 @@
+[21:47:00.602] START
+[21:47:10.866] book+chapter
+[21:47:26.310]   IMP done 5s files=1
+[21:47:44.742]   IMP done 5s files=2
+[21:47:44.753] pages=2
+[21:47:48.795] clicked 阅读
+[21:47:48.817] before: 1 2
+[21:47:48.833] 下一页 en=False
+[21:47:48.852] after : 1 2
+[21:47:48.869] images=Page 1
+[21:47:51.908] cleaned_left=0
+[21:47:51.914] RUN end

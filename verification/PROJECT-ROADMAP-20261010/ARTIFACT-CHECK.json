@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-10T14:13:58+08:00",
+  "task_rows": 22,
+  "task_status_counts": {
+    "done": 4,
+    "in_progress": 1,
+    "blocked": 1,
+    "proposed": 16
+  },
+  "image_size": [
+    1500,
+    1110
+  ],
+  "SVG_XML": "PASS",
+  "snapshot_json": "PASS",
+  "usage_json": "PASS",
+  "usage_sessions": 3,
+  "usage_events_present": true,
+  "standard_credit_estimate_complete": true,
+  "new_document_local_links": "PASS",
+  "links_checked": 11,
+  "missing_links": [],
+  "main_head": "cddff58469b56e181019a8ddfeade80684bc7eb9",
+  "main_product_delta_since_previous_audit": [],
+  "P04_R3_decision": "CHANGES_REQUESTED",
+  "P04_R3_report_sha256": "e15fce703e65c9ce1403ebe21254bb2b0c42a2348b1753cf4f9a5f810c13cd4d",
+  "P04_R3_range_paths": 24,
+  "P04_R3_diff_check_exit": 0,
+  "P04_worktree_head": "5ea8304ae1670e079b7a496e08fbdea6f656156f",
+  "state_conflicts": [
+    "Index/Plan/Status/P04 still describe R3 pending",
+    "P04/P22/task graph still describe Owner R2 revision",
+    "P22 dependency sentence is reversed",
+    "linked Task calls untracked R3 report archived"
+  ],
+  "quota_resume_file": "RESUME.md",
+  "product_tests": "NOT_RUN",
+  "artifact_checks": "PASS"
+}

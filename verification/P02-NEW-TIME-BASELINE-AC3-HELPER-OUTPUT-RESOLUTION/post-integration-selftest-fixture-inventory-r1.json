@@ -1,0 +1,22 @@
+{
+  "fixture_root": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE/20261014-054650-integration-50c60755-pure-selftest",
+  "file_count": 3,
+  "total_bytes": 105,
+  "files": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\temp\\P02-NEW-TIME-BASELINE\\20261014-054650-integration-50c60755-pure-selftest\\collision.bin",
+      "bytes": 5,
+      "sha256": "74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\temp\\P02-NEW-TIME-BASELINE\\20261014-054650-integration-50c60755-pure-selftest\\exclusive.bin",
+      "bytes": 1,
+      "sha256": "559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\temp\\P02-NEW-TIME-BASELINE\\20261014-054650-integration-50c60755-pure-selftest\\partial-run.json",
+      "bytes": 99,
+      "sha256": "6E8D8DCB09220F31316075389DBE28BBA0B7A9482675E6542A7254579C8E6D11"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "original_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-review-binding-r1-20261014T0535CST",
+    "destination_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-review-binding-r1-20261014T0530CST",
+    "created_at_local": "2026-10-14T05:30:07",
+    "file_count": 6,
+    "files": [
+      {
+        "name": "evaluation.exit",
+        "bytes": 3,
+        "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+      },
+      {
+        "name": "evaluation.json",
+        "bytes": 336,
+        "sha256": "FC779F663A8C70644FDE7F3C8900FBDA490CA8918995FC350FF28034F6299E40"
+      },
+      {
+        "name": "evaluation.stderr",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "name": "manifest-verify.exit",
+        "bytes": 3,
+        "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+      },
+      {
+        "name": "manifest-verify.stderr",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "name": "manifest-verify.stdout.json",
+        "bytes": 187,
+        "sha256": "A0B55AD97903793FE1685F473455EF31DBD9970F4306B004DC290BD073E62ED1"
+      }
+    ]
+  },
+  {
+    "original_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-preflight-r4-20261014T0540CST",
+    "destination_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-preflight-r4-20261014T0530CST",
+    "created_at_local": "2026-10-14T05:30:33",
+    "file_count": 3,
+    "files": [
+      {
+        "name": "exit.txt",
+        "bytes": 3,
+        "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+      },
+      {
+        "name": "stderr.txt",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "name": "stdout.json",
+        "bytes": 2455,
+        "sha256": "5C9D580A05D6166B5B4776AD9AE04F1EE38551A07D68C0CBA7C660061572D61E"
+      }
+    ]
+  },
+  {
+    "original_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-preflight-r5-20261014T0550CST",
+    "destination_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-preflight-r5-20261014T0533CST",
+    "created_at_local": "2026-10-14T05:33:11",
+    "file_count": 3,
+    "files": [
+      {
+        "name": "exit.txt",
+        "bytes": 3,
+        "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+      },
+      {
+        "name": "stderr.txt",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "name": "stdout.json",
+        "bytes": 2455,
+        "sha256": "93886A7771CA49E656DC19FAECD453CB1D7E83A0944E734F8A1131517A7745AF"
+      }
+    ]
+  },
+  {
+    "original_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\dsh\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\bounded-review-followup-r1-20261014T0551CST",
+    "destination_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\dsh\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\bounded-review-followup-r1-20261014T0533CST",
+    "created_at_local": "2026-10-14T05:33:21",
+    "file_count": 4,
+    "files": [
+      {
+        "name": "exit.txt",
+        "bytes": 3,
+        "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+      },
+      {
+        "name": "prompt.md",
+        "bytes": 2017,
+        "sha256": "98765FF4BBA894739EF2FF8865E0A5D29F10B0248B85ABF5E58416AAE73C9667"
+      },
+      {
+        "name": "stderr.log",
+        "bytes": 85848,
+        "sha256": "B658F3505CA73347591B6A30ACD7E7A1C90C6CE049A84C103453D4109FD08456"
+      },
+      {
+        "name": "stdout.md",
+        "bytes": 13964,
+        "sha256": "F39F770616E8501292E991BD944C73FC4592516D66730E98A775C5A5B5664782"
+      }
+    ]
+  }
+]
