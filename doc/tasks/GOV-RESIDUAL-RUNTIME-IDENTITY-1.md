@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-RUNTIME-IDENTITY-1
 title: 七项剩余历史运行身份的只读取证与裁决边界
 kind: research
 governance_version: 2
-status: in_progress
+status: in_review
 approval: user_authorization_20261022_dsh_coordinator_takeover
 suggested_owner: dsh
 owner: dsh
@@ -13,8 +13,8 @@ base_commit: 43a7d73c850f669cc2595343a1747a661c277f2e
 branch: null
 worktree: G:/CODEX/New Manga（只读研究；仅在 main 写本 Task、自身 evidence 与权威导航）
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: bb04c78d4b39e93e07712b2d056a2691810c0c58
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1
 allowed_paths:
@@ -81,23 +81,24 @@ allowed_paths:
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md`。
-- Review：待独立 Reviewer（ZCode）对固定 head 审查。
+- Review：待独立 Reviewer（ZCode）对固定 head 审查（本次取交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58`）。
 - 实际测试：见「测试要求」表与 `verification-log.txt`。
 - 2026-10-22 / dsh / base `43a7d73c8`：只读取证完成；7 项身份固定；唯一真实保护缺口为 `C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop`（用户数据，hits=0）。真实资源操作 0。
+- 交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58`：Task + Handoff + 证据 + STATUS/Plan/Ledger 同点提交；随后转 `in_review` 等待独立 Review。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC1 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/audit-run.log | `BASE` | 待固定 | CANONICAL |
-| EV-02 | AC1 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/declaration-audit.json | `BASE` | 待固定 | CANONICAL |
-| EV-03 | AC2 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/historical-env-evidence.json | `BASE` | 待固定 | CANONICAL |
-| EV-04 | AC3/AC5 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md | `BASE` | 待固定 | CANONICAL |
-| EV-05 | AC4 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/protection-evaluation.json | `BASE` | 待固定 | CANONICAL |
-| EV-06 | AC4 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/probe-protected.py | `BASE` | 待固定 | CANONICAL |
-| EV-07 | AC6 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/verification-log.txt | `BASE` | 待固定 | CANONICAL |
+| EV-01 | AC1 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/audit-run.log | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `bb8d0c6b4fa854a87f5a80fb2674203ad81ef0e15b0bbe3530492e9b08c6366d` | CANONICAL |
+| EV-02 | AC1 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/declaration-audit.json | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `7d4b258a7f949782fe037d0c9501e4f2eff799affaf253934d094f71f1ac6ba9` | CANONICAL |
+| EV-03 | AC2 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/historical-env-evidence.json | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `c1d08c392902ef5f1519ca5204da6598fc2fbb5e4ec52d131491b52f4313eaf9` | CANONICAL |
+| EV-04 | AC3/AC5 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `41859b5cc7b30215ad8c7ccafc372e2effe19adbed53767321b9a2aa684cfb5f` | CANONICAL |
+| EV-05 | AC4 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/protection-evaluation.json | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `956999fa5761031d816e8b622593d8b0aea745cf2cd3a85658f937bddc56b380` | CANONICAL |
+| EV-06 | AC4 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/probe-protected.py | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `8078c82cd8b1226a96e71d40beef32e1f25ed6f0a7ce6fd8829af74c19644770` | CANONICAL |
+| EV-07 | AC6 | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/verification-log.txt | `bb04c78d4b39e93e07712b2d056a2691810c0c58` | `332177d6dbc93671a1f79083275adee5622a97504f00ed40b2a6bdf1fc6ec0d7` | CANONICAL |
 
-`BASE` 在交付提交后替换为实际 commit SHA，并回填各文件 raw sha256；不使用自引用 SHA。
+本表在交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58` 上回填实际 raw sha256；`delivery_head` 指向同一交付提交。随后仅追加状态/Review 记录，不改变上述证据字节（BL-15：EV 不指向自引用 SHA）。
 
 ## Resource Manifest
 
@@ -112,7 +113,7 @@ allowed_paths:
 ## Closeout Record
 
 - Closeout date / dsh：待独立 Review 与集成复验后填写。
-- canonical_evidence_status：`pending`（待固定交付 commit 与 raw SHA）。
+- canonical_evidence_status：`complete`（7 项 EV 固定到交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58`，raw SHA-256 已回填）。
 - resource_closeout_status：`pending`（无真实删除/迁移；四项资源均为保留或 NOT_APPLICABLE）。
 - 删除、迁移、归档数量/字节数：0 / 0 / 0。
 - 未关闭项及保留原因：7 项声明错误仍为 fatal（本 Task 只取证，不解除）；`C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop` 保护缺口待实施 Task 补齐；11 个 `p19*` 系统 Temp 目录待用户授权后另议。
