@@ -25,6 +25,7 @@ allowed_paths:
   - tools/dev/dev-preview.ps1
   - doc/tasks/DEV-PREVIEW-1.md
   - doc/reviews/DEV-PREVIEW-1-8ac00b97b.md
+  - doc/reviews/DEV-PREVIEW-1-p2-fa7f4e0c0.md
   - doc/handoffs/DEV-PREVIEW-1-8ac00b97b.md
   - doc/STATUS.md
   - doc/TASK_LEDGER.md
@@ -91,6 +92,21 @@ created: 2026-10-22
 | 生产语义反向验证 | PASS，未设 `M2RC1_DEV_PREVIEW` 时 `cargo build --no-default-features` 仍 `exit 101` 并输出 `missing sidecar bundle` 原诊断 |
 
 结论：原 P1 修复真实有效，B 档在固定提交上端到端可用。4 项 P2（启动器进程/端口健壮性）仍为遗留，不影响本次验收。
+
+## 遗留 P2 修复与独立验证（2026-10-22，ZCode 实现 + DSH 验证）
+
+实现提交 `fa7f4e0c0`（仅 `tools/dev/dev-preview.ps1`，+114/−42）；独立 Review 见
+[DEV-PREVIEW-1-p2-fa7f4e0c0](../reviews/DEV-PREVIEW-1-p2-fa7f4e0c0.md)（`approved`）。
+
+| ID | 修复方式 | 独立实测 |
+|---|---|---|
+| R-001 | 只清理本次启动的进程树：PID + `StartTime` 核对一致才 `taskkill /T`，不按端口盲杀 | 白盒：伪 `StartTime` → 跳过且进程存活；真 `StartTime` → 树杀。B 档退出日志 `停止 Vite 进程树 (pid 692)` |
+| R-002 | Vite 启动 + 90s 等待纳入主 `try/finally` | 假 `npm.cmd` 永不监听 → 91.9s 后 exit 1 且完成树清理，无 cmd/ping 残留 |
+| R-003 | 删除 `-VitePort` 参数，改用 `Set-Variable -Option Constant` 固定 5188 | `-VitePort 5199` → exit 1，参数绑定失败，无启动动作 |
+| R-004 | 复用端口前做 HTTP 身份校验（`/@vite/client` 200 + `/` 含 `/src/main.tsx`），未知服务 fail-closed | python 占位 5188 → exit 1 fail-closed；真 Vite → `-NoVite -ViteOnly` exit 0 并打印复用 |
+
+B 档完整回归：编译 8.69s、窗口启动、production allowlist 正常、关闭后 5188 释放且无 node/cmd 残留、脚本 `exit 0`。
+语法检查 `ERRCOUNT=0`，`git diff --check` 无输出。
 
 ## Canonical Evidence
 
