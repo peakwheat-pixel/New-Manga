@@ -4,10 +4,10 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`in_review`；主线收敛完成：heads 仅 main、worktree 1、21 条归档；Owner dsh / Reviewer zcode）。
+- 当前 Task：**无执行中的 Task（READY=无）**；唯一非终态保留项为 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书签核）；主线收敛 [GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) 已 r3 approved 并 `done`。
 - 最近完成：**[GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1](tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md)** `done`；7项声明错误→0、APPDATA 用户数据受保护；随后完成 A+B+C 最终收敛（2.6GiB 内容归档可恢复）。
-- 父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)** `blocked`；正式7项历史运行身份错误，原保护与STATUS-r212禁令有效。
-- 收敛基线97/135；当前103本地分支/141工作树；**尚未达到只剩main**。
+- 父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)** `done`；r3 approved `6997733bf`；7项历史运行身份已由精确解释层归零。
+- 收敛结果：`refs/heads` 仅 `main`、注册 worktree 1、`refs/archive/*` 21、声明审计 0 errors；2.6GiB 内容归档可恢复。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：待发布签核；声明修复 done `bb7887442`）。
 - **WORKSPACE-CONSOLIDATION-1**：`closed_with_limitations`（r212）；18资源limitation；不得再清理/GC/prune。

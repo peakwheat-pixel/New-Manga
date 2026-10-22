@@ -3,12 +3,12 @@ id: GIT-MAINLINE-CONVERGENCE-1
 title: Git 主线与支线收敛到 main（逐项保全与受限清理）
 kind: ops
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_20261021_convergence_preserving_existing_protections
 blocked_by:
 resume_status: in_review
-latest_review: verification/GIT-MAINLINE-CONVERGENCE-1/deepseek-review-r2.md
-reviewed_head: c9a1bdd3061300c9c1c633eb8f2279903918e5a2
+latest_review: doc/reviews/GIT-MAINLINE-CONVERGENCE-1-6997733bf-zcode-r3.md
+reviewed_head: 6997733bf959fdd4b087993c80624cafc2e7c93f
 suggested_owner: dsh
 owner: Codex
 reviewer: zcode
@@ -16,10 +16,10 @@ depends_on: []
 base_commit: fdca2057eec058996f936fc16138cc87e8cdc0bc
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 6997733bf959fdd4b087993c80624cafc2e7c93f
 delivery_head: 92425ef1a9ed0493982eb43580282018eaae7900
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/GIT-MAINLINE-CONVERGENCE-1
 allowed_paths:
   - doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md
@@ -50,7 +50,7 @@ created: 2026-10-21
 - [x] **AC3** 19 条未合并支线逐项核对提交、patch 等价性、实际差异、归档与恢复，不盲合并。 <<MET>>
 - [x] **AC4** 所有计划删除对象已备份、验证恢复、刷新 Inventory、通过独立 Review 并获所需授权；未满足者保留。 <<MET>>
 - [x] **AC5** 本地 refs/heads 仅 main，无需保留的 linked worktree 安全退出；例外必须据实列出，不能宣称达标。 <<MET>>
-- [ ] **AC6** 完成独立 Review、集成验证、治理检查、Handoff 和逐项资源处置记录。 <<PARTIAL: 待 zcode 独立审查与集成复验>>
+- [x] **AC6** 完成独立 Review、集成验证、治理检查、Handoff 和逐项资源处置记录。 <<MET>>
 
 ## 允许修改范围
 
@@ -101,6 +101,13 @@ created: 2026-10-21
 恢复路径：`refs/archive/<branch>`、`G:/CODEX/New Manga.workspace/archive/worktree-content-20261022/`（含逐文件 manifest）、`all-refs-352410640c.bundle`。
 
 未执行：`worktree prune`、GC、push、reset、stash；五广域根保护与 r212 禁令未改变。
+
+### r3 审查返修（2026-10-22）
+
+- **R-001（P2，已处置）**：刷新 `doc/STATUS.md` 第 9–10 行与 `doc/REBASELINE_PLAN.md` 的陈旧行 —— 父任务状态由 `blocked` 改为 `done`，收敛基线由「103分支/141工作树、尚未达到只剩main」改为「heads 仅 main、worktree 1、21 条归档、0 errors」；PLAN 的 READY 行不再引用已 done 的取证 Task。
+- **R-002（P2，已处置）**：收尾段 5 个工作树的最终处置如实补记 —— d3f 阶段 4 个（T2.2.1-zcode、T3.2.1-zcode-repair-13、TASK-024-zcode、TASK-046-zcode）因文件只读报 `Permission denied`，d3g 阶段 P09-IMPORT-CORE 报 `Directory not empty`；这 5 个的注册元数据在 `git worktree remove` 执行时已被移除（故 `git worktree list` 不再显示），残留目录随后全部归档至 `archive/worktree-content-20261022/_leftover/`（115.5 MiB，逐文件比对 missing=0，P09 为 1,716 文件 / 55,353,179 B），再清除只读属性后删除目录。**6→1 的衔接**：d3f 结束时注册数为 6（main + 3 个 diag002 + P09-IMPORT-CORE + P19-BOOT-1），随后 P19-BOOT-1 与 3 个 diag002 正常移除、P09-IMPORT-CORE 仅剩目录，最终 1。
+- **R-003（P2，随 approved 闭合）**：AC4 中「通过独立 Review」子条件由 r3（`6997733bf`）承担；本 Task 以 AC6 `PARTIAL` 诚实挂起审查事项，r3 approved 后 AC6 转 `MET`。
+- **集成复验期自查发现的回归（已修复）**：Resource Manifest 中的 `refs/archive/*` 行触发 `DECL_GLOB` + `DECL_DESTINATION_UNRESOLVED`，连带使 residual identity 阶段 batch 不匹配、7 项历史错误重新暴露（审计 0→10 errors）。已改为 `NOT_APPLICABLE` 并复验：**2684→2693 declarations / 1983 protected roots / 0 errors / 277 warnings**。
 
 ## Canonical Evidence
 
@@ -167,10 +174,10 @@ created: 2026-10-21
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/GIT-MAINLINE-CONVERGENCE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/GIT-MAINLINE-CONVERGENCE-1 | verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md | 本 Task 诊断/备份；不删除 |
 | artifact | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-56272e40b.bundle | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-56272e40b.bundle | 8128955e47f835989a718b55b3af11754752e893b7f78fe7f337eaef68c0f1a9 | 截至 main=56272e40b 的快照：214 common refs 全等、135 记录时 HEAD 可读；不含后续治理提交；仅 Git 历史 |
 | temp | G:/CODEX/New Manga.workspace/temp/GIT-MAINLINE-CONVERGENCE-1/restore-all-refs.git | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/temp/GIT-MAINLINE-CONVERGENCE-1/restore-all-refs.git | verification/GIT-MAINLINE-CONVERGENCE-1/backup-restoration.json | 只作恢复探针，非项目真值；保留待裁决 |
-| artifact | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-352410640c.bundle | PRESERVE_REFERENCED | 同路径 | `35869bc3442be3ab2af78da3a09d927d30701e70db262b33654f3aa8eadcc6cd` | 239,944,235 B；221 refs；空仓恢复 missing 0 / extra 0；fsck clean |
-| artifact | G:/CODEX/New Manga.workspace/archive/worktree-content-20261022 | ARCHIVE | 同路径 | verification/GIT-MAINLINE-CONVERGENCE-1/archive-result-20261022.json | 75 个工作树未提交内容全量归档，12,686 文件 / 2,605.7 MiB，逐文件 SHA-256 manifest |
-| artifact | G:/CODEX/New Manga.workspace/archive/worktree-content-20261022/_leftover | ARCHIVE | 同路径 | verification/GIT-MAINLINE-CONVERGENCE-1/leftover-archive-20261022.json | 5 个残留目录，115.5 MiB，missing 0 |
-| ref | refs/archive/* | ARCHIVE | refs/archive | verification/GIT-MAINLINE-CONVERGENCE-1/phaseA-tags-20261022.json | 21 条历史分支归档引用，逐条 rev-parse 回验 |
+| artifact | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-352410640c.bundle | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-352410640c.bundle | `35869bc3442be3ab2af78da3a09d927d30701e70db262b33654f3aa8eadcc6cd` | 239,944,235 B；221 refs；空仓恢复 missing 0 / extra 0；fsck clean |
+| artifact | G:/CODEX/New Manga.workspace/archive/worktree-content-20261022 | ARCHIVE | G:/CODEX/New Manga.workspace/archive/worktree-content-20261022 | verification/GIT-MAINLINE-CONVERGENCE-1/archive-result-20261022.json | 75 个工作树未提交内容全量归档，12,686 文件 / 2,605.7 MiB，逐文件 SHA-256 manifest |
+| artifact | G:/CODEX/New Manga.workspace/archive/worktree-content-20261022/_leftover | ARCHIVE | G:/CODEX/New Manga.workspace/archive/worktree-content-20261022/_leftover | verification/GIT-MAINLINE-CONVERGENCE-1/leftover-archive-20261022.json | 5 个残留目录，115.5 MiB，missing 0 |
+| ref | NOT_APPLICABLE | NOT_APPLICABLE | — | verification/GIT-MAINLINE-CONVERGENCE-1/phaseA-tags-20261022.json | 21 条历史分支归档引用（`refs/archive/<branch>`，Git ref 非文件路径，故 source 记 NOT_APPLICABLE），逐条 `rev-parse` 回验 |
 
 ## Closeout Record
 
