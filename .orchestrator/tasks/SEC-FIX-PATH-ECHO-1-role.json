@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "task_id": "SEC-FIX-PATH-ECHO-1",
+  "owner": "codex",
+  "contributors": [],
+  "repair_participants": [],
+  "revision": 0,
+  "updated_utc": "2026-10-17T14:20:28+00:00",
+  "authority": "task-role-state"
+}

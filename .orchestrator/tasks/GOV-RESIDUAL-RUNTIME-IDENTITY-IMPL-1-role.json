@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "task_id": "GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1",
+  "owner": "dsh",
+  "contributors": [],
+  "repair_participants": [],
+  "revision": 1,
+  "updated_utc": "2026-10-22T01:50:00+00:00",
+  "authority": "task-role-state"
+}

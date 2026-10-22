@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "owner": "codex",
+  "contributors": [
+    "zcode",
+    "antigravity"
+  ],
+  "repair_participants": [
+    "antigravity",
+    "codex"
+  ],
+  "revision": 4,
+  "updated_utc": "2026-10-15T00:56:53+00:00",
+  "authority": "task-role-state"
+}

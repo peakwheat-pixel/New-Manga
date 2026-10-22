@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task_id": "RES-P02-AC6-CDP-RECOVERY",
+  "owner": "antigravity",
+  "contributors": [
+    "antigravity"
+  ],
+  "repair_participants": [],
+  "revision": 1,
+  "updated_utc": "2026-10-15T06:14:46+00:00",
+  "authority": "task-role-state"
+}

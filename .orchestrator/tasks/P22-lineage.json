@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task_id": "P22",
+  "revision": 2,
+  "updated_utc": "2026-10-15T12:24:22+00:00",
+  "authority": "lineage-state",
+  "findings": {
+    "R2-001": {
+      "followup_task_id": "P22-REBASE-1",
+      "resolution_task_id": "P22-REBASE-1"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "revision": 1,
+  "updated_utc": "2026-10-15T02:06:59+00:00",
+  "authority": "lineage-state",
+  "findings": {
+    "R3-01": {
+      "followup_task_id": null,
+      "resolution_task_id": "RES-P02-AC6-CDP-RECOVERY"
+    }
+  }
+}

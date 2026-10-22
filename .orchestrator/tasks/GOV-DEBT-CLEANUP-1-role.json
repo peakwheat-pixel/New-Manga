@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "task_id": "GOV-DEBT-CLEANUP-1",
+  "owner": "Codex",
+  "contributors": [],
+  "repair_participants": [],
+  "revision": 0,
+  "updated_utc": "2026-10-18T08:43:32+00:00",
+  "authority": "task-role-state"
+}

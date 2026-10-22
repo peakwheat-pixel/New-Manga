@@ -1,0 +1,197 @@
+{
+  "schema_version": 5,
+  "migration_id": "dynamic-roles-v5-compat-overlay",
+  "migration_boundary_git_head": "a9c3214b2d7806c2b8920897e5684c039ae14057",
+  "migration_boundary_utc": "2026-10-14T14:55:15+00:00",
+  "legacy_scan": {
+    "files_scanned": [
+      "AGENTS.md",
+      ".pytest_cache/README.md",
+      ".qoder-credits/report.json",
+      ".zcode/dsh-dispatch/agy-m2ipc1-out.json",
+      ".zcode/dsh-dispatch/agy-m2ipc1-repair-out.json",
+      ".zcode/dsh-dispatch/agy-m2ipc1-repair-result.md",
+      ".zcode/dsh-dispatch/agy-m2ipc1-repair-task.txt",
+      ".zcode/dsh-dispatch/agy-m2ipc1-result.md",
+      ".zcode/dsh-dispatch/agy-m2ipc1-task.txt",
+      ".zcode/dsh-dispatch/agy-m2p1-out.json",
+      ".zcode/dsh-dispatch/agy-m2p1-result.md",
+      ".zcode/dsh-dispatch/agy-m2p1-task.txt",
+      ".zcode/dsh-dispatch/agy-review-out.json",
+      ".zcode/dsh-dispatch/agy-review-result.md",
+      ".zcode/dsh-dispatch/agy-review-task.txt",
+      ".zcode/dsh-dispatch/diag-result.md",
+      ".zcode/dsh-dispatch/diag-task.txt",
+      ".zcode/dsh-dispatch/dsh-m2ac2-recheck-result.md",
+      ".zcode/dsh-dispatch/dsh-m2ac2-recheck-task.txt",
+      ".zcode/dsh-dispatch/dsh-m2ac2-review-result.md",
+      ".zcode/dsh-dispatch/dsh-m2ac2-review-task.txt",
+      ".zcode/dsh-dispatch/dsh-m2ipc1-recheck-result.md",
+      ".zcode/dsh-dispatch/dsh-m2ipc1-recheck-task.txt",
+      ".zcode/dsh-dispatch/dsh-m2ipc1-review-result.md",
+      ".zcode/dsh-dispatch/dsh-m2ipc1-review-task.txt",
+      ".zcode/dsh-dispatch/dsh-m2p1-review-result.md",
+      ".zcode/dsh-dispatch/dsh-m2p1-review-task.txt",
+      ".zcode/plans/plan-sess_5142e961-3633-41c4-adbf-05b5dcf96137.md",
+      "archive/README.md",
+      "doc/00_INDEX.md",
+      "doc/01_FUNCTIONAL_ARCHITECTURE.md",
+      "doc/02_TECHNICAL_ARCHITECTURE_.md",
+      "doc/03_DATA_MODEL.md",
+      "doc/04_USER_FLOW.md",
+      "doc/05_UI_MAPPING.md",
+      "doc/06_TRANSLATION_PIPELINE.md",
+      "doc/07_NON_FUNCTIONAL_REQUIREMENTS.md",
+      "doc/08_ACCEPTANCE_CRITERIA.md",
+      "doc/09_COLLABORATION.md",
+      "doc/10_CURRENT_STATE_AND_GAPS.md",
+      "doc/11_ARCHITECTURE_MAPS.md",
+      "doc/12_ROADMAP.md",
+      "doc/13_ACCEPTANCE_TRACEABILITY.md",
+      "doc/14_TAKEOVER_VERIFICATION.md",
+      "doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
+      "doc/AI_COORDINATION.md",
+      "doc/GOAL.md",
+      "doc/REBASELINE_PLAN.md",
+      "doc/STATUS.md",
+      "doc/WORKSPACE_GOVERNANCE.md",
+      "doc/WORKTREE_SAFETY_INVENTORY.md",
+      "doc/code-review-5f3c115-zcode-window-7-integrations.json",
+      "doc/code-review-5f3c115-zcode-window-7-integrations.md",
+      "doc/ui-baseline.md",
+      "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "doc/contracts/M2-RC4_DOMAIN_COMMANDS.md",
+      "doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md",
+      "doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md",
+      "doc/contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md",
+      "doc/contracts/UI_UX_GUI_DESIGN.md",
+      "doc/contracts/extensions.md",
+      "doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md",
+      "doc/design/tokens-cand-a.json",
+      "doc/design/tokens-cand-b.json",
+      "doc/design/tokens-cand-c.json",
+      "doc/design/tokens-cand-d.json",
+      "doc/design/tokens-cand-e.json",
+      "doc/design/tokens-cand-f.json",
+      "doc/fixtures/MANIFEST.md",
+      "doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md",
+      "doc/handoffs/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-5789b30b.md",
+      "doc/handoffs/DIAG-READING-EXPORT-001-8b36e98e.md",
+      "doc/handoffs/DIAG-READING-EXPORT-001-FIX-A-77a78b25.md",
+      "doc/handoffs/DIAG-READING-EXPORT-001-FIX-B-3ce82240.md",
+      "doc/handoffs/DIAG-READING-EXPORT-001-FIX-C-de0bf175.md",
+      "doc/handoffs/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-zcode-delivery-20260930.md",
+      "doc/handoffs/GOV-001-2e8f4bf.md",
+      "doc/handoffs/M2-AC1-zcode-delivery-20260928.md",
+      "doc/handoffs/M2-AC2-owner-delivery.md",
+      "doc/handoffs/M2-AC3-owner-delivery.md"
+    ],
+    "fixed_role_findings": [
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": "AGENTS.md",
+        "line": 28,
+        "excerpt": "- Codex：Lead / Architect / Integrator；负责契约、任务分配、冲突决策及集成。"
+      },
+      {
+        "kind": "zcode_fixed_owner",
+        "path": "AGENTS.md",
+        "line": 29,
+        "excerpt": "- ZCode：独立 Feature、长任务实现；新架构 UI/UX、GUI 与 React/Tauri 视觉/交互设计及实现主责；提交设计、代码、测试及 Handoff。设计与实现分别冻结Task范围，不得自行扩大产品范围、修改未授权共享契约或审核自己的变更。"
+      },
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": ".zcode/dsh-dispatch/agy-m2p1-out.json",
+        "line": 1,
+        "excerpt": "{\"conversation_id\":\"dc47ca98-0699-4c58-bb97-14226fb58acf\",\"status\":\"SUCCESS\",\"response\":\"# M2-P1（Regionless Detection Fan-out and Guard Rebinding）交付报告\\n\\n作为 M2-P1 的 Owner，我已在工作树 `G:/CODEX/New Manga.worktrees/M2-P1-agy`（分支 `agent/antigravity"
+      },
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": ".zcode/dsh-dispatch/agy-review-out.json",
+        "line": 1,
+        "excerpt": "{\"conversation_id\":\"bdf7cf60-f078-4ece-bca7-299e18fa1bb6\",\"status\":\"SUCCESS\",\"response\":\"decision: approved\\n\\n### AC 判定表\\n\\n| AC 项 | 判定 | 依据 |\\n|---|---|---|\\n| **AC1 — 可复现** | **PASS** | 自包含复现脚本 [`reproduce.py`](file:///G:/CODEX/New%20Man"
+      },
+      {
+        "kind": "zcode_fixed_owner",
+        "path": ".zcode/dsh-dispatch/agy-review-task.txt",
+        "line": 1,
+        "excerpt": "你是 Antigravity，担任 DIAG-M2-REGIONLESS-LOCK-CHANGED-001 的独立非作者 Reviewer。作者（Owner）是 DeepSeek Harness，集成执行代理是 ZCode 会话（代行 Codex，用户授权）；你与两者均无作者关系。这是一次只读 Review：不要修改任何文件、不要创建或删除文件、不要 git commit；允许运行只读命令（git log/show/diff、读文件）和执行复现脚本（该脚本只写系统临时目录，不"
+      },
+      {
+        "kind": "dsh_fixed_reviewer",
+        "path": ".zcode/dsh-dispatch/dsh-m2ac2-recheck-result.md",
+        "line": 70,
+        "excerpt": "> 你是 Codex（Integrator，非本 Task 作者）。目标 worktree：`G:/CODEX/New Manga.worktrees/M2-AC2-zcode`，Task `doc/tasks/M2-AC2.md`，Owner 交付 tip `375cf43b`（代码返修 commit `8d72f91f`）。DSH 非作者 Review 结论为 `approved_with_conditions`。请：① 关闭 Review 条件 C1–C3（修正 `ve"
+      },
+      {
+        "kind": "zcode_fixed_owner",
+        "path": ".zcode/dsh-dispatch/dsh-m2ac2-review-task.txt",
+        "line": 1,
+        "excerpt": "你是 DeepSeek Harness，担任 M2-AC2（Data Integrity Acceptance）的独立非作者 Reviewer。Owner=ZCode 会话（亲自实现）；集成方将是另一个 ZCode 会话（以 Codex 身份）。只读静态 Review：沙箱无 shell（预期内），不要执行命令或写文件；session workspace 就是 Owner worktree，相对路径直读，全部结论放进最终回答。"
+      },
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": ".zcode/dsh-dispatch/dsh-m2ipc1-review-result.md",
+        "line": 95,
+        "excerpt": "**放行条件（建议）**：① Owner 以 `try_wait()` 轮询实现 5s→kill 并补 Rust 单测；② 修 `version` 非 dict 的 typed 拒绝（P2-1）与 `_fetch_page_counts` 的显式 typed 错误（P2-2，至少区分「查询失败」与「0 页」）；③ 补一条 Rust 真实 spawn `bootstrap.core_service` 的通道测试与一组 page_count 过滤判别用例（P2-3、P2-5）；④"
+      },
+      {
+        "kind": "zcode_fixed_owner",
+        "path": ".zcode/dsh-dispatch/dsh-m2ipc1-review-task.txt",
+        "line": 1,
+        "excerpt": "你是 DeepSeek Harness，担任 M2-IPC1（Production Core Lifecycle + Read-only Library Vertical Slice）的独立非作者 Reviewer。Owner=Antigravity；集成方=ZCode 会话（代行 Codex）。这是一次只读静态 Review：沙箱无 shell（预期内），不要执行命令或写文件；用 read/grep/glob 读代码，全部结论放进最终回答。session workspace"
+      },
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": "doc/09_COLLABORATION.md",
+        "line": 121,
+        "excerpt": "Codex 负责契约、共享 seam、主线集成和 Release Gate。Owner 与 Reviewer 必须不同。"
+      },
+      {
+        "kind": "dsh_fixed_reviewer",
+        "path": "doc/09_COLLABORATION.md",
+        "line": 181,
+        "excerpt": "若重启后仍不可见，记录 DSH 版本、worktree 路径、session ID 和检查结果，标记 `web_visibility=unverified`；不要把 headless 运行描述成 Web 对话已显示，也不要用 Codex 模拟代替真实 DSH Review。继续已有会话时才传入 `--session-id <id>`，并确认该会话属于相同工作目录且可由当前 profile 接管。"
+      },
+      {
+        "kind": "dsh_fixed_reviewer",
+        "path": "doc/09_COLLABORATION.md",
+        "line": 188,
+        "excerpt": "6. **报告形式（不强制）**：报告须覆盖 **Architecture** 与 **Verification** 两面（第 4/5 条）。`code-review` 技能的 Standards/Spec 两视角**可采用也可不用**；采用时建议分别呈现（一个变更可能通过一面而在另一面失败），但**不再强制**分节、命名或\"不跨轴排名\"的写法。**取消**下列强制项（2026-09-18 用户决定，理由：并行双轴子代理能力不可用）：①不再要求两视角各由独立 sub-agen"
+      },
+      {
+        "kind": "dsh_fixed_reviewer",
+        "path": "doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md",
+        "line": 75,
+        "excerpt": "- **DSH r1**（非作者静态，沙箱无法执行命令）：[approved_with_conditions](../../doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-57a83485-dsh-r1.md)（0×P0/P1、3×P2、4×P3、3×P4；报告原字节 import，SHA256=`8091fb05…9223f7`；被审 head=`57a83485`）。条件 F-001~F-010 已在 v5 返修轮全数闭合（映射见 T"
+      },
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": "doc/handoffs/DIAG-READING-EXPORT-001-FIX-C-de0bf175.md",
+        "line": 97,
+        "excerpt": "| F-1 | Minor（集成前须 Codex 处置） | Task AC1 字面要求 `hasChapter is False` 与 closeReader 冻结语义矛盾 | **交代行 Codex 于集成时裁决**（建议采纳 Review 建议：AC 判\"文本缺陷，非实现缺陷\"，集成时修订 AC1 为\"心跳停 + 进度 flush（hasChapter 按既有语义保留）\"并记入集成记录） |"
+      },
+      {
+        "kind": "codex_fixed_coordinator",
+        "path": "doc/handoffs/GOV-001-2e8f4bf.md",
+        "line": 37,
+        "excerpt": "- Recovery point：仓库=`G:/CODEX/New Manga`；本 Handoff 固定 delivery=`2e8f4bf951ad8a16af50300463f990d325b768e6`，审计的实际 base 应在 AD-001 集成后由 Codex 固定；审计 branch/worktree **待 Codex 创建**，不得用此作者 worktree 开工。"
+      }
+    ],
+    "fingerprint": "563de347f91f508a116808694a59c50f0e0d2f3f12cbcbd7a2b7aa9bbb90943a"
+  },
+  "historical_documents_rewritten": false,
+  "created_project_runtime_files": [
+    ".orchestrator/policy.yaml",
+    ".orchestrator/agents.json",
+    ".orchestrator/runtime.json",
+    ".orchestrator/governance-write-scope.json",
+    ".orchestrator/.gitignore"
+  ],
+  "semantics": {
+    "legacy_fixed_role_records_before_boundary": "historical_facts_preserved",
+    "future_role_assignment": "dynamic_role_policy",
+    "product_architecture_changed": false,
+    "task_acceptance_criteria_changed": false
+  }
+}

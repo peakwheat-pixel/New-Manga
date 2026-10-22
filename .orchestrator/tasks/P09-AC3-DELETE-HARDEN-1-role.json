@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "task_id": "P09-AC3-DELETE-HARDEN-1",
+  "owner": "Antigravity",
+  "contributors": [],
+  "repair_participants": [],
+  "revision": 0,
+  "updated_utc": "2026-10-18T08:54:25+00:00",
+  "authority": "task-role-state"
+}

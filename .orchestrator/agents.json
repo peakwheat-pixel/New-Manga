@@ -1,0 +1,81 @@
+{
+  "schema_version": 5,
+  "agents": [
+    {
+      "name": "codex",
+      "cli": "codex",
+      "enabled": true,
+      "capabilities": [
+        "coordinator",
+        "owner",
+        "reviewer",
+        "integrator"
+      ],
+      "strengths": [
+        "coding",
+        "repo_write",
+        "deterministic_verify",
+        "integration"
+      ],
+      "priority": 0,
+      "required_commands": []
+    },
+    {
+      "name": "zcode",
+      "cli": [
+        "node",
+        "E:\\Program Files\\ZCode\\resources\\glm\\zcode.cjs"
+      ],
+      "enabled": true,
+      "capabilities": [
+        "coordinator",
+        "owner",
+        "reviewer",
+        "integrator"
+      ],
+      "strengths": [
+        "coding",
+        "large_context",
+        "repo_write"
+      ],
+      "priority": 0,
+      "required_commands": []
+    },
+    {
+      "name": "dsh",
+      "cli": "dsh",
+      "enabled": true,
+      "capabilities": [
+        "coordinator",
+        "owner",
+        "reviewer",
+        "integrator"
+      ],
+      "strengths": [
+        "review",
+        "analysis",
+        "large_context"
+      ],
+      "priority": 0,
+      "required_commands": []
+    },
+    {
+      "name": "antigravity",
+      "cli": "agy",
+      "enabled": true,
+      "capabilities": [
+        "coordinator",
+        "owner",
+        "reviewer",
+        "integrator"
+      ],
+      "strengths": [
+        "coding",
+        "focused_tasks",
+        "repo_write"
+      ],
+      "priority": 0,
+      "required_commands": []
+    }
+  ]
+}

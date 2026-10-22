@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "allowed_exact": [
+    "STATUS.md",
+    "PLAN.md",
+    "REBASELINE_PLAN.md",
+    "doc/STATUS.md",
+    "doc/PLAN.md",
+    "doc/REBASELINE_PLAN.md",
+    "docs/STATUS.md",
+    "docs/PLAN.md",
+    "docs/REBASELINE_PLAN.md"
+  ],
+  "allowed_prefixes": [
+    ".orchestrator/tasks/",
+    "tasks/",
+    "doc/tasks/",
+    "docs/tasks/"
+  ],
+  "hard_deny_prefixes": [
+    ".git/"
+  ]
+}
