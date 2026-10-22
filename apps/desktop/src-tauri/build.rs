@@ -1,4 +1,6 @@
 fn main() {
+    println!("cargo:rerun-if-env-changed=M2RC1_DEV_PREVIEW");
+
     // M2-AC5-BUILD-FRESH-CHECKOUT: fail-closed, actionable probe for the
     // gitignored Core sidecar bundle BEFORE tauri_build::try_build runs.
     //
@@ -15,17 +17,22 @@ fn main() {
     // fast, deterministic and free of Python/venv dependencies; fail-closed
     // + diagnosable beats hidden heavy rebuilds. The build script's cwd is
     // unspecified, so anchor on CARGO_MANIFEST_DIR (this crate's dir).
-    let sidecar_bundle = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("target")
-        .join("core-sidecar")
-        .join("core-sidecar");
-    if !sidecar_bundle.is_dir() {
-        panic!(
-            "missing sidecar bundle: {} does not exist (gitignored build artifact, absent on a fresh checkout).\n\
-             Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).\n\
-             See packaging/m2ac5/README.md (fresh checkout section) for the full setup.",
-            sidecar_bundle.display()
-        );
+    let dev_preview = std::env::var("M2RC1_DEV_PREVIEW").unwrap_or_default() == "1";
+    if !dev_preview {
+        let sidecar_bundle = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("target")
+            .join("core-sidecar")
+            .join("core-sidecar");
+        if !sidecar_bundle.is_dir() {
+            panic!(
+                "missing sidecar bundle: {} does not exist (gitignored build artifact, absent on a fresh checkout).\n\
+                 Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).\n\
+                 See packaging/m2ac5/README.md (fresh checkout section) for the full setup.",
+                sidecar_bundle.display()
+            );
+        }
+    } else {
+        // Local preview runs Python Core via `python -m infrastructure.resource_channel.host_bridge`; it never bundles a sidecar.
     }
 
     // RC2-AC1 (F-03) + R2-01(a): the app's own commands are declared in the

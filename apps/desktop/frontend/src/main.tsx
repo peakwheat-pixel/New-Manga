@@ -1,9 +1,17 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { installDevMockBridge } from "./dev/devMockBridge";
 import { FpsRecorderPanel } from "./perf/FpsRecorderPanel";
 import { readFpsRecorderRequest, startFpsRecorder } from "./perf/fpsRecorder";
 
 // No StrictMode: the ?probe=1 evidence matrix must execute exactly once.
+
+// Vite dev-server only: 没有真实 Tauri 桥时装上浏览器预览垫片，必须在 render
+// 之前同步执行，否则 App 的启动探测已经判定 TAURI_BRIDGE_MISSING 并停下。
+const devEnv = (import.meta as unknown as { env?: { DEV?: boolean } }).env;
+if (devEnv?.DEV) {
+  installDevMockBridge();
+}
 
 // P20-AC4-FPS-1: opt-in rAF frame-time sampling. Default path evaluates the
 // three explicit switches once (build flag / ?m2_fps=1 / localStorage) and
