@@ -23,9 +23,10 @@
 |GIT-MAINLINE-CONVERGENCE-1|—|done（r3 approved 6997733bf；refs/heads 仅 main、worktree 1、21 条归档、2.6GiB 可恢复）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
 |GOV-DIRECTORY-CLEANUP-1|—|done（r1 approved 40acf35b7；五根 171 项，2 项归档后删除、净释放 426.3 MiB）|
+|SETTINGS-OPEN-A-1|P15、P15-C1|in_progress（用户 2026-10-22 裁决开放全部设置分区；批次 A 实现 commit 87ae85a，r1 Review changes_requested，返修 r2 中；批次 B/C 待登记）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**无**。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+READY 节点：**无**。SETTINGS-OPEN-A-1 以 in_progress 执行中（非 READY），批次 B/C 待其关闭后登记。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 

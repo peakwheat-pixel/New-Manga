@@ -7,10 +7,11 @@ import { SettingsClient } from "./client";
 import { TypesetSettingsPanel } from "./TypesetSettingsPanel";
 
 /**
- * SETTINGS-OPEN-A-1 §3.4 / AC3+AC4 — the typeset default-style section:
- * eleven editable keys (font_family intentionally absent), #RRGGBB colors
- * with a text echo, numeric ranges, exact payload, post-save re-read and the
- * closed §9 error projection.
+ * SETTINGS-OPEN-A-1 §3.4 / AC3+AC4 — the typeset default-style section.
+ *
+ * 返修 r2（review r1）后的冻结面：10 个可编辑键。`font_family` 本批不开放；
+ * `fill_color` 因全链路无消费者（B2）已移除；`text_align` 值域收窄为
+ * left | center（M2）；`auto_font_size=false` 时必须填写 manual_font_size（M1）。
  */
 describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
   let dom: JSDOM;
@@ -42,14 +43,14 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
   const saveButton = () =>
     q('[data-testid="typeset-settings-panel-save-btn"]') as HTMLButtonElement;
 
+  /** Ten keys; fill_color is gone (B2) and font_family was never part of it. */
   const FULL_SECTION = {
     text_color: "#101010",
-    fill_color: "#fafafa",
     stroke_enabled: false,
     stroke_color: "#202020",
     stroke_width: 2.5,
     line_spacing: 1.4,
-    text_align: "right",
+    text_align: "center",
     text_direction: "horizontal",
     auto_font_size: false,
     font_size_offset: -1,
@@ -77,17 +78,23 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
     expect(q('[data-testid="typeset-settings-panel-unset"]')).toBeNull();
     expect(input("typeset-text-color").value).toBe("#101010");
     expect(q('[data-testid="typeset-text-color-value"]')?.textContent).toBe("#101010");
-    expect(input("typeset-fill-color").value).toBe("#fafafa");
     expect(input("typeset-stroke-enabled").checked).toBe(false);
     expect(input("typeset-stroke-color").value).toBe("#202020");
     expect(input("typeset-stroke-width").value).toBe("2.5");
     expect(input("typeset-line-spacing").value).toBe("1.4");
-    expect(select("typeset-text-align").value).toBe("right");
+    expect(select("typeset-text-align").value).toBe("center");
+    // M2: the select offers exactly left | center (right has no renderer).
+    expect(Array.from(select("typeset-text-align").options).map((option) => option.value)).toEqual([
+      "left",
+      "center",
+    ]);
     expect(select("typeset-text-direction").value).toBe("horizontal");
     expect(input("typeset-auto-font-size").checked).toBe(false);
     expect(input("typeset-font-size-offset").value).toBe("-1");
     expect(input("typeset-manual-font-size").value).toBe("22");
-    // font_family is NOT part of the batch A surface
+    // B2: fill_color has no consumer anywhere in Core — no fake control.
+    expect(q('[data-testid="typeset-fill-color"]')).toBeNull();
+    // font_family is NOT part of the batch A surface either.
     expect(q('[data-testid="typeset-font-family"]')).toBeNull();
     expect(q('[data-testid="typeset-settings-panel-effect-note"]')?.textContent).toContain(
       "对之后启动的任务生效",
@@ -105,7 +112,6 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
     expect(unset?.textContent).toContain("未设置");
     expect(unset?.textContent).toContain("#000000");
     expect(input("typeset-text-color").value).toBe("#000000");
-    expect(input("typeset-fill-color").value).toBe("#ffffff");
     expect(input("typeset-stroke-enabled").checked).toBe(true);
     expect(input("typeset-stroke-width").value).toBe("3");
     expect(input("typeset-line-spacing").value).toBe("1");
@@ -114,6 +120,16 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
     expect(input("typeset-auto-font-size").checked).toBe(true);
     expect(input("typeset-font-size-offset").value).toBe("0");
     expect(input("typeset-manual-font-size").value).toBe("");
+  });
+
+  it("collapses the legacy text_align values start/right onto left (M2, never written back)", async () => {
+    const invoke = vi.fn(async () => ({
+      settings: { typeset: { ...FULL_SECTION, text_align: "right", manual_font_size: 22 } },
+    }));
+    await act(async () => {
+      root.render(<TypesetSettingsPanel client={new SettingsClient(invoke)} />);
+    });
+    expect(select("typeset-text-align").value).toBe("left");
   });
 
   it("saves the exact whole-section payload with typed values and re-reads it", async () => {
@@ -125,7 +141,6 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
           section: "typeset",
           values: {
             text_color: "#112233",
-            fill_color: "#fafafa",
             stroke_enabled: false,
             stroke_color: "#202020",
             stroke_width: 4.5,
@@ -179,8 +194,12 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
     expect(q('[data-testid="typeset-settings-panel-save-error"]')).toBeNull();
   });
 
-  it("sends manual_font_size=null when the optional field is blank", async () => {
-    let stored: Record<string, unknown> = { ...FULL_SECTION };
+  it("sends manual_font_size=null when auto_font_size is on and the optional field is blank", async () => {
+    let stored: Record<string, unknown> = {
+      ...FULL_SECTION,
+      auto_font_size: true,
+      manual_font_size: 22,
+    };
     const saveCalls: Array<Record<string, unknown>> = [];
     const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
       if (command === "settings_update_section") {
@@ -196,16 +215,18 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
     await act(async () => {
       setNativeInputValue(dom.window, input("typeset-manual-font-size"), "");
     });
+    // auto=true keeps the empty manual size legal.
+    expect(saveButton().disabled).toBe(false);
     await act(async () => {
       saveButton().click();
     });
     expect(saveCalls).toHaveLength(1);
+    expect(saveCalls[0].auto_font_size).toBe(true);
     expect(saveCalls[0].manual_font_size).toBeNull();
     // the rest of the section is always written as a whole-section upsert
     expect(Object.keys(saveCalls[0]).sort()).toEqual(
       [
         "auto_font_size",
-        "fill_color",
         "font_size_offset",
         "line_spacing",
         "manual_font_size",
@@ -217,6 +238,37 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
         "text_direction",
       ].sort(),
     );
+  });
+
+  it("M1: disabling auto_font_size without a manual size blocks the save with an inline error", async () => {
+    const invoke = vi.fn(async () => ({
+      settings: { typeset: { ...FULL_SECTION, auto_font_size: true, manual_font_size: 22 } },
+    }));
+    await act(async () => {
+      root.render(<TypesetSettingsPanel client={new SettingsClient(invoke)} />);
+    });
+    // Turn auto sizing off while a manual size is present → still valid.
+    await act(async () => {
+      input("typeset-auto-font-size").click();
+    });
+    expect(input("typeset-auto-font-size").checked).toBe(false);
+    expect(q('[data-testid="typeset-manual-font-size-error"]')).toBeNull();
+    // Clear the manual size → the combination would fail every render.
+    await act(async () => {
+      setNativeInputValue(dom.window, input("typeset-manual-font-size"), "");
+    });
+    const error = q('[data-testid="typeset-manual-font-size-error"]');
+    expect(error).not.toBeNull();
+    expect(error?.textContent).toContain("必须填写");
+    expect(input("typeset-manual-font-size").getAttribute("aria-invalid")).toBe("true");
+    expect(saveButton().disabled).toBe(true);
+    expect(invoke).not.toHaveBeenCalledWith("settings_update_section", expect.anything());
+    // Filling a legal manual size clears the cross-field error and re-enables save.
+    await act(async () => {
+      setNativeInputValue(dom.window, input("typeset-manual-font-size"), "30");
+    });
+    expect(q('[data-testid="typeset-manual-font-size-error"]')).toBeNull();
+    expect(saveButton().disabled).toBe(false);
   });
 
   it("blocks the save and explains both numeric range violations", async () => {
@@ -278,7 +330,7 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
       root.render(<TypesetSettingsPanel client={new SettingsClient(invoke)} />);
     });
     await act(async () => {
-      setNativeSelectValue(dom.window, select("typeset-text-align"), "center");
+      setNativeSelectValue(dom.window, select("typeset-text-align"), "left");
     });
     await act(async () => {
       saveButton().click();
@@ -286,7 +338,8 @@ describe("TypesetSettingsPanel (SETTINGS-OPEN-A-1 §3.4)", () => {
     const bar = q('[data-testid="typeset-settings-panel-save-error"]');
     expect(bar).not.toBeNull();
     expect(bar?.getAttribute("data-error-category")).toBe("validation");
-    expect(select("typeset-text-align").value).toBe("center");
-    expect(q('[data-testid="typeset-settings-panel-effective"]')?.textContent).toContain("右对齐");
+    expect(select("typeset-text-align").value).toBe("left");
+    // The effective value is unchanged until a save succeeds (stored is center).
+    expect(q('[data-testid="typeset-settings-panel-effective"]')?.textContent).toContain("居中");
   });
 });

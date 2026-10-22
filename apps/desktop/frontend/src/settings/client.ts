@@ -60,6 +60,26 @@ export const SETTINGS_UPDATE_SECTION_COMMAND = "settings_update_section";
 /** The settings section this Task touches (Python: settings["sfx"]). */
 export const SFX_SECTION = "sfx";
 
+/**
+ * SETTINGS-OPEN-A-1 m2（review r1）— the closed set of sections addressable
+ * through the generic section read/write pair: the four batch-A sections
+ * frozen by doc/design/SETTINGS_SECTION_SCHEMAS.md §3 plus the pre-existing
+ * `sfx` section. Sections outside this union are a COMPILE-TIME error; the
+ * Core stays fail-closed for unknown sections, but the UI must not even be
+ * able to express one.
+ */
+export type EditableSettingsSection = "ocr" | "translate" | "inpaint" | "typeset" | "sfx";
+
+/** Runtime mirror of {@link EditableSettingsSection} — a drift alarm pinned
+ * in the structural guard test; never iterated to build requests. */
+export const EDITABLE_SETTINGS_SECTIONS: readonly EditableSettingsSection[] = [
+  "ocr",
+  "translate",
+  "inpaint",
+  "typeset",
+  "sfx",
+] as const;
+
 /* P15-C1 §2 — the frozen production-only Tauri command names for the new
  * settings surface. Pinned as constants exactly like the settings_get pair
  * above: renaming any of them is a wire drift. The runtime host registers
@@ -200,8 +220,11 @@ export class SettingsClient {
    * callers can render the explicit "未设置" affordance instead of inventing
    * values. Non-object payloads fail closed to null: the Core is the authority
    * for each section's shape, the UI never guesses.
+   *
+   * `section` is the frozen {@link EditableSettingsSection} union (m2): an
+   * arbitrary section name is a compile error, not a runtime convention.
    */
-  async getSection<T>(section: string): Promise<T | null> {
+  async getSection<T>(section: EditableSettingsSection): Promise<T | null> {
     try {
       const res = (await this.invoke(SETTINGS_GET_COMMAND, { section })) as {
         settings?: Record<string, unknown>;
@@ -226,8 +249,14 @@ export class SettingsClient {
    * `save_settings_section(section, values)`. Key-level whitelist/value-domain
    * validation stays in the Core (SettingsRequestError → INVALID_REQUEST);
    * this client only preserves the closed error projection.
+   *
+   * `section` is the frozen {@link EditableSettingsSection} union (m2): the
+   * UI cannot express a section outside the batch-A + sfx whitelist.
    */
-  async saveSection(section: string, values: Record<string, unknown>): Promise<void> {
+  async saveSection(
+    section: EditableSettingsSection,
+    values: Record<string, unknown>,
+  ): Promise<void> {
     try {
       await this.invoke(SETTINGS_UPDATE_SECTION_COMMAND, { section, values });
     } catch (error) {

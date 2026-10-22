@@ -1020,7 +1020,8 @@ def _payload_hash(image_bytes: bytes, region_id: str) -> str:
 #: Batch-A ``typeset`` values this reader accepts; the Core write gate
 #: (``bootstrap.settings_sections``) already enforces the same domains, so
 #: these checks only shield a render from corrupted/legacy stored values.
-_TYPESET_TEXT_ALIGNS = frozenset({"left", "center", "right"})
+#: ``text_align`` stays left/center: the compositors do not implement ``right``.
+_TYPESET_TEXT_ALIGNS = frozenset({"left", "center"})
 _TEXT_DIRECTIONS = {direction.value: direction for direction in TextDirection}
 
 
@@ -1041,7 +1042,7 @@ def typeset_style_defaults(settings: Mapping[str, Any]) -> RenderTextStyle | Non
     if not isinstance(section, Mapping) or not section:
         return None
     kwargs: dict[str, Any] = {}
-    for key in ("text_color", "fill_color", "stroke_color"):
+    for key in ("text_color", "stroke_color"):
         value = section.get(key)
         if _is_hex_color(value):
             kwargs[key] = value

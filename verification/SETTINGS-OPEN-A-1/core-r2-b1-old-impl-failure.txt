@@ -1,0 +1,80 @@
+FFF.                                                                     [100%]
+================================== FAILURES ===================================
+____ test_default_region_inherits_every_typeset_default_into_the_render_op ____
+
+    def test_default_region_inherits_every_typeset_default_into_the_render_op() -> None:
+        """B1: a brand-new Region (no persisted style) must render with the
+        ``typeset`` defaults, not with the synthesised zero-stroke snapshot."""
+        service, engine = _service()
+    
+        prepared = _prepare(service, _region(), _typeset_defaults())
+    
+        assert prepared.op is not None, prepared.report.skip_reason
+        op = prepared.op
+        assert op.text_color == "#112233"
+>       assert op.stroke_enabled is False
+E       AssertionError: assert True is False
+E        +  where True = RenderOp(items=(), region_x=10, region_y=20, region_width=220, region_height=120, font_family='Source Han Sans K Bold'...True, stroke_color='#FFFFFF', stroke_width=0.0, direction=<TextDirection.HORIZONTAL: 'horizontal'>, text_align='start').stroke_enabled
+
+tests\rendering\test_typeset_defaults_merge.py:123: AssertionError
+______ test_region_persisting_only_text_color_keeps_every_other_default _______
+
+    def test_region_persisting_only_text_color_keeps_every_other_default() -> None:
+        """Old implementation leaked ``stroke_width=0.0``/``offset=0`` from the
+        synthesised snapshot even when only one field was really persisted."""
+        service, _engine = _service()
+    
+        prepared = _prepare(
+            service, _region(TextStyle(text_color="#ABCDEF")), _typeset_defaults()
+        )
+    
+        assert prepared.op is not None
+        assert prepared.op.text_color == "#ABCDEF"  # persisted Region value wins
+>       assert prepared.op.stroke_enabled is False  # default applies
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert True is False
+E        +  where True = RenderOp(items=(), region_x=10, region_y=20, region_width=220, region_height=120, font_family='Source Han Sans K Bold'...True, stroke_color='#FFFFFF', stroke_width=0.0, direction=<TextDirection.HORIZONTAL: 'horizontal'>, text_align='start').stroke_enabled
+E        +    where RenderOp(items=(), region_x=10, region_y=20, region_width=220, region_height=120, font_family='Source Han Sans K Bold'...True, stroke_color='#FFFFFF', stroke_width=0.0, direction=<TextDirection.HORIZONTAL: 'horizontal'>, text_align='start') = _Prepared(report=RegionRenderReport(region_id='region-typeset-merge', status='rendered', skip_reason=None, final_font_...rue, stroke_color='#FFFFFF', stroke_width=0.0, direction=<TextDirection.HORIZONTAL: 'horizontal'>, text_align='start')).op
+
+tests\rendering\test_typeset_defaults_merge.py:149: AssertionError
+___________ test_persisted_region_style_overrides_typeset_defaults ____________
+
+    def test_persisted_region_style_overrides_typeset_defaults() -> None:
+        """D03 ��11.4 reverse case: every domain TextStyle field the Region really
+        persisted wins over the global defaults."""
+        service, _engine = _service()
+        persisted = TextStyle(
+            font_family="Persisted Font",
+            font_size=30,
+            text_color="#ABCDEF",
+            stroke_color="#123456",
+            stroke_width=2.0,
+            auto_font_size_enabled=False,
+        )
+    
+        prepared = _prepare(service, _region(persisted), _typeset_defaults())
+    
+        assert prepared.op is not None
+        op = prepared.op
+        assert op.font_family == "Persisted Font"
+        assert op.text_color == "#ABCDEF"
+        assert op.stroke_enabled is True  # a persisted stroke width means enabled
+        assert op.stroke_color == "#123456"
+        assert op.stroke_width == 2.0
+        assert op.font_size == 30.0  # manual size (auto_font_size_enabled=False)
+        assert prepared.report.resolution is not None
+        assert prepared.report.resolution.auto is False
+    
+        # Fields the domain snapshot cannot express always inherit the defaults.
+>       assert op.text_align == "center"
+E       AssertionError: assert 'start' == 'center'
+E         
+E         - center
+E         + start
+
+tests\rendering\test_typeset_defaults_merge.py:184: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/rendering/test_typeset_defaults_merge.py::test_default_region_inherits_every_typeset_default_into_the_render_op
+FAILED tests/rendering/test_typeset_defaults_merge.py::test_region_persisting_only_text_color_keeps_every_other_default
+FAILED tests/rendering/test_typeset_defaults_merge.py::test_persisted_region_style_overrides_typeset_defaults
+3 failed, 1 passed in 0.14s

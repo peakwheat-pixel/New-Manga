@@ -100,7 +100,6 @@ _LEGAL_VALUES = {
     },
     "typeset": {
         "text_color": "#112233",
-        "fill_color": "#FFFFFF",
         "stroke_enabled": False,
         "stroke_color": "#000000",
         "stroke_width": 3,
@@ -124,7 +123,6 @@ _NORMALIZED_VALUES = {
     },
     "typeset": {
         "text_color": "#112233",
-        "fill_color": "#FFFFFF",
         "stroke_enabled": False,
         "stroke_color": "#000000",
         "stroke_width": 3.0,
@@ -168,6 +166,38 @@ def test_manual_font_size_accepts_null() -> None:
     }
 
 
+@pytest.mark.parametrize(
+    "values",
+    [
+        # review r1 M1: manual mode without a manual size makes every render
+        # fail closed (StyleResolutionError), so the write is rejected.
+        {"auto_font_size": False},
+        {"auto_font_size": False, "manual_font_size": None},
+        {"auto_font_size": False, "text_color": "#112233"},
+    ],
+)
+def test_typeset_manual_mode_requires_a_manual_font_size(values: dict) -> None:
+    with pytest.raises(SettingsSectionError) as raised:
+        validate_settings_section("typeset", values)
+    message = str(raised.value)
+    assert "manual_font_size" in message
+    assert "auto_font_size" in message
+
+
+def test_typeset_auto_mode_allows_a_null_manual_font_size() -> None:
+    assert validate_settings_section(
+        "typeset", {"auto_font_size": True, "manual_font_size": None}
+    ) == {"auto_font_size": True, "manual_font_size": None}
+
+
+def test_typeset_manual_mode_with_a_size_is_accepted() -> None:
+    values = {"auto_font_size": False, "manual_font_size": 24}
+    assert validate_settings_section("typeset", values) == {
+        "auto_font_size": False,
+        "manual_font_size": 24.0,
+    }
+
+
 @pytest.mark.parametrize("section", sorted(_LEGAL_VALUES))
 def test_empty_values_are_accepted_for_every_batch_a_section(section: str) -> None:
     assert validate_settings_section(section, {}) == {}
@@ -187,6 +217,9 @@ _UNKNOWN_KEYS = [
     ("translate", {"glossary": {"term": "x"}}),
     ("inpaint", {"route_policy": "auto"}),
     ("typeset", {"font_family": "Arial"}),
+    # review r1 B2: fill_color has no consumer (RenderOp/layout/compositor do
+    # not read it), so it was removed from the batch-A whitelist.
+    ("typeset", {"fill_color": "#FFFFFF"}),
     ("typeset", {"definitely_not_a_key": True}),
 ]
 
@@ -218,7 +251,6 @@ _ILLEGAL_VALUES = [
     ("inpaint", {"dilate_radius": 11}),
     ("inpaint", {"erode_radius": 11}),
     ("typeset", {"text_color": "red"}),
-    ("typeset", {"fill_color": "#12345"}),
     ("typeset", {"stroke_color": "#1234567"}),
     ("typeset", {"text_color": "#GGGGGG"}),
     ("typeset", {"stroke_width": -0.1}),
@@ -226,6 +258,8 @@ _ILLEGAL_VALUES = [
     ("typeset", {"line_spacing": 0.9}),
     ("typeset", {"line_spacing": 3.1}),
     ("typeset", {"text_align": "justify"}),
+    # review r1 M2: ``right`` is not implemented by either compositor.
+    ("typeset", {"text_align": "right"}),
     ("typeset", {"text_direction": "diagonal"}),
     ("typeset", {"font_size_offset": -6}),
     ("typeset", {"font_size_offset": 6}),
@@ -309,6 +343,7 @@ def test_four_sections_legal_write_round_trip_and_projection(server) -> None:
         ("typeset", "stroke_width", 21),
         ("typeset", "font_size_offset", 6),
         ("typeset", "manual_font_size", 0),
+        ("typeset", "text_align", "right"),
     ],
 )
 def test_wire_illegal_value_rejected_before_persistence(
@@ -353,6 +388,27 @@ def test_wire_illegal_write_keeps_an_unset_section_unset(server) -> None:
     }
 
 
+def test_wire_typeset_manual_mode_without_size_rejected_and_not_persisted(
+    server,
+) -> None:
+    """review r1 M1: the render-blocking combination never reaches the store."""
+    for values in (
+        {"auto_font_size": False},
+        {"auto_font_size": False, "manual_font_size": None},
+    ):
+        rejected = _request(
+            server,
+            "settings.update_section",
+            {"section": "typeset", "values": values},
+        )
+        assert rejected["result"] is None
+        assert rejected["error"]["code"] == "INVALID_REQUEST"
+        assert "manual_font_size" in rejected["error"]["message"]
+        assert (
+            server._core.pipeline_defaults.read().settings.get("typeset") is None
+        )
+
+
 @pytest.mark.parametrize(
     "section,values",
     [
@@ -360,6 +416,7 @@ def test_wire_illegal_write_keeps_an_unset_section_unset(server) -> None:
         ("translate", {"glossary": {"term": "x"}}),
         ("inpaint", {"route_policy": "auto"}),
         ("typeset", {"font_family": "Arial"}),
+        ("typeset", {"fill_color": "#FFFFFF"}),
     ],
 )
 def test_wire_unknown_key_rejected_and_not_persisted(
@@ -526,7 +583,6 @@ def test_manual_rerender_page_uses_the_persisted_typeset_defaults(server) -> Non
     style = recorded["style_defaults"]
     assert isinstance(style, RenderTextStyle)
     assert style.text_color == "#112233"
-    assert style.fill_color == "#FFFFFF"
     assert style.stroke_enabled is False
     assert style.stroke_color == "#000000"
     assert style.stroke_width == 3.0
@@ -684,7 +740,6 @@ def test_handle_render_maps_the_typeset_whitelist_from_the_run_snapshot() -> Non
     style = _render_call({"typeset": _LEGAL_VALUES["typeset"]})
     assert isinstance(style, RenderTextStyle)
     assert style.text_color == "#112233"
-    assert style.fill_color == "#FFFFFF"
     assert style.stroke_enabled is False
     assert style.stroke_color == "#000000"
     assert style.stroke_width == 3.0
@@ -696,6 +751,10 @@ def test_handle_render_maps_the_typeset_whitelist_from_the_run_snapshot() -> Non
     assert style.manual_font_size == 24.0
     # font_family is deliberately NOT in the batch-A white-list: default kept.
     assert style.font_family == RenderTextStyle().font_family
+    # fill_color has no consumer (review r1 B2) and is not mapped: a legacy
+    # snapshot carrying it must not resurrect the fake control.
+    assert "fill_color" not in _LEGAL_VALUES["typeset"]
+    assert style.fill_color == RenderTextStyle().fill_color
 
 
 @pytest.mark.parametrize(
@@ -720,10 +779,9 @@ def test_typeset_style_defaults_is_defensive_against_corrupt_values() -> None:
             "typeset": {
                 "text_color": "#112233",
                 # corrupted / legacy values are skipped, defaults kept
-                "fill_color": "rgb(1,2,3)",
                 "stroke_width": 99,
                 "line_spacing": 0.1,
-                "text_align": "justify",
+                "text_align": "right",
                 "text_direction": "diagonal",
                 "font_size_offset": 99,
                 "manual_font_size": 10000,

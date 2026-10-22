@@ -43,7 +43,7 @@ from application.rendering.style import (
 )
 from application.translation.color.service import SourceStyleService
 from application.translation.context.gate import decide_sfx_translation
-from domain.regions.entities import RegionType, SfxPolicy
+from domain.regions.entities import RegionType, SfxPolicy, TextStyle
 from ports.repositories.artifacts import (
     ArtifactRecord,
     ArtifactRepositoryPort,
@@ -472,7 +472,10 @@ class RenderService:
 
         style = RenderTextStyle.from_domain(region.style)
         if style_defaults is not None:
-            style = _merge_defaults(style, style_defaults)
+            # Use the RAW domain TextStyle to decide what the Region really
+            # persisted; ``style`` also carries synthesis defaults (0 stroke,
+            # offset 0, ...) that must never shadow the global defaults (B1).
+            style = _merge_defaults(region.style, style, style_defaults)
 
         source_result = None
         if original_bytes is not None:
@@ -672,34 +675,45 @@ def _sfx_gate_allows(
 
 
 def _merge_defaults(
-    style: RenderTextStyle, defaults: RenderTextStyle
+    domain_style: TextStyle,
+    style: RenderTextStyle,
+    defaults: RenderTextStyle,
 ) -> RenderTextStyle:
-    """Region-persisted values win; D03 §11.4 inheritance order."""
+    """Region-persisted values win; D03 §11.4 inheritance order.
+
+    ``domain_style`` is the RAW persisted ``TextStyle`` (the only source of
+    "was this field explicitly set?"); ``style`` is its render-side synthesis
+    (``RenderTextStyle.from_domain``). The synthesised fields that the domain
+    model cannot persist (``stroke_width=0.0`` default, ``font_size_offset=0``,
+    ``line_spacing=1.0``, ``text_align="start"``, ``text_direction=AUTO``) must
+    NOT shadow the global defaults -- review r1 blocker B1. Only a persisted
+    ``font_family`` / ``text_color`` / stroke pair / font-size choice overrides
+    the defaults; everything else (including the four fields absent from the
+    domain ``TextStyle``) inherits from ``defaults``.
+    """
     from dataclasses import replace as _replace
 
-    domain_set = style
     merged = defaults
-    if domain_set.font_family != RenderTextStyle().font_family:
-        merged = _replace(merged, font_family=domain_set.font_family)
-    if domain_set.text_color != RenderTextStyle().text_color:
-        merged = _replace(merged, text_color=domain_set.text_color)
-    if domain_set.stroke_width != RenderTextStyle().stroke_width:
+    if domain_style.font_family:
+        merged = _replace(merged, font_family=style.font_family)
+    if domain_style.text_color:
+        merged = _replace(merged, text_color=style.text_color)
+    # The domain TextStyle has no ``stroke_enabled``: a non-zero width or a
+    # stored colour is the persisted marker; the synthesised style then decides
+    # enabled/colour/width as a group (historical rendering convention).
+    if domain_style.stroke_width != 0.0 or bool(domain_style.stroke_color):
         merged = _replace(
             merged,
-            stroke_enabled=domain_set.stroke_enabled,
-            stroke_color=domain_set.stroke_color,
-            stroke_width=domain_set.stroke_width,
+            stroke_enabled=style.stroke_enabled,
+            stroke_color=style.stroke_color,
+            stroke_width=style.stroke_width,
         )
-    if not domain_set.auto_font_size_enabled:
+    # ``auto_font_size_enabled=False`` (manual mode) or an explicit font_size is
+    # the persisted marker for the font-size group.
+    if domain_style.font_size is not None or not domain_style.auto_font_size_enabled:
         merged = _replace(
             merged,
-            auto_font_size_enabled=False,
-            manual_font_size=domain_set.manual_font_size,
+            auto_font_size_enabled=style.auto_font_size_enabled,
+            manual_font_size=style.manual_font_size,
         )
-    return _replace(
-        merged,
-        font_size_offset=domain_set.font_size_offset,
-        line_spacing=domain_set.line_spacing,
-        text_direction=domain_set.text_direction,
-        text_align=domain_set.text_align,
-    )
+    return merged

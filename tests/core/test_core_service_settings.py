@@ -216,8 +216,9 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
 
     # SETTINGS-OPEN-A-1: the batch-A sections accept only their frozen key
     # set, so the same path-shaped payload is rejected BEFORE persistence and
-    # never echoed -- a stronger guarantee than output redaction.
-    for section in ("ocr", "inpaint", "typeset"):
+    # never echoed -- a stronger guarantee than output redaction. (review r1
+    # m3: ``translate`` belongs to the same whitelisted batch-A set.)
+    for section in ("ocr", "translate", "inpaint", "typeset"):
         rejected = _request(
             server,
             "settings.update_section",

@@ -1,85 +1,128 @@
-# SETTINGS-OPEN-A-1 前端实现报告（批次 A）
+# SETTINGS-OPEN-A-1 前端实现报告（批次 A，含返修 r2）
 
-- 团队任务：`task-2`（SETTINGS-OPEN-A-1 Frontend：四个设置面板 + 分类开放）
+- 团队任务：`task-2`（初版）、`task-4`（返修 r2）
 - 实现 agent：`ui-settings-a`（DeepSeek Harness）
 - 仓库 / 分支：`G:\CODEX\New Manga` / `main`（未 commit、未 push）
-- 依据：[SETTINGS 分区 Schema 设计 §3](../doc/design/SETTINGS_SECTION_SCHEMAS.md)、[SETTINGS-OPEN-A-1 任务](../doc/tasks/SETTINGS-OPEN-A-1.md)
+- 依据：[SETTINGS 分区 Schema 设计 §3](../doc/design/SETTINGS_SECTION_SCHEMAS.md)、[SETTINGS-OPEN-A-1 任务](../doc/tasks/SETTINGS-OPEN-A-1.md)、[独立 Review r1](review-r1.md)
 - 实现范围：仅 `apps/desktop/frontend/src/settings/**` 与 `verification/SETTINGS-OPEN-A-1/**`
+- 返修状态：review r1 的前端 finding **B2 / M1 / M2 / m2 / m5 已处理**（见 §2）；其余 finding（B1 等 Core 侧、M3/M4/m1/m3/m4/m6/n1/n2）不在本 agent 范围，见 §7。
 
-## 1. 交付结论
+## 1. 交付结论（r2）
 
-- 设置页 `ocr` / `translate`（翻译参数/上下文）/ `inpaint` / `typeset` 四个分区已开放；
+- 设置页 `ocr` / `translate`（翻译参数/上下文）/ `inpaint` / `typeset` 四个分区开放；
   `translation` 分类保留 SFX 面板并加入翻译参数面板；`ocr` / `inpaint` / `typeset`
   内容区为真实可编辑面板，不再渲染 `DisabledSection`。
 - 四个面板均实现：section 读取（`settings_get {section}`）、JSON null 的“未设置 + Core
   默认值”提示、前端值域校验、整节保存（`settings_update_section {section, values}`）、
   保存后重新读取回显、加载/保存错误走 `SettingsErrorBar`（关闭 §9 投影）、
   “对之后启动的任务生效”说明、保存中禁用与错误不丢草稿。
+- r2 之后 `typeset` 的冻结面为 **10 键**（移除 `fill_color`，本批仍不含 `font_family`）；
+  `text_align` 值域收窄为 `left | center`；关闭自动字号时必须填写手动字号（前后端一致约束）。
 - 其余 6 个分区（model_gpu / task_concurrency / cache_revision / recycle_bin /
   backup_restore / plugins）保持禁用占位与 `未开放` 徽标；导航 `aria-label`/`title`
   的“未开放：等待 section schema 冻结”只保留给这 6 个分区。
-- 测试：`pnpm --dir apps/desktop/frontend test` 全绿（37 files / 364 tests），
-  `tsc --noEmit` 无错误；`npm test`（同一 vitest 套件，仓库跟踪的 package-lock 通道）交叉验证一致。
 - Lead 裁决同步：`translate.context_token_budget` 键名保持不变，前端按设计 §3.2 原样提交，
   未做任何改名或降级。
+- 测试：`npm --prefix apps/desktop/frontend test` 全绿（37 files / 367 tests）；
+  `tsc --noEmit` 无错误。
 
-## 2. 改动清单
+## 2. 返修 r2 记录（review r1 finding → 处理）
 
-### 2.1 修改（M）
+| finding | 处理 | 落点 / 证据 |
+|---|---|---|
+| **B2**（blocker）`typeset.fill_color` 全链路无消费者（假控件） | 前端彻底移除：`TypesetSettingsDraft` 字段、默认值、归一化、校验、payload、持久化值摘要、面板控件全部删除；测试断言页面不存在 `typeset-fill-color` 控件 | `sections.ts`（类型/默认/归一化/`validateTypesetSettingsDraft`/`typesetSettingsValues`/`describeTypesetSettings`）、`TypesetSettingsPanel.tsx`、`TypesetSettingsPanel.test.tsx`（“reads …”“sends manual_font_size=null …” 两条测试均显式断言无该控件/无该键）；保存 payload 键集测试改为 10 键 |
+| **M2**（major）`text_align: right` 无渲染实现 | 值域收窄为 `left \| center`：类型、`TEXT_ALIGN_VALUES`、标签、校验文案、下拉选项同步；旧持久化 `start`/`right` 读取时折叠为 `left` 展示且永不写回；测试断言下拉只有 `left`/`center`，并新增“legacy start/right → left”用例 | `sections.ts`、`TypesetSettingsPanel.tsx`、`TypesetSettingsPanel.test.tsx` |
+| **M1**（major）`auto_font_size=false` + `manual_font_size=null` 会让渲染失败 | 新增跨字段校验：关闭自动字号时 `manual_font_size` 必填（非空且 1–500），否则行内错误 + 禁止保存；`auto_font_size=true` 时留空合法；payload 仍整节 upsert 且 `manual_font_size: number \| null`；新增专门测试（关闭自动→清空→错误+禁用；填回合法值→错误消失+可保存） | `sections.ts::validateTypesetSettingsDraft`、`TypesetSettingsPanel.tsx`（行内错误/禁用态/hint）、`TypesetSettingsPanel.test.tsx`（M1 用例） |
+| **m2**（minor）section 参数为任意 `string` | `getSection` / `saveSection` 参数收窄为冻结 union `EditableSettingsSection = "ocr" \| "translate" \| "inpaint" \| "typeset" \| "sfx"`；新增运行时镜像 `EDITABLE_SETTINGS_SECTIONS`；`useSettingsSection` 同类型；`client.p15.test.ts` 恢复结构守卫：运行时钉住 5 个节名 + 用 `@ts-expect-error` 保证“任意节名（如 `bogus_section`）是编译错误”（由验收命令中的 `tsc --noEmit` 强制执行；闭包不执行、无 wire 调用） | `client.ts`、`useSettingsSection.ts`、`client.p15.test.ts` |
+| **m5**（minor）验收通道不可复现（pnpm 依赖校验） | 验收主命令改为 `npm --prefix apps/desktop/frontend test`（仓库跟踪 `package-lock.json`）；原始证据重跑并覆盖为 npm 通道输出；本机 pnpm 11 自动生成的两个未跟踪环境文件已删除；`frontend-pnpm-test-raw.txt` 仅作历史环境记录，不再作为验收证据 | 本报告 §5、`frontend-npm-test-raw.txt`、`frontend-tsc-raw.txt` |
+
+未处理（超出本 agent 范围，留给 Lead/Core writer）：B1（`_merge_defaults` 优先级）、M3（冻结契约同步）、
+M4（base commit pin）、m1（`manual_font_size` 值域设计对齐）、m3（Core 测试拒绝循环补 `translate`）、
+m4（治理元数据）、m6（逐分区 GUI 烟测）、n1/n2（回读失败文案/损坏数据区分）。
+
+## 3. 改动清单
+
+### 3.1 本轮 r2 修改（相对 commit `87ae85a`）
 
 | 文件 | 变更 |
 |---|---|
-| `apps/desktop/frontend/src/settings/client.ts` | 新增通用 `getSection<T>(section): Promise<T \| null>` 与 `saveSection(section, values): Promise<void>`；复用 `SETTINGS_GET_COMMAND` / `SETTINGS_UPDATE_SECTION_COMMAND` 与 `SettingsClientError` 错误映射；null / 缺失 section 均返回 null（与 `getSfxSection` 的 frozen-None 语义一致），非对象载荷 fail-closed 为 null。既有方法语义未改。 |
-| `apps/desktop/frontend/src/settings/SettingsPage.tsx` | `ocr`/`inpaint`/`typeset` 改 `open: true`；翻译分类 `SfxPolicyControl` + `TranslationParamsPanel`；ocr/inpaint/typeset 渲染对应面板；`DISABLED_SECTION_TEST_IDS` 移除已开放分支；排版分类内“阅读方向”改为只读指引说明（设计 §3.4，不提供假控件、不再用 DisabledSection 占位）；标题注释同步。 |
-| `apps/desktop/frontend/src/settings/SettingsPage.test.tsx` | 按行为变化更新：分类 open 断言（6 开 / 6 关）、开放分类可点击并渲染真实面板、翻译参数占位消失、键盘导航断言与补充；保留 6 个仍禁用分区的 disabled + `未开放` + `等待 section schema 冻结` 断言。 |
-| `apps/desktop/frontend/src/settings/client.p15.test.ts` | 更新唯一一条随行为变化的“无通用 update 方法”结构守卫：`updateSection` 仍未定义，`saveSection` 现在是冻结的命名 section API（逐节白名单仍在 Core），`saveSfxPolicy` 不变。 |
+| `apps/desktop/frontend/src/settings/sections.ts` | 移除 `fill_color`（类型/默认/归一化/校验/payload/描述）；`TextAlign` 收窄为 `left \| center`（标签/值域/文案）；新增 M1 跨字段校验；归一化把旧 `start`/`right` 折叠为 `left` |
+| `apps/desktop/frontend/src/settings/TypesetSettingsPanel.tsx` | 移除“填充颜色”控件；对齐下拉只剩 left/center 并更新 hint；自动字号/手动字号 hint 说明跨字段约束；未设置文案去掉 fill_color |
+| `apps/desktop/frontend/src/settings/TypesetSettingsPanel.test.tsx` | 更新读取/保存/未设置用例为 10 键；断言无 fill_color 控件、对齐仅 left/center；新增 legacy align 与 M1 跨字段用例；保存 payload 键集更新 |
+| `apps/desktop/frontend/src/settings/client.ts` | 新增 `EditableSettingsSection` 冻结 union 与运行时镜像 `EDITABLE_SETTINGS_SECTIONS`；`getSection` / `saveSection` 参数收窄 |
+| `apps/desktop/frontend/src/settings/useSettingsSection.ts` | `section` 选项类型改用 `EditableSettingsSection` |
+| `apps/desktop/frontend/src/settings/client.p15.test.ts` | 结构守卫恢复为“冻结 union + 任意节名编译错误”的等价断言 |
+| `verification/SETTINGS-OPEN-A-1/ui-report.md` / `frontend-npm-test-raw.txt` / `frontend-tsc-raw.txt` | 本报告与 r2 重跑原始证据 |
 
-### 2.2 新增（A）
+### 3.2 初版交付文件（commit `87ae85a` 已包含，r2 后仍有效）
 
 | 文件 | 内容 |
 |---|---|
-| `apps/desktop/frontend/src/settings/sections.ts` | 批次 A 四节的单一前端事实源：section 名、枚举/值域/范围常量、Core 默认值、wire→draft 归一化、前端校验、draft→payload 构造、持久化值摘要文案。 |
-| `apps/desktop/frontend/src/settings/useSettingsSection.ts` | 四面板共享生命周期（加载 / 重试 / 保存 / 保存后重新读取 / 关闭错误投影），沿用 SfxPolicyControl 的状态模式。 |
-| `apps/desktop/frontend/src/settings/SectionPanelFrame.tsx` | 共享面板外壳：卡片、标题、加载骨架、“对之后启动的任务生效”说明、未设置提示、保存按钮/状态、错误条、当前持久化值。 |
-| `apps/desktop/frontend/src/settings/SectionField.tsx` | 共享字段行（label/htmlFor/hint/`role=alert` 行内校验）+ 输入样式 + `onChange`/`onInput` 双通道写草稿（jsdom 与 WebView 均可用，沿用 ProviderProfilePanel 既有模式）。 |
-| `apps/desktop/frontend/src/settings/OcrSettingsPanel.tsx` | `ocr.script`（japanese/korean/chinese/latin）、`ocr.direction`（horizontal/vertical）下拉 + 保存。 |
-| `apps/desktop/frontend/src/settings/TranslationParamsPanel.tsx` | `translate.context_pages`（int 1–5，默认 1）、`translate.context_token_budget`（int 200–8000，默认 2000）数字输入 + 前端范围校验。 |
-| `apps/desktop/frontend/src/settings/InpaintSettingsPanel.tsx` | `inpaint.preferred_quality`（fast/balanced/quality）、`background_complexity`（low/medium/high）、`dilate_radius`（0–10）、`erode_radius`（0–10），附“质量越高越慢”说明。 |
-| `apps/desktop/frontend/src/settings/TypesetSettingsPanel.tsx` | `typeset` 11 键：text_color / fill_color / stroke_color（`<input type="color">` + `#RRGGBB` 文本回显）、stroke_enabled、stroke_width（0–20）、line_spacing（1.0–3.0）、text_align（left/center/right）、text_direction（auto/horizontal/vertical）、auto_font_size、font_size_offset（-5..5）、manual_font_size（可空，1–500）。**不含 font_family**（本批不开放）。 |
-| `apps/desktop/frontend/src/settings/OcrSettingsPanel.test.tsx` | 6 tests：加载、读取回显+生效说明、未设置默认、保存 payload+重读、加载错误投影+重试、保存失败保留草稿。 |
-| `apps/desktop/frontend/src/settings/TranslationParamsPanel.test.tsx` | 8 tests：加载、读取回显、未设置默认、数值 payload+保存中+重读、context_pages 越界拦截、token_budget 越界拦截、加载错误、保存失败保留草稿。 |
-| `apps/desktop/frontend/src/settings/InpaintSettingsPanel.test.tsx` | 7 tests：加载、读取回显、未设置默认、payload+重读、dilate 越界拦截、加载错误、保存失败保留草稿。 |
-| `apps/desktop/frontend/src/settings/TypesetSettingsPanel.test.tsx` | 9 tests：加载、全键读取回显（含 font_family 不存在）、未设置默认样式、11 键 typed payload+重读、manual 空值→null、stroke/line 越界拦截、offset/manual 越界拦截、加载错误、保存失败保留草稿。 |
-| `apps/desktop/frontend/src/settings/client.sections.test.ts` | 6 tests：`getSection` 精确请求/返回、null 与缺失可区分、非对象 fail-closed、读错误映射；`saveSection` 精确 `{section, values}`、写错误映射。 |
+| `settings/client.ts` | 通用 `getSection<T>` / `saveSection`（r2 收窄 union），复用 `settings_get` / `settings_update_section` 与 `SettingsClientError` 错误映射 |
+| `settings/sections.ts` | 批次 A 四节单一事实源（section 名、值域、Core 默认值、归一化、校验、payload、摘要） |
+| `settings/useSettingsSection.ts` | 四面板共享生命周期（加载/重试/保存/保存后重读/错误投影） |
+| `settings/SectionPanelFrame.tsx` | 共享面板外壳（卡片、骨架、错误条、未设置提示、保存态、“对之后启动的任务生效”说明、当前持久化值） |
+| `settings/SectionField.tsx` | 共享字段行 + 输入样式 + `onChange`/`onInput` 双通道写草稿 |
+| `settings/OcrSettingsPanel.tsx` | `ocr.script` / `ocr.direction` |
+| `settings/TranslationParamsPanel.tsx` | `translate.context_pages`（1–5，默认 1）/ `context_token_budget`（200–8000，默认 2000） |
+| `settings/InpaintSettingsPanel.tsx` | `preferred_quality` / `background_complexity` / `dilate_radius`（0–10）/ `erode_radius`（0–10） |
+| `settings/TypesetSettingsPanel.tsx` | typeset 可编辑键（r2 后 10 键） |
+| `settings/SettingsPage.tsx` | 四个分类开放 + 翻译分类双面板 + 阅读方向指引说明 |
+| `settings/SettingsPage.test.tsx` | 6 开/6 关矩阵、开放面板渲染、禁用分区断言、键盘/ARIA 更新 |
+| `settings/*Panel.test.tsx`、`settings/client.sections.test.ts` | 各面板与公共 client 的挂载级测试 |
 
-### 2.3 关键 wire 契约（面板实际提交）
+### 3.3 关键 wire 契约（面板实际提交）
 
 | 节 | 提交值 |
 |---|---|
 | `ocr` | `{ script, direction }` |
 | `translate` | `{ context_pages: number, context_token_budget: number }` |
 | `inpaint` | `{ preferred_quality, background_complexity, dilate_radius: number, erode_radius: number }` |
-| `typeset` | `{ text_color, fill_color, stroke_enabled, stroke_color, stroke_width: number, line_spacing: number, text_align, text_direction, auto_font_size, font_size_offset: number, manual_font_size: number \| null }` |
+| `typeset`（r2 后） | `{ text_color, stroke_enabled, stroke_color, stroke_width: number, line_spacing: number, text_align: "left" \| "center", text_direction, auto_font_size, font_size_offset: number, manual_font_size: number \| null }` |
 
-均为整节 upsert，`section` 使用设计冻结名；每节的键域/值域校验仍由 Core 作为权威，前端校验仅为可用性预检。
+均为整节 upsert，`section` 使用设计冻结名且被 TS union 约束；每节的键域/值域校验仍由 Core 作为权威。
 
-## 3. 测试证据（原始结果）
+## 4. 类型/值域约束（前端侧）
 
-### 3.1 主命令（验收命令）
+| 键 | 前端约束 |
+|---|---|
+| `ocr.script` | `japanese \| korean \| chinese \| latin` |
+| `ocr.direction` | `horizontal \| vertical` |
+| `translate.context_pages` | 整数 1–5 |
+| `translate.context_token_budget` | 整数 200–8000 |
+| `inpaint.preferred_quality` | `fast \| balanced \| quality` |
+| `inpaint.background_complexity` | `low \| medium \| high` |
+| `inpaint.dilate_radius` / `erode_radius` | 整数 0–10 |
+| `typeset.text_color` / `stroke_color` | `#RRGGBB`（`<input type="color">` + 文本回显） |
+| `typeset.stroke_width` | 0–20 |
+| `typeset.line_spacing` | 1.0–3.0 |
+| `typeset.text_align` | `left \| center` |
+| `typeset.text_direction` | `auto \| horizontal \| vertical` |
+| `typeset.font_size_offset` | 整数 -5–+5 |
+| `typeset.manual_font_size` | 可空；非空时 1–500；`auto_font_size=false` 时**必填**（M1） |
+| `typeset.fill_color` | **已移除**（B2；前端不显示、不读取、不提交） |
+| `typeset.font_family` | 本批不开放（无控件、不提交） |
+
+## 5. 测试证据（原始结果，r2 重跑）
+
+### 5.1 验收主命令（npm 通道，仓库跟踪 package-lock）
 
 ```text
-PS> pnpm --dir apps/desktop/frontend test
+PS> npm --prefix apps/desktop/frontend test
 ...
  Test Files  37 passed (37)
-      Tests  364 passed (364)
-   Start at  20:32:43
-   Duration  3.43s (transform 3.49s, setup 0ms, collect 36.45s, tests 7.33s, environment 5ms, prepare 8.34s)
+      Tests  367 passed (367)
+   Start at  21:16:02
+   Duration  3.68s (transform 3.38s, setup 0ms, collect 38.44s, tests 7.80s, environment 6ms, prepare 8.99s)
 [exit code 0]
 ```
 
-完整原始输出：`verification/SETTINGS-OPEN-A-1/frontend-pnpm-test-raw.txt`
+完整原始输出：`verification/SETTINGS-OPEN-A-1/frontend-npm-test-raw.txt`
 
-### 3.2 类型检查
+- 初版基线：32 files / 327 tests 全绿；r1 交付：364 tests；r2：**367 tests**（+3：M1 跨字段、legacy text_align、section union 结构守卫）。
+- settings 子集：14 files / 112 tests 全绿。
+
+### 5.2 类型检查（同时是 m2 类型级守卫的执行者）
 
 ```text
 PS> cd apps/desktop/frontend; .\node_modules\.bin\tsc --noEmit
@@ -88,63 +131,48 @@ PS> cd apps/desktop/frontend; .\node_modules\.bin\tsc --noEmit
 ```
 
 原始输出（空）：`verification/SETTINGS-OPEN-A-1/frontend-tsc-raw.txt`
+`client.p15.test.ts` 中两条 `@ts-expect-error` 只有在该参数仍是 `string` 时才会变成“未使用指令”，
+因此 `tsc` 通过即证明“任意节名调用”是编译错误。
 
-### 3.3 交叉验证（同一 vitest 套件，npm 通道）
+### 5.3 pnpm 通道（历史记录，不作为验收证据）
 
-```text
-PS> cd apps/desktop/frontend; npm test
- Test Files  37 passed (37)
-      Tests  364 passed (364)
-   Start at  20:32:58
-```
+`frontend-pnpm-test-raw.txt` 记录的是 r1 期间本机 pnpm 11.25.0 的结果；在干净 commit 上
+`pnpm --dir apps/desktop/frontend test` 会因 `ERR_PNPM_IGNORED_BUILDS`（esbuild build script 未批准）
+在依赖校验阶段失败，属于环境前置而非代码失败。按 m5 裁决，验收主命令改为 npm 通道；
+本机 pnpm 自动生成的 `apps/desktop/frontend/pnpm-lock.yaml`、`pnpm-workspace.yaml`（未跟踪）已删除。
 
-完整原始输出：`verification/SETTINGS-OPEN-A-1/frontend-npm-test-raw.txt`
+## 6. 既有测试更新说明（非“绕过失败”）
 
-### 3.4 基线对比
+| 测试 | 更新 | 原因 |
+|---|---|---|
+| `SettingsPage.test.tsx` 分类 open 矩阵 | provider/network/ocr/translation/inpaint/typeset 6 开，其余 6 关 | 用户裁决 + 批次 A 设计开放 |
+| `SettingsPage.test.tsx` OCR/inpaint/typeset 禁用用例 | 改为“可点击 + 渲染真实面板 + 无禁用占位” | 同上 |
+| `SettingsPage.test.tsx` 翻译参数占位用例 | 改为渲染 `TranslationParamsPanel`，SFX 面板保留 | 同上 |
+| `SettingsPage.test.tsx` 键盘导航 | 保留 3×ArrowDown → translation，并补充 typeset 之后 ArrowDown 仍停留（跳过 model_gpu） | 分类集合变化后防止关闭分类被键盘进入 |
+| `SettingsPage.test.tsx` ARIA | 开放分类 `aria-label`/`title` 为 null、`aria-disabled=false`、文本不含“未开放” | “未开放”只保留给仍未开放分区 |
+| `client.p15.test.ts` 结构守卫 | 初版：`saveSection` function；r2：冻结 union 运行时钉住 + 任意节名编译错误（`@ts-expect-error`） | 新增 section API 后恢复等价的结构约束（review m2） |
+| `TypesetSettingsPanel.test.tsx` | 10 键读写、无 fill_color、left/center、M1 跨字段 | review r1 B2/M1/M2 |
 
-- 变更前基线：32 files / 327 tests 全绿。
-- 变更后：37 files / 364 tests 全绿（+5 测试文件、+37 tests：四个面板 30 + client.sections 6 + SettingsPage 净 +1）。
+未改动其余既有测试（SFX、Provider、Network、Credential、SettingsPanel、errors、client.test 等），全部原样通过，未删除或弱化无关断言。
 
-## 4. 既有测试更新说明（非“绕过失败”）
-
-| 测试 | 原断言 | 现断言 | 原因 |
-|---|---|---|---|
-| `SettingsPage.test.tsx` 分类 open 矩阵 | provider/network/translation 3 开，其余 9 关 | provider/network/ocr/translation/inpaint/typeset 6 开，其余 6 关 | 用户裁决 + 本批设计显式开放 4 个分区，属行为变化 |
-| `SettingsPage.test.tsx` OCR/inpaint/typeset 禁用用例 | disabled + `未开放` + 占位框 | 可点击、渲染真实面板、无禁用占位 | 同上 |
-| `SettingsPage.test.tsx` 翻译参数/上下文占位用例 | `settings-disabled-section-translation-context` 可见且禁用 | 同一位置渲染 `TranslationParamsPanel`，占位消失，SFX 面板保留 | 同上 |
-| `SettingsPage.test.tsx` 键盘导航 | 3×ArrowDown 落在 translation | 同一断言保留，并补充“typeset 之后再 ArrowDown 仍停留（跳过 model_gpu）” | 分类集合变化后防止关闭分类被键盘进入 |
-| `SettingsPage.test.tsx` ARIA | 仅断言禁用分类含 `未开放` | 追加：开放分类 `aria-label`/`title` 为 null、`aria-disabled=false`、文本不含 `未开放` | 任务要求“未开放”只保留给仍未开放分区 |
-| `client.p15.test.ts` 结构守卫 | `saveSection` 必须 undefined | `saveSection` 为 function（命名 section API，逐节白名单在 Core）；`updateSection` 仍未定义 | 任务 1 明确新增 `saveSection`，属冻结行为变化；未放宽为任意 section 透传 |
-
-未改动的其余既有测试（SFX、Provider、Network、Credential、SettingsPanel、errors、client.test 等）全部原样通过，未删除或弱化任何断言。
-
-## 5. 环境说明（重要，非交付改动）
-
-本机全局 pnpm 为 11.25.0。首次执行 `pnpm test` 时 pnpm 的依赖校验自动触发 `pnpm install`，
-生成了**未跟踪**的 `apps/desktop/frontend/pnpm-lock.yaml` 与 `apps/desktop/frontend/pnpm-workspace.yaml`；
-若缺少后者中的 `allowBuilds: esbuild: true` / `verifyDepsBeforeRun: false`，
-`pnpm test` 会在依赖校验阶段以 `ERR_PNPM_IGNORED_BUILDS` 退出（与测试本身无关）。
-
-- 这两个文件不在本任务交付范围（untracked，不会进入任何 commit），仅作为本机运行前置；
-- 仓库原本使用 npm（跟踪的 `package-lock.json`），因此另给 `npm test` 的等价原始结果作为独立证据；
-- 未新增/升级任何依赖，未修改 `package.json`。
-
-## 6. 未执行 / 遗留项
+## 7. 未执行 / 遗留项
 
 | 项 | 状态 | 说明 |
 |---|---|---|
-| E2E/GUI 烟测（真实 Tauri 应用逐分区保存 + 重启复查 + 新 Run 生效） | NOT_RUN | 本 agent 运行环境无已构建桌面应用；需 Lead/集成阶段执行 |
-| 关键截图 | NOT_RUN | 同上，无 GUI 会话 |
-| Core 侧联调（写入校验、`style_defaults` 装配） | 依赖 `task-1`（另一个 agent） | 前端按冻结键集提交；Core `INVALID_REQUEST` 会经 `SettingsErrorBar` 显示 |
-| `typeset.text_align` 旧值 `start` | 设计差异记录 | 设计值域为 left/center/right，而 Python `DEFAULT_TEXT_ALIGN = "start"`。前端把持久化的 `start` 显示为 `left`（同向可视结果），且永远不会提交 `start`；待 Core 白名单确认对旧值兼容 |
-| 阅读方向（`reading`） | 按设计 §3.4 不开放 | typeset 分区内仅显示指引（书籍/章节属性），无全局控件、无假键 |
-| `typeset.font_family` | 本批不开放 | 面板无该控件，未提交该键 |
-| 保存后的“当前持久化值”展示 | 已实现 | 保存成功 → 重新 `settings_get` → 用 Core 返回投影渲染（非本地乐观回显） |
+| E2E/GUI 烟测（逐分区保存 + 重启复查 + typeset 渲染效果） | NOT_RUN（本 agent） | 需集成阶段在真实 Tauri 应用执行；review r1 m6 指出的覆盖缺口仍在 |
+| 关键截图 | NOT_RUN | 同上 |
+| B1 `_merge_defaults` 优先级 | 非本 agent 范围 | Core writer / Lead；前端仅按冻结键集提交 |
+| M3 冻结契约同步、M4 base commit pin | 非本 agent 范围 | Lead/Codex 在集成前处理 |
+| M1 的 Core 侧跨字段拒绝（`auto_font_size=false` 且 manual 为空 → INVALID_REQUEST） | 前端已做 UI 约束；Core 侧由 Core writer 对齐 | 前端校验先拦截，但 Core 白名单仍应拒绝该组合（review r1 建议） |
+| B2/M2 的设计文档与 Core 白名单同步（`fill_color` 移除、`right` 收窄） | 待 Lead/Core writer | 设计 §3.4 仍列 `fill_color`/`right`；本 agent 无权改 `doc/**`/`src/**` |
+| m1 `manual_font_size` 值域（设计 `>0` vs 实现 1–500） | 未处理（review 未要求本 agent 修） | 需设计/Core/UI 三处统一；当前 UI 与 Core 实现一致（1–500） |
+| n1 `getSection` 非对象载荷静默当 null；n2 保存成功但回读失败的文案 | 未处理（review 未要求本 agent 修，属 nit） | 可后续优化 |
+| `typeset.text_align` 旧值兼容 | 已处理 | `start`/`right` 读取折叠为 `left`，永不写回 |
 
-## 7. 合规声明
+## 8. 合规声明
 
-- 仅修改 `apps/desktop/frontend/src/settings/**`，并新增本报告与原始日志于 `verification/SETTINGS-OPEN-A-1/`；
-  未改 `src/**`（Python/Core）、未改 Schema/migration、未改 Provider/Network/凭据/SFX 面板语义。
+- 仅修改 `apps/desktop/frontend/src/settings/**`，并更新 `verification/SETTINGS-OPEN-A-1/**` 证据；
+  未改 `src/**`（Python/Core）、未改 `doc/**`、未改 Schema/migration、未改 Provider/Network/凭据/SFX 面板语义。
 - 未新增依赖、未 `git commit` / `git push`。
-- Core 侧并行修改（`src/bootstrap/**`、`src/infrastructure/**`、`tests/**` 等）均来自 `task-1` 的另一个 writer，
+- Core 侧并行修改（`src/bootstrap/**`、`src/infrastructure/**`、`tests/**` 等）属于其它 writer，
   不在本报告变更清单内。

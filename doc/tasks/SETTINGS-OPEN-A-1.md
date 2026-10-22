@@ -3,17 +3,17 @@ id: SETTINGS-OPEN-A-1
 title: 设置分区开放批次 A：OCR / 翻译参数+上下文 / 图片修复 / 排版样式
 kind: implementation
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_ruling_20261022_open_all_settings_partitions
 suggested_owner: dsh
 owner: dsh
-reviewer: tbd_independent
+reviewer: reviewer-settings-a
 depends_on: [P15, P15-C1]
-base_commit: 1fa2c3c58bcb0d5eb4d144d87e71d1ca7b3d3eac
+base_commit: 1fa2c3c58413b6bce972bd20fb044438d538d3d6
 branch: main
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 87ae85a678880bff840ac77b53f2700e586ad95c
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/SETTINGS-OPEN-A-1
@@ -22,6 +22,8 @@ allowed_paths:
   - doc/tasks/SETTINGS-OPEN-A-1.md
   - doc/STATUS.md
   - doc/handoffs/SETTINGS-OPEN-A-1-*.md
+  - doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+  - doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
   - verification/SETTINGS-OPEN-A-1/**
   - apps/desktop/frontend/src/settings/**
   - src/bootstrap/core_service.py
@@ -35,6 +37,7 @@ allowed_paths:
   - tests/core/**
   - tests/application/**
   - tests/pipeline/**
+  - tests/rendering/**
 ---
 
 # SETTINGS-OPEN-A-1：设置分区开放批次 A
@@ -47,11 +50,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 Core 写入校验**：`settings.update_section` 对 `ocr` / `translate` / `inpaint` / `typeset` 四节按白名单校验（键集与值域见设计 §3.1–§3.4）；未知键、非法枚举、越界数值返回 `INVALID_REQUEST`，且不写入任何值。未知 section 保持既有透传（兼容）。
-- [ ] **AC2 排版默认样式接入**：`RenderService.style_defaults` 从持久化 `typeset` 节派生（缺省 `None` 时行为不变）；Pipeline `render` 步与手动整页重渲染（`handle_rerender_page`）两条路径都使用新默认值，Region 已持久化样式仍按 D03 §11.4 覆盖默认值。字体选择不在本批白名单（设计 §3.4 注），`font_family` 保持代码默认。
-- [ ] **AC3 前端分区开放**：`SETTINGS_CATEGORIES` 中 ocr/inpaint/typeset 改为 open，翻译分类内的"翻译参数 / 上下文策略"由 disabled 占位替换为可编辑面板；四个面板具备保存、错误展示、"对之后的任务生效"说明；无 mock 值，显示持久化值或明确"未设置"。
-- [ ] **AC4 测试**：pytest 覆盖四节合法/非法/未知键/默认投影；Vitest 覆盖四个面板与 SettingsPage 分类可点；全部通过且不弱化既有测试。
-- [ ] **AC5 证据与交付**：固定 commit；evidence_dir 记录测试原始输出与关键截图；Handoff；独立 Review 由非实现者执行后记录结论；未跑项标 NOT_RUN。
+- [x] **AC1 Core 写入校验**：`settings.update_section` 对 `ocr` / `translate` / `inpaint` / `typeset` 四节按白名单校验（键集与值域见设计 §3.1–§3.4）；未知键、非法枚举、越界数值返回 `INVALID_REQUEST`，且不写入任何值。未知 section 保持既有透传（兼容）。返修 r2 追加：`typeset` 跨字段约束（`auto_font_size=false` 时 `manual_font_size` 必填）与 `text_align` 收窄为 `left|center`。
+- [ ] **AC2 排版默认样式接入（返修中）**：`RenderService.style_defaults` 从持久化 `typeset` 节派生（缺省 `None` 时行为不变）；Pipeline `render` 步与手动整页重渲染（`handle_rerender_page`）两条路径都使用新默认值，Region 已持久化样式仍按 D03 §11.4 覆盖默认值。字体选择不在本批白名单（设计 §3.4 注），`font_family` 保持代码默认。**r1 Review 发现 B1：`_merge_defaults` 优先级使 7/11 键不生效，返修 r2 中修复并要求 tests/rendering 级回归。**
+- [x] **AC3 前端分区开放**：`SETTINGS_CATEGORIES` 中 ocr/inpaint/typeset 改为 open，翻译分类内的"翻译参数 / 上下文策略"由 disabled 占位替换为可编辑面板；四个面板具备保存、错误展示、"对之后的任务生效"说明；无 mock 值，显示持久化值或明确"未设置"。返修 r2 移除 `fill_color` 假控件、收窄 `text_align`、加跨字段校验、`saveSection` 收窄为 union。
+- [x] **AC4 测试**：pytest 覆盖四节合法/非法/未知键/默认投影；Vitest 覆盖四个面板与 SettingsPage 分类可点；全部通过且不弱化既有测试。返修 r2 追加 AC2 合并语义回归（`tests/rendering`）。
+- [ ] **AC5 证据与交付**：固定 commit；evidence_dir 记录测试原始输出与关键截图；Handoff；独立 Review 由非实现者执行后记录结论；未跑项标 NOT_RUN。**r1 Review=`changes_requested`（B1/B2/M1/M2/M3/M4 等），返修 r2 后需复审。**
 
 ## 允许修改范围
 
@@ -68,10 +71,12 @@ allowed_paths:
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | `python -m pytest tests/core -k settings -q` | 本地 Python 环境 | NOT_RUN | 待填 |
-| AC2 | 同上 + `tests/application` 渲染相关 | 同上 | NOT_RUN | 待填 |
-| AC3/AC4 | `pnpm --dir apps/desktop/frontend test`（或项目脚本） | node_modules 已装 | NOT_RUN | 待填 |
-| 烟测 | 启动 dev preview，逐分区保存并重启复查 | 构建可用 | NOT_RUN | 待填 |
+| AC1 | `python -m pytest tests/core -k settings -q` | 本地 Python 环境 | PASS（r1：239 passed；r2 待重跑） | core-report.md |
+| AC2 | `python -m pytest tests/core tests/pipeline tests/rendering -q` | 同上 | r1 819 passed；**B1 回归 r2 待补** | core-report.md + review-r1.md |
+| AC3/AC4 | `npm --prefix apps/desktop/frontend test`（仓库跟踪 npm 通道；pnpm 需环境产物，不作为主命令） | node_modules 已装 | PASS（r1：37 files/364 tests） | ui-report.md + raw logs |
+| 烟测 | 启动 dev preview，保存并重启复查（inpaint.background_complexity=medium） | 构建可用 | PASS（保存后 SQLite 落库；重启后回显） | gui-smoke.md + screenshots |
+| 独立 Review r1 | 只读审查 `87ae85a` + 独立跑测试 | — | **changes_requested**（B1/B2 blocker；M1–M5） | review-r1.md |
+| 独立 Review r2 | 返修后复审 | — | 待执行 | 待填 |
 
 ## 依赖、风险与阻塞
 

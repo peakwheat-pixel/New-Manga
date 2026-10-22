@@ -144,7 +144,7 @@ export function TypesetSettingsPanel({ client }: { client: SettingsClient }) {
       loadError={loadError}
       onRetry={() => void reload()}
       unset={unset}
-      unsetText={`该节未设置（Core 返回 JSON null）——当前按 Core 默认文字样式运行：文字 ${DEFAULT_TYPESET_SETTINGS_DRAFT.text_color}，填充 ${DEFAULT_TYPESET_SETTINGS_DRAFT.fill_color}，描边 ${DEFAULT_TYPESET_SETTINGS_DRAFT.stroke_color} / ${DEFAULT_TYPESET_SETTINGS_DRAFT.stroke_width}，行距 ${DEFAULT_TYPESET_SETTINGS_DRAFT.line_spacing}，自动字号。`}
+      unsetText={`该节未设置（Core 返回 JSON null）——当前按 Core 默认文字样式运行：文字 ${DEFAULT_TYPESET_SETTINGS_DRAFT.text_color}，描边 ${DEFAULT_TYPESET_SETTINGS_DRAFT.stroke_color} / ${DEFAULT_TYPESET_SETTINGS_DRAFT.stroke_width}，行距 ${DEFAULT_TYPESET_SETTINGS_DRAFT.line_spacing}，自动字号。`}
       saving={saving}
       saveError={saveError}
       saveDisabled={!ready || !dirty || hasErrors}
@@ -159,16 +159,6 @@ export function TypesetSettingsPanel({ client }: { client: SettingsClient }) {
           value={draft.text_color}
           disabled={saving}
           onChange={(next) => setDraft((prev) => ({ ...prev, text_color: next }))}
-        />
-      </SettingsField>
-
-      <SettingsField id="typeset-fill-color" label="填充颜色 (fill_color)" hint="默认 #FFFFFF。">
-        <ColorControl
-          id="typeset-fill-color"
-          testId="typeset-fill-color"
-          value={draft.fill_color}
-          disabled={saving}
-          onChange={(next) => setDraft((prev) => ({ ...prev, fill_color: next }))}
         />
       </SettingsField>
 
@@ -234,7 +224,7 @@ export function TypesetSettingsPanel({ client }: { client: SettingsClient }) {
         />
       </SettingsField>
 
-      <SettingsField id="typeset-text-align" label="文字对齐 (text_align)" hint="默认左对齐。">
+      <SettingsField id="typeset-text-align" label="文字对齐 (text_align)" hint="默认左对齐；渲染器仅实现居中特判，值域为 left / center。">
         <select
           id="typeset-text-align"
           data-testid="typeset-text-align"
@@ -281,7 +271,7 @@ export function TypesetSettingsPanel({ client }: { client: SettingsClient }) {
       <SettingsField
         id="typeset-auto-font-size"
         label="自动字号 (auto_font_size)"
-        hint="默认开启；关闭后使用 manual_font_size。"
+        hint="默认开启；关闭后必须填写 manual_font_size（否则无法保存）。"
       >
         <ToggleControl
           id="typeset-auto-font-size"
@@ -317,7 +307,7 @@ export function TypesetSettingsPanel({ client }: { client: SettingsClient }) {
       <SettingsField
         id="typeset-manual-font-size"
         label="手动字号 (manual_font_size)"
-        hint={`可留空（未设置）；仅在自动字号关闭时生效。范围 ${MANUAL_FONT_SIZE_MIN}–${MANUAL_FONT_SIZE_MAX}。`}
+        hint={`自动字号开启时可留空（未设置）；关闭自动字号时必填。范围 ${MANUAL_FONT_SIZE_MIN}–${MANUAL_FONT_SIZE_MAX}。`}
         error={errors.manual_font_size}
       >
         <input

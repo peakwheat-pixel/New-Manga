@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { SettingsClient } from "./client";
-import type { InvokeFn } from "./client";
+import { EDITABLE_SETTINGS_SECTIONS, SettingsClient } from "./client";
+import type { EditableSettingsSection, InvokeFn } from "./client";
 
 /**
  * P15 AC3 — the new G21/G22/G23 wire surface: command names pinned exactly
@@ -205,7 +205,7 @@ describe("sfx single-section read keeps null distinguishable (AC3)", () => {
 });
 
 describe("no untyped settings_update_section passthrough beyond the frozen section API", () => {
-  it("the client exposes only the pinned sfx builder plus the SETTINGS-OPEN-A-1 section pair", async () => {
+  it("the client exposes only the pinned sfx builder plus the frozen section pair", () => {
     const client = new SettingsClient(async () => ({}));
     const clientAny = client as unknown as Record<string, unknown>;
     // No unspecified-name arbitrary update method exists: the only generic
@@ -215,7 +215,25 @@ describe("no untyped settings_update_section passthrough beyond the frozen secti
     expect(typeof clientAny.updateSection).toBe("undefined");
     expect(typeof clientAny.saveSection).toBe("function");
     expect(typeof clientAny.saveSfxPolicy).toBe("function");
+    // m2（review r1）: the section argument is the frozen compile-time union —
+    // the runtime mirror must stay exactly the batch-A + sfx whitelist.
+    expect(EDITABLE_SETTINGS_SECTIONS).toEqual(["ocr", "translate", "inpaint", "typeset", "sfx"]);
     // The sfx channel still writes exactly "sfx" with {policy} — pinned by the
     // pre-existing client.test.ts.
+  });
+
+  it("arbitrary section names are a COMPILE-TIME error, not a runtime convention (m2 guard)", () => {
+    const client = new SettingsClient(async () => ({}));
+    // These lines are checked by `tsc --noEmit`, not by the vitest runtime:
+    // if the section parameter widened back to `string`, the @ts-expect-error
+    // directives would become unused and tsc would fail. The closures are
+    // never invoked, so no wire call happens.
+    // @ts-expect-error — "bogus_section" is outside EditableSettingsSection
+    void (() => client.saveSection("bogus_section", {}));
+    // @ts-expect-error — same closed union for reads
+    void (() => client.getSection("bogus_section"));
+    // Positive control: every frozen member stays assignable.
+    const accepted: EditableSettingsSection[] = [...EDITABLE_SETTINGS_SECTIONS];
+    expect(accepted).toHaveLength(5);
   });
 });

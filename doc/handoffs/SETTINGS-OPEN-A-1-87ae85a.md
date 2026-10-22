@@ -2,7 +2,7 @@
 task_id: SETTINGS-OPEN-A-1
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
-base_commit: 1fa2c3c58bcb0d5eb4d144d87e71d1ca7b3d3eac
+base_commit: 1fa2c3c58413b6bce972bd20fb044438d538d3d6
 delivery_head: 87ae85a678880bff840ac77b53f2700e586ad95c
 status: in_review
 ---
@@ -68,9 +68,11 @@ status: in_review
 
 ## 风险与遗留
 
-1. **独立 Review 未完成**：reviewer-settings-a 进行中；结论落 `verification/SETTINGS-OPEN-A-1/review-r1.md`，若 changes_requested 需追加修复提交后重跑测试。
+1. **独立 Review 第一轮 `changes_requested`，已返修 r2**：评审报告 `verification/SETTINGS-OPEN-A-1/review-r1.md`。处置：B1 `_merge_defaults` 优先级重写（用 domain `TextStyle` 原始字段判断持久化；渲染级回归 `tests/rendering/test_typeset_defaults_merge.py` 在旧实现上 3 failed / 修复后 4 passed）；B2 移除无消费者的 `fill_color`（白名单/映射/UI）；M1 增加 `auto_font_size=false` → `manual_font_size` 必填的跨字段校验；M2 `text_align` 收窄 `left|center`；M3 两份冻结契约补 2026-10-22 增量修订注记；M4 base_commit 更正为真实 `1fa2c3c58413b6bce972bd20fb044438d538d3d6`；m1/m2/m3/m5/m6 分别在设计/前端/测试/任务书/烟测证据中处理。r2 独立测试：pytest `832 passed`（tests/core+pipeline+rendering）、`npm --prefix apps/desktop/frontend test` 37 files/367 tests、tsc exit 0。
 2. **`typeset.font_family` 未开放**：字体列表/上传需要新增 wire（U-5 边界），设计 §3.4 已注明；当前字体保持 FontCatalog 默认。
-3. **跨字段约束缺口**：`auto_font_size=false` 且 `manual_font_size` 未设置时，写入合法但渲染 fail-closed（`MISSING_RESOURCE_INPUT` 语义），前端未强制；建议批次 B 或补丁在 Core 加跨字段校验或前端强制。
-4. **`text_align` 默认 `start`**：前端按 `left` 显示且不提交 `start`；不改变渲染语义（Qt/Pillow 仅特判 center）。
-5. **legacy PySide6 设置 ViewModel** 仍绕过新 Core wire 校验（legacy 面，不在新架构范围）；渲染读取端已做防御。
-6. **未 push**：按要求不 push/merge；集成由后续 Codex/主控处理。
+3. **跨字段约束**：`auto_font_size=false` 且 `manual_font_size` 未设置现在被 Core 拒绝（r2）；前端同步禁用保存并提示。
+4. **partial typeset 语义（用户可见）**：保存任意 `typeset` 键后，未在 Region 持久化的字段取全局默认（例如仅保存 text_color 时 stroke_width 从历史合成 0.0 变为 `RenderTextStyle` 默认 3.0），符合 D03 §11.4 继承顺序；设计 §3.4 已记录。
+5. **`text_align` 默认 `start`**：前端按 `left` 显示且不提交 `start`；不改变渲染语义（Qt/Pillow 仅特判 center）。
+6. **legacy PySide6 设置 ViewModel** 仍绕过新 Core wire 校验（legacy 面，不在新架构范围）；渲染读取端已做防御。
+7. **未 push**：按要求不 push/merge；集成由后续 Codex/主控处理。
+8. **GUI 烟测范围**：inpaint 逐分区保存 + 重启复查已做；OCR/翻译/排版的逐分区保存与 typeset 渲染效果由 pytest 渲染级回归覆盖，真实页面渲染效果未做 E2E。

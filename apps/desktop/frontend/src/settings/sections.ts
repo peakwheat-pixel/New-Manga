@@ -318,10 +318,12 @@ export function describeInpaintSettings(draft: InpaintSettingsDraft | null): str
 
 export const TYPESET_SECTION = "typeset";
 
-export type TextAlign = "left" | "center" | "right";
+// M2（review r1）：值域收窄为 left | center —— 两个 compositor 只实现 center
+// 特判，`right` 会被渲染成左对齐，因此不再作为可选项展示/提交。
+export type TextAlign = "left" | "center";
 export type TextDirection = "auto" | "horizontal" | "vertical";
 
-export const TEXT_ALIGN_VALUES: readonly TextAlign[] = ["left", "center", "right"] as const;
+export const TEXT_ALIGN_VALUES: readonly TextAlign[] = ["left", "center"] as const;
 export const TEXT_DIRECTION_VALUES: readonly TextDirection[] = [
   "auto",
   "horizontal",
@@ -331,7 +333,6 @@ export const TEXT_DIRECTION_VALUES: readonly TextDirection[] = [
 export const TEXT_ALIGN_LABELS: Readonly<Record<TextAlign, string>> = {
   left: "左对齐 (left)",
   center: "居中 (center)",
-  right: "右对齐 (right)",
 };
 
 export const TEXT_DIRECTION_LABELS: Readonly<Record<TextDirection, string>> = {
@@ -351,7 +352,6 @@ export const MANUAL_FONT_SIZE_MAX = 500;
 
 export interface TypesetSettingsDraft {
   text_color: string;
-  fill_color: string;
   stroke_enabled: boolean;
   stroke_color: string;
   stroke_width: string;
@@ -366,18 +366,19 @@ export interface TypesetSettingsDraft {
 
 /**
  * Core defaults from `application/rendering/style.py` (D03 §11.6):
- * DEFAULT_TEXT_COLOR #000000, DEFAULT_FILL_COLOR #FFFFFF,
- * DEFAULT_STROKE_COLOR #FFFFFF, DEFAULT_STROKE_WIDTH 3.0,
- * DEFAULT_LINE_SPACING 1.0, auto font size on, offset 0, manual size null.
+ * DEFAULT_TEXT_COLOR #000000, DEFAULT_STROKE_COLOR #FFFFFF,
+ * DEFAULT_STROKE_WIDTH 3.0, DEFAULT_LINE_SPACING 1.0, auto font size on,
+ * offset 0, manual size null.
  *
- * text_align: the design table lists `left | center | right` while the Python
- * default constant is "start"; "start" is mapped onto "left" for display (the
- * same visual result under the frozen LTR/auto direction) and is never sent
- * back — the Core default stays untouched until the user saves a draft.
+ * B2（review r1）：`fill_color` 已从本节移除 —— RenderOp/compositor 全链路没有
+ * 该字段的消费者，保留控件会违反设计 §2.4「不伪造」。设计表与 Core 白名单需
+ * 由 Lead/Core writer 同步（前端已不再读写该键）。
+ *
+ * text_align: 冻结值域 left | center（M2 返修）。Python 默认常量是 "start"，
+ * 旧持久化值 "start" / "right" 读取时折叠为 "left" 展示，且永远不会被写回。
  */
 export const DEFAULT_TYPESET_SETTINGS_DRAFT: TypesetSettingsDraft = {
   text_color: "#000000",
-  fill_color: "#ffffff",
   stroke_enabled: true,
   stroke_color: "#ffffff",
   stroke_width: "3",
@@ -400,7 +401,6 @@ export function normalizeTypesetSettings(value: unknown): TypesetSettingsDraft {
   const manualFontSize = pickOptionalNumber(raw.manual_font_size);
   return {
     text_color: normalizeColor(raw.text_color, DEFAULT_TYPESET_SETTINGS_DRAFT.text_color),
-    fill_color: normalizeColor(raw.fill_color, DEFAULT_TYPESET_SETTINGS_DRAFT.fill_color),
     stroke_enabled: pickBoolean(raw.stroke_enabled, DEFAULT_TYPESET_SETTINGS_DRAFT.stroke_enabled),
     stroke_color: normalizeColor(
       raw.stroke_color,
@@ -409,7 +409,7 @@ export function normalizeTypesetSettings(value: unknown): TypesetSettingsDraft {
     stroke_width: String(pickNumber(raw.stroke_width, 3)),
     line_spacing: String(pickNumber(raw.line_spacing, 1)),
     text_align:
-      raw.text_align === "start"
+      raw.text_align === "start" || raw.text_align === "right"
         ? "left"
         : pickOne(raw.text_align, TEXT_ALIGN_VALUES, DEFAULT_TYPESET_SETTINGS_DRAFT.text_align),
     text_direction: pickOne(
@@ -432,7 +432,6 @@ export function validateTypesetSettingsDraft(
   const errors: Record<string, string> = {};
 
   if (!isHexColor(draft.text_color)) errors.text_color = "text_color 必须是 #RRGGBB";
-  if (!isHexColor(draft.fill_color)) errors.fill_color = "fill_color 必须是 #RRGGBB";
   if (!isHexColor(draft.stroke_color)) errors.stroke_color = "stroke_color 必须是 #RRGGBB";
 
   const strokeWidth = parseNumberDraft(draft.stroke_width);
@@ -450,15 +449,22 @@ export function validateTypesetSettingsDraft(
     errors.font_size_offset = `font_size_offset 必须是 ${FONT_SIZE_OFFSET_MIN} 到 +${FONT_SIZE_OFFSET_MAX} 的整数`;
   }
 
-  if (draft.manual_font_size.trim() !== "") {
+  // M1（review r1）：跨字段约束 —— 关闭自动字号后必须给出手动字号，否则
+  // RenderService 会抛 StyleResolutionError / rerender 映射为
+  // MISSING_REQUIRED_INPUT，整页渲染失败。auto=true 时手动字号可留空。
+  const manualRaw = draft.manual_font_size.trim();
+  if (!draft.auto_font_size && manualRaw === "") {
+    errors.manual_font_size =
+      "关闭自动字号 (auto_font_size=false) 时必须填写 manual_font_size";
+  } else if (manualRaw !== "") {
     const manual = parseNumberDraft(draft.manual_font_size);
     if (manual === null || manual < MANUAL_FONT_SIZE_MIN || manual > MANUAL_FONT_SIZE_MAX) {
-      errors.manual_font_size = `manual_font_size 必须在 ${MANUAL_FONT_SIZE_MIN}–${MANUAL_FONT_SIZE_MAX} 之间，或留空`;
+      errors.manual_font_size = `manual_font_size 必须在 ${MANUAL_FONT_SIZE_MIN}–${MANUAL_FONT_SIZE_MAX} 之间`;
     }
   }
 
   if (!TEXT_ALIGN_VALUES.includes(draft.text_align)) {
-    errors.text_align = "text_align 必须是 left / center / right";
+    errors.text_align = "text_align 必须是 left / center";
   }
   if (!TEXT_DIRECTION_VALUES.includes(draft.text_direction)) {
     errors.text_direction = "text_direction 必须是 auto / horizontal / vertical";
@@ -470,7 +476,6 @@ export function validateTypesetSettingsDraft(
 export function typesetSettingsValues(draft: TypesetSettingsDraft): Record<string, unknown> {
   return {
     text_color: draft.text_color,
-    fill_color: draft.fill_color,
     stroke_enabled: draft.stroke_enabled,
     stroke_color: draft.stroke_color,
     stroke_width: parseNumberDraft(draft.stroke_width),
@@ -486,10 +491,10 @@ export function typesetSettingsValues(draft: TypesetSettingsDraft): Record<strin
 
 export function describeTypesetSettings(draft: TypesetSettingsDraft | null): string {
   if (draft === null) return "未设置（按 Core 默认样式运行）";
-  const manual = draft.manual_font_size.trim() === "" ? "自动" : `手动 ${draft.manual_font_size}px`;
+  const manual =
+    draft.manual_font_size.trim() === "" ? "手动字号缺失" : `手动 ${draft.manual_font_size}px`;
   return [
     `文字 ${draft.text_color}`,
-    `填充 ${draft.fill_color}`,
     draft.stroke_enabled ? `描边 ${draft.stroke_color} / ${draft.stroke_width}` : "描边关闭",
     `行距 ${draft.line_spacing}`,
     TEXT_ALIGN_LABELS[draft.text_align],

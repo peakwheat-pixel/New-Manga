@@ -71,12 +71,12 @@ _INPAINT_RULES: dict[str, _Rule] = {
 
 _TYPESET_RULES: dict[str, _Rule] = {
     "text_color": _Rule("color"),
-    "fill_color": _Rule("color"),
     "stroke_enabled": _Rule("bool"),
     "stroke_color": _Rule("color"),
     "stroke_width": _Rule("float", minimum=0.0, maximum=20.0),
     "line_spacing": _Rule("float", minimum=1.0, maximum=3.0),
-    "text_align": _Rule("enum", frozenset({"left", "center", "right"})),
+    # ``right`` is rejected: neither compositor implements it yet (review M2).
+    "text_align": _Rule("enum", frozenset({"left", "center"})),
     "text_direction": _Rule(
         "enum", frozenset({"auto", "horizontal", "vertical"})
     ),
@@ -119,7 +119,27 @@ def validate_settings_section(
                 f"{key!r}; allowed keys: {sorted(rules)}"
             )
         normalized[key] = _normalize(section, key, rule, value)
+    if section == "typeset":
+        _validate_typeset_cross_fields(normalized)
     return normalized
+
+
+def _validate_typeset_cross_fields(normalized: Mapping[str, Any]) -> None:
+    """Cross-field rule for ``typeset`` (review r1 M1).
+
+    The section is replaced as a whole, so an omitted ``manual_font_size`` is
+    null after the write. ``auto_font_size=False`` without a manual size makes
+    ``resolve_font_size`` raise for every region (render fail-closed); reject
+    that combination on write instead of storing a render-blocking setting.
+    """
+    if (
+        normalized.get("auto_font_size") is False
+        and normalized.get("manual_font_size") is None
+    ):
+        raise SettingsSectionError(
+            "settings.update_section typeset.manual_font_size is required "
+            "when typeset.auto_font_size is false"
+        )
 
 
 def _normalize(section: str, key: str, rule: _Rule, value: Any) -> Any:

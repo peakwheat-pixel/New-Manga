@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
-import { SettingsClient, SettingsClientError } from "./client";
+import { SettingsClient, SettingsClientError, type EditableSettingsSection } from "./client";
 import { projectSettingsError, type SettingsSurfaceError } from "./errors";
 
 /**
@@ -42,7 +42,7 @@ function errorCode(error: unknown): string {
 
 export function useSettingsSection<T>(options: {
   client: SettingsClient;
-  section: string;
+  section: EditableSettingsSection;
   defaults: T;
   normalize: (value: unknown) => T;
 }): SettingsSectionController<T> {

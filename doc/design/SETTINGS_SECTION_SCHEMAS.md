@@ -68,16 +68,21 @@
 |---|---|---|---|
 | `font_family` | string（必须存在于 FontCatalog；否则拒绝） | `Source Han Sans K Bold` | **本批不开放**：字体列表/上传需要新增 wire（U-5 边界另立 Task）；批次 A 的 typeset 白名单不含此项，面板只显示当前默认字体 |
 | `text_color` | `#RRGGBB` | `#000000` | 同上 |
-| `fill_color` | `#RRGGBB` | 默认渲染样式 | 同上 |
-| `stroke_enabled` | bool | `true` | 同上 |
+| `stroke_enabled` | bool | `true` | `RenderService.style_defaults`（本批新增装配读取） |
 | `stroke_color` | `#RRGGBB` | `#FFFFFF` | 同上 |
 | `stroke_width` | float，0–20 | 默认（`DEFAULT_STROKE_WIDTH`） | 同上 |
 | `line_spacing` | float，1.0–3.0 | 默认（`DEFAULT_LINE_SPACING`） | 同上 |
-| `text_align` | `left` \| `center` \| `right` | 默认（`DEFAULT_TEXT_ALIGN`） | 同上 |
+| `text_align` | `left` \| `center` | 默认（`DEFAULT_TEXT_ALIGN`） | 同上（渲染器只实现 center 特判，`right` 未实现故不开放） |
 | `text_direction` | `auto` \| `horizontal` \| `vertical` | `auto` | 同上 |
 | `auto_font_size` | bool | `true` | 同上（D03 §11.2 自动字号） |
 | `font_size_offset` | int，-5–+5 | `0` | 同上 |
-| `manual_font_size` | float，> 0（仅 `auto_font_size=false` 时有意义） | `null` | 同上 |
+| `manual_font_size` | float，1–500（`auto_font_size=false` 时必填） | `null` | 同上 |
+
+**默认样式合并语义（B1 返修后冻结）**：Region 已持久化的样式字段优先；Region 未持久化的字段继承全局 `typeset` 默认；全局默认缺省时才落到代码常量（D03 §11.4/§11.6）。判断"是否持久化"以领域 `TextStyle` 的原始字段为准（`font_family`/`text_color`/`stroke_color` 非空、`stroke_width != 0`、`font_size is not None` 或 `auto_font_size_enabled=False`）；`line_spacing` / `text_align` / `text_direction` / `font_size_offset` 不在领域 `TextStyle` 中，一律取全局默认（Region 级覆盖留待后续契约）。未保存 `typeset` 时行为与历史逐字节一致。
+
+**跨字段约束（M1 返修后冻结）**：`auto_font_size=false` 时 `manual_font_size` 必须为非空值（1–500），否则写入拒绝；`auto_font_size=true` 时 `manual_font_size` 可为 `null`。
+
+**未开放的字体/填充**：`font_family` 本批不开放（字体列表/上传需新增 wire，U-5 边界另立 Task）；`fill_color` 在 `RenderOp`/layout/compositor 全链路无消费者，本批**不列入白名单、不出现在 UI**（避免假控件，§2.4）；若后续需要背景填充，须先实现真实消费者与测试再开放。
 
 阅读方向（section `reading`，键 `direction`：`rtl` \| `ltr` \| `vertical`）：
 - 现状：方向是 **Book/Chapter 属性**（`domain/library/entities.py`），Run 覆盖解析已支持 `reading.direction`（`settings_commands.py:836`），但阅读器/工作台实际取章节属性。
