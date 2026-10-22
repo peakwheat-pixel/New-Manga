@@ -344,3 +344,8 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 
 - 未删除旧主线 `antigravity/P09-AC3-DELETE-HARDEN-1`（需单独裁决）；
 - 未 prune、未 GC、未 push、未 reset、未 stash；未改五广域根保护与 r212。
+## Stage 17 旧主线归档删除（2026-10-22）
+
+用户追加裁决删除旧主线 `antigravity/P09-AC3-DELETE-HARDEN-1`。核实已并入 main（独有提交 0）、未被检出后，先建 `refs/archive/antigravity/P09-AC3-DELETE-HARDEN-1` 保护引用（回验通过），再用 `git branch -d` 删除。
+
+**最终**：`refs/heads` 仅 **main**；注册 worktree 1；`refs/archive/*` 21。

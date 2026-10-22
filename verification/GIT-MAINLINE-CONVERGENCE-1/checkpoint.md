@@ -101,3 +101,10 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - 复验：声明审计 **0 errors / 1946 保护根 / 273 warnings**；治理检查 PASS；tracked 干净。
 - 恢复：archive 引用 + 内容归档 manifest + 全 refs bundle 三路可逆。
 - 未执行：prune、GC、push、reset、stash；五广域根保护与 r212 不变；旧主线保留待裁决。
+### 旧主线归档删除（2026-10-22，用户追加裁决）
+
+- 核实：`antigravity/P09-AC3-DELETE-HARDEN-1` 已并入 main（独有提交 0）、未被检出。
+- 先建 `refs/archive/antigravity/P09-AC3-DELETE-HARDEN-1`（回验 True），再用 `git branch -d` 删除。
+- **达成**：`refs/heads` 仅 **main**；注册 worktree **1**；`refs/archive/*` **21**。
+- 复验：声明审计 0 errors / 1946 保护根；治理检查 PASS；tracked 干净。
+- 未执行：prune、GC、push、reset、stash；五广域根保护与 r212 不变。

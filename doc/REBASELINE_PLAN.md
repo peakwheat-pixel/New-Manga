@@ -20,7 +20,7 @@
 |GOV-NDJSON-NONDECL-IDENTITY-1|GOV-DECLARATION-RESIDUAL-32-AUDIT-1|done（54cfbadad；身份研究，不登记例外）|
 |GOV-DECLARATION-RESIDUAL-32-AUDIT-1|GOV-PATH-HEADER-COMPAT-1|done（927e06f8b；只读取证，原32错误保留）|
 |GOV-PATH-HEADER-COMPAT-1|WORKSPACE-DECLARATION-REMEDIATION-1|done（9cae94142；单一固定别名，无资源处置授权）|
-|GIT-MAINLINE-CONVERGENCE-1|—|converged-awaiting-review（A+B+C 已执行：heads 103→2、worktree 141→1、20 条历史归档 refs/archive/*、2.6GiB 内容可恢复；旧主线保留待裁决）|
+|GIT-MAINLINE-CONVERGENCE-1|—|converged-awaiting-review（A+B+C+旧主线已执行：refs/heads 仅 main、worktree 1、21 条历史归档 refs/archive/*、2.6GiB 内容可恢复）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待发布签核；当前无执行）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
