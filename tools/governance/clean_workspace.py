@@ -1967,6 +1967,250 @@ def _apply_historical_evidence_interpretation(index, scanned):
         return _finish_declaration_scan(index, scanned)
 
 
+RESIDUAL_RUNTIME_IDENTITY_POLICY = "tools/governance/residual-runtime-identity.json"
+RESIDUAL_RUNTIME_IDENTITY_DIGEST = (
+    "5a47481d9bee7752fab5270b1bf7b348a855bdd3e8445fcf05e78cf36fd51b88")
+RESIDUAL_IDENTITY_KINDS = ("ALREADY_ABSENT_PATH", "NON_IDENTITY_RECORD",
+                           "NON_IDENTITY_PROSE", "PRESERVE_ROOTS")
+
+
+def _apply_residual_runtime_identity(index, scanned):
+    """Resolve exactly the seven adjudicated residual runtime identities.
+
+    The policy never expands an environment token or a wildcard.  Every binding
+    names one exact declared expression, the byte identity of its origin file
+    (plus the exact source line where the declaration lives on a line), and the
+    single resulting identity.  Any mismatch stays fatal, and the stage refuses
+    to run on top of an already-failed upstream interpretation.
+    """
+    if any(e.get("file") in (BROAD_PRESERVATION_POLICY,
+                             HISTORICAL_EVIDENCE_POLICY) for e in index.errors):
+        return _finish_declaration_scan(index, scanned)
+
+    def require(condition, code, message):
+        if not condition:
+            fail(code, message)
+
+    def sha(raw):
+        return hashlib.sha256(raw).hexdigest()
+
+    def absolute(relative):
+        require(isinstance(relative, str) and not is_abs_path(relative)
+                and "\\" not in relative and not GLOB_RE.search(relative)
+                and not ENV_RE.search(relative)
+                and all(p not in ("", ".", "..") for p in relative.split("/")),
+                "POLICY_INVALID", "invalid residual identity relative path")
+        return os.path.join(index.repo_root.replace("/", os.sep),
+                            relative.replace("/", os.sep))
+
+    def tracked(relative):
+        output = git_checked(index.repo_root, "ls-files", "-z", "--", relative,
+                             what="git ls-files residual identity input")
+        return relative in output.split("\x00")
+
+    def read_bytes(relative):
+        path = absolute(relative)
+        require(os.path.isfile(path) and not _is_link(path), "SOURCE_DRIFT",
+                "residual identity input is not a regular file: %s" % relative)
+        require(tracked(relative), "SOURCE_DRIFT",
+                "residual identity input tracking changed: %s" % relative)
+        with io.open(path, "rb") as handle:
+            return handle.read()
+
+    def policy_digest(raw):
+        data = json.loads(raw.decode("utf-8"),
+                          object_pairs_hook=_unique_preservation_object)
+        return sha(json.dumps(data, ensure_ascii=False, sort_keys=True,
+                              separators=(",", ":")).encode("utf-8"))
+
+    try:
+        policy_path = os.path.join(
+            index.repo_root.replace("/", os.sep),
+            RESIDUAL_RUNTIME_IDENTITY_POLICY.replace("/", os.sep))
+        present = os.path.lexists(policy_path)
+        enabled = tracked(RESIDUAL_RUNTIME_IDENTITY_POLICY)
+        if not present and not enabled:
+            return _finish_declaration_scan(index, scanned)
+        require(enabled, "POLICY_UNTRACKED", "residual identity policy must be tracked")
+        require(present, "POLICY_MISSING", "tracked residual identity policy is missing")
+        policy_raw = read_bytes(RESIDUAL_RUNTIME_IDENTITY_POLICY)
+        require(policy_digest(policy_raw) == RESIDUAL_RUNTIME_IDENTITY_DIGEST,
+                "POLICY_DIGEST_MISMATCH", "residual identity policy is not approved")
+        policy = json.loads(policy_raw.decode("utf-8"),
+                            object_pairs_hook=_unique_preservation_object)
+        require(type(policy) is dict
+                and set(policy) == {"schema_version", "purpose",
+                                    "approved_research", "bindings"},
+                "POLICY_INVALID", "unexpected residual identity policy fields")
+        require(type(policy["schema_version"]) is int
+                and policy["schema_version"] == 1
+                and policy["purpose"] == "PRESERVE_EXACT_RESIDUAL_RUNTIME_IDENTITY",
+                "POLICY_INVALID",
+                "unsupported residual identity policy version/purpose")
+
+        research = policy["approved_research"]
+        require(type(research) is dict
+                and set(research) == {"task_id", "evidence_commit", "matrix_file",
+                                      "matrix_raw_sha256"},
+                "POLICY_INVALID", "unexpected residual identity provenance fields")
+        require(research["task_id"] == "GOV-RESIDUAL-RUNTIME-IDENTITY-1",
+                "POLICY_INVALID", "residual identity provenance task changed")
+        require(sha(read_bytes(research["matrix_file"])) ==
+                research["matrix_raw_sha256"], "SOURCE_DRIFT",
+                "approved residual identity research changed")
+        commit = research["evidence_commit"]
+        require(isinstance(commit, str) and len(commit) == 40
+                and all(ch in "0123456789abcdef" for ch in commit),
+                "POLICY_INVALID", "residual identity evidence commit is malformed")
+        git_checked(index.repo_root, "cat-file", "-e", commit + "^{commit}",
+                    what="git cat-file residual identity evidence commit")
+
+        bindings = policy["bindings"]
+        require(type(bindings) is list and len(bindings) == 7
+                and [b.get("id") for b in bindings] ==
+                ["RRI-%02d" % n for n in range(1, 8)],
+                "POLICY_INVALID", "residual identity binding set changed")
+
+        staged = copy.copy(index)
+        staged.declarations = list(index.declarations)
+        staged.protected = {root: list(items) for root, items in index.protected.items()}
+        staged.non_protective = list(index.non_protective)
+        staged.errors = list(index.errors)
+        staged.warnings = list(index.warnings)
+        staged._repo_tops = set(index._repo_tops) if index._repo_tops is not None else None
+
+        removed = []
+        pending_protective = []
+        pending_non_protective = []
+        live_targets = {}
+        for b in bindings:
+            require(type(b) is dict, "POLICY_INVALID",
+                    "residual identity binding is not an object")
+            kind = b.get("kind")
+            require(kind in RESIDUAL_IDENTITY_KINDS, "POLICY_INVALID",
+                    "unknown residual identity kind")
+            has_line = "origin_line" in b
+            keys = ("id kind origin_file origin_raw_sha256 origin_byte_length "
+                    "errors declared_text provenance")
+            if has_line:
+                keys += " origin_line origin_line_raw_sha256"
+            keys += {"ALREADY_ABSENT_PATH": " target_abs target_normalized "
+                                           "require_absent",
+                     "PRESERVE_ROOTS": " targets"}.get(kind, "")
+            require(set(b) == set(keys.split()), "POLICY_INVALID",
+                    "unexpected residual identity binding fields")
+            origin = b["origin_file"]
+            raw = read_bytes(origin)
+            require(sha(raw) == b["origin_raw_sha256"]
+                    and type(b["origin_byte_length"]) is int
+                    and len(raw) == b["origin_byte_length"], "SOURCE_DRIFT",
+                    "residual identity origin changed: %s" % origin)
+            if has_line:
+                number = b["origin_line"]
+                lines = raw.splitlines(keepends=True)
+                require(type(number) is int and 1 <= number <= len(lines)
+                        and sha(lines[number - 1]) == b["origin_line_raw_sha256"],
+                        "SOURCE_DRIFT",
+                        "residual identity source line changed: %s" % origin)
+            require(type(b["errors"]) is list and len(b["errors"]) == 1,
+                    "POLICY_INVALID", "residual identity must bind exactly one error")
+            for error in b["errors"]:
+                require(type(error) is dict
+                        and set(error) == {"code", "message", "file", "locator"},
+                        "POLICY_INVALID", "invalid residual identity error record")
+                require(error["file"] == origin and index.errors.count(error) == 1
+                        and error not in removed, "ERROR_MISMATCH",
+                        "residual identity error is missing, duplicated or changed")
+                removed.append(error)
+
+            if kind == "PRESERVE_ROOTS":
+                targets = b.get("targets")
+                require(type(targets) is list and targets, "POLICY_INVALID",
+                        "residual identity preservation has no targets")
+                for target in targets:
+                    require(type(target) is dict
+                            and set(target) == {"abs", "normalized", "disposition",
+                                                "require_present"},
+                            "POLICY_INVALID", "invalid residual identity target")
+                    require(is_abs_path(target["abs"]), "POLICY_INVALID",
+                            "residual identity target must be absolute")
+                    normalized, real = index._resolve_identity(
+                        target["abs"], None, None, warn_alias=False)
+                    require(normalized == target["normalized"] == real,
+                            "REAL_DRIFT", "residual identity target changed")
+                    require(is_protective(target["disposition"]), "POLICY_INVALID",
+                            "residual identity disposition is not protective")
+                    require(target["require_present"] is True
+                            and os.path.isdir(target["abs"].replace("/", os.sep)),
+                            "RESIDUAL_TARGET_MISSING",
+                            "residual identity preservation target is missing")
+                    live_targets[normalized] = target["abs"]
+                    pending_protective.append(Declaration(
+                        b["declared_text"], target["disposition"], origin,
+                        "%s/%s" % (b["id"], target["normalized"]), normalized, real))
+            elif kind == "ALREADY_ABSENT_PATH":
+                require(is_abs_path(b["target_abs"]), "POLICY_INVALID",
+                        "already-absent residual identity needs an absolute target")
+                normalized, real = index._resolve_identity(
+                    b["target_abs"], None, None, warn_alias=False)
+                require(normalized == b["target_normalized"] == real,
+                        "REAL_DRIFT", "already-absent residual identity changed")
+                require(b["require_absent"] is True, "POLICY_INVALID",
+                        "already-absent residual identity must require absence")
+                require(not os.path.lexists(b["target_abs"].replace("/", os.sep)),
+                        "RESIDUAL_TARGET_PRESENT",
+                        "already-absent residual identity target now exists")
+                live_targets[normalized] = b["target_abs"]
+                pending_non_protective.append(Declaration(
+                    b["declared_text"], "ALREADY_ABSENT", origin,
+                    "%s/%s" % (b["id"], b["target_normalized"]), normalized, real))
+            else:
+                require("target_abs" not in b and "targets" not in b,
+                        "POLICY_INVALID",
+                        "non-identity residual binding must not name a target")
+
+        require(len(removed) == 7 and len(index.errors) == 7, "ERROR_MISMATCH",
+                "residual identity batch does not cover exactly the seven errors")
+        staged.errors = [e for e in staged.errors if e not in removed]
+        for declaration in pending_non_protective:
+            staged.declarations.append(declaration)
+            staged.non_protective.append(declaration)
+        for declaration in pending_protective:
+            staged._register_protective(declaration)
+        for b in bindings:
+            staged.add_warning(
+                "DECL_RESIDUAL_RUNTIME_PRESERVED",
+                "policy=%s id=%s kind=%s origin=%s line=%r raw_sha256=%s "
+                "declared=%r provenance=%s"
+                % (RESIDUAL_RUNTIME_IDENTITY_POLICY, b["id"], b["kind"],
+                   b["origin_file"], b.get("origin_line"),
+                   b["origin_raw_sha256"], b["declared_text"], b["provenance"]),
+                b["origin_file"], "%s/%s" % (b["id"], b["kind"]))
+        require(not staged.errors, "POLICY_INVALID",
+                "residual identity interpretation left fatal errors")
+        require(all(root in staged.protected for root in index.protected),
+                "PROTECTION_REGRESSION",
+                "residual identity interpretation dropped a protected root")
+        require(len(staged.protected) >= len(index.protected), "PROTECTION_REGRESSION",
+                "residual identity interpretation shrank the protected set")
+
+        result = _finish_declaration_scan(staged, scanned)
+        require(policy_digest(read_bytes(RESIDUAL_RUNTIME_IDENTITY_POLICY)) ==
+                RESIDUAL_RUNTIME_IDENTITY_DIGEST, "SOURCE_DRIFT",
+                "residual identity policy changed during scan")
+        for normalized, abs_path in live_targets.items():
+            require(index._resolve_identity(abs_path, None, None,
+                                            warn_alias=False)[0] == normalized,
+                    "REAL_DRIFT", "residual identity target changed during scan")
+        return result
+    except Exception as exc:
+        code = exc.code if isinstance(exc, GuardError) else "POLICY_INVALID"
+        message = exc.message if isinstance(exc, GuardError) else \
+            "residual identity policy validation failed"
+        index.add_error(code, message, RESIDUAL_RUNTIME_IDENTITY_POLICY)
+        return _finish_declaration_scan(index, scanned)
+
+
 def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
     """Build the protection index from ``doc/tasks/**`` and ``verification/**``.
 
@@ -2055,7 +2299,8 @@ def scan_repo_declarations(repo_root, ws_root, json_exceptions=None):
                 continue
             parse_json_declarations(index, data, relative)
     index, scanned = _apply_broad_preservation(index, scanned)
-    return _apply_historical_evidence_interpretation(index, scanned)
+    index, scanned = _apply_historical_evidence_interpretation(index, scanned)
+    return _apply_residual_runtime_identity(index, scanned)
 
 
 # ---------------------------------------------------------------------------

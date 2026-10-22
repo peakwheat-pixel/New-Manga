@@ -1,0 +1,104 @@
+# GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1 验证日志
+
+执行者：dsh（Coordinator epoch 10，lease `37230d7822a141fcae8f46acd7841890`）
+执行时间：2026-10-22（Asia/Shanghai）
+主机 / shell：Windows / pwsh 7.6.6（`pwsh -NoProfile`）
+Python：`C:\Python314\python.exe` 3.14.6（`python -B`，不生成 `__pycache__`）
+仓库：`G:/CODEX/New Manga`，branch `main`，base commit `8e31aaa1dff113e5f95ca7db5ece0de00126059a`
+
+每条命令均实际运行；未运行项不会被写成 PASS。
+
+---
+
+## 1. AC1–AC4 / AC6 单元与负例测试
+
+```
+$ python -B tools/governance/tests/test_residual_runtime_identity.py
+Ran 12 tests in 14.534s
+OK
+EXIT_CODE=0
+```
+
+覆盖：生产扫描 7→0、APPDATA 三根受保护、无通配/环境展开泄漏、保护集合未缩小、
+fixture 基线恰为 7 项历史错误、摘要错误 / 正文篡改 / origin 漂移 / `ALREADY_ABSENT` 目标复活 /
+保护目标缺失 / 未绑定错误 六类负例全部 fail-closed。
+
+既有治理测试（防回归）：
+
+```
+$ python -B tools/governance/tests/test_path_header_compat.py
+Ran 5 tests
+OK
+EXIT_CODE=0
+
+$ python -B tools/governance/tests/test_ac_gate.py
+12/12 cases behaved as specified
+EXIT_CODE=0
+```
+（`test_ac_gate` 输出中的 FAIL 行是它自己声明的预期负例，整体 exit 0。）
+
+## 2. AC5 生产声明审计：7 项历史身份降为 0
+
+```
+$ python -B tools/governance/clean_workspace.py --audit-declarations --out <workspace>/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1/audit-freeze
+declaration audit: 2639 declaration(s), 1936 protected root(s), 7 error(s), 285 warning(s)
+EXIT_CODE=2                      # 冻结实施 Task 后的基线
+```
+
+```
+$ python -B tools/governance/clean_workspace.py --audit-declarations --out <workspace>/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1/audit-impl-final
+declaration audit: 2648 declaration(s), 1939 protected root(s), 0 error(s), 292 warning(s)
+EXIT_CODE=0
+```
+
+结论：7 项历史身份错误全部消解；保护根 1936 → 1939（新增 APPDATA 的 catalog/data/derived）；
+warning +7（`DECL_RESIDUAL_RUNTIME_PRESERVED`）。产出见 `raw/audit-baseline/`、`raw/audit-resolved/`。
+
+## 3. 保护集合只增不减与缺口补齐
+
+```
+$ python -B <workspace>/temp/.../gen_impl_evidence.py
+BEFORE {"declarations": 2639, "protected_roots": 1936, "errors": 7, "warnings": 285}
+AFTER  {"declarations": 2648, "protected_roots": 1939, "errors": 0, "warnings": 292}
+SUBSET True ADDED 3 DROPPED 0
+APPDATA {'catalog': True, 'data': True, 'derived': True} WILDCARD []
+RESIDUAL_WARNINGS 7
+EXIT_CODE=0
+```
+
+结论：`旧 1936 保护根 ⊂ 新 1939 保护根`（dropped 0）；三项 APPDATA 用户数据路径由
+`evaluate()` 命中；无任何 `p19-ac2*` 或 `.tmp` 通配展开。证据：`protection-delta.json`。
+
+## 4. AC7 治理检查与空白检查
+
+```
+$ pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md
+WARN: 存在 14 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2925 bytes / 29 lines
+Governance check: PASS (2 warnings)
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+$ git diff --cached --check
+EXIT_CODE=0
+```
+
+## 5. 未运行 / 不适用项
+
+| 项 | 状态 | 原因 |
+|---|---|---|
+| 产品测试套件（pytest / vitest / cargo） | NOT_RUN | 未改产品代码、Schema、依赖或共享契约，无可判别回归面 |
+| `clean_workspace.py --apply` | NOT_RUN | 清理禁令有效且本 Task 无删除授权；运行会真实删除资源 |
+| linked worktree 内完整 audit | NOT_RUN | 该 worktree 缺少主仓 untracked 的 P22 原件，HIE policy 会 fail-closed；交付与验证在主 checkout 完成 |
+| 独立 Review | PENDING | Antigravity 固定 head 审查，结果另记 |
+
+## 6. 真实资源操作
+
+删除 0、迁移 0、归档 0、GC 0、prune 0、push 0、reset 0、stash 0。
+唯一新增目录为 `G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1`
+（开发记录，PRESERVE_REFERENCED）与 `verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/`。
+未触碰 r212 禁令、五广域根、P22 untracked 内容、旧 pin、六个 DSH 探针或任何用户未提交内容。

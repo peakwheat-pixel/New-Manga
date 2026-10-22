@@ -86,7 +86,9 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：待创建。
+- Handoff：doc/handoffs/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md。
+- 2026-10-22 / dsh / base 8e31aaa1d：实现完成。生产声明审计 7 项历史错误降为 0（2639/1936/7/285 → 2648/1939/0/292，exit 2→0）；保护集合旧 1936 根为新 1939 根真子集，新增 APPDATA catalog/data/derived 三根；无通配或环境变量展开；新增 12/12 测试与既有治理测试全绿；治理检查 PASS(2 warnings)、git diff --check exit 0。真实资源操作 0/0/0。
+
 - Review：待独立 Reviewer（Antigravity）。
 - 实际测试：待填。
 

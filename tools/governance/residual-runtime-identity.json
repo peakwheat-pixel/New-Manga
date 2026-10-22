@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "purpose": "PRESERVE_EXACT_RESIDUAL_RUNTIME_IDENTITY",
+  "approved_research": {
+    "task_id": "GOV-RESIDUAL-RUNTIME-IDENTITY-1",
+    "evidence_commit": "bb04c78d4b39e93e07712b2d056a2691810c0c58",
+    "matrix_file": "verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md",
+    "matrix_raw_sha256": "41859b5cc7b30215ad8c7ccafc372e2effe19adbed53767321b9a2aa684cfb5f"
+  },
+  "bindings": [
+    {
+      "id": "RRI-01",
+      "kind": "ALREADY_ABSENT_PATH",
+      "origin_file": "doc/tasks/P19.md",
+      "origin_raw_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "origin_byte_length": 18443,
+      "origin_line": 112,
+      "origin_line_raw_sha256": "a85eb6cc250a90433bbfe2c6ac43132e2b44f84700eac27c9f25a109b3d29877",
+      "errors": [
+        {
+          "code": "DECL_RELATIVE_AMBIGUOUS",
+          "message": "declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused",
+          "file": "doc/tasks/P19.md",
+          "locator": "line 5"
+        }
+      ],
+      "declared_text": "worktrees/P19-AC3-1",
+      "target_abs": "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1",
+      "target_normalized": "g:/codex/new manga.workspace/worktrees/p19-ac3-1",
+      "require_absent": true,
+      "provenance": "workspace-relative root resolved by WORKSPACE_GOVERNANCE; absence corroborated by WORKTREE_SAFETY_INVENTORY.md line 183"
+    },
+    {
+      "id": "RRI-02",
+      "kind": "ALREADY_ABSENT_PATH",
+      "origin_file": "doc/tasks/P19.md",
+      "origin_raw_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "origin_byte_length": 18443,
+      "origin_line": 113,
+      "origin_line_raw_sha256": "3af662e298e2fae2c8f372e13f1fc1e3944ba6d2eecaba4b22da9da702b6f924",
+      "errors": [
+        {
+          "code": "DECL_ENV",
+          "message": "declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token",
+          "file": "doc/tasks/P19.md",
+          "locator": "line 6"
+        }
+      ],
+      "declared_text": "%TEMP%/p19-ac2-r1",
+      "target_abs": "C:/Users/49745/AppData/Local/Temp/p19-ac2-r1",
+      "target_normalized": "c:/users/49745/appdata/local/temp/p19-ac2-r1",
+      "require_absent": true,
+      "provenance": "historical %TEMP% expansion proven in GOV-RESIDUAL-RUNTIME-IDENTITY-1/historical-env-evidence.json"
+    },
+    {
+      "id": "RRI-03",
+      "kind": "ALREADY_ABSENT_PATH",
+      "origin_file": "doc/tasks/P19.md",
+      "origin_raw_sha256": "243093abcf6d45895c11c4b0697929236d3ca2d6738952a331236e8b74faabc9",
+      "origin_byte_length": 18443,
+      "origin_line": 114,
+      "origin_line_raw_sha256": "428b9224a43d2185318ba8076d74c8c713789416684b0bde3be7e3285f933075",
+      "errors": [
+        {
+          "code": "DECL_ENV",
+          "message": "declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token",
+          "file": "doc/tasks/P19.md",
+          "locator": "line 7"
+        }
+      ],
+      "declared_text": "%TEMP%/p19-ac2-main-1",
+      "target_abs": "C:/Users/49745/AppData/Local/Temp/p19-ac2-main-1",
+      "target_normalized": "c:/users/49745/appdata/local/temp/p19-ac2-main-1",
+      "require_absent": true,
+      "provenance": "historical %TEMP% expansion proven in GOV-RESIDUAL-RUNTIME-IDENTITY-1/historical-env-evidence.json"
+    },
+    {
+      "id": "RRI-04",
+      "kind": "NON_IDENTITY_RECORD",
+      "origin_file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "origin_raw_sha256": "2c90839bd8fb97273d45103f2b368726baaef3d509de6cab8f3bde97f043508f",
+      "origin_byte_length": 3784,
+      "errors": [
+        {
+          "code": "DECL_UNKNOWN_DISPOSITION",
+          "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
+          "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+          "locator": "$.resources[7].disposition"
+        }
+      ],
+      "declared_text": "%TEMP%/.tmp* created by Rust tempfile tests",
+      "provenance": "wildcard + environment token cannot be a stable identity; the described Rust TempDir values are dropped at test end and schema vocabulary maps this to ALREADY_ABSENT semantics. No protection is registered, and no wildcard expansion is performed."
+    },
+    {
+      "id": "RRI-05",
+      "kind": "NON_IDENTITY_PROSE",
+      "origin_file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "origin_raw_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "origin_byte_length": 4027,
+      "errors": [
+        {
+          "code": "DECL_DESTINATION_UNRESOLVED",
+          "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+          "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+          "locator": "$.resources[1].destination_path"
+        }
+      ],
+      "declared_text": "Same ignored target/dist locations in this worktree",
+      "provenance": "destination prose; the three real products are already protected through $.resources[0] and the workspace broad roots"
+    },
+    {
+      "id": "RRI-06",
+      "kind": "PRESERVE_ROOTS",
+      "origin_file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "origin_raw_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "origin_byte_length": 4027,
+      "errors": [
+        {
+          "code": "DECL_ENV",
+          "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+          "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+          "locator": "$.resources[2].disposition"
+        }
+      ],
+      "declared_text": "%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}",
+      "targets": [
+        {
+          "abs": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog",
+          "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/catalog",
+          "disposition": "PRESERVE_REFERENCED",
+          "require_present": true
+        },
+        {
+          "abs": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data",
+          "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/data",
+          "disposition": "PRESERVE_REFERENCED",
+          "require_present": true
+        },
+        {
+          "abs": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived",
+          "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/derived",
+          "disposition": "PRESERVE_REFERENCED",
+          "require_present": true
+        }
+      ],
+      "provenance": "historical %APPDATA% expansion proven in GOV-RESIDUAL-RUNTIME-IDENTITY-1/historical-env-evidence.json; real user data, previously unprotected"
+    },
+    {
+      "id": "RRI-07",
+      "kind": "PRESERVE_ROOTS",
+      "origin_file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "origin_raw_sha256": "b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2",
+      "origin_byte_length": 4027,
+      "errors": [
+        {
+          "code": "DECL_ENV",
+          "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
+          "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+          "locator": "$.resources[3].disposition"
+        }
+      ],
+      "declared_text": "%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}",
+      "targets": [
+        {
+          "abs": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/catalog",
+          "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/catalog",
+          "disposition": "PRESERVE_USER_DATA",
+          "require_present": true
+        },
+        {
+          "abs": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/data",
+          "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/data",
+          "disposition": "PRESERVE_USER_DATA",
+          "require_present": true
+        },
+        {
+          "abs": "C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop/derived",
+          "normalized": "c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/derived",
+          "disposition": "PRESERVE_USER_DATA",
+          "require_present": true
+        }
+      ],
+      "provenance": "same real user-data root as RRI-06, declared as the source location that must stay unchanged (user-data disposition)"
+    }
+  ]
+}
