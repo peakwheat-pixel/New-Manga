@@ -15,7 +15,7 @@
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（7 Gate达成 + AC-CONSUMPTION `PARTIAL`；ZCode设计Gate与第二环境无活动Task）。
 - `DETECT-TILING-1`/`DETECT-MEMORY-GUARD-1`/`SEC-FMT-IMPL-1`/`PDF-STREAM-FIX-1`/`P09-AC3-DELETE-1`/`P09-AC3-HARDEN-1` 均 `closed_with_limitations`。
 - **`P18` 4/8**（AC2门槛、AC5阻塞）；`P20` 6/7；`P16`/`P17` `done`；**[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)** `superseded`；**[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md)** `closed_with_limitations`。
-- **Task台账**：见 [TASK_LEDGER](TASK_LEDGER.md)；11个非终态历史未跟踪草稿原样保留，状态字段不证明活性，不批量关闭。
+- **Task台账**：见 [TASK_LEDGER](TASK_LEDGER.md)；11 条 P02 历史线按用户 2026-10-22 裁决归档为 `historical`（原字节保留），现仅 1 个非终态 Task。
 - DIR-4：同一失败上限2次；DIR-5：goal轮次上限1000。Coordinator=dsh，epoch=10，lease=37230d7822a141fcae8f46acd7841890（LEASE_VALID）。
 
 ## Gate 与保留项
