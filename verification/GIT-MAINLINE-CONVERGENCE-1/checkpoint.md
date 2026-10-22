@@ -69,3 +69,11 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - 复验：声明审计 0 errors / 1946 保护根；tracked 工作区干净。
 - 未执行：prune、GC、push、reset、stash；USER_CONTENT/MIXED 工作树与 20 条未合并分支保留。
 - 剩余 64 heads = main 1 + 检出 42 + 未合并 20 + 旧主线 1；**仍未达到只剩 main**。
+### 第三批收敛（2026-10-22）
+
+- 退出 12/12「tracked/untracked/ignored 全为 0」的 CLEAN 工作树（`worktree remove`，无 --force，0 拒绝）：worktree 96 → **84**。
+- 分支不删除（D-2 保留 20 条未合并分支）：heads 保持 **64**。
+- 3 个 detached HEAD 的 commit 在备份恢复仓中逐条验证可读（3/3）。
+- 复验：声明审计 0 errors / 1946 保护根；治理检查 PASS；tracked 干净。
+- 未执行：prune、GC、push、reset、stash；五广域根保护与 r212 不变。
+- 累计：heads 104→64、worktree 142→84；**仍未达到只剩 main**（剩 42 检出 + 20 未合并 + 1 旧主线）。

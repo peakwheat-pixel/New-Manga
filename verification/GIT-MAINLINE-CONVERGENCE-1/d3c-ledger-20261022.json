@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "authorisation": "user: 授权全部; CLEAN worktrees hold no uncommitted content",
+  "targets": 12,
+  "removed": 12,
+  "refused": 0,
+  "heads_after": 64,
+  "worktrees_after": 84,
+  "detached_commits_recoverable": [
+    {
+      "head": "60d47991baea777996313d2cf1a335c136fb1ba0",
+      "in_bundle_restore": true
+    },
+    {
+      "head": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+      "in_bundle_restore": true
+    },
+    {
+      "head": "1924fbb4fbff6044205e4f8b52adb6aaff879e2a",
+      "in_bundle_restore": true
+    }
+  ],
+  "entries": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "branch": null,
+      "detached": true,
+      "head": "60d47991baea777996313d2cf1a335c136fb1ba0",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "branch": null,
+      "detached": true,
+      "head": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1",
+      "branch": "codex/gov-residual-runtime-identity-impl-1",
+      "detached": false,
+      "head": "4d5e97108a28a6394c93823a7b8b9fe61c115f49",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "detached": false,
+      "head": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "detached": false,
+      "head": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "detached": false,
+      "head": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "detached": false,
+      "head": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "detached": false,
+      "head": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION",
+      "branch": null,
+      "detached": true,
+      "head": "1924fbb4fbff6044205e4f8b52adb6aaff879e2a",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "detached": false,
+      "head": "06990b7993d042ae5e74ab479e291e494b622588",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "detached": false,
+      "head": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2",
+      "branch": "codex/P15-C1-FU2",
+      "detached": false,
+      "head": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "exit": 0,
+      "stderr": "",
+      "result": "REMOVED"
+    }
+  ]
+}

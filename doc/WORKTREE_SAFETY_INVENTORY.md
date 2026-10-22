@@ -302,3 +302,12 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 ### 未触碰
 
 - 未 prune、未 GC、未 push、未 reset、未 stash；未解除五广域根保护；未改 r212。
+## Stage 13 第三批授权执行（2026-10-22）
+
+| 步骤 | 动作 | 结果 |
+|---|---|---|
+| D-3c | 退出 tracked/untracked/ignored 全为 0 的工作树（`worktree remove`） | 12/12 成功，worktree 96→84 |
+| 分支 | 不删除（D-2 保留 20 条未合并分支） | heads 保持 64 |
+| 可恢复性 | 3 个 detached commit 在备份恢复仓逐条验证 | 3/3 可读 |
+
+**未触碰**：prune、GC、push、reset、stash、五广域根保护、r212 禁令、含未提交内容的工作树。
