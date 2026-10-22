@@ -85,7 +85,7 @@ allowed_paths:
 
 - 2026-10-22：dsh 释放并登记；wire 由 `wire-settings-b2`、前端由 `ui-settings-b2` 两个独立 writer 并行实现；Lead 独立复核 diff、跑 pytest 与 GUI 烟测。
 - 2026-10-22：交付 commit `0e2e623`；独立 Review 由 `reviewer-settings-a`（非实现者）执行，结论落 `verification/SETTINGS-OPEN-B-2/review-b2.md`。
-- Lead 独立验证：`pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` → 1251 passed / 3 skipped；`npm --prefix apps/desktop/frontend test` → 41 files / 406 tests；`tsc --noEmit` exit 0；GUI 烟测 PASS（gui-smoke.md）。
+- Lead 独立验证：`pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` → 1253 passed / 3 skipped；`npm --prefix apps/desktop/frontend test` → 41 files / 406 tests；`tsc --noEmit` exit 0；GUI 烟测 PASS（gui-smoke.md）。
 - 任务文本笔误已修：AC1 原写"HostControl 命令"，实际按**应用层命令**实现（与 `settings.get` 同型；不加入冻结的 `_HOST_CONTROL_COMMANDS`），见 wire-report §2。
 
 ## Canonical Evidence

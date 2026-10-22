@@ -24,7 +24,7 @@ status: in_review
 | 命令 | 结果 |
 |---|---|
 | `python -m pytest tests/core -q` | 752 passed（wire；含新增 28 项 cleanup wire） |
-| `python -m pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` | 1251 passed / 3 skipped（Lead 独立重跑） |
+| `python -m pytest tests/core tests/providers --ignore=tests/providers/test_detection_manga_real.py -q` | 1253 passed / 3 skipped（Lead 独立重跑） |
 | `cargo test --locked --skip packaged_sidecar_tests --test-threads=1`（dev overlay） | 152 passed / 1 ignored / 12 filtered（串行）；默认线程 149 passed / 2 failed，两者均为既有 worker-registry/锁竞争 flaky，单跑与串行全绿 |
 | `npm --prefix apps/desktop/frontend test` | 41 files / 406 tests passed（B-2 树） |
 | `tsc --noEmit` | exit 0 |
