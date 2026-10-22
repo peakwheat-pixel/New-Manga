@@ -129,6 +129,8 @@
 
 ## 5. 批次 C：数据安全与扩展
 
+> **实现级冻结见 [SETTINGS_SECTION_C_SCHEMAS.md](SETTINGS_SECTION_C_SCHEMAS.md)**（2026-10-23 设计提案）：回收站查看/清空复用既有 wire、备份包 v1 格式、Plugin manifest v1 与信任边界、决策清单 D1–D11。本节保留为批次 C 的范围与来源索引。
+
 ### 5.1 回收站（section `recycle_bin`）
 
 | 键/操作 | 值域 | 默认 | 现状 |

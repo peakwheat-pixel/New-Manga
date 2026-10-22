@@ -26,9 +26,10 @@
 |SETTINGS-OPEN-A-1|P15、P15-C1|done（批次 A：OCR/翻译参数/图片修复/排版样式；r1 changes_requested → r2 approved，集成 6a303a9）|
 |SETTINGS-OPEN-B-1|SETTINGS-OPEN-A-1|done（批次 B-1：模型/GPU + 任务/并发；review r1/r2/r3 与 follow-up approved，集成 b521ad27）|
 |SETTINGS-OPEN-B-2|SETTINGS-OPEN-B-1|done（批次 B-2：缓存/Revision 清理操作面；review approved，集成 0e2e623；GUI 烟测 PASS）|
+|SETTINGS-OPEN-C-1-DESIGN|SETTINGS-OPEN-B-2|in_review（批次 C 契约设计：回收站/备份恢复/Plugin-Hooks；产出设计文档 + 决策清单 D1–D11；待用户裁决）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**无**。批次 A/B-1/B-2 已关闭；批次 C（回收站、备份/恢复、Plugin/Hooks）需用户产品裁决并冻结各自 wire 后登记（不得造假控件）。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+READY 节点：**无**。批次 A/B-1/B-2 已关闭；批次 C 设计已产出（`SETTINGS-OPEN-C-1-DESIGN` `in_review`，待用户裁决 D1–D11）；裁决后释放 C-1/C-2/C-3 实现 Task（不得在无消费点的情况下开放写控件）。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 
