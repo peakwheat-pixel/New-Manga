@@ -82,6 +82,9 @@ allowed_paths:
 
 - Handoff：`doc/handoffs/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md`。
 - 2026-10-22 / dsh / 自查返修：本 Task 首次提交的 Resource Manifest 含两行被声明审计拒绝的写法（`refs/heads/main` 触发 `DECL_RELATIVE_UNRESOLVED`；`C:/.../Temp/p19*（…）` 触发 `DECL_GLOB`），使全仓错误数由 7 变 9。已改为 `NOT_APPLICABLE` 并保留说明文字；原件与七项身份未被触碰。返修后重跑审计必须回到 7 个错误。
+- 2026-10-22 / dsh / r1 审查返修（R-001，P1）：`verification-log.txt` §4 的 COUNTS 行与同段 `WROTE` 的 raw 产物来自两次不同的 probe 运行 —— COUNTS 行取自 Task 文件入库前的运行（2627/1926/7/276），`raw/protection-evaluation.json` 由 Task 文件入库后的运行写入（2636/1934/9/281）；两次的 7 项目标错误身份完全相同，差异仅为本 Task 自身文档新增的声明与 2 个自指 fatal。`verification-log.txt` 是已 pin 的 EV-07，按 R-001 要求不改其字节；本段是唯一勘误来源。`raw/protection-evaluation.json` 未修饰，如实保留 9 errors。
+- 2026-10-22 / dsh / r1 审查返修（R-002，P2）：交付提交 `56260c145` 的 Task Resource Manifest 含 `refs/heads/main` 与 `Temp/p19*（…）` 两行被审计拒绝，曾使活树错误数 7→9；已在 `a161cfb7e` 改为 `NOT_APPLICABLE` 并复跑确认回到 7。**口径条款**：`2627/1926/7/276` 是 base 时点（本 Task 文件入库前）口径；本 Task 入库后同一时刻实测为 `2636/1934/7/281`。后续 Task 的「7 errors」断言必须注明是「7 项历史错误身份」而非某个绝对计数，或以实施时实时基线为准。
+- 2026-10-22 / dsh / r1 审查返修（R-003，P2）：`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md` 三处权威导航已同步为 `in_review`。
 - Review：待独立 Reviewer（ZCode）对固定 head 审查（本次取交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58`）。
 - 实际测试：见「测试要求」表与 `verification-log.txt`。
 - 2026-10-22 / dsh / base `43a7d73c8`：只读取证完成；7 项身份固定；唯一真实保护缺口为 `C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop`（用户数据，hits=0）。真实资源操作 0。

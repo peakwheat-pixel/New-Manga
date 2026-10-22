@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-RESIDUAL-RUNTIME-IDENTITY-1](tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md)**（`in_progress`；七项历史运行身份只读取证，Owner dsh / Reviewer zcode，base `43a7d73c8`）。
+- 当前 Task：**[GOV-RESIDUAL-RUNTIME-IDENTITY-1](tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md)**（`in_review`；七项身份只读取证已交付，R1 3 项返修待 r2，Owner dsh / Reviewer zcode）。
 - 最近完成：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)** `done`；R2 b8c51b038，集成457485207；正式7。
 - 父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)** `blocked`；正式7项历史运行身份错误，原保护与STATUS-r212禁令有效。
 - 收敛基线97/135；当前103本地分支/141工作树；**尚未达到只剩main**。
