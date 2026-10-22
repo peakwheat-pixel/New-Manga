@@ -1,44 +1,70 @@
 ---
 task_id: GIT-MAINLINE-CONVERGENCE-1
-author: Codex
-recipient: Codex
+author: dsh
+recipient: zcode
 base_commit: fdca2057eec058996f936fc16138cc87e8cdc0bc
-delivery_head: c9a1bdd3061300c9c1c633eb8f2279903918e5a2
-status: blocked
+delivery_head: 92425ef1a9ed0493982eb43580282018eaae7900
+status: in_review
 ---
 
-# Handoff：Git 主线收敛（目标尚未完成）
+# Handoff：Git 主线收敛（执行完成，待独立审查）
 
-正式 CAS 接管：Codex epoch9；用户已确认原 dsh 停止写入。main 当前承接治理；不重开旧Task。
+Coordinator / Owner：dsh（epoch 10，lease `37230d7822a141fcae8f46acd7841890`）；Reviewer：**zcode**（独立，未参与本 Task 实现）。
+canonical 仓库 `G:/CODEX/New Manga`；branch `main`；交付 head `92425ef1a9ed0493982eb43580282018eaae7900`。
 
-治理前后本地分支97→97，注册工作树135→135；214 common refs全部保留，0stash。19未合并支线已逐项核对提交/patch/增量归档，未执行产品代码集成。19份旧bundle verify通过；新增全refs bundle 238847964B在空bare恢复214refs全等、135HEAD可读、fsck exit0，SHA256 8128955e47f835989a718b55b3af11754752e893b7f78fe7f337eaef68c0f1a9。备份仅截至56272e40b，不含后续治理提交或未提交/ignored/应用会话。
+## 1. 交付摘要
 
-证据版本：最初盘点 a91e659c3（历史）；修订与LF证据 c615d52b4；19条重签/盘点复审 head c9a1bdd30。DeepSeek session-1b587ef1-3c10-4e81-97b0-17e7d84c0765，R1/R2退出0；R2 approved仅限固定c9非破坏性切片。6项P2已修，N001旧指针在尾部记录提交修正。Review不批准删除/GC/prune/Task done，尾部状态登记不是新实施交付。
+按用户裁决（D-1 / D-3 与 A+B+C+旧主线）完成主线收敛。所有删除均「先备份、后执行、再复验」：
 
-## 实测验证
+| 阶段 | 动作 | 结果 |
+|---|---|---|
+| 备份 | 新建全 refs bundle + 空仓恢复验证 | 221 refs，missing 0 / extra 0，fsck clean，SHA-256 `35869bc3…cc6cd` |
+| D-3 × 5 批 | 140 个工作树退出 | 每批逐项复核 tracked/untracked/ignored/独有提交/进程占用 |
+| D-1 × 5 批 | 102 条分支删除 | `branch -d` 为主；仅对已归档分支用 `-D` |
+| A | 21 条历史分支 → `refs/archive/*` | 逐条 `rev-parse` 回验 |
+| B | 75 个工作树内容全量归档 | 12,686 文件 / 2,605.7 MiB，逐文件 SHA-256 |
+| B | 5 个残留目录归档清理 | 115.5 MiB，missing 0 |
 
-- 19 EV/SRC：raw bytes disk==blob==SHA，19/19，无文本归一化。
-- pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GIT-MAINLINE-CONVERGENCE-1.md：c9固定head PASS 3 warnings，EXIT0；日志 verification/GIT-MAINLINE-CONVERGENCE-1/validation-c9a1bdd30.txt，最终记录提交后另验。
-- git diff --check：EXIT0。产品测试NOT_RUN（无产品代码变化）。
-- 117个其他refs逐项记录保留；相比19分支集合另有110个去重提交，均在记录时Git备份中。
+## 2. 最终实测
 
-## 当前阻塞
+```
+refs/heads          1  (main)
+worktrees           1  (主 checkout)
+refs/archive/*     21
+声明审计            0 errors / 1946 protected roots / 273 warnings   EXIT 0
+governance check    PASS (2 warnings)                                EXIT 0
+git diff --check    0                                                EXIT 0
+tracked 工作区       干净
+stash               0
+```
 
-125工作树保护命中，82有dirty/untracked，60有ignored根，77声明错误；集合重叠。旧清理禁令和旧主线显式保留未解除。未提交/ignored未逐文件备份，不对任何工作树执行删除。19未合并branch不能普通-d删除，不能以强删旁路或盲合并绕过用户约束。
+完整命令与退出码见 `verification/GIT-MAINLINE-CONVERGENCE-1/convergence-verification-log.txt`（EV-CONV-CHECK）。
 
-完整Task保持blocked，暂停前in_review；没有done/关闭/发布/下一Owner。全部新资源按Task Manifest保留，源数据/原作者未提交内容保留；精确清册和下一裁决见 verification/GIT-MAINLINE-CONVERGENCE-1/{report,branches,worktrees,decision-request}.md。
+## 3. 恢复路径（三路可逆）
 
-## 下一任务建议（等待用户裁决，尚未释放）
+1. **分支**：`git branch <name> refs/archive/<name>`；
+2. **工作树内容**：`G:/CODEX/New Manga.workspace/archive/worktree-content-20261022/<worktree>/`，`_manifest.json` 给出相对路径 / 大小 / SHA-256；
+3. **Git 对象**：`G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-352410640c.bundle`（221 refs）。
 
-- Task：GIT-MAINLINE-CONVERGENCE-1后续处置切片，或另建逐项保护声明/路径兼容Task。前提是明确保护与独有工作的处置边界；不把本建议当作READY。
-- Owner：Codex；Reviewer：DeepSeek Harness（非本轮修订作者）。原因：Lead掌握保护/契约，独立Reviewer核对语义与数据保全。
-- Recovery：G:/CODEX/New Manga，main；固定base为本Handoff delivery_head c9a1bdd30，实际尾部HEAD以git实测；不创建新worktree直到正式释放。若有代码修复，分支codex/<NEW-TASK-ID>，路径G:/CODEX/New Manga.workspace/worktrees/<NEW-TASK-ID>，均待Codex创建。
-- 允许：先只读所选source、77错误与原RESIDUAL，冻结Task/Plan/STATUS和自己的verification；任何helper或历史声明改动要另列精确allowed_paths。
-- 禁止：用户文件/数据库/模型/原始evidence/pin字节、全局忽略/放宽fail-closed、清理/GC/prune/强删/远端操作；不得恢复Legacy实现。
-- 交付：逐项source/HEAD/归属/保护来源/引用/占用/备份恢复矩阵、原始错误与修复前后对照、固定commit、非作者Review和Handoff。删除另需独立授权窗口。
-- 验证：现有声明审计/incident replay（如涉及工具）、Task治理check、必要回归；所有命令有环境/EXIT，任何PARTIAL/BLOCKED不写PASS。
-- Forwardable instruction：在 G:/CODEX/New Manga 的 main 读取 GIT-MAINLINE-CONVERGENCE-1、R2 reviewed_head=c9a1bdd3061300c9c1c633eb8f2279903918e5a2、checkpoint与decision-request，先核对实际HEAD和唯一Codex租约。确认用户对所选保护资源/独有支线的处置裁决；未获裁决则保持blocked和全部原位保护。获裁决后仅冻结一个最小后续Task，明确Owner Codex/Reviewer DeepSeek、source/HEAD/allowed_paths；代码修复使用待创建的codex任务分支和workspace工作树。交付真实before/after矩阵、必要测试、固定commit、独立Review/Handoff；任何删除需另做备份恢复与精确授权窗口，禁止强删旁路、Legacy盲合并、GC/prune或push。
+## 4. 边界与未执行
 
-## 2026-10-21 后续状态（覆盖上文历史计数与77错误的当前含义）
+- 未执行 `git worktree prune`、GC、push、reset、stash。
+- 未改变五广域根整体保护、r212 清理禁令。
+- 用户未提交内容（1247 个 untracked 根）原样保留。
+- `.git/worktrees` 下历史孤儿元数据保留（未 prune）。
 
-保护处置边界已记录boundary-adjudication.md，全部原资源保留，STATUS/r212禁令有效。工具前置GOV-PATH-HEADER-COMPAT-1独审/集成完成9cae94142；77→32 errors，原保护集合全保留+410。当前98本地分支/136工作树，新增Task资源原位保留，尚未达到只剩main。父Task继续blocked；旧盘点Review范围不扩张。下一建议为32项只读取证，完整启动条件/Owner/Reviewer/base/范围/验证/可转发指令见 [子Task Handoff](GOV-PATH-HEADER-COMPAT-1.md)，尚未释放。
+## 5. 下一 Gate
+
+**zcode 独立审查**（固定 `92425ef1a`），重点：
+
+1. **删除合规性**：102 条分支、140 个工作树、5 个残留目录，逐项检查是否满足「已备份 + 已归档 + 已授权 + 恢复可行」；
+2. **AC 真实性**：AC2–AC5 的 MET 是否有证据支撑；是否把未验证项写成 MET；
+3. **恢复可行性**：archive 引用、内容 manifest、bundle 三者是否足以重建；
+4. **保护边界**：五广域根、r212、用户未提交内容是否真的未动；
+5. **强制手段**：`--force` 与 `-D` 的使用是否仅在授权与已归档范围内。
+
+approved 后由 dsh 集成复验并 done；不批准则按 findings 返修。
+
+## 6. 可转发指令（下一节点）
+
+「从 `G:/CODEX/New Manga` 当前 `main` 先读 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、本 Handoff 与 `verification/GIT-MAINLINE-CONVERGENCE-1/delta-20261022.md` §16–17，核对 HEAD 与 epoch 10 租约。`GIT-MAINLINE-CONVERGENCE-1` 已把主线收敛到 `refs/heads` 仅 `main`、注册 worktree 仅主 checkout，21 条历史分支归档在 `refs/archive/*`，2.6 GiB 工作树未提交内容归档在 `G:/CODEX/New Manga.workspace/archive/worktree-content-20261022/` 并带逐文件 SHA-256 manifest。**下一步是独立审查该 Task**（固定 `92425ef1a`），通过后 done 并核销资源。不得以本 Task 的完成当作解除 r212 或五广域根保护的授权。」
