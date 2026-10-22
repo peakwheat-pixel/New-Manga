@@ -191,6 +191,51 @@ export class SettingsClient {
     }
   }
 
+  /* ---------------- SETTINGS-OPEN-A-1: generic section read/write ---------------- */
+
+  /**
+   * Generic single-section read over the frozen `settings_get` channel
+   * (request shape `{section}`; same wire as getSfxSection). A JSON null — or
+   * a missing key, which the projection treats the same way — returns null so
+   * callers can render the explicit "未设置" affordance instead of inventing
+   * values. Non-object payloads fail closed to null: the Core is the authority
+   * for each section's shape, the UI never guesses.
+   */
+  async getSection<T>(section: string): Promise<T | null> {
+    try {
+      const res = (await this.invoke(SETTINGS_GET_COMMAND, { section })) as {
+        settings?: Record<string, unknown>;
+      };
+      const value = res?.settings?.[section];
+      if (value === null || value === undefined) {
+        return null;
+      }
+      if (typeof value !== "object" || Array.isArray(value)) {
+        return null;
+      }
+      return value as T;
+    } catch (error) {
+      const code = extractErrorCode(error, "SETTINGS_UNAVAILABLE");
+      throw new SettingsClientError(code, `settings_get(section) failed: ${code}`);
+    }
+  }
+
+  /**
+   * Generic whole-section upsert over the frozen `settings_update_section`
+   * channel: exactly `{section, values}` — the mirror of the Core's
+   * `save_settings_section(section, values)`. Key-level whitelist/value-domain
+   * validation stays in the Core (SettingsRequestError → INVALID_REQUEST);
+   * this client only preserves the closed error projection.
+   */
+  async saveSection(section: string, values: Record<string, unknown>): Promise<void> {
+    try {
+      await this.invoke(SETTINGS_UPDATE_SECTION_COMMAND, { section, values });
+    } catch (error) {
+      const code = extractErrorCode(error, "SETTINGS_SAVE_FAILED");
+      throw new SettingsClientError(code, `settings_update_section failed: ${code}`);
+    }
+  }
+
   /* ---------------- G21: Provider Profiles + Capability bindings ---------------- */
 
   async listProviderProfiles(): Promise<ProviderProfile[]> {

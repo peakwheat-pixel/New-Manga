@@ -31,6 +31,7 @@ from typing import Any, Protocol
 
 from application.editing.ports import RegionRepository
 from application.rendering.service import RenderService, RenderStatus
+from application.rendering.style import RenderTextStyle
 from application.translation.color.service import SourceStyleService
 from application.translation.inpaint.mask import (
     DEFAULT_MASK_PARAMS,
@@ -84,6 +85,7 @@ from ports.ocr.ports import (
     TEXT_DIRECTION_HORIZONTAL,
     OcrRequest,
 )
+from ports.rendering.direction import TextDirection
 from ports.providers.errors import (
     ProviderError,
     ProviderInputError,
@@ -794,7 +796,13 @@ class ProductionHandlers:
                 "no render service assembled for the render step",
                 stage=STEP_RENDER,
             )
-        outcome = self.deps.render_service.rerender_region(region_id)
+        # SETTINGS-OPEN-A-1 AC2: the persisted (Run-frozen) ``typeset`` section
+        # is the render default style; Region-persisted values still win
+        # (D03 §11.4). No section -> None -> the historical behaviour.
+        outcome = self.deps.render_service.rerender_region(
+            region_id,
+            style_defaults=typeset_style_defaults(run.settings_snapshot),
+        )
         if outcome.status is not RenderStatus.COMMITTED:
             raise StepExecutionError(
                 outcome.error_code or "RENDER_FAILED",
@@ -1009,6 +1017,101 @@ def _payload_hash(image_bytes: bytes, region_id: str) -> str:
     return digest.hexdigest()
 
 
+#: Batch-A ``typeset`` values this reader accepts; the Core write gate
+#: (``bootstrap.settings_sections``) already enforces the same domains, so
+#: these checks only shield a render from corrupted/legacy stored values.
+_TYPESET_TEXT_ALIGNS = frozenset({"left", "center", "right"})
+_TEXT_DIRECTIONS = {direction.value: direction for direction in TextDirection}
+
+
+def typeset_style_defaults(settings: Mapping[str, Any]) -> RenderTextStyle | None:
+    """Derive the render default style from a Run's frozen ``typeset`` section.
+
+    SETTINGS-OPEN-A-1 AC2: the persisted typeset keys feed
+    ``RenderService.style_defaults``; fields absent from the whitelist (e.g.
+    ``font_family``) keep the D03 §11.6 defaults, and a missing/non-mapping
+    section returns ``None`` (historical render behaviour, byte-for-byte).
+
+    The Core write gate validates every value before persistence, but a frozen
+    Run can be replayed from older/corrupted storage. A malformed field is
+    therefore skipped (it keeps its default) rather than crashing the render
+    step; ``RenderTextStyle.__post_init__`` re-validates the assembled value.
+    """
+    section = settings.get("typeset") if isinstance(settings, Mapping) else None
+    if not isinstance(section, Mapping) or not section:
+        return None
+    kwargs: dict[str, Any] = {}
+    for key in ("text_color", "fill_color", "stroke_color"):
+        value = section.get(key)
+        if _is_hex_color(value):
+            kwargs[key] = value
+    for key, target in (
+        ("stroke_enabled", "stroke_enabled"),
+        ("auto_font_size", "auto_font_size_enabled"),
+    ):
+        value = section.get(key)
+        if isinstance(value, bool):
+            kwargs[target] = value
+    stroke_width = _bounded_number(section.get("stroke_width"), 0.0, 20.0)
+    if stroke_width is not None:
+        kwargs["stroke_width"] = stroke_width
+    line_spacing = _bounded_number(section.get("line_spacing"), 1.0, 3.0)
+    if line_spacing is not None:
+        kwargs["line_spacing"] = line_spacing
+    text_align = section.get("text_align")
+    if isinstance(text_align, str) and text_align in _TYPESET_TEXT_ALIGNS:
+        kwargs["text_align"] = text_align
+    raw_direction = section.get("text_direction")
+    direction = (
+        _TEXT_DIRECTIONS.get(raw_direction)
+        if isinstance(raw_direction, str)
+        else None
+    )
+    # An unknown direction falls back to the RenderTextStyle default (AUTO),
+    # never to a guessed horizontal/vertical value.
+    if direction is not None:
+        kwargs["text_direction"] = direction
+    font_size_offset = section.get("font_size_offset")
+    if (
+        isinstance(font_size_offset, int)
+        and not isinstance(font_size_offset, bool)
+        and -5 <= font_size_offset <= 5
+    ):
+        kwargs["font_size_offset"] = font_size_offset
+    manual_font_size = section.get("manual_font_size")
+    if manual_font_size is not None:
+        manual = _bounded_number(manual_font_size, 1.0, 500.0)
+        if manual is not None:
+            kwargs["manual_font_size"] = manual
+    if not kwargs:
+        return None
+    try:
+        return RenderTextStyle(**kwargs)
+    except (TypeError, ValueError):
+        # Defense in depth only: skip the whole section instead of letting a
+        # corrupted field fail the render step.
+        return None
+
+
+def _is_hex_color(value: Any) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 7
+        and value.startswith("#")
+        and all(digit in "0123456789abcdefABCDEF" for digit in value[1:])
+    )
+
+
+def _bounded_number(value: Any, minimum: float, maximum: float) -> float | None:
+    """Return ``value`` as a float inside the inclusive bounds, else ``None``."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    number = float(value)
+    if not minimum <= number <= maximum:
+        return None
+    return number
+
+
 def build_production_handlers(
     *,
     registry: ProviderRegistry,
@@ -1076,4 +1179,5 @@ __all__ = [
     "STEP_TERM_EXTRACT",
     "STEP_TRANSLATE",
     "build_production_handlers",
+    "typeset_style_defaults",
 ]

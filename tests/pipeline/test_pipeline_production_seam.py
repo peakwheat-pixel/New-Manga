@@ -130,6 +130,54 @@ def test_sqlite_snapshot_redacts_secrets_and_merges_overrides(production_db):
     assert "do-not-store" not in raw
 
 
+def test_sqlite_snapshot_keeps_context_token_budget_but_still_redacts_secrets(
+    production_db,
+):
+    """SETTINGS-OPEN-A-1 §3.2: ``translate.context_token_budget`` is an
+    ordinary integer setting whose key only *looks* sensitive to the
+    substring scrubber; it must persist, while real secret keys stay dropped
+    (the exact-key exemption cannot widen the scrubber)."""
+    provider = SqliteSnapshotProvider(
+        production_db,
+        settings={
+            "translate": {"context_pages": 3, "context_token_budget": 4096},
+            "api_key": "do-not-store-api-key",
+            "password": "do-not-store-password",
+            "auth_token": "do-not-store-auth-token",
+            "nested": {
+                "refresh_token": "do-not-store-refresh-token",
+                "secret": "do-not-store-secret",
+            },
+        },
+        provider_bindings={},
+        constraint_snapshot_ref=None,
+        context_policy={},
+    )
+    frozen = provider.freeze("run-1")
+
+    assert frozen.settings["translate"] == {
+        "context_pages": 3,
+        "context_token_budget": 4096,
+    }
+    for sensitive in ("api_key", "password", "auth_token"):
+        assert sensitive not in frozen.settings
+    assert "refresh_token" not in frozen.settings["nested"]
+    assert "secret" not in frozen.settings["nested"]
+
+    raw = production_db.execute(
+        "SELECT settings_json FROM pipeline_defaults"
+    ).fetchone()[0]
+    assert '"context_token_budget": 4096' in raw
+    for marker in (
+        "do-not-store-api-key",
+        "do-not-store-password",
+        "do-not-store-auth-token",
+        "do-not-store-refresh-token",
+        "do-not-store-secret",
+    ):
+        assert marker not in raw
+
+
 def test_production_service_round_trips_and_recovers_without_fake_executor(production_db):
     catalog = SqliteTargetCatalog(production_db)
     store = SqlitePipelineStore(production_db)

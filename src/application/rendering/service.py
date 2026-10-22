@@ -290,8 +290,20 @@ class RenderService:
     # ------------------------------------------------------------------
 
     def rerender_region(
-        self, region_id: str, *, allow_manual_sfx: bool = False
+        self,
+        region_id: str,
+        *,
+        allow_manual_sfx: bool = False,
+        style_defaults: RenderTextStyle | None = None,
     ) -> RenderOutcome:
+        """Rerender one region (D06 §47).
+
+        ``style_defaults`` carries the same meaning as in :meth:`rerender_page`
+        (D03 §11.4: persisted Region values win, then the supplied defaults,
+        then the D03 §11.6 constants). ``None`` keeps the historical behaviour
+        byte-for-byte; the single-region path only differs in its composition
+        base, never in style inheritance.
+        """
         stored = self._region_repo.get_region(region_id)
         if stored is None or stored.deleted:
             return _blocked("TARGET_NOT_FOUND", f"region {region_id} not found")
@@ -333,7 +345,10 @@ class RenderService:
 
         source_style_result = self._extract_source_style(page_id)
         prepared = self._prepare_region(
-            stored, source_style_result, None, allow_sfx=True
+            stored,
+            source_style_result,
+            style_defaults,
+            allow_sfx=True,
         )
         if prepared.op is None:
             return _blocked("MISSING_REQUIRED_INPUT", prepared.report.skip_reason or "")

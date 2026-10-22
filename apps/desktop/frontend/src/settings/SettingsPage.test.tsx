@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 import { act } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SettingsClient } from "./client";
 import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from "./SettingsPage";
@@ -9,9 +9,23 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * P15 AC1 — layout & category structure (AD-001 §5.2): 200px fixed
  * SettingsCategoryNav + SettingsContentPanel, twelve categories in the
  * frozen order, switching via React local state (no sub-route).
- * P15 AC2 — every non-frozen partition is visible, not operable, and
- * states the reason "等待 section schema 冻结".
+ *
+ * SETTINGS-OPEN-A-1 AC3 — batch A opens OCR / translation parameters /
+ * inpaint / typeset: those categories are now operable and host real panels;
+ * only model/GPU, tasks/concurrency, cache/Revision, recycle bin,
+ * backup/restore and plugins keep the disabled placeholder and the
+ * "未开放" badge.
  */
+
+const OPEN_CATEGORY_IDS = ["provider", "network", "ocr", "translation", "inpaint", "typeset"] as const;
+const CLOSED_CATEGORY_IDS = [
+  "model_gpu",
+  "task_concurrency",
+  "cache_revision",
+  "recycle_bin",
+  "backup_restore",
+  "plugins",
+] as const;
 
 function makeInvoke() {
   return vi.fn(async (command: string) => {
@@ -30,50 +44,69 @@ function makeInvoke() {
   });
 }
 
-describe("SettingsPage layout & categories (AC1)", () => {
-  let dom: JSDOM;
-  let container: HTMLDivElement;
-  let root: Root;
+function useMountedPage() {
+  const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
+  vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+  vi.stubGlobal("window", dom.window);
+  vi.stubGlobal("document", dom.window.document);
+  vi.stubGlobal("navigator", dom.window.navigator);
+  vi.stubGlobal("HTMLElement", dom.window.HTMLElement);
+  const container = dom.window.document.createElement("div");
+  dom.window.document.body.appendChild(container);
+  const root = createRoot(container);
 
-  beforeEach(() => {
-    dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
-    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
-    vi.stubGlobal("window", dom.window);
-    vi.stubGlobal("document", dom.window.document);
-    vi.stubGlobal("navigator", dom.window.navigator);
-    vi.stubGlobal("HTMLElement", dom.window.HTMLElement);
-    container = dom.window.document.createElement("div");
-    dom.window.document.body.appendChild(container);
-    root = createRoot(container);
-  });
+  const q = (selector: string) => container.querySelector(selector) as HTMLElement | null;
 
-  afterEach(() => {
+  const mount = () => {
+    act(() => {
+      root.render(<SettingsPage client={new SettingsClient(makeInvoke())} />);
+    });
+  };
+
+  const activateOpenCategory = async (categoryId: string) => {
+    await act(async () => {
+      (q(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement).click();
+      await Promise.resolve();
+    });
+  };
+
+  const cleanup = () => {
     act(() => {
       root.unmount();
     });
     vi.unstubAllGlobals();
-  });
-
-  const mount = (invoke: ReturnType<typeof makeInvoke>) => {
-    act(() => {
-      root.render(<SettingsPage client={new SettingsClient(invoke)} />);
-    });
   };
 
-  const q = (selector: string) => container.querySelector(selector) as HTMLElement | null;
+  return { dom, container, q, mount, activateOpenCategory, cleanup };
+}
+
+describe("SettingsPage layout & categories (AC1)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
 
   it("renders the fixed 200px category nav and the content panel", () => {
-    mount(makeInvoke());
-    const nav = q('[data-testid="settings-category-nav"]');
+    page.mount();
+    const nav = page.q('[data-testid="settings-category-nav"]');
     expect(nav).not.toBeNull();
     expect(nav?.getAttribute("style") ?? nav?.style.width).toContain("200px");
-    expect(q('[data-testid="settings-content-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-content-panel"]')).not.toBeNull();
   });
 
   it("renders the twelve categories in the frozen order with the frozen labels", () => {
-    mount(makeInvoke());
-    const buttons = Array.from(container.querySelectorAll('button[data-testid^="settings-category-"]'));
-    const ids = buttons.map((b) => (b as HTMLElement).dataset.testid?.replace("settings-category-", ""));
+    page.mount();
+    const buttons = Array.from(
+      page.container.querySelectorAll('button[data-testid^="settings-category-"]'),
+    );
+    const ids = buttons.map((b) =>
+      (b as HTMLElement).dataset.testid?.replace("settings-category-", ""),
+    );
     expect(ids).toEqual([...SETTINGS_CATEGORY_ORDER]);
     const labels = buttons.map((b) => (b as HTMLElement).textContent);
     expect(labels[0]).toContain("Provider");
@@ -91,90 +124,167 @@ describe("SettingsPage layout & categories (AC1)", () => {
   });
 
   it("switches categories via local state only — no sub-route, no remount of the page", async () => {
-    mount(makeInvoke());
-    const page = q('[data-testid="settings-page"]');
-    expect(page).not.toBeNull();
+    page.mount();
+    expect(page.q('[data-testid="settings-page"]')).not.toBeNull();
 
-    const networkBtn = q('[data-testid="settings-category-network"]') as HTMLButtonElement;
-    await act(async () => {
-      networkBtn.click();
-    });
-    expect(q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe("network");
-    expect(q('[data-testid="settings-content-network"]')).not.toBeNull();
+    await page.activateOpenCategory("network");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "network",
+    );
+    expect(page.q('[data-testid="settings-content-network"]')).not.toBeNull();
     // The page container node is the SAME node across switches (no route
     // remount): the nav keeps its DOM identity.
-    const navBefore = q('[data-testid="settings-category-nav"]');
-    await act(async () => {
-      (q('[data-testid="settings-category-provider"]') as HTMLButtonElement).click();
-    });
-    expect(q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe("provider");
-    expect(q('[data-testid="settings-content-provider"]')).not.toBeNull();
-    expect(q('[data-testid="settings-category-nav"]')).toBe(navBefore);
+    const navBefore = page.q('[data-testid="settings-category-nav"]');
+    await page.activateOpenCategory("provider");
+    expect(
+      page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id"),
+    ).toBe("provider");
+    expect(page.q('[data-testid="settings-content-provider"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-category-nav"]')).toBe(navBefore);
   });
 
-  it("marks only the three open categories open; the rest carry the 未开放 badge", () => {
-    mount(makeInvoke());
+  it("opens exactly the batch-A categories; only still-closed categories carry the 未开放 badge", () => {
+    page.mount();
     const openFlags = SETTINGS_CATEGORY_ORDER.map(
-      (id) => (q(`[data-testid="settings-category-${id}"]`) as HTMLElement).dataset.open,
+      (id) => (page.q(`[data-testid="settings-category-${id}"]`) as HTMLElement).dataset.open,
     );
     expect(openFlags).toEqual([
       "true", // provider
       "true", // network
-      "false", // ocr
-      "true", // translation (hosts sfx.policy)
-      "false",
-      "false",
-      "false",
-      "false",
-      "false",
-      "false",
-      "false",
-      "false",
+      "true", // ocr — batch A
+      "true", // translation (sfx.policy + translation params)
+      "true", // inpaint — batch A
+      "true", // typeset — batch A
+      "false", // model_gpu
+      "false", // task_concurrency
+      "false", // cache_revision
+      "false", // recycle_bin
+      "false", // backup_restore
+      "false", // plugins
     ]);
-    const ocrBtn = q('[data-testid="settings-category-ocr"]') as HTMLElement;
-    expect(ocrBtn.textContent).toContain("未开放");
+
+    for (const id of OPEN_CATEGORY_IDS) {
+      const button = page.q(`[data-testid="settings-category-${id}"]`) as HTMLButtonElement;
+      expect(button).not.toBeNull();
+      expect(button.disabled).toBe(false);
+      expect(button.getAttribute("aria-disabled")).toBe("false");
+      // The "未开放" aria-label/title only exists for still-closed partitions.
+      expect(button.getAttribute("aria-label")).toBeNull();
+      expect(button.getAttribute("title")).toBeNull();
+      expect(button.textContent).not.toContain("未开放");
+    }
+
+    for (const id of CLOSED_CATEGORY_IDS) {
+      const button = page.q(`[data-testid="settings-category-${id}"]`) as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+      expect(button.getAttribute("aria-disabled")).toBe("true");
+      expect(button.getAttribute("aria-label")).toContain("未开放");
+      expect(button.getAttribute("title")).toContain("等待 section schema 冻结");
+      expect(button.textContent).toContain("未开放");
+    }
   });
 });
 
-describe("Disabled partitions: visible, not operable, reasoned (AC2)", () => {
-  let dom: JSDOM;
-  let container: HTMLDivElement;
-  let root: Root;
+describe("Batch A open categories host editable panels (AC3)", () => {
+  let page: ReturnType<typeof useMountedPage>;
 
   beforeEach(() => {
-    dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
-    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
-    vi.stubGlobal("window", dom.window);
-    vi.stubGlobal("document", dom.window.document);
-    vi.stubGlobal("navigator", dom.window.navigator);
-    vi.stubGlobal("HTMLElement", dom.window.HTMLElement);
-    container = dom.window.document.createElement("div");
-    dom.window.document.body.appendChild(container);
-    root = createRoot(container);
+    page = useMountedPage();
   });
 
   afterEach(() => {
-    act(() => {
-      root.unmount();
-    });
-    vi.unstubAllGlobals();
+    page.cleanup();
   });
 
-  const mount = () => {
-    const invoke = makeInvoke();
-    act(() => {
-      root.render(<SettingsPage client={new SettingsClient(invoke)} />);
-    });
-  };
+  it("OCR category opens and renders OcrSettingsPanel instead of the placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("ocr");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "ocr",
+    );
+    expect(page.q('[data-testid="settings-content-ocr"]')).not.toBeNull();
+    expect(page.q('[data-testid="ocr-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-ocr"]')).toBeNull();
+    // The panel loaded the real section through the shared channel.
+    expect(page.q('[data-testid="ocr-script"]')).not.toBeNull();
+  });
 
-  const activateOpenCategory = async (categoryId: string) => {
+  it("inpaint category opens and renders InpaintSettingsPanel instead of the placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("inpaint");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "inpaint",
+    );
+    expect(page.q('[data-testid="settings-content-inpaint"]')).not.toBeNull();
+    expect(page.q('[data-testid="inpaint-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-inpaint"]')).toBeNull();
+  });
+
+  it("typeset category opens TypesetSettingsPanel and keeps reading direction as guidance only", async () => {
+    page.mount();
+    await page.activateOpenCategory("typeset");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "typeset",
+    );
+    expect(page.q('[data-testid="settings-content-typeset"]')).not.toBeNull();
+    expect(page.q('[data-testid="typeset-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-typeset"]')).toBeNull();
+    // §3.4: direction is a Book/Chapter property — guidance, not a fake control.
+    const note = page.q('[data-testid="settings-reading-direction-note"]');
+    expect(note).not.toBeNull();
+    expect(note?.textContent).toContain("书籍 / 章节属性");
+    expect(note?.getAttribute("aria-disabled")).toBeNull();
+  });
+
+  it("translation keeps SfxPolicyControl and adds TranslationParamsPanel, replacing the context placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("translation");
+    expect(page.q('[data-testid="sfx-policy-control"]')).not.toBeNull();
+    expect(page.q('[data-testid="translation-params-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-translation-context"]')).toBeNull();
+    expect(page.q('[data-testid="translate-context-pages"]')).not.toBeNull();
+  });
+
+  it("keyboard navigation skips the still-closed categories", async () => {
+    page.mount();
+    const nav = page.q('[data-testid="settings-category-nav"]') as HTMLElement;
+    // provider → network → ocr → translation: the three closed-after-open
+    // transitions still land on open categories only.
+    for (let i = 0; i < 3; i += 1) {
+      await act(async () => {
+        nav.dispatchEvent(new page.dom.window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+        await Promise.resolve();
+      });
+    }
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "translation",
+    );
+
+    await page.activateOpenCategory("typeset");
     await act(async () => {
-      (container.querySelector(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement).click();
+      nav.dispatchEvent(new page.dom.window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      await Promise.resolve();
     });
-  };
+    // model/GPU (closed) is skipped — the last open category stays active.
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "typeset",
+    );
+  });
+});
+
+describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
 
   const assertDisabledCategory = (categoryId: string, label: string) => {
-    const button = container.querySelector(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement;
+    const button = page.q(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement;
     expect(button).not.toBeNull();
     expect(button.disabled).toBe(true);
     expect(button.getAttribute("aria-disabled")).toBe("true");
@@ -185,92 +295,55 @@ describe("Disabled partitions: visible, not operable, reasoned (AC2)", () => {
     expect(button.textContent).toContain("未开放");
   };
 
-  /** The shared per-partition assertion: visible section + disabled control
-   * + the frozen reason string. */
-  const assertDisabledSection = (testId: string, expectedTitlePart: string) => {
-    const section = container.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null;
-    expect(section).not.toBeNull();
-    expect(section?.getAttribute("aria-disabled")).toBe("true");
-    // Visible: the title text is rendered.
-    const title = container.querySelector(`[data-testid="${testId}-title"]`) as HTMLElement | null;
-    expect(title?.textContent ?? "").toContain(expectedTitlePart);
-    // Reason: the frozen cause string.
-    const reason = container.querySelector(`[data-testid="${testId}-reason"]`) as HTMLElement | null;
-    expect(reason?.textContent ?? "").toContain("等待 section schema 冻结");
-    // Not operable: no enabled interactive control inside the section.
-    const buttons = Array.from(section?.querySelectorAll("button") ?? []);
-    expect(buttons.length).toBeGreaterThan(0);
-    for (const button of buttons) {
-      expect((button as HTMLButtonElement).disabled).toBe(true);
-    }
-    // No input/select/textarea at all — nothing to type into.
-    expect((section?.querySelectorAll("input, select, textarea") ?? []).length).toBe(0);
-  };
-
-  it("OCR category remains visible but cannot be invoked", async () => {
-    mount();
-    const button = container.querySelector('[data-testid="settings-category-ocr"]') as HTMLButtonElement;
-    assertDisabledCategory("ocr", "OCR");
-    await act(async () => button.click());
-    expect(container.querySelector('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe("provider");
-  });
-
-  it("translation-context partition is disabled inside the open translation category", async () => {
-    mount();
-    await activateOpenCategory("translation");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.translationContext, "翻译参数 / 上下文策略");
-    // The same category still hosts the open SFX control (AC2 open table).
-    expect(container.querySelector('[data-testid="sfx-policy-control"]')).not.toBeNull();
-  });
-
-  it("inpaint category remains visible but cannot be invoked", () => {
-    mount();
-    assertDisabledCategory("inpaint", "图片修复");
-  });
-
-  it("typeset category remains visible but cannot be invoked", () => {
-    mount();
-    assertDisabledCategory("typeset", "排版样式");
-  });
-
-  it("model/GPU category remains visible but cannot be invoked", () => {
-    mount();
+  it("model/GPU category remains visible but cannot be invoked", async () => {
+    page.mount();
     assertDisabledCategory("model_gpu", "模型/GPU");
+    await page.activateOpenCategory("model_gpu");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "provider",
+    );
   });
 
   it("task/concurrency category remains visible but cannot be invoked", () => {
-    mount();
+    page.mount();
     assertDisabledCategory("task_concurrency", "任务/并发");
   });
 
   it("cache/Revision category remains visible but cannot be invoked", () => {
-    mount();
+    page.mount();
     assertDisabledCategory("cache_revision", "缓存/Revision");
   });
 
   it("recycle bin category remains visible but cannot be invoked", () => {
-    mount();
+    page.mount();
     assertDisabledCategory("recycle_bin", "回收站");
   });
 
   it("backup/restore category remains visible but cannot be invoked", () => {
-    mount();
+    page.mount();
     assertDisabledCategory("backup_restore", "备份/恢复");
   });
 
   it("Plugin/Hooks category remains visible but cannot be invoked", () => {
-    mount();
+    page.mount();
     assertDisabledCategory("plugins", "Plugin/Hooks");
   });
 
-  it("keyboard navigation skips closed categories", async () => {
-    mount();
-    const nav = container.querySelector('[data-testid="settings-category-nav"]') as HTMLElement;
-    for (let i = 0; i < 3; i += 1) {
-      await act(async () => {
-        nav.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
-      });
+  it("keeps a reasoned placeholder id for every still-closed partition", () => {
+    page.mount();
+    expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(
+      [
+        "backupRestore",
+        "cacheRevision",
+        "modelGpu",
+        "plugins",
+        "recycleBin",
+        "taskConcurrency",
+      ].sort(),
+    );
+    // None of them is mounted while the page sits on an open category.
+    for (const testId of Object.values(DISABLED_SECTION_TEST_IDS)) {
+      expect(page.q(`[data-testid="${testId}"]`)).toBeNull();
     }
-    expect(container.querySelector('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe("translation");
   });
 });

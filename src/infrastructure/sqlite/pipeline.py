@@ -882,13 +882,21 @@ class SqliteTargetCatalog(TargetCatalog):
 
 _SENSITIVE_PARTS = ("secret", "password", "token", "api_key", "apikey")
 
+#: Ordinary configuration keys that merely *look* sensitive to the substring
+#: heuristic above. ``translate.context_token_budget`` is a plain integer
+#: setting (SETTINGS-OPEN-A-1 §3.2) with a real consumer
+#: (``handlers.py`` translate step) and must persist; the exemption is exact
+#: key-name matching, so it cannot widen the scrubber for any other key.
+_REDACTION_ALLOWED_KEYS = frozenset({"context_token_budget"})
+
 
 def _redact(value: Any) -> Any:
     if isinstance(value, Mapping):
         return {
             str(key): _redact(item)
             for key, item in value.items()
-            if not any(part in str(key).lower() for part in _SENSITIVE_PARTS)
+            if str(key) in _REDACTION_ALLOWED_KEYS
+            or not any(part in str(key).lower() for part in _SENSITIVE_PARTS)
         }
     if isinstance(value, (tuple, list)):
         return [_redact(item) for item in value]

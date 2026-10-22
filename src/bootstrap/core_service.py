@@ -137,6 +137,7 @@ from bootstrap.core_assembly import (
 from domain.regions.entities import RegionType, SfxPolicy
 from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
 from infrastructure.importing import QtImageDecoder, SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.providers.handlers import typeset_style_defaults
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
     PillowImageCompositor,
@@ -165,6 +166,7 @@ from infrastructure.export.target_refs import ExportTargetRefError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 from bootstrap.settings_commands import P15_SNAPSHOT_KEY, P15SettingsCommands, SettingsSurfaceError
+from bootstrap.settings_sections import SettingsSectionError, validate_settings_section
 
 PROTOCOL_NAME = "new-manga.core"
 PROTOCOL_MAJOR = 2
@@ -1622,7 +1624,12 @@ class CoreServiceServer:
           - ``values``: JSON object (the whole section is replaced);
           - ``settings["sfx"]["policy"]``: the first value-domain gate --
             one of skip/translate/manual (M2-SFX-TRANSLATE-ENTRY; default
-            SKIP stays the assembly reader's concern, not rewritten here).
+            SKIP stays the assembly reader's concern, not rewritten here);
+          - the batch-A sections ``ocr`` / ``translate`` / ``inpaint`` /
+            ``typeset``: the frozen per-section white-list (SETTINGS-OPEN-A-1,
+            design §3.1-§3.4). Unknown keys and illegal values are typed
+            ``INVALID_REQUEST`` before any persistence; values are stored
+            normalized (JSON types converted).
         Every other section/key passes through. The result is the full
         updated projection, so one round trip re-syncs the caller.
         """
@@ -1643,9 +1650,17 @@ class CoreServiceServer:
                     "settings.update_section sfx.policy must be one of "
                     f"{sorted(_SFX_POLICY_VALUES)}"
                 )
+        # SETTINGS-OPEN-A-1 AC1: the four opened batch-A sections are gated by
+        # their frozen white-list BEFORE persistence (design §3.5); an unknown
+        # section returns None and keeps the historical pass-through.
+        try:
+            validated = validate_settings_section(section, values)
+        except SettingsSectionError as error:
+            raise SettingsRequestError(str(error)) from error
+        stored = values if validated is None else validated
         try:
             defaults = self._core.pipeline_defaults.save_settings_section(
-                section, values
+                section, stored
             )
         except BindingValidationError as error:
             # the service's own structural guard; same typed surface as the
@@ -1842,7 +1857,16 @@ class CoreServiceServer:
             )
         if self._core.repository.get_page(page_id) is None:
             raise RegionLookupError(page_id)
-        outcome = self._core.render.rerender_page(page_id)
+        # SETTINGS-OPEN-A-1 AC2: a manual page rerender has no Run context, so
+        # it applies the CURRENT global ``typeset`` settings immediately (the
+        # same derivation the pipeline render step applies to a frozen Run
+        # snapshot). Region-persisted values still win (D03 §11.4).
+        style_defaults = typeset_style_defaults(
+            self._core.pipeline_defaults.read().settings
+        )
+        outcome = self._core.render.rerender_page(
+            page_id, style_defaults=style_defaults
+        )
         if outcome.status != "committed":
             code = outcome.error_code or E_UNKNOWN
             if code == "COMPOSITION_BASE_CHANGED":

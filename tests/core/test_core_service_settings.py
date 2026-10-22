@@ -9,9 +9,10 @@ Exercises the two new stdio JSON-lines commands (``settings.get`` /
 - write: upsert through ``PipelineDefaultsService.save_settings_section``
   (the same channel/row as the ``ocr.script`` key);
 - write-side validation, typed fail-closed BEFORE any persistence
-  (M2-SFX-ENTRY r1 R4 lesson): ``sfx.policy`` three-value gate as the first
-  instance, structural shapes for everything else -- an illegal value must
-  never reach the store.
+  (M2-SFX-ENTRY r1 R4 lesson): ``sfx.policy`` three-value gate, the batch-A
+  per-section white-lists (SETTINGS-OPEN-A-1; ocr/translate/inpaint/typeset,
+  design §3.1-§3.4) and the structural shapes for everything else -- an
+  illegal value must never reach the store.
 
 The real subprocess round trip (React → Tauri → this sidecar) is covered on
 the Rust side (``real_core_sidecar_settings_round_trip``); the envelope
@@ -145,15 +146,17 @@ def test_settings_update_section_three_legal_policy_values(server, policy) -> No
     assert response["result"]["settings"]["sfx"] == {"policy": policy}
 
 
-def test_settings_update_section_other_sections_pass_through(server) -> None:
-    # the ocr.script precedent: non-sfx sections ride the same channel with
-    # structural validation only (no key whitelist is invented here)
+def test_settings_update_section_unknown_section_passes_through(server) -> None:
+    # SETTINGS-OPEN-A-1: the batch-A sections are white-listed now; a section
+    # whose schema is not frozen yet keeps the historical pass-through
+    # (design §3.5 backwards compatibility), and the frozen SFX gate still
+    # only fires on the policy key.
     response = _request(
         server, "settings.update_section",
-        {"section": "ocr", "values": {"script": "large"}},
+        {"section": "providers", "values": {"future_key": "x"}},
     )
     assert response["error"] is None
-    assert response["result"]["settings"]["ocr"] == {"script": "large"}
+    assert response["result"]["settings"]["providers"] == {"future_key": "x"}
 
 
 def test_settings_commands_redact_paths_in_every_section(server) -> None:
@@ -166,11 +169,14 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
         serialized = json.dumps(response, ensure_ascii=False)
         assert all(path not in serialized for path in forbidden)
 
-    # Mirror all twelve visible settings categories, plus the generic SFX section.
+    # Mirror the settings categories whose schema is not frozen yet, plus the
+    # generic SFX section. The four batch-A sections (ocr/translate/inpaint/
+    # typeset) are white-listed since SETTINGS-OPEN-A-1: they reject unknown
+    # keys before persistence, so a path payload can never even be stored --
+    # asserted separately below.
     sections = (
-        "provider", "network", "ocr", "translation", "inpaint", "typeset",
-        "model_gpu", "task_concurrency", "cache_revision", "recycle_bin",
-        "backup_restore", "plugins", "sfx",
+        "provider", "network", "translation", "model_gpu", "task_concurrency",
+        "cache_revision", "recycle_bin", "backup_restore", "plugins", "sfx",
     )
     values = {
         "path": windows_path,
@@ -207,6 +213,19 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
         and stored[section]["relative_path"] == "models/relative-runner.exe"
         for section in sections
     )
+
+    # SETTINGS-OPEN-A-1: the batch-A sections accept only their frozen key
+    # set, so the same path-shaped payload is rejected BEFORE persistence and
+    # never echoed -- a stronger guarantee than output redaction.
+    for section in ("ocr", "inpaint", "typeset"):
+        rejected = _request(
+            server,
+            "settings.update_section",
+            {"section": section, "values": values},
+        )
+        assert rejected["error"]["code"] == "INVALID_REQUEST"
+        assert_no_paths(rejected)
+        assert server._core.pipeline_defaults.read().settings.get(section) is None
 
     # Section names are also caller-controlled projection keys.
     path_section = r"C:\Users\sec-fix-path-echo-1\AppData\Local\custom-section"

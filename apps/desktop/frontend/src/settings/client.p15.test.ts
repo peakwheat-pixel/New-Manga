@@ -204,14 +204,18 @@ describe("sfx single-section read keeps null distinguishable (AC3)", () => {
   });
 });
 
-describe("no generic settings_update_section passthrough exists (AC2 structural guard)", () => {
-  it("the client exposes no arbitrary-section update method — only the pinned sfx builder", async () => {
+describe("no untyped settings_update_section passthrough beyond the frozen section API", () => {
+  it("the client exposes only the pinned sfx builder plus the SETTINGS-OPEN-A-1 section pair", async () => {
     const client = new SettingsClient(async () => ({}));
     const clientAny = client as unknown as Record<string, unknown>;
+    // No unspecified-name arbitrary update method exists: the only generic
+    // write surface is the named `saveSection(section, values)` added by
+    // SETTINGS-OPEN-A-1, whose key-level whitelist/range validation lives in
+    // the Core (settings.update_section) — never in an untyped passthrough.
     expect(typeof clientAny.updateSection).toBe("undefined");
-    expect(typeof clientAny.saveSection).toBe("undefined");
+    expect(typeof clientAny.saveSection).toBe("function");
     expect(typeof clientAny.saveSfxPolicy).toBe("function");
-    // The only section ever written through the generic channel is "sfx"
-    // with exactly {policy} — pinned by the pre-existing client.test.ts.
+    // The sfx channel still writes exactly "sfx" with {policy} — pinned by the
+    // pre-existing client.test.ts.
   });
 });

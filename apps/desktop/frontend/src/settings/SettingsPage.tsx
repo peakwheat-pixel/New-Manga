@@ -2,9 +2,13 @@ import { useRef, useState } from "react";
 import { SettingsClient } from "./client";
 import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
 import { DisabledSection } from "./DisabledSection";
+import { InpaintSettingsPanel } from "./InpaintSettingsPanel";
 import { NetworkProfilePanel } from "./NetworkProfilePanel";
+import { OcrSettingsPanel } from "./OcrSettingsPanel";
 import { ProviderProfilePanel } from "./ProviderProfilePanel";
 import { SfxPolicyControl } from "./SfxPolicyControl";
+import { TranslationParamsPanel } from "./TranslationParamsPanel";
+import { TypesetSettingsPanel } from "./TypesetSettingsPanel";
 import { tokens } from "../theme/tokens";
 
 /**
@@ -14,10 +18,14 @@ import { tokens } from "../theme/tokens";
  * are in a FIXED order and switching is React local state — there is no
  * sub-route.
  *
- * Editability follows P15-C1 §7 (G25) exactly: Provider (profiles +
- * capability bindings), Network/Proxy, and the sfx.policy section are the
- * only open surfaces; every other partition renders the disabled
- * placeholder with the reason "等待 section schema 冻结".
+ * Editability: Provider (profiles + capability bindings), Network/Proxy,
+ * SFX policy and — SETTINGS-OPEN-A-1 batch A (design
+ * doc/design/SETTINGS_SECTION_SCHEMAS.md §3) — OCR, translation parameters /
+ * context, inpaint and typeset default style are editable. The remaining
+ * partitions (model/GPU, tasks/concurrency, cache/Revision, recycle bin,
+ * backup/restore, plugins) still render the disabled placeholder with the
+ * reason "等待 section schema 冻结"; the nav badge "未开放" only applies to
+ * those still-closed categories.
  */
 export const SETTINGS_CATEGORY_ORDER = [
   "provider",
@@ -43,10 +51,10 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
 }> = [
   { id: "provider", label: "Provider", open: true },
   { id: "network", label: "网络/代理", open: true },
-  { id: "ocr", label: "OCR", open: false },
+  { id: "ocr", label: "OCR", open: true },
   { id: "translation", label: "翻译", open: true },
-  { id: "inpaint", label: "图片修复", open: false },
-  { id: "typeset", label: "排版样式", open: false },
+  { id: "inpaint", label: "图片修复", open: true },
+  { id: "typeset", label: "排版样式", open: true },
   { id: "model_gpu", label: "模型/GPU", open: false },
   { id: "task_concurrency", label: "任务/并发", open: false },
   { id: "cache_revision", label: "缓存/Revision", open: false },
@@ -55,14 +63,10 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
   { id: "plugins", label: "Plugin/Hooks", open: false },
 ];
 
-/** Every disabled partition (P15-C1 §7 lower table) with its placeholder
- * test id — asserted one by one in the AC2 tests. */
+/** Every still-disabled partition with its placeholder test id — asserted
+ * one by one in the AC2 tests. Batch A's ocr / translation-context / inpaint /
+ * typeset placeholders are gone: those categories now host real panels. */
 export const DISABLED_SECTION_TEST_IDS = {
-  ocr: "settings-disabled-section-ocr",
-  translationContext: "settings-disabled-section-translation-context",
-  inpaint: "settings-disabled-section-inpaint",
-  typeset: "settings-disabled-section-typeset",
-  readingDirection: "settings-disabled-section-reading-direction",
   modelGpu: "settings-disabled-section-model-gpu",
   taskConcurrency: "settings-disabled-section-task-concurrency",
   cacheRevision: "settings-disabled-section-cache-revision",
@@ -224,20 +228,45 @@ export function SettingsPage({ client }: SettingsPageProps) {
         {activeCategoryId === "translation" && (
           <div data-testid="settings-content-translation" style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
             <SfxPolicyControl client={activeClient} />
-            <DisabledSection testId={DISABLED_SECTION_TEST_IDS.translationContext} title="翻译参数 / 上下文策略" />
+            <TranslationParamsPanel client={activeClient} />
           </div>
         )}
 
-        {activeCategoryId === "ocr" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.ocr} title="OCR 参数" />}
-        {activeCategoryId === "inpaint" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.inpaint} title="图片修复" />}
+        {activeCategoryId === "ocr" && (
+          <div data-testid="settings-content-ocr">
+            <OcrSettingsPanel client={activeClient} />
+          </div>
+        )}
+
+        {activeCategoryId === "inpaint" && (
+          <div data-testid="settings-content-inpaint">
+            <InpaintSettingsPanel client={activeClient} />
+          </div>
+        )}
+
         {activeCategoryId === "typeset" && (
           <div data-testid="settings-content-typeset" style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
-            <DisabledSection testId={DISABLED_SECTION_TEST_IDS.typeset} title="排版 / Text Style" />
-            <DisabledSection
-              testId={DISABLED_SECTION_TEST_IDS.readingDirection}
-              title="阅读方向"
-              reason="等待 section schema 冻结（G24 仅提供只读解析，无写 wire）"
-            />
+            <TypesetSettingsPanel client={activeClient} />
+            {/* §3.4: reading direction is a Book/Chapter property — the
+             * settings page shows guidance only, never a fake global control
+             * (no DisabledSection placeholder: this partition is not the
+             * batch A surface and must not claim to be "waiting schema"). */}
+            <section
+              data-testid="settings-reading-direction-note"
+              style={{
+                padding: tokens.spacing.md,
+                backgroundColor: tokens.color.surface.card,
+                border: `1px solid ${tokens.color.border.default}`,
+                borderRadius: tokens.radius.card,
+                maxWidth: 780,
+                color: tokens.color.text.secondary,
+                fontSize: tokens.typography.size.secondary,
+                lineHeight: tokens.typography.lineHeight,
+              }}
+            >
+              阅读方向（rtl / ltr / vertical）是书籍 / 章节属性：请在书架或章节属性中修改；
+              设置页不提供全局默认方向。若需要“新建章节默认方向”，另立契约后再开放。
+            </section>
           </div>
         )}
         {activeCategoryId === "model_gpu" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.modelGpu} title="模型 / GPU" />}
