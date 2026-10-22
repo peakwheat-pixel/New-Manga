@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)**（`in_review`；R1末检已修，待R2，正式12，READY无）。
-- 最近完成：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md)** `done`；设计已集成。
-- 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式12错误（7历史身份/2模板/3NUL），原保护与STATUS-r212禁令有效。
+- 当前 Task：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)**（`blocked`；无执行，READY 无）。
+- 最近完成：**[GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1](tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md)** `done`；R2 b8c51b038，集成457485207；正式7。
+- 父任务：[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md) `blocked`；正式7项历史运行身份错误，原保护与STATUS-r212禁令有效。
 - 收敛基线97/135；当前103本地分支/141工作树（新增任务资源按禁令保留）；**尚未达到只剩main**。
 
 - 发布保留：**[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)**（`in_review`：用户接受未签名 v1，待发布签核）。声明修复 done（`bb7887442`，76 残余）；WORKSPACE/P09 已 done。
@@ -27,4 +27,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - **治理主线分支**：`main`（2026-10-21 起；见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
-- 恢复点：[父任务当前 checkpoint](../verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md)；设计已done；旧checkpoint-r12/INFLIGHT不恢复。
+- 恢复点：[父任务当前 checkpoint](../verification/GIT-MAINLINE-CONVERGENCE-1/checkpoint.md)；本实现已done；旧checkpoint-r12/INFLIGHT不恢复。
