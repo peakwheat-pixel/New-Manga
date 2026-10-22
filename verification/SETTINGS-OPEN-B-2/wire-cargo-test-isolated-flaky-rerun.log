@@ -1,0 +1,6 @@
+=== isolated rerun 1: ac1_consecutive_lock_timeouts (default threads) ===
+test library_bridge::tests::ac1_consecutive_lock_timeouts_keep_the_handle_and_the_holder_registers_it ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 164 filtered out; finished in 3.31s
+=== isolated rerun 2: ac4_unreaped_worker_registry_tracks_and_reaps_finite_lifecycle (default threads) ===
+test library_bridge::tests::ac4_unreaped_worker_registry_tracks_and_reaps_finite_lifecycle ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 164 filtered out; finished in 0.04s

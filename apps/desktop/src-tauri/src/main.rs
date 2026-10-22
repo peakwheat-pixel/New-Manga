@@ -21,7 +21,9 @@
 //! main window; the hardened CSP replaces the RC1 `csp: null`.
 //! M2-IPC1 later added the production-only `core_ping`/`library_list_books`
 //! pair, M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3) the
-//! production-only `settings_get`/`settings_update_section` pair, and
+//! production-only `settings_get`/`settings_update_section` pair,
+//! SETTINGS-OPEN-B-2 (design §4.3) the production-only
+//! `cleanup_preview`/`cleanup_run`/`cleanup_retry_pending` trio, and
 //! M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4) the production-only
 //! `set_region_type`/`list_regions` and the RC-4 history/restore/render
 //! commands — probe/AC1 surfaces remain frozen while production widens.
@@ -79,6 +81,12 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // write pair, production-only like the IPC1 commands below.
     "settings_get",
     "settings_update_section",
+    // SETTINGS-OPEN-B-2 (design §4.3): the cache/Revision maintenance face
+    // (preview / run / retry over the rebuildable webtoon tile cache),
+    // production-only like the settings pair above.
+    "cleanup_preview",
+    "cleanup_run",
+    "cleanup_retry_pending",
     // P15-C1 rev 2.7 G21/G22/G23/G24 settings surface (19 commands); production-only.
     "settings_provider_profiles_list",
     "settings_provider_profiles_create",
@@ -176,6 +184,13 @@ pub const IPC1_PRODUCTION_ONLY_COMMANDS: &[&str] = &["core_ping", "library_list_
 /// are production-only too — the frozen RC2 probe / AC1 test-mode surfaces
 /// never gain them (option-B precedent of M2-IPC1).
 pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &["settings_get", "settings_update_section"];
+
+/// SETTINGS-OPEN-B-2 (design §4.3): the cache/Revision maintenance face is
+/// production-only too (the option-B precedent): the frozen RC2 probe / AC1
+/// test-mode surfaces keep their historical 7/6-command shape and never
+/// gain the three cleanup commands.
+pub const CLEANUP_PRODUCTION_ONLY_COMMANDS: &[&str] =
+    &["cleanup_preview", "cleanup_run", "cleanup_retry_pending"];
 
 pub const P15_SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "settings_provider_profiles_list",
@@ -278,6 +293,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
             .filter(|command| {
                 !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !CLEANUP_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RETYPE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
@@ -580,6 +596,50 @@ fn settings_update_section(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .update_settings_section(&section, &values)
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-B-2 (design §4.3): read-only pre-flight of the controlled
+/// cache cleanup -- which rebuildable cache files would be removed, how many
+/// bytes they occupy, and how many failed removals are still pending. The
+/// host is a pass-through: path authority and the never-clean predicate live
+/// in the Python Core (`CleanupService`); this command never accepts a path
+/// and never guesses at the cache population.
+#[tauri::command]
+fn cleanup_preview(state: tauri::State<'_, AppState>) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .cleanup_preview()
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-B-2 (design §4.3): run the controlled cleanup now. The
+/// result is the Core's structured outcome (per-target ok/failed/skipped plus
+/// the three counts); failed removals stay persisted in the Core's
+/// `pending_cleanups` ledger, so the retry face below can settle them. No user
+/// source file, current/pinned Revision or business row is addressable.
+#[tauri::command]
+fn cleanup_run(state: tauri::State<'_, AppState>) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .cleanup_run()
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-B-2 (design §4.3): retry the persisted pending removals.
+/// Same outcome projection as `cleanup_run`; the Core re-checks the never-clean
+/// predicate on every pending entry and only settled entries leave the ledger.
+#[tauri::command]
+fn cleanup_retry_pending(state: tauri::State<'_, AppState>) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .cleanup_retry_pending()
         .map_err(|error| error.code)
 }
 
@@ -1608,6 +1668,9 @@ fn main() {
             create_chapter,
             settings_get,
             settings_update_section,
+            cleanup_preview,
+            cleanup_run,
+            cleanup_retry_pending,
             settings_provider_profiles_list,
             settings_provider_profiles_create,
             settings_provider_profiles_update,
@@ -1747,9 +1810,9 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (forty-nine production -- resource-channel, IPC1, settings, retype,
-    /// RC-4, page resolve/navigation, HOST-ISSUER-1, Run, export reveal and
-    /// Reader actions -- plus
+    /// (fifty-seven production -- resource-channel, IPC1, settings, cleanup,
+    /// retype, RC-4, page resolve/navigation, HOST-ISSUER-1, Run, export
+    /// reveal and Reader actions -- plus
     /// four probe-only and three M2-AC1 acceptance commands; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
@@ -1768,10 +1831,11 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 58 commands across the
-        // three surfaces (51 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 64 commands across the
+        // three surfaces (57 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
-        // retype pair) fails this test, not just a live invoke.
+        // retype pair or the SETTINGS-OPEN-B-2 cleanup trio) fails this
+        // test, not just a live invoke.
         for command in command_allowlist(true, false)
             .into_iter()
             .chain(command_allowlist(false, true))
@@ -1794,7 +1858,8 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // Existing 32 production commands + 19 P15 settings commands = 51.
+        // 57 production commands (the three SETTINGS-OPEN-B-2 cleanup
+        // commands joined the previously pinned 54-command surface).
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1808,6 +1873,9 @@ mod tests {
                 "create_chapter",
                 "settings_get",
                 "settings_update_section",
+                "cleanup_preview",
+                "cleanup_run",
+                "cleanup_retry_pending",
                 "settings_provider_profiles_list",
                 "settings_provider_profiles_create",
                 "settings_provider_profiles_update",
@@ -1859,7 +1927,7 @@ mod tests {
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
         assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -1875,7 +1943,7 @@ mod tests {
             CREATE_PRODUCTION_ONLY_COMMANDS,
             &["library_create_book", "create_chapter"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in CREATE_PRODUCTION_ONLY_COMMANDS {
@@ -2103,6 +2171,13 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        // SETTINGS-OPEN-B-2: the cleanup trio is production-only too.
+        for command in CLEANUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         // M2-REGION-RETYPE-CORE: the retype pair is production-only too
         for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
             assert!(
@@ -2164,6 +2239,7 @@ mod tests {
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                - CLEANUP_PRODUCTION_ONLY_COMMANDS.len()
                 - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
@@ -2199,6 +2275,13 @@ mod tests {
         }
         // M2-SETTINGS-IPC-CHANNEL: the settings pair is production-only too
         for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
+        // SETTINGS-OPEN-B-2: the cleanup trio is production-only too.
+        for command in CLEANUP_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 !ac1.contains(command),
                 "{command} must stay production-only"
@@ -2265,6 +2348,7 @@ mod tests {
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                - CLEANUP_PRODUCTION_ONLY_COMMANDS.len()
                 - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
@@ -2288,6 +2372,7 @@ mod tests {
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
             .iter()
             .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
+            .chain(CLEANUP_PRODUCTION_ONLY_COMMANDS)
             .chain(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS)
             .chain(RETYPE_PRODUCTION_ONLY_COMMANDS)
             .chain(RC4_PRODUCTION_ONLY_COMMANDS)
@@ -2315,6 +2400,63 @@ mod tests {
         assert_eq!(command_allowlist(false, true).len(), 6);
     }
 
+    /// SETTINGS-OPEN-B-2 (design §4.3): literal exact assertions for the
+    /// cache/Revision cleanup trio. The three names are pinned with a fixed
+    /// literal expectation (never derived from the constant itself), the
+    /// group must sit on the production surface and on NEITHER frozen test
+    /// surface, and the R2-04 three-view sync is checked: the build.rs app
+    /// manifest declares every command, the capability file allows it, and
+    /// the production `generate_handler!` literal list registers it.
+    #[test]
+    fn cleanup_commands_are_exact_and_production_only() {
+        assert_eq!(
+            CLEANUP_PRODUCTION_ONLY_COMMANDS,
+            &["cleanup_preview", "cleanup_run", "cleanup_retry_pending"]
+        );
+        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+
+        let production = command_allowlist(false, false);
+        let probe = command_allowlist(true, false);
+        let ac1 = command_allowlist(false, true);
+
+        for command in CLEANUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production.contains(command),
+                "{command} must be on the production surface"
+            );
+            assert!(
+                !probe.contains(command),
+                "{command} must not appear in probe surface"
+            );
+            assert!(
+                !ac1.contains(command),
+                "{command} must not appear in ac1 surface"
+            );
+            // view 2: the build.rs application ACL manifest
+            assert!(include_str!("../build.rs").contains(command));
+            // view 3: the capability allow list
+            assert!(include_str!("../capabilities/m2rc1-commands.json")
+                .contains(&format!("allow-{}", command.replace('_', "-"))));
+        }
+
+        // view 1: the production `generate_handler!` literal list. The
+        // production arm is the third `generate_handler!` in main.rs (probe,
+        // ac1, production); pin it the same way the create family does.
+        let production_handler = include_str!("main.rs")
+            .split("builder.invoke_handler(tauri::generate_handler![")
+            .nth(3)
+            .unwrap()
+            .split("])")
+            .next()
+            .unwrap();
+        for command in CLEANUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production_handler.contains(command),
+                "{command} missing from the production generate_handler! list"
+            );
+        }
+    }
+
     /// RUN-IPC-1: literal exact assertions for the Run transport family. The
     /// six names are pinned with a fixed literal expectation (never derived
     /// from the constant itself), the group must sit on the production surface
@@ -2332,8 +2474,9 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 33 pre-existing production commands (incl. recycle-bin read face) + 19 P15 settings commands + 2 delete commands = 54.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
+        // 57 production commands: the previous 54 plus the SETTINGS-OPEN-B-2
+        // cleanup trio (PRODUCTION_COMMANDS, main.rs).
+        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2366,7 +2509,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2398,7 +2541,7 @@ mod tests {
                 "library_delete_books_permanently",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);

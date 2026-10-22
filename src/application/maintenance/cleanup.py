@@ -64,6 +64,21 @@ class CleanupPreview:
     targets: tuple[CleanupTarget, ...]
     total_bytes: int
 
+    def to_dict(self) -> dict:
+        """Wire projection (SETTINGS-OPEN-B-2 AC1): the same shape the
+        read face of the settings panel consumes -- relative paths and byte
+        sizes only, no OS paths."""
+        return {
+            "targets": [
+                {
+                    "relative_path": target.relative_path,
+                    "size_bytes": target.size_bytes,
+                }
+                for target in self.targets
+            ],
+            "total_bytes": self.total_bytes,
+        }
+
 
 @dataclass(frozen=True)
 class CleanupItemResult:

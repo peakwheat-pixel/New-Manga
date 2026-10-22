@@ -41,14 +41,16 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the sixty-one commands below: 54 production (3 resource + 2 IPC1 +
-    // 2 create + 2 existing settings + 19 P15 settings + 2 retype + 3 RC-4 + 1 page
+    // the sixty-four commands below: 57 production (3 resource + 2 IPC1 +
+    // 2 create + 2 existing settings + 3 cleanup + 19 P15 settings + 2 retype
+    // + 3 RC-4 + 1 page
     // resolve + 2 page navigation + 2 Reader + 3 Host Issuer + 6 Run +
     // 1 reveal + 3 export + 2 delete), four probe, and three M2-AC1 acceptance commands;
     // any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
-    // contract rev 1.3 §5.3) and the region-retype pair (M2-REGION-RETYPE-
+    // contract rev 1.3 §5.3), the cleanup trio (SETTINGS-OPEN-B-2, design
+    // §4.3) and the region-retype pair (M2-REGION-RETYPE-
     // CORE, contract rev 1.4 §5.4) and P15 rev 2.7 settings are production-only; the probe commands
     // additionally require probe mode, and the three acceptance commands
     // require the M2-AC1 test mode at runtime (main.rs).
@@ -74,6 +76,13 @@ fn main() {
             // mode (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS).
             "settings_get",
             "settings_update_section",
+            // SETTINGS-OPEN-B-2 (design §4.3): production-only cache/Revision
+            // maintenance trio; ACL-declared so the capability file can name
+            // them, registered at runtime ONLY in production mode (main.rs
+            // CLEANUP_PRODUCTION_ONLY_COMMANDS).
+            "cleanup_preview",
+            "cleanup_run",
+            "cleanup_retry_pending",
             // P15-C1 rev 2.7 G21/G22/G23/G24: 19 production-only settings commands.
             "settings_provider_profiles_list",
             "settings_provider_profiles_create",

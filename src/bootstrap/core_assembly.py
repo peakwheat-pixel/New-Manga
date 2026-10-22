@@ -43,6 +43,7 @@ from application.importing.images.ports import ImageDecoder
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
 from application.maintenance import TrashService
+from application.maintenance.cleanup import CleanupService
 from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsService
 from application.maintenance.trash import _JsonTrashManifest
 from application.reading.service import ReadingService
@@ -60,6 +61,7 @@ from domain.regions.entities import (
 )
 from infrastructure.filesystem.bounded_log_store import BoundedLogStore
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
+from infrastructure.imaging.tile_cache_sweep import WebtoonTileCacheSweeper
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
 from infrastructure.importing import (
     ManagedCopyStoreAdapter,
@@ -645,6 +647,12 @@ class CoreServices:
     importer: ImportImagesUseCase
     document_importer: ImportDocumentsUseCase
     trash: TrashService
+    #: SETTINGS-OPEN-B-2 (design §4.3): preview/run/retry over the
+    #: rebuildable webtoon tile cache; shares the trash manifest's
+    #: ``pending_cleanups`` ledger. Provenance-only for the rest of the
+    #: assembly -- the Core service exposes it as the settings panel's
+    #: cleanup face and never touches it from any other surface.
+    cleanup: CleanupService
     reading: ReadingService
     export_service: ExportService
     diagnostics: DiagnosticsService
@@ -929,10 +937,27 @@ def assemble_core_services(
         )
         # TASK-021 trash subset: page-level soft delete / batch restore /
         # controlled-only purge. The manifest lives next to the managed data.
+        # SETTINGS-OPEN-B-2: the SAME manifest instance is the cleanup face's
+        # pending ledger, so a failed cache removal and a failed trash purge
+        # share one merge-safe `pending_cleanups` key.
+        trash_manifest = _JsonTrashManifest(Path(managed_root) / "trash-manifest.json")
         trash = TrashService(
             repository,
             storage,
-            _JsonTrashManifest(Path(managed_root) / "trash-manifest.json"),
+            trash_manifest,
+        )
+        # SETTINGS-OPEN-B-2 (design §4.3): the controlled cleanup use case --
+        # preview / run / retry over the rebuildable webtoon tile cache only.
+        # The inventory lists that cache subtree; removal goes through the
+        # SAME ManagedFileStorage instance so the managed-root boundary and
+        # the link/containment guards stay in one place. No user source file,
+        # no business row and no current/pinned revision is addressable:
+        # cleanup only ever hands over `cache/`-prefixed relative paths.
+        tile_cache_dir = Path(managed_root) / "cache" / "webtoon-tiles"
+        cleanup = CleanupService(
+            WebtoonTileCacheSweeper(tile_cache_dir, Path(managed_root)),
+            storage,
+            trash_manifest,
         )
         # TASK-019: the production Pipeline receives real handlers built from
         # the provider runtime. Nothing is wired when no provider is ready:
@@ -1270,7 +1295,7 @@ def assemble_core_services(
         def tile_factory(path: str) -> TiledPageRasterizer:
             return TiledPageRasterizer(
                 path,
-                cache_dir=Path(managed_root) / "cache" / "webtoon-tiles",
+                cache_dir=tile_cache_dir,
                 tile_height=4000,
                 # overlap=0 (TASK-046): after TASK-045 F-4 crops the decode
                 # window to the content band, an overlap contributes nothing
@@ -1301,6 +1326,7 @@ def assemble_core_services(
             importer=importer,
             document_importer=document_importer,
             trash=trash,
+            cleanup=cleanup,
             reading=reading,
             export_service=export_service,
             diagnostics=diagnostics,

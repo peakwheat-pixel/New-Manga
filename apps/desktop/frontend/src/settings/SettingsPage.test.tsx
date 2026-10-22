@@ -13,8 +13,10 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * SETTINGS-OPEN-A-1 AC3 — batch A opens OCR / translation parameters /
  * inpaint / typeset.
  * SETTINGS-OPEN-B-1 AC4 — batch B-1 opens model/GPU and tasks/concurrency.
- * Only cache/Revision, recycle bin, backup/restore and plugins keep the
- * disabled placeholder and the "未开放" badge (8 open / 4 closed).
+ * SETTINGS-OPEN-B-2 AC3/AC4 — batch B-2 opens cache/Revision (preview +
+ * manual cleanup + pending retry). Only recycle bin, backup/restore and
+ * plugins keep the disabled placeholder and the "未开放" badge (9 open /
+ * 3 closed).
  */
 
 const OPEN_CATEGORY_IDS = [
@@ -26,13 +28,9 @@ const OPEN_CATEGORY_IDS = [
   "typeset",
   "model_gpu",
   "task_concurrency",
-] as const;
-const CLOSED_CATEGORY_IDS = [
   "cache_revision",
-  "recycle_bin",
-  "backup_restore",
-  "plugins",
 ] as const;
+const CLOSED_CATEGORY_IDS = ["recycle_bin", "backup_restore", "plugins"] as const;
 
 function makeInvoke() {
   return vi.fn(async (command: string) => {
@@ -45,6 +43,8 @@ function makeInvoke() {
         return { profile_id: null, source: null };
       case "settings_network_profile_resolve":
         return { network_profile_id: null, mode: "Direct", source: "direct" };
+      case "cleanup_preview":
+        return { targets: [], total_bytes: 0, pending_cleanups: 0 };
       default:
         return {};
     }
@@ -150,7 +150,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
     expect(page.q('[data-testid="settings-category-nav"]')).toBe(navBefore);
   });
 
-  it("opens exactly the batch-A + batch-B-1 categories; only still-closed categories carry the 未开放 badge", () => {
+  it("opens exactly the batch-A + batch-B-1 + batch-B-2 categories; only still-closed categories carry the 未开放 badge", () => {
     page.mount();
     const openFlags = SETTINGS_CATEGORY_ORDER.map(
       (id) => (page.q(`[data-testid="settings-category-${id}"]`) as HTMLElement).dataset.open,
@@ -164,7 +164,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
       "true", // typeset — batch A
       "true", // model_gpu — batch B-1
       "true", // task_concurrency — batch B-1
-      "false", // cache_revision
+      "true", // cache_revision — batch B-2
       "false", // recycle_bin
       "false", // backup_restore
       "false", // plugins
@@ -282,11 +282,17 @@ describe("Batch A open categories host editable panels (AC3)", () => {
       "task_concurrency",
     );
 
-    // The four closed categories trail the open list: another ArrowDown is
-    // clamped to the last OPEN category and never lands on cache/Revision.
+    // cache/Revision is open since batch B-2, so it is the next stop (not skipped).
     await arrowDown();
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
-      "task_concurrency",
+      "cache_revision",
+    );
+
+    // The three batch C closed categories trail the open list: another
+    // ArrowDown is clamped to the last OPEN category and never lands on them.
+    await arrowDown();
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "cache_revision",
     );
   });
 
@@ -351,6 +357,41 @@ describe("Batch B-1 open categories host editable panels (AC4)", () => {
   });
 });
 
+describe("Batch B-2 open category hosts the cache/Revision cleanup surface (AC3)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
+
+  it("cache/Revision category opens CacheRevisionPanel instead of the placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("cache_revision");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "cache_revision",
+    );
+    expect(page.q('[data-testid="settings-content-cache-revision"]')).not.toBeNull();
+    expect(page.q('[data-testid="cache-revision-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-cache-revision"]')).toBeNull();
+    // Real preview state, not a disabled placeholder: the empty cache is
+    // surfaced explicitly and the operations are visible but gated.
+    expect(page.q('[data-testid="cache-revision-panel-empty"]')?.textContent).toContain(
+      "无可清理文件",
+    );
+    expect(
+      (page.q('[data-testid="cache-revision-panel-cleanup-btn"]') as HTMLButtonElement).disabled,
+    ).toBe(true);
+    // §4.3: retention policy / automatic cleanup are read-only, not fake controls.
+    expect(page.q('[data-testid="cache-revision-panel-policy-note"]')?.textContent).toContain(
+      "Revision 保留策略与自动清理未开放",
+    );
+  });
+});
+
 describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () => {
   let page: ReturnType<typeof useMountedPage>;
 
@@ -374,15 +415,6 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
     expect(button.textContent).toContain("未开放");
   };
 
-  it("cache/Revision category remains visible but cannot be invoked", async () => {
-    page.mount();
-    assertDisabledCategory("cache_revision", "缓存/Revision");
-    await page.activateOpenCategory("cache_revision");
-    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
-      "provider",
-    );
-  });
-
   it("recycle bin category remains visible but cannot be invoked", () => {
     page.mount();
     assertDisabledCategory("recycle_bin", "回收站");
@@ -400,10 +432,10 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
 
   it("keeps a reasoned placeholder id for every still-closed partition", () => {
     page.mount();
-    // Batch B-1 closed two more placeholders: only B-2 (cache/Revision) and
-    // batch C (recycle bin, backup/restore, plugins) remain.
+    // Batch B-2 closed the cache/Revision placeholder: only batch C
+    // (recycle bin, backup/restore, plugins) remains.
     expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(
-      ["backupRestore", "cacheRevision", "plugins", "recycleBin"].sort(),
+      ["backupRestore", "plugins", "recycleBin"].sort(),
     );
     // None of them is mounted while the page sits on an open category.
     for (const testId of Object.values(DISABLED_SECTION_TEST_IDS)) {

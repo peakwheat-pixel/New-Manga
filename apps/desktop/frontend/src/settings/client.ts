@@ -113,6 +113,14 @@ export const SETTINGS_NETWORK_PROFILE_DEFAULT_SET_COMMAND = "settings_network_pr
 export const SETTINGS_NETWORK_PROFILE_DEFAULT_CLEAR_COMMAND = "settings_network_profile_default_clear";
 export const SETTINGS_NETWORK_PROFILE_RESOLVE_COMMAND = "settings_network_profile_resolve";
 
+/* SETTINGS-OPEN-B-2 §4.3 — the frozen payload-free cleanup command names
+ * (`cleanup_preview` / `cleanup_run` / `cleanup_retry_pending`). Same
+ * pinned-constant discipline as the settings pair above: renaming any of them
+ * is a wire drift, and none of them takes an argument object. */
+export const CLEANUP_PREVIEW_COMMAND = "cleanup_preview";
+export const CLEANUP_RUN_COMMAND = "cleanup_run";
+export const CLEANUP_RETRY_PENDING_COMMAND = "cleanup_retry_pending";
+
 export class SettingsClientError extends Error {
   code: string;
 
@@ -166,6 +174,191 @@ export function buildSfxPolicySection(policy: SfxPolicy): {
   values: Record<string, unknown>;
 } {
   return { section: SFX_SECTION, values: { policy } };
+}
+
+/* ---------------- SETTINGS-OPEN-B-2 §4.3: cache / revision cleanup ---------------- */
+
+/** One cleanable cache file, addressed RELATIVE to the managed root. The
+ * WebView never receives or renders an absolute path for a cleanup target. */
+export interface CleanupTarget {
+  relative_path: string;
+  size_bytes: number;
+}
+
+/**
+ * `cleanup_preview` projection: what a run would remove, the byte total, and
+ * how many paths sit in the persisted `pending_cleanups` retry ledger.
+ */
+export interface CleanupPreview {
+  targets: CleanupTarget[];
+  total_bytes: number;
+  pending_cleanups: number;
+}
+
+/** The only three per-target statuses `CleanupOutcome` produces (cleanup.py). */
+export type CleanupItemStatus = "ok" | "failed" | "skipped";
+
+/** One per-target result of a run / retry. `detail` is the Core-provided
+ * failure/skip reason and is rendered as opaque text (never interpreted). */
+export interface CleanupItem {
+  relative_path: string;
+  status: CleanupItemStatus;
+  detail?: string;
+}
+
+/** `cleanup_run` / `cleanup_retry_pending` projection: per-target results plus
+ * the removed / failed / skipped counts. */
+export interface CleanupOutcome {
+  items: CleanupItem[];
+  removed: number;
+  failed: number;
+  skipped: number;
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+/** Non-negative integer from a JSON number (or a numeric string, tolerated
+ * because the Python projection may serialize counts as strings). Anything
+ * else is "unknown" — never NaN, never a negative count. */
+function asCount(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 0) {
+    return Math.floor(value);
+  }
+  if (typeof value === "string" && /^[0-9]+$/.test(value.trim())) {
+    return Number(value.trim());
+  }
+  return null;
+}
+
+function asRelativePath(value: unknown): string | null {
+  return typeof value === "string" && value.trim() !== "" ? value : null;
+}
+
+function normalizeCleanupStatus(value: unknown): CleanupItemStatus {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (text === "ok" || text === "skipped") {
+    return text;
+  }
+  // Unknown/missing statuses are fail-closed to "failed": the UI must never
+  // claim a removal the Core did not actually confirm.
+  return "failed";
+}
+
+/**
+ * Defensive parse of the `cleanup_preview` result. The frozen projection is
+ * `{targets:[{relative_path,size_bytes}], total_bytes, pending_cleanups}`;
+ * a nested `{preview: ...}` envelope, a pending list instead of a count, and
+ * a missing `total_bytes` are all tolerated so the panel degrades to "no
+ * cleanable files" instead of crashing on a projection drift.
+ */
+function normalizeCleanupPreview(raw: unknown): CleanupPreview {
+  const root = asRecord(raw) ?? {};
+  const nested = asRecord(root.preview);
+  const record = nested && root.targets === undefined ? nested : root;
+
+  const targets: CleanupTarget[] = [];
+  if (Array.isArray(record.targets)) {
+    for (const entry of record.targets) {
+      const row = asRecord(entry);
+      if (!row) continue;
+      const relativePath = asRelativePath(row.relative_path);
+      if (!relativePath) continue;
+      targets.push({
+        relative_path: relativePath,
+        size_bytes: asCount(row.size_bytes) ?? 0,
+      });
+    }
+  }
+
+  const totalBytes =
+    asCount(record.total_bytes) ?? targets.reduce((sum, target) => sum + target.size_bytes, 0);
+
+  const pendingRaw = record.pending_cleanups ?? root.pending_cleanups;
+  const pendingCleanups = Array.isArray(pendingRaw)
+    ? pendingRaw.length
+    : (asCount(pendingRaw) ?? asCount(asRecord(pendingRaw)?.count) ?? 0);
+
+  return { targets, total_bytes: totalBytes, pending_cleanups: pendingCleanups };
+}
+
+function cleanupItemFrom(relativePath: string, raw: unknown): CleanupItem | null {
+  const row = asRecord(raw);
+  if (!row) return null;
+  const detailRaw = row.detail ?? row.reason;
+  const detail = typeof detailRaw === "string" && detailRaw !== "" ? detailRaw : undefined;
+  return {
+    relative_path: relativePath,
+    status: normalizeCleanupStatus(row.status),
+    ...(detail !== undefined ? { detail } : {}),
+  };
+}
+
+/**
+ * Defensive parse of a cleanup outcome. Accepts BOTH shapes that exist on the
+ * wire boundary:
+ *
+ *   1. the ruled B-2 projection (task-7) — `{items: {relative_path: {status,
+ *      reason}}, removed, failed, skipped}`: `items` is a mapping, NOT an
+ *      array, and the counts are top-level integers;
+ *   2. the legacy `CleanupOutcome.to_dict()` mapping — `{path: {status,
+ *      reason}}` (cleanup.py:92) — with the counts derived from the statuses;
+ *   3. an items ARRAY form, tolerated for forward compatibility.
+ *
+ * Counts prefer the server-provided integers; a missing count is derived from
+ * the parsed items. Unknown statuses are fail-closed to "failed".
+ */
+function normalizeCleanupOutcome(raw: unknown): CleanupOutcome {
+  const root = asRecord(raw) ?? {};
+  const nested = asRecord(root.outcome);
+  const record = nested && root.items === undefined && root.removed === undefined ? nested : root;
+
+  const items: CleanupItem[] = [];
+  const pushItem = (relativePath: string, value: unknown) => {
+    const item = cleanupItemFrom(relativePath, value);
+    if (item) items.push(item);
+  };
+
+  const itemsRaw = record.items;
+  const itemsRecord = asRecord(itemsRaw);
+  if (Array.isArray(itemsRaw)) {
+    for (const entry of itemsRaw) {
+      const row = asRecord(entry);
+      if (!row) continue;
+      const relativePath = asRelativePath(row.relative_path) ?? asRelativePath(row.path);
+      if (!relativePath) continue;
+      pushItem(relativePath, row);
+    }
+  } else if (itemsRecord) {
+    // Ruled task-7 shape: items is a path → {status, reason} mapping.
+    for (const [relativePath, value] of Object.entries(itemsRecord)) {
+      pushItem(relativePath, value);
+    }
+  } else {
+    // Legacy task-7 pre-ruling shape: top-level mapping, no counts.
+    for (const [relativePath, value] of Object.entries(record)) {
+      if (
+        relativePath === "items" ||
+        relativePath === "outcome" ||
+        relativePath === "removed" ||
+        relativePath === "failed" ||
+        relativePath === "skipped"
+      ) {
+        continue;
+      }
+      pushItem(relativePath, value);
+    }
+  }
+
+  return {
+    items,
+    removed: asCount(record.removed) ?? items.filter((item) => item.status === "ok").length,
+    failed: asCount(record.failed) ?? items.filter((item) => item.status === "failed").length,
+    skipped: asCount(record.skipped) ?? items.filter((item) => item.status === "skipped").length,
+  };
 }
 
 export class SettingsClient {
@@ -273,6 +466,43 @@ export class SettingsClient {
     } catch (error) {
       const code = extractErrorCode(error, "SETTINGS_SAVE_FAILED");
       throw new SettingsClientError(code, `settings_update_section failed: ${code}`);
+    }
+  }
+
+  /* ---------------- SETTINGS-OPEN-B-2 §4.3: cache / revision cleanup ---------------- */
+
+  /**
+   * Read the cleanable-cache preview (`cleanup_preview`, no payload). The
+   * request is deliberately empty: the Core owns the managed root and the
+   * safe-prefix policy, so the UI cannot widen the cleanup scope.
+   */
+  async getCleanupPreview(): Promise<CleanupPreview> {
+    try {
+      return normalizeCleanupPreview(await this.invoke(CLEANUP_PREVIEW_COMMAND));
+    } catch (error) {
+      throw toClientError(error, CLEANUP_PREVIEW_COMMAND);
+    }
+  }
+
+  /** Execute the controlled cache cleanup (`cleanup_run`, no payload). */
+  async runCleanup(): Promise<CleanupOutcome> {
+    try {
+      return normalizeCleanupOutcome(await this.invoke(CLEANUP_RUN_COMMAND));
+    } catch (error) {
+      throw toClientError(error, CLEANUP_RUN_COMMAND);
+    }
+  }
+
+  /**
+   * Retry the persisted `pending_cleanups` ledger (`cleanup_retry_pending`,
+   * no payload). Same safe-prefix predicate as a full run — retry is not a
+   * bypass.
+   */
+  async retryPendingCleanups(): Promise<CleanupOutcome> {
+    try {
+      return normalizeCleanupOutcome(await this.invoke(CLEANUP_RETRY_PENDING_COMMAND));
+    } catch (error) {
+      throw toClientError(error, CLEANUP_RETRY_PENDING_COMMAND);
     }
   }
 

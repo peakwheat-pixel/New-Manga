@@ -85,6 +85,36 @@ Allowed production commands (M2-IPC1 + existing command slices + P13-C1):
     {"regions": [], "page_size": null}, NOT an error -- the existing
     list_regions semantics (contract §5.4 footnote a). Errors:
     INVALID_REQUEST (payload) / UNKNOWN (internal) only.)
+  - cleanup.preview: {} -> {"targets": [{"relative_path", "size_bytes"}...],
+      "total_bytes": <int>, "pending_cleanups": <int>}
+    (SETTINGS-OPEN-B-2, design §4.3: the cache/Revision maintenance face
+    over the assembly-injected ``CleanupService``. Ordinary
+    application-channel commands (settings.get precedent), NOT HostControl
+    -- the frozen host-control envelope stays the HOST-ISSUER-1
+    grant/session set. The inventory is the rebuildable webtoon tile cache
+    under ``<managed_root>/cache/webtoon-tiles``; targets are relative
+    paths only, and only paths under a safe cache prefix are ever
+    reported. Reading never deletes.)
+  - cleanup.run: {} -> {"items": {<relative_path>: {"status",
+      "reason"}...}, "removed", "failed", "skipped"}
+    (Remove every safe cache target; idempotent -- already-gone files
+    report ``ok``. A failed removal is persisted in the shared trash
+    manifest's ``pending_cleanups`` ledger before the outcome returns,
+    never silently dropped. No user source file, business row, current or
+    pinned Revision is addressable: cleanup only hands ``cache/``-prefixed
+    relative paths to the controlled remover.)
+  - cleanup.retry_pending: {} -> the same outcome projection as cleanup.run
+    (TASK-060 Q-007 retry semantics: the never-clean predicate is
+    re-checked on every pending entry, only settled entries leave the
+    ledger, and an entry that fails again stays pending. A pending list
+    that was never written reads as an empty retry -- never an error.)
+    Errors for the three faces: payload non-object -> INVALID_REQUEST
+    (validation, fail-closed before any filesystem work); an assembly
+    without the injected service -> CORE_UNAVAILABLE (unavailable,
+    retryable) -- the sidecar keeps serving; anything else -> UNKNOWN
+    (internal). Protocol minor stays 3: the envelope version is unchanged
+    by this additive command surface (same precedent as the later
+    production-only command families).
 """
 
 from __future__ import annotations
@@ -117,6 +147,7 @@ from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
 from application.library.errors import BookNotFound
+from application.maintenance.cleanup import CleanupOutcome, CleanupService
 from application.resource_channel.dto import (
     E_IDENTITY_CHANGED,
     E_NOT_FOUND,
@@ -216,6 +247,18 @@ _RUN_COMMANDS = frozenset({
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
     "GetTaskProjection", "RetryFailedTargets",
 })
+#: SETTINGS-OPEN-B-2 (design §4.3): the cache/Revision maintenance face.
+#: These are ORDINARY application-channel commands (the settings.get
+#: precedent), NOT HostControl operations: the host-control envelope is
+#: frozen to the HOST-ISSUER-1 grant/session set by contract §5.7, and the
+#: Tauri bridge drives every production command over the application
+#: envelope. Adding them to ``_HOST_CONTROL_COMMANDS`` would make the
+#: application channel refuse them with HOST_ONLY_REQUIRED.
+_CLEANUP_COMMANDS = frozenset({
+    "cleanup.preview",
+    "cleanup.run",
+    "cleanup.retry_pending",
+})
 _P15_SETTINGS_COMMANDS = frozenset({
     "settings_provider_profiles_list",
     "settings_provider_profiles_create",
@@ -266,6 +309,12 @@ E_TARGET_NOT_FOUND = "TARGET_NOT_FOUND"
 # rev 1.7 §5) needs to distinguish "page/its original is not available"
 # from the region not-found family without overloading the message text.
 E_PAGE_NOT_FOUND = "PAGE_NOT_FOUND"
+# SETTINGS-OPEN-B-2: an assembly without the cleanup service refuses the
+# cleanup faces with the SAME literal the Tauri host already uses for a
+# missing Core channel (contract §5.3 line: channel/spawn failure ->
+# CORE_UNAVAILABLE), so the panel shows one stable "unavailable" family
+# regardless of whether the channel or the injected service is missing.
+E_CORE_UNAVAILABLE = "CORE_UNAVAILABLE"
 
 #: M2-PAGE-RESOURCE-RESOLVE-1: managed originals are published byte-for-byte
 #: (no transcode) into ``pages/`` under the derived root. The gate reuses the
@@ -413,6 +462,36 @@ class DetectRequestError(ValueError):
 class SettingsRequestError(ValueError):
     """A settings.get/update_section payload violates the request contract
     (INVALID_REQUEST; M2-SETTINGS-IPC-CHANNEL, contract rev 1.3 §5.3)."""
+
+
+class CleanupRequestError(ValueError):
+    """A cleanup.* payload violates the request contract (INVALID_REQUEST;
+    SETTINGS-OPEN-B-2, design §4.3 -- same fail-closed discipline as the
+    settings pair). The three faces take no parameters, so the only shape
+    gate is "payload is a JSON object"; the refusal carries a fixed short
+    message, never an OS path."""
+
+
+class CleanupUnavailableError(RuntimeError):
+    """No ``CleanupService`` was injected into this Core assembly
+    (SETTINGS-OPEN-B-2). The cleanup faces then fail closed with the
+    existing ``CORE_UNAVAILABLE`` / ``unavailable`` envelope -- the same
+    code family the Tauri host already surfaces for a missing Core channel
+    -- instead of crashing the sidecar or pretending an empty cleanup."""
+
+
+def _cleanup_outcome_projection(outcome: CleanupOutcome) -> dict[str, Any]:
+    """SETTINGS-OPEN-B-2 AC1: the outcome wire projection is the frozen
+    ``CleanupOutcome.to_dict()`` mapping (relative path -> status/reason)
+    plus the three counts the settings panel displays. No OS path, no
+    absolute path and no user source file ever appears here: cleanup only
+    addresses ``cache/``-prefixed relative paths."""
+    return {
+        "items": outcome.to_dict(),
+        "removed": outcome.removed,
+        "failed": outcome.failed,
+        "skipped": outcome.skipped,
+    }
 
 
 _SETTINGS_OS_PATH = re.compile(
@@ -805,9 +884,18 @@ class CoreServiceServer:
         render_previews: RenderPreviewPublisher | None = None,
         producer_root: Path | None = None,
         import_cancelled: Callable[[], bool] | None = None,
+        cleanup: CleanupService | None = None,
     ) -> None:
         self._core = core
         self._p15_settings = P15SettingsCommands(core)
+        #: SETTINGS-OPEN-B-2 (design §4.3): the assembly-injected controlled
+        #: cleanup use case. ``None`` keeps every existing construction valid
+        #: and makes the three cleanup faces fail closed with
+        #: CORE_UNAVAILABLE instead of crashing (an assembly that has not
+        #: wired the service must not regress start-up). The production
+        #: ``main`` passes ``core.cleanup`` explicitly -- there is no
+        #: implicit fallback, so a forgotten injection is loud, not silent.
+        self._cleanup = cleanup
         self._stdin = stdin or sys.stdin
         self._stdout = stdout or sys.stdout
         # M2-DERIVED-GC-2: the canonical data root this Core owns (its
@@ -1667,6 +1755,48 @@ class CoreServiceServer:
             # pre-validation above (INVALID_REQUEST, never a raw ValueError)
             raise SettingsRequestError(str(error)) from error
         return {"settings": _project_settings_value(dict(defaults.settings))}
+
+    # ------------------------------------------------------------------
+    # cleanup.preview / cleanup.run / cleanup.retry_pending
+    # (SETTINGS-OPEN-B-2, design §4.3)
+    # ------------------------------------------------------------------
+
+    def _require_cleanup(self) -> CleanupService:
+        """The injected controlled cleanup use case, or a typed refusal.
+
+        ``None`` means this assembly never wired the service. The refusal
+        is CORE_UNAVAILABLE (dispatcher mapping), never an exception that
+        escapes the stdio loop.
+        """
+        service = self._cleanup
+        if service is None:
+            raise CleanupUnavailableError("cleanup service is not wired")
+        return service
+
+    def handle_cleanup_preview(self) -> dict[str, Any]:
+        """Read-only pre-flight: which cache files would be removed and how
+        many bytes they occupy, plus the persisted pending-failure count.
+
+        The preview only lists targets that pass the same never-clean
+        predicate the run face re-checks, so "preview says N" and "run
+        touches at most N" can never disagree. Reading never deletes.
+        """
+        service = self._require_cleanup()
+        result = service.preview().to_dict()
+        result["pending_cleanups"] = service.pending_cleanup_count()
+        return result
+
+    def handle_cleanup_run(self) -> dict[str, Any]:
+        """Remove every safe cache target now (idempotent); failed removals
+        stay persisted as ``pending_cleanups`` for the retry face."""
+        service = self._require_cleanup()
+        return _cleanup_outcome_projection(service.run())
+
+    def handle_cleanup_retry_pending(self) -> dict[str, Any]:
+        """Retry the persisted pending-removal list; settled entries leave
+        the ledger, entries that fail again stay pending."""
+        service = self._require_cleanup()
+        return _cleanup_outcome_projection(service.retry_pending_cleanups())
 
     # ------------------------------------------------------------------
     # set_region_type / list_regions (M2-REGION-RETYPE-CORE)
@@ -3184,16 +3314,25 @@ class CoreServiceServer:
         protocol = req.get("protocol")
         version = req.get("version")
         command = req.get("command")
+        # SETTINGS-OPEN-B-2: the cleanup faces join the settings pair in the
+        # safe-request-id projection -- a rejection must never echo a
+        # path-shaped request id back to the caller (SEC-FIX-PATH-ECHO-1
+        # precedent; the cleanup projection itself is path-free).
+        projected_request_commands = (
+            "settings.get",
+            "settings.update_section",
+            *_CLEANUP_COMMANDS,
+        )
         safe_request_id = (
             _project_settings_value(request_id)
-            if command in ("settings.get", "settings.update_section")
+            if command in projected_request_commands
             else request_id
         )
         raw_payload = req.get("payload")
         payload = raw_payload if isinstance(raw_payload, dict) else {}
 
         if req.get("channel") == "host-control":
-            if command in ("settings.get", "settings.update_section"):
+            if command in projected_request_commands:
                 req = {**req, "request_id": safe_request_id}
             return self._dispatch_host_control(req), False
         if isinstance(command, str) and command in _HOST_CONTROL_COMMANDS:
@@ -3665,6 +3804,86 @@ class CoreServiceServer:
                             code=E_UNKNOWN,
                             category="internal",
                             message="Settings operation failed",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": safe_request_id,
+                    "result": result,
+                    "error": None,
+                },
+                False,
+            )
+
+        # SETTINGS-OPEN-B-2 (design §4.3): the cache/Revision maintenance
+        # face -- preview / run / retry over the rebuildable webtoon tile
+        # cache. Ordinary application-channel commands (settings.get
+        # precedent), not HostControl: the frozen host-control envelope stays
+        # limited to the HOST-ISSUER-1 grant/session set (contract §5.7).
+        # Request shape is typed fail-closed BEFORE any filesystem work; the
+        # result is the frozen CleanupPreview/CleanupOutcome projection.
+        # A Core assembled without the service fails closed with
+        # CORE_UNAVAILABLE instead of crashing the sidecar.
+        if command in _CLEANUP_COMMANDS:
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise CleanupRequestError(
+                        "cleanup request payload must be a JSON object"
+                    )
+                if command == "cleanup.preview":
+                    result = self.handle_cleanup_preview()
+                elif command == "cleanup.run":
+                    result = self.handle_cleanup_run()
+                else:
+                    result = self.handle_cleanup_retry_pending()
+            except CleanupRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": safe_request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except CleanupUnavailableError:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": safe_request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_CORE_UNAVAILABLE,
+                            category="unavailable",
+                            message="Cleanup service is unavailable",
+                            retryable=True,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": safe_request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="Cleanup operation failed",
                             retryable=False,
                         ),
                     },
@@ -4175,6 +4394,10 @@ def main() -> int:
                 # F-002 (Codex R1): same correction as the retired-preview GC
                 # above - managed paths are relative to the storage root.
                 producer_root=core.storage.root,
+                # SETTINGS-OPEN-B-2: the cleanup faces are served from the
+                # assembly-injected CleanupService (tile-cache inventory +
+                # ManagedFileStorage remover + the shared trash manifest).
+                cleanup=core.cleanup,
             )
             return server.serve_forever()
         finally:

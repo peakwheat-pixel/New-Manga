@@ -985,6 +985,32 @@ pub trait LibraryChannel: Send + Sync {
         Err(LibraryError::unavailable("Export channel is unavailable"))
     }
 
+    /// SETTINGS-OPEN-B-2 (design §4.3): the cache/Revision maintenance face
+    /// -- preview / run / retry over the rebuildable webtoon tile cache.
+    /// Ordinary application-channel Core commands (the settings pair
+    /// precedent: `cleanup.preview` / `cleanup.run` /
+    /// `cleanup.retry_pending`), production-only at the Tauri surface.
+    /// The outcome is the raw Core projection:
+    ///
+    /// - preview: `{targets: [{relative_path, size_bytes}...],
+    ///   total_bytes, pending_cleanups}`;
+    /// - run / retry_pending: `{items: {relative_path: {status, reason}},
+    ///   removed, failed, skipped}`.
+    ///
+    /// The defaults are fail-closed so test doubles and wrappers keep
+    /// compiling; the production channel overrides all three.
+    fn cleanup_preview(&self) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Cleanup channel is unavailable"))
+    }
+
+    fn cleanup_run(&self) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Cleanup channel is unavailable"))
+    }
+
+    fn cleanup_retry_pending(&self) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Cleanup channel is unavailable"))
+    }
+
     /// P20-ISOLATION-1: Register a lifecycle status emitter for sidecar health events.
     fn set_status_emitter(&self, _emitter: StatusEmitter) {}
 
@@ -4350,6 +4376,25 @@ impl LibraryChannel for StdioLibraryChannel {
         project_export_history(val)
     }
 
+    fn cleanup_preview(&self) -> Result<serde_json::Value, LibraryError> {
+        // SETTINGS-OPEN-B-2: ordinary application-envelope command (same
+        // channel as settings.get); the Core returns the CleanupPreview
+        // projection with the persisted pending count.
+        self.round_trip("cleanup.preview", serde_json::json!({}))
+    }
+
+    fn cleanup_run(&self) -> Result<serde_json::Value, LibraryError> {
+        // SETTINGS-OPEN-B-2: removes the safe cache population; failed
+        // removals come back as persisted pending entries, so the caller
+        // can offer the retry face instead of losing the failure.
+        self.round_trip("cleanup.run", serde_json::json!({}))
+    }
+
+    fn cleanup_retry_pending(&self) -> Result<serde_json::Value, LibraryError> {
+        // SETTINGS-OPEN-B-2: retries the persisted pending-removal ledger.
+        self.round_trip("cleanup.retry_pending", serde_json::json!({}))
+    }
+
     fn permanently_delete_book(
         &self,
         payload: PermanentlyDeleteBookPayload,
@@ -4729,6 +4774,18 @@ impl LibraryChannel for MockLibraryChannel {
 
     fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
         self.export_history_result.lock().unwrap().clone()
+    }
+
+    fn cleanup_preview(&self) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn cleanup_run(&self) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn cleanup_retry_pending(&self) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
     }
 
     fn permanently_delete_book(
@@ -5548,6 +5605,18 @@ impl LibraryChannel for ResilientLibraryChannel {
         self.with_channel(|c| c.get_export_history())
     }
 
+    fn cleanup_preview(&self) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.cleanup_preview())
+    }
+
+    fn cleanup_run(&self) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.cleanup_run())
+    }
+
+    fn cleanup_retry_pending(&self) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.cleanup_retry_pending())
+    }
+
     fn permanently_delete_book(
         &self,
         payload: PermanentlyDeleteBookPayload,
@@ -5980,6 +6049,50 @@ mod tests {
         assert_eq!(err.code, "INVALID_REQUEST");
         assert_eq!(err.category, "validation");
         assert!(!err.retryable);
+    }
+
+    #[test]
+    fn cleanup_mock_channel_round_trip_and_typed_unavailable() {
+        // SETTINGS-OPEN-B-2: the host-level cleanup surface maps 1:1 onto the
+        // three LibraryChannel methods (the mock presets the domain slot; the
+        // REAL channel round-trips the Core over the ordinary application
+        // envelope, like the settings pair). What is pinned here is the
+        // pass-through of the Core projection and of the typed error codes.
+        let channel = MockLibraryChannel::new();
+        assert_eq!(channel.cleanup_preview().unwrap(), serde_json::json!({}));
+
+        channel.set_domain_result(Ok(serde_json::json!({
+            "targets": [
+                {"relative_path": "cache/webtoon-tiles/tile-a.png", "size_bytes": 4}
+            ],
+            "total_bytes": 4,
+            "pending_cleanups": 1,
+        })));
+        let preview = channel.cleanup_preview().unwrap();
+        assert_eq!(preview["total_bytes"], 4);
+        assert_eq!(preview["pending_cleanups"], 1);
+
+        channel.set_domain_result(Ok(serde_json::json!({
+            "items": {
+                "cache/webtoon-tiles/tile-a.png": {"status": "ok", "reason": ""}
+            },
+            "removed": 1,
+            "failed": 0,
+            "skipped": 0,
+        })));
+        assert_eq!(channel.cleanup_run().unwrap()["removed"], 1);
+        assert_eq!(channel.cleanup_retry_pending().unwrap()["removed"], 1);
+
+        channel.set_domain_result(Err(LibraryError::new(
+            "CORE_UNAVAILABLE",
+            "unavailable",
+            true,
+            None,
+        )));
+        let error = channel.cleanup_preview().unwrap_err();
+        assert_eq!(error.code, "CORE_UNAVAILABLE");
+        assert_eq!(error.category, "unavailable");
+        assert!(error.retryable);
     }
 
     #[test]

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { CacheRevisionPanel } from "./CacheRevisionPanel";
 import { SettingsClient } from "./client";
 import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
 import { DisabledSection } from "./DisabledSection";
@@ -22,12 +23,12 @@ import { tokens } from "../theme/tokens";
  *
  * Editability: Provider (profiles + capability bindings), Network/Proxy,
  * SFX policy, the four SETTINGS-OPEN-A-1 batch A sections (design
- * doc/design/SETTINGS_SECTION_SCHEMAS.md §3) and — SETTINGS-OPEN-B-1 — the
- * model/GPU (§4.1) and tasks/concurrency (§4.2) sections are editable. The
- * remaining four partitions (cache/Revision, recycle bin, backup/restore,
- * plugins) still render the disabled placeholder with the reason
- * "等待 section schema 冻结"; the nav badge "未开放" only applies to those
- * still-closed categories.
+ * doc/design/SETTINGS_SECTION_SCHEMAS.md §3), the SETTINGS-OPEN-B-1
+ * model/GPU (§4.1) and tasks/concurrency (§4.2) sections, and — batch B-2 —
+ * the cache/Revision cleanup operation surface (§4.3). Only the three batch C
+ * partitions (recycle bin, backup/restore, plugins) still render the disabled
+ * placeholder with the reason "等待 section schema 冻结"; the nav badge
+ * "未开放" only applies to those still-closed categories.
  */
 export const SETTINGS_CATEGORY_ORDER = [
   "provider",
@@ -59,7 +60,7 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
   { id: "typeset", label: "排版样式", open: true },
   { id: "model_gpu", label: "模型/GPU", open: true },
   { id: "task_concurrency", label: "任务/并发", open: true },
-  { id: "cache_revision", label: "缓存/Revision", open: false },
+  { id: "cache_revision", label: "缓存/Revision", open: true },
   { id: "recycle_bin", label: "回收站", open: false },
   { id: "backup_restore", label: "备份/恢复", open: false },
   { id: "plugins", label: "Plugin/Hooks", open: false },
@@ -67,12 +68,11 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
 
 /** Every still-disabled partition with its placeholder test id — asserted
  * one by one in the AC2 tests. Batch A's ocr / translation-context / inpaint /
- * typeset placeholders and batch B-1's model-GPU / task-concurrency
- * placeholders are gone: those categories now host real panels. Only the B-2
- * (cache/Revision) and batch C (recycle bin, backup/restore, plugins)
- * partitions remain closed. */
+ * typeset placeholders, batch B-1's model-GPU / task-concurrency placeholders
+ * and batch B-2's cache/Revision placeholder are gone: those categories now
+ * host real panels. Only the three batch C partitions (recycle bin,
+ * backup/restore, plugins) remain closed. */
 export const DISABLED_SECTION_TEST_IDS = {
-  cacheRevision: "settings-disabled-section-cache-revision",
   recycleBin: "settings-disabled-section-recycle-bin",
   backupRestore: "settings-disabled-section-backup-restore",
   plugins: "settings-disabled-section-plugins",
@@ -282,7 +282,11 @@ export function SettingsPage({ client }: SettingsPageProps) {
             <TasksSettingsPanel client={activeClient} />
           </div>
         )}
-        {activeCategoryId === "cache_revision" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.cacheRevision} title="缓存 / Revision" />}
+        {activeCategoryId === "cache_revision" && (
+          <div data-testid="settings-content-cache-revision">
+            <CacheRevisionPanel client={activeClient} />
+          </div>
+        )}
         {activeCategoryId === "recycle_bin" && (
           <DisabledSection
             testId={DISABLED_SECTION_TEST_IDS.recycleBin}
