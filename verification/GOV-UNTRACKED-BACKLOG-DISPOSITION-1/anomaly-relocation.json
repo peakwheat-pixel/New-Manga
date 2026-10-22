@@ -1,0 +1,26 @@
+[
+  {
+    "source": "INTERRUPTED by Codex before final report; no exit marker; partial JSONL preserved; not Review evidence",
+    "destination": "verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/interrupted-status-pointer-20261020.txt",
+    "bytes": 72,
+    "sha256": "ECEE8685A7F7E11D241B621F5BA88A4077F0B568E9F4C67EA9F9D65F4E37EDA2",
+    "source_absent": true,
+    "sha256_equal": true
+  },
+  {
+    "source": "fd",
+    "destination": "verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/fd-mupdf-zlib-error-20261020.txt",
+    "bytes": 66,
+    "sha256": "881CA1CE8E3EC8475E7EABFE21E6C3C30A26CED6C07F4FAC877FD143B96FF3E5",
+    "source_absent": true,
+    "sha256_equal": true
+  },
+  {
+    "source": "CON",
+    "destination": "verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/CON-sfx-review-hash-manifest-20261013.csv",
+    "bytes": 34778,
+    "sha256": "8241373A2CC3AC428786E92B23A5872952CF7635E8A5153CAC660560C4AC8714",
+    "source_absent": true,
+    "sha256_equal": true
+  }
+]

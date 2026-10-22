@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-10-22T17:47:11.9856052+08:00",
+  "head": "7d65ba9f58164142cffd3ebbc4e7f323382197ae",
+  "manifest_entries": 1601,
+  "bytes_identical": 1601,
+  "bytes_mismatch": [],
+  "missing": [],
+  "untracked_after": [
+    "verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/CON-sfx-review-hash-manifest-20261013.csv",
+    "verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/fd-mupdf-zlib-error-20261020.txt",
+    "verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/interrupted-status-pointer-20261020.txt"
+  ],
+  "modified_after": [],
+  "verdict": "PASS_NO_CONTENT_CHANGE"
+}

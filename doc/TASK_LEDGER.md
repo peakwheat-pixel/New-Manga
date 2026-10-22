@@ -11,8 +11,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | non-terminal | 1 |
 | non-terminal named in the plan | 1 |
 | non-terminal outside the plan | 0 |
-| task files tracked by git | 326 |
-| task files untracked (drafts) | 15 |
+| task files tracked by git | 341 |
+| task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 1 |
 
 ## By status

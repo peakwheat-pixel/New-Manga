@@ -21,7 +21,7 @@
 
 ## Gate 与保留项
 
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。H1/P2-1/13缺项、BC-AC5 PARTIAL、backlog保留。用户未提交内容保留，不push/删除。**P20发布Gate已实测通过**（`bundle==resource`；四页可达）。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。H1/P2-1/13缺项、BC-AC5 PARTIAL、backlog保留。未提交积压已入库（`GOV-UNTRACKED-BACKLOG-DISPOSITION-1`），不push。**P20发布Gate已实测通过**（`bundle==resource`；四页可达）。
 
 ## 当前权威指针
 

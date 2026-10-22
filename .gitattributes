@@ -38,3 +38,11 @@ doc/handoffs/GOV-EOL-PIN-1-*.md text eol=lf
 # Same reason the existing eol=lf pins above exist: recorded sha256 evidence
 # breaks when autocrlf rewrites a file, and the fix is to stop the rewriting.
 doc/tasks/*.md text eol=lf
+
+# GOV-UNTRACKED-BACKLOG-DISPOSITION-1: the disposition evidence is sha256-recorded, so
+# pin LF on checkout exactly like the GOV-UNTRACKED-BACKLOG-1 pins above. The relocated
+# anomaly payloads are the opposite case: their SHA-256 *is* the original content
+# fingerprint, so they are marked -text to guarantee Git never rewrites their bytes.
+verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/*.json text eol=lf
+verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/*.md text eol=lf
+verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/** -text
