@@ -132,9 +132,24 @@ $dirs = [ordered]@{
     managed  = Join-Path $dataRoot 'managed'
     dataRoot = Join-Path $dataRoot 'data-root'
     catalog  = Join-Path $dataRoot 'catalog'
+    webview2 = Join-Path $dataRoot 'webview2-udd'
 }
 foreach ($dir in $dirs.Values) {
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
+}
+
+# --- 单实例保护 --------------------------------------------------------------
+# 开发预览共用同一份 WebView2 用户数据目录与 SQLite 目录：两个实例并发启动时
+# 必然互相锁死（WebView2 0x800700AA「请求的资源在使用中」/ sqlite unable to
+# open database file）。与其让用户看到一堆底层报错，不如在入口 fail-closed。
+$running = Get-Process -Name 'm2rc1-desktop' -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($running) {
+    throw @"
+[dev-preview] 已有 m2rc1-desktop 在运行（pid $($running.Id)），拒绝并发启动。
+预览与正式版共用 WebView2 用户数据目录与 SQLite 目录，两个实例同时运行会导致
+WebView2 报 0x800700AA（资源在使用中）或 SQLite 报 unable to open database file。
+请先关闭已打开的应用窗口（或结束该进程）后再启动预览。
+"@
 }
 
 # --- dev 模式环境（同时清掉会切到 probe/ac1/packaged 模式的开关） -----------
@@ -148,6 +163,9 @@ $env:M2RC1_DERIVED_ROOT = $dirs.derived
 $env:M2RC1_MANAGED_ROOT = $dirs.managed
 $env:NEWMANGA_DATA_ROOT = $dirs.dataRoot
 $env:M2RC2_CATALOG_DB   = Join-Path $dirs.catalog 'catalog.sqlite'
+# WebView2 用户数据目录隔离到 workspace：既不与已安装的正式版争用默认
+# %LOCALAPPDATA%\<identifier>\EBWebView，也保证崩溃残留不会污染正式版。
+$env:WEBVIEW2_USER_DATA_FOLDER = $dirs.webview2
 if (-not $env:M2RC1_PYTHON) {
     $python = (Get-Command python -ErrorAction SilentlyContinue)
     if ($python) { $env:M2RC1_PYTHON = $python.Source }
