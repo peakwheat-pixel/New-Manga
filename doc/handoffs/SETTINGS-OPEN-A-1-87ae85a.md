@@ -3,8 +3,8 @@ task_id: SETTINGS-OPEN-A-1
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: 1fa2c3c58413b6bce972bd20fb044438d538d3d6
-delivery_head: 87ae85a678880bff840ac77b53f2700e586ad95c
-status: in_review
+delivery_head: 6a303a9d2c66f6ffbfee2aec6ebde359312a6b33
+status: approved
 ---
 
 # Handoff：SETTINGS-OPEN-A-1（设置分区开放批次 A）
@@ -26,7 +26,7 @@ status: in_review
 | AC2 排版默认样式接入（两条渲染路径：Run 冻结快照 + 手动整页重渲染） | 完成 | `handlers.typeset_style_defaults`；`handle_render` 与 `handle_rerender_page` 均接入；`pytest tests/pipeline tests/rendering` 164 passed |
 | AC3 前端分区开放（四面板 + 翻译参数替换占位） | 完成 | `apps/desktop/frontend/src/settings/{Ocr,TranslationParams,Inpaint,Typeset}SettingsPanel.tsx`；`SettingsPage.tsx` 6 开 6 关 |
 | AC4 测试（pytest + Vitest，全部通过、未弱化） | 完成 | 后端 819 passed；前端 37 files / 364 tests passed；tsc 无错误；既有断言按行为变化更新（见 ui-report §4） |
-| AC5 证据/Handoff/独立 Review | 部分 | 证据与 Handoff 已提交；**独立 Review 进行中**（reviewer-settings-a），结论待落 `review-r1.md` |
+| AC5 证据/Handoff/独立 Review | 完成 | 证据与 Handoff 已提交；独立 Review r1 `changes_requested` → r2 `approved`（`review-r1.md`、`review-r2.md`）；集成目标 commit `6a303a9` |
 
 ### 一并修复的存储层缺陷
 
@@ -68,7 +68,7 @@ status: in_review
 
 ## 风险与遗留
 
-1. **独立 Review 第一轮 `changes_requested`，已返修 r2**：评审报告 `verification/SETTINGS-OPEN-A-1/review-r1.md`。处置：B1 `_merge_defaults` 优先级重写（用 domain `TextStyle` 原始字段判断持久化；渲染级回归 `tests/rendering/test_typeset_defaults_merge.py` 在旧实现上 3 failed / 修复后 4 passed）；B2 移除无消费者的 `fill_color`（白名单/映射/UI）；M1 增加 `auto_font_size=false` → `manual_font_size` 必填的跨字段校验；M2 `text_align` 收窄 `left|center`；M3 两份冻结契约补 2026-10-22 增量修订注记；M4 base_commit 更正为真实 `1fa2c3c58413b6bce972bd20fb044438d538d3d6`；m1/m2/m3/m5/m6 分别在设计/前端/测试/任务书/烟测证据中处理。r2 独立测试：pytest `832 passed`（tests/core+pipeline+rendering）、`npm --prefix apps/desktop/frontend test` 37 files/367 tests、tsc exit 0。
+1. **独立 Review 第一轮 `changes_requested`，已返修 r2 并获 `approved`**：评审报告 `verification/SETTINGS-OPEN-A-1/review-r1.md`、`review-r2.md`。处置：B1 `_merge_defaults` 优先级重写（用 domain `TextStyle` 原始字段判断持久化；渲染级回归 `tests/rendering/test_typeset_defaults_merge.py` 在旧实现上 3 failed / 修复后 4 passed）；B2 移除无消费者的 `fill_color`（白名单/映射/UI）；M1 增加 `auto_font_size=false` → `manual_font_size` 必填的跨字段校验；M2 `text_align` 收窄 `left|center`；M3 两份冻结契约补 2026-10-22 增量修订注记；M4 base_commit 更正为真实 `1fa2c3c58413b6bce972bd20fb044438d538d3d6`；m1/m2/m3/m5/m6 分别在设计/前端/测试/任务书/烟测证据中处理。r2 独立测试：pytest `832 passed`（tests/core+pipeline+rendering）、`npm --prefix apps/desktop/frontend test` 37 files/367 tests、tsc exit 0。最终集成目标：`6a303a9d2c66f6ffbfee2aec6ebde359312a6b33`（**不要集成 `87ae85a`**，那是被 r1 否决的实现）。
 2. **`typeset.font_family` 未开放**：字体列表/上传需要新增 wire（U-5 边界），设计 §3.4 已注明；当前字体保持 FontCatalog 默认。
 3. **跨字段约束**：`auto_font_size=false` 且 `manual_font_size` 未设置现在被 Core 拒绝（r2）；前端同步禁用保存并提示。
 4. **partial typeset 语义（用户可见）**：保存任意 `typeset` 键后，未在 Region 持久化的字段取全局默认（例如仅保存 text_color 时 stroke_width 从历史合成 0.0 变为 `RenderTextStyle` 默认 3.0），符合 D03 §11.4 继承顺序；设计 §3.4 已记录。

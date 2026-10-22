@@ -4,7 +4,7 @@
 - 实现者：DSH teammate `core-settings-a`（Lead：`lead`）
 - 设计依据：[SETTINGS 分区 Schema 设计](../design/SETTINGS_SECTION_SCHEMAS.md) §2、§3.1–§3.5
 - 日期：2026-10-22（r1 实现 + r2 返修）
-- 状态：**r2 返修完成，未 commit**（按任务禁令，不执行 git commit/push/reset/stash）
+- 状态：**r2 返修完成并已由 Lead 固定 commit `6a303a9d2c66f6ffbfee2aec6ebde359312a6b33`**（r2 独立 Review `approved`，见 `review-r2.md`；之后仅证据/文档提交）
 - 基线 commit（真实）：`1fa2c3c58413b6bce972bd20fb044438d538d3d6`（`main`，`87ae85a^`）。r2 工作区基于 `fd31d0b8b83c656cbd3db5412c68f0652356afd2`（r1 实现 commit `87ae85a` + 两个 docs-only commit；产品代码与 `87ae85a` 相同）
 
 ## 1. 工作区/commit 前状态说明
@@ -152,7 +152,7 @@ AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection'
 
 ## 6. 遗留项与风险
 
-1. **未 commit**：r2 改动均为工作区改动，需 Lead/Codex 固定 commit 并进入独立 Review；本报告不含 r2 commit hash。
+1. **已 commit**：r2 改动由 Lead 固定为 `6a303a9d2c66f6ffbfee2aec6ebde359312a6b33`（parent `fd31d0b8b`；r1 实现 `87ae85a` 在被否决的 r1 状态，勿作为集成目标），独立 Review r2 `approved`（`review-r2.md`）。
 2. **真实应用烟测 NOT_RUN**：未启动 dev preview 做“保存→重启→新 Run 生效”的完整 GUI 烟测（需要前端与运行环境；前端由 `ui-settings-a` 负责）。Core 侧用真实生产 assembly + 真实 Run 快照 + 真实 `_prepare_region` 回归测试替代链路证明。
 3. **M1 已修复（原跨字段缺口）**：`typeset.auto_font_size=false` 现在必须同时提供 `manual_font_size`，否则 `INVALID_REQUEST` 且不落库；前端面板由 `ui-settings-a` 同步做内联提示（本 writer 未改前端）。
 4. **M2 已修复（原 text_align 值域）**：本批值域收窄为 `left|center`，`right` 返回 `INVALID_REQUEST`；渲染器只特判 `center`（其余按左/start），不再存在“选右对齐实际左对齐”的假能力。
@@ -166,7 +166,7 @@ AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection'
 - AC1 Core 写入校验：**已实现并测试**（四节合法写入/投影/落库；非法枚举/越界/类型错误/未知键 → `INVALID_REQUEST` 且存储不变；未知 section 透传；bool 不作为 int 接受；r2 增补 M1 跨字段、M2 `right` 拒绝、B2 `fill_color` 拒绝）。
 - AC2 排版默认样式接入：**已实现并经渲染级回归验证（两条渲染路径）**：`RenderService.style_defaults` 已接入 `rerender_region`；`handle_render` 从 Run 冻结快照派生并透传（保存→下一 Run 生效）；`handle_rerender_page` 从当前全局设置派生并透传（保存→立即生效）；r2 重写 `_merge_defaults` 后，未持久化字段真正取 defaults、显式持久化 Region 字段仍覆盖 defaults；`tests/rendering/test_typeset_defaults_merge.py` 4 项回归在旧实现上 3 项失败、修复后全通过。`font_family` 按 Lead 裁决不在批次 A 白名单（§5.4）。
 - AC3/AC4（前端/Vitest）：不在本 writer 范围（`ui-settings-a`），本报告 NOT_RUN。
-- AC5（固定 commit/截图/独立 Review/Handoff）：r2 未 commit；截图/烟测 NOT_RUN；独立 Review 由 Lead 指派非实现者执行。
+- AC5（固定 commit/截图/独立 Review/Handoff）：固定 commit `6a303a9`；GUI 逐分区保存 + 重启复查证据由 Lead 补在 `gui-smoke.md` 与 `screenshots/01..10`；独立 Review r1 changes_requested → r2 approved（`review-r2.md`）。
 
 ## 8. 返修 r2 记录（Review r1 `changes_requested`）
 
