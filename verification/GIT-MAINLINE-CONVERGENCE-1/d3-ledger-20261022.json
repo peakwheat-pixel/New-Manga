@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "authorisation": "user: 授权全部 (D-3 + D-1)",
+  "backup_bundle": "G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-352410640c.bundle",
+  "attempted": 20,
+  "removed": 26,
+  "refused": 0,
+  "worktrees_registered_after": 116,
+  "entries": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE",
+      "head": "702081442d44f74310f7ae9ae7cc412479f0766a",
+      "branch": "codex/arch-doc-rebaseline",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
+      "head": "d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05",
+      "branch": "codex/gov-broad-root-preservation-impl-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1",
+      "head": "e6f400101d39e466d44278f08163ed1e4c1c234a",
+      "branch": "codex/gov-historical-evidence-interpretation-design-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
+      "head": "b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5",
+      "branch": "codex/gov-historical-evidence-interpretation-impl-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-NDJSON-EXCEPTION-CONFIG-1",
+      "head": "85a393dc43eaf60df20258040d5869b42700d2c5",
+      "branch": "codex/gov-ndjson-exception-config-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1",
+      "head": "b26b60ca68e39319fc90d7b6014b76de70cde310",
+      "branch": "codex/gov-path-header-compat-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1",
+      "head": "49942377b452ea2131b0fe530d7f2235e3143af9",
+      "branch": "codex/gov-residual-template-nul-identity-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "head": "13cc2bb5440b9d4bfb9e01266b9045079de84e65",
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6",
+      "head": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "head": "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "head": "fa20602debb2d5f16f315bbed4180eae6f8821c5",
+      "branch": "codex/P10-credential-config-contract",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "head": "c7922ae1c62f4cac8721a2730fc19c7c973c7e83",
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "head": "e325e007231beb866d3bd2656bc081e9424acc15",
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "head": "7dde1f6c41dbd70bf99a61dac8bf3c40833a35f5",
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU1",
+      "head": "9b0a2459058504c63fd3b688286d25cb02498954",
+      "branch": "codex/P15-C1-FU1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "head": "356a9fe07f67dd8b0c376d3b6c02c151b4c06f15",
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "head": "34d81c96a66fbde17e4eb44bc058ab993483922f",
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "head": "920151a9cd8bb715466be22b2417f2fee74b67a3",
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "head": "1dc8a89445207e47a28a330610a925fa8514bf3b",
+      "branch": "dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "head": "f3d8cb27b196472d12f979c29788ad3966ab026f",
+      "branch": "dsh/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "detached": false,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    }
+  ]
+}

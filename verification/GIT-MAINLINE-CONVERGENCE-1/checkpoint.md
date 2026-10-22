@@ -52,3 +52,12 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - `doc/WORKTREE_SAFETY_INVENTORY.md` 已追加 Stage 10（只读刷新，未删除/未移动/未 prune 任何工作树）；`delta-20261022.md` 追加 §10 执行链修正。
 - 证据：`branch-deletion-readiness-20261022.json`（104 heads 交叉核对）。
 - 真实删除/迁移/归档/GC/prune/push/reset/stash：0；**仍未达到只剩 main**。
+### 用户授权「全部」后的执行（2026-10-22）
+
+- 授权：用户回复「授权全部」，覆盖 D-1/D-3。D-2（20 条未合并分支）保留；D-4（解除保护/r212）**未执行**（不建议且不需要）。
+- **D-3 工作树退出 26/26 成功**（`git worktree remove` 无 --force，0 拒绝）：142 → **116**。
+- **D-1 分支删除 20/20 成功**（`git branch -d` 非 -D，0 拒绝）：104 → **84**；保留旧主线 `antigravity/P09-AC3-DELETE-HARDEN-1`。
+- 可恢复性已实测：20 条被删分支的 tip 在备份恢复仓中 **20/20 可读、0 缺失**。
+- 复验：声明审计 **0 errors / 1946 保护根**；治理检查 **PASS (2 warnings)**；tracked 工作区干净。
+- 未执行：`git worktree prune`、GC、push、reset、stash；.git/worktrees 下 37 个历史孤儿元数据保留。
+- 剩余：84 heads = main + 62 检出 + 20 未合并 + 1 旧主线；**仍未达到只剩 main**。

@@ -262,3 +262,24 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 - `verification/GIT-MAINLINE-CONVERGENCE-1/worktree-inventory-20261022.json`（142/142 逐项）
 - `verification/GIT-MAINLINE-CONVERGENCE-1/branch-deletion-readiness-20261022.json`（104 heads 交叉）
 - `verification/GIT-MAINLINE-CONVERGENCE-1/backup-all-refs-352410640.json`（备份验证）
+
+## Stage 11 授权执行记录（2026-10-22，dsh epoch 10）
+
+**授权来源**：用户会话回复「授权全部」（覆盖 D-1 / D-3）。
+
+| 步骤 | 动作 | 结果 |
+|---|---|---|
+| 备份 | 新建全 refs bundle 并空仓恢复验证 | 221 refs，missing 0 / extra 0，fsck clean |
+| D-3 | `git worktree remove`（无 --force） | **26/20** 退出，142 → 116 |
+| D-1 | `git branch -d`（非 -D） | **20/20** 删除，104 → 84 |
+| 复验 | 声明审计 / 治理检查 / 可恢复性 | 0 errors、PASS、20/20 tip 可读 |
+
+### 判定依据（与 Stage 7 规则一致）
+
+三条同时满足才执行：① 资源已显式裁决可退出（本 Stage 为 D-3）；② tracked/untracked/ignored 均为空；③ 无进程占用且独有提交为 0。分支另加：已合并入 main 且未被任何工作树检出，并用 `branch -d` 让 git 再守一道。
+
+### 未触碰
+
+- 未运行 `git worktree prune`；未删除 `.git/worktrees` 下的孤儿元数据（37 个）。
+- 未解除五广域根保护；未改变 r212 禁令；未 GC；未 push；未 reset；未 stash。
+- 用户未提交内容与 62 个未退出工作树原样保留。

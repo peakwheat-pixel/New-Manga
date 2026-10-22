@@ -1,0 +1,1080 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "authorisation": "user: 授权全部 (D-3 worktree exit, D-1 branch deletion)",
+  "repo": "G:/CODEX/New Manga",
+  "summary": {
+    "candidates": 26,
+    "remove": 20,
+    "hold": [
+      "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+      "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity"
+    ],
+    "skip_missing": [],
+    "with_protection_hits": 26
+  },
+  "records": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE",
+      "exists": true,
+      "head": "702081442d44f74310f7ae9ae7cc412479f0766a",
+      "branch": "codex/arch-doc-rebaseline",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/arch-doc-rebaseline",
+          "sources": [
+            "doc/tasks/ARCH-DOC-REBASELINE.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "exists": true,
+      "head": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+      "branch": null,
+      "detached": true,
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": null,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/feat-create-2",
+          "sources": [
+            "doc/tasks/FEAT-CREATE-2.md line 7",
+            "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[14].disposition_original"
+          ]
+        }
+      ],
+      "verdict": "HOLD"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "exists": true,
+      "head": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+      "branch": null,
+      "detached": true,
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": null,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/feat-create-4",
+          "sources": [
+            "doc/tasks/FEAT-CREATE-4.md line 7",
+            "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[15].disposition_original"
+          ]
+        }
+      ],
+      "verdict": "HOLD"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
+      "exists": true,
+      "head": "d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05",
+      "branch": "codex/gov-broad-root-preservation-impl-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/gov-broad-root-preservation-impl-1",
+          "sources": [
+            "doc/tasks/GOV-BROAD-ROOT-PRESERVATION-IMPL-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1",
+      "exists": true,
+      "head": "e6f400101d39e466d44278f08163ed1e4c1c234a",
+      "branch": "codex/gov-historical-evidence-interpretation-design-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/gov-historical-evidence-interpretation-design-1",
+          "sources": [
+            "doc/tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
+      "exists": true,
+      "head": "b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5",
+      "branch": "codex/gov-historical-evidence-interpretation-impl-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/gov-historical-evidence-interpretation-impl-1",
+          "sources": [
+            "doc/tasks/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-NDJSON-EXCEPTION-CONFIG-1",
+      "exists": true,
+      "head": "85a393dc43eaf60df20258040d5869b42700d2c5",
+      "branch": "codex/gov-ndjson-exception-config-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/gov-ndjson-exception-config-1",
+          "sources": [
+            "doc/tasks/GOV-NDJSON-EXCEPTION-CONFIG-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1",
+      "exists": true,
+      "head": "b26b60ca68e39319fc90d7b6014b76de70cde310",
+      "branch": "codex/gov-path-header-compat-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/gov-path-header-compat-1",
+          "sources": [
+            "doc/tasks/GOV-PATH-HEADER-COMPAT-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1",
+      "exists": true,
+      "head": "49942377b452ea2131b0fe530d7f2235e3143af9",
+      "branch": "codex/gov-residual-template-nul-identity-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/gov-residual-template-nul-identity-1",
+          "sources": [
+            "doc/tasks/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "exists": true,
+      "head": "13cc2bb5440b9d4bfb9e01266b9045079de84e65",
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/host-issuer-1-c1",
+          "sources": [
+            "doc/tasks/HOST-ISSUER-1-C1.md line 4",
+            "verification/HOST-ISSUER-1-C1/resource-manifest.json $.resources[0].destination_path",
+            "verification/HOST-ISSUER-1-C1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6",
+      "exists": true,
+      "head": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 6"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/doc/handoffs/p02-new-time-x6-3c707261.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 15"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/codex-ac2-verification-r2.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 29"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/codex-selftest-t-review-adjudication-r3.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 24"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/codex-source-review-adjudication-r1.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 20"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/codex-source-review-adjudication-r2.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 22"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/dsh-selftest-t-review-r3.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 23"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/dsh-source-review-input-manifest-r1.json",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 16"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/dsh-source-review-input-manifest-r2.json",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 17"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/dsh-source-review-input-manifest-r3.json",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 18"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/dsh-source-review-r1.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 19"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/dsh-source-review-r2.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 21"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/executor/p02-new-time-x6-selftest.ps1",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 7"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/executor/p02-new-time-x6.ps1",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 6"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/output-target-inventory-r2.json",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 14"
+          ]
+        },
+        {
+          "kind": "ancestor_of_preserved_source",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6/verification/p02-new-time-x6/protocol/x6-execution-protocol-r2.md",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6.md line 13"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "exists": true,
+      "head": "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6-ac1-ac7-integration",
+          "sources": [
+            "doc/tasks/P02-MAINLINE-INTEGRATION.md line 5",
+            "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md line 6",
+            "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md line 6",
+            "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json $.resources[2].destination_path"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+      "exists": true,
+      "head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+      "branch": null,
+      "detached": true,
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": null,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p02-new-time-x6-build-cargo-dsh-review",
+          "sources": [
+            "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md line 7"
+          ]
+        }
+      ],
+      "verdict": "HOLD"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "exists": true,
+      "head": "fa20602debb2d5f16f315bbed4180eae6f8821c5",
+      "branch": "codex/P10-credential-config-contract",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p10-credential-config-contract",
+          "sources": [
+            "doc/tasks/P10.md line 4",
+            "verification/P10/resource-manifest.json $.resources[0].destination_path",
+            "verification/P10/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "exists": true,
+      "head": "c7922ae1c62f4cac8721a2730fc19c7c973c7e83",
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p11-long-task-lifecycle-contract",
+          "sources": [
+            "doc/tasks/P11.md line 4",
+            "verification/P11/resource-manifest.json $.resources[0].destination_path",
+            "verification/P11/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "exists": true,
+      "head": "e325e007231beb866d3bd2656bc081e9424acc15",
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p12-c1-import-ipc",
+          "sources": [
+            "doc/tasks/P12-C1.md line 4",
+            "verification/P12-C1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P12-C1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "exists": true,
+      "head": "7dde1f6c41dbd70bf99a61dac8bf3c40833a35f5",
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p13-c1-runtime-ipc",
+          "sources": [
+            "doc/tasks/P13-C1.md line 4",
+            "verification/P13-C1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P13-C1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU1",
+      "exists": true,
+      "head": "9b0a2459058504c63fd3b688286d25cb02498954",
+      "branch": "codex/P15-C1-FU1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p15-c1-fu1",
+          "sources": [
+            "doc/tasks/P15-C1-FU1.md line 4",
+            "verification/P15-C1-FU1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P15-C1-FU1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "exists": true,
+      "head": "356a9fe07f67dd8b0c376d3b6c02c151b4c06f15",
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p16-c1-reader-export-ipc",
+          "sources": [
+            "doc/tasks/P16-C1.md line 4",
+            "verification/P16-C1/resource-manifest.json $.resources[0].destination_path",
+            "verification/P16-C1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "exists": true,
+      "head": "34d81c96a66fbde17e4eb44bc058ab993483922f",
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p18-ja-ko-quality",
+          "sources": [
+            "doc/tasks/P18.md line 4",
+            "verification/P18/resource-manifest.json $.resources[0].destination_path",
+            "verification/P18/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "exists": true,
+      "head": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+      "branch": null,
+      "detached": true,
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": null,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-2",
+          "sources": [
+            "doc/tasks/P19-UI-FIX-2.md line 7",
+            "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[16].disposition_original"
+          ]
+        }
+      ],
+      "verdict": "HOLD"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "exists": true,
+      "head": "a43c6b9fed681e7cb123123eeb6b5ccb7fd4d4b6",
+      "branch": null,
+      "detached": true,
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": null,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/project-roadmap-release-review",
+          "sources": [
+            "doc/tasks/PROJECT-ROADMAP-RELEASE.md line 5",
+            "verification/PROJECT-ROADMAP-RELEASE/resource-retention.json $.resources[1].path"
+          ]
+        }
+      ],
+      "verdict": "HOLD"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "exists": true,
+      "head": "920151a9cd8bb715466be22b2417f2fee74b67a3",
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/ui-design-1",
+          "sources": [
+            "doc/tasks/UI-DESIGN-1.md line 4",
+            "verification/UI-DESIGN-1/resource-manifest.json $.resources[0].destination_path",
+            "verification/UI-DESIGN-1/resource-manifest.json $.resources[0].disposition"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "exists": true,
+      "head": "1dc8a89445207e47a28a330610a925fa8514bf3b",
+      "branch": "dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "exists": true,
+      "head": "f3d8cb27b196472d12f979c29788ad3966ab026f",
+      "branch": "dsh/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": 0,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace",
+          "sources": [
+            "doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5",
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11"
+          ]
+        },
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.workspace/worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.workspace/worktrees/workspace-declaration-remediation-1",
+          "sources": [
+            "doc/tasks/WORKSPACE-DECLARATION-REMEDIATION-1.md line 4"
+          ]
+        }
+      ],
+      "verdict": "REMOVE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "exists": true,
+      "head": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+      "branch": null,
+      "detached": true,
+      "tracked_dirty": 0,
+      "untracked": 0,
+      "ignored_entries": 0,
+      "unique_commits": null,
+      "processes": [],
+      "protection_hits": [
+        {
+          "kind": "descendant_of_preserved_root",
+          "root": "g:/codex/new manga.worktrees",
+          "sources": [
+            "doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 13"
+          ]
+        },
+        {
+          "kind": "exact_source_path",
+          "root": "g:/codex/new manga.worktrees/p02-real-webview-harness-antigravity",
+          "sources": [
+            "doc/tasks/P02-MAINLINE-INTEGRATION.md line 9",
+            "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[17].disposition_original"
+          ]
+        }
+      ],
+      "verdict": "HOLD"
+    }
+  ]
+}

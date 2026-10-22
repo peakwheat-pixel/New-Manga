@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "authorisation": "user: 授权全部 (D-1)",
+  "method": "git branch -d (safe delete; git refuses unmerged branches)",
+  "backup_bundle": "G:/CODEX/New Manga.workspace/archive/git-backups/GIT-MAINLINE-CONVERGENCE-1/all-refs-352410640c.bundle",
+  "retained_by_policy": [
+    "antigravity/P09-AC3-DELETE-HARDEN-1"
+  ],
+  "attempted": 20,
+  "deleted": 20,
+  "refused": 0,
+  "heads_after": 84,
+  "entries": [
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "tip": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+      "exit": 0,
+      "stdout": "Deleted branch agent/zcode/P02-NEW-TIME-X6 (was 49d2a2f9c).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "tip": "920151a9cd8bb715466be22b2417f2fee74b67a3",
+      "exit": 0,
+      "stdout": "Deleted branch agent/zcode/UI-DESIGN-1 (was 920151a9c).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "tip": "13cc2bb5440b9d4bfb9e01266b9045079de84e65",
+      "exit": 0,
+      "stdout": "Deleted branch codex/HOST-ISSUER-1-C1-grant-registration-contract (was 13cc2bb54).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P10-credential-config-contract",
+      "tip": "fa20602debb2d5f16f315bbed4180eae6f8821c5",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P10-credential-config-contract (was fa20602de).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "tip": "c7922ae1c62f4cac8721a2730fc19c7c973c7e83",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P11-long-task-lifecycle-contract (was c7922ae1c).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "tip": "e325e007231beb866d3bd2656bc081e9424acc15",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P12-C1-import-ipc-contract (was e325e0072).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "tip": "7dde1f6c41dbd70bf99a61dac8bf3c40833a35f5",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P13-C1-runtime-ipc-contract (was 7dde1f6c4).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P15-C1-FU1",
+      "tip": "9b0a2459058504c63fd3b688286d25cb02498954",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P15-C1-FU1 (was 9b0a24590).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "tip": "356a9fe07f67dd8b0c376d3b6c02c151b4c06f15",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P16-C1-reader-export-ipc-contract (was 356a9fe07).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "tip": "34d81c96a66fbde17e4eb44bc058ab993483922f",
+      "exit": 0,
+      "stdout": "Deleted branch codex/P18-ja-ko-quality-qualification (was 34d81c96a).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/arch-doc-rebaseline",
+      "tip": "702081442d44f74310f7ae9ae7cc412479f0766a",
+      "exit": 0,
+      "stdout": "Deleted branch codex/arch-doc-rebaseline (was 702081442).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/gov-broad-root-preservation-impl-1",
+      "tip": "d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05",
+      "exit": 0,
+      "stdout": "Deleted branch codex/gov-broad-root-preservation-impl-1 (was d5d21ff9f).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/gov-historical-evidence-interpretation-design-1",
+      "tip": "e6f400101d39e466d44278f08163ed1e4c1c234a",
+      "exit": 0,
+      "stdout": "Deleted branch codex/gov-historical-evidence-interpretation-design-1 (was e6f400101).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/gov-historical-evidence-interpretation-impl-1",
+      "tip": "b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5",
+      "exit": 0,
+      "stdout": "Deleted branch codex/gov-historical-evidence-interpretation-impl-1 (was b8c51b038).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/gov-ndjson-exception-config-1",
+      "tip": "85a393dc43eaf60df20258040d5869b42700d2c5",
+      "exit": 0,
+      "stdout": "Deleted branch codex/gov-ndjson-exception-config-1 (was 85a393dc4).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/gov-path-header-compat-1",
+      "tip": "b26b60ca68e39319fc90d7b6014b76de70cde310",
+      "exit": 0,
+      "stdout": "Deleted branch codex/gov-path-header-compat-1 (was b26b60ca6).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/gov-residual-template-nul-identity-1",
+      "tip": "49942377b452ea2131b0fe530d7f2235e3143af9",
+      "exit": 0,
+      "stdout": "Deleted branch codex/gov-residual-template-nul-identity-1 (was 49942377b).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "tip": "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+      "exit": 0,
+      "stdout": "Deleted branch codex/p02-mainline-closeout-20261015 (was 0dcc94f35).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "tip": "1dc8a89445207e47a28a330610a925fa8514bf3b",
+      "exit": 0,
+      "stdout": "Deleted branch dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1 (was 1dc8a8944).",
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "dsh/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "tip": "f3d8cb27b196472d12f979c29788ad3966ab026f",
+      "exit": 0,
+      "stdout": "Deleted branch dsh/WORKSPACE-DECLARATION-REMEDIATION-1 (was f3d8cb27b).",
+      "stderr": "",
+      "result": "DELETED"
+    }
+  ]
+}
