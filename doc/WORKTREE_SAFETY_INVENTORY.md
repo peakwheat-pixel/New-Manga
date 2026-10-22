@@ -283,3 +283,22 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 - 未运行 `git worktree prune`；未删除 `.git/worktrees` 下的孤儿元数据（37 个）。
 - 未解除五广域根保护；未改变 r212 禁令；未 GC；未 push；未 reset；未 stash。
 - 用户未提交内容与 62 个未退出工作树原样保留。
+
+## Stage 12 第二批授权执行（2026-10-22）
+
+| 步骤 | 动作 | 结果 |
+|---|---|---|
+| 分类 | 115 个非 main 工作树的 tracked/untracked/ignored 内容性质 | CLEAN 12 / BUILD_ONLY 22 / USER_CONTENT 18 / MIXED 63 |
+| D-3b | 退出 BUILD_ONLY 工作树（`worktree remove`，无 --force） | 20 成功、2 被 git 拒绝（均保留） |
+| D-1b | `git branch -d` 删除解锁分支 | 20 删除、0 拒绝 |
+| 复验 | 声明审计 | 0 errors / 1946 保护根 |
+
+### 保留原则
+
+- git 拒绝的一律不 --force：含 Review 证据的工作树与含构建日志的工作树原样保留；
+- 未提交内容不等于可丢弃：USER_CONTENT / MIXED 工作树不退出；
+- 未合并分支（20 条）继续按 D-2 保留；旧主线 `antigravity/P09-AC3-DELETE-HARDEN-1` 保留。
+
+### 未触碰
+
+- 未 prune、未 GC、未 push、未 reset、未 stash；未解除五广域根保护；未改 r212。

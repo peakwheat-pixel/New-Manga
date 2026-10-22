@@ -61,3 +61,11 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - 复验：声明审计 **0 errors / 1946 保护根**；治理检查 **PASS (2 warnings)**；tracked 工作区干净。
 - 未执行：`git worktree prune`、GC、push、reset、stash；.git/worktrees 下 37 个历史孤儿元数据保留。
 - 剩余：84 heads = main + 62 检出 + 20 未合并 + 1 旧主线；**仍未达到只剩 main**。
+### 第二批收敛（2026-10-22）
+
+- 分类 115 个非 main 工作树：CLEAN 12 / BUILD_ONLY 22 / USER_CONTENT 18 / MIXED 63。
+- **BUILD_ONLY 退出 20/22 成功**（ignored 全部为 node_modules/target/dist/__pycache__/.pytest_cache）；2 个被 git 拒绝并保留（含 Review 证据 / 构建日志）。
+- **分支删除 20/20 成功**：heads 84 → **64**；worktree 116 → **96**。
+- 复验：声明审计 0 errors / 1946 保护根；tracked 工作区干净。
+- 未执行：prune、GC、push、reset、stash；USER_CONTENT/MIXED 工作树与 20 条未合并分支保留。
+- 剩余 64 heads = main 1 + 检出 42 + 未合并 20 + 旧主线 1；**仍未达到只剩 main**。

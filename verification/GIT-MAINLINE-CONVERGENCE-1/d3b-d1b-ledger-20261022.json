@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "authorisation": "user: 授权全部 (D-3/D-1); BUILD_ONLY extension",
+  "build_only_targets": 22,
+  "worktrees_removed": 20,
+  "worktrees_refused": 2,
+  "branches_deleted": 20,
+  "branches_refused": 0,
+  "heads_after": 64,
+  "worktrees_after": 96,
+  "worktree_entries": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1",
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+      "ignored_entries": 48,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1",
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance",
+      "ignored_entries": 48,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1",
+      "branch": "agent/antigravity/EVENTS-FWD-1",
+      "ignored_entries": 63,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1",
+      "branch": "agent/antigravity/EXPORT-IPC-1",
+      "ignored_entries": 62,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "ignored_entries": 60,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "ignored_entries": 47,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1",
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl",
+      "ignored_entries": 61,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION",
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "ignored_entries": 47,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST",
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "ignored_entries": 60,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "ignored_entries": 60,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1",
+      "branch": "dsh/P09-MANAGED-READ-ROOT-TRUST-1",
+      "ignored_entries": 69,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12",
+      "branch": "agent/antigravity/P12-bookshelf-ui",
+      "ignored_entries": 3,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME",
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "ignored_entries": 58,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1",
+      "branch": "antigravity/P15-C1",
+      "ignored_entries": 2,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A",
+      "branch": "codex/P15-CORE-1A",
+      "ignored_entries": 60,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B",
+      "branch": "codex/P15-CORE-1B",
+      "ignored_entries": 60,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1",
+      "branch": "codex/P15-HOST-1",
+      "ignored_entries": 85,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE",
+      "branch": "codex/P16-reader-export-core",
+      "ignored_entries": 59,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P17",
+      "branch": "agent/antigravity/P17",
+      "ignored_entries": 63,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1",
+      "branch": "codex/P19-UI-FIX-1",
+      "ignored_entries": 50,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "REMOVED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "branch": null,
+      "ignored_entries": 71,
+      "exit": 128,
+      "stdout": "",
+      "stderr": "fatal: 'G:\\CODEX\\New Manga.worktrees\\M2-I2-review-0d6acc7' contains modified or untracked files, use --force to delete it",
+      "result": "REFUSED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PAGE-NAV-1",
+      "branch": "zcode/page-nav-projection-1",
+      "ignored_entries": 82,
+      "exit": 128,
+      "stdout": "",
+      "stderr": "fatal: 'G:\\CODEX\\New Manga.worktrees\\PAGE-NAV-1' contains modified or untracked files, use --force to delete it",
+      "result": "REFUSED"
+    }
+  ],
+  "branch_entries": [
+    {
+      "branch": "agent/antigravity/EVENTS-FWD-1",
+      "tip": "5f1d9870ea87361255589719cd66fa392238504f",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "agent/antigravity/EXPORT-IPC-1",
+      "tip": "fee223e36bfc28fe8c75cdc7f260933f8c49d6f6",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "agent/antigravity/P12-bookshelf-ui",
+      "tip": "98f3055f1ace0c27096ba73efc65d6d0e8156589",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "agent/antigravity/P17",
+      "tip": "55b9ff3f88dd98859c7ef816e2dbd00d7b84d97c",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "antigravity/P15-C1",
+      "tip": "9c0200e88f36761f6ee108ab5a838d1d7dabf378",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance",
+      "tip": "77f760e5fae2a913c397cd5503886897b00cf0db",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+      "tip": "5a23c503789ffecc4215a5ec96fc250faacbad06",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "tip": "c97b2d125bd765bdfae3ec93bc440a7ba6d595c2",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "tip": "deb2dfc0b863e75aa0fcb0f843127947031d6865",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl",
+      "tip": "fdf974645f4d3fdcabacbda5a8bf1b1678572398",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "tip": "4ed493a3f766ec126ab549b0d29f6d3886f9fdf6",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "tip": "c15cb9589917aaecc8e54fb8b4ef0152619a0d6b",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "tip": "73b52e86aebbbab3854b870990d8de513d3e7ee1",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "tip": "8056ee63e0b1b5a25b64ef9e85bb8e8e54282dba",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P15-CORE-1A",
+      "tip": "99641c41f180abba6536715599a1809c1f620e94",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P15-CORE-1B",
+      "tip": "075bcbad88dedaf2cad33822ae7742e944079915",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P15-HOST-1",
+      "tip": "f80678bbd2314e6548b63585e658d2de2d6c17b5",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P16-reader-export-core",
+      "tip": "316d79eceb7723d89670f5072bb2f71996e85610",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "codex/P19-UI-FIX-1",
+      "tip": "00c5e87dad36d591e7c63c37db720c6a09eefca4",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    },
+    {
+      "branch": "dsh/P09-MANAGED-READ-ROOT-TRUST-1",
+      "tip": "9f5560bc1d169e803bb853c94b6c3d2619263f68",
+      "exit": 0,
+      "stderr": "",
+      "result": "DELETED"
+    }
+  ]
+}
