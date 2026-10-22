@@ -77,3 +77,10 @@ r212 禁令、五广域根整体保护、P22 untracked 内容、旧 pin、六个
 - 复验：声明审计 0 errors / 1946 保护根；治理检查 PASS；tracked 干净。
 - 未执行：prune、GC、push、reset、stash；五广域根保护与 r212 不变。
 - 累计：heads 104→64、worktree 142→84；**仍未达到只剩 main**（剩 42 检出 + 20 未合并 + 1 旧主线）。
+### 第四批：detached 工作树核查（2026-10-22）
+
+- 84 个注册工作树中 30 个 detached；逐项检查后 **HAS_CONTENT 30 / EMPTY 0 / BUILD_ONLY 0**。
+- 内容以 `verification/` 下 Review 证据为主，另有 3 个破损 checkout（2804 deleted）。
+- **0 个可退出，本轮删除数为 0**；30 个 detached HEAD 在备份恢复仓中全部可读。
+- 当前：heads **64** / worktrees **84**；复验 0 errors、check PASS、tracked 干净。
+- **仍未达到只剩 main**：剩余资源全部承载未提交证据、未提交用户内容或未合并历史。

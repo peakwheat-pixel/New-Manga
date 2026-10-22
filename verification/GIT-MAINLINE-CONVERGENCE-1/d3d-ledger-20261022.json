@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "authorisation": "user: 授权全部; detached worktrees hold no branch and no uncommitted content",
+  "detached_total": 30,
+  "classification": {
+    "EMPTY": 0,
+    "BUILD_ONLY": 0,
+    "HAS_CONTENT": 30,
+    "PATH_MISSING": 0
+  },
+  "targets": 0,
+  "removed": 0,
+  "refused": 0,
+  "worktrees_after": 84,
+  "heads_after": 64,
+  "all_heads_in_bundle": true,
+  "rows": [
+    {
+      "path": "C:/Users/49745/.codex/worktrees/m2-i2-review-a4705a9/New Manga",
+      "head": "a4705a9f473d0e8d9087068edc4bec572d90439a",
+      "tracked_dirty": 0,
+      "untracked": 5,
+      "ignored": 71,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r1",
+      "head": "e6227e0b0b2c205105c8bc22ee49132d9da779e7",
+      "tracked_dirty": 0,
+      "untracked": 4,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r2",
+      "head": "9bd1999c76ff65994d6e7bca44ba568553fe26ec",
+      "tracked_dirty": 0,
+      "untracked": 6,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r3",
+      "head": "322526fcde650ea9dcfde4a14f828afeb8808ead",
+      "tracked_dirty": 0,
+      "untracked": 5,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r4",
+      "head": "6ffa2a9c5375d21bb905f4d6adbccb9124ed531b",
+      "tracked_dirty": 0,
+      "untracked": 5,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5",
+      "head": "68bafd3741f376bfab297b8ced911191e96bd424",
+      "tracked_dirty": 0,
+      "untracked": 3,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5-followup",
+      "head": "999e6adfc229698344c0cbf9bfb6d636fe73fb7c",
+      "tracked_dirty": 0,
+      "untracked": 3,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-d27-review-repair-review",
+      "head": "c328691af582ff782c9d41dda60494dec990c6a6",
+      "tracked_dirty": 1,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout-review/New Manga",
+      "head": "4d5a0864495d9482ad162d05588b4921aaece3ac",
+      "tracked_dirty": 0,
+      "untracked": 7,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-fixes-review",
+      "head": "f366124ecb6194ff9ea4ee0d6c684ccb2b781a07",
+      "tracked_dirty": 0,
+      "untracked": 7,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p04-prod-command-concurrency-review",
+      "head": "751abae2277e975eddacc385a423bcd796334f97",
+      "tracked_dirty": 0,
+      "untracked": 7,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2-2jWfPm",
+      "head": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+      "tracked_dirty": 2804,
+      "untracked": 0,
+      "ignored": 44,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v4-FTf6BC",
+      "head": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+      "tracked_dirty": 2804,
+      "untracked": 0,
+      "ignored": 44,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v5-WJGAfi",
+      "head": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+      "tracked_dirty": 2804,
+      "untracked": 0,
+      "ignored": 44,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14-review",
+      "head": "ee1d1e287c0825c885d3182246af3433a33cc97b",
+      "tracked_dirty": 39,
+      "untracked": 1,
+      "ignored": 62,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-review",
+      "head": "ee19898fcd328d7231c7c3ac0a0bf4a5fa5d7024",
+      "tracked_dirty": 39,
+      "untracked": 1,
+      "ignored": 62,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1-review",
+      "head": "be14d721c3596655e4ce053e24371a244e598197",
+      "tracked_dirty": 0,
+      "untracked": 1,
+      "ignored": 61,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "head": "0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716",
+      "tracked_dirty": 0,
+      "untracked": 5,
+      "ignored": 71,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c8-review-dsh",
+      "head": "91ab1ef8ddaa1d00b0b34880a103937b4831590d",
+      "tracked_dirty": 0,
+      "untracked": 5,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity",
+      "head": "7645577ab374b581eb7081fd57675c32793249f5",
+      "tracked_dirty": 0,
+      "untracked": 5,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-closeout-review-antigravity",
+      "head": "51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb",
+      "tracked_dirty": 0,
+      "untracked": 12,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-failureprobe",
+      "head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+      "tracked_dirty": 3,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-full",
+      "head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+      "tracked_dirty": 8,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-probe",
+      "head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+      "tracked_dirty": 5,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38672473-exact",
+      "head": "38672473f93971a4681aef682e5635e64b0bd896",
+      "tracked_dirty": 9,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38959ba99-exact",
+      "head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+      "tracked_dirty": 9,
+      "untracked": 0,
+      "ignored": 1,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-5fa8a41f",
+      "head": "5fa8a41f1fbda56dd88fb3a87e1604fd0a14a59e",
+      "tracked_dirty": 5,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-9b82e97b",
+      "head": "9b82e97b8aadc5b6b8710e03b5128a608697f56e",
+      "tracked_dirty": 5,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-full",
+      "head": "cc1bd7505f3fc48079db7ea2719040e77a8c58dd",
+      "tracked_dirty": 7,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-probe",
+      "head": "cc1bd7505f3fc48079db7ea2719040e77a8c58dd",
+      "tracked_dirty": 4,
+      "untracked": 0,
+      "ignored": 0,
+      "ignored_all_build": true,
+      "head_in_bundle": true,
+      "class": "HAS_CONTENT"
+    }
+  ],
+  "entries": []
+}

@@ -311,3 +311,8 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 | 可恢复性 | 3 个 detached commit 在备份恢复仓逐条验证 | 3/3 可读 |
 
 **未触碰**：prune、GC、push、reset、stash、五广域根保护、r212 禁令、含未提交内容的工作树。
+## Stage 14 detached 工作树只读核查（2026-10-22）
+
+84 个工作树中 30 个 detached；逐项复核后 **HAS_CONTENT 30 / EMPTY 0 / BUILD_ONLY 0**，故 **0 个可退出**。所有 detached HEAD 在备份恢复仓中可读。
+
+判定规则重申：**detached 不等于可删** —— 只要含未提交的 Review 证据或用户内容就必须保留。
