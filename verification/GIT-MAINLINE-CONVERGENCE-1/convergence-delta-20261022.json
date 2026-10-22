@@ -1,0 +1,1791 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-22",
+  "repo": "G:/CODEX/New Manga",
+  "main_head": "56260c1451da7b1e0d93fcc31a5782f6685da134",
+  "baseline": {
+    "described_in": "verification/GIT-MAINLINE-CONVERGENCE-1/branch-analysis.json",
+    "mainline_head": "56272e40b4492dd9c9006ae230a8d44ae66fb0fd",
+    "heads": 97,
+    "worktrees": 135
+  },
+  "current": {
+    "heads": 103,
+    "worktrees": 141,
+    "detached_worktrees": 39
+  },
+  "delta": {
+    "new_branches": [
+      "codex/gov-broad-root-preservation-impl-1",
+      "codex/gov-historical-evidence-interpretation-design-1",
+      "codex/gov-historical-evidence-interpretation-impl-1",
+      "codex/gov-ndjson-exception-config-1",
+      "codex/gov-path-header-compat-1",
+      "codex/gov-residual-template-nul-identity-1"
+    ],
+    "gone_branches": [],
+    "tip_moved_branches": [
+      "main"
+    ]
+  },
+  "branches": [
+    {
+      "branch": "GOV-PLAN-BUDGET-1",
+      "tip": "126af54e7ed478bb3a0470ac32b931a6509acd14",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "tip": "a2ca297f1b5775a0d5fb5fc8efcc2281bc4013c2",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "tip": "0a2c45d5ea41df351e0f529a9b2d46c0784a1e7b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "P19-UI-MANIFEST-VIEW-1",
+      "tip": "3e316830c26366fc313027357de91092a96e0cd4",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/EVENTS-FWD-1",
+      "tip": "5f1d9870ea87361255589719cd66fa392238504f",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/EXPORT-IPC-1",
+      "tip": "fee223e36bfc28fe8c75cdc7f260933f8c49d6f6",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "tip": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+      "tip": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "tip": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 15,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+      "tip": "343895fb5f0329c0c07a7104ec321b698f967607",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P03-packaged-sfx-entry",
+      "tip": "85482c5b001d452953c3ed797ce3c4ed64cae4e3",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P12-bookshelf-ui",
+      "tip": "98f3055f1ace0c27096ba73efc65d6d0e8156589",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P17",
+      "tip": "55b9ff3f88dd98859c7ef816e2dbd00d7b84d97c",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "tip": "4a707db80499f11e93cee163a9a10bf6392b1a92",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 10,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "tip": "2f38141d6c8e56bd66b483114b107dead88fdb6d",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "tip": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 3,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 4,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "tip": "06990b7993d042ae5e74ab479e291e494b622588",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 3,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "tip": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 18,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/dsh/RUN-IPC-1",
+      "tip": "de3caf93adf44fdda226a5f9ad013cbe7739e0f4",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT",
+      "tip": "ed8a6ea64efe92957b1306bcfbaeca22ff223b57",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/M2-C2-typed-ipc-contract-revision",
+      "tip": "c18f273ad5a7768c6ae1726610da1ac27aa958d3",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/M2-DERIVED-GC-2",
+      "tip": "0fadc330a6daa42de6c78be52feaae26ce6724ea",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB",
+      "tip": "8a1bc1e856e41aef62a9ad355138a426975c59c0",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL",
+      "tip": "8a28c797b414453df8c3bb14d1cdc4bbf199a93b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "tip": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 60,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "tip": "10c35daed241aa3717b248da14c1b9b959ff1fba",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 31,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "tip": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 78,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 43,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "tip": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/P02-real-webview-harness",
+      "tip": "e1948466082b3cadbfde1da53b791319e359a10b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "tip": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 4,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "tip": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 1,
+      "cherry_equivalent_commits": 1,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "tip": "13ae23f65e963cf1d5aea19634572627e5e709db",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 64,
+      "cherry_equivalent_commits": 5,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design",
+      "tip": "86072c30a9587d5eced3daa14c555409d6917e6c",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost",
+      "tip": "60cebc060752d4c68b15288c7602841d0e6f7db4",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "tip": "920151a9cd8bb715466be22b2417f2fee74b67a3",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "antigravity/P09-AC3-DELETE-HARDEN-1",
+      "tip": "26c0f2aabf5ec3f393ce36763e2f7bdd67c0786d",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "antigravity/P15-C1",
+      "tip": "9c0200e88f36761f6ee108ab5a838d1d7dabf378",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance",
+      "tip": "77f760e5fae2a913c397cd5503886897b00cf0db",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+      "tip": "5a23c503789ffecc4215a5ec96fc250faacbad06",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/EXPORT-REVEAL-1",
+      "tip": "13ac5b30f61a82194d21f7def4472398067c3d26",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/FEAT-CREATE-3",
+      "tip": "f15d085e6063bff51116bbf474dc04571ac41288",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/FEAT-IMPORT-MULTI-1",
+      "tip": "6caddf38e8c917c9013164ba32056056de07bff3",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "tip": "c97b2d125bd765bdfae3ec93bc440a7ba6d595c2",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "tip": "13cc2bb5440b9d4bfb9e01266b9045079de84e65",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "tip": "deb2dfc0b863e75aa0fcb0f843127947031d6865",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl",
+      "tip": "fdf974645f4d3fdcabacbda5a8bf1b1678572398",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "tip": "ceca2446da88df23a719f40868cc89e1481ccb2c",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 7,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "codex/P03-integration-4c04459",
+      "tip": "552464238a69ad2cea63cff18abe98f412dbae87",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "tip": "4ed493a3f766ec126ab549b0d29f6d3886f9fdf6",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "tip": "c15cb9589917aaecc8e54fb8b4ef0152619a0d6b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "tip": "73b52e86aebbbab3854b870990d8de513d3e7ee1",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P09-import-core",
+      "tip": "54d40e6686ba2006f8506b519d00672ee75adfeb",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P10-credential-config-contract",
+      "tip": "fa20602debb2d5f16f315bbed4180eae6f8821c5",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "tip": "c7922ae1c62f4cac8721a2730fc19c7c973c7e83",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "tip": "e325e007231beb866d3bd2656bc081e9424acc15",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "tip": "7dde1f6c41dbd70bf99a61dac8bf3c40833a35f5",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "tip": "8056ee63e0b1b5a25b64ef9e85bb8e8e54282dba",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P14",
+      "tip": "41c3206942730536bc9b41e871f23ad9b3de3f1d",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 2,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "codex/P15-C1-FU1",
+      "tip": "9b0a2459058504c63fd3b688286d25cb02498954",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 2,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "codex/P15-CORE-1",
+      "tip": "c399b1ae21e946650ca2d57df7642316f77402ed",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P15-CORE-1A",
+      "tip": "99641c41f180abba6536715599a1809c1f620e94",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P15-CORE-1B",
+      "tip": "075bcbad88dedaf2cad33822ae7742e944079915",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P15-CORE-1C",
+      "tip": "faa37493d8448ec793835bc58baf851cb1a246f1",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P15-HOST-1",
+      "tip": "f80678bbd2314e6548b63585e658d2de2d6c17b5",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P15-HOST-2",
+      "tip": "4e88bc4d413c38b467541c03a0886550b498826b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "tip": "356a9fe07f67dd8b0c376d3b6c02c151b4c06f15",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P16-reader-export-core",
+      "tip": "316d79eceb7723d89670f5072bb2f71996e85610",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "tip": "34d81c96a66fbde17e4eb44bc058ab993483922f",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P19-BOOT-1",
+      "tip": "e4aff85bc87fa36f8656710315add6ec52c5ce15",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P19-UI-FIX-1",
+      "tip": "00c5e87dad36d591e7c63c37db720c6a09eefca4",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/P19-UI-FIX-3",
+      "tip": "9e152b6312e75be5e7381b6a6be021aa7e6a9060",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/READER-IPC-1",
+      "tip": "6aadc70de76b5464e1069a857385714b1184825c",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/SEC-FIX-PATH-ECHO-1",
+      "tip": "6efbfcf063131795dd4bfa0bc227e7a7c94fc444",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/arch-doc-rebaseline",
+      "tip": "702081442d44f74310f7ae9ae7cc412479f0766a",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/gov-broad-root-preservation-impl-1",
+      "tip": "d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05",
+      "in_baseline": false,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": null
+    },
+    {
+      "branch": "codex/gov-historical-evidence-interpretation-design-1",
+      "tip": "e6f400101d39e466d44278f08163ed1e4c1c234a",
+      "in_baseline": false,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": null
+    },
+    {
+      "branch": "codex/gov-historical-evidence-interpretation-impl-1",
+      "tip": "b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5",
+      "in_baseline": false,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": null
+    },
+    {
+      "branch": "codex/gov-ndjson-exception-config-1",
+      "tip": "85a393dc43eaf60df20258040d5869b42700d2c5",
+      "in_baseline": false,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": null
+    },
+    {
+      "branch": "codex/gov-path-header-compat-1",
+      "tip": "b26b60ca68e39319fc90d7b6014b76de70cde310",
+      "in_baseline": false,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": null
+    },
+    {
+      "branch": "codex/gov-residual-template-nul-identity-1",
+      "tip": "49942377b452ea2131b0fe530d7f2235e3143af9",
+      "in_baseline": false,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": null
+    },
+    {
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "tip": "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/p22-rebase-1",
+      "tip": "5181facbb095be8c7a45924b699d4e3a481aeb50",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "tip": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 1,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "codex/rc4-domain-commands",
+      "tip": "6a7b4c3d691ed89bff8513b9ac409ee5ef5267e8",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "codex/rc4-integration",
+      "tip": "0a7e0d5be97b273cc3093a59da11008f20bae89f",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "dsh/P09-MANAGED-READ-ROOT-TRUST-1",
+      "tip": "9f5560bc1d169e803bb853c94b6c3d2619263f68",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "tip": "1dc8a89445207e47a28a330610a925fa8514bf3b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "dsh/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "tip": "f3d8cb27b196472d12f979c29788ad3966ab026f",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "main",
+      "tip": "56260c1451da7b1e0d93fcc31a5782f6685da134",
+      "in_baseline": true,
+      "tip_changed_since_baseline": true,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "MAIN"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "tip": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 4,
+      "cherry_equivalent_commits": 0,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2",
+      "tip": "b2377288680569dbee4e2299fd7dfae4de067c54",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2",
+      "tip": "b2377288680569dbee4e2299fd7dfae4de067c54",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1",
+      "tip": "0ea16b832dcf32297d8c73df2ccdcf764c694368",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "tip": "daab1996b99c7036108bc505cc3db29b744fdf9d",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": false,
+      "unique_commits": 1,
+      "cherry_equivalent_commits": 1,
+      "baseline_disposition": "D_PRESERVE_PENDING_RULING"
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47",
+      "tip": "083d2b47f7051c2dedd0d9ae4346ae1affab6c1b",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r6-c85a041c",
+      "tip": "c85a041c514f3c0dd1c355a2d09f064dbc64e749",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48",
+      "tip": "6d84b480d5996d6374192bbbba07807848b8ebde",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2",
+      "tip": "0d73983a5e1f37f104c76d8bd4c70c6f98fa36f5",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "zcode/P15",
+      "tip": "ee19898fcd328d7231c7c3ac0a0bf4a5fa5d7024",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    },
+    {
+      "branch": "zcode/page-nav-projection-1",
+      "tip": "7bec3589eb6a01882e8f681c9b9a5b69e9e88821",
+      "in_baseline": true,
+      "tip_changed_since_baseline": false,
+      "merged_into_main": true,
+      "unique_commits": 0,
+      "cherry_equivalent_commits": null,
+      "baseline_disposition": "A_CONTENT_MERGED_BUT_RESOURCE_GATES_BLOCKED"
+    }
+  ],
+  "unmerged_branches": [
+    "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+    "agent/antigravity/P22-roundtrip-serialization",
+    "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+    "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+    "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+    "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+    "agent/zcode/P02-NEW-TIME-BASELINE",
+    "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+    "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+    "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+    "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+    "agent/zcode/T2.2.1-reader-workbench-polish",
+    "agent/zcode/T3.2.1-repair-13",
+    "codex/P02-hook-cache-isolation-plan",
+    "codex/P14",
+    "codex/P15-C1-FU2",
+    "codex/project-roadmap-rebaseline",
+    "review/deepseek/M2-C1-typed-ipc-7d908a5",
+    "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2"
+  ],
+  "worktrees": [
+    {
+      "path": "G:/CODEX/New Manga",
+      "head": "56260c1451da7b1e0d93fcc31a5782f6685da134",
+      "branch": "main"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2",
+      "head": "b2377288680569dbee4e2299fd7dfae4de067c54",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/m2-i2-review-a4705a9/New Manga",
+      "head": "a4705a9f473d0e8d9087068edc4bec572d90439a",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r1",
+      "head": "e6227e0b0b2c205105c8bc22ee49132d9da779e7",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r2",
+      "head": "9bd1999c76ff65994d6e7bca44ba568553fe26ec",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r3",
+      "head": "322526fcde650ea9dcfde4a14f828afeb8808ead",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r4",
+      "head": "6ffa2a9c5375d21bb905f4d6adbccb9124ed531b",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5",
+      "head": "68bafd3741f376bfab297b8ced911191e96bd424",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5-followup",
+      "head": "999e6adfc229698344c0cbf9bfb6d636fe73fb7c",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-d27-review-repair-review",
+      "head": "c328691af582ff782c9d41dda60494dec990c6a6",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+      "head": "083d2b47f7051c2dedd0d9ae4346ae1affab6c1b",
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r6-c85a041c-review-dsh",
+      "head": "c85a041c514f3c0dd1c355a2d09f064dbc64e749",
+      "branch": "review/deepseek/P02-preflight-r6-c85a041c"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout-review/New Manga",
+      "head": "4d5a0864495d9482ad162d05588b4921aaece3ac",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-fixes-review",
+      "head": "f366124ecb6194ff9ea4ee0d6c684ccb2b781a07",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-exec-a6-antigravity/New Manga",
+      "head": "343895fb5f0329c0c07a7104ec321b698f967607",
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p04-prod-command-concurrency-review",
+      "head": "751abae2277e975eddacc385a423bcd796334f97",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2-2jWfPm",
+      "head": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v4-FTf6BC",
+      "head": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+      "detached": true
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v5-WJGAfi",
+      "head": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1",
+      "head": "126af54e7ed478bb3a0470ac32b931a6509acd14",
+      "branch": "GOV-PLAN-BUDGET-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1",
+      "head": "a2ca297f1b5775a0d5fb5fc8efcc2281bc4013c2",
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "head": "0a2c45d5ea41df351e0f529a9b2d46c0784a1e7b",
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1",
+      "head": "3e316830c26366fc313027357de91092a96e0cd4",
+      "branch": "P19-UI-MANIFEST-VIEW-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "head": "60d47991baea777996313d2cf1a335c136fb1ba0",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE",
+      "head": "702081442d44f74310f7ae9ae7cc412479f0766a",
+      "branch": "codex/arch-doc-rebaseline"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1",
+      "head": "5a23c503789ffecc4215a5ec96fc250faacbad06",
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1",
+      "head": "77f760e5fae2a913c397cd5503886897b00cf0db",
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1",
+      "head": "5f1d9870ea87361255589719cd66fa392238504f",
+      "branch": "agent/antigravity/EVENTS-FWD-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1",
+      "head": "fee223e36bfc28fe8c75cdc7f260933f8c49d6f6",
+      "branch": "agent/antigravity/EXPORT-IPC-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "head": "13ac5b30f61a82194d21f7def4472398067c3d26",
+      "branch": "codex/EXPORT-REVEAL-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "head": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "head": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3",
+      "head": "f15d085e6063bff51116bbf474dc04571ac41288",
+      "branch": "codex/FEAT-CREATE-3"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "head": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1",
+      "head": "6caddf38e8c917c9013164ba32056056de07bff3",
+      "branch": "codex/FEAT-IMPORT-MULTI-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-BROAD-ROOT-PRESERVATION-IMPL-1",
+      "head": "d5d21ff9f4cfbd667f0a6bcc5e1fefe104efff05",
+      "branch": "codex/gov-broad-root-preservation-impl-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1",
+      "head": "e6f400101d39e466d44278f08163ed1e4c1c234a",
+      "branch": "codex/gov-historical-evidence-interpretation-design-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1",
+      "head": "b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5",
+      "branch": "codex/gov-historical-evidence-interpretation-impl-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-NDJSON-EXCEPTION-CONFIG-1",
+      "head": "85a393dc43eaf60df20258040d5869b42700d2c5",
+      "branch": "codex/gov-ndjson-exception-config-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-PATH-HEADER-COMPAT-1",
+      "head": "b26b60ca68e39319fc90d7b6014b76de70cde310",
+      "branch": "codex/gov-path-header-compat-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1",
+      "head": "49942377b452ea2131b0fe530d7f2235e3143af9",
+      "branch": "codex/gov-residual-template-nul-identity-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
+      "head": "c97b2d125bd765bdfae3ec93bc440a7ba6d595c2",
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "head": "deb2dfc0b863e75aa0fcb0f843127947031d6865",
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "head": "13cc2bb5440b9d4bfb9e01266b9045079de84e65",
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1",
+      "head": "fdf974645f4d3fdcabacbda5a8bf1b1678572398",
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+      "head": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "head": "10c35daed241aa3717b248da14c1b9b959ff1fba",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "head": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "head": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6",
+      "head": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+      "branch": "agent/zcode/P02-NEW-TIME-X6"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "head": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "head": "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+      "branch": "codex/p02-mainline-closeout-20261015"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+      "head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "head": "2f38141d6c8e56bd66b483114b107dead88fdb6d",
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "head": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "head": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR",
+      "head": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+      "head": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION",
+      "head": "1924fbb4fbff6044205e4f8b52adb6aaff879e2a",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "head": "06990b7993d042ae5e74ab479e291e494b622588",
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "head": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION",
+      "head": "4ed493a3f766ec126ab549b0d29f6d3886f9fdf6",
+      "branch": "codex/P06-gc-distribution-migration-evidence"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST",
+      "head": "c15cb9589917aaecc8e54fb8b4ef0152619a0d6b",
+      "branch": "codex/P09-FU1-decoder-test-baseline"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
+      "head": "73b52e86aebbbab3854b870990d8de513d3e7ee1",
+      "branch": "codex/P09-FU2-import-ipc-runtime"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE",
+      "head": "54d40e6686ba2006f8506b519d00672ee75adfeb",
+      "branch": "codex/P09-import-core"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1",
+      "head": "9f5560bc1d169e803bb853c94b6c3d2619263f68",
+      "branch": "dsh/P09-MANAGED-READ-ROOT-TRUST-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "head": "fa20602debb2d5f16f315bbed4180eae6f8821c5",
+      "branch": "codex/P10-credential-config-contract"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "head": "c7922ae1c62f4cac8721a2730fc19c7c973c7e83",
+      "branch": "codex/P11-long-task-lifecycle-contract"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12",
+      "head": "98f3055f1ace0c27096ba73efc65d6d0e8156589",
+      "branch": "agent/antigravity/P12-bookshelf-ui"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "head": "e325e007231beb866d3bd2656bc081e9424acc15",
+      "branch": "codex/P12-C1-import-ipc-contract"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "head": "7dde1f6c41dbd70bf99a61dac8bf3c40833a35f5",
+      "branch": "codex/P13-C1-runtime-ipc-contract"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME",
+      "head": "8056ee63e0b1b5a25b64ef9e85bb8e8e54282dba",
+      "branch": "codex/P13-run-runtime-control-recovery"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14",
+      "head": "41c3206942730536bc9b41e871f23ad9b3de3f1d",
+      "branch": "codex/P14"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14-review",
+      "head": "ee1d1e287c0825c885d3182246af3433a33cc97b",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "head": "ee19898fcd328d7231c7c3ac0a0bf4a5fa5d7024",
+      "branch": "zcode/P15"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1",
+      "head": "9c0200e88f36761f6ee108ab5a838d1d7dabf378",
+      "branch": "antigravity/P15-C1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU1",
+      "head": "9b0a2459058504c63fd3b688286d25cb02498954",
+      "branch": "codex/P15-C1-FU1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2",
+      "head": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "branch": "codex/P15-C1-FU2"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "head": "c399b1ae21e946650ca2d57df7642316f77402ed",
+      "branch": "codex/P15-CORE-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A",
+      "head": "99641c41f180abba6536715599a1809c1f620e94",
+      "branch": "codex/P15-CORE-1A"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B",
+      "head": "075bcbad88dedaf2cad33822ae7742e944079915",
+      "branch": "codex/P15-CORE-1B"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C",
+      "head": "faa37493d8448ec793835bc58baf851cb1a246f1",
+      "branch": "codex/P15-CORE-1C"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1",
+      "head": "f80678bbd2314e6548b63585e658d2de2d6c17b5",
+      "branch": "codex/P15-HOST-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2",
+      "head": "4e88bc4d413c38b467541c03a0886550b498826b",
+      "branch": "codex/P15-HOST-2"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-review",
+      "head": "ee19898fcd328d7231c7c3ac0a0bf4a5fa5d7024",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "head": "356a9fe07f67dd8b0c376d3b6c02c151b4c06f15",
+      "branch": "codex/P16-C1-reader-export-ipc-contract"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE",
+      "head": "316d79eceb7723d89670f5072bb2f71996e85610",
+      "branch": "codex/P16-reader-export-core"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P17",
+      "head": "55b9ff3f88dd98859c7ef816e2dbd00d7b84d97c",
+      "branch": "agent/antigravity/P17"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "head": "34d81c96a66fbde17e4eb44bc058ab993483922f",
+      "branch": "codex/P18-ja-ko-quality-qualification"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1",
+      "head": "e4aff85bc87fa36f8656710315add6ec52c5ce15",
+      "branch": "codex/P19-BOOT-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1",
+      "head": "00c5e87dad36d591e7c63c37db720c6a09eefca4",
+      "branch": "codex/P19-UI-FIX-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "head": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-3",
+      "head": "9e152b6312e75be5e7381b6a6be021aa7e6a9060",
+      "branch": "codex/P19-UI-FIX-3"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1",
+      "head": "5181facbb095be8c7a45924b699d4e3a481aeb50",
+      "branch": "codex/p22-rebase-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-REBASELINE",
+      "head": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e",
+      "branch": "codex/project-roadmap-rebaseline"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "head": "a43c6b9fed681e7cb123123eeb6b5ccb7fd4d4b6",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1",
+      "head": "6aadc70de76b5464e1069a857385714b1184825c",
+      "branch": "codex/READER-IPC-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1",
+      "head": "de3caf93adf44fdda226a5f9ad013cbe7739e0f4",
+      "branch": "agent/dsh/RUN-IPC-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1-review",
+      "head": "be14d721c3596655e4ce053e24371a244e598197",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1",
+      "head": "6efbfcf063131795dd4bfa0bc227e7a7c94fc444",
+      "branch": "codex/SEC-FIX-PATH-ECHO-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "head": "920151a9cd8bb715466be22b2417f2fee74b67a3",
+      "branch": "agent/zcode/UI-DESIGN-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1",
+      "head": "1dc8a89445207e47a28a330610a925fa8514bf3b",
+      "branch": "dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1",
+      "head": "f3d8cb27b196472d12f979c29788ad3966ab026f",
+      "branch": "dsh/WORKSPACE-DECLARATION-REMEDIATION-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode",
+      "head": "0fadc330a6daa42de6c78be52feaae26ce6724ea",
+      "branch": "agent/zcode/M2-DERIVED-GC-2"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-AC5-BUILD-FRESH-CHECKOUT-zcode",
+      "head": "ed8a6ea64efe92957b1306bcfbaeca22ff223b57",
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5",
+      "head": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1",
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2",
+      "head": "b2377288680569dbee4e2299fd7dfae4de067c54",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2",
+      "head": "0d73983a5e1f37f104c76d8bd4c70c6f98fa36f5",
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C2-zcode",
+      "head": "c18f273ad5a7768c6ae1726610da1ac27aa958d3",
+      "branch": "agent/zcode/M2-C2-typed-ipc-contract-revision"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode",
+      "head": "8a1bc1e856e41aef62a9ad355138a426975c59c0",
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "head": "0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode",
+      "head": "8a28c797b414453df8c3bb14d1cdc4bbf199a93b",
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c8-review-dsh",
+      "head": "91ab1ef8ddaa1d00b0b34880a103937b4831590d",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity",
+      "head": "7645577ab374b581eb7081fd57675c32793249f5",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-closeout-review-antigravity",
+      "head": "51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex",
+      "head": "ceca2446da88df23a719f40868cc89e1481ccb2c",
+      "branch": "codex/P02-hook-cache-isolation-plan"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "head": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode",
+      "head": "e1948466082b3cadbfde1da53b791319e359a10b",
+      "branch": "agent/zcode/P02-real-webview-harness"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-failureprobe",
+      "head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-full",
+      "head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-probe",
+      "head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38672473-exact",
+      "head": "38672473f93971a4681aef682e5635e64b0bd896",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38959ba99-exact",
+      "head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-5fa8a41f",
+      "head": "5fa8a41f1fbda56dd88fb3a87e1604fd0a14a59e",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-9b82e97b",
+      "head": "9b82e97b8aadc5b6b8710e03b5128a608697f56e",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-full",
+      "head": "cc1bd7505f3fc48079db7ea2719040e77a8c58dd",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-probe",
+      "head": "cc1bd7505f3fc48079db7ea2719040e77a8c58dd",
+      "detached": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-dsh-review-6d84b48",
+      "head": "6d84b480d5996d6374192bbbba07807848b8ebde",
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity",
+      "head": "85482c5b001d452953c3ed797ce3c4ed64cae4e3",
+      "branch": "agent/antigravity/P03-packaged-sfx-entry"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+      "head": "552464238a69ad2cea63cff18abe98f412dbae87",
+      "branch": "codex/P03-integration-4c04459"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity",
+      "head": "4a707db80499f11e93cee163a9a10bf6392b1a92",
+      "branch": "agent/antigravity/P22-roundtrip-serialization"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PAGE-NAV-1",
+      "head": "7bec3589eb6a01882e8f681c9b9a5b69e9e88821",
+      "branch": "zcode/page-nav-projection-1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-domain-commands",
+      "head": "6a7b4c3d691ed89bff8513b9ac409ee5ef5267e8",
+      "branch": "codex/rc4-domain-commands"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-integration",
+      "head": "0a7e0d5be97b273cc3093a59da11008f20bae89f",
+      "branch": "codex/rc4-integration"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1",
+      "head": "0ea16b832dcf32297d8c73df2ccdcf764c694368",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2",
+      "head": "daab1996b99c7036108bc505cc3db29b744fdf9d",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-zcode",
+      "head": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64",
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13",
+      "head": "13ae23f65e963cf1d5aea19634572627e5e709db",
+      "branch": "agent/zcode/T3.2.1-repair-13"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-zcode",
+      "head": "86072c30a9587d5eced3daa14c555409d6917e6c",
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-046-zcode",
+      "head": "60cebc060752d4c68b15288c7602841d0e6f7db4",
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost"
+    }
+  ]
+}

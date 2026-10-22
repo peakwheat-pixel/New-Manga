@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1
 title: 七项历史运行身份的精确解释层实现（含用户数据保护补齐）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: user_authorization_20261022_dsh_coordinator_takeover
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: [GOV-RESIDUAL-RUNTIME-IDENTITY-1]
 base_commit: 8e31aaa1dff113e5f95ca7db5ece0de00126059a
 branch: null
 worktree: G:/CODEX/New Manga（主 checkout 交付；开发区为 linked worktree G:/CODEX/New Manga.workspace/worktrees/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1）
-integration_commit: null
+integration_commit: 3264e0b61ea509ff1cd0db46be85567a0a0adb25
 delivery_head: d4ac5452514f54147cff2bfd087ecf36305db947
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1
 allowed_paths:
   - tools/governance/clean_workspace.py
@@ -103,6 +103,7 @@ allowed_paths:
 | EV-05 | AC1 | tools/governance/residual-runtime-identity.json | `d4ac5452514f54147cff2bfd087ecf36305db947` | `2ce5cc2ef67725ed68efbaac908abc51bbc0115d4ec752d33047820fe07dc384` | CANONICAL |
 | EV-06 | AC2/AC3 | tools/governance/clean_workspace.py | `d4ac5452514f54147cff2bfd087ecf36305db947` | `a9b329597ebd81941de6e1de0b0941b7b7bb582745326c62304dcca942d1b295` | CANONICAL |
 | EV-07 | AC1-AC6 | tools/governance/tests/test_residual_runtime_identity.py | `d4ac5452514f54147cff2bfd087ecf36305db947` | `03cd671d9ebd05b36fd67719269b19264e6c62400ec21aa2446630e41f06a7c2` | CANONICAL |
+| EV-08 | Review | verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/raw/agy-review-run1.json | `3264e0b61ea509ff1cd0db46be85567a0a0adb25` | `384f9ffeb9b003713c1b1a58db4333edfdabf08f9b398797331bcfdf819dde77` | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -115,7 +116,13 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / dsh：待关闭时填写。
+- Closeout date / dsh：2026-10-22。
+- canonical_evidence_status：`complete`（EV-01..EV-07 pin 到交付 `d4ac54525`；EV-08 为 Review 原始 JSON 的 SOURCE_PIN）。
+- resource_closeout_status：`complete`。
+- 删除、迁移、归档数量/字节数：0 / 0 / 0；GC/prune/push/reset/stash 均 0。
+- 未关闭项及保留原因：无未关闭交付项。Antigravity 唯一 P2 观察（历史遗留 ResourceWarning）不阻塞且已标记 CLOSED。
+- 集成复验（`3264e0b61`）：audit 0 errors / 1945 保护根 / EXIT 0；check PASS；diff-check 0；Review approved；见 `verification/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1/integration/`。
+- 当前指针清理：STATUS / Rebaseline Plan / Task Ledger 已同步；本 Task 之后无 READY 节点。
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：0 / 0 / 0。
