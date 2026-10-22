@@ -9,7 +9,7 @@ AC1–3候选已实测满足；AC4待真实独审/正常集成复验。变更只
 
 1. Task：GOV-RESIDUAL-RUNTIME-IDENTITY-1，七项历史运行身份只读取证与裁决边界；依赖本实现done，当前尚未释放。
 2. Agent：Owner Codex（范围和契约裁决），Reviewer DeepSeek Harness；不重新分配Qoder。
-3. Recovery point：G:/CODEX/New Manga/main，base/head待本Task最终关闭commit确定；新branch/worktree待Codex创建；当前交付branch/WT及base/head如上。
+3. Recovery point：G:/CODEX/New Manga/main，固定base/head 2e7492a98ffc8300b143e3537a97943fac815acf（本实现done恢复点；启动时核当前main）；新branch/worktree待Codex创建；当前交付branch/WT及base/head如上。
 4. Scope：只读当前7错误来源与最小相关证据；仅拟议自身Task/E/Handoff及权威导航可写；禁止猜TEMP/APPDATA、修改旧源/pin/通用parser、产品/Schema/依赖、真实资源清理或缩小保护。
 5. Deliverables：7完整错误identity/引用/归属与历史实际路径是否可证明的矩阵、明确事实/未知、待用户裁决对象及影响、Handoff；不因研究自动增加运行例外。
 6. Verification：只读scan保持7完整identity，原件SHA/旧保护不减；pwsh -NoProfile -File tools/governance/check.ps1和git diff --check；DeepSeek独审后Codex正常集成；NOT_RUN/BLOCKED如实列。
@@ -23,3 +23,11 @@ R1 changes_requested 090bed6f6已修，最新delivery bb769d273f18ff895c72244558
 
 当前Task已done：DeepSeek R2 approved b8c51b03811eca12e8ca4d8fc8c74d1e17f6bca5，正常merge 45748520755841ad14c46f64458249cec1df9bef，最终证据 739fe58fbcd9c4d47462e2b3a3c067f47207f095。R1 P1-1已修，R2通过；145/0、双15/0/0、main正式12→7/+6/+4/原集合与四源字节/P22untracked复验通过。真实资源操作0，103/141保留，r212/父blocked有效。R2独审时25EV实时1920保护根，1895/1916为更早快照；最终EV后总数以final-verification.json为准。上方“待审/正式12”均为历史交付阶段记录，以本节及STATUS为当前事实。
 下一候选仍GOV-RESIDUAL-RUNTIME-IDENTITY-1，Owner Codex/Reviewer DeepSeek；依赖本实现done，未释放/未创建branch/WT。使用上方七字段Scope/Deliverables/Verification及可转发指令，启动时核实main实际HEAD；禁止猜TEMP/APPDATA或改旧源/真实清理。最新具体恢复commit将在closeout后追加。
+
+## 已核实的下一任务恢复与转发指令
+
+固定恢复点：G:/CODEX/New Manga，branch main，base/head 2e7492a98ffc8300b143e3537a97943fac815acf（已done且final checks PASS）；新研究branch/worktree待Codex创建，未声称已存在。最终31EV实际注册、正式7、原保护集合与四SHA保持，实时保护1926；此前1895/1916/1920均不同EV快照。
+
+可直接转发给Codex：
+
+“请作为Lead从G:/CODEX/New Manga/main继续，以 2e7492a98ffc8300b143e3537a97943fac815acf 为已done恢复点，先核当前HEAD差异/STATUS/Plan与本Handoff。冻结GOV-RESIDUAL-RUNTIME-IDENTITY-1：Owner Codex、Reviewer DeepSeek Harness，依赖本实现done；实际base/head明确后再创建任务branch/linked worktree（统一workspace子目录）。只读P19三项、ENV-BUNDLE一项、P19-UI-FIX三项剩余历史运行身份，按当前7完整错误定位最小来源和证据；只写新Task/E/Handoff及权威导航，交付7项身份/引用/归属/真实路径是否可证明矩阵、事实与未知、需用户具体裁决对象和影响。禁止猜TEMP/APPDATA、改旧源/pin/共享parser、产品/Schema/依赖、真实资源清理或缩小保护；保持7错完整身份、四原件字节、全部原保护和r212，六旧探针不触碰。运行只读scan、check.ps1与diff-check，固定head交DeepSeek独审、Codex正常集成复验后才done；NOT_RUN/BLOCKED单列。当前建议尚未释放下一Task。”
