@@ -1,0 +1,19 @@
+PYTHON=C:\Python314\python.exe 3.14.6
+declaration audit: 2636 declaration(s), 1934 protected root(s), 7 error(s), 281 warning(s)
+  ERROR DECL_RELATIVE_AMBIGUOUS: declared path 'worktrees/P19-AC3-1' looks workspace-relative; it may mean the workspace root or the repository root and is refused [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-r1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_ENV: declared path '%TEMP%/p19-ac2-main-1' contains an environment variable or shell home token [doc/tasks/P19.md]
+  ERROR DECL_UNKNOWN_DISPOSITION: resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER' [verification/ENV-BUNDLE-1-FU1/resource-manifest.json]
+  ERROR DECL_DESTINATION_UNRESOLVED: declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  ERROR DECL_ENV: declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token [verification/P19-UI-FIX-1/resource-manifest.json]
+  report: G:/CODEX/New Manga.workspace/temp/GOV-RESIDUAL-RUNTIME-IDENTITY-1/integration/audit/declaration-audit.json
+AUDIT_EXIT=2
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\GOV-RESIDUAL-RUNTIME-IDENTITY-1.md
+WARN: 存在 14 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2842 bytes / 29 lines
+Governance check: PASS (2 warnings)
+CHECK_EXIT=0
+DIFFCHECK_EXIT=0
+TRACKED_DIRTY_COUNT=0

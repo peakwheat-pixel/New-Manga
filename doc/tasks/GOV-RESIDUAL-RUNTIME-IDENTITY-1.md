@@ -3,7 +3,7 @@ id: GOV-RESIDUAL-RUNTIME-IDENTITY-1
 title: 七项剩余历史运行身份的只读取证与裁决边界
 kind: research
 governance_version: 2
-status: in_review
+status: done
 approval: user_authorization_20261022_dsh_coordinator_takeover
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: [GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1]
 base_commit: 43a7d73c850f669cc2595343a1747a661c277f2e
 branch: null
 worktree: G:/CODEX/New Manga（只读研究；仅在 main 写本 Task、自身 evidence 与权威导航）
-integration_commit: null
-delivery_head: bb04c78d4b39e93e07712b2d056a2691810c0c58
+integration_commit: 8e31aaa1dff113e5f95ca7db5ece0de00126059a
+delivery_head: 8e31aaa1dff113e5f95ca7db5ece0de00126059a
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1
 allowed_paths:
   - doc/tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-1.md
@@ -116,7 +116,13 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / dsh：待独立 Review 与集成复验后填写。
+- Closeout date / dsh：2026-10-22。
+- canonical_evidence_status：`complete`（EV-01..EV-07 固定到 `bb04c78d4`；集成复验证据新增于 `verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/integration/`）。
+- resource_closeout_status：`complete`。
+- 删除、迁移、归档数量/字节数：0 / 0 / 0；GC/prune/push/reset/stash 均 0。
+- 未关闭项及保留原因：7 项声明错误按设计保持 fatal（本 Task 只取证，不解除；由 `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1` 以精确解释层处置）；`C:/Users/49745/AppData/Roaming/com.newmanga.m2rc1.desktop` 保护缺口由同一实施 Task 补齐；11 个系统 Temp `p19*` 遗留目录待用户授权后另议。
+- 集成复验（`8e31aaa1dff113e5f95ca7db5ece0de00126059a`）：audit 2636/1934/7/281 且 7 项全为历史身份；check PASS 2 warnings；`git diff --check` exit 0；tracked 工作区干净；见 `verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/integration-validation.json`。
+- 当前指针清理：STATUS / Rebaseline Plan / Task Ledger 已同步；下一 Task 为 `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1`。
 - canonical_evidence_status：`complete`（7 项 EV 固定到交付提交 `bb04c78d4b39e93e07712b2d056a2691810c0c58`，raw SHA-256 已回填）。
 - resource_closeout_status：`pending`（无真实删除/迁移；四项资源均为保留或 NOT_APPLICABLE）。
 - 删除、迁移、归档数量/字节数：0 / 0 / 0。

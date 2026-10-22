@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "task_id": "GOV-RESIDUAL-RUNTIME-IDENTITY-1",
+  "validated_at": "2026-10-22",
+  "reviewed_head": "8e31aaa1dff113e5f95ca7db5ece0de00126059a",
+  "review_file": "doc/reviews/GOV-RESIDUAL-RUNTIME-IDENTITY-1-8e31aaa1d-zcode-r2.md",
+  "review_decision": "approved",
+  "review_r1": "doc/reviews/GOV-RESIDUAL-RUNTIME-IDENTITY-1-56260c145-zcode-r1.md",
+  "review_r1_decision": "changes_requested (R-001/R-002/R-003 all reworked)",
+  "main_head_at_validation": "8e31aaa1dff113e5f95ca7db5ece0de00126059a",
+  "audit": {
+    "declarations": 2636,
+    "protected_roots": 1934,
+    "errors": 7,
+    "warnings": 281,
+    "exit": 2,
+    "seven_errors_are_historical_identities_only": true,
+    "historical_sources": [
+      "doc/tasks/P19.md",
+      "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+      "verification/P19-UI-FIX-1/resource-manifest.json"
+    ]
+  },
+  "governance_check": {
+    "result": "PASS",
+    "warnings": 2,
+    "exit": 0
+  },
+  "diff_check_exit": 0,
+  "tracked_dirty_count": 0,
+  "real_resource_operations": {
+    "deleted": 0,
+    "migrated": 0,
+    "archived": 0,
+    "gc": 0,
+    "prune": 0,
+    "push": 0,
+    "reset": 0,
+    "stash": 0
+  },
+  "protections_preserved": "r212 ban, five broad roots, P22 untracked content, old pins, six DSH probes all untouched"
+}
