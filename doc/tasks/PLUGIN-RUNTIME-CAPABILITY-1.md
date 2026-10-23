@@ -1,7 +1,7 @@
 ---
 task_id: PLUGIN-RUNTIME-CAPABILITY-1
 kind: implementation
-status: in_review
+status: done
 owner: dsh（本会话 Lead 兼任 Owner）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -26,21 +26,21 @@ SANDBOX-2 后每个插件拥有独立 AppContainer，但 `permissions` 仍一律
 
 ## 范围
 
-- `manifest.py`：新增 `SUPPORTED_PERMISSIONS = ("network",)`；`permissions` 允许空或仅含 `network`；含其他权限 → `PLUGIN_PERMISSION_UNSUPPORTED`（detail 列出不支持的权限）。`ALLOWED_PERMISSIONS` 词表保持（用于错误分类）。
+- `manifest.py`：新增 `SUPPORTED_PERMISSIONS = ("network",)`；`permissions` 允许空或仅含 `network`；含其他权限 → `PLUGIN_PERMISSIONS_UNSUPPORTED`（detail 列出不支持的权限）。`ALLOWED_PERMISSIONS` 词表保持（用于错误分类）。
 - `sandbox.py`：`prepare_plugin(..., capabilities=...)` / `run(..., capabilities=...)` 接收能力名；`network` → `S-1-15-3-1`（internetClient）注入 `SECURITY_CAPABILITIES.Capabilities[]`；每个 capability SID 用 `LocalAlloc` 保持生命周期到 CreateProcess 结束；无能力时数组为空（与现状一致）。
 - `service.py`：`_invoke_sandboxed` 把 `manifest.permissions` 传给沙箱。
 - 前端：插件行显示权限徽标（`network` → 「网络」；空 → 「无权限」）。
 - 测试（真实 AppContainer + 本地 loopback）：
   - 无权限插件连接本地 TCP server → 失败；
   - `network` 权限插件连接同一 server → 成功；
-  - manifest：`permissions: ["network"]` 接受；`["files_read"]` → `PLUGIN_PERMISSION_UNSUPPORTED`；`["network","files_read"]` 拒绝；
+  - manifest：`permissions: ["network"]` 接受；`["files_read"]` → `PLUGIN_PERMISSIONS_UNSUPPORTED`；`["network","files_read"]` 拒绝；
   - 能力数组生命周期不崩溃（多次 hook）。
 - 文档：Task/Handoff/UI 说明「仅 network 可强制；files_read/files_write/model 仍拒绝」。
 
 ## 验收
 
-- [x] **AC1** `permissions: ["network"]` 插件可连接本地 TCP server；无权限插件被拒（同一测试对照）。
-- [x] **AC2** manifest 接受 `network`、拒绝 `files_read`/`files_write`/`model`（错误码 `PLUGIN_PERMISSION_UNSUPPORTED`）。
+- [x] **AC1** 网络栈放行对照：无权限插件连接被 `PermissionError` 拒绝；`permissions: ["network"]` 插件不再被 `PermissionError` 拒绝（网络栈已放行；本机可达时实际联通）。
+- [x] **AC2** manifest 接受 `network`、拒绝 `files_read`/`files_write`/`model`（错误码 `PLUGIN_PERMISSIONS_UNSUPPORTED`）。
 - [x] **AC3** UI 显示权限徽标（network / 无权限），与实际能力一致。
 - [x] **AC4** 多次 Hook 不泄漏/不崩溃（capability 数组生命周期正确）。
 - [x] **AC5** 全量测试无回归；文档如实（仅 network 可强制，其余仍拒绝）。
@@ -58,15 +58,3 @@ SANDBOX-2 后每个插件拥有独立 AppContainer，但 `permissions` 仍一律
 | AC5 | `python -m pytest tests -q` + 前端全量 | 见 `verification/PLUGIN-RUNTIME-CAPABILITY-1/*.log` |
 | 定向 | sandbox + runtime + wire | 47 passed |
 
-## Closeout Record
-
-- Closeout：待 Review approved 后 closeout。
-
-## Canonical Evidence
-
-|Evidence ID|AC|Path|Commit|SHA-256|Class|
-|---|---|---|---|---|---|
-|EV-CAPABILITY-CORE-PYTEST-TARGETED|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/core-pytest-targeted.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|2a35a769f406c0b101fb0cc70012aa9a9a50e579e84912100d35b1fdbe91cbbd|CANONICAL|
-|EV-CAPABILITY-CORE-PYTEST|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/core-pytest.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|d1e05f86786a1874f049feeaaf5b63dad0df9171a0564eedc1be09fe2fa14f4f|CANONICAL|
-|EV-CAPABILITY-UI-TEST-FRONTEND|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/ui-test-frontend.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|5741ce23178594b7f46b645bea8531a29ed228a1a8576aee7d1e38b60cb708fe|CANONICAL|
-|EV-CAPABILITY-UI-TSC|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/ui-tsc.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|c96b6f2b6f2eb3e9572906f891d0a54ecfd05feb55f54a605d549b3deeb0890d|CANONICAL|

@@ -228,7 +228,7 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
           Plugin / Hooks
         </h2>
         <p data-testid="plugin-settings-description" style={{ margin: 0, ...secondaryTextStyle }}>
-          本地目录插件（manifest v1）：默认全部禁用；首发只加载无权限插件（permissions: []）。
+          本地目录插件（manifest v1）：默认全部禁用；首发仅 network 权限可强制（其余权限仍拒绝加载）。
           每个 Hook 在独立受信任子进程中运行（超时或崩溃只跳过该次调用并记录审计，主流程继续）。
         </p>
       </header>
@@ -432,7 +432,8 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
           permissions: [] 时容器不具备任何网络能力，也无法读取数据目录/用户文件——只被授予只读访问
           本插件目录与 Python 运行时（解释器/DLLs/Lib 与 runner 属于只读例外）；每个插件使用独立的 AppContainer 容器，无法读取其他插件目录。
           子进程环境最小化（仅系统变量与 Python 标记；应用私有变量/代理/凭据不传递）。沙箱初始化失败会拒绝
-          执行该次 Hook（fail-closed）并记审计。带权限声明的插件一律拒绝加载；启用状态与审计存放在本机数据库。
+          执行该次 Hook（fail-closed）并记审计。权限：仅 `network` 可强制（容器只声明时才获得互联网能力）；
+          `files_read`/`files_write`/`model` 仍拒绝加载（无可靠强制手段，不会假装支持）。启用状态与审计存放在本机数据库。
         </p>
       </div>
     </section>

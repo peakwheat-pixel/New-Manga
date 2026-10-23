@@ -417,6 +417,8 @@ class AppContainerSandbox:
             None,
             None,
         ):
+            for pointer in cleanup_pointers:
+                _k32.LocalFree(ctypes.c_void_p(pointer))
             raise SandboxError("cannot attach the AppContainer capability")
         si.lpAttributeList = attribute_list
         si.StartupInfo.dwFlags = _STARTF_USESTDHANDLES
