@@ -201,16 +201,69 @@ def test_sandbox_kills_a_hanging_hook_within_the_timeout(sandboxed, tmp_path) ->
     assert elapsed < 15
 
 
-def test_sandbox_uses_one_shared_container(sandboxed, tmp_path) -> None:
+def test_sandbox_uses_per_plugin_profiles(sandboxed, tmp_path) -> None:
     a = _write_plugin(tmp_path, "acme-a", "def after_detect(p):\n    return {}\n")
     b = _write_plugin(tmp_path, "acme-b", "def after_detect(p):\n    return {}\n")
     sids = {
         sandboxed.sandbox._ensure_profile(a.name),
         sandboxed.sandbox._ensure_profile(b.name),
     }
-    # One shared container keeps the interpreter ACL a single one-time grant;
-    # per-plugin isolation is enforced by directory ACLs.
-    assert len(sids) == 1
+    # SANDBOX-2: each plugin gets its own container SID.
+    assert len(sids) == 2
+    assert sandboxed.sandbox.shared_profile is False
+
+
+def test_shared_profile_is_an_explicit_opt_in(tmp_path) -> None:
+    from infrastructure.plugins.sandbox import AppContainerSandbox
+
+    shared = AppContainerSandbox(shared_profile=True)
+    try:
+        assert shared.shared_profile is True
+        assert shared._ensure_profile("acme-a") == shared._ensure_profile("acme-b")
+    finally:
+        shared.close()
+
+
+def test_plugin_cannot_read_another_plugins_directory(sandboxed, tmp_path) -> None:
+    trick = _write_plugin(
+        tmp_path,
+        "acme-trick",
+        (
+            "import os\n"
+            "def after_detect(payload):\n"
+            "    root = os.path.dirname(os.path.abspath(__file__))\n"
+            "    other = os.path.join(os.path.dirname(root), 'acme-secret', 'plugin.py')\n"
+            "    try:\n"
+            "        data = open(other, encoding='utf-8').read()\n"
+            "        return {'read': 'OK', 'data': data}\n"
+            "    except OSError as error:\n"
+            "        return {'read': 'BLOCKED', 'winerror': getattr(error, 'winerror', None)}\n"
+        ),
+    )
+    _write_plugin(tmp_path, "acme-secret", "def after_detect(p):\n    return {}  # SIBLING-SECRET\n")
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-trick", True)
+
+    outcome = service.run_hook("after_detect", {})
+
+    assert outcome["applied"] is True
+    result = outcome["results"][0]["result"]
+    assert result["read"] == "BLOCKED"
+    assert "data" not in result
+
+
+def test_interpreter_acl_is_granted_once_per_profile_sid(sandboxed, tmp_path) -> None:
+    _write_plugin(tmp_path, "acme-cache", "def after_detect(p):\n    return {}\n")
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-cache", True)
+    service.run_hook("after_detect", {})
+    first = set(sandboxed.sandbox._interpreter_sids)
+    service.run_hook("after_detect", {})
+    second = set(sandboxed.sandbox._interpreter_sids)
+    assert first == second  # the SID's interpreter ACL is cached
+    assert len(first) == 1
 
 # ---------------------------------------------------------------------------
 # review r1: production wiring, minimal env, byte cap, job tree
@@ -250,6 +303,7 @@ def test_production_assembly_wires_the_sandbox(tmp_path) -> None:
     try:
         assert core.plugins is not None
         assert core.plugins._sandbox is not None, "production must run hooks sandboxed"
+        assert core.plugins._sandbox.shared_profile is False
         core.plugins.set_global_enabled(True)
         core.plugins.set_plugin_enabled("acme-prod", True)
         outcome = core.plugins.run_hook("after_detect", {"pages": []})

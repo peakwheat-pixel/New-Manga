@@ -2,11 +2,12 @@
 
 Design (user authorization 2026-10-23, option 1; accepted approach A):
 
-* all plugins share ONE AppContainer profile (``NewMangaPluginSandbox``) so the
-  expensive interpreter/Lib read-only ACL is granted once per process; plugin
-  isolation is enforced by per-directory ACLs (the container only gets RX on
-  the directory of the plugin being executed -- reading another plugin's
-  directory is out of the v1 threat model and can be tightened later);
+* every plugin gets its OWN AppContainer profile by default
+  (``NewMangaPlugin-<sha256(plugin_id)[:12]>``), so plugin A cannot read plugin
+  B's directory even if B's directory was granted earlier; the read-only
+  interpreter ACL is granted once per profile SID (cached); a shared profile is
+  available only as an explicit opt-in (``shared_profile=True``) for low-cost
+  scenarios;
 * the container is granted read/execute on that plugin's directory and on the
   Python interpreter runtime only (read-only), plus traverse-only grants on the
   ancestors of the data root so the process can reach its own directory;
@@ -202,14 +203,21 @@ class AppContainerSandbox:
         interpreter: str | None = None,
         anchors: tuple[str, ...] = (),
         capability_names: tuple[str, ...] = (),
+        shared_profile: bool = False,
     ) -> None:
         self._interpreter = interpreter or sys.executable
         self._anchors = tuple(str(item) for item in anchors if item)
         self._capability_names = tuple(capability_names)
+        self._shared_profile = shared_profile
         self._profiles: dict[str, str] = {}
         self._grants = _GrantCache()
-        self._interpreter_prepared = False
+        self._interpreter_sids: set[str] = set()
         self._closed = False
+
+    @property
+    def shared_profile(self) -> bool:
+        """True when every plugin shares one AppContainer (opt-in only)."""
+        return self._shared_profile
 
     # -- capability ---------------------------------------------------------
     @property
@@ -224,14 +232,17 @@ class AppContainerSandbox:
 
     # -- profile / ACL ------------------------------------------------------
     def _profile_name(self, plugin_id: str) -> str:
-        # One shared container keeps the (expensive) interpreter ACL a single
-        # one-time grant; the plugin id only participates in ACL bookkeeping.
-        del plugin_id
-        return _PROFILE_NAME_PREFIX + "Sandbox"
+        if self._shared_profile:
+            return _PROFILE_NAME_PREFIX + "Sandbox"
+        # Per-plugin container: plugin A's SID never appears in plugin B's ACLs,
+        # so a compromised plugin cannot read a sibling's directory.
+        digest = hashlib.sha256(plugin_id.encode("utf-8")).hexdigest()[:12]
+        return f"{_PROFILE_NAME_PREFIX}-{digest}"
 
     def _ensure_profile(self, plugin_id: str) -> str:
-        if plugin_id in self._profiles:
-            return self._profiles[plugin_id]
+        cache_key = "__shared__" if self._shared_profile else plugin_id
+        if cache_key in self._profiles:
+            return self._profiles[cache_key]
         if len(self._profiles) >= MAX_PROFILES:
             raise SandboxError("too many plugin sandbox profiles")
         name = self._profile_name(plugin_id)
@@ -252,7 +263,7 @@ class AppContainerSandbox:
         out = ctypes.c_wchar_p()
         if not _advapi32.ConvertSidToStringSidW(sid, ctypes.byref(out)):
             raise SandboxError("cannot resolve the plugin AppContainer SID")
-        self._profiles[plugin_id] = out.value
+        self._profiles[cache_key] = out.value
         return out.value
 
     def _grant(self, path: str, sid: str, rights: str) -> None:
@@ -287,6 +298,8 @@ class AppContainerSandbox:
         return tuple(chain)
 
     def _prepare_interpreter(self, sid: str) -> None:
+        if sid in self._interpreter_sids:
+            return
         interpreter = Path(self._interpreter).resolve()
         root = interpreter.parent
         self._grant(str(interpreter), sid, "(RX)")
@@ -295,7 +308,7 @@ class AppContainerSandbox:
             candidate = root / sub
             if candidate.is_dir():
                 self._grant(str(candidate), sid, "(OI)(CI)(RX)")
-        self._interpreter_prepared = True
+        self._interpreter_sids.add(sid)
 
     def prepare_plugin(
         self,

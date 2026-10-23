@@ -174,6 +174,7 @@ describe("PluginSettingsPanel (PLUGIN-RUNTIME-1 §4.1–§4.4)", () => {
     // PLUGIN-RUNTIME-SANDBOX-1: the copy states the real AppContainer boundary.
     expect(note).toContain("AppContainer");
     expect(note).toContain("fail-closed");
+    expect(note).toContain("独立");
   });
 
   it("shows the empty state when the plugin root has no plugins", async () => {
