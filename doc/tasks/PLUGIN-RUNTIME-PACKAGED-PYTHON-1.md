@@ -67,3 +67,11 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 ## Closeout Record
 
 - Closeout：待 Review approved 后 closeout（实际 PyInstaller 产物冒烟留给发布验证）。
+
+## Canonical Evidence
+
+|Evidence ID|AC|Path|Commit|SHA-256|Class|
+|---|---|---|---|---|---|
+|EV-PKG-PY-BUILD-PS1-PARSE|AC1-AC5|verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/build-ps1-parse.log|d8bab54df1e958db2ce743e74d652f8f6e0a0425|72ade57c2a50579a300427e389d9b795df69da464c348cae20356e0cb5c1ab87|CANONICAL|
+|EV-PKG-PY-CORE-PYTEST-TARGETED|AC1-AC5|verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/core-pytest-targeted.log|d8bab54df1e958db2ce743e74d652f8f6e0a0425|387140d2e4d1f67e2a14097e7e774b09d742ce6abc63d5749e11cb13fd967d8d|CANONICAL|
+|EV-PKG-PY-CORE-PYTEST|AC1-AC5|verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/core-pytest.log|d8bab54df1e958db2ce743e74d652f8f6e0a0425|bfc832b3863bd2b831eac119f42413434c6fa009fec0651df1be954b6a1d932e|CANONICAL|
