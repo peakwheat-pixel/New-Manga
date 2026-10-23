@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-SANDBOX-2
 author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: acc1e36a7dc9f333c41f8131ff1b4d0b0bcd3423
-delivery_head: PLACEHOLDER_SB2_HEAD
+delivery_head: 9ab2748d6325e8e817537fed40cd9269edc0d1ea
 status: in_review
 authorization: 用户 2026-10-23「1234都授权」
 ---

@@ -57,3 +57,10 @@ SANDBOX-1 为性能使用**共享容器**（所有插件同一 AppContainer SID�
 ## Closeout Record
 
 - Closeout：待 Review approved 后 closeout。
+
+## Canonical Evidence
+
+|Evidence ID|AC|Path|Commit|SHA-256|Class|
+|---|---|---|---|---|---|
+|EV-SANDBOX-2-CORE-PYTEST-TARGETED|AC1-AC5|verification/PLUGIN-RUNTIME-SANDBOX-2/core-pytest-targeted.log|9ab2748d6325e8e817537fed40cd9269edc0d1ea|b2faaf1e293cbda8094f4088639ae10c019a5df4cef35b4fc75e78aaf9c423ae|CANONICAL|
+|EV-SANDBOX-2-CORE-PYTEST|AC1-AC5|verification/PLUGIN-RUNTIME-SANDBOX-2/core-pytest.log|9ab2748d6325e8e817537fed40cd9269edc0d1ea|7fa94623f790fcc12f1dd8ef31dec40bcd352f189ba619ae77be7d37ff8b11aa|CANONICAL|
