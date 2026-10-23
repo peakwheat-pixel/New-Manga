@@ -166,16 +166,20 @@ class NmbakBackupService:
                 json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
             )
             self._zip_directory(workdir, temporary)
-            # Read-back self check (AC1): a package we cannot verify must not
-            # be reported as a backup the user can rely on.
-            verified_manifest = self._read_manifest(temporary)
-            if (
-                verified_manifest.get("database_sha256") != database_sha
-                or not self._package_database_matches(temporary, database_sha)
-            ):
+            # AC1 read-back self check: the package must pass exactly the same
+            # validation a restore performs (`_verify_package`), so a package
+            # we cannot verify can never be reported as a usable backup. A
+            # missing current/pinned managed source already fails below in
+            # `_copy_managed_files`; this catches every other drift (digest,
+            # manifest/member mismatch, unexpected managed members).
+            try:
+                self._verify_package(temporary)
+            except NmbakBackupError as error:
                 raise NmbakBackupError(
-                    "BACKUP_CREATE_FAILED", "read-back verification failed"
-                )
+                    "BACKUP_CREATE_FAILED",
+                    f"read-back verification failed: {error.detail}",
+                ) from error
+            verified_manifest = self._read_manifest(temporary)
             verified_manifest["verified"] = True
             self._rewrite_manifest(temporary, verified_manifest)
             os.replace(temporary, target)
@@ -311,13 +315,30 @@ class NmbakBackupService:
         ).fetchall()
         refs = []
         for row in rows:
+            managed_path = row["managed_path"]
+            source = self._managed_root / Path(managed_path)
+            if not source.is_file():
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    f"managed file missing for revision ref: {managed_path}",
+                )
+            # The manifest digest describes the BYTES IN THIS PACKAGE (what a
+            # restore verifies), not the database's historical file_hash: a
+            # live managed file may have drifted from the row (external edit,
+            # partial write), and the pre_restore package must still snapshot
+            # the real bytes so the restore keeps a valid rollback point.
             refs.append(
                 {
                     "revision_id": row["artifact_revision_id"],
+                    # Frozen field (design §3.1). Page artifact revisions are
+                    # not owned by a Region (regions snapshot text/layout and
+                    # have no managed image), so the field is present but null;
+                    # keeping the key keeps the manifest schema closed.
+                    "region_id": None,
                     "artifact_id": row["artifact_id"],
-                    "managed_path": row["managed_path"],
-                    "sha256": row["file_hash"],
-                    "size_bytes": int(row["size_bytes"] or 0),
+                    "managed_path": managed_path,
+                    "sha256": sha256_file(source),
+                    "size_bytes": source.stat().st_size,
                     "pinned": bool(row["is_pinned"] or row[6]),
                 }
             )
@@ -333,9 +354,13 @@ class NmbakBackupService:
             seen.add(managed_path)
             source = self._managed_root / Path(managed_path)
             if not source.is_file():
-                # Missing managed copies are reported after restore by the
-                # consistency report instead of silently dropping the ref.
-                continue
+                # Design §3.1: every revision_ref must be backed by a managed
+                # file with a matching digest. Silently dropping it would
+                # produce a "verified" package that a restore must reject.
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    f"managed file missing for revision ref: {managed_path}",
+                )
             destination = workdir / MANAGED_PREFIX / Path(managed_path)
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(source.read_bytes())
@@ -382,14 +407,6 @@ class NmbakBackupService:
             raise NmbakBackupError("BACKUP_CORRUPT", f"{package.name}: not a nm-backup")
         return payload
 
-    def _package_database_matches(self, package: Path, expected_sha: str) -> bool:
-        try:
-            with zipfile.ZipFile(package, "r") as archive:
-                data = archive.read(DB_NAME)
-        except (KeyError, OSError, zipfile.BadZipFile):
-            return False
-        return hashlib.sha256(data).hexdigest() == expected_sha
-
     def _verify_package(self, package: Path) -> dict:
         """Full validation before restore (§3.1 rules); raises BACKUP_CORRUPT."""
         manifest = self._read_manifest(package)
@@ -416,24 +433,32 @@ class NmbakBackupService:
                         "BACKUP_CORRUPT",
                         f"{package.name}: database sha256 mismatch",
                     )
-                for ref in manifest.get("revision_refs") or []:
-                    member = MANAGED_PREFIX + str(ref.get("managed_path", "")).lstrip("/")
+                # The frozen manifest is the ONLY allowed population of the
+                # package: every listed managed file must exist with its
+                # digest, and an unlisted managed member is corruption (a
+                # tampered package must never write files the manifest does
+                # not name).
+                allowed: set[str] = set()
+                for entry in (manifest.get("revision_refs") or []) + (
+                    manifest.get("managed_files") or []
+                ):
+                    member = MANAGED_PREFIX + str(entry.get("managed_path", "")).lstrip("/")
+                    allowed.add(member)
                     if member not in names:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
-                            f"{package.name}: missing managed file {ref.get('managed_path')}",
+                            f"{package.name}: missing managed file {entry.get('managed_path')}",
                         )
-                    if hashlib.sha256(archive.read(member)).hexdigest() != ref.get("sha256"):
+                    if hashlib.sha256(archive.read(member)).hexdigest() != entry.get("sha256"):
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
-                            f"{package.name}: managed sha256 mismatch {ref.get('managed_path')}",
+                            f"{package.name}: managed sha256 mismatch {entry.get('managed_path')}",
                         )
-                for item in manifest.get("managed_files") or []:
-                    member = MANAGED_PREFIX + str(item.get("managed_path", "")).lstrip("/")
-                    if member not in names:
+                for name in names:
+                    if name.startswith(MANAGED_PREFIX) and name not in allowed:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
-                            f"{package.name}: missing managed file {item.get('managed_path')}",
+                            f"{package.name}: unexpected managed member {name}",
                         )
         except zipfile.BadZipFile as error:
             raise NmbakBackupError("BACKUP_CORRUPT", f"{package.name}: {error}") from error
@@ -460,18 +485,24 @@ class NmbakBackupService:
         if restored != latest_known:
             raise NmbakBackupError(
                 "BACKUP_RESTORE_INCOMPLETE",
-                f"restored schema v{restored} != known v{latest_known}",
+                f"restored schema v{restored} != known v{latest_known}; "
+                f"rollback package: pre_restore",
             )
         return int(restored)
 
     def _restore_managed(self, restore_dir: Path, manifest: dict) -> None:
-        root = restore_dir / "managed"
-        if not root.is_dir():
-            return
-        for source in sorted(root.rglob("*")):
+        # Only the manifest's own population is written back (the verifier
+        # already rejected unlisted managed members).
+        members: set[str] = set()
+        for entry in (manifest.get("revision_refs") or []) + (
+            manifest.get("managed_files") or []
+        ):
+            members.add(str(entry.get("managed_path", "")).lstrip("/"))
+        for managed_path in sorted(members):
+            relative = Path(managed_path)
+            source = restore_dir / MANAGED_PREFIX / relative
             if not source.is_file():
                 continue
-            relative = source.relative_to(root)
             destination = self._managed_root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(source.read_bytes())

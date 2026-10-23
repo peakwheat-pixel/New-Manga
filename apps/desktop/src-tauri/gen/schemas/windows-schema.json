@@ -363,6 +363,30 @@
           "markdownDescription": "Enables the ac1_write_results command without any pre-configured scope."
         },
         {
+          "description": "Enables the backup_create command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-backup-create",
+          "markdownDescription": "Enables the backup_create command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the backup_delete command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-backup-delete",
+          "markdownDescription": "Enables the backup_delete command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the backup_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-backup-list",
+          "markdownDescription": "Enables the backup_list command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the backup_restore command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-backup-restore",
+          "markdownDescription": "Enables the backup_restore command without any pre-configured scope."
+        },
+        {
           "description": "Enables the cleanup_preview command without any pre-configured scope.",
           "type": "string",
           "const": "allow-cleanup-preview",
@@ -745,6 +769,30 @@
           "type": "string",
           "const": "deny-ac1-write-results",
           "markdownDescription": "Denies the ac1_write_results command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the backup_create command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-backup-create",
+          "markdownDescription": "Denies the backup_create command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the backup_delete command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-backup-delete",
+          "markdownDescription": "Denies the backup_delete command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the backup_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-backup-list",
+          "markdownDescription": "Denies the backup_list command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the backup_restore command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-backup-restore",
+          "markdownDescription": "Denies the backup_restore command without any pre-configured scope."
         },
         {
           "description": "Denies the cleanup_preview command without any pre-configured scope.",

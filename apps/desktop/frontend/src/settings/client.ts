@@ -391,13 +391,21 @@ export interface BackupCreateResult {
   verified: boolean;
 }
 
+/** One DB revision whose managed file was missing after a restore. The Core
+ * reports the pair (`{revision_id, managed_path}`), so the projection keeps
+ * both fields instead of collapsing them to opaque strings. */
+export interface BackupMissingRef {
+  revision_id: string;
+  managed_path: string;
+}
+
 /** `backup_restore` report: overwrite source, rollback package and the
  * post-restore DB/managed consistency summary. */
 export interface BackupRestoreReport {
   restored_from: string;
   pre_restore_backup_id: string;
   schema_versions: { backup: number | null; restored: number | null };
-  managed_consistency: { checked: number | null; missing: string[] };
+  managed_consistency: { checked: number | null; missing: BackupMissingRef[] };
 }
 
 /** `backup_delete` projection. */
@@ -462,7 +470,14 @@ function normalizeBackupRestore(raw: unknown): BackupRestoreReport {
     managed_consistency: {
       checked: asCount(consistency.checked),
       missing: Array.isArray(consistency.missing)
-        ? consistency.missing.filter((item): item is string => typeof item === "string")
+        ? consistency.missing
+            .map((item) => asRecord(item))
+            .filter((item): item is Record<string, unknown> => item !== null)
+            .map((item) => ({
+              revision_id: typeof item.revision_id === "string" ? item.revision_id : "",
+              managed_path: typeof item.managed_path === "string" ? item.managed_path : "",
+            }))
+            .filter((item) => item.managed_path !== "")
         : [],
     },
   };

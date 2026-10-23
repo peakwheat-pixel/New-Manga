@@ -66,16 +66,16 @@ def _backup_root(core) -> Path:
     return Path(core.data_root) / "backups"
 
 
-def _insert_running_run(core) -> None:
+def _insert_run(core, status: str, run_id: str = "run-busy") -> None:
     with core.conn as conn:
         conn.execute(
             "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
             " requested_targets_json, settings_snapshot_json,"
             " provider_binding_snapshot_json, context_policy_json, status,"
             " run_json, updated_at)"
-            " VALUES ('run-busy', 'translate', 'book', '[]', '{}', '{}', '{}',"
-            " 'running', '{}', ?)",
-            (NOW,),
+            " VALUES (?, 'translate', 'book', '[]', '{}', '{}', '{}',"
+            " ?, '{}', ?)",
+            (run_id, status, NOW),
         )
 
 
@@ -137,13 +137,17 @@ def test_create_list_restore_delete_round_trip(core) -> None:
     missing = _request(server, "backup.delete", {"backup_id": backup_id})
     assert missing["error"]["code"] == "BACKUP_NOT_FOUND"
     assert missing["error"]["category"] == "not_found"
+    assert missing["error"]["retryable"] is False
 
 
-def test_restore_is_refused_while_a_run_is_active(core) -> None:
+@pytest.mark.parametrize(
+    "status", ["pending", "running", "paused", "blocked", "interrupted"]
+)
+def test_restore_is_refused_while_a_run_is_active(core, status: str) -> None:
     server = CoreServiceServer(core)
     created = _request(server, "backup.create", {"backup_type": "manual"})
     backup_id = created["result"]["backup_id"]
-    _insert_running_run(core)
+    _insert_run(core, status)
     try:
         refused = _request(
             server, "backup.restore", {"backup_id": backup_id, "confirm_restore": True}
@@ -154,6 +158,21 @@ def test_restore_is_refused_while_a_run_is_active(core) -> None:
     assert refused["error"]["code"] == "BACKUP_RESTORE_BUSY"
     assert refused["error"]["category"] == "conflict"
     assert refused["error"]["retryable"] is True
+
+
+def test_restore_is_allowed_once_the_run_is_terminal(core) -> None:
+    server = CoreServiceServer(core)
+    created = _request(server, "backup.create", {"backup_type": "manual"})
+    backup_id = created["result"]["backup_id"]
+    _insert_run(core, "completed", run_id="run-done")
+    try:
+        restored = _request(
+            server, "backup.restore", {"backup_id": backup_id, "confirm_restore": True}
+        )
+    finally:
+        with core.conn as conn:
+            conn.execute("DELETE FROM pipeline_runs WHERE run_id = 'run-done'")
+    assert restored["error"] is None
 
 
 def test_tampered_package_is_rejected_as_corrupt(core) -> None:
@@ -179,8 +198,13 @@ def test_malformed_payloads_are_typed(core) -> None:
     server = CoreServiceServer(core)
     not_an_object = _request(server, "backup.create", [1, 2, 3])
     assert not_an_object["error"]["code"] == "INVALID_REQUEST"
+    # Review r1 P1-4: design §1 projected validation errors as validation /
+    # non-retryable, not the internal fallback.
+    assert not_an_object["error"]["category"] == "validation"
+    assert not_an_object["error"]["retryable"] is False
     wrong_type = _request(server, "backup.create", {"backup_type": "automatic"})
     assert wrong_type["error"]["code"] == "INVALID_REQUEST"
+    assert wrong_type["error"]["category"] == "validation"
     bad_id = _request(
         server, "backup.restore", {"backup_id": "../library.db", "confirm_restore": True}
     )

@@ -130,6 +130,9 @@ def test_create_package_contains_frozen_v1_layout(workspace):
     refs = manifest["revision_refs"]
     assert refs and refs[0]["managed_path"] == relative
     assert refs[0]["sha256"] == hashlib.sha256(b"PAGE-ONE").hexdigest()
+    # Frozen manifest field (design §3.1): present, null for page artifacts.
+    assert "region_id" in refs[0]
+    assert refs[0]["region_id"] is None
 
 
 def test_restore_overwrites_database_and_creates_pre_restore(workspace):
@@ -248,3 +251,53 @@ def test_delete_rejects_path_traversal_ids(workspace):
     with pytest.raises(NmbakBackupError) as info:
         workspace["service"].delete("../library.db")
     assert info.value.code == "BACKUP_NOT_FOUND"
+
+def test_missing_managed_source_fails_create_instead_of_a_verified_package(workspace):
+    relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
+    (workspace["managed_root"] / relative).unlink()
+
+    with pytest.raises(NmbakBackupError) as info:
+        workspace["service"].create("manual", "missing managed source")
+    assert info.value.code == "BACKUP_CREATE_FAILED"
+    assert "managed file missing" in info.value.detail
+    # A failed create never leaves a package behind.
+    assert list(workspace["backup_root"].glob("*.nmbak")) == []
+
+
+def test_package_with_unlisted_managed_member_is_corrupt(workspace):
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    backup = workspace["service"].create("manual", "extra member")
+    package = workspace["backup_root"] / f"{backup['backup_id']}.nmbak"
+    with zipfile.ZipFile(package) as archive:
+        entries = {item.filename: archive.read(item.filename) for item in archive.infolist()}
+    entries["managed/books/evil.png"] = b"EVIL"
+    with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name, data in entries.items():
+            archive.writestr(name, data)
+
+    with pytest.raises(NmbakBackupError) as info:
+        workspace["service"].restore(backup["backup_id"], confirm_restore=True)
+    assert info.value.code == "BACKUP_CORRUPT"
+    assert "unexpected managed member" in info.value.detail
+
+
+def test_restore_aborts_when_pre_restore_cannot_be_created(workspace, monkeypatch):
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    backup = workspace["service"].create("manual", "target")
+    with workspace["conn"] as conn:
+        conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('book-2', 'after backup', ?, ?)",
+            (NOW, NOW),
+        )
+
+    def boom(*args, **kwargs):
+        raise NmbakBackupError("BACKUP_CREATE_FAILED", "simulated disk full")
+
+    monkeypatch.setattr(workspace["service"], "create", boom)
+    with pytest.raises(NmbakBackupError) as info:
+        workspace["service"].restore(backup["backup_id"], confirm_restore=True)
+    assert info.value.code == "BACKUP_CREATE_FAILED"
+    # No rollback point => nothing is overwritten.
+    remaining = {row["book_id"] for row in workspace["conn"].execute("SELECT book_id FROM books")}
+    assert "book-2" in remaining

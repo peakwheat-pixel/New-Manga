@@ -272,7 +272,11 @@ _BACKUP_COMMANDS = frozenset({
 #: Design §3.4 error taxonomy -> (category, retryable). Anything not listed
 #: falls back to ("internal", False).
 _BACKUP_ERROR_RULES: dict[str, tuple[str, bool]] = {
+    # Malformed backup payloads are request validation, not internal failures
+    # (review r1 P1-4: the fallback used to project them as "internal").
+    "INVALID_REQUEST": ("validation", False),
     "BACKUP_CREATE_FAILED": ("internal", "unknown"),
+    "BACKUP_DELETE_FAILED": ("internal", False),
     "BACKUP_NOT_FOUND": ("not_found", False),
     "BACKUP_CORRUPT": ("validation", False),
     "BACKUP_RESTORE_BUSY": ("conflict", True),

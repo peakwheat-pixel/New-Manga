@@ -41,9 +41,9 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the sixty-four commands below: 57 production (3 resource + 2 IPC1 +
-    // 2 create + 2 existing settings + 3 cleanup + 19 P15 settings + 2 retype
-    // + 3 RC-4 + 1 page
+    // the sixty-eight commands below: 61 production (3 resource + 2 IPC1 +
+    // 2 create + 2 existing settings + 3 cleanup + 4 backup + 19 P15 settings
+    // + 2 retype + 3 RC-4 + 1 page
     // resolve + 2 page navigation + 2 Reader + 3 Host Issuer + 6 Run +
     // 1 reveal + 3 export + 2 delete), four probe, and three M2-AC1 acceptance commands;
     // any other command name

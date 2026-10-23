@@ -15,6 +15,13 @@
 6. 点「覆盖并恢复」→ **成功**：notice"已从备份 6c798990 恢复（恢复前备份 6ba741fa）。其他页面可能仍显示旧数据，请手动刷新。"；列表变为 3 个（2 个 pre_restore + 1 个 manual），全部"校验通过"——`screenshots/04-restore-success.png`。
 7. 数据库核对（隔离库）：恢复后 `books` 仅剩 `ActiveBook`（`PostBackupBook` 已被覆盖消失）；`backups/` 下新增 `pre_restore` 包（f7cae7c4、6ba741fa）。
 
+## 补充：managed 文件往返（review r1 P2）
+
+1. 隔离库 seed：`book-1/chapter-1/page-1` + `art-1` + `rev-1`（current/pinned），managed 文件 `managed/books/book-1/chapters/chapter-1/original/page-1.png` = `ORIGINAL-MANAGED-BLOB`。
+2. 设置 → 备份/恢复 → 立即备份：生成 `0db3692b…nmbak`（11.6 KB，zip 含 `managed/…/page-1.png`；manifest `managed_file_count=1`、`revision_refs` 含 `rev-1` 与 `region_id: null`），列表"校验通过"。
+3. 篡改 managed 文件为 `TAMPERED-AFTER-BACKUP` → 对该包「恢复」→「覆盖并恢复」→ notice"已从备份 0db3692b 恢复（恢复前备份 fceb8a60）"。
+4. 核对：managed 文件字节恢复为 `ORIGINAL-MANAGED-BLOB`；备份列表 5 个（含新 pre_restore）——`screenshots/05-managed-restore.png`。
+
 ## 限制与备注
 
 - 窗口在 UIA 操作间多次被最小化（driver 的 SendInput 点击与 UIA invoke 交替时 Windows 焦点切换），截图前用 `ShowWindow(SW_RESTORE)` 还原；操作本身均通过 UIAutomation Invoke/ValuePattern 完成。
