@@ -32,6 +32,7 @@ class FakeRecycleClient implements RecycleBinClientLike {
   books: BookSummary[];
   failLoad: unknown = null;
   failDelete: unknown = null;
+  failDeleteOnCall: number | null = null;
   deleteCalls: Array<Record<string, unknown>> = [];
   listCalls = 0;
 
@@ -52,7 +53,12 @@ class FakeRecycleClient implements RecycleBinClientLike {
     confirm_permanent_delete: true;
   }): Promise<unknown> {
     this.deleteCalls.push(payload as unknown as Record<string, unknown>);
-    if (this.failDelete) throw this.failDelete;
+    if (
+      this.failDelete &&
+      (this.failDeleteOnCall === null || this.deleteCalls.length === this.failDeleteOnCall)
+    ) {
+      throw this.failDelete;
+    }
     this.books = this.books.filter((item) => !payload.book_ids.includes(item.book_id));
     return {
       requested_count: payload.book_ids.length,
@@ -227,6 +233,64 @@ describe("RecycleBinSettingsPanel (SETTINGS-OPEN-C-1-RECYCLE §2)", () => {
       expect(call.confirm_count).toBe(ids.length);
       expect(call.confirm_permanent_delete).toBe(true);
     }
+  });
+
+  it("reloads the bin when a later batch fails so a retry targets only the remaining books", async () => {
+    const many = Array.from({ length: 25 }, (_, index) =>
+      book(`bk-${String(index).padStart(2, "0")}`, `作品${index}`),
+    );
+    const client = new FakeRecycleClient(many);
+    client.failDelete = new LibraryClientError("BOOK_DELETE_BATCH_PREFLIGHT_FAILED", "busy");
+    client.failDeleteOnCall = 2; // first batch (20) succeeds, second (5) fails
+
+    await render(client);
+    await act(async () => {
+      button("recycle-bin-settings-clear-btn")?.click();
+      await Promise.resolve();
+    });
+    await act(async () => {
+      checkbox()?.click();
+      await Promise.resolve();
+    });
+    await act(async () => {
+      submitButton()?.click();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // Two batches attempted; the first removed 20, the second failed.
+    expect(client.deleteCalls).toHaveLength(2);
+    expect((client.deleteCalls[0].book_ids as string[]).length).toBe(20);
+    expect(q('[data-testid="permanent-delete-error"]')?.textContent).toContain(
+      "有任务或导出正在进行",
+    );
+    // The panel re-read the bin after the failure: only 5 books remain.
+    expect(client.listCalls).toBe(2);
+    await act(async () => {
+      q('[data-testid="confirm-dialog-cancel-btn"]')?.click();
+      await Promise.resolve();
+    });
+    expect(
+      container.querySelectorAll('[data-testid^="recycle-bin-settings-item-"]').length,
+    ).toBe(5);
+
+    // A retry targets only the remaining ids (never the 20 already deleted).
+    await act(async () => {
+      button("recycle-bin-settings-clear-btn")?.click();
+      await Promise.resolve();
+    });
+    await act(async () => {
+      checkbox()?.click();
+      await Promise.resolve();
+    });
+    await act(async () => {
+      submitButton()?.click();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(client.deleteCalls).toHaveLength(3);
+    expect(client.deleteCalls[2].book_ids).toEqual(many.slice(20).map((item) => item.book_id));
   });
 
   it("surfaces the whole-library protection verbatim instead of bypassing it", async () => {

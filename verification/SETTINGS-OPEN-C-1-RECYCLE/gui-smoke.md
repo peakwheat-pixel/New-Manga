@@ -1,6 +1,6 @@
 # GUI smoke — SETTINGS-OPEN-C-1-RECYCLE
 
-- Time: 2026-10-23 ~07:36–08:02 +08:00
+- Time: 2026-10-23 ~07:36–08:02（r1：读取/确认 dialog）+ 08:25–08:31（r2：整库保护/成功清空/DB 核对）+08:00
 - App: `tools/dev/dev-preview.ps1`（Tauri dev window，隔离数据根 `G:\CODEX\New Manga.workspace\dev-preview\data`）
 - Window: m2rc1-desktop.exe（pid 41156 最终轮），URL http://localhost:5188/
 - 数据准备：在隔离库 `data-root/library.db` 建 2 部作品，并将其 `deleted_at` 置为非空（软删除；书架页"删除作品"按钮当前 GAP-G2 未接入，故用隔离库 SQL 软删除准备烟测数据，未触碰用户数据）。

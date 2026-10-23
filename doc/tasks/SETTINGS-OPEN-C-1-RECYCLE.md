@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-1-RECYCLE
 kind: implementation
-status: in_review
+status: done
 owner: dsh
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -55,11 +55,11 @@ allowed_paths:
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1-AC4 | `npx vitest run src/library/client.test.ts src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx` | node_modules | PASS（3 files / 42 tests，含 P2-4 malformed 用例） | ui-test-targeted.log |
-| 全量前端 | `npm --prefix apps/desktop/frontend test` | node_modules | PASS（42 files / 415 tests） | ui-test-frontend.log |
+| AC1-AC4 | `npx vitest run src/library/client.test.ts src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx` | node_modules | PASS（3 files / 43 tests，含 P2-4 malformed 用例） | ui-test-targeted.log |
+| 全量前端 | `npm --prefix apps/desktop/frontend test` | node_modules | PASS（42 files / 416 tests） | ui-test-frontend.log |
 | 类型 | `tsc --noEmit` | node_modules | PASS（exit 0；日志含命令与 exit） | ui-tsc.log |
 | Rust 桥接 | `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | Rust 1.98.1 | PASS（152 passed / 1 ignored / 12 filtered；编译含 `ResilientLibraryChannel::list_recycle_bin_books`） | wire-cargo-test-serial.log |
-| 烟测 | dev preview：设置 → 回收站 → 清空 | 构建可用 | 读取 PASS（2 部作品）+ 确认 dialog PASS（2 部/三条提示/勾选控件）；实际删除的 checkbox 点击在 UIA/SendInput 下未切换 → 删除链路由 Vitest + Rust/Core 既有测试覆盖 | gui-smoke.md + screenshots/00..02 |
+| 烟测 | dev preview：设置 → 回收站 → 清空 | 构建可用 | PASS（读取 2 部 → 确认 dialog → 整库保护原样提示 → 补活跃书后清空成功：0 部/已永久删除 2 部；隔离库仅剩 ActiveBook） | gui-smoke.md + screenshots/00..04 |
 
 ## 交付与运行记录
 
@@ -67,7 +67,7 @@ allowed_paths:
 - 2026-10-23（烟测发现的既有缺口）：production（Resilient）通道**未实现** `list_recycle_bin_books`，trait 默认返回 `unavailable` → 书架回收站与设置页读取均 `CORE_UNAVAILABLE`（R-007 读取面在生产从未可用）。修复：`ResilientLibraryChannel` 补转发 `self.with_channel(|c| c.list_recycle_bin_books())`（与 `list_books` 同型）；无新 wire。`permanently_delete_books` 转发已存在，清空路径不受影响。
 - 2026-10-23（烟测，r1）：修复后 dev preview 设置页回收站**读取到 2 部软删除作品**（此前 R-007 读取面在生产恒为 `CORE_UNAVAILABLE`，见 screenshots/00）；"清空回收站"弹出二次确认 dialog（2 部作品、三条不可逆提示、"我理解不可恢复"勾选、取消/确认，见 screenshots/01/02）。
 - 2026-10-23（烟测，r2 补充实际清空）：键盘勾选（Tab→Space）后执行：回收站=全库时 Core 返回 `BOOK_DELETE_BATCH_WHOLE_LIBRARY` 并原样提示（screenshots/03）；新增 1 部活跃作品后再次清空 → **成功**：面板显示"回收站：0 部作品"+"已永久删除 2 部作品。"，隔离库核对仅剩 `ActiveBook`、回收站行已真实删除（screenshots/04）。
-- 2026-10-23（Review r1 处置）：P1-1 已补真实 GUI 清空与 DB 核对；P1-2 Task 置 `in_review`、canonical/resource 回退 `pending`；P2-1 allowed_paths 补 `client.ts/client.test.ts` 与 Lead 集成的 doc 指针；P2-2 实现范围写清 `6d6c085..<本交付>`（前端面板在 `cb50b15`，a653 为 Rust+证据）；P2-3 前端日志重录（含命令与 exit）；P2-4 `listRecycleBinBooks` 对非数组抛 `RECYCLE_BIN_MALFORMED` + 2 个测试；P2-5 批量失败后 `await load()` 再抛，重试不会重发已删除 ID。
+- 2026-10-23（Review r1 处置）：P1-1 已补真实 GUI 清空与 DB 核对；P1-2 Task 置 `in_review`、canonical/resource 回退 `pending`；P2-1 allowed_paths 补 `client.ts/client.test.ts` 与 Lead 集成的 doc 指针；P2-2 实现范围写清 `6d6c085..984311f0`（面板 `cb50b15`、Rust+证据 `a653c823`、复审修复 `984311f0`；`66988075` 为 docs pin）；P2-3 前端日志重录（含命令与 exit）；P2-4 `listRecycleBinBooks` 对非数组抛 `RECYCLE_BIN_MALFORMED` + 2 个测试；P2-5 批量失败后 `await load()` 再抛，重试不会重发已删除 ID（新增"第一批成功、第二批失败 → 重读 → 重试仅剩余 5 个"回归测试）。
 - 环境注记：本 checkout 的 gitignored sidecar bundle 缺失；cargo test 需要 `M2RC1_DEV_PREVIEW=1` + `M2RC1_PYTHON`，并为 `tauri-build` 的 resource 探测创建了 `target/core-sidecar/core-sidecar/` 占位目录（不入库，真实 bundle 由 `packaging/m2ac5/build_sidecar.ps1` 生成）。
 - 未执行：Core 改动（无新增 wire）。
 ## Canonical Evidence
@@ -88,8 +88,8 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout：待独立 Review + GUI 烟测通过后关闭。
-- canonical_evidence_status：pending；resource_closeout_status：pending（Review 通过后 closeout）。
+- Closeout：2026-10-23 关闭（独立 Review r1 changes_requested → r2 approved，`review-r1.md`/`review-r2.md`；实现范围 `6d6c085..984311f0`，docs pin `66988075`）。
+- canonical_evidence_status：complete；resource_closeout_status：complete。
 - 删除/迁移/归档：0。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 登记本 Task。
 
