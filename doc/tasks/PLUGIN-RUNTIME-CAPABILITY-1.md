@@ -57,4 +57,3 @@ SANDBOX-2 后每个插件拥有独立 AppContainer，但 `permissions` 仍一律
 | AC4 | `test_network_capability_survives_repeated_hooks` | PASS：3 次 Hook 无错误/无泄漏 |
 | AC5 | `python -m pytest tests -q` + 前端全量 | 见 `verification/PLUGIN-RUNTIME-CAPABILITY-1/*.log` |
 | 定向 | sandbox + runtime + wire | 47 passed |
-
