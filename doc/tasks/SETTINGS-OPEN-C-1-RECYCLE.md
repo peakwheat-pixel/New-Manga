@@ -9,6 +9,7 @@ base_commit: 6d6c08541cc9d92398bcb05fc5682ef4759fc4fd
 allowed_paths:
   - apps/desktop/frontend/src/settings/**
   - apps/desktop/frontend/src/recycleBin/**（只读复用，不修改）
+  - apps/desktop/src-tauri/src/library_bridge.rs（仅补 Resilient 通道转发，见运行记录）
   - doc/tasks/**
   - doc/handoffs/**
   - verification/SETTINGS-OPEN-C-1-RECYCLE/**
@@ -50,16 +51,19 @@ allowed_paths:
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1-AC4 | `npx vitest run src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx` | node_modules | 待填 | 待填 |
-| 全量前端 | `npm --prefix apps/desktop/frontend test` | node_modules | 待填 | 待填 |
-| 类型 | `tsc --noEmit` | node_modules | 待填 | 待填 |
-| 烟测 | dev preview：设置 → 回收站 → 清空 | 构建可用 | 待填 | 待填 |
+| AC1-AC4 | `npx vitest run src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx` | node_modules | PASS（7 + 17 tests） | ui-test-targeted.log |
+| 全量前端 | `npm --prefix apps/desktop/frontend test` | node_modules | PASS（42 files / 413 tests） | ui-test-frontend.log |
+| 类型 | `tsc --noEmit` | node_modules | PASS（exit 0） | ui-tsc.log |
+| Rust 桥接 | `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | Rust 1.98.1 | PASS（152 passed / 1 ignored / 12 filtered；编译含 `ResilientLibraryChannel::list_recycle_bin_books`） | wire-cargo-test-serial.log |
+| 烟测 | dev preview：设置 → 回收站 → 清空 | 构建可用 | 读取 PASS（2 部作品）+ 确认 dialog PASS（2 部/三条提示/勾选控件）；实际删除的 checkbox 点击在 UIA/SendInput 下未切换 → 删除链路由 Vitest + Rust/Core 既有测试覆盖 | gui-smoke.md + screenshots/00..02 |
 
 ## 交付与运行记录
 
 - 2026-10-23：dsh 按设计 §2 实现面板与设置页接线；待测试与独立 Review。
-- 未执行：Core/Tauri 改动（无新增 wire）、GUI 烟测（待构建）。
-
+- 2026-10-23（烟测发现的既有缺口）：production（Resilient）通道**未实现** `list_recycle_bin_books`，trait 默认返回 `unavailable` → 书架回收站与设置页读取均 `CORE_UNAVAILABLE`（R-007 读取面在生产从未可用）。修复：`ResilientLibraryChannel` 补转发 `self.with_channel(|c| c.list_recycle_bin_books())`（与 `list_books` 同型）；无新 wire。`permanently_delete_books` 转发已存在，清空路径不受影响。
+- 2026-10-23（烟测结果）：修复后 dev preview 设置页回收站**读取到 2 部软删除作品**（此前 R-007 读取面在生产恒为 `CORE_UNAVAILABLE`，见 screenshots/00）；"清空回收站"弹出二次确认 dialog（2 部作品、三条不可逆提示、"我理解不可恢复"勾选、取消/确认，见 screenshots/01/02）。**实际勾选并执行删除未在 GUI 完成**：UIA/SendInput 点击 checkbox 未触发切换（工具限制），删除链路由 `RecycleBinSettingsPanel.test.tsx`（含 25 本分批 payload 断言、整库保护）与既有 Rust/Core 删除测试覆盖。
+- 环境注记：本 checkout 的 gitignored sidecar bundle 缺失；cargo test 需要 `M2RC1_DEV_PREVIEW=1` + `M2RC1_PYTHON`，并为 `tauri-build` 的 resource 探测创建了 `target/core-sidecar/core-sidecar/` 占位目录（不入库，真实 bundle 由 `packaging/m2ac5/build_sidecar.ps1` 生成）。
+- 未执行：Core 改动（无新增 wire）。
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |

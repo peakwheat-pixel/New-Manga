@@ -5374,6 +5374,15 @@ impl LibraryChannel for ResilientLibraryChannel {
         self.with_channel(|c| c.list_books())
     }
 
+    /// SETTINGS-OPEN-C-1-RECYCLE: forward the recycle-bin read face through
+    /// the supervisor. Without this override the trait default answers
+    /// "unavailable" and the production (Resilient) channel silently turns the
+    /// R-007 read into `CORE_UNAVAILABLE`, even though `StdioLibraryChannel`
+    /// implements the command.
+    fn list_recycle_bin_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+        self.with_channel(|c| c.list_recycle_bin_books())
+    }
+
     fn create_book(&self, title: &str) -> Result<BookSummary, LibraryError> {
         self.with_channel(|c| c.create_book(title))
     }
