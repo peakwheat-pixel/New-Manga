@@ -1,3 +1,4 @@
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)
 warning: function `track_unreaped_worker_handle` is never used
     --> src\library_bridge.rs:1738:15
      |
@@ -7,7 +8,7 @@ warning: function `track_unreaped_worker_handle` is never used
      = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
 
 warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 1 warning
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.67s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.64s
      Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
 
 running 154 tests
@@ -172,5 +173,5 @@ test tests::successful_rotation_retires_previous_key_only ... ok
 test tests::unknown_well_formed_id_typed_404 ... ok
 test tests::url_builder_is_opaque_only ... ok
 
-test result: ok. 153 passed; 0 failed; 1 ignored; 0 measured; 12 filtered out; finished in 28.91s
+test result: ok. 153 passed; 0 failed; 1 ignored; 0 measured; 12 filtered out; finished in 29.51s
 

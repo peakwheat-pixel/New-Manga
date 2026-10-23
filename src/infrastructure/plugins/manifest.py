@@ -5,6 +5,16 @@ whose ``code`` is a stable, non-sensitive identifier (the audit ledger stores
 the code + a short detail, never payloads or absolute paths outside the
 plugin root).
 
+Security boundary (review r1 P1-1, honest downgrade): a plugin is **trusted
+local code**. ``permissions: []`` means the Core grants it NO capability
+handles -- no Core objects, no database, no model or credentials, no
+configured paths, no network configuration -- and the hook subprocess runs
+with a minimal environment and ``-I``. It is NOT an OS-level sandbox: the
+plugin process still runs with the user's OS rights, so a malicious plugin can
+still open files or sockets itself. The first release therefore documents
+"trusted code + zero granted capabilities"; an OS sandbox
+(PLUGIN-RUNTIME-SANDBOX-1) is a separate, unauthorized follow-up.
+
 Frozen field set (§4.2):
 
 === ====== ==== ========================================================
@@ -52,6 +62,21 @@ WRITABLE_HOOKS: tuple[str, ...] = (
     "before_detect",
     "before_ocr",
     "before_export",
+)
+
+#: §4.2 frozen field set: any other top-level key rejects the manifest
+#: (review r1 P1-2: unknown keys were silently accepted before).
+_ALLOWED_KEYS = frozenset(
+    {
+        "id",
+        "name",
+        "version",
+        "entry",
+        "hooks",
+        "permissions",
+        "min_app_version",
+        "description",
+    }
 )
 
 _ID_PATTERN = re.compile(r"^[a-z0-9-]{3,64}$")
@@ -115,9 +140,18 @@ def parse_manifest(plugin_root: Path, *, app_version: str) -> PluginManifest:
     caller records ``load_rejected`` and keeps the plugin unloaded.
     """
 
+    if plugin_root.is_symlink():
+        raise ManifestError(
+            "PLUGIN_MANIFEST_INVALID", "plugin directory must not be a symlink"
+        )
+    root_resolved = plugin_root.resolve()
     manifest_path = plugin_root / "manifest.json"
     if not manifest_path.is_file():
         raise ManifestError("PLUGIN_MANIFEST_MISSING", "manifest.json not found")
+    if not manifest_path.resolve().is_relative_to(root_resolved):
+        raise ManifestError(
+            "PLUGIN_MANIFEST_INVALID", "manifest.json escapes the plugin directory"
+        )
     try:
         if manifest_path.stat().st_size > _MAX_MANIFEST_BYTES:
             raise ManifestError("PLUGIN_MANIFEST_INVALID", "manifest.json is too large")
@@ -128,6 +162,12 @@ def parse_manifest(plugin_root: Path, *, app_version: str) -> PluginManifest:
         raise ManifestError("PLUGIN_MANIFEST_INVALID", f"unreadable manifest: {error.strerror}") from error
     if not isinstance(raw, dict):
         raise ManifestError("PLUGIN_MANIFEST_INVALID", "manifest must be a JSON object")
+    unknown_keys = sorted(set(raw) - _ALLOWED_KEYS)
+    if unknown_keys:
+        raise ManifestError(
+            "PLUGIN_MANIFEST_INVALID",
+            f"unknown manifest keys: {', '.join(unknown_keys)}",
+        )
 
     plugin_id = _require_str(raw, "id")
     if not _ID_PATTERN.match(plugin_id):

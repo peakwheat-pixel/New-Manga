@@ -13,6 +13,16 @@ Scope of this release (user authorization 2026-10-23, decisions D1–D6):
 * only permission-free plugins (``permissions: []``) are loadable (design
   §4.3 first-release limit).
 
+Security boundary (review r1 P1-1): plugins are trusted local code. The
+``permissions: []`` first release means the Core grants the plugin process NO
+capability handles (no Core objects, database, model, credentials, configured
+paths or network configuration); the hook subprocess runs with a minimal
+environment, ``-I`` and the plugin directory as cwd. It is NOT an OS sandbox --
+the plugin still has the user's OS rights -- so a malicious plugin could open
+files or sockets itself; that boundary is documented, tested (no Core env/core
+imports leak into the child) and tracked as the separate
+PLUGIN-RUNTIME-SANDBOX-1 follow-up.
+
 The service never writes plugin files, never imports plugin code into the
 Core process, and never stores payload bytes in the audit ledger.
 """
@@ -40,10 +50,12 @@ from infrastructure.plugins.manifest import (
 #: skipped hook, never a Core failure.
 HOOK_TIMEOUT_SECONDS = 10
 
-#: The audit ledger's dedup window: the list endpoint re-discovers plugins on
-#: every read, so identical reject/load events within this window are not
-#: written twice (they are still visible as one row).
-_EVENT_DEDUP_SECONDS = 60
+#: D3: the versioned schema marker injected into every hook payload.
+HOOK_SCHEMA_REF = "nm-plugin-hook/1"
+
+#: The hook subprocess may not emit more than this much stdout (a runaway
+#: plugin must not exhaust Core memory; the hook is then skipped + audited).
+_MAX_HOOK_OUTPUT_BYTES = 256 * 1024
 
 _GLOBAL_PLUGIN_ID = "__global__"
 _MAX_AUDIT_LIMIT = 500
@@ -142,7 +154,9 @@ class PluginService:
             )
         return {
             "global_enabled": global_enabled,
-            "plugin_root": str(self._plugin_root),
+            # The plugin root is never projected over IPC (review r1 P2: an
+            # absolute OS path does not belong in a settings projection); the
+            # opener resolves the same directory Rust-side.
             "plugins": plugins,
         }
 
@@ -224,6 +238,7 @@ class PluginService:
                 "overrides": [],
                 "errors": [],
             }
+        payload = {**payload, "schema_ref": HOOK_SCHEMA_REF}
 
         results: list[dict] = []
         overrides: list[dict] = []
@@ -307,6 +322,10 @@ class PluginService:
             raise PluginError(
                 "PLUGIN_HOOK_FAILED", f"{hook_name} exited with {completed.returncode}"
             )
+        if len(completed.stdout or "") > _MAX_HOOK_OUTPUT_BYTES:
+            raise PluginError(
+                "PLUGIN_HOOK_FAILED", f"{hook_name} produced too much output"
+            )
         try:
             response = json.loads(completed.stdout or "{}")
         except json.JSONDecodeError as error:
@@ -323,34 +342,80 @@ class PluginService:
         discoveries: list[dict] = []
         if not self._plugin_root.is_dir():
             return discoveries
+        state = self._state_full() if record_events else {}
         for candidate in sorted(self._plugin_root.iterdir(), key=lambda path: path.name):
             if not candidate.is_dir() or candidate.name.startswith("."):
                 continue
             try:
                 manifest = parse_manifest(candidate, app_version=self._app_version)
             except ManifestError as error:
+                reason = f"{error.code}: {error.detail}"
                 discoveries.append(
-                    {
-                        "plugin_id": candidate.name,
-                        "manifest": None,
-                        "reason": f"{error.code}: {error.detail}",
-                    }
+                    {"plugin_id": candidate.name, "manifest": None, "reason": reason}
                 )
                 if record_events:
-                    self._record_event(
-                        candidate.name,
-                        "load_rejected",
-                        detail={"code": error.code, "detail": error.detail[:200]},
-                    )
+                    previous = state.get(candidate.name)
+                    if previous is None or previous["last_error"] != reason:
+                        self._record_event(
+                            candidate.name,
+                            "load_rejected",
+                            detail={"code": error.code, "detail": error.detail[:200]},
+                        )
+                        self._upsert_discovery_state(
+                            candidate.name,
+                            manifest_json=previous["manifest_json"] if previous else None,
+                            last_error=reason,
+                        )
                 continue
             discoveries.append({"plugin_id": manifest.plugin_id, "manifest": manifest, "reason": None})
             if record_events:
-                self._record_event(
-                    manifest.plugin_id,
-                    "load_ok",
-                    detail={"version": manifest.version, "hooks": list(manifest.hooks)},
-                )
+                fingerprint = self._manifest_fingerprint(manifest)
+                previous = state.get(manifest.plugin_id)
+                if (
+                    previous is None
+                    or previous["manifest_json"] != fingerprint
+                    or previous["last_error"]
+                ):
+                    self._record_event(
+                        manifest.plugin_id,
+                        "load_ok",
+                        detail={"version": manifest.version, "hooks": list(manifest.hooks)},
+                    )
+                    self._upsert_discovery_state(
+                        manifest.plugin_id, manifest_json=fingerprint, last_error=None
+                    )
         return discoveries
+
+    @staticmethod
+    def _manifest_fingerprint(manifest: PluginManifest) -> str:
+        return json.dumps(
+            {
+                "id": manifest.plugin_id,
+                "name": manifest.name,
+                "version": manifest.version,
+                "hooks": list(manifest.hooks),
+                "permissions": list(manifest.permissions),
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+
+    def _upsert_discovery_state(
+        self, plugin_id: str, *, manifest_json: str | None, last_error: str | None
+    ) -> None:
+        """Discovery metadata only -- the enabled flag is preserved."""
+        now = _now()
+        with self._conn:
+            self._conn.execute(
+                "INSERT INTO plugin_state"
+                " (plugin_id, enabled, manifest_json, installed_at, updated_at, last_error)"
+                " VALUES (?, 0, ?, ?, ?, ?)"
+                " ON CONFLICT(plugin_id) DO UPDATE SET"
+                " manifest_json = COALESCE(excluded.manifest_json, plugin_state.manifest_json),"
+                " last_error = excluded.last_error,"
+                " updated_at = excluded.updated_at",
+                (plugin_id, manifest_json, now, now, last_error),
+            )
 
     def _global_enabled(self) -> bool:
         return bool(self._state_rows().get(_GLOBAL_PLUGIN_ID, 0))
@@ -360,6 +425,19 @@ class PluginService:
             "SELECT plugin_id, enabled FROM plugin_state"
         ).fetchall()
         return {row["plugin_id"]: int(row["enabled"]) for row in rows}
+
+    def _state_full(self) -> dict[str, dict]:
+        rows = self._conn.execute(
+            "SELECT plugin_id, enabled, manifest_json, last_error FROM plugin_state"
+        ).fetchall()
+        return {
+            row["plugin_id"]: {
+                "enabled": int(row["enabled"]),
+                "manifest_json": row["manifest_json"],
+                "last_error": row["last_error"],
+            }
+            for row in rows
+        }
 
     def _write_state(
         self, plugin_id: str, enabled: bool, *, manifest: PluginManifest | None
@@ -399,22 +477,10 @@ class PluginService:
         hook_name: str | None = None,
         detail: dict | None = None,
     ) -> None:
+        """Append one audit row. Strictly append-only: no time-window dedup
+        (discovery load events are already state-driven by ``_discover``)."""
         detail_json = json.dumps(detail or {}, ensure_ascii=False, sort_keys=True)
         now = _now()
-        cutoff = (
-            datetime.now(timezone.utc) - timedelta(seconds=_EVENT_DEDUP_SECONDS)
-        ).isoformat(timespec="seconds")
-        try:
-            recent = self._conn.execute(
-                "SELECT detail_json FROM plugin_events"
-                " WHERE plugin_id = ? AND event_type = ? AND IFNULL(hook_name, '') = IFNULL(?, '')"
-                " AND occurred_at >= ? ORDER BY occurred_at DESC LIMIT 1",
-                (plugin_id, event_type, hook_name, cutoff),
-            ).fetchone()
-        except Exception:  # noqa: BLE001 - ledger must never break a hook
-            recent = None
-        if recent is not None and recent["detail_json"] == detail_json:
-            return
         try:
             with self._conn:
                 self._conn.execute(

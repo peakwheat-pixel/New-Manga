@@ -118,6 +118,7 @@ def test_valid_manifest_parses_and_round_trips_frozen_fields(tmp_path: Path) -> 
         ("acme-escape-entry", {"entry": "../escape.py"}, (), "PLUGIN_ENTRY_INVALID"),
         ("acme-bad-version", {"version": "1.0"}, (), "PLUGIN_MANIFEST_INVALID"),
         ("acme-long-name", {"name": "x" * 81}, (), "PLUGIN_MANIFEST_INVALID"),
+        ("acme-unknown-key", {"evil_unknown": True}, (), "PLUGIN_MANIFEST_INVALID"),
         ("acme-min-app", {"min_app_version": "9.9.9"}, (), "PLUGIN_MIN_APP_VERSION"),
     ],
 )
@@ -143,6 +144,7 @@ def test_discovery_lists_plugins_and_junk_is_rejected(runtime) -> None:
 
     snapshot = runtime["service"].list_plugins()
     assert snapshot["global_enabled"] is False
+    assert "plugin_root" not in snapshot
     statuses = {item["plugin_id"]: item["status"] for item in snapshot["plugins"]}
     assert statuses == {"acme-detect": "disabled", "acme-broken": "disabled", "acme-bad-json": "rejected"}
     rejected = [item for item in snapshot["plugins"] if item["plugin_id"] == "acme-bad-json"][0]
@@ -172,7 +174,10 @@ def test_global_switch_defaults_off_and_gates_every_hook(runtime) -> None:
     applied = service.run_hook("after_detect", {"pages": ["p1"]})
     assert applied["applied"] is True
     assert applied["results"][0]["plugin_id"] == "acme-detect"
-    assert applied["results"][0]["result"] == {"seen": {"pages": ["p1"]}}
+    seen = applied["results"][0]["result"]["seen"]
+    assert seen["pages"] == ["p1"]
+    # D3: every hook payload carries the versioned schema marker.
+    assert seen["schema_ref"] == "nm-plugin-hook/1"
 
 
 def test_rejected_plugin_cannot_be_enabled_and_unknown_id_is_not_found(runtime) -> None:
@@ -237,3 +242,86 @@ def test_audit_list_is_newest_first_and_validates_limit(runtime) -> None:
     with pytest.raises(PluginError) as bad_limit:
         service.audit_list(0)
     assert bad_limit.value.code == "PLUGIN_INVALID_REQUEST"
+
+# ---------------------------------------------------------------------------
+# review r1 security boundary (trusted code) and v6 schema
+# ---------------------------------------------------------------------------
+def test_v6_tables_start_empty_and_are_indexed(runtime) -> None:
+    conn = runtime["conn"]
+    assert conn.execute("SELECT COUNT(*) FROM plugin_state").fetchone()[0] == 0
+    assert conn.execute("SELECT COUNT(*) FROM plugin_events").fetchone()[0] == 0
+    indexes = {
+        row["name"]
+        for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'plugin_events'"
+        )
+    }
+    assert "idx_plugin_events_plugin" in indexes
+    assert "idx_plugin_events_type" in indexes
+
+
+def test_hook_subprocess_gets_no_core_environment_or_path(runtime, monkeypatch) -> None:
+    root = runtime["root"]
+    service = runtime["service"]
+    monkeypatch.setenv("NEWMANGA_DATA_ROOT", "G:/secret/data-root")
+    monkeypatch.setenv("M2RC1_PYTHON", "G:/secret/python.exe")
+    probe = (
+        "import os, sys\n"
+        "def after_detect(payload):\n"
+        "    return {'env': sorted(os.environ), 'sys_path': sys.path}\n"
+    )
+    write_plugin(root, "acme-env", entry_source=probe)
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-env", True)
+    outcome = service.run_hook("after_detect", {"pages": []})
+    assert outcome["applied"] is True
+    env = outcome["results"][0]["result"]["env"]
+    # Trusted-code boundary: no Core configuration leaks into the child.
+    assert "NEWMANGA_DATA_ROOT" not in env
+    assert "M2RC1_PYTHON" not in env
+    assert "PYTHONPATH" not in env
+    # -I keeps the child off sys.path entries that would expose Core modules.
+    for entry in outcome["results"][0]["result"]["sys_path"]:
+        assert "New Manga" not in entry
+
+
+def test_hook_subprocess_cannot_import_core_modules(runtime) -> None:
+    root = runtime["root"]
+    service = runtime["service"]
+    entry = (
+        "def after_detect(payload):\n"
+        "    import infrastructure.sqlite.nmbak\n"
+        "    return {'leaked': True}\n"
+    )
+    write_plugin(root, "acme-import", entry_source=entry)
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-import", True)
+    outcome = service.run_hook("after_detect", {"pages": []})
+    assert outcome["applied"] is False
+    assert outcome["errors"][0]["code"] == "PLUGIN_HOOK_FAILED"
+
+
+def test_hook_output_is_capped(runtime) -> None:
+    root = runtime["root"]
+    service = runtime["service"]
+    entry = (
+        "def after_detect(payload):\n"
+        "    return {'blob': 'x' * 300000}\n"
+    )
+    write_plugin(root, "acme-loud", entry_source=entry)
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-loud", True)
+    outcome = service.run_hook("after_detect", {"pages": []})
+    assert outcome["applied"] is False
+    assert outcome["errors"][0]["code"] == "PLUGIN_HOOK_FAILED"
+
+
+def test_discovery_audit_is_state_driven_not_repeated(runtime) -> None:
+    root = runtime["root"]
+    service = runtime["service"]
+    write_plugin(root, "acme-detect")
+    service.list_plugins()
+    service.list_plugins()
+    events = service.audit_list(50)
+    load_events = [event for event in events if event["event_type"] == "load_ok"]
+    assert len(load_events) == 1

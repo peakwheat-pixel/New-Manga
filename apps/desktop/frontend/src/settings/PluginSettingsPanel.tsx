@@ -222,7 +222,7 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
         </h2>
         <p data-testid="plugin-settings-description" style={{ margin: 0, ...secondaryTextStyle }}>
           本地目录插件（manifest v1）：默认全部禁用；首发只加载无权限插件（permissions: []）。
-          每个 Hook 在独立子进程中运行（超时或崩溃只跳过该次调用并记录审计，主流程继续）。
+          每个 Hook 在独立受信任子进程中运行（超时或崩溃只跳过该次调用并记录审计，主流程继续）。
         </p>
       </header>
 
@@ -411,8 +411,9 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
 
       <div data-testid="plugin-settings-policy-note" style={cardStyle}>
         <p style={{ margin: 0, ...secondaryTextStyle }}>
-          只读说明：首发只支持 permissions: [] 的插件（无文件/网络/模型访问）；带权限的插件会被拒绝加载。
-          插件目录对插件自身只读，应用只读扫描；启用状态与审计存放在本机数据库。
+          安全说明：插件是「受信任的本地代码」。permissions: [] 表示 Core 不向插件授予任何能力句柄
+          （不传数据库/模型/凭据/配置路径/网络配置，子进程环境最小化并用 -I 隔离）；本版本不做操作系统级沙箱，
+          插件进程仍以当前用户权限运行——请只安装你信任的插件。带权限声明的插件一律拒绝加载；启用状态与审计存放在本机数据库。
         </p>
       </div>
     </section>

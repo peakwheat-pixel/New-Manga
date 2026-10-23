@@ -810,11 +810,21 @@ fn plugins_audit_list(
 /// never a Core command: the Core only reads that directory.
 #[tauri::command]
 fn plugins_open_directory(app: tauri::AppHandle) -> Result<(), String> {
-    let app_data = app
-        .path()
-        .app_data_dir()
-        .map_err(|_| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())?;
-    let plugin_dir = app_data.join("plugins");
+    // review r1 P2: resolve the SAME data root the Core resolved. The sidecar
+    // honours NEWMANGA_DATA_ROOT first (dev preview), then falls back to
+    // %LOCALAPPDATA%/New Manga; Tauri's app_data_dir is a different directory,
+    // so the opener must not guess it.
+    let plugin_dir = match std::env::var("NEWMANGA_DATA_ROOT") {
+        Ok(root) if !root.trim().is_empty() => std::path::PathBuf::from(root).join("plugins"),
+        _ => {
+            let local_app_data = std::env::var("LOCALAPPDATA")
+                .map_err(|_| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())?;
+            std::path::PathBuf::from(local_app_data)
+                .join("New Manga")
+                .join("plugins")
+        }
+    };
+    let _ = &app;
     std::fs::create_dir_all(&plugin_dir).map_err(|_| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())?;
     app.opener()
         .open_path(

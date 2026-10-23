@@ -96,7 +96,8 @@ def test_list_plugins_reports_default_off_global_and_discovered_plugins(core) ->
     assert response["error"] is None
     result = response["result"]
     assert result["global_enabled"] is False
-    assert result["plugin_root"].endswith("plugins")
+    # No absolute OS path is projected over IPC (review r1 P2).
+    assert "plugin_root" not in result
     by_id = {item["plugin_id"]: item for item in result["plugins"]}
     assert by_id["acme-detect"]["status"] == "disabled"
     assert by_id["acme-detect"]["hooks"] == ["after_detect"]

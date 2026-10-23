@@ -26,6 +26,11 @@
 - **Hook 实际调用/崩溃/超时** 由单测覆盖（真实子进程）：`tests/infrastructure/test_plugin_runtime.py`（after_detect 结果、crash → `plugin_error`、slow → `PLUGIN_HOOK_TIMEOUT`、未知 hook/坏 payload、rejected 插件不可启用）。
 - 流水线接线点（before/after detect/ocr/export 在真实 Run 中触发）不在本 Task：运行时 API `run_hook` 已就绪并有测试；接线属于后续批次（Task 未授权扩大范围）。
 
+## AC6 拆分（review r1）
+
+- **AC6a（API/隔离，已覆盖）**：Hook 结果/超时/崩溃/环境隔离/输出上限由 `tests/infrastructure/test_plugin_runtime.py` 的真实子进程测试覆盖。
+- **AC6b（GUI 触发 Hook，NOT_RUN）**：本 GUI 烟测未触发真实 Hook（流水线接线属 PLUGIN-RUNTIME-2），仅验证管理面（发现/拒绝/开关/审计）。
+
 ## 限制与备注
 
 - 窗口焦点：UIA Invoke/TogglePattern 全程驱动（无 SendInput 点击），未出现焦点丢失。
