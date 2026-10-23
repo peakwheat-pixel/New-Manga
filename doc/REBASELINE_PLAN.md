@@ -27,10 +27,11 @@
 |SETTINGS-OPEN-B-1|SETTINGS-OPEN-A-1|done（批次 B-1：模型/GPU + 任务/并发；review r1/r2/r3 与 follow-up approved，集成 b521ad27）|
 |SETTINGS-OPEN-B-2|SETTINGS-OPEN-B-1|done（批次 B-2：缓存/Revision 清理操作面；review approved，集成 0e2e623；GUI 烟测 PASS）|
 |SETTINGS-OPEN-C-1-DESIGN|SETTINGS-OPEN-B-2|done（批次 C 契约设计：三节冻结 + 决策清单 D1–D11；用户裁决全部接受推荐值）|
-|SETTINGS-OPEN-C-1-RECYCLE|SETTINGS-OPEN-C-1-DESIGN|in_progress（设置页回收站查看+清空；复用既有 wire；待独立 Review + GUI 烟测）|
+|SETTINGS-OPEN-C-1-RECYCLE|SETTINGS-OPEN-C-1-DESIGN|done（回收站查看+清空；实现 `6d6c085..893c00fc`；独立 Review r1 changes_requested → r2 approved）|
+|SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|ready（备份/恢复操作面；设计 §3 + 裁决 D3–D6 冻结；待启动）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**无**（`SETTINGS-OPEN-C-1-RECYCLE` 执行中）。批次 A/B-1/B-2 已关闭；批次 C 设计已裁决（D1–D11 接受推荐值），C-1 实现中，C-2/C-3 按分期顺序释放（不得在无消费点的情况下开放写控件）。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+READY 节点：**SETTINGS-OPEN-C-2-BACKUP**（备份/恢复；设计 §3 + D3–D6 已裁决；C-1 已关闭）。C-1 已关闭；C-3（Plugin）待 C-2 关闭后释放（不得在无消费点的情况下开放写控件）。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 
