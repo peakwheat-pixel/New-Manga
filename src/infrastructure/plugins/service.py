@@ -118,12 +118,17 @@ class PluginService:
         app_version: str,
         hook_timeout_seconds: int = HOOK_TIMEOUT_SECONDS,
         sandbox: AppContainerSandbox | None = None,
+        allow_unsandboxed: bool = True,
     ) -> None:
         self._conn = conn
         self._plugin_root = Path(plugin_root)
         self._app_version = app_version
         self._hook_timeout_seconds = hook_timeout_seconds
         self._sandbox = sandbox
+        # Production passes allow_unsandboxed=False: a future entry point that
+        # forgets the sandbox argument then fails closed instead of silently
+        # running plugins with the user's OS rights.
+        self._allow_unsandboxed = allow_unsandboxed
 
     # ------------------------------------------------------------------
     # discovery / listing
@@ -374,6 +379,10 @@ class PluginService:
             env["PATH"] = os.environ["PATH"]
         interpreter = _hook_interpreter()
         payload_bytes = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        if self._sandbox is None and not self._allow_unsandboxed:
+            raise PluginError(
+                "PLUGIN_HOOK_UNAVAILABLE", "sandbox is required for this hook"
+            )
         if self._sandbox is not None:
             return self._invoke_sandboxed(
                 manifest, hook_name, payload_bytes, runner, interpreter

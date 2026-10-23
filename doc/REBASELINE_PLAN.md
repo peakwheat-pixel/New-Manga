@@ -32,12 +32,12 @@
 |SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|done（Plugin/Hooks 只读面；Review r2 approved `85128cd2`）|
 |PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|done（本地插件运行时；用户 2026-10-23 授权 D1–D6；Review approved 2026-10-23，`992225d5`）|
 |PLUGIN-RUNTIME-2|PLUGIN-RUNTIME-1|done（r3 approved 2ea97edd6；集成 eb5e821f3；111 passed；资源原位保留）|
-|PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|in_review（OS 级插件沙箱；用户 2026-10-23 选择候选 1 授权）|
+|PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级插件沙箱；用户 2026-10-23 选择候选 1；Review r2 approved `41d7abeb`）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
 READY 节点：无。
 
-当前实施中的 Task：**PLUGIN-RUNTIME-SANDBOX-1**（用户 2026-10-23 选择候选 1 授权）。
+当前实施中的 Task：无（PLUGIN-RUNTIME-SANDBOX-1 已关闭）。
 
 待授权候选（未释放）：插件 OS 级沙箱（PLUGIN-RUNTIME-SANDBOX-1）。C-1/C-2/C-3 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 

@@ -4,7 +4,7 @@ author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: 1a17decf1
 delivery_head: 84a6378899f415a7847c80c354ea56099901be0f
-status: in_review
+status: done
 authorization: 用户 2026-10-23「1」（选择候选 1 = 本 Task）
 ---
 
@@ -48,8 +48,14 @@ authorization: 用户 2026-10-23「1」（选择候选 1 = 本 Task）
 
 ## 5. Review r1 处置（changes_requested）
 
-- **P1-1 生产装配**：`core_assembly.py:1212` 现在真正构造 `AppContainerSandbox(interpreter=resolve_hook_interpreter(), anchors=(data_root, data_root.parent))` 并注入 `PluginService(sandbox=...)`；`test_production_assembly_wires_the_sandbox` 走真实 `assemble_core_services` 验证。
+- **P1-1 生产装配**：`core_assembly.py:1212` 现在真正构造 `AppContainerSandbox(anchors=(data_root, data_root.parent))` 并注入 `PluginService(sandbox=..., allow_unsandboxed=False)`；解释器由 service 在每次 hook 时惰性解析并传给沙箱（frozen sidecar 无 python 时在 hook 处 fail-closed）；`test_production_assembly_wires_the_sandbox` 走真实 `assemble_core_services` 验证。
 - **P1-2 最小 env**：`CreateProcessW` 改为传 UTF-16 环境块（`CREATE_UNICODE_ENVIRONMENT`），白名单仅 `PYTHONIOENCODING/PYTHONDONTWRITEBYTECODE/SYSTEMROOT/SYSTEMDRIVE/LOCALAPPDATA`（实测 LOCALAPPDATA 是 AppContainer 启动必需，其余用户/测试/代理/凭据变量全部丢弃）；`test_hook_child_sees_only_the_minimal_environment` 断言无 `DSH_/M2RC1_/NEWMANGA_/代理/API key`。
 - **P1-3 诚实性**：UI 文案改为「容器只被授予只读访问本插件目录与 Python 运行时（解释器/DLLs/Lib 与 runner 为只读例外）；插件共用同一容器（v1）；环境最小化；fail-closed」。
 - **P2**：`allowed_paths` 补 `src/bootstrap/core_assembly.py`；Task canonical 证据补生产装配/环境/Job 树杀/前端行；两个 Closeout 标题合并；`_traversal_chain`/anchors 改 `(X)`（traverse-only）；`AssignProcessToJobObject` 失败抛 `SandboxError`；沙箱用 `_hook_interpreter()` 解析的解释器（ACL 一致）；`CREATE_SUSPENDED` + 先入 Job 再 `ResumeThread`（消除孙进程竞态）；job 句柄禁止继承（`KILL_ON_JOB_CLOSE` 生效）。
 - **验证（r1 修复后）**：定向 **49 passed**；全量见 `core-pytest.log`；前端 vitest 8 passed（panel）；tsc 0。
+
+## 6. Closeout（2026-10-23）
+
+- 独立 Review：**approved**（`verification/PLUGIN-RUNTIME-SANDBOX-1/review-r2.md`，审查头 `41d7abeb`；r1 changes_requested 已全部修复）。
+- 生产装配：`core_assembly` 注入 `AppContainerSandbox` + `allow_unsandboxed=False`；`_invoke_sandboxed` fail-closed。
+- 已知边界与后续：GUI 端到端沙箱冒烟、per-plugin profile（跨插件隔离）、capability 接线（带权限插件）、frozen 解释器捆绑。

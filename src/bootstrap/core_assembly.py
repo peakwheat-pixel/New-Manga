@@ -1217,6 +1217,7 @@ def assemble_core_services(
             sandbox=AppContainerSandbox(
                 anchors=(str(plugin_data_root), str(plugin_data_root.parent)),
             ),
+            allow_unsandboxed=False,
         )
         handlers = build_production_handlers(
             plugins=plugins,

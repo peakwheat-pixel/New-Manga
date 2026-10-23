@@ -1,7 +1,7 @@
 ---
 task_id: PLUGIN-RUNTIME-SANDBOX-1
 kind: implementation
-status: in_review
+status: done
 owner: dsh（本会话 Lead 兼任 Owner）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -13,6 +13,7 @@ allowed_paths:
   - src/bootstrap/core_assembly.py（生产装配注入；Lead 授权的唯一共享文件）
   - tests/**
   - doc/tasks/PLUGIN-RUNTIME-SANDBOX-1.md
+  - doc/STATUS.md、doc/REBASELINE_PLAN.md、doc/TASK_LEDGER.md（Lead 集成登记）
   - doc/handoffs/**
   - verification/PLUGIN-RUNTIME-SANDBOX-1/**
 ---
@@ -64,7 +65,7 @@ PLUGIN-RUNTIME-1 review r1 P1-1 指出：`permissions: []` 目前只保证「Cor
 | AC4 | 同上（`test_sandbox_kills_a_hanging_hook_within_the_timeout`） | PASS：1s 超时 kill 进程树，主链路不阻塞 |
 | AC5 | 同上（`test_sandbox_failure_is_fail_closed_and_audited`） | PASS：`PLUGIN_HOOK_UNAVAILABLE` + `plugin_error`；正常路径 `hook_invoked` |
 | AC6 | `npx vitest run src/settings/PluginSettingsPanel.test.tsx` | PASS：policy note 断言 AppContainer/fail-closed/permissions: [] |
-| 生产装配 | `tests/core/test_core_assembly.py` + `test_production_assembly_wires_the_sandbox` | PASS：真实 `assemble_core_services` 构造的 PluginService 带 sandbox，注入插件 hook 成功执行 |
+| 生产装配 | `tests/infrastructure/test_plugin_sandbox.py::test_production_assembly_wires_the_sandbox` | PASS：真实 `assemble_core_services` 构造的 PluginService 带 sandbox，注入插件 hook 成功执行 |
 | 环境最小化 | `test_hook_child_sees_only_the_minimal_environment` | PASS：无 DSH_/M2RC1_/NEWMANGA_/代理/凭据；含 Python 标记 |
 | Job 树杀 | `test_sandbox_job_kills_grandchildren` | PASS：插件 spawn 的孙进程在 run 返回后被杀 |
 | 全量 | `python -m pytest tests -q` | 结果见 `core-pytest.log`（含 3 个既有环境失败） |
