@@ -11,9 +11,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | non-terminal | 2 |
 | non-terminal named in the plan | 2 |
 | non-terminal outside the plan | 0 |
-| task files tracked by git | 346 |
-| task files untracked (drafts) | 1 |
-| non-terminal tracked by git | 1 |
+| task files tracked by git | 347 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 2 |
 
 ## By status
 
@@ -24,15 +24,15 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
+| `in_progress` | 1 | no |
 | `in_review` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
+| `SETTINGS-OPEN-C-2-BACKUP` | `in_progress` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
-| `SETTINGS-OPEN-C-2-BACKUP` | `ready` | own row |
 
 ## What this ledger does not say
 
