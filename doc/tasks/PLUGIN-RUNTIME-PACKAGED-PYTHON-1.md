@@ -1,7 +1,7 @@
 ---
 task_id: PLUGIN-RUNTIME-PACKAGED-PYTHON-1
 kind: implementation
-status: in_review
+status: done
 owner: dsh（本会话 Lead 兼任 Owner）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
