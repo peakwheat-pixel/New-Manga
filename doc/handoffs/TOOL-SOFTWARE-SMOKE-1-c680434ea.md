@@ -4,7 +4,7 @@ author: dsh（Lead / 实现者）
 recipient: Codex / 独立 Reviewer
 base_commit: 6e3ce06f96bb48bc7a8de0a114c8391a9bc82014
 delivery_head: c680434eab1ff6abcc4bc204e844ecba0c41979a
-status: draft
+status: final
 ---
 
 # Handoff：TOOL-SOFTWARE-SMOKE-1
@@ -22,6 +22,8 @@ status: draft
 | `963ff5e6f` | 工具本体 `tools/smoke/**` + 定向测试 `tests/tools/**`（初始实现） |
 | `c680434ea` | P2 修复：repack 临时目录清理、JSON 写失败/全层跳过退出码、bundle Hook 实际解释器断言、生产 `allow_unsandboxed=False` 断言、层失败分支测试（**delivery head**） |
 | `7b2abfa00` | 修复后 canonical 证据（两次全量运行、`--repack`、定向/全量 pytest `-rs`、基线对比、review-r1 历史） |
+| `6df1fc355` | Task/Handoff 与证据 pin 更新、`governance-check.log` 入库 |
+| `53574181f` | 独立 Review r2（approved，绑定 `c680434ea`） |
 
 **新增入口：**
 
@@ -47,11 +49,11 @@ python -m tools.smoke.plugins --only packaged --repack   # 可选：复用 verif
 | AC3 Wire | 全量运行中的 `wire` 层（6 项） | 真实 `python -m bootstrap.core_service` 子进程 | PASS：0.5s；`core.ping`/`plugins.*`/typed errors/`core.shutdown` | `smoke-report.json` |
 | AC4 前端 | 全量运行中的 `frontend` 层 | 真实 `node_modules` | PASS：7.5s（tsc 2.8s + Vitest 4.6s / 45 files / 435 tests） | `smoke-report.json` |
 | AC5 打包 | `packaged` 层 + `--only packaged --repack` | 真实 `core-sidecar` bundle | PASS：0.5s / 7.4s；bundle 解释器存在、最小 PATH 启动、frozen 解析、AppContainer Hook 实际解释器断言、`verify_bundled_python.ps1` OK、repack 临时插件目录清理 1 个 | `repack-report.json`、`repack-run.log` |
-| AC6 幂等 | 连续两次全量运行 | 同上 | PASS / PASS（24.0s / 23.6s）；运行后无临时目录；`git status --porcelain --untracked-files=no` 为空 | `run-1.log`、`run-2.log` |
+| AC6 幂等 | 连续两次全量运行 | 同上 | PASS / PASS（24.0s / 23.5s）；运行后无临时目录；`git status --porcelain --untracked-files=no` 为空 | `run-1.log`、`run-2.log` |
 | AC6 定向 | `python -m pytest tests/tools -q` | Python 3.14.6 | PASS：15 passed | `pytest-tools.log` |
 | AC6 回归 | `python -m pytest tests -q -rs` | Python 3.14.6 | **2687 passed, 9 skipped, 3 failed**：`transformers` 4.48.3 缺 `RTDetrV2ForObjectDetection` ×2；历史 PySide6 viewmodel 测试超时 ×1；9 skip：docTR ×2、openssl unavailable ×6、registry-readiness 既有 guard ×1。`git diff --stat 6e3ce06f9..HEAD -- src/apps/tests` 证明 `src/**`、`apps/**` 与既有 tests 未改，仅新增 `tests/tools/`；逐例复现见证据 | `pytest-full.log`、`baseline-check.log` |
 | AC6 治理 | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库根，`in_review` 状态 | PASS（证据见 `governance-check.log`） | `governance-check.log` |
-| AC6 独立 Review | 非实现者复审 `base_commit..delivery_head` + 文档 | `reviewer-tool-smoke` | r1：旧 head `963ff5e6f` `approved` + 6 项 P2（历史）；r2：新 head `c680434ea` 待执行 | `review-r1.md`、`review-r2.md`（待提交） |
+| AC6 独立 Review | 非实现者复审 `base_commit..delivery_head` + 文档 | `reviewer-tool-smoke` | r1：旧 head `963ff5e6f` `approved` + 6 项 P2（历史）；r2：新 head `c680434ea` `approved`（R-007/R-008 已在 closeout 处置） | `review-r1.md`、`review-r2.md` |
 
 **未跑 / 非目标：** GUI 点击/拖拽、截图、NSIS/Tauri 安装包端到端、检测模型推理质量、真实用户数据根。
 **全量 pytest 的 3 个失败不是本 Task 引入**：失败位于既有 provider 环境依赖与历史 PySide6 测试；本 Task 未修改
@@ -102,9 +104,11 @@ pwsh -NoProfile -File tools/governance/check.ps1
 | R-004 退出码边缘 | **fixed** | JSON 写入 `OSError` → exit 2；全部层显式跳过 → exit 2（不再冒充 PASS）；无效果的 `--verbose` 已移除 |
 | R-005 弱断言 | **partial / deferred** | bundle Hook 夹具返回 `sys.executable` 并断言等于 bundle 解释器；`CORE-PRODUCTION-WIRING` 断言 `_allow_unsandboxed is False`。`CORE-NET-ALLOW` 维持 Task R2 的「非 PermissionError」语义、前端测试数下限未加，作为后续工具增强 |
 | R-006 定向测试覆盖 | **fixed** | `tests/tools` 15 passed，新增各层 setup 失败 BLOCKED、JSON 写失败、全层 skip 等分支 |
+| R-007 governance log 未登记 | **fixed** | `governance-check.log` 已登记为 `EV-GOVERNANCE-CHECK`（commit `6df1fc355`，sha256 `76804a4d…`）；evidence_dir 11 文件 / 11 条 pin |
+| R-008 幂等耗时 0.1s 口径 | **fixed** | Task/Handoff 的 run-2 耗时由 23.6s 改为 canonical `run-2.log` 的 23.5s |
 
-**Review 历史：** r1 绑定旧 head `963ff5e6f`，`approved` + 6 项 P2；本处置提交 `c680434ea` 后旧批准自动失效，
-r2 将绑定新 head 复审（`review-r2.md`）。
+**Review 历史：** r1 绑定旧 head `963ff5e6f`，`approved` + 6 项 P2；处置提交 `c680434ea` 后旧批准自动失效；
+r2 绑定新 head `c680434ea`，`approved`（`review-r2.md`，提交 `53574181f`）；R-007/R-008 已在 closeout 处置。
 
 ## 风险与遗留
 

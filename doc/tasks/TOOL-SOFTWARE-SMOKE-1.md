@@ -3,7 +3,7 @@ id: TOOL-SOFTWARE-SMOKE-1
 title: 分层软件检查工具（替代手工 GUI 冒烟）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 language: zh-CN
 suggested_owner: dsh
 owner: dsh（本会话 Lead）
@@ -12,10 +12,10 @@ depends_on: [PLUGIN-RUNTIME-PACKAGED-PYTHON-1]
 base_commit: 6e3ce06f96bb48bc7a8de0a114c8391a9bc82014
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: c680434eab1ff6abcc4bc204e844ecba0c41979a
 delivery_head: c680434eab1ff6abcc4bc204e844ecba0c41979a
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/TOOL-SOFTWARE-SMOKE-1
 allowed_paths:
   - tools/smoke/**
@@ -57,7 +57,7 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 - [x] **AC3 Wire 层**：启动真实 `python -m bootstrap.core_service` 子进程，按 Tauri/前端实际消费的 JSON-lines 信封调用 `core.ping`、`plugins.list`、`plugins.set_enabled`、`plugins.set_plugin_enabled`、`plugins.audit_list`，断言默认关闭、状态往返、拒绝/未知/畸形请求的 typed 错误码、审计字段与 `core.shutdown` 正常退出；该层不依赖 DOM/视觉，供后续 UI/UX 改动守住后端契约。 <<MET>>
 - [x] **AC4 前端层**：对 `apps/desktop/frontend` 执行 `tsc --noEmit` 与全量 Vitest（435 tests），断言全部通过；UI/UX 改动后仍由现有测试与类型检查兜底，无需启动 GUI 或占用鼠标。npm/node_modules 缺失时记 BLOCKED（不得写成 PASS），可用 `--skip frontend` 显式跳过。 <<MET>>
 - [x] **AC5 打包层**：断言真实 `apps/desktop/src-tauri/target/core-sidecar/core-sidecar/python/python.exe` 存在、可在最小 PATH 下启动并导入 Hook 所需标准库、`_hook_interpreter()` 在模拟 frozen 布局下解析到该解释器，并在真实 AppContainer 中执行一个 Hook；`--repack` 复用 `packaging/m2ac5/verify_bundled_python.ps1` 做复制+启动+Hook 复验。 <<MET>>
-- [ ] **AC6 幂等、无残留与回归**：连续两次全量运行 PASS 且不修改仓库跟踪文件；临时目录默认清理、无残留临时插件/进程；定向工具测试 PASS；全量 `python -m pytest tests -q` 无本 Task 引入的新失败（既有 3 例环境/历史失败在 `baseline-check.log` 如实记录，不冒充 PASS）；`check.ps1` PASS；独立 Reviewer（非实现者）复审通过。 <<PARTIAL: 等待独立 Reviewer 复审>>
+- [x] **AC6 幂等、无残留与回归**：连续两次全量运行 PASS 且不修改仓库跟踪文件；临时目录默认清理、无残留临时插件/进程；定向工具测试 PASS；全量 `python -m pytest tests -q` 无本 Task 引入的新失败（既有 3 例环境/历史失败在 `baseline-check.log` 如实记录，不冒充 PASS）；`check.ps1` PASS；独立 Reviewer（非实现者）复审通过。 <<MET>>
 - [x] **AC7 边界如实**：未修改 `src/**`、`apps/**` 生产代码与冻结 IPC 契约；未引入新依赖；不点击/拖拽 GUI、默认不截图、不做安装包冒烟、不验证检测模型推理；文档明确标注非目标；`GUI-PLUGIN-SANDBOX-SMOKE-1` 的恢复/关闭依据由 Lead 在 closeout 时决定，本 Task 不自动改变其状态。 <<MET>>
 
 ## 允许修改范围
@@ -81,11 +81,11 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 | 场景/AC | 命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1–AC5 验收 | `python -m tools.smoke.plugins --json verification/TOOL-SOFTWARE-SMOKE-1/smoke-report.json` | Windows；Python 3.14.6；node_modules；真实 bundle | PASS（4 层 / 24 项：23 PASS + 1 SKIP 为未传 `--repack`；exit 0；24.0s） | `smoke-report.json`、`run-1.log` |
-| AC6 幂等 | `python -m tools.smoke.plugins` 连续两次 | 同上 | PASS / PASS（24.0s / 23.6s；临时目录无残留） | `run-1.log`、`run-2.log` |
+| AC6 幂等 | `python -m tools.smoke.plugins` 连续两次 | 同上 | PASS / PASS（24.0s / 23.5s；临时目录无残留） | `run-1.log`、`run-2.log` |
 | AC5 `--repack` | `python -m tools.smoke.plugins --only packaged --repack --json verification/TOOL-SOFTWARE-SMOKE-1/repack-report.json` | 同上 | PASS（5/5；7.4s；`verify_bundled_python.ps1` OK；`temp_plugin_dirs_cleaned=1`） | `repack-report.json`、`repack-run.log` |
 | AC6 定向 | `python -m pytest tests/tools -q` | Python 3.14.6 | PASS：15 passed | `pytest-tools.log` |
 | AC6 回归 | `python -m pytest tests -q -rs` | Python 3.14.6 | 2687 passed, 9 skipped, 3 failed（既有环境：transformers 4.48.3 缺 `RTDetrV2ForObjectDetection` ×2；历史 PySide6 viewmodel 测试超时 ×1；9 skip：docTR ×2、openssl unavailable ×6、registry-readiness 既有 guard ×1；`src/**`、`apps/**` 与本 Task 前既有 tests 未改动） | `pytest-full.log`、`baseline-check.log` |
-| AC6 治理 | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库根 | PASS（最终运行见 Handoff） | Handoff、`governance-check.log` |
+| AC6 治理/复审 | `pwsh -NoProfile -File tools/governance/check.ps1`；独立 Reviewer r2 | 仓库根；`reviewer-tool-smoke` | PASS（check 4 warnings，log 入库；r2 `approved` `c680434ea`） | `governance-check.log`、`review-r2.md` |
 
 ## 依赖、风险与阻塞
 
@@ -104,10 +104,12 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 
 ## 交付与运行记录
 
-- Handoff：[TOOL-SOFTWARE-SMOKE-1-c680434ea.md](../handoffs/TOOL-SOFTWARE-SMOKE-1-c680434ea.md)（review 前 draft）。
-- Review：`review-r1.md`（旧 head `963ff5e6f`，approved + 6 项 P2）与 `review-r2.md`（新 head `c680434ea`，待独立复审）。
-- 实施提交：`c680434eab1ff6abcc4bc204e844ecba0c41979a`（工具 + 定向测试 + P2 修复）；证据提交：
-  `7b2abfa00`（修复后 canonical 证据）；Task 登记：`ff94baf74`。
+- Handoff：[TOOL-SOFTWARE-SMOKE-1-c680434ea.md](../handoffs/TOOL-SOFTWARE-SMOKE-1-c680434ea.md)（final）。
+- Review：`review-r1.md`（旧 head `963ff5e6f`，approved + 6 项 P2，历史）→ `review-r2.md`
+  （新 head `c680434ea`，approved；R-001–R-008 disposition 见 r2）。
+- 实施提交：`c680434eab1ff6abcc4bc204e844ecba0c41979a`（工具 + 定向测试 + P2 修复，integration_commit）；
+  证据提交：`7b2abfa00`（修复后 canonical 证据）、`6df1fc355`（治理日志与 pin 更新）、
+  `53574181f`（review-r2）；Task 登记：`ff94baf74`。
 - 实际测试：2026-10-23，见上表与 `verification/TOOL-SOFTWARE-SMOKE-1/`。
 
 ## Canonical Evidence
@@ -123,20 +125,23 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 | EV-PYTEST-FULL | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/pytest-full.log` | 7b2abfa00 | 0097a835c04c9711b237a088e3717ea7feed4e60c7f7400232f645c52df8f6f7 | CANONICAL |
 | EV-BASELINE | AC6/AC7 | `verification/TOOL-SOFTWARE-SMOKE-1/baseline-check.log` | 7b2abfa00 | 7ca4398d05d5e863713d1690ca82333d850b876cfd18325bf3d1687cdf2e7a57 | CANONICAL |
 | EV-REVIEW-R1 | AC6（历史：旧 head） | `verification/TOOL-SOFTWARE-SMOKE-1/review-r1.md` | 7b2abfa00 | d11918f03f41a80b93439ac2bb856a5f7c087775e270014374102b04f46a5381 | CANONICAL |
+| EV-REVIEW-R2 | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/review-r2.md` | 53574181f | 5b267ad51c24cd91bcfbc2ae579dcea6e63ececb16f654c0a46b2a0b61a6f612 | CANONICAL |
+| EV-GOVERNANCE-CHECK | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/governance-check.log` | 6df1fc355 | 76804a4d8cb2394ff01a16d7b84d4cc29b77ded564f1ec9f11f11939aba571d3 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga | NOT_APPLICABLE | — | — | 使用主 worktree，无新 worktree |
-| temp | `%TEMP%/nm-software-smoke-*`、`%TEMP%/nm-bundled-hook-*` | DELETE_SAFE | — | — | 全量运行目录在 finally 清理；repack 脚本自建目录由工具在前后快照后删除（canonical 清理 1 个）；评审前遗留 3 个 `nm-bundled-hook-*` 已删除，2026-10-23 复查计数 0 |
+| temp | `%TEMP%/nm-software-smoke-*`、`%TEMP%/nm-bundled-hook-*` | NOT_APPLICABLE | — | — | 临时目录不是保留资源：全量运行目录在 finally 清理；repack 脚本自建目录由工具在前后快照后删除（canonical 清理 1 个）；评审前遗留 3 个 `nm-bundled-hook-*` 已删除，2026-10-23 复查计数 0 |
 | agent-output | — | NOT_APPLICABLE | — | — | 未产生 agent-output 资源；证据只入 `verification/TOOL-SOFTWARE-SMOKE-1/` |
 
 ## Closeout Record
 
-- Closeout date / Codex：待独立 Review 与集成后填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；预计 0（仅临时目录已清理）。
-- 未关闭项及保留原因：AC6 待独立 Review；全量 pytest 既有 3 例环境失败保留并记录，不在本 Task 修复。
-- 当前指针清理：STATUS / Plan / Task 导航 / TASK_LEDGER 待 closeout 更新。
+- Closeout date / Codex：2026-10-23，dsh（Lead，Codex 角色）；独立 Review r2 `approved`（`reviewer-tool-smoke`，绑定 `c680434ea`）。
+- canonical_evidence_status：`complete`（11 个 evidence 文件、11 条 pin；`governance-check.log` 已按 R-007 登记）。
+- resource_closeout_status：`complete`。
+- 删除、迁移、归档数量/字节数：版本化文件 0；清理 `%TEMP%` 临时目录：评审前遗留 `nm-bundled-hook-*` 3 个 + 全量运行临时目录（自动清理），不计入版本化字节。
+- 未关闭项及保留原因：全量 pytest 的 3 例既有失败（transformers 4.48.3 缺 `RTDetrV2ForObjectDetection` ×2、历史 PySide6 测试超时 ×1）保留并记录，不属本 Task 修复范围；R-005 的 `CORE-NET-ALLOW` 语义与前端测试数下限按 Handoff 声明 deferred；`GUI-PLUGIN-SANDBOX-SMOKE-1` 的恢复/关闭由 Lead 后续裁决，本 Task 不自动改变其状态。
+- 当前指针清理：STATUS 已移除 Active 指针并记录完成；Plan 行改 `done`、当前实施 Task 为“无”；TASK_LEDGER 已重生成（非终态 2）；Handoff 已 final。
+

@@ -4,10 +4,10 @@
 
 ## 当前 Task
 
-- 当前 Task：[TOOL-SOFTWARE-SMOKE-1](tasks/TOOL-SOFTWARE-SMOKE-1.md) `in_review`（分层软件检查工具；实现 `c680434ea`，独立 Review r2 待执行）。保留项：[GUI-PLUGIN-SANDBOX-SMOKE-1](tasks/GUI-PLUGIN-SANDBOX-SMOKE-1.md) `blocked`（证据已存）、[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md) `in_review`。
+- 当前 Task：无 active；[GUI-PLUGIN-SANDBOX-SMOKE-1](tasks/GUI-PLUGIN-SANDBOX-SMOKE-1.md) `blocked`（手工 GUI 冒烟证据已存，待 Lead 依据工具化结果裁决）、[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md) `in_review`。
+- 最近完成：[TOOL-SOFTWARE-SMOKE-1](tasks/TOOL-SOFTWARE-SMOKE-1.md) `done`（分层软件检查工具，替代手工 GUI 冒烟；r2 approved `c680434ea`；工具测试 15 passed；全量 2687 passed/9 skipped/3 既有环境失败；证据 `verification/TOOL-SOFTWARE-SMOKE-1/`）。
 - 插件运行线完成：SANDBOX-1 `41d7abeb`、SANDBOX-2 `127c5111`、CAPABILITY-1 `0d3bbe49`、PACKAGED-PYTHON-1 `a1f05450`（均 approved）。
-- 最近完成：PLUGIN-RUNTIME-2 `done`（r3 approved；111 passed）；SETTINGS-OPEN-C-3-PLUGIN `done`（`657c18d4..85128cd2`）；C-2-BACKUP、C-1-RECYCLE、C-1-DESIGN、B-1、A-1 均 done；DEV-PREVIEW-1 done `8ac00b97b`。
-- 父任务：GIT-MAINLINE-CONVERGENCE-1 `done`（r3 approved `6997733bf`）。
+- 更早完成：PLUGIN-RUNTIME-2 `done`；SETTINGS-OPEN-C-3-PLUGIN `done`；C-2/C-1、B-1、A-1 done；DEV-PREVIEW-1 `8ac00b97b`；父任务 GIT-MAINLINE-CONVERGENCE-1 `done`（`6997733bf`）。
 
 ## 保留与已知限制
 
@@ -16,7 +16,7 @@
 - ARCH-DOC-REBASELINE `closed_with_limitations`（7 Gate + AC-CONSUMPTION PARTIAL）。
 - DETECT-TILING-1 / DETECT-MEMORY-GUARD-1 / SEC-FMT-IMPL-1 / PDF-STREAM-FIX-1 / P09-AC3-DELETE-1 / P09-AC3-HARDEN-1：`closed_with_limitations`。
 - P18 4/8（AC2 门槛、AC5 阻塞）；P20 6/7；P16/P17 done；GOV-DEBT-CLEANUP-1 `superseded`；RUST-ENV-BASELINE-1 `closed_with_limitations`。
-- Task 台账：TASK_LEDGER；11 条 P02 历史线归档 historical；当前 3 个非终态 Task。
+- Task 台账：TASK_LEDGER；11 条 P02 历史线归档 historical；当前 2 个非终态 Task。
 - DIR-4 同一失败上限 2 次；DIR-5 goal 轮次上限 1000。Coordinator=dsh，epoch=10，lease=37230d7822a141fcae8f46acd7841890（LEASE_VALID）。
 
 ## Gate 与保留项
