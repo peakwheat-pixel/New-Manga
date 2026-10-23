@@ -68,11 +68,18 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-|EV-C1-WIRE|AC1-AC5|PENDING|PENDING|PENDING|CANONICAL|
+|EV-C1-GUI-SMOKE|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/gui-smoke.md|a653c8230ba30948b19e551a4450fa7a79920951|47c3494e813a53d0f8e0afb1126567ff343bd5f958cdcef7d9da85adb67ed9c1|CANONICAL|
+|EV-C1-00-BRIDGE-GAP-BEFORE-FIX|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/screenshots/00-bridge-gap-before-fix.png|a653c8230ba30948b19e551a4450fa7a79920951|5f502ea6e6253ea3a1a41279e371f51daae43a0eb0f81348b86b917b9386b1f2|CANONICAL|
+|EV-C1-01-RECYCLE-PANEL-2-BOOKS|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/screenshots/01-recycle-panel-2-books.png|a653c8230ba30948b19e551a4450fa7a79920951|2211bfefac723262ad834dd80169d2b34c1d794dfff1db5e7cf2fcea40bdfcb9|CANONICAL|
+|EV-C1-02-CONFIRM-DIALOG-2-BOOKS|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/screenshots/02-confirm-dialog-2-books.png|a653c8230ba30948b19e551a4450fa7a79920951|318e9a60108db1f0266e95fd73f06bda6709e7df5e9c537499c2c59abb1521d7|CANONICAL|
+|EV-C1-UI-TEST-FRONTEND|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/ui-test-frontend.log|a653c8230ba30948b19e551a4450fa7a79920951|5daa6e703cd6d0eef299044936f42b2801be0242ea2e1aa39f7013b9e2b74423|CANONICAL|
+|EV-C1-UI-TEST-TARGETED|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/ui-test-targeted.log|a653c8230ba30948b19e551a4450fa7a79920951|db8aecf5534f06e95fef9ff558c2ec8a57bbf387ff533b825a73b261c4f3aa35|CANONICAL|
+|EV-C1-UI-TSC|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/ui-tsc.log|a653c8230ba30948b19e551a4450fa7a79920951|e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855|CANONICAL|
+|EV-C1-WIRE-CARGO-TEST-SERIAL|AC1-AC5|verification/SETTINGS-OPEN-C-1-RECYCLE/wire-cargo-test-serial.log|a653c8230ba30948b19e551a4450fa7a79920951|dc5ad222f35f2c6e363e935280a3dbb4f9edf74a26a518c7616c874a0a4ab95e|CANONICAL|
 
 ## Closeout Record
 
 - Closeout：待独立 Review + GUI 烟测通过后关闭。
-- canonical_evidence_status：pending；resource_closeout_status：pending。
+- canonical_evidence_status：complete；resource_closeout_status：complete。
 - 删除/迁移/归档：0。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 登记本 Task。
