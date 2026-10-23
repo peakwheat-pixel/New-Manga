@@ -63,4 +63,3 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 | AC4 | `packaging/m2ac5/verify_bundled_python.ps1`（`bundled-runtime-verify.log`） | PASS：完整运行时复制 + 最小 PATH smoke + frozen 解析 + **捆绑解释器真实 AppContainer Hook**（`bundled-sandbox-hook-ok`）；4 个脚本 PS-PARSE-OK（`build-ps1-parse.log`） |
 | AC5 | `python -m pytest tests -q` | 见 `core-pytest.log` |
 | 定向 | packaged-python + sandbox + runtime | 46 passed |
-
