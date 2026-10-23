@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-1
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: c793442946801bea7ab53799683cecc76260f672
-delivery_head: a80cfd0bb83752534e138b0db7d04bfb2d2782a6
+delivery_head: 7253286f5836fd5589c29d7bd3050b4383844f2f
 status: in_review
 authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D6」
 ---
@@ -12,7 +12,7 @@ authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D
 
 ## 1. 交付摘要
 
-按 `doc/design/SETTINGS_SECTION_C_SCHEMAS.md` §4.1–§4.4（冻结）+ 用户 2026-10-23 授权（D1–D6 按建议值）实现本地目录插件运行时，实现范围 `c7934429..a80cfd0b`：
+按 `doc/design/SETTINGS_SECTION_C_SCHEMAS.md` §4.1–§4.4（冻结）+ 用户 2026-10-23 授权（D1–D6 按建议值）实现本地目录插件运行时，实现范围 `c7934429..7253286f`（实现 `a80cfd0b`，r1 修复 `7253286f`）：
 
 - **发现**（D4）：插件根 `<data_root>/plugins/<plugin_id>/`；只读扫描，不写插件文件，不做安装器/市场。
 - **manifest v1**（§4.2）：fail-closed 校验（id 正则 + 目录名一致、name ≤80、semver、entry 相对 `.py` 且存在/不越界、hooks ⊆ 6 组、permissions ⊆ 词表且**非空拒绝**、min_app_version）；拒绝码稳定（`PLUGIN_MANIFEST_MISSING/INVALID`、`PLUGIN_ID_MISMATCH`、`PLUGIN_UNKNOWN_HOOK`、`PLUGIN_UNKNOWN_PERMISSION`、`PLUGIN_PERMISSIONS_UNSUPPORTED`、`PLUGIN_ENTRY_INVALID`、`PLUGIN_MIN_APP_VERSION`）。
@@ -50,3 +50,11 @@ authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D
   1. **PLUGIN-RUNTIME-2（Hook 流水线接线）**：把 `run_hook` 接到 detect/ocr/export 真实步骤（before_* override / after_* 只读），并补 Run 内触发测试；
   2. 插件打包解释器 follow-up；
   3. 保留项 `V1-RELEASE-SIGNING-1`（`in_review`）等待发布签核。
+
+## 5. Review r1 处置（changes_requested）
+
+- **P1-1 安全边界（诚实降级）**：插件是**受信任的本地代码**。`permissions: []` 的承诺收窄为「Core 不授予任何能力句柄」：不传 Core 对象/DB/模型/凭据/配置路径/网络配置，子进程最小 env + `-I` + cwd=插件目录；**不承诺 OS 沙箱**——恶意插件仍可用用户 OS 权限自行读写文件/联网。UI/Task/Handoff/manifest/service 文案同步修正；补「子进程无 Core env、无法 import Core 模块、输出 >256KB 被拒」测试。OS 沙箱另立 `PLUGIN-RUNTIME-SANDBOX-1`（proposed，未授权）。
+- **P1-2 manifest 未知字段**：`_ALLOWED_KEYS` 白名单，未知顶层键 → `PLUGIN_MANIFEST_INVALID`；目录/manifest 符号链接根校验（`resolve().is_relative_to(root)`）；补拒绝测试。
+- **P1-3 生命周期**：Task/STATUS/TASK_LEDGER 统一 `in_review`；Task Closeout 改为「待 Review approved 后 closeout」；allowed_paths 补 doc 指针。
+- **P2**：`plugins.list` 移除 `plugin_root` 绝对路径投影（前端未使用）；`plugins_open_directory` 按 Core 同源 data root 解析（`NEWMANGA_DATA_ROOT` → `LOCALAPPDATA/New Manga`）+ `plugins`；审计改为**状态驱动**（load 事件只在状态变化时写，严格 append-only，删 60s 窗口）；Hook payload 注入 `schema_ref=nm-plugin-hook/1`；AC6 拆为 AC6a（API/隔离，已覆盖）/AC6b（GUI 触发 Hook，**NOT_RUN**，流水线接线属 PLUGIN-RUNTIME-2）。
+- **v6 专项**：`test_v6_tables_start_empty_and_are_indexed` 断言两表 0 行 + 两索引；`test_frozen_runtime_contract` 改为双源校验（`application_metadata` vs `schema_migrations` max）。
