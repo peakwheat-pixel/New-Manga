@@ -44,3 +44,4 @@ status: in_review
 ## 4. 推荐下一步
 
 - **C-2 关闭后按裁决顺序释放 `SETTINGS-OPEN-C-3-PLUGIN`**（Plugin/Hooks 管理面，设计 §4：先 `permissions: []` 的只读安装/启用面；无实现前 UI 只显示"需要安装系统"只读说明）。C-3 是最后一个仍关闭的设置分区；关闭后设置页 12/12 开放。
+
