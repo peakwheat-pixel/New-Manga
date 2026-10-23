@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-PACKAGED-PYTHON-1
 author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: 2b965c1b9de25c3dd73e24724aa99fcb5b8b599a
-delivery_head: d79e1a48063d66e43febe1df693bb83466dcbbdf
+delivery_head: fdc0dfa3dbcc17f9028ff0cfbb79b67b617de583
 status: done
 authorization: 用户 2026-10-23「1234都授权」
 ---
