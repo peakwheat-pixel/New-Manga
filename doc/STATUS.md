@@ -4,11 +4,10 @@
 
 ## 当前 Task
 
-- 当前 Task：[PLUGIN-RUNTIME-2](tasks/PLUGIN-RUNTIME-2.md) `in_review`（Codex 已实现；待 reviewer-settings-a 独审）；保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
+- 当前 Task：[PLUGIN-RUNTIME-2](tasks/PLUGIN-RUNTIME-2.md) `approved`（`2ea97edd6`；[r3](../verification/PLUGIN-RUNTIME-2/review-r3.md)；待 Codex 收口）；保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
 - 最近完成：**[SETTINGS-OPEN-C-3-PLUGIN](tasks/SETTINGS-OPEN-C-3-PLUGIN.md)** `done`（`657c18d4..85128cd2`；r2 approved）；**[SETTINGS-OPEN-C-2-BACKUP](tasks/SETTINGS-OPEN-C-2-BACKUP.md)** `done`（`.nmbak`；`893c00fc..657c18d4`）；**[SETTINGS-OPEN-C-1-RECYCLE](tasks/SETTINGS-OPEN-C-1-RECYCLE.md)** `done`（`6d6c085..893c00fc`；r2 approved）；**[SETTINGS-OPEN-C-1-DESIGN](tasks/SETTINGS-OPEN-C-1-DESIGN.md)** `done`（D1–D11）；**[SETTINGS-OPEN-B-1](tasks/SETTINGS-OPEN-B-1.md)** `done`（`b521ad27`）；**[SETTINGS-OPEN-A-1](tasks/SETTINGS-OPEN-A-1.md)** `done`（`6a303a9`）。设置页 12/12 开放（Plugin 管理面已实现）。
 - [DEV-PREVIEW-1](tasks/DEV-PREVIEW-1.md)：done，`8ac00b97b`。**GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1** `done`（声明错误 7→0、APPDATA 受保护）。
 - 父任务：**[GIT-MAINLINE-CONVERGENCE-1](tasks/GIT-MAINLINE-CONVERGENCE-1.md)** `done`，r3 approved `6997733bf`；历史运行身份已归零。
-- 收敛结果：`refs/heads` 仅 `main`、worktree 1、`refs/archive/*` 21、声明审计 0 errors。
 
 ## 保留与已知限制
 

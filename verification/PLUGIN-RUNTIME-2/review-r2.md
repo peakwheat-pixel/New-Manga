@@ -28,7 +28,7 @@ R1/R2 的正常覆盖路径已修复，但新增参数校验放行空对象，�
 
 ### R3 — P1：空 format_options 覆盖绕过校验，使文本导出失败且未审计
 
-- 固定 head 位置：`src/application/export/service.py:259`（`if options and ...`），`:273`（调用 text_content_factory）；关联 `src/bootstrap/core_service.py:3081`（读取 `options["text_representation"]`）。
+- 固定 head 位置：`src/application/export/service.py:258`（`if options and ...`），`:272`（调用 text_content_factory）；关联 `src/bootstrap/core_service.py:3081`（读取 `options["text_representation"]`）。
 - 触发：合法文本 StartExport 请求含 `{"text_representation":"txt"}`，插件返回 `{"format_options":{}}`。
 - 实际行为：空对象跳过新增校验，进入 factory 后 KeyError；StartExport 返回 UNKNOWN/internal，未创建 job、未生成文件，没有 plugin_error。违反 AC2/函数注释所要求的坏覆盖跳过并审计、主链继续，也违背 Handoff “拒绝非法值后用原输入继续”的承诺。target_ref 在此之前已经消耗，用户需要重新取得导出授权。
 - 最小修复：对具有必需选项的真实 P16 请求拒绝空覆盖，走已有 apply_input 的 PLUGIN_INVALID_OVERRIDE 审计和原输入回退；若需要保留旧式直接 ExportService 空 options 的兼容行为，应依据原始请求明确区分。增加真实 StartExport 回归，断言 completed、原格式输出与 history 一致，并出现 plugin_error。
@@ -44,6 +44,7 @@ Verification：Windows PowerShell、`C:\Python314\python.exe`、Python 3.14.6，
 |---|---|---|
 | Core P16 + ExportService 定向测试 | PASS，49 passed / 0 skipped | 下方实际原始输出；包括新增 ZIP/TEXT 两项真实 Core 回归 |
 | 空 format_options 真实 Core 复现 | FAIL，R3 | 下方完整脚本及原始输出 |
+| governance check（报告落盘后） | PASS，4 warnings | 下方原始输出；新增过程文件由主 Agent 后续登记，不改本次生产判定 |
 | r1 的 OCR timeout/crash/disabled 矩阵 | NOT_RUN（本轮不重复） | r1 已验证，本轮未修改相应实现；不把历史结果计为新执行 |
 | GUI、全量 pytest、模型质量、打包 | NOT_RUN | 未产生此类证据 |
 
@@ -52,6 +53,16 @@ SHELL=PowerShell; PYTHON=C:\Python314\python.exe; VERSION=3.14.6; UTF8=-X utf8
 COMMAND=python -X utf8 -m pytest tests/core/test_p16_reader_export.py tests/reading_export/test_export.py -q --tb=short --basetemp='G:/CODEX/New Manga.workspace/temp/PLUGIN-RUNTIME-2/review-r2'
 .................................................                        [100%]
 49 passed in 4.61s
+EXIT=0
+
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\PLUGIN-RUNTIME-2.md
+WARN: 存在 3 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3157 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5445 bytes / 51 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\PLUGIN-RUNTIME-2\pytest-r3.log, G:\CODEX\New Manga\verification\PLUGIN-RUNTIME-2\review-r2.md
+Governance check: PASS (4 warnings)
 EXIT=0
 ```
 

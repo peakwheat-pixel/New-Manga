@@ -3,7 +3,7 @@ id: PLUGIN-RUNTIME-2
 title: 真实流水线 Hook 接线
 kind: implementation
 governance_version: 3
-status: in_review
+status: approved
 approval: authorized
 owner: Codex
 reviewer: reviewer-settings-a
@@ -12,8 +12,8 @@ base_commit: d28b7a8b1449e5f4790470bcbbba10abcf3ab388
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 55af609b0cbb4d7dc29160df150b116989b3b0be
-canonical_evidence_status: pending
+delivery_head: 2ea97edd6e65260d1276e7b1e505a036dc612f80
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/PLUGIN-RUNTIME-2
 allowed_paths:
@@ -61,15 +61,17 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 
-| EV-PLUGIN-RUNTIME-2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest.log | 050530dfb78afaa9877eac1ce727cd40f69f5837 | d93167e3fafec6c8a48d96159a771340ae522642c7c36bd11f5aa157b4926670 | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest.log | 050530dfb78afaa9877eac1ce727cd40f69f5837 | d93167e3fafec6c8a48d96159a771340ae522642c7c36bd11f5aa157b4926670 | SOURCE_PIN |
 
-| EV-PLUGIN-RUNTIME-2-GATE | AC3 | verification/PLUGIN-RUNTIME-2/validation.md | - | 1a12582f86ac19ff13c41de160bd9b75918cc00e250d9cc4edacc4f3fea168cf | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-GATE | AC3 | verification/PLUGIN-RUNTIME-2/validation.md | - | ef5c8bb040a7996323f19fea3df53f704afc9f65a0eeb1284285e6d1d570f010 | CANONICAL |
 
-| EV-PLUGIN-RUNTIME-2-R2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r2.log | - | 1c2b263058842e1a72ddfb9a4f73d105c29e59e4ab40ceef565f242c1b8dedf6 | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-R2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r2.log | - | 1c2b263058842e1a72ddfb9a4f73d105c29e59e4ab40ceef565f242c1b8dedf6 | SOURCE_PIN |
 | EV-PLUGIN-RUNTIME-2-R1 | review | verification/PLUGIN-RUNTIME-2/review-r1.md | - | 285f523b373c30e19add128313970e7ea0abb2421b5c83d869aa8a54790015cb | SOURCE_PIN |
 
 | EV-PLUGIN-RUNTIME-2-R3-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r3.log | - | 167d81e5b5a23d7d0633fecc96e410aba426019d79c91556333697a3c3ce4d25 | CANONICAL |
-| EV-PLUGIN-RUNTIME-2-R2 | review | verification/PLUGIN-RUNTIME-2/review-r2.md | - | 64a9f5fcdb4de6b1d54f8f49f00713b36c0a221a6a623413980bd32e5178a5bc | SOURCE_PIN |
+| EV-PLUGIN-RUNTIME-2-R2 | review | verification/PLUGIN-RUNTIME-2/review-r2.md | - | 80ddbf11d054b8f743b926a503321e1dc803d686989be25a8f6d5b1279f71083 | SOURCE_PIN |
+
+| EV-PLUGIN-RUNTIME-2-R3 | Review/AC3 | verification/PLUGIN-RUNTIME-2/review-r3.md | - | a8544ffbab0ddc5ca7928bbe02b5b19482d398615c193d6b11719b25e8273405 | CANONICAL |
 
 ## Resource Manifest
 
@@ -96,3 +98,7 @@ R1 P1/P2 已修复：prepare_request 在 job/history 冻结前幂等应用 befor
 当前交付 head：55af609b0cbb4d7dc29160df150b116989b3b0be；当前审查请求 r2，仅允许写 verification/PLUGIN-RUNTIME-2/review-r2.md。r1 为历史发现证据，不代表新 head 审查结论。
 
 R2 空 format_options 覆盖导致文本必需键丢失：现拒绝并 plugin_error 审计，原选项继续；真实 Core 空覆盖回归通过。最新 103 passed / 0 skipped。此前 pytest.log/pytest-r2.log 为历史过程，当前验收以 pytest-r3.log 为准。
+
+当前 reviewed_head 请求：2ea97edd6e65260d1276e7b1e505a036dc612f80，review-r3.md 待返回。r1/r2 报告为历史证据。
+
+最新独立 Review：[r3](../../verification/PLUGIN-RUNTIME-2/review-r3.md) approved，精确 head 2ea97edd6e65260d1276e7b1e505a036dc612f80；独立 22 passed / 0 skipped，R1/R2/R3 fixed。Task approved，等待 Codex 按已审 head 完成正式集成记录和资源 closeout，不视作 done。
