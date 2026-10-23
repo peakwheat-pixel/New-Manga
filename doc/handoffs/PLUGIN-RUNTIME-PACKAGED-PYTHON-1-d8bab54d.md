@@ -35,8 +35,8 @@ Review approved 后 closeout，进入候选 1（GUI 端到端沙箱冒烟）。
 
 ## 5. Review r1 处置（changes_requested）
 
-- **P1-1 真实产物**：改 `packaging/m2ac5/build_sidecar.ps1`（Tauri 打包的 sidecar 目录），`-BundlePythonRuntime <dir>` 在 PyInstaller 构建 + bundle 完整性检查后执行；`packaging/build.ps1`（legacy）复用同一 helper 且复制在 `artifact-manifest.sha256` 之前。
+- **P1-1 真实产物**：改 `packaging/m2ac5/build_sidecar.ps1`（Tauri 打包的 sidecar 目录）。r2 追加修复：**增量短路路径也执行复制**（bundle 已有但缺 `python/python.exe` 时不再被 `target exists, skipping` 跳过）；**默认自动捆绑**（缺省从构建解释器 `sys.base_prefix` 解析完整运行时，`-SkipPythonRuntime` 仅 debug）；`packaging/build.ps1`（legacy）复用同一 helper 且复制在 `artifact-manifest.sha256` 之前。
 - **P1-2 完整运行时**：共享 helper `packaging/bundle_python_runtime.ps1` 复制 `python.exe`、`python3*.dll`、`vcruntime*.dll`、根 `*.pyd`、`DLLs/`、`Lib/`（排除 `site-packages`/`test`/`idlelib`/`tkinter`/`turtledemo`），复制后立即用最小 PATH 跑 `python.exe -I -c "import socket, ssl, sqlite3, json, hashlib"`，失败即 throw（fail-closed）。
-- **P1-3 AC4 实证**：`packaging/m2ac5/verify_bundled_python.ps1` → `verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/bundled-runtime-verify.log`（exit 0）：完整复制 + 最小 PATH smoke + frozen 解析到 `<sidecar>/python/python.exe` + **该解释器在 AppContainer 中真实执行 Hook**（`bundled-sandbox-hook-ok`）。
+- **P1-3 AC4 实证**：真实 `build_sidecar.ps1` 增量路径（`build-sidecar-incremental.log`：bundle 无 python → 复制后存在，exit 0）+ PyInstaller -Force 全量路径（`build-sidecar-force.log`：重建后 `python/python.exe` 存在，exit 0）+ 真实 bundle 解析/沙箱 Hook（`real-bundle-verify.log`：`real-bundle-sandbox-hook-ok`）+ 幂等复跑（`build-sidecar-incremental-2.log`）；另有 helper 独立验证 `bundled-runtime-verify.log`。
 - **P2**：STATUS 统一 `in_review`；Task 两个 Closeout 标题合并；artifact manifest 覆盖随包解释器；复制在构建收尾前；`_hook_interpreter` 注释标注 env 仅打包启动器使用（P3）。
 - **仍剩余**：完整 PyInstaller 产物冒烟（需要打包环境）与 GUI 端到端，留给候选 1/发布验证。

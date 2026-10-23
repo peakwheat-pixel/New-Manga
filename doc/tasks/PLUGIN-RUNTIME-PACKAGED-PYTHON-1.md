@@ -34,7 +34,7 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 ## 范围
 
 - `service.py::_hook_interpreter`：上述 1–4 优先级；只接受 `is_file()` 的路径；env 覆盖也要校验存在。
-- `packaging/m2ac5/build_sidecar.ps1`（真实 Tauri sidecar 构建，输出 `apps/desktop/src-tauri/target/core-sidecar/core-sidecar`）：新增可选 `-BundlePythonRuntime <dir>`，构建后用共享 helper `packaging/bundle_python_runtime.ps1` 复制**完整可重定位运行时**到 `<bundle>/python/`（python.exe + python3*.dll + vcruntime*.dll + 根 *.pyd + DLLs/ + Lib/，排除 site-packages），并做最小 PATH smoke（import socket/ssl/sqlite3/json/hashlib）。`packaging/build.ps1`（legacy）复用同一 helper，且复制发生在 `artifact-manifest.sha256` 生成之前。
+- `packaging/m2ac5/build_sidecar.ps1`（真实 Tauri sidecar 构建，输出 `apps/desktop/src-tauri/target/core-sidecar/core-sidecar`）：**默认**捆绑插件解释器（`-BundlePythonRuntime` 显式指定目录；缺省时从构建解释器的 `sys.base_prefix` 解析；`-SkipPythonRuntime` 仅 debug 关闭）。**增量短路路径同样执行复制**（bundle 缺 `python/python.exe` 时不会被 `target exists, skipping` 跳过）。共享 helper `packaging/bundle_python_runtime.ps1` 复制完整运行时（python.exe + python3*.dll + vcruntime*.dll + 根 *.pyd + DLLs/ + Lib/，排除 site-packages）并做最小 PATH smoke。`packaging/build.ps1`（legacy PySide6）复用同一 helper，且复制发生在 `artifact-manifest.sha256` 生成之前。
 - 测试（模拟 frozen）：
   - env 覆盖真实解释器 → 返回；
   - `sys.frozen=True` + 同级 `python.exe`（复制真实解释器）→ 返回；
@@ -60,6 +60,6 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 | AC1 | `test_environment_override_wins` | PASS：`NEWMANGA_PLUGIN_PYTHON` 优先 |
 | AC2 | `test_sibling_interpreter_is_found` / `test_bundled_python_directory_is_found` | PASS：同级 / `python/` 子目录 |
 | AC3 | `test_missing_environment_override_fails_closed` / `test_no_interpreter_fails_closed_without_system_fallback` | PASS：`PLUGIN_HOOK_UNAVAILABLE`，不回退系统 Python |
-| AC4 | `packaging/m2ac5/verify_bundled_python.ps1`（`bundled-runtime-verify.log`） | PASS：完整运行时复制 + 最小 PATH smoke + frozen 解析 + **捆绑解释器真实 AppContainer Hook**（`bundled-sandbox-hook-ok`）；4 个脚本 PS-PARSE-OK（`build-ps1-parse.log`） |
+| AC4 | 真实 `build_sidecar.ps1` 两条路径 + 真实 bundle 验证 | PASS：`build-sidecar-incremental.log`（bundle 无 python → 复制后存在，exit 0）、`build-sidecar-force.log`（PyInstaller -Force 全量重建后 `python/python.exe` 存在，exit 0）、`real-bundle-verify.log`（真实 bundle 的 frozen 解析 + AppContainer Hook `real-bundle-sandbox-hook-ok`）、`build-sidecar-incremental-2.log`（幂等）；4 个脚本 PS-PARSE-OK（`build-ps1-parse.log`） |
 | AC5 | `python -m pytest tests -q` | 见 `core-pytest.log` |
 | 定向 | packaged-python + sandbox + runtime | 46 passed |

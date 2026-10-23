@@ -20,7 +20,11 @@
 # form fails closed NOT_CONFIGURED when switched back to doctr).
 #
 # Usage (from the repository root):
-#   powershell -File packaging/m2ac5/build_sidecar.ps1 [-PythonExe <path>] [-WeightsSource <path>] [-Force] [-SkipWeights]
+#   powershell -File packaging/m2ac5/build_sidecar.ps1 [-PythonExe <path>] [-WeightsSource <path>] [-Force] [-SkipWeights] [-BundlePythonRuntime <dir>] [-SkipPythonRuntime]
+#
+# PLUGIN-RUNTIME-PACKAGED-PYTHON-1: the plugin-hook Python runtime is bundled
+# into <bundle>/python/ by DEFAULT (resolved from the build interpreter's
+# sys.base_prefix). Pass -SkipPythonRuntime to opt out (debug only).
 #
 # The default build venv is the dedicated M2-AC5 build env (packager + ML
 # runtime closure; see packaging/m2ac5/requirements-build.txt).
@@ -61,7 +65,10 @@ param (
     # The directory must contain python.exe (the interpreter used to run
     # PyInstaller is a natural candidate: its Lib/DLLs are the same ABI).
     [Parameter(Mandatory = $false)]
-    [string]$BundlePythonRuntime = ""
+    [string]$BundlePythonRuntime = "",
+    # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: opt out of the bundled plugin-hook
+    # runtime (debug only; the packaged app then fails closed for plugin hooks).
+    [switch]$SkipPythonRuntime
 )
 
 $ErrorActionPreference = "Stop"
@@ -175,6 +182,25 @@ function Copy-SfxWeights {
     Write-Host "build_sidecar: sfx weights bundled (yolo11s-seg.onnx, sha256 verified) -> $destDir"
 }
 
+# PLUGIN-RUNTIME-PACKAGED-PYTHON-1: resolve the runtime to bundle (default:
+# the build interpreter's base installation) and load the shared helper.
+if (-not $SkipPythonRuntime) {
+    . (Join-Path $repoRoot "packaging/bundle_python_runtime.ps1")
+    if (-not $BundlePythonRuntime) {
+        if (Test-Path -LiteralPath $PythonExe -PathType Leaf) {
+            $basePrefix = (& $PythonExe -I -c "import sys; print(sys.base_prefix)" 2>$null)
+            if ($LASTEXITCODE -eq 0 -and $basePrefix -and (Test-Path -LiteralPath (Join-Path $basePrefix "python.exe") -PathType Leaf)) {
+                $BundlePythonRuntime = $basePrefix.Trim()
+            }
+        }
+    }
+    if (-not $BundlePythonRuntime) {
+        Write-Warning "build_sidecar: no plugin-hook Python runtime resolved; packaged plugin hooks will fail closed (pass -BundlePythonRuntime or -SkipPythonRuntime explicitly)"
+    } elseif (-not (Test-Path -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -PathType Leaf)) {
+        throw "BundlePythonRuntime does not contain python.exe: $BundlePythonRuntime"
+    }
+}
+
 # M2-AC5-BUILD-FRESH-CHECKOUT: incremental short-circuit. When the target
 # onedir bundle is already present, skip the (expensive) PyInstaller rebuild
 # and exit 0 so automated callers can invoke this unconditionally. The check
@@ -185,10 +211,16 @@ function Copy-SfxWeights {
 # previously -SkipWeights-built bundle gets its weights on the next call.
 $existingBundle = Join-Path $repoRoot "apps/desktop/src-tauri/target/core-sidecar/core-sidecar"
 if (-not $Force -and (Test-Path -LiteralPath $existingBundle -PathType Container)) {
-    Write-Host "build_sidecar: target exists, skipping (use -Force to rebuild)"
+    Write-Host "build_sidecar: target exists, skipping PyInstaller (use -Force to rebuild)"
     if (-not $SkipWeights) {
         Copy-MangaWeights -Bundle $existingBundle -WeightsSource $WeightsSource
         Copy-SfxWeights -Bundle $existingBundle -WeightsSource $SfxWeightsSource
+    }
+    # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: the skip path must NOT leave the
+    # bundle without its plugin-hook interpreter. Copy it when missing (or
+    # always refresh it), then exit.
+    if ($BundlePythonRuntime) {
+        Copy-PluginPythonRuntime -Bundle $existingBundle -RuntimeDir $BundlePythonRuntime
     }
     exit 0
 }

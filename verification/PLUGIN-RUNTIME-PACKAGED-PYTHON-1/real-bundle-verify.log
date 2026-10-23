@@ -1,0 +1,6 @@
+# command: python (real bundle) frozen resolution + AppContainer hook
+# started: 2026-10-23T19:13:38.6321974+08:00
+# exit: 0
+real-bundle-frozen-resolution-ok: G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\python\python.exe
+real-bundle-hook-interpreter-ok
+real-bundle-sandbox-hook-ok

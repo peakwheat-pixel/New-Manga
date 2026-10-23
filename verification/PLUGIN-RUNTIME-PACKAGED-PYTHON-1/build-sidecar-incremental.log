@@ -1,0 +1,5 @@
+# command: pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -SkipWeights (incremental path)
+# started: 2026-10-23T19:13:19.2496971+08:00
+# exit: 0
+build_sidecar: target exists, skipping PyInstaller (use -Force to rebuild)
+bundle_python_runtime: OK -> G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\python (smoke import socket/ssl/sqlite3/json/hashlib)
