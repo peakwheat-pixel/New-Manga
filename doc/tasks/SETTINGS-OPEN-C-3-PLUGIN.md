@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-3-PLUGIN
 kind: implementation
-status: in_progress
+status: in_review
 owner: 待指派（非本 Task 实现者）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -42,7 +42,7 @@ allowed_paths:
 | 场景/AC | 计划命令 | 实际结果 | 证据 |
 |---|---|---|---|
 | AC1/AC3 前端 | `npx vitest run src/settings/SettingsPage.test.tsx src/settings/DisabledSection.test.tsx` | PASS（19 passed：plugins disabled + §4.5 文案 + 无按钮） | ui-test-frontend.log（节选） |
-| AC4 全量 | `npx vitest run` + `tsc --noEmit` | PASS（43 files / **426 tests**；tsc exit 0） | ui-test-frontend.log、ui-tsc.log |
+| AC4 全量 | `npx vitest run` + `tsc --noEmit` | PASS（44 files / **426 tests**；tsc exit 0） | ui-test-frontend.log、ui-tsc.log |
 | 烟测 | dev preview：设置 → Plugin/Hooks | PASS（11 开 1 关；nav 可访问名 `Plugin/Hooks，未开放：插件系统尚未实现`；面板不可达/无控件） | gui-smoke.md + screenshots/01 |
 
 ## Canonical Evidence
@@ -57,11 +57,12 @@ allowed_paths:
 ## 交付与运行记录
 
 - 2026-10-23：C-2 关闭后释放；启动实现。
+- 2026-10-23（Review r1 处置）：Task/STATUS/LEDGER 统一 `in_review`；§4.5 文案改为**逐字单段**（新增 `DisabledSection.body`，plugin 面板以完整原文渲染，通用「该分区暂不可编辑…」句不再插入；测试用 `toBe` 精确断言）；全量测试文件数修正 44；Closeout 文案更新。GUI 边界：plugins 面板不可达，完整文案仅由组件测试验证（gui-smoke 已写明）。
 - 2026-10-23（实现）：`DisabledSection` 增 `description`/`showPlaceholderControl`（plugin 面不渲染任何控件）；`SettingsPage` 常量 `PLUGIN_SECTION_REASON`/`PLUGIN_SECTION_DESCRIPTION`（§4.5 原文）、nav 与占位面板改用专属 reason；新增 `DisabledSection.test.tsx`（2 用例：冻结文案 + 无按钮 / 通用面保留 disabled 控件），`SettingsPage.test.tsx` 断言 plugins 文案。
 
 ## Closeout Record
 
-- Closeout：待实现 + 独立 Review + 烟测通过后关闭。
+- Closeout：待 Review approved 后 closeout（r1 生命周期/文案处置后复审）。
 - canonical_evidence_status：pending；resource_closeout_status：pending。
 - 删除/迁移/归档：0。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 登记本 Task。

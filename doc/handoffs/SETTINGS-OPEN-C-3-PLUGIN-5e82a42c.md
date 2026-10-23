@@ -23,7 +23,7 @@ status: in_review
 | 命令 | 结果 |
 |---|---|
 | `npx vitest run src/settings/SettingsPage.test.tsx src/settings/DisabledSection.test.tsx` | PASS（19 passed） |
-| `npx vitest run`（全量） | PASS（43 files / **426 tests**） |
+| `npx vitest run`（全量） | PASS（44 files / **426 tests**） |
 | `tsc --noEmit` | exit 0 |
 | GUI 烟测（dev preview） | PASS：设置页 11 开 1 关；`Plugin/Hooks` 可访问名 `Plugin/Hooks，未开放：插件系统尚未实现`；面板不可达、无控件 |
 

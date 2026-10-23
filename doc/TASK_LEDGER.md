@@ -24,15 +24,14 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `in_review` | 1 | no |
-| `ready` | 1 | no |
+| `in_review` | 2 | no |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
+| `SETTINGS-OPEN-C-3-PLUGIN` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
-| `SETTINGS-OPEN-C-3-PLUGIN` | `ready` | own row |
 
 ## What this ledger does not say
 

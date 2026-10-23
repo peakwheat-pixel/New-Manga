@@ -85,8 +85,10 @@ export const DISABLED_SECTION_TEST_IDS = {
  * The nav and the placeholder use the frozen copy instead of the generic
  * "等待 section schema 冻结" reason. */
 export const PLUGIN_SECTION_REASON = "插件系统尚未实现";
+/** §4.5 verbatim copy (single continuous paragraph, no generic sentence
+ * inserted in the middle). */
 export const PLUGIN_SECTION_DESCRIPTION =
-  "当前版本未安装插件运行时。设计已冻结（本地目录插件、manifest v1、Hook 默认禁用、崩溃隔离、审计）；实现后将在此管理已安装插件与权限。";
+  "插件系统尚未实现：当前版本未安装插件运行时。设计已冻结（本地目录插件、manifest v1、Hook 默认禁用、崩溃隔离、审计）；实现后将在此管理已安装插件与权限。";
 
 export interface SettingsPageProps {
   client?: SettingsClient;
@@ -324,7 +326,7 @@ export function SettingsPage({ client }: SettingsPageProps) {
             testId={DISABLED_SECTION_TEST_IDS.plugins}
             title="Plugin / Hooks"
             reason={PLUGIN_SECTION_REASON}
-            description={PLUGIN_SECTION_DESCRIPTION}
+            body={PLUGIN_SECTION_DESCRIPTION}
             showPlaceholderControl={false}
           />
         )}

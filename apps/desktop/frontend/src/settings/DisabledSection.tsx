@@ -15,12 +15,16 @@ export function DisabledSection({
   title,
   reason = DISABLED_SECTION_REASON,
   description,
+  body,
   showPlaceholderControl = true,
 }: {
   testId: string;
   title: string;
   reason?: string;
   description?: string;
+  /** Frozen partition copy rendered verbatim in place of the generic
+   * "该分区暂不可编辑…" sentence (design §4.5 plugins). */
+  body?: string;
   showPlaceholderControl?: boolean;
 }) {
   return (
@@ -60,7 +64,7 @@ export function DisabledSection({
           lineHeight: tokens.typography.lineHeight,
         }}
       >
-        该分区暂不可编辑：{reason}。此处不会以占位数据或本地推断填充任何设置值。
+        {body ?? `该分区暂不可编辑：${reason}。此处不会以占位数据或本地推断填充任何设置值。`}
       </p>
       {description && (
         <p

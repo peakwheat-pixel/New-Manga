@@ -43,7 +43,7 @@ describe("DisabledSection (SETTINGS-OPEN-C-3-PLUGIN §4.5)", () => {
           testId="settings-disabled-section-plugins"
           title="Plugin / Hooks"
           reason={PLUGIN_SECTION_REASON}
-          description={PLUGIN_SECTION_DESCRIPTION}
+          body={PLUGIN_SECTION_DESCRIPTION}
           showPlaceholderControl={false}
         />,
       );
@@ -52,11 +52,12 @@ describe("DisabledSection (SETTINGS-OPEN-C-3-PLUGIN §4.5)", () => {
     expect(section).not.toBeNull();
     expect(section?.getAttribute("aria-disabled")).toBe("true");
     expect(section?.getAttribute("data-disabled-reason")).toBe(PLUGIN_SECTION_REASON);
-    expect(q("settings-disabled-section-plugins-reason")?.textContent).toContain(
-      "插件系统尚未实现",
+    // The frozen §4.5 copy is rendered verbatim as one continuous paragraph.
+    expect(q("settings-disabled-section-plugins-reason")?.textContent).toBe(
+      PLUGIN_SECTION_DESCRIPTION,
     );
-    expect(q("settings-disabled-section-plugins-description")?.textContent).toContain(
-      "当前版本未安装插件运行时",
+    expect(PLUGIN_SECTION_DESCRIPTION.startsWith("插件系统尚未实现：当前版本未安装插件运行时。")).toBe(
+      true,
     );
     // §4.5: no enable/reload/open-directory button can exist without a runtime.
     expect(section?.querySelector("button")).toBeNull();
@@ -73,6 +74,6 @@ describe("DisabledSection (SETTINGS-OPEN-C-3-PLUGIN §4.5)", () => {
     const button = section?.querySelector("button");
     expect(button).not.toBeNull();
     expect(button?.disabled).toBe(true);
-    expect(q("generic-disabled-section-description")).toBeNull();
+    expect(q("generic-disabled-section-reason")?.textContent).toContain("该分区暂不可编辑");
   });
 });
