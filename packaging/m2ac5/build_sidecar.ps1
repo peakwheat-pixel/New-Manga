@@ -195,8 +195,11 @@ if (-not $SkipPythonRuntime) {
         }
     }
     if (-not $BundlePythonRuntime) {
-        Write-Warning "build_sidecar: no plugin-hook Python runtime resolved; packaged plugin hooks will fail closed (pass -BundlePythonRuntime or -SkipPythonRuntime explicitly)"
-    } elseif (-not (Test-Path -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -PathType Leaf)) {
+        # fail-closed: a release bundle must ship the plugin-hook interpreter
+        # (an explicit -SkipPythonRuntime is the only way to opt out).
+        throw "build_sidecar: cannot resolve the plugin-hook Python runtime (pass -BundlePythonRuntime <dir> with python.exe, or -SkipPythonRuntime to opt out explicitly)"
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -PathType Leaf)) {
         throw "BundlePythonRuntime does not contain python.exe: $BundlePythonRuntime"
     }
 }

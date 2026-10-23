@@ -1,5 +1,6 @@
 # command: pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -Force -SkipWeights (full PyInstaller path)
 # started: 2026-10-23T19:13:38.6251948+08:00
+# note: recorded from the working tree (bundle HEAD line reflects the committed state at build start); deliverable fixed at cfc737fc.
 # exit: 0
 34 DEPRECATION: Running PyInstaller as admin is not necessary nor sensible. Run PyInstaller from a non-administrator terminal. PyInstaller 7.0 will block this.
 build_sidecar: git HEAD=9e79153aec9d28fa6a9d8cfb572afc7a15943b01 pyinstaller=6.22.3 python=G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe

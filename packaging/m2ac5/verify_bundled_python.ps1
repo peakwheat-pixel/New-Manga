@@ -10,6 +10,9 @@
 #
 # Usage:
 #   pwsh -File packaging/m2ac5/verify_bundled_python.ps1 [-PythonRuntime <dir>] [-OutDir <dir>]
+#
+# CI: pass -PythonRuntime with the runner's Python installation (the default
+# C:\Python314 is a local convenience only).
 
 [CmdletBinding()]
 param(

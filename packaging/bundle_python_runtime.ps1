@@ -68,7 +68,20 @@ function Copy-PluginPythonRuntime {
         "Launcher may set NEWMANGA_PLUGIN_PYTHON to this interpreter; _hook_interpreter() also resolves python/python.exe"
     )
 
-    # 4) fail-closed smoke: the copied runtime must import the modules the
+    # 4) sha256 manifest of the bundled runtime (release auditability)
+    $manifest = Join-Path $target "plugin-python.sha256"
+    $lines = Get-ChildItem -LiteralPath $target -Recurse -File |
+        Where-Object { $_.Name -ne "plugin-python.sha256" } |
+        Sort-Object FullName |
+        ForEach-Object {
+            $relative = $_.FullName.Substring($target.Length + 1).Replace("\", "/")
+            $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $relative"
+        }
+    Set-Content -LiteralPath $manifest -Encoding ascii -Value $lines
+    Write-Host "bundle_python_runtime: sha256 manifest ($($lines.Count) files) -> $manifest"
+
+    # 5) fail-closed smoke: the copied runtime must import the modules the
     #    plugin runtime depends on, with a minimal PATH (no host PYTHONHOME).
     $smoke = & (Join-Path $target "python.exe") -I -c "import socket, ssl, sqlite3, json, hashlib; print('plugin-python-smoke-ok')" 2>&1
     if ($LASTEXITCODE -ne 0 -or ($smoke -join "`n") -notmatch "plugin-python-smoke-ok") {

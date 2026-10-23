@@ -48,8 +48,8 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 - [x] **AC1** `NEWMANGA_PLUGIN_PYTHON` 存在时优先返回该解释器。
 - [x] **AC2** frozen 下同级或 `python/` 子目录解释器可被发现。
 - [x] **AC3** 全部缺失 / env 指向不存在路径 → `PLUGIN_HOOK_UNAVAILABLE`（fail-closed，不回退系统 Python）。
-- [x] **AC4** `build.ps1 -BundlePythonRuntime` 复制运行时并写记录文件（脚本级测试可用 dry-run/复制临时目录验证）。
-- [x] **AC5** 全量测试无回归；文档如实（实际打包冒烟未做）。
+- [x] **AC4** 真实 `build_sidecar.ps1` 增量路径与 `-Force` 全量路径均产出含 `python/python.exe` 的 bundle，并记录 sha256 manifest（1009 files）。
+- [x] **AC5** 全量测试无回归；文档如实（NSIS/Tauri 安装包与 GUI 内 Hook 冒烟留给候选 1）。
 
 ## Closeout Record
 
