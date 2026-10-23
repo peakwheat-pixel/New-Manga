@@ -34,6 +34,7 @@ from pathlib import Path
 import json
 import os
 import subprocess
+import threading
 import sys
 import time
 import uuid
@@ -239,6 +240,8 @@ class PluginService:
                 "errors": [],
             }
         payload = {**payload, "schema_ref": HOOK_SCHEMA_REF}
+        if not isinstance(payload["schema_ref"], str):  # defensive: frozen constant
+            raise PluginError("PLUGIN_INVALID_REQUEST", "schema_ref must be a string")
 
         results: list[dict] = []
         overrides: list[dict] = []
@@ -291,8 +294,9 @@ class PluginService:
         if "PATH" in os.environ:
             env["PATH"] = os.environ["PATH"]
         interpreter = _hook_interpreter()
+        payload_bytes = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         try:
-            completed = subprocess.run(
+            process = subprocess.Popen(
                 [
                     interpreter,
                     "-I",
@@ -300,35 +304,67 @@ class PluginService:
                     str(manifest.entry_path),
                     hook_name,
                 ],
-                input=json.dumps(payload, ensure_ascii=False),
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                timeout=self._hook_timeout_seconds,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
                 cwd=str(manifest.root),
                 env=env,
-                check=False,
             )
-        except subprocess.TimeoutExpired as error:
-            raise PluginError(
-                "PLUGIN_HOOK_TIMEOUT",
-                f"{hook_name} exceeded {self._hook_timeout_seconds}s",
-            ) from error
         except OSError as error:
             raise PluginError(
                 "PLUGIN_HOOK_FAILED", f"could not start hook process: {error.strerror}"
             ) from error
-        if completed.returncode != 0:
+        # Bounded streaming read (review r2 P2): the first byte past the cap
+        # kills the child, so a runaway plugin can never buffer an unbounded
+        # stdout/stderr inside the Core. stderr is discarded outright.
+        collected: dict[str, object] = {}
+
+        def pump_stdout() -> None:
+            chunks: list[bytes] = []
+            total = 0
+            assert process.stdout is not None
+            while True:
+                chunk = process.stdout.read(65536)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > _MAX_HOOK_OUTPUT_BYTES:
+                    collected["overflow"] = True
+                    process.kill()
+                    break
+                chunks.append(chunk)
+            collected["stdout"] = b"".join(chunks)
+
+        reader = threading.Thread(target=pump_stdout, daemon=True)
+        reader.start()
+        try:
+            assert process.stdin is not None
+            process.stdin.write(payload_bytes)
+            process.stdin.close()
+        except OSError:
+            pass
+        try:
+            process.wait(timeout=self._hook_timeout_seconds)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
             raise PluginError(
-                "PLUGIN_HOOK_FAILED", f"{hook_name} exited with {completed.returncode}"
-            )
-        if len(completed.stdout or "") > _MAX_HOOK_OUTPUT_BYTES:
+                "PLUGIN_HOOK_TIMEOUT",
+                f"{hook_name} exceeded {self._hook_timeout_seconds}s",
+            ) from None
+        reader.join(timeout=2)
+        if collected.get("overflow"):
             raise PluginError(
                 "PLUGIN_HOOK_FAILED", f"{hook_name} produced too much output"
             )
+        if process.returncode != 0:
+            raise PluginError(
+                "PLUGIN_HOOK_FAILED", f"{hook_name} exited with {process.returncode}"
+            )
+        stdout_bytes = collected.get("stdout") or b""
         try:
-            response = json.loads(completed.stdout or "{}")
-        except json.JSONDecodeError as error:
+            response = json.loads(stdout_bytes.decode("utf-8") or "{}")
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
             raise PluginError("PLUGIN_HOOK_FAILED", "hook returned non-JSON output") from error
         if not isinstance(response, dict) or response.get("ok") is not True:
             code = response.get("error") if isinstance(response, dict) else "hook_failed"
@@ -443,20 +479,7 @@ class PluginService:
         self, plugin_id: str, enabled: bool, *, manifest: PluginManifest | None
     ) -> None:
         now = _now()
-        manifest_json = (
-            json.dumps(
-                {
-                    "id": manifest.plugin_id,
-                    "name": manifest.name,
-                    "version": manifest.version,
-                    "hooks": list(manifest.hooks),
-                    "permissions": list(manifest.permissions),
-                },
-                ensure_ascii=False,
-            )
-            if manifest is not None
-            else None
-        )
+        manifest_json = self._manifest_fingerprint(manifest) if manifest is not None else None
         with self._conn:
             self._conn.execute(
                 "INSERT INTO plugin_state"

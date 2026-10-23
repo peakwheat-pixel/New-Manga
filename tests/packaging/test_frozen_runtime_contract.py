@@ -64,14 +64,18 @@ def test_explicit_data_root_isolation(tmp_path):
         assert not str(db_path).startswith(str(ROOT / "src"))
         assert not str(db_path).startswith(str(ROOT / "packaging"))
 
-        # Verify schema version is current (the latest known migration).
-        from infrastructure.sqlite.schema import default_migrations as _default_migrations
-
-        expected_schema = max(m.schema_version for m in _default_migrations())
+        # Verify the recorded schema version is consistent from two
+        # independent sources: the application_metadata projection and the
+        # applied-migration ledger (review r2: reading default_migrations and
+        # comparing it to itself was a tautology).
         ver = services.conn.execute(
             "SELECT CAST(value_json AS INTEGER) FROM application_metadata WHERE metadata_key='schema_version'"
         ).fetchone()[0]
-        assert ver == expected_schema
+        applied = services.conn.execute(
+            "SELECT MAX(schema_version) FROM schema_migrations"
+        ).fetchone()[0]
+        assert ver == applied
+        assert ver is not None and ver >= 5
     finally:
         _shutdown_services(services)
 

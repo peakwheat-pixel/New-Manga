@@ -45,7 +45,7 @@ function event(id: string, overrides: Partial<PluginAuditEvent> = {}): PluginAud
 }
 
 function snapshot(plugins: PluginEntry[], globalEnabled = false): PluginsSnapshot {
-  return { global_enabled: globalEnabled, plugin_root: "G:/data/plugins", plugins };
+  return { global_enabled: globalEnabled, plugins };
 }
 
 class FakePluginClient implements PluginPanelClientLike {

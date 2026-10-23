@@ -58,3 +58,10 @@ authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D
 - **P1-3 生命周期**：Task/STATUS/TASK_LEDGER 统一 `in_review`；Task Closeout 改为「待 Review approved 后 closeout」；allowed_paths 补 doc 指针。
 - **P2**：`plugins.list` 移除 `plugin_root` 绝对路径投影（前端未使用）；`plugins_open_directory` 按 Core 同源 data root 解析（`NEWMANGA_DATA_ROOT` → `LOCALAPPDATA/New Manga`）+ `plugins`；审计改为**状态驱动**（load 事件只在状态变化时写，严格 append-only，删 60s 窗口）；Hook payload 注入 `schema_ref=nm-plugin-hook/1`；AC6 拆为 AC6a（API/隔离，已覆盖）/AC6b（GUI 触发 Hook，**NOT_RUN**，流水线接线属 PLUGIN-RUNTIME-2）。
 - **v6 专项**：`test_v6_tables_start_empty_and_are_indexed` 断言两表 0 行 + 两索引；`test_frozen_runtime_contract` 改为双源校验（`application_metadata` vs `schema_migrations` max）。
+
+## 6. Review r2 处置
+
+- **P1-1 剩余承诺**：Task 目标 4/非目标、设计 §4.3/§4.5 全部加「trusted-code 边界」实现注记——`permissions: []` = Core 不授予能力句柄，**不是 OS 沙箱**；旧「无文件/网络/模型访问」表述已由注记替换。
+- **P1-3 剩余**：Task 正文 `in_progress` → `in_review`；Closeout「未开始」→「待 Review approved 后 closeout」。
+- **P2**：前端 `plugin_root` 类型/规范化/测试 fake 删除；Hook 输出改为**流式字节上限**（`Popen` + 读线程，超 256KB 立即 kill，stderr `DEVNULL`；中文 100k 字符用例覆盖）；`_write_state` 复用 `_manifest_fingerprint`（enable 后不再重复 `load_ok`，补测试）；`test_frozen_runtime_contract` 改为 `application_metadata` vs `schema_migrations` MAX 双源；`schema_ref` 注入处做类型校验；GUI 实测「打开插件目录」打开 `.../data-root/plugins`（与 Core 一致）并截图 `screenshots/02`。
+- **验证（r2 修复后）**：定向 31 passed；全量 2640 passed / 3 既有失败；cargo 153；vitest 45/434；tsc 0；check.ps1 PASS。

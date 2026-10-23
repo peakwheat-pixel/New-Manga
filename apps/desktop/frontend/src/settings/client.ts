@@ -517,7 +517,6 @@ export interface PluginEntry {
 /** `plugins_list` projection: the global kill switch + every discovered dir. */
 export interface PluginsSnapshot {
   global_enabled: boolean;
-  plugin_root: string;
   plugins: PluginEntry[];
 }
 
@@ -566,7 +565,6 @@ function normalizePluginsSnapshot(raw: unknown): PluginsSnapshot {
   }
   return {
     global_enabled: row.global_enabled === true,
-    plugin_root: typeof row.plugin_root === "string" ? row.plugin_root : "",
     plugins,
   };
 }

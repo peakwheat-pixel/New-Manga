@@ -1,5 +1,5 @@
 # command: python -m pytest tests -q
-# started: 2026-10-23T15:21:40.9065168+08:00
+# started: 2026-10-23T15:35:10.4944019+08:00
 # exit: 1
 ........................................................................ [  2%]
 ........................................................................ [  5%]
@@ -18,16 +18,16 @@
 ........................................................................ [ 40%]
 ........................................................................ [ 43%]
 ........................................................................ [ 46%]
-...............................s........................................ [ 48%]
-.......................................................sssss............ [ 51%]
+................................s....................................... [ 48%]
+........................................................sssss........... [ 51%]
 ........................................................................ [ 54%]
 ........................................................................ [ 57%]
 ........................................................................ [ 59%]
-................................FF...................................... [ 62%]
+.................................FF..................................... [ 62%]
 ........................................................................ [ 65%]
 ........................................................................ [ 67%]
 ........................................................................ [ 70%]
-.....................s.................................................. [ 73%]
+......................s................................................. [ 73%]
 ........................................................................ [ 76%]
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
@@ -390,7 +390,7 @@ file:///G:/CODEX/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeErr
 file:///G:/CODEX/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
 ........................................................................ [ 95%]
 ........................................................................ [ 97%]
-.....................F...................................                [100%]
+......................F...................................               [100%]
 ================================== FAILURES ===================================
 ________________ test_real_detection_returns_block_candidates _________________
 
@@ -807,7 +807,7 @@ E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detecto
 src\infrastructure\providers\detection_manga.py:535: ProviderError
 ______________ test_pause_shows_optimistic_feedback_immediately _______________
 
-qapp_ = <PySide6.QtGui.QGuiApplication(0x2065055c1b0) at 0x000002063F7DDB80>
+qapp_ = <PySide6.QtGui.QGuiApplication(0x1c3072595e0) at 0x000001C303F1EE80>
 
     def test_pause_shows_optimistic_feedback_immediately(qapp_):
         """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
@@ -839,7 +839,7 @@ qapp_ = <PySide6.QtGui.QGuiApplication(0x2065055c1b0) at 0x000002063F7DDB80>
             qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
         )
 E       assert False
-E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x2065055c1b0) at 0x000002063F7DDB80>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000020684E45850>, timeout_ms=15000)
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x1c3072595e0) at 0x000001C303F1EE80>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000001C33BF61C70>, timeout_ms=15000)
 
 tests\workbench\test_workbench_viewmodel.py:210: AssertionError
 ============================== warnings summary ===============================
@@ -856,4 +856,4 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
 FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
 FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
-3 failed, 2639 passed, 9 skipped, 2 warnings in 186.85s (0:03:06)
+3 failed, 2640 passed, 9 skipped, 2 warnings in 188.25s (0:03:08)

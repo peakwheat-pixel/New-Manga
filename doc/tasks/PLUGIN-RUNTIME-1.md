@@ -30,7 +30,7 @@ allowed_paths:
 
 ## 状态
 
-**in_progress**（用户 2026-10-23 授权，D1–D6 按建议值）。实现期间设置页 `Plugin/Hooks` 的只读占位保持到运行时接线完成，不提前开放假控件；wire/控件只随真实运行能力落地。
+**in_review**（用户 2026-10-23 授权，D1–D6 按建议值；r1/r2 修复完成，待复审）。
 
 ## 目标
 
@@ -39,7 +39,7 @@ allowed_paths:
 1. **本地目录插件发现**：插件根 `%LOCALAPPDATA%/New Manga/plugins/<plugin_id>/`（以 `app_data_dir` 解析，不写死）；只读扫描，不写插件文件；不做应用内安装器/市场/在线分发/自动更新。
 2. **manifest v1 校验**：按 §4.2 冻结字段（`id`/`name`/`version`/`entry`/`hooks`/`permissions` 必填，`min_app_version`/`description` 可选）；`id` 必须等于目录名；`entry` 仅 `.py` 且必须存在；未知 Hook/未知权限/类型错 → **fail-closed 不加载** + `plugin_load_rejected` 审计。
 3. **默认禁用**：`plugins.enabled = false` 为全局总开关且**默认关**；已发现插件默认 `disabled`；启用后只调用其声明的 Hook。
-4. **`permissions: []` 首发**：本期只加载无权限插件（无文件/网络/模型访问）；带权限插件一律拒绝加载（即使 manifest 声明），未来批次另行放开。
+4. **`permissions: []` 首发（trusted-code 边界）**：本期只加载声明 `permissions: []` 的插件；`permissions` 非空一律拒绝加载。首发的安全承诺是「**Core 不授予任何能力句柄**」（不传 Core 对象/DB/模型/凭据/配置路径/网络配置，子进程最小 env + `-I` + cwd=插件目录），**不是 OS 级沙箱**：插件进程仍以用户权限运行，恶意插件可自行读写文件/联网——请只安装可信插件（OS 沙箱见 `PLUGIN-RUNTIME-SANDBOX-1`）。
 5. **审计表**：`plugin_events`（加载/拒绝/启用/禁用/调用/错误），只追加、可查询；schema 变更走正常迁移（record-only 迁移预计 v+1）。
 6. **Hook 契约冻结**：§4.4 六组 Hook（`before_detect` / `after_detect` / `before_ocr` / `after_ocr` / `before_export` / `after_export`）的 versioned JSON schema 落位；Hook 异常不改变主链路状态。
 7. **崩溃隔离**：Hook 在独立子进程执行，超时/崩溃 = 该次 Hook 跳过 + `plugin_error` 审计 + 主链路继续。
@@ -70,14 +70,14 @@ allowed_paths:
 
 - 带权限插件（`files_read`/`files_write`/`network`/`model`）的加载与权限授予；
 - 插件市场/在线分发/自动更新/应用内安装器；
-- 插件直接访问 DB/Repository/任意路径；
+- 通过 Core 接口访问 DB/Repository/任意路径（Core 不提供任何此类句柄；注意：trusted-code 边界下插件仍可用 OS 权限自行访问文件/网络，见目标 4）；
 - 更改 P15 白名单之外的新 write section（启用状态若走 settings 需在裁决 D5 中明确键集）。
 
 ## 测试要求（授权后填）
 
 | 场景/AC | 计划命令 | 实际结果 | 证据 |
 |---|---|---|---|
-| AC1/AC2 Core | `python -m pytest tests/infrastructure/test_plugin_runtime.py -q` | PASS（22 passed：manifest 拒绝矩阵（含未知字段/符号链接）、发现、默认禁用、全局/逐插件开关） | core-pytest-targeted.log |
+| AC1/AC2 Core | `python -m pytest tests/infrastructure/test_plugin_runtime.py -q` | PASS（23 passed：manifest 拒绝矩阵（含未知字段/符号链接）、发现、默认禁用、全局/逐插件开关） | core-pytest-targeted.log |
 | AC3 隔离 | 同上（崩溃/超时用例） | PASS（真实子进程：崩溃 → `plugin_error`；超时 1s → `PLUGIN_HOOK_TIMEOUT`；无 Core env/无法 import Core；输出上限 256KB；主流程不抛） | core-pytest-targeted.log |
 | AC4 审计 | 同上 + `tests/core/test_core_plugin_wire.py` | PASS（`audit_list` 最新优先、limit 校验、状态驱动 load 事件不重复；wire `plugins.audit_list` 无绝对路径投影） | core-pytest-targeted.log |
 | AC5 UI | `npx vitest run src/settings/PluginSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx` | PASS（8 panel 用例 + settings 页；全量 45 files / 434 tests） | ui-test-frontend.log |
@@ -87,14 +87,14 @@ allowed_paths:
 
 |evidence_id|ac|path|commit|sha256|status|
 |---|---|---|---|---|---|
-|EV-PLUGIN-RUNTIME-1-CORE-PYTEST-TARGETED|AC1-AC6|verification/PLUGIN-RUNTIME-1/core-pytest-targeted.log|7253286f5836fd5589c29d7bd3050b4383844f2f|44a487a519931dd36f149e50f2a77ce79ba3d1e0ba00438c1d4065830e6e37f4|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-CORE-PYTEST|AC1-AC6|verification/PLUGIN-RUNTIME-1/core-pytest.log|7253286f5836fd5589c29d7bd3050b4383844f2f|f86a8c5b4dd829a133d1d343877c500b6580f13c64ae7a3793db714c2cd87fb4|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-GUI-SMOKE|AC1-AC6|verification/PLUGIN-RUNTIME-1/gui-smoke.md|7253286f5836fd5589c29d7bd3050b4383844f2f|1a7b06bcf86205a63c3639bfb32d8ae636ec6190fa46b7e6b2256bbc1ed11483|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-REVIEW-R1|AC1-AC6|verification/PLUGIN-RUNTIME-1/review-r1.md|7253286f5836fd5589c29d7bd3050b4383844f2f|cb3e2eeea3282ade377181c27e237277cae34beea7661f27a54eb67a2d200c2d|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-01-PLUGIN-PANEL-ENABLED|AC1-AC6|verification/PLUGIN-RUNTIME-1/screenshots/01-plugin-panel-enabled.png|7253286f5836fd5589c29d7bd3050b4383844f2f|5cbb6485a148b70531b2fb82ea0bb3329d1edefd240908a7495f0cbd3f3a9aa0|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-UI-TEST-FRONTEND|AC1-AC6|verification/PLUGIN-RUNTIME-1/ui-test-frontend.log|7253286f5836fd5589c29d7bd3050b4383844f2f|da5d74039199babb648133a9d33b9b868c479ce6cb8573fd3d84638a7c76eb1a|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-UI-TSC|AC1-AC6|verification/PLUGIN-RUNTIME-1/ui-tsc.log|7253286f5836fd5589c29d7bd3050b4383844f2f|7e47314f1054ad0850901454dc45cc17bd73b73e46fb7968861b7c95706d80c6|CANONICAL|
-|EV-PLUGIN-RUNTIME-1-WIRE-CARGO-TEST-SERIAL|AC1-AC6|verification/PLUGIN-RUNTIME-1/wire-cargo-test-serial.log|7253286f5836fd5589c29d7bd3050b4383844f2f|721e430d3fcea36b56e9bfc045cd8c86e0a137845b5704ece0337d937c1b3dcf|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-CORE-PYTEST-TARGETED|AC1-AC6a|verification/PLUGIN-RUNTIME-1/core-pytest-targeted.log|7253286f5836fd5589c29d7bd3050b4383844f2f|44a487a519931dd36f149e50f2a77ce79ba3d1e0ba00438c1d4065830e6e37f4|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-CORE-PYTEST|AC1-AC6a|verification/PLUGIN-RUNTIME-1/core-pytest.log|7253286f5836fd5589c29d7bd3050b4383844f2f|f86a8c5b4dd829a133d1d343877c500b6580f13c64ae7a3793db714c2cd87fb4|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-GUI-SMOKE|AC1-AC6a|verification/PLUGIN-RUNTIME-1/gui-smoke.md|7253286f5836fd5589c29d7bd3050b4383844f2f|1a7b06bcf86205a63c3639bfb32d8ae636ec6190fa46b7e6b2256bbc1ed11483|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-REVIEW-R1|AC1-AC6a|verification/PLUGIN-RUNTIME-1/review-r1.md|7253286f5836fd5589c29d7bd3050b4383844f2f|cb3e2eeea3282ade377181c27e237277cae34beea7661f27a54eb67a2d200c2d|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-01-PLUGIN-PANEL-ENABLED|AC1-AC6a|verification/PLUGIN-RUNTIME-1/screenshots/01-plugin-panel-enabled.png|7253286f5836fd5589c29d7bd3050b4383844f2f|5cbb6485a148b70531b2fb82ea0bb3329d1edefd240908a7495f0cbd3f3a9aa0|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-UI-TEST-FRONTEND|AC1-AC6a|verification/PLUGIN-RUNTIME-1/ui-test-frontend.log|7253286f5836fd5589c29d7bd3050b4383844f2f|da5d74039199babb648133a9d33b9b868c479ce6cb8573fd3d84638a7c76eb1a|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-UI-TSC|AC1-AC6a|verification/PLUGIN-RUNTIME-1/ui-tsc.log|7253286f5836fd5589c29d7bd3050b4383844f2f|7e47314f1054ad0850901454dc45cc17bd73b73e46fb7968861b7c95706d80c6|CANONICAL|
+|EV-PLUGIN-RUNTIME-1-WIRE-CARGO-TEST-SERIAL|AC1-AC6a|verification/PLUGIN-RUNTIME-1/wire-cargo-test-serial.log|7253286f5836fd5589c29d7bd3050b4383844f2f|721e430d3fcea36b56e9bfc045cd8c86e0a137845b5704ece0337d937c1b3dcf|CANONICAL|
 
 ## 交付与运行记录
 
@@ -102,11 +102,12 @@ allowed_paths:
 - 2026-10-23：用户授权「PLUGIN-RUNTIME-1，按建议值 D1–D6」；转 `in_progress` 并启动实现（D1 子进程隔离 10s 超时 / D2 `plugin_events` 迁移 / D3 versioned JSON hook / D4 `app_data_dir()/plugins` / D5 `plugins.enabled` + 逐插件状态 / D6 UI 本期开放管理面）。
 - 2026-10-23（实现）：Core 新增 `src/infrastructure/plugins/`（manifest v1 校验 fail-closed、`_hook_runner.py` 隔离子进程入口、`PluginService` 发现/状态/审计/`run_hook`）；迁移 **v6**（`plugin_state` + `plugin_events` 两空表）；`core_assembly` 装配 `<data_root>/plugins`；`core_service` 新增 4 个应用层命令（`plugins.list/set_enabled/set_plugin_enabled/audit_list`，minor 保持 3）。Rust trait/Mock/Resilient/Stdio 4 方法 + 5 个 production 命令（含 opener 打开的 `plugins_open_directory`），`PRODUCTION_COMMANDS` 61→66、build.rs ACL、capabilities、allowlist 过滤、表面测试同步。前端 `SettingsClient` 5 方法 + `PluginSettingsPanel`（默认关全局开关/逐插件启停/拒绝原因/审计/打开目录）+ `SettingsPage` 12/12 开放。
 - 2026-10-23（Review r1 处置）：安全边界按事实**降级为「受信任的本地代码」**（`permissions: []` = Core 不授予任何能力句柄；子进程最小环境 + `-I` + cwd=插件目录；**不承诺 OS 沙箱**，恶意插件仍可用用户权限读写文件/联网——OS 沙箱另立 follow-up `PLUGIN-RUNTIME-SANDBOX-1`），并补「子进程无 Core env/无法 import Core 模块/输出上限」测试；manifest 增加未知字段拒绝 + 目录/manifest 符号链接根校验；`plugins.list` 不再投影绝对路径；`plugins_open_directory` 按 Core 同源 data root（NEWMANGA_DATA_ROOT → LOCALAPPDATA/New Manga）解析；审计改为**状态驱动**（load 事件只在状态变化时写，严格 append-only，取消 60s 窗口）；Hook payload 注入 versioned `schema_ref=nm-plugin-hook/1`；Task/STATUS/LEDGER 统一 `in_review`，AC6 拆为 AC6a（API）/AC6b（GUI Hook，NOT_RUN）。
-- 2026-10-23（测试）：定向 24 passed；全量 2633 passed / 3 既有失败（detector 权重缺失 + workbench 时序 flaky，与本改动无关；新增迁移 v6 后同步更新了 schema/restore/packaging 测试中的版本硬编码）；cargo 153 passed；前端 45 files / 434 tests；tsc 0；GUI 烟测 PASS。
+- 2026-10-23（Review r2 处置）：Task/设计 §4.3/§4.5 的旧安全承诺改为「trusted-code 边界」实现注记（不再声称插件无法读写文件/联网）；Task 正文/Closeout 统一 `in_review`；前端 `plugin_root` 类型/规范化/测试 fake 清理；Hook 输出改为**流式字节上限**（超限即 kill 子进程，stderr 丢弃）；`_write_state` 复用 fingerprint（修复 enable 后重复 `load_ok`）；`test_frozen_runtime_contract` 改为 `application_metadata` vs `schema_migrations` 双源；GUI 实测「打开插件目录」打开 Core 同源目录并截图。
+- 2026-10-23（测试）：定向 31 passed；全量 2640 passed / 3 既有失败（detector 权重缺失 + workbench 时序 flaky，与本改动无关；新增迁移 v6 后同步更新了 schema/restore/packaging 测试中的版本硬编码）；cargo 153 passed；前端 45 files / 434 tests；tsc 0；GUI 烟测 PASS。
 
 ## Closeout Record
 
-- Closeout：未开始（proposed）。
+- Closeout：待 Review approved 后 closeout（当前 in_review）。
 - canonical_evidence_status：pending；resource_closeout_status：pending。
 - 删除/迁移/归档：0。
 - 当前指针清理：本 Task 仅在 REBASELINE_PLAN 以 `proposed` 登记；授权前不进入 STATUS/ACTIVE。

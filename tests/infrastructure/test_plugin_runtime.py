@@ -304,9 +304,11 @@ def test_hook_subprocess_cannot_import_core_modules(runtime) -> None:
 def test_hook_output_is_capped(runtime) -> None:
     root = runtime["root"]
     service = runtime["service"]
+    # Multi-byte payload: 100k CJK chars ~= 300KB UTF-8, so the byte cap (not
+    # a character count) must trip.
     entry = (
         "def after_detect(payload):\n"
-        "    return {'blob': 'x' * 300000}\n"
+        "    return {'blob': '\u4e2d' * 100000}\n"
     )
     write_plugin(root, "acme-loud", entry_source=entry)
     service.set_global_enabled(True)
@@ -324,4 +326,18 @@ def test_discovery_audit_is_state_driven_not_repeated(runtime) -> None:
     service.list_plugins()
     events = service.audit_list(50)
     load_events = [event for event in events if event["event_type"] == "load_ok"]
+    assert len(load_events) == 1
+
+def test_enable_does_not_duplicate_load_ok(runtime) -> None:
+    root = runtime["root"]
+    service = runtime["service"]
+    write_plugin(root, "acme-detect")
+    service.list_plugins()
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-detect", True)
+    service.list_plugins()
+    service.list_plugins()
+    load_events = [
+        event for event in service.audit_list(50) if event["event_type"] == "load_ok"
+    ]
     assert len(load_events) == 1
