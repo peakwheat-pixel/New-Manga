@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import tempfile
 
 from tools.smoke import util
 from tools.smoke.model import (
@@ -64,10 +65,14 @@ class _PackagedContext:
 
 def run(options: RunOptions) -> list[CheckResult]:
     if not _BUNDLED_PYTHON.is_file():
+        try:
+            shown = _BUNDLED_PYTHON.relative_to(util.REPO_ROOT).as_posix()
+        except ValueError:
+            shown = _BUNDLED_PYTHON.name
         return all_blocked(
             CHECKS,
             "PACKAGED-BUNDLE-MISSING",
-            f"未找到真实 core-sidecar bundle 解释器：{_BUNDLED_PYTHON.relative_to(util.REPO_ROOT)}",
+            f"未找到真实 core-sidecar bundle 解释器：{shown}",
         )
     context = _PackagedContext(
         bundle_dir=_BUNDLE_DIR,
@@ -76,10 +81,7 @@ def run(options: RunOptions) -> list[CheckResult]:
         run_root=options.run_root,
         repack=options.repack,
     )
-    try:
-        return run_checks(_ENTRIES, context)
-    finally:
-        pass
+    return run_checks(_ENTRIES, context)
 
 
 # ---------------------------------------------------------------------------
@@ -175,7 +177,10 @@ def _check_sandbox_hook(context: _PackagedContext) -> dict:
     plugin = plugin_root / "smoke-bundled"
     plugin.mkdir(parents=True, exist_ok=True)
     (plugin / "plugin.py").write_text(
-        "def after_detect(payload):\n    return {'bundled': True}\n", encoding="utf-8"
+        "import sys\n"
+        "def after_detect(payload):\n"
+        "    return {'bundled': True, 'executable': sys.executable}\n",
+        encoding="utf-8",
     )
     (plugin / "manifest.json").write_text(
         json.dumps(
@@ -222,11 +227,19 @@ def _check_sandbox_hook(context: _PackagedContext) -> dict:
                 f"bundle 解释器 AppContainer Hook 未执行：{outcome.get('errors')}",
             )
         result = outcome["results"][0]["result"]
-        if result != {"bundled": True}:
+        expected_executable = context.python.resolve()
+        actual_executable = Path(str(result.get("executable", ""))).resolve()
+        if actual_executable != expected_executable:
             raise SmokeFailure(
-                "PACKAGED_HOOK_RESULT", f"bundle Hook 返回不符合预期：{result!r}"
+                "PACKAGED_HOOK_INTERPRETER",
+                f"Hook 实际解释器不是 bundle：{actual_executable} != {expected_executable}",
             )
-        return {"hook": "after_detect", "result": result, "interpreter": "bundle python.exe"}
+        return {
+            "hook": "after_detect",
+            "result": {"bundled": True},
+            "interpreter": str(expected_executable.name),
+            "executable_verified": True,
+        }
     finally:
         service_module._hook_interpreter = original_interpreter
         sandbox.close()
@@ -245,29 +258,46 @@ def _check_repack(context: _PackagedContext) -> dict:
     if not script.is_file():
         raise SmokeFailure("PACKAGED_VERIFY_SCRIPT_MISSING", "找不到 verify_bundled_python.ps1")
     out_dir = context.run_root / "repack-verify"
-    result = util.run_command(
-        [
-            shell,
-            "-NoProfile",
-            "-File",
-            str(script),
-            "-PythonRuntime",
-            sys.base_prefix,
-            "-OutDir",
-            str(out_dir),
-        ],
-        cwd=util.REPO_ROOT,
-        timeout=300,
-        log_path=context.logs / "packaged-repack-verify.log",
-    )
-    if result.timed_out:
-        raise SmokeFailure("PACKAGED_REPACK_TIMEOUT", "verify_bundled_python.ps1 超过 300s")
-    if result.exit_code != 0 or "verify_bundled_python: OK" not in result.combined:
-        raise SmokeFailure(
-            "PACKAGED_REPACK_FAILED",
-            f"verify_bundled_python.ps1 失败（exit={result.exit_code}）：{util.tail(result.combined)}",
+    # The reusable script creates its own %TEMP%/nm-bundled-hook-* plugin
+    # directory for the real sandbox hook (verify_bundled_python.ps1:83) and
+    # does not remove it. The tool is responsible for leaving no temp plugin
+    # behind, so snapshot the prefix and delete only directories created by
+    # this check afterwards.
+    temp_prefix = "nm-bundled-hook-"
+    temp_root = Path(tempfile.gettempdir())
+    before = {path for path in temp_root.glob(temp_prefix + "*") if path.is_dir()}
+    try:
+        result = util.run_command(
+            [
+                shell,
+                "-NoProfile",
+                "-File",
+                str(script),
+                "-PythonRuntime",
+                sys.base_prefix,
+                "-OutDir",
+                str(out_dir),
+            ],
+            cwd=util.REPO_ROOT,
+            timeout=300,
+            log_path=context.logs / "packaged-repack-verify.log",
         )
-    return {"script": "packaging/m2ac5/verify_bundled_python.ps1", "exit": result.exit_code}
+        if result.timed_out:
+            raise SmokeFailure("PACKAGED_REPACK_TIMEOUT", "verify_bundled_python.ps1 超过 300s")
+        if result.exit_code != 0 or "verify_bundled_python: OK" not in result.combined:
+            raise SmokeFailure(
+                "PACKAGED_REPACK_FAILED",
+                f"verify_bundled_python.ps1 失败（exit={result.exit_code}）：{util.tail(result.combined)}",
+            )
+    finally:
+        after = {path for path in temp_root.glob(temp_prefix + "*") if path.is_dir()}
+        for leftover in after - before:
+            util.remove_tree(leftover)
+    return {
+        "script": "packaging/m2ac5/verify_bundled_python.ps1",
+        "exit": result.exit_code,
+        "temp_plugin_dirs_cleaned": len(after - before),
+    }
 
 
 _ENTRIES = (

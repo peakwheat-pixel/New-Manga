@@ -74,7 +74,6 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="只列出层与检查项 ID，不执行检查",
     )
-    parser.add_argument("--verbose", action="store_true", help="保留更多控制台细节")
     return parser
 
 
@@ -135,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     run_root = util.make_run_root()
-    options = RunOptions(run_root=run_root, repack=args.repack, verbose=args.verbose)
+    options = RunOptions(run_root=run_root, repack=args.repack)
     started_at = util.now_iso()
     started = time.perf_counter()
     layers: list[LayerResult] = []
@@ -173,6 +172,13 @@ def main(argv: list[str] | None = None) -> int:
             util.remove_tree(run_root)
 
     duration_ms = int((time.perf_counter() - started) * 1000)
+    total_checks = sum(len(layer.checks) for layer in layers)
+    if total_checks == 0:
+        print(
+            "错误：没有执行任何检查（全部层被 --skip 排除）；不会把空运行当成 PASS。",
+            file=sys.stderr,
+        )
+        return 2
     payload = report.build_report(
         layers,
         started_at=started_at,
@@ -183,7 +189,11 @@ def main(argv: list[str] | None = None) -> int:
     json_path: Path | None = None
     if args.json and args.json != "-":
         json_path = Path(args.json)
-        report.write_json(json_path, payload)
+        try:
+            report.write_json(json_path, payload)
+        except OSError as error:
+            print(f"错误：无法写入 JSON 报告：{error}", file=sys.stderr)
+            return 2
     elif args.json == "-":
         sys.stdout.write(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
         sys.stderr.write(report.render_summary(payload) + "\n")

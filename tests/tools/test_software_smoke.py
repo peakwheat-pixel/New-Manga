@@ -18,7 +18,12 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from tools.smoke import model, report  # noqa: E402
+from tools.smoke.checks import core, frontend, packaged, wire  # noqa: E402
 from tools.smoke.plugins import LAYERS, main, select_layers  # noqa: E402
+
+
+def _options(tmp_path: Path) -> model.RunOptions:
+    return model.RunOptions(run_root=tmp_path / "run-root")
 
 
 def _check(check_id: str, status: str, code: str | None = None) -> model.CheckResult:
@@ -158,3 +163,57 @@ def test_cli_json_stdout_mode() -> None:
     # main() writes JSON to stdout and the human summary to stderr.
     exit_code = main(["--only", "wire", "--json", "-"])
     assert exit_code == 0
+
+
+def test_frontend_layer_blocks_without_node(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(frontend.shutil, "which", lambda _name: None)
+    results = frontend.run(_options(tmp_path))
+    assert results
+    assert {item.status for item in results} == {model.BLOCKED}
+    assert {item.code for item in results} == {"FRONTEND-NODE-MISSING"}
+
+
+def test_packaged_layer_blocks_without_bundle(tmp_path, monkeypatch) -> None:
+    missing = tmp_path / "missing-bundle" / "python.exe"
+    monkeypatch.setattr(packaged, "_BUNDLED_PYTHON", missing)
+    results = packaged.run(_options(tmp_path))
+    assert results
+    assert {item.status for item in results} == {model.BLOCKED}
+    assert {item.code for item in results} == {"PACKAGED-BUNDLE-MISSING"}
+
+
+def test_core_layer_blocks_when_setup_fails(tmp_path, monkeypatch) -> None:
+    if sys.platform != "win32":
+        pytest.skip("Core AppContainer layer is Windows-only")
+
+    def _boom(_data_root):
+        raise RuntimeError("assembly failed")
+
+    monkeypatch.setattr(core, "assemble_production_core", _boom)
+    results = core.run(_options(tmp_path))
+    assert len(results) == len(core.CHECKS)
+    assert {item.status for item in results} == {model.BLOCKED}
+    assert {item.code for item in results} == {"CORE-SETUP-FAILED"}
+
+
+def test_wire_layer_blocks_when_spawn_fails(tmp_path, monkeypatch) -> None:
+    def _fail(*_args, **_kwargs):
+        raise OSError("cannot spawn core")
+
+    monkeypatch.setattr(wire.subprocess, "Popen", _fail)
+    results = wire.run(_options(tmp_path))
+    assert results
+    assert {item.status for item in results} == {model.BLOCKED}
+    assert {item.code for item in results} == {"WIRE-SETUP-FAILED"}
+
+
+def test_cli_json_write_failure_returns_tool_error(tmp_path) -> None:
+    blocker = tmp_path / "blocked"
+    blocker.write_text("not a directory", encoding="utf-8")
+    exit_code = main(["--only", "packaged", "--json", str(blocker / "report.json")])
+    assert exit_code == 2
+
+
+def test_cli_all_layers_skipped_is_not_a_pass() -> None:
+    exit_code = main(["--skip", "core,wire,frontend,packaged"])
+    assert exit_code == 2

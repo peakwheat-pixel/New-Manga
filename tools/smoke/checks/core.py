@@ -212,6 +212,11 @@ def _check_wiring(context: _CoreContext) -> dict:
         raise SmokeFailure(
             "CORE_SANDBOX_SHARED_PROFILE", "生产装配不应使用共享 AppContainer profile"
         )
+    if getattr(context.service, "_allow_unsandboxed", None) is not False:
+        raise SmokeFailure(
+            "CORE_SANDBOX_NOT_REQUIRED",
+            "生产装配必须设置 allow_unsandboxed=False（缺沙箱时 fail-closed）",
+        )
     interpreter = Path(context.interpreter)
     if not interpreter.is_file():
         raise SmokeFailure(

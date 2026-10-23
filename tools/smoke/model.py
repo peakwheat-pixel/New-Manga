@@ -40,7 +40,6 @@ class RunOptions:
 
     run_root: Path
     repack: bool = False
-    verbose: bool = False
 
     @property
     def logs_dir(self) -> Path:
