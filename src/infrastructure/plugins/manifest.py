@@ -48,14 +48,19 @@ HOOK_NAMES: tuple[str, ...] = (
     "after_export",
 )
 
-#: Design §4.3 — the permission vocabulary (closed). The first release only
-#: loads plugins that declare ``permissions: []``.
+#: Design §4.3 — the permission vocabulary (closed).
 ALLOWED_PERMISSIONS: tuple[str, ...] = (
     "files_read",
     "files_write",
     "network",
     "model",
 )
+
+#: CAPABILITY-1: only ``network`` has reliable AppContainer enforcement
+#: (internetClient SID). ``files_read``/``files_write``/``model`` stay rejected
+#: until a trustworthy enforcement exists; claiming support without enforcement
+#: would be a false promise.
+SUPPORTED_PERMISSIONS: tuple[str, ...] = ("network",)
 
 #: `before_*` hooks may return an override object; `after_*` are read-only.
 WRITABLE_HOOKS: tuple[str, ...] = (
@@ -210,11 +215,17 @@ def parse_manifest(plugin_root: Path, *, app_version: str) -> PluginManifest:
             "PLUGIN_UNKNOWN_PERMISSION",
             f"unknown permissions: {', '.join(sorted(unknown_permissions))}",
         )
-    if permissions:
-        # Design §4.3 first-release limit: only permission-free plugins load.
+    unsupported = [item for item in permissions if item not in SUPPORTED_PERMISSIONS]
+    if unsupported:
+        # CAPABILITY-1: only permissions with real AppContainer enforcement
+        # (``network``) are accepted; the rest stay rejected rather than
+        # promising a capability the sandbox cannot enforce.
         raise ManifestError(
             "PLUGIN_PERMISSIONS_UNSUPPORTED",
-            "this release only loads plugins with permissions: []",
+            "this release only enforces: "
+            + ", ".join(SUPPORTED_PERMISSIONS)
+            + "; rejected: "
+            + ", ".join(sorted(unsupported)),
         )
 
     description_raw = raw.get("description", "")

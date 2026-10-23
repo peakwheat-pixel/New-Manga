@@ -153,6 +153,7 @@ class PluginService:
                         "version": "",
                         "description": "",
                         "hooks": [],
+                        "permissions": [],
                         "reason": item["reason"],
                     }
                 )
@@ -167,6 +168,7 @@ class PluginService:
                     "version": manifest.version,
                     "description": manifest.description,
                     "hooks": list(manifest.hooks),
+                    "permissions": list(manifest.permissions),
                     "reason": None,
                 }
             )
@@ -343,6 +345,7 @@ class PluginService:
                 timeout_seconds=self._hook_timeout_seconds,
                 max_output_bytes=_MAX_HOOK_OUTPUT_BYTES,
                 interpreter=interpreter,
+                capabilities=tuple(manifest.permissions),
             )
         except SandboxError as error:
             message = str(error)

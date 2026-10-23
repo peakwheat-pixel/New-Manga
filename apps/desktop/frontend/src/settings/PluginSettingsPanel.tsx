@@ -62,6 +62,13 @@ export function pluginErrorMessage(error: unknown): string {
   }
 }
 
+const PERMISSION_LABELS: Record<string, string> = {
+  network: "网络",
+  files_read: "文件读取",
+  files_write: "文件写入",
+  model: "模型",
+};
+
 const EVENT_LABELS: Record<string, string> = {
   load_ok: "加载成功",
   load_rejected: "拒绝加载",
@@ -322,6 +329,16 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
                   </span>
                   <span style={{ fontSize: tokens.typography.size.secondary, color: tokens.color.text.muted }}>
                     {entry.hooks.length > 0 ? entry.hooks.join(", ") : "未声明 Hook"}
+                  </span>
+                  <span
+                    data-testid={`plugin-settings-permissions-${entry.plugin_id}`}
+                    style={{ fontSize: tokens.typography.size.secondary, color: tokens.color.text.secondary }}
+                  >
+                    {entry.permissions.length === 0
+                      ? "无权限"
+                      : entry.permissions
+                          .map((permission) => PERMISSION_LABELS[permission] ?? permission)
+                          .join(" / ")}
                   </span>
                   {entry.reason && (
                     <span

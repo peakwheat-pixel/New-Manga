@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import socket
 import sys
 import time
 from pathlib import Path
@@ -35,14 +36,20 @@ def _manifest(plugin_id: str, hooks: list[str] | None = None) -> dict:
 
 
 def _write_plugin(
-    root: Path, plugin_id: str, source: str, *, hooks: list[str] | None = None
+    root: Path,
+    plugin_id: str,
+    source: str,
+    *,
+    hooks: list[str] | None = None,
+    permissions: list[str] | None = None,
 ) -> Path:
     plugin = root / "plugins" / plugin_id
     plugin.mkdir(parents=True, exist_ok=True)
     (plugin / "plugin.py").write_text(source, encoding="utf-8")
-    (plugin / "manifest.json").write_text(
-        json.dumps(_manifest(plugin_id, hooks)), encoding="utf-8"
-    )
+    manifest = _manifest(plugin_id, hooks)
+    if permissions is not None:
+        manifest["permissions"] = permissions
+    (plugin / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     return plugin
 
 
@@ -406,3 +413,91 @@ def test_sandbox_job_kills_grandchildren(sandboxed, tmp_path) -> None:
             break
         time.sleep(0.1)
     assert still_alive is False, "the job object must kill the whole tree"
+
+# ---------------------------------------------------------------------------
+# PLUGIN-RUNTIME-CAPABILITY-1: network capability enforcement
+# ---------------------------------------------------------------------------
+def _network_probe_source() -> str:
+    """Connect to a public endpoint; report the error CLASS.
+
+    AppContainer without the network capability fails with ``PermissionError``
+    (the network stack is denied), while a plugin holding ``internetClient`` is
+    allowed through and reaches the real network (success, or a timeout /
+    connection error when the host/endpoint is unreachable from this machine).
+    """
+    return (
+        "import socket\n"
+        "def after_detect(payload):\n"
+        "    try:\n"
+        "        sock = socket.create_connection(('1.1.1.1', 443), timeout=4)\n"
+        "        sock.close()\n"
+        "        return {'net': 'OK'}\n"
+        "    except OSError as error:\n"
+        "        return {'net': 'BLOCKED', 'kind': type(error).__name__}\n"
+    )
+
+
+def test_network_capability_requires_the_network_permission(sandboxed, tmp_path) -> None:
+    source = _network_probe_source()
+    _write_plugin(tmp_path, "acme-no-net", source)
+    _write_plugin(tmp_path, "acme-net", source, permissions=["network"])
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-no-net", True)
+    service.set_plugin_enabled("acme-net", True)
+
+    outcome = service.run_hook("after_detect", {})
+    results = {item["plugin_id"]: item["result"] for item in outcome["results"]}
+
+    # CAPABILITY-1: the container's network stack is denied for a plugin that
+    # declares no permission; the network plugin is allowed through.
+    assert results["acme-no-net"]["net"] == "BLOCKED"
+    assert results["acme-no-net"]["kind"] == "PermissionError"
+    assert results["acme-net"]["kind"] != "PermissionError"
+
+
+def test_network_capability_survives_repeated_hooks(sandboxed, tmp_path) -> None:
+    source = (
+        "def after_detect(payload):\n"
+        "    return {'ok': True}\n"
+    )
+    _write_plugin(tmp_path, "acme-net-repeat", source, permissions=["network"])
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-net-repeat", True)
+    for _ in range(3):
+        outcome = service.run_hook("after_detect", {})
+        assert outcome["applied"] is True
+        assert outcome["errors"] == []
+
+
+def test_manifest_rejects_unsupported_permissions_and_accepts_network(tmp_path) -> None:
+    from infrastructure.plugins.manifest import ManifestError, parse_manifest
+
+    def _write(permissions: list[str]) -> Path:
+        plugin = tmp_path / ("p-" + "-".join(permissions or ["none"]).replace("_", "-"))
+        plugin.mkdir(parents=True, exist_ok=True)
+        (plugin / "plugin.py").write_text("def after_detect(p):\n    return {}\n", encoding="utf-8")
+        (plugin / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "id": plugin.name,
+                    "name": plugin.name,
+                    "version": "1.0.0",
+                    "entry": "plugin.py",
+                    "hooks": ["after_detect"],
+                    "permissions": permissions,
+                }
+            ),
+            encoding="utf-8",
+        )
+        return plugin
+
+    accepted = parse_manifest(_write(["network"]), app_version="0.1.0")
+    assert accepted.permissions == ("network",)
+    with pytest.raises(ManifestError) as excinfo:
+        parse_manifest(_write(["files_read"]), app_version="0.1.0")
+    assert excinfo.value.code == "PLUGIN_PERMISSIONS_UNSUPPORTED"
+    with pytest.raises(ManifestError) as mixed:
+        parse_manifest(_write(["network", "model"]), app_version="0.1.0")
+    assert mixed.value.code == "PLUGIN_PERMISSIONS_UNSUPPORTED"

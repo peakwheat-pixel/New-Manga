@@ -58,6 +58,8 @@ if _IS_WINDOWS:  # pragma: no branch - import-time platform switch
     _STARTF_USESTDHANDLES = 0x00000100
     _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
     _JOB_OBJECT_EXTENDED_LIMIT_INFORMATION = 9
+    _SE_GROUP_ENABLED = 0x00000004
+    _LMEM_FIXED = 0x0040
     _ERROR_ALREADY_EXISTS_HRESULT = -2147024713  # 0x800700B7
 
     class _SID_AND_ATTRIBUTES(ctypes.Structure):
@@ -140,6 +142,11 @@ if _IS_WINDOWS:  # pragma: no branch - import-time platform switch
             ("PeakJobMemoryUsed", ctypes.c_size_t),
         ]
 
+    _k32.ConvertStringSidToSidW = _advapi32.ConvertStringSidToSidW
+    _k32.LocalAlloc.restype = ctypes.c_void_p
+    _k32.LocalAlloc.argtypes = [w.DWORD, ctypes.c_size_t]
+    _k32.LocalFree.restype = ctypes.c_void_p
+    _k32.LocalFree.argtypes = [ctypes.c_void_p]
     _k32.CreateProcessW.restype = w.BOOL
     _k32.CreateProcessW.argtypes = [
         ctypes.c_void_p,
@@ -351,6 +358,7 @@ class AppContainerSandbox:
         timeout_seconds: float,
         max_output_bytes: int,
         interpreter: str | None = None,
+        capabilities: tuple[str, ...] = (),
     ) -> SandboxResult:
         if not self.available:
             raise SandboxError("sandbox is unavailable")
@@ -396,10 +404,10 @@ class AppContainerSandbox:
             attribute_list, 1, 0, ctypes.byref(size)
         ):
             raise SandboxError("cannot initialize the sandbox process attributes")
-        capabilities = _SECURITY_CAPABILITIES()
-        capabilities.AppContainerSid = ctypes.c_void_p(self._sid_pointer(sid))
-        capabilities.CapabilityCount = 0
-        capabilities.Capabilities = None
+        security_capabilities, cleanup_pointers = _build_security_capabilities(
+            self._sid_pointer(sid), capabilities
+        )
+        capabilities = security_capabilities
         if not _k32.UpdateProcThreadAttribute(
             attribute_list,
             0,
@@ -432,6 +440,9 @@ class AppContainerSandbox:
             ctypes.byref(si),
             ctypes.byref(process_info),
         )
+        for pointer in cleanup_pointers:
+            _k32.LocalFree(ctypes.c_void_p(pointer))
+        cleanup_pointers = []
         if not created:
             raise SandboxError(
                 f"cannot start the sandboxed hook process (WinError {ctypes.get_last_error()})"
@@ -585,6 +596,47 @@ def _environment_block(environment: dict[str, str]) -> ctypes.Array:
     data = encoded.encode("utf-16-le")
     buffer = ctypes.create_string_buffer(data, len(data) + 2)
     return buffer
+
+
+def _capability_sid(name: str) -> ctypes.c_void_p:
+    sid_string = CAPABILITY_SIDS.get(name)
+    if sid_string is None:
+        raise SandboxError(f"unknown capability {name!r}")
+    sid = ctypes.c_void_p()
+    if not _advapi32.ConvertStringSidToSidW(
+        ctypes.c_wchar_p(sid_string), ctypes.byref(sid)
+    ):
+        raise SandboxError(f"cannot resolve the capability SID for {name!r}")
+    return sid
+
+
+def _build_security_capabilities(
+    app_container_sid_pointer: int, capability_names: tuple[str, ...]
+) -> tuple[_SECURITY_CAPABILITIES, list[int]]:
+    """Build SECURITY_CAPABILITIES with an enabled capability SID array.
+
+    Returns the structure plus the LocalAlloc'd pointers the caller must free
+    after CreateProcessW (the kernel copies them before returning).
+    """
+    structure = _SECURITY_CAPABILITIES()
+    structure.AppContainerSid = ctypes.c_void_p(app_container_sid_pointer)
+    structure.CapabilityCount = 0
+    structure.Capabilities = None
+    if not capability_names:
+        return structure, []
+    block_size = ctypes.sizeof(_SID_AND_ATTRIBUTES) * len(capability_names)
+    block = _k32.LocalAlloc(_LMEM_FIXED, block_size)
+    if not block:
+        raise SandboxError("cannot allocate the capability SID array")
+    array = ctypes.cast(block, ctypes.POINTER(_SID_AND_ATTRIBUTES))
+    pointers: list[int] = [block]
+    for index, name in enumerate(capability_names):
+        sid = _capability_sid(name)
+        pointers.append(int(sid.value))
+        array[index] = _SID_AND_ATTRIBUTES(sid, _SE_GROUP_ENABLED)
+    structure.Capabilities = array
+    structure.CapabilityCount = len(capability_names)
+    return structure, pointers
 
 
 def _command_line(argv: list[str]) -> str:

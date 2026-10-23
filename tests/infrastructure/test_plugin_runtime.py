@@ -112,7 +112,7 @@ def test_valid_manifest_parses_and_round_trips_frozen_fields(tmp_path: Path) -> 
     [
         ("acme-unknown-hook", {"hooks": ["before_unknown"]}, (), "PLUGIN_UNKNOWN_HOOK"),
         ("acme-unknown-perm", {}, ("shell",), "PLUGIN_UNKNOWN_PERMISSION"),
-        ("acme-permissions", {}, ("network",), "PLUGIN_PERMISSIONS_UNSUPPORTED"),
+        ("acme-permissions", {}, ("files_read",), "PLUGIN_PERMISSIONS_UNSUPPORTED"),
         ("acme-bad-id", {"id": "other-id"}, (), "PLUGIN_ID_MISMATCH"),
         ("acme-missing-entry", {"entry": "nope.py"}, (), "PLUGIN_ENTRY_INVALID"),
         ("acme-escape-entry", {"entry": "../escape.py"}, (), "PLUGIN_ENTRY_INVALID"),

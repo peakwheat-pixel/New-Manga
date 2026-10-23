@@ -511,6 +511,7 @@ export interface PluginEntry {
   version: string;
   description: string;
   hooks: string[];
+  permissions: string[];
   reason: string | null;
 }
 
@@ -549,6 +550,9 @@ function normalizePluginEntry(raw: unknown): PluginEntry | null {
     description: typeof row.description === "string" ? row.description : "",
     hooks: Array.isArray(row.hooks)
       ? row.hooks.filter((item): item is string => typeof item === "string")
+      : [],
+    permissions: Array.isArray(row.permissions)
+      ? row.permissions.filter((item): item is string => typeof item === "string")
       : [],
     reason: typeof row.reason === "string" && row.reason ? row.reason : null,
   };

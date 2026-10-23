@@ -27,6 +27,7 @@ function plugin(id: string, overrides: Partial<PluginEntry> = {}): PluginEntry {
     version: "1.0.0",
     description: "",
     hooks: ["after_detect"],
+    permissions: [],
     reason: null,
     ...overrides,
   };
@@ -175,6 +176,18 @@ describe("PluginSettingsPanel (PLUGIN-RUNTIME-1 §4.1–§4.4)", () => {
     expect(note).toContain("AppContainer");
     expect(note).toContain("fail-closed");
     expect(note).toContain("独立");
+  });
+
+  it("renders the permission badge from the manifest", async () => {
+    const client = new FakePluginClient(
+      snapshot([
+        plugin("acme-net", { permissions: ["network"] }),
+        plugin("acme-plain"),
+      ]),
+    );
+    await render(client);
+    expect(q('[data-testid="plugin-settings-permissions-acme-net"]')?.textContent).toContain("网络");
+    expect(q('[data-testid="plugin-settings-permissions-acme-plain"]')?.textContent).toContain("无权限");
   });
 
   it("shows the empty state when the plugin root has no plugins", async () => {
