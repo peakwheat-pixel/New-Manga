@@ -3,7 +3,7 @@ task_id: SETTINGS-OPEN-C-1-RECYCLE
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: 6d6c08541cc9d92398bcb05fc5682ef4759fc4fd
-delivery_head: a653c8230ba30948b19e551a4450fa7a79920951
+delivery_head: 984311f0a706058bd39226296514be5492760e4c
 status: in_review
 ---
 
@@ -27,15 +27,25 @@ status: in_review
 | `npm --prefix apps/desktop/frontend test` | PASS（**42 files / 413 tests**） |
 | `tsc --noEmit` | exit 0 |
 | `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | PASS（**152 passed / 1 ignored / 12 filtered**） |
-| GUI 烟测（dev preview，隔离数据根） | 修复前：书架与设置页回收站均 `CORE_UNAVAILABLE`（screenshots/00）；修复后：设置页回收站读取 **2 部作品** + 清空按钮弹出二次确认 dialog（2 部/三条提示/勾选控件，screenshots/01–02） |
+| GUI 烟测（dev preview，隔离数据根） | 修复前：书架与设置页回收站均 `CORE_UNAVAILABLE`（screenshots/00）；修复后：读取 **2 部作品** + 二次确认 dialog（screenshots/01–02）；**实际清空**：整库保护先原样提示（screenshots/03），补 1 部活跃作品后清空成功——"回收站：0 部作品"+"已永久删除 2 部作品。"（screenshots/04），隔离库核对仅剩 ActiveBook |
 
 原始日志与截图：`verification/SETTINGS-OPEN-C-1-RECYCLE/**`。
 
 ## 3. 未执行 / 遗留
 
-1. **GUI 实际删除未执行**：UIA/SendInput 对该 dialog 的 checkbox 点击未触发切换（工具限制）；删除路径由 7 个 Vitest 用例（单批 payload 严格断言、25 本→20+5 分批、整库保护、错误映射）与既有 Rust/Core 删除测试覆盖。若需要端到端 GUI 证据，可由人工或后续自动化补一次勾选+确认。
+1. ~~GUI 实际删除未执行~~ → **r1 复审后已补**：键盘勾选（Tab→Space）→ Space 确认，实测整库保护 + 成功清空 + DB 核对（screenshots/03/04）。
 2. **packaged sidecar**：本 checkout 缺 gitignored bundle；cargo 测试用 dev overlay（`M2RC1_DEV_PREVIEW=1` + `M2RC1_PYTHON`）并创建了 `target/core-sidecar/core-sidecar/` 占位目录（不入库）。
 3. **书架页"删除作品"仍为 GAP-G2 未接入**（本次烟测靠隔离库 SQL 软删除准备数据）；不属本 Task 范围，未改动。
+
+## 3.1 Review r1 处置（changes_requested → r2）
+
+- **P1-1**：补真实 GUI 清空（整库保护 → 补活跃书 → 成功）+ DB 核对；证据 screenshots/03、04。
+- **P1-2**：Task 置 `in_review`，canonical/resource 回退 `pending`，Review 通过后再 closeout。
+- **P2-1**：allowed_paths 补 `library/client.ts`、`client.test.ts`，并记录 Lead 集成的 doc 指针（design/STATUS/REBASELINE/LEDGER）。
+- **P2-2**：实现范围写清 `6d6c085..984311f0`（前端面板 `cb50b15`，Rust+证据 `a653c823`，复审修复 `984311f0`）。
+- **P2-3**：前端日志重录，含命令与 exit 行。
+- **P2-4**：`listRecycleBinBooks` 非数组 → `RECYCLE_BIN_MALFORMED` typed error + 2 个测试。
+- **P2-5**：批量失败后 `await load()` 再抛，重试不重发已删除 ID。
 
 ## 4. 推荐下一步
 
