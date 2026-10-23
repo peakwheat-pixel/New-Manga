@@ -31,7 +31,7 @@
 |SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|done（`.nmbak` v1 + Core/Tauri/前端；Review r3 approved `657c18d4`）|
 |SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|done（Plugin/Hooks 只读面；Review r2 approved `85128cd2`）|
 |PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|done（本地插件运行时；用户 2026-10-23 授权 D1–D6；Review approved 2026-10-23，`992225d5`）|
-|PLUGIN-RUNTIME-2|PLUGIN-RUNTIME-1|approved（reviewer-settings-a r3；2ea97edd6；待 Codex closeout）|
+|PLUGIN-RUNTIME-2|PLUGIN-RUNTIME-1|done（r3 approved 2ea97edd6；集成 eb5e821f3；111 passed；资源原位保留）|
 |PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|proposed（OS 级插件沙箱；未授权，未释放）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 

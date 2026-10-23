@@ -30,18 +30,14 @@ Run 测试含真实 SQLite + 真实插件子进程，模型 provider 使用 fake
 
 仓库 G:/CODEX/New Manga，branch main，共享 .git，固定 delivery_head 如上。未跟踪的六个 verification/P04 诊断文件未纳入提交。没有执行 push/merge/reset/stash，没有清理任何资源。
 
+## 集成与关闭
+
+2026-10-23 用户授权后 Codex 完成收口，integration_commit=eb5e821f3798b4d411ddbd60cd52db65208a2812；source/tests 与 r3 已审实现一致。集成复跑 111 passed / 0 skipped，证据 verification/PLUGIN-RUNTIME-2/integration-pytest.log；资源逐文件指纹和原位保留裁定见 resource-manifest.json，完整记录见 closeout.md。Task done，两项 closeout 状态 complete，无资源删除/迁移/归档。
+
 ## 下一任务建议
 
-- Task ID / 标题：PLUGIN-RUNTIME-2 Codex 集成记录与 closeout（当前 Task 收口，无新产品 Task）。
-- 推荐 Agent：Codex（Lead/Integrator）；Reviewer：reviewer-settings-a r3 已 approved。
-- 前置依赖：r3 接受固定 head 2ea97edd6e65260d1276e7b1e505a036dc612f80，103 passed；无生产改动待审。
-- Recovery point：G:/CODEX/New Manga，main，base d28b7a8b1449e5f4790470bcbbba10abcf3ab388，head 2ea97edd6e65260d1276e7b1e505a036dc612f80。
-- 允许修改路径：当前 Task、STATUS、LEDGER、REBASELINE、Handoff 和本 Task evidence。
-- 禁止范围：新增产品行为、IPC/UI/Schema、资源清理；禁止 push/merge/reset/stash。
-- 交付物：integration_commit、资源逐项保留裁定、done 状态与最终治理结果。
-- 验证与 Gate：核对 source 与已审 head 一致，证据 pin 完整，check.ps1 PASS，STATUS ≤3200 字节。
-- 可直接转发指令：请 Codex 以 head 2ea97edd6e65260d1276e7b1e505a036dc612f80 和独立 r3 approved 为恢复点，核对已提交的103项测试证据，完成 PLUGIN-RUNTIME-2 集成记录与资源 closeout；只做治理收口，不改变生产实现，不删除资源，不执行 push/merge/reset/stash。无已授权新产品 Task，收口后无需下一步操作。
+无需下一步操作：Plan 无 READY；沙箱未授权，签名仍待证书/发布签核，不创建或派发新 Task。
 
 ## 风险与遗留
 
-继承 trusted-code 边界，非 OS 沙箱；stdin 上限和进程树终止沿用前期限制。独立 r3 approved（verification/PLUGIN-RUNTIME-2/review-r3.md），Task approved，待 Codex 正式 closeout，不视作 done。没有授权新产品实现 Task。
+继承 trusted-code 边界，非 OS 沙箱；stdin 上限和进程树终止沿用前期限制。独立 r3 approved（verification/PLUGIN-RUNTIME-2/review-r3.md），Task done，Codex 已完成集成与资源 closeout。没有授权新产品实现 Task。

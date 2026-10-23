@@ -3,7 +3,7 @@ id: PLUGIN-RUNTIME-2
 title: 真实流水线 Hook 接线
 kind: implementation
 governance_version: 3
-status: approved
+status: done
 approval: authorized
 owner: Codex
 reviewer: reviewer-settings-a
@@ -11,10 +11,10 @@ depends_on: [PLUGIN-RUNTIME-1]
 base_commit: d28b7a8b1449e5f4790470bcbbba10abcf3ab388
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: eb5e821f3798b4d411ddbd60cd52db65208a2812
 delivery_head: 2ea97edd6e65260d1276e7b1e505a036dc612f80
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/PLUGIN-RUNTIME-2
 allowed_paths:
   - src/infrastructure/plugins/service.py
@@ -68,23 +68,28 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 | EV-PLUGIN-RUNTIME-2-R2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r2.log | - | 1c2b263058842e1a72ddfb9a4f73d105c29e59e4ab40ceef565f242c1b8dedf6 | SOURCE_PIN |
 | EV-PLUGIN-RUNTIME-2-R1 | review | verification/PLUGIN-RUNTIME-2/review-r1.md | - | 285f523b373c30e19add128313970e7ea0abb2421b5c83d869aa8a54790015cb | SOURCE_PIN |
 
-| EV-PLUGIN-RUNTIME-2-R3-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r3.log | - | 167d81e5b5a23d7d0633fecc96e410aba426019d79c91556333697a3c3ce4d25 | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-R3-TEST | 历史 AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r3.log | - | 167d81e5b5a23d7d0633fecc96e410aba426019d79c91556333697a3c3ce4d25 | SOURCE_PIN |
 | EV-PLUGIN-RUNTIME-2-R2 | review | verification/PLUGIN-RUNTIME-2/review-r2.md | - | 80ddbf11d054b8f743b926a503321e1dc803d686989be25a8f6d5b1279f71083 | SOURCE_PIN |
 
 | EV-PLUGIN-RUNTIME-2-R3 | Review/AC3 | verification/PLUGIN-RUNTIME-2/review-r3.md | - | a8544ffbab0ddc5ca7928bbe02b5b19482d398615c193d6b11719b25e8273405 | CANONICAL |
+
+| EV-PLUGIN-RUNTIME-2-INTEGRATION | AC1/AC2 | verification/PLUGIN-RUNTIME-2/integration-pytest.log | - | 1b6e5409c31158f6b7044cd0f6c0b12724a1f61b049348c202641ebd2ae8072d | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-CLOSEOUT | AC3/closeout | verification/PLUGIN-RUNTIME-2/closeout.md | - | 52e32349065066026d4ff10d8a70e04e1e4318e3252139cc54c0e0946c27e7d9 | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-RESOURCES | resource closeout | verification/PLUGIN-RUNTIME-2/resource-manifest.json | - | 903d332b6855ff5c592ec9264f1ad022b1f8aeeaf18c26cc41d1c22c58a4d3e6 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | 原位 | main | 现有主工作区不清理 |
-| task-env/dataset/model/artifact/temp/exchange | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 无新增 |
-| temp | G:/CODEX/New Manga.workspace/temp/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | 原位 | pytest 独立运行目录 | 测试证据复现，无清理 |
-| agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | 原位 | 测试日志 | 测试恢复用 |
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | verification/PLUGIN-RUNTIME-2/closeout.md | 唯一现有主工作区；六个原有未知文件保留，不清理 |
+| task-env/dataset/model/build/artifact/exchange | NOT_APPLICABLE | NOT_APPLICABLE | - | - | 无新增独立资源 |
+| temp/test-material | G:/CODEX/New Manga.workspace/temp/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/temp/PLUGIN-RUNTIME-2 | verification/PLUGIN-RUNTIME-2/resource-manifest.json | Task/Handoff/Review 引用；逐文件 hash 已记录，不删除 |
+| agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/PLUGIN-RUNTIME-2 | verification/PLUGIN-RUNTIME-2/resource-manifest.json | 保留历史治理失败日志；无迁移/删除 |
+| evidence | verification/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | verification/PLUGIN-RUNTIME-2 | verification/PLUGIN-RUNTIME-2/resource-manifest.json | 当前验收与审查证据永久保留 |
 
 ## 交付与运行记录
 
-当前 HEAD 与文档存在旧指针：STATUS 仍称 RUNTIME-1 closeout，Task YAML done 与正文 in_review 不一致；以 Plan done 与最新独审为依赖依据，本任务仅刷新当前指针，不改历史 Task。用户直接授权本次 Codex 实施，不改 Coordinator lease。
+启动时历史记录：STATUS 仍称 RUNTIME-1 closeout，Task YAML done 与正文 in_review 不一致；以 Plan done 与最新独审为依赖依据，本任务仅刷新当前指针，不改历史 Task。用户直接授权本次 Codex 实施，不改 Coordinator lease。
 
 实际验证：Python 3.14，81 passed / 0 skipped；命令见 pytest.log 对应 Handoff。check.ps1 PASS（3 warnings）；STATUS 预算通过。初次系统 temp ACL 失败后使用独立 workspace temp；装配顺序与中文 payload 编码问题已修复。
 
@@ -95,10 +100,20 @@ Review r1 暴露导出 job.history 与最终 options 不一致、TEXT 内容提�
 
 R1 P1/P2 已修复：prepare_request 在 job/history 冻结前幂等应用 before；text_content_factory 按最终 options 生成实际内容。真实 StartExport ZIP/TEXT 及重建 Runtime 历史一致性回归通过；扩展相关测试 102 passed / 0 skipped。待固定 head 后 r2 复审，r1 不适用于新修订。
 
-当前交付 head：55af609b0cbb4d7dc29160df150b116989b3b0be；当前审查请求 r2，仅允许写 verification/PLUGIN-RUNTIME-2/review-r2.md。r1 为历史发现证据，不代表新 head 审查结论。
+历史 r2 交付 head：55af609b0cbb4d7dc29160df150b116989b3b0be；当前审查请求 r2，仅允许写 verification/PLUGIN-RUNTIME-2/review-r2.md。r1 为历史发现证据，不代表新 head 审查结论。
 
 R2 空 format_options 覆盖导致文本必需键丢失：现拒绝并 plugin_error 审计，原选项继续；真实 Core 空覆盖回归通过。最新 103 passed / 0 skipped。此前 pytest.log/pytest-r2.log 为历史过程，当前验收以 pytest-r3.log 为准。
 
-当前 reviewed_head 请求：2ea97edd6e65260d1276e7b1e505a036dc612f80，review-r3.md 待返回。r1/r2 报告为历史证据。
+历史 r3 请求：2ea97edd6e65260d1276e7b1e505a036dc612f80，review-r3.md 待返回。r1/r2 报告为历史证据。
 
 最新独立 Review：[r3](../../verification/PLUGIN-RUNTIME-2/review-r3.md) approved，精确 head 2ea97edd6e65260d1276e7b1e505a036dc612f80；独立 22 passed / 0 skipped，R1/R2/R3 fixed。Task approved，等待 Codex 按已审 head 完成正式集成记录和资源 closeout，不视作 done。
+
+## Closeout Record
+
+- 2026-10-23 / Codex：按用户本轮授权完成集成验证与关闭。Task **done**；上方运行记录为历史阶段，当前状态以 frontmatter 与本节为准。
+- integration_commit：eb5e821f3798b4d411ddbd60cd52db65208a2812；与已审实现 source/tests 一致。
+- 集成验证：111 passed / 0 skipped；r3 approved；详情及资源指纹见 Canonical Evidence 的 closeout.md/resource-manifest.json。
+- canonical_evidence_status：complete；resource_closeout_status：complete。
+- 资源全部原位保留，删除/移动/归档均 0 项 / 0 字节；未关闭资源项：无（保留裁定已闭环，不代表允许清理）。
+- STATUS Active 已移除、Plan done、LEDGER 重新生成；无本 Task README/rolling checkpoint Active 指针需要清理。
+- 下一任务建议：无需下一步操作；无已释放 READY，沙箱未授权，签名仍等待证书/发布签核。

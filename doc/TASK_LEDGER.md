@@ -7,24 +7,23 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 351 |
-| terminal | 348 |
-| non-terminal | 3 |
-| non-terminal named in the plan | 3 |
+| terminal | 349 |
+| non-terminal | 2 |
+| non-terminal named in the plan | 2 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 351 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 3 |
+| non-terminal tracked by git | 2 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 279 | yes |
+| `done` | 280 | yes |
 | `closed_with_limitations` | 34 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `approved` | 1 | no |
 | `in_review` | 1 | no |
 | `proposed` | 1 | no |
 
@@ -32,7 +31,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | task | status | in plan |
 |---|---|---|
-| `PLUGIN-RUNTIME-2` | `approved` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `PLUGIN-RUNTIME-SANDBOX-1` | `proposed` | own row |
 
