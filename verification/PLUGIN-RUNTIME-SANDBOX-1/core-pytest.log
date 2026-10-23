@@ -1,5 +1,5 @@
 # command: python -m pytest tests -q
-# started: 2026-10-23T17:01:57.4899546+08:00
+# started: 2026-10-23T17:30:22.0580574+08:00
 # exit: 1
 ........................................................................ [  2%]
 ........................................................................ [  5%]
@@ -10,7 +10,7 @@
 ........................................................................ [ 18%]
 ........................................................................ [ 21%]
 ........................................................................ [ 24%]
-........................................................................ [ 27%]
+........................................................................ [ 26%]
 ........................................................................ [ 29%]
 ........................................................................ [ 32%]
 ........................................................................ [ 35%]
@@ -18,16 +18,16 @@
 ........................................................................ [ 40%]
 ........................................................................ [ 43%]
 ........................................................................ [ 45%]
-.........................................s.............................. [ 48%]
-.................................................................sssss.. [ 51%]
-........................................................................ [ 54%]
+.............................................s.......................... [ 48%]
+.....................................................................sss [ 51%]
+ss...................................................................... [ 53%]
 ........................................................................ [ 56%]
 ........................................................................ [ 59%]
-..........................................FF............................ [ 62%]
+..............................................FF........................ [ 62%]
 ........................................................................ [ 64%]
 ........................................................................ [ 67%]
 ........................................................................ [ 70%]
-......................................s................................. [ 72%]
+..........................................s............................. [ 72%]
 ........................................................................ [ 75%]
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
@@ -37,10 +37,10 @@ file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cann
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 ........................................................................ [ 78%]
-........................................................................ [ 81%]
+........................................................................ [ 80%]
 ........................................................................ [ 83%]
 ........................................................................ [ 86%]
-........................................................................ [ 89%]
+........................................................................ [ 88%]
 ........................................................................ [ 91%]
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
@@ -390,8 +390,8 @@ file:///G:/CODEX/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeErr
 file:///G:/CODEX/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
 ........................................................................ [ 94%]
 ........................................................................ [ 97%]
-......................................F................................. [ 99%]
-..                                                                       [100%]
+..........................................F............................. [ 99%]
+......                                                                   [100%]
 ================================== FAILURES ===================================
 ________________ test_real_detection_returns_block_candidates _________________
 
@@ -808,7 +808,7 @@ E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detecto
 src\infrastructure\providers\detection_manga.py:535: ProviderError
 ______________ test_pause_shows_optimistic_feedback_immediately _______________
 
-qapp_ = <PySide6.QtGui.QGuiApplication(0x1a4557dde60) at 0x000001A456645CC0>
+qapp_ = <PySide6.QtGui.QGuiApplication(0x2011f9fcd70) at 0x000002011F5245C0>
 
     def test_pause_shows_optimistic_feedback_immediately(qapp_):
         """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
@@ -840,7 +840,7 @@ qapp_ = <PySide6.QtGui.QGuiApplication(0x1a4557dde60) at 0x000001A456645CC0>
             qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
         )
 E       assert False
-E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x1a4557dde60) at 0x000001A456645CC0>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000001A48A4D7ED0>, timeout_ms=15000)
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x2011f9fcd70) at 0x000002011F5245C0>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000020181995430>, timeout_ms=15000)
 
 tests\workbench\test_workbench_viewmodel.py:210: AssertionError
 ============================== warnings summary ===============================
@@ -857,4 +857,4 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
 FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
 FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
-3 failed, 2656 passed, 9 skipped, 2 warnings in 211.90s (0:03:31)
+3 failed, 2660 passed, 9 skipped, 2 warnings in 199.42s (0:03:19)

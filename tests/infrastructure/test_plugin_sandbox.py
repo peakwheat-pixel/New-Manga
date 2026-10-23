@@ -211,3 +211,130 @@ def test_sandbox_uses_one_shared_container(sandboxed, tmp_path) -> None:
     # One shared container keeps the interpreter ACL a single one-time grant;
     # per-plugin isolation is enforced by directory ACLs.
     assert len(sids) == 1
+
+# ---------------------------------------------------------------------------
+# review r1: production wiring, minimal env, byte cap, job tree
+# ---------------------------------------------------------------------------
+def test_production_assembly_wires_the_sandbox(tmp_path) -> None:
+    """The REAL production assembly constructs a sandboxed PluginService."""
+    from application.translation.color.service import SourceStyleService
+    from bootstrap.core_assembly import assemble_core_services
+
+    class _Decoder:
+        def decode(self, data: bytes):  # pragma: no cover - never called
+            raise AssertionError("not used")
+
+    class _Analyzer:
+        def analyze(self, original_png: bytes, box):  # pragma: no cover
+            raise AssertionError("not used")
+
+    plugin = tmp_path / "plugins" / "acme-prod"
+    plugin.mkdir(parents=True)
+    (plugin / "plugin.py").write_text(
+        "def after_detect(payload):\n"
+        "    return {'ok': True}\n",
+        encoding="utf-8",
+    )
+    (plugin / "manifest.json").write_text(
+        json.dumps(_manifest("acme-prod")), encoding="utf-8"
+    )
+    core = assemble_core_services(
+        tmp_path / "library.db",
+        tmp_path / "managed",
+        image_decoder=_Decoder(),
+        font_catalog=object(),
+        layout_engine=object(),
+        compositor=object(),
+        source_styles=SourceStyleService(_Analyzer()),
+    )
+    try:
+        assert core.plugins is not None
+        assert core.plugins._sandbox is not None, "production must run hooks sandboxed"
+        core.plugins.set_global_enabled(True)
+        core.plugins.set_plugin_enabled("acme-prod", True)
+        outcome = core.plugins.run_hook("after_detect", {"pages": []})
+        assert outcome["applied"] is True
+    finally:
+        core.conn.close()
+
+
+def test_hook_child_sees_only_the_minimal_environment(sandboxed, tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("NEWMANGA_DATA_ROOT", "G:/secret")
+    monkeypatch.setenv("M2RC1_PYTHON", "G:/secret/python.exe")
+    monkeypatch.setenv("DSH_SECRET", "leak")
+    source = (
+        "import os\n"
+        "def after_detect(payload):\n"
+        "    return {'env': sorted(os.environ)}\n"
+    )
+    _write_plugin(tmp_path, "acme-env2", source)
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-env2", True)
+
+    outcome = service.run_hook("after_detect", {})
+
+    env = outcome["results"][0]["result"]["env"]
+    # Windows/AppContainer injects a few profile variables of its own; the
+    # guarantee is that NO application-private, proxy or credential variable
+    # crosses the boundary and the Python markers are present.
+    assert "PYTHONIOENCODING" in env
+    assert "PYTHONDONTWRITEBYTECODE" in env
+    forbidden_prefixes = ("DSH_", "M2RC1_", "NEWMANGA_", "PYTEST_", "CODEX_", "ZCODE_", "AGY_")
+    forbidden_exact = {
+        "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY",
+        "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY",
+    }
+    for key in env:
+        assert not key.upper().startswith(forbidden_prefixes), key
+        assert key.upper() not in forbidden_exact, key
+
+
+def test_sandbox_output_cap_counts_bytes(sandboxed, tmp_path) -> None:
+    source = (
+        "def after_detect(payload):\n"
+        "    return {'blob': '\u4e2d' * 100000}\n"
+    )
+    _write_plugin(tmp_path, "acme-loud2", source)
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-loud2", True)
+
+    outcome = service.run_hook("after_detect", {})
+
+    assert outcome["applied"] is False
+    assert outcome["errors"][0]["code"] == "PLUGIN_HOOK_FAILED"
+
+
+def test_sandbox_job_kills_grandchildren(sandboxed, tmp_path) -> None:
+    import ctypes
+
+    source = (
+        "import subprocess, sys\n"
+        "def after_detect(payload):\n"
+        "    child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\n"
+        "    return {'pid': child.pid}\n"
+    )
+    _write_plugin(tmp_path, "acme-tree", source)
+    service = sandboxed.service
+    service.set_global_enabled(True)
+    service.set_plugin_enabled("acme-tree", True)
+
+    outcome = service.run_hook("after_detect", {})
+    assert outcome["applied"] is True
+    pid = int(outcome["results"][0]["result"]["pid"])
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.OpenProcess.restype = ctypes.c_void_p
+    still_alive = True
+    for _ in range(20):  # the kernel reclaims the tree asynchronously
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        try:
+            still_alive = bool(handle)
+        finally:
+            if handle:
+                kernel32.CloseHandle(ctypes.c_void_p(handle))
+        if not still_alive:
+            break
+        time.sleep(0.1)
+    assert still_alive is False, "the job object must kill the whole tree"

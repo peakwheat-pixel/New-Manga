@@ -10,6 +10,7 @@ depends_on: PLUGIN-RUNTIME-1
 authorization: 用户 2026-10-23「1」（选择候选 1 = 本 Task）
 allowed_paths:
   - src/infrastructure/plugins/**
+  - src/bootstrap/core_assembly.py（生产装配注入；Lead 授权的唯一共享文件）
   - tests/**
   - doc/tasks/PLUGIN-RUNTIME-SANDBOX-1.md
   - doc/handoffs/**
@@ -49,7 +50,7 @@ PLUGIN-RUNTIME-1 review r1 P1-1 指出：`permissions: []` 目前只保证「Cor
 - [x] **AC3** 能力映射存在但**不放开**：`CAPABILITY_SIDS` 支持 `network`（`S-1-15-3-1`），manifest 层仍拒绝非空 permissions（首发限制不变）；测试覆盖"带权限插件不可加载"。
 - [x] **AC4** 崩溃/超时仍隔离：超时 kill 进程树（Job Object + PeekNamedPipe 泵），主链路不阻塞。
 - [x] **AC5** 审计：沙箱拒绝/失败 → `plugin_error`（fail-closed 时 `PLUGIN_HOOK_UNAVAILABLE`）；成功 → `hook_invoked`。
-- [x] **AC6** UI 文案与实际能力边界一致（AppContainer 沙箱已启用；无新增假控件）。
+- [x] **AC6** UI 文案与实际能力边界一致（AppContainer 沙箱已启用；标注只读例外/共享容器/最小 env；无新增假控件）。
 
 ## Closeout Record
 
@@ -63,17 +64,9 @@ PLUGIN-RUNTIME-1 review r1 P1-1 指出：`permissions: []` 目前只保证「Cor
 | AC4 | 同上（`test_sandbox_kills_a_hanging_hook_within_the_timeout`） | PASS：1s 超时 kill 进程树，主链路不阻塞 |
 | AC5 | 同上（`test_sandbox_failure_is_fail_closed_and_audited`） | PASS：`PLUGIN_HOOK_UNAVAILABLE` + `plugin_error`；正常路径 `hook_invoked` |
 | AC6 | `npx vitest run src/settings/PluginSettingsPanel.test.tsx` | PASS：policy note 断言 AppContainer/fail-closed/permissions: [] |
-| 全量 | `python -m pytest tests -q` | 结果见 `core-pytest.log` |
+| 生产装配 | `tests/core/test_core_assembly.py` + `test_production_assembly_wires_the_sandbox` | PASS：真实 `assemble_core_services` 构造的 PluginService 带 sandbox，注入插件 hook 成功执行 |
+| 环境最小化 | `test_hook_child_sees_only_the_minimal_environment` | PASS：无 DSH_/M2RC1_/NEWMANGA_/代理/凭据；含 Python 标记 |
+| Job 树杀 | `test_sandbox_job_kills_grandchildren` | PASS：插件 spawn 的孙进程在 run 返回后被杀 |
+| 全量 | `python -m pytest tests -q` | 结果见 `core-pytest.log`（含 3 个既有环境失败） |
 | 探针 | `verification/PLUGIN-RUNTIME-SANDBOX-1/probe-appcontainer.log` | AppContainer 内 `fs=BLOCKED, net=NET_BLOCKED` |
-
-## Closeout Record
-
-- Closeout：待 Review approved 后 closeout（当前 in_review；实现 commit 见 Handoff）。
-
-## Canonical Evidence
-
-|Evidence ID|AC|Path|Commit|SHA-256|Class|
-|---|---|---|---|---|---|
-|EV-SANDBOX-CORE-PYTEST-TARGETED|AC1-AC6|verification/PLUGIN-RUNTIME-SANDBOX-1/core-pytest-targeted.log|22f09e9056ad0c581db13eb61532035b032ba4b9|3bd5406385a4a496435d23f1daaf8eb1115b1df882728418637dad318b653c3c|CANONICAL|
-|EV-SANDBOX-CORE-PYTEST|AC1-AC6|verification/PLUGIN-RUNTIME-SANDBOX-1/core-pytest.log|22f09e9056ad0c581db13eb61532035b032ba4b9|6bfa31ecc3d99331507ada14c764e03db09119c3ff4d29840c3a64f9f1be8134|CANONICAL|
-|EV-SANDBOX-PROBE-APPCONTAINER|AC1-AC6|verification/PLUGIN-RUNTIME-SANDBOX-1/probe-appcontainer.log|22f09e9056ad0c581db13eb61532035b032ba4b9|e95d28b5c84081c470f5ab4cdb70f70bf66a43072e5ecff2b7e69fb769c99c21|CANONICAL|
+| 前端全量 | `npx vitest run` / `tsc --noEmit` | 见 `ui-test-frontend.log` / `ui-tsc.log` |

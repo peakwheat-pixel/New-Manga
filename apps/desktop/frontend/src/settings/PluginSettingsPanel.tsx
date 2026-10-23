@@ -411,10 +411,11 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
 
       <div data-testid="plugin-settings-policy-note" style={cardStyle}>
         <p style={{ margin: 0, ...secondaryTextStyle }}>
-          安全说明：插件在 Windows AppContainer 中运行（独立容器 + Job Object）：permissions: [] 时
-          容器不具备任何网络能力，也无法读取插件目录之外的任何文件；Core 不向插件传递数据库/模型/凭据/配置路径，
-          子进程环境最小化并用 -I 隔离。沙箱初始化失败会拒绝执行该次 Hook（fail-closed）并记审计。
-          带权限声明的插件一律拒绝加载；启用状态与审计存放在本机数据库。
+          安全说明：插件在 Windows AppContainer 中运行（容器 + Job Object，超时或关闭时整棵进程树被回收）。
+          permissions: [] 时容器不具备任何网络能力，也无法读取数据目录/用户文件——只被授予只读访问
+          本插件目录与 Python 运行时（解释器/DLLs/Lib 与 runner 属于只读例外）；插件之间共用同一容器（v1）。
+          子进程环境最小化（仅系统变量与 Python 标记；应用私有变量/代理/凭据不传递）。沙箱初始化失败会拒绝
+          执行该次 Hook（fail-closed）并记审计。带权限声明的插件一律拒绝加载；启用状态与审计存放在本机数据库。
         </p>
       </div>
     </section>

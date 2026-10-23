@@ -1209,7 +1209,15 @@ def assemble_core_services(
             )
             return region.region_id
 
-        plugins = PluginService(conn, Path(db_path).parent / "plugins", app_version=_APP_VERSION)
+        plugin_data_root = Path(db_path).parent
+        plugins = PluginService(
+            conn,
+            plugin_data_root / "plugins",
+            app_version=_APP_VERSION,
+            sandbox=AppContainerSandbox(
+                anchors=(str(plugin_data_root), str(plugin_data_root.parent)),
+            ),
+        )
         handlers = build_production_handlers(
             plugins=plugins,
             registry=provider_runtime.registry,

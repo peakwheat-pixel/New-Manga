@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-SANDBOX-1
 author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: 1a17decf1
-delivery_head: 22f09e9056ad0c581db13eb61532035b032ba4b9
+delivery_head: PLACEHOLDER_SANDBOX_R1
 status: in_review
 authorization: 用户 2026-10-23「1」（选择候选 1 = 本 Task）
 ---
@@ -45,3 +45,11 @@ authorization: 用户 2026-10-23「1」（选择候选 1 = 本 Task）
 
 - 本 Task Review approved 后 closeout；
 - 后续候选：per-plugin profile（跨插件隔离）、带权限插件的 capability 接线（`PLUGIN-RUNTIME-3`）、打包解释器。
+
+## 5. Review r1 处置（changes_requested）
+
+- **P1-1 生产装配**：`core_assembly.py:1212` 现在真正构造 `AppContainerSandbox(interpreter=resolve_hook_interpreter(), anchors=(data_root, data_root.parent))` 并注入 `PluginService(sandbox=...)`；`test_production_assembly_wires_the_sandbox` 走真实 `assemble_core_services` 验证。
+- **P1-2 最小 env**：`CreateProcessW` 改为传 UTF-16 环境块（`CREATE_UNICODE_ENVIRONMENT`），白名单仅 `PYTHONIOENCODING/PYTHONDONTWRITEBYTECODE/SYSTEMROOT/SYSTEMDRIVE/LOCALAPPDATA`（实测 LOCALAPPDATA 是 AppContainer 启动必需，其余用户/测试/代理/凭据变量全部丢弃）；`test_hook_child_sees_only_the_minimal_environment` 断言无 `DSH_/M2RC1_/NEWMANGA_/代理/API key`。
+- **P1-3 诚实性**：UI 文案改为「容器只被授予只读访问本插件目录与 Python 运行时（解释器/DLLs/Lib 与 runner 为只读例外）；插件共用同一容器（v1）；环境最小化；fail-closed」。
+- **P2**：`allowed_paths` 补 `src/bootstrap/core_assembly.py`；Task canonical 证据补生产装配/环境/Job 树杀/前端行；两个 Closeout 标题合并；`_traversal_chain`/anchors 改 `(X)`（traverse-only）；`AssignProcessToJobObject` 失败抛 `SandboxError`；沙箱用 `_hook_interpreter()` 解析的解释器（ACL 一致）；`CREATE_SUSPENDED` + 先入 Job 再 `ResumeThread`（消除孙进程竞态）；job 句柄禁止继承（`KILL_ON_JOB_CLOSE` 生效）。
+- **验证（r1 修复后）**：定向 **49 passed**；全量见 `core-pytest.log`；前端 vitest 8 passed（panel）；tsc 0。

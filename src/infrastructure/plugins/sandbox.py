@@ -48,6 +48,8 @@ if _IS_WINDOWS:  # pragma: no branch - import-time platform switch
     _PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES = 0x20009
     _EXTENDED_STARTUPINFO_PRESENT = 0x00080000
     _CREATE_NO_WINDOW = 0x08000000
+    _CREATE_UNICODE_ENVIRONMENT = 0x00000400
+    _CREATE_SUSPENDED = 0x00000004
     _INFINITE = 0xFFFFFFFF
     _WAIT_TIMEOUT = 258
     _STD_INPUT_HANDLE = -10
@@ -137,6 +139,19 @@ if _IS_WINDOWS:  # pragma: no branch - import-time platform switch
             ("PeakJobMemoryUsed", ctypes.c_size_t),
         ]
 
+    _k32.CreateProcessW.restype = w.BOOL
+    _k32.CreateProcessW.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_wchar_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        w.BOOL,
+        w.DWORD,
+        ctypes.c_void_p,
+        ctypes.c_wchar_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+    ]
     _k32.CreateAppContainerProfile = _userenv.CreateAppContainerProfile
     _k32.CreateAppContainerProfile.restype = ctypes.c_long
     _k32.CreateAppContainerProfile.argtypes = [
@@ -288,6 +303,7 @@ class AppContainerSandbox:
         plugin_root: str | Path,
         *,
         runner_path: str | Path | None = None,
+        interpreter: str | None = None,
     ) -> None:
         """Idempotently grant the container access to its own plugin files.
 
@@ -296,6 +312,8 @@ class AppContainerSandbox:
         plugin directory get traverse-only ACLs so the child can reach its own
         directory without listing sibling folders.
         """
+        if interpreter is not None:
+            self._interpreter = interpreter
         if not self.available:
             raise SandboxError("sandbox is unavailable")
         sid = self._ensure_profile(plugin_id)
@@ -303,9 +321,9 @@ class AppContainerSandbox:
         self._prepare_interpreter(sid)
         self._grant(str(root), sid, "(OI)(CI)(RX)")
         for ancestor in self._traversal_chain(root):
-            self._grant(str(ancestor), sid, "(RX)")
+            self._grant(str(ancestor), sid, "(X)")
         for anchor in self._anchors:
-            self._grant(anchor, sid, "(RX)")
+            self._grant(anchor, sid, "(X)")
         if runner_path is not None:
             self._grant(str(Path(runner_path).resolve()), sid, "(RX)")
 
@@ -319,10 +337,14 @@ class AppContainerSandbox:
         payload: bytes,
         timeout_seconds: float,
         max_output_bytes: int,
+        interpreter: str | None = None,
     ) -> SandboxResult:
         if not self.available:
             raise SandboxError("sandbox is unavailable")
+        if interpreter is not None:
+            self._interpreter = interpreter
         sid = self._ensure_profile(plugin_id)
+        self._prepare_interpreter(sid)
         _k32.CreatePipe.restype = w.BOOL
         read_stdin, write_stdin = w.HANDLE(), w.HANDLE()
         read_stdout, write_stdout = w.HANDLE(), w.HANDLE()
@@ -337,6 +359,10 @@ class AppContainerSandbox:
         job = _k32.CreateJobObjectW(None, None)
         if not job:
             raise SandboxError("cannot create the sandbox job object")
+        # The job handle must NOT be inherited by the child: an inherited job
+        # handle keeps the job alive after the Core closes its own handle and
+        # would defeat KILL_ON_JOB_CLOSE (the whole tree must die on close).
+        _k32.SetHandleInformation(job, 1, 0)
         limits = _JOBOBJECT_EXTENDED_LIMIT_INFORMATION()
         limits.BasicLimitInformation.LimitFlags = _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
         if not _k32.SetInformationJobObject(
@@ -379,24 +405,35 @@ class AppContainerSandbox:
 
         process_info = _PROCESS_INFORMATION()
         command_line = ctypes.c_wchar_p(_command_line(argv))
+        environment_block = _environment_block(_child_environment())
+        environment_pointer = ctypes.cast(environment_block, ctypes.c_void_p)
         created = _k32.CreateProcessW(
-            None,
+            ctypes.c_wchar_p(argv[0]),
             command_line,
             None,
             None,
             True,
-            _EXTENDED_STARTUPINFO_PRESENT | _CREATE_NO_WINDOW,
-            None,
+            _EXTENDED_STARTUPINFO_PRESENT | _CREATE_NO_WINDOW | _CREATE_UNICODE_ENVIRONMENT | _CREATE_SUSPENDED,
+            environment_pointer,
             ctypes.c_wchar_p(str(cwd)),
             ctypes.byref(si),
             ctypes.byref(process_info),
         )
         if not created:
-            raise SandboxError("cannot start the sandboxed hook process")
+            raise SandboxError(
+                f"cannot start the sandboxed hook process (WinError {ctypes.get_last_error()})"
+            )
         _k32.CloseHandle(read_stdin)
         _k32.CloseHandle(write_stdout)
         if not _k32.AssignProcessToJobObject(job, process_info.hProcess):
             _k32.TerminateProcess(process_info.hProcess, 1)
+            _k32.CloseHandle(process_info.hProcess)
+            _k32.CloseHandle(process_info.hThread)
+            _k32.CloseHandle(job)
+            raise SandboxError("cannot attach the hook process to the sandbox job")
+        # The process was created suspended so nothing (including grandchildren)
+        # can start before it is inside the job; resume once attached.
+        _k32.ResumeThread(process_info.hThread)
 
         timed_out = False
         stdout = b""
@@ -506,6 +543,35 @@ class AppContainerSandbox:
 
     def __exit__(self, *exc: object) -> None:
         self.close()
+
+
+#: The only variables a hook child may inherit: everything else (data root,
+#: proxy, DSH/M2RC1/test vars, user profile, tokens) stays inside the Core.
+_CHILD_ENVIRONMENT_KEYS = ("SYSTEMROOT", "PYTHONIOENCODING", "PYTHONDONTWRITEBYTECODE")
+
+
+def _child_environment() -> dict[str, str]:
+    environment = {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONDONTWRITEBYTECODE": "1",
+    }
+    # Empirical minimum for CreateProcessW + AppContainer: LOCALAPPDATA is
+    # required by the container launch path (removing it yields WinError 203);
+    # every other user/test/proxy variable is dropped.
+    for key in ("SYSTEMROOT", "SYSTEMDRIVE", "LOCALAPPDATA"):
+        value = os.environ.get(key)
+        if value:
+            environment[key] = value
+    return environment
+
+
+def _environment_block(environment: dict[str, str]) -> ctypes.Array:
+    """Build the ``KEY=VALUE\0...\0\0`` UTF-16 block CreateProcessW expects."""
+    encoded = "".join(f"{key}={value}\0" for key, value in environment.items())
+    encoded += "\0"
+    data = encoded.encode("utf-16-le")
+    buffer = ctypes.create_string_buffer(data, len(data) + 2)
+    return buffer
 
 
 def _command_line(argv: list[str]) -> str:

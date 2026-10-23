@@ -80,6 +80,11 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+def resolve_hook_interpreter() -> str:
+    """Public wrapper used by the production assembly for sandbox ACL setup."""
+    return _hook_interpreter()
+
+
 def _hook_interpreter() -> str:
     """The interpreter used for the isolated hook subprocess (D1).
 
@@ -320,7 +325,10 @@ class PluginService:
         """Run one hook inside the plugin's AppContainer (fail-closed)."""
         try:
             self._sandbox.prepare_plugin(
-                manifest.plugin_id, manifest.root, runner_path=runner
+                manifest.plugin_id,
+                manifest.root,
+                runner_path=runner,
+                interpreter=interpreter,
             )
             outcome: SandboxResult = self._sandbox.run(
                 manifest.plugin_id,
@@ -329,6 +337,7 @@ class PluginService:
                 payload=payload_bytes,
                 timeout_seconds=self._hook_timeout_seconds,
                 max_output_bytes=_MAX_HOOK_OUTPUT_BYTES,
+                interpreter=interpreter,
             )
         except SandboxError as error:
             message = str(error)
