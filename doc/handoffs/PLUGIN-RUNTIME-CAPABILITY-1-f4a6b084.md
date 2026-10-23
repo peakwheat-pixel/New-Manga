@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-CAPABILITY-1
 author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: b5f3814b2a798ce17e6ebe0f7d8ce183ca091c02
-delivery_head: PLACEHOLDER_CAP_HEAD
+delivery_head: f4a6b0842a57a4d0f39b09947a4aeb99b793d706
 status: in_review
 authorization: 用户 2026-10-23「1234都授权」
 ---

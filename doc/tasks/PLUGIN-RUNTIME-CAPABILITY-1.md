@@ -61,3 +61,12 @@ SANDBOX-2 后每个插件拥有独立 AppContainer，但 `permissions` 仍一律
 ## Closeout Record
 
 - Closeout：待 Review approved 后 closeout。
+
+## Canonical Evidence
+
+|Evidence ID|AC|Path|Commit|SHA-256|Class|
+|---|---|---|---|---|---|
+|EV-CAPABILITY-CORE-PYTEST-TARGETED|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/core-pytest-targeted.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|2a35a769f406c0b101fb0cc70012aa9a9a50e579e84912100d35b1fdbe91cbbd|CANONICAL|
+|EV-CAPABILITY-CORE-PYTEST|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/core-pytest.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|d1e05f86786a1874f049feeaaf5b63dad0df9171a0564eedc1be09fe2fa14f4f|CANONICAL|
+|EV-CAPABILITY-UI-TEST-FRONTEND|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/ui-test-frontend.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|5741ce23178594b7f46b645bea8531a29ed228a1a8576aee7d1e38b60cb708fe|CANONICAL|
+|EV-CAPABILITY-UI-TSC|AC1-AC5|verification/PLUGIN-RUNTIME-CAPABILITY-1/ui-tsc.log|f4a6b0842a57a4d0f39b09947a4aeb99b793d706|c96b6f2b6f2eb3e9572906f891d0a54ecfd05feb55f54a605d549b3deeb0890d|CANONICAL|
