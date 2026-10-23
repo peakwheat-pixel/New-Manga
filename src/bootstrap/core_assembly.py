@@ -114,6 +114,7 @@ from infrastructure.resource_channel.handle_resolver import ManagedRootTrust
 from infrastructure.resource_channel.import_source_refs import ImportSourceGrantRegistry
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.nmbak import NmbakBackupService
+from infrastructure.plugins.sandbox import AppContainerSandbox
 from infrastructure.plugins.service import PluginService
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport

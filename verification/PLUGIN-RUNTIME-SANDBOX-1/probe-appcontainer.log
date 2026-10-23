@@ -1,0 +1,15 @@
+# probe: AppContainer feasibility (create profile, grant ACL, run python -I, read outside, connect)
+# started: 2026-10-23T17:01:48.0526454+08:00
+# exit: 0
+SID: S-1-15-2-2554244112-2339394842-2923535091-717697084-666379880-147406710-3183442166
+icacls plugin: 0 processed file: C:\Users\49745\AppData\Local\Temp\nm-ac-probe-iki8d34_\plugin
+Successfully processed 1 files; Failed processing 0 files
+icacls out: 0
+icacls python: 0 processed file: C:\Python314
+Successfully processed 1 files; Failed processing 0
+icacls DLLs/Lib: 0 0
+icacls anchor: \49745\AppData\Local 0
+icacls anchor: 5\AppData\Local\Temp 0
+echo exit: 0 echo file: True
+python exit: 0 python: C:\Python314\python.exe
+output: {"fs": "BLOCKED:None", "net": "NET_BLOCKED"}

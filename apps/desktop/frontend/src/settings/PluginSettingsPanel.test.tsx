@@ -169,7 +169,11 @@ describe("PluginSettingsPanel (PLUGIN-RUNTIME-1 §4.1–§4.4)", () => {
     // A rejected plugin can never be toggled on.
     expect(button("plugin-settings-toggle-acme-broken")).not.toBeNull();
     expect(button("plugin-settings-toggle-acme-broken")?.disabled).toBe(true);
-    expect(q('[data-testid="plugin-settings-policy-note"]')?.textContent).toContain("permissions: []");
+    const note = q('[data-testid="plugin-settings-policy-note"]')?.textContent ?? "";
+    expect(note).toContain("permissions: []");
+    // PLUGIN-RUNTIME-SANDBOX-1: the copy states the real AppContainer boundary.
+    expect(note).toContain("AppContainer");
+    expect(note).toContain("fail-closed");
   });
 
   it("shows the empty state when the plugin root has no plugins", async () => {

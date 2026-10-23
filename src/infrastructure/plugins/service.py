@@ -39,6 +39,11 @@ import sys
 import time
 import uuid
 
+from infrastructure.plugins.sandbox import (
+    AppContainerSandbox,
+    SandboxError,
+    SandboxResult,
+)
 from infrastructure.plugins.manifest import (
     HOOK_NAMES,
     WRITABLE_HOOKS,
@@ -107,11 +112,13 @@ class PluginService:
         *,
         app_version: str,
         hook_timeout_seconds: int = HOOK_TIMEOUT_SECONDS,
+        sandbox: AppContainerSandbox | None = None,
     ) -> None:
         self._conn = conn
         self._plugin_root = Path(plugin_root)
         self._app_version = app_version
         self._hook_timeout_seconds = hook_timeout_seconds
+        self._sandbox = sandbox
 
     # ------------------------------------------------------------------
     # discovery / listing
@@ -302,6 +309,52 @@ class PluginService:
             current = candidate
         return current
 
+    def _invoke_sandboxed(
+        self,
+        manifest: PluginManifest,
+        hook_name: str,
+        payload_bytes: bytes,
+        runner: Path,
+        interpreter: str,
+    ) -> object:
+        """Run one hook inside the plugin's AppContainer (fail-closed)."""
+        try:
+            self._sandbox.prepare_plugin(
+                manifest.plugin_id, manifest.root, runner_path=runner
+            )
+            outcome: SandboxResult = self._sandbox.run(
+                manifest.plugin_id,
+                [interpreter, "-I", str(runner), str(manifest.entry_path), hook_name],
+                cwd=manifest.root,
+                payload=payload_bytes,
+                timeout_seconds=self._hook_timeout_seconds,
+                max_output_bytes=_MAX_HOOK_OUTPUT_BYTES,
+            )
+        except SandboxError as error:
+            message = str(error)
+            if "output exceeded" in message:
+                raise PluginError(
+                    "PLUGIN_HOOK_FAILED", f"{hook_name} produced too much output"
+                ) from error
+            raise PluginError("PLUGIN_HOOK_UNAVAILABLE", message) from error
+        if outcome.timed_out:
+            raise PluginError(
+                "PLUGIN_HOOK_TIMEOUT",
+                f"{hook_name} exceeded {self._hook_timeout_seconds}s",
+            )
+        if outcome.returncode != 0:
+            raise PluginError(
+                "PLUGIN_HOOK_FAILED", f"{hook_name} exited with {outcome.returncode}"
+            )
+        try:
+            response = json.loads(outcome.stdout.decode("utf-8") or "{}")
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            raise PluginError("PLUGIN_HOOK_FAILED", "hook returned non-JSON output") from error
+        if not isinstance(response, dict) or response.get("ok") is not True:
+            code = response.get("error") if isinstance(response, dict) else "hook_failed"
+            raise PluginError("PLUGIN_HOOK_FAILED", f"hook reported {code}")
+        return response.get("result")
+
     def _invoke(self, manifest: PluginManifest, hook_name: str, payload: dict) -> object:
         runner = Path(__file__).with_name("_hook_runner.py")
         env = {
@@ -312,6 +365,10 @@ class PluginService:
             env["PATH"] = os.environ["PATH"]
         interpreter = _hook_interpreter()
         payload_bytes = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        if self._sandbox is not None:
+            return self._invoke_sandboxed(
+                manifest, hook_name, payload_bytes, runner, interpreter
+            )
         try:
             process = subprocess.Popen(
                 [

@@ -8,6 +8,10 @@ from infrastructure.plugins.manifest import (
     PluginManifest,
     parse_manifest,
 )
+from infrastructure.plugins.sandbox import (
+    AppContainerSandbox,
+    SandboxError,
+)
 from infrastructure.plugins.service import (
     HOOK_TIMEOUT_SECONDS,
     PluginError,
@@ -22,6 +26,8 @@ __all__ = [
     "PluginError",
     "PluginManifest",
     "PluginService",
+    "AppContainerSandbox",
+    "SandboxError",
     "WRITABLE_HOOKS",
     "parse_manifest",
 ]

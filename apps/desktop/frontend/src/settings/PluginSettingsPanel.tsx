@@ -411,9 +411,10 @@ export function PluginSettingsPanel({ client }: { client?: PluginPanelClientLike
 
       <div data-testid="plugin-settings-policy-note" style={cardStyle}>
         <p style={{ margin: 0, ...secondaryTextStyle }}>
-          安全说明：插件是「受信任的本地代码」。permissions: [] 表示 Core 不向插件授予任何能力句柄
-          （不传数据库/模型/凭据/配置路径/网络配置，子进程环境最小化并用 -I 隔离）；本版本不做操作系统级沙箱，
-          插件进程仍以当前用户权限运行——请只安装你信任的插件。带权限声明的插件一律拒绝加载；启用状态与审计存放在本机数据库。
+          安全说明：插件在 Windows AppContainer 中运行（独立容器 + Job Object）：permissions: [] 时
+          容器不具备任何网络能力，也无法读取插件目录之外的任何文件；Core 不向插件传递数据库/模型/凭据/配置路径，
+          子进程环境最小化并用 -I 隔离。沙箱初始化失败会拒绝执行该次 Hook（fail-closed）并记审计。
+          带权限声明的插件一律拒绝加载；启用状态与审计存放在本机数据库。
         </p>
       </div>
     </section>
