@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-2-BACKUP
 kind: implementation
-status: in_review
+status: done
 owner: dsh（Lead 可另行指派）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -62,13 +62,13 @@ allowed_paths:
 | Rust | `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | PASS（153 passed / 1 ignored / 12 filtered；含 `backup_commands_are_exact_and_production_only`） | wire-cargo-test-serial.log |
 | 前端 | `npx vitest run` | PASS（43 files / 424 tests） | ui-test-frontend.log |
 | 类型 | `tsc --noEmit` | PASS（exit 0） | ui-tsc.log |
-| 烟测 | dev preview：备份/改数据/恢复 + managed 往返 | PASS（备份 1 个 / 校验通过 → 插入 PostBackupBook → 确认 dialog → 恢复成功 + pre_restore 2 个 → 隔离库仅剩 ActiveBook） | gui-smoke.md + screenshots/01..04 |
+| 烟测 | dev preview：备份/改数据/恢复 + managed 往返 | PASS（备份 1 个 / 校验通过 → 插入 PostBackupBook → 确认 dialog → 恢复成功 + pre_restore 2 个 → 隔离库仅剩 ActiveBook） | gui-smoke.md + screenshots/01..05 |
 
 ## 交付与运行记录
 
 - 2026-10-23：C-1 关闭后释放；启动实现。
 - 2026-10-23（实现）：Core 侧新增 `src/infrastructure/sqlite/nmbak.py`（`.nmbak` v1：zip + manifest + library.db + sidecar + managed/ + revision_refs；create/list/restore/delete；read-back 校验；pre_restore；`is_run_active` 拒绝；CORRUPT/BUSY/INCOMPLETE/NOT_FOUND 错误码）并在 `core_assembly` 装配（`<data_root>/backups`，`backup` 字段）；`core_service` 新增 `_BACKUP_COMMANDS`（`backup.create/list/restore/delete`）+ `_BACKUP_ERROR_RULES` + 4 个 handler + dispatch 分支（应用层通道，minor 保持 3）。
-- 2026-10-23（测试）：Core 9 个 `.nmbak` 服务测试 + 7 个 wire 测试全绿；全量 pytest 仅 3 个既有环境/时序失败（不属于本改动范围，已记录）。Rust 153 passed；前端 42/424 + tsc 0。
+- 2026-10-23（测试）：Core 12 个 `.nmbak` 服务测试 + 12 个 wire 测试全绿；全量 pytest 仅 3 个既有环境/时序失败（不属于本改动范围，已记录）。Rust 153 passed；前端 43/424 + tsc 0。
 - 2026-10-23（烟测）：dev preview 备份 → 改数据（插入 PostBackupBook）→ 二次确认 → 覆盖恢复成功，隔离库回到备份点（仅 ActiveBook），pre_restore 包自动生成（screenshots/01–04）。
 - 2026-10-23（Review r1 处置，`c2d720b`）：create 完整 read-back（缺失 managed 源 → `BACKUP_CREATE_FAILED`）；`revision_refs` 用包内真实字节；`_verify_package` 拒绝未列出 managed 成员且 `_restore_managed` 只写 `revision_refs`；manifest 补 `region_id`；`INVALID_REQUEST`/`BACKUP_DELETE_FAILED` 分类；提交 ACL 生成产物；build/capabilities 计数 61/68；前端 `missing` 保留 `{revision_id, managed_path}`。
 - 2026-10-23（Review r2 处置）：恢复被 r1 脚本误覆盖的 Task 文件（从 `29f65695` 恢复后按 r2 更新）；schema 不匹配的 INCOMPLETE detail 写入真实 pre_restore id；`managed_files` 收紧为 `revision_refs` 子集、`_restore_managed` 仅写 refs；`_remove_tree` 改 `shutil.rmtree` 清理临时目录。
@@ -95,7 +95,7 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout：待实现 + 独立 Review + GUI 烟测通过后关闭。
-- canonical_evidence_status：pending；resource_closeout_status：pending。
+- Closeout：2026-10-23 **done**（Review r3 approved，审查头 `b2e86a79`，交付 `657c18d4`；Task 文件曾于 r1 误被 Handoff 覆盖，已从 `29f65695` 恢复并复核）。
+- canonical_evidence_status：**complete**（canonical evidence 已 pin 至本 Task 表）；resource_closeout_status：**complete**。
 - 删除/迁移/归档：0。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 登记本 Task。

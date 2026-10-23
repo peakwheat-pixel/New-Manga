@@ -530,10 +530,4 @@ class NmbakBackupService:
 
     @staticmethod
     def _remove_tree(path: Path) -> None:
-        try:
-            shutil.rmtree(path, ignore_errors=True)
-        except OSError:
-            pass
-            path.rmdir()
-        except OSError:
-            pass
+        shutil.rmtree(path, ignore_errors=True)

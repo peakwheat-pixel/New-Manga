@@ -28,10 +28,11 @@
 |SETTINGS-OPEN-B-2|SETTINGS-OPEN-B-1|done（批次 B-2：缓存/Revision 清理操作面；review approved，集成 0e2e623；GUI 烟测 PASS）|
 |SETTINGS-OPEN-C-1-DESIGN|SETTINGS-OPEN-B-2|done（批次 C 契约设计：三节冻结 + 决策清单 D1–D11；用户裁决全部接受推荐值）|
 |SETTINGS-OPEN-C-1-RECYCLE|SETTINGS-OPEN-C-1-DESIGN|done（回收站查看+清空；实现 `6d6c085..893c00fc`；独立 Review r1 changes_requested → r2 approved）|
-|SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|in_progress（`.nmbak` v1 + Core/Tauri/前端接线；待测试证据 + 独立 Review）|
+|SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|done（`.nmbak` v1 + Core/Tauri/前端；Review r3 approved `657c18d4`）|
+|SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|ready（Plugin/Hooks 无运行时只读面；设计 §4.5 冻结；11 开 1 关保持）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**无**（`SETTINGS-OPEN-C-2-BACKUP` 执行中）。C-1 已关闭；C-3（Plugin）待 C-2 关闭后释放（不得在无消费点的情况下开放写控件）。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+READY 节点：**SETTINGS-OPEN-C-3-PLUGIN**（只读说明 + 保持未开放；无运行时不得开放写控件）。C-1/C-2 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 
