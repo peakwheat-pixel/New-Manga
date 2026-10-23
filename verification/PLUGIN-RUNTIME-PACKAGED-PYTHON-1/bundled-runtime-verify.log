@@ -1,0 +1,7 @@
+# command: pwsh -NoProfile -File packaging/m2ac5/verify_bundled_python.ps1 -PythonRuntime C:\Python314 -OutDir G:\CODEX\New Manga.workspace\tmp\pkg-python-verify2
+# started: 2026-10-23T18:59:17.9140229+08:00
+# exit: 0
+bundle_python_runtime: OK -> G:\CODEX\New Manga.workspace\tmp\pkg-python-verify2\core-sidecar\python (smoke import socket/ssl/sqlite3/json/hashlib)
+bundled-sandbox-hook-ok
+verify_bundled_python: OK (G:\CODEX\New Manga.workspace\tmp\pkg-python-verify2\core-sidecar)
+frozen-resolution-ok: G:\CODEX\New Manga.workspace\tmp\pkg-python-verify2\core-sidecar\python\python.exe

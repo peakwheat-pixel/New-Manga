@@ -55,7 +55,13 @@ param (
     # M2-SFX-PROD-1: also skips the sfx weights copy (same debug semantics —
     # the sfx provider fails closed NOT_CONFIGURED at detect time, the app
     # assembles and the manga chain lives on).
-    [switch]$SkipWeights
+    [switch]$SkipWeights,
+    # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: copy a complete relocatable Python
+    # runtime into <bundle>/python/ so plugin hooks run in the packaged app.
+    # The directory must contain python.exe (the interpreter used to run
+    # PyInstaller is a natural candidate: its Lib/DLLs are the same ABI).
+    [Parameter(Mandatory = $false)]
+    [string]$BundlePythonRuntime = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -64,6 +70,14 @@ $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
 
 
 # --------------------------------------------------------------------------
+# PLUGIN-RUNTIME-PACKAGED-PYTHON-1: complete relocatable Python runtime.
+if ($BundlePythonRuntime) {
+    if (-not (Test-Path -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -PathType Leaf)) {
+        throw "BundlePythonRuntime does not contain python.exe: $BundlePythonRuntime"
+    }
+    . (Join-Path $repoRoot "packaging/bundle_python_runtime.ps1")
+}
+
 # M2-PROD-DETECT-2 (AC2): pinned manga weights into the bundle.
 # (Defined BEFORE any call site: PowerShell resolves script-scope functions
 # in sequential execution order.)
@@ -261,5 +275,8 @@ Write-Host "build_sidecar: verified 0 shadowing ICU binaries across bundle layou
 if (-not $SkipWeights) {
     Copy-MangaWeights -Bundle $bundle -WeightsSource $WeightsSource
     Copy-SfxWeights -Bundle $bundle -WeightsSource $SfxWeightsSource
+}
+if ($BundlePythonRuntime) {
+    Copy-PluginPythonRuntime -Bundle $bundle -RuntimeDir $BundlePythonRuntime
 }
 Write-Host "build_sidecar: OK -> $bundle (HEAD=$gitHead, pyinstaller=$pyinstallerVersion)"

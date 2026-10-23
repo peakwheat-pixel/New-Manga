@@ -1,1 +1,6 @@
-PS-PARSE-OK
+# command: PowerShell Parser::ParseFile on the four packaging scripts
+# started: 2026-10-23T19:00:53.8281550+08:00
+packaging/build.ps1 PS-PARSE-OK
+packaging/bundle_python_runtime.ps1 PS-PARSE-OK
+packaging/m2ac5/build_sidecar.ps1 PS-PARSE-OK
+packaging/m2ac5/verify_bundled_python.ps1 PS-PARSE-OK

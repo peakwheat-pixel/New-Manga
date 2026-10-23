@@ -142,6 +142,13 @@ try {
         throw "Qt/ICU runtime symbol closure verification failed with exit code: $closureExit"
     }
 
+    # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: stage the bundled Python runtime
+    # BEFORE the artifact manifest so the manifest covers the runtime too.
+    if ($BundlePythonRuntime) {
+        . (Join-Path $repoRoot "packaging/bundle_python_runtime.ps1")
+        Copy-PluginPythonRuntime -Bundle (Join-Path $OutputDir "core-sidecar") -RuntimeDir $BundlePythonRuntime
+    }
+
     # Generate SHA-256 manifest
     $manifestScript = Join-Path $repoRoot "packaging\manifest.py"
     $manifestFile = Join-Path $OutputDir "artifact-manifest.sha256"
@@ -159,25 +166,4 @@ try {
     foreach ($name in $savedEnv.Keys) {
         [Environment]::SetEnvironmentVariable($name, $savedEnv[$name], "Process")
     }
-}
-
-# PLUGIN-RUNTIME-PACKAGED-PYTHON-1: stage the bundled Python runtime.
-if ($BundlePythonRuntime) {
-    $sidecarDir = Join-Path $OutputDir "core-sidecar"
-    $target = Join-Path $sidecarDir "python"
-    if (Test-Path -LiteralPath $target) { Remove-Item -LiteralPath $target -Recurse -Force }
-    New-Item -ItemType Directory -Path $target -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -Destination $target -Force
-    foreach ($sub in @("DLLs", "Lib")) {
-        $source = Join-Path $BundlePythonRuntime $sub
-        if (Test-Path -LiteralPath $source -PathType Container) {
-            Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
-        }
-    }
-    Set-Content -LiteralPath (Join-Path $target "plugin-python.txt") -Encoding utf8 -Value @(
-        "Bundled by packaging/build.ps1 -BundlePythonRuntime"
-        "Interpreter: python/python.exe"
-        "Launcher: set NEWMANGA_PLUGIN_PYTHON to this interpreter (or rely on the python/ fallback)"
-    )
-    Write-Host "Bundled Python runtime: $target"
 }

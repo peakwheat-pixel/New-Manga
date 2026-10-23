@@ -1,5 +1,5 @@
 # command: python -m pytest tests/infrastructure/test_plugin_packaged_python.py tests/infrastructure/test_plugin_sandbox.py tests/infrastructure/test_plugin_runtime.py -q
-# started: 2026-10-23T18:44:18.9496838+08:00
+# started: 2026-10-23T19:00:53.8281550+08:00
 # exit: 0
 ..............................................                           [100%]
-46 passed in 31.07s
+46 passed in 30.90s

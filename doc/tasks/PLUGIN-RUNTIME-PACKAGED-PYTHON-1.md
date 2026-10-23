@@ -34,7 +34,7 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 ## 范围
 
 - `service.py::_hook_interpreter`：上述 1–4 优先级；只接受 `is_file()` 的路径；env 覆盖也要校验存在。
-- `packaging/build.ps1`：新增可选参数 `-BundlePythonRuntime <dir>`（校验 `<dir>/python.exe` 存在），复制到 sidecar 输出目录 `python/`（保留 DLLs/Lib 相对结构），并在 `plugin-python.txt` 记录解释器相对路径。
+- `packaging/m2ac5/build_sidecar.ps1`（真实 Tauri sidecar 构建，输出 `apps/desktop/src-tauri/target/core-sidecar/core-sidecar`）：新增可选 `-BundlePythonRuntime <dir>`，构建后用共享 helper `packaging/bundle_python_runtime.ps1` 复制**完整可重定位运行时**到 `<bundle>/python/`（python.exe + python3*.dll + vcruntime*.dll + 根 *.pyd + DLLs/ + Lib/，排除 site-packages），并做最小 PATH smoke（import socket/ssl/sqlite3/json/hashlib）。`packaging/build.ps1`（legacy）复用同一 helper，且复制发生在 `artifact-manifest.sha256` 生成之前。
 - 测试（模拟 frozen）：
   - env 覆盖真实解释器 → 返回；
   - `sys.frozen=True` + 同级 `python.exe`（复制真实解释器）→ 返回；
@@ -60,18 +60,7 @@ PyInstaller onedir 构建中 `sys.executable` 是 sidecar 自身，不是 Python
 | AC1 | `test_environment_override_wins` | PASS：`NEWMANGA_PLUGIN_PYTHON` 优先 |
 | AC2 | `test_sibling_interpreter_is_found` / `test_bundled_python_directory_is_found` | PASS：同级 / `python/` 子目录 |
 | AC3 | `test_missing_environment_override_fails_closed` / `test_no_interpreter_fails_closed_without_system_fallback` | PASS：`PLUGIN_HOOK_UNAVAILABLE`，不回退系统 Python |
-| AC4 | `packaging/build.ps1` 语法检查（`build-ps1-parse.log`） | PASS（PS-PARSE-OK）；`-BundlePythonRuntime` 复制 python.exe/DLLs/Lib 并写 `plugin-python.txt`（脚本逻辑，未跑完整 PyInstaller 构建） |
+| AC4 | `packaging/m2ac5/verify_bundled_python.ps1`（`bundled-runtime-verify.log`） | PASS：完整运行时复制 + 最小 PATH smoke + frozen 解析 + **捆绑解释器真实 AppContainer Hook**（`bundled-sandbox-hook-ok`）；4 个脚本 PS-PARSE-OK（`build-ps1-parse.log`） |
 | AC5 | `python -m pytest tests -q` | 见 `core-pytest.log` |
 | 定向 | packaged-python + sandbox + runtime | 46 passed |
 
-## Closeout Record
-
-- Closeout：待 Review approved 后 closeout（实际 PyInstaller 产物冒烟留给发布验证）。
-
-## Canonical Evidence
-
-|Evidence ID|AC|Path|Commit|SHA-256|Class|
-|---|---|---|---|---|---|
-|EV-PKG-PY-BUILD-PS1-PARSE|AC1-AC5|verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/build-ps1-parse.log|d8bab54df1e958db2ce743e74d652f8f6e0a0425|72ade57c2a50579a300427e389d9b795df69da464c348cae20356e0cb5c1ab87|CANONICAL|
-|EV-PKG-PY-CORE-PYTEST-TARGETED|AC1-AC5|verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/core-pytest-targeted.log|d8bab54df1e958db2ce743e74d652f8f6e0a0425|387140d2e4d1f67e2a14097e7e774b09d742ce6abc63d5749e11cb13fd967d8d|CANONICAL|
-|EV-PKG-PY-CORE-PYTEST|AC1-AC5|verification/PLUGIN-RUNTIME-PACKAGED-PYTHON-1/core-pytest.log|d8bab54df1e958db2ce743e74d652f8f6e0a0425|bfc832b3863bd2b831eac119f42413434c6fa009fec0651df1be954b6a1d932e|CANONICAL|

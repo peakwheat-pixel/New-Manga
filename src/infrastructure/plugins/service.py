@@ -92,9 +92,9 @@ def _hook_interpreter() -> str:
     ``sys.executable`` is the sidecar itself, not a Python CLI, so resolution
     order is:
 
-    1. ``NEWMANGA_PLUGIN_PYTHON`` (packaging launcher points at the bundled
-       runtime; a missing path is fail-closed, never a silent system-python
-       fallback);
+    1. ``NEWMANGA_PLUGIN_PYTHON`` (intended for the packaging launcher only —
+       it is trusted as a file path and checked with ``is_file()``; a missing
+       path is fail-closed, never a silent system-python fallback);
     2. a sibling ``python.exe``/``python3.exe`` next to the sidecar;
     3. ``python/python.exe`` (a ``python`` runtime directory bundled next to
        the sidecar by ``packaging/build.ps1 -BundlePythonRuntime``).
