@@ -32,7 +32,7 @@
 |SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|done（Plugin/Hooks 只读面；Review r2 approved `85128cd2`）|
 |PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|done（本地插件运行时；用户 2026-10-23 授权 D1–D6；Review approved 2026-10-23，`992225d5`）|
 |PLUGIN-RUNTIME-2|PLUGIN-RUNTIME-1|done（r3 approved 2ea97edd6；集成 eb5e821f3；111 passed；资源原位保留）|
-|PLUGIN-RUNTIME-SANDBOX-2|PLUGIN-RUNTIME-SANDBOX-1|in_progress（per-plugin AppContainer profile；用户 2026-10-23「1234都授权」）|
+|PLUGIN-RUNTIME-SANDBOX-2|PLUGIN-RUNTIME-SANDBOX-1|done（per-plugin AppContainer profile；Review r1 approved `127c5111`）|
 |PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级插件沙箱；用户 2026-10-23 选择候选 1；Review r2 approved `41d7abeb`）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 

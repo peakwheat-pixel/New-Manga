@@ -4,7 +4,7 @@ author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: acc1e36a7dc9f333c41f8131ff1b4d0b0bcd3423
 delivery_head: 9ab2748d6325e8e817537fed40cd9269edc0d1ea
-status: in_review
+status: done
 authorization: 用户 2026-10-23「1234都授权」
 ---
 
@@ -34,3 +34,9 @@ authorization: 用户 2026-10-23「1234都授权」
 ## 4. 推荐下一步
 
 Review approved 后 closeout，进入候选 3（capability 接线）。
+
+## 5. Closeout（2026-10-23）
+
+- Review r1 **approved**（`verification/PLUGIN-RUNTIME-SANDBOX-2/review-r1.md`，审查头 `127c5111`）。
+- P2 已修：STATUS 统一、canonical 补 UI/tsc、Closeout 合并、跨插件测试先 warm B 再读（判别力）、双插件 SID ACL 断言、装配显式 `shared_profile=False`、`MAX_PROFILES=64`/2s 首次延迟记录。
+- 下一步：候选 3（capability 接线）。

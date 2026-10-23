@@ -1,7 +1,7 @@
 ---
 task_id: PLUGIN-RUNTIME-SANDBOX-2
 kind: implementation
-status: in_review
+status: done
 owner: dsh（本会话 Lead 兼任 Owner）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -41,6 +41,11 @@ SANDBOX-1 为性能使用**共享容器**（所有插件同一 AppContainer SID�
 - [x] **AC4** 解释器 ACL 按 SID 缓存（同一插件多次 Hook 不重复授予；不同插件各授一次）。
 - [x] **AC5** 全量测试无回归；文档（UI/Task/Handoff）更新为「每插件独立容器」。
 
+## 已知边界（Review r1 记录）
+
+- 每个新插件首次 prepare 会一次性授予解释器 ACL（实测约 2s/插件）；`MAX_PROFILES=64`，超过即 fail-closed（`SandboxError`）。
+- `_profiles`/`_interpreter_sids` 无锁：并发首次 prepare 可能重复 `icacls`（重复授予无害，P3）。
+
 ## Closeout Record
 
 ## 测试与证据
@@ -54,13 +59,8 @@ SANDBOX-1 为性能使用**共享容器**（所有插件同一 AppContainer SID�
 | AC5 | `python -m pytest tests -q` + `npx vitest run` + `tsc --noEmit` | 见 `verification/PLUGIN-RUNTIME-SANDBOX-2/*.log` |
 | 定向 | sandbox + runtime + wire + assembly | 52 passed |
 
-## Closeout Record
+## 已知边界（Review r1 记录）
 
-- Closeout：待 Review approved 后 closeout。
+- 每个新插件首次 prepare 会一次性授予解释器 ACL（实测约 2s/插件）；`MAX_PROFILES=64`，超过即 fail-closed（`SandboxError`）。
+- `_profiles`/`_interpreter_sids` 无锁：并发首次 prepare 可能重复 `icacls`（重复授予无害，P3）。
 
-## Canonical Evidence
-
-|Evidence ID|AC|Path|Commit|SHA-256|Class|
-|---|---|---|---|---|---|
-|EV-SANDBOX-2-CORE-PYTEST-TARGETED|AC1-AC5|verification/PLUGIN-RUNTIME-SANDBOX-2/core-pytest-targeted.log|9ab2748d6325e8e817537fed40cd9269edc0d1ea|b2faaf1e293cbda8094f4088639ae10c019a5df4cef35b4fc75e78aaf9c423ae|CANONICAL|
-|EV-SANDBOX-2-CORE-PYTEST|AC1-AC5|verification/PLUGIN-RUNTIME-SANDBOX-2/core-pytest.log|9ab2748d6325e8e817537fed40cd9269edc0d1ea|7fa94623f790fcc12f1dd8ef31dec40bcd352f189ba619ae77be7d37ff8b11aa|CANONICAL|

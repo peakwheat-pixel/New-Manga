@@ -1,5 +1,5 @@
 # command: python -m pytest tests -q
-# started: 2026-10-23T17:56:37.7891581+08:00
+# started: 2026-10-23T18:08:35.9454844+08:00
 # exit: 1
 ........................................................................ [  2%]
 ........................................................................ [  5%]
@@ -808,7 +808,7 @@ E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detecto
 src\infrastructure\providers\detection_manga.py:535: ProviderError
 ______________ test_pause_shows_optimistic_feedback_immediately _______________
 
-qapp_ = <PySide6.QtGui.QGuiApplication(0x2355daa70a0) at 0x000002355D611A00>
+qapp_ = <PySide6.QtGui.QGuiApplication(0x20cfc378a90) at 0x0000020CFD449A00>
 
     def test_pause_shows_optimistic_feedback_immediately(qapp_):
         """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
@@ -840,7 +840,7 @@ qapp_ = <PySide6.QtGui.QGuiApplication(0x2355daa70a0) at 0x000002355D611A00>
             qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
         )
 E       assert False
-E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x2355daa70a0) at 0x000002355D611A00>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000023596E9E1F0>, timeout_ms=15000)
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x20cfc378a90) at 0x0000020CFD449A00>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000020CB1F32560>, timeout_ms=15000)
 
 tests\workbench\test_workbench_viewmodel.py:210: AssertionError
 ============================== warnings summary ===============================
@@ -857,4 +857,4 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
 FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
 FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
-3 failed, 2663 passed, 9 skipped, 2 warnings in 200.80s (0:03:20)
+3 failed, 2663 passed, 9 skipped, 2 warnings in 214.99s (0:03:34)

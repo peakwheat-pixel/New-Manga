@@ -1216,6 +1216,7 @@ def assemble_core_services(
             app_version=_APP_VERSION,
             sandbox=AppContainerSandbox(
                 anchors=(str(plugin_data_root), str(plugin_data_root.parent)),
+                shared_profile=False,  # per-plugin isolation is the production default
             ),
             allow_unsandboxed=False,
         )

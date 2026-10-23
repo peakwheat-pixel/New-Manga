@@ -243,27 +243,41 @@ def test_plugin_cannot_read_another_plugins_directory(sandboxed, tmp_path) -> No
     _write_plugin(tmp_path, "acme-secret", "def after_detect(p):\n    return {}  # SIBLING-SECRET\n")
     service = sandboxed.service
     service.set_global_enabled(True)
-    service.set_plugin_enabled("acme-trick", True)
+    # Run the sibling FIRST so its directory has been granted to the sibling's
+    # container: under a shared profile this grant would let the trick read the
+    # secret (READ_OK); with per-plugin profiles the trick's SID never sees it.
+    service.set_plugin_enabled("acme-secret", True)
+    warm = service.run_hook("after_detect", {})
+    assert warm["applied"] is True
+    sibling_acl_was_granted = "acme-secret" in sandboxed.sandbox._profiles
+    assert sibling_acl_was_granted
 
+    service.set_plugin_enabled("acme-trick", True)
     outcome = service.run_hook("after_detect", {})
 
     assert outcome["applied"] is True
-    result = outcome["results"][0]["result"]
+    result = next(
+        item["result"] for item in outcome["results"] if item["plugin_id"] == "acme-trick"
+    )
     assert result["read"] == "BLOCKED"
     assert "data" not in result
 
 
 def test_interpreter_acl_is_granted_once_per_profile_sid(sandboxed, tmp_path) -> None:
     _write_plugin(tmp_path, "acme-cache", "def after_detect(p):\n    return {}\n")
+    _write_plugin(tmp_path, "acme-cache-b", "def after_detect(p):\n    return {}\n")
     service = sandboxed.service
     service.set_global_enabled(True)
     service.set_plugin_enabled("acme-cache", True)
     service.run_hook("after_detect", {})
     first = set(sandboxed.sandbox._interpreter_sids)
     service.run_hook("after_detect", {})
-    second = set(sandboxed.sandbox._interpreter_sids)
-    assert first == second  # the SID's interpreter ACL is cached
+    assert set(sandboxed.sandbox._interpreter_sids) == first  # cached per SID
     assert len(first) == 1
+    # a second plugin brings a second SID and its own one-time grant
+    service.set_plugin_enabled("acme-cache-b", True)
+    service.run_hook("after_detect", {})
+    assert len(sandboxed.sandbox._interpreter_sids) == 2
 
 # ---------------------------------------------------------------------------
 # review r1: production wiring, minimal env, byte cap, job tree
