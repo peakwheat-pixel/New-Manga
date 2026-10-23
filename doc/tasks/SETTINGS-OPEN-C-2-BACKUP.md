@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-2-BACKUP
 kind: implementation
-status: ready
+status: in_progress
 owner: dsh（Lead 可另行指派）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -63,7 +63,9 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- 2026-10-23：C-1 关闭后释放；等待启动。
+- 2026-10-23：C-1 关闭后释放；启动实现。
+- 2026-10-23（实现）：Core 侧新增 `src/infrastructure/sqlite/nmbak.py`（`.nmbak` v1：zip + manifest + library.db + sidecar + managed/ + revision_refs；create/list/restore/delete；read-back 校验；pre_restore；`is_run_active` 拒绝；CORRUPT/BUSY/INCOMPLETE/NOT_FOUND 错误码）并在 `core_assembly` 装配（`<data_root>/backups`，`backup` 字段）；`core_service` 新增 `_BACKUP_COMMANDS`（`backup.create/list/restore/delete`）+ `_BACKUP_ERROR_RULES` + 4 个 handler + dispatch 分支（应用层通道，minor 保持 3）。
+- 2026-10-23（实现）：Rust 桥接 `LibraryChannel` trait 默认 + `StdioLibraryChannel` round_trip + `MockLibraryChannel` + `ResilientLibraryChannel` 转发；`main.rs` 增 4 个 Tauri 命令 + `BACKUP_PRODUCTION_ONLY_COMMANDS` + PRODUCTION_COMMANDS（61）+ generate_handler + command_allowlist 过滤；`build.rs` ACL 清单与 `capabilities/m2rc1-commands.json` 同步；`SettingsClient` 新增 create/list/restore/delete + 类型/规范化；`BackupSettingsPanel`（列表/立即备份/恢复二次确认/删除确认/错误映射/自动备份只读说明）；`SettingsPage` 打开 `backup_restore`（11 开 1 关，Plugin 仍关）。
 
 ## Canonical Evidence
 

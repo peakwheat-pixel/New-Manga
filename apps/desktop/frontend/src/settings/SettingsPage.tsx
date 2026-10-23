@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { BackupSettingsPanel } from "./BackupSettingsPanel";
 import { CacheRevisionPanel } from "./CacheRevisionPanel";
 import { SettingsClient } from "./client";
 import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
@@ -26,12 +27,12 @@ import { tokens } from "../theme/tokens";
  * SFX policy, the four SETTINGS-OPEN-A-1 batch A sections (design
  * doc/design/SETTINGS_SECTION_SCHEMAS.md §3), the SETTINGS-OPEN-B-1
  * model/GPU (§4.1) and tasks/concurrency (§4.2) sections, batch B-2's
- * cache/Revision cleanup operation surface (§4.3), and — batch C-1 — the
- * recycle-bin view/clear operation surface (design
- * doc/design/SETTINGS_SECTION_C_SCHEMAS.md §2). Only the two remaining batch C
- * partitions (backup/restore, plugins) still render the disabled placeholder
- * with the reason "等待 section schema 冻结"; the nav badge "未开放" only
- * applies to those still-closed categories.
+ * cache/Revision cleanup operation surface (§4.3), batch C-1's recycle-bin
+ * view/clear surface (§2), and — batch C-2 — the backup/restore operation
+ * surface (design doc/design/SETTINGS_SECTION_C_SCHEMAS.md §3). Only the
+ * last batch C partition (plugin/hooks) still renders the disabled
+ * placeholder with the reason "等待 section schema 冻结"; the nav badge
+ * "未开放" only applies to that still-closed category.
  */
 export const SETTINGS_CATEGORY_ORDER = [
   "provider",
@@ -65,18 +66,18 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
   { id: "task_concurrency", label: "任务/并发", open: true },
   { id: "cache_revision", label: "缓存/Revision", open: true },
   { id: "recycle_bin", label: "回收站", open: true },
-  { id: "backup_restore", label: "备份/恢复", open: false },
+  { id: "backup_restore", label: "备份/恢复", open: true },
   { id: "plugins", label: "Plugin/Hooks", open: false },
 ];
 
 /** Every still-disabled partition with its placeholder test id — asserted
  * one by one in the AC2 tests. Batch A's ocr / translation-context / inpaint /
- * typeset placeholders, batch B-1's model-GPU / task-concurrency placeholders
- * and batch B-2's cache/Revision placeholder are gone: those categories now
- * host real panels. Batch C-1 opens the recycle bin (view/clear). Only the
- * two remaining batch C partitions (backup/restore, plugins) stay closed. */
+ * typeset placeholders, batch B-1's model-GPU / task-concurrency placeholders,
+ * batch B-2's cache/Revision placeholder, batch C-1's recycle-bin placeholder
+ * and batch C-2's backup/restore placeholder are gone: those categories now
+ * host real panels. Only the last batch C partition (plugin/hooks) stays
+ * closed (C-3, no install system yet). */
 export const DISABLED_SECTION_TEST_IDS = {
-  backupRestore: "settings-disabled-section-backup-restore",
   plugins: "settings-disabled-section-plugins",
 } as const;
 
@@ -294,7 +295,11 @@ export function SettingsPage({ client }: SettingsPageProps) {
             <RecycleBinSettingsPanel />
           </div>
         )}
-        {activeCategoryId === "backup_restore" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.backupRestore} title="备份 / 恢复" />}
+        {activeCategoryId === "backup_restore" && (
+          <div data-testid="settings-content-backup-restore">
+            <BackupSettingsPanel client={activeClient} />
+          </div>
+        )}
         {activeCategoryId === "plugins" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.plugins} title="Plugin / Hooks" />}
 
         <div data-testid="settings-active-category" data-category-id={activeCategoryId} style={{ display: "none" }}>

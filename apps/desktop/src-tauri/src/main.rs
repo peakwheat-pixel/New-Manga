@@ -87,6 +87,13 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "cleanup_preview",
     "cleanup_run",
     "cleanup_retry_pending",
+    // SETTINGS-OPEN-C-2-BACKUP (design §3.4): the .nmbak backup package face
+    // (create / list / restore / delete), production-only like the cleanup
+    // trio above.
+    "backup_create",
+    "backup_list",
+    "backup_restore",
+    "backup_delete",
     // P15-C1 rev 2.7 G21/G22/G23/G24 settings surface (19 commands); production-only.
     "settings_provider_profiles_list",
     "settings_provider_profiles_create",
@@ -191,6 +198,13 @@ pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &["settings_get", "settin
 /// gain the three cleanup commands.
 pub const CLEANUP_PRODUCTION_ONLY_COMMANDS: &[&str] =
     &["cleanup_preview", "cleanup_run", "cleanup_retry_pending"];
+
+/// SETTINGS-OPEN-C-2-BACKUP (design §3.4): the ``.nmbak`` package face is
+/// production-only too (the option-B precedent): the frozen RC2 probe / AC1
+/// test-mode surfaces keep their historical 7/6-command shape and never gain
+/// the four backup commands.
+pub const BACKUP_PRODUCTION_ONLY_COMMANDS: &[&str] =
+    &["backup_create", "backup_list", "backup_restore", "backup_delete"];
 
 pub const P15_SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "settings_provider_profiles_list",
@@ -307,6 +321,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !CREATE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !DELETE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !BACKUP_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -640,6 +655,72 @@ fn cleanup_retry_pending(state: tauri::State<'_, AppState>) -> Result<serde_json
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .cleanup_retry_pending()
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-C-2-BACKUP (design §3.4): create one ``manual`` ``.nmbak``
+/// package. The Core owns the package format, the fixed backup root and the
+/// read-back verification; the host never builds a path and the WebView never
+/// picks a directory (export is a separate host-only surface).
+#[tauri::command]
+fn backup_create(
+    state: tauri::State<'_, AppState>,
+    backup_type: Option<String>,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .backup_create(backup_type.as_deref().unwrap_or("manual"))
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-C-2-BACKUP (design §3.4): list the packages found in the
+/// Core's backup root. A package whose manifest cannot be read is still
+/// listed (``verified=false``) — hiding it would look like a lost backup.
+#[tauri::command]
+fn backup_list(state: tauri::State<'_, AppState>) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .backup_list()
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-C-2-BACKUP (design §3.3): overwrite-restore from one
+/// verified package. ``confirm_restore`` is the explicit second confirmation
+/// the Core also re-checks; the Core refuses while a Run is active
+/// (``BACKUP_RESTORE_BUSY``) and always writes a ``pre_restore`` package
+/// first, so a failed restore keeps its rollback point.
+#[tauri::command]
+fn backup_restore(
+    state: tauri::State<'_, AppState>,
+    backup_id: String,
+    confirm_restore: bool,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .backup_restore(&backup_id, confirm_restore)
+        .map_err(|error| error.code)
+}
+
+/// SETTINGS-OPEN-C-2-BACKUP (design §3.4): delete one package. Idempotent
+/// from the caller's point of view: a second delete answers
+/// ``BACKUP_NOT_FOUND`` (not_found, non-retryable) instead of failing
+/// mysteriously.
+#[tauri::command]
+fn backup_delete(
+    state: tauri::State<'_, AppState>,
+    backup_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .backup_delete(&backup_id)
         .map_err(|error| error.code)
 }
 
@@ -1671,6 +1752,10 @@ fn main() {
             cleanup_preview,
             cleanup_run,
             cleanup_retry_pending,
+            backup_create,
+            backup_list,
+            backup_restore,
+            backup_delete,
             settings_provider_profiles_list,
             settings_provider_profiles_create,
             settings_provider_profiles_update,
@@ -1832,7 +1917,7 @@ mod tests {
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
         // sweep, so the existence check covers all 64 commands across the
-        // three surfaces (57 production + 4 probe-only + 3 ac1) — a missing
+        // three surfaces (61 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair or the SETTINGS-OPEN-B-2 cleanup trio) fails this
         // test, not just a live invoke.
@@ -1858,8 +1943,8 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // 57 production commands (the three SETTINGS-OPEN-B-2 cleanup
-        // commands joined the previously pinned 54-command surface).
+        // 61 production commands: the previously pinned 57-command surface plus
+        // the four SETTINGS-OPEN-C-2-BACKUP package commands.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1876,6 +1961,10 @@ mod tests {
                 "cleanup_preview",
                 "cleanup_run",
                 "cleanup_retry_pending",
+                "backup_create",
+                "backup_list",
+                "backup_restore",
+                "backup_delete",
                 "settings_provider_profiles_list",
                 "settings_provider_profiles_create",
                 "settings_provider_profiles_update",
@@ -1927,7 +2016,7 @@ mod tests {
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
         assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -1943,7 +2032,7 @@ mod tests {
             CREATE_PRODUCTION_ONLY_COMMANDS,
             &["library_create_book", "create_chapter"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in CREATE_PRODUCTION_ONLY_COMMANDS {
@@ -2240,6 +2329,7 @@ mod tests {
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - CLEANUP_PRODUCTION_ONLY_COMMANDS.len()
+                - BACKUP_PRODUCTION_ONLY_COMMANDS.len()
                 - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
@@ -2282,6 +2372,13 @@ mod tests {
         }
         // SETTINGS-OPEN-B-2: the cleanup trio is production-only too.
         for command in CLEANUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
+        // SETTINGS-OPEN-C-2-BACKUP: the .nmbak package face is production-only too.
+        for command in BACKUP_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 !ac1.contains(command),
                 "{command} must stay production-only"
@@ -2349,6 +2446,7 @@ mod tests {
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - CLEANUP_PRODUCTION_ONLY_COMMANDS.len()
+                - BACKUP_PRODUCTION_ONLY_COMMANDS.len()
                 - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
@@ -2413,7 +2511,7 @@ mod tests {
             CLEANUP_PRODUCTION_ONLY_COMMANDS,
             &["cleanup_preview", "cleanup_run", "cleanup_retry_pending"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2457,6 +2555,53 @@ mod tests {
         }
     }
 
+    /// SETTINGS-OPEN-C-2-BACKUP (design §3.4): the four `.nmbak` commands are
+    /// exact, production-only, and synchronized across the R2-04 three views
+    /// (build.rs ACL manifest, capability allow list, generate_handler).
+    #[test]
+    fn backup_commands_are_exact_and_production_only() {
+        assert_eq!(
+            BACKUP_PRODUCTION_ONLY_COMMANDS,
+            &["backup_create", "backup_list", "backup_restore", "backup_delete"]
+        );
+
+        let production = command_allowlist(false, false);
+        let probe = command_allowlist(true, false);
+        let ac1 = command_allowlist(false, true);
+
+        for command in BACKUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production.contains(command),
+                "{command} must be on the production surface"
+            );
+            assert!(
+                !probe.contains(command),
+                "{command} must not appear in probe surface"
+            );
+            assert!(
+                !ac1.contains(command),
+                "{command} must not appear in ac1 surface"
+            );
+            assert!(include_str!("../build.rs").contains(command));
+            assert!(include_str!("../capabilities/m2rc1-commands.json")
+                .contains(&format!("allow-{}", command.replace('_', "-"))));
+        }
+
+        let production_handler = include_str!("main.rs")
+            .split("builder.invoke_handler(tauri::generate_handler![")
+            .nth(3)
+            .unwrap()
+            .split("])")
+            .next()
+            .unwrap();
+        for command in BACKUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production_handler.contains(command),
+                "{command} missing from the production generate_handler! list"
+            );
+        }
+    }
+
     /// RUN-IPC-1: literal exact assertions for the Run transport family. The
     /// six names are pinned with a fixed literal expectation (never derived
     /// from the constant itself), the group must sit on the production surface
@@ -2474,9 +2619,9 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 57 production commands: the previous 54 plus the SETTINGS-OPEN-B-2
+        // 61 production commands: the previous 54 plus the SETTINGS-OPEN-B-2
         // cleanup trio (PRODUCTION_COMMANDS, main.rs).
-        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2509,7 +2654,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2541,7 +2686,7 @@ mod tests {
                 "library_delete_books_permanently",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 57);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);

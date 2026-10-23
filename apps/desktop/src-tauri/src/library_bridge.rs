@@ -1011,6 +1011,43 @@ pub trait LibraryChannel: Send + Sync {
         Err(LibraryError::unavailable("Cleanup channel is unavailable"))
     }
 
+    /// SETTINGS-OPEN-C-2-BACKUP (design §3.4): the ``.nmbak`` backup package
+    /// face -- create/list/restore/delete. Ordinary application-channel Core
+    /// commands (the cleanup precedent), production-only at the Tauri surface.
+    /// The projections are the raw Core results:
+    ///
+    /// - create:  `{backup_id, path, size_bytes, created_at, verified}`;
+    /// - list:    `[{backup_id, backup_type, created_at, size_bytes,
+    ///   schema_version, verified}]`;
+    /// - restore: `{restored_from, pre_restore_backup_id, schema_versions,
+    ///   managed_consistency}`;
+    /// - delete:  `{removed: true}`.
+    ///
+    /// The defaults are fail-closed so test doubles and wrappers keep
+    /// compiling; the production channel overrides all four.
+    fn backup_create(&self, backup_type: &str) -> Result<serde_json::Value, LibraryError> {
+        let _ = backup_type;
+        Err(LibraryError::unavailable("Backup channel is unavailable"))
+    }
+
+    fn backup_list(&self) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Backup channel is unavailable"))
+    }
+
+    fn backup_restore(
+        &self,
+        backup_id: &str,
+        confirm_restore: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let _ = (backup_id, confirm_restore);
+        Err(LibraryError::unavailable("Backup channel is unavailable"))
+    }
+
+    fn backup_delete(&self, backup_id: &str) -> Result<serde_json::Value, LibraryError> {
+        let _ = backup_id;
+        Err(LibraryError::unavailable("Backup channel is unavailable"))
+    }
+
     /// P20-ISOLATION-1: Register a lifecycle status emitter for sidecar health events.
     fn set_status_emitter(&self, _emitter: StatusEmitter) {}
 
@@ -4395,6 +4432,41 @@ impl LibraryChannel for StdioLibraryChannel {
         self.round_trip("cleanup.retry_pending", serde_json::json!({}))
     }
 
+    fn backup_create(&self, backup_type: &str) -> Result<serde_json::Value, LibraryError> {
+        // SETTINGS-OPEN-C-2-BACKUP: ordinary application-envelope command
+        // (cleanup precedent); the Core writes the .nmbak package into its
+        // fixed backup root and returns the verified projection.
+        self.round_trip(
+            "backup.create",
+            serde_json::json!({ "backup_type": backup_type }),
+        )
+    }
+
+    fn backup_list(&self) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip("backup.list", serde_json::json!({}))
+    }
+
+    fn backup_restore(
+        &self,
+        backup_id: &str,
+        confirm_restore: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "backup.restore",
+            serde_json::json!({
+                "backup_id": backup_id,
+                "confirm_restore": confirm_restore,
+            }),
+        )
+    }
+
+    fn backup_delete(&self, backup_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "backup.delete",
+            serde_json::json!({ "backup_id": backup_id }),
+        )
+    }
+
     fn permanently_delete_book(
         &self,
         payload: PermanentlyDeleteBookPayload,
@@ -4785,6 +4857,26 @@ impl LibraryChannel for MockLibraryChannel {
     }
 
     fn cleanup_retry_pending(&self) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn backup_create(&self, _backup_type: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn backup_list(&self) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn backup_restore(
+        &self,
+        _backup_id: &str,
+        _confirm_restore: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn backup_delete(&self, _backup_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
     }
 
@@ -5624,6 +5716,26 @@ impl LibraryChannel for ResilientLibraryChannel {
 
     fn cleanup_retry_pending(&self) -> Result<serde_json::Value, LibraryError> {
         self.with_channel(|c| c.cleanup_retry_pending())
+    }
+
+    fn backup_create(&self, backup_type: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.backup_create(backup_type))
+    }
+
+    fn backup_list(&self) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.backup_list())
+    }
+
+    fn backup_restore(
+        &self,
+        backup_id: &str,
+        confirm_restore: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.backup_restore(backup_id, confirm_restore))
+    }
+
+    fn backup_delete(&self, backup_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.backup_delete(backup_id))
     }
 
     fn permanently_delete_book(

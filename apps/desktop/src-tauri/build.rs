@@ -83,6 +83,14 @@ fn main() {
             "cleanup_preview",
             "cleanup_run",
             "cleanup_retry_pending",
+            // SETTINGS-OPEN-C-2-BACKUP (design §3.4): production-only
+            // .nmbak package face; ACL-declared so the capability file can
+            // name them, registered at runtime ONLY in production mode
+            // (main.rs BACKUP_PRODUCTION_ONLY_COMMANDS).
+            "backup_create",
+            "backup_list",
+            "backup_restore",
+            "backup_delete",
             // P15-C1 rev 2.7 G21/G22/G23/G24: 19 production-only settings commands.
             "settings_provider_profiles_list",
             "settings_provider_profiles_create",

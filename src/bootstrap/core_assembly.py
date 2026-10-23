@@ -113,6 +113,7 @@ from infrastructure.export.target_refs import ExportTargetGrantRegistry
 from infrastructure.resource_channel.handle_resolver import ManagedRootTrust
 from infrastructure.resource_channel.import_source_refs import ImportSourceGrantRegistry
 from infrastructure.sqlite.regions import SqliteRegionRepository
+from infrastructure.sqlite.nmbak import NmbakBackupService
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport
 from ports.inpaint.ports import ImageFrame
@@ -120,6 +121,19 @@ from ports.repositories.artifacts import ArtifactType
 from ports.providers.errors import ProviderInputError
 
 _APP_VERSION = "0.1.0"
+
+
+def _has_active_run(conn) -> bool:
+    """True when a pipeline run is not in a terminal state (design §3.3(5)).
+
+    A restore is overwrite-only, so it must never run while a Run could still
+    write pages into the database it is about to replace.
+    """
+    row = conn.execute(
+        "SELECT 1 FROM pipeline_runs WHERE status IN"
+        " ('pending', 'running', 'paused', 'blocked', 'interrupted') LIMIT 1"
+    ).fetchone()
+    return row is not None
 
 
 @dataclass(frozen=True)
@@ -699,6 +713,11 @@ class CoreServices:
     network_profile_store: object = None
     provider_binding_store: object = None
     network_profile_test_probe: object = None
+    #: SETTINGS-OPEN-C-2-BACKUP: ``.nmbak`` package service over
+    #: ``<data_root>/backups`` (create/list/restore/delete). ``None`` keeps
+    #: every existing construction valid and makes the backup commands fail
+    #: closed with CORE_UNAVAILABLE.
+    backup: object = None
 
 
 def _resolve_detector_weights_path(
@@ -1356,6 +1375,17 @@ def assemble_core_services(
             network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
             provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),
             network_profile_test_probe=NetworkProfileTestProbe(transport),
+            # SETTINGS-OPEN-C-2-BACKUP: one package service per assembly.
+            # ``is_run_active`` reads the durable run table directly so the
+            # restore gate cannot be bypassed by a caller that forgot to pass
+            # a probe.
+            backup=NmbakBackupService(
+                conn,
+                data_root / "backups",
+                Path(managed_root),
+                app_version=_APP_VERSION,
+                is_run_active=lambda: _has_active_run(conn),
+            ),
         )
     except Exception:
         conn.close()

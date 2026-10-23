@@ -121,6 +121,15 @@ export const CLEANUP_PREVIEW_COMMAND = "cleanup_preview";
 export const CLEANUP_RUN_COMMAND = "cleanup_run";
 export const CLEANUP_RETRY_PENDING_COMMAND = "cleanup_retry_pending";
 
+/* SETTINGS-OPEN-C-2-BACKUP §3.4 — the frozen `.nmbak` package command names.
+ * `backup_create` takes no target directory (the Core owns the backup root),
+ * `backup_restore` carries the id + the explicit `confirm_restore`, and every
+ * name is a pinned constant: renaming one is wire drift. */
+export const BACKUP_CREATE_COMMAND = "backup_create";
+export const BACKUP_LIST_COMMAND = "backup_list";
+export const BACKUP_RESTORE_COMMAND = "backup_restore";
+export const BACKUP_DELETE_COMMAND = "backup_delete";
+
 export class SettingsClientError extends Error {
   code: string;
 
@@ -361,6 +370,109 @@ function normalizeCleanupOutcome(raw: unknown): CleanupOutcome {
   };
 }
 
+/* ---------------- SETTINGS-OPEN-C-2-BACKUP §3.4: .nmbak packages ---------------- */
+
+/** One package found in the Core's fixed backup root. */
+export interface BackupEntry {
+  backup_id: string;
+  backup_type: string;
+  created_at: string;
+  size_bytes: number;
+  schema_version: number;
+  verified: boolean;
+}
+
+/** `backup_create` projection: the verified package the Core just wrote. */
+export interface BackupCreateResult {
+  backup_id: string;
+  path: string;
+  size_bytes: number;
+  created_at: string;
+  verified: boolean;
+}
+
+/** `backup_restore` report: overwrite source, rollback package and the
+ * post-restore DB/managed consistency summary. */
+export interface BackupRestoreReport {
+  restored_from: string;
+  pre_restore_backup_id: string;
+  schema_versions: { backup: number | null; restored: number | null };
+  managed_consistency: { checked: number | null; missing: string[] };
+}
+
+/** `backup_delete` projection. */
+export interface BackupDeleteResult {
+  removed: boolean;
+}
+
+function normalizeBackupEntry(raw: unknown): BackupEntry | null {
+  const row = asRecord(raw);
+  if (!row) return null;
+  const backupId = typeof row.backup_id === "string" ? row.backup_id.trim() : "";
+  if (!/^[0-9a-f]{32}$/.test(backupId)) return null;
+  return {
+    backup_id: backupId,
+    backup_type: typeof row.backup_type === "string" ? row.backup_type : "unknown",
+    created_at: typeof row.created_at === "string" ? row.created_at : "",
+    size_bytes: asCount(row.size_bytes) ?? 0,
+    schema_version: asCount(row.schema_version) ?? 0,
+    verified: row.verified === true,
+  };
+}
+
+function normalizeBackupList(raw: unknown): BackupEntry[] {
+  if (!Array.isArray(raw)) {
+    throw new SettingsClientError("BACKUP_MALFORMED", "backup_list returned a non-array");
+  }
+  const entries: BackupEntry[] = [];
+  for (const item of raw) {
+    const entry = normalizeBackupEntry(item);
+    if (entry) entries.push(entry);
+  }
+  return entries.sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0));
+}
+
+function normalizeBackupCreate(raw: unknown): BackupCreateResult {
+  const row = asRecord(raw) ?? {};
+  const backupId = typeof row.backup_id === "string" ? row.backup_id.trim() : "";
+  if (!/^[0-9a-f]{32}$/.test(backupId)) {
+    throw new SettingsClientError("BACKUP_MALFORMED", "backup_create returned no backup_id");
+  }
+  return {
+    backup_id: backupId,
+    path: typeof row.path === "string" ? row.path : "",
+    size_bytes: asCount(row.size_bytes) ?? 0,
+    created_at: typeof row.created_at === "string" ? row.created_at : "",
+    verified: row.verified === true,
+  };
+}
+
+function normalizeBackupRestore(raw: unknown): BackupRestoreReport {
+  const row = asRecord(raw) ?? {};
+  const versions = asRecord(row.schema_versions) ?? {};
+  const consistency = asRecord(row.managed_consistency) ?? {};
+  return {
+    restored_from: typeof row.restored_from === "string" ? row.restored_from : "",
+    pre_restore_backup_id:
+      typeof row.pre_restore_backup_id === "string" ? row.pre_restore_backup_id : "",
+    schema_versions: {
+      backup: asCount(versions.backup),
+      restored: asCount(versions.restored),
+    },
+    managed_consistency: {
+      checked: asCount(consistency.checked),
+      missing: Array.isArray(consistency.missing)
+        ? consistency.missing.filter((item): item is string => typeof item === "string")
+        : [],
+    },
+  };
+}
+
+function normalizeBackupDelete(raw: unknown): BackupDeleteResult {
+  const row = asRecord(raw) ?? {};
+  return { removed: row.removed === true };
+}
+
 export class SettingsClient {
   private invoke: InvokeFn;
 
@@ -503,6 +615,56 @@ export class SettingsClient {
       return normalizeCleanupOutcome(await this.invoke(CLEANUP_RETRY_PENDING_COMMAND));
     } catch (error) {
       throw toClientError(error, CLEANUP_RETRY_PENDING_COMMAND);
+    }
+  }
+
+  /* ---------------- SETTINGS-OPEN-C-2-BACKUP §3.4: .nmbak packages ---------------- */
+
+  /** Create one `manual` package (`backup_type` is the only payload field;
+   * there is no target directory — the Core owns the backup root). */
+  async createBackup(): Promise<BackupCreateResult> {
+    try {
+      return normalizeBackupCreate(
+        await this.invoke(BACKUP_CREATE_COMMAND, { backupType: "manual" }),
+      );
+    } catch (error) {
+      throw toClientError(error, BACKUP_CREATE_COMMAND);
+    }
+  }
+
+  /** List the packages in the Core's backup root, newest first. */
+  async listBackups(): Promise<BackupEntry[]> {
+    try {
+      return normalizeBackupList(await this.invoke(BACKUP_LIST_COMMAND));
+    } catch (error) {
+      throw toClientError(error, BACKUP_LIST_COMMAND);
+    }
+  }
+
+  /** Overwrite-restore from one verified package. `confirm_restore` is always
+   * true here: the panel's own dialog is the human confirmation. */
+  async restoreBackup(backupId: string): Promise<BackupRestoreReport> {
+    try {
+      return normalizeBackupRestore(
+        await this.invoke(BACKUP_RESTORE_COMMAND, {
+          backupId,
+          confirmRestore: true,
+        }),
+      );
+    } catch (error) {
+      throw toClientError(error, BACKUP_RESTORE_COMMAND);
+    }
+  }
+
+  /** Delete one package (idempotent from the UI's point of view: a second
+   * delete answers BACKUP_NOT_FOUND). */
+  async deleteBackup(backupId: string): Promise<BackupDeleteResult> {
+    try {
+      return normalizeBackupDelete(
+        await this.invoke(BACKUP_DELETE_COMMAND, { backupId }),
+      );
+    } catch (error) {
+      throw toClientError(error, BACKUP_DELETE_COMMAND);
     }
   }
 

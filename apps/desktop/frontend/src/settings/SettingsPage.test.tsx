@@ -16,9 +16,10 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * SETTINGS-OPEN-B-2 AC3/AC4 — batch B-2 opens cache/Revision (preview +
  * manual cleanup + pending retry).
  * SETTINGS-OPEN-C-1-RECYCLE — batch C-1 opens the recycle bin (view + clear
- * operation surface; no settings write section). Only backup/restore and
- * plugins keep the disabled placeholder and the "未开放" badge (10 open /
- * 2 closed).
+ * operation surface; no settings write section). SETTINGS-OPEN-C-2-BACKUP —
+ * batch C-2 opens backup/restore (create/list/restore/delete operation
+ * surface; no auto_backup controls). Only plugins keep the disabled
+ * placeholder and the "未开放" badge (11 open / 1 closed).
  */
 
 const OPEN_CATEGORY_IDS = [
@@ -32,8 +33,9 @@ const OPEN_CATEGORY_IDS = [
   "task_concurrency",
   "cache_revision",
   "recycle_bin",
+  "backup_restore",
 ] as const;
-const CLOSED_CATEGORY_IDS = ["backup_restore", "plugins"] as const;
+const CLOSED_CATEGORY_IDS = ["plugins"] as const;
 
 function makeInvoke() {
   return vi.fn(async (command: string) => {
@@ -50,6 +52,16 @@ function makeInvoke() {
         return { targets: [], total_bytes: 0, pending_cleanups: 0 };
       case "library_list_recycle_bin_books":
         return [];
+      case "backup_list":
+        return [];
+      case "backup_create":
+        return {
+          backup_id: "a".repeat(32),
+          path: "a.nmbak",
+          size_bytes: 1024,
+          created_at: "2026-10-23T02:00:00+00:00",
+          verified: true,
+        };
       default:
         return {};
     }
@@ -171,7 +183,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
       "true", // task_concurrency — batch B-1
       "true", // cache_revision — batch B-2
       "true", // recycle_bin — batch C-1
-      "false", // backup_restore
+      "true", // backup_restore — batch C-2
       "false", // plugins
     ]);
 
@@ -299,11 +311,17 @@ describe("Batch A open categories host editable panels (AC3)", () => {
       "recycle_bin",
     );
 
-    // The two still-closed batch C categories trail the open list: another
-    // ArrowDown is clamped to the last OPEN category and never lands on them.
+    // backup/restore is open since batch C-2, so it is the next stop.
     await arrowDown();
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
-      "recycle_bin",
+      "backup_restore",
+    );
+
+    // The still-closed plugin category trails the open list: another
+    // ArrowDown is clamped to the last OPEN category and never lands on it.
+    await arrowDown();
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "backup_restore",
     );
   });
 
@@ -430,6 +448,33 @@ describe("Batch C-1 open category hosts the recycle-bin surface (AC3)", () => {
   });
 });
 
+describe("Batch C-2 open category hosts the backup/restore surface (AC3)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
+
+  it("backup/restore category opens BackupSettingsPanel instead of the placeholder", async () => {
+    page.mount();
+    await page.activateOpenCategory("backup_restore");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "backup_restore",
+    );
+    expect(page.q('[data-testid="settings-content-backup-restore"]')).not.toBeNull();
+    expect(page.q('[data-testid="backup-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-backup-restore"]')).toBeNull();
+    // §3.2: automatic backups are a read-only note, never a fake control.
+    expect(page.q('[data-testid="backup-settings-policy-note"]')?.textContent).toContain(
+      "自动备份",
+    );
+  });
+});
+
 describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () => {
   let page: ReturnType<typeof useMountedPage>;
 
@@ -453,11 +498,6 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
     expect(button.textContent).toContain("未开放");
   };
 
-  it("backup/restore category remains visible but cannot be invoked", () => {
-    page.mount();
-    assertDisabledCategory("backup_restore", "备份/恢复");
-  });
-
   it("Plugin/Hooks category remains visible but cannot be invoked", () => {
     page.mount();
     assertDisabledCategory("plugins", "Plugin/Hooks");
@@ -465,10 +505,8 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
 
   it("keeps a reasoned placeholder id for every still-closed partition", () => {
     page.mount();
-    // Batch C-1 opened the recycle bin: only backup/restore and plugins remain.
-    expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(
-      ["backupRestore", "plugins"].sort(),
-    );
+    // Batch C-2 opened backup/restore: only the plugin partition remains.
+    expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(["plugins"]);
     // None of them is mounted while the page sits on an open category.
     for (const testId of Object.values(DISABLED_SECTION_TEST_IDS)) {
       expect(page.q(`[data-testid="${testId}"]`)).toBeNull();

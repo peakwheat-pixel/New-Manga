@@ -194,6 +194,7 @@ from infrastructure.resource_channel.render_preview import (
 )
 from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
+from infrastructure.sqlite.nmbak import NmbakBackupError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 from bootstrap.settings_commands import P15_SNAPSHOT_KEY, P15SettingsCommands, SettingsSurfaceError
@@ -259,6 +260,25 @@ _CLEANUP_COMMANDS = frozenset({
     "cleanup.run",
     "cleanup.retry_pending",
 })
+#: SETTINGS-OPEN-C-2-BACKUP (design §3.4): the backup/restore face. Same
+#: ordinary application-channel precedent as cleanup/settings.get -- the
+#: frozen host-control envelope is not widened.
+_BACKUP_COMMANDS = frozenset({
+    "backup.create",
+    "backup.list",
+    "backup.restore",
+    "backup.delete",
+})
+#: Design §3.4 error taxonomy -> (category, retryable). Anything not listed
+#: falls back to ("internal", False).
+_BACKUP_ERROR_RULES: dict[str, tuple[str, bool]] = {
+    "BACKUP_CREATE_FAILED": ("internal", "unknown"),
+    "BACKUP_NOT_FOUND": ("not_found", False),
+    "BACKUP_CORRUPT": ("validation", False),
+    "BACKUP_RESTORE_BUSY": ("conflict", True),
+    "BACKUP_RESTORE_INCOMPLETE": ("conflict", False),
+    "BACKUP_RESTORE_REQUIRES_CONFIRMATION": ("validation", False),
+}
 _P15_SETTINGS_COMMANDS = frozenset({
     "settings_provider_profiles_list",
     "settings_provider_profiles_create",
@@ -1819,6 +1839,52 @@ class CoreServiceServer:
         the ledger, entries that fail again stay pending."""
         service = self._require_cleanup()
         return _cleanup_outcome_projection(service.retry_pending_cleanups())
+
+    # ------------------------------------------------------------------
+    # backup / restore (SETTINGS-OPEN-C-2-BACKUP, design §3.4)
+    # ------------------------------------------------------------------
+
+    def _require_backup(self):
+        """The assembled ``.nmbak`` service; a Core without one fails closed
+        with CORE_UNAVAILABLE instead of crashing the sidecar."""
+        service = getattr(self._core, "backup", None)
+        if service is None:
+            raise NmbakBackupError("CORE_UNAVAILABLE", "backup service is not wired")
+        return service
+
+    def handle_backup_create(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Only ``manual`` is exposed: automatic backups have no scheduler
+        consumer yet (design §3.2), so a payload asking for another type is
+        a malformed request rather than a silent no-op."""
+        service = self._require_backup()
+        backup_type = payload.get("backup_type", "manual")
+        if backup_type != "manual":
+            raise NmbakBackupError(
+                "INVALID_REQUEST",
+                "only backup_type=manual is exposed from the settings panel",
+            )
+        return service.create("manual", "settings-panel manual backup")
+
+    def handle_backup_list(self) -> list[dict[str, Any]]:
+        return self._require_backup().list_backups()
+
+    def handle_backup_restore(self, payload: dict[str, Any]) -> dict[str, Any]:
+        service = self._require_backup()
+        backup_id = payload.get("backup_id")
+        if not isinstance(backup_id, str):
+            raise NmbakBackupError("INVALID_REQUEST", "backup_id must be a string")
+        if payload.get("confirm_restore") is not True:
+            raise NmbakBackupError(
+                "BACKUP_RESTORE_REQUIRES_CONFIRMATION", "confirm_restore must be true"
+            )
+        return service.restore(backup_id, confirm_restore=True)
+
+    def handle_backup_delete(self, payload: dict[str, Any]) -> dict[str, Any]:
+        service = self._require_backup()
+        backup_id = payload.get("backup_id")
+        if not isinstance(backup_id, str):
+            raise NmbakBackupError("INVALID_REQUEST", "backup_id must be a string")
+        return service.delete(backup_id)
 
     # ------------------------------------------------------------------
     # set_region_type / list_regions (M2-REGION-RETYPE-CORE)
@@ -3838,6 +3904,57 @@ class CoreServiceServer:
                     "request_id": safe_request_id,
                     "result": result,
                     "error": None,
+                },
+                False,
+            )
+
+        # SETTINGS-OPEN-C-2-BACKUP (design §3.4): the ``.nmbak`` backup
+        # package face. The payload is typed fail-closed before any
+        # filesystem work; failures use the frozen taxonomy
+        # (BACKUP_NOT_FOUND / BACKUP_CORRUPT / BACKUP_RESTORE_BUSY /
+        # BACKUP_RESTORE_INCOMPLETE / ...). A Core assembled without the
+        # service fails closed with CORE_UNAVAILABLE.
+        if command in _BACKUP_COMMANDS:
+            result = None
+            error = None
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise NmbakBackupError(
+                        "INVALID_REQUEST",
+                        "backup request payload must be a JSON object",
+                    )
+                if command == "backup.create":
+                    result = self.handle_backup_create(raw_payload)
+                elif command == "backup.list":
+                    result = self.handle_backup_list()
+                elif command == "backup.restore":
+                    result = self.handle_backup_restore(raw_payload)
+                else:
+                    result = self.handle_backup_delete(raw_payload)
+            except NmbakBackupError as backup_error:
+                category, retryable = _BACKUP_ERROR_RULES.get(
+                    backup_error.code, ("internal", False)
+                )
+                error = make_error_envelope(
+                    code=backup_error.code,
+                    category=category,
+                    message=backup_error.detail[:500],
+                    retryable=retryable,
+                )
+            except Exception:
+                error = make_error_envelope(
+                    code=E_UNKNOWN,
+                    category="internal",
+                    message="Backup operation failed",
+                    retryable=False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": safe_request_id,
+                    "result": result,
+                    "error": error,
                 },
                 False,
             )

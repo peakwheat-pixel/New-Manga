@@ -1,0 +1,5 @@
+# command: python -m pytest tests/storage/test_nmbak_backup.py tests/core/test_core_backup_wire.py tests/core/test_core_cleanup_wire.py tests/core/test_core_service_settings.py -q
+# started: 2026-10-23T10:25:58.4644247+08:00
+# exit: 0
+........................................................................ [100%]
+72 passed in 3.60s
