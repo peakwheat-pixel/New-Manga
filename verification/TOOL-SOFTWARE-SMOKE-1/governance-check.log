@@ -1,0 +1,12 @@
+# command: pwsh -NoProfile -File tools/governance/check.ps1
+# shell: PowerShell 7.6.6
+# cwd: G:\CODEX\New Manga
+# started: 2026-10-23T21:12:09.9007484+08:00
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\TOOL-SOFTWARE-SMOKE-1.md
+WARN: 存在 3 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2560 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6265 bytes / 58 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\TOOL-SOFTWARE-SMOKE-1\governance-check.log
+Governance check: PASS (4 warnings)
+# exit: 0

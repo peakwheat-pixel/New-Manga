@@ -34,7 +34,7 @@
 |PLUGIN-RUNTIME-2|PLUGIN-RUNTIME-1|done（r3 approved 2ea97edd6；集成 eb5e821f3；111 passed；资源原位保留）|
 |GUI-PLUGIN-SANDBOX-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|paused（手工 GUI 冒烟成本过高；用户 2026-10-23 指示暂停，待工具化检查）|
 |PLUGIN-RUNTIME-PACKAGED-PYTHON-1|PLUGIN-RUNTIME-CAPABILITY-1|done（approved `a1f05450`；证据重钉 `6e3ce06f9`）|
-|TOOL-SOFTWARE-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|in_review（分层软件检查工具；实现 `963ff5e6f`，独立 Review 待执行）|
+|TOOL-SOFTWARE-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|in_review（分层软件检查工具；实现 `c680434ea`，独立 Review r2 待执行）|
 |PLUGIN-RUNTIME-CAPABILITY-1|PLUGIN-RUNTIME-SANDBOX-2|done（capability 接线：network 可强制；Review r1 approved `0d3bbe49`）|
 |PLUGIN-RUNTIME-SANDBOX-2|PLUGIN-RUNTIME-SANDBOX-1|done（per-plugin AppContainer profile；Review r1 approved `127c5111`）|
 |PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级插件沙箱；用户 2026-10-23 选择候选 1；Review r2 approved `41d7abeb`）|

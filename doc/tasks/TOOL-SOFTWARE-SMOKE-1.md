@@ -13,7 +13,7 @@ base_commit: 6e3ce06f96bb48bc7a8de0a114c8391a9bc82014
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 963ff5e6f77f153de2a58153940c96c7569ef22c
+delivery_head: c680434eab1ff6abcc4bc204e844ecba0c41979a
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/TOOL-SOFTWARE-SMOKE-1
@@ -47,8 +47,8 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 `assemble_production_core`、`PluginService`、`AppContainerSandbox`、`bootstrap.core_service` stdio 协议、
 真实 `core-sidecar` bundle 与前端现有 `tsc`/Vitest 工具链。`src/**`、`apps/**` 生产代码未改。
 
-**本机实测（2026-10-23）。** Core 层 11 项 15.0s；Wire 层 6 项 0.5s；前端层 2 项 7.4s；打包层 5 项 0.5s；
-单次全量 23.3s；`--repack` 复验 10.4s；前端全量 Vitest 435 tests 4.9s；`tsc --noEmit` 3.8s。
+**本机实测（2026-10-23，修复后 canonical 证据）。** Core 层 11 项 15.5s；Wire 层 6 项 0.5s；前端层 2 项 7.5s
+（tsc 2.8s、Vitest 4.6s / 435 tests）；打包层 5 项 0.5s；单次全量 24.0s；`--repack` 层 7.3s（check 6.8s）。
 
 ## Acceptance Criteria
 
@@ -80,12 +80,12 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 
 | 场景/AC | 命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1–AC5 验收 | `python -m tools.smoke.plugins --json verification/TOOL-SOFTWARE-SMOKE-1/smoke-report.json` | Windows；Python 3.14.6；node_modules；真实 bundle | PASS（4 层 / 24 项：23 PASS + 1 SKIP 为未传 `--repack`；exit 0；23.3s） | `smoke-report.json`、`run-1.log` |
-| AC6 幂等 | `python -m tools.smoke.plugins` 连续两次 | 同上 | PASS / PASS（23.3s / 23.5s；临时目录无残留） | `run-1.log`、`run-2.log` |
-| AC5 `--repack` | `python -m tools.smoke.plugins --only packaged --repack --json verification/TOOL-SOFTWARE-SMOKE-1/repack-report.json` | 同上 | PASS（5/5；10.4s；`verify_bundled_python.ps1` OK） | `repack-report.json`、`repack-run.log` |
-| AC6 定向 | `python -m pytest tests/tools -q` | Python 3.14.6 | PASS：9 passed | `pytest-tools.log` |
-| AC6 回归 | `python -m pytest tests -q` | Python 3.14.6 | 2681 passed, 9 skipped, 3 failed（既有环境：transformers 缺 `RTDetrV2ForObjectDetection` ×2；历史 PySide6 viewmodel 测试超时 ×1；`src/**` 与本 Task 前既有 tests 未改动） | `pytest-full.log`、`baseline-check.log` |
-| AC6 治理 | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库根 | PASS（最终运行见 Handoff） | Handoff |
+| AC1–AC5 验收 | `python -m tools.smoke.plugins --json verification/TOOL-SOFTWARE-SMOKE-1/smoke-report.json` | Windows；Python 3.14.6；node_modules；真实 bundle | PASS（4 层 / 24 项：23 PASS + 1 SKIP 为未传 `--repack`；exit 0；24.0s） | `smoke-report.json`、`run-1.log` |
+| AC6 幂等 | `python -m tools.smoke.plugins` 连续两次 | 同上 | PASS / PASS（24.0s / 23.6s；临时目录无残留） | `run-1.log`、`run-2.log` |
+| AC5 `--repack` | `python -m tools.smoke.plugins --only packaged --repack --json verification/TOOL-SOFTWARE-SMOKE-1/repack-report.json` | 同上 | PASS（5/5；7.4s；`verify_bundled_python.ps1` OK；`temp_plugin_dirs_cleaned=1`） | `repack-report.json`、`repack-run.log` |
+| AC6 定向 | `python -m pytest tests/tools -q` | Python 3.14.6 | PASS：15 passed | `pytest-tools.log` |
+| AC6 回归 | `python -m pytest tests -q -rs` | Python 3.14.6 | 2687 passed, 9 skipped, 3 failed（既有环境：transformers 4.48.3 缺 `RTDetrV2ForObjectDetection` ×2；历史 PySide6 viewmodel 测试超时 ×1；9 skip：docTR ×2、openssl unavailable ×6、registry-readiness 既有 guard ×1；`src/**`、`apps/**` 与本 Task 前既有 tests 未改动） | `pytest-full.log`、`baseline-check.log` |
+| AC6 治理 | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库根 | PASS（最终运行见 Handoff） | Handoff、`governance-check.log` |
 
 ## 依赖、风险与阻塞
 
@@ -96,38 +96,40 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 - **R2 网络波动**：`network` 放行只断言「非 PermissionError」，不做外网可用性断言。
 - **R3 前端测试漂移**：未来改 UI/UX 会更新前端测试，工具只运行当前仓库测试；测试文件缺失即 BLOCKED/FAIL。
 - **R4 AppContainer profile 残留**：profile 为 OS 级容器身份，工具不删除；临时插件目录与进程在退出时清理。
-- **R5 全量 pytest 基线失败**：`transformers` 当前安装版本缺少 `RTDetrV2ForObjectDetection`；历史 PySide6
-  viewmodel 测试超时。`baseline-check.log` 以 `git diff --stat 6e3ce06f9..HEAD -- src/tests` 与逐例复现证明
-  与本 Task 无关；本 Task 不修环境、不把它们记为 PASS。
+- **R5 全量 pytest 基线失败**：`transformers` 当前安装版本（4.48.3）缺少 `RTDetrV2ForObjectDetection`；
+  历史 PySide6 viewmodel 测试超时。9 个 skip 原因为 docTR ×2、openssl unavailable ×6、registry-readiness 既有
+  guard ×1（`pytest-full.log` 的 `-rs` 输出）。`baseline-check.log` 以 `git diff --stat 6e3ce06f9..HEAD -- src/apps/tests`
+  与逐例复现证明与本 Task 无关；本 Task 不修环境、不把它们记为 PASS。
 - **非阻塞**：`GUI-PLUGIN-SANDBOX-SMOKE-1` 保持 paused；本 Task 产出可作为 Lead 决定恢复/关闭的依据。
 
 ## 交付与运行记录
 
-- Handoff：[TOOL-SOFTWARE-SMOKE-1-963ff5e6f.md](../handoffs/TOOL-SOFTWARE-SMOKE-1-963ff5e6f.md)（review 前 draft）。
-- Review：独立 Reviewer `reviewer-tool-smoke`，待执行。
-- 实施提交：`963ff5e6f77f153de2a58153940c96c7569ef22c`（工具 + 定向测试）；
-  证据提交：`2052b4619c0c17663271060d4e065284521a18b3`。
+- Handoff：[TOOL-SOFTWARE-SMOKE-1-c680434ea.md](../handoffs/TOOL-SOFTWARE-SMOKE-1-c680434ea.md)（review 前 draft）。
+- Review：`review-r1.md`（旧 head `963ff5e6f`，approved + 6 项 P2）与 `review-r2.md`（新 head `c680434ea`，待独立复审）。
+- 实施提交：`c680434eab1ff6abcc4bc204e844ecba0c41979a`（工具 + 定向测试 + P2 修复）；证据提交：
+  `7b2abfa00`（修复后 canonical 证据）；Task 登记：`ff94baf74`。
 - 实际测试：2026-10-23，见上表与 `verification/TOOL-SOFTWARE-SMOKE-1/`。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EV-SMOKE-REPORT | AC2/AC3/AC4/AC5/AC7 | `verification/TOOL-SOFTWARE-SMOKE-1/smoke-report.json` | 2052b4619 | c3ce68cedfce2deeed0ee40bd9fe4d0d705c6d804553c8d83757881a84f17dfd | CANONICAL |
-| EV-RUN1 | AC1/AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/run-1.log` | 2052b4619 | 42b3df32934a12b0595517fbbd6618f9f00f8df4b19c2d28455c9531d6fd15f6 | CANONICAL |
-| EV-RUN2 | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/run-2.log` | 2052b4619 | b537be99a7514f9f1eac02c9c6437594d69cf5d69605005dabdc341891781418 | CANONICAL |
-| EV-REPACK-REPORT | AC5 | `verification/TOOL-SOFTWARE-SMOKE-1/repack-report.json` | 2052b4619 | b0565fbb4e23d69340b44f9124778b2a2e99e8f3085aaf43780781e96d7ea78b | CANONICAL |
-| EV-REPACK-RUN | AC5 | `verification/TOOL-SOFTWARE-SMOKE-1/repack-run.log` | 2052b4619 | 8829395e3e29093005e646f6709986da08576c367e33479a995cc4cf767caf00 | CANONICAL |
-| EV-PYTEST-TOOLS | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/pytest-tools.log` | 2052b4619 | b8e377ddf65cbe4b91415e3680bdfcdb13723c76c472e83943959b8b02e8b3c5 | CANONICAL |
-| EV-PYTEST-FULL | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/pytest-full.log` | 2052b4619 | 3fc2c41ac732453185776412d91d701cb92b6e7d56107aa63171df899c013095 | CANONICAL |
-| EV-BASELINE | AC6/AC7 | `verification/TOOL-SOFTWARE-SMOKE-1/baseline-check.log` | 2052b4619 | b447f67b551c4a3a58e32d2c825a0c9330043e651818e4976477f268c7166e93 | CANONICAL |
+| EV-SMOKE-REPORT | AC2/AC3/AC4/AC5/AC7 | `verification/TOOL-SOFTWARE-SMOKE-1/smoke-report.json` | 7b2abfa00 | 19a2ab9255b4a5c1560f1f193228ab126d42fe6a3f87ca79889d4ff01e160477 | CANONICAL |
+| EV-RUN1 | AC1/AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/run-1.log` | 7b2abfa00 | 79f4ec188890cd729f56666a2621c46b8bee61630deefc9e5b084c5790bf7d19 | CANONICAL |
+| EV-RUN2 | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/run-2.log` | 7b2abfa00 | 4b3bdd0e6c3f58a71985fb6ce8b1e3b4c04cbcf00fadfd06aea40ea82b21d626 | CANONICAL |
+| EV-REPACK-REPORT | AC5 | `verification/TOOL-SOFTWARE-SMOKE-1/repack-report.json` | 7b2abfa00 | 5d0deb8a8606c0f438781f5f87fbde6926e2de2f224c34358c2ca5d2df784ac5 | CANONICAL |
+| EV-REPACK-RUN | AC5 | `verification/TOOL-SOFTWARE-SMOKE-1/repack-run.log` | 7b2abfa00 | 800822de4183be94e0c35c11020d79abce9662f161f43e6e47f1844c5f01feda | CANONICAL |
+| EV-PYTEST-TOOLS | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/pytest-tools.log` | 7b2abfa00 | cba3576bb24f9013755b5d9d1cc667bd1b57c854ddb8e7ff91bd8cc4403e8f1b | CANONICAL |
+| EV-PYTEST-FULL | AC6 | `verification/TOOL-SOFTWARE-SMOKE-1/pytest-full.log` | 7b2abfa00 | 0097a835c04c9711b237a088e3717ea7feed4e60c7f7400232f645c52df8f6f7 | CANONICAL |
+| EV-BASELINE | AC6/AC7 | `verification/TOOL-SOFTWARE-SMOKE-1/baseline-check.log` | 7b2abfa00 | 7ca4398d05d5e863713d1690ca82333d850b876cfd18325bf3d1687cdf2e7a57 | CANONICAL |
+| EV-REVIEW-R1 | AC6（历史：旧 head） | `verification/TOOL-SOFTWARE-SMOKE-1/review-r1.md` | 7b2abfa00 | d11918f03f41a80b93439ac2bb856a5f7c087775e270014374102b04f46a5381 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga | NOT_APPLICABLE | — | — | 使用主 worktree，无新 worktree |
-| temp | `%TEMP%/nm-software-smoke-*` | DELETE_SAFE | — | — | 工具默认在 finally 清理；2026-10-23 运行后 `Get-ChildItem $env:TEMP -Directory -Filter nm-software-smoke-*` 无结果 |
+| temp | `%TEMP%/nm-software-smoke-*`、`%TEMP%/nm-bundled-hook-*` | DELETE_SAFE | — | — | 全量运行目录在 finally 清理；repack 脚本自建目录由工具在前后快照后删除（canonical 清理 1 个）；评审前遗留 3 个 `nm-bundled-hook-*` 已删除，2026-10-23 复查计数 0 |
 | agent-output | — | NOT_APPLICABLE | — | — | 未产生 agent-output 资源；证据只入 `verification/TOOL-SOFTWARE-SMOKE-1/` |
 
 ## Closeout Record

@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[TOOL-SOFTWARE-SMOKE-1](tasks/TOOL-SOFTWARE-SMOKE-1.md) `in_review`（分层软件检查工具；实现 `963ff5e6f`，独立 Review 待执行）。保留项：[GUI-PLUGIN-SANDBOX-SMOKE-1](tasks/GUI-PLUGIN-SANDBOX-SMOKE-1.md) `blocked`（证据已存）、[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md) `in_review`。
+- 当前 Task：[TOOL-SOFTWARE-SMOKE-1](tasks/TOOL-SOFTWARE-SMOKE-1.md) `in_review`（分层软件检查工具；实现 `c680434ea`，独立 Review r2 待执行）。保留项：[GUI-PLUGIN-SANDBOX-SMOKE-1](tasks/GUI-PLUGIN-SANDBOX-SMOKE-1.md) `blocked`（证据已存）、[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md) `in_review`。
 - 插件运行线完成：SANDBOX-1 `41d7abeb`、SANDBOX-2 `127c5111`、CAPABILITY-1 `0d3bbe49`、PACKAGED-PYTHON-1 `a1f05450`（均 approved）。
 - 最近完成：PLUGIN-RUNTIME-2 `done`（r3 approved；111 passed）；SETTINGS-OPEN-C-3-PLUGIN `done`（`657c18d4..85128cd2`）；C-2-BACKUP、C-1-RECYCLE、C-1-DESIGN、B-1、A-1 均 done；DEV-PREVIEW-1 done `8ac00b97b`。
 - 父任务：GIT-MAINLINE-CONVERGENCE-1 `done`（r3 approved `6997733bf`）。
