@@ -69,3 +69,11 @@ PLUGIN-RUNTIME-1 review r1 P1-1 指出：`permissions: []` 目前只保证「Cor
 ## Closeout Record
 
 - Closeout：待 Review approved 后 closeout（当前 in_review；实现 commit 见 Handoff）。
+
+## Canonical Evidence
+
+|Evidence ID|AC|Path|Commit|SHA-256|Class|
+|---|---|---|---|---|---|
+|EV-SANDBOX-CORE-PYTEST-TARGETED|AC1-AC6|verification/PLUGIN-RUNTIME-SANDBOX-1/core-pytest-targeted.log|22f09e9056ad0c581db13eb61532035b032ba4b9|3bd5406385a4a496435d23f1daaf8eb1115b1df882728418637dad318b653c3c|CANONICAL|
+|EV-SANDBOX-CORE-PYTEST|AC1-AC6|verification/PLUGIN-RUNTIME-SANDBOX-1/core-pytest.log|22f09e9056ad0c581db13eb61532035b032ba4b9|6bfa31ecc3d99331507ada14c764e03db09119c3ff4d29840c3a64f9f1be8134|CANONICAL|
+|EV-SANDBOX-PROBE-APPCONTAINER|AC1-AC6|verification/PLUGIN-RUNTIME-SANDBOX-1/probe-appcontainer.log|22f09e9056ad0c581db13eb61532035b032ba4b9|e95d28b5c84081c470f5ab4cdb70f70bf66a43072e5ecff2b7e69fb769c99c21|CANONICAL|
