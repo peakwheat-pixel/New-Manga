@@ -89,18 +89,40 @@ def _hook_interpreter() -> str:
     """The interpreter used for the isolated hook subprocess (D1).
 
     In source runs it is the running interpreter. In a packaged onedir build
-    ``sys.executable`` is the sidecar itself, not a Python CLI, so the
-    sibling ``python.exe`` is used when present; otherwise the hop fails
-    closed with a typed error and the hook is skipped (the packaged-runtime
-    interpreter bundling is tracked as a follow-up, never a silent crash).
+    ``sys.executable`` is the sidecar itself, not a Python CLI, so resolution
+    order is:
+
+    1. ``NEWMANGA_PLUGIN_PYTHON`` (packaging launcher points at the bundled
+       runtime; a missing path is fail-closed, never a silent system-python
+       fallback);
+    2. a sibling ``python.exe``/``python3.exe`` next to the sidecar;
+    3. ``python/python.exe`` (a ``python`` runtime directory bundled next to
+       the sidecar by ``packaging/build.ps1 -BundlePythonRuntime``).
+
+    Everything else fails closed with ``PLUGIN_HOOK_UNAVAILABLE``; a plugin hook
+    never runs on a silently chosen interpreter.
     """
 
     if not getattr(sys, "frozen", False):
         return sys.executable
+    override = os.environ.get("NEWMANGA_PLUGIN_PYTHON")
+    if override:
+        candidate = Path(override)
+        if candidate.is_file():
+            return str(candidate)
+        raise PluginError(
+            "PLUGIN_HOOK_UNAVAILABLE",
+            "NEWMANGA_PLUGIN_PYTHON does not point at an interpreter file",
+        )
+    sidecar = Path(sys.executable)
     for candidate in ("python.exe", "python3.exe", "python3"):
-        sibling = Path(sys.executable).with_name(candidate)
+        sibling = sidecar.with_name(candidate)
         if sibling.is_file():
             return str(sibling)
+    for candidate in ("python.exe", "python3.exe"):
+        bundled = sidecar.parent / "python" / candidate
+        if bundled.is_file():
+            return str(bundled)
     raise PluginError(
         "PLUGIN_HOOK_UNAVAILABLE",
         "no python interpreter is bundled next to the sidecar",

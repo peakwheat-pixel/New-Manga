@@ -11,7 +11,13 @@ param (
     [string]$WorkDir = "",
 
     [Parameter(Mandatory = $true)]
-    [string]$ConfigDir
+    [string]$ConfigDir,
+
+    # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: copy a Python runtime next to the
+    # sidecar so plugin hooks can run in the packaged app (sandboxed). The
+    # directory must contain python.exe; its DLLs/Lib tree is copied as-is.
+    [Parameter(Mandatory = $false)]
+    [string]$BundlePythonRuntime = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -31,6 +37,11 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to inspect source working tree at $repo
 if ($gitStatus.Count -ne 0) { throw "Build source working tree is not clean; refusing uncommitted inputs" }
 $sourceDateEpoch = (git -C $repoRoot show -s --format=%ct HEAD)
 if ($LASTEXITCODE -ne 0 -or -not $sourceDateEpoch) { throw "Unable to resolve source commit timestamp" }
+
+if ($BundlePythonRuntime -and -not (Test-Path -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -PathType Leaf)) {
+    throw "BundlePythonRuntime does not contain python.exe: $BundlePythonRuntime"
+}
+if ($BundlePythonRuntime) { $BundlePythonRuntime = (Resolve-Path -LiteralPath $BundlePythonRuntime).Path }
 
 Write-Host "=== New Manga Package Build ==="
 Write-Host "Repository root: $repoRoot"
@@ -148,4 +159,25 @@ try {
     foreach ($name in $savedEnv.Keys) {
         [Environment]::SetEnvironmentVariable($name, $savedEnv[$name], "Process")
     }
+}
+
+# PLUGIN-RUNTIME-PACKAGED-PYTHON-1: stage the bundled Python runtime.
+if ($BundlePythonRuntime) {
+    $sidecarDir = Join-Path $OutputDir "core-sidecar"
+    $target = Join-Path $sidecarDir "python"
+    if (Test-Path -LiteralPath $target) { Remove-Item -LiteralPath $target -Recurse -Force }
+    New-Item -ItemType Directory -Path $target -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $BundlePythonRuntime "python.exe") -Destination $target -Force
+    foreach ($sub in @("DLLs", "Lib")) {
+        $source = Join-Path $BundlePythonRuntime $sub
+        if (Test-Path -LiteralPath $source -PathType Container) {
+            Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
+        }
+    }
+    Set-Content -LiteralPath (Join-Path $target "plugin-python.txt") -Encoding utf8 -Value @(
+        "Bundled by packaging/build.ps1 -BundlePythonRuntime"
+        "Interpreter: python/python.exe"
+        "Launcher: set NEWMANGA_PLUGIN_PYTHON to this interpreter (or rely on the python/ fallback)"
+    )
+    Write-Host "Bundled Python runtime: $target"
 }
