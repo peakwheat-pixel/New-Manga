@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Protocol
 
 from application.editing.ports import RegionRepository
@@ -178,6 +178,7 @@ class HandlerDependencies:
     # M2-SFX-PROD-1: the 5th argument carries the candidate's anonymous
     # provider_label so the assembly can dispatch the ``sfx-`` prefix to
     # RegionType.SFX (contract zero-change: RegionCandidate keeps its slots).
+    plugins: Any = None
     region_creator: Any = None  # (page_id, polygon, reading_order, provenance, provider_label) -> region_id
 
 
@@ -282,7 +283,13 @@ class ProductionHandlers:
             width=frame.width,
             height=frame.height,
         )
+        request = self._hook_request("detect", request, run)
         detection = self.deps.detector.detect(request)
+        if self.deps.plugins is not None:
+            self.deps.plugins.run_hook("after_detect", {
+                "run_id": run.run_id, "page_id": unit.page_id,
+                "candidate_count": len(detection.page_global_candidates()),
+            })
         candidates = detection.page_global_candidates()
         if not candidates:
             raise ProviderInputError(
@@ -304,6 +311,29 @@ class ProductionHandlers:
             for index, candidate in enumerate(candidates, start=1)
         )
         return self._detect_result(unit, region_ids, provenance)
+
+    def _hook_request(self, stage, request, run):
+        if self.deps.plugins is None:
+            return request
+        values = {"options": dict(request.options)}
+        if stage == "ocr":
+            values.update(script=request.script, direction=request.direction)
+
+        def validate(candidate):
+            options = candidate["options"]
+            if not isinstance(options, dict) or not all(
+                isinstance(k, str) and isinstance(v, str) for k, v in options.items()
+            ):
+                raise ValueError("options must contain string pairs")
+            try:
+                replace(request, **{**candidate, "options": tuple(options.items())})
+            except ProviderError as error:
+                raise ValueError(str(error)) from error
+
+        values = self.deps.plugins.apply_input("before_" + stage, {
+            "run_id": run.run_id, "page_id": request.page_id, "input": values,
+        }, validate)
+        return replace(request, **{**values, "options": tuple(values["options"].items())})
 
     @staticmethod
     def _detect_result(
@@ -337,6 +367,7 @@ class ProductionHandlers:
             direction=str(settings.get("direction", TEXT_DIRECTION_HORIZONTAL)),
         )
 
+        request = self._hook_request("ocr", request, run)
         outcome = run_chain(
             chain,
             lambda provider_id: self._invoke_provider(
@@ -349,6 +380,11 @@ class ProductionHandlers:
             payload_hash_provider=lambda: _payload_hash(request.image_bytes, request.region_id),
         )
         result = outcome.result
+        if self.deps.plugins is not None:
+            self.deps.plugins.run_hook("after_ocr", {
+                "run_id": run.run_id, "page_id": unit.page_id,
+                "region_id": region_id, "text": result.text,
+            })
         if result.region_id != region_id:
             raise ProviderInputError(
                 "provider answered for a different region",
@@ -1256,6 +1292,7 @@ def build_production_handlers(
     render_service: RenderService | None = None,
     detector: Any = None,
     region_creator: Any = None,
+    plugins: Any = None,
 ) -> dict[str, Any]:
     """Convenience wrapper used by ``bootstrap.app``.
 
@@ -1267,6 +1304,7 @@ def build_production_handlers(
     """
     return ProductionHandlers(
         HandlerDependencies(
+            plugins=plugins,
             registry=registry,
             regions=regions,
             region_writer=region_writer,

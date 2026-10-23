@@ -29,6 +29,8 @@ def main(argv: list[str]) -> int:
     if len(argv) != 3:
         _emit({"ok": False, "error": "runner_usage"})
         return 2
+    sys.stdin.reconfigure(encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8")
     entry_path, hook_name = argv[1], argv[2]
     try:
         raw_payload = sys.stdin.read()

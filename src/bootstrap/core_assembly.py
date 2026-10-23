@@ -1208,7 +1208,9 @@ def assemble_core_services(
             )
             return region.region_id
 
+        plugins = PluginService(conn, Path(db_path).parent / "plugins", app_version=_APP_VERSION)
         handlers = build_production_handlers(
+            plugins=plugins,
             registry=provider_runtime.registry,
             regions=regions,
             region_writer=RegionStepWriter(conn, regions),
@@ -1312,7 +1314,7 @@ def assemble_core_services(
         reading = ReadingService(SqliteReadingProgressStore(conn))
         export_history_store = SqliteExportHistoryStore(conn)
         export_service = ExportService(
-            export_history_store, pdf_composer=QtFreePdfComposer()
+            export_history_store, pdf_composer=QtFreePdfComposer(), plugins=plugins
         )
         export_job_store = JsonExportJobStore(Path(data_root) / "export_jobs.json")
         export_target_refs = ExportTargetGrantRegistry()
@@ -1396,11 +1398,7 @@ def assemble_core_services(
             # ``<data_root>/plugins`` -- the app-data plugin directory the
             # design freezes; dev preview and production each resolve their
             # own data root, so the isolation boundary is the data root.
-            plugins=PluginService(
-                conn,
-                data_root / "plugins",
-                app_version=_APP_VERSION,
-            ),
+            plugins=plugins,
         )
     except Exception:
         conn.close()

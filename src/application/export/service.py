@@ -230,7 +230,9 @@ class ExportService:
         history_store: HistoryDocumentStore,
         *,
         pdf_composer: PdfComposer | None = None,
+        plugins=None,
     ) -> None:
+        self._plugins = plugins
         self._store = history_store
         self._pdf_composer = pdf_composer
 
@@ -239,6 +241,29 @@ class ExportService:
     # ------------------------------------------------------------------
 
     def export(self, request: ExportRequest) -> ExportResult:
+        if self._plugins is not None:
+            def validate(candidate):
+                if not isinstance(candidate["format_options"], dict):
+                    raise ValueError("format_options must be an object")
+                try:
+                    self._validate(replace(request, **candidate))
+                except ExportError as error:
+                    raise ValueError(str(error)) from error
+            values = self._plugins.apply_input("before_export", {
+                "run_id": request.pipeline_run_id,
+                "page_ids": [page.page_id for page in request.pages],
+                "input": {"format_options": request.format_options or {}},
+            }, validate)
+            request = replace(request, **values)
+        result = self._export(request)
+        if self._plugins is not None:
+            self._plugins.run_hook("after_export", {
+                "run_id": request.pipeline_run_id, "export_id": result.export_id,
+                "status": result.status.value, "page_ids": list(result.page_ids),
+            })
+        return result
+
+    def _export(self, request: ExportRequest) -> ExportResult:
         self._validate(request)
         stale_ids, missing_ids = self._stale_scope(request)
         if request.stale_policy is StalePolicy.ABORT and (stale_ids or missing_ids):

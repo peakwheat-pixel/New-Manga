@@ -837,3 +837,107 @@ def test_sfx_translate_region_carries_type_and_maps_output(workspace) -> None:
     text = _text(conn, "region-sfx")["text"]
     assert text["machine_translation"] == "[en]ドガ"
     assert text["final_translation"] == "[en]ドガ"
+
+
+@pytest.mark.parametrize("behavior", ["override", "disabled", "crash", "timeout", "invalid"])
+def test_plugin_hooks_inside_ocr_run(workspace, tmp_path, behavior):
+    from infrastructure.plugins.service import PluginService
+    root = tmp_path / "plugins"
+    plugin = root / "run-hook"
+    plugin.mkdir(parents=True)
+    hooks = ["before_ocr", "after_ocr"]
+    (plugin / "manifest.json").write_text(json.dumps({
+        "id": "run-hook", "name": "Run hook", "version": "1.0.0",
+        "entry": "plugin.py", "hooks": hooks, "permissions": [],
+    }), encoding="utf-8")
+    body = {
+        "override": "return {'direction': 'vertical'}",
+        "disabled": "raise AssertionError('must not run')",
+        "crash": "raise RuntimeError('crash')",
+        "timeout": "import time; time.sleep(2)",
+        "invalid": "return {'script': 'invalid-script'}",
+    }[behavior]
+    (plugin / "plugin.py").write_text(
+        "def before_ocr(payload):\n"
+        "    assert payload['schema_ref'] == 'nm-plugin-hook/1'\n"
+        "    assert payload['run_id']\n"
+        f"    {body}\n"
+        "def after_ocr(payload):\n"
+        "    assert payload['text'] == 'こんにちは'\n"
+        "    return {'text': 'must be ignored'}\n", encoding="utf-8")
+    plugins = PluginService(workspace["conn"], root, app_version="0.1.0",
+                            hook_timeout_seconds=0.3)
+    plugins.set_plugin_enabled("run-hook", True)
+    plugins.set_global_enabled(behavior != "disabled")
+    workspace["handlers"].deps.plugins = plugins
+    service = _pipeline(workspace)
+    run = service.create_run(CommandType.OCR_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)))
+    service.plan_run(run.run_id)
+    result = service.execute_run(run.run_id)
+    assert result.status is PipelineRunStatus.COMPLETED
+    assert _text(workspace["conn"], "region-b")["text"]["ocr_text"] == "こんにちは"
+    request = workspace["ocr_provider"].requests[-1]
+    assert request.direction == ("vertical" if behavior == "override" else "horizontal")
+    events = plugins.audit_list(limit=100)
+    hook_events = [e for e in events if e["event_type"] in ("hook_invoked", "plugin_error")]
+    if behavior == "disabled":
+        assert hook_events == []
+    elif behavior in ("crash", "timeout", "invalid"):
+        assert any(e["event_type"] == "plugin_error" for e in hook_events)
+    else:
+        assert len([e for e in hook_events if e["event_type"] == "hook_invoked"]) == 2
+
+
+@pytest.mark.parametrize("stage", ["detect", "export"])
+def test_plugin_real_detect_and_export_inputs(workspace, tmp_path, stage):
+    from types import SimpleNamespace
+    from infrastructure.plugins.service import PluginService
+    from ports.detection.ports import DetectionResult, RegionCandidate
+    from application.export.service import ExportService, ExportRequest, ExportPage, ExportFormat
+    from application.export.ports import JsonHistoryDocumentStore
+    import zipfile
+
+    root = tmp_path / "plugins"
+    plugin = root / "input-hook"
+    plugin.mkdir(parents=True)
+    (plugin / "manifest.json").write_text(json.dumps({
+        "id": "input-hook", "name": "Input", "version": "1.0.0",
+        "entry": "plugin.py", "hooks": ["before_" + stage, "after_" + stage],
+        "permissions": [],
+    }), encoding="utf-8")
+    override = {"options": {"test": "applied"}} if stage == "detect" else {
+        "format_options": {"compression": "store"}}
+    (plugin / "plugin.py").write_text(
+        f"def before_{stage}(payload):\n    return {override!r}\n"
+        f"def after_{stage}(payload):\n    return {{'output_path': 'ignored'}}\n",
+        encoding="utf-8")
+    plugins = PluginService(workspace["conn"], root, app_version="0.1.0")
+    plugins.set_plugin_enabled("input-hook", True)
+    plugins.set_global_enabled(True)
+    if stage == "detect":
+        seen = []
+        def detect(request):
+            seen.append(request)
+            return DetectionResult(request.page_id, (RegionCandidate(((0, 0), (1, 0), (1, 1))),))
+        handlers = workspace["handlers"]
+        handlers.deps.plugins = plugins
+        handlers.deps.detector = SimpleNamespace(detect=detect)
+        handlers.deps.regions = SimpleNamespace(list_regions=lambda _: [])
+        handlers.deps.region_creator = lambda *args: "created-region"
+        result = handlers.handle_detect(None, SimpleNamespace(page_id="page-1", target_id="page-1"),
+                                        SimpleNamespace(run_id="test-run"))
+        assert seen[0].option_dict() == {"test": "applied"}
+        assert result.outputs["region_ids"] == ("created-region",)
+    else:
+        service = ExportService(JsonHistoryDocumentStore(tmp_path / "history.json"), plugins=plugins)
+        path = tmp_path / "export.zip"
+        result = service.export(ExportRequest("book-1", "chapter-1", ExportFormat.ZIP, path,
+            (ExportPage("page-1", "page.png", lambda: b"image"),), pipeline_run_id="test-run"))
+        assert result.output_path == path
+        with zipfile.ZipFile(path) as archive:
+            assert archive.infolist()[0].compress_type == zipfile.ZIP_STORED
+            assert archive.read(archive.namelist()[0]) == b"image"
+    events = plugins.audit_list(limit=100)
+    assert {e["hook_name"] for e in events if e["event_type"] == "hook_invoked"} == {
+        "before_" + stage, "after_" + stage}

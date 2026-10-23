@@ -285,6 +285,23 @@ class PluginService:
             "errors": errors,
         }
 
+    def apply_input(self, hook_name: str, payload: dict, validate) -> dict:
+        """Apply validated writable fields; bad overrides cannot fail a Run."""
+        current = dict(payload["input"])
+        for item in self.run_hook(hook_name, payload)["overrides"]:
+            override = item["override"]
+            try:
+                if not override.keys() <= current.keys():
+                    raise ValueError("unknown input field")
+                candidate = {**current, **override}
+                validate(candidate)
+            except (ValueError, TypeError) as error:
+                self._record_event(item["plugin_id"], "plugin_error", hook_name=hook_name,
+                                   detail={"code": "PLUGIN_INVALID_OVERRIDE", "detail": str(error)[:200]})
+                continue
+            current = candidate
+        return current
+
     def _invoke(self, manifest: PluginManifest, hook_name: str, payload: dict) -> object:
         runner = Path(__file__).with_name("_hook_runner.py")
         env = {
