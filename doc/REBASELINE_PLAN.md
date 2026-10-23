@@ -30,11 +30,13 @@
 |SETTINGS-OPEN-C-1-RECYCLE|SETTINGS-OPEN-C-1-DESIGN|done（回收站查看+清空；实现 `6d6c085..893c00fc`；独立 Review r1 changes_requested → r2 approved）|
 |SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|done（`.nmbak` v1 + Core/Tauri/前端；Review r3 approved `657c18d4`）|
 |SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|done（Plugin/Hooks 只读面；Review r2 approved `85128cd2`）|
-|PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|in_review（本地插件运行时；用户 2026-10-23 授权 D1–D6；r1 修复完成待复审）|
+|PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|done（本地插件运行时；用户 2026-10-23 授权 D1–D6；Review approved 2026-10-23，`992225d5`）|
 |PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|proposed（OS 级插件沙箱；未授权，未释放）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**PLUGIN-RUNTIME-1**（已授权，复审中；D1–D6 按建议值）。`PLUGIN-RUNTIME-SANDBOX-1` 仅 proposed，待授权。C-1/C-2/C-3 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+READY 节点：无。
+
+待授权候选（未释放）：Hook 流水线接线（PLUGIN-RUNTIME-2）、插件 OS 级沙箱（PLUGIN-RUNTIME-SANDBOX-1）。C-1/C-2/C-3 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 

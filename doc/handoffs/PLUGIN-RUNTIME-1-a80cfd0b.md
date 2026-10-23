@@ -4,7 +4,7 @@ author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: c793442946801bea7ab53799683cecc76260f672
 delivery_head: 97485b89d8d341e78c7c7160a9aba0291b662f42
-status: in_review
+status: done
 authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D6」
 ---
 
@@ -65,3 +65,9 @@ authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D
 - **P1-3 剩余**：Task 正文 `in_progress` → `in_review`；Closeout「未开始」→「待 Review approved 后 closeout」。
 - **P2**：前端 `plugin_root` 类型/规范化/测试 fake 删除；Hook 输出改为**流式字节上限**（`Popen` + 读线程，超 256KB 立即 kill，stderr `DEVNULL`；中文 100k 字符用例覆盖）；`_write_state` 复用 `_manifest_fingerprint`（enable 后不再重复 `load_ok`，补测试）；`test_frozen_runtime_contract` 改为 `application_metadata` vs `schema_migrations` MAX 双源；`schema_ref` 注入处做类型校验；GUI 实测「打开插件目录」打开 `.../data-root/plugins`（与 Core 一致）并截图 `screenshots/02`。
 - **验证（r2 修复后）**：定向 31 passed；全量 2640 passed / 3 既有失败；cargo 153；vitest 45/434；tsc 0；check.ps1 PASS。
+
+## 7. Closeout（2026-10-23）
+
+- 独立 Review 结论：**approved**（`verification/PLUGIN-RUNTIME-1/review-r3.md`，审查头 `992225d5`；r1/r2 为 changes_requested，均已修复）。
+- Task 状态 `done`；证据 pin `verification/PLUGIN-RUNTIME-1/**`。
+- 后续（未授权）：`PLUGIN-RUNTIME-2`（Hook 流水线接线）、`PLUGIN-RUNTIME-SANDBOX-1`（OS 沙箱）、打包解释器 follow-up。

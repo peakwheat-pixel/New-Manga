@@ -1,7 +1,7 @@
 ---
 task_id: PLUGIN-RUNTIME-1
 kind: implementation
-status: in_review
+status: done
 owner: 待指派（非本 Task 实现者）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -109,7 +109,8 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout：待 Review approved 后 closeout（当前 in_review）。
+- Closeout：**done**（2026-10-23）。实现 `a80cfd0b`；r1 修复 `7253286f`；r2 修复 `97485b89`；证据/Handoff pin `d603fd51`/`28876385`/`992225d5`；独立 Review r1/r2 `changes_requested`、r3 **approved**（`verification/PLUGIN-RUNTIME-1/review-r3.md`，审查头 `992225d5`）。已知非阻塞项（P2/P3）：Design §8 已补注记、STATUS 已更新、Explorer 截图已补（`screenshots/03`）；子进程 stdin payload 上限/进程树终止留待后续加固。
+- 证据：`verification/PLUGIN-RUNTIME-1/**`（定向 31 passed、全量 2640 passed / 3 既有失败、cargo 153、vitest 45 files / 434 tests、tsc 0、GUI 烟测 + 3 张截图、review-r1/r2/r3）。
 - canonical_evidence_status：pending；resource_closeout_status：pending。
 - 删除/迁移/归档：0。
 - 当前指针清理：本 Task 仅在 REBASELINE_PLAN 以 `proposed` 登记；授权前不进入 STATUS/ACTIVE。
