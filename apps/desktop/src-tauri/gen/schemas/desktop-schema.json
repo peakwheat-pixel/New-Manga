@@ -579,6 +579,36 @@
           "markdownDescription": "Enables the list_regions command without any pre-configured scope."
         },
         {
+          "description": "Enables the plugins_audit_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-plugins-audit-list",
+          "markdownDescription": "Enables the plugins_audit_list command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the plugins_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-plugins-list",
+          "markdownDescription": "Enables the plugins_list command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the plugins_open_directory command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-plugins-open-directory",
+          "markdownDescription": "Enables the plugins_open_directory command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the plugins_set_enabled command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-plugins-set-enabled",
+          "markdownDescription": "Enables the plugins_set_enabled command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the plugins_set_plugin_enabled command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-plugins-set-plugin-enabled",
+          "markdownDescription": "Enables the plugins_set_plugin_enabled command without any pre-configured scope."
+        },
+        {
           "description": "Enables the probe_config command without any pre-configured scope.",
           "type": "string",
           "const": "allow-probe-config",
@@ -985,6 +1015,36 @@
           "type": "string",
           "const": "deny-list-regions",
           "markdownDescription": "Denies the list_regions command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the plugins_audit_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-plugins-audit-list",
+          "markdownDescription": "Denies the plugins_audit_list command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the plugins_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-plugins-list",
+          "markdownDescription": "Denies the plugins_list command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the plugins_open_directory command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-plugins-open-directory",
+          "markdownDescription": "Denies the plugins_open_directory command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the plugins_set_enabled command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-plugins-set-enabled",
+          "markdownDescription": "Denies the plugins_set_enabled command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the plugins_set_plugin_enabled command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-plugins-set-plugin-enabled",
+          "markdownDescription": "Denies the plugins_set_plugin_enabled command without any pre-configured scope."
         },
         {
           "description": "Denies the probe_config command without any pre-configured scope.",

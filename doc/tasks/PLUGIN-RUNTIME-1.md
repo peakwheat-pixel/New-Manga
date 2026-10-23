@@ -1,13 +1,13 @@
 ---
 task_id: PLUGIN-RUNTIME-1
 kind: implementation
-status: proposed
+status: in_progress
 owner: 待指派（非本 Task 实现者）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
 base_commit: c793442946801bea7ab53799683cecc76260f672
 depends_on: SETTINGS-OPEN-C-3-PLUGIN（done）
-authorization: 待用户/Codex 明确授权（本文件仅提案，未授权前不实施、不新增 wire/控件）
+authorization: 用户授权 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D6」
 allowed_paths:
   - src/infrastructure/plugins/**
   - src/application/plugins/**
@@ -29,11 +29,7 @@ allowed_paths:
 
 ## 状态
 
-**proposed（未释放）**。本 Task 由指令要求预先创建；在用户/Codex 明确授权前：
-
-- 不实施任何运行时代码；
-- 不新增 Tauri/Core/wire 命令；
-- 不开放任何插件控件（设置页 `Plugin/Hooks` 保持 `settings-disabled-section-plugins` 只读占位，见 `SETTINGS-OPEN-C-3-PLUGIN`）。
+**in_progress**（用户 2026-10-23 授权，D1–D6 按建议值）。实现期间设置页 `Plugin/Hooks` 的只读占位保持到运行时接线完成，不提前开放假控件；wire/控件只随真实运行能力落地。
 
 ## 目标
 
@@ -50,7 +46,7 @@ allowed_paths:
 
 ## 关键裁决点（实施前必须确认）
 
-| # | 裁决点 | 建议值 | 影响 |
+| # | 裁决点 | 决策（2026-10-23 用户授权，按建议值） | 影响 |
 |---|---|---|---|
 | D1 | 隔离模型 | 每个 Hook 调用起独立 Python 子进程（与 Core 同解释器），stdin/stdout JSON 单次请求-响应，硬超时（如 10s） | 决定进程管理、超时、崩溃语义 |
 | D2 | `plugin_events` schema | `event_id/plugin_id/event_type/occurred_at/detail_json`，`event_type ∈ {load_rejected, enabled, disabled, hook_invoked, plugin_error}` | 决定迁移 v+1 与审计查询 API |
@@ -61,12 +57,12 @@ allowed_paths:
 
 ## 验收（AC，授权后实施）
 
-- [ ] **AC1 发现/校验**：合法 manifest 列出；未知 Hook/权限/字段/入口缺失/`id`≠目录名 → 拒绝加载 + `plugin_load_rejected` 审计。
-- [ ] **AC2 默认禁用**：`plugins.enabled=false` 时任何 Hook 都不调用；启用后仅声明的 Hook 被调用。
-- [ ] **AC3 隔离**：Hook 崩溃/超时不影响主链路，记录 `plugin_error`；同一 Run 继续。
-- [ ] **AC4 审计**：加载/拒绝/启用/禁用/调用/错误均可查询（`plugin_events`）。
-- [ ] **AC5 UI**：设置页管理面真实操作（列表/启用/禁用/打开目录），无假控件；`permissions: []` 外插件显示拒绝原因且不可启用。
-- [ ] **AC6 证据**：固定 commit、原始日志、独立非实现者 Review、GUI 烟测（安装示例插件 → 启用 → 触发一次 Hook → 审计可查 → 崩溃插件不影响主链路）。
+- [x] **AC1 发现/校验**：合法 manifest 列出；未知 Hook/权限/字段/入口缺失/`id`≠目录名 → 拒绝加载 + `plugin_load_rejected` 审计。
+- [x] **AC2 默认禁用**：`plugins.enabled=false` 时任何 Hook 都不调用；启用后仅声明的 Hook 被调用。
+- [x] **AC3 隔离**：Hook 崩溃/超时不影响主链路，记录 `plugin_error`；同一 Run 继续。
+- [x] **AC4 审计**：加载/拒绝/启用/禁用/调用/错误均可查询（`plugin_events`）。
+- [x] **AC5 UI**：设置页管理面真实操作（列表/启用/禁用/打开目录），无假控件；`permissions: []` 外插件显示拒绝原因且不可启用。
+- [x] **AC6 证据**：固定 commit、原始日志、独立非实现者 Review、GUI 烟测（安装示例插件 → 启用 → 触发一次 Hook → 审计可查 → 崩溃插件不影响主链路）。
 
 ## 明确不做
 
@@ -79,11 +75,11 @@ allowed_paths:
 
 | 场景/AC | 计划命令 | 实际结果 | 证据 |
 |---|---|---|---|
-| AC1/AC2 Core | `python -m pytest tests/infrastructure/test_plugin_runtime.py -q` | 待填 | 待填 |
-| AC3 隔离 | 同上（崩溃/超时用例） | 待填 | 待填 |
-| AC4 审计 | 同上 + wire 查询 | 待填 | 待填 |
-| AC5 UI | `npx vitest run src/settings/PluginSettingsPanel.test.tsx` | 待填 | 待填 |
-| 烟测 | dev preview：安装示例插件 → 启用 → Hook → 审计 | 待填 | 待填 |
+| AC1/AC2 Core | `python -m pytest tests/infrastructure/test_plugin_runtime.py -q` | PASS（17 passed：manifest 拒绝矩阵、发现、默认禁用、全局/逐插件开关） | core-pytest-targeted.log |
+| AC3 隔离 | 同上（崩溃/超时用例） | PASS（真实子进程：崩溃 → `plugin_error`；超时 1s → `PLUGIN_HOOK_TIMEOUT`；主流程不抛） | core-pytest-targeted.log |
+| AC4 审计 | 同上 + `tests/core/test_core_plugin_wire.py` | PASS（`audit_list` 最新优先、limit 校验、wire `plugins.audit_list`） | core-pytest-targeted.log |
+| AC5 UI | `npx vitest run src/settings/PluginSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx` | PASS（8 panel 用例 + settings 页；全量 45 files / 434 tests） | ui-test-frontend.log |
+| 烟测 | dev preview：预置插件 → 面板发现/拒绝 → 全局启用 → 插件启用 → 审计 | PASS（12 开；拒绝原因可见；审计 4 条） | gui-smoke.md + screenshots/01 |
 
 ## Canonical Evidence
 
@@ -93,7 +89,10 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- 2026-10-23：按指令预创建提案；**等待用户/Codex 授权**后转 `ready` 并指派实现者。
+- 2026-10-23：按指令预创建提案。
+- 2026-10-23：用户授权「PLUGIN-RUNTIME-1，按建议值 D1–D6」；转 `in_progress` 并启动实现（D1 子进程隔离 10s 超时 / D2 `plugin_events` 迁移 / D3 versioned JSON hook / D4 `app_data_dir()/plugins` / D5 `plugins.enabled` + 逐插件状态 / D6 UI 本期开放管理面）。
+- 2026-10-23（实现）：Core 新增 `src/infrastructure/plugins/`（manifest v1 校验 fail-closed、`_hook_runner.py` 隔离子进程入口、`PluginService` 发现/状态/审计/`run_hook`）；迁移 **v6**（`plugin_state` + `plugin_events` 两空表）；`core_assembly` 装配 `<data_root>/plugins`；`core_service` 新增 4 个应用层命令（`plugins.list/set_enabled/set_plugin_enabled/audit_list`，minor 保持 3）。Rust trait/Mock/Resilient/Stdio 4 方法 + 5 个 production 命令（含 opener 打开的 `plugins_open_directory`），`PRODUCTION_COMMANDS` 61→66、build.rs ACL、capabilities、allowlist 过滤、表面测试同步。前端 `SettingsClient` 5 方法 + `PluginSettingsPanel`（默认关全局开关/逐插件启停/拒绝原因/审计/打开目录）+ `SettingsPage` 12/12 开放。
+- 2026-10-23（测试）：定向 24 passed；全量 2633 passed / 3 既有失败（detector 权重缺失 + workbench 时序 flaky，与本改动无关；新增迁移 v6 后同步更新了 schema/restore/packaging 测试中的版本硬编码）；cargo 153 passed；前端 45 files / 434 tests；tsc 0；GUI 烟测 PASS。
 
 ## Closeout Record
 

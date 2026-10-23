@@ -114,6 +114,7 @@ from infrastructure.resource_channel.handle_resolver import ManagedRootTrust
 from infrastructure.resource_channel.import_source_refs import ImportSourceGrantRegistry
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.nmbak import NmbakBackupService
+from infrastructure.plugins.service import PluginService
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport
 from ports.inpaint.ports import ImageFrame
@@ -718,6 +719,11 @@ class CoreServices:
     #: every existing construction valid and makes the backup commands fail
     #: closed with CORE_UNAVAILABLE.
     backup: object = None
+    #: PLUGIN-RUNTIME-1 (design §4.1–§4.4, D1–D6): local-directory plugin
+    #: discovery + state + audit + isolated hook invocation over
+    #: ``<data_root>/plugins``. ``None`` keeps every existing construction
+    #: valid and makes the plugin commands fail closed with CORE_UNAVAILABLE.
+    plugins: object = None
 
 
 def _resolve_detector_weights_path(
@@ -1385,6 +1391,15 @@ def assemble_core_services(
                 Path(managed_root),
                 app_version=_APP_VERSION,
                 is_run_active=lambda: _has_active_run(conn),
+            ),
+            # PLUGIN-RUNTIME-1 (D4): the plugin root is
+            # ``<data_root>/plugins`` -- the app-data plugin directory the
+            # design freezes; dev preview and production each resolve their
+            # own data root, so the isolation boundary is the data root.
+            plugins=PluginService(
+                conn,
+                data_root / "plugins",
+                app_version=_APP_VERSION,
             ),
         )
     except Exception:

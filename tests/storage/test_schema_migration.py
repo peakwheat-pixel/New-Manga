@@ -19,7 +19,7 @@ LATEST_KNOWN = default_migrations()[-1].schema_version
 
 def test_all_migrations_apply_with_checksum_and_metadata(db_conn):
     version = read_schema_version(db_conn)
-    assert version == LATEST_KNOWN == 5
+    assert version == LATEST_KNOWN
 
     for migration in default_migrations():
         row = db_conn.execute(
@@ -58,7 +58,9 @@ def test_reopening_is_idempotent(tmp_path):
     assert opened.state.value == "empty"
     runner = MigrationRunner(conn, default_migrations())
     applied = runner.apply_pending()
-    assert [record.schema_version for record in applied] == [1, 2, 3, 4, 5]
+    assert [record.schema_version for record in applied] == [
+        migration.schema_version for migration in default_migrations()
+    ]
     assert runner.pending_migrations() == []
     assert runner.apply_pending() == []
 
@@ -76,12 +78,13 @@ def test_newer_schema_is_rejected_and_readonly(tmp_path):
     runner = MigrationRunner(conn, default_migrations())
     runner.apply_pending()
     with conn:
+        future_version = LATEST_KNOWN + 1
         conn.execute(
             "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"
-            " VALUES (6, 'future', '2026-01-01T00:00:00Z', 'nope')"
+            f" VALUES ({future_version}, 'future', '2026-01-01T00:00:00Z', 'nope')"
         )
         conn.execute(
-            "UPDATE application_metadata SET value_json = '6'"
+            f"UPDATE application_metadata SET value_json = '{future_version}'"
             " WHERE metadata_key = 'schema_version'"
         )
     conn.close()
@@ -119,34 +122,34 @@ def test_pre_migration_backup_created_before_first_ddl(tmp_path):
     assert calls and calls[0][0] == "pre_migration"
 
     # Full pending batch: one pre-migration backup fires per pending
-    # migration. The v0→v1 guard predates backup_records, so the v1→v2,
-    # v2→v3, v3→v4, and v4→v5 snapshots are the four recorded rows.
+    # migration. The v0→v1 guard predates backup_records, so every snapshot
+    # from the v1 state onward is a recorded row (schema-version-driven, so a
+    # new migration adds exactly one more row here).
+    known = [migration.schema_version for migration in default_migrations()]
     records = conn.execute(
         "SELECT backup_type, managed_path, schema_version FROM backup_records"
     ).fetchall()
-    assert len(records) == 4
+    assert len(records) == len(known) - 1
     assert records[0]["backup_type"] == "pre_migration"
-    assert records[0]["schema_version"] == 1  # snapshot taken at v1 state
-    assert records[1]["schema_version"] == 2  # snapshot taken at v2 state
-    assert records[2]["schema_version"] == 3  # snapshot taken at v3 state
-    assert records[3]["schema_version"] == 4  # snapshot taken at v4 state
+    for index in range(len(records)):
+        assert records[index]["schema_version"] == known[index]
     assert records[0]["managed_path"].startswith("backups/")
     assert (backups / records[0]["managed_path"].split("/", 1)[1]).is_file()
 
     backup_files = list(backups.glob("*.db"))
-    assert len(backup_files) == 5  # v0→v1 guard + v1→v2 + v2→v3 + v3→v4 + v4→v5
+    assert len(backup_files) == len(known)  # v0→v1 guard + one per later migration
     # The unrecorded file is the v0→v1 snapshot: it predates the schema.
     recorded_file = backups / records[0]["managed_path"].split("/", 1)[1]
     recorded_v2_file = backups / records[1]["managed_path"].split("/", 1)[1]
     recorded_v3_file = backups / records[2]["managed_path"].split("/", 1)[1]
-    recorded_v4_file = backups / records[3]["managed_path"].split("/", 1)[1]
+    recorded_rest = [backups / record["managed_path"].split("/", 1)[1] for record in records[3:]]
     unrecorded_files = [
         f for f in backup_files
         if f.resolve() not in {
             recorded_file.resolve(),
             recorded_v2_file.resolve(),
             recorded_v3_file.resolve(),
-            recorded_v4_file.resolve(),
+            *(path.resolve() for path in recorded_rest),
         }
     ]
     assert len(unrecorded_files) == 1

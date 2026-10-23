@@ -21,7 +21,8 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * surface; no auto_backup controls). Only plugins keep the disabled
  * placeholder and the "未开放" badge (11 open / 1 closed).
  * SETTINGS-OPEN-C-3-PLUGIN keeps the plugin partition closed but swaps its
- * placeholder reason for the frozen §4.5 copy (no operable control).
+ * placeholder reason for the frozen §4.5 copy (no operable control), and
+ * PLUGIN-RUNTIME-1 opens it with the real management face (12 open / 0 closed).
  */
 
 const OPEN_CATEGORY_IDS = [
@@ -36,8 +37,9 @@ const OPEN_CATEGORY_IDS = [
   "cache_revision",
   "recycle_bin",
   "backup_restore",
+  "plugins",
 ] as const;
-const CLOSED_CATEGORY_IDS = ["plugins"] as const;
+const CLOSED_CATEGORY_IDS: readonly string[] = [];
 
 function makeInvoke() {
   return vi.fn(async (command: string) => {
@@ -55,6 +57,10 @@ function makeInvoke() {
       case "library_list_recycle_bin_books":
         return [];
       case "backup_list":
+        return [];
+      case "plugins_list":
+        return { global_enabled: false, plugin_root: "plugins", plugins: [] };
+      case "plugins_audit_list":
         return [];
       case "backup_create":
         return {
@@ -186,7 +192,7 @@ describe("SettingsPage layout & categories (AC1)", () => {
       "true", // cache_revision — batch B-2
       "true", // recycle_bin — batch C-1
       "true", // backup_restore — batch C-2
-      "false", // plugins
+      "true", // plugins — PLUGIN-RUNTIME-1
     ]);
 
     for (const id of OPEN_CATEGORY_IDS) {
@@ -320,11 +326,15 @@ describe("Batch A open categories host editable panels (AC3)", () => {
       "backup_restore",
     );
 
-    // The still-closed plugin category trails the open list: another
-    // ArrowDown is clamped to the last OPEN category and never lands on it.
+    // PLUGIN-RUNTIME-1 opens the plugin category: the next stop, and the
+    // ArrowDown after it clamps because no closed partition trails the list.
     await arrowDown();
     expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
-      "backup_restore",
+      "plugins",
+    );
+    await arrowDown();
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "plugins",
     );
   });
 
@@ -478,6 +488,34 @@ describe("Batch C-2 open category hosts the backup/restore surface (AC3)", () =>
   });
 });
 
+describe("PLUGIN-RUNTIME-1 opens the plugin management face (AC5)", () => {
+  let page: ReturnType<typeof useMountedPage>;
+
+  beforeEach(() => {
+    page = useMountedPage();
+  });
+
+  afterEach(() => {
+    page.cleanup();
+  });
+
+  it("plugins category opens PluginSettingsPanel and the nav has no closed badge", async () => {
+    page.mount();
+    await page.activateOpenCategory("plugins");
+    expect(page.q('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe(
+      "plugins",
+    );
+    expect(page.q('[data-testid="settings-content-plugins"]')).not.toBeNull();
+    expect(page.q('[data-testid="plugin-settings-panel"]')).not.toBeNull();
+    expect(page.q('[data-testid="plugin-settings-global-toggle"]')).not.toBeNull();
+    expect(page.q('[data-testid="settings-disabled-section-plugins"]')).toBeNull();
+    const nav = page.q('[data-testid="settings-category-plugins"]') as HTMLButtonElement;
+    expect(nav.disabled).toBe(false);
+    expect(nav.getAttribute("aria-disabled")).toBe("false");
+    expect(nav.textContent).not.toContain("未开放");
+  });
+});
+
 describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () => {
   let page: ReturnType<typeof useMountedPage>;
 
@@ -489,27 +527,10 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
     page.cleanup();
   });
 
-  const assertDisabledCategory = (categoryId: string, label: string) => {
-    const button = page.q(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement;
-    expect(button).not.toBeNull();
-    expect(button.disabled).toBe(true);
-    expect(button.getAttribute("aria-disabled")).toBe("true");
-    expect(button.getAttribute("aria-label")).toContain("未开放");
-    expect(button.getAttribute("aria-label")).toContain("插件系统尚未实现");
-    expect(button.title).toContain("插件系统尚未实现");
-    expect(button.textContent).toContain(label);
-    expect(button.textContent).toContain("未开放");
-  };
-
-  it("Plugin/Hooks category remains visible but cannot be invoked", () => {
-    page.mount();
-    assertDisabledCategory("plugins", "Plugin/Hooks");
-  });
-
   it("keeps a reasoned placeholder id for every still-closed partition", () => {
     page.mount();
-    // Batch C-2 opened backup/restore: only the plugin partition remains.
-    expect(Object.keys(DISABLED_SECTION_TEST_IDS).sort()).toEqual(["plugins"]);
+    // PLUGIN-RUNTIME-1 opened the last partition: no disabled placeholder remains.
+    expect(Object.keys(DISABLED_SECTION_TEST_IDS)).toEqual([]);
     // None of them is mounted while the page sits on an open category.
     for (const testId of Object.values(DISABLED_SECTION_TEST_IDS)) {
       expect(page.q(`[data-testid="${testId}"]`)).toBeNull();

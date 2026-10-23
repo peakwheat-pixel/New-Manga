@@ -30,10 +30,10 @@
 |SETTINGS-OPEN-C-1-RECYCLE|SETTINGS-OPEN-C-1-DESIGN|done（回收站查看+清空；实现 `6d6c085..893c00fc`；独立 Review r1 changes_requested → r2 approved）|
 |SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|done（`.nmbak` v1 + Core/Tauri/前端；Review r3 approved `657c18d4`）|
 |SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|done（Plugin/Hooks 只读面；Review r2 approved `85128cd2`）|
-|PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|proposed（本地插件运行时提案；设计 §4.1–§4.4 冻结；**待用户/Codex 授权**，未释放）|
+|PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|in_progress（本地插件运行时；用户 2026-10-23 授权 D1–D6 按建议值）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：**无**（设置分区 A/B/C 全部关闭）。`PLUGIN-RUNTIME-1` 仅以 proposed 登记，待授权后释放。C-1/C-2/C-3 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+READY 节点：**PLUGIN-RUNTIME-1**（已授权，实施中；D1–D6 按建议值）。C-1/C-2/C-3 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 

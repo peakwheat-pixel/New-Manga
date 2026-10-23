@@ -195,6 +195,7 @@ from infrastructure.resource_channel.render_preview import (
 from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
 from infrastructure.sqlite.nmbak import NmbakBackupError
+from infrastructure.plugins.service import PluginError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 from bootstrap.settings_commands import P15_SNAPSHOT_KEY, P15SettingsCommands, SettingsSurfaceError
@@ -271,6 +272,29 @@ _BACKUP_COMMANDS = frozenset({
 })
 #: Design §3.4 error taxonomy -> (category, retryable). Anything not listed
 #: falls back to ("internal", False).
+#: PLUGIN-RUNTIME-1 (design §4.1-§4.4, decisions D1-D6): the local plugin
+#: runtime face. Same ordinary application-channel precedent as cleanup and
+#: backup -- the frozen host-control envelope is not widened. The commands are
+#: additive; protocol minor stays 3.
+_PLUGIN_COMMANDS = frozenset({
+    "plugins.list",
+    "plugins.set_enabled",
+    "plugins.set_plugin_enabled",
+    "plugins.audit_list",
+})
+#: Plugin runtime error taxonomy -> (category, retryable).
+_PLUGIN_ERROR_RULES: dict[str, tuple[str, bool]] = {
+    "INVALID_REQUEST": ("validation", False),
+    "PLUGIN_INVALID_REQUEST": ("validation", False),
+    "PLUGIN_NOT_FOUND": ("not_found", False),
+    "PLUGIN_NOT_LOADED": ("validation", False),
+    "PLUGIN_HOOK_UNKNOWN": ("validation", False),
+    "PLUGIN_HOOK_TIMEOUT": ("conflict", True),
+    "PLUGIN_HOOK_FAILED": ("internal", True),
+    "PLUGIN_HOOK_UNAVAILABLE": ("internal", False),
+    "PLUGIN_OPERATION_FAILED": ("internal", False),
+    "CORE_UNAVAILABLE": ("unavailable", True),
+}
 _BACKUP_ERROR_RULES: dict[str, tuple[str, bool]] = {
     # Malformed backup payloads are request validation, not internal failures
     # (review r1 P1-4: the fallback used to project them as "internal").
@@ -1889,6 +1913,44 @@ class CoreServiceServer:
         if not isinstance(backup_id, str):
             raise NmbakBackupError("INVALID_REQUEST", "backup_id must be a string")
         return service.delete(backup_id)
+
+
+    # ------------------------------------------------------------------
+    # local plugin runtime (PLUGIN-RUNTIME-1, design §4.1-§4.4)
+    # ------------------------------------------------------------------
+
+    def _require_plugins(self):
+        """The assembled plugin runtime; a Core without one fails closed with
+        CORE_UNAVAILABLE instead of crashing the sidecar."""
+        service = getattr(self._core, "plugins", None)
+        if service is None:
+            raise PluginError("CORE_UNAVAILABLE", "plugin service is not wired")
+        return service
+
+    def handle_plugins_list(self) -> dict[str, Any]:
+        return self._require_plugins().list_plugins()
+
+    def handle_plugins_set_enabled(self, payload: dict[str, Any]) -> dict[str, Any]:
+        enabled = payload.get("enabled")
+        if not isinstance(enabled, bool):
+            raise PluginError("PLUGIN_INVALID_REQUEST", "enabled must be a boolean")
+        return self._require_plugins().set_global_enabled(enabled)
+
+    def handle_plugins_set_plugin_enabled(self, payload: dict[str, Any]) -> dict[str, Any]:
+        plugin_id = payload.get("plugin_id")
+        enabled = payload.get("enabled")
+        if not isinstance(plugin_id, str) or not isinstance(enabled, bool):
+            raise PluginError(
+                "PLUGIN_INVALID_REQUEST",
+                "plugin_id must be a string and enabled a boolean",
+            )
+        return self._require_plugins().set_plugin_enabled(plugin_id, enabled)
+
+    def handle_plugins_audit_list(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
+        limit = payload.get("limit", 50)
+        if not isinstance(limit, int) or isinstance(limit, bool):
+            raise PluginError("PLUGIN_INVALID_REQUEST", "limit must be an integer")
+        return self._require_plugins().audit_list(limit)
 
     # ------------------------------------------------------------------
     # set_region_type / list_regions (M2-REGION-RETYPE-CORE)
@@ -3950,6 +4012,56 @@ class CoreServiceServer:
                     code=E_UNKNOWN,
                     category="internal",
                     message="Backup operation failed",
+                    retryable=False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": safe_request_id,
+                    "result": result,
+                    "error": error,
+                },
+                False,
+            )
+
+
+        # PLUGIN-RUNTIME-1 (design §4.1-§4.4): the local plugin runtime face.
+        # Payloads are typed fail-closed; a Core assembled without the service
+        # fails closed with CORE_UNAVAILABLE. Same application-channel
+        # precedent as cleanup/backup -- protocol minor stays 3.
+        if command in _PLUGIN_COMMANDS:
+            result = None
+            error = None
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise PluginError(
+                        "PLUGIN_INVALID_REQUEST",
+                        "plugin request payload must be a JSON object",
+                    )
+                if command == "plugins.list":
+                    result = self.handle_plugins_list()
+                elif command == "plugins.set_enabled":
+                    result = self.handle_plugins_set_enabled(raw_payload)
+                elif command == "plugins.set_plugin_enabled":
+                    result = self.handle_plugins_set_plugin_enabled(raw_payload)
+                else:
+                    result = self.handle_plugins_audit_list(raw_payload)
+            except PluginError as plugin_error:
+                category, retryable = _PLUGIN_ERROR_RULES.get(
+                    plugin_error.code, ("internal", False)
+                )
+                error = make_error_envelope(
+                    code=plugin_error.code,
+                    category=category,
+                    message=plugin_error.detail[:500],
+                    retryable=retryable,
+                )
+            except Exception:
+                error = make_error_envelope(
+                    code=E_UNKNOWN,
+                    category="internal",
+                    message="Plugin operation failed",
                     retryable=False,
                 )
             return (

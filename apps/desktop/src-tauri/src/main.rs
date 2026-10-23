@@ -94,6 +94,14 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "backup_list",
     "backup_restore",
     "backup_delete",
+    // PLUGIN-RUNTIME-1 (design §4.1-§4.4, D1-D6): the local plugin runtime
+    // face (list / global switch / per-plugin switch / audit ledger) plus the
+    // plugin-directory opener; production-only like the faces above.
+    "plugins_list",
+    "plugins_set_enabled",
+    "plugins_set_plugin_enabled",
+    "plugins_audit_list",
+    "plugins_open_directory",
     // P15-C1 rev 2.7 G21/G22/G23/G24 settings surface (19 commands); production-only.
     "settings_provider_profiles_list",
     "settings_provider_profiles_create",
@@ -205,6 +213,17 @@ pub const CLEANUP_PRODUCTION_ONLY_COMMANDS: &[&str] =
 /// the four backup commands.
 pub const BACKUP_PRODUCTION_ONLY_COMMANDS: &[&str] =
     &["backup_create", "backup_list", "backup_restore", "backup_delete"];
+
+/// PLUGIN-RUNTIME-1 (design §4.1-§4.4): the local plugin runtime face is
+/// production-only too (option-B precedent); the frozen RC2 probe / AC1
+/// test-mode surfaces keep their historical 7/6-command shape.
+pub const PLUGIN_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "plugins_list",
+    "plugins_set_enabled",
+    "plugins_set_plugin_enabled",
+    "plugins_audit_list",
+    "plugins_open_directory",
+];
 
 pub const P15_SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "settings_provider_profiles_list",
@@ -322,6 +341,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !DELETE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !BACKUP_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !PLUGIN_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -722,6 +742,88 @@ fn backup_delete(
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .backup_delete(&backup_id)
         .map_err(|error| error.code)
+}
+
+/// PLUGIN-RUNTIME-1 (design §4.1-§4.4): the plugin snapshot the settings
+/// panel renders. The Core re-discovers ``<data_root>/plugins`` on every
+/// list, so the view always reflects the directory on disk.
+#[tauri::command]
+fn plugins_list(state: tauri::State<'_, AppState>) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .plugins_list()
+        .map_err(|error| error.code)
+}
+
+/// PLUGIN-RUNTIME-1 (design §4.3, D5): the global ``plugins.enabled`` kill
+/// switch. Default OFF; a disabled switch makes every hook a silent no-op
+/// (the Core still answers, it just applies nothing).
+#[tauri::command]
+fn plugins_set_enabled(
+    state: tauri::State<'_, AppState>,
+    enabled: bool,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .plugins_set_enabled(enabled)
+        .map_err(|error| error.code)
+}
+
+/// PLUGIN-RUNTIME-1 (design §4.3, D5): per-plugin enable. A rejected plugin
+/// answers ``PLUGIN_NOT_LOADED`` — the Core re-validates the manifest on
+/// every call, so a tampered directory can never be enabled through the UI.
+#[tauri::command]
+fn plugins_set_plugin_enabled(
+    state: tauri::State<'_, AppState>,
+    plugin_id: String,
+    enabled: bool,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .plugins_set_plugin_enabled(&plugin_id, enabled)
+        .map_err(|error| error.code)
+}
+
+/// PLUGIN-RUNTIME-1 (design §4.4, D2): the append-only ``plugin_events``
+/// ledger (load/reject/enable/disable/hook/error).
+#[tauri::command]
+fn plugins_audit_list(
+    state: tauri::State<'_, AppState>,
+    limit: Option<u32>,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .plugins_audit_list(limit.unwrap_or(50))
+        .map_err(|error| error.code)
+}
+
+/// PLUGIN-RUNTIME-1 (design §4.1): open the plugin directory so the user can
+/// install a plugin by dropping a directory. Rust-local (the opener plugin),
+/// never a Core command: the Core only reads that directory.
+#[tauri::command]
+fn plugins_open_directory(app: tauri::AppHandle) -> Result<(), String> {
+    let app_data = app
+        .path()
+        .app_data_dir()
+        .map_err(|_| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())?;
+    let plugin_dir = app_data.join("plugins");
+    std::fs::create_dir_all(&plugin_dir).map_err(|_| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())?;
+    app.opener()
+        .open_path(
+            plugin_dir
+                .to_str()
+                .ok_or_else(|| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())?,
+            None::<&str>,
+        )
+        .map_err(|_| "PLUGIN_DIRECTORY_UNAVAILABLE".to_string())
 }
 
 /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): retype one region through
@@ -1756,6 +1858,11 @@ fn main() {
             backup_list,
             backup_restore,
             backup_delete,
+            plugins_list,
+            plugins_set_enabled,
+            plugins_set_plugin_enabled,
+            plugins_audit_list,
+            plugins_open_directory,
             settings_provider_profiles_list,
             settings_provider_profiles_create,
             settings_provider_profiles_update,
@@ -1943,8 +2050,8 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // 61 production commands: the previously pinned 57-command surface plus
-        // the four SETTINGS-OPEN-C-2-BACKUP package commands.
+        // 66 production commands: the previously pinned 61-command surface plus
+        // the five PLUGIN-RUNTIME-1 plugin commands.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1965,6 +2072,11 @@ mod tests {
                 "backup_list",
                 "backup_restore",
                 "backup_delete",
+                "plugins_list",
+                "plugins_set_enabled",
+                "plugins_set_plugin_enabled",
+                "plugins_audit_list",
+                "plugins_open_directory",
                 "settings_provider_profiles_list",
                 "settings_provider_profiles_create",
                 "settings_provider_profiles_update",
@@ -2016,7 +2128,7 @@ mod tests {
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
         assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 66);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -2032,7 +2144,7 @@ mod tests {
             CREATE_PRODUCTION_ONLY_COMMANDS,
             &["library_create_book", "create_chapter"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 66);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in CREATE_PRODUCTION_ONLY_COMMANDS {
@@ -2267,6 +2379,13 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        // PLUGIN-RUNTIME-1: the plugin runtime face is production-only too.
+        for command in PLUGIN_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         // M2-REGION-RETYPE-CORE: the retype pair is production-only too
         for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
             assert!(
@@ -2330,6 +2449,7 @@ mod tests {
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - CLEANUP_PRODUCTION_ONLY_COMMANDS.len()
                 - BACKUP_PRODUCTION_ONLY_COMMANDS.len()
+                - PLUGIN_PRODUCTION_ONLY_COMMANDS.len()
                 - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
@@ -2379,6 +2499,13 @@ mod tests {
         }
         // SETTINGS-OPEN-C-2-BACKUP: the .nmbak package face is production-only too.
         for command in BACKUP_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
+        // PLUGIN-RUNTIME-1: the local plugin runtime face is production-only too.
+        for command in PLUGIN_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 !ac1.contains(command),
                 "{command} must stay production-only"
@@ -2447,6 +2574,7 @@ mod tests {
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - CLEANUP_PRODUCTION_ONLY_COMMANDS.len()
                 - BACKUP_PRODUCTION_ONLY_COMMANDS.len()
+                - PLUGIN_PRODUCTION_ONLY_COMMANDS.len()
                 - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
@@ -2511,7 +2639,7 @@ mod tests {
             CLEANUP_PRODUCTION_ONLY_COMMANDS,
             &["cleanup_preview", "cleanup_run", "cleanup_retry_pending"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 66);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2621,7 +2749,7 @@ mod tests {
         );
         // 61 production commands: the previous 54 plus the SETTINGS-OPEN-B-2
         // cleanup trio (PRODUCTION_COMMANDS, main.rs).
-        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 66);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2654,7 +2782,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 66);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2686,7 +2814,7 @@ mod tests {
                 "library_delete_books_permanently",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 61);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 66);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);

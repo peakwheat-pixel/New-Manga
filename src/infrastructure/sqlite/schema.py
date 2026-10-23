@@ -26,6 +26,8 @@ SCHEMA_VERSION_V2 = 2
 SCHEMA_VERSION_V3 = 3
 SCHEMA_VERSION_V4 = 4
 SCHEMA_VERSION_V5 = 5
+#: PLUGIN-RUNTIME-1 (design §4.1–§4.4, D2/D5): additive plugin state + audit.
+SCHEMA_VERSION_V6 = 6
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -555,6 +557,43 @@ class Migration:
         return hashlib.sha256(self.sql.encode("utf-8")).hexdigest()
 
 
+MIGRATION_V6_NAME = "v6__plugin_runtime"
+
+MIGRATION_V6_SQL = """
+-- PLUGIN-RUNTIME-1 (design §4.1-§4.4; decision D2/D5): local plugin state and
+-- an append-only audit ledger. Both tables start empty, so every existing
+-- database gains the schema without changing any current behaviour.
+-- `plugin_id = '__global__'` carries the global `plugins.enabled` switch (a
+-- disabled-by-default kill switch, design §4.3); every other row is one
+-- discovered plugin.
+CREATE TABLE plugin_state (
+    plugin_id TEXT PRIMARY KEY CHECK (length(plugin_id) > 0),
+    enabled INTEGER NOT NULL DEFAULT 0 CHECK (enabled IN (0, 1)),
+    manifest_json TEXT,
+    installed_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    last_error TEXT
+);
+
+-- One row per load/reject/enable/disable/hook/error event. `detail_json` is
+-- a closed, non-sensitive projection (never paths outside the plugin root or
+-- user payload bytes).
+CREATE TABLE plugin_events (
+    event_id TEXT PRIMARY KEY CHECK (length(event_id) > 0),
+    plugin_id TEXT NOT NULL,
+    event_type TEXT NOT NULL CHECK (event_type IN (
+        'load_ok', 'load_rejected', 'enabled', 'disabled',
+        'hook_invoked', 'plugin_error'
+    )),
+    hook_name TEXT,
+    detail_json TEXT NOT NULL DEFAULT '{}',
+    occurred_at TEXT NOT NULL
+);
+CREATE INDEX idx_plugin_events_plugin ON plugin_events(plugin_id, occurred_at);
+CREATE INDEX idx_plugin_events_type ON plugin_events(event_type, occurred_at);
+"""
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -562,4 +601,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V3, MIGRATION_V3_NAME, MIGRATION_V3_SQL),
         Migration(SCHEMA_VERSION_V4, MIGRATION_V4_NAME, MIGRATION_V4_SQL),
         Migration(SCHEMA_VERSION_V5, MIGRATION_V5_NAME, MIGRATION_V5_SQL),
+        Migration(SCHEMA_VERSION_V6, MIGRATION_V6_NAME, MIGRATION_V6_SQL),
     )

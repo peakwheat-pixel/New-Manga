@@ -64,11 +64,14 @@ def test_explicit_data_root_isolation(tmp_path):
         assert not str(db_path).startswith(str(ROOT / "src"))
         assert not str(db_path).startswith(str(ROOT / "packaging"))
 
-        # Verify schema version is current (v5)
+        # Verify schema version is current (the latest known migration).
+        from infrastructure.sqlite.schema import default_migrations as _default_migrations
+
+        expected_schema = max(m.schema_version for m in _default_migrations())
         ver = services.conn.execute(
             "SELECT CAST(value_json AS INTEGER) FROM application_metadata WHERE metadata_key='schema_version'"
         ).fetchone()[0]
-        assert ver == 5
+        assert ver == expected_schema
     finally:
         _shutdown_services(services)
 

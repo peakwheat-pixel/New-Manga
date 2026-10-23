@@ -130,6 +130,16 @@ export const BACKUP_LIST_COMMAND = "backup_list";
 export const BACKUP_RESTORE_COMMAND = "backup_restore";
 export const BACKUP_DELETE_COMMAND = "backup_delete";
 
+/* PLUGIN-RUNTIME-1 (design §4.1–§4.4): the local plugin runtime face. The
+ * four channel commands are pinned constants; `plugins_open_directory` is a
+ * Rust-local command (the opener plugin) and never travels over the Core
+ * channel. */
+export const PLUGINS_LIST_COMMAND = "plugins_list";
+export const PLUGINS_SET_ENABLED_COMMAND = "plugins_set_enabled";
+export const PLUGINS_SET_PLUGIN_ENABLED_COMMAND = "plugins_set_plugin_enabled";
+export const PLUGINS_AUDIT_LIST_COMMAND = "plugins_audit_list";
+export const PLUGINS_OPEN_DIRECTORY_COMMAND = "plugins_open_directory";
+
 export class SettingsClientError extends Error {
   code: string;
 
@@ -488,6 +498,99 @@ function normalizeBackupDelete(raw: unknown): BackupDeleteResult {
   return { removed: row.removed === true };
 }
 
+/* ---------------- PLUGIN-RUNTIME-1 §4.1–§4.4: local plugins ---------------- */
+
+export type PluginStatus = "enabled" | "disabled" | "rejected";
+
+/** One discovered plugin directory, as the Core projects it. */
+export interface PluginEntry {
+  plugin_id: string;
+  status: PluginStatus;
+  enabled: boolean;
+  name: string;
+  version: string;
+  description: string;
+  hooks: string[];
+  reason: string | null;
+}
+
+/** `plugins_list` projection: the global kill switch + every discovered dir. */
+export interface PluginsSnapshot {
+  global_enabled: boolean;
+  plugin_root: string;
+  plugins: PluginEntry[];
+}
+
+/** One `plugin_events` row (append-only audit ledger). */
+export interface PluginAuditEvent {
+  event_id: string;
+  plugin_id: string;
+  event_type: string;
+  hook_name: string | null;
+  detail: Record<string, unknown>;
+  occurred_at: string;
+}
+
+function normalizePluginStatus(value: unknown): PluginStatus {
+  if (value === "enabled" || value === "disabled" || value === "rejected") return value;
+  return "rejected";
+}
+
+function normalizePluginEntry(raw: unknown): PluginEntry | null {
+  const row = asRecord(raw);
+  if (!row) return null;
+  const pluginId = typeof row.plugin_id === "string" ? row.plugin_id.trim() : "";
+  if (!pluginId) return null;
+  return {
+    plugin_id: pluginId,
+    status: normalizePluginStatus(row.status),
+    enabled: row.enabled === true,
+    name: typeof row.name === "string" ? row.name : "",
+    version: typeof row.version === "string" ? row.version : "",
+    description: typeof row.description === "string" ? row.description : "",
+    hooks: Array.isArray(row.hooks)
+      ? row.hooks.filter((item): item is string => typeof item === "string")
+      : [],
+    reason: typeof row.reason === "string" && row.reason ? row.reason : null,
+  };
+}
+
+function normalizePluginsSnapshot(raw: unknown): PluginsSnapshot {
+  const row = asRecord(raw) ?? {};
+  const plugins: PluginEntry[] = [];
+  if (Array.isArray(row.plugins)) {
+    for (const item of row.plugins) {
+      const entry = normalizePluginEntry(item);
+      if (entry) plugins.push(entry);
+    }
+  }
+  return {
+    global_enabled: row.global_enabled === true,
+    plugin_root: typeof row.plugin_root === "string" ? row.plugin_root : "",
+    plugins,
+  };
+}
+
+function normalizePluginAudit(raw: unknown): PluginAuditEvent[] {
+  if (!Array.isArray(raw)) {
+    throw new SettingsClientError("PLUGIN_MALFORMED", "plugins_audit_list returned a non-array");
+  }
+  const events: PluginAuditEvent[] = [];
+  for (const item of raw) {
+    const row = asRecord(item);
+    if (!row) continue;
+    events.push({
+      event_id: typeof row.event_id === "string" ? row.event_id : "",
+      plugin_id: typeof row.plugin_id === "string" ? row.plugin_id : "",
+      event_type: typeof row.event_type === "string" ? row.event_type : "unknown",
+      hook_name: typeof row.hook_name === "string" ? row.hook_name : null,
+      detail: asRecord(row.detail) ?? {},
+      occurred_at: typeof row.occurred_at === "string" ? row.occurred_at : "",
+    });
+  }
+  return events;
+}
+
 export class SettingsClient {
   private invoke: InvokeFn;
 
@@ -630,6 +733,60 @@ export class SettingsClient {
       return normalizeCleanupOutcome(await this.invoke(CLEANUP_RETRY_PENDING_COMMAND));
     } catch (error) {
       throw toClientError(error, CLEANUP_RETRY_PENDING_COMMAND);
+    }
+  }
+
+
+  /* ---------------- PLUGIN-RUNTIME-1 §4.1–§4.4: local plugins ---------------- */
+
+  /** The discovered-plugin snapshot (global switch + per-plugin state). */
+  async listPlugins(): Promise<PluginsSnapshot> {
+    try {
+      return normalizePluginsSnapshot(await this.invoke(PLUGINS_LIST_COMMAND));
+    } catch (error) {
+      throw toClientError(error, PLUGINS_LIST_COMMAND);
+    }
+  }
+
+  /** The global `plugins.enabled` kill switch (default off). */
+  async setPluginsEnabled(enabled: boolean): Promise<{ global_enabled: boolean }> {
+    try {
+      const row = asRecord(await this.invoke(PLUGINS_SET_ENABLED_COMMAND, { enabled })) ?? {};
+      return { global_enabled: row.global_enabled === true };
+    } catch (error) {
+      throw toClientError(error, PLUGINS_SET_ENABLED_COMMAND);
+    }
+  }
+
+  /** Per-plugin enable; the Core re-validates the manifest on every call. */
+  async setPluginEnabled(pluginId: string, enabled: boolean): Promise<{ plugin_id: string; enabled: boolean }> {
+    try {
+      const row =
+        asRecord(await this.invoke(PLUGINS_SET_PLUGIN_ENABLED_COMMAND, { pluginId, enabled })) ?? {};
+      return {
+        plugin_id: typeof row.plugin_id === "string" ? row.plugin_id : pluginId,
+        enabled: row.enabled === true,
+      };
+    } catch (error) {
+      throw toClientError(error, PLUGINS_SET_PLUGIN_ENABLED_COMMAND);
+    }
+  }
+
+  /** The newest `plugin_events` rows (append-only audit ledger). */
+  async listPluginAudit(limit = 20): Promise<PluginAuditEvent[]> {
+    try {
+      return normalizePluginAudit(await this.invoke(PLUGINS_AUDIT_LIST_COMMAND, { limit }));
+    } catch (error) {
+      throw toClientError(error, PLUGINS_AUDIT_LIST_COMMAND);
+    }
+  }
+
+  /** Open `<app_data>/plugins` so the user can drop a plugin directory. */
+  async openPluginDirectory(): Promise<void> {
+    try {
+      await this.invoke(PLUGINS_OPEN_DIRECTORY_COMMAND);
+    } catch (error) {
+      throw toClientError(error, PLUGINS_OPEN_DIRECTORY_COMMAND);
     }
   }
 

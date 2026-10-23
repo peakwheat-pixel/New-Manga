@@ -41,9 +41,9 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the sixty-eight commands below: 61 production (3 resource + 2 IPC1 +
-    // 2 create + 2 existing settings + 3 cleanup + 4 backup + 19 P15 settings
-    // + 2 retype + 3 RC-4 + 1 page
+    // the seventy-three commands below: 66 production (3 resource + 2 IPC1 +
+    // 2 create + 2 existing settings + 3 cleanup + 4 backup + 5 plugins
+    // + 19 P15 settings + 2 retype + 3 RC-4 + 1 page
     // resolve + 2 page navigation + 2 Reader + 3 Host Issuer + 6 Run +
     // 1 reveal + 3 export + 2 delete), four probe, and three M2-AC1 acceptance commands;
     // any other command name
@@ -91,6 +91,15 @@ fn main() {
             "backup_list",
             "backup_restore",
             "backup_delete",
+            // PLUGIN-RUNTIME-1: the local plugin runtime face + the
+            // plugin-directory opener; ACL-declared so the capability file
+            // can name them, registered at runtime ONLY in production mode
+            // (main.rs PLUGIN_PRODUCTION_ONLY_COMMANDS).
+            "plugins_list",
+            "plugins_set_enabled",
+            "plugins_set_plugin_enabled",
+            "plugins_audit_list",
+            "plugins_open_directory",
             // P15-C1 rev 2.7 G21/G22/G23/G24: 19 production-only settings commands.
             "settings_provider_profiles_list",
             "settings_provider_profiles_create",

@@ -1,0 +1,5 @@
+# command: python -m pytest tests/infrastructure/test_plugin_runtime.py tests/core/test_core_plugin_wire.py -q
+# started: 2026-10-23T14:57:22.9266836+08:00
+# exit: 0
+........................                                                 [100%]
+24 passed in 1.88s

@@ -3,11 +3,12 @@ import { BackupSettingsPanel } from "./BackupSettingsPanel";
 import { CacheRevisionPanel } from "./CacheRevisionPanel";
 import { SettingsClient } from "./client";
 import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
-import { DisabledSection, DISABLED_SECTION_REASON } from "./DisabledSection";
+import { DISABLED_SECTION_REASON } from "./DisabledSection";
 import { InpaintSettingsPanel } from "./InpaintSettingsPanel";
 import { ModelGpuSettingsPanel } from "./ModelGpuSettingsPanel";
 import { NetworkProfilePanel } from "./NetworkProfilePanel";
 import { OcrSettingsPanel } from "./OcrSettingsPanel";
+import { PluginSettingsPanel } from "./PluginSettingsPanel";
 import { ProviderProfilePanel } from "./ProviderProfilePanel";
 import { RecycleBinSettingsPanel } from "./RecycleBinSettingsPanel";
 import { SfxPolicyControl } from "./SfxPolicyControl";
@@ -30,9 +31,11 @@ import { tokens } from "../theme/tokens";
  * cache/Revision cleanup operation surface (§4.3), batch C-1's recycle-bin
  * view/clear surface (§2), and — batch C-2 — the backup/restore operation
  * surface (design doc/design/SETTINGS_SECTION_C_SCHEMAS.md §3), and — batch
- * C-3 — the plugin partition's frozen §4.5 read-only face: it stays closed
- * (no runtime is installed) but explains the frozen plugin design in a
- * dedicated placeholder with NO operable control.
+ * C-3 — the plugin partition's frozen §4.5 read-only face, and
+ * PLUGIN-RUNTIME-1 (user authorization 2026-10-23, D1–D6) — the real plugin
+ * runtime management face: discovery, default-off global switch, per-plugin
+ * switches, the `plugin_events` audit ledger and the plugin-directory opener.
+ * All twelve categories are now open.
  */
 export const SETTINGS_CATEGORY_ORDER = [
   "provider",
@@ -67,19 +70,14 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
   { id: "cache_revision", label: "缓存/Revision", open: true },
   { id: "recycle_bin", label: "回收站", open: true },
   { id: "backup_restore", label: "备份/恢复", open: true },
-  { id: "plugins", label: "Plugin/Hooks", open: false },
+  { id: "plugins", label: "Plugin/Hooks", open: true },
 ];
 
-/** Every still-disabled partition with its placeholder test id — asserted
- * one by one in the AC2 tests. Batch A's ocr / translation-context / inpaint /
- * typeset placeholders, batch B-1's model-GPU / task-concurrency placeholders,
- * batch B-2's cache/Revision placeholder, batch C-1's recycle-bin placeholder
- * and batch C-2's backup/restore placeholder are gone: those categories now
- * host real panels. Only the last batch C partition (plugin/hooks) stays
- * closed (C-3, no install system yet). */
-export const DISABLED_SECTION_TEST_IDS = {
-  plugins: "settings-disabled-section-plugins",
-} as const;
+/** Every still-disabled partition with its placeholder test id. PLUGIN-RUNTIME-1
+ * opens the last category (real runtime + management face), so this map is
+ * empty and the nav no longer renders a "未开放" badge for any partition. The
+ * exported shape is kept so callers/tests keep one vocabulary. */
+export const DISABLED_SECTION_TEST_IDS: Readonly<Record<string, string>> = {};
 
 /** Batch C-3 §4.5: the plugin partition stays closed until a runtime exists.
  * The nav and the placeholder use the frozen copy instead of the generic
@@ -322,13 +320,9 @@ export function SettingsPage({ client }: SettingsPageProps) {
           </div>
         )}
         {activeCategoryId === "plugins" && (
-          <DisabledSection
-            testId={DISABLED_SECTION_TEST_IDS.plugins}
-            title="Plugin / Hooks"
-            reason={PLUGIN_SECTION_REASON}
-            body={PLUGIN_SECTION_DESCRIPTION}
-            showPlaceholderControl={false}
-          />
+          <div data-testid="settings-content-plugins">
+            <PluginSettingsPanel client={activeClient} />
+          </div>
         )}
 
         <div data-testid="settings-active-category" data-category-id={activeCategoryId} style={{ display: "none" }}>

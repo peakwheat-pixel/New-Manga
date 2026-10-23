@@ -1048,6 +1048,34 @@ pub trait LibraryChannel: Send + Sync {
         Err(LibraryError::unavailable("Backup channel is unavailable"))
     }
 
+    /// PLUGIN-RUNTIME-1: the local-directory plugin runtime face
+    /// (list / global switch / per-plugin switch / audit ledger). Ordinary
+    /// application-channel Core commands (cleanup/backup precedent),
+    /// production-only at the Tauri surface. The plugin-directory opener is a
+    /// Rust-local command and does not travel over this channel.
+    fn plugins_list(&self) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Plugin channel is unavailable"))
+    }
+
+    fn plugins_set_enabled(&self, enabled: bool) -> Result<serde_json::Value, LibraryError> {
+        let _ = enabled;
+        Err(LibraryError::unavailable("Plugin channel is unavailable"))
+    }
+
+    fn plugins_set_plugin_enabled(
+        &self,
+        plugin_id: &str,
+        enabled: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let _ = (plugin_id, enabled);
+        Err(LibraryError::unavailable("Plugin channel is unavailable"))
+    }
+
+    fn plugins_audit_list(&self, limit: u32) -> Result<serde_json::Value, LibraryError> {
+        let _ = limit;
+        Err(LibraryError::unavailable("Plugin channel is unavailable"))
+    }
+
     /// P20-ISOLATION-1: Register a lifecycle status emitter for sidecar health events.
     fn set_status_emitter(&self, _emitter: StatusEmitter) {}
 
@@ -4467,6 +4495,37 @@ impl LibraryChannel for StdioLibraryChannel {
         )
     }
 
+    fn plugins_list(&self) -> Result<serde_json::Value, LibraryError> {
+        // PLUGIN-RUNTIME-1: the Core re-discovers the plugin root on every
+        // list so the panel always reflects the directory on disk.
+        self.round_trip("plugins.list", serde_json::json!({}))
+    }
+
+    fn plugins_set_enabled(&self, enabled: bool) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "plugins.set_enabled",
+            serde_json::json!({ "enabled": enabled }),
+        )
+    }
+
+    fn plugins_set_plugin_enabled(
+        &self,
+        plugin_id: &str,
+        enabled: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "plugins.set_plugin_enabled",
+            serde_json::json!({ "plugin_id": plugin_id, "enabled": enabled }),
+        )
+    }
+
+    fn plugins_audit_list(&self, limit: u32) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "plugins.audit_list",
+            serde_json::json!({ "limit": limit }),
+        )
+    }
+
     fn permanently_delete_book(
         &self,
         payload: PermanentlyDeleteBookPayload,
@@ -4877,6 +4936,26 @@ impl LibraryChannel for MockLibraryChannel {
     }
 
     fn backup_delete(&self, _backup_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn plugins_list(&self) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn plugins_set_enabled(&self, _enabled: bool) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn plugins_set_plugin_enabled(
+        &self,
+        _plugin_id: &str,
+        _enabled: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn plugins_audit_list(&self, _limit: u32) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
     }
 
@@ -5736,6 +5815,26 @@ impl LibraryChannel for ResilientLibraryChannel {
 
     fn backup_delete(&self, backup_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.with_channel(|c| c.backup_delete(backup_id))
+    }
+
+    fn plugins_list(&self) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.plugins_list())
+    }
+
+    fn plugins_set_enabled(&self, enabled: bool) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.plugins_set_enabled(enabled))
+    }
+
+    fn plugins_set_plugin_enabled(
+        &self,
+        plugin_id: &str,
+        enabled: bool,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.plugins_set_plugin_enabled(plugin_id, enabled))
+    }
+
+    fn plugins_audit_list(&self, limit: u32) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.plugins_audit_list(limit))
     }
 
     fn permanently_delete_book(
