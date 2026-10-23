@@ -1,5 +1,8 @@
 # command: python -m pytest tests/tools -q
-# started: 2026-10-23T20:27:14.9488487+08:00
-.........                                                                [100%]
-9 passed in 1.63s
+# shell: PowerShell 7.6.6
+# python: C:\Python314\python.exe (Python 3.14.6)
+# cwd: G:\CODEX\New Manga
+# started: 2026-10-23T21:00:32.9642887+08:00
+...............                                                          [100%]
+15 passed in 2.14s
 # exit: 0

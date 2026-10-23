@@ -1,8 +1,8 @@
 {
   "schema": "nm-software-smoke/1",
-  "generated_at": "2026-10-23T12:26:43+00:00",
-  "started_at": "2026-10-23T12:26:19+00:00",
-  "duration_ms": 23309,
+  "generated_at": "2026-10-23T13:00:01+00:00",
+  "started_at": "2026-10-23T12:59:37+00:00",
+  "duration_ms": 24009,
   "status": "PASS",
   "command": [
     "--json",
@@ -30,7 +30,7 @@
       "id": "core",
       "name": "Core 沙箱层",
       "status": "PASS",
-      "duration_ms": 14964,
+      "duration_ms": 15503,
       "checks": [
         {
           "id": "CORE-PRODUCTION-WIRING",
@@ -51,7 +51,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 10,
+          "duration_ms": 24,
           "detail": {
             "plugins": 8,
             "rejected": "smoke-rejected-files",
@@ -67,7 +67,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 76,
+          "duration_ms": 74,
           "detail": {
             "global_kill_switch": "plugins_disabled"
           }
@@ -78,7 +78,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 1475,
+          "duration_ms": 1661,
           "detail": {
             "result": {
               "pages": 3,
@@ -92,7 +92,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 1489,
+          "duration_ms": 1539,
           "detail": {
             "fs": "BLOCKED",
             "winerror": null
@@ -104,7 +104,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 1503,
+          "duration_ms": 1567,
           "detail": {
             "net": "BLOCKED",
             "kind": "PermissionError"
@@ -116,7 +116,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 5481,
+          "duration_ms": 5599,
           "detail": {
             "net": "BLOCKED",
             "kind": "TimeoutError"
@@ -128,9 +128,9 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 2376,
+          "duration_ms": 2426,
           "detail": {
-            "elapsed_ms": 2331
+            "elapsed_ms": 2379
           }
         },
         {
@@ -139,9 +139,9 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 2403,
+          "duration_ms": 2456,
           "detail": {
-            "grandchild_pid": 9348,
+            "grandchild_pid": 49896,
             "timed_out": true
           }
         },
@@ -151,7 +151,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 101,
+          "duration_ms": 108,
           "detail": {
             "sandbox_modes": [
               "none",
@@ -184,7 +184,7 @@
       "id": "wire",
       "name": "Wire 层",
       "status": "PASS",
-      "duration_ms": 481,
+      "duration_ms": 493,
       "checks": [
         {
           "id": "WIRE-PING",
@@ -192,7 +192,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 432,
+          "duration_ms": 442,
           "detail": {
             "status": "ready",
             "protocol_version": {
@@ -273,7 +273,7 @@
       "id": "frontend",
       "name": "前端层",
       "status": "PASS",
-      "duration_ms": 7351,
+      "duration_ms": 7478,
       "checks": [
         {
           "id": "FRONTEND-TSC",
@@ -281,9 +281,9 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 2745,
+          "duration_ms": 2825,
           "detail": {
-            "duration_ms": 2744
+            "duration_ms": 2824
           }
         },
         {
@@ -292,11 +292,11 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 4601,
+          "duration_ms": 4648,
           "detail": {
             "test_files": 45,
             "tests": 435,
-            "duration_ms": 4599
+            "duration_ms": 4645
           }
         }
       ]
@@ -305,7 +305,7 @@
       "id": "packaged",
       "name": "打包层",
       "status": "PASS",
-      "duration_ms": 503,
+      "duration_ms": 525,
       "checks": [
         {
           "id": "PACKAGED-BUNDLE-FILES",
@@ -342,7 +342,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 81,
+          "duration_ms": 86,
           "detail": {
             "resolved": "python/python.exe"
           }
@@ -353,13 +353,14 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 359,
+          "duration_ms": 377,
           "detail": {
             "hook": "after_detect",
             "result": {
               "bundled": true
             },
-            "interpreter": "bundle python.exe"
+            "interpreter": "python.exe",
+            "executable_verified": true
           }
         },
         {

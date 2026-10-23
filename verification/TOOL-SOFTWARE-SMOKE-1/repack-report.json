@@ -1,8 +1,8 @@
 {
   "schema": "nm-software-smoke/1",
-  "generated_at": "2026-10-23T12:27:14+00:00",
-  "started_at": "2026-10-23T12:27:07+00:00",
-  "duration_ms": 7567,
+  "generated_at": "2026-10-23T13:00:32+00:00",
+  "started_at": "2026-10-23T13:00:25+00:00",
+  "duration_ms": 7402,
   "status": "PASS",
   "command": [
     "--only",
@@ -57,7 +57,7 @@
       "id": "packaged",
       "name": "打包层",
       "status": "PASS",
-      "duration_ms": 7423,
+      "duration_ms": 7264,
       "checks": [
         {
           "id": "PACKAGED-BUNDLE-FILES",
@@ -85,7 +85,7 @@
           "message": "",
           "duration_ms": 50,
           "detail": {
-            "duration_ms": 49
+            "duration_ms": 50
           }
         },
         {
@@ -94,7 +94,7 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 79,
+          "duration_ms": 77,
           "detail": {
             "resolved": "python/python.exe"
           }
@@ -105,13 +105,14 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 383,
+          "duration_ms": 360,
           "detail": {
             "hook": "after_detect",
             "result": {
               "bundled": true
             },
-            "interpreter": "bundle python.exe"
+            "interpreter": "python.exe",
+            "executable_verified": true
           }
         },
         {
@@ -120,10 +121,11 @@
           "status": "PASS",
           "code": null,
           "message": "",
-          "duration_ms": 6910,
+          "duration_ms": 6775,
           "detail": {
             "script": "packaging/m2ac5/verify_bundled_python.ps1",
-            "exit": 0
+            "exit": 0,
+            "temp_plugin_dirs_cleaned": 1
           }
         }
       ]

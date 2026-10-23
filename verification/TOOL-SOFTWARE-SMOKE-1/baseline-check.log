@@ -1,14 +1,21 @@
-# TOOL-SOFTWARE-SMOKE-1 baseline comparison (2026-10-23)
+# TOOL-SOFTWARE-SMOKE-1 baseline comparison
 # base_commit: 6e3ce06f96bb48bc7a8de0a114c8391a9bc82014
-# purpose: prove the 3 full-pytest failures are pre-existing environment issues, not introduced by this tool task.
+# shell: PowerShell 7.6.6
+# python: C:\Python314\python.exe (Python 3.14.6)
+# cwd: G:\CODEX\New Manga
+# started: 2026-10-23T21:04:48.8931550+08:00
+# purpose: prove the only 3 full-pytest failures are pre-existing environment/legacy issues, not introduced by this tool task.
 # command: git diff --stat 6e3ce06f9..HEAD -- src
 # exit: 0
+# command: git diff --stat 6e3ce06f9..HEAD -- apps
+# exit: 0
 # command: git diff --stat 6e3ce06f9..HEAD -- tests
- tests/tools/test_software_smoke.py | 160 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+ tests/tools/test_software_smoke.py | 219 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 219 insertions(+)
 # exit: 0
 # command: python -c "import transformers; print(transformers.__version__, hasattr(transformers, 'RTDetrV2ForObjectDetection'))"
-4.48.3 False# exit: 0
+4.48.3 False
+# exit: 0
 # command: python -m pytest tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately -q --tb=line
 FFF                                                                      [100%]
 ================================== FAILURES ===================================
@@ -23,12 +30,12 @@ The above exception was the direct cause of the following exception:
 E   ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
 G:\CODEX\New Manga\src\infrastructure\providers\detection_manga.py:535: ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
 E   assert False
-     +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x24aea4e3e40) at 0x0000024AF04F3C40>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000024AF050C040>, timeout_ms=15000)
+     +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x2c3c5f0ff30) at 0x000002C3C3413C80>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000002C3C342C040>, timeout_ms=15000)
 G:\CODEX\New Manga\tests\workbench\test_workbench_viewmodel.py:210: assert False
 =========================== short test summary info ===========================
 FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
 FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
 FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
-3 failed in 19.23s
+3 failed in 19.33s
 # exit: 1
-# conclusion: src/** and existing tests are unchanged by this task; the only 3 full-pytest failures are pre-existing environment/legacy-PySide6 issues.
+# conclusion: src/**, apps/** and all pre-existing tests are unchanged by this task (only tests/tools/ is new); the 3 full-pytest failures are pre-existing environment/legacy-PySide6 issues.

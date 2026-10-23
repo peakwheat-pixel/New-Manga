@@ -1,9 +1,12 @@
 # command: python -m tools.smoke.plugins --json verification/TOOL-SOFTWARE-SMOKE-1/smoke-report.json
-# started: 2026-10-23T20:26:19.4008446+08:00
-NM 软件检查工具 v1 — PASS（4 层，24 项检查，23.3s）
-  [PASS] Core 沙箱层（11 项，15.0s）
+# shell: PowerShell 7.6.6
+# python: C:\Python314\python.exe (Python 3.14.6)
+# cwd: G:\CODEX\New Manga
+# started: 2026-10-23T20:59:36.8104043+08:00
+NM 软件检查工具 v1 — PASS（4 层，24 项检查，24.0s）
+  [PASS] Core 沙箱层（11 项，15.5s）
   [PASS] Wire 层（6 项，0.5s）
-  [PASS] 前端层（2 项，7.4s）
+  [PASS] 前端层（2 项，7.5s）
   [PASS] 打包层（5 项，0.5s）
 报告：verification\TOOL-SOFTWARE-SMOKE-1\smoke-report.json
 # exit: 0
