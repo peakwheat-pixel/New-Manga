@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-SANDBOX-1
 author: dsh（Lead / Owner）
 recipient: reviewer-settings-a（独立 Review）
 base_commit: 1a17decf1
-delivery_head: 84a6378899f415a7847c80c354ea56099901be0f
+delivery_head: a022439990b3832e0a445d2c2538c213433fa847
 status: done
 authorization: 用户 2026-10-23「1」（选择候选 1 = 本 Task）
 ---
