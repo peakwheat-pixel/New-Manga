@@ -117,13 +117,16 @@ export function RecycleBinSettingsPanel({ client }: RecycleBinSettingsPanelProps
       }
       setNotice(`已永久删除 ${ids.length} 部作品。`);
     } catch (error) {
-      // The dialog renders this message and stays open so the user can retry
-      // or cancel; the list below is re-read on close.
+      // Review P2-5: a later batch may have failed after earlier ones already
+      // deleted their books. Re-read the bin so a retry never re-submits IDs
+      // that were just removed (it would answer BOOK_NOT_FOUND), and the
+      // dialog's targets shrink to the remaining books.
+      await load();
       throw new Error(mapClearError(error));
     } finally {
       setClearing(false);
     }
-  }, [activeClient, books]);
+  }, [activeClient, books, load]);
 
   const closeConfirm = useCallback(() => {
     setConfirmOpen(false);

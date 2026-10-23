@@ -1,9 +1,13 @@
+# command: npx vitest run src/library/client.test.ts src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx
+# started: 2026-10-23T08:42:42.1201210+08:00
+# exit: 0
 npm notice run m2rc1-frontend@0.1.0 npx
-npm notice run vitest run src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx
+npm notice run vitest run src/library/client.test.ts src/settings/RecycleBinSettingsPanel.test.tsx src/settings/SettingsPage.test.tsx
 
  RUN  v2.1.9 G:/CODEX/New Manga/apps/desktop/frontend
 
- ✓ src/settings/RecycleBinSettingsPanel.test.tsx (7 tests) 120ms
+ ✓ src/library/client.test.ts (18 tests) 8ms
+ ✓ src/settings/RecycleBinSettingsPanel.test.tsx (7 tests) 117ms
 stderr | src/settings/SettingsPage.test.tsx > SettingsPage layout & categories (AC1) > renders the fixed 200px category nav and the content panel
 Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
 
@@ -389,6 +393,7 @@ This ensures that you're testing the behavior the user would see in the browser.
     at div
     at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:69:25)
 
+ ✓ src/settings/SettingsPage.test.tsx (17 tests) 289ms
 stderr | src/settings/SettingsPage.test.tsx > Still-disabled partitions: visible, not operable, reasoned (AC2) > keeps a reasoned placeholder id for every still-closed partition
 Warning: An update to ProviderProfilePanel inside a test was not wrapped in act(...).
 
@@ -466,10 +471,9 @@ This ensures that you're testing the behavior the user would see in the browser.
     at div
     at SettingsPage (G:\CODEX\New Manga\apps\desktop\frontend\src\settings\SettingsPage.tsx:69:25)
 
- ✓ src/settings/SettingsPage.test.tsx (17 tests) 282ms
 
- Test Files  2 passed (2)
-      Tests  24 passed (24)
-   Start at  08:02:31
-   Duration  1.34s (transform 225ms, setup 0ms, collect 1.20s, tests 401ms, environment 0ms, prepare 237ms)
+ Test Files  3 passed (3)
+      Tests  42 passed (42)
+   Start at  08:42:47
+   Duration  1.36s (transform 255ms, setup 0ms, collect 1.23s, tests 413ms, environment 0ms, prepare 375ms)
 

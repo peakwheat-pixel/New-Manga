@@ -51,6 +51,22 @@ describe("LibraryClient", () => {
     expect(books[0].page_count).toBe(10);
   });
 
+  it("rejects a malformed recycle-bin projection instead of reporting an empty bin", async () => {
+    const invoke = vi.fn().mockResolvedValue({ not: "an array" });
+    const client = new LibraryClient(invoke);
+
+    await expect(client.listRecycleBinBooks()).rejects.toMatchObject({
+      code: "RECYCLE_BIN_MALFORMED",
+    });
+    expect(invoke).toHaveBeenCalledWith("library_list_recycle_bin_books");
+  });
+
+  it("returns the recycle-bin array when the projection is valid", async () => {
+    const invoke = vi.fn().mockResolvedValue([]);
+    const client = new LibraryClient(invoke);
+    await expect(client.listRecycleBinBooks()).resolves.toEqual([]);
+  });
+
   it("uses the frozen book and chapter create commands with closed payloads", async () => {
     expect(LIBRARY_CREATE_BOOK_COMMAND).toBe("library_create_book");
     expect(CREATE_CHAPTER_COMMAND).toBe("create_chapter");

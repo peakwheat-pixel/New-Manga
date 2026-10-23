@@ -130,7 +130,16 @@ export class LibraryClient {
   async listRecycleBinBooks(): Promise<BookSummary[]> {
     try {
       const res = await this.invoke(LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND);
-      return Array.isArray(res) ? (res as BookSummary[]) : [];
+      if (!Array.isArray(res)) {
+        // Review P2-4: a malformed projection must not be reported as an
+        // empty recycle bin — "nothing soft-deleted" and "the answer could not
+        // be parsed" are different states (AC1 of R-007).
+        throw new LibraryClientError(
+          "RECYCLE_BIN_MALFORMED",
+          "library_list_recycle_bin_books returned a non-array projection",
+        );
+      }
+      return res as BookSummary[];
     } catch (error) {
       if (error instanceof LibraryClientError) {
         throw error;

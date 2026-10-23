@@ -16,8 +16,12 @@
 1. `Ctrl+4` → 设置分类：回收站可点击（10 开 2 关：备份/恢复、Plugin 仍"未开放"）。
 2. 打开回收站：**真实读取 2 部作品**（标题列表、数量"回收站：2 部作品"、刷新/清空按钮、只读策略说明）——`screenshots/01-recycle-panel-2-books.png`。
 3. 点击「清空回收站」：弹出二次确认 dialog——标题"永久删除确认（不可逆）"、2 部作品列表、三条不可逆提示、"我理解不可恢复"勾选、取消/确认按钮——`screenshots/02-confirm-dialog-2-books.png`。
-4. **未完成**：在 GUI 中勾选"我理解不可恢复"并点击确认执行删除。UIA/SendInput 对该 checkbox 的点击未触发切换（工具限制，见备注），因此实际删除未在 GUI 执行；删除路径由 `RecycleBinSettingsPanel.test.tsx`（单批 payload 严格断言、25 本→20+5 分批、整库保护原样提示）与既有 Rust/Core 删除测试覆盖。
-5. 环境注记：cargo test 需 `M2RC1_DEV_PREVIEW=1` + `M2RC1_PYTHON`；本 checkout 缺 gitignored sidecar bundle，为 `tauri-build` 的 resource 探测创建了 `target/core-sidecar/core-sidecar/` 占位目录（不入库）。
+4. **真实清空（08:25–08:31）**：勾选方式为键盘（Tab 聚焦 checkbox → Space），确认执行后：
+   - 第一次执行时回收站 = 全库 → Core 返回 `BOOK_DELETE_BATCH_WHOLE_LIBRARY`，dialog 原样显示"不能删除整个书库：回收站包含全部作品，请保留至少一部作品。"（整库保护在真实链路生效，见 `screenshots/03-whole-library-guard.png`）。
+   - 在书架新建 1 部活跃作品（ActiveBook）后再次清空 → 成功：面板显示"回收站：0 部作品"、"已永久删除 2 部作品。"、"回收站为空。"，清空按钮禁用（`screenshots/04-clear-success.png`）。
+   - 数据库核对（隔离库）：`books` 仅剩 `ActiveBook`（`deleted_at IS NULL`），回收站 2 部作品的行已被真实删除（非软删除残留）。
+5. **结论**：React → Tauri → Core 的回收站查看/清空链路端到端可用；≤20 分批由 Vitest（25→20+5 payload 断言）覆盖，GUI 实测 2 部一次成功。
+6. 环境注记：cargo test 需 `M2RC1_DEV_PREVIEW=1` + `M2RC1_PYTHON`；本 checkout 缺 gitignored sidecar bundle，为 `tauri-build` 的 resource 探测创建了 `target/core-sidecar/core-sidecar/` 占位目录（不入库）。
 
 ## 备注
 
