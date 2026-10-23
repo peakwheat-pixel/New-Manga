@@ -22,6 +22,7 @@ allowed_paths:
   - src/application/export/service.py
   - src/infrastructure/providers/handlers.py
   - src/bootstrap/core_assembly.py
+  - src/bootstrap/core_service.py
   - tests/**
   - doc/tasks/PLUGIN-RUNTIME-2.md
   - doc/STATUS.md
@@ -64,6 +65,9 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 
 | EV-PLUGIN-RUNTIME-2-GATE | AC3 | verification/PLUGIN-RUNTIME-2/validation.md | - | 1a12582f86ac19ff13c41de160bd9b75918cc00e250d9cc4edacc4f3fea168cf | CANONICAL |
 
+| EV-PLUGIN-RUNTIME-2-R2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r2.log | - | 1c2b263058842e1a72ddfb9a4f73d105c29e59e4ab40ceef565f242c1b8dedf6 | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-R1 | review | verification/PLUGIN-RUNTIME-2/review-r1.md | - | 285f523b373c30e19add128313970e7ea0abb2421b5c83d869aa8a54790015cb | SOURCE_PIN |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -81,3 +85,7 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 
 
 Handoff：[交接](../handoffs/PLUGIN-RUNTIME-2.md)。实现 head 050530dfb78afaa9877eac1ce727cd40f69f5837；已派发 reviewer-settings-a 独立子代理，仅允许写 review-r1.md。
+
+Review r1 暴露导出 job.history 与最终 options 不一致、TEXT 内容提前生成；Codex 冻结修复范围为同一导出服务及 core_service 请求构造，统一准备有效输入后生成内容/快照，不增加 IPC。
+
+R1 P1/P2 已修复：prepare_request 在 job/history 冻结前幂等应用 before；text_content_factory 按最终 options 生成实际内容。真实 StartExport ZIP/TEXT 及重建 Runtime 历史一致性回归通过；扩展相关测试 102 passed / 0 skipped。待固定 head 后 r2 复审，r1 不适用于新修订。

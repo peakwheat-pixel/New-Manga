@@ -2942,13 +2942,13 @@ class CoreServiceServer:
 
         first_chapter = chapters[chapter_ids[0]]
         format_value = ExportFormat.SINGLE_IMAGE if fmt == "png" else ExportFormat(fmt)
-        text_content = self._text_export_bytes(fmt, options, text_pages) if fmt == "text" else None
         request = ExportRequest(
             book_id=book_id, chapter_id=page_chapter[ordered_ids[0]],
             format=format_value, output_path=target.path, pages=tuple(export_pages),
             mode="translated", overwrite_policy=OverwritePolicy.OVERWRITE,
             stale_policy=StalePolicy.ABORT if stale == "abort" else StalePolicy.CONTINUE,
-            format_options=options, text_content=text_content,
+            format_options=options,
+            text_content_factory=(lambda effective: self._text_export_bytes(fmt, effective, text_pages)) if fmt == "text" else None,
             book_metadata={"title": book.title, "author": book.author, "description": book.description},
             chapter_metadata={"title": first_chapter.title, "chapter_number": first_chapter.chapter_number, "chapter_ids": chapter_ids},
             lineage=tuple(lineage), image_encoder=encode_png,

@@ -179,6 +179,8 @@ class ExportRequest:
     target_context: Callable[[], ContextManager] | None = None
     publish_temp: Callable[[Path, Path], None] | None = None
     image_encoder: Callable[[bytes], bytes] | None = None
+    text_content_factory: Callable[[dict], bytes] | None = None
+    hooks_prepared: bool = False
 
 
 @dataclass(frozen=True)
@@ -240,11 +242,22 @@ class ExportService:
     # execution
     # ------------------------------------------------------------------
 
-    def export(self, request: ExportRequest) -> ExportResult:
+    def prepare_request(self, request: ExportRequest) -> ExportRequest:
+        if request.hooks_prepared:
+            return request
         if self._plugins is not None:
             def validate(candidate):
                 if not isinstance(candidate["format_options"], dict):
                     raise ValueError("format_options must be an object")
+                options = candidate["format_options"]
+                allowed = {
+                    ExportFormat.ZIP: ("compression", ("standard", "fast", "store")),
+                    ExportFormat.PDF: ("pdf_content", ("image_only", "searchable_dual_layer")),
+                    ExportFormat.TEXT: ("text_representation", ("txt", "json", "markdown")),
+                }.get(request.format)
+                if options and (allowed is None or set(options) != {allowed[0]}
+                                or options[allowed[0]] not in allowed[1]):
+                    raise ValueError("unsupported format options")
                 try:
                     self._validate(replace(request, **candidate))
                 except ExportError as error:
@@ -255,6 +268,12 @@ class ExportService:
                 "input": {"format_options": request.format_options or {}},
             }, validate)
             request = replace(request, **values)
+        if request.text_content_factory is not None:
+            request = replace(request, text_content=request.text_content_factory(request.format_options or {}))
+        return replace(request, hooks_prepared=True)
+
+    def export(self, request: ExportRequest) -> ExportResult:
+        request = self.prepare_request(request)
         result = self._export(request)
         if self._plugins is not None:
             self._plugins.run_hook("after_export", {
@@ -777,6 +796,8 @@ class P16ExportRuntime:
             self._job_store.write(self._jobs)
 
     def start(self, request: ExportRequest, target) -> dict:
+        if isinstance(self._exporter, ExportService):
+            request = self._exporter.prepare_request(request)
         export_id = request.export_id or f"exp-{uuid.uuid4().hex[:12]}"
         cancel = threading.Event()
         accepted_at = utc_now()

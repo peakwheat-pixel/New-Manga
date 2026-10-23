@@ -732,3 +732,49 @@ def test_replayed_ref_is_never_reconsumed_after_successful_export(tmp_path: Path
         server.close()
         catalog.close()
         core.conn.close()
+
+
+@pytest.mark.parametrize("fmt,initial,effective", [
+    ("zip", {"compression": "standard"}, {"compression": "store"}),
+    ("text", {"text_representation": "txt"}, {"text_representation": "json"}),
+])
+def test_export_hook_effective_options_match_content_and_history(tmp_path, fmt, initial, effective):
+    core, server, catalog, pages = _seed_core(tmp_path)
+    try:
+        plugin = tmp_path / "data" / "plugins" / "export-hook"
+        plugin.mkdir(parents=True)
+        (plugin / "manifest.json").write_text(json.dumps({
+            "id": "export-hook", "name": "Export", "version": "1.0.0",
+            "entry": "plugin.py", "hooks": ["before_export", "after_export"], "permissions": [],
+        }), encoding="utf-8")
+        (plugin / "plugin.py").write_text(
+            f"def before_export(payload):\n    return {{'format_options': {effective!r}}}\n"
+            "def after_export(payload):\n    return {'status': 'failed'}\n", encoding="utf-8")
+        core.plugins.set_plugin_enabled("export-hook", True)
+        core.plugins.set_global_enabled(True)
+        page_id = pages["chapter"][0]["page"].page_id
+        target = tmp_path / ("output." + fmt)
+        ref, _ = _make_grant(server, target, fmt)
+        response = _rpc(server, "StartExport", _export_payload("chapter", [page_id], fmt, initial, ref))
+        assert response["error"] is None, response
+        accepted = response["result"]
+        assert accepted["format_options"] == effective
+        assert _wait_export(server, accepted["export_id"])["status"] == "completed"
+        history = next(h for h in server._exports.history() if h["export_id"] == accepted["export_id"])
+        assert history["format_options"] == effective
+        if fmt == "zip":
+            with zipfile.ZipFile(target) as archive:
+                assert archive.infolist()[0].compress_type == zipfile.ZIP_STORED
+        else:
+            assert json.loads(target.read_text(encoding="utf-8"))["pages"][0]["page_id"] == page_id
+        thread = server._exports._threads.get(accepted["export_id"])
+        if thread is not None:
+            thread.join(timeout=12)
+            assert not thread.is_alive()
+        restored = type(server._exports)(core.export_service, core.export_history_store, core.export_job_store)
+        assert next(h for h in restored.history() if h["export_id"] == accepted["export_id"])["format_options"] == effective
+        events = core.plugins.audit_list(limit=100)
+        assert len([e for e in events if e["event_type"] == "hook_invoked"]) == 2
+    finally:
+        catalog.close()
+        core.conn.close()
