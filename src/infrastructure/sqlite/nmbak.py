@@ -30,6 +30,7 @@ resolved inside the configured backup root.
 from __future__ import annotations
 
 import hashlib
+import shutil
 import json
 import os
 import re
@@ -226,7 +227,18 @@ class NmbakBackupService:
         )
         try:
             self._extract_package(target, restore_dir)
-            restored_schema = self._restore_database(restore_dir / DB_NAME, manifest)
+            try:
+                restored_schema = self._restore_database(restore_dir / DB_NAME, manifest)
+            except NmbakBackupError as error:
+                if error.code == "BACKUP_RESTORE_INCOMPLETE":
+                    raise NmbakBackupError(
+                        error.code,
+                        error.detail.replace(
+                            "rollback package: pre_restore",
+                            f"rollback package: {pre_restore['backup_id']}",
+                        ),
+                    ) from error
+                raise
             self._restore_managed(restore_dir, manifest)
             consistency = self.managed_consistency_report()
             report = {
@@ -438,21 +450,30 @@ class NmbakBackupService:
                 # digest, and an unlisted managed member is corruption (a
                 # tampered package must never write files the manifest does
                 # not name).
+                # `revision_refs` is the authoritative population: a
+                # `managed_files` entry may only describe a path already in
+                # it, so a tampered manifest cannot self-authorize extra
+                # files.
                 allowed: set[str] = set()
-                for entry in (manifest.get("revision_refs") or []) + (
-                    manifest.get("managed_files") or []
-                ):
-                    member = MANAGED_PREFIX + str(entry.get("managed_path", "")).lstrip("/")
+                for ref in manifest.get("revision_refs") or []:
+                    member = MANAGED_PREFIX + str(ref.get("managed_path", "")).lstrip("/")
                     allowed.add(member)
                     if member not in names:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
-                            f"{package.name}: missing managed file {entry.get('managed_path')}",
+                            f"{package.name}: missing managed file {ref.get('managed_path')}",
                         )
-                    if hashlib.sha256(archive.read(member)).hexdigest() != entry.get("sha256"):
+                    if hashlib.sha256(archive.read(member)).hexdigest() != ref.get("sha256"):
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
-                            f"{package.name}: managed sha256 mismatch {entry.get('managed_path')}",
+                            f"{package.name}: managed sha256 mismatch {ref.get('managed_path')}",
+                        )
+                for item in manifest.get("managed_files") or []:
+                    member = MANAGED_PREFIX + str(item.get("managed_path", "")).lstrip("/")
+                    if member not in allowed:
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: managed_files entry not in revision_refs {item.get('managed_path')}",
                         )
                 for name in names:
                     if name.startswith(MANAGED_PREFIX) and name not in allowed:
@@ -491,13 +512,13 @@ class NmbakBackupService:
         return int(restored)
 
     def _restore_managed(self, restore_dir: Path, manifest: dict) -> None:
-        # Only the manifest's own population is written back (the verifier
-        # already rejected unlisted managed members).
-        members: set[str] = set()
-        for entry in (manifest.get("revision_refs") or []) + (
-            manifest.get("managed_files") or []
-        ):
-            members.add(str(entry.get("managed_path", "")).lstrip("/"))
+        # Only the authoritative revision_refs population is written back
+        # (the verifier already rejected unlisted managed members and any
+        # managed_files entry outside revision_refs).
+        members: set[str] = {
+            str(entry.get("managed_path", "")).lstrip("/")
+            for entry in (manifest.get("revision_refs") or [])
+        }
         for managed_path in sorted(members):
             relative = Path(managed_path)
             source = restore_dir / MANAGED_PREFIX / relative
@@ -510,13 +531,9 @@ class NmbakBackupService:
     @staticmethod
     def _remove_tree(path: Path) -> None:
         try:
-            for candidate in sorted(path.rglob("*"), reverse=True):
-                try:
-                    candidate.unlink()
-                except IsADirectoryError:
-                    candidate.rmdir()
-                except OSError:
-                    pass
+            shutil.rmtree(path, ignore_errors=True)
+        except OSError:
+            pass
             path.rmdir()
         except OSError:
             pass

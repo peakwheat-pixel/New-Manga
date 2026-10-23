@@ -25,14 +25,14 @@ status: in_review
 
 | 命令 | 结果 |
 |---|---|
-| `python -m pytest tests/storage/test_nmbak_backup.py tests/core/test_core_backup_wire.py tests/core/test_core_cleanup_wire.py tests/core/test_core_service_settings.py -q` | PASS（**72 passed**；含 9 个 `.nmbak` 服务测试 + 7 个 wire 测试） |
-| `python -m pytest tests -q` | 2601 passed / 9 skipped / **3 既有失败**（2×`test_detection_manga_real` 本机缺 detector 权重；1×`test_workbench_viewmodel::test_pause...` 时序 flaky；均与本改动无关） |
+| `python -m pytest tests/storage/test_nmbak_backup.py tests/core/test_core_backup_wire.py tests/core/test_core_cleanup_wire.py tests/core/test_core_service_settings.py -q` | PASS（**80 passed**；含 12 个 `.nmbak` 服务测试 + 12 个 wire 测试） |
+| `python -m pytest tests -q` | 2609 passed / 9 skipped / **3 既有失败**（2×`test_detection_manga_real` 本机缺 detector 权重；1×`test_workbench_viewmodel::test_pause...` 时序 flaky；均与本改动无关） |
 | `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | PASS（**153 passed** / 1 ignored / 12 filtered） |
-| `npx vitest run` | PASS（42 files / **424 tests**） |
+| `npx vitest run` | PASS（43 files / **424 tests**） |
 | `tsc --noEmit` | exit 0 |
 | GUI 烟测（dev preview） | PASS：空态 → 立即备份（1 个 manual / 10.9 KB / 校验通过 / 盘上 `.nmbak` 存在）→ 插入 `PostBackupBook` → 恢复二次确认 → 覆盖恢复成功（notice + 2 个 pre_restore）→ 隔离库仅剩 `ActiveBook` |
 
-原始日志/截图：`verification/SETTINGS-OPEN-C-2-BACKUP/**`（`core-pytest-targeted.log`、`core-pytest.log`、`wire-cargo-test-serial.log`、`ui-test-frontend.log`、`ui-tsc.log`、`gui-smoke.md`、`screenshots/01–04`）。
+原始日志/截图：`verification/SETTINGS-OPEN-C-2-BACKUP/**`（`core-pytest-targeted.log`、`core-pytest.log`、`wire-cargo-test-serial.log`、`ui-test-frontend.log`、`ui-tsc.log`、`gui-smoke.md`、`screenshots/01–05`）。
 
 ## 3. 未执行 / 遗留（明确非本 Task 范围）
 

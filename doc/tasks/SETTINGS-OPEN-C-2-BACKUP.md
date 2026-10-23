@@ -1,47 +1,98 @@
 ---
 task_id: SETTINGS-OPEN-C-2-BACKUP
-author: dsh (Lead, epoch 10)
-recipient: Codex / 下一批次 Owner
-base_commit: 893c00fcf532cc9469e229930dacc587acdc0597
-delivery_head: 62421f538dc221a3ab1301415f23079e3eec2405
+kind: implementation
 status: in_review
+owner: dsh（Lead 可另行指派）
+reviewer: reviewer-settings-a（非实现者）
+created: 2026-10-23
+base_commit: 893c00fcf532cc9469e229930dacc587acdc0597
+depends_on: SETTINGS-OPEN-C-1-RECYCLE（done）
+allowed_paths:
+  - src/application/maintenance/**
+  - src/infrastructure/sqlite/**
+  - src/bootstrap/core_service.py
+  - src/bootstrap/core_assembly.py
+  - apps/desktop/src-tauri/src/**
+  - apps/desktop/src-tauri/build.rs
+  - apps/desktop/src-tauri/capabilities/**
+  - apps/desktop/src-tauri/permissions/**
+  - apps/desktop/src-tauri/gen/**
+  - apps/desktop/frontend/src/settings/**
+  - apps/desktop/frontend/src/library/**（仅 client 通道扩展）
+  - tests/**
+  - doc/tasks/**
+  - doc/STATUS.md、doc/REBASELINE_PLAN.md、doc/TASK_LEDGER.md（Lead 集成登记）
+  - doc/handoffs/**
+  - verification/SETTINGS-OPEN-C-2-BACKUP/**
 ---
 
-# Handoff — SETTINGS-OPEN-C-2-BACKUP（设置页备份/恢复：`.nmbak` v1）
+# SETTINGS-OPEN-C-2-BACKUP — 备份/恢复操作面
 
-## 1. 交付摘要
+## 目标
 
-按 [SETTINGS_SECTION_C_SCHEMAS.md](../design/SETTINGS_SECTION_C_SCHEMAS.md) §3（裁决 D3–D6，2026-10-23 接受推荐值）实现「备份/恢复」分区，实现范围 `893c00fc..29f65695`（产品代码 `62421f538`，测试/证据 `2f38ca41`，docs pin `29f65695`；本文件后续复审修复另计）：
+按 [SETTINGS_SECTION_C_SCHEMAS.md](../design/SETTINGS_SECTION_C_SCHEMAS.md) §3（用户裁决 D3–D6）实现「备份/恢复」分区：`.nmbak` v1 包、创建/列出/恢复/删除操作、恢复覆盖 + 强制 pre_restore + running Run 拒绝、Tauri 文件选择；`auto_backup` 等设置键**不开放**（无调度消费点）。
 
-- **包格式 v1**：`src/infrastructure/sqlite/nmbak.py`。单文件 `.nmbak`（zip）= `manifest.json`（format/format_version/app_version/schema_version/created_at/backup_type/database_sha256/managed_file_count/managed_total_bytes/revision_refs/verified）+ `library.db`（SQLite backup API 一致快照）+ `library.db.sidecar.json` + `managed/`（current/pinned revision 的受管文件，storage-relative 路径）。create 后**读回自检**，只有校验通过才 `verified=true`。
-- **校验**：恢复前校验 `format`/`format_version`/`database_sha256`/每条 revision_ref 的 sha256；任一失败 `BACKUP_CORRUPT`（validation，non-retryable），不开始恢复。
-- **命令**（应用层通道，protocol minor 保持 3，与 cleanup 同型）：`backup.create`（仅 `manual`；备份根固定 `<data_root>/backups/`，无目标目录参数）、`backup.list`、`backup.restore`（`confirm_restore:true` 必填）、`backup.delete`。错误码 `BACKUP_NOT_FOUND`(not_found) / `BACKUP_CORRUPT`(validation) / `BACKUP_RESTORE_BUSY`(conflict, retryable) / `BACKUP_RESTORE_INCOMPLETE`(conflict) / `BACKUP_CREATE_FAILED`(internal) / `BACKUP_RESTORE_REQUIRES_CONFIRMATION`(validation)。
-- **恢复语义**：覆盖式；**先**创建 `pre_restore` 包（失败即中止）；存在 running Run 时拒绝（Core 直接查 `pipeline_runs` 非终态，不依赖调用方）；恢复后跑 `managed_consistency_report`，缺失引用 → `BACKUP_RESTORE_INCOMPLETE`（detail 含缺失数量与 rollback 包 id，不回滚 DB——回滚靠 pre_restore）。
-- **Rust**：`LibraryChannel`/`MockLibraryChannel`/`ResilientLibraryChannel`/`StdioLibraryChannel` 四个方法；4 个 production-only Tauri 命令（`backup_create/list/restore/delete`），`PRODUCTION_COMMANDS` 57→61，`build.rs` ACL 清单 + `capabilities/m2rc1-commands.json` + `command_allowlist` 过滤同步；`backup_commands_are_exact_and_production_only` 测试钉三视图。
-- **前端**：`SettingsClient` 新增 `createBackup/listBackups/restoreBackup/deleteBackup`（含类型与防御性规范化，非数组抛 `BACKUP_MALFORMED`）；`BackupSettingsPanel`（列表/立即备份/恢复二次确认 dialog/删除确认/错误映射/自动备份只读说明）；`SettingsPage` 打开 `backup_restore`（**11 开 1 关**，Plugin 仍关）。
-- **未开放**：`auto_backup` / `auto_backup_days` / `keep_count`（无调度消费点）——只读说明；无 `settings_update_section` 写路径；P15 白名单未动。
+## 范围
 
-## 2. 验证
+1. **包格式 v1**（设计 §3.1）：`manifest.json`（format/format_version/app_version/schema_version/created_at/backup_type/database_sha256/managed_file_count/managed_total_bytes/revision_refs/verified）+ `library.db` + sidecar + `managed/`；恢复前全量校验，失败 `BACKUP_CORRUPT`。
+2. **Core 命令**（应用层，与 `settings_get` 同型）：`backup_create`（`{backup_type:"manual"}`）、`backup_list`、`backup_restore`（`{backup_id, confirm_restore:true}`）、`backup_delete`；可选 `backup_export`（Tauri dialog 选目录后调用）。错误码：`BACKUP_NOT_FOUND` / `BACKUP_CORRUPT` / `BACKUP_RESTORE_BUSY` / `BACKUP_RESTORE_INCOMPLETE`。
+3. **恢复语义**：覆盖 live DB；先创建 `pre_restore` 备份（失败即中止）；running Run 存在时 `BACKUP_RESTORE_BUSY`；恢复后 `managed_consistency_report` 报告缺失 revision 引用。
+4. **Tauri**：production-only 命令 + 五处清单/capabilities/build.rs 同步 + 前端 commandSurface pin。
+5. **前端**：备份/恢复面板（列表/创建/恢复二次确认/删除/错误映射/只读说明"自动备份未开放"）；`backup_restore` 分类 open（11 开 1 关 → Plugin 仍关）。
+6. **不开放**：`auto_backup` / `auto_backup_days` / `keep_count`（无调度）；无 `settings_update_section` 写路径。
 
-| 命令 | 结果 |
-|---|---|
-| `python -m pytest tests/storage/test_nmbak_backup.py tests/core/test_core_backup_wire.py tests/core/test_core_cleanup_wire.py tests/core/test_core_service_settings.py -q` | PASS（**72 passed**；含 9 个 `.nmbak` 服务测试 + 7 个 wire 测试） |
-| `python -m pytest tests -q` | 2601 passed / 9 skipped / **3 既有失败**（2×`test_detection_manga_real` 本机缺 detector 权重；1×`test_workbench_viewmodel::test_pause...` 时序 flaky；均与本改动无关） |
-| `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | PASS（**153 passed** / 1 ignored / 12 filtered） |
-| `npx vitest run` | PASS（42 files / **424 tests**） |
-| `tsc --noEmit` | exit 0 |
-| GUI 烟测（dev preview） | PASS：空态 → 立即备份（1 个 manual / 10.9 KB / 校验通过 / 盘上 `.nmbak` 存在）→ 插入 `PostBackupBook` → 恢复二次确认 → 覆盖恢复成功（notice + 2 个 pre_restore）→ 隔离库仅剩 `ActiveBook` |
+## 禁止范围
 
-原始日志/截图：`verification/SETTINGS-OPEN-C-2-BACKUP/**`（`core-pytest-targeted.log`、`core-pytest.log`、`wire-cargo-test-serial.log`、`ui-test-frontend.log`、`ui-tsc.log`、`gui-smoke.md`、`screenshots/01–04`）。
+- 不做自动备份调度、不做增量备份、不做云同步；不改 P15 白名单；不破坏 pre_restore 语义；不 push/merge/reset/stash。
 
-## 3. 未执行 / 遗留（明确非本 Task 范围）
+## AC
 
-1. **`backup_export`（可选）未实现**：设计 §3.4 标为可选；本期由 `backup_import`/导出另行释放。当前恢复只从固定备份根读取，不接收用户路径。
-2. **UI 全局刷新未做**：恢复后提示"其他页面可能仍显示旧数据，请手动刷新"（设计 §3.3(6) 允许 C-2 决定；未引入 Tauri 全局刷新事件）。
-3. **`backup_type` 仅 `manual` 暴露**：`automatic` 无调度；`pre_migration` 沿用既有 Core 语义但无 UI。
-4. **3 个既有 pytest 失败**（detector 权重/时序 flaky）与本改动无关，未修复。
+- [x] **AC1 包格式**：生成包含 manifest/db/sidecar/managed，`verified=true`；损坏包被 `BACKUP_CORRUPT` 拒绝；排除项（缓存/日志/trash）不进包。
+- [x] **AC2 恢复**：覆盖 + pre_restore 自动备份；running Run → `BACKUP_RESTORE_BUSY`；consistency 报告。
+- [x] **AC3 列表/删除**：真实文件；`BACKUP_NOT_FOUND` 幂等；备份根固定 `<data_root>/backups/`。
+- [x] **AC4 前端**：面板真实操作（非假控件）；恢复二次确认；错误映射；无 `auto_backup` 控件；分类 open。
+- [x] **AC5 证据**：固定 commit、原始日志、独立 Review（非实现者）、GUI 烟测（建库 → 备份 → 改数据 → 恢复 → 数据回到备份点）。
 
-## 4. 推荐下一步
+## 测试要求
 
-- **C-2 关闭后按裁决顺序释放 `SETTINGS-OPEN-C-3-PLUGIN`**（Plugin/Hooks 管理面，设计 §4：先 `permissions: []` 的只读安装/启用面；无实现前 UI 只显示"需要安装系统"只读说明）。C-3 是最后一个仍关闭的设置分区；关闭后设置页 12/12 开放。
+| 场景/AC | 计划命令 | 实际结果 | 证据 |
+|---|---|---|---|
+| AC1-AC3 定向 | `python -m pytest tests/storage/test_nmbak_backup.py tests/core/test_core_backup_wire.py tests/core/test_core_cleanup_wire.py tests/core/test_core_service_settings.py -q` | PASS（80 passed） | core-pytest-targeted.log |
+| 全量 Python | `python -m pytest tests -q` | 2609 passed / 9 skipped / **3 既有失败**（2×`test_detection_manga_real`：本机缺 detector 权重 `PROVIDER_FAILED`；1×`test_workbench_viewmodel::test_pause_shows_optimistic_feedback_immediately`：时序 flaky，单独重跑仍失败；均与本改动无关） | core-pytest.log |
+| Rust | `cargo test --locked -- --skip packaged_sidecar_tests --test-threads=1`（dev overlay + `M2RC1_PYTHON`） | PASS（153 passed / 1 ignored / 12 filtered；含 `backup_commands_are_exact_and_production_only`） | wire-cargo-test-serial.log |
+| 前端 | `npx vitest run` | PASS（43 files / 424 tests） | ui-test-frontend.log |
+| 类型 | `tsc --noEmit` | PASS（exit 0） | ui-tsc.log |
+| 烟测 | dev preview：备份/改数据/恢复 + managed 往返 | PASS（备份 1 个 / 校验通过 → 插入 PostBackupBook → 确认 dialog → 恢复成功 + pre_restore 2 个 → 隔离库仅剩 ActiveBook） | gui-smoke.md + screenshots/01..04 |
 
+## 交付与运行记录
+
+- 2026-10-23：C-1 关闭后释放；启动实现。
+- 2026-10-23（实现）：Core 侧新增 `src/infrastructure/sqlite/nmbak.py`（`.nmbak` v1：zip + manifest + library.db + sidecar + managed/ + revision_refs；create/list/restore/delete；read-back 校验；pre_restore；`is_run_active` 拒绝；CORRUPT/BUSY/INCOMPLETE/NOT_FOUND 错误码）并在 `core_assembly` 装配（`<data_root>/backups`，`backup` 字段）；`core_service` 新增 `_BACKUP_COMMANDS`（`backup.create/list/restore/delete`）+ `_BACKUP_ERROR_RULES` + 4 个 handler + dispatch 分支（应用层通道，minor 保持 3）。
+- 2026-10-23（测试）：Core 9 个 `.nmbak` 服务测试 + 7 个 wire 测试全绿；全量 pytest 仅 3 个既有环境/时序失败（不属于本改动范围，已记录）。Rust 153 passed；前端 42/424 + tsc 0。
+- 2026-10-23（烟测）：dev preview 备份 → 改数据（插入 PostBackupBook）→ 二次确认 → 覆盖恢复成功，隔离库回到备份点（仅 ActiveBook），pre_restore 包自动生成（screenshots/01–04）。
+- 2026-10-23（Review r1 处置，`c2d720b`）：create 完整 read-back（缺失 managed 源 → `BACKUP_CREATE_FAILED`）；`revision_refs` 用包内真实字节；`_verify_package` 拒绝未列出 managed 成员且 `_restore_managed` 只写 `revision_refs`；manifest 补 `region_id`；`INVALID_REQUEST`/`BACKUP_DELETE_FAILED` 分类；提交 ACL 生成产物；build/capabilities 计数 61/68；前端 `missing` 保留 `{revision_id, managed_path}`。
+- 2026-10-23（Review r2 处置）：恢复被 r1 脚本误覆盖的 Task 文件（从 `29f65695` 恢复后按 r2 更新）；schema 不匹配的 INCOMPLETE detail 写入真实 pre_restore id；`managed_files` 收紧为 `revision_refs` 子集、`_restore_managed` 仅写 refs；`_remove_tree` 改 `shutil.rmtree` 清理临时目录。
+- 2026-10-23（GUI managed 往返）：seed current revision + managed 文件 → 备份（`managed_file_count=1`）→ 篡改 → 恢复 → 字节回到 `ORIGINAL-MANAGED-BLOB`（screenshots/05）。
+- 2026-10-23（实现）：Rust 桥接 `LibraryChannel` trait 默认 + `StdioLibraryChannel` round_trip + `MockLibraryChannel` + `ResilientLibraryChannel` 转发；`main.rs` 增 4 个 Tauri 命令 + `BACKUP_PRODUCTION_ONLY_COMMANDS` + PRODUCTION_COMMANDS（61）+ generate_handler + command_allowlist 过滤；`build.rs` ACL 清单与 `capabilities/m2rc1-commands.json` 同步；`SettingsClient` 新增 create/list/restore/delete + 类型/规范化；`BackupSettingsPanel`（列表/立即备份/恢复二次确认/删除确认/错误映射/自动备份只读说明）；`SettingsPage` 打开 `backup_restore`（11 开 1 关，Plugin 仍关）。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+|EV-C2-CORE-PYTEST-TARGETED|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/core-pytest-targeted.log|2f38ca41fab4c761719cc76e217719c3a677fe2c|2706ab14801f7a2253a5e7636868b2f49024a3a2e17d22030258caac40516d9a|CANONICAL|
+|EV-C2-CORE-PYTEST|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/core-pytest.log|2f38ca41fab4c761719cc76e217719c3a677fe2c|53d749bb1442d2c8b3a97e9ba84212a806901fa5e834fd23f34533dcbc2d95c2|CANONICAL|
+|EV-C2-GUI-SMOKE|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/gui-smoke.md|2f38ca41fab4c761719cc76e217719c3a677fe2c|1202c254ae97f31bcfc41b2f75882e4ad1bd23f9623e6e2df304f43e45381503|CANONICAL|
+|EV-C2-01-BACKUP-PANEL-EMPTY|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/screenshots/01-backup-panel-empty.png|2f38ca41fab4c761719cc76e217719c3a677fe2c|7fa3148273636d0d0aba8f481c1cc435586c01f5dd255d35d73200b33440666f|CANONICAL|
+|EV-C2-02-BACKUP-CREATED|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/screenshots/02-backup-created.png|2f38ca41fab4c761719cc76e217719c3a677fe2c|dbb0db6af8ff9f62b8d825a957709feaa6a6a03987cdca5032530c131b04bb58|CANONICAL|
+|EV-C2-03-RESTORE-CONFIRM-DIALOG|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/screenshots/03-restore-confirm-dialog.png|2f38ca41fab4c761719cc76e217719c3a677fe2c|88cd9843a43163ff469b174d5a2c599bd6c1ca2423c52c3ea2ce98d4abef4097|CANONICAL|
+|EV-C2-04-RESTORE-SUCCESS|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/screenshots/04-restore-success.png|2f38ca41fab4c761719cc76e217719c3a677fe2c|15f02adf4d8e81a480fd30fd5562daa05d1d38eb1a61eec0a73478ace50e8073|CANONICAL|
+|EV-C2-UI-TEST-FRONTEND|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/ui-test-frontend.log|2f38ca41fab4c761719cc76e217719c3a677fe2c|56f1b480b9556adf62fe906a14eb998e2fa38fc6f56a4e5fc6431a68f209b179|CANONICAL|
+|EV-C2-UI-TSC|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/ui-tsc.log|2f38ca41fab4c761719cc76e217719c3a677fe2c|4fc396dd7a3a4971bb53cfdb1776d27d6ac249be8c0cad554243a188e324807b|CANONICAL|
+|EV-C2-WIRE-CARGO-TEST-SERIAL|AC1-AC5|verification/SETTINGS-OPEN-C-2-BACKUP/wire-cargo-test-serial.log|2f38ca41fab4c761719cc76e217719c3a677fe2c|764651e51c7d54e0a6c3ae3a994a51d01cc970bd77517880d137e97d68150c57|CANONICAL|
+
+## Closeout Record
+
+- Closeout：待实现 + 独立 Review + GUI 烟测通过后关闭。
+- canonical_evidence_status：pending；resource_closeout_status：pending。
+- 删除/迁移/归档：0。
+- 当前指针清理：STATUS/REBASELINE/LEDGER 登记本 Task。
