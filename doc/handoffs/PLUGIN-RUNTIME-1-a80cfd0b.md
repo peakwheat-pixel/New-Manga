@@ -3,7 +3,7 @@ task_id: PLUGIN-RUNTIME-1
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: c793442946801bea7ab53799683cecc76260f672
-delivery_head: 7253286f5836fd5589c29d7bd3050b4383844f2f
+delivery_head: 97485b89d8d341e78c7c7160a9aba0291b662f42
 status: in_review
 authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D6」
 ---
@@ -12,7 +12,7 @@ authorization: 用户 2026-10-23「授权 PLUGIN-RUNTIME-1，按建议值 D1–D
 
 ## 1. 交付摘要
 
-按 `doc/design/SETTINGS_SECTION_C_SCHEMAS.md` §4.1–§4.4（冻结）+ 用户 2026-10-23 授权（D1–D6 按建议值）实现本地目录插件运行时，实现范围 `c7934429..7253286f`（实现 `a80cfd0b`，r1 修复 `7253286f`）：
+按 `doc/design/SETTINGS_SECTION_C_SCHEMAS.md` §4.1–§4.4（冻结）+ 用户 2026-10-23 授权（D1–D6 按建议值）实现本地目录插件运行时，实现范围 `c7934429..97485b89`（实现 `a80cfd0b`，r1 修复 `7253286f`，r2 修复 `97485b89`）：
 
 - **发现**（D4）：插件根 `<data_root>/plugins/<plugin_id>/`；只读扫描，不写插件文件，不做安装器/市场。
 - **manifest v1**（§4.2）：fail-closed 校验（id 正则 + 目录名一致、name ≤80、semver、entry 相对 `.py` 且存在/不越界、hooks ⊆ 6 组、permissions ⊆ 词表且**非空拒绝**、min_app_version）；拒绝码稳定（`PLUGIN_MANIFEST_MISSING/INVALID`、`PLUGIN_ID_MISMATCH`、`PLUGIN_UNKNOWN_HOOK`、`PLUGIN_UNKNOWN_PERMISSION`、`PLUGIN_PERMISSIONS_UNSUPPORTED`、`PLUGIN_ENTRY_INVALID`、`PLUGIN_MIN_APP_VERSION`）。
