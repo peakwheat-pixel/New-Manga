@@ -3,7 +3,7 @@ task_id: SETTINGS-OPEN-C-2-BACKUP
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: 893c00fcf532cc9469e229930dacc587acdc0597
-delivery_head: c2d720bdefedf0ada3d9f55c3e6b725bce2f85db
+delivery_head: 657c18d4a046c34de4e38885b9f5703a613c9d3d
 status: in_review
 ---
 
@@ -11,7 +11,7 @@ status: in_review
 
 ## 1. 交付摘要
 
-按 [SETTINGS_SECTION_C_SCHEMAS.md](../design/SETTINGS_SECTION_C_SCHEMAS.md) §3（裁决 D3–D6，2026-10-23 接受推荐值）实现「备份/恢复」分区。实现范围 `893c00fc..c2d720bd`（产品代码 `62421f538`，测试/证据 `2f38ca41`，docs pin `29f65695`，r1 复审修复 `c2d720bd`）：
+按 [SETTINGS_SECTION_C_SCHEMAS.md](../design/SETTINGS_SECTION_C_SCHEMAS.md) §3（裁决 D3–D6，2026-10-23 接受推荐值）实现「备份/恢复」分区。实现范围 `893c00fc..657c18d4`（产品代码 `62421f538`，测试/证据 `2f38ca41`，docs pin `29f65695`，r1 修复 `c2d720bd`，r2 修复 `657c18d4`）：
 
 - **包格式 v1**：`src/infrastructure/sqlite/nmbak.py`。单文件 `.nmbak`（zip）= `manifest.json`（format/format_version/app_version/schema_version/created_at/backup_type/database_sha256/managed_file_count/managed_total_bytes/revision_refs/verified）+ `library.db`（SQLite backup API 一致快照）+ `library.db.sidecar.json` + `managed/`（current/pinned revision 的受管文件，storage-relative 路径）。create 后**读回自检**，只有校验通过才 `verified=true`。
 - **校验**：恢复前校验 `format`/`format_version`/`database_sha256`/每条 revision_ref 的 sha256；任一失败 `BACKUP_CORRUPT`（validation，non-retryable），不开始恢复。
