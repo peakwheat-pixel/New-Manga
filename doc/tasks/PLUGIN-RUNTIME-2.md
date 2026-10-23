@@ -12,7 +12,7 @@ base_commit: d28b7a8b1449e5f4790470bcbbba10abcf3ab388
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 050530dfb78afaa9877eac1ce727cd40f69f5837
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/PLUGIN-RUNTIME-2
@@ -43,9 +43,9 @@ detect 输入可覆盖 options；ocr 可覆盖 script/direction/options；export
 
 ## Acceptance Criteria
 
-- [x] AC1 detect/ocr/export 真实入口调用 before/after，合法覆盖实际输入，只读 after。 <<MET>>
-- [x] AC2 Run 内全局关闭零插件调用，超时/崩溃跳过并审计、主链继续。 <<MET>>
-- [ ] AC3 固定提交与 Handoff、独立 Review 请求、治理 PASS、STATUS ≤3200 字节。 <<PARTIAL: 待交付>>
+- [x] **AC1** detect/ocr/export 真实入口调用 before/after，合法覆盖实际输入，只读 after。 <<MET>>
+- [x] **AC2** Run 内全局关闭零插件调用，超时/崩溃跳过并审计、主链继续。 <<MET>>
+- [x] **AC3** 固定提交与 Handoff、独立 Review 请求、治理 PASS、STATUS ≤3200 字节。 <<MET>>
 
 ## 禁止范围
 
@@ -60,12 +60,17 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 
+| EV-PLUGIN-RUNTIME-2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest.log | 050530dfb78afaa9877eac1ce727cd40f69f5837 | d93167e3fafec6c8a48d96159a771340ae522642c7c36bd11f5aa157b4926670 | CANONICAL |
+
+| EV-PLUGIN-RUNTIME-2-GATE | AC3 | verification/PLUGIN-RUNTIME-2/validation.md | - | 1a12582f86ac19ff13c41de160bd9b75918cc00e250d9cc4edacc4f3fea168cf | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | 原位 | main | 现有主工作区不清理 |
 | task-env/dataset/model/artifact/temp/exchange | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 无新增 |
+| temp | G:/CODEX/New Manga.workspace/temp/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | 原位 | pytest 独立运行目录 | 测试证据复现，无清理 |
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/PLUGIN-RUNTIME-2 | PRESERVE_REFERENCED | 原位 | 测试日志 | 测试恢复用 |
 
 ## 交付与运行记录
@@ -74,4 +79,5 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 
 实际验证：Python 3.14，81 passed / 0 skipped；命令见 pytest.log 对应 Handoff。check.ps1 PASS（3 warnings）；STATUS 预算通过。初次系统 temp ACL 失败后使用独立 workspace temp；装配顺序与中文 payload 编码问题已修复。
 
-| EV-PLUGIN-RUNTIME-2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest.log | — | d93167e3fafec6c8a48d96159a771340ae522642c7c36bd11f5aa157b4926670 | CANONICAL |
+
+Handoff：[交接](../handoffs/PLUGIN-RUNTIME-2.md)。实现 head 050530dfb78afaa9877eac1ce727cd40f69f5837；已派发 reviewer-settings-a 独立子代理，仅允许写 review-r1.md。
