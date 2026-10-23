@@ -1,0 +1,378 @@
+{
+  "schema": "nm-software-smoke/1",
+  "generated_at": "2026-10-23T13:38:37+00:00",
+  "started_at": "2026-10-23T13:38:13+00:00",
+  "duration_ms": 23649,
+  "status": "PASS",
+  "command": [
+    "--json",
+    "verification/GUI-PLUGIN-SANDBOX-SMOKE-1/smoke-tool-run.json"
+  ],
+  "environment": {
+    "platform": "win32",
+    "python": "3.14.6",
+    "repack": false,
+    "screenshots": "disabled",
+    "gui": "not_used",
+    "mouse": "not_used"
+  },
+  "summary": {
+    "status": "PASS",
+    "layers": 4,
+    "checks": 24,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 1,
+    "blocked": 0
+  },
+  "layers": [
+    {
+      "id": "core",
+      "name": "Core 沙箱层",
+      "status": "PASS",
+      "duration_ms": 14983,
+      "checks": [
+        {
+          "id": "CORE-PRODUCTION-WIRING",
+          "name": "生产装配挂载真实 AppContainer，而非静默无沙箱",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 0,
+          "detail": {
+            "sandbox": "AppContainerSandbox",
+            "shared_profile": false,
+            "interpreter": "python.exe"
+          }
+        },
+        {
+          "id": "CORE-DISCOVERY",
+          "name": "插件发现、permissions 拒绝语义与权限徽标数据",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 11,
+          "detail": {
+            "plugins": 8,
+            "rejected": "smoke-rejected-files",
+            "audit_types": [
+              "load_ok",
+              "load_rejected"
+            ]
+          }
+        },
+        {
+          "id": "CORE-STATE",
+          "name": "全局开关与插件启用/禁用往返，拒绝插件不可启用",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 73,
+          "detail": {
+            "global_kill_switch": "plugins_disabled"
+          }
+        },
+        {
+          "id": "CORE-BENIGN-HOOK",
+          "name": "无权限插件 Hook 正常执行并返回 schema_ref",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 1423,
+          "detail": {
+            "result": {
+              "pages": 3,
+              "schema_ref": "nm-plugin-hook/1"
+            }
+          }
+        },
+        {
+          "id": "CORE-FS-DENY",
+          "name": "插件根外读被 AppContainer 拒绝",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 1415,
+          "detail": {
+            "fs": "BLOCKED",
+            "winerror": null
+          }
+        },
+        {
+          "id": "CORE-NET-DENY",
+          "name": "无权限插件的网络栈被拒绝（PermissionError）",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 1525,
+          "detail": {
+            "net": "BLOCKED",
+            "kind": "PermissionError"
+          }
+        },
+        {
+          "id": "CORE-NET-ALLOW",
+          "name": "network 权限插件不被网络栈拒绝",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 5506,
+          "detail": {
+            "net": "BLOCKED",
+            "kind": "TimeoutError"
+          }
+        },
+        {
+          "id": "CORE-TIMEOUT",
+          "name": "Hook 超时返回 PLUGIN_HOOK_TIMEOUT，不中断调用方",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 2433,
+          "detail": {
+            "elapsed_ms": 2383
+          }
+        },
+        {
+          "id": "CORE-TREE-KILL",
+          "name": "超时后 Hook 子进程树被 Job Object 清理",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 2424,
+          "detail": {
+            "grandchild_pid": 28828,
+            "timed_out": true
+          }
+        },
+        {
+          "id": "CORE-FAIL-CLOSED",
+          "name": "无沙箱/沙箱损坏时 fail-closed 返回 PLUGIN_HOOK_UNAVAILABLE",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 125,
+          "detail": {
+            "sandbox_modes": [
+              "none",
+              "broken"
+            ]
+          }
+        },
+        {
+          "id": "CORE-AUDIT",
+          "name": "审计账本包含稳定事件类型且不写入 Hook 载荷",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 0,
+          "detail": {
+            "events": 82,
+            "types": [
+              "disabled",
+              "enabled",
+              "hook_invoked",
+              "load_ok",
+              "load_rejected",
+              "plugin_error"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "wire",
+      "name": "Wire 层",
+      "status": "PASS",
+      "duration_ms": 487,
+      "checks": [
+        {
+          "id": "WIRE-PING",
+          "name": "真实 Core 子进程启动并响应 core.ping",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 436,
+          "detail": {
+            "status": "ready",
+            "protocol_version": {
+              "major": 2,
+              "minor": 3
+            }
+          }
+        },
+        {
+          "id": "WIRE-PLUGINS-LIST",
+          "name": "plugins.list 默认关闭、拒绝语义与投影字段",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 3,
+          "detail": {
+            "plugins": 2
+          }
+        },
+        {
+          "id": "WIRE-PLUGINS-STATE",
+          "name": "plugins.set_enabled / set_plugin_enabled 状态往返",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 5,
+          "detail": {
+            "global": true,
+            "plugin": "smoke-wire-ok"
+          }
+        },
+        {
+          "id": "WIRE-PLUGINS-ERRORS",
+          "name": "类型化错误信封：拒绝/未知/畸形请求",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 3,
+          "detail": {
+            "codes": [
+              "PLUGIN_NOT_LOADED",
+              "PLUGIN_NOT_FOUND",
+              "PLUGIN_INVALID_REQUEST"
+            ]
+          }
+        },
+        {
+          "id": "WIRE-PLUGINS-AUDIT",
+          "name": "plugins.audit_list 账本形状与事件",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 0,
+          "detail": {
+            "events": 5,
+            "types": [
+              "disabled",
+              "enabled",
+              "load_ok",
+              "load_rejected"
+            ]
+          }
+        },
+        {
+          "id": "WIRE-SHUTDOWN",
+          "name": "core.shutdown 正常退出且无残留进程",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 30,
+          "detail": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "frontend",
+      "name": "前端层",
+      "status": "PASS",
+      "duration_ms": 7639,
+      "checks": [
+        {
+          "id": "FRONTEND-TSC",
+          "name": "前端 TypeScript 类型检查（tsc --noEmit）",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 2898,
+          "detail": {
+            "duration_ms": 2897
+          }
+        },
+        {
+          "id": "FRONTEND-VITEST",
+          "name": "前端全量 Vitest 通过（UI/UX 契约）",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 4736,
+          "detail": {
+            "test_files": 45,
+            "tests": 435,
+            "duration_ms": 4734
+          }
+        }
+      ]
+    },
+    {
+      "id": "packaged",
+      "name": "打包层",
+      "status": "PASS",
+      "duration_ms": 530,
+      "checks": [
+        {
+          "id": "PACKAGED-BUNDLE-FILES",
+          "name": "真实 core-sidecar bundle 的 Python 运行时布局完整",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 0,
+          "detail": {
+            "bundle": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+            "interpreter": "python/python.exe",
+            "required": [
+              "python/python.exe",
+              "python/plugin-python.txt",
+              "python/Lib/os.py",
+              "python/DLLs"
+            ]
+          }
+        },
+        {
+          "id": "PACKAGED-RUNTIME-SMOKE",
+          "name": "bundle 解释器在最小 PATH 下启动并导入 Hook 所需标准库",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 62,
+          "detail": {
+            "duration_ms": 61
+          }
+        },
+        {
+          "id": "PACKAGED-FROZEN-RESOLVE",
+          "name": "模拟 frozen sidecar 时 _hook_interpreter() 解析到 bundle 解释器",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 87,
+          "detail": {
+            "resolved": "python/python.exe"
+          }
+        },
+        {
+          "id": "PACKAGED-SANDBOX-HOOK",
+          "name": "bundle 解释器在真实 AppContainer 中执行插件 Hook",
+          "status": "PASS",
+          "code": null,
+          "message": "",
+          "duration_ms": 379,
+          "detail": {
+            "hook": "after_detect",
+            "result": {
+              "bundled": true
+            },
+            "interpreter": "python.exe",
+            "executable_verified": true
+          }
+        },
+        {
+          "id": "PACKAGED-REPACK-VERIFY",
+          "name": "--repack：复用 verify_bundled_python.ps1 复验复制与 Hook",
+          "status": "SKIP",
+          "code": "EXPECTED_REPACK_DISABLED",
+          "message": "未传 --repack，跳过打包脚本复验",
+          "duration_ms": 0,
+          "detail": {}
+        }
+      ]
+    }
+  ]
+}

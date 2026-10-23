@@ -1,0 +1,9 @@
+# command: python -m tools.smoke.plugins --only packaged --repack --json verification/GUI-PLUGIN-SANDBOX-SMOKE-1/smoke-tool-repack.json
+# started: 2026-10-23T21:39:04.6159899+08:00
+# exit: 0
+NM 软件检查工具 v1 — PASS（4 层，5 项检查，8.0s）
+  [SKIP] Core 沙箱层（显式跳过）
+  [SKIP] Wire 层（显式跳过）
+  [SKIP] 前端层（显式跳过）
+  [PASS] 打包层（5 项，7.9s）
+报告：G:\CODEX\New Manga\verification\GUI-PLUGIN-SANDBOX-SMOKE-1\smoke-tool-repack.json
