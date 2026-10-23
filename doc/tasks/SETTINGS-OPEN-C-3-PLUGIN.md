@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-3-PLUGIN
 kind: implementation
-status: in_review
+status: done
 owner: 待指派（非本 Task 实现者）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -63,7 +63,7 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout：待 Review approved 后 closeout（r1 生命周期/文案处置后复审）。
-- canonical_evidence_status：pending；resource_closeout_status：pending。
+- Closeout：2026-10-23 **done**（Review r2 approved，审查头 `6ff76761`，交付 `85128cd2`）。
+- canonical_evidence_status：**complete**；resource_closeout_status：**complete**。
 - 删除/迁移/归档：0。
 - 当前指针清理：STATUS/REBASELINE/LEDGER 登记本 Task。

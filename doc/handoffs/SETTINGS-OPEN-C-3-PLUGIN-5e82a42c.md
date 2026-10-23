@@ -3,7 +3,7 @@ task_id: SETTINGS-OPEN-C-3-PLUGIN
 author: dsh (Lead, epoch 10)
 recipient: Codex / 下一批次 Owner
 base_commit: 657c18d4a046c34de4e38885b9f5703a613c9d3d
-delivery_head: 5e82a42cabbe8927e98088c6f7e0d8002f15a339
+delivery_head: 85128cd2a3437442fde65c5991a0c07fe7a7ba86
 status: in_review
 ---
 
@@ -11,7 +11,7 @@ status: in_review
 
 ## 1. 交付摘要
 
-按 [SETTINGS_SECTION_C_SCHEMAS.md](../design/SETTINGS_SECTION_C_SCHEMAS.md) §4.5 交付最后一个设置分区的**无实现前只读面**，实现范围 `657c18d4..5e82a42c`：
+按 [SETTINGS_SECTION_C_SCHEMAS.md](../design/SETTINGS_SECTION_C_SCHEMAS.md) §4.5 交付最后一个设置分区的**无实现前只读面**，实现范围 `657c18d4..85128cd2`（实现 `5e82a42c`，r1 修复 `85128cd2`）：
 
 - `DisabledSection.tsx`：新增 `description?: string` 与 `showPlaceholderControl?: boolean`（默认 `true`，既有分区行为不变）；plugins 面 `showPlaceholderControl={false}`，**不渲染任何控件**。
 - `SettingsPage.tsx`：新增 `PLUGIN_SECTION_REASON = "插件系统尚未实现"` 与 `PLUGIN_SECTION_DESCRIPTION`（§4.5 原文：本地目录插件、manifest v1、Hook 默认禁用、崩溃隔离、审计；实现后管理已安装插件与权限）；nav 的 aria-label/title 与占位面板改用该 reason。`plugins` 仍 `open: false`（**11 开 1 关**）。
