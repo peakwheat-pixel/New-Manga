@@ -3,7 +3,7 @@ import { BackupSettingsPanel } from "./BackupSettingsPanel";
 import { CacheRevisionPanel } from "./CacheRevisionPanel";
 import { SettingsClient } from "./client";
 import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
-import { DisabledSection } from "./DisabledSection";
+import { DisabledSection, DISABLED_SECTION_REASON } from "./DisabledSection";
 import { InpaintSettingsPanel } from "./InpaintSettingsPanel";
 import { ModelGpuSettingsPanel } from "./ModelGpuSettingsPanel";
 import { NetworkProfilePanel } from "./NetworkProfilePanel";
@@ -29,10 +29,10 @@ import { tokens } from "../theme/tokens";
  * model/GPU (§4.1) and tasks/concurrency (§4.2) sections, batch B-2's
  * cache/Revision cleanup operation surface (§4.3), batch C-1's recycle-bin
  * view/clear surface (§2), and — batch C-2 — the backup/restore operation
- * surface (design doc/design/SETTINGS_SECTION_C_SCHEMAS.md §3). Only the
- * last batch C partition (plugin/hooks) still renders the disabled
- * placeholder with the reason "等待 section schema 冻结"; the nav badge
- * "未开放" only applies to that still-closed category.
+ * surface (design doc/design/SETTINGS_SECTION_C_SCHEMAS.md §3), and — batch
+ * C-3 — the plugin partition's frozen §4.5 read-only face: it stays closed
+ * (no runtime is installed) but explains the frozen plugin design in a
+ * dedicated placeholder with NO operable control.
  */
 export const SETTINGS_CATEGORY_ORDER = [
   "provider",
@@ -80,6 +80,13 @@ const SETTINGS_CATEGORIES: ReadonlyArray<{
 export const DISABLED_SECTION_TEST_IDS = {
   plugins: "settings-disabled-section-plugins",
 } as const;
+
+/** Batch C-3 §4.5: the plugin partition stays closed until a runtime exists.
+ * The nav and the placeholder use the frozen copy instead of the generic
+ * "等待 section schema 冻结" reason. */
+export const PLUGIN_SECTION_REASON = "插件系统尚未实现";
+export const PLUGIN_SECTION_DESCRIPTION =
+  "当前版本未安装插件运行时。设计已冻结（本地目录插件、manifest v1、Hook 默认禁用、崩溃隔离、审计）；实现后将在此管理已安装插件与权限。";
 
 export interface SettingsPageProps {
   client?: SettingsClient;
@@ -167,8 +174,20 @@ export function SettingsPage({ client }: SettingsPageProps) {
               data-open={cat.open}
               disabled={!cat.open}
               aria-disabled={!cat.open}
-              aria-label={cat.open ? undefined : `${cat.label}，未开放：等待 section schema 冻结`}
-              title={cat.open ? undefined : "等待 section schema 冻结"}
+              aria-label={
+                cat.open
+                  ? undefined
+                  : `${cat.label}，未开放：${
+                      cat.id === "plugins" ? PLUGIN_SECTION_REASON : DISABLED_SECTION_REASON
+                    }`
+              }
+              title={
+                cat.open
+                  ? undefined
+                  : cat.id === "plugins"
+                    ? PLUGIN_SECTION_REASON
+                    : DISABLED_SECTION_REASON
+              }
               onClick={() => {
                 if (cat.open) setActiveCategoryId(cat.id);
               }}
@@ -300,7 +319,15 @@ export function SettingsPage({ client }: SettingsPageProps) {
             <BackupSettingsPanel client={activeClient} />
           </div>
         )}
-        {activeCategoryId === "plugins" && <DisabledSection testId={DISABLED_SECTION_TEST_IDS.plugins} title="Plugin / Hooks" />}
+        {activeCategoryId === "plugins" && (
+          <DisabledSection
+            testId={DISABLED_SECTION_TEST_IDS.plugins}
+            title="Plugin / Hooks"
+            reason={PLUGIN_SECTION_REASON}
+            description={PLUGIN_SECTION_DESCRIPTION}
+            showPlaceholderControl={false}
+          />
+        )}
 
         <div data-testid="settings-active-category" data-category-id={activeCategoryId} style={{ display: "none" }}>
           {activeCategory?.label}

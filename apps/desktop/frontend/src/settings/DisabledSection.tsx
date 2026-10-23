@@ -2,10 +2,11 @@ import { tokens } from "../theme/tokens";
 
 /**
  * The P15 AC2 disabled-partition placeholder: every section whose schema is
- * not frozen (OCR / translation-context / inpaint / typography / reading
- * direction / model-GPU / concurrency / cache-revision / recycle bin (G2) /
- * backup / plugins) is VISIBLE, NOT operable, and states the reason
- * "等待 section schema 冻结". No mock values, no invented keys.
+ * not frozen is VISIBLE, NOT operable, and states the reason. Batch C-3 adds
+ * the plugin partition's frozen §4.5 copy: no runtime is installed yet, so the
+ * placeholder carries the dedicated reason/description and NEVER renders an
+ * operable-looking control (a plugin button without a runtime is a fake
+ * control). No mock values, no invented keys.
  */
 export const DISABLED_SECTION_REASON = "等待 section schema 冻结";
 
@@ -13,10 +14,14 @@ export function DisabledSection({
   testId,
   title,
   reason = DISABLED_SECTION_REASON,
+  description,
+  showPlaceholderControl = true,
 }: {
   testId: string;
   title: string;
   reason?: string;
+  description?: string;
+  showPlaceholderControl?: boolean;
 }) {
   return (
     <section
@@ -57,9 +62,24 @@ export function DisabledSection({
       >
         该分区暂不可编辑：{reason}。此处不会以占位数据或本地推断填充任何设置值。
       </p>
+      {description && (
+        <p
+          data-testid={`${testId}-description`}
+          style={{
+            fontSize: tokens.typography.size.secondary,
+            marginTop: tokens.spacing.sm,
+            color: tokens.color.text.secondary,
+            lineHeight: tokens.typography.lineHeight,
+            textAlign: "left",
+          }}
+        >
+          {description}
+        </p>
+      )}
       {/* Operable-looking control rendered disabled so the partition is
-       * visibly present but cannot be interacted with. */}
-      <button
+       * visibly present but cannot be interacted with. Partitions without a
+       * runtime (plugins, §4.5) suppress it entirely. */}
+      {showPlaceholderControl && <button
         type="button"
         disabled
         aria-disabled="true"
@@ -77,7 +97,7 @@ export function DisabledSection({
         }}
       >
         编辑该分区
-      </button>
+      </button>}
     </section>
   );
 }

@@ -1,7 +1,7 @@
 ---
 task_id: SETTINGS-OPEN-C-3-PLUGIN
 kind: implementation
-status: ready
+status: in_progress
 owner: 待指派（非本 Task 实现者）
 reviewer: reviewer-settings-a（非实现者）
 created: 2026-10-23
@@ -31,29 +31,30 @@ allowed_paths:
 
 ## 验收（AC）
 
-- [ ] **AC1 未开放保持**：`plugins` nav 按钮 `disabled`、aria-label/title 含"未开放"，`SETTINGS_CATEGORIES` 中 `open: false` 不变（11 开 1 关）。
-- [ ] **AC2 只读说明**：面板显示 §4.5 冻结文案（"插件系统尚未实现：当前版本未安装插件运行时……"），无任何可点控件（无 enable/reload/open-dir）。
-- [ ] **AC3 无新面**：无新增 Tauri 命令/`PRODUCTION_COMMANDS`/HostControl/`settings_update_section` 写路径；`plugins` 不出现在 `settings_get` 冻结键集。
-- [ ] **AC4 测试**：Vitest 断言 disabled + 文案 + 无按钮；全量前端测试与 tsc 通过；GUI 烟测（设置页 → Plugin/Hooks 显示只读说明）。
-- [ ] **AC5 证据**：固定 commit、原始日志、独立非实现者 Review、`verification/SETTINGS-OPEN-C-3-PLUGIN/**`。
+- [x] **AC1 未开放保持**：`plugins` nav 按钮 `disabled`、aria-label/title 含"未开放"，`SETTINGS_CATEGORIES` 中 `open: false` 不变（11 开 1 关）。
+- [x] **AC2 只读说明**：面板显示 §4.5 冻结文案（"插件系统尚未实现：当前版本未安装插件运行时……"），无任何可点控件（无 enable/reload/open-dir）。
+- [x] **AC3 无新面**：无新增 Tauri 命令/`PRODUCTION_COMMANDS`/HostControl/`settings_update_section` 写路径；`plugins` 不出现在 `settings_get` 冻结键集。
+- [x] **AC4 测试**：Vitest 断言 disabled + 文案 + 无按钮；全量前端测试与 tsc 通过；GUI 烟测（设置页 → Plugin/Hooks 显示只读说明）。
+- [x] **AC5 证据**：固定 commit、原始日志、独立非实现者 Review、`verification/SETTINGS-OPEN-C-3-PLUGIN/**`。
 
 ## 测试要求
 
 | 场景/AC | 计划命令 | 实际结果 | 证据 |
 |---|---|---|---|
-| AC1/AC3 前端 | `npx vitest run src/settings/SettingsPage.test.tsx` | 待填 | 待填 |
-| AC4 全量 | `npx vitest run` + `tsc --noEmit` | 待填 | 待填 |
-| 烟测 | dev preview：设置 → Plugin/Hooks | 待填 | 待填 |
+| AC1/AC3 前端 | `npx vitest run src/settings/SettingsPage.test.tsx src/settings/DisabledSection.test.tsx` | PASS（19 passed：plugins disabled + §4.5 文案 + 无按钮） | ui-test-frontend.log（节选） |
+| AC4 全量 | `npx vitest run` + `tsc --noEmit` | PASS（43 files / **426 tests**；tsc exit 0） | ui-test-frontend.log、ui-tsc.log |
+| 烟测 | dev preview：设置 → Plugin/Hooks | PASS（11 开 1 关；nav 可访问名 `Plugin/Hooks，未开放：插件系统尚未实现`；面板不可达/无控件） | gui-smoke.md + screenshots/01 |
 
 ## Canonical Evidence
 
 |evidence_id|ac|path|commit|sha256|status|
 |---|---|---|---|---|---|
-|EV-C3-EXAMPLE|AC1-AC5|PENDING|PENDING|PENDING|CANONICAL|
+|EV-C3-PENDING|AC1-AC5|PENDING|PENDING|PENDING|CANONICAL|
 
 ## 交付与运行记录
 
-- 2026-10-23：C-2 关闭后释放；等待启动。
+- 2026-10-23：C-2 关闭后释放；启动实现。
+- 2026-10-23（实现）：`DisabledSection` 增 `description`/`showPlaceholderControl`（plugin 面不渲染任何控件）；`SettingsPage` 常量 `PLUGIN_SECTION_REASON`/`PLUGIN_SECTION_DESCRIPTION`（§4.5 原文）、nav 与占位面板改用专属 reason；新增 `DisabledSection.test.tsx`（2 用例：冻结文案 + 无按钮 / 通用面保留 disabled 控件），`SettingsPage.test.tsx` 断言 plugins 文案。
 
 ## Closeout Record
 

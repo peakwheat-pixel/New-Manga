@@ -20,6 +20,8 @@ import { DISABLED_SECTION_TEST_IDS, SETTINGS_CATEGORY_ORDER, SettingsPage } from
  * batch C-2 opens backup/restore (create/list/restore/delete operation
  * surface; no auto_backup controls). Only plugins keep the disabled
  * placeholder and the "未开放" badge (11 open / 1 closed).
+ * SETTINGS-OPEN-C-3-PLUGIN keeps the plugin partition closed but swaps its
+ * placeholder reason for the frozen §4.5 copy (no operable control).
  */
 
 const OPEN_CATEGORY_IDS = [
@@ -203,7 +205,8 @@ describe("SettingsPage layout & categories (AC1)", () => {
       expect(button.disabled).toBe(true);
       expect(button.getAttribute("aria-disabled")).toBe("true");
       expect(button.getAttribute("aria-label")).toContain("未开放");
-      expect(button.getAttribute("title")).toContain("等待 section schema 冻结");
+      // Batch C-3 §4.5: the plugin partition uses its frozen reason.
+      expect(button.getAttribute("title")).toContain("插件系统尚未实现");
       expect(button.textContent).toContain("未开放");
     }
   });
@@ -492,8 +495,8 @@ describe("Still-disabled partitions: visible, not operable, reasoned (AC2)", () 
     expect(button.disabled).toBe(true);
     expect(button.getAttribute("aria-disabled")).toBe("true");
     expect(button.getAttribute("aria-label")).toContain("未开放");
-    expect(button.getAttribute("aria-label")).toContain("等待 section schema 冻结");
-    expect(button.title).toContain("等待 section schema 冻结");
+    expect(button.getAttribute("aria-label")).toContain("插件系统尚未实现");
+    expect(button.title).toContain("插件系统尚未实现");
     expect(button.textContent).toContain(label);
     expect(button.textContent).toContain("未开放");
   };
