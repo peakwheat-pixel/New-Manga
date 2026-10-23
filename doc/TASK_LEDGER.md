@@ -11,9 +11,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | non-terminal | 3 |
 | non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 0 |
-| task files tracked by git | 355 |
-| task files untracked (drafts) | 1 |
-| non-terminal tracked by git | 2 |
+| task files tracked by git | 356 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 3 |
 
 ## By status
 
@@ -24,16 +24,15 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
+| `in_review` | 2 | no |
 | `blocked` | 1 | no |
-| `in_progress` | 1 | no |
-| `in_review` | 1 | no |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
 | `GUI-PLUGIN-SANDBOX-SMOKE-1` | `blocked` | own row |
-| `TOOL-SOFTWARE-SMOKE-1` | `in_progress` | own row |
+| `TOOL-SOFTWARE-SMOKE-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 
 ## What this ledger does not say
