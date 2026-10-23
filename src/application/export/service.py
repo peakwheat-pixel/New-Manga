@@ -255,6 +255,8 @@ class ExportService:
                     ExportFormat.PDF: ("pdf_content", ("image_only", "searchable_dual_layer")),
                     ExportFormat.TEXT: ("text_representation", ("txt", "json", "markdown")),
                 }.get(request.format)
+                if not options and request.format_options:
+                    raise ValueError("required format option is missing")
                 if options and (allowed is None or set(options) != {allowed[0]}
                                 or options[allowed[0]] not in allowed[1]):
                     raise ValueError("unsupported format options")

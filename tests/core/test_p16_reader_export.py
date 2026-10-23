@@ -734,11 +734,12 @@ def test_replayed_ref_is_never_reconsumed_after_successful_export(tmp_path: Path
         core.conn.close()
 
 
-@pytest.mark.parametrize("fmt,initial,effective", [
-    ("zip", {"compression": "standard"}, {"compression": "store"}),
-    ("text", {"text_representation": "txt"}, {"text_representation": "json"}),
+@pytest.mark.parametrize("fmt,initial,override,effective", [
+    ("zip", {"compression": "standard"}, {"compression": "store"}, {"compression": "store"}),
+    ("text", {"text_representation": "txt"}, {"text_representation": "json"}, {"text_representation": "json"}),
+    ("text", {"text_representation": "txt"}, {}, {"text_representation": "txt"}),
 ])
-def test_export_hook_effective_options_match_content_and_history(tmp_path, fmt, initial, effective):
+def test_export_hook_effective_options_match_content_and_history(tmp_path, fmt, initial, override, effective):
     core, server, catalog, pages = _seed_core(tmp_path)
     try:
         plugin = tmp_path / "data" / "plugins" / "export-hook"
@@ -748,7 +749,7 @@ def test_export_hook_effective_options_match_content_and_history(tmp_path, fmt, 
             "entry": "plugin.py", "hooks": ["before_export", "after_export"], "permissions": [],
         }), encoding="utf-8")
         (plugin / "plugin.py").write_text(
-            f"def before_export(payload):\n    return {{'format_options': {effective!r}}}\n"
+            f"def before_export(payload):\n    return {{'format_options': {override!r}}}\n"
             "def after_export(payload):\n    return {'status': 'failed'}\n", encoding="utf-8")
         core.plugins.set_plugin_enabled("export-hook", True)
         core.plugins.set_global_enabled(True)
@@ -765,8 +766,10 @@ def test_export_hook_effective_options_match_content_and_history(tmp_path, fmt, 
         if fmt == "zip":
             with zipfile.ZipFile(target) as archive:
                 assert archive.infolist()[0].compress_type == zipfile.ZIP_STORED
-        else:
+        elif effective["text_representation"] == "json":
             assert json.loads(target.read_text(encoding="utf-8"))["pages"][0]["page_id"] == page_id
+        else:
+            assert target.read_text(encoding="utf-8")
         thread = server._exports._threads.get(accepted["export_id"])
         if thread is not None:
             thread.join(timeout=12)
@@ -775,6 +778,7 @@ def test_export_hook_effective_options_match_content_and_history(tmp_path, fmt, 
         assert next(h for h in restored.history() if h["export_id"] == accepted["export_id"])["format_options"] == effective
         events = core.plugins.audit_list(limit=100)
         assert len([e for e in events if e["event_type"] == "hook_invoked"]) == 2
+        assert bool([e for e in events if e["event_type"] == "plugin_error"]) == (override == {})
     finally:
         catalog.close()
         core.conn.close()

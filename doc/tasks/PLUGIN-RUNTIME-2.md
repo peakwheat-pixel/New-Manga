@@ -12,7 +12,7 @@ base_commit: d28b7a8b1449e5f4790470bcbbba10abcf3ab388
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 050530dfb78afaa9877eac1ce727cd40f69f5837
+delivery_head: 55af609b0cbb4d7dc29160df150b116989b3b0be
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/PLUGIN-RUNTIME-2
@@ -68,6 +68,9 @@ planned：定向 pytest 覆盖运行入口、覆盖/只读、超时/崩溃/全�
 | EV-PLUGIN-RUNTIME-2-R2-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r2.log | - | 1c2b263058842e1a72ddfb9a4f73d105c29e59e4ab40ceef565f242c1b8dedf6 | CANONICAL |
 | EV-PLUGIN-RUNTIME-2-R1 | review | verification/PLUGIN-RUNTIME-2/review-r1.md | - | 285f523b373c30e19add128313970e7ea0abb2421b5c83d869aa8a54790015cb | SOURCE_PIN |
 
+| EV-PLUGIN-RUNTIME-2-R3-TEST | AC1/AC2 | verification/PLUGIN-RUNTIME-2/pytest-r3.log | - | 167d81e5b5a23d7d0633fecc96e410aba426019d79c91556333697a3c3ce4d25 | CANONICAL |
+| EV-PLUGIN-RUNTIME-2-R2 | review | verification/PLUGIN-RUNTIME-2/review-r2.md | - | 64a9f5fcdb4de6b1d54f8f49f00713b36c0a221a6a623413980bd32e5178a5bc | SOURCE_PIN |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -89,3 +92,7 @@ Handoff：[交接](../handoffs/PLUGIN-RUNTIME-2.md)。实现 head 050530dfb78afa
 Review r1 暴露导出 job.history 与最终 options 不一致、TEXT 内容提前生成；Codex 冻结修复范围为同一导出服务及 core_service 请求构造，统一准备有效输入后生成内容/快照，不增加 IPC。
 
 R1 P1/P2 已修复：prepare_request 在 job/history 冻结前幂等应用 before；text_content_factory 按最终 options 生成实际内容。真实 StartExport ZIP/TEXT 及重建 Runtime 历史一致性回归通过；扩展相关测试 102 passed / 0 skipped。待固定 head 后 r2 复审，r1 不适用于新修订。
+
+当前交付 head：55af609b0cbb4d7dc29160df150b116989b3b0be；当前审查请求 r2，仅允许写 verification/PLUGIN-RUNTIME-2/review-r2.md。r1 为历史发现证据，不代表新 head 审查结论。
+
+R2 空 format_options 覆盖导致文本必需键丢失：现拒绝并 plugin_error 审计，原选项继续；真实 Core 空覆盖回归通过。最新 103 passed / 0 skipped。此前 pytest.log/pytest-r2.log 为历史过程，当前验收以 pytest-r3.log 为准。
