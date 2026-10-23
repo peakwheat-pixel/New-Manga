@@ -7,31 +7,29 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 356 |
-| terminal | 354 |
-| non-terminal | 2 |
-| non-terminal named in the plan | 2 |
+| terminal | 355 |
+| non-terminal | 1 |
+| non-terminal named in the plan | 1 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 356 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 2 |
+| non-terminal tracked by git | 1 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 285 | yes |
+| `done` | 286 | yes |
 | `closed_with_limitations` | 34 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `blocked` | 1 | no |
 | `in_review` | 1 | no |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
-| `GUI-PLUGIN-SANDBOX-SMOKE-1` | `blocked` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 
 ## What this ledger does not say

@@ -1,8 +1,7 @@
 ---
 task_id: GUI-PLUGIN-SANDBOX-SMOKE-1
 kind: verification
-status: blocked
-blocked_reason: 手工 GUI 冒烟成本过高（慢/占鼠标/token），用户 2026-10-23 指示暂停；等待工具化检查方案
+status: done
 owner: dsh（本会话 Lead）
 reviewer: （暂停，未进入 Review）
 created: 2026-10-23
@@ -43,4 +42,8 @@ allowed_paths:
 
 ## Closeout Record
 
-- 未 closeout：`paused`（等待工具化检查方案）。
+- Closeout：**done**（2026-10-23）。手工 GUI 冒烟由 `TOOL-SOFTWARE-SMOKE-1`（done，r2 approved `c680434e`）分层 headless 检查替代：
+  - 全量检查 `python -m tools.smoke.plugins` → **PASS（4 层 24 项，23.6s，exit 0）**：`smoke-tool-run.log` / `smoke-tool-run.json`；
+  - 打包层 `--only packaged --repack` → **PASS（5 项，8.0s，exit 0）**：`smoke-tool-repack.log` / `smoke-tool-repack.json`；
+  - 覆盖：Core 沙箱（真实 AppContainer：根外读拒绝、无权限网络拒绝、network 放行、超时 tree-kill、fail-closed、审计）、真实 Core wire、前端 tsc/Vitest 435、真实 bundle 解释器 + AppContainer Hook。
+- 仍如实保留的边界：未做真实 GUI 点击/拖拽与安装包端到端；GUI 内手工触发 Hook 未执行（由工具的真实 AppContainer 路径覆盖）；已保存的 GUI 截图证据仍有效。

@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：无 active；[GUI-PLUGIN-SANDBOX-SMOKE-1](tasks/GUI-PLUGIN-SANDBOX-SMOKE-1.md) `blocked`（手工 GUI 冒烟证据已存，待 Lead 依据工具化结果裁决）、[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md) `in_review`。
-- 最近完成：[TOOL-SOFTWARE-SMOKE-1](tasks/TOOL-SOFTWARE-SMOKE-1.md) `done`（分层软件检查工具，替代手工 GUI 冒烟；r2 approved `c680434ea`；工具测试 15 passed；全量 2687 passed/9 skipped/3 既有环境失败；证据 `verification/TOOL-SOFTWARE-SMOKE-1/`）。
+- 当前 Task：无 active；保留项 [V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md)（`in_review`，待证书/发布签核）。
+- 最近完成：[GUI-PLUGIN-SANDBOX-SMOKE-1](tasks/GUI-PLUGIN-SANDBOX-SMOKE-1.md) `done`（由检查工具替代关闭：全量 PASS 24 项/23.6s）、[TOOL-SOFTWARE-SMOKE-1](tasks/TOOL-SOFTWARE-SMOKE-1.md) `done`（分层软件检查工具；r2 approved `c680434ea`；证据 `verification/TOOL-SOFTWARE-SMOKE-1/`）。
 - 插件运行线完成：SANDBOX-1 `41d7abeb`、SANDBOX-2 `127c5111`、CAPABILITY-1 `0d3bbe49`、PACKAGED-PYTHON-1 `a1f05450`（均 approved）。
 - 更早完成：PLUGIN-RUNTIME-2 `done`；SETTINGS-OPEN-C-3-PLUGIN `done`；C-2/C-1、B-1、A-1 done；DEV-PREVIEW-1 `8ac00b97b`；父任务 GIT-MAINLINE-CONVERGENCE-1 `done`（`6997733bf`）。
 
