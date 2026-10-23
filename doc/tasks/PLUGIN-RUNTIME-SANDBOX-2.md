@@ -63,4 +63,3 @@ SANDBOX-1 为性能使用**共享容器**（所有插件同一 AppContainer SID�
 
 - 每个新插件首次 prepare 会一次性授予解释器 ACL（实测约 2s/插件）；`MAX_PROFILES=64`，超过即 fail-closed（`SandboxError`）。
 - `_profiles`/`_interpreter_sids` 无锁：并发首次 prepare 可能重复 `icacls`（重复授予无害，P3）。
-
