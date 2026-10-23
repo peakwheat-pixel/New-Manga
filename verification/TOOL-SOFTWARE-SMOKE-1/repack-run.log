@@ -1,0 +1,9 @@
+# command: python -m tools.smoke.plugins --only packaged --repack --json verification/TOOL-SOFTWARE-SMOKE-1/repack-report.json
+# started: 2026-10-23T20:27:06.9762072+08:00
+NM 软件检查工具 v1 — PASS（4 层，5 项检查，7.6s）
+  [SKIP] Core 沙箱层（显式跳过）
+  [SKIP] Wire 层（显式跳过）
+  [SKIP] 前端层（显式跳过）
+  [PASS] 打包层（5 项，7.4s）
+报告：verification\TOOL-SOFTWARE-SMOKE-1\repack-report.json
+# exit: 0

@@ -1,0 +1,5 @@
+# command: python -m pytest tests/tools -q
+# started: 2026-10-23T20:27:14.9488487+08:00
+.........                                                                [100%]
+9 passed in 1.63s
+# exit: 0
