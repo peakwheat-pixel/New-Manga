@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-rerender-page"
+description = "Enables the rerender_page command without any pre-configured scope."
+commands.allow = ["rerender_page"]
+
+[[permission]]
+identifier = "deny-rerender-page"
+description = "Denies the rerender_page command without any pre-configured scope."
+commands.deny = ["rerender_page"]

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "build": {
+    "devUrl": "http://localhost:5188"
+  },
+  "app": {
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: http://m2res.localhost; connect-src 'self' ipc: http://ipc.localhost http://m2res.localhost http://localhost:5188 ws://localhost:5188; font-src 'self'"
+    }
+  },
+  "bundle": {
+    "resources": []
+  }
+}

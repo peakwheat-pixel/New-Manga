@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-issue-resource-url"
+description = "Enables the issue_resource_url command without any pre-configured scope."
+commands.allow = ["issue_resource_url"]
+
+[[permission]]
+identifier = "deny-issue-resource-url"
+description = "Denies the issue_resource_url command without any pre-configured scope."
+commands.deny = ["issue_resource_url"]
