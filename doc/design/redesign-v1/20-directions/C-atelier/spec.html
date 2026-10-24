@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Manga · 方向 C 工坊 Atelier · 视觉规范 Spec</title>
+<meta name="description" content="方向 C 工坊 Atelier 的视觉规范页：状态色三重编码、矩阵图例、等宽数字、标尺裁切、图标与组件样例。">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* 规范页只做文档排版；所有颜色/间距/字号仍来自 styles.css 的令牌 */
+  body { overflow: auto; }
+  .spec { max-width: 1180px; margin: 0 auto; padding: var(--sp-6) var(--sp-5) var(--sp-6); }
+  .spec-head { display: flex; align-items: baseline; gap: var(--sp-4); border-bottom: var(--lh-1) solid var(--line-default); padding-bottom: var(--sp-3); }
+  .spec-head h1 { font-size: var(--fs-2xl); font-weight: var(--fw-strong); letter-spacing: 0.01em; }
+  .spec-head .meta { margin-left: auto; display: flex; gap: var(--sp-3); align-items: center; }
+  .sec { margin-top: var(--sp-6); }
+  .sec > h2 { font-size: var(--fs-xl); font-weight: var(--fw-strong); display: flex; align-items: baseline; gap: var(--sp-3); }
+  .sec > h2 .n { font-family: var(--font-data); font-size: var(--fs-sm); color: var(--accent-base); }
+  .sec > .lead { margin: var(--sp-2) 0 var(--sp-4); font-size: var(--fs-sm); color: var(--text-secondary); line-height: 1.65; max-width: 86ch; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+  .box { border: var(--lh-1) solid var(--line-default); background: var(--bg-panel); padding: var(--sp-3); }
+  .box > .lbl { margin-bottom: var(--sp-2); }
+  table.sp { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  table.sp th { text-align: left; height: var(--row-table); padding: 0 var(--sp-2); background: var(--bg-sunken);
+    border-bottom: var(--lh-1) solid var(--line-default); font-size: var(--fs-xs); letter-spacing: var(--ls-tracked);
+    text-transform: uppercase; color: var(--text-tertiary); font-weight: var(--fw-medium); }
+  table.sp td { height: var(--row-normal); padding: 0 var(--sp-2); border-bottom: var(--lh-1) solid var(--line-hair); color: var(--text-secondary); vertical-align: middle; }
+  table.sp td.mono, table.sp td.num { color: var(--text-primary); }
+  .sw { width: 34px; height: 18px; display: block; border: var(--lh-1) solid var(--line-default); }
+  .row { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+  .icon-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: var(--sp-2); }
+  .icon-cell { border: var(--lh-1) solid var(--line-hair); display: grid; place-items: center; gap: var(--sp-1);
+    padding: var(--sp-3) var(--sp-1); color: var(--text-secondary); font-size: var(--fs-xs); font-family: var(--font-data); }
+  .icon-cell .icon { width: 20px; height: 20px; color: var(--text-primary); }
+  .anti { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--sp-2) var(--sp-3); font-size: var(--fs-sm); }
+  .anti dt { font-family: var(--font-data); color: var(--st-failed); font-size: var(--fs-xs); padding-top: 1px; }
+  .anti dd { color: var(--text-secondary); }
+  .ruler-demo { display: flex; align-items: flex-end; gap: var(--sp-4); }
+  .spec-foot { margin-top: var(--sp-6); padding-top: var(--sp-3); border-top: var(--lh-1) solid var(--line-default);
+    font-size: var(--fs-xs); color: var(--text-tertiary); display: flex; gap: var(--sp-4); }
+  code { font-family: var(--font-data); font-size: var(--fs-xs); color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+<!-- 内联 SVG 图标（20×20，1.5px stroke，square cap）—— 与 index.html 同一套 sprite -->
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="s-detect" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 7.5v-3A1.5 1.5 0 0 1 4.5 3h3M17 7.5v-3A1.5 1.5 0 0 0 15.5 3h-3M3 12.5v3A1.5 1.5 0 0 0 4.5 17h3M17 12.5v3A1.5 1.5 0 0 1 15.5 17h-3"/>
+    <rect x="7" y="7" width="6" height="6"/></symbol>
+  <symbol id="s-ocr" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 4.5h14M3 8h14M3 11.5h9M3 15h6"/></symbol>
+  <symbol id="s-verify" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M4 10.5l3.5 3.5L15.5 5"/><path d="M3 17h14"/></symbol>
+  <symbol id="s-inpaint" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M4 16l1.4-4.4 8.1-8.1 2.9 2.9-8.1 8.1L4 16z"/><path d="M11.8 4.8l2.9 2.9"/></symbol>
+  <symbol id="s-render" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3" y="6.5" width="10" height="10.5"/><path d="M7 6.5V3h10v10.5h-4"/></symbol>
+  <symbol id="s-queue" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3" y="4" width="4" height="3"/><rect x="3" y="9" width="4" height="3"/><rect x="3" y="14" width="4" height="3"/>
+    <path d="M9.5 5.5h7.5M9.5 10.5h7.5M9.5 15.5h7.5"/></symbol>
+  <symbol id="s-grid" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3.5" y="3.5" width="13" height="13"/><path d="M3.5 8h13M3.5 12.5h13M8 3.5v13M12.5 3.5v13"/></symbol>
+  <symbol id="s-search" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="9" cy="9" r="4.5"/><path d="M12.5 12.5L17 17"/></symbol>
+  <symbol id="s-filter" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 5h14l-5.5 6v5.2l-3-1.6V11L3 5z"/></symbol>
+  <symbol id="s-retry" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M16 10a6 6 0 1 1-2-4.5"/><path d="M16 3v4h-4"/></symbol>
+  <symbol id="s-lock" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="4.5" y="9" width="11" height="7.5"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></symbol>
+  <symbol id="s-target" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="10" cy="10" r="5"/><path d="M10 2.5v3M10 14.5v3M2.5 10h3M14.5 10h3"/></symbol>
+  <symbol id="s-eye" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M2.5 10S5.3 5.5 10 5.5 17.5 10 17.5 10s-2.8 4.5-7.5 4.5S2.5 10 2.5 10z"/><circle cx="10" cy="10" r="2"/></symbol>
+  <symbol id="s-warn" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M10 3l7.2 13H2.8L10 3z"/><path d="M10 8v4.2M10 14.3v.6"/></symbol>
+  <symbol id="s-clock" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="10" cy="10" r="6.5"/><path d="M10 6v4.3l3 2"/></symbol>
+</svg>
+
+<div class="spec">
+
+  <div class="spec-head">
+    <h1>工坊 Atelier · 视觉规范</h1>
+    <span class="lbl">DIRECTION C · SPEC v1</span>
+    <div class="meta">
+      <span class="lbl">令牌源 tokens.json</span>
+      <button class="btn sm" id="themeBtn" type="button">切换深/浅</button>
+      <a class="btn sm" href="index.html?stage=detect&theme=dark">打开原型</a>
+    </div>
+  </div>
+
+  <!-- 1. 状态色系统 -->
+  <section class="sec">
+    <h2><span class="n">01</span>状态色系统 · 色相 + 明度 + 符号三重编码</h2>
+    <p class="lead">
+      状态色是本方向<strong>唯一允许的彩色</strong>。四组色相：绿（结果有效）/ 青（进行中）/ 紫（过期）/ 红（失败）；
+      琥珀与灰阶分别承担「门禁未通过」与「未开始 / 等待 / 跳过」。颜色永远不单独承担语义：
+      每个单元同时给出<strong>形状</strong>（实心 / 空心 / 半实心 / 斜纹 / 叉 / 短横 / 点）、
+      <strong>明度</strong>（同一色相内 saturated → 半透明阶梯）与<strong>文字键</strong>（在抽屉与图例中给出枚举名）。
+      任意两者失效时仍可判定。
+    </p>
+
+    <div class="grid2">
+      <div class="box">
+        <div class="lbl">7 个矩阵状态 · 三重编码对照</div>
+        <table class="sp">
+          <thead><tr><th>符号</th><th>状态键</th><th>色板</th><th>色相 / 语义</th><th>明度角色</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mk" data-st="completed"></span></td><td class="mono">completed</td>
+              <td><span class="sw" style="background:var(--st-done)"></span></td><td>绿 · 结果有效</td><td>基色</td></tr>
+            <tr><td><span class="mk" data-st="not_started"></span></td><td class="mono">not_started</td>
+              <td><span class="sw" style="background:var(--st-queued)"></span></td><td>灰 · 从未执行</td><td>低饱和</td></tr>
+            <tr><td><span class="mk" data-st="running"></span></td><td class="mono">running</td>
+              <td><span class="sw" style="background:var(--st-running)"></span></td><td>青 · 正在执行</td><td>基色 + 呼吸</td></tr>
+            <tr><td><span class="mk" data-st="stale"></span></td><td class="mono">stale</td>
+              <td><span class="sw" style="background:var(--st-stale)"></span></td><td>紫 · 曾成功已过期</td><td>基色 + 斜纹</td></tr>
+            <tr><td><span class="mk" data-st="failed"></span></td><td class="mono">failed</td>
+              <td><span class="sw" style="background:var(--st-failed)"></span></td><td>红 · 执行失败</td><td>基色</td></tr>
+            <tr><td><span class="mk" data-st="skipped"></span></td><td class="mono">skipped</td>
+              <td><span class="sw" style="background:var(--st-skipped)"></span></td><td>深灰 · 跳过/不适用</td><td>最低明度</td></tr>
+            <tr><td><span class="mk" data-st="pending"></span></td><td class="mono">pending</td>
+              <td><span class="sw" style="background:var(--st-pending)"></span></td><td>浅灰 · 等待上游</td><td>中间明度</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box">
+        <div class="lbl">符号对照 · 形状是最强编码</div>
+        <div class="legend" style="border:none;padding:0">
+          <div class="legend-grid">
+            <div class="legend-item"><span class="mk" data-st="completed"></span><span>实心圆</span><span class="lg-st">completed</span></div>
+            <div class="legend-item"><span class="mk" data-st="not_started"></span><span>空心圆</span><span class="lg-st">not_started</span></div>
+            <div class="legend-item"><span class="mk" data-st="running"></span><span>半实心（呼吸）</span><span class="lg-st">running</span></div>
+            <div class="legend-item"><span class="mk" data-st="stale"></span><span>斜纹方块</span><span class="lg-st">stale</span></div>
+            <div class="legend-item"><span class="mk" data-st="failed"></span><span>叉</span><span class="lg-st">failed</span></div>
+            <div class="legend-item"><span class="mk" data-st="skipped"></span><span>短横</span><span class="lg-st">skipped</span></div>
+            <div class="legend-item"><span class="mk" data-st="pending"></span><span>小点</span><span class="lg-st">pending</span></div>
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:var(--sp-4)">禁止组合</div>
+        <dl class="anti">
+          <dt>stale ≠ not_started</dt><dd>过期必须是独立形态（斜纹 + 紫），不得用空心圆；否则用户无法区分"没跑过"和"跑过但过期"。</dd>
+          <dt>failed ≠ 仅红色</dt><dd>失败必须带叉形与错误码；色盲与灰度打印下仍可判定。</dd>
+          <dt>skipped ≠ 无原因</dt><dd>短横必须可下钻到跳过原因（Lock / 策略 / 无目标）。</dd>
+          <dt>accent ≠ 状态</dt><dd>强调色（青绿）只用于焦点环、当前阶段指针、选中集合描边；不得用于状态填充。</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:var(--sp-3)">
+      <div class="box"><div class="lbl">门禁态（blocked）</div>
+        <div class="row"><span class="sw" style="background:var(--st-blocked)"></span><code>--st-blocked</code></div>
+        <p class="lead" style="margin:var(--sp-2) 0 0">琥珀 · 门禁未通过 / 低置信警告 / 需要人工介入。与 failed 的区别是"可继续但产物不完整"。</p></div>
+      <div class="box"><div class="lbl">强调态（accent）</div>
+        <div class="row"><span class="sw" style="background:var(--accent-base)"></span><code>--accent-base</code></div>
+        <p class="lead" style="margin:var(--sp-2) 0 0">青绿 · 焦点 / 当前项 / 选中集合。全屏占比目标 &lt; 2%。</p></div>
+      <div class="box"><div class="lbl">三级明度层级</div>
+        <div class="row"><span class="sw" style="background:var(--bg-sunken)"></span>
+          <span class="sw" style="background:var(--bg-panel)"></span>
+          <span class="sw" style="background:var(--bg-raised)"></span></div>
+        <p class="lead" style="margin:var(--sp-2) 0 0">sunken / panel / raised 三级明度 + 1px 边线替代阴影。本方向禁用一切阴影与渐变。</p></div>
+    </div>
+  </section>
+
+  <!-- 2. 矩阵图例 -->
+  <section class="sec">
+    <h2><span class="n">02</span>Page × Stage 矩阵 · 图例与单元规格</h2>
+    <p class="lead">
+      单元 <code>18 × 18</code> px（冻结），行高 <code>22</code> px，11 个阶段列（detect / ocr / color / term / translate / segment / mask_refine / inpaint / render / review / export），
+      其后是汇总、RGN 计数与事件列。图例<strong>常驻矩阵底部</strong>，承担教学；矩阵不是只读看板——单元可点击、可 Shift 框选、可 Enter 下钻。
+    </p>
+    <div class="grid2">
+      <div class="box">
+        <div class="lbl">单元状态样例（真实 .mk 组件）</div>
+        <div class="row" style="gap:var(--sp-1)">
+          <span class="cell" data-st="completed"><span class="mk" data-st="completed"></span></span>
+          <span class="cell" data-st="running"><span class="mk" data-st="running"></span></span>
+          <span class="cell" data-st="stale"><span class="mk" data-st="stale"></span></span>
+          <span class="cell" data-st="failed"><span class="mk" data-st="failed"></span></span>
+          <span class="cell" data-st="pending"><span class="mk" data-st="pending"></span></span>
+          <span class="cell" data-st="skipped"><span class="mk" data-st="skipped"></span></span>
+          <span class="cell" data-st="not_started"><span class="mk" data-st="not_started"></span></span>
+          <span class="cell" data-selected="1"><span class="mk" data-st="completed"></span></span>
+          <span class="cell" data-focus="1"><span class="mk" data-st="failed"></span></span>
+          <span class="cell" data-selected="1" data-focus="1"><span class="mk" data-st="stale"></span></span>
+        </div>
+        <div class="lbl" style="margin-top:var(--sp-3)">选中 / 焦点 / 选中且焦点</div>
+        <p class="lead" style="margin:var(--sp-1) 0 0">选中 = accent-muted 底 + 1px 描边；焦点 = 1px 描边；两者叠加 = 2px 描边（唯一允许的 2px 线宽）。</p>
+      </div>
+      <div class="box">
+        <div class="lbl">图例组件（常驻，2 列 × 4 行）</div>
+        <div class="legend" style="border:none;padding:0">
+          <div class="legend-grid">
+            <div class="legend-item"><span class="mk" data-st="completed"></span><span>完成</span><span class="lg-st">completed</span></div>
+            <div class="legend-item"><span class="mk" data-st="not_started"></span><span>未开始</span><span class="lg-st">not_started</span></div>
+            <div class="legend-item"><span class="mk" data-st="running"></span><span>进行中</span><span class="lg-st">running</span></div>
+            <div class="legend-item"><span class="mk" data-st="stale"></span><span>过期</span><span class="lg-st">stale</span></div>
+            <div class="legend-item"><span class="mk" data-st="failed"></span><span>失败</span><span class="lg-st">failed</span></div>
+            <div class="legend-item"><span class="mk" data-st="skipped"></span><span>跳过/不适用</span><span class="lg-st">skipped</span></div>
+            <div class="legend-item"><span class="mk" data-st="pending"></span><span>等待中</span><span class="lg-st">pending</span></div>
+            <div class="legend-item"><span class="mk" data-st="stale"></span><span>聚合行（Σ）</span><span class="lg-st">aggregate</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 等宽带宽数字 -->
+  <section class="sec">
+    <h2><span class="n">03</span>等宽带宽数字 · tabular-nums 对齐</h2>
+    <p class="lead">
+      页码、百分比、计数、耗时、Revision、Region 数一律使用 <code>--font-data</code>（Cascadia Mono）并开启
+      <code>font-variant-numeric: tabular-nums</code>，保证纵向对齐可扫读。右对齐数字列的末位对齐；
+      单位与后缀用 <code>--fs-xs</code> 三级灰，避免与数值争夺注意力。
+    </p>
+    <div class="grid2">
+      <div class="box">
+        <div class="lbl">对齐对比 · 等宽（上）vs 比例字（下）</div>
+        <table class="sp">
+          <tbody>
+            <tr><td class="mono">001</td><td class="num">100%</td><td class="mono">12:07</td><td class="mono">0.94</td><td class="mono">2.1 GiB</td></tr>
+            <tr><td class="mono">017</td><td class="num">62%</td><td class="mono">4m12s</td><td class="mono">0.71</td><td class="mono">284 MiB</td></tr>
+            <tr><td class="mono">023</td><td class="num">8%</td><td class="mono">0:09</td><td class="mono">0.43</td><td class="mono">1.4 GiB</td></tr>
+            <tr><td style="font-family:var(--font-ui)">001</td><td class="num" style="font-family:var(--font-ui)">100%</td>
+              <td style="font-family:var(--font-ui)">12:07</td><td style="font-family:var(--font-ui)">0.94</td>
+              <td style="font-family:var(--font-ui)">2.1 GiB</td></tr>
+          </tbody>
+        </table>
+        <p class="lead" style="margin:var(--sp-2) 0 0">末行故意用 UI 字体：数字宽度不一致，纵向难以比对——这正是要避免的。</p>
+      </div>
+      <div class="box">
+        <div class="lbl">数字出现的位置</div>
+        <dl class="anti" style="grid-template-columns:120px 1fr">
+          <dt>矩阵</dt><dd>页码、RGN 计数、百分比</dd>
+          <dt>计数胶囊</dt><dd>240 / 182 / 12 / 6 / 40，标签在上，数值用 --fs-xl</dd>
+          <dt>Run 状态带</dt><dd>Run 号、62%、12:07、ETA、failed 3</dd>
+          <dt>抽屉</dt><dd>错误码、重试次数 2/2、Provider、Revision 号</dd>
+          <dt>队列</dt><dd>18 / 2 / 2、耗时、百分比</dd>
+          <dt>阶段轨道</dt><dd>完成度百分比、异常计数（右对齐，异常归零时转三级灰）</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 标尺 / 裁切标记 -->
+  <section class="sec">
+    <h2><span class="n">04</span>标尺与裁切标记 · 真实功能而非装饰</h2>
+    <p class="lead">
+      允许且仅允许两种"边缘装饰"，因为它们对应真实几何：<code>.safe</code> = 安全区（Region 越界检测基准，页面内缩 6%），
+      <code>.trim</code> = 四角裁切标记（成品裁切边界与出血检查）。二者都画在页面图容器内、使用绝对百分比定位，随缩放同步，不可作为纯装饰贴在大屏上。
+    </p>
+    <div class="box">
+      <div class="ruler-demo">
+        <div class="art" style="width:120px;height:180px;border:var(--lh-1) solid var(--line-default)">
+          <span class="safe"></span><span class="trim"><i></i></span>
+          <span class="txt" style="left:14%;top:16%;width:30%;height:12%"></span>
+          <span class="txt" style="left:52%;top:16%;width:28%;height:12%"></span>
+          <span class="tone" style="left:8%;top:40%;width:46%;height:22%"></span>
+        </div>
+        <div class="art" style="width:120px;height:180px;border:var(--lh-1) solid var(--line-default)">
+          <span class="trim"><i></i></span>
+          <span class="rgn" data-n="1" style="left:14%;top:16%;width:30%;height:12%"></span>
+          <span class="rgn" data-n="2" data-t="sfx" style="left:56%;top:44%;width:30%;height:16%"></span>
+          <span class="rgn" data-n="3" data-t="narration" style="left:10%;top:72%;width:50%;height:8%"></span>
+        </div>
+        <div style="flex:1;min-width:0">
+          <table class="sp">
+            <tbody>
+              <tr><td><span class="mono">.safe</span></td><td>安全区内缩 6%；Region 越出即触发 DETECT 越界提示（示例：2 页 / 3 Region）</td></tr>
+              <tr><td><span class="mono">.trim</span></td><td>四角裁切标记；成品导出按此边界裁切，出血 0</td></tr>
+              <tr><td><span class="mono">.rgn</span></td><td>Region 覆盖框：绿 = 对白，琥珀 = 拟声，青 = 旁白，紫 = 注释；虚线 = needs_review</td></tr>
+              <tr><td><span class="mono">.mask</span></td><td>修复轨 Mask 覆盖（斜纹填充）；修复后页面用 <code>.is-clean</code> 隐藏文字块</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 图标 -->
+  <section class="sec">
+    <h2><span class="n">05</span>图标系统 · 20×20 / 1.5px / 方形端点</h2>
+    <p class="lead">
+      全部图标内联 SVG symbol，网格 20×20，线宽 1.5px，<code>stroke-linecap: square</code>，无圆角端点、无填充（除强调态）。
+      仅三档尺寸 12 / 16 / 20；当前项才允许使用 accent 色。共 15 枚，下图即真实内联 SVG 渲染。
+    </p>
+    <div class="icon-grid">
+      <div class="icon-cell"><svg class="icon"><use href="#s-detect"></use></svg>detect</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-ocr"></use></svg>ocr</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-verify"></use></svg>verify</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-inpaint"></use></svg>inpaint</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-render"></use></svg>render</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-queue"></use></svg>queue</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-grid"></use></svg>grid</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-search"></use></svg>search</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-filter"></use></svg>filter</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-retry"></use></svg>retry</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-lock"></use></svg>lock</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-target"></use></svg>target</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-eye"></use></svg>eye</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-warn"></use></svg>warn</div>
+      <div class="icon-cell"><svg class="icon"><use href="#s-clock"></use></svg>clock</div>
+    </div>
+  </section>
+
+  <!-- 6. 组件样例 -->
+  <section class="sec">
+    <h2><span class="n">06</span>组件样例</h2>
+    <div class="grid2">
+      <div class="box">
+        <div class="lbl">按钮 / 开关 / 键盘提示</div>
+        <div class="row" style="margin-bottom:var(--sp-2)">
+          <button class="btn" type="button">默认</button>
+          <button class="btn" type="button" data-tone="primary">主操作</button>
+          <button class="btn" type="button" data-tone="danger">危险</button>
+          <button class="btn sm" type="button">小号</button>
+          <button class="btn tall" type="button">高号</button>
+        </div>
+        <div class="row">
+          <span class="tgl" aria-pressed="true">仅异常</span>
+          <span class="tgl" aria-pressed="false">聚合行</span>
+          <kbd>Ctrl</kbd><kbd>K</kbd><kbd>Enter</kbd><kbd>Esc</kbd>
+        </div>
+      </div>
+      <div class="box">
+        <div class="lbl">计数胶囊（点击即筛选矩阵）</div>
+        <div class="row" style="gap:0;border:var(--lh-1) solid var(--line-hair)">
+          <button class="chip" type="button" aria-pressed="true"><span class="n">240</span><span>页</span><span class="u">页</span></button>
+          <button class="chip" type="button" data-kind="done"><span class="n">182</span><span>完成</span></button>
+          <button class="chip" type="button" data-kind="failed"><span class="n">12</span><span>失败</span></button>
+          <button class="chip" type="button" data-kind="stale"><span class="n">6</span><span>过期</span></button>
+          <button class="chip" type="button" data-kind="review"><span class="n">40</span><span>待确认</span></button>
+        </div>
+        <div class="lbl" style="margin-top:var(--sp-3)">阶段门禁段</div>
+        <div style="display:flex;border:var(--lh-1) solid var(--line-hair)">
+          <div class="gate-seg" data-gate="ok" style="flex:1"><span class="g-bar"><span class="g-fill" style="width:92%"></span></span><span class="g-pct">92%</span></div>
+          <div class="gate-seg" data-gate="warn" style="flex:1"><span class="g-bar"><span class="g-fill" style="width:78%"></span></span><span class="g-pct">78%</span><span class="g-ab">2</span></div>
+          <div class="gate-seg" data-gate="fail" style="flex:1"><span class="g-bar"><span class="g-fill" style="width:52%"></span></span><span class="g-pct">52%</span><span class="g-ab">9</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:var(--sp-3)">
+      <div class="lbl">Run 状态带（底部常驻，24px）</div>
+      <div class="runstrip" style="position:static">
+        <span class="rs-state"><span class="m"></span>Run #R-8831 · running</span>
+        <span class="rs-meta"><b>62%</b><span>· 12:07</span><span>· 18/23 页</span><span class="warn">· failed 2</span><span>· ETA 4m12s</span></span>
+        <span class="rs-prog"><span class="bar"><i style="width:62%"></i><span class="tick" style="left:78%"></span></span></span>
+        <span class="rs-acts"><button class="iconbtn" type="button"><svg class="icon"><use href="#s-queue"></use></svg></button></span>
+        <span class="rs-exp">详情</span>
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:var(--sp-3)">
+      <div class="lbl">错误呈现：就地标记 + 汇总入口（错误码 + 后果 + 建议动作）</div>
+      <div class="ip-err" style="border-left-width:2px">
+        <svg class="icon icon-12"><use href="#s-warn"></use></svg>
+        p018 · <b>ProviderRateLimitError</b> · 翻译被限流，2 次重试后停止 · 建议降低并发或更换 Provider
+        <button class="btn sm" type="button">重试该阶段</button>
+      </div>
+      <div class="mx-gate" style="padding:var(--sp-2) 0 0;border:none">
+        <div class="gate-line" data-tone="fail"><span class="tag">BLOCK</span><span class="mono">INPAINT</span>
+          <span class="grow">2 单元失败 · ModelLoadError（anime_lama_v2）</span>
+          <button class="btn sm" type="button">处置</button></div>
+        <div class="gate-line" data-tone="warn"><span class="tag">WARN</span><span class="mono">REVIEW</span>
+          <span class="grow">3 页待确认 · 其中 2 页有 needs_review Region</span>
+          <button class="btn sm" type="button">处置</button></div>
+        <div class="gate-line" data-tone="ok"><span class="tag">OK</span><span class="mono">DETECT</span>
+          <span class="grow">23/23 页已检测 · 0 页无 Region</span>
+          <button class="btn sm" type="button">处置</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 版式刻度 -->
+  <section class="sec">
+    <h2><span class="n">07</span>版式刻度 · 间距 / 字号 / 行高 / 圆角</h2>
+    <div class="grid2">
+      <div class="box">
+        <div class="lbl">间距（4 / 6 / 8 / 12 / 16 / 24）</div>
+        <div class="row" style="align-items:flex-end;gap:var(--sp-2)">
+          <span style="width:4px;height:28px;background:var(--accent-base)"></span>
+          <span style="width:6px;height:28px;background:var(--accent-base)"></span>
+          <span style="width:8px;height:28px;background:var(--accent-base)"></span>
+          <span style="width:12px;height:28px;background:var(--accent-base)"></span>
+          <span style="width:16px;height:28px;background:var(--accent-base)"></span>
+          <span style="width:24px;height:28px;background:var(--accent-base)"></span>
+        </div>
+        <div class="lbl" style="margin-top:var(--sp-3)">行高（矩阵 22 / 表 26 / 常规 30）</div>
+        <div class="row" style="gap:var(--sp-2)">
+          <span style="height:22px;width:60px;border:var(--lh-1) solid var(--line-default);font-size:var(--fs-xs);display:grid;place-items:center">22</span>
+          <span style="height:26px;width:60px;border:var(--lh-1) solid var(--line-default);font-size:var(--fs-xs);display:grid;place-items:center">26</span>
+          <span style="height:30px;width:60px;border:var(--lh-1) solid var(--line-default);font-size:var(--fs-xs);display:grid;place-items:center">30</span>
+        </div>
+      </div>
+      <div class="box">
+        <div class="lbl">字号（10 / 11 / 12 / 13 / 15 / 20）</div>
+        <div style="color:var(--text-secondary);line-height:1.9">
+          <div style="font-size:var(--fs-xs)">10 · 微标签 / 矩阵图例 / 单位</div>
+          <div style="font-size:var(--fs-sm)">11 · 次级正文 / 表头 / 树节点</div>
+          <div style="font-size:var(--fs-md)">12 · 基准正文</div>
+          <div style="font-size:var(--fs-lg)">13 · 工作面标题 / 抽屉标题</div>
+          <div style="font-size:var(--fs-xl)">15 · 计数数值 / Run 主进度</div>
+          <div style="font-size:var(--fs-2xl)">20 · 仅危险确认标题</div>
+        </div>
+        <div class="lbl" style="margin-top:var(--sp-3)">圆角上限 2px · 无阴影 · 无渐变</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. 反模式 -->
+  <section class="sec">
+    <h2><span class="n">08</span>反模式清单（评审红线）</h2>
+    <div class="box">
+      <dl class="anti">
+        <dt>渐变</dt><dd>不允许 linear/radial-gradient；深浅一律用 solid + 透明度。斜纹用内联 SVG pattern（stale）。</dd>
+        <dt>玻璃拟态</dt><dd>不允许 backdrop-filter / 半透明叠加层；层级靠 sunken→panel→raised 三级明度。</dd>
+        <dt>圆角 &gt; 2px</dt><dd>所有控件 0 或 2px；胶囊形仅用于 kbd / tag 等微元素，且不得做成圆角卡片。</dd>
+        <dt>装饰性阴影</dt><dd>elevation 恒为 none；抽屉与命令面板只靠 1px 边线 + 明度区分。</dd>
+        <dt>emoji</dt><dd>禁止。所有语义用 20×20 内联 SVG 或状态符号。</dd>
+        <dt>彩色图标</dt><dd>除状态色外图标一律 currentColor；accent 仅当前项。</dd>
+        <dt>卡片堆叠</dt><dd>不做卡片流。信息用表格 / 矩阵 / 分段 + 1px 分隔线组织。</dd>
+        <dt>纯展示大屏</dt><dd>矩阵必须可操作（选中 / 框选 / 下钻 / 批量动作）；任何数字都要能点进去。</dd>
+      </dl>
+    </div>
+  </section>
+
+  <div class="spec-foot">
+    <span>New Manga · 方向 C 工坊 Atelier</span>
+    <span>令牌源：tokens.json（DTCG）</span>
+    <span>样式源：styles.css</span>
+    <span>原型：index.html</span>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var KEY = 'nm.atelier.theme';
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
+    if (saved) root.setAttribute('data-theme', saved);
+    document.getElementById('themeBtn').addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem(KEY, next); } catch (e) { /* file:// 可能禁用存储 */ }
+    });
+  })();
+</script>
+</body>
+</html>

@@ -203,7 +203,7 @@ NM.RUNS = [
   {
     id: 'R-8831', task: 'translate_untranslated', scope: '第12话 · 23 页', state: 'running', pct: 62,
     elapsed: '12:07', eta: '4m12', total: 23, completed: 18, failed: 2, skipped: 1, waiting: 2,
-    current: '021.jpg · translate · step 5/9', canPause: true, canStop: true,
+    current: '021 translate 5/9', canPause: true, canStop: true,
     steps: [
       { k: 'detect', s: 'completed', t: '0.4s' }, { k: 'ocr', s: 'completed', t: '1.1s' },
       { k: 'color', s: 'completed', t: '0.2s' }, { k: 'term', s: 'completed', t: '0.3s' },
@@ -212,8 +212,8 @@ NM.RUNS = [
       { k: 'render', s: 'pending', t: '—' }
     ]
   },
-  { id: 'R-8830', task: 'reinpaint_selected', scope: '第11话 · 选中 5 页', state: 'completed', pct: 100, elapsed: '1:52', eta: '—', total: 5, completed: 5, failed: 0, skipped: 0, waiting: 0, current: '—' },
-  { id: 'R-8829', task: 'rerender_all', scope: '第10话', state: 'completed_with_failures', pct: 100, elapsed: '3:41', eta: '—', total: 22, completed: 21, failed: 1, skipped: 0, waiting: 0, current: 'OutputMappingError · p014' },
+  { id: 'R-8830', task: 'reinpaint_selected', scope: '第11话 · 5 页', state: 'completed', pct: 100, elapsed: '1:52', eta: '—', total: 5, completed: 5, failed: 0, skipped: 0, waiting: 0, current: '—' },
+  { id: 'R-8829', task: 'rerender_all', scope: '第10话', state: 'completed_with_failures', pct: 100, elapsed: '3:41', eta: '—', total: 22, completed: 21, failed: 1, skipped: 0, waiting: 0, current: 'OutputMappingError p014' },
   { id: 'R-8828', task: 'translate_all', scope: '第9话', state: 'blocked', pct: 0, elapsed: '0:00', eta: '—', total: 21, completed: 0, failed: 0, skipped: 0, waiting: 21, current: 'Provider 认证失效（401）' },
   { id: 'R-8827', task: 'translate_all', scope: '第8话', state: 'interrupted', pct: 37, elapsed: '5:19', eta: '—', total: 20, completed: 7, failed: 0, skipped: 0, waiting: 13, current: '异常退出 · 可继续' }
 ];
@@ -249,15 +249,15 @@ NM.REVS = [
 /* ---------- 13. 12 状态真相（13_STATE_MODELS §3） ---------- */
 NM.STATES = [
   { n: '01', key: 'empty', t: '空工作区', d: '数据根路径 + 导入入口 + 首次引导', act: '导入文件 / 导入文件夹 / 打开设置' },
-  { n: '02', key: 'importing', t: '导入中', d: '每文件状态 + 总进度 + 成功/失败计数', act: '取消 / 查看失败文件' },
-  { n: '03', key: 'import_part_fail', t: '导入部分失败', d: '失败文件列表与原因（格式/损坏/重复）', act: '重试失败项 / 跳过继续' },
-  { n: '04', key: 'chapter_empty', t: '章节无页面', d: '本章还没有页面 + 上一/下一章', act: '导入页面' },
-  { n: '05', key: 'page_no_region', t: '页面无 Region', d: '未检测到文字区域', act: '手动新建 Region / 重检测' },
-  { n: '06', key: 'running', t: '流水线运行中', d: 'Run #R-8831 · step 5/9 · 18/23 页', act: '暂停 / 停止 / 查看失败' },
-  { n: '07', key: 'paused', t: '暂停中', d: '当前步骤安全结束后暂停 · 已完成 18', act: '继续 / 停止' },
-  { n: '08', key: 'done_with_fail', t: '完成但有失败', d: 'completed_with_failures · 成果已保留 · 失败 2', act: '只重试失败 / 查看报告' },
-  { n: '09', key: 'blocked', t: '阻塞', d: 'blocked · Provider 认证失效 · 影响 21 页', act: '跳转修复配置 / 修复后恢复' },
-  { n: '10', key: 'resume', t: '中断恢复', d: '上次中断的 Run R-8827 与范围（第8话 20 页）', act: '继续 / 重新开始 / 放弃' },
+  { n: '02', key: 'importing', t: '导入中 / 部分失败', d: '每文件状态 + 总进度 + 成功/失败计数', act: '取消 / 查看失败文件 / 重试失败项' },
+  { n: '03', key: 'chapter_empty', t: '章节无页面 / 页面无 Region', d: '本章还没有页面；或页内未检测到文字区域', act: '导入页面 / 手动新建 Region / 重检测' },
+  { n: '04', key: 'running', t: '流水线运行中', d: 'Run #R-8831 · step 5/9 · 18/23 页', act: '暂停 / 停止 / 查看失败' },
+  { n: '05', key: 'paused', t: '暂停中', d: '当前步骤安全结束后暂停 · 已完成 18', act: '继续 / 停止' },
+  { n: '06', key: 'done_with_fail', t: '完成但有失败', d: 'completed_with_failures · 成果已保留 · 失败 2', act: '只重试失败 / 查看报告' },
+  { n: '07', key: 'blocked', t: '阻塞', d: 'blocked · Provider 认证失效 · 影响 21 页', act: '跳转修复配置 / 修复后恢复' },
+  { n: '08', key: 'resume', t: '中断恢复', d: '上次中断的 Run R-8827 与范围（第8话 20 页）', act: '继续 / 重新开始 / 放弃' },
+  { n: '09', key: 'partial', t: 'Region 部分完成', d: '同一页 9 个 Region：OCR 全完成，1 个翻译失败', act: '只重试该 Region / 换 Provider' },
+  { n: '10', key: 'stale', t: '过期 stale', d: '上游几何变更 → render/save 过期，历史版本保留', act: '重跑过期项 / 查看过期原因' },
   { n: '11', key: 'review_backlog', t: '待确认积压', d: '40 条待确认 · 按页/章分布 · 当前位置', act: '逐条确认 / 批量确认（显示影响面）' },
   { n: '12', key: 'danger', t: '危险确认', d: '影响对象数量 + 可撤销性 + 不可逆警告', act: '确认执行 / 取消（Esc 可退）' }
 ];

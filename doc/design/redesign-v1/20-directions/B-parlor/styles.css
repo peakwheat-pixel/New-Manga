@@ -2570,3 +2570,9 @@ svg {
     padding: var(--space-3) 0;
   }
 }
+
+/* Lead 补充：尊重系统减少动效偏好（14_INPUT_SPEC.md §8） */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+

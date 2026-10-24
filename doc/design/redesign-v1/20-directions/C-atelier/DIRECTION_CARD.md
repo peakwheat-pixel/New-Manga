@@ -87,3 +87,24 @@
 - 对个人单章作业偏"重"，很多功能用不上
 
 **最适合**：需要同时推进多章、以异常治理为核心、追求可观测与交付纪律的工作室或批量生产者。
+
+---
+
+## 7. 实现状态（2026-10-25 接手完成，dir-c-atelier-2）
+
+`index.html` / `styles.css` / `tokens.json` 沿用前人骨架（仅最小修补，见 `VISUAL_LANGUAGE.md §11`），交互层与其余交付补齐：
+
+| 文件 | 行数 | 职责 |
+|---|---|---|
+| `index.html` | 264 | DOM 骨架（新增 3 个 script 标签；`#bulk` 移入 `.main` 以匹配 CSS 定位） |
+| `styles.css` | 4073 | 样式层（末尾 §25 追加 3 条最小修补，未改既有令牌/规则） |
+| `tokens.json` | 168 | 令牌源（未改） |
+| `data.js` | 288 | 假数据，严格对齐 `00_SAMPLE_DATA`（23 页 × 11 阶段真实分布） |
+| `views.js` | 766 | 纯渲染：树 / 胶囊 / 矩阵 / 6 个工作面 / 抽屉 / 状态面板 / 命令面板 |
+| `app.js` | 754 | 状态、事件委托、框选、键盘、URL 参数（`stage/theme/state/filter/sel/drawer/run/matrix/palette`） |
+| `spec.html` | 455 | 视觉规范页（8 节，含 15 枚内联 SVG 图标与状态三重编码色板） |
+| 7 份文档 | 51–94 | VISUAL_LANGUAGE / IA / WORKSPACES / FLOW / STATES / INPUT / PROS_CONS |
+
+`SCREENSHOTS/`（本目录，全部经 `read_image` 自查）：`matrix-dark`、`matrix-selection`、`verify-dark`、`inpaint-dark`、`render-dark`、`ocr-dark`、`queue-dark`、`drawer-unit`、`states-panel`、`dialog-danger`、`palette`（1600×1000）+ `matrix-light-1280`（1280×800）+ `spec`（1600×2600 整页）。
+
+> 注：`../30-prototype/cmp-C-detect.png` 与 `cmp-C-verify.png` 生成于本次修补之前的旧版本，如需对比请用本目录 `SCREENSHOTS/` 为准。

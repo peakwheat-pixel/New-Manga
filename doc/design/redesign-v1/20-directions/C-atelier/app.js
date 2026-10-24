@@ -263,6 +263,33 @@
     renderStates();
     var s = NM.STATES.filter(function (x) { return x.key === key; })[0];
     if (!s) return;
+    if (key === 'partial') {
+      openDialog({
+        kicker: 'STATE 09 · PARTIAL REGION', title: 'Region 部分完成（同一页状态不一致）',
+        body: '<p>021.jpg 共 9 个 Region：OCR / 配色 / 术语全部完成，其中 <b>1 个 Region 翻译失败</b>（ProviderRateLimitError），其余 8 个已完成。</p>' +
+          '<div class="import-list">' +
+          '<div class="import-row" data-s="done"><span>R01–R06</span><span class="fn">对白 · 竖排</span><span>translate ✓</span><span class="st">done</span></div>' +
+          '<div class="import-row" data-s="failed"><span>R07</span><span class="fn">旁白 · 横排</span><span>ProviderRateLimitError</span><span class="st">failed</span></div>' +
+          '<div class="import-row" data-s="pending"><span>R08–R09</span><span class="fn">拟声词 / 注释</span><span>等待</span><span class="st">pending</span></div>' +
+          '</div>' +
+          '<p class="note">页级综合状态为「部分完成」；失败只影响 R07，重试该 Region 即可，不必整页重跑。</p>',
+        actions: [{ label: '只重试 R07', act: 'do-retry-failed' }, { label: '换 Provider', act: 'do-provider' }]
+      });
+      return;
+    }
+    if (key === 'stale') {
+      openDialog({
+        kicker: 'STATE 10 · STALE', title: '过期 stale（曾成功但已失效）',
+        body: '<p>020.jpg 的 <b>render / save</b> 为 <code>stale</code>：019.jpg 的 Region 几何在上次修复后变更，导致下游渲染结果不再是当前有效结果。</p>' +
+          '<div class="import-list">' +
+          '<div class="import-row" data-s="done"><span>DETECT–INPAINT</span><span class="fn">上游 8 个阶段</span><span>completed</span><span class="st">done</span></div>' +
+          '<div class="import-row" data-s="stale"><span>RENDER</span><span class="fn">过期原因：geometry@019</span><span>历史 r3 保留</span><span class="st">stale</span></div>' +
+          '</div>' +
+          '<p class="note">stale ≠ not_started，也 ≠ failed：结果曾经有效、历史版本仍在，只是当前不再是最新。重跑过期项即可恢复。</p>',
+        actions: [{ label: '重跑过期项', act: 'do-rerun-stale' }, { label: '查看过期原因', act: 'do-detail' }]
+      });
+      return;
+    }
     switch (key) {
       case 'empty':
         openDialog({
@@ -391,6 +418,8 @@
     if (ui.matrixMax) p.set('matrix', 'max'); else p.delete('matrix');
     if (ui.runOpen) p.set('run', '1'); else p.delete('run');
     if (ui.drawer) p.set('drawer', ui.drawer.r + ':' + ui.drawer.c); else p.delete('drawer');
+    var selKeys = Object.keys(ui.sel);
+    if (selKeys.length) p.set('sel', selKeys.join(',')); else p.delete('sel');
     try { history.replaceState(null, '', location.pathname + '?' + p.toString()); } catch (e) { /* file:// 下部分环境禁写 */ }
   }
   function readURL() {
@@ -410,8 +439,17 @@
       ui.drawer = { r: Math.min(+a[0] || 0, ui.pages.length - 1), c: Math.min(+a[1] || 0, 10) };
       ui.focus = { r: ui.drawer.r, c: ui.drawer.c };
     }
+    /* 深链选中：?sel=17:4,18:7（也用于截图验证批量动作条） */
+    var selp = p.get('sel');
+    if (selp) {
+      selp.split(',').forEach(function (kv) {
+        var a2 = kv.split(':'), r = +a2[0], c = +a2[1];
+        if (ui.pages[r] && c >= 0 && c <= 10) { ui.sel[r + ':' + c] = 1; ui.focus = { r: r, c: c }; }
+      });
+    }
     var st = p.get('state');
     if (st) setTimeout(function () { applyState(st); }, 0);
+    if (p.get('palette') === '1') setTimeout(openPalette, 0);
   }
 
   /* ---------------- 事件：点击委托 ---------------- */

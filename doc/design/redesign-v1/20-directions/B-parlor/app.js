@@ -26,18 +26,18 @@
   ];
 
   var STATES = [
-    ['空工作区', '首次启动，无作品', 'empty'],
-    ['导入中', '3 个文件夹 · 可取消', 'importing'],
-    ['导入部分失败', '2 个格式不支持', 'import-failed'],
-    ['章节无页面', '第13话还没有页面', 'no-pages'],
-    ['页面无 Region', '未检测到文字区域', 'no-regions'],
-    ['流水线运行中', 'Run #R-8831 · 62%', 'running'],
-    ['暂停中', '等待安全边界', 'paused'],
-    ['完成但有失败', '21 完成 / 2 失败', 'done-failed'],
-    ['阻塞', 'Provider 认证失效', 'blocked'],
-    ['中断恢复', '继续 / 重开 / 放弃', 'interrupted'],
-    ['Region 部分完成', 'OCR 完成、翻译失败', 'partial'],
-    ['过期 stale', '上游几何变更', 'stale']
+    ['空工作区', '首次启动，无作品', 'empty', '§9-01'],
+    ['导入中 / 部分失败', '3 文件夹 · 2 个格式不支持', 'importing', '§9-02'],
+    ['章节无页面 / 页面无 Region', '第13话无页；或页内 0 Region', 'no-pages', '§9-03'],
+    ['流水线运行中', 'Run #R-8831 · 62%', 'running', '§9-04'],
+    ['暂停中', '等待安全边界', 'paused', '§9-05'],
+    ['完成但有失败', '21 完成 / 2 失败', 'done-failed', '§9-06'],
+    ['阻塞', 'Provider 认证失效', 'blocked', '§9-07'],
+    ['中断恢复', '继续 / 重开 / 放弃', 'interrupted', '§9-08'],
+    ['Region 部分完成', 'OCR 完成、翻译失败', 'partial', '§9-09'],
+    ['过期 stale', '上游几何变更', 'stale', '§9-10'],
+    ['待确认队列', '3 条 needs_review · 逐条确认', 'review-queue', '§9-11'],
+    ['危险确认', '覆盖 2 条人工译文 · 不可撤销', 'danger-confirm', '§9-12']
   ];
 
   var ST = { row: 0, view: 'proof', theme: 'light', filter: 'all', zoom: 100, state: '', sel: [] };
@@ -232,7 +232,7 @@
   function renderStates() {
     $('#statesList').innerHTML = STATES.map(function (s, i) {
       return '<button class="state-item" data-state="' + s[2] + '">' +
-        '<span class="state-item__no mono">' + (i + 1) + '</span>' +
+        '<span class="state-item__no mono">' + (s[3] || (i + 1)) + '</span>' +
         '<span class="state-item__name">' + s[0] + '</span>' +
         '<span class="state-item__expr">' + s[1] + '</span>' +
         '<span class="state-item__apply">应用</span></button>';
@@ -281,6 +281,11 @@
         '<span class="banner__text">上次任务 #R-8827 在第8话中断，已完成 14 页成果保留</span>' +
         '<span class="banner__actions"><button class="btn btn--sm btn--solid">继续</button>' +
         '<button class="btn btn--sm">重新开始</button><button class="btn btn--sm btn--quiet">放弃</button></span></div>';
+    } else if (ST.state === 'review-queue') {
+      slot.innerHTML = '<div class="banner"><span class="banner__tag">REVIEW</span>' +
+        '<span class="banner__text">第 017 页 · 3 条 needs_review 待逐条确认（本章共 3 条）</span>' +
+        '<span class="banner__actions"><button class="btn btn--sm btn--solid">下一条待确认 →</button>' +
+        '<button class="btn btn--sm btn--quiet">确认本页全部</button></span></div>';
     } else slot.innerHTML = '';
   }
 
@@ -439,6 +444,9 @@
     if (id === 'empty' || id === 'no-pages') { /* view 内呈现空态 */ }
     else if (id === 'running' || id === 'paused' || id === 'done-failed') { ST.state = id; }
     render();
+    if (id === 'danger-confirm') {
+      openDialog('覆盖 2 条人工译文？', 'Region 2 与 Region 5 存在人工译文且已 translation_locked。继续将使 2 条人工成果被机器译文覆盖，不可撤销（旧 Revision 仍可在版本历史中恢复）。', ['取消', '仍要覆盖']);
+    }
   }
 
   /* ---- 启动 ---- */

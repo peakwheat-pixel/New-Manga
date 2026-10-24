@@ -63,18 +63,18 @@
   ];
 
   var STATES = [
-    { id: 'empty', name: '空工作区', desc: '首次启动，无任何作品', where: '资料柜' },
-    { id: 'importing', name: '导入中', desc: '3 个文件夹 · 每文件状态 · 可取消', where: '资料柜 · 导入条' },
-    { id: 'import-partial', name: '导入部分失败', desc: '2 个文件格式不支持，其余成功', where: '资料柜 · 导入条' },
-    { id: 'no-pages', name: '章节无页面', desc: '第 13 话还没有页面', where: '资料柜 · 页表' },
-    { id: 'no-regions', name: '页面无 Region', desc: '未检测到文字区域，需手动新建', where: '工位 · 画布' },
-    { id: 'running', name: '流水线运行中', desc: 'Run #R-8831 · 62% · 当前 021.jpg 翻译', where: '工位 · 流水线带' },
-    { id: 'paused', name: '暂停中', desc: '等待当前步骤安全结束后暂停', where: '工位 · 流水线带' },
-    { id: 'completed-with-failures', name: '完成但有失败', desc: '21 完成 / 2 失败 · 成果已保留', where: '工位 · 流水线带' },
-    { id: 'blocked', name: '阻塞', desc: 'Provider 认证失效，需修复配置', where: '工位 · 横幅' },
-    { id: 'interrupted', name: '中断恢复', desc: '继续 / 重新开始 / 放弃', where: '模态' },
-    { id: 'partial-region', name: 'Region 部分完成', desc: 'OCR 完成、翻译失败', where: '工位 · 检查器' },
-    { id: 'stale', name: '过期 stale', desc: '上游几何变更，渲染结果已过期', where: '工位 · 画布 + 带' }
+    { id: 'empty', no: '§9-01', name: '空工作区', desc: '首次启动，无任何作品', where: '资料柜' },
+    { id: 'importing', no: '§9-02', name: '导入中 / 部分失败', desc: '3 文件夹 · 2 个文件格式不支持', where: '资料柜 · 导入条' },
+    { id: 'no-pages', no: '§9-03', name: '章节无页面 / 页面无 Region', desc: '第13话无页；或页内 0 Region', where: '资料柜 / 工位' },
+    { id: 'running', no: '§9-04', name: '流水线运行中', desc: 'Run #R-8831 · 62% · 当前 021.jpg 翻译', where: '工位 · 流水线带' },
+    { id: 'paused', no: '§9-05', name: '暂停中', desc: '等待当前步骤安全结束后暂停', where: '工位 · 流水线带' },
+    { id: 'completed-with-failures', no: '§9-06', name: '完成但有失败', desc: '21 完成 / 2 失败 · 成果已保留', where: '工位 · 流水线带' },
+    { id: 'blocked', no: '§9-07', name: '阻塞', desc: 'Provider 认证失效，需修复配置', where: '工位 · 横幅' },
+    { id: 'interrupted', no: '§9-08', name: '中断恢复', desc: '继续 / 重新开始 / 放弃', where: '模态' },
+    { id: 'partial-region', no: '§9-09', name: 'Region 部分完成', desc: 'OCR 完成、翻译失败', where: '工位 · 检查器' },
+    { id: 'stale', no: '§9-10', name: '过期 stale', desc: '上游几何变更，渲染结果已过期', where: '工位 · 画布 + 带' },
+    { id: 'review-queue', no: '§9-11', name: '待确认队列', desc: '3 条 needs_review 积压 · 逐条确认', where: '工位 · 审阅条' },
+    { id: 'danger-confirm', no: '§9-12', name: '危险确认', desc: '将覆盖 2 条人工译文 · 不可撤销', where: '模态' }
   ];
 
   var CONSOLE_SECTIONS = [
@@ -270,6 +270,9 @@
     } else if (page.status === 'fail') {
       rail.hidden = false;
       rail.innerHTML = '<span class="reviewrail-label" style="color:var(--c-danger)">失败</span><span>' + esc(page.err) + ' · 翻译被限流，2 次重试后停止</span><span class="reviewrail-spacer"></span><button class="btn btn--sm" data-act="retry-fail">只重试失败</button>';
+    } else if (S.state === 'review-queue') {
+      rail.hidden = false;
+      rail.innerHTML = '<span class="reviewrail-label">待确认 3</span><span>第 017 页 · 3 条 needs_review 待逐条确认（本章共 3 条）</span><span class="reviewrail-spacer"></span><button class="btn btn--sm" data-act="next-review">下一条待确认</button>';
     } else {
       rail.hidden = true;
       rail.innerHTML = '';
@@ -569,7 +572,7 @@
     $('#stateList').innerHTML = STATES.map(function (s, i) {
       var on = S.state === s.id ? ' is-on' : '';
       return '<button class="state-row' + on + '" data-state="' + s.id + '">' +
-        '<span class="state-no">' + (i + 1) + '</span>' +
+        '<span class="state-no">' + (s.no || (i + 1)) + '</span>' +
         '<span class="state-main"><span class="state-name">' + s.name + '</span>' +
         '<span class="state-desc">' + s.desc + '</span></span>' +
         '<span class="state-where">' + s.where + '</span></button>';
@@ -633,6 +636,7 @@
     if (S.state === 'empty') { S.space = 'library'; }
     else if (S.state === 'no-pages' || S.state === 'importing' || S.state === 'import-partial') { S.space = 'library'; }
     else if (S.state === 'interrupted') { S.space = 'studio'; }
+    else if (S.state === 'review-queue' || S.state === 'danger-confirm') { S.space = 'studio'; }
     else { if (S.space !== 'console') S.space = 'studio'; }
 
     if (S.state === 'empty') {
@@ -664,6 +668,8 @@
         '<div class="modal-choice-list"><div class="modal-choice"><strong>继续</strong><span>从断点恢复，不重跑已完成步骤</span></div>' +
         '<div class="modal-choice"><strong>重新开始</strong><span>丢弃本 Run 的未完成单元，从头跑</span></div>' +
         '<div class="modal-choice"><strong>放弃</strong><span>保留已有成果，把 Run 标记结束</span></div></div>', ['继续（推荐）', '重新开始', '放弃'], 'warn');
+    } else if (S.state === 'danger-confirm') {
+      openModal('覆盖 2 条人工译文？', '<div class="modal-impact">Region 2 与 Region 5 存在人工译文且已 <span class="mono">translation_locked</span>。继续将使 2 条人工成果被机器译文覆盖，<strong>不可撤销</strong>（但旧 Revision 仍可在历史中恢复）。</div>', ['取消', '仍要覆盖'], 'warn');
     } else { closeModal(); }
 
     renderCrumb(); renderFilm(); renderStage(); renderInspector(); renderPipeline(); renderConsole(); renderStates(); renderBanner();

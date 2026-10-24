@@ -4004,8 +4004,10 @@ body.matrix-max .matrix {
       中段 1fr 留出大片空洞。新增 .is-stack 变体：页头 / 页图 / 页切换条 / Region 检查清单。
    ============================================================================= */
 .ip-canvas .art {
+  width: 100%;
   height: auto;
   max-width: 100%;
+  max-height: 100%;
 }
 
 .vf-page.is-stack {
@@ -4062,4 +4064,10 @@ body.matrix-max .matrix {
 .vf-chk-row:hover {
   background: var(--bg-raised);
   color: var(--text-primary);
+}
+
+/* 3) 状态面板条目：标题与描述在原型里同为 <span>，需块级化才不挤在一行 */
+.st-item .tt,
+.st-item .dd {
+  display: block;
 }

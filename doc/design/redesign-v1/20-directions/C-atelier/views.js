@@ -181,8 +181,7 @@
       var d = NM.CHIPS.filter(function (c) { return c.k === ui.filter; })[0];
       h += '<span class="filter-flag">筛选：' + esc(d.label) + ' · 全批 ' + d.n + ' 页' + ic('i-close') + '</span>';
     }
-    h += '<span class="sel-note">本章 <b>' + NM.CHAPTER.pages + '</b> 页 · 失败 <b>' + NM.CHAPTER.failed + '</b> · 过期 <b>' +
-      NM.CHAPTER.stale + '</b> · 待确认 <b>' + NM.CHAPTER.review + '</b></span>';
+    h += '<span class="sel-note">本章 <b>' + NM.CHAPTER.pages + '</b> 页 · 待确认 <b>' + NM.CHAPTER.review + '</b></span>';
     return h;
   };
 
@@ -476,14 +475,14 @@
     var h = '<div class="ip">';
 
     h += '<div class="ip-pane"><div class="ip-pane-head">原图 ORIGINAL<span class="chip-route">source · 只读</span></div>' +
-      '<div class="ip-canvas">' + art({ seed: 19, regions: NM.REGIONS, safe: true, txts: 1 }) + '</div>' +
+      '<div class="ip-canvas">' + art({ seed: 19, regions: NM.REGIONS, safe: true, tones: 3, txts: 3 }) + '</div>' +
       '<div class="ip-strip"><span class="lbl">页</span>' +
       [7, 17, 18, 19, 20, 21].map(function (n) {
         return '<button class="pg" data-page="' + NM.pad3(n) + '" data-f="' + (n === 19 ? 'failed' : '') + '"' + (n === 19 ? ' aria-current="true"' : '') + '>' + n + '</button>';
       }).join('') + '</div></div>';
 
     h += '<div class="ip-pane"><div class="ip-pane-head">修复后 CLEAN<span class="chip-route">anime_lama_v2</span></div>' +
-      '<div class="ip-canvas">' + art({ seed: 19, clean: true, masks: masks, txts: 1 }) + '</div>' +
+      '<div class="ip-canvas">' + art({ seed: 19, clean: true, masks: masks, txts: 3 }) + '</div>' +
       '<div class="ip-strip"><span class="lbl">Mask</span>' +
       '<button class="pg" data-action="toggle-mask" aria-current="true">叠加</button>' +
       '<button class="pg" data-action="toggle-diff">差分</button>' +
@@ -499,7 +498,7 @@
           '<span class="sub">' + r.geo.map(function (x) { return Math.round(x); }).join(', ') + ' %</span></button>';
       }).join('') + '</div>' +
       '<div class="ip-err">' + ic('i-warn', 'icon-12') +
-      'p019 · <b>ModelLoadError</b> · 权重 anime_lama_v2 缺失 · 本页修复未产出' +
+      'p019 · <b>ModelLoadError</b>' +
       '<button class="btn sm" data-action="install-model">安装模型</button></div>' +
       '</div>';
 
@@ -542,7 +541,7 @@
       '<button class="btn sm" data-action="discard-run">放弃</button></span></div>';
 
     h += '<div class="q-table-wrap"><table class="q-table"><thead><tr>' +
-      '<th>Run</th><th>任务</th><th>范围</th><th>状态</th><th>进度</th><th>完成/失败/等待</th><th>耗时</th><th>当前</th>' +
+      '<th>Run</th><th>任务</th><th>范围</th><th>状态</th><th>进度</th><th>统计</th><th>耗时</th><th>当前</th>' +
       '</tr></thead><tbody>';
     NM.RUNS.forEach(function (r) {
       var cur = r.id === 'R-8831';
@@ -555,7 +554,7 @@
         '<span class="pct">' + r.pct + '%</span></div></td>' +
         '<td class="num">' + r.completed + ' / ' + r.failed + ' / ' + r.waiting + '</td>' +
         '<td class="num">' + r.elapsed + '</td>' +
-        '<td class="mono" style="max-width:220px;overflow:hidden;text-overflow:ellipsis">' + esc(r.current) + '</td>' +
+        '<td class="mono" style="max-width:180px;overflow:hidden;text-overflow:ellipsis">' + esc(r.current) + '</td>' +
         '</tr>';
     });
     h += '</tbody></table></div>';
