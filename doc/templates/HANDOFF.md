@@ -1,7 +1,7 @@
 ---
 task_id: TASK-xxx
 author: 待填写
-recipient: Codex
+recipient: DeepSeek Harness
 base_commit: null
 delivery_head: null
 status: draft
@@ -30,7 +30,7 @@ status: draft
 - Task ID / 标题：
 - 推荐 Agent / Reviewer：
 - 推荐原因与前置依赖：
-- Recovery point：仓库、branch/worktree、固定 base/head；未创建的 worktree 必须写“待 Codex 创建”：
+- Recovery point：仓库、branch/worktree、固定 base/head；未创建的 worktree 必须写“待 DSH 创建”：
 - 允许修改路径：
 - 禁止范围与新增授权条件：
 - 交付物：
@@ -43,7 +43,7 @@ status: draft
 
 未解决问题、用户选择、破坏性操作/迁移影响、回退方法、关联 Task；无需重复项目背景。
 
-DONE 前由 Codex按 Task 的 Canonical Evidence 与 Resource Manifest 收口；Handoff 指向最终证据及 closeout 记录。Handoff 本身不授予集成、删除或关闭权限。
+DONE 前由 DSH 按 Task 的 Canonical Evidence 与 Resource Manifest 收口；Handoff 指向最终证据及 closeout 记录。Handoff 本身不授予集成、删除或关闭权限。
 
 ## 实验附录（仅实验任务）
 

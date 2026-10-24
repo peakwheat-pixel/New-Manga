@@ -9,7 +9,7 @@ decision: pending
 
 # Review：TASK-xxx
 
-Reviewer 不能是变更作者。decision 为 pending / changes_requested / approved / blocked；只有对该 reviewed_head 的实际审查才有效。
+Reviewer 不能是变更作者；Reviewer 由 DSH 以 Appointment 指定，DSH 不得审核自己实现的变更。decision 为 pending / changes_requested / approved / blocked；只有对该 reviewed_head 的实际审查才有效。
 
 **执行口径（2026-09-18 更新：双轴强制已取消）**：Review 必须覆盖 **Architecture**（分层/契约/依赖/安全/持久化）与 **Verification**（实际运行检查、逐项 PASS/FAIL/BLOCKED/NOT_RUN）。`code-review` 技能的 **Standards**（是否符合本仓库记录的标准）与 **Spec**（是否忠实实现来源 AC）是**可选视角**：可用可不用，**不再强制**，也**不再要求**分别报告、独立 sub-agent 并行执行、"两遍相互隔离"检查或偏差声明（并行双轴子代理能力在本会话不可用，用户 2026-09-18 决定取消该强制项）。
 
@@ -56,4 +56,4 @@ Reviewer 不能是变更作者。decision 为 pending / changes_requested / appr
 
 ## 结论与复审
 
-固定 head 是否可交 Codex 集成、理由、剩余风险。复审追加新 head 与对应 findings disposition，不抹掉旧记录；集成后的测试由 Codex另行记录。
+固定 head 是否可交 DSH 集成、理由、剩余风险。复审追加新 head 与对应 findings disposition，不抹掉旧记录；集成后的测试由 DSH 另行记录。

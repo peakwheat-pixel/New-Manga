@@ -1,6 +1,6 @@
 # Document Truth Map / 项目文档权威地图
 
-更新：2026-10-13。当前目标架构固定为 Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。本文是文档导航和冲突裁决表，不替代下列权威来源。
+更新：2026-10-25（DSH 接任 Lead / Architect / Integrator；角色迁移与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)）。当前目标架构固定为 Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。本文是文档导航和冲突裁决表，不替代下列权威来源。
 
 ## 权威来源与冲突裁决
 
@@ -11,7 +11,7 @@
 | Milestone、Task DAG、依赖和释放状态 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | 历史 Task 文件、聊天记录和旧计划快照不能激活 Task。 |
 | 唯一活动 Task 与运行状态 | [STATUS](STATUS.md) | 仅此处声明当前 Active Task、Gate、阻塞和恢复指针。 |
 | Task 范围与冻结契约 | Plan 指定的当前 Task、该 Task 明确引用的契约 | 已完成或历史 Task 不构成当前授权。 |
-| Review 结论 | 当前 Task 最新 Review 及 Codex adjudication | adjudication 记录 finding 的接受/拒绝及限制。 |
+| Review 结论 | 当前 Task 最新 Review 及 DSH adjudication | adjudication 记录 finding 的接受/拒绝及限制。 |
 | 当前恢复点 | STATUS 指定的 rolling checkpoint | 只为恢复当前 Task，不替代 Task、Review 或原始证据。 |
 | 技术事实/验证结果 | 当前 Task 指定的原始 evidence/source pin | 证据说明其实际测得内容；不自行授予授权或改写 Review/adjudication。 |
 
@@ -22,6 +22,7 @@
 | 文档 | 分类 | 当前可依赖内容 |
 |---|---|---|
 | [AGENTS.md](../AGENTS.md) | CURRENT / GOVERNANCE | Agent 项目入口、角色、安全和最小读取规则。 |
+| [接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md) | CURRENT / GOVERNANCE | 2026-10-25 用户裁决：Codex 的 Lead / Architect / Integrator 权限移交 DSH；历史署名与证据字节保留。 |
 | [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) | CURRENT / ARCHITECTURE | 唯一目标架构及边界。 |
 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | CURRENT / PLAN | 当前 DAG 和 Task 释放/阻塞关系。 |
 | [STATUS](STATUS.md) | CURRENT / STATUS | 当前唯一 Active Task、Gate 状态和恢复指针。 |

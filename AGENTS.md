@@ -2,12 +2,14 @@
 
 唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness、Antigravity 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
 
+项目 Lead / Architect / Integrator 自 2026-10-25 起为 DeepSeek Harness（DSH）；Codex 转为按 DSH 分配的协作 Agent。用户授权、责任边界与字节保留规则见[接管记录](doc/GOVERNANCE_TAKEOVER_2026-10-25.md)。
+
 ## 每次开始工作
 
 1. 默认只读当前有效上下文：[目标架构 AD-001](doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md)、[当前阶段](doc/STATUS.md) 的当前状态、[Project Rebaseline Plan](doc/REBASELINE_PLAN.md) 的当前 DAG、当前 Task、该 Task 最新 Review/adjudication 和 rolling checkpoint。
 2. [Document Truth Map](doc/00_INDEX.md) 仅在需要定位文档、分类或裁决来源时查阅；[协作协议](doc/09_COLLABORATION.md) 按当前任务需要读取相关章节。不得默认通读历史快照，也不得默认扫描整个 doc/**、verification/**、历史 Task、Review 或 checkpoint。
 3. 检查工作区、分支及 Git common directory；阅读任务引用的需求与真实代码、测试。未提交内容归原作者所有。
-4. 发现事实与文档不一致，在 Task 中留下证据并交 Codex 处理；不能靠聊天、旧项目路径或目标图推断已有实现。
+4. 发现事实与文档不一致，在 Task 中留下证据并交 DSH 处理；不能靠聊天、旧项目路径或目标图推断已有实现。
 5. 只按当前 Task/Status 明确引用读取 `verification/**` 证据；它提供恢复与地图信息，但不替代 Plan、Status、Task 或代码测试事实。
 6. 创建/更新 Task、Review、当前状态或证据 pin，以及准备关闭 Task 时，按 [协作协议 §4](doc/09_COLLABORATION.md#4-task-文件约定) 执行生命周期；运行 `pwsh -NoProfile -File tools/governance/check.ps1` 检查当前权威指针。检查器只读，结果不能替代审查或授权。
 
@@ -22,16 +24,18 @@
 
 2026-10-08 用户裁决：Qoder已退出本项目，不再分配Owner、Reviewer、UI设计或接管任务。历史署名/证据与未提交文件保留，不能据此恢复参与资格。项目故障转移顺序为ZCode、Antigravity，覆盖共享skill的默认候选。
 
+2026-10-25 用户裁决（立即生效）：DSH 接任 Lead / Architect / Integrator，接管原 Codex 在项目中的任务释放、范围冻结、Agent 分配、契约与架构裁决、Review Appointment、审查处置、集成验证、资源处置裁决、Task 生命周期管理及最终 push 权限。Codex 改为按 DSH 分配的协作 Agent，不再保留项目级审批、否决或最终集成特权；ZCode、Antigravity 的既有职责继续保留。DSH 不得独立审核自己实现的变更；需要独审时，指定未参与实现的 ZCode、Antigravity 或 Codex。旧文档中“仅 Codex 可批准/集成/关闭/推送”的身份限制，以本次用户裁决为准；历史署名、冻结 Review、日志、manifest 和 evidence pin 保持原字节。
+
 
 ## 角色与交付
 
-- Codex：Lead / Architect / Integrator；负责契约、任务分配、冲突决策及集成。
+- DeepSeek Harness（DSH）：Lead / Architect / Integrator；负责任务释放与范围冻结、Agent 分配、契约与架构裁决、Review Appointment、审查处置、集成验证、资源处置裁决、Task 生命周期管理及最终 push。不得审核自己实现的变更；独审由未参与实现的 ZCode、Antigravity 或 Codex 执行。
+- Codex：协作 Agent；按 DSH 分配承担实现、诊断、测试或独立 Review，提交固定 commit、测试及 Handoff。不再保留项目级审批、否决或最终集成特权；不得审核自己实现的变更。
 - ZCode：独立 Feature、长任务实现；新架构 UI/UX、GUI 与 React/Tauri 视觉/交互设计及实现主责；提交设计、代码、测试及 Handoff。设计与实现分别冻结Task范围，不得自行扩大产品范围、修改未授权共享契约或审核自己的变更。
-- DeepSeek Harness：技术实验、OCR / Translation / Inpainting 研究、测试、Bug 分析及独立 Review。不得审核自己实现的变更。
-- Antigravity：通用编程实现 Agent；承担 Codex 已释放的 Python、应用、基础设施或测试编程 Task，提交固定 commit、测试及 Handoff。使用自己的任务分支，不得自行扩大范围、修改未授权共享契约、审核自己的实现或合并主线；React UI/UX 由 ZCode 主责，除非 Task 另行明确分配。
-- 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 Codex 明确范围；产品需求取舍由用户决定。
+- Antigravity：通用编程实现 Agent；承担 DSH 已释放的 Python、应用、基础设施或测试编程 Task，提交固定 commit、测试及 Handoff。使用自己的任务分支，不得自行扩大范围、修改未授权共享契约、审核自己的实现或合并主线；React UI/UX 由 ZCode 主责，除非 Task 另行明确分配。
+- 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 DSH 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
-- 完成实现不等于完成集成：独立审查、测试证据和 Codex 集成验证通过后，Task 才能进入 done。
+- 完成实现不等于完成集成：独立审查、测试证据和 DSH 集成验证通过后，Task 才能进入 done；Owner 与 Reviewer 必须不同。
 
 ## 产品边界
 

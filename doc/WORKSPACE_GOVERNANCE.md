@@ -72,7 +72,7 @@ git rev-parse main
 2. **Task 实施提交落在该 Task 自己的分支**（`agent/<name>/<TASK-ID>`）。
 3. **主线再次切换/重命名时，必须同步更新本节。**
 
-**远端**：`origin/main` 仍停在旧提交 `6a68fdeb9`（2026-09-25），本仓库未执行 push；`main` 未设置上游跟踪，避免误推。是否推送/对齐远端是独立决定。
+**远端**：`origin/main` 仍停在旧提交 `6a68fdeb9`（2026-09-25），本仓库未推送 `main`；`main` 未设置上游跟踪，避免误推。是否推送/对齐远端是独立决定。2026-10-25 用户授权 DSH 在既定推送条件与独立审查满足后，把材料已隔离的干净源码快照推送到 `origin` 的**新分支**；该授权不包含推送 `main`、不包含 force push、不包含覆盖远端 `main`。
 
 **旧分支**：`antigravity/P09-AC3-DELETE-HARDEN-1` 保留（`26c0f2aab`，历史证据/恢复点），不作为当前主线。
 
@@ -81,10 +81,10 @@ git rev-parse main
 - 保留最终 adjudication、最终有效 Review、当前 Gate 所依赖的原始 evidence/source pins，以及恢复当前 Task 必需的 rolling checkpoint。
 - r1/r2/r3/r4、retry、attempt 等过程文件仅在最终文件逐项覆盖其唯一结论、所有引用已迁移、没有当前 Gate/source pin 依赖后，才可归档或删除。
 - Task 的唯一 READY/DAG 权威是 `REBASELINE_PLAN.md`；唯一运行状态权威是 `STATUS.md`。DONE、SUPERSEDED、CANCELLED、HISTORICAL Task 不得作为 READY 节点。
-- worktree 仅在 Task 已 Review approved、Codex 已记录 integration_commit 与集成后验证（或已为其他终态）、不再属于当前 Task，且刷新 Inventory 后 clean、无 untracked、HEAD 无独有提交、无当前引用时才可移除。Dirty、唯一文件/提交或归属未知的 worktree 保留。
+- worktree 仅在 Task 已 Review approved、DSH 已记录 integration_commit 与集成后验证（或已为其他终态）、不再属于当前 Task，且刷新 Inventory 后 clean、无 untracked、HEAD 无独有提交、无当前引用时才可移除。Dirty、唯一文件/提交或归属未知的 worktree 保留。
 - 不为瘦身运行 Git history rewrite 或未经证明的 GC；孤立对象、临时 refs、外部目录和数据库默认按 `UNKNOWN_DO_NOT_DELETE` 保留。
 - Task 的完整 READY→DONE 状态、canonical evidence、Review/checkpoint 降级和资源 closeout 只由[协作协议 §4](09_COLLABORATION.md#4-task-文件约定)定义；本文件仅定义派生物位置与保留门槛。新 Task 结束时按 Resource Manifest 逐项核销，不按目录名推断安全。
-- `STATUS.md` 上限 3,200 bytes / 45 行，`REBASELINE_PLAN.md` 上限 2,500 bytes / 35 行；达到上限前先把过期流水账移入 `archive/history/` 并保留简短锚点。机器预算由 `tools/governance/check.ps1` 检查。
+- `STATUS.md` 与 `REBASELINE_PLAN.md` 的防膨胀预算以 `tools/governance/check.ps1` 为准（当前 STATUS 上限 3,200 bytes / 45 行，REBASELINE_PLAN 上限 7,000 bytes / 64 行）；达到上限前先把过期流水账移入 `archive/history/` 并保留简短锚点。
 - 每个 Task 的默认文档上下文目标 ≤12,000 tokens：只读 AGENTS、AD-001、STATUS 当前段、Plan 当前 DAG、当前 Task、最新 Review/adjudication、rolling checkpoint；额外历史只按当前 AC/pin 取用，并在 Task 记录原因。token 数以模型分词器估算为准，检查器不扫描历史目录估算 token。
 - verification 只保存最终 adjudication、最终有效 Review、Gate 所需原始 pins 和当前 rolling checkpoint。尝试/重试输出默认写 workspace；每个 AC/Gate 在 Task 表中只指向当前 canonical item。旧版 P02 等共享证据路径按原 pin 保持，不为套用新布局而移动。
 

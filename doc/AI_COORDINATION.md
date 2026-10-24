@@ -3,18 +3,18 @@
 本文件只管两件事：**谁负责刷新知识层**，以及**换主控时怎么交接**。
 
 它不改变角色与集成权限。主线集成权仍按 [AGENTS.md](../AGENTS.md) 与
-[协作协议](09_COLLABORATION.md) 执行：Codex 是唯一主线写入和合并责任人。
-本文件与上述两份冲突时，以上述两份为准。
+[协作协议](09_COLLABORATION.md) 执行：DSH 是唯一主线写入、合并与最终 push 责任人；
+2026-10-25 用户裁决见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。本文件与上述两份冲突时，以上述两份为准。
 
 ## 当前状态
 
 ```text
-Knowledge Refresh Owner:  Codex
-Bootstrap Agent:          Codex         # 2026-09-21 从 ZCode 接手（工具链由 ZCode 于同日重建为全局 Windows 原生）
-Mainline Integrator:      Codex        # 不由本文件授予或变更
-Knowledge Baseline HEAD:  4dfe9e7850c370634a293118536672e5f91680f8
+Knowledge Refresh Owner:  DeepSeek Harness   # 2026-10-25 随项目管理与集成权限一并移交
+Bootstrap Agent:          Codex              # 2026-09-21 从 ZCode 接手；历史事实，不由本文件回写
+Mainline Integrator:      DeepSeek Harness   # 2026-10-25 用户裁决
+Knowledge Baseline HEAD:  4dfe9e7850c370634a293118536672e5f91680f8   # 本次接管未刷新知识基线
 Last Knowledge Refresh:   2026-09-22 (RepoWiki current; CodeWiki stale)
-Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移交；见下方交接记录)
+Last Handover:            2026-10-25 Codex -> DeepSeek Harness (主控/主线集成/知识层 Owner)
 ```
 
 ### 2026-09-22 V2 审计后的知识层现实
@@ -30,6 +30,19 @@ Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移�
   `AGENTS.md`、`STATUS.md` 与 Task/Handoff/Review 仍是事实源。
 
 ## 交接记录
+
+### 2026-10-25 Codex → DeepSeek Harness（主控 / 主线集成 / 知识层 Owner）
+
+用户 2026-10-25 正式裁决：原 Codex 在 New Manga 的全部项目管理与集成权限移交 DSH，
+包括任务释放、范围冻结、Agent 分配、契约与架构裁决、Review Appointment、审查处置、
+集成验证、资源处置裁决、Task 生命周期管理和最终 push；Codex 改为按 DSH 分配的协作
+Agent。知识层刷新 Owner 随主控权限一并移交。完整授权、字节保留与事实核对见
+[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
+
+接管时实测：仓库 `G:/CODEX/New Manga`，branch `main`，HEAD
+`349e61faff5f93067af5d4ce2d9e394e0d665b8c`，Git common directory 为 `.git`，
+只有 1 个注册 worktree。接管未刷新 `wiki/**`（知识基线仍为 `4dfe9e7`，RepoWiki current、
+CodeWiki stale），未 push、未改写历史、未删除任何 worktree/分支/证据。
 
 ### 2026-09-21 ZCode → Codex（Knowledge Refresh Owner）
 
@@ -76,7 +89,7 @@ Overview → `git status`。确认时工作区为 `G:/CODEX/New Manga`，`master
 
 | 权限 | 归属 | 范围 |
 |---|---|---|
-| 主线集成 | Codex | 合并、`master` 写入、发布、任务释放与范围冻结 |
+| 主线集成 | DeepSeek Harness | 合并、`main` 写入、发布、任务释放与范围冻结、最终 push |
 | 知识层刷新 | Knowledge Refresh Owner | 只写 `wiki/**` 与 `wiki/*/*.meta.json` |
 
 Knowledge Refresh Owner **不**因此获得 `src/**`、`tests/**`、`doc/tasks/**` 写权限，
@@ -87,7 +100,7 @@ Knowledge Refresh Owner **不**因此获得 `src/**`、`tests/**`、`doc/tasks/*
 | 层 | 位置 | 产生方式 | 不负责 |
 |---|---|---|---|
 | 实现事实 | `src/**`、`tests/**`、Git | 提交 | — |
-| 项目管理事实 | `AGENTS.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/tasks/**` | 人工 + Codex 集成 | 代码结构 |
+| 项目管理事实 | `AGENTS.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/tasks/**` | 人工 + DSH 集成 | 代码结构 |
 | 快速导航 | `wiki/repowiki/repo-map.json` | `repowiki map`，零 LLM | 架构结论、任务、完成证据 |
 | 深度知识库 | `wiki/codewiki/` | CodeWiki 分析 + 编写 | 任务状态、Git 事实、验收 |
 
@@ -136,5 +149,4 @@ Release、Rebaseline 时刷，默认增量（`--update`），不默认全量重�
 - **CodeWiki 不是一等支持 QML。** 涉及 Screen / Component / signal / slot /
   property / objectName / ViewModel binding / Python bridge / UI Action 的结论，
   必须直接读 `.qml` 与对应 Python/ViewModel/Service。CodeWiki 没显示不等于不存在。
-- **antigravity 在 `AGENTS.md` 中没有角色条目**（见 STATUS.md 治理行）。本文件不
-  补这个缺口，需要 Codex/Owner 裁决。
+- **antigravity 已在 `AGENTS.md` 中有角色条目**（2026-10-25 接管核对关闭该历史缺口）。后续如再缺失，由 DSH 裁决。

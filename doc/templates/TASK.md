@@ -5,7 +5,7 @@ kind: design
 governance_version: 2
 status: proposed
 approval: pending_user_review
-suggested_owner: Codex
+suggested_owner: null
 owner: null
 reviewer: null
 depends_on: []
@@ -35,11 +35,11 @@ allowed_paths: []   # 必须显式包含 evidence_dir（见「允许修改范围
 
 - 明确相对项目根目录的文件/目录；共享接口、Schema、依赖变更单列。
 - 本 Task、自己的 Handoff、经分配的测试/verification 路径。
-- **`allowed_paths` 必须显式包含 frontmatter 的 `evidence_dir`**（默认 `verification/TASK-xxx`）。判别力证据按协作协议 §4.1 / §5 提交到该目录；只声明 `evidence_dir` 而不把它列入 `allowed_paths`，属于释放时清单不完整（Codex R29 裁定第 2 节）。
+- **`allowed_paths` 必须显式包含 frontmatter 的 `evidence_dir`**（默认 `verification/TASK-xxx`）。判别力证据按协作协议 §4.1 / §5 提交到该目录；只声明 `evidence_dir` 而不把它列入 `allowed_paths`，属于释放时清单不完整（Codex R29 历史裁定第 2 节；2026-10-25 起释放执行者为 DSH）。
 
 ## 禁止范围
 
-写明非目标、依赖方模块、用户原始数据；范围扩大须先由 Codex登记。
+写明非目标、依赖方模块、用户原始数据；范围扩大须先由 DSH 登记。
 
 ## 测试要求
 
@@ -56,7 +56,7 @@ depends_on 必须是已存在 Task ID。区分硬依赖与可并行条件；记�
 - Handoff：尚无。
 - Review：尚无。
 - 实际测试：尚无。
-- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 Codex填写 integration_commit 并改 done。
+- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 DSH 填写 integration_commit 并改 done。
 
 ## Canonical Evidence
 
@@ -76,7 +76,7 @@ depends_on 必须是已存在 Task ID。区分硬依赖与可并行条件；记�
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
+- Closeout date / DSH：待关闭时填写。
 - canonical_evidence_status：`pending` / `complete`。
 - resource_closeout_status：`pending` / `complete`。
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
