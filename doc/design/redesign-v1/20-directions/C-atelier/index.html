@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Manga · 工坊 Atelier · 第12话「雨の停車場」</title>
+<meta name="description" content="方向 C 工坊 Atelier —— 以流水线阶段与批次状态为中心的高保真原型（纯静态，零依赖）">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================ 图标 sprite：20×20 viewBox，1.5px stroke ============================ -->
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <g id="g-stroke" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"></g>
+  </defs>
+
+  <symbol id="i-detect" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 7.5v-3A1.5 1.5 0 0 1 4.5 3h3M17 7.5v-3A1.5 1.5 0 0 0 15.5 3h-3M3 12.5v3A1.5 1.5 0 0 0 4.5 17h3M17 12.5v3A1.5 1.5 0 0 1 15.5 17h-3"/>
+    <rect x="7" y="7" width="6" height="6"/>
+  </symbol>
+
+  <symbol id="i-ocr" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 4.5h14M3 8h14M3 11.5h9M3 15h6"/>
+  </symbol>
+
+  <symbol id="i-verify" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M4 10.5l3.5 3.5L15.5 5"/>
+    <path d="M3 17h14"/>
+  </symbol>
+
+  <symbol id="i-inpaint" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M4 16l1.4-4.4 8.1-8.1 2.9 2.9-8.1 8.1L4 16z"/>
+    <path d="M11.8 4.8l2.9 2.9"/>
+  </symbol>
+
+  <symbol id="i-render" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3" y="6.5" width="10" height="10.5"/>
+    <path d="M7 6.5V3h10v10.5h-4"/>
+  </symbol>
+
+  <symbol id="i-queue" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3" y="4" width="4" height="3"/>
+    <rect x="3" y="9" width="4" height="3"/>
+    <rect x="3" y="14" width="4" height="3"/>
+    <path d="M9.5 5.5h7.5M9.5 10.5h7.5M9.5 15.5h7.5"/>
+  </symbol>
+
+  <symbol id="i-grid" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3.5" y="3.5" width="13" height="13"/>
+    <path d="M3.5 8h13M3.5 12.5h13M8 3.5v13M12.5 3.5v13"/>
+  </symbol>
+
+  <symbol id="i-search" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="9" cy="9" r="4.5"/>
+    <path d="M12.5 12.5L17 17"/>
+  </symbol>
+
+  <symbol id="i-filter" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 5h14l-5.5 6v5.2l-3-1.6V11L3 5z"/>
+  </symbol>
+
+  <symbol id="i-retry" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M16 10a6 6 0 1 1-2-4.5"/>
+    <path d="M16 3v4h-4"/>
+  </symbol>
+
+  <symbol id="i-skip" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M4 5l7 5-7 5V5z"/>
+    <path d="M15.5 5v10"/>
+  </symbol>
+
+  <symbol id="i-lock" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="4.5" y="9" width="11" height="7.5"/>
+    <path d="M7 9V6.5a3 3 0 0 1 6 0V9"/>
+  </symbol>
+
+  <symbol id="i-unlock" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="4.5" y="9" width="11" height="7.5"/>
+    <path d="M7 9V6.5a3 3 0 0 1 5.8-.9"/>
+  </symbol>
+
+  <symbol id="i-close" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M5 5l10 10M15 5L5 15"/>
+  </symbol>
+
+  <symbol id="i-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M5.5 8l4.5 4.5L14.5 8"/>
+  </symbol>
+
+  <symbol id="i-play" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter">
+    <path d="M6.5 4.5l9 5.5-9 5.5v-11z"/>
+  </symbol>
+
+  <symbol id="i-pause" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M7 4.5v11M13 4.5v11"/>
+  </symbol>
+
+  <symbol id="i-stop" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="5" y="5" width="10" height="10"/>
+  </symbol>
+
+  <symbol id="i-export" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M10 13V3.5M6.5 7L10 3.5 13.5 7"/>
+    <path d="M3.5 12v4.5h13V12"/>
+  </symbol>
+
+  <symbol id="i-settings" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 6.5h14M3 13.5h14"/>
+    <rect x="6" y="4.5" width="2.5" height="4"/>
+    <rect x="12" y="11.5" width="2.5" height="4"/>
+  </symbol>
+
+  <symbol id="i-sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="10" cy="10" r="3.5"/>
+    <path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4"/>
+  </symbol>
+
+  <symbol id="i-moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter">
+    <path d="M16 12.5A6.5 6.5 0 0 1 7.5 4a6.5 6.5 0 1 0 8.5 8.5z"/>
+  </symbol>
+
+  <symbol id="i-panel" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3" y="4" width="14" height="12"/>
+    <path d="M12 4v12"/>
+  </symbol>
+
+  <symbol id="i-warn" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M10 3l7.2 13H2.8L10 3z"/>
+    <path d="M10 8v4.2M10 14.3v.6"/>
+  </symbol>
+
+  <symbol id="i-check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3.5 10.5l4 4L16.5 5"/>
+  </symbol>
+
+  <symbol id="i-more" viewBox="0 0 20 20" fill="currentColor" stroke="none">
+    <circle cx="4.5" cy="10" r="1"/>
+    <circle cx="10" cy="10" r="1"/>
+    <circle cx="15.5" cy="10" r="1"/>
+  </symbol>
+
+  <symbol id="i-plus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M10 4v12M4 10h12"/>
+  </symbol>
+
+  <symbol id="i-folder" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3 6h5l1.5 2H17v8.5H3V6z"/>
+  </symbol>
+
+  <symbol id="i-page" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M5 3h7l3 3v11H5V3z"/>
+    <path d="M11.5 3v3.5H15"/>
+  </symbol>
+
+  <symbol id="i-command" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3.5" y="3.5" width="13" height="13"/>
+    <path d="M7.5 7v6M12.5 7l-4 3 4 3"/>
+  </symbol>
+
+  <symbol id="i-clock" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="10" cy="10" r="6.5"/>
+    <path d="M10 6v4.3l3 2"/>
+  </symbol>
+
+  <symbol id="i-target" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <circle cx="10" cy="10" r="5"/>
+    <path d="M10 2.5v3M10 14.5v3M2.5 10h3M14.5 10h3"/>
+  </symbol>
+
+  <symbol id="i-split" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <rect x="3" y="4" width="5.5" height="12"/>
+    <rect x="11.5" y="4" width="5.5" height="12"/>
+  </symbol>
+
+  <symbol id="i-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M3.5 10h13M12 5.5l4.5 4.5L12 14.5"/>
+  </symbol>
+
+  <symbol id="i-eye" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M2.5 10S5.3 5.5 10 5.5 17.5 10 17.5 10s-2.8 4.5-7.5 4.5S2.5 10 2.5 10z"/>
+    <circle cx="10" cy="10" r="2"/>
+  </symbol>
+
+  <symbol id="i-list" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M7 5h10M7 10h10M7 15h10"/>
+    <path d="M3.5 5h.2M3.5 10h.2M3.5 15h.2"/>
+  </symbol>
+</svg>
+
+<!-- ============================ 应用骨架 ============================ -->
+<div class="app" id="app">
+
+  <!-- 顶部阶段轨道 + 门禁条 -->
+  <header class="rail" id="rail">
+    <div class="rail-tabs" role="tablist" aria-label="流水线阶段">
+      <div class="rail-brand">
+        <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="wordmark">NEW MANGA<em>ATELIER · 工坊</em></span>
+      </div>
+      <div id="railTabs" style="display:contents"></div>
+      <div class="rail-tools">
+        <span class="rail-ctx">
+          <span>批次</span><b id="ctxBatch">B-012</b>
+          <span class="mono" id="ctxScope">第1–10章 · 240 页</span>
+        </span>
+        <button class="btn sm" data-action="palette" title="命令面板"><svg class="icon icon-12"><use href="#i-command"></use></svg>命令 <kbd>Ctrl</kbd><kbd>K</kbd></button>
+        <button class="iconbtn" data-action="theme" title="切换主题 (T)"><svg class="icon" id="themeIcon"><use href="#i-sun"></use></svg></button>
+        <button class="iconbtn" data-action="states" title="状态演示面板：12 个状态真相"><svg class="icon"><use href="#i-eye"></use></svg></button>
+        <button class="iconbtn" data-action="settings" title="设置（Provider / 网络 / 并发）"><svg class="icon"><use href="#i-settings"></use></svg></button>
+      </div>
+    </div>
+    <div class="gate" id="gateStrip" aria-label="阶段门禁"></div>
+  </header>
+
+  <div class="main" id="main">
+    <!-- 左：资源树 -->
+    <nav class="tree" id="tree" aria-label="资源树 作品 / 章节 / 批次 / 队列"></nav>
+
+    <!-- 中：Page × Stage 状态矩阵（常驻、可直接操作） -->
+    <section class="matrix" id="matrix" aria-label="Page × Stage 状态矩阵"></section>
+
+    <!-- 右：概览条 + 阶段工作面 -->
+    <div class="workwrap">
+      <div class="chips" id="chips" role="toolbar" aria-label="概览计数与筛选"></div>
+      <section class="surface" id="surface" aria-label="阶段工作面"></section>
+    </div>
+
+    <!-- 批量动作条：.bulk 的 CSS 以 .main 为定位上下文（left:var(--w-tree)），故它是 .main 的子元素 -->
+    <div class="bulk" id="bulk" hidden aria-label="批量动作条"></div>
+  </div>
+
+  <!-- 底部：Run 状态带 -->
+  <div class="runpanel" id="runPanel" hidden></div>
+  <footer class="runstrip" id="runStrip" aria-label="当前 Run 状态"></footer>
+
+  <!-- 详情抽屉 -->
+  <aside class="drawer" id="drawer" data-open="0" aria-label="详情抽屉" aria-hidden="true"></aside>
+
+  <!-- 状态演示面板 -->
+  <aside class="states" id="states" data-open="0" aria-label="状态演示面板" aria-hidden="true"></aside>
+
+  <!-- 命令面板 -->
+  <div class="scrim hidden" id="scrim"></div>
+  <div class="palette hidden" id="palette" role="dialog" aria-modal="true" aria-label="命令面板"></div>
+
+  <!-- 对话框 -->
+  <div class="dlg-scrim hidden" id="dlgScrim"></div>
+  <div class="dlg hidden" id="dialog" role="dialog" aria-modal="true"></div>
+
+  <!-- 演示说明条 -->
+  <div class="demo-note hidden" id="demoNote"></div>
+</div>
+
+<noscript>
+  <p style="padding:16px;color:#E6E9E8;background:#15181A">本原型需要 JavaScript 渲染假数据（纯本地，无网络请求）。</p>
+</noscript>
+
+<!-- 分层：数据（对齐 00_SAMPLE_DATA）→ 视图（纯渲染）→ 交互（状态/事件/键盘/URL） -->
+<script src="data.js"></script>
+<script src="views.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
