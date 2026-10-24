@@ -23,6 +23,7 @@
 |---|---|---|
 | [AGENTS.md](../AGENTS.md) | CURRENT / GOVERNANCE | Agent 项目入口、角色、安全和最小读取规则。 |
 | [接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md) | CURRENT / GOVERNANCE | 2026-10-25 用户裁决：Codex 的 Lead / Architect / Integrator 权限移交 DSH；历史署名与证据字节保留。 |
+| [Push 记录](PUSH_RECORD_2026-10-25.md) | CURRENT / DELIVERY RECORD | 干净源码快照推送到 `origin/codex/clean-source-snapshot` 的授权、审查、命令、远端 SHA 核验与未关闭项。 |
 | [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) | CURRENT / ARCHITECTURE | 唯一目标架构及边界。 |
 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | CURRENT / PLAN | 当前 DAG 和 Task 释放/阻塞关系。 |
 | [STATUS](STATUS.md) | CURRENT / STATUS | 当前唯一 Active Task、Gate 状态和恢复指针。 |

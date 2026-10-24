@@ -72,7 +72,7 @@ git rev-parse main
 2. **Task 实施提交落在该 Task 自己的分支**（`agent/<name>/<TASK-ID>`）。
 3. **主线再次切换/重命名时，必须同步更新本节。**
 
-**远端**：`origin/main` 仍停在旧提交 `6a68fdeb9`（2026-09-25），本仓库未推送 `main`；`main` 未设置上游跟踪，避免误推。是否推送/对齐远端是独立决定。2026-10-25 用户授权 DSH 在既定推送条件与独立审查满足后，把材料已隔离的干净源码快照推送到 `origin` 的**新分支**；该授权不包含推送 `main`、不包含 force push、不包含覆盖远端 `main`。
+**远端**：`origin/main` 仍停在旧提交 `6a68fdeb9`（2026-09-25），本仓库未推送 `main`；`main` 未设置上游跟踪，避免误推。是否推送/对齐远端是独立决定。2026-10-25 用户授权 DSH 在既定推送条件与独立审查满足后，把材料已隔离的干净源码快照推送到 `origin` 的**新分支**；该授权不包含推送 `main`、不包含 force push、不包含覆盖远端 `main`。实际执行：`codex/clean-source-snapshot = e34a90d001cce1fa966aec7d2b032bb5ad1cf148`，`origin/main` 未变；见 [Push 记录](PUSH_RECORD_2026-10-25.md)。
 
 **旧分支**：`antigravity/P09-AC3-DELETE-HARDEN-1` 保留（`26c0f2aab`，历史证据/恢复点），不作为当前主线。
 

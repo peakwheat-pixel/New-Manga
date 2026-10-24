@@ -35,6 +35,7 @@
 - `origin`：`https://github.com/peakwheat-pixel/New-Manga.git`；远端仅有 `refs/heads/main = 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`；本地 `main` 未设置上游跟踪。
 - 接管前工作区：3 个已跟踪文档存在他人（Codex）在途修改（`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`），另有 20 个未跟踪项（当前 Task 文件与证据、`audit/`、6 个 P04 日志）。按用户要求，他人未提交内容不纳入本次接管提交；其原位内容与归属保留。
 - 当前非终态 Task：`GIT-CLEAN-PUBLICATION-1`、`GIT-CLEAN-RUST-ISOLATION-1`、`GIT-CLEAN-RUST-CAPACITY-DESIGN-1`、`GIT-CLEAN-PUBLICATION-DIAG-1`、`GIT-CLEAN-CORE-ENV-2`、`NEW-MANGA-V1-FULL-AUDIT`、`V1-RELEASE-SIGNING-1`。
+- 接管基线提交：`a3c936f68748047aee41c4c60d732adc5bdf55f7`（仅本记录与角色/模板文档，10 files +208/−80）。提交后 `main` 从 `349e61faf` 前进 1 个治理 commit；`349e61faf` 仍为直接 parent 与祖先，源码、验证证据、338 禁止对象指纹零改动。
 - 最新关键 Review：父候选 `e34a90d001cce1fa966aec7d2b032bb5ad1cf148` 的 `dsh-review-r1.md`（blocked）；Rust r2 `1829a38a41587a0d680001a40d206886afb0911d` 的 `r2/dsh-review-r2.md`（blocked）。两份 Review 均保持原字节，不改写为通过。
 
 ## 4. 本次实际文档变更
@@ -85,7 +86,16 @@ exit 0。未发现由角色迁移引入的治理检查失败。
 提交边界：本记录与角色/模板文档进入 DSH 接管基线提交；`doc/STATUS.md`、
 `doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md` 与 6 个当前 Task 文件含他人（Codex）
 在途未提交内容，按用户要求不纳入该提交，保留原归属与工作区 diff。治理检查在
-工作区上通过，不代表这些未提交内容已被提交。
+工作区上通过，不代表这些未提交内容已被提交。推送后复跑同一检查仍为
+`PASS (3 warnings)`，7 个非终态 Task 逐个 `-TaskPath` 均 PASS。
+
+推送执行结果（2026-10-25）：Antigravity 按新 Appointment 对精确候选
+`e34a90d001cce1fa966aec7d2b032bb5ad1cf148` 完成 push-gate 独立审查，decision=`approved`
+（P0=0/P1=0/P2=2/P3=2；仅表示可安全普通推送，不是产品发布验收，未改写任何 blocked 证据）。
+DSH 接受该处置并执行普通 push 到 `origin` 新分支 `codex/clean-source-snapshot`，exit 0；
+远端 SHA 核验：`refs/heads/codex/clean-source-snapshot = e34a90d001cce1fa966aec7d2b032bb5ad1cf148`，
+`refs/heads/main = 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a` 保持不变。未 force、未推 `main`、
+未设置上游、未传播私有素材。完整命令与核验见 `doc/PUSH_RECORD_2026-10-25.md`。
 
 ## 7. Push 授权与条件（接管后）
 
