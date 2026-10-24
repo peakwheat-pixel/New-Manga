@@ -259,7 +259,10 @@ NM.STATES = [
   { n: '09', key: 'partial', t: 'Region 部分完成', d: '同一页 9 个 Region：OCR 全完成，1 个翻译失败', act: '只重试该 Region / 换 Provider' },
   { n: '10', key: 'stale', t: '过期 stale', d: '上游几何变更 → render/save 过期，历史版本保留', act: '重跑过期项 / 查看过期原因' },
   { n: '11', key: 'review_backlog', t: '待确认积压', d: '40 条待确认 · 按页/章分布 · 当前位置', act: '逐条确认 / 批量确认（显示影响面）' },
-  { n: '12', key: 'danger', t: '危险确认', d: '影响对象数量 + 可撤销性 + 不可逆警告', act: '确认执行 / 取消（Esc 可退）' }
+  { n: '12', key: 'danger', t: '危险确认', d: '影响对象数量 + 可撤销性 + 不可逆警告', act: '确认执行 / 取消（Esc 可退）' },
+  /* 补充（13_STATE_MODELS §3 标准 12 状态中，被 #02/#03 合并的三项在此单列，保证规范可逐项演示） */
+  { n: '补1', key: 'import_part_fail', sup: true, t: '导入部分失败', d: '失败文件列表与原因（格式不支持 / 重复页）', act: '重试失败项 / 跳过继续' },
+  { n: '补2', key: 'page_no_region', sup: true, t: '页面无 Region', d: '未检测到文字区域 · 置信阈值 0.30', act: '手动新建 Region / 降低阈值重检测' }
 ];
 
 /* ---------- 14. 工具 ---------- */

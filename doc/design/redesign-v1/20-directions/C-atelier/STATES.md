@@ -16,18 +16,25 @@
 
 ## 2. 十二个状态在本方向的落点
 
+> 面板结构：**12 个主状态（编号 01–12）+ 2 个补充状态（补1/补2）**，头部计数显示 `12 / 12 + 2`。
+> 合并说明：规范 §3 的「导入部分失败 / 章节无页面 / 页面无 Region」在面板里被折进 02、03 两条（导入与章节两条主线各带一次失败处置），
+> 为避免规范项失去独立演示入口，另以「补1 导入部分失败」「补2 页面无 Region」单列，键名仍可 `?state=import_part_fail` / `?state=page_no_region` 直达。
+> 同时按矩阵语义补充了「09 Region 部分完成（同页状态不一致）」与「10 过期 stale」两个高价值真相——它们是本方向矩阵的核心论点。
+
 | # | key | 场景 | 本方向呈现 | 页面可见证据 |
 |---|---|---|---|---|
 | 01 | `empty` | 空工作区 | 对话框内 `.empty`：数据根 / 缓存路径 / 导入入口 + 引导，无插画 | `?state=empty` |
-| 02 | `importing` | 导入中 | `.import-list` 逐文件状态 + 总进度 18/2/3 + 取消 | `?state=importing` |
-| 03 | `import_part_fail` | 导入部分失败 | 失败文件 + 原因（格式不支持 / 重复页）+ 重试或跳过 | `?state=import_part_fail` |
-| 04 | `chapter_empty` | 章节无页面 | 「本章还没有页面」+ 上一/下一章 + 导入页面 | `?state=chapter_empty` |
-| 05 | `page_no_region` | 页面无 Region | 「022.jpg 未检测到文字区域」+ 置信阈值 + 降低阈值重检测 / 手绘 | `?state=page_no_region` |
-| 06 | `running` | 流水线运行中 | QUEUE 工作面 + Run 面板：step 5/9、当前页 021、18/2/1/2、暂停/停止 | `?state=running` |
-| 07 | `paused` | 暂停中 | 「将在当前步骤（translate）安全结束后生效」；状态带 paused，◐ 停止呼吸 | `?state=paused` |
-| 08 | `done_with_fail` | 完成但有失败 | `completed_with_failures` + 「成果已保留」+ 按错误码聚合 + 只重试失败 | `?state=done_with_fail` |
-| 09 | `blocked` | 阻塞 | 队列横幅 `R-8828 blocked · Provider 认证失效（401）· 影响 21 页` + 修复配置 / 修复后恢复 | `?state=blocked` |
-| 10 | `resume` | 中断恢复 | 三选一对话框：继续（剩余 13 页）/ 重新开始 / 放弃，含影响面 | `?state=resume` |
+| 02 | `importing` | 导入中 / 部分失败 | `.import-list` 逐文件状态 + 总进度 18/2/3 + 取消 / 重试失败项 | `?state=importing` |
+| 03 | `chapter_empty` | 章节无页面 / 页面无 Region | 「本章还没有页面」+ 上一/下一章；页内未检测到文字区域时给置信阈值 | `?state=chapter_empty` |
+| 补1 | `import_part_fail` | 导入部分失败（单列） | 失败文件 + 原因（格式不支持 / 重复页）+ 重试或跳过 | `?state=import_part_fail` |
+| 补2 | `page_no_region` | 页面无 Region（单列） | 「022.jpg 未检测到文字区域」+ 阈值 0.30 + 手绘入口 | `?state=page_no_region` |
+| 04 | `running` | 流水线运行中 | QUEUE 工作面 + Run 面板：step 5/9、当前页 021、18/2/1/2、暂停/停止 | `?state=running` |
+| 05 | `paused` | 暂停中 | 「将在当前步骤（translate）安全结束后生效」；状态带 paused，◐ 停止呼吸 | `?state=paused` |
+| 06 | `done_with_fail` | 完成但有失败 | `completed_with_failures` + 「成果已保留」+ 按错误码聚合 + 只重试失败 | `?state=done_with_fail` |
+| 07 | `blocked` | 阻塞 | 队列横幅 `R-8828 blocked · Provider 认证失效（401）· 影响 21 页` + 修复配置 / 修复后恢复 | `?state=blocked` |
+| 08 | `resume` | 中断恢复 | 三选一对话框：继续（剩余 13 页）/ 重新开始 / 放弃，含影响面 | `?state=resume` |
+| 09 | `partial` | Region 部分完成 | 同页 9 Region：OCR/色彩/术语全完成，1 个翻译失败 → 只重试该 Region | `?state=partial` |
+| 10 | `stale` | 过期 stale | 上游几何变更 → render 过期，历史版本保留；提供「重跑过期项 / 查看原因」 | `?state=stale` |
 | 11 | `review_backlog` | 待确认积压 | 自动切 VERIFY + 筛选 `review`；40 条待确认、当前审阅位置在 Region 检查清单 | `?state=review_backlog` |
 | 12 | `danger` | 危险确认 | 停止 Run 对话框：影响对象 5 页、不可撤销标记、`Esc` 可退 | `?state=danger` |
 

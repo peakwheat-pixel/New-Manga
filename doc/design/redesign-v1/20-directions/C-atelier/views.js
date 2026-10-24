@@ -707,7 +707,9 @@
 
   /* ---------- 11. 状态演示面板 ---------- */
   V.states = function (ui) {
-    var head = '<div class="st-head"><span class="t">状态真相</span><span class="mono">12 / 12</span>' +
+    var head = '<div class="st-head"><span class="t">状态真相</span>' +
+      '<span class="mono">' + NM.STATES.filter(function (s) { return !s.sup; }).length + ' / 12' +
+      (NM.STATES.some(function (s) { return s.sup; }) ? ' + ' + NM.STATES.filter(function (s) { return s.sup; }).length : '') + '</span>' +
       '<button class="iconbtn" data-action="states-close" style="margin-left:auto" title="关闭">' + ic('i-close') + '</button></div>';
     var body = '<div class="st-body">' + NM.STATES.map(function (s) {
       var on = ui.state === s.key;
