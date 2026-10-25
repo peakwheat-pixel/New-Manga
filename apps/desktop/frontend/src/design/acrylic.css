@@ -18,6 +18,10 @@
   /* 噪声强度：这是"像亚克力"和"像磨砂塑料"之间的唯一切换点。
      0.03 克制 / 0.055 明显（当前）/ 0.08 粗粝。改这一个值即可整体调。 */
   --nm-acrylic-noise: 0.055;
+
+  /* 颗粒尺度由下方 data URI 里的 baseFrequency 控制（无法用 var() 注入）：
+     0.8 细（像胶片颗粒）/ 0.5 粗（当前，像亚克力涂层）/ 0.35 很粗（像砂纸）。
+     改的时候三处伪元素要一起改，测试会拦住漏改。 */
 }
 
 .nm-acrylic {
@@ -38,7 +42,7 @@
   border-radius: inherit;
   opacity: var(--nm-acrylic-noise);
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
 }
 
 .nm-acrylic-24 {
@@ -59,7 +63,7 @@
   border-radius: inherit;
   opacity: var(--nm-acrylic-noise);
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
 }
 
 .nm-acrylic-strong {
@@ -80,7 +84,7 @@
   border-radius: inherit;
   opacity: var(--nm-acrylic-noise);
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
 }
 
 /*
