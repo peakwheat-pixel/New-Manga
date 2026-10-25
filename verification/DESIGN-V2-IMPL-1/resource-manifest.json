@@ -1,0 +1,24 @@
+{
+  "task_id": "DESIGN-V2-IMPL-1",
+  "generated": "2026-10-25",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/DESIGN-V2-IMPL-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "分支 agent/dsh/design-v2-impl-1 已合并到 main（e1fd738a7）；按协作协议 4.2，删除前需刷新 Worktree Safety Inventory，本轮未执行，故保留。"
+    },
+    {
+      "resource_type": "agent-output",
+      "source_path": "C:/Users/49745/AppData/Local/Temp/zcode-{review,rereview,rereview2,delta}-designv2",
+      "disposition": "MIGRATE",
+      "destination_path": "verification/DESIGN-V2-IMPL-1",
+      "reason": "四份 ZCode 审查原文已复制入仓库证据目录（review-1/2/3-zcode.md 与 ac11 记录），临时目录无保留义务。"
+    },
+    {
+      "resource_type": "task-env / dataset / artifact",
+      "disposition": "NOT_APPLICABLE",
+      "reason": "本 Task 不产生此类资源。"
+    }
+  ]
+}

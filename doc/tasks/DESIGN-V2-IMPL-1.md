@@ -117,7 +117,7 @@ allowed_paths:
 | ev-review-1 | AC10 | verification/DESIGN-V2-IMPL-1/review-1-zcode.md | 3de3101ed | - | CANONICAL |
 | ev-review-2 | AC10 | verification/DESIGN-V2-IMPL-1/review-2-zcode.md | 3de3101ed | - | CANONICAL |
 | ev-review-3 | AC10 | verification/DESIGN-V2-IMPL-1/review-3-zcode.md | 3de3101ed | - | CANONICAL |
-| ev-review-4 | AC10 | verification/DESIGN-V2-IMPL-1/ac11-manual-verification.md | 见集成 commit | - | CANONICAL |
+| ev-review-4 | AC11 | verification/DESIGN-V2-IMPL-1/ac11-manual-verification.md | 6e9e7e631 | - | CANONICAL |
 
 > 证据文件随 `3de3101ed` 提交入库，pin 即该 commit（文件内容生成于 delivery head `0e752fbad`，两者关系见 Handoff）。`sha256` 列留空：本 Task 未对仓内文本证据做哈希 pin，判别依据是 commit 内文件内容。
 
@@ -125,10 +125,8 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/DESIGN-V2-IMPL-1 | PRESERVE_REFERENCED | - | branch `agent/dsh/design-v2-impl-1` | 集成完成并 closeout 前不得移除 |
-| agent-output | C:/Users/49745/AppData/Local/Temp/zcode-{review,rereview,rereview2}-designv2/ | DELETE_SAFE | verification/DESIGN-V2-IMPL-1/ | 三份 result.md 已复制入证据目录 | 复制后临时目录可删 |
-| temp | C:/Users/49745/AppData/Local/Temp/agy-*（Antigravity 审查任务，项目已停用 ady） | DELETE_SAFE | - | - | 未产出有效结果，项目决定不再使用 Antigravity |
-| task-env / dataset / artifact | - | NOT_APPLICABLE | - | - | 本 Task 无此类资源 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/DESIGN-V2-IMPL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/DESIGN-V2-IMPL-1 | verification/DESIGN-V2-IMPL-1/resource-manifest.json | 分支已合并；删除前需刷新 Worktree Safety Inventory，本轮保留 |
+| agent-output | C:/Users/49745/AppData/Local/Temp/zcode-review-designv2 | MIGRATE | verification/DESIGN-V2-IMPL-1 | verification/DESIGN-V2-IMPL-1/resource-manifest.json | 四份审查原文已复制入证据目录 |
 
 ## Closeout Record
 
