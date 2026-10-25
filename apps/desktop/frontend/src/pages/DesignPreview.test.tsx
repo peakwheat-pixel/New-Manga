@@ -180,10 +180,14 @@ describe("DesignPreview (v2 static skeleton)", () => {
     expect(document.activeElement?.getAttribute("data-testid")).toBe("tab-workbench");
 
     keydown(host, '[data-testid="tab-workbench"]', "End");
-    expect(activePage()).toBe("reader");
+    // UIUX-V2-RUNTIME-1: 一级导航从三页扩到四页（新增设置），End 落在末位。
+    expect(activePage()).toBe("settings");
 
-    keydown(host, '[data-testid="tab-reader"]', "ArrowRight");
+    keydown(host, '[data-testid="tab-settings"]', "ArrowRight");
     expect(activePage()).toBe("shelf");
+
+    keydown(host, '[data-testid="tab-shelf"]', "ArrowLeft");
+    expect(activePage()).toBe("settings");
   });
 
   it("keeps focus on the tab after a mouse click", () => {

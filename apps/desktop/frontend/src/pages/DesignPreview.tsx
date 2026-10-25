@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { isDesignPage, type DesignPage, type Theme } from "../design/types";
 import { Reader } from "./Reader";
+import { Settings } from "./Settings";
 import { Shelf } from "./Shelf";
 import { Workbench } from "./Workbench";
 import "../design/tokens.css";
@@ -72,9 +73,17 @@ export function DesignPreview({ initialPage, initialTheme }: DesignPreviewProps 
         target?.isContentEditable === true;
       if (typing) return;
 
-      if ((event.ctrlKey || event.metaKey) && ["1", "2", "3"].includes(event.key)) {
+      if ((event.ctrlKey || event.metaKey) && ["1", "2", "3", "4"].includes(event.key)) {
         event.preventDefault();
-        setPage(event.key === "1" ? "shelf" : event.key === "2" ? "workbench" : "reader");
+        setPage(
+          event.key === "1"
+            ? "shelf"
+            : event.key === "2"
+            ? "workbench"
+            : event.key === "3"
+            ? "reader"
+            : "settings",
+        );
         return;
       }
       if (!event.ctrlKey && !event.metaKey && event.key.toLowerCase() === "t") {
@@ -108,6 +117,9 @@ export function DesignPreview({ initialPage, initialTheme }: DesignPreviewProps 
       )}
       {page === "reader" && (
         <Reader theme={theme} onNavigate={setPage} onToggleTheme={toggleTheme} />
+      )}
+      {page === "settings" && (
+        <Settings theme={theme} onNavigate={setPage} onToggleTheme={toggleTheme} />
       )}
     </div>
   );

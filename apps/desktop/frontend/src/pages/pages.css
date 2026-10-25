@@ -23,11 +23,11 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  background-color: var(--nm-bg-mica);
-  background-image:
-    radial-gradient(1100px 520px at 8% -12%, var(--nm-accent-muted), transparent 62%),
-    radial-gradient(900px 480px at 102% 112%, var(--nm-status-muted-stale), transparent 64%);
+  /* 背景由同元素的 .nm-mica 物料类提供（Mica 底色 + 两处径向高光）。
+     这里曾复制同一份 background；两层声明并存时只有后一条生效，
+     改一处忘另一处就会静默不一致 —— 统一收敛到 .nm-mica。 */
 }
+
 
 .nm-titlebar {
   display: grid;
@@ -71,7 +71,7 @@
 .nm-tabs {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--nm-space-1);
   padding: 2px;
   border: 1px solid var(--nm-line-divider);
   border-radius: var(--nm-radius-control);
@@ -81,7 +81,7 @@
 .nm-tab {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--nm-space-2);
   height: 28px;
   padding: 0 var(--nm-space-3);
   border-radius: var(--nm-radius-control);
@@ -105,7 +105,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 4px;
+  gap: var(--nm-space-1);
   min-width: 0;
 }
 
@@ -139,7 +139,7 @@
 
 .nm-command-trigger__keys {
   display: inline-flex;
-  gap: 2px;
+  gap: var(--nm-space-1);
 }
 
 .nm-window-buttons {
@@ -196,7 +196,7 @@
 .nm-chips {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--nm-space-2);
   min-width: 0;
 }
 
@@ -359,7 +359,7 @@
 .nm-book-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--nm-space-1);
   padding: 10px 12px 12px;
 }
 
@@ -432,7 +432,7 @@
 .nm-detail__identity {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--nm-space-1);
   min-width: 0;
 }
 
@@ -455,20 +455,20 @@
 .nm-detail__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: var(--nm-space-1);
   margin-top: 2px;
 }
 
 .nm-detail__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  gap: var(--nm-space-2);
 }
 
 .nm-stat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--nm-space-1);
   padding: var(--nm-space-2);
   border: 1px solid var(--nm-line-divider);
   border-radius: var(--nm-radius-control);
@@ -495,7 +495,7 @@
 .nm-detail__link {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--nm-space-1);
   color: var(--nm-accent-base);
   font: var(--nm-text-caption);
 }
@@ -507,7 +507,7 @@
 .nm-chapter-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--nm-space-1);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -557,7 +557,7 @@
 .nm-detail__progress {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--nm-space-2);
 }
 
 .nm-detail__actions {
@@ -597,7 +597,7 @@
 .nm-core {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--nm-space-2);
   color: var(--nm-text-secondary);
   font: var(--nm-text-caption);
   white-space: nowrap;
@@ -660,7 +660,7 @@
 .nm-command__list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--nm-space-1);
   padding: 6px 0;
 }
 
@@ -696,7 +696,7 @@
 .nm-command__copy {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: var(--nm-space-1);
   flex: 1;
   min-width: 0;
   font: var(--nm-text-body);
@@ -715,7 +715,7 @@
 .nm-command__foot > span {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--nm-space-1);
 }
 
 /* ---------------------------------------------------------------------
@@ -768,7 +768,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--nm-space-2);
   flex: 1;
   min-height: 0;
   padding: 4px 0 12px;
@@ -779,7 +779,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: var(--nm-space-1);
   width: 64px;
   padding: 4px 0;
   border-radius: var(--nm-radius-control);
@@ -860,7 +860,7 @@
 .nm-canvas__crumb {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--nm-space-1);
   min-width: 0;
   max-width: 300px;
   color: var(--nm-text-secondary);
@@ -900,7 +900,7 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--nm-space-1);
   height: 36px;
   padding: 2px 6px;
   border: 1px solid var(--nm-line-control);
@@ -936,7 +936,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--nm-space-1);
   width: 48px;
   flex: 0 0 48px;
   padding: 8px 0;
@@ -1015,7 +1015,7 @@
 .nm-ocr-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--nm-space-1);
   padding: var(--nm-space-3);
   border: 1px solid var(--nm-line-divider);
   border-radius: var(--nm-radius-control);
@@ -1038,7 +1038,7 @@
 .nm-region-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--nm-space-1);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1073,7 +1073,7 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  gap: 1px;
+  gap: var(--nm-space-1);
 }
 
 .nm-region__label {
@@ -1090,7 +1090,7 @@
 .nm-kv {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--nm-space-2);
   margin: 0;
 }
 
@@ -1145,7 +1145,7 @@
 .nm-stage {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--nm-space-1);
   flex: none;
   color: var(--nm-text-tertiary);
   font: var(--nm-text-caption);
@@ -1224,7 +1224,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1.25fr 0.9fr 0.85fr;
-  gap: 6px;
+  gap: var(--nm-space-2);
   height: 100%;
   padding: 22px 14px 20px;
 }
@@ -1376,7 +1376,7 @@
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--nm-space-2);
   height: 48px;
   padding: 0 var(--nm-space-2);
   border-radius: var(--nm-radius-overlay);
@@ -1385,7 +1385,7 @@
 .nm-reader__chapter {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--nm-space-1);
   min-width: 0;
   max-width: 210px;
   color: var(--nm-text-secondary);
@@ -1468,7 +1468,7 @@
 .nm-keyhint {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--nm-space-1);
   color: var(--nm-text-tertiary);
   font: var(--nm-text-caption);
   white-space: nowrap;

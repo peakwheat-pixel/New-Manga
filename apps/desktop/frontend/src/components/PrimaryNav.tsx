@@ -12,6 +12,7 @@ const TABS: ReadonlyArray<TabSpec> = [
   { id: "shelf", label: "书架", icon: "book" },
   { id: "workbench", label: "工作台", icon: "tool" },
   { id: "reader", label: "阅读器", icon: "reader" },
+  { id: "settings", label: "设置", icon: "settings" },
 ];
 
 export interface PrimaryNavProps {

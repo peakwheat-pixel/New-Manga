@@ -6,6 +6,7 @@ import { SettingsPanel } from "./settings/SettingsPanel";
 import { AppShell } from "./shell/AppShell";
 import { WorkbenchPage } from "./workbench/WorkbenchPage";
 import { DesignPreview } from "./pages/DesignPreview";
+import { UiRoot } from "./ui/UiRoot";
 
 type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
@@ -526,13 +527,20 @@ function RuntimeApp() {
   }
 
   const safeInvoke = activeInvoke || tauriInvokeSafe();
-  return <AppShell invoke={safeInvoke} />;
+  // UIUX-V2-RUNTIME-1: 生产窗渲染 v2 运行时根。`?view=legacy` 仅作为一次性
+  // 回退通道保留（历史内联样式壳 AppShell），默认路径不再可达，避免同屏两套 UI。
+  const legacyRequested =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("view") === "legacy";
+  return legacyRequested ? <AppShell invoke={safeInvoke} /> : <UiRoot invoke={safeInvoke} />;
 }
 
 /**
- * Design v2 static skeleton entry. `?view=design` bypasses the Tauri runtime
- * probes entirely so the three page shells can be reviewed without a backend.
- * The frozen probe/console chrome remains the default path.
+ * 设计层入口分派：
+ *   - `?view=design` → 静态骨架（固定 fixtures，不接 IPC），用于视觉回归。
+ *   - `?view=legacy` → 历史内联样式壳（一次性回退，不再作为默认路径）。
+ *   - 其余（含 Tauri 生产窗与 `?view=app`）→ v2 运行时根，走真实 IPC。
+ * 冻结的 probe / AC1 证据路径在 `RuntimeApp` 内部按 invoke 探测决定，不受这里影响。
  */
 export default function App() {
   const designRequested =

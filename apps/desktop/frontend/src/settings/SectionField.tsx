@@ -15,7 +15,30 @@ import { tokens } from "../theme/tokens";
  * these messages are UI affordances only.
  */
 
-export const settingsInputStyle: CSSProperties = {
+/**
+ * 令牌主题可切换后，**模块级** `const style = { ...tokens.x }` 会被冻结在
+ * import 那一刻的主题（当初是深色）。浅色主题下这些控件仍会是深色底，
+ * 与页面其余部分打架——UIUX-V2-RUNTIME-1 的真机自查就抓到了这个问题。
+ *
+ * 这里把这类常量换成"按当前主题现算"的**访问器属性对象**（不用 Proxy：
+ * React 遍历行内样式时会做 ownKeys 一致性检查，Proxy 在某些路径下会抛
+ * "'ownKeys' trap returned extra keys but proxy target is non-extensible"）。
+ * 键集合由工厂首次求值决定（两套主题的键完全相同），每次读取属性再按当前
+ * 主题现算值；调用点零改动（各 panel 仍然 `style={settingsSelectStyle}`）。
+ */
+function themeStyle(factory: () => CSSProperties): CSSProperties {
+  const style: Record<string, unknown> = {};
+  for (const key of Object.keys(factory())) {
+    Object.defineProperty(style, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => (factory() as Record<string, unknown>)[key],
+    });
+  }
+  return style as CSSProperties;
+}
+
+export const settingsInputStyle: CSSProperties = themeStyle(() => ({
   width: "100%",
   maxWidth: 220,
   boxSizing: "border-box",
@@ -25,9 +48,9 @@ export const settingsInputStyle: CSSProperties = {
   borderRadius: tokens.radius.button,
   background: tokens.color.surface.card,
   color: tokens.color.text.primary,
-};
+}));
 
-export const settingsSelectStyle: CSSProperties = {
+export const settingsSelectStyle: CSSProperties = themeStyle(() => ({
   width: "100%",
   maxWidth: 260,
   boxSizing: "border-box",
@@ -37,7 +60,7 @@ export const settingsSelectStyle: CSSProperties = {
   borderRadius: tokens.radius.button,
   background: tokens.color.surface.card,
   color: tokens.color.text.primary,
-};
+}));
 
 /**
  * Twin-handler pattern for free-text / number inputs (same rule already used

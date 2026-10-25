@@ -3,33 +3,35 @@
  * Component-specific rules live beside their components; page geometry lives
  * in src/pages/pages.css.
  *
- * SCOPE: everything below is gated on `:where(html[data-view="design"])`, which
- * DesignPreview sets on mount and restores on unmount. These are element-level
+ * SCOPE: everything below is gated on `:where(html[data-view])` — the mere
+ * presence of the attribute, not a specific value. These are element-level
  * resets (body overflow, button padding, svg display) that would otherwise
- * leak into the frozen Tauri runtime path — the runtime path has no CSS files
- * of its own and relies on its inline styles, so an unscoped reset silently
- * changes it. Never add an unscoped element selector here.
+ * leak into the frozen RC2 probe/AC1 runtime path, which sets no attribute and
+ * relies on its inline styles, so an unscoped reset silently changes it.
+ * Both v2 roots set the attribute: `DesignPreview` uses `data-view="design"`
+ * (static fixture preview) and `UiRoot` uses `data-view="app"` (real runtime).
+ * Never add an unscoped element selector here.
  */
 
-:where(html[data-view="design"]) *,
-:where(html[data-view="design"]) *::before,
-:where(html[data-view="design"]) *::after {
+:where(html[data-view]) *,
+:where(html[data-view]) *::before,
+:where(html[data-view]) *::after {
   box-sizing: border-box;
 }
 
-:where(html[data-view="design"]),
-:where(html[data-view="design"]) body,
-:where(html[data-view="design"]) #root {
+:where(html[data-view]),
+:where(html[data-view]) body,
+:where(html[data-view]) #root {
   width: 100%;
   height: 100%;
   margin: 0;
 }
 
-:where(html[data-view="design"]) {
+:where(html[data-view]) {
   background: var(--nm-bg-canvas);
 }
 
-:where(html[data-view="design"]) body {
+:where(html[data-view]) body {
   overflow: hidden;
   background: var(--nm-bg-canvas);
   color: var(--nm-text-primary);
@@ -38,56 +40,56 @@
   text-rendering: optimizeLegibility;
 }
 
-:where(html[data-view="design"]) button,
-:where(html[data-view="design"]) input,
-:where(html[data-view="design"]) select,
-:where(html[data-view="design"]) textarea {
+:where(html[data-view]) button,
+:where(html[data-view]) input,
+:where(html[data-view]) select,
+:where(html[data-view]) textarea {
   margin: 0;
   font: inherit;
   color: inherit;
 }
 
-:where(html[data-view="design"]) button {
+:where(html[data-view]) button {
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
 }
 
-:where(html[data-view="design"]) button:disabled {
+:where(html[data-view]) button:disabled {
   cursor: default;
 }
 
-:where(html[data-view="design"]) svg {
+:where(html[data-view]) svg {
   display: block;
   flex: none;
 }
 
-:where(html[data-view="design"]) ::selection {
+:where(html[data-view]) ::selection {
   background: var(--nm-accent-muted);
   color: var(--nm-text-primary);
 }
 
-:where(html[data-view="design"]) :focus-visible {
+:where(html[data-view]) :focus-visible {
   outline: 2px solid var(--nm-accent-ring);
   outline-offset: 2px;
 }
 
-:where(html[data-view="design"]) * {
+:where(html[data-view]) * {
   scrollbar-width: thin;
   scrollbar-color: var(--nm-line-strong) transparent;
 }
 
-:where(html[data-view="design"]) *::-webkit-scrollbar {
+:where(html[data-view]) *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-:where(html[data-view="design"]) *::-webkit-scrollbar-track {
+:where(html[data-view]) *::-webkit-scrollbar-track {
   background: transparent;
 }
 
-:where(html[data-view="design"]) *::-webkit-scrollbar-thumb {
+:where(html[data-view]) *::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: var(--nm-radius-control);
   background: var(--nm-line-strong);

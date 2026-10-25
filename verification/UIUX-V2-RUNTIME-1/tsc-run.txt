@@ -1,0 +1,5 @@
+REVIEW_HEAD_PENDING
+command: node node_modules/typescript/bin/tsc --noEmit
+exit_code: 0
+output_begin
+output_end

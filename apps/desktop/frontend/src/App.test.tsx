@@ -126,7 +126,7 @@ describe("App Mode Dispatching - Detecting Neutrality, Production AppShell vs Pr
   });
 
   // Production Mode: Explicitly entered only after probe_config is denied and deny matrix completes
-  it("mounts production AppShell after probe_config is denied (production mode confirmed)", async () => {
+  it("mounts the v2 runtime root after probe_config is denied (production mode confirmed)", async () => {
     const invokedCommands: string[] = [];
     const mockInvoke = vi.fn(async (cmd: string) => {
       invokedCommands.push(cmd);
@@ -170,11 +170,14 @@ describe("App Mode Dispatching - Detecting Neutrality, Production AppShell vs Pr
       }
     });
 
-    // Now production mode is confirmed and AppShell is mounted
-    expect(container.querySelector('[data-testid="app-shell"]')).not.toBeNull();
-    expect(container.querySelector('[data-testid="app-nav-rail"]')).not.toBeNull();
+    // UIUX-V2-RUNTIME-1: 生产窗渲染 v2 运行时根。历史内联样式壳 AppShell 不再
+    // 挂在默认路由上——只有显式 `?view=legacy` 才是回退通道，因此这里必须
+    // 同时断言 app-shell **不存在**，否则"两套 UI 并存"会悄悄回归。
+    expect(container.querySelector('[data-testid="app-root"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="app-shell"]')).toBeNull();
+    expect(container.querySelector('[data-testid="page-shelf"]')).not.toBeNull();
 
-    // In production mode, library_list_books is now legitimately called by BookshelfPage
+    // In production mode, library_list_books is now legitimately called by the v2 shelf page
     expect(invokedCommands).toContain("library_list_books");
     expect(invokedCommands).not.toContain("issue_resource_url");
   });
