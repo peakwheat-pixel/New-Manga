@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from "react";
 import { Icon, type IconName } from "../components/Icon";
+import { PrimaryNav } from "../components/PrimaryNav";
 import { PagePlaceholder } from "../components/PagePlaceholder";
 import { StatusMark, type StatusState } from "../components/StatusMark";
 import { useAcrylicBudget } from "../design/useAcrylicBudget";
@@ -58,6 +59,28 @@ export function Workbench({ theme, onNavigate, onToggleTheme }: WorkbenchProps) 
 
   return (
     <div className="nm-workbench nm-mica" data-testid="page-workbench">
+      <header className="nm-titlebar" data-testid="workbench-titlebar">
+        <div className="nm-titlebar__brand">
+          <span className="nm-brand-mark" aria-hidden="true">
+            NM
+          </span>
+          <span className="nm-brand-name">New Manga</span>
+        </div>
+        <PrimaryNav activePage="workbench" onNavigate={onNavigate} />
+        <div className="nm-titlebar__actions" style={{ justifyContent: "flex-end" }}>
+          <div className="nm-window-buttons" aria-hidden="true">
+            <span className="nm-window-btn">
+              <Icon name="minus" size={12} />
+            </span>
+            <span className="nm-window-btn">
+              <Icon name="maximize" size={11} />
+            </span>
+            <span className="nm-window-btn nm-window-btn--close">
+              <Icon name="close" size={12} />
+            </span>
+          </div>
+        </div>
+      </header>
       <div className="nm-workbench__body">
         <aside className="nm-filmstrip" data-testid="filmstrip" aria-label="胶片条">
           <button

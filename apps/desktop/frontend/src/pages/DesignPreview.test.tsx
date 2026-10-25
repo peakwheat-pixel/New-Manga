@@ -93,6 +93,13 @@ describe("DesignPreview (v2 static skeleton)", () => {
     expect(host.querySelectorAll('[data-testid="pipeline"] .nm-stage')).toHaveLength(10);
     expect(host.querySelector('[data-testid="inspector"]')?.classList.contains("nm-acrylic")).toBe(true);
     expect(host.querySelectorAll(".nm-acrylic, .nm-acrylic-24, .nm-acrylic-strong")).toHaveLength(1);
+
+    // 一级切换栏必须在工作台上同样可用，否则只能靠画布里的单向后跳转。
+    const wbTabs = host.querySelector('[data-testid="page-workbench"] [data-testid="tab-workbench"]');
+    expect(wbTabs).not.toBeNull();
+    expect(wbTabs?.getAttribute("data-active")).toBe("true");
+    expect(host.querySelector('[data-testid="page-workbench"] [data-testid="tab-shelf"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="page-workbench"] [data-testid="tab-reader"]')).not.toBeNull();
   });
 
   it("switches to the immersive reader via the shelf tabs", () => {
@@ -105,6 +112,12 @@ describe("DesignPreview (v2 static skeleton)", () => {
     expect(host.querySelector('[data-testid="reader-bottom"]')?.classList.contains("nm-acrylic-24")).toBe(true);
     expect(host.querySelector('[data-testid="page-placeholder"]')).not.toBeNull();
     expect(host.querySelectorAll(".nm-acrylic, .nm-acrylic-24, .nm-acrylic-strong")).toHaveLength(2);
+
+    // 阅读器浮层里也要有一级切换栏，且不能因此多出亚克力层。
+    const rdTabs = host.querySelector('[data-testid="page-reader"] [data-testid="tab-reader"]');
+    expect(rdTabs).not.toBeNull();
+    expect(rdTabs?.getAttribute("data-active")).toBe("true");
+    expect(host.querySelector('[data-testid="page-reader"] [data-testid="tab-shelf"]')).not.toBeNull();
 
     // Reader chrome is navigable back to the shelf.
     click(host, '[data-testid="reader-top"] [aria-label="返回书架"]');

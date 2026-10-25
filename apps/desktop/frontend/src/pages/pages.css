@@ -1483,3 +1483,18 @@
     max-width: 150px;
   }
 }
+
+/* ── 一级页面切换栏：阅读器浮层内需要"轻"量呈现 ─────────────────────
+   阅读器的顶部浮层本身就是亚克力条，切换栏再套一层底色和外框会抢视觉，
+   所以这里去掉容器 chrome，只保留选中态的卡片底。
+   工作台用完整 .nm-titlebar，不需要覆盖。 */
+.nm-reader__top .nm-tabs {
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+}
+
+.nm-reader__top .nm-tabs .nm-tab[data-active="true"] {
+  background: var(--nm-acrylic-tint-strong);
+  box-shadow: none;
+}

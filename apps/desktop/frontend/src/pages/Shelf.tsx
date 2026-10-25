@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Icon, type IconName } from "../components/Icon";
+import { PrimaryNav } from "../components/PrimaryNav";
 import { StatusMark, type StatusState } from "../components/StatusMark";
 import { useAcrylicBudget } from "../design/useAcrylicBudget";
 import type { DesignPage, Theme } from "../design/types";
@@ -266,12 +267,6 @@ export function Shelf({ activePage, theme, onNavigate, onToggleTheme }: ShelfPro
     command.action();
   };
 
-  const tabs: Array<{ id: DesignPage; label: string; icon: IconName }> = [
-    { id: "shelf", label: "书架", icon: "book" },
-    { id: "workbench", label: "工作台", icon: "tool" },
-    { id: "reader", label: "阅读器", icon: "reader" },
-  ];
-
   return (
     <div className="nm-shelf nm-mica" data-testid="page-shelf">
       <header className="nm-titlebar" data-testid="shelf-titlebar">
@@ -282,23 +277,7 @@ export function Shelf({ activePage, theme, onNavigate, onToggleTheme }: ShelfPro
           <span className="nm-brand-name">New Manga</span>
         </div>
 
-        <nav className="nm-tabs" role="tablist" aria-label="一级页面">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activePage === tab.id}
-              className="nm-tab"
-              data-active={activePage === tab.id}
-              data-testid={`tab-${tab.id}`}
-              onClick={() => onNavigate(tab.id)}
-            >
-              <Icon name={tab.icon} size={15} />
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </nav>
+        <PrimaryNav activePage={activePage} onNavigate={onNavigate} />
 
         <div className="nm-titlebar__actions">
           <button

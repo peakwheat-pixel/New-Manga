@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Icon } from "../components/Icon";
+import { PrimaryNav } from "../components/PrimaryNav";
 import { PagePlaceholder } from "../components/PagePlaceholder";
 import { StatusMark } from "../components/StatusMark";
 import { useAcrylicBudget } from "../design/useAcrylicBudget";
@@ -42,6 +43,7 @@ export function Reader({ theme, onNavigate, onToggleTheme }: ReaderProps) {
         >
           <Icon name="arrow-left" size={17} />
         </button>
+        <PrimaryNav activePage="reader" onNavigate={onNavigate} />
         <span className="nm-reader__chapter">
           <span className="nm-reader__book">雾港来信</span>
           <span className="nm-reader__sep">·</span>
