@@ -34,6 +34,9 @@ export interface PrimaryNavProps {
  * 同步 focus 落在即将被移除的旧节点上，flush 后浏览器把焦点丢回 body，第二次
  * 方向键就再也收不到了。所以把目标记在模块级，等新页面的 PrimaryNav 挂载、
  * activePage 生效之后再 focus。
+ * 契约：`onNavigate(id)` 最终必须使本组件的 `activePage` 变成 `id`，否则标记会滞留，
+ * 直到之后某次激活恰好命中该值时才错误抢一次焦点。当前三个调用方都是
+ * DesignPreview 直接传入的 setPage，满足契约。
  */
 let pendingFocusTarget: DesignPage | null = null;
 

@@ -186,6 +186,14 @@ describe("DesignPreview (v2 static skeleton)", () => {
     expect(activePage()).toBe("shelf");
   });
 
+  it("keeps focus on the tab after a mouse click", () => {
+    // 点击会卸载被点的按钮，浏览器随后把焦点丢回 body，方向键就没人接收。
+    // 这条断言锁住"点击也走 pending 焦点路径"的修复，防止无声回退。
+    const host = mount(<DesignPreview />);
+    click(host, '[data-testid="tab-workbench"]');
+    expect(document.activeElement?.getAttribute("data-testid")).toBe("tab-workbench");
+  });
+
   it("turns reader pages with the arrow keys it advertises", () => {
     const host = mount(<DesignPreview />);
     click(host, '[data-testid="tab-reader"]');
