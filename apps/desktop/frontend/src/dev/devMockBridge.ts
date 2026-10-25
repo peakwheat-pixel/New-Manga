@@ -122,10 +122,15 @@ const EMPTY_READS: Record<string, unknown> = {
   },
   revoke_ref: { revoked: true },
   list_regions: () => ({
+    // 枚举必须取自冻结闭集（region/types.ts）：RegionType 六值
+    // speech|narration|sfx|title|note|other；RegionOrigin 四值
+    // machine|user|imported|restored；SfxPolicy 三值 skip|translate|manual。
+    // 用闭集外的值（如 dialogue / manual / preserve）会让 UI 查表得 undefined
+    // 并渲染出残缺行——ZCode 审查 F-2 就是靠截图发现这里写错了。
     regions: [
-      { region_id: "region-1", region_type: "dialogue", sfx_policy: "preserve", origin: "machine", revision_no: 1 },
-      { region_id: "region-2", region_type: "narration", sfx_policy: "preserve", origin: "machine", revision_no: 1 },
-      { region_id: "region-3", region_type: "sfx", sfx_policy: "translate", origin: "manual", revision_no: 2 },
+      { region_id: "region-1", region_type: "speech", sfx_policy: "translate", origin: "machine", revision_no: 1 },
+      { region_id: "region-2", region_type: "narration", sfx_policy: "skip", origin: "machine", revision_no: 1 },
+      { region_id: "region-3", region_type: "sfx", sfx_policy: "translate", origin: "user", revision_no: 2 },
     ],
     page_size: { width: 1440, height: 2048 },
   }),

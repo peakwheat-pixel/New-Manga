@@ -1,11 +1,10 @@
-# vitest 原始输出（摘要；完整 214KB 原文见仓外 G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt）
-# 保留规则：命令、退出码、汇总行、以及所有 FAIL/× 行；成功用例的逐条 ✓ 行省略。
-
+# 采集时点：修复提交头（ZCode review r1 处置后：新增 Shelf.test.tsx 诚实数据守卫、dev mock 枚举修复、PageEmpty role）。
+# 完整原始输出（约 220KB）留仓外：G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt
 command: npx vitest run --reporter=basic
 exit_code: 0
-output_begin
-stderr | src/settings/ProviderProfilePanel.test.tsx > ProviderProfilePanel (G21) > a failed save keeps the draft and shows the closed conflict projection (AC4)
+
 stderr | src/settings/NetworkProfilePanel.test.tsx > NetworkProfilePanel (G23) > failed save keeps the draft (AC4) and shows the closed projection
+stderr | src/settings/ProviderProfilePanel.test.tsx > ProviderProfilePanel (G21) > a failed save keeps the draft and shows the closed conflict projection (AC4)
 stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > shows a visible error when the native picker or import fails
 stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > shows a visible error when the native picker or import fails
 stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > shows a visible error when the native picker or import fails
@@ -16,7 +15,6 @@ stderr | src/shell/AppShell.lifecycle.test.tsx > AppShell - P20-ISOLATION-1 side
 stderr | src/shell/AppShell.lifecycle.test.tsx > AppShell - P20-ISOLATION-1 sidecar fault indicator and state preservation > AC2: displays recovery notification on recovered, and fatal degraded message on permanent failure
 stderr | src/components/StatusMark.test.tsx > StatusMark > renders symbol, label and class for 'failed'
 stderr | src/components/StatusMark.test.tsx > StatusMark > keeps 'failed' non-emoji
- Test Files  59 passed (59)
-      Tests  561 passed (561)
-   Duration  5.92s (transform 4.60s, setup 0ms, collect 57.20s, tests 14.09s, environment 6.63s, prepare 11.08s)
-output_end
+ Test Files  60 passed (60)
+      Tests  564 passed (564)
+   Duration  5.94s (transform 5.01s, setup 0ms, collect 54.76s, tests 14.45s, environment 7.77s, prepare 11.70s)

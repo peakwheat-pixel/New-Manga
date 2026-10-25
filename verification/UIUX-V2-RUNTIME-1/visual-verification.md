@@ -50,3 +50,29 @@ npm run dev -- --port 5189
 ```
 
 注意：`devMockBridge` 只在 `import.meta.env.DEV` 下安装；真实 Tauri 桥存在时绝不覆盖。
+
+## ZCode 独立审查 r1 的处置（2026-10-25）
+
+审查结论：`changes_requested`，0×P0 / 1×P1 / 1×P2 / 5×P3（`review-zcode-r1.md`）。逐条处置：
+
+| finding | 严重度 | 处置 | 证据 |
+|---|---|---|---|
+| F-1 书架页运行时诚实数据零测试守卫（审查者变异核验：`progress: null → 42` 后 561 条测试全绿） | P1 | **已修复**：新增 `src/pages/Shelf.test.tsx` 三条守卫（真实书卡字段、无 `.nm-progress`/百分比/VOL./七态、章节页数来自 IPC 而非 fixtures、空书架态）。DSH 复做变异核验：改回 `progress: 42` → 新测试 1 failed；还原 → 3 passed，工作树零残留 | `vitest-run.txt`（60 文件/564 passed）、本文件下方"变异核验" |
+| F-2 dev mock 的 `region_type`/`origin` 用冻结闭集外的值 → 区域行残缺、本文件未登记 | P2 | **已修复**：改为 `speech`/`narration`/`sfx` + `machine`/`user`，`sfx_policy` 改为闭集内 `translate`/`skip`；重截 `shots/03` 并更新本文件第 03 行 | `shots/03-workbench-real-data.png` |
+| F-3 tsc 证据首行留有 `REVIEW_HEAD_PENDING` 占位 | P3 | **已修复**：重采 `tsc-run.txt`/`vitest-run.txt`，去掉占位并标注采集时点 | `tsc-run.txt` |
+| F-4 `PageEmpty` 无显式 role | P3 | **已修复**：`PageEmpty` 根节点加 `role="status"`，四态 role 一致 | `src/ui/PageState.tsx` |
+| F-5 两处字面色值（close 悬停 `#FFFFFF`、命令面板遮罩 `rgba(0,0,0,0.32)`）未令牌化 | P3 | **登记为债务**：均为 DESIGN-V2-IMPL-1 冻结既有值，本 Task 未新增；并入 R6 的后续"控件几何 + 间距/装饰色令牌"Task | Task 卡 R6 |
+| F-6 入库版任命书范围描述与冻结区间不符；PrimaryNav 注释过时 | P3 | **已修复**：任命书范围描述已在本次提交修订；`PrimaryNav.tsx` 注释更新为"五个消费点（运行时四页经 UiRoot + 设计预览）" | `APPOINTMENT.md`、`components/PrimaryNav.tsx` |
+| F-7 设计预览 fixture 底栏保留未实现的「Esc 返回」keyhint | P3 | **登记为债务**：base（DESIGN-V2-IMPL-1 骨架）既有、运行时分支无此假提示；并入设计预览清理 Task | Task 卡 R7 |
+
+修复后回归：`tsc --noEmit` exit 0；`vitest run` **60 文件 / 564 passed / 0 skipped**，exit 0。
+
+### 变异核验（DSH 复做，证明 F-1 守卫有判别力）
+
+```
+改 src/pages/Shelf.tsx 运行时 progress: null → progress: 42
+npx vitest run src/pages/Shelf.test.tsx
+→ Tests 1 failed | 2 passed   （新守卫拦截）
+还原后
+→ Tests 3 passed              （工作树 git status 对 src/ 无输出）
+```

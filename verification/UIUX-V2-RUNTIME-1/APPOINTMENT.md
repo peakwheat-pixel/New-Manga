@@ -6,7 +6,7 @@
 - **审查对象（冻结）**：
   - `base_commit` = `b51d202c9ffab869d26bdb15b38459147991685c`
   - `reviewed_head` = `1853f0a0795ca93a26f6a41efc6c14bd77a3c7b1`
-  - 审查范围 = `git diff b51d202c9 1853f0a07`（全部为 `apps/desktop/frontend/src/**` 与 `verification/UIUX-V2-RUNTIME-1/**`）
+  - 审查范围 = `git diff b51d202c9 1853f0a07`。**注意**：该区间还包含一个前置治理提交 `f7e63c70c`（把两个休眠 Rust Task 的 Reviewer 从已停用的 Antigravity 改派为 ZCode，只动 4 个 doc 文件）。它不属于本 Task 的技术交付，审查时请跳过；技术变更全部在 `apps/desktop/frontend/src/**` 与 `verification/UIUX-V2-RUNTIME-1/**`。
 - **唯一写入路径**：`verification/UIUX-V2-RUNTIME-1/review-zcode-r1.md`
   - 审查者**只允许**创建/写入这一个文件。不得修改任何源码、测试、Task 卡、STATUS、PLAN、TASK_LEDGER 或其它证据文件。
   - 只读可访问：仓库全部文件、dev server（`localhost:5189`）、`npx vitest`、`node node_modules/typescript/bin/tsc --noEmit`。

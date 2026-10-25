@@ -1,4 +1,6 @@
-REVIEW_HEAD_PENDING
+# 采集时点：修复提交头（review r1 处置后）；命令在 apps/desktop/frontend 下执行。
+# 说明：reviewed_head 1853f0a07 首次采集时首行留有 REVIEW_HEAD_PENDING 占位（ZCode 审查 F-3），
+#       本次按 F-3 建议重采，去掉占位并标注采集时点。
 command: node node_modules/typescript/bin/tsc --noEmit
 exit_code: 0
 output_begin

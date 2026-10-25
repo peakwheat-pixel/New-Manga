@@ -36,8 +36,9 @@ export interface PrimaryNavProps {
  * 方向键就再也收不到了。所以把目标记在模块级，等新页面的 PrimaryNav 挂载、
  * activePage 生效之后再 focus。
  * 契约：`onNavigate(id)` 最终必须使本组件的 `activePage` 变成 `id`，否则标记会滞留，
- * 直到之后某次激活恰好命中该值时才错误抢一次焦点。当前三个调用方都是
- * DesignPreview 直接传入的 setPage，满足契约。
+ * 直到之后某次激活恰好命中该值时才错误抢一次焦点。当前五个消费点（运行时四页经
+ * `ui/UiRoot`、静态设计预览经 `pages/DesignPreview`）都直接把自己持有的页状态
+ * 写回，满足契约。
  */
 let pendingFocusTarget: DesignPage | null = null;
 

@@ -63,7 +63,7 @@ export function PageEmpty({
 }: PageEmptyProps) {
   const state: StatusState = kind === "filtered" ? "skipped" : "notStarted";
   return (
-    <div className="nm-state" data-testid={testId}>
+    <div className="nm-state" data-testid={testId} role="status">
       <span className="nm-state__icon" aria-hidden="true">
         <Icon name={icon} size={22} />
       </span>
