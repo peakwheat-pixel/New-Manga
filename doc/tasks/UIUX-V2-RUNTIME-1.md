@@ -13,7 +13,7 @@ base_commit: b51d202c9ffab869d26bdb15b38459147991685c
 branch: main
 worktree: null
 integration_commit: null
-delivery_head: 1853f0a0795ca93a26f6a41efc6c14bd77a3c7b1
+delivery_head: af421b9e6b973b5705e44e4c57bfebbb614ed33d
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/UIUX-V2-RUNTIME-1
@@ -45,10 +45,10 @@ allowed_paths:
 - [x] **AC5 阅读器页真实数据**：`pages/Reader.tsx` 运行时分支接 `library_get_reader_projection` + `library_save_reading_progress` + 页图资源通道；保留 ←/→ 翻页与章末不越界；webtoon_vertical 无接线时显式 BLOCKED 而不是假装可读。证据：`src/pages/Reader.test.tsx`（8 例）、截图 05/10。 <<MET>>
 - [x] **AC6 设置页 v2 实现**：`pages/Settings.tsx` 新建 v2 页面（标题栏 + 12 分节导航 + 内容带），挂载既有 12 个真实设置面板；`settings_get` 失败整页 PageError（显示错误码）且不挂载 panel；侧栏页脚显示真实 SFX 策略/未设置状态。证据：`src/pages/Settings.test.tsx`（7 例）、截图 06/08。 <<MET>>
 - [x] **AC7 单一 UI 收口**：App 生产窗默认渲染 `UiRoot`；`AppShell` 只允许出现在显式 `?view=legacy` 分支；`UiRoot.test.tsx` 有源码级守卫断言运行时根不 import 任何历史页面容器，并断言 AppShell 不再出现在默认分支。证据：`src/ui/UiRoot.test.tsx`。 <<MET>>
-- [x] **AC8 三/四态与诚实数据**：四页共用 `src/ui/PageState.tsx`（loading / empty / error / blocked），错误面必须显示错误码；无 IPC 来源的字段（跨书进度、跨书流水线状态、封面图、OCR 文本与置信度、区域文本、缩略图、作品标题等）一律省略或标「未知/未识别」，不得沿用 fixtures 数值。证据：三个页面测试文件中的"无 fixtures 回填"断言 + 截图 03/05/09/10。 <<MET>>
+- [x] **AC8 三/四态与诚实数据**：四页共用 `src/ui/PageState.tsx`（loading / empty / error / blocked），错误面必须显示错误码；无 IPC 来源的字段（跨书进度、跨书流水线状态、封面图、OCR 文本与置信度、区域文本、缩略图、作品标题等）一律省略或标「未知/未识别」，不得沿用 fixtures 数值。证据：`src/pages/Shelf.test.tsx`（3 例，运行时书卡/章节反 fixtures 回填，含变异核验）、`Workbench.test.tsx` 的反断言、`Reader.test.tsx`/`Settings.test.tsx` 的诚实态断言 + 截图 03/05/09/10。 <<MET>>
 - [x] **AC9 命令面板与键盘全通路**：全局命令面板（Ctrl+K）抽出为 `src/ui/CommandPalette.tsx`，具备 Tab 焦点圈禁、↑↓/Home/End/Enter/Esc 全通路、`aria-activedescendant`、关闭后焦点还给唤起元素；Ctrl/Cmd+1..4 切四页。证据：`src/ui/CommandPalette.test.tsx`（7 例）、`src/ui/UiRoot.test.tsx`、截图 07。 <<MET>>
 - [x] **AC10 设计层债务清理（DESIGN-V2-IMPL-1 P2 清单）**：`base.test.ts` 守卫补齐缩进块与 `@media`/`@supports` 嵌套盲区；命令面板焦点圈禁（见 AC9）；`:root` 的 `color-scheme` 作用域化到 `:where(html[data-view])`，不再泄漏到冻结的 probe/AC1 路径；`.nm-shelf` 与 `.nm-mica` 的重复背景收敛为一份；`pages.css` 的 gap 字面值（1/2/4/5/6px）全部改走 `--nm-space-*` 令牌。证据：`src/design/base.test.ts`（7 例，含守卫自指对照）、`design/tokens.css` 末尾作用域块。 <<MET>>
-- [x] **AC11 构建与测试**：`tsc --noEmit` 退出 0 且无诊断；`vitest run` **59 文件 / 561 测试全部通过**（0 skipped）。证据：`tsc-run.txt`、`vitest-run.txt`。 <<MET>>
+- [x] **AC11 构建与测试**：`tsc --noEmit` 退出 0 且无诊断；`vitest run` **60 文件 / 564 测试全部通过**（0 skipped）。证据：`tsc-run.txt`、`vitest-run.txt`。 <<MET>>
 - [x] **AC12 真机视觉自查（可替代部分）**：dev server（`localhost:5189`，主工作树）+ 真实 Chromium 打开运行时路径，逐页截图核对：深/浅两主题、书架（真实书/章节/页数）、工作台（真实页图/区域/运行投影/七态）、阅读器（真实页图/页码/章名/进度）、设置（12 分节、真实控件、错误码态）、命令面板、设计预览不退化。证据：`visual-verification.md` + `shots/01..11`。 <<MET>>
 - [ ] **AC13 独立审查**：由未参与实现的 ZCode 对冻结 head 做只读审查，结论写入 `verification/UIUX-V2-RUNTIME-1/review-zcode-*.md`；DSH 不自审。证据：待审查完成后回填（见「交付与运行记录」）。 <<PARTIAL: 待 ZCode 独立审查完成>>
 
@@ -77,7 +77,7 @@ allowed_paths:
 | AC6 设置页 | `npx vitest run src/pages/Settings.test.tsx` | 同上 | PASS（7 例） | `vitest-run.txt` |
 | AC10 设计层守卫 | `npx vitest run src/design` | 同上 | PASS | `vitest-run.txt` |
 | AC11 类型 | `node node_modules/typescript/bin/tsc --noEmit` | frontend 目录 | exit 0，无输出 | `tsc-run.txt` |
-| AC11 全量测试 | `npx vitest run --reporter=basic` | frontend 目录 | 59 文件 / 561 passed / 0 skipped | `vitest-run.txt` |
+| AC11 全量测试 | `npx vitest run --reporter=basic` | frontend 目录 | 60 文件 / 564 passed / 0 skipped | `vitest-run.txt` |
 | AC12 真机视觉 | dev server + Chrome，逐页截图 | `localhost:5189`，dev mock 数据 | PASS（11 张，见 index） | `visual-verification.md` |
 | AC12 真实 Core 端到端 | 打包 Tauri + Python Core 后点选四页 | 需要真实 app 构建 | **NOT_RUN**（本轮未构建 Tauri 安装包；HUMAN_VERIFY 登记） | `visual-verification.md` §未验证项 |
 
@@ -87,6 +87,8 @@ allowed_paths:
 - **风险 R1（已处置）**：令牌从静态对象变为主题 Proxy 后，模块级 `const style = {...tokens.x}`（`settings/SectionField.tsx` 两处）会被冻结在深色值；真机自查在浅色主题下抓到深色下拉框。已改为按主题现算的访问器属性对象，并加 `themeReactiveStyles.test.ts` 守卫。**备选**（未采用）：把 settings 各 panel 的全部行内样式改成 CSS 类——范围过大且会重写 12 个既有面板。
 - **风险 R2（已登记，不阻塞）**：真实 Core 端到端（打包 Tauri + Python Core 后四页点选）**未执行**：本轮无 Tauri 构建产物、无 Python Core 运行环境，且构建/打包属于发布线（与本 Task 的 UI 接线目标不同）。因此页面图像的 host 侧 HTTP 通道只在 dev 合成图下验证过；**HUMAN_VERIFY**：需要在真实 app 中确认页图渲染、阅读进度写回、导入对话框原生选择器。不得宣称该项已通过。
 - **风险 R3（已登记）**：`?view=legacy` 回退通道保留 `AppShell`，因此历史容器与其测试仍在仓库内（未被删除）。这是有意的低风险选择（删除会同时删掉 100KB+ 行为测试），并在 `UiRoot.test.tsx` 用源码级守卫保证它们不回到默认路由。**备选**（未采用）：立即删除历史容器——与"单一 UI"目标等价但牺牲回归覆盖，留作后续清理 Task。
+- **风险 R7（债务，来自独立审查 P3）**：base 冻结遗留的两处字面色值（`.nm-window-btn--close:hover` 的 `#FFFFFF`、`.nm-command-backdrop` 的 `rgba(0,0,0,0.32)`）与设计预览 fixture 底栏未实现的「Esc 返回」keyhint，均为 DESIGN-V2-IMPL-1 既有、本 Task 未新增；运行时分支无该假提示。并入后续「控件几何 + 装饰色令牌」与「设计预览清理」Task，不在本 Task 扩大范围。
+- **风险 R6（如实登记，未修复）**：`pages/pages.css` 仍有 21 处**非 gap** 的间距字面值（`padding` / 绝对定位微调，如 `padding: 2px`、`top: 10px`、`bottom: 14px`）。本轮只把 `gap` 字面值（1/2/4/5/6px，共 22 处）改走 `--nm-space-*`；其余多与固定高度控件（`.nm-tabs` 28px、`.nm-canvas__tools` 36px）的盒模型耦合，直接换成 4/8/12/16 会溢出或改变控件高度，需要逐控件重排才能安全收敛。**备选**（未采用）：本轮强行全量替换——会在无真机逐控件复核的条件下改变控件几何，风险高于收益。解除条件：另立"控件几何 + 间距令牌"Task，按控件逐个核对高度与内边距。
 - **风险 R4**：页面级设计语言是 v2，但设置/导入等次级面板仍是既有内联样式组件（经令牌桥接后配色/圆角/字阶与 v2 一致）；它们与 v2 的差异是结构与密度，不是色板。若要求像素级一致，需另立"面板 v2 重绘"Task。
 - 无阻塞本 Task 集成的项。
 
@@ -116,6 +118,8 @@ allowed_paths:
 | EV-12 | AC3/AC8/AC12 | verification/UIUX-V2-RUNTIME-1/shots/09-workbench-no-context.png | 1853f0a07 | - | CANONICAL |
 | EV-13 | AC5/AC8/AC12 | verification/UIUX-V2-RUNTIME-1/shots/10-reader-no-context.png | 1853f0a07 | - | CANONICAL |
 | EV-14 | AC3/AC12 | verification/UIUX-V2-RUNTIME-1/shots/11-design-preview-shelf.png | 1853f0a07 | - | CANONICAL |
+| EV-16 | AC8/AC13 | verification/UIUX-V2-RUNTIME-1/review-zcode-r1.md | af421b9e6 | - | CANONICAL |
+| EV-17 | AC8 | apps/desktop/frontend/src/pages/Shelf.test.tsx | af421b9e6 | - | CANONICAL |
 | EV-15 | AC13 | verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md | 66013fc33 | - | CANONICAL |
 
 > `sha256` 列留空：本 Task 的证据是仓内文本与 PNG，判别依据为 commit 内文件内容（与 EV-01/02 同 commit）。完整 214KB vitest 原始输出在仓外 `G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt`（体积原因不入库）。

@@ -52,3 +52,19 @@ base_commit: b51d202c9
 ## 审查完成后的流程
 
 Review 落盘后由 DSH 处置 findings：P0/P1 必须修复并重新定位审查（同一失败上限 2 次），P2/P3 逐条裁决（修复或登记为后续 Task）。只有 `decision: approved` 或 DSH 处置后复审通过，才由 DSH 回填 `integration_commit` 并把 Task 改为 `done`。
+
+---
+
+## 增量复审任命（r2）
+
+- **触发**：r1 `decision: changes_requested`（0×P0 / 1×P1 / 1×P2 / 5×P3），处置提交 `af421b9e6`。
+- **复审对象（冻结）**：`1853f0a07`（r1 reviewed head）→ `af421b9e6`（修复 head）。增量范围：
+  - 新增 `apps/desktop/frontend/src/pages/Shelf.test.tsx`（F-1 守卫）
+  - `apps/desktop/frontend/src/dev/devMockBridge.ts`（F-2 枚举修复）
+  - `apps/desktop/frontend/src/ui/PageState.tsx`（F-4 `role="status"`）
+  - `apps/desktop/frontend/src/components/PrimaryNav.tsx`（F-6 注释）
+  - 证据重采：`tsc-run.txt`、`vitest-run.txt`、`shots/03-workbench-real-data.png`、`visual-verification.md`（F-2/F-3 处置记录）
+  - `APPOINTMENT.md`、`doc/tasks/UIUX-V2-RUNTIME-1.md`（F-6 范围披露、R6/R7 债务登记）
+- **复审只需覆盖**：F-1/F-2 是否真正修复（含复跑 `npx vitest run` 与 `tsc --noEmit`）、F-3/F-4/F-6 是否落实、F-5/F-7 的债务登记是否如实、以及修复本身是否引入新问题。其余六轴 r1 已 PASS，不要求重走；若发现与修复相关的新问题，按原严重度定义登记。
+- **唯一写入路径**：`verification/UIUX-V2-RUNTIME-1/review-zcode-r2.md`（其余路径只读）。
+- **输出**：同上格式 + 对 r1 七条 finding 的逐条处置判定（CLOSED / STILL_OPEN / NOT_VERIFIED）。
