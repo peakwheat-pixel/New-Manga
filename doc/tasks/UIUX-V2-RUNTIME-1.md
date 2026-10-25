@@ -124,6 +124,7 @@ allowed_paths:
 | EV-16 | AC8/AC13 | verification/UIUX-V2-RUNTIME-1/review-zcode-r1.md | af421b9e6 | - | CANONICAL |
 | EV-17 | AC8 | apps/desktop/frontend/src/pages/Shelf.test.tsx | af421b9e6 | - | CANONICAL |
 | EV-18 | AC13 | verification/UIUX-V2-RUNTIME-1/review-zcode-r2.md | ae4e3a077 | - | CANONICAL |
+| EV-19 | Resource Manifest | verification/UIUX-V2-RUNTIME-1/resource-manifest.json | c375f2703 | - | CANONICAL |
 | EV-15 | AC13 | verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md | 66013fc33 | - | CANONICAL |
 
 > `sha256` 列留空：本 Task 的证据是仓内文本与 PNG，判别依据为 commit 内文件内容（与 EV-01/02 同 commit）。完整 214KB vitest 原始输出在仓外 `G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt`（体积原因不入库）。
@@ -142,7 +143,7 @@ allowed_paths:
 ## Closeout Record
 
 - Closeout date / DSH：2026-10-25 / DeepSeek Harness。
-- canonical_evidence_status：`complete`（EV-01..EV-18 全部入库并被独立审查复现；AC12 的 NOT_RUN 项显式登记，未冒充通过）。
+- canonical_evidence_status：`complete`（EV-01..EV-19 全部入库并被独立审查复现；AC12 的 NOT_RUN 项显式登记，未冒充通过）。
 - resource_closeout_status：`complete`（无删除/迁移/归档；仓外 agent-output 与 dev 截图标 PRESERVE_REFERENCED）。
 - 删除、迁移、归档数量/字节数：0（0 字节删除、0 迁移、0 归档）。
 - 未关闭项及保留原因：① AC12「真实 Tauri + Python Core 端到端」= HUMAN_VERIFY（本轮无构建产物与 Core 环境）；② R3 历史内联容器保留待后续清理 Task；③ R4 次级面板未像素级 v2 重绘；④ R6（21 处非 gap 间距字面值）与 R7（两处字面色值 + 设计预览假 keyhint）已登记为债务。
