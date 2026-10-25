@@ -53,6 +53,17 @@ export function PrimaryNav({ activePage, onNavigate }: PrimaryNavProps) {
     onNavigate(tab.id);
   };
 
+  /*
+   * 鼠标点击也要走同一条焦点路径：切页会卸载整页，点中的那个按钮随页面一起被
+   * 移除，浏览器会把焦点丢回 body，随后按方向键就没有任何元素接收——这是
+   * 「点了 Tab 之后 → 不生效」的真正原因。让点击也登记 pending 目标，
+   * 焦点就会落到新页面里同名 Tab 上，键盘可以接着用。
+   */
+  const activate = (id: DesignPage) => {
+    if (id !== activePage) pendingFocusTarget = id;
+    onNavigate(id);
+  };
+
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, current: DesignPage) => {
     const index = TABS.findIndex((tab) => tab.id === current);
     let next = -1;
@@ -80,7 +91,7 @@ export function PrimaryNav({ activePage, onNavigate }: PrimaryNavProps) {
           className="nm-tab"
           data-active={activePage === tab.id}
           data-testid={`tab-${tab.id}`}
-          onClick={() => onNavigate(tab.id)}
+          onClick={() => activate(tab.id)}
           onKeyDown={(event) => onKeyDown(event, tab.id)}
         >
           <Icon name={tab.icon} size={15} />
