@@ -6,6 +6,12 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
+|GIT-CLEAN-RUST-CAPACITY-DESIGN-1|—|ready（ZCode 仅设计；base1829a38；Reviewer=Antigravity）|
+|GIT-CLEAN-RUST-ISOLATION-1|—|in_review（1829a38；并发双过，饱和0/32；DSH r2 blocked；Reviewer=Antigravity）|
+|GIT-CLEAN-CORE-ENV-2|—|proposed（V2–V5与无ACL写入环境未定义）|
+|GIT-CLEAN-PUBLICATION-DIAG-1|—|approved（DSH r1；仅fed诊断；不集成/不done）|
+|GIT-CLEAN-PUBLICATION-1|—|in_review（root e34a90d00；DSH r1 blocked；push-gate approved；已推新分支）|
+|NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress，其他审计AC未完成）|
 |GOV-RESIDUAL-RUNTIME-IDENTITY-1|GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1|done（r2 approved 8e31aaa1d；集成同点；只读取证，7项错误与保护不变）|
 |GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1|GOV-RESIDUAL-RUNTIME-IDENTITY-1|done（Antigravity approved 3264e0b61；7错→0，保护根+APPDATA 三根）|
 |GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1|GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1|done（R2 b8c51b038；集成457485207；正式12→7，无清理）|
@@ -40,19 +46,19 @@
 |PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级插件沙箱；用户 2026-10-23 选择候选 1；Review r2 approved `41d7abeb`）|
 |P07 / P21|P02 / P20+另授权|proposed（可选；未释放）|
 
-READY 节点：无。
+READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1。
 
-当前实施中的 Task：无（TOOL-SOFTWARE-SMOKE-1 已 done）。
+2026-10-25 DSH 接任 Lead/Architect/Integrator（Codex 降为协作）。仅 ZCode 容量设计释放；Rust r2 与父审查 blocked，Core proposed。目标安全 push：仅干净快照分支，Gate 未过早不推；新 head 新 Appointment。
 
-待授权候选（未释放）：插件 OS 级沙箱（PLUGIN-RUNTIME-SANDBOX-1）。C-1/C-2/C-3 已关闭。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+C-1/C-2/C-3 与插件 OS 级沙箱已完成，不再列为待授权候选。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 
 本 Plan 明确继承[冻结 DAG](../archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md)中的其余节点状态、依赖 与限制；这是对原图的无损引用，不重开 Task、不增加 READY。完整源为 `fdca2057e:doc/REBASELINE_PLAN.md`，SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`。
 
 - 已完成节点共 54 项（源图口径）；P09/P18/P19/P20 等限定关闭，未满足 Gate 不变。
-- WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 个受保护资源限制；不得清理/GC/prune。132 worktrees/93 branches 是历史快照，新 Task 基线为 135/97。
+- WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 个受保护资源限制；不得清理/GC/prune。132 worktrees/93 branches 为历史快照。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1：done（368c07809）；WORKSPACE-DECLARATION-REMEDIATION-1：done（bb7887442），残余错误保留 fail-closed；不因工具修复自动获得删除授权。
-- P22 已集成；H1/P2-1/13 缺项和 BC-AC5 PARTIAL 保留。无 Legacy 实施/诊断/修复释放。
+- P22 已集成；H1/P2-1/13 与 BC-AC5 PARTIAL 保留。无 Legacy 实施/诊断/修复释放。
 
-当前治理主线 `main`；旧主线显式保留规则不变，远端不 push。
+当前治理主线 `main`；旧主线显式保留规则不变。远端仅允许用户授权的新分支快照 push，不push main。
