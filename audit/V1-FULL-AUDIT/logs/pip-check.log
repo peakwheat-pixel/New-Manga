@@ -1,0 +1,17 @@
+START_UTC=2026-10-23T16:24:56.925519+00:00
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pip", "check"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\pip-check\data
+iopaint 1.6.0 requires fastapi, which is not installed.
+iopaint 1.6.0 requires gradio, which is not installed.
+iopaint 1.6.0 requires python-socketio, which is not installed.
+iopaint 1.6.0 has requirement controlnet-aux==0.0.3, but you have controlnet-aux 0.0.10.
+iopaint 1.6.0 has requirement peft==0.7.1, but you have peft 0.20.0.
+iopaint 1.6.0 has requirement Pillow==9.5.0, but you have pillow 12.3.0.
+iopaint 1.6.0 has requirement typer-config==1.4.0, but you have typer-config 1.5.1.
+
+EXIT=1
+TIMED_OUT=False
+ELAPSED_SECONDS=3.079

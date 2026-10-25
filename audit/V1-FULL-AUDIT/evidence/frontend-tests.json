@@ -1,0 +1,15 @@
+{
+  "name": "frontend-tests",
+  "argv": [
+    "E:\\Program Files\\nodejs\\npm.cmd",
+    "test",
+    "--",
+    "--reporter=verbose"
+  ],
+  "cwd": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend",
+  "started_utc": "2026-10-23T16:24:56.904404+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 19.587,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\frontend-tests.log"
+}

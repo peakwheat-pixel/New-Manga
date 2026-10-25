@@ -1,0 +1,14 @@
+{
+  "name": "npm-audit",
+  "argv": [
+    "E:\\Program Files\\nodejs\\npm.cmd",
+    "audit",
+    "--json"
+  ],
+  "cwd": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend",
+  "started_utc": "2026-10-23T16:25:00.005879+00:00",
+  "exit_code": 1,
+  "timed_out": false,
+  "elapsed_seconds": 4.547,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\npm-audit.log"
+}

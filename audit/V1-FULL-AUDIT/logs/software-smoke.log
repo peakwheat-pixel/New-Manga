@@ -1,0 +1,25 @@
+START_UTC=2026-10-23T16:24:56.908122+00:00
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "tools.smoke.plugins", "--only", "core,wire,packaged", "--json", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\software-smoke-report.json"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\software-smoke\data
+NM 软件检查工具 v1 — FAIL（4 层，22 项检查，1.5s）
+  [FAIL] Core 沙箱层（11 项，0.7s）
+    - CORE-BENIGN-HOOK（CORE_BENIGN_NOT_APPLIED）：合法 Hook 未执行：[{'plugin_id': 'smoke-benign', 'code': 'PLUGIN_HOOK_UNAVAILABLE', 'detail': 'cannot grant sandbox access to python.exe'}]
+    - CORE-FS-DENY（CORE_FS_NOT_APPLIED）：根外读插件 Hook 未执行：[{'plugin_id': 'smoke-fs-read', 'code': 'PLUGIN_HOOK_UNAVAILABLE', 'detail': 'cannot grant sandbox access to python.exe'}]
+    - CORE-NET-DENY（CORE_NET_DENY_NOT_APPLIED）：无权限网络插件 Hook 未执行：[{'plugin_id': 'smoke-net-none', 'code': 'PLUGIN_HOOK_UNAVAILABLE', 'detail': 'cannot grant sandbox access to python.exe'}]
+    - CORE-NET-ALLOW（CORE_NET_ALLOW_NOT_APPLIED）：network 插件 Hook 未执行：[{'plugin_id': 'smoke-net-ok', 'code': 'PLUGIN_HOOK_UNAVAILABLE', 'detail': 'cannot grant sandbox access to python.exe'}]
+    - CORE-TIMEOUT（CORE_TIMEOUT_CODE）：超时错误码应为 PLUGIN_HOOK_TIMEOUT，实际 PLUGIN_HOOK_UNAVAILABLE
+    - CORE-TREE-KILL（UNEXPECTED_CHECK_ERROR）：SandboxError: cannot grant sandbox access to python.exe
+    - CORE-AUDIT（CORE_AUDIT_EVENTS_MISSING）：缺少审计事件：['hook_invoked']
+  [PASS] Wire 层（6 项，0.5s）
+  [SKIP] 前端层（显式跳过）
+  [FAIL] 打包层（5 项，0.2s）
+    - PACKAGED-RUNTIME-SMOKE（PACKAGED_RUNTIME_FAILED）：bundle 解释器最小 PATH 启动失败（exit=3221225781）：
+    - PACKAGED-SANDBOX-HOOK（PACKAGED_HOOK_FAILED）：bundle 解释器 AppContainer Hook 未执行：[{'plugin_id': 'smoke-bundled', 'code': 'PLUGIN_HOOK_UNAVAILABLE', 'detail': 'cannot grant sandbox access to python.exe'}]
+报告：G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\software-smoke-report.json
+
+EXIT=1
+TIMED_OUT=False
+ELAPSED_SECONDS=1.996

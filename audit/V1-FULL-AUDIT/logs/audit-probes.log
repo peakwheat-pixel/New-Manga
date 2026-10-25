@@ -1,0 +1,25 @@
+START_UTC=2026-10-23T22:33:46.430703+00:00
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\test_audit_probes.py", "-vv", "-s", "-p", "no:cacheprovider", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\probe-temp"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit-probes\data
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+rootdir: G:\CODEX\New Manga
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 3 items
+
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_managed_publish_follows_directory_junction {"defect_confirmed": true, "publish_wrote_outside_managed": true, "scope": "all paths under isolated tmp_path"}
+PASSED
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id {"defect_confirmed": true, "database_changed": true, "typed_error": false, "rollback_id_in_error": false, "pre_restore_packages": 1}
+PASSED
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_nmbak_restore_can_overwrite_outside_managed_root {"defect_confirmed": true, "outside_managed_root": true, "before": "ORIGINAL-SENTINEL", "after": "AUDIT-OVERWRITE", "pre_restore_backup_created": true}
+PASSED
+
+============================== 3 passed in 0.37s ==============================
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=0.857

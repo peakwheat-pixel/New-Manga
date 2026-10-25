@@ -1,0 +1,27 @@
+{
+  "name": "rust-tests",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--",
+    "--skip",
+    "packaged_sidecar_tests::"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export\\apps\\desktop\\src-tauri",
+  "shell": false,
+  "started_utc": "2026-10-24T11:25:48.354759+00:00",
+  "elapsed_seconds": 50.15,
+  "exit": 101,
+  "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\rust-tests.log",
+  "env_overrides": {
+    "M2RC1_DEV_PREVIEW": "1",
+    "TAURI_CONFIG": "{\"bundle\": {\"resources\": []}}",
+    "CARGO_TARGET_DIR": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\cargo-target",
+    "M2RC1_PYTHON": "C:\\Python314\\python.exe",
+    "M2RC1_SRC_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export\\src",
+    "PYTHONUSERBASE": "C:\\Users\\49745\\AppData\\Roaming\\Python"
+  },
+  "filtered_tests_reason": "packaged_sidecar_tests requires a separately built frozen sidecar; no private ignored bundle borrowed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "desktop-build",
+  "argv": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline"
+  ],
+  "cwd": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri",
+  "started_utc": "2026-10-23T16:26:24.602870+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 26.149,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\desktop-build.log"
+}

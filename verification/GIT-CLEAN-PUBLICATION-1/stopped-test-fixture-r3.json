@@ -1,0 +1,9 @@
+{
+  "event": "STOP_OWN_HUNG_TEST_FIXTURE",
+  "parent_pid": 31700,
+  "child_pid": 19792,
+  "parent_executable": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\cargo-target\\debug\\deps\\m2rc1_desktop-24448612fc7535f6.exe",
+  "child_created": "2026-10-24T19:42:10.638403+08:00",
+  "fixture": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3\\verification\\P04\\deterministic_concurrent_sidecar.py",
+  "reason": "Missing preferred P22 fixture caused old P04 fallback to wait for a second serialized request"
+}

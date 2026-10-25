@@ -1,0 +1,116 @@
+START_UTC=2026-10-23T16:26:24.602870+00:00
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga\apps\desktop\src-tauri
+ARGV=["cargo", "build", "--locked", "--offline"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\desktop-build\data
+   Compiling getrandom v0.4.3
+   Compiling uuid v1.26.1
+   Compiling cfb v0.14.0
+   Compiling schemars v0.8.22
+   Compiling infer v0.22.0
+   Compiling tauri-utils v2.10.2
+   Compiling tauri-build v2.7.0
+   Compiling tauri-plugin v2.7.2
+   Compiling tauri-codegen v2.7.0
+   Compiling tauri v2.12.0
+   Compiling tauri-plugin-fs v2.7.1
+   Compiling tauri-macros v2.7.0
+   Compiling tauri-plugin-opener v2.7.2
+   Compiling tauri-plugin-dialog v2.8.3
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)
+warning: unused imports: `P15CredentialTarget`, `P15SettingsCommand`, and `P15_HOST_ONLY_COMMANDS`
+  --> src\main.rs:52:55
+   |
+52 |     LibraryChannel, LibraryError, LibrarySpawnConfig, P15CredentialTarget, P15SettingsCommand,
+   |                                                       ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+...
+55 |     PingResult, ResilientLibraryChannel, StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
+   |                                                               ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:335:12
+    |
+335 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:350:12
+    |
+350 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:359:12
+    |
+358 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+359 |     pub fn new() -> Self {
+    |            ^^^
+...
+370 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+378 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: constant `P15_HOST_ONLY_COMMANDS` is never used
+   --> src\library_bridge.rs:707:11
+    |
+707 | pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+    |           ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `track_unreaped_worker_handle` is never used
+    --> src\library_bridge.rs:1738:15
+     |
+1738 | pub(crate) fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) -> bool {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated function `spawn` is never used
+    --> src\library_bridge.rs:1904:12
+     |
+1903 | impl StdioLibraryChannel {
+     | ------------------------ associated function in this implementation
+1904 |     pub fn spawn(
+     |            ^^^^^
+
+warning: multiple methods are never used
+    --> src\library_bridge.rs:4673:12
+     |
+4630 | impl MockLibraryChannel {
+     | ----------------------- methods in this implementation
+...
+4673 |     pub fn set_export_snapshot_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4680 |     pub fn set_export_history_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4687 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+     |            ^^^^^^^^^
+...
+4691 |     pub fn set_books_error(&self, error: LibraryError) {
+     |            ^^^^^^^^^^^^^^^
+...
+4697 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^^
+...
+4703 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+...
+4707 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^
+...
+4714 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 8 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 26.09s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=26.149

@@ -1,0 +1,65 @@
+[
+  {
+    "name": "npm-ci-r4",
+    "delivery_head": "e34a90d001cce1fa966aec7d2b032bb5ad1cf148",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "ci",
+      "--offline",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "--cache",
+      "C:\\Users\\49745\\AppData\\Local\\npm-cache"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r4\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:45:47.145652+00:00",
+    "elapsed_seconds": 2.8,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\npm-ci-r4.log"
+  },
+  {
+    "name": "frontend-build-r4",
+    "delivery_head": "e34a90d001cce1fa966aec7d2b032bb5ad1cf148",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "build"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r4\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:45:49.946874+00:00",
+    "elapsed_seconds": 4.27,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\frontend-build-r4.log"
+  },
+  {
+    "name": "rust-tests-r4-serial",
+    "delivery_head": "e34a90d001cce1fa966aec7d2b032bb5ad1cf148",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--",
+      "--skip",
+      "packaged_sidecar_tests::",
+      "--test-threads=1"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r4\\apps\\desktop\\src-tauri",
+    "shell": false,
+    "started_utc": "2026-10-24T11:45:54.217863+00:00",
+    "elapsed_seconds": 38.1,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\rust-tests-r4-serial.log",
+    "env_overrides": {
+      "M2RC1_DEV_PREVIEW": "1",
+      "TAURI_CONFIG": "{\"bundle\": {\"resources\": []}}",
+      "CARGO_TARGET_DIR": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\cargo-target",
+      "M2RC1_PYTHON": "C:\\Python314\\python.exe",
+      "M2RC1_SRC_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r4\\src",
+      "PYTHONUSERBASE": "C:\\Users\\49745\\AppData\\Roaming\\Python"
+    }
+  }
+]

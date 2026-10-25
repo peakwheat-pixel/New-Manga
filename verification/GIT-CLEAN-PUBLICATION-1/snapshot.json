@@ -1,0 +1,17 @@
+{
+  "source_commit": "349e61faff5f93067af5d4ce2d9e394e0d665b8c",
+  "repository": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r4",
+  "branch": "codex/clean-source-snapshot",
+  "delivery_head": "e34a90d001cce1fa966aec7d2b032bb5ad1cf148",
+  "root_commits": 1,
+  "source_files": 724,
+  "source_bytes": 7749547,
+  "forbidden_object_ids_absent": 338,
+  "remotes": [],
+  "tests": "FRONTEND_PASS_RUST_SERIAL_PASS_CORE_3_FAILURES",
+  "review": "NOT_RUN",
+  "push": "NOT_AUTHORIZED",
+  "readiness": "BLOCKED_CORE_SANDBOX_AND_INDEPENDENT_REVIEW",
+  "generated_files": 6,
+  "tracked_files": 733
+}

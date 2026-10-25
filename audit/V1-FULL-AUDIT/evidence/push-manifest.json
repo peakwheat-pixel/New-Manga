@@ -1,0 +1,90 @@
+{
+  "status": "BLOCKED_OWNER_NO_DISTRIBUTION",
+  "base": "6a68fdeb92d8a1c7903166a8076d6260bf8fa79a",
+  "head": "349e61faff5f93067af5d4ce2d9e394e0d665b8c",
+  "target": "refs/heads/main",
+  "remote": "https://github.com/peakwheat-pixel/New-Manga.git",
+  "commits": 2888,
+  "candidate_batches": [
+    {
+      "head": "9cb31430e12e35e55357244ea7bf6178501f9f77",
+      "cumulative_commits": 2762,
+      "includes_driveupload_introduction": true
+    },
+    {
+      "head": "7e242db00d3751ddebd286334e346fda3ab5fbba",
+      "cumulative_commits": 2834,
+      "includes_driveupload_introduction": true
+    },
+    {
+      "head": "349e61faff5f93067af5d4ce2d9e394e0d665b8c",
+      "cumulative_commits": 2888,
+      "includes_driveupload_introduction": true
+    }
+  ],
+  "excluded_worktree_content": [
+    "all uncommitted changes",
+    "6 preexisting P04 diagnostic logs"
+  ],
+  "push_authorized": false,
+  "history_rewrite_authorized": false,
+  "checks": {
+    "heuristic_secret_triage": "4_TEST_PLACEHOLDER_HITS_NO_CONFIRMED_SECRET",
+    "material_redistribution": "PROHIBITED_BY_USER_FOR_169_JPEG",
+    "independent_review": "NOT_RUN",
+    "business_tests": "NOT_RUN_FOR_THIS_DOC_ONLY_CHANGE",
+    "material_inspection": "COMPLETED_WITH_LIMITS_169_JPEG_RIGHTS_NOT_ESTABLISHED",
+    "database_inspection": "34_QUICKCHECK_OK_22_LOCAL_PATH_CELLS_WAL_AND_FREE_PAGES_NOT_CLEARED",
+    "synthetic_embedded_png": "4_EXACT_SOURCE_MANIFEST_MATCHES"
+  },
+  "artifacts": [
+    {
+      "path": "audit/V1-FULL-AUDIT/evidence/push-history-scan.json",
+      "sha256": "7abd28dddf36c5b5c51c728aae6b27b15b5f1f9fc94e2c3c13378a645a72cc51"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/evidence/push-material-provenance.json",
+      "sha256": "e2002dbb5438b5e970decd53095bc63db9dc9535397372ba038c31c338cb1af4"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/evidence/push-worktree-ownership.json",
+      "sha256": "08fdd021a697030f0e56537fe4827aef56aca47ce4fac12547b7638425518bcb"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/tests/scan_push_history.py",
+      "sha256": "fdd0ff8771b2f717cb84e0c868ef56e6d7203a4333331b41bbb175b926ecc224"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/reports/PUSH_READINESS.md",
+      "sha256": "c8dd86eab8501298697032aab490da9de482559ff03c0754377d42fa37a8c9dc"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/reports/MATERIAL_CLEARANCE.md",
+      "sha256": "a37cd96e42b964a53b6d7936d3f46ad5f3e3f87e5bd588f12e5d57e635a75a22"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/evidence/push-material-inspection.json",
+      "sha256": "eb7546530766c178e3b2da72ae071b2b07dcd762725043f9acf2403569ef46b5"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/tests/inspect_push_materials.py",
+      "sha256": "f0663fa1afd5419fcf959c49c05e63e5ed16665ecfe694fe07a22f100689ad25"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/logs/push-material-checks.json",
+      "sha256": "3d7c41d32b754a9a0481db9635d49831864732df96dd8ed48bc5f921777f7e16"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/reports/MATERIAL_DISPOSITION_OPTIONS.md",
+      "sha256": "63736efa55c122883ffd2ab42ba8a0ed1ea7d6629b2a0ce361e5860509cde93e"
+    },
+    {
+      "path": "audit/V1-FULL-AUDIT/evidence/push-material-disposition.json",
+      "sha256": "78e89cddb790e4409785110756cf9f8627d0b0d4f93a620f94360047c388b2bd"
+    }
+  ],
+  "required_user_input": "Publication target/scope choice for the separate clean snapshot design; do not seek permission to distribute these JPEGs by default",
+  "clean_snapshot_design": "audit/V1-FULL-AUDIT/reports/MATERIAL_DISPOSITION_OPTIONS.md",
+  "clean_snapshot_execution": "NOT_AUTHORIZED_OR_STARTED",
+  "forbidden_material_disposition": "audit/V1-FULL-AUDIT/evidence/push-material-disposition.json"
+}

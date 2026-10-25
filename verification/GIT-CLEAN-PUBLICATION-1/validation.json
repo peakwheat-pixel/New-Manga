@@ -1,0 +1,69 @@
+{
+  "source_commit": "349e61faff5f93067af5d4ce2d9e394e0d665b8c",
+  "delivery_head": "e34a90d001cce1fa966aec7d2b032bb5ad1cf148",
+  "candidate_repository": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r4",
+  "source_files": 724,
+  "generated_files": 6,
+  "tracked_files": 733,
+  "forbidden_objects_absent": 338,
+  "private_profile_path_hits": [],
+  "file_hashes_match": true,
+  "root_commit_only": true,
+  "git_fsck_exit": 0,
+  "remotes": [],
+  "working_tree_clean": true,
+  "source_main_and_index_unchanged": true,
+  "protected_P04_hashes_unchanged": true,
+  "code_equivalence": [
+    {
+      "reference_repository": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2",
+      "reference_directory": "src",
+      "reference_tree": "1571a2ca84e76a52ef13876e9041a29c1e47fe0d",
+      "candidate_tree": "1571a2ca84e76a52ef13876e9041a29c1e47fe0d",
+      "meaning": "Core implementation"
+    },
+    {
+      "reference_repository": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2",
+      "reference_directory": "tests/core",
+      "reference_tree": "da2f41fb16feb1afa9b025b74a38fa632c187906",
+      "candidate_tree": "da2f41fb16feb1afa9b025b74a38fa632c187906",
+      "meaning": "Core tests"
+    },
+    {
+      "reference_repository": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3",
+      "reference_directory": "apps/desktop/frontend",
+      "reference_tree": "662ad099f9a71f0040ca375ecb637c7839e25e3d",
+      "candidate_tree": "662ad099f9a71f0040ca375ecb637c7839e25e3d",
+      "meaning": "Frontend source/tests/lock"
+    }
+  ],
+  "tests": {
+    "frontend": {
+      "passed": 435,
+      "evidence": "frontend-tests-r3.log",
+      "binding": "Exact frontend Git subtree matches final candidate; final frontend build rerun on r4"
+    },
+    "rust": {
+      "passed": 153,
+      "failed": 0,
+      "ignored": 1,
+      "filtered_out": 12,
+      "evidence": "rust-tests-r4-serial.log",
+      "mode": "serial development source; frozen-sidecar tests filtered, ignored test retained"
+    },
+    "core": {
+      "passed": 771,
+      "failed": 3,
+      "evidence": "core-tests-r2.log",
+      "binding": "Exact src and tests/core Git subtrees match final candidate; same known failures not rerun beyond 2 identical attempts",
+      "known_error": "PLUGIN_HOOK_UNAVAILABLE: cannot grant sandbox access to python.exe"
+    }
+  },
+  "review": "NOT_RUN",
+  "readiness": "BLOCKED_CORE_SANDBOX_AND_INDEPENDENT_REVIEW",
+  "limits": [
+    "No installer/model/real GUI acceptance; not a full product audit",
+    "Prior parallel worker-registry test failures remain recorded; serial success does not adjudicate parallel isolation",
+    "No GitHub remote/ref/default-branch changes or upload"
+  ]
+}

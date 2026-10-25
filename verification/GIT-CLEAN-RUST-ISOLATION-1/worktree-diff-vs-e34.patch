@@ -1,0 +1,35 @@
+# NOT a byte-exact patch. Do not use as canonical evidence.
+#
+# Reason: this delivery session had no shell write permission (Bash output
+# redirection and `git diff --output` were both blocked by the session
+# permission layer: "No permission client configured for Bash"), so the diff
+# could not be captured to a file by a tool. A hand-transcribed patch was
+# attempted first and contained transcription errors; it was discarded.
+#
+# Canonical regeneration (execution-capable session, from the implementation
+# repo at G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/source,
+# branch codex/git-clean-rust-isolation-1, base e34a90d001cce1fa966aec7d2b032bb5ad1cf148):
+#
+#   git -C "G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/source" diff
+#   git -C "G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/source" status --porcelain
+#
+# File-level binding of the delivered worktree state (sha256, computed with
+# sha256sum in-session; see RESULT.md §交付绑定):
+#   apps/desktop/src-tauri/src/library_bridge.rs
+#     c01363e96f2579dea0061d8956ab8d96c6002a7d9b31b3d8a854426dba8f66bf
+#   apps/desktop/src-tauri/src/main.rs
+#     b315e632e51befc7311ddb58fb513d6e6f400f9e84d1d0737d0a0e74404764cd
+#   apps/desktop/src-tauri/src/multichannel_stress_tests.rs (NEW, untracked)
+#     2e773e288605848a1a18d70d9114fa1daa50e7102a09edf755e4214184a0ea1a
+#
+# Change summary (see RESULT.md for the full design):
+#   - library_bridge.rs: registry access routed through unreaped_registry()
+#     (cfg(test): per-test override for the owning thread; production builds
+#     inline back to the same global static), reap/count parameterized via
+#     reap_registry/registry_count, cfg(test) reap_unreaped_workers_global,
+#     RegistryTestGuard in mod tests, four registry-semantics tests guarded.
+#     Production MAX=32 / lock / backpressure / holder semantics unchanged.
+#   - main.rs: registers #[cfg(test)] mod multichannel_stress_tests.
+#   - multichannel_stress_tests.rs (new): five #[ignore] dedicated-process
+#     stress scenarios (real Core 1/8/20 graceful, 20 concurrent cancel,
+#     FAULT_INJECTION blocked pipes touching the 32-slot boundary).

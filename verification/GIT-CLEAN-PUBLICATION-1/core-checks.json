@@ -1,0 +1,52 @@
+[
+  {
+    "name": "core-tests",
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "tests/core",
+      "-q",
+      "-rs",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\pytest-temp-747e324f1dfe4118bfc2438e2e9eb6a3"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export",
+    "shell": false,
+    "started_utc": "2026-10-24T11:24:21.537338+00:00",
+    "elapsed_seconds": 0.03,
+    "exit": 1,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\core-tests.log",
+    "isolation_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\core-check-environment",
+    "PYTHONPATH": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export\\src"
+  },
+  {
+    "name": "core-tests-isolated-deps",
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "tests/core",
+      "-q",
+      "-rs",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\pytest-temp-4353953f865e4843824f4e435341171c"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export",
+    "shell": false,
+    "started_utc": "2026-10-24T11:25:48.350124+00:00",
+    "elapsed_seconds": 59.17,
+    "exit": 1,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\core-tests-isolated-deps.log",
+    "isolation_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\core-check-environment",
+    "PYTHONPATH": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export\\src",
+    "PYTHONUSERBASE": "C:\\Users\\49745\\AppData\\Roaming\\Python",
+    "prior_attempt_note": "APPDATA isolation hid installed user-site pytest; explicit existing dependency base restores dependencies only"
+  }
+]

@@ -1,0 +1,81 @@
+[
+  {
+    "name": "npm-ci-r3",
+    "delivery_head": "87accae4d8aad0f149d1967e03280d78f07b19ad",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "ci",
+      "--offline",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "--cache",
+      "C:\\Users\\49745\\AppData\\Local\\npm-cache"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:41:29.371100+00:00",
+    "elapsed_seconds": 2.85,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\npm-ci-r3.log"
+  },
+  {
+    "name": "frontend-tests-r3",
+    "delivery_head": "87accae4d8aad0f149d1967e03280d78f07b19ad",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "test",
+      "--",
+      "--reporter=dot"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:41:32.221289+00:00",
+    "elapsed_seconds": 4.88,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\frontend-tests-r3.log"
+  },
+  {
+    "name": "frontend-build-r3",
+    "delivery_head": "87accae4d8aad0f149d1967e03280d78f07b19ad",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "build"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:41:37.104457+00:00",
+    "elapsed_seconds": 3.93,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\frontend-build-r3.log"
+  },
+  {
+    "name": "rust-tests-r3-serial",
+    "delivery_head": "87accae4d8aad0f149d1967e03280d78f07b19ad",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--",
+      "--skip",
+      "packaged_sidecar_tests::",
+      "--test-threads=1"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3\\apps\\desktop\\src-tauri",
+    "shell": false,
+    "started_utc": "2026-10-24T11:41:41.032796+00:00",
+    "elapsed_seconds": 216.52,
+    "exit": 101,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\rust-tests-r3-serial.log",
+    "env_overrides": {
+      "M2RC1_DEV_PREVIEW": "1",
+      "TAURI_CONFIG": "{\"bundle\": {\"resources\": []}}",
+      "CARGO_TARGET_DIR": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\cargo-target",
+      "M2RC1_PYTHON": "C:\\Python314\\python.exe",
+      "M2RC1_SRC_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r3\\src",
+      "PYTHONUSERBASE": "C:\\Users\\49745\\AppData\\Roaming\\Python"
+    }
+  }
+]

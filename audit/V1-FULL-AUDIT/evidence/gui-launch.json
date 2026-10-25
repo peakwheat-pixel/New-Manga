@@ -1,0 +1,22 @@
+{
+  "pid": 51000,
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\cargo-target\\debug\\m2rc1-desktop.exe",
+  "sha256": "e9a1dd3a8f36c8d0dc080ca2948c3da75df78f010ad83c252536444d877940a1",
+  "source_head": "349e61faff5f93067af5d4ce2d9e394e0d665b8c",
+  "environment_pins": {
+    "M2RC1_PYTHON": "C:\\Python314\\python.exe",
+    "M2RC1_SRC_ROOT": "G:\\CODEX\\New Manga\\src",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\data",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\catalog\\catalog.sqlite",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\temp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\temp",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\webview",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "spawn_seconds": 0.373,
+  "mode": "fresh debug build / real Python Core / synthetic empty audit data; not installed release"
+}

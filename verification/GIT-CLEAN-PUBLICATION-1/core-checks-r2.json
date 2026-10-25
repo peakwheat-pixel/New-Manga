@@ -1,0 +1,26 @@
+{
+  "name": "core-tests-r2",
+  "delivery_head": "b1e6935256ca4c4f1e5852e04095875afb242908",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/core",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\pytest-temp-r2-869998ce4c9a4435add9a7c42a6fb7bc"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2",
+  "shell": false,
+  "started_utc": "2026-10-24T11:31:42.695529+00:00",
+  "elapsed_seconds": 50.36,
+  "exit": 1,
+  "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\core-tests-r2.log",
+  "isolation_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\core-check-environment-r2",
+  "PYTHONPATH": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2\\src",
+  "PYTHONUSERBASE": "C:\\Users\\49745\\AppData\\Roaming\\Python"
+}

@@ -1,0 +1,18 @@
+{
+  "files": 749,
+  "by_extension": {
+    ".mjs": 11,
+    ".ts": 44,
+    ".html": 1,
+    ".json": 16,
+    ".tsx": 84,
+    ".toml": 74,
+    ".rs": 10,
+    ".ps1": 8,
+    ".py": 475,
+    ".txt": 1,
+    ".qml": 25
+  },
+  "python_syntax_failures": [],
+  "limits": "All tracked candidate source/config scanned for hash and Python syntax; not equivalent to semantic/security analysis. src/ui legacy excluded from new-runtime diagnosis. Experiments/archive/verification excluded."
+}

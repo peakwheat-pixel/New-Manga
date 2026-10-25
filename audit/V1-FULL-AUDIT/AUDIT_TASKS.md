@@ -1,0 +1,17 @@
+# 专项状态
+
+- AUDIT-00: PASS（基线与清单；语义覆盖后续核对）
+- AUDIT-01: NOT_TESTED / 进行中
+- AUDIT-02: NOT_TESTED / 进行中
+- AUDIT-03: NOT_TESTED / 进行中
+- AUDIT-04: NOT_TESTED / 进行中
+- AUDIT-05: NOT_TESTED / 进行中
+- AUDIT-06: NOT_TESTED / 进行中
+- AUDIT-07: NOT_TESTED / 进行中
+- AUDIT-08: NOT_TESTED / 进行中
+- AUDIT-09: NOT_TESTED / 进行中
+- AUDIT-10: NOT_TESTED / 进行中
+- AUDIT-11: NOT_TESTED / 进行中
+- AUDIT-12: NOT_TESTED / 进行中
+- AUDIT-13: NOT_TESTED / 进行中
+- AUDIT-14: NOT_TESTED / 进行中

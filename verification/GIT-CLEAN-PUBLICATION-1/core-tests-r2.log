@@ -1,0 +1,40 @@
+........................................................................ [  9%]
+........................................................................ [ 18%]
+........................................................................ [ 27%]
+........................................................................ [ 37%]
+........................................................................ [ 46%]
+........................................................................ [ 55%]
+........................................................................ [ 65%]
+...........FFF.......................................................... [ 74%]
+........................................................................ [ 83%]
+........................................................................ [ 93%]
+......................................................                   [100%]
+================================== FAILURES ===================================
+_ test_export_hook_effective_options_match_content_and_history[zip-initial0-override0-effective0] _
+tests\core\test_p16_reader_export.py:762: in test_export_hook_effective_options_match_content_and_history
+    assert accepted["format_options"] == effective
+E   AssertionError: assert {'compression': 'standard'} == {'compression': 'store'}
+E     
+E     Differing items:
+E     {'compression': 'standard'} != {'compression': 'store'}
+E     Use -v to get more diff
+_ test_export_hook_effective_options_match_content_and_history[text-initial1-override1-effective1] _
+tests\core\test_p16_reader_export.py:762: in test_export_hook_effective_options_match_content_and_history
+    assert accepted["format_options"] == effective
+E   AssertionError: assert {'text_representation': 'txt'} == {'text_repres...tion': 'json'}
+E     
+E     Differing items:
+E     {'text_representation': 'txt'} != {'text_representation': 'json'}
+E     Use -v to get more diff
+_ test_export_hook_effective_options_match_content_and_history[text-initial2-override2-effective2] _
+tests\core\test_p16_reader_export.py:780: in test_export_hook_effective_options_match_content_and_history
+    assert len([e for e in events if e["event_type"] == "hook_invoked"]) == 2
+E   assert 0 == 2
+E    +  where 0 = len([])
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\task-envs\GIT-CLEAN-PUBLICATION-1\source-export-r2\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3 failed, 771 passed, 1 warning in 49.64s

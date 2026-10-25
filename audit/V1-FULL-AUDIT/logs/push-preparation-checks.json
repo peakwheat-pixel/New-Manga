@@ -1,0 +1,55 @@
+[
+  {
+    "argv": [
+      "python",
+      "tools/governance/task_ledger.py"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "started_utc": "2026-10-24T10:28:08.968503+00:00",
+    "exit": 0,
+    "stdout": "Task ledger (reproducible from doc/tasks/*.md)\n  task files            : 357  (tracked 356, untracked drafts 1)\n  terminal              : 355\n  non-terminal          : 2  (tracked 1, untracked drafts 1)\n    own plan row        : 2\n    named anywhere      : 2\n    outside the plan    : 0\n  by status:\n    done                     286 (terminal)\n    closed_with_limitations   34 (terminal)\n    cancelled                 18 (terminal)\n    historical                11 (terminal)\n    superseded                 6 (terminal)\n    in_progress                1\n    in_review                  1\n\n  2 task(s) in a state that implies activity or dispatchability:\n  (r38: none of these may be bulk-closed; each needs individual proof)\n    in_progress              NEW-MANGA-V1-FULL-AUDIT                        plan-row\n    in_review                V1-RELEASE-SIGNING-1                           plan-row\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python",
+      "-c",
+      "import runpy; m=runpy.run_path('audit/V1-FULL-AUDIT/tests/scan_push_history.py'); m['selfcheck'](); print('scanner selfcheck PASS')"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "started_utc": "2026-10-24T10:28:09.756198+00:00",
+    "exit": 0,
+    "stdout": "scanner selfcheck PASS\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "started_utc": "2026-10-24T10:28:09.840258+00:00",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'doc/TASK_LEDGER.md', LF will be replaced by CRLF the next time Git touches it\n"
+  },
+  {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-Command",
+      "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); & ./tools/governance/check.ps1 -TaskPath doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "checked_utc": "2026-10-24T10:30:20.798628+00:00",
+    "exit": 0,
+    "stdout_encoding": "utf-8",
+    "stdout": "Governance scope: 13 current documents; no historical directory scan.\r\nTask: doc\\tasks\\NEW-MANGA-V1-FULL-AUDIT.md\r\nWARN: 存在 2 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）\r\nWARN: doc/STATUS.md 已达到预算的 80%：2809 bytes / 30 lines\r\nWARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6375 bytes / 59 lines\r\nGovernance check: PASS (3 warnings)\r\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "argv": [
+      "python",
+      "-B",
+      "audit/V1-FULL-AUDIT/tests/inspect_push_materials.py"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "started_utc": "2026-10-24T10:43:33.936082+00:00",
+    "exit": 0,
+    "stdout": "{\"images\": 173, \"images_with_paths\": 4, \"trees_loaded\": 1449, \"missing_trees\": 0, \"databases\": 34, \"database_failures\": 0}\r\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-Command",
+      "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); & ./tools/governance/check.ps1 -TaskPath doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "started_utc": "2026-10-24T10:43:35.812140+00:00",
+    "exit": 0,
+    "stdout": "Governance scope: 13 current documents; no historical directory scan.\r\nTask: doc\\tasks\\NEW-MANGA-V1-FULL-AUDIT.md\r\nWARN: 存在 2 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）\r\nWARN: doc/STATUS.md 已达到预算的 80%：2809 bytes / 30 lines\r\nWARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6375 bytes / 59 lines\r\nGovernance check: PASS (3 warnings)\r\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "started_utc": "2026-10-24T10:43:36.457514+00:00",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'doc/TASK_LEDGER.md', LF will be replaced by CRLF the next time Git touches it\n"
+  },
+  {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-Command",
+      "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); & ./tools/governance/check.ps1 -TaskPath doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "checked_utc": "2026-10-24T10:46:10.679345+00:00",
+    "exit": 0,
+    "stdout": "Governance scope: 13 current documents; no historical directory scan.\r\nTask: doc\\tasks\\NEW-MANGA-V1-FULL-AUDIT.md\r\nWARN: 存在 2 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）\r\nWARN: doc/STATUS.md 已达到预算的 80%：2809 bytes / 30 lines\r\nWARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6375 bytes / 59 lines\r\nGovernance check: PASS (3 warnings)\r\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-Command",
+      "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); & ./tools/governance/check.ps1 -TaskPath doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "shell": false,
+    "checked_utc": "2026-10-24T11:04:01.311960+00:00",
+    "exit": 0,
+    "stdout": "Governance scope: 13 current documents; no historical directory scan.\r\nTask: doc\\tasks\\NEW-MANGA-V1-FULL-AUDIT.md\r\nWARN: 存在 2 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）\r\nWARN: doc/STATUS.md 已达到预算的 80%：2809 bytes / 30 lines\r\nWARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6375 bytes / 59 lines\r\nGovernance check: PASS (3 warnings)\r\n",
+    "stderr": ""
+  }
+]

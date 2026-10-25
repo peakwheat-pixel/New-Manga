@@ -1,0 +1,50 @@
+[
+  {
+    "name": "npm-ci-r2",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "ci",
+      "--offline",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "--cache",
+      "C:\\Users\\49745\\AppData\\Local\\npm-cache"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:31:42.987916+00:00",
+    "elapsed_seconds": 3.2,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\npm-ci-r2.log"
+  },
+  {
+    "name": "frontend-tests-r2",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "test",
+      "--",
+      "--reporter=dot"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:31:46.184503+00:00",
+    "elapsed_seconds": 5.14,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\frontend-tests-r2.log"
+  },
+  {
+    "name": "frontend-build-r2",
+    "argv": [
+      "E:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "build"
+    ],
+    "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\GIT-CLEAN-PUBLICATION-1\\source-export-r2\\apps\\desktop\\frontend",
+    "shell": false,
+    "started_utc": "2026-10-24T11:31:51.327188+00:00",
+    "elapsed_seconds": 4.06,
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga\\verification\\GIT-CLEAN-PUBLICATION-1\\frontend-build-r2.log"
+  }
+]

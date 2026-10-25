@@ -1,0 +1,49 @@
+{
+  "task": "NEW-MANGA-V1-FULL-AUDIT",
+  "audit_owner": "Codex",
+  "ownership_basis": "audit/V1-FULL-AUDIT/evidence/baseline.json initial_dirty and Task allowed_paths",
+  "preexisting": [
+    {
+      "path": "verification/P04/diagnostic_p22_30056_1792740931950.jsonl",
+      "bytes": 2551,
+      "sha256": "94361e65309b7c1322e757e8735ab7a08010e3963e4f602d48b63ee69aa04dc2",
+      "owner": "UNKNOWN_PREEXISTING",
+      "disposition": "PRESERVE_UNSTAGED"
+    },
+    {
+      "path": "verification/P04/diagnostic_p22_31944_1792740125586.jsonl",
+      "bytes": 2551,
+      "sha256": "54b611cc31c86f6845175110fdd7f7482fc4ed5b32c85a95bffabff8e91c6f1d",
+      "owner": "UNKNOWN_PREEXISTING",
+      "disposition": "PRESERVE_UNSTAGED"
+    },
+    {
+      "path": "verification/P04/diagnostic_p22_44344_1792737400757.jsonl",
+      "bytes": 2553,
+      "sha256": "4bf3dd13ee531b86ee0e70955c7bec20a9d60cead327ce6f7d223735869e276c",
+      "owner": "UNKNOWN_PREEXISTING",
+      "disposition": "PRESERVE_UNSTAGED"
+    },
+    {
+      "path": "verification/P04/diagnostic_p22_44696_1792738684323.jsonl",
+      "bytes": 2552,
+      "sha256": "023b7158750faf78bb4995f71f162ef03ec2bf0622be7aa4c285537454820710",
+      "owner": "UNKNOWN_PREEXISTING",
+      "disposition": "PRESERVE_UNSTAGED"
+    },
+    {
+      "path": "verification/P04/diagnostic_p22_44800_1792737152850.jsonl",
+      "bytes": 2553,
+      "sha256": "ff4db4dc1ed13e732fe403249c273f90927a17d325431012ac63f17477e2edb2",
+      "owner": "UNKNOWN_PREEXISTING",
+      "disposition": "PRESERVE_UNSTAGED"
+    },
+    {
+      "path": "verification/P04/diagnostic_p22_9552_1792737097067.jsonl",
+      "bytes": 2554,
+      "sha256": "eacc6c3d043dd8c27ac1653ac34438d721e37c79269cccb716317a9c96edec47",
+      "owner": "UNKNOWN_PREEXISTING",
+      "disposition": "PRESERVE_UNSTAGED"
+    }
+  ]
+}

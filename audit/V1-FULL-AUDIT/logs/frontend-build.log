@@ -1,0 +1,25 @@
+START_UTC=2026-10-23T16:25:16.492156+00:00
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga\apps\desktop\frontend
+ARGV=["E:\\Program Files\\nodejs\\npm.cmd", "run", "build", "--", "--outDir", "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\frontend-dist"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\frontend-build\data
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build --outDir G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\frontend-dist
+vite v5.4.21 building for production...
+
+(!) outDir G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\frontend-dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+transforming...
+✓ 107 modules transformed.
+rendering chunks...
+computing gzip size...
+../../../../New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/frontend-dist/index.html                  0.28 kB │ gzip:   0.21 kB
+../../../../New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/frontend-dist/assets/event-B0kAzHa-.js    1.49 kB │ gzip:   0.68 kB
+../../../../New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/frontend-dist/assets/index-6VbCgEW3.js  443.41 kB │ gzip: 127.27 kB
+✓ built in 793ms
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=4.731

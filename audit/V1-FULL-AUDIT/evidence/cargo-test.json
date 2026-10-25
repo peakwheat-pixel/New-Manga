@@ -1,0 +1,15 @@
+{
+  "name": "cargo-test",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline"
+  ],
+  "cwd": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri",
+  "started_utc": "2026-10-23T16:24:56.907784+00:00",
+  "exit_code": 101,
+  "timed_out": false,
+  "elapsed_seconds": 66.9,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\cargo-test.log"
+}

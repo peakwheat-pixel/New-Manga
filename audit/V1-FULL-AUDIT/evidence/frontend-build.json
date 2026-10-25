@@ -1,0 +1,17 @@
+{
+  "name": "frontend-build",
+  "argv": [
+    "E:\\Program Files\\nodejs\\npm.cmd",
+    "run",
+    "build",
+    "--",
+    "--outDir",
+    "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\frontend-dist"
+  ],
+  "cwd": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend",
+  "started_utc": "2026-10-23T16:25:16.492156+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 4.731,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\frontend-build.log"
+}
