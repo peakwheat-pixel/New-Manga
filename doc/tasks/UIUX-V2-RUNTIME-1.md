@@ -50,7 +50,7 @@ allowed_paths:
 - [x] **AC10 设计层债务清理（DESIGN-V2-IMPL-1 P2 清单）**：`base.test.ts` 守卫补齐缩进块与 `@media`/`@supports` 嵌套盲区；命令面板焦点圈禁（见 AC9）；`:root` 的 `color-scheme` 作用域化到 `:where(html[data-view])`，不再泄漏到冻结的 probe/AC1 路径；`.nm-shelf` 与 `.nm-mica` 的重复背景收敛为一份；`pages.css` 的 gap 字面值（1/2/4/5/6px）全部改走 `--nm-space-*` 令牌。证据：`src/design/base.test.ts`（7 例，含守卫自指对照）、`design/tokens.css` 末尾作用域块。 <<MET>>
 - [x] **AC11 构建与测试**：`tsc --noEmit` 退出 0 且无诊断；`vitest run` **59 文件 / 561 测试全部通过**（0 skipped）。证据：`tsc-run.txt`、`vitest-run.txt`。 <<MET>>
 - [x] **AC12 真机视觉自查（可替代部分）**：dev server（`localhost:5189`，主工作树）+ 真实 Chromium 打开运行时路径，逐页截图核对：深/浅两主题、书架（真实书/章节/页数）、工作台（真实页图/区域/运行投影/七态）、阅读器（真实页图/页码/章名/进度）、设置（12 分节、真实控件、错误码态）、命令面板、设计预览不退化。证据：`visual-verification.md` + `shots/01..11`。 <<MET>>
-- [x] **AC13 独立审查**：由未参与实现的 ZCode 对冻结 head 做只读审查，结论写入 `verification/UIUX-V2-RUNTIME-1/review-zcode-*.md`；DSH 不自审。证据：待审查完成后回填（见「交付与运行记录」）。 <<PARTIAL: 待 ZCode 独立审查完成>>
+- [ ] **AC13 独立审查**：由未参与实现的 ZCode 对冻结 head 做只读审查，结论写入 `verification/UIUX-V2-RUNTIME-1/review-zcode-*.md`；DSH 不自审。证据：待审查完成后回填（见「交付与运行记录」）。 <<PARTIAL: 待 ZCode 独立审查完成>>
 
 ## 允许修改范围
 
@@ -116,7 +116,7 @@ allowed_paths:
 | EV-12 | AC3/AC8/AC12 | verification/UIUX-V2-RUNTIME-1/shots/09-workbench-no-context.png | 1853f0a07 | - | CANONICAL |
 | EV-13 | AC5/AC8/AC12 | verification/UIUX-V2-RUNTIME-1/shots/10-reader-no-context.png | 1853f0a07 | - | CANONICAL |
 | EV-14 | AC3/AC12 | verification/UIUX-V2-RUNTIME-1/shots/11-design-preview-shelf.png | 1853f0a07 | - | CANONICAL |
-| EV-15 | AC13 | verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md | 1853f0a07 | - | CANONICAL |
+| EV-15 | AC13 | verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md | 66013fc33 | - | CANONICAL |
 
 > `sha256` 列留空：本 Task 的证据是仓内文本与 PNG，判别依据为 commit 内文件内容（与 EV-01/02 同 commit）。完整 214KB vitest 原始输出在仓外 `G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt`（体积原因不入库）。
 
