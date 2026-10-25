@@ -48,6 +48,8 @@ describe("acrylic material", () => {
     expect(css).toContain("background-size: 140% 140%");
     expect(css).toContain("@keyframes nm-noise-drift");
     expect(css).toContain("step-end");
+    // 一轮 24s、四个关键帧 → 每 6s 跳一次，慢到不会让人觉得面板在动。
+    expect(css).toContain("nm-noise-drift 24s step-end");
 
     // 关键帧里的位移上限必须留在 background-size 的余量内，否则边缘会露缝。
     const frames = [...css.matchAll(/background-position:\s*([\d.]+)%\s+([\d.]+)%/g)];

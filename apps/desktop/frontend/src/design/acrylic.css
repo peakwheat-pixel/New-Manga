@@ -99,7 +99,7 @@
 .nm-acrylic-24::after,
 .nm-acrylic-strong::after {
   background-size: 140% 140%;
-  animation: nm-noise-drift 16s step-end infinite;
+  animation: nm-noise-drift 24s step-end infinite;
   will-change: background-position;
 }
 
