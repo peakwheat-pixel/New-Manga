@@ -118,6 +118,7 @@ allowed_paths:
 | ev-review-2 | AC10 | verification/DESIGN-V2-IMPL-1/review-2-zcode.md | 3de3101ed | - | CANONICAL |
 | ev-review-3 | AC10 | verification/DESIGN-V2-IMPL-1/review-3-zcode.md | 3de3101ed | - | CANONICAL |
 | ev-review-4 | AC11 | verification/DESIGN-V2-IMPL-1/ac11-manual-verification.md | 6e9e7e631 | - | CANONICAL |
+| ev-manifest | Resource Manifest | verification/DESIGN-V2-IMPL-1/resource-manifest.json | b283e730f | - | CANONICAL |
 
 > 证据文件随 `3de3101ed` 提交入库，pin 即该 commit（文件内容生成于 delivery head `0e752fbad`，两者关系见 Handoff）。`sha256` 列留空：本 Task 未对仓内文本证据做哈希 pin，判别依据是 commit 内文件内容。
 
