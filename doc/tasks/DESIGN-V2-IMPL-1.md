@@ -110,13 +110,13 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
-| ev-tsc | AC9 | verification/DESIGN-V2-IMPL-1/tsc-run.txt | 0e752fbad | - | CANONICAL |
-| ev-vitest | AC1–AC7, AC9 | verification/DESIGN-V2-IMPL-1/vitest-run.txt | 0e752fbad | - | CANONICAL |
-| ev-review-1 | AC10 | verification/DESIGN-V2-IMPL-1/review-1-zcode.md | 8647a435 | - | CANONICAL |
-| ev-review-2 | AC10 | verification/DESIGN-V2-IMPL-1/review-2-zcode.md | e6a80fc1 | - | CANONICAL |
-| ev-review-3 | AC10 | verification/DESIGN-V2-IMPL-1/review-3-zcode.md | 0e752fbad | - | CANONICAL |
+| ev-tsc | AC9 | verification/DESIGN-V2-IMPL-1/tsc-run.txt | 3de3101ed | - | CANONICAL |
+| ev-vitest | AC1–AC7, AC9 | verification/DESIGN-V2-IMPL-1/vitest-run.txt | 3de3101ed | - | CANONICAL |
+| ev-review-1 | AC10 | verification/DESIGN-V2-IMPL-1/review-1-zcode.md | 3de3101ed | - | CANONICAL |
+| ev-review-2 | AC10 | verification/DESIGN-V2-IMPL-1/review-2-zcode.md | 3de3101ed | - | CANONICAL |
+| ev-review-3 | AC10 | verification/DESIGN-V2-IMPL-1/review-3-zcode.md | 3de3101ed | - | CANONICAL |
 
-> 证据文件当前为**未提交的 untracked 文件**（main 工作树有他人改动，暂不提交）；`commit` 列记录其生成时的 delivery head，待集成时随 Task 文档一并提交并回填实际 commit。
+> 证据文件随 `3de3101ed` 提交入库，pin 即该 commit（文件内容生成于 delivery head `0e752fbad`，两者关系见 Handoff）。`sha256` 列留空：本 Task 未对仓内文本证据做哈希 pin，判别依据是 commit 内文件内容。
 
 ## Resource Manifest
 
