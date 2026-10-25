@@ -1,0 +1,139 @@
+---
+id: UIUX-V2-RUNTIME-1
+title: 设计系统 v2 接入运行时：四页真实数据、设置页与单一 UI 收口
+kind: implementation
+governance_version: 3
+status: in_review
+approval: user_directed_20261025_auto_authorized
+suggested_owner: dsh
+owner: dsh
+reviewer: zcode-external
+depends_on: [DESIGN-V2-IMPL-1]
+base_commit: b51d202c9ffab869d26bdb15b38459147991685c
+branch: main
+worktree: null
+integration_commit: null
+delivery_head: 1853f0a0795ca93a26f6a41efc6c14bd77a3c7b1
+canonical_evidence_status: complete
+resource_closeout_status: complete
+evidence_dir: verification/UIUX-V2-RUNTIME-1
+allowed_paths:
+  - apps/desktop/frontend/src/**
+  - apps/desktop/frontend/index.html
+  - doc/tasks/UIUX-V2-RUNTIME-1.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
+  - doc/handoffs/UIUX-V2-RUNTIME-1-*.md
+  - verification/UIUX-V2-RUNTIME-1/**
+---
+
+# UIUX-V2-RUNTIME-1：设计系统 v2 接入运行时
+
+## 来源与目标
+
+- **需求来源**：用户 2026-10-25 授权会话（「全自动推进到产品完成」）中的 P0 目标：把已冻结并集成（[DESIGN-V2-IMPL-1](DESIGN-V2-IMPL-1.md)，集成 commit `e1fd738a7`）的设计系统 v2 **真正接进运行时**，替换旧内联样式界面、接通 Tauri IPC，让书架 / 工作台 / 阅读器 / 设置四页按 v2 设计语言真实可用，并只有一套 UI。
+- **基线事实（已核对）**：base `b51d202c9` 时 v2 只是 `?view=design` 的静态骨架（三页、固定 fixtures、无设置页）；真实数据由历史内联样式容器 `shell/AppShell.tsx` + `bookshelf/BookshelfPage.tsx` + `workbench/WorkbenchPage.tsx` + `reader/ReaderPage.tsx` + `settings/SettingsPage.tsx` 渲染，两套外观并存。
+- **可观察交付**：Tauri 生产窗（及浏览器 dev 预览）默认渲染 v2 运行时根；四页各自从真实 IPC 取数并渲染 v2 设计语言；设置页从"不存在"变为 12 分节可用的 v2 页面；历史内联样式容器不再挂在任何默认路由上（只保留显式 `?view=legacy` 回退通道），并有机械守卫防止回归。
+
+## Acceptance Criteria
+
+- [x] **AC1 令牌单一真相 + 主题可切换**：`theme/tokens.ts` 改为 v2 令牌的运行时镜像（`tokens.css` 为唯一真相源），dark/light 两套取值与 CSS 变量逐值相等，字号收敛到 28/20/14/12、圆角收敛到 8/4/2/0；模块级样式常量不再被冻结在 import 时的主题（真机自查发现的 P0 级缺陷，改为按当前主题现算）。证据：`src/theme/tokens.test.ts`（29 例）、`src/theme/themeReactiveStyles.test.ts`（3 例）、截图 02/08。 <<MET>>
+- [x] **AC2 v2 运行时根**：新增 `src/ui/UiRoot.tsx` 作为唯一运行时根（主题 / 当前页 / 跨页上下文 / 命令面板 / 全局快捷键 / IPC 客户端装配），`?view=design`、`?view=legacy`、probe/AC1 证据路径语义各自保持不变。证据：`src/ui/UiRoot.test.tsx`（6 例）、`src/App.test.tsx`（生产窗断言改为 app-root）。 <<MET>>
+- [x] **AC3 书架页真实数据**：`pages/Shelf.tsx` 双数据源（fixtures / IPC），真实读取 `library_list_books` + `core_ping` + `list_chapters` + `list_chapter_pages`；导入 / 新建 / 回收站沿用既有真实对话框。证据：`src/pages/DesignPreview.test.tsx`（fixtures 不退化）、截图 01/02、`src/ui/UiRoot.test.tsx`。 <<MET>>
+- [x] **AC4 工作台页真实数据**：`pages/Workbench.tsx` 运行时分支接 `list_chapters` → `list_chapter_pages` → `resolve_page_resource` → `issue_resource_url` → `fetchAll`（Blob URL）+ `list_regions` + `library_start_run` / `library_get_run_snapshot` / `library_get_task_projection`（1s 轮询、卸载即停）。证据：`src/pages/Workbench.test.tsx`（9 例）、截图 03/04/09。 <<MET>>
+- [x] **AC5 阅读器页真实数据**：`pages/Reader.tsx` 运行时分支接 `library_get_reader_projection` + `library_save_reading_progress` + 页图资源通道；保留 ←/→ 翻页与章末不越界；webtoon_vertical 无接线时显式 BLOCKED 而不是假装可读。证据：`src/pages/Reader.test.tsx`（8 例）、截图 05/10。 <<MET>>
+- [x] **AC6 设置页 v2 实现**：`pages/Settings.tsx` 新建 v2 页面（标题栏 + 12 分节导航 + 内容带），挂载既有 12 个真实设置面板；`settings_get` 失败整页 PageError（显示错误码）且不挂载 panel；侧栏页脚显示真实 SFX 策略/未设置状态。证据：`src/pages/Settings.test.tsx`（7 例）、截图 06/08。 <<MET>>
+- [x] **AC7 单一 UI 收口**：App 生产窗默认渲染 `UiRoot`；`AppShell` 只允许出现在显式 `?view=legacy` 分支；`UiRoot.test.tsx` 有源码级守卫断言运行时根不 import 任何历史页面容器，并断言 AppShell 不再出现在默认分支。证据：`src/ui/UiRoot.test.tsx`。 <<MET>>
+- [x] **AC8 三/四态与诚实数据**：四页共用 `src/ui/PageState.tsx`（loading / empty / error / blocked），错误面必须显示错误码；无 IPC 来源的字段（跨书进度、跨书流水线状态、封面图、OCR 文本与置信度、区域文本、缩略图、作品标题等）一律省略或标「未知/未识别」，不得沿用 fixtures 数值。证据：三个页面测试文件中的"无 fixtures 回填"断言 + 截图 03/05/09/10。 <<MET>>
+- [x] **AC9 命令面板与键盘全通路**：全局命令面板（Ctrl+K）抽出为 `src/ui/CommandPalette.tsx`，具备 Tab 焦点圈禁、↑↓/Home/End/Enter/Esc 全通路、`aria-activedescendant`、关闭后焦点还给唤起元素；Ctrl/Cmd+1..4 切四页。证据：`src/ui/CommandPalette.test.tsx`（7 例）、`src/ui/UiRoot.test.tsx`、截图 07。 <<MET>>
+- [x] **AC10 设计层债务清理（DESIGN-V2-IMPL-1 P2 清单）**：`base.test.ts` 守卫补齐缩进块与 `@media`/`@supports` 嵌套盲区；命令面板焦点圈禁（见 AC9）；`:root` 的 `color-scheme` 作用域化到 `:where(html[data-view])`，不再泄漏到冻结的 probe/AC1 路径；`.nm-shelf` 与 `.nm-mica` 的重复背景收敛为一份；`pages.css` 的 gap 字面值（1/2/4/5/6px）全部改走 `--nm-space-*` 令牌。证据：`src/design/base.test.ts`（7 例，含守卫自指对照）、`design/tokens.css` 末尾作用域块。 <<MET>>
+- [x] **AC11 构建与测试**：`tsc --noEmit` 退出 0 且无诊断；`vitest run` **59 文件 / 561 测试全部通过**（0 skipped）。证据：`tsc-run.txt`、`vitest-run.txt`。 <<MET>>
+- [x] **AC12 真机视觉自查（可替代部分）**：dev server（`localhost:5189`，主工作树）+ 真实 Chromium 打开运行时路径，逐页截图核对：深/浅两主题、书架（真实书/章节/页数）、工作台（真实页图/区域/运行投影/七态）、阅读器（真实页图/页码/章名/进度）、设置（12 分节、真实控件、错误码态）、命令面板、设计预览不退化。证据：`visual-verification.md` + `shots/01..11`。 <<MET>>
+- [x] **AC13 独立审查**：由未参与实现的 ZCode 对冻结 head 做只读审查，结论写入 `verification/UIUX-V2-RUNTIME-1/review-zcode-*.md`；DSH 不自审。证据：待审查完成后回填（见「交付与运行记录」）。 <<PARTIAL: 待 ZCode 独立审查完成>>
+
+## 允许修改范围
+
+- `apps/desktop/frontend/src/**`：设计层（`design/`）、运行时根与共享件（新增 `ui/`）、四页（`pages/`）、令牌镜像（`theme/`）、dev 预览垫片（`dev/`）、`components/PrimaryNav.tsx`（第四页）、`settings/SectionField.tsx`（主题响应样式，唯一一处触碰既有 settings 代码）、`App.tsx` / `App.test.tsx`。
+- 本 Task、Handoff、`verification/UIUX-V2-RUNTIME-1/**`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`。
+- 不新增 npm 依赖（`package.json` / `package-lock.json` 零改动，见 AC 外的 closeout 核对）。
+
+## 禁止范围
+
+- 不改 Rust（`apps/desktop/src-tauri/**`）、不改 Python Core、不改 IPC 契约/Schema、不改 `src/settings/**` 的业务逻辑（仅 `SectionField.tsx` 的主题响应样式）。
+- 不做原生亚克力（`window-vibrancy` / Windows App SDK / 透明多窗口）；不用 emoji 表达状态；同屏 `backdrop-filter` ≤2 层。
+- 不处理用户原始漫画页数据；不删除既有测试来让测试变绿（唯一被改写的既有断言是 `App.test.tsx` 的生产窗路由断言与 `DesignPreview.test.tsx` 的四页 tab 断言，二者都是产品行为变更的直接后果，已在 Handoff 说明）。
+- 不合并未知分支、不 force push、不改他人未提交内容。
+
+## 测试要求
+
+| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC1 令牌 | `npx vitest run src/theme` | Node + jsdom/vitest | PASS（32 例） | `vitest-run.txt` |
+| AC2/AC7/AC9 运行时根 | `npx vitest run src/ui` | 同上 | PASS（13 例） | `vitest-run.txt` |
+| AC3 书架 | `npx vitest run src/pages/DesignPreview.test.tsx` | 同上 | PASS（10 例，fixtures 未退化） | `vitest-run.txt` |
+| AC4 工作台 | `npx vitest run src/pages/Workbench.test.tsx` | 同上 | PASS（9 例） | `vitest-run.txt` |
+| AC5 阅读器 | `npx vitest run src/pages/Reader.test.tsx` | 同上 | PASS（8 例） | `vitest-run.txt` |
+| AC6 设置页 | `npx vitest run src/pages/Settings.test.tsx` | 同上 | PASS（7 例） | `vitest-run.txt` |
+| AC10 设计层守卫 | `npx vitest run src/design` | 同上 | PASS | `vitest-run.txt` |
+| AC11 类型 | `node node_modules/typescript/bin/tsc --noEmit` | frontend 目录 | exit 0，无输出 | `tsc-run.txt` |
+| AC11 全量测试 | `npx vitest run --reporter=basic` | frontend 目录 | 59 文件 / 561 passed / 0 skipped | `vitest-run.txt` |
+| AC12 真机视觉 | dev server + Chrome，逐页截图 | `localhost:5189`，dev mock 数据 | PASS（11 张，见 index） | `visual-verification.md` |
+| AC12 真实 Core 端到端 | 打包 Tauri + Python Core 后点选四页 | 需要真实 app 构建 | **NOT_RUN**（本轮未构建 Tauri 安装包；HUMAN_VERIFY 登记） | `visual-verification.md` §未验证项 |
+
+## 依赖、风险与阻塞
+
+- 硬依赖：[DESIGN-V2-IMPL-1](DESIGN-V2-IMPL-1.md) 已 `done`（集成 `e1fd738a7`）；本 Task 只消费其令牌/材质/状态组件与页面骨架，不改其冻结取值。
+- **风险 R1（已处置）**：令牌从静态对象变为主题 Proxy 后，模块级 `const style = {...tokens.x}`（`settings/SectionField.tsx` 两处）会被冻结在深色值；真机自查在浅色主题下抓到深色下拉框。已改为按主题现算的访问器属性对象，并加 `themeReactiveStyles.test.ts` 守卫。**备选**（未采用）：把 settings 各 panel 的全部行内样式改成 CSS 类——范围过大且会重写 12 个既有面板。
+- **风险 R2（已登记，不阻塞）**：真实 Core 端到端（打包 Tauri + Python Core 后四页点选）**未执行**：本轮无 Tauri 构建产物、无 Python Core 运行环境，且构建/打包属于发布线（与本 Task 的 UI 接线目标不同）。因此页面图像的 host 侧 HTTP 通道只在 dev 合成图下验证过；**HUMAN_VERIFY**：需要在真实 app 中确认页图渲染、阅读进度写回、导入对话框原生选择器。不得宣称该项已通过。
+- **风险 R3（已登记）**：`?view=legacy` 回退通道保留 `AppShell`，因此历史容器与其测试仍在仓库内（未被删除）。这是有意的低风险选择（删除会同时删掉 100KB+ 行为测试），并在 `UiRoot.test.tsx` 用源码级守卫保证它们不回到默认路由。**备选**（未采用）：立即删除历史容器——与"单一 UI"目标等价但牺牲回归覆盖，留作后续清理 Task。
+- **风险 R4**：页面级设计语言是 v2，但设置/导入等次级面板仍是既有内联样式组件（经令牌桥接后配色/圆角/字阶与 v2 一致）；它们与 v2 的差异是结构与密度，不是色板。若要求像素级一致，需另立"面板 v2 重绘"Task。
+- 无阻塞本 Task 集成的项。
+
+## 交付与运行记录
+
+- Handoff：[UIUX-V2-RUNTIME-1](../handoffs/UIUX-V2-RUNTIME-1-delivery.md)
+- Review：待 ZCode 独立审查（`verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md` 指定唯一写路径）。
+- 实际测试：2026-10-25，`apps/desktop/frontend`，tsc exit 0，vitest 59 文件 / 561 passed。
+- 分工（如实记录）：Lead（DSH）实现运行时根、共享状态组件、命令面板、令牌桥接、书架页、dev 预览垫片、设计层债务与全部文档/证据；`impl-workbench`（子 Agent）实现工作台页与 9 条测试；`impl-reader-settings`（子 Agent）实现阅读器页、设置页与 15 条测试。三者写作用域互斥，Lead 独立复跑 tsc/vitest 与真机截图，未采信子 Agent 报告结论。
+- 2026-10-25：集成动作与 `integration_commit` 待独立审查通过后由 DSH 回填。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC11 | verification/UIUX-V2-RUNTIME-1/tsc-run.txt | 1853f0a07 | - | CANONICAL |
+| EV-02 | AC1–AC11 | verification/UIUX-V2-RUNTIME-1/vitest-run.txt | 1853f0a07 | - | CANONICAL |
+| EV-03 | AC12 | verification/UIUX-V2-RUNTIME-1/visual-verification.md | 1853f0a07 | - | CANONICAL |
+| EV-04 | AC12 | verification/UIUX-V2-RUNTIME-1/shots/01-shelf-dark.png | 1853f0a07 | - | CANONICAL |
+| EV-05 | AC12 | verification/UIUX-V2-RUNTIME-1/shots/02-shelf-light.png | 1853f0a07 | - | CANONICAL |
+| EV-06 | AC4/AC12 | verification/UIUX-V2-RUNTIME-1/shots/03-workbench-real-data.png | 1853f0a07 | - | CANONICAL |
+| EV-07 | AC4/AC12 | verification/UIUX-V2-RUNTIME-1/shots/04-workbench-running.png | 1853f0a07 | - | CANONICAL |
+| EV-08 | AC5/AC12 | verification/UIUX-V2-RUNTIME-1/shots/05-reader-real-data.png | 1853f0a07 | - | CANONICAL |
+| EV-09 | AC6/AC12 | verification/UIUX-V2-RUNTIME-1/shots/06-settings-provider-dark.png | 1853f0a07 | - | CANONICAL |
+| EV-10 | AC9/AC12 | verification/UIUX-V2-RUNTIME-1/shots/07-command-palette.png | 1853f0a07 | - | CANONICAL |
+| EV-11 | AC1/AC6/AC12 | verification/UIUX-V2-RUNTIME-1/shots/08-settings-ocr-light.png | 1853f0a07 | - | CANONICAL |
+| EV-12 | AC3/AC8/AC12 | verification/UIUX-V2-RUNTIME-1/shots/09-workbench-no-context.png | 1853f0a07 | - | CANONICAL |
+| EV-13 | AC5/AC8/AC12 | verification/UIUX-V2-RUNTIME-1/shots/10-reader-no-context.png | 1853f0a07 | - | CANONICAL |
+| EV-14 | AC3/AC12 | verification/UIUX-V2-RUNTIME-1/shots/11-design-preview-shelf.png | 1853f0a07 | - | CANONICAL |
+| EV-15 | AC13 | verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md | 1853f0a07 | - | CANONICAL |
+
+> `sha256` 列留空：本 Task 的证据是仓内文本与 PNG，判别依据为 commit 内文件内容（与 EV-01/02 同 commit）。完整 214KB vitest 原始输出在仓外 `G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt`（体积原因不入库）。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| temp/build | — | NOT_APPLICABLE | — | — | 未构建、未打包，无 build artifact |
+| agent-output | G:/CODEX/New Manga.workspace/UIUX-V2-RUNTIME-1 | PRESERVE_REFERENCED | — | 本 Task 证据目录 | Lead 视觉自查截图与 vitest 全文；仓外保留，不清理 |
+| dataset/model/user-data | — | NOT_APPLICABLE | — | — | 未使用用户素材；dev mock 数据为合成假数据并常驻角标标注 |
+| exchange | — | NOT_APPLICABLE | — | — | 无 |
+
+## Closeout Record
+
+- Closeout date / DSH：待独立审查与集成后填写。
+- canonical_evidence_status：`complete`（canonical 证据全部入库；AC12 的 NOT_RUN 项已显式登记）。
+- resource_closeout_status：`complete`（无删除/迁移/归档；仓外 agent-output 标 PRESERVE_REFERENCED）。
+- 删除、迁移、归档数量/字节数：0。
+- 未关闭项及保留原因：AC12 的"真实 Core 端到端"为 HUMAN_VERIFY（未构建 Tauri 产物）；R3 历史容器保留待后续清理 Task；R4 次级面板未像素级 v2 重绘。
+- 当前指针清理：STATUS / REBASELINE_PLAN / TASK_LEDGER 已更新（见集成段）。
