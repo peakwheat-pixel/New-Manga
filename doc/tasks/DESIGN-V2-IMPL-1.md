@@ -3,7 +3,7 @@ id: DESIGN-V2-IMPL-1
 title: New Manga 设计系统 v2（Fluent 材质）前端基础层实现
 kind: design
 governance_version: 2
-status: approved
+status: done
 approval: user_directed_20261025_auto_authorized
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: [UI-DESIGN-1]
 base_commit: 65d9efa191c6867243bf67aced54fd89308838b7
 branch: agent/dsh/design-v2-impl-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/DESIGN-V2-IMPL-1
-integration_commit: null
-delivery_head: 0e752fbad
+integration_commit: e1fd738a75c6af52c49d9bd32d6d32b39ad451f3
+delivery_head: 4f49ef304
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/DESIGN-V2-IMPL-1
 allowed_paths:
   - apps/desktop/frontend/src/design/
@@ -56,7 +56,7 @@ allowed_paths:
 - [x] **AC8 无新增依赖**：`git diff 65d9efa19 -- apps/desktop/frontend/package.json` 为空。
 - [x] **AC9 构建与测试**：`tsc` 退出 0 且无诊断；`vitest run` 52 文件 / 489 测试全部通过（0 skipped）。证据：`tsc-run.txt`、`vitest-run.txt`。
 - [x] **AC10 独立审查通过**：三轮外部审查收敛（初审 4×P1 + 9×P2 → 修复引入 1×P0 + 1×P1 → 复审打回 → 二次复审「通过」，新引入问题「未发现」）。证据：`review-1-zcode.md`、`review-2-zcode.md`、`review-3-zcode.md`。
-- [ ] **AC11 真机肉眼验证**（**未完成**）：WebView2 打开 `?view=design` 确认按钮/书卡边框与底色恢复；键盘连续切页焦点跟随；浅色主题同样检查；运行时路径（不带参数）无视觉变化。**该项 jsdom 无法覆盖，需人工执行**，见「依赖、风险与阻塞」。
+- [x] **AC11 真机肉眼验证**：WebView2 打开 `?view=design` 确认按钮/书卡边框与底色恢复；键盘连续切页焦点跟随；浅色主题同样检查；运行时路径（不带参数）无视觉变化。用户 2026-10-25 执行，五项全部正常；证据 `ac11-manual-verification.md`。该项 jsdom 无法覆盖，见「依赖、风险与阻塞」。
 
 ## 允许修改范围
 
@@ -89,7 +89,7 @@ allowed_paths:
 | AC7 键盘 | `npx vitest run src/pages/DesignPreview.test.tsx` | 同上 | PASS（9 例，含 activeElement） | `vitest-run.txt` |
 | AC8 依赖 | `git diff 65d9efa19 -- apps/desktop/frontend/package.json` | 分支 worktree | 空输出 | 本 Task 记录 |
 | AC9 构建 | `node node_modules/typescript/bin/tsc` + `npm test` | 分支 worktree | tsc exit 0；52 文件 / 489 passed / 0 skipped | `tsc-run.txt`、`vitest-run.txt` |
-| AC11 真机肉眼 | 浏览器打开 `http://localhost:5188/?view=design`（`npm run dev`） | WebView2/Chromium | **NOT_RUN** | 无 |
+| AC11 真机肉眼 | 浏览器打开 `http://localhost:5188/?view=design`（`npm run dev`） | WebView2/Chromium | PASS（用户执行，五项全部正常） | ac11-manual-verification.md |
 
 ## 依赖、风险与阻塞
 
@@ -104,7 +104,9 @@ allowed_paths:
 - Handoff：[DESIGN-V2-IMPL-1-0e752fbad](../handoffs/DESIGN-V2-IMPL-1-0e752fbad.md)
 - Review：[DESIGN-V2-IMPL-1-0e752fbad](../reviews/DESIGN-V2-IMPL-1-0e752fbad.md)（三轮，最终 approved）
 - 实际测试：2026-10-25，worktree `DESIGN-V2-IMPL-1`，tsc exit 0，vitest 52 文件 / 489 passed。
-- 2026-10-25 DSH：实现 + P1 修复 + P0 回归修复完成，delivery_head `0e752fbad`；等待 AC11 人工验证与集成授权。
+- 2026-10-25 DSH：实现 + P1 修复 + P0 回归修复完成。 e752fbad 通过四轮审查（初审 → 修复 → 打回 → 复审通过 → 增量复审通过）。
+- 2026-10-25 用户：执行 AC11 真机验证，5 项全部正常（含首轮暴露的『点击后方向键失效』，修复后复测通过）。
+- 2026-10-25 DSH：合并 gent/dsh/design-v2-impl-1 → main，集成 commit 1fd738a7；合并后 main 上 	sc exit 0、itest 52 文件 / 490 passed。
 
 ## Canonical Evidence
 
@@ -115,6 +117,7 @@ allowed_paths:
 | ev-review-1 | AC10 | verification/DESIGN-V2-IMPL-1/review-1-zcode.md | 3de3101ed | - | CANONICAL |
 | ev-review-2 | AC10 | verification/DESIGN-V2-IMPL-1/review-2-zcode.md | 3de3101ed | - | CANONICAL |
 | ev-review-3 | AC10 | verification/DESIGN-V2-IMPL-1/review-3-zcode.md | 3de3101ed | - | CANONICAL |
+| ev-review-4 | AC10 | verification/DESIGN-V2-IMPL-1/ac11-manual-verification.md | 见集成 commit | - | CANONICAL |
 
 > 证据文件随 `3de3101ed` 提交入库，pin 即该 commit（文件内容生成于 delivery head `0e752fbad`，两者关系见 Handoff）。`sha256` 列留空：本 Task 未对仓内文本证据做哈希 pin，判别依据是 commit 内文件内容。
 
@@ -129,9 +132,10 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-10-25 / DeepSeek Harness。
 - canonical_evidence_status：`complete`
-- resource_closeout_status：`pending`
-- 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：AC11 人工肉眼验证未执行；STATUS/PLAN/LEDGER 指针未登记（阻塞于他人未提交改动）。
-- 当前指针清理：待解除上述阻塞后由 DSH 更新。
+- resource_closeout_status：`complete`
+- 删除、迁移、归档数量/字节数：0（未删除、未迁移、未归档任何文件）。
+- 未关闭项及保留原因：① worktree DESIGN-V2-IMPL-1 保留（分支已合并，但按 §4.2 删除前需刷新 Worktree Safety Inventory，本轮未执行，故 disposition=PRESERVE_REFERENCED）；② STATUS / REBASELINE_PLAN / TASK_LEDGER 三个指针未登记，因三者含他人未提交改动，写入会覆盖其工作。
+- 当前指针清理：未更新（阻塞同上）。解除后由 DSH 补登：TASK_LEDGER 重生成、PLAN DAG 登记、STATUS 指针切换。
+

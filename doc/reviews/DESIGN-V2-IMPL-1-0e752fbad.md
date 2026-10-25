@@ -30,6 +30,9 @@ DSH 修复上述 4×P1 后，Reviewer 打回：修复手段引入 **1×P0**—�
 **第三轮 @ `0e752fbad`｜decision: approved**
 作用域前缀改为 `:where(html[data-view="design"])`（特异性 0），新增 `base.test.ts` 守卫（裸前缀 / 未作用域选择器即失败）；焦点改为模块级 pending 标记 + 新页面挂载后 effect 聚焦，测试补 `document.activeElement` 断言；顺带修掉阅读器与 tablist 方向键事件叠加、`.nm-stat__value` 改走 Title 令牌。Reviewer 逐条核对后结论**通过**，新引入问题**未发现**。
 
+**第四轮（增量）@ `0bd92dd05`｜decision: approved**
+合并前的鼠标路径修复（点击 Tab 后焦点丢失导致方向键失效）单独送审。Reviewer 确认：点击与键盘汇入同一 pending 焦点机制、无第二套逻辑；点当前页 Tab 不写标记且 React bail out 无误聚焦；残留标记路径当前不存在；未启用 StrictMode 下模块级变量无 tearing。结论**通过**，新引入问题**未发现**，并要求补一条点击路径的 `document.activeElement` 断言——该断言已随 `4f49ef304` 补齐（490 测试）。**注：`4f49ef304` 只新增该测试与一行契约注释，是对第四条建议的执行，不是新的实现变更。**
+
 ## 结论
 
 **approved @ `0e752fbad`**。P0/P1 清零；P2 剩余项已在 Task「依赖、风险与阻塞」中登记为后续事项（间距 1/2/5/6px 未走 space 令牌、`.nm-shelf` 与 `.nm-mica` 背景重复、命令面板无焦点圈禁、`:root{color-scheme:dark}` 未作用域化、`base.test.ts` 守卫对缩进块与 `@media` 内规则有盲区）。
