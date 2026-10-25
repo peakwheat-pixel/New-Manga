@@ -14,7 +14,7 @@ jsdom 不应用样式表。本项目历史上因此漏过一个 P0（按钮样�
 |---|---|---|---|
 | 01 | `shots/01-shelf-dark.png` | 书架 / 深色 / 真实数据 | v2 标题栏（品牌 + 四页 PrimaryNav + 命令入口 + 主题切换 + 窗口按钮）、工具栏（搜索/筛选/排序/导入/新建）、168px 网格、亚克力详情面板（真实章节与页数）、底部浮动状态条（真实 `core_ping` 状态）全部正确渲染；封面为由 `book_id` 派生的确定性渐变（不冒充真实封面） |
 | 02 | `shots/02-shelf-light.png` | 书架 / 浅色 / 真实数据 | 切换主题后整页（含亚克力面板、按钮、输入框、状态条）真实换色，`color-scheme` 作用域化生效 |
-| 03 | `shots/03-workbench-real-data.png` | 工作台 / 真实章节与页 | 胶片条为真实 6 页（缩略图用「未知」虚线占位，不画假缩略图）；画布加载真实页图（经 `resolve_page_resource` → `issue_resource_url` → `fetchAll` → Blob URL）；检查器显示真实区域 3 条与「未识别」OCR 说明；无运行记录时显示 PageBlocked「尚未开始运行」+ 运行按钮 |
+| 03 | `shots/03-workbench-real-data.png` | 工作台 / 真实章节与页 | 胶片条为真实 6 页（缩略图用「未知」虚线占位，不画假缩略图）；画布加载真实页图（经 `resolve_page_resource` → `issue_resource_url` → `fetchAll` → Blob URL）；检查器显示 3 条区域（对白/旁白/拟声，带 `region_type` 色条与 `origin` 机器/人工标记）与「未识别」OCR 说明；无运行记录时显示 PageBlocked「尚未开始运行」+ 运行按钮。**本图于 ZCode 审查 F-2 处置后重截**：首版 dev mock 的 `region_type`/`origin` 用了冻结闭集外的值（`dialogue`/`manual`），导致区域行残缺（首行标签缺失、色条不可见、末行 origin 空）；修复 mock 枚举后区域行完整渲染 |
 | 04 | `shots/04-workbench-running.png` | 工作台 / 运行中 | 点击「运行」后：状态符号 ◐ 进行中、整体进度 40%、任务总数 6 / 已完成 2 / 失败 0 / 阻塞 0、任务列表七态（完成/进行中/排队）、底部流水线阶段（识别/翻译/排版）均为真实投影字段；`step_flow` 段数来自 Core 而非设计稿的 10 段 |
 | 05 | `shots/05-reader-real-data.png` | 阅读器 / 真实章节 | 顶部浮层显示真实书名、章节号与标题、页码 1/6、真右→左布局；页图真实加载；左右翻页热区可点且首/末页正确禁用；底部显示「本话进度 —」（投影无进度时不编造百分比） |
 | 06 | `shots/06-settings-provider-dark.png` | 设置 / Provider / 深色 | 12 分节导航 + 内容带；Provider 分节挂载真实面板；后端不可用时显示错误码态而不是假成功；侧栏页脚显示真实 `settings_get` 同步状态与 SFX 策略「未设置（按 Core 默认）」 |
@@ -61,7 +61,7 @@ npm run dev -- --port 5189
 | F-2 dev mock 的 `region_type`/`origin` 用冻结闭集外的值 → 区域行残缺、本文件未登记 | P2 | **已修复**：改为 `speech`/`narration`/`sfx` + `machine`/`user`，`sfx_policy` 改为闭集内 `translate`/`skip`；重截 `shots/03` 并更新本文件第 03 行 | `shots/03-workbench-real-data.png` |
 | F-3 tsc 证据首行留有 `REVIEW_HEAD_PENDING` 占位 | P3 | **已修复**：重采 `tsc-run.txt`/`vitest-run.txt`，去掉占位并标注采集时点 | `tsc-run.txt` |
 | F-4 `PageEmpty` 无显式 role | P3 | **已修复**：`PageEmpty` 根节点加 `role="status"`，四态 role 一致 | `src/ui/PageState.tsx` |
-| F-5 两处字面色值（close 悬停 `#FFFFFF`、命令面板遮罩 `rgba(0,0,0,0.32)`）未令牌化 | P3 | **登记为债务**：均为 DESIGN-V2-IMPL-1 冻结既有值，本 Task 未新增；并入 R6 的后续"控件几何 + 间距/装饰色令牌"Task | Task 卡 R6 |
+| F-5 两处字面色值（close 悬停 `#FFFFFF`、命令面板遮罩 `rgba(0,0,0,0.32)`）未令牌化 | P3 | **登记为债务**：均为 DESIGN-V2-IMPL-1 冻结既有值，本 Task 未新增；并入 R7 的后续"控件几何 + 间距/装饰色令牌"Task | Task 卡 R7 |
 | F-6 入库版任命书范围描述与冻结区间不符；PrimaryNav 注释过时 | P3 | **已修复**：任命书范围描述已在本次提交修订；`PrimaryNav.tsx` 注释更新为"五个消费点（运行时四页经 UiRoot + 设计预览）" | `APPOINTMENT.md`、`components/PrimaryNav.tsx` |
 | F-7 设计预览 fixture 底栏保留未实现的「Esc 返回」keyhint | P3 | **登记为债务**：base（DESIGN-V2-IMPL-1 骨架）既有、运行时分支无此假提示；并入设计预览清理 Task | Task 卡 R7 |
 
