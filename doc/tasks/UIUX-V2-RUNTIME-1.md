@@ -3,7 +3,7 @@ id: UIUX-V2-RUNTIME-1
 title: 设计系统 v2 接入运行时：四页真实数据、设置页与单一 UI 收口
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_directed_20261025_auto_authorized
 suggested_owner: dsh
 owner: dsh
@@ -12,7 +12,7 @@ depends_on: [DESIGN-V2-IMPL-1]
 base_commit: b51d202c9ffab869d26bdb15b38459147991685c
 branch: main
 worktree: null
-integration_commit: null
+integration_commit: af421b9e6b973b5705e44e4c57bfebbb614ed33d
 delivery_head: af421b9e6b973b5705e44e4c57bfebbb614ed33d
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -50,7 +50,7 @@ allowed_paths:
 - [x] **AC10 设计层债务清理（DESIGN-V2-IMPL-1 P2 清单）**：`base.test.ts` 守卫补齐缩进块与 `@media`/`@supports` 嵌套盲区；命令面板焦点圈禁（见 AC9）；`:root` 的 `color-scheme` 作用域化到 `:where(html[data-view])`，不再泄漏到冻结的 probe/AC1 路径；`.nm-shelf` 与 `.nm-mica` 的重复背景收敛为一份；`pages.css` 的 gap 字面值（1/2/4/5/6px）全部改走 `--nm-space-*` 令牌。证据：`src/design/base.test.ts`（7 例，含守卫自指对照）、`design/tokens.css` 末尾作用域块。 <<MET>>
 - [x] **AC11 构建与测试**：`tsc --noEmit` 退出 0 且无诊断；`vitest run` **60 文件 / 564 测试全部通过**（0 skipped）。证据：`tsc-run.txt`、`vitest-run.txt`。 <<MET>>
 - [x] **AC12 真机视觉自查（可替代部分）**：dev server（`localhost:5189`，主工作树）+ 真实 Chromium 打开运行时路径，逐页截图核对：深/浅两主题、书架（真实书/章节/页数）、工作台（真实页图/区域/运行投影/七态）、阅读器（真实页图/页码/章名/进度）、设置（12 分节、真实控件、错误码态）、命令面板、设计预览不退化。证据：`visual-verification.md` + `shots/01..11`。 <<MET>>
-- [ ] **AC13 独立审查**：由未参与实现的 ZCode 对冻结 head 做只读审查，结论写入 `verification/UIUX-V2-RUNTIME-1/review-zcode-*.md`；DSH 不自审。证据：待审查完成后回填（见「交付与运行记录」）。 <<PARTIAL: 待 ZCode 独立审查完成>>
+- [x] **AC13 独立审查**：由未参与实现的 ZCode 对冻结 head 做只读审查：r1 `changes_requested`（0×P0/1×P1/1×P2/5×P3，`review-zcode-r1.md`）→ 处置提交 `af421b9e6` → r2 增量复审 `approved`（`review-zcode-r2.md`，独立复跑 tsc exit 0 / vitest 60 文件 564 passed，独立复做变异核验证明 F-1 守卫有判别力）；DSH 未自审。 <<MET>>
 
 ## 允许修改范围
 
@@ -98,7 +98,10 @@ allowed_paths:
 - Review：待 ZCode 独立审查（`verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md` 指定唯一写路径）。
 - 实际测试：2026-10-25，`apps/desktop/frontend`，tsc exit 0，vitest 59 文件 / 561 passed。
 - 分工（如实记录）：Lead（DSH）实现运行时根、共享状态组件、命令面板、令牌桥接、书架页、dev 预览垫片、设计层债务与全部文档/证据；`impl-workbench`（子 Agent）实现工作台页与 9 条测试；`impl-reader-settings`（子 Agent）实现阅读器页、设置页与 15 条测试。三者写作用域互斥，Lead 独立复跑 tsc/vitest 与真机截图，未采信子 Agent 报告结论。
-- 2026-10-25：集成动作与 `integration_commit` 待独立审查通过后由 DSH 回填。
+- 2026-10-25 独立审查与集成：
+  - r1 ZCode `changes_requested`（0×P0/1×P1/1×P2/5×P3，`review-zcode-r1.md`）→ DSH 处置提交 `af421b9e6`（F-1 补 `Shelf.test.tsx` 三条守卫并自做变异核验、F-2 修 dev mock 枚举并重截 `shots/03`、F-3 重采证据、F-4 加 `role="status"`、F-5/F-7 登记 R7 债务、F-6 更新任命书与注释）。
+  - r2 ZCode 增量复审 `approved`（`review-zcode-r2.md`）：独立复跑 tsc exit 0 / vitest 60 文件 564 passed；独立复做变异核验（`progress: null → 42` → 1 failed，还原 → 3 passed）；F-1..F-7 全部 CLOSED；仅两处记录精确性 P3（N-1/N-2，已在收口时订正）。
+  - 集成方式：fast-forward 无冲突（本轮全部提交直接落在 `main`），`integration_commit` = `af421b9e6b973b5705e44e4c57bfebbb614ed33d`（修复 head，含 r1 全部处置）；其后 df48a14b3、$short2（r2 复审入库 + N-1/N-2 订正）与本次收口提交均为文档/指针。
 
 ## Canonical Evidence
 
@@ -120,24 +123,29 @@ allowed_paths:
 | EV-14 | AC3/AC12 | verification/UIUX-V2-RUNTIME-1/shots/11-design-preview-shelf.png | 1853f0a07 | - | CANONICAL |
 | EV-16 | AC8/AC13 | verification/UIUX-V2-RUNTIME-1/review-zcode-r1.md | af421b9e6 | - | CANONICAL |
 | EV-17 | AC8 | apps/desktop/frontend/src/pages/Shelf.test.tsx | af421b9e6 | - | CANONICAL |
+| EV-18 | AC13 | verification/UIUX-V2-RUNTIME-1/review-zcode-r2.md | ae4e3a077 | - | CANONICAL |
 | EV-15 | AC13 | verification/UIUX-V2-RUNTIME-1/APPOINTMENT.md | 66013fc33 | - | CANONICAL |
 
 > `sha256` 列留空：本 Task 的证据是仓内文本与 PNG，判别依据为 commit 内文件内容（与 EV-01/02 同 commit）。完整 214KB vitest 原始输出在仓外 `G:\CODEX\New Manga.workspace\UIUX-V2-RUNTIME-1\vitest-run-full.txt`（体积原因不入库）。
 
 ## Resource Manifest
 
+机器可读清单：`verification/UIUX-V2-RUNTIME-1/resource-manifest.json`（schema_version 1，本 Task 唯一权威 resource 记录；下表为人读摘要）。
+
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| temp/build | — | NOT_APPLICABLE | — | — | 未构建、未打包，无 build artifact |
-| agent-output | G:/CODEX/New Manga.workspace/UIUX-V2-RUNTIME-1 | PRESERVE_REFERENCED | — | 本 Task 证据目录 | Lead 视觉自查截图与 vitest 全文；仓外保留，不清理 |
-| dataset/model/user-data | — | NOT_APPLICABLE | — | — | 未使用用户素材；dev mock 数据为合成假数据并常驻角标标注 |
-| exchange | — | NOT_APPLICABLE | — | — | 无 |
-
+| evidence | verification/UIUX-V2-RUNTIME-1 | PRESERVE_REFERENCED | verification/UIUX-V2-RUNTIME-1 | verification/UIUX-V2-RUNTIME-1/resource-manifest.json | canonical 证据入库；EV-01..EV-18 均被独立审查复现 |
+| agent-output | G:/CODEX/New Manga.workspace/UIUX-V2-RUNTIME-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/UIUX-V2-RUNTIME-1 | verification/UIUX-V2-RUNTIME-1/resource-manifest.json | 仓外保留：截图原图、ZCode 审查原始 stdout、214KB vitest 全文；无进程引用 |
+| build-artifact | — | NOT_APPLICABLE | — | — | 未构建、未打包，无 build artifact |
+| dataset-model-user-data | — | NOT_APPLICABLE | — | — | 未使用用户素材/模型/数据集；dev 预览为合成假数据并常驻角标 |
+| exchange | — | NOT_APPLICABLE | — | — | 无跨机交换产物 |
 ## Closeout Record
 
-- Closeout date / DSH：待独立审查与集成后填写。
-- canonical_evidence_status：`complete`（canonical 证据全部入库；AC12 的 NOT_RUN 项已显式登记）。
-- resource_closeout_status：`complete`（无删除/迁移/归档；仓外 agent-output 标 PRESERVE_REFERENCED）。
-- 删除、迁移、归档数量/字节数：0。
-- 未关闭项及保留原因：AC12 的"真实 Core 端到端"为 HUMAN_VERIFY（未构建 Tauri 产物）；R3 历史容器保留待后续清理 Task；R4 次级面板未像素级 v2 重绘。
-- 当前指针清理：STATUS / REBASELINE_PLAN / TASK_LEDGER 已更新（见集成段）。
+- Closeout date / DSH：2026-10-25 / DeepSeek Harness。
+- canonical_evidence_status：`complete`（EV-01..EV-18 全部入库并被独立审查复现；AC12 的 NOT_RUN 项显式登记，未冒充通过）。
+- resource_closeout_status：`complete`（无删除/迁移/归档；仓外 agent-output 与 dev 截图标 PRESERVE_REFERENCED）。
+- 删除、迁移、归档数量/字节数：0（0 字节删除、0 迁移、0 归档）。
+- 未关闭项及保留原因：① AC12「真实 Tauri + Python Core 端到端」= HUMAN_VERIFY（本轮无构建产物与 Core 环境）；② R3 历史内联容器保留待后续清理 Task；③ R4 次级面板未像素级 v2 重绘；④ R6（21 处非 gap 间距字面值）与 R7（两处字面色值 + 设计预览假 keyhint）已登记为债务。
+- 当前指针清理：STATUS / REBASELINE_PLAN / TASK_LEDGER 已在本次收口更新；Handoff 指向最终证据与 closeout。
+- Push：按安全裁决**未执行**（`main` 含历史材料、干净快照 Gate 未清，push 不可逆；理由见 STATUS「Gate 与保留项」与最终报告）。
+- 当前指针清理：STATUS / REBASELINE_PLAN / TASK_LEDGER 已在本次收口更新；Handoff 指向最终证据与 closeout。

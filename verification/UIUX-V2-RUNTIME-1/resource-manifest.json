@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "task_id": "UIUX-V2-RUNTIME-1",
+  "generated_at": "2026-10-25",
+  "generated_by": "DeepSeek Harness (DSH)",
+  "note": "本 Task 未删除/迁移/归档任何文件。仓外 agent-output 目录（截图原图与 vitest 全文）保留引用。",
+  "resources": [
+    {
+      "resource_type": "agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/UIUX-V2-RUNTIME-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/UIUX-V2-RUNTIME-1",
+      "process_check": "Lead 真机自查截图原图（shots/*.png）、dev server 日志、ZCode 审查原始 stdout（zcode-review-r1/r2）与 214KB vitest 全文 vitest-run-full.txt 均在此目录；无进程引用，仅作可追溯原件保留。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "evidence",
+      "source_path": "verification/UIUX-V2-RUNTIME-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/UIUX-V2-RUNTIME-1",
+      "process_check": "canonical 证据（tsc/vitest 原始输出、11 张真机截图、visual-verification.md、两轮 ZCode 审查、APPOINTMENT）已入库；EV-01..EV-18 均被独立审查复现。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "本 Task 未构建、未打包（无 Tauri 产物、无 dist 入库）；因此不存在构建缓存或 artifact 资源的处置问题。"
+    },
+    {
+      "resource_type": "dataset-model-user-data",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "未使用任何用户漫画素材、模型权重或数据集；dev 浏览器预览的数据来自 src/dev/devMockBridge.ts 的合成假数据，页面常驻「假数据」角标。"
+    },
+    {
+      "resource_type": "exchange",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "无跨机交换产物；子 Agent 与本机 ZCode 均在同一文件系统内工作。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "canonical_evidence_status=complete；resource_closeout_status=complete；无删除/迁移/归档。"
+}
