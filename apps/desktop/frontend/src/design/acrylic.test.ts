@@ -38,7 +38,7 @@ describe("acrylic material", () => {
     expect(css.match(/feTurbulence/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
 
     // 强度集中在单一变量上，三档伪元素共用，避免各写一个值后漂移。
-    expect(css).toContain("--nm-acrylic-noise: 0.055");
+    expect(css).toContain("--nm-acrylic-noise: 0.08");
     expect(css.match(/opacity: var\(--nm-acrylic-noise\)/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
     // 颗粒尺度无法用 var() 注入，所以三处必须字面量一致，靠测试防漏改。
     expect(css.match(/baseFrequency=%220\.5%22/g)?.length ?? 0).toBe(3);
