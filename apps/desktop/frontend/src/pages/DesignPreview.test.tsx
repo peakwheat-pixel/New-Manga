@@ -175,6 +175,9 @@ describe("DesignPreview (v2 static skeleton)", () => {
 
     keydown(host, '[data-testid="tab-shelf"]', "ArrowRight");
     expect(activePage()).toBe("workbench");
+    // 焦点必须落在新页面真实存在的 tab 上：切页会卸载整页，若在旧节点上同步
+    // focus，flush 后焦点会被浏览器丢回 body，roving tabindex 就只能用一次。
+    expect(document.activeElement?.getAttribute("data-testid")).toBe("tab-workbench");
 
     keydown(host, '[data-testid="tab-workbench"]', "End");
     expect(activePage()).toBe("reader");

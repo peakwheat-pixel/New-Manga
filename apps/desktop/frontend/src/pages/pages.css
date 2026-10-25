@@ -477,9 +477,7 @@
 
 .nm-stat__value {
   color: var(--nm-text-primary);
-  font-size: 20px;
-  line-height: 22px;
-  font-weight: 700;
+  font: var(--nm-text-title);
 }
 
 .nm-stat__label {

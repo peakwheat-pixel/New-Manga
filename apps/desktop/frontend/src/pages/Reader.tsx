@@ -36,6 +36,10 @@ export function Reader({ theme, onNavigate, onToggleTheme }: ReaderProps) {
         target?.tagName === "TEXTAREA" ||
         target?.isContentEditable === true;
       if (typing || event.ctrlKey || event.metaKey || event.altKey) return;
+      // 焦点在 tablist（一级切换栏 / 检查器 rail）里时，方向键归 tab 导航，
+      // 不能再同时翻页——否则一次按键既切页又翻页。
+      // 注意 target 可能是 window（测试里就是），必须先确认是 Element 再调 closest。
+      if (target instanceof Element && target.closest('[role="tablist"]')) return;
       if (event.key === "ArrowLeft") {
         event.preventDefault();
         step(-1);

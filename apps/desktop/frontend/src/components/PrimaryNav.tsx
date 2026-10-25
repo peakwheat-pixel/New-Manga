@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import { Icon, type IconName } from "./Icon";
 import type { DesignPage } from "../design/types";
 
@@ -27,15 +27,30 @@ export interface PrimaryNavProps {
  * 在 Tab 序列里（tabIndex 0），其余为 -1；左右方向键在 tab 之间移动并同步切换
  * 页面，Home/End 跳到两端。缺了这段，`role="tablist"` 就是假的。
  */
+/**
+ * 键盘切页后要接管的焦点目标。
+ *
+ * 不能在同一次事件里 focus：切页会让 DesignPreview 卸载当前整页、挂载下一页，
+ * 同步 focus 落在即将被移除的旧节点上，flush 后浏览器把焦点丢回 body，第二次
+ * 方向键就再也收不到了。所以把目标记在模块级，等新页面的 PrimaryNav 挂载、
+ * activePage 生效之后再 focus。
+ */
+let pendingFocusTarget: DesignPage | null = null;
+
 export function PrimaryNav({ activePage, onNavigate }: PrimaryNavProps) {
   const tabRefs = useRef<Partial<Record<DesignPage, HTMLButtonElement | null>>>({});
+
+  useEffect(() => {
+    if (pendingFocusTarget === null || pendingFocusTarget !== activePage) return;
+    pendingFocusTarget = null;
+    tabRefs.current[activePage]?.focus();
+  }, [activePage]);
 
   const moveTo = (index: number) => {
     const tab = TABS[index];
     if (!tab) return;
+    pendingFocusTarget = tab.id;
     onNavigate(tab.id);
-    // 切换后焦点要跟着走，否则键盘用户会停在已隐藏的旧 tab 上。
-    tabRefs.current[tab.id]?.focus();
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, current: DesignPage) => {

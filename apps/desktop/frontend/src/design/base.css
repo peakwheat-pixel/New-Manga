@@ -3,7 +3,7 @@
  * Component-specific rules live beside their components; page geometry lives
  * in src/pages/pages.css.
  *
- * SCOPE: everything below is gated on `html[data-view="design"]`, which
+ * SCOPE: everything below is gated on `:where(html[data-view="design"])`, which
  * DesignPreview sets on mount and restores on unmount. These are element-level
  * resets (body overflow, button padding, svg display) that would otherwise
  * leak into the frozen Tauri runtime path — the runtime path has no CSS files
@@ -11,25 +11,25 @@
  * changes it. Never add an unscoped element selector here.
  */
 
-html[data-view="design"] *,
-html[data-view="design"] *::before,
-html[data-view="design"] *::after {
+:where(html[data-view="design"]) *,
+:where(html[data-view="design"]) *::before,
+:where(html[data-view="design"]) *::after {
   box-sizing: border-box;
 }
 
-html[data-view="design"],
-html[data-view="design"] body,
-html[data-view="design"] #root {
+:where(html[data-view="design"]),
+:where(html[data-view="design"]) body,
+:where(html[data-view="design"]) #root {
   width: 100%;
   height: 100%;
   margin: 0;
 }
 
-html[data-view="design"] {
+:where(html[data-view="design"]) {
   background: var(--nm-bg-canvas);
 }
 
-html[data-view="design"] body {
+:where(html[data-view="design"]) body {
   overflow: hidden;
   background: var(--nm-bg-canvas);
   color: var(--nm-text-primary);
@@ -38,56 +38,56 @@ html[data-view="design"] body {
   text-rendering: optimizeLegibility;
 }
 
-html[data-view="design"] button,
-html[data-view="design"] input,
-html[data-view="design"] select,
-html[data-view="design"] textarea {
+:where(html[data-view="design"]) button,
+:where(html[data-view="design"]) input,
+:where(html[data-view="design"]) select,
+:where(html[data-view="design"]) textarea {
   margin: 0;
   font: inherit;
   color: inherit;
 }
 
-html[data-view="design"] button {
+:where(html[data-view="design"]) button {
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
 }
 
-html[data-view="design"] button:disabled {
+:where(html[data-view="design"]) button:disabled {
   cursor: default;
 }
 
-html[data-view="design"] svg {
+:where(html[data-view="design"]) svg {
   display: block;
   flex: none;
 }
 
-html[data-view="design"] ::selection {
+:where(html[data-view="design"]) ::selection {
   background: var(--nm-accent-muted);
   color: var(--nm-text-primary);
 }
 
-html[data-view="design"] :focus-visible {
+:where(html[data-view="design"]) :focus-visible {
   outline: 2px solid var(--nm-accent-ring);
   outline-offset: 2px;
 }
 
-html[data-view="design"] * {
+:where(html[data-view="design"]) * {
   scrollbar-width: thin;
   scrollbar-color: var(--nm-line-strong) transparent;
 }
 
-html[data-view="design"] *::-webkit-scrollbar {
+:where(html[data-view="design"]) *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-html[data-view="design"] *::-webkit-scrollbar-track {
+:where(html[data-view="design"]) *::-webkit-scrollbar-track {
   background: transparent;
 }
 
-html[data-view="design"] *::-webkit-scrollbar-thumb {
+:where(html[data-view="design"]) *::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: var(--nm-radius-control);
   background: var(--nm-line-strong);
