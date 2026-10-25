@@ -28,7 +28,7 @@ describe("acrylic material", () => {
     expect(noise).toContain("position: absolute");
     expect(noise).toContain("inset: 0");
     expect(noise).toContain("pointer-events: none");
-    expect(noise).toContain("opacity: 0.022");
+    expect(noise).toContain("opacity: var(--nm-acrylic-noise)");
     expect(noise).toContain("mix-blend-mode: overlay");
     expect(noise).toContain("data:image/svg+xml");
     expect(noise).toContain("feTurbulence");
@@ -36,6 +36,10 @@ describe("acrylic material", () => {
     expect(noise).toContain("baseFrequency=%220.8%22");
     expect(noise).toContain("numOctaves=%223%22");
     expect(css.match(/feTurbulence/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
+
+    // 强度集中在单一变量上，三档伪元素共用，避免各写一个值后漂移。
+    expect(css).toContain("--nm-acrylic-noise: 0.055");
+    expect(css.match(/opacity: var\(--nm-acrylic-noise\)/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
   });
 
   it("provides the 24px band tier and the strong modal tier", () => {
