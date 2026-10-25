@@ -100,7 +100,6 @@
 .nm-acrylic-strong::after {
   background-size: 140% 140%;
   animation: nm-noise-drift 24s step-end infinite;
-  will-change: background-position;
 }
 
 @keyframes nm-noise-drift {
@@ -146,14 +145,22 @@
 /*
  * Capability fallback: WebView2 without backdrop-filter keeps the tint and
  * the stroke; only the blur is dropped.
+ *
+ * strong 档必须降成 tint-strong：否则模态在不支持 blur 的环境里，底色比
+ * 「预算降级」的 .nm-acrylic-off 更透，对比度反而更低，两个降级链就打架了。
  */
 @supports not (backdrop-filter: blur(1px)) {
   .nm-acrylic,
-  .nm-acrylic-24,
-  .nm-acrylic-strong {
+  .nm-acrylic-24 {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     background: var(--nm-acrylic-tint);
+  }
+
+  .nm-acrylic-strong {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--nm-acrylic-tint-strong);
   }
 }
 

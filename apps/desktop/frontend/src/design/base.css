@@ -2,27 +2,34 @@
  * Shared primitives for the v2 shell. Plain CSS only — no preprocessor.
  * Component-specific rules live beside their components; page geometry lives
  * in src/pages/pages.css.
+ *
+ * SCOPE: everything below is gated on `html[data-view="design"]`, which
+ * DesignPreview sets on mount and restores on unmount. These are element-level
+ * resets (body overflow, button padding, svg display) that would otherwise
+ * leak into the frozen Tauri runtime path — the runtime path has no CSS files
+ * of its own and relies on its inline styles, so an unscoped reset silently
+ * changes it. Never add an unscoped element selector here.
  */
 
-*,
-*::before,
-*::after {
+html[data-view="design"] *,
+html[data-view="design"] *::before,
+html[data-view="design"] *::after {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
+html[data-view="design"],
+html[data-view="design"] body,
+html[data-view="design"] #root {
   width: 100%;
   height: 100%;
   margin: 0;
 }
 
-html {
+html[data-view="design"] {
   background: var(--nm-bg-canvas);
 }
 
-body {
+html[data-view="design"] body {
   overflow: hidden;
   background: var(--nm-bg-canvas);
   color: var(--nm-text-primary);
@@ -31,56 +38,56 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-button,
-input,
-select,
-textarea {
+html[data-view="design"] button,
+html[data-view="design"] input,
+html[data-view="design"] select,
+html[data-view="design"] textarea {
   margin: 0;
   font: inherit;
   color: inherit;
 }
 
-button {
+html[data-view="design"] button {
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
 }
 
-button:disabled {
+html[data-view="design"] button:disabled {
   cursor: default;
 }
 
-svg {
+html[data-view="design"] svg {
   display: block;
   flex: none;
 }
 
-::selection {
+html[data-view="design"] ::selection {
   background: var(--nm-accent-muted);
   color: var(--nm-text-primary);
 }
 
-:focus-visible {
+html[data-view="design"] :focus-visible {
   outline: 2px solid var(--nm-accent-ring);
   outline-offset: 2px;
 }
 
-* {
+html[data-view="design"] * {
   scrollbar-width: thin;
   scrollbar-color: var(--nm-line-strong) transparent;
 }
 
-*::-webkit-scrollbar {
+html[data-view="design"] *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-*::-webkit-scrollbar-track {
+html[data-view="design"] *::-webkit-scrollbar-track {
   background: transparent;
 }
 
-*::-webkit-scrollbar-thumb {
+html[data-view="design"] *::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: var(--nm-radius-control);
   background: var(--nm-line-strong);
@@ -343,7 +350,6 @@ svg {
 .nm-segmented button[data-active="true"] {
   background: var(--nm-bg-card);
   color: var(--nm-text-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14);
 }
 
 .nm-kbd {
@@ -358,7 +364,7 @@ svg {
   background: var(--nm-bg-alt);
   color: var(--nm-text-tertiary);
   font: var(--nm-text-data);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1;
 }
 

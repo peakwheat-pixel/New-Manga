@@ -99,7 +99,6 @@
   background: var(--nm-bg-card);
   color: var(--nm-accent-base);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .nm-titlebar__actions {
@@ -274,7 +273,6 @@
   border-radius: var(--nm-radius-overlay);
   background: var(--nm-bg-card);
   text-align: left;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
 }
 
@@ -389,7 +387,7 @@
   justify-content: space-between;
   color: var(--nm-text-tertiary);
   font: var(--nm-text-caption);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .nm-detail {
@@ -418,7 +416,7 @@
   overflow: hidden;
   border-radius: var(--nm-radius-control);
   background: linear-gradient(155deg, var(--cover-a), var(--cover-b));
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--nm-elevation-8);
 }
 
 .nm-detail__cover span {
@@ -479,7 +477,7 @@
 
 .nm-stat__value {
   color: var(--nm-text-primary);
-  font-size: 18px;
+  font-size: 20px;
   line-height: 22px;
   font-weight: 700;
 }
@@ -542,7 +540,7 @@
 
 .nm-chapter__index {
   color: var(--nm-text-tertiary);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .nm-chapter__title {
@@ -555,7 +553,7 @@
 
 .nm-chapter__pages {
   color: var(--nm-text-tertiary);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .nm-detail__progress {
@@ -824,7 +822,7 @@
 .nm-filmstrip__no {
   color: var(--nm-text-tertiary);
   font: var(--nm-text-data);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.04em;
 }
 
@@ -858,7 +856,7 @@
   border: 1px solid var(--nm-line-control);
   border-radius: var(--nm-radius-control);
   background: var(--nm-bg-layer);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--nm-elevation-8);
 }
 
 .nm-canvas__crumb {
@@ -911,7 +909,7 @@
   border-radius: var(--nm-radius-overlay);
   background: var(--nm-bg-layer);
   transform: translateX(-50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--nm-elevation-8);
 }
 
 .nm-canvas__tools .nm-data {
@@ -1036,7 +1034,7 @@
 .nm-ocr-box__meta {
   margin-top: 4px;
   color: var(--nm-text-tertiary);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .nm-region-list {
@@ -1088,7 +1086,7 @@
 .nm-region__text {
   color: var(--nm-text-tertiary);
   font: var(--nm-text-caption);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .nm-kv {
@@ -1153,7 +1151,7 @@
   flex: none;
   color: var(--nm-text-tertiary);
   font: var(--nm-text-caption);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .nm-stage__dot {
@@ -1498,3 +1496,11 @@
 
 /* 一级页面切换栏统一放在 .nm-titlebar 内（书架 / 工作台 / 阅读器一致），
    阅读器沿用它自己的亚克力顶栏承载阅读控件，不再额外塞 Tab。 */
+
+/* 垂直 tablist 分组：tablist 只允许包含 tab 元素，所以主题/设置按钮被移出到
+   .nm-inspector__rail 直下，这里用一层容器保住原来的纵向排布与间距。 */
+.nm-rail-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-1);
+}

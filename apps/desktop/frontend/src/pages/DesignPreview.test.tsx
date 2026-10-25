@@ -26,8 +26,17 @@ function click(host: HTMLElement, selector: string) {
   });
 }
 
+function keydown(host: HTMLElement, selector: string, key: string) {
+  const target = host.querySelector<HTMLElement>(selector);
+  if (!target) throw new Error(`missing element: ${selector}`);
+  act(() => {
+    target.dispatchEvent(new window.KeyboardEvent("keydown", { key, bubbles: true }));
+  });
+}
+
 beforeEach(() => {
   delete document.documentElement.dataset.theme;
+  delete document.documentElement.dataset.view;
   window.history.replaceState({}, "", "/");
 });
 
@@ -37,6 +46,7 @@ afterEach(() => {
   root = undefined;
   container = undefined;
   delete document.documentElement.dataset.theme;
+  delete document.documentElement.dataset.view;
 });
 
 describe("DesignPreview (v2 static skeleton)", () => {
@@ -141,5 +151,53 @@ describe("DesignPreview (v2 static skeleton)", () => {
     const host = mount(<App />);
     expect(host.querySelector('[data-testid="design-preview"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="page-shelf"]')).not.toBeNull();
+  });
+
+  it("scopes the element-level resets behind the design view attribute", () => {
+    // base.css 的 body/button/svg reset 挂在 html[data-view="design"] 上，
+    // 这个属性必须只在设计预览挂载期间存在，否则会改动冻结的运行时路径。
+    mount(<DesignPreview />);
+    expect(document.documentElement.dataset.view).toBe("design");
+
+    act(() => root?.unmount());
+    root = undefined;
+    expect(document.documentElement.dataset.view).toBeUndefined();
+  });
+
+  it("moves between primary tabs with the arrow keys", () => {
+    const host = mount(<DesignPreview />);
+    const activePage = () =>
+      host.querySelector('[data-testid="design-preview"]')?.getAttribute("data-page");
+
+    // 初始只有当前 tab 在 Tab 序列里（roving tabindex）。
+    expect(host.querySelector('[data-testid="tab-shelf"]')?.getAttribute("tabindex")).toBe("0");
+    expect(host.querySelector('[data-testid="tab-workbench"]')?.getAttribute("tabindex")).toBe("-1");
+
+    keydown(host, '[data-testid="tab-shelf"]', "ArrowRight");
+    expect(activePage()).toBe("workbench");
+
+    keydown(host, '[data-testid="tab-workbench"]', "End");
+    expect(activePage()).toBe("reader");
+
+    keydown(host, '[data-testid="tab-reader"]', "ArrowRight");
+    expect(activePage()).toBe("shelf");
+  });
+
+  it("turns reader pages with the arrow keys it advertises", () => {
+    const host = mount(<DesignPreview />);
+    click(host, '[data-testid="tab-reader"]');
+
+    const pager = () => host.querySelector(".nm-reader__pager")?.textContent ?? "";
+    expect(pager()).toContain("012");
+
+    act(() => {
+      window.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    });
+    expect(pager()).toContain("013");
+
+    act(() => {
+      window.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }));
+    });
+    expect(pager()).toContain("012");
   });
 });

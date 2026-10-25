@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "../components/Icon";
 import { PagePlaceholder } from "../components/PagePlaceholder";
 import { PrimaryNav } from "../components/PrimaryNav";
@@ -23,6 +23,30 @@ export function Reader({ theme, onNavigate, onToggleTheme }: ReaderProps) {
   const step = (delta: number) => {
     setPage((current) => Math.min(TOTAL_PAGES, Math.max(1, current + delta)));
   };
+
+  /*
+   * 底栏写着「← → 翻页」就必须真的能翻。骨架阶段只覆盖左右方向键；
+   * 没实现的键（曾经的 F 全屏）不留提示，避免做出假承诺。
+   */
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.isContentEditable === true;
+      if (typing || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        step(-1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        step(1);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="nm-reader" data-testid="page-reader">
@@ -169,10 +193,6 @@ export function Reader({ theme, onNavigate, onToggleTheme }: ReaderProps) {
             <kbd className="nm-kbd">←</kbd>
             <kbd className="nm-kbd">→</kbd>
             翻页
-          </span>
-          <span className="nm-keyhint">
-            <kbd className="nm-kbd">F</kbd>
-            全屏
           </span>
           <span className="nm-keyhint">
             <kbd className="nm-kbd">Esc</kbd>

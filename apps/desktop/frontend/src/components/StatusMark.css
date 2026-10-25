@@ -19,7 +19,7 @@
   background: var(--nm-status-muted-skipped);
   color: var(--nm-text-tertiary);
   font: var(--nm-text-body-strong);
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1;
 }
 

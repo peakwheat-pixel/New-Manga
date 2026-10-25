@@ -43,7 +43,11 @@ export function useAcrylicBudget(
   const layerKey = layers.join("\u0000");
 
   const blurred = useMemo(() => {
-    const ids = layerKey.length > 0 ? layerKey.split("\u0000") : [];
+    // 过滤空 id：调用方偶尔会传 [""]，它会被当成一层真实图层吃掉预算。
+    const ids =
+      layerKey.length > 0
+        ? layerKey.split("\u0000").filter((id) => id.trim().length > 0)
+        : [];
     const allowed = new Set<string>();
     if (ids.length <= budget) {
       ids.forEach((id) => allowed.add(id));

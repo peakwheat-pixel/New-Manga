@@ -44,6 +44,21 @@ export function DesignPreview({ initialPage, initialTheme }: DesignPreviewProps 
     };
   }, [theme]);
 
+  /*
+   * base.css 里的元素级 reset（body overflow、button padding、svg display、
+   * 滚动条样式等）全部挂在 html[data-view="design"] 下，避免经主 bundle 泄漏到
+   * 冻结的 Tauri 运行时路径。该属性必须在首帧之前就位，所以用 layout effect。
+   */
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const previous = root.dataset.view;
+    root.dataset.view = "design";
+    return () => {
+      if (previous === undefined) delete root.dataset.view;
+      else root.dataset.view = previous;
+    };
+  }, []);
+
   useEffect(() => {
     const previousTitle = document.title;
     document.title = "New Manga · Design v2";

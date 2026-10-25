@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { Icon, type IconName } from "../components/Icon";
 import { PrimaryNav } from "../components/PrimaryNav";
 import { PagePlaceholder } from "../components/PagePlaceholder";
@@ -56,6 +56,22 @@ export function Workbench({ theme, onNavigate, onToggleTheme }: WorkbenchProps) 
   const [selectedPage, setSelectedPage] = useState(12);
   const [activeRail, setActiveRail] = useState("layers");
   const budget = useAcrylicBudget("workbench-inspector", ["workbench-inspector"]);
+  const railRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  // 垂直 tablist 的 roving tabindex：上下方向键移动并同步焦点。
+  const onRailKeyDown = (event: KeyboardEvent<HTMLButtonElement>, current: string) => {
+    const index = RAIL.findIndex((item) => item.id === current);
+    let next = -1;
+    if (event.key === "ArrowDown") next = (index + 1) % RAIL.length;
+    else if (event.key === "ArrowUp") next = (index - 1 + RAIL.length) % RAIL.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = RAIL.length - 1;
+    if (next < 0) return;
+    event.preventDefault();
+    const target = RAIL[next];
+    setActiveRail(target.id);
+    railRefs.current[target.id]?.focus();
+  };
 
   return (
     <div className="nm-workbench nm-mica" data-testid="page-workbench">
@@ -168,22 +184,38 @@ export function Workbench({ theme, onNavigate, onToggleTheme }: WorkbenchProps) 
           data-testid="inspector"
           aria-label="检查器"
         >
-          <div className="nm-inspector__rail" role="tablist" aria-label="检查器分类" aria-orientation="vertical">
-            {RAIL.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={activeRail === item.id}
-                aria-label={item.label}
-                title={item.label}
-                className="nm-rail-btn"
-                data-active={activeRail === item.id}
-                onClick={() => setActiveRail(item.id)}
-              >
-                <Icon name={item.icon} size={17} />
-              </button>
-            ))}
+          <div className="nm-inspector__rail">
+            {/*
+             * tablist 里只能放 tab。主题切换与设置是普通按钮，原先混在
+             * tablist 内属于 ARIA 结构违规，这里把它们移出分组。
+             */}
+            <div
+              className="nm-rail-group"
+              role="tablist"
+              aria-label="检查器分类"
+              aria-orientation="vertical"
+            >
+              {RAIL.map((item) => (
+                <button
+                  key={item.id}
+                  ref={(element) => {
+                    railRefs.current[item.id] = element;
+                  }}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeRail === item.id}
+                  tabIndex={activeRail === item.id ? 0 : -1}
+                  aria-label={item.label}
+                  title={item.label}
+                  className="nm-rail-btn"
+                  data-active={activeRail === item.id}
+                  onClick={() => setActiveRail(item.id)}
+                  onKeyDown={(event) => onRailKeyDown(event, item.id)}
+                >
+                  <Icon name={item.icon} size={17} />
+                </button>
+              ))}
+            </div>
             <span className="nm-inspector__rail-spacer" />
             <button
               type="button"
