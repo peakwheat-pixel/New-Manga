@@ -5,6 +5,7 @@ import { ResourceChannelClient, TypedChannelError } from "./resourceChannel/clie
 import { SettingsPanel } from "./settings/SettingsPanel";
 import { AppShell } from "./shell/AppShell";
 import { WorkbenchPage } from "./workbench/WorkbenchPage";
+import { DesignPreview } from "./pages/DesignPreview";
 
 type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
@@ -72,7 +73,7 @@ async function expectCommandDenied(action: () => Promise<unknown>): Promise<Scen
   }
 }
 
-export default function App() {
+function RuntimeApp() {
   const [log, setLog] = useState<string[]>([]);
   const [status, setStatus] = useState("idle");
   // M2-WORKBENCH-REACT-1 navigation: the probe/ac1 runner windows keep the
@@ -526,4 +527,16 @@ export default function App() {
 
   const safeInvoke = activeInvoke || tauriInvokeSafe();
   return <AppShell invoke={safeInvoke} />;
+}
+
+/**
+ * Design v2 static skeleton entry. `?view=design` bypasses the Tauri runtime
+ * probes entirely so the three page shells can be reviewed without a backend.
+ * The frozen probe/console chrome remains the default path.
+ */
+export default function App() {
+  const designRequested =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("view") === "design";
+  return designRequested ? <DesignPreview /> : <RuntimeApp />;
 }

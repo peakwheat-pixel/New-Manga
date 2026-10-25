@@ -1,0 +1,68 @@
+.nm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nm-space-2);
+  min-width: 0;
+  color: var(--nm-text-secondary);
+  font: var(--nm-text-caption);
+  white-space: nowrap;
+}
+
+.nm-status__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: var(--nm-radius-control);
+  background: var(--nm-status-muted-skipped);
+  color: var(--nm-text-tertiary);
+  font: var(--nm-text-body-strong);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.nm-status__label {
+  color: var(--nm-text-secondary);
+}
+
+.nm-status--queued .nm-status__mark {
+  background: var(--nm-status-muted-queued);
+  color: var(--nm-status-queued);
+}
+
+.nm-status--running .nm-status__mark {
+  background: var(--nm-status-muted-running);
+  color: var(--nm-status-running);
+}
+
+.nm-status--done .nm-status__mark {
+  background: var(--nm-status-muted-done);
+  color: var(--nm-status-done);
+}
+
+.nm-status--failed .nm-status__mark {
+  background: var(--nm-status-muted-failed);
+  color: var(--nm-status-failed);
+}
+
+.nm-status--blocked .nm-status__mark {
+  background: var(--nm-status-muted-blocked);
+  color: var(--nm-status-blocked);
+}
+
+.nm-status--stale .nm-status__mark {
+  background: var(--nm-status-muted-stale);
+  color: var(--nm-status-stale);
+}
+
+.nm-status--skipped .nm-status__mark {
+  background: var(--nm-status-muted-skipped);
+  color: var(--nm-status-skipped);
+}
+
+.nm-status--not-started .nm-status__mark {
+  background: var(--nm-status-muted-skipped);
+  color: var(--nm-text-tertiary);
+}

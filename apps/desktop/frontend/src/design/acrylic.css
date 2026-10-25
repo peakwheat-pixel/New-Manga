@@ -1,0 +1,130 @@
+/*
+ * New Manga faux-acrylic material.
+ *
+ * Three tiers:
+ *   .nm-acrylic        blur 40  — detail panels, command palette
+ *   .nm-acrylic-24     blur 24  — title bands, floating bars
+ *   .nm-acrylic-strong blur 40 + strong tint — modal focus surface
+ *
+ * The noise layer (feTurbulence data URI) is mandatory: blur alone reads as
+ * frosted glass, not acrylic. Do not replace the data URI with a remote image.
+ *
+ * The browser performance gate lives in useAcrylicBudget.ts: at most two
+ * backdrop-filter layers may be active on one screen. A downgraded layer gets
+ * .nm-acrylic-off (tint only, no blur, no noise).
+ */
+
+.nm-acrylic {
+  position: relative;
+  background: var(--nm-acrylic-tint);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+.nm-acrylic::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.022;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+.nm-acrylic-24 {
+  position: relative;
+  background: var(--nm-acrylic-tint);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+.nm-acrylic-24::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.022;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+.nm-acrylic-strong {
+  position: relative;
+  background: var(--nm-acrylic-tint-strong);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+.nm-acrylic-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.022;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+/*
+ * Budget fallback: tint and stroke survive, blur and noise do not.
+ * The stronger tint keeps text legible when a panel loses its blur.
+ */
+.nm-acrylic-off {
+  position: relative;
+  background: var(--nm-acrylic-tint-strong);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+/*
+ * Capability fallback: WebView2 without backdrop-filter keeps the tint and
+ * the stroke; only the blur is dropped.
+ */
+@supports not (backdrop-filter: blur(1px)) {
+  .nm-acrylic,
+  .nm-acrylic-24,
+  .nm-acrylic-strong {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--nm-acrylic-tint);
+  }
+}
+
+/*
+ * Accessibility fallback: users who ask the OS to reduce transparency get a
+ * solid surface, no blur, no noise.
+ */
+@media (prefers-reduced-transparency: reduce) {
+  .nm-acrylic,
+  .nm-acrylic-24,
+  .nm-acrylic-strong,
+  .nm-acrylic-off {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--nm-bg-solid);
+    box-shadow: none;
+  }
+
+  .nm-acrylic::after,
+  .nm-acrylic-24::after,
+  .nm-acrylic-strong::after {
+    content: none;
+    display: none;
+    opacity: 0;
+  }
+}
