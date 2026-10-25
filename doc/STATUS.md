@@ -5,8 +5,9 @@
 ## 当前 Task
 
 - 当前 Task：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（root `e34a90d00`；push-gate 独立 Review approved；已推 `origin/codex/clean-source-snapshot`，远端 SHA=e34a90d00；DSH r1 blocked 保留；产品 AC4/AC5 未过；[checkpoint](../verification/GIT-CLEAN-PUBLICATION-1/checkpoint.md)）。
-- Rust：[ISOLATION-1](tasks/GIT-CLEAN-RUST-ISOLATION-1.md) `in_review`（1829a38；默认并发双过；饱和 0/32，DSH r2 blocked 保留；Reviewer 改派 Antigravity）。
-- 容量设计：[CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`（ZCode，仅设计；Reviewer 改派 Antigravity）。
+- Rust：[ISOLATION-1](tasks/GIT-CLEAN-RUST-ISOLATION-1.md) `in_review`（1829a38；默认并发双过；饱和 0/32，DSH r2 blocked 保留；Reviewer 改派 ZCode）。
+- 容量设计：[CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`（ZCode，仅设计；Reviewer 改派 ZCode）。
+- Reviewer 改派依据（2026-10-25）：用户明令停用 Antigravity/agy，两 Task Reviewer 改 ZCode；Owner 同为 ZCode 的冲突已在 Task 卡登记，不授权自审、本会话不复活。
 - 诊断/环境：[DIAG-1](tasks/GIT-CLEAN-PUBLICATION-DIAG-1.md) `approved`（仅诊断，不集成/不 done）；[CORE-ENV-2](tasks/GIT-CLEAN-CORE-ENV-2.md) `proposed`（V2–V5 未冻结）。
 - 全审/签核：[FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) `blocked`（resume=in_progress）；[V1-RELEASE-SIGNING-1](tasks/V1-RELEASE-SIGNING-1.md) `in_review`（无当前执行）。
 - 最近完成：GUI-PLUGIN-SANDBOX-SMOKE-1、TOOL-SOFTWARE-SMOKE-1 `done`；插件运行线 SANDBOX-1/2、CAPABILITY-1、PACKAGED-PYTHON-1 approved。

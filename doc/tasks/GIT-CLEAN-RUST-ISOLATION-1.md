@@ -7,7 +7,7 @@ status: in_review
 approval: codex_scope_released_user_review_disposition_2026-10-24
 suggested_owner: ZCode
 owner: ZCode
-reviewer: Antigravity
+reviewer: ZCode
 depends_on: []
 base_commit: e34a90d001cce1fa966aec7d2b032bb5ad1cf148
 branch: codex/git-clean-rust-isolation-r2
@@ -182,6 +182,15 @@ AC4仅指交付绑定与独审已执行的程序性AC，证据EV-059..061/067；
 
 ## 2026-10-25 DSH 接管后的处置
 
-DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。本 Task 的 Owner/实现作者仍为 ZCode；当前 Reviewer 改派 **Antigravity**，用于未来任何新 head 的独立审查 Appointment。DSH r1/r2 两份 Review、r2/DISPOSITION、测试日志、包与源码字节全部保持原样，不改写为通过。
+DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。本 Task 的 Owner/实现作者仍为 ZCode；当前 Reviewer 改派 **ZCode**（同日再次改派，见下节「Reviewer 二次改派」）。DSH r1/r2 两份 Review、r2/DISPOSITION、测试日志、包与源码字节全部保持原样，不改写为通过。
 
-当前事实不变：delivery head `1829a38a41587a0d680001a40d206886afb0911d`；默认并发两次 153 passed/0 failed/6 ignored/12 filtered；AC1 PARTIAL、AC3 BLOCKED（真实 32 饱和未达，peak 0/32），R2-F01..05 中部分 open。Task 保持 `in_review`，无当前实施。本 Task 不是干净快照 push 的前置 Gate；其 blocked 结论保留，不能作为产品并发安全或父候选升级的批准。任何新 head 必须由 Antigravity 按新 Appointment 独立审查后再进入 DSH 集成裁决；重复失败遵守同一失败上限 2 次，不新增无边界的压力门槛。
+当前事实不变：delivery head `1829a38a41587a0d680001a40d206886afb0911d`；默认并发两次 153 passed/0 failed/6 ignored/12 filtered；AC1 PARTIAL、AC3 BLOCKED（真实 32 饱和未达，peak 0/32），R2-F01..05 中部分 open。Task 保持 `in_review`，无当前实施。本 Task 不是干净快照 push 的前置 Gate；其 blocked 结论保留，不能作为产品并发安全或父候选升级的批准。任何新 head 必须按新 Appointment 由非作者独立审查后再进入 DSH 集成裁决；重复失败遵守同一失败上限 2 次，不新增无边界的压力门槛。
+
+## Reviewer 二次改派（2026-10-25）
+
+- **改派**：frontmatter `reviewer` 由 `Antigravity` 改为 `ZCode`；同时修正上两节中指向 Antigravity 的 Appointment 描述。STATUS 与 REBASELINE_PLAN 同步。
+- **依据**：用户 2026-10-25 明令本项目**停用 Antigravity / agy**。保留 `Reviewer=Antigravity` 会造成指向已停用 Agent 的死指针，后续任何 Appointment 都会卡死。
+- **遗留冲突（如实登记，不隐瞒）**：本 Task 的 `owner` 同为 `ZCode`，与协作协议「Owner 与 Reviewer 必须不同」冲突。因此本次改派**只是清除死指针**，不构成对 ZCode 自审的授权：
+  - 本 Task 在本轮不复活、不产生新 head、不进行任何 ZCode 自审；
+  - 若将来复活，独立审查必须由**未参与该 head 实现**的 Agent 执行（候选：Codex，或按协作协议记 `reviewer_unavailable` 并等待可用 Reviewer），并在新 `APPOINTMENT.md` 中重新绑定精确 base/head 与唯一 Review 写路径；
+  - 备选方案「改 Owner 为 Codex、Reviewer 留 ZCode」未被采用：那会把一个 blocked 的环境线 Task 重新拉回实施队列，与本轮"绕开环境线、聚焦产品收口"的优先级相反。

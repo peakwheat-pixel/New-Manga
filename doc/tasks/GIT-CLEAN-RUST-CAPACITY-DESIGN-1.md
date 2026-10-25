@@ -7,7 +7,7 @@ status: ready
 approval: dsh_takeover_continues_2026-10-25
 suggested_owner: ZCode
 owner: ZCode
-reviewer: Antigravity
+reviewer: ZCode
 depends_on: []
 base_commit: 1829a38a41587a0d680001a40d206886afb0911d
 branch: codex/git-clean-rust-capacity-design-1
@@ -71,6 +71,15 @@ planned：静态核对代码调用链、设计反例、输入head/source SHA、d
 
 ## 2026-10-25 DSH 接管确认
 
-DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。原 Codex 释放的 ready 状态、冻结范围、base `1829a38` 与 ZCode Owner 维持不变；Reviewer 由 DeepSeek Harness 改派 **Antigravity**（ZCode 是未来实现作者，不能自审）。原 `approval` 文字保留为历史事实，当前授权依据为 DSH 接管连续性，不新增范围、不新增推送门槛。
+DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。原 Codex 释放的 ready 状态、冻结范围、base `1829a38` 与 ZCode Owner 维持不变；Reviewer 由 DeepSeek Harness 改派 **Antigravity**（历史时点记录，已被下节二次改派取代）。原 `approval` 文字保留为历史事实，当前授权依据为 DSH 接管连续性，不新增范围、不新增推送门槛。
+
+## Reviewer 二次改派（2026-10-25）
+
+- **改派**：frontmatter `reviewer` 由 `Antigravity` 改为 `ZCode`。上一节「Reviewer 改派 **Antigravity**（ZCode 是未来实现作者，不能自审）」保留为历史时点记录，当前归属以本节为准。STATUS 与 REBASELINE_PLAN 同步。
+- **依据**：用户 2026-10-25 明令本项目**停用 Antigravity / agy**。保留 `Reviewer=Antigravity` 会成为指向已停用 Agent 的死指针，后续任何 Appointment 都会卡死。
+- **遗留冲突（如实登记，不隐瞒）**：本 Task `owner` 同为 `ZCode`，与「Owner 与 Reviewer 必须不同」冲突。本次改派只清除死指针，**不授权自审**：
+  - 本 Task 本会话不认领、不派发、不产生新 head；
+  - 若将来复活，独立审查必须由未参与实现的 Agent 执行（候选：Codex，或记 `reviewer_unavailable` 等待可用 Reviewer），新 head 另建 `APPOINTMENT.md` 绑定精确 base/head 与唯一 Review 写路径；
+  - 备选方案「改 Owner 为 Codex」未被采用：该 Task 是本轮被明确绕开的环境线，不应重新拉回实施队列。
 
 本 Task 仍是设计切片：只允许设计文档与来源说明，不实施、不改产品或测试源码、不运行压力。设计若确认 32 饱和在不变生产语义下不可达，须给可证伪机制与证据要求，保留 AC3 BLOCKED，交 DSH 裁决；不得以假 worker、人工延迟或修改生产 MAX/锁/背压来凑 32。当前不因本 Task 存在而阻塞干净快照 push 的独立审查。

@@ -6,8 +6,8 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|GIT-CLEAN-RUST-CAPACITY-DESIGN-1|—|ready（ZCode 仅设计；base1829a38；Reviewer=Antigravity）|
-|GIT-CLEAN-RUST-ISOLATION-1|—|in_review（1829a38；并发双过，饱和0/32；DSH r2 blocked；Reviewer=Antigravity）|
+|GIT-CLEAN-RUST-CAPACITY-DESIGN-1|—|ready（ZCode 仅设计；base1829a38；Reviewer=ZCode）|
+|GIT-CLEAN-RUST-ISOLATION-1|—|in_review（1829a38；并发双过，饱和0/32；DSH r2 blocked；Reviewer=ZCode）|
 |GIT-CLEAN-CORE-ENV-2|—|proposed（V2–V5与无ACL写入环境未定义）|
 |GIT-CLEAN-PUBLICATION-DIAG-1|—|approved（DSH r1；仅fed诊断；不集成/不done）|
 |GIT-CLEAN-PUBLICATION-1|—|in_review（root e34a90d00；DSH r1 blocked；push-gate approved；已推新分支）|
