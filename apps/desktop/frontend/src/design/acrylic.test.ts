@@ -29,7 +29,7 @@ describe("acrylic material", () => {
     expect(noise).toContain("inset: 0");
     expect(noise).toContain("pointer-events: none");
     expect(noise).toContain("opacity: var(--nm-acrylic-noise)");
-    expect(noise).toContain("mix-blend-mode: overlay");
+    expect(noise).toContain("mix-blend-mode: hard-light");
     expect(noise).toContain("data:image/svg+xml");
     expect(noise).toContain("feTurbulence");
     expect(noise).toContain("fractalNoise");
@@ -42,6 +42,26 @@ describe("acrylic material", () => {
     expect(css.match(/opacity: var\(--nm-acrylic-noise\)/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
     // 颗粒尺度无法用 var() 注入，所以三处必须字面量一致，靠测试防漏改。
     expect(css.match(/baseFrequency=%220\.5%22/g)?.length ?? 0).toBe(3);
+  });
+
+  it("drifts the grain slowly without ever exposing an uncovered edge", () => {
+    expect(css).toContain("background-size: 140% 140%");
+    expect(css).toContain("@keyframes nm-noise-drift");
+    expect(css).toContain("step-end");
+
+    // 关键帧里的位移上限必须留在 background-size 的余量内，否则边缘会露缝。
+    const frames = [...css.matchAll(/background-position:\s*([\d.]+)%\s+([\d.]+)%/g)];
+    expect(frames.length).toBeGreaterThanOrEqual(4);
+    for (const frame of frames) {
+      expect(Number(frame[1])).toBeGreaterThanOrEqual(0);
+      expect(Number(frame[1])).toBeLessThanOrEqual(28);
+      expect(Number(frame[2])).toBeGreaterThanOrEqual(0);
+      expect(Number(frame[2])).toBeLessThanOrEqual(28);
+    }
+
+    // 减少动效时必须停掉漂移。
+    const reducedMotion = css.slice(css.indexOf("prefers-reduced-motion"));
+    expect(reducedMotion).toContain("animation: none");
   });
 
   it("provides the 24px band tier and the strong modal tier", () => {

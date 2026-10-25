@@ -41,7 +41,7 @@
   pointer-events: none;
   border-radius: inherit;
   opacity: var(--nm-acrylic-noise);
-  mix-blend-mode: overlay;
+  mix-blend-mode: hard-light;
   background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
 }
 
@@ -62,7 +62,7 @@
   pointer-events: none;
   border-radius: inherit;
   opacity: var(--nm-acrylic-noise);
-  mix-blend-mode: overlay;
+  mix-blend-mode: hard-light;
   background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
 }
 
@@ -83,15 +83,57 @@
   pointer-events: none;
   border-radius: inherit;
   opacity: var(--nm-acrylic-noise);
-  mix-blend-mode: overlay;
+  mix-blend-mode: hard-light;
   background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+/*
+ * 颗粒漂移：静态纹理人眼会自动忽略，极慢的位移反而让颗粒被"看见"。
+ *
+ * background-size 140% 给 background-position 留出 40% 的余量，
+ * 这样任意 position 都不会在边缘露出没铺到噪声的缝隙
+ * （用 transform 平移 inset:0 的伪元素会露边，不要那样做）。
+ * step-end 让位移是离散跳变而不是滑动，滑动会像面板在漂。
+ */
+.nm-acrylic::after,
+.nm-acrylic-24::after,
+.nm-acrylic-strong::after {
+  background-size: 140% 140%;
+  animation: nm-noise-drift 16s step-end infinite;
+  will-change: background-position;
+}
+
+@keyframes nm-noise-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 11% 6%;
+  }
+  50% {
+    background-position: 4% 17%;
+  }
+  75% {
+    background-position: 19% 9%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-acrylic::after,
+  .nm-acrylic-24::after,
+  .nm-acrylic-strong::after {
+    animation: none;
+    background-position: 0% 0%;
+  }
 }
 
 /*
  * Budget fallback: tint and stroke survive, blur and noise do not.
  * The stronger tint keeps text legible when a panel loses its blur.
- */
-.nm-acrylic-off {
+ */.nm-acrylic-off {
   position: relative;
   background: var(--nm-acrylic-tint-strong);
   -webkit-backdrop-filter: none;
