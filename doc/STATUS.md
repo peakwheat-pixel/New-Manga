@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[FINAL-VALIDATION-1](tasks/FINAL-VALIDATION-1.md) `delivered`（sidecar 186.3MiB；包 97.75/690.94MB；回归+smoke PASS；97fd10afe）。
+- 当前 Task：无（AD-002 重构主体完成；`FINAL-VALIDATION-1` done，剩余=真机 5 项人工核验 + 可选后续）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

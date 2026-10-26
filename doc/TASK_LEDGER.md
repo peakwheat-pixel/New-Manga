@@ -7,28 +7,28 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 382 |
-| terminal | 374 |
-| non-terminal | 8 |
-| non-terminal named in the plan | 8 |
+| terminal | 375 |
+| non-terminal | 7 |
+| non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 382 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 8 |
+| non-terminal tracked by git | 7 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 304 | yes |
+| `done` | 305 | yes |
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
 | `in_review` | 3 | no |
-| `ready` | 2 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `proposed` | 1 | no |
+| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -40,7 +40,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | own row |
-| `FINAL-VALIDATION-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | own row |
 
 ## What this ledger does not say

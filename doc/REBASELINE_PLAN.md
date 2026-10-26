@@ -21,7 +21,7 @@
 |CORE-SLIM-1|CORE-TILE-EMIT-1|done（去 PySide6 闭包零 Qt；exe 199.6→1.9MiB；运行时 970.1MiB；AC3 PARTIAL；集成 c5aade851）|
 |INFER-BASELINE-EP-1|—|done（默认 EP=DirectML；主包 1216.4MB；必须 torch 的模型=无）|
 |CORE-SLIM-2|INFER-BASELINE-EP-1|done（Core 运行时 186.3MiB；检测 61.47ms/页；OCR 10/10；pytest 0 新增失败）|
-|FINAL-VALIDATION-1|CORE-SLIM-2、RELEASE-PACKAGE-1|ready（终验/重建/重打包/许可复验；base d3f081870）|
+|FINAL-VALIDATION-1|CORE-SLIM-2、RELEASE-PACKAGE-1|done（base 97.75MB/models 690.94MB；安装 smoke PASS；S0–S5 完成表）|
 |HOST-TILE-CHANNEL-1|UI-WORKBENCH-READER-1|done（S5-A tile 通道+digest+1s 缓存；revoke 0.071ms；集成 09d7e76c1）|
 |HOST-RESOURCE-SECURITY-1|HOST-TILE-CHANNEL-1|done（S5-B D4-1/3/5/6 全 PASS；digest 1.33%；集成 744eccb61）|
 |CORE-TILE-EMIT-1|HOST-RESOURCE-SECURITY-1|done（Core 出 tile+摘要；一致率100%；pytest 0 新增失败；集成 7b07da6a4）|

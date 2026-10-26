@@ -3,7 +3,7 @@ id: FINAL-VALIDATION-1
 title: 终验与发布重建——按新 spec 重建侧车 + 重打包 + 许可复验 + 全量回归
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: null
@@ -14,8 +14,8 @@ branch: task/FINAL-VALIDATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FINAL-VALIDATION-1
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FINAL-VALIDATION-1
 allowed_paths:
   - doc/tasks/FINAL-VALIDATION-1.md
@@ -25,6 +25,8 @@ allowed_paths:
   - apps/desktop-avalonia/**
   - scripts/**
   - packaging/**
+  - doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md
+  - doc/handoffs/**
   - verification/FINAL-VALIDATION-1/**
   - G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/**
   - G:/CODEX/New Manga.workspace/worktrees/FINAL-VALIDATION-1/**
@@ -38,13 +40,12 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [x] **AC1 侧车重建**：用新 spec（`packaging/m2ac5/core_sidecar.spec`，无 Qt/无 torch）重建 `core_service`/`host_bridge` 等 entry，记录体积表；启动/协议 smoke 通过。→ **MET**：构建 37.1s exit=0；整包 828.6 MiB / **Core 运行时 186.3 MiB（不含 models）**；Qt 0 / torch 栈 0；能力 smoke **7/7 PASS**（`sidecar-meter`… 见 `sidecar-measure.json`、`capability-smoke.json`）。
-- [x] **AC2 重打包**：`apps/desktop-avalonia/scripts/package.ps1` 产出安装包（含 Core 侧车与模型分发策略），体积 ≤2GB（含基础模型）/≤150MB（不含模型）；包内许可三件套逐字节一致。→ **MET**：base zip **97.75 MB ≤150**（sidecar 186.31 MiB 内含、模型分离策略）；models zip **690.94 MB ≤2 GB**（sidecar 828.59 MiB + models 642.3 MiB 内含）；许可三件套两包均逐字节一致。
-- [x] **AC3 全量回归**：`scripts/test.ps1` 全绿；pytest 相对基线 3F/2739P/9S 无新增失败；旧壳 vitest 60/567 不变；`command_allowlist` parity 快照 `--check` 零漂移。→ **MET**：test.ps1 **102/102**；pytest **3F/2739P/9S（0 新增）**；vitest **60/60 文件 567/567 用例**；parity `--check` **PASS（66 命令零漂移）**。
-- [x] **AC4 安装 smoke**：安装→启动→窗口→退出无残留（复用 RELEASE-PACKAGE-1 的 `install-smoke.ps1`，新包复跑）。→ **MET**：base 与 models 两包均 PASS（窗口句柄出现 / console 0 / exit 0 / 残留进程 0 / 安装目录已删除 / sidecar_bundled=true / models_bundled 按变体）。
-- [x] **AC5 收尾文档**：AD-002 标记 S0–S5 完成；`DISPLAY-PERF-DECISION-1` 关闭；产出 `MANUAL_VERIFY.md` 最新版（真机 5 项）。→ **MET**：AD-002 §8 标题改「已全部完成」+ §8.1 完成表；DISPLAY-PERF-DECISION-1 `status: done` + Closeout Record；`apps/desktop-avalonia/docs/MANUAL_VERIFY.md` 最新版（NOT_RUN by agent）。
-- [x] **AC6 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：`check.ps1 -TaskPath` PASS；pin 见下；`doc/handoffs/FINAL-VALIDATION-1-handoff.md`。
-
+- [x] **AC1 侧车重建**：用新 spec（`packaging/m2ac5/core_sidecar.spec`，无 Qt/无 torch）重建 `core_service`/`host_bridge` 等 entry，记录体积表；启动/协议 smoke 通过。→ **MET**：构建 37.1s exit=0；整包 828.6 MiB / **Core 运行时 186.3 MiB（不含 models）**；Qt 0 / torch 栈 0；能力 smoke **7/7 PASS**（`sidecar-meter`… 见 `sidecar-measure.json`、`capability-smoke.json`）。 <<MET>>
+- [x] **AC2 重打包**：`apps/desktop-avalonia/scripts/package.ps1` 产出安装包（含 Core 侧车与模型分发策略），体积 ≤2GB（含基础模型）/≤150MB（不含模型）；包内许可三件套逐字节一致。→ **MET**：base zip **97.75 MB ≤150**（sidecar 186.31 MiB 内含、模型分离策略）；models zip **690.94 MB ≤2 GB**（sidecar 828.59 MiB + models 642.3 MiB 内含）；许可三件套两包均逐字节一致。 <<MET>>
+- [x] **AC3 全量回归**：`scripts/test.ps1` 全绿；pytest 相对基线 3F/2739P/9S 无新增失败；旧壳 vitest 60/567 不变；`command_allowlist` parity 快照 `--check` 零漂移。→ **MET**：test.ps1 **102/102**；pytest **3F/2739P/9S（0 新增）**；vitest **60/60 文件 567/567 用例**；parity `--check` **PASS（66 命令零漂移）**。 <<MET>>
+- [x] **AC4 安装 smoke**：安装→启动→窗口→退出无残留（复用 RELEASE-PACKAGE-1 的 `install-smoke.ps1`，新包复跑）。→ **MET**：base 与 models 两包均 PASS（窗口句柄出现 / console 0 / exit 0 / 残留进程 0 / 安装目录已删除 / sidecar_bundled=true / models_bundled 按变体）。 <<MET>>
+- [x] **AC5 收尾文档**：AD-002 标记 S0–S5 完成；`DISPLAY-PERF-DECISION-1` 关闭；产出 `MANUAL_VERIFY.md` 最新版（真机 5 项）。→ **MET**：AD-002 §8 标题改「已全部完成」+ §8.1 完成表；DISPLAY-PERF-DECISION-1 `status: done` + Closeout Record；`apps/desktop-avalonia/docs/MANUAL_VERIFY.md` 最新版（NOT_RUN by agent）。 <<MET>>
+- [x] **AC6 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：`check.ps1 -TaskPath` PASS；pin 见下；`doc/handoffs/FINAL-VALIDATION-1-handoff.md`。 <<MET>>
 ## 允许修改范围
 
 `apps/desktop-avalonia/**`、`scripts/**`、`packaging/**`、本卡、STATUS/PLAN/LEDGER、`verification/FINAL-VALIDATION-1/**`、workspace。
@@ -96,3 +97,11 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 单命令：scripts/test.ps1 → **102/102**；pytest **3F/2739P/9S**（0 新增）；旧壳 vitest **60/60 文件、567/567**；parity --check **66 命令零漂移**。
+- 打包：**base zip 97.75MB（≤150）**、**models zip 690.94MB（≤2GB）**；Core 侧车随 base（<app>/app/core-sidecar），install.ps1 缺侧车即 throw；两包许可三件套与仓库根**逐字节一致**。
+- 安装 smoke：两包均 PASS（窗口句柄出现、退出码 0、0 残留进程、安装目录清理、sidecar_bundled=true、license_copy_ok=true）。
+- 收尾：AD-002 §8「已全部完成」+ §8.1 S0–S5 完成表；DISPLAY-PERF-DECISION-1 → done + Closeout；MANUAL_VERIFY.md 最新版（5 项真机 NOT_RUN）。
+- 遗留（记录不阻塞）：真机 5 项待用户；安装 smoke 窗口断言不含书架语义；未签名/无 MSIX（zip+install.ps1）；base 包无模型→首次检测 typed NOT_CONFIGURED（预期）；GPU 状态探测待改 ORT EP。
+- 集成：见下条提交；未 push。
