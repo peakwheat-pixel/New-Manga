@@ -3,7 +3,7 @@ id: HOST-CORECLIENT-1
 title: S1 C# Host/CoreClient——spawn 双 sidecar + JSON-lines + 中文零乱码 + 失败可诊断
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: avalonia-spike
@@ -12,10 +12,10 @@ depends_on: [DISPLAY-PERF-DECISION-1]
 base_commit: a93f20c7b
 branch: task/HOST-CORECLIENT-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-CORECLIENT-1
-integration_commit: null
+integration_commit: 9126090eb
 delivery_head: c1efb938f5b12c989b406316a8eabd62e0a34a6a
-canonical_evidence_status: pinned
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/HOST-CORECLIENT-1
 allowed_paths:
   - doc/tasks/HOST-CORECLIENT-1.md
@@ -110,6 +110,52 @@ allowed_paths:
 | E16-no-fixture-log | AC6 | verification/HOST-CORECLIENT-1/test/dotnet-test-Debug-no-fixture.log | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 48c365afea673d4a696ad4f1a99d3d637b4a4a03f571172014a3548aede7920c | CANONICAL |
 | E17-no-fixture-summary | AC6 | verification/HOST-CORECLIENT-1/test/no-fixture-summary.json | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 18f1bca63c095645d63e3d4e6c4fb32e50f4d3f80d6e3a2faf6d0ea7a73ffb4d | CANONICAL |
 | E18-test-summary | AC2/AC6 | verification/HOST-CORECLIENT-1/test/summary.json | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 0535aff85784df6f04c62581895f9a627837c04b482961cb0df1a14c34ab6207 | CANONICAL |
+| X1-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/wire/core-service.ndjson | 9126090eb | ef9b3d2c54d0dc062db4122b45f0eeb00d45402f672e24031c1b597b9b74eb62 | SOURCE_PIN |
+| X2-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/wire/host-bridge.ndjson | 9126090eb | 88d830761d9bfbc5fed36ea886606c3e5f38c781d9bcc2366aa84c25c0581f67 | SOURCE_PIN |
+| X3-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-missing-sidecar/host.log | 9126090eb | bba61a9a99a0bc9d2495eb8c806f628e58229798361aa894ab4827dab8556325 | SOURCE_PIN |
+| X4-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/core_service.stderr.log | 9126090eb | abf57e1da3e4af542b5ffdb02a33419836eff04a8efed71d8867ab2029c2672f | SOURCE_PIN |
+| X5-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/host_bridge.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X6-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/host.log | 9126090eb | 3f1604a2f178ded4ffa5b036c966b33270ce0ce494799cff7eb6fdadb1690a84 | SOURCE_PIN |
+| X7-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/wire/core-service.ndjson | 9126090eb | a46eaf26c1ec6430a7cff7086af8c0e6dc838d6be08c0c13e59baabd3901c116 | SOURCE_PIN |
+| X8-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/wire/host-bridge.ndjson | 9126090eb | 02b5f54421b6a4d054f84267e740b5b94ddaabff923582d3f6efd466f39aa252 | SOURCE_PIN |
+| X9-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/core_service.stderr.log | 9126090eb | 1d3a102e47b2e054d0e33783807c508e1c473cf17aee6263d74355e5dc64349c | SOURCE_PIN |
+| X10-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/host_bridge.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X11-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/host.log | 9126090eb | 95d378d27ad096e21c3bed146ba6715014b34182031546c180deeade7819408b | SOURCE_PIN |
+| X12-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/wire/core-service.ndjson | 9126090eb | 3c3c47aafeeb0596e75db5765baddc51cf7d58cf34408a1b0668a23721085602 | SOURCE_PIN |
+| X13-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/wire/host-bridge.ndjson | 9126090eb | 919d4780ca4c9cd46b9b031cc2560833fb11ea4e1624ec78ba51f9ed4d326215 | SOURCE_PIN |
+| X14-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-second-instance/host.log | 9126090eb | 5d8fe660f8f7bca9585afdbf81d610acf67ca6d012d9e9958177bda7ea43e7b3 | SOURCE_PIN |
+| X15-src | AC4/AC5 | verification/HOST-CORECLIENT-1/legacy-shell/detected.json | 9126090eb | 3250dbf34df47e259458f5cd28be03b0fc811359e505eb3173fde9d6a8fd632c | SOURCE_PIN |
+| X16-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/bridge-errors/host_bridge.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X17-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/bridge-lifecycle/host_bridge.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X18-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/bridge-wire/host_bridge.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X19-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/core-chinese/core_service.stderr.log | 9126090eb | dd67e0045d2a5048a87d54a4b6f9260aabf29c4a481a0fac362166896bd274c9 | SOURCE_PIN |
+| X20-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/core-ping/core_service.stderr.log | 9126090eb | e6daaada8a898a50d256c415d2ff405cc186c2d5a32b044e235e559a290ac148 | SOURCE_PIN |
+| X21-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/core-raw-utf8/core_service.stderr.log | 9126090eb | a82a4e69d1aa0a891a7add2d457fb340bfa0b409610991b43d577236d4036c49 | SOURCE_PIN |
+| X22-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/core-wire-shape/core_service.stderr.log | 9126090eb | 53a6e286b32bcb84a4a5159c91b9307e095cc99fbc561309af16f76b4d2fd003 | SOURCE_PIN |
+| X23-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/failure-request-timeout/fake.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X24-src | AC4/AC5 | verification/HOST-CORECLIENT-1/logs/failure-startup-timeout/core_service.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| X25-src | AC4/AC5 | verification/HOST-CORECLIENT-1/publish/publish.log | 9126090eb | c298bc6aa063f85f7dbea13f37db8934a320c3485d67eed71e11ffce9e10283b | SOURCE_PIN |
+| X26-src | AC4/AC5 | verification/HOST-CORECLIENT-1/smoke/host.log | 9126090eb | d4767928e62d2beb94621eae7ebdae27981669eb0f353cfd60e3f2e3604e076c | SOURCE_PIN |
+| X27-src | AC4/AC5 | verification/HOST-CORECLIENT-1/smoke/wire/core-service.ndjson | 9126090eb | 9fdc0b98040aae8ae12a9717bff62080047151223ed80afad3f0dd4459542f89 | SOURCE_PIN |
+| X28-src | AC4/AC5 | verification/HOST-CORECLIENT-1/smoke/wire/host-bridge.ndjson | 9126090eb | f0eadf6df1ad246fb9051864c3b4faca483a1a6a80076d782b8cac6fa15481e3 | SOURCE_PIN |
+| X29-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/bridge-errors.ndjson | 9126090eb | caa0389bb21dc0fd7565999b5069b275c8768f4c2fbf596e16ec4564889a651e | SOURCE_PIN |
+| X30-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/bridge-lifecycle.ndjson | 9126090eb | e6a3dc44a9c9f2e2eb469092e04ccbdcd6483eb54cab95ab24a66d2c31d8a4db | SOURCE_PIN |
+| X31-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/bridge-wire.ndjson | 9126090eb | d80f888b9fd2efaee31e83646f0648ac68add7fdf1d2b20f6ef44eaef35d6bc8 | SOURCE_PIN |
+| X32-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/core-chinese.ndjson | 9126090eb | 1808e9d7862bdc4037033dc36ba167258369ab4535e159fabb8b43f6ef93c6fd | SOURCE_PIN |
+| X33-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/core-ping.json | 9126090eb | 7d466bb22deba069a8f4bd303fef84709721c0802f24cd6e2e69afe39f026812 | SOURCE_PIN |
+| X34-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/core-ping.ndjson | 9126090eb | 71239e07f27888f44f5c2b4946c4891ef90733e611511ec57b0797aa0e1bc3ee | SOURCE_PIN |
+| X35-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/core-raw-utf8.ndjson | 9126090eb | cf3c7e4653d00401c2bcf50820dd9c164723fbeceea5765cbf092a30032edb42 | SOURCE_PIN |
+| X36-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/core-wire-shape.json | 9126090eb | 818f1ceae873300662f4c0641120e4d4724e948ee0e2ad076cd2bbf442eeaaa0 | SOURCE_PIN |
+| X37-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/core-wire-shape.ndjson | 9126090eb | 73110ffecc4041fc5e81318ed7382b9911c1cf6b7160612f4ab91c1084d3079c | SOURCE_PIN |
+| X38-src | AC4/AC5 | verification/HOST-CORECLIENT-1/wire/host-bridge-errors.json | 9126090eb | fc7ffa5f88e93247b725eb04c6a9d0cd356a9c029aef6fc12437cd3b537cf86a | SOURCE_PIN |
+| S1-src | AC4/AC5 | verification/HOST-CORECLIENT-1/diagnostics/missing-exe.json | 9126090eb | 4594512db61c9500844d52d13c3b289c0322cdfed7dc471e8f3a1eac425391dd | SOURCE_PIN |
+| S2-src | AC4/AC5 | verification/HOST-CORECLIENT-1/diagnostics/request-timeout.json | 9126090eb | d92e4e444d02eda85d8f361a1d140e43d818429a18ea7c3244dc82df40d76269 | SOURCE_PIN |
+| S3-src | AC4/AC5 | verification/HOST-CORECLIENT-1/diagnostics/spawn-failed.json | 9126090eb | d328eb1713bbede1e76649b4474c555dfbde7c72e00736d1828a2118afc6760b | SOURCE_PIN |
+| S4-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host/runtime-chinese-roundtrip.json | 9126090eb | 344024d1ddb450ab1e3e32b328208c909b4405def1077f867f458e04c7151b28 | SOURCE_PIN |
+| S5-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host/runtime-missing-sidecar.json | 9126090eb | 294565828007d46dca8cba7ce0f2705cf89cb7e20f55d45e3dbb0c68420ae74e | SOURCE_PIN |
+| S6-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/core_service.stderr.log | 9126090eb | 1aaa98de18b87e2e91b379133ed6451d473604d1edf09b833232ce7d8cffff06 | SOURCE_PIN |
+| S7-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/host_bridge.stderr.log | 9126090eb | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
+| S8-src | AC4/AC5 | verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/host.log | 9126090eb | 4cc416ef39002c3258ee6b7d71f70a2965921c00a4e578716c427d14a1b6e112 | SOURCE_PIN |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -141,12 +187,12 @@ allowed_paths:
 改动文件：`tests/**/Support/{SidecarFixture,HostFixture}.cs`（新增 `TryGetSidecarDirectory`）、新增 `SidecarFactAttribute.cs`/`HostSidecarFactAttribute.cs`、8+4 条集成测试改为可跳过属性、`scripts/test.ps1`（一条命令 + 确定性 TRX + summary）、新增 `scripts/test-without-fixture.ps1`、`verification/HOST-CORECLIENT-1/**`（重跑证据 + MANIFEST）、本卡与 Handoff。
 ## Closeout Record
 
-- Closeout date / DSH：待 DSH 集成与 ZCode 复核后填写（本卡 `in_review`）。
-- canonical_evidence_status：`pinned`（20 条证据 E1–E18 已 pin 到 `c1efb938f` 的完整 SHA-256；集成/关闭时由 DSH 收口）。
-- resource_closeout_status：`pending`。
+- Closeout date / DSH：2026-10-27 DSH（作者 avalonia-spike，reviewer dsh；author≠reviewer）。
+- canonical_evidence_status：`complete`（E1–E18 + S1–S8 SOURCE_PIN，共 28 条；TRX 已按合并后产物重钉）。
+- resource_closeout_status：`complete`（task-env 无标签副本 ~1GB 按 PRESERVE_REFERENCED 保留，删除需另行授权）。
 - 删除、迁移、归档数量/字节数：0（仅新增 `apps/desktop-avalonia/**` 与 `verification/HOST-CORECLIENT-1/**`；workspace 新增无标签副本目录）。
 - 未关闭项及保留原因：S2 命令 parity 未做（按 Task 范围留待 S2）；`Global\` 回退 `Local\` 已在 Handoff 记录；IL 不一致分支仅单测覆盖（子进程天然继承父 IL）。
-- 当前指针清理：已更新 STATUS/PLAN/LEDGER，指向 `in_review`。
+- 当前指针清理：STATUS 指向 S2；PLAN/LEDGER 同步；集成 9126090eb。
 
 ## Review 2（DSH 集成复核，2026-10-27）— PASS
 

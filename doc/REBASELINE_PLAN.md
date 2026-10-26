@@ -6,59 +6,24 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|GIT-CLEAN-RUST-CAPACITY-DESIGN-1|—|ready（ZCode 仅设计；base1829a38；Reviewer=ZCode）|
-|GIT-CLEAN-RUST-ISOLATION-1|—|in_review（1829a38；并发双过，饱和0/32；blocked；Reviewer=ZCode）|
+|GIT-CLEAN-RUST-CAPACITY-DESIGN-1|—|ready（Rust 线仅设计；AD-002 下 Rust host 于 S5 退役，释放前需用户确认）|
+|GIT-CLEAN-RUST-ISOLATION-1|—|in_review（r2 blocked 保留；同上）|
 |GIT-CLEAN-CORE-ENV-2|—|proposed（V2–V5未定义）|
 |GIT-CLEAN-PUBLICATION-DIAG-1|—|approved（仅诊断）|
-|GIT-CLEAN-PUBLICATION-1|—|in_review（root e34a90d00；r1 blocked；push-gate approved；已推新分支）|
+|GIT-CLEAN-PUBLICATION-1|—|in_review（root e34a90d00；r1 blocked；push-gate approved）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
-|GOV-RESIDUAL-RUNTIME-IDENTITY-1|GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1|done（r2 approved 8e31aaa1d；只读取证，7错与保护不变）|
-|GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1|GOV-RESIDUAL-RUNTIME-IDENTITY-1|done（approved 3264e0b61；7错→0，保护根+APPDATA 三根）|
-|GOV-HISTORICAL-EVIDENCE-INTERPRETATION-IMPL-1|GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1|done（R2 b8c51b038；集成457485207；正式12→7，无清理）|
-|GOV-HISTORICAL-EVIDENCE-INTERPRETATION-DESIGN-1|GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1、GOV-BROAD-ROOT-PRESERVATION-IMPL-1|done（R2 e6f400101；集成20dff6381；仅设计，正式12不变）|
-|GOV-RESIDUAL-TEMPLATE-NUL-IDENTITY-1|GOV-BROAD-ROOT-PRESERVATION-IMPL-1|done（R2 49942377b；集成fec50696a；研究，正式12不变）|
-|GOV-BROAD-ROOT-PRESERVATION-IMPL-1|GOV-BROAD-ROOT-PRESERVATION-DESIGN-1|done（R4 d5d21ff9f；集成a3bba87ce；正式24→12，不清理）|
-|GOV-BROAD-ROOT-PRESERVATION-DESIGN-1|GOV-RESIDUAL-24-DECISION-1|done（R3 232e3a589；整体保护设计，未实现）|
-|GOV-RESIDUAL-24-DECISION-1|GOV-NONRESOURCE-MANIFEST-FORMAT-1|done（d1ad7e525；只读汇总；广域根裁决见设计Task）|
-|GOV-NONRESOURCE-MANIFEST-FORMAT-1|GOV-NDJSON-EXCEPTION-CONFIG-1|done（独审2573375dc；正式30→24，保护+2）|
-|GOV-NDJSON-EXCEPTION-CONFIG-1|GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1、GOV-NDJSON-NONDECL-IDENTITY-1|done（独审85a393dc4；集成9d21f8fb8；正式32→30）|
-|GOV-EVIDENCE-TABLE-REGISTRATION-FIX-1|GOV-NDJSON-NONDECL-IDENTITY-1|done（edbd1a492；51pin实际保护恢复）|
-|GOV-NDJSON-NONDECL-IDENTITY-1|GOV-DECLARATION-RESIDUAL-32-AUDIT-1|done（54cfbadad；身份研究，不登记例外）|
-|GOV-DECLARATION-RESIDUAL-32-AUDIT-1|GOV-PATH-HEADER-COMPAT-1|done（927e06f8b；只读取证，原32错误保留）|
-|GOV-PATH-HEADER-COMPAT-1|WORKSPACE-DECLARATION-REMEDIATION-1|done（9cae94142；单一固定别名，无资源处置授权）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
-|GOV-DIRECTORY-CLEANUP-1|—|done（approved 40acf35b7；五根 171 项，2 项删除、释放 426.3 MiB）|
-|SETTINGS-OPEN-A-1|P15、P15-C1|done（批次 A：OCR/翻译/修复/排版；r1→r2 approved，集成 6a303a9）|
-|SETTINGS-OPEN-B-1|SETTINGS-OPEN-A-1|done（批次 B-1：模型/GPU+任务/并发；review r1-r3 approved，集成 b521ad27）|
-|SETTINGS-OPEN-B-2|SETTINGS-OPEN-B-1|done（批次 B-2：缓存/Revision；approved，集成 0e2e623；GUI 烟测 PASS）|
-|SETTINGS-OPEN-C-1-DESIGN|SETTINGS-OPEN-B-2|done（批次 C 契约设计：三节冻结+D1–D11；用户裁决全部接受推荐值）|
-|SETTINGS-OPEN-C-1-RECYCLE|SETTINGS-OPEN-C-1-DESIGN|done（回收站查看+清空；6d6c085..893c00fc；r1→r2 approved）|
-|SETTINGS-OPEN-C-2-BACKUP|SETTINGS-OPEN-C-1-RECYCLE|done（`.nmbak` v1 + Core/Tauri/前端；Review r3 approved `657c18d4`）|
-|SETTINGS-OPEN-C-3-PLUGIN|SETTINGS-OPEN-C-2-BACKUP|done（Plugin/Hooks 只读面；Review r2 approved `85128cd2`）|
-|PLUGIN-RUNTIME-1|SETTINGS-OPEN-C-3-PLUGIN|done（本地插件运行时；用户 2026-10-23 授权 D1–D6；approved `992225d5`）|
-|PLUGIN-RUNTIME-2|PLUGIN-RUNTIME-1|done（r3 approved 2ea97edd6；集成 eb5e821f3；111 passed；资源原位保留）|
-|GUI-PLUGIN-SANDBOX-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|done（由 TOOL-SOFTWARE-SMOKE-1 替代；工具 24 项/23.6s PASS）|
-|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|PLUGIN-RUNTIME-CAPABILITY-1|done（approved `a1f05450`；证据重钉 `6e3ce06f9`）|
-|TOOL-SOFTWARE-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|done（r2 approved `c680434ea`；分层软件检查工具；15 tests；证据 `7b2abfa00`）|
-|PLUGIN-RUNTIME-CAPABILITY-1|PLUGIN-RUNTIME-SANDBOX-2|done（capability 接线；r1 `0d3bbe49`）|
-|PLUGIN-RUNTIME-SANDBOX-1/2|PLUGIN-RUNTIME-1|done（OS 级沙箱 r2 `41d7abeb`；per-plugin AppContainer r1 `127c5111`）|
-|DESIGN-V2-IMPL-1|UI-DESIGN-1|done（v2 令牌/亚克力/七态/三页骨架；集成 e1fd738a7；指针已补登）|
-|UIUX-V2-RUNTIME-1|DESIGN-V2-IMPL-1|done（四页真实 IPC+设置页+单一 UI；集成 af421b9e6；ZCode r2 approved）|
-|UIUX-V2-RUNTIME-REALCORE-1|UIUX-V2-RUNTIME-1|done（脚本化真实 Tauri+Core 端到端 7/7；修 P0 中文编码+P1 死按钮；ZCode r1 approved）|
-|UIUX-V2-RUNTIME-REALCORE-2|UIUX-V2-RUNTIME-REALCORE-1|closed_with_limitations（run-i36 10/10；G2/G4/G5 达成；G1 转人工验证）|
-|UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|done（.nm-app min-width:1024 根治；900 档四页 900/900；`e9a409927`）|
-|PRODUCT-IDENTITY-1|UIUX-V2-RUNTIME-NARROW-1|done（窗口标题/exe/应用ID → New Manga；`new-manga.exe`）|
-|DISPLAY-PERF-DECISION-1|—|in_review（全部 AC MET；S0 GO；待独立复核+closeout）|
-|HOST-CORECLIENT-1|DISPLAY-PERF-DECISION-1|changes_requested（S1 集成复核 2 项待修：测试可复现 + 证据 pin）|
-|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|proposed（S2 命令 parity；S1 done 后释放）|
+|DISPLAY-PERF-DECISION-1|—|in_review（全 AC MET；S0 GO；待独立复核）|
+|INFER-BASELINE-EP-1|—|proposed（推理基线选型 3 人日；待排期）|
+|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|ready（S2 命令 parity；base 9126090eb）|
 
-READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 生效，主线转 Avalonia。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：HOST-COMMAND-MIGRATION-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 spike GO、HOST-CORECLIENT-1 done（9126090eb）。清理/删除需新授权；r212 与五广域根保护不变。
 
-## 终态依赖与限制
+## 历史快照（终态节点，非当前 DAG）
 
-本 Plan 继承[冻结 DAG](../archive/history/2026-10-21/git-mainline-convergence/rebaseline-plan-before.md)的其余节点、依赖与限制；无损引用，不重开 Task、不增 READY。完整源为 `fdca2057e:doc/REBASELINE_PLAN.md`，SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`。
+已终止节点共 370+ 项（GOV-*、SETTINGS-OPEN-*、PLUGIN-*、UIUX-V2-*、PRODUCT-IDENTITY-1、HOST-CORECLIENT-1 等），明细以 [TASK_LEDGER](TASK_LEDGER.md) 与各 Task 卡为准；本 Plan 不再逐行复制历史注解。仍影响当前决策的终态约束：
 
-- 已完成节点共 54 项（源图口径）；P09/P18/P19/P20 等限定关闭，未满足 Gate 不变。
-- WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 个受保护资源限制；不得清理/GC/prune。132 worktrees/93 branches 为历史快照。
-- WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。P22 已集成；H1/P2-1/13 与 BC-AC5 PARTIAL 保留。
-当前治理主线 `main`；旧主线显式保留规则不变。远端仅允许用户授权的新分支快照 push，不push main。
+- WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 项受保护资源；不得清理/GC/prune。
+- WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
+- 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
+- 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。

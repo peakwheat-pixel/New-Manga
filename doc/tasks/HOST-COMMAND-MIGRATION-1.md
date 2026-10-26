@@ -3,7 +3,7 @@ id: HOST-COMMAND-MIGRATION-1
 title: S2 命令迁移——生产命令面 parity 快照 + 6 个 domain service + 双 sidecar 覆盖
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: null
@@ -90,3 +90,4 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+

@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `changes_requested`（S1 集成复核：测试可复现性 + 证据 pin 待修）。
+- 当前 Task：[HOST-COMMAND-MIGRATION-1](tasks/HOST-COMMAND-MIGRATION-1.md) `ready`（S2 命令 parity；S1 done 9126090eb）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
@@ -34,4 +34,5 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
 - 治理主线分支：`main`（见 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)）。
 - 恢复点：REALCORE-1 的脚本、命令、两版 exe SHA 见 `verification/UIUX-V2-RUNTIME-REALCORE-1/README.md`；UIUX-V2-RUNTIME-1 恢复点见其 Task 卡。
+
 
