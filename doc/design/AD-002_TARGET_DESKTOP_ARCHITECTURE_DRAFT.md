@@ -1,8 +1,10 @@
-# AD-002 — 目标桌面架构（草案 v0.1，待用户书面裁决后冻结）
+# AD-002 — 目标桌面架构
 
-Status: DRAFT — 本文件是裁决输入，不是实现授权。取代 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React+Tauri 前端目标；AD-001 转为历史。
+Status: **ACCEPTED_TARGET_ARCHITECTURE**（用户 2026-10-26 书面裁决 v1.0）。本文件取代 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React+Tauri 前端目标；AD-001 转为历史。
 Owner: DSH（Lead/Architect）· Decision authority: User · Date: 2026-10-26
-依据：`verification/DISPLAY-PERF-DECISION-1/{baseline,visual,routes,ui-stack,nonadmin}/**`
+依据：`verification/DISPLAY-PERF-DECISION-1/{baseline,visual,routes,ui-stack,ui-spec,nonadmin}/**`
+
+**用户已裁决的三项**：① 前端 = C#/.NET + Avalonia 11；② UI = 四页全部按 Saber-Translator 视觉 1:1 重做；③ 许可证 = **GPL-3.0 开源**（因此可合法移植 Saber 代码并保留版权声明）。
 
 ---
 
@@ -75,18 +77,17 @@ icons/                 # 图标集（可选，覆盖默认）
 **三档切换粒度**：① 仅配色 ② 完整皮肤（配色+形状+图标+动效）③ 材质档。**运行时热切换**（`ThemeVariantScope` + `DynamicResource`），目标 P95 ≤100ms、无重启、无旧色残留。
 **内置**：Fluent Dark、Fluent Light、Saber Purple（1:1 复刻）、高对比无障碍、纸质漫画、霓虹。
 
-## 5. 许可证决策树（**阻塞项，必须用户裁决**）
+## 5. 许可证（已裁决：L2 开源 GPL-3.0）
 
-用户要求「有能用的代码和模型直接拿来使用」+「书架 1:1 复刻」。这与 Saber-Translator 的 **GPL-3.0** 直接冲突：
+**产品主许可 = GPL-3.0。** 由此解锁：
 
-| 方案 | 能否拿 Saber 代码 | 代价 | 适用 |
-|---|---|---|---|
-| **L1 闭源/商业化** | ❌ 不可拷代码、不可粘片段；UI 可自己复刻 | 需独立实现全部流程；AGPL 模型（如 Ultralytics YOLO）需商业授权或替换；字体只能用 OFL/Apache 类（思源/Noto），Windows 系统字体与华文商业字体不得随包 | 将来要卖/闭源分发 |
-| **L2 开源 GPL-3.0** | ✅ 可移植代码并保留版权声明；AGPL 组件兼容 | 整个产品须 GPL-3.0 开源（含后续修改） | 不打算闭源分发，愿意开源 |
-| **L3 混合隔离** | ⚠️ 仅"独立进程/独立仓库 + 明确边界"下的有限借用，法律风险取决于交互方式（IPC 边界判例不统一） | 架构复杂化，仍需法务确认 | 不建议 |
+- ✅ 可移植 Saber-Translator（GPL-3.0）的代码/流程/组件，**必须保留原版权声明与许可证文本**，衍生作品同样 GPL-3.0；
+- ✅ 可随包分发 OFL/Apache 字体（思源/Noto 等）；
+- ⚠️ **Ultralytics YOLO = AGPL-3.0**：GPL-3.0 与 AGPL-3.0 可组合（GPLv3 §13），但组合作品分发时应按 **AGPL-3.0** 提供——**建议直接把产品声明为 AGPL-3.0**（最省事、合规），或改用 Apache/MIT 检测器以保持纯 GPL-3.0；
+- ⚠️ 商业/系统字体（`msyh`、`STKAITI`、`STZHONGS` 等）**不得随包分发**，只能依赖用户系统已安装或改用 OFL 字体；
+- ❌ 即使开源，也不得删除上游版权声明或附加额外限制。
 
-**模型/资产许可证（逐项待核实，先给方向）**：PaddleOCR/RapidOCR ≈ Apache-2.0 ✅；Ultralytics YOLO = **AGPL-3.0**（商用需授权）；manga-ocr / LaMa / litelama 权重需逐个核实；思源黑体 = OFL-1.1 ✅ 可随包；`msyh.ttc`、`STKAITI`、`STZHONGS` 等为系统/商业字体 ❌ 不得随包。
-**本仓库当前没有任何 Saber 代码**（仅截图与公开 README 事实）。
+**合规义务清单（写进发布 Gate）**：仓库根 `LICENSE`（GPL-3.0 或 AGPL-3.0 全文）、`NOTICE`/`THIRD_PARTY_LICENSES.md`（逐项列出移植的 Saber 文件与模型/字体许可）、源码可获得性（发布页提供对应源码 tag）、构建脚本可复现。
 
 ## 6. 迁移路线（灰度，非一次性重写）
 
@@ -101,10 +102,26 @@ icons/                 # 图标集（可选，覆盖默认）
 
 **成本**：200–400 人日（依据 `ui-stack/STACK_COMPARISON.md` §3.6）；S0+S1 约 15–25 人日可先出可运行骨架。
 
-## 7. 待用户裁决
+## 7. 裁决结果（已定）
 
-- **D-A 许可证**：L1 闭源 / L2 开源 GPL-3.0 / L3 隔离——**决定 S2 之后能拿多少 Saber 资产，也决定能否 1:1 复刻时直接移植其实现**。
-- **D-B UI 参考范围**：仅书架/详情/新建/导入 1:1，还是工作台也尽量贴 Saber（当前工作台 Saber 是 Web 版式，与阅读器沉浸式可能冲突）。
-- **D-C 主题中心内置套数与品牌色**：默认 6 套 + Saber Purple 复刻？
-- **D-D 桌宠/悬浮球**：是否要（Saber 有，Avalonia 透明窗口可做，+5–8 人日）。
-- **D-E 旧壳处置**：Tauri 版保留为并行可运行版本直到 S4 完成，还是尽早删除。
+| # | 决策点 | 结果 |
+|---|---|---|
+| D-A | 许可证 | **L2 开源 GPL-3.0**（含 Ultralytics 时按 AGPL-3.0 分发，建议产品直接声明 AGPL-3.0） |
+| D-B | UI 参考范围 | **四页全部按 Saber 视觉 1:1**（书架/详情/新建/导入优先；工作台/阅读器/设置同语言）；Saber Purple 作为内置主题之一，默认主题 |
+| D-C | 主题中心 | 内置 6 套 + Saber Purple 默认；ThemePack 三档换肤；后续可导入 |
+| D-D | 桌宠/悬浮球 | 待定（Saber 有；Avalonia 透明窗口可做，+5–8 人日） |
+| D-E | 旧壳处置 | Tauri 版保留并行可运行，S4 完成后删除 |
+
+## 8. 任务拆解（S0–S5，可直接释放）
+
+| 阶段 | Task 建议 ID | 交付 | 估时 | 依赖 |
+|---|---|---|---|---|
+| S0 | `UI-AVALONIA-SPIKE-1` | 11 项门槛（spike 工程在 workspace，不进产品仓库） | 5 人日 | AD-002 冻结（本文件） |
+| S0b | `SABER-UI-SPEC-1` | `ui-spec/SABER_UI_SPEC.md` + `tokens-saber-purple.json` | 2 人日 | —（进行中） |
+| S1 | `HOST-CORECLIENT-1` | C# `CoreClient`：spawn/JSON-lines/错误码/`\uXXXX`；`ping`+`list_books`；中文零乱码 | 5–8 人日 | S0 通过 |
+| S2 | `HOST-COMMAND-MIGRATION-1` | 57 命令 → 6 个 C# service；契约 parity 测试 | 15–25 人日 | S1 |
+| S3 | `UI-SHELL-THEME-1` | 主窗+导航+主题中心+书架 1:1+设置骨架 | 25–40 人日 | S1/S0b |
+| S4 | `UI-WORKBENCH-READER-1` | 工作台画布/区域编辑 + 沉浸式阅读器（分块/缩放/长条） | 40–70 人日 | S3 |
+| S5 | `LEGACY-SHELL-REMOVAL-1` | 删 Tauri/React/WebView2/m2res/CORS/每请求 SHA-256；全量回归 | 15–25 人日 | S4 |
+
+**合计 200–400 人日**（含回归）；关键路径 S0 → S1 → S3 → S4。

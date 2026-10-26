@@ -53,6 +53,7 @@ allowed_paths:
 - [x] **AC10 非 Web 前端技术栈选型证据**（用户追加需求；实测 Avalonia 单文件 34.24MB、运行时换肤机制对比、WinUI3 单文件/RequestedTheme 限制、GPL 红线；给出主选/备选/不推荐与 11 项 spike 验收）<<MET>>
 - [ ] **AC11 干净机复核 Core 启动**（用户 2026-10-26 追加：本机 Windows Sandbox 已启用且存在 `CodexSandboxOffline/Online` 沙箱账户 → 在 Windows Sandbox 干净环境中以非提权运行基线 exe，测 sidecar 令牌完整性、Core 是否启动、app 是否 panic；判定 Low IL 降级是机器策略 vs 产品/打包问题）
 - [x] **AC12 新架构草案 + Saber 参考规格**（AD-002 草案：Avalonia+Python Core 边界/接线/主题中心 ThemePack/书架 1:1 复刻令牌与流程/许可证决策树 L1–L3/灰度迁移 S0–S5/成本 200–400 人日；Saber 实测栈与 CSS 令牌已存证）<<MET>>
+- [x] **AC13 AD-002 冻结 + 裁决落地 + 任务拆解**（用户裁决：前端 Avalonia、四页全贴 Saber、**L2 开源 GPL-3.0**；AD-002 v1.0 标 ACCEPTED 并给出 S0–S5 任务拆解与 GPL 合规义务清单）<<MET>>
 
 ## 允许修改范围
 
