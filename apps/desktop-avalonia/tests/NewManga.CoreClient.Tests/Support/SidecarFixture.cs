@@ -255,6 +255,79 @@ public static class SidecarFixture
         }
     }
 
+    public sealed record CommandEnvironment(
+        string DataRoot,
+        CoreServiceOptions CoreOptions,
+        HostBridgeOptions BridgeOptions,
+        string ManagedFilePath,
+        string CatalogLoaderStdout);
+
+    /// <summary>
+    /// Shared environment for S2 command parity tests: one isolated data root, a seeded
+    /// resource catalog (catalog_loader + managed file) and options for both sidecars so the
+    /// core_service and host_bridge channels run against the same Core state.
+    /// </summary>
+    public static CommandEnvironment CreateCommandEnvironment(string testName)
+    {
+        const string resourceId = "res-1";
+        const string relPath = "book/page01.jpg";
+        var dataRoot = NewDataRoot(testName);
+        var managedRoot = Path.Combine(dataRoot, "managed");
+        var derivedRoot = Path.Combine(dataRoot, "derived");
+        var catalogDb = Path.Combine(dataRoot, "catalog", "catalog.sqlite");
+        var page = Path.Combine(managedRoot, "book", "page01.jpg");
+        Directory.CreateDirectory(Path.GetDirectoryName(page)!);
+        File.WriteAllBytes(page, Encoding.UTF8.GetBytes("fake-jpeg-bytes-" + new string('x', 1024)));
+
+        var loader = RunProcess(
+            Exe(CatalogLoaderFileName),
+            new[]
+            {
+                "--db", catalogDb,
+                "--initialize-preview-namespace", derivedRoot,
+                "--set", $"{resourceId}={relPath}@managed-read-only",
+                "--dump",
+            },
+            workingDirectory: SidecarDirectory);
+
+        if (loader.ExitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"catalog_loader failed ({loader.ExitCode}): {loader.Stdout} {loader.Stderr}");
+        }
+
+        var logDirectory = Path.Combine(EvidenceDirectory, "logs", testName);
+        Directory.CreateDirectory(logDirectory);
+        var wireDirectory = Path.Combine(EvidenceDirectory, "wire");
+        Directory.CreateDirectory(wireDirectory);
+
+        var coreOptions = new CoreServiceOptions
+        {
+            ExecutablePath = Exe(CoreServiceFileName),
+            DataRoot = dataRoot,
+            DerivedRoot = derivedRoot,
+            CatalogDbPath = catalogDb,
+            ManagedRoot = managedRoot,
+            StderrLogPath = Path.Combine(logDirectory, "core_service.stderr.log"),
+            WireLogPath = Path.Combine(wireDirectory, testName + "-core-service.ndjson"),
+            StartupTimeout = TimeSpan.FromSeconds(60),
+            RequestTimeout = TimeSpan.FromSeconds(60),
+        };
+
+        var bridgeOptions = new HostBridgeOptions
+        {
+            ExecutablePath = Exe(HostBridgeFileName),
+            DerivedRoot = derivedRoot,
+            ManagedRoot = managedRoot,
+            CatalogDbPath = catalogDb,
+            StderrLogPath = Path.Combine(logDirectory, "host_bridge.stderr.log"),
+            WireLogPath = Path.Combine(wireDirectory, testName + "-host-bridge.ndjson"),
+            StartupTimeout = TimeSpan.FromSeconds(60),
+            RequestTimeout = TimeSpan.FromSeconds(60),
+        };
+
+        return new CommandEnvironment(dataRoot, coreOptions, bridgeOptions, page, loader.Stdout);
+    }
     public static void WriteEvidenceJson(string relativePath, Action<Utf8JsonWriter> write)
     {
         var path = Path.Combine(EvidenceDirectory, relativePath);

@@ -15,9 +15,9 @@
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 |DISPLAY-PERF-DECISION-1|—|in_review（全 AC MET；S0 GO；待独立复核）|
 |INFER-BASELINE-EP-1|—|proposed（推理基线选型 3 人日；待排期）|
-|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|ready（S2 命令 parity；base 9126090eb）|
+|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|in_review（S2 命令 parity：66 快照=16 实现+50 NOT_SUPPORTED；交付 4ffa9d77f）|
 
-READY 节点：HOST-COMMAND-MIGRATION-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 spike GO、HOST-CORECLIENT-1 done（9126090eb）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 spike GO、HOST-CORECLIENT-1 done（9126090eb）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 

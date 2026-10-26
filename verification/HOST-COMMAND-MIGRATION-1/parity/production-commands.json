@@ -1,0 +1,1518 @@
+{
+  "schema_version": 1,
+  "ac": "AC1/AC2/AC3/AC4",
+  "generated_from": {
+    "files": [
+      {
+        "path": "apps/desktop/src-tauri/src/ac1_bridge.rs",
+        "sha256": "0b0931156477066899d298ece58540bc557395991d766663035d93747a53dc56"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/core_bridge.rs",
+        "sha256": "c59b9eca0255ac52d19d5b52704d3854a915fbf823685a9b798c1c978f0d0315"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/credential_manager.rs",
+        "sha256": "93da81d66815d55d098859a272e930eed2fdcd4ab34bea6e66d695f91643de08"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/host_issuer.rs",
+        "sha256": "00b1b7a3821f67c4c2ff3e1d27c94145469ba7777546f1ee28a9b1b3de2e4d3d"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "sha256": "0e3af5eb735b7f6f343a2f6b2ffcea21a73d25f6d14dfdd2bd765cc4c51ec5d9"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/main.rs",
+        "sha256": "87ad610a5d5149048a82c2807027424339a45ceff79dde66945aafad7bba32e1"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/packaged_sidecar_tests.rs",
+        "sha256": "babaf8c3d9fe174eecfc49232d012e3fa51ebbe0cb57cfef5e22c949d7caaa1b"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/resource_protocol.rs",
+        "sha256": "e085338a563d47cd56ec1e82844e58d5fea4a649a987a7d72738690d6bb540c6"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "sha256": "8911b486fb51888d416399d359f4790a1d3e34d7c041c332e958d3d5d5f4f9f2"
+      }
+    ],
+    "extractor": "apps/desktop-avalonia/scripts/extract-command-surface.py"
+  },
+  "counts": {
+    "production": 66,
+    "probe_only": 4,
+    "ac1_test": 3,
+    "removed": 1
+  },
+  "excluded": {
+    "probe_only": [
+      "probe_config",
+      "probe_write_results",
+      "probe_exit",
+      "probe_issue_url"
+    ],
+    "ac1_test": [
+      "ac1_request",
+      "ac1_write_results",
+      "ac1_exit"
+    ],
+    "removed": [
+      "register_catalog"
+    ]
+  },
+  "domain_counts": {
+    "resource": 3,
+    "workbench": 12,
+    "library": 8,
+    "settings": 33,
+    "region": 6,
+    "reader": 4
+  },
+  "commands": [
+    {
+      "name": "issue_resource_url",
+      "domain": "resource",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1373
+      },
+      "params": [
+        {
+          "name": "resource_id",
+          "type": "String"
+        },
+        {
+          "name": "revision",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<IssuedUrl, String>",
+      "error_type": "String",
+      "error_codes": []
+    },
+    {
+      "name": "revoke_ref",
+      "domain": "resource",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1386
+      },
+      "params": [
+        {
+          "name": "opaque_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<(), String>",
+      "error_type": "String",
+      "error_codes": []
+    },
+    {
+      "name": "revoke_resource_refs",
+      "domain": "resource",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1391
+      },
+      "params": [
+        {
+          "name": "resource_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<u32, String>",
+      "error_type": "String",
+      "error_codes": []
+    },
+    {
+      "name": "core_ping",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 394
+      },
+      "params": [],
+      "returns": "Result<PingResult, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_list_books",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 408
+      },
+      "params": [],
+      "returns": "Result<Vec<BookSummary>, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_list_recycle_bin_books",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 423
+      },
+      "params": [],
+      "returns": "Result<Vec<BookSummary>, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_create_book",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 567
+      },
+      "params": [
+        {
+          "name": "payload",
+          "type": "Option<serde_json::Value>"
+        }
+      ],
+      "returns": "Result<BookSummary, LibrarySurfaceError>",
+      "error_type": "LibrarySurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "create_chapter",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 581
+      },
+      "params": [
+        {
+          "name": "payload",
+          "type": "Option<serde_json::Value>"
+        }
+      ],
+      "returns": "Result<ChapterNavSummary, LibrarySurfaceError>",
+      "error_type": "LibrarySurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_get",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 605
+      },
+      "params": [
+        {
+          "name": "section",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "settings_update_section",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 624
+      },
+      "params": [
+        {
+          "name": "section",
+          "type": "String"
+        },
+        {
+          "name": "values",
+          "type": "serde_json::Value"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "cleanup_preview",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 644
+      },
+      "params": [],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "cleanup_run",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 659
+      },
+      "params": [],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "cleanup_retry_pending",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 672
+      },
+      "params": [],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "backup_create",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 686
+      },
+      "params": [
+        {
+          "name": "backup_type",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "backup_list",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 702
+      },
+      "params": [],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "backup_restore",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 717
+      },
+      "params": [
+        {
+          "name": "backup_id",
+          "type": "String"
+        },
+        {
+          "name": "confirm_restore",
+          "type": "bool"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "backup_delete",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 735
+      },
+      "params": [
+        {
+          "name": "backup_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "plugins_list",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 751
+      },
+      "params": [],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "plugins_set_enabled",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 764
+      },
+      "params": [
+        {
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "plugins_set_plugin_enabled",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 780
+      },
+      "params": [
+        {
+          "name": "plugin_id",
+          "type": "String"
+        },
+        {
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "plugins_audit_list",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 796
+      },
+      "params": [
+        {
+          "name": "limit",
+          "type": "Option<u32>"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "plugins_open_directory",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 812
+      },
+      "params": [],
+      "returns": "Result<(), String>",
+      "error_type": "String",
+      "error_codes": [
+        "LOCALAPPDATA",
+        "NEWMANGA_DATA_ROOT",
+        "PLUGIN_DIRECTORY_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "settings_provider_profiles_list",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 917
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        }
+      ],
+      "returns": "Result<ProfileList<ProviderProfile>, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_profiles_create",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 924
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "provider_id",
+          "type": "String"
+        },
+        {
+          "name": "display_name",
+          "type": "String"
+        },
+        {
+          "name": "capabilities",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "endpoint",
+          "type": "String"
+        },
+        {
+          "name": "model",
+          "type": "String"
+        },
+        {
+          "name": "network_profile_id",
+          "type": "Option<String>"
+        },
+        {
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "returns": "Result<ProfileResult<ProviderProfile>, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_profiles_update",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 946
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "profile_id",
+          "type": "String"
+        },
+        {
+          "name": "display_name",
+          "type": "String"
+        },
+        {
+          "name": "capabilities",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "endpoint",
+          "type": "String"
+        },
+        {
+          "name": "model",
+          "type": "String"
+        },
+        {
+          "name": "network_profile_id",
+          "type": "Option<String>"
+        },
+        {
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "returns": "Result<ProfileResult<ProviderProfile>, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_profiles_delete",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 968
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "profile_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<DeleteResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_bindings_set",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 980
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "scope",
+          "type": "BindingScope"
+        },
+        {
+          "name": "capability",
+          "type": "String"
+        },
+        {
+          "name": "profile_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<BindingResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_bindings_clear",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 996
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "scope",
+          "type": "BindingScope"
+        },
+        {
+          "name": "capability",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<ClearedResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_bindings_resolve",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1009
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "capability",
+          "type": "String"
+        },
+        {
+          "name": "book_id",
+          "type": "Option<String>"
+        },
+        {
+          "name": "chapter_id",
+          "type": "Option<String>"
+        },
+        {
+          "name": "run_id",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<BindingResolution, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_provider_run_snapshot_get",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1030
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<RunSnapshot, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profiles_list",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1042
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        }
+      ],
+      "returns": "Result<ProfileList<NetworkProfile>, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profiles_create",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1049
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "display_name",
+          "type": "String"
+        },
+        {
+          "name": "mode",
+          "type": "String"
+        },
+        {
+          "name": "proxy_endpoint",
+          "type": "Option<String>"
+        },
+        {
+          "name": "verify_tls",
+          "type": "Option<bool>"
+        },
+        {
+          "name": "confirm_disable_tls_verification",
+          "type": "Option<bool>"
+        },
+        {
+          "name": "allow_proxy_failure_direct_fallback",
+          "type": "Option<bool>"
+        }
+      ],
+      "returns": "Result<ProfileResult<NetworkProfile>, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profiles_update",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1079
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "network_profile_id",
+          "type": "String"
+        },
+        {
+          "name": "display_name",
+          "type": "String"
+        },
+        {
+          "name": "mode",
+          "type": "String"
+        },
+        {
+          "name": "proxy_endpoint",
+          "type": "Option<String>"
+        },
+        {
+          "name": "verify_tls",
+          "type": "bool"
+        },
+        {
+          "name": "confirm_disable_tls_verification",
+          "type": "Option<bool>"
+        },
+        {
+          "name": "allow_proxy_failure_direct_fallback",
+          "type": "bool"
+        }
+      ],
+      "returns": "Result<ProfileResult<NetworkProfile>, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profiles_delete",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1101
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "network_profile_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<DeleteResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profiles_test",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1113
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "network_profile_id",
+          "type": "String"
+        },
+        {
+          "name": "provider_profile_id",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<NetworkTestResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profile_default_set",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1126
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "network_profile_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<NetworkDefaultResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profile_default_clear",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1138
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        }
+      ],
+      "returns": "Result<NetworkDefaultResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_network_profile_resolve",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1149
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "provider_profile_id",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<NetworkResolution, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "settings_resolve_overrides",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 1161
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "keys",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "book_id",
+          "type": "Option<String>"
+        },
+        {
+          "name": "chapter_id",
+          "type": "Option<String>"
+        },
+        {
+          "name": "run_id",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<OverridesResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "credential_put",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 288
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "request",
+          "type": "Request<'_>"
+        }
+      ],
+      "returns": "Result<CredentialPutResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "credential_clear",
+      "domain": "settings",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/settings_bridge.rs",
+        "line": 335
+      },
+      "params": [
+        {
+          "name": "state",
+          "type": "State<'_, super::AppState>"
+        },
+        {
+          "name": "request",
+          "type": "Request<'_>"
+        }
+      ],
+      "returns": "Result<CredentialClearResult, SettingsSurfaceError>",
+      "error_type": "SettingsSurfaceError",
+      "error_codes": []
+    },
+    {
+      "name": "set_region_type",
+      "domain": "region",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 847
+      },
+      "params": [
+        {
+          "name": "region_id",
+          "type": "String"
+        },
+        {
+          "name": "new_region_type",
+          "type": "String"
+        },
+        {
+          "name": "expected_revision",
+          "type": "Option<i64>"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "list_regions",
+      "domain": "region",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 866
+      },
+      "params": [
+        {
+          "name": "page_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "list_region_revisions",
+      "domain": "region",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 879
+      },
+      "params": [
+        {
+          "name": "region_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "restore_region_revision",
+      "domain": "region",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 892
+      },
+      "params": [
+        {
+          "name": "region_id",
+          "type": "String"
+        },
+        {
+          "name": "revision_no",
+          "type": "i64"
+        },
+        {
+          "name": "expected_revision",
+          "type": "i64"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "rerender_page",
+      "domain": "region",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 907
+      },
+      "params": [
+        {
+          "name": "page_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": []
+    },
+    {
+      "name": "resolve_page_resource",
+      "domain": "region",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 936
+      },
+      "params": [
+        {
+          "name": "page_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "list_chapters",
+      "domain": "reader",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 951
+      },
+      "params": [
+        {
+          "name": "book_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "list_chapter_pages",
+      "domain": "reader",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 964
+      },
+      "params": [
+        {
+          "name": "chapter_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_get_reader_projection",
+      "domain": "reader",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 979
+      },
+      "params": [
+        {
+          "name": "chapter_id",
+          "type": "String"
+        },
+        {
+          "name": "mode",
+          "type": "String"
+        },
+        {
+          "name": "start_position",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_save_reading_progress",
+      "domain": "reader",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 996
+      },
+      "params": [
+        {
+          "name": "chapter_id",
+          "type": "String"
+        },
+        {
+          "name": "mode",
+          "type": "String"
+        },
+        {
+          "name": "page_id",
+          "type": "String"
+        },
+        {
+          "name": "scroll_offset_y",
+          "type": "Option<f64>"
+        },
+        {
+          "name": "elapsed_seconds_delta",
+          "type": "Option<f64>"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_import_file",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1190
+      },
+      "params": [
+        {
+          "name": "chapter_id",
+          "type": "String"
+        },
+        {
+          "name": "duplicate_policy",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<host_issuer::ImportSummary, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE",
+        "INVALID_REQUEST"
+      ]
+    },
+    {
+      "name": "library_import_folder",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1220
+      },
+      "params": [
+        {
+          "name": "chapter_id",
+          "type": "String"
+        },
+        {
+          "name": "duplicate_policy",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<host_issuer::ImportSummary, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE",
+        "INVALID_REQUEST"
+      ]
+    },
+    {
+      "name": "library_start_export",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1242
+      },
+      "params": [
+        {
+          "name": "request",
+          "type": "serde_json::Value"
+        }
+      ],
+      "returns": "Result<Option<host_issuer::ExportSummary>, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE",
+        "INVALID_REQUEST"
+      ]
+    },
+    {
+      "name": "library_start_run",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1026
+      },
+      "params": [
+        {
+          "name": "command",
+          "type": "String"
+        },
+        {
+          "name": "scope",
+          "type": "serde_json::Value"
+        },
+        {
+          "name": "overrides",
+          "type": "Option<serde_json::Value>"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_control_run",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1042
+      },
+      "params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        },
+        {
+          "name": "action",
+          "type": "String"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "Option<String>"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_resume_blocked_run",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1057
+      },
+      "params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_get_run_snapshot",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1070
+      },
+      "params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_get_task_projection",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1083
+      },
+      "params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_retry_failed_targets",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1096
+      },
+      "params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<serde_json::Value, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_reveal_export_folder",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1286
+      },
+      "params": [
+        {
+          "name": "export_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<(), String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE",
+        "EXPORT_PATH_UNAVAILABLE",
+        "EXPORT_REVEAL_FAILED"
+      ]
+    },
+    {
+      "name": "library_cancel_export",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1110
+      },
+      "params": [
+        {
+          "name": "export_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<ExportProgressSnapshotView, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_get_export_snapshot",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1123
+      },
+      "params": [
+        {
+          "name": "export_id",
+          "type": "String"
+        }
+      ],
+      "returns": "Result<ExportProgressSnapshotView, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_get_export_history",
+      "domain": "workbench",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1136
+      },
+      "params": [],
+      "returns": "Result<ExportHistoryResponseView, String>",
+      "error_type": "String",
+      "error_codes": [
+        "CORE_UNAVAILABLE"
+      ]
+    },
+    {
+      "name": "library_delete_book_permanently",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1162
+      },
+      "params": [
+        {
+          "name": "payload",
+          "type": "Option<serde_json::Value>"
+        }
+      ],
+      "returns": "Result<PermanentlyDeleteBookResult, PermanentlyDeleteBookErrorView>",
+      "error_type": "PermanentlyDeleteBookErrorView",
+      "error_codes": []
+    },
+    {
+      "name": "library_delete_books_permanently",
+      "domain": "library",
+      "handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1176
+      },
+      "params": [
+        {
+          "name": "payload",
+          "type": "Option<serde_json::Value>"
+        }
+      ],
+      "returns": "Result<PermanentlyDeleteBooksResult, PermanentlyDeleteBooksErrorView>",
+      "error_type": "PermanentlyDeleteBooksErrorView",
+      "error_codes": []
+    }
+  ]
+}

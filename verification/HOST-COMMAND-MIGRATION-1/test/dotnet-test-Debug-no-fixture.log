@@ -1,0 +1,139 @@
+G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.03]   Discovering: NewManga.CoreClient.Tests
+[xUnit.net 00:00:00.06]   Discovered:  NewManga.CoreClient.Tests
+[xUnit.net 00:00:00.06]   Starting:    NewManga.CoreClient.Tests
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 12288, expected: High) [3 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 16384, expected: System) [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 4660, expected: Unknown) [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 4096, expected: Low) [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 8192, expected: Medium) [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Low, child: Medium, expected: False) [1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Medium, child: Medium, expected: True) [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: High, child: High, expected: True) [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Unknown, child: Unknown, expected: False) [< 1 ms]
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Medium, child: Low, expected: False) [< 1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [1 ms]
+  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.ParseResponse_RejectsMalformedJson_AsTypedError [4 ms]
+  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.CreateRequest_UsesMinor8 [3 ms]
+  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.ParseResponse_ReadsResultAndError [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.RequestEnvelope_MatchesProtocol23 [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce [1 ms]
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.10]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars [SKIP]
+[xUnit.net 00:00:00.10]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars [1 ms]
+  已通过 NewManga.CoreClient.Tests.AsciiWireTests.Hex_IsLowercaseUtf8 [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.AsciiWireTests.EscapedText_IsJsonRoundTrippable [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.AsciiWireTests.AsciiText_IsUnchanged [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.AsciiWireTests.AstralCharacters_UseSurrogatePairEscapes [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.AsciiWireTests.ChineseText_IsEscapedAsUnicode [< 1 ms]
+  已通过 NewManga.CoreClient.Tests.Commands.CommandParityContractTests.ImplementedCoreCommands_AreProvenByProbeEvidence [3 ms]
+[xUnit.net 00:00:00.11]     NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [SKIP]
+[xUnit.net 00:00:00.11]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+  已通过 NewManga.CoreClient.Tests.Commands.CommandParityContractTests.Snapshot_Has66ProductionCommands_AndExcludesTestOnlySurface [1 ms]
+  已通过 NewManga.CoreClient.Tests.Commands.CommandParityContractTests.EveryNotSupportedCommand_HasReason_AndEveryImplementedCommand_HasChannel [3 ms]
+  已通过 NewManga.CoreClient.Tests.Commands.CommandParityContractTests.CoverageMatrix_IsWrittenAsEvidence [3 ms]
+  已通过 NewManga.CoreClient.Tests.Commands.CommandParityContractTests.Registry_CoversSnapshotExactly_WithSixDomains [3 ms]
+  已跳过 NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [1 ms]
+[xUnit.net 00:00:03.00]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [SKIP]
+[xUnit.net 00:00:03.00]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:03.00]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [SKIP]
+[xUnit.net 00:00:03.00]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:03.00]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [SKIP]
+[xUnit.net 00:00:03.00]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:03.00]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [SKIP]
+[xUnit.net 00:00:03.00]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:03.00]   Finished:    NewManga.CoreClient.Tests
+  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.RequestTimeout_IsTyped_AndStderrLogKept [2 s]
+  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.NonExecutableFile_ReportsSpawnFailed [36 ms]
+  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.MissingExecutable_IsTyped_AndNoProcessIsLeftBehind [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [1 ms]
+  已通过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.CurrentProcessIntegrityLevel_IsReadableOnWindows [< 1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [1 ms]
+结果文件: C:\Users\49745\AppData\Local\Temp\newmanga-no-fixture-b7ef12a8\coreclient.trx
+
+测试运行成功。
+测试总数: 40
+     通过数: 28
+    跳过数: 12
+总时间: 3.3545 秒
+G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.03]   Discovering: NewManga.Host.Tests
+[xUnit.net 00:00:00.06]   Discovered:  NewManga.Host.Tests
+[xUnit.net 00:00:00.06]   Starting:    NewManga.Host.Tests
+[xUnit.net 00:00:00.07]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [SKIP]
+[xUnit.net 00:00:00.07]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.09]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [SKIP]
+[xUnit.net 00:00:00.09]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.09]     NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [SKIP]
+[xUnit.net 00:00:00.09]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [1 ms]
+  已通过 NewManga.Host.Tests.HostRuntimeIntegrationTests.MissingSidecarDirectory_IsTypedFailure_NoThrow [14 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [1 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [1 ms]
+  已通过 NewManga.Host.Tests.CoexistenceTests.LegacyDetector_UsesInjectedProbe [4 ms]
+  已通过 NewManga.Host.Tests.CoexistenceTests.ModeDescription_IsHumanReadable [< 1 ms]
+  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: False, expected: ReadOnlyUntilParity) [1 ms]
+  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: True, expected: ReadOnlyLegacyShellRunning) [< 1 ms]
+  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: True, expected: ReadWrite) [< 1 ms]
+  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: False, expected: ReadOnlyLegacyShellRunning) [< 1 ms]
+  已通过 NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyLegacyShellRunning, expected: False) [1 ms]
+  已通过 NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyUntilParity, expected: False) [< 1 ms]
+  已通过 NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadWrite, expected: True) [< 1 ms]
+  已通过 NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_SkipsWhenNoCatalog [< 1 ms]
+  已通过 NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_CopiesOnce_AndStaysIdempotent [3 ms]
+  已通过 NewManga.Host.Tests.SingleInstanceTests.SecondAcquire_OnAnotherThread_ReportsAlreadyRunning [< 1 ms]
+  已通过 NewManga.Host.Tests.SingleInstanceTests.FakeBackend_ReportsAbandonedRecovery [< 1 ms]
+  已通过 NewManga.Host.Tests.SingleInstanceTests.FakeBackend_CanReportAlreadyRunning [< 1 ms]
+[xUnit.net 00:00:00.11]     NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [SKIP]
+[xUnit.net 00:00:00.11]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+[xUnit.net 00:00:00.15]   Finished:    NewManga.Host.Tests
+  已通过 NewManga.Host.Tests.SingleInstanceTests.DefaultGlobalName_IsPinnedByAdr [< 1 ms]
+  已跳过 NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [1 ms]
+  已通过 NewManga.Host.Tests.LegacyShellRealTests.RealProcessNamedNewManga_IsDetectedByProbe [47 ms]
+  已通过 NewManga.Host.Tests.LegacyShellRealTests.DefaultGlobalMutex_AcquiresOrFallsBackToLocal [< 1 ms]
+结果文件: C:\Users\49745\AppData\Local\Temp\newmanga-no-fixture-b7ef12a8\host.trx
+
+测试运行成功。
+测试总数: 22
+     通过数: 18
+    跳过数: 4
+总时间: 0.4097 秒
+G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.03]   Discovering: NewManga.App.Tests
+[xUnit.net 00:00:00.05]   Discovered:  NewManga.App.Tests
+[xUnit.net 00:00:00.05]   Starting:    NewManga.App.Tests
+[xUnit.net 00:00:00.26]   Finished:    NewManga.App.Tests
+  已通过 NewManga.App.Tests.MainWindowTests.ThemeSwitch_ReplacesPaletteWithoutRestart [91 ms]
+  已通过 NewManga.App.Tests.MainWindowTests.ReadySnapshot_RendersStatusBooksAndWireStats [3 ms]
+  已通过 NewManga.App.Tests.MainWindowTests.FailureSnapshot_ShowsTypedCode_NotAnException [1 ms]
+  已通过 NewManga.App.Tests.MainWindowTests.ChineseRoundTripButton_UsesAc3Vector [1 ms]
+结果文件: C:\Users\49745\AppData\Local\Temp\newmanga-no-fixture-b7ef12a8\app.trx
+
+测试运行成功。
+测试总数: 4
+     通过数: 4
+总时间: 0.5383 秒
