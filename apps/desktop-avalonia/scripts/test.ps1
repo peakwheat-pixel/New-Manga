@@ -15,13 +15,20 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Debug',
-    [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy'
+    [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy',
+    [switch]$CanonicalEvidence
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $repoRoot = Resolve-Path (Join-Path $root '..\..')
-$evidence = Join-Path $repoRoot 'verification/HOST-CORECLIENT-1'
+# Reviewer reruns must never overwrite the pinned canonical evidence: default output goes to the
+# workspace task-env. Only the owner regenerates pins with -CanonicalEvidence.
+$evidence = if ($CanonicalEvidence) {
+    Join-Path $repoRoot 'verification/HOST-CORECLIENT-1'
+} else {
+    'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/evidence-rerun'
+}
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
 
@@ -82,6 +89,7 @@ try {
 $summary = [ordered]@{
     ac = 'AC1/AC2/AC3/AC4/AC5/AC6'
     command = 'pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1'
+    evidence_root = $evidence
     configuration = $Configuration
     fixture = 'NEWMANGA_CORECLIENT_SIDECAR_DIR (AC11 unlabelled copy)'
     sidecar_directory = $env:NEWMANGA_CORECLIENT_SIDECAR_DIR
@@ -99,6 +107,7 @@ $summary | ConvertTo-Json -Depth 6 | Set-Content $summaryPath -Encoding utf8
 $summary | ConvertTo-Json -Depth 4
 
 Write-Output "log: $testLog"
+Write-Output "evidence root: $evidence (use -CanonicalEvidence only when regenerating pins)"
 Write-Output "summary: $summaryPath"
 if ($summary.totals.failed -ne 0) { throw "totals failed=$($summary.totals.failed)" }
 Write-Output "TEST PASS ($Configuration): $($summary.totals.passed)/$($summary.totals.total) passed, $($summary.totals.skipped) skipped"

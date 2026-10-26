@@ -13,13 +13,18 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Configuration = 'Debug'
+    [string]$Configuration = 'Debug',
+    [switch]$CanonicalEvidence
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $repoRoot = Resolve-Path (Join-Path $root '..\..')
-$evidence = Join-Path $repoRoot 'verification/HOST-CORECLIENT-1'
+$evidence = if ($CanonicalEvidence) {
+    Join-Path $repoRoot 'verification/HOST-CORECLIENT-1'
+} else {
+    'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/evidence-rerun'
+}
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
 
@@ -79,6 +84,7 @@ try {
 $summary = [ordered]@{
     ac = 'AC6 reproducibility'
     command = 'dotnet test apps\desktop-avalonia\NewManga.sln   (no NEWMANGA_CORECLIENT_SIDECAR_DIR)'
+    evidence_root = $evidence
     fixture = 'absent - integration tests self-skip with reason'
     projects = $results
     totals = [ordered]@{
@@ -93,6 +99,7 @@ $summaryPath = Join-Path $testEvidence 'no-fixture-summary.json'
 $summary | ConvertTo-Json -Depth 8 | Set-Content $summaryPath -Encoding utf8
 $summary | ConvertTo-Json -Depth 5
 
+Write-Output "evidence root: $evidence (use -CanonicalEvidence only when regenerating pins)"
 Write-Output "log: $log"
 if ($summary.totals.failed -ne 0) { throw "plain run must not fail" }
 Write-Output "PLAIN RUN GREEN: $($summary.totals.passed)/$($summary.totals.total) passed, $($summary.totals.skipped) skipped (all with reasons)"

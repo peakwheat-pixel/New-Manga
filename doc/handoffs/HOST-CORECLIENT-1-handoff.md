@@ -3,7 +3,7 @@ task_id: HOST-CORECLIENT-1
 author: avalonia-spike
 recipient: DeepSeek Harness
 base_commit: a93f20c7b
-delivery_head: eb123ad4f7e758010ee6597f276c34b6c9807e26
+delivery_head: c1efb938f5b12c989b406316a8eabd62e0a34a6a
 status: draft
 ---
 
@@ -18,9 +18,9 @@ status: draft
 - `scripts/{prepare-sidecar,build,test,publish,smoke}.ps1`：一键无标签副本准备、`-warnaserror` 构建、真实 sidecar 测试、S0 单文件发布配方、端到端 smoke（截图 + 无控制台 + 无残留进程）。
 - 证据：`verification/HOST-CORECLIENT-1/**`（wire 原始帧 + hex、负例、typed 诊断、单实例/旧壳、发布清单、smoke、vitest 基线），清单见 `verification/HOST-CORECLIENT-1/MANIFEST.json`。
 
-与 AC 逐项对照见 Task 卡 Canonical Evidence（E1–E15）。**未修改** `apps/desktop/**`（旧壳）与 Python Core `src/**`；未 push。
+与 AC 逐项对照见 Task 卡 Canonical Evidence（E1–E18）。**未修改** `apps/desktop/**`（旧壳）与 Python Core `src/**`；未 push。
 
-关键数字：`dotnet build -warnaserror` 0 警告 0 错误；`dotnet test` 57/57 通过（App 4 + Host 22 + CoreClient 31）；发布单文件 **27.64 MiB**（≤45 MiB）；smoke 窗口可见 **373.5 ms**、控制台窗口 **0**、退出码 0、退出后无 sidecar 残留；旧壳 vitest **60 文件 / 567 用例全绿**。
+关键数字：一条命令 `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1` → **57 passed / 0 skipped / 0 failed**（App 4 + Host 22 + CoreClient 31；脚本自备无标签副本、设 env、build -warnaserror 0 警告后跑）；裸 `dotnet test`（无 fixture env）→ **45 passed / 12 skipped / 0 failed**，12 条 Skip 均带原因；发布单文件 **27.64 MiB**（≤45 MiB）；smoke 窗口可见 **373.5 ms**、控制台窗口 **0**、退出码 0、退出后无 sidecar 残留；旧壳 vitest **60 文件 / 567 用例全绿**。
 
 ## 验证证据
 
@@ -28,7 +28,8 @@ status: draft
 |---|---|---|---|---|
 | AC1 构建 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/build.ps1` | SDK 9.0.308，Debug，交付分支 | PASS | `verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log` |
 | AC1 发布 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/publish.ps1` | win-x64，SingleFile+Trim+R2R+压缩 | PASS（1 文件 27.64 MiB） | `verification/HOST-CORECLIENT-1/publish/publish_files.json` |
-| AC2 双 sidecar | `scripts/test.ps1` → `CoreServiceIntegrationTests`/`HostBridgeIntegrationTests` | 无标签副本 + 隔离 data root | PASS | `test/dotnet-test-Debug.log`、`wire/*.ndjson` |
+| AC2/AC3/AC4/AC5 全量（一条命令） | **`pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1`**（自备无标签副本 + env + build + 三项目 TRX） | Windows 11，无需管理员 | **PASS 57 passed / 0 skipped / 0 failed** | `test/summary.json`、`test/results-{coreclient,host,app}.trx`、`test/dotnet-test-Debug.log` |
+| AC6 可复现性（无 fixture env） | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test-without-fixture.ps1`（等价裸 `dotnet test apps\\desktop-avalonia\\NewManga.sln`） | 清空 `NEWMANGA_CORECLIENT_SIDECAR_DIR` | **PASS 45 passed / 12 skipped / 0 failed**，skip 全带 `reason: needs sidecar fixture …`（CoreClient 8 + Host 4） | `test/no-fixture-summary.json`、`test/dotnet-test-Debug-no-fixture.log` |
 | AC3 中文往返 | `ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped` | 同上；向量 `雾港来信・日本語テスト` | PASS（UTF-8 hex 相等；wire 含 `\u96fe…`，request_ascii_only=true） | `wire/core-chinese-roundtrip.json` |
 | AC3 UTF-8 负例 | `RawUtf8Request_ReplicatesUnknownError` | 同上 | PASS（`UNKNOWN`） | `wire/core-raw-utf8-negative.json` |
 | AC4 typed 失败 | `SidecarFailureTests`（缺失 exe / 非法 exe / 启动超时 / 请求超时） | 同上 | PASS（stderr 文件必存在；无 panic） | `diagnostics/*.json` |
@@ -39,7 +40,7 @@ status: draft
 | AC6 旧壳回归 | `npx vitest run`（`apps/desktop/frontend`） | 旧前端依赖已装 | PASS（60/60 文件，567/567 用例） | `test/vitest-baseline.log` |
 | AC6 治理 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/HOST-CORECLIENT-1.md` | 本 worktree | PASS | 本卡 Canonical Evidence |
 
-未运行项：无。说明：`ProcessIntegrity.EnsureChildMatchesParent` 的“不一致”分支只有单测（Windows 子进程天然继承父 integrity level），真实链路以“所有真 sidecar 均能通过校验启动”间接证明；`Global\` 命名空间权限不足时回退 `Local\` 的行为已单测 + 真机获取验证（见 record decision）。
+未运行项：无（无 fixture 时的 12 条 Skip 是设计行为，见 Fix Record；有 fixture 的 57/57 已全部真实执行）。说明：`ProcessIntegrity.EnsureChildMatchesParent` 的“不一致”分支只有单测（Windows 子进程天然继承父 integrity level），真实链路以“所有真 sidecar 均能通过校验启动”间接证明；`Global\` 命名空间权限不足时回退 `Local\` 的行为已单测 + 真机获取验证（见 record decision）。
 
 ## 接收方式
 
@@ -49,13 +50,20 @@ status: draft
   `pwsh -NoProfile -File apps/desktop-avalonia/scripts/prepare-sidecar.ps1`
   默认落到 `G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy`。
 - 复跑门禁：
-  1. `pwsh -NoProfile -File apps/desktop-avalonia/scripts/build.ps1`
-  2. `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1`（自动设 `NEWMANGA_CORECLIENT_SIDECAR_DIR`、`NEWMANGA_EVIDENCE_DIR`）
+  1. **一条命令**：`pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1`（自动准备 AC11 无标签副本、导出 `NEWMANGA_CORECLIENT_SIDECAR_DIR`/`NEWMANGA_EVIDENCE_DIR`、`dotnet build -warnaserror`，再按项目跑测试 → **57/57 passed / 0 skipped**，产出 `test/results-coreclient.trx`、`results-host.trx`、`results-app.trx` 与 `test/summary.json`）
+  2. **无 fixture 证明**：`pwsh -NoProfile -File apps/desktop-avalonia/scripts/test-without-fixture.ps1`（或直接 `dotnet test apps\\desktop-avalonia\\NewManga.sln`，无 env）→ **45 passed / 12 skipped / 0 failed**，skip 原因见 `test/no-fixture-summary.json`
   3. `pwsh -NoProfile -File apps/desktop-avalonia/scripts/publish.ps1`
   4. `pwsh -NoProfile -File apps/desktop-avalonia/scripts/smoke.ps1`
   5. `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/HOST-CORECLIENT-1.md`
-- 接收者应检查：E1–E15 pin 是否仍匹配；`apps/desktop/**` 无 diff；`git diff --stat base_commit..delivery_head` 只含允许路径；旧壳 vitest 仍 60/567。
 
+  > 复跑安全：上述测试命令默认把证据写到 workspace `task-envs/HOST-CORECLIENT-1/evidence-rerun`，不会覆盖仓内 Canonical Evidence（pin 之后不得重写证据）；仅当 Owner 显式加 `-CanonicalEvidence` 时才重生成仓内证据。DSH 复跑实测 57/57，且 `git status verification/HOST-CORECLIENT-1` 干净。
+- 接收者应检查：E1–E18 pin 是否仍匹配（尤其 E3a–c 三条 per-project TRX 与 E18 `test/summary.json` 内的 sha256 一致）；`apps/desktop/**` 无 diff；`git diff --stat base_commit..delivery_head` 只含允许路径；旧壳 vitest 仍 60/567。
+
+## Fix Record（2026-10-27，响应 DSH changes_requested）
+
+1. **测试可复现性**：新增 `[SidecarFact]`/`[HostSidecarFact]`，fixture（`NEWMANGA_CORECLIENT_SIDECAR_DIR` 或其中的 exe）缺失时显式 `Skip("reason: needs sidecar fixture …")`；裸 `dotnet test` 实测 45 passed / 12 skipped / 0 failed。`scripts/test.ps1` 重写为**一条命令**（准备副本 → env → build → 三项目确定性 TRX + `test/summary.json`），实测 57/57 passed、0 skipped。原先 8 个 CoreClient 失败即这 8 条集成测试在无 env 时抛 fixture 异常；有 fixture 时它们真实执行并通过。
+2. **TRX pin**：改为每项目独立 TRX（`results-coreclient.trx`/`results-host.trx`/`results-app.trx`），以完整 64-hex SHA-256 pin 到修复提交 `c1efb938f5b12c989b406316a8eabd62e0a34a6a`；`test/summary.json` 内嵌三条 TRX 的 sha256。pin 后未再重写证据。
+3. 改动文件：`tests/NewManga.CoreClient.Tests/Support/{SidecarFixture.cs,SidecarFactAttribute.cs}`、`tests/NewManga.Host.Tests/Support/{HostFixture.cs,HostSidecarFactAttribute.cs}`、4+4 个集成测试属性、`scripts/test.ps1`、新增 `scripts/test-without-fixture.ps1`、`verification/HOST-CORECLIENT-1/**`、Task 卡与 Handoff。
 ## Record Decision（AC7 要求）
 
 1. **协议字段映射（保持不变，零改动 Core）**
