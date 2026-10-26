@@ -64,6 +64,14 @@ try {
     & $fixturePython (Join-Path $root 'scripts/make_reader_fixtures.py') 2>&1 | Tee-Object -FilePath $testLog -Append
     if ($LASTEXITCODE -ne 0) { throw "S4 fixture generation failed" }
     $env:NEWMANGA_S4_FIXTURES = $fixtureRoot
+    # CORE-TILE-EMIT-1: produce a real Python-Core tile artifact for the Host E2E test.
+    $coreTileE2e = 'G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e'
+    $env:NEWMANGA_CORE_TILE_E2E = "$coreTileE2e/artifact"
+    $previousPythonPath = $env:PYTHONPATH
+    $env:PYTHONPATH = Join-Path $repoRoot 'src'
+    & $fixturePython -m application.resource_channel.tiles --synthetic 1200x2400 --out $env:NEWMANGA_CORE_TILE_E2E 2>&1 | Tee-Object -FilePath $testLog -Append
+    if ($LASTEXITCODE -ne 0) { throw "Core tile emission failed" }
+    $env:PYTHONPATH = $previousPythonPath
     # AC1: regenerate the Rust production command surface in memory and compare with the committed snapshot.
     $python = (Get-Command python -ErrorAction SilentlyContinue)?.Source
     if (-not $python) { $python = (Get-Command py -ErrorAction SilentlyContinue)?.Source }

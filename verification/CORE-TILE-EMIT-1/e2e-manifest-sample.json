@@ -1,0 +1,23 @@
+{
+  "schema": "tile-channel-contract/v1",
+  "resource_id": "page:9b5bdfb35a06fd2a",
+  "revision": "9b5bdfb35a06fd2ac43b2ce0c8de13425f78bb62ade068730e812cf463eb44a3",
+  "size": 15566,
+  "absolute_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-TILE-EMIT-1\\e2e\\artifact\\page.bin",
+  "allowed_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-TILE-EMIT-1\\e2e\\artifact",
+  "ttl_ms": 300000,
+  "tiles": [
+    {
+      "index": 0,
+      "offset": 0,
+      "length": 13197,
+      "sha256": "794418548c67bc0fc0bc363dbf7bba38978f1e52da410e5b4e6cc900de29b573"
+    },
+    {
+      "index": 1,
+      "offset": 13197,
+      "length": 2369,
+      "sha256": "9a9e6bc05c3f5c7a50ce92603a7d3e72efcd3b83c074088fa8bdf1fc0ede9423"
+    }
+  ]
+}
