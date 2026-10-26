@@ -3,7 +3,7 @@ id: UIUX-V2-RUNTIME-REALCORE-2
 title: 补齐真机端到端未覆盖路径（原生导入 / Core 掉线 / 编码守卫）+ 视觉窄窗与高 DPI
 kind: implementation
 governance_version: 3
-status: ready
+status: changes_requested
 approval: user_authorized_autonomous
 suggested_owner: codex
 owner: codex
@@ -70,3 +70,19 @@ allowed_paths:
 - push（维持未执行裁决）。
 - 任何视觉重设计或设计系统变更。
 - 引擎/导入/渲染管线的新功能。
+
+## 执行记录与复核（r1）
+
+- 2026-10-26：Owner=Codex 交付 `3d038732a`（自标 partial，未 push）。
+  - **G1 未达成**：原生导入未跑通——未采用派发时指定的 CDP `DOM.setFileInputFiles`，改用 UIAutomation 驱动 Windows 原生文件对话框并失败（`native picker filename control unavailable`）。
+  - **G2 部分达成**：S9 连续终止 3 个 sidecar（21752/34104/13868），设置页与书架出现 `错误代码：CORE_UNAVAILABLE`，新 PID 50360 拉起后 `coreReady=true`、`books=1`；工作台/阅读器未覆盖。
+  - **G3 部分达成**：900×700/DPR2 下 `blurLayers=2`、状态条可见、无重叠通过；**横向溢出 124px（docWidth 1024 > viewport 900）**——真实产品缺陷。
+  - **G4 达成**：`core_bridge.rs` 增 `ascii_only_request_line()`，非 ASCII 载荷返回可见错误码 `CORE_BRIDGE_NON_ASCII_PAYLOAD` + 定向测试；选择方案 (b) 的理由已写入注释。
+  - **G5 达成**：`Shelf.test.tsx` 补 `commandOpen=true`；vitest 60 files / 567 passed。
+- 2026-10-26：**DSH 独立复核 r1 → `changes_requested`**（`verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r1.md`）。
+  - R1(P1) G1 方法走偏，须改用 CDP `DOM.setFileInputFiles`
+  - R2(P1) G2 需覆盖工作台/阅读器
+  - R3(P2) 窄窗横向溢出为真实产品缺陷，**另立 Task**，本卡不修
+  - R4(P3) `cargo test --release` 23 failed 属环境前置（`M2RC1_PYTHON`/`M2RC1_PACKAGED_DIR`），非回归，README 须写明复跑方式
+  - R5(P3) `report.json` 的 `checks[].status` 为空，断言状态未落盘
+- 复核者独立核实：23 个 Rust 失败不含本卡改动的 `core_bridge`/`ac1_bridge` 测试；未越界改 STATUS/PLAN/LEDGER/tauri.conf.json；用户真实数据根未被本卡触碰。

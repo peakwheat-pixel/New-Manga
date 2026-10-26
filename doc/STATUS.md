@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[UIUX-V2-RUNTIME-REALCORE-2](tasks/UIUX-V2-RUNTIME-REALCORE-2.md) `ready`（补原生导入/Core 掉线/窄窗高 DPI + 两条 P3 守卫；Owner 待派）。
+- 当前 Task：[UIUX-V2-RUNTIME-REALCORE-2](tasks/UIUX-V2-RUNTIME-REALCORE-2.md) `changes_requested`（Codex `3d038732a` 部分交付；G4/G5 过，G1 走偏、G2 不足；DSH r1 见 `review-dsh-r1.md`）。
 - 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
 - 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`）。
 - 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（root `e34a90d00`；push-gate approved；AC4/AC5 未过）。
