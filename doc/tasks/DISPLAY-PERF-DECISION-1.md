@@ -22,6 +22,11 @@ allowed_paths:
   - doc/design/DISPLAY_PERF_DECISION_1.md
   - doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md
   - doc/design/EXECUTION_DIRECTIVE_AD002_V2.md
+  - doc/design/ADR-0001_REPO_LAYOUT_AND_COEXISTENCE.md
+  - doc/design/ADR-0002_RESOURCE_CHANNEL_SECURITY_V2.md
+  - LICENSE
+  - NOTICE.md
+  - THIRD_PARTY_LICENSES.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
@@ -55,7 +60,8 @@ allowed_paths:
 - [x] **AC11 干净机复核 Core 启动**（判定 **H1 = 本机环境/机器策略，非产品缺陷**：仓库根 `G:\CODEX\New Manga` 带 `Mandatory Label\Low (OI)(CI)(NW)` 强制标签，全仓库继承 → 从该目录启动的 exe 进程令牌 Low(0x1000) → MIC 拒写 `%APPDATA%` → Core 秒退。对照：无标签副本 Medium(0x2000)/Windows Sandbox 中性副本 High(0x3000) 均 **Core 启动成功**；手工 `icacls /setintegritylevel Low` 可复现同款失败。产品侧仅需「可诊断 + 优雅失败」，不得改产品适配 Low；测试规则：非提权验证须从无标签副本运行）<<MET>>
 - [x] **AC12 新架构草案 + Saber 参考规格**（AD-002 草案：Avalonia+Python Core 边界/接线/主题中心 ThemePack/书架 1:1 复刻令牌与流程/许可证决策树 L1–L3/灰度迁移 S0–S5/成本 200–400 人日；Saber 实测栈与 CSS 令牌已存证）<<MET>>
 - [x] **AC13 AD-002 冻结 + 裁决落地 + 任务拆解**（用户裁决：前端 Avalonia、全页"着重参考"Saber、**L2 开源 GPL-3.0**；AD-002 v1.0 标 ACCEPTED 并给出 S0–S5 任务拆解与 GPL 合规义务清单）<<MET>>
-- [ ] **AC14 S0 Avalonia spike（GO/NO-GO）**（11 项门槛：单文件 ≤45MB、冷启动 p50 ≤600ms、真 Mica、3 套主题热切 ≤100ms、4000×60000 分块 p95 ≤16.7ms/内存 ≤1.5GB、竖排 1:1 像素、IME、CoreClient 中文零乱码、无障碍、安装包 ≤150MB、版本决策；工程在 workspace，证据在当前任务 `spike/`）
+- [x] **AC14 S0 Avalonia spike（GO/NO-GO）**（**GO**：4 项决定性门槛全 PASS——单文件 **29.31MB**、换肤 p95 **3.74ms**、长条 DPR2 光栅 p95 **3.725ms**/703MB、sidecar 中文零乱码；冷启动 p50 **408ms**、Mica PASS、竖排 1:1 全像素一致；NOT_RUN：IME/真 200% 屏；PARTIAL：无障碍/Narrator、安装包需 Core 瘦身。三条 S1 条件：R2R+压缩配方、资源通道、Core 依赖预算）<<MET>>
+- [x] **AC16 AD-002 前置件 P1–P4**（P1 许可三件套：`LICENSE` GPL-3.0-or-later 34674B + `NOTICE.md`（Saber 移植登记规则）+ `THIRD_PARTY_LICENSES.md`（模型/字体清单与 AGPL 决策点）；P2 `ADR-0001` 仓库布局与新旧共存（`apps/desktop-avalonia/`、identifier 不变、单实例 Mutex、只读期、无标签副本测试规则）；P3 `ADR-0002` 资源通道安全 v2（tile+per-tile digest、允许删除的旧机制、6 项回归验收）；P4 `prereq/BASELINE.md`：pytest **4 failed/2686 passed/9 skipped**（4 个既有失败登记）、vitest **60/60 文件 567/567 用例**、dotnet 从 0）<<MET>>
 - [x] **AC15 Saber UI 参考规格 + Core 依赖预算**（`ui-spec/SABER_UI_SPEC.md` 53KB + `tokens-saber-purple.json` 31KB（light/dark 各 53 色，含 Avalonia 映射）+ `SCREENSHOT_INDEX.md`；AD-002 新增 §3.5 后端依赖预算：Core CPU ≤2GB、CUDA 可选包 ≤8GB、去 PySide6、ONNX 优先、不照搬 Flask/SSE）<<MET>>
 
 ## 允许修改范围
@@ -115,6 +121,11 @@ allowed_paths:
 | E-AC9 | AC9 | verification/DISPLAY-PERF-DECISION-1/nonadmin/RCA.md | | df33ab8c999edda61715736f784744a3869b7b8f3bb34e0f841be624791a1734 | CANONICAL |
 | E-AC10 | AC10 | verification/DISPLAY-PERF-DECISION-1/ui-stack/STACK_COMPARISON.md | | 9e9786fc6bfc1ff4aec370ad68de693b61201d3628681303bc334e36db06774c | CANONICAL |
 | E-AC11 | AC11 | verification/DISPLAY-PERF-DECISION-1/nonadmin/sandbox/REPORT.md | | f6b59a80b6565cad23a2d87738c8a1072ebfe246767bc5ab11743f6fab19b8a8 | CANONICAL |
+| E-AC14 | AC14 | verification/DISPLAY-PERF-DECISION-1/spike/SPIKE_REPORT.md | | c9c942bbbc175a7a9b186231340100f14fa2e1ed024a8cfdd1166b00255d1518 | CANONICAL |
+| E-AC16-L | AC16-P1 | LICENSE | | fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0 | CANONICAL |
+| E-AC16-B | AC16-P4 | verification/DISPLAY-PERF-DECISION-1/prereq/BASELINE.md | | 612ec234484bc67bfdca2eb881926aaec347899989107c6210a383fa23f8c096 | CANONICAL |
+| E-AC16-A1 | AC16-P2 | doc/design/ADR-0001_REPO_LAYOUT_AND_COEXISTENCE.md | | dc5d6c601cabcea6d9e6a7c2cc29cdd61000d3aa2e4c74d845e778bce8a01070 | CANONICAL |
+| E-AC16-A2 | AC16-P3 | doc/design/ADR-0002_RESOURCE_CHANNEL_SECURITY_V2.md | | 064cc82ec37b83dccf47ea1315f7ac06deb65a46a7166818c1438a33ebcba1cd | CANONICAL |
 
 ## Resource Manifest
 
