@@ -46,7 +46,7 @@
 |PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级插件沙箱；用户 2026-10-23 选择候选 1；Review r2 approved `41d7abeb`）|
 |DESIGN-V2-IMPL-1|UI-DESIGN-1|done（v2 令牌/亚克力/七态/三页骨架；集成 e1fd738a7；指针已补登）|
 |UIUX-V2-RUNTIME-1|DESIGN-V2-IMPL-1|done（四页真实 IPC+设置页+单一 UI；集成 af421b9e6；ZCode r2 approved；tsc0/vitest564；真实 Core=HUMAN_VERIFY）|
-|UIUX-V2-RUNTIME-REALCORE-1|UIUX-V2-RUNTIME-1|in_review（脚本化真实 Tauri+Core 端到端 7/7 过；修 P0 中文编码乱码+P1 死按钮；ZCode 复核中）|
+|UIUX-V2-RUNTIME-REALCORE-1|UIUX-V2-RUNTIME-1|done（脚本化真实 Tauri+Core 端到端 7/7；修 P0 中文编码+P1 死按钮；ZCode r1 approved）|
 |P07 / P21|P02 / P20+另授权|proposed（可选）|
 
 READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1（仅设计）。

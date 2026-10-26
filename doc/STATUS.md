@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `in_review`（真实 Tauri 生产窗 + 真实 Python Core 的**脚本化**端到端，9 图 7 场景）；已抓到并修复 **P0 中文内容经 IPC 落库乱码** 与 **P1 书架命令触发器死按钮**；ZCode 复核中。
-- 最近完成：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`；tsc 0；vitest 60/564）。
+- 最近完成（无活跃产品 Task）：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
+- 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`；tsc 0；vitest 60/564）。
 - 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（root `e34a90d00`；push-gate approved；AC4/AC5 未过）。
 - Rust：[ISOLATION-1](tasks/GIT-CLEAN-RUST-ISOLATION-1.md) `in_review`（1829a38；DSH r2 blocked 保留；Reviewer=ZCode）；[CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`。
 - 诊断/环境：DIAG-1 `approved`；CORE-ENV-2 `proposed`；FULL-AUDIT `blocked`；V1-RELEASE-SIGNING-1 `in_review`（无执行）。

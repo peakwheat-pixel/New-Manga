@@ -3,7 +3,7 @@ id: UIUX-V2-RUNTIME-REALCORE-1
 title: 真实 Tauri 生产窗 + Python Core 端到端验收（脚本化），并修复其暴露的缺陷
 kind: verification
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_autonomous
 suggested_owner: dsh
 owner: dsh
@@ -68,13 +68,13 @@ allowed_paths:
 - [ ] **AC3 页图 host 通道**：未执行——需要原生文件选择器导入图片，本轮自动化未覆盖，如实保留为未验证。 <<PARTIAL: 需要原生文件对话框，脚本化未覆盖；不冒充通过>>
 - [ ] **AC4 故障面**：Core 掉线/重启时四页状态条表现未执行（需杀 Core 的受控实验）。 <<PARTIAL: 本轮未做受控故障注入>>
 - [ ] **AC5 视觉差异（部分）**：真实 WebView2 下的亚克力/Mica、浅色主题、计算样式均已实测（`dark rgb(27,27,27)` → `light rgb(238,238,238)`）；高 DPI 与窄窗口未覆盖。 <<PARTIAL: WebView2 实测完成，高 DPI/窄窗口未测>>
-- [ ] **AC6 独立审查**：由未参与实现的 ZCode 复核证据可复现性（进行中）。 <<PARTIAL: 待 ZCode 复核完成>>
+- [x] **AC6 独立审查**：ZCode r1 复核完成，verdict=approved（1×P2 + 5×P3，均不阻塞，已逐条处置或登记）。 <<MET>>
 
 ## 发现与修复
 
 | id | 严重度 | 现象（真实栈实测） | 根因 | 修复 | 守卫 |
 |---|---|---|---|---|---|
-| **F-1** | **P0** | 经 UI/真实 IPC 创建中文标题：多数直接失败（`LIBRARY_OPERATION_FAILED`），个别"成功"但落库乱码（`雾港来信` → `闆炬腐鏉ヤ俊`） | Core 的 stdio 协议是 UTF-8 JSON 行，但 **PyInstaller 打包的 sidecar 在 Windows 上用 cp936 解码 stdin**；`PYTHONIOENCODING`/`PYTHONUTF8` 对冻结 bootloader 完全无效（四种组合实测返回完全相同的乱码） | `library_bridge.rs` 新增 `ascii_json_line()`，把请求里所有非 ASCII 转成 `\uXXXX`（纯 ASCII 线上形式），Python `json.loads` 无损还原；不需要重打包 sidecar | Rust 单测 `ascii_json_line_is_lossless_for_non_ascii_payloads`（断言线上纯 ASCII 且解码后与原值相等）+ `ascii_json_line_leaves_ascii_payloads_untouched`；端到端 S6 用中文标题写入并读回 |
+| **F-1** | **P0** | 经 UI/真实 IPC 创建中文标题：多数直接失败（`LIBRARY_OPERATION_FAILED`），个别"成功"但落库乱码（`雾港来信` → `闆炬腐鏉ヤ俊`） | Core 的 stdio 协议是 UTF-8 JSON 行，但 **PyInstaller 打包的 sidecar 在 Windows 上用 cp936 解码 stdin**；`PYTHONIOENCODING`/`PYTHONUTF8` 对冻结 bootloader 完全无效（四种组合实测回显完全一致，留痕见 workspace `task-envs/UIUX-V2-RUNTIME-REALCORE-1/encoding-probe/summary.json`，distinct=1） | `library_bridge.rs` 新增 `ascii_json_line()`，把请求里所有非 ASCII 转成 `\uXXXX`（纯 ASCII 线上形式），Python `json.loads` 无损还原；不需要重打包 sidecar | Rust 单测 `ascii_json_line_is_lossless_for_non_ascii_payloads`（断言线上纯 ASCII 且解码后与原值相等）+ `ascii_json_line_leaves_ascii_payloads_untouched`；端到端 S6 用中文标题写入并读回 |
 | **F-2** | **P1** | 书架标题栏「搜索或执行命令」按钮点击无任何反应；`aria-expanded` 恒为 false（其它三页正常） | 运行时 `RuntimeShelf` 给 `ShelfShell` 传 `palette={null}`（面板归 UiRoot 托管），但按钮仍是 `onClick={() => palette?.onOpen()}` → 对 null 静默无操作 | `ShelfShell` 增加 `onOpenCommand`/`commandOpen`，`RuntimeShelf` 传 `chrome.onOpenCommand`/`chrome.commandOpen`，按钮改为 `onClick={openCommand}` | jsdom 守卫「标题栏命令触发器在运行时真的能发出打开请求」+ aria-expanded 断言；端到端 S3 用真实鼠标点击断言面板打开与焦点还原 |
 | F-3 | P3（脚手架） | 首轮 E2E 卡在 `app-root`；S7 被未关闭的对话框连带挡住 | ①对 Tauri 页面 `Page.reload` 会打断 IPC 桥；②场景间未清理遮罩 | 脚本改为不 reload、失败时保留截图与错误文案、S6 允许"被拒"作为 finding 而不是挂死 | 见 `README.md` 的 run 历史表 |
 
@@ -150,6 +150,7 @@ S1 身份与单一 UI / S2 书架真实数据 / S3 命令面板 / S4 四页导�
 | EV-28 | F-1 | apps/desktop/src-tauri/src/core_bridge.rs | 4fb5c1be9 | - | CANONICAL |
 | EV-29 | AC1/AC6 | doc/STATUS.md | 4fb5c1be9 | - | CANONICAL |
 | EV-30 | AC1/AC6 | doc/REBASELINE_PLAN.md | 4fb5c1be9 | - | CANONICAL |
+| EV-31 | AC6 | verification/UIUX-V2-RUNTIME-REALCORE-1/review-zcode-r1.md | 4fb5c1be9 | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -157,4 +158,8 @@ S1 身份与单一 UI / S2 书架真实数据 / S3 命令面板 / S4 四页导�
 
 ## Closeout Record
 
-- 2026-10-26：交付提交 `4fb5c1be9`（代码+证据+文档同一提交，直接落 main，无独立 worktree）。ZCode 独立复核进行中；复核通过后由 DSH 更新 status=done 并回填最终结论。
+- 2026-10-26：交付提交 `4fb5c1be9`（代码+证据+文档同一提交，直接落 main，无独立 worktree）。
+- **独立复核（ZCode r1，`review-zcode-r1.md`）**：`verdict: approved`。复核者做了仓库证据之外的独立对账——直接只读查询各轮数据根的 SQLite 原始字节，确认修复前落库为 `闆炬腐鏉ヤ俊`、修复后无损；并复跑全部守卫（vitest 5 passed / cargo 2 passed / tsc exit 0）。判定：F-1 修复成立且只改发送方向充分（Core 两处响应用默认 `ensure_ascii=True`，天然 ASCII）；F-2 与 Workbench/Reader/Settings 约定一致；范围扩张 D3 可接受，替代方案更差。
+- **复核意见处置**：R-P2-1（"四组合实测"无留痕）→ 补 `encoding-probe/` 实验留痕（四组合回显 distinct=1）；R-P3-4/R-P3-5（README 措辞与 run 表）→ 已改并补 i9–i17 去向；R-P3-2（aria-expanded=true 无覆盖）、R-P3-3（core_bridge/ac1_bridge 载荷 ASCII 约束无守卫）→ 登记为后续候选，不在本 Task 内假装解决。
+- **Push**：维持未执行（干净快照 Gate 未清，与 2026-10-25 裁决一致）。
+- Closeout：`status=done`，`integration_commit=4fb5c1be9`，`canonical_evidence_status=complete`，`resource_closeout_status=complete`。

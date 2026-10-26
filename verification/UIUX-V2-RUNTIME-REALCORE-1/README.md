@@ -28,7 +28,7 @@ node e2e/uiux-v2/run.mjs      # exit 0 = 全绿
 | **验收构建**（本目录证据所用） | `cargo tauri build --no-bundle --config tauri.acceptance.conf.json` | `54F0957FC32DEA1855AE7C651A15E18DE86BB244A04284239345F774B5BA81D0` | 开（9345，仅本机回环） |
 | **发布构建**（对外交付物） | `cargo tauri build --no-bundle` | `CF86888DA121C608B6A473E21666E3C335A874FB6A4CCE4374F6FB3C3FC43AAB` | 关 |
 
-两版代码完全相同，唯一差异是 `tauri.acceptance.conf.json` 给窗口加了
+两版代码完全相同，**配置差异**只有 `tauri.acceptance.conf.json` 给窗口加的
 `additionalBrowserArgs`（wry 会用它覆盖环境变量，这是 WebView2 打开 CDP 的唯一
 可靠入口）。发布构建另做了一次冒烟：启动、v2 UI 渲染、`Core 在线`、无 9345 端口
 （见 `release-smoke.png`）。`run-i18/report.json` 的 `exeSha256` 记录的就是当轮
@@ -43,6 +43,8 @@ node e2e/uiux-v2/run.mjs      # exit 0 = 全绿
 | `run-i5` | FAIL | S3 焦点还原断言假设错误（键盘路径下 opener 是 `<body>`，本就无元素可还原） |
 | `run-i6` | FAIL | S3 鼠标路径改用「点击命令项」；S6 暴露真实写入被拒 |
 | `run-i8` | FAIL(5/7) | S6 真实写入失败（P0 编码缺陷）、S7 被未关闭的对话框连带挡住 |
+| `run-i9`..`run-i16` | 诊断轮（非验收） | 直接 IPC 探针证明写入路径本身可用；**`run-i14` 是 F-1 修复前的乱码铁证**（`雾港来信` → `闆炬腐鏉ヤ俊`，数据根保留在 workspace）；`run-i15` 复验环境变量钉死无效。原始产物在 workspace `task-envs/UIUX-V2-RUNTIME-REALCORE-1/` |
+| `run-i17` | 诊断（修复后） | 六种中文 title 形态全部正确落库并读回 |
 | **`run-i18`** | **PASS(7/7)** | 缺陷修复后全绿 |
 
 每一次失败都被保留下来：它们是「工具化验收确实在检查真实行为」的证据，而不是被
@@ -58,6 +60,14 @@ node e2e/uiux-v2/run.mjs      # exit 0 = 全绿
 6. **S6 新建作品**：真实 Core 写入中文标题 → 书卡出现 → 计数 0→1 → 选中后详情与章节区真实空态
 7. **S7 主题切换**：`data-theme` 变化 + **计算样式背景色** `rgb(27,27,27)` → `rgb(238,238,238)`
 
+## 编码留痕（ZCode 复核 R-P2-1）
+
+「`PYTHONIOENCODING` / `PYTHONUTF8` 对冻结的 PyInstaller sidecar 无效」这句话不留口说，实验在
+`G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-1/encoding-probe/`：
+同一个 `core_service.exe`、同一个含中文命令名的请求，四种环境组合各跑一次，原始响应在
+`0N-*.response.txt`，汇总在 `summary.json`。结果：四种组合回显的乱码**完全一致**
+（distinct = 1），即环境变量对该 bootloader 没有任何作用。修复不依赖这句结论——
+纯 ASCII 的 `\uXXXX` 线上形式比钉住环境变量更强，但结论本身现在有据可查。
 ## 本轮抓到的产品缺陷（详见 Task 卡）
 
 - **P0 中文内容经 IPC 落库乱码**：`library_bridge.rs` 请求序列化改为纯 ASCII
