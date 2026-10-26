@@ -89,7 +89,7 @@ allowed_paths:
 - 已解决阻塞：冻结 release exe 无法开 WebView2 CDP（wry 覆盖 env 变量）→ 经 Lead 批准做一次仓外配置增量构建（18.9s），差异仅 browser args，溯源 `BUILD-PROVENANCE.json`。
 - 保留限制：AC5 的 Chromium 侧 DOM 量化 BLOCKED（本机 msedge launcher 交接）；长条滚动 FPS BLOCKED（产品能力缺失）；物理 DPR2 屏 NOT_RUN。
 - 审查：本 Task 不自我批准；用户裁决 D1–D10 后，如需技术复核再指派未参与实现的 ZCode/Antigravity/Codex。
-- **用户 2026-10-26 追加裁决**：前端改用 **Avalonia 11（C#/.NET）**（先选 WinUI3，看过换肤/单文件证据后改选 Avalonia）；架构替换 AD-001，草案见 `doc/design/AD-002_TARGET_DESKTOP_ARCHITECTURE_DRAFT.md`；UI 参考 = Saber-Translator（书架/详情/新建/导入可 1:1 复刻视觉与流程，工作台参考其排版）；「有能用的代码和模型直接拿来用」受 GPL-3.0 约束，待 D-A 许可证裁决；**先完成技术栈与方案，Core 修复暂缓**（用户 2026-10-26）。
+- **用户 2026-10-26 追加裁决**：前端改用 **Avalonia 11（C#/.NET）**；架构替换 AD-001，见 `doc/design/AD-002_TARGET_DESKTOP_ARCHITECTURE_DRAFT.md`（v1.0 已冻结）；UI = **书架页 1:1 复刻 Saber、工作区参考、阅读器/设置沿用既有结构 + Saber 令牌**；许可证 = **L2 开源 GPL-3.0**（可合法移植 Saber 代码并保留版权）；「有能用的代码和模型直接拿来用」在该许可下成立；**先完成技术栈与方案，Core 修复暂缓**。
 - **RCA 机器特异性待复核**：本机存在沙箱 ACE 痕迹（`HOME-MY\CodexSandboxUsers`），「谁把 sidecar 降到 Low IL」未最终定位；需在无沙箱痕迹的干净 Windows 上重跑 `child-token-probe.ps1`（RCA §排除表末段），以判定是机器策略还是产品/打包问题。
 
 ## 交付与运行记录

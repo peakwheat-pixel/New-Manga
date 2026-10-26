@@ -4,7 +4,7 @@ Status: **ACCEPTED_TARGET_ARCHITECTURE**（用户 2026-10-26 书面裁决 v1.0�
 Owner: DSH（Lead/Architect）· Decision authority: User · Date: 2026-10-26
 依据：`verification/DISPLAY-PERF-DECISION-1/{baseline,visual,routes,ui-stack,ui-spec,nonadmin}/**`
 
-**用户已裁决的三项**：① 前端 = C#/.NET + Avalonia 11；② UI = 四页全部按 Saber-Translator 视觉 1:1 重做；③ 许可证 = **GPL-3.0 开源**（因此可合法移植 Saber 代码并保留版权声明）。
+**用户已裁决的三项**：① 前端 = C#/.NET + Avalonia 11；② UI = **书架页 1:1 复刻 Saber**、工作区参考、阅读器/设置沿用既有结构 + Saber 令牌；③ 许可证 = **GPL-3.0 开源**（因此可合法移植 Saber 代码并保留版权声明）。
 
 ---
 
@@ -107,7 +107,7 @@ icons/                 # 图标集（可选，覆盖默认）
 | # | 决策点 | 结果 |
 |---|---|---|
 | D-A | 许可证 | **L2 开源 GPL-3.0**（含 Ultralytics 时按 AGPL-3.0 分发，建议产品直接声明 AGPL-3.0） |
-| D-B | UI 参考范围 | **四页全部按 Saber 视觉 1:1**（书架/详情/新建/导入优先；工作台/阅读器/设置同语言）；Saber Purple 作为内置主题之一，默认主题 |
+| D-B | UI 参考范围 | **书架页 1:1 复刻**（含书籍详情/新建书籍/导入流程与对话框）；**工作区参考**其信息架构与观感（不逐像素）；**阅读器/设置不要求复刻**，沿用既有 Figma v2 结构 + Saber 配色令牌（由主题中心统一）。Saber Purple 作为内置默认主题 |
 | D-C | 主题中心 | 内置 6 套 + Saber Purple 默认；ThemePack 三档换肤；后续可导入 |
 | D-D | 桌宠/悬浮球 | 待定（Saber 有；Avalonia 透明窗口可做，+5–8 人日） |
 | D-E | 旧壳处置 | Tauri 版保留并行可运行，S4 完成后删除 |
