@@ -1,0 +1,34 @@
+{
+  "ac": "AC2",
+  "packs_total": 6,
+  "switch_samples": 30,
+  "p95_ms": 2.357,
+  "max_ms": 2.75,
+  "min_ms": 1.411,
+  "threshold_ms": 100,
+  "p95_pass": true,
+  "theme_dictionaries_light_dark": true,
+  "reduced_motion_zeroes_durations": true,
+  "distinct_app_backgrounds": 3,
+  "no_color_residue_after_switch": true,
+  "swatches": [
+    {
+      "id": "saber-purple",
+      "app_bg": "#fff5f3fa",
+      "gradient_start": "#ff667eea",
+      "gradient_end": "#ff764ba2"
+    },
+    {
+      "id": "midnight",
+      "app_bg": "#ff101322",
+      "gradient_start": "#ff2b2350",
+      "gradient_end": "#ff151a2e"
+    },
+    {
+      "id": "sakura",
+      "app_bg": "#fffdf5f7",
+      "gradient_start": "#fff3a6c0",
+      "gradient_end": "#ffd96c8e"
+    }
+  ]
+}

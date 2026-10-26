@@ -1,0 +1,11 @@
+{
+  "ac": "AC3/AC4",
+  "strip_image": "4000x60000",
+  "tile": "4000x2048",
+  "tile_count": 30,
+  "device_raster_claim": "4000x2048 device rasters",
+  "typography_vertical": "48820436433a9a30a5eecbe73a4033a22ecaba0863f33e70830399369874fafe",
+  "typography_horizontal": "3292b5776805cf863f27538b3f83019d716b81c5c91f31fe32eb90d4e1e0f226",
+  "fixtures_meta": "G:\\CODEX\\New Manga.workspace\\task-envs\\UI-WORKBENCH-READER-1\\fixtures\\meta.json",
+  "reuses_s0_method": true
+}

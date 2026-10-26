@@ -25,9 +25,9 @@ $repoRoot = Resolve-Path (Join-Path $root '..\..')
 # Reviewer reruns must never overwrite the pinned canonical evidence: default output goes to the
 # workspace task-env. Only the owner regenerates pins with -CanonicalEvidence.
 $evidence = if ($CanonicalEvidence) {
-    Join-Path $repoRoot 'verification/UI-SHELL-THEME-1'
+    Join-Path $repoRoot 'verification/UI-WORKBENCH-READER-1'
 } else {
-    'G:/CODEX/New Manga.workspace/task-envs/UI-SHELL-THEME-1/evidence-rerun'
+    'G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/evidence-rerun'
 }
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
@@ -56,6 +56,14 @@ try {
     & dotnet build NewManga.sln -c $Configuration -warnaserror 2>&1 | Tee-Object -FilePath $buildLog | Select-Object -Last 3
     if ($LASTEXITCODE -ne 0) { throw "dotnet build failed with exit code $LASTEXITCODE" }
 
+    # S4: compose/refresh reader fixtures (reuses the S0 long-strip method) and export their root.
+    $fixtureRoot = 'G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/fixtures'
+    $fixturePython = (Get-Command python -ErrorAction SilentlyContinue)?.Source
+    if (-not $fixturePython) { $fixturePython = (Get-Command py -ErrorAction SilentlyContinue)?.Source }
+    if (-not $fixturePython) { throw "python is required for S4 reader fixtures" }
+    & $fixturePython (Join-Path $root 'scripts/make_reader_fixtures.py') 2>&1 | Tee-Object -FilePath $testLog -Append
+    if ($LASTEXITCODE -ne 0) { throw "S4 fixture generation failed" }
+    $env:NEWMANGA_S4_FIXTURES = $fixtureRoot
     # AC1: regenerate the Rust production command surface in memory and compare with the committed snapshot.
     $python = (Get-Command python -ErrorAction SilentlyContinue)?.Source
     if (-not $python) { $python = (Get-Command py -ErrorAction SilentlyContinue)?.Source }
