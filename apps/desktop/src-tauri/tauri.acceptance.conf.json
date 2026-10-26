@@ -3,7 +3,7 @@
   "app": {
     "windows": [
       {
-        "title": "M2-RC1 resource channel runtime",
+        "title": "New Manga",
         "width": 1180,
         "height": 860,
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9345"

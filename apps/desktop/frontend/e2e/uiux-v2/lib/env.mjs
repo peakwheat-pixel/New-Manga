@@ -32,7 +32,7 @@ export const TASK_ENV_ROOT =
  */
 export const PINNED_EXE =
   process.env.UIUX_E2E_EXE ||
-  "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe";
+  "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/new-manga.exe";
 
 export const CDP_PORT = Number(process.env.UIUX_E2E_CDP_PORT || 9345);
 

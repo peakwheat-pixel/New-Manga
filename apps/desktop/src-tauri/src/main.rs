@@ -1540,7 +1540,7 @@ fn resolve_packaged_sidecar_dir(
 fn packaged_user_root() -> Option<PathBuf> {
     std::env::var("APPDATA")
         .ok()
-        .map(|appdata| PathBuf::from(appdata).join("com.newmanga.m2rc1.desktop"))
+        .map(|appdata| PathBuf::from(appdata).join("com.newmanga.desktop"))
 }
 
 fn fixture_shas() -> serde_json::Value {
@@ -3496,7 +3496,7 @@ mod tests {
 
     // ---- AC2 chunk-request cost probe (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF)
     // `#[ignore]`d: measured explicitly, never in the default suite. Run with
-    // `cargo test --bin m2rc1-desktop perf_chunk_request_digest_cost -- --ignored --nocapture`
+    // `cargo test --bin new-manga perf_chunk_request_digest_cost -- --ignored --nocapture`
     // (same command under `--release` for the release-profile column). Warm
     // request first, then N timed identical requests; the average is the
     // per-request figure recorded in the task's comparison table.

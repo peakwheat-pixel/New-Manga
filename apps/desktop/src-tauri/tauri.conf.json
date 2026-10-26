@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "m2rc1-desktop",
+  "productName": "New Manga",
   "version": "0.1.0",
-  "identifier": "com.newmanga.m2rc1.desktop",
+  "identifier": "com.newmanga.desktop",
   "build": {
     "frontendDist": "../frontend/dist"
   },
@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "M2-RC1 resource channel runtime",
+        "title": "New Manga",
         "width": 1180,
         "height": 860
       }
