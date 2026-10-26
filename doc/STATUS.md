@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[UI-WORKBENCH-READER-1](tasks/UI-WORKBENCH-READER-1.md) `in_review`（fit 0.99/翻页 1.05ms/长条 p95 0ms；84/84）。
+- 当前 Task：[LEGACY-SHELL-REMOVAL-1](tasks/LEGACY-SHELL-REMOVAL-1.md) `ready`（S5 旧壳退役/tile 通道；S4 done 55b7f42c6）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
