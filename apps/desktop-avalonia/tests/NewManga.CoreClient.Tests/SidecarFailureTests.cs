@@ -61,7 +61,7 @@ public sealed class SidecarFailureTests
         }
     }
 
-    [Fact]
+    [SidecarFact]
     public async Task StartupTimeout_IsTyped_NotAHang()
     {
         var powershell = Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");

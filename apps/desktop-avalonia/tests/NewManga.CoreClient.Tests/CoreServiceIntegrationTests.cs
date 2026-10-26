@@ -16,7 +16,7 @@ public sealed class CoreServiceIntegrationTests
     /// <summary>AC3 fixed vector (explicit escapes so the test never depends on editor encoding).</summary>
     public const string Ac3Title = "\u96fe\u6e2f\u6765\u4fe1\u30fb\u65e5\u672c\u8a9e\u30c6\u30b9\u30c8";
 
-    [Fact]
+    [SidecarFact]
     public async Task Ping_ReturnsReady_WithProtocol23()
     {
         var options = SidecarFixture.CreateCoreOptions("core-ping", out var dataRoot);
@@ -50,7 +50,7 @@ public sealed class CoreServiceIntegrationTests
         }
     }
 
-    [Fact]
+    [SidecarFact]
     public async Task ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped()
     {
         var options = SidecarFixture.CreateCoreOptions("core-chinese", out var dataRoot);
@@ -101,7 +101,7 @@ public sealed class CoreServiceIntegrationTests
         }
     }
 
-    [Fact]
+    [SidecarFact]
     public async Task RawUtf8Request_ReplicatesUnknownError()
     {
         var options = SidecarFixture.CreateCoreOptions("core-raw-utf8", out var dataRoot);
@@ -142,7 +142,7 @@ public sealed class CoreServiceIntegrationTests
         }
     }
 
-    [Fact]
+    [SidecarFact]
     public async Task WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest()
     {
         var options = SidecarFixture.CreateCoreOptions("core-wire-shape", out var dataRoot);

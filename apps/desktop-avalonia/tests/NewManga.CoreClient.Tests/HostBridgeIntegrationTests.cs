@@ -10,7 +10,7 @@ namespace NewManga.CoreClient.Tests;
 /// </summary>
 public sealed class HostBridgeIntegrationTests
 {
-    [Fact]
+    [SidecarFact]
     public async Task Ping_IssueResolveRevoke_FullLifecycle()
     {
         using var context = SidecarFixture.CreateBridgeContext("bridge-lifecycle");
@@ -53,7 +53,7 @@ public sealed class HostBridgeIntegrationTests
         });
     }
 
-    [Fact]
+    [SidecarFact]
     public async Task TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling()
     {
         using var context = SidecarFixture.CreateBridgeContext("bridge-errors");
@@ -80,7 +80,7 @@ public sealed class HostBridgeIntegrationTests
         });
     }
 
-    [Fact]
+    [SidecarFact]
     public async Task WireFrames_AreSingleLineJson_AsciiOnly()
     {
         using var context = SidecarFixture.CreateBridgeContext("bridge-wire");

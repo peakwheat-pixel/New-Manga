@@ -2,12 +2,19 @@
   "task": "HOST-CORECLIENT-1",
   "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
   "base_commit": "a93f20c7b",
-  "generated_at_utc": "2026-10-26T16:53:24.1973095Z",
+  "generated_at_utc": "2026-10-26T17:12:35.6182496Z",
   "runtime": {
     "dotnet_sdk": "10.0.401",
     "avalonia": "11.3.22",
     "target": "net9.0-win-x64",
     "python_sidecars": "protocol 2.3 + host_bridge wire v1"
+  },
+  "test_contract": {
+    "one_command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1",
+    "one_command_expected": "57 passed / 0 skipped / 0 failed (script prepares AC11 unlabelled sidecar copy and sets env)",
+    "plain_dotnet_test": "dotnet test apps/desktop-avalonia/NewManga.sln  (no NEWMANGA_CORECLIENT_SIDECAR_DIR)",
+    "plain_expected": "45 passed / 12 skipped / 0 failed; every skip has reason \"needs sidecar fixture\"",
+    "plain_proof_command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test-without-fixture.ps1"
   },
   "artifacts": {
     "published_exe": {
@@ -32,74 +39,104 @@
     }
   },
   "evidence": {
-    "dotnet_test_log": {
-      "path": "verification\\HOST-CORECLIENT-1\\test\\dotnet-test-Debug.log",
-      "bytes": 9343,
-      "sha256": "4161c65553511dcd56e915c4c5264de53ebc185e303f32acee58cf5568f8c4f2"
+    "build_log": {
+      "path": "verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log",
+      "bytes": 1327,
+      "sha256": "b64f1e8079711150ef9b3caf8d28f3dc28e62550b6eaed2ce6f4975bf9be8a9c"
     },
-    "dotnet_build_log": {
-      "path": "verification\\HOST-CORECLIENT-1\\build\\dotnet-build-Debug.log",
-      "bytes": 1962,
-      "sha256": "2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666"
+    "test_log": {
+      "path": "verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log",
+      "bytes": 1534,
+      "sha256": "e027f355d195b5221dd1719001f149a7e09bc42a7711afe11a7458e4ac011657"
     },
-    "vitest_baseline_log": {
-      "path": "verification\\HOST-CORECLIENT-1\\test\\vitest-baseline.log",
+    "summary": {
+      "path": "verification/HOST-CORECLIENT-1/test/summary.json",
+      "bytes": 1249,
+      "sha256": "0535aff85784df6f04c62581895f9a627837c04b482961cb0df1a14c34ab6207"
+    },
+    "trx_coreclient": {
+      "path": "verification/HOST-CORECLIENT-1/test/results-coreclient.trx",
+      "bytes": 47629,
+      "sha256": "5d2a111191e770949ee6b1ac4132abde119cc76c0698d79f9dc4a8122a2b3bda"
+    },
+    "trx_host": {
+      "path": "verification/HOST-CORECLIENT-1/test/results-host.trx",
+      "bytes": 33477,
+      "sha256": "0b4e2792ab29e626fa796d4c1a386f9ab3b18120daec9866f8a165faaafd5e79"
+    },
+    "trx_app": {
+      "path": "verification/HOST-CORECLIENT-1/test/results-app.trx",
+      "bytes": 7233,
+      "sha256": "10de787cf33c9cfe6998986cb7552bae4b1d1e4adc6e9e74d2b1db8ae64b0290"
+    },
+    "no_fixture_log": {
+      "path": "verification/HOST-CORECLIENT-1/test/dotnet-test-Debug-no-fixture.log",
+      "bytes": 12612,
+      "sha256": "48c365afea673d4a696ad4f1a99d3d637b4a4a03f571172014a3548aede7920c"
+    },
+    "no_fixture_summary": {
+      "path": "verification/HOST-CORECLIENT-1/test/no-fixture-summary.json",
+      "bytes": 4480,
+      "sha256": "18f1bca63c095645d63e3d4e6c4fb32e50f4d3f80d6e3a2faf6d0ea7a73ffb4d"
+    },
+    "vitest_baseline": {
+      "path": "verification/HOST-CORECLIENT-1/test/vitest-baseline.log",
       "bytes": 234307,
       "sha256": "8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2"
     },
     "publish_files": {
-      "path": "verification\\HOST-CORECLIENT-1\\publish\\publish_files.json",
+      "path": "verification/HOST-CORECLIENT-1/publish/publish_files.json",
       "bytes": 699,
       "sha256": "00d5ec9b5a09fc0d921701049817e17bf87a405a491c71b3184569f97ba40000"
     },
     "core_chinese_roundtrip": {
-      "path": "verification\\HOST-CORECLIENT-1\\wire\\core-chinese-roundtrip.json",
+      "path": "verification/HOST-CORECLIENT-1/wire/core-chinese-roundtrip.json",
       "bytes": 4785,
-      "sha256": "978de43ca074205f9be417fff8f5c617d057c9696f9aa663b442fa88be1be052"
+      "sha256": "9a24c58d6ad5e50c622901fb63b6484c6248af50b1f1d3c5cb9b4313ac02d9c9"
     },
     "core_raw_utf8_negative": {
-      "path": "verification\\HOST-CORECLIENT-1\\wire\\core-raw-utf8-negative.json",
+      "path": "verification/HOST-CORECLIENT-1/wire/core-raw-utf8-negative.json",
       "bytes": 1122,
       "sha256": "611962501be106ce97c22a0c6cc3ac7c157d7c691c1378eb44b25834d64ca084"
     },
     "host_bridge_lifecycle": {
-      "path": "verification\\HOST-CORECLIENT-1\\wire\\host-bridge-lifecycle.json",
-      "bytes": 4484,
-      "sha256": "3e29eaa8bf17e2663b7d7cdb28e1ab751308bc3880f0ee437f97cb78e8a78f86"
+      "path": "verification/HOST-CORECLIENT-1/wire/host-bridge-lifecycle.json",
+      "bytes": 4480,
+      "sha256": "43ea607c88ef39b12fd11567fb8c4695edd17f0e4beebc8ab393ed66d2af9e76"
     },
     "startup_timeout": {
-      "path": "verification\\HOST-CORECLIENT-1\\diagnostics\\startup-timeout.json",
+      "path": "verification/HOST-CORECLIENT-1/diagnostics/startup-timeout.json",
       "bytes": 257,
       "sha256": "95a65b02f59bd9d5259d3fe0f81839c99d6ba872c7461c0710eff8c9e2d4dbf7"
     },
     "host_readonly": {
-      "path": "verification\\HOST-CORECLIENT-1\\host\\runtime-readonly.json",
+      "path": "verification/HOST-CORECLIENT-1/host/runtime-readonly.json",
       "bytes": 290,
       "sha256": "855710ca4f5b6c4e61e705f50c735781ec1b496fd93ff15bb35f8b5c8f954790"
     },
     "second_instance": {
-      "path": "verification\\HOST-CORECLIENT-1\\host\\second-instance.json",
+      "path": "verification/HOST-CORECLIENT-1/host/second-instance.json",
       "bytes": 175,
-      "sha256": "ac9bb4a7868524ad22c847ce222884c49372801ff30e74b6a22b0699735d7662"
+      "sha256": "de8aaf4da3c9e7bc81fc4d9af63ae46ca959b3ab68c9209775705a6e92eefee0"
     },
     "legacy_shell_readonly": {
-      "path": "verification\\HOST-CORECLIENT-1\\legacy-shell\\runtime-readonly.json",
+      "path": "verification/HOST-CORECLIENT-1/legacy-shell/runtime-readonly.json",
       "bytes": 177,
       "sha256": "ef4301465315daf4a7edef6d70b66512fbcba9db5277c8cecc549fc59fdd468f"
     },
     "smoke": {
-      "path": "verification\\HOST-CORECLIENT-1\\smoke\\smoke.json",
+      "path": "verification/HOST-CORECLIENT-1/smoke/smoke.json",
       "bytes": 2130,
       "sha256": "3cb09e935ea897a2cb8b96b53c9fd3e678b1786cfe6b1a739e6b02b8187c5021"
     },
     "smoke_window": {
-      "path": "verification\\HOST-CORECLIENT-1\\smoke\\window.png",
+      "path": "verification/HOST-CORECLIENT-1/smoke/window.png",
       "bytes": 139672,
       "sha256": "6634709274fdfbecb0a399d284f5113baf8f3cb7eabbaba60c2fa7b8c6604741"
     }
   },
   "cleanup": {
-    "action": "PRESERVE (evidence copy, unlabelled sidecars for tests)",
-    "task_env": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1"
+    "task_env": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1",
+    "action": "PRESERVE (unlabelled sidecars for reproducibility)"
   }
 }

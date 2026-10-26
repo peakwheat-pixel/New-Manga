@@ -20,24 +20,41 @@ public static class SidecarFixture
     public const string CoreServiceFileName = "core_service.exe";
     public const string HostBridgeFileName = "host_bridge.exe";
 
+    /// <summary>
+    /// True when the AC11 unlabelled sidecar copy is available. Integration tests use this through
+    /// <see cref="SidecarFactAttribute"/> so a plain `dotnet test` reports an explicit Skip instead
+    /// of a failure.
+    /// </summary>
+    public static bool TryGetSidecarDirectory(out string directory, out string reason)
+    {
+        directory = Environment.GetEnvironmentVariable(SidecarDirectoryVariable) ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            reason = $"reason: needs sidecar fixture - set {SidecarDirectoryVariable} or run " +
+                     "apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)";
+            return false;
+        }
+
+        foreach (var exe in new[] { CoreServiceFileName, HostBridgeFileName, CatalogLoaderFileName })
+        {
+            if (!File.Exists(Path.Combine(directory, exe)))
+            {
+                reason = $"reason: needs sidecar fixture - {exe} missing under {SidecarDirectoryVariable}";
+                return false;
+            }
+        }
+
+        reason = string.Empty;
+        return true;
+    }
+
     public static string SidecarDirectory
     {
         get
         {
-            var directory = Environment.GetEnvironmentVariable(SidecarDirectoryVariable);
-            if (string.IsNullOrWhiteSpace(directory))
+            if (!TryGetSidecarDirectory(out var directory, out var reason))
             {
-                throw new InvalidOperationException(
-                    $"{SidecarDirectoryVariable} is not set. Run tests through scripts/test.ps1, which copies the " +
-                    "frozen sidecars to an unlabelled workspace directory (AC11).");
-            }
-
-            foreach (var exe in new[] { CoreServiceFileName, HostBridgeFileName, CatalogLoaderFileName })
-            {
-                if (!File.Exists(Path.Combine(directory, exe)))
-                {
-                    throw new InvalidOperationException($"{exe} is missing under {SidecarDirectoryVariable}={directory}");
-                }
+                throw new InvalidOperationException(reason);
             }
 
             return directory;
