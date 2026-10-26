@@ -52,7 +52,7 @@ allowed_paths:
 - [x] **AC8 证据与范围自检**（全部数字可复核；产品代码/配置/依赖零改动；测量全程隔离 env，未触用户数据；`git status` 仅本 Task 新增路径）<<MET>>
 - [x] **AC9 Core 非管理员启动 RCA**（已复现：非提权 3 次/提权对照 2 次；根因链闭合到 Low 完整性令牌 → sidecar 无法写 `%APPDATA%\com.newmanga.desktop\{derived,catalog}` → Core 秒退 → supervisor 3 次失败 → t≈20s panic 退出；候选机器策略待干净机复核）<<MET>>
 - [x] **AC10 非 Web 前端技术栈选型证据**（用户追加需求；实测 Avalonia 单文件 34.24MB、运行时换肤机制对比、WinUI3 单文件/RequestedTheme 限制、GPL 红线；给出主选/备选/不推荐与 11 项 spike 验收）<<MET>>
-- [ ] **AC11 干净机复核 Core 启动**（用户 2026-10-26 追加：本机 Windows Sandbox 已启用且存在 `CodexSandboxOffline/Online` 沙箱账户 → 在 Windows Sandbox 干净环境中以非提权运行基线 exe，测 sidecar 令牌完整性、Core 是否启动、app 是否 panic；判定 Low IL 降级是机器策略 vs 产品/打包问题）
+- [x] **AC11 干净机复核 Core 启动**（判定 **H1 = 本机环境/机器策略，非产品缺陷**：仓库根 `G:\CODEX\New Manga` 带 `Mandatory Label\Low (OI)(CI)(NW)` 强制标签，全仓库继承 → 从该目录启动的 exe 进程令牌 Low(0x1000) → MIC 拒写 `%APPDATA%` → Core 秒退。对照：无标签副本 Medium(0x2000)/Windows Sandbox 中性副本 High(0x3000) 均 **Core 启动成功**；手工 `icacls /setintegritylevel Low` 可复现同款失败。产品侧仅需「可诊断 + 优雅失败」，不得改产品适配 Low；测试规则：非提权验证须从无标签副本运行）<<MET>>
 - [x] **AC12 新架构草案 + Saber 参考规格**（AD-002 草案：Avalonia+Python Core 边界/接线/主题中心 ThemePack/书架 1:1 复刻令牌与流程/许可证决策树 L1–L3/灰度迁移 S0–S5/成本 200–400 人日；Saber 实测栈与 CSS 令牌已存证）<<MET>>
 - [x] **AC13 AD-002 冻结 + 裁决落地 + 任务拆解**（用户裁决：前端 Avalonia、全页"着重参考"Saber、**L2 开源 GPL-3.0**；AD-002 v1.0 标 ACCEPTED 并给出 S0–S5 任务拆解与 GPL 合规义务清单）<<MET>>
 - [ ] **AC14 S0 Avalonia spike（GO/NO-GO）**（11 项门槛：单文件 ≤45MB、冷启动 p50 ≤600ms、真 Mica、3 套主题热切 ≤100ms、4000×60000 分块 p95 ≤16.7ms/内存 ≤1.5GB、竖排 1:1 像素、IME、CoreClient 中文零乱码、无障碍、安装包 ≤150MB、版本决策；工程在 workspace，证据在当前任务 `spike/`）
@@ -114,6 +114,7 @@ allowed_paths:
 | E-AC7 | AC7 | doc/design/DISPLAY_PERF_DECISION_1.md | | 9d9687d7f6bd44e302b24556a7e204fab6cbd1bc28c3e159ab16f8b9db840643 | CANONICAL |
 | E-AC9 | AC9 | verification/DISPLAY-PERF-DECISION-1/nonadmin/RCA.md | | df33ab8c999edda61715736f784744a3869b7b8f3bb34e0f841be624791a1734 | CANONICAL |
 | E-AC10 | AC10 | verification/DISPLAY-PERF-DECISION-1/ui-stack/STACK_COMPARISON.md | | 9e9786fc6bfc1ff4aec370ad68de693b61201d3628681303bc334e36db06774c | CANONICAL |
+| E-AC11 | AC11 | verification/DISPLAY-PERF-DECISION-1/nonadmin/sandbox/REPORT.md | | f6b59a80b6565cad23a2d87738c8a1072ebfe246767bc5ab11743f6fab19b8a8 | CANONICAL |
 
 ## Resource Manifest
 

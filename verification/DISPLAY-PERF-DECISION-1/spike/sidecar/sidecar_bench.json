@@ -1,0 +1,52 @@
+{
+  "gate": "8-sidecar-reuse",
+  "sidecar_exe": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\release\\resources\\core-sidecar\\core_service.exe",
+  "spawn_ms": 6,
+  "child_has_console_window": false,
+  "ping": {
+    "latency_ms": 214.29,
+    "wire_ascii_only": true,
+    "status": "ready",
+    "protocol_major": 2,
+    "protocol_minor": 3,
+    "capabilities": [
+      "library.list_books"
+    ],
+    "error": null
+  },
+  "raw_utf8_negative_control": {
+    "request_ascii_only": false,
+    "request_has_raw_utf8": true,
+    "error": "{\u0022code\u0022:\u0022UNKNOWN\u0022,\u0022category\u0022:\u0022unknown\u0022,\u0022retryable\u0022:\u0022unknown\u0022}",
+    "result_is_null": true,
+    "result_title": null
+  },
+  "create_book": {
+    "wire_ascii_only": true,
+    "error": null,
+    "title_roundtrip_equal": true,
+    "title_received": "\u96FE\u6E2F\u6765\u4FE1 \u00B7 Saber \u6D4B\u8BD5\u5377 \u00B7 \u4E2D\u6587\u5F80\u8FD4",
+    "title_expected": "\u96FE\u6E2F\u6765\u4FE1 \u00B7 Saber \u6D4B\u8BD5\u5377 \u00B7 \u4E2D\u6587\u5F80\u8FD4",
+    "title_utf8_hex_expected": "e99bbee6b8afe69da5e4bfa120c2b720536162657220e6b58be8af95e58db720c2b720e4b8ade69687e5be80e8bf94",
+    "title_utf8_hex_received": "e99bbee6b8afe69da5e4bfa120c2b720536162657220e6b58be8af95e58db720c2b720e4b8ade69687e5be80e8bf94"
+  },
+  "list_books": {
+    "wire_ascii_only": true,
+    "count": 1,
+    "title_found_exact": true,
+    "titles": [
+      "\u96FE\u6E2F\u6765\u4FE1 \u00B7 Saber \u6D4B\u8BD5\u5377 \u00B7 \u4E2D\u6587\u5F80\u8FD4"
+    ],
+    "error": null
+  },
+  "shutdown_response": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022spike-shutdown\u0022,\u0022result\u0022:{\u0022status\u0022:\u0022stopped\u0022},\u0022error\u0022:null}",
+  "exit": {
+    "exited": true,
+    "exit_code": 0
+  },
+  "stderr_tail": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "stderr_has_traceback": false,
+  "all_requests_ascii_only": false,
+  "status": "RUN",
+  "written_at_utc": "2026-10-26T15:42:02.883Z"
+}

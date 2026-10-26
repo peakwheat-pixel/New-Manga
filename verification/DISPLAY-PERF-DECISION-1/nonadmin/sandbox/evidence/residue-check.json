@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-26T23:48:26.5576308+08:00",
+  "sandboxProcesses": [],
+  "port19080Listeners": [],
+  "hcsdiagList": "32d74c76-a2e3-480a-a5fd-35e950313094\n    VM,                       \tSavedAsTemplate, 32D74C76-A2E3-480A-A5FD-35E950313094, CmService\n",
+  "sandboxFeature": 2,
+  "sandboxPackage": "0.8.107.0"
+}

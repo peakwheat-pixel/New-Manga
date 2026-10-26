@@ -1,0 +1,13 @@
+23:49:54.162 LISTENING port=19080 stage=G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\stage out=G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\mini-out
+23:50:04.055 REQ 172.30.63.23:52937 :: GET bootstrap-mini.ps1
+23:50:04.063 SEND bootstrap-mini.ps1 size=9782
+23:50:07.363 REQ 172.30.63.23:53973 :: GET payload.zip
+23:50:07.371 SEND payload.zip size=1345101181
+23:50:09.227 REQ 172.30.63.23:53976 :: GET payload.zip.sha256
+23:50:09.234 SEND payload.zip.sha256 size=66
+23:50:18.968 REQ 172.30.63.23:53983 :: UPLOAD
+23:50:19.012 RECV bootstrap.log size=652
+23:50:19.023 RECV mini-result.json size=931659
+23:50:19.031 REQ 172.30.63.23:53984 :: UPLOAD
+23:50:19.038 RECV PROBE-DONE.txt size=38
+23:50:19.046 SERVER END done=True elapsed=24.9

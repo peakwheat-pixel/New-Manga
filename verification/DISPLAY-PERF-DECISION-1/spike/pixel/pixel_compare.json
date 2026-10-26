@@ -1,0 +1,55 @@
+{
+  "gate": "6-portrait-1to1",
+  "source": {
+    "path": "verification/DISPLAY-PERF-DECISION-1/routes/sample_current_pillow.png",
+    "size": [
+      1350,
+      1920
+    ]
+  },
+  "dpr1": {
+    "same_size": true,
+    "pixels": 2592000,
+    "identical_pixels": 2592000,
+    "identical_ratio": 1.0,
+    "diff_pixels": 0,
+    "diff_ratio": 0.0,
+    "diff_ratio_le2": 0.0,
+    "max_channel_delta": 0,
+    "mean_abs_delta": 0.0
+  },
+  "dpr2": {
+    "same_size": true,
+    "pixels": 2592000,
+    "identical_pixels": 2592000,
+    "identical_ratio": 1.0,
+    "diff_pixels": 0,
+    "diff_ratio": 0.0,
+    "diff_ratio_le2": 0.0,
+    "max_channel_delta": 0,
+    "mean_abs_delta": 0.0,
+    "uniform_2x2_blocks": 254677,
+    "checked_2x2_blocks": 648000,
+    "uniform_ratio": 0.39302
+  },
+  "dpr2_probe": {
+    "png_size": [
+      1350,
+      1920
+    ],
+    "red_pixels": 40000,
+    "red_bbox": [
+      0,
+      0,
+      199,
+      199
+    ],
+    "red_bbox_size": [
+      200,
+      200
+    ],
+    "dpi_scale_honoured_2x": true
+  },
+  "pass_dpr1_exact": true,
+  "pass_dpr2_exact": true
+}

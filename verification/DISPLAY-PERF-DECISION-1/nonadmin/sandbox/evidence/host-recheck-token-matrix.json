@@ -1,0 +1,82 @@
+[
+  {
+    "label": "explorer-dde",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": true,
+    "exited": false,
+    "lockFile": "exists|415",
+    "catalogDb": "exists|24576",
+    "finishedAt": "2026-10-26T23:38:30.2056685+08:00"
+  },
+  {
+    "label": "explorer-dde-freshcopy",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": true,
+    "exited": false,
+    "lockFile": "exists|435",
+    "catalogDb": "exists|24576",
+    "finishedAt": "2026-10-26T23:43:19.8030487+08:00"
+  },
+  {
+    "label": "explorer-dde-label-low",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x1000 (Low) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": false,
+    "exited": true,
+    "lockFile": "missing",
+    "catalogDb": "missing",
+    "finishedAt": "2026-10-26T23:44:53.1221329+08:00"
+  },
+  {
+    "label": "explorer-dde-payload2",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": true,
+    "exited": false,
+    "lockFile": "exists|433",
+    "catalogDb": "exists|24576",
+    "finishedAt": "2026-10-26T23:43:21.7578498+08:00"
+  },
+  {
+    "label": "explorer-dde-pinned",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": true,
+    "exited": false,
+    "lockFile": "exists|429",
+    "catalogDb": "exists|24576",
+    "finishedAt": "2026-10-26T23:43:17.1423966+08:00"
+  },
+  {
+    "label": "explorer-dde-release",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x1000 (Low) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": false,
+    "exited": true,
+    "lockFile": "missing",
+    "catalogDb": "missing",
+    "finishedAt": "2026-10-26T23:40:41.3861246+08:00"
+  },
+  {
+    "label": "explorer-dde-release-re1",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x1000 (Low) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": false,
+    "exited": true,
+    "lockFile": "missing",
+    "catalogDb": "missing",
+    "finishedAt": "2026-10-26T23:44:06.9160475+08:00"
+  },
+  {
+    "label": "explorer-dde-release-re2",
+    "selfToken": "integrity=0x2000 (Medium) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "coreToken": "integrity=0x1000 (Low) elevation=0 elevationType=3 appContainer=0 tokenType=1",
+    "gcMarker": false,
+    "exited": true,
+    "lockFile": "missing",
+    "catalogDb": "missing",
+    "finishedAt": "2026-10-26T23:44:08.9763715+08:00"
+  }
+]

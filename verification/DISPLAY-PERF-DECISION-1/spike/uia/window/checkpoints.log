@@ -1,0 +1,28 @@
+0.2	main-entry
+11.5	options-parsed
+14.2	avalonia-bootstrap-start
+218.7	app-xaml-start
+228.9	app-xaml-done
+229.2	framework-init-start
+230.6	theme-applied
+249.1	window-ctor-start
+271.2	window-xaml-done
+271.7	window-ctor-done
+271.9	main-window-created
+272.1	framework-init-completed
+328.9	window-opened-event
+
+0.2	main-entry
+11.1	options-parsed
+14.0	avalonia-bootstrap-start
+217.6	app-xaml-start
+227.9	app-xaml-done
+228.2	framework-init-start
+229.6	theme-applied
+246.9	window-ctor-start
+268.6	window-xaml-done
+269.1	window-ctor-done
+269.4	main-window-created
+269.5	framework-init-completed
+330.4	window-opened-event
+

@@ -1,0 +1,40 @@
+{
+  "capturedAt": "2026-10-26T23:51:04.6425108+08:00",
+  "source": "Windows Sandbox clean VM (disposable), guest user WDAGUtilityAccount, EnableLUA=0",
+  "hostOS": "Windows Sandbox guest build 26100.9711",
+  "payload": {
+    "zipSha256": "B7996A60D29C687B081751CF3A6048B5C71BC536C1CDE2EA6D4E5B1D484226F8 (round1) / 2E7400619E38F9600F76D27D131A64A7FBCCC16C4BEBF9E80A50161D9664EB1B (round4, same content except probe scripts)",
+    "payloadShaMatchInGuest": true,
+    "coreServiceSha256InGuest": "E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0",
+    "appExeSha256InGuest": "1136BB0A8D582A30C6EF0B16959B86A62DD26D2C6D9CE49E298C9B86C3343226",
+    "pinnedBaselineCore": "E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0",
+    "pinnedBaselineApp": "1136BB0A8D582A30C6EF0B16959B86A62DD26D2C6D9CE49E298C9B86C3343226"
+  },
+  "mechanismTest": {
+    "description": "same pinned-baseline core_service.exe in a disposable Windows Sandbox: neutral copy vs copy with Low mandatory label",
+    "guestWasElevated": "High (elevation=1, elevationType=1; sandbox has EnableLUA=0 so no non-elevated context exists inside WSB)",
+    "results": [
+      {
+        "step": "unlabeled-high",
+        "childToken": "integrity=0x3000 (High) elevation=1 elevationType=1 appContainer=0 tokenType=1",
+        "gcMarker": false,
+        "exited": true,
+        "lockFile": "exists|261",
+        "catalogDb": "exists",
+        "stderrHead": "@{value=WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\work\\runs\\unlabeled-high\\data-root\\models\\detector\\ogkalu-comic-text-and-bubble-detector | C:\\work\\lab\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\work\\runs\\unlabeled-high\\data-root\\models\\detector\\yolo11s-seg.onnx | C:\\work\\lab\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n; PSPath=C:\\work\\runs\\unlabeled-high\\stderr.log; PSParentPath=C:\\work\\runs\\unlabeled-high; PSChildName=stderr.log; PSDrive=; PSProvider=; ReadCount=1}"
+      },
+      {
+        "step": "lowlabel-high",
+        "childToken": "integrity=0x1000 (Low) elevation=1 elevationType=1 appContainer=0 tokenType=1",
+        "gcMarker": false,
+        "exited": true,
+        "lockFile": "missing",
+        "catalogDb": "missing",
+        "stderrHead": "@{value=Traceback (most recent call last):\r\n  File \"infrastructure\\resource_channel\\handle_resolver.py\", line 1039, in open_exclusive_lock_for_initialize\r\n  File \"infrastructure\\resource_channel\\handle_resolver.py\", line 902, in _open_lock_handle\r\nFileNotFoundError: C:\\work\\runs\\lowlabel-high\\scope\\derived\\.preview-lifecycle.lock\r\n\r\nDuring handling of the above exception, another exception occurred:\r"
+      }
+    ],
+    "labelBefore_rawHasLowLabel": false,
+    "labelAfter_rawHasLowLabel": true
+  },
+  "rawFileInWorkspace": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\sandbox\\mini-out\\mini-result.json (931 KB raw, incl. whoami + icacls)"
+}

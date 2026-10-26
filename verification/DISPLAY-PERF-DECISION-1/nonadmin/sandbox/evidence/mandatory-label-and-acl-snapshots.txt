@@ -1,0 +1,53 @@
+=== repo path chain: mandatory labels (icacls) ===
+G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\resources\core-sidecar => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\resources => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga\apps\desktop\src-tauri\target\release => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga\apps\desktop\src-tauri\target => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga\apps\desktop\src-tauri => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga\apps\desktop => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga\apps => Mandatory Label\Low Mandatory Level:(I)(OI)(CI)(NW)
+G:\CODEX\New Manga => Mandatory Label\Low Mandatory Level:(OI)(CI)(NW)
+G:\CODEX => no label
+=== exe labels ===
+G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\resources\core-sidecar\core_service.exe
+  sha256=E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0
+  label=Mandatory Label\Low Mandatory Level:(I)(NW)
+G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\new-manga.exe
+  sha256=1B78B92FF553F74E5A628BC0781F9F1BD85E6DB8BB779C62DE933D99363881B4
+  label=Mandatory Label\Low Mandatory Level:(I)(NW)
+G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\pinned-baseline\new-manga.exe
+  sha256=1136BB0A8D582A30C6EF0B16959B86A62DD26D2C6D9CE49E298C9B86C3343226
+  label=Mandatory Label\Low Mandatory Level:(I)(NW)
+G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\pinned-baseline\resources\core-sidecar\core_service.exe
+  sha256=E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0
+  label=none
+G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\payload\resources\core-sidecar\core_service.exe
+  sha256=E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0
+  label=none
+G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\work\labeltest\core_service.exe
+  sha256=E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0
+  label=Mandatory Label\Low Mandatory Level:(NW)
+G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\work\copytest\core_service.exe
+  sha256=E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0
+  label=none
+=== release sidecar dir SACL (raw) ===
+O:BAG:S-1-5-21-2196946971-914346751-4210154634-1001D:AI(D;CIID;DT;;;WD)(A;OICIID;0x1301bf;;;S-1-5-21-715456912-1603238377-2083547873-2758968920)(A;OICIID;0x110156;;;S-1-4-63028012-1010052687)(A;OICIID;0x1301bf;;;S-1-5-21-2196946971-914346751-4210154634-1003)(A;OICIID;0x1301bf;;;S-1-5-21-884840046-396652784-710274065-85489587)(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;0x1301bf;;;AU)(A;OICIIOID;SDGXGWGR;;;AU)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;BU)S:AI
+=== release core_service.exe ACL (icacls) ===
+G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\resources\core-sidecar\core_service.exe S-1-5-21-715456912-1603238377-2083547873-2758968920:(I)(M)
+                                                                                                 S-1-4-63028012-1010052687:(I)(W,D,DC)
+                                                                                                 HOME-MY\CodexSandboxUsers:(I)(M)
+                                                                                                 S-1-5-21-884840046-396652784-710274065-85489587:(I)(M)
+                                                                                                 BUILTIN\Administrators:(I)(F)
+                                                                                                 NT AUTHORITY\SYSTEM:(I)(F)
+                                                                                                 NT AUTHORITY\Authenticated Users:(I)(M)
+                                                                                                 BUILTIN\Users:(I)(RX)
+                                                                                                 Mandatory Label\Low Mandatory Level:(I)(NW)
+
+Successfully processed 1 files; Failed processing 0 files
+=== pinned core_service.exe ACL (icacls) ===
+G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\pinned-baseline\resources\core-sidecar\core_service.exe BUILTIN\Administrators:(F)
+                                                                                                                       NT AUTHORITY\SYSTEM:(F)
+                                                                                                                       NT AUTHORITY\Authenticated Users:(M)
+                                                                                                                       BUILTIN\Users:(RX)
+
+Successfully processed 1 files; Failed processing 0 files

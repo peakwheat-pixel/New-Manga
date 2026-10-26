@@ -1,0 +1,7 @@
+﻿23:50:07.078 mini bootstrap start host=172.30.48.1
+23:50:09.107 downloaded payload.zip bytes=1345101181
+23:50:09.228 downloaded payload.zip.sha256 bytes=66
+23:50:10.509 payload sha match=True
+23:50:13.949 extracted; coreSha=E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0 appSha=1136BB0A8D582A30C6EF0B16959B86A62DD26D2C6D9CE49E298C9B86C3343226
+23:50:18.097 test unlabeled-high token=integrity=0x3000 (High) elevation=1 elevationType=1 appContainer=0 tokenType=1 gc=False lock=exists|261
+23:50:18.587 test lowlabel-high token=integrity=0x1000 (Low) elevation=1 elevationType=1 appContainer=0 tokenType=1 gc=False lock=missing

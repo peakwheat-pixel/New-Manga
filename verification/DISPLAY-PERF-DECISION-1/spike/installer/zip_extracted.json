@@ -1,0 +1,36 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\package\\installer\\extracted\\Spike.App.exe",
+  "arguments": "",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:51:05.9323033Z",
+      "window_visible_ms": 2357,
+      "window_visible_from_create_ms": 448.3,
+      "hwnd": "0x7600FC",
+      "pid": 38168,
+      "working_set_mb": 139.4,
+      "process_start_time": "2026-10-26T23:51:07.8415514+08:00",
+      "capture": {
+        "height": 832,
+        "width": 1202,
+        "y": 276,
+        "x": 679
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\installer\\zip_extracted_run1.png"
+    }
+  ],
+  "measured_count": 1,
+  "visible_ms_sorted": [
+    2357
+  ],
+  "visible_ms_p50": 2357,
+  "visible_from_create_ms_sorted": [
+    448.3
+  ],
+  "visible_from_create_ms_p50": 448.3,
+  "visible_from_create_ms_min": 448.3,
+  "visible_from_create_ms_max": 448.3,
+  "captured_at_utc": "2026-10-26T15:51:09.6372951Z"
+}

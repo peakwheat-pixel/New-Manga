@@ -1,0 +1,7 @@
+23:42:33.699 LISTENING port=19080 stage=G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\stage out=G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\sandbox\sbx-out
+23:42:43.264 REQ 172.30.52.138:55445 :: GET bootstrap.ps1
+23:42:43.272 SEND bootstrap.ps1 size=6271
+23:42:46.449 REQ 172.30.52.138:62620 :: GET payload.zip
+23:42:46.457 SEND payload.zip size=1345101181
+23:42:48.178 REQ 172.30.52.138:62622 :: GET payload.zip.sha256
+23:42:48.185 SEND payload.zip.sha256 size=66

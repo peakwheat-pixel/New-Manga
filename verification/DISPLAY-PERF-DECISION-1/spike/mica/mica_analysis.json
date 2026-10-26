@@ -1,0 +1,146 @@
+{
+  "gate": "3-mica-real",
+  "captures": {
+    "mica_on": "verification/DISPLAY-PERF-DECISION-1/spike/mica/mica_on_run1.png",
+    "mica_off": "verification/DISPLAY-PERF-DECISION-1/spike/mica/mica_off_run1.png",
+    "band_box": [
+      40,
+      8,
+      1160,
+      112
+    ]
+  },
+  "mica_on_band": {
+    "size": [
+      1120,
+      104
+    ],
+    "unique_colors": 56,
+    "channel_stddev": [
+      11.072,
+      10.729,
+      11.229
+    ],
+    "channel_mean": [
+      232.604,
+      242.926,
+      254.126
+    ],
+    "max_stddev": 11.229,
+    "top_colors": [
+      {
+        "count": 37839,
+        "rgb": [
+          233,
+          244,
+          255
+        ]
+      },
+      {
+        "count": 30445,
+        "rgb": [
+          235,
+          243,
+          255
+        ]
+      },
+      {
+        "count": 14859,
+        "rgb": [
+          232,
+          244,
+          255
+        ]
+      },
+      {
+        "count": 12736,
+        "rgb": [
+          234,
+          244,
+          255
+        ]
+      },
+      {
+        "count": 12514,
+        "rgb": [
+          232,
+          245,
+          255
+        ]
+      }
+    ],
+    "is_flat": false
+  },
+  "mica_off_band": {
+    "size": [
+      1120,
+      104
+    ],
+    "unique_colors": 45,
+    "channel_stddev": [
+      8.967,
+      8.578,
+      8.078
+    ],
+    "channel_mean": [
+      245.387,
+      246.399,
+      248.433
+    ],
+    "max_stddev": 8.967,
+    "top_colors": [
+      {
+        "count": 115675,
+        "rgb": [
+          246,
+          247,
+          249
+        ]
+      },
+      {
+        "count": 235,
+        "rgb": [
+          92,
+          102,
+          112
+        ]
+      },
+      {
+        "count": 59,
+        "rgb": [
+          246,
+          201,
+          156
+        ]
+      },
+      {
+        "count": 52,
+        "rgb": [
+          126,
+          176,
+          227
+        ]
+      },
+      {
+        "count": 43,
+        "rgb": [
+          246,
+          247,
+          205
+        ]
+      }
+    ],
+    "is_flat": false
+  },
+  "on_vs_off": {
+    "mean_abs_delta": [
+      12.783,
+      3.473,
+      6.234
+    ],
+    "max_channel_delta": 182,
+    "pixels_changed_gt2": 116245,
+    "pixel_changed_ratio": 0.8947
+  },
+  "mica_backdrop_proven": false
+}

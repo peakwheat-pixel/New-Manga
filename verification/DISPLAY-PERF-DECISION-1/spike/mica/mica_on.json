@@ -1,0 +1,36 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\publish\\win-x64-single-trimmed-r2r-compressed\\Spike.App.exe",
+  "arguments": "--mode=window --mica=on --hold-ms=6000 --out=\"G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\mica\" --assets=\"G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA\\oc material\\17\" --tiles=\"G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\fixtures\\strip-4000x60000\\tiles\" --tiles-meta=\"G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\fixtures\\strip-4000x60000\\meta.json\"",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:44:15.3258584Z",
+      "window_visible_ms": 1789,
+      "window_visible_from_create_ms": 500.5,
+      "hwnd": "0x2B0AE6",
+      "pid": 24816,
+      "working_set_mb": 420.2,
+      "process_start_time": "2026-10-26T23:44:16.6151178+08:00",
+      "capture": {
+        "height": 800,
+        "y": 307,
+        "width": 1200,
+        "x": 680
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\mica\\mica_on_run1.png"
+    }
+  ],
+  "measured_count": 1,
+  "visible_ms_sorted": [
+    1789
+  ],
+  "visible_ms_p50": 1789,
+  "visible_from_create_ms_sorted": [
+    500.5
+  ],
+  "visible_from_create_ms_p50": 500.5,
+  "visible_from_create_ms_min": 500.5,
+  "visible_from_create_ms_max": 500.5,
+  "captured_at_utc": "2026-10-26T15:44:20.3014516Z"
+}
