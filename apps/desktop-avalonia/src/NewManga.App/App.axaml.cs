@@ -18,7 +18,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var options = AppOptionsStore.Current;
-            ThemeManager.Apply(this, ThemeManager.Light);
+            ThemePackService.ApplyDefault(this);
             var controller = new HostController(options.ToHostOptions());
             var window = new MainWindow(controller, options);
             desktop.MainWindow = window;

@@ -1,0 +1,12 @@
+2026-10-26T18:00:42.7043448+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.bba6c9618682 (abandoned_recovered=False)
+2026-10-26T18:00:42.7043977+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-missing-sidecar-c3410b6202
+2026-10-26T18:00:42.7044398+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:00:42.7051219+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 3 candidate locations
+2026-10-26T18:02:44.0922403+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.83024f5aa770 (abandoned_recovered=False)
+2026-10-26T18:02:44.0986514+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-missing-sidecar-4e579a593e
+2026-10-26T18:02:44.0987084+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:02:44.0996094+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 3 candidate locations
+2026-10-26T18:04:16.5425439+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.c7431b0181da (abandoned_recovered=False)
+2026-10-26T18:04:16.5425866+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-missing-sidecar-b4ed659038
+2026-10-26T18:04:16.5426217+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:04:16.5432655+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 3 candidate locations

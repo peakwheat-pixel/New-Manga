@@ -35,6 +35,9 @@ public sealed class NullHostController : IHostController
 
     public Task RefreshBooksAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
+    public Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
     public Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 

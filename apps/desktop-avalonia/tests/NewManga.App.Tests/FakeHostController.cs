@@ -15,6 +15,8 @@ public sealed class FakeHostController : IHostController
 
     public int StartCalls { get; private set; }
 
+    public Task? StartGate { get; set; }
+
     public int RefreshCalls { get; private set; }
 
     public string? LastRoundTripTitle { get; private set; }
@@ -32,6 +34,10 @@ public sealed class FakeHostController : IHostController
         RefreshCalls++;
         return Task.CompletedTask;
     }
+
+    public bool CreateBookResult { get; set; } = true;
+
+    public Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default) => Task.FromResult(CreateBookResult);
 
     public Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default)
     {

@@ -134,6 +134,25 @@ public sealed class HostController : IHostController
         }
     }
 
+    public async Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return false;
+        }
+
+        try
+        {
+            await _runtime.CreateBookAsync(title, cancellationToken).ConfigureAwait(false);
+            await RefreshBooksAsync(cancellationToken).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex) when (ex is ReadOnlyHostException or CoreOperationException or SidecarException or OperationCanceledException)
+        {
+            return false;
+        }
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_runtime is not null)
