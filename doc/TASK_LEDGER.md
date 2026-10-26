@@ -6,14 +6,14 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 382 |
+| task files | 383 |
 | terminal | 375 |
-| non-terminal | 7 |
-| non-terminal named in the plan | 7 |
+| non-terminal | 8 |
+| non-terminal named in the plan | 8 |
 | non-terminal outside the plan | 0 |
-| task files tracked by git | 382 |
+| task files tracked by git | 383 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 7 |
+| non-terminal tracked by git | 8 |
 
 ## By status
 
@@ -27,6 +27,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `in_review` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
+| `in_progress` | 1 | no |
 | `proposed` | 1 | no |
 | `ready` | 1 | no |
 
@@ -36,6 +37,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | own row |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
+| `MANUAL-VERIFY-1` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | own row |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |

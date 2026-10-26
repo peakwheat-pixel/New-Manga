@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：无（AD-002 重构主体完成；`FINAL-VALIDATION-1` done，剩余=真机 5 项人工核验 + 可选后续）。
+- 当前 Task：[MANUAL-VERIFY-1](tasks/MANUAL-VERIFY-1.md) `in_progress`（真机 5 项人工核验；AD-002 主体已完成）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
