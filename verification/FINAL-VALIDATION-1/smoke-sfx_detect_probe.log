@@ -1,0 +1,17 @@
+usage: sfx_detect_probe [-h] [--page PAGE] [--weights WEIGHTS] [--out OUT]
+                        [--label LABEL]
+
+One-shot frozen-process SFX detect probe (M2-PROD-SFX-PROBE-1): one production
+SfxDetectionProvider.detect against the in-bundle v2b weights, audit JSON on
+stdout.
+
+options:
+  -h, --help         show this help message and exit
+  --page PAGE        inject a real page (png/jpg) instead of the builtin
+                     synthetic page
+  --weights WEIGHTS  explicit weights path (else NEWMANGA_SFX_WEIGHTS, else
+                     the frozen in-bundle probe)
+  --out OUT          also write the probe JSON pretty-printed to this path
+  --label LABEL      free-form label for the outer runner (e.g. synthetic |
+                     injected-real-page)
+

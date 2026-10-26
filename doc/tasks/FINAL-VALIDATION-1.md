@@ -9,7 +9,7 @@ suggested_owner: antigravity
 owner: null
 reviewer: dsh
 depends_on: [CORE-SLIM-2, RELEASE-PACKAGE-1]
-base_commit: d3f081870
+base_commit: 78784afaf
 branch: task/FINAL-VALIDATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FINAL-VALIDATION-1
 integration_commit: null
@@ -38,12 +38,12 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 侧车重建**：用新 spec（`packaging/m2ac5/core_sidecar.spec`，无 Qt/无 torch）重建 `core_service`/`host_bridge` 等 entry，记录体积表；启动/协议 smoke 通过。
-- [ ] **AC2 重打包**：`apps/desktop-avalonia/scripts/package.ps1` 产出安装包（含 Core 侧车与模型分发策略），体积 ≤2GB（含基础模型）/≤150MB（不含模型）；包内许可三件套逐字节一致。
-- [ ] **AC3 全量回归**：`scripts/test.ps1` 全绿；pytest 相对基线 3F/2739P/9S 无新增失败；旧壳 vitest 60/567 不变；`command_allowlist` parity 快照 `--check` 零漂移。
-- [ ] **AC4 安装 smoke**：安装→启动→窗口→退出无残留（复用 RELEASE-PACKAGE-1 的 `install-smoke.ps1`，新包复跑）。
-- [ ] **AC5 收尾文档**：AD-002 标记 S0–S5 完成；`DISPLAY-PERF-DECISION-1` 关闭；产出 `MANUAL_VERIFY.md` 最新版（真机 5 项）。
-- [ ] **AC6 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。
+- [x] **AC1 侧车重建**：用新 spec（`packaging/m2ac5/core_sidecar.spec`，无 Qt/无 torch）重建 `core_service`/`host_bridge` 等 entry，记录体积表；启动/协议 smoke 通过。→ **MET**：构建 37.1s exit=0；整包 828.6 MiB / **Core 运行时 186.3 MiB（不含 models）**；Qt 0 / torch 栈 0；能力 smoke **7/7 PASS**（`sidecar-meter`… 见 `sidecar-measure.json`、`capability-smoke.json`）。
+- [x] **AC2 重打包**：`apps/desktop-avalonia/scripts/package.ps1` 产出安装包（含 Core 侧车与模型分发策略），体积 ≤2GB（含基础模型）/≤150MB（不含模型）；包内许可三件套逐字节一致。→ **MET**：base zip **97.75 MB ≤150**（sidecar 186.31 MiB 内含、模型分离策略）；models zip **690.94 MB ≤2 GB**（sidecar 828.59 MiB + models 642.3 MiB 内含）；许可三件套两包均逐字节一致。
+- [x] **AC3 全量回归**：`scripts/test.ps1` 全绿；pytest 相对基线 3F/2739P/9S 无新增失败；旧壳 vitest 60/567 不变；`command_allowlist` parity 快照 `--check` 零漂移。→ **MET**：test.ps1 **102/102**；pytest **3F/2739P/9S（0 新增）**；vitest **60/60 文件 567/567 用例**；parity `--check` **PASS（66 命令零漂移）**。
+- [x] **AC4 安装 smoke**：安装→启动→窗口→退出无残留（复用 RELEASE-PACKAGE-1 的 `install-smoke.ps1`，新包复跑）。→ **MET**：base 与 models 两包均 PASS（窗口句柄出现 / console 0 / exit 0 / 残留进程 0 / 安装目录已删除 / sidecar_bundled=true / models_bundled 按变体）。
+- [x] **AC5 收尾文档**：AD-002 标记 S0–S5 完成；`DISPLAY-PERF-DECISION-1` 关闭；产出 `MANUAL_VERIFY.md` 最新版（真机 5 项）。→ **MET**：AD-002 §8 标题改「已全部完成」+ §8.1 完成表；DISPLAY-PERF-DECISION-1 `status: done` + Closeout Record；`apps/desktop-avalonia/docs/MANUAL_VERIFY.md` 最新版（NOT_RUN by agent）。
+- [x] **AC6 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：`check.ps1 -TaskPath` PASS；pin 见下；`doc/handoffs/FINAL-VALIDATION-1-handoff.md`。
 
 ## 允许修改范围
 
@@ -57,20 +57,36 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 重建 + 启动/协议 smoke | 无标签副本 | NOT_RUN | 待填 |
-| AC2/AC4 | 打包 + 安装 smoke | 干净目录 | NOT_RUN | 待填 |
-| AC3/AC6 | 全量回归 + 治理 | 全量 | NOT_RUN | 待填 |
+| AC1 | `packaging/m2ac5/build_sidecar.ps1 -Force` + `measure_bundle.py` + `capability_smoke.py`（无标签副本） | build venv | **PASS**：37.1s；186.3 MiB（不含模型）；smoke 7/7 | `sidecar-build.log`、`sidecar-measure.json`、`capability-smoke.json` |
+| AC2 | `apps/desktop-avalonia/scripts/package.ps1`（base 与 `-WithModels`）+ 逐字节许可比对 | 干净 out 目录 | **PASS**：97.75 MB / 690.94 MB；许可一致 | `package-facts.json`、`package-summary-{base,models}.json` |
+| AC4 | `install-smoke.ps1`（base 与 models 包） | 隔离安装目录 | **PASS**：窗口/exit0/无残留/sidecar_bundled | `install-smoke.json`、`install-smoke-models.json` |
+| AC3 | `python -m pytest -q` | dev env | **PASS**：3F/2739P/9S（0 新增） | `pytest.log` |
+| AC3 | `pwsh -File apps/desktop-avalonia/scripts/test.ps1 -SidecarDirectory <副本>` | .NET 9 | **PASS**：102/102 | `scripts-test.log` |
+| AC3 | `npm install && npx vitest run`（旧壳前端） | node/npm | **PASS**：60/60 文件、567/567 用例 | `vitest.log` |
+| AC3 | `python apps/desktop-avalonia/scripts/extract-command-surface.py --check` | — | **PASS**：66 命令零漂移 | `parity-check.log` |
+| AC6 | `pwsh -File tools/governance/check.ps1 -TaskPath doc/tasks/FINAL-VALIDATION-1.md` | — | PASS | 见 Handoff |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-FV-REPORT | AC1–AC5 | `verification/FINAL-VALIDATION-1/REPORT.md` | `97fd10afe` | `f5aad8bae69b467182ee4d7c5fca3dbdcabd3e355665ef4f419cbd92785ceb24` | CANONICAL |
+| E-FV-SIDECAR | AC1 | `verification/FINAL-VALIDATION-1/sidecar-measure.json` | `97fd10afe` | `a5a8743fb52db1064eda7a545cbbabba7427a85c85f914db652e87eeef4dfa2a` | CANONICAL |
+| E-FV-SMOKE | AC1 | `verification/FINAL-VALIDATION-1/capability-smoke.json` | `97fd10afe` | `7f83f100c62299ff5ea4d3e38e02858b58cc02b1675d734b3823b286918b8757` | CANONICAL |
+| E-FV-PKG | AC2 | `verification/FINAL-VALIDATION-1/package-facts.json` | `97fd10afe` | `ebb6cbeb481990d1e39d161222fdbd09c6d5e002a051a1398424429b4061a608` | CANONICAL |
+| E-FV-INSTALL | AC4 | `verification/FINAL-VALIDATION-1/install-smoke.json` | `97fd10afe` | `3df736c1c1ab0b16f98539ca1cb095b4b865d34ff4d1cd8529f52bbe6fd5b76e` | CANONICAL |
+| E-FV-INSTALL-M | AC2/AC4 | `verification/FINAL-VALIDATION-1/install-smoke-models.json` | `97fd10afe` | `40d1de0dc7937e6ded6db910b87879432552fe22c9b84dff17ce65829c99b9d7` | CANONICAL |
+| E-FV-PYTEST | AC3 | `verification/FINAL-VALIDATION-1/pytest.log` | `97fd10afe` | `dfbe370a5e42b29433a97c55c6c3df3d24953d7d9f8a7929a7d1c2c5017c9a6f` | CANONICAL |
+| E-FV-DOTNET | AC3 | `verification/FINAL-VALIDATION-1/scripts-test.log` | `97fd10afe` | `9c4cabb9c38d2ee6b8d830b67e3ca7250393e2c8a2ee1eb0940409013551086e` | CANONICAL |
+| E-FV-VITEST | AC3 | `verification/FINAL-VALIDATION-1/vitest.log` | `97fd10afe` | `97569c1764e0a38f4659304ca3e91d0b850ac472f0fa1803948d118d6e6f6259` | CANONICAL |
+| E-FV-PARITY | AC3 | `verification/FINAL-VALIDATION-1/parity-check.log` | `97fd10afe` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-FV-BUILD | AC1 | `verification/FINAL-VALIDATION-1/sidecar-build.log` | `97fd10afe` | `a05c391d4dc10070e355c4e6da198a3ea7b31bbc315e6eb0a1f5ad902f386e43` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1 | `out/`（base 97.75MB + models 690.94MB 两包，sha256 见 `verification/FINAL-VALIDATION-1/package-facts.json`）、`sidecar-copy/`、`install*/`（smoke 后已卸载） | 构建/打包/安装 smoke 均引用该 task-env；包件为发布候选，关闭时按裁决保留或归档 |
 
 ## Closeout Record
 

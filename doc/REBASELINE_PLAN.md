@@ -13,7 +13,7 @@
 |GIT-CLEAN-PUBLICATION-1|—|in_review（root e34a90d00；r1 blocked；push-gate approved）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
-|DISPLAY-PERF-DECISION-1|—|in_review（全 AC MET；S0 GO；待独立复核）|
+|DISPLAY-PERF-DECISION-1|—|done（AC1–AC16 全 MET；随 FINAL-VALIDATION-1 关闭）|
 |HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|done（S2 parity：66 快照/16 实现/50 NS 分批；集成 5a11fa7d9）|
 |UI-SHELL-THEME-1|HOST-CORECLIENT-1|done（S3 主窗/主题 6 套 p95 2.2ms/书架骨架；集成 657d36817）|
 |UI-WORKBENCH-READER-1|UI-SHELL-THEME-1|done（S4 阅读器/工作台；利用率0.99/翻页1.05ms/长条0ms；集成 55b7f42c6）|
@@ -27,7 +27,7 @@
 |CORE-TILE-EMIT-1|HOST-RESOURCE-SECURITY-1|done（Core 出 tile+摘要；一致率100%；pytest 0 新增失败；集成 7b07da6a4）|
 |RELEASE-PACKAGE-1|CORE-TILE-EMIT-1|done（S5-D 包 22.9MB；AC4a/b PASS；集成 8ff3d288d）|
 
-READY 节点：FINAL-VALIDATION-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）、S4 done（55b7f42c6）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：无（FINAL-VALIDATION-1 已交付待集成）。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）、S4 done（55b7f42c6）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 

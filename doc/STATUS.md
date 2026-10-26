@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：[FINAL-VALIDATION-1](tasks/FINAL-VALIDATION-1.md) `ready`（终验/重打包；CORE-SLIM-2 done d3f081870）。
-- 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
+- 当前 Task：[FINAL-VALIDATION-1](tasks/FINAL-VALIDATION-1.md) `delivered`（sidecar 186.3MiB；包 97.75/690.94MB；回归+smoke PASS；97fd10afe）。
+- 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
 - 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（真实 Tauri+Core 7/7；修 P0 中文落库乱码 + P1 死按钮；ZCode r1 approved）。DAG 无 READY。
