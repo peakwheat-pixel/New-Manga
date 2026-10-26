@@ -1,0 +1,135 @@
+{
+  "status": "PARTIAL — Pillow side executed; Edge/WebView2 screenshot captured manually; DOM-based Chromium layout measurement BLOCKED",
+  "text": "「そうか……本当に、ここで終わりか。まだだ、諦めない！12番目の階層で待つ奴がいる。」",
+  "text_box": [
+    1013,
+    823,
+    232,
+    536
+  ],
+  "environment": {
+    "python": "3.14.6",
+    "pillow": "12.3.0"
+  },
+  "font_current": {
+    "resolved_family": "Microsoft YaHei",
+    "requested_family": "Source Han Sans K Bold",
+    "available": false,
+    "preview_family": "Microsoft YaHei",
+    "ascent": 28,
+    "descent": 7,
+    "vertical_char_pitch_px": 35,
+    "advance_1em_px": 26.0,
+    "advance_punctuation_px": 26.0,
+    "kerning_probe_AV": 35.96875,
+    "kerning_probe_A_plus_V": 36.0,
+    "ligature_probe_fi": 16.0,
+    "ligature_probe_f_plus_i": 16.0
+  },
+  "current_pillow": {
+    "requested_family": "Source Han Sans K Bold",
+    "resolved_family": "Microsoft YaHei",
+    "font_available": false,
+    "final_font_size": 26.0,
+    "layout_fits": true,
+    "column_count": 3,
+    "columns": [
+      [
+        "「",
+        "そ",
+        "う",
+        "か",
+        "…",
+        "…",
+        "本",
+        "当",
+        "に",
+        "、",
+        "こ",
+        "こ",
+        "で",
+        "終",
+        "わ"
+      ],
+      [
+        "り",
+        "か",
+        "。",
+        "ま",
+        "だ",
+        "だ",
+        "、",
+        "諦",
+        "め",
+        "な",
+        "い",
+        "！",
+        "1",
+        "2",
+        "番"
+      ],
+      [
+        "目",
+        "の",
+        "階",
+        "層",
+        "で",
+        "待",
+        "つ",
+        "奴",
+        "が",
+        "い",
+        "る",
+        "。",
+        "」"
+      ]
+    ],
+    "kinsoku": {
+      "start_prohibited_violations": [],
+      "end_prohibited_violations": [],
+      "total": 0
+    },
+    "items": 43,
+    "extents": [
+      78.0,
+      525
+    ]
+  },
+  "pixel_analysis": {
+    "pillow": {
+      "ink_pixels": 8251,
+      "ink_bbox_in_box": [
+        0,
+        0,
+        231,
+        535
+      ],
+      "ink_coverage": 0.06635,
+      "distinct_gray_levels_in_ink": 200,
+      "antialias_mid_gray_pixels": 4684,
+      "antialias_mid_gray_ratio": 0.56769,
+      "mean_ink_darkness": 54.79
+    },
+    "webview2": {
+      "ink_pixels": 2518,
+      "ink_bbox_in_box": [
+        0,
+        0,
+        231,
+        535
+      ],
+      "ink_coverage": 0.02025,
+      "distinct_gray_levels_in_ink": 191,
+      "antialias_mid_gray_pixels": 1621,
+      "antialias_mid_gray_ratio": 0.64376,
+      "mean_ink_darkness": 75.17
+    }
+  },
+  "webview2_capture": {
+    "size": [
+      1350,
+      1920
+    ],
+    "png_bytes": 1941932
+  }
+}

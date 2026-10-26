@@ -49,10 +49,9 @@
 |UIUX-V2-RUNTIME-REALCORE-2|UIUX-V2-RUNTIME-REALCORE-1|closed_with_limitations（run-i36 10/10；G2/G4/G5 达成；G1 转人工验证）|
 |UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|done（.nm-app min-width:1024 根治；900 档四页 900/900；`e9a409927`）|
 |PRODUCT-IDENTITY-1|UIUX-V2-RUNTIME-NARROW-1|done（窗口标题/exe/应用ID → New Manga；`new-manga.exe`）|
+|DISPLAY-PERF-DECISION-1|—|in_review（显示/效率基线+三路线裁决已交付，待用户裁决 D1–D10）|
 
-READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1
-
-2026-10-25 DSH 接任 Lead/Architect/Integrator。产品主线=UIUX-V2-RUNTIME-1；Rust r2、父审查、Core 环境线不变，按用户优先级绕开。主线收敛已完成并通过独立审查；后续清理/删除仍需新授权，不构成解除 r212 或五广域根保护。
+READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1。2026-10-25 DSH 接任 Lead/Architect/Integrator。产品主线=UIUX-V2-RUNTIME-1；Rust r2、父审查、Core 环境线不变，按用户优先级绕开。主线收敛已完成并通过独立审查；后续清理/删除仍需新授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 

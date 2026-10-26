@@ -1,0 +1,269 @@
+{
+  "label": "ac1-02",
+  "cdpPort": 9362,
+  "scenarioRoot": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02",
+  "pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/new-manga.exe",
+  "pinnedExeSha256": "1136bb0a8d582a30c6ef0b16959b86a62dd26d2c6d9ce49e298c9b86c3343226",
+  "env": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9362",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*",
+      "WEBVIEW2_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT"
+    ],
+    "__cdpPort": 9362,
+    "__pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/new-manga.exe",
+    "__pinnedExeSha256": "1136bb0a8d582a30c6ef0b16959b86a62dd26d2c6d9ce49e298c9b86c3343226"
+  },
+  "cleanState": {
+    "roaming": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\appdata-roaming",
+      "state": "ABSENT"
+    },
+    "localAppData": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\appdata-local",
+      "state": "ABSENT"
+    },
+    "tmp": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\tmp",
+      "state": "ABSENT"
+    },
+    "dataRoot": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\data-root",
+      "state": "ABSENT"
+    },
+    "derived": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\scope\\derived",
+      "state": "ABSENT"
+    },
+    "managed": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\scope\\managed",
+      "state": "ABSENT"
+    },
+    "catalogDb": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\catalog\\catalog.sqlite",
+      "state": "ABSENT"
+    },
+    "webview2Udd": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\webview2-udd",
+      "state": "ABSENT"
+    },
+    "logs": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs",
+      "state": "ABSENT"
+    },
+    "shots": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\shots",
+      "state": "ABSENT"
+    },
+    "probe": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\probe",
+      "state": "ABSENT"
+    }
+  },
+  "launchTimeline": {
+    "t0EpochMs": 1793017624533,
+    "spawnRequestedEpochMs": 1793017625455,
+    "childSpawnedEpochMs": 1793017625468,
+    "childPid": 17148
+  },
+  "timeline": {
+    "appStartEpochMs": 1793017625457,
+    "appStartRelMs": 0,
+    "coreSpawn": {
+      "epochMs": 1793017625501,
+      "relMs": 44,
+      "corePid": 11152,
+      "isOwnChild": true
+    },
+    "windowVisible": {
+      "epochMs": 1793017625997,
+      "relMs": 540,
+      "title": "N",
+      "hwnd": "986872"
+    },
+    "webviewFirstSeen": {
+      "epochMs": 1793017626077,
+      "relMs": 620,
+      "webviewPid": 37716
+    },
+    "catalogFirstSeen": {
+      "epochMs": 1793017625873,
+      "relMs": 416
+    },
+    "coreDerivedGcLog": {
+      "epochMs": 1793017625946,
+      "relMs": 489,
+      "text": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r"
+    },
+    "coreReadyPingLog": {
+      "epochMs": 1793017625988,
+      "relMs": 531,
+      "text": "[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,library_list_recycle_bin_books,library_create_book,create_chapter,settings_get,settings_upd"
+    },
+    "firstTitleLog": {
+      "epochMs": 1793017628400,
+      "relMs": 2943,
+      "text": "[m2rc1-title] New Manga"
+    },
+    "firstContentPainted": {
+      "missing": true
+    },
+    "visualSettled": {},
+    "cdp": {
+      "missing": true
+    },
+    "health": {
+      "supervisorRestarts": 0,
+      "coreCrashes": 0
+    },
+    "paint": {
+      "frames": 0,
+      "clientRect": {
+        "w": 1,
+        "h": 1
+      }
+    }
+  },
+  "method": {
+    "processStart": "OS Process.StartTime of new-manga.exe (not the launcher clock)",
+    "coreSpawn": "first core_service.exe whose ParentProcessId == new-manga pid",
+    "windowVisible": "GetProcess.MainWindowHandle != 0",
+    "coreReady": "[core.derived_gc] on the Core sidecar's inherited stderr (printed after the Core's startup GC window, i.e. after the startup ping is answerable)",
+    "setupReached": "[m2rc2-allowlist] printed in Rust setup()",
+    "firstPaint": "first window blit frame whose pixel edge-energy exceeds 3x the blank baseline (2 consecutive frames), ~25 fps probe",
+    "clock": "all values Unix ms; relMs = epoch - appStartEpochMs"
+  },
+  "exitInfo": {
+    "exited": true,
+    "code": null,
+    "signal": "SIGTERM",
+    "epochMs": 1793017632890
+  },
+  "killedOrphans": "",
+  "logs": {
+    "stdoutPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs\\app.stdout.log",
+    "stderrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs\\app.stderr.log",
+    "stdoutTsPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs\\app.stdout.ts.log",
+    "stderrTsPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs\\app.stderr.ts.log",
+    "probeOut": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\probe\\native-probe.jsonl",
+    "probeErrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs\\native-probe.stderr.log",
+    "paintOut": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\probe\\paint-frames.jsonl",
+    "paintErrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\logs\\paint-probe.stderr.log"
+  },
+  "rawProbeEvents": [
+    {
+      "t0EpochMs": 1793017624533,
+      "epochMs": 1793017625293,
+      "kind": "probe_ready"
+    },
+    {
+      "t0EpochMs": 1793017624533,
+      "epochMs": 1793017625492,
+      "appPid": 17148,
+      "kind": "pid_observed"
+    },
+    {
+      "exeName": "new-manga",
+      "exeStartEpochMs": 1793017625457,
+      "appPid": 17148,
+      "kind": "app_started",
+      "t0EpochMs": 1793017624533,
+      "epochMs": 1793017625495
+    },
+    {
+      "t0EpochMs": 1793017624533,
+      "epochMs": 1793017625501,
+      "kind": "probe_loop_started"
+    },
+    {
+      "isOwnChild": true,
+      "corePid": 11152,
+      "kind": "core_service_first_seen",
+      "t0EpochMs": 1793017624533,
+      "epochMs": 1793017625501,
+      "parentPid": 17148
+    },
+    {
+      "t0EpochMs": 1793017624533,
+      "epochMs": 1793017625873,
+      "kind": "catalog_db_first_seen",
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\catalog\\catalog.sqlite"
+    },
+    {
+      "class": "T",
+      "ownedByApp": true,
+      "t0EpochMs": 1793017624533,
+      "isForeground": false,
+      "kind": "window_candidate",
+      "visible": true,
+      "hwnd": "986872",
+      "title": "N",
+      "epochMs": 1793017625997,
+      "ownerPid": 17148
+    },
+    {
+      "class": "T",
+      "kind": "window_visible",
+      "t0EpochMs": 1793017624533,
+      "title": "N",
+      "epochMs": 1793017625997,
+      "hwnd": "986872"
+    },
+    {
+      "webviewPid": 37716,
+      "epochMs": 1793017626077,
+      "t0EpochMs": 1793017624533,
+      "kind": "webview2_first_seen"
+    },
+    {
+      "catalogSeen": true,
+      "t0EpochMs": 1793017624533,
+      "windowVisible": true,
+      "coreSeen": 1,
+      "kind": "probe_done",
+      "epochMs": 1793017627596,
+      "webviewSeen": 6
+    }
+  ],
+  "rawStderr": [
+    {
+      "relMs": 489,
+      "text": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r"
+    },
+    {
+      "relMs": 531,
+      "text": "[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,library_list_recycle_bin_books,library_create_book,create_chapter,settings_get,settings_update_section,cleanup_preview,cleanup_run,cleanup_retry_pending,backup_create,backup_list,backup_restore,backup_delete,plugins_list,plugins_set_enabled,plugins_set_plugin_enabled,plugins_audit_list,plugins_open_directory,settings_provider_profiles_list,settings_provider_profiles_create,settings_provider_profiles_update,settings_provider_profiles_delete,settings_provider_bindings_set,settings_provider_bindings_clear,settings_provider_bindings_resolve,settings_provider_run_snapshot_get,settings_network_profiles_list,settings_network_profiles_create,settings_network_profiles_update,settings_network_profiles_delete,settings_network_profiles_test,settings_network_profile_default_set,settings_network_profile_default_clear,settings_network_profile_resolve,settings_resolve_overrides,credential_put,credential_clear,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages,library_get_reader_projection,library_save_reading_progress,library_import_file,library_import_folder,library_start_export,library_start_run,library_control_run,library_resume_blocked_run,library_get_run_snapshot,library_get_task_projection,library_retry_failed_targets,library_reveal_export_folder,library_cancel_export,library_get_export_snapshot,library_get_export_history,library_delete_book_permanently,library_delete_books_permanently"
+    },
+    {
+      "relMs": 2943,
+      "text": "[m2rc1-title] New Manga"
+    },
+    {
+      "relMs": 4943,
+      "text": "[m2rc1-title] New Manga"
+    },
+    {
+      "relMs": 6944,
+      "text": "[m2rc1-title] New Manga"
+    }
+  ],
+  "rawStdout": []
+}

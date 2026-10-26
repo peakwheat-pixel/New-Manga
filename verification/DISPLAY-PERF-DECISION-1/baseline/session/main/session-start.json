@@ -1,0 +1,102 @@
+{
+  "label": "main",
+  "httpPort": 9362,
+  "cdpPort": 9361,
+  "exe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/new-manga.exe",
+  "exeSha256": "1136bb0a8d582a30c6ef0b16959b86a62dd26d2c6d9ce49e298c9b86c3343226",
+  "timeline": {
+    "t0EpochMs": 1793018564312,
+    "spawnRequestedEpochMs": 1793018564350,
+    "childSpawnedEpochMs": 1793018564364,
+    "childPid": 13448,
+    "cdpEndpointEpochMs": 1793018565143,
+    "cdpVersion": {
+      "Browser": "Edg/155.0.4283.62",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+      "V8-Version": "15.5.9.7",
+      "WebKit-Version": "537.36 (@aa3a7406ba8c53a83536df539f07124d73c899bd)",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:9361/devtools/browser/64966bde-e3f6-4ce8-9fb3-e0d29e8ee27d"
+    },
+    "cdpAttachedEpochMs": 1793018565222,
+    "pageTarget": {
+      "id": "33783F52FB800DCF4F46654232DBE792",
+      "url": "about:blank",
+      "type": "page"
+    },
+    "attachSnapshot": {
+      "nowPerfNow": 96.20000000298023,
+      "nowEpochMs": 1793018565223,
+      "timeOrigin": 1793018565127.4,
+      "marks": {},
+      "paint": [],
+      "navigation": {
+        "startTime": 0,
+        "responseEnd": 88.90000000596046,
+        "domInteractive": 88.90000000596046,
+        "domContentLoadedEventEnd": 88.90000000596046,
+        "loadEventEnd": 89.59999999403954
+      },
+      "readyState": "complete",
+      "devicePixelRatio": 1,
+      "innerWidth": 1281,
+      "innerHeight": 1392
+    }
+  },
+  "env": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9361",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*",
+      "WEBVIEW2_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT"
+    ],
+    "__cdpPort": 9361,
+    "__pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/new-manga.exe",
+    "__pinnedExeSha256": "1136bb0a8d582a30c6ef0b16959b86a62dd26d2c6d9ce49e298c9b86c3343226"
+  },
+  "logs": {
+    "stdoutPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stdout.log",
+    "stderrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stderr.log",
+    "stdoutTsPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stdout.ts.log",
+    "stderrTsPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stderr.ts.log",
+    "probeOut": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\probe\\native-probe.jsonl",
+    "probeErrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\native-probe.stderr.log",
+    "paintOut": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\probe\\paint-frames.jsonl",
+    "paintErrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\paint-probe.stderr.log"
+  },
+  "pageAtAttach": {
+    "url": "http://tauri.localhost/",
+    "title": "",
+    "readyState": "loading",
+    "dpr": 1,
+    "innerWidth": 1180,
+    "innerHeight": 860,
+    "screenW": 2560,
+    "screenH": 1440,
+    "outerW": 1180,
+    "outerH": 860,
+    "page": "unknown",
+    "bookCards": 0,
+    "layout": null,
+    "pager": null,
+    "imgSrc": null,
+    "fpsPanel": false
+  }
+}

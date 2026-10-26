@@ -1,0 +1,10 @@
+{"epochMs":1793017348469,"kind":"paint_probe_ready"}
+{"epochMs":1793017348514,"hwnd":"4788238","kind":"paint_window_found"}
+{"kind":"paint_client_rect","w":1180,"x":34,"h":860,"epochMs":1793017348528,"y":57}
+{"meanL":255.0,"seq":0,"darkFrac":0.0,"hash":"Infinity","edge":0.0,"occluded":false,"kind":"paint_frame","epochMs":1793017348539}
+{"meanL":38.761,"seq":1,"darkFrac":0.878,"hash":"Infinity","edge":5.173,"occluded":false,"kind":"paint_frame","epochMs":1793017350106}
+{"meanL":38.761,"seq":2,"darkFrac":0.878,"hash":"Infinity","edge":5.173,"occluded":false,"kind":"paint_frame","epochMs":1793017351411}
+{"meanL":38.761,"seq":3,"darkFrac":0.878,"hash":"Infinity","edge":5.173,"occluded":false,"kind":"paint_frame","epochMs":1793017352616}
+{"meanL":38.761,"seq":4,"darkFrac":0.878,"hash":"Infinity","edge":5.173,"occluded":false,"kind":"paint_frame","epochMs":1793017353553}
+{"meanL":38.761,"seq":5,"darkFrac":0.878,"hash":"Infinity","edge":5.173,"occluded":false,"kind":"paint_frame","epochMs":1793017354317}
+{"epochMs":1793017355041,"frames":6,"kind":"paint_probe_done"}

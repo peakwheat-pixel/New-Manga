@@ -1,0 +1,2208 @@
+{
+  "state": {
+    "label": "main",
+    "startedAt": "2026-10-26T12:32:03.845Z",
+    "cdpPort": 9361,
+    "ops": [
+      {
+        "op": "eval",
+        "at": 1793018015194,
+        "expr": "(() => ({ buttons: Array.from(document.querySelectorAll('button')).map(b => ({ t: (b.getAttribute('data-testid')||''), t"
+      },
+      {
+        "op": "eval",
+        "at": 1793018018837,
+        "expr": "(async () => { try { const r = await window.__TAURI__.core.invoke('library_create_book', { payload: { title: '基线样张作品' } "
+      },
+      {
+        "op": "eval",
+        "at": 1793018025113,
+        "expr": "(async () => { try { const r = await window.__TAURI__.core.invoke('create_chapter', { payload: { book_id: '6d5a92fa8ae14"
+      },
+      {
+        "op": "click",
+        "at": 1793018025297,
+        "selector": "[data-testid='tab-workbench']"
+      },
+      {
+        "op": "click",
+        "at": 1793018026284,
+        "selector": "[data-testid='tab-shelf']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018027585,
+        "expr": "(() => ({ cards: Array.from(document.querySelectorAll('[data-testid^=\\ book-\\]')).map(e=>e.getAttribute('data-testid')),"
+      },
+      {
+        "op": "click",
+        "at": 1793018036345,
+        "selector": "[data-testid='shelf-import']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018037346,
+        "expr": "(() => ({ dialog: !!document.querySelector('[data-testid=\\ import-dialog\\]'), chapterSelectValue: document.querySelector"
+      },
+      {
+        "op": "click",
+        "at": 1793018042789,
+        "selector": "[data-testid='import-file-btn']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018047258,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018047878,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018048474,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018049070,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018049650,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018050246,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018050846,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018051431,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018052030,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018052622,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018053220,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018053816,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018054406,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018055011,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018055613,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018056217,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018056812,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018057407,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018058008,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018058601,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018059195,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018059782,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018060382,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018060969,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018061556,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018062148,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018062754,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018063343,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018063936,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018064538,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018065144,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018065732,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018066322,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018066911,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018067508,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018068107,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018068712,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018069309,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018069919,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018070520,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018088187,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018127953,
+        "expr": "(() => ({ dialog: !!document.querySelector('[data-testid=\\ import-dialog\\]'), status: document.querySelector('[data-test"
+      },
+      {
+        "op": "click",
+        "at": 1793018128110,
+        "selector": "[data-testid='import-folder-btn']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018138229,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018138827,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018139430,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018140036,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018140630,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018141232,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018141830,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018142430,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018143028,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018143620,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018144218,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018144823,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018145425,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018146024,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018146627,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018147229,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018147826,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018148415,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018149007,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018149610,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018150215,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018150816,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018151406,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018152004,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018152603,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018153188,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018153775,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018154373,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018154973,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018155583,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018156185,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018156786,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018157384,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018157980,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018158579,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018159177,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018159763,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018160359,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018160959,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018161560,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018162154,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018162757,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018163362,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018163952,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018164553,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018165155,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018165753,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018166357,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018166957,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018167558,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018168155,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018168748,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018169341,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018169941,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018170530,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018171134,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018171726,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018172327,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018172930,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018173532,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "click",
+        "at": 1793018200027,
+        "selector": "[data-testid='import-file-btn']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018219116,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018219729,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018220329,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018220932,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018221528,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018222138,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018222737,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018223340,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018223947,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018224555,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018225172,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018225774,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018226379,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018226991,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018227604,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018228219,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018228830,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018229423,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018230034,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018230638,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018231238,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018231835,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018232439,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018233040,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018233640,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018234241,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018234848,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018235444,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018236058,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018236664,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "click",
+        "at": 1793018272552,
+        "selector": "[data-testid='import-file-btn']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018277365,
+        "expr": "(() => ({ report: !!document.querySelector('[data-testid=\\ import-report-view\\]'), err: document.querySelector('[data-te"
+      },
+      {
+        "op": "eval",
+        "at": 1793018283174,
+        "expr": "(() => ({ text: (document.querySelector('[data-testid=\\ import-report-view\\]')?.textContent || '').replace(/\\s+/g,' ').s"
+      },
+      {
+        "op": "eval",
+        "at": 1793018283268,
+        "expr": "(async () => { try { const r = await window.__TAURI__.core.invoke('list_chapter_pages', { chapterId: '699cc91849414874a6"
+      },
+      {
+        "op": "click",
+        "at": 1793018289899,
+        "selector": "[data-testid='import-finish-btn']"
+      },
+      {
+        "op": "click",
+        "at": 1793018290980,
+        "selector": "[data-testid='shelf-import']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018291996,
+        "expr": "(() => ({ dialog: !!document.querySelector('[data-testid=\\ import-dialog\\]'), chapter: document.querySelector('[data-tes"
+      },
+      {
+        "op": "click",
+        "at": 1793018292150,
+        "selector": "[data-testid='import-file-btn']"
+      },
+      {
+        "op": "eval",
+        "at": 1793018299688,
+        "expr": "(() => ({ text: (document.querySelector('[data-testid=\\ import-report-view\\]')?.textContent || '').replace(/\\s+/g,' ').s"
+      },
+      {
+        "op": "click",
+        "at": 1793018327559,
+        "selector": "[data-testid='import-finish-btn']"
+      },
+      {
+        "op": "click",
+        "at": 1793018328535,
+        "selector": "[data-testid='chapter-list'] li"
+      },
+      {
+        "op": "eval",
+        "at": 1793018329234,
+        "expr": "(() => Array.from(document.querySelectorAll('[data-testid=\\ shelf-detail\\] button, [data-testid=\\shelf-detail\\] .nm-btn'"
+      },
+      {
+        "op": "click",
+        "at": 1793018329393,
+        "selector": "[data-testid='shelf-detail'] .nm-btn--primary"
+      },
+      {
+        "op": "eval",
+        "at": 1793018330995,
+        "expr": "(() => ({ page: document.querySelector('[data-testid=\\ page-reader\\]')?'reader':document.querySelector('[data-testid=\\pa"
+      },
+      {
+        "op": "eval",
+        "at": 1793018433941,
+        "expr": "(async () => { const r = await window.__TAURI__.core.invoke('list_chapter_pages', { chapterId: '699cc91849414874a6e54f0d"
+      },
+      {
+        "op": "eval",
+        "at": 1793018436036,
+        "expr": "(() => ({ page: document.querySelector('[data-testid=\\ page-reader\\]')?'reader':'other', book: document.querySelector('["
+      },
+      {
+        "op": "eval",
+        "at": 1793018441496,
+        "expr": "(() => ({ noContext: !!document.querySelector('[data-testid=\\ reader-no-context\\]'), text: (document.querySelector('[dat"
+      },
+      {
+        "op": "eval",
+        "at": 1793018496241,
+        "expr": "(() => {\n  const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n  const area = img ? img.parentEleme"
+      },
+      {
+        "op": "shot",
+        "at": 1793018496377,
+        "file": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\baseline\\session\\main\\shots\\ac3-reader-native-window.png"
+      },
+      {
+        "op": "eval",
+        "at": 1793018497204,
+        "expr": "(() => {\n  const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n  const area = img ? img.parentEleme"
+      },
+      {
+        "op": "shot",
+        "at": 1793018497591,
+        "file": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\baseline\\session\\main\\shots\\ac3-reader-dpr2.png"
+      },
+      {
+        "op": "eval",
+        "at": 1793018497644,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018497877,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018498111,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018498361,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018498595,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018498845,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018499095,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018499329,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018499579,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018499812,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500518,
+        "expr": "(() => {\n  if (window.__dpFps && window.__dpFps.running) return { already: true };\n  const samples = [];\n  let last = nu"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500563,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500613,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500663,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500713,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500763,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500813,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500863,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500913,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018500964,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501014,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501063,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501114,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501164,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501230,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501280,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501332,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501397,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501447,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501497,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501499,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501501,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501502,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501504,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501505,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501507,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501509,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501510,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501512,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501513,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501514,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501516,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501517,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501518,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501520,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501521,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501522,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501523,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501524,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501525,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501527,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501529,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501530,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501532,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501535,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501537,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501538,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501540,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501541,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501542,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501543,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501544,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501545,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501546,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501547,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501548,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501550,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501551,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501553,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501554,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501555,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501556,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501557,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501558,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501559,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501560,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501561,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501562,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501563,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501564,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501565,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501567,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501568,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501568,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501569,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501570,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501572,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501573,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501574,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501575,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501576,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501577,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501578,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501579,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501580,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501582,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501583,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501584,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501585,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501586,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501587,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501588,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501589,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501590,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501591,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501592,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501593,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501594,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501595,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501596,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501597,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501598,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501599,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501600,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501601,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501602,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501603,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501604,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501605,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501606,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501607,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501608,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501609,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501610,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501611,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501613,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501614,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501615,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501616,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501617,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501618,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501619,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501620,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501621,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501622,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501622,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501623,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501624,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501625,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501626,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501627,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501628,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501630,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501631,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501632,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501633,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501634,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501635,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501636,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501638,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501639,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501639,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501640,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501642,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501643,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501644,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501645,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501646,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501647,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501650,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501651,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501652,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501653,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501654,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501655,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501657,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501658,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501659,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501661,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501662,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501663,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501665,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501666,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501667,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501668,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501669,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501670,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501671,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501672,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501673,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501674,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501675,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501676,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501678,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501679,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501680,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501681,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501682,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501683,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501684,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501685,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501687,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501688,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501689,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501691,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501692,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501693,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501694,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501695,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501696,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501698,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501699,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501700,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501701,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501702,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501703,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501704,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501705,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501706,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501707,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501708,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501709,
+        "expr": "(async () => {\n  const sel = '[data-testid=\"reader-page-image\"]';\n  const before = document.querySelector(sel)?.getAttri"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501710,
+        "expr": "(() => {\n  const s = window.__dpFps;\n  if (!s) return { error: 'no sampler' };\n  s.running = false;\n  s.endedAt = perfor"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501712,
+        "expr": "(() => {\n  if (window.__dpFps && window.__dpFps.running) return { already: true };\n  const samples = [];\n  let last = nu"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501713,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501847,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018501972,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502095,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502217,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502342,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502465,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502588,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502714,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502839,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018502963,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503088,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503214,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503339,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503462,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503586,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503712,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503837,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018503974,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504098,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504221,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504347,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504469,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504594,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504720,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504857,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018504994,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505117,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505241,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505365,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505487,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505612,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505736,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505860,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018505983,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506107,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506233,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506355,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506477,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506600,
+        "expr": "(() => {\n        const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n        const target = img ? i"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506725,
+        "expr": "(() => {\n  const s = window.__dpFps;\n  if (!s) return { error: 'no sampler' };\n  s.running = false;\n  s.endedAt = perfor"
+      },
+      {
+        "op": "eval",
+        "at": 1793018506728,
+        "expr": "(() => {\n  if (window.__dpFps && window.__dpFps.running) return { already: true };\n  const samples = [];\n  let last = nu"
+      },
+      {
+        "op": "eval",
+        "at": 1793018509737,
+        "expr": "(() => {\n  const s = window.__dpFps;\n  if (!s) return { error: 'no sampler' };\n  s.running = false;\n  s.endedAt = perfor"
+      },
+      {
+        "op": "eval",
+        "at": 1793018509740,
+        "expr": "(() => {\n    const img = document.querySelector('[data-testid=\"reader-page-image\"]');\n    const area = img ? img.parentE"
+      },
+      {
+        "op": "eval",
+        "at": 1793018516798,
+        "expr": "(async () => {\n    try {\n      const r = await window.__TAURI__.core.invoke('list_chapter_pages', { chapterId: \"699cc918"
+      },
+      {
+        "op": "eval",
+        "at": 1793018516836,
+        "expr": "(async () => {\n  const inv = window.__TAURI__.core.invoke;\n  const tryInvoke = async (cmd, args) => {\n    try { return a"
+      },
+      {
+        "op": "eval",
+        "at": 1793018516940,
+        "expr": "(async () => {\n  const inv = window.__TAURI__.core.invoke;\n  const tryInvoke = async (cmd, args) => {\n    try { return a"
+      },
+      {
+        "op": "eval",
+        "at": 1793018524082,
+        "expr": "(async () => { try { const r = await window.__TAURI__.core.invoke('list_chapter_pages', { chapterId: '699cc91849414874a6"
+      },
+      {
+        "op": "eval",
+        "at": 1793018524178,
+        "expr": "(() => ({ pager: document.querySelector('[data-testid=\\ reader-pager\\]')?.textContent, err: document.querySelector('[dat"
+      },
+      {
+        "op": "eval",
+        "at": 1793018524273,
+        "expr": "(async () => { try { const r = await window.__TAURI__.core.invoke('resolve_page_resource', { pageId: 'dc9fb6b8f7af410484"
+      },
+      {
+        "op": "eval",
+        "at": 1793018531496,
+        "expr": "(async () => {\n  const inv = window.__TAURI__.core.invoke; const log = {};\n  try { log.res = await inv('resolve_page_res"
+      },
+      {
+        "op": "eval",
+        "at": 1793018542001,
+        "expr": "(async () => { const out={}; try { out.revAll = await window.__TAURI__.core.invoke('revoke_resource_refs', {}); } catch("
+      }
+    ]
+  },
+  "timeline": {
+    "t0EpochMs": 1793017922162,
+    "spawnRequestedEpochMs": 1793017922983,
+    "childSpawnedEpochMs": 1793017922995,
+    "childPid": 40640,
+    "cdpEndpointEpochMs": 1793017923773,
+    "cdpVersion": {
+      "Browser": "Edg/155.0.4283.62",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+      "V8-Version": "15.5.9.7",
+      "WebKit-Version": "537.36 (@aa3a7406ba8c53a83536df539f07124d73c899bd)",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:9361/devtools/browser/4c60dc4b-b12a-4f24-ad2a-c4cd85916fd0"
+    },
+    "cdpAttachedEpochMs": 1793017923843,
+    "pageTarget": {
+      "id": "17CAFFAD99795880D603E3EABF526924",
+      "url": "about:blank",
+      "type": "page"
+    },
+    "attachSnapshot": {
+      "nowPerfNow": 86.3999999910593,
+      "nowEpochMs": 1793017923845,
+      "timeOrigin": 1793017923758.5,
+      "marks": {},
+      "paint": [],
+      "navigation": {
+        "startTime": 0,
+        "responseEnd": 76.3999999910593,
+        "domInteractive": 76.3999999910593,
+        "domContentLoadedEventEnd": 76.5,
+        "loadEventEnd": 77
+      },
+      "readyState": "complete",
+      "devicePixelRatio": 1,
+      "innerWidth": 1281,
+      "innerHeight": 1392
+    }
+  },
+  "logs": {
+    "stdoutPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stdout.log",
+    "stderrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stderr.log",
+    "stdoutTsPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stdout.ts.log",
+    "stderrTsPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\app.stderr.ts.log",
+    "probeOut": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\probe\\native-probe.jsonl",
+    "probeErrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\native-probe.stderr.log",
+    "paintOut": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\probe\\paint-frames.jsonl",
+    "paintErrPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\session-main\\logs\\paint-probe.stderr.log"
+  }
+}

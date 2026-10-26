@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; width: 1350px; height: 1920px; overflow: hidden;
+               background: #ffffff; }
+  * { box-sizing: border-box; }
+  
+</style></head><body>
+
+<div id="box" style="position:absolute;left:1013px;top:823px;width:232px;height:536px;
+     display:flex;justify-content:center;align-items:flex-start;overflow:hidden">
+  <div id="text" style="writing-mode:vertical-rl;height:100%;
+       font-family:'Microsoft YaHei';font-size:26px;line-height:26px;
+       line-break:strict;text-combine-upright:all;color:#000000">「そうか……本当に、ここで終わりか。まだだ、諦めない！12番目の階層で待つ奴がいる。」</div>
+</div>
+<div style="position:absolute;left:20px;top:20px;writing-mode:vertical-rl;font-size:26px;
+     line-height:26px;font-family:'Microsoft YaHei'"><span id="combine"
+     style="text-combine-upright:all">12</span></div>
+<div id="narrow" style="position:absolute;left:700px;top:800px;width:72px;height:536px;
+     display:flex;justify-content:center;align-items:flex-start;overflow:hidden">
+  <div id="textNarrow" style="writing-mode:vertical-rl;height:100%;font-family:'Microsoft YaHei';
+       font-size:26px;line-height:26px;line-break:strict">「そうか……本当に、ここで終わりか。まだだ、諦めない！12番目の階層で待つ奴がいる。」</div>
+</div>
+<pre id="result" style="position:absolute;left:0;top:1900px;font-size:1px"></pre>
+<script>
+const out = {};
+const textEl = document.getElementById('text');
+out.userAgent = navigator.userAgent;
+out.supports = {
+  writingModeVerticalRl: CSS.supports('writing-mode', 'vertical-rl'),
+  textCombineUprightAll: CSS.supports('text-combine-upright', 'all'),
+  lineBreakStrict: CSS.supports('line-break', 'strict'),
+  textSpacingTrim: CSS.supports('text-spacing-trim', 'trim-start'),
+  textAutospace: CSS.supports('text-autospace', 'normal'),
+  paintOrder: CSS.supports('paint-order', 'stroke fill'),
+  webkitTextStroke: CSS.supports('-webkit-text-stroke', '1px'),
+  textAlignJustify: CSS.supports('text-align', 'justify'),
+};
+const cs = getComputedStyle(textEl);
+out.computed = {
+  fontFamily: cs.fontFamily, fontSize: cs.fontSize, lineHeight: cs.lineHeight,
+  writingMode: cs.writingMode, letterSpacing: cs.letterSpacing,
+};
+const node = textEl.firstChild;
+const chars = [];
+for (let i = 0; i < node.length; i++) {
+  if (node.data[i] === '\n') continue;
+  const r = document.createRange();
+  r.setStart(node, i); r.setEnd(node, i + 1);
+  const rect = r.getBoundingClientRect();
+  chars.push({ch: node.data[i], x: rect.left, y: rect.top, w: rect.width, h: rect.height});
+}
+const columns = [];
+for (const c of chars) {
+  let col = columns.find(k => Math.abs(k.x - c.x) < 1.5);
+  if (!col) { col = {x: c.x, chars: []}; columns.push(col); }
+  col.chars.push(c);
+}
+columns.sort((a, b) => a.x - b.x);
+for (const col of columns) col.chars.sort((a, b) => a.y - b.y);
+out.charCount = chars.length;
+out.columnCount = columns.length;
+out.columns = columns.map(col => col.chars.map(c => c.ch));
+out.columnGeometry = columns.map((col, i) => ({
+  indexFromLeft: i, x: col.x,
+  firstCharTop: col.chars[0].y, lastCharBottom: col.chars[col.chars.length - 1].y,
+  chars: col.chars.length,
+}));
+out.blockLeft = Math.min(...columns.map(c => c.x));
+out.blockRight = Math.max(...columns.map(c => c.x + c.chars[0].w));
+out.firstCharTop = chars[0].y;
+out.lastCharBottom = chars[chars.length - 1].y;
+out.overflow = {scrollWidth: textEl.scrollWidth, clientWidth: textEl.clientWidth,
+                scrollHeight: textEl.scrollHeight, clientHeight: textEl.clientHeight,
+                overflowsBox: textEl.scrollWidth > textEl.clientWidth + 0.5};
+const comb = document.getElementById('combine');
+if (comb) {
+  const r = comb.getBoundingClientRect();
+  out.combineUpright = {width: r.width, height: r.height, text: comb.textContent};
+}
+const cv = document.createElement('canvas');
+const ctx = cv.getContext('2d');
+ctx.font = cs.fontSize + " '" + cs.fontFamily.replace(/"/g, '') + "'";
+out.canvasText = {};
+for (const s of ['AV', 'A', 'V', 'fi', 'f', 'i', 'あ', '。']) out.canvasText[s] = ctx.measureText(s).width;
+const narrow = document.getElementById('narrow');
+if (narrow) {
+  out.narrowBox = {clientWidth: narrow.clientWidth, scrollWidth: narrow.scrollWidth,
+                   clientHeight: narrow.clientHeight, scrollHeight: narrow.scrollHeight,
+                   overflows: narrow.scrollWidth > narrow.clientWidth + 0.5};
+}
+document.getElementById('result').textContent =
+  '<<<JSON' + JSON.stringify(out) + 'JSON>>>';
+</script>
+
+</body></html>

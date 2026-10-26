@@ -1,0 +1,5 @@
+{"epochMs":1793017636028,"kind":"paint_probe_ready"}
+{"hwnd":"330502","epochMs":1793017636621,"kind":"paint_window_found"}
+{"epochMs":1793017636644,"y":null,"kind":"paint_client_rect","x":null,"w":1,"h":1}
+{"epochMs":1793017636650,"kind":"paint_loop_started","gridX":16,"gridY":12}
+{"frames":0,"epochMs":1793017643156,"kind":"paint_probe_done"}

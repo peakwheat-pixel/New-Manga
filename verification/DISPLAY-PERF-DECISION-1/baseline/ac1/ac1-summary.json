@@ -1,0 +1,140 @@
+{
+  "generatedAt": "2026-10-26T12:27:36.355Z",
+  "runs": 3,
+  "pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/new-manga.exe",
+  "pinnedExeSha256": "1136bb0a8d582a30c6ef0b16959b86a62dd26d2c6d9ce49e298c9b86c3343226",
+  "units": "ms after new-manga.exe process start (OS Process.StartTime)",
+  "cdpStatus": "unknown",
+  "stages": {
+    "coreSidecarSpawned": {
+      "n": 3,
+      "medianMs": 40,
+      "minMs": 35,
+      "maxMs": 44,
+      "values": [
+        44,
+        35,
+        40
+      ]
+    },
+    "coreDerivedGcLog": {
+      "n": 3,
+      "medianMs": 513,
+      "minMs": 489,
+      "maxMs": 517,
+      "values": [
+        489,
+        513,
+        517
+      ]
+    },
+    "coreReadyPingLog": {
+      "n": 3,
+      "medianMs": 554,
+      "minMs": 531,
+      "maxMs": 554,
+      "values": [
+        531,
+        554,
+        554
+      ]
+    },
+    "windowVisible": {
+      "n": 3,
+      "medianMs": 558,
+      "minMs": 540,
+      "maxMs": 582,
+      "values": [
+        540,
+        582,
+        558
+      ]
+    },
+    "webview2FirstSeen": {
+      "n": 3,
+      "medianMs": 650,
+      "minMs": 620,
+      "maxMs": 666,
+      "values": [
+        620,
+        666,
+        650
+      ]
+    },
+    "firstContentPainted": {
+      "n": 0,
+      "medianMs": null,
+      "minMs": null,
+      "maxMs": null,
+      "values": []
+    },
+    "visualSettled": {
+      "n": 0,
+      "medianMs": null,
+      "minMs": null,
+      "maxMs": null,
+      "values": []
+    },
+    "firstTitleLog": {
+      "n": 3,
+      "medianMs": 2944,
+      "minMs": 2943,
+      "maxMs": 2992,
+      "values": [
+        2943,
+        2992,
+        2944
+      ]
+    }
+  },
+  "perRun": [
+    {
+      "label": "ac1-02",
+      "appStartEpochMs": 1793017625457,
+      "coreSpawnMs": 44,
+      "coreDerivedGcMs": 489,
+      "allowlistSetupMs": 531,
+      "windowVisibleMs": 540,
+      "windowTitle": "N",
+      "firstContentMs": null,
+      "visualSettledMs": null,
+      "paintFrames": 0,
+      "paintIntervalMs": null,
+      "supervisorRestarts": 0,
+      "coreCrashes": 0,
+      "killedOrphans": ""
+    },
+    {
+      "label": "ac1-03",
+      "appStartEpochMs": 1793017636045,
+      "coreSpawnMs": 35,
+      "coreDerivedGcMs": 513,
+      "allowlistSetupMs": 554,
+      "windowVisibleMs": 582,
+      "windowTitle": "N",
+      "firstContentMs": null,
+      "visualSettledMs": null,
+      "paintFrames": 0,
+      "paintIntervalMs": null,
+      "supervisorRestarts": 0,
+      "coreCrashes": 0,
+      "killedOrphans": ""
+    },
+    {
+      "label": "ac1-04",
+      "appStartEpochMs": 1793017646671,
+      "coreSpawnMs": 40,
+      "coreDerivedGcMs": 517,
+      "allowlistSetupMs": 554,
+      "windowVisibleMs": 558,
+      "windowTitle": "",
+      "firstContentMs": null,
+      "visualSettledMs": null,
+      "paintFrames": 0,
+      "paintIntervalMs": null,
+      "supervisorRestarts": 0,
+      "coreCrashes": 0,
+      "killedOrphans": ""
+    }
+  ]
+}

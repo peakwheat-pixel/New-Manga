@@ -1,0 +1,10 @@
+{"t0EpochMs":1793017624533,"epochMs":1793017625293,"kind":"probe_ready"}
+{"t0EpochMs":1793017624533,"epochMs":1793017625492,"appPid":17148,"kind":"pid_observed"}
+{"exeName":"new-manga","exeStartEpochMs":1793017625457,"appPid":17148,"kind":"app_started","t0EpochMs":1793017624533,"epochMs":1793017625495}
+{"t0EpochMs":1793017624533,"epochMs":1793017625501,"kind":"probe_loop_started"}
+{"isOwnChild":true,"corePid":11152,"kind":"core_service_first_seen","t0EpochMs":1793017624533,"epochMs":1793017625501,"parentPid":17148}
+{"t0EpochMs":1793017624533,"epochMs":1793017625873,"kind":"catalog_db_first_seen","path":"G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\runs\\ac1-02\\catalog\\catalog.sqlite"}
+{"class":"T","ownedByApp":true,"t0EpochMs":1793017624533,"isForeground":false,"kind":"window_candidate","visible":true,"hwnd":"986872","title":"N","epochMs":1793017625997,"ownerPid":17148}
+{"class":"T","kind":"window_visible","t0EpochMs":1793017624533,"title":"N","epochMs":1793017625997,"hwnd":"986872"}
+{"webviewPid":37716,"epochMs":1793017626077,"t0EpochMs":1793017624533,"kind":"webview2_first_seen"}
+{"catalogSeen":true,"t0EpochMs":1793017624533,"windowVisible":true,"coreSeen":1,"kind":"probe_done","epochMs":1793017627596,"webviewSeen":6}

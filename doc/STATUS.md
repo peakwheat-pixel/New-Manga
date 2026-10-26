@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：[GIT-CLEAN-RUST-CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`（Rust 线仅设计；产品线无 READY）。
+- 当前 Task：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（证据与三路线裁决已交付，待用户裁决 D1–D10）。
 - 最近：PRODUCT-IDENTITY-1 done（命名 → New Manga）。
-- 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；ZCode 交付 `e9a409927`，DSH 复核 approved）。
+- 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10；G1 转人工验证）。
 - 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
 - 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`）。
