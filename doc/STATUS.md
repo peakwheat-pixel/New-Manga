@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `ready`（修 900px 窄窗横向溢出 1024→实宽；**改产品 CSS，待用户授权后才实施**）。
+- 当前 Task：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `in_progress`（用户已授权改 CSS；修 900px 横向溢出 1024→实宽；Owner=ZCode）。
 - 最近完成：[UIUX-V2-RUNTIME-REALCORE-2](tasks/UIUX-V2-RUNTIME-REALCORE-2.md) `closed_with_limitations`（run-i34 10/10 exit 0；G2/G4/G5 达成；G1 架构性不可自动化）。
 - 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
 - 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`）。

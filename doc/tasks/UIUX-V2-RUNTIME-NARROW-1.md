@@ -3,13 +3,13 @@ id: UIUX-V2-RUNTIME-NARROW-1
 title: 修 900px 窄窗横向溢出（1024 vs 900）+ 高 DPI 布局回归守卫
 kind: implementation
 governance_version: 3
-status: ready
-approval: pending_user_authorization
+status: in_progress
+approval: user_authorized_2026-10-26
 suggested_owner: zcode
-owner: null
+owner: zcode
 reviewer: dsh
 depends_on: [UIUX-V2-RUNTIME-REALCORE-2]
-base_commit: null
+base_commit: 5b8688ad2
 branch: null
 worktree: null
 integration_commit: null
@@ -63,7 +63,7 @@ overflow {"docWidth":1024,"clientWidth":900,"pageWidth":1024}   ← 横向溢出
 ## 需要用户授权的原因
 
 这张卡会**改产品 CSS**（布局断点），属于视觉层变更，按项目规则需要 DSH 之外的确权；
-`approval: pending_user_authorization` 就是这个意思——**未获授权前不实施**。
+`approval: user_authorized_2026-10-26` 就是这个意思——**未获授权前不实施**。
 
 ## 验收
 
