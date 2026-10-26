@@ -69,6 +69,12 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-AC1-DECODE | AC1 | `verification/CORE-SLIM-1/ac1/COMPARISON.md` | `95c2c28bb` | `3cbc559e62d050328d83652d7a022f7ed8ca3e35853ddf6b5995858f9297b8e8` | CANONICAL |
+| E-AC2-BUNDLE | AC2 | `verification/CORE-SLIM-1/ac2/bundle-after.json` | `95c2c28bb` | `0d2305407b7a18a9a228abcaa7d6cc61a6325f8cd04fdb6434f8606c6e0a77fe` | CANONICAL |
+| E-AC2-SMOKE | AC2/AC3 能力 | `verification/CORE-SLIM-1/ac2/capability-smoke.json` | `95c2c28bb` | `16ad92a89cbee2d816e192406f5a5ae844321b78faf6e5b18d850fb881102c88` | CANONICAL |
+| E-AC3-SIZE | AC3 | `verification/CORE-SLIM-1/size-report.md` | `95c2c28bb` | `bac34850c543f2b7bf0421bce7957e802bc78a49311ece4435581e301674bb15` | CANONICAL |
+| E-AC4-PYTEST | AC4 | `verification/CORE-SLIM-1/ac4/pytest-after.log` | `95c2c28bb` | `3581abf13134a4065d31deab1f2ae27576cb46ce7981f9a9e9cb34f290294719` | CANONICAL |
+| E-AC4-DOTNET | AC4 | `verification/CORE-SLIM-1/ac4/scripts-test-after.log` | `95c2c28bb` | `5d988bc8842fb0412475100b105c8f857a6047741204a6459c45a253a0f05569` | CANONICAL |
 
 ## Resource Manifest
 

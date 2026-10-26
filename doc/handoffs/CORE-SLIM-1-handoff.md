@@ -3,7 +3,7 @@
 - Task: `doc/tasks/CORE-SLIM-1.md`（AD-002 §3.5 预算规则）
 - Branch: `task/CORE-SLIM-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/CORE-SLIM-1`
 - Base: `8d0531cfb`（卡字段同步 `a101eeda3`）；Owner: DSH（teammate `core-admin-rca`）；Reviewer: DSH（独立审查另行指定）
-- Delivery head: 见本文件所在 commit 的父提交（证据 pin 以 `git log --oneline -1 <evidence-commit>` 为准）
+- Delivery head: `95c2c28bb`（实现+证据所在 commit；本卡 Canonical Evidence 的 pin 均指向它）
 - 未 push（按卡禁止）。
 
 ## 1. 交付摘要
