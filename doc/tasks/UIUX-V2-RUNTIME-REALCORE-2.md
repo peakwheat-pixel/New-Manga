@@ -5,8 +5,8 @@ kind: implementation
 governance_version: 3
 status: ready
 approval: user_authorized_autonomous
-suggested_owner: zcode
-owner: null
+suggested_owner: codex
+owner: codex
 reviewer: dsh
 depends_on: [UIUX-V2-RUNTIME-REALCORE-1]
 base_commit: null
