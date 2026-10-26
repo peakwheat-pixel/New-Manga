@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[HOST-COMMAND-MIGRATION-1](tasks/HOST-COMMAND-MIGRATION-1.md) `in_review`（快照 66=16 实现+50 NOT_SUPPORTED；dotnet 66/66）。
+- 当前 Task：[UI-SHELL-THEME-1](tasks/UI-SHELL-THEME-1.md) `ready`（S3 主窗/主题中心/书架；S2 done 5a11fa7d9）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

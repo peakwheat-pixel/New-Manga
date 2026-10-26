@@ -15,9 +15,10 @@
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 |DISPLAY-PERF-DECISION-1|—|in_review（全 AC MET；S0 GO；待独立复核）|
 |INFER-BASELINE-EP-1|—|proposed（推理基线选型 3 人日；待排期）|
-|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|in_review（S2 命令 parity：66 快照=16 实现+50 NOT_SUPPORTED；交付 4ffa9d77f）|
+|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|done（S2 parity：66 快照/16 实现/50 NS 分批；集成 5a11fa7d9）|
+|UI-SHELL-THEME-1|HOST-CORECLIENT-1|ready（S3 主窗+主题中心+书架；base 5a11fa7d9）|
 
-READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 spike GO、HOST-CORECLIENT-1 done（9126090eb）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：UI-SHELL-THEME-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -27,3 +28,4 @@ READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-2
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
