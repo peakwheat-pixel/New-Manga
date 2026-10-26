@@ -20,6 +20,7 @@ evidence_dir: verification/DISPLAY-PERF-DECISION-1
 allowed_paths:
   - doc/tasks/DISPLAY-PERF-DECISION-1.md
   - doc/design/DISPLAY_PERF_DECISION_1.md
+  - doc/design/AD-002_TARGET_DESKTOP_ARCHITECTURE_DRAFT.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
@@ -51,6 +52,7 @@ allowed_paths:
 - [x] **AC9 Core 非管理员启动 RCA**（已复现：非提权 3 次/提权对照 2 次；根因链闭合到 Low 完整性令牌 → sidecar 无法写 `%APPDATA%\com.newmanga.desktop\{derived,catalog}` → Core 秒退 → supervisor 3 次失败 → t≈20s panic 退出；候选机器策略待干净机复核）<<MET>>
 - [x] **AC10 非 Web 前端技术栈选型证据**（用户追加需求；实测 Avalonia 单文件 34.24MB、运行时换肤机制对比、WinUI3 单文件/RequestedTheme 限制、GPL 红线；给出主选/备选/不推荐与 11 项 spike 验收）<<MET>>
 - [ ] **AC11 干净机复核 Core 启动**（用户 2026-10-26 追加：本机 Windows Sandbox 已启用且存在 `CodexSandboxOffline/Online` 沙箱账户 → 在 Windows Sandbox 干净环境中以非提权运行基线 exe，测 sidecar 令牌完整性、Core 是否启动、app 是否 panic；判定 Low IL 降级是机器策略 vs 产品/打包问题）
+- [x] **AC12 新架构草案 + Saber 参考规格**（AD-002 草案：Avalonia+Python Core 边界/接线/主题中心 ThemePack/书架 1:1 复刻令牌与流程/许可证决策树 L1–L3/灰度迁移 S0–S5/成本 200–400 人日；Saber 实测栈与 CSS 令牌已存证）<<MET>>
 
 ## 允许修改范围
 
@@ -86,7 +88,7 @@ allowed_paths:
 - 已解决阻塞：冻结 release exe 无法开 WebView2 CDP（wry 覆盖 env 变量）→ 经 Lead 批准做一次仓外配置增量构建（18.9s），差异仅 browser args，溯源 `BUILD-PROVENANCE.json`。
 - 保留限制：AC5 的 Chromium 侧 DOM 量化 BLOCKED（本机 msedge launcher 交接）；长条滚动 FPS BLOCKED（产品能力缺失）；物理 DPR2 屏 NOT_RUN。
 - 审查：本 Task 不自我批准；用户裁决 D1–D10 后，如需技术复核再指派未参与实现的 ZCode/Antigravity/Codex。
-- **用户 2026-10-26 追加裁决**：前端改用 **Avalonia 11（C#/.NET）**（先选 WinUI3，看过换肤/单文件证据后改选 Avalonia）；架构替换 AD-001 的 React+Tauri 冻结目标，需落 AD-002 并由用户书面确认；5 人日 spike 待授权后启动。
+- **用户 2026-10-26 追加裁决**：前端改用 **Avalonia 11（C#/.NET）**（先选 WinUI3，看过换肤/单文件证据后改选 Avalonia）；架构替换 AD-001，草案见 `doc/design/AD-002_TARGET_DESKTOP_ARCHITECTURE_DRAFT.md`；UI 参考 = Saber-Translator（书架/详情/新建/导入可 1:1 复刻视觉与流程，工作台参考其排版）；「有能用的代码和模型直接拿来用」受 GPL-3.0 约束，待 D-A 许可证裁决；**先完成技术栈与方案，Core 修复暂缓**（用户 2026-10-26）。
 - **RCA 机器特异性待复核**：本机存在沙箱 ACE 痕迹（`HOME-MY\CodexSandboxUsers`），「谁把 sidecar 降到 Low IL」未最终定位；需在无沙箱痕迹的干净 Windows 上重跑 `child-token-probe.ps1`（RCA §排除表末段），以判定是机器策略还是产品/打包问题。
 
 ## 交付与运行记录
