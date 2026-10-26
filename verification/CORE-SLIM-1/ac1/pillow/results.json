@@ -1,0 +1,176 @@
+{
+  "impl": "pillow",
+  "decode": {
+    "basic.png": {
+      "ok": true,
+      "width": 11,
+      "height": 7,
+      "mime_type": "image/png"
+    },
+    "plain.bmp": {
+      "ok": true,
+      "width": 20,
+      "height": 10,
+      "mime_type": "image/bmp"
+    },
+    "photo.jpg": {
+      "ok": true,
+      "width": 64,
+      "height": 48,
+      "mime_type": "image/jpeg"
+    },
+    "palette.png": {
+      "ok": true,
+      "width": 24,
+      "height": 16,
+      "mime_type": "image/png"
+    },
+    "alpha.png": {
+      "ok": true,
+      "width": 40,
+      "height": 30,
+      "mime_type": "image/png"
+    },
+    "multi.tiff": {
+      "ok": true,
+      "width": 40,
+      "height": 30,
+      "mime_type": "image/tiff"
+    },
+    "still.webp": {
+      "ok": true,
+      "width": 64,
+      "height": 48,
+      "mime_type": "image/webp"
+    },
+    "anim.webp": {
+      "ok": true,
+      "width": 32,
+      "height": 24,
+      "mime_type": "image/webp"
+    },
+    "anim.gif": {
+      "ok": true,
+      "width": 48,
+      "height": 32,
+      "mime_type": "image/gif"
+    },
+    "still.avif": {
+      "ok": true,
+      "width": 32,
+      "height": 24,
+      "mime_type": "image/avif"
+    },
+    "long.png": {
+      "ok": true,
+      "width": 690,
+      "height": 4000,
+      "mime_type": "image/png"
+    },
+    "declared-huge.png": {
+      "ok": false,
+      "error": "ImageDecodeError",
+      "detail": "image declares 8192x65536 = 2048.0 MiB decoded, above the 2047 MiB decode ceiling"
+    }
+  },
+  "pixels": {
+    "basic.png": {
+      "frame": {
+        "width": 11,
+        "height": 7,
+        "sha256": "e408f8e6bdfd421c9ca29d6f0a77a61b856ac89307eb3d2a173eca7fe9773438",
+        "bytes": 308
+      },
+      "page_png": {
+        "sha256": "c13429a289bfde399c8d9fde657fcf421f4c615905667c074a0b1d5ba9c2dbb1",
+        "bytes": 77
+      },
+      "crop_png": {
+        "sha256": "90548c7fba9cb499a3c9f1d6d74da1019c4e73df835a2974c96224792c0561c8",
+        "bytes": 77
+      },
+      "bridge_png": {
+        "sha256": "c13429a289bfde399c8d9fde657fcf421f4c615905667c074a0b1d5ba9c2dbb1",
+        "bytes": 77
+      }
+    },
+    "photo.jpg": {
+      "frame": {
+        "width": 64,
+        "height": 48,
+        "sha256": "3e8866725ee659cd186f25ae39d76db18efc07de95311fadccfc5cf97a66ac82",
+        "bytes": 12288
+      },
+      "page_png": {
+        "sha256": "353144828d6bf04426c2f58bc3437ec9f9e9b1be108bb444fd151361fd3415f3",
+        "bytes": 4036
+      },
+      "crop_png": {
+        "sha256": "551027a401f29384fb872f018cde7dfb5c52dae4700f93c6bb1bd499b1f93621",
+        "bytes": 311
+      },
+      "bridge_png": {
+        "sha256": "353144828d6bf04426c2f58bc3437ec9f9e9b1be108bb444fd151361fd3415f3",
+        "bytes": 4036
+      }
+    },
+    "alpha.png": {
+      "frame": {
+        "width": 40,
+        "height": 30,
+        "sha256": "6bef84d89bb482ee1c5d8a5546984d1f0129bc3cb204ee7e0aaa330661c01da4",
+        "bytes": 4800
+      },
+      "page_png": {
+        "sha256": "e1b6787b41c62d4dfcd21713771036567bcadb34b46e827c6ba6d85d8801d4a8",
+        "bytes": 134
+      },
+      "crop_png": {
+        "sha256": "85da78713337bef6a717eeaa5dc3177806d9475237b32632f34b9399d7990300",
+        "bytes": 83
+      },
+      "bridge_png": {
+        "sha256": "10174ba10bf9c6f8e96f048c7d5b93c09386da6dba03d83a866a886d87b9c1f2",
+        "bytes": 128
+      }
+    },
+    "palette.png": {
+      "frame": {
+        "width": 24,
+        "height": 16,
+        "sha256": "5d263765940ba58ad3d7ea71bc7eb2820c1abe1b663d68a55929a463b4a18e42",
+        "bytes": 1536
+      },
+      "page_png": {
+        "sha256": "d63aee8f817000e9f307d17cd19b5168cbea7912f6282bff2828a3c8e34cb813",
+        "bytes": 92
+      },
+      "crop_png": {
+        "sha256": "144bb2f92ab9ca670369fced6ce848c070e70c6d4ee5b4ab569e669644f1088c",
+        "bytes": 83
+      },
+      "bridge_png": {
+        "sha256": "d63aee8f817000e9f307d17cd19b5168cbea7912f6282bff2828a3c8e34cb813",
+        "bytes": 92
+      }
+    }
+  },
+  "pdf": {
+    "pages": [
+      {
+        "index": 0,
+        "width": 1224,
+        "height": 1584,
+        "sha256": "d57548663538849476d56cf8713dbe23f28e57f91a8fd5c5dc0090aaf51dd598",
+        "bytes": 13682
+      },
+      {
+        "index": 1,
+        "width": 1224,
+        "height": 1584,
+        "sha256": "96c3912152f27a851166bfca94293e71b1696ac3c0ba61115cfd8108b8cee643",
+        "bytes": 14464
+      }
+    ]
+  }
+}

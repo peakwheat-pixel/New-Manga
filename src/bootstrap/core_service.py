@@ -167,7 +167,7 @@ from bootstrap.core_assembly import (
 )
 from domain.regions.entities import RegionType, SfxPolicy
 from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
-from infrastructure.importing import QtImageDecoder, SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.importing import PillowImageDecoder, SUPPORTED_IMAGE_SUFFIXES
 from infrastructure.providers.handlers import typeset_style_defaults
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
@@ -642,7 +642,7 @@ class P16WireError(Exception):
 
 
 class _PassthroughImageDecoder:
-    """Legacy test double; production assembly uses ``QtImageDecoder``."""
+    """Legacy test double; production assembly uses ``PillowImageDecoder``."""
 
     def decode(self, payload: bytes) -> DecodedImage:
         del payload
@@ -708,7 +708,7 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     core = assemble_core_services(
         db_path,
         managed_root,
-        image_decoder=QtImageDecoder(),
+        image_decoder=PillowImageDecoder(),
         font_catalog=catalog,
         layout_engine=PillowTextLayoutEngine(catalog),
         compositor=PillowImageCompositor(catalog),

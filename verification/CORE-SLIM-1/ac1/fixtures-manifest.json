@@ -1,0 +1,54 @@
+{
+  "alpha.png": {
+    "bytes": 134,
+    "sha256": "e1b6787b41c62d4dfcd21713771036567bcadb34b46e827c6ba6d85d8801d4a8"
+  },
+  "anim.gif": {
+    "bytes": 406,
+    "sha256": "0bd20941c2fef17e77331a3d3d42b585906c0d1fbd836e98d38c4c0457ab90bd"
+  },
+  "anim.webp": {
+    "bytes": 334,
+    "sha256": "7cb3694c398b171e3d763d25bae4d8828ad0effc6dc693e7ea883bc92cdd28cb"
+  },
+  "basic.png": {
+    "bytes": 77,
+    "sha256": "c13429a289bfde399c8d9fde657fcf421f4c615905667c074a0b1d5ba9c2dbb1"
+  },
+  "book.pdf": {
+    "bytes": 672,
+    "sha256": "f6ae8e31b32c0400815ae33ad39350bf99c3fc79c7ffab819b7634aecfe124c7"
+  },
+  "declared-huge.png": {
+    "bytes": 109,
+    "sha256": "1891fe6efc993026f45eee292e641fe053d2789ac885234a0b5264ef1cf5c9ce"
+  },
+  "long.png": {
+    "bytes": 10806,
+    "sha256": "4d978d47b17e3a9ae236466a02eb9a4c04fbc8d66bccba8d3cdfdd448b8f8a7a"
+  },
+  "multi.tiff": {
+    "bytes": 7488,
+    "sha256": "38697569db15eaab944f29d99f1ba140782d404a4d77072597c76db8adf1be18"
+  },
+  "palette.png": {
+    "bytes": 851,
+    "sha256": "9fbf27e119d9324d67a66aa078df5ab2485c40ca081c0b864904d3b91cb34fe9"
+  },
+  "photo.jpg": {
+    "bytes": 1211,
+    "sha256": "18ab959954fa3509b9af9f192a017e06fa62e7b626ea94c6c30663d0335c000f"
+  },
+  "plain.bmp": {
+    "bytes": 654,
+    "sha256": "8bd68006cfb8c42f6e129e9e39d90214c0fe92f39e0ae86a61af69bc88dc00f2"
+  },
+  "still.avif": {
+    "bytes": 315,
+    "sha256": "4bd7464f3a6e6fb3628caff87e510b9e0ebde93ca23596bdba304ae47d254026"
+  },
+  "still.webp": {
+    "bytes": 392,
+    "sha256": "245df01c9e8d3ee2d459b91059585c988eb0231a1fcc4a070f4cfb6fc158be42"
+  }
+}

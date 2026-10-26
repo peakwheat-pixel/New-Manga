@@ -18,14 +18,15 @@
 # supported configuration (same source as requirements.txt; GPU/CUDA wheels
 # are a separate packaging decision, T3.2.1).
 #
-# PySide6_Essentials/shiboken6 are pinned to the SAME versions as
-# ../../requirements.txt: `bootstrap.acceptance_bridge` hard-requires PySide6
-# through its frozen `assemble_acceptance_core` assembly (QGuiApplication +
-# the production Qt imaging/rendering adapters) — measured 2026-09-29: with
-# Qt excluded the frozen acceptance_bridge.exe failed with
-# ModuleNotFoundError at startup, so the closure ships Qt. The other sidecar
-# entries (host_bridge / core_service / catalog_loader) remain Qt-free by
-# their import closure.
+# CORE-SLIM-1 (2026-10-27): PySide6_Essentials/shiboken6 were REMOVED from this
+# build list together with the Core-side Qt adapters. The old note ("the
+# acceptance bridge hard-requires PySide6, so the closure ships Qt") is obsolete:
+# `assemble_acceptance_core` now injects the same Qt-free Pillow adapters as the
+# production `core_service` (PillowImageDecoder / Pillow* rendering adapters /
+# PillowSourceStyleAnalyzer), and the spec excludes PySide6/shiboken6 explicitly
+# (packaging/m2ac5/core_sidecar.spec EXCLUDED). The rebuilt closure was measured
+# with 0 Qt artefacts and passed the frozen capability smoke for all five entry
+# exes (verification/CORE-SLIM-1/).
 #
 # pypdfium2 / mobi and the build venv (DSH r1 R9 review-fix wording):
 # - mobi is NOT in the build venv on purpose (lazy import: the MOBI document
@@ -40,8 +41,6 @@
 #   requirements.txt version (5.13.0) — check the closure after any ML
 #   version bump.
 pyinstaller==6.22.3
-PySide6_Essentials==6.11.2
-shiboken6==6.11.2
 python-doctr==1.1.0
 torch==2.14.0
 torchvision==0.29.0

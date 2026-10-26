@@ -1,0 +1,29 @@
+FFFFF                                                                    [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+      
+      - MOCK-TRANSLATED-TEXT
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-1\tests\core\test_sfx_policy_end_to_end.py:261: AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+E   AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+      
+      - MOCK-TRANSLATED-TEXT
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-1\tests\core\test_sfx_policy_end_to_end.py:334: AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+E   AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+      
+      - MOCK-TRANSLATED-TEXT
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-1\tests\core\test_sfx_policy_end_to_end.py:389: AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+E   AssertionError: ('translate_all', <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'>)
+    assert <PipelineRunS...ith_failures'> == 'completed'
+      
+      - completed
+      + completed_with_failures
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-1\tests\library\test_p09_managed_copy_safety.py:176: AssertionError: ('translate_all', <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'>)
+E   AssertionError: run_pipeline failed: {'code': 'AC1_PIPELINE_FAILED', 'detail': '{"status": "completed_with_failures"}'}
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-1\tests\m2_acceptance\test_acceptance_loop.py:70: AssertionError: run_pipeline failed: {'code': 'AC1_PIPELINE_FAILED', 'detail': '{"status": "completed_with_failures"}'}
+=========================== short test summary info ===========================
+FAILED tests/core/test_sfx_policy_end_to_end.py::test_translate_policy_runs_the_sfx_region_end_to_end
+FAILED tests/core/test_sfx_policy_end_to_end.py::test_manual_policy_keeps_the_sfx_region_untranslated
+FAILED tests/core/test_sfx_policy_end_to_end.py::test_manual_policy_gates_the_sfx_primary_region_end_to_end
+FAILED tests/library/test_p09_managed_copy_safety.py::test_source_hash_survives_translation_repair_and_rerender
+FAILED tests/m2_acceptance/test_acceptance_loop.py::test_full_loop_pipeline_save_restore_reader_export
+5 failed in 1.81s

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import os
 import re
 import shutil
@@ -73,48 +74,172 @@ _ALLOCATION_LIMIT_MIB = 2047
 _ERROR_DETAIL_MAX_CHARS = 300
 
 
-def _reader_error_detail(reader) -> str:
-    """Carry the reader's own error text, truncated to a bounded length."""
-    text = (reader.errorString() or "").strip()
-    if not text:
-        text = "bytes are not a decodable image"
-    if len(text) > _ERROR_DETAIL_MAX_CHARS:
-        text = text[:_ERROR_DETAIL_MAX_CHARS] + "..."
-    return text
+def _bounded_detail(text: str) -> str:
+    """Bounded per-file decode failure detail (r1 R4/R8 contract)."""
+    detail = (text or "").strip()
+    if not detail:
+        detail = "bytes are not a decodable image"
+    if len(detail) > _ERROR_DETAIL_MAX_CHARS:
+        detail = detail[:_ERROR_DETAIL_MAX_CHARS] + "..."
+    return detail
 
 
-class QtImageDecoder:
-    """Decode image bytes with the Qt image plugins available to the app.
+def _decode_ceiling_mib(width: int, height: int) -> float:
+    """Decoded RGBA footprint of a DECLARED image size, in MiB.
 
-    Asserts the module's documented decode allocation ceiling
-    (``_ALLOCATION_LIMIT_MIB``) before every read: Qt's built-in 256 MiB
-    default rejected webtoon long-strips in the product domain
-    (M2-IMPORT-ALLOC-LIMIT). Payloads above the ceiling stay fail-closed
-    with the reader's own error text as the typed detail.
+    The ceiling is evaluated against the header dimensions before any pixel
+    buffer is materialised — the same fail-closed ordering the replaced Qt
+    reader used (M2-IMPORT-ALLOC-LIMIT): a corrupt/declared-huge header can
+    never be the reason a Core process OOMs.
+    """
+    return (int(width) * int(height) * 4) / float(1024 * 1024)
+
+
+#: Pillow ``Image.format`` -> the MIME type the import surface reports.
+#: CORE-SLIM-1: Pillow replaced the Qt image plugins; the frozen product
+#: surface (``SUPPORTED_IMAGE_SUFFIXES``) is unchanged. AVIF is a capability
+#: the Qt plugin set did NOT have in the shipped closure; HEIC/HEIF stay
+#: unsupported in both (Pillow needs pillow-heif, not a dependency), so no
+#: decode capability is lost.
+_MIME_BY_IMAGE_FORMAT = {
+    "AVIF": "image/avif",
+    "BMP": "image/bmp",
+    "GIF": "image/gif",
+    "JPEG": "image/jpeg",
+    "PNG": "image/png",
+    "TIFF": "image/tiff",
+    "WEBP": "image/webp",
+}
+
+
+class PillowImageDecoder:
+    """Decode image bytes with Pillow (CORE-SLIM-1: the Core ships no Qt).
+
+    Replacement for the former ``QtImageDecoder``. The documented decode
+    allocation ceiling (``_ALLOCATION_LIMIT_MIB``) is enforced against the
+    DECLARED dimensions before any pixel buffer is allocated, so webtoon
+    long-strips in the product domain decode while oversized/corrupt headers
+    stay fail-closed with a bounded typed detail (M2-IMPORT-ALLOC-LIMIT
+    behaviour, unchanged).
+
+    Multi-frame payloads (animated GIF/WebP, multi-page TIFF) are accepted and
+    reported by their first frame's dimensions — exactly what the replaced
+    reader returned to the import surface; the original bytes are stored
+    verbatim by the Managed Copy, so no animation data is dropped.
+
+    Pillow's own decompression-bomb heuristic is disabled for the duration of
+    one decode (it would otherwise refuse the measured 90.6 Mpx webtoon page
+    the 2047 MiB product ceiling deliberately admits); the product ceiling is
+    the only bound, exactly as the process-global Qt allocation limit was
+    before.
     """
 
     def decode(self, data: bytes) -> DecodedImage:
-        from PySide6.QtCore import QByteArray, QBuffer, QIODevice
-        from PySide6.QtGui import QImageReader
+        from PIL import Image
 
-        QImageReader.setAllocationLimit(_ALLOCATION_LIMIT_MIB)
-
-        buffer = QBuffer()
-        buffer.setData(QByteArray(data))
-        if not buffer.open(QIODevice.OpenModeFlag.ReadOnly):
-            raise ImageDecodeError("image buffer could not be opened")
-
-        reader = QImageReader(buffer)
-        format_name = bytes(reader.format()).decode("ascii", errors="ignore").lower()
-        image = reader.read()
-        if image.isNull():
-            raise ImageDecodeError(_reader_error_detail(reader))
+        previous_bomb_limit = Image.MAX_IMAGE_PIXELS
+        Image.MAX_IMAGE_PIXELS = None  # the product ceiling below is the bound
+        try:
+            image = Image.open(io.BytesIO(data))
+            try:
+                width, height = image.size
+                decoded_mib = _decode_ceiling_mib(width, height)
+                if decoded_mib > _ALLOCATION_LIMIT_MIB:
+                    raise ImageDecodeError(
+                        _bounded_detail(
+                            f"image declares {width}x{height} = "
+                            f"{decoded_mib:.1f} MiB decoded, above the "
+                            f"{_ALLOCATION_LIMIT_MIB} MiB decode ceiling"
+                        )
+                    )
+                image.load()
+                format_name = (image.format or "").upper()
+            finally:
+                image.close()
+        except ImageDecodeError:
+            raise
+        except Exception as error:  # noqa: BLE001 - every decode failure is typed
+            raise ImageDecodeError(_bounded_detail(str(error))) from error
+        finally:
+            Image.MAX_IMAGE_PIXELS = previous_bomb_limit
 
         return DecodedImage(
-            width=image.width(),
-            height=image.height(),
-            mime_type=_MIME_TYPES.get(format_name, _UNKNOWN_MIME_TYPE),
+            width=width,
+            height=height,
+            mime_type=_MIME_BY_IMAGE_FORMAT.get(format_name, _UNKNOWN_MIME_TYPE),
         )
+
+
+#: CORE-SLIM-1 legacy compatibility shim: the evidence-frozen legacy Qt shell
+#: modules (``bootstrap.app``, ``bootstrap.acceptance_bridge``) import the old
+#: class name. They are NOT part of the shipped Core closure, and the alias
+#: keeps their imports working without reintroducing Qt.
+QtImageDecoder = PillowImageDecoder
+
+
+def _encode_pdf_bitmap_png(raw: bytes, width: int, height: int, mode: str) -> bytes:
+    """Encode a pdfium bitmap buffer as PNG bytes (CORE-SLIM-1: Pillow, no Qt).
+
+    The buffer byte order is pdfium's, not Qt's: ``BGRA`` is read as ``BGRA``
+    and ``BGR`` as ``BGR``, preserving the red/blue assignment the frozen F-1
+    (TASK-043) fix established. Any other mode is a typed refusal by the
+    caller; a truncated buffer raises ``ValueError``.
+    """
+    from PIL import Image
+
+    bytes_per_line = width * (4 if mode == "BGRA" else 3)
+    if len(raw) < bytes_per_line * height:
+        raise ValueError("truncated bitmap buffer")
+    image = (
+        Image.frombuffer("RGBA", (width, height), raw, "raw", "BGRA", 0, 1)
+        if mode == "BGRA"
+        else Image.frombuffer("RGB", (width, height), raw, "raw", "BGR", 0, 1)
+    )
+    out = io.BytesIO()
+    image.save(out, format="PNG")
+    return out.getvalue()
+
+
+#: r1 R7 (M2-IMPORT-ALLOC-LIMIT): MOBI page images are untrusted input and
+#: keep the original tightened 256 MiB fail-closed bound (the webtoon path's
+#: 2047 MiB ceiling must not leak into this decode face).
+_MOBI_PAGE_ALLOCATION_LIMIT_MIB = 256
+
+
+class _MobiPageDecodeError(RuntimeError):
+    """One MOBI page image could not be decoded (typed at the adapter)."""
+
+
+def _decode_mobi_page_png(raw: bytes) -> tuple[bytes, int, int]:
+    """Decode one embedded MOBI page image to PNG bytes (CORE-SLIM-1: Pillow)."""
+    from PIL import Image
+
+    previous_bomb_limit = Image.MAX_IMAGE_PIXELS
+    Image.MAX_IMAGE_PIXELS = None  # the explicit ceiling below is the bound
+    try:
+        image = Image.open(io.BytesIO(raw))
+        try:
+            width, height = image.size
+            decoded_mib = _decode_ceiling_mib(width, height)
+            if decoded_mib > _MOBI_PAGE_ALLOCATION_LIMIT_MIB:
+                raise _MobiPageDecodeError(
+                    f"{decoded_mib:.1f} MiB decoded is above the "
+                    f"{_MOBI_PAGE_ALLOCATION_LIMIT_MIB} MiB page ceiling"
+                )
+            image.load()
+            if image.mode not in ("RGB", "RGBA", "L", "LA"):
+                image = image.convert("RGB")
+            out = io.BytesIO()
+            image.save(out, format="PNG")
+            return out.getvalue(), width, height
+        finally:
+            image.close()
+    except _MobiPageDecodeError:
+        raise
+    except Exception as error:  # noqa: BLE001 - typed page refusal
+        raise _MobiPageDecodeError(str(error)) from error
+    finally:
+        Image.MAX_IMAGE_PIXELS = previous_bomb_limit
 
 
 class ManagedCopyStoreAdapter:
@@ -229,9 +354,6 @@ class _PdfiumDocumentHandle:
             RenderedDocumentPage,
         )
 
-        from PySide6.QtCore import QBuffer, QIODevice
-        from PySide6.QtGui import QImage
-
         try:
             page = self._document[index]
             bitmap = page.render(scale=self.scale)
@@ -240,18 +362,11 @@ class _PdfiumDocumentHandle:
         except Exception as error:  # pdfium-level failure on this page
             raise DocumentDecodeError("INVALID_DOCUMENT", str(error)) from error
         mode = str(bitmap.mode)
-        if mode == "BGRA":
-            # pdfium hands back BGRA byte order. Format_ARGB32 is the
-            # little-endian name for exactly that in-memory layout
-            # (0xAARRGGBB words read as B,G,R,A), so the two agree.
-            qformat = QImage.Format.Format_ARGB32
-        elif mode == "BGR":
-            # F-1 (TASK-043): pdfium hands back BGR byte order, so the buffer
-            # must be read as BGR — Format_RGB888 swapped red and blue on
-            # every page (and the wrong pixels were persisted to the Managed
-            # Copy and hashed into source_hash).
-            qformat = QImage.Format.Format_BGR888
-        else:
+        if mode not in ("BGRA", "BGR"):
+            # F-1 (TASK-043) background: pdfium hands back BGRA (alpha) or BGR
+            # byte order; both must be read in PDFIUM's order — reading BGR as
+            # RGB swapped red and blue on every page (and the wrong pixels were
+            # persisted to the Managed Copy and hashed into source_hash).
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT", f"unexpected pdfium bitmap mode {mode!r}"
             )
@@ -260,18 +375,14 @@ class _PdfiumDocumentHandle:
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT", "pdfium bitmap buffer is truncated"
             )
-        image = QImage(raw, width, height, bytes_per_line, qformat)
-        if image.isNull():
-            raise DocumentDecodeError(
-                "INVALID_DOCUMENT", "rasterised page could not be decoded by Qt"
-            )
-        buffer = QBuffer()
-        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-        if not image.save(buffer, "PNG"):
+        try:
+            # CORE-SLIM-1: Pillow replaces the QImage -> PNG bridge.
+            png = _encode_pdf_bitmap_png(raw, width, height, mode)
+        except Exception as error:  # noqa: BLE001 - typed refusal, never a crash
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT", "rasterised page could not be encoded as PNG"
-            )
-        return RenderedDocumentPage(bytes(buffer.data()), width, height)
+            ) from error
+        return RenderedDocumentPage(png, width, height)
 
     def close(self) -> None:
         try:
@@ -403,9 +514,6 @@ class _MobiDocumentHandle:
             RenderedDocumentPage,
         )
 
-        from PySide6.QtCore import QBuffer, QIODevice
-        from PySide6.QtGui import QImage, QImageReader
-
         path = self._images[index]
         try:
             raw = path.read_bytes()
@@ -413,29 +521,19 @@ class _MobiDocumentHandle:
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT", f"page image could not be read: {error}"
             ) from error
-        # r1 R7 (M2-IMPORT-ALLOC-LIMIT): QtImageDecoder raises the
-        # process-global allocation limit to 2047 MiB for webtoon long-strips,
-        # and that global persists for the process lifetime. MOBI embedded
-        # page images are untrusted input, so re-tighten the built-in 256 MiB
-        # fail-closed bound before this decode: QImage.loadFromData routes
-        # through QImageReader and would otherwise inherit the widened limit.
-        # (QtImageDecoder re-asserts its own bound before every decode, so
-        # this tightening never starves the webtoon path.)
-        QImageReader.setAllocationLimit(256)
-        image = QImage()
-        if not image.loadFromData(raw):
+        # r1 R7 (M2-IMPORT-ALLOC-LIMIT): the webtoon path widens the decode
+        # ceiling to 2047 MiB; MOBI embedded page images are untrusted input,
+        # so this path keeps the original 256 MiB fail-closed bound of its own
+        # (CORE-SLIM-1: enforced against the declared size, before pixels are
+        # materialised, instead of through Qt's process-global limit).
+        try:
+            png, width, height = _decode_mobi_page_png(raw)
+        except _MobiPageDecodeError as error:
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT",
-                f"page image {path.name} could not be decoded by Qt",
-            )
-        buffer = QBuffer()
-        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-        if not image.save(buffer, "PNG"):
-            raise DocumentDecodeError(
-                "INVALID_DOCUMENT",
-                f"page image {path.name} could not be encoded as PNG",
-            )
-        return RenderedDocumentPage(bytes(buffer.data()), image.width(), image.height())
+                f"page image {path.name} could not be decoded ({error})",
+            ) from error
+        return RenderedDocumentPage(png, width, height)
 
     def close(self) -> None:
         # The extractor leaves its temp tree behind; ownership of cleanup is

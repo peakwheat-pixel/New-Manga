@@ -23,14 +23,27 @@ a single `_internal` dependency directory (PyInstaller 6 layout):
 Ruling recorded for M2-AC5 (risk item 1): the three sidecar channels plus the
 seeding tool are covered by ONE onedir closure. Measured facts behind the
 choice: the import closure of host_bridge / core_service / catalog_loader is
-stdlib + in-repo packages only (verified 2026-09-29 with TASK-012-py312), but
-`bootstrap.acceptance_bridge` — through its frozen `assemble_acceptance_core`
-assembly, shared verbatim with tests/m2_acceptance — HARD-REQUIRES PySide6
-(QGuiApplication + the production Qt imaging/rendering adapters). Excluding
-Qt made acceptance_bridge.exe fail closed with ModuleNotFoundError at
-startup, so the closure INCLUDES PySide6. That release-time note ("Qt-free")
-held for the resource-channel and library sidecars only; the acceptance
-bridge's Qt dependence is a frozen M2-AC1 fact, not a packaging choice.
+stdlib + in-repo packages only (verified 2026-09-29 with TASK-012-py312).
+
+CORE-SLIM-1 (2026-10-27): the closure is now **Qt-free**. The former note that
+`bootstrap.acceptance_bridge` HARD-REQUIRES PySide6 is obsolete: the acceptance
+assembly injects the shipped Pillow adapters (PillowImageDecoder /
+PillowFontCatalog / PillowTextLayoutEngine / PillowImageCompositor /
+PillowSourceStyleAnalyzer) exactly like `bootstrap.core_service`, and the Qt
+image decoder/PDF/MOBI raster/assembly pixel helpers were replaced by Pillow
+and pypdfium2 in `src/`. PySide6/shiboken6 are therefore excluded below; a
+regression that reintroduces a Qt import fails the build (excluded modules are
+not silently collected) and is caught by the module-scope import audit in
+tests/core/test_architecture.py.
+
+CORE-SLIM-1 entry dedup: the Analysis for every entry runs with
+``noarchive=True``. PyInstaller then stores each pure-Python module as an
+individual ``.pyc`` file in the shared ``_internal`` tree instead of embedding
+one PYZ per entry exe. The five entries share byte-identical ``.pyc`` paths, so
+COLLECT keeps ONE copy of the pure-Python closure instead of one per entry (the
+measured duplication was ~3 x 65 MB of embedded PYZ). Startup/protocol
+semantics are unchanged: the exes are still separate onedir entry points with
+the same names, argv and stdio contract.
 
 Excluded below: build tooling only. M2-PROD-DETECT-2 (proxy ruling 2,
 reversible): the heavy ML stack (torch/torchvision/doctr/transformers) is now
@@ -188,13 +201,27 @@ def _archive_warn_file(exe_name: str) -> None:
     print(f"warn-archive: {warn_src} -> {warn_dst}")
 
 
+def _pure_module_names(analysis) -> set:
+    """Every pure-Python module name in the analyzed graph.
+
+    CORE-SLIM-1: with ``noarchive=True`` the modules are collected as ``.pyc``
+    data files and PyInstaller keeps them in ``_modules_outside_pyz`` instead of
+    ``analysis.pure`` — the closure assertions below must see both tables or
+    they would fail on a complete closure (or, worse, pass on an empty one).
+    """
+    names = {entry[0] for entry in analysis.pure}
+    names |= {entry[0] for entry in getattr(analysis, "_modules_outside_pyz", [])}
+    return names
+
+
 def _assert_ml_closure(analysis, exe_name: str) -> None:
     """DSH r1 R3 review-fix: fail the BUILD (not the release) if the ML
-    runtime is not actually in the analyzed graph. `analysis.pure` is the
-    TOC of pure-Python modules that will land in this entry's PYZ;
-    `analysis.binaries` carries the EXTENSION modules (M2-PROD-DETECT-3:
+    runtime is not actually in the analyzed graph. ``analysis.pure`` (plus, in
+    CORE-SLIM-1 noarchive mode, ``analysis._modules_outside_pyz``) is the TOC of
+    pure-Python modules that will land in the bundle;
+    ``analysis.binaries`` carries the EXTENSION modules (M2-PROD-DETECT-3:
     torchvision's stable-ABI .pyd pair, see ML_BINARY_IMPORTS)."""
-    pure_names = {entry[0] for entry in analysis.pure}
+    pure_names = _pure_module_names(analysis)
     missing = [m for m in ML_HIDDENIMPORTS if m not in pure_names]
     if missing:
         raise SystemExit(
@@ -238,7 +265,7 @@ def _assert_sfx_probe_closure(analysis, exe_name: str) -> None:
     engine binaries (the pyd + DirectML.dll, SFX_BINARY_IMPORTS). A closure
     that lost them would fail the probe at model load, not the build — this
     assertion keeps that failure at BUILD time."""
-    pure_names = {entry[0] for entry in analysis.pure}
+    pure_names = _pure_module_names(analysis)
     missing = [m for m in SFX_PROBE_HIDDENIMPORTS if m not in pure_names]
     if missing:
         raise SystemExit(
@@ -417,6 +444,14 @@ EXCLUDED = [
     # so the release-form detect chain works. Reverting = re-add the three
     # names here + drop the ML lines from requirements-build.txt.
     "pandas",
+    # CORE-SLIM-1: the shipped Core closure carries NO Qt. The Core-side Qt
+    # adapters were replaced (PillowImageDecoder / Pillow* rendering adapters /
+    # PillowSourceStyleAnalyzer); the evidence-frozen legacy QML shell is not
+    # part of any entry's import graph. Excluding the packages explicitly makes
+    # a reintroduced Qt import fail the build instead of silently growing the
+    # bundle by the measured 61 MB.
+    "PySide6",
+    "shiboken6",
     # build/test tooling never belongs in the runtime closure
     "pytest",
     "setuptools",
@@ -442,7 +477,12 @@ for stem, name, is_ml_entry in ENTRIES:
         hooksconfig={},
         runtime_hooks=[],
         excludes=EXCLUDED,
-        noarchive=False,
+        # CORE-SLIM-1 entry dedup: collect pure modules as individual .pyc
+        # files in the SHARED _internal tree instead of one embedded PYZ per
+        # entry exe (the three ML entries used to embed the same ~65 MB PYZ
+        # three times). COLLECT then keeps one copy; exes shrink to the
+        # bootloader + their own entry script. Names/argv/stdio unchanged.
+        noarchive=True,
         optimize=1,
     )
     # DSH r1 R1: archive THIS entry's warn file before the next Analysis

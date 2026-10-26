@@ -8,19 +8,21 @@ stores and the render service.  It never imports ``PySide6`` or ``src/ui``
 at module scope, so it can be imported — and, given adapters, exercised —
 in a process without Qt (M2-D1 M2D1-15/21).
 
-Adapter injection (I1-AC4): the Qt implementations of the imaging/rendering
-ports — ``QtImageDecoder``, ``QtFontCatalog``, ``QtTextLayoutEngine``,
-``QtImageCompositor``, ``PixelSourceStyleAnalyzer`` — are constructed by the
-Legacy Qt assembly (``bootstrap.app``) and passed in here; this module never
-constructs them or any ``QObject`` viewmodel.  The side-effect order of the
-assembly (schema check → migrations → managed layout → provider settings →
-``recover_running_runs`` → diagnostics store → legacy JSON import) is the
-historical ``bootstrap.app.assemble_services`` order, unchanged.
+Adapter injection (I1-AC4): the rendering port implementations —
+``PillowFontCatalog``/``PillowTextLayoutEngine``/``PillowImageCompositor`` in
+the shipped Core (``bootstrap.core_service``) or their legacy Qt equivalents in
+the evidence-frozen ``bootstrap.app`` — are constructed outside this module and
+passed in; this module never constructs them or any ``QObject`` viewmodel.  The
+side-effect order of the assembly (schema check → migrations → managed layout →
+provider settings → ``recover_running_runs`` → diagnostics store → legacy JSON
+import) is the historical ``bootstrap.app.assemble_services`` order, unchanged.
 
 The pixel helpers below (``_ManagedPageImageSource`` and
-``_render_content_decoder``) keep their lazy in-function Qt imports: module
-import stays Qt-free, and replacing them with a Qt-free pixel path is a
-separately released M2 slice (M2-D1 M2D1-10/23).
+``_render_content_decoder``) are CORE-SLIM-1 Pillow implementations: the Core
+closure carries no Qt at all. The former lazy in-function ``QImage`` path was
+replaced by an equivalent Pillow path whose output is proven pixel-identical
+(``verification/CORE-SLIM-1/ac1/``: frame bytes, crop/page/bridge PNGs and the
+PDF rasteriser are compared against the pre-change Qt reference).
 """
 
 from __future__ import annotations
@@ -28,6 +30,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import io
 import json
 import os
 from pathlib import Path
@@ -321,7 +324,12 @@ class _ManagedPageImageSource:
         return _root_trust_for(self)
 
     def _page_image(self, page_id: str):
-        from PySide6.QtGui import QImage
+        """The page's Managed Copy original as a loaded Pillow image.
+
+        CORE-SLIM-1: Pillow replaced ``QImage.fromData``; the containment and
+        error semantics are unchanged (same typed ``ProviderInputError`` sites).
+        """
+        from PIL import Image
 
         page = self._repository.get_page(page_id)
         if page is None or not page.managed_original_ref:
@@ -340,24 +348,33 @@ class _ManagedPageImageSource:
                 f"managed original for {page_id!r} escapes the data root",
                 stage="image-source",
             ) from error
-        image = QImage.fromData(data)
-        if image.isNull():
+        try:
+            image = Image.open(io.BytesIO(data))
+            image.load()
+        except Exception as error:  # noqa: BLE001 - every decode failure is typed
             raise ProviderInputError(
                 f"managed original is not decodable: {ref}", stage="image-source"
-            )
+            ) from error
         return image
 
     def page_frame(self, page_id: str) -> ImageFrame:
-        from PySide6.QtGui import QImage
+        """The page as the frozen ``rgb32`` frame contract.
 
-        image = self._page_image(page_id).convertToFormat(QImage.Format.Format_RGB32)
-        width, height = image.width(), image.height()
-        return ImageFrame(width, height, "rgb32", bytes(image.constBits()))
+        ``rgb32`` means ``Format_RGB32``'s memory layout: little-endian BGRA
+        with the alpha byte forced to 0xff (the providers reshape ``(h, w, 4)``
+        and drop alpha). CORE-SLIM-1 keeps those exact bytes with Pillow.
+        """
+        image = self._page_image(page_id)
+        try:
+            rgba = image.convert("RGBA")
+            rgba.putalpha(255)
+            width, height = rgba.size
+            payload = rgba.tobytes("raw", "BGRA")
+        finally:
+            image.close()
+        return ImageFrame(width, height, "rgb32", payload)
 
     def region_crop(self, page_id: str, region_id: str) -> tuple[bytes, int, int]:
-        from PySide6.QtCore import QBuffer, QIODevice, QRect
-        from PySide6.QtGui import QImage
-
         page = self._repository.get_page(page_id)
         if page is None:
             raise ProviderInputError(
@@ -369,36 +386,39 @@ class _ManagedPageImageSource:
                 f"region {region_id!r} is not available", stage="image-source"
             )
         image = self._page_image(page_id)
-        bbox = region.geometry.bbox
-        rect = QRect(bbox.x, bbox.y, bbox.width, bbox.height).intersected(
-            QRect(0, 0, image.width(), image.height())
-        )
-        if rect.isEmpty():
-            raise ProviderInputError(
-                f"region {region_id!r} lies outside the page", stage="image-source"
-            )
-        crop = image.copy(rect).convertToFormat(QImage.Format.Format_RGB888)
-        buffer = QBuffer()
-        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-        if not crop.save(buffer, "PNG"):
-            raise ProviderInputError(
-                "region crop could not be encoded", stage="image-source"
-            )
-        return bytes(buffer.data()), crop.width(), crop.height()
+        try:
+            bbox = region.geometry.bbox
+            left = max(0, bbox.x)
+            top = max(0, bbox.y)
+            right = min(image.width, bbox.x + bbox.width)
+            bottom = min(image.height, bbox.y + bbox.height)
+            if right <= left or bottom <= top:
+                raise ProviderInputError(
+                    f"region {region_id!r} lies outside the page", stage="image-source"
+                )
+            crop = image.convert("RGB").crop((left, top, right, bottom))
+            buffer = io.BytesIO()
+            crop.save(buffer, format="PNG")
+            return buffer.getvalue(), crop.width, crop.height
+        finally:
+            image.close()
 
     def page_png(self, page_id: str) -> bytes:
         """The whole Managed Copy page as PNG (TASK-033 color step input)."""
-        from PySide6.QtCore import QBuffer, QIODevice
-
         image = self._page_image(page_id)
-        buffer = QBuffer()
-        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-        if not image.save(buffer, "PNG"):
+        try:
+            buffer = io.BytesIO()
+            if image.mode not in ("RGB", "RGBA", "L", "LA"):
+                image = image.convert("RGB")
+            image.save(buffer, format="PNG")
+            return buffer.getvalue()
+        except Exception as error:  # noqa: BLE001 - typed refusal, never a crash
             raise ProviderInputError(
                 f"page {page_id!r} could not be re-encoded as PNG",
                 stage="image-source",
-            )
-        return bytes(buffer.data())
+            ) from error
+        finally:
+            image.close()
 
 
 class _ManagedReaderCatalog:
@@ -520,11 +540,10 @@ def _render_content_decoder(relative_path: str, payload: bytes) -> bytes:
     ``NMFR`` (PNG originals, translated PNGs) pass through unchanged, so this
     is a pure format bridge at the seam — the stored revisions stay untouched.
     """
-    from PySide6.QtCore import QBuffer, QIODevice
-    from PySide6.QtGui import QImage
-
     if not payload.startswith(b"NMFR"):
         return payload
+    from PIL import Image
+
     from infrastructure.providers.step_writes import decode_frame_payload
 
     header, raw = decode_frame_payload(payload)
@@ -538,18 +557,18 @@ def _render_content_decoder(relative_path: str, payload: bytes) -> bytes:
     bytes_per_line = width * 4
     if len(raw) < bytes_per_line * height:
         raise ProviderInputError("frame payload is truncated", stage="render")
-    image = QImage(raw, width, height, bytes_per_line, QImage.Format.Format_RGB32)
-    if image.isNull():
-        raise ProviderInputError(
-            "frame payload could not be decoded for rendering", stage="render"
-        )
-    buffer = QBuffer()
-    buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-    if not image.save(buffer, "PNG"):
+    # CORE-SLIM-1: Format_RGB32's memory layout is little-endian BGRA with a
+    # forced 0xff alpha; the Pillow bridge reads exactly those bytes and
+    # re-encodes the PNG the render seam composes on.
+    try:
+        image = Image.frombuffer("RGBA", (width, height), raw, "raw", "BGRA", 0, 1)
+        buffer = io.BytesIO()
+        image.convert("RGB").save(buffer, format="PNG")
+    except Exception as error:  # noqa: BLE001 - typed refusal, never a crash
         raise ProviderInputError(
             "clean frame could not be re-encoded as PNG", stage="render"
-        )
-    return bytes(buffer.data())
+        ) from error
+    return buffer.getvalue()
 
 
 def _load_pipeline_defaults(conn: sqlite3.Connection) -> dict:
