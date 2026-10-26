@@ -46,8 +46,8 @@
 |DESIGN-V2-IMPL-1|UI-DESIGN-1|done（v2 令牌/亚克力/七态/三页骨架；集成 e1fd738a7；指针已补登）|
 |UIUX-V2-RUNTIME-1|DESIGN-V2-IMPL-1|done（四页真实 IPC+设置页+单一 UI；集成 af421b9e6；ZCode r2 approved）|
 |UIUX-V2-RUNTIME-REALCORE-1|UIUX-V2-RUNTIME-1|done（脚本化真实 Tauri+Core 端到端 7/7；修 P0 中文编码+P1 死按钮；ZCode r1 approved）|
-|UIUX-V2-RUNTIME-REALCORE-2|UIUX-V2-RUNTIME-REALCORE-1|closed_with_limitations（run-i34 10/10；G2/G4/G5 达成；G1 架构性不可自动化；窄窗溢出另立）|
-|UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|in_progress（用户已授权改CSS；修 900px 横向溢出；Owner=ZCode）|
+|UIUX-V2-RUNTIME-REALCORE-2|UIUX-V2-RUNTIME-REALCORE-1|closed_with_limitations（run-i36 10/10；G2/G4/G5 达成；G1 转人工验证）|
+|UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|done（.nm-app min-width:1024 根治；900 档四页 900/900；`e9a409927`）|
 
 READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1
 

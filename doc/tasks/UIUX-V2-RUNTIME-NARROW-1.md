@@ -123,15 +123,15 @@ body `overflow:hidden` 裁剪并报告为 `documentElement.scrollWidth=1024`。
 
 | evidence_id | AC | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i4/report.json | HEAD2 | - | CANONICAL |
-| EV-02 | AC1/AC2/AC3 | verification/UIUX-V2-RUNTIME-NARROW-1/README.md | HEAD2 | - | CANONICAL |
-| EV-03 | AC2 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/11-900x700-dpr2-shelf.png | HEAD2 | - | CANONICAL |
-| EV-04 | AC3 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/12-1280x800-dpr2-shelf.png | HEAD2 | - | CANONICAL |
-| EV-05 | 复核 | verification/UIUX-V2-RUNTIME-NARROW-1/review-dsh-narrow-r1.md | HEAD2 | - | CANONICAL |
-| EV-06 | 资源 | verification/UIUX-V2-RUNTIME-NARROW-1/resource-manifest.json | HEAD2 | - | CANONICAL |
+| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i4/report.json | 46afe3cfe | - | CANONICAL |
+| EV-02 | AC1/AC2/AC3 | verification/UIUX-V2-RUNTIME-NARROW-1/README.md | 46afe3cfe | - | CANONICAL |
+| EV-03 | AC2 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/11-900x700-dpr2-shelf.png | 46afe3cfe | - | CANONICAL |
+| EV-04 | AC3 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/12-1280x800-dpr2-shelf.png | 46afe3cfe | - | CANONICAL |
+| EV-05 | 复核 | verification/UIUX-V2-RUNTIME-NARROW-1/review-dsh-narrow-r1.md | 46afe3cfe | - | CANONICAL |
+| EV-06 | 资源 | verification/UIUX-V2-RUNTIME-NARROW-1/resource-manifest.json | 46afe3cfe | - | CANONICAL |
 | EV-07 | AC1/AC2 | apps/desktop/frontend/src/ui/ui.css | e9a409927 | - | CANONICAL |
 | EV-08 | AC2/AC3 | apps/desktop/frontend/src/pages/pages.css | e9a409927 | - | CANONICAL |
-| EV-09 | AC4 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | HEAD2 | - | CANONICAL |
+| EV-09 | AC4 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | 46afe3cfe | - | CANONICAL |
 | EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-NARROW-1-handoff.md | e9a409927 | - | CANONICAL |
 
 ## Resource Manifest
