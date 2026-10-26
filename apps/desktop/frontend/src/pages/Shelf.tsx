@@ -457,6 +457,13 @@ interface ShelfShellProps {
   onToggleTheme: () => void;
   /** 运行时由 UiRoot 托管命令面板（传 null）；设计预览由书架自己渲染。 */
   palette: { open: boolean; onOpen(): void; onClose(): void } | null;
+  /**
+   * 运行时命令面板归 UiRoot 所有，本页只负责发出"打开"意图。
+   * 缺了它，标题栏那颗「搜索或执行命令」按钮在生产运行时就是死按钮
+   * （`palette?.onOpen()` 对 null 静默无操作）——真机验收脚本 S3 抓到过。
+   */
+  onOpenCommand?: () => void;
+  commandOpen?: boolean;
   onRequestImport?: () => void;
   onRequestCreate?: () => void;
   onRequestRecycle?: () => void;
@@ -470,6 +477,8 @@ function ShelfShell({
   onNavigate,
   onToggleTheme,
   palette,
+  onOpenCommand,
+  commandOpen = false,
   onRequestImport,
   onRequestCreate,
   onRequestRecycle,
@@ -479,7 +488,9 @@ function ShelfShell({
   const [filter, setFilter] = useState<BookFilter>("all");
   const [sort, setSort] = useState<SortMode>("updated");
 
-  const paletteOpen = palette?.open ?? false;
+  const paletteOpen = palette?.open ?? commandOpen;
+  // 运行时面板归 UiRoot 托管：本页只发出"打开"意图；设计预览则由本页自己开关。
+  const openCommand = palette ? () => palette.onOpen() : (onOpenCommand ?? (() => undefined));
   // 命令面板最多占掉一层预算；打开时把状态条挤出模糊层。
   const layers = paletteOpen
     ? ["shelf-command", "shelf-detail", "shelf-status"]
@@ -571,7 +582,7 @@ function ShelfShell({
             type="button"
             className="nm-command-trigger"
             data-testid="command-trigger"
-            onClick={() => palette?.onOpen()}
+            onClick={openCommand}
             aria-haspopup="dialog"
             aria-expanded={paletteOpen}
           >
@@ -1014,6 +1025,8 @@ function RuntimeShelf(props: ShelfProps & { runtime: PageRuntime }) {
       onNavigate={props.onNavigate}
       onToggleTheme={props.onToggleTheme}
       palette={null}
+      onOpenCommand={runtime.chrome.onOpenCommand}
+      commandOpen={runtime.chrome.commandOpen}
       onRequestImport={() => setImportOpen(true)}
       onRequestCreate={() => setCreateOpen(true)}
       onRequestRecycle={() => setRecycleOpen(true)}

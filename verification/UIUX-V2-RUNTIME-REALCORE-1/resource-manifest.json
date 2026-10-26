@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "task_id": "UIUX-V2-RUNTIME-REALCORE-1",
+  "generated_at": "2026-10-26",
+  "generated_by": "DeepSeek Harness (DSH)",
+  "note": "本 Task 未删除/迁移/归档任何仓库文件。Task 隔离运行目录与诊断探针输出保留在仓外 workspace；失败轮次的证据与缺陷修复前后的二进制 SHA 全部如实登记，不清理痕迹。",
+  "resources": [
+    {
+      "resource_type": "evidence",
+      "source_path": "verification/UIUX-V2-RUNTIME-REALCORE-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/UIUX-V2-RUNTIME-REALCORE-1",
+      "process_check": "canonical 证据：run-i2..run-i18 六轮 report.json 与 stderr（含 5 轮失败记录）、run-i18 的 9 张 CDP 截图、release-smoke.png、README.md（两版 exe SHA-256 与复现命令）。全部由脚本生成，未手工编辑。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-1",
+      "process_check": "每轮隔离数据根（library.db、managed/、backups/、logs/、shots/）与编码探针 probe-encoding/、发布冒烟 release-smoke/ 均在此目录；无进程持有（本轮结束已终止全部 m2rc1-desktop 与 core_service 进程）。这些目录证明验收从未触碰用户的 %LOCALAPPDATA%\\New Manga。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "apps/desktop/src-tauri/target",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "apps/desktop/src-tauri/target",
+      "process_check": "两个二进制同目录保留：发布构建 target/release/m2rc1-desktop.exe（SHA-256 CF86888D…，无调试端口）与备份 target/release/m2rc1-desktop.release.exe（同发布构建）。验收构建每次由 tauri.acceptance.conf.json 覆盖同名文件后重建，最终已恢复为发布构建；二者差异仅 additionalBrowserArgs，已在 README 说明。target/ 属构建缓存，不入库。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "dataset-model-user-data",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "全程使用隔离数据根（NEWMANGA_DATA_ROOT/APPDATA/LOCALAPPDATA/TEMP/WEBVIEW2_USER_DATA_FOLDER 全部指向 task-envs 子目录），未读写用户真实库；用户 Edge 窗口在早期桌面点击实验中曾被临时最小化，随后已 SW_RESTORE 恢复。"
+    },
+    {
+      "resource_type": "exchange",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "无跨机交换产物；ZCode 复核在本机同一文件系统内进行。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "canonical_evidence_status=complete；resource_closeout_status=complete；无删除/迁移/归档。误建的 apps/verification/（REPO_ROOT 计算残留，非版本化内容）已删除，未产生仓库资源影响。"
+}

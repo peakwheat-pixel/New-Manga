@@ -176,4 +176,33 @@ describe("Shelf runtime data discipline（AC8 反 fixtures 回填）", () => {
     expect(host.querySelector('[data-testid="shelf-empty"]')).not.toBeNull();
     expect(host.querySelectorAll(".nm-book-card")).toHaveLength(0);
   });
+
+  /**
+   * ZCode 审查期之外、由真机验收脚本 S3 抓到的缺陷回归守卫：
+   * 运行时 `palette` 传 null（面板归 UiRoot 托管），标题栏那颗
+   * 「搜索或执行命令」按钮当时 `onClick={() => palette?.onOpen()}`，
+   * 对 null 静默无操作 —— 生产环境里是一颗点了没反应的假按钮，
+   * 而且 aria-expanded 永远是 false。564 条 jsdom 测试全绿也没拦住它。
+   */
+  it("标题栏命令触发器在运行时真的能发出打开请求（不是死按钮）", async () => {
+    const { runtime, chrome } = makeRuntime();
+    const host = await mountShelf(runtime);
+
+    const trigger = host.querySelector('[data-testid="command-trigger"]') as HTMLButtonElement | null;
+    expect(trigger).not.toBeNull();
+    expect(trigger?.getAttribute("aria-expanded")).toBe("false");
+
+    await act(async () => {
+      trigger?.click();
+    });
+    expect(chrome.onOpenCommand).toHaveBeenCalledTimes(1);
+  });
+
+  it("命令面板打开时触发器 aria-expanded 反映真实状态", async () => {
+    const { runtime } = makeRuntime();
+    const host = await mountShelf(runtime);
+    const trigger = host.querySelector('[data-testid="command-trigger"]') as HTMLButtonElement | null;
+    // runtime.chrome.commandOpen=false 时必须是 false（不能恒为 false 的假状态）
+    expect(trigger?.getAttribute("aria-expanded")).toBe("false");
+  });
 });

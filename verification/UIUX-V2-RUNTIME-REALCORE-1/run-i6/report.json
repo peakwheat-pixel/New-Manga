@@ -1,0 +1,124 @@
+{
+  "taskId": "UIUX-V2-RUNTIME-REALCORE-1",
+  "runId": "uiux-v2-realcore-20261026-run-i6",
+  "startedAt": "2026-10-26T01:40:40.534Z",
+  "cdpPort": 9345,
+  "pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+  "exeSha256": "D82BEBD755B78319FE15E57F7B5191F7EE3B4851274B1DB97CE9A200F43A2548",
+  "envManifest": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i6\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9345",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT"
+    ],
+    "__cdpPort": 9345,
+    "__pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe"
+  },
+  "scenarios": [
+    {
+      "scenarioId": "S1",
+      "title": "身份与单一 UI（真实 packaged EXE + WebView2）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "data-view=app",
+          "ok": true,
+          "detail": "data-view=app"
+        },
+        {
+          "name": "data-theme 已设置",
+          "ok": true,
+          "detail": "data-theme=dark"
+        },
+        {
+          "name": "旧内联壳 AppShell 不在 DOM 中",
+          "ok": true,
+          "detail": "count=0"
+        },
+        {
+          "name": "一级导航 4 个 tab",
+          "ok": true,
+          "detail": "count=4"
+        },
+        {
+          "name": "Tauri IPC 桥存在",
+          "ok": true,
+          "detail": "typeof __TAURI__=object"
+        },
+        {
+          "name": "文档标题非空",
+          "ok": true,
+          "detail": "title=M2RC1|interactive|deny=5/5|allow=0/0|results=5"
+        },
+        {
+          "name": "生产 IPC allowlist 已公告",
+          "ok": true,
+          "detail": "commands=66"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S2",
+      "title": "书架页真实数据（library_list_books + core_ping）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "书架空态来自真实读取（0 部作品）",
+          "ok": true,
+          "detail": "shelf-empty=true"
+        },
+        {
+          "name": "状态栏显示真实 Core 在线",
+          "ok": true,
+          "detail": "statusbar=●完成Core 在线Core ready0 部作品"
+        },
+        {
+          "name": "工具栏声明数据来自 Core 的最新读取",
+          "ok": true,
+          "detail": "text="
+        },
+        {
+          "name": "详情面板为空态（未编造数据）",
+          "ok": true,
+          "detail": "detail=○未开始未选择作品从左侧网格选择一部作品查看章节与详情。"
+        }
+      ]
+    },
+    {
+      "scenarioId": "FATAL",
+      "title": "harness failure",
+      "ok": false,
+      "checks": [
+        {
+          "name": "harness",
+          "ok": false,
+          "detail": "waitFor timeout: palette open (click) (last=false)"
+        }
+      ]
+    }
+  ],
+  "stderrAllowlistLine": "[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,library_list_recycle_bin_books,library_create_book,create_chapter,settings_get,settings_update_section,cleanup_preview,cleanup_run,cleanup_retry_pending,backup_create,backup_list,backup_restore,backup_delete,plugins_list,plugins_set_enabled,plugins_set_plugin_enabled,plugins_audit_list,plugins_open_directory,settings_provider_profiles_list,settings_provider_profiles_create,settings_provider_profiles_update,settings_provider_profiles_delete,settings_provider_bindings_set,settings_provider_bindings_clear,settings_provider_bindings_resolve,settings_provider_run_snapshot_get,settings_network_profiles_list,settings_network_profiles_create,settings_network_profiles_update,settings_network_profiles_delete,settings_network_profiles_test,settings_network_profile_default_set,settings_network_profile_default_clear,settings_network_profile_resolve,settings_resolve_overrides,credential_put,credential_clear,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages,library_get_reader_projection,library_save_reading_progress,library_import_file,library_import_folder,library_start_export,library_start_run,library_control_run,library_resume_blocked_run,library_get_run_snapshot,library_get_task_projection,library_retry_failed_targets,library_reveal_export_folder,library_cancel_export,library_get_export_snapshot,library_get_export_history,library_delete_book_permanently,library_delete_books_permanently",
+  "ok": false,
+  "appExit": {
+    "exited": true,
+    "code": null,
+    "signal": "SIGTERM"
+  },
+  "finishedAt": "2026-10-26T01:41:03.950Z"
+}

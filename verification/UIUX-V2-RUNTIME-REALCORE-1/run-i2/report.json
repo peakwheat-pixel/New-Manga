@@ -1,0 +1,56 @@
+{
+  "taskId": "UIUX-V2-RUNTIME-REALCORE-1",
+  "runId": "uiux-v2-realcore-20261026-run-i2",
+  "startedAt": "2026-10-26T01:29:51.956Z",
+  "cdpPort": 9345,
+  "pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+  "exeSha256": "D82BEBD755B78319FE15E57F7B5191F7EE3B4851274B1DB97CE9A200F43A2548",
+  "envManifest": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-1\\run-i2\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9345",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT"
+    ],
+    "__cdpPort": 9345,
+    "__pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe"
+  },
+  "scenarios": [
+    {
+      "scenarioId": "FATAL",
+      "title": "harness failure",
+      "ok": false,
+      "checks": [
+        {
+          "name": "harness",
+          "ok": false,
+          "detail": "waitFor timeout: app-root mounted (last=false)"
+        }
+      ]
+    }
+  ],
+  "ipc": null,
+  "stderrAllowlistLine": null,
+  "ok": false,
+  "appExit": {
+    "exited": true,
+    "code": null,
+    "signal": "SIGTERM"
+  },
+  "finishedAt": "2026-10-26T01:30:25.634Z"
+}

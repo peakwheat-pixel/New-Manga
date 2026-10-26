@@ -137,6 +137,10 @@ impl StdioCoreChannel {
             .env("M2RC1_DERIVED_ROOT", derived_root)
             .env("M2RC1_MANAGED_ROOT", managed_root)
             .env("M2RC2_CATALOG_DB", catalog_db)
+            // Encoding note: env-based UTF-8 pinning (PYTHONIOENCODING /
+            // PYTHONUTF8) is ignored by the frozen sidecar bootloader; the
+            // library channel neutralises non-ASCII on the wire instead
+            // (library_bridge::ascii_json_line). Kept ASCII-only here too.
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit());

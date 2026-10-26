@@ -14,6 +14,35 @@ use std::sync::mpsc::SyncSender;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+/// Serialise one request as a **pure ASCII** JSON line (`\uXXXX` for non-ASCII).
+///
+/// The Core speaks "one UTF-8 JSON per line" over stdio, but the PyInstaller
+/// sidecar on Windows decodes stdin with the ANSI code page (cp936) — the frozen
+/// bootloader ignores `PYTHONIOENCODING` / `PYTHONUTF8` (measured: all four
+/// combinations produce identical mojibake). Consequences observed by the real
+/// end-to-end acceptance (`UIUX-V2-RUNTIME-REALCORE-1`): a Chinese book title
+/// was either rejected with `LIBRARY_OPERATION_FAILED` or silently stored as
+/// mojibake (`雾港来信` → `闆炬腐鏉ヤ俊`).
+///
+/// Escaping to ASCII on the host side is lossless for the Core (`json.loads`
+/// restores `\uXXXX` to the original character), keeps the wire format within
+/// cp936, and needs no sidecar rebuild.
+fn ascii_json_line(value: &Value) -> String {
+    let raw = value.to_string();
+    let mut out = String::with_capacity(raw.len() + 16);
+    for ch in raw.chars() {
+        if ch.is_ascii() {
+            out.push(ch);
+        } else {
+            let mut buf = [0u16; 2];
+            for unit in ch.encode_utf16(&mut buf) {
+                out.push_str(&format!("\\u{unit:04x}"));
+            }
+        }
+    }
+    out
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ProtocolVersion {
     pub major: u32,
@@ -1925,6 +1954,10 @@ impl StdioLibraryChannel {
         cmd.args(spawn_args())
             .current_dir(src_root)
             .env("PYTHONPATH", src_root)
+            // NOTE: PYTHONIOENCODING / PYTHONUTF8 do NOT work here — the frozen
+            // PyInstaller bootloader ignores them (measured: every combination
+            // yields identical cp936 mojibake). Non-ASCII is neutralised on the
+            // wire instead; see `ascii_json_line` at the top of this file.
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit());
@@ -2545,7 +2578,7 @@ impl StdioLibraryChannel {
             .unwrap_or("host-control-request")
             .to_string();
 
-        let mut line = request.to_string();
+        let mut line = ascii_json_line(&request);
         line.push('\n');
 
         let _tx_guard = self.acquire_transaction_lock(timeout)?;
@@ -5856,6 +5889,31 @@ impl LibraryChannel for ResilientLibraryChannel {
 mod tests {
     use super::*;
     use std::path::PathBuf;
+
+    /// Regression guard for the cp936 stdin defect: the wire form must be pure
+    /// ASCII yet decode back to the identical payload, so Chinese titles,
+    /// chapter names and paths survive the ANSI-code-page sidecar stdin.
+    #[test]
+    fn ascii_json_line_is_lossless_for_non_ascii_payloads() {
+        let value = serde_json::json!({
+            "protocol": "new-manga.core",
+            "command": "library_create_book",
+            "payload": { "title": "雾港来信 · 第 1 卷", "note": "中文 与 emoji 之外的非 ASCII" },
+        });
+        let line = ascii_json_line(&value);
+        assert!(
+            line.is_ascii(),
+            "wire form must stay ASCII; cp936 stdin would corrupt UTF-8 bytes: {line}"
+        );
+        let decoded: Value = serde_json::from_str(&line).expect("ASCII form must be valid JSON");
+        assert_eq!(decoded, value, "escaping must not change the payload");
+    }
+
+    #[test]
+    fn ascii_json_line_leaves_ascii_payloads_untouched() {
+        let value = serde_json::json!({ "command": "core.ping", "payload": {} });
+        assert_eq!(ascii_json_line(&value), value.to_string());
+    }
 
     #[test]
     fn create_results_are_rebuilt_from_the_contract_whitelist() {
