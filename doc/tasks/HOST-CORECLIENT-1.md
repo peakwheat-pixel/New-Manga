@@ -13,7 +13,7 @@ base_commit: a93f20c7b
 branch: task/HOST-CORECLIENT-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-CORECLIENT-1
 integration_commit: null
-delivery_head: pending
+delivery_head: eb123ad4f7e758010ee6597f276c34b6c9807e26
 canonical_evidence_status: pinned
 resource_closeout_status: pending
 evidence_dir: verification/HOST-CORECLIENT-1
@@ -90,21 +90,21 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| E1-build | AC1/AC6 | verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log | - | 2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666 | CANONICAL |
-| E2-test | AC2/AC3/AC4/AC5/AC6 | verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log | - | 4161c65553511dcd56e915c4c5264de53ebc185e303f32acee58cf5568f8c4f2 | CANONICAL |
-| E3-trx | AC2/AC3/AC4/AC5 | verification/HOST-CORECLIENT-1/test/results-Debug.trx | - | 68b5c79eef6b2e5a5ea0fa199bde168f2fa9043f28df5d7a11cd06344bb26113 | CANONICAL |
-| E4-vitest | AC6 | verification/HOST-CORECLIENT-1/test/vitest-baseline.log | - | 8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2 | CANONICAL |
-| E5-publish | AC1 | verification/HOST-CORECLIENT-1/publish/publish_files.json | - | 00d5ec9b5a09fc0d921701049817e17bf87a405a491c71b3184569f97ba40000 | CANONICAL |
-| E6-cn-roundtrip | AC2/AC3 | verification/HOST-CORECLIENT-1/wire/core-chinese-roundtrip.json | - | 978de43ca074205f9be417fff8f5c617d057c9696f9aa663b442fa88be1be052 | CANONICAL |
-| E7-utf8-negative | AC3 | verification/HOST-CORECLIENT-1/wire/core-raw-utf8-negative.json | - | 611962501be106ce97c22a0c6cc3ac7c157d7c691c1378eb44b25834d64ca084 | CANONICAL |
-| E8-bridge | AC2/AC4 | verification/HOST-CORECLIENT-1/wire/host-bridge-lifecycle.json | - | 3e29eaa8bf17e2663b7d7cdb28e1ab751308bc3880f0ee437f97cb78e8a78f86 | CANONICAL |
-| E9-diagnostics | AC4 | verification/HOST-CORECLIENT-1/diagnostics/startup-timeout.json | - | 95a65b02f59bd9d5259d3fe0f81839c99d6ba872c7461c0710eff8c9e2d4dbf7 | CANONICAL |
-| E10-host-readonly | AC5 | verification/HOST-CORECLIENT-1/host/runtime-readonly.json | - | 855710ca4f5b6c4e61e705f50c735781ec1b496fd93ff15bb35f8b5c8f954790 | CANONICAL |
-| E11-single-instance | AC5 | verification/HOST-CORECLIENT-1/host/second-instance.json | - | ac9bb4a7868524ad22c847ce222884c49372801ff30e74b6a22b0699735d7662 | CANONICAL |
-| E12-legacy-shell | AC5 | verification/HOST-CORECLIENT-1/legacy-shell/runtime-readonly.json | - | ef4301465315daf4a7edef6d70b66512fbcba9db5277c8cecc549fc59fdd468f | CANONICAL |
-| E13-smoke | AC6 | verification/HOST-CORECLIENT-1/smoke/smoke.json | - | 3cb09e935ea897a2cb8b96b53c9fd3e678b1786cfe6b1a739e6b02b8187c5021 | CANONICAL |
-| E14-smoke-window | AC6 | verification/HOST-CORECLIENT-1/smoke/window.png | - | 6634709274fdfbecb0a399d284f5113baf8f3cb7eabbaba60c2fa7b8c6604741 | CANONICAL |
-| E15-manifest | 全 AC | verification/HOST-CORECLIENT-1/MANIFEST.json | - | f2941cf68d676ec9d5b0c9f69e569f7824ca9143996117fe6bef4eb7dea88bb6 | CANONICAL |
+| E1-build | AC1/AC6 | verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666 | CANONICAL |
+| E2-test | AC2/AC3/AC4/AC5/AC6 | verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 4161c65553511dcd56e915c4c5264de53ebc185e303f32acee58cf5568f8c4f2 | CANONICAL |
+| E3-trx | AC2/AC3/AC4/AC5 | verification/HOST-CORECLIENT-1/test/results-Debug.trx | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 68b5c79eef6b2e5a5ea0fa199bde168f2fa9043f28df5d7a11cd06344bb26113 | CANONICAL |
+| E4-vitest | AC6 | verification/HOST-CORECLIENT-1/test/vitest-baseline.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2 | CANONICAL |
+| E5-publish | AC1 | verification/HOST-CORECLIENT-1/publish/publish_files.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 00d5ec9b5a09fc0d921701049817e17bf87a405a491c71b3184569f97ba40000 | CANONICAL |
+| E6-cn-roundtrip | AC2/AC3 | verification/HOST-CORECLIENT-1/wire/core-chinese-roundtrip.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 978de43ca074205f9be417fff8f5c617d057c9696f9aa663b442fa88be1be052 | CANONICAL |
+| E7-utf8-negative | AC3 | verification/HOST-CORECLIENT-1/wire/core-raw-utf8-negative.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 611962501be106ce97c22a0c6cc3ac7c157d7c691c1378eb44b25834d64ca084 | CANONICAL |
+| E8-bridge | AC2/AC4 | verification/HOST-CORECLIENT-1/wire/host-bridge-lifecycle.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 3e29eaa8bf17e2663b7d7cdb28e1ab751308bc3880f0ee437f97cb78e8a78f86 | CANONICAL |
+| E9-diagnostics | AC4 | verification/HOST-CORECLIENT-1/diagnostics/startup-timeout.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 95a65b02f59bd9d5259d3fe0f81839c99d6ba872c7461c0710eff8c9e2d4dbf7 | CANONICAL |
+| E10-host-readonly | AC5 | verification/HOST-CORECLIENT-1/host/runtime-readonly.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 855710ca4f5b6c4e61e705f50c735781ec1b496fd93ff15bb35f8b5c8f954790 | CANONICAL |
+| E11-single-instance | AC5 | verification/HOST-CORECLIENT-1/host/second-instance.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | ac9bb4a7868524ad22c847ce222884c49372801ff30e74b6a22b0699735d7662 | CANONICAL |
+| E12-legacy-shell | AC5 | verification/HOST-CORECLIENT-1/legacy-shell/runtime-readonly.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | ef4301465315daf4a7edef6d70b66512fbcba9db5277c8cecc549fc59fdd468f | CANONICAL |
+| E13-smoke | AC6 | verification/HOST-CORECLIENT-1/smoke/smoke.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 3cb09e935ea897a2cb8b96b53c9fd3e678b1786cfe6b1a739e6b02b8187c5021 | CANONICAL |
+| E14-smoke-window | AC6 | verification/HOST-CORECLIENT-1/smoke/window.png | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 6634709274fdfbecb0a399d284f5113baf8f3cb7eabbaba60c2fa7b8c6604741 | CANONICAL |
+| E15-manifest | 全 AC | verification/HOST-CORECLIENT-1/MANIFEST.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | f2941cf68d676ec9d5b0c9f69e569f7824ca9143996117fe6bef4eb7dea88bb6 | CANONICAL |
 
 ## Resource Manifest
 

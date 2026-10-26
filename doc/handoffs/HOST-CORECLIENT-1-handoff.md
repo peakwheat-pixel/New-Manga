@@ -3,7 +3,7 @@ task_id: HOST-CORECLIENT-1
 author: avalonia-spike
 recipient: DeepSeek Harness
 base_commit: a93f20c7b
-delivery_head: pending
+delivery_head: eb123ad4f7e758010ee6597f276c34b6c9807e26
 status: draft
 ---
 
