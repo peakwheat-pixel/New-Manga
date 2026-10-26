@@ -12,7 +12,7 @@ depends_on: []
 base_commit: c5aade851
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 1b91d93a9
 delivery_head: null
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -131,3 +131,4 @@ allowed_paths:
 - 决策采纳：**默认 EP=DirectML**；主包 ORT-DML 362.6MB + 模型 853.8MB = **1216.4MB ≤2GB**；可选 CUDA 包 2296MB（含 torch 7005.8MB ≤8GB）；**必须 torch 的模型：无**（torch 退为训练/导出期）。
 - 工程规范新增（写入后续验收）：① onnxruntime-gpu ≥1.31 静默回退 CPU 必须硬断言拦截；② OCR 默认 CPU；③ 发 fixed-shape 图，动态图需先过 ORT 加载验证；④ LaMa DML 不可用，修复走 CPU/可选 CUDA。
 - 集成：证据入库（本轮提交）。
+
