@@ -20,13 +20,14 @@
 |LEGACY-SHELL-REMOVAL-1|HOST-TILE-CHANNEL-1、HOST-RESOURCE-SECURITY-1、CORE-TILE-EMIT-1、RELEASE-PACKAGE-1|done（S5 完成：D4 全绿、旧壳原位冻结、发布件 22.9MB）|
 |CORE-SLIM-1|CORE-TILE-EMIT-1|done（去 PySide6 闭包零 Qt；exe 199.6→1.9MiB；运行时 970.1MiB；AC3 PARTIAL；集成 c5aade851）|
 |INFER-BASELINE-EP-1|—|done（默认 EP=DirectML；主包 1216.4MB；必须 torch 的模型=无）|
-|CORE-SLIM-2|INFER-BASELINE-EP-1|ready（检测链 ONNX 化，目标 ≤700MB；base 4b0d5f0eb）|
+|CORE-SLIM-2|INFER-BASELINE-EP-1|done（Core 运行时 186.3MiB；检测 61.47ms/页；OCR 10/10；pytest 0 新增失败）|
+|FINAL-VALIDATION-1|CORE-SLIM-2、RELEASE-PACKAGE-1|ready（终验/重建/重打包/许可复验；base d3f081870）|
 |HOST-TILE-CHANNEL-1|UI-WORKBENCH-READER-1|done（S5-A tile 通道+digest+1s 缓存；revoke 0.071ms；集成 09d7e76c1）|
 |HOST-RESOURCE-SECURITY-1|HOST-TILE-CHANNEL-1|done（S5-B D4-1/3/5/6 全 PASS；digest 1.33%；集成 744eccb61）|
 |CORE-TILE-EMIT-1|HOST-RESOURCE-SECURITY-1|done（Core 出 tile+摘要；一致率100%；pytest 0 新增失败；集成 7b07da6a4）|
 |RELEASE-PACKAGE-1|CORE-TILE-EMIT-1|done（S5-D 包 22.9MB；AC4a/b PASS；集成 8ff3d288d）|
 
-READY 节点：CORE-SLIM-2。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）、S4 done（55b7f42c6）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：FINAL-VALIDATION-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）、S4 done（55b7f42c6）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 

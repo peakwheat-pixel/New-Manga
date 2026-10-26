@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[CORE-SLIM-2](tasks/CORE-SLIM-2.md) `ready`（检测链 ONNX 化，目标 Core ≤700MB；推理基线 done）。
+- 当前 Task：[FINAL-VALIDATION-1](tasks/FINAL-VALIDATION-1.md) `ready`（终验/重打包；CORE-SLIM-2 done d3f081870）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

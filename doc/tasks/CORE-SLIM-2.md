@@ -3,7 +3,7 @@ id: CORE-SLIM-2
 title: 检测链瘦身——doctr/torch → ONNX Runtime（目标 Core 运行时 ≤700MB）
 kind: research
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: null
@@ -14,8 +14,8 @@ branch: task/CORE-SLIM-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/CORE-SLIM-2
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/CORE-SLIM-2
 allowed_paths:
   - doc/tasks/CORE-SLIM-2.md
@@ -25,6 +25,7 @@ allowed_paths:
   - src/**
   - tests/**
   - requirements.txt
+  - doc/handoffs/**
   - packaging/**
   - verification/CORE-SLIM-2/**
   - G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2/**
@@ -42,12 +43,11 @@ CORE-SLIM-1 实测：Core 运行时 970.1 MiB（目标 ≤700MB），缺口 270.
 
 ## Acceptance Criteria
 
-- [x] **AC1 可行性**：基于 `INFER-BASELINE-EP-1` 结论，给出「torch → ORT」的迁移方案与精度/速度对比（检测 IoU/召回、ms/页）。→ **MET**：fixed-shape ONNX（RT-DETR opset17 + manga-ocr enc/dec）+ ORT-DML；10/10 页候选数相同、recall 1.0、meanIoU 1.0、OCR 逐字符 10/10；检测 263.14 → 61.47 ms/页（DML）。见 `verification/CORE-SLIM-2/REPORT.md` §1、`parity.json`。
-- [x] **AC2 实现**：检测链改 ORT（含模型导出/固定 shape/预处理对齐），保留 torch 路径作为可选回退（不随主包）。→ **MET**：新增 `onnx_sessions` / `detection_manga_onnx` / `ocr_manga_onnx`；默认后端 ONNX，`NEWMANGA_DETECTOR_BACKEND=torch` / `NEWMANGA_OCR_BACKEND=torch` 保留旧适配器（不随包；spec 负向断言防回流）。协议/命令语义/Host 契约未改。
-- [x] **AC3 体积**：Core 运行时 ≤700MB；产出 before/after 表与依赖移除清单。→ **MET**：Core 运行时 **970.1 → 186.3 MiB**（余量 513.7 MiB）；闭包 torch 栈 0 命中；`models/` 642.3 MiB 计入模型预算。见 `size-report.md`。
-- [x] **AC4 回归**：pytest 无新增失败（基线 3F/2710P/9S）；`scripts/test.ps1` 全绿；检测样例与 S2/S4 证据口径一致。→ **MET**：pytest **3F/2739P/9S**（失败集合=基线 3 项，0 新增，新增 29 用例）；`test.ps1` **102/102 passed, 0 skipped**；检测候选 10/10 一致（`parity.json`）。
-- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision。→ **MET**：`doc/handoffs/CORE-SLIM-2-handoff.md`（含 Record Decision）；pin 见下。
-
+- [x] **AC1 可行性**：基于 `INFER-BASELINE-EP-1` 结论，给出「torch → ORT」的迁移方案与精度/速度对比（检测 IoU/召回、ms/页）。→ **MET**：fixed-shape ONNX（RT-DETR opset17 + manga-ocr enc/dec）+ ORT-DML；10/10 页候选数相同、recall 1.0、meanIoU 1.0、OCR 逐字符 10/10；检测 263.14 → 61.47 ms/页（DML）。见 `verification/CORE-SLIM-2/REPORT.md` §1、`parity.json`。 <<MET>>
+- [x] **AC2 实现**：检测链改 ORT（含模型导出/固定 shape/预处理对齐），保留 torch 路径作为可选回退（不随主包）。→ **MET**：新增 `onnx_sessions` / `detection_manga_onnx` / `ocr_manga_onnx`；默认后端 ONNX，`NEWMANGA_DETECTOR_BACKEND=torch` / `NEWMANGA_OCR_BACKEND=torch` 保留旧适配器（不随包；spec 负向断言防回流）。协议/命令语义/Host 契约未改。 <<MET>>
+- [x] **AC3 体积**：Core 运行时 ≤700MB；产出 before/after 表与依赖移除清单。→ **MET**：Core 运行时 **970.1 → 186.3 MiB**（余量 513.7 MiB）；闭包 torch 栈 0 命中；`models/` 642.3 MiB 计入模型预算。见 `size-report.md`。 <<MET>>
+- [x] **AC4 回归**：pytest 无新增失败（基线 3F/2710P/9S）；`scripts/test.ps1` 全绿；检测样例与 S2/S4 证据口径一致。→ **MET**：pytest **3F/2739P/9S**（失败集合=基线 3 项，0 新增，新增 29 用例）；`test.ps1` **102/102 passed, 0 skipped**；检测候选 10/10 一致（`parity.json`）。 <<MET>>
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision。→ **MET**：`doc/handoffs/CORE-SLIM-2-handoff.md`（含 Record Decision）；pin 见下。 <<MET>>
 ## 禁止范围
 
 不删除 OCR/检测/修复能力；不改协议/命令语义；不改 Host 契约；不 push。
@@ -96,3 +96,11 @@ CORE-SLIM-1 实测：Core 运行时 970.1 MiB（目标 ≤700MB），缺口 270.
 - 硬数据：RT-DETR-v2 fixed 三档可跑、10/10 页框数与 torch 完全相同（DML 22.95ms vs torch-CPU 251.78ms）；manga-ocr encoder/decoder 逐字符 100% 一致，解码循环留 Python。
 - 不变量：检测/OCR/修复能力不降级；OCR 默认 CPU；onnxruntime-gpu 版本硬断言；LaMa 走 CPU/可选 CUDA。
 - 验收基线：pytest 3F/2710P/9S 无新增失败；scripts/test.ps1 全绿；体积 before/after 表。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 单命令：scripts/test.ps1 → **102/102**；pytest **3F/2739P/9S**（失败集合=基线 3 项、0 新增、+29 用例）。
+- **AC3 达成且余量巨大**：Core 运行时（不含模型）**970.1 → 186.3 MiB（−783.8，余量 513.7）**，远超 ≤700MB 目标；闭包 torch/torchvision/transformers/doctr/cv2/scipy **0 命中**；models 642.3 MiB 计入模型预算；整包 828.6 MiB。
+- 等价性：检测 10/10 页候选数一致、recall 1.0、meanIoU 1.0；OCR 逐字符 10/10 一致；检测 263.14 → **61.47 ms/页**（DML）。
+- 不变量：默认 ONNX、torch/doctr 为显式可选回退且不随包（spec 负向断言）；协议/命令语义/Host 契约零改动。
+- 遗留（记录不阻塞）：绝对精度 vs 人工 GT 未测（无对齐 GT，不冒充）；CUDA 可选包未构建；devices/manager.py 仍用 torch 探 CUDA（建议后续改 ORT EP 探测）；发布前需按新 spec 重建侧车。
+- 集成：测试与治理复核通过；未 push。

@@ -152,3 +152,4 @@ icons/                 # 图标集（可选，覆盖默认）
 - 发布 fixed-shape ONNX（RT-DETR-v2 163.7MB）；manga-ocr 解码循环留 Python；LaMa DML 不可用（CPU/可选 CUDA）。
 - 工程硬断言：`onnxruntime-gpu ≥1.31` 会静默回退 CPU，验收必须显式检查实际 EP。
 - 许可：仅 yolo11s-seg = AGPL-3.0（产品按 AGPL 声明）；其余权重 Apache-2.0；CUDA/cuDNN 为 NVIDIA 专有需单独声明。
+
