@@ -256,13 +256,15 @@ foreach ($file in $selectedFiles) {
     }
 }
 
-$architecture = 'Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy'
-$adPath = Join-Path $repoRoot 'doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md'
+$architecture = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy'
+$adPath = Join-Path $repoRoot 'doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md'
 $adText = Get-Content -LiteralPath $adPath -Raw
-if ($adText -notlike "*$architecture*") { Add-Error 'AD-001 缺少冻结的唯一目标架构哨兵。' }
-$truthPaths = @('AGENTS.md', 'doc/00_INDEX.md', 'doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md', 'doc/STATUS.md', 'doc/REBASELINE_PLAN.md')
+if ($adText -notlike "*$architecture*") { Add-Error 'AD-002 缺少冻结的唯一目标架构哨兵。' }
+$truthPaths = @('AGENTS.md', 'doc/00_INDEX.md', 'doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md', 'doc/STATUS.md', 'doc/REBASELINE_PLAN.md')
 $conflictPatterns = @(
-    '(?i)(?:current|target|future)\s+architecture\s*(?:is|=)\s*(?:Windows\s*\+\s*)?Python\s*\+\s*PySide6',
+    '(?i)(?:current|target|future)\s+architecture\s*(?:is|=)\s*(?:Windows\s*\+\s*)?React\s*\+\s*TypeScript',
+    '(?:当前目标架构|唯一继续演进的产品架构)\s*(?:为|是|=|：|:)\s*(?:Windows\s*\+\s*)?React\s*\+\s*TypeScript',
+    'React\s*(?:\+|/)\s*Tauri\s*(?:为|是)\s*(?:当前|目标|未来)架构',
     '(?:当前目标架构|唯一继续演进的产品架构)\s*(?:为|是|=|：|:)\s*(?:Windows\s*\+\s*)?Python\s*\+\s*PySide6',
     'PySide6\s*(?:\+|/)\s*QML\s*(?:为|是)\s*(?:当前|目标|未来)架构'
 )

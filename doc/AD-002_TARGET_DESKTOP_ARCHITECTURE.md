@@ -1,6 +1,7 @@
 # AD-002 — 目标桌面架构
 
 Status: **ACCEPTED_TARGET_ARCHITECTURE**（用户 2026-10-26 书面裁决 v1.0）。本文件取代 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React+Tauri 前端目标；AD-001 转为历史。
+Target architecture sentinel: `Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy`
 Owner: DSH（Lead/Architect）· Decision authority: User · Date: 2026-10-26
 依据：`verification/DISPLAY-PERF-DECISION-1/{baseline,visual,routes,ui-stack,ui-spec,nonadmin}/**`
 

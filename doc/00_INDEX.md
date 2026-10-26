@@ -6,7 +6,7 @@
 
 | 事实类型 | 唯一权威来源 | 解释 |
 |---|---|---|
-| 当前目标架构与技术边界 | [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)；后续用户明确裁决优先 | 目标是 React/TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。PySide6/QML 仅为旧生产基线/迁移参考。 |
+| 当前目标架构与技术边界 | [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)；后续用户明确裁决优先 | 目标是 Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy；UI 着重参考 Saber-Translator（非 1:1）。AD-001（React/Tauri）与 PySide6/QML 均为历史。 |
 | 项目规则与 Agent 权限 | [AGENTS.md](../AGENTS.md) | 当前角色、安全边界、默认上下文和工作区规则。 |
 | Milestone、Task DAG、依赖和释放状态 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | 历史 Task 文件、聊天记录和旧计划快照不能激活 Task。 |
 | 唯一活动 Task 与运行状态 | [STATUS](STATUS.md) | 仅此处声明当前 Active Task、Gate、阻塞和恢复指针。 |
@@ -24,7 +24,8 @@
 | [AGENTS.md](../AGENTS.md) | CURRENT / GOVERNANCE | Agent 项目入口、角色、安全和最小读取规则。 |
 | [接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md) | CURRENT / GOVERNANCE | 2026-10-25 用户裁决：Codex 的 Lead / Architect / Integrator 权限移交 DSH；历史署名与证据字节保留。 |
 | [Push 记录](PUSH_RECORD_2026-10-25.md) | CURRENT / DELIVERY RECORD | 干净源码快照推送到 `origin/codex/clean-source-snapshot` 的授权、审查、命令、远端 SHA 核验与未关闭项。 |
-| [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) | CURRENT / ARCHITECTURE | 唯一目标架构及边界。 |
+| [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md) | CURRENT / ARCHITECTURE | 唯一目标架构及边界（2026-10-26 用户裁决，取代 AD-001）。 |
+| [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) | HISTORICAL / ARCHITECTURE | 旧目标架构（React/TypeScript + Tauri/Rust）；已被 AD-002 取代，仅作审计。 |
 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | CURRENT / PLAN | 当前 DAG 和 Task 释放/阻塞关系。 |
 | [STATUS](STATUS.md) | CURRENT / STATUS | 当前唯一 Active Task、Gate 状态和恢复指针。 |
 | [09 协作协议](09_COLLABORATION.md) | CURRENT / PROCESS | 协作、Review、handoff 和 Task 关闭流程；按需读取。 |
@@ -32,7 +33,7 @@
 | [Governance checker](../tools/governance/check.ps1) | CURRENT / AUTOMATION | 只读检查当前指针、相对引用、目标架构标记、STATUS/PLAN 预算及受治理 Task 的 canonical evidence/closeout 字段。 |
 | [Worktree Safety Inventory](WORKTREE_SAFETY_INVENTORY.md) | CURRENT / OPERATIONAL | 删除 worktree 或 prune 前必须刷新并读取。 |
 | [Task templates](templates/TASK.md)、[Review template](templates/REVIEW.md)、[Handoff template](templates/HANDOFF.md) | CURRENT / TEMPLATE | 仅在创建对应交付时读取。 |
-| [TASK-002 minimum contract](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | TASK-SCOPED / SEMANTIC CONTRACT | G06–G13 semantics only when a current Task cites it; subordinate to AD-001 and not authority for QML/React UI architecture. |
+| [TASK-002 minimum contract](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | TASK-SCOPED / SEMANTIC CONTRACT | G06–G13 semantics only when a current Task cites it; subordinate to AD-002 and not authority for QML/React UI architecture. |
 | Plan 指向的当前 Task、最新 Review/adjudication、checkpoint 和证据 | CURRENT / TASK-SCOPED | 只读当前 Task 明确引用的版本；其他内容均按需检索。 |
 | [01 功能架构](01_FUNCTIONAL_ARCHITECTURE.md)、[03 数据模型](03_DATA_MODEL.md)、[04 用户流程](04_USER_FLOW.md) | REQUIREMENT REFERENCE | 产品行为/概念数据意图；不授予实现权限。03 的正式字段与写入契约以当前 Task 冻结契约为准。 |
 | [06 Translation Pipeline](06_TRANSLATION_PIPELINE.md) | REQUIREMENT + LEGACY MAPPING | 业务流程与安全语义可作需求参考；Qt/QML 接线是历史映射。 |
@@ -47,14 +48,14 @@
 |---|---|---|
 | 旧生产基线 | 曾实际采用的历史生产架构 | Python + PySide6/QML + SQLite；仅作为 Legacy Production Baseline / Migration Reference。 |
 | 迁移中间态 | 特定迁移 Task 中的阶段性实现状态 | 不构成另一个产品目标；仅由当前 Task 明确范围描述，不得推翻目标架构或默认释放 QML 工作。 |
-| 用户最终目标 | 当前唯一继续演进的产品架构 | Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。 |
+| 用户最终目标 | 当前唯一继续演进的产品架构 | Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy（AD-002）。 |
 
 因此，2026-09-25 注册快照中的 QML 保留/parity 计划、旧 M2 释放列表和 Qoder 分工均不代表当前决定；详情仅在 [AD-001 pre-Rebaseline snapshot](../archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 中作为原始历史文本保留。该归档副本不是权威来源。
 
 ## Agent 默认最小读取集
 
 1. AGENTS.md
-2. AD-001
+2. AD-002（AD-001 为历史）
 3. STATUS 当前状态段
 4. REBASELINE_PLAN 当前 DAG
 5. Plan 指定的当前 Task

@@ -1,5 +1,8 @@
 # AD-001 — Target Desktop Architecture
-Status: ACCEPTED_TARGET_ARCHITECTURE. Decision authority: User. Target fixed by the 2026-09-28 user ruling. This document records the approved target; it does not release implementation work.
+
+> **SUPERSEDED（2026-10-26）**：本文件的目标架构（React + TypeScript + Tauri/Rust 前端）已由用户 2026-10-26 裁决取代，当前目标架构见 [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy）。AD-001 全文按原字节保留，仅作历史与审计依据；其"React/Tauri 为唯一目标"的声明不再具有当前效力。
+
+Status: SUPERSEDED_BY_AD_002（原为 ACCEPTED_TARGET_ARCHITECTURE，Decision authority: User，2026-09-28 裁决）. This document records the historical target; it does not release implementation work.
 
 ## Decision
 

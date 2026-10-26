@@ -1,6 +1,8 @@
 # DISPLAY-PERF-DECISION-1 — 显示效果与运行效率：证据基线 + 三路线裁决建议
 
-Status: DRAFT_FOR_USER_ADJUDICATION（本文件是裁决输入，不是实现授权）
+> **SUPERSEDED（2026-10-26）**：本文的"A 现栈深化（Tauri）为主线"建议已被用户 2026-10-26 裁决取代——当前目标架构为 [AD-002](../AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（C#/.NET + Avalonia + 既有 Python Core，GPL-3.0 开源）。本文保留为**证据与成本基线**（测量数据、差距清单、三路线成本对比仍然有效），其路线推荐不再作为当前决策依据。
+
+Status: SUPERSEDED_BY_AD_002（原为 DRAFT_FOR_USER_ADJUDICATION）
 Owner: DSH（Lead/Architect）· Reviewer: 待指派（ZCode/Antigravity/Codex，DSH 不审自己的产出）
 Evidence: `verification/DISPLAY-PERF-DECISION-1/**`、本 Task 卡 AC 行
 

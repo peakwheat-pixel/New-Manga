@@ -271,9 +271,9 @@ Execution Event；退出不等于完成。只有 AC、独立 Review、集成和�
 若重启后仍不可见，记录 DSH 版本、worktree 路径、session ID 和检查结果，标记 `web_visibility=unverified`；不要把 headless 运行描述成 Web 对话已显示，也不要用其他 Agent 模拟代替指定 Reviewer 的真实 Review。继续已有会话时才传入 `--session-id <id>`，并确认该会话属于相同工作目录且可由当前 profile 接管。
 
 1. Reviewer 在独立工作区读完整 diff、受影响调用链、需求和测试，不只看作者摘要。
-2. **Standards 视角（建议，非强制；2026-09-18 用户决定取消"双轴"强制口径）**：代码是否符合**当前有效**标准——`AGENTS.md`、本协议、[AD-001 目标架构](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)、本 Task 的允许/禁止范围及 Task 明确引用的冻结 contract。`02_TECHNICAL_ARCHITECTURE_.md`、QML 映射和旧 D08 中的 PyInstaller/Qt 条款属于 Legacy/Historical，不得作为新架构实现标准。仓库**未记录**标准的方面适用 Fowler smell baseline（_Refactoring_ 第 3 章）作为**判断项**（须带 label 并引用 hunk）；**仓库记录的标准优先于 baseline**，工具已强制的项跳过。
+2. **Standards 视角（建议，非强制；2026-09-18 用户决定取消"双轴"强制口径）**：代码是否符合**当前有效**标准——`AGENTS.md`、本协议、[AD-002 目标架构](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)、本 Task 的允许/禁止范围及 Task 明确引用的冻结 contract。`AD-001`、`02_TECHNICAL_ARCHITECTURE_.md`、QML 映射和旧 D08 中的 PyInstaller/Qt 条款属于 Legacy/Historical，不得作为新架构实现标准。仓库**未记录**标准的方面适用 Fowler smell baseline（_Refactoring_ 第 3 章）作为**判断项**（须带 label 并引用 hunk）；**仓库记录的标准优先于 baseline**，工具已强制的项跳过。
 3. **Spec 视角（建议，非强制；同上）**：AC、写回范围、命令语义、数据保护、失败/暂停/恢复、UI 行为是否符合来源。来源顺序：本 Task 文件 AC → 其引用的 D01～D08 条文与 `doc/contracts/**` → STATUS 中的用户裁决；**不得**用聊天记录或旧仓库推断已有实现。
-4. Architecture 轴：分层、共享契约、依赖、安全、持久化、可选 AI 依赖边界；新架构依赖方向为 `React/WebView → explicit Tauri IPC → Python Application → Domain/Ports → Infrastructure Adapters`，禁止 React/Rust 直接访问 SQLite、任意 OS 路径或模型，也禁止反向依赖。Legacy QML 只作历史证据。
+4. Architecture 轴：分层、共享契约、依赖、安全、持久化、可选 AI 依赖边界；新架构依赖方向为 `Avalonia UI → Host/IPC（C# 服务层）→ Python Application → Domain/Ports → Infrastructure Adapters`，禁止 Avalonia UI 直接访问 SQLite、任意 OS 路径或模型，也禁止反向依赖。Legacy QML 与 Tauri/React 只作历史证据。
 5. Verification 轴：运行相关检查；逐项写 PASS/FAIL/BLOCKED/NOT_RUN。没有运行环境时不能批准未核实的关键路径。
 6. **报告形式（不强制）**：报告须覆盖 **Architecture** 与 **Verification** 两面（第 4/5 条）。`code-review` 技能的 Standards/Spec 两视角**可采用也可不用**；采用时建议分别呈现（一个变更可能通过一面而在另一面失败），但**不再强制**分节、命名或"不跨轴排名"的写法。**取消**下列强制项（2026-09-18 用户决定，理由：并行双轴子代理能力不可用）：①不再要求两视角各由独立 sub-agent **并行**执行；②不再要求"两遍相互隔离"检查；③不再要求在报告中声明该偏差或附派发尝试证据。该能力**会话相关**（本会话多次派发未启动；DSH 会话曾成功），故不作为任何 Review 的前置条件。
 7. **视角状态声明（建议）**：如报告采用了多个视角，建议各自标注 `executed`/`N/A` 并给一行小结；**缺声明不再视为 Review 未完成**，也不影响能否批准。批准与否只取决于第 8 条（P0/P1 是否未解决、关键验证是否缺失）。

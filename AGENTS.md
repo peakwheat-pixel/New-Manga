@@ -6,7 +6,7 @@
 
 ## 每次开始工作
 
-1. 默认只读当前有效上下文：[目标架构 AD-001](doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md)、[当前阶段](doc/STATUS.md) 的当前状态、[Project Rebaseline Plan](doc/REBASELINE_PLAN.md) 的当前 DAG、当前 Task、该 Task 最新 Review/adjudication 和 rolling checkpoint。
+1. 默认只读当前有效上下文：[目标架构 AD-002](doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（AD-001 为已取代的历史架构）、[当前阶段](doc/STATUS.md) 的当前状态、[Project Rebaseline Plan](doc/REBASELINE_PLAN.md) 的当前 DAG、当前 Task、该 Task 最新 Review/adjudication 和 rolling checkpoint。
 2. [Document Truth Map](doc/00_INDEX.md) 仅在需要定位文档、分类或裁决来源时查阅；[协作协议](doc/09_COLLABORATION.md) 按当前任务需要读取相关章节。不得默认通读历史快照，也不得默认扫描整个 doc/**、verification/**、历史 Task、Review 或 checkpoint。
 3. 检查工作区、分支及 Git common directory；阅读任务引用的需求与真实代码、测试。未提交内容归原作者所有。
 4. 发现事实与文档不一致，在 Task 中留下证据并交 DSH 处理；不能靠聊天、旧项目路径或目标图推断已有实现。
@@ -31,17 +31,19 @@
 
 - DeepSeek Harness（DSH）：Lead / Architect / Integrator；负责任务释放与范围冻结、Agent 分配、契约与架构裁决、Review Appointment、审查处置、集成验证、资源处置裁决、Task 生命周期管理及最终 push。不得审核自己实现的变更；独审由未参与实现的 ZCode、Antigravity 或 Codex 执行。
 - Codex：协作 Agent；按 DSH 分配承担实现、诊断、测试或独立 Review，提交固定 commit、测试及 Handoff。不再保留项目级审批、否决或最终集成特权；不得审核自己实现的变更。
-- ZCode：独立 Feature、长任务实现；新架构 UI/UX、GUI 与 React/Tauri 视觉/交互设计及实现主责；提交设计、代码、测试及 Handoff。设计与实现分别冻结Task范围，不得自行扩大产品范围、修改未授权共享契约或审核自己的变更。
-- Antigravity：通用编程实现 Agent；承担 DSH 已释放的 Python、应用、基础设施或测试编程 Task，提交固定 commit、测试及 Handoff。使用自己的任务分支，不得自行扩大范围、修改未授权共享契约、审核自己的实现或合并主线；React UI/UX 由 ZCode 主责，除非 Task 另行明确分配。
+- ZCode：独立 Feature、长任务实现；新架构 UI/UX、GUI 与 Avalonia/C# 视觉/交互设计及实现主责；提交设计、代码、测试及 Handoff。设计与实现分别冻结Task范围，不得自行扩大产品范围、修改未授权共享契约或审核自己的变更。
+- Antigravity：通用编程实现 Agent；承担 DSH 已释放的 Python、应用、基础设施或测试编程 Task，提交固定 commit、测试及 Handoff。使用自己的任务分支，不得自行扩大范围、修改未授权共享契约、审核自己的实现或合并主线；Avalonia UI/UX 由 ZCode 主责，除非 Task 另行明确分配。
 - 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 DSH 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
 - 完成实现不等于完成集成：独立审查、测试证据和 DSH 集成验证通过后，Task 才能进入 done；Owner 与 Reviewer 必须不同。
 
 ## 产品边界
 
-当前唯一继续演进的产品架构为 Windows / React + TypeScript / Tauri / Python Core / SQLite / Managed Copy，详见 [AD-001 架构决策](doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md)。后续 Task、缺陷诊断和修复只允许落在该新架构；PySide6/QML 代码、测试和既有 Task 仅保留为历史证据，不再释放 Legacy 实现、诊断或修复任务。若旧架构暴露用户可见问题，只把对应产品行为转化为新架构需求并在新架构复现、修复和验收。产品仍只有书架、工作台、阅读器、设置四个一级页面。
+当前唯一继续演进的产品架构为 Windows / C# .NET + Avalonia / Python Core / SQLite / Managed Copy，详见 [AD-002 架构决策](doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（2026-10-26 用户裁决，取代 AD-001）。后续 Task、缺陷诊断和修复只允许落在该架构；Tauri/React/WebView2 与 PySide6/QML 代码、测试和既有 Task 仅保留为历史证据，不再释放 Legacy 实现、诊断或修复任务。若旧架构暴露用户可见问题，只把对应产品行为转化为新架构需求并在新架构复现、修复和验收。产品仍只有书架、工作台、阅读器、设置四个一级页面，UI 视觉**着重参考** Saber-Translator（非 1:1 复刻）。
 
-所有实现必须保护用户源文件、人工修改、Lock、current/pinned Revision 和任务可恢复性。React/WebView 不直接访问数据库、任意 OS 路径或模型；通过 Tauri IPC 与 Python Core 的冻结契约访问。详细约束按 Task 引用加载，不在本文件复制第二套定义。
+所有实现必须保护用户源文件、人工修改、Lock、current/pinned Revision 和任务可恢复性。Avalonia UI 不直接访问数据库、任意 OS 路径或模型；通过 Host/IPC 与 Python Core 的冻结契约访问。详细约束按 Task 引用加载，不在本文件复制第二套定义。
+
+**许可证边界**：产品按 GPL-3.0 开源分发（若集成 AGPL-3.0 组件如 Ultralytics，则整体按 AGPL-3.0 声明）。引入新依赖、移植外部代码或随包字体前，必须先确认许可兼容并在 Task 中记录；商业/系统字体不得随包。
 
 ## 工作区、归档与派生产物
 

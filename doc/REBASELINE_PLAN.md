@@ -1,6 +1,6 @@
 # Project Rebaseline Plan — 唯一 DAG
 
-运行以 [STATUS](STATUS.md) 为准；目标架构 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)。
+运行以 [STATUS](STATUS.md) 为准；目标架构 [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（AD-001 已取代）。
 
 ## 当前 DAG
 
