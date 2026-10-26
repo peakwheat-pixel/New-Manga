@@ -20,9 +20,10 @@
 |UI-WORKBENCH-READER-1|UI-SHELL-THEME-1|done（S4 阅读器/工作台；利用率0.99/翻页1.05ms/长条0ms；集成 55b7f42c6）|
 |LEGACY-SHELL-REMOVAL-1|HOST-TILE-CHANNEL-1、HOST-RESOURCE-SECURITY-1|blocked（待 S5-A/B 全绿；S5-A done，S5-B ready）|
 |HOST-TILE-CHANNEL-1|UI-WORKBENCH-READER-1|done（S5-A tile 通道+digest+1s 缓存；revoke 0.071ms；集成 09d7e76c1）|
-|HOST-RESOURCE-SECURITY-1|HOST-TILE-CHANNEL-1|ready（S5-B D4 harness；base 09d7e76c1）|
+|HOST-RESOURCE-SECURITY-1|HOST-TILE-CHANNEL-1|done（S5-B D4-1/3/5/6 全 PASS；digest 1.33%；集成 744eccb61）|
+|CORE-TILE-EMIT-1|HOST-RESOURCE-SECURITY-1|ready（Core 出 tile+per-tile 摘要；base 744eccb61）|
 
-READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）、S4 done（55b7f42c6）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：CORE-TILE-EMIT-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）、S4 done（55b7f42c6）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 
