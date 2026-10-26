@@ -1,0 +1,73 @@
+---
+id: UIUX-V2-RUNTIME-NARROW-1
+title: 修 900px 窄窗横向溢出（1024 vs 900）+ 高 DPI 布局回归守卫
+kind: implementation
+governance_version: 3
+status: ready
+approval: pending_user_authorization
+suggested_owner: zcode
+owner: null
+reviewer: dsh
+depends_on: [UIUX-V2-RUNTIME-REALCORE-2]
+base_commit: null
+branch: null
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
+evidence_dir: verification/UIUX-V2-RUNTIME-NARROW-1
+allowed_paths:
+  - doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
+  - verification/UIUX-V2-RUNTIME-NARROW-1/**
+  - apps/desktop/frontend/src/design/**
+  - apps/desktop/frontend/src/pages/pages.css
+  - apps/desktop/frontend/src/ui/ui.css
+  - apps/desktop/frontend/e2e/uiux-v2/**
+---
+
+# UIUX-V2-RUNTIME-NARROW-1：900px 窄窗横向溢出修复
+
+## 来源（实测证据，不是推测）
+
+[UIUX-V2-RUNTIME-REALCORE-2](UIUX-V2-RUNTIME-REALCORE-2.md) 的 S10 在真实 Tauri 生产窗 + WebView2 上实测：
+
+```
+视口 {"width":900,"height":700,"dpr":2}
+overflow {"docWidth":1024,"clientWidth":900,"pageWidth":1024}   ← 横向溢出 124px
+```
+
+同一场景其它断言均通过（标题栏元素不重叠、内容区与详情区不重叠、`blurLayers=2`、状态条可见），
+所以问题**只在整体宽度**：文档宽度被某个子元素或最小宽度撑到 1024，超出 900 视口。
+
+证据：`verification/UIUX-V2-RUNTIME-REALCORE-2/run-i34/report.json` 的 S10。
+
+## 目标
+
+- **G1** 定位撑宽来源（最可能是书架网格 `minmax`、详情面板固定宽度、标题栏三段式最小宽度之一），给出实测依据（哪个元素/哪条规则）。
+- **G2** 在 **900×700** 下做到 `document.documentElement.scrollWidth === clientWidth`（无横向滚动），且四页都成立。
+- **G3** 不牺牲既有通过项：`blurLayers ≤ 2`、标题栏与内容区不重叠、状态条可见、1280×800 下布局不退化。
+- **G4** 把 S10 的 KNOWN_DEFECT 断言升级为硬断言（修复后必须 PASS），防止回退。
+
+## 约束
+
+1. **不改设计语言**：令牌、色彩、七态符号、亚克力预算规则不变；只改宽度/网格/断点相关规则。
+2. **不改信息架构**：不删功能、不做"窄窗隐藏侧栏"这类交互重构，除非 G1 证明别无他法——那种情况先回报再动手。
+3. 只在允许路径内改；不碰 Rust、不改 IPC、不动 `tauri.conf.json`。
+4. 验收必须用 `e2e/uiux-v2/run.mjs`（S10 升级为硬断言）+ 四页 CDP 截图；不得只靠 jsdom。
+5. 继承 REALCORE 系列的运行约束：隔离数据根、不 reload Tauri 页面、WebView2 鼠标事件带 `buttons`、CDP 仅 acceptance 构建。
+
+## 需要用户授权的原因
+
+这张卡会**改产品 CSS**（布局断点），属于视觉层变更，按项目规则需要 DSH 之外的确权；
+`approval: pending_user_authorization` 就是这个意思——**未获授权前不实施**。
+
+## 验收
+
+- `node e2e/uiux-v2/run.mjs` exit 0，且 S10 无 KNOWN_DEFECT
+- `tsc --noEmit` exit 0；`vitest run` 全绿
+- 900×700 与 1280×800 两档四页截图各一张，`scrollWidth === clientWidth`
+- 证据落 `verification/UIUX-V2-RUNTIME-NARROW-1/`，README 写清改前/改后的实测数字

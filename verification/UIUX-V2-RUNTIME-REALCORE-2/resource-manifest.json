@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "task_id": "UIUX-V2-RUNTIME-REALCORE-2",
+  "generated_at": "2026-10-26",
+  "generated_by": "DeepSeek Harness (DSH)",
+  "note": "本 Task 未删除/迁移/归档任何仓库文件。中途失败与迭代轮次的 report.json 保留入库；过程日志（logs/shots）按工作区规则留在仓外 workspace。窄窗横向溢出缺陷不在本卡修，已转 UIUX-V2-RUNTIME-NARROW-1。",
+  "resources": [
+    {
+      "resource_type": "evidence",
+      "source_path": "verification/UIUX-V2-RUNTIME-REALCORE-2",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/UIUX-V2-RUNTIME-REALCORE-2",
+      "process_check": "canonical 证据：run-i29/i30/i31/i32/i33/i34 的 report.json、两轮 README、DSH 复核 r1/r2、r2 的四条验收原始日志与 result.json、cargo 定向测试日志。全部由脚本或工具原生产生，未手工编辑。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2",
+      "process_check": "每轮隔离数据根（library.db、managed/、backups/、process-env/、fixtures/）在此；无进程持有（本轮结束已终止 m2rc1-desktop 与 core_service）。证明验收未触碰用户 %LOCALAPPDATA%\\New Manga。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "apps/desktop/src-tauri/target",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "apps/desktop/src-tauri/target",
+      "process_check": "验收构建 exe 与发布构建 exe 各自 SHA-256 记录在 README；target/ 属构建缓存不入库。发布 exe 不含调试端口。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "dataset-model-user-data",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "全程隔离数据根；未读写用户真实库。导入用例的 PNG 夹具是脚本生成的纯色图片，放在 task-envs 下，不含任何用户素材。"
+    },
+    {
+      "resource_type": "exchange",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "无跨机交换；Codex 与 DSH 在同一文件系统内协作。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "canonical_evidence_status=complete；resource_closeout_status=complete；无删除/迁移/归档。"
+}

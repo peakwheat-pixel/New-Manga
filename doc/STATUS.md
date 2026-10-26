@@ -1,25 +1,26 @@
 # Current Development Status
 
-状态：2026-10-25 起 DeepSeek Harness（DSH）接任 Lead / Architect / Integrator；用户授权与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
+状态：2026-10-25 起 DSH 接任 Lead / Architect / Integrator；授权与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
 
 ## 当前 Task
 
-- 当前 Task：[UIUX-V2-RUNTIME-REALCORE-2](tasks/UIUX-V2-RUNTIME-REALCORE-2.md) `changes_requested`（Codex `3d038732a` 部分交付；G4/G5 过，G1 走偏、G2 不足；DSH r1 见 `review-dsh-r1.md`）。
+- 当前 Task：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `ready`（修 900px 窄窗横向溢出 1024→实宽；**改产品 CSS，待用户授权后才实施**）。
+- 最近完成：[UIUX-V2-RUNTIME-REALCORE-2](tasks/UIUX-V2-RUNTIME-REALCORE-2.md) `closed_with_limitations`（run-i34 10/10 exit 0；G2/G4/G5 达成；G1 架构性不可自动化）。
 - 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
 - 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`）。
-- 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（root `e34a90d00`；push-gate approved；AC4/AC5 未过）。
+- 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（push-gate approved；AC4/AC5 未过）。
 - Rust：[ISOLATION-1](tasks/GIT-CLEAN-RUST-ISOLATION-1.md) `in_review`（1829a38；DSH r2 blocked 保留；Reviewer=ZCode）；[CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`。
 - 诊断/环境：DIAG-1 `approved`；CORE-ENV-2 `proposed`；FULL-AUDIT `blocked`；V1-RELEASE-SIGNING-1 `in_review`（无执行）。
-- 更早完成：DESIGN-V2-IMPL-1 `done`（`e1fd738a7`）；插件两条 smoke `done`。
-- Reviewer 改派（2026-10-25）：用户停用 Antigravity/agy，两 Rust Task Reviewer 改 ZCode；Owner 冲突已登记，不授权自审。
+- 更早：DESIGN-V2-IMPL-1 `done`（`e1fd738a7`）；插件 smoke `done`。
+- Reviewer 改派（2026-10-25）：停用 Antigravity/agy，两 Rust Task 改 ZCode 审；不授权自审。
 
 ## 保留与已知限制
 
 - WORKSPACE-CONSOLIDATION-1：`closed_with_limitations`（r212）；不得再清理/GC/prune。
 - v1 收口（2026-10-21，HEAD `239b165c2`）：ACL 已修；source/packaged/前端/pytest/NSIS/Sandbox 各线实测过；签名待证书。
 - ARCH-DOC-REBASELINE `closed_with_limitations`；P18 4/8；P20 6/7；DETECT-* / SEC-* / PDF-* / P09-AC3-* 等 `closed_with_limitations`。
-- Task 台账：TASK_LEDGER（8 个非终态）；DIR-4 同一失败上限 2 次；DIR-5 goal 轮次上限 1000。
-- 真实 Core 端到端：**脚本跑通 7/7（run-i18）**，不再是 HUMAN_VERIFY；未覆盖项见 REALCORE-2。
+- 台账 TASK_LEDGER（8 非终态）；DIR-4 上限 2 次；DIR-5 上限 1000。
+- 真实 Core 端到端：脚本化验收已建立（run-i18 7/7、run-i34 10/10）。
 - `?view=legacy` 保留历史容器；次级面板仍为令牌桥接；21 处非 gap 间距字面量与 2 处颜色字面量记 DESIGN-V2-IMPL-1 P2 债。
 
 ## Gate 与保留项
