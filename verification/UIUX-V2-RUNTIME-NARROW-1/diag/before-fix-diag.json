@@ -1,0 +1,1514 @@
+{
+  "startedAt": "2026-10-26T06:14:27.206Z",
+  "viewports": [
+    {
+      "viewport": {
+        "name": "900x700-dpr2",
+        "width": 900,
+        "height": 700,
+        "dpr": 2
+      },
+      "pages": [
+        {
+          "page": "shelf",
+          "view": {
+            "width": 900,
+            "height": 700,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1024,
+            "clientWidth": 900,
+            "bodyScrollWidth": 1024
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1024,
+              "top": 0,
+              "bottom": 700,
+              "width": 1024,
+              "height": 700
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "290px 326px 360px",
+            "brand": {
+              "left": 16,
+              "right": 306,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 290,
+              "height": 24
+            },
+            "tabs": {
+              "left": 318,
+              "right": 644,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 656,
+              "right": 1016,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 360,
+              "height": 32
+            }
+          },
+          "shelf": {
+            "library": {
+              "left": 16,
+              "right": 652,
+              "top": 112,
+              "bottom": 624,
+              "width": 636,
+              "height": 512
+            },
+            "libraryScroll": {
+              "scrollWidth": 636,
+              "clientWidth": 636
+            },
+            "grid": null,
+            "gridColumns": null,
+            "detail": {
+              "left": 668,
+              "right": 1008,
+              "top": 112,
+              "bottom": 624,
+              "width": 340,
+              "height": 512
+            }
+          },
+          "offenders": [
+            {
+              "tag": "div",
+              "cls": "nm-app",
+              "testid": "app-root",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "1024px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-shelf nm-mica",
+              "testid": "page-shelf",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "header",
+              "cls": "nm-titlebar",
+              "testid": "shelf-titlebar",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-titlebar__actions",
+              "testid": null,
+              "rect": {
+                "left": 656,
+                "right": 1016,
+                "width": 360
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-window-buttons",
+              "testid": "window-buttons",
+              "rect": {
+                "left": 878,
+                "right": 1016,
+                "width": 138
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 924,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 895,
+                "right": 907,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 897.5,
+                "right": 904.5,
+                "width": 7
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 924,
+                "right": 970,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 941.5,
+                "right": 952.5,
+                "width": 11
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "rect",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 944,
+                "right": 950,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn nm-window-btn--close",
+              "testid": null,
+              "rect": {
+                "left": 970,
+                "right": 1016,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 987,
+                "right": 999,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 990,
+                "right": 996,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-toolbar",
+              "testid": "shelf-toolbar",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-toolbar__right",
+              "testid": null,
+              "rect": {
+                "left": 734,
+                "right": 1008,
+                "width": 274
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "button",
+              "cls": "nm-btn",
+              "testid": "shelf-import",
+              "rect": {
+                "left": 846,
+                "right": 923,
+                "width": 77
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "button",
+              "cls": "nm-btn nm-btn--primary",
+              "testid": "shelf-create",
+              "rect": {
+                "left": 931,
+                "right": 1008,
+                "width": 77
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 944,
+                "right": 959,
+                "width": 15
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 947.1,
+                "right": 955.9,
+                "width": 8.8
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "main",
+              "cls": "nm-shelf__main",
+              "testid": null,
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "aside",
+              "cls": "nm-detail nm-acrylic",
+              "testid": "shelf-detail",
+              "rect": {
+                "left": 668,
+                "right": 1008,
+                "width": 340
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-state",
+              "testid": "shelf-detail-empty",
+              "rect": {
+                "left": 699,
+                "right": 977,
+                "width": 278
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "p",
+              "cls": "nm-state__detail",
+              "testid": null,
+              "rect": {
+                "left": 724,
+                "right": 952,
+                "width": 228
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-floating-status nm-acrylic-24",
+              "testid": "shelf-statusbar",
+              "rect": {
+                "left": 16,
+                "right": 1008,
+                "width": 992
+              },
+              "minWidth": "0px"
+            }
+          ],
+          "shot": "diag-900x700-dpr2-shelf.png"
+        },
+        {
+          "page": "workbench",
+          "view": {
+            "width": 900,
+            "height": 700,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1024,
+            "clientWidth": 900,
+            "bodyScrollWidth": 1024
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1024,
+              "top": 0,
+              "bottom": 700,
+              "width": 1024,
+              "height": 700
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "290px 326px 360px",
+            "brand": {
+              "left": 16,
+              "right": 306,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 290,
+              "height": 24
+            },
+            "tabs": {
+              "left": 318,
+              "right": 644,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 656,
+              "right": 1016,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 360,
+              "height": 32
+            }
+          },
+          "shelf": null,
+          "offenders": [
+            {
+              "tag": "div",
+              "cls": "nm-app",
+              "testid": "app-root",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "1024px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-workbench nm-mica",
+              "testid": "page-workbench",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "header",
+              "cls": "nm-titlebar",
+              "testid": "workbench-titlebar",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-titlebar__actions",
+              "testid": null,
+              "rect": {
+                "left": 656,
+                "right": 1016,
+                "width": 360
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-window-buttons",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 1016,
+                "width": 138
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 924,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 895,
+                "right": 907,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 897.5,
+                "right": 904.5,
+                "width": 7
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 924,
+                "right": 970,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 941.5,
+                "right": 952.5,
+                "width": 11
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "rect",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 944,
+                "right": 950,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn nm-window-btn--close",
+              "testid": null,
+              "rect": {
+                "left": 970,
+                "right": 1016,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 987,
+                "right": 999,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 990,
+                "right": 996,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-workbench__body nm-workbench__body--state",
+              "testid": null,
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            }
+          ],
+          "shot": "diag-900x700-dpr2-workbench.png"
+        },
+        {
+          "page": "reader",
+          "view": {
+            "width": 900,
+            "height": 700,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1024,
+            "clientWidth": 900,
+            "bodyScrollWidth": 1024
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1024,
+              "top": 0,
+              "bottom": 700,
+              "width": 1024,
+              "height": 700
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "290px 326px 360px",
+            "brand": {
+              "left": 16,
+              "right": 306,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 290,
+              "height": 24
+            },
+            "tabs": {
+              "left": 318,
+              "right": 644,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 656,
+              "right": 1016,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 360,
+              "height": 32
+            }
+          },
+          "shelf": null,
+          "offenders": [
+            {
+              "tag": "div",
+              "cls": "nm-app",
+              "testid": "app-root",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "1024px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-reader",
+              "testid": "page-reader",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "header",
+              "cls": "nm-titlebar",
+              "testid": "reader-titlebar",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-titlebar__actions",
+              "testid": null,
+              "rect": {
+                "left": 656,
+                "right": 1016,
+                "width": 360
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-window-buttons",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 1016,
+                "width": 138
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 924,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 895,
+                "right": 907,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 897.5,
+                "right": 904.5,
+                "width": 7
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 924,
+                "right": 970,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 941.5,
+                "right": 952.5,
+                "width": 11
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "rect",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 944,
+                "right": 950,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn nm-window-btn--close",
+              "testid": null,
+              "rect": {
+                "left": 970,
+                "right": 1016,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 987,
+                "right": 999,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 990,
+                "right": 996,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-reader__body",
+              "testid": null,
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-reader__page-area",
+              "testid": null,
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-reader__top nm-acrylic-24",
+              "testid": "reader-top",
+              "rect": {
+                "left": 16,
+                "right": 1008,
+                "width": 992
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "button",
+              "cls": "nm-btn nm-btn--ghost nm-btn--icon",
+              "testid": null,
+              "rect": {
+                "left": 883,
+                "right": 915,
+                "width": 32
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 891,
+                "right": 907,
+                "width": 16
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "circle",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 896.3,
+                "right": 901.7,
+                "width": 5.3
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 893,
+                "right": 905,
+                "width": 12
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "button",
+              "cls": "nm-btn",
+              "testid": "reader-open-settings",
+              "rect": {
+                "left": 923,
+                "right": 999,
+                "width": 76
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 936,
+                "right": 950,
+                "width": 14
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "circle",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 941.3,
+                "right": 944.8,
+                "width": 3.5
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 938.3,
+                "right": 948.2,
+                "width": 9.9
+              },
+              "minWidth": "0px"
+            }
+          ],
+          "shot": "diag-900x700-dpr2-reader.png"
+        },
+        {
+          "page": "settings",
+          "view": {
+            "width": 900,
+            "height": 700,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1024,
+            "clientWidth": 900,
+            "bodyScrollWidth": 1024
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1024,
+              "top": 0,
+              "bottom": 700,
+              "width": 1024,
+              "height": 700
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "290px 326px 360px",
+            "brand": {
+              "left": 16,
+              "right": 306,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 290,
+              "height": 24
+            },
+            "tabs": {
+              "left": 318,
+              "right": 644,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 656,
+              "right": 1016,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 360,
+              "height": 32
+            }
+          },
+          "shelf": null,
+          "offenders": [
+            {
+              "tag": "div",
+              "cls": "nm-app",
+              "testid": "app-root",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "1024px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-settings",
+              "testid": "page-settings",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "header",
+              "cls": "nm-titlebar",
+              "testid": "settings-titlebar",
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-titlebar__actions",
+              "testid": null,
+              "rect": {
+                "left": 656,
+                "right": 1016,
+                "width": 360
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-window-buttons",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 1016,
+                "width": 138
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 878,
+                "right": 924,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 895,
+                "right": 907,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 897.5,
+                "right": 904.5,
+                "width": 7
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn",
+              "testid": null,
+              "rect": {
+                "left": 924,
+                "right": 970,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 941.5,
+                "right": 952.5,
+                "width": 11
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "rect",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 944,
+                "right": 950,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-window-btn nm-window-btn--close",
+              "testid": null,
+              "rect": {
+                "left": 970,
+                "right": 1016,
+                "width": 46
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "svg",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 987,
+                "right": 999,
+                "width": 12
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "path",
+              "cls": "[object SVGAnimatedString]",
+              "testid": null,
+              "rect": {
+                "left": 990,
+                "right": 996,
+                "width": 6
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-settings__body",
+              "testid": null,
+              "rect": {
+                "left": 0,
+                "right": 1024,
+                "width": 1024
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "main",
+              "cls": "nm-settings__content",
+              "testid": "settings-content-panel",
+              "rect": {
+                "left": 212,
+                "right": 1024,
+                "width": 812
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-settings__content-head",
+              "testid": null,
+              "rect": {
+                "left": 236,
+                "right": 990,
+                "width": 754
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "span",
+              "cls": "nm-caption nm-tertiary",
+              "testid": "settings-section-id",
+              "rect": {
+                "left": 898.7,
+                "right": 990,
+                "width": 91.3
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "div",
+              "cls": "nm-settings__panel",
+              "testid": "settings-content-provider",
+              "rect": {
+                "left": 236,
+                "right": 990,
+                "width": 754
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "section",
+              "cls": "",
+              "testid": "provider-profile-panel",
+              "rect": {
+                "left": 236,
+                "right": 990,
+                "width": 754
+              },
+              "minWidth": "auto"
+            },
+            {
+              "tag": "h3",
+              "cls": "",
+              "testid": null,
+              "rect": {
+                "left": 253,
+                "right": 973,
+                "width": 720
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "p",
+              "cls": "",
+              "testid": null,
+              "rect": {
+                "left": 253,
+                "right": 973,
+                "width": 720
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "",
+              "testid": "provider-panel-empty",
+              "rect": {
+                "left": 253,
+                "right": 973,
+                "width": 720
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "div",
+              "cls": "",
+              "testid": null,
+              "rect": {
+                "left": 253,
+                "right": 973,
+                "width": 720
+              },
+              "minWidth": "0px"
+            },
+            {
+              "tag": "section",
+              "cls": "",
+              "testid": "capability-binding-panel",
+              "rect": {
+                "left": 236,
+                "right": 990,
+                "width": 754
+              },
+              "minWidth": "auto"
+            }
+          ],
+          "shot": "diag-900x700-dpr2-settings.png"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "name": "1280x800-dpr2",
+        "width": 1280,
+        "height": 800,
+        "dpr": 2
+      },
+      "pages": [
+        {
+          "page": "shelf",
+          "view": {
+            "width": 1280,
+            "height": 800,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1280,
+            "clientWidth": 1280,
+            "bodyScrollWidth": 1280
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1280,
+              "top": 0,
+              "bottom": 800,
+              "width": 1280,
+              "height": 800
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "453px 326px 453px",
+            "brand": {
+              "left": 16,
+              "right": 469,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 453,
+              "height": 24
+            },
+            "tabs": {
+              "left": 481,
+              "right": 807,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 819,
+              "right": 1272,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 453,
+              "height": 32
+            }
+          },
+          "shelf": {
+            "library": {
+              "left": 16,
+              "right": 908,
+              "top": 112,
+              "bottom": 724,
+              "width": 892,
+              "height": 612
+            },
+            "libraryScroll": {
+              "scrollWidth": 892,
+              "clientWidth": 892
+            },
+            "grid": null,
+            "gridColumns": null,
+            "detail": {
+              "left": 924,
+              "right": 1264,
+              "top": 112,
+              "bottom": 724,
+              "width": 340,
+              "height": 612
+            }
+          },
+          "offenders": [],
+          "shot": "diag-1280x800-dpr2-shelf.png"
+        },
+        {
+          "page": "workbench",
+          "view": {
+            "width": 1280,
+            "height": 800,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1280,
+            "clientWidth": 1280,
+            "bodyScrollWidth": 1280
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1280,
+              "top": 0,
+              "bottom": 800,
+              "width": 1280,
+              "height": 800
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "453px 326px 453px",
+            "brand": {
+              "left": 16,
+              "right": 469,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 453,
+              "height": 24
+            },
+            "tabs": {
+              "left": 481,
+              "right": 807,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 819,
+              "right": 1272,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 453,
+              "height": 32
+            }
+          },
+          "shelf": null,
+          "offenders": [],
+          "shot": "diag-1280x800-dpr2-workbench.png"
+        },
+        {
+          "page": "reader",
+          "view": {
+            "width": 1280,
+            "height": 800,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1280,
+            "clientWidth": 1280,
+            "bodyScrollWidth": 1280
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1280,
+              "top": 0,
+              "bottom": 800,
+              "width": 1280,
+              "height": 800
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "453px 326px 453px",
+            "brand": {
+              "left": 16,
+              "right": 469,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 453,
+              "height": 24
+            },
+            "tabs": {
+              "left": 481,
+              "right": 807,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 819,
+              "right": 1272,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 453,
+              "height": 32
+            }
+          },
+          "shelf": null,
+          "offenders": [],
+          "shot": "diag-1280x800-dpr2-reader.png"
+        },
+        {
+          "page": "settings",
+          "view": {
+            "width": 1280,
+            "height": 800,
+            "dpr": 2
+          },
+          "doc": {
+            "scrollWidth": 1280,
+            "clientWidth": 1280,
+            "bodyScrollWidth": 1280
+          },
+          "app": {
+            "rect": {
+              "left": 0,
+              "right": 1280,
+              "top": 0,
+              "bottom": 800,
+              "width": 1280,
+              "height": 800
+            },
+            "minWidth": "1024px",
+            "minHeight": "680px",
+            "overflowX": "hidden"
+          },
+          "titlebar": {
+            "grid": "453px 326px 453px",
+            "brand": {
+              "left": 16,
+              "right": 469,
+              "top": 11.5,
+              "bottom": 35.5,
+              "width": 453,
+              "height": 24
+            },
+            "tabs": {
+              "left": 481,
+              "right": 807,
+              "top": 6.5,
+              "bottom": 40.5,
+              "width": 326,
+              "height": 34
+            },
+            "actions": {
+              "left": 819,
+              "right": 1272,
+              "top": 7.5,
+              "bottom": 39.5,
+              "width": 453,
+              "height": 32
+            }
+          },
+          "shelf": null,
+          "offenders": [],
+          "shot": "diag-1280x800-dpr2-settings.png"
+        }
+      ]
+    }
+  ],
+  "finishedAt": "2026-10-26T06:14:36.437Z"
+}

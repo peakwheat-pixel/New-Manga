@@ -9,13 +9,17 @@
 /*
  * 根容器铺满视口。`data-view="app"` 由 UiRoot 挂到 <html> 上，base.css 的
  * 元素级 reset 才会生效；这里只负责根自身盒模型。
+ *
+ * 不设 min-width：UIUX-V2-RUNTIME-NARROW-1 实测 900×700/DPR2 下四页全部
+ * documentElement.scrollWidth=1024（横向溢出 124px），根因就是这里曾经的
+ * `min-width: 1024px` 把根盒撑到 1024 再溢出 #root/body。窄窗几何由各页
+ * 自己的窄断点（见 pages.css 的 max-width: 1023px 段）承接。
  */
 .nm-app {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  min-width: 1024px;
   min-height: 680px;
   overflow: hidden;
   background: var(--nm-bg-canvas);

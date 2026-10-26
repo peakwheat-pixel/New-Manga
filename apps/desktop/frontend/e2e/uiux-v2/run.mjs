@@ -42,12 +42,12 @@ import {
   runRootFor,
 } from "./lib/env.mjs";
 
-const TASK_ID = "UIUX-V2-RUNTIME-REALCORE-2";
+const TASK_ID = "UIUX-V2-RUNTIME-NARROW-1";
 /** Never overwrite a previous run: a fresh run-iN slot is allocated up front. */
 const RUN_NAME = resolveRunName();
 const RUN_ROOT = runRootFor(RUN_NAME);
 const CANONICAL_RUN_DIR = canonicalFor(RUN_NAME);
-const RUN_ID = `uiux-v2-realcore-20261026-${RUN_NAME}`;
+const RUN_ID = `uiux-v2-narrow-20261026-${RUN_NAME}`;
 const startedAt = new Date().toISOString();
 const scenarios = [];
 
@@ -921,6 +921,16 @@ try {
     const checks = [];
     let windowId = null;
     let oldBounds = null;
+    // 修复后（UIUX-V2-RUNTIME-NARROW-1）横向溢出从 KNOWN_DEFECT 升级为硬断言：
+    // 两个视口档 × 四个一级页面，任何一页 scrollWidth !== clientWidth 都 FAIL。
+    const narrowPages = [
+      { key: "shelf", tab: "tab-shelf", page: "page-shelf", label: "书架" },
+      { key: "workbench", tab: "tab-workbench", page: "page-workbench", label: "工作台" },
+      { key: "reader", tab: "tab-reader", page: "page-reader", label: "阅读器" },
+      { key: "settings", tab: "tab-settings", page: "page-settings", label: "设置" },
+    ];
+    const measureDoc = `(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth, innerWidth: innerWidth }))()`;
+    report.narrowViewportMatrix = [];
     try {
       await clickSelector(cdp, "[data-testid='tab-shelf']");
       await waitFor(cdp, `document.querySelector('[data-testid="page-shelf"]') !== null`, { label: "S10 shelf active" });
@@ -956,7 +966,7 @@ try {
       const noTitleOverlap = titlePartsValid && layout.titleParts.every((a, i) => layout.titleParts.slice(i + 1).every((b) => a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
       const gridDetailNoOverlap = layout.grid && layout.detail && (layout.grid.right <= layout.detail.left || layout.detail.right <= layout.grid.left || layout.grid.bottom <= layout.detail.top || layout.detail.bottom <= layout.grid.top);
       checks.push(check("900×700 视口与 DPR=2 生效", layout.width === 900 && layout.height === 700 && layout.dpr === 2, JSON.stringify({ width: layout.width, height: layout.height, dpr: layout.dpr })));
-      checks.push(knownDefect("窄窗横向溢出（KNOWN_DEFECT，另立 Task）", JSON.stringify({ detected: layout.docWidth > layout.docClientWidth || layout.pageWidth > layout.width, docWidth: layout.docWidth, clientWidth: layout.docClientWidth, pageWidth: layout.pageWidth })));
+      checks.push(check("900×700 书架无横向溢出（scrollWidth===clientWidth）", layout.docWidth === layout.docClientWidth && layout.pageWidth <= layout.width, JSON.stringify({ docWidth: layout.docWidth, clientWidth: layout.docClientWidth, pageWidth: layout.pageWidth })));
       checks.push(check("标题栏关键元素不重叠", noTitleOverlap, JSON.stringify(layout.titleParts)));
       checks.push(check("书架内容区与详情区不重叠", Boolean(gridDetailNoOverlap), JSON.stringify({ grid: layout.grid, detail: layout.detail })));
       checks.push(check("useAcrylicBudget 计算出的模糊层不超过 2", layout.blur <= 2, `blurLayers=${layout.blur}`));
@@ -964,6 +974,45 @@ try {
       checks.push(check("状态条在窄窗仍可见", layout.statusVisible && statusIntersectsViewport, JSON.stringify(layout.status)));
       await shot(cdp, "11-shelf-900x700-dpr2");
       report.narrowWindowLayout = layout;
+
+      // 900×700：四个一级页面逐页断言 + 截图
+      for (const item of narrowPages) {
+        await clickSelector(cdp, `[data-testid='${item.tab}']`);
+        await waitFor(cdp, `document.querySelector('[data-testid="${item.page}"]') !== null`, { label: item.page + " @ 900x700" });
+        await sleep(250);
+        const doc = await evaluate(cdp, measureDoc);
+        const ok = doc.scrollWidth === doc.clientWidth && doc.clientWidth === 900;
+        checks.push(check(`900×700 ${item.label}无横向溢出`, ok, JSON.stringify(doc)));
+        report.narrowViewportMatrix.push({ viewport: "900x700-dpr2", page: item.key, ...doc });
+        await shot(cdp, `11-900x700-dpr2-${item.key}`);
+      }
+
+      // 1280×800：不退化档，同样四页断言 + 截图
+      await cdp.send("Browser.setWindowBounds", {
+        windowId,
+        bounds: { width: 1280, height: 800, windowState: "normal" },
+      });
+      await cdp.send("Emulation.setDeviceMetricsOverride", {
+        width: 1280,
+        height: 800,
+        deviceScaleFactor: 2,
+        mobile: false,
+        screenWidth: 1280,
+        screenHeight: 800,
+      });
+      await sleep(400);
+      const wideProbe = await evaluate(cdp, measureDoc);
+      checks.push(check("1280×800 视口生效", wideProbe.innerWidth === 1280 && wideProbe.clientWidth === 1280, JSON.stringify(wideProbe)));
+      for (const item of narrowPages) {
+        await clickSelector(cdp, `[data-testid='${item.tab}']`);
+        await waitFor(cdp, `document.querySelector('[data-testid="${item.page}"]') !== null`, { label: item.page + " @ 1280x800" });
+        await sleep(250);
+        const doc = await evaluate(cdp, measureDoc);
+        const ok = doc.scrollWidth === doc.clientWidth && doc.clientWidth === 1280;
+        checks.push(check(`1280×800 ${item.label}无横向溢出（不退化）`, ok, JSON.stringify(doc)));
+        report.narrowViewportMatrix.push({ viewport: "1280x800-dpr2", page: item.key, ...doc });
+        await shot(cdp, `12-1280x800-dpr2-${item.key}`);
+      }
     } catch (error) {
       checks.push(check("S10 窄窗与高 DPI 探针完成", false, error?.stack || error));
     } finally {
@@ -972,7 +1021,7 @@ try {
         if (oldBounds) await cdp.send("Browser.setWindowBounds", { windowId, bounds: oldBounds }).catch(() => {});
       }
     }
-    record("S10", "900×700 窄窗与 200% DPI 布局预算", checks);
+    record("S10", "900×700 窄窗与 200% DPI 布局预算（含 1280×800 四页不退化）", checks);
   }
 
   report.ok = scenarios.every((s) => s.ok);

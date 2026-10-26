@@ -1,14 +1,19 @@
 /**
- * UIUX-V2-RUNTIME-REALCORE-2 — isolated launch environment for the REAL
- * packaged Tauri app (release exe built from the frozen delivery head).
+ * UIUX-V2-RUNTIME — isolated launch environment for the REAL packaged Tauri
+ * app (release exe built from the frozen delivery head).
  *
  * Reuses the proven discipline of e2e/p02-new-time/lib/env.mjs (Task-local
  * isolation, purge-then-pin, empty-target assertion) but points at THIS
  * Task's build output and evidence root.
  *
+ * Ownership note: this harness directory was created by REALCORE-2 and is
+ * reused by UIUX-V2-RUNTIME-NARROW-1 (allowed path of that Task). The env
+ * roots below moved to the NARROW-1 Task environment so no run of this card
+ * can ever write into REALCORE-2's evidence tree.
+ *
  * Isolation contract (every writable path the packaged app can reach):
- *   G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2/run-iN/<scenario>/
- * Every writable root for this run is under the REALCORE-2 task environment;
+ *   G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-NARROW-1/run-iN/<scenario>/
+ * Every writable root for this run is under the NARROW-1 task environment;
  * the user's real %APPDATA%/%LOCALAPPDATA%/New Manga library is never touched.
  */
 
@@ -16,7 +21,7 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 
 export const TASK_ENV_ROOT =
-  "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2";
+  "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-NARROW-1";
 
 /**
  * Release exe built in-repo by `cargo tauri build --no-bundle` from the frozen
@@ -38,7 +43,7 @@ export const REPO_ROOT = path.resolve(
 export const CANONICAL_ROOT = path.join(
   REPO_ROOT,
   "verification",
-  "UIUX-V2-RUNTIME-REALCORE-2",
+  "UIUX-V2-RUNTIME-NARROW-1",
 );
 
 /**

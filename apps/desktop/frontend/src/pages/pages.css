@@ -1492,6 +1492,21 @@
   }
 }
 
+/* 窄窗（< 1024px）：书架网格从固定 5×168px 改为按列宽自适应。根容器的
+   min-width: 1024px 移除后（见 ui.css），900 级视口里库区只剩约 512px，
+   固定 5 列的最小宽度 904px 会让库区内部横向滚动；自适应列把同样的卡片
+   （150–168px 宽）排成 3 列铺满。≥ 1024px 走上面的固定 5 列，宽窗布局
+   不变（UIUX-V2-RUNTIME-NARROW-1）。 */
+@media (max-width: 1023px) {
+  .nm-book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .nm-book-card {
+    width: auto;
+  }
+}
+
 /* 一级页面切换栏统一放在 .nm-titlebar 内（书架 / 工作台 / 阅读器一致），
    阅读器沿用它自己的亚克力顶栏承载阅读控件，不再额外塞 Tab。 */
 

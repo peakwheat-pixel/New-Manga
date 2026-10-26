@@ -71,3 +71,36 @@ overflow {"docWidth":1024,"clientWidth":900,"pageWidth":1024}   ← 横向溢出
 - `tsc --noEmit` exit 0；`vitest run` 全绿
 - 900×700 与 1280×800 两档四页截图各一张，`scrollWidth === clientWidth`
 - 证据落 `verification/UIUX-V2-RUNTIME-NARROW-1/`，README 写清改前/改后的实测数字
+
+## 执行记录（Owner: ZCode，2026-10-26）
+
+### G1 根因（实测实锤）
+
+撑宽元素是 `.nm-app`（运行时根容器）：修复前 `src/ui/ui.css:18` 的
+`min-width: 1024px` 在 900 视口下把根盒撑到 1024，溢出 `#root`/body 后被
+body `overflow:hidden` 裁剪并报告为 `documentElement.scrollWidth=1024`。
+改前诊断（`verification/UIUX-V2-RUNTIME-NARROW-1/diag/before-fix-diag.json`，
+改前 exe = REALCORE-2 冻结构建）在 900×700 DPR2 下四页全部复现
+`1024/900`，且 `.nm-app` computed `min-width:1024px`、rect.width=1024；
+溢出元素扫描确认无第二个独立撑宽源。书架网格/详情面板/标题栏均非根因。
+
+### 修法
+
+1. `src/ui/ui.css`：删 `.nm-app` 的 `min-width: 1024px`（`min-height: 680px` 保留，本卡只涉宽度）。
+2. `src/pages/pages.css`：新增 `@media (max-width: 1023px)`——书架网格
+   `repeat(5,168px)` → `repeat(auto-fill, minmax(150px,1fr))` + `.nm-book-card{width:auto}`，
+   消除库区内部横滚；≥1024 不命中，宽窗布局不变。
+3. 标题栏三段式未改：实测 min-content 884 < 900，900 下窗口按钮完整可见（actions.right=892）。
+4. `e2e/uiux-v2/run.mjs` S10：KNOWN_DEFECT → 硬断言；新增两档×四页
+   `scrollWidth===clientWidth` 矩阵断言与截图（`narrowViewportMatrix`）。
+5. `e2e/uiux-v2/lib/env.mjs`：隔离根/canonical 目录改指本卡（硬约束 1 落实）；
+   `run.mjs` TASK_ID/RUN_ID 改 NARROW-1；新增 `diag-narrow.mjs` 诊断脚本。
+
+### 验收结果（全过）
+
+- `node e2e/uiux-v2/run.mjs` **exit 0**，S1..S10 全 PASS；S10 15 checks 全 PASS、
+  knownDefects=0；900 档四页 900/900、1280 档四页 1280/1280。
+- 1280 不退化：改前/改后 1280 档四页布局数值逐项一致（titlebar 453/326/453 等）。
+- `tsc --noEmit` exit 0；`vitest run` 60 files / 567 tests 全绿（基线一致）。
+- 被测 exe SHA256 `C1AB2749EAEE5E1BD793EEC1FCA59158B76E44CF741349A0962B76AC11DFA8BD`；
+  证据与改前/改后数字详见 `verification/UIUX-V2-RUNTIME-NARROW-1/README.md`。
