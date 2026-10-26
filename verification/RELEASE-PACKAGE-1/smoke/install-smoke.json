@@ -1,0 +1,14 @@
+{
+  "ac": "AC4b",
+  "launched_from_install_dir": true,
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-PACKAGE-1\\install\\app\\NewManga.App.exe",
+  "window_handle_found": true,
+  "window_handle": 1771396,
+  "console_window_count": 0,
+  "exit_code": 0,
+  "exit_ok": true,
+  "residual_processes": 0,
+  "install_dir_after": false,
+  "sidecar_bundled": false,
+  "generated_at_utc": "2026-10-26T19:05:21.4445600Z"
+}

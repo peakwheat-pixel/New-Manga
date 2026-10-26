@@ -1,0 +1,18 @@
+{
+  "ac": "AC1",
+  "command": "dotnet publish src/NewManga.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true",
+  "output_directory": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-PACKAGE-1\\out\\NewManga-0.1.0-win-x64\\app",
+  "file_count": 1,
+  "files": [
+    {
+      "name": "NewManga.App.exe",
+      "bytes": 29255764
+    }
+  ],
+  "total_bytes": 29255764.0,
+  "total_mb": 27.9,
+  "exe_bytes": 29255764,
+  "size_threshold_mb": 45,
+  "single_file_pass": true,
+  "at_utc": "2026-10-26T19:03:34.0373738Z"
+}
