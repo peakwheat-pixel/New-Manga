@@ -3,6 +3,6 @@
   "probe": "Process.GetProcessesByName(\u0022new-manga\u0022)",
   "detected": true,
   "pids": [
-    5312
+    16460
   ]
 }

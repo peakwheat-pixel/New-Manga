@@ -26,3 +26,18 @@
 2026-10-26T16:50:16.4955239+00:00 INFO first-run backup skipped: catalog database not present yet
 2026-10-26T16:50:16.8617393+00:00 INFO core_service ready (1 wire frames)
 2026-10-26T16:50:16.9364034+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T17:08:41.4091244+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.837bb76e74f6 (abandoned_recovered=False)
+2026-10-26T17:08:41.4105098+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-readonly-052d140fc9
+2026-10-26T17:08:41.4107925+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T17:08:41.7887394+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T17:08:41.8649643+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T17:10:15.4465172+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.23cac93fe88b (abandoned_recovered=False)
+2026-10-26T17:10:15.4479215+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-readonly-c7e6883a56
+2026-10-26T17:10:15.4481994+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T17:10:15.8356691+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T17:10:15.9122431+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T17:11:25.6697204+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.565e02ff8131 (abandoned_recovered=False)
+2026-10-26T17:11:25.6697532+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-readonly-fbde676215
+2026-10-26T17:11:25.6697874+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T17:11:26.0383711+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T17:11:26.1104215+00:00 INFO host_bridge ready (1 wire frames)

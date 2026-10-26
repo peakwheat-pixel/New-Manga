@@ -1,0 +1,88 @@
+{
+  "ac": "AC6 reproducibility",
+  "command": "dotnet test apps\\desktop-avalonia\\NewManga.sln   (no NEWMANGA_CORECLIENT_SIDECAR_DIR)",
+  "fixture": "absent - integration tests self-skip with reason",
+  "projects": [
+    {
+      "project": "coreclient",
+      "total": 31,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 8,
+      "skip_list": [
+        {
+          "test": "NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        }
+      ]
+    },
+    {
+      "project": "host",
+      "total": 22,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 4,
+      "skip_list": [
+        {
+          "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        }
+      ]
+    },
+    {
+      "project": "app",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "skip_list": []
+    }
+  ],
+  "totals": {
+    "total": 57.0,
+    "passed": 45.0,
+    "failed": 0.0,
+    "skipped": 12.0
+  },
+  "at_utc": "2026-10-26T17:12:12.4787518Z"
+}

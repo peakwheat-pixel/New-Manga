@@ -10,15 +10,36 @@ public static class HostFixture
     public const string SidecarDirectoryVariable = "NEWMANGA_CORECLIENT_SIDECAR_DIR";
     public const string EvidenceDirectoryVariable = "NEWMANGA_EVIDENCE_DIR";
 
+    public static bool TryGetSidecarDirectory(out string directory, out string reason)
+    {
+        directory = Environment.GetEnvironmentVariable(SidecarDirectoryVariable) ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            reason = $"reason: needs sidecar fixture - set {SidecarDirectoryVariable} or run " +
+                     "apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)";
+            return false;
+        }
+
+        foreach (var exe in new[] { "core_service.exe", "host_bridge.exe" })
+        {
+            if (!File.Exists(Path.Combine(directory, exe)))
+            {
+                reason = $"reason: needs sidecar fixture - {exe} missing under {SidecarDirectoryVariable}";
+                return false;
+            }
+        }
+
+        reason = string.Empty;
+        return true;
+    }
+
     public static string SidecarDirectory
     {
         get
         {
-            var directory = Environment.GetEnvironmentVariable(SidecarDirectoryVariable);
-            if (string.IsNullOrWhiteSpace(directory))
+            if (!TryGetSidecarDirectory(out var directory, out var reason))
             {
-                throw new InvalidOperationException(
-                    $"{SidecarDirectoryVariable} is not set. Run tests through scripts/test.ps1 (AC11 unlabelled copy).");
+                throw new InvalidOperationException(reason);
             }
 
             return directory;

@@ -44,7 +44,7 @@ public sealed class LegacyShellRealTests
         }
     }
 
-    [Fact]
+    [HostSidecarFact]
     public async Task LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites()
     {
         var (process, tempDirectory) = StartFakeLegacyShell();

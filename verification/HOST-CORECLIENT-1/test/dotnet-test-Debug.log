@@ -1,98 +1,15 @@
-G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-coreclient.trx
+
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 23 s - NewManga.CoreClient.Tests.dll (net9.0)
+G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-host.trx
+
+已通过! - 失败:     0，通过:    22，已跳过:     0，总计:    22，持续时间: 13 s - NewManga.Host.Tests.dll (net9.0)
 G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
-总共 1 个测试文件与指定模式相匹配。
-总共 1 个测试文件与指定模式相匹配。
-[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
-[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
-[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
-[xUnit.net 00:00:00.09]   Discovering: NewManga.CoreClient.Tests
-[xUnit.net 00:00:00.14]   Discovering: NewManga.App.Tests
-[xUnit.net 00:00:00.11]   Discovered:  NewManga.CoreClient.Tests
-[xUnit.net 00:00:00.11]   Starting:    NewManga.CoreClient.Tests
-[xUnit.net 00:00:00.13]   Discovering: NewManga.Host.Tests
-[xUnit.net 00:00:00.16]   Discovered:  NewManga.App.Tests
-[xUnit.net 00:00:00.16]   Starting:    NewManga.App.Tests
-[xUnit.net 00:00:00.15]   Discovered:  NewManga.Host.Tests
-[xUnit.net 00:00:00.16]   Starting:    NewManga.Host.Tests
-[xUnit.net 00:00:00.49]   Finished:    NewManga.App.Tests
-  已通过 NewManga.App.Tests.MainWindowTests.ThemeSwitch_ReplacesPaletteWithoutRestart [145 ms]
-  已通过 NewManga.App.Tests.MainWindowTests.ReadySnapshot_RendersStatusBooksAndWireStats [3 ms]
-  已通过 NewManga.App.Tests.MainWindowTests.FailureSnapshot_ShowsTypedCode_NotAnException [1 ms]
-  已通过 NewManga.App.Tests.MainWindowTests.ChineseRoundTripButton_UsesAc3Vector [1 ms]
-结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-Debug.trx
+结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-app.trx
 
-测试运行成功。
-测试总数: 4
-     通过数: 4
-总时间: 0.7761 秒
-  已通过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [2 s]
-  已通过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.CurrentProcessIntegrityLevel_IsReadableOnWindows [1 ms]
-  已通过 NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [4 s]
-  已通过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [2 s]
-  已通过 NewManga.Host.Tests.LegacyShellRealTests.RealProcessNamedNewManga_IsDetectedByProbe [49 ms]
-  已通过 NewManga.Host.Tests.LegacyShellRealTests.DefaultGlobalMutex_AcquiresOrFallsBackToLocal [1 ms]
-  已通过 NewManga.Host.Tests.SingleInstanceTests.SecondAcquire_OnAnotherThread_ReportsAlreadyRunning [< 1 ms]
-  已通过 NewManga.Host.Tests.SingleInstanceTests.FakeBackend_ReportsAbandonedRecovery [< 1 ms]
-  已通过 NewManga.Host.Tests.SingleInstanceTests.FakeBackend_CanReportAlreadyRunning [< 1 ms]
-  已通过 NewManga.Host.Tests.SingleInstanceTests.DefaultGlobalName_IsPinnedByAdr [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [2 s]
-  已通过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [4 s]
-  已通过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [2 s]
-  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.ParseResponse_RejectsMalformedJson_AsTypedError [3 ms]
-  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.CreateRequest_UsesMinor8 [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.ParseResponse_ReadsResultAndError [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.CoreProtocolTests.RequestEnvelope_MatchesProtocol23 [1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 12288, expected: High) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 16384, expected: System) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 4660, expected: Unknown) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 4096, expected: Low) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.FromRid_MapsWindowsIntegrityLevels(rid: 8192, expected: Medium) [< 1 ms]
-  已通过 NewManga.Host.Tests.HostRuntimeIntegrationTests.MissingSidecarDirectory_IsTypedFailure_NoThrow [5 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Low, child: Medium, expected: False) [1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Medium, child: Medium, expected: True) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: High, child: High, expected: True) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Unknown, child: Unknown, expected: False) [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.ProcessIntegrityTests.Compare_RequiresEqualityAndKnownLevels(parent: Medium, child: Low, expected: False) [< 1 ms]
-  已通过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [4 s]
-  已通过 NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [3 ms]
-  已通过 NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyLegacyShellRunning, expected: False) [1 ms]
-  已通过 NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyUntilParity, expected: False) [< 1 ms]
-  已通过 NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadWrite, expected: True) [< 1 ms]
-  已通过 NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_SkipsWhenNoCatalog [< 1 ms]
-  已通过 NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_CopiesOnce_AndStaysIdempotent [2 ms]
-  已通过 NewManga.Host.Tests.CoexistenceTests.LegacyDetector_UsesInjectedProbe [2 ms]
-  已通过 NewManga.Host.Tests.CoexistenceTests.ModeDescription_IsHumanReadable [< 1 ms]
-  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: False, expected: ReadOnlyUntilParity) [< 1 ms]
-[xUnit.net 00:00:13.70]   Finished:    NewManga.Host.Tests
-  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [4 s]
-  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: True, expected: ReadOnlyLegacyShellRunning) [< 1 ms]
-  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: True, expected: ReadWrite) [< 1 ms]
-  已通过 NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: False, expected: ReadOnlyLegacyShellRunning) [< 1 ms]
-警告: 正在覆盖结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-Debug.trx
-结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-Debug.trx
-
-测试运行成功。
-测试总数: 22
-     通过数: 22
-总时间: 13.9931 秒
-  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.RequestTimeout_IsTyped_AndStderrLogKept [2 s]
-  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.NonExecutableFile_ReportsSpawnFailed [48 ms]
-  已通过 NewManga.CoreClient.Tests.SidecarFailureTests.MissingExecutable_IsTyped_AndNoProcessIsLeftBehind [1 ms]
-  已通过 NewManga.CoreClient.Tests.AsciiWireTests.Hex_IsLowercaseUtf8 [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.AsciiWireTests.EscapedText_IsJsonRoundTrippable [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.AsciiWireTests.AsciiText_IsUnchanged [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.AsciiWireTests.AstralCharacters_UseSurrogatePairEscapes [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.AsciiWireTests.ChineseText_IsEscapedAsUnicode [< 1 ms]
-  已通过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [2 s]
-  已通过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [2 s]
-[xUnit.net 00:00:23.24]   Finished:    NewManga.CoreClient.Tests
-  已通过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [2 s]
-警告: 正在覆盖结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-Debug.trx
-结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\verification\HOST-CORECLIENT-1\test\results-Debug.trx
-
-测试运行成功。
-测试总数: 31
-     通过数: 31
-总时间: 23.5980 秒
+已通过! - 失败:     0，通过:     4，已跳过:     0，总计:     4，持续时间: 102 ms - NewManga.App.Tests.dll (net9.0)

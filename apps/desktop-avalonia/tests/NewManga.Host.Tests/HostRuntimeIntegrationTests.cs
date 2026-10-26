@@ -11,7 +11,7 @@ public sealed class HostRuntimeIntegrationTests
 {
     public const string Ac3Title = "\u96fe\u6e2f\u6765\u4fe1\u30fb\u65e5\u672c\u8a9e\u30c6\u30b9\u30c8";
 
-    [Fact]
+    [HostSidecarFact]
     public async Task ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked()
     {
         var options = HostFixture.CreateOptions("runtime-readonly", out var dataRoot);
@@ -58,7 +58,7 @@ public sealed class HostRuntimeIntegrationTests
         }
     }
 
-    [Fact]
+    [HostSidecarFact]
     public async Task ParityReached_ChineseRoundTrip_IsExact_ThroughHost()
     {
         var options = HostFixture.CreateOptions("runtime-parity-roundtrip", out var dataRoot, parity: true);
@@ -137,7 +137,7 @@ public sealed class HostRuntimeIntegrationTests
         }
     }
 
-    [Fact]
+    [HostSidecarFact]
     public async Task SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars()
     {
         var mutexName = @"Local\NewManga.Host.Test." + Guid.NewGuid().ToString("N")[..12];

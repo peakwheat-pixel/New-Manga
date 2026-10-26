@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d2259609-45e3-4abf-856f-4da8f249c0a4" name="49745@HOME-MY 2026-10-27 01:11:35" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-27T01:11:35.7537149+08:00" queuing="2026-10-27T01:11:35.7537150+08:00" start="2026-10-27T01:11:35.2005515+08:00" finish="2026-10-27T01:11:35.7574533+08:00" />
+  <TestSettings name="default" id="c6606b8a-3a0b-4951-852a-2f804c4834d6">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-27_01_11_35" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c03a370d-4b7f-42f4-8904-03c329277e11" testId="66e65d08-45eb-f098-437d-57fec638847a" testName="NewManga.App.Tests.MainWindowTests.FailureSnapshot_ShowsTypedCode_NotAnException" computerName="HOME-MY" duration="00:00:00.0012547" startTime="2026-10-27T01:11:35.6901864+08:00" endTime="2026-10-27T01:11:35.6901864+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c03a370d-4b7f-42f4-8904-03c329277e11" />
+    <UnitTestResult executionId="649df5ae-f47a-444f-b17e-e9a709fe9210" testId="4a8d571e-31bb-5995-7637-227c4b7fcdeb" testName="NewManga.App.Tests.MainWindowTests.ReadySnapshot_RendersStatusBooksAndWireStats" computerName="HOME-MY" duration="00:00:00.0030358" startTime="2026-10-27T01:11:35.6877415+08:00" endTime="2026-10-27T01:11:35.6877416+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="649df5ae-f47a-444f-b17e-e9a709fe9210" />
+    <UnitTestResult executionId="3e6c1c15-dfcc-464e-8dda-5d5e45b94188" testId="5b00387d-4502-4b4a-b8a7-95e294df3a4a" testName="NewManga.App.Tests.MainWindowTests.ThemeSwitch_ReplacesPaletteWithoutRestart" computerName="HOME-MY" duration="00:00:00.0924654" startTime="2026-10-27T01:11:35.6829022+08:00" endTime="2026-10-27T01:11:35.6829108+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e6c1c15-dfcc-464e-8dda-5d5e45b94188" />
+    <UnitTestResult executionId="def128be-6d7a-4e13-b0d2-04323a68788b" testId="8d178004-7b9a-f671-2bfe-ead79135d0fd" testName="NewManga.App.Tests.MainWindowTests.ChineseRoundTripButton_UsesAc3Vector" computerName="HOME-MY" duration="00:00:00.0016054" startTime="2026-10-27T01:11:35.6931875+08:00" endTime="2026-10-27T01:11:35.6931875+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="def128be-6d7a-4e13-b0d2-04323a68788b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.App.Tests.MainWindowTests.ReadySnapshot_RendersStatusBooksAndWireStats" storage="g:\codex\new manga.workspace\worktrees\host-coreclient-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="4a8d571e-31bb-5995-7637-227c4b7fcdeb">
+      <Execution id="649df5ae-f47a-444f-b17e-e9a709fe9210" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="ReadySnapshot_RendersStatusBooksAndWireStats" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.MainWindowTests.FailureSnapshot_ShowsTypedCode_NotAnException" storage="g:\codex\new manga.workspace\worktrees\host-coreclient-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="66e65d08-45eb-f098-437d-57fec638847a">
+      <Execution id="c03a370d-4b7f-42f4-8904-03c329277e11" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="FailureSnapshot_ShowsTypedCode_NotAnException" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.MainWindowTests.ThemeSwitch_ReplacesPaletteWithoutRestart" storage="g:\codex\new manga.workspace\worktrees\host-coreclient-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="5b00387d-4502-4b4a-b8a7-95e294df3a4a">
+      <Execution id="3e6c1c15-dfcc-464e-8dda-5d5e45b94188" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="ThemeSwitch_ReplacesPaletteWithoutRestart" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.MainWindowTests.ChineseRoundTripButton_UsesAc3Vector" storage="g:\codex\new manga.workspace\worktrees\host-coreclient-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="8d178004-7b9a-f671-2bfe-ead79135d0fd">
+      <Execution id="def128be-6d7a-4e13-b0d2-04323a68788b" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-CORECLIENT-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="ChineseRoundTripButton_UsesAc3Vector" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="66e65d08-45eb-f098-437d-57fec638847a" executionId="c03a370d-4b7f-42f4-8904-03c329277e11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a8d571e-31bb-5995-7637-227c4b7fcdeb" executionId="649df5ae-f47a-444f-b17e-e9a709fe9210" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b00387d-4502-4b4a-b8a7-95e294df3a4a" executionId="3e6c1c15-dfcc-464e-8dda-5d5e45b94188" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d178004-7b9a-f671-2bfe-ead79135d0fd" executionId="def128be-6d7a-4e13-b0d2-04323a68788b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.04]   Discovering: NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.05]   Discovered:  NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.05]   Starting:    NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.26]   Finished:    NewManga.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
