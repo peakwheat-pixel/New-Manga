@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>NewManga.App</AssemblyName>
+    <RootNamespace>NewManga.App</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <Version>0.1.0</Version>
+
+    <!-- Release publish shape validated by the S0 spike (DISPLAY-PERF-DECISION-1):
+         SingleFile + SelfContained + Trimmed + native libs bundled + R2R + compression
+         -> one exe, ~29 MB, cold start ~408 ms. Passed via scripts/publish.ps1. -->
+    <PublishTrimmed Condition="'$(PublishTrimmed)' == ''">false</PublishTrimmed>
+    <TrimMode Condition="'$(PublishTrimmed)' == 'true'">partial</TrimMode>
+    <DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
+    <DebugSymbols Condition="'$(Configuration)' == 'Release'">false</DebugSymbols>
+    <!-- Trim-safe JSON: the app uses Utf8JsonWriter/JsonDocument only (no reflection metadata). -->
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <!-- Avalonia.Desktop pulls DesignerSupport, whose IL2026/IL2072 trim hints are expected and were
+         present in the S0 spike; the publish recipe must not fail on them (the build gate still runs
+         -warnaserror in the normal TFM build, where these hints do not appear). -->
+    <TreatWarningsAsErrors Condition="'$(PublishTrimmed)' == 'true'">false</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2072;IL2075;IL3050</WarningsNotAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewManga.Host\NewManga.Host.csproj" />
+    <ProjectReference Include="..\NewManga.Theme\NewManga.Theme.csproj" />
+  </ItemGroup>
+
+</Project>

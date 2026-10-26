@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `ready`（S1 C# Host；S0 GO）。
+- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `in_review`（S1 已交付：57/57 测试、单文件 27.64 MiB、smoke PASS；待 ZCode 复核）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET；待复核）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10；G1 转人工验证）。

@@ -1,0 +1,18 @@
+{
+  "ac": "AC1",
+  "command": "dotnet publish src/NewManga.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true",
+  "output_directory": "G:\\CODEX\\New Manga.workspace\\worktrees\\HOST-CORECLIENT-1\\apps\\desktop-avalonia\\artifacts\\win-x64-single",
+  "file_count": 1,
+  "files": [
+    {
+      "name": "NewManga.App.exe",
+      "bytes": 28988170
+    }
+  ],
+  "total_bytes": 28988170.0,
+  "total_mb": 27.65,
+  "exe_bytes": 28988170,
+  "size_threshold_mb": 45,
+  "single_file_pass": true,
+  "at_utc": "2026-10-26T16:47:05.2611858Z"
+}
