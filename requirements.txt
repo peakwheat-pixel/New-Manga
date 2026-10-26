@@ -1,5 +1,15 @@
-PySide6_Essentials==6.11.2
-shiboken6==6.11.2
+# CORE-SLIM-1: the Core ships NO Qt. The former PySide6_Essentials/shiboken6
+# pins were removed together with the Qt image decoder: `QtImageDecoder` is now
+# the Pillow implementation (`PillowImageDecoder`), the PDF/MOBI rasters encode
+# through Pillow, and the frozen sidecar closure carries no Qt (see
+# verification/CORE-SLIM-1/). The evidence-frozen legacy QML shell
+# (src/ui/**, bootstrap/app.py) is NOT part of the shipped Core closure; running
+# those legacy tests locally still needs PySide6 installed from the archive
+# evidence environment, not from this product runtime list.
+#
+# Pillow is now a DIRECT Core dependency (previously only transitive through
+# torchvision): pinned to the version verified with the packaged closure.
+pillow==12.3.0
 pypdfium2==5.13.0
 mobi==0.4.1
 # T1.1.1 production text detector (doc/research/T1.1.1-detector-evaluation.md).

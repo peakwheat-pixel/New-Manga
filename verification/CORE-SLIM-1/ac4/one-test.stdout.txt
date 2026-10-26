@@ -1,0 +1,35 @@
+F
+================================== FAILURES ===================================
+____________ test_translate_policy_runs_the_sfx_region_end_to_end _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-468/test_translate_policy_runs_the0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000243CC787E10>
+
+    def test_translate_policy_runs_the_sfx_region_end_to_end(tmp_path, monkeypatch):
+        from domain.tasks.models import CommandType, StepRunStatus
+    
+        core, chapter_id, page_id, first_run, _build = _scenario(
+            tmp_path, monkeypatch, "translate"
+        )
+        try:
+            # the detection run: the settings channel reached region creation
+            steps = {step.step_type: step for step in first_run.step_runs}
+            assert steps["detect"].status is StepRunStatus.COMPLETED
+            regions = _regions_by_type(core, page_id)
+            assert set(regions) == {"speech", "sfx"}
+            assert regions["sfx"]["sfx_policy"] == "translate"
+            assert regions["speech"]["sfx_policy"] == "skip"
+            # the backfilled speech neighbour translates normally: configuring
+            # the SFX policy leaves non-SFX regions untouched
+>           assert (
+                regions["speech"]["text"]["machine_translation"]
+                == MOCK_TRANSLATION_TEXT
+            )
+E           AssertionError: assert '' == 'MOCK-TRANSLATED-TEXT'
+E             
+E             - MOCK-TRANSLATED-TEXT
+
+tests\core\test_sfx_policy_end_to_end.py:261: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_sfx_policy_end_to_end.py::test_translate_policy_runs_the_sfx_region_end_to_end
+1 failed in 1.46s

@@ -1,0 +1,78 @@
+{
+  "measuredAt": "2026-10-27T03:31:02.3919532+08:00",
+  "bundlePath": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\release\\resources\\core-sidecar",
+  "exists": true,
+  "totalBytes": 1331508299.0,
+  "totalMb": 1269.8,
+  "fileCount": 6573,
+  "modelsBytes": 212370945.0,
+  "excludingModelsBytes": 1119137354.0,
+  "excludingModelsMb": 1067.3,
+  "internalBytes": 865907744.0,
+  "internalMb": 825.8,
+  "pySidecarMb": 41.9,
+  "exeSizes": {
+    "acceptance_bridge.exe": 68786833,
+    "core_service.exe": 68887500,
+    "catalog_loader.exe": 1833029,
+    "sfx_detect_probe.exe": 67967803,
+    "host_bridge.exe": 1835134
+  },
+  "exeSha256": {
+    "acceptance_bridge.exe": "ADF1CCE1A4F88115002A4B114C52035F530F5D38B94DD73DB0DB8D37D6D01A34",
+    "core_service.exe": "E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0",
+    "catalog_loader.exe": "B8D549BC4AFD7BB59AF826725483DF324ADDCCCF357B5AE7C23B927752E84CD4",
+    "sfx_detect_probe.exe": "B550A492E3A675D1BB087536F59119F7080B40202E4930E291CEEBBD16F46F34",
+    "host_bridge.exe": "92AA37D1DA9D5F4318C7ABD284083B2A4F93460064A06822C4FF6D9176F22CAB"
+  },
+  "internalTop": [
+    {
+      "name": "torch",
+      "mb": 365.2
+    },
+    {
+      "name": "cv2",
+      "mb": 111.8
+    },
+    {
+      "name": "onnxruntime",
+      "mb": 63.1
+    },
+    {
+      "name": "PySide6",
+      "mb": 61.2
+    },
+    {
+      "name": "scipy",
+      "mb": 51.2
+    },
+    {
+      "name": "transformers",
+      "mb": 38.6
+    },
+    {
+      "name": "numpy.libs",
+      "mb": 20.2
+    },
+    {
+      "name": "scipy.libs",
+      "mb": 19.3
+    },
+    {
+      "name": "PIL",
+      "mb": 12.8
+    },
+    {
+      "name": "hf_xet",
+      "mb": 8.9
+    },
+    {
+      "name": "tokenizers",
+      "mb": 7.5
+    },
+    {
+      "name": "pypdfium2_raw",
+      "mb": 7.0
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "label": "after",
+  "bundle": "apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+  "exists": true,
+  "totalBytes": 1229583673,
+  "totalMb": 1172.6,
+  "fileCount": 15204,
+  "modelsBytes": 212370945,
+  "modelsMb": 202.5,
+  "excludingModelsBytes": 1017212728,
+  "excludingModelsMb": 970.1,
+  "internalBytes": 971299295,
+  "internalMb": 926.3,
+  "pythonRuntimeMb": 41.9,
+  "exeSizes": {
+    "host_bridge.exe": 397534,
+    "core_service.exe": 399492,
+    "acceptance_bridge.exe": 399627,
+    "catalog_loader.exe": 397554,
+    "sfx_detect_probe.exe": 399915
+  },
+  "exeMb": {
+    "host_bridge.exe": 0.38,
+    "core_service.exe": 0.38,
+    "acceptance_bridge.exe": 0.38,
+    "catalog_loader.exe": 0.38,
+    "sfx_detect_probe.exe": 0.38
+  },
+  "exeSha256": {
+    "host_bridge.exe": "b6e96230af0ec445c3e7c393f21c6e0ad3a56729a5ee5dbaf9e73aa989570827",
+    "core_service.exe": "2beae74ac42a6491ab2d86246a632b9fcff3f38f973d6fa6fe642b923f92ee22",
+    "acceptance_bridge.exe": "6216cf6f4a387ecdd1917adca7a640c14332e2aeff1a631ffa4ea3af5fa3b41c",
+    "catalog_loader.exe": "5a7da3766b08ca8a7d3a26739c634cd5388f990cc101f8dc83fa8fb4180a1250",
+    "sfx_detect_probe.exe": "447c672578e4982d40462c4e0bdcd341b01b2363f475fd5f84f3b52c7a1c3fa8"
+  },
+  "internalTop": [
+    {
+      "name": "torch",
+      "bytes": 436947667,
+      "mb": 416.7
+    },
+    {
+      "name": "cv2",
+      "bytes": 117183874,
+      "mb": 111.8
+    },
+    {
+      "name": "transformers",
+      "bytes": 84690134,
+      "mb": 80.8
+    },
+    {
+      "name": "scipy",
+      "bytes": 66634645,
+      "mb": 63.5
+    },
+    {
+      "name": "onnxruntime",
+      "bytes": 66277941,
+      "mb": 63.2
+    },
+    {
+      "name": "numpy.libs",
+      "bytes": 21164112,
+      "mb": 20.2
+    },
+    {
+      "name": "scipy.libs",
+      "bytes": 20262912,
+      "mb": 19.3
+    },
+    {
+      "name": "sympy",
+      "bytes": 16176784,
+      "mb": 15.4
+    },
+    {
+      "name": "PIL",
+      "bytes": 14721246,
+      "mb": 14.0
+    },
+    {
+      "name": "numpy",
+      "bytes": 10310457,
+      "mb": 9.8
+    },
+    {
+      "name": "hf_xet",
+      "bytes": 9358100,
+      "mb": 8.9
+    },
+    {
+      "name": "tokenizers",
+      "bytes": 7918980,
+      "mb": 7.6
+    },
+    {
+      "name": "pypdfium2_raw",
+      "bytes": 7495549,
+      "mb": 7.1
+    },
+    {
+      "name": "h5py",
+      "bytes": 7425619,
+      "mb": 7.1
+    }
+  ],
+  "noarchivePycCount": 8767,
+  "noarchivePycMb": 164.1,
+  "qtArtifacts": [],
+  "missingRequiredRuntime": []
+}

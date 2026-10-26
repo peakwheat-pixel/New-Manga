@@ -4,8 +4,8 @@ The Tauri host spawns this module — ``python -m bootstrap.acceptance_bridge``
 — as a second Core sidecar in the explicit test startup configuration only
 (``M2AC1_TEST_MODE=1``); production launches never see it. It assembles the
 REAL production Core stack (``bootstrap.core_assembly.assemble_core_services``
-with the Qt adapters and ``mock_local_providers=True``) and serves a small
-JSON-lines method set that drives the frozen acceptance loop:
+with the shipped Qt-free Pillow adapters and ``mock_local_providers=True``) and
+serves a small JSON-lines method set that drives the frozen acceptance loop:
 
     Mock/Local pipeline  ->  SQLite result persistence  ->  process restart
     ->  restore from the persisted state  ->  Reader pages  ->  PNG export.
@@ -148,7 +148,7 @@ def sha256_hex(payload: bytes) -> str:
 
 
 # ---------------------------------------------------------------------------
-# acceptance assembly (Qt adapters + mock-local providers)
+# acceptance assembly (production Pillow adapters + mock-local providers)
 # ---------------------------------------------------------------------------
 
 
@@ -161,35 +161,49 @@ class AcceptanceState:
     chapter_id: str
 
 
+class _HeadlessStyleAnalyzer:
+    """Headless style adapter used before the Pillow port; kept for importers."""
+
+    def analyze(self, original_png: bytes, box: tuple[int, int, int, int]):
+        from infrastructure.rendering.pillow_source_style import (
+            PillowSourceStyleAnalyzer,
+        )
+
+        return PillowSourceStyleAnalyzer().analyze(original_png, box)
+
+    def analyze_pixel_styles(self, image: Any) -> list[Any]:
+        del image
+        return []
+
+
 def assemble_acceptance_core(db_path: str | Path, managed_root: str | Path) -> CoreServices:
-    """The production Core assembly + Qt adapters + Mock/Local providers.
+    """The production Core assembly (Qt-free Pillow adapters) + mock providers.
 
-    Shared by the stdio bridge and ``tests/m2_acceptance`` so the pytest
-    suite exercises exactly the assembly the desktop E2E runs. Requires
-    PySide6 (the production imaging/rendering adapters); sets the offscreen
-    platform so a headless process can render text deterministically.
+    Shared by the stdio bridge and ``tests/m2_acceptance`` so the pytest suite
+    exercises exactly the assembly the packaged ``core_service`` runs. CORE-SLIM-1:
+    the injected adapters are the shipped Core's Pillow implementations
+    (``PillowImageDecoder``/``PillowFontCatalog``/``PillowTextLayoutEngine``/
+    ``PillowImageCompositor``/``PillowSourceStyleAnalyzer``), so this second
+    entry needs no Qt and the frozen sidecar closure carries none.
     """
-    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from PySide6.QtGui import QGuiApplication
-
-    if QGuiApplication.instance() is None:
-        QGuiApplication(["m2-ac1-acceptance"])
     from application.translation.color.service import SourceStyleService
-    from infrastructure.importing import QtImageDecoder
-    from infrastructure.rendering.font_catalog import QtFontCatalog
-    from infrastructure.rendering.pixel_source_style import PixelSourceStyleAnalyzer
-    from infrastructure.rendering.qt_compositor import QtImageCompositor
-    from infrastructure.rendering.qt_layout import QtTextLayoutEngine
+    from infrastructure.importing import PillowImageDecoder
+    from infrastructure.rendering.pillow_rendering import (
+        PillowFontCatalog,
+        PillowImageCompositor,
+        PillowTextLayoutEngine,
+    )
+    from infrastructure.rendering.pillow_source_style import PillowSourceStyleAnalyzer
 
-    font_catalog = QtFontCatalog()
+    font_catalog = PillowFontCatalog()
     return assemble_core_services(
         db_path,
         managed_root,
-        image_decoder=QtImageDecoder(),
+        image_decoder=PillowImageDecoder(),
         font_catalog=font_catalog,
-        layout_engine=QtTextLayoutEngine(font_catalog),
-        compositor=QtImageCompositor(),
-        source_styles=SourceStyleService(PixelSourceStyleAnalyzer()),
+        layout_engine=PillowTextLayoutEngine(font_catalog),
+        compositor=PillowImageCompositor(font_catalog),
+        source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
         mock_local_providers=True,
     )
 
