@@ -1,0 +1,8 @@
+{
+  "task": "HOST-RESOURCE-SECURITY-1",
+  "at_utc": "2026-10-26T18:40:34.7057359Z",
+  "ac": "AC3",
+  "detection": "volume serial \u002B file index",
+  "size_after_replace": 2097152,
+  "read_result": "TileIdentityMismatch"
+}

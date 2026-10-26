@@ -21,9 +21,9 @@ $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $repoRoot = Resolve-Path (Join-Path $root '..\..')
 $evidence = if ($CanonicalEvidence) {
-    Join-Path $repoRoot 'verification/HOST-TILE-CHANNEL-1'
+    Join-Path $repoRoot 'verification/HOST-RESOURCE-SECURITY-1'
 } else {
-    'G:/CODEX/New Manga.workspace/task-envs/HOST-TILE-CHANNEL-1/evidence-rerun'
+    'G:/CODEX/New Manga.workspace/task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun'
 }
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null

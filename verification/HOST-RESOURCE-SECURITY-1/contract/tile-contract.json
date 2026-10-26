@@ -1,0 +1,12 @@
+{
+  "task": "HOST-RESOURCE-SECURITY-1",
+  "at_utc": "2026-10-26T18:40:34.7099885Z",
+  "ac": "AC5",
+  "contract_doc": "apps/desktop-avalonia/docs/TILE-CHANNEL-CONTRACT-V1.md",
+  "contract_sha256": "449465ca20fa05f2d35cea42fbf3af0443627c37cb45b948fc191aea8ef5fd6b",
+  "core_changed": false,
+  "grant_manifest": "resource_id/revision/size/tiles[index,offset,length,sha256]",
+  "ui_view": "handle/resource_id/revision/size/tile_count/issued_at/expires_at",
+  "ui_exposes_paths_or_digests": false,
+  "error_codes": "TilePathOutsideRoot,TilePathReparse,TileIdentityMismatch,TileSizeMismatch,TileDigestMismatch,TileGrantRevoked,TileGrantExpired"
+}
