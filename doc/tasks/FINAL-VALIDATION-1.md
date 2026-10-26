@@ -70,6 +70,17 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-FV-REPORT | AC1–AC5 | `verification/FINAL-VALIDATION-1/REPORT.md` | `97fd10afe` | `f5aad8bae69b467182ee4d7c5fca3dbdcabd3e355665ef4f419cbd92785ceb24` | CANONICAL |
+| E-FV-SIDECAR | AC1 | `verification/FINAL-VALIDATION-1/sidecar-measure.json` | `97fd10afe` | `a5a8743fb52db1064eda7a545cbbabba7427a85c85f914db652e87eeef4dfa2a` | CANONICAL |
+| E-FV-SMOKE | AC1 | `verification/FINAL-VALIDATION-1/capability-smoke.json` | `97fd10afe` | `7f83f100c62299ff5ea4d3e38e02858b58cc02b1675d734b3823b286918b8757` | CANONICAL |
+| E-FV-PKG | AC2 | `verification/FINAL-VALIDATION-1/package-facts.json` | `97fd10afe` | `ebb6cbeb481990d1e39d161222fdbd09c6d5e002a051a1398424429b4061a608` | CANONICAL |
+| E-FV-INSTALL | AC4 | `verification/FINAL-VALIDATION-1/install-smoke.json` | `97fd10afe` | `3df736c1c1ab0b16f98539ca1cb095b4b865d34ff4d1cd8529f52bbe6fd5b76e` | CANONICAL |
+| E-FV-INSTALL-M | AC2/AC4 | `verification/FINAL-VALIDATION-1/install-smoke-models.json` | `97fd10afe` | `40d1de0dc7937e6ded6db910b87879432552fe22c9b84dff17ce65829c99b9d7` | CANONICAL |
+| E-FV-PYTEST | AC3 | `verification/FINAL-VALIDATION-1/pytest.log` | `97fd10afe` | `dfbe370a5e42b29433a97c55c6c3df3d24953d7d9f8a7929a7d1c2c5017c9a6f` | CANONICAL |
+| E-FV-DOTNET | AC3 | `verification/FINAL-VALIDATION-1/scripts-test.log` | `97fd10afe` | `9c4cabb9c38d2ee6b8d830b67e3ca7250393e2c8a2ee1eb0940409013551086e` | CANONICAL |
+| E-FV-VITEST | AC3 | `verification/FINAL-VALIDATION-1/vitest.log` | `97fd10afe` | `97569c1764e0a38f4659304ca3e91d0b850ac472f0fa1803948d118d6e6f6259` | CANONICAL |
+| E-FV-PARITY | AC3 | `verification/FINAL-VALIDATION-1/parity-check.log` | `97fd10afe` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-FV-BUILD | AC1 | `verification/FINAL-VALIDATION-1/sidecar-build.log` | `97fd10afe` | `a05c391d4dc10070e355c4e6da198a3ea7b31bbc315e6eb0a1f5ad902f386e43` | CANONICAL |
 
 ## Resource Manifest
 

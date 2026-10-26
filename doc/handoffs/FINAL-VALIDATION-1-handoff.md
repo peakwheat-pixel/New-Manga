@@ -3,7 +3,7 @@
 - Task: `doc/tasks/FINAL-VALIDATION-1.md`（依赖 CORE-SLIM-2 / RELEASE-PACKAGE-1）
 - Branch: `task/FINAL-VALIDATION-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/FINAL-VALIDATION-1`
 - Base: `78784afaf`（含 CORE-SLIM-2 集成 `fe346c50a` 与 closeout；卡面 base `d3f081870` 为依赖集成前）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `97fd10afe`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push（按卡禁止）。
 
 ## 1. 交付摘要
