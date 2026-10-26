@@ -19,7 +19,7 @@
 |UI-SHELL-THEME-1|HOST-CORECLIENT-1|done（S3 主窗/主题 6 套 p95 2.2ms/书架骨架；集成 657d36817）|
 |UI-WORKBENCH-READER-1|UI-SHELL-THEME-1|ready（S4 工作台+阅读器；base 657d36817）|
 
-READY 节点：UI-WORKBENCH-READER-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）、S3 done（657d36817）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 
