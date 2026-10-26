@@ -62,8 +62,14 @@ public partial class MainWindow : Window
         RightPanel.Children.Add(themeCycle);
 
         _pages["bookshelf"] = new BookshelfPage(Bookshelf);
-        _pages["workbench"] = new PlaceholderPage("工作台", "S4 插槽：Run / Task / Export 投影（当前 50 条 NS 中的 Run/Export 批次）。");
-        _pages["reader"] = new PlaceholderPage("阅读器", "S4 插槽：Reader 投影与进度（NS 批 S3-C）。");
+        Workbench = new WorkbenchPage(new WorkbenchViewModel());
+        var readerUserViewModel = new ReaderViewModel();
+        Reader = new ReaderPage(
+            readerUserViewModel,
+            NewManga.App.Views.ReaderFixtureLocator.TypographyPaths(),
+            NewManga.App.Views.ReaderFixtureLocator.TileDirectory);
+        _pages["workbench"] = Workbench;
+        _pages["reader"] = Reader;
         Settings = new SettingsPage(settingsViewModel, OnThemeApplied);
         _pages["settings"] = Settings;
 
@@ -90,6 +96,10 @@ public partial class MainWindow : Window
     public BookshelfViewModel Bookshelf { get; }
 
     public SettingsPage Settings { get; }
+
+    public WorkbenchPage Workbench { get; private set; } = null!;
+
+    public ReaderPage Reader { get; private set; } = null!;
 
     public ContentControl PageHostControl => PageHost;
 

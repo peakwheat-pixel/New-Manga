@@ -1,0 +1,111 @@
+{
+  "ac": "AC2/AC3/AC4",
+  "implemented_commands_executed": 17,
+  "core_service_channel": 13,
+  "host_bridge_channel": 4,
+  "all_ok": true,
+  "results": [
+    {
+      "command": "core_ping",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "library_list_books",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Array"
+    },
+    {
+      "command": "library_list_recycle_bin_books",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Array"
+    },
+    {
+      "command": "library_create_book",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "create_chapter",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "list_chapters",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "list_chapter_pages",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "list_regions",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "settings_get",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "backup_list",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Array"
+    },
+    {
+      "command": "plugins_list",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "cleanup_preview",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "library_get_export_history",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "value_kind": "Object"
+    },
+    {
+      "command": "issue_resource_url",
+      "status": "Implemented",
+      "channel": "HostBridge",
+      "value_kind": "Object"
+    },
+    {
+      "command": "revoke_ref",
+      "status": "Implemented",
+      "channel": "HostBridge",
+      "value_kind": "Object"
+    },
+    {
+      "command": "issue_resource_url",
+      "status": "Implemented",
+      "channel": "HostBridge",
+      "value_kind": "Object"
+    },
+    {
+      "command": "revoke_resource_refs",
+      "status": "Implemented",
+      "channel": "HostBridge",
+      "value_kind": "Object"
+    }
+  ]
+}

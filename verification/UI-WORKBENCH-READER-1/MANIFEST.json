@@ -1,0 +1,97 @@
+{
+  "task": "UI-WORKBENCH-READER-1",
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "base_commit": "3d6fed4d9",
+  "generated_at_utc": "2026-10-26T18:22:00.0364736Z",
+  "hard_numbers": {
+    "fit_utilization": 0.99,
+    "page_turn_p95_ms": 1.05,
+    "webtoon_scroll_p95_ms": 0,
+    "webtoon_decoded_bytes": 98304000,
+    "memory_limit_bytes": 1610612736,
+    "dpr2_400pct_sharp": true,
+    "one_to_one_exact": true
+  },
+  "commands": {
+    "wired_implemented": 13,
+    "ns_registered": 10,
+    "ns_done": 0
+  },
+  "tests": {
+    "dotnet": "84 passed / 0 skipped",
+    "vitest": "60 files / 567 tests",
+    "pytest": "see test/pytest-baseline.log (baseline 3F/2687P/9S)"
+  },
+  "evidence": {
+    "fit": {
+      "path": "verification/UI-WORKBENCH-READER-1/performance/fit.json",
+      "bytes": 124,
+      "sha256": "d0d1eee723ad39ac837403de6569a2aa32434ab8c348a32d370a3d26e76db017"
+    },
+    "page_turn": {
+      "path": "verification/UI-WORKBENCH-READER-1/performance/page-turn.json",
+      "bytes": 582,
+      "sha256": "bfedddb524407bd5695385b82b2380aea54cb4551b2cc276ec8b416058d781f4"
+    },
+    "webtoon": {
+      "path": "verification/UI-WORKBENCH-READER-1/performance/webtoon.json",
+      "bytes": 353,
+      "sha256": "888ec0f0007d3cef9d2bfa173969861ca7c4211f53b15a01028bedf60b29d4b6"
+    },
+    "one_to_one": {
+      "path": "verification/UI-WORKBENCH-READER-1/performance/one-to-one.json",
+      "bytes": 457,
+      "sha256": "34b49b321f9b03d777cfcffe1de65268e22b2c927eedb8137ceee00581cd8607"
+    },
+    "fixtures": {
+      "path": "verification/UI-WORKBENCH-READER-1/performance/fixtures.json",
+      "bytes": 482,
+      "sha256": "d8f51120dea7b872a63700eaca7ae25505780b238db50919b067603b2dd3c557"
+    },
+    "wiring": {
+      "path": "verification/UI-WORKBENCH-READER-1/commands/wiring.json",
+      "bytes": 2695,
+      "sha256": "1b5a31590d0c993533d4912df6587689b15ed658631ce70e39badeae4f1bc1d8"
+    },
+    "test_log": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/dotnet-test-Debug.log",
+      "bytes": 16449,
+      "sha256": "68dcc6bfd8201decb2fa9a225285944bae473e423e36eeaf353158bb106b4cc7"
+    },
+    "test_summary": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/summary.json",
+      "bytes": 1376,
+      "sha256": "73310245320c32b70e83b31cdb3ffe907fa69274959067e0ceb172f9e8fff1fb"
+    },
+    "trx_app": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/results-app.trx",
+      "bytes": 32867,
+      "sha256": "66c5a12f43a1e5bf962f9f4d4f6418c7313bfaf92c31d1a7f359be06b3d4a18e"
+    },
+    "trx_core": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/results-coreclient.trx",
+      "bytes": 61824,
+      "sha256": "f6ea269948edb75136587bc2e9b230d468ea04a7165f66809d566913b8838634"
+    },
+    "trx_host": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/results-host.trx",
+      "bytes": 33653,
+      "sha256": "020bc142617b1b0d9255c9bb448c597ade4bd34d60aa73b310262a0ef4979d3b"
+    },
+    "build_log": {
+      "path": "verification/UI-WORKBENCH-READER-1/build/dotnet-build-Debug.log",
+      "bytes": 1355,
+      "sha256": "97c1442796182fd5eaeaf0f6cc64e884e1b3eda2ba9d21e2736afabb0a368052"
+    },
+    "vitest": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/vitest-baseline.log",
+      "bytes": 233481,
+      "sha256": "a822b83f595acc9b9baea098e35b4452cc8b3bb5edd75b3d19d2ddcee13a5e57"
+    },
+    "pytest": {
+      "path": "verification/UI-WORKBENCH-READER-1/test/pytest-baseline.log",
+      "bytes": 71220,
+      "sha256": "57599fbe92baccaa6b0c6c8a2bb4dedcdefb655424115164637626ec1e1250a6"
+    }
+  }
+}
