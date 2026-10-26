@@ -1,0 +1,18 @@
+2026-10-26T18:00:47.2200793+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.23f18e3921da (abandoned_recovered=False)
+2026-10-26T18:00:47.2247868+00:00 WARN legacy shell detected (pid 47508); entering read-only mode
+2026-10-26T18:00:47.2248241+00:00 INFO mode=ReadOnlyLegacyShellRunning reason=legacy Tauri shell (new-manga.exe) is running; new host starts read-only and shows a notice data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-legacy-running-bd1a90728e
+2026-10-26T18:00:47.2248805+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:00:47.5881634+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T18:00:47.6601981+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T18:02:35.1125155+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.5d2985b0eecd (abandoned_recovered=False)
+2026-10-26T18:02:35.1176594+00:00 WARN legacy shell detected (pid 36392); entering read-only mode
+2026-10-26T18:02:35.1183853+00:00 INFO mode=ReadOnlyLegacyShellRunning reason=legacy Tauri shell (new-manga.exe) is running; new host starts read-only and shows a notice data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-legacy-running-3d2e378af2
+2026-10-26T18:02:35.1186718+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:02:35.5003899+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T18:02:35.5771812+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T18:04:07.5511817+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.90a946d13b24 (abandoned_recovered=False)
+2026-10-26T18:04:07.5561483+00:00 WARN legacy shell detected (pid 34812); entering read-only mode
+2026-10-26T18:04:07.5568798+00:00 INFO mode=ReadOnlyLegacyShellRunning reason=legacy Tauri shell (new-manga.exe) is running; new host starts read-only and shows a notice data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-legacy-running-8552f9fd3d
+2026-10-26T18:04:07.5569847+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:04:07.9364217+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T18:04:08.0119757+00:00 INFO host_bridge ready (1 wire frames)

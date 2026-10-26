@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4294af76-01de-47c4-924d-d26779839806" name="49745@HOME-MY 2026-10-27 02:04:22" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-27T02:04:22.4311872+08:00" queuing="2026-10-27T02:04:22.4311873+08:00" start="2026-10-27T02:04:21.6558209+08:00" finish="2026-10-27T02:04:22.4597670+08:00" />
+  <TestSettings name="default" id="73ffd1c9-9496-491b-a487-4746873e949a">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-27_02_04_22" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="352292ca-8b45-4895-86ec-c6ae5691c31c" testId="ec543c1f-4b2c-3f3d-b532-ba3a06f20a73" testName="NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow" computerName="HOME-MY" duration="00:00:00.0000989" startTime="2026-10-27T02:04:22.3854881+08:00" endTime="2026-10-27T02:04:22.3854882+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="352292ca-8b45-4895-86ec-c6ae5691c31c" />
+    <UnitTestResult executionId="a4c79915-56e7-48c7-8dcb-304b73d51044" testId="c2690294-e9de-21d2-6e21-466b2a806d86" testName="NewManga.App.Tests.ShellTests.SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch" computerName="HOME-MY" duration="00:00:00.0057455" startTime="2026-10-27T02:04:22.4021604+08:00" endTime="2026-10-27T02:04:22.4021606+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4c79915-56e7-48c7-8dcb-304b73d51044" />
+    <UnitTestResult executionId="950225f6-cb5e-4507-8d06-8c90e3606ab5" testId="067059ad-1733-b872-c2e8-571688b6a39a" testName="NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus" computerName="HOME-MY" duration="00:00:00.0171794" startTime="2026-10-27T02:04:22.4245878+08:00" endTime="2026-10-27T02:04:22.4245879+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="950225f6-cb5e-4507-8d06-8c90e3606ab5" />
+    <UnitTestResult executionId="f98f7ab3-4e7d-4cdf-ae1c-ace421959c55" testId="0c243740-8351-48fe-073a-e65f7505cf36" testName="NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported" computerName="HOME-MY" duration="00:00:00.0015821" startTime="2026-10-27T02:04:22.3842005+08:00" endTime="2026-10-27T02:04:22.3842005+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f98f7ab3-4e7d-4cdf-ae1c-ace421959c55" />
+    <UnitTestResult executionId="6ceac043-309d-43e0-8ab8-b09f0964adb5" testId="3725e5a0-49e9-96d5-9a63-5333ae0b3305" testName="NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens" computerName="HOME-MY" duration="00:00:00.0012041" startTime="2026-10-27T02:04:22.3796520+08:00" endTime="2026-10-27T02:04:22.3796521+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ceac043-309d-43e0-8ab8-b09f0964adb5" />
+    <UnitTestResult executionId="51e220a9-e4d0-4378-9b75-b7cd81942003" testId="bc5927a2-f53b-17bd-afb8-c4a2fa7f7775" testName="NewManga.App.Tests.ShellTests.WindowMaterial_MicaOnWin11_OpaqueFallbackOnWin10" computerName="HOME-MY" duration="00:00:00.0011874" startTime="2026-10-27T02:04:22.4149251+08:00" endTime="2026-10-27T02:04:22.4149251+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51e220a9-e4d0-4378-9b75-b7cd81942003" />
+    <UnitTestResult executionId="e642a0d5-c18c-4874-91e8-05ce7a799f14" testId="0b0ebfc3-abfd-7c96-4f50-9671b21409a4" testName="NewManga.App.Tests.BookshelfTests.SearchAndTags_Filter_AndEmptyNoResultsStates" computerName="HOME-MY" duration="00:00:00.0006305" startTime="2026-10-27T02:04:22.3814367+08:00" endTime="2026-10-27T02:04:22.3814368+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e642a0d5-c18c-4874-91e8-05ce7a799f14" />
+    <UnitTestResult executionId="333fc1c3-4190-423f-91d1-7ddb3cd34832" testId="cfacaf90-a190-8a3a-23e1-e311448c304e" testName="NewManga.App.Tests.ThemeCenterTests.ReducedMotion_ZeroesAllDurations" computerName="HOME-MY" duration="00:00:00.0012741" startTime="2026-10-27T02:04:22.3760530+08:00" endTime="2026-10-27T02:04:22.3760530+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="333fc1c3-4190-423f-91d1-7ddb3cd34832" />
+    <UnitTestResult executionId="ce83bfb4-32aa-4ee3-908b-45e2b4e3d9cc" testId="82c46ac5-b07f-3d3a-46f6-cb0eab726fc4" testName="NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95" computerName="HOME-MY" duration="00:00:00.3331186" startTime="2026-10-27T02:04:22.3703376+08:00" endTime="2026-10-27T02:04:22.3703466+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce83bfb4-32aa-4ee3-908b-45e2b4e3d9cc" />
+    <UnitTestResult executionId="b24756e5-8f11-4322-8583-2299b0d386e3" testId="c7125643-a8d6-d8c3-bf29-aa561bc75406" testName="NewManga.App.Tests.ShellTests.SettingsPage_RendersThemeCenterAndNsBatch" computerName="HOME-MY" duration="00:00:00.0004433" startTime="2026-10-27T02:04:22.4150027+08:00" endTime="2026-10-27T02:04:22.4150028+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b24756e5-8f11-4322-8583-2299b0d386e3" />
+    <UnitTestResult executionId="37728e66-9546-440a-afcb-c027cf90b2c5" testId="d01b5ea0-fafb-e7a7-0dbb-8a7828bb12d2" testName="NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame" computerName="HOME-MY" duration="00:00:00.0084832" startTime="2026-10-27T02:04:22.3952208+08:00" endTime="2026-10-27T02:04:22.3952210+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37728e66-9546-440a-afcb-c027cf90b2c5" />
+    <UnitTestResult executionId="d1aad66a-0605-4436-a212-901789734138" testId="c4486313-ea03-49b0-3a3f-cf7abeedf635" testName="NewManga.App.Tests.ThemeCenterTests.SixPacks_WithManifestParts_AndSaberPurpleDefault" computerName="HOME-MY" duration="00:00:00.0013820" startTime="2026-10-27T02:04:22.3735994+08:00" endTime="2026-10-27T02:04:22.3735995+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1aad66a-0605-4436-a212-901789734138" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.App.Tests.ThemeCenterTests.SixPacks_WithManifestParts_AndSaberPurpleDefault" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="c4486313-ea03-49b0-3a3f-cf7abeedf635">
+      <Execution id="d1aad66a-0605-4436-a212-901789734138" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ThemeCenterTests" name="SixPacks_WithManifestParts_AndSaberPurpleDefault" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="ec543c1f-4b2c-3f3d-b532-ba3a06f20a73">
+      <Execution id="352292ca-8b45-4895-86ec-c6ae5691c31c" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="Columns_AreComputedInViewModel_ForWideAndNarrow" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="c2690294-e9de-21d2-6e21-466b2a806d86">
+      <Execution id="a4c79915-56e7-48c7-8dcb-304b73d51044" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="82c46ac5-b07f-3d3a-46f6-cb0eab726fc4">
+      <Execution id="ce83bfb4-32aa-4ee3-908b-45e2b4e3d9cc" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ThemeCenterTests" name="ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.SearchAndTags_Filter_AndEmptyNoResultsStates" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="0b0ebfc3-abfd-7c96-4f50-9671b21409a4">
+      <Execution id="e642a0d5-c18c-4874-91e8-05ce7a799f14" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="SearchAndTags_Filter_AndEmptyNoResultsStates" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="d01b5ea0-fafb-e7a7-0dbb-8a7828bb12d2">
+      <Execution id="37728e66-9546-440a-afcb-c027cf90b2c5" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="Startup_DoesNotBlockFirstFrame" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="3725e5a0-49e9-96d5-9a63-5333ae0b3305">
+      <Execution id="6ceac043-309d-43e0-8ab8-b09f0964adb5" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="Page_RendersSearchChipsAndGrid_WithThemeTokens" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.WindowMaterial_MicaOnWin11_OpaqueFallbackOnWin10" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="bc5927a2-f53b-17bd-afb8-c4a2fa7f7775">
+      <Execution id="51e220a9-e4d0-4378-9b75-b7cd81942003" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="WindowMaterial_MicaOnWin11_OpaqueFallbackOnWin10" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ThemeCenterTests.ReducedMotion_ZeroesAllDurations" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="cfacaf90-a190-8a3a-23e1-e311448c304e">
+      <Execution id="333fc1c3-4190-423f-91d1-7ddb3cd34832" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ThemeCenterTests" name="ReducedMotion_ZeroesAllDurations" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="0c243740-8351-48fe-073a-e65f7505cf36">
+      <Execution id="f98f7ab3-4e7d-4cdf-ae1c-ace421959c55" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="BookCard_Click_OpensDetails_AndCreateFlowReported" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="067059ad-1733-b872-c2e8-571688b6a39a">
+      <Execution id="950225f6-cb5e-4507-8d06-8c90e3606ab5" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="FourPageNavigation_AndKeyboardFocus" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.SettingsPage_RendersThemeCenterAndNsBatch" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="c7125643-a8d6-d8c3-bf29-aa561bc75406">
+      <Execution id="b24756e5-8f11-4322-8583-2299b0d386e3" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="SettingsPage_RendersThemeCenterAndNsBatch" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ec543c1f-4b2c-3f3d-b532-ba3a06f20a73" executionId="352292ca-8b45-4895-86ec-c6ae5691c31c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2690294-e9de-21d2-6e21-466b2a806d86" executionId="a4c79915-56e7-48c7-8dcb-304b73d51044" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="067059ad-1733-b872-c2e8-571688b6a39a" executionId="950225f6-cb5e-4507-8d06-8c90e3606ab5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c243740-8351-48fe-073a-e65f7505cf36" executionId="f98f7ab3-4e7d-4cdf-ae1c-ace421959c55" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3725e5a0-49e9-96d5-9a63-5333ae0b3305" executionId="6ceac043-309d-43e0-8ab8-b09f0964adb5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc5927a2-f53b-17bd-afb8-c4a2fa7f7775" executionId="51e220a9-e4d0-4378-9b75-b7cd81942003" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b0ebfc3-abfd-7c96-4f50-9671b21409a4" executionId="e642a0d5-c18c-4874-91e8-05ce7a799f14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfacaf90-a190-8a3a-23e1-e311448c304e" executionId="333fc1c3-4190-423f-91d1-7ddb3cd34832" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82c46ac5-b07f-3d3a-46f6-cb0eab726fc4" executionId="ce83bfb4-32aa-4ee3-908b-45e2b4e3d9cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7125643-a8d6-d8c3-bf29-aa561bc75406" executionId="b24756e5-8f11-4322-8583-2299b0d386e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d01b5ea0-fafb-e7a7-0dbb-8a7828bb12d2" executionId="37728e66-9546-440a-afcb-c027cf90b2c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4486313-ea03-49b0-3a3f-cf7abeedf635" executionId="d1aad66a-0605-4436-a212-901789734138" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="12" executed="12" passed="12" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.04]   Discovering: NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.05]   Discovered:  NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.06]   Starting:    NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.54]   Finished:    NewManga.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

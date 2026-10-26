@@ -35,4 +35,6 @@ public interface IHostController : IAsyncDisposable
 
     /// <summary>Creates the fixed AC3 Chinese vector; false when the host is read-only.</summary>
     Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default);
+
+    Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default);
 }

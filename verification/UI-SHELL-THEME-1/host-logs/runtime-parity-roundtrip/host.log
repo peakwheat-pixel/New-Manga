@@ -1,0 +1,15 @@
+2026-10-26T18:00:42.7097221+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.22c4c94d4178 (abandoned_recovered=False)
+2026-10-26T18:00:42.7097587+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-parity-roundtrip-5861261b41
+2026-10-26T18:00:42.7097997+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:00:43.0754700+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T18:00:43.1486679+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T18:02:44.1038469+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.3b76f0ce028e (abandoned_recovered=False)
+2026-10-26T18:02:44.1038898+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-parity-roundtrip-688fe29e73
+2026-10-26T18:02:44.1040262+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:02:44.4677756+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T18:02:44.5389150+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T18:04:16.5471688+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.137dc3d4eada (abandoned_recovered=False)
+2026-10-26T18:04:16.5471967+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-parity-roundtrip-1d2d63ccd4
+2026-10-26T18:04:16.5472299+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:04:16.9104953+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T18:04:16.9823021+00:00 INFO host_bridge ready (1 wire frames)

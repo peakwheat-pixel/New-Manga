@@ -18,7 +18,7 @@
 |HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|done（S2 parity：66 快照/16 实现/50 NS 分批；集成 5a11fa7d9）|
 |UI-SHELL-THEME-1|HOST-CORECLIENT-1|ready（S3 主窗+主题中心+书架；base 5a11fa7d9）|
 
-READY 节点：UI-SHELL-THEME-1。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）。清理/删除需新授权；r212 与五广域根保护不变。
+READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转 Avalonia（旧 Tauri/React 于 S5 退役）。已收口：S0 GO、S1 done（9126090eb）、S2 done（5a11fa7d9）。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 历史快照（终态节点，非当前 DAG）
 

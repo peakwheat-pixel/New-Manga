@@ -2,77 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="NewManga.App.Views.MainWindow"
         Title="New Manga"
-        Width="1100"
-        Height="760"
-        MinWidth="900"
-        MinHeight="600"
+        Width="1280"
+        Height="820"
+        MinWidth="960"
+        MinHeight="640"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource AppBg}">
+        Background="{DynamicResource AppBg}"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="48"
+        TransparencyLevelHint="Mica,Blur,None">
 
-  <Grid RowDefinitions="Auto,Auto,*,Auto">
-
-    <Border Grid.Row="0" Classes="header">
-      <Grid ColumnDefinitions="*,Auto">
-        <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
-          <TextBlock Text="New Manga" Classes="brand" />
-          <TextBlock x:Name="BuildLine" Text="S1 · Avalonia 11.3.22 · C#/.NET 9 · Python Core"
-                     Classes="sub" VerticalAlignment="Center" />
-        </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-          <Button x:Name="LightThemeButton" Content="Light" Classes="action" Click="OnLightTheme" />
-          <Button x:Name="DarkThemeButton" Content="Dark" Classes="action" Click="OnDarkTheme" />
-          <Button x:Name="SaberThemeButton" Content="Saber Purple" Classes="action" Click="OnSaberTheme" />
-        </StackPanel>
-      </Grid>
-    </Border>
-
-    <Border Grid.Row="1" Classes="status" Margin="12,12,12,0">
-      <StackPanel Spacing="2">
-        <TextBlock x:Name="StatusText" Text="正在启动 Host…" Classes="brand" FontSize="14" />
-        <TextBlock x:Name="ModeText" Text="—" Classes="sub" />
+  <Grid RowDefinitions="48,*">
+    <Grid x:Name="TitleBar" Grid.Row="0" ColumnDefinitions="Auto,*,Auto"
+          Background="{DynamicResource HeaderBg}"
+          PointerPressed="OnTitleBarPressed">
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+        <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource Accent}" />
+        <TextBlock Text="New Manga" FontSize="14" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
       </StackPanel>
-    </Border>
-
-    <Grid Grid.Row="2" ColumnDefinitions="*,380" Margin="12">
-      <Border Grid.Column="0" Classes="panel">
-        <DockPanel>
-          <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,6">
-            <TextBlock Text="书架 · ListBooks (protocol 2.3)" Classes="section" />
-            <Button x:Name="RefreshButton" Grid.Column="1" Content="刷新" Classes="action" Click="OnRefresh" />
-          </Grid>
-          <ListBox x:Name="BooksList" Classes="books" />
-        </DockPanel>
-      </Border>
-
-      <StackPanel Grid.Column="1" Spacing="12" Margin="12,0,0,0">
-        <Border Classes="panel">
-          <StackPanel Spacing="6">
-            <TextBlock Text="中文往返 · AC3" Classes="section" />
-            <TextBlock x:Name="RoundTripHint" Classes="sub"
-                       Text="固定向量：雾港来信・日本語テスト（\\uXXXX 转义 + ListBooks 精确比对）" />
-            <Button x:Name="RoundTripButton" Content="写入中文测试书" Classes="action" Click="OnRoundTrip" />
-            <TextBlock x:Name="RoundTripText" Classes="sub" Text="尚未执行" TextWrapping="Wrap" />
-          </StackPanel>
-        </Border>
-
-        <Border Classes="panel">
-          <StackPanel Spacing="6">
-            <TextBlock Text="诊断 · typed errors" Classes="section" />
-            <TextBlock x:Name="ErrorCodeText" Classes="sub" Text="无错误" />
-            <TextBlock x:Name="ErrorMessageText" Classes="sub" Text="—" TextWrapping="Wrap" />
-            <TextBlock x:Name="WireText" Classes="sub" Text="wire: 0 frames" />
-            <TextBlock x:Name="LogHintText" Classes="sub" Text="诊断日志：host.log（不向 UI 暴露绝对路径）" TextWrapping="Wrap" />
-          </StackPanel>
-        </Border>
-      </StackPanel>
+      <StackPanel x:Name="NavPanel" Grid.Column="1" Orientation="Horizontal" Spacing="6"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+      <StackPanel x:Name="RightPanel" Grid.Column="2" Orientation="Horizontal" Spacing="10"
+                  Margin="0,0,16,0" VerticalAlignment="Center" />
     </Grid>
-
-    <Border Grid.Row="3" Classes="header" BorderThickness="0,1,0,0">
-      <Grid ColumnDefinitions="*,Auto">
-        <TextBlock Text="双 sidecar：core_service（protocol 2.3） + host_bridge（wire v1）· 非 ASCII 一律 \\uXXXX"
-                   Classes="sub" VerticalAlignment="Center" />
-        <TextBlock x:Name="FooterText" Grid.Column="1" Classes="sub" Text="" />
-      </Grid>
-    </Border>
+    <ContentControl x:Name="PageHost" Grid.Row="1" />
   </Grid>
 </Window>

@@ -1,0 +1,24 @@
+{
+  "ac": "AC2",
+  "frame_count": 2,
+  "frames": [
+    {
+      "sidecar": "core_service",
+      "request": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-1\u0022,\u0022command\u0022:\u0022core.ping\u0022,\u0022payload\u0022:{}}",
+      "response": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-1\u0022,\u0022result\u0022:{\u0022status\u0022:\u0022ready\u0022,\u0022protocol_version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022capabilities\u0022:[\u0022library.list_books\u0022]},\u0022error\u0022:null}",
+      "request_utf8_hex": "7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d31222c22636f6d6d616e64223a22636f72652e70696e67222c227061796c6f6164223a7b7d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 361.538
+    },
+    {
+      "sidecar": "core_service",
+      "request": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022ListBooks\u0022,\u0022payload\u0022:{}}",
+      "response": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022result\u0022:[],\u0022error\u0022:null}",
+      "request_utf8_hex": "7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d32222c22636f6d6d616e64223a224c697374426f6f6b73222c227061796c6f6164223a7b7d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 0.182
+    }
+  ]
+}

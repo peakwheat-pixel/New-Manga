@@ -1,0 +1,90 @@
+{
+  "task": "UI-SHELL-THEME-1",
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "base_commit": "348f15176",
+  "generated_at_utc": "2026-10-26T18:05:05.3989564Z",
+  "packs": {
+    "total": 6,
+    "default": "saber-purple",
+    "hot_switch_p95_ms": 2.215,
+    "hot_switch_pass": true
+  },
+  "commands": {
+    "wired_implemented": 13,
+    "ns_registered": 8,
+    "ns_done": 0
+  },
+  "tests": {
+    "dotnet_total": 74.0,
+    "passed": 74.0,
+    "skipped": 0.0,
+    "vitest": "60 files / 567 tests"
+  },
+  "evidence": {
+    "theme_hot_switch": {
+      "path": "verification/UI-SHELL-THEME-1/theme/hot-switch.json",
+      "bytes": 785,
+      "sha256": "399baf37b7744df5ff0595289516e4c15ac74546d78994f658b25726dcad0f55"
+    },
+    "wiring": {
+      "path": "verification/UI-SHELL-THEME-1/commands/wiring.json",
+      "bytes": 2695,
+      "sha256": "1b5a31590d0c993533d4912df6587689b15ed658631ce70e39badeae4f1bc1d8"
+    },
+    "test_log": {
+      "path": "verification/UI-SHELL-THEME-1/test/dotnet-test-Debug.log",
+      "bytes": 15910,
+      "sha256": "202bcd9dd6db35748ad7c428ed1f546a145e5e1e7151cc3a33f86c17b67d61f3"
+    },
+    "test_summary": {
+      "path": "verification/UI-SHELL-THEME-1/test/summary.json",
+      "bytes": 1366,
+      "sha256": "4cf9f2ccd95afcef4f28c363e5e668b01ec9e68e09736f381eb306a2cc9832d5"
+    },
+    "trx_app": {
+      "path": "verification/UI-SHELL-THEME-1/test/results-app.trx",
+      "bytes": 18528,
+      "sha256": "9ab7cd9f200bd9502e09d1364737fa095491bf40da0995367f24d809b5f54d6c"
+    },
+    "trx_core": {
+      "path": "verification/UI-SHELL-THEME-1/test/results-coreclient.trx",
+      "bytes": 61424,
+      "sha256": "bbfb1fb1055747e750b239645a9e8be4b71f4c74754fc88bc1e09aef90f05b10"
+    },
+    "trx_host": {
+      "path": "verification/UI-SHELL-THEME-1/test/results-host.trx",
+      "bytes": 33433,
+      "sha256": "bdea4b9dbf39067e28fcb8513b8eef9cb4328074809fdfee2a8e34e3a71286b7"
+    },
+    "build_log": {
+      "path": "verification/UI-SHELL-THEME-1/build/dotnet-build-Debug.log",
+      "bytes": 1320,
+      "sha256": "5a362c057b3c62a65cebf610272722e8adb5a353d321fa6d887f7ad51b1c4a59"
+    },
+    "vitest": {
+      "path": "verification/UI-SHELL-THEME-1/test/vitest-baseline.log",
+      "bytes": 233308,
+      "sha256": "9ebf78cd82d7d3b45a7e9a5472c0841d050ae4f3e5ced4857247a4adecce1360"
+    },
+    "probe": {
+      "path": "verification/UI-SHELL-THEME-1/parity/core-command-probe.json",
+      "bytes": 14088,
+      "sha256": "5557e3cf987f7dee80ffa26a4a6ec2c9576102c2e00ae9fc786ff437cd9970c0"
+    },
+    "contract": {
+      "path": "verification/UI-SHELL-THEME-1/commands/parity-contract.json",
+      "bytes": 76640,
+      "sha256": "1a188fd7af08bde50dace142f22ac4e5208bec466458b129b6c4e679f6aec962"
+    },
+    "integration": {
+      "path": "verification/UI-SHELL-THEME-1/commands/integration-results.json",
+      "bytes": 2679,
+      "sha256": "7aa5464c72c67d4a632e3fb69ab1633157cb618575dfc002355fee6cf05c6b72"
+    },
+    "chinese": {
+      "path": "verification/UI-SHELL-THEME-1/commands/chinese-roundtrip.json",
+      "bytes": 1089,
+      "sha256": "bbd6ee9d4ccf9ac6d3e1bd5c8d845a69c7845cd76e54e983874778185e95f130"
+    }
+  }
+}
