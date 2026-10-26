@@ -11,9 +11,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | non-terminal | 8 |
 | non-terminal named in the plan | 8 |
 | non-terminal outside the plan | 0 |
-| task files tracked by git | 364 |
-| task files untracked (drafts) | 1 |
-| non-terminal tracked by git | 7 |
+| task files tracked by git | 365 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 8 |
 
 ## By status
 
@@ -24,10 +24,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `in_review` | 3 | no |
-| `proposed` | 2 | no |
+| `in_review` | 4 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
+| `proposed` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -38,9 +38,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | own row |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | own row |
+| `UIUX-V2-RUNTIME-REALCORE-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | own row |
-| `UIUX-V2-RUNTIME-REALCORE-1` | `proposed` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | own row |
 
 ## What this ledger does not say

@@ -12,8 +12,8 @@ depends_on: [UIUX-V2-RUNTIME-1]
 base_commit: e1838875e2db951382d1efefcdef404cbf47a661
 branch: main
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: 4fb5c1be9
+delivery_head: 4fb5c1be9
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/UIUX-V2-RUNTIME-REALCORE-1
@@ -120,14 +120,14 @@ S1 身份与单一 UI / S2 书架真实数据 / S3 命令面板 / S4 四页导�
 
 | evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/report.json | PENDING | - | CANONICAL |
-| EV-02 | AC1/AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/README.md | PENDING | - | CANONICAL |
-| EV-03 | AC5 | verification/UIUX-V2-RUNTIME-REALCORE-1/release-smoke.png | PENDING | - | CANONICAL |
-| EV-04 | AC1 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | PENDING | - | CANONICAL |
-| EV-05 | AC1 | apps/desktop/src-tauri/tauri.acceptance.conf.json | PENDING | - | CANONICAL |
-| EV-06 | F-1 | apps/desktop/src-tauri/src/library_bridge.rs | PENDING | - | CANONICAL |
-| EV-07 | F-2 | apps/desktop/frontend/src/pages/Shelf.tsx | PENDING | - | CANONICAL |
-| EV-08 | F-2 | apps/desktop/frontend/src/pages/Shelf.test.tsx | PENDING | - | CANONICAL |
+| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/report.json | 4fb5c1be9 | - | CANONICAL |
+| EV-02 | AC1/AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/README.md | 4fb5c1be9 | - | CANONICAL |
+| EV-03 | AC5 | verification/UIUX-V2-RUNTIME-REALCORE-1/release-smoke.png | 4fb5c1be9 | - | CANONICAL |
+| EV-04 | AC1 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | 4fb5c1be9 | - | CANONICAL |
+| EV-05 | AC1 | apps/desktop/src-tauri/tauri.acceptance.conf.json | 4fb5c1be9 | - | CANONICAL |
+| EV-06 | F-1 | apps/desktop/src-tauri/src/library_bridge.rs | 4fb5c1be9 | - | CANONICAL |
+| EV-07 | F-2 | apps/desktop/frontend/src/pages/Shelf.tsx | 4fb5c1be9 | - | CANONICAL |
+| EV-08 | F-2 | apps/desktop/frontend/src/pages/Shelf.test.tsx | 4fb5c1be9 | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -135,4 +135,4 @@ S1 身份与单一 UI / S2 书架真实数据 / S3 命令面板 / S4 四页导�
 
 ## Closeout Record
 
-- Closeout date / DSH：待 ZCode 复核后由 DSH 收口。
+- 2026-10-26：交付提交 `4fb5c1be9`（代码+证据+文档同一提交，直接落 main，无独立 worktree）。ZCode 独立复核进行中；复核通过后由 DSH 更新 status=done 并回填最终结论。
