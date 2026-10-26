@@ -3,7 +3,7 @@ id: LEGACY-SHELL-REMOVAL-1
 title: S5 旧壳退役 + tile 资源通道切换 + ADR-0002 D4 回归 + 安装包/数据升级
 kind: implementation
 governance_version: 3
-status: blocked
+status: ready
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: null
@@ -88,3 +88,4 @@ allowed_paths:
 - **S5-C**：S5-A/B 全绿后归档 pps/desktop/** + 引用迁移。
 - **S5-D**：安装包/升级/许可 + 人工实机 smoke（Mica/IME/工作集）。
 - S5 本卡保持 blocked 直至 A+B 完成；归档与发布不得提前。
+
