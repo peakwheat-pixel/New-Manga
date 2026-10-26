@@ -1,7 +1,7 @@
 {
   "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
   "command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1",
-  "evidence_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\HOST-RESOURCE-SECURITY-1\\verification\\HOST-RESOURCE-SECURITY-1",
+  "evidence_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\CORE-TILE-EMIT-1\\verification\\HOST-RESOURCE-SECURITY-1",
   "configuration": "Debug",
   "fixture": "NEWMANGA_CORECLIENT_SIDECAR_DIR (AC11 unlabelled copy)",
   "sidecar_directory": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
@@ -13,16 +13,16 @@
       "failed": 0,
       "skipped": 0,
       "trx": "test/results-coreclient.trx",
-      "trx_sha256": "79a6c197fcd78329d11e5e9b25e3cd681b87b9a9eaa63f9943a54fc370e629ba"
+      "trx_sha256": "40cd089c31387015294c7a38bebef1567fb3c7ec34453eaa25b435faf18f0fcc"
     },
     {
       "project": "host",
-      "total": 36,
-      "passed": 36,
+      "total": 37,
+      "passed": 37,
       "failed": 0,
       "skipped": 0,
       "trx": "test/results-host.trx",
-      "trx_sha256": "cef592e96fee8258ef7f6abd2f9efc402996895f0d106755026529cea145ffc8"
+      "trx_sha256": "a59515cf34f81e331ea2fb5e01b595f468f4aaa874360c0ace03b7e9dbea1644"
     },
     {
       "project": "app",
@@ -31,14 +31,14 @@
       "failed": 0,
       "skipped": 0,
       "trx": "test/results-app.trx",
-      "trx_sha256": "70e52ff45cdc008177c4a479fed35eea1e0fb31fb53ec9cfb0c7ed5fc75e447e"
+      "trx_sha256": "6f4a880f4140c59388fe1e3e52d087861f4771f0cb829759bdeaa4a5deaf0e70"
     }
   ],
   "totals": {
-    "total": 101.0,
-    "passed": 101.0,
+    "total": 102.0,
+    "passed": 102.0,
     "failed": 0.0,
     "skipped": 0.0
   },
-  "at_utc": "2026-10-26T18:40:46.8670722Z"
+  "at_utc": "2026-10-26T18:54:38.2377837Z"
 }

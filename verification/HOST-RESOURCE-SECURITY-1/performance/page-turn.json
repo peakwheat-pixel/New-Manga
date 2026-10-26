@@ -1,13 +1,13 @@
 {
   "ac": "AC2",
   "samples": 6,
-  "p95_ms": 0.95,
+  "p95_ms": 0.78,
   "le_120ms": true,
   "turns": [
     {
       "page": 0,
-      "total_ms": 0.95,
-      "decode_ms": 0.35
+      "total_ms": 0.78,
+      "decode_ms": 0.09
     },
     {
       "page": 1,
@@ -22,12 +22,12 @@
     {
       "page": 1,
       "total_ms": 0.01,
-      "decode_ms": 0
+      "decode_ms": 0.01
     },
     {
       "page": 0,
       "total_ms": 0.01,
-      "decode_ms": 0
+      "decode_ms": 0.01
     },
     {
       "page": 1,

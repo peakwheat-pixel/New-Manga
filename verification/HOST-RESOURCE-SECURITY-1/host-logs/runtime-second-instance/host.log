@@ -1,1 +1,2 @@
 2026-10-26T18:40:43.6429266+00:00 WARN single-instance mutex already owned; exiting without spawning sidecars
+2026-10-26T18:54:35.0093685+00:00 WARN single-instance mutex already owned; exiting without spawning sidecars

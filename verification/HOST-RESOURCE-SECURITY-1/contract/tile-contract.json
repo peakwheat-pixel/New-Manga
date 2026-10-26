@@ -1,9 +1,9 @@
 {
   "task": "HOST-RESOURCE-SECURITY-1",
-  "at_utc": "2026-10-26T18:40:34.7099885Z",
+  "at_utc": "2026-10-26T18:54:21.1948393Z",
   "ac": "AC5",
   "contract_doc": "apps/desktop-avalonia/docs/TILE-CHANNEL-CONTRACT-V1.md",
-  "contract_sha256": "449465ca20fa05f2d35cea42fbf3af0443627c37cb45b948fc191aea8ef5fd6b",
+  "contract_sha256": "ed4eac950b42fd858cf17213e07e530ddc33b62efc2dc3a5d383468e508c521d",
   "core_changed": false,
   "grant_manifest": "resource_id/revision/size/tiles[index,offset,length,sha256]",
   "ui_view": "handle/resource_id/revision/size/tile_count/issued_at/expires_at",
