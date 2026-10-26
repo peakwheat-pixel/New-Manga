@@ -23,6 +23,7 @@ allowed_paths:
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
   - src/**
+  - packaging/**
   - tests/**
   - requirements.txt
   - apps/desktop/src-tauri/tauri.conf.json
@@ -42,9 +43,9 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 PySide6 移除**：源码无 PySide6 import；`requirements.txt` 移除；PDF/TIFF/WebP/动画 GIF 解码回归通过（含多帧）。
+- [ ] **AC1 PySide6 移除（口径=打包 Core 闭包零 PySide6）**：`src/` 中 4 个 Core 文件（`infrastructure/importing.py`、`bootstrap/{core_assembly,core_service,acceptance_bridge}.py`）的去 Qt 化；`requirements.txt` 移除 PySide6/shiboken6；spec 打包闭包不加载 Qt；PDF/TIFF/WebP/多帧 GIF 解码回归通过。legacy QML 源与约 45 个旧测试**原位冻结、不打包、不改**（与 S5-C 冻结口径一致），AC1 记 MET + Record Decision。
 - [ ] **AC2 exe 去重**：打包脚本产出的 entry 数量与体积优化（记录 before/after 体积表）；sidecar 启动与协议不变。
-- [ ] **AC3 体积达标**：Core 运行时（不含模型）≤700MB；产出体积报告 `verification/CORE-SLIM-1/size-report.md`。
+- [ ] **AC3 体积达标**：Core 运行时（不含模型）**≤700MB**；允许在**冻结闭包**中 excludes 未使用的传递依赖（cv2/scipy/h5py/shapely 等），**前提是**解码/OCR/检测/修复/导入/PDF 全能力 smoke 全绿且可复跑；若仍 >700MB 则 AC3 记 `PARTIAL`（附实测值与缺口原因），不得改预算口径或伪造。产出 `verification/CORE-SLIM-1/size-report.md`（before/after 表 + 每项 exclude 的能力证据）。
 - [ ] **AC4 回归**：pytest 无新增失败（基线 3F/2691P/9S）；`scripts/test.ps1` 全绿；渲染/导入关键样例像素级不变（或差异有解释）。
 - [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；证据 64-hex pin；Handoff + Record Decision（解码器替代方案、打包策略）。
 
@@ -83,3 +84,4 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+
