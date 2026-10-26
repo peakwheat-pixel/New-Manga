@@ -1,0 +1,40 @@
+{
+  "ac": "AC3",
+  "title_expected": "\u96FE\u6E2F\u6765\u4FE1\u30FB\u65E5\u672C\u8A9E\u30C6\u30B9\u30C8",
+  "title_received": "\u96FE\u6E2F\u6765\u4FE1\u30FB\u65E5\u672C\u8A9E\u30C6\u30B9\u30C8",
+  "utf8_hex_expected": "e99bbee6b8afe69da5e4bfa1e383bbe697a5e69cace8aa9ee38386e382b9e38388",
+  "utf8_hex_received": "e99bbee6b8afe69da5e4bfa1e383bbe697a5e69cace8aa9ee38386e382b9e38388",
+  "exact_match": true,
+  "all_requests_ascii_only": true,
+  "all_responses_ascii_only": true,
+  "create_request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:8},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022CreateBook\u0022,\u0022payload\u0022:{\u0022title\u0022:\u0022\\u96fe\\u6e2f\\u6765\\u4fe1\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\u0022}}",
+  "frames": [
+    {
+      "sidecar": "core_service",
+      "request": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-1\u0022,\u0022command\u0022:\u0022core.ping\u0022,\u0022payload\u0022:{}}",
+      "response": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-1\u0022,\u0022result\u0022:{\u0022status\u0022:\u0022ready\u0022,\u0022protocol_version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022capabilities\u0022:[\u0022library.list_books\u0022]},\u0022error\u0022:null}",
+      "request_utf8_hex": "7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d31222c22636f6d6d616e64223a22636f72652e70696e67222c227061796c6f6164223a7b7d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 359.357
+    },
+    {
+      "sidecar": "core_service",
+      "request": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:8},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022CreateBook\u0022,\u0022payload\u0022:{\u0022title\u0022:\u0022\\u96fe\\u6e2f\\u6765\\u4fe1\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\u0022}}",
+      "response": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:8},\u0022request_id\u0022:\u0022req-2\u0022,\u0022result\u0022:{\u0022book_id\u0022:\u0022a9cac6593183456d87c637730cd694e0\u0022,\u0022title\u0022:\u0022\\u96fe\\u6e2f\\u6765\\u4fe1\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\u0022,\u0022original_title\u0022:\u0022\u0022,\u0022is_favorite\u0022:false,\u0022is_archived\u0022:false,\u0022page_count\u0022:null,\u0022created_at\u0022:\u00222026-10-26T18:30:21.493\u002B00:00\u0022,\u0022updated_at\u0022:\u00222026-10-26T18:30:21.493\u002B00:00\u0022},\u0022error\u0022:null}",
+      "request_utf8_hex": "7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a387d2c22726571756573745f6964223a227265712d32222c22636f6d6d616e64223a22437265617465426f6f6b222c227061796c6f6164223a7b227469746c65223a225c75393666655c75366532665c75363736355c75346665315c75333066625c75363565355c75363732635c75386139655c75333063365c75333062395c7533306338227d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 0.398
+    },
+    {
+      "sidecar": "core_service",
+      "request": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-3\u0022,\u0022command\u0022:\u0022ListBooks\u0022,\u0022payload\u0022:{}}",
+      "response": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-3\u0022,\u0022result\u0022:[{\u0022book_id\u0022:\u0022a9cac6593183456d87c637730cd694e0\u0022,\u0022title\u0022:\u0022\\u96fe\\u6e2f\\u6765\\u4fe1\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\u0022,\u0022original_title\u0022:\u0022\u0022,\u0022is_favorite\u0022:false,\u0022is_archived\u0022:false,\u0022page_count\u0022:null,\u0022created_at\u0022:\u00222026-10-26T18:30:21.493\u002B00:00\u0022,\u0022updated_at\u0022:\u00222026-10-26T18:30:21.493\u002B00:00\u0022}],\u0022error\u0022:null}",
+      "request_utf8_hex": "7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d33222c22636f6d6d616e64223a224c697374426f6f6b73222c227061796c6f6164223a7b7d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 0.22
+    }
+  ]
+}

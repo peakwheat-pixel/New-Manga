@@ -1,0 +1,90 @@
+{
+  "task": "HOST-TILE-CHANNEL-1",
+  "ac": "AC1-AC6",
+  "base_commit": "2885861fa",
+  "generated_at_utc": "2026-10-26T18:35:47.4202657Z",
+  "tests": {
+    "dotnet_total": 95.0,
+    "passed": 95.0,
+    "skipped": 0.0,
+    "vitest": "60 files / 567 tests",
+    "pytest": "3F/2687P/9S baseline"
+  },
+  "evidence": {
+    "security/issue-read-revoke.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/issue-read-revoke.json",
+      "bytes": 278,
+      "sha256": "79b3fe4f03a133f2d4e80b4ec2d801d2315d0ccabffd99ddf95f040f4dfc12b4"
+    },
+    "security/cache-revoke.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/cache-revoke.json",
+      "bytes": 336,
+      "sha256": "ed698acbd558105ffae35e61ea6a5afeb61834ed4d81b09fe4a078aec7ff85d2"
+    },
+    "security/expiry.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/expiry.json",
+      "bytes": 181,
+      "sha256": "90515e49f26cdef3c634c5d7242a4c9a0c0c90a5de007e4bbad16ec21bdb9f07"
+    },
+    "security/containment.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/containment.json",
+      "bytes": 211,
+      "sha256": "5aebde7aec847deb4eb8f4e7626bf6efd262b9fc59a9ca198ffd3689e83279f9"
+    },
+    "security/equal-length-rewrite.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/equal-length-rewrite.json",
+      "bytes": 253,
+      "sha256": "a66ebed787579ffeb17da723c5e7b1f02b2eaf6026bdcf2fbb0409bf4495f6d9"
+    },
+    "security/tampered-tile.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/tampered-tile.json",
+      "bytes": 185,
+      "sha256": "90d59d30365d428e089fdae4cf836415239d8ba1e5cff5d37bc94e0c46c663e6"
+    },
+    "security/identity-change.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/identity-change.json",
+      "bytes": 173,
+      "sha256": "f704845118f7bf16f5b7c4520a4038d1585e1b8208ee764466213f0e1cde6a05"
+    },
+    "security/reader-tile-channel.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/reader-tile-channel.json",
+      "bytes": 172,
+      "sha256": "ae94bfb0b9b96851e2149f2889c2085e94fe1c57ba9a7255ea7d804c60e8594e"
+    },
+    "security/workbench-tamper.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/security/workbench-tamper.json",
+      "bytes": 213,
+      "sha256": "fd3baeb60e04d2848092a6c86eb3046b010fdfc6d091644c8f330a8c38c89c53"
+    },
+    "performance/tile-read.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/performance/tile-read.json",
+      "bytes": 427,
+      "sha256": "4511c508d188cefb19be52aa287c866b7145ccbb48eed508cf5af9e41b962afe"
+    },
+    "test/summary.json": {
+      "path": "verification/HOST-TILE-CHANNEL-1/test/summary.json",
+      "bytes": 1372,
+      "sha256": "1acd7855551a77e81e3c16b70ccc758f0786b2e658aa0e34e97f1e7aa4b17382"
+    },
+    "test/dotnet-test-Debug.log": {
+      "path": "verification/HOST-TILE-CHANNEL-1/test/dotnet-test-Debug.log",
+      "bytes": 16427,
+      "sha256": "dcb7e31be2821164a303c1d72eca8c59885891c9384b1dcdb62a9e5a23d2b480"
+    },
+    "build/dotnet-build-Debug.log": {
+      "path": "verification/HOST-TILE-CHANNEL-1/build/dotnet-build-Debug.log",
+      "bytes": 1341,
+      "sha256": "a2755b45f638f53c89cae0004473a66692f03a1a307ffa4c784007acd9f2b2ce"
+    },
+    "test/vitest-baseline.log": {
+      "path": "verification/HOST-TILE-CHANNEL-1/test/vitest-baseline.log",
+      "bytes": 234100,
+      "sha256": "76e771b1be4522bb57a611c80feabb8ef9d909aed894be44015ce9e0d2bd461d"
+    },
+    "test/pytest-baseline.log": {
+      "path": "verification/HOST-TILE-CHANNEL-1/test/pytest-baseline.log",
+      "bytes": 71220,
+      "sha256": "a9299b7e4230e5469826dd30d034123747548af6cf8520fe70b922b3e387ca14"
+    }
+  }
+}

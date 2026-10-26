@@ -1,0 +1,22 @@
+{
+  "ac": "AC4",
+  "samples": 2,
+  "exact_pixel_size": true,
+  "no_interpolation": true,
+  "pages": [
+    {
+      "orientation": "vertical",
+      "source": "1200x1800",
+      "rendered_contract": "1200x1800",
+      "scale": 1,
+      "no_interpolation": true
+    },
+    {
+      "orientation": "horizontal",
+      "source": "1800x1200",
+      "rendered_contract": "1800x1200",
+      "scale": 1,
+      "no_interpolation": true
+    }
+  ]
+}

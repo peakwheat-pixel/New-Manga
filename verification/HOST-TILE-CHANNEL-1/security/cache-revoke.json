@@ -1,0 +1,13 @@
+{
+  "task": "HOST-TILE-CHANNEL-1",
+  "at_utc": "2026-10-26T18:35:34.4296514Z",
+  "ac": "AC2",
+  "cache_ttl_ms": 1000,
+  "cache_hits": 2,
+  "cache_misses": 1,
+  "cache_hit_rate": 0.6667,
+  "revoke_effective_latency_ms": 0.071,
+  "revoke_latency_le_1s": true,
+  "cache_invalidations": 1,
+  "after_revoke": "TileGrantRevoked"
+}

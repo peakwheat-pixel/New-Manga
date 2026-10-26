@@ -1,0 +1,8 @@
+{
+  "task": "HOST-TILE-CHANNEL-1",
+  "at_utc": "2026-10-26T18:31:13.6618246Z",
+  "ac": "AC5",
+  "tile_count": 3,
+  "channel_reads": 3,
+  "fallback_available": true
+}
