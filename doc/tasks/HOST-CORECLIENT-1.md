@@ -90,7 +90,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| E1-build | AC1/AC6 | verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666 | CANONICAL |
+| E1-build | AC1/AC6 | verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log | - | 2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666 | CANONICAL |
 | E2-test | AC2/AC3/AC4/AC5/AC6 | verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 4161c65553511dcd56e915c4c5264de53ebc185e303f32acee58cf5568f8c4f2 | CANONICAL |
 | E3-trx | AC2/AC3/AC4/AC5 | verification/HOST-CORECLIENT-1/test/results-Debug.trx | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 68b5c79eef6b2e5a5ea0fa199bde168f2fa9043f28df5d7a11cd06344bb26113 | CANONICAL |
 | E4-vitest | AC6 | verification/HOST-CORECLIENT-1/test/vitest-baseline.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2 | CANONICAL |

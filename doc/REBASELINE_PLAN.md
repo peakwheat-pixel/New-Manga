@@ -50,9 +50,9 @@
 |UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|done（.nm-app min-width:1024 根治；900 档四页 900/900；`e9a409927`）|
 |PRODUCT-IDENTITY-1|UIUX-V2-RUNTIME-NARROW-1|done（窗口标题/exe/应用ID → New Manga；`new-manga.exe`）|
 |DISPLAY-PERF-DECISION-1|—|in_review（全部 AC MET；S0 GO；待独立复核+closeout）|
-|HOST-CORECLIENT-1|DISPLAY-PERF-DECISION-1|in_review（S1 C# Host/CoreClient 已交付；base a93f20c7b；Reviewer=ZCode）|
+|HOST-CORECLIENT-1|DISPLAY-PERF-DECISION-1|in_review（S1 已交付；base a93f20c7b；Reviewer=ZCode）|
 
-READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 取代 AD-001，主线转入 Avalonia 重构（旧 Tauri/React 于 S5 退役）。清理/删除仍需新授权，r212 与五广域根保护不变。
+READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 生效，主线转 Avalonia。清理/删除仍需新授权，r212 与五广域根保护不变。
 
 ## 终态依赖与限制
 
