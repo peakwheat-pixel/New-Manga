@@ -1,8 +1,0 @@
-{
-  "ac": "AC3-negative",
-  "raw_request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:8},\u0022request_id\u0022:\u0022raw-1\u0022,\u0022command\u0022:\u0022CreateBook\u0022,\u0022payload\u0022:{\u0022title\u0022:\u0022\u96FE\u6E2F\u6765\u4FE1\u30FB\u65E5\u672C\u8A9E\u30C6\u30B9\u30C8\u0022}}",
-  "raw_request_utf8_hex": "7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a387d2c22726571756573745f6964223a227261772d31222c22636f6d6d616e64223a22437265617465426f6f6b222c227061796c6f6164223a7b227469746c65223a22e99bbee6b8afe69da5e4bfa1e383bbe697a5e69cace8aa9ee38386e382b9e38388227d7d",
-  "request_ascii_only": false,
-  "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:8},\u0022request_id\u0022:\u0022raw-1\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022UNKNOWN\u0022,\u0022category\u0022:\u0022unknown\u0022,\u0022retryable\u0022:\u0022unknown\u0022}}",
-  "error_code": "UNKNOWN"
-}

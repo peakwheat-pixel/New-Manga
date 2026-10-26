@@ -1,7 +1,0 @@
-{
-  "ac": "AC4",
-  "scenario": "startup timeout (2s) against a never-responding child",
-  "error_code": "StartupTimeout",
-  "user_message": "\u6838\u5FC3\u670D\u52A1\u542F\u52A8\u8D85\u65F6\uFF08core_service\uFF09\u3002",
-  "stderr_log_exists": true
-}

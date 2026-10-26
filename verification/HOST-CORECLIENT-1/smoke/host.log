@@ -1,5 +1,0 @@
-2026-10-26T16:50:51.6763632+00:00 INFO single-instance acquired: Local\NewManga.Host.Smoke (abandoned_recovered=False)
-2026-10-26T16:50:51.6816540+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-s1-smoke-61c40482
-2026-10-26T16:50:51.6817753+00:00 INFO first-run backup skipped: catalog database not present yet
-2026-10-26T16:50:52.0538695+00:00 INFO core_service ready (1 wire frames)
-2026-10-26T16:50:52.1294030+00:00 INFO host_bridge ready (1 wire frames)

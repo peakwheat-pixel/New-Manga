@@ -1,8 +1,0 @@
-{
-  "ac": "AC5",
-  "ready": true,
-  "mode": "ReadOnlyLegacyShellRunning",
-  "legacy_detected": true,
-  "writes_allowed": false,
-  "write_blocked_code": "HOST_READ_ONLY"
-}
