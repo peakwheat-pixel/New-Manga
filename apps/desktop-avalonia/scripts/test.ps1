@@ -25,9 +25,9 @@ $repoRoot = Resolve-Path (Join-Path $root '..\..')
 # Reviewer reruns must never overwrite the pinned canonical evidence: default output goes to the
 # workspace task-env. Only the owner regenerates pins with -CanonicalEvidence.
 $evidence = if ($CanonicalEvidence) {
-    Join-Path $repoRoot 'verification/HOST-CORECLIENT-1'
+    Join-Path $repoRoot 'verification/HOST-COMMAND-MIGRATION-1'
 } else {
-    'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/evidence-rerun'
+    'G:/CODEX/New Manga.workspace/task-envs/HOST-COMMAND-MIGRATION-1/evidence-rerun'
 }
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
@@ -56,9 +56,21 @@ try {
     & dotnet build NewManga.sln -c $Configuration -warnaserror 2>&1 | Tee-Object -FilePath $buildLog | Select-Object -Last 3
     if ($LASTEXITCODE -ne 0) { throw "dotnet build failed with exit code $LASTEXITCODE" }
 
+    # AC1: regenerate the Rust production command surface in memory and compare with the committed snapshot.
+    $python = (Get-Command python -ErrorAction SilentlyContinue)?.Source
+    if (-not $python) { $python = (Get-Command py -ErrorAction SilentlyContinue)?.Source }
+    if (-not $python) { throw "python is required for the AC1 command-surface extractor (scripts/extract-command-surface.py)" }
+    & $python (Join-Path $root 'scripts/extract-command-surface.py') --check 2>&1 | Tee-Object -FilePath $testLog -Append
+    if ($LASTEXITCODE -ne 0) { throw "AC1 command-surface extractor --check failed" }
+
+    # AC3: re-probe the frozen core_service command surface used by the parity registry.
+    $probeOutput = Join-Path $evidence 'parity/core-command-probe.json'
+    New-Item -ItemType Directory -Force -Path (Split-Path $probeOutput) | Out-Null
+    & (Join-Path $PSScriptRoot 'probe-core-commands.ps1') -SidecarDirectory $env:NEWMANGA_CORECLIENT_SIDECAR_DIR -OutputPath $probeOutput 2>&1 |
+        Tee-Object -FilePath $testLog -Append
+
     $results = @()
-    foreach ($project in $projects) {
-        $trx = Join-Path $testEvidence "results-$($project.Name).trx"
+    foreach ($project in $projects) {        $trx = Join-Path $testEvidence "results-$($project.Name).trx"
         Remove-Item $trx -ErrorAction SilentlyContinue
         & dotnet test $project.Path -c $Configuration --no-build `
             --logger "trx;LogFileName=$trx" --logger "console;verbosity=minimal" 2>&1 |

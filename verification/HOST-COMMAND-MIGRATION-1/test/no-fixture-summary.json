@@ -1,0 +1,105 @@
+{
+  "ac": "AC6 reproducibility",
+  "command": "dotnet test apps\\desktop-avalonia\\NewManga.sln   (no NEWMANGA_CORECLIENT_SIDECAR_DIR)",
+  "evidence_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\HOST-COMMAND-MIGRATION-1\\verification\\HOST-COMMAND-MIGRATION-1",
+  "fixture": "absent - integration tests self-skip with reason",
+  "projects": [
+    {
+      "project": "coreclient",
+      "total": 40,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 12,
+      "skip_list": [
+        {
+          "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        }
+      ]
+    },
+    {
+      "project": "host",
+      "total": 22,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 4,
+      "skip_list": [
+        {
+          "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        },
+        {
+          "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars",
+          "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)"
+        }
+      ]
+    },
+    {
+      "project": "app",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "skip_list": []
+    }
+  ],
+  "totals": {
+    "total": 66.0,
+    "passed": 50.0,
+    "failed": 0.0,
+    "skipped": 16.0
+  },
+  "at_utc": "2026-10-26T17:45:38.6845950Z"
+}

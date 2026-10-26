@@ -1,0 +1,156 @@
+{
+  "task": "HOST-COMMAND-MIGRATION-1",
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "base_commit": "ab53cd39d",
+  "generated_at_utc": "2026-10-26T17:45:55.0174856Z",
+  "runtime": {
+    "dotnet_sdk": "10.0.401",
+    "avalonia": "11.3.22",
+    "target": "net9.0-win-x64",
+    "python_sidecars": "protocol 2.3 + host_bridge wire v1"
+  },
+  "parity": {
+    "production_commands": 66,
+    "implemented": 16,
+    "not_supported": 50,
+    "domains": {
+      "settings": 33,
+      "library": 8,
+      "region": 6,
+      "reader": 4,
+      "resource": 3,
+      "workbench": 12
+    },
+    "coverage_percent": 100
+  },
+  "test_contract": {
+    "one_command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -CanonicalEvidence",
+    "one_command_expected": "66 passed / 0 skipped / 0 failed",
+    "plain_dotnet_test": "dotnet test apps/desktop-avalonia/NewManga.sln (no sidecar fixture env)",
+    "plain_expected": "50 passed / 16 skipped / 0 failed (all skips carry reason)",
+    "extractor_check": "python apps/desktop-avalonia/scripts/extract-command-surface.py --check",
+    "probe": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/probe-core-commands.ps1"
+  },
+  "regressions": {
+    "vitest": "60 files / 567 tests passed",
+    "pytest": "3 failed / 2687 passed / 9 skipped (baseline 4 failed / 2686 passed / 9 skipped; no new failures)"
+  },
+  "artifacts": {
+    "core_service": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
+      "bytes": 68887500,
+      "sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0"
+    },
+    "host_bridge": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\host_bridge.exe",
+      "bytes": 1835134,
+      "sha256": "92aa37d1da9d5f4318c7abd284083b2a4f93460064a06822c4ff6d9176f22cab"
+    },
+    "catalog_loader": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\catalog_loader.exe",
+      "bytes": 1833029,
+      "sha256": "b8d549bc4afd7bb59af826725483df324addcccf357b5ae7c23b927752e84cd4"
+    }
+  },
+  "evidence": {
+    "snapshot": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+      "bytes": 36466,
+      "sha256": "b6a4d7e4a74a534185bd262729a8453ef826c25ef424c78e16f9cb2e20395f0b"
+    },
+    "probe": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/parity/core-command-probe.json",
+      "bytes": 14088,
+      "sha256": "880ff34626269c841c43346afa4ea3329e37ae0bcdfd6c7573cfc969a3a91d95"
+    },
+    "contract": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/commands/parity-contract.json",
+      "bytes": 76640,
+      "sha256": "1a188fd7af08bde50dace142f22ac4e5208bec466458b129b6c4e679f6aec962"
+    },
+    "integration": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/commands/integration-results.json",
+      "bytes": 2679,
+      "sha256": "7aa5464c72c67d4a632e3fb69ab1633157cb618575dfc002355fee6cf05c6b72"
+    },
+    "chinese": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/commands/chinese-roundtrip.json",
+      "bytes": 1089,
+      "sha256": "bbd6ee9d4ccf9ac6d3e1bd5c8d845a69c7845cd76e54e983874778185e95f130"
+    },
+    "typed_errors": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/commands/not-supported-typed-errors.json",
+      "bytes": 6245,
+      "sha256": "3ee273a43241e135e1fed39713cfd0aa9051618074d19b15ead1d03b1f43c4c6"
+    },
+    "domains": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/commands/domain-services.json",
+      "bytes": 821,
+      "sha256": "c00ef5b8ce38b89f7e4711ccb543d087732d16419b995bafa4db3d66d9b76b7a"
+    },
+    "test_log": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/dotnet-test-Debug.log",
+      "bytes": 15998,
+      "sha256": "28654697a579d315341e6ae9655fdbb289ff2e6c4b1847b9156bce040b82852d"
+    },
+    "test_summary": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/summary.json",
+      "bytes": 1380,
+      "sha256": "c046407778acc72ab5d5695fa9f71f6ba39a6296777b4d37f777c9755f01468e"
+    },
+    "trx_coreclient": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/results-coreclient.trx",
+      "bytes": 62064,
+      "sha256": "bb3612824d7869eaf6eab8a43299eecf82766d22f8dc7fd72b4a3bad836ce08d"
+    },
+    "trx_host": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/results-host.trx",
+      "bytes": 33785,
+      "sha256": "dc43ca1a5801e644690fee78902fb60c4ead434ae84a3d603614c1c50ea5bd6d"
+    },
+    "trx_app": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/results-app.trx",
+      "bytes": 7289,
+      "sha256": "27bde4f84718e628c0fbe284cfa80e0c443c3d3090ed441e6925dbece5ffdcd3"
+    },
+    "no_fixture_log": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/dotnet-test-Debug-no-fixture.log",
+      "bytes": 15106,
+      "sha256": "a416c5ba3d0eb417c1b3fac50603060b59d7afb51b981c7a48a0984c9ca85bbd"
+    },
+    "no_fixture_summary": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/no-fixture-summary.json",
+      "bytes": 5881,
+      "sha256": "78e042c8e9d09aef9a5c25dc5dc889a5baefde406e8b7abb2b813beff7a948d4"
+    },
+    "vitest": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/vitest-baseline.log",
+      "bytes": 233698,
+      "sha256": "4bcd34de60fa549aa9c9f3cd52ddecd743de9c8f99b682ad8a100b8f53ab36d6"
+    },
+    "pytest": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/test/pytest-baseline.log",
+      "bytes": 71220,
+      "sha256": "35e819f11bb63923785824f36bac2ad70bf912a87f62a7e33ce171483bceb242"
+    },
+    "build_log": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/build/dotnet-build-Debug.log",
+      "bytes": 1376,
+      "sha256": "859cf25f40689e63b597a03db7a251d1eaee7519c5cb40e1b00fd1c8d899939d"
+    },
+    "wire_chinese": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/wire/commands-chinese-core-service.ndjson",
+      "bytes": 30974,
+      "sha256": "edb61405db88f06f780d072b076d89b01c5fc7f15579314184d8b83cb32b4f17"
+    },
+    "wire_bridge": {
+      "path": "verification/HOST-COMMAND-MIGRATION-1/wire/commands-integration-host-bridge.ndjson",
+      "bytes": 32150,
+      "sha256": "b12fdaf0e1e65d18fceee3016d864c316a512ee41dbcf4a55fd674548960783c"
+    }
+  },
+  "cleanup": {
+    "action": "PRESERVE (rerun evidence only)",
+    "task_env": "G:/CODEX/New Manga.workspace/task-envs/HOST-COMMAND-MIGRATION-1"
+  }
+}
