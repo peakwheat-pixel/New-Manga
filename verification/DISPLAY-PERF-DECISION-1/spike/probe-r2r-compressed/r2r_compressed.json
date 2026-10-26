@@ -1,0 +1,76 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\publish\\win-x64-single-trimmed-r2r-compressed\\Spike.App.exe",
+  "arguments": "--out=\"G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r-compressed\" --assets=\"G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA\\oc material\\17\"",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:27:17.2593107Z",
+      "window_visible_ms": 427,
+      "window_visible_from_create_ms": 422.3,
+      "hwnd": "0xA809F2",
+      "pid": 19132,
+      "working_set_mb": 208.0,
+      "process_start_time": "2026-10-26T23:27:17.2646502+08:00",
+      "capture": {
+        "y": 276,
+        "height": 832,
+        "x": 679,
+        "width": 1202
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r-compressed\\r2r_compressed_run1.png"
+    },
+    {
+      "run": 2,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:27:18.6878003Z",
+      "window_visible_ms": 414,
+      "window_visible_from_create_ms": 410.1,
+      "hwnd": "0x1F0868",
+      "pid": 21460,
+      "working_set_mb": 207.3,
+      "process_start_time": "2026-10-26T23:27:18.6922819+08:00",
+      "capture": {
+        "y": 276,
+        "height": 832,
+        "x": 679,
+        "width": 1202
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r-compressed\\r2r_compressed_run2.png"
+    },
+    {
+      "run": 3,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:27:20.0885748Z",
+      "window_visible_ms": 397,
+      "window_visible_from_create_ms": 391.9,
+      "hwnd": "0xE00FFE",
+      "pid": 26700,
+      "working_set_mb": 209.6,
+      "process_start_time": "2026-10-26T23:27:20.0939606+08:00",
+      "capture": {
+        "y": 276,
+        "height": 832,
+        "x": 679,
+        "width": 1202
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r-compressed\\r2r_compressed_run3.png"
+    }
+  ],
+  "measured_count": 3,
+  "visible_ms_sorted": [
+    397,
+    414,
+    427
+  ],
+  "visible_ms_p50": 414,
+  "visible_from_create_ms_sorted": [
+    391.9,
+    410.1,
+    422.3
+  ],
+  "visible_from_create_ms_p50": 410.1,
+  "visible_from_create_ms_min": 391.9,
+  "visible_from_create_ms_max": 422.3,
+  "captured_at_utc": "2026-10-26T15:27:21.4954869Z"
+}

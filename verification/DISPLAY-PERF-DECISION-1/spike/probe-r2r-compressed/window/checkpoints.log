@@ -1,0 +1,56 @@
+0.2	main-entry
+10.8	options-parsed
+14.6	avalonia-bootstrap-start
+234.2	app-xaml-start
+244.3	app-xaml-done
+244.6	framework-init-start
+246.0	theme-applied
+264.2	window-ctor-start
+285.9	window-xaml-done
+286.5	window-ctor-done
+286.7	main-window-created
+286.9	framework-init-completed
+336.9	window-opened-event
+
+0.2	main-entry
+11.1	options-parsed
+14.3	avalonia-bootstrap-start
+228.8	app-xaml-start
+240.6	app-xaml-done
+240.9	framework-init-start
+242.5	theme-applied
+262.5	window-ctor-start
+286.5	window-xaml-done
+287.1	window-ctor-done
+287.3	main-window-created
+287.5	framework-init-completed
+342.6	window-opened-event
+
+0.2	main-entry
+11.0	options-parsed
+14.3	avalonia-bootstrap-start
+223.6	app-xaml-start
+233.9	app-xaml-done
+234.1	framework-init-start
+235.6	theme-applied
+254.0	window-ctor-start
+276.0	window-xaml-done
+276.6	window-ctor-done
+276.8	main-window-created
+276.9	framework-init-completed
+326.1	window-opened-event
+
+0.2	main-entry
+10.7	options-parsed
+13.7	avalonia-bootstrap-start
+215.4	app-xaml-start
+225.6	app-xaml-done
+225.9	framework-init-start
+227.3	theme-applied
+244.2	window-ctor-start
+266.0	window-xaml-done
+266.6	window-ctor-done
+266.8	main-window-created
+267.0	framework-init-completed
+322.3	window-opened-event
+

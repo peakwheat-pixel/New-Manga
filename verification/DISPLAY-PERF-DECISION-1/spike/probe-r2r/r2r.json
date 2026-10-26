@@ -1,0 +1,76 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\publish\\win-x64-single-trimmed-r2r\\Spike.App.exe",
+  "arguments": "--out=\"G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r\" --assets=\"G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA\\oc material\\17\"",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:26:31.9847832Z",
+      "window_visible_ms": 357,
+      "window_visible_from_create_ms": 353.2,
+      "hwnd": "0x210826",
+      "pid": 35704,
+      "working_set_mb": 186.7,
+      "process_start_time": "2026-10-26T23:26:31.9894150+08:00",
+      "capture": {
+        "height": 832,
+        "y": 276,
+        "x": 679,
+        "width": 1202
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r\\r2r_run1.png"
+    },
+    {
+      "run": 2,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:26:33.1270034Z",
+      "window_visible_ms": 353,
+      "window_visible_from_create_ms": 348.4,
+      "hwnd": "0x350CE0",
+      "pid": 47532,
+      "working_set_mb": 186.9,
+      "process_start_time": "2026-10-26T23:26:33.1320421+08:00",
+      "capture": {
+        "height": 832,
+        "y": 276,
+        "x": 679,
+        "width": 1202
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r\\r2r_run2.png"
+    },
+    {
+      "run": 3,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:26:34.2771641Z",
+      "window_visible_ms": 352,
+      "window_visible_from_create_ms": 347.5,
+      "hwnd": "0x4E00A8",
+      "pid": 42580,
+      "working_set_mb": 196.8,
+      "process_start_time": "2026-10-26T23:26:34.2822218+08:00",
+      "capture": {
+        "height": 832,
+        "y": 276,
+        "x": 679,
+        "width": 1202
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-r2r\\r2r_run3.png"
+    }
+  ],
+  "measured_count": 3,
+  "visible_ms_sorted": [
+    352,
+    353,
+    357
+  ],
+  "visible_ms_p50": 353,
+  "visible_from_create_ms_sorted": [
+    347.5,
+    348.4,
+    353.2
+  ],
+  "visible_from_create_ms_p50": 348.4,
+  "visible_from_create_ms_min": 347.5,
+  "visible_from_create_ms_max": 353.2,
+  "captured_at_utc": "2026-10-26T15:26:35.4386818Z"
+}

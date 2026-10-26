@@ -1,0 +1,25 @@
+{
+  "gate": "6-portrait-1to1",
+  "status": "RUN",
+  "portrait_path": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\routes\\sample_current_pillow.png",
+  "source_pixels": {
+    "width": 1350,
+    "height": 1920
+  },
+  "dpr1": {
+    "logical_width": 1350,
+    "logical_height": 1920,
+    "device_scale": 1,
+    "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\pixel/portrait_render_dpr1.png"
+  },
+  "dpr2": {
+    "logical_width": 675,
+    "logical_height": 960,
+    "device_scale": 2,
+    "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\pixel/portrait_render_dpr2.png",
+    "window_render_scaling": 1,
+    "dpi_emulated": false
+  },
+  "dpr2_probe_png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\pixel/dpr2_probe.png",
+  "written_at_utc": "2026-10-26T15:28:07.700Z"
+}

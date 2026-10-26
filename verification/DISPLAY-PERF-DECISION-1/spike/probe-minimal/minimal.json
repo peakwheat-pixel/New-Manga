@@ -1,0 +1,76 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\publish\\win-x64-single-trimmed\\Spike.App.exe",
+  "arguments": "--out=\"G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-minimal\" --minimal=true",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:22:06.9121608Z",
+      "window_visible_ms": 702,
+      "window_visible_from_create_ms": 697.9,
+      "hwnd": "0x4703DA",
+      "pid": 5468,
+      "working_set_mb": 114.6,
+      "process_start_time": "2026-10-26T23:22:06.9167601+08:00",
+      "capture": {
+        "width": 602,
+        "height": 432,
+        "y": 156,
+        "x": 163
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-minimal\\minimal_run1.png"
+    },
+    {
+      "run": 2,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:22:08.2062123Z",
+      "window_visible_ms": 774,
+      "window_visible_from_create_ms": 769.8,
+      "hwnd": "0x1603E4",
+      "pid": 23832,
+      "working_set_mb": 113.7,
+      "process_start_time": "2026-10-26T23:22:08.2113194+08:00",
+      "capture": {
+        "width": 602,
+        "height": 432,
+        "y": 260,
+        "x": 267
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-minimal\\minimal_run2.png"
+    },
+    {
+      "run": 3,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:22:09.5745490Z",
+      "window_visible_ms": 789,
+      "window_visible_from_create_ms": 784.8,
+      "hwnd": "0x361012",
+      "pid": 49488,
+      "working_set_mb": 114.5,
+      "process_start_time": "2026-10-26T23:22:09.5792927+08:00",
+      "capture": {
+        "width": 602,
+        "height": 432,
+        "y": 338,
+        "x": 345
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\probe-minimal\\minimal_run3.png"
+    }
+  ],
+  "measured_count": 3,
+  "visible_ms_sorted": [
+    702,
+    774,
+    789
+  ],
+  "visible_ms_p50": 774,
+  "visible_from_create_ms_sorted": [
+    697.9,
+    769.8,
+    784.8
+  ],
+  "visible_from_create_ms_p50": 769.8,
+  "visible_from_create_ms_min": 697.9,
+  "visible_from_create_ms_max": 784.8,
+  "captured_at_utc": "2026-10-26T15:22:10.9849321Z"
+}

@@ -1,0 +1,73 @@
+{
+  "gate": "4-runtime-skinning",
+  "switch_samples": 30,
+  "apply_to_frame_ms": {
+    "p50": 2.831,
+    "p90": 3.384,
+    "p95": 3.611,
+    "p99": 3.893,
+    "max": 3.934,
+    "min": 2.215,
+    "all": [
+      2.594,
+      2.828,
+      2.337,
+      2.836,
+      2.897,
+      2.309,
+      2.833,
+      3.793,
+      2.653,
+      3.197,
+      3.249,
+      2.74,
+      3.374,
+      3.062,
+      2.454,
+      2.992,
+      3.032,
+      2.255,
+      2.704,
+      2.673,
+      2.215,
+      2.748,
+      3.934,
+      2.815,
+      3.384,
+      3.36,
+      2.732,
+      3.268,
+      3.388,
+      2.692
+    ]
+  },
+  "themes": {
+    "light": {
+      "label": "Light",
+      "is_dark": false,
+      "palette_keys": 11
+    },
+    "dark": {
+      "label": "Dark",
+      "is_dark": true,
+      "palette_keys": 11
+    },
+    "saber-purple": {
+      "label": "Saber Purple",
+      "is_dark": true,
+      "palette_keys": 11
+    }
+  },
+  "reference_pngs": {
+    "light": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\theme/ref_light.png",
+    "dark": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\theme/ref_dark.png",
+    "saber-purple": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\theme/ref_saber-purple.png"
+  },
+  "render_scaling": 1,
+  "mica": false,
+  "window_size": {
+    "logical_width": 1200,
+    "logical_height": 800
+  },
+  "written_at_utc": "2026-10-26T15:30:59.797Z"
+}
