@@ -3,7 +3,7 @@ id: CORE-TILE-EMIT-1
 title: Core 侧 tile 生成 + per-tile SHA-256 下发（对齐 TILE-CHANNEL-CONTRACT-V1）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: avalonia-spike
@@ -12,10 +12,10 @@ depends_on: [HOST-RESOURCE-SECURITY-1]
 base_commit: 744eccb61
 branch: task/CORE-TILE-EMIT-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/CORE-TILE-EMIT-1
-integration_commit: null
+integration_commit: 7b07da6a4
 delivery_head: 2c2c1f3ebe4aed18455ce7d1b92d6a9d2230a9ef
-canonical_evidence_status: pinned
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/CORE-TILE-EMIT-1
 allowed_paths:
   - doc/tasks/CORE-TILE-EMIT-1.md
@@ -85,3 +85,10 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 单命令：scripts/test.ps1 → **102/102**（先跑 Core emit 再 Host 端到端，无 fixture 兜底）；pytest **3F/2691P/9S** vs 基线 3F/2687P/9S → **0 新增失败、+4 通过**。
+- 摘要一致率 **100%**（2/2 tile，digest_mismatches=0）；中文/unicode 路径通过，manifest 纯 ASCII。
+- 契约：Core 输出通过 TILE-CHANNEL-CONTRACT-V1；Host 真实产物消费通过。
+- 遗留转后续：Core 渲染管线何时调用 emit（独立 Core 集成任务）；阅读器切真实产物与安装 smoke 联合验证（S5-D）。
+- 集成：7b07da6a4；范围仅 src/**+	ests/**+证据+文档，Host 契约与旧壳未动。
