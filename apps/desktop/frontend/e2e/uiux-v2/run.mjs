@@ -73,7 +73,7 @@ function record(scenarioId, title, checks) {
     checks,
     checkSummary: { ...totals, total: checks.length },
     passRate: denominator === 0 ? 1 : totals.passed / denominator,
-    passRateScope: "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+    passRateScope: "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母",
   });
   console.log("\n[" + (ok ? "PASS" : "FAIL") + "] " + scenarioId + " — " + title);
   for (const item of checks) {
@@ -754,16 +754,28 @@ try {
     }
 
     report.importResult = { imported, bookId, chapterId };
-    // G1 结构性结论（2026-10-26 DSH 复核确认）：本项目是 HOST-ISSUER-1 架构——
-    // `library_import_file` / `library_import_folder` 属“用户动作”，由 Rust 侧弹
-    // 原生文件选择器取路径，refs/路径**不进 WebView**（见 main.rs 的 allowlist
-    // 注释与 host_issuer.rs）。因此页面里没有 input[type=file]，CDP
-    // `DOM.setFileInputFiles` 结构性不可用（实测 inputNodeId=0）。
-    // 该路径的端到端只能人工验；它的 UI 状态机已由 BookshelfPage.test.tsx 的
-    // “AC3 / W30 ImportDialog Flow” 用 jsdom 覆盖。这里把注入失败的断言降级为
-    // HUMAN_VERIFY，不冒充通过。
+    // G1 结论（2026-10-26，经 Codex 复核后收窄）：本项目是 HOST-ISSUER-1 架构——
+    // `library_import_file` / `library_import_folder` 属“用户动作”，由 Rust 侧取路径，
+    // 前端只传 chapterId/duplicatePolicy（library/client.ts:264），refs/路径不进
+    // WebView（main.rs 的 allowlist 注释与 host_issuer.rs 可证）。
+    // 因此 **CDP 文件注入这条路径不可用**：页面无 input[type=file]，实测
+    // `DOM.setFileInputFiles` 拿到 inputNodeId=0。
+    //
+    // 注意范围：这只证明"CDP 注入不可用"，**不**证明"原生选择器无法被 UI Automation
+    // 或键盘自动化驱动"——后者的可行性本轮未验证（一次 UIA 尝试失败，见 r1 记录）。
+    // 这条差别写在这里，避免后人把"未验证"读成"不可能"。
+    //
+    // 降级只允许作用于**依赖 CDP 注入**的断言（白名单）。S8 里其它断言
+    // （真实书架数据、IPC 建章节、对话框定位等）一旦 FAIL 必须保持 FAIL，
+    // 否则真实回归会被吞掉——这是 Codex 复核 r2 指出的 P1，已修正。
+    const CDP_INJECTION_LABELS = [
+      "ImportDialog 存在可由 CDP 注入的 input[type=file]",
+      "DOM.setFileInputFiles 将真实 PNG 交给页面",
+      "不支持格式错误路径也由 CDP 文件注入",
+      "导入失败明确显示错误码",
+    ];
     for (const item of checks) {
-      if (item.status === "FAIL") {
+      if (item.status === "FAIL" && CDP_INJECTION_LABELS.includes(item.label)) {
         item.status = "HUMAN_VERIFY";
         item.ok = false;
         item.detail =
@@ -777,7 +789,7 @@ try {
         "HOST-ISSUER-1：路径留在 Rust，页面无 input[type=file]；UI 状态机由 BookshelfPage.test.tsx AC3/W30 覆盖",
       ),
     );
-    record("S8", "书架原生导入（架构性 HUMAN_VERIFY，非失败）", checks);
+    record("S8", "书架原生导入（CDP 注入不可用 → 转人工验证；其它断言照常门禁）", checks);
   }
   /* ---------------------------------------------- S9 Core sidecar 掉线/恢复 */
   {

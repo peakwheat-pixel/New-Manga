@@ -34,7 +34,7 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1（=G1）原生导入自动化**：尝试用 CDP 注入覆盖"导入页图"。**结论：HOST-ISSUER-1 架构下结构性不可自动化**——前端 `importFile()` 不传路径，路径由 Rust 原生选择器取得，页面无 `input[type=file]`。已转为 HUMAN_VERIFY（断言内写有人工步骤），UI 状态机由 `BookshelfPage.test.tsx` AC3/W30 覆盖。 <<PARTIAL: 架构约束，不可自动化；已转人工验证 + jsdom 覆盖>>
+- [ ] **AC1（=G1）原生导入自动化**：尝试用 CDP 注入覆盖"导入页图"。**结论：HOST-ISSUER-1 架构下结构性不可自动化**——前端 `importFile()` 不传路径，路径由 Rust 原生选择器取得，页面无 `input[type=file]`。已转为 HUMAN_VERIFY（断言内写有人工步骤），UI 状态机由 `BookshelfPage.test.tsx` AC3/W30 覆盖。 <<PARTIAL: CDP 文件注入路径不可用（inputNodeId=0）；原生选择器经 UIA/键盘自动化是否可行本轮未验证；已转人工验证 + jsdom 覆盖>>
 - [x] **AC2（=G2）受控故障注入与恢复**：杀 sidecar 后书架/工作台/阅读器/设置四页均显示 `CORE_UNAVAILABLE` 错误码，Core 以新 PID 恢复后四页各自回到正常态（12 条断言全 PASS）。 <<MET>>
 - [x] **AC3（=G3）窄窗与高 DPI 布局预算**：900×700 / DPR 2 下 `blurLayers=2`、标题栏与内容区无重叠、状态条可见、视口生效；横向溢出为真实产品缺陷，标记 KNOWN_DEFECT 并转入 NARROW-1。 <<MET>>
 - [x] **AC4（=G4）非 ASCII 载荷守卫**：`core_bridge.rs` 增 `ascii_only_request_line()`，非 ASCII 载荷返回可见错误码 `CORE_BRIDGE_NON_ASCII_PAYLOAD`；选方案 (b) 的理由写在注释；定向测试通过。 <<MET>>
@@ -90,11 +90,11 @@ allowed_paths:
 ## 返修与复核 r2（最终）
 
 - `f68184b60`（Codex 返修）：R2 四页故障注入与恢复 **通过**（run-i33 S9 十二条断言全 PASS）；R3 按裁定转 `KNOWN_DEFECT`；R4 Cargo 口径说明补齐；R5 断言状态落盘。
-- **R1 结论改为"结构性不可自动化"**（见 `review-dsh-r2.md` 证据链）：
+- **R1 结论：CDP 文件注入路径不可用**（措辞经 Codex 复核后收窄——"不可用"≠"不可自动化"）：
   1. `ImportDialog` 只调 `client.importFile(chapterId, duplicatePolicy)`，**不传路径**；
   2. 路径由 Rust 侧原生选择器取得，`main.rs` 明写 `HOST-ISSUER-1: user actions use native pickers; refs and paths stay in Rust.`；
   3. 页面无 `input[type=file]`，CDP `DOM.setFileInputFiles` 实测 `inputNodeId=0`。
-  → 该路径转为 **HUMAN_VERIFY**（断言 detail 内写有人工步骤），其 UI 状态机由 `BookshelfPage.test.tsx` 的 AC3/W30 覆盖。触及 DIR-4"同一失败上限 2 次"，不再返修。
+  → CDP 注入相关断言转为 **HUMAN_VERIFY**（白名单，仅限依赖注入的 4 条；其它断言照常门禁），其 UI 状态机由 `BookshelfPage.test.tsx` 的 AC3/W30 覆盖。原生选择器经 UIA/键盘驱动是否可行仍未验证，留给后续（不冒充"不可能"）。
 - **DSH 收口改动（已披露，待独立复核）**：`e2e/uiux-v2/run.mjs` 新增 `humanVerify()` 状态（`ok` 恒 false，不计入 passRate 分母），S8 的失败断言降级为 `HUMAN_VERIFY` 并附原失败原因；**未改产品代码**。
 - **最终结果**：`run-i34` **10/10 场景 PASS，exit 0**；`tsc` exit 0；`vitest` 60 files / 567 passed；本卡改动模块 Rust 定向测试 exit 0。
 - 收口状态：`closed_with_limitations`。遗留两项：① 窄窗横向溢出属真实产品缺陷，需另立 CSS 修复 Task（需用户授权动布局）；② 全量 Cargo 测试的复跑环境属环境线。
@@ -104,7 +104,7 @@ allowed_paths:
 | evidence_id | AC | path（仓库相对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-01 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i33/report.json | 3070050a8 | - | CANONICAL |
-| EV-02 | AC3 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i34/report.json | 3070050a8 | - | CANONICAL |
+| EV-02 | AC3 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i35/report.json | 3070050a8 | - | CANONICAL |
 | EV-03 | AC1..AC5 | verification/UIUX-V2-RUNTIME-REALCORE-2/README.md | 3070050a8 | - | CANONICAL |
 | EV-04 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r1.md | 3070050a8 | - | CANONICAL |
 | EV-05 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r2.md | 3070050a8 | - | CANONICAL |

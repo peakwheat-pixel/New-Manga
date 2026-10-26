@@ -55,3 +55,15 @@ S1–S7 沿用 REALCORE-1 的既有断言；S8 = 架构性 HUMAN_VERIFY（不计
 遗留（已登记，不在本卡）：
 - **窄窗横向溢出（900px，1024 vs 900）** → 需另立产品修复 Task（改 CSS 断点，需要用户授权动产品布局）
 - `cargo test --release` 全量 23 失败的复跑环境（`M2RC1_PYTHON` / packaged bundle）→ 属环境线，不阻塞产品
+
+## 六、r2 修订（Codex 复核我的改动后）
+
+我把第三节那处收口改动交给 Codex 复核，它给 `unacceptable`（`review-codex-dsh-closeout.md`），**判定正确**，我采纳并修订：
+
+1. **我原来的降级范围过宽。** 原实现是"遍历 checks，把 status===\"FAIL\" 的一律改成 HUMAN_VERIFY"，这会连 S8 里**本可自动化**的断言（真实书架数据、IPC 建章节、对话框定位）在将来回归时一起吞掉，等于给真实回归开了后门。
+   **修正**：改为**标签白名单**——只有 4 条依赖 CDP 注入的断言允许降级（`ImportDialog 存在可由 CDP 注入的 input[type=file]` / `DOM.setFileInputFiles 将真实 PNG 交给页面` / `不支持格式错误路径也由 CDP 文件注入` / `导入失败明确显示错误码`）；其余断言 FAIL 仍必须 FAIL。
+2. **`passRateScope` 未说明 HUMAN_VERIFY 也被排除。** 已改为"KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"。
+3. **"结构性不可自动化"下得太满。** `inputNodeId=0` 只证明 **CDP 注入不可用**；原生选择器经 UIA / 键盘自动化是否可行，本轮只失败过一次、**未做系统验证**。措辞已全部收窄为"CDP 注入不可用"，并在脚本注释里显式写下这条边界（避免后人把"未验证"读成"不可能"）。
+4. 场景标题从"（架构性 HUMAN_VERIFY，非失败）"改为"（CDP 注入不可用 → 转人工验证；其它断言照常门禁）"，避免读者误以为导入已通过验收。
+
+修订后复跑：**`run-i35` 10/10 场景 PASS，exit 0**；S8 的 4 条自动化断言 PASS，4 条注入相关断言 HUMAN_VERIFY，1 条架构说明 HUMAN_VERIFY。降级范围受白名单约束，回归门禁不再有缺口。
