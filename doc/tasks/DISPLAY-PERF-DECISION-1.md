@@ -21,6 +21,7 @@ allowed_paths:
   - doc/tasks/DISPLAY-PERF-DECISION-1.md
   - doc/design/DISPLAY_PERF_DECISION_1.md
   - doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md
+  - doc/design/EXECUTION_DIRECTIVE_AD002_V2.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
