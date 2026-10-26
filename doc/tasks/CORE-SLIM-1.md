@@ -3,7 +3,7 @@ id: CORE-SLIM-1
 title: Core 瘦身：移除 PySide6 + entry exe 去重 + 体积预算（≤700MB 运行时/≤2GB 包）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: null
@@ -12,10 +12,10 @@ depends_on: [CORE-TILE-EMIT-1]
 base_commit: 7a9d474d8
 branch: task/CORE-SLIM-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/CORE-SLIM-1
-integration_commit: null
+integration_commit: c5aade851
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/CORE-SLIM-1
 allowed_paths:
   - doc/tasks/CORE-SLIM-1.md
@@ -26,6 +26,7 @@ allowed_paths:
   - packaging/**
   - tests/**
   - requirements.txt
+  - doc/handoffs/**
   - apps/desktop/src-tauri/tauri.conf.json
   - verification/CORE-SLIM-1/**
   - G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-1/**
@@ -43,11 +44,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [x] **AC1 PySide6 移除（口径=打包 Core 闭包零 PySide6）**：`src/` 中 4 个 Core 文件（`infrastructure/importing.py`、`bootstrap/{core_assembly,core_service,acceptance_bridge}.py`）的去 Qt 化；`requirements.txt` 移除 PySide6/shiboken6；spec 打包闭包不加载 Qt；PDF/TIFF/WebP/多帧 GIF 解码回归通过。legacy QML 源与约 45 个旧测试**原位冻结、不打包、不改**（与 S5-C 冻结口径一致），AC1 记 MET + Record Decision。→ **MET**：闭包实测 0 Qt；解码矩阵 11/12（唯一差异=AVIF 能力增益）、像素产物 16/16、PDF 2/2 逐像素相等（`verification/CORE-SLIM-1/ac1/COMPARISON.md`）。
-- [x] **AC2 exe 去重**：打包脚本产出的 entry 数量与体积优化（记录 before/after 体积表）；sidecar 启动与协议不变。→ **MET**：5 个 exe 合计 199.6 → **1.9 MiB**（每 entry ~0.38 MiB）；机制=`noarchive=True` 共享 `_internal/*.pyc`（8767 个），entry 名/argv/stdio 协议未变（能力 smoke 7/7 PASS）。
-- [ ] **AC3 体积达标**：Core 运行时（不含模型）**≤700MB**；允许在**冻结闭包**中 excludes 未使用的传递依赖（cv2/scipy/h5py/shapely 等），**前提是**解码/OCR/检测/修复/导入/PDF 全能力 smoke 全绿且可复跑；若仍 >700MB 则 AC3 记 `PARTIAL`（附实测值与缺口原因），不得改预算口径或伪造。产出 `verification/CORE-SLIM-1/size-report.md`（before/after 表 + 每项 exclude 的能力证据）。→ **PARTIAL**：实测 **970.1 MiB**（改前 1067.3，−97.2）；未做 excludes——build venv 实测 `cv2/scipy/h5py/shapely` 是 ML 栈**导入期硬依赖**（排除即删能力），且强排后仅 ~788 MiB 仍不达标；缺口 270.1 MiB 由能力必需的 torch/cv2/scipy/onnxruntime 构成（`size-report.md` §4）。
-- [x] **AC4 回归**：pytest 无新增失败（基线 3F/2691P/9S）；`scripts/test.ps1` 全绿；渲染/导入关键样例像素级不变（或差异有解释）。→ **MET**：pytest `3F/2710P/9S`（失败集合=基线 3 项，0 新增；新增 19 个 AC1 用例）；`test.ps1` **102/102 passed, 0 skipped**；像素等价见 AC1 证据。
-- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；证据 64-hex pin；Handoff + Record Decision（解码器替代方案、打包策略）。→ **MET**：`doc/handoffs/CORE-SLIM-1-handoff.md`（含 Record Decision §5）；pin 见下。
+- [x] **AC1 <<MET>>
+- [x] **AC2 <<MET>>
+- [x] **AC3 体积达标：Core 运行时（不含模型）**≤700MB**；允许在**冻结闭包**中 excludes 未使用的传递依赖（cv2/scipy/h5py/shapely 等），**前提是**解码/OCR/检测/修复/导入/PDF 全能力 smoke 全绿且可复跑；若仍 >700MB 则 AC3 记 `PARTIAL`（附实测值与缺口原因），不得改预算口径或伪造。产出 `verification/CORE-SLIM-1/size-report.md`（before/after 表 + 每项 exclude 的能力证据）。→ **PARTIAL**：实测 **970.1 MiB**（改前 1067.3，−97.2）；未做 excludes——build venv 实测 `cv2/scipy/h5py/shapely` 是 ML 栈**导入期硬依赖**（排除即删能力），且强排后仅 ~788 MiB 仍不达标；缺口 270.1 MiB 由能力必需的 torch/cv2/scipy/onnxruntime 构成（`size-report.md` §4）。 <<PARTIAL: 970.1 MiB（目标 ≤700MB）；缺口 270.1 MiB 全为能力必需 ML 栈（torch 365/cv2 112/scipy 70/onnx 63 MiB），cv2/scipy 为导入期硬依赖，强排仅 ~788 MiB 且删能力，故不做 excludes>>
+- [x] **AC4 <<MET>>
+- [x] **AC5 <<MET>>
 
 ## 允许修改范围
 
@@ -90,4 +91,13 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS（AC3 接受 PARTIAL）
 
+- 单命令：scripts/test.ps1 → **102/102 passed / 0 skipped**（对重建无标签 sidecar 副本）。
+- pytest：**3F/2710P/9S**，失败集合 = 基线 3 项、**0 新增**、+19 用例；基线更新为 3F/2710P/9S。
+- AC1（口径=打包闭包零 Qt）：闭包 Qt 命中 **0**；Pillow 解码矩阵 11/12（差异=AVIF 能力增益）、像素 16/16、PDF 2/2 逐像素相等；legacy QML 与旧测试原位冻结未动（符合 S5-C 口径）。
+- AC2：5 entry exe **199.6 → 1.9 MiB**，
+oarchive=True 共享 8767 个 .pyc，entry 名/argv/stdio 协议不变（能力 smoke 7/7）。
+- **AC3 裁决**：接受 PARTIAL——Core 运行时 **1067.3 → 970.1 MiB（−97.2）**；未做 excludes 的理由成立（cv2/scipy 为检测链导入期硬依赖，排除=删能力；强排仅 ~788 MiB）。**不改 700MB 口径、不伪造达成**；缺口归 ML 栈，交由 CORE-SLIM-2（依赖 INFER-BASELINE-EP-1 的 ONNX 化结论）处置。
+- 遗留：build venv 仍装 PySide6（pin 已删，干净重建自然消失）；主检出 release 侧车仍是旧 Qt 版，发布前需按新 spec 重建（S5-D 打包脚本应内置重建步骤）。
+- 集成：c5aade851；未 push。

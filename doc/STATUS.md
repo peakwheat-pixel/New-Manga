@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[CORE-SLIM-1](tasks/CORE-SLIM-1.md) `ready`（Core 瘦身；S5 冻结完成 done）。
+- 当前 Task：[INFER-BASELINE-EP-1](tasks/INFER-BASELINE-EP-1.md) `ready`（推理基线选型；CORE-SLIM-1 done c5aade851）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

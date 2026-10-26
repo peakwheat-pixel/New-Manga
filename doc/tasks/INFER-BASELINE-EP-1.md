@@ -3,13 +3,13 @@ id: INFER-BASELINE-EP-1
 title: 推理基线选型——ORT-DML vs ORT-CUDA vs torch（检测/OCR/修复三类模型实测）
 kind: research
 governance_version: 3
-status: proposed
+status: ready
 approval: user_authorized_2026-10-26
 suggested_owner: antigravity
 owner: null
 reviewer: null
 depends_on: []
-base_commit: 1549439ec
+base_commit: c5aade851
 branch: null
 worktree: null
 integration_commit: null
@@ -102,3 +102,4 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时补 DAG/STATUS 指针。
+
