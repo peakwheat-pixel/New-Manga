@@ -3,7 +3,7 @@ id: UIUX-V2-RUNTIME-NARROW-1
 title: 修 900px 窄窗横向溢出（1024 vs 900）+ 高 DPI 布局回归守卫
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 approval: user_authorized_2026-10-26
 suggested_owner: zcode
 owner: zcode
@@ -12,10 +12,10 @@ depends_on: [UIUX-V2-RUNTIME-REALCORE-2]
 base_commit: 5b8688ad2
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: e9a409927
+delivery_head: e9a409927
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/UIUX-V2-RUNTIME-NARROW-1
 allowed_paths:
   - doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md
@@ -104,3 +104,36 @@ body `overflow:hidden` 裁剪并报告为 `documentElement.scrollWidth=1024`。
 - `tsc --noEmit` exit 0；`vitest run` 60 files / 567 tests 全绿（基线一致）。
 - 被测 exe SHA256 `C1AB2749EAEE5E1BD793EEC1FCA59158B76E44CF741349A0962B76AC11DFA8BD`；
   证据与改前/改后数字详见 `verification/UIUX-V2-RUNTIME-NARROW-1/README.md`。
+
+## Acceptance Criteria（实施后）
+
+- [x] **AC1 根因定位**：撑宽源 = `.nm-app { min-width: 1024px }`（`ui.css:18`，改前）。四页在 900 视口全部 `scrollWidth=1024`，且全前端 CSS 中这是唯一 ≥1024 的宽度下限；任务卡原先猜的三个候选（网格 minmax / 详情面板 / 标题栏三段）经实测均被否证（标题栏 min-content 884 < 900）。 <<MET>>
+- [x] **AC2 900×700 无横向溢出**：删除 `min-width: 1024px`；四页 `scrollWidth === clientWidth === 900`。 <<MET>>
+- [x] **AC3 不退化**：1280×800 四页 `scrollWidth === clientWidth === 1280`；改前/改后 1280 档布局数值一致（`.nm-app` 1280、标题栏轨道 453/326/453、库区 892、详情面板 340）；`blurLayers=2`、无重叠、状态条可见保持。 <<MET>>
+- [x] **AC4 断言升级防回退**：S10 的 `knownDefect` 改为硬断言，并新增 900×700 / 1280×800 两档 × 四页矩阵（15 条全 PASS，`knownDefects=0`）。 <<MET>>
+
+## 执行记录（ZCode 实现，DSH 复核）
+
+- 2026-10-26 用户授权改 CSS 后释放，Owner=ZCode。交付 `e9a409927`（单 commit，未 push）。
+- 改法：`ui.css` 删 `.nm-app` 的 `min-width: 1024px`（`min-height: 680px` 保留，本卡只涉宽度）；`pages.css` 新增 `@media (max-width: 1023px)`：书架网格 `repeat(5,168px)` → `repeat(auto-fill, minmax(150px,1fr))`，卡片 `width:auto`；`run.mjs` 升级 S10 断言 + 两档四页矩阵；`env.mjs` 隔离根改指本卡（原遗留指向 REALCORE-2）；新增 `diag-narrow.mjs` 诊断脚本。
+- **DSH 独立复核（`review-dsh-narrow-r1.md`）→ `approved`**：根因经 `git show e9a409927^:ui.css` 核实；独立复跑 `run-i4` 10/10 exit 0、`tsc` exit 0、`vitest` 567 passed；构建新鲜度（CSS→dist→exe 时间序 + exe SHA `C1AB2749…`）核对通过；范围未越界（未动 tokens/base.css/STATUS/PLAN/LEDGER/tauri.conf/Rust）；人眼看 900 档四页截图确认布局完整。
+- 遗留（P3，已登记不阻塞）：N-1 书卡封面长标题竖排裁切（宽窗同样存在，非本卡引入）；N-2 `min-height: 680px` 导致 <680 高视口同类纵向溢出。
+
+## Canonical Evidence
+
+| evidence_id | AC | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i4/report.json | HEAD2 | - | CANONICAL |
+| EV-02 | AC1/AC2/AC3 | verification/UIUX-V2-RUNTIME-NARROW-1/README.md | HEAD2 | - | CANONICAL |
+| EV-03 | AC2 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/11-900x700-dpr2-shelf.png | HEAD2 | - | CANONICAL |
+| EV-04 | AC3 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/12-1280x800-dpr2-shelf.png | HEAD2 | - | CANONICAL |
+| EV-05 | 复核 | verification/UIUX-V2-RUNTIME-NARROW-1/review-dsh-narrow-r1.md | HEAD2 | - | CANONICAL |
+| EV-06 | 资源 | verification/UIUX-V2-RUNTIME-NARROW-1/resource-manifest.json | HEAD2 | - | CANONICAL |
+| EV-07 | AC1/AC2 | apps/desktop/frontend/src/ui/ui.css | e9a409927 | - | CANONICAL |
+| EV-08 | AC2/AC3 | apps/desktop/frontend/src/pages/pages.css | e9a409927 | - | CANONICAL |
+| EV-09 | AC4 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | HEAD2 | - | CANONICAL |
+| EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-NARROW-1-handoff.md | e9a409927 | - | CANONICAL |
+
+## Resource Manifest
+
+- 机器清单：`verification/UIUX-V2-RUNTIME-NARROW-1/resource-manifest.json`（无删除/迁移/归档）。

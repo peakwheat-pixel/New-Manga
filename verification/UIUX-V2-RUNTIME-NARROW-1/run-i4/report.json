@@ -1,0 +1,970 @@
+{
+  "taskId": "UIUX-V2-RUNTIME-NARROW-1",
+  "runId": "uiux-v2-narrow-20261026-run-i4",
+  "startedAt": "2026-10-26T06:29:26.175Z",
+  "cdpPort": 9345,
+  "pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+  "exeSha256": "C1AB2749EAEE5E1BD793EEC1FCA59158B76E44CF741349A0962B76AC11DFA8BD",
+  "envManifest": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9345",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT"
+    ],
+    "__cdpPort": 9345,
+    "__pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe"
+  },
+  "cleanTargetsObserved": {
+    "roaming": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\appdata-roaming",
+      "state": "ABSENT"
+    },
+    "localAppData": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\appdata-local",
+      "state": "ABSENT"
+    },
+    "tmp": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\tmp",
+      "state": "ABSENT"
+    },
+    "dataRoot": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\data-root",
+      "state": "ABSENT"
+    },
+    "derived": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\scope\\derived",
+      "state": "ABSENT"
+    },
+    "managed": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\scope\\managed",
+      "state": "ABSENT"
+    },
+    "catalogDb": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\catalog\\catalog.sqlite",
+      "state": "ABSENT"
+    },
+    "webview2Udd": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\webview2-udd",
+      "state": "ABSENT"
+    },
+    "logs": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\logs",
+      "state": "ABSENT"
+    },
+    "shots": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\shots",
+      "state": "ABSENT"
+    }
+  },
+  "fileInjection": {
+    "pngPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\fixtures\\uiux-import.png",
+    "rootNodeId": 1,
+    "rootInputNodeId": 0,
+    "dialogNodeId": 230,
+    "inputNodeId": 0
+  },
+  "databasePath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\data-root\\library.db",
+  "databaseExists": true,
+  "scenarios": [
+    {
+      "scenarioId": "S1",
+      "title": "身份与单一 UI（真实 packaged EXE + WebView2）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "data-view=app",
+          "name": "data-view=app",
+          "status": "PASS",
+          "ok": true,
+          "detail": "data-view=app"
+        },
+        {
+          "label": "data-theme 已设置",
+          "name": "data-theme 已设置",
+          "status": "PASS",
+          "ok": true,
+          "detail": "data-theme=dark"
+        },
+        {
+          "label": "旧内联壳 AppShell 不在 DOM 中",
+          "name": "旧内联壳 AppShell 不在 DOM 中",
+          "status": "PASS",
+          "ok": true,
+          "detail": "count=0"
+        },
+        {
+          "label": "一级导航 4 个 tab",
+          "name": "一级导航 4 个 tab",
+          "status": "PASS",
+          "ok": true,
+          "detail": "count=4"
+        },
+        {
+          "label": "Tauri IPC 桥存在",
+          "name": "Tauri IPC 桥存在",
+          "status": "PASS",
+          "ok": true,
+          "detail": "typeof __TAURI__=object"
+        },
+        {
+          "label": "文档标题非空",
+          "name": "文档标题非空",
+          "status": "PASS",
+          "ok": true,
+          "detail": "title=M2RC1|starting|results=0"
+        },
+        {
+          "label": "生产 IPC allowlist 已公告",
+          "name": "生产 IPC allowlist 已公告",
+          "status": "PASS",
+          "ok": true,
+          "detail": "commands=66"
+        }
+      ],
+      "checkSummary": {
+        "passed": 7,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 7
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S2",
+      "title": "书架页真实数据（library_list_books + core_ping）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "书架空态来自真实读取（0 部作品）",
+          "name": "书架空态来自真实读取（0 部作品）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "shelf-empty=true"
+        },
+        {
+          "label": "状态栏显示真实 Core 在线",
+          "name": "状态栏显示真实 Core 在线",
+          "status": "PASS",
+          "ok": true,
+          "detail": "statusbar=●完成Core 在线Core ready0 部作品"
+        },
+        {
+          "label": "工具栏声明数据来自 Core 的最新读取",
+          "name": "工具栏声明数据来自 Core 的最新读取",
+          "status": "PASS",
+          "ok": true,
+          "detail": "text="
+        },
+        {
+          "label": "详情面板为空态（未编造数据）",
+          "name": "详情面板为空态（未编造数据）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "detail=○未开始未选择作品从左侧网格选择一部作品查看章节与详情。"
+        }
+      ],
+      "checkSummary": {
+        "passed": 4,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 4
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S3",
+      "title": "命令面板（焦点圈禁 / Esc / 焦点还原）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "Ctrl+K 快捷键打开命令面板",
+          "name": "Ctrl+K 快捷键打开命令面板",
+          "status": "PASS",
+          "ok": true,
+          "detail": "keyboard path"
+        },
+        {
+          "label": "Ctrl+K 触发按钮打开面板",
+          "name": "Ctrl+K 触发按钮打开面板",
+          "status": "PASS",
+          "ok": true,
+          "detail": "options=5"
+        },
+        {
+          "label": "焦点落在命令输入框",
+          "name": "焦点落在命令输入框",
+          "status": "PASS",
+          "ok": true,
+          "detail": "activeElement=command-input"
+        },
+        {
+          "label": "aria-activedescendant 指向可选项",
+          "name": "aria-activedescendant 指向可选项",
+          "status": "PASS",
+          "ok": true,
+          "detail": "aria-activedescendant=:r0:-go-shelf"
+        },
+        {
+          "label": "Esc 关闭面板（键盘路径）",
+          "name": "Esc 关闭面板（键盘路径）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "closed"
+        },
+        {
+          "label": "真实鼠标点击触发器也能打开",
+          "name": "真实鼠标点击触发器也能打开",
+          "status": "PASS",
+          "ok": true,
+          "detail": "click path"
+        },
+        {
+          "label": "焦点还原到唤起按钮",
+          "name": "焦点还原到唤起按钮",
+          "status": "PASS",
+          "ok": true,
+          "detail": "activeElement=command-trigger"
+        }
+      ],
+      "checkSummary": {
+        "passed": 7,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 7
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S4",
+      "title": "四页导航（真实点击 + aria-selected）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "切到工作台（page-workbench）",
+          "name": "切到工作台（page-workbench）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "label": "切到阅读器（page-reader）",
+          "name": "切到阅读器（page-reader）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "label": "切到设置（page-settings）",
+          "name": "切到设置（page-settings）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "label": "切到书架（page-shelf）",
+          "name": "切到书架（page-shelf）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "label": "全程只有一套 UI（无 AppShell）",
+          "name": "全程只有一套 UI（无 AppShell）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "app-shell=0"
+        }
+      ],
+      "checkSummary": {
+        "passed": 5,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 5
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S5",
+      "title": "设置页（真实 settings_get + 分节切换）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "12+ 分节导航",
+          "name": "12+ 分节导航",
+          "status": "PASS",
+          "ok": true,
+          "detail": "sections=12"
+        },
+        {
+          "label": "settings_get 已同步",
+          "name": "settings_get 已同步",
+          "status": "PASS",
+          "ok": true,
+          "detail": "channel=●完成settings_get 已同步SFX 策略 · 未设置（按 Core 默认）"
+        },
+        {
+          "label": "SFX 策略显示真实未设置态",
+          "name": "SFX 策略显示真实未设置态",
+          "status": "PASS",
+          "ok": true,
+          "detail": "sfx=SFX 策略 · 未设置（按 Core 默认）"
+        },
+        {
+          "label": "切分节改变内容标题",
+          "name": "切分节改变内容标题",
+          "status": "PASS",
+          "ok": true,
+          "detail": "Provider -> 翻译"
+        }
+      ],
+      "checkSummary": {
+        "passed": 4,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 4
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S6",
+      "title": "新建作品（真实 Core 写入 + 书架刷新）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "标题输入框可聚焦",
+          "name": "标题输入框可聚焦",
+          "status": "PASS",
+          "ok": true,
+          "detail": "activeElement=create-title-input"
+        },
+        {
+          "label": "标题写入受控输入框",
+          "name": "标题写入受控输入框",
+          "status": "PASS",
+          "ok": true,
+          "detail": "value=端到端验收-170601"
+        },
+        {
+          "label": "创建被真实 Core 接受（对话框关闭）",
+          "name": "创建被真实 Core 接受（对话框关闭）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "accepted"
+        },
+        {
+          "label": "真实写入后书架出现书卡",
+          "name": "真实写入后书架出现书卡",
+          "status": "PASS",
+          "ok": true,
+          "detail": "cards=1"
+        },
+        {
+          "label": "书卡显示我写入的标题",
+          "name": "书卡显示我写入的标题",
+          "status": "PASS",
+          "ok": true,
+          "detail": "grid=NEW MANGA端到端验收-170601端到端验收-170601章节数见详情 · 页数未知刚刚"
+        },
+        {
+          "label": "作品计数从 0 变为 1（真实刷新）",
+          "name": "作品计数从 0 变为 1（真实刷新）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "statusbar=●完成Core 在线端到端验收-170601Core ready1 部作品"
+        },
+        {
+          "label": "选中作品后详情面板显示该作品",
+          "name": "选中作品后详情面板显示该作品",
+          "status": "PASS",
+          "ok": true,
+          "detail": "detail=端到端到端验收-170601—刚刚0章节页数未知页数章节0○未开始还没有章节导入图片时会自动创建章节，或在工作台新建章节。继续阅读工作台"
+        },
+        {
+          "label": "章节区为真实空态或真实列表",
+          "name": "章节区为真实空态或真实列表",
+          "status": "PASS",
+          "ok": true,
+          "detail": "chapterStateNodes=1"
+        }
+      ],
+      "checkSummary": {
+        "passed": 8,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 8
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S7",
+      "title": "主题切换（真机计算样式，非 jsdom）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "主题切换改变 data-theme",
+          "name": "主题切换改变 data-theme",
+          "status": "PASS",
+          "ok": true,
+          "detail": "dark -> light"
+        },
+        {
+          "label": "主题切换改变实际计算背景色",
+          "name": "主题切换改变实际计算背景色",
+          "status": "PASS",
+          "ok": true,
+          "detail": "rgb(27, 27, 27) -> rgb(238, 238, 238)"
+        },
+        {
+          "label": "可切回原主题",
+          "name": "可切回原主题",
+          "status": "PASS",
+          "ok": true,
+          "detail": "theme=dark"
+        }
+      ],
+      "checkSummary": {
+        "passed": 3,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 3
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S8",
+      "title": "书架原生导入（CDP 注入不可用 → 转人工验证；其它断言照常门禁）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "S6 创建的作品仍来自真实书架",
+          "name": "S6 创建的作品仍来自真实书架",
+          "status": "PASS",
+          "ok": true,
+          "detail": "bookId=d725b1417f73403fad5f967c9234cded"
+        },
+        {
+          "label": "通过真实 Tauri IPC 创建导入目标章节",
+          "name": "通过真实 Tauri IPC 创建导入目标章节",
+          "status": "PASS",
+          "ok": true,
+          "detail": "chapterId=a2091d9e5eb34ed9ad42210de6260546"
+        },
+        {
+          "label": "书架重新读取到真实章节",
+          "name": "书架重新读取到真实章节",
+          "status": "PASS",
+          "ok": true,
+          "detail": "001导入验收章节-735370p"
+        },
+        {
+          "label": "导入对话框指向目标章节",
+          "name": "导入对话框指向目标章节",
+          "status": "PASS",
+          "ok": true,
+          "detail": "selected=a2091d9e5eb34ed9ad42210de6260546; expected=a2091d9e5eb34ed9ad42210de6260546"
+        },
+        {
+          "label": "ImportDialog 存在可由 CDP 注入的 input[type=file]",
+          "name": "ImportDialog 存在可由 CDP 注入的 input[type=file]",
+          "status": "HUMAN_VERIFY",
+          "ok": false,
+          "detail": "[HUMAN_VERIFY] 人工步骤：打开导入对话框 → 选择图片文件 → 确认书架作品页数递增且与实际文件数一致。原注入失败原因：{\"rootNodeId\":1,\"rootInputNodeId\":0,\"dialogNodeId\":230,\"inputNodeId\":0}"
+        },
+        {
+          "label": "DOM.setFileInputFiles 将真实 PNG 交给页面",
+          "name": "DOM.setFileInputFiles 将真实 PNG 交给页面",
+          "status": "HUMAN_VERIFY",
+          "ok": false,
+          "detail": "[HUMAN_VERIFY] 人工步骤：打开导入对话框 → 选择图片文件 → 确认书架作品页数递增且与实际文件数一致。原注入失败原因：ImportDialog 没有 input[type=file]；CDP 无可注入节点"
+        },
+        {
+          "label": "不支持格式错误路径也由 CDP 文件注入",
+          "name": "不支持格式错误路径也由 CDP 文件注入",
+          "status": "HUMAN_VERIFY",
+          "ok": false,
+          "detail": "[HUMAN_VERIFY] 人工步骤：打开导入对话框 → 选择图片文件 → 确认书架作品页数递增且与实际文件数一致。原注入失败原因：ImportDialog 没有 input[type=file]；CDP 无可注入节点"
+        },
+        {
+          "label": "导入失败明确显示错误码",
+          "name": "导入失败明确显示错误码",
+          "status": "HUMAN_VERIFY",
+          "ok": false,
+          "detail": "[HUMAN_VERIFY] 人工步骤：打开导入对话框 → 选择图片文件 → 确认书架作品页数递增且与实际文件数一致。原注入失败原因：ImportDialog 没有 input[type=file]；无法在不打开原生选择器时提交错误样本"
+        },
+        {
+          "label": "G1 原生导入端到端（架构性人工验证）",
+          "name": "G1 原生导入端到端（架构性人工验证）",
+          "status": "HUMAN_VERIFY",
+          "ok": false,
+          "detail": "HOST-ISSUER-1：路径留在 Rust，页面无 input[type=file]；UI 状态机由 BookshelfPage.test.tsx AC3/W30 覆盖"
+        }
+      ],
+      "checkSummary": {
+        "passed": 4,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 5,
+        "total": 9
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S9",
+      "title": "真实 Core sidecar 定向终止与四页恢复",
+      "ok": true,
+      "checks": [
+        {
+          "label": "故障注入前建立真实作品与章节上下文",
+          "name": "故障注入前建立真实作品与章节上下文",
+          "status": "PASS",
+          "ok": true,
+          "detail": "book=d725b1417f73403fad5f967c9234cded; chapter=a2091d9e5eb34ed9ad42210de6260546; rowIndex=0"
+        },
+        {
+          "label": "故障注入前设置页正常且仅定向终止本 Tauri 的 Core",
+          "name": "故障注入前设置页正常且仅定向终止本 Tauri 的 Core",
+          "status": "PASS",
+          "ok": true,
+          "detail": "killed=41096"
+        },
+        {
+          "label": "书架真实错误态可见且含错误码",
+          "name": "书架真实错误态可见且含错误码",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"code\":\"错误代码：CORE_UNAVAILABLE\",\"alertTestId\":\"shelf-error\",\"visible\":true,\"pageText\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK/全部收藏已归档排序方式最近更新书名 A–Z导入新建全部作品0 部作品 · 0 部正在显示来自 Core 的最新读取✗失败服务不可用Python Core 核心服务当前不可用，请检查服务状态并重试。错误代码：CORE_UNAVAILABLE重试○未开始未选择作品从左侧网格选择一部作品查看章节与详情。✗失败Core 连接异常Core 不可用0 部作品\"}"
+        },
+        {
+          "label": "工作台真实错误态可见且含错误码",
+          "name": "工作台真实错误态可见且含错误码",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"code\":\"错误代码：CORE_UNAVAILABLE\",\"alertTestId\":\"workbench-chapters-error\",\"visible\":true,\"pageText\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK✗失败章节读取失败无法从 Core 读取该作品的章节列表。错误代码：CORE_UNAVAILABLE重试\"}"
+        },
+        {
+          "label": "阅读器真实错误态可见且含错误码",
+          "name": "阅读器真实错误态可见且含错误码",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"code\":\"错误代码：CORE_UNAVAILABLE\",\"alertTestId\":\"reader-error\",\"visible\":true,\"pageText\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK✗失败阅读数据加载失败无法读取章节或页面序列；这不代表作品没有内容，请重试。错误代码：CORE_UNAVAILABLE重试—·——/——设置本话进度—阅读数据不可用\"}"
+        },
+        {
+          "label": "设置真实错误态可见且含错误码",
+          "name": "设置真实错误态可见且含错误码",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"code\":\"错误代码：CORE_UNAVAILABLE\",\"alertTestId\":\"settings-error\",\"visible\":true,\"pageText\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK系统设置Provider网络/代理OCR翻译图片修复排版样式模型/GPU任务/并发缓存/Revision回收站备份/恢复Plugin/HooksProvidersection · provider✗失败设置读取失败设置通道不可用，页面不会用占位数值替代真实设置；请重试。错误代码：CORE_UNAVAILABLE重试\"}"
+        },
+        {
+          "label": "Core supervisor 恢复真实 core_ping=ready",
+          "name": "Core supervisor 恢复真实 core_ping=ready",
+          "status": "PASS",
+          "ok": true,
+          "detail": "pids=37716"
+        },
+        {
+          "label": "恢复使用未在故障清单中的新 PID",
+          "name": "恢复使用未在故障清单中的新 PID",
+          "status": "PASS",
+          "ok": true,
+          "detail": "killed=41096; recovered=37716"
+        },
+        {
+          "label": "书架恢复后回到正常态",
+          "name": "书架恢复后回到正常态",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"pagePresent\":true,\"code\":null,\"contentPresent\":true,\"text\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK/全部收藏已归档排序方式最近更新书名 A–Z导入新建全部作品1 部作品 · 1 部正在显示来自 Core 的最新读取NEW MANGA端到端验收-170601端到端验收-170601章节数见详情 · 页数未知刚刚端到端到端验收-170601—刚刚1章节页数未知页数章节1001导入验收章节-735370p继续阅读工作台●完成Core \"}"
+        },
+        {
+          "label": "工作台恢复后回到正常态",
+          "name": "工作台恢复后回到正常态",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"pagePresent\":true,\"code\":null,\"contentPresent\":true,\"text\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK书架第 1 话 · 导入验收章节-73537切换章节第 1 话 · 导入验收章节-73537○未开始阅读器○未开始本章还没有页面导入页面后，这里会按 Core 的排序显示真实页序。检查器未选择页面○未开始尚未开始运行识别结果—未识别当前 IPC 未返回 OCR 文本与置信度区域未选择页面运行▲阻塞尚未开始运行本章还没有运行记录；点击\"}"
+        },
+        {
+          "label": "阅读器恢复后回到正常态",
+          "name": "阅读器恢复后回到正常态",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"pagePresent\":true,\"code\":null,\"contentPresent\":true,\"text\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK○未开始该章节暂无页面导入验收章节-73537 还没有可阅读页面：请先在书架或工作台导入页面。返回书架—·——/——设置本话进度—←→翻页\"}"
+        },
+        {
+          "label": "设置恢复后回到正常态",
+          "name": "设置恢复后回到正常态",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"pagePresent\":true,\"code\":null,\"contentPresent\":true,\"text\":\"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK系统设置Provider网络/代理OCR翻译图片修复排版样式模型/GPU任务/并发缓存/Revision回收站备份/恢复Plugin/Hooks●完成settings_get 已同步SFX 策略 · 未设置（按 Core 默认）Providersection · providerProvider Profile同一 Provider\"}"
+        }
+      ],
+      "checkSummary": {
+        "passed": 12,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 12
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    },
+    {
+      "scenarioId": "S10",
+      "title": "900×700 窄窗与 200% DPI 布局预算（含 1280×800 四页不退化）",
+      "ok": true,
+      "checks": [
+        {
+          "label": "900×700 视口与 DPR=2 生效",
+          "name": "900×700 视口与 DPR=2 生效",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"width\":900,\"height\":700,\"dpr\":2}"
+        },
+        {
+          "label": "900×700 书架无横向溢出（scrollWidth===clientWidth）",
+          "name": "900×700 书架无横向溢出（scrollWidth===clientWidth）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"docWidth\":900,\"clientWidth\":900,\"pageWidth\":900}"
+        },
+        {
+          "label": "标题栏关键元素不重叠",
+          "name": "标题栏关键元素不重叠",
+          "status": "PASS",
+          "ok": true,
+          "detail": "[{\"left\":16,\"top\":11.5,\"right\":182,\"bottom\":35.5,\"width\":166,\"height\":24},{\"left\":194,\"top\":6.5,\"right\":520,\"bottom\":40.5,\"width\":326,\"height\":34},{\"left\":532,\"top\":7.5,\"right\":892,\"bottom\":39.5,\"width\":360,\"height\":32}]"
+        },
+        {
+          "label": "书架内容区与详情区不重叠",
+          "name": "书架内容区与详情区不重叠",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"grid\":{\"left\":16,\"top\":170,\"right\":524,\"bottom\":496.984375,\"width\":508,\"height\":326.984375},\"detail\":{\"left\":544,\"top\":112,\"right\":884,\"bottom\":624,\"width\":340,\"height\":512}}"
+        },
+        {
+          "label": "useAcrylicBudget 计算出的模糊层不超过 2",
+          "name": "useAcrylicBudget 计算出的模糊层不超过 2",
+          "status": "PASS",
+          "ok": true,
+          "detail": "blurLayers=2"
+        },
+        {
+          "label": "状态条在窄窗仍可见",
+          "name": "状态条在窄窗仍可见",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"left\":16,\"top\":640,\"right\":884,\"bottom\":684,\"width\":868,\"height\":44}"
+        },
+        {
+          "label": "900×700 书架无横向溢出",
+          "name": "900×700 书架无横向溢出",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":900,\"clientWidth\":900,\"innerWidth\":900}"
+        },
+        {
+          "label": "900×700 工作台无横向溢出",
+          "name": "900×700 工作台无横向溢出",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":900,\"clientWidth\":900,\"innerWidth\":900}"
+        },
+        {
+          "label": "900×700 阅读器无横向溢出",
+          "name": "900×700 阅读器无横向溢出",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":900,\"clientWidth\":900,\"innerWidth\":900}"
+        },
+        {
+          "label": "900×700 设置无横向溢出",
+          "name": "900×700 设置无横向溢出",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":900,\"clientWidth\":900,\"innerWidth\":900}"
+        },
+        {
+          "label": "1280×800 视口生效",
+          "name": "1280×800 视口生效",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":1280,\"clientWidth\":1280,\"innerWidth\":1280}"
+        },
+        {
+          "label": "1280×800 书架无横向溢出（不退化）",
+          "name": "1280×800 书架无横向溢出（不退化）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":1280,\"clientWidth\":1280,\"innerWidth\":1280}"
+        },
+        {
+          "label": "1280×800 工作台无横向溢出（不退化）",
+          "name": "1280×800 工作台无横向溢出（不退化）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":1280,\"clientWidth\":1280,\"innerWidth\":1280}"
+        },
+        {
+          "label": "1280×800 阅读器无横向溢出（不退化）",
+          "name": "1280×800 阅读器无横向溢出（不退化）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":1280,\"clientWidth\":1280,\"innerWidth\":1280}"
+        },
+        {
+          "label": "1280×800 设置无横向溢出（不退化）",
+          "name": "1280×800 设置无横向溢出（不退化）",
+          "status": "PASS",
+          "ok": true,
+          "detail": "{\"scrollWidth\":1280,\"clientWidth\":1280,\"innerWidth\":1280}"
+        }
+      ],
+      "checkSummary": {
+        "passed": 15,
+        "failed": 0,
+        "knownDefects": 0,
+        "humanVerify": 0,
+        "total": 15
+      },
+      "passRate": 1,
+      "passRateScope": "PASS / (PASS + FAIL); KNOWN_DEFECT 与 HUMAN_VERIFY 均不计入分母"
+    }
+  ],
+  "stderrAllowlistLine": "[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,library_list_recycle_bin_books,library_create_book,create_chapter,settings_get,settings_update_section,cleanup_preview,cleanup_run,cleanup_retry_pending,backup_create,backup_list,backup_restore,backup_delete,plugins_list,plugins_set_enabled,plugins_set_plugin_enabled,plugins_audit_list,plugins_open_directory,settings_provider_profiles_list,settings_provider_profiles_create,settings_provider_profiles_update,settings_provider_profiles_delete,settings_provider_bindings_set,settings_provider_bindings_clear,settings_provider_bindings_resolve,settings_provider_run_snapshot_get,settings_network_profiles_list,settings_network_profiles_create,settings_network_profiles_update,settings_network_profiles_delete,settings_network_profiles_test,settings_network_profile_default_set,settings_network_profile_default_clear,settings_network_profile_resolve,settings_resolve_overrides,credential_put,credential_clear,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages,library_get_reader_projection,library_save_reading_progress,library_import_file,library_import_folder,library_start_export,library_start_run,library_control_run,library_resume_blocked_run,library_get_run_snapshot,library_get_task_projection,library_retry_failed_targets,library_reveal_export_folder,library_cancel_export,library_get_export_snapshot,library_get_export_history,library_delete_book_permanently,library_delete_books_permanently",
+  "ok": true,
+  "importFixture": {
+    "pngPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\fixtures\\uiux-import.png",
+    "pngSha256": "521A1D8AA4B50467F2F87FE7E03A18380D2A592D99E84211E6F6DA7B9E0C0258",
+    "unsupportedPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-NARROW-1\\run-i4\\fixtures\\uiux-import-unsupported.txt"
+  },
+  "importResult": {
+    "imported": false,
+    "bookId": "d725b1417f73403fad5f967c9234cded",
+    "chapterId": "a2091d9e5eb34ed9ad42210de6260546"
+  },
+  "coreOutage": {
+    "parentPid": 44660,
+    "killedPids": [
+      41096
+    ],
+    "pages": [
+      {
+        "page": "page-shelf",
+        "code": "错误代码：CORE_UNAVAILABLE",
+        "alertTestId": "shelf-error",
+        "visible": true,
+        "pageText": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK/全部收藏已归档排序方式最近更新书名 A–Z导入新建全部作品0 部作品 · 0 部正在显示来自 Core 的最新读取✗失败服务不可用Python Core 核心服务当前不可用，请检查服务状态并重试。错误代码：CORE_UNAVAILABLE重试○未开始未选择作品从左侧网格选择一部作品查看章节与详情。✗失败Core 连接异常Core 不可用0 部作品"
+      },
+      {
+        "page": "page-workbench",
+        "code": "错误代码：CORE_UNAVAILABLE",
+        "alertTestId": "workbench-chapters-error",
+        "visible": true,
+        "pageText": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK✗失败章节读取失败无法从 Core 读取该作品的章节列表。错误代码：CORE_UNAVAILABLE重试"
+      },
+      {
+        "page": "page-reader",
+        "code": "错误代码：CORE_UNAVAILABLE",
+        "alertTestId": "reader-error",
+        "visible": true,
+        "pageText": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK✗失败阅读数据加载失败无法读取章节或页面序列；这不代表作品没有内容，请重试。错误代码：CORE_UNAVAILABLE重试—·——/——设置本话进度—阅读数据不可用"
+      },
+      {
+        "page": "page-settings",
+        "code": "错误代码：CORE_UNAVAILABLE",
+        "alertTestId": "settings-error",
+        "visible": true,
+        "pageText": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK系统设置Provider网络/代理OCR翻译图片修复排版样式模型/GPU任务/并发缓存/Revision回收站备份/恢复Plugin/HooksProvidersection · provider✗失败设置读取失败设置通道不可用，页面不会用占位数值替代真实设置；请重试。错误代码：CORE_UNAVAILABLE重试"
+      }
+    ],
+    "recoveredPids": [
+      37716
+    ],
+    "recoveredPages": [
+      {
+        "page": "page-shelf",
+        "pagePresent": true,
+        "code": null,
+        "contentPresent": true,
+        "text": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK/全部收藏已归档排序方式最近更新书名 A–Z导入新建全部作品1 部作品 · 1 部正在显示来自 Core 的最新读取NEW MANGA端到端验收-170601端到端验收-170601章节数见详情 · 页数未知刚刚端到端到端验收-170601—刚刚1章节页数未知页数章节1001导入验收章节-735370p继续阅读工作台●完成Core "
+      },
+      {
+        "page": "page-workbench",
+        "pagePresent": true,
+        "code": null,
+        "contentPresent": true,
+        "text": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK书架第 1 话 · 导入验收章节-73537切换章节第 1 话 · 导入验收章节-73537○未开始阅读器○未开始本章还没有页面导入页面后，这里会按 Core 的排序显示真实页序。检查器未选择页面○未开始尚未开始运行识别结果—未识别当前 IPC 未返回 OCR 文本与置信度区域未选择页面运行▲阻塞尚未开始运行本章还没有运行记录；点击"
+      },
+      {
+        "page": "page-reader",
+        "pagePresent": true,
+        "code": null,
+        "contentPresent": true,
+        "text": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK○未开始该章节暂无页面导入验收章节-73537 还没有可阅读页面：请先在书架或工作台导入页面。返回书架—·——/——设置本话进度—←→翻页"
+      },
+      {
+        "page": "page-settings",
+        "pagePresent": true,
+        "code": null,
+        "contentPresent": true,
+        "text": "NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK系统设置Provider网络/代理OCR翻译图片修复排版样式模型/GPU任务/并发缓存/Revision回收站备份/恢复Plugin/Hooks●完成settings_get 已同步SFX 策略 · 未设置（按 Core 默认）Providersection · providerProvider Profile同一 Provider"
+      }
+    ]
+  },
+  "narrowViewportMatrix": [
+    {
+      "viewport": "900x700-dpr2",
+      "page": "shelf",
+      "scrollWidth": 900,
+      "clientWidth": 900,
+      "innerWidth": 900
+    },
+    {
+      "viewport": "900x700-dpr2",
+      "page": "workbench",
+      "scrollWidth": 900,
+      "clientWidth": 900,
+      "innerWidth": 900
+    },
+    {
+      "viewport": "900x700-dpr2",
+      "page": "reader",
+      "scrollWidth": 900,
+      "clientWidth": 900,
+      "innerWidth": 900
+    },
+    {
+      "viewport": "900x700-dpr2",
+      "page": "settings",
+      "scrollWidth": 900,
+      "clientWidth": 900,
+      "innerWidth": 900
+    },
+    {
+      "viewport": "1280x800-dpr2",
+      "page": "shelf",
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "innerWidth": 1280
+    },
+    {
+      "viewport": "1280x800-dpr2",
+      "page": "workbench",
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "innerWidth": 1280
+    },
+    {
+      "viewport": "1280x800-dpr2",
+      "page": "reader",
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "innerWidth": 1280
+    },
+    {
+      "viewport": "1280x800-dpr2",
+      "page": "settings",
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "innerWidth": 1280
+    }
+  ],
+  "narrowWindowLayout": {
+    "width": 900,
+    "height": 700,
+    "dpr": 2,
+    "docWidth": 900,
+    "docClientWidth": 900,
+    "pageWidth": 900,
+    "titleParts": [
+      {
+        "left": 16,
+        "top": 11.5,
+        "right": 182,
+        "bottom": 35.5,
+        "width": 166,
+        "height": 24
+      },
+      {
+        "left": 194,
+        "top": 6.5,
+        "right": 520,
+        "bottom": 40.5,
+        "width": 326,
+        "height": 34
+      },
+      {
+        "left": 532,
+        "top": 7.5,
+        "right": 892,
+        "bottom": 39.5,
+        "width": 360,
+        "height": 32
+      }
+    ],
+    "grid": {
+      "left": 16,
+      "top": 170,
+      "right": 524,
+      "bottom": 496.984375,
+      "width": 508,
+      "height": 326.984375
+    },
+    "detail": {
+      "left": 544,
+      "top": 112,
+      "right": 884,
+      "bottom": 624,
+      "width": 340,
+      "height": 512
+    },
+    "status": {
+      "left": 16,
+      "top": 640,
+      "right": 884,
+      "bottom": 684,
+      "width": 868,
+      "height": 44
+    },
+    "statusVisible": true,
+    "blur": 2
+  },
+  "appExit": {
+    "exited": true,
+    "code": null,
+    "signal": "SIGTERM"
+  },
+  "finishedAt": "2026-10-26T06:29:47.116Z"
+}

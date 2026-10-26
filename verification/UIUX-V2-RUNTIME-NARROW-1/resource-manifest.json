@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "task_id": "UIUX-V2-RUNTIME-NARROW-1",
+  "generated_at": "2026-10-26",
+  "generated_by": "DeepSeek Harness (DSH)",
+  "note": "本 Task 只改 CSS 宽度规则与验收断言，未删除/迁移/归档任何文件。诊断与验收轮次的截图保留入库作为改前/改后对照。",
+  "resources": [
+    {
+      "resource_type": "evidence",
+      "source_path": "verification/UIUX-V2-RUNTIME-NARROW-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/UIUX-V2-RUNTIME-NARROW-1",
+      "process_check": "canonical 证据：run-i3/run-i4 的 report.json、改前改后诊断截图（diag-* 与 11-*/12-*，含 900×700 与 1280×800 四页）、README、DSH 复核报告。全部由脚本产生，未手工编辑。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-NARROW-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-NARROW-1",
+      "process_check": "各轮隔离数据根与诊断产物（library.db、shots、logs）在此；无进程持有。证明验收未触碰用户真实库（%LOCALAPPDATA%\\New Manga 本轮零写入）。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "apps/desktop/src-tauri/target",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "apps/desktop/src-tauri/target",
+      "process_check": "被测 exe SHA-256 C1AB2749… 记录在 README 与本卡；target/ 属构建缓存不入库，发布构建不含调试端口。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "dataset-model-user-data",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "未使用任何用户素材；窄窗验收用脚本创建的测试书名与脚本生成夹具，全程隔离数据根。"
+    },
+    {
+      "resource_type": "exchange",
+      "source_path": "none",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "none",
+      "process_check": "无跨机交换；ZCode 与 DSH 在同一文件系统内协作。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "canonical_evidence_status=complete；resource_closeout_status=complete；无删除/迁移/归档。"
+}
