@@ -214,3 +214,12 @@ DSH 接管基线提交 `a3c936f68748047aee41c4c60d732adc5bdf55f7`（仅 `AGENTS.
 - **未公开内容确认**：远端 `main` 仍为 `6a68fdeb9`（1788 files），`codex/clean-source-snapshot` 仍为 `e34a90d00`，本地 `main`(14002 files 含全部治理材料) **未推送**。
 - **构建快照本地副本**：`G:/CODEX/New Manga.workspace/publish/clean-snapshot-20261026`（可复现此分支）。
 - **本卡 AC4/AC5 状态不受影响**：它描述的是「推 main 的发布 Gate」，本次走的是快照分支口径，不等于本卡通过。
+
+## 2026-10-26 快照同步（第二次，用户授权）
+
+- **授权**：用户在同一次对话中先选「只推干净快照」，后又指示「提交到主线」；经二选一确认，明确选择 **只更新干净快照分支**（不推 main）。
+- **动作**：把 `main` 最新代码重新导出为快照，在既有分支上**追加一个提交**（fast-forward），**未 force push**。
+- **变化**：6 个文件（PRODUCT-IDENTITY-1 改名：`tauri.conf.json` / `tauri.acceptance.conf.json` / `Cargo.toml` / `main.rs` / `e2e/uiux-v2/lib/env.mjs` / `diag-narrow.mjs`）。窄窗修复在上一版快照已包含，故不在本次 diff。
+- **结果**：`892b946..e8147c6`，`push exit=0`，2 秒；远端 `clean-snapshot-20261026` = `e8147c6c8a7edde4e5784999454acb5732a869fb`。
+- **推送前验证**（快照目录内独立跑）：`tsc --noEmit` exit 0；`vitest` **60 files / 567 passed**；875 tracked files；禁区泄漏检查通过。
+- **远端 main**：仍为 `6a68fdeb9`，**未推**；本地 `main`=`b488f2ab4` 领先 2945 提交，保持本地。
