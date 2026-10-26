@@ -1,0 +1,7 @@
+{
+  "ac": "AC5",
+  "mutex": "Local\\NewManga.Host.Test.67f62dee1027",
+  "status": "AlreadyRunning",
+  "error_code": "HOST_ALREADY_RUNNING",
+  "sidecars_spawned": false
+}

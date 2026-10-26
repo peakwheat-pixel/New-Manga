@@ -1,0 +1,268 @@
+using NewManga.CoreClient;
+using NewManga.CoreClient.Bridge;
+using NewManga.CoreClient.Diagnostics;
+using NewManga.CoreClient.Transport;
+
+namespace NewManga.Host;
+
+/// <summary>
+/// Host lifecycle: single instance → legacy coexistence → read-only policy → first-run backup →
+/// sidecar discovery → both sidecars (core_service protocol 2.3 + host_bridge wire v1). Every
+/// failure becomes a typed <see cref="HostStartResult"/> (never a crash), with stderr logs on disk.
+/// </summary>
+public sealed class HostRuntime : IAsyncDisposable
+{
+    private readonly HostOptions _options;
+    private readonly HostLog _log;
+    private SingleInstanceGuard? _guard;
+    private DataRootPolicy? _policy;
+    private bool _disposed;
+
+    private HostRuntime(HostOptions options, HostLog log)
+    {
+        _options = options;
+        _log = log;
+        _policy = DataRootPolicy.For(options.DataRoot, HostMode.ReadOnlyUntilParity);
+    }
+
+    public HostStartResult Result { get; private set; } =
+        new(HostStatus.Failed, HostMode.ReadOnlyUntilParity, "HOST_NOT_STARTED", "host not started", null);
+
+    public CoreServiceClient? CoreService { get; private set; }
+
+    public HostBridgeClient? HostBridge { get; private set; }
+
+    public HostLog Log => _log;
+
+    public HostOptions Options => _options;
+
+    public DataRootPolicy Policy => _policy!;
+
+    public HostMode Mode => _policy?.Mode ?? HostMode.ReadOnlyUntilParity;
+
+    public LegacyShellState LegacyShell { get; private set; } = LegacyShellState.NotDetected;
+
+    public FirstRunBackupResult? Backup { get; private set; }
+
+    public string WireEvidenceDirectory => Path.Combine(_options.LogDirectory, "wire");
+
+    public static async Task<HostRuntime> StartAsync(HostOptions options, CancellationToken cancellationToken = default)
+    {
+        var runtime = new HostRuntime(options, new HostLog(options.LogDirectory));
+        await runtime.StartInternalAsync(cancellationToken).ConfigureAwait(false);
+        return runtime;
+    }
+
+    public async Task<IReadOnlyList<BookSummary>> ListBooksAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListBooksAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Creates a book through the Core — refused while the host is read-only (S1 default). Tests and
+    /// the isolated demo pass an isolated data root and <c>ParityReached=true</c>.
+    /// </summary>
+    public async Task<BookSummary> CreateBookAsync(string title, CancellationToken cancellationToken = default)
+    {
+        if (!Policy.WritesAllowed)
+        {
+            throw new ReadOnlyHostException($"host is read-only ({Policy.Reason}); writes to production data are disabled until S2 parity");
+        }
+
+        var core = CoreService ?? throw NotReady();
+        return await core.CreateBookAsync(title, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// AC3 end-to-end vector: create the fixed Chinese title then list it back and require exact
+    /// string equality (any mojibake fails here). Only valid on an isolated writable data root.
+    /// </summary>
+    public async Task<ChineseRoundTripResult> RoundTripChineseTitleAsync(
+        string title,
+        CancellationToken cancellationToken = default)
+    {
+        var created = await CreateBookAsync(title, cancellationToken).ConfigureAwait(false);
+        var books = await ListBooksAsync(cancellationToken).ConfigureAwait(false);
+        var found = false;
+        foreach (var book in books)
+        {
+            if (string.Equals(book.Title, title, StringComparison.Ordinal))
+            {
+                found = true;
+                break;
+            }
+        }
+
+        return new ChineseRoundTripResult(title, created.Title, found);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        if (HostBridge is not null)
+        {
+            await HostBridge.DisposeAsync().ConfigureAwait(false);
+            HostBridge = null;
+        }
+
+        if (CoreService is not null)
+        {
+            await CoreService.DisposeAsync().ConfigureAwait(false);
+            CoreService = null;
+        }
+
+        _guard?.Dispose();
+        _guard = null;
+        _log.Dispose();
+    }
+
+    private async Task StartInternalAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!SingleInstanceGuard.TryAcquire(_options.MutexName, out var guard))
+            {
+                _log.Warn("single-instance mutex already owned; exiting without spawning sidecars");
+                Result = HostStartResult.AlreadyRunning();
+                return;
+            }
+
+            _guard = guard!;
+            _log.Info($"single-instance acquired: {guard!.Name} (abandoned_recovered={guard.RecoveredAbandoned})");
+            if (guard!.RecoveredAbandoned)
+            {
+                _log.Warn("recovered abandoned single-instance mutex from a previous host");
+            }
+
+            LegacyShell = _options.DetectLegacyShell
+                ? new LegacyShellDetector(_options.ProcessProbe).Detect()
+                : LegacyShellState.NotDetected;
+            if (LegacyShell.Detected)
+            {
+                _log.Warn($"legacy shell detected (pid {string.Join(',', LegacyShell.ProcessIds)}); entering read-only mode");
+            }
+
+            var decision = CoexistenceRules.Decide(LegacyShell.Detected, _options.ParityReached);
+            _policy = DataRootPolicy.For(_options.DataRoot, decision.Mode);
+            _log.Info($"mode={decision.Mode} reason={decision.Reason} data_root={_options.DataRoot}");
+
+            if (_options.FirstRunBackupEnabled)
+            {
+                Backup = FirstRunBackup.EnsureBackup(_options.DataRoot, Path.Combine(_options.DataRoot, "backups"));
+                _log.Info(Backup.Created
+                    ? $"first-run backup created: {Backup.FileName}"
+                    : $"first-run backup skipped: {Backup.SkippedReason}");
+            }
+
+            SidecarBundle bundle;
+            try
+            {
+                bundle = SidecarLocator.Locate(_options.SidecarDirectoryOverride);
+            }
+            catch (SidecarException ex)
+            {
+                Fail(ex);
+                return;
+            }
+
+            var managedRoot = _options.ManagedRoot ?? Path.Combine(_options.DataRoot, "managed");
+            var derivedRoot = Path.Combine(_options.DataRoot, "derived");
+            var catalogDb = Path.Combine(_options.DataRoot, "catalog", "catalog.sqlite");
+            Directory.CreateDirectory(derivedRoot);
+            Directory.CreateDirectory(managedRoot);
+            Directory.CreateDirectory(Path.GetDirectoryName(catalogDb)!);
+            if (_options.EnableWireEvidence)
+            {
+                Directory.CreateDirectory(WireEvidenceDirectory);
+            }
+
+            var coreWire = _options.EnableWireEvidence ? Path.Combine(WireEvidenceDirectory, "core-service.ndjson") : null;
+            CoreService = await CoreServiceClient.StartAsync(
+                new CoreServiceOptions
+                {
+                    ExecutablePath = bundle.CoreServicePath,
+                    DataRoot = _options.DataRoot,
+                    DerivedRoot = derivedRoot,
+                    CatalogDbPath = catalogDb,
+                    ManagedRoot = managedRoot,
+                    StderrLogPath = _log.CoreServiceStderrPath,
+                    WireLogPath = coreWire,
+                    StartupTimeout = _options.StartupTimeout,
+                    RequestTimeout = _options.RequestTimeout,
+                },
+                cancellationToken).ConfigureAwait(false);
+            _log.Info($"core_service ready ({CoreService.Wire.Count} wire frames)");
+
+            var bridgeWire = _options.EnableWireEvidence ? Path.Combine(WireEvidenceDirectory, "host-bridge.ndjson") : null;
+            HostBridge = await HostBridgeClient.StartAsync(
+                new HostBridgeOptions
+                {
+                    ExecutablePath = bundle.HostBridgePath,
+                    DerivedRoot = derivedRoot,
+                    ManagedRoot = managedRoot,
+                    CatalogDbPath = catalogDb,
+                    StderrLogPath = _log.HostBridgeStderrPath,
+                    WireLogPath = bridgeWire,
+                    StartupTimeout = _options.StartupTimeout,
+                    RequestTimeout = _options.RequestTimeout,
+                },
+                cancellationToken).ConfigureAwait(false);
+            _log.Info($"host_bridge ready ({HostBridge.Wire.Count} wire frames)");
+
+            Result = HostStartResult.Ready(decision.Mode);
+        }
+        catch (SidecarException ex)
+        {
+            Fail(ex);
+        }
+        catch (BridgeException ex)
+        {
+            _log.Error(ex.Code, ex.Message);
+            Result = new HostStartResult(HostStatus.Failed, _policy?.Mode ?? HostMode.ReadOnlyUntilParity, ex.Code, ex.UserMessage, null);
+            await StopSidecarsAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or OperationCanceledException)
+        {
+            _log.Error("HOST_START_IO", ex.Message);
+            Result = new HostStartResult(
+                HostStatus.Failed,
+                _policy?.Mode ?? HostMode.ReadOnlyUntilParity,
+                "HOST_START_IO",
+                "Host 启动时发生 I/O 错误，详见 host.log。",
+                null);
+            await StopSidecarsAsync().ConfigureAwait(false);
+        }
+    }
+
+    private void Fail(SidecarException error)
+    {
+        _log.Error(error);
+        Result = HostStartResult.Failed(new SidecarErrorLike(error.Code.ToString(), error.UserMessage, error.StderrLogPath));
+    }
+
+    private async Task StopSidecarsAsync()
+    {
+        if (HostBridge is not null)
+        {
+            await HostBridge.DisposeAsync().ConfigureAwait(false);
+            HostBridge = null;
+        }
+
+        if (CoreService is not null)
+        {
+            await CoreService.DisposeAsync().ConfigureAwait(false);
+            CoreService = null;
+        }
+    }
+
+    private static SidecarException NotReady() =>
+        new(SidecarErrorCode.SidecarExeMissing, "host", "host is not ready; sidecars were not started");
+}
+
+public sealed record ChineseRoundTripResult(string Expected, string Received, bool ExactMatch);

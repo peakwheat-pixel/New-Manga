@@ -4,11 +4,11 @@
 
 ## 当前 Task
 
-- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `ready`（S1 C# Host；S0 GO）。
-- 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET；待复核）。
+- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `in_review`（57/57 测试、单文件 27.64 MiB、smoke PASS；待 ZCode 复核）。
+- 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
-- 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10；G1 转人工验证）。
-- 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
+- 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
+- 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（真实 Tauri+Core 7/7；修 P0 中文落库乱码 + P1 死按钮；ZCode r1 approved）。DAG 无 READY。
 - 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`）。
 - 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（push-gate approved；AC4/AC5 未过）。
 - Rust：[ISOLATION-1](tasks/GIT-CLEAN-RUST-ISOLATION-1.md) `in_review`（r2 blocked 保留）；[CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`。

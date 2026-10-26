@@ -1,0 +1,105 @@
+{
+  "task": "HOST-CORECLIENT-1",
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "base_commit": "a93f20c7b",
+  "generated_at_utc": "2026-10-26T16:53:24.1973095Z",
+  "runtime": {
+    "dotnet_sdk": "10.0.401",
+    "avalonia": "11.3.22",
+    "target": "net9.0-win-x64",
+    "python_sidecars": "protocol 2.3 + host_bridge wire v1"
+  },
+  "artifacts": {
+    "published_exe": {
+      "path": "apps\\desktop-avalonia\\artifacts\\win-x64-single\\NewManga.App.exe",
+      "bytes": 28988170,
+      "sha256": "14eb3df30981ccda38b470b43998f3ca6da62acea7f17c006d0c888a189b5443"
+    },
+    "core_service": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
+      "bytes": 68887500,
+      "sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0"
+    },
+    "host_bridge": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\host_bridge.exe",
+      "bytes": 1835134,
+      "sha256": "92aa37d1da9d5f4318c7abd284083b2a4f93460064a06822c4ff6d9176f22cab"
+    },
+    "catalog_loader": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\catalog_loader.exe",
+      "bytes": 1833029,
+      "sha256": "b8d549bc4afd7bb59af826725483df324addcccf357b5ae7c23b927752e84cd4"
+    }
+  },
+  "evidence": {
+    "dotnet_test_log": {
+      "path": "verification\\HOST-CORECLIENT-1\\test\\dotnet-test-Debug.log",
+      "bytes": 9343,
+      "sha256": "4161c65553511dcd56e915c4c5264de53ebc185e303f32acee58cf5568f8c4f2"
+    },
+    "dotnet_build_log": {
+      "path": "verification\\HOST-CORECLIENT-1\\build\\dotnet-build-Debug.log",
+      "bytes": 1962,
+      "sha256": "2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666"
+    },
+    "vitest_baseline_log": {
+      "path": "verification\\HOST-CORECLIENT-1\\test\\vitest-baseline.log",
+      "bytes": 234307,
+      "sha256": "8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2"
+    },
+    "publish_files": {
+      "path": "verification\\HOST-CORECLIENT-1\\publish\\publish_files.json",
+      "bytes": 699,
+      "sha256": "00d5ec9b5a09fc0d921701049817e17bf87a405a491c71b3184569f97ba40000"
+    },
+    "core_chinese_roundtrip": {
+      "path": "verification\\HOST-CORECLIENT-1\\wire\\core-chinese-roundtrip.json",
+      "bytes": 4785,
+      "sha256": "978de43ca074205f9be417fff8f5c617d057c9696f9aa663b442fa88be1be052"
+    },
+    "core_raw_utf8_negative": {
+      "path": "verification\\HOST-CORECLIENT-1\\wire\\core-raw-utf8-negative.json",
+      "bytes": 1122,
+      "sha256": "611962501be106ce97c22a0c6cc3ac7c157d7c691c1378eb44b25834d64ca084"
+    },
+    "host_bridge_lifecycle": {
+      "path": "verification\\HOST-CORECLIENT-1\\wire\\host-bridge-lifecycle.json",
+      "bytes": 4484,
+      "sha256": "3e29eaa8bf17e2663b7d7cdb28e1ab751308bc3880f0ee437f97cb78e8a78f86"
+    },
+    "startup_timeout": {
+      "path": "verification\\HOST-CORECLIENT-1\\diagnostics\\startup-timeout.json",
+      "bytes": 257,
+      "sha256": "95a65b02f59bd9d5259d3fe0f81839c99d6ba872c7461c0710eff8c9e2d4dbf7"
+    },
+    "host_readonly": {
+      "path": "verification\\HOST-CORECLIENT-1\\host\\runtime-readonly.json",
+      "bytes": 290,
+      "sha256": "855710ca4f5b6c4e61e705f50c735781ec1b496fd93ff15bb35f8b5c8f954790"
+    },
+    "second_instance": {
+      "path": "verification\\HOST-CORECLIENT-1\\host\\second-instance.json",
+      "bytes": 175,
+      "sha256": "ac9bb4a7868524ad22c847ce222884c49372801ff30e74b6a22b0699735d7662"
+    },
+    "legacy_shell_readonly": {
+      "path": "verification\\HOST-CORECLIENT-1\\legacy-shell\\runtime-readonly.json",
+      "bytes": 177,
+      "sha256": "ef4301465315daf4a7edef6d70b66512fbcba9db5277c8cecc549fc59fdd468f"
+    },
+    "smoke": {
+      "path": "verification\\HOST-CORECLIENT-1\\smoke\\smoke.json",
+      "bytes": 2130,
+      "sha256": "3cb09e935ea897a2cb8b96b53c9fd3e678b1786cfe6b1a739e6b02b8187c5021"
+    },
+    "smoke_window": {
+      "path": "verification\\HOST-CORECLIENT-1\\smoke\\window.png",
+      "bytes": 139672,
+      "sha256": "6634709274fdfbecb0a399d284f5113baf8f3cb7eabbaba60c2fa7b8c6604741"
+    }
+  },
+  "cleanup": {
+    "action": "PRESERVE (evidence copy, unlabelled sidecars for tests)",
+    "task_env": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1"
+  }
+}
