@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[HOST-RESOURCE-SECURITY-1](tasks/HOST-RESOURCE-SECURITY-1.md) `ready`（S5-B 安全 harness；S5-A done 09d7e76c1）。
+- 当前 Task：[HOST-RESOURCE-SECURITY-1](tasks/HOST-RESOURCE-SECURITY-1.md) `in_review`（D4-1/3/5/6 PASS；101/101）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
