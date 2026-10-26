@@ -3,7 +3,7 @@ id: DISPLAY-PERF-DECISION-1
 title: 显示效果与运行效率基线 + 三路线裁决（仅证据/设计，不改产品代码）
 kind: research
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_authorized_2026-10-26_display_perf_decision
 suggested_owner: dsh
 owner: dsh
