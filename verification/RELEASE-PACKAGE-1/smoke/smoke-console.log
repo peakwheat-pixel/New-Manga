@@ -1,0 +1,51 @@
+{
+  "ac": "AC2/AC3/AC6",
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-PACKAGE-1\\install\\app\\NewManga.App.exe",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s1-smoke-9d855305",
+  "window_visible_ms": 465.3,
+  "window_rect": {
+    "x": 640,
+    "y": 286,
+    "width": 1280,
+    "height": 820
+  },
+  "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\RELEASE-PACKAGE-1\\verification\\RELEASE-PACKAGE-1\\smoke\\window.png",
+  "process_tree": [
+    35860,
+    29584,
+    20016,
+    23936,
+    30760
+  ],
+  "sidecars_spawned": [
+    {
+      "name": "core_service",
+      "pid": 29584
+    },
+    {
+      "name": "host_bridge",
+      "pid": 20016
+    }
+  ],
+  "console_windows": [],
+  "console_window_count": 0,
+  "visible_window_classes": [
+    {
+      "pid": 35860,
+      "class": "Avalonia-69587b14-aaaf-4684-9b81-5fc814241574"
+    }
+  ],
+  "exit_code": 0,
+  "leftover_sidecar_pids": {
+    "core_service": [],
+    "host_bridge": []
+  },
+  "wire_files": [
+    "core-service.ndjson",
+    "host-bridge.ndjson"
+  ],
+  "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\RELEASE-PACKAGE-1\\verification\\RELEASE-PACKAGE-1\\smoke\\host.log",
+  "chinese_roundtrip_wire_evidence": false,
+  "chinese_roundtrip_wire_sample": null,
+  "at_utc": "2026-10-26T19:04:15.1371265Z"
+}
