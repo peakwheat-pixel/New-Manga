@@ -12,8 +12,8 @@ depends_on: [UIUX-V2-RUNTIME-REALCORE-1]
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: 3070050a8
+delivery_head: 3070050a8
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/UIUX-V2-RUNTIME-REALCORE-2
@@ -103,13 +103,13 @@ allowed_paths:
 
 | evidence_id | AC | path（仓库相对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i33/report.json | PENDING | - | CANONICAL |
-| EV-02 | AC3 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i34/report.json | PENDING | - | CANONICAL |
-| EV-03 | AC1..AC5 | verification/UIUX-V2-RUNTIME-REALCORE-2/README.md | PENDING | - | CANONICAL |
-| EV-04 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r1.md | PENDING | - | CANONICAL |
-| EV-05 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r2.md | PENDING | - | CANONICAL |
-| EV-06 | 资源 | verification/UIUX-V2-RUNTIME-REALCORE-2/resource-manifest.json | PENDING | - | CANONICAL |
-| EV-07 | AC1..AC5 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | PENDING | - | CANONICAL |
-| EV-08 | AC4 | apps/desktop/src-tauri/src/core_bridge.rs | PENDING | - | CANONICAL |
-| EV-09 | AC5 | apps/desktop/frontend/src/pages/Shelf.test.tsx | PENDING | - | CANONICAL |
-| EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-REALCORE-2-handoff.md | PENDING | - | CANONICAL |
+| EV-01 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i33/report.json | 3070050a8 | - | CANONICAL |
+| EV-02 | AC3 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i34/report.json | 3070050a8 | - | CANONICAL |
+| EV-03 | AC1..AC5 | verification/UIUX-V2-RUNTIME-REALCORE-2/README.md | 3070050a8 | - | CANONICAL |
+| EV-04 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r1.md | 3070050a8 | - | CANONICAL |
+| EV-05 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r2.md | 3070050a8 | - | CANONICAL |
+| EV-06 | 资源 | verification/UIUX-V2-RUNTIME-REALCORE-2/resource-manifest.json | 3070050a8 | - | CANONICAL |
+| EV-07 | AC1..AC5 | apps/desktop/frontend/e2e/uiux-v2/run.mjs | 3070050a8 | - | CANONICAL |
+| EV-08 | AC4 | apps/desktop/src-tauri/src/core_bridge.rs | 3070050a8 | - | CANONICAL |
+| EV-09 | AC5 | apps/desktop/frontend/src/pages/Shelf.test.tsx | 3070050a8 | - | CANONICAL |
+| EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-REALCORE-2-handoff.md | 3070050a8 | - | CANONICAL |
