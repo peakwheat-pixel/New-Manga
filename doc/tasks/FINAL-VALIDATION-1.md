@@ -12,7 +12,7 @@ depends_on: [CORE-SLIM-2, RELEASE-PACKAGE-1]
 base_commit: 78784afaf
 branch: task/FINAL-VALIDATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FINAL-VALIDATION-1
-integration_commit: null
+integration_commit: 0ab42cd15
 delivery_head: null
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -105,3 +105,4 @@ allowed_paths:
 - 收尾：AD-002 §8「已全部完成」+ §8.1 S0–S5 完成表；DISPLAY-PERF-DECISION-1 → done + Closeout；MANUAL_VERIFY.md 最新版（5 项真机 NOT_RUN）。
 - 遗留（记录不阻塞）：真机 5 项待用户；安装 smoke 窗口断言不含书架语义；未签名/无 MSIX（zip+install.ps1）；base 包无模型→首次检测 typed NOT_CONFIGURED（预期）；GPU 状态探测待改 ORT EP。
 - 集成：见下条提交；未 push。
+
