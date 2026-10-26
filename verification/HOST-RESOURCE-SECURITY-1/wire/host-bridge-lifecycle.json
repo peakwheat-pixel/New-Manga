@@ -2,7 +2,7 @@
   "ac": "AC2",
   "catalog_loader_stdout": "{\r\n  \u0022res-1\u0022: {\r\n    \u0022scope_class\u0022: \u0022managed-read-only\u0022,\r\n    \u0022rel_path\u0022: \u0022book/page01.jpg\u0022\r\n  }\r\n}\r\n",
   "catalog_loader_exit_code": 0,
-  "grant_id": "m2id.v1.uDKJ6Ad-bVL8u9eVVo1q5DoyuW8KuucI3AhyNXznXJU",
+  "grant_id": "m2id.v1.WIC9abERVWIZwi5tfsEC53UwPqwLFaOl4X7VGgyYtCM",
   "rel_path": "book/page01.jpg",
   "size": 1040,
   "sha256": "b9addd435843d64862cc17e0f62a5b8b302b0a90a570315bd595fee0fb913601",
@@ -15,7 +15,7 @@
       "request_utf8_hex": "7b226964223a312c226d6574686f64223a2270696e67222c22706172616d73223a7b7d7d",
       "request_ascii_only": true,
       "response_ascii_only": true,
-      "elapsed_ms": 67.797
+      "elapsed_ms": 67.357
     },
     {
       "sidecar": "host_bridge",
@@ -24,43 +24,43 @@
       "request_utf8_hex": "7b226964223a322c226d6574686f64223a2270696e67222c22706172616d73223a7b7d7d",
       "request_ascii_only": true,
       "response_ascii_only": true,
-      "elapsed_ms": 0.095
+      "elapsed_ms": 0.09
     },
     {
       "sidecar": "host_bridge",
       "request": "{\u0022id\u0022:3,\u0022method\u0022:\u0022issue\u0022,\u0022params\u0022:{\u0022resource_id\u0022:\u0022res-1\u0022,\u0022revision_fingerprint\u0022:\u0022rev-1\u0022}}",
-      "response": "{\u0022result\u0022:{\u0022id\u0022:\u0022m2id.v1.uDKJ6Ad-bVL8u9eVVo1q5DoyuW8KuucI3AhyNXznXJU\u0022,\u0022size\u0022:1040},\u0022id\u0022:3}",
+      "response": "{\u0022result\u0022:{\u0022id\u0022:\u0022m2id.v1.WIC9abERVWIZwi5tfsEC53UwPqwLFaOl4X7VGgyYtCM\u0022,\u0022size\u0022:1040},\u0022id\u0022:3}",
       "request_utf8_hex": "7b226964223a332c226d6574686f64223a226973737565222c22706172616d73223a7b227265736f757263655f6964223a227265732d31222c227265766973696f6e5f66696e6765727072696e74223a227265762d31227d7d",
       "request_ascii_only": true,
       "response_ascii_only": true,
-      "elapsed_ms": 2.71
+      "elapsed_ms": 2.46
     },
     {
       "sidecar": "host_bridge",
-      "request": "{\u0022id\u0022:4,\u0022method\u0022:\u0022resolve\u0022,\u0022params\u0022:{\u0022id\u0022:\u0022m2id.v1.uDKJ6Ad-bVL8u9eVVo1q5DoyuW8KuucI3AhyNXznXJU\u0022}}",
-      "response": "{\u0022result\u0022:{\u0022scope_class\u0022:\u0022managed-read-only\u0022,\u0022resource_id\u0022:\u0022res-1\u0022,\u0022revision_fingerprint\u0022:\u0022rev-1\u0022,\u0022rel_path\u0022:\u0022book/page01.jpg\u0022,\u0022size\u0022:1040,\u0022sha256\u0022:\u0022b9addd435843d64862cc17e0f62a5b8b302b0a90a570315bd595fee0fb913601\u0022,\u0022volume_serial\u0022:1485189147,\u0022file_index\u0022:10133099162616156},\u0022id\u0022:4}",
-      "request_utf8_hex": "7b226964223a342c226d6574686f64223a227265736f6c7665222c22706172616d73223a7b226964223a226d3269642e76312e75444b4a3641642d62564c3875396556566f317135446f797557384b75756349334168794e587a6e584a55227d7d",
+      "request": "{\u0022id\u0022:4,\u0022method\u0022:\u0022resolve\u0022,\u0022params\u0022:{\u0022id\u0022:\u0022m2id.v1.WIC9abERVWIZwi5tfsEC53UwPqwLFaOl4X7VGgyYtCM\u0022}}",
+      "response": "{\u0022result\u0022:{\u0022scope_class\u0022:\u0022managed-read-only\u0022,\u0022resource_id\u0022:\u0022res-1\u0022,\u0022revision_fingerprint\u0022:\u0022rev-1\u0022,\u0022rel_path\u0022:\u0022book/page01.jpg\u0022,\u0022size\u0022:1040,\u0022sha256\u0022:\u0022b9addd435843d64862cc17e0f62a5b8b302b0a90a570315bd595fee0fb913601\u0022,\u0022volume_serial\u0022:1485189147,\u0022file_index\u0022:1970324838164615},\u0022id\u0022:4}",
+      "request_utf8_hex": "7b226964223a342c226d6574686f64223a227265736f6c7665222c22706172616d73223a7b226964223a226d3269642e76312e57494339616245525657495a7769357466734543353355775071774c46614f6c345837564767795974434d227d7d",
       "request_ascii_only": true,
       "response_ascii_only": true,
-      "elapsed_ms": 0.066
+      "elapsed_ms": 0.068
     },
     {
       "sidecar": "host_bridge",
-      "request": "{\u0022id\u0022:5,\u0022method\u0022:\u0022revoke\u0022,\u0022params\u0022:{\u0022id\u0022:\u0022m2id.v1.uDKJ6Ad-bVL8u9eVVo1q5DoyuW8KuucI3AhyNXznXJU\u0022}}",
+      "request": "{\u0022id\u0022:5,\u0022method\u0022:\u0022revoke\u0022,\u0022params\u0022:{\u0022id\u0022:\u0022m2id.v1.WIC9abERVWIZwi5tfsEC53UwPqwLFaOl4X7VGgyYtCM\u0022}}",
       "response": "{\u0022result\u0022:{\u0022revoked\u0022:true},\u0022id\u0022:5}",
-      "request_utf8_hex": "7b226964223a352c226d6574686f64223a227265766f6b65222c22706172616d73223a7b226964223a226d3269642e76312e75444b4a3641642d62564c3875396556566f317135446f797557384b75756349334168794e587a6e584a55227d7d",
+      "request_utf8_hex": "7b226964223a352c226d6574686f64223a227265766f6b65222c22706172616d73223a7b226964223a226d3269642e76312e57494339616245525657495a7769357466734543353355775071774c46614f6c345837564767795974434d227d7d",
       "request_ascii_only": true,
       "response_ascii_only": true,
-      "elapsed_ms": 0.188
+      "elapsed_ms": 0.156
     },
     {
       "sidecar": "host_bridge",
-      "request": "{\u0022id\u0022:6,\u0022method\u0022:\u0022resolve\u0022,\u0022params\u0022:{\u0022id\u0022:\u0022m2id.v1.uDKJ6Ad-bVL8u9eVVo1q5DoyuW8KuucI3AhyNXznXJU\u0022}}",
+      "request": "{\u0022id\u0022:6,\u0022method\u0022:\u0022resolve\u0022,\u0022params\u0022:{\u0022id\u0022:\u0022m2id.v1.WIC9abERVWIZwi5tfsEC53UwPqwLFaOl4X7VGgyYtCM\u0022}}",
       "response": "{\u0022error\u0022:{\u0022code\u0022:\u0022REF_REVOKED\u0022},\u0022id\u0022:6}",
-      "request_utf8_hex": "7b226964223a362c226d6574686f64223a227265736f6c7665222c22706172616d73223a7b226964223a226d3269642e76312e75444b4a3641642d62564c3875396556566f317135446f797557384b75756349334168794e587a6e584a55227d7d",
+      "request_utf8_hex": "7b226964223a362c226d6574686f64223a227265736f6c7665222c22706172616d73223a7b226964223a226d3269642e76312e57494339616245525657495a7769357466734543353355775071774c46614f6c345837564767795974434d227d7d",
       "request_ascii_only": true,
       "response_ascii_only": true,
-      "elapsed_ms": 0.056
+      "elapsed_ms": 0.063
     }
   ]
 }

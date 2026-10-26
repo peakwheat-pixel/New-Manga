@@ -1,14 +1,14 @@
 {
   "task": "HOST-TILE-CHANNEL-1",
-  "at_utc": "2026-10-26T18:54:21.4884423Z",
+  "at_utc": "2026-10-26T18:40:34.5771852Z",
   "ac": "AC1/AC5",
   "tile_bytes": 4194304,
   "tile_count": 4,
   "issue_ms": 0.206,
-  "cold_read_max_ms": 2.514,
-  "cold_read_avg_ms": 2.434,
-  "raw_read_avg_ms": 0.373,
-  "digest_overhead_ratio": 5.519,
+  "cold_read_max_ms": 2.481,
+  "cold_read_avg_ms": 2.404,
+  "raw_read_avg_ms": 0.408,
+  "digest_overhead_ratio": 4.896,
   "cold_read_le_60ms": true,
   "digest_overhead_note": "S5-A records the ratio; G5 \u003C=10% target is accounted in S5-B harness"
 }

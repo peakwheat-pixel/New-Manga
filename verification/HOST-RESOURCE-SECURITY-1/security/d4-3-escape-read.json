@@ -1,6 +1,6 @@
 {
   "task": "HOST-RESOURCE-SECURITY-1",
-  "at_utc": "2026-10-26T18:54:21.1176604Z",
+  "at_utc": "2026-10-26T18:40:34.6389919Z",
   "ac": "AC2",
   "path_replaced_with_junction": true,
   "read_result": "TilePathOutsideRoot",

@@ -4,9 +4,3 @@
 2026-10-26T18:40:29.7754191+00:00 INFO first-run backup skipped: catalog database not present yet
 2026-10-26T18:40:30.1564634+00:00 INFO core_service ready (1 wire frames)
 2026-10-26T18:40:30.2329252+00:00 INFO host_bridge ready (1 wire frames)
-2026-10-26T18:54:21.5317348+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.29c14da0c784 (abandoned_recovered=False)
-2026-10-26T18:54:21.5367303+00:00 WARN legacy shell detected (pid 51216); entering read-only mode
-2026-10-26T18:54:21.5371523+00:00 INFO mode=ReadOnlyLegacyShellRunning reason=legacy Tauri shell (new-manga.exe) is running; new host starts read-only and shows a notice data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-legacy-running-4b8a723fd4
-2026-10-26T18:54:21.5374813+00:00 INFO first-run backup skipped: catalog database not present yet
-2026-10-26T18:54:21.9158292+00:00 INFO core_service ready (1 wire frames)
-2026-10-26T18:54:21.9918894+00:00 INFO host_bridge ready (1 wire frames)

@@ -2,8 +2,8 @@
   "ac": "AC1/AC3",
   "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
   "sidecar_sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
-  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-05a400de",
-  "core_stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-05a400de\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-05a400de\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-9654be20",
+  "core_stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-9654be20\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-9654be20\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
   "probes": [
     {
       "command": "core.ping",
@@ -42,7 +42,7 @@
         "title": "命令面探测・日本語テスト"
       },
       "raw_request_ascii": true,
-      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"ab7e3dddf8c1467da49a1155bacee181\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-26T18:53:36.620+00:00\",\"updated_at\":\"2026-10-26T18:53:36.620+00:00\"},\"error\":null}",
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"62db61921b18420aa08690ba832216c5\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-26T18:39:45.505+00:00\",\"updated_at\":\"2026-10-26T18:39:45.505+00:00\"},\"error\":null}",
       "ok": true,
       "error_code": null,
       "error_category": null
@@ -51,12 +51,12 @@
       "command": "CreateChapter",
       "minor": 8,
       "request_payload": {
+        "book_id": "62db61921b18420aa08690ba832216c5",
         "chapter_number": "1",
-        "book_id": "ab7e3dddf8c1467da49a1155bacee181",
         "title": "第1章"
       },
       "raw_request_ascii": true,
-      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"b376406db9024bd8acd029a56ada9207\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"962c3a05da334433ac95fcfb6c09940a\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
       "ok": true,
       "error_code": null,
       "error_category": null
@@ -65,7 +65,7 @@
       "command": "ListChapters",
       "minor": 3,
       "request_payload": {
-        "book_id": "ab7e3dddf8c1467da49a1155bacee181"
+        "book_id": "62db61921b18420aa08690ba832216c5"
       },
       "raw_request_ascii": true,
       "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-6\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapters'\",\"retryable\":false}}",
@@ -77,7 +77,7 @@
       "command": "ListChapterPages",
       "minor": 3,
       "request_payload": {
-        "chapter_id": "b376406db9024bd8acd029a56ada9207"
+        "chapter_id": "962c3a05da334433ac95fcfb6c09940a"
       },
       "raw_request_ascii": true,
       "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-7\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapterPages'\",\"retryable\":false}}",
@@ -241,8 +241,8 @@
       "command": "set_region_type",
       "minor": 3,
       "request_payload": {
-        "region_id": "probe-region",
-        "new_region_type": "probe"
+        "new_region_type": "probe",
+        "region_id": "probe-region"
       },
       "raw_request_ascii": true,
       "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-22\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"set_region_type requires 'new_region_type': one of ['narration', 'note', 'other', 'sfx', 'speech', 'title']\",\"retryable\":false}}",
@@ -255,8 +255,8 @@
       "minor": 3,
       "request_payload": {
         "revision_no": 1,
-        "expected_revision": 1,
-        "region_id": "probe-region"
+        "region_id": "probe-region",
+        "expected_revision": 1
       },
       "raw_request_ascii": true,
       "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-23\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
@@ -268,8 +268,8 @@
       "command": "GetReaderProjection",
       "minor": 3,
       "request_payload": {
-        "chapter_id": "probe-chapter",
         "start_position": 0,
+        "chapter_id": "probe-chapter",
         "mode": "scroll"
       },
       "raw_request_ascii": true,
@@ -292,5 +292,5 @@
       "error_category": "validation"
     }
   ],
-  "at_utc": "2026-10-26T18:53:36.7346838Z"
+  "at_utc": "2026-10-26T18:39:45.6209978Z"
 }
