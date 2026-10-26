@@ -11,9 +11,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | non-terminal | 11 |
 | non-terminal named in the plan | 10 |
 | non-terminal outside the plan | 1 |
-| task files tracked by git | 371 |
-| task files untracked (drafts) | 1 |
-| non-terminal tracked by git | 10 |
+| task files tracked by git | 372 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 11 |
 
 ## By status
 
@@ -24,11 +24,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `in_review` | 4 | no |
+| `in_review` | 5 | no |
 | `proposed` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
-| `changes_requested` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -37,10 +36,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | own row |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
-| `HOST-CORECLIENT-1` | `changes_requested` | own row |
 | `DISPLAY-PERF-DECISION-1` | `in_review` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | own row |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | own row |
+| `HOST-CORECLIENT-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | own row |
 | `HOST-COMMAND-MIGRATION-1` | `proposed` | own row |

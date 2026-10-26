@@ -3,7 +3,7 @@ id: HOST-CORECLIENT-1
 title: S1 C# Host/CoreClient——spawn 双 sidecar + JSON-lines + 中文零乱码 + 失败可诊断
 kind: implementation
 governance_version: 3
-status: done
+status: in_review
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: avalonia-spike
@@ -14,8 +14,8 @@ branch: task/HOST-CORECLIENT-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-CORECLIENT-1
 integration_commit: null
 delivery_head: c1efb938f5b12c989b406316a8eabd62e0a34a6a
-canonical_evidence_status: complete
-resource_closeout_status: complete
+canonical_evidence_status: pinned
+resource_closeout_status: pending
 evidence_dir: verification/HOST-CORECLIENT-1
 allowed_paths:
   - doc/tasks/HOST-CORECLIENT-1.md
@@ -92,9 +92,9 @@ allowed_paths:
 |---|---|---|---|---|---|
 | E1-build | AC1/AC6 | verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log | c1efb938f5b12c989b406316a8eabd62e0a34a6a | b64f1e8079711150ef9b3caf8d28f3dc28e62550b6eaed2ce6f4975bf9be8a9c | CANONICAL |
 | E2-test-log | AC2/AC3/AC4/AC5/AC6 | verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log | c1efb938f5b12c989b406316a8eabd62e0a34a6a | e027f355d195b5221dd1719001f149a7e09bc42a7711afe11a7458e4ac011657 | CANONICAL |
-| E3a-trx-coreclient | AC2/AC3/AC4/AC6 | verification/HOST-CORECLIENT-1/test/results-coreclient.trx | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 5d2a111191e770949ee6b1ac4132abde119cc76c0698d79f9dc4a8122a2b3bda | CANONICAL |
-| E3b-trx-host | AC2/AC5/AC6 | verification/HOST-CORECLIENT-1/test/results-host.trx | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 0b4e2792ab29e626fa796d4c1a386f9ab3b18120daec9866f8a165faaafd5e79 | CANONICAL |
-| E3c-trx-app | AC1/AC6 | verification/HOST-CORECLIENT-1/test/results-app.trx | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 10de787cf33c9cfe6998986cb7552bae4b1d1e4adc6e9e74d2b1db8ae64b0290 | CANONICAL |
+| E3a-trx-coreclient | AC2/AC3/AC4/AC6 | verification/HOST-CORECLIENT-1/test/results-coreclient.trx | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 3b18a3f97ce58f5ee432cc4841e59e5f5a55fc87882c30d4f77f60fa2ff9a530 | CANONICAL |
+| E3b-trx-host | AC2/AC5/AC6 | verification/HOST-CORECLIENT-1/test/results-host.trx | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 79d6904cf38eff6b75b93c4c205afd29ac91dae847156ae3eb86d1d103eb1215 | CANONICAL |
+| E3c-trx-app | AC1/AC6 | verification/HOST-CORECLIENT-1/test/results-app.trx | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 1817d1836591d7e06f1b5c97dacd0b55dffe60440bd73e0043dd1c23f66e3d89 | CANONICAL |
 | E4-vitest | AC6 | verification/HOST-CORECLIENT-1/test/vitest-baseline.log | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2 | CANONICAL |
 | E5-publish | AC1 | verification/HOST-CORECLIENT-1/publish/publish_files.json | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 00d5ec9b5a09fc0d921701049817e17bf87a405a491c71b3184569f97ba40000 | CANONICAL |
 | E6-cn-roundtrip | AC2/AC3 | verification/HOST-CORECLIENT-1/wire/core-chinese-roundtrip.json | c1efb938f5b12c989b406316a8eabd62e0a34a6a | 9a24c58d6ad5e50c622901fb63b6484c6248af50b1f1d3c5cb9b4313ac02d9c9 | CANONICAL |
@@ -153,6 +153,8 @@ allowed_paths:
 - 单命令验收：pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 → **57 passed / 0 skipped / 0 failed**（证据写 workspace evidence-rerun，不覆盖仓内 pin）。
 - 裸跑合同：无 fixture 时 45 passed / 12 skipped / 0 failed，12 条 skip 均带 
 eeds sidecar fixture 原因（已抽查 ScriptFact/HostSidecarFact 属性）。
-- 证据 pin：per-project TRX 与 MANIFEST 均为完整 64-hex；旧单一 esults-Debug.trx 已删除，与卡内 E 表一致。
+- 证据 pin：per-project TRX 与 MANIFEST 均为完整 64-hex；旧单一 
+esults-Debug.trx 已删除，与卡内 E 表一致。
 - 集成：分支 	ask/HOST-CORECLIENT-1 合入 main；范围仅 pps/desktop-avalonia/** + erification/HOST-CORECLIENT-1/** + 文档；未改旧壳/Python Core。
-- 结论：**approved / done**；esource_closeout_status=complete（~1GB 无标签 sidecar 副本按 PRESERVE_REFERENCED 保留，删除需另行授权）。
+- 结论：**修复验收 PASS**（closeout 下一轮完成）；
+esource_closeout_status=complete（~1GB 无标签 sidecar 副本按 PRESERVE_REFERENCED 保留，删除需另行授权）。
