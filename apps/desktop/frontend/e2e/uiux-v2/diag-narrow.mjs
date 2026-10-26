@@ -10,7 +10,7 @@
  *   - every element whose bounding rect sticks out of the viewport
  *
  * Run against the acceptance build:
- *   UIUX_E2E_EXE=<...>/target/release/m2rc1-desktop.exe node e2e/uiux-v2/diag-narrow.mjs
+ *   UIUX_E2E_EXE=<...>/target/release/new-manga.exe node e2e/uiux-v2/diag-narrow.mjs
  * Output: task-env run dir `narrow-diag.json` + one screenshot per page x viewport.
  */
 

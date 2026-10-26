@@ -48,10 +48,11 @@
 |UIUX-V2-RUNTIME-REALCORE-1|UIUX-V2-RUNTIME-1|done（脚本化真实 Tauri+Core 端到端 7/7；修 P0 中文编码+P1 死按钮；ZCode r1 approved）|
 |UIUX-V2-RUNTIME-REALCORE-2|UIUX-V2-RUNTIME-REALCORE-1|closed_with_limitations（run-i36 10/10；G2/G4/G5 达成；G1 转人工验证）|
 |UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|done（.nm-app min-width:1024 根治；900 档四页 900/900；`e9a409927`）|
+|PRODUCT-IDENTITY-1|UIUX-V2-RUNTIME-NARROW-1|done（窗口标题/exe/应用ID → New Manga；`new-manga.exe`）|
 
 READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1
 
-2026-10-25 DSH 接任 Lead/Architect/Integrator。产品主线=UIUX-V2-RUNTIME-1（v2 接入运行时，四页真实数据+设置页）；Rust r2、父审查、Core 环境线不变，按用户优先级绕开。C-1/C-2/C-3 与插件 OS 级沙箱已完成，不再列为待授权候选。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
+2026-10-25 DSH 接任 Lead/Architect/Integrator。产品主线=UIUX-V2-RUNTIME-1；Rust r2、父审查、Core 环境线不变，按用户优先级绕开。主线收敛已完成并通过独立审查；后续清理/删除仍需新授权，不构成解除 r212 或五广域根保护。
 
 ## 终态依赖与限制
 
@@ -59,6 +60,5 @@ READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1
 
 - 已完成节点共 54 项（源图口径）；P09/P18/P19/P20 等限定关闭，未满足 Gate 不变。
 - WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 个受保护资源限制；不得清理/GC/prune。132 worktrees/93 branches 为历史快照。
-- WORKSPACE-CLEANUP-TOOL-HARDENING-1：done（368c07809）；WORKSPACE-DECLARATION-REMEDIATION-1：done（bb7887442），残余错误保留 fail-closed；不因工具修复自动获得删除授权。
-- P22 已集成；H1/P2-1/13 与 BC-AC5 PARTIAL 保留。无 Legacy 实施/诊断/修复释放。
+- WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。P22 已集成；H1/P2-1/13 与 BC-AC5 PARTIAL 保留。
 当前治理主线 `main`；旧主线显式保留规则不变。远端仅允许用户授权的新分支快照 push，不push main。
