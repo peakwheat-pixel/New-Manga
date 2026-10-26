@@ -1,0 +1,24 @@
+2026-10-26T22:07:28.5008154+08:00 === probe host start ===
+2026-10-26T22:07:28.5058170+08:00 mode=app label=admin-app-01
+2026-10-26T22:07:28.6910898+08:00 isElevated=True user=HOME-MY\49745
+2026-10-26T22:07:28.7612085+08:00 target=G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\pinned-baseline\new-manga.exe sha256=1136BB0A8D582A30C6EF0B16959B86A62DD26D2C6D9CE49E298C9B86C3343226
+2026-10-26T22:07:28.7747197+08:00 spawned pid=50720
+2026-10-26T22:07:29.8995345+08:00 proc+ pid=41536 ppid=41420 name=python.exe
+2026-10-26T22:07:29.9000385+08:00 proc+ pid=41548 ppid=41536 name=python.exe
+2026-10-26T22:07:29.9010432+08:00 proc+ pid=34924 ppid=17896 name=msedgewebview2.exe
+2026-10-26T22:07:29.9020425+08:00 proc+ pid=32928 ppid=34924 name=msedgewebview2.exe
+2026-10-26T22:07:29.9020425+08:00 proc+ pid=46304 ppid=34924 name=msedgewebview2.exe
+2026-10-26T22:07:29.9030436+08:00 proc+ pid=30480 ppid=34924 name=msedgewebview2.exe
+2026-10-26T22:07:29.9040423+08:00 proc+ pid=28956 ppid=34924 name=msedgewebview2.exe
+2026-10-26T22:07:29.9040423+08:00 proc+ pid=5520 ppid=34924 name=msedgewebview2.exe
+2026-10-26T22:07:29.9050435+08:00 proc+ pid=50720 ppid=49404 name=new-manga.exe
+2026-10-26T22:07:29.9060448+08:00 proc+ pid=4212 ppid=50720 name=core_service.exe
+2026-10-26T22:07:29.9060448+08:00 proc+ pid=684 ppid=50720 name=host_bridge.exe
+2026-10-26T22:07:29.9070500+08:00 proc+ pid=51880 ppid=50720 name=msedgewebview2.exe
+2026-10-26T22:07:29.9080436+08:00 proc+ pid=43304 ppid=51880 name=msedgewebview2.exe
+2026-10-26T22:07:29.9080436+08:00 proc+ pid=51500 ppid=51880 name=msedgewebview2.exe
+2026-10-26T22:07:29.9090426+08:00 proc+ pid=26656 ppid=51880 name=msedgewebview2.exe
+2026-10-26T22:07:29.9095469+08:00 proc+ pid=16968 ppid=51880 name=msedgewebview2.exe
+2026-10-26T22:07:29.9105512+08:00 proc+ pid=44076 ppid=51880 name=msedgewebview2.exe
+2026-10-26T22:08:44.8431791+08:00 summary written
+2026-10-26T22:08:44.8471784+08:00 === probe host end: exited=True code= window=True ===

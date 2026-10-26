@@ -1,0 +1,76 @@
+﻿{
+    "label":  "nonadmin-core-01",
+    "mode":  "core",
+    "isElevated":  false,
+    "user":  "HOME-MY\\49745",
+    "integrityLevel":  "组名: Mandatory Label\\Medium Mandatory Level",
+    "exe":  "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\release\\resources\\core-sidecar\\core_service.exe",
+    "exeSha256":  "E0A1EFF8D9EE7558EAE903F83AF3870ADA94AFC2D083F82E2CC0B571F6F14BC0",
+    "exited":  true,
+    "exitCode":  null,
+    "exitedAtSec":  1,
+    "mainWindowSeen":  true,
+    "mainWindowTitle":  "",
+    "samplingSeconds":  4.6,
+    "processesSeen":  [
+                          {
+                              "pid":  35324,
+                              "ppid":  17896,
+                              "name":  "msedgewebview2.exe",
+                              "firstSeenAtSec":  1,
+                              "creationDate":  "2026-10-26T22:08:44.8736440+08:00",
+                              "cmd":  "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=SearchHost.exe --webview-exe-version=2608.25008.200.0 --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\" --noerrdialogs --disable-features=msSmartScreenProtection --edge-webview-enable-mojo-ipcz --enable-features=msEdgeFluentOverlayScrollbar --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26300.9711) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26300 IsWebView2/True (WebView2Version 155.0.4283.62)\" --lang=zh-Hans-CN --mojo-named-platform-channel-pipe=17896.21772.1079062214741306541 /pfhostedapp:3bd3269e9686b1420f350e45d5a0c0805bb16972"
+                          },
+                          {
+                              "pid":  45472,
+                              "ppid":  35324,
+                              "name":  "msedgewebview2.exe",
+                              "firstSeenAtSec":  1,
+                              "creationDate":  "2026-10-26T22:08:44.9682120+08:00",
+                              "cmd":  "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=zh-CN --service-sandbox-type=none --noerrdialogs --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26300.9711) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26300 IsWebView2/True (WebView2Version 155.0.4283.62)\" --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\" --webview-exe-name=SearchHost.exe --webview-exe-version=2608.25008.200.0 --embedded-browser-webview=1 --startup-read-main-dll --metrics-shmem-handle=2236,i,13527677181315450478,17369002734173288048,524288 --field-trial-handle=1980,i,17861599044203885765,8924712691290080343,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --pseudonymization-salt-handle=2056,i,14693390356072655383,7275082173390195791,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2252 /prefetch:11 /pfhostedapp:3bd3269e9686b1420f350e45d5a0c0805bb16972"
+                          },
+                          {
+                              "pid":  28028,
+                              "ppid":  35324,
+                              "name":  "msedgewebview2.exe",
+                              "firstSeenAtSec":  1,
+                              "creationDate":  "2026-10-26T22:08:44.9670200+08:00",
+                              "cmd":  "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --type=gpu-process --gpu-recent-crash-count=0 --noerrdialogs --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26300.9711) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26300 IsWebView2/True (WebView2Version 155.0.4283.62)\" --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\" --webview-exe-name=SearchHost.exe --webview-exe-version=2608.25008.200.0 --embedded-browser-webview=1 --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --startup-read-main-dll --metrics-shmem-handle=1888,i,18274638724302648,17011419878933849248,262144 --field-trial-handle=1980,i,17861599044203885765,8924712691290080343,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --pseudonymization-salt-handle=2056,i,14693390356072655383,7275082173390195791,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1776 /prefetch:2 /pfhostedapp:3bd3269e9686b1420f350e45d5a0c0805bb16972"
+                          },
+                          {
+                              "pid":  20560,
+                              "ppid":  35324,
+                              "name":  "msedgewebview2.exe",
+                              "firstSeenAtSec":  1,
+                              "creationDate":  "2026-10-26T22:08:44.8903040+08:00",
+                              "cmd":  "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --type=crashpad-handler --user-data-dir=C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView /prefetch:4 /pfhostedapp:3bd3269e9686b1420f350e45d5a0c0805bb16972 --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\\Crashpad --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=155.0.8059.85 \"--annotation=exe=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --annotation=plat=Win64 \"--annotation=prod=Edge WebView2\" --annotation=ver=155.0.4283.62 --initial-client-data=0x174,0x178,0x17c,0x150,0x184,0x7ff9719f83e0,0x7ff9719f83f0,0x7ff9719f8400"
+                          },
+                          {
+                              "pid":  14744,
+                              "ppid":  35324,
+                              "name":  "msedgewebview2.exe",
+                              "firstSeenAtSec":  1,
+                              "creationDate":  "2026-10-26T22:08:45.0462930+08:00",
+                              "cmd":  "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --type=renderer --noerrdialogs --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26300.9711) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26300 IsWebView2/True (WebView2Version 155.0.4283.62)\" --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\" --webview-exe-name=SearchHost.exe --webview-exe-version=2608.25008.200.0 --embedded-browser-webview=1 --video-capture-use-gpu-memory-buffer --lang=zh-CN --js-flags --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --ssd-no-pressure-read-main-dll --launch-time-ticks=91272116278 --metrics-shmem-handle=3776,i,10596269570624665446,10579167846014177221,1048576 --field-trial-handle=1980,i,17861599044203885765,8924712691290080343,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --pseudonymization-salt-handle=2056,i,14693390356072655383,7275082173390195791,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3804 /pfhostedapp:3bd3269e9686b1420f350e45d5a0c0805bb16972 /prefetch:1"
+                          },
+                          {
+                              "pid":  51648,
+                              "ppid":  35324,
+                              "name":  "msedgewebview2.exe",
+                              "firstSeenAtSec":  1,
+                              "creationDate":  "2026-10-26T22:08:44.9879720+08:00",
+                              "cmd":  "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=zh-CN --service-sandbox-type=service --noerrdialogs --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26300.9711) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26300 IsWebView2/True (WebView2Version 155.0.4283.62)\" --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\" --webview-exe-name=SearchHost.exe --webview-exe-version=2608.25008.200.0 --embedded-browser-webview=1 --startup-read-main-dll --metrics-shmem-handle=2548,i,2778284578812384791,18002399456724421193,524288 --field-trial-handle=1980,i,17861599044203885765,8924712691290080343,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --pseudonymization-salt-handle=2056,i,14693390356072655383,7275082173390195791,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2568 /prefetch:13 /pfhostedapp:3bd3269e9686b1420f350e45d5a0c0805bb16972"
+                          }
+                      ],
+    "killedSurvivors":  [
+                            "msedgewebview2.exe:35324",
+                            "msedgewebview2.exe:20560",
+                            "msedgewebview2.exe:28028",
+                            "msedgewebview2.exe:45472",
+                            "msedgewebview2.exe:51648",
+                            "msedgewebview2.exe:14744"
+                        ],
+    "stderrBytes":  1230,
+    "stdoutBytes":  0,
+    "finishedAt":  "2026-10-26T22:10:14.1150514+08:00"
+}

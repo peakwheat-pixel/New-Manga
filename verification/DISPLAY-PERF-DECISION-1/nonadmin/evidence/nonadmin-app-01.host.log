@@ -1,0 +1,90 @@
+2026-10-26T22:01:42.9616742+08:00 === probe host start ===
+2026-10-26T22:01:42.9676743+08:00 mode=app label=nonadmin-app-01
+2026-10-26T22:01:43.1590962+08:00 isElevated=False user=HOME-MY\49745
+2026-10-26T22:01:43.2474375+08:00 target=G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\pinned-baseline\new-manga.exe sha256=1136BB0A8D582A30C6EF0B16959B86A62DD26D2C6D9CE49E298C9B86C3343226
+2026-10-26T22:01:43.3995606+08:00 spawned pid=51752
+2026-10-26T22:01:44.5889996+08:00 proc+ pid=21828 ppid=17896 name=msedgewebview2.exe
+2026-10-26T22:01:44.5910102+08:00 proc+ pid=21948 ppid=21828 name=msedgewebview2.exe
+2026-10-26T22:01:44.5920074+08:00 proc+ pid=21740 ppid=21828 name=msedgewebview2.exe
+2026-10-26T22:01:44.5930064+08:00 proc+ pid=21704 ppid=21828 name=msedgewebview2.exe
+2026-10-26T22:01:44.5940072+08:00 proc+ pid=21136 ppid=21828 name=msedgewebview2.exe
+2026-10-26T22:01:44.5950075+08:00 proc+ pid=13764 ppid=21828 name=msedgewebview2.exe
+2026-10-26T22:01:44.5950075+08:00 proc+ pid=29652 ppid=36616 name=msedgewebview2.exe
+2026-10-26T22:01:44.5960066+08:00 proc+ pid=29136 ppid=29652 name=msedgewebview2.exe
+2026-10-26T22:01:44.5970062+08:00 proc+ pid=28172 ppid=29652 name=msedgewebview2.exe
+2026-10-26T22:01:44.5975093+08:00 proc+ pid=36408 ppid=29652 name=msedgewebview2.exe
+2026-10-26T22:01:44.5985133+08:00 proc+ pid=35612 ppid=29652 name=msedgewebview2.exe
+2026-10-26T22:01:44.5985133+08:00 proc+ pid=36672 ppid=29652 name=msedgewebview2.exe
+2026-10-26T22:01:44.5995189+08:00 proc+ pid=37452 ppid=29652 name=msedgewebview2.exe
+2026-10-26T22:01:44.6005192+08:00 proc+ pid=41536 ppid=41420 name=python.exe
+2026-10-26T22:01:44.6015188+08:00 proc+ pid=41548 ppid=41536 name=python.exe
+2026-10-26T22:01:44.6015188+08:00 proc+ pid=44428 ppid=36084 name=msedgewebview2.exe
+2026-10-26T22:01:44.6025192+08:00 proc+ pid=47816 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6035195+08:00 proc+ pid=8804 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6045190+08:00 proc+ pid=38964 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6055195+08:00 proc+ pid=51092 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6065194+08:00 proc+ pid=28696 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6075187+08:00 proc+ pid=9976 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6085189+08:00 proc+ pid=16380 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6090233+08:00 proc+ pid=25656 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6100289+08:00 proc+ pid=50852 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6100289+08:00 proc+ pid=24108 ppid=44428 name=msedgewebview2.exe
+2026-10-26T22:01:44.6110335+08:00 proc+ pid=51752 ppid=34124 name=new-manga.exe
+2026-10-26T22:01:44.6120342+08:00 proc+ pid=11572 ppid=51752 name=host_bridge.exe
+2026-10-26T22:01:44.6120342+08:00 proc+ pid=18476 ppid=51752 name=msedgewebview2.exe
+2026-10-26T22:01:44.6130327+08:00 proc+ pid=34216 ppid=18476 name=msedgewebview2.exe
+2026-10-26T22:01:45.7174736+08:00 proc+ pid=34100 ppid=18476 name=msedgewebview2.exe
+2026-10-26T22:01:47.9459559+08:00 proc+ pid=25252 ppid=51752 name=core_service.exe
+2026-10-26T22:01:59.9643847+08:00 proc+ pid=39364 ppid=51752 name=msedgewebview2.exe
+2026-10-26T22:01:59.9653829+08:00 proc+ pid=31672 ppid=39364 name=msedgewebview2.exe
+2026-10-26T22:02:04.3222513+08:00 child exited code= at t=20.9
+2026-10-26T22:02:05.4526032+08:00 child exited code= at t=22.1
+2026-10-26T22:02:06.5732351+08:00 child exited code= at t=23.2
+2026-10-26T22:02:07.6913909+08:00 child exited code= at t=24.3
+2026-10-26T22:02:08.7779770+08:00 child exited code= at t=25.4
+2026-10-26T22:02:09.8978251+08:00 child exited code= at t=26.5
+2026-10-26T22:02:10.9980848+08:00 child exited code= at t=27.6
+2026-10-26T22:02:12.1049390+08:00 child exited code= at t=28.7
+2026-10-26T22:02:13.2095835+08:00 child exited code= at t=29.8
+2026-10-26T22:02:14.3046105+08:00 child exited code= at t=30.9
+2026-10-26T22:02:15.3981226+08:00 child exited code= at t=32
+2026-10-26T22:02:16.4996392+08:00 child exited code= at t=33.1
+2026-10-26T22:02:17.5939829+08:00 child exited code= at t=34.2
+2026-10-26T22:02:18.6873331+08:00 child exited code= at t=35.3
+2026-10-26T22:02:19.7856865+08:00 child exited code= at t=36.4
+2026-10-26T22:02:20.8818711+08:00 child exited code= at t=37.5
+2026-10-26T22:02:21.9947274+08:00 child exited code= at t=38.6
+2026-10-26T22:02:23.0896158+08:00 child exited code= at t=39.7
+2026-10-26T22:02:24.1877173+08:00 child exited code= at t=40.8
+2026-10-26T22:02:25.2803787+08:00 child exited code= at t=41.9
+2026-10-26T22:02:26.3729192+08:00 child exited code= at t=43
+2026-10-26T22:02:27.4838719+08:00 child exited code= at t=44.1
+2026-10-26T22:02:28.5847169+08:00 child exited code= at t=45.2
+2026-10-26T22:02:29.6820633+08:00 child exited code= at t=46.3
+2026-10-26T22:02:30.7970987+08:00 child exited code= at t=47.4
+2026-10-26T22:02:31.9067612+08:00 child exited code= at t=48.5
+2026-10-26T22:02:33.0124116+08:00 child exited code= at t=49.6
+2026-10-26T22:02:34.1273978+08:00 child exited code= at t=50.7
+2026-10-26T22:02:35.2293109+08:00 child exited code= at t=51.8
+2026-10-26T22:02:36.3322359+08:00 child exited code= at t=52.9
+2026-10-26T22:02:37.4357581+08:00 child exited code= at t=54
+2026-10-26T22:02:38.5365529+08:00 child exited code= at t=55.1
+2026-10-26T22:02:39.6235885+08:00 child exited code= at t=56.2
+2026-10-26T22:02:40.7094602+08:00 child exited code= at t=57.3
+2026-10-26T22:02:41.8095124+08:00 child exited code= at t=58.4
+2026-10-26T22:02:42.9109946+08:00 child exited code= at t=59.5
+2026-10-26T22:02:44.0114899+08:00 child exited code= at t=60.6
+2026-10-26T22:02:45.1121209+08:00 child exited code= at t=61.7
+2026-10-26T22:02:46.2220647+08:00 child exited code= at t=62.8
+2026-10-26T22:02:47.3122832+08:00 child exited code= at t=63.9
+2026-10-26T22:02:48.4172215+08:00 child exited code= at t=65
+2026-10-26T22:02:49.5218960+08:00 child exited code= at t=66.1
+2026-10-26T22:02:50.6190458+08:00 child exited code= at t=67.2
+2026-10-26T22:02:51.7306219+08:00 child exited code= at t=68.3
+2026-10-26T22:02:52.8248059+08:00 child exited code= at t=69.4
+2026-10-26T22:02:53.9249591+08:00 child exited code= at t=70.5
+2026-10-26T22:02:55.0159784+08:00 child exited code= at t=71.6
+2026-10-26T22:02:56.1173216+08:00 child exited code= at t=72.7
+2026-10-26T22:02:57.2142261+08:00 child exited code= at t=73.8
+2026-10-26T22:02:58.3140959+08:00 child exited code= at t=74.9
+2026-10-26T22:02:59.1706929+08:00 === probe host end: exited= code= window=True ===

@@ -1,0 +1,16 @@
+﻿{
+    "M2RC1_PACKAGED":  "1",
+    "APPDATA":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\appdata-roaming",
+    "LOCALAPPDATA":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\appdata-local",
+    "TEMP":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\tmp",
+    "TMP":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\tmp",
+    "NEWMANGA_DATA_ROOT":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\data-root",
+    "M2RC1_DERIVED_ROOT":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\scope\\derived",
+    "M2RC1_MANAGED_ROOT":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\scope\\managed",
+    "M2RC2_CATALOG_DB":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS":  "--remote-debugging-port=9371",
+    "__purged":  [
+
+                 ]
+}

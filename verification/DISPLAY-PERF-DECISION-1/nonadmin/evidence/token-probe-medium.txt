@@ -1,0 +1,8 @@
+﻿[dir-fresh-under-runroot] exists=True lockCreateNew=OK plainCreate=OK psCreate=OK dotCreateNew=OK
+[dir-nonadmin-app-01-derived] exists=True lockCreateNew=OK plainCreate=OK psCreate=OK dotCreateNew=OK
+[dir-admin-app-01-derived] exists=True lockCreateNew=FAIL hresult=0x80131501 使用“4”个参数调用“Open”时发生异常:“文件“G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\nonadmin\runs\admin-app-01\scope\derived\.preview-lifecycle.lock”已经存在。” plainCreate=OK psCreate=OK dotCreateNew=OK
+[dir-user-temp] exists=True lockCreateNew=OK plainCreate=OK psCreate=OK dotCreateNew=OK
+[dir-repo-verification] exists=True lockCreateNew=OK plainCreate=OK psCreate=OK dotCreateNew=OK
+
+integrity=组名: Mandatory Label\Medium Mandatory Level
+isAdmin=False

@@ -1,0 +1,106 @@
+{
+  "pid": 13244,
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\pinned-baseline\\resources\\core-sidecar\\python",
+  "repoSrc": "G:\\CODEX\\New Manga\\src",
+  "internal": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\pinned-baseline\\resources\\core-sidecar\\_internal",
+  "imports": {
+    "handle_resolver": "G:\\CODEX\\New Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py",
+    "preview_lock_name": ".preview-lifecycle.lock",
+    "catalog_store": "G:\\CODEX\\New Manga\\src\\infrastructure\\resource_channel\\catalog_store.py"
+  },
+  "steps": [
+    {
+      "step": "token",
+      "result": "admin-write-denied winerror=None"
+    },
+    {
+      "step": "imports",
+      "result": "ok"
+    },
+    {
+      "step": "resolve_namespace_identity",
+      "error": "AttributeError: 'str' object has no attribute 'parts'",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\scripts\\repo-core-namespace-probe.py\", line 42, in step\n    entry[\"result\"] = fn()\n                      ^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\scripts\\repo-core-namespace-probe.py\", line 130, in <lambda>\n    lambda: list(hr.resolve_namespace_identity(derived_root)))\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 864, in resolve_namespace_identity\n    _lstat_reparse_walk(path)\n  File \"G:\\CODEX\\New Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 594, in _lstat_reparse_walk\n    parts = path.parts\n            ^^^^^^^^^^\nAttributeError: 'str' object has no attribute 'parts'\n"
+    },
+    {
+      "step": "initialize_namespace",
+      "result": [
+        1,
+        "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\repo-code-probe\\derived",
+        [
+          3401956556,
+          6192449488529762
+        ],
+        "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\repo-code-probe\\catalog\\catalog.sqlite",
+        [
+          3401956556,
+          5629499535108453
+        ]
+      ]
+    },
+    {
+      "step": "bisect_create_file",
+      "result": [
+        {
+          "variant": "as_source_normal_attr",
+          "access": 3221225472,
+          "share": 0,
+          "flags": 128,
+          "lastError": 80,
+          "handle": 18446744073709551615,
+          "ok": false
+        },
+        {
+          "variant": "backup_semantics",
+          "access": 3221225472,
+          "share": 0,
+          "flags": 33554560,
+          "lastError": 80,
+          "handle": 18446744073709551615,
+          "ok": false
+        },
+        {
+          "variant": "backup_semantics_share_rw",
+          "access": 3221225472,
+          "share": 3,
+          "flags": 33554560,
+          "lastError": 80,
+          "handle": 18446744073709551615,
+          "ok": false
+        },
+        {
+          "variant": "normal_attr_share_rw",
+          "access": 3221225472,
+          "share": 3,
+          "flags": 128,
+          "lastError": 80,
+          "handle": 18446744073709551615,
+          "ok": false
+        },
+        {
+          "variant": "generic_write_only",
+          "access": 1073741824,
+          "share": 0,
+          "flags": 128,
+          "lastError": 80,
+          "handle": 18446744073709551615,
+          "ok": false
+        },
+        {
+          "variant": "generic_read_only",
+          "access": 2147483648,
+          "share": 0,
+          "flags": 128,
+          "lastError": 80,
+          "handle": 18446744073709551615,
+          "ok": false
+        }
+      ]
+    }
+  ],
+  "paths": {
+    "derivedRoot": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\repo-code-probe\\derived",
+    "catalogDb": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\repo-code-probe\\catalog\\catalog.sqlite"
+  }
+}

@@ -48,6 +48,8 @@ allowed_paths:
 - [x] **AC6 三路线对比**（A 35–60 / B 60–110 / C 180–320 人日；各含差距映射、风险、验收门槛、不可解决项，附一手资料 URL）<<MET>>
 - [x] **AC7 裁决建议与决策点**（推荐 A + 排版子线；D1–D10 共 10 个待裁决点，含 2 处设计源冲突与 B 触发条件）<<MET>>
 - [x] **AC8 证据与范围自检**（全部数字可复核；产品代码/配置/依赖零改动；测量全程隔离 env，未触用户数据；`git status` 仅本 Task 新增路径）<<MET>>
+- [x] **AC9 Core 非管理员启动 RCA**（已复现：非提权 3 次/提权对照 2 次；根因链闭合到 Low 完整性令牌 → sidecar 无法写 `%APPDATA%\com.newmanga.desktop\{derived,catalog}` → Core 秒退 → supervisor 3 次失败 → t≈20s panic 退出；候选机器策略待干净机复核）<<MET>>
+- [x] **AC10 非 Web 前端技术栈选型证据**（用户追加需求；实测 Avalonia 单文件 34.24MB、运行时换肤机制对比、WinUI3 单文件/RequestedTheme 限制、GPL 红线；给出主选/备选/不推荐与 11 项 spike 验收）<<MET>>
 
 ## 允许修改范围
 
@@ -74,6 +76,8 @@ allowed_paths:
 | AC4 | 现状 DPR2 截图 vs 设计基线 vs Figma v2（只读） | Figma MCP 可用，无设置页画板（已降级说明） | PASS（43 条编号 + 判定依据） | `visual/GAP_REPORT.md` + `visual/figma-ref/` |
 | AC5 | Pillow 真实适配器链渲染 + shaping/几何探针 + Edge 截图对照 | Pillow 12.3.0（无 raqm）；msedge launcher 限制 | PARTIAL（Pillow 侧 PASS；Chromium DOM 量化 BLOCKED、对照样本塌缩无效，已如实登记） | `routes/TYPESETTING_COMPARISON.md` + `routes/metrics.json` |
 | AC6/AC7 | 证据汇总 + 外部资料核查 + 路线矩阵 | 一手资料 web 核查 | PASS（三路线 + 10 决策点 + URL/未核实标注） | `routes/ROUTES.md`、`doc/design/DISPLAY_PERF_DECISION_1.md` |
+| AC9 | 非提权 vs 提权启动对照 + 令牌/ACL/stderr/事件日志取证 | packaged exe + 隔离 env，本机有沙箱痕迹 | PASS（根因链闭合：Low IL 令牌 → sidecar 写 denied）；PARTIAL：「谁降到 Low」需干净机复核 | `verification/DISPLAY-PERF-DECISION-1/nonadmin/RCA.md` + `nonadmin/evidence/`（24 文件） |
+| AC10 | 各栈一手资料核查 + Avalonia 真实 publish 实测 | .NET 9 SDK、NuGet、官方文档 | PASS（Avalonia 34.24MB 单文件实测；WinUI3/QML/Flutter 限制逐条有据） | `verification/DISPLAY-PERF-DECISION-1/ui-stack/STACK_COMPARISON.md` + `_spike/` |
 
 ## 依赖、风险与阻塞
 
@@ -81,6 +85,8 @@ allowed_paths:
 - 已解决阻塞：冻结 release exe 无法开 WebView2 CDP（wry 覆盖 env 变量）→ 经 Lead 批准做一次仓外配置增量构建（18.9s），差异仅 browser args，溯源 `BUILD-PROVENANCE.json`。
 - 保留限制：AC5 的 Chromium 侧 DOM 量化 BLOCKED（本机 msedge launcher 交接）；长条滚动 FPS BLOCKED（产品能力缺失）；物理 DPR2 屏 NOT_RUN。
 - 审查：本 Task 不自我批准；用户裁决 D1–D10 后，如需技术复核再指派未参与实现的 ZCode/Antigravity/Codex。
+- **用户 2026-10-26 追加裁决**：前端改用 **WinUI 3**（非 Web、主题中心）；架构替换 AD-001 的 React+Tauri 冻结目标，需落 AD-002 并由用户书面确认。选型证据同时给出 Avalonia 更利于「运行时深度换肤」的反向证据（`ui-stack/STACK_COMPARISON.md` §4），WinUI3 需在 spike 中证明换肤/打包两条硬约束。
+- **RCA 机器特异性待复核**：本机存在沙箱 ACE 痕迹（`HOME-MY\CodexSandboxUsers`），「谁把 sidecar 降到 Low IL」未最终定位；需在无沙箱痕迹的干净 Windows 上重跑 `child-token-probe.ps1`（RCA §排除表末段），以判定是机器策略还是产品/打包问题。
 
 ## 交付与运行记录
 
@@ -99,6 +105,8 @@ allowed_paths:
 | E-AC5T | AC5 | verification/DISPLAY-PERF-DECISION-1/routes/TYPESETTING_COMPARISON.md | | 9db2e1fc9c9a1f3d3c0f25190f4ad4e07edbb91cd317aef1f1fb0821b87ee1e9 | CANONICAL |
 | E-AC6 | AC6 | verification/DISPLAY-PERF-DECISION-1/routes/ROUTES.md | | 02205b32f77be3382a9b6d3087f7dee8a824a1558b4af4befce32f30e48c73ee | CANONICAL |
 | E-AC7 | AC7 | doc/design/DISPLAY_PERF_DECISION_1.md | | 9d9687d7f6bd44e302b24556a7e204fab6cbd1bc28c3e159ab16f8b9db840643 | CANONICAL |
+| E-AC9 | AC9 | verification/DISPLAY-PERF-DECISION-1/nonadmin/RCA.md | | df33ab8c999edda61715736f784744a3869b7b8f3bb34e0f841be624791a1734 | CANONICAL |
+| E-AC10 | AC10 | verification/DISPLAY-PERF-DECISION-1/ui-stack/STACK_COMPARISON.md | | 9e9786fc6bfc1ff4aec370ad68de693b61201d3628681303bc334e36db06774c | CANONICAL |
 
 ## Resource Manifest
 

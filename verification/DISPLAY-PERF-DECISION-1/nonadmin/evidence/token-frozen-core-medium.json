@@ -1,0 +1,17 @@
+﻿{
+    "label":  "token-frozen-core-medium",
+    "target":  "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\release\\resources\\core-sidecar\\core_service.exe",
+    "arguments":  "",
+    "childPid":  16948,
+    "exited":  false,
+    "exitCode":  null,
+    "tokenSamples":  [
+                         {
+                             "t":  0.01,
+                             "token":  "integrity=0x1000 (Low) elevation=err=24 appContainer=0 tokenType=1"
+                         }
+                     ],
+    "stderrBytes":  0,
+    "stderrHead":  "",
+    "finishedAt":  "2026-10-26T22:16:37.0878174+08:00"
+}

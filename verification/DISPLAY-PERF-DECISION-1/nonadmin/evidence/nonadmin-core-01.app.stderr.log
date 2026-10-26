@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "infrastructure\resource_channel\handle_resolver.py", line 1039, in open_exclusive_lock_for_initialize
+  File "infrastructure\resource_channel\handle_resolver.py", line 902, in _open_lock_handle
+FileNotFoundError: G:\CODEX\New Manga.workspace\task-envs\DISPLAY-PERF-DECISION-1\nonadmin\runs\nonadmin-core-01\scope\derived\.preview-lifecycle.lock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "entry_core_service.py", line 10, in <module>
+  File "bootstrap\core_service.py", line 4604, in main
+  File "bootstrap\core_service.py", line 4586, in _ensure_preview_namespace
+  File "infrastructure\resource_channel\catalog_store.py", line 211, in initialize_namespace
+  File "infrastructure\resource_channel\handle_resolver.py", line 1041, in open_exclusive_lock_for_initialize
+  File "infrastructure\resource_channel\handle_resolver.py", line 903, in _open_lock_handle
+application.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace lock open failed (win32 error 5, exclusive=True)
+[PYI-45928:ERROR] Failed to execute script 'entry_core_service' due to unhandled exception!

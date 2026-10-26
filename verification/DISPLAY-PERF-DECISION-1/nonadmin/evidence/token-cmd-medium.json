@@ -1,0 +1,17 @@
+﻿{
+    "label":  "token-k-cmd-medium",
+    "target":  "C:\\Windows\\System32\\cmd.exe",
+    "arguments":  "/c exit",
+    "childPid":  6380,
+    "exited":  false,
+    "exitCode":  null,
+    "tokenSamples":  [
+                         {
+                             "t":  0.01,
+                             "token":  "integrity=0x2000 (Medium) elevation=err=24 appContainer=0 tokenType=1"
+                         }
+                     ],
+    "stderrBytes":  0,
+    "stderrHead":  "",
+    "finishedAt":  "2026-10-26T22:17:14.6345289+08:00"
+}

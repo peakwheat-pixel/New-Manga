@@ -1,0 +1,11 @@
+=== sc-single-trimmed
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\Release\net9.0\win-x64\avalonia-size.dll
+  正在优化程序集以调整大小。此过程可能需要一段时间。
+ILLink : Trim analysis warning IL2026: Internal.Runtime.InteropServices.ComActivator.GetClassFactoryForTypeInternal(ComActivationContextInternal*): Using member 'Internal.Runtime.InteropServices.ComActivator.GetClassFactoryForTypeImpl(ComActivationContextInternal*, Boolean)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. Built-in COM support is not trim compatible. https://aka.ms/dotnet-illink/com [G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\avalonia-size.csproj]
+C:\Users\49745\.nuget\packages\avalonia\11.3.22\lib\net8.0\Avalonia.DesignerSupport.dll : warning IL2104: Assembly 'Avalonia.DesignerSupport' produced trim warnings. For more information see https://aka.ms/il2104 [G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\avalonia-size.csproj]
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\sc-single-trimmed\
+RESULT sc-single-trimmed: files=2 totalMB=34.24
+   avalonia-size.exe 34.23MB
+   avalonia-size.pdb 0.01MB

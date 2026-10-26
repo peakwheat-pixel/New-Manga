@@ -1,0 +1,13 @@
+﻿{
+    "user":  "HOME-MY\\49745",
+    "authenticationType":  "CloudAP",
+    "isElevated":  false,
+    "isInAdministratorRole":  false,
+    "integrityLevel":  "组名: Mandatory Label\\Medium Mandatory Level",
+    "is64BitProcess":  true,
+    "osVersion":  "Microsoft Windows NT 10.0.26300.0",
+    "sessionId":  1,
+    "processId":  34124,
+    "startedAt":  "2026-10-26T22:01:43.0324178+08:00",
+    "commandLine":  "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\scripts\\launch-probe.ps1\" -Mode app -Label nonadmin-app-01 -TimeoutSec 75"
+}

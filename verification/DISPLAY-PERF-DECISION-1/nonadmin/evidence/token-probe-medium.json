@@ -1,0 +1,483 @@
+﻿{
+    "label":  "token-probe-medium",
+    "user":  "HOME-MY\\49745",
+    "isAdmin":  false,
+    "integrity":  "组名: Mandatory Label\\Medium Mandatory Level",
+    "startedAt":  "2026-10-26T22:09:45.3049097+08:00",
+    "dirs":  [
+                 {
+                     "name":  "dir-fresh-under-runroot",
+                     "path":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\token-probe-medium\\medium-created-dir",
+                     "exists":  true,
+                     "owner":  "HOME-MY\\49745",
+                     "access":  [
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "-536805376",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "-1610612736",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    }
+                                ],
+                     "saclError":  "使用“1”个参数调用“GetAccessControl”时发生异常:“该进程不具有执行此操作所需的“SeSecurityPrivilege”特权。”",
+                     "lockCreateNew":  "OK",
+                     "plainCreate":  "OK",
+                     "psCreate":  "OK",
+                     "dotCreateNew":  "OK",
+                     "privs":  " | 特权信息 | ---------------------- |  | 特权名                        描述                 状态   | ============================= ==================== ====== | SeShutdownPrivilege           关闭系统             已禁用 | SeChangeNotifyPrivilege       绕过遍历检查         已启用 | SeUndockPrivilege             从扩展坞上取下计算机 已禁用 | SeIncreaseWorkingSetPrivilege 增加进程工作集       已禁用 | SeTimeZonePrivilege           更改时区             已禁用"
+                 },
+                 {
+                     "name":  "dir-nonadmin-app-01-derived",
+                     "path":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\nonadmin-app-01\\scope\\derived",
+                     "exists":  true,
+                     "owner":  "HOME-MY\\49745",
+                     "access":  [
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "-536805376",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "-1610612736",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    }
+                                ],
+                     "saclError":  "使用“1”个参数调用“GetAccessControl”时发生异常:“该进程不具有执行此操作所需的“SeSecurityPrivilege”特权。”",
+                     "lockCreateNew":  "OK",
+                     "plainCreate":  "OK",
+                     "psCreate":  "OK",
+                     "dotCreateNew":  "OK",
+                     "privs":  " | 特权信息 | ---------------------- |  | 特权名                        描述                 状态   | ============================= ==================== ====== | SeShutdownPrivilege           关闭系统             已禁用 | SeChangeNotifyPrivilege       绕过遍历检查         已启用 | SeUndockPrivilege             从扩展坞上取下计算机 已禁用 | SeIncreaseWorkingSetPrivilege 增加进程工作集       已禁用 | SeTimeZonePrivilege           更改时区             已禁用"
+                 },
+                 {
+                     "name":  "dir-admin-app-01-derived",
+                     "path":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\admin-app-01\\scope\\derived",
+                     "exists":  true,
+                     "owner":  "BUILTIN\\Administrators",
+                     "access":  [
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "-536805376",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "-1610612736",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    }
+                                ],
+                     "saclError":  "使用“1”个参数调用“GetAccessControl”时发生异常:“该进程不具有执行此操作所需的“SeSecurityPrivilege”特权。”",
+                     "lockCreateNew":  "FAIL hresult=0x80131501 使用“4”个参数调用“Open”时发生异常:“文件“G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\admin-app-01\\scope\\derived\\.preview-lifecycle.lock”已经存在。”",
+                     "lockCreateNewInner":  "IOException: 文件“G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\nonadmin\\runs\\admin-app-01\\scope\\derived\\.preview-lifecycle.lock”已经存在。",
+                     "plainCreate":  "OK",
+                     "psCreate":  "OK",
+                     "dotCreateNew":  "OK",
+                     "privs":  " | 特权信息 | ---------------------- |  | 特权名                        描述                 状态   | ============================= ==================== ====== | SeShutdownPrivilege           关闭系统             已禁用 | SeChangeNotifyPrivilege       绕过遍历检查         已启用 | SeUndockPrivilege             从扩展坞上取下计算机 已禁用 | SeIncreaseWorkingSetPrivilege 增加进程工作集       已禁用 | SeTimeZonePrivilege           更改时区             已禁用"
+                 },
+                 {
+                     "name":  "dir-user-temp",
+                     "path":  "C:\\Users\\49745\\AppData\\Local\\Temp",
+                     "exists":  true,
+                     "owner":  "HOME-MY\\49745",
+                     "access":  [
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "HOME-MY\\49745",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "HOME-MY\\CodexSandboxUsers",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-5-21-2645688638-2001666387-4154474545-1219112936",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-3-600613-1-3-2535568973-3917845513-3697897365",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-3-600613-1-3-2535568973-3917845513-3697897365",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-1389028724-710606700-681846517-1868825640-127813466-3199908700-3360952429",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-1389028724-710606700-681846517-1868825640-127813466-3199908700-3360952429",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-1842643185-4261042942-108581034-1850594256-3646845729-826276441-2121510442",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-1842643185-4261042942-108581034-1850594256-3646845729-826276441-2121510442",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-2452996152-1064382059-2891192693-2647701218-3243508689-1772574940-1258086337",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-2452996152-1064382059-2891192693-2647701218-3243508689-1772574940-1258086337",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-2554244112-2339394842-2923535091-717697084-666379880-147406710-3183442166",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3348131405-1461047848-3420142733-3575617759-710938308-2414909573-4020080431",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3462132738-3599162511-206798831-1220222832-2371888326-3979471327-3365161003",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3464743682-3383922263-1730664044-2507634447-2742659660-3871973269-2153833053",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3464743682-3383922263-1730664044-2507634447-2742659660-3871973269-2153833053",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3792625396-19297846-332093292-3992683135-3589298602-1239820089-480196437",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3792625396-19297846-332093292-3992683135-3589298602-1239820089-480196437",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3813845264-3917248653-3127154928-587249241-230075892-2041046335-2996129463",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-3813845264-3917248653-3127154928-587249241-230075892-2041046335-2996129463",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-4105302602-3326161843-3537469633-1140204205-3167075545-861936137-2694500445",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-4105302602-3326161843-3537469633-1140204205-3167075545-861936137-2694500445",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-4154284373-36700302-123432249-490865555-3583588152-2418152092-2628934539",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-4211931857-1435066803-777139936-2438086354-254136083-1945126205-525333529",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-4211931857-1435066803-777139936-2438086354-254136083-1945126205-525333529",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-555503879-2368164582-646900437-2535112660-3321415150-437754662-244541939",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-555503879-2368164582-646900437-2535112660-3321415150-437754662-244541939",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    },
+                                    {
+                                        "id":  "S-1-15-2-565149897-3321838571-3647805763-1799959782-2640557167-3141920864-2657878113",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  false
+                                    }
+                                ],
+                     "saclError":  "使用“1”个参数调用“GetAccessControl”时发生异常:“该进程不具有执行此操作所需的“SeSecurityPrivilege”特权。”",
+                     "lockCreateNew":  "OK",
+                     "plainCreate":  "OK",
+                     "psCreate":  "OK",
+                     "dotCreateNew":  "OK",
+                     "privs":  " | 特权信息 | ---------------------- |  | 特权名                        描述                 状态   | ============================= ==================== ====== | SeShutdownPrivilege           关闭系统             已禁用 | SeChangeNotifyPrivilege       绕过遍历检查         已启用 | SeUndockPrivilege             从扩展坞上取下计算机 已禁用 | SeIncreaseWorkingSetPrivilege 增加进程工作集       已禁用 | SeTimeZonePrivilege           更改时区             已禁用"
+                 },
+                 {
+                     "name":  "dir-repo-verification",
+                     "path":  "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\nonadmin",
+                     "exists":  true,
+                     "owner":  "BUILTIN\\Administrators",
+                     "access":  [
+                                    {
+                                        "id":  "Everyone",
+                                        "rights":  "DeleteSubdirectoriesAndFiles",
+                                        "type":  "Deny",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "S-1-5-21-715456912-1603238377-2083547873-2758968920",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "S-1-4-63028012-1010052687",
+                                        "rights":  "DeleteSubdirectoriesAndFiles, Write, Delete, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "HOME-MY\\CodexSandboxUsers",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "S-1-5-21-884840046-396652784-710274065-85489587",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Administrators",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "FullControl",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\SYSTEM",
+                                        "rights":  "268435456",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "Modify, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "NT AUTHORITY\\Authenticated Users",
+                                        "rights":  "-536805376",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "ReadAndExecute, Synchronize",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    },
+                                    {
+                                        "id":  "BUILTIN\\Users",
+                                        "rights":  "-1610612736",
+                                        "type":  "Allow",
+                                        "inherited":  true
+                                    }
+                                ],
+                     "saclError":  "使用“1”个参数调用“GetAccessControl”时发生异常:“该进程不具有执行此操作所需的“SeSecurityPrivilege”特权。”",
+                     "lockCreateNew":  "OK",
+                     "plainCreate":  "OK",
+                     "psCreate":  "OK",
+                     "dotCreateNew":  "OK",
+                     "privs":  " | 特权信息 | ---------------------- |  | 特权名                        描述                 状态   | ============================= ==================== ====== | SeShutdownPrivilege           关闭系统             已禁用 | SeChangeNotifyPrivilege       绕过遍历检查         已启用 | SeUndockPrivilege             从扩展坞上取下计算机 已禁用 | SeIncreaseWorkingSetPrivilege 增加进程工作集       已禁用 | SeTimeZonePrivilege           更改时区             已禁用"
+                 }
+             ],
+    "finishedAt":  "2026-10-26T22:09:45.6801488+08:00"
+}

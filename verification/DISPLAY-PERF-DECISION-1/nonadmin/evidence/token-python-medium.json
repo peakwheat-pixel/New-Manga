@@ -1,0 +1,17 @@
+﻿{
+    "label":  "token-k-python-medium",
+    "target":  "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\pinned-baseline\\resources\\core-sidecar\\python\\python.exe",
+    "arguments":  "",
+    "childPid":  43604,
+    "exited":  false,
+    "exitCode":  null,
+    "tokenSamples":  [
+                         {
+                             "t":  0.01,
+                             "token":  "integrity=0x2000 (Medium) elevation=err=24 appContainer=0 tokenType=1"
+                         }
+                     ],
+    "stderrBytes":  0,
+    "stderrHead":  "",
+    "finishedAt":  "2026-10-26T22:17:13.3023604+08:00"
+}

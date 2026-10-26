@@ -1,0 +1,17 @@
+﻿{
+    "label":  "token-k-notepad-medium",
+    "target":  "C:\\Windows\\System32\\notepad.exe",
+    "arguments":  "",
+    "childPid":  38152,
+    "exited":  false,
+    "exitCode":  null,
+    "tokenSamples":  [
+                         {
+                             "t":  0.01,
+                             "token":  "integrity=0x2000 (Medium) elevation=err=24 appContainer=0 tokenType=1"
+                         }
+                     ],
+    "stderrBytes":  0,
+    "stderrHead":  "",
+    "finishedAt":  "2026-10-26T22:17:16.0766101+08:00"
+}

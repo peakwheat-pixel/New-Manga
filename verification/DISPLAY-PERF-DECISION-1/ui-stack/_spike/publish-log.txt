@@ -1,0 +1,36 @@
+=== fd-single: dotnet publish G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size -c Release -r win-x64 -o G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\fd-single -p:PublishSingleFile=true --self-contained false
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\avalonia-size.csproj (用时 23.2 秒)。
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\Release\net9.0\win-x64\avalonia-size.dll
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\fd-single\
+RESULT fd-single: files=5 totalMB=23.44
+   libSkiaSharp.dll 8.98MB
+   avalonia-size.exe 7.55MB
+   av_libglesv2.dll 5.17MB
+   libHarfBuzzSharp.dll 1.72MB
+   avalonia-size.pdb 0.01MB
+=== sc-single-noselfextract: dotnet publish G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size -c Release -r win-x64 -o G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\sc-single-noselfextract -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\Release\net9.0\win-x64\avalonia-size.dll
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\sc-single-noselfextract\
+RESULT sc-single-noselfextract: files=2 totalMB=90.89
+   avalonia-size.exe 90.88MB
+   avalonia-size.pdb 0.01MB
+=== sc-trimmed: dotnet publish G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size -c Release -r win-x64 -o G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\sc-trimmed --self-contained true -p:PublishTrimmed=true -p:TrimMode=partial
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\Release\net9.0\win-x64\avalonia-size.dll
+  正在优化程序集以调整大小。此过程可能需要一段时间。
+ILLink : Trim analysis warning IL2026: Internal.Runtime.InteropServices.ComActivator.GetClassFactoryForTypeInternal(ComActivationContextInternal*): Using member 'Internal.Runtime.InteropServices.ComActivator.GetClassFactoryForTypeImpl(ComActivationContextInternal*, Boolean)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. Built-in COM support is not trim compatible. https://aka.ms/dotnet-illink/com [G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\avalonia-size.csproj]
+C:\Users\49745\.nuget\packages\avalonia\11.3.22\lib\net8.0\Avalonia.DesignerSupport.dll : warning IL2104: Assembly 'Avalonia.DesignerSupport' produced trim warnings. For more information see https://aka.ms/il2104 [G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\avalonia-size.csproj]
+  avalonia-size -> G:\CODEX\New Manga\verification\DISPLAY-PERF-DECISION-1\ui-stack\_spike\avalonia-size\bin\out\sc-trimmed\
+RESULT sc-trimmed: files=75 totalMB=41.32
+   libSkiaSharp.dll 8.98MB
+   av_libglesv2.dll 5.17MB
+   coreclr.dll 4.57MB
+   System.Private.CoreLib.dll 2.74MB
+   Microsoft.DiaSymReader.Native.amd64.dll 2.27MB
+   clrjit.dll 1.85MB
+   libHarfBuzzSharp.dll 1.72MB
+   Avalonia.Base.dll 1.47MB
