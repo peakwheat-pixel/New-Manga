@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+import os
 import threading
 from typing import Any
 
@@ -37,6 +38,7 @@ from infrastructure.providers.ocr_local import (
     MangaOcrProvider,
     PaddleKoreanOcrProvider,
 )
+from infrastructure.providers.ocr_manga_onnx import MangaOcrOnnxProvider
 from infrastructure.providers.ocr_vision import PROVIDER_VISION_OCR, VisionOcrProvider
 from infrastructure.providers.inpaint_routes import (
     EdgeBleedProvider,
@@ -555,21 +557,54 @@ def build_provider_registry(
     )
 
     # -- OCR -----------------------------------------------------------
-    registry.register(
-        ProviderDescriptor(
-            provider_id=PROVIDER_MANGA_OCR,
-            provider_type="local-manga-ocr",
-            capabilities=frozenset({CAPABILITY_OCR}),
-            requirements=(
-                Requirement(KIND_MODULE, "manga_ocr"),
-                Requirement(KIND_MODULE, "PIL"),
+    # CORE-SLIM-2: manga-ocr runs over ONNX Runtime by default (pinned
+    # encoder/decoder graphs + Python-side greedy decode), so the packaged Core
+    # closure carries no torch/transformers. ``NEWMANGA_OCR_BACKEND=torch``
+    # keeps the released torch adapter as an explicitly-installed optional
+    # fallback; an unknown value fails fast instead of silently picking one.
+    ocr_backend = os.environ.get("NEWMANGA_OCR_BACKEND", "onnx").strip().lower()
+    if ocr_backend == "onnx":
+        registry.register(
+            ProviderDescriptor(
+                provider_id=PROVIDER_MANGA_OCR,
+                provider_type="local-manga-ocr-onnx",
+                capabilities=frozenset({CAPABILITY_OCR}),
+                requirements=(
+                    Requirement(KIND_MODULE, "onnxruntime"),
+                    Requirement(KIND_MODULE, "PIL"),
+                ),
+                requires_gpu=False,
+                supports_cpu_fallback=True,
+                note=(
+                    "recognition-only (ONNX Runtime encoder/decoder); never "
+                    "supplies detection boxes"
+                ),
             ),
-            requires_gpu=False,
-            supports_cpu_fallback=True,
-            note="recognition-only candidate; never supplies detection boxes",
-        ),
-        MangaOcrProvider,
-    )
+            MangaOcrOnnxProvider,
+        )
+    elif ocr_backend == "torch":
+        registry.register(
+            ProviderDescriptor(
+                provider_id=PROVIDER_MANGA_OCR,
+                provider_type="local-manga-ocr",
+                capabilities=frozenset({CAPABILITY_OCR}),
+                requirements=(
+                    Requirement(KIND_MODULE, "manga_ocr"),
+                    Requirement(KIND_MODULE, "PIL"),
+                ),
+                requires_gpu=False,
+                supports_cpu_fallback=True,
+                note=(
+                    "recognition-only candidate (optional torch fallback path, "
+                    "NEWMANGA_OCR_BACKEND=torch); never supplies detection boxes"
+                ),
+            ),
+            MangaOcrProvider,
+        )
+    else:
+        raise ValueError(
+            f"unsupported NEWMANGA_OCR_BACKEND {ocr_backend!r} (use onnx|torch)"
+        )
     registry.register(
         ProviderDescriptor(
             provider_id=PROVIDER_PADDLE_KOREAN,

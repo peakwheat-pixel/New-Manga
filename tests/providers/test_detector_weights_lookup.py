@@ -28,6 +28,9 @@ from infrastructure.providers.detection_manga import (
     MANGA_WEIGHTS_DIRNAME,
     MANGA_MODEL_FILENAME,
 )
+from infrastructure.providers.detection_manga_onnx import (
+    MANGA_ONNX_FILENAME,
+)
 
 
 def _released_default(db_path: Path, weights_name: str) -> Path:
@@ -351,8 +354,11 @@ def test_assembly_wires_frozen_bundle_weights(
     from bootstrap.core_service import assemble_production_core
 
     bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
-    bundle_weights = _bundle_candidate(bundle_dir, MANGA_WEIGHTS_DIRNAME)
-    bundle_weights.mkdir(parents=True)
+    # CORE-SLIM-2: the default backend's weights unit is the pinned ONNX FILE
+    # (models/detector/rtdetr-v2-fixed.onnx), not the torch snapshot directory.
+    bundle_weights = _bundle_candidate(bundle_dir, MANGA_ONNX_FILENAME)
+    bundle_weights.parent.mkdir(parents=True)
+    bundle_weights.write_bytes(b"stub-onnx")
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     monkeypatch.delenv("NEWMANGA_DETECTOR_BACKEND", raising=False)
     _simulate_frozen(monkeypatch, bundle_dir)
@@ -360,7 +366,7 @@ def test_assembly_wires_frozen_bundle_weights(
     core = assemble_production_core(tmp_path / "roaming" / "data")
     try:
         detector = _wired_detector(core.pipeline._executor._handlers)
-        assert Path(detector.weights_dir) == bundle_weights
+        assert Path(detector.weights_path) == bundle_weights
     finally:
         core.conn.close()
 
@@ -372,7 +378,9 @@ def test_assembly_reads_env_override_without_explicit_argument(
     comes only from NEWMANGA_DETECTOR_WEIGHTS, never a call argument."""
     from bootstrap.core_service import assemble_production_core
 
-    override = tmp_path / "operator" / MANGA_WEIGHTS_DIRNAME
+    # The override stays accepted in either form: the provider resolves a
+    # directory that holds the pinned ONNX file at load time.
+    override = tmp_path / "operator" / "onnx-weights"
     override.mkdir(parents=True)
     monkeypatch.setenv("NEWMANGA_DETECTOR_WEIGHTS", str(override))
     monkeypatch.delenv("NEWMANGA_DETECTOR_BACKEND", raising=False)
@@ -380,7 +388,7 @@ def test_assembly_reads_env_override_without_explicit_argument(
     core = assemble_production_core(tmp_path / "data")
     try:
         detector = _wired_detector(core.pipeline._executor._handlers)
-        assert Path(detector.weights_dir) == override
+        assert Path(detector.weights_path) == override
     finally:
         core.conn.close()
 
@@ -401,8 +409,8 @@ def test_assembly_frozen_all_absent_assembles_with_warning(
     core = assemble_production_core(data_root)
     try:
         detector = _wired_detector(core.pipeline._executor._handlers)
-        assert Path(detector.weights_dir) == _data_root_candidate(
-            data_root / "library.db", MANGA_WEIGHTS_DIRNAME
+        assert Path(detector.weights_path) == _data_root_candidate(
+            data_root / "library.db", MANGA_ONNX_FILENAME
         )
         captured = capsys.readouterr()
         assert "probed candidates" in captured.err

@@ -79,6 +79,10 @@ from infrastructure.providers.detection_manga import (
     MANGA_WEIGHTS_DIRNAME,
     MangaDetectionProvider,
 )
+from infrastructure.providers.detection_manga_onnx import (
+    MANGA_ONNX_FILENAME,
+    MangaDetectionOnnxProvider,
+)
 from infrastructure.providers.detection_sfx import (
     SFX_CONF_THRESHOLD,
     SFX_LABEL_PREFIX,
@@ -1102,16 +1106,39 @@ def assemble_core_services(
             # detect; the doctr branch now follows this fallback semantics —
             # the only env-boundary difference from the released behaviour.
             backend = os.environ.get("NEWMANGA_DETECTOR_BACKEND", "manga").strip().lower()
-            detector_device_env = os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu")
+            detector_device_env = os.environ.get(
+                "NEWMANGA_DETECTOR_DEVICE",
+                # CORE-SLIM-2: the ONNX backend defaults to the EP policy
+                # "auto" (DirectML when the shipped onnxruntime-directml wheel
+                # exposes it, CPU otherwise). The optional torch/doctr paths
+                # keep their released CPU default below.
+                "auto" if backend in ("manga", "manga-onnx") else "cpu",
+            )
             detector_weights_override = os.environ.get("NEWMANGA_DETECTOR_WEIGHTS")
             # M2-PROD-DETECT-2 (proxy ruling 4): the lookup below is shared
-            # verbatim by both backends — env override > data root (probed) >
+            # verbatim by every backend — env override > data root (probed) >
             # frozen in-bundle copy (probed, `sys.frozen` onedir only) > the
             # default data-root path. The in-bundle layer is what makes the
             # RELEASE-form detect chain work (weights ship inside the
             # core-sidecar onedir via the whole-directory Tauri resource);
             # the non-frozen (source venv) form resolves exactly as before.
-            if backend == "manga":
+            if backend in ("manga", "manga-onnx"):
+                # CORE-SLIM-2 default: RT-DETR-v2 over ONNX Runtime. The
+                # weights unit is a FILE now (fixed-shape opset-17 graph);
+                # the provider also accepts a directory that holds it, so the
+                # released directory-style NEWMANGA_DETECTOR_WEIGHTS still
+                # works. torch/transformers are NOT part of this path.
+                detector_weights = _resolve_detector_weights_path(
+                    detector_weights_override, MANGA_ONNX_FILENAME, db_path
+                )
+                detector = MangaDetectionOnnxProvider(
+                    weights_path=detector_weights,
+                    device=detector_device_env,
+                )
+            elif backend == "torch":
+                # CORE-SLIM-2: the released transformers/RT-DETR-v2 path is
+                # kept as an explicitly-installed optional fallback; it is NOT
+                # in the packaged closure (no torch/transformers shipped).
                 detector_weights = _resolve_detector_weights_path(
                     detector_weights_override, MANGA_WEIGHTS_DIRNAME, db_path
                 )
@@ -1135,7 +1162,7 @@ def assemble_core_services(
             else:
                 raise ValueError(
                     f"unsupported NEWMANGA_DETECTOR_BACKEND {backend!r} "
-                    "(use manga|doctr)"
+                    "(use manga|manga-onnx|torch|doctr)"
                 )
             # M2-SFX-PROD-1: the standalone SFX detector (chiqui7 ONNX over
             # the onnxruntime lightweight stack) runs BESIDE the selected

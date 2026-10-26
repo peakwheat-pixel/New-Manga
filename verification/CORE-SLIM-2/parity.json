@@ -1,0 +1,465 @@
+{
+  "pages": [
+    {
+      "page": "p01_manga_001.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 6,
+          "preMerge": "7"
+        },
+        "onnxCpu": {
+          "candidates": 6,
+          "preMerge": "7",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 6,
+          "preMerge": "7",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 6,
+          "gotCount": 6,
+          "matched": 6,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9999
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 6,
+          "gotCount": 6,
+          "matched": 6,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9999
+        }
+      },
+      "ocr": {
+        "torchText": "それでも、",
+        "onnxText": "それでも、",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p02_manga_002.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 1,
+          "preMerge": "1"
+        },
+        "onnxCpu": {
+          "candidates": 1,
+          "preMerge": "1",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 1,
+          "preMerge": "1",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 1,
+          "gotCount": 1,
+          "matched": 1,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 1,
+          "gotCount": 1,
+          "matched": 1,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        }
+      },
+      "ocr": {
+        "torchText": "それは、",
+        "onnxText": "それは、",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p03_manga_003.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 2,
+          "preMerge": "2"
+        },
+        "onnxCpu": {
+          "candidates": 2,
+          "preMerge": "2",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 2,
+          "preMerge": "2",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 2,
+          "gotCount": 2,
+          "matched": 2,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9999
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 2,
+          "gotCount": 2,
+          "matched": 2,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9999
+        }
+      },
+      "ocr": {
+        "torchText": "それは......",
+        "onnxText": "それは......",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p04_manga_004.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 12,
+          "preMerge": "15"
+        },
+        "onnxCpu": {
+          "candidates": 12,
+          "preMerge": "15",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 12,
+          "preMerge": "15",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 12,
+          "gotCount": 12,
+          "matched": 12,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9999
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 12,
+          "gotCount": 12,
+          "matched": 12,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9999
+        }
+      },
+      "ocr": {
+        "torchText": "003年10月17日木、一生の17年、10月1",
+        "onnxText": "003年10月17日木、一生の17年、10月1",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p05_manga_005.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 6,
+          "preMerge": "6"
+        },
+        "onnxCpu": {
+          "candidates": 6,
+          "preMerge": "6",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 6,
+          "preMerge": "6",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 6,
+          "gotCount": 6,
+          "matched": 6,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 6,
+          "gotCount": 6,
+          "matched": 6,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        }
+      },
+      "ocr": {
+        "torchText": "そのため、",
+        "onnxText": "そのため、",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p06_manga_006.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 7,
+          "preMerge": "7"
+        },
+        "onnxCpu": {
+          "candidates": 7,
+          "preMerge": "7",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 7,
+          "preMerge": "7",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 7,
+          "gotCount": 7,
+          "matched": 7,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 7,
+          "gotCount": 7,
+          "matched": 7,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        }
+      },
+      "ocr": {
+        "torchText": "なんですか",
+        "onnxText": "なんですか",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p07_manga_007.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 7,
+          "preMerge": "7"
+        },
+        "onnxCpu": {
+          "candidates": 7,
+          "preMerge": "7",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 7,
+          "preMerge": "7",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 7,
+          "gotCount": 7,
+          "matched": 7,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 7,
+          "gotCount": 7,
+          "matched": 7,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        }
+      },
+      "ocr": {
+        "torchText": "それは、",
+        "onnxText": "それは、",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p08_manga_008.jpg",
+      "size": [
+        1350,
+        1920
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 1,
+          "preMerge": "1"
+        },
+        "onnxCpu": {
+          "candidates": 1,
+          "preMerge": "1",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 1,
+          "preMerge": "1",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 1,
+          "gotCount": 1,
+          "matched": 1,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 1,
+          "gotCount": 1,
+          "matched": 1,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        }
+      },
+      "ocr": {
+        "torchText": "............",
+        "onnxText": "............",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "size": [
+        1200,
+        1660
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 9,
+          "preMerge": "9"
+        },
+        "onnxCpu": {
+          "candidates": 9,
+          "preMerge": "9",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 9,
+          "preMerge": "9",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 9,
+          "gotCount": 9,
+          "matched": 9,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9998
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 9,
+          "gotCount": 9,
+          "matched": 9,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 0.9998
+        }
+      },
+      "ocr": {
+        "torchText": "............",
+        "onnxText": "............",
+        "exactMatch": true
+      }
+    },
+    {
+      "page": "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+      "size": [
+        1200,
+        1660
+      ],
+      "detection": {
+        "torch": {
+          "candidates": 6,
+          "preMerge": "6"
+        },
+        "onnxCpu": {
+          "candidates": 6,
+          "preMerge": "6",
+          "ep": "CPUExecutionProvider"
+        },
+        "onnxDml": {
+          "candidates": 6,
+          "preMerge": "6",
+          "ep": "DmlExecutionProvider,CPUExecutionProvider"
+        },
+        "onnxCpuVsTorch": {
+          "refCount": 6,
+          "gotCount": 6,
+          "matched": 6,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        },
+        "onnxDmlVsTorch": {
+          "refCount": 6,
+          "gotCount": 6,
+          "matched": 6,
+          "recall": 1.0,
+          "precision": 1.0,
+          "meanIoU": 1.0
+        }
+      },
+      "ocr": {
+        "torchText": "............",
+        "onnxText": "............",
+        "exactMatch": true
+      }
+    }
+  ],
+  "summary": {
+    "pages": 10,
+    "detection": {
+      "torchMedianMs": 263.14,
+      "onnxCpuMedianMs": 203.45,
+      "onnxDmlMedianMs": 61.47,
+      "candidateCountsEqualCpu": true,
+      "preMergeCountsEqualCpu": true,
+      "exactCandidateCountMatchDml": true,
+      "totalTorchCandidates": 57,
+      "totalOnnxCandidates": 57,
+      "meanRecallCpu": 1.0,
+      "meanIoUCpu": 1.0
+    },
+    "ocr": {
+      "torchMedianMs": 121.78,
+      "onnxMedianMs": 109.7,
+      "exactMatchPages": 10,
+      "pages": 10
+    }
+  }
+}

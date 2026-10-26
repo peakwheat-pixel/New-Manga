@@ -1,0 +1,48 @@
+........................................................................ [  5%]
+...........................................FF........................... [ 11%]
+.......................................................................F [ 16%]
+FF...................................................................... [ 22%]
+........................................................................ [ 27%]
+.......................................s................................ [ 33%]
+........................................................................ [ 39%]
+........................................................................ [ 44%]
+........................................................................ [ 50%]
+........................................................................ [ 55%]
+........................................................................ [ 61%]
+........................................................................ [ 67%]
+........................................................................ [ 72%]
+........................................................................ [ 78%]
+........................................................................ [ 83%]
+........................................................................ [ 89%]
+........................................................................ [ 95%]
+...............................................................          [100%]
+================================== FAILURES ===================================
+E   AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+The above exception was the direct cause of the following exception:
+E   ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-2\src\infrastructure\providers\detection_manga.py:535: ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+E   AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+The above exception was the direct cause of the following exception:
+E   ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-2\src\infrastructure\providers\detection_manga.py:535: ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+E   AttributeError: 'MangaDetectionOnnxProvider' object has no attribute 'weights_dir'. Did you mean: 'weights_path'?
+---------------------------- Captured stderr call -----------------------------
+WARNING: detector weights not found (weights name 'rtdetr-v2-fixed.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_wires_frozen_bun0\roaming\data\models\detector\rtdetr-v2-fixed.onnx | C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_wires_frozen_bun0\install\resources\core-sidecar\models\detector\rtdetr-v2-fixed.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
+WARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_wires_frozen_bun0\roaming\data\models\detector\yolo11s-seg.onnx | C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_wires_frozen_bun0\install\resources\core-sidecar\models\detector\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-2\tests\providers\test_detector_weights_lookup.py:363: AttributeError: 'MangaDetectionOnnxProvider' object has no attribute 'weights_dir'. Did you mean: 'weights_path'?
+E   AttributeError: 'MangaDetectionOnnxProvider' object has no attribute 'weights_dir'. Did you mean: 'weights_path'?
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-2\tests\providers\test_detector_weights_lookup.py:383: AttributeError: 'MangaDetectionOnnxProvider' object has no attribute 'weights_dir'. Did you mean: 'weights_path'?
+E   AttributeError: 'MangaDetectionOnnxProvider' object has no attribute 'weights_dir'. Did you mean: 'weights_path'?
+---------------------------- Captured stderr call -----------------------------
+WARNING: detector weights not found (weights name 'rtdetr-v2-fixed.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_frozen_all_absen0\roaming\data\models\detector\rtdetr-v2-fixed.onnx | C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_frozen_all_absen0\install\resources\core-sidecar\models\detector\rtdetr-v2-fixed.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
+WARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_frozen_all_absen0\roaming\data\models\detector\yolo11s-seg.onnx | C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-475\test_assembly_frozen_all_absen0\install\resources\core-sidecar\models\detector\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS
+G:\CODEX\New Manga.workspace\worktrees\CORE-SLIM-2\tests\providers\test_detector_weights_lookup.py:404: AttributeError: 'MangaDetectionOnnxProvider' object has no attribute 'weights_dir'. Did you mean: 'weights_path'?
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
+FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
+FAILED tests/providers/test_detector_weights_lookup.py::test_assembly_wires_frozen_bundle_weights
+FAILED tests/providers/test_detector_weights_lookup.py::test_assembly_reads_env_override_without_explicit_argument
+FAILED tests/providers/test_detector_weights_lookup.py::test_assembly_frozen_all_absent_assembles_with_warning
+5 failed, 1281 passed, 3 skipped in 58.47s

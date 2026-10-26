@@ -1,0 +1,71 @@
+{
+  "bundle": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-SLIM-2\\sidecar-copy",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "capability": "\u76ee\u5f55/\u547d\u540d\u7a7a\u95f4\u64ad\u79cd\uff08catalog_loader\uff09",
+      "probe": "catalog_loader.exe --db ... --initialize-preview-namespace ... --count",
+      "verdict": "PASS\uff08rc=0\uff09",
+      "ok": true
+    },
+    {
+      "capability": "Host \u5951\u7ea6\uff1acore_service \u542f\u52a8 + core.ping",
+      "probe": "core_service.exe < protocol 2.3",
+      "verdict": "PASS\uff08\u54cd\u5e94\u5df2\u89e3\u6790\uff09",
+      "ok": true
+    },
+    {
+      "capability": "\u5bfc\u5165\uff08REAL import \u8def\u5f84\uff0cPillow \u89e3\u7801\uff09",
+      "probe": "acceptance_bridge seed_fixture",
+      "verdict": "PASS",
+      "ok": true
+    },
+    {
+      "capability": "OCR/\u7ffb\u8bd1/\u6392\u7248\u6e32\u67d3\uff08Mock \u7ba1\u7ebf\uff0c\u51bb\u7ed3 Pillow \u9002\u914d\u5668\uff09",
+      "probe": "acceptance_bridge run_pipeline",
+      "verdict": "PASS",
+      "ok": true
+    },
+    {
+      "capability": "\u9605\u8bfb\u5668\u6295\u5f71",
+      "probe": "acceptance_bridge reader_pages",
+      "verdict": "PASS",
+      "ok": true
+    },
+    {
+      "capability": "\u5bfc\u51fa\uff08PNG \u5199\u51fa\uff09",
+      "probe": "acceptance_bridge export_page",
+      "verdict": "PASS",
+      "ok": true
+    },
+    {
+      "capability": "\u68c0\u6d4b\uff08onnxruntime/DirectML \u51bb\u7ed3\u95ed\u5305\u542f\u52a8\uff09",
+      "probe": "sfx_detect_probe.exe --help",
+      "verdict": "PASS\uff08\u6743\u91cd\u9700\u771f\u5b9e\u9875 fixture\uff0c\u89c1 run_clean_start_e2e\uff09",
+      "ok": true
+    }
+  ],
+  "detail": {
+    "catalogLoader": {
+      "rc": 0,
+      "stdout": "catalog rows: 0\n"
+    },
+    "coreService": {
+      "pingOk": true
+    },
+    "acceptanceBridge": {
+      "rc": 0,
+      "steps": {
+        "ping": "OK",
+        "seed_fixture": "OK",
+        "run_pipeline": "OK",
+        "catalog_pages": "OK",
+        "reader_pages": "OK",
+        "export_page": "OK"
+      }
+    },
+    "sfxDetectProbe": {
+      "rc": 0
+    }
+  }
+}

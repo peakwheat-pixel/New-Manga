@@ -37,7 +37,12 @@ from bootstrap.core_assembly import (
 )
 from bootstrap.core_service import _PassthroughImageDecoder, _StubStyleAnalyzer
 from domain.regions.entities import BBox, RegionGeometry, RegionType
-from infrastructure.providers.detection_manga import MangaDetectionProvider
+from infrastructure.providers.detection_manga import (
+    MangaDetectionProvider,
+)
+from infrastructure.providers.detection_manga_onnx import (
+    MangaDetectionOnnxProvider,
+)
 from infrastructure.providers.detection_sfx import (
     MangaSfxParallelDetectionProvider,
     SfxDetectionProvider,
@@ -74,7 +79,11 @@ def assembled(tmp_path, monkeypatch):
 def test_default_on_wires_composite_with_expected_weights_path(assembled):
     core = assembled()
     assert isinstance(core.detector, MangaSfxParallelDetectionProvider)
-    assert isinstance(core.detector.primary, MangaDetectionProvider)
+    # CORE-SLIM-2: the default primary is the ONNX Runtime detector; the
+    # torch class stays importable as the optional fallback.
+    assert isinstance(
+        core.detector.primary, (MangaDetectionProvider, MangaDetectionOnnxProvider)
+    )
     assert isinstance(core.detector.sfx, SfxDetectionProvider)
     assert core.detector.sfx.conf_threshold == 0.5
     # The shared DETECT-2 lookup: default data root = <db parent>/models/detector/.
@@ -86,7 +95,9 @@ def test_default_on_wires_composite_with_expected_weights_path(assembled):
 def test_off_keeps_the_pre_sfx_byte_identical_wiring(assembled, monkeypatch):
     monkeypatch.setenv("NEWMANGA_SFX_DETECTION", "off")
     core = assembled()
-    assert isinstance(core.detector, MangaDetectionProvider)
+    assert isinstance(
+        core.detector, (MangaDetectionProvider, MangaDetectionOnnxProvider)
+    )
     assert not isinstance(core.detector, MangaSfxParallelDetectionProvider)
 
 
@@ -168,7 +179,9 @@ def test_off_assembly_never_touches_the_ep_env(assembled, monkeypatch):
     monkeypatch.setenv("NEWMANGA_SFX_DETECTION", "off")
     monkeypatch.setenv("NEWMANGA_SFX_EP", "totally-bogus")
     core = assembled()
-    assert isinstance(core.detector, MangaDetectionProvider)
+    assert isinstance(
+        core.detector, (MangaDetectionProvider, MangaDetectionOnnxProvider)
+    )
     assert not isinstance(core.detector, MangaSfxParallelDetectionProvider)
 
 

@@ -64,6 +64,19 @@ silently shrink the closure (build stays green, release-form detect degrades
 to PROVIDER_DEPENDENCY_MISSING). The ML hiddenimports below make the closure
 EXPLICIT, and the per-entry closure assertion right after each Analysis fails
 the build if the graph did not actually collect them.
+
+CORE-SLIM-2 (2026-10-27): the closure is now **torch-free** as well. The
+manga detector/OCR chains run over ONNX Runtime: RT-DETR-v2 fixed-shape ONNX
+(opset 17) ships as ``models/detector/rtdetr-v2-fixed.onnx`` and the manga-ocr
+encoder/decoder ONNX pair under ``models/ocr/manga-ocr-onnx/`` (both SHA-256
+pinned and verified by the providers at load time). torch, torchvision,
+transformers, doctr and their transitive stack (cv2/scipy/h5py/shapely/
+tokenizers/huggingface_hub/safetensors/networkx/mpmath) are EXCLUDED below.
+The torch detector/OCR adapters stay in the source tree as explicitly
+installed optional fallbacks (``NEWMANGA_DETECTOR_BACKEND=torch`` /
+``NEWMANGA_OCR_BACKEND=torch``), never as part of the shipped closure. The
+per-entry closure assertion fails the build if onnxruntime is missing OR if
+torch/transformers/doctr leak back into the analyzed graph.
 """
 
 import os
@@ -92,21 +105,10 @@ ENTRIES = [
     ("entry_catalog_loader", "catalog_loader", False),
     # M2-PROD-SFX-PROBE-1: the one-shot SFX-detect probe (frozen-process
     # evidence, NOT an IPC command — catalog_loader precedent shape).
-    # Closure reality (DSH r1 P2-1, corrected from the original "onnxruntime
-    # only" claim): the probe imports the production SfxDetectionProvider,
-    # whose module graph runs detection_sfx -> detection_manga ->
-    # detection_doctr, and detection_doctr carries a function-body-static
-    # `from doctr.models import detection_predictor` that modulegraph DOES
-    # follow — so this entry's PYZ ships a SECOND torch/transformers/doctr
-    # closure (~8455 pure modules, ~64.76 MiB exe), not an onnxruntime-only
-    # face. Accepted deliberately (integration ruling on the DSH r1 menu):
-    # (a) accept the duplication (zero-risk, revert = drop this line);
-    # (b) a one-shot CLI mode on core_service.exe (0 B) was rejected — it
-    #     forks the production entry's startup behaviour;
-    # (c) slimming the probe import face (breaking the static doctr import)
-    #     is a product-src refactor left to a future slice.
-    # It still gets its own hiddenimports + its own closure assertion below
-    # instead of the ML entry treatment.
+    # CORE-SLIM-2: the probe's runtime face is onnxruntime only (doctr/torch
+    # are excluded from the build), so it no longer drags a second
+    # torch/transformers closure into the bundle. It keeps its own
+    # hiddenimports + its own closure assertion below.
     ("entry_sfx_detect_probe", "sfx_detect_probe", False),
 ]
 
@@ -122,47 +124,27 @@ SFX_PROBE_HIDDENIMPORTS = [
     "onnxruntime",
 ]
 
-#: DSH r1 R3 review-fix (N3, DSH r2): the detect chain resolves transformers
-#: and its RT-DETR model modules DYNAMICALLY (transformers' own _LazyModule —
-#: `RTDetrV2ForObjectDetection` resolves through transformers.models.rt_detr_v2,
-#: which modulegraph cannot be trusted to pull in on its own), so all three
-#: names are pinned here; the assertion below fails the build if any of them
-#: is missing from the analyzed graph.
+#: CORE-SLIM-2: the detect chain now runs on ONNX Runtime. The runtime is
+#: imported through ``importlib`` (``onnx_sessions._onnxruntime``) so
+#: modulegraph never tracks it — pin it explicitly, exactly like the SFX
+#: probe below. Pillow/numpy are statically reachable from other Core modules
+#: but are pinned here too so the ONNX path cannot silently lose its decode
+#: surface.
 ML_HIDDENIMPORTS = [
-    "transformers",
-    "transformers.models.rt_detr",
-    "transformers.models.rt_detr_v2",
-    # M2-SFX-PROD-1: the standalone SFX provider resolves onnxruntime through
-    # importlib at detect time (same lazy pattern as transformers), so
-    # modulegraph never tracks it — pin it explicitly or the frozen sfx chain
-    # would silently degrade to PROVIDER_DEPENDENCY_MISSING.
     "onnxruntime",
+    "PIL.Image",
+    "numpy",
 ]
 
-#: M2-PROD-DETECT-3 (frozen in-process detect evidence): torchvision 0.29's
-#: C++ ops live in stable-ABI extensions (`_C_stable` / `image_stable`) that
-#: load DYNAMICALLY through `torchvision.extension._load_library` — and the
-#: stock hook-torchvision still pins the pre-0.29 name `torchvision._C`, so
-#: the real binaries NEVER reached the closure: the first frozen in-process
-#: detect (this Task's AC4 probe) failed with
-#: `RuntimeError: operator torchvision::nms does not exist` wrapped by
-#: transformers' _LazyModule as "Could not import module
-#: 'RTDetrImageProcessor'". `RTDetrImageProcessor` imports
-#: `torchvision.transforms.v2.functional`, whose import finishes the
-#: torchvision init and hits the missing ops. Pin the two stable-ABI
-#: extensions here (EXTENSION modules land in a.binaries, not a.pure —
-#: hence the separate binaries assertion below).
-ML_BINARY_IMPORT_MODULES = [
-    "torchvision._C_stable",
-    "torchvision.image_stable",
-]
+#: Legacy torchvision stable-ABI pins: REMOVED by CORE-SLIM-2 (torchvision is
+#: excluded). Kept as an empty tuple so older spec readers/importers do not
+#: break; the binaries assertion below only inspects SFX_BINARY_IMPORTS.
+ML_BINARY_IMPORT_MODULES = []
 
-#: What the binaries assertion looks for: the dotted module names as they
-#: appear as EXTENSION TOC entries inside the `torchvision/` bundle dir.
-ML_BINARY_IMPORTS = [
-    "torchvision/_C_stable.pyd",
-    "torchvision/image_stable.pyd",
-]
+#: CORE-SLIM-2: what the binaries assertion looks for in the bundle — the
+#: onnxruntime C-extension pair (engine + DirectML provider DLL), shared with
+#: the SFX probe assertion.
+ML_BINARY_IMPORTS = []
 
 #: M2-SFX-PROD-1 / M2-SFX-GPU-EP-1: the onnxruntime C-extension pair plus —
 #: since the GPU deployment ruling (2026-10-06) — the DirectML runtime DLL.
@@ -215,49 +197,60 @@ def _pure_module_names(analysis) -> set:
 
 
 def _assert_ml_closure(analysis, exe_name: str) -> None:
-    """DSH r1 R3 review-fix: fail the BUILD (not the release) if the ML
-    runtime is not actually in the analyzed graph. ``analysis.pure`` (plus, in
-    CORE-SLIM-1 noarchive mode, ``analysis._modules_outside_pyz``) is the TOC of
-    pure-Python modules that will land in the bundle;
-    ``analysis.binaries`` carries the EXTENSION modules (M2-PROD-DETECT-3:
-    torchvision's stable-ABI .pyd pair, see ML_BINARY_IMPORTS)."""
+    """CORE-SLIM-2 review-fix: fail the BUILD if the ONNX detect runtime is
+    missing from the analyzed graph, or if the removed torch stack leaks back
+    in.
+
+    ``analysis.pure`` (plus, in noarchive mode, ``analysis._modules_outside_pyz``)
+    is the TOC of pure-Python modules that will land in the bundle;
+    ``analysis.binaries`` carries the extension modules. The negative half is
+    the important new one: the whole point of CORE-SLIM-2 is that
+    torch/torchvision/transformers/doctr are NOT in the shipped closure — a
+    future import that drags them back must fail the build, not silently grow
+    the bundle by ~500 MiB.
+    """
     pure_names = _pure_module_names(analysis)
     missing = [m for m in ML_HIDDENIMPORTS if m not in pure_names]
     if missing:
         raise SystemExit(
-            f"ML closure assertion FAILED for {exe_name}: {missing} not "
-            "collected into the PYZ — the release-form detect chain would "
-            "silently degrade to PROVIDER_DEPENDENCY_MISSING. Do NOT relax "
-            "this check; fix the hiddenimports/analysis instead."
+            f"ONNX detect closure assertion FAILED for {exe_name}: {missing} not "
+            "collected into the bundle — the release-form ONNX detect/OCR chain "
+            "would silently degrade to PROVIDER_DEPENDENCY_MISSING. Do NOT "
+            "relax this check; fix the hiddenimports/analysis instead."
+        )
+    leaked = [
+        module
+        for module in ("torch", "torchvision", "transformers", "doctr")
+        if module in pure_names
+    ]
+    if leaked:
+        raise SystemExit(
+            f"torch-free closure assertion FAILED for {exe_name}: {leaked} are "
+            "in the analyzed graph but CORE-SLIM-2 excludes the torch stack "
+            "from the shipped Core (the packaged detect/OCR chains run over "
+            "ONNX Runtime). Remove the static import that drags it back in, or "
+            "re-scope the product change; do NOT delete this guard."
         )
     binary_names = {entry[0].replace("\\", "/") for entry in analysis.binaries}
     missing_binaries = [
-        m for m in ML_BINARY_IMPORTS if not any(
-            name == m or name.endswith("/" + m) for name in binary_names
-        )
-    ]
-    # M2-SFX-PROD-1: the onnxruntime C-extension rides the same assertion —
-    # a closure that lost it would break the frozen sfx detect chain only.
-    missing_binaries += [
-        m for m in SFX_BINARY_IMPORTS if not any(
-            name == m or name.endswith("/" + m) for name in binary_names
-        )
+        m
+        for m in SFX_BINARY_IMPORTS
+        if not any(name == m or name.endswith("/" + m) for name in binary_names)
     ]
     if missing_binaries:
         raise SystemExit(
-            f"ML closure assertion FAILED for {exe_name}: extension(s) "
-            f"{missing_binaries} not collected into the bundle binaries — "
-            "the frozen detect chain would fail at model load with the "
-            "missing torchvision C++ ops (or the missing onnxruntime "
-            "engine). Do NOT relax this check; fix the hiddenimports/"
-            "analysis instead."
+            f"ONNX detect closure assertion FAILED for {exe_name}: extension(s) "
+            f"{missing_binaries} not collected into the bundle binaries — the "
+            "frozen ONNX detect/OCR (and SFX) chains would fail at model load. "
+            "Do NOT relax this check; fix the hiddenimports/analysis instead."
         )
     print(
-        f"closure assertion: {exe_name} PYZ carries "
+        f"closure assertion: {exe_name} carries ONNX Runtime "
         + ", ".join(ML_HIDDENIMPORTS)
-        + f" ({len(pure_names)} pure modules) + extensions "
-        + ", ".join(ML_BINARY_IMPORTS + SFX_BINARY_IMPORTS)
+        + f" ({len(pure_names)} pure modules, torch-free) + extensions "
+        + ", ".join(SFX_BINARY_IMPORTS)
     )
+
 
 def _assert_sfx_probe_closure(analysis, exe_name: str) -> None:
     """M2-PROD-SFX-PROBE-1: the SFX-probe counterpart of _assert_ml_closure —
@@ -452,6 +445,25 @@ EXCLUDED = [
     # bundle by the measured 61 MB.
     "PySide6",
     "shiboken6",
+    # CORE-SLIM-2: the torch/transformers/doctr detection stack left the
+    # shipped closure (ONNX Runtime replaced it). These are the transitive
+    # deps that only existed for that stack; excluding them explicitly keeps
+    # a future import from silently restoring ~500 MiB.
+    "torch",
+    "torchvision",
+    "transformers",
+    "doctr",
+    "safetensors",
+    "tokenizers",
+    "huggingface_hub",
+    "hf_xet",
+    "cv2",
+    "scipy",
+    "h5py",
+    "shapely",
+    "networkx",
+    "mpmath",
+    "onnx",  # the (unused) ONNX graph library — ORT does not need it
     # build/test tooling never belongs in the runtime closure
     "pytest",
     "setuptools",
