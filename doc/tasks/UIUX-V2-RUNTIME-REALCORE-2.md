@@ -114,7 +114,7 @@ allowed_paths:
 | EV-09 | AC5 | apps/desktop/frontend/src/pages/Shelf.test.tsx | 0718482e5 | - | CANONICAL |
 | EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-REALCORE-2-handoff.md | 0718482e5 | - | CANONICAL |
 | EV-11 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout-r2.md | 0718482e5 | - | CANONICAL |
-| EV-13 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout-r3.md | HEAD | - | CANONICAL |
+| EV-13 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout-r3.md | 97ade7dd0 | - | CANONICAL |
 | EV-12 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout.md | 0718482e5 | - | CANONICAL |
 
 ### 收口改动的独立复核（三轮，Codex）
