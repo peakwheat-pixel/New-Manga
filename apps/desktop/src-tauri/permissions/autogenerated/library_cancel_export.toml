@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-cancel-export"
+description = "Enables the library_cancel_export command without any pre-configured scope."
+commands.allow = ["library_cancel_export"]
+
+[[permission]]
+identifier = "deny-library-cancel-export"
+description = "Denies the library_cancel_export command without any pre-configured scope."
+commands.deny = ["library_cancel_export"]

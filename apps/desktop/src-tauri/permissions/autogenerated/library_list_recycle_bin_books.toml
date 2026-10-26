@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-list-recycle-bin-books"
+description = "Enables the library_list_recycle_bin_books command without any pre-configured scope."
+commands.allow = ["library_list_recycle_bin_books"]
+
+[[permission]]
+identifier = "deny-library-list-recycle-bin-books"
+description = "Denies the library_list_recycle_bin_books command without any pre-configured scope."
+commands.deny = ["library_list_recycle_bin_books"]

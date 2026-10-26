@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-plugins-open-directory"
+description = "Enables the plugins_open_directory command without any pre-configured scope."
+commands.allow = ["plugins_open_directory"]
+
+[[permission]]
+identifier = "deny-plugins-open-directory"
+description = "Denies the plugins_open_directory command without any pre-configured scope."
+commands.deny = ["plugins_open_directory"]

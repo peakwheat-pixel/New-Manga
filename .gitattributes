@@ -1,0 +1,48 @@
+doc/reviews/M2-RC2-a8fb17ca.md -text
+doc/reviews/M2-RC2-FIX-eac5cb3e.md -text
+verification/M2-RC2/review-dsh-a8fb17ca/** -text
+verification/M2-RC2/review-dsh-eac5cb3e/** -text
+verification/M2-RC2/review-dsh-import-sha256.txt -text
+
+# M2-SFX-FINETUNE-PREFLIGHT r2: HF upstream README snapshot keeps its native hard-break trailing space (DSH r2 confirmed substantive-free); exempt from whitespace check
+verification/M2-SFX-FINETUNE-PREFLIGHT/raw/** -whitespace
+
+# SEC-FIX-PATH-ECHO-1 (P19 AC2 finding): the Handoff outside the evidence dir is a pinned
+# Canonical Evidence file; pin its line endings so the recorded sha256 is reproducible on
+# any checkout (core.autocrlf=true would otherwise emit CRLF and break the pin).
+doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md text eol=lf
+
+# GOV-PLAN-BUDGET-1 / r5: the governance checker is now version-controlled; pin its line endings
+# so the recorded sha256 (25477A5D...) stays reproducible on any checkout under core.autocrlf=true.
+tools/governance/check.ps1 text eol=lf
+
+# P19-UI-MANIFEST-VIEW-1: these evidence files are pinned by sha256 in the task's Canonical
+# Evidence table. Without an eol rule, core.autocrlf=true rewrites them to CRLF on checkout and
+# every pin fails on a fresh clone - the same trap already documented for SEC-FIX-PATH-ECHO-1.
+verification/P19-UI-MANIFEST-VIEW-1/** text eol=lf
+
+# GOV-EOL-PIN-1: canonical evidence and handoff files are SHA-256 pinned.
+# Keep LF on checkout so pins remain reproducible when core.autocrlf=true.
+verification/GOV-UNTRACKED-BACKLOG-1/** text eol=lf
+doc/handoffs/GOV-UNTRACKED-BACKLOG-1-*.md text eol=lf
+verification/GOV-EOL-PIN-1/** text eol=lf
+doc/handoffs/GOV-EOL-PIN-1-*.md text eol=lf
+
+# GOV-EOL-PIN-1 generalised (r187): the governance checker parses Acceptance
+# Criteria with '(?m)^...**AC[^\r\n]*$', and .NET's multiline $ never matches
+# before a CRLF. With core.autocrlf=true a fresh checkout rewrote every task
+# file to CRLF, which made every AC line invisible - 60 files were in that state
+# and a clean clone would have made it all 320. The AC rules only work on LF, so
+# the line ending is part of the contract, not a preference.
+#
+# Same reason the existing eol=lf pins above exist: recorded sha256 evidence
+# breaks when autocrlf rewrites a file, and the fix is to stop the rewriting.
+doc/tasks/*.md text eol=lf
+
+# GOV-UNTRACKED-BACKLOG-DISPOSITION-1: the disposition evidence is sha256-recorded, so
+# pin LF on checkout exactly like the GOV-UNTRACKED-BACKLOG-1 pins above. The relocated
+# anomaly payloads are the opposite case: their SHA-256 *is* the original content
+# fingerprint, so they are marked -text to guarantee Git never rewrites their bytes.
+verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/*.json text eol=lf
+verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/*.md text eol=lf
+verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/** -text

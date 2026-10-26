@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-provider-run-snapshot-get"
+description = "Enables the settings_provider_run_snapshot_get command without any pre-configured scope."
+commands.allow = ["settings_provider_run_snapshot_get"]
+
+[[permission]]
+identifier = "deny-settings-provider-run-snapshot-get"
+description = "Denies the settings_provider_run_snapshot_get command without any pre-configured scope."
+commands.deny = ["settings_provider_run_snapshot_get"]

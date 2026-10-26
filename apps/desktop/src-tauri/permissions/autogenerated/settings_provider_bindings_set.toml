@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-provider-bindings-set"
+description = "Enables the settings_provider_bindings_set command without any pre-configured scope."
+commands.allow = ["settings_provider_bindings_set"]
+
+[[permission]]
+identifier = "deny-settings-provider-bindings-set"
+description = "Denies the settings_provider_bindings_set command without any pre-configured scope."
+commands.deny = ["settings_provider_bindings_set"]
