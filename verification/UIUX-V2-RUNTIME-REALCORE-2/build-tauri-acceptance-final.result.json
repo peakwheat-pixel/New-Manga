@@ -1,0 +1,7 @@
+{
+  "log": "build-tauri-acceptance-final.log",
+  "exit_code": 0,
+  "command": "cargo tauri build --no-bundle --config tauri.acceptance.conf.json",
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\acceptance-build-final",
+  "exe_sha256": "E58CFE59DFEACA840AFDFB1E58AC4A5AC3E283BCC91A97F2DFA75BBC63D142EA"
+}

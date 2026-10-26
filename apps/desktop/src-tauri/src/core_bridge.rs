@@ -67,6 +67,15 @@ fn decode_response(line: &str) -> Result<serde_json::Value, CoreError> {
     Ok(value.get("result").cloned().unwrap_or(serde_json::Value::Null))
 }
 
+// Keep this channel's existing wire form; current fields are ASCII, and drift must surface as a bridge error.
+fn ascii_only_request_line(request: &serde_json::Value) -> Result<String, CoreError> {
+    let line = request.to_string();
+    if !line.is_ascii() {
+        return Err(CoreError::new("CORE_BRIDGE_NON_ASCII_PAYLOAD"));
+    }
+    Ok(line)
+}
+
 /// Control-plane transport; `MockCoreChannel` drives Rust-side unit tests,
 /// `StdioCoreChannel` talks to the real Python Core sidecar.
 ///
@@ -213,7 +222,7 @@ impl StdioCoreChannel {
         params: serde_json::Value,
     ) -> Result<serde_json::Value, CoreError> {
         let request = serde_json::json!({ "id": 1, "method": method, "params": params });
-        let mut line = request.to_string();
+        let mut line = ascii_only_request_line(&request)?;
         line.push('\n');
         {
             let mut stdin = self.stdin.lock().unwrap();
@@ -496,5 +505,17 @@ impl CoreChannel for MockCoreChannel {
             self.retire_calls.lock().unwrap().push(resource_id.to_string());
         }
         result
+    }
+}
+
+#[cfg(test)]
+mod request_encoding_tests {
+    use super::ascii_only_request_line;
+
+    #[test]
+    fn non_ascii_payload_returns_visible_error_code() {
+        let error = ascii_only_request_line(&serde_json::json!({ "title": "雾港来信" }))
+            .expect_err("non-ASCII payload must fail");
+        assert_eq!(error.code, "CORE_BRIDGE_NON_ASCII_PAYLOAD");
     }
 }

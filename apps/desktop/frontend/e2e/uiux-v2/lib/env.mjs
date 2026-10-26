@@ -1,5 +1,5 @@
 /**
- * UIUX-V2-RUNTIME-REALCORE-1 — isolated launch environment for the REAL
+ * UIUX-V2-RUNTIME-REALCORE-2 — isolated launch environment for the REAL
  * packaged Tauri app (release exe built from the frozen delivery head).
  *
  * Reuses the proven discipline of e2e/p02-new-time/lib/env.mjs (Task-local
@@ -7,15 +7,16 @@
  * Task's build output and evidence root.
  *
  * Isolation contract (every writable path the packaged app can reach):
- *   G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-1/run-i1/<scenario>/
- * The user's real %APPDATA%/%LOCALAPPDATA%/New Manga library is never touched.
+ *   G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2/run-iN/<scenario>/
+ * Every writable root for this run is under the REALCORE-2 task environment;
+ * the user's real %APPDATA%/%LOCALAPPDATA%/New Manga library is never touched.
  */
 
 import { existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 
 export const TASK_ENV_ROOT =
-  "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-1";
+  "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2";
 
 /**
  * Release exe built in-repo by `cargo tauri build --no-bundle` from the frozen
@@ -37,7 +38,7 @@ export const REPO_ROOT = path.resolve(
 export const CANONICAL_ROOT = path.join(
   REPO_ROOT,
   "verification",
-  "UIUX-V2-RUNTIME-REALCORE-1",
+  "UIUX-V2-RUNTIME-REALCORE-2",
 );
 
 /**
@@ -142,6 +143,7 @@ export function envEvidenceManifest(env) {
     "APPDATA",
     "LOCALAPPDATA",
     "TEMP",
+    "TMP",
     "NEWMANGA_DATA_ROOT",
     "M2RC1_DERIVED_ROOT",
     "M2RC1_MANAGED_ROOT",

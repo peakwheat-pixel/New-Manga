@@ -198,11 +198,19 @@ describe("Shelf runtime data discipline（AC8 反 fixtures 回填）", () => {
     expect(chrome.onOpenCommand).toHaveBeenCalledTimes(1);
   });
 
-  it("命令面板打开时触发器 aria-expanded 反映真实状态", async () => {
-    const { runtime } = makeRuntime();
+  it("commandOpen=false 时触发器 aria-expanded 为 false", async () => {
+    const { runtime, chrome } = makeRuntime();
+    chrome.commandOpen = false;
     const host = await mountShelf(runtime);
     const trigger = host.querySelector('[data-testid="command-trigger"]') as HTMLButtonElement | null;
-    // runtime.chrome.commandOpen=false 时必须是 false（不能恒为 false 的假状态）
     expect(trigger?.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("commandOpen=true 时触发器 aria-expanded 为 true", async () => {
+    const { runtime, chrome } = makeRuntime();
+    chrome.commandOpen = true;
+    const host = await mountShelf(runtime);
+    const trigger = host.querySelector('[data-testid="command-trigger"]') as HTMLButtonElement | null;
+    expect(trigger?.getAttribute("aria-expanded")).toBe("true");
   });
 });

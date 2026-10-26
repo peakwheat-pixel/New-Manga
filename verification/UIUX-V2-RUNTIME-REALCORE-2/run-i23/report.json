@@ -1,0 +1,21 @@
+{
+  "environmentRoot": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i23",
+  "ok": false,
+  "runId": "uiux-v2-realcore-20261026-run-i23",
+  "taskId": "UIUX-V2-RUNTIME-REALCORE-2",
+  "evidenceStatus": "INVALID_CONCURRENT_CDP",
+  "reason": "此轮与 run-i22 重叠，固定 CDP 端口 9345 指向上一轮 WebView2；S1/S2 读数因此不代表 run-i23 子进程。已中止，不能用于通过判定。",
+  "scenarios": [
+    {
+      "scenarioId": "S1",
+      "ok": false,
+      "detail": "IPC allowlist=0; CDP endpoint was stale"
+    },
+    {
+      "scenarioId": "S2",
+      "ok": false,
+      "detail": "UI showed data from another active run"
+    }
+  ],
+  "processLog": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-logs\\e2e-final-22.log"
+}

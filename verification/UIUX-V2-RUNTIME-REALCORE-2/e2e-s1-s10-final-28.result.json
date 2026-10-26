@@ -1,0 +1,7 @@
+{
+  "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-logs\\e2e-final-28.log",
+  "exe": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\release\\m2rc1-desktop.exe",
+  "command": "node e2e/uiux-v2/run.mjs",
+  "exit_code": 1,
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\e2e-final-28"
+}

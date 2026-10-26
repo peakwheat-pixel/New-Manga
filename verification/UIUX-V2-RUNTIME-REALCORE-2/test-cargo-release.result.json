@@ -1,0 +1,6 @@
+{
+  "log": "test-cargo-release.log",
+  "exit_code": 101,
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\cargo-test-final",
+  "command": "cargo test --release"
+}

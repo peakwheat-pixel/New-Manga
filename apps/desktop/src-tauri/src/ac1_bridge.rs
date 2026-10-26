@@ -39,6 +39,15 @@ fn decode_response(line: &str) -> Result<serde_json::Value, Ac1Error> {
     Ok(value.get("result").cloned().unwrap_or(serde_json::Value::Null))
 }
 
+// Keep this test-only channel's current wire form; drift must surface instead of silently changing the contract.
+fn ascii_only_request_line(request: &serde_json::Value) -> Result<String, Ac1Error> {
+    let line = request.to_string();
+    if !line.is_ascii() {
+        return Err(Ac1Error::new("AC1_BRIDGE_NON_ASCII_PAYLOAD"));
+    }
+    Ok(line)
+}
+
 /// The acceptance Core sidecar. One request at a time (the acceptance loop
 /// is strictly sequential); `round_trip` serialises through the mutexes.
 pub struct Ac1Channel {
@@ -102,7 +111,7 @@ impl Ac1Channel {
         params: serde_json::Value,
     ) -> Result<serde_json::Value, Ac1Error> {
         let request = serde_json::json!({ "id": 1, "method": method, "params": params });
-        let mut line = request.to_string();
+        let mut line = ascii_only_request_line(&request)?;
         line.push('\n');
         {
             let mut stdin = self.stdin.lock().unwrap();
@@ -144,6 +153,13 @@ impl Drop for Ac1Channel {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn non_ascii_payload_returns_visible_error_code() {
+        let error = ascii_only_request_line(&serde_json::json!({ "title": "雾港来信" }))
+            .expect_err("non-ASCII payload must fail");
+        assert_eq!(error.code, "AC1_BRIDGE_NON_ASCII_PAYLOAD");
+    }
 
     /// Wire shape: the request line carries id/method/params only; a typed
     /// error response decodes to `Ac1Error` with the Core-side code.

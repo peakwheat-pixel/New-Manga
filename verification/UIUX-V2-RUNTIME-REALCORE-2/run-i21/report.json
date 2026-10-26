@@ -1,0 +1,535 @@
+{
+  "taskId": "UIUX-V2-RUNTIME-REALCORE-2",
+  "runId": "uiux-v2-realcore-20261026-run-i21",
+  "startedAt": "2026-10-26T04:46:40.068Z",
+  "cdpPort": 9345,
+  "pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+  "exeSha256": "B4C35626EE2C7EFB327D3DF27C4A4742BB83FC4B3FD996022E0BC47D4F87AA6A",
+  "envManifest": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9345",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT"
+    ],
+    "__cdpPort": 9345,
+    "__pinnedExe": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe"
+  },
+  "cleanTargetsObserved": {
+    "roaming": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\appdata-roaming",
+      "state": "ABSENT"
+    },
+    "localAppData": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\appdata-local",
+      "state": "ABSENT"
+    },
+    "tmp": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\tmp",
+      "state": "ABSENT"
+    },
+    "dataRoot": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\data-root",
+      "state": "ABSENT"
+    },
+    "derived": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\scope\\derived",
+      "state": "ABSENT"
+    },
+    "managed": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\scope\\managed",
+      "state": "ABSENT"
+    },
+    "catalogDb": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\catalog\\catalog.sqlite",
+      "state": "ABSENT"
+    },
+    "webview2Udd": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\webview2-udd",
+      "state": "ABSENT"
+    },
+    "logs": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\logs",
+      "state": "ABSENT"
+    },
+    "shots": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\shots",
+      "state": "ABSENT"
+    }
+  },
+  "nativePickerAttempts": [
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\fixtures\\uiux-import.png",
+      "filenameText": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\fixtures\\uiux-import.png",
+      "mouse": [
+        1031,
+        705
+      ],
+      "activated": true,
+      "foregroundWindow": 1116940,
+      "filenameEdit": 1967900,
+      "action": "Foreground native dialog; set Task-local path in ID1148; CBN_EDITCHANGE; click actual Open button coordinates",
+      "buttonRect": [
+        987,
+        692,
+        1075,
+        718
+      ],
+      "dialogThread": 31604,
+      "foregroundThread": 4620,
+      "class": "#32770",
+      "attached": true,
+      "dialog": "��",
+      "submitted": false,
+      "sourcePath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\fixtures\\uiux-import.png",
+      "hwnd": 2033410,
+      "foreground": true,
+      "inputCandidates": [
+        "ControlType.Pane|1090|�ļ���(N):|Static",
+        "ControlType.Pane|1148||ComboBoxEx32",
+        "ControlType.Pane|1148||ComboBox",
+        "ControlType.Pane|1148||Edit",
+        "ControlType.Pane|1001|��ַ: G:\\AI\\uiux-workbench-copy\\testdata\\export|ToolbarWindow32",
+        "ControlType.Edit|SearchEditBox|������|SearchEditBox"
+      ],
+      "openEnabled": true,
+      "windowsAfter": [
+        "#32770|2033410|��",
+        "Tauri Window|4654862|M2-RC1 resource channel runtime",
+        "Tao Thread Event Target|2557694|"
+      ],
+      "filenameControl": 1836736,
+      "stillOpen": true
+    }
+  ],
+  "databasePath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\data-root\\library.db",
+  "databaseExists": true,
+  "scenarios": [
+    {
+      "scenarioId": "S1",
+      "title": "身份与单一 UI（真实 packaged EXE + WebView2）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "data-view=app",
+          "ok": true,
+          "detail": "data-view=app"
+        },
+        {
+          "name": "data-theme 已设置",
+          "ok": true,
+          "detail": "data-theme=dark"
+        },
+        {
+          "name": "旧内联壳 AppShell 不在 DOM 中",
+          "ok": true,
+          "detail": "count=0"
+        },
+        {
+          "name": "一级导航 4 个 tab",
+          "ok": true,
+          "detail": "count=4"
+        },
+        {
+          "name": "Tauri IPC 桥存在",
+          "ok": true,
+          "detail": "typeof __TAURI__=object"
+        },
+        {
+          "name": "文档标题非空",
+          "ok": true,
+          "detail": "title=M2RC1|interactive|deny=5/5|allow=0/0|results=5"
+        },
+        {
+          "name": "生产 IPC allowlist 已公告",
+          "ok": true,
+          "detail": "commands=66"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S2",
+      "title": "书架页真实数据（library_list_books + core_ping）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "书架空态来自真实读取（0 部作品）",
+          "ok": true,
+          "detail": "shelf-empty=true"
+        },
+        {
+          "name": "状态栏显示真实 Core 在线",
+          "ok": true,
+          "detail": "statusbar=●完成Core 在线Core ready0 部作品"
+        },
+        {
+          "name": "工具栏声明数据来自 Core 的最新读取",
+          "ok": true,
+          "detail": "text="
+        },
+        {
+          "name": "详情面板为空态（未编造数据）",
+          "ok": true,
+          "detail": "detail=○未开始未选择作品从左侧网格选择一部作品查看章节与详情。"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S3",
+      "title": "命令面板（焦点圈禁 / Esc / 焦点还原）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "Ctrl+K 快捷键打开命令面板",
+          "ok": true,
+          "detail": "keyboard path"
+        },
+        {
+          "name": "Ctrl+K 触发按钮打开面板",
+          "ok": true,
+          "detail": "options=5"
+        },
+        {
+          "name": "焦点落在命令输入框",
+          "ok": true,
+          "detail": "activeElement=command-input"
+        },
+        {
+          "name": "aria-activedescendant 指向可选项",
+          "ok": true,
+          "detail": "aria-activedescendant=:r0:-go-shelf"
+        },
+        {
+          "name": "Esc 关闭面板（键盘路径）",
+          "ok": true,
+          "detail": "closed"
+        },
+        {
+          "name": "真实鼠标点击触发器也能打开",
+          "ok": true,
+          "detail": "click path"
+        },
+        {
+          "name": "焦点还原到唤起按钮",
+          "ok": true,
+          "detail": "activeElement=command-trigger"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S4",
+      "title": "四页导航（真实点击 + aria-selected）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "切到工作台（page-workbench）",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "name": "切到阅读器（page-reader）",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "name": "切到设置（page-settings）",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "name": "切到书架（page-shelf）",
+          "ok": true,
+          "detail": "aria-selected=true"
+        },
+        {
+          "name": "全程只有一套 UI（无 AppShell）",
+          "ok": true,
+          "detail": "app-shell=0"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S5",
+      "title": "设置页（真实 settings_get + 分节切换）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "12+ 分节导航",
+          "ok": true,
+          "detail": "sections=12"
+        },
+        {
+          "name": "settings_get 已同步",
+          "ok": true,
+          "detail": "channel=●完成settings_get 已同步SFX 策略 · 未设置（按 Core 默认）"
+        },
+        {
+          "name": "SFX 策略显示真实未设置态",
+          "ok": true,
+          "detail": "sfx=SFX 策略 · 未设置（按 Core 默认）"
+        },
+        {
+          "name": "切分节改变内容标题",
+          "ok": true,
+          "detail": "Provider -> 翻译"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S6",
+      "title": "新建作品（真实 Core 写入 + 书架刷新）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "标题输入框可聚焦",
+          "ok": true,
+          "detail": "activeElement=create-title-input"
+        },
+        {
+          "name": "标题写入受控输入框",
+          "ok": true,
+          "detail": "value=端到端验收-004501"
+        },
+        {
+          "name": "创建被真实 Core 接受（对话框关闭）",
+          "ok": true,
+          "detail": "accepted"
+        },
+        {
+          "name": "真实写入后书架出现书卡",
+          "ok": true,
+          "detail": "cards=1"
+        },
+        {
+          "name": "书卡显示我写入的标题",
+          "ok": true,
+          "detail": "grid=NEW MANGA端到端验收-004501端到端验收-004501章节数见详情 · 页数未知刚刚"
+        },
+        {
+          "name": "作品计数从 0 变为 1（真实刷新）",
+          "ok": true,
+          "detail": "statusbar=●完成Core 在线端到端验收-004501Core ready1 部作品"
+        },
+        {
+          "name": "选中作品后详情面板显示该作品",
+          "ok": true,
+          "detail": "detail=端到端到端验收-004501—刚刚0章节页数未知页数章节0○未开始还没有章节导入图片时会自动创建章节，或在工作台新建章节。继续阅读工作台"
+        },
+        {
+          "name": "章节区为真实空态或真实列表",
+          "ok": true,
+          "detail": "chapterStateNodes=1"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S7",
+      "title": "主题切换（真机计算样式，非 jsdom）",
+      "ok": true,
+      "checks": [
+        {
+          "name": "主题切换改变 data-theme",
+          "ok": true,
+          "detail": "dark -> light"
+        },
+        {
+          "name": "主题切换改变实际计算背景色",
+          "ok": true,
+          "detail": "rgb(27, 27, 27) -> rgb(238, 238, 238)"
+        },
+        {
+          "name": "可切回原主题",
+          "ok": true,
+          "detail": "theme=dark"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S8",
+      "title": "书架原生导入（Tauri IPC + 真实 Core）",
+      "ok": false,
+      "checks": [
+        {
+          "name": "S6 创建的作品仍来自真实书架",
+          "ok": true,
+          "detail": "bookId=ff7f15f906a44c52865d2e0a6e4bb87d"
+        },
+        {
+          "name": "通过真实 Tauri IPC 创建导入目标章节",
+          "ok": true,
+          "detail": "chapterId=33c368a06f704f08adf5a6ee4ddffa5d"
+        },
+        {
+          "name": "书架重新读取到真实章节",
+          "ok": true,
+          "detail": "001导入验收章节-074530p"
+        },
+        {
+          "name": "导入对话框指向目标章节",
+          "ok": true,
+          "detail": "selected=33c368a06f704f08adf5a6ee4ddffa5d; expected=33c368a06f704f08adf5a6ee4ddffa5d"
+        },
+        {
+          "name": "S8 场景执行完成",
+          "ok": false,
+          "detail": "Error: native picker filename control unavailable: {\"filenameText\":\"G:\\\\CODEX\\\\New Manga.workspace\\\\task-envs\\\\UIUX-V2-RUNTIME-REALCORE-2\\\\run-i21\\\\fixtures\\\\uiux-import.png\",\"mouse\":[1031,705],\"activated\":true,\"foregroundWindow\":1116940,\"filenameEdit\":1967900,\"action\":\"Foreground native dialog; set Task-local path in ID1148; CBN_EDITCHANGE; click actual Open button coordinates\",\"buttonRect\":[987,"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S9",
+      "title": "真实 Core sidecar 定向终止与自愈",
+      "ok": false,
+      "checks": [
+        {
+          "name": "仅终止本 Tauri 父进程的 core_service.exe",
+          "ok": true,
+          "detail": "parentPid=16792; killed=21188"
+        },
+        {
+          "name": "S9 故障注入与恢复流程完成",
+          "ok": false,
+          "detail": "Error: waitFor timeout: 工作台 remounted (last=false)\n    at waitFor (file:///G:/CODEX/New%20Manga/apps/desktop/frontend/e2e/uiux-v2/run.mjs:84:9)\n    at async file:///G:/CODEX/New%20Manga/apps/desktop/frontend/e2e/uiux-v2/run.mjs:720:9"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S10",
+      "title": "900×700 窄窗与 200% DPI 布局预算",
+      "ok": false,
+      "checks": [
+        {
+          "name": "900×700 视口与 DPR=2 生效",
+          "ok": true,
+          "detail": "{\"width\":900,\"height\":700,\"dpr\":2}"
+        },
+        {
+          "name": "无横向滚动溢出",
+          "ok": false,
+          "detail": "{\"docWidth\":1024,\"clientWidth\":900,\"pageWidth\":1024}"
+        },
+        {
+          "name": "标题栏关键元素不重叠",
+          "ok": true,
+          "detail": "[{\"left\":16,\"top\":11.5,\"right\":306,\"bottom\":35.5,\"width\":290,\"height\":24},{\"left\":318,\"top\":6.5,\"right\":644,\"bottom\":40.5,\"width\":326,\"height\":34},{\"left\":656,\"top\":7.5,\"right\":1016,\"bottom\":39.5,\"width\":360,\"height\":32}]"
+        },
+        {
+          "name": "书架内容区与详情区不重叠",
+          "ok": true,
+          "detail": "{\"grid\":{\"left\":16,\"top\":170,\"right\":648,\"bottom\":507,\"width\":632,\"height\":337},\"detail\":{\"left\":668,\"top\":112,\"right\":1008,\"bottom\":624,\"width\":340,\"height\":512}}"
+        },
+        {
+          "name": "useAcrylicBudget 计算出的模糊层不超过 2",
+          "ok": true,
+          "detail": "blurLayers=2"
+        },
+        {
+          "name": "状态条在窄窗仍可见",
+          "ok": true,
+          "detail": "{\"left\":16,\"top\":640,\"right\":1008,\"bottom\":684,\"width\":992,\"height\":44}"
+        }
+      ]
+    }
+  ],
+  "stderrAllowlistLine": "[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,library_list_recycle_bin_books,library_create_book,create_chapter,settings_get,settings_update_section,cleanup_preview,cleanup_run,cleanup_retry_pending,backup_create,backup_list,backup_restore,backup_delete,plugins_list,plugins_set_enabled,plugins_set_plugin_enabled,plugins_audit_list,plugins_open_directory,settings_provider_profiles_list,settings_provider_profiles_create,settings_provider_profiles_update,settings_provider_profiles_delete,settings_provider_bindings_set,settings_provider_bindings_clear,settings_provider_bindings_resolve,settings_provider_run_snapshot_get,settings_network_profiles_list,settings_network_profiles_create,settings_network_profiles_update,settings_network_profiles_delete,settings_network_profiles_test,settings_network_profile_default_set,settings_network_profile_default_clear,settings_network_profile_resolve,settings_resolve_overrides,credential_put,credential_clear,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages,library_get_reader_projection,library_save_reading_progress,library_import_file,library_import_folder,library_start_export,library_start_run,library_control_run,library_resume_blocked_run,library_get_run_snapshot,library_get_task_projection,library_retry_failed_targets,library_reveal_export_folder,library_cancel_export,library_get_export_snapshot,library_get_export_history,library_delete_book_permanently,library_delete_books_permanently",
+  "ok": false,
+  "importFixture": {
+    "pngPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\fixtures\\uiux-import.png",
+    "pngSha256": "521A1D8AA4B50467F2F87FE7E03A18380D2A592D99E84211E6F6DA7B9E0C0258",
+    "unsupportedPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\run-i21\\fixtures\\uiux-import-unsupported.txt"
+  },
+  "importResult": {
+    "imported": false,
+    "bookId": "ff7f15f906a44c52865d2e0a6e4bb87d",
+    "chapterId": "33c368a06f704f08adf5a6ee4ddffa5d"
+  },
+  "coreOutage": {
+    "parentPid": 16792,
+    "killedPids": [
+      21188
+    ],
+    "pages": []
+  },
+  "narrowWindowLayout": {
+    "width": 900,
+    "height": 700,
+    "dpr": 2,
+    "docWidth": 1024,
+    "docClientWidth": 900,
+    "pageWidth": 1024,
+    "titleParts": [
+      {
+        "left": 16,
+        "top": 11.5,
+        "right": 306,
+        "bottom": 35.5,
+        "width": 290,
+        "height": 24
+      },
+      {
+        "left": 318,
+        "top": 6.5,
+        "right": 644,
+        "bottom": 40.5,
+        "width": 326,
+        "height": 34
+      },
+      {
+        "left": 656,
+        "top": 7.5,
+        "right": 1016,
+        "bottom": 39.5,
+        "width": 360,
+        "height": 32
+      }
+    ],
+    "grid": {
+      "left": 16,
+      "top": 170,
+      "right": 648,
+      "bottom": 507,
+      "width": 632,
+      "height": 337
+    },
+    "detail": {
+      "left": 668,
+      "top": 112,
+      "right": 1008,
+      "bottom": 624,
+      "width": 340,
+      "height": 512
+    },
+    "status": {
+      "left": 16,
+      "top": 640,
+      "right": 1008,
+      "bottom": 684,
+      "width": 992,
+      "height": 44
+    },
+    "statusVisible": true,
+    "blur": 2
+  },
+  "appExit": {
+    "exited": true,
+    "code": null,
+    "signal": "SIGTERM"
+  },
+  "finishedAt": "2026-10-26T04:47:14.106Z"
+}

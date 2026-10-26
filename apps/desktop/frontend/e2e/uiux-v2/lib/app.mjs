@@ -20,12 +20,24 @@ import {
   CDP_PORT,
   launchDirs,
   PINNED_EXE,
+  TASK_ENV_ROOT,
 } from "./env.mjs";
+
+function assertTaskEnvironment(env) {
+  const taskRoot = `${path.resolve(TASK_ENV_ROOT).toLowerCase()}${path.sep}`;
+  for (const key of ["NEWMANGA_DATA_ROOT", "APPDATA", "LOCALAPPDATA", "TEMP", "TMP", "WEBVIEW2_USER_DATA_FOLDER"]) {
+    const value = env[key];
+    if (!value || !`${path.resolve(value).toLowerCase()}${path.sep}`.startsWith(taskRoot)) {
+      throw new Error(`UNSAFE_LAUNCH_ENV: ${key} must stay under ${TASK_ENV_ROOT}, got ${value}`);
+    }
+  }
+}
 
 export async function launchApp({ scenarioRoot, tag = "app" } = {}) {
   if (!scenarioRoot) throw new Error("launchApp requires scenarioRoot (never a shared path)");
   const clean = assertLaunchTargetsClean(scenarioRoot);
   const env = buildLaunchEnv(scenarioRoot);
+  assertTaskEnvironment(env);
   const dirs = launchDirs(scenarioRoot);
   mkdirSync(dirs.logs, { recursive: true });
   mkdirSync(dirs.shots, { recursive: true });

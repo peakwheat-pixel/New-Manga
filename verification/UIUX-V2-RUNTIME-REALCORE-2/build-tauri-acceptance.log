@@ -1,0 +1,25 @@
+**********************
+PowerShell 记录开始
+开始时间: 20261026120537
+用户名: HOME-MY\49745
+RunAs 用户: HOME-MY\49745
+配置名称: 
+计算机: HOME-MY (Microsoft Windows NT 10.0.26300.0)
+主机应用程序: C:\Program Files\PowerShell\7\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$taskRoot = 'G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2'; $evidence = 'G:/CODEX/New Manga/verification/UIUX-V2-RUNTIME-REALCORE-2'; $env:APPDATA = "$taskRoot/build-env/appdata"; $env:LOCALAPPDATA = "$taskRoot/build-env/localappdata"; $env:TEMP = "$taskRoot/build-env/temp"; $env:TMP = "$taskRoot/build-env/temp"; $env:NEWMANGA_DATA_ROOT = "$taskRoot/build-env/data-root"; $env:WEBVIEW2_USER_DATA_FOLDER = "$taskRoot/build-env/webview2"; $env:CARGO_HOME = "$taskRoot/tool-cache/cargo-home"; $env:RUSTUP_HOME = 'C:/Users/49745/.rustup'; $env:CARGO_NET_OFFLINE = 'true'; $log = Join-Path $evidence 'build-tauri-acceptance.log'; Start-Transcript -Path $log -Force | Out-Null; Push-Location 'apps/desktop/src-tauri'; cargo tauri build --no-bundle --config tauri.acceptance.conf.json; $code = $LASTEXITCODE; Pop-Location; Stop-Transcript | Out-Null; [ordered]@{command='cd apps/desktop/src-tauri; cargo tauri build --no-bundle --config tauri.acceptance.conf.json'; exitCode=$code} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence 'build-tauri-acceptance.result.json') -Encoding utf8; Write-Output "exitCode=$code"; if ($code -ne 0) { exit $code }
+进程 ID: 39996
+PSVersion: 7.6.8
+PSEdition: Core
+GitCommitId: 7.6.8
+OS: Microsoft Windows 10.0.26300
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+
+**********************
+PowerShell 记录结束
+结束时间: 20261026120649
+**********************

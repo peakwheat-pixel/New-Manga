@@ -1,0 +1,4 @@
+{
+  "command": "cd apps/desktop/src-tauri; cargo tauri build --no-bundle --config tauri.acceptance.conf.json",
+  "exitCode": 0
+}

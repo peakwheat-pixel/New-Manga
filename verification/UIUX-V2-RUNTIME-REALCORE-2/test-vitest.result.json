@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "log": "test-vitest.log",
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\vitest-final",
+  "command": "npx vitest run"
+}

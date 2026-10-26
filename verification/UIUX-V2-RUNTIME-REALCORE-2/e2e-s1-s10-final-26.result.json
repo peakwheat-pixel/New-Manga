@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "command": "node e2e/uiux-v2/run.mjs",
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\e2e-final-26",
+  "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-logs\\e2e-final-26.log"
+}

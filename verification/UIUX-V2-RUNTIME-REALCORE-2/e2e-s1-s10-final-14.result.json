@@ -1,0 +1,8 @@
+{
+  "exit_code": 1,
+  "report": "G:\\CODEX\\New Manga\\verification\\UIUX-V2-RUNTIME-REALCORE-2\\run-i15\\report.json",
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\e2e-final-14",
+  "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-logs\\e2e-s1-s10-final-14.log",
+  "isolated_library_db_exists": true,
+  "command": "node e2e/uiux-v2/run.mjs"
+}

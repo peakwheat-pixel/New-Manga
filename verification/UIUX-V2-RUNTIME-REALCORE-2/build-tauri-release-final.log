@@ -1,0 +1,94 @@
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)
+warning: unused imports: `P15CredentialTarget`, `P15SettingsCommand`, and `P15_HOST_ONLY_COMMANDS`
+  --> src\main.rs:52:55
+   |
+52 |     LibraryChannel, LibraryError, LibrarySpawnConfig, P15CredentialTarget, P15SettingsCommand,
+   |                                                       ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+...
+55 |     PingResult, ResilientLibraryChannel, StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
+   |                                                               ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:348:12
+    |
+348 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:363:12
+    |
+363 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:372:12
+    |
+371 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+372 |     pub fn new() -> Self {
+    |            ^^^
+...
+383 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+391 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: constant `P15_HOST_ONLY_COMMANDS` is never used
+   --> src\library_bridge.rs:736:11
+    |
+736 | pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+    |           ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `track_unreaped_worker_handle` is never used
+    --> src\library_bridge.rs:1767:15
+     |
+1767 | pub(crate) fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) -> bool {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated function `spawn` is never used
+    --> src\library_bridge.rs:1933:12
+     |
+1932 | impl StdioLibraryChannel {
+     | ------------------------ associated function in this implementation
+1933 |     pub fn spawn(
+     |            ^^^^^
+
+warning: multiple methods are never used
+    --> src\library_bridge.rs:4706:12
+     |
+4663 | impl MockLibraryChannel {
+     | ----------------------- methods in this implementation
+...
+4706 |     pub fn set_export_snapshot_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4713 |     pub fn set_export_history_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4720 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+     |            ^^^^^^^^^
+...
+4724 |     pub fn set_books_error(&self, error: LibraryError) {
+     |            ^^^^^^^^^^^^^^^
+...
+4730 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^^
+...
+4736 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+...
+4740 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^
+...
+4747 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 8 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 14.93s
+       Built application at: G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe

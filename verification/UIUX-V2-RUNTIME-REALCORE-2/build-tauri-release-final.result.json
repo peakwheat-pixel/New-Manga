@@ -1,0 +1,7 @@
+{
+  "command": "cargo tauri build --no-bundle",
+  "exit_code": 0,
+  "exe_sha256": "B47689C5F547432F2DED8A8A5F34837E4F237BB370EC734E3BC991CFBA13905B",
+  "environment_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\process-env\\release-build-final",
+  "log": "build-tauri-release-final.log"
+}
