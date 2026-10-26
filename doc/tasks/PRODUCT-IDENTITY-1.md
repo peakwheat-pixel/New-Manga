@@ -12,8 +12,8 @@ depends_on: [UIUX-V2-RUNTIME-NARROW-1]
 base_commit: null
 branch: main
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: 874eec3cb
+delivery_head: 874eec3cb
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/PRODUCT-IDENTITY-1
@@ -122,12 +122,12 @@ allowed_paths:
 
 | evidence_id | AC | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC1/AC2/AC6 | verification/PRODUCT-IDENTITY-1/README.md | HEAD3 | - | CANONICAL |
-| EV-02 | AC5 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i5/report.json | HEAD3 | - | CANONICAL |
-| EV-03 | AC1/AC3 | apps/desktop/src-tauri/tauri.conf.json | HEAD3 | - | CANONICAL |
-| EV-04 | AC2 | apps/desktop/src-tauri/Cargo.toml | HEAD3 | - | CANONICAL |
-| EV-05 | AC3 | apps/desktop/src-tauri/src/main.rs | HEAD3 | - | CANONICAL |
-| EV-06 | AC5 | apps/desktop/frontend/e2e/uiux-v2/lib/env.mjs | HEAD3 | - | CANONICAL |
+| EV-01 | AC1/AC2/AC6 | verification/PRODUCT-IDENTITY-1/README.md | 874eec3cb | - | CANONICAL |
+| EV-02 | AC5 | verification/UIUX-V2-RUNTIME-NARROW-1/run-i5/report.json | 874eec3cb | - | CANONICAL |
+| EV-03 | AC1/AC3 | apps/desktop/src-tauri/tauri.conf.json | 874eec3cb | - | CANONICAL |
+| EV-04 | AC2 | apps/desktop/src-tauri/Cargo.toml | 874eec3cb | - | CANONICAL |
+| EV-05 | AC3 | apps/desktop/src-tauri/src/main.rs | 874eec3cb | - | CANONICAL |
+| EV-06 | AC5 | apps/desktop/frontend/e2e/uiux-v2/lib/env.mjs | 874eec3cb | - | CANONICAL |
 
 ## Resource Manifest
 
