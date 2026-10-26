@@ -1,0 +1,7 @@
+{
+  "source_path_ascii_escaped": "C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-49745\\\\pytest-462\\\\test_unicode_paths_are_ascii_e0\\\\\\u4e2d\\u6587\\u76ee\\u5f55_\\u65e5\\u672c\\u8a9e\\\\\\u65e5\\u6f2b_\\u7b2c1\\u9875_\\u30c6\\u30b9\\u30c8.png",
+  "manifest_ascii_only": true,
+  "manifest_bytes": 852,
+  "unicode_escape_present": false,
+  "raw_manifest_prefix_hex": "7b0d0a202022736368656d61223a202274696c652d6368616e6e656c2d636f6e74726163742f7631222c0d0a2020227265736f757263655f6964223a20227061"
+}

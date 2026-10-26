@@ -1,0 +1,47 @@
+{
+  "task": "CORE-TILE-EMIT-1",
+  "ac": "AC1-AC5",
+  "base_commit": "744eccb61",
+  "generated_at_utc": "2026-10-26T18:54:39.2966446Z",
+  "tests": {
+    "pytest": "see log",
+    "dotnet_one_command": "see test.ps1.log"
+  },
+  "evidence": {
+    "test/pytest-baseline.log": {
+      "path": "verification/CORE-TILE-EMIT-1/test/pytest-baseline.log",
+      "bytes": 84355,
+      "sha256": "363fc532bf70bbf987c9d2eacc73befd1a7aa8c4eb23583333955772bfd90ff7"
+    },
+    "test/test.ps1.log": {
+      "path": "verification/CORE-TILE-EMIT-1/test/test.ps1.log",
+      "bytes": 18496,
+      "sha256": "bad745d3303379cb44fbf18465aa9b4174f2ff5b3984cf4994c697f2a4ff71a6"
+    },
+    "e2e-manifest-sample.json": {
+      "path": "verification/CORE-TILE-EMIT-1/e2e-manifest-sample.json",
+      "bytes": 762,
+      "sha256": "34fe8fa63ce17891509d6f6c43f9aeb2701dc2b22eaf176b5264d38a17a36667"
+    },
+    "core-emit/unicode-path.json": {
+      "path": "verification/CORE-TILE-EMIT-1/core-emit/unicode-path.json",
+      "bytes": 527,
+      "sha256": "0ccff5fc8d7fbb0862885469d524b5b58107c14ffc19972d08ee6f71f144a55a"
+    },
+    "core-emit/contract-manifest.json": {
+      "path": "verification/CORE-TILE-EMIT-1/core-emit/contract-manifest.json",
+      "bytes": 58,
+      "sha256": "b27da78a3782431c31b718bca32972d07f583ab88dc6c2b66dec2d9b1a11fa6b"
+    },
+    "core-emit/host-e2e-artifact.json": {
+      "path": "verification/CORE-TILE-EMIT-1/core-emit/host-e2e-artifact.json",
+      "bytes": 200,
+      "sha256": "9ea5a03ea859551b756a03413830370c3a959a55f4da3582340ea8e5acaf10ed"
+    },
+    "e2e/host-consumes-core-artifact.json": {
+      "path": "verification/CORE-TILE-EMIT-1/e2e/host-consumes-core-artifact.json",
+      "bytes": 545,
+      "sha256": "41ebc1d37b138ed9f83c4dd8e769545edba23b28faa90c8629d73acb1fa17855"
+    }
+  }
+}
