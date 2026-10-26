@@ -1,0 +1,76 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\publish\\win-x64-single-trimmed\\Spike.App.exe",
+  "arguments": "--out=\"G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\cold-start\" --assets=\"G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA\\oc material\\17\"",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:19:07.3305665Z",
+      "window_visible_ms": 846,
+      "window_visible_from_create_ms": 841.2,
+      "hwnd": "0x200470",
+      "pid": 4556,
+      "working_set_mb": 196.6,
+      "process_start_time": "2026-10-26T23:19:07.3354644+08:00",
+      "capture": {
+        "x": 679,
+        "width": 1202,
+        "height": 832,
+        "y": 276
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\cold-start\\coldstart_run1.png"
+    },
+    {
+      "run": 2,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:19:09.1696638Z",
+      "window_visible_ms": 841,
+      "window_visible_from_create_ms": 836.2,
+      "hwnd": "0x310DD2",
+      "pid": 48456,
+      "working_set_mb": 206.8,
+      "process_start_time": "2026-10-26T23:19:09.1746731+08:00",
+      "capture": {
+        "x": 679,
+        "width": 1202,
+        "height": 832,
+        "y": 276
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\cold-start\\coldstart_run2.png"
+    },
+    {
+      "run": 3,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:19:11.0122795Z",
+      "window_visible_ms": 854,
+      "window_visible_from_create_ms": 849.7,
+      "hwnd": "0x28083A",
+      "pid": 51860,
+      "working_set_mb": 197.3,
+      "process_start_time": "2026-10-26T23:19:11.0173354+08:00",
+      "capture": {
+        "x": 679,
+        "width": 1202,
+        "height": 832,
+        "y": 276
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\cold-start\\coldstart_run3.png"
+    }
+  ],
+  "measured_count": 3,
+  "visible_ms_sorted": [
+    841,
+    846,
+    854
+  ],
+  "visible_ms_p50": 846,
+  "visible_from_create_ms_sorted": [
+    836.2,
+    841.2,
+    849.7
+  ],
+  "visible_from_create_ms_p50": 841.2,
+  "visible_from_create_ms_min": 836.2,
+  "visible_from_create_ms_max": 849.7,
+  "captured_at_utc": "2026-10-26T15:19:12.8898457Z"
+}

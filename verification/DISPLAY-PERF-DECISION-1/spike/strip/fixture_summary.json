@@ -1,0 +1,9 @@
+{
+  "master": "G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/master_4000x60000.jpg",
+  "master_bytes": 27491643,
+  "master_sha256": "6017362a3dd89a641eafa06bbb362ce4598bedb75e6d422995e5f090f005e7dc",
+  "tiles": 30,
+  "tile_total_bytes": 31767652,
+  "used_pages": 11,
+  "contact_sheet": "G:/CODEX/New Manga/verification/DISPLAY-PERF-DECISION-1/spike/strip/contact_sheet.png"
+}

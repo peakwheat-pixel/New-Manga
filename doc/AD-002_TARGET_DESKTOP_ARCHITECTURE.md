@@ -60,7 +60,25 @@ Owner: DSH（Lead/Architect）· Decision authority: User · Date: 2026-10-26
 3. **导入流程**：图片/文件夹/PDF/ZIP/CBZ → 选择书籍/章节 → 进度 → 落库。
 4. **快速翻译**：独立工作区，重置语义明确。
 
-> 复刻原则：**视觉与交互规格可 1:1；代码不 1:1**（见 §5 许可证）。Avalonia 侧用 ThemePack + 自定义 ControlTheme 实现，令牌集中成一个 JSON，便于主题中心切换。
+> 复刻原则：**视觉与交互规格可参考；代码按 GPL-3.0 合规移植**（见 §5 许可证）。Avalonia 侧用 ThemePack + 自定义 ControlTheme 实现，令牌集中成一个 JSON，便于主题中心切换。
+>
+> **规格已交付**：`verification/DISPLAY-PERF-DECISION-1/ui-spec/SABER_UI_SPEC.md`（53KB，四页 + 流程 + NOT_RUN 标注）、`tokens-saber-purple.json`（31KB，light/dark 各 53 色 + 渐变/圆角/间距/字号/阴影/组件配方/Avalonia 映射，JSON 校验通过）、`SCREENSHOT_INDEX.md`（含 4 条版本漂移 D1–D4）。Avalonia 实现注意：无 `::before`/`auto-fill`（列宽需算 172/24）、`rgba`→`#AARRGGBB`、`135deg`→`LinearGradientBrush`、字体仅系统栈（Saber `fonts/` 含商业字体不可随包）。
+
+## 3.5 后端依赖预算（Python Core vs Saber 实测）
+
+| 维度 | 本项目 Python Core | Saber |
+|---|---|---|
+| Python | 3.12 | 3.11 |
+| 体积 | **1.27 GB**（torch 365MB CPU / cv2 112MB / onnxruntime 63MB / **PySide6 61MB** / transformers 39MB） | **27.2 GB**（models 3.76GB / torch 2.66GB **CUDA** / unidic_lite 248MB / chromadb 60MB + Flask/uvicorn） |
+| 形态 | stdio JSON-lines（无 HTTP/端口/CORS） | Flask+uvicorn REST/SSE + Vue Web UI |
+| 模型 | 仓外 SHA-256 pin、懒加载 fail-closed | 随包 `models/` 全带 |
+
+**预算规则（实现 Task 硬约束）**：
+1. Core（CPU 分发）**≤ 2 GB**；CUDA 作为**可选独立包 ≤ 8 GB**，不得并进主安装包。
+2. 新增模型优先走 **ONNX Runtime**（已有 DirectML 通道）；引入 torch-CUDA 全家桶须单独裁决。
+3. **移除 Core 内 PySide6**（`QtImageDecoder` 改用 Pillow/pypdfium2）：-61MB、去掉 LGPL 依赖、符合"Core 不依赖 Qt GUI"边界。
+4. 打包瘦身：当前 3 个 ~68MB entry exe 存在运行时重复，目标 Core 总体积 ≤ 700MB（不含模型）。
+5. Saber 的 **Flask/uvicorn/REST/SSE 不照搬**——Avalonia 直连 stdio 更快更安全；只借鉴其任务队列/Worker 分离/暂停恢复理念。
 
 ## 4. 主题中心（Saber 没有的能力，本项目差异化）
 

@@ -55,6 +55,7 @@ allowed_paths:
 - [x] **AC12 新架构草案 + Saber 参考规格**（AD-002 草案：Avalonia+Python Core 边界/接线/主题中心 ThemePack/书架 1:1 复刻令牌与流程/许可证决策树 L1–L3/灰度迁移 S0–S5/成本 200–400 人日；Saber 实测栈与 CSS 令牌已存证）<<MET>>
 - [x] **AC13 AD-002 冻结 + 裁决落地 + 任务拆解**（用户裁决：前端 Avalonia、全页"着重参考"Saber、**L2 开源 GPL-3.0**；AD-002 v1.0 标 ACCEPTED 并给出 S0–S5 任务拆解与 GPL 合规义务清单）<<MET>>
 - [ ] **AC14 S0 Avalonia spike（GO/NO-GO）**（11 项门槛：单文件 ≤45MB、冷启动 p50 ≤600ms、真 Mica、3 套主题热切 ≤100ms、4000×60000 分块 p95 ≤16.7ms/内存 ≤1.5GB、竖排 1:1 像素、IME、CoreClient 中文零乱码、无障碍、安装包 ≤150MB、版本决策；工程在 workspace，证据在当前任务 `spike/`）
+- [x] **AC15 Saber UI 参考规格 + Core 依赖预算**（`ui-spec/SABER_UI_SPEC.md` 53KB + `tokens-saber-purple.json` 31KB（light/dark 各 53 色，含 Avalonia 映射）+ `SCREENSHOT_INDEX.md`；AD-002 新增 §3.5 后端依赖预算：Core CPU ≤2GB、CUDA 可选包 ≤8GB、去 PySide6、ONNX 优先、不照搬 Flask/SSE）<<MET>>
 
 ## 允许修改范围
 

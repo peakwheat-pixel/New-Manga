@@ -1,0 +1,22 @@
+{
+  "mode": "window",
+  "process_start_utc": "2026-10-26T15:19:11.017Z",
+  "process_create_to_window_opened_ms": 847.354,
+  "process_create_to_first_frame_ms": 911.246,
+  "entry_to_window_opened_ms": 726.952,
+  "first_frame_wait_ms": 46.469,
+  "render_scaling": 1,
+  "actual_transparency_level": "Mica",
+  "requested_transparency_hint": "Mica",
+  "window_bounds": {
+    "width": 1200,
+    "height": 800
+  },
+  "platform_handle": "0x28083A",
+  "os_version": "Microsoft Windows NT 10.0.26300.0",
+  "runtime": "9.0.20",
+  "avalonia_version": "11.3.22.0",
+  "gc_server": false,
+  "processor_count": 32,
+  "written_at_utc": "2026-10-26T15:19:11.934Z"
+}

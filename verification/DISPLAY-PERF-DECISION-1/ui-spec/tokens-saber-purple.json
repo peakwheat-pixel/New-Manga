@@ -1,0 +1,639 @@
+{
+  "schema": "nm.design-tokens/1",
+  "name": "saber-purple",
+  "displayName": "Saber Purple（紫渐变 → 靛蓝主色）",
+  "meta": {
+    "generated": "2026-10-26",
+    "task": "DISPLAY-PERF-DECISION-1 / task-7",
+    "owner": "saber-ui-spec",
+    "referenceMode": "着重参考（视觉语言与信息架构参考 Saber-Translator，不承诺逐像素一致；阅读器/设置页只取令牌）",
+    "consumer": "Avalonia 11.x（.NET）App；ThemeVariant Light/Dark；ResourceDictionary + DynamicResource",
+    "sourceInstall": "E:\\software\\Saber-Translator（只读；PyInstaller onedir）",
+    "sourceAssets": [
+      "_internal/src/app/static/vue/assets/index.*.css（:root 全局变量、.btn/.card/.form-group/.settings-* 等）",
+      "_internal/src/app/static/vue/assets/AppHeader.*.css（顶栏渐变、毛玻璃链接胶囊）",
+      "_internal/src/app/static/vue/assets/BookshelfView.*.css（书架/筛选/书卡/详情/标签/对话框）",
+      "_internal/src/app/static/vue/assets/TranslateView.*.css（工作区侧栏/工具栏/编辑面板，深色 chrome）",
+      "_internal/src/app/static/vue/assets/ReaderView.*.css（阅读器底色预设与顶栏）",
+      "_internal/src/app/static/vue/js/*.js（编译后模板中的类名与界面文案）"
+    ],
+    "screenshotEvidence": [
+      "verification/DISPLAY-PERF-DECISION-1/ui-stack/saber-ref/bookshelf-display.png",
+      "verification/DISPLAY-PERF-DECISION-1/ui-stack/saber-ref/interface.png",
+      "verification/DISPLAY-PERF-DECISION-1/ui-stack/saber-ref/Editor.png"
+    ],
+    "licenseNote": "数值与观感令牌派生自 GPL-3.0 项目 Saber-Translator 的编译产物；本文件是规格数据、不含其源码片段。实现阶段若移植其组件/样式代码，必须按 GPL-3.0 保留版权与许可声明（产品整体按 GPL-3.0 / 若含 AGPL 组件则 AGPL-3.0 声明）。随包字体不得取自该安装目录：其 fonts/ 内混有 Arial Unicode、汉仪/华康/字体管家等商业字体，仅可参考其字体清单，实际字体须另行取得可再分发授权（OFL 等）。",
+    "colorFormat": "Avalonia Color.Parse 兼容：#RRGGBB 或 #AARRGGBB（8 位时前两位为 Alpha）。凡原值为 rgba() 的，此处已换算为 #AARRGGBB。",
+    "namingRule": "全部小写 kebab-case，前缀 nm-；语义层（semantic）供界面直接引用，基础层（palette）供扩展与调试。",
+    "contrastNote": "contrast 字段为按 WCAG 相对亮度公式的估算值（两位小数），实现前请用工具复核；标 AA- 的表示小字号 4.5:1 未达标、仅满足大字号/组件边界（3:1），已在建议值中给出替代。"
+  },
+
+  "palette": {
+    "brand": {
+      "purple-400": "#8B6BBF",
+      "purple-500": "#764BA2",
+      "purple-600": "#8E44AD",
+      "indigo-300": "#8B9BF3",
+      "indigo-400": "#7B8EEF",
+      "indigo-500": "#667EEA",
+      "indigo-600": "#6366F1",
+      "indigo-700": "#4F46E5",
+      "indigo-800": "#4338CA"
+    },
+    "neutral": {
+      "white": "#FFFFFF",
+      "gray-50": "#F8FAFC",
+      "gray-100": "#F4F7F9",
+      "gray-150": "#F5F5F8",
+      "gray-200": "#F0F4F8",
+      "gray-300": "#E2E8F0",
+      "gray-350": "#E5E7EB",
+      "gray-400": "#CBD5E0",
+      "gray-500": "#A0AEC0",
+      "gray-550": "#94A3B8",
+      "gray-600": "#718096",
+      "gray-700": "#4A5568",
+      "gray-750": "#3B3F4F",
+      "gray-800": "#2D3748",
+      "gray-850": "#2C3E50",
+      "gray-900": "#1A202C",
+      "black": "#000000"
+    },
+    "blue-legacy": {
+      "note": "Saber 早期蓝色体系，仍出现在工作区侧栏/拖放区/滑杆；新版紫色体系为主。",
+      "blue-400": "#5DADE2",
+      "blue-500": "#3498DB",
+      "blue-600": "#2980B9",
+      "blue-700": "#1F6AA6",
+      "cyan-600": "#17A2B8"
+    },
+    "green": { "green-500": "#22C55E", "green-600": "#28A745", "green-650": "#27AE60", "green-700": "#16A34A", "mint-400": "#20C997", "mint-500": "#2ECC71", "neon-400": "#00FF88" },
+    "red": { "red-400": "#F87171", "red-500": "#EF4444", "red-600": "#DC3545", "red-650": "#D9534F", "red-700": "#C82333", "red-800": "#E74C3C", "red-900": "#FF1744" },
+    "amber": { "amber-400": "#FBBF24", "amber-500": "#F59E0B", "amber-600": "#F0AD4E", "amber-700": "#EB9316" },
+    "orange": { "orange-500": "#FF6B6B" },
+    "dark-chrome": {
+      "note": "编辑/翻译工作区的深色 chrome 家族（来自 TranslateView 编辑工具栏、阅读器深蓝预设、Editor 截图采样）。",
+      "ink-950": "#0D1B2A",
+      "ink-900": "#111827",
+      "ink-850": "#1A1A2E",
+      "ink-800": "#16213E",
+      "ink-750": "#1F2430",
+      "ink-700": "#263360"
+    }
+  },
+
+  "themes": {
+    "light": {
+      "color": {
+        "nm-bg-canvas": "#F4F7F9",
+        "nm-bg-canvas-alt": "#F5F5F8",
+        "nm-bg-surface": "#FFFFFF",
+        "nm-bg-surface-muted": "#F8FAFC",
+        "nm-bg-inset": "#F9FAFC",
+        "nm-bg-hover": "#F0F4F8",
+        "nm-bg-active": "#E2E8F0",
+        "nm-bg-reader-navy": "#1A1A2E",
+        "nm-bg-reader-beige": "#F5F5DC",
+        "nm-bg-reader-charcoal": "#2D2D2D",
+        "nm-scrim": "#80000000",
+        "nm-scrim-soft": "#40000000",
+
+        "nm-border-subtle": "#EEF2F6",
+        "nm-border-default": "#E2E8F0",
+        "nm-border-input": "#E0E6ED",
+        "nm-border-strong": "#CBD5E0",
+        "nm-divider": "#E2E8F0",
+
+        "nm-text-primary": "#1A202C",
+        "nm-text-heading": "#2C3E50",
+        "nm-text-body": "#333333",
+        "nm-text-secondary": "#718096",
+        "nm-text-tertiary": "#94A3B8",
+        "nm-text-muted": "#A0AEC0",
+        "nm-text-inverse": "#FFFFFF",
+        "nm-text-on-accent": "#FFFFFF",
+        "nm-text-on-header": "#FFFFFF",
+
+        "nm-accent": "#6366F1",
+        "nm-accent-strong": "#4F46E5",
+        "nm-accent-weak": "#667EEA",
+        "nm-accent-soft": "#1A667EEA",
+        "nm-accent-softer": "#0D667EEA",
+        "nm-accent-border": "#80667EEA",
+        "nm-focus-ring": "#1A667EEA",
+
+        "nm-status-success": "#22C55E",
+        "nm-status-success-strong": "#16A34A",
+        "nm-status-success-soft": "#1A22C55E",
+        "nm-status-danger": "#EF4444",
+        "nm-status-danger-strong": "#DC3545",
+        "nm-status-danger-soft": "#1AEF4444",
+        "nm-status-warning": "#F59E0B",
+        "nm-status-warning-strong": "#EB9316",
+        "nm-status-warning-soft": "#1AF59E0B",
+        "nm-status-info": "#3498DB",
+        "nm-status-info-strong": "#2980B9",
+        "nm-status-info-soft": "#1A3498DB",
+
+        "nm-header-text": "#FFFFFF",
+        "nm-header-pill": "#2EFFFFFF",
+        "nm-header-pill-hover": "#40FFFFFF",
+        "nm-header-pill-text": "#F2FFFFFF",
+        "nm-online-dot": "#22C55E",
+        "nm-badge-bg": "#4DFFFFFF",
+        "nm-control-on-dark": "#1AFFFFFF",
+        "nm-control-on-dark-hover": "#33FFFFFF"
+      },
+      "gradient": {
+        "nm-gradient-brand": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#667EEA", "#764BA2"],
+          "usage": "顶栏、主按钮、章节「进入翻译」、搜索按钮、封面占位"
+        },
+        "nm-gradient-brand-hover": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#7B8EEF", "#8A5CB5"],
+          "usage": "主按钮 hover"
+        },
+        "nm-gradient-success": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#28A745", "#20C997"],
+          "usage": "章节「进入阅读」、保存类按钮"
+        },
+        "nm-gradient-danger": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#DC3545", "#C82333"],
+          "usage": "删除类按钮"
+        },
+        "nm-gradient-info": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#2980B9", "#3498DB"],
+          "usage": "工作区「查看原图 / 切换编辑模式」控制按钮"
+        },
+        "nm-gradient-info-active": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#27AE60", "#2ECC71"],
+          "usage": "工作区控制按钮 active 态"
+        },
+        "nm-gradient-dark-chrome": {
+          "type": "linear",
+          "angleDeg": 135,
+          "stops": ["#16213E", "#1A1A2E"],
+          "usage": "工作区编辑模式顶部 chrome（深色）"
+        }
+      },
+      "radius": {
+        "nm-radius-xs": "4px",
+        "nm-radius-sm": "6px",
+        "nm-radius-md": "8px",
+        "nm-radius-lg": "10px",
+        "nm-radius-xl": "12px",
+        "nm-radius-2xl": "14px",
+        "nm-radius-3xl": "16px",
+        "nm-radius-pill": "20px",
+        "nm-radius-full": "999px"
+      },
+      "spacing": {
+        "nm-space-1": "4px",
+        "nm-space-2": "6px",
+        "nm-space-3": "8px",
+        "nm-space-4": "10px",
+        "nm-space-5": "12px",
+        "nm-space-6": "14px",
+        "nm-space-7": "16px",
+        "nm-space-8": "20px",
+        "nm-space-9": "24px",
+        "nm-space-10": "28px",
+        "nm-space-11": "32px",
+        "nm-space-12": "40px",
+        "nm-space-13": "80px"
+      },
+      "typography": {
+        "nm-font-sans": "\"Microsoft YaHei UI\", \"Segoe UI\", \"PingFang SC\", \"Noto Sans SC\", sans-serif",
+        "nm-font-display": "\"Microsoft YaHei UI\", \"Segoe UI\", sans-serif",
+        "nm-font-mono": "\"Cascadia Mono\", Consolas, \"Courier New\", monospace",
+        "nm-font-manga-fallback": "\"Microsoft YaHei\", \"SimHei\", sans-serif",
+        "nm-font-size-caption": "11px",
+        "nm-font-size-xs": "12px",
+        "nm-font-size-sm": "13px",
+        "nm-font-size-body": "14px",
+        "nm-font-size-body-lg": "15px",
+        "nm-font-size-md": "16px",
+        "nm-font-size-lg": "18px",
+        "nm-font-size-title": "20px",
+        "nm-font-size-h2": "24px",
+        "nm-font-size-page-title": "29px",
+        "nm-font-weight-regular": 400,
+        "nm-font-weight-medium": 500,
+        "nm-font-weight-semibold": 600,
+        "nm-font-weight-bold": 700,
+        "nm-line-height-tight": 1.3,
+        "nm-line-height-normal": 1.6
+      },
+      "shadow": {
+        "nm-shadow-1": { "offsetY": 2, "blur": 4, "color": "#0D000000", "usage": "轻分隔/输入聚焦外层" },
+        "nm-shadow-2": { "offsetY": 4, "blur": 12, "color": "#14000000", "usage": "卡片、筛选卡、下拉" },
+        "nm-shadow-3": { "offsetY": 8, "blur": 16, "color": "#1F000000", "usage": "悬浮面板" },
+        "nm-shadow-4": { "offsetY": 12, "blur": 32, "color": "#26000000", "usage": "书卡 hover" },
+        "nm-shadow-5": { "offsetY": 4, "blur": 20, "color": "#26000000", "usage": "对话框" },
+        "nm-shadow-header": { "offsetY": 2, "blur": 20, "color": "#4D667EEA", "usage": "顶栏紫色投影" },
+        "nm-shadow-accent": { "offsetY": 4, "blur": 12, "color": "#4D667EEA", "usage": "主按钮" },
+        "nm-shadow-accent-hover": { "offsetY": 6, "blur": 20, "color": "#66667EEA", "usage": "主按钮 hover" },
+        "nm-shadow-success": { "offsetY": 4, "blur": 12, "color": "#4D28A745", "usage": "成功按钮" },
+        "nm-shadow-danger": { "offsetY": 4, "blur": 12, "color": "#4DDC3545", "usage": "危险按钮" },
+        "nm-shadow-cover": { "offsetY": 8, "blur": 24, "color": "#26000000", "usage": "详情页大封面" },
+        "nm-shadow-fab": { "offsetY": 4, "blur": 12, "color": "#66667EEA", "usage": "回到顶部悬浮球" }
+      },
+      "layout": {
+        "nm-header-height": "64px",
+        "nm-header-height-compact": "56px",
+        "nm-content-max-width": "1400px",
+        "nm-content-padding": "24px",
+        "nm-page-gutter": "20px",
+        "nm-bookshelf-grid-min": "160px",
+        "nm-bookshelf-grid-gap": "24px",
+        "nm-book-cover-ratio": "3 / 4",
+        "nm-dialog-width-sm": "400px",
+        "nm-dialog-width-md": "600px",
+        "nm-dialog-width-lg": "900px",
+        "nm-dialog-max-height": "90vh",
+        "nm-toolbar-height": "56px",
+        "nm-workbench-sidebar-width": "300px",
+        "nm-workbench-thumbs-width": "230px",
+        "nm-workbench-inspector-width": "600px",
+        "nm-reader-max-image-width": "1200px"
+      },
+      "motion": {
+        "nm-duration-fast": "160ms",
+        "nm-duration-normal": "300ms",
+        "nm-duration-slow": "500ms",
+        "nm-easing-standard": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "nm-hover-lift": "-2px",
+        "nm-hover-lift-card": "-6px",
+        "nm-press-scale": "0.97",
+        "nm-hover-scale-card": "1.02"
+      },
+      "zindex": {
+        "nm-z-base": 1,
+        "nm-z-dropdown": 100,
+        "nm-z-sticky": 200,
+        "nm-z-sidebar": 300,
+        "nm-z-overlay": 1000,
+        "nm-z-modal": 1100,
+        "nm-z-popover": 1200,
+        "nm-z-toast": 1300
+      }
+    },
+
+    "dark": {
+      "note": "Saber 仅实现浅色（顶栏 ☀️ 按钮 title=「功能开发中」）。本 dark 变体为新增建议：以工作区深色 chrome（#16213E / #1A1A2E）与阅读器深蓝（#1A1A2E）为锚点外推，保持同一紫色品牌渐变，未做像素对照。",
+      "color": {
+        "nm-bg-canvas": "#12131C",
+        "nm-bg-canvas-alt": "#0F1017",
+        "nm-bg-surface": "#1B1D29",
+        "nm-bg-surface-muted": "#20222F",
+        "nm-bg-inset": "#191B26",
+        "nm-bg-hover": "#262A3A",
+        "nm-bg-active": "#2E3346",
+        "nm-bg-reader-navy": "#0E0F1A",
+        "nm-bg-reader-beige": "#2A2418",
+        "nm-bg-reader-charcoal": "#1C1C1C",
+        "nm-scrim": "#B3000000",
+        "nm-scrim-soft": "#66000000",
+
+        "nm-border-subtle": "#252836",
+        "nm-border-default": "#2E3346",
+        "nm-border-input": "#343A50",
+        "nm-border-strong": "#3C4257",
+        "nm-divider": "#2A2E3D",
+
+        "nm-text-primary": "#E8EAF2",
+        "nm-text-heading": "#F1F3F9",
+        "nm-text-body": "#D6DAE6",
+        "nm-text-secondary": "#A7ADBF",
+        "nm-text-tertiary": "#8A90A4",
+        "nm-text-muted": "#7C8296",
+        "nm-text-inverse": "#12131C",
+        "nm-text-on-accent": "#12131C",
+        "nm-text-on-header": "#FFFFFF",
+
+        "nm-accent": "#7C8CF8",
+        "nm-accent-strong": "#6A79F2",
+        "nm-accent-weak": "#667EEA",
+        "nm-accent-soft": "#267C8CF8",
+        "nm-accent-softer": "#147C8CF8",
+        "nm-accent-border": "#807C8CF8",
+        "nm-focus-ring": "#337C8CF8",
+
+        "nm-status-success": "#34D399",
+        "nm-status-success-strong": "#10B981",
+        "nm-status-success-soft": "#2634D399",
+        "nm-status-danger": "#F87171",
+        "nm-status-danger-strong": "#EF4444",
+        "nm-status-danger-soft": "#26F87171",
+        "nm-status-warning": "#FBBF24",
+        "nm-status-warning-strong": "#F59E0B",
+        "nm-status-warning-soft": "#26FBBF24",
+        "nm-status-info": "#60A5FA",
+        "nm-status-info-strong": "#3B82F6",
+        "nm-status-info-soft": "#2660A5FA",
+
+        "nm-header-text": "#FFFFFF",
+        "nm-header-pill": "#33FFFFFF",
+        "nm-header-pill-hover": "#4DFFFFFF",
+        "nm-header-pill-text": "#F2FFFFFF",
+        "nm-online-dot": "#34D399",
+        "nm-badge-bg": "#40FFFFFF",
+        "nm-control-on-dark": "#26FFFFFF",
+        "nm-control-on-dark-hover": "#40FFFFFF"
+      },
+      "gradient": {
+        "nm-gradient-brand": { "type": "linear", "angleDeg": 135, "stops": ["#667EEA", "#8B6BBF"] },
+        "nm-gradient-brand-hover": { "type": "linear", "angleDeg": 135, "stops": ["#7B8EEF", "#9C7BCB"] },
+        "nm-gradient-success": { "type": "linear", "angleDeg": 135, "stops": ["#10B981", "#34D399"] },
+        "nm-gradient-danger": { "type": "linear", "angleDeg": 135, "stops": ["#B91C1C", "#DC2626"] },
+        "nm-gradient-info": { "type": "linear", "angleDeg": 135, "stops": ["#1D4ED8", "#3B82F6"] },
+        "nm-gradient-info-active": { "type": "linear", "angleDeg": 135, "stops": ["#059669", "#10B981"] },
+        "nm-gradient-dark-chrome": { "type": "linear", "angleDeg": 135, "stops": ["#0D1B2A", "#16213E"] }
+      },
+      "radius": "same-as-light",
+      "spacing": "same-as-light",
+      "typography": {
+        "nm-font-sans": "\"Microsoft YaHei UI\", \"Segoe UI\", \"PingFang SC\", \"Noto Sans SC\", sans-serif",
+        "nm-font-mono": "\"Cascadia Mono\", Consolas, \"Courier New\", monospace",
+        "sizes": "same-as-light",
+        "note": "深色下建议字重不变，但正文对比度提高一档（text-primary 而非 text-body）"
+      },
+      "shadow": {
+        "nm-shadow-1": { "offsetY": 2, "blur": 4, "color": "#40000000" },
+        "nm-shadow-2": { "offsetY": 4, "blur": 14, "color": "#59000000" },
+        "nm-shadow-3": { "offsetY": 8, "blur": 20, "color": "#66000000" },
+        "nm-shadow-4": { "offsetY": 12, "blur": 36, "color": "#73000000" },
+        "nm-shadow-5": { "offsetY": 4, "blur": 24, "color": "#80000000" },
+        "nm-shadow-header": { "offsetY": 2, "blur": 20, "color": "#66000000" },
+        "nm-shadow-accent": { "offsetY": 4, "blur": 12, "color": "#3D7C8CF8" },
+        "nm-shadow-accent-hover": { "offsetY": 6, "blur": 20, "color": "#597C8CF8" },
+        "nm-shadow-success": { "offsetY": 4, "blur": 12, "color": "#3D34D399" },
+        "nm-shadow-danger": { "offsetY": 4, "blur": 12, "color": "#3DF87171" },
+        "nm-shadow-cover": { "offsetY": 8, "blur": 24, "color": "#73000000" },
+        "nm-shadow-fab": { "offsetY": 4, "blur": 12, "color": "#597C8CF8" }
+      },
+      "layout": "same-as-light",
+      "motion": "same-as-light",
+      "zindex": "same-as-light"
+    }
+  },
+
+  "contrast": {
+    "light": [
+      { "pair": "nm-text-primary on nm-bg-surface", "ratio": 15.9, "verdict": "AAA" },
+      { "pair": "nm-text-secondary on nm-bg-surface", "ratio": 4.8, "verdict": "AA" },
+      { "pair": "nm-text-muted on nm-bg-surface", "ratio": 2.4, "verdict": "fail（仅用于占位/装饰）" },
+      { "pair": "nm-text-on-accent on nm-accent(#6366F1)", "ratio": 4.47, "verdict": "AA-（小字改用 #4F46E5 或加大字重/字号）" },
+      { "pair": "nm-text-on-accent on nm-accent-strong(#4F46E5)", "ratio": 6.28, "verdict": "AA" },
+      { "pair": "nm-text-on-header on nm-gradient-brand", "ratio": 4.0, "verdict": "AA-（顶栏文字 ≥16px/600）" }
+    ],
+    "dark": [
+      { "pair": "nm-text-primary on nm-bg-surface", "ratio": 12.6, "verdict": "AAA" },
+      { "pair": "nm-text-secondary on nm-bg-surface", "ratio": 6.4, "verdict": "AA" },
+      { "pair": "nm-accent(#7C8CF8) on nm-bg-surface", "ratio": 5.6, "verdict": "AA" }
+    ]
+  },
+
+  "components": {
+    "topbar": {
+      "reference": "参考项（书架顶栏为该形态）",
+      "light": {
+        "height": "64px",
+        "paddingX": "24px",
+        "background": "nm-gradient-brand",
+        "shadow": "nm-shadow-header",
+        "position": "sticky-top",
+        "contentMaxWidth": "1400px",
+        "logoSize": "40px",
+        "logoRadius": "8px",
+        "logoShadow": "0 2px 8px #33000000",
+        "titleFontSize": "21px",
+        "titleWeight": 700,
+        "titleColor": "nm-header-text",
+        "titleLetterSpacing": "-0.5px",
+        "linksGap": "16px",
+        "pillRadius": "20px",
+        "pillPadding": "6px 12px",
+        "pillBg": "nm-header-pill",
+        "pillBgHover": "nm-header-pill-hover",
+        "pillFontSize": "13.6px",
+        "pillFontFamily": "nm-font-mono（LAN 地址段）",
+        "pillBackdropBlur": "4px",
+        "iconButtonSize": "38px",
+        "iconButtonRadius": "999px"
+      }
+    },
+    "pageTitle": {
+      "reference": "参考项",
+      "fontSize": "29px",
+      "weight": 700,
+      "color": "nm-text-primary",
+      "iconGap": "12px",
+      "leadingEmoji": "📚（Saber 用 CSS ::before 渲染；Avalonia 建议改为独立 Icon 元素）"
+    },
+    "button": {
+      "reference": "参考项（四页共用）",
+      "primary": {
+        "background": "nm-gradient-brand",
+        "textColor": "nm-text-on-accent",
+        "padding": "10px 20px",
+        "radius": "8px",
+        "fontSize": "15.2px",
+        "weight": 500,
+        "iconGap": "8px",
+        "shadow": "nm-shadow-1",
+        "shadowHover": "nm-shadow-accent-hover",
+        "hoverTransform": "translateY(-2px)",
+        "pressTransform": "scale(0.97)",
+        "disabledOpacity": 0.6
+      },
+      "secondary": {
+        "background": "nm-bg-surface",
+        "textColor": "nm-text-primary",
+        "border": "1px solid nm-border-default",
+        "hoverBackground": "nm-bg-hover",
+        "hoverBorder": "nm-text-secondary"
+      },
+      "danger": { "background": "nm-gradient-danger", "textColor": "nm-text-inverse" },
+      "success": { "background": "nm-gradient-success", "textColor": "nm-text-inverse" },
+      "small": { "padding": "6px 14px", "fontSize": "13.6px" },
+      "iconOnly": { "size": "34px", "radius": "8px", "border": "1px solid nm-border-default", "activeGradient": "nm-gradient-info-active" }
+    },
+    "searchField": {
+      "reference": "参考项",
+      "height": "约 42px（padding 10/16 + 14.4px 字号）",
+      "padding": "10px 16px",
+      "radius": "8px",
+      "background": "nm-bg-inset",
+      "border": "1px solid nm-border-default",
+      "focusBorder": "nm-accent",
+      "focusRing": "0 0 0 3px nm-focus-ring",
+      "placeholder": "nm-text-muted",
+      "submitButton": { "background": "nm-gradient-brand", "padding": "10px 14px", "radius": "8px", "hoverScale": 1.05 },
+      "clearButton": { "background": "nm-bg-hover", "color": "nm-text-secondary" }
+    },
+    "chip": {
+      "reference": "参考项",
+      "padding": "4px 12px",
+      "radius": "nm-radius-pill",
+      "fontSize": "12.8px",
+      "defaultBackground": "nm-bg-hover",
+      "defaultColor": "nm-text-primary",
+      "activeBackground": "tagColor（回退 nm-accent-weak）",
+      "activeColor": "nm-text-inverse",
+      "activeShadow": "0 2px 8px #4D667EEA",
+      "border": "2px solid transparent",
+      "countBadge": { "background": "nm-badge-bg", "padding": "1px 6px", "radius": "10px", "fontSize": "11.2px" }
+    },
+    "bookCard": {
+      "reference": "参考项（书架的标志性组件）",
+      "width": "自适应（网格列宽 约 172px @1400 容器 7 列；min 160px）",
+      "radius": "12px",
+      "background": "nm-bg-surface",
+      "shadow": "nm-shadow-2",
+      "hoverTransform": "translateY(-6px) scale(1.02)",
+      "hoverShadow": "nm-shadow-4",
+      "hoverBorder": "2px solid #80667EEA",
+      "pressTransform": "translateY(-2px) scale(1.01)",
+      "cover": {
+        "aspectRatio": "3 / 4",
+        "fallbackGradient": "nm-gradient-brand",
+        "imageHoverScale": 1.05,
+        "placeholderGlyph": "📖（48px，白色 80%）",
+        "hoverOverlay": { "scrim": "#99000000", "text": "查看详情", "fontSize": "14.4px", "weight": 500, "duration": "200ms" }
+      },
+      "info": { "padding": "12px", "gap": "4px" },
+      "title": { "fontSize": "15.2px", "weight": 600, "lines": 1, "ellipsis": true, "color": "nm-text-primary" },
+      "meta": { "fontSize": "12.8px", "color": "nm-text-secondary", "format": "{n} 章节" },
+      "tagRow": { "gap": "4px", "marginTop": "4px" },
+      "tag": { "padding": "2px 8px", "radius": "10px", "fontSize": "11.2px", "color": "#FFFFFF", "background": "tagColor（回退 #667EEA）" }
+    },
+    "dialog": {
+      "reference": "参考项",
+      "scrim": "nm-scrim",
+      "widths": { "small": "400px", "medium": "600px", "large": "900px", "full": "95vw" },
+      "maxHeight": "90vh",
+      "radius": "12px",
+      "shadow": "nm-shadow-5",
+      "header": { "padding": "16px 20px", "borderBottom": "1px solid nm-divider", "titleSize": "19.2px", "titleWeight": 600, "titleColor": "nm-text-heading" },
+      "body": { "padding": "20px", "scroll": true },
+      "footer": { "padding": "16px 20px", "borderTop": "1px solid nm-divider", "align": "flex-end", "gap": "10px" },
+      "openAnimation": { "opacity": "0→1", "transform": "scale(0.95)→1", "duration": "200ms" },
+      "closeButton": { "size": "28px", "hoverBackground": "#1A000000", "color": "nm-text-secondary" }
+    },
+    "toast": {
+      "reference": "参考项",
+      "position": "居中、距底 80px",
+      "background": "#BF000000",
+      "radius": "8px",
+      "padding": "12px 36px 12px 24px",
+      "fontSize": "14px",
+      "color": "#FFFFFF",
+      "shadow": "0 4px 12px #4D000000",
+      "variants": {
+        "info": "#D91890FF",
+        "success": "#D952C41A",
+        "warning": "#D9FAAD14",
+        "error": "#D9FF4D4F"
+      },
+      "enter": "translateY(20px)→0 + fade 300ms"
+    },
+    "progress": {
+      "reference": "参考项（工作区/导入进度）",
+      "track": "nm-bg-active",
+      "trackRadius": "999px",
+      "fill": "nm-gradient-info 或 nm-accent",
+      "height": "6px"
+    },
+    "emptyState": {
+      "reference": "参考项",
+      "padding": "80px 20px",
+      "iconSize": "64px",
+      "titleSize": "24px",
+      "titleColor": "nm-text-primary",
+      "bodyColor": "nm-text-secondary",
+      "gap": "8px / 24px"
+    },
+    "workbenchChrome": {
+      "reference": "参考项（信息架构参考，不逐像素）",
+      "canvasBackground": "nm-bg-canvas",
+      "leftSidebar": { "width": "300px", "padding": "18px", "surface": "#FFFFFF", "border": "1px solid #DBE4EF", "radius": "14px", "shadow": "0 8px 20px #121C2D48", "titleSize": "22px" },
+      "rightThumbs": { "width": "230px" },
+      "editorToolbar": { "background": "nm-gradient-dark-chrome", "padding": "8px 15px", "gap": "10px", "borderBottom": "#1AFFFFFF" },
+      "editorPrimaryButton": { "background": "linear-gradient(135deg,#00FF88,#00CC6A)", "textColor": "#1A1A2E", "radius": "6px", "weight": 600, "fontSize": "13px" },
+      "editorSecondaryButton": { "background": "transparent", "border": "1px solid #4DFFFFFF", "textColor": "#FFFFFF", "radius": "6px" },
+      "bubbleBox": { "borderIdle": "#CCFFC800", "backgroundIdle": "#1AFFC800", "borderHover": "#FF6B6B", "borderSelected": "#00FF88", "borderMulti": "#FF1744", "indexLabelBg": "#B3000000" },
+      "imageZoomRange": { "min": 50, "max": 200, "step": 1, "default": 100 }
+    },
+    "readerChrome": {
+      "reference": "令牌映射用（阅读器布局沿用既有 Figma v2）",
+      "headerHeight": "56px",
+      "headerBackground": "nm-gradient-brand",
+      "backgroundPresets": {
+        "深蓝": "#1A1A2E",
+        "白色": "#FFFFFF",
+        "米色": "#F5F5DC",
+        "深灰": "#2D2D2D"
+      },
+      "imageMaxWidth": "1200px",
+      "defaultImageWidthPercent": 100,
+      "defaultImageGap": "8px",
+      "navButton": { "background": "#1AFFFFFF", "border": "1px solid #33FFFFFF", "color": "#FFFFFF", "radius": "8px", "padding": "12px 24px" },
+      "scrollTopFab": { "size": "48px", "background": "nm-accent-weak", "shadow": "nm-shadow-fab" }
+    },
+    "settingsSurface": {
+      "reference": "令牌映射用（设置页沿用既有 Figma v2 结构，仅套本令牌）",
+      "groupCard": { "background": "nm-bg-inset", "border": "1px solid nm-border-default", "radius": "10px", "padding": "20px", "marginBottom": "25px" },
+      "groupTitle": { "fontSize": "17.6px", "weight": 600, "color": "nm-status-info（Saber 用 --color-primary）", "borderBottom": "1px solid nm-border-default", "paddingBottom": "10px", "marginBottom": "15px" },
+      "itemLabel": { "fontSize": "15.2px", "weight": 500, "marginBottom": "6px" },
+      "input": { "padding": "10px 12px", "radius": "6px", "border": "1px solid nm-border-default", "background": "nm-bg-surface", "focusRing": "0 0 0 3px nm-status-info-soft" },
+      "rowGrid": { "columns": "repeat(auto-fit, minmax(200px, 1fr))", "gap": "15px" },
+      "hint": { "fontSize": "13.6px", "color": "nm-text-secondary" },
+      "togglePill": { "radius": "999px", "onColor": "nm-accent", "offColor": "nm-border-strong" }
+    }
+  },
+
+  "avalonia": {
+    "resourceStrategy": "浅色值放 ResourceDictionary 顶层（ThemeVariant.Light 默认），深色放 <ResourceDictionary.ThemeDictionaries><ResourceDictionary x:Key='Dark'>…。界面统一用 {DynamicResource NmAccent} 之类键，禁止写死颜色。",
+    "keyMapping": "nm-bg-canvas → NmBgCanvas；nm-accent → NmAccent；连字符去掉并转 PascalCase。",
+    "gradient": "135deg 线性渐变映射为 <LinearGradientBrush StartPoint='0%,0%' EndPoint='100%,100%'>（Avalonia RelativePoint），stops 取 gradient.stops。",
+    "color": "Color.Parse(\"#AARRGGBB\") 可直接用；Brush 建议 SolidColorBrush 与 LinearGradientBrush 各建资源，避免运行时字符串解析。",
+    "shadow": "Avalonia Border.BoxShadow 语法：\"offsetX offsetY blur spread color\"；JSON 中 offsetY/blur/color 直接拼接为 \"0 {offsetY} {blur} 0 {color}\"（x 偏移为 0）。卡片等多层阴影用逗号分隔。",
+    "cornerRadius": "Border.CornerRadius / Control.CornerRadius 直接取 radius 值（px == DIP）。",
+    "font": "FontFamily 取 nm-font-sans；字重通过 FontWeight.SemiBold 等映射 400/500/600/700。",
+    "spacing": "Thickness/Margin 取 spacing 标度；行内 gap 用 StackPanel.Spacing 或 Grid 的 RowSpacing/ColumnSpacing。",
+    "hoverPress": "用 <Style Selector='Button.c-primary:pointerover /template/ Border#PART_Border'> 设置背景与 Transform；Avalonia 的 hover 选择器为 :pointerover，按下为 :pressed，禁用为 :disabled。",
+    "transitions": "Transitions 上挂 BrushTransition / DoubleTransition / TransformOperationsTransition；时长取 motion.nm-duration-*。",
+    "focusRing": "用 :focus-visible 叠加一个 3px 外描边 Border 或 BoxShadow \"0 0 0 3 {NmFocusRing}\"。",
+    "theming": "App 启动时按用户设置切换 RequestedThemeVariant=Light/Dark（ThemeCenter 占位页只读预览，暂不改全局）。",
+    "grid": "书架网格优先 ItemsControl + WrapPanel（按容器宽计算列数并设 ItemWidth），或 Grid + 动态 ColumnDefinitions；Avalonia 无 CSS auto-fill/minmax，列数需在 VM/附加属性里算。",
+    "scroll": "统一 ScrollViewer（Overlay 滚动条），滚动条宽度 6–8px，颜色取 nm-border-strong / nm-bg-hover，圆角 999px。",
+    "notes": [
+      "Avalonia 无 CSS ::before/::after：Saber 用伪元素画的「📚」标题图标、书卡 hover「查看详情」遮罩需改为独立控件（Icon + 可动画 Border）。",
+      "禁止把 rgba() 直接塞进 XAML：先换算 #AARRGGBB。",
+      "深浅切换时渐变两端都需替换（深色用 #667EEA→#8B6BBF）。"
+    ]
+  },
+
+  "usageRules": [
+    "品牌渐变只用于：顶栏、主按钮、选中/进入类动作、封面占位、搜索按钮；不要用于大面积背景（页面背景用 nm-bg-canvas）。",
+    "一张界面最多一个品牌渐变实心按钮（主 CTA）；其余动作用 secondary / icon 按钮。",
+    "状态色只表达状态：success=完成/已翻译、danger=删除/失败、warning=需注意/清理、info=中性信息/进度。Saber 工作区把动作按颜色分族（绿=翻译、紫=高质量/AI、蓝=消除、红=删除、橙=清理），这属于「参考」信息架构，不追求其精确色值。",
+    "圆角层级：8px 控件 / 12px 卡片与对话框 / 14px 侧栏卡片 / 20px 胶囊 / 999px 圆形；不要混用 6px 与 8px 做同级控件。",
+    "阴影克制：默认卡片用 nm-shadow-2；只有 hover/浮层才升到 3/4/5。",
+    "文字对比度优先于观感：nm-text-muted 仅用作占位或装饰文字。",
+    "字体：界面只用系统字体栈（Microsoft YaHei UI/Segoe UI）；漫画渲染字体另行按可再分发许可引入，禁止从 Saber 安装目录拷入（含商业字体）。"
+  ]
+}
