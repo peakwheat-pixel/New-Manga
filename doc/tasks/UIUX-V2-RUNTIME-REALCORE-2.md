@@ -114,4 +114,16 @@ allowed_paths:
 | EV-09 | AC5 | apps/desktop/frontend/src/pages/Shelf.test.tsx | 0718482e5 | - | CANONICAL |
 | EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-REALCORE-2-handoff.md | 0718482e5 | - | CANONICAL |
 | EV-11 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout-r2.md | 0718482e5 | - | CANONICAL |
+| EV-13 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout-r3.md | HEAD | - | CANONICAL |
 | EV-12 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout.md | 0718482e5 | - | CANONICAL |
+
+### 收口改动的独立复核（三轮，Codex）
+
+| 轮 | verdict | 抓到的 P1 | 处置 |
+|---|---|---|---|
+| r1 | **unacceptable** | 无差别降级所有 FAIL，会吞掉 S8 里本可自动化的断言（真实书架/IPC 建章节/对话框定位） | 改为 4 条 CDP 注入断言的标签白名单 |
+| r2 | **unacceptable** | 白名单只按标签匹配，未绑定"注入确实不可用"前提；注入成功后错误码回归仍会被降级 | S8 增 `cdpInjectionUnavailable`，仅在 `inputNodeId === 0` 时置 true 才允许降级 |
+| r3 | **acceptable** | —（注明依据静态控制流审查，未重跑"注入成功后失败"路径） | 记录该限制 |
+
+三次报告：`review-codex-dsh-closeout.md` / `-r2.md` / `-r3.md`。前两次都是 DSH 自己写错、由 Codex 抓出来的，不改写、不删除。
+最终：`run-i36` 10/10 场景 PASS，exit 0。
