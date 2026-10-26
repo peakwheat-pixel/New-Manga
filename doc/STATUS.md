@@ -4,8 +4,9 @@
 
 ## 当前 Task
 
-- 最近完成（无活跃产品 Task）：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
-- 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`；tsc 0；vitest 60/564）。
+- 当前 Task：[UIUX-V2-RUNTIME-REALCORE-2](tasks/UIUX-V2-RUNTIME-REALCORE-2.md) `ready`（补原生导入/Core 掉线/窄窗高 DPI + 两条 P3 守卫；Owner 待派）。
+- 最近完成：[UIUX-V2-RUNTIME-REALCORE-1](tasks/UIUX-V2-RUNTIME-REALCORE-1.md) `done`（脚本化真实 Tauri+Core 端到端 7/7；修 **P0 中文经 IPC 落库乱码** + **P1 书架命令触发器死按钮**；ZCode r1 approved）。DAG 无 READY。
+- 前序：[UIUX-V2-RUNTIME-1](tasks/UIUX-V2-RUNTIME-1.md) `done`（四页真实 IPC + 设置页 + 单一 UI；集成 `af421b9e6`）。
 - 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`（root `e34a90d00`；push-gate approved；AC4/AC5 未过）。
 - Rust：[ISOLATION-1](tasks/GIT-CLEAN-RUST-ISOLATION-1.md) `in_review`（1829a38；DSH r2 blocked 保留；Reviewer=ZCode）；[CAPACITY-DESIGN-1](tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md) `ready`。
 - 诊断/环境：DIAG-1 `approved`；CORE-ENV-2 `proposed`；FULL-AUDIT `blocked`；V1-RELEASE-SIGNING-1 `in_review`（无执行）。
@@ -18,7 +19,7 @@
 - v1 收口（2026-10-21，HEAD `239b165c2`）：ACL 已修；source/packaged/前端/pytest/NSIS/Sandbox 各线实测过；签名待证书。
 - ARCH-DOC-REBASELINE `closed_with_limitations`；P18 4/8；P20 6/7；DETECT-* / SEC-* / PDF-* / P09-AC3-* 等 `closed_with_limitations`。
 - Task 台账：TASK_LEDGER（8 个非终态）；DIR-4 同一失败上限 2 次；DIR-5 goal 轮次上限 1000。
-- 真实 Core 端到端：**已由脚本跑通 7/7（run-i18，exit 0）**，不再是 HUMAN_VERIFY；未覆盖项=原生文件导入、受控 Core 掉线、高 DPI（见 Task 卡 AC3/AC4/AC5 PARTIAL）。
+- 真实 Core 端到端：**脚本跑通 7/7（run-i18）**，不再是 HUMAN_VERIFY；未覆盖项见 REALCORE-2。
 - `?view=legacy` 保留历史容器；次级面板仍为令牌桥接；21 处非 gap 间距字面量与 2 处颜色字面量记 DESIGN-V2-IMPL-1 P2 债。
 
 ## Gate 与保留项

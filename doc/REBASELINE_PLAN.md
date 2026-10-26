@@ -41,15 +41,15 @@
 |GUI-PLUGIN-SANDBOX-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|done（由 TOOL-SOFTWARE-SMOKE-1 替代；工具 24 项/23.6s PASS）|
 |PLUGIN-RUNTIME-PACKAGED-PYTHON-1|PLUGIN-RUNTIME-CAPABILITY-1|done（approved `a1f05450`；证据重钉 `6e3ce06f9`）|
 |TOOL-SOFTWARE-SMOKE-1|PLUGIN-RUNTIME-PACKAGED-PYTHON-1|done（r2 approved `c680434ea`；分层软件检查工具；15 tests；证据 `7b2abfa00`）|
-|PLUGIN-RUNTIME-CAPABILITY-1|PLUGIN-RUNTIME-SANDBOX-2|done（capability 接线：network 可强制；Review r1 approved `0d3bbe49`）|
+|PLUGIN-RUNTIME-CAPABILITY-1|PLUGIN-RUNTIME-SANDBOX-2|done（capability 接线；r1 `0d3bbe49`）|
 |PLUGIN-RUNTIME-SANDBOX-2|PLUGIN-RUNTIME-SANDBOX-1|done（per-plugin AppContainer profile；Review r1 approved `127c5111`）|
-|PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级插件沙箱；用户 2026-10-23 选择候选 1；Review r2 approved `41d7abeb`）|
+|PLUGIN-RUNTIME-SANDBOX-1|PLUGIN-RUNTIME-1|done（OS 级沙箱；r2 `41d7abeb`）|
 |DESIGN-V2-IMPL-1|UI-DESIGN-1|done（v2 令牌/亚克力/七态/三页骨架；集成 e1fd738a7；指针已补登）|
-|UIUX-V2-RUNTIME-1|DESIGN-V2-IMPL-1|done（四页真实 IPC+设置页+单一 UI；集成 af421b9e6；ZCode r2 approved；tsc0/vitest564；真实 Core=HUMAN_VERIFY）|
+|UIUX-V2-RUNTIME-1|DESIGN-V2-IMPL-1|done（四页真实 IPC+设置页+单一 UI；集成 af421b9e6；ZCode r2 approved）|
 |UIUX-V2-RUNTIME-REALCORE-1|UIUX-V2-RUNTIME-1|done（脚本化真实 Tauri+Core 端到端 7/7；修 P0 中文编码+P1 死按钮；ZCode r1 approved）|
-|P07 / P21|P02 / P20+另授权|proposed（可选）|
+|UIUX-V2-RUNTIME-REALCORE-2|UIUX-V2-RUNTIME-REALCORE-1|ready（补 AC3 导入/AC4 掉线/AC5 窄窗高DPI + R-P3-2/R-P3-3；Owner 待派）|
 
-READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1（仅设计）。
+READY 节点：UIUX-V2-RUNTIME-REALCORE-2、GIT-CLEAN-RUST-CAPACITY-DESIGN-1。
 
 2026-10-25 DSH 接任 Lead/Architect/Integrator。产品主线=UIUX-V2-RUNTIME-1（v2 接入运行时，四页真实数据+设置页）；Rust r2、父审查、Core 环境线不变，按用户优先级绕开。C-1/C-2/C-3 与插件 OS 级沙箱已完成，不再列为待授权候选。主线收敛已完成并通过独立审查；后续任何清理/删除仍需新的具体授权，不构成解除 r212 或五广域根保护。
 
