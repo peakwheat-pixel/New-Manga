@@ -1,0 +1,36 @@
+{
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\DISPLAY-PERF-DECISION-1\\spike\\avalonia\\Spike.App\\bin\\Debug\\net9.0\\Spike.App.exe",
+  "arguments": "--mode=window --hold-ms=8000 --out=\"G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\avalonia12\" --assets=\"G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA\\oc material\\17\"",
+  "runs": [
+    {
+      "run": 1,
+      "measured": true,
+      "process_create_utc": "2026-10-26T15:54:58.2916395Z",
+      "window_visible_ms": 1780,
+      "window_visible_from_create_ms": 1726.8,
+      "hwnd": "0x360EFC",
+      "pid": 51396,
+      "working_set_mb": 210.4,
+      "process_start_time": "2026-10-26T23:54:58.3451048+08:00",
+      "capture": {
+        "y": 276,
+        "height": 832,
+        "width": 1202,
+        "x": 679
+      },
+      "png": "G:\\CODEX\\New Manga\\verification\\DISPLAY-PERF-DECISION-1\\spike\\avalonia12\\avalonia12_run_run1.png"
+    }
+  ],
+  "measured_count": 1,
+  "visible_ms_sorted": [
+    1780
+  ],
+  "visible_ms_p50": 1780,
+  "visible_from_create_ms_sorted": [
+    1726.8
+  ],
+  "visible_from_create_ms_p50": 1726.8,
+  "visible_from_create_ms_min": 1726.8,
+  "visible_from_create_ms_max": 1726.8,
+  "captured_at_utc": "2026-10-26T15:55:02.2221678Z"
+}

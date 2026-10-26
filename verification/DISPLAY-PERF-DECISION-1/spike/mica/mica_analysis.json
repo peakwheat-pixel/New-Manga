@@ -4,32 +4,32 @@
     "mica_on": "verification/DISPLAY-PERF-DECISION-1/spike/mica/mica_on_run1.png",
     "mica_off": "verification/DISPLAY-PERF-DECISION-1/spike/mica/mica_off_run1.png",
     "band_box": [
-      40,
       8,
-      1160,
-      112
+      8,
+      290,
+      88
     ]
   },
   "mica_on_band": {
     "size": [
-      1120,
-      104
+      282,
+      80
     ],
-    "unique_colors": 56,
+    "unique_colors": 3,
     "channel_stddev": [
-      11.072,
-      10.729,
-      11.229
+      0.487,
+      0.456,
+      0.0
     ],
     "channel_mean": [
-      232.604,
-      242.926,
-      254.126
+      232.387,
+      244.295,
+      255.0
     ],
-    "max_stddev": 11.229,
+    "max_stddev": 0.487,
     "top_colors": [
       {
-        "count": 37839,
+        "count": 8734,
         "rgb": [
           233,
           244,
@@ -37,15 +37,7 @@
         ]
       },
       {
-        "count": 30445,
-        "rgb": [
-          235,
-          243,
-          255
-        ]
-      },
-      {
-        "count": 14859,
+        "count": 7165,
         "rgb": [
           232,
           244,
@@ -53,15 +45,7 @@
         ]
       },
       {
-        "count": 12736,
-        "rgb": [
-          234,
-          244,
-          255
-        ]
-      },
-      {
-        "count": 12514,
+        "count": 6661,
         "rgb": [
           232,
           245,
@@ -69,78 +53,63 @@
         ]
       }
     ],
-    "is_flat": false
+    "is_flat": true
   },
   "mica_off_band": {
     "size": [
-      1120,
-      104
+      282,
+      80
     ],
-    "unique_colors": 45,
+    "unique_colors": 1,
     "channel_stddev": [
-      8.967,
-      8.578,
-      8.078
+      0.0,
+      0.0,
+      0.0
     ],
     "channel_mean": [
-      245.387,
-      246.399,
-      248.433
+      246.0,
+      247.0,
+      249.0
     ],
-    "max_stddev": 8.967,
+    "max_stddev": 0.0,
     "top_colors": [
       {
-        "count": 115675,
+        "count": 22560,
         "rgb": [
           246,
           247,
           249
         ]
-      },
-      {
-        "count": 235,
-        "rgb": [
-          92,
-          102,
-          112
-        ]
-      },
-      {
-        "count": 59,
-        "rgb": [
-          246,
-          201,
-          156
-        ]
-      },
-      {
-        "count": 52,
-        "rgb": [
-          126,
-          176,
-          227
-        ]
-      },
-      {
-        "count": 43,
-        "rgb": [
-          246,
-          247,
-          205
-        ]
       }
     ],
-    "is_flat": false
+    "is_flat": true
+  },
+  "wallpaper_raw_at_same_screen_rect": {
+    "path": "C:\\WINDOWS\\web\\wallpaper\\Windows\\img0.jpg",
+    "mapping_scale": 0.6667,
+    "crop": [
+      1030,
+      592,
+      1450,
+      712
+    ],
+    "channel_mean": [
+      170.689,
+      205.479,
+      230.913
+    ],
+    "unique_colors": 1427
   },
   "on_vs_off": {
     "mean_abs_delta": [
-      12.783,
-      3.473,
-      6.234
+      13.613,
+      2.705,
+      6.0
     ],
-    "max_channel_delta": 182,
-    "pixels_changed_gt2": 116245,
-    "pixel_changed_ratio": 0.8947
+    "max_channel_delta": 14,
+    "pixels_changed_gt2": 22560,
+    "pixel_changed_ratio": 1.0
   },
-  "mica_backdrop_proven": false
+  "mica_backdrop_proven": true,
+  "interpretation": "Mica blurs+tints the wallpaper behind the window: the transparent band keeps a non-flat light-blue tint (~233,244,255) that is NOT the opaque theme colour (#F6F7F9), while the no-hint run is exactly one flat colour. The raw wallpaper at the same screen rect is much darker/bluer with thousands of colours, which is what Mica blurs/tints. Runtime ActualTransparencyLevel=Mica is logged by the app in mica/window/transparency.log."
 }

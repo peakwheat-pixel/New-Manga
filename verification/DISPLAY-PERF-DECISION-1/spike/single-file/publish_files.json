@@ -1,0 +1,16 @@
+{
+  "gate": "1-single-file-publish",
+  "command": "dotnet publish Spike.App/Spike.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true",
+  "files": [
+    {
+      "name": "Spike.App.exe",
+      "bytes": 29310826,
+      "mb": 27.95
+    }
+  ],
+  "file_count": 1,
+  "total_bytes": 29310826.0,
+  "threshold_mb": 45,
+  "pass": true,
+  "keypoint": "The literal task command (without IncludeNativeLibrariesForSelfExtract) leaves the 3 Skia/HarfBuzz native DLLs beside the exe (4 files); bundling them is required for a true single exe."
+}

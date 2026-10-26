@@ -1,0 +1,33 @@
+{
+  "gate": "10-installer",
+  "ui_payload": {
+    "component": "Spike.App.exe (Avalonia UI, single file)",
+    "bytes": 29310826,
+    "zip_bytes": 24050509,
+    "zip_kind": "self-made zip (stage: exe + README)",
+    "extracted_run_visible_ms": 448.3
+  },
+  "core_sidecar_payload": {
+    "component": "resources/core-sidecar (frozen PyInstaller onedir for the existing Python Core)",
+    "bytes": 1331508299.0,
+    "files": 6573,
+    "subdirs": {
+      "_internal_MB": 825.8,
+      "models_MB": 202.5,
+      "python_MB": 41.9
+    },
+    "biggest_internal": {
+      "torch_MB": 365.2,
+      "cv2_MB": 111.8,
+      "onnxruntime_MB": 63.1,
+      "PySide6_MB": 61.2,
+      "scipy_MB": 51.2,
+      "transformers_MB": 38.6
+    }
+  },
+  "threshold_mb": 150,
+  "ui_installer_pass": true,
+  "full_product_pass": false,
+  "conclusion": "UI-only installer passes (23.4 MB zip). Shipping the current frozen Core sidecar makes the package ~1.27 GB, so gate-10 as stated cannot pass without Core packaging work (drop PySide6/torch, split models into an on-demand download, or ship a slimmer Core build).",
+  "upgrade_path": "Replace Spike.App.exe in place (single file); user data (Core data root) lives outside the app directory, so upgrade = atomic exe swap + version stamp + optional rollback. MSIX/Squirrel would add signing/auto-update; not needed to decide the architecture."
+}

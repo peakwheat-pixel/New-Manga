@@ -1,22 +1,22 @@
 {
   "mode": "window",
-  "process_start_utc": "2026-10-26T15:44:20.829Z",
-  "process_create_to_window_opened_ms": 408.352,
-  "process_create_to_first_frame_ms": 420.911,
-  "entry_to_window_opened_ms": 326.33,
-  "first_frame_wait_ms": 9.672,
+  "process_start_utc": "2026-10-26T15:57:29.954Z",
+  "process_create_to_window_opened_ms": 404.42,
+  "process_create_to_first_frame_ms": 414.21,
+  "entry_to_window_opened_ms": 322.88,
+  "first_frame_wait_ms": 8.878,
   "render_scaling": 1,
-  "actual_transparency_level": "Transparent",
-  "requested_transparency_hint": "",
+  "actual_transparency_level": "Mica",
+  "requested_transparency_hint": "Mica",
   "window_bounds": {
     "width": 1200,
     "height": 800
   },
-  "platform_handle": "0x9307F2",
+  "platform_handle": "0x1803CC",
   "os_version": "Microsoft Windows NT 10.0.26300.0",
   "runtime": "9.0.20",
   "avalonia_version": "11.3.22.0",
   "gc_server": false,
   "processor_count": 32,
-  "written_at_utc": "2026-10-26T15:44:21.252Z"
+  "written_at_utc": "2026-10-26T15:57:30.370Z"
 }

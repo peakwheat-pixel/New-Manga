@@ -1,0 +1,12 @@
+{
+  "gate": "3-mica-real",
+  "hwnd": "0x1803CC",
+  "dwm_composition_enabled": true,
+  "dwm_systembackdrop_type_raw": 0,
+  "dwm_systembackdrop_type_name": "Auto",
+  "hr": 0,
+  "os_build": "26300",
+  "transparency_effect_enabled": 1,
+  "query_method": "DwmGetWindowAttribute(DWMWA_SYSTEMBACKDROP_TYPE=38) on the live window",
+  "captured_at": "2026-10-26T15:57:32.7644172Z"
+}

@@ -1,0 +1,100 @@
+{
+  "gate": "9-accessibility",
+  "provider": "UI Automation tree read by cua-driver (same tree Narrator consumes)",
+  "window_title": "New Manga · Avalonia S0 Spike",
+  "named_elements": [
+    {
+      "index": 5,
+      "role": "Edit",
+      "name": "IME 输入测试框",
+      "actions": [
+        "set_value"
+      ]
+    },
+    {
+      "index": 6,
+      "role": "Button",
+      "name": "切换到 Light 主题",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 7,
+      "role": "Button",
+      "name": "切换到 Dark 主题",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 8,
+      "role": "Button",
+      "name": "切换到 Saber Purple 自定义主题",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 10,
+      "role": "List",
+      "name": "（书架列表，含 8 个命名 Button）",
+      "actions": [
+        "scroll"
+      ]
+    },
+    {
+      "index": 11,
+      "role": "Button",
+      "name": "书架卡片 1: 雾港来信 · 第 1 卷",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 12,
+      "role": "Button",
+      "name": "书架卡片 2: 雾港来信 · 第 2 卷",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 13,
+      "role": "Button",
+      "name": "书架卡片 3: 星屑のセイバー",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 14,
+      "role": "Button",
+      "name": "书架卡片 4: 雨の日の図書館",
+      "actions": [
+        "invoke"
+      ]
+    },
+    {
+      "index": 15,
+      "role": "Button",
+      "name": "书架卡片 5: 月光の追跡者",
+      "actions": [
+        "invoke"
+      ]
+    }
+  ],
+  "named_element_count": 10,
+  "roles_present": [
+    "Window",
+    "TitleBar",
+    "Button",
+    "Edit",
+    "List",
+    "ScrollBar",
+    "Pane",
+    "Text"
+  ],
+  "captured_at": "2026-10-26T15:53:30.1918243Z",
+  "note": "Narrator itself was not launched (manual step); this is the UIA tree it reads. 10 named elements >= the gate's 5."
+}
