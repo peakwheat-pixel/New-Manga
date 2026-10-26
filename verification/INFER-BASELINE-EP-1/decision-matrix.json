@@ -1,0 +1,133 @@
+{
+  "task": "INFER-BASELINE-EP-1",
+  "generatedAt": "2026-10-27T04:31:43.1031281+08:00",
+  "machine": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti 16GB sm_120",
+    "driver": "616.92",
+    "python": "3.12.3",
+    "os": "Microsoft Windows 11 专业版"
+  },
+  "protocol": {
+    "pages": 10,
+    "warmupPerPage": 1,
+    "measuredRunsPerPage": 4,
+    "aggregate": "median of per-page medians"
+  },
+  "speedMedianMsPerPage": {
+    "yolo11s-seg": {
+      "ort_cpu": 161.418,
+      "ort_dml": 26.476,
+      "ort_cuda": 27.71
+    },
+    "rtdetr-v2-onnx": {
+      "ort_cpu": 168.945,
+      "ort_dml": 22.947,
+      "ort_cuda": 25.276,
+      "torch_cpu": 251.778,
+      "torch_cuda": 40.819
+    },
+    "ppocrv4-det-rec": {
+      "ort_cpu": 135.846,
+      "ort_dml": 250.923,
+      "ort_cuda": 496.087
+    },
+    "mangaocr": {
+      "ort_cpu": 72.516,
+      "ort_dml": 97.873,
+      "ort_cuda": 23.168,
+      "torch_cpu": 111.588,
+      "torch_cuda": 31.889
+    },
+    "lama-fp32-512": {
+      "ort_cpu": 1161.186,
+      "ort_dml": "RUNTIME_FAIL(DmlFusedConv 80070057)",
+      "ort_cuda": 76.923
+    },
+    "lama-manga-dynamic": {
+      "ort_cpu": 3176.653,
+      "ort_dml": 197.197,
+      "ort_cuda": 137.791
+    }
+  },
+  "startupMs": {
+    "ort_import": "66-89",
+    "ort_session_create": "78 (yolo cpu) .. 721 (yolo dml) .. 6859 (lama cpu)",
+    "torch_import": "1292-1313",
+    "torch_model_load": "2823-3321"
+  },
+  "sizesMB": {
+    "yolo11s_seg_onnx": 38.93,
+    "rtdetr_v2_onnx_fixed": 163.68,
+    "ppocr_det_rec": 14.88,
+    "mangaocr_onnx_enc_dec": 439.58,
+    "lama_dynamic": 196.74,
+    "lama_fp32": 198.41,
+    "venv_ort_dml": 362.6,
+    "venv_ort_cuda": 639.5,
+    "venv_torch_cuda": 4709.8,
+    "cuda_cudnn_dlls": 1656.5
+  },
+  "parityVsSameModelCpu": {
+    "yolo_dml": "recall 1.0 / precision 1.0 / meanIoU 1.0",
+    "yolo_cuda": "recall 1.0 / precision 1.0 / meanIoU 0.9963",
+    "ppocr_dml": "det recall 1.0 / text exact 1.0 / charAcc 1.0",
+    "ppocr_cuda": "det recall 1.0 / text exact 0.9832 / charAcc 0.9860",
+    "lama_dynamic_dml": "PSNR 109.89 dB / SSIM 1.000000",
+    "lama_dynamic_cuda": "PSNR 71.98 dB / SSIM 0.999995",
+    "lama_fp32_cuda": "PSNR 19.02 dB / SSIM 0.999977 (localized numeric outliers)",
+    "mangaocr_torch_vs_onnx": "exact match 10/10, charAcc 1.0 (CPU and CUDA)",
+    "rtdetr_torch_vs_exported_onnx": "box counts identical 10/10; logits maxAbsDiff 1.46e-4, boxes 2.05e-5"
+  },
+  "onnxExport": {
+    "yolo11s_seg": "already ONNX opset 18 fixed 1024; re-export NOT_RUN (no .pt)",
+    "rtdetr_v2": "fixed OK (opset 17, 163.68 MB) usable on CPU/DML/CUDA; dynamic OK in torch but NOT loadable by ORT (CPU: Cos NOT_IMPLEMENTED; DML: transformer_memcpy) -> ship fixed",
+    "ppocrv4": "already ONNX opset 12, dynamic dims built in",
+    "mangaocr": "encoder/decoder export OK (opset 14, 327.4+112.0 MB); full generate() FAILS (aten::full INTERNAL ASSERT) -> greedy loop must stay in Python; shipped export has no KV cache",
+    "lama": "already ONNX (opset 17 fixed 512 / opset 18 dynamic); re-export NOT_RUN (no source weights)"
+  },
+  "recommendation": {
+    "defaultEp": "DirectML (onnxruntime-directml, existing production pin 1.24.4)",
+    "mainPackage": {
+      "budget": "<= 2 GB",
+      "computedMB": 1216.4,
+      "items": [
+        "onnxruntime-directml 362.60",
+        "yolo11s-seg 38.93",
+        "rtdetr-v2 onnx 163.68",
+        "ppocrv4 14.88",
+        "manga-ocr onnx 439.58",
+        "lama-manga-dynamic 196.74"
+      ],
+      "defaultEpPerModel": {
+        "yolo": "dml",
+        "rtdetr": "dml",
+        "ppocr": "cpu",
+        "mangaocr": "cuda-then-cpu",
+        "lama": "cuda-then-cpu"
+      }
+    },
+    "optionalCudaPackage": {
+      "budget": "<= 8 GB",
+      "ortOnlyMB": 2296.0,
+      "withTorchMB": 7005.8,
+      "items": [
+        "onnxruntime-gpu 639.50",
+        "CUDA12.8+cuDNN9 runtime 1656.50",
+        "(optional) torch-cuda 4709.80"
+      ],
+      "note": "NVIDIA CUDA/cuDNN binaries are proprietary (NVIDIA EULA), not open source"
+    },
+    "modelsRequiringTorch": [],
+    "modelsRequiringTorchNote": "none, provided the exported RT-DETR fixed ONNX and the manga-ocr encoder/decoder ONNX are pinned by sha256; torch stays a training/export-time dependency"
+  },
+  "notRun": [
+    "YOLO11s-seg dynamic-shape re-export (no .pt weights in repo)",
+    "PP-OCRv4 / LaMa re-export (no source weights)",
+    "PP-OCR batched recognition (would likely fix GPU slowdown)",
+    "MangaOCR KV-cache incremental decode",
+    "absolute accuracy vs human GT (annotation XMLs do not match the 10-page sample)",
+    "TensorRT EP (TensorRT not installed)",
+    "onnxruntime-gpu 1.24.4 (requires CUDA 13.x; blocked by environment)",
+    "torch 2.12+cu130 (Saber parity)"
+  ]
+}

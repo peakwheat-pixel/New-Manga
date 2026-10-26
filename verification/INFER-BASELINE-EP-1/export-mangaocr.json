@@ -1,0 +1,45 @@
+{
+  "target": "mangaocr",
+  "torch": "2.11.0+cu128",
+  "results": {
+    "mangaocr-encoder-fixed": {
+      "ok": true,
+      "opset": 14,
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\results\\exports\\mangaocr-encoder-fixed.onnx",
+      "sizeBytes": 343323284,
+      "exportMs": 2190.2
+    },
+    "mangaocr-encoder-dynamic": {
+      "ok": true,
+      "opset": 14,
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\results\\exports\\mangaocr-encoder-dynamic.onnx",
+      "sizeBytes": 343372013,
+      "exportMs": 2093.2
+    },
+    "mangaocr-decoder-fixed": {
+      "ok": true,
+      "opset": 14,
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\results\\exports\\mangaocr-decoder-fixed.onnx",
+      "sizeBytes": 117412511,
+      "exportMs": 763.1
+    },
+    "mangaocr-decoder-dynamic": {
+      "ok": true,
+      "opset": 14,
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\results\\exports\\mangaocr-decoder-dynamic.onnx",
+      "sizeBytes": 117442743,
+      "exportMs": 728.4
+    },
+    "mangaocr-full-generate": {
+      "ok": false,
+      "opset": 14,
+      "errorType": "RuntimeError",
+      "error": "0 INTERNAL ASSERT FAILED at \"C:\\\\actions-runner\\\\_work\\\\pytorch\\\\pytorch\\\\pytorch\\\\torch\\\\csrc\\\\jit\\\\ir\\\\alias_analysis.cpp\":629, please report a bug to PyTorch. We don't have an op for aten::full but it isn't a special case.  Argument types: int[], bool, int, NoneType, Device, bool, \n\nCandidates:\n\taten::full.names(int[] size, Scalar fill_value, *, str[]? names, ScalarType? dtype=None, Layout? layout=None, Device? device=None, bool? pin_memory=None) -> Tensor\n\taten::full(SymInt[] size, Scalar fill_value, *, ScalarType? dtype=None, Layout? layout=None, Device? device=None, bool? pin_memory=None) -> Tensor\n\taten::full.names_out(int[] size, Scalar fill_value, *, str[]? names, Tensor(a!) out) -> Tensor(a!)\n\taten::full.out(SymInt[] size, Scalar fill_value, *, Tensor(a!) out) -> Tensor(a!)",
+      "exportMs": 870.8
+    },
+    "decoderKvCache": {
+      "supported": true,
+      "note": "decoder supports use_cache/past_key_values in torch, but the 3rd-party shipped ONNX export (mayocream/manga-ocr-onnx) has no past_key_values inputs -> every decoded token re-runs the full decoder sequence (no incremental decode)."
+    }
+  }
+}

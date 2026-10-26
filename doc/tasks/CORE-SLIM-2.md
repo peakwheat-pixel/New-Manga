@@ -3,13 +3,13 @@ id: CORE-SLIM-2
 title: 检测链瘦身——doctr/torch → ONNX Runtime（目标 Core 运行时 ≤700MB）
 kind: research
 governance_version: 3
-status: proposed
+status: ready
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: null
 reviewer: dsh
 depends_on: [INFER-BASELINE-EP-1]
-base_commit: null
+base_commit: 4b0d5f0eb
 branch: null
 worktree: null
 integration_commit: null
@@ -71,3 +71,9 @@ CORE-SLIM-1 实测：Core 运行时 970.1 MiB（目标 ≤700MB），缺口 270.
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## 实施要点（依据 INFER-BASELINE-EP-1 结论）
+
+- 目标：Core 运行时 970.1MiB → **≤700MB**；路径 = 检测链改 fixed-shape ONNX（RT-DETR-v2 163.7MB @opset17）+ 主包移除 torch/torchvision/transformers（仅保留可选导出/训练包）。
+- 硬数据：RT-DETR-v2 fixed 三档可跑、10/10 页框数与 torch 完全相同（DML 22.95ms vs torch-CPU 251.78ms）；manga-ocr encoder/decoder 逐字符 100% 一致，解码循环留 Python。
+- 不变量：检测/OCR/修复能力不降级；OCR 默认 CPU；onnxruntime-gpu 版本硬断言；LaMa 走 CPU/可选 CUDA。
+- 验收基线：pytest 3F/2710P/9S 无新增失败；scripts/test.ps1 全绿；体积 before/after 表。

@@ -144,3 +144,11 @@ icons/                 # 图标集（可选，覆盖默认）
 | S5 | `LEGACY-SHELL-REMOVAL-1` | 删 Tauri/React/WebView2/m2res/CORS/每请求 SHA-256；全量回归 | 15–25 人日 | S4 |
 
 **合计 200–400 人日**（含回归）；关键路径 S0 → S1 → S3 → S4。
+## 3.6 推理基线（2026-10-27 实测，INFER-BASELINE-EP-1）
+
+- **默认 EP = DirectML**；OCR 默认 CPU（GPU 反而更慢：PP-OCRv4 CPU 135.85 vs CUDA 496.09 ms/页）。
+- **主包**：ORT-DML 运行时 362.6MB + 模型 853.8MB = **1216.4MB（≤2GB）**；可选 CUDA 包 2296MB（含 torch 7005.8MB，≤8GB）。
+- **必须 torch 的模型：无**（torch 仅训练/导出期）→ 主包可去 torch，Core 运行时 970.1MiB → 预计 ~605MB（`CORE-SLIM-2` 验证）。
+- 发布 fixed-shape ONNX（RT-DETR-v2 163.7MB）；manga-ocr 解码循环留 Python；LaMa DML 不可用（CPU/可选 CUDA）。
+- 工程硬断言：`onnxruntime-gpu ≥1.31` 会静默回退 CPU，验收必须显式检查实际 EP。
+- 许可：仅 yolo11s-seg = AGPL-3.0（产品按 AGPL 声明）；其余权重 Apache-2.0；CUDA/cuDNN 为 NVIDIA 专有需单独声明。

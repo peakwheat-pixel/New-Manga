@@ -1,0 +1,38 @@
+[
+  {
+    "rel": "lama\\lama_fp32.onnx",
+    "bytes": 208044816,
+    "mb": 198.41,
+    "sha256": "1faef5301d78db7dda502fe59966957ec4b79dd64e16f03ed96913c7a4eb68d6"
+  },
+  {
+    "rel": "lama\\lama-manga-dynamic.onnx",
+    "bytes": 206291843,
+    "mb": 196.74,
+    "sha256": "de31ffa5ba26916b8ea35319f6c12151ff9654d4261bccf0583a69bb095315f9"
+  },
+  {
+    "rel": "manga-ocr-onnx\\decoder_model.onnx",
+    "bytes": 117480262,
+    "mb": 112.04,
+    "sha256": "ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8"
+  },
+  {
+    "rel": "manga-ocr-onnx\\encoder_model.onnx",
+    "bytes": 343454249,
+    "mb": 327.54,
+    "sha256": "15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f"
+  },
+  {
+    "rel": "paddle-ocr\\ch_PP-OCRv4_det_infer.onnx",
+    "bytes": 4745517,
+    "mb": 4.53,
+    "sha256": "d2a7720d45a54257208b1e13e36a8479894cb74155a5efe29462512d42f49da9"
+  },
+  {
+    "rel": "paddle-ocr\\ch_PP-OCRv4_rec_infer.onnx",
+    "bytes": 10857958,
+    "mb": 10.35,
+    "sha256": "48fc40f24f6d2a207a2b1091d3437eb3cc3eb6b676dc3ef9c37384005483683b"
+  }
+]

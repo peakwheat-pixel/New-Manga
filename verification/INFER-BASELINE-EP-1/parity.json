@@ -1,0 +1,998 @@
+{
+  "reference": "CPU run of the same model (fp32, no EP)",
+  "rows": [
+    {
+      "case": "yolo",
+      "ep": "dml",
+      "status": "OK",
+      "refBench": "bench-yolo-cpu.json",
+      "epBench": "bench-yolo-dml.json",
+      "cpuMedianMs": 161.418,
+      "epMedianMs": 26.476,
+      "speedupVsCpu": 6.1,
+      "providers": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p02_manga_002.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p03_manga_003.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p04_manga_004.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p05_manga_005.jpg": {
+          "refBoxes": 1,
+          "epBoxes": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 1.0,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p06_manga_006.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p07_manga_007.jpg": {
+          "refBoxes": 2,
+          "epBoxes": 2,
+          "matched": 2,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 1.0,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p08_manga_008.jpg": {
+          "refBoxes": 2,
+          "epBoxes": 2,
+          "matched": 2,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 1.0,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "refBoxes": 3,
+          "epBoxes": 3,
+          "matched": 3,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 1.0,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        }
+      },
+      "matched": 8,
+      "missed": 0,
+      "extra": 0,
+      "recallAtIoU50": 1.0,
+      "precisionAtIoU50": 1.0,
+      "meanIoU": 1.0,
+      "refBoxesTotal": 8,
+      "epBoxesTotal": 8
+    },
+    {
+      "case": "yolo",
+      "ep": "cuda",
+      "status": "OK",
+      "refBench": "bench-yolo-cpu.json",
+      "epBench": "bench-yolo-cuda.json",
+      "cpuMedianMs": 161.418,
+      "epMedianMs": 27.71,
+      "speedupVsCpu": 5.83,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p02_manga_002.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p03_manga_003.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p04_manga_004.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p05_manga_005.jpg": {
+          "refBoxes": 1,
+          "epBoxes": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 1.0,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p06_manga_006.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p07_manga_007.jpg": {
+          "refBoxes": 2,
+          "epBoxes": 2,
+          "matched": 2,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 0.9853,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p08_manga_008.jpg": {
+          "refBoxes": 2,
+          "epBoxes": 2,
+          "matched": 2,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 1.0,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "refBoxes": 3,
+          "epBoxes": 3,
+          "matched": 3,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": 0.9999,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        }
+      },
+      "matched": 8,
+      "missed": 0,
+      "extra": 0,
+      "recallAtIoU50": 1.0,
+      "precisionAtIoU50": 1.0,
+      "meanIoU": 0.9963,
+      "refBoxesTotal": 8,
+      "epBoxesTotal": 8
+    },
+    {
+      "case": "rtdetr-onnx",
+      "ep": "dml",
+      "status": "OK",
+      "refBench": "bench-rtdetr-onnx-cpu-fixed.json",
+      "epBench": "bench-rtdetr-onnx-dml-fixed.json",
+      "cpuMedianMs": 168.945,
+      "epMedianMs": 22.947,
+      "speedupVsCpu": 7.36,
+      "providers": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p02_manga_002.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p03_manga_003.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p04_manga_004.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p05_manga_005.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p06_manga_006.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p07_manga_007.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p08_manga_008.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        }
+      },
+      "matched": 0,
+      "missed": 0,
+      "extra": 0,
+      "recallAtIoU50": 0.0,
+      "precisionAtIoU50": 0.0,
+      "meanIoU": null,
+      "refBoxesTotal": 0,
+      "epBoxesTotal": 0
+    },
+    {
+      "case": "rtdetr-onnx",
+      "ep": "cuda",
+      "status": "OK",
+      "refBench": "bench-rtdetr-onnx-cpu-fixed.json",
+      "epBench": "bench-rtdetr-onnx-cuda-fixed.json",
+      "cpuMedianMs": 168.945,
+      "epMedianMs": 25.276,
+      "speedupVsCpu": 6.68,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p02_manga_002.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p03_manga_003.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p04_manga_004.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p05_manga_005.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p06_manga_006.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p07_manga_007.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p08_manga_008.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "refBoxes": 0,
+          "epBoxes": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "meanIoU": null,
+          "recall": null,
+          "precision": null
+        }
+      },
+      "matched": 0,
+      "missed": 0,
+      "extra": 0,
+      "recallAtIoU50": 0.0,
+      "precisionAtIoU50": 0.0,
+      "meanIoU": null,
+      "refBoxesTotal": 0,
+      "epBoxesTotal": 0
+    },
+    {
+      "case": "ppocr",
+      "ep": "dml",
+      "status": "OK",
+      "refBench": "bench-ppocr-cpu.json",
+      "epBench": "bench-ppocr-dml.json",
+      "cpuMedianMs": 135.846,
+      "epMedianMs": 250.923,
+      "speedupVsCpu": 0.54,
+      "providers": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "det": {
+            "matched": 10,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 10,
+          "epLines": 10
+        },
+        "p02_manga_002.jpg": {
+          "det": {
+            "matched": 8,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 8,
+          "epLines": 8
+        },
+        "p03_manga_003.jpg": {
+          "det": {
+            "matched": 3,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 3,
+          "epLines": 3
+        },
+        "p04_manga_004.jpg": {
+          "det": {
+            "matched": 59,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 59,
+          "epLines": 59
+        },
+        "p05_manga_005.jpg": {
+          "det": {
+            "matched": 22,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 22,
+          "epLines": 22
+        },
+        "p06_manga_006.jpg": {
+          "det": {
+            "matched": 17,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 17,
+          "epLines": 17
+        },
+        "p07_manga_007.jpg": {
+          "det": {
+            "matched": 13,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 13,
+          "epLines": 13
+        },
+        "p08_manga_008.jpg": {
+          "det": {
+            "matched": 2,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 2,
+          "epLines": 2
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "det": {
+            "matched": 29,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 29,
+          "epLines": 29
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "det": {
+            "matched": 16,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 16,
+          "epLines": 16
+        }
+      },
+      "detMatched": 179,
+      "detRecallAtIoU50": 1.0,
+      "detExtra": 0,
+      "textPairs": 179,
+      "textExactMatch": 1.0,
+      "charAccuracy": 1.0
+    },
+    {
+      "case": "ppocr",
+      "ep": "cuda",
+      "status": "OK",
+      "refBench": "bench-ppocr-cpu.json",
+      "epBench": "bench-ppocr-cuda.json",
+      "cpuMedianMs": 135.846,
+      "epMedianMs": 496.087,
+      "speedupVsCpu": 0.27,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "det": {
+            "matched": 10,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 10,
+          "epLines": 10
+        },
+        "p02_manga_002.jpg": {
+          "det": {
+            "matched": 8,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 0.9054,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 8,
+          "epLines": 8
+        },
+        "p03_manga_003.jpg": {
+          "det": {
+            "matched": 3,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 3,
+          "epLines": 3
+        },
+        "p04_manga_004.jpg": {
+          "det": {
+            "matched": 59,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 0.9934,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 59,
+          "epLines": 59
+        },
+        "p05_manga_005.jpg": {
+          "det": {
+            "matched": 22,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 0.993,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 22,
+          "epLines": 22
+        },
+        "p06_manga_006.jpg": {
+          "det": {
+            "matched": 17,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 0.9947,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 17,
+          "epLines": 17
+        },
+        "p07_manga_007.jpg": {
+          "det": {
+            "matched": 13,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 13,
+          "epLines": 13
+        },
+        "p08_manga_008.jpg": {
+          "det": {
+            "matched": 2,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 2,
+          "epLines": 2
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "det": {
+            "matched": 29,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 0.9862,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 29,
+          "epLines": 29
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "det": {
+            "matched": 16,
+            "missed": 0,
+            "extra": 0,
+            "meanIoU": 1.0,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "refLines": 16,
+          "epLines": 16
+        }
+      },
+      "detMatched": 179,
+      "detRecallAtIoU50": 1.0,
+      "detExtra": 0,
+      "textPairs": 179,
+      "textExactMatch": 0.9832,
+      "charAccuracy": 0.986
+    },
+    {
+      "case": "lama-dyn1024",
+      "ep": "dml",
+      "status": "OK",
+      "refBench": "bench-lama-cpu-dyn1024.json",
+      "epBench": "bench-lama-dml-dyn1024.json",
+      "cpuMedianMs": 3176.653,
+      "epMedianMs": 197.197,
+      "speedupVsCpu": 16.11,
+      "providers": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "psnrDb": 110.0002,
+          "ssim": 1.0
+        },
+        "p02_manga_002.jpg": {
+          "psnrDb": 99.0,
+          "ssim": 1.0
+        },
+        "p03_manga_003.jpg": {
+          "psnrDb": 113.6741,
+          "ssim": 1.0
+        },
+        "p04_manga_004.jpg": {
+          "psnrDb": 114.3542,
+          "ssim": 1.0
+        },
+        "p05_manga_005.jpg": {
+          "psnrDb": 111.2407,
+          "ssim": 1.0
+        },
+        "p06_manga_006.jpg": {
+          "psnrDb": 106.742,
+          "ssim": 1.0
+        },
+        "p07_manga_007.jpg": {
+          "psnrDb": 109.1549,
+          "ssim": 1.0
+        },
+        "p08_manga_008.jpg": {
+          "psnrDb": 107.9304,
+          "ssim": 1.0
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "psnrDb": 113.1304,
+          "ssim": 1.0
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "psnrDb": 113.7154,
+          "ssim": 1.0
+        }
+      },
+      "psnrDb": 109.8942,
+      "ssim": 1.0
+    },
+    {
+      "case": "lama-dyn1024",
+      "ep": "cuda",
+      "status": "OK",
+      "refBench": "bench-lama-cpu-dyn1024.json",
+      "epBench": "bench-lama-cuda-dyn1024.json",
+      "cpuMedianMs": 3176.653,
+      "epMedianMs": 137.791,
+      "speedupVsCpu": 23.05,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "psnrDb": 68.8732,
+          "ssim": 0.999993
+        },
+        "p02_manga_002.jpg": {
+          "psnrDb": 77.4958,
+          "ssim": 0.999999
+        },
+        "p03_manga_003.jpg": {
+          "psnrDb": 71.762,
+          "ssim": 0.999993
+        },
+        "p04_manga_004.jpg": {
+          "psnrDb": 78.2296,
+          "ssim": 0.999998
+        },
+        "p05_manga_005.jpg": {
+          "psnrDb": 71.8971,
+          "ssim": 0.999995
+        },
+        "p06_manga_006.jpg": {
+          "psnrDb": 68.6197,
+          "ssim": 0.999995
+        },
+        "p07_manga_007.jpg": {
+          "psnrDb": 68.0603,
+          "ssim": 0.999993
+        },
+        "p08_manga_008.jpg": {
+          "psnrDb": 67.8213,
+          "ssim": 0.999993
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "psnrDb": 72.9562,
+          "ssim": 0.999993
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "psnrDb": 74.0723,
+          "ssim": 0.999996
+        }
+      },
+      "psnrDb": 71.9787,
+      "ssim": 0.999995
+    },
+    {
+      "case": "lama-fixed512",
+      "ep": "cuda",
+      "status": "OK",
+      "refBench": "bench-lama-cpu-fixed512.json",
+      "epBench": "bench-lama-cuda-fixed512.json",
+      "cpuMedianMs": 1161.186,
+      "epMedianMs": 76.923,
+      "speedupVsCpu": 15.1,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "pages": {
+        "p01_manga_001.jpg": {
+          "psnrDb": 19.5601,
+          "ssim": 0.999986
+        },
+        "p02_manga_002.jpg": {
+          "psnrDb": 24.0304,
+          "ssim": 0.999983
+        },
+        "p03_manga_003.jpg": {
+          "psnrDb": 17.4599,
+          "ssim": 0.999977
+        },
+        "p04_manga_004.jpg": {
+          "psnrDb": 20.7398,
+          "ssim": 0.999978
+        },
+        "p05_manga_005.jpg": {
+          "psnrDb": 19.3257,
+          "ssim": 0.999984
+        },
+        "p06_manga_006.jpg": {
+          "psnrDb": 16.0863,
+          "ssim": 0.999985
+        },
+        "p07_manga_007.jpg": {
+          "psnrDb": 15.2161,
+          "ssim": 0.999934
+        },
+        "p08_manga_008.jpg": {
+          "psnrDb": 18.0326,
+          "ssim": 0.999987
+        },
+        "p09_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg": {
+          "psnrDb": 20.1827,
+          "ssim": 0.999981
+        },
+        "p10_manga_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg": {
+          "psnrDb": 19.5809,
+          "ssim": 0.999974
+        }
+      },
+      "psnrDb": 19.0215,
+      "ssim": 0.999977
+    }
+  ],
+  "crossRuntime": {
+    "rtdetr": {
+      "torch-cpu": {
+        "medianMs": 251.778,
+        "pages": 10
+      },
+      "torch-cuda": {
+        "medianMs": 40.819,
+        "pages": 10
+      },
+      "torch-vs-exported-onnx": {
+        "matched": 0,
+        "missed": 0,
+        "extra": 0,
+        "recallAtIoU50": 0.0,
+        "precisionAtIoU50": 0.0,
+        "meanIoU": null,
+        "pages": {}
+      }
+    },
+    "mangaocr": {
+      "torch-cpu": {
+        "torchMedianMs": 111.588,
+        "onnxEp": "cpu",
+        "onnxMedianMs": 72.516,
+        "pagesCompared": 10,
+        "exactMatch": 1.0,
+        "charAccuracy": 1.0
+      },
+      "torch-cuda": {
+        "torchMedianMs": 31.889,
+        "onnxEp": "cuda",
+        "onnxMedianMs": 23.168,
+        "pagesCompared": 10,
+        "exactMatch": 1.0,
+        "charAccuracy": 1.0
+      }
+    }
+  }
+}

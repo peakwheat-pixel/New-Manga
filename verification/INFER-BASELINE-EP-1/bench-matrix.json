@@ -1,0 +1,823 @@
+{
+  "task": "INFER-BASELINE-EP-1",
+  "capturedAt": "2026-10-27T04:30:19.2339013+08:00",
+  "runs": {
+    "lama-cpu-dyn1024": {
+      "model": "lama",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 65.565,
+      "sessionCreateMs": 5842.042,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 3176.653,
+        "min": 3114.86,
+        "max": 3216.03,
+        "p95": 3216.03,
+        "mean": 3171.154
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 3193.153,
+        "min": 3129.711,
+        "max": 3447.003,
+        "p95": 3447.003,
+        "mean": 3224.003
+      }
+    },
+    "lama-cpu-fixed512": {
+      "model": "lama",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 78.169,
+      "sessionCreateMs": 6859.711,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 1161.186,
+        "min": 1150.337,
+        "max": 1182.165,
+        "p95": 1182.165,
+        "mean": 1164.595
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 1162.141,
+        "min": 1131.585,
+        "max": 1217.594,
+        "p95": 1217.594,
+        "mean": 1169.879
+      }
+    },
+    "lama-cpu": {
+      "model": "lama",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 69.572,
+      "sessionCreateMs": 5790.678,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 3195.015,
+        "min": 3177.883,
+        "max": 3251.507,
+        "p95": 3251.507,
+        "mean": 3206.512
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 3209.301,
+        "min": 3173.764,
+        "max": 3361.419,
+        "p95": 3361.419,
+        "mean": 3216.627
+      }
+    },
+    "lama-cuda-dyn1024": {
+      "model": "lama",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 86.348,
+      "sessionCreateMs": 3023.84,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 137.791,
+        "min": 135.336,
+        "max": 138.101,
+        "p95": 138.101,
+        "mean": 137.397
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 137.389,
+        "min": 135.154,
+        "max": 499.026,
+        "p95": 499.026,
+        "mean": 173.265
+      }
+    },
+    "lama-cuda-fixed512": {
+      "model": "lama",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 85.189,
+      "sessionCreateMs": 4478.994,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 76.923,
+        "min": 72.621,
+        "max": 77.976,
+        "p95": 77.976,
+        "mean": 76.078
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 76.822,
+        "min": 72.854,
+        "max": 1002.768,
+        "p95": 1002.768,
+        "mean": 168.509
+      }
+    },
+    "lama-cuda": {
+      "model": "lama",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 75.761,
+      "sessionCreateMs": 3035.081,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 137.519,
+        "min": 135.17,
+        "max": 138.369,
+        "p95": 138.369,
+        "mean": 137.212
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 137.422,
+        "min": 134.951,
+        "max": 515.948,
+        "p95": 515.948,
+        "mean": 174.981
+      }
+    },
+    "lama-dml-dyn1024": {
+      "model": "lama",
+      "ep": "dml",
+      "providersActive": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 75.516,
+      "sessionCreateMs": 4487.947,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 197.197,
+        "min": 194.992,
+        "max": 197.943,
+        "p95": 197.943,
+        "mean": 196.981
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 196.828,
+        "min": 194.558,
+        "max": 814.547,
+        "p95": 814.547,
+        "mean": 258.301
+      }
+    },
+    "lama-dml": {
+      "model": "lama",
+      "ep": "dml",
+      "providersActive": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 75.543,
+      "sessionCreateMs": 4472.773,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 197.034,
+        "min": 194.995,
+        "max": 197.426,
+        "p95": 197.426,
+        "mean": 196.61
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 196.676,
+        "min": 194.738,
+        "max": 1162.226,
+        "p95": 1162.226,
+        "mean": 293.168
+      }
+    },
+    "mangaocr-cpu": {
+      "model": "mangaocr",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 70.501,
+      "sessionCreateMs": 433.441,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 72.516,
+        "min": 64.304,
+        "max": 112.736,
+        "p95": 112.736,
+        "mean": 77.097
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 69.706,
+        "min": 61.56,
+        "max": 112.863,
+        "p95": 112.863,
+        "mean": 74.797
+      }
+    },
+    "mangaocr-cuda": {
+      "model": "mangaocr",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 81.22,
+      "sessionCreateMs": 459.331,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 23.168,
+        "min": 18.811,
+        "max": 43.774,
+        "p95": 43.774,
+        "mean": 25.576
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 28.105,
+        "min": 19.182,
+        "max": 3792.143,
+        "p95": 3792.143,
+        "mean": 403.579
+      }
+    },
+    "mangaocr-dml": {
+      "model": "mangaocr",
+      "ep": "dml",
+      "providersActive": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 73.069,
+      "sessionCreateMs": 674.208,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 97.873,
+        "min": 66.974,
+        "max": 253.607,
+        "p95": 253.607,
+        "mean": 116.888
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 133.273,
+        "min": 66.362,
+        "max": 406.334,
+        "p95": 406.334,
+        "mean": 152.327
+      }
+    },
+    "mangaocr-torch-cpu": {
+      "model": "mangaocr",
+      "ep": "torch-cpu",
+      "providersActive": null,
+      "ortVersion": null,
+      "torch": {
+        "version": "2.11.0+cu128",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "device": "NVIDIA GeForce RTX 5070 Ti",
+        "capability": [
+          12,
+          0
+        ]
+      },
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 1292.518,
+      "sessionCreateMs": null,
+      "modelLoadMs": 2823.263,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 111.588,
+        "min": 88.203,
+        "max": 200.285,
+        "p95": 200.285,
+        "mean": 120.834
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 129.095,
+        "min": 81.333,
+        "max": 199.714,
+        "p95": 199.714,
+        "mean": 127.365
+      }
+    },
+    "mangaocr-torch-cuda": {
+      "model": "mangaocr",
+      "ep": "torch-cuda",
+      "providersActive": null,
+      "ortVersion": null,
+      "torch": {
+        "version": "2.11.0+cu128",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "device": "NVIDIA GeForce RTX 5070 Ti",
+        "capability": [
+          12,
+          0
+        ]
+      },
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 1309.086,
+      "sessionCreateMs": null,
+      "modelLoadMs": 3075.01,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 31.889,
+        "min": 25.583,
+        "max": 62.684,
+        "p95": 62.684,
+        "mean": 35.318
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 38.26,
+        "min": 25.71,
+        "max": 10211.545,
+        "p95": 10211.545,
+        "mean": 1054.187
+      }
+    },
+    "ppocr-cpu": {
+      "model": "ppocr",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 66.292,
+      "sessionCreateMs": 169.571,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 135.846,
+        "min": 84.638,
+        "max": 255.369,
+        "p95": 255.369,
+        "mean": 144.084
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 152.993,
+        "min": 85.124,
+        "max": 255.409,
+        "p95": 255.409,
+        "mean": 152.156
+      }
+    },
+    "ppocr-cuda": {
+      "model": "ppocr",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 89.355,
+      "sessionCreateMs": 292.387,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 496.087,
+        "min": 67.233,
+        "max": 2013.546,
+        "p95": 2013.546,
+        "mean": 710.299
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 745.072,
+        "min": 73.851,
+        "max": 3904.541,
+        "p95": 3904.541,
+        "mean": 1082.055
+      }
+    },
+    "ppocr-dml": {
+      "model": "ppocr",
+      "ep": "dml",
+      "providersActive": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 72.766,
+      "sessionCreateMs": 419.351,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 250.923,
+        "min": 72.861,
+        "max": 876.977,
+        "p95": 876.977,
+        "mean": 320.054
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 364.154,
+        "min": 80.751,
+        "max": 1344.88,
+        "p95": 1344.88,
+        "mean": 469.529
+      }
+    },
+    "rtdetr-onnx-cpu-fixed": {
+      "model": "rtdetr-onnx",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 76.207,
+      "sessionCreateMs": 383.09,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 168.945,
+        "min": 164.689,
+        "max": 178.946,
+        "p95": 178.946,
+        "mean": 169.706
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 171.154,
+        "min": 157.156,
+        "max": 190.045,
+        "p95": 190.045,
+        "mean": 171.902
+      }
+    },
+    "rtdetr-onnx-cuda-fixed": {
+      "model": "rtdetr-onnx",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 73.973,
+      "sessionCreateMs": 463.3,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 25.276,
+        "min": 22.752,
+        "max": 25.712,
+        "p95": 25.712,
+        "mean": 24.83
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 25.193,
+        "min": 23.064,
+        "max": 2510.941,
+        "p95": 2510.941,
+        "mean": 273.855
+      }
+    },
+    "rtdetr-onnx-cuda": {
+      "model": "rtdetr-onnx",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 74.666,
+      "sessionCreateMs": 697.955,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 27.765,
+        "min": 25.342,
+        "max": 38.467,
+        "p95": 38.467,
+        "mean": 28.365
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 27.63,
+        "min": 25.012,
+        "max": 9719.39,
+        "p95": 9719.39,
+        "mean": 996.369
+      }
+    },
+    "rtdetr-onnx-dml-fixed": {
+      "model": "rtdetr-onnx",
+      "ep": "dml",
+      "providersActive": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 72.683,
+      "sessionCreateMs": 918.489,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 22.947,
+        "min": 20.579,
+        "max": 23.026,
+        "p95": 23.026,
+        "mean": 22.476
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 23.017,
+        "min": 20.698,
+        "max": 32.339,
+        "p95": 32.339,
+        "mean": 24.198
+      }
+    },
+    "rtdetr-torch-cpu": {
+      "model": "rtdetr",
+      "ep": "torch-cpu",
+      "providersActive": null,
+      "ortVersion": null,
+      "torch": {
+        "version": "2.11.0+cu128",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "device": "NVIDIA GeForce RTX 5070 Ti",
+        "capability": [
+          12,
+          0
+        ]
+      },
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 1312.944,
+      "sessionCreateMs": null,
+      "modelLoadMs": 3321.202,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 251.778,
+        "min": 244.205,
+        "max": 274.519,
+        "p95": 274.519,
+        "mean": 253.999
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 249.72,
+        "min": 233.936,
+        "max": 289.057,
+        "p95": 289.057,
+        "mean": 254.636
+      }
+    },
+    "rtdetr-torch-cuda": {
+      "model": "rtdetr",
+      "ep": "torch-cuda",
+      "providersActive": null,
+      "ortVersion": null,
+      "torch": {
+        "version": "2.11.0+cu128",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "device": "NVIDIA GeForce RTX 5070 Ti",
+        "capability": [
+          12,
+          0
+        ]
+      },
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 1301.678,
+      "sessionCreateMs": null,
+      "modelLoadMs": 3110.909,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 40.819,
+        "min": 35.728,
+        "max": 45.623,
+        "p95": 45.623,
+        "mean": 41.124
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 40.19,
+        "min": 37.506,
+        "max": 13511.384,
+        "p95": 13511.384,
+        "mean": 1387.542
+      }
+    },
+    "yolo-cpu": {
+      "model": "yolo",
+      "ep": "cpu",
+      "providersActive": [
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 75.743,
+      "sessionCreateMs": 78.042,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 161.418,
+        "min": 156.397,
+        "max": 175.1,
+        "p95": 175.1,
+        "mean": 162.736
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 160.444,
+        "min": 147.636,
+        "max": 187.211,
+        "p95": 187.211,
+        "mean": 162.493
+      }
+    },
+    "yolo-cuda": {
+      "model": "yolo",
+      "ep": "cuda",
+      "providersActive": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.22.0",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 75.542,
+      "sessionCreateMs": 203.076,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 27.71,
+        "min": 25.577,
+        "max": 29.1,
+        "p95": 29.1,
+        "mean": 27.536
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 27.785,
+        "min": 25.73,
+        "max": 4766.818,
+        "p95": 4766.818,
+        "mean": 501.446
+      }
+    },
+    "yolo-dml": {
+      "model": "yolo",
+      "ep": "dml",
+      "providersActive": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "ortVersion": "1.24.4",
+      "torch": null,
+      "pages": 10,
+      "itersPerPage": 4,
+      "warmupPerPage": 1,
+      "importMs": 74.802,
+      "sessionCreateMs": 721.82,
+      "modelLoadMs": null,
+      "perPageMedianMs": {
+        "n": 10,
+        "median": 26.476,
+        "min": 24.348,
+        "max": 27.27,
+        "p95": 27.27,
+        "mean": 26.202
+      },
+      "firstRunMs": {
+        "n": 10,
+        "median": 26.615,
+        "min": 24.474,
+        "max": 35.484,
+        "p95": 35.484,
+        "mean": 27.155
+      }
+    }
+  }
+}

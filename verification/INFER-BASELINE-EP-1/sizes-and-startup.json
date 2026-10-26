@@ -1,0 +1,293 @@
+{
+  "cudaDlls": [
+    {
+      "name": "cudart64_12.dll",
+      "mb": 0.5
+    },
+    {
+      "name": "cublas64_12.dll",
+      "mb": 108.4
+    },
+    {
+      "name": "cublasLt64_12.dll",
+      "mb": 643.4
+    },
+    {
+      "name": "cudnn64_9.dll",
+      "mb": 0.3
+    },
+    {
+      "name": "cudnn_adv64_9.dll",
+      "mb": 256.6
+    },
+    {
+      "name": "cudnn_cnn64_9.dll",
+      "mb": 2.8
+    },
+    {
+      "name": "cudnn_engines_precompiled64_9.dll",
+      "mb": 458.7
+    },
+    {
+      "name": "cudnn_engines_runtime_compiled64_9.dll",
+      "mb": 26.5
+    },
+    {
+      "name": "cudnn_graph64_9.dll",
+      "mb": 2.4
+    },
+    {
+      "name": "cudnn_heuristic64_9.dll",
+      "mb": 56.1
+    },
+    {
+      "name": "cudnn_ops64_9.dll",
+      "mb": 100.7
+    }
+  ],
+  "capturedAt": "2026-10-27T04:18:56.2302642+08:00",
+  "startup": [
+    {
+      "run": "lama-cpu-dyn1024",
+      "importMs": 65.565,
+      "sessionCreateMs": 5842.042,
+      "modelLoadMs": null,
+      "firstRunMs": 3193.153,
+      "steadyMs": 3176.653
+    },
+    {
+      "run": "lama-cpu-fixed512",
+      "importMs": 78.169,
+      "sessionCreateMs": 6859.711,
+      "modelLoadMs": null,
+      "firstRunMs": 1162.141,
+      "steadyMs": 1161.186
+    },
+    {
+      "run": "lama-cpu",
+      "importMs": 69.572,
+      "sessionCreateMs": 5790.678,
+      "modelLoadMs": null,
+      "firstRunMs": 3209.301,
+      "steadyMs": 3195.015
+    },
+    {
+      "run": "lama-cuda-dyn1024",
+      "importMs": 86.348,
+      "sessionCreateMs": 3023.84,
+      "modelLoadMs": null,
+      "firstRunMs": 137.389,
+      "steadyMs": 137.791
+    },
+    {
+      "run": "lama-cuda-fixed512",
+      "importMs": 85.189,
+      "sessionCreateMs": 4478.994,
+      "modelLoadMs": null,
+      "firstRunMs": 76.822,
+      "steadyMs": 76.923
+    },
+    {
+      "run": "lama-cuda",
+      "importMs": 75.761,
+      "sessionCreateMs": 3035.081,
+      "modelLoadMs": null,
+      "firstRunMs": 137.422,
+      "steadyMs": 137.519
+    },
+    {
+      "run": "lama-dml-dyn1024",
+      "importMs": 75.516,
+      "sessionCreateMs": 4487.947,
+      "modelLoadMs": null,
+      "firstRunMs": 196.828,
+      "steadyMs": 197.197
+    },
+    {
+      "run": "lama-dml",
+      "importMs": 75.543,
+      "sessionCreateMs": 4472.773,
+      "modelLoadMs": null,
+      "firstRunMs": 196.676,
+      "steadyMs": 197.034
+    },
+    {
+      "run": "mangaocr-cpu",
+      "importMs": 70.501,
+      "sessionCreateMs": 433.441,
+      "modelLoadMs": null,
+      "firstRunMs": 69.706,
+      "steadyMs": 72.516
+    },
+    {
+      "run": "mangaocr-cuda",
+      "importMs": 81.22,
+      "sessionCreateMs": 459.331,
+      "modelLoadMs": null,
+      "firstRunMs": 28.105,
+      "steadyMs": 23.168
+    },
+    {
+      "run": "mangaocr-dml",
+      "importMs": 73.069,
+      "sessionCreateMs": 674.208,
+      "modelLoadMs": null,
+      "firstRunMs": 133.273,
+      "steadyMs": 97.873
+    },
+    {
+      "run": "mangaocr-torch-cpu",
+      "importMs": 1292.518,
+      "sessionCreateMs": null,
+      "modelLoadMs": 2823.263,
+      "firstRunMs": 129.095,
+      "steadyMs": 111.588
+    },
+    {
+      "run": "mangaocr-torch-cuda",
+      "importMs": 1309.086,
+      "sessionCreateMs": null,
+      "modelLoadMs": 3075.01,
+      "firstRunMs": 38.26,
+      "steadyMs": 31.889
+    },
+    {
+      "run": "ppocr-cpu",
+      "importMs": 66.292,
+      "sessionCreateMs": 169.571,
+      "modelLoadMs": null,
+      "firstRunMs": 152.993,
+      "steadyMs": 135.846
+    },
+    {
+      "run": "ppocr-cuda",
+      "importMs": 89.355,
+      "sessionCreateMs": 292.387,
+      "modelLoadMs": null,
+      "firstRunMs": 745.072,
+      "steadyMs": 496.087
+    },
+    {
+      "run": "ppocr-dml",
+      "importMs": 72.766,
+      "sessionCreateMs": 419.351,
+      "modelLoadMs": null,
+      "firstRunMs": 364.154,
+      "steadyMs": 250.923
+    },
+    {
+      "run": "rtdetr-torch-cpu",
+      "importMs": 1312.944,
+      "sessionCreateMs": null,
+      "modelLoadMs": 3321.202,
+      "firstRunMs": 249.72,
+      "steadyMs": 251.778
+    },
+    {
+      "run": "rtdetr-torch-cuda",
+      "importMs": 1301.678,
+      "sessionCreateMs": null,
+      "modelLoadMs": 3110.909,
+      "firstRunMs": 40.19,
+      "steadyMs": 40.819
+    },
+    {
+      "run": "yolo-cpu",
+      "importMs": 75.743,
+      "sessionCreateMs": 78.042,
+      "modelLoadMs": null,
+      "firstRunMs": 160.444,
+      "steadyMs": 161.418
+    },
+    {
+      "run": "yolo-cuda",
+      "importMs": 75.542,
+      "sessionCreateMs": 203.076,
+      "modelLoadMs": null,
+      "firstRunMs": 27.785,
+      "steadyMs": 27.71
+    },
+    {
+      "run": "yolo-dml",
+      "importMs": 74.802,
+      "sessionCreateMs": 721.82,
+      "modelLoadMs": null,
+      "firstRunMs": 26.615,
+      "steadyMs": 26.476
+    }
+  ],
+  "sizes": [
+    {
+      "kind": "model",
+      "name": "detect\\yolo11s-seg.onnx",
+      "mb": 38.93,
+      "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+    },
+    {
+      "kind": "model",
+      "name": "lama\\lama_fp32.onnx",
+      "mb": 198.41,
+      "sha256": "1faef5301d78db7dda502fe59966957ec4b79dd64e16f03ed96913c7a4eb68d6"
+    },
+    {
+      "kind": "model",
+      "name": "lama\\lama-manga-dynamic.onnx",
+      "mb": 196.74,
+      "sha256": "de31ffa5ba26916b8ea35319f6c12151ff9654d4261bccf0583a69bb095315f9"
+    },
+    {
+      "kind": "model",
+      "name": "manga-ocr-onnx\\decoder_model.onnx",
+      "mb": 112.04,
+      "sha256": "ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8"
+    },
+    {
+      "kind": "model",
+      "name": "manga-ocr-onnx\\encoder_model.onnx",
+      "mb": 327.54,
+      "sha256": "15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f"
+    },
+    {
+      "kind": "model",
+      "name": "paddle-ocr\\ch_PP-OCRv4_det_infer.onnx",
+      "mb": 4.53,
+      "sha256": "d2a7720d45a54257208b1e13e36a8479894cb74155a5efe29462512d42f49da9"
+    },
+    {
+      "kind": "model",
+      "name": "paddle-ocr\\ch_PP-OCRv4_rec_infer.onnx",
+      "mb": 10.35,
+      "sha256": "48fc40f24f6d2a207a2b1091d3437eb3cc3eb6b676dc3ef9c37384005483683b"
+    },
+    {
+      "kind": "venv",
+      "name": "ort-cuda  [ onnxruntime-gpu 1.22.0 + numpy/pillow/opencv/onnx ]",
+      "mb": 639.5,
+      "sha256": ""
+    },
+    {
+      "kind": "venv",
+      "name": "torch-cuda  [ torch 2.11.0+cu128 + torchvision + transformers 5.17 + safetensors ]",
+      "mb": 4709.8,
+      "sha256": ""
+    },
+    {
+      "kind": "venv",
+      "name": "ort-dml  [ onnxruntime-directml 1.24.4 (production pin) + numpy/pillow/opencv/onnx ]",
+      "mb": 362.6,
+      "sha256": ""
+    },
+    {
+      "kind": "venv",
+      "name": "ocr-ref  [ rapidocr_onnxruntime (CPU reference OCR) ]",
+      "mb": 265.9,
+      "sha256": ""
+    },
+    {
+      "kind": "cuda-runtime",
+      "name": "CUDA 12.8 + cuDNN 9 DLLs borrowed from torch wheel torch\\lib (11 dlls)",
+      "mb": 1656.5,
+      "sha256": ""
+    }
+  ]
+}

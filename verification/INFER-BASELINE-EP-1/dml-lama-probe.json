@@ -1,0 +1,121 @@
+{
+  "ortVersion": "1.24.4",
+  "availableProviders": [
+    "DmlExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "probes": [
+    {
+      "label": "lama",
+      "model": "lama_fp32.onnx",
+      "ep": "DmlExecutionProvider",
+      "sessionProviders": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "inputShapes": {
+        "image": [
+          512,
+          3,
+          512,
+          512
+        ],
+        "mask": [
+          512,
+          1,
+          512,
+          512
+        ]
+      },
+      "ok": false,
+      "runError": "'utf-8' codec can't decode byte 0xb2 in position 444: invalid start byte | gbk: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running DmlFusedConv node. Name:'fused op (#19 '/generator/model/model.1/ffc/convl2l/Conv') + (#20 '/generator/model/model.1/act_l/Relu')' Status Message: E:\\_work\\1\\s\\onnxruntime\\core\\providers\\dml\\DmlExecutionProvider\\src\\MLOperatorAuthorImpl.cpp(2508)\\onnxruntime_pybind11_state.pyd!00007FF8E4EAB705: (caller: 00007FF8E4EACB5C) Exception(3) tid(a49c) 80070057 参数错误。\r\n",
+      "trace": "Traceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\scripts\\probe_lama_dml.py\", line 53, in probe\n    res = sess.run(None, feed)\n          ^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\venvs\\ort-dml\\Lib\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 296, in run\n    return self._sess.run(output_names, input_feed, run_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xb2 in position 444: invalid start byte\n"
+    },
+    {
+      "model": "lama_fp32.onnx",
+      "ep": "CUDAExecutionProvider",
+      "skipped": "EP not in this venv"
+    },
+    {
+      "label": "lama",
+      "model": "lama_fp32.onnx",
+      "ep": "CPUExecutionProvider",
+      "sessionProviders": [
+        "CPUExecutionProvider"
+      ],
+      "inputShapes": {
+        "image": [
+          512,
+          3,
+          512,
+          512
+        ],
+        "mask": [
+          512,
+          1,
+          512,
+          512
+        ]
+      },
+      "ok": false,
+      "runError": "[ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Pad node. Name:'/generator/model/model.2/ffc/convl2l/Pad' Status Message: E:\\_work\\1\\s\\onnxruntime\\core\\framework\\bfc_arena.cc:358 onnxruntime::BFCArena::AllocateRawInternal Failed to allocate memory for requested buffer of size 34628698112\n",
+      "trace": "Traceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\scripts\\probe_lama_dml.py\", line 53, in probe\n    res = sess.run(None, feed)\n          ^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\venvs\\ort-dml\\Lib\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 296, in run\n    return self._sess.run(output_names, input_feed, run_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nonnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Pad node. Name:'/generator/model/model.2/ffc/convl2l/Pad' Status Message: E:\\_work\\1\\s\\onnxruntime\\core\\framework\\bfc_arena.cc:358 onnxruntime::BFCArena::AllocateRawInternal Failed to allocate memory for requested buffer of size 34628698112\n\n"
+    },
+    {
+      "label": "lama",
+      "model": "lama-manga-dynamic.onnx",
+      "ep": "DmlExecutionProvider",
+      "sessionProviders": [
+        "DmlExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "inputShapes": {
+        "image": [
+          512,
+          3,
+          512,
+          512
+        ],
+        "mask": [
+          512,
+          1,
+          512,
+          512
+        ]
+      },
+      "ok": false,
+      "runError": "'utf-8' codec can't decode byte 0xb2 in position 442: invalid start byte | gbk: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running DmlFusedConv node. Name:'fused op (#19 'generator/model/model.1/ffc/convl2l/Conv') + (#20 'generator/model/model.1/act_l/Relu')' Status Message: E:\\_work\\1\\s\\onnxruntime\\core\\providers\\dml\\DmlExecutionProvider\\src\\MLOperatorAuthorImpl.cpp(2508)\\onnxruntime_pybind11_state.pyd!00007FF8E4EAB705: (caller: 00007FF8E4EACB5C) Exception(6) tid(a49c) 80070057 参数错误。\r\n",
+      "trace": "Traceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\scripts\\probe_lama_dml.py\", line 53, in probe\n    res = sess.run(None, feed)\n          ^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\venvs\\ort-dml\\Lib\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 296, in run\n    return self._sess.run(output_names, input_feed, run_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xb2 in position 442: invalid start byte\n"
+    },
+    {
+      "model": "lama-manga-dynamic.onnx",
+      "ep": "CUDAExecutionProvider",
+      "skipped": "EP not in this venv"
+    },
+    {
+      "label": "lama",
+      "model": "lama-manga-dynamic.onnx",
+      "ep": "CPUExecutionProvider",
+      "sessionProviders": [
+        "CPUExecutionProvider"
+      ],
+      "inputShapes": {
+        "image": [
+          512,
+          3,
+          512,
+          512
+        ],
+        "mask": [
+          512,
+          1,
+          512,
+          512
+        ]
+      },
+      "ok": false,
+      "runError": "[ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Pad node. Name:'generator/model/model.2/ffc/convl2l/Pad' Status Message: E:\\_work\\1\\s\\onnxruntime\\core\\framework\\bfc_arena.cc:358 onnxruntime::BFCArena::AllocateRawInternal Failed to allocate memory for requested buffer of size 34628698112\n",
+      "trace": "Traceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\scripts\\probe_lama_dml.py\", line 53, in probe\n    res = sess.run(None, feed)\n          ^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\task-envs\\INFER-BASELINE-EP-1\\venvs\\ort-dml\\Lib\\site-packages\\onnxruntime\\capi\\onnxruntime_inference_collection.py\", line 296, in run\n    return self._sess.run(output_names, input_feed, run_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nonnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running Pad node. Name:'generator/model/model.2/ffc/convl2l/Pad' Status Message: E:\\_work\\1\\s\\onnxruntime\\core\\framework\\bfc_arena.cc:358 onnxruntime::BFCArena::AllocateRawInternal Failed to allocate memory for requested buffer of size 34628698112\n\n"
+    }
+  ]
+}
