@@ -26,7 +26,6 @@
 |GOV-NDJSON-NONDECL-IDENTITY-1|GOV-DECLARATION-RESIDUAL-32-AUDIT-1|done（54cfbadad；身份研究，不登记例外）|
 |GOV-DECLARATION-RESIDUAL-32-AUDIT-1|GOV-PATH-HEADER-COMPAT-1|done（927e06f8b；只读取证，原32错误保留）|
 |GOV-PATH-HEADER-COMPAT-1|WORKSPACE-DECLARATION-REMEDIATION-1|done（9cae94142；单一固定别名，无资源处置授权）|
-|GIT-MAINLINE-CONVERGENCE-1|—|done（r3 approved 6997733bf；仅 main、1 worktree、21 条归档）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 |GOV-DIRECTORY-CLEANUP-1|—|done（approved 40acf35b7；五根 171 项，2 项删除、释放 426.3 MiB）|
 |SETTINGS-OPEN-A-1|P15、P15-C1|done（批次 A：OCR/翻译/修复/排版；r1→r2 approved，集成 6a303a9）|
@@ -50,9 +49,10 @@
 |UIUX-V2-RUNTIME-NARROW-1|UIUX-V2-RUNTIME-REALCORE-2|done（.nm-app min-width:1024 根治；900 档四页 900/900；`e9a409927`）|
 |PRODUCT-IDENTITY-1|UIUX-V2-RUNTIME-NARROW-1|done（窗口标题/exe/应用ID → New Manga；`new-manga.exe`）|
 |DISPLAY-PERF-DECISION-1|—|in_review（全部 AC MET；S0 GO；待独立复核+closeout）|
-|HOST-CORECLIENT-1|DISPLAY-PERF-DECISION-1|in_review（S1 已交付；base a93f20c7b；Reviewer=ZCode）|
+|HOST-CORECLIENT-1|DISPLAY-PERF-DECISION-1|changes_requested（S1 集成复核 2 项待修：测试可复现 + 证据 pin）|
+|HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|proposed（S2 命令 parity；S1 done 后释放）|
 
-READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 生效，主线转 Avalonia。清理/删除仍需新授权，r212 与五广域根保护不变。
+READY 节点：无。2026-10-25 DSH 接任 Lead/Architect/Integrator；2026-10-26 AD-002 生效，主线转 Avalonia。清理/删除需新授权；r212 与五广域根保护不变。
 
 ## 终态依赖与限制
 

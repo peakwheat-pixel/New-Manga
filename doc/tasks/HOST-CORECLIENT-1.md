@@ -3,11 +3,11 @@ id: HOST-CORECLIENT-1
 title: S1 C# Host/CoreClient——spawn 双 sidecar + JSON-lines + 中文零乱码 + 失败可诊断
 kind: implementation
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: antigravity
 owner: avalonia-spike
-reviewer: zcode
+reviewer: dsh
 depends_on: [DISPLAY-PERF-DECISION-1]
 base_commit: a93f20c7b
 branch: task/HOST-CORECLIENT-1
@@ -92,7 +92,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | E1-build | AC1/AC6 | verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log | - | 2943b1f5fc6b808ce1da8537da29444833f2c3de298ee347636ea02be9131666 | CANONICAL |
 | E2-test | AC2/AC3/AC4/AC5/AC6 | verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 4161c65553511dcd56e915c4c5264de53ebc185e303f32acee58cf5568f8c4f2 | CANONICAL |
-| E3-trx | AC2/AC3/AC4/AC5 | verification/HOST-CORECLIENT-1/test/results-Debug.trx | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 68b5c79eef6b2e5a5ea0fa199bde168f2fa9043f28df5d7a11cd06344bb26113 | CANONICAL |
+| E3-trx | AC2/AC3/AC4/AC5 | verification/HOST-CORECLIENT-1/test/results-Debug.trx | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 354c7b2699fee8009529860b2a1ad7839d2a4d9717e59bd9a4ab9f90bad8de4d | CANONICAL |
 | E4-vitest | AC6 | verification/HOST-CORECLIENT-1/test/vitest-baseline.log | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 8879a2097807f6388880344f0026caab119128bccbeb35d04ca9faffe03b43a2 | CANONICAL |
 | E5-publish | AC1 | verification/HOST-CORECLIENT-1/publish/publish_files.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 00d5ec9b5a09fc0d921701049817e17bf87a405a491c71b3184569f97ba40000 | CANONICAL |
 | E6-cn-roundtrip | AC2/AC3 | verification/HOST-CORECLIENT-1/wire/core-chinese-roundtrip.json | eb123ad4f7e758010ee6597f276c34b6c9807e26 | 978de43ca074205f9be417fff8f5c617d057c9696f9aa663b442fa88be1be052 | CANONICAL |
@@ -111,6 +111,15 @@ allowed_paths:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | task-env | G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1 | f2941cf68d676ec9d5b0c9f69e569f7824ca9143996117fe6bef4eb7dea88bb6 | 本 Task 集成前保留：无标签 sidecar 副本供复跑测试；未删除、未移动。关闭时由 DSH 复核。 |
+
+## Review（DSH 集成复核，2026-10-27）
+
+结论：**changes_requested**（2 项修复后才能 done）：
+
+1. **AC6 测试可复现性**：DSH 集成后跑 `dotnet test apps\desktop-avalonia\NewManga.sln` → `NewManga.App.Tests` 4/4 通过，但 `NewManga.CoreClient.Tests` **23 passed / 8 failed**，失败全在 `CoreServiceIntegrationTests`（Ping、中文往返、UTF-8 负例、wire 帧）。交付声称 57/57 但**没有给出可复现的单一命令/环境**。要求：集成测试在 sidecar fixture 缺失时显式 `Skip` 写明原因，或提供带环境变量的一键命令写入 Handoff；"一条命令 57/57"必须成立。
+2. **E3-trx 证据 pin 陈旧**：pin 值（`68b5c79e…`）与合并后实际产物（`354c7b26…`）不一致——文件在 pin 之后被重写 → `check.ps1` SHA-256 校验 FAIL。DSH 已临时改为当前全量哈希；**重跑测试后必须重新 pin 最终产物**，且 pin 之后不得再重写证据文件。
+
+其余通过：分支仅新增 `apps/desktop-avalonia/**` 与 `verification/HOST-CORECLIENT-1/**`（未触碰旧壳/Python Core）；wire 证据含 `5c75` 转义与 ASCII-only；AC11 无标签副本规则遵守。修复后 DSH 复跑单命令 + `check.ps1` 通过即 done。
 
 ## Closeout Record
 

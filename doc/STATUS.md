@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `in_review`（57/57 测试、单文件 27.64 MiB、smoke PASS；待 ZCode 复核）。
+- 当前 Task：[HOST-CORECLIENT-1](tasks/HOST-CORECLIENT-1.md) `changes_requested`（S1 集成复核：测试可复现性 + 证据 pin 待修）。
 - 收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（全 AC MET）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
