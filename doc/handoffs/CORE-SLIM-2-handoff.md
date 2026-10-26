@@ -3,7 +3,7 @@
 - Task: `doc/tasks/CORE-SLIM-2.md`（AD-002 §3.5 预算规则；依赖 `INFER-BASELINE-EP-1`）
 - Branch: `task/CORE-SLIM-2`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/CORE-SLIM-2`
 - Base: `21960f4cb`（= CORE-SLIM-1 集成 `4b0d5f0eb` + INFER 基线集成 `1b91d93a9` + docs）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列（实现+证据所在提交）
+- Delivery head: `9ebc2caa4`（实现+证据所在提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push（按卡禁止）。
 
 ## 1. 交付摘要

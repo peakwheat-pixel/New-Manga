@@ -67,12 +67,20 @@ CORE-SLIM-1 实测：Core 运行时 970.1 MiB（目标 ≤700MB），缺口 270.
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-AC1-PARITY | AC1/AC4 检测+OCR 等价 | `verification/CORE-SLIM-2/parity.json` | `9ebc2caa4` | `801769900815c6ee3e099c542bdeb731cbd9ae37ac2438598085e9b3996982e9` | CANONICAL |
+| E-AC2-REPORT | AC1/AC2 方案与实现 | `verification/CORE-SLIM-2/REPORT.md` | `9ebc2caa4` | `333a628941aa04ec5e813094ba3cf8d369fe74f56927401f6eecde205285fcaa` | CANONICAL |
+| E-AC3-SIZE | AC3 体积报告 | `verification/CORE-SLIM-2/size-report.md` | `9ebc2caa4` | `bfe98bf8a084fbf89eeaa2d281ba685c437f5c170c9dcea60cfaab2864667986` | CANONICAL |
+| E-AC3-BUNDLE | AC3 构建度量 | `verification/CORE-SLIM-2/bundle-after.json` | `9ebc2caa4` | `03bcdf30c941ca16e0b0e55dba68f20122e962464ffd71b1d42d8a2bbcf2d056` | CANONICAL |
+| E-AC2-SMOKE | AC2/AC3 冻结能力 smoke | `verification/CORE-SLIM-2/capability-smoke.json` | `9ebc2caa4` | `c05690ac37a735428dbdb50b653e1c7f636d20c0c535a04c91ac176f8bdd7472` | CANONICAL |
+| E-AC4-PYTEST | AC4 pytest | `verification/CORE-SLIM-2/pytest-after.log` | `9ebc2caa4` | `abc7b5dd48420e800af0cc85b7453d3ac915bfb27c885bf6d42d0341f0165d85` | CANONICAL |
+| E-AC4-DOTNET | AC4 scripts/test.ps1 | `verification/CORE-SLIM-2/scripts-test.log` | `9ebc2caa4` | `ba14fe64066dfb3b4bbdb254227314f5aa87683cd2791b0f78216c0de7634ae8` | CANONICAL |
+| E-AC2-BUILD | AC2 打包构建 | `verification/CORE-SLIM-2/build.log` | `9ebc2caa4` | `1bdef965a256bcd3dc0b9dee06a700984a139acf61a70bbf443919272773e8bc` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2 | `models/`（staged ONNX，sha256 见 `verification/CORE-SLIM-2/REPORT.md`）、`sidecar-copy/`（无标签副本）、`results/`、`scripts/` | 构建/parity/smoke 均引用该 task-env；关闭时按 workspace 治理裁决 |
 
 ## Closeout Record
 
