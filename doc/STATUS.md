@@ -26,7 +26,7 @@
 
 ## Gate 与保留项
 
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。P20 发布 Gate 已实测通过。此前授权只覆盖「干净源码快照新分支」push，不是 main 推送、不是产品发布验收。**2026-10-25 UIUX push 裁决：未执行**（main 含历史材料、干净快照 Gate 未清）。**2026-10-26 REALCORE push 裁决：仍未执行**，同一 Gate 未清。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。P20 发布 Gate 已实测通过。此前授权只覆盖「干净源码快照新分支」push，不是 main 推送、不是产品发布验收。**2026-10-25 UIUX push 裁决：未执行**（main 含历史材料、干净快照 Gate 未清）。**2026-10-26 push 已执行（用户授权，快照口径）**：`clean-snapshot-20261026`=`892b946e`（875 files）；main 未推。
 
 ## 当前权威指针
 

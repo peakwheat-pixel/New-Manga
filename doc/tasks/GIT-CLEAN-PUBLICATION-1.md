@@ -196,3 +196,21 @@ DSH 接管基线提交 `a3c936f68748047aee41c4c60d732adc5bdf55f7`（仅 `AGENTS.
   `e34a90d001cce1fa966aec7d2b032bb5ad1cf148 refs/heads/codex/clean-source-snapshot`；
   `refs/heads/main` 保持 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a` 不变。未使用 force、未推送 `main`、未设置上游、未传播私有素材。
 - **记录文件**：`doc/PUSH_RECORD_2026-10-25.md`。
+
+## 2026-10-26 实际发布记录（DSH 执行，用户明确授权）
+
+- **授权**：用户 2026-10-26 同意 push 裁决，并在「推 main / 推干净快照 / 先看清单」三选中明确选择 **只推干净源码快照**。
+- **口径**：新建分支推送，**不动 `main`、不动既有 `codex/clean-source-snapshot`、不 force push**。
+- **方法**：`git archive --format=tar --output=... main -- <白名单路径>` 导出 → 独立 `git init` + 单提交 → `git push origin HEAD:refs/heads/clean-snapshot-20261026`。
+- **导出白名单**：`apps/` `src/` `tests/` `packaging/` `test_assets/` `pytest.ini` `requirements.txt` `requirements-dev.txt` `.gitignore` `.gitattributes` `tools/dev` `tools/p02` `tools/smoke`。
+- **剔除**：`verification/`(9306 files) `doc/`(1158) `docs/` `audit/` `wiki/` `archive/` `experiments/` `.orchestrator/` `.codewiki/` `.codex/` `.dsh/` `.gemini/` `.qoder/` `.workbuddy/` `.qoder-credits/` `.tmp.driveupload/`(2148) `AGENTS.md` `GOAL.md` `tools/governance`。
+- **快照内容**：875 个文件 / 15.3 MB；顶层 = apps(283) src(243) tests(226) test_assets(81) packaging(18) tools(14) + 5 个根配置文件。
+- **推送结果**：`clean-snapshot-20261026` = `892b9469e2fc2fe494ff4c469d1e54e94dcef571`，`push exit=0`，7 秒；远端 `ls-remote` 回读一致。
+- **推送前验证**（在快照目录内独立跑，非借用 main 的结论）：
+  - `git ls-files` = 875
+  - `tsc --noEmit` → **exit 0**
+  - `vitest run` → **567 passed**
+  - 禁区泄漏检查：`verification/doc/audit/wiki/archive/experiments/.orchestrator/.codex/.dsh/.gemini/.qoder/.workbuddy/.codewiki/.tmp.driveupload/AGENTS.md/GOAL.md/tools/governance` **全部不存在**
+- **未公开内容确认**：远端 `main` 仍为 `6a68fdeb9`（1788 files），`codex/clean-source-snapshot` 仍为 `e34a90d00`，本地 `main`(14002 files 含全部治理材料) **未推送**。
+- **构建快照本地副本**：`G:/CODEX/New Manga.workspace/publish/clean-snapshot-20261026`（可复现此分支）。
+- **本卡 AC4/AC5 状态不受影响**：它描述的是「推 main 的发布 Gate」，本次走的是快照分支口径，不等于本卡通过。
