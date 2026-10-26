@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_review`（基线/选型/三路线已交付；Core 根因已定位；前端改 WinUI3）。
+- 当前 Task：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `in_progress`（基线/选型/三路线已交付；AC11 干净机复核中；架构改 Avalonia）。
 - 最近：PRODUCT-IDENTITY-1 done（命名 → New Manga）。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10；G1 转人工验证）。
