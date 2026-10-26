@@ -595,6 +595,11 @@ try {
   /* ---------------------------------------------- S8 CDP 文件注入 + Core 导入 */
   {
     const checks = [];
+    // 只有当"CDP 文件注入确实不可用"时，白名单里的断言才允许降级为
+    // HUMAN_VERIFY。将来注入能力恢复（或页面改成 <input type=file>）后，
+    // 这个标记会变 false，届时错误码断言 FAIL 必须继续阻断——否则真实回归
+    // 会被降级吞掉（Codex 复审 r2 的第二条 P1）。
+    let cdpInjectionUnavailable = false;
     const fixtureDir = path.join(RUN_ROOT, "fixtures");
     const pngPath = path.join(fixtureDir, "uiux-import.png");
     const invalidPath = path.join(fixtureDir, "uiux-import-unsupported.txt");
@@ -740,7 +745,8 @@ try {
           }
           await clickSelector(cdp, "[data-testid='import-dialog-close-btn']").catch(() => {});
         } else {
-          checks.push(check("DOM.setFileInputFiles 将真实 PNG 交给页面", false, "ImportDialog 没有 input[type=file]；CDP 无可注入节点"));
+          cdpInjectionUnavailable = true;
+      checks.push(check("DOM.setFileInputFiles 将真实 PNG 交给页面", false, "ImportDialog 没有 input[type=file]；CDP 无可注入节点"));
           checks.push(check("不支持格式错误路径也由 CDP 文件注入", false, "ImportDialog 没有 input[type=file]；CDP 无可注入节点"));
           checks.push(check("导入失败明确显示错误码", false, "ImportDialog 没有 input[type=file]；无法在不打开原生选择器时提交错误样本"));
           await clickSelector(cdp, "[data-testid='import-dialog-close-btn']").catch(() => {});
@@ -775,7 +781,11 @@ try {
       "导入失败明确显示错误码",
     ];
     for (const item of checks) {
-      if (item.status === "FAIL" && CDP_INJECTION_LABELS.includes(item.label)) {
+      if (
+        item.status === "FAIL" &&
+        cdpInjectionUnavailable &&
+        CDP_INJECTION_LABELS.includes(item.label)
+      ) {
         item.status = "HUMAN_VERIFY";
         item.ok = false;
         item.detail =

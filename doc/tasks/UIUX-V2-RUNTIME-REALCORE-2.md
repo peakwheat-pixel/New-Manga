@@ -104,7 +104,7 @@ allowed_paths:
 | evidence_id | AC | path（仓库相对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-01 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i33/report.json | 0718482e5 | - | CANONICAL |
-| EV-02 | AC3 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i35/report.json | 0718482e5 | - | CANONICAL |
+| EV-02 | AC3 | verification/UIUX-V2-RUNTIME-REALCORE-2/run-i36/report.json | 0718482e5 | - | CANONICAL |
 | EV-03 | AC1..AC5 | verification/UIUX-V2-RUNTIME-REALCORE-2/README.md | 0718482e5 | - | CANONICAL |
 | EV-04 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r1.md | 0718482e5 | - | CANONICAL |
 | EV-05 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-dsh-r2.md | 0718482e5 | - | CANONICAL |
@@ -113,4 +113,5 @@ allowed_paths:
 | EV-08 | AC4 | apps/desktop/src-tauri/src/core_bridge.rs | 0718482e5 | - | CANONICAL |
 | EV-09 | AC5 | apps/desktop/frontend/src/pages/Shelf.test.tsx | 0718482e5 | - | CANONICAL |
 | EV-10 | 交付 | doc/handoffs/UIUX-V2-RUNTIME-REALCORE-2-handoff.md | 0718482e5 | - | CANONICAL |
-| EV-11 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout.md | 0718482e5 | - | CANONICAL |
+| EV-11 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout-r2.md | 0718482e5 | - | CANONICAL |
+| EV-12 | 复核 | verification/UIUX-V2-RUNTIME-REALCORE-2/review-codex-dsh-closeout.md | 0718482e5 | - | CANONICAL |

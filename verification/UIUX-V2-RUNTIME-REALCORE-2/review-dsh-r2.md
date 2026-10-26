@@ -66,4 +66,8 @@ S1–S7 沿用 REALCORE-1 的既有断言；S8 = 架构性 HUMAN_VERIFY（不计
 3. **"结构性不可自动化"下得太满。** `inputNodeId=0` 只证明 **CDP 注入不可用**；原生选择器经 UIA / 键盘自动化是否可行，本轮只失败过一次、**未做系统验证**。措辞已全部收窄为"CDP 注入不可用"，并在脚本注释里显式写下这条边界（避免后人把"未验证"读成"不可能"）。
 4. 场景标题从"（架构性 HUMAN_VERIFY，非失败）"改为"（CDP 注入不可用 → 转人工验证；其它断言照常门禁）"，避免读者误以为导入已通过验收。
 
-修订后复跑：**`run-i35` 10/10 场景 PASS，exit 0**；S8 的 4 条自动化断言 PASS，4 条注入相关断言 HUMAN_VERIFY，1 条架构说明 HUMAN_VERIFY。降级范围受白名单约束，回归门禁不再有缺口。
+修订后复跑：**`run-i35` 10/10 场景 PASS，exit 0**；S8 的 4 条自动化断言 PASS，4 条注入相关断言 HUMAN_VERIFY，1 条架构说明 HUMAN_VERIFY。
+
+**第二次修订（Codex 复审 r2 又判 unacceptable，仍然成立）**：白名单只按标签匹配，没有绑定"注入确实不可用"这个**前提**。若将来页面改成 `input[type=file]`、注入成功，而"导入失败明确显示错误码"这条因产品回归 FAIL，它仍会被降级吞掉。
+修正：S8 引入 `let cdpInjectionUnavailable = false`，只在探测到 `inputNodeId === 0`（注入前置确实不可用）时置 true；降级条件改为 `status === "FAIL" && cdpInjectionUnavailable && CDP_INJECTION_LABELS.includes(label)`。注入能力恢复后该标记为 false，白名单断言 FAIL 必须继续阻断。
+复跑 **`run-i36` 10/10 PASS，exit 0**。这三个连续修正都是我先做错、Codex 两次判 unacceptable 逼出来的——记在这里，不抹掉。
