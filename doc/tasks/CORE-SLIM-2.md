@@ -12,7 +12,7 @@ depends_on: [INFER-BASELINE-EP-1]
 base_commit: 21960f4cb
 branch: task/CORE-SLIM-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/CORE-SLIM-2
-integration_commit: null
+integration_commit: fe346c50a
 delivery_head: null
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -104,3 +104,4 @@ CORE-SLIM-1 实测：Core 运行时 970.1 MiB（目标 ≤700MB），缺口 270.
 - 不变量：默认 ONNX、torch/doctr 为显式可选回退且不随包（spec 负向断言）；协议/命令语义/Host 契约零改动。
 - 遗留（记录不阻塞）：绝对精度 vs 人工 GT 未测（无对齐 GT，不冒充）；CUDA 可选包未构建；devices/manager.py 仍用 torch 探 CUDA（建议后续改 ORT EP 探测）；发布前需按新 spec 重建侧车。
 - 集成：测试与治理复核通过；未 push。
+
