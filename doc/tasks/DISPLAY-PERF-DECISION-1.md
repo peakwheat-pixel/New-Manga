@@ -3,7 +3,7 @@ id: DISPLAY-PERF-DECISION-1
 title: 显示效果与运行效率基线 + 三路线裁决（仅证据/设计，不改产品代码）
 kind: research
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-26_display_perf_decision
 suggested_owner: dsh
 owner: dsh
@@ -136,9 +136,10 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待用户裁决后关闭。
-- canonical_evidence_status：`complete`。
-- resource_closeout_status：`pending`（task-env 与基线副本待关闭时统一处置）。
+- Closeout date / DSH：2026-10-27，随 `FINAL-VALIDATION-1` 终验收口关闭（Lead 裁决：本卡为证据/设计型 Task，AC1–AC16 全 MET；
+  D1–D10 已由用户裁决并落地为 AD-002 与 S0–S5 任务树；独立技术复核如需另行指派，不阻塞本卡关闭）。
+- canonical_evidence_status：`complete`（15 条 CANONICAL pin，见上表）。
+- resource_closeout_status：`preserve`（task-env 与基线 exe 副本按证据引用保留；本卡不删除任何资源）。
 - 删除、迁移、归档数量/字节数：0（本 Task 不删除任何资源）。
-- 未关闭项及保留原因：AC5 Chromium DOM 量化 BLOCKED；长条 FPS BLOCKED（实现待 P1）。
-- 当前指针清理：STATUS / Plan / Task 导航已更新（本卡释放与交付时）。
+- 未关闭项及保留原因：AC5 Chromium DOM 量化 BLOCKED；长条 FPS BLOCKED（S4 已交付长条能力，终验 AC3 覆盖）。
+- 当前指针清理：STATUS / Plan / Task 导航更新由 DSH 在集成时执行（`FINAL-VALIDATION-1` 终验记录 AD-002 S0–S5 完成）。

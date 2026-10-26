@@ -1,22 +1,80 @@
-[CmdletBinding()] param([string]$OutputRoot='G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1/out',[string]$Version='0.1.0')
+[CmdletBinding()] param(
+  [string]$OutputRoot='G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out',
+  [string]$Version='0.1.0',
+  [string]$SidecarDir='',
+  [switch]$WithModels,
+  [int]$MaxZipMB=0
+)
 $ErrorActionPreference='Stop'
 $root=Resolve-Path (Join-Path $PSScriptRoot '..'); $repo=Resolve-Path (Join-Path $root '..\..')
-$stage=Join-Path $OutputRoot "NewManga-$Version-win-x64"
+if([string]::IsNullOrWhiteSpace($SidecarDir)){$SidecarDir=Join-Path $repo 'apps/desktop/src-tauri/target/core-sidecar/core-sidecar'}
+$variant=if($WithModels){'models'}else{'base'}
+$stageName=if($WithModels){"NewManga-$Version-win-x64-models"}else{"NewManga-$Version-win-x64"}
+$stage=Join-Path $OutputRoot $stageName
+if($MaxZipMB -le 0){$MaxZipMB=if($WithModels){2048}else{150}}
 if(Test-Path $stage){Remove-Item $stage -Recurse -Force}
 New-Item -ItemType Directory -Force (Join-Path $stage 'app')|Out-Null
-Push-Location $root; & dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true -o (Join-Path $stage 'app') 2>&1 | Tee-Object -FilePath (Join-Path $OutputRoot 'publish.log') | Out-Null; if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }; Pop-Location
+
+# ---- 1) Avalonia Host/App (single-file self-contained) ----------------------
+Push-Location $root
+& dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true -o (Join-Path $stage 'app') 2>&1 | Tee-Object -FilePath (Join-Path $OutputRoot "publish-$variant.log") | Out-Null
+if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }
+Pop-Location
+
+# ---- 2) Python Core sidecar (FINAL-VALIDATION-1 AC1 artifact) --------------
+# Layout: <stage>/app/core-sidecar/ — the packaged SidecarLocator probes
+# <app dir>/core-sidecar first, so the built sidecar rides beside the exe.
+if(-not (Test-Path (Join-Path $SidecarDir 'core_service.exe'))){throw "sidecar bundle missing under SidecarDir: $SidecarDir (run packaging/m2ac5/build_sidecar.ps1 -Force first)"}
+$sidecarDst=Join-Path $stage 'app/core-sidecar'
+New-Item -ItemType Directory -Force $sidecarDst|Out-Null
+$roboArgs=@($SidecarDir,$sidecarDst,'/E','/NFL','/NDL','/NJH','/NJS','/NP')
+if(-not $WithModels){$roboArgs+=@('/XD',(Join-Path $SidecarDir 'models'))}
+& robocopy @roboArgs | Out-Null
+if($LASTEXITCODE -ge 8){throw "robocopy sidecar failed ($LASTEXITCODE)"}
+$requiredSidecar=@('core_service.exe','host_bridge.exe','catalog_loader.exe')
+foreach($n in $requiredSidecar){if(-not (Test-Path (Join-Path $sidecarDst $n))){throw "packaged sidecar incomplete: missing $n"}}
+$sidecarFiles=Get-ChildItem $sidecarDst -Recurse -File
+$sidecarBytes=($sidecarFiles|Measure-Object Length -Sum).Sum
+$modelsBundled=(Test-Path (Join-Path $sidecarDst 'models'))
+$modelsBytes=if($modelsBundled){(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File|Measure-Object Length -Sum).Sum}else{0}
+if($WithModels -and -not $modelsBundled){throw 'WithModels requested but the built sidecar has no models/ directory'}
+
+# ---- 3) license trio: byte-identical to the repo root ----------------------
 $lic=@('LICENSE','NOTICE.md','THIRD_PARTY_LICENSES.md')
-$licHashes=@{}; foreach($n in $lic){$src=Join-Path $repo $n; $dst=Join-Path $stage $n; Copy-Item $src $dst -Force; $a=(Get-FileHash $src -Algorithm SHA256).Hash.ToLower(); $b=(Get-FileHash $dst -Algorithm SHA256).Hash.ToLower(); if($a -ne $b){throw "license mismatch $n"}; $licHashes[$n]=$a}
+$licHashes=@{}
+foreach($n in $lic){
+  $src=Join-Path $repo $n; $dst=Join-Path $stage $n
+  Copy-Item $src $dst -Force
+  $a=(Get-FileHash $src -Algorithm SHA256).Hash.ToLower(); $b=(Get-FileHash $dst -Algorithm SHA256).Hash.ToLower()
+  if($a -ne $b){throw "license mismatch $n"}
+  $licHashes[$n]=$a
+}
+
+# ---- 4) installer scripts + docs -------------------------------------------
 @('install.ps1','uninstall.ps1','migrate-legacy-dryrun.ps1')|ForEach-Object{Copy-Item (Join-Path $PSScriptRoot $_) (Join-Path $stage $_) -Force}
-$docs=Join-Path $root 'docs'; Copy-Item (Join-Path $docs 'MANUAL_VERIFY.md') $stage -Force; Copy-Item (Join-Path $docs 'UPGRADE.md') $stage -Force; Copy-Item (Join-Path $docs 'LICENSE_AUDIT.md') $stage -Force
-@{version=$Version;channel='stable';data_root='%APPDATA%\com.newmanga.desktop';models='not_bundled (model separation: %APPDATA%\com.newmanga.desktop\models)';migration='runtime dry-run script included'} | ConvertTo-Json | Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+$docs=Join-Path $root 'docs'
+Copy-Item (Join-Path $docs 'MANUAL_VERIFY.md') $stage -Force
+Copy-Item (Join-Path $docs 'UPGRADE.md') $stage -Force
+Copy-Item (Join-Path $docs 'LICENSE_AUDIT.md') $stage -Force
+
+# ---- 5) VERSION.json: real model distribution strategy ---------------------
+$modelsStrategy=if($modelsBundled){
+  "bundled: app/core-sidecar/models ($([math]::Round($modelsBytes/1MB,1)) MiB in-package); no download at run time"
+}else{
+  "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\com.newmanga.desktop\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle"
+}
+@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included'}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+
+# ---- 6) manifest + zip + budget gate ---------------------------------------
 $files=Get-ChildItem $stage -Recurse -File; $bytes=($files|Measure-Object Length -Sum).Sum
-$manifest=[ordered]@{package="NewManga-$Version-win-x64";version=$Version;bytes=$bytes;files=@();licenses=$licHashes}
+$manifest=[ordered]@{package=$stageName;version=$Version;variant=$variant;bytes=$bytes;sidecar_bytes=$sidecarBytes;models_bundled=$modelsBundled;models_bytes=$modelsBytes;licenses=$licHashes;files=@()}
 foreach($f in $files){$manifest.files+=@{path=$f.FullName.Substring($stage.Length+1).Replace('\','/');bytes=$f.Length;sha256=(Get-FileHash $f.FullName -Algorithm SHA256).Hash.ToLower()}}
 $manifest|ConvertTo-Json -Depth 5|Set-Content (Join-Path $stage 'package-manifest.json') -Encoding utf8
-$zip=Join-Path $OutputRoot "NewManga-$Version-win-x64.zip"; if(Test-Path $zip){Remove-Item $zip -Force}
+$zip=Join-Path $OutputRoot "$stageName.zip"
+if(Test-Path $zip){Remove-Item $zip -Force}
 Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -CompressionLevel Optimal
-$zipBytes=(Get-Item $zip).Length; if($zipBytes -gt 150MB){throw "package exceeds 150MB: $zipBytes"}
-$summary=[ordered]@{ac='AC1/AC3';version=$Version;zip=$zip;zip_bytes=$zipBytes;zip_mb=[math]::Round($zipBytes/1MB,2);uncompressed_bytes=$bytes;file_count=$files.Count;licenses_byte_identical=$true;license_hashes=$licHashes;models='separated';generated_at_utc=[DateTime]::UtcNow.ToString('o')}
-$summary|ConvertTo-Json -Depth 4|Set-Content (Join-Path $OutputRoot 'package-summary.json') -Encoding utf8
+$zipBytes=(Get-Item $zip).Length
+if($zipBytes -gt ($MaxZipMB*1MB)){throw "package exceeds ${MaxZipMB}MB: $zipBytes"}
+$summary=[ordered]@{ac='AC2';variant=$variant;version=$Version;zip=$zip;zip_bytes=$zipBytes;zip_mb=[math]::Round($zipBytes/1MB,2);max_zip_mb=$MaxZipMB;uncompressed_bytes=$bytes;uncompressed_mb=[math]::Round($bytes/1MB,2);file_count=$files.Count;sidecar_bytes=$sidecarBytes;sidecar_mb=[math]::Round($sidecarBytes/1MB,2);models_bundled=$modelsBundled;models_bytes=$modelsBytes;licenses_byte_identical=$true;license_hashes=$licHashes;generated_at_utc=[DateTime]::UtcNow.ToString('o')}
+$summary|ConvertTo-Json -Depth 4|Set-Content (Join-Path $OutputRoot "package-summary-$variant.json") -Encoding utf8
 $summary|ConvertTo-Json -Depth 4

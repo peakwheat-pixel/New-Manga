@@ -1,0 +1,43 @@
+{
+  "generated_at_utc": "2026-10-26T21:20:28.5394249Z",
+  "variants": [
+    {
+      "variant": "base",
+      "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64.zip",
+      "zip_bytes": 102493981,
+      "zip_mb": 97.75,
+      "zip_sha256": "8780c8decb7f83ba902faeaeeb14147a099db2de0e5a83e4023431df2f819dac",
+      "max_zip_mb": 150,
+      "uncompressed_mb": 214.25,
+      "sidecar_mb": 186.31,
+      "models_bundled": false,
+      "models_bytes": 0,
+      "licenses_byte_identical": true,
+      "license_hashes": {
+        "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+        "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+        "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+      },
+      "file_count": 1965
+    },
+    {
+      "variant": "models",
+      "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+      "zip_bytes": 724501664,
+      "zip_mb": 690.94,
+      "zip_sha256": "4da9179b2ea31ca906a0b28a574ab747a4bb1b8d4d2b54823fd469fc87fbbd9d",
+      "max_zip_mb": 2048,
+      "uncompressed_mb": 856.54,
+      "sidecar_mb": 828.59,
+      "models_bundled": true,
+      "models_bytes": 673486515.0,
+      "licenses_byte_identical": true,
+      "license_hashes": {
+        "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+        "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+        "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+      },
+      "file_count": 1975
+    }
+  ]
+}

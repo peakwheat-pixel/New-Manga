@@ -1,0 +1,24 @@
+{
+  "ac": "AC2",
+  "variant": "models",
+  "version": "0.1.0",
+  "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+  "zip_bytes": 724501664,
+  "zip_mb": 690.94,
+  "max_zip_mb": 2048,
+  "uncompressed_bytes": 898145797.0,
+  "uncompressed_mb": 856.54,
+  "file_count": 1975,
+  "sidecar_bytes": 868843916.0,
+  "sidecar_mb": 828.59,
+  "models_bundled": true,
+  "models_bytes": 673486515.0,
+  "licenses_byte_identical": true,
+  "license_hashes": {
+    "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+    "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+    "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+  },
+  "generated_at_utc": "2026-10-26T21:18:21.9562756Z"
+}
+exit=0 elapsedSec=35

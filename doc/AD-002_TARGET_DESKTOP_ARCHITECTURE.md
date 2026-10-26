@@ -131,7 +131,7 @@ icons/                 # 图标集（可选，覆盖默认）
 | D-D | 桌宠/悬浮球 | 待定（Saber 有；Avalonia 透明窗口可做，+5–8 人日） |
 | D-E | 旧壳处置 | Tauri 版保留并行可运行，S4 完成后删除 |
 
-## 8. 任务拆解（S0–S5，可直接释放）
+## 8. 任务拆解（S0–S5，已全部完成）
 
 | 阶段 | Task 建议 ID | 交付 | 估时 | 依赖 |
 |---|---|---|---|---|
@@ -144,6 +144,21 @@ icons/                 # 图标集（可选，覆盖默认）
 | S5 | `LEGACY-SHELL-REMOVAL-1` | 删 Tauri/React/WebView2/m2res/CORS/每请求 SHA-256；全量回归 | 15–25 人日 | S4 |
 
 **合计 200–400 人日**（含回归）；关键路径 S0 → S1 → S3 → S4。
+
+### 8.1 S0–S5 完成情况（2026-10-27，FINAL-VALIDATION-1 终验）
+
+| 阶段 | Task | 状态 | 集成/交付锚点 |
+|---|---|---|---|
+| S0 | `UI-AVALONIA-SPIKE-1` | ✅ 完成（GO：单文件 29.31MB、换肤 p95 3.74ms、长条光栅 3.725ms、中文往返零乱码） | DISPLAY-PERF-DECISION-1 AC14；spike 工程在 workspace（不进产品仓库） |
+| S0b | `SABER-UI-SPEC-1` | ✅ 完成（`ui-spec/SABER_UI_SPEC.md` + `tokens-saber-purple.json`） | DISPLAY-PERF-DECISION-1 AC15 |
+| S1 | `HOST-CORECLIENT-1` | ✅ 完成（CoreClient spawn/JSON-lines/错误码 + ping/list_books） | 集成 `9126090eb` |
+| S2 | `HOST-COMMAND-MIGRATION-1` | ✅ 完成（66 命令 parity 快照；`--check` 零漂移） | 集成 `5a11fa7d9`；FINAL-VALIDATION-1 AC3 复跑 PASS |
+| S3 | `UI-SHELL-THEME-1` | ✅ 完成（主窗/导航/主题中心/书架骨架；换肤 p95 2.2ms） | 集成 `657d36817` |
+| S4 | `UI-WORKBENCH-READER-1` | ✅ 完成（工作台画布/区域编辑 + 沉浸阅读器；利用率 0.99、翻页 1.05ms） | 集成 `55b7f42c6` |
+| S5 | `LEGACY-SHELL-REMOVAL-1` | ✅ 完成（旧 Tauri/React/WebView2 代码**原位冻结为证据**、不再参与发布；发布件走 Avalonia + Core sidecar；D4 全绿） | 集成（S5 系列 `09d7e76c1`/`744eccb61`/`8ff3d288d`）；旧壳 vitest 仍 60 文件/567 用例全绿（证据保全，FINAL-VALIDATION-1 AC3） |
+
+终验结论：S0–S5 全部完成；发布件由 FINAL-VALIDATION-1 重建并复核（base zip 97.75MB ≤150MB；含模型 zip 690.94MB ≤2GB；
+核心 sidecar 186.3MiB/无 Qt/无 torch；安装 smoke 安装→启动→窗口→退出无残留 PASS）。
 ## 3.6 推理基线（2026-10-27 实测，INFER-BASELINE-EP-1）
 
 - **默认 EP = DirectML**；OCR 默认 CPU（GPU 反而更慢：PP-OCRv4 CPU 135.85 vs CUDA 496.09 ms/页）。
