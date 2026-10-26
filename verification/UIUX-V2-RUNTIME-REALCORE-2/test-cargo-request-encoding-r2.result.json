@@ -1,0 +1,6 @@
+{
+  "command": "cargo test --release non_ascii_payload_returns_visible_error_code",
+  "exit_code": 0,
+  "log": "test-cargo-request-encoding-r2.log",
+  "target_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\UIUX-V2-RUNTIME-REALCORE-2\\build-env\\cargo-request-encoding-r2"
+}

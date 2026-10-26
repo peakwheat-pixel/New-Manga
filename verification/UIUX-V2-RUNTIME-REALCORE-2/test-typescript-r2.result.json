@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "log": "test-typescript-r2.log",
+  "environment_root": "G:/CODEX/New Manga.workspace/task-envs/UIUX-V2-RUNTIME-REALCORE-2/process-env/typescript-r2",
+  "command": "node node_modules/typescript/bin/tsc --noEmit"
+}

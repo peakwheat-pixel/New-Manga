@@ -1,0 +1,131 @@
+{
+  "run_id": "uiux-v2-realcore-20261026-run-i33",
+  "log": "test-e2e-r2.log",
+  "all_checks_have_label_and_detail": true,
+  "all_checks_have_status": true,
+  "command": "node e2e/uiux-v2/run.mjs",
+  "report": "run-i33/report.json",
+  "exit_code": 1,
+  "scenario_pass_rates": [
+    {
+      "scenarioId": "S1",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 7,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 7
+      }
+    },
+    {
+      "scenarioId": "S2",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 4,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 4
+      }
+    },
+    {
+      "scenarioId": "S3",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 7,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 7
+      }
+    },
+    {
+      "scenarioId": "S4",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 5,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 5
+      }
+    },
+    {
+      "scenarioId": "S5",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 4,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 4
+      }
+    },
+    {
+      "scenarioId": "S6",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 8,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 8
+      }
+    },
+    {
+      "scenarioId": "S7",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 3,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 3
+      }
+    },
+    {
+      "scenarioId": "S8",
+      "passRate": 0.5,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": false,
+      "checkSummary": {
+        "passed": 4,
+        "failed": 4,
+        "knownDefects": 0,
+        "total": 8
+      }
+    },
+    {
+      "scenarioId": "S9",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 12,
+        "failed": 0,
+        "knownDefects": 0,
+        "total": 12
+      }
+    },
+    {
+      "scenarioId": "S10",
+      "passRate": 1,
+      "scope": "PASS / (PASS + FAIL); KNOWN_DEFECT excluded",
+      "ok": true,
+      "checkSummary": {
+        "passed": 5,
+        "failed": 0,
+        "knownDefects": 1,
+        "total": 6
+      }
+    }
+  ]
+}

@@ -71,3 +71,30 @@ G1 的 native picker 未提交所选文件，故没有实际页图导入、Core/
 - G3 900px 宽视口仍横向溢出 124px；本 Task 不允许修改产品布局。
 - `cargo test --release` exit 101 的原始日志已保留；G4 两条定向测试通过，但不能替代全量 Rust 测试。
 - 本次没有 push。task 状态、DAG 与集成由 DSH 按 Review 结果处置。
+
+## 返修轮 r2 追加交付（2026-10-26）
+
+本段追加记录 r1 复核后的修订；上一轮已通过的 G4、G5、S1–S7 保留，未改其断言，也未修改产品源码/CSS/TSX、IPC、`tauri.conf.json`、STATUS、REBASELINE_PLAN 或 TASK_LEDGER。本次交付为本文件所在的新本地提交，未 push；精确 SHA 见提交历史和本次交付回复。
+
+### 逐项结果
+
+- **R1 — 未达成。** `run.mjs` 移除了 PowerShell/UIAutomation 原生 picker 操作，改为导入对话框打开后查询 CDP DOM，并在可用时调用 `DOM.setFileInputFiles`、验证页面 `FileList`。但真实 EXE 的 ImportDialog 没有 `input[type=file]`：`run-i33/report.json` 记录 `rootInputNodeId=0`、`dialogNodeId=230`、`inputNodeId=0`。现有 Tauri command 自行调用原生 picker，IPC 没有本地路径参数。没有文件被交给页面/Core，真实 PNG 导入、Core/UI 页数对照和错误码路径未完成。当前 Task 禁止产品源码和 IPC 修改；需 DSH 另行冻结/释放具备受支持文件输入路径的 Task。
+- **R2 — 已达成。** S9 在一次定向 sidecar 故障后，书架、工作台、阅读器、设置四页均显示可见 Core 错误码；supervisor 恢复 `core_ping=ready` 后逐页回到正常内容。报告 S9 为 12 PASS / 0 FAIL，见 `verification/UIUX-V2-RUNTIME-REALCORE-2/run-i33/report.json`。
+- **R3 — 按裁定记录。** S10 水平溢出记为 `KNOWN_DEFECT`，检测值 `docWidth=1024`、`clientWidth=900`、`pageWidth=1024`，不让该检查使场景失败；产品布局另立 Task。
+- **R4 — 记录完成。** README 新增 23 项 Cargo 全量失败明细、原始错误、当前源代码实际使用的环境变量和分组复跑命令，并给出本卡改动模块的 focused exit 0 证据。`M2RC1_PACKAGED_DIR` 在当前 checkout 无读取点，实际 packaged 测试要求 `M2RC1_PACKAGED=1`。
+- **R5 — 已达成。** 每项检查记录 `PASS` / `FAIL` / `KNOWN_DEFECT`、`label` 与 `detail`；每个 scenario 记录 `checkSummary`、`passRate`。`test-e2e-r2.result.json` 校验 `all_checks_have_status=true`、`all_checks_have_label_and_detail=true`。
+
+### 本轮验收
+
+| 命令 | 实际结果 | 证据 |
+|---|---|---|
+| `node e2e/uiux-v2/run.mjs` | **exit 1**，仅 S8 因当前产品没有 file input 而失败；S1–S7、S9 通过，S10 缺陷状态为 `KNOWN_DEFECT` | `verification/UIUX-V2-RUNTIME-REALCORE-2/test-e2e-r2.log`、`test-e2e-r2.result.json`、`run-i33/report.json` |
+| `node node_modules/typescript/bin/tsc --noEmit` | **exit 0** | `test-typescript-r2.log`、`test-typescript-r2.result.json` |
+| `npx vitest run` | **exit 0**，60 files / 567 tests | `test-vitest-r2.log`、`test-vitest-r2.result.json` |
+| `cargo test --release non_ascii_payload_returns_visible_error_code` | **exit 0**，`core_bridge`、`ac1_bridge` 两项通过 | `test-cargo-request-encoding-r2.log`、`test-cargo-request-encoding-r2.result.json` |
+
+Cargo 全量输出仍以既有 `test-cargo-release.log` 为准：exit 101，146 passed、23 failed、1 ignored；README 逐项列出 6 条 `library_bridge::tests::*`、12 条 packaged 测试和其余 5 条 `tests::*` 的实际报错。定向测试成功不能替代完整 Cargo Gate。TypeScript、Vitest、E2E 原始日志和机器结果均位于 `verification/UIUX-V2-RUNTIME-REALCORE-2/`。
+
+### 建议 DSH 下一步
+
+请 DSH 独立复核本修订提交、README、`run-i33/report.json` 和四条验收日志，并处置 Task 状态。R1 不具备当前允许范围内的实现路径；如要关闭该 Gate，建议先定义并释放独立 Task，冻结如何让前端取得真实文件并交给 Core 的产品/IPC 契约，再安排实现与独立 Review。当前不得据此把本 Task 标为 `done`。

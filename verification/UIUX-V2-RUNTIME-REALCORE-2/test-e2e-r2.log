@@ -1,0 +1,100 @@
+
+[PASS] S1 — 身份与单一 UI（真实 packaged EXE + WebView2）
+   PASS         data-view=app :: data-view=app
+   PASS         data-theme 已设置 :: data-theme=dark
+   PASS         旧内联壳 AppShell 不在 DOM 中 :: count=0
+   PASS         一级导航 4 个 tab :: count=4
+   PASS         Tauri IPC 桥存在 :: typeof __TAURI__=object
+   PASS         文档标题非空 :: title=M2RC1|interactive|deny=5/5|allow=0/0|results=5
+   PASS         生产 IPC allowlist 已公告 :: commands=66
+
+[PASS] S2 — 书架页真实数据（library_list_books + core_ping）
+   PASS         书架空态来自真实读取（0 部作品） :: shelf-empty=true
+   PASS         状态栏显示真实 Core 在线 :: statusbar=●完成Core 在线Core ready0 部作品
+   PASS         工具栏声明数据来自 Core 的最新读取 :: text=
+   PASS         详情面板为空态（未编造数据） :: detail=○未开始未选择作品从左侧网格选择一部作品查看章节与详情。
+
+[PASS] S3 — 命令面板（焦点圈禁 / Esc / 焦点还原）
+   PASS         Ctrl+K 快捷键打开命令面板 :: keyboard path
+   PASS         Ctrl+K 触发按钮打开面板 :: options=5
+   PASS         焦点落在命令输入框 :: activeElement=command-input
+   PASS         aria-activedescendant 指向可选项 :: aria-activedescendant=:r0:-go-shelf
+   PASS         Esc 关闭面板（键盘路径） :: closed
+   PASS         真实鼠标点击触发器也能打开 :: click path
+   PASS         焦点还原到唤起按钮 :: activeElement=command-trigger
+
+[PASS] S4 — 四页导航（真实点击 + aria-selected）
+   PASS         切到工作台（page-workbench） :: aria-selected=true
+   PASS         切到阅读器（page-reader） :: aria-selected=true
+   PASS         切到设置（page-settings） :: aria-selected=true
+   PASS         切到书架（page-shelf） :: aria-selected=true
+   PASS         全程只有一套 UI（无 AppShell） :: app-shell=0
+
+[PASS] S5 — 设置页（真实 settings_get + 分节切换）
+   PASS         12+ 分节导航 :: sections=12
+   PASS         settings_get 已同步 :: channel=●完成settings_get 已同步SFX 策略 · 未设置（按 Core 默认）
+   PASS         SFX 策略显示真实未设置态 :: sfx=SFX 策略 · 未设置（按 Core 默认）
+   PASS         切分节改变内容标题 :: Provider -> 翻译
+
+[PASS] S6 — 新建作品（真实 Core 写入 + 书架刷新）
+   PASS         标题输入框可聚焦 :: activeElement=create-title-input
+   PASS         标题写入受控输入框 :: value=端到端验收-090569
+   PASS         创建被真实 Core 接受（对话框关闭） :: accepted
+   PASS         真实写入后书架出现书卡 :: cards=1
+   PASS         书卡显示我写入的标题 :: grid=NEW MANGA端到端验收-090569端到端验收-090569章节数见详情 · 页数未知刚刚
+   PASS         作品计数从 0 变为 1（真实刷新） :: statusbar=●完成Core 在线端到端验收-090569Core ready1 部作品
+   PASS         选中作品后详情面板显示该作品 :: detail=端到端到端验收-090569—刚刚0章节页数未知页数章节0○未开始还没有章节导入图片时会自动创建章节，或在工作台新建章节。继续阅读工作台
+   PASS         章节区为真实空态或真实列表 :: chapterStateNodes=1
+
+[PASS] S7 — 主题切换（真机计算样式，非 jsdom）
+   PASS         主题切换改变 data-theme :: dark -> light
+   PASS         主题切换改变实际计算背景色 :: rgb(27, 27, 27) -> rgb(238, 238, 238)
+   PASS         可切回原主题 :: theme=dark
+
+[FAIL] S8 — 书架 CDP 文件注入（Tauri IPC + 真实 Core）
+   PASS         S6 创建的作品仍来自真实书架 :: bookId=60df2ef53c5349958082f5a3f10e4e03
+   PASS         通过真实 Tauri IPC 创建导入目标章节 :: chapterId=8bcd2a5a7586431885d438ea07aa7de7
+   PASS         书架重新读取到真实章节 :: 001导入验收章节-935240p
+   PASS         导入对话框指向目标章节 :: selected=8bcd2a5a7586431885d438ea07aa7de7; expected=8bcd2a5a7586431885d438ea07aa7de7
+   FAIL         ImportDialog 存在可由 CDP 注入的 input[type=file] :: {"rootNodeId":1,"rootInputNodeId":0,"dialogNodeId":230,"inputNodeId":0}
+   FAIL         DOM.setFileInputFiles 将真实 PNG 交给页面 :: ImportDialog 没有 input[type=file]；CDP 无可注入节点
+   FAIL         不支持格式错误路径也由 CDP 文件注入 :: ImportDialog 没有 input[type=file]；CDP 无可注入节点
+   FAIL         导入失败明确显示错误码 :: ImportDialog 没有 input[type=file]；无法在不打开原生选择器时提交错误样本
+
+[PASS] S9 — 真实 Core sidecar 定向终止与四页恢复
+   PASS         故障注入前建立真实作品与章节上下文 :: book=60df2ef53c5349958082f5a3f10e4e03; chapter=8bcd2a5a7586431885d438ea07aa7de7; rowIndex=0
+   PASS         故障注入前设置页正常且仅定向终止本 Tauri 的 Core :: killed=8452
+   PASS         书架真实错误态可见且含错误码 :: {"code":"错误代码：CORE_UNAVAILABLE","alertTestId":"shelf-error","visible":true,"pageText":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK/全部收藏已归档排序方式最近更新书名 A–Z导入新建全部作品0 部作品 · 0 部正在显示来自 Core 的最新读取✗失败服务不可用Python Core 核心服务当前不可用，请检查服务状态并重试。错误代码：CORE_UNAVAILABLE重试○未开始未选择作品从左侧网格选择一部作品查看章节与详情。✗失败Core 连接异常Core 不可用0 部作品"}
+   PASS         工作台真实错误态可见且含错误码 :: {"code":"错误代码：CORE_UNAVAILABLE","alertTestId":"workbench-chapters-error","visible":true,"pageText":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK✗失败章节读取失败无法从 Core 读取该作品的章节列表。错误代码：CORE_UNAVAILABLE重试"}
+   PASS         阅读器真实错误态可见且含错误码 :: {"code":"错误代码：CORE_UNAVAILABLE","alertTestId":"reader-error","visible":true,"pageText":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK✗失败阅读数据加载失败无法读取章节或页面序列；这不代表作品没有内容，请重试。错误代码：CORE_UNAVAILABLE重试—·——/——设置本话进度—阅读数据不可用"}
+   PASS         设置真实错误态可见且含错误码 :: {"code":"错误代码：CORE_UNAVAILABLE","alertTestId":"settings-error","visible":true,"pageText":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK系统设置Provider网络/代理OCR翻译图片修复排版样式模型/GPU任务/并发缓存/Revision回收站备份/恢复Plugin/HooksProvidersection · provider✗失败设置读取失败设置通道不可用，页面不会用占位数值替代真实设置；请重试。错误代码：CORE_UNAVAILABLE重试"}
+   PASS         Core supervisor 恢复真实 core_ping=ready :: pids=32148
+   PASS         恢复使用未在故障清单中的新 PID :: killed=8452; recovered=32148
+   PASS         书架恢复后回到正常态 :: {"pagePresent":true,"code":null,"contentPresent":true,"text":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK/全部收藏已归档排序方式最近更新书名 A–Z导入新建全部作品1 部作品 · 1 部正在显示来自 Core 的最新读取NEW MANGA端到端验收-090569端到端验收-090569章节数见详情 · 页数未知刚刚端到端到端验收-090569—刚刚1章节页数未知页数章节1001导入验收章节-935240p继续阅读工作台●完成Core "}
+   PASS         工作台恢复后回到正常态 :: {"pagePresent":true,"code":null,"contentPresent":true,"text":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK书架第 1 话 · 导入验收章节-93524切换章节第 1 话 · 导入验收章节-93524○未开始阅读器○未开始本章还没有页面导入页面后，这里会按 Core 的排序显示真实页序。检查器未选择页面○未开始尚未开始运行识别结果—未识别当前 IPC 未返回 OCR 文本与置信度区域未选择页面运行▲阻塞尚未开始运行本章还没有运行记录；点击"}
+   PASS         阅读器恢复后回到正常态 :: {"pagePresent":true,"code":null,"contentPresent":true,"text":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK○未开始该章节暂无页面导入验收章节-93524 还没有可阅读页面：请先在书架或工作台导入页面。返回书架—·——/——设置本话进度—←→翻页"}
+   PASS         设置恢复后回到正常态 :: {"pagePresent":true,"code":null,"contentPresent":true,"text":"NMNew Manga书架工作台阅读器设置搜索或执行命令CtrlK系统设置Provider网络/代理OCR翻译图片修复排版样式模型/GPU任务/并发缓存/Revision回收站备份/恢复Plugin/Hooks●完成settings_get 已同步SFX 策略 · 未设置（按 Core 默认）Providersection · providerProvider Profile同一 Provider"}
+
+[PASS] S10 — 900×700 窄窗与 200% DPI 布局预算
+   PASS         900×700 视口与 DPR=2 生效 :: {"width":900,"height":700,"dpr":2}
+   KNOWN_DEFECT 窄窗横向溢出（KNOWN_DEFECT，另立 Task） :: {"detected":true,"docWidth":1024,"clientWidth":900,"pageWidth":1024}
+   PASS         标题栏关键元素不重叠 :: [{"left":16,"top":11.5,"right":306,"bottom":35.5,"width":290,"height":24},{"left":318,"top":6.5,"right":644,"bottom":40.5,"width":326,"height":34},{"left":656,"top":7.5,"right":1016,"bottom":39.5,"width":360,"height":32}]
+   PASS         书架内容区与详情区不重叠 :: {"grid":{"left":16,"top":170,"right":648,"bottom":507,"width":632,"height":337},"detail":{"left":668,"top":112,"right":1008,"bottom":624,"width":340,"height":512}}
+   PASS         useAcrylicBudget 计算出的模糊层不超过 2 :: blurLayers=2
+   PASS         状态条在窄窗仍可见 :: {"left":16,"top":640,"right":1008,"bottom":684,"width":992,"height":44}
+
+=== UIUX-V2-RUNTIME-REALCORE-2 / uiux-v2-realcore-20261026-run-i33 ===
+PASS  S1  身份与单一 UI（真实 packaged EXE + WebView2）
+PASS  S2  书架页真实数据（library_list_books + core_ping）
+PASS  S3  命令面板（焦点圈禁 / Esc / 焦点还原）
+PASS  S4  四页导航（真实点击 + aria-selected）
+PASS  S5  设置页（真实 settings_get + 分节切换）
+PASS  S6  新建作品（真实 Core 写入 + 书架刷新）
+PASS  S7  主题切换（真机计算样式，非 jsdom）
+FAIL  S8  书架 CDP 文件注入（Tauri IPC + 真实 Core）
+PASS  S9  真实 Core sidecar 定向终止与四页恢复
+PASS  S10  900×700 窄窗与 200% DPI 布局预算
+
+report: G:\CODEX\New Manga\verification\UIUX-V2-RUNTIME-REALCORE-2\run-i33\report.json
+result: FAIL
+EXIT_CODE=1

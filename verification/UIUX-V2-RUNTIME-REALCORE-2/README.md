@@ -1,5 +1,81 @@
 # UIUX-V2-RUNTIME-REALCORE-2 验收记录
 
+## 返修轮 r2（2026-10-26）
+
+**结论：R2、R4、R5 已完成；R3 按裁定记录为 `KNOWN_DEFECT`；R1 未达成，故本轮 E2E exit 1，不能把 Task 标成全绿。** 本轮保留 G4、G5 与 S1–S7 的原有断言，没有改产品源码/CSS/TSX、IPC 契约、`tauri.conf.json`、STATUS、REBASELINE_PLAN 或 TASK_LEDGER。
+
+### R1：CDP 已检查，当前产品没有文件输入节点
+
+`run.mjs` 在导入对话框打开后执行 `DOM.enable`、`DOM.getDocument`、根节点 `DOM.querySelector("input[type=file]")`，并在 `[data-testid="import-dialog"]` 下再次查询；找到节点时会用 `DOM.setFileInputFiles` 并检查页面 `FileList`，然后继续对照 Core/UI 作品、章节和页数，也会注入不支持格式样本核对错误码。本次生成的 PNG 是真实文件，位于 task workspace：`G:\CODEX\New Manga.workspace\task-envs\UIUX-V2-RUNTIME-REALCORE-2\run-i33\fixtures\uiux-import.png`。
+
+实际报告 [run-i33/report.json](run-i33/report.json) 的 `fileInjection` 显示 `rootInputNodeId=0`、`dialogNodeId=230`、`inputNodeId=0`；`DOM.setFileInputFiles` 因页面无目标节点而没有调用。当前 `ImportDialog` 走 Tauri `library_import_file`，Rust command 自己打开原生 `blocking_pick_files()`，没有 HTML file input 或可传入本地路径的 IPC 参数。S8 记录 4 PASS / 4 FAIL；真实 PNG 没有交给页面/Core，Core 作品/页数对照和错误码路径未执行。因此 R1 未达成。当前禁区不允许新增产品文件输入或改 IPC；需要 DSH 另行冻结并释放包含受支持导入路径的 Task 后才能完成。
+
+### R2：四页掉线与恢复
+
+S9 先验证真实 Core 正常，再仅定向终止该 Tauri 进程的 sidecar；随后依次访问书架、工作台、阅读器、设置，四页都检查可见错误态和 `CORE_UNAVAILABLE`/`CORE_BRIDGE_DOWN` 错误码。Core supervisor 恢复 `core_ping=ready` 后，又逐页检查各自正常内容。最终报告 S9 为 12 PASS / 0 FAIL；进程清单、四页错误态和恢复态见 [run-i33/report.json](run-i33/report.json) 的 `coreOutage` 与 S9 checks。
+
+### R3：窄窗溢出按已知缺陷留档
+
+S10 将水平溢出记录为 `KNOWN_DEFECT`，不计入失败率：`docWidth=1024`、`clientWidth=900`、`pageWidth=1024`。其余 S10 检查通过；此缺陷按 DSH 决定另立产品布局 Task，本轮没有修改布局。
+
+### R4：Cargo 全量测试口径与定向结果
+
+既有全量记录 [test-cargo-release.log](test-cargo-release.log) / [result](test-cargo-release.result.json)：`cargo test --release` exit 101，146 passed、23 failed、1 ignored。23 条失败的完整名称在原始日志中；分组为 6 条 `library_bridge::tests::*`、12 条 `packaged_sidecar_tests::*`、另 5 条 `tests::*`。
+
+6 条 `library_bridge::tests::*`：
+
+- `same_channel_concurrent_round_trips_keep_response_ownership`：真实报错 `M2RC1_PYTHON must be explicitly set to P02-approved Python environment for testing: NotPresent`。
+- `wait_timeout_or_kill_returns_immediately_for_already_exited_child`：并发全量运行下耗时 `291.6252ms`，超过测试设定的 `<100ms`。
+- `ac4_unreaped_worker_registry_tracks_and_reaps_finite_lifecycle`：worker registry 达到容量 32，测试无法追踪/回收有限 worker。
+- `real_core_sidecar_answers_startup_ping_on_fresh_catalog`：真实 Core 启动 ping timeout，返回 `CORE_UNAVAILABLE`。
+- `child_lock_contention_timeout_fallback_kills_child_and_prevents_orphan`：`taskkill` 在 250ms 超时，reaper 未能完成 `child.wait()`。
+- `ac1_consecutive_lock_timeouts_keep_the_handle_and_the_holder_registers_it`：registry 满载，holder 未能登记 handle。
+
+12 条 `packaged_sidecar_tests::*`：`export_command_wire_reaches_the_frozen_core_export_family`、`host_export_grant_round_trip_reaches_frozen_start_export`、`host_import_grant_round_trip_reaches_frozen_import_pages`、`reader_commands_reach_frozen_core_with_typed_rejections`、`real_core_sidecar_answers_startup_ping_on_fresh_catalog`、`real_core_sidecar_rc4_commands_round_trip_typed_errors`、`real_core_sidecar_retype_pair_empty_page_and_typed_rejection`、`real_core_sidecar_round_trip`、`real_core_sidecar_settings_round_trip_and_typed_rejection`、`real_library_sidecar_event_sink_registration_and_lifecycle`、`real_library_sidecar_round_trip_and_eof`、`run_command_wire_reaches_the_frozen_core_run_family`。12 条均在 `packaged_sidecar_tests.rs:23` 失败：实际 `M2RC1_PACKAGED` 是空字符串，断言要求 `"1"`。
+
+另 5 条 `tests::*`：`real_core_sidecar_create_commands_use_minor_8_and_existing_reads`、`real_core_sidecar_rc4_commands_round_trip_typed_errors`、`real_core_sidecar_retype_pair_empty_page_and_typed_rejection`、`real_core_sidecar_settings_round_trip_and_typed_rejection`、`real_library_sidecar_round_trip_and_eof`。运行时 Python 输出 `ModuleNotFoundError: No module named 'PIL'`，Core stdout 关闭为 `EOF`，调用方收到 `CORE_UNAVAILABLE`。
+
+该次全量运行未设置所需 source-backed / packaged 测试环境，因此不能作为本卡改动导致 Rust 回归的证据；同时日志确有 worker registry 与时限失败，不能把它们改写成 Cargo exit 0。当前 checkout 的真实环境约定和复跑方式：
+
+```powershell
+# source-backed library_bridge/tests::* 与 tests::*
+$env:TEMP = 'G:\CODEX\New Manga.workspace\task-envs\UIUX-V2-RUNTIME-REALCORE-2\process-env\cargo-source-rerun\tmp'
+$env:TMP = $env:TEMP
+New-Item -ItemType Directory -Force $env:TEMP | Out-Null
+$env:M2RC1_PYTHON = '<P02-approved Python.exe>'
+$env:M2RC1_SRC_ROOT = 'G:\CODEX\New Manga\src'
+Remove-Item Env:M2RC1_PACKAGED -ErrorAction SilentlyContinue
+cargo test --release -- --skip packaged_sidecar_tests --test-threads=1
+
+# packaged_sidecar_tests::*；独立进程环境，不能同时保留 source-backed 变量
+Remove-Item Env:M2RC1_PYTHON,Env:M2RC1_SRC_ROOT -ErrorAction SilentlyContinue
+$env:M2RC1_PACKAGED = '1'
+cargo test --release packaged_sidecar_tests -- --test-threads=1
+```
+
+source-backed Python 环境还需安装项目要求的 Pillow (`PIL`)。本 checkout 的 packaged 测试实际读取 `M2RC1_PACKAGED=1`，并从 `CARGO_MANIFEST_DIR/target/core-sidecar/core-sidecar` 找 sidecar；`M2RC1_PACKAGED_DIR` 在当前源代码中没有读取点，单独设置它不能满足断言。packaged 模式要求 `M2RC1_SRC_ROOT`、`M2RC1_PYTHON` 未设置；需要调整启动等待时间时可设 `M2RC1_PACKAGED_STARTUP_TIMEOUT_SECS`。
+
+**本卡改动模块的定向测试 exit 0：**本轮执行 `cargo test --release non_ascii_payload_returns_visible_error_code`，`core_bridge::request_encoding_tests::non_ascii_payload_returns_visible_error_code ... ok`、`ac1_bridge::tests::non_ascii_payload_returns_visible_error_code ... ok`，`test result: ok. 2 passed; 0 failed`，`EXIT_CODE=0`。原始输出：[test-cargo-request-encoding-r2.log](test-cargo-request-encoding-r2.log)，机器结果：[test-cargo-request-encoding-r2.result.json](test-cargo-request-encoding-r2.result.json)。
+
+### R5：断言状态与通过率已写入 JSON
+
+`record()` 为每项断言落盘 `status`（`PASS` / `FAIL` / `KNOWN_DEFECT`）、`label`、`detail`；每个 scenario 记录 `checkSummary`、`passRate` 和通过率口径。`report.json` 可直接逐场景解析这些字段；本轮 [test-e2e-r2.result.json](test-e2e-r2.result.json) 另保存了场景汇总。校验结果为 `all_checks_have_status=true`、`all_checks_have_label_and_detail=true`。S10 的 `KNOWN_DEFECT` 不计入 pass rate 分母。
+
+### 本轮四条验收命令实际结果
+
+| 命令 | 实际结果 | 原始输出与机器结果 |
+|---|---:|---|
+| `node e2e/uiux-v2/run.mjs` | **exit 1**：S1–S7 全部通过，S8 因无 file input 记录 4 FAIL；S9 12/12 通过；S10 5 PASS、1 `KNOWN_DEFECT` | [test-e2e-r2.log](test-e2e-r2.log)、[test-e2e-r2.result.json](test-e2e-r2.result.json)、[run-i33/report.json](run-i33/report.json) |
+| `node node_modules/typescript/bin/tsc --noEmit` | **exit 0** | [test-typescript-r2.log](test-typescript-r2.log)、[test-typescript-r2.result.json](test-typescript-r2.result.json) |
+| `npx vitest run` | **exit 0**：60 files / 567 tests passed | [test-vitest-r2.log](test-vitest-r2.log)、[test-vitest-r2.result.json](test-vitest-r2.result.json) |
+| `cargo test --release non_ascii_payload_returns_visible_error_code` | **exit 0**：2 passed，覆盖 `core_bridge` 与 `ac1_bridge` request encoding | [test-cargo-request-encoding-r2.log](test-cargo-request-encoding-r2.log)、[test-cargo-request-encoding-r2.result.json](test-cargo-request-encoding-r2.result.json) |
+
+日志和 `.result.json` 保留实际命令及 exit code；本轮 E2E 的 task-local PNG 与运行数据均在 `G:\CODEX\New Manga.workspace\task-envs\UIUX-V2-RUNTIME-REALCORE-2\`。R1 的产品路径缺失是本轮唯一阻止 E2E exit 0 的项。
+
+`run-i30` 至 `run-i32` 是修订期间的探索性运行记录（分别用于定位 sidecar 重试上限与页面恢复选择器）；最终验收仅以 `run-i33` 及其 stdout 为准，早期记录保留供审查。
+
+## r1 上轮记录（历史）
+
 **结论：部分交付，未达到 Task 的全绿 Gate。** G4、G5 达成；G1 未达成；G2、G3 部分达成。不得将本 Task 标记为 `done`，待 DSH 独立 Review 与处置。
 
 ## 变更
