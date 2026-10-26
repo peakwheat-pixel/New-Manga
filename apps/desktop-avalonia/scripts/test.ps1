@@ -25,9 +25,9 @@ $repoRoot = Resolve-Path (Join-Path $root '..\..')
 # Reviewer reruns must never overwrite the pinned canonical evidence: default output goes to the
 # workspace task-env. Only the owner regenerates pins with -CanonicalEvidence.
 $evidence = if ($CanonicalEvidence) {
-    Join-Path $repoRoot 'verification/UI-WORKBENCH-READER-1'
+    Join-Path $repoRoot 'verification/HOST-TILE-CHANNEL-1'
 } else {
-    'G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/evidence-rerun'
+    'G:/CODEX/New Manga.workspace/task-envs/HOST-TILE-CHANNEL-1/evidence-rerun'
 }
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null

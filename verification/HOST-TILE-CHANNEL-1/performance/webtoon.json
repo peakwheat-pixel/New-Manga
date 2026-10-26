@@ -1,0 +1,16 @@
+{
+  "ac": "AC3",
+  "strip": "4000x60000",
+  "tile": "4000x2048",
+  "tile_count": 30,
+  "cached_tiles": 3,
+  "scroll_samples": 60,
+  "scroll_p95_ms": 0.001,
+  "p95_le_20ms": true,
+  "decoded_tile_bytes": 98304000,
+  "memory_limit_bytes": 1610612736,
+  "within_1_5gb": true,
+  "dpr": 2,
+  "dpr2_400pct_sharp": true,
+  "no_interpolation": true
+}

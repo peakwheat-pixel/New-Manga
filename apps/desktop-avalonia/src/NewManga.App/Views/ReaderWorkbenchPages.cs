@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.ViewModels;
 using NewManga.Theme;
@@ -28,6 +29,10 @@ public sealed class WorkbenchPage : UserControl
     }
 
     public WorkbenchViewModel ViewModel { get; }
+
+    public ITileSource? TileSource { get; private set; }
+
+    public void BindTileSource(ITileSource? source) => TileSource = source;
 
     public Grid Root => (Grid)Content!;
 
@@ -191,6 +196,7 @@ public sealed class ReaderPage : UserControl
     private readonly TextBlock _hud;
     private readonly Border _root;
     private Bitmap? _currentBitmap;
+    private ITileSource? _tileSource;
 
     public ReaderPage(ReaderViewModel viewModel, IReadOnlyList<string> pages, string? tileDirectory = null)
     {
@@ -255,6 +261,12 @@ public sealed class ReaderPage : UserControl
 
     public int TileCount => _tileFiles.Count;
 
+    public ITileSource? TileSource => _tileSource;
+
+    public int BoundTileCount => _tileSource?.TileCount ?? _tileFiles.Count;
+
+    public void BindTileSource(ITileSource? source) => _tileSource = source;
+
     public BitmapInterpolationMode InterpolationMode => RenderOptions.GetBitmapInterpolationMode(_pageImage);
 
     public void SetViewport(double width, double height, double dpr = 1.0)
@@ -303,12 +315,13 @@ public sealed class ReaderPage : UserControl
         ViewModel.ScrollWebtoon(0, out _);
         var items = new List<Control>();
         var cacheLimit = Math.Max(3, ViewModel.CachedTileCount);
-        for (var index = 0; index < _tileFiles.Count; index++)
+        var totalTiles = _tileSource?.TileCount ?? _tileFiles.Count;
+        for (var index = 0; index < totalTiles; index++)
         {
             Bitmap? bitmap = null;
             if (index < cacheLimit)
             {
-                bitmap = GetTile(index);
+                bitmap = LoadTileBitmap(index);
             }
 
             var image = new Image
@@ -324,6 +337,29 @@ public sealed class ReaderPage : UserControl
         _webtoonItems.ItemsSource = items;
         _webtoonItems.Measure(new Size(ViewModel.ViewportWidth, ViewModel.ViewportHeight));
         _webtoonItems.Arrange(new Rect(0, 0, ViewModel.ViewportWidth, ViewModel.ViewportHeight));
+    }
+
+    private Bitmap? LoadTileBitmap(int index)
+    {
+        if (_tileSource is not null)
+        {
+            var bytes = _tileSource.ReadTile(index);
+            if (bytes is null)
+            {
+                return null;
+            }
+
+            try
+            {
+                return new Bitmap(new MemoryStream(bytes));
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NotSupportedException)
+            {
+                return null;
+            }
+        }
+
+        return GetTile(index);
     }
 
     public Bitmap? GetTile(int index)

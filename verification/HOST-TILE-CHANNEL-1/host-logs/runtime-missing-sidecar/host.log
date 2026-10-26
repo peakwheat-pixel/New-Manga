@@ -1,0 +1,8 @@
+2026-10-26T18:29:19.4682036+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.3428a36660af (abandoned_recovered=False)
+2026-10-26T18:29:19.4686160+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-missing-sidecar-0acec3ecf9
+2026-10-26T18:29:19.4687192+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:29:19.4695331+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 3 candidate locations
+2026-10-26T18:31:02.8423207+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.f4a7d443dff7 (abandoned_recovered=False)
+2026-10-26T18:31:02.8424955+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-missing-sidecar-53dd424951
+2026-10-26T18:31:02.8425399+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-26T18:31:02.8431654+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 3 candidate locations
