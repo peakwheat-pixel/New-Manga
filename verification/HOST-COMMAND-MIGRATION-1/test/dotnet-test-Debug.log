@@ -3,8 +3,8 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
   "ac": "AC1/AC3",
   "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
   "sidecar_sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
-  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-a44ad177",
-  "core_stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-a44ad177\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-a44ad177\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-08eaae1f",
+  "core_stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-08eaae1f\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-08eaae1f\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
   "probes": [
     {
       "command": "core.ping",
@@ -43,7 +43,7 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
         "title": "命令面探测・日本語テスト"
       },
       "raw_request_ascii": true,
-      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"2b327b85bda24ddab7d6d9cfb1c23181\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-26T17:43:50.350+00:00\",\"updated_at\":\"2026-10-26T17:43:50.350+00:00\"},\"error\":null}",
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"764b743ba4444273b55fb2401bb7c7fd\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-26T17:58:09.546+00:00\",\"updated_at\":\"2026-10-26T17:58:09.546+00:00\"},\"error\":null}",
       "ok": true,
       "error_code": null,
       "error_category": null
@@ -53,11 +53,11 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
       "minor": 8,
       "request_payload": {
         "title": "第1章",
-        "book_id": "2b327b85bda24ddab7d6d9cfb1c23181",
-        "chapter_number": "1"
+        "chapter_number": "1",
+        "book_id": "764b743ba4444273b55fb2401bb7c7fd"
       },
       "raw_request_ascii": true,
-      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"91d5d6d9267c4d699fda4208d74825eb\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"5e17971218974a41a4d3a7629752303a\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
       "ok": true,
       "error_code": null,
       "error_category": null
@@ -66,7 +66,7 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
       "command": "ListChapters",
       "minor": 3,
       "request_payload": {
-        "book_id": "2b327b85bda24ddab7d6d9cfb1c23181"
+        "book_id": "764b743ba4444273b55fb2401bb7c7fd"
       },
       "raw_request_ascii": true,
       "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-6\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapters'\",\"retryable\":false}}",
@@ -78,7 +78,7 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
       "command": "ListChapterPages",
       "minor": 3,
       "request_payload": {
-        "chapter_id": "91d5d6d9267c4d699fda4208d74825eb"
+        "chapter_id": "5e17971218974a41a4d3a7629752303a"
       },
       "raw_request_ascii": true,
       "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-7\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapterPages'\",\"retryable\":false}}",
@@ -255,8 +255,8 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
       "command": "restore_region_revision",
       "minor": 3,
       "request_payload": {
-        "expected_revision": 1,
         "revision_no": 1,
+        "expected_revision": 1,
         "region_id": "probe-region"
       },
       "raw_request_ascii": true,
@@ -269,8 +269,8 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
       "command": "GetReaderProjection",
       "minor": 3,
       "request_payload": {
-        "start_position": 0,
         "mode": "scroll",
+        "start_position": 0,
         "chapter_id": "probe-chapter"
       },
       "raw_request_ascii": true,
@@ -293,21 +293,109 @@ PASS: production command surface matches snapshot (66 commands, domains={'resour
       "error_category": "validation"
     }
   ],
-  "at_utc": "2026-10-26T17:43:50.4646672Z"
+  "at_utc": "2026-10-26T17:58:09.6642700Z"
 }
-probe evidence: G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\verification\HOST-COMMAND-MIGRATION-1\parity\core-command-probe.json
-G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+probe evidence: G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\verification\HOST-COMMAND-MIGRATION-1\parity\core-command-probe.json
+G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
-结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\verification\HOST-COMMAND-MIGRATION-1\test\results-coreclient.trx
+结果文件: G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\verification\HOST-COMMAND-MIGRATION-1\test\results-coreclient.trx
 
 已通过! - 失败:     0，通过:    40，已跳过:     0，总计:    40，持续时间: 41 s - NewManga.CoreClient.Tests.dll (net9.0)
-G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
-结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\verification\HOST-COMMAND-MIGRATION-1\test\results-host.trx
+结果文件: G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\verification\HOST-COMMAND-MIGRATION-1\test\results-host.trx
 
 已通过! - 失败:     0，通过:    22，已跳过:     0，总计:    22，持续时间: 13 s - NewManga.Host.Tests.dll (net9.0)
-G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
-结果文件: G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\verification\HOST-COMMAND-MIGRATION-1\test\results-app.trx
+[xUnit.net 00:00:01.21]     NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95 [FAIL]
+[xUnit.net 00:00:01.22]     NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens [FAIL]
+[xUnit.net 00:00:01.23]     NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported [FAIL]
+[xUnit.net 00:00:01.23]     NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow [FAIL]
+[xUnit.net 00:00:01.23]     NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame [FAIL]
+  失败 NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95 [253 ms]
+  错误消息:
+   System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.
+  堆栈跟踪:
+     at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator<Avalonia.Visual>.Validate(Visual item)
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 64
+   at NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 70
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens [1 ms]
+  错误消息:
+   System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.
+  堆栈跟踪:
+     at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator<Avalonia.Visual>.Validate(Visual item)
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173
+   at NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 228
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported [< 1 ms]
+  错误消息:
+   System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.
+  堆栈跟踪:
+     at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator<Avalonia.Visual>.Validate(Visual item)
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173
+   at NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 211
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow [1 ms]
+  错误消息:
+   Assert.Equal() Failure: Values differ
+Expected: 7
+Actual:   6
+  堆栈跟踪:
+     at NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 166
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame [1 ms]
+  错误消息:
+   System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.
+  堆栈跟踪:
+     at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator<Avalonia.Visual>.Validate(Visual item)
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 64
+   at NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 275
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.27]     NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus [FAIL]
+  失败 NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus [1 ms]
+  错误消息:
+   System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.
+  堆栈跟踪:
+     at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator<Avalonia.Visual>.Validate(Visual item)
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 64
+   at NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 254
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+结果文件: G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\verification\HOST-COMMAND-MIGRATION-1\test\results-app.trx
 
-已通过! - 失败:     0，通过:     4，已跳过:     0，总计:     4，持续时间: 154 ms - NewManga.App.Tests.dll (net9.0)
+失败!  - 失败:     6，通过:     6，已跳过:     0，总计:    12，持续时间: 308 ms - NewManga.App.Tests.dll (net9.0)

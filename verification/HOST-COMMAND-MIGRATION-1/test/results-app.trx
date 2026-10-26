@@ -1,52 +1,284 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TestRun id="71372a17-d740-4d79-87a2-62cd228a0742" name="49745@HOME-MY 2026-10-27 01:44:48" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
-  <Times creation="2026-10-27T01:44:48.4379621+08:00" queuing="2026-10-27T01:44:48.4379622+08:00" start="2026-10-27T01:44:47.8371742+08:00" finish="2026-10-27T01:44:48.4421187+08:00" />
-  <TestSettings name="default" id="6b210ec3-fd7d-4f48-9d26-173f888fa127">
-    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-27_01_44_48" />
+<TestRun id="4fa00976-1209-4358-9245-02e3073e61bc" name="49745@HOME-MY 2026-10-27 01:59:17" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-27T01:59:17.2104602+08:00" queuing="2026-10-27T01:59:17.2104603+08:00" start="2026-10-27T01:59:15.0920004+08:00" finish="2026-10-27T01:59:17.2323243+08:00" />
+  <TestSettings name="default" id="60b54040-db65-40d7-9e18-461b9d203bf5">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-27_01_59_17" />
   </TestSettings>
   <Results>
-    <UnitTestResult executionId="6cc169cf-ce99-4cdc-ba77-44709025d166" testId="5b00387d-4502-4b4a-b8a7-95e294df3a4a" testName="NewManga.App.Tests.MainWindowTests.ThemeSwitch_ReplacesPaletteWithoutRestart" computerName="HOME-MY" duration="00:00:00.1439628" startTime="2026-10-27T01:44:48.3676761+08:00" endTime="2026-10-27T01:44:48.3676846+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6cc169cf-ce99-4cdc-ba77-44709025d166" />
-    <UnitTestResult executionId="9b04c86f-5901-4c21-87d2-827fd6f68ff8" testId="8d178004-7b9a-f671-2bfe-ead79135d0fd" testName="NewManga.App.Tests.MainWindowTests.ChineseRoundTripButton_UsesAc3Vector" computerName="HOME-MY" duration="00:00:00.0018676" startTime="2026-10-27T01:44:48.3780520+08:00" endTime="2026-10-27T01:44:48.3780521+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b04c86f-5901-4c21-87d2-827fd6f68ff8" />
-    <UnitTestResult executionId="44b0a719-af1c-4330-a9c3-cd0825884ae4" testId="4a8d571e-31bb-5995-7637-227c4b7fcdeb" testName="NewManga.App.Tests.MainWindowTests.ReadySnapshot_RendersStatusBooksAndWireStats" computerName="HOME-MY" duration="00:00:00.0031218" startTime="2026-10-27T01:44:48.3723650+08:00" endTime="2026-10-27T01:44:48.3723651+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="44b0a719-af1c-4330-a9c3-cd0825884ae4" />
-    <UnitTestResult executionId="0afe7e6d-9f0b-4aa8-ae47-58e337da0eac" testId="66e65d08-45eb-f098-437d-57fec638847a" testName="NewManga.App.Tests.MainWindowTests.FailureSnapshot_ShowsTypedCode_NotAnException" computerName="HOME-MY" duration="00:00:00.0012623" startTime="2026-10-27T01:44:48.3749090+08:00" endTime="2026-10-27T01:44:48.3749090+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0afe7e6d-9f0b-4aa8-ae47-58e337da0eac" />
+    <UnitTestResult executionId="03991de0-9ec3-4d7b-9769-c0472572b184" testId="ec543c1f-4b2c-3f3d-b532-ba3a06f20a73" testName="NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow" computerName="HOME-MY" duration="00:00:00.0010147" startTime="2026-10-27T01:59:17.1568037+08:00" endTime="2026-10-27T01:59:17.1568039+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="03991de0-9ec3-4d7b-9769-c0472572b184">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 7&#xD;
+Actual:   6</Message>
+          <StackTrace>   at NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 166&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3447a4a0-b208-40e6-aef6-4e820feb6ad5" testId="c4486313-ea03-49b0-3a3f-cf7abeedf635" testName="NewManga.App.Tests.ThemeCenterTests.SixPacks_WithManifestParts_AndSaberPurpleDefault" computerName="HOME-MY" duration="00:00:00.0020065" startTime="2026-10-27T01:59:17.1406686+08:00" endTime="2026-10-27T01:59:17.1406686+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3447a4a0-b208-40e6-aef6-4e820feb6ad5" />
+    <UnitTestResult executionId="2bca1679-ef1f-407f-9315-a3f37d7ef3f9" testId="c7125643-a8d6-d8c3-bf29-aa561bc75406" testName="NewManga.App.Tests.ShellTests.SettingsPage_RendersThemeCenterAndNsBatch" computerName="HOME-MY" duration="00:00:00.0012675" startTime="2026-10-27T01:59:17.1934009+08:00" endTime="2026-10-27T01:59:17.1934009+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2bca1679-ef1f-407f-9315-a3f37d7ef3f9" />
+    <UnitTestResult executionId="56cac73a-17d4-4b9f-86d2-46e9b9ea8f26" testId="bc5927a2-f53b-17bd-afb8-c4a2fa7f7775" testName="NewManga.App.Tests.ShellTests.WindowMaterial_MicaOnWin11_OpaqueFallbackOnWin10" computerName="HOME-MY" duration="00:00:00.0012484" startTime="2026-10-27T01:59:17.1933159+08:00" endTime="2026-10-27T01:59:17.1933160+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56cac73a-17d4-4b9f-86d2-46e9b9ea8f26" />
+    <UnitTestResult executionId="e5899faf-fb42-491a-b21c-ebc071bbfada" testId="d01b5ea0-fafb-e7a7-0dbb-8a7828bb12d2" testName="NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame" computerName="HOME-MY" duration="00:00:00.0017656" startTime="2026-10-27T01:59:17.1602663+08:00" endTime="2026-10-27T01:59:17.1602665+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5899faf-fb42-491a-b21c-ebc071bbfada">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.</Message>
+          <StackTrace>   at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173&#xD;
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 64&#xD;
+   at NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 275&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aea35469-7b78-4b1f-83ce-c2ecf9c51dfe" testId="0c243740-8351-48fe-073a-e65f7505cf36" testName="NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported" computerName="HOME-MY" duration="00:00:00.0006874" startTime="2026-10-27T01:59:17.1530622+08:00" endTime="2026-10-27T01:59:17.1530622+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aea35469-7b78-4b1f-83ce-c2ecf9c51dfe">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.</Message>
+          <StackTrace>   at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173&#xD;
+   at NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 211&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1cd62dc0-d50a-4181-bccb-9a7cf9785cd9" testId="cfacaf90-a190-8a3a-23e1-e311448c304e" testName="NewManga.App.Tests.ThemeCenterTests.ReducedMotion_ZeroesAllDurations" computerName="HOME-MY" duration="00:00:00.0017090" startTime="2026-10-27T01:59:17.1434331+08:00" endTime="2026-10-27T01:59:17.1434332+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1cd62dc0-d50a-4181-bccb-9a7cf9785cd9" />
+    <UnitTestResult executionId="023920da-f97b-47b9-98e5-2f12d0f3e8e3" testId="c2690294-e9de-21d2-6e21-466b2a806d86" testName="NewManga.App.Tests.ShellTests.SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch" computerName="HOME-MY" duration="00:00:00.0182228" startTime="2026-10-27T01:59:17.1795240+08:00" endTime="2026-10-27T01:59:17.1795244+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="023920da-f97b-47b9-98e5-2f12d0f3e8e3" />
+    <UnitTestResult executionId="928426f2-2322-4488-b22c-d9f8b71ecff6" testId="0b0ebfc3-abfd-7c96-4f50-9671b21409a4" testName="NewManga.App.Tests.BookshelfTests.SearchAndTags_Filter_AndEmptyNoResultsStates" computerName="HOME-MY" duration="00:00:00.0017491" startTime="2026-10-27T01:59:17.1506609+08:00" endTime="2026-10-27T01:59:17.1506610+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="928426f2-2322-4488-b22c-d9f8b71ecff6" />
+    <UnitTestResult executionId="17e65b53-4c39-43a8-bebb-392906c83958" testId="3725e5a0-49e9-96d5-9a63-5333ae0b3305" testName="NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens" computerName="HOME-MY" duration="00:00:00.0019608" startTime="2026-10-27T01:59:17.1479746+08:00" endTime="2026-10-27T01:59:17.1479746+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17e65b53-4c39-43a8-bebb-392906c83958">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.</Message>
+          <StackTrace>   at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173&#xD;
+   at NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 228&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b12a0f69-a2fe-4c39-a389-67be9f23ce6a" testId="82c46ac5-b07f-3d3a-46f6-cb0eab726fc4" testName="NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95" computerName="HOME-MY" duration="00:00:00.2538027" startTime="2026-10-27T01:59:17.1390349+08:00" endTime="2026-10-27T01:59:17.1390473+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b12a0f69-a2fe-4c39-a389-67be9f23ce6a">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.</Message>
+          <StackTrace>   at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173&#xD;
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 64&#xD;
+   at NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 70&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="572eaca7-bce3-41f0-ac6d-7e3c8722ef3c" testId="067059ad-1733-b872-c2e8-571688b6a39a" testName="NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus" computerName="HOME-MY" duration="00:00:00.0010490" startTime="2026-10-27T01:59:17.1937667+08:00" endTime="2026-10-27T01:59:17.1937668+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="572eaca7-bce3-41f0-ac6d-7e3c8722ef3c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.</Message>
+          <StackTrace>   at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+   at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+   at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+   at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs:line 173&#xD;
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options) in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 64&#xD;
+   at NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus() in G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 254&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
   </Results>
   <TestDefinitions>
-    <UnitTest name="NewManga.App.Tests.MainWindowTests.ReadySnapshot_RendersStatusBooksAndWireStats" storage="g:\codex\new manga.workspace\worktrees\host-command-migration-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="4a8d571e-31bb-5995-7637-227c4b7fcdeb">
-      <Execution id="44b0a719-af1c-4330-a9c3-cd0825884ae4" />
-      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="ReadySnapshot_RendersStatusBooksAndWireStats" />
+    <UnitTest name="NewManga.App.Tests.ThemeCenterTests.SixPacks_WithManifestParts_AndSaberPurpleDefault" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="c4486313-ea03-49b0-3a3f-cf7abeedf635">
+      <Execution id="3447a4a0-b208-40e6-aef6-4e820feb6ad5" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ThemeCenterTests" name="SixPacks_WithManifestParts_AndSaberPurpleDefault" />
     </UnitTest>
-    <UnitTest name="NewManga.App.Tests.MainWindowTests.FailureSnapshot_ShowsTypedCode_NotAnException" storage="g:\codex\new manga.workspace\worktrees\host-command-migration-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="66e65d08-45eb-f098-437d-57fec638847a">
-      <Execution id="0afe7e6d-9f0b-4aa8-ae47-58e337da0eac" />
-      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="FailureSnapshot_ShowsTypedCode_NotAnException" />
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="ec543c1f-4b2c-3f3d-b532-ba3a06f20a73">
+      <Execution id="03991de0-9ec3-4d7b-9769-c0472572b184" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="Columns_AreComputedInViewModel_ForWideAndNarrow" />
     </UnitTest>
-    <UnitTest name="NewManga.App.Tests.MainWindowTests.ThemeSwitch_ReplacesPaletteWithoutRestart" storage="g:\codex\new manga.workspace\worktrees\host-command-migration-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="5b00387d-4502-4b4a-b8a7-95e294df3a4a">
-      <Execution id="6cc169cf-ce99-4cdc-ba77-44709025d166" />
-      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="ThemeSwitch_ReplacesPaletteWithoutRestart" />
+    <UnitTest name="NewManga.App.Tests.ShellTests.SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="c2690294-e9de-21d2-6e21-466b2a806d86">
+      <Execution id="023920da-f97b-47b9-98e5-2f12d0f3e8e3" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch" />
     </UnitTest>
-    <UnitTest name="NewManga.App.Tests.MainWindowTests.ChineseRoundTripButton_UsesAc3Vector" storage="g:\codex\new manga.workspace\worktrees\host-command-migration-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="8d178004-7b9a-f671-2bfe-ead79135d0fd">
-      <Execution id="9b04c86f-5901-4c21-87d2-827fd6f68ff8" />
-      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\HOST-COMMAND-MIGRATION-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.MainWindowTests" name="ChineseRoundTripButton_UsesAc3Vector" />
+    <UnitTest name="NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="82c46ac5-b07f-3d3a-46f6-cb0eab726fc4">
+      <Execution id="b12a0f69-a2fe-4c39-a389-67be9f23ce6a" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ThemeCenterTests" name="ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.SearchAndTags_Filter_AndEmptyNoResultsStates" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="0b0ebfc3-abfd-7c96-4f50-9671b21409a4">
+      <Execution id="928426f2-2322-4488-b22c-d9f8b71ecff6" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="SearchAndTags_Filter_AndEmptyNoResultsStates" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="d01b5ea0-fafb-e7a7-0dbb-8a7828bb12d2">
+      <Execution id="e5899faf-fb42-491a-b21c-ebc071bbfada" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="Startup_DoesNotBlockFirstFrame" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="3725e5a0-49e9-96d5-9a63-5333ae0b3305">
+      <Execution id="17e65b53-4c39-43a8-bebb-392906c83958" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="Page_RendersSearchChipsAndGrid_WithThemeTokens" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.WindowMaterial_MicaOnWin11_OpaqueFallbackOnWin10" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="bc5927a2-f53b-17bd-afb8-c4a2fa7f7775">
+      <Execution id="56cac73a-17d4-4b9f-86d2-46e9b9ea8f26" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="WindowMaterial_MicaOnWin11_OpaqueFallbackOnWin10" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ThemeCenterTests.ReducedMotion_ZeroesAllDurations" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="cfacaf90-a190-8a3a-23e1-e311448c304e">
+      <Execution id="1cd62dc0-d50a-4181-bccb-9a7cf9785cd9" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ThemeCenterTests" name="ReducedMotion_ZeroesAllDurations" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="0c243740-8351-48fe-073a-e65f7505cf36">
+      <Execution id="aea35469-7b78-4b1f-83ce-c2ecf9c51dfe" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.BookshelfTests" name="BookCard_Click_OpensDetails_AndCreateFlowReported" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="067059ad-1733-b872-c2e8-571688b6a39a">
+      <Execution id="572eaca7-bce3-41f0-ac6d-7e3c8722ef3c" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="FourPageNavigation_AndKeyboardFocus" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ShellTests.SettingsPage_RendersThemeCenterAndNsBatch" storage="g:\codex\new manga.workspace\worktrees\ui-shell-theme-1\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="c7125643-a8d6-d8c3-bf29-aa561bc75406">
+      <Execution id="2bca1679-ef1f-407f-9315-a3f37d7ef3f9" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ShellTests" name="SettingsPage_RendersThemeCenterAndNsBatch" />
     </UnitTest>
   </TestDefinitions>
   <TestEntries>
-    <TestEntry testId="5b00387d-4502-4b4a-b8a7-95e294df3a4a" executionId="6cc169cf-ce99-4cdc-ba77-44709025d166" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="8d178004-7b9a-f671-2bfe-ead79135d0fd" executionId="9b04c86f-5901-4c21-87d2-827fd6f68ff8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="4a8d571e-31bb-5995-7637-227c4b7fcdeb" executionId="44b0a719-af1c-4330-a9c3-cd0825884ae4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="66e65d08-45eb-f098-437d-57fec638847a" executionId="0afe7e6d-9f0b-4aa8-ae47-58e337da0eac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec543c1f-4b2c-3f3d-b532-ba3a06f20a73" executionId="03991de0-9ec3-4d7b-9769-c0472572b184" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4486313-ea03-49b0-3a3f-cf7abeedf635" executionId="3447a4a0-b208-40e6-aef6-4e820feb6ad5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7125643-a8d6-d8c3-bf29-aa561bc75406" executionId="2bca1679-ef1f-407f-9315-a3f37d7ef3f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc5927a2-f53b-17bd-afb8-c4a2fa7f7775" executionId="56cac73a-17d4-4b9f-86d2-46e9b9ea8f26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d01b5ea0-fafb-e7a7-0dbb-8a7828bb12d2" executionId="e5899faf-fb42-491a-b21c-ebc071bbfada" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c243740-8351-48fe-073a-e65f7505cf36" executionId="aea35469-7b78-4b1f-83ce-c2ecf9c51dfe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfacaf90-a190-8a3a-23e1-e311448c304e" executionId="1cd62dc0-d50a-4181-bccb-9a7cf9785cd9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2690294-e9de-21d2-6e21-466b2a806d86" executionId="023920da-f97b-47b9-98e5-2f12d0f3e8e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b0ebfc3-abfd-7c96-4f50-9671b21409a4" executionId="928426f2-2322-4488-b22c-d9f8b71ecff6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3725e5a0-49e9-96d5-9a63-5333ae0b3305" executionId="17e65b53-4c39-43a8-bebb-392906c83958" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82c46ac5-b07f-3d3a-46f6-cb0eab726fc4" executionId="b12a0f69-a2fe-4c39-a389-67be9f23ce6a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="067059ad-1733-b872-c2e8-571688b6a39a" executionId="572eaca7-bce3-41f0-ac6d-7e3c8722ef3c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
   </TestEntries>
   <TestLists>
     <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
     <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
   </TestLists>
-  <ResultSummary outcome="Completed">
-    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  <ResultSummary outcome="Failed">
+    <Counters total="12" executed="12" passed="6" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
     <Output>
       <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
-[xUnit.net 00:00:00.03]   Discovering: NewManga.App.Tests&#xD;
-[xUnit.net 00:00:00.05]   Discovered:  NewManga.App.Tests&#xD;
-[xUnit.net 00:00:00.05]   Starting:    NewManga.App.Tests&#xD;
-[xUnit.net 00:00:00.31]   Finished:    NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.38]   Discovering: NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.41]   Discovered:  NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.41]   Starting:    NewManga.App.Tests&#xD;
+[xUnit.net 00:00:01.21]       System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.&#xD;
+[xUnit.net 00:00:01.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.21]            at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+[xUnit.net 00:00:01.21]            at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+[xUnit.net 00:00:01.21]            at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.21]            at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.21]            at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+[xUnit.net 00:00:01.21]            at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+[xUnit.net 00:00:01.21]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs(173,0): at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel)&#xD;
+[xUnit.net 00:00:01.21]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs(64,0): at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options)&#xD;
+[xUnit.net 00:00:01.21]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs(70,0): at NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95()&#xD;
+[xUnit.net 00:00:01.21]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.22]       System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.&#xD;
+[xUnit.net 00:00:01.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.22]            at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+[xUnit.net 00:00:01.22]            at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+[xUnit.net 00:00:01.22]            at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.22]            at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.22]            at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+[xUnit.net 00:00:01.22]            at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+[xUnit.net 00:00:01.22]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs(173,0): at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel)&#xD;
+[xUnit.net 00:00:01.22]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs(228,0): at NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens()&#xD;
+[xUnit.net 00:00:01.22]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.23]       System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.&#xD;
+[xUnit.net 00:00:01.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+[xUnit.net 00:00:01.23]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs(173,0): at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel)&#xD;
+[xUnit.net 00:00:01.23]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs(211,0): at NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported()&#xD;
+[xUnit.net 00:00:01.23]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.23]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.23]       Expected: 7&#xD;
+[xUnit.net 00:00:01.23]       Actual:   6&#xD;
+[xUnit.net 00:00:01.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.23]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs(166,0): at NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow()&#xD;
+[xUnit.net 00:00:01.23]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.23]       System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.&#xD;
+[xUnit.net 00:00:01.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+[xUnit.net 00:00:01.23]            at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+[xUnit.net 00:00:01.23]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs(173,0): at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel)&#xD;
+[xUnit.net 00:00:01.23]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs(64,0): at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options)&#xD;
+[xUnit.net 00:00:01.23]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs(275,0): at NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame()&#xD;
+[xUnit.net 00:00:01.23]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.27]       System.InvalidOperationException : The control Border already has a visual parent Grid while trying to add it as a child of Grid.&#xD;
+[xUnit.net 00:00:01.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.27]            at Avalonia.Visual.Avalonia.Collections.IAvaloniaListItemValidator&lt;Avalonia.Visual&gt;.Validate(Visual item)&#xD;
+[xUnit.net 00:00:01.27]            at Avalonia.Collections.AvaloniaList`1.InsertRange(Int32 index, IEnumerable`1 items)&#xD;
+[xUnit.net 00:00:01.27]            at Avalonia.Controls.Panel.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.27]            at Avalonia.Controls.Grid.ChildrenChanged(Object sender, NotifyCollectionChangedEventArgs e)&#xD;
+[xUnit.net 00:00:01.27]            at Avalonia.Collections.AvaloniaList`1.NotifyAdd(T item, Int32 index)&#xD;
+[xUnit.net 00:00:01.27]            at Avalonia.Collections.AvaloniaList`1.Add(T item)&#xD;
+[xUnit.net 00:00:01.27]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\Pages.cs(173,0): at NewManga.App.Views.BookshelfPage..ctor(BookshelfViewModel viewModel)&#xD;
+[xUnit.net 00:00:01.27]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs(64,0): at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options)&#xD;
+[xUnit.net 00:00:01.27]         G:\CODEX\New Manga.workspace\worktrees\UI-SHELL-THEME-1\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs(254,0): at NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus()&#xD;
+[xUnit.net 00:00:01.27]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.27]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.27]   Finished:    NewManga.App.Tests&#xD;
 </StdOut>
     </Output>
+    <RunInfos>
+      <RunInfo computerName="HOME-MY" outcome="Error" timestamp="2026-10-27T01:59:17.1377942+08:00">
+        <Text>[xUnit.net 00:00:01.21]     NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95 [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Error" timestamp="2026-10-27T01:59:17.1478628+08:00">
+        <Text>[xUnit.net 00:00:01.22]     NewManga.App.Tests.BookshelfTests.Page_RendersSearchChipsAndGrid_WithThemeTokens [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Error" timestamp="2026-10-27T01:59:17.1529431+08:00">
+        <Text>[xUnit.net 00:00:01.23]     NewManga.App.Tests.BookshelfTests.BookCard_Click_OpensDetails_AndCreateFlowReported [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Error" timestamp="2026-10-27T01:59:17.1567463+08:00">
+        <Text>[xUnit.net 00:00:01.23]     NewManga.App.Tests.BookshelfTests.Columns_AreComputedInViewModel_ForWideAndNarrow [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Error" timestamp="2026-10-27T01:59:17.1600993+08:00">
+        <Text>[xUnit.net 00:00:01.23]     NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Error" timestamp="2026-10-27T01:59:17.2152783+08:00">
+        <Text>[xUnit.net 00:00:01.27]     NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
   </ResultSummary>
 </TestRun>
