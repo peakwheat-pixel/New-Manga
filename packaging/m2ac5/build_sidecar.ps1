@@ -6,21 +6,23 @@
 # output lives under the gitignored `target/` tree so build artifacts can
 # never enter a commit.
 #
-# M2-PROD-DETECT-2 (AC2, proxy ruling 3): after the PyInstaller build this
-# script copies the PINNED manga weights (ogkalu/comic-text-and-bubble-
-# detector, three files) from the local task-envs snapshot into
-# `<bundle>/models/detector/ogkalu-comic-text-and-bubble-detector/`. The
-# Tauri resource mechanism packages the whole core-sidecar directory, so the
-# weights ride along with zero tauri.conf.json change. Each file is
-# SHA-256-checked against the pins frozen in
-# src/infrastructure/providers/detection_manga.py (duplicated here as
-# literals because a PowerShell build script cannot import src/**). A
-# missing snapshot file or a hash mismatch FAILS the build — never a silent
-# skip. docTR weights are deliberately NOT bundled (ruling 3: the release
-# form fails closed NOT_CONFIGURED when switched back to doctr).
+# CORE-SLIM-2 (AC2/AC3): after the PyInstaller build this script copies the
+# PINNED ONNX model bundle from the local task-envs snapshot into the sidecar:
+#   <bundle>/models/detector/rtdetr-v2-fixed.onnx          (RT-DETR-v2, opset17)
+#   <bundle>/models/ocr/manga-ocr-onnx/                     (encoder/decoder/vocab)
+# The Tauri resource mechanism packages the whole core-sidecar directory, so
+# the models ride along with zero tauri.conf.json change. Each ONNX/vocab file
+# is SHA-256-checked against the pins frozen in
+# src/infrastructure/providers/detection_manga_onnx.py and
+# src/infrastructure/providers/ocr_manga_onnx.py (duplicated here as literals
+# because a PowerShell build script cannot import src/**). A missing snapshot
+# file or a hash mismatch FAILS the build — never a silent skip. The torch
+# safetensors snapshot and docTR weights are deliberately NOT bundled any more
+# (CORE-SLIM-2: the shipped closure is torch-free; both paths remain optional
+# operator-installed fallbacks).
 #
 # Usage (from the repository root):
-#   powershell -File packaging/m2ac5/build_sidecar.ps1 [-PythonExe <path>] [-WeightsSource <path>] [-Force] [-SkipWeights] [-BundlePythonRuntime <dir>] [-SkipPythonRuntime]
+#   powershell -File packaging/m2ac5/build_sidecar.ps1 [-PythonExe <path>] [-WeightsSource <dir>] [-OcrWeightsSource <dir>] [-SfxWeightsSource <dir>] [-Force] [-SkipWeights] [-BundlePythonRuntime <dir>] [-SkipPythonRuntime]
 #
 # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: the plugin-hook Python runtime is bundled
 # into <bundle>/python/ by DEFAULT (resolved from the build interpreter's
@@ -42,7 +44,12 @@ param (
     # below (the copy fails closed on any mismatch), so this parameter only
     # relocates the source, never relaxes the verification.
     [Parameter(Mandatory = $false)]
-    [string]$WeightsSource = "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector",
+    [string]$WeightsSource = "G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2/models/detector",
+    # CORE-SLIM-2: directory holding the manga-ocr ONNX bundle directory
+    # (manga-ocr-onnx/ with encoder_model.onnx + decoder_model.onnx + vocab.txt
+    # + tokenizer/config json). Same relocation-only semantics.
+    [Parameter(Mandatory = $false)]
+    [string]$OcrWeightsSource = "G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2/models/ocr",
     # M2-SFX-PROD-1 / M2-SFX-T4-SWITCH: source directory holding the pinned
     # SFX ONNX export (yolo11s-seg.onnx). Since the v2b switch the default
     # points at the v2b deploy directory (the previous chiqui7 file stays in
@@ -90,46 +97,79 @@ if ($BundlePythonRuntime) {
 # in sequential execution order.)
 # --------------------------------------------------------------------------
 
-function Copy-MangaWeights {
+function Copy-MangaDetectorOnnx {
     param(
         [Parameter(Mandatory = $true)][string]$Bundle,
         [Parameter(Mandatory = $true)][string]$WeightsSource
     )
 
-    # Destination INSIDE the onedir bundle: <bundle>/models/detector/<dirname>/
-    # — the same layout the frozen assembly probes at
-    # Path(sys.executable).parent/models/detector/<dirname> (proxy ruling 4).
-    $destDir = Join-Path $Bundle "models/detector/ogkalu-comic-text-and-bubble-detector"
-
-    # SHA-256 pins, duplicated verbatim from
-    # src/infrastructure/providers/detection_manga.py (MANGA_MODEL_SHA256 /
-    # MANGA_CONFIG_SHA256 / MANGA_PREPROCESSOR_SHA256; HF revision 16e8a622).
-    # A build script cannot import src/**, so the values are literals here —
-    # if the provider pins ever change, these MUST be updated in lockstep
-    # (the copy step fails closed on any mismatch, so a stale literal cannot
-    # ship silently).
-    $pins = [ordered]@{
-        "model.safetensors"        = "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d"
-        "config.json"              = "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072"
-        "preprocessor_config.json" = "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca"
+    # CORE-SLIM-2: RT-DETR-v2 fixed-shape ONNX export (opset 17, 1x3x640x640).
+    # Destination INSIDE the onedir bundle: <bundle>/models/detector/
+    # (the frozen provider probes Path(sys.executable).parent/models/detector/
+    # <file>, and the data root's models/detector/<file> first).
+    $destDir = Join-Path $Bundle "models/detector"
+    $name = "rtdetr-v2-fixed.onnx"
+    # SHA-256 pin, duplicated verbatim from
+    # src/infrastructure/providers/detection_manga_onnx.py
+    # (MANGA_ONNX_SHA256). The provider re-verifies it at load time; a stale
+    # literal here would fail closed at detect, and a corrupted snapshot fails
+    # here at build.
+    $pin = "c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3"
+    $src = Join-Path $weightsSource $name
+    if (-not (Test-Path -LiteralPath $src -PathType Leaf)) {
+        throw "manga detector ONNX missing: $src (run the CORE-SLIM-2 model staging step, or rebuild with -SkipWeights for a debug-only bundle)"
     }
+    $actual = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actual -ne $pin) {
+        throw "manga detector ONNX sha256 mismatch for $name : got $actual, expected $pin — refusing to bundle"
+    }
+    New-Item -ItemType Directory -Force -Path $destDir | Out-Null
+    Copy-Item -LiteralPath $src -Destination (Join-Path $destDir $name) -Force
+    Write-Host "build_sidecar: manga detector ONNX bundled (rtdetr-v2-fixed.onnx, sha256 verified) -> $destDir"
+}
 
+function Copy-MangaOcrOnnx {
+    param(
+        [Parameter(Mandatory = $true)][string]$Bundle,
+        [Parameter(Mandatory = $true)][string]$OcrWeightsSource
+    )
+
+    # CORE-SLIM-2: manga-ocr encoder + decoder ONNX pair plus its tokenizer
+    # files. Destination: <bundle>/models/ocr/manga-ocr-onnx/ (the frozen
+    # provider probes <exe dir>/models/ocr/manga-ocr-onnx).
+    $destDir = Join-Path $Bundle "models/ocr/manga-ocr-onnx"
+    $sourceDir = Join-Path $OcrWeightsSource "manga-ocr-onnx"
+    # SHA-256 pins, duplicated verbatim from
+    # src/infrastructure/providers/ocr_manga_onnx.py.
+    $pins = [ordered]@{
+        "encoder_model.onnx"     = "15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f"
+        "decoder_model.onnx"     = "ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8"
+        "vocab.txt"              = "5cb5c5586d98a2f331d9f8828e4586479b0611bfba5d8c3b6dadffc84d6a36a3"
+    }
     foreach ($name in $pins.Keys) {
-        $src = Join-Path $weightsSource $name
+        $src = Join-Path $sourceDir $name
         if (-not (Test-Path -LiteralPath $src -PathType Leaf)) {
-            throw "weights snapshot file missing: $src (place the pinned snapshot of ogkalu/comic-text-and-bubble-detector there, or rebuild with -SkipWeights for a debug-only bundle)"
+            throw "manga-ocr ONNX missing: $src (run the CORE-SLIM-2 model staging step, or rebuild with -SkipWeights for a debug-only bundle)"
         }
         $actual = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actual -ne $pins[$name]) {
-            throw "weights snapshot sha256 mismatch for $name : got $actual, expected $($pins[$name]) — refusing to bundle"
+            throw "manga-ocr ONNX sha256 mismatch for $name : got $actual, expected $($pins[$name]) — refusing to bundle"
         }
     }
-
     New-Item -ItemType Directory -Force -Path $destDir | Out-Null
     foreach ($name in $pins.Keys) {
-        Copy-Item -LiteralPath (Join-Path $weightsSource $name) -Destination (Join-Path $destDir $name) -Force
+        Copy-Item -LiteralPath (Join-Path $sourceDir $name) -Destination (Join-Path $destDir $name) -Force
     }
-    Write-Host "build_sidecar: manga weights bundled (3 files, sha256 verified) -> $destDir"
+    # The tokenizer/config files are small and pinned by the provider's
+    # behaviour, not by hash (they are not executable weights); copy the
+    # complete set so a future re-export cannot half-update the bundle.
+    foreach ($name in @("config.json", "preprocessor_config.json", "generation_config.json", "tokenizer_config.json", "special_tokens_map.json")) {
+        $src = Join-Path $sourceDir $name
+        if (Test-Path -LiteralPath $src -PathType Leaf) {
+            Copy-Item -LiteralPath $src -Destination (Join-Path $destDir $name) -Force
+        }
+    }
+    Write-Host "build_sidecar: manga-ocr ONNX bundled (encoder/decoder/vocab, sha256 verified) -> $destDir"
 }
 
 # --------------------------------------------------------------------------
@@ -216,7 +256,8 @@ $existingBundle = Join-Path $repoRoot "apps/desktop/src-tauri/target/core-sideca
 if (-not $Force -and (Test-Path -LiteralPath $existingBundle -PathType Container)) {
     Write-Host "build_sidecar: target exists, skipping PyInstaller (use -Force to rebuild)"
     if (-not $SkipWeights) {
-        Copy-MangaWeights -Bundle $existingBundle -WeightsSource $WeightsSource
+        Copy-MangaDetectorOnnx -Bundle $existingBundle -WeightsSource $WeightsSource
+        Copy-MangaOcrOnnx -Bundle $existingBundle -OcrWeightsSource $OcrWeightsSource
         Copy-SfxWeights -Bundle $existingBundle -WeightsSource $SfxWeightsSource
     }
     # PLUGIN-RUNTIME-PACKAGED-PYTHON-1: the skip path must NOT leave the
@@ -308,7 +349,8 @@ if ($bundleIcuFiles.Count -gt 0) {
 Write-Host "build_sidecar: verified 0 shadowing ICU binaries across bundle layout under $bundle (fail-closed guard satisfied)"
 
 if (-not $SkipWeights) {
-    Copy-MangaWeights -Bundle $bundle -WeightsSource $WeightsSource
+    Copy-MangaDetectorOnnx -Bundle $bundle -WeightsSource $WeightsSource
+Copy-MangaOcrOnnx -Bundle $bundle -OcrWeightsSource $OcrWeightsSource
     Copy-SfxWeights -Bundle $bundle -WeightsSource $SfxWeightsSource
 }
 if ($BundlePythonRuntime) {

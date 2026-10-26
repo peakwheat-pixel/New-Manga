@@ -62,7 +62,9 @@ def test_real_environment_reports_optional_providers_as_not_ready() -> None:
     """
     from tests.providers.env_sim import modules_state
 
-    with modules_state(absent=frozenset({"manga_ocr", "paddleocr", "paddle"})):
+    # CORE-SLIM-2: the default manga OCR provider requires onnxruntime (the
+    # torch/manga_ocr pair is only the NEWMANGA_OCR_BACKEND=torch fallback).
+    with modules_state(absent=frozenset({"onnxruntime", "paddleocr", "paddle"})):
         registry, models = build_provider_registry(settings={})
         statuses = {status.provider_id: status for status in registry.statuses()}
 
@@ -112,9 +114,9 @@ def test_optional_providers_report_ready_when_their_runtimes_are_present() -> No
     """
     from tests.providers.env_sim import modules_state
 
-    # PIL is in the present set because manga-ocr declares (manga_ocr, PIL).
-    # Leaving it out made this test pass only on hosts that happen to have PIL.
-    present = frozenset({"manga_ocr", "paddleocr", "paddle", "PIL"})
+    # PIL is in the present set because the manga-ocr provider declares it
+    # (CORE-SLIM-2 default: onnxruntime + PIL).
+    present = frozenset({"onnxruntime", "paddleocr", "paddle", "PIL"})
     with modules_state(present=present):
         registry, _ = build_provider_registry(settings={})
         statuses = {status.provider_id: status for status in registry.statuses()}

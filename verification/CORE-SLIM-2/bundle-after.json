@@ -1,0 +1,129 @@
+{
+  "label": "after",
+  "bundle": "apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+  "exists": true,
+  "totalBytes": 868843756,
+  "totalMb": 828.6,
+  "fileCount": 1964,
+  "modelsBytes": 673486515,
+  "modelsMb": 642.3,
+  "excludingModelsBytes": 195357241,
+  "excludingModelsMb": 186.3,
+  "internalBytes": 149443808,
+  "internalMb": 142.5,
+  "pythonRuntimeMb": 41.9,
+  "exeSizes": {
+    "host_bridge.exe": 397534,
+    "core_service.exe": 399492,
+    "acceptance_bridge.exe": 399627,
+    "catalog_loader.exe": 397554,
+    "sfx_detect_probe.exe": 399915
+  },
+  "exeMb": {
+    "host_bridge.exe": 0.38,
+    "core_service.exe": 0.38,
+    "acceptance_bridge.exe": 0.38,
+    "catalog_loader.exe": 0.38,
+    "sfx_detect_probe.exe": 0.38
+  },
+  "exeSha256": {
+    "host_bridge.exe": "05f91ac65ff87f588aafe6d1275d0f7045b24121a0d5e76d506b45a4684daa4c",
+    "core_service.exe": "55c53f276409235fbc4490c5670d234f1b6706d74c06b48fb29d1fe44aed9921",
+    "acceptance_bridge.exe": "e19eedad2c716ce9090e53f9e466879af84fdce1998a7f154c3b2749ea7c15c1",
+    "catalog_loader.exe": "f7e153ea66c7d7b357df4c05078a110199f76e9389f6098df8b3470d6354a7c4",
+    "sfx_detect_probe.exe": "243ebaa7feb8465781ab54a74d2c12e4025bd3eec3729336d90c41764d176b99"
+  },
+  "internalTop": [
+    {
+      "name": "onnxruntime",
+      "bytes": 66277941,
+      "mb": 63.2
+    },
+    {
+      "name": "numpy.libs",
+      "bytes": 21164112,
+      "mb": 20.2
+    },
+    {
+      "name": "PIL",
+      "bytes": 14708385,
+      "mb": 14.0
+    },
+    {
+      "name": "numpy",
+      "bytes": 10299911,
+      "mb": 9.8
+    },
+    {
+      "name": "pypdfium2_raw",
+      "bytes": 7495549,
+      "mb": 7.1
+    },
+    {
+      "name": "python312.dll",
+      "bytes": 6928664,
+      "mb": 6.6
+    },
+    {
+      "name": "libcrypto-3.dll",
+      "bytes": 5191960,
+      "mb": 5.0
+    },
+    {
+      "name": "sqlite3.dll",
+      "bytes": 1540888,
+      "mb": 1.5
+    },
+    {
+      "name": "infrastructure",
+      "bytes": 1188133,
+      "mb": 1.1
+    },
+    {
+      "name": "unicodedata.pyd",
+      "bytes": 1137944,
+      "mb": 1.1
+    },
+    {
+      "name": "libssl-3.dll",
+      "bytes": 787224,
+      "mb": 0.8
+    },
+    {
+      "name": "msvcp140.dll",
+      "bytes": 643512,
+      "mb": 0.6
+    },
+    {
+      "name": "asyncio",
+      "bytes": 627480,
+      "mb": 0.6
+    },
+    {
+      "name": "application",
+      "bytes": 569753,
+      "mb": 0.5
+    }
+  ],
+  "noarchivePycCount": 859,
+  "noarchivePycMb": 15.5,
+  "qtArtifacts": [],
+  "torchArtifacts": [],
+  "missingRequiredRuntime": [],
+  "models": {
+    "detector": "apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\models\\detector\\rtdetr-v2-fixed.onnx",
+    "ocr": "apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\models\\ocr\\manga-ocr-onnx"
+  },
+  "modelFiles": [
+    "models\\detector\\rtdetr-v2-fixed.onnx",
+    "models\\detector\\yolo11s-seg.onnx",
+    "models\\ocr\\manga-ocr-onnx\\config.json",
+    "models\\ocr\\manga-ocr-onnx\\decoder_model.onnx",
+    "models\\ocr\\manga-ocr-onnx\\encoder_model.onnx",
+    "models\\ocr\\manga-ocr-onnx\\generation_config.json",
+    "models\\ocr\\manga-ocr-onnx\\preprocessor_config.json",
+    "models\\ocr\\manga-ocr-onnx\\special_tokens_map.json",
+    "models\\ocr\\manga-ocr-onnx\\tokenizer_config.json",
+    "models\\ocr\\manga-ocr-onnx\\vocab.txt"
+  ]
+}

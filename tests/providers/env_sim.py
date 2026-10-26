@@ -50,6 +50,7 @@ from infrastructure.providers.dependencies import (
 #: test cannot silently pass just because the machine lacks them anyway - the
 #: helper reports on these names explicitly either way.
 OPTIONAL_PROVIDER_MODULES = (
+    "onnxruntime",
     "manga_ocr",
     "paddleocr",
     "paddle",

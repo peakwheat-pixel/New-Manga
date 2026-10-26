@@ -937,6 +937,34 @@ def _clean_detector_env(monkeypatch):
 
 class TestAssemblyBackendSelection:
     def test_default_backend_is_manga(self, tmp_path: Path, _clean_detector_env):
+        # CORE-SLIM-2: the default manga backend is the ONNX Runtime detector
+        # (the torch/transformers class is the optional fallback, see
+        # test_torch_backend_switch_keeps_the_optional_fallback below).
+        from infrastructure.providers.detection_manga_onnx import (
+            MANGA_ONNX_FILENAME,
+            MangaDetectionOnnxProvider,
+        )
+
+        core = _assemble(tmp_path / "data-root")
+        try:
+            detector = _wired_detector(core)
+            assert isinstance(detector, MangaDetectionOnnxProvider)
+            assert detector.provider_id == "local-manga"
+            assert detector.weights_path == (
+                tmp_path / "data-root" / "models" / "detector" / MANGA_ONNX_FILENAME
+            )
+            # DML-first EP policy by default (falls back to CPU when the wheel
+            # exposes no DirectML provider).
+            assert detector.device == "auto"
+        finally:
+            core.conn.close()
+
+    def test_torch_backend_switch_keeps_the_optional_fallback(
+        self, tmp_path: Path, monkeypatch
+    ):
+        """CORE-SLIM-2: the released torch path stays selectable (optional)."""
+        monkeypatch.setenv("NEWMANGA_DETECTOR_BACKEND", "torch")
+        monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
         from infrastructure.providers.detection_manga import MANGA_WEIGHTS_DIRNAME
 
         core = _assemble(tmp_path / "data-root")
@@ -947,6 +975,7 @@ class TestAssemblyBackendSelection:
             assert detector.weights_dir == (
                 tmp_path / "data-root" / "models" / "detector" / MANGA_WEIGHTS_DIRNAME
             )
+            assert detector.device == "cpu"  # released torch default unchanged
         finally:
             core.conn.close()
 
@@ -974,8 +1003,29 @@ class TestAssemblyBackendSelection:
             core.conn.close()
 
     def test_weights_override_stays_backend_specific(self, tmp_path: Path, monkeypatch):
+        from infrastructure.providers.detection_manga_onnx import (
+            MangaDetectionOnnxProvider,
+        )
+
         monkeypatch.setenv("NEWMANGA_DETECTOR_BACKEND", "manga")
         override = tmp_path / "manga-snapshot"
+        override.mkdir()
+        monkeypatch.setenv("NEWMANGA_DETECTOR_WEIGHTS", str(override))
+        core = _assemble(tmp_path / "data-root")
+        try:
+            detector = _wired_detector(core)
+            # The ONNX provider accepts the released directory-style override
+            # and resolves the pinned ONNX file inside it at load time.
+            assert isinstance(detector, MangaDetectionOnnxProvider)
+            assert detector.weights_path == override
+        finally:
+            core.conn.close()
+
+    def test_torch_weights_override_stays_backend_specific(
+        self, tmp_path: Path, monkeypatch
+    ):
+        monkeypatch.setenv("NEWMANGA_DETECTOR_BACKEND", "torch")
+        override = tmp_path / "torch-snapshot"
         override.mkdir()
         monkeypatch.setenv("NEWMANGA_DETECTOR_WEIGHTS", str(override))
         core = _assemble(tmp_path / "data-root")
