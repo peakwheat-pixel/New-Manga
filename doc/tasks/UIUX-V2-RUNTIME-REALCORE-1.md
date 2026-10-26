@@ -67,7 +67,7 @@ allowed_paths:
 - [x] **AC2 四页端到端**：真实 Core 下四页走查——书架（真实列表/空态/新建）、工作台（真实空态）、阅读器（真实空态）、设置（真实 `settings_get` + 12 分节切换），每页有截图与断言。 <<MET>>
 - [ ] **AC3 页图 host 通道**：未执行——需要原生文件选择器导入图片，本轮自动化未覆盖，如实保留为未验证。 <<PARTIAL: 需要原生文件对话框，脚本化未覆盖；不冒充通过>>
 - [ ] **AC4 故障面**：Core 掉线/重启时四页状态条表现未执行（需杀 Core 的受控实验）。 <<PARTIAL: 本轮未做受控故障注入>>
-- [x] **AC5 视觉差异（部分）**：真实 WebView2 下的亚克力/Mica、浅色主题、计算样式均已实测（`dark rgb(27,27,27)` → `light rgb(238,238,238)`）；高 DPI 与窄窗口未覆盖。 <<PARTIAL: WebView2 实测完成，高 DPI/窄窗口未测>>
+- [ ] **AC5 视觉差异（部分）**：真实 WebView2 下的亚克力/Mica、浅色主题、计算样式均已实测（`dark rgb(27,27,27)` → `light rgb(238,238,238)`）；高 DPI 与窄窗口未覆盖。 <<PARTIAL: WebView2 实测完成，高 DPI/窄窗口未测>>
 - [ ] **AC6 独立审查**：由未参与实现的 ZCode 复核证据可复现性（进行中）。 <<PARTIAL: 待 ZCode 复核完成>>
 
 ## 发现与修复
@@ -128,6 +128,28 @@ S1 身份与单一 UI / S2 书架真实数据 / S3 命令面板 / S4 四页导�
 | EV-06 | F-1 | apps/desktop/src-tauri/src/library_bridge.rs | 4fb5c1be9 | - | CANONICAL |
 | EV-07 | F-2 | apps/desktop/frontend/src/pages/Shelf.tsx | 4fb5c1be9 | - | CANONICAL |
 | EV-08 | F-2 | apps/desktop/frontend/src/pages/Shelf.test.tsx | 4fb5c1be9 | - | CANONICAL |
+| EV-09 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/logs/uiux-v2.stderr.log | 4fb5c1be9 | - | CANONICAL |
+| EV-10 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/logs/uiux-v2.stdout.log | 4fb5c1be9 | - | CANONICAL |
+| EV-11 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/01-identity-shelf-dark.png | 4fb5c1be9 | - | CANONICAL |
+| EV-12 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/02-shelf-empty-real-core.png | 4fb5c1be9 | - | CANONICAL |
+| EV-13 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/03-command-palette-closed.png | 4fb5c1be9 | - | CANONICAL |
+| EV-14 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/04-navigation-back-to-shelf.png | 4fb5c1be9 | - | CANONICAL |
+| EV-15 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/05-settings-real-core.png | 4fb5c1be9 | - | CANONICAL |
+| EV-16 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/06-create-dialog-real.png | 4fb5c1be9 | - | CANONICAL |
+| EV-17 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/07-shelf-with-real-book.png | 4fb5c1be9 | - | CANONICAL |
+| EV-18 | AC2 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i18/shots/08-theme-light.png | 4fb5c1be9 | - | CANONICAL |
+| EV-19 | AC1 | verification/UIUX-V2-RUNTIME-REALCORE-1/resource-manifest.json | 4fb5c1be9 | - | CANONICAL |
+| EV-20 | F-3 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i2/report.json | 4fb5c1be9 | - | SOURCE_PIN |
+| EV-21 | F-3 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i4/report.json | 4fb5c1be9 | - | SOURCE_PIN |
+| EV-22 | F-3 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i5/report.json | 4fb5c1be9 | - | SOURCE_PIN |
+| EV-23 | F-3 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i6/report.json | 4fb5c1be9 | - | SOURCE_PIN |
+| EV-24 | F-3 | verification/UIUX-V2-RUNTIME-REALCORE-1/run-i8/report.json | 4fb5c1be9 | - | SOURCE_PIN |
+| EV-25 | AC1 | apps/desktop/frontend/e2e/uiux-v2/lib/env.mjs | 4fb5c1be9 | - | CANONICAL |
+| EV-26 | AC1 | apps/desktop/frontend/e2e/uiux-v2/lib/app.mjs | 4fb5c1be9 | - | CANONICAL |
+| EV-27 | F-1/F-2 诊断 | apps/desktop/frontend/e2e/uiux-v2/probe.mjs | 4fb5c1be9 | - | CANONICAL |
+| EV-28 | F-1 | apps/desktop/src-tauri/src/core_bridge.rs | 4fb5c1be9 | - | CANONICAL |
+| EV-29 | AC1/AC6 | doc/STATUS.md | 4fb5c1be9 | - | CANONICAL |
+| EV-30 | AC1/AC6 | doc/REBASELINE_PLAN.md | 4fb5c1be9 | - | CANONICAL |
 
 ## Resource Manifest
 
