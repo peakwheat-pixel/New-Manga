@@ -1,0 +1,10 @@
+{
+  "task": "HOST-TILE-CHANNEL-1",
+  "at_utc": "2026-10-26T18:40:34.5085219Z",
+  "ac": "AC4",
+  "file_size_before": 262144,
+  "file_size_after": 262144,
+  "size_unchanged": true,
+  "read_result": "TileDigestMismatch",
+  "digest_mismatches": 1
+}

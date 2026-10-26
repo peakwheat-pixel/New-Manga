@@ -1,0 +1,15 @@
+{
+  "task": "HOST-RESOURCE-SECURITY-1",
+  "at_utc": "2026-10-26T18:40:34.6007983Z",
+  "ac": "AC4",
+  "method": "page = 8 x 256KiB tiles read through TileChannel (per-tile digest on every read); wall clock",
+  "page_bytes": 2097152,
+  "page_load_ms": 2.259,
+  "digest_ms": 0.8,
+  "budget_ms": 60,
+  "digest_share_of_budget": 0.0133,
+  "digest_share_of_measured_load": 0.3539,
+  "page_load_le_60ms": true,
+  "digest_share_le_10pct": true,
+  "cache_state": "freshly written temp file; OS read cache may be warm (wall-clock budget gate, not disk-cold claim)"
+}

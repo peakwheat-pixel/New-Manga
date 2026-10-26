@@ -1,0 +1,70 @@
+{
+  "task": "HOST-RESOURCE-SECURITY-1",
+  "ac": "AC1-AC6",
+  "base_commit": "09d7e76c1",
+  "generated_at_utc": "2026-10-26T18:44:25.8224532Z",
+  "tests": {
+    "dotnet_total": 101.0,
+    "passed": 101.0,
+    "skipped": 0.0,
+    "vitest": "60 files / 567 tests",
+    "pytest": "3F/2687P/9S baseline"
+  },
+  "evidence": {
+    "security/d4-1-equal-length-rewrite.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/security/d4-1-equal-length-rewrite.json",
+      "bytes": 347,
+      "sha256": "c024f4f52017e4d69cb850f7ec7dd9adcee38d709e31d6a68d79c26cea8a1c54"
+    },
+    "security/d4-3-escape-issue.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/security/d4-3-escape-issue.json",
+      "bytes": 322,
+      "sha256": "0d73a58855f58a236c8fdfc55eb65980b892834d35f5986a330fd5a44e64cbe5"
+    },
+    "security/d4-3-escape-read.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/security/d4-3-escape-read.json",
+      "bytes": 205,
+      "sha256": "769595e14c14fb8bec973390cab60059eb985faf0328d7fd4c4ffe64c8217a0c"
+    },
+    "security/d4-5-identity-change.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/security/d4-5-identity-change.json",
+      "bytes": 230,
+      "sha256": "69c6eacfea26e6712335da42b85fdf938e1f098fc2807210b9e059eaedfe76f8"
+    },
+    "performance/d4-6-page-budget.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/performance/d4-6-page-budget.json",
+      "bytes": 570,
+      "sha256": "611a1686b20fec66cc384e05d35fa2a238741ea1feb310b5bb4f8cf3443f167f"
+    },
+    "contract/tile-contract.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/contract/tile-contract.json",
+      "bytes": 651,
+      "sha256": "1e94efe36e24b8ed656491882b104714b4c6414ecd20985843663d42dc93950d"
+    },
+    "test/summary.json": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/test/summary.json",
+      "bytes": 1384,
+      "sha256": "0c920fc40437a9f73092e133028f2a77ff14a263f4b5f094b7a22b64deb6fa96"
+    },
+    "test/dotnet-test-Debug.log": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/test/dotnet-test-Debug.log",
+      "bytes": 16482,
+      "sha256": "e97abf33af8baaa07231b5eab83cf7c9412b3baec76e11f16271735b2263b41b"
+    },
+    "build/dotnet-build-Debug.log": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/build/dotnet-build-Debug.log",
+      "bytes": 1376,
+      "sha256": "41caff1990ff24fb8b56aca31cd577f91fb2857b03be7017237b35afc86c0abf"
+    },
+    "test/vitest-baseline.log": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/test/vitest-baseline.log",
+      "bytes": 234272,
+      "sha256": "eea1d0afa9116859db3bbce337710f85845c9d480e8a39c3d5a7dea8fe0aba3d"
+    },
+    "test/pytest-baseline.log": {
+      "path": "verification/HOST-RESOURCE-SECURITY-1/test/pytest-baseline.log",
+      "bytes": 71220,
+      "sha256": "1beed4645c2c09ec94e0174d5a7993765da31b3308ead18d728df450dbfe2996"
+    }
+  }
+}
