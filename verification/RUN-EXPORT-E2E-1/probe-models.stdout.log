@@ -1,0 +1,66 @@
+{
+  "variant": "models",
+  "run_id": "run-affbc4b6f4734a5bba0d8b639551e54f",
+  "terminal": "completed_with_failures",
+  "timeline": [
+    {
+      "t_ms": 0.1,
+      "status": "pending",
+      "elapsed_ms": 0.1,
+      "ok": true,
+      "error": null
+    },
+    {
+      "t_ms": 500.8,
+      "status": "running",
+      "elapsed_ms": 0.2,
+      "ok": true,
+      "error": null
+    },
+    {
+      "t_ms": 3115.0,
+      "status": "completed_with_failures",
+      "elapsed_ms": 0.1,
+      "ok": true,
+      "error": null
+    }
+  ],
+  "errors": [
+    {
+      "ControlRun": {
+        "code": "INVALID_RUN_TRANSITION",
+        "kind": null,
+        "message": "Run operation is not valid in the current state"
+      }
+    },
+    {
+      "ResumeBlockedRun": {
+        "code": "INVALID_RUN_TRANSITION",
+        "kind": null,
+        "message": "Run operation is not valid in the current state"
+      }
+    },
+    {
+      "StartExport": {
+        "code": "EXPORT_INPUT_UNAVAILABLE",
+        "kind": null,
+        "message": "A translated input is unavailable"
+      }
+    },
+    {
+      "GetExportSnapshot": {
+        "code": "EXPORT_NOT_FOUND",
+        "kind": null,
+        "message": "Export was not found"
+      }
+    },
+    {
+      "CancelExport": {
+        "code": "EXPORT_NOT_FOUND",
+        "kind": null,
+        "message": "Export was not found"
+      }
+    }
+  ],
+  "out": "G:\\CODEX\\New Manga.workspace\\task-envs\\RUN-EXPORT-E2E-1\\probe-models.json"
+}

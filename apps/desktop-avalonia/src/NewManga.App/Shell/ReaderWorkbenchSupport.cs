@@ -187,6 +187,16 @@ public static class S4Wiring
         "create_chapter",
         // NS-WIRE-A1: the reader projection is now a real Host command route (S3-C entry).
         "library_get_reader_projection",
+        // RUN-EXPORT-E2E-1: the Core-backed Run/Export control + projection faces.
+        "library_start_run",
+        "library_control_run",
+        "library_resume_blocked_run",
+        "library_get_run_snapshot",
+        "library_get_task_projection",
+        "library_retry_failed_targets",
+        "library_start_export",
+        "library_cancel_export",
+        "library_get_export_snapshot",
     };
 
     public static IReadOnlyList<NsBatchItem> NsBatch { get; } = new NsBatchItem[]
@@ -196,10 +206,6 @@ public static class S4Wiring
         new("resolve_page_resource", "S4-A", "工作台-画布", "冻结 Core 返回 PAGE_NOT_FOUND；需真实 page_id 与 catalog 接线", "PLANNED"),
         new("restore_region_revision", "S4-A", "工作台-区域", "冻结 Core 返回 TARGET_NOT_FOUND；撤销/恢复语义待 S5", "PLANNED"),
         new("library_save_reading_progress", "S4-B", "阅读器", "SaveReadingProgress 负载语义未定（INVALID_REQUEST）", "PLANNED"),
-        new("library_get_run_snapshot", "S4-C", "工作台-Run", "Run 投影依赖 Python 运行编排（host-local 未迁移）", "PLANNED"),
-        new("library_control_run", "S4-C", "工作台-Run", "Run 控制依赖 Python 运行编排（host-local 未迁移）", "PLANNED"),
-        new("library_cancel_export", "S4-C", "工作台-Export", "Export 控制依赖 host-local 导出编排", "PLANNED"),
-        new("library_get_export_snapshot", "S4-C", "工作台-Export", "Export 快照依赖 host-local 导出编排", "PLANNED"),
     };
 
     public static int WiredCommandCount => WiredImplemented.Count;

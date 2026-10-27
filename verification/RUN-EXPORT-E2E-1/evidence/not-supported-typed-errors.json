@@ -1,0 +1,173 @@
+{
+  "ac": "AC2/AC3",
+  "typed_not_supported": 33,
+  "every_reason_present": true,
+  "unknown_command_code": "UNKNOWN_COMMAND",
+  "commands": [
+    {
+      "command": "backup_delete",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "backup_restore",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "cleanup_retry_pending",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "credential_clear",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "credential_put",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_delete_book_permanently",
+      "domain": "Library",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "domain": "Library",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_import_file",
+      "domain": "Library",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_import_folder",
+      "domain": "Library",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_reveal_export_folder",
+      "domain": "Workbench",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_save_reading_progress",
+      "domain": "Reader",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "list_region_revisions",
+      "domain": "Region",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "plugins_audit_list",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "plugins_open_directory",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "plugins_set_plugin_enabled",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "rerender_page",
+      "domain": "Region",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "resolve_page_resource",
+      "domain": "Region",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "restore_region_revision",
+      "domain": "Region",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "set_region_type",
+      "domain": "Region",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profile_default_clear",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profile_default_set",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profile_resolve",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profiles_create",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profiles_delete",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profiles_test",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profiles_update",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_bindings_clear",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_bindings_resolve",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_bindings_set",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_profiles_delete",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_profiles_update",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_run_snapshot_get",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    }
+  ]
+}

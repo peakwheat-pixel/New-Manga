@@ -1,0 +1,1122 @@
+{
+  "ac": "AC2/AC3",
+  "variant": "base",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\sidecar-copy",
+  "sidecar_core_service_sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\RUN-EXPORT-E2E-1\\data-root-base",
+  "fixture_book": "14340ddad0ed472fbe687fe12340c5d8",
+  "fixture_chapter": "240bdba549b74281bfc6d901b1a7abd7",
+  "models_present": {
+    "detector": false,
+    "ocr": false
+  },
+  "commands": [
+    {
+      "command": "core.ping",
+      "elapsed_ms": 347.1,
+      "ok": true,
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      }
+    },
+    {
+      "command": "list_chapters",
+      "elapsed_ms": 0.1,
+      "ok": true,
+      "result": {
+        "chapters": [
+          {
+            "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+            "title": "第 1 章",
+            "chapter_number": "1",
+            "sort_order": 1
+          }
+        ]
+      }
+    },
+    {
+      "command": "list_chapter_pages",
+      "elapsed_ms": 0.2,
+      "ok": true,
+      "result": {
+        "pages": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+            "sort_order": 1
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+            "sort_order": 2
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+            "sort_order": 3
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+            "sort_order": 4
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+            "sort_order": 5
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+            "sort_order": 6
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+            "sort_order": 7
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+            "sort_order": 8
+          }
+        ]
+      }
+    },
+    {
+      "command": "StartRun",
+      "elapsed_ms": 9.2,
+      "ok": true,
+      "result": {
+        "run_id": "run-4b9733279f4c42b88afca9ae25bca747",
+        "status": "pending"
+      }
+    },
+    {
+      "command": "GetTaskProjection",
+      "elapsed_ms": 1.0,
+      "ok": true,
+      "result": {
+        "run_id": "run-4b9733279f4c42b88afca9ae25bca747",
+        "run_status": "completed_with_failures",
+        "run_title": "全部翻译（跳过已翻译）",
+        "overall_progress": 1.0,
+        "current_page_id": "221d772e601e480e8e7508dfe9aff380",
+        "current_step_type": "",
+        "step_flow": [
+          {
+            "type": "detect",
+            "label": "检测",
+            "state": "failed"
+          },
+          {
+            "type": "ocr",
+            "label": "OCR",
+            "state": "pending"
+          },
+          {
+            "type": "color",
+            "label": "配色",
+            "state": "pending"
+          },
+          {
+            "type": "term_extract",
+            "label": "术语",
+            "state": "pending"
+          },
+          {
+            "type": "translate",
+            "label": "翻译",
+            "state": "pending"
+          },
+          {
+            "type": "segment",
+            "label": "分割",
+            "state": "pending"
+          },
+          {
+            "type": "mask_refine",
+            "label": "掩膜",
+            "state": "pending"
+          },
+          {
+            "type": "inpaint",
+            "label": "修复",
+            "state": "pending"
+          },
+          {
+            "type": "render",
+            "label": "渲染",
+            "state": "pending"
+          }
+        ],
+        "rows": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "page_order": 1,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "page_order": 2,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "page_order": 3,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "page_order": 4,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "page_order": 5,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "page_order": 6,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "page_order": 7,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "page_order": 8,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": true,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ],
+        "tasks": [
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:0",
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-649d7c2f00644a61b33fe70b49d889fa",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:1",
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-02a3270a69754cda808db7d1ca42116b",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:2",
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-cb4e3289387f4d9e833efc5b35c317b1",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:3",
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-f7b1f435d3bb445cb60b15eb570475cd",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:4",
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-55c875d5bd104f8aba6517392633f1b1",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:5",
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-9bb5e6eb47994daf818fe227fc8ede43",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:6",
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-4a04c8706bcc45488ed009c67068b114",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:7",
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-cf965ac7ff6d49519f22ca49258a01a7",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          }
+        ],
+        "counts": {
+          "total": 8,
+          "completed": 0,
+          "failed": 8,
+          "skipped": 0,
+          "blocked": 0,
+          "waiting": 0,
+          "processing": 0
+        },
+        "blocked_reasons": [],
+        "controls": {
+          "can_pause": false,
+          "can_stop": false,
+          "can_continue": false,
+          "can_restart": false,
+          "can_abandon": false,
+          "can_retry_failed": true
+        },
+        "extra": {}
+      },
+      "raw": {
+        "run_id": "run-4b9733279f4c42b88afca9ae25bca747",
+        "run_status": "completed_with_failures",
+        "run_title": "全部翻译（跳过已翻译）",
+        "overall_progress": 1.0,
+        "current_page_id": "221d772e601e480e8e7508dfe9aff380",
+        "current_step_type": "",
+        "step_flow": [
+          {
+            "type": "detect",
+            "label": "检测",
+            "state": "failed"
+          },
+          {
+            "type": "ocr",
+            "label": "OCR",
+            "state": "pending"
+          },
+          {
+            "type": "color",
+            "label": "配色",
+            "state": "pending"
+          },
+          {
+            "type": "term_extract",
+            "label": "术语",
+            "state": "pending"
+          },
+          {
+            "type": "translate",
+            "label": "翻译",
+            "state": "pending"
+          },
+          {
+            "type": "segment",
+            "label": "分割",
+            "state": "pending"
+          },
+          {
+            "type": "mask_refine",
+            "label": "掩膜",
+            "state": "pending"
+          },
+          {
+            "type": "inpaint",
+            "label": "修复",
+            "state": "pending"
+          },
+          {
+            "type": "render",
+            "label": "渲染",
+            "state": "pending"
+          }
+        ],
+        "rows": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "page_order": 1,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "page_order": 2,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "page_order": 3,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "page_order": 4,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "page_order": 5,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "page_order": 6,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "page_order": 7,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "page_order": 8,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": true,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ],
+        "tasks": [
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:0",
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-649d7c2f00644a61b33fe70b49d889fa",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:1",
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-02a3270a69754cda808db7d1ca42116b",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:2",
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-cb4e3289387f4d9e833efc5b35c317b1",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:3",
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-f7b1f435d3bb445cb60b15eb570475cd",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:4",
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-55c875d5bd104f8aba6517392633f1b1",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:5",
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-9bb5e6eb47994daf818fe227fc8ede43",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:6",
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-4a04c8706bcc45488ed009c67068b114",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:7",
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-cf965ac7ff6d49519f22ca49258a01a7",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          }
+        ],
+        "counts": {
+          "total": 8,
+          "completed": 0,
+          "failed": 8,
+          "skipped": 0,
+          "blocked": 0,
+          "waiting": 0,
+          "processing": 0
+        },
+        "blocked_reasons": [],
+        "controls": {
+          "can_pause": false,
+          "can_stop": false,
+          "can_continue": false,
+          "can_restart": false,
+          "can_abandon": false,
+          "can_retry_failed": true
+        },
+        "extra": {}
+      }
+    },
+    {
+      "command": "ControlRun",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error": {
+        "code": "INVALID_RUN_TRANSITION",
+        "kind": null,
+        "message": "Run operation is not valid in the current state"
+      }
+    },
+    {
+      "command": "ResumeBlockedRun",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error": {
+        "code": "INVALID_RUN_TRANSITION",
+        "kind": null,
+        "message": "Run operation is not valid in the current state"
+      }
+    },
+    {
+      "command": "StartExport",
+      "elapsed_ms": 0.4,
+      "ok": false,
+      "error": {
+        "code": "EXPORT_INPUT_UNAVAILABLE",
+        "kind": null,
+        "message": "A translated input is unavailable"
+      }
+    },
+    {
+      "command": "GetExportSnapshot",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error": {
+        "code": "EXPORT_NOT_FOUND",
+        "kind": null,
+        "message": "Export was not found"
+      }
+    },
+    {
+      "command": "CancelExport",
+      "elapsed_ms": 0.0,
+      "ok": false,
+      "error": {
+        "code": "EXPORT_NOT_FOUND",
+        "kind": null,
+        "message": "Export was not found"
+      }
+    },
+    {
+      "command": "GetExportHistory",
+      "elapsed_ms": 0.2,
+      "ok": true,
+      "result": {
+        "exports": []
+      }
+    }
+  ],
+  "page_count": 8,
+  "run_id": "run-4b9733279f4c42b88afca9ae25bca747",
+  "run_timeline": [
+    {
+      "t_ms": 0.1,
+      "status": "pending",
+      "elapsed_ms": 0.1,
+      "ok": true,
+      "error": null
+    },
+    {
+      "t_ms": 501.0,
+      "status": "running",
+      "elapsed_ms": 0.7,
+      "ok": true,
+      "error": null
+    },
+    {
+      "t_ms": 1502.4,
+      "status": "completed_with_failures",
+      "elapsed_ms": 0.1,
+      "ok": true,
+      "error": null
+    }
+  ],
+  "run_terminal_status": "completed_with_failures",
+  "task_projection": {
+    "run_id": "run-4b9733279f4c42b88afca9ae25bca747",
+    "run_status": "completed_with_failures",
+    "run_title": "全部翻译（跳过已翻译）",
+    "overall_progress": 1.0,
+    "current_page_id": "221d772e601e480e8e7508dfe9aff380",
+    "current_step_type": "",
+    "step_flow": [
+      {
+        "type": "detect",
+        "label": "检测",
+        "state": "failed"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      }
+    ],
+    "rows": [
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_order": 1,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "page_order": 2,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_order": 3,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "page_order": 4,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "page_order": 5,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "page_order": 6,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "page_order": 7,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "page_order": 8,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "status": "failed",
+        "is_locked": false,
+        "is_pipeline_current": true,
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:0",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-649d7c2f00644a61b33fe70b49d889fa",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:1",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-02a3270a69754cda808db7d1ca42116b",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:2",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-cb4e3289387f4d9e833efc5b35c317b1",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:3",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-f7b1f435d3bb445cb60b15eb570475cd",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:4",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-55c875d5bd104f8aba6517392633f1b1",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:5",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-9bb5e6eb47994daf818fe227fc8ede43",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:6",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-4a04c8706bcc45488ed009c67068b114",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-4b9733279f4c42b88afca9ae25bca747:task:7",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-cf965ac7ff6d49519f22ca49258a01a7",
+            "step_type": "detect",
+            "status": "failed",
+            "retry_no": 0,
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      }
+    ],
+    "counts": {
+      "total": 8,
+      "completed": 0,
+      "failed": 8,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "controls": {
+      "can_pause": false,
+      "can_stop": false,
+      "can_continue": false,
+      "can_restart": false,
+      "can_abandon": false,
+      "can_retry_failed": true
+    },
+    "extra": {}
+  }
+}
