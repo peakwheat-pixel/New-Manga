@@ -37,4 +37,11 @@ public interface IHostController : IAsyncDisposable
     Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default);
 
     Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// READER-LIBRARY-WIRE-1 AC1: real reader payload (ListBooks → list_chapters → GetReaderProjection)
+    /// for the reader page. Null when the Host is not ready, the library is empty, or the read fails;
+    /// the reader then keeps its fixture fallback.
+    /// </summary>
+    Task<ReaderBookData?> LoadReaderBookAsync(string? bookId = null, CancellationToken cancellationToken = default);
 }

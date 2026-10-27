@@ -1,4 +1,5 @@
 using NewManga.CoreClient;
+using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Wire;
 using NewManga.Host;
@@ -152,6 +153,59 @@ public sealed class HostController : IHostController
             return false;
         }
     }
+
+    public async Task<ReaderBookData?> LoadReaderBookAsync(string? bookId = null, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            var books = await runtime.ListBooksAsync(cancellationToken).ConfigureAwait(false);
+            BookSummary? book = null;
+            if (!string.IsNullOrWhiteSpace(bookId))
+            {
+                book = books.FirstOrDefault(candidate => string.Equals(candidate.BookId, bookId, StringComparison.Ordinal));
+            }
+
+            book ??= books.FirstOrDefault(candidate => (candidate.PageCount ?? 0) > 0) ?? books.FirstOrDefault();
+            if (book is null)
+            {
+                return null;
+            }
+
+            var chapters = await runtime.ListChaptersAsync(book.BookId, cancellationToken).ConfigureAwait(false);
+            if (chapters.Count == 0)
+            {
+                return null;
+            }
+
+            // Reader navigation face: first chapter (projection order is the user's sort order).
+            var chapter = chapters[0];
+            var projection = await runtime.GetReaderProjectionAsync(chapter.ChapterId, cancellationToken).ConfigureAwait(false);
+            if (projection.Pages.Count == 0)
+            {
+                return null;
+            }
+
+            return ReaderBookData.FromProjection(
+                book,
+                chapter,
+                projection,
+                (pageId, token) => LoadPageBytesAsync(runtime, pageId, token));
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    private static async Task<byte[]?> LoadPageBytesAsync(HostRuntime runtime, string pageId, CancellationToken token) =>
+        await runtime.ReadPageImageAsync(pageId, token).ConfigureAwait(false);
 
     public async ValueTask DisposeAsync()
     {

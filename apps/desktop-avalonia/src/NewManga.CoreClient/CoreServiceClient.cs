@@ -22,6 +22,30 @@ public sealed record BookSummary(
     string CreatedAt,
     string UpdatedAt);
 
+/// <summary>One chapter row from the Core <c>list_chapters</c> read face.</summary>
+public sealed record ChapterSummary(string ChapterId, string Title, string ChapterNumber, int SortOrder);
+
+/// <summary>One page row from <c>GetReaderProjection</c> (src/infrastructure/sqlite/library.py list_pages).</summary>
+public sealed record ReaderPageSummary(
+    string PageId,
+    int Order,
+    int WidthPx,
+    int HeightPx,
+    string? OriginalResourceId,
+    string? OriginalRevisionId,
+    string? Sha256);
+
+/// <summary>Reader projection result: layout + ordered pages for one chapter.</summary>
+public sealed record ReaderProjection(
+    string BookId,
+    string ChapterId,
+    string Mode,
+    string Layout,
+    IReadOnlyList<ReaderPageSummary> Pages);
+
+/// <summary>Catalog key returned by <c>resolve_page_resource</c> (idempotent per page).</summary>
+public sealed record ResolvedPageResource(string ResourceId, string Revision);
+
 public sealed class CoreServiceOptions
 {
     public required string ExecutablePath { get; init; }
@@ -223,6 +247,142 @@ public sealed class CoreServiceClient : IAsyncDisposable
         return ParseBook(result);
     }
 
+    /// <summary>Chapter navigation read face (protocol 2.3 <c>list_chapters</c>).</summary>
+    public async Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(string bookId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+
+        var response = await SendAsync(
+                "list_chapters",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "list_chapters");
+        var chapters = new List<ChapterSummary>();
+        if (result.TryGetProperty("chapters", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object)
+                {
+                    throw Malformed("list_chapters entry is not an object");
+                }
+
+                chapters.Add(new ChapterSummary(
+                    ReadString(item, "chapter_id") ?? string.Empty,
+                    ReadString(item, "title") ?? string.Empty,
+                    ReadString(item, "chapter_number") ?? string.Empty,
+                    ReadInt(item, "sort_order")));
+            }
+        }
+
+        return chapters;
+    }
+
+    /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>
+    public async Task<ReaderProjection> GetReaderProjectionAsync(
+        string chapterId,
+        string mode = "original",
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId))
+        {
+            throw new ArgumentException("chapter_id is required", nameof(chapterId));
+        }
+
+        var response = await SendAsync(
+                "GetReaderProjection",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("chapter_id", chapterId);
+                    writer.WriteString("mode", mode);
+                    writer.WriteString("start_position", "beginning");
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "GetReaderProjection");
+        var pages = new List<ReaderPageSummary>();
+        if (result.TryGetProperty("pages", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object)
+                {
+                    throw Malformed("GetReaderProjection page entry is not an object");
+                }
+
+                string? resourceId = null;
+                string? revisionId = null;
+                string? sha256 = null;
+                if (item.TryGetProperty("original", out var original) && original.ValueKind == JsonValueKind.Object)
+                {
+                    sha256 = ReadString(original, "sha256");
+                    if (original.TryGetProperty("resource_ref", out var resourceRef) && resourceRef.ValueKind == JsonValueKind.Object)
+                    {
+                        resourceId = ReadString(resourceRef, "resource_id");
+                        revisionId = ReadString(resourceRef, "revision");
+                    }
+                }
+
+                pages.Add(new ReaderPageSummary(
+                    ReadString(item, "page_id") ?? string.Empty,
+                    ReadInt(item, "order"),
+                    ReadInt(item, "width_px"),
+                    ReadInt(item, "height_px"),
+                    resourceId,
+                    revisionId,
+                    sha256));
+            }
+        }
+
+        return new ReaderProjection(
+            ReadString(result, "book_id") ?? string.Empty,
+            ReadString(result, "chapter_id") ?? chapterId,
+            ReadString(result, "mode") ?? mode,
+            ReadString(result, "layout") ?? string.Empty,
+            pages);
+    }
+
+    /// <summary>Publishes/looks up the page-original catalog key used by the Host resource channel.</summary>
+    public async Task<ResolvedPageResource> ResolvePageResourceAsync(string pageId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId))
+        {
+            throw new ArgumentException("page_id is required", nameof(pageId));
+        }
+
+        var response = await SendAsync(
+                "resolve_page_resource",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("page_id", pageId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "resolve_page_resource");
+        return new ResolvedPageResource(
+            ReadString(result, "resource_id") ?? string.Empty,
+            ReadString(result, "revision") ?? "original");
+    }
+
     /// <summary>Raw escaping test hook (AC3 negative): sends the line verbatim, never throws on Core errors.</summary>
     public async Task<CoreResponse> SendRawAsync(string rawJsonLine, CancellationToken cancellationToken = default)
     {
@@ -231,7 +391,6 @@ public sealed class CoreServiceClient : IAsyncDisposable
             .ConfigureAwait(false);
         return CoreProtocol.Parse(frame.ResponseLine);
     }
-
     public async Task<CoreResponse> SendAsync(
         string command,
         int minor,

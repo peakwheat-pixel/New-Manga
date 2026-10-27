@@ -52,6 +52,17 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(Snapshot.State == HostViewState.Ready);
     }
 
+    /// <summary>READER-LIBRARY-WIRE-1: scripted reader payload (null = empty library).</summary>
+    public ReaderBookData? ReaderBook { get; set; }
+
+    public bool ReaderLoadCalled { get; private set; }
+
+    public Task<ReaderBookData?> LoadReaderBookAsync(string? bookId = null, CancellationToken cancellationToken = default)
+    {
+        ReaderLoadCalled = true;
+        return Task.FromResult(ReaderBook);
+    }
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     public static HostViewSnapshot ReadySnapshot(params string[] titles)

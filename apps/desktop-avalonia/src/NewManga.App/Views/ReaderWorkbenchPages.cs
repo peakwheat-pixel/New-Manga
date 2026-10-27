@@ -183,20 +183,31 @@ public sealed class WorkbenchPage : UserControl
     }
 }
 
-/// <summary>AC2/AC3/AC4 reader page: fit/1:1/fit-width + virtualized webtoon, no interpolation.</summary>
+/// <summary>
+/// AC2/AC3/AC4 reader page: fit/1:1/fit-width + virtualized webtoon, no interpolation.
+/// READER-LIBRARY-WIRE-1 AC1: renders a real library book (pages come from the Host resource
+/// channel, lazily); the fixture path stays available as the fallback source.
+/// </summary>
 public sealed class ReaderPage : UserControl
 {
     private readonly IReadOnlyList<string> _pages;
     private readonly string? _tileDirectory;
     private readonly List<string> _tileFiles = new();
     private readonly Dictionary<int, Bitmap> _tileCache = new();
+    private readonly Dictionary<int, TaskCompletionSource<int>> _pageWaiters = new();
+    private readonly HashSet<int> _renderedPages = new();
+    private readonly SemaphoreSlim _libraryLoadGate = new(1, 1);
     private readonly Image _pageImage;
     private readonly ScrollViewer _webtoonScroll;
     private readonly ItemsControl _webtoonItems;
     private readonly TextBlock _hud;
+    private readonly TextBlock _libraryTitle;
+    private readonly TextBlock _emptyState;
+    private readonly Button _immersiveButton;
     private readonly Border _root;
     private Bitmap? _currentBitmap;
     private ITileSource? _tileSource;
+    private ReaderBookData? _libraryBook;
 
     public ReaderPage(ReaderViewModel viewModel, IReadOnlyList<string> pages, string? tileDirectory = null)
     {
@@ -232,15 +243,61 @@ public sealed class ReaderPage : UserControl
             FontSize = 12,
             Foreground = Brushes.White,
             Margin = new Thickness(16, 10),
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left,
         };
         Hud = _hud;
 
-        _root = new Border { Background = Brushes.Black, Child = new Grid { RowDefinitions = new RowDefinitions("Auto,*") , Children = { _hud, BuildSurface() } } };
-        var grid = (Grid)_root.Child!;
-        Grid.SetRow(grid.Children[1], 1);
-        grid.Children.Add(_webtoonScroll);
+        _libraryTitle = new TextBlock
+        {
+            Text = "fixture 回退（无库中书）",
+            FontSize = 12,
+            Foreground = Brushes.White,
+            Margin = new Thickness(8, 10),
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        LibraryTitle = _libraryTitle;
+
+        _emptyState = new TextBlock
+        {
+            Text = string.Empty,
+            FontSize = 13,
+            Foreground = Brushes.White,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            TextAlignment = TextAlignment.Center,
+            IsVisible = false,
+        };
+        EmptyState = _emptyState;
+
+        _immersiveButton = new Button
+        {
+            Content = "沉浸模式 (Esc/H/F)",
+            Name = "ImmersiveButton",
+            FontSize = 12,
+            Padding = new Thickness(10, 4),
+            CornerRadius = new CornerRadius(8),
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        _immersiveButton.Click += (_, _) => RequestImmersive();
+        ImmersiveButton = _immersiveButton;
+
+        var toolbar = new StackPanel
+        {
+            Orientation = Avalonia.Layout.Orientation.Horizontal,
+            Spacing = 12,
+            Children = { _hud, _libraryTitle, _immersiveButton },
+        };
+        var surface = BuildSurface();
+        var grid = new Grid
+        {
+            RowDefinitions = new RowDefinitions("Auto,*"),
+            Children = { toolbar, surface, _webtoonScroll, _emptyState },
+        };
+        Grid.SetRow(surface, 1);
         Grid.SetRow(_webtoonScroll, 1);
+        Grid.SetRow(_emptyState, 1);
+        _root = new Border { Background = Brushes.Black, Child = grid };
         Content = _root;
 
         PointerPressed += OnPointerPressed;
@@ -254,6 +311,18 @@ public sealed class ReaderPage : UserControl
     public ScrollViewer WebtoonScroll { get; }
 
     public TextBlock Hud { get; }
+
+    public TextBlock LibraryTitle { get; }
+
+    public TextBlock EmptyState { get; }
+
+    public Button ImmersiveButton { get; }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC2: raised by the toolbar button / double-click.</summary>
+    public event EventHandler? ImmersiveRequested;
+
+    /// <summary>Real library book currently rendered (null = fixture fallback).</summary>
+    public ReaderBookData? LibraryBook => _libraryBook;
 
     public IReadOnlyList<string> TileFiles => _tileFiles;
 
@@ -276,9 +345,66 @@ public sealed class ReaderPage : UserControl
         _pageImage.MaxHeight = height - 2 * ReaderViewModel.PagePadding;
     }
 
+    /// <summary>READER-LIBRARY-WIRE-1 AC1: render a real book from Host/CoreClient data.</summary>
+    public void LoadLibrary(ReaderBookData book)
+    {
+        _libraryBook = book;
+        _renderedPages.Clear();
+        _emptyState.IsVisible = false;
+        _libraryTitle.Text = book.Summary;
+        ViewModel.SetPageCount(book.Pages.Count, 0);
+        if (book.IsWebtoon)
+        {
+            PrepareLibraryWebtoon();
+        }
+        else
+        {
+            _webtoonScroll.IsVisible = false;
+            _pageImage.IsVisible = true;
+            ShowPage(0);
+        }
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC1 empty state (fixture fallback keeps rendering behind it).</summary>
+    public void SetLibraryEmpty(string message)
+    {
+        _libraryBook = null;
+        _emptyState.Text = message;
+        _emptyState.IsVisible = true;
+        _libraryTitle.Text = "fixture 回退";
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC2: request the immersive window (button / double-click).</summary>
+    public void RequestImmersive() => ImmersiveRequested?.Invoke(this, EventArgs.Empty);
+
+    /// <summary>Waits until a library page has decoded and been applied (tests/evidence).</summary>
+    public Task<int> WaitForPageAsync(int index)
+    {
+        if (_renderedPages.Contains(index))
+        {
+            return Task.FromResult(index);
+        }
+
+        if (!_pageWaiters.TryGetValue(index, out var waiter))
+        {
+            waiter = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _pageWaiters[index] = waiter;
+        }
+
+        return waiter.Task;
+    }
+
     /// <summary>Loads one page image and applies the current fit mode; returns the measured frame cost.</summary>
     public PageTurnSample ShowPage(int index)
     {
+        if (_libraryBook is not null)
+        {
+            var clamped = Math.Clamp(index, 0, _libraryBook.Pages.Count - 1);
+            ViewModel.SetPageCount(_libraryBook.Pages.Count, clamped);
+            _ = ShowLibraryPageAsync(clamped);
+            return new PageTurnSample(clamped, 0, 0, 0);
+        }
+
         var watch = Stopwatch.StartNew();
         var decodeStart = watch.Elapsed.TotalMilliseconds;
         _currentBitmap?.Dispose();
@@ -291,20 +417,84 @@ public sealed class ReaderPage : UserControl
         _pageImage.Source = _currentBitmap;
         var decode = watch.Elapsed.TotalMilliseconds - decodeStart;
         var layoutStart = watch.Elapsed.TotalMilliseconds;
-        var size = _currentBitmap is null
-            ? (ViewModel.ViewportWidth - 2 * ReaderViewModel.PagePadding, ViewModel.ViewportHeight - 2 * ReaderViewModel.PagePadding, 1.0)
-            : ViewModel.DisplaySize(_currentBitmap.PixelSize.Width, _currentBitmap.PixelSize.Height);
-        _pageImage.Stretch = ViewModel.FitMode == ReaderFitMode.OneToOne ? Stretch.None : Stretch.Uniform;
-        _pageImage.Width = size.Item1;
-        _pageImage.Height = size.Item2;
-        _pageImage.Measure(new Size(ViewModel.ViewportWidth, ViewModel.ViewportHeight));
-        _pageImage.Arrange(new Rect(0, 0, size.Item1, size.Item2));
+        ApplyPageLayout(_currentBitmap);
         Dispatcher.UIThread.RunJobs();
         var total = watch.Elapsed.TotalMilliseconds;
         var sample = new PageTurnSample(index, total, decode, total - decode - layoutStart);
         ViewModel.RecordPageTurn(index, sample.TotalMs, sample.DecodeMs, sample.LayoutMs);
         ViewModel.SetPageCount(_pages.Count, index);
         return sample;
+    }
+
+    private async Task ShowLibraryPageAsync(int index)
+    {
+        var book = _libraryBook;
+        if (book is null || index < 0 || index >= book.Pages.Count)
+        {
+            return;
+        }
+
+        var watch = Stopwatch.StartNew();
+        byte[]? bytes = null;
+        try
+        {
+            if (book.Pages[index].LoadImageAsync is { } loader)
+            {
+                await _libraryLoadGate.WaitAsync(CancellationToken.None).ConfigureAwait(true);
+                try
+                {
+                    bytes = await loader(CancellationToken.None).ConfigureAwait(true);
+                }
+                finally
+                {
+                    _libraryLoadGate.Release();
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException)
+        {
+            bytes = null;
+        }
+
+        Bitmap? bitmap = null;
+        if (bytes is { Length: > 0 })
+        {
+            try
+            {
+                using var stream = new MemoryStream(bytes);
+                bitmap = new Bitmap(stream);
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NotSupportedException)
+            {
+                bitmap = null;
+            }
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _currentBitmap?.Dispose();
+            _currentBitmap = bitmap;
+            _pageImage.Source = bitmap;
+            ApplyPageLayout(bitmap);
+            _renderedPages.Add(index);
+            ViewModel.RecordPageTurn(index, watch.Elapsed.TotalMilliseconds, 0, 0);
+            if (_pageWaiters.Remove(index, out var waiter))
+            {
+                waiter.TrySetResult(index);
+            }
+        });
+    }
+
+    private void ApplyPageLayout(Bitmap? bitmap)
+    {
+        var size = bitmap is null
+            ? (ViewModel.ViewportWidth - 2 * ReaderViewModel.PagePadding, ViewModel.ViewportHeight - 2 * ReaderViewModel.PagePadding, 1.0)
+            : ViewModel.DisplaySize(bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+        _pageImage.Stretch = ViewModel.FitMode == ReaderFitMode.OneToOne ? Stretch.None : Stretch.Uniform;
+        _pageImage.Width = size.Item1;
+        _pageImage.Height = size.Item2;
+        _pageImage.Measure(new Size(ViewModel.ViewportWidth, ViewModel.ViewportHeight));
+        _pageImage.Arrange(new Rect(0, 0, size.Item1, size.Item2));
     }
 
     public void PrepareWebtoon()
@@ -337,6 +527,107 @@ public sealed class ReaderPage : UserControl
         _webtoonItems.ItemsSource = items;
         _webtoonItems.Measure(new Size(ViewModel.ViewportWidth, ViewModel.ViewportHeight));
         _webtoonItems.Arrange(new Rect(0, 0, ViewModel.ViewportWidth, ViewModel.ViewportHeight));
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC4: real webtoon book rendered as one vertical page stack.</summary>
+    public void PrepareLibraryWebtoon() => _ = PrepareLibraryWebtoonAsync();
+
+    private async Task PrepareLibraryWebtoonAsync()
+    {
+        var book = _libraryBook;
+        if (book is null)
+        {
+            PrepareWebtoon();
+            return;
+        }
+
+        ViewModel.SetFitMode(ReaderFitMode.Webtoon);
+        _pageImage.IsVisible = false;
+        _webtoonScroll.IsVisible = true;
+        var images = new List<Image>();
+        for (var index = 0; index < book.Pages.Count; index++)
+        {
+            var image = new Image
+            {
+                Name = $"WebtoonPage_{index}",
+                Stretch = Stretch.Fill,
+                Height = LibraryPageHeight(book.Pages[index]),
+            };
+            RenderOptions.SetBitmapInterpolationMode(image, BitmapInterpolationMode.None);
+            images.Add(image);
+        }
+
+        _webtoonItems.ItemsSource = images;
+        _webtoonItems.Measure(new Size(ViewModel.ViewportWidth, ViewModel.ViewportHeight));
+        _webtoonItems.Arrange(new Rect(0, 0, ViewModel.ViewportWidth, ViewModel.ViewportHeight));
+
+        // The resource pipe is request/response: load page images one at a time.
+        for (var index = 0; index < book.Pages.Count; index++)
+        {
+            await LoadWebtoonPageAsync(images[index], index).ConfigureAwait(true);
+        }
+    }
+
+    private double LibraryPageHeight(ReaderPageData page)
+    {
+        var aspect = page.WidthPx > 0 ? (double)page.HeightPx / page.WidthPx : 1.0;
+        return Math.Max(1, Math.Max(1, ViewModel.ViewportWidth) * aspect);
+    }
+
+    private async Task LoadWebtoonPageAsync(Image image, int index)
+    {
+        var book = _libraryBook;
+        if (book is null || index < 0 || index >= book.Pages.Count)
+        {
+            return;
+        }
+
+        byte[]? bytes = null;
+        try
+        {
+            if (book.Pages[index].LoadImageAsync is { } loader)
+            {
+                await _libraryLoadGate.WaitAsync(CancellationToken.None).ConfigureAwait(true);
+                try
+                {
+                    bytes = await loader(CancellationToken.None).ConfigureAwait(true);
+                }
+                finally
+                {
+                    _libraryLoadGate.Release();
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException)
+        {
+            bytes = null;
+        }
+
+        if (bytes is not { Length: > 0 })
+        {
+            return;
+        }
+
+        Bitmap? bitmap;
+        try
+        {
+            using var stream = new MemoryStream(bytes);
+            bitmap = new Bitmap(stream);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NotSupportedException)
+        {
+            bitmap = null;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            image.Source = bitmap;
+            _renderedPages.Add(index);
+            if (_pageWaiters.Remove(index, out var waiter))
+            {
+                waiter.TrySetResult(index);
+            }
+        });
     }
 
     private Bitmap? LoadTileBitmap(int index)
@@ -383,6 +674,8 @@ public sealed class ReaderPage : UserControl
     {
         ViewModel.HudVisible = visible;
         _hud.IsVisible = visible;
+        _immersiveButton.IsVisible = visible;
+        _libraryTitle.IsVisible = visible;
     }
 
     public void CycleFitMode()
@@ -397,7 +690,14 @@ public sealed class ReaderPage : UserControl
         ViewModel.SetFitMode(next);
         if (next == ReaderFitMode.Webtoon)
         {
-            PrepareWebtoon();
+            if (_libraryBook is { IsWebtoon: true })
+            {
+                PrepareLibraryWebtoon();
+            }
+            else
+            {
+                PrepareWebtoon();
+            }
         }
         else
         {
@@ -419,6 +719,13 @@ public sealed class ReaderPage : UserControl
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (e.ClickCount >= 2)
+        {
+            RequestImmersive();
+            e.Handled = true;
+            return;
+        }
+
         var position = e.GetPosition(this);
         if (position.X < Bounds.Width * 0.25)
         {
@@ -445,44 +752,96 @@ public sealed class ReaderPage : UserControl
     }
 }
 
-/// <summary>AC2 immersive reader window: borderless black chrome, Esc exits, H hides HUD, F cycles fit.</summary>
+/// <summary>
+/// AC2 immersive reader window: borderless black chrome, Esc exits, H hides HUD, F cycles fit,
+/// arrow keys page. READER-LIBRARY-WIRE-1 AC2: created from the reader page (button/double-click)
+/// for both a real library book and the fixture fallback.
+/// </summary>
 public sealed class ReaderWindow : Window
 {
     public ReaderWindow(ReaderViewModel viewModel, IReadOnlyList<string> pages, string? tileDirectory = null)
+        : this(viewModel, new ReaderPage(viewModel, pages, tileDirectory))
     {
+    }
+
+    public ReaderWindow(ReaderViewModel viewModel, ReaderBookData book)
+        : this(viewModel, CreateLibraryPage(viewModel, book))
+    {
+    }
+
+    public ReaderWindow(ReaderViewModel viewModel, ReaderPage page)
+    {
+        var effectivePage = page;
+        if (effectivePage.LibraryBook is null && effectivePage.PageImage.Source is null && effectivePage.ViewModel.PageCount <= 1)
+        {
+            // No fixture and no library book: keep the window usable but empty.
+        }
+
         Title = "阅读器";
         SystemDecorations = SystemDecorations.None;
         WindowState = WindowState.FullScreen;
         Background = Brushes.Black;
-        Page = new ReaderPage(viewModel, pages, tileDirectory);
-        Content = Page;
+        Page = effectivePage;
+        Content = effectivePage;
         KeyDown += OnKeyDown;
-        Opened += (_, _) => Page.ShowPage(viewModel.CurrentPageIndex);
+        Opened += (_, _) =>
+        {
+            if (effectivePage.LibraryBook is { IsWebtoon: true })
+            {
+                effectivePage.PrepareLibraryWebtoon();
+            }
+            else
+            {
+                effectivePage.ShowPage(viewModel.CurrentPageIndex);
+            }
+        };
     }
 
     public ReaderPage Page { get; }
 
-    private void OnKeyDown(object? sender, KeyEventArgs e)
+    /// <summary>Number of Esc presses that requested a close (headless-testable).</summary>
+    public int EscapeCount { get; private set; }
+
+    /// <summary>Handles one keystroke; returns true when the key was consumed.</summary>
+    public bool TryHandleKey(Key key)
     {
-        switch (e.Key)
+        switch (key)
         {
             case Key.Escape:
+                EscapeCount++;
                 Close();
-                break;
+                return true;
             case Key.H:
                 Page.SetHudVisible(!Page.ViewModel.HudVisible);
-                break;
+                return true;
             case Key.F:
                 Page.CycleFitMode();
-                break;
+                return true;
             case Key.Right:
             case Key.Down:
                 Page.ViewModel.NextPage();
-                break;
+                return true;
             case Key.Left:
             case Key.Up:
                 Page.ViewModel.PreviousPage();
-                break;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static ReaderPage CreateLibraryPage(ReaderViewModel viewModel, ReaderBookData book)
+    {
+        var page = new ReaderPage(viewModel, Array.Empty<string>());
+        page.LoadLibrary(book);
+        return page;
+    }
+
+    private void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (TryHandleKey(e.Key))
+        {
+            e.Handled = true;
         }
     }
 }
