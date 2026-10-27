@@ -1,0 +1,6 @@
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\CORE-PIPELINE-FIX-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3190 bytes / 38 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5383 bytes / 62 lines
+Governance check: PASS (3 warnings)

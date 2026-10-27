@@ -1,0 +1,100 @@
+{
+  "task": "CORE-PIPELINE-FIX-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/CORE-PIPELINE-FIX-1",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar",
+      "used_as": "冻结 models 包：models/detector、models/ocr 只读复用；core_service.exe 未修改（sha256 2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b）"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "used_as": "AC3 每轮私有数据根副本（inproc-*/data-root-*），原件零修改"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/RUN-OCR-DIAG-1",
+      "used_as": "复验脚本基线与请求序列（只读参考）"
+    }
+  ],
+  "written_in_repo": "verification/CORE-PIPELINE-FIX-1/**（仅证据）；src/** 语义修复与 tests/** 用例",
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/task-envs/CORE-PIPELINE-FIX-1/**（data roots、logs、scripts；保留引用）",
+  "artifacts": [
+    {
+      "rel": "check-taskpath.log",
+      "bytes": 418,
+      "sha256": "1d1e36c90b551c9f93631d519517af7e36211b3dfd5f48bfbf399178cf6dd522"
+    },
+    {
+      "rel": "dotnet-summary.json",
+      "bytes": 1351,
+      "sha256": "c41c35a659c5b134689151293fa42909f637e652e99c9bfdc400aeca82c53d8e"
+    },
+    {
+      "rel": "dotnet-test.log",
+      "bytes": 20080,
+      "sha256": "cefa3c06a2cdd62cef562b39e1e801b1661ca7de60938c067becf34606ebee0e"
+    },
+    {
+      "rel": "pytest-full.log",
+      "bytes": 80457,
+      "sha256": "f1b49986071777cd004d43805791b6cbd8dbf1d561cb8eb59a3ca29f76318937"
+    },
+    {
+      "rel": "REPORT.md",
+      "bytes": 10578,
+      "sha256": "06c1955c26a993f3606073f1fd44ee0ed4eac5fb19d15decf96c484bf45d05b5"
+    },
+    {
+      "rel": "run-ac3-default.json",
+      "bytes": 6397,
+      "sha256": "551faaeeb48c7ea5898e82b37edba311bcd816e545d6654ac1536cd1039de975"
+    },
+    {
+      "rel": "run-ac3-policy-fail.json",
+      "bytes": 7482,
+      "sha256": "2008f3ce02dc77103ebfdbb232a90520d64f12a716476b8b02e2a2aabab22c52"
+    },
+    {
+      "rel": "run-stdio-scheduler-anomaly-nopoll.json",
+      "bytes": 365646,
+      "sha256": "ed00a117cfb1952c2b8f2dce4c5088ec07808cfdd7355cbe4d9d39770199d7f1"
+    },
+    {
+      "rel": "run-stdio-scheduler-anomaly-recheck.json",
+      "bytes": 350155,
+      "sha256": "300dd70952ac3da804987c3f90bdf411dbb964c0b8e86ca39285fb6fa06d499c"
+    },
+    {
+      "rel": "run-stdio-scheduler-anomaly.json",
+      "bytes": 350159,
+      "sha256": "6c3ae00194576c628e70bfa99a670051363ed19dbe34534545280af3200d5337"
+    },
+    {
+      "rel": "runs-per-page.json",
+      "bytes": 12314,
+      "sha256": "a6e75c62f13cb3d83e2b82f5529cbf8c79269b50d8397b8f7a58729d4ff7e57b"
+    },
+    {
+      "rel": "src-changes-vs-base.patch",
+      "bytes": 10627,
+      "sha256": "8b6633ef2b57303edd826d0316cbd548e8e19629621d76c31f5db3896012fbaf"
+    },
+    {
+      "rel": "src-workingtree.patch",
+      "bytes": 2902,
+      "sha256": "be1ef1a7f534ccd60e69eaa4add68bb8745f36bf694f1a7bc2cf2bb92c982adb"
+    },
+    {
+      "rel": "tools/verify_inproc.py",
+      "bytes": 5289,
+      "sha256": "86b53281991c37ff77acc231ce73f144043b265b459bb0ec820807ba04bc257e"
+    },
+    {
+      "rel": "vitest.log",
+      "bytes": 235306,
+      "sha256": "a5a700de36f2e34addd6a7ce4fe9bef2b0a0a941d443a8a44a0148541154ab01"
+    }
+  ],
+  "process_check": "task-env 仅含本 Task 数据根/日志/脚本；仓库内仅 verification/CORE-PIPELINE-FIX-1/** 证据；无 push/gc/prune。",
+  "closeout": "pending（resource_closeout_status: pending，Task 终态时按本清单处置）"
+}

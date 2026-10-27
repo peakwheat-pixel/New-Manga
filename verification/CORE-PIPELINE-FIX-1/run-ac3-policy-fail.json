@@ -1,0 +1,211 @@
+{
+  "tag": "ac3-policy-fail",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-PIPELINE-FIX-1\\inproc-ac3-policy-fail",
+  "models": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\models",
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr"
+    },
+    "settings": {
+      "detect": {
+        "empty_detection_policy": "fail"
+      }
+    }
+  },
+  "entry": "assemble_production_core + PipelineService (in-process)",
+  "elapsed_ms": 4168.0,
+  "run_status": "PipelineRunStatus.COMPLETED_WITH_FAILURES",
+  "steps": [
+    {
+      "step_type": "detect",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page '6814353f6d8544d6945ad5748d518f47' (stage=detect)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page 'f54739037525486e8704db23db5c0dc1' (stage=detect)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page 'c239be827f3a4448848d2c42bffc05d1' (stage=detect)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page '7a39226851774f01a4cdb89bcf118296' (stage=detect)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page '221d772e601e480e8e7508dfe9aff380' (stage=detect)"
+    }
+  ],
+  "tasks": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page '6814353f6d8544d6945ad5748d518f47' (stage=detect)"
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page 'f54739037525486e8704db23db5c0dc1' (stage=detect)"
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page 'c239be827f3a4448848d2c42bffc05d1' (stage=detect)"
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page '7a39226851774f01a4cdb89bcf118296' (stage=detect)"
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "INVALID_INPUT",
+      "error_detail": "detector returned no candidates for page '221d772e601e480e8e7508dfe9aff380' (stage=detect)"
+    }
+  ],
+  "regions": null
+}

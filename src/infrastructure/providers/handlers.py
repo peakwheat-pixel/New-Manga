@@ -747,6 +747,13 @@ class ProductionHandlers:
         reporting a fallback default (AC-COLOR). ``needs_fallback`` is the
         *output* of the frozen reliability rule, recorded in provenance —
         the render step applies it, this step only measures.
+
+        CORE-PIPELINE-FIX-1: the production assembly wires the real
+        :class:`PillowSourceStyleAnalyzer` (the previous stub had no ``analyze``
+        at all, so every color unit died with ``AttributeError``). An analyzer
+        failure is re-raised as a typed :class:`ProviderError` so the StepRun
+        keeps a diagnosable code (``PROVIDER_FAILED``) instead of a bare
+        ``ValueError``/``AttributeError``.
         """
         region_id = self._require_region(unit)
         if self.deps.source_styles is None:
@@ -761,7 +768,14 @@ class ProductionHandlers:
             )
         original_png = self.deps.images.page_png(unit.page_id)
         box = region.geometry.bbox.as_tuple()
-        result = self.deps.source_styles.extract(original_png, box)
+        try:
+            result = self.deps.source_styles.extract(original_png, box)
+        except ProviderError:
+            raise
+        except Exception as error:  # noqa: BLE001 - analyzer contract: any failure is a provider failure
+            raise ProviderError(
+                f"source style analysis failed: {error}", stage=STEP_COLOR
+            ) from error
         style = result.style
         outputs = {
             "source_style": {

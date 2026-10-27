@@ -149,13 +149,15 @@ def _handlers(
     )
 
 
-def _pipeline(workspace, *, detector=None, region_creator=None) -> PipelineService:
+def _pipeline(
+    workspace, *, detector=None, region_creator=None, settings=None
+) -> PipelineService:
     return build_production_pipeline(
         workspace["conn"],
         handlers=_handlers(
             workspace, detector=detector, region_creator=region_creator
         ).as_mapping(),
-        settings={"ocr": {"script": "japanese"}},
+        settings=settings or {"ocr": {"script": "japanese"}},
     )
 
 
@@ -388,21 +390,67 @@ def test_detect_reuses_existing_live_regions(workspace):
     assert detect_step.output["detection"]["reused_existing_regions"] == 1
 
 
-def test_detect_fails_typed_when_no_candidates(workspace):
-    """AC ①: zero candidates → INVALID_INPUT at the detect step, so the
-    task's remaining units are cancelled (ocr never runs without a Region)."""
+def _run_zero_candidate_pipeline(workspace, *, settings=None):
     detector = FakeDetector(_detection())
     service = _pipeline(
-        workspace, detector=detector, region_creator=lambda *args: "x"
+        workspace,
+        detector=detector,
+        region_creator=lambda *args: "x",
+        settings=settings,
     )
     run = service.create_run(
         CommandType.TRANSLATE_ALL,
         PipelineScope(ScopeType.CHAPTER, chapter_id="chapter-1"),
     )
     service.plan_run(run.run_id)
-    executed = service.execute_run(run.run_id)
+    return detector, service.execute_run(run.run_id)
+
+
+def test_detect_zero_candidates_completes_with_zero_regions(workspace):
+    """AC ② (CORE-PIPELINE-FIX-1): a text-free page is a legitimate empty
+    detection — the step completes with zero Regions and says so."""
+    detector, executed = _run_zero_candidate_pipeline(workspace)
+
+    detect_step = executed.step_runs[0]
+    assert detect_step.status is StepRunStatus.COMPLETED
+    assert detect_step.error_code is None
+    assert detect_step.output["region_ids"] == ()
+    detection = detect_step.output["detection"]
+    assert detection["empty_detection"] is True
+    assert detection["candidate_count"] == 0
+    assert detection["empty_detection_policy"] == "complete"
+    # the detector really ran; nothing was invented
+    assert detector.requests
+    assert workspace["regions"].list_regions("page-1") == []
+    assert executed.status is PipelineRunStatus.COMPLETED
+
+
+def test_detect_zero_candidates_fail_policy_keeps_invalid_input(workspace):
+    """AC ②: the pre-fix hard failure stays available as an opt-in policy."""
+    _, executed = _run_zero_candidate_pipeline(
+        workspace,
+        settings={
+            "ocr": {"script": "japanese"},
+            "detect": {"empty_detection_policy": "fail"},
+        },
+    )
 
     detect_step = executed.step_runs[0]
     assert detect_step.status is StepRunStatus.FAILED
     assert detect_step.error_code == "INVALID_INPUT"
     assert executed.status is PipelineRunStatus.COMPLETED_WITH_FAILURES
+
+
+def test_detect_zero_candidates_unknown_policy_falls_back_to_complete(workspace):
+    """AC ②: an unrecognised knob value must not flip the semantics silently."""
+    _, executed = _run_zero_candidate_pipeline(
+        workspace,
+        settings={
+            "ocr": {"script": "japanese"},
+            "detect": {"empty_detection_policy": "not-a-policy"},
+        },
+    )
+
+    detect_step = executed.step_runs[0]
+    assert detect_step.status is StepRunStatus.COMPLETED
+    assert detect_step.output["detection"]["empty_detection_policy"] == "complete"

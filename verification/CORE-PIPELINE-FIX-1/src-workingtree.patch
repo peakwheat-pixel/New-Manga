@@ -1,0 +1,55 @@
+diff --git a/src/application/tasks/service.py b/src/application/tasks/service.py
+index e00ed52f6..48fba42ce 100644
+--- a/src/application/tasks/service.py
++++ b/src/application/tasks/service.py
+@@ -1238,6 +1238,16 @@ class PipelineService:
+         """
+         region_ids = tuple(result.outputs.get("region_ids") or ())
+         if not region_ids:
++            # CORE-PIPELINE-FIX-1: a *legitimate* empty detection (text-free
++            # page) completes the page task with zero Regions. The plan still
++            # carries the pre-detect regionless fallback units; retire them
++            # instead of letting them fail with "requires a Region target", so
++            # the page task and the run close as completed. The step output
++            # (``detection.empty_detection``) records why nothing ran, so this
++            # is observable rather than a silent success.
++            detection = result.outputs.get("detection")
++            if isinstance(detection, Mapping) and detection.get("empty_detection"):
++                self._cancel_remaining(run, task, unit)
+             return
+         replanned: list[PlanUnit] = []
+         for region_id in region_ids:
+diff --git a/src/infrastructure/providers/handlers.py b/src/infrastructure/providers/handlers.py
+index 4c22fe858..120d03681 100644
+--- a/src/infrastructure/providers/handlers.py
++++ b/src/infrastructure/providers/handlers.py
+@@ -747,6 +747,13 @@ class ProductionHandlers:
+         reporting a fallback default (AC-COLOR). ``needs_fallback`` is the
+         *output* of the frozen reliability rule, recorded in provenance —
+         the render step applies it, this step only measures.
++
++        CORE-PIPELINE-FIX-1: the production assembly wires the real
++        :class:`PillowSourceStyleAnalyzer` (the previous stub had no ``analyze``
++        at all, so every color unit died with ``AttributeError``). An analyzer
++        failure is re-raised as a typed :class:`ProviderError` so the StepRun
++        keeps a diagnosable code (``PROVIDER_FAILED``) instead of a bare
++        ``ValueError``/``AttributeError``.
+         """
+         region_id = self._require_region(unit)
+         if self.deps.source_styles is None:
+@@ -761,7 +768,14 @@ class ProductionHandlers:
+             )
+         original_png = self.deps.images.page_png(unit.page_id)
+         box = region.geometry.bbox.as_tuple()
+-        result = self.deps.source_styles.extract(original_png, box)
++        try:
++            result = self.deps.source_styles.extract(original_png, box)
++        except ProviderError:
++            raise
++        except Exception as error:  # noqa: BLE001 - analyzer contract: any failure is a provider failure
++            raise ProviderError(
++                f"source style analysis failed: {error}", stage=STEP_COLOR
++            ) from error
+         style = result.style
+         outputs = {
+             "source_style": {

@@ -46,9 +46,9 @@ from bootstrap.core_assembly import (
     assemble_core_services,
 )
 from bootstrap.core_service import _PassthroughImageDecoder
-    from infrastructure.rendering.pillow_source_style import (
-        PillowSourceStyleAnalyzer,
-    )
+from infrastructure.rendering.pillow_source_style import (
+    PillowSourceStyleAnalyzer,
+)
 from domain.regions.entities import SfxPolicy
 
 

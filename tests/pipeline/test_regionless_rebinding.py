@@ -211,6 +211,7 @@ def _build_service(
     ocr: Any = None,
     register_ocr: bool = True,
     handler_override: dict[str, Callable] | None = None,
+    settings: dict[str, Any] | None = None,
 ):
     conn = ws["conn"]
     storage = ws["storage"]
@@ -277,7 +278,7 @@ def _build_service(
     service = build_production_pipeline(
         conn,
         handlers=mapping,
-        settings={"ocr": {"script": "japanese"}},
+        settings=settings or {"ocr": {"script": "japanese"}},
         provider_bindings=provider_bindings,
     )
     return service, detector, ocr
@@ -604,11 +605,52 @@ def test_n2_region_locked_between_detect_and_ocr(workspace):
     assert primary.text.ocr_text == ""
 
 
-def test_n3_detector_zero_candidates_fails_with_invalid_input(workspace):
-    """N3: Detector returning 0 candidates results in INVALID_INPUT; no regions created and OCR skipped."""
+def test_n3_detector_zero_candidates_completes_without_regions(workspace):
+    """N3 (CORE-PIPELINE-FIX-1): a text-free page is an empty detection, not invalid input.
+
+    The detect step completes with zero Regions, the obsolete regionless
+    fallback units are retired (OCR never runs), and the run closes COMPLETED.
+    The outcome stays observable through ``detection.empty_detection``.
+    """
     detector = DeterministicDetector(candidates=())
     service, _, _ = _build_service(workspace, detector=detector)
     regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    detect_steps = [s for s in executed.step_runs if s.step_type == STEP_DETECT]
+    assert len(detect_steps) == 1
+    assert detect_steps[0].status is StepRunStatus.COMPLETED
+    assert detect_steps[0].error_code is None
+    assert detect_steps[0].output["region_ids"] == ()
+    assert detect_steps[0].output["detection"]["empty_detection"] is True
+    assert detect_steps[0].output["detection"]["empty_detection_policy"] == "complete"
+
+    # No regions were created
+    assert len(regions.list_regions(PAGE_ID)) == 0
+
+    # OCR step never ran
+    ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
+    assert len(ocr_steps) == 0
+
+
+def test_n3b_zero_candidates_fail_policy_keeps_invalid_input(workspace):
+    """N3b (CORE-PIPELINE-FIX-1): ``empty_detection_policy="fail"`` keeps the old contract."""
+    detector = DeterministicDetector(candidates=())
+    service, _, _ = _build_service(
+        workspace,
+        detector=detector,
+        settings={
+            "ocr": {"script": "japanese"},
+            "detect": {"empty_detection_policy": "fail"},
+        },
+    )
 
     run = service.create_run(
         CommandType.REOCR_ALL,
@@ -622,13 +664,6 @@ def test_n3_detector_zero_candidates_fails_with_invalid_input(workspace):
     assert len(detect_steps) == 1
     assert detect_steps[0].status is StepRunStatus.FAILED
     assert detect_steps[0].error_code == "INVALID_INPUT"
-
-    # No regions were created
-    assert len(regions.list_regions(PAGE_ID)) == 0
-
-    # OCR step never ran
-    ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
-    assert len(ocr_steps) == 0
 
 
 def test_n4_no_ocr_provider_fails_with_provider_not_configured(workspace):
@@ -981,9 +1016,11 @@ def test_backfill_single_region_nonsfx_page_decisions_unchanged(workspace):
     assert executed.planned_step_units == executed.terminal_step_units == 2
 
 
-def test_backfill_zero_detected_regions_leaves_units_regionless(workspace):
-    """F3 (boundary): detect finds zero candidates — nothing to fan out, the
-    backfill never fires and the plan units stay regionless."""
+def test_backfill_zero_detected_regions_completes_without_fan_out(workspace):
+    """F3 (boundary, CORE-PIPELINE-FIX-1): detect finds zero candidates — an
+    empty detection, so nothing fans out. The obsolete regionless units are
+    retired (never executed, never rebound), the page task completes and the
+    detect step records ``empty_detection`` so the outcome is observable."""
     detector = DeterministicDetector(candidates=())
     service, _, _ = _build_service(workspace, detector=detector)
     regions = workspace["regions"]
@@ -995,12 +1032,15 @@ def test_backfill_zero_detected_regions_leaves_units_regionless(workspace):
     service.plan_run(run.run_id)
     executed = service.execute_run(run.run_id)
 
-    assert executed.status is PipelineRunStatus.COMPLETED_WITH_FAILURES
-    assert executed.tasks[0].error_code == "INVALID_INPUT"
+    assert executed.status is PipelineRunStatus.COMPLETED
+    assert executed.tasks[0].status is PipelineTaskStatus.COMPLETED
     assert len(regions.list_regions(PAGE_ID)) == 0
-    # no unit ever got rebound to a Region
+    # no unit ever got rebound to a Region, and only the detect unit ran
     assert all(u.region_id is None for u in executed.tasks[0].units)
-    assert not [s for s in executed.step_runs if s.step_type == STEP_OCR]
+    assert [s.step_type for s in executed.step_runs] == [STEP_DETECT]
+    detect_step = executed.step_runs[0]
+    assert detect_step.output["detection"]["empty_detection"] is True
+    assert detect_step.output["detection"]["candidate_count"] == 0
 
 
 def test_region_added_after_backfill_not_followed_by_current_run(workspace):

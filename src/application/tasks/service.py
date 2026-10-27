@@ -1238,6 +1238,16 @@ class PipelineService:
         """
         region_ids = tuple(result.outputs.get("region_ids") or ())
         if not region_ids:
+            # CORE-PIPELINE-FIX-1: a *legitimate* empty detection (text-free
+            # page) completes the page task with zero Regions. The plan still
+            # carries the pre-detect regionless fallback units; retire them
+            # instead of letting them fail with "requires a Region target", so
+            # the page task and the run close as completed. The step output
+            # (``detection.empty_detection``) records why nothing ran, so this
+            # is observable rather than a silent success.
+            detection = result.outputs.get("detection")
+            if isinstance(detection, Mapping) and detection.get("empty_detection"):
+                self._cancel_remaining(run, task, unit)
             return
         replanned: list[PlanUnit] = []
         for region_id in region_ids:
