@@ -1,0 +1,11 @@
+{
+  "ac": "AC2",
+  "policy": "control: NEWMANGA_RUN_PROVIDER_BINDINGS=off (no Host-side bindings)",
+  "sidecar": "G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar\\core_service.exe",
+  "sidecar_sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "run_id": "run-c05f82f866784a2685f0373ce56eedbe",
+  "terminal_status": "completed_with_failures",
+  "start_request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-3\u0022,\u0022command\u0022:\u0022StartRun\u0022,\u0022payload\u0022:{\u0022command\u0022:\u0022translate_untranslated\u0022,\u0022scope\u0022:{\u0022kind\u0022:\u0022book\u0022,\u0022book_id\u0022:\u002214340ddad0ed472fbe687fe12340c5d8\u0022},\u0022idempotency_key\u0022:\u0022run-binding-baseline-1\u0022}}",
+  "note": "the exact per-step PROVIDER_NOT_CONFIGURED is asserted on the copied library.db by check_run_binding.py"
+}

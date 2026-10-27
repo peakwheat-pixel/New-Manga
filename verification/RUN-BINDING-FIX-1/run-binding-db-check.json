@@ -1,0 +1,59 @@
+{
+  "ac": "AC2/AC3",
+  "task": "RUN-BINDING-FIX-1",
+  "models_build_sha256_expected": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+  "models_run": {
+    "run_id": "run-d12f988f25b44021a0546e8903505475",
+    "status": "completed_with_failures",
+    "provider_binding_snapshot": "{\"ocr\": \"manga-ocr\"}",
+    "run_targets": 8,
+    "step_counts": {
+      "detect:completed:none": 3,
+      "ocr:completed:none": 3,
+      "color:failed:PROVIDER_FAILED": 3,
+      "detect:failed:INVALID_INPUT": 5
+    },
+    "ocr_rows": 3,
+    "ocr_completed_rows": 3,
+    "ocr_no_longer_provider_not_configured": true,
+    "color_rows": 3,
+    "color_failed_rows": 3,
+    "chain_still_stops_at": "color",
+    "db_sha256": "3710e6618e6bd2c2a98fb8a6b0173c4d252c39a05e8633c7732e6f49a10b7a7a"
+  },
+  "unknown_provider_run": {
+    "run_id": "run-b451794565b34e83ae525449009bfe7d",
+    "status": "completed_with_failures",
+    "provider_binding_snapshot": "{\"ocr\": \"no-such-provider\"}",
+    "ocr_rows": 1,
+    "typed_error_codes": [
+      "PROVIDER_UNAVAILABLE"
+    ],
+    "typed_error_present": true,
+    "db_sha256": "6e6e10f73f0c28534fc2083a7c809b4829aea91f208024126c26dbb62b8b74f5"
+  },
+  "baseline_run_host_injection_disabled": {
+    "run_id": "run-c05f82f866784a2685f0373ce56eedbe",
+    "status": "completed_with_failures",
+    "provider_binding_snapshot": "{}",
+    "ocr_rows": 3,
+    "ocr_provider_not_configured_rows": 3,
+    "step_counts": {
+      "detect:completed:none": 3,
+      "ocr:failed:PROVIDER_NOT_CONFIGURED": 3,
+      "detect:failed:INVALID_INPUT": 5
+    },
+    "db_sha256": "b97839faac325ccb141325e1aa89a635c3049efe16c4b8ed45c73ef54439722b"
+  },
+  "assertions": {
+    "models_ocr_completed": true,
+    "models_ocr_not_provider_not_configured": true,
+    "models_chain_advanced_to_color": true,
+    "models_run_has_8_targets": true,
+    "unknown_provider_typed_error": true,
+    "baseline_ocr_still_provider_not_configured": true
+  },
+  "passed": true,
+  "errors": [],
+  "note": "OCR success is asserted on step_runs; the run still terminates completed_with_failures because the color step fails with a pre-existing stub-analyzer error - this does NOT mean the whole chain is green."
+}

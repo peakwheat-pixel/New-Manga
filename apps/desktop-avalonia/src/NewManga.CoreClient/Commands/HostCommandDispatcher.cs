@@ -191,13 +191,9 @@ public sealed class HostCommandDispatcher
                 writer.WriteString("command", RequireString(name, payload, "command"));
                 writer.WritePropertyName("scope");
                 RequireObject(name, payload, "scope").WriteTo(writer);
-                if (payload.TryGetProperty("overrides", out var overrides) &&
-                    overrides.ValueKind != JsonValueKind.Null)
-                {
-                    writer.WritePropertyName("overrides");
-                    overrides.WriteTo(writer);
-                }
-
+                // RUN-BINDING-FIX-1: carry Host-side default provider bindings (the frozen Core's
+                // pipeline defaults are empty, so OCR otherwise fails PROVIDER_NOT_CONFIGURED).
+                WriteStartRunOverrides(writer, name, payload);
                 writer.WriteString("idempotency_key", RequireString(name, payload, "idempotency_key"));
                 break;
             case "library_control_run":
@@ -467,6 +463,78 @@ public sealed class HostCommandDispatcher
         }
 
         throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be a non-negative integer");
+    }
+
+    /// <summary>
+    /// RUN-BINDING-FIX-1: writes StartRun's <c>overrides</c> object with the Host-side default
+    /// provider bindings merged in. Priority: explicit <c>overrides.provider_bindings</c> from the
+    /// caller always wins (never merged/overwritten); otherwise the configured default is injected
+    /// (default <c>{"ocr":"manga-ocr"}`, disabled through <see cref="RunBindingDefaults"/>). Other
+    /// caller overrides are preserved. A non-object <c>overrides</c>/<c>provider_bindings</c> is a
+    /// typed INVALID_ARGUMENTS rejection before any Core frame is sent.
+    /// </summary>
+    private static void WriteStartRunOverrides(Utf8JsonWriter writer, string command, JsonElement args)
+    {
+        JsonElement? userOverrides = null;
+        if (args.TryGetProperty("overrides", out var overrides) && overrides.ValueKind != JsonValueKind.Null)
+        {
+            if (overrides.ValueKind != JsonValueKind.Object)
+            {
+                throw new HostCommandInvalidArgumentsException(command, "argument 'overrides' must be an object");
+            }
+
+            userOverrides = overrides;
+        }
+
+        JsonElement? userBindings = null;
+        if (userOverrides is { } present &&
+            present.TryGetProperty("provider_bindings", out var bindings) &&
+            bindings.ValueKind != JsonValueKind.Null)
+        {
+            if (bindings.ValueKind != JsonValueKind.Object)
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command,
+                    "argument 'overrides.provider_bindings' must be an object");
+            }
+
+            userBindings = bindings;
+        }
+
+        // Only consult the environment when the caller did not provide explicit bindings.
+        var defaults = userBindings is null ? RunBindingDefaults.Resolve() : null;
+        if (userOverrides is null && userBindings is null && defaults is null)
+        {
+            return;
+        }
+
+        writer.WritePropertyName("overrides");
+        writer.WriteStartObject();
+        if (userOverrides is { } source)
+        {
+            foreach (var property in source.EnumerateObject())
+            {
+                if (property.NameEquals("provider_bindings"))
+                {
+                    continue;
+                }
+
+                property.WriteTo(writer);
+            }
+        }
+
+        if (userBindings is { } explicitBindings)
+        {
+            writer.WritePropertyName("provider_bindings");
+            explicitBindings.WriteTo(writer);
+        }
+        else if (defaults is { } defaultBindings)
+        {
+            writer.WritePropertyName("provider_bindings");
+            defaultBindings.WriteTo(writer);
+        }
+
+        writer.WriteEndObject();
     }
 
     private static JsonElement? OptionalObject(string command, JsonElement args, string property)

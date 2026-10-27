@@ -84,6 +84,12 @@ try {
         Tee-Object -FilePath $testLog -Append
     if ($LASTEXITCODE -ne 0) { throw "S4 region fixture seeding failed" }
     $env:NEWMANGA_S4_REGION_FIXTURE = $regionFixtureRoot
+    # RUN-BINDING-FIX-1: the models-package core_service carries the OCR weights; the StartRun binding
+    # fix re-verifies the full 8-page run against that exact build when the package is present.
+    $modelsSidecar = 'G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar'
+    if (Test-Path (Join-Path $modelsSidecar 'core_service.exe')) {
+        $env:NEWMANGA_MODELS_SIDECAR_DIR = $modelsSidecar
+    }
     # CORE-TILE-EMIT-1: produce a real Python-Core tile artifact for the Host E2E test.
     $coreTileE2e = 'G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e'
     $env:NEWMANGA_CORE_TILE_E2E = "$coreTileE2e/artifact"
