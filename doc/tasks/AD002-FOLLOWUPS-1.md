@@ -75,3 +75,15 @@ AD-002 重构（S0–S5 + 后端瘦身 + 推理基线 + 发布件）已完成，
 - 删除、迁移、归档数量/字节数：无。
 - 未关闭项及保留原因：即本清单。
 - 当前指针清理：关闭时更新 STATUS/PLAN/LEDGER。
+## 追加登记（2026-10-27，A/B 批次后）
+
+### E. Run/Export 链闭环
+14. **翻译 provider slice**：`translate` 步骤 typed `PROVIDER_NOT_CONFIGURED`（CORE-PIPELINE-FIX-1 后 Run 止于此）→ 接入翻译 provider 才能到 render/Export。
+15. **sidecar 重打包**：Core 修复（color analyzer/空检测语义）只在源码，冻结 `core_service.exe`（`2b36bfeb…`）未重打包；发布前需重打包 base + models 包并复跑 `verify_inproc.py`。
+16. **调度线程异常诊断**：`python -m bootstrap.core_service` 调度线程内 detect StepRun 卡 `running`、下游 regionless ocr 报 `INVALID_INPUT`（进程内正常，3 份证据）——疑 `ThreadRoutedConnection`/`write_in_current_transaction` 事务路径，建议单开诊断 Task。
+17. **Export 真跑**：需 14 + translated 产物 + grant（grant 已由 GRANT-ISSUER-1 完成）。
+
+### F. 命令面收尾
+18. `list_region_revisions`（读）仍 NS，路由探针 ok:true，可直接接线。
+19. region 写 UI 入口 + 只读门（S5）。
+20. App 侧导入/导出 UI（文件/文件夹选择器 → 已接的 4 条 Host 命令）。
