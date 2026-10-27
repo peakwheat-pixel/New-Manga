@@ -1,0 +1,79 @@
+{
+  "ac": "AC3",
+  "snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+  "snapshot_sha256": "4c6a4da0e8968c6b62516fdbabd5608f4dd14cdd4d91c2c0b9d16a1092ccb574",
+  "extract_check": "PASS: production command surface matches snapshot (66 commands)",
+  "before": {
+    "implemented": 16,
+    "not_supported": 50
+  },
+  "after": {
+    "implemented": 24,
+    "not_supported": 42
+  },
+  "changed_commands": [
+    {
+      "command": "settings_update_section",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings.update_section",
+      "core_minor": 3
+    },
+    {
+      "command": "settings_provider_profiles_list",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_provider_profiles_list",
+      "core_minor": 7
+    },
+    {
+      "command": "settings_network_profiles_list",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_network_profiles_list",
+      "core_minor": 7
+    },
+    {
+      "command": "settings_resolve_overrides",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_resolve_overrides",
+      "core_minor": 7
+    },
+    {
+      "command": "backup_create",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "backup.create",
+      "core_minor": 3
+    },
+    {
+      "command": "plugins_set_enabled",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "plugins.set_enabled",
+      "core_minor": 3
+    },
+    {
+      "command": "cleanup_run",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "cleanup.run",
+      "core_minor": 3
+    },
+    {
+      "command": "library_get_reader_projection",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "GetReaderProjection",
+      "core_minor": 3
+    }
+  ],
+  "evidence": {
+    "before_parity_contract": "verification/HOST-COMMAND-MIGRATION-1/commands/parity-contract.json",
+    "after_parity_contract": "verification/NS-WIRE-A1/evidence/parity-contract.json",
+    "integration_results": "verification/NS-WIRE-A1/evidence/integration-results.json",
+    "probe_results": "verification/NS-WIRE-A1/probe-results.json"
+  },
+  "registry_contract": "C# HostCommandRegistry 66 条全部有归属：24 IMPLEMENTED / 42 NOT_SUPPORTED（每族原因可见）"
+}

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Commands;
+using NewManga.CoreClient.Wire;
 using NewManga.CoreClient.Tests.Support;
 
 namespace NewManga.CoreClient.Tests.Commands;
@@ -146,6 +147,30 @@ public sealed class CommandIntegrationTests
         var exports = await Run("library_get_export_history");
         Assert.True(exports.TryGetProperty("exports", out _));
 
+        // NS-WIRE-A1 batch A1: settings / plugins / backup / cleanup faces against the frozen Core.
+        var settingsUpdated = await Run("settings_update_section", "{\"section\":\"ocr\",\"values\":{}}");
+        Assert.True(settingsUpdated.TryGetProperty("settings", out _), "settings.update_section must return the settings projection");
+        var providerProfiles = await Run("settings_provider_profiles_list");
+        Assert.True(providerProfiles.TryGetProperty("profiles", out _), "provider profiles list must return a profiles array");
+        var networkProfiles = await Run("settings_network_profiles_list");
+        Assert.True(networkProfiles.TryGetProperty("profiles", out _), "network profiles list must return a profiles array");
+        var overrides = await Run("settings_resolve_overrides", "{\"keys\":[\"sfx.policy\"]}");
+        Assert.True(overrides.TryGetProperty("values", out _), "resolve_overrides must return resolved values");
+        var backupCreated = await Run("backup_create", "{\"backup_type\":\"manual\"}");
+        Assert.False(string.IsNullOrEmpty(backupCreated.GetProperty("backup_id").GetString()), "backup.create must return a backup_id");
+        var pluginsToggled = await Run("plugins_set_enabled", "{\"enabled\":false}");
+        Assert.False(pluginsToggled.GetProperty("global_enabled").GetBoolean(), "plugins.set_enabled must project global_enabled=false");
+        var cleanupRun = await Run("cleanup_run");
+        Assert.True(cleanupRun.TryGetProperty("removed", out _), "cleanup.run must project the CleanupOutcome");
+        // The reader projection success path needs a chapter WITH pages; this fixture data root has
+        // none, so the real execution must surface the Core's typed TARGET_NOT_FOUND (routing proof).
+        // The success path is covered by verification/NS-WIRE-A1/probe-results.json against BOOK-FIXTURE-1.
+        var readerProjectionError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync(
+                "library_get_reader_projection",
+                Args($"{{\"chapter_id\":\"{chapterId}\",\"mode\":\"original\",\"start_position\":\"beginning\"}}")));
+        Assert.Equal("TARGET_NOT_FOUND", readerProjectionError.Code);
+
         var issued = await Run("issue_resource_url", "{\"resource_id\":\"res-1\",\"revision\":\"rev-1\"}");
         var grantId = issued.GetProperty("id").GetString();
         Assert.False(string.IsNullOrEmpty(grantId));
@@ -163,8 +188,8 @@ public sealed class CommandIntegrationTests
         var revokedCount = await Run("revoke_resource_refs", "{\"resource_id\":\"res-1\"}");
         Assert.True(revokedCount.GetProperty("revoked_count").GetInt64() >= 1);
 
-        Assert.Equal(17, results.Count); // 13 core + 4 bridge (issue x2)
-        Assert.Equal(13, results.Count(row => row.GetType().GetProperty("channel")!.GetValue(row)!.ToString() == "CoreService"));
+        Assert.Equal(24, results.Count); // 20 core + 4 bridge (issue x2)
+        Assert.Equal(20, results.Count(row => row.GetType().GetProperty("channel")!.GetValue(row)!.ToString() == "CoreService"));
         Assert.Equal(4, results.Count(row => row.GetType().GetProperty("channel")!.GetValue(row)!.ToString() == "HostBridge"));
 
         SidecarFixture.WriteEvidenceJson("commands/integration-results.json", writer =>
@@ -172,7 +197,7 @@ public sealed class CommandIntegrationTests
             writer.WriteStartObject();
             writer.WriteString("ac", "AC2/AC3/AC4");
             writer.WriteNumber("implemented_commands_executed", results.Count);
-            writer.WriteNumber("core_service_channel", 13);
+            writer.WriteNumber("core_service_channel", 20);
             writer.WriteNumber("host_bridge_channel", 4);
             writer.WriteBoolean("all_ok", true);
             writer.WriteStartArray("results");
@@ -253,7 +278,7 @@ public sealed class CommandIntegrationTests
             typed.Add(new { command = descriptor.Name, domain = descriptor.Domain.ToString(), code = error.Code });
         }
 
-        Assert.Equal(50, typed.Count);
+        Assert.Equal(42, typed.Count);
         var unknown = await Assert.ThrowsAsync<HostCommandUnknownException>(
             () => context.Dispatcher.InvokeAsync("not_a_production_command"));
         Assert.Equal("UNKNOWN_COMMAND", unknown.Code);
@@ -318,7 +343,7 @@ public sealed class CommandIntegrationTests
 
         Assert.Equal(66, seen.Count);
         Assert.Equal(66, services.Sum(service => service.Descriptors.Count));
-        Assert.Equal(16, services.Sum(service => service.ImplementedCount));
+        Assert.Equal(24, services.Sum(service => service.ImplementedCount));
 
         var crossDomain = await Assert.ThrowsAsync<ArgumentException>(
             () => context.Settings.InvokeAsync("library_list_books", Args("{}")));

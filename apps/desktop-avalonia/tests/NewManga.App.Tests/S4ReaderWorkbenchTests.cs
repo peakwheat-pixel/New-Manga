@@ -335,8 +335,8 @@ public sealed class S4WiringTests
     public void ReaderWorkbenchWiring_IsVerified_AndNsBatchRegistered()
     {
         Assert.Empty(S4Wiring.VerifyAgainstRegistry());
-        Assert.Equal(13, S4Wiring.WiredCommandCount);
-        Assert.Equal(10, S4Wiring.NsRegisteredCount);
+        Assert.Equal(14, S4Wiring.WiredCommandCount);
+        Assert.Equal(9, S4Wiring.NsRegisteredCount);
         Assert.Equal(0, S4Wiring.NsDoneCount);
         Assert.All(S4Wiring.NsBatch, item =>
         {
@@ -351,8 +351,8 @@ public sealed class S4WiringTests
             vm,
             new List<double> { 1.2, 1.8, 2.1 });
         var json = File.ReadAllText(Path.Combine(Evidence.Directory, "commands", "wiring.json"));
-        Assert.Contains("\"wired_implemented_count\": 13", json, StringComparison.Ordinal);
-        Assert.Contains("\"ns_registered_count\": 10", json, StringComparison.Ordinal);
+        Assert.Contains("\"wired_implemented_count\": 14", json, StringComparison.Ordinal);
+        Assert.Contains("\"ns_registered_count\": 9", json, StringComparison.Ordinal);
     }
 
     [AvaloniaFact]

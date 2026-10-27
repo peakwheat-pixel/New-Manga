@@ -73,16 +73,7 @@ public sealed class HostCommandDispatcher
         var response = await core.SendAsync(
                 descriptor.CoreCommand!,
                 descriptor.CoreMinor,
-                writer =>
-                {
-                    writer.WriteStartObject();
-                    foreach (var property in args.EnumerateObject())
-                    {
-                        property.WriteTo(writer);
-                    }
-
-                    writer.WriteEndObject();
-                },
+                writer => WriteCorePayload(descriptor.Name, args, writer),
                 TimeSpan.FromSeconds(30),
                 cancellationToken)
             .ConfigureAwait(false);
@@ -160,6 +151,123 @@ public sealed class HostCommandDispatcher
             default:
                 throw new HostCommandNotSupportedException(descriptor);
         }
+    }
+
+    /// <summary>
+    /// NS-WIRE-A1: the legacy Tauri command signatures are enforced at the dispatcher boundary and
+    /// translated to the exact Core payload each route proved against the frozen sidecar. Unknown
+    /// commands keep the historical pass-through (Core remains the semantic authority).
+    /// </summary>
+    private static void WriteCorePayload(string name, JsonElement args, Utf8JsonWriter writer)
+    {
+        var payload = args.ValueKind == JsonValueKind.Object ? args : EmptyObject();
+        writer.WriteStartObject();
+        switch (name)
+        {
+            case "settings_update_section":
+                writer.WriteString("section", RequireString(name, payload, "section"));
+                writer.WritePropertyName("values");
+                RequireObject(name, payload, "values").WriteTo(writer);
+                break;
+            case "settings_provider_profiles_list":
+            case "settings_network_profiles_list":
+            case "cleanup_run":
+                // Legacy signatures take no arguments; the Core faces reject stray payload keys.
+                break;
+            case "settings_resolve_overrides":
+                writer.WritePropertyName("keys");
+                WriteStringArray(writer, name, payload, "keys");
+                WriteOptionalString(writer, name, payload, "book_id");
+                WriteOptionalString(writer, name, payload, "chapter_id");
+                WriteOptionalString(writer, name, payload, "run_id");
+                break;
+            case "backup_create":
+                writer.WriteString("backup_type", OptionalString(name, payload, "backup_type") ?? "manual");
+                break;
+            case "plugins_set_enabled":
+                writer.WriteBoolean("enabled", RequireBool(name, payload, "enabled"));
+                break;
+            case "library_get_reader_projection":
+                writer.WriteString("chapter_id", RequireString(name, payload, "chapter_id"));
+                writer.WriteString("mode", RequireString(name, payload, "mode"));
+                writer.WriteString("start_position", RequireString(name, payload, "start_position"));
+                break;
+            default:
+                foreach (var property in payload.EnumerateObject())
+                {
+                    property.WriteTo(writer);
+                }
+
+                break;
+        }
+
+        writer.WriteEndObject();
+    }
+
+    private static JsonElement RequireObject(string command, JsonElement args, string property)
+    {
+        if (args.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.Object)
+        {
+            return value;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"missing required object argument '{property}'");
+    }
+
+    private static bool RequireBool(string command, JsonElement args, string property)
+    {
+        if (args.TryGetProperty(property, out var value) &&
+            value.ValueKind is JsonValueKind.True or JsonValueKind.False)
+        {
+            return value.GetBoolean();
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"missing required boolean argument '{property}'");
+    }
+
+    private static string? OptionalString(string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return null;
+        }
+
+        if (value.ValueKind == JsonValueKind.String && value.GetString() is { Length: > 0 } text)
+        {
+            return text;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be a non-empty string");
+    }
+
+    private static void WriteOptionalString(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        var value = OptionalString(command, args, property);
+        if (value is not null)
+        {
+            writer.WriteString(property, value);
+        }
+    }
+
+    private static void WriteStringArray(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind != JsonValueKind.Array)
+        {
+            throw new HostCommandInvalidArgumentsException(command, $"missing required string[] argument '{property}'");
+        }
+
+        writer.WriteStartArray();
+        foreach (var element in value.EnumerateArray())
+        {
+            if (element.ValueKind != JsonValueKind.String || string.IsNullOrEmpty(element.GetString()))
+            {
+                throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must contain non-empty strings");
+            }
+
+            writer.WriteStringValue(element.GetString());
+        }
+
+        writer.WriteEndArray();
     }
 
     private static string RequireString(string command, JsonElement args, string property)

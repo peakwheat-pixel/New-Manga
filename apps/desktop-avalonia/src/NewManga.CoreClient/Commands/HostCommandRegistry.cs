@@ -2,7 +2,7 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Twelve commands are migrated to the existing sidecars;
+/// organised into the six domain services. Twenty-four commands are migrated to the existing sidecars;
 /// the rest are explicit NOT_SUPPORTED with a per-command reason (never silently missing).
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
@@ -120,6 +120,17 @@ public static class HostCommandRegistry
         ["plugins_list"] = new("plugins.list", 3),
         ["cleanup_preview"] = new("cleanup.preview", 3),
         ["library_get_export_history"] = new("GetExportHistory", 3),
+        // NS-WIRE-A1 batch A1: S3-A/B/C settings / plugins / backup / cleanup faces.
+        // Payloads/minors are the ones proven against the frozen core_service by
+        // verification/NS-WIRE-A1/probe-results.json (P15 settings face needs minor 7).
+        ["settings_update_section"] = new("settings.update_section", 3),
+        ["settings_provider_profiles_list"] = new("settings_provider_profiles_list", 7),
+        ["settings_network_profiles_list"] = new("settings_network_profiles_list", 7),
+        ["settings_resolve_overrides"] = new("settings_resolve_overrides", 7),
+        ["backup_create"] = new("backup.create", 3),
+        ["plugins_set_enabled"] = new("plugins.set_enabled", 3),
+        ["cleanup_run"] = new("cleanup.run", 3),
+        ["library_get_reader_projection"] = new("GetReaderProjection", 3),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
@@ -132,7 +143,6 @@ public static class HostCommandRegistry
     /// <summary>Commands whose legacy implementation is a Core round-trip still missing from the frozen Core.</summary>
     private static readonly Dictionary<string, string> CoreRoute = new(StringComparer.Ordinal)
     {
-        ["library_get_reader_projection"] = "GetReaderProjection",
         ["library_save_reading_progress"] = "SaveReadingProgress",
         ["set_region_type"] = "set_region_type",
         ["list_region_revisions"] = "list_region_revisions",
