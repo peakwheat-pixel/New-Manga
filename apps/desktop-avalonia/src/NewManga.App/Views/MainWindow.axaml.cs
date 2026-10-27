@@ -1,8 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.ViewModels;
@@ -21,6 +23,9 @@ public partial class MainWindow : Window
     private readonly TextBlock _status;
     private WindowMaterialKind _materialKind;
     private double _lastRenderScaling;
+
+    /// <summary>F11-HOTKEY-1: page to return to after an F11-initiated immersive session (null = reader).</summary>
+    private string? _pageBeforeImmersive;
 
     /// <summary>Design-time / XAML loader constructor.</summary>
     public MainWindow()
@@ -132,6 +137,9 @@ public partial class MainWindow : Window
         };
         Loaded += OnLoaded;
         Closed += OnClosed;
+        // F11-HOTKEY-1: application-internal F11 toggle. Tunnelling so the window sees F11 before
+        // focused controls (the handler still refuses when a text input has focus).
+        AddHandler(KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel, handledEventsToo: true);
         Navigate("bookshelf");
         ApplyTheme();
     }
@@ -188,6 +196,115 @@ public partial class MainWindow : Window
 
     /// <summary>READER-LIBRARY-WIRE-1 AC2: the immersive window created by the reader page entry.</summary>
     public ReaderWindow? LastImmersiveWindow { get; private set; }
+
+    /// <summary>F11-HOTKEY-1: page to restore when an F11-initiated immersive session closes.</summary>
+    public string? ImmersiveRestorePage => _pageBeforeImmersive;
+
+    /// <summary>F11-HOTKEY-1: last F11 toggle task (headless tests / evidence await this).</summary>
+    public Task LastImmersiveToggle { get; private set; } = Task.CompletedTask;
+
+    /// <summary>
+    /// F11-HOTKEY-1 AC1/AC2: one application-level F11 press.
+    /// Behaviour (Record Decision): bare F11 only (no modifiers); ignored while a text input has
+    /// focus; opens the immersive reader for the current book — switching to the reader page first
+    /// when pressed elsewhere — and closes it (restoring the page the user came from) when already
+    /// open. Returns true when the key was consumed.
+    /// </summary>
+    public bool TryHandleGlobalKey(Key key, KeyModifiers modifiers = KeyModifiers.None)
+    {
+        if (key != Key.F11)
+        {
+            return false;
+        }
+
+        if (modifiers != KeyModifiers.None)
+        {
+            return false;
+        }
+
+        if (IsTextInputFocused())
+        {
+            return false;
+        }
+
+        LastImmersiveToggle = ToggleImmersiveAsync();
+        return true;
+    }
+
+    /// <summary>F11-HOTKEY-1 AC2: true when the focused element is (inside) a text input.</summary>
+    public bool IsTextInputFocused()
+    {
+        var focused = FocusManager?.GetFocusedElement();
+        if (focused is null)
+        {
+            return false;
+        }
+
+        if (focused is TextBox)
+        {
+            return true;
+        }
+
+        return focused is Visual visual && visual.FindAncestorOfType<TextBox>(includeSelf: false) is not null;
+    }
+
+    /// <summary>
+    /// F11-HOTKEY-1 AC1: F11 toggle. Opening from a non-reader page first enters the reader (loading
+    /// the current/default book) and remembers that page so Esc/F11 returns there; opening from the
+    /// reader page keeps the reader page as the return target. While an immersive window is open,
+    /// toggling again closes it.
+    /// </summary>
+    public async Task ToggleImmersiveAsync()
+    {
+        if (LastImmersiveWindow is { } open)
+        {
+            if (open.IsVisible)
+            {
+                open.Close();
+            }
+            else
+            {
+                LastImmersiveWindow = null;
+            }
+
+            return;
+        }
+
+        var origin = CurrentPage;
+        if (!string.Equals(origin, "reader", StringComparison.Ordinal))
+        {
+            Navigate("reader");
+            await EnsureReaderLoadedAsync().ConfigureAwait(true);
+        }
+
+        OpenImmersiveReader();
+        if (!string.Equals(origin, "reader", StringComparison.Ordinal))
+        {
+            _pageBeforeImmersive = origin;
+        }
+    }
+
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (TryHandleGlobalKey(e.Key, e.KeyModifiers))
+        {
+            e.Handled = true;
+        }
+    }
+
+    private void OnImmersiveWindowClosed(ReaderWindow window)
+    {
+        if (ReferenceEquals(LastImmersiveWindow, window))
+        {
+            LastImmersiveWindow = null;
+        }
+
+        if (_pageBeforeImmersive is { } origin)
+        {
+            _pageBeforeImmersive = null;
+            Navigate(origin);
+        }
+    }
 
     /// <summary>
     /// READER-LIBRARY-WIRE-1 AC1: pull the real book through Host/CoreClient
@@ -326,6 +443,8 @@ public partial class MainWindow : Window
         }
 
         LastImmersiveWindow = window;
+        // F11-HOTKEY-1: closing (Esc / F11 / toolbar) restores the page F11 came from, if any.
+        window.Closed += (_, _) => OnImmersiveWindowClosed(window);
         window.Show();
         return window;
     }

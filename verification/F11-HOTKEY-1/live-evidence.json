@@ -1,0 +1,140 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "task": "F11-HOTKEY-1",
+  "captured_at_utc": "2026-10-27T10:08:41+00:00",
+  "record_decision": {
+    "scope": "application-internal F11 (no OS-global hotkey; no RegisterHotKey/HotKeyManager/SetWindowsHookEx calls exist in apps/desktop-avalonia - verified by source grep)",
+    "bare_f11_only": "F11 with any modifier (Ctrl/Alt/Shift) is not the hotkey and is not consumed",
+    "from_reader_page": "opens the immersive fullscreen reader for the current book; closing (Esc/F11) stays on the reader page",
+    "from_other_pages": "first enters the reader page for the current/default book, then opens the immersive window; closing (Esc/F11) returns to the page F11 was pressed on",
+    "while_open": "F11 toggles the immersive window closed and applies the same return-page rule",
+    "text_inputs": "while the focused element is a TextBox (search / rename inputs) F11 is ignored and not consumed, so typing and text content are untouched"
+  },
+  "environment": {
+    "app_exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\F11-HOTKEY-1\\pkg\\app\\NewManga.App.exe",
+    "app_exe_bytes": 29385441,
+    "app_exe_sha256": "b3febfa9d9aa7f93f4c65b8799c48a1d005b1cfc655fb6c113c08860967c6e6e",
+    "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\F11-HOTKEY-1\\isolated-data",
+    "data_root_provenance": "copy of BOOK-FIXTURE-1 durable state (library.db + managed/); source fixture untouched",
+    "launch": "pwsh -File apps/desktop-avalonia/scripts/start-book-fixture.ps1 -AppExe <pkg>/NewManga.App.exe -DataRoot <isolated-data> -ExtraArgs '--demo-write'",
+    "host_log_mode_lines": [
+      "2026-10-27T10:03:02.2933273+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\\CODEX\\New Manga.workspace\\task-envs\\F11-HOTKEY-1\\isolated-data"
+    ],
+    "sidecar_provenance": "FINAL-VALIDATION-1 packaged core-sidecar (unmodified)",
+    "input_delivery": "cua-driver: keyboard via foreground SendInput for real-machine run; window observations via list_windows / get_window_state screenshots"
+  },
+  "screens": {
+    "bookshelf_initial": {
+      "path": "screens/01-bookshelf-initial.png",
+      "bytes": 49247,
+      "sha256": "ddb52d02dd8d4e668db320a406d0ae8ee898486062e4dc0ab081ae73f4208b47"
+    },
+    "textbox_focus_f11_noop": {
+      "path": "screens/02-textbox-focus-f11-noop.png",
+      "bytes": 50978,
+      "sha256": "548cea932e762313b7757081d52bfb86af3a20c55c8ffdf2c38d0eee1e77363a"
+    },
+    "immersive_from_reader": {
+      "path": "screens/03-immersive-f11-from-reader.png",
+      "bytes": 1854307,
+      "sha256": "f5759e365e08f20fbb6f65dc80d1e83e2a8a1f2a89dbdaa417b51d36bc14fc4f"
+    },
+    "restored_reader_after_esc": {
+      "path": "screens/04-restored-reader-after-esc.png",
+      "bytes": 1238064,
+      "sha256": "85bcd4834e716aa59c32db251bfa70bfaa27acb74ee3ef95dfe845384535be7f"
+    },
+    "immersive_from_bookshelf": {
+      "path": "screens/05-immersive-f11-from-bookshelf.png",
+      "bytes": 1854307,
+      "sha256": "f5759e365e08f20fbb6f65dc80d1e83e2a8a1f2a89dbdaa417b51d36bc14fc4f"
+    },
+    "restored_bookshelf_after_f11_toggle": {
+      "path": "screens/06-restored-bookshelf-after-f11-toggle.png",
+      "bytes": 50852,
+      "sha256": "57c49764b22bcbc227fef81f742fe4db77a3fc3ccc7f4f4930d37c53b254bb1b"
+    }
+  },
+  "window_state_timeline": [
+    {
+      "step": "launch",
+      "windows": [
+        "New Manga"
+      ],
+      "window_count": 1,
+      "screenshot": "01-bookshelf-initial.png"
+    },
+    {
+      "step": "search box focused, text typed",
+      "search_text": "雾港来信",
+      "window_count": 1
+    },
+    {
+      "step": "F11 while search box focused (background PostMessage)",
+      "window_count": 1,
+      "immersive_opened": false
+    },
+    {
+      "step": "F11 while search box focused (foreground SendInput)",
+      "window_count": 1,
+      "immersive_opened": false
+    },
+    {
+      "step": "navigate 阅读器; F11 (foreground)",
+      "windows": [
+        "阅读器",
+        "New Manga"
+      ],
+      "window_count": 2,
+      "immersive_size": "1400x787",
+      "immersive_opened": true,
+      "screenshot": "03-immersive-f11-from-reader.png"
+    },
+    {
+      "step": "Esc in immersive window",
+      "window_count": 1,
+      "immersive_opened": false,
+      "current_page": "reader",
+      "screenshot": "04-restored-reader-after-esc.png"
+    },
+    {
+      "step": "navigate 书架; focus restored to search box (text kept); F11 ignored",
+      "window_count": 1,
+      "immersive_opened": false
+    },
+    {
+      "step": "Tab moves focus out of the search box; F11 (foreground)",
+      "windows": [
+        "阅读器",
+        "New Manga"
+      ],
+      "window_count": 2,
+      "immersive_opened": true,
+      "screenshot": "05-immersive-f11-from-bookshelf.png"
+    },
+    {
+      "step": "F11 inside immersive window (toggle off)",
+      "window_count": 1,
+      "current_page": "bookshelf",
+      "search_text_preserved": "雾港来信",
+      "screenshot": "06-restored-bookshelf-after-f11-toggle.png"
+    }
+  ],
+  "assertions": {
+    "f11_from_reader_opens_immersive": true,
+    "esc_closes_immersive_and_stays_on_reader_page": true,
+    "f11_from_bookshelf_enters_reader_then_immersive": true,
+    "f11_toggle_off_restores_bookshelf_page": true,
+    "textbox_focus_blocks_f11": true,
+    "text_not_modified_by_f11": true,
+    "focus_leaves_textbox_then_f11_works": true,
+    "no_os_global_hotkey_registered": true,
+    "immersive_window_is_fullscreen": true,
+    "reader_content_rendered_in_immersive": true
+  },
+  "source_grep": {
+    "command": "Select-String -Pattern 'RegisterHotKey|HotKeyManager|GlobalHotKey|SetWindowsHookEx|Win32Properties' -Path apps/desktop-avalonia -Include *.cs,*.axaml (recursive)",
+    "matches": 0,
+    "interpretation": "the hotkey is an Avalonia window-level F11 KeyDown handler; no system-wide registration"
+  }
+}
