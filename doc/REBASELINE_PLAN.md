@@ -7,7 +7,7 @@
 |节点/目标|依赖|状态|
 |---|---|---|
 |REAL-TRANSLATE-PROVIDER-1|—|in_review（AC1 探测/AC2 vault/AC4 降级回退达成；AC3 BLOCKED=OpenCode 额度 402/429；235/235）|
-|THEME-MACOS-2|—|ready（macOS 主题重做，独立分支）|
+|THEME-MACOS-2|—|done（macos-sonoma 已达标+测试补齐；243/243；p95 10.5ms；集成 ec7316738）|
 |VERIFY-RECHECK-1|—|done（Mica 非回归/Esc-H PASS/4K 环境阻塞；204f98fb4）|
 |RELEASE-REPACK-4|—|done（最终包 103.33MB/725.34MB；ZIP+PDF 真机；232/232；集成 31af88610）|
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
@@ -24,7 +24,7 @@
 |THEME-MACOS-1|—|in_review（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
 |THEME-MACOS-LAYOUTS-1|—|ready（三套不同布局的 macOS 风主题：Sonoma/Launchpad/Split；证据 verification/THEME-MACOS-LAYOUTS-1）|
 
-READY 节点：THEME-MACOS-2。
+READY 节点：无（全部收口）。
 
 ## 历史快照（终态节点，非当前 DAG）
 

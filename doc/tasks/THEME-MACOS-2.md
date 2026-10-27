@@ -3,7 +3,7 @@ id: THEME-MACOS-2
 title: macOS 风主题重做（独立分支）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-28_goal_all_authorized
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: f1b89c5e5
 branch: task/THEME-MACOS-2-saber
 worktree: G:/CODEX/New Manga.workspace/worktrees/THEME-MACOS-2-saber
-integration_commit: null
+integration_commit: ec7316738
 delivery_head: bfaec8f54fb7d817959b04d8f97c1f954a2d0465
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -107,3 +107,11 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实 `%APPDATA%` 未写）。
 - 未关闭项：冲突 worktree 处置；launchpad/split 布局不在本卡范围；主题测试源出外部会话但已由我逐项跑通；截图启动证据 hook 可在合入时移除；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-28）— PASS
+
+- **判定：主线 macos-sonoma 已达标，未新增 pack/id**——7 packs、默认仍 saber-purple、Light/Dark 双 token+material、AppBg/HeaderBg/Accent/MicaFallback 全映射、圆角 12/14/8/6 + 柔和阴影、交通灯仅视觉。
+- 补齐：恢复 9 项 ThemeMacosTests + 2 项审计（字体许可：0 字体二进制；交通灯：装饰/缩放/客户区不变）+ 真机截图 + 启动 hook（--theme/--variant/--page，缺省不变）。
+- 数字：test.ps1 **243/243**（61/56/126）；vitest 60/567；pytest **0F/2773P/10S**；热切换 **p95=10.456ms**（max 15.830，48 samples）；对比度 Light 正文 15.457/16.830、次要 4.658/5.071、nav 8.521；Dark 正文 15.311/12.800、次要 5.806/4.853、nav 9.290。
+- 真机截图 4 张：erification/THEME-MACOS-2/real-app-{bookshelf,settings}-{light,dark}.png（背景采样 #F5F5F7 / #1E1E1E）。
+- 遗留：冲突 worktree 的外部 WIP（Lead 另行处置）；launchpad/split 不在范围。
+- 集成：ec7316738。
