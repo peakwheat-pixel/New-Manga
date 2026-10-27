@@ -28,6 +28,8 @@ from __future__ import annotations
 import copy
 import json
 import sqlite3
+import threading
+import time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -1443,3 +1445,104 @@ def test_sfx_primary_region_gated_by_manual_policy(workspace):
     assert executed.planned_step_units == 1 + 2 * 8
     assert executed.terminal_step_units == executed.planned_step_units
     assert service.get_task_progress(run.run_id).overall_progress == 1.0
+
+
+# ---------------------------------------------------------------------------
+# RUN-STORE-CACHE-RACE-FIX-1 / AC3: concurrent GetTaskProjection(fresh=True)
+# polling while the scheduler thread executes the Run.
+# ---------------------------------------------------------------------------
+
+
+class SlowDetector(DeterministicDetector):
+    """Detector double that widens the detect window so the poller interleaves."""
+
+    def __init__(self, delay: float = 0.03) -> None:
+        super().__init__()
+        self.delay = delay
+
+    def detect(self, request: DetectionRequest) -> DetectionResult:
+        time.sleep(self.delay)
+        return super().detect(request)
+
+
+class SlowOcr(DeterministicOcr):
+    """OCR double that keeps the scheduler thread busy between commits."""
+
+    def __init__(self, delay: float = 0.01) -> None:
+        super().__init__()
+        self.delay = delay
+
+    def recognize(self, request):
+        time.sleep(self.delay)
+        return super().recognize(request)
+
+
+def test_projection_fresh_polling_does_not_corrupt_execution(workspace):
+    """RUN-STORE-CACHE-RACE-FIX-1 AC3.
+
+    A second thread polls ``get_task_projection(..., fresh=True)`` (the exact
+    ``GetTaskProjection`` RPC path, every 10 ms) while ``execute_run`` runs.
+    Before the fix ``store.refresh()`` replaced ``_cache[run_id]`` mid-run:
+    detect commits + region backfill landed on the clone, the executor kept
+    regionless units (``INVALID_INPUT``) and the stale object's ``_persist``
+    reverted committed StepRuns to ``running``. After the fix the read path
+    never replaces the execution cache and no write can clobber a newer commit.
+    """
+    service, detector, ocr = _build_service(
+        workspace, detector=SlowDetector(), ocr=SlowOcr()
+    )
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+
+    stop = threading.Event()
+    poll_errors: list[BaseException] = []
+    poll_count = 0
+
+    def poll_projection() -> None:
+        nonlocal poll_count
+        while not stop.is_set():
+            try:
+                projection = service.get_task_projection(run.run_id, fresh=True)
+                assert projection.run_id == run.run_id
+                poll_count += 1
+            except BaseException as error:  # noqa: BLE001 - surfaced by the assert below
+                poll_errors.append(error)
+            time.sleep(0.01)
+
+    poller = threading.Thread(target=poll_projection, name="projection-poller", daemon=True)
+    poller.start()
+    try:
+        executed = service.execute_run(run.run_id)
+    finally:
+        stop.set()
+        poller.join(timeout=10)
+
+    assert not poller.is_alive()
+    assert poll_errors == []
+    assert poll_count > 0, "the projection poller never ran"
+
+    # 1) the run is terminal and no StepRun is stuck in running
+    assert executed.status is PipelineRunStatus.COMPLETED
+    assert [s for s in executed.step_runs if s.status is StepRunStatus.RUNNING] == []
+    conn = workspace["conn"]
+    stuck = conn.execute(
+        "SELECT COUNT(*) AS n FROM step_runs WHERE status = 'running'"
+    ).fetchone()["n"]
+    assert stuck == 0, f"{stuck} StepRun(s) stuck in running"
+
+    # 2) no regionless INVALID_INPUT: detect's committed Regions were visible
+    #    to the execution thread when it planned the downstream units
+    regionless = conn.execute(
+        "SELECT COUNT(*) AS n FROM step_runs"
+        " WHERE error_code = 'INVALID_INPUT' AND region_id IS NULL"
+    ).fetchone()["n"]
+    assert regionless == 0, f"{regionless} regionless INVALID_INPUT step(s)"
+
+    # 3) the durable run_json agrees with the terminal in-memory run
+    persisted = conn.execute(
+        "SELECT status FROM pipeline_runs WHERE run_id = ?", (run.run_id,)
+    ).fetchone()
+    assert persisted["status"] == "completed"

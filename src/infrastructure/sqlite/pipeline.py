@@ -390,6 +390,11 @@ class SqlitePipelineStore(PipelineStore):
     def __init__(self, conn: sqlite3.Connection) -> None:
         self._conn = conn
         self._cache: dict[str, PipelineRun] = {}
+        # RUN-STORE-CACHE-RACE-FIX-1 (AC2): per-Run write revision for the
+        # ``run_json`` CAS. Only the cache-owner object may advance a Run; a
+        # snapshot captured before a newer commit is rejected instead of
+        # silently overwriting it (last-writer-wins).
+        self._write_revision: dict[str, int] = {}
         with self._conn:
             self._conn.execute(
                 "CREATE TABLE IF NOT EXISTS pipeline_run_idempotency ("
@@ -422,6 +427,7 @@ class SqlitePipelineStore(PipelineStore):
         self._cache.update((run.run_id, run) for run in runs)
 
     def _write_run(self, run: PipelineRun) -> None:
+        revision = self._check_write_revision(run)
         value = _run_dict(run)
         now = _now()
         self._conn.execute("DELETE FROM pipeline_runs WHERE run_id = ?", (run.run_id,))
@@ -520,6 +526,8 @@ class SqlitePipelineStore(PipelineStore):
                         _dump(candidate.payload), candidate.reason, candidate.status, now,
                     ),
             )
+        self._write_revision[run.run_id] = revision + 1
+        run._store_revision = revision + 1
 
     def get_idempotency(self, idempotency_key: str) -> IdempotencyRecord | None:
         row = self._conn.execute(
@@ -616,11 +624,39 @@ class SqlitePipelineStore(PipelineStore):
         self._cache[child.run_id] = child
         return child, True
 
+    def _adopt_revision(self, run: PipelineRun) -> PipelineRun:
+        """Stamp a freshly loaded Run with the store's current write revision."""
+        run._store_revision = self._write_revision.get(run.run_id, 0)
+        return run
+
+    def _check_write_revision(self, run: PipelineRun) -> int:
+        """CAS precondition for ``run_json`` writes (RUN-STORE-CACHE-RACE-FIX-1 AC2).
+
+        Returns the current store revision to bump on success. A Run object
+        loaded through this store carries ``_store_revision`` from the moment it
+        was read; if the store has committed a newer revision since then, the
+        snapshot is stale and must not overwrite the newer committed state.
+        """
+        current = self._write_revision.get(run.run_id, 0)
+        snapshot = getattr(run, "_store_revision", None)
+        if snapshot is None:
+            # In-process Run object built for its very first write (create_run).
+            snapshot = current
+        if snapshot != current:
+            raise PipelineError(
+                "STALE_RUN_SNAPSHOT",
+                f"run {run.run_id} snapshot revision {snapshot} is older than "
+                f"store revision {current}",
+            )
+        return current
+
     def _read_run(self, run_id: str) -> PipelineRun | None:
         row = self._conn.execute(
             "SELECT run_json FROM pipeline_runs WHERE run_id = ?", (run_id,)
         ).fetchone()
-        return _run(_load(row["run_json"])) if row is not None else None
+        if row is None:
+            return None
+        return self._adopt_revision(_run(_load(row["run_json"])))
 
     def get(self, run_id: str) -> PipelineRun | None:
         if run_id in self._cache:
@@ -631,12 +667,18 @@ class SqlitePipelineStore(PipelineStore):
         return run
 
     def refresh(self, run_id: str) -> PipelineRun | None:
-        run = self._read_run(run_id)
-        if run is None:
-            self._cache.pop(run_id, None)
-        else:
-            self._cache[run_id] = run
-        return run
+        """Read durable state as a detached *view*; never touch the execution cache.
+
+        RUN-STORE-CACHE-RACE-FIX-1 (AC1). ``refresh`` backs
+        ``get_run_snapshot(fresh=True)`` / ``GetTaskProjection``. Replacing
+        ``self._cache[run_id]`` here used to split the mutable Run graph between
+        the request thread and the scheduler thread: commits + detect-region
+        backfill landed on the clone, the executor kept the regionless units
+        (``INVALID_INPUT``) and the stale object's ``_persist`` reverted committed
+        StepRuns to ``running``. The returned object is a detached clone; only
+        ``get()``/``put()`` may own the execution cache entry.
+        """
+        return self._read_run(run_id)
 
     def list_ids(self) -> tuple[str, ...]:
         rows = self._conn.execute(

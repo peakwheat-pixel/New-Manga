@@ -383,6 +383,37 @@ class InMemorySnapshotProvider:
         )
 
 
+def _detached_run(run: PipelineRun) -> PipelineRun:
+    """Structural clone for view reads (RUN-STORE-CACHE-RACE-FIX-1 AC1).
+
+    Frozen snapshots (settings/provider/context/candidate payloads and the
+    ``PlanUnit`` tuples) are immutable and may be shared; the mutable containers
+    the scheduler mutates (tasks/step_runs/candidates/terminal units, a StepRun's
+    input/output dicts, a task's step_run_ids list) are copied so a view reader
+    can never mutate execution state through the returned object.
+    """
+    return replace(
+        run,
+        tasks=[
+            replace(task, step_run_ids=list(task.step_run_ids))
+            for task in run.tasks
+        ],
+        step_runs=[
+            replace(
+                step,
+                input_refs=dict(step.input_refs),
+                output=dict(step.output),
+            )
+            for step in run.step_runs
+        ],
+        candidates=[
+            replace(candidate, payload=dict(candidate.payload))
+            for candidate in run.candidates
+        ],
+        terminal_unit_ids=set(run.terminal_unit_ids),
+    )
+
+
 class InMemoryPipelineStore:
     def __init__(self) -> None:
         self._runs: dict[str, PipelineRun] = {}
@@ -401,7 +432,17 @@ class InMemoryPipelineStore:
             return self._runs.get(run_id)
 
     def refresh(self, run_id: str) -> PipelineRun | None:
-        return self.get(run_id)
+        """Return an independent *view* of the stored Run.
+
+        RUN-STORE-CACHE-RACE-FIX-1 (AC1): ``refresh`` / ``get_run_snapshot(fresh=True)``
+        is a view read for projections -- it must not hand out (or re-cache) the
+        live ``PipelineRun`` object that the scheduler thread is executing, and
+        it must not evict/replace it either. The returned copy is detached: a
+        caller cannot mutate execution state through it.
+        """
+        with self._lock:
+            run = self._runs.get(run_id)
+        return _detached_run(run) if run is not None else None
 
     def list_ids(self) -> tuple[str, ...]:
         with self._lock:

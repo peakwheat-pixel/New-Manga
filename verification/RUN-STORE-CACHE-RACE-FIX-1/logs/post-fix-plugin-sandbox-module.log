@@ -1,0 +1,58 @@
+=== RUN META ===
+command: python -m pytest tests/infrastructure/test_plugin_sandbox.py -q
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\RUN-STORE-CACHE-RACE-FIX-1
+git_head: 
+dadcf72b9d0feaf786e660d23ef28a63244060bf
+=== OUTPUT ===
+............F...                                                         [100%]
+================================== FAILURES ===================================
+____________________ test_sandbox_job_kills_grandchildren _____________________
+
+sandboxed = <test_plugin_sandbox._Runtime object at 0x0000015E5D379040>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-547/test_sandbox_job_kills_grandch0')
+
+    def test_sandbox_job_kills_grandchildren(sandboxed, tmp_path) -> None:
+        import ctypes
+    
+        source = (
+            "import subprocess, sys\n"
+            "def after_detect(payload):\n"
+            "    child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\n"
+            "    return {'pid': child.pid}\n"
+        )
+        _write_plugin(tmp_path, "acme-tree", source)
+        service = sandboxed.service
+        service.set_global_enabled(True)
+        service.set_plugin_enabled("acme-tree", True)
+    
+        outcome = service.run_hook("after_detect", {})
+        assert outcome["applied"] is True
+        pid = int(outcome["results"][0]["result"]["pid"])
+    
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.restype = ctypes.c_void_p
+        still_alive = True
+        for _ in range(20):  # the kernel reclaims the tree asynchronously
+            handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+            try:
+                still_alive = bool(handle)
+            finally:
+                if handle:
+                    kernel32.CloseHandle(ctypes.c_void_p(handle))
+            if not still_alive:
+                break
+            time.sleep(0.1)
+>       assert still_alive is False, "the job object must kill the whole tree"
+E       AssertionError: the job object must kill the whole tree
+E       assert True is False
+
+tests\infrastructure\test_plugin_sandbox.py:415: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/infrastructure/test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren
+1 failed, 15 passed in 35.45s
+=== EXIT=1 ===

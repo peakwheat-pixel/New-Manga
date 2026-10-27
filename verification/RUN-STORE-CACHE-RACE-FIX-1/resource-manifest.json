@@ -1,0 +1,154 @@
+{
+  "task": "RUN-STORE-CACHE-RACE-FIX-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "delivery_head": "dadcf72b9",
+  "docs_commit": "e35238075",
+  "base_commit": "9ef53f24d",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/RUN-STORE-CACHE-RACE-FIX-1",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "used_as": "每次复现固定数据根（复制到 task-env data-roots/，原件零修改）"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar/models",
+      "used_as": "仅只读 weights 路径（repro 脚本环境变量），未复制/未修改"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy",
+      "used_as": "Avalonia test.ps1 默认 sidecar（只读，未修改）"
+    }
+  ],
+  "written_in_repo": "verification/RUN-STORE-CACHE-RACE-FIX-1/**（证据）；src/**、tests/**、doc/tasks 本卡、doc/handoffs 本卡 Handoff",
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/task-envs/RUN-STORE-CACHE-RACE-FIX-1/**（data-roots、evidence、finalize 脚本；保留引用）",
+  "artifacts": [
+    {
+      "rel": "REPORT.md",
+      "bytes": 11761,
+      "sha256": "c0285723e3ad6e6be92d58780ce5437e1d1df869a68bdc40823c4d66d392f232"
+    },
+    {
+      "rel": "ab-matrix.json",
+      "bytes": 3101,
+      "sha256": "e2966644877429ffe6b1c6a186a4d2202a1a4578f40043a1268209a5eb8fd9e3"
+    },
+    {
+      "rel": "check-taskpath.log",
+      "bytes": 645,
+      "sha256": "507142f9f823e4526b8a4e8ff5aebd391140f391cda1702fae1e181145abdc27"
+    },
+    {
+      "rel": "logs/dotnet-test.log",
+      "bytes": 18094,
+      "sha256": "b18a59399deaba0bc59f9662a725faa27ae5cb7dfb66a996f971917509780729"
+    },
+    {
+      "rel": "logs/flaky-plugin-sandbox-reruns.log",
+      "bytes": 813,
+      "sha256": "89a4f4456f2a7e4aaccf8891d5e50a57fa57b91298c974fb62f226ff058cdca8"
+    },
+    {
+      "rel": "logs/post-fix-plugin-sandbox-module.log",
+      "bytes": 2441,
+      "sha256": "b5e2f3f6ce2b9999a7512b3626939b62209e8291f046b2cc85875bbd04d4bede"
+    },
+    {
+      "rel": "logs/post-fix-pytest-concurrency.log",
+      "bytes": 561,
+      "sha256": "5c97a8cbf525bf887cd41e06c978cc28e3c8b961f8149025d90c9adb4a32dfe3"
+    },
+    {
+      "rel": "logs/post-fix-pytest-full-runA-aux.log",
+      "bytes": 87128,
+      "sha256": "f424d4b62fdac0150d611c90f8f6b2e5481179e21caae1a32ccf35dae9716509"
+    },
+    {
+      "rel": "logs/post-fix-pytest-full.log",
+      "bytes": 89320,
+      "sha256": "2b78a6d3a9c7f2bcf24fc15e40d055329f09f7f61fc4312738d377099630acb9"
+    },
+    {
+      "rel": "logs/post-fix-pytest-unit.log",
+      "bytes": 546,
+      "sha256": "76647283294b446393c65aede3e16c96a3c64ccf563a063ad62ba32e0dfe43e9"
+    },
+    {
+      "rel": "logs/post-fix-repro-cached-control.log",
+      "bytes": 33074,
+      "sha256": "14416b1b90ac31d529a94dff23e5d41a38e463928cda076845d74363660569dd"
+    },
+    {
+      "rel": "logs/post-fix-repro-nopoll-control.log",
+      "bytes": 32971,
+      "sha256": "251f5b6d14089dcfb7dc8f080b80f32629154cde2d0ea211b4b8dafb32c2c54a"
+    },
+    {
+      "rel": "logs/post-fix-repro-projection-fresh.log",
+      "bytes": 40468,
+      "sha256": "b54414aa745ba8de85ef1e0376aae779a3c7ab1e8191120657c3f7fb352ad603"
+    },
+    {
+      "rel": "logs/pre-fix-pytest-concurrency.log",
+      "bytes": 4105,
+      "sha256": "ca7797ee9e666a6b52959a425dfd72d4ed2ea3c90abb59a5f4ae566392cb9b39"
+    },
+    {
+      "rel": "logs/pre-fix-pytest-full-baseline.log",
+      "bytes": 95649,
+      "sha256": "92eb673d3b1b61e62b273ba1d2528dd13344f3d9e748f229ad1bd3b9f234d277"
+    },
+    {
+      "rel": "logs/pre-fix-pytest-unit.log",
+      "bytes": 10177,
+      "sha256": "dd8e1c285415a619759c521e5c92e1258ab188b1fcb9ed1489053064e6e94c80"
+    },
+    {
+      "rel": "logs/pre-fix-repro-cached-control.log",
+      "bytes": 33220,
+      "sha256": "67bf3dfb4e46bff5db4d9a0a97cc0c1a63cc90fca474f477c1f394c2454aad5c"
+    },
+    {
+      "rel": "logs/pre-fix-repro-projection-fresh.log",
+      "bytes": 31106,
+      "sha256": "d74472342d27603b239e9346f16324573bf320c67bd5e5ce7ed4d06c0ea3b1f7"
+    },
+    {
+      "rel": "repro/post-fix-cached-control.json",
+      "bytes": 212220,
+      "sha256": "6f8c8840ba59d8d4361787bd4a39944dfc54a7ba62e5580866c6a4bc9bcecfe4"
+    },
+    {
+      "rel": "repro/post-fix-projection-fresh.json",
+      "bytes": 221535,
+      "sha256": "c6edf38d5d1959c0a88f7b5e679b4dc41b9c26dc110344243bca1b63d3c0fc34"
+    },
+    {
+      "rel": "repro/pre-fix-cached-control.json",
+      "bytes": 212238,
+      "sha256": "4534904b7ad3cdbaea2fbd3c086d37f638d71dc446b6573a6ec5faedfdbd9ac2"
+    },
+    {
+      "rel": "repro/pre-fix-projection-fresh.json",
+      "bytes": 86374,
+      "sha256": "baafefb30877d29f11fdde7d77fe25a48191ad4334c69287b231493682f9220d"
+    },
+    {
+      "rel": "src-changes-vs-base.patch",
+      "bytes": 19349,
+      "sha256": "d95791215a511eab6d95f27dc9c251f147df3b4f7cee597a0fbc5705c4aa31bf"
+    },
+    {
+      "rel": "test/avalonia-summary.json",
+      "bytes": 1322,
+      "sha256": "f13df036b8593d60777b313f1d9da417152604061932823c16b05db319f7c452"
+    },
+    {
+      "rel": "tools/repro_scheduler.py",
+      "bytes": 13813,
+      "sha256": "59c000cebbb9d34e040d1500a7c56c2c694c00f8d9b4325e971bab6587d535e1"
+    }
+  ],
+  "pin_mode": "sha256 of the committed git blob (same bytes a fresh checkout materialises)",
+  "process_check": "未 push、未 gc/prune；未修改协议/Host 契约/旧壳；未禁用 fresh 轮询；未改真实 %APPDATA% 数据根；临时 pre-fix worktree 仅用于修复前判别证据，按 Worktree Safety Inventory 规则保留于 task-env、不删除、不 prune，关闭时由 DSH 按 Task 资源处置。",
+  "closeout": "pending（canonical_evidence_status=complete；resource_closeout_status=pending，DSH 终态时按本清单处置）"
+}
