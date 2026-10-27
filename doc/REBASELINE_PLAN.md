@@ -39,7 +39,7 @@
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
 |RUN-BINDING-FIX-1|—|done（Host 注入 provider_bindings；ocr 3/3；A/B；173/173；集成 692347b58）|
 |CORE-PIPELINE-FIX-1|—|done（color analyzer + 空检测语义；同构建 8 页 color 3/3；pytest 2753P；集成 aac638781）|
-|RELEASE-REPACK-1|—|ready（sidecar 重打包+同构建复验）|
+|RELEASE-REPACK-1|—|done（新 sidecar base/models；同构建 8 页 ocr/color 3/3；安装 smoke PASS；集成 429ca763c）|
 |TRANSLATE-PROVIDER-1|—|ready（最小翻译 provider 接线）|
 |RUN-STORE-CACHE-RACE-FIX-1|—|ready（共享缓存竞态修复；latent 生产缺陷）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
@@ -47,7 +47,7 @@
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：RELEASE-REPACK-1、TRANSLATE-PROVIDER-1、RUN-STORE-CACHE-RACE-FIX-1。
+READY 节点：TRANSLATE-PROVIDER-1、RUN-STORE-CACHE-RACE-FIX-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

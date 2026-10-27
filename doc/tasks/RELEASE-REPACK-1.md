@@ -3,7 +3,7 @@ id: RELEASE-REPACK-1
 title: sidecar 重打包与同构建复验
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: core-admin-rca
 owner: null
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 97de0fa99
 branch: task/RELEASE-REPACK-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-1
-integration_commit: null
+integration_commit: 429ca763c
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/RELEASE-REPACK-1
 allowed_paths:
   - doc/tasks/RELEASE-REPACK-1.md
@@ -81,3 +81,12 @@ CORE-PIPELINE-FIX-1（color analyzer + 空检测语义）与 RUN-BINDING-FIX-1�
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- AC1：旧 sidecar 2b36bfeb…（399,492B）→ base d499bd7… / models 9fcb9e87…（均 399,492B）；bundle 195,366,432 / 868,852,947B；torch-free 闭包断言（857 pure modules + DirectML）、0 shadowing ICU。
+- AC2 同构建 8 页（新 models 构建 + BOOK-FIXTURE 私有副本，Host 命令面）：ocr **3/3**、color **3/3**、term_extract 3/3、**0 条 PROVIDER_NOT_CONFIGURED**；页 4–8 **completed region_counts=0**；translate 3/3 仍 PROVIDER_NOT_CONFIGURED（TRANSLATE-PROVIDER-1 未合入，如实）；run completed_with_failures 5.58s。
+- AC3 发布件：base zip 102,975,176B / models zip 724,983,494B；install-verify 安装×2/卸载×2 幂等、license byte-identical、residue 0；install-smoke window_handle_found=true、**console_window_count=0**、exit 0、sidecar 随包（base 1954 files / models 1964 files）。
+- AC4：VERSION.json.sidecar_build（sha/bytes/built-at/HEAD/variant/models）+ packaging/m2ac5/README.md §2.1 已更新；闭包依赖不变 → NOTICE/THIRD_PARTY 无需改。**README 未改**：仓库无根 README，安装说明在 pps/desktop-avalonia/docs/UPGRADE.md（不在 allowed_paths，已记录）。
+- AC5：DSH 复跑 test.ps1 见执行记录（177/177）；pytest 3F/2753P/9S（0 新增）；check.ps1 PASS；12 条 pin；Handoff。
+- 遗留：translate 缺口需 TRANSLATE-PROVIDER-1 合入后**重新打包**再复验；docs/UPGRADE.md 未改；AC2 临时 harness 未入库；旧包（FINAL-VALIDATION out/）未动。
+- 集成：429ca763c。
