@@ -3,7 +3,7 @@ id: TRANSLATE-PROVIDER-1
 title: 翻译 provider 最小可用接线
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: route-research
 owner: route-research
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 97de0fa99
 branch: task/TRANSLATE-PROVIDER-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/TRANSLATE-PROVIDER-1
-integration_commit: null
+integration_commit: 5b96c25ef
 delivery_head: f96f245f4b5f435275767a6b00d7721debd64ea3
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/TRANSLATE-PROVIDER-1
 allowed_paths:
   - doc/tasks/TRANSLATE-PROVIDER-1.md
@@ -106,3 +106,12 @@ CORE-PIPELINE-FIX-1 后 Run 链停在 `translate`：typed `PROVIDER_NOT_CONFIGUR
 - 删除、迁移、归档数量/字节数：待关闭时填写（本卡交付后清理 `baseline-worktree` 与 inproc 数据根，见 Handoff）。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS（AC3 PARTIAL：同构建待重打包）
+
+- provider：新增 identity-translation（type=identity-experimental、零 requirements、ready、输入=输出、**显式 experimental 占位**）；现有 openai-compatible / sakura-local 均需配置，无法开箱离线。
+- 两条绑定路径实测：StartRun override + pipeline_defaults 持久默认绑定；无绑定仍 typed PROVIDER_NOT_CONFIGURED；新增 11 例单测全绿。
+- **源码直跑 8 页**（生产 assembly 同路径 + 真实 models）：translate **3/3 completed（22/22 units）**，页 4–8 completed(0 region)，**segment/mask_refine/inpaint/render 22/22 completed** → Run 链首次端到端跑通到 render（identity 占位翻译）。
+- 回归：DSH 复跑 test.ps1 **177/177 PASS**（首次跑出现 1 例 coreclient 失败，单独跑该测试通过、二次全量 177/177 → 判定环境/残留进程偶发）；pytest **4F/2763P/9S**，失败名单为 2 个 detection-real + 	est_start_export_completes_and_updates_history、	est_pause_shows_optimistic_feedback_immediately（后者单跑失败、前者单跑通过；实现方在同一 clean base 亦 4F/2752P/9S，判为 Qt/环境偶发，**0 新增确定性失败**）。
+- vitest 60/567；check.ps1 PASS；14 条 64-hex pin；Handoff + Record Decision。
+- 遗留：同构建全链待第二次重打包；真实翻译质量（OpenAI/Sakura）不在本卡；translated artifact 视觉验收属 UI 线；一次 heavy-run [Errno 22] 瞬态已记录（重跑全绿）。
+- 集成：5b96c25ef。

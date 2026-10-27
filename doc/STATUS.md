@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[TRANSLATE-PROVIDER-1](tasks/TRANSLATE-PROVIDER-1.md) `ready`（执行中；RELEASE-REPACK-1 done）。
+- 当前 Task：[RUN-STORE-CACHE-RACE-FIX-1](tasks/RUN-STORE-CACHE-RACE-FIX-1.md) `ready`（执行中：缓存竞态）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
