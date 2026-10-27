@@ -92,7 +92,7 @@ pytest 侧并发用例：`tests/pipeline/test_regionless_rebinding.py::test_proj
 ## 7. AC5 门禁
 
 - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/RUN-STORE-CACHE-RACE-FIX-1.md` → 结果见 `check-taskpath.log` 与 §10 交付记录。
-- Canonical Evidence：64-hex sha256 pin 见任务卡证据表（commit 列留空，由 DSH 集成时填写）。
+- Canonical Evidence：64-hex sha256 pin 见任务卡 `## Canonical Evidence`（pin 为提交内 blob 字节；commit 列为包含该文件的交付/证据提交，集成 commit 由 DSH 填写）。
 - Resource Manifest：`verification/RUN-STORE-CACHE-RACE-FIX-1/resource-manifest.json`。
 - Handoff：`doc/handoffs/RUN-STORE-CACHE-RACE-FIX-1-handoff.md`。
 
