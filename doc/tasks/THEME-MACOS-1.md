@@ -1,0 +1,131 @@
+---
+id: THEME-MACOS-1
+title: 新增 macOS Sonoma 风主题（id macos-sonoma，中文名「macOS 风」）
+kind: implementation
+governance_version: 3
+status: ready
+approval: user_authorized_2026-10-27_theme_macos_1
+suggested_owner: macos-theme-owner
+owner: macos-theme-owner
+reviewer: dsh
+depends_on: []
+base_commit: 170878dc4
+branch: null
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
+evidence_dir: verification/THEME-MACOS-1
+allowed_paths:
+  - doc/tasks/THEME-MACOS-1.md
+  - doc/handoffs/THEME-MACOS-1-handoff.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
+  - apps/desktop-avalonia/src/NewManga.Theme/**
+  - apps/desktop-avalonia/src/NewManga.App/Views/**
+  - apps/desktop-avalonia/src/NewManga.App/Styles/AppStyles.axaml
+  - apps/desktop-avalonia/src/NewManga.App/ViewModels/MainViewModels.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/ThemeMacosTests.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/TestAppBuilder.cs
+  - verification/THEME-MACOS-1/**
+  - G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1/**
+---
+
+# THEME-MACOS-1：新增 macOS Sonoma 风主题（macos-sonoma /「macOS 风」）
+
+## 来源与目标
+
+- 用户 2026-10-27 直接需求：按 AD-002 架构给 New Manga 新增一套 macOS Sonoma 风格主题（id `macos-sonoma`，中文名「macOS 风」），双 token 集（Light/Dark），只落在 `NewManga.Theme/**`、设置页主题列表（Views 最小改动）与本卡/证据目录。
+- 依据：`doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md` §4（ThemePack = manifest + tokens + controlthemes + materials + motion + icons；运行时热切换 p95 ≤100ms）；`doc/tasks/UI-SHELL-THEME-1.md` 与 `doc/handoffs/UI-SHELL-THEME-1-handoff.md`（主题中心/热切换口径）。
+- 现状基线：仓库实际 HEAD 为 `170878dc4`（用户任务描述中的 `b874b2cf7` 是更早基线；`170878dc4` 之后 test.ps1 基线为 225/225）。本卡以实际 HEAD 为 base，不 reset、不 push、不 gc/prune。该差异已记录，待 Lead 复核时确认。
+- 现有实现事实：`ThemePacks.All` 内置 6 套（Saber Purple 默认 / Saber Light / Midnight / Sakura / Emerald / Mono）；`ThemePackService.Apply` 对每套 pack 构建 Light/Dark 两个 ResourceDictionary，但当前两者使用同一 token 集；设置页 `SettingsPage` 的主题列表直接绑定 `ThemePacks.All`，点击调用 `ThemePackService.Apply` + `OnThemeApplied`。
+- 截图技术路线已由 Lead 预验证：Avalonia.Headless + Skia（`UseSkia()` + `UseHeadlessDrawing=false`）可 `CaptureRenderedFrame()` 出真实中文渲染 PNG（probe 见 `G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1/probe`），截图不得使用占位/空白/色块替代。
+
+## Acceptance Criteria
+
+- [ ] **AC1 主题可见可切换**：`macos-sonoma` 出现在设置页主题列表中（中文名「macOS 风」），点击可切换；`ThemePacks.Default` 仍为 `saber-purple`（默认不变）；现有 6 套主题标签/顺序/行为不变。
+- [ ] **AC2 Light/Dark 双模式渲染正确**：同一 `macos-sonoma` pack 内嵌 Light/Dark 两套 token；真实渲染截图共 4 张（书架 × Light/Dark、设置页 × Light/Dark），Light/Dark 主背景/卡片/正文/强调色与规格一致且明显不同。
+- [ ] **AC3 热切换 p95 ≤100ms**：沿用现有 `S3ShellTests` 的测量机制（`ThemePackService.Apply` + `window.ApplyTheme()` + `Dispatcher.UIThread.RunJobs()`，≥30 次采样），macos-sonoma Light↔Dark 与既有主题互切 p95 ≤100ms，给出实际数字。
+- [ ] **AC4 对比度自查**：Light/Dark 下正文对背景 ≥4.5:1、次要文字对背景 ≥3:1；给出计算过程或工具结果（WCAG 相对亮度公式）。
+- [ ] **AC5 既有主题不回归**：`apps/desktop-avalonia/scripts/test.ps1` 全绿（≥215；当前基线 225）；旧壳 `npx vitest run` 仍 60 文件/567 用例；pytest 无新增失败；既有 6 套主题 token/视觉断言不破。
+- [ ] **AC6 治理与证据**：`tools/governance/check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` PASS；证据 64-hex SHA-256 pin；Handoff 到 `doc/handoffs/THEME-MACOS-1-handoff.md`；卡改 `in_review`（owner≠reviewer，不自行判 done）。
+
+## 设计规格（用户冻结）
+
+- Light token：窗口 `#F5F5F7`、卡片/内容 `#FFFFFF`、侧栏 `#ECECEF`、正文 `#1D1D1F`、次要文字 `#6E6E73`、分隔线 `#D2D2D7`、强调蓝 `#007AFF`、危险 `#FF3B30`、成功 `#34C759`、警告 `#FF9500`。
+- Dark token：窗口 `#1E1E1E`、卡片 `#2C2C2E`、侧栏 `#252527`、正文 `#F5F5F7`、次要文字 `#98989D`、分隔线 `#3A3A3C`、强调蓝 `#0A84FF`；危险/成功/警告沿用语义色（可微调但须保留语义）。
+- 圆角：窗口/卡片 12–14px、按钮 8px、小控件 6px；阴影柔和（Light `0 1px 3px rgba(0,0,0,.08)`；Dark `0 1px 3px rgba(0,0,0,.4)`）。
+- 字体：优先 Inter / Segoe UI Variable 等 OFL 或系统可回退字体；**禁止随包商业/系统字体**（msyh、STKAITI 等）；仅字体栈字符串。
+- 标题栏：仿 macOS 交通灯（红 `#FF5F57` / 黄 `#FEBC2E` / 绿 `#28C840` 三圆点，仅视觉，不改变现有窗口拖拽/最大化语义）；标题栏与侧栏允许半透明/Mica 观感（在现有 Mica/Blur 回退机制内）。
+- 控件：主按钮蓝底白字、次按钮浅灰底；输入框白底/深底 + 细边框 + 聚焦蓝描边；Tab/导航选中项浅蓝底或下划线；禁用态降透明度。
+- 动效：hover/pressed 120–160ms ease-out；reduced-motion 时归零（沿用现有 `MotionProfile` 机制）。
+- 语义映射：必须映射到现有 token（AppBg/HeaderBg/CardBg/CardBorder/TextPrimary/TextSecondary/Accent/AccentText/ChipBg/ChipActiveBg/SearchBg/NavBg/NavActiveBg/EmptyBg + Materials HeaderGradientStart/HeaderGradientEnd/CardShadow/MicaFallback），保证 Light/Dark 切换与 6 套既有主题互不破坏。
+- 实现约束：`ThemePack` record 只允许**向后兼容**扩展（新增可选字段/默认值；既有 6 套 token 值不得修改）；macos-sonoma 的 Light/Dark 两套 token 必须落在同一 pack 内（不得拆成两个列表项）；明暗切换需有可编程入口（设置页「外观：浅色/深色」最小 UI，或 `ThemePackService` 明确的 variant API），reduced-motion 归零。
+
+## 允许修改范围
+
+- `apps/desktop-avalonia/src/NewManga.Theme/**`（主题模型 + macos-sonoma pack）。
+- `apps/desktop-avalonia/src/NewManga.App/Views/**`（设置页主题列表/外观切换、标题栏交通灯；最小改动）。
+- `apps/desktop-avalonia/src/NewManga.App/Styles/AppStyles.axaml`（仅字体 token 桥接所需最小改动）。
+- `apps/desktop-avalonia/src/NewManga.App/ViewModels/MainViewModels.cs`（仅 `SettingsViewModel` 主题/外观所需最小改动）。
+- `apps/desktop-avalonia/tests/NewManga.App.Tests/ThemeMacosTests.cs`（新增测试）与 `TestAppBuilder.cs`（仅 headless Skia 截图所需修改）；既有测试断言不得削弱。
+- `doc/tasks/THEME-MACOS-1.md`、`doc/handoffs/THEME-MACOS-1-handoff.md`、`doc/REBASELINE_PLAN.md`（DAG/READY 登记）、`doc/TASK_LEDGER.md`（重跑生成）。
+- `verification/THEME-MACOS-1/**`、`G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1/**`。
+
+## 禁止范围
+
+- 不改 Python Core / Host / 协议 / 旧壳（`apps/desktop/**`、`src/**` 不得有 diff）。
+- 不随包任何商业/系统字体；不新增字体二进制文件。
+- 不修改既有 6 套主题的 token 值与默认主题；不降低现有主题正确性。
+- 不伪造成截图或耗时数字；NOT_RUN 必须显式标注。
+- 不 push、不 `git gc`/`prune`、不 reset 他人提交。
+- 不自行判 `done`；本卡由 owner 实现并改 `in_review`，由 Lead 复核凑集。
+
+## 测试要求
+
+| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC1 | `dotnet test tests/NewManga.App.Tests --filter ThemeMacos`：ThemePacks 含 macos-sonoma、Default 仍 saber-purple、设置页 ThemeList 条目数 = All.Count | .NET9/Avalonia 11.3.22 headless | NOT_RUN | `verification/THEME-MACOS-1/theme/pack.json` |
+| AC2 | headless Skia `CaptureRenderedFrame()` 截图书架/设置页 × Light/Dark 共 4 张 | headless + Skia | NOT_RUN | `verification/THEME-MACOS-1/screenshots/*.png` |
+| AC3 | ThemeCenter 测量：Apply + ApplyTheme + RunJobs，≥30 次采样，p95 ≤100ms | 同上 | NOT_RUN | `verification/THEME-MACOS-1/theme/hot-switch-macos.json` |
+| AC4 | WCAG 相对亮度公式计算正文/次要文字对比度（Light/Dark） | 纯计算，无外部依赖 | NOT_RUN | `verification/THEME-MACOS-1/theme/contrast.json` |
+| AC5 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory verification/THEME-MACOS-1`；`cd apps/desktop/frontend; npx vitest run`；pytest 相关套件 | 全量 | NOT_RUN | `verification/THEME-MACOS-1/test/**` |
+| AC6 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` | 治理门禁 | NOT_RUN | 本卡 + `verification/THEME-MACOS-1/MANIFEST.json` |
+
+## 依赖、风险与阻塞
+
+- 依赖：无阻塞依赖（`depends_on: []`）。需复用既有 sidecar fixture（`G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy`）跑 test.ps1。
+- 风险 1：`ThemePack` 扩展若破坏既有 6 套主题的资源构建（Light/Dark 回退逻辑）→ 用“DarkTokens 为空则复用 Tokens”的向后兼容回退 + 既有断言回归。
+- 风险 2：headless 截图若字体缺字/空白 → Lead 已 probe 验证 Skia 可渲染中文；截图必须附尺寸/像素校验。
+- 风险 3：设置页外观切换与既有 `SettingsPage` 构造签名/测试耦合 → 保持 `SettingsPage(vm, onThemeApplied, controller)` 兼容。
+- 风险 4：`check.ps1` 要求 `status: ready` 的任务出现在 REBASELINE_PLAN 当前 DAG 的 READY 节点，且 TASK_LEDGER 不得过期 → 本卡建卡时同步登记并重跑 `tools/governance/task_ledger.py --write`。
+
+## 交付与运行记录
+
+- Handoff：`doc/handoffs/THEME-MACOS-1-handoff.md`（owner 完成后填写）。
+- Review：尚无（Lead 复核后补 Review 记录）。
+- 实际测试：尚无。
+- 后续实际记录包含日期、commit/工作区状态、环境、结果、遗留项；Lead 复核后填写 integration_commit（本任务不 push，未 commit 时以工作区 SHA-256 pin 为准）。
+
+## Canonical Evidence
+
+进入 `in_review` 前逐项填写。
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| task-env | G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1 | 待关闭时 pin | 待关闭时核 |
+
+## Closeout Record
+
+- Closeout date / DSH：待关闭时填写。
+- canonical_evidence_status：`pending` / `complete`。
+- resource_closeout_status：`pending` / `complete`。
+- 删除、迁移、归档数量/字节数：待关闭时填写。
+- 未关闭项及保留原因：待关闭时填写。
+- 当前指针清理：待关闭时更新 STATUS / Plan / Task 导航 / rolling checkpoint。

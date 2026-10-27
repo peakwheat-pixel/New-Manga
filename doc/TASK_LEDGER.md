@@ -6,14 +6,14 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 417 |
+| task files | 419 |
 | terminal | 403 |
-| non-terminal | 14 |
-| non-terminal named in the plan | 7 |
+| non-terminal | 16 |
+| non-terminal named in the plan | 9 |
 | non-terminal outside the plan | 7 |
-| task files tracked by git | 413 |
-| task files untracked (drafts) | 4 |
-| non-terminal tracked by git | 10 |
+| task files tracked by git | 417 |
+| task files untracked (drafts) | 2 |
+| non-terminal tracked by git | 14 |
 
 ## By status
 
@@ -23,8 +23,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
+| `ready` | 7 | no |
 | `superseded` | 6 | yes |
-| `ready` | 5 | no |
 | `in_review` | 4 | no |
 | `proposed` | 3 | no |
 | `approved` | 1 | no |
@@ -46,8 +46,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FLAKY-PYTEST-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 | `PDF-EXPORT-1` | `ready` | own row |
+| `PDF-EXPORT-UI-1` | `ready` | own row |
 | `REAL-TRANSLATE-PROVIDER-1` | `ready` | own row |
 | `RELEASE-SMOKE-1` | `ready` | own row |
+| `THEME-MACOS-1` | `ready` | own row |
 
 ## What this ledger does not say
 
