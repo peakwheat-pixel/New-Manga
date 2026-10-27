@@ -67,7 +67,7 @@ allowed_paths:
 
 ## Canonical Evidence
 
-| ID | AC/场景 | 路径 | commit | sha256 (64-hex) | 类型 |
+| ID | AC/场景 | path | commit | sha256 (64-hex) | 类型 |
 |---|---|---|---|---|---|
 | EV-REPORT | AC1–AC5 总报告（含 Record Decision） | verification/RUN-STORE-CACHE-RACE-FIX-1/REPORT.md | 8ef319b9aadc5bac30a73eb5599b5b0e9c053602 | c0285723e3ad6e6be92d58780ce5437e1d1df869a68bdc40823c4d66d392f232 | CANONICAL |
 | EV-AB-MATRIX | AC3 修复前/后 A/B 矩阵 | verification/RUN-STORE-CACHE-RACE-FIX-1/ab-matrix.json | e35238075 | e2966644877429ffe6b1c6a186a4d2202a1a4578f40043a1268209a5eb8fd9e3 | CANONICAL |
@@ -130,3 +130,4 @@ pin 口径：sha256 为 **提交内 blob 字节**（与全新 checkout 落盘字
 - AC5：check.ps1 -TaskPath PASS；26 条 64-hex pin（口径=提交 blob）；Handoff + Record Decision。
 - 遗留：frozen sidecar 未重打包（→ RELEASE-REPACK-2）；CAS 为单进程/store 实例内存态（前提单 Core 独占 data root）；run_json 仍整份写、无字段级合并。
 - 集成：2980608e0。
+

@@ -14,9 +14,8 @@
 |UI-SHELL-THEME-1|HOST-CORECLIENT-1|done（S3 主窗/主题 6 套 p95 2.2ms/书架骨架；集成 657d36817）|
 |UI-WORKBENCH-READER-1|UI-SHELL-THEME-1|done（S4 阅读器/工作台；利用率0.99/翻页1.05ms/长条0ms；集成 55b7f42c6）|
 |LEGACY-SHELL-REMOVAL-1|HOST-TILE-CHANNEL-1、HOST-RESOURCE-SECURITY-1、CORE-TILE-EMIT-1、RELEASE-PACKAGE-1|done（S5 完成：D4 全绿、旧壳原位冻结、发布件 22.9MB）|
-|CORE-SLIM-1|CORE-TILE-EMIT-1|done（去 PySide6 闭包零 Qt；exe 199.6→1.9MiB；运行时 970.1MiB；AC3 PARTIAL；集成 c5aade851）|
+|CORE-SLIM-1/2|INFER-BASELINE-EP-1|done（去 Qt 闭包 + 运行时 186.3MiB；检测 61.47ms/页；集成 c5aade851/e39...）|
 |INFER-BASELINE-EP-1|—|done（默认 EP=DirectML；主包 1216.4MB；必须 torch 的模型=无）|
-|CORE-SLIM-2|INFER-BASELINE-EP-1|done（Core 运行时 186.3MiB；检测 61.47ms/页；OCR 10/10；pytest 0 新增失败）|
 |FINAL-VALIDATION-1|CORE-SLIM-2、RELEASE-PACKAGE-1|done（base 97.75MB/models 690.94MB；安装 smoke PASS；S0–S5 完成表）|
 |MANUAL-VERIFY-1|FINAL-VALIDATION-1|done（真机 5 项全 PASS：Mica/DPR2/工作集 395.1MB/IME/Esc-H）|
 |HOST-TILE-CHANNEL-1|UI-WORKBENCH-READER-1|done（S5-A tile 通道+digest+1s 缓存；revoke 0.071ms；集成 09d7e76c1）|
@@ -43,12 +42,13 @@
 |TRANSLATE-PROVIDER-1|—|done（identity-experimental；源码 8 页全链到 render 22/22；PC3 同构建待重打包；集成 5b96c25ef）|
 |RUN-STORE-CACHE-RACE-FIX-1|—|done（视图读/执行缓存分离+CAS；前后 FAIL→PASS 实证；集成 2980608e0）|
 |NS-WIRE-B2|—|ready（剩余 11 条 NS 收尾接线）|
+|RELEASE-REPACK-2|—|ready（第二次重打包 + 8 页全链复验 + UPGRADE 文档）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：RUN-STORE-CACHE-RACE-FIX-1、NS-WIRE-B2。
+READY 节点：NS-WIRE-B2、RELEASE-REPACK-2。
 
 ## 历史快照（终态节点，非当前 DAG）
 
