@@ -1,0 +1,9 @@
+G:\CODEX\New Manga.workspace\worktrees\RELEASE-REPACK-4\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs(593,18): error CS1061: “SettingsPage”未包含“ApplyLayout”的定义，并且找不到可接受第一个“SettingsPage”类型参数的可访问扩展方法“ApplyLayout”(是否缺少 using 指令或程序集引用?) [G:\CODEX\New Manga.workspace\worktrees\RELEASE-REPACK-4\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj]
+
+生成失败。
+
+G:\CODEX\New Manga.workspace\worktrees\RELEASE-REPACK-4\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs(593,18): error CS1061: “SettingsPage”未包含“ApplyLayout”的定义，并且找不到可接受第一个“SettingsPage”类型参数的可访问扩展方法“ApplyLayout”(是否缺少 using 指令或程序集引用?) [G:\CODEX\New Manga.workspace\worktrees\RELEASE-REPACK-4\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj]
+    0 个警告
+    1 个错误
+
+已用时间 00:00:01.69
