@@ -6,7 +6,7 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|REAL-TRANSLATE-PROVIDER-1|—|ready（真实翻译接入；key 走 Windows vault）|
+|REAL-TRANSLATE-PROVIDER-1|—|in_review（AC1 探测/AC2 vault/AC4 降级回退达成；AC3 BLOCKED=OpenCode 额度 402/429；235/235）|
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
 |PDF-EXPORT-UI-1|—|ready（导出面板 PDF 选项；Core 已支持）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
@@ -20,7 +20,7 @@
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |THEME-MACOS-1|—|in_review（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
 
-READY 节点：REAL-TRANSLATE-PROVIDER-1、PDF-EXPORT-UI-1。
+READY 节点：PDF-EXPORT-UI-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

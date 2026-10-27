@@ -23,10 +23,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
+| `in_review` | 6 | no |
 | `superseded` | 6 | yes |
-| `in_review` | 5 | no |
-| `ready` | 4 | no |
 | `proposed` | 3 | no |
+| `ready` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 
@@ -38,6 +38,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
+| `REAL-TRANSLATE-PROVIDER-1` | `in_review` | own row |
 | `S4-CMD-BATCH-1` | `in_review` | no |
 | `THEME-MACOS-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
@@ -46,7 +47,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `READER-LIBRARY-WIRE-1` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 | `PDF-EXPORT-UI-1` | `ready` | own row |
-| `REAL-TRANSLATE-PROVIDER-1` | `ready` | own row |
 | `RELEASE-SMOKE-1` | `ready` | own row |
 
 ## What this ledger does not say
