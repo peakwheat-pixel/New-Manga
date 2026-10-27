@@ -7,10 +7,9 @@ using NewManga.CoreClient.Tests.Support;
 namespace NewManga.CoreClient.Tests.Commands;
 
 /// <summary>
-/// AC2/AC3/AC4 execution parity: the twelve migrated commands really run against the frozen
-/// sidecars (nine over core_service protocol 2.3, three over host_bridge wire v1), Chinese survives
-/// the round trip byte-for-byte, and every remaining command fails with a typed NOT_SUPPORTED
-/// carrying its reason.
+/// AC2/AC3/AC4 execution parity: the migrated commands really run against the frozen sidecars
+/// (core_service protocol 2.3 + host_bridge wire v1), Chinese survives the round trip byte-for-byte,
+/// and every remaining command fails with a typed NOT_SUPPORTED carrying its reason.
 /// </summary>
 public sealed class CommandIntegrationTests
 {
@@ -202,6 +201,39 @@ public sealed class CommandIntegrationTests
         Assert.Equal("TARGET_NOT_FOUND", runErrors[1].Code);
         Assert.Equal("EXPORT_NOT_FOUND", runErrors[3].Code);
 
+        // S4-CMD-BATCH-1: the region write face and the reader progress face. This integration data
+        // root has no pages/regions/clean artifacts, so every write surface must surface the Core's
+        // typed rejection (routing proof); the success paths are covered against the seeded region
+        // fixture by S4RegionReaderCommandTests (scripts/seed_s4_region_fixture.py).
+        var setRegionTypeError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync(
+                "set_region_type",
+                Args("{\"region_id\":\"missing-region\",\"new_region_type\":\"narration\"}")));
+        Assert.Equal("TARGET_NOT_FOUND", setRegionTypeError.Code);
+
+        var restoreRevisionError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync(
+                "restore_region_revision",
+                Args("{\"region_id\":\"missing-region\",\"revision_no\":1,\"expected_revision\":1}")));
+        Assert.Equal("TARGET_NOT_FOUND", restoreRevisionError.Code);
+
+        var rerenderError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync("rerender_page", Args("{\"page_id\":\"missing-page\"}")));
+        Assert.Equal("TARGET_NOT_FOUND", rerenderError.Code);
+
+        // The resolve face projects a missing page as the route-specific PAGE_NOT_FOUND code
+        // (core_service.py handle_resolve_page_resource error mapping), unlike the region writes.
+        var resolvePageError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync("resolve_page_resource", Args("{\"page_id\":\"missing-page\"}")));
+        Assert.Equal("PAGE_NOT_FOUND", resolvePageError.Code);
+
+        var saveProgressError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync(
+                "library_save_reading_progress",
+                Args("{\"chapter_id\":\"missing-chapter\",\"mode\":\"original\",\"page_id\":\"missing-page\"," +
+                     "\"scroll_offset_y\":0,\"elapsed_seconds_delta\":1}")));
+        Assert.Equal("TARGET_NOT_FOUND", saveProgressError.Code);
+
         var issued = await Run("issue_resource_url", "{\"resource_id\":\"res-1\",\"revision\":\"rev-1\"}");
         var grantId = issued.GetProperty("id").GetString();
         Assert.False(string.IsNullOrEmpty(grantId));
@@ -219,6 +251,9 @@ public sealed class CommandIntegrationTests
         var revokedCount = await Run("revoke_resource_refs", "{\"resource_id\":\"res-1\"}");
         Assert.True(revokedCount.GetProperty("revoked_count").GetInt64() >= 1);
 
+        // Success-path count is unchanged: the five S4-CMD-BATCH-1 write commands cannot succeed on
+        // this empty data root, so they are proven by typed rejection here (routing) and by
+        // commands/s4-region-reader-results.json against the seeded region fixture (success).
         Assert.Equal(24, results.Count); // 20 core + 4 bridge (issue x2)
         Assert.Equal(20, results.Count(row => row.GetType().GetProperty("channel")!.GetValue(row)!.ToString() == "CoreService"));
         Assert.Equal(4, results.Count(row => row.GetType().GetProperty("channel")!.GetValue(row)!.ToString() == "HostBridge"));
@@ -228,6 +263,7 @@ public sealed class CommandIntegrationTests
             writer.WriteStartObject();
             writer.WriteString("ac", "AC2/AC3/AC4");
             writer.WriteNumber("implemented_commands_executed", results.Count);
+            writer.WriteNumber("s4_routing_probes", 5);
             writer.WriteNumber("core_service_channel", 20);
             writer.WriteNumber("host_bridge_channel", 4);
             writer.WriteBoolean("all_ok", true);
@@ -309,7 +345,7 @@ public sealed class CommandIntegrationTests
             typed.Add(new { command = descriptor.Name, domain = descriptor.Domain.ToString(), code = error.Code });
         }
 
-        Assert.Equal(20, typed.Count);
+        Assert.Equal(15, typed.Count);
         var unknown = await Assert.ThrowsAsync<HostCommandUnknownException>(
             () => context.Dispatcher.InvokeAsync("not_a_production_command"));
         Assert.Equal("UNKNOWN_COMMAND", unknown.Code);
@@ -374,7 +410,7 @@ public sealed class CommandIntegrationTests
 
         Assert.Equal(66, seen.Count);
         Assert.Equal(66, services.Sum(service => service.Descriptors.Count));
-        Assert.Equal(46, services.Sum(service => service.ImplementedCount));
+        Assert.Equal(51, services.Sum(service => service.ImplementedCount));
 
         var crossDomain = await Assert.ThrowsAsync<ArgumentException>(
             () => context.Settings.InvokeAsync("library_list_books", Args("{}")));

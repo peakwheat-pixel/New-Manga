@@ -307,6 +307,31 @@ public sealed class HostCommandDispatcher
             case "settings_provider_run_snapshot_get":
                 writer.WriteString("run_id", RequireString(name, payload, "run_id"));
                 break;
+            // S4-CMD-BATCH-1: region write face + reader progress face. The legacy Tauri signatures
+            // are enforced here; the Core payload keys are identical to the wire contract.
+            case "set_region_type":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                writer.WriteString("new_region_type", RequireString(name, payload, "new_region_type"));
+                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                break;
+            case "restore_region_revision":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                writer.WriteNumber("revision_no", RequireInt64(name, payload, "revision_no"));
+                writer.WriteNumber("expected_revision", RequireInt64(name, payload, "expected_revision"));
+                break;
+            case "rerender_page":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                break;
+            case "resolve_page_resource":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                break;
+            case "library_save_reading_progress":
+                writer.WriteString("chapter_id", RequireString(name, payload, "chapter_id"));
+                writer.WriteString("mode", RequireString(name, payload, "mode"));
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                WriteOptionalDouble(writer, name, payload, "scroll_offset_y");
+                WriteOptionalDouble(writer, name, payload, "elapsed_seconds_delta");
+                break;
             default:
                 foreach (var property in payload.EnumerateObject())
                 {
@@ -459,8 +484,51 @@ public sealed class HostCommandDispatcher
         throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be an object");
     }
 
-    private static void WriteStringArray(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    private static long RequireInt64(string command, JsonElement args, string property)
     {
+        if (args.ValueKind == JsonValueKind.Object &&
+            args.TryGetProperty(property, out var value) &&
+            value.ValueKind == JsonValueKind.Number &&
+            value.TryGetInt64(out var number))
+        {
+            return number;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"missing required integer argument '{property}'");
+    }
+
+    private static void WriteOptionalInt64(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt64(out var number))
+        {
+            throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be an integer");
+        }
+
+        writer.WriteNumber(property, number);
+    }
+
+    private static void WriteOptionalDouble(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Number || !value.TryGetDouble(out var number) ||
+            double.IsNaN(number) || double.IsInfinity(number))
+        {
+            throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be a finite number");
+        }
+
+        writer.WriteNumber(property, number);
+    }
+
+    private static void WriteStringArray(Utf8JsonWriter writer, string command, JsonElement args, string property)    {
         if (!args.TryGetProperty(property, out var value) || value.ValueKind != JsonValueKind.Array)
         {
             throw new HostCommandInvalidArgumentsException(command, $"missing required string[] argument '{property}'");

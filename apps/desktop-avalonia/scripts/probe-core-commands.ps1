@@ -14,7 +14,12 @@
 [CmdletBinding()]
 param(
     [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy',
-    [string]$OutputPath = ''
+    [string]$OutputPath = '',
+    # S4-CMD-BATCH-1: optional seeded region fixture root (produced by
+    # scripts/seed_s4_region_fixture.py). When supplied, the region write face and the
+    # reader progress face are probed with REAL ids against a disposable copy, instead of
+    # the frozen S2 invalid-payload probes.
+    [string]$RegionFixtureDataRoot = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -28,6 +33,23 @@ $core = Join-Path $SidecarDirectory 'core_service.exe'
 if (-not (Test-Path $core)) { throw "core_service.exe not found under $SidecarDirectory" }
 
 $dataRoot = Join-Path ([IO.Path]::GetTempPath()) ('newmanga-s2-probe-' + [guid]::NewGuid().ToString('N').Substring(0, 8))
+$regionMeta = $null
+if (-not [string]::IsNullOrWhiteSpace($RegionFixtureDataRoot)) {
+    $fixtureRoot = Resolve-Path $RegionFixtureDataRoot
+    $metaPath = Join-Path $fixtureRoot 'fixture.json'
+    if (-not (Test-Path (Join-Path $fixtureRoot 'library.db')) -or -not (Test-Path $metaPath)) {
+        throw "region fixture incomplete under $fixtureRoot (need library.db + fixture.json)"
+    }
+    $regionMeta = Get-Content $metaPath -Raw | ConvertFrom-Json
+    New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
+    foreach ($name in @('library.db', 'library.db-wal', 'library.db-shm')) {
+        $candidate = Join-Path $fixtureRoot $name
+        if (Test-Path $candidate) { Copy-Item $candidate (Join-Path $dataRoot $name) -Force }
+    }
+    if (Test-Path (Join-Path $fixtureRoot 'managed')) {
+        Copy-Item (Join-Path $fixtureRoot 'managed') (Join-Path $dataRoot 'managed') -Recurse -Force
+    }
+}
 foreach ($sub in @('derived', 'catalog', 'managed')) {
     New-Item -ItemType Directory -Force -Path (Join-Path $dataRoot $sub) | Out-Null
 }
@@ -127,6 +149,51 @@ try {
     $probes += Invoke-Core 'restore_region_revision' 3 @{ region_id = 'probe-region'; revision_no = 1; expected_revision = 1 }
     $probes += Invoke-Core 'GetReaderProjection' 3 @{ chapter_id = 'probe-chapter'; mode = 'scroll'; start_position = 0 }
     $probes += Invoke-Core 'SaveReadingProgress' 3 @{ chapter_id = 'probe-chapter'; position = 0 }
+    if ($null -ne $regionMeta) {
+        # S4-CMD-BATCH-1: real targets from the seeded region fixture (disposable copy).
+        $pageId = $regionMeta.page_id
+        $regionId = $regionMeta.region_id
+        $chapterId = $regionMeta.chapter_id
+        $regionsProbe = Invoke-Core 'list_regions' 3 @{ page_id = $pageId }
+        $probes += $regionsProbe
+        $currentRevision = $null
+        $currentType = $null
+        if ($regionsProbe.ok) {
+            $regionsResult = ($regionsProbe.response_raw | ConvertFrom-Json).result
+            $row = $regionsResult.regions | Where-Object { $_.region_id -eq $regionId } | Select-Object -First 1
+            if ($null -ne $row) {
+                $currentRevision = [int]$row.revision_no
+                $currentType = $row.region_type
+            }
+        }
+        $probes += Invoke-Core 'list_region_revisions' 3 @{ region_id = $regionId }
+        $probes += Invoke-Core 'set_region_type' 3 @{
+            region_id = $regionId
+            new_region_type = if ($currentType -eq 'narration') { 'speech' } else { 'narration' }
+            expected_revision = $currentRevision
+        }
+        $setTypeRevision = $null
+        if ($currentRevision -ne $null) { $setTypeRevision = $currentRevision + 1 }
+        $probes += Invoke-Core 'restore_region_revision' 3 @{
+            region_id = $regionId
+            revision_no = 1
+            expected_revision = $setTypeRevision
+        }
+        $probes += Invoke-Core 'rerender_page' 3 @{ page_id = $pageId }
+        $probes += Invoke-Core 'resolve_page_resource' 3 @{ page_id = $pageId }
+        $probes += Invoke-Core 'SaveReadingProgress' 3 @{
+            chapter_id = $chapterId
+            mode = 'original'
+            page_id = $pageId
+            scroll_offset_y = 0
+            elapsed_seconds_delta = 1.5
+        }
+        $probes += Invoke-Core 'GetReaderProjection' 3 @{
+            chapter_id = $chapterId
+            mode = 'original'
+            start_position = 'beginning'
+        }
+    }
 } finally {
     try { $process.StandardInput.Close() } catch { }
     if (-not $process.WaitForExit(5000)) { try { $process.Kill($true) } catch { } }
@@ -136,6 +203,8 @@ try {
 
 $payload = [ordered]@{
     ac = 'AC1/AC3'
+    region_fixture = $RegionFixtureDataRoot
+    region_fixture_meta = $regionMeta
     sidecar = $core
     sidecar_sha256 = (Get-FileHash $core -Algorithm SHA256).Hash.ToLowerInvariant()
     data_root = $dataRoot

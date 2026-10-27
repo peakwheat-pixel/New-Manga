@@ -197,15 +197,18 @@ public static class S4Wiring
         "library_start_export",
         "library_cancel_export",
         "library_get_export_snapshot",
+        // S4-CMD-BATCH-1: region write face (set/restore/rerender/resolve) + reader progress write.
+        "set_region_type",
+        "restore_region_revision",
+        "rerender_page",
+        "resolve_page_resource",
+        "library_save_reading_progress",
     };
 
+    // RUN-EXPORT-E2E-1 and S4-CMD-BATCH-1 wired the last two batches; the S4 ledger is now empty
+    // (VerifyAgainstRegistry stays the source of truth for NS drift).
     public static IReadOnlyList<NsBatchItem> NsBatch { get; } = new NsBatchItem[]
     {
-        new("set_region_type", "S4-A", "工作台-区域", "冻结 Core 的 set_region_type 负载语义未验证（probe INVALID_REQUEST）", "PLANNED"),
-        new("rerender_page", "S4-A", "工作台-区域", "冻结 Core 的 rerender_page 返回 TARGET_NOT_FOUND（命令存在，需真实 page）", "PLANNED"),
-        new("resolve_page_resource", "S4-A", "工作台-画布", "冻结 Core 返回 PAGE_NOT_FOUND；需真实 page_id 与 catalog 接线", "PLANNED"),
-        new("restore_region_revision", "S4-A", "工作台-区域", "冻结 Core 返回 TARGET_NOT_FOUND；撤销/恢复语义待 S5", "PLANNED"),
-        new("library_save_reading_progress", "S4-B", "阅读器", "SaveReadingProgress 负载语义未定（INVALID_REQUEST）", "PLANNED"),
     };
 
     public static int WiredCommandCount => WiredImplemented.Count;

@@ -1,0 +1,186 @@
+{
+  "ac": "AC1",
+  "task": "S4-CMD-BATCH-1",
+  "source": {
+    "runtime_snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+    "snapshot_sha256": "4c6a4da0e8968c6b62516fdbabd5608f4dd14cdd4d91c2c0b9d16a1092ccb574",
+    "s2_handoff": "doc/handoffs/NS-WIRE-A1-handoff.md",
+    "s4_ledger": "apps/desktop-avalonia/src/NewManga.App/Shell/ReaderWorkbenchSupport.cs (S4Wiring)",
+    "core_routes": "src/bootstrap/core_service.py",
+    "old_shell_handlers": "apps/desktop/src-tauri/src/main.rs"
+  },
+  "counts": {
+    "expected_total": 6,
+    "region_write": 4,
+    "reader": 2,
+    "not_supported_before": {
+      "set_region_type": true,
+      "restore_region_revision": true,
+      "rerender_page": true,
+      "resolve_page_resource": true,
+      "library_save_reading_progress": true,
+      "library_get_reader_projection": false
+    }
+  },
+  "commands": [
+    {
+      "command": "set_region_type",
+      "batch": "S4-A",
+      "domain": "region",
+      "role": "region write (retype)",
+      "legacy_handler": "apps/desktop/src-tauri/src/main.rs:847",
+      "legacy_params": [
+        {"name": "region_id", "type": "String"},
+        {"name": "new_region_type", "type": "String"},
+        {"name": "expected_revision", "type": "Option<i64>"}
+      ],
+      "legacy_returns": "Result<serde_json::Value, String> (raw Core JSON pass-through)",
+      "legacy_error_type": "String (typed Core error code)",
+      "core_route": "set_region_type",
+      "core_minor": 3,
+      "core_payload": {"region_id": "string", "new_region_type": "speech|narration|sfx|title|note|other", "expected_revision": "int (optional)"},
+      "core_result": {"region_id": "string", "revision_no": "int", "region_type": "string", "sfx_policy": "skip|translate|manual"},
+      "core_wire_errors": ["INVALID_REQUEST", "INPUT_REVISION_CHANGED", "TARGET_NOT_FOUND", "UNKNOWN"],
+      "before_status": "NOT_SUPPORTED",
+      "after_status": "IMPLEMENTED",
+      "evidence": ["verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json#set_region_type"]
+    },
+    {
+      "command": "restore_region_revision",
+      "batch": "S4-A",
+      "domain": "region",
+      "role": "region write (restore past revision)",
+      "legacy_handler": "apps/desktop/src-tauri/src/main.rs:892",
+      "legacy_params": [
+        {"name": "region_id", "type": "String"},
+        {"name": "revision_no", "type": "i64"},
+        {"name": "expected_revision", "type": "i64"}
+      ],
+      "legacy_returns": "Result<serde_json::Value, String> (raw Core JSON pass-through)",
+      "legacy_error_type": "String (typed Core error code)",
+      "core_route": "restore_region_revision",
+      "core_minor": 3,
+      "core_payload": {"region_id": "string", "revision_no": "positive int", "expected_revision": "positive int"},
+      "core_result": {"region_id": "string", "revision_no": "int", "region_type": "string", "sfx_policy": "string"},
+      "core_wire_errors": ["INVALID_REQUEST", "INPUT_REVISION_CHANGED", "TARGET_NOT_FOUND", "UNKNOWN"],
+      "before_status": "NOT_SUPPORTED",
+      "after_status": "IMPLEMENTED",
+      "evidence": ["verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json#restore_region_revision"]
+    },
+    {
+      "command": "rerender_page",
+      "batch": "S4-A",
+      "domain": "region",
+      "role": "region write (synchronous page rerender + preview projection)",
+      "legacy_handler": "apps/desktop/src-tauri/src/main.rs:907",
+      "legacy_params": [{"name": "page_id", "type": "String"}],
+      "legacy_returns": "Result<serde_json::Value, String> (raw Core JSON pass-through)",
+      "legacy_error_type": "String (typed Core error code)",
+      "core_route": "rerender_page",
+      "core_minor": 3,
+      "core_payload": {"page_id": "string"},
+      "core_result": {
+        "page_id": "string",
+        "artifact_id": "string",
+        "revision_no": "int",
+        "reports": "array of {region_id, status, skip_reason, font_substituted}",
+        "preview": "object|null (preview resource projection)",
+        "preview_error": "string|null"
+      },
+      "core_requires": "current CLEAN artifact for the page (missing -> MISSING_REQUIRED_INPUT)",
+      "core_wire_errors": ["INVALID_REQUEST", "TARGET_NOT_FOUND", "MISSING_REQUIRED_INPUT", "COMPOSITION_BASE_CHANGED", "ARTIFACT_WRITE_FAILED", "UNKNOWN"],
+      "before_status": "NOT_SUPPORTED",
+      "after_status": "IMPLEMENTED",
+      "evidence": ["verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json#rerender_page"]
+    },
+    {
+      "command": "resolve_page_resource",
+      "batch": "S4-A",
+      "domain": "region",
+      "role": "region/canvas read (managed original -> servable resource key)",
+      "legacy_handler": "apps/desktop/src-tauri/src/main.rs:936",
+      "legacy_params": [{"name": "page_id", "type": "String"}],
+      "legacy_returns": "Result<serde_json::Value, String> (raw Core JSON pass-through)",
+      "legacy_error_type": "String (typed Core error code)",
+      "core_route": "resolve_page_resource",
+      "core_minor": 3,
+      "core_payload": {"page_id": "string"},
+      "core_result": {"resource_id": "page-original-{page_id}", "revision": "string"},
+      "core_wire_errors": ["INVALID_REQUEST", "PAGE_NOT_FOUND", "UNKNOWN"],
+      "notes": "The frozen Core projects a missing page on this face as PAGE_NOT_FOUND (not TARGET_NOT_FOUND), unlike the region write faces.",
+      "before_status": "NOT_SUPPORTED",
+      "after_status": "IMPLEMENTED",
+      "evidence": ["verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json#resolve_page_resource"]
+    },
+    {
+      "command": "library_save_reading_progress",
+      "batch": "S4-B",
+      "domain": "reader",
+      "role": "reader progress write",
+      "legacy_handler": "apps/desktop/src-tauri/src/main.rs:996",
+      "legacy_params": [
+        {"name": "chapter_id", "type": "String"},
+        {"name": "mode", "type": "String"},
+        {"name": "page_id", "type": "String"},
+        {"name": "scroll_offset_y", "type": "Option<f64>"},
+        {"name": "elapsed_seconds_delta", "type": "Option<f64>"}
+      ],
+      "legacy_returns": "Result<serde_json::Value, String> (raw Core JSON pass-through)",
+      "legacy_error_type": "String (typed Core error code)",
+      "core_route": "SaveReadingProgress",
+      "core_minor": 3,
+      "core_payload": {
+        "chapter_id": "string",
+        "mode": "original|translated",
+        "page_id": "string",
+        "scroll_offset_y": "finite number >= 0 (optional; must be 0 for paged chapters)",
+        "elapsed_seconds_delta": "finite number >= 0 (optional)"
+      },
+      "core_result": {
+        "book_id": "string",
+        "chapter_id": "string",
+        "mode": "string",
+        "last_page_id": "string|null",
+        "scroll_offset_y": "number",
+        "progress_percent": "number",
+        "last_read_at": "string|null",
+        "total_read_seconds": "number"
+      },
+      "core_wire_errors": ["INVALID_REQUEST", "TARGET_NOT_FOUND", "UNKNOWN"],
+      "before_status": "NOT_SUPPORTED",
+      "after_status": "IMPLEMENTED",
+      "evidence": ["verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json#library_save_reading_progress"]
+    },
+    {
+      "command": "library_get_reader_projection",
+      "batch": "S4-B",
+      "domain": "reader",
+      "role": "reader projection read",
+      "legacy_handler": "apps/desktop/src-tauri/src/main.rs:979",
+      "legacy_params": [
+        {"name": "chapter_id", "type": "String"},
+        {"name": "mode", "type": "String"},
+        {"name": "start_position", "type": "String"}
+      ],
+      "legacy_returns": "Result<serde_json::Value, String> (raw Core JSON pass-through)",
+      "legacy_error_type": "String (typed Core error code)",
+      "core_route": "GetReaderProjection",
+      "core_minor": 3,
+      "core_payload": {"chapter_id": "string", "mode": "original|translated", "start_position": "resume|beginning"},
+      "core_result": {
+        "book_id": "string",
+        "chapter_id": "string",
+        "mode": "string",
+        "layout": "webtoon_vertical|paged layout token",
+        "pages": "array of {page_id, order, width_px, height_px, original{resource_ref, artifact_revision_id, sha256}, translated{...}}",
+        "saved_progress": "object|null",
+        "initial_position": {"page_id": "string", "scroll_offset_y": "number"}
+      },
+      "core_wire_errors": ["INVALID_REQUEST", "TARGET_NOT_FOUND", "EXPORT_INPUT_UNAVAILABLE", "UNKNOWN"],
+      "before_status": "IMPLEMENTED",
+      "after_status": "IMPLEMENTED",
+      "notes": "Wired by NS-WIRE-A1 (S3-C entry); re-executed with a real chapter in this batch to complete the reader pair's success evidence.",
+      "evidence": ["verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json#library_get_reader_projection"]
+    }
+  ]
+}

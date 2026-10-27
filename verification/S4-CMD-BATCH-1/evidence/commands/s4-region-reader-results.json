@@ -1,0 +1,58 @@
+{
+  "ac": "AC2",
+  "fixture": "scripts/seed_s4_region_fixture.py",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "chapter_type": "webtoon",
+  "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+  "page_count": 8,
+  "region_id": "ebe44480b8064157b2f70c97adf2a51a",
+  "region_revision_no": 3,
+  "region_type": "speech",
+  "all_ok": true,
+  "executed_count": 7,
+  "results": [
+    {
+      "command": "list_regions (read-then-write setup)",
+      "core_command": "list_regions",
+      "ok": true,
+      "detail": "revision_no=3"
+    },
+    {
+      "command": "set_region_type",
+      "core_command": "set_region_type",
+      "ok": true,
+      "detail": "region_type=narration revision_no=4"
+    },
+    {
+      "command": "restore_region_revision",
+      "core_command": "restore_region_revision",
+      "ok": true,
+      "detail": "restored revision_no=1 -\u003E new revision_no=5 region_type=speech"
+    },
+    {
+      "command": "rerender_page",
+      "core_command": "rerender_page",
+      "ok": true,
+      "detail": "artifact_id=9804f0bb279e4eb390a6be9bfc45e45d revision_no=1 reports=1"
+    },
+    {
+      "command": "resolve_page_resource",
+      "core_command": "resolve_page_resource",
+      "ok": true,
+      "detail": "resource_id=page-original-f52f2772e8044557a72e82f5ea6ab932 revision=original"
+    },
+    {
+      "command": "library_save_reading_progress",
+      "core_command": "SaveReadingProgress",
+      "ok": true,
+      "detail": "mode=original scroll_offset_y=0 elapsed_seconds_delta=1.5 persisted"
+    },
+    {
+      "command": "library_get_reader_projection",
+      "core_command": "GetReaderProjection",
+      "ok": true,
+      "detail": "layout=webtoon_vertical pages=8 initial_page=f52f2772e8044557a72e82f5ea6ab932"
+    }
+  ]
+}

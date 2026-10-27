@@ -1,0 +1,44 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "wired_implemented_count": 19,
+  "ns_registered_count": 4,
+  "ns_done_count": 0,
+  "registry_verified": true,
+  "registry_problems": [],
+  "fit_utilization": 0.9867,
+  "page_turn_p95_ms": 0,
+  "webtoon_scroll_p95_ms": 2.1,
+  "webtoon_tiles": 30,
+  "webtoon_cached_tiles": 0,
+  "webtoon_decoded_bytes": 0,
+  "within_memory_limit": true,
+  "dpr2_400pct_sharp": true,
+  "no_interpolation": true,
+  "page_turns": [],
+  "ns_batch": [
+    {
+      "command": "library_get_run_snapshot",
+      "batch": "S4-C",
+      "status": "PLANNED",
+      "reason": "Run \u6295\u5F71\u4F9D\u8D56 Python \u8FD0\u884C\u7F16\u6392\uFF08host-local \u672A\u8FC1\u79FB\uFF09"
+    },
+    {
+      "command": "library_control_run",
+      "batch": "S4-C",
+      "status": "PLANNED",
+      "reason": "Run \u63A7\u5236\u4F9D\u8D56 Python \u8FD0\u884C\u7F16\u6392\uFF08host-local \u672A\u8FC1\u79FB\uFF09"
+    },
+    {
+      "command": "library_cancel_export",
+      "batch": "S4-C",
+      "status": "PLANNED",
+      "reason": "Export \u63A7\u5236\u4F9D\u8D56 host-local \u5BFC\u51FA\u7F16\u6392"
+    },
+    {
+      "command": "library_get_export_snapshot",
+      "batch": "S4-C",
+      "status": "PLANNED",
+      "reason": "Export \u5FEB\u7167\u4F9D\u8D56 host-local \u5BFC\u51FA\u7F16\u6392"
+    }
+  ]
+}
