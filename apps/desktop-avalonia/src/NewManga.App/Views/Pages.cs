@@ -5,6 +5,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
+using NewManga.App.Services;
 using NewManga.App.ViewModels;
 using NewManga.Theme;
 
@@ -509,6 +510,30 @@ public sealed class SettingsPage : UserControl
         dataCard.Child = dataBody;
         right.Children.Add(dataCard);
 
+        // GPU-ORT-PROBE-1: packaged device probe (ONNX Runtime EP list recorded in VERSION.json).
+        DeviceStatus = Services.DeviceStatus.Load();
+        DeviceStatusText = Ui.Text(
+            DeviceStatus?.DisplayText ?? "GPU：未打包探测（开发运行）",
+            11,
+            DeviceStatus?.Available == true ? "TextPrimary" : "TextSecondary");
+        var deviceCard = new Border
+        {
+            Padding = new Thickness(16),
+            CornerRadius = new CornerRadius(12),
+            Background = ThemePackService.Brush("CardBg"),
+            BorderBrush = ThemePackService.Brush("CardBorder"),
+            BorderThickness = new Thickness(1),
+        };
+        var deviceBody = new StackPanel();
+        deviceBody.Children.Add(Ui.Text("运行环境 · GPU", 13, "TextPrimary", bold: true));
+        deviceBody.Children.Add(DeviceStatusText);
+        deviceBody.Children.Add(Ui.Text(
+            "探测源：ONNX Runtime 执行提供程序（打包时写入 VERSION.json）",
+            11,
+            "TextSecondary"));
+        deviceCard.Child = deviceBody;
+        right.Children.Insert(0, deviceCard);
+
         var nsCard = new Border
         {
             Padding = new Thickness(16),
@@ -539,6 +564,11 @@ public sealed class SettingsPage : UserControl
     public ItemsControl ThemeList { get; }
 
     public StackPanel NsList => _nsList;
+
+    /// <summary>GPU-ORT-PROBE-1: packaged device probe (null in a dev run).</summary>
+    public DeviceStatusInfo? DeviceStatus { get; }
+
+    public TextBlock DeviceStatusText { get; }
 
     public void UpdateSettingsJson(System.Text.Json.JsonElement value)
     {

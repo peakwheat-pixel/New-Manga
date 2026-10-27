@@ -3,9 +3,10 @@
 TASK-019 runs in an environment without ``torch``/``numpy``: GPU existence is
 **not** device availability. This module therefore never invents a device:
 
-- a GPU is reported available only when a real runtime for it is installed
-  and importable (``torch.cuda`` today); otherwise the state is
-  ``unavailable`` with a typed reason and the model provider is Not-Ready;
+- a GPU is reported available only when a real inference runtime for it is
+  installed and enumerable — the authority is ONNX Runtime's execution-provider
+  list (``onnxruntime.get_available_providers()``); ``torch`` is only a
+  development-time supplement (device name/memory) and never the main verdict;
 - CPU fallback happens only when the provider declares
   ``supports_cpu_fallback`` (D06 §82, AC-GPU-003) and the fallback is recorded
   in provenance — it is never presented as GPU execution;
@@ -14,11 +15,18 @@ TASK-019 runs in an environment without ``torch``/``numpy``: GPU existence is
 - an OOM inside a provider is isolated into a typed failure: the slot is
   released, the model is marked unloaded and the application keeps running
   (AC-GPU-001).
+
+GPU-ORT-PROBE-1 (2026-10-27): the release closure is torch-free and ships
+ONNX Runtime with the DirectML provider, so torch-based probing reported the
+GPU unavailable in packaged builds. The probe now reads the ORT EP list and
+uses the Windows display-adapter registry (and torch, when importable) only as
+a name/memory supplement.
 """
 
 from __future__ import annotations
 
 import importlib.util
+import sys
 import threading
 from dataclasses import dataclass, field
 
@@ -33,6 +41,16 @@ DEVICE_CPU = "cpu"
 GPU_AVAILABLE = "available"
 GPU_UNAVAILABLE = "unavailable"
 GPU_UNKNOWN = "unknown"
+
+#: ONNX Runtime execution providers that mean "this machine has a GPU EP".
+#: Ordered by preference; only labels/names here, never an import.
+_GPU_EXECUTION_PROVIDERS = (
+    ("DmlExecutionProvider", "DirectML"),
+    ("CUDAExecutionProvider", "CUDA"),
+    ("ROCMExecutionProvider", "ROCm"),
+    ("MIGraphXExecutionProvider", "MIGraphX"),
+    ("TensorrtExecutionProvider", "TensorRT"),
+)
 
 #: Substrings that identify an out-of-memory failure across runtimes without
 #: importing any of them (torch/cuda/numpy all phrase it differently).
@@ -53,6 +71,112 @@ def _module_present(name: str) -> bool:
         return importlib.util.find_spec(name) is not None
     except (ImportError, ValueError):
         return False
+
+
+def _onnxruntime_providers() -> tuple[str, ...]:
+    """The execution providers the installed ONNX Runtime reports (empty when absent).
+
+    This is the AC1 authority for "is there a usable GPU runtime": the release
+    closure ships ``onnxruntime-directml`` and no torch, so the EP list is the
+    only honest answer available inside the packaged process. Import errors and
+    unusual runtimes fail closed to "no providers".
+    """
+    try:
+        import onnxruntime  # type: ignore
+    except Exception:  # noqa: BLE001 - optional runtime, any import failure means absent
+        return ()
+    try:
+        providers = onnxruntime.get_available_providers()
+    except Exception:  # noqa: BLE001 - a broken runtime must not break device probing
+        return ()
+    if not providers:
+        return ()
+    return tuple(str(provider) for provider in providers)
+
+
+def _windows_gpu_name() -> tuple[str, int | None] | None:
+    """Best-effort display-adapter name/size from the Windows registry (stdlib only).
+
+    ONNX Runtime enumerates *providers*, not adapters; the settings page wants a
+    human name. The display-adapter class key carries ``DriverDesc`` and (for
+    real GPUs) ``HardwareInformation.qwMemorySize``. Virtual display adapters are
+    present on this machine, so the adapter with the largest reported memory
+    wins. Never raises: the registry is a supplement, not the verdict.
+    """
+    if sys.platform != "win32":
+        return None
+    try:
+        import winreg
+    except ImportError:  # pragma: no cover - Windows always has winreg
+        return None
+    base = (
+        r"SYSTEM\CurrentControlSet\Control\Class"
+        r"\{4d36e968-e325-11ce-bfc1-08002be10318}"
+    )
+    try:
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, base) as root:
+            best: tuple[str, int | None] | None = None
+            for index in range(64):
+                try:
+                    subkey = winreg.EnumKey(root, index)
+                except OSError:
+                    break
+                if subkey in ("Configuration", "Properties"):
+                    continue
+                try:
+                    with winreg.OpenKey(root, subkey) as adapter:
+                        try:
+                            desc, _ = winreg.QueryValueEx(adapter, "DriverDesc")
+                        except OSError:
+                            desc = None
+                        try:
+                            qword, _ = winreg.QueryValueEx(
+                                adapter, "HardwareInformation.qwMemorySize"
+                            )
+                        except OSError:
+                            qword = None
+                except OSError:
+                    continue
+                if not isinstance(desc, str) or not desc:
+                    continue
+                memory = (
+                    int(qword) // (1024 * 1024)
+                    if isinstance(qword, int) and qword > 0
+                    else None
+                )
+                if best is None or (memory or 0) > (best[1] or 0):
+                    best = (desc, memory)
+            return best
+    except OSError:
+        return None
+
+
+def _torch_supplement() -> tuple[str | None, int | None]:
+    """Development-time name/memory supplement (never the availability verdict)."""
+    if not _module_present("torch"):
+        return None, None
+    try:  # pragma: no cover - requires a CUDA torch, absent in the release closure
+        import torch  # type: ignore
+
+        if not torch.cuda.is_available():
+            return None, None
+        properties = torch.cuda.get_device_properties(0)
+        return str(properties.name), int(properties.total_memory // (1024 * 1024))
+    except Exception:  # pragma: no cover - defensive
+        return None, None
+
+
+def probe_snapshot(manager: "DeviceManager | None" = None) -> dict:
+    """The probe result as a JSON-ready dict (device probe evidence / package metadata).
+
+    Same fields as ``DeviceInfo.as_dict()`` plus the raw ORT EP list, so a
+    packaged build can record what its closure actually supports.
+    """
+    probe = (manager or DeviceManager()).gpu_info()
+    return {
+        "onnxruntime_providers": list(_onnxruntime_providers()),
+        "gpu": probe.as_dict(),
+    }
 
 
 def looks_like_oom(error: BaseException) -> bool:
@@ -191,38 +315,46 @@ class DeviceManager:
         return self._gpu_info
 
     def _probe_gpu(self) -> DeviceInfo:
-        if not _module_present("torch"):
+        providers = _onnxruntime_providers()
+        execution_provider = next(
+            (label for name, label in _GPU_EXECUTION_PROVIDERS if name in providers),
+            None,
+        )
+        torch_name, torch_memory = _torch_supplement()
+        adapter = _windows_gpu_name()
+        if execution_provider is None:
+            if providers:
+                detail = (
+                    "onnxruntime has no GPU execution provider "
+                    f"(providers={list(providers)})"
+                )
+            else:
+                detail = "onnxruntime is not installed (no execution providers)"
+            if torch_name:
+                detail += (
+                    f"; torch supplement: {torch_name} "
+                    "(development-only, not the inference runtime)"
+                )
             return DeviceInfo(
                 kind=DEVICE_GPU,
                 state=GPU_UNAVAILABLE,
                 error_code=DeviceUnavailable.error_code,
-                detail="no GPU runtime installed (torch is absent)",
+                detail=detail,
             )
-        try:  # pragma: no cover - requires torch, absent in this environment
-            import torch  # type: ignore
 
-            if not torch.cuda.is_available():
-                return DeviceInfo(
-                    kind=DEVICE_GPU,
-                    state=GPU_UNAVAILABLE,
-                    error_code=DeviceUnavailable.error_code,
-                    detail="torch reports no CUDA device",
-                )
-            properties = torch.cuda.get_device_properties(0)
-            return DeviceInfo(
-                kind=DEVICE_GPU,
-                index=0,
-                name=str(properties.name),
-                total_memory_mb=int(properties.total_memory // (1024 * 1024)),
-                state=GPU_AVAILABLE,
-            )
-        except Exception as error:  # pragma: no cover - defensive
-            return DeviceInfo(
-                kind=DEVICE_GPU,
-                state=GPU_UNKNOWN,
-                error_code=DeviceUnavailable.error_code,
-                detail=f"GPU probe failed: {error!r}",
-            )
+        name = torch_name or (adapter[0] if adapter else None) or execution_provider
+        memory = torch_memory or (adapter[1] if adapter else None)
+        return DeviceInfo(
+            kind=DEVICE_GPU,
+            index=0,
+            name=name,
+            total_memory_mb=memory,
+            state=GPU_AVAILABLE,
+            detail=(
+                f"onnxruntime providers={list(providers)}; "
+                f"execution_provider={execution_provider}"
+            ),
+        )
 
     def plan(
         self,

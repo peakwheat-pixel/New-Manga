@@ -1,0 +1,17 @@
+{
+  "onnxruntime_providers": [
+    "DmlExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "gpu": {
+    "kind": "gpu",
+    "index": 0,
+    "name": "NVIDIA GeForce RTX 5070 Ti",
+    "total_memory_mb": 16303,
+    "state": "available",
+    "error_code": "",
+    "detail": "onnxruntime providers=['DmlExecutionProvider', 'CPUExecutionProvider']; execution_provider=DirectML"
+  },
+  "ac": "AC1/AC2",
+  "source": "build-environment probe: onnxruntime.get_available_providers() + Windows display-adapter registry supplement"
+}
