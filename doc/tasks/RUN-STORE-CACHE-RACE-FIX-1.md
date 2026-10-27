@@ -69,10 +69,10 @@ allowed_paths:
 
 | ID | AC/场景 | 路径 | commit | sha256 (64-hex) | 类型 |
 |---|---|---|---|---|---|
-| EV-REPORT | AC1–AC5 总报告（含 Record Decision） | verification/RUN-STORE-CACHE-RACE-FIX-1/REPORT.md | e35238075 | afeeba14a0713b47a91e5f9c92e68df6e87b54c83231a748b3c33b929e8a8e07 | CANONICAL |
+| EV-REPORT | AC1–AC5 总报告（含 Record Decision） | verification/RUN-STORE-CACHE-RACE-FIX-1/REPORT.md | 8ef319b9aadc5bac30a73eb5599b5b0e9c053602 | c0285723e3ad6e6be92d58780ce5437e1d1df869a68bdc40823c4d66d392f232 | CANONICAL |
 | EV-AB-MATRIX | AC3 修复前/后 A/B 矩阵 | verification/RUN-STORE-CACHE-RACE-FIX-1/ab-matrix.json | e35238075 | e2966644877429ffe6b1c6a186a4d2202a1a4578f40043a1268209a5eb8fd9e3 | CANONICAL |
 | EV-SRC-DIFF | AC1/AC2 源码 diff（base→delivery） | verification/RUN-STORE-CACHE-RACE-FIX-1/src-changes-vs-base.patch | e35238075 | d95791215a511eab6d95f27dc9c251f147df3b4f7cee597a0fbc5705c4aa31bf | SOURCE_PIN |
-| EV-RESOURCE-MANIFEST | AC5 资源清单 | verification/RUN-STORE-CACHE-RACE-FIX-1/resource-manifest.json | 0a43a9a7a7e5d58b7199ce83704404e10fea96ce | f4287f267260ee77f630a590fb0709afe6e5e7e286e7ab8fb38131496dc08a56 | SOURCE_PIN |
+| EV-RESOURCE-MANIFEST | AC5 资源清单 | verification/RUN-STORE-CACHE-RACE-FIX-1/resource-manifest.json | 8ef319b9aadc5bac30a73eb5599b5b0e9c053602 | eedad51b70f339f32825713997de26050d7a2c692e711fe648790f0af92d62ad | SOURCE_PIN |
 | EV-CHECK-TASKPATH | AC5 治理门禁日志 | verification/RUN-STORE-CACHE-RACE-FIX-1/check-taskpath.log | e35238075 | 507142f9f823e4526b8a4e8ff5aebd391140f391cda1702fae1e181145abdc27 | CANONICAL |
 | EV-TOOL-REPRO | AC3 并发复现/判别工具 | verification/RUN-STORE-CACHE-RACE-FIX-1/tools/repro_scheduler.py | e35238075 | 59c000cebbb9d34e040d1500a7c56c2c694c00f8d9b4325e971bab6587d535e1 | CANONICAL |
 | EV-DOTNET-SUMMARY | AC4 Avalonia 177/177 摘要 | verification/RUN-STORE-CACHE-RACE-FIX-1/test/avalonia-summary.json | e35238075 | f13df036b8593d60777b313f1d9da417152604061932823c16b05db319f7c452 | CANONICAL |
