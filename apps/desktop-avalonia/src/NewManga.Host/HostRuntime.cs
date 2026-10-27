@@ -101,27 +101,48 @@ public sealed class HostRuntime : IAsyncDisposable
         return new ChineseRoundTripResult(title, created.Title, found);
     }
 
-    /// <summary>READER-LIBRARY-WIRE-1: chapter navigation for the reader page (read-only).</summary>
+    /// <summary>
+    /// READER-LIBRARY-WIRE-1: chapter navigation for the reader page (read-only).
+    /// CHAPTER-SELECTOR-1: serialized on the reader I/O gate — the core_service pipe is strictly
+    /// request/response, so a chapter list must not cross a concurrent page/projection read.
+    /// </summary>
     public async Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(string bookId, CancellationToken cancellationToken = default)
     {
-        var core = CoreService ?? throw NotReady();
-        return await core.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
     }
 
     /// <summary>
     /// READER-LIBRARY-WIRE-1: ordered reader projection (pages + layout) for one chapter.
     /// READER-PROGRESS-1: <paramref name="startPosition"/> defaults to <c>resume</c> so the Core echoes
     /// the persisted page (book, chapter, mode) and never mutates it on read.
+    /// CHAPTER-SELECTOR-1: serialized on the same reader I/O gate as page reads.
     /// </summary>
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
         string startPosition = ReaderStartPosition.Resume,
         CancellationToken cancellationToken = default)
     {
-        var core = CoreService ?? throw NotReady();
-        return await core
-            .GetReaderProjectionAsync(chapterId, startPosition: startPosition, cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core
+                .GetReaderProjectionAsync(chapterId, startPosition: startPosition, cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
     }
 
     /// <summary>

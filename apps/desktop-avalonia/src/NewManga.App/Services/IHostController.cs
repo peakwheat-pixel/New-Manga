@@ -98,9 +98,19 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
     /// the reader then keeps its fixture fallback.
     /// READER-PROGRESS-1: the projection asks for <c>start_position="resume"</c>, so the returned book
     /// carries <see cref="ReaderBookData.InitialPageIndex"/> for the last read page.
+    /// CHAPTER-SELECTOR-1: <paramref name="bookId"/>/<paramref name="chapterId"/> select the exact
+    /// book and chapter; null keeps the previous defaults (first readable book / its first chapter).
     /// </summary>
     Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC1: chapter list of one book (<c>list_chapters</c>) for the reader's chapter
+    /// selector. Read-only; returns an empty list when the Host is not ready or the read fails.
+    /// </summary>
+    Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(
+        string bookId,
         CancellationToken cancellationToken = default);
 }

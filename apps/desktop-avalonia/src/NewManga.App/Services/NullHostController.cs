@@ -47,6 +47,11 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult<ReaderBookData?>(null);
 
+    public Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(
+        string bookId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ChapterSummary>>(Array.Empty<ChapterSummary>());
+
     public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,
