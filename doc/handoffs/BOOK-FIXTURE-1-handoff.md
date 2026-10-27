@@ -3,7 +3,7 @@
 - Task: `doc/tasks/BOOK-FIXTURE-1.md`（team task-20）
 - Branch: `task/BOOK-FIXTURE-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/BOOK-FIXTURE-1`
 - Base: `c6934cba5`（卡面 `4deb9ef3e` 为释放前；实际分支含 followups 释放提交）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `f0142fccd`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改产品源码/协议/Host 契约；未触碰真实用户数据。
 
 ## 1. 交付摘要

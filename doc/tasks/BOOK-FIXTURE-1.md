@@ -62,6 +62,14 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-BF-REPORT | AC1–AC5 | `verification/BOOK-FIXTURE-1/REPORT.md` | `f0142fccd` | `9c9f879baf8d3233c38992c293c97df8e805a658f7e728387ce58817720d53cf` | CANONICAL |
+| E-BF-RETEST | AC3 | `verification/BOOK-FIXTURE-1/RETEST.md` | `f0142fccd` | `e67dff71b79fe787dd2a613ce7d3980859be6eb91305d63945b9fa9cf7e7250c` | CANONICAL |
+| E-BF-FIXTURE | AC1/AC2 | `verification/BOOK-FIXTURE-1/book-fixture.json` | `f0142fccd` | `4e809f8f227ee03461f68fbbb25b1a6e6300b9fc1f96abc7dac8f4c77745a879` | CANONICAL |
+| E-BF-RERUN | AC1（幂等） | `verification/BOOK-FIXTURE-1/book-fixture-rerun.json` | `f0142fccd` | `bb5665ac36045829807564bc918eaa6f652e9631ebd493adb88b7d6a4095018e` | CANONICAL |
+| E-BF-APPSMOKE | AC3/AC4 | `verification/BOOK-FIXTURE-1/app-smoke.json` | `f0142fccd` | `bcae98ddcab23e35138f73514d5b83025e69ef267582973a319b05117a920edb` | CANONICAL |
+| E-BF-PYTEST | AC4 | `verification/BOOK-FIXTURE-1/pytest.log` | `f0142fccd` | `5acdf7e7f455f75367eafb0e438b46f1b556f6c0683ec0d88c039c729c57e816` | CANONICAL |
+| E-BF-DOTNET | AC4 | `verification/BOOK-FIXTURE-1/scripts-test.log` | `f0142fccd` | `6aa2a76d5df7d7bf2d3b3d37fab0409f27a64b8aca9af8cb9f29011bbe1b664a` | CANONICAL |
+| E-BF-HELPER | AC1 | `verification/BOOK-FIXTURE-1/new-test-book.helper.log` | `f0142fccd` | `89dadb79a1f4ed175254f623eaef61c390b71c2bc3ee18527d46bfbd32be3687` | CANONICAL |
 
 ## Resource Manifest
 
