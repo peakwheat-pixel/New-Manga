@@ -1,0 +1,1695 @@
+{
+  "task": "RUN-STORE-CACHE-RACE-FIX-1",
+  "mode": "scheduler",
+  "poll": "projection-fresh",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\RUN-STORE-CACHE-RACE-FIX-1\\data-roots\\data-root-scheduler-projection-fresh-1793102608",
+  "repo": "G:\\CODEX\\New Manga.workspace\\task-envs\\RUN-STORE-CACHE-RACE-FIX-1\\pre-fix-worktree",
+  "head": "9ef53f24de27e77e36ef1eb6eecb11b29491f785",
+  "python": "3.14.6",
+  "started_at": "2026-10-27T20:03:29",
+  "terminal": "completed_with_failures",
+  "run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+  "analysis": {
+    "step_total": 16,
+    "step_status_counts": {
+      "running": 8,
+      "failed": 8
+    },
+    "stuck_running": [
+      {
+        "step_run_id": "step-2bb97c0a55ec4e55a1e2c97a2c8055d7",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-df613cc519764f968cd50fc467f45091",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-7ced41a2f37644b18abc3c8d328c000f",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-34e2409405434cf8bbdcbb8d1a668498",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-a7445d9f21d64f1ebc9c0d770789db2b",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-40b8bb4a9bc541ce98da7ac338caf426",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-1cecc7e2990d4851b5b351111a3a4510",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      },
+      {
+        "step_run_id": "step-a0aa9fb036e6496785a0cee1869e3ffe",
+        "step_type": "detect",
+        "region_id": null,
+        "status": "running"
+      }
+    ],
+    "regionless_invalid_input": [
+      {
+        "step_run_id": "step-4572efec1d5b4a7b8c60ae72060b3fce",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-e81fba41bbde4b01b4549e5c8c6a20f2",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-b10afc55343d4dfbb5402b4fd85f00e1",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-36d06b4e436c4eca9f8423e4cff00f21",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-a681994d4a1e494ca5d3214e550e0dfa",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-0a7cf3eab7204065ba51cf0275842927",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-612058fa28ae4fd5ae0b79562d77b1ba",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_run_id": "step-18053674b50a4f4bbb9fab5eda174e46",
+        "step_type": "ocr",
+        "region_id": null,
+        "error_code": "INVALID_INPUT"
+      }
+    ],
+    "regions": 26,
+    "run_rows": [
+      {
+        "run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "status": "completed_with_failures"
+      }
+    ],
+    "task_status_counts": {
+      "failed": 8
+    }
+  },
+  "db": {
+    "run": [
+      {
+        "run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "command_type": "translate_untranslated",
+        "scope_type": "book",
+        "requested_targets_json": "[\"14340ddad0ed472fbe687fe12340c5d8\"]",
+        "settings_snapshot_json": "{}",
+        "provider_binding_snapshot_json": "{\"ocr\": \"manga-ocr\"}",
+        "constraint_snapshot_ref": null,
+        "context_policy_json": "{}",
+        "status": "completed_with_failures",
+        "planned_step_units": 72,
+        "terminal_step_units": 64,
+        "pause_requested": 0,
+        "cancel_requested": 0,
+        "source_run_id": null,
+        "retry_reason": null,
+        "interruption_disposition": null,
+        "termination_reason": null,
+        "fatal_error": null,
+        "updated_at": "2026-10-27T12:03:33.908+00:00"
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:0",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "target_type": "page",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:render\"}]",
+        "step_run_ids_json": "[\"step-2bb97c0a55ec4e55a1e2c97a2c8055d7\", \"step-4572efec1d5b4a7b8c60ae72060b3fce\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:1",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "target_type": "page",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:render\"}]",
+        "step_run_ids_json": "[\"step-df613cc519764f968cd50fc467f45091\", \"step-e81fba41bbde4b01b4549e5c8c6a20f2\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:2",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "target_type": "page",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:render\"}]",
+        "step_run_ids_json": "[\"step-7ced41a2f37644b18abc3c8d328c000f\", \"step-b10afc55343d4dfbb5402b4fd85f00e1\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:3",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "target_type": "page",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:render\"}]",
+        "step_run_ids_json": "[\"step-34e2409405434cf8bbdcbb8d1a668498\", \"step-36d06b4e436c4eca9f8423e4cff00f21\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:4",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "target_type": "page",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:render\"}]",
+        "step_run_ids_json": "[\"step-a7445d9f21d64f1ebc9c0d770789db2b\", \"step-a681994d4a1e494ca5d3214e550e0dfa\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:5",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "target_type": "page",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:render\"}]",
+        "step_run_ids_json": "[\"step-40b8bb4a9bc541ce98da7ac338caf426\", \"step-0a7cf3eab7204065ba51cf0275842927\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:6",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "target_type": "page",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:render\"}]",
+        "step_run_ids_json": "[\"step-1cecc7e2990d4851b5b351111a3a4510\", \"step-612058fa28ae4fd5ae0b79562d77b1ba\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "run_target_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:target:7",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "target_type": "page",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7\", \"unit_id\": \"run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:render\"}]",
+        "step_run_ids_json": "[\"step-a0aa9fb036e6496785a0cee1869e3ffe\", \"step-18053674b50a4f4bbb9fab5eda174e46\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      }
+    ],
+    "steps": [
+      {
+        "step_run_id": "step-2bb97c0a55ec4e55a1e2c97a2c8055d7",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-4572efec1d5b4a7b8c60ae72060b3fce",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:0:f52f2772e8044557a72e82f5ea6ab932:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-df613cc519764f968cd50fc467f45091",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-e81fba41bbde4b01b4549e5c8c6a20f2",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:1:4f8a24147b3044deabf4f5a2dd83b84f:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-7ced41a2f37644b18abc3c8d328c000f",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-b10afc55343d4dfbb5402b4fd85f00e1",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-34e2409405434cf8bbdcbb8d1a668498",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-36d06b4e436c4eca9f8423e4cff00f21",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:3:6814353f6d8544d6945ad5748d518f47:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-a7445d9f21d64f1ebc9c0d770789db2b",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-a681994d4a1e494ca5d3214e550e0dfa",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:4:f54739037525486e8704db23db5c0dc1:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-40b8bb4a9bc541ce98da7ac338caf426",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-0a7cf3eab7204065ba51cf0275842927",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:5:c239be827f3a4448848d2c42bffc05d1:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-1cecc7e2990d4851b5b351111a3a4510",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-612058fa28ae4fd5ae0b79562d77b1ba",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:6:7a39226851774f01a4cdb89bcf118296:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-a0aa9fb036e6496785a0cee1869e3ffe",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-18053674b50a4f4bbb9fab5eda174e46",
+        "pipeline_run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+        "task_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc:task:7:221d772e601e480e8e7508dfe9aff380:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      }
+    ],
+    "regions": [
+      {
+        "region_id": "f8568e6785b04a8fb7d853c917ad6dfd",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "3b2cd0d1402e4dfcb13dc201d5823a27",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "fafc8aefc6474a8c8ef743fe98824aef",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "2366fd2840b340bf909e04d4b2701901",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "10ca29623e6949d98c32f792b3eca3f5",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "4439478721e64c888e9f5c681fb4cfd7",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "f1a241b2899344798ea3c92f80c3bb04",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "4bd1dfb91b92477c8d4fd5d67f2493be",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "b668acc925f3439a96d8414001a369f5",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "f2c34d26e84946229a9949aa6e820d06",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "38ae85c67b0a493a85561f10284bed86",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "a69a931b692647c8b0c750b1abc63d68",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "95420d3423c54dac87fbfdf176f555e2",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "5a86b7d9e5ca41f2a64cdfc14090c2ec",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "953a4eefc0a949bab65ce268bcc94e78",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "ea11b57326524bf49ee0230ea2b77062",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "104a1cac428a41fa82551895f9c261b0",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "aa085460912f4c2f85e9c8c291549ed6",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "258c3ee193834a5dba44684f1cd183f6",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "edad20e3692b4d409f5913018830b443",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "ea10aea6a5cb409cb34b504888ead030",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "323337db2b67425c96195a9c2f785bcb",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "73f9f80a1cdc4263ad3fdc7e2b137964",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "d91bec7bd123447d83963ea139c3fa1b",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "b46c4d1de8774a0f85811f64cbf94ec0",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "5c96c530d15a418f8f03e3def023a8da",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      }
+    ]
+  },
+  "log": [
+    {
+      "t_ms": 1245.0,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "scheduler.started",
+      "owner": true,
+      "worker": "core-run-scheduler"
+    },
+    {
+      "t_ms": 1259.9,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "run.accepted",
+      "run": "run-e4efb3c4",
+      "created": true,
+      "status": "pending",
+      "tasks": 0
+    },
+    {
+      "t_ms": 1260.2,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x254204dc1a0",
+      "after_obj": "0x25420392710"
+    },
+    {
+      "t_ms": 1260.3,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "run.status",
+      "run": "run-e4efb3c4",
+      "status": "pending"
+    },
+    {
+      "t_ms": 1360.9,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x25420392710",
+      "after_obj": "0x25420393390"
+    },
+    {
+      "t_ms": 1461.9,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x25420393390",
+      "after_obj": "0x2542031fe10"
+    },
+    {
+      "t_ms": 1509.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "pending",
+      "terminal_units": 0,
+      "steps": []
+    },
+    {
+      "t_ms": 1512.5,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 0,
+      "steps": []
+    },
+    {
+      "t_ms": 1515.7,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 0,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 1563.1,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x254204ceb10"
+    },
+    {
+      "t_ms": 1563.3,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "run.status",
+      "run": "run-e4efb3c4",
+      "status": "running"
+    },
+    {
+      "t_ms": 1664.6,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x254204ceb10",
+      "after_obj": "0x254204e29f0"
+    },
+    {
+      "t_ms": 1766.6,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x254204e29f0",
+      "after_obj": "0x2542042d260"
+    },
+    {
+      "t_ms": 1892.5,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542042d260",
+      "after_obj": "0x25421973460"
+    },
+    {
+      "t_ms": 4016.4,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x25421973460",
+      "after_obj": "0x254219738a0"
+    },
+    {
+      "t_ms": 4117.8,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x254219738a0",
+      "after_obj": "0x25421ae2140"
+    },
+    {
+      "t_ms": 4621.8,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x25421ae2140",
+      "after_obj": "0x25421ae2250"
+    },
+    {
+      "t_ms": 4688.7,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-2bb97",
+      "run_obj": "0x25421ae2250",
+      "step_status": "running",
+      "unit": ":f52f2772e8044557a72e82f5ea6ab932:detect"
+    },
+    {
+      "t_ms": 4696.7,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 1
+    },
+    {
+      "t_ms": 4697.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "f52f2772e804",
+      "status": "applied"
+    },
+    {
+      "t_ms": 4698.9,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 0,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 4701.9,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 1,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 4705.1,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 8,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 4723.1,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x25421972580"
+    },
+    {
+      "t_ms": 4824.7,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x25421972580",
+      "after_obj": "0x254219738a0"
+    },
+    {
+      "t_ms": 4867.8,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-df613",
+      "run_obj": "0x254219738a0",
+      "step_status": "running",
+      "unit": ":4f8a24147b3044deabf4f5a2dd83b84f:detect"
+    },
+    {
+      "t_ms": 4873.1,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 3
+    },
+    {
+      "t_ms": 4873.7,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "4f8a24147b30",
+      "status": "applied"
+    },
+    {
+      "t_ms": 4874.1,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 8,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 4877.7,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 9,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 4881.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 16,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 4926.1,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x25421972580"
+    },
+    {
+      "t_ms": 4995.8,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-7ced4",
+      "run_obj": "0x25421972580",
+      "step_status": "running",
+      "unit": ":a607fc4ca3034f47b5bc43d59f94f2ca:detect"
+    },
+    {
+      "t_ms": 5002.5,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 5
+    },
+    {
+      "t_ms": 5003.1,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "a607fc4ca303",
+      "status": "applied"
+    },
+    {
+      "t_ms": 5003.7,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 16,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5008.6,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 17,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5012.8,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 24,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5027.9,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x254219738a0"
+    },
+    {
+      "t_ms": 5129.1,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x254219738a0",
+      "after_obj": "0x25421972580"
+    },
+    {
+      "t_ms": 5148.2,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-34e24",
+      "run_obj": "0x25421972580",
+      "step_status": "running",
+      "unit": ":6814353f6d8544d6945ad5748d518f47:detect"
+    },
+    {
+      "t_ms": 5152.5,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 7
+    },
+    {
+      "t_ms": 5153.0,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "6814353f6d85",
+      "status": "applied"
+    },
+    {
+      "t_ms": 5153.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 24,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5162.0,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 25,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5168.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 32,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5230.7,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x25421ae2030"
+    },
+    {
+      "t_ms": 5311.4,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-a7445",
+      "run_obj": "0x25421ae2030",
+      "step_status": "running",
+      "unit": ":f54739037525486e8704db23db5c0dc1:detect"
+    },
+    {
+      "t_ms": 5315.5,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 9
+    },
+    {
+      "t_ms": 5315.8,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "f54739037525",
+      "status": "applied"
+    },
+    {
+      "t_ms": 5316.2,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 32,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5321.1,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 33,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5324.9,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 40,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5332.4,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x254219738a0"
+    },
+    {
+      "t_ms": 5434.3,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x254219738a0",
+      "after_obj": "0x25421972580"
+    },
+    {
+      "t_ms": 5456.2,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-40b8b",
+      "run_obj": "0x25421972580",
+      "step_status": "running",
+      "unit": ":c239be827f3a4448848d2c42bffc05d1:detect"
+    },
+    {
+      "t_ms": 5460.6,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 11
+    },
+    {
+      "t_ms": 5460.9,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "c239be827f3a",
+      "status": "applied"
+    },
+    {
+      "t_ms": 5461.4,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 40,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5466.5,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 41,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5471.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 48,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5535.7,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x254219738a0"
+    },
+    {
+      "t_ms": 5610.4,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-1cecc",
+      "run_obj": "0x254219738a0",
+      "step_status": "running",
+      "unit": ":7a39226851774f01a4cdb89bcf118296:detect"
+    },
+    {
+      "t_ms": 5614.2,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 13
+    },
+    {
+      "t_ms": 5614.6,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "7a3922685177",
+      "status": "applied"
+    },
+    {
+      "t_ms": 5614.9,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 48,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5618.6,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 49,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5623.4,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 56,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5636.6,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x25421ae2250"
+    },
+    {
+      "t_ms": 5739.2,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x25421ae2250",
+      "after_obj": "0x25421ae1f20"
+    },
+    {
+      "t_ms": 5760.9,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._find_step",
+      "step": "step-a0aa9",
+      "run_obj": "0x25421ae1f20",
+      "step_status": "running",
+      "unit": ":221d772e601e480e8e7508dfe9aff380:detect"
+    },
+    {
+      "t_ms": 5765.2,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "store.write_in_current_transaction.ok",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "steps": 15
+    },
+    {
+      "t_ms": 5765.6,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "catalog.commit_step",
+      "target": "221d772e601e",
+      "status": "applied"
+    },
+    {
+      "t_ms": 5766.1,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 56,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5770.5,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "running",
+      "terminal_units": 57,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5774.3,
+      "thread": "core-run-scheduler",
+      "tid": 44792,
+      "event": "pipeline._persist",
+      "run": "run-e4efb3c4",
+      "status": "completed_with_failures",
+      "terminal_units": 64,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 5841.9,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-e4efb3c4",
+      "before_obj": "0x2542031fe10",
+      "after_obj": "0x254219738a0"
+    },
+    {
+      "t_ms": 5842.3,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "run.status",
+      "run": "run-e4efb3c4",
+      "status": "completed_with_failures"
+    },
+    {
+      "t_ms": 5842.3,
+      "thread": "MainThread",
+      "tid": 53492,
+      "event": "run.terminal",
+      "run": "run-e4efb3c4",
+      "status": "completed_with_failures"
+    }
+  ],
+  "finished_at": "2026-10-27T20:03:33",
+  "verdict": "FAIL"
+}

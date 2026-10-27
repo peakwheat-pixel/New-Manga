@@ -1,0 +1,19 @@
+=== RUN META ===
+purpose: demonstrate tests/infrastructure/test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren is a PRE-EXISTING FLAKY test (unrelated to this task)
+command: python -m pytest <single test> -q  x6
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\RUN-STORE-CACHE-RACE-FIX-1
+git_head: 
+dadcf72b9d0feaf786e660d23ef28a63244060bf
+=== OUTPUT ===
+repeat 1 : 1 failed in 4.36s
+repeat 2 : 1 failed in 4.08s
+repeat 3 : 1 failed in 4.10s
+repeat 4 : 1 passed in 2.84s
+repeat 5 : 1 failed in 4.14s
+repeat 6 : 1 passed in 2.64s
+=== NOTE: same tree, same commit; failures alternate with passes => environment/kernel-timing flake in the job-tree reclamation assertion, not produced by RUN-STORE-CACHE-RACE-FIX-1 (also fails on the untouched base commit worktree) ===

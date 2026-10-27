@@ -1,0 +1,11 @@
+=== RUN META ===
+command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/RUN-STORE-CACHE-RACE-FIX-1.md
+cwd: G:\CODEX\New Manga.workspace\worktrees\RUN-STORE-CACHE-RACE-FIX-1
+=== OUTPUT ===
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\RUN-STORE-CACHE-RACE-FIX-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3145 bytes / 38 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5673 bytes / 63 lines
+Governance check: PASS (3 warnings)
+=== EXIT=0 ===

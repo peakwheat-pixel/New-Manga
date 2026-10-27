@@ -1,0 +1,480 @@
+diff --git a/src/application/tasks/store.py b/src/application/tasks/store.py
+index 5f6991cda..da481a128 100644
+--- a/src/application/tasks/store.py
++++ b/src/application/tasks/store.py
+@@ -383,6 +383,37 @@ class InMemorySnapshotProvider:
+         )
+ 
+ 
++def _detached_run(run: PipelineRun) -> PipelineRun:
++    """Structural clone for view reads (RUN-STORE-CACHE-RACE-FIX-1 AC1).
++
++    Frozen snapshots (settings/provider/context/candidate payloads and the
++    ``PlanUnit`` tuples) are immutable and may be shared; the mutable containers
++    the scheduler mutates (tasks/step_runs/candidates/terminal units, a StepRun's
++    input/output dicts, a task's step_run_ids list) are copied so a view reader
++    can never mutate execution state through the returned object.
++    """
++    return replace(
++        run,
++        tasks=[
++            replace(task, step_run_ids=list(task.step_run_ids))
++            for task in run.tasks
++        ],
++        step_runs=[
++            replace(
++                step,
++                input_refs=dict(step.input_refs),
++                output=dict(step.output),
++            )
++            for step in run.step_runs
++        ],
++        candidates=[
++            replace(candidate, payload=dict(candidate.payload))
++            for candidate in run.candidates
++        ],
++        terminal_unit_ids=set(run.terminal_unit_ids),
++    )
++
++
+ class InMemoryPipelineStore:
+     def __init__(self) -> None:
+         self._runs: dict[str, PipelineRun] = {}
+@@ -401,7 +432,17 @@ class InMemoryPipelineStore:
+             return self._runs.get(run_id)
+ 
+     def refresh(self, run_id: str) -> PipelineRun | None:
+-        return self.get(run_id)
++        """Return an independent *view* of the stored Run.
++
++        RUN-STORE-CACHE-RACE-FIX-1 (AC1): ``refresh`` / ``get_run_snapshot(fresh=True)``
++        is a view read for projections -- it must not hand out (or re-cache) the
++        live ``PipelineRun`` object that the scheduler thread is executing, and
++        it must not evict/replace it either. The returned copy is detached: a
++        caller cannot mutate execution state through it.
++        """
++        with self._lock:
++            run = self._runs.get(run_id)
++        return _detached_run(run) if run is not None else None
+ 
+     def list_ids(self) -> tuple[str, ...]:
+         with self._lock:
+diff --git a/src/infrastructure/sqlite/pipeline.py b/src/infrastructure/sqlite/pipeline.py
+index 21e19135e..bff53e944 100644
+--- a/src/infrastructure/sqlite/pipeline.py
++++ b/src/infrastructure/sqlite/pipeline.py
+@@ -390,6 +390,11 @@ class SqlitePipelineStore(PipelineStore):
+     def __init__(self, conn: sqlite3.Connection) -> None:
+         self._conn = conn
+         self._cache: dict[str, PipelineRun] = {}
++        # RUN-STORE-CACHE-RACE-FIX-1 (AC2): per-Run write revision for the
++        # ``run_json`` CAS. Only the cache-owner object may advance a Run; a
++        # snapshot captured before a newer commit is rejected instead of
++        # silently overwriting it (last-writer-wins).
++        self._write_revision: dict[str, int] = {}
+         with self._conn:
+             self._conn.execute(
+                 "CREATE TABLE IF NOT EXISTS pipeline_run_idempotency ("
+@@ -422,6 +427,7 @@ class SqlitePipelineStore(PipelineStore):
+         self._cache.update((run.run_id, run) for run in runs)
+ 
+     def _write_run(self, run: PipelineRun) -> None:
++        revision = self._check_write_revision(run)
+         value = _run_dict(run)
+         now = _now()
+         self._conn.execute("DELETE FROM pipeline_runs WHERE run_id = ?", (run.run_id,))
+@@ -520,6 +526,8 @@ class SqlitePipelineStore(PipelineStore):
+                         _dump(candidate.payload), candidate.reason, candidate.status, now,
+                     ),
+             )
++        self._write_revision[run.run_id] = revision + 1
++        run._store_revision = revision + 1
+ 
+     def get_idempotency(self, idempotency_key: str) -> IdempotencyRecord | None:
+         row = self._conn.execute(
+@@ -616,11 +624,39 @@ class SqlitePipelineStore(PipelineStore):
+         self._cache[child.run_id] = child
+         return child, True
+ 
++    def _adopt_revision(self, run: PipelineRun) -> PipelineRun:
++        """Stamp a freshly loaded Run with the store's current write revision."""
++        run._store_revision = self._write_revision.get(run.run_id, 0)
++        return run
++
++    def _check_write_revision(self, run: PipelineRun) -> int:
++        """CAS precondition for ``run_json`` writes (RUN-STORE-CACHE-RACE-FIX-1 AC2).
++
++        Returns the current store revision to bump on success. A Run object
++        loaded through this store carries ``_store_revision`` from the moment it
++        was read; if the store has committed a newer revision since then, the
++        snapshot is stale and must not overwrite the newer committed state.
++        """
++        current = self._write_revision.get(run.run_id, 0)
++        snapshot = getattr(run, "_store_revision", None)
++        if snapshot is None:
++            # In-process Run object built for its very first write (create_run).
++            snapshot = current
++        if snapshot != current:
++            raise PipelineError(
++                "STALE_RUN_SNAPSHOT",
++                f"run {run.run_id} snapshot revision {snapshot} is older than "
++                f"store revision {current}",
++            )
++        return current
++
+     def _read_run(self, run_id: str) -> PipelineRun | None:
+         row = self._conn.execute(
+             "SELECT run_json FROM pipeline_runs WHERE run_id = ?", (run_id,)
+         ).fetchone()
+-        return _run(_load(row["run_json"])) if row is not None else None
++        if row is None:
++            return None
++        return self._adopt_revision(_run(_load(row["run_json"])))
+ 
+     def get(self, run_id: str) -> PipelineRun | None:
+         if run_id in self._cache:
+@@ -631,12 +667,18 @@ class SqlitePipelineStore(PipelineStore):
+         return run
+ 
+     def refresh(self, run_id: str) -> PipelineRun | None:
+-        run = self._read_run(run_id)
+-        if run is None:
+-            self._cache.pop(run_id, None)
+-        else:
+-            self._cache[run_id] = run
+-        return run
++        """Read durable state as a detached *view*; never touch the execution cache.
++
++        RUN-STORE-CACHE-RACE-FIX-1 (AC1). ``refresh`` backs
++        ``get_run_snapshot(fresh=True)`` / ``GetTaskProjection``. Replacing
++        ``self._cache[run_id]`` here used to split the mutable Run graph between
++        the request thread and the scheduler thread: commits + detect-region
++        backfill landed on the clone, the executor kept the regionless units
++        (``INVALID_INPUT``) and the stale object's ``_persist`` reverted committed
++        StepRuns to ``running``. The returned object is a detached clone; only
++        ``get()``/``put()`` may own the execution cache entry.
++        """
++        return self._read_run(run_id)
+ 
+     def list_ids(self) -> tuple[str, ...]:
+         rows = self._conn.execute(
+diff --git a/tests/pipeline/test_regionless_rebinding.py b/tests/pipeline/test_regionless_rebinding.py
+index c70b5745a..58d8d5c68 100644
+--- a/tests/pipeline/test_regionless_rebinding.py
++++ b/tests/pipeline/test_regionless_rebinding.py
+@@ -28,6 +28,8 @@ from __future__ import annotations
+ import copy
+ import json
+ import sqlite3
++import threading
++import time
+ from pathlib import Path
+ from typing import Any, Callable
+ 
+@@ -1443,3 +1445,104 @@ def test_sfx_primary_region_gated_by_manual_policy(workspace):
+     assert executed.planned_step_units == 1 + 2 * 8
+     assert executed.terminal_step_units == executed.planned_step_units
+     assert service.get_task_progress(run.run_id).overall_progress == 1.0
++
++
++# ---------------------------------------------------------------------------
++# RUN-STORE-CACHE-RACE-FIX-1 / AC3: concurrent GetTaskProjection(fresh=True)
++# polling while the scheduler thread executes the Run.
++# ---------------------------------------------------------------------------
++
++
++class SlowDetector(DeterministicDetector):
++    """Detector double that widens the detect window so the poller interleaves."""
++
++    def __init__(self, delay: float = 0.03) -> None:
++        super().__init__()
++        self.delay = delay
++
++    def detect(self, request: DetectionRequest) -> DetectionResult:
++        time.sleep(self.delay)
++        return super().detect(request)
++
++
++class SlowOcr(DeterministicOcr):
++    """OCR double that keeps the scheduler thread busy between commits."""
++
++    def __init__(self, delay: float = 0.01) -> None:
++        super().__init__()
++        self.delay = delay
++
++    def recognize(self, request):
++        time.sleep(self.delay)
++        return super().recognize(request)
++
++
++def test_projection_fresh_polling_does_not_corrupt_execution(workspace):
++    """RUN-STORE-CACHE-RACE-FIX-1 AC3.
++
++    A second thread polls ``get_task_projection(..., fresh=True)`` (the exact
++    ``GetTaskProjection`` RPC path, every 10 ms) while ``execute_run`` runs.
++    Before the fix ``store.refresh()`` replaced ``_cache[run_id]`` mid-run:
++    detect commits + region backfill landed on the clone, the executor kept
++    regionless units (``INVALID_INPUT``) and the stale object's ``_persist``
++    reverted committed StepRuns to ``running``. After the fix the read path
++    never replaces the execution cache and no write can clobber a newer commit.
++    """
++    service, detector, ocr = _build_service(
++        workspace, detector=SlowDetector(), ocr=SlowOcr()
++    )
++    run = service.create_run(
++        CommandType.REOCR_ALL,
++        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
++    )
++    service.plan_run(run.run_id)
++
++    stop = threading.Event()
++    poll_errors: list[BaseException] = []
++    poll_count = 0
++
++    def poll_projection() -> None:
++        nonlocal poll_count
++        while not stop.is_set():
++            try:
++                projection = service.get_task_projection(run.run_id, fresh=True)
++                assert projection.run_id == run.run_id
++                poll_count += 1
++            except BaseException as error:  # noqa: BLE001 - surfaced by the assert below
++                poll_errors.append(error)
++            time.sleep(0.01)
++
++    poller = threading.Thread(target=poll_projection, name="projection-poller", daemon=True)
++    poller.start()
++    try:
++        executed = service.execute_run(run.run_id)
++    finally:
++        stop.set()
++        poller.join(timeout=10)
++
++    assert not poller.is_alive()
++    assert poll_errors == []
++    assert poll_count > 0, "the projection poller never ran"
++
++    # 1) the run is terminal and no StepRun is stuck in running
++    assert executed.status is PipelineRunStatus.COMPLETED
++    assert [s for s in executed.step_runs if s.status is StepRunStatus.RUNNING] == []
++    conn = workspace["conn"]
++    stuck = conn.execute(
++        "SELECT COUNT(*) AS n FROM step_runs WHERE status = 'running'"
++    ).fetchone()["n"]
++    assert stuck == 0, f"{stuck} StepRun(s) stuck in running"
++
++    # 2) no regionless INVALID_INPUT: detect's committed Regions were visible
++    #    to the execution thread when it planned the downstream units
++    regionless = conn.execute(
++        "SELECT COUNT(*) AS n FROM step_runs"
++        " WHERE error_code = 'INVALID_INPUT' AND region_id IS NULL"
++    ).fetchone()["n"]
++    assert regionless == 0, f"{regionless} regionless INVALID_INPUT step(s)"
++
++    # 3) the durable run_json agrees with the terminal in-memory run
++    persisted = conn.execute(
++        "SELECT status FROM pipeline_runs WHERE run_id = ?", (run.run_id,)
++    ).fetchone()
++    assert persisted["status"] == "completed"
+diff --git a/tests/pipeline/test_run_store_cache_race.py b/tests/pipeline/test_run_store_cache_race.py
+new file mode 100644
+index 000000000..8c88b3e93
+--- /dev/null
++++ b/tests/pipeline/test_run_store_cache_race.py
+@@ -0,0 +1,193 @@
++"""RUN-STORE-CACHE-RACE-FIX-1: store-level unit tests for the shared run cache.
++
++Covers:
++  AC1  ``refresh()`` / ``get_run_snapshot(fresh=True)`` is a *view read* and must
++       never replace the execution cache entry (or return the cached object).
++  AC2  ``run_json`` writes are owner/revision guarded: a stale snapshot captured
++       before a newer commit is rejected instead of silently overwriting it
++       (last-writer-wins).
++
++These tests fail on the pre-fix implementation and pass after the fix; the
++end-to-end concurrent reproduction lives in
++``tests/pipeline/test_regionless_rebinding.py::test_projection_fresh_polling_does_not_corrupt_execution``
++and ``verification/RUN-STORE-CACHE-RACE-FIX-1/tools/repro_scheduler.py``.
++"""
++
++from __future__ import annotations
++
++import sys
++from pathlib import Path
++
++import pytest
++
++SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
++if str(SRC_ROOT) not in sys.path:
++    sys.path.insert(0, str(SRC_ROOT))
++
++from application.tasks.store import InMemoryPipelineStore  # noqa: E402
++from domain.tasks.models import (  # noqa: E402
++    CommandType,
++    PipelineError,
++    PipelineRun,
++    PipelineRunStatus,
++    PipelineScope,
++    ScopeType,
++)
++from infrastructure.sqlite.connection import open_database  # noqa: E402
++from infrastructure.sqlite.migrator import MigrationRunner  # noqa: E402
++from infrastructure.sqlite.pipeline import SqlitePipelineStore  # noqa: E402
++from infrastructure.sqlite.schema import default_migrations  # noqa: E402
++
++
++def _run(run_id: str = "run-cache-1") -> PipelineRun:
++    return PipelineRun(
++        run_id=run_id,
++        command_type=CommandType.REOCR_ALL,
++        scope=PipelineScope(ScopeType.PAGE, selected_ids=("page-1",)),
++        requested_targets=("page-1",),
++        targets=(),
++        settings_snapshot={},
++        provider_binding_snapshot={},
++        constraint_snapshot_ref=None,
++        context_policy={},
++    )
++
++
++@pytest.fixture()
++def store(tmp_path: Path) -> SqlitePipelineStore:
++    conn, _ = open_database(
++        tmp_path / "app.db",
++        latest_known_schema_version=default_migrations()[-1].schema_version,
++    )
++    MigrationRunner(conn, default_migrations()).apply_pending()
++    try:
++        yield SqlitePipelineStore(conn)
++    finally:
++        conn.close()
++
++
++# ---------------------------------------------------------------------------
++# AC1: view reads must not replace the execution cache
++# ---------------------------------------------------------------------------
++
++
++def test_refresh_returns_detached_view_and_keeps_execution_cache(store: SqlitePipelineStore) -> None:
++    run = _run()
++    store.put(run.run_id, run)
++    owner = store.get(run.run_id)
++    assert owner is not None
++
++    view = store.refresh(run.run_id)
++
++    assert view is not None
++    assert view is not owner, "refresh() must return an independent read object"
++    assert store.get(run.run_id) is owner, "refresh() must not replace the cached execution object"
++
++
++def test_fresh_view_sees_committed_state_without_touching_owner(store: SqlitePipelineStore) -> None:
++    run = _run()
++    store.put(run.run_id, run)
++    owner = store.get(run.run_id)
++    assert owner is not None
++
++    # the owner mutates in memory but has not persisted yet
++    owner.status = PipelineRunStatus.RUNNING
++    view = store.refresh(run.run_id)
++
++    assert view is not None
++    assert view.status is PipelineRunStatus.PENDING, "view must reflect durable state, not owner memory"
++    assert owner.status is PipelineRunStatus.RUNNING
++    assert store.get(run.run_id) is owner
++
++
++def test_in_memory_refresh_returns_independent_view() -> None:
++    store = InMemoryPipelineStore()
++    store.put("run-1", _run("run-1"))
++    owner = store.get("run-1")
++    view = store.refresh("run-1")
++    assert view is not None and owner is not None
++    assert view is not owner
++    view.status = PipelineRunStatus.RUNNING
++    assert owner.status is PipelineRunStatus.PENDING
++    assert store.get("run-1") is owner
++
++
++def test_get_run_snapshot_fresh_is_read_only(store: SqlitePipelineStore) -> None:
++    """Service-level AC1: ``get_run_snapshot(fresh=True)`` must not swap the cache."""
++    from application.tasks.service import PipelineService
++
++    service = PipelineService(catalog=_NoopCatalog(), store=store)
++    run = _run()
++    store.put(run.run_id, run)
++    owner = store.get(run.run_id)
++    snapshot = service.get_run_snapshot(run.run_id, fresh=True)
++    assert snapshot is not owner
++    assert store.get(run.run_id) is owner
++
++
++class _NoopCatalog:
++    def expand(self, scope):  # pragma: no cover - only the store path is exercised
++        raise AssertionError("catalog is not used by get_run_snapshot")
++
++
++# ---------------------------------------------------------------------------
++# AC2: owner / revision CAS on run_json writes
++# ---------------------------------------------------------------------------
++
++
++def test_stale_snapshot_write_is_rejected(store: SqlitePipelineStore) -> None:
++    run = _run()
++    store.put(run.run_id, run)
++    owner = store.get(run.run_id)
++    assert owner is not None
++    stale = store.refresh(run.run_id)  # snapshot taken before the next commit
++    assert stale is not None
++
++    owner.status = PipelineRunStatus.COMPLETED
++    store.put(run.run_id, owner)  # the current owner commits
++
++    stale.status = PipelineRunStatus.FAILED
++    with pytest.raises(PipelineError) as error:
++        store.put(run.run_id, stale)
++    assert error.value.code == "STALE_RUN_SNAPSHOT"
++
++    persisted = store.get(run.run_id)
++    assert persisted is not None
++    assert persisted.status is PipelineRunStatus.COMPLETED, "stale write must not clobber the commit"
++
++
++def test_repeated_owner_writes_are_accepted(store: SqlitePipelineStore) -> None:
++    run = _run()
++    store.put(run.run_id, run)
++    owner = store.get(run.run_id)
++    assert owner is not None
++    for index in range(3):
++        owner.terminal_step_units = index + 1
++        owner.status = PipelineRunStatus.RUNNING
++        store.put(run.run_id, owner)
++    persisted = store.get(run.run_id)
++    assert persisted is not None
++    assert persisted.terminal_step_units == 3
++    assert persisted.status is PipelineRunStatus.RUNNING
++
++
++def test_stale_write_inside_transaction_is_rejected(store: SqlitePipelineStore) -> None:
++    run = _run()
++    store.put(run.run_id, run)
++    owner = store.get(run.run_id)
++    assert owner is not None
++    stale = store.refresh(run.run_id)
++    assert stale is not None
++
++    owner.status = PipelineRunStatus.COMPLETED
++    store.put(run.run_id, owner)
++
++    stale.status = PipelineRunStatus.FAILED
++    with pytest.raises(PipelineError) as error:
++        store._conn.execute("BEGIN IMMEDIATE")
++        try:
++            store.write_in_current_transaction(stale)
++        finally:
++            store._conn.rollback()
++    assert error.value.code == "STALE_RUN_SNAPSHOT"
++    assert store.get(run.run_id).status is PipelineRunStatus.COMPLETED
+
+# --- diffstat ---
+ src/application/tasks/store.py              |  43 ++++++-  src/infrastructure/sqlite/pipeline.py       |  56 +++++++-  tests/pipeline/test_regionless_rebinding.py | 103 +++++++++++++++  tests/pipeline/test_run_store_cache_race.py | 193 ++++++++++++++++++++++++++++  4 files changed, 387 insertions(+), 8 deletions(-)

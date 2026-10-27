@@ -1,0 +1,142 @@
+=== RUN META ===
+task: RUN-STORE-CACHE-RACE-FIX-1 (AC3 discrimination: PRE-FIX)
+time: 2026-10-27T20:03:21.4535252+08:00
+shell: PowerShell 7.6.8 / C:\Program Files\PowerShell\7\pwsh.exe
+python: C:\Python314\python.exe / Python 3.14.6
+cwd: G:\CODEX\New Manga.workspace\task-envs\RUN-STORE-CACHE-RACE-FIX-1\pre-fix-worktree
+git_head: 9ef53f24de27e77e36ef1eb6eecb11b29491f785 (detached, product src = pre-fix)
+git_status: ?? verification/RUN-STORE-CACHE-RACE-FIX-1/
+overlay: tests/pipeline/test_run_store_cache_race.py + test_regionless_rebinding.py (new AC3 test) only
+=== OUTPUT ===
+FFFFF.F                                                                  [100%]
+================================== FAILURES ===================================
+________ test_refresh_returns_detached_view_and_keeps_execution_cache _________
+
+store = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C5639B8980>
+
+    def test_refresh_returns_detached_view_and_keeps_execution_cache(store: SqlitePipelineStore) -> None:
+        run = _run()
+        store.put(run.run_id, run)
+        owner = store.get(run.run_id)
+        assert owner is not None
+    
+        view = store.refresh(run.run_id)
+    
+        assert view is not None
+        assert view is not owner, "refresh() must return an independent read object"
+>       assert store.get(run.run_id) is owner, "refresh() must not replace the cached execution object"
+E       AssertionError: refresh() must not replace the cached execution object
+E       assert PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) is PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None)
+E        +  where PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) = get('run-cache-1')
+E        +    where get = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C5639B8980>.get
+E        +    and   'run-cache-1' = PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None).run_id
+
+tests\pipeline\test_run_store_cache_race.py:84: AssertionError
+_________ test_fresh_view_sees_committed_state_without_touching_owner _________
+
+store = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C5639639D0>
+
+    def test_fresh_view_sees_committed_state_without_touching_owner(store: SqlitePipelineStore) -> None:
+        run = _run()
+        store.put(run.run_id, run)
+        owner = store.get(run.run_id)
+        assert owner is not None
+    
+        # the owner mutates in memory but has not persisted yet
+        owner.status = PipelineRunStatus.RUNNING
+        view = store.refresh(run.run_id)
+    
+        assert view is not None
+        assert view.status is PipelineRunStatus.PENDING, "view must reflect durable state, not owner memory"
+        assert owner.status is PipelineRunStatus.RUNNING
+>       assert store.get(run.run_id) is owner
+E       AssertionError: assert PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) is PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None)
+E        +  where PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) = get('run-cache-1')
+E        +    where get = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C5639639D0>.get
+E        +    and   'run-cache-1' = PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None).run_id
+
+tests\pipeline\test_run_store_cache_race.py:100: AssertionError
+_______________ test_in_memory_refresh_returns_independent_view _______________
+
+    def test_in_memory_refresh_returns_independent_view() -> None:
+        store = InMemoryPipelineStore()
+        store.put("run-1", _run("run-1"))
+        owner = store.get("run-1")
+        view = store.refresh("run-1")
+        assert view is not None and owner is not None
+>       assert view is not owner
+E       AssertionError: assert PipelineRun(run_id='run-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<ScopeTy...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) is not PipelineRun(run_id='run-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<ScopeTy...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None)
+
+tests\pipeline\test_run_store_cache_race.py:109: AssertionError
+__________________ test_get_run_snapshot_fresh_is_read_only ___________________
+
+store = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C56399D1D0>
+
+    def test_get_run_snapshot_fresh_is_read_only(store: SqlitePipelineStore) -> None:
+        """Service-level AC1: ``get_run_snapshot(fresh=True)`` must not swap the cache."""
+        from application.tasks.service import PipelineService
+    
+        service = PipelineService(catalog=_NoopCatalog(), store=store)
+        run = _run()
+        store.put(run.run_id, run)
+        owner = store.get(run.run_id)
+        snapshot = service.get_run_snapshot(run.run_id, fresh=True)
+        assert snapshot is not owner
+>       assert store.get(run.run_id) is owner
+E       AssertionError: assert PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) is PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None)
+E        +  where PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None) = get('run-cache-1')
+E        +    where get = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C56399D1D0>.get
+E        +    and   'run-cache-1' = PipelineRun(run_id='run-cache-1', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=PipelineScope(scope_type=<S...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None).run_id
+
+tests\pipeline\test_run_store_cache_race.py:125: AssertionError
+____________________ test_stale_snapshot_write_is_rejected ____________________
+
+store = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C56392F820>
+
+    def test_stale_snapshot_write_is_rejected(store: SqlitePipelineStore) -> None:
+        run = _run()
+        store.put(run.run_id, run)
+        owner = store.get(run.run_id)
+        assert owner is not None
+        stale = store.refresh(run.run_id)  # snapshot taken before the next commit
+        assert stale is not None
+    
+        owner.status = PipelineRunStatus.COMPLETED
+        store.put(run.run_id, owner)  # the current owner commits
+    
+        stale.status = PipelineRunStatus.FAILED
+>       with pytest.raises(PipelineError) as error:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE PipelineError
+
+tests\pipeline\test_run_store_cache_race.py:150: Failed
+_______________ test_stale_write_inside_transaction_is_rejected _______________
+
+store = <infrastructure.sqlite.pipeline.SqlitePipelineStore object at 0x000001C56384F410>
+
+    def test_stale_write_inside_transaction_is_rejected(store: SqlitePipelineStore) -> None:
+        run = _run()
+        store.put(run.run_id, run)
+        owner = store.get(run.run_id)
+        assert owner is not None
+        stale = store.refresh(run.run_id)
+        assert stale is not None
+    
+        owner.status = PipelineRunStatus.COMPLETED
+        store.put(run.run_id, owner)
+    
+        stale.status = PipelineRunStatus.FAILED
+>       with pytest.raises(PipelineError) as error:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE PipelineError
+
+tests\pipeline\test_run_store_cache_race.py:186: Failed
+=========================== short test summary info ===========================
+FAILED tests/pipeline/test_run_store_cache_race.py::test_refresh_returns_detached_view_and_keeps_execution_cache
+FAILED tests/pipeline/test_run_store_cache_race.py::test_fresh_view_sees_committed_state_without_touching_owner
+FAILED tests/pipeline/test_run_store_cache_race.py::test_in_memory_refresh_returns_independent_view
+FAILED tests/pipeline/test_run_store_cache_race.py::test_get_run_snapshot_fresh_is_read_only
+FAILED tests/pipeline/test_run_store_cache_race.py::test_stale_snapshot_write_is_rejected
+FAILED tests/pipeline/test_run_store_cache_race.py::test_stale_write_inside_transaction_is_rejected
+6 failed, 1 passed in 4.02s
+=== EXIT=1 ===

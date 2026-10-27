@@ -1,0 +1,106 @@
+{
+  "task": "RUN-STORE-CACHE-RACE-FIX-1",
+  "tool": "tools/repro_scheduler.py",
+  "topology": "assemble_production_core + CoreServiceServer._start_run_scheduler (real scheduler thread) + accept_start_run; poller = get_task_projection(fresh=True|fresh=False|none) every 100ms",
+  "rows": [
+    {
+      "scenario": "pre-fix/projection-fresh",
+      "verdict": "FAIL",
+      "terminal": "completed_with_failures",
+      "step_total": 16,
+      "step_status_counts": {
+        "running": 8,
+        "failed": 8
+      },
+      "task_status_counts": {
+        "failed": 8
+      },
+      "stuck_running": 8,
+      "regionless_invalid_input": 8,
+      "regions": 26,
+      "run_rows": [
+        {
+          "run_id": "run-e4efb3c4b6b34269991d8de8bb9ef4cc",
+          "status": "completed_with_failures"
+        }
+      ],
+      "evidence": "repro/pre-fix-projection-fresh.json",
+      "evidence_sha256": "1d0cbbf5f414aa75d441084cdea63e25deef10f7b3adc3783ccd53f06cfeecdc"
+    },
+    {
+      "scenario": "pre-fix/projection-cached",
+      "verdict": "PASS",
+      "terminal": "completed_with_failures",
+      "step_total": 20,
+      "step_status_counts": {
+        "completed": 17,
+        "failed": 3
+      },
+      "task_status_counts": {
+        "failed": 3,
+        "completed": 5
+      },
+      "stuck_running": 0,
+      "regionless_invalid_input": 0,
+      "regions": 26,
+      "run_rows": [
+        {
+          "run_id": "run-5b307c81cfaf46e4a1972284e74d89be",
+          "status": "completed_with_failures"
+        }
+      ],
+      "evidence": "repro/pre-fix-cached-control.json",
+      "evidence_sha256": "b8adbc8dc4107ab3a8c07b63c5c46f09de7a4b4c2548745f8c20e58e060baaf5"
+    },
+    {
+      "scenario": "post-fix/projection-fresh",
+      "verdict": "PASS",
+      "terminal": "completed_with_failures",
+      "step_total": 20,
+      "step_status_counts": {
+        "completed": 17,
+        "failed": 3
+      },
+      "task_status_counts": {
+        "failed": 3,
+        "completed": 5
+      },
+      "stuck_running": 0,
+      "regionless_invalid_input": 0,
+      "regions": 26,
+      "run_rows": [
+        {
+          "run_id": "run-ddbda1e4f21949038d41b272f53fafdb",
+          "status": "completed_with_failures"
+        }
+      ],
+      "evidence": "repro/post-fix-projection-fresh.json",
+      "evidence_sha256": "0f2869a87634909857e90a6545311ed7890ae820efd84b35b87985e011e5151d"
+    },
+    {
+      "scenario": "post-fix/projection-cached",
+      "verdict": "PASS",
+      "terminal": "completed_with_failures",
+      "step_total": 20,
+      "step_status_counts": {
+        "completed": 17,
+        "failed": 3
+      },
+      "task_status_counts": {
+        "failed": 3,
+        "completed": 5
+      },
+      "stuck_running": 0,
+      "regionless_invalid_input": 0,
+      "regions": 26,
+      "run_rows": [
+        {
+          "run_id": "run-26f8d1e4b3a44847aebf408f4d2525ed",
+          "status": "completed_with_failures"
+        }
+      ],
+      "evidence": "repro/post-fix-cached-control.json",
+      "evidence_sha256": "5dd9ae79e2567a216527bdf6079eb3617d5c4cb4a246bed0cc2666813ee9d27b"
+    }
+  ]
+}
