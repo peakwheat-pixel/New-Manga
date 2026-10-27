@@ -3,7 +3,7 @@ id: THEME-MACOS-1
 title: 新增 macOS Sonoma 风主题（id macos-sonoma，中文名「macOS 风」）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: user_authorized_2026-10-27_theme_macos_1
 suggested_owner: macos-theme-owner
 owner: macos-theme-owner
@@ -13,8 +13,8 @@ base_commit: 170878dc4
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: dd2408869
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/THEME-MACOS-1
 allowed_paths:
@@ -38,18 +38,18 @@ allowed_paths:
 
 - 用户 2026-10-27 直接需求：按 AD-002 架构给 New Manga 新增一套 macOS Sonoma 风格主题（id `macos-sonoma`，中文名「macOS 风」），双 token 集（Light/Dark），只落在 `NewManga.Theme/**`、设置页主题列表（Views 最小改动）与本卡/证据目录。
 - 依据：`doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md` §4（ThemePack = manifest + tokens + controlthemes + materials + motion + icons；运行时热切换 p95 ≤100ms）；`doc/tasks/UI-SHELL-THEME-1.md` 与 `doc/handoffs/UI-SHELL-THEME-1-handoff.md`（主题中心/热切换口径）。
-- 现状基线：仓库实际 HEAD 为 `170878dc4`（用户任务描述中的 `b874b2cf7` 是更早基线；`170878dc4` 之后 test.ps1 基线为 225/225）。本卡以实际 HEAD 为 base，不 reset、不 push、不 gc/prune。该差异已记录，待 Lead 复核时确认。
+- 现状基线：仓库实际 HEAD 为 `170878dc4`（用户任务描述中的 `b874b2cf7` 是更早基线；`170878dc4` 之后 test.ps1 基线为 225/225）。本卡以实际 HEAD 为 base，不 reset、不 push、不 gc/prune。该差异已记录，待 Lead 复核时确认。实现完成后工作区 HEAD 为 `dd2408869`（并行集成方提交，含本任务代码），本卡/Handoff/证据目录为工作区未提交改动。
 - 现有实现事实：`ThemePacks.All` 内置 6 套（Saber Purple 默认 / Saber Light / Midnight / Sakura / Emerald / Mono）；`ThemePackService.Apply` 对每套 pack 构建 Light/Dark 两个 ResourceDictionary，但当前两者使用同一 token 集；设置页 `SettingsPage` 的主题列表直接绑定 `ThemePacks.All`，点击调用 `ThemePackService.Apply` + `OnThemeApplied`。
 - 截图技术路线已由 Lead 预验证：Avalonia.Headless + Skia（`UseSkia()` + `UseHeadlessDrawing=false`）可 `CaptureRenderedFrame()` 出真实中文渲染 PNG（probe 见 `G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1/probe`），截图不得使用占位/空白/色块替代。
 
 ## Acceptance Criteria
 
-- [ ] **AC1 主题可见可切换**：`macos-sonoma` 出现在设置页主题列表中（中文名「macOS 风」），点击可切换；`ThemePacks.Default` 仍为 `saber-purple`（默认不变）；现有 6 套主题标签/顺序/行为不变。
-- [ ] **AC2 Light/Dark 双模式渲染正确**：同一 `macos-sonoma` pack 内嵌 Light/Dark 两套 token；真实渲染截图共 4 张（书架 × Light/Dark、设置页 × Light/Dark），Light/Dark 主背景/卡片/正文/强调色与规格一致且明显不同。
-- [ ] **AC3 热切换 p95 ≤100ms**：沿用现有 `S3ShellTests` 的测量机制（`ThemePackService.Apply` + `window.ApplyTheme()` + `Dispatcher.UIThread.RunJobs()`，≥30 次采样），macos-sonoma Light↔Dark 与既有主题互切 p95 ≤100ms，给出实际数字。
-- [ ] **AC4 对比度自查**：Light/Dark 下正文对背景 ≥4.5:1、次要文字对背景 ≥3:1；给出计算过程或工具结果（WCAG 相对亮度公式）。
-- [ ] **AC5 既有主题不回归**：`apps/desktop-avalonia/scripts/test.ps1` 全绿（≥215；当前基线 225）；旧壳 `npx vitest run` 仍 60 文件/567 用例；pytest 无新增失败；既有 6 套主题 token/视觉断言不破。
-- [ ] **AC6 治理与证据**：`tools/governance/check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` PASS；证据 64-hex SHA-256 pin；Handoff 到 `doc/handoffs/THEME-MACOS-1-handoff.md`；卡改 `in_review`（owner≠reviewer，不自行判 done）。
+- [x] **AC1 主题可见可切换**：`macos-sonoma` 出现在设置页主题列表中（中文名「macOS 风」），点击可切换；`ThemePacks.Default` 仍为 `saber-purple`（默认不变）；现有 6 套主题标签/顺序/行为不变。<<MET>>
+- [x] **AC2 Light/Dark 双模式渲染正确**：同一 `macos-sonoma` pack 内嵌 Light/Dark 两套 token；真实渲染截图共 4 张（书架 × Light/Dark、设置页 × Light/Dark），Light/Dark 主背景/卡片/正文/强调色与规格一致且明显不同。<<MET>>
+- [x] **AC3 热切换 p95 ≤100ms**：沿用现有 `S3ShellTests` 的测量机制（`ThemePackService.Apply` + `window.ApplyTheme()` + `Dispatcher.UIThread.RunJobs()`，≥30 次采样），macos-sonoma Light↔Dark 与既有主题互切 p95 ≤100ms，给出实际数字。<<MET>>
+- [x] **AC4 对比度自查**：Light/Dark 下正文对背景 ≥4.5:1、次要文字对背景 ≥3:1；给出计算过程或工具结果（WCAG 相对亮度公式）。<<MET>>
+- [x] **AC5 既有主题不回归**：`apps/desktop-avalonia/scripts/test.ps1` 全绿（≥215；当前基线 225）；旧壳 `npx vitest run` 仍 60 文件/567 用例；pytest 无新增失败；既有 6 套主题 token/视觉断言不破。<<MET>>
+- [x] **AC6 治理与证据**：`tools/governance/check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` PASS；证据 64-hex SHA-256 pin；Handoff 到 `doc/handoffs/THEME-MACOS-1-handoff.md`；卡改 `in_review`（owner≠reviewer，不自行判 done）。<<MET>>
 
 ## 设计规格（用户冻结）
 
@@ -86,12 +86,12 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | `dotnet test tests/NewManga.App.Tests --filter ThemeMacos`：ThemePacks 含 macos-sonoma、Default 仍 saber-purple、设置页 ThemeList 条目数 = All.Count | .NET9/Avalonia 11.3.22 headless | NOT_RUN | `verification/THEME-MACOS-1/theme/pack.json` |
-| AC2 | headless Skia `CaptureRenderedFrame()` 截图书架/设置页 × Light/Dark 共 4 张 | headless + Skia | NOT_RUN | `verification/THEME-MACOS-1/screenshots/*.png` |
-| AC3 | ThemeCenter 测量：Apply + ApplyTheme + RunJobs，≥30 次采样，p95 ≤100ms | 同上 | NOT_RUN | `verification/THEME-MACOS-1/theme/hot-switch-macos.json` |
-| AC4 | WCAG 相对亮度公式计算正文/次要文字对比度（Light/Dark） | 纯计算，无外部依赖 | NOT_RUN | `verification/THEME-MACOS-1/theme/contrast.json` |
-| AC5 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory verification/THEME-MACOS-1`；`cd apps/desktop/frontend; npx vitest run`；pytest 相关套件 | 全量 | NOT_RUN | `verification/THEME-MACOS-1/test/**` |
-| AC6 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` | 治理门禁 | NOT_RUN | 本卡 + `verification/THEME-MACOS-1/MANIFEST.json` |
+| AC1 | `dotnet test tests/NewManga.App.Tests --filter ThemeMacos`：ThemePacks 含 macos-sonoma、Default 仍 saber-purple、设置页 ThemeList 条目数 = All.Count | .NET9/Avalonia 11.3.22 headless（Skia） | PASS：7 套 pack（6 legacy + macOS 单一列表项，中文名「macOS 风」）；Default=saber-purple；ThemeList.ItemCount=7；ThemeMacosTests 9/9 | `verification/THEME-MACOS-1/theme/pack.json` |
+| AC2 | headless Skia `CaptureRenderedFrame()` 截图书架/设置页 × Light/Dark 共 4 张 | headless + Skia | PASS：4 张 1280x820 PNG（29KB/71KB/70KB/28KB）；AppBg 采样比例 0.57/0.10/0.09/0.55，书架中心像素 = 对应 variant AppBg，distinct colors 204-325 | `verification/THEME-MACOS-1/screenshots/*.png` + `theme/screenshots.json` |
+| AC3 | ThemeCenter 测量：Apply + ApplyTheme + RunJobs，≥30 次采样，p95 ≤100ms | 同上 | PASS：48 样本（8 cycles × 6 步，含 macOS Light↔Dark 与 saber-purple/midnight/sakura 互切），p95=14.729ms，max=20.56ms，min=4.792ms（开发证据目录另一次 p95=12.039ms） | `verification/THEME-MACOS-1/theme/hot-switch-macos.json` |
+| AC4 | WCAG 相对亮度公式计算正文/次要文字对比度（Light/Dark） | 纯计算，无外部依赖 | PASS：正文 15.46/16.83（Light）/15.31/12.80（Dark）；次要 4.66/5.07/5.81/4.85；导航选中 8.52/9.29；全部 ≥ 门槛 | `verification/THEME-MACOS-1/theme/contrast.json` |
+| AC5 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory <repo>/verification/THEME-MACOS-1`；`cd apps/desktop/frontend; npx vitest run`；`python -m pytest -q` | 全量 | PASS：dotnet 234/234（61/55/118，0 skipped，build -warnaserror 0 warnings）；vitest 60 files/567 tests；pytest 2773 passed/0 failed/10 skipped（本任务零 Python 改动） | `verification/THEME-MACOS-1/test/**` |
+| AC6 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` | 治理门禁 | PASS（见「交付与运行记录」） | 本卡 + `verification/THEME-MACOS-1/MANIFEST.json` |
 
 ## 依赖、风险与阻塞
 
@@ -100,32 +100,54 @@ allowed_paths:
 - 风险 2：headless 截图若字体缺字/空白 → Lead 已 probe 验证 Skia 可渲染中文；截图必须附尺寸/像素校验。
 - 风险 3：设置页外观切换与既有 `SettingsPage` 构造签名/测试耦合 → 保持 `SettingsPage(vm, onThemeApplied, controller)` 兼容。
 - 风险 4：`check.ps1` 要求 `status: ready` 的任务出现在 REBASELINE_PLAN 当前 DAG 的 READY 节点，且 TASK_LEDGER 不得过期 → 本卡建卡时同步登记并重跑 `tools/governance/task_ledger.py --write`。
+- 风险 5（实际发生，已处置）：并行 agent 在同一工作区同时运行 test 套件时，既有 `RunBindingFixTests`（SQLite `-shm` 复制竞争）与 `LegacyShellRealTests`（全局 mutex）各失败 1 次；空载重跑 234/234 全绿，非本任务改动引入。
+- 风险 6（已知边界，未扩大范围）：代码构建页面的子卡片在**原地**切换 variant 时保留构造期颜色（与既有主题中心原地切换行为一致）；4 张 variant 截图由「先应用 variant 再构造主窗」的真实渲染路径产出，构造即解析对应 token。
 
 ## 交付与运行记录
 
-- Handoff：`doc/handoffs/THEME-MACOS-1-handoff.md`（owner 完成后填写）。
-- Review：尚无（Lead 复核后补 Review 记录）。
-- 实际测试：尚无。
-- 后续实际记录包含日期、commit/工作区状态、环境、结果、遗留项；Lead 复核后填写 integration_commit（本任务不 push，未 commit 时以工作区 SHA-256 pin 为准）。
+- Handoff：`doc/handoffs/THEME-MACOS-1-handoff.md`（owner 已填写，含 Record Decision / 验证证据 / 风险）。
+- Review：尚无（Lead 复核后补 Review 记录；owner=macos-theme-owner，reviewer=dsh，owner≠reviewer）。
+- 实际测试（2026-10-27 深夜 ~ 10-28 00:00，工作区 HEAD `dd2408869`；证据/Handoff/本卡为未提交工作区改动）：
+  - `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory <repo>/verification/THEME-MACOS-1` → **TEST PASS (Debug): 234/234 passed, 0 skipped**；`dotnet build -warnaserror` 0 warnings / 0 errors。
+  - `cd apps/desktop/frontend; npx vitest run` → **60 files / 567 tests passed**。
+  - `python -m pytest -q` → **2773 passed, 0 failed, 10 skipped**（本任务零 Python 改动；同一环境首次探索运行曾出现 3 个既有 flaky 失败——`test_detection_manga_real` ×2、workbench pause——重跑全绿，日志为准）。
+  - `ThemeMacosTests`：**9/9 passed**（结构/default、双 variant 逐 key、legacy token 回归、p95、WCAG、reduced-motion、外观切换/无残留、交通灯/字体、4 张截图）。
+  - 热切换 p95：**14.729ms**（48 样本）/ 开发期另一次 12.039ms，阈值 100ms。
+- 后续：Lead 复核后填写 `integration_commit`（本任务不 push；证据以 64-hex SHA-256 pin）。
 
 ## Canonical Evidence
 
-进入 `in_review` 前逐项填写。
-
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E1 | AC1 | `verification/THEME-MACOS-1/theme/pack.json` | - | 830ea52a9cc5c920889c4566928bce0576a9379e9aa33d9b33533cd8482e2c13 | CANONICAL |
+| E2 | AC2 | `verification/THEME-MACOS-1/theme/screenshots.json` | - | dd8fdfa7ace27a3d35d34c33838d07872fa6a2bd9d40a0418590d6d59fd102d7 | CANONICAL |
+| E3 | AC2 | `verification/THEME-MACOS-1/screenshots/bookshelf-light.png` | - | 0bd028aed8bcfc548009e1469bfff4cafc25a564285deeb60b442eeb3ac8870e | CANONICAL |
+| E4 | AC2 | `verification/THEME-MACOS-1/screenshots/bookshelf-dark.png` | - | 5e866fee694f71734d933e917e3f8c544bb56a9829f48a18de6704ec95995843 | CANONICAL |
+| E5 | AC2 | `verification/THEME-MACOS-1/screenshots/settings-light.png` | - | 92b2e8e6ab35e2b949230242e3f839c12b26a407af7ea15fd9e22a50d580a081 | CANONICAL |
+| E6 | AC2 | `verification/THEME-MACOS-1/screenshots/settings-dark.png` | - | 4474de4b1e35f0088c8e15c8e4fbe5155e098b585e6c4f89012697f6accb60c0 | CANONICAL |
+| E7 | AC3 | `verification/THEME-MACOS-1/theme/hot-switch-macos.json` | - | b3b0e675cc85b4decb98629c2390687f79d85438972e0cfcfd220ae0cbd7bc17 | CANONICAL |
+| E8 | AC4 | `verification/THEME-MACOS-1/theme/contrast.json` | - | 314567fa26f9152704973455f6c51d9d9d689350979389449235e4cbe828d110 | CANONICAL |
+| E9 | AC5 | `verification/THEME-MACOS-1/test/summary.json` | - | 2e42d8a71e6e50759a919679ee41da81fea89a3e5094e48e7fdddcc78669197c | CANONICAL |
+| E10 | AC5 | `verification/THEME-MACOS-1/test/dotnet-test-Debug.log` | - | b6846e2efb66b3d9777f511260ccdd2bc909c18d925a92e7ba53a5b3d66f05af | CANONICAL |
+| E11 | AC5 | `verification/THEME-MACOS-1/test/vitest.log` | - | e14e763df9bca789cdff00a4e9904461953494ac3ea8942530875cac4c6a2615 | CANONICAL |
+| E12 | AC5 | `verification/THEME-MACOS-1/test/pytest.log` | - | 96f896683332c2f98a69cd71f2f789182342c8bc2787d4d6f5638ead51892082 | CANONICAL |
+| E13 | AC5 | `verification/THEME-MACOS-1/test/results-app.trx` | - | e9652ad1da9f00da6bd6f752ece24d8de0326f88ce932989a9115d901a656b93 | CANONICAL |
+| E14 | AC5 | `verification/THEME-MACOS-1/build/dotnet-build-Debug.log` | - | efe901af055e870d8e1e7f33c3131b8a68833cb1144c0dd11a66d93e568de2e8 | CANONICAL |
+| E15 | AC5 | `verification/THEME-MACOS-1/theme/hot-switch.json` | - | fedaab8dc1d1270840737ca5bb597dbc560ea6e3490a516573efe6ec4d2f437e | CANONICAL |
+| E16 | AC6 | `verification/THEME-MACOS-1/MANIFEST.json` | - | 1dcfd78d32c550ae46f303fd3e304c5756544ab3c2204905426ffff60cdaa624 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1 | 待关闭时 pin | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1 | 待关闭时 pin | PRESERVE：probe/evidence-dev/testrun-dev 均为仓外开发产物，关闭时由 DSH 复核；本任务未删除/迁移任何资源 |
+| evidence | verification/THEME-MACOS-1 | PRESERVE_REFERENCED | verification/THEME-MACOS-1 | `verification/THEME-MACOS-1/MANIFEST.json` | 272 文件 / 15,285,386 bytes，逐文件 sha256 见 MANIFEST.json |
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending` / `complete`。
-- resource_closeout_status：`pending` / `complete`。
-- 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：待关闭时更新 STATUS / Plan / Task 导航 / rolling checkpoint。
+- canonical_evidence_status：`complete`（16 条 64-hex pin，E1-E16）。
+- resource_closeout_status：`pending`。
+- 删除、迁移、归档数量/字节数：本任务未删除/迁移/归档任何资源（0/0/0）。
+- 未关闭项及保留原因：Task 卡/Handoff/证据目录为工作区未提交改动，待 Lead 复核与集成提交；task-env 开发产物保留至 closeout。
+- 当前指针清理：待 DSH 关闭时更新 STATUS / Plan / Task 导航 / rolling checkpoint。

@@ -1,0 +1,1952 @@
+{
+  "schema_version": 1,
+  "task_id": "THEME-MACOS-1",
+  "evidence_dir": "verification/THEME-MACOS-1",
+  "base_commit": "170878dc4",
+  "delivery_head": "dd2408869",
+  "generated_at": "2026-10-27T16:05:38.9934966Z",
+  "generated_by": "macos-theme-owner (THEME-MACOS-1)",
+  "note": "Every file produced by the canonical run `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory <abs>/verification/THEME-MACOS-1` plus the vitest/pytest logs recorded by the owner. The shared NEWMANGA_EVIDENCE_DIR also receives the pre-existing suite evidence (commands/**, host/**, wire/**, ...); those are mapped to AC5 (no regression).",
+  "ac_map": [
+    {
+      "ac": "AC5",
+      "file_count": 264,
+      "files": [
+        "build/dotnet-build-Debug.log",
+        "commands/chinese-roundtrip.json",
+        "commands/domain-services.json",
+        "commands/integration-results.json",
+        "commands/not-supported-typed-errors.json",
+        "commands/ns-b1-integration.json",
+        "commands/ns-b1-invalid-arguments.json",
+        "commands/ns-b2-integration.json",
+        "commands/ns-b2-invalid-arguments.json",
+        "commands/ns-b2-inventory.json",
+        "commands/ns-b2-list-region-revisions.json",
+        "commands/parity-contract.json",
+        "commands/run-binding-baseline-library.db",
+        "commands/run-binding-baseline-library.db-shm",
+        "commands/run-binding-baseline-library.db-wal",
+        "commands/run-binding-baseline.json",
+        "commands/run-binding-models-library.db",
+        "commands/run-binding-models-library.db-shm",
+        "commands/run-binding-models-library.db-wal",
+        "commands/run-binding-models.json",
+        "commands/run-binding-overrides.json",
+        "commands/run-binding-unknown-library.db",
+        "commands/run-binding-unknown-library.db-shm",
+        "commands/run-binding-unknown-library.db-wal",
+        "commands/run-binding-unknown-provider.json",
+        "commands/run-binding-wire.json",
+        "commands/s4-region-reader-results.json",
+        "commands/s4-wiring.json",
+        "commands/wiring.json",
+        "contract/tile-contract.json",
+        "credential-ui/clear.json",
+        "credential-ui/configured-target-confirm.json",
+        "credential-ui/conflict-replace.json",
+        "credential-ui/masked-input-visible.json",
+        "credential-ui/payload-contract.json",
+        "credential-ui/put-create.json",
+        "credential-ui/settings-wiring.json",
+        "credential-ui/window-close-clears.json",
+        "credentials/credential-port.json",
+        "diagnostics/missing-exe.json",
+        "diagnostics/request-timeout.json",
+        "diagnostics/spawn-failed.json",
+        "diagnostics/startup-timeout.json",
+        "e2e/host-consumes-core-artifact.json",
+        "grants/export-attempt.json",
+        "grants/import-success.json",
+        "grants/shell-actions.json",
+        "host-logs/credential-port/core_service.stderr.log",
+        "host-logs/credential-port/credentials/clear-20261027T1556124252920Z.json",
+        "host-logs/credential-port/credentials/clear-20261027T1559009482286Z.json",
+        "host-logs/credential-port/credentials/put-20261027T1556124057696Z.json",
+        "host-logs/credential-port/credentials/put-20261027T1559009182458Z.json",
+        "host-logs/credential-port/host_bridge.stderr.log",
+        "host-logs/credential-port/host.log",
+        "host-logs/credential-port/wire/core-service.ndjson",
+        "host-logs/credential-port/wire/host-bridge.ndjson",
+        "host-logs/grant-export/core_service.stderr.log",
+        "host-logs/grant-export/grants/export-error-20261027T155539665.json",
+        "host-logs/grant-export/grants/export-error-20261027T155947398.json",
+        "host-logs/grant-export/grants/import-20261027T155539612.json",
+        "host-logs/grant-export/grants/import-20261027T155947337.json",
+        "host-logs/grant-export/host_bridge.stderr.log",
+        "host-logs/grant-export/host.log",
+        "host-logs/grant-export/wire/core-service.ndjson",
+        "host-logs/grant-export/wire/host-bridge.ndjson",
+        "host-logs/grant-import/core_service.stderr.log",
+        "host-logs/grant-import/grants/import-20261027T155544314.json",
+        "host-logs/grant-import/grants/import-20261027T155951989.json",
+        "host-logs/grant-import/host_bridge.stderr.log",
+        "host-logs/grant-import/host.log",
+        "host-logs/grant-import/wire/core-service.ndjson",
+        "host-logs/grant-import/wire/host-bridge.ndjson",
+        "host-logs/grant-shell/core_service.stderr.log",
+        "host-logs/grant-shell/host_bridge.stderr.log",
+        "host-logs/grant-shell/host.log",
+        "host-logs/grant-shell/wire/core-service.ndjson",
+        "host-logs/grant-shell/wire/host-bridge.ndjson",
+        "host-logs/reader-chapters-concurrent/core_service.stderr.log",
+        "host-logs/reader-chapters-concurrent/host_bridge.stderr.log",
+        "host-logs/reader-chapters-concurrent/host.log",
+        "host-logs/reader-chapters-concurrent/wire/core-service.ndjson",
+        "host-logs/reader-chapters-concurrent/wire/host-bridge.ndjson",
+        "host-logs/reader-chapters-list/core_service.stderr.log",
+        "host-logs/reader-chapters-list/host_bridge.stderr.log",
+        "host-logs/reader-chapters-list/host.log",
+        "host-logs/reader-chapters-list/wire/core-service.ndjson",
+        "host-logs/reader-chapters-list/wire/host-bridge.ndjson",
+        "host-logs/reader-progress-a/core_service.stderr.log",
+        "host-logs/reader-progress-a/host_bridge.stderr.log",
+        "host-logs/reader-progress-a/host.log",
+        "host-logs/reader-progress-a/wire/core-service.ndjson",
+        "host-logs/reader-progress-a/wire/host-bridge.ndjson",
+        "host-logs/reader-progress-b/core_service.stderr.log",
+        "host-logs/reader-progress-b/host_bridge.stderr.log",
+        "host-logs/reader-progress-b/host.log",
+        "host-logs/reader-progress-b/wire/core-service.ndjson",
+        "host-logs/reader-progress-b/wire/host-bridge.ndjson",
+        "host-logs/reader-progress-readonly/core_service.stderr.log",
+        "host-logs/reader-progress-readonly/host_bridge.stderr.log",
+        "host-logs/reader-progress-readonly/host.log",
+        "host-logs/reader-progress-readonly/wire/core-service.ndjson",
+        "host-logs/reader-progress-readonly/wire/host-bridge.ndjson",
+        "host-logs/reader-progress-reject/core_service.stderr.log",
+        "host-logs/reader-progress-reject/host_bridge.stderr.log",
+        "host-logs/reader-progress-reject/host.log",
+        "host-logs/reader-progress-reject/wire/core-service.ndjson",
+        "host-logs/reader-progress-reject/wire/host-bridge.ndjson",
+        "host-logs/runtime-legacy-running/core_service.stderr.log",
+        "host-logs/runtime-legacy-running/host_bridge.stderr.log",
+        "host-logs/runtime-legacy-running/host.log",
+        "host-logs/runtime-legacy-running/wire/core-service.ndjson",
+        "host-logs/runtime-legacy-running/wire/host-bridge.ndjson",
+        "host-logs/runtime-missing-sidecar/host.log",
+        "host-logs/runtime-parity-roundtrip/core_service.stderr.log",
+        "host-logs/runtime-parity-roundtrip/host_bridge.stderr.log",
+        "host-logs/runtime-parity-roundtrip/host.log",
+        "host-logs/runtime-parity-roundtrip/wire/core-service.ndjson",
+        "host-logs/runtime-parity-roundtrip/wire/host-bridge.ndjson",
+        "host-logs/runtime-readonly/core_service.stderr.log",
+        "host-logs/runtime-readonly/host_bridge.stderr.log",
+        "host-logs/runtime-readonly/host.log",
+        "host-logs/runtime-readonly/wire/core-service.ndjson",
+        "host-logs/runtime-readonly/wire/host-bridge.ndjson",
+        "host-logs/runtime-second-instance/host.log",
+        "host/reader-chapters-concurrent.json",
+        "host/reader-chapters-list.json",
+        "host/reader-progress-readonly.json",
+        "host/reader-progress-reject.json",
+        "host/reader-progress-restart.json",
+        "host/runtime-chinese-roundtrip.json",
+        "host/runtime-missing-sidecar.json",
+        "host/runtime-readonly.json",
+        "host/second-instance.json",
+        "import-export-ui/export-cancel.json",
+        "import-export-ui/export-flow.json",
+        "import-export-ui/export-reveal.json",
+        "import-export-ui/import-files.json",
+        "import-export-ui/import-folder.json",
+        "import-export-ui/payload-contract.json",
+        "legacy-shell/detected.json",
+        "legacy-shell/runtime-readonly.json",
+        "logs/bridge-errors/host_bridge.stderr.log",
+        "logs/bridge-lifecycle/host_bridge.stderr.log",
+        "logs/bridge-wire/host_bridge.stderr.log",
+        "logs/commands-chinese/core_service.stderr.log",
+        "logs/commands-chinese/host_bridge.stderr.log",
+        "logs/commands-domains/core_service.stderr.log",
+        "logs/commands-domains/host_bridge.stderr.log",
+        "logs/commands-integration/core_service.stderr.log",
+        "logs/commands-integration/host_bridge.stderr.log",
+        "logs/commands-not-supported/core_service.stderr.log",
+        "logs/commands-not-supported/host_bridge.stderr.log",
+        "logs/commands-ns-b1-invalid/core_service.stderr.log",
+        "logs/commands-ns-b1-invalid/host_bridge.stderr.log",
+        "logs/commands-ns-b1/core_service.stderr.log",
+        "logs/commands-ns-b1/host_bridge.stderr.log",
+        "logs/commands-ns-b2-invalid/core_service.stderr.log",
+        "logs/commands-ns-b2-invalid/host_bridge.stderr.log",
+        "logs/commands-ns-b2-region/core_service.stderr.log",
+        "logs/commands-ns-b2/core_service.stderr.log",
+        "logs/commands-ns-b2/host_bridge.stderr.log",
+        "logs/core-chinese/core_service.stderr.log",
+        "logs/core-ping/core_service.stderr.log",
+        "logs/core-raw-utf8/core_service.stderr.log",
+        "logs/core-wire-shape/core_service.stderr.log",
+        "logs/failure-request-timeout/fake.stderr.log",
+        "logs/failure-startup-timeout/core_service.stderr.log",
+        "logs/run-binding-baseline/core_service.stderr.log",
+        "logs/run-binding-default/core_service.stderr.log",
+        "logs/run-binding-default/host_bridge.stderr.log",
+        "logs/run-binding-disabled/core_service.stderr.log",
+        "logs/run-binding-disabled/host_bridge.stderr.log",
+        "logs/run-binding-explicit/core_service.stderr.log",
+        "logs/run-binding-explicit/host_bridge.stderr.log",
+        "logs/run-binding-invalid/core_service.stderr.log",
+        "logs/run-binding-invalid/host_bridge.stderr.log",
+        "logs/run-binding-models/core_service.stderr.log",
+        "logs/run-binding-unknown/core_service.stderr.log",
+        "logs/s4-region-reader/core_service.stderr.log",
+        "parity/core-command-probe.json",
+        "performance/d4-6-page-budget.json",
+        "performance/fit.json",
+        "performance/one-to-one.json",
+        "performance/page-turn.json",
+        "performance/tile-read.json",
+        "performance/webtoon.json",
+        "reader-selector-ui/book-scope.json",
+        "reader-selector-ui/chapter-ready.json",
+        "reader-selector-ui/chapter-scope.json",
+        "reader-selector-ui/chapterless-and-scope-switch.json",
+        "reader-selector-ui/empty-library.json",
+        "security/cache-revoke.json",
+        "security/containment.json",
+        "security/d4-1-equal-length-rewrite.json",
+        "security/d4-3-escape-issue.json",
+        "security/d4-3-escape-read.json",
+        "security/d4-5-identity-change.json",
+        "security/equal-length-rewrite.json",
+        "security/expiry.json",
+        "security/identity-change.json",
+        "security/issue-read-revoke.json",
+        "security/reader-tile-channel.json",
+        "security/tampered-tile.json",
+        "security/workbench-tamper.json",
+        "settings-profile-ui/bindings-set-clear.json",
+        "settings-profile-ui/network-create.json",
+        "settings-profile-ui/network-default-delete.json",
+        "settings-profile-ui/network-test-resolve.json",
+        "settings-profile-ui/network-tls-confirmation.json",
+        "settings-profile-ui/payload-contract.json",
+        "settings-profile-ui/provider-create.json",
+        "settings-profile-ui/provider-error-feedback.json",
+        "settings-profile-ui/provider-update-delete.json",
+        "settings-profile-ui/settings-wiring.json",
+        "test/dotnet-test-Debug.log",
+        "test/pytest.log",
+        "test/results-app.trx",
+        "test/results-coreclient.trx",
+        "test/results-host.trx",
+        "test/summary.json",
+        "test/vitest.log",
+        "theme/hot-switch.json",
+        "wire/bridge-errors.ndjson",
+        "wire/bridge-lifecycle.ndjson",
+        "wire/bridge-wire.ndjson",
+        "wire/commands-chinese-core-service.ndjson",
+        "wire/commands-chinese-host-bridge.ndjson",
+        "wire/commands-domains-core-service.ndjson",
+        "wire/commands-domains-host-bridge.ndjson",
+        "wire/commands-integration-core-service.ndjson",
+        "wire/commands-integration-host-bridge.ndjson",
+        "wire/commands-not-supported-core-service.ndjson",
+        "wire/commands-not-supported-host-bridge.ndjson",
+        "wire/commands-ns-b1-core-service.ndjson",
+        "wire/commands-ns-b1-host-bridge.ndjson",
+        "wire/commands-ns-b1-invalid-core-service.ndjson",
+        "wire/commands-ns-b1-invalid-host-bridge.ndjson",
+        "wire/commands-ns-b2-core-service.ndjson",
+        "wire/commands-ns-b2-host-bridge.ndjson",
+        "wire/commands-ns-b2-invalid-core-service.ndjson",
+        "wire/commands-ns-b2-invalid-host-bridge.ndjson",
+        "wire/commands-ns-b2-region.ndjson",
+        "wire/core-chinese-roundtrip.json",
+        "wire/core-chinese.ndjson",
+        "wire/core-ping.json",
+        "wire/core-ping.ndjson",
+        "wire/core-raw-utf8-negative.json",
+        "wire/core-raw-utf8.ndjson",
+        "wire/core-wire-shape.json",
+        "wire/core-wire-shape.ndjson",
+        "wire/host-bridge-errors.json",
+        "wire/host-bridge-lifecycle.json",
+        "wire/run-binding-baseline.ndjson",
+        "wire/run-binding-default-core-service.ndjson",
+        "wire/run-binding-default-host-bridge.ndjson",
+        "wire/run-binding-disabled-core-service.ndjson",
+        "wire/run-binding-disabled-host-bridge.ndjson",
+        "wire/run-binding-explicit-core-service.ndjson",
+        "wire/run-binding-explicit-host-bridge.ndjson",
+        "wire/run-binding-invalid-core-service.ndjson",
+        "wire/run-binding-invalid-host-bridge.ndjson",
+        "wire/run-binding-models.ndjson",
+        "wire/run-binding-unknown.ndjson",
+        "wire/s4-region-reader.ndjson"
+      ]
+    },
+    {
+      "ac": "AC2",
+      "file_count": 5,
+      "files": [
+        "screenshots/bookshelf-dark.png",
+        "screenshots/bookshelf-light.png",
+        "screenshots/settings-dark.png",
+        "screenshots/settings-light.png",
+        "theme/screenshots.json"
+      ]
+    },
+    {
+      "ac": "AC4",
+      "file_count": 1,
+      "files": [
+        "theme/contrast.json"
+      ]
+    },
+    {
+      "ac": "AC3",
+      "file_count": 1,
+      "files": [
+        "theme/hot-switch-macos.json"
+      ]
+    },
+    {
+      "ac": "AC1",
+      "file_count": 1,
+      "files": [
+        "theme/pack.json"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "build/dotnet-build-Debug.log",
+      "bytes": 1061,
+      "sha256": "efe901af055e870d8e1e7f33c3131b8a68833cb1144c0dd11a66d93e568de2e8",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/chinese-roundtrip.json",
+      "bytes": 1089,
+      "sha256": "bbd6ee9d4ccf9ac6d3e1bd5c8d845a69c7845cd76e54e983874778185e95f130",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/domain-services.json",
+      "bytes": 821,
+      "sha256": "b41c2f3e901131e2adf32851f51f29e26b1bb6d83b8b05611e56ee98424862af",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/integration-results.json",
+      "bytes": 3783,
+      "sha256": "13cba3d26ddcc28765ceef4410acaa6f21249f54852aa9204850dd1c49fdd09c",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/not-supported-typed-errors.json",
+      "bytes": 150,
+      "sha256": "92ab32df0f918ffd1161521f12e3f3d49a8039b3d8063732bbd4c6f7ee214e85",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/ns-b1-integration.json",
+      "bytes": 7375,
+      "sha256": "27b3811a71cfaae28d9f84866a386aa1ef0a49c33be7447d164b53422e6b8101",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/ns-b1-invalid-arguments.json",
+      "bytes": 2539,
+      "sha256": "fec4ebcb4378744e7891b4067845cbb12a406b0c83b143c53a39073b37c19209",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/ns-b2-integration.json",
+      "bytes": 7190,
+      "sha256": "f1daed4aedf76492023668f610887503edddc17e8fbba4da152d4ff5e42c6265",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/ns-b2-invalid-arguments.json",
+      "bytes": 3544,
+      "sha256": "63fb38f6ce912644458f143478f41dfe7b788d3ea048f333d013cdb0baca7661",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/ns-b2-inventory.json",
+      "bytes": 2957,
+      "sha256": "37f702a899f1df6fc70bc54671d74b2bfd11eff5987fcb926215a813d6fa10c6",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/ns-b2-list-region-revisions.json",
+      "bytes": 2243,
+      "sha256": "3f45ba84337bce0dd65c7b9c385afd33dc822bf5663f6b51e9f1db306c85636d",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/parity-contract.json",
+      "bytes": 29887,
+      "sha256": "87dc2cef2ca615d65720af40005707ffb474e2aff1a9a12651c9d439bc8c0963",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-baseline-library.db",
+      "bytes": 733184,
+      "sha256": "b7961653c2e20cf6389dc13837ec2db2ff4798db7b143edc3a6e29694131fde4",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-baseline-library.db-shm",
+      "bytes": 32768,
+      "sha256": "7fa4ef12f5ab65ea2665e124621a0d80dab129120822f5e7e467c30b2df2a610",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-baseline-library.db-wal",
+      "bytes": 4239512,
+      "sha256": "b4aaafd3f55f5991a907859c39c2196c7b262785a0ca30575cef9336f1dec6fc",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-baseline.json",
+      "bytes": 1087,
+      "sha256": "74b5f9cbba0bbb4cbb943238220675dc6131a9aa3da5c2dd9819470ee119e12a",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-models-library.db",
+      "bytes": 745472,
+      "sha256": "63396355a7e11cc733b5554a82c7271fd090adfe1a1a23e94ab547533aedd687",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-models-library.db-shm",
+      "bytes": 32768,
+      "sha256": "6c2f5a8302982b0ca9af43ee828570603546ed41f3964e2dd546372494a0d043",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-models-library.db-wal",
+      "bytes": 4424912,
+      "sha256": "2a291b1814f18221743f88c00f15eadbeb84bb9290c8f724f85d104564fdffa2",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-models.json",
+      "bytes": 2755,
+      "sha256": "02e3608d0c7ef6d07f36a322d302415bc9812cfb9696e7e434cc3568f8afb051",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-overrides.json",
+      "bytes": 1216,
+      "sha256": "0946cce96c6f8bb636246e4f1e097d72c20c90e8a08096c506d631412e85c710",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-unknown-library.db",
+      "bytes": 344064,
+      "sha256": "6e6e10f73f0c28534fc2083a7c809b4829aea91f208024126c26dbb62b8b74f5",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-unknown-library.db-shm",
+      "bytes": 32768,
+      "sha256": "fca9272fd0bc04de41980f2054f0edd576cfea521621f3341d41a4fa9cc0db14",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-unknown-library.db-wal",
+      "bytes": 1602712,
+      "sha256": "2c0c356356fc1f8c638f7f54ed37d95f34b4a490d51dea2777fadfb054598107",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-unknown-provider.json",
+      "bytes": 377,
+      "sha256": "96ae7533fc0141dc8e40a7ddc5bff9ebfb8b4c7142b25aa4cd15a8309dce585c",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/run-binding-wire.json",
+      "bytes": 1290,
+      "sha256": "dc992f082370628283d58f11ee10515184755e8c9049390bb181ee2a44422ab4",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/s4-region-reader-results.json",
+      "bytes": 1857,
+      "sha256": "476337aae84824b62e2cf7db8bb2a33b2aedc6d0f818ecc54a8d8098766b524b",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/s4-wiring.json",
+      "bytes": 480,
+      "sha256": "e93851d237d046baf98d9afe38ab74e0ab2199cdf34b1485f8c4abe9c596f329",
+      "ac": "AC5"
+    },
+    {
+      "path": "commands/wiring.json",
+      "bytes": 938,
+      "sha256": "1c3050a24274705d1857460168ca728959644ad49a9f39cfa4003a4d19529a01",
+      "ac": "AC5"
+    },
+    {
+      "path": "contract/tile-contract.json",
+      "bytes": 651,
+      "sha256": "91dde74d8d548de59c1e2d950d2dc7702b5e11e623f9aa9e9bda69214add541b",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/clear.json",
+      "bytes": 215,
+      "sha256": "e2290e2d0fe85048e2a458f6f41a758b578910a561fef61d70cf5d388a67bb7d",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/configured-target-confirm.json",
+      "bytes": 211,
+      "sha256": "a3fc95840bfb150fc9deaf46cc07f08f73369edbda658eb13cd14f76089f1cf9",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/conflict-replace.json",
+      "bytes": 317,
+      "sha256": "6f226e5a25ec828b8719ec199ec2e194f5f1349529c1570b4a0c33c20aa6faa7",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/masked-input-visible.json",
+      "bytes": 164,
+      "sha256": "197039b711d91b04e26335bbc63730f6fafdb2b9a9b151171c9ff85a5e9c6603",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/payload-contract.json",
+      "bytes": 186,
+      "sha256": "1e3262d5e449531ac5fa2f3698a8e9baebaae6eb0dd9da3757c753f1c6b2245d",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/put-create.json",
+      "bytes": 400,
+      "sha256": "3d3ea1a8e567ed54a71440e35936261ff1e63b12931e7843c34cd64194abfea4",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/settings-wiring.json",
+      "bytes": 198,
+      "sha256": "20e4bbc0a60debe08cc6c72e6638c9a3b0bbe65c9ae3bb5fca553283b9368c42",
+      "ac": "AC5"
+    },
+    {
+      "path": "credential-ui/window-close-clears.json",
+      "bytes": 185,
+      "sha256": "b2476b03a8471a1f9e842d9ead023c7e2175f84ccb944825cc5620459eaafbf8",
+      "ac": "AC5"
+    },
+    {
+      "path": "credentials/credential-port.json",
+      "bytes": 455,
+      "sha256": "aed7346fd50313da64e46ee0b443368fcdbc55b63cf478a9d4067c70a1cb16c1",
+      "ac": "AC5"
+    },
+    {
+      "path": "diagnostics/missing-exe.json",
+      "bytes": 199,
+      "sha256": "4594512db61c9500844d52d13c3b289c0322cdfed7dc471e8f3a1eac425391dd",
+      "ac": "AC5"
+    },
+    {
+      "path": "diagnostics/request-timeout.json",
+      "bytes": 143,
+      "sha256": "d92e4e444d02eda85d8f361a1d140e43d818429a18ea7c3244dc82df40d76269",
+      "ac": "AC5"
+    },
+    {
+      "path": "diagnostics/spawn-failed.json",
+      "bytes": 270,
+      "sha256": "d328eb1713bbede1e76649b4474c555dfbde7c72e00736d1828a2118afc6760b",
+      "ac": "AC5"
+    },
+    {
+      "path": "diagnostics/startup-timeout.json",
+      "bytes": 257,
+      "sha256": "95a65b02f59bd9d5259d3fe0f81839c99d6ba872c7461c0710eff8c9e2d4dbf7",
+      "ac": "AC5"
+    },
+    {
+      "path": "e2e/host-consumes-core-artifact.json",
+      "bytes": 539,
+      "sha256": "50a9681447e8f86207b0a3333e5a3cc3b1cae1df97108386b81a99630337dacc",
+      "ac": "AC5"
+    },
+    {
+      "path": "grants/export-attempt.json",
+      "bytes": 267,
+      "sha256": "0599ca59fb65f6a425a365ab0b273e296d8f7cef7c2a746853ef331bacd402ba",
+      "ac": "AC5"
+    },
+    {
+      "path": "grants/import-success.json",
+      "bytes": 253,
+      "sha256": "3b364d4b8b250e17bd2507275e40056845f5fe874df4cd74a5e1147ee662358f",
+      "ac": "AC5"
+    },
+    {
+      "path": "grants/shell-actions.json",
+      "bytes": 297,
+      "sha256": "dd916883611ab692cf81587ad8236b67e1ef0a193a008fbb33dc281f3c3c6920",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/core_service.stderr.log",
+      "bytes": 2148,
+      "sha256": "b0b87db160163f85ee2f7cc9b091324155db3595aac5a6ccba6c3509cd972a4b",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/credentials/clear-20261027T1556124252920Z.json",
+      "bytes": 261,
+      "sha256": "b52b5d77e907a77f9da48a2ab6173334b33e48a37766707ccf3ef2e5bac8f88e",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/credentials/clear-20261027T1559009482286Z.json",
+      "bytes": 261,
+      "sha256": "83010b08e8b44d286594b6a3c5a2baa96e6c88e23deddf554ce4b90f952a6720",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/credentials/put-20261027T1556124057696Z.json",
+      "bytes": 270,
+      "sha256": "c0b0075c79b67b3965513d25ddd00c62e0321ca544c17f344c2747f3f2739da3",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/credentials/put-20261027T1559009182458Z.json",
+      "bytes": 270,
+      "sha256": "a836b1a72901f7567470b6a3759bb092e8b07520c131d44f2a046f297ff8744f",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/host.log",
+      "bytes": 1588,
+      "sha256": "9fdb567ce40f6de31ae97a2f7d6312fa5599dcde15f9cacc3ec1d092ae16a14f",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/wire/core-service.ndjson",
+      "bytes": 38537,
+      "sha256": "075059b2dd21ea7466d112054c235ea02d8029d790c870b0741be3c900ce1abb",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/credential-port/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "db2cff6bd9e9eabd63906a619deceda733c1258f329ae8f2cec799c73493008a",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/core_service.stderr.log",
+      "bytes": 2136,
+      "sha256": "70988d9354d9ad1da80f1239d239430830aba28e752752137179d033e5c8c6eb",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/grants/export-error-20261027T155539665.json",
+      "bytes": 484,
+      "sha256": "dec2abb55431d4b2248741f0da9365a135e2c1b43a6ee0ad655b0abb7a577c6e",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/grants/export-error-20261027T155947398.json",
+      "bytes": 484,
+      "sha256": "f39b9fa9884e20c59564cd9459c782ff5676781a85aa492c92dd5f1695db27eb",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/grants/import-20261027T155539612.json",
+      "bytes": 1542,
+      "sha256": "938246989e96f3e8b98ad6d8462a48cfeb7af8f3f3b2336d55ac05fdd4558d85",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/grants/import-20261027T155947337.json",
+      "bytes": 1542,
+      "sha256": "a2e0532e6b4a3226ec7333f36d66e29800435067eecbacdf38c2f1b240356464",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/host.log",
+      "bytes": 1582,
+      "sha256": "0855f5d54bbf3a362fcfed4c36190d9b76fede90f915f4323d91713d4f273a1b",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/wire/core-service.ndjson",
+      "bytes": 64802,
+      "sha256": "67a2ed5df2d8e7196b22d1e2085b42db722849c6219a99de991b28dd85cd6a68",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-export/wire/host-bridge.ndjson",
+      "bytes": 1101,
+      "sha256": "4c11af387f667f36a8a00497153359393d7e1cb30d5433454eb22343fc8d6d98",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/core_service.stderr.log",
+      "bytes": 2136,
+      "sha256": "3ccb3f6c857948b603ee55ac2cd75d03017ee39816647872475185caca77e768",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/grants/import-20261027T155544314.json",
+      "bytes": 5328,
+      "sha256": "156d4a1fed2c83c1acfbd2e936b2ea8c4fd59273a600b4c5a04cca9f50d6b44c",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/grants/import-20261027T155951989.json",
+      "bytes": 5328,
+      "sha256": "0df81e2ef8e950f71224fe81ab98ccebbf64ff89186dfc1829938f942c0e417a",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/host.log",
+      "bytes": 1582,
+      "sha256": "23af312d6817e958bb20520e6bb3881fea338366204c69d64a0c07e0abe6387f",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/wire/core-service.ndjson",
+      "bytes": 140655,
+      "sha256": "1937012458015fc7a3d10adc36d50b8cc0caa0c9b96e230c99b5d8fae7512cd2",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-import/wire/host-bridge.ndjson",
+      "bytes": 1103,
+      "sha256": "28798997a05a0ddbdd4d1e1cc5ff0f709bd67c410135555d10f7d9f5ac6e5d97",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-shell/core_service.stderr.log",
+      "bytes": 2132,
+      "sha256": "c304b530bcfe17eba17ad4cc9cf0ad265c3fdb29e76d0a2b0bfd4aaa855de4d0",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-shell/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-shell/host.log",
+      "bytes": 1580,
+      "sha256": "cd28ce9164ffc37c2713e50b28b172ae4b4ac79f0b3a394d0554ba37194a8531",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-shell/wire/core-service.ndjson",
+      "bytes": 7741,
+      "sha256": "1c97dae7fa99a948fa45c5ed4c6beedbdc63cac497c91e29556d15e0448eb61d",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/grant-shell/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "d1fb3d5b8e83ab0db0c303205a5a35b367c3ffe938d06a9d7b1982db8567453f",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-concurrent/core_service.stderr.log",
+      "bytes": 2192,
+      "sha256": "83f012abd954133f09929f0c0d0604b1ae8e2f9cb71332a1d48c361ade3a5894",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-concurrent/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-concurrent/host.log",
+      "bytes": 1610,
+      "sha256": "f910a791cb5ed25d9e5db4b8ac13795f05aff0c4c39807f782f26bf80d6bd131",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-concurrent/wire/core-service.ndjson",
+      "bytes": 201863,
+      "sha256": "371184a15d2f4437dc5a93aa3cb335da9b2844d46f9648b0ca9b1c357e3bf372",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-concurrent/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "11838325b6f76337e65187597be6162dd94d312ca0b47a5515a127ff6327e22c",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-list/core_service.stderr.log",
+      "bytes": 2168,
+      "sha256": "d17bb20a99b93fbfc3a23d908ae4233aa1d85a9084dc8b22ea55c0f4e05d2782",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-list/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-list/host.log",
+      "bytes": 1598,
+      "sha256": "9e817d3001193a54f1942fdef9e1762994ec7e9af41f0782ccf865092714faf8",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-list/wire/core-service.ndjson",
+      "bytes": 40901,
+      "sha256": "fb3e5a9f45e154d35403157f20ed291ea3599101de13f207ddf1ca92e20e3117",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-chapters-list/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "f852a421f6d62c6f72b8af090393fb4dfee1d639617f5fe9a5d39cb1d8e44eb6",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-a/core_service.stderr.log",
+      "bytes": 2180,
+      "sha256": "79893e68c506353a4cc6df57814814a9dc2a43e6f13dfee4700350592b9efc0d",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-a/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-a/host.log",
+      "bytes": 1604,
+      "sha256": "ca39405ed31d142e7604c8bdcec0ee129a97888318abb9fc194506d065748c70",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-a/wire/core-service.ndjson",
+      "bytes": 54674,
+      "sha256": "52633a9c14715079f61924bc9a935e2b3ecf6e77ff37271f8a6dd28148254238",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-a/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "e503066fe98f116550fa70944b6769c73678abdf9c6ffbba7fa56dd93ef254ee",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-b/core_service.stderr.log",
+      "bytes": 2246,
+      "sha256": "784f0fde376099b0f1edc9ad79eb972d5888cca449d4e29230993b8b560420f4",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-b/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-b/host.log",
+      "bytes": 1614,
+      "sha256": "a0fccef5ac7e6e6de8f09ad322e42d1a2205b40d43f597665e79d3a5f7c89ec9",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-b/wire/core-service.ndjson",
+      "bytes": 66430,
+      "sha256": "6136423c8a4286eabf5d68fc3c516e6f85e359ff639bf5c06c0c60bfa87cab97",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-b/wire/host-bridge.ndjson",
+      "bytes": 1101,
+      "sha256": "ec61573416beedac139da58591558eee2179cb307b7965fbe5fc33c88d541519",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-readonly/core_service.stderr.log",
+      "bytes": 2184,
+      "sha256": "20728e318cf329edff8260e7c3b7a333ff5b2a10c1c60b68f0d8156a9a0c67cb",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-readonly/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-readonly/host.log",
+      "bytes": 1666,
+      "sha256": "66c77b65183231cf3d7ed3efcef88aee649f74f66b87d6cf2a5d1d93eb2943f1",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-readonly/wire/core-service.ndjson",
+      "bytes": 5756,
+      "sha256": "0f39b307d8503c06186e8625984b3f57005dba47dadb7c898447f3e9528f9287",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-readonly/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "9b56395804e2aec9680962d25a89128e66eb06e35e83bb136ad7a3f7d149d131",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-reject/core_service.stderr.log",
+      "bytes": 2176,
+      "sha256": "31a8572c87405d22f3ec8e30203b6cfb8cd64f08d1c6cd0813401efc3103992c",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-reject/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-reject/host.log",
+      "bytes": 1602,
+      "sha256": "4910d94478c2fa1702c72b3e3257148cc8569d1cc0cc8cde68d198ea8c58b32f",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-reject/wire/core-service.ndjson",
+      "bytes": 15726,
+      "sha256": "3568c2122a40ff87ffc66b397712385a788145823a86b31e6101387da553e020",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/reader-progress-reject/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "16f7704d2a1afa9afd74013ca159d75bdf89a77872352e8a7513db96e01eb490",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-legacy-running/core_service.stderr.log",
+      "bytes": 2176,
+      "sha256": "c638fd764354d4b6522550eac6a30c27196b4b6db238a1f88a862b4b94a738d6",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-legacy-running/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-legacy-running/host.log",
+      "bytes": 1932,
+      "sha256": "1e47acc0ecbf267f643c38d9c7ee2233acf59a7c2ffd610aeb75dcaf353eada6",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-legacy-running/wire/core-service.ndjson",
+      "bytes": 5756,
+      "sha256": "c7020e2687255ebbee494b8267826a60162be59ed9441fdbbbc3b1003fbcb431",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-legacy-running/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "dd80af516162a854868660e7b690ef0e355490197ad0b9a99db6b8893756a8b2",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-missing-sidecar/host.log",
+      "bytes": 1392,
+      "sha256": "7b9142b648487d98ca879e48a8c7af84feecdbc7201491ae09e0ad9625f94d63",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-parity-roundtrip/core_service.stderr.log",
+      "bytes": 2184,
+      "sha256": "e2c6b9e7d5a63b6f59546b1010ca4ef0c557cbbc780879e719a83951c7b86925",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-parity-roundtrip/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-parity-roundtrip/host.log",
+      "bytes": 1606,
+      "sha256": "0c3c07587e3adb9d970271763d0f09baf2426720f19d29ee2aec0c7c85c15150",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-parity-roundtrip/wire/core-service.ndjson",
+      "bytes": 17299,
+      "sha256": "6506cd9e4caee8f9e6d8e8595349a8ba2fdd8277f533b8994a8baad4a4e987da",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-parity-roundtrip/wire/host-bridge.ndjson",
+      "bytes": 1101,
+      "sha256": "37b11c2fe85c1936437c18140fd888e436e7cbc27f94f0d1b46efaa76fa09365",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-readonly/core_service.stderr.log",
+      "bytes": 2152,
+      "sha256": "a7bc2fcd58b084e7507c772e4c67a99f386d1f8f3c2e7edd781b09ca97baa5ae",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-readonly/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-readonly/host.log",
+      "bytes": 1650,
+      "sha256": "1e77d641144d409b7524bb176e1e88cd049bcf42e28fc802738167982d782c79",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-readonly/wire/core-service.ndjson",
+      "bytes": 7623,
+      "sha256": "cccf09714cf3d181321bc3f0ac96f7dae3f53be23708a67389f731c9b4cf3c9b",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-readonly/wire/host-bridge.ndjson",
+      "bytes": 1102,
+      "sha256": "71f013f424b4ff833d3a888abcd4279bd9459ee9244076d614a8d0895c58aa99",
+      "ac": "AC5"
+    },
+    {
+      "path": "host-logs/runtime-second-instance/host.log",
+      "bytes": 222,
+      "sha256": "3904dd344be99330786d93eb181580e0ef20bf3efc974a2a1f6bc6a141e28a14",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/reader-chapters-concurrent.json",
+      "bytes": 100,
+      "sha256": "5d7eb0068de1e90b5c4b99cf6307b7701f5ffa88fcf2a62244d354b8bb642615",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/reader-chapters-list.json",
+      "bytes": 199,
+      "sha256": "633bd583b0f6cdee8dd8a97a24817c403c7b2bba7d9652512cc432ceb30f8a0d",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/reader-progress-readonly.json",
+      "bytes": 116,
+      "sha256": "960f9e86882663237dee2630b5f3138b5907ee99e2628f883e7e4cd1d84c083e",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/reader-progress-reject.json",
+      "bytes": 88,
+      "sha256": "8adc6035a8f3843d56b4c0d2a0e9fae5e580b928544f0f5fdcedf17785f27e8d",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/reader-progress-restart.json",
+      "bytes": 539,
+      "sha256": "9de71c822bbb975620cf3680bb6ccb4f24f5b213060c3d6bf0fee7f1bbe8862f",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/runtime-chinese-roundtrip.json",
+      "bytes": 281,
+      "sha256": "344024d1ddb450ab1e3e32b328208c909b4405def1077f867f458e04c7151b28",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/runtime-missing-sidecar.json",
+      "bytes": 246,
+      "sha256": "294565828007d46dca8cba7ce0f2705cf89cb7e20f55d45e3dbb0c68420ae74e",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/runtime-readonly.json",
+      "bytes": 290,
+      "sha256": "593d2fc995e89699d4b4c0846fe8705e61f7d956805c1b16e26694e35cb6c88c",
+      "ac": "AC5"
+    },
+    {
+      "path": "host/second-instance.json",
+      "bytes": 175,
+      "sha256": "46d3e529b8aa3ffb642d8f3f97d87f495785bc0dba982ab328b85a1585a24c46",
+      "ac": "AC5"
+    },
+    {
+      "path": "import-export-ui/export-cancel.json",
+      "bytes": 217,
+      "sha256": "5439b1fc170ca6538aea3bbb7d7a10e217a212b10cc1019e47a08cfec73c4032",
+      "ac": "AC5"
+    },
+    {
+      "path": "import-export-ui/export-flow.json",
+      "bytes": 507,
+      "sha256": "a7c13f300ba7111e468281d1ee417a149c4794681af6e2e19862e7408290da19",
+      "ac": "AC5"
+    },
+    {
+      "path": "import-export-ui/export-reveal.json",
+      "bytes": 124,
+      "sha256": "380479633728d51171a796d46f230c30175f456412e00c995b802167ed3a723f",
+      "ac": "AC5"
+    },
+    {
+      "path": "import-export-ui/import-files.json",
+      "bytes": 306,
+      "sha256": "ed43a9830da85785ad1f4b31d06f715e54a597854e5763e60081e323b4b91fe6",
+      "ac": "AC5"
+    },
+    {
+      "path": "import-export-ui/import-folder.json",
+      "bytes": 191,
+      "sha256": "5223bdb50839f91259dfb005e302319915a479aa2d32bcc425d4683a3fd08982",
+      "ac": "AC5"
+    },
+    {
+      "path": "import-export-ui/payload-contract.json",
+      "bytes": 651,
+      "sha256": "8d273c45a7aa6c41aa9da797f6c4b63e89bb83c5a69f54bb727131aac37975a3",
+      "ac": "AC5"
+    },
+    {
+      "path": "legacy-shell/detected.json",
+      "bytes": 134,
+      "sha256": "71c0c410c4cb92cea1654f79c6bf94438fc563dc34b823e1fa8ebaee4602a813",
+      "ac": "AC5"
+    },
+    {
+      "path": "legacy-shell/runtime-readonly.json",
+      "bytes": 177,
+      "sha256": "ef4301465315daf4a7edef6d70b66512fbcba9db5277c8cecc549fc59fdd468f",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/bridge-errors/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/bridge-lifecycle/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/bridge-wire/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-chinese/core_service.stderr.log",
+      "bytes": 3222,
+      "sha256": "69b2ab194bb4c664c52070571c14a5d179089e96401afda36bb34be1b608f581",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-chinese/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-domains/core_service.stderr.log",
+      "bytes": 3222,
+      "sha256": "32dbf1eeec75d949b527b4f83abec37ecde91acc55e6749b98937c8efa2e0a37",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-domains/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-integration/core_service.stderr.log",
+      "bytes": 3246,
+      "sha256": "4a259bcb798577437dbd8926d58753611439326f38f5ab2a2aa184b48c32adfb",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-integration/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-not-supported/core_service.stderr.log",
+      "bytes": 3258,
+      "sha256": "4ca989cd5815094f91167b88bb739600cdd31e20ca76abbb2b38479121aad8cb",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-not-supported/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b1-invalid/core_service.stderr.log",
+      "bytes": 3258,
+      "sha256": "7bb443b6a759aecc815ced11a6cd9b0ef9d655c0d5e0a89e7e9984c2b8cbfa25",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b1-invalid/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b1/core_service.stderr.log",
+      "bytes": 3210,
+      "sha256": "c89e71b2a40883370e0fbeb897970e69e81d86a420d7de7477ab9e98e4e156a0",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b1/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b2-invalid/core_service.stderr.log",
+      "bytes": 3258,
+      "sha256": "797328b2797d1f455c655486eb1c8217767078728a239e8de12c04bcf8ebbaed",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b2-invalid/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b2-region/core_service.stderr.log",
+      "bytes": 3246,
+      "sha256": "eef95255242c2988e6e672a8a39a6f5c8829a1ad00f7bba8d95617ff69d44448",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b2/core_service.stderr.log",
+      "bytes": 3210,
+      "sha256": "bdf1fb24299bc2672ec64552e6f16d1ea07a485f568cb779f66a217d6c34631f",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/commands-ns-b2/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/core-chinese/core_service.stderr.log",
+      "bytes": 3198,
+      "sha256": "902c2b4f9436f18062d2c3f1fc8c75abc9b223b84177dae8481a2d7c14afe372",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/core-ping/core_service.stderr.log",
+      "bytes": 3180,
+      "sha256": "acec767ac03c9020b9d6e18804c842479b01dbe80cabdb4aa7ae6caa57434db4",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/core-raw-utf8/core_service.stderr.log",
+      "bytes": 3204,
+      "sha256": "643cac9e99cf021050a2c39a2f6046ac207eedde55d26743a8479a366235dfa9",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/core-wire-shape/core_service.stderr.log",
+      "bytes": 3216,
+      "sha256": "60f970125098c03626685502eb5c378b7940c24a35a8cdc712352cb72e5c8f7c",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/failure-request-timeout/fake.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/failure-startup-timeout/core_service.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-baseline/core_service.stderr.log",
+      "bytes": 186,
+      "sha256": "be79b320ebc215ac0424c4b2a88cd5c5e280d32130a26fb0cc0a45f6ac6828a6",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-default/core_service.stderr.log",
+      "bytes": 3240,
+      "sha256": "e91dbd6a3f34be58b9ce0e6468557c8ca1a0e19f275981df6d858f6a4a13ea9f",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-default/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-disabled/core_service.stderr.log",
+      "bytes": 3246,
+      "sha256": "14a3684bc583ced6fb5a9a4982b85477a5ab3bc55fa61fa61e802ec1cd985a9c",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-disabled/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-explicit/core_service.stderr.log",
+      "bytes": 3246,
+      "sha256": "ddc13c78e84aad2760c5e071e5ed5d3e624e31ae90230837d205ad410312eae1",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-explicit/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-invalid/core_service.stderr.log",
+      "bytes": 3240,
+      "sha256": "f277186fcd88deff06544d721d7f908d4d824098717753f6da6e37d9234dade1",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-invalid/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-models/core_service.stderr.log",
+      "bytes": 597,
+      "sha256": "002e184b5441809b391734cc103de0a9cfc0e5445e907d5698784f1637c7bd53",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/run-binding-unknown/core_service.stderr.log",
+      "bytes": 186,
+      "sha256": "be79b320ebc215ac0424c4b2a88cd5c5e280d32130a26fb0cc0a45f6ac6828a6",
+      "ac": "AC5"
+    },
+    {
+      "path": "logs/s4-region-reader/core_service.stderr.log",
+      "bytes": 3210,
+      "sha256": "e43ec16cf86f20d62ea1d382b31d128f3c9a17a650c62b9b3944083bb1b51c76",
+      "ac": "AC5"
+    },
+    {
+      "path": "parity/core-command-probe.json",
+      "bytes": 14145,
+      "sha256": "fe0a2b831ba5a65db0466744d4f49148e7eae168fbdb914ba0f879531f6221ef",
+      "ac": "AC5"
+    },
+    {
+      "path": "performance/d4-6-page-budget.json",
+      "bytes": 572,
+      "sha256": "0feed7c43eb3098d264e755df0e0b4fa75ee583a01570f2eb02ec94fc3709661",
+      "ac": "AC5"
+    },
+    {
+      "path": "performance/fit.json",
+      "bytes": 124,
+      "sha256": "d0d1eee723ad39ac837403de6569a2aa32434ab8c348a32d370a3d26e76db017",
+      "ac": "AC5"
+    },
+    {
+      "path": "performance/one-to-one.json",
+      "bytes": 457,
+      "sha256": "34b49b321f9b03d777cfcffe1de65268e22b2c927eedb8137ceee00581cd8607",
+      "ac": "AC5"
+    },
+    {
+      "path": "performance/page-turn.json",
+      "bytes": 592,
+      "sha256": "3b142ff8042a24f837da999c90cf032a3268bf1d07e64c701c6e27489b2bff0f",
+      "ac": "AC5"
+    },
+    {
+      "path": "performance/tile-read.json",
+      "bytes": 428,
+      "sha256": "2af09494d92770cbfba7941544c1470c07fd7736d3416a48ec12ae7cf0ec687c",
+      "ac": "AC5"
+    },
+    {
+      "path": "performance/webtoon.json",
+      "bytes": 357,
+      "sha256": "dae69956fbc81ab622040054b5a396e44335eb27b1e732f8765fdd181f2fbd92",
+      "ac": "AC5"
+    },
+    {
+      "path": "reader-selector-ui/book-scope.json",
+      "bytes": 170,
+      "sha256": "0573cb4361f2d0c048e27379c8123467a64f743d1c40ba06d6d0691dee455b87",
+      "ac": "AC5"
+    },
+    {
+      "path": "reader-selector-ui/chapter-ready.json",
+      "bytes": 150,
+      "sha256": "2f1079dd61c68f348b9150d03d71aa6ddefbf7f88de591975487fa7404863d58",
+      "ac": "AC5"
+    },
+    {
+      "path": "reader-selector-ui/chapter-scope.json",
+      "bytes": 287,
+      "sha256": "8b791b5d7500d744e9aafd0f39b1421773f30f32114d3aa95f800360aec503cf",
+      "ac": "AC5"
+    },
+    {
+      "path": "reader-selector-ui/chapterless-and-scope-switch.json",
+      "bytes": 232,
+      "sha256": "17981ddab72c81de5e3ef00a5ec3b8a3d58fe62579394a31571ba810cd8963b8",
+      "ac": "AC5"
+    },
+    {
+      "path": "reader-selector-ui/empty-library.json",
+      "bytes": 194,
+      "sha256": "0a607fc1bee74cf13c9e3a4e01100edcdbfc4f57f09c3fed9d8d0e0e18546dce",
+      "ac": "AC5"
+    },
+    {
+      "path": "screenshots/bookshelf-dark.png",
+      "bytes": 28676,
+      "sha256": "5e866fee694f71734d933e917e3f8c544bb56a9829f48a18de6704ec95995843",
+      "ac": "AC2"
+    },
+    {
+      "path": "screenshots/bookshelf-light.png",
+      "bytes": 29349,
+      "sha256": "0bd028aed8bcfc548009e1469bfff4cafc25a564285deeb60b442eeb3ac8870e",
+      "ac": "AC2"
+    },
+    {
+      "path": "screenshots/settings-dark.png",
+      "bytes": 70183,
+      "sha256": "4474de4b1e35f0088c8e15c8e4fbe5155e098b585e6c4f89012697f6accb60c0",
+      "ac": "AC2"
+    },
+    {
+      "path": "screenshots/settings-light.png",
+      "bytes": 71167,
+      "sha256": "92b2e8e6ab35e2b949230242e3f839c12b26a407af7ea15fd9e22a50d580a081",
+      "ac": "AC2"
+    },
+    {
+      "path": "security/cache-revoke.json",
+      "bytes": 336,
+      "sha256": "2ec35dfe968fc616e9acce065b84e2b93bebc8df76f1bf96407bcb967006ab60",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/containment.json",
+      "bytes": 211,
+      "sha256": "18d18a84b84d0bb05440baa34dd1400ad57c85ee02d20dc3e004fc8f77ae11d9",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/d4-1-equal-length-rewrite.json",
+      "bytes": 347,
+      "sha256": "6c02924864ee1abccbb5989d415278c03ccfeceec128533e89918bf7511a20ad",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/d4-3-escape-issue.json",
+      "bytes": 322,
+      "sha256": "d315fcdbaf8db00f69230bc9bc34c19d7f70736425ad08750e4b8e80e303da4c",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/d4-3-escape-read.json",
+      "bytes": 205,
+      "sha256": "baeaad88d16b5682524bff149074a553d64bdd1bcd9b64a12ce9aee1c5473f5d",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/d4-5-identity-change.json",
+      "bytes": 230,
+      "sha256": "c9549dbb41045dc4331c9d0d46e168d0c75072f45f7c9d6fc97a9ee112ed5fc0",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/equal-length-rewrite.json",
+      "bytes": 253,
+      "sha256": "0339e88db36f0f245e20b2a98fe084c29b8621cd71dd1c4158ad51d18501f9e4",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/expiry.json",
+      "bytes": 181,
+      "sha256": "29c06773539a31dbeabe26abf7e4e2a5ec1d989fe017718285dd4eb9923e90de",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/identity-change.json",
+      "bytes": 173,
+      "sha256": "ea64f4acf07da91d2139ad362622fb0578b9b211b0b094124e69bc78dc9e730e",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/issue-read-revoke.json",
+      "bytes": 278,
+      "sha256": "16e494ba937b9adaa6917d20aa0e5a3f6096fbdcf6634892a1c455c54f031b34",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/reader-tile-channel.json",
+      "bytes": 172,
+      "sha256": "6705a8c1eb8ab0f9836ef6c2c02c33d3d780f4c5affbda5ffc5ff2d1d6b5abc9",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/tampered-tile.json",
+      "bytes": 185,
+      "sha256": "5bc274d40984193ba68f417ae0950268687a898eb435871765887f092076c446",
+      "ac": "AC5"
+    },
+    {
+      "path": "security/workbench-tamper.json",
+      "bytes": 213,
+      "sha256": "b03b2c0ce921f994ebbdcdfd17b14f0361f40571b8ea53b9d241420630654f70",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/bindings-set-clear.json",
+      "bytes": 223,
+      "sha256": "a558577965ee9a9df0b0e512aacf5a150623a4645db86e780a780e180b166111",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/network-create.json",
+      "bytes": 276,
+      "sha256": "1071913ce0edaf3799045960b9cf863995af526dcf63dc7b871ec84685cfe2fb",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/network-default-delete.json",
+      "bytes": 169,
+      "sha256": "4d98a56501b3c1b80a9124c535dd0796baa4b6bd7ccea1cf22990f44669b2b43",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/network-test-resolve.json",
+      "bytes": 555,
+      "sha256": "f6abab106cbc481001f71f9e17d17920466a745c1826f7d3a2baee6cdc737311",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/network-tls-confirmation.json",
+      "bytes": 190,
+      "sha256": "c76266823372c976724b829a5b82449d68ee91b412a30ec96e7c75299336d6ae",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/payload-contract.json",
+      "bytes": 385,
+      "sha256": "7d6f535b9a1502695e92945f123c46af9d5f0b7e7a8375b61ebb682c6b644b96",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/provider-create.json",
+      "bytes": 367,
+      "sha256": "1ea0ff6ecc28fbb480f56b1eb85c78308b9fac1c3e0e8f30a1e73dedd442ea1f",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/provider-error-feedback.json",
+      "bytes": 177,
+      "sha256": "a6f3bb9ad80180fde4761c9884c010c5f97f981908274ee9dd9cbe6200bdb436",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/provider-update-delete.json",
+      "bytes": 209,
+      "sha256": "87f030ef879c12bf9fe5d0fffee0df23bc08590d23141865638216bcead6eaf0",
+      "ac": "AC5"
+    },
+    {
+      "path": "settings-profile-ui/settings-wiring.json",
+      "bytes": 189,
+      "sha256": "e3a404702b601231d068015b41ea589fbe2f7a126175079dd1035063eb6f7ffd",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/dotnet-test-Debug.log",
+      "bytes": 18170,
+      "sha256": "b6846e2efb66b3d9777f511260ccdd2bc909c18d925a92e7ba53a5b3d66f05af",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/pytest.log",
+      "bytes": 48147,
+      "sha256": "96f896683332c2f98a69cd71f2f789182342c8bc2787d4d6f5638ead51892082",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/results-app.trx",
+      "bytes": 162341,
+      "sha256": "e9652ad1da9f00da6bd6f752ece24d8de0326f88ce932989a9115d901a656b93",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/results-coreclient.trx",
+      "bytes": 88719,
+      "sha256": "ecd6817c637950081a836fc77f4bbd8540c90fe5641d7716e101f842acc0a127",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/results-host.trx",
+      "bytes": 77153,
+      "sha256": "421f4f81e10565822598c5d15eb1c00704f3b91b1a22e6f48ad4f776e51001b3",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/summary.json",
+      "bytes": 1328,
+      "sha256": "2e42d8a71e6e50759a919679ee41da81fea89a3e5094e48e7fdddcc78669197c",
+      "ac": "AC5"
+    },
+    {
+      "path": "test/vitest.log",
+      "bytes": 233594,
+      "sha256": "e14e763df9bca789cdff00a4e9904461953494ac3ea8942530875cac4c6a2615",
+      "ac": "AC5"
+    },
+    {
+      "path": "theme/contrast.json",
+      "bytes": 2920,
+      "sha256": "314567fa26f9152704973455f6c51d9d9d689350979389449235e4cbe828d110",
+      "ac": "AC4"
+    },
+    {
+      "path": "theme/hot-switch-macos.json",
+      "bytes": 4220,
+      "sha256": "b3b0e675cc85b4decb98629c2390687f79d85438972e0cfcfd220ae0cbd7bc17",
+      "ac": "AC3"
+    },
+    {
+      "path": "theme/hot-switch.json",
+      "bytes": 787,
+      "sha256": "fedaab8dc1d1270840737ca5bb597dbc560ea6e3490a516573efe6ec4d2f437e",
+      "ac": "AC5"
+    },
+    {
+      "path": "theme/pack.json",
+      "bytes": 10608,
+      "sha256": "830ea52a9cc5c920889c4566928bce0576a9379e9aa33d9b33533cd8482e2c13",
+      "ac": "AC1"
+    },
+    {
+      "path": "theme/screenshots.json",
+      "bytes": 1921,
+      "sha256": "dd8fdfa7ace27a3d35d34c33838d07872fa6a2bd9d40a0418590d6d59fd102d7",
+      "ac": "AC2"
+    },
+    {
+      "path": "wire/bridge-errors.ndjson",
+      "bytes": 5882,
+      "sha256": "9caf06d0ea0c94aeaa1f0b5926de5ae4fe71da2d0232cdff2863ac398035ffb4",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/bridge-lifecycle.ndjson",
+      "bytes": 13696,
+      "sha256": "4ad56d6cba01165539c235b950c4c2c4a49a69d9ee4526b70eebee69cb39004a",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/bridge-wire.ndjson",
+      "bytes": 3300,
+      "sha256": "e5621e4e52848d4148883062c118b073728bf2c6288e1626b6f76fa4be5f12ac",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-chinese-core-service.ndjson",
+      "bytes": 15489,
+      "sha256": "ffc3727998c7e0a3753b8bbee48bc7045d4d41607eb5b2a1a1cc49de1ff56114",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-chinese-host-bridge.ndjson",
+      "bytes": 1653,
+      "sha256": "2a3b6e290faefa08b16ce9f5a3cd8e50824cab692115da6a38e9d6d50b0f6757",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-domains-core-service.ndjson",
+      "bytes": 3705,
+      "sha256": "285260eafb110bf6f1281e74aef41e7a72beffee475055efacb9b7ff755c4f73",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-domains-host-bridge.ndjson",
+      "bytes": 1653,
+      "sha256": "673d76a1309feda0ebecb7f110ff325f0065034e3da6bec4cfac2e675e655f69",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-integration-core-service.ndjson",
+      "bytes": 129348,
+      "sha256": "3af27dd683108887186708afe205643c648926d0ddd871dc6af0281e5a0ad0bc",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-integration-host-bridge.ndjson",
+      "bytes": 16071,
+      "sha256": "c169826e753abb2fa190b1f6ab4b1aee69654107fe4e05e01caea5e5994d848c",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-not-supported-core-service.ndjson",
+      "bytes": 3705,
+      "sha256": "b20cb69d08b3d45c12fde8a817e73faab554ba92417b5b524e451e8b1ae94e70",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-not-supported-host-bridge.ndjson",
+      "bytes": 1653,
+      "sha256": "0edd3422b49350f7dce3e4da280cee46230dfd4166f10026004e3f8d3d22d7f7",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b1-core-service.ndjson",
+      "bytes": 68979,
+      "sha256": "d1bd3c26b9722fea67ad4462d9ae35e14e6d72d17dda559ec7478fad1983892b",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b1-host-bridge.ndjson",
+      "bytes": 1655,
+      "sha256": "614cabdd383e6199b3d98144a08f962434c333af0e0310a33de474cd9fe99173",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b1-invalid-core-service.ndjson",
+      "bytes": 3705,
+      "sha256": "35484a8dc803a5e3f22a9a7fb235df88d92b254997d7a2d0fda206c90376a102",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b1-invalid-host-bridge.ndjson",
+      "bytes": 1654,
+      "sha256": "a5f75d97db9347e08600def8636f38a1417cc7c1ba8f5a07fa39c8960e681cf4",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b2-core-service.ndjson",
+      "bytes": 77652,
+      "sha256": "466de5619dd842d15b001bee1d12c96b37b2a29141abd7091c9718a826147346",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b2-host-bridge.ndjson",
+      "bytes": 1655,
+      "sha256": "abff9f3b07169b0e617952aab0884b5fa499cca15e891069ac64d1c0b63dffa3",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b2-invalid-core-service.ndjson",
+      "bytes": 3705,
+      "sha256": "4cf982b6ba588c5d5f05c5771fa5341003c8ea4bb43104a54478b5e1c1acedc0",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b2-invalid-host-bridge.ndjson",
+      "bytes": 1653,
+      "sha256": "ff2ff6e1ee48de87c24f4ba75adf7af95c4820fe49c87252b60caaa0c1b31999",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/commands-ns-b2-region.ndjson",
+      "bytes": 15562,
+      "sha256": "b5531d3b8cb68f9f73126627e9470ac1191841fe0864337ff75f48cabe526b83",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-chinese-roundtrip.json",
+      "bytes": 4784,
+      "sha256": "4b0bcb1ec0c79ef5cc803053ba0e9801c0b8d10aa8be95d4a43a16b981f7bff0",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-chinese.ndjson",
+      "bytes": 15488,
+      "sha256": "451d4e4169b5818962c3a9fea94ba2ba56471dd255ccd478754759c63f9a4464",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-ping.json",
+      "bytes": 2275,
+      "sha256": "0d4c217421f42413929872fb2f78ec4bcf9d6673859caab7abed20b5e0a0f9b9",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-ping.ndjson",
+      "bytes": 7404,
+      "sha256": "53f79a7996a70e642d825cae6fe6b8356e7e5f0ce5142fc61e0f26855cf6ee8c",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-raw-utf8-negative.json",
+      "bytes": 1122,
+      "sha256": "611962501be106ce97c22a0c6cc3ac7c157d7c691c1378eb44b25834d64ca084",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-raw-utf8.ndjson",
+      "bytes": 7485,
+      "sha256": "06031a4a2f8d59eed77480492e1fe32d9b4cec09d27b47cb8ef8c4593247d72b",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-wire-shape.json",
+      "bytes": 1969,
+      "sha256": "40e367fcb42bdded8c28c7d407f1cdac95ed4bfba1ae57fc1fcbde9baab63236",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/core-wire-shape.ndjson",
+      "bytes": 6507,
+      "sha256": "3bde718758cbb7fd4dfb15e66b3197912265a42b52408cd6fe162be184037982",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/host-bridge-errors.json",
+      "bytes": 2199,
+      "sha256": "ab46dc1596676ad65edea3c9f1fd6758ed94fc33de1dc6785efcf675dc0b28a2",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/host-bridge-lifecycle.json",
+      "bytes": 4483,
+      "sha256": "239e45fc1568f614127e4943515baa4a8b6b9996d8969cf782aabc58f2432f95",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-baseline.ndjson",
+      "bytes": 238863,
+      "sha256": "c634560d9c410e3161c22456170da71f5addd5bd75e7f67e529e4485141ff98a",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-default-core-service.ndjson",
+      "bytes": 14354,
+      "sha256": "ad1c9b4817e8e3d7d5833d52fb8d93e3447b81b44df4dd8b4366bd1676d290bf",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-default-host-bridge.ndjson",
+      "bytes": 1655,
+      "sha256": "feea2b332f3f93717dab59ef12da40bccc4ccc119984bdff4b496df4efdd1981",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-disabled-core-service.ndjson",
+      "bytes": 8898,
+      "sha256": "d646215a721532ba1e71f1d6254d5af2edb3f22f3ba38dd116e52727591435ae",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-disabled-host-bridge.ndjson",
+      "bytes": 1653,
+      "sha256": "f13153d5d858a0b7c3c6e3790a96c72975195ac5a254a90d0876848523122075",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-explicit-core-service.ndjson",
+      "bytes": 14853,
+      "sha256": "a4f9d303cab1c89301bc7aa481be67d7dad339a645a4e065542e16d9b56bf298",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-explicit-host-bridge.ndjson",
+      "bytes": 1654,
+      "sha256": "d08a1d544e76d7e5096ab6cc71506000c2b189620c47bbfc9be6ac61098381d6",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-invalid-core-service.ndjson",
+      "bytes": 3705,
+      "sha256": "a5791a970d2fbd5757bbba84fd00a48eb3bc980930c7941479af393a53fc0758",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-invalid-host-bridge.ndjson",
+      "bytes": 1653,
+      "sha256": "27e4df2a3bfe4e809308fdaab6ae9aa45a96568965dd389fd0f02be3bdc24970",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-models.ndjson",
+      "bytes": 398613,
+      "sha256": "9aebc4fc70e8f44fec996933e983552be71824714a4cd32c50bb70631fb87a44",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/run-binding-unknown.ndjson",
+      "bytes": 134689,
+      "sha256": "1619d84beae2c151e748530c9246c9ac235a0b0a5bd243250efecb158ea17dcf",
+      "ac": "AC5"
+    },
+    {
+      "path": "wire/s4-region-reader.ndjson",
+      "bytes": 87547,
+      "sha256": "36a5cf5f38625906458daec8de9734eaa4786d8a443d18393e1ff9657fdbb3d1",
+      "ac": "AC5"
+    }
+  ],
+  "totals": {
+    "files": 272,
+    "bytes": 15285386.0
+  }
+}

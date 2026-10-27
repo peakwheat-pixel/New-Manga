@@ -11,16 +11,16 @@
 |PDF-EXPORT-UI-1|—|ready（导出面板 PDF 选项；Core 已支持）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
 |RELEASE-SMOKE-1|—|ready（新包真机全流程快检）|
-|RELEASE-REPACK-3|—|ready（含 UI 收尾的第三次重打包）|
+|RELEASE-REPACK-3|—|done（新包全流程真跑：UI 导入/导出 ZIP；Mica=actual；234/234；集成 4290afb1b）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
-|THEME-MACOS-1|—|ready（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
+|THEME-MACOS-1|—|in_review（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
 
-READY 节点：REAL-TRANSLATE-PROVIDER-1、PDF-EXPORT-UI-1、RELEASE-REPACK-3。
+READY 节点：REAL-TRANSLATE-PROVIDER-1、PDF-EXPORT-UI-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

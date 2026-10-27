@@ -7,25 +7,25 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 420 |
-| terminal | 405 |
-| non-terminal | 15 |
-| non-terminal named in the plan | 8 |
+| terminal | 406 |
+| non-terminal | 14 |
+| non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 7 |
 | task files tracked by git | 420 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 15 |
+| non-terminal tracked by git | 14 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 335 | yes |
+| `done` | 336 | yes |
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
-| `ready` | 6 | no |
 | `superseded` | 6 | yes |
-| `in_review` | 4 | no |
+| `in_review` | 5 | no |
+| `ready` | 4 | no |
 | `proposed` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
@@ -39,6 +39,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `S4-CMD-BATCH-1` | `in_review` | no |
+| `THEME-MACOS-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `AD002-FOLLOWUPS-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
@@ -46,9 +47,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 | `PDF-EXPORT-UI-1` | `ready` | own row |
 | `REAL-TRANSLATE-PROVIDER-1` | `ready` | own row |
-| `RELEASE-REPACK-3` | `ready` | own row |
 | `RELEASE-SMOKE-1` | `ready` | own row |
-| `THEME-MACOS-1` | `ready` | own row |
 
 ## What this ledger does not say
 
