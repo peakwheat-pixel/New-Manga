@@ -1493,9 +1493,10 @@ public sealed class ReaderPage : UserControl
 }
 
 /// <summary>
-/// AC2 immersive reader window: borderless black chrome, Esc exits, H hides HUD, F cycles fit,
+/// AC2 immersive reader window: borderless black chrome, Esc/F11 exits, H hides HUD, F cycles fit,
 /// arrow keys page. READER-LIBRARY-WIRE-1 AC2: created from the reader page (button/double-click)
-/// for both a real library book and the fixture fallback.
+/// for both a real library book and the fixture fallback. F11-HOTKEY-1: also opened/closed by the
+/// application-level F11 hotkey.
 /// </summary>
 public sealed class ReaderWindow : Window
 {
@@ -1545,6 +1546,9 @@ public sealed class ReaderWindow : Window
     /// <summary>Number of Esc presses that requested a close (headless-testable).</summary>
     public int EscapeCount { get; private set; }
 
+    /// <summary>F11-HOTKEY-1: number of F11 presses that closed the immersive session.</summary>
+    public int F11Count { get; private set; }
+
     /// <summary>Handles one keystroke; returns true when the key was consumed.</summary>
     public bool TryHandleKey(Key key)
     {
@@ -1552,6 +1556,14 @@ public sealed class ReaderWindow : Window
         {
             case Key.Escape:
                 EscapeCount++;
+                _ = Page.FlushProgressAsync();
+                Close();
+                return true;
+            case Key.F11:
+                // F11-HOTKEY-1: inside the immersive window F11 is the toggle-off half of the
+                // application hotkey (the window is already fullscreen); closing returns to the
+                // main window page (restored by MainWindow when F11 started elsewhere).
+                F11Count++;
                 _ = Page.FlushProgressAsync();
                 Close();
                 return true;
