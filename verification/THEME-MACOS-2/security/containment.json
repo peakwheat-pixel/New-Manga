@@ -1,0 +1,8 @@
+{
+  "task": "HOST-TILE-CHANNEL-1",
+  "at_utc": "2026-10-27T17:13:11.9874195Z",
+  "ac": "AC3",
+  "outside_root": "TilePathOutsideRoot",
+  "junction_created": true,
+  "junction_reparse": "TilePathReparse"
+}

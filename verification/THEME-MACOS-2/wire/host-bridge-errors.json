@@ -1,0 +1,35 @@
+{
+  "ac": "AC2/AC4",
+  "unknown_resource_error": "RESOURCE_NOT_CATALOGED",
+  "unknown_resource_message": "\u8D44\u6E90\u672A\u5728 Core \u76EE\u5F55\u4E2D\u767B\u8BB0\uFF08RESOURCE_NOT_CATALOGED\uFF09\u3002",
+  "smuggled_rel_path_error": "REF_MALFORMED",
+  "frames": [
+    {
+      "sidecar": "host_bridge",
+      "request": "{\u0022id\u0022:1,\u0022method\u0022:\u0022ping\u0022,\u0022params\u0022:{}}",
+      "response": "{\u0022result\u0022:{\u0022pong\u0022:true,\u0022service\u0022:\u0022m2-rc1-resource-channel\u0022},\u0022id\u0022:1}",
+      "request_utf8_hex": "7b226964223a312c226d6574686f64223a2270696e67222c22706172616d73223a7b7d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 878.572
+    },
+    {
+      "sidecar": "host_bridge",
+      "request": "{\u0022id\u0022:2,\u0022method\u0022:\u0022issue\u0022,\u0022params\u0022:{\u0022resource_id\u0022:\u0022does-not-exist\u0022,\u0022revision_fingerprint\u0022:\u0022rev-1\u0022}}",
+      "response": "{\u0022error\u0022:{\u0022code\u0022:\u0022RESOURCE_NOT_CATALOGED\u0022},\u0022id\u0022:2}",
+      "request_utf8_hex": "7b226964223a322c226d6574686f64223a226973737565222c22706172616d73223a7b227265736f757263655f6964223a22646f65732d6e6f742d6578697374222c227265766973696f6e5f66696e6765727072696e74223a227265762d31227d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 0.228
+    },
+    {
+      "sidecar": "host_bridge",
+      "request": "{\u0022id\u0022:99,\u0022method\u0022:\u0022issue\u0022,\u0022params\u0022:{\u0022resource_id\u0022:\u0022res-1\u0022,\u0022revision_fingerprint\u0022:\u0022rev-1\u0022,\u0022rel_path\u0022:\u0022escape.jpg\u0022}}",
+      "response": "{\u0022error\u0022:{\u0022code\u0022:\u0022REF_MALFORMED\u0022},\u0022id\u0022:99}",
+      "request_utf8_hex": "7b226964223a39392c226d6574686f64223a226973737565222c22706172616d73223a7b227265736f757263655f6964223a227265732d31222c227265766973696f6e5f66696e6765727072696e74223a227265762d31222c2272656c5f70617468223a226573636170652e6a7067227d7d",
+      "request_ascii_only": true,
+      "response_ascii_only": true,
+      "elapsed_ms": 0.076
+    }
+  ]
+}

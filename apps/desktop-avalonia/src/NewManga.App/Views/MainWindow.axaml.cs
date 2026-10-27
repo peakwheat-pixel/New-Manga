@@ -180,6 +180,9 @@ public partial class MainWindow : Window
     /// <summary>THEME-MACOS-LAYOUTS-1: left Sidebar host (visible only for a Sidebar layout pack).</summary>
     public Border SidebarHostControl => SidebarHost;
 
+    /// <summary>THEME-MACOS-LAYOUTS-1: body host whose first column is the Split sidebar (0 width otherwise).</summary>
+    public Grid BodyHostControl => BodyHost;
+
     /// <summary>THEME-MACOS-LAYOUTS-1: panel that currently holds the four navigation buttons.</summary>
     public StackPanel DockNavPanelControl => DockNavPanel;
 
@@ -591,6 +594,9 @@ public partial class MainWindow : Window
 
         BookshelfPageControl.ApplyLayout(profile);
         Settings.ApplyLayout(profile);
+        // The floating Dock overlays the page host, so the host itself reserves the Dock band: no page can
+        // slide under the capsule (this is what the Launchpad profile's bottom inset is for).
+        PageHost.Margin = new Thickness(0, 0, 0, profile.UsesDock ? profile.LaunchpadBottomInset : 0);
         ApplyTheme();
         InvalidateMeasure();
         InvalidateVisual();

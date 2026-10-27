@@ -415,6 +415,9 @@ public sealed class BookshelfPage : UserControl
 
     public ImportPanel? ImportPanelControl => _importPanel;
 
+    /// <summary>IMPORT-EXPORT-UI-1: last page-level status line (picker/refresh feedback).</summary>
+    public string StatusLine => _status.Text ?? string.Empty;
+
     /// <summary>THEME-MACOS-LAYOUTS-1: the Split layout's left-hand book list.</summary>
     public ItemsControl SplitBookList => _splitBookList;
 
@@ -490,7 +493,9 @@ public sealed class BookshelfPage : UserControl
     private void AttachLaunchpad(LayoutProfile profile)
     {
         _launchpadContentHost.MaxWidth = profile.ContentMaxWidth;
-        _launchpadContentHost.Margin = new Thickness(24, 10, 24, profile.LaunchpadBottomInset);
+        // The shell reserves the Dock band on PageHost (MainWindow.ApplyLayout), so the page itself only
+        // needs its normal content margin; the bottom inset stays in the profile for the shell.
+        _launchpadContentHost.Margin = new Thickness(24, 10, 24, 16);
         _launchpadHeaderSlot.Children.Add(_header);
         _launchpadSearchSlot.Children.Add(_searchCard);
         _launchpadGridSlot.Children.Add(_contentGrid);
@@ -714,7 +719,9 @@ public sealed class BookshelfPage : UserControl
     {
         var launchpad = _layout.Shelf == ShelfStyle.LaunchpadGrid;
         var cardWidth = launchpad ? _layout.LaunchpadCardWidth : BookshelfViewModel.CardWidth;
-        var coverHeight = launchpad ? Math.Max(140, _layout.LaunchpadCardHeight - 58) : 226;
+        // Launchpad cards are the frozen 168x220 icon tiles: the cover takes the remaining height and the
+        // Border keeps the fixed tile height so the uniform grid cells never stretch the card.
+        var coverHeight = launchpad ? Math.Max(140, _layout.LaunchpadCardHeight - 70) : 226;
         var cover = new Border
         {
             Height = coverHeight,
@@ -760,6 +767,8 @@ public sealed class BookshelfPage : UserControl
         var card = new Border
         {
             Width = cardWidth,
+            Height = launchpad ? _layout.LaunchpadCardHeight : double.NaN,
+            VerticalAlignment = launchpad ? VerticalAlignment.Top : VerticalAlignment.Stretch,
             Margin = new Thickness(0, 0, BookshelfViewModel.CardGap, BookshelfViewModel.CardGap),
             CornerRadius = new CornerRadius(launchpad ? 16 : 12),
             Padding = new Thickness(launchpad ? 10 : 8),
@@ -891,7 +900,13 @@ public sealed class BookshelfPage : UserControl
     }
 }
 
-/// <summary>AC4 settings skeleton.</summary>
+/// <summary>
+/// AC4 settings skeleton.
+/// THEME-MACOS-LAYOUTS-1: three settings structures (two-column / single centred column / split
+/// directory) share the same card instances, the same theme centre and the same Host seams. The cards are
+/// re-parented between layouts; inside the Split layout switching sections only toggles visibility, so no
+/// section control is ever recreated.
+/// </summary>
 public sealed class SettingsPage : UserControl
 {
     private readonly StackPanel _themeList;
@@ -899,6 +914,7 @@ public sealed class SettingsPage : UserControl
     private readonly TextBlock _settingsJson;
     private readonly StackPanel _nsList;
     private readonly Action _onThemeApplied;
+    private readonly TextBlock _title;
 
     // THEME-MACOS-1: theme card geometry comes from the active pack's Metrics (old packs = corner 12, no
     // shadow; macOS = corner 14 + soft card shadow) and the appearance row toggles Light/Dark.
@@ -908,23 +924,54 @@ public sealed class SettingsPage : UserControl
     private readonly Button _darkVariantButton;
     private readonly List<(ThemePack Pack, Button Button)> _themeButtons = new();
 
+    // Section cards: one instance each, re-parented per layout (never rebuilt).
+    private readonly Border _credentialCard;
+    private readonly Border _providerCard;
+    private readonly Border _networkCard;
+    private readonly Border _bindingsCard;
+    private readonly Border _deviceCard;
+    private readonly Border _dataCard;
+    private readonly Border _nsCard;
+
+    // Sonoma tree (THEME-MACOS-1 two-column settings).
+    private readonly Grid _sonomaRoot;
+    private readonly Grid _sonomaContent;
+    private readonly Grid _sonomaThemeSlot;
+    private readonly StackPanel _sonomaRightSlot;
+
+    // Launchpad tree (single centred column, max width from the profile).
+    private readonly Grid _launchpadRoot;
+    private readonly Grid _launchpadColumnHost;
+    private readonly StackPanel _launchpadStack;
+
+    // Split tree (section directory + one visible section panel).
+    private readonly Grid _splitRoot;
+    private readonly Grid _splitBody;
+    private readonly Border _splitNavBorder;
+    private readonly StackPanel _splitNav;
+    private readonly StackPanel _splitPages;
+    private readonly Dictionary<string, StackPanel> _splitSectionPanels = new(StringComparer.Ordinal);
+    private readonly List<(string Key, string Label, Button Button)> _splitSectionButtons = new();
+
+    private LayoutProfile _layout = LayoutProfiles.Sonoma;
+    private string _splitSection = SplitSectionTheme;
+
+    private const string SplitSectionTheme = "theme";
+    private const string SplitSectionCredentials = "credentials";
+    private const string SplitSectionProvider = "provider";
+    private const string SplitSectionNetwork = "network";
+    private const string SplitSectionBindings = "bindings";
+    private const string SplitSectionRegistry = "registry";
+
     public SettingsPage(SettingsViewModel viewModel, Action onThemeApplied, IHostController? controller = null)
     {
         ViewModel = viewModel;
         _onThemeApplied = onThemeApplied;
         Name = "SettingsPage";
-        var root = new Grid
-        {
-            RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto"),
-            Margin = new Thickness(28, 18),
-            Background = ThemePackService.Brush("AppBg"),
-        };
-        root.Children.Add(Ui.Text("设置", 26, "TextPrimary", bold: true));
-        _wired = Ui.Text(viewModel.WiredSummary, 12, "TextSecondary");
-        Grid.SetRow(_wired, 1);
-        root.Children.Add(_wired);
 
-        var content = new Grid { ColumnDefinitions = new ColumnDefinitions("320,*"), ColumnSpacing = 18, Margin = new Thickness(0, 12, 0, 0) };
+        _title = Ui.Text("设置", 26, "TextPrimary", bold: true);
+        _wired = Ui.Text(viewModel.WiredSummary, 12, "TextSecondary");
+
         _themeCard = new Border
         {
             Padding = new Thickness(16),
@@ -950,6 +997,10 @@ public sealed class SettingsPage : UserControl
             };
             button.Name = "ThemePack_" + pack.Id;
             button.Click += (_, _) => SelectTheme(pack);
+            // THEME-MACOS-LAYOUTS-1: re-parenting the theme card into another layout tree may make the
+            // ItemsControl regenerate its containers, which re-runs this factory. Keep one entry per pack
+            // so ThemeButtons never accumulates duplicates across layout switches.
+            _themeButtons.RemoveAll(entry => string.Equals(entry.Pack.Id, pack.Id, StringComparison.Ordinal));
             _themeButtons.Add((pack, button));
             return button;
         });
@@ -977,25 +1028,21 @@ public sealed class SettingsPage : UserControl
         _appearanceRow.Children.Add(_lightVariantButton);
         _appearanceRow.Children.Add(_darkVariantButton);
         _themeList.Children.Add(_appearanceRow);
-
         _themeCard.Child = _themeList;
-        content.Children.Add(_themeCard);
 
-        var right = new StackPanel { Spacing = 12 };
-        var dataCard = new Border
+        _settingsJson = Ui.Text(viewModel.SettingsJson, 11, "TextSecondary");
+        var dataBody = new StackPanel();
+        dataBody.Children.Add(Ui.Text("已接线 settings 命令 · 展示", 13, "TextPrimary", bold: true));
+        dataBody.Children.Add(_settingsJson);
+        _dataCard = new Border
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
             Background = ThemePackService.Brush("CardBg"),
             BorderBrush = ThemePackService.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
+            Child = dataBody,
         };
-        _settingsJson = Ui.Text(viewModel.SettingsJson, 11, "TextSecondary");
-        var dataBody = new StackPanel();
-        dataBody.Children.Add(Ui.Text("已接线 settings 命令 · 展示", 13, "TextPrimary", bold: true));
-        dataBody.Children.Add(_settingsJson);
-        dataCard.Child = dataBody;
-        right.Children.Add(dataCard);
 
         // GPU-ORT-PROBE-1: packaged device probe (ONNX Runtime EP list recorded in VERSION.json).
         DeviceStatus = Services.DeviceStatus.Load();
@@ -1003,14 +1050,6 @@ public sealed class SettingsPage : UserControl
             DeviceStatus?.DisplayText ?? "GPU：未打包探测（开发运行）",
             11,
             DeviceStatus?.Available == true ? "TextPrimary" : "TextSecondary");
-        var deviceCard = new Border
-        {
-            Padding = new Thickness(16),
-            CornerRadius = new CornerRadius(12),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
-            BorderThickness = new Thickness(1),
-        };
         var deviceBody = new StackPanel();
         deviceBody.Children.Add(Ui.Text("运行环境 · GPU", 13, "TextPrimary", bold: true));
         deviceBody.Children.Add(DeviceStatusText);
@@ -1018,17 +1057,16 @@ public sealed class SettingsPage : UserControl
             "探测源：ONNX Runtime 执行提供程序（打包时写入 VERSION.json）",
             11,
             "TextSecondary"));
-        deviceCard.Child = deviceBody;
-        right.Children.Insert(0, deviceCard);
-
-        var nsCard = new Border
+        _deviceCard = new Border
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
             Background = ThemePackService.Brush("CardBg"),
             BorderBrush = ThemePackService.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
+            Child = deviceBody,
         };
+
         _nsList = new StackPanel { Spacing = 4 };
         _nsList.Children.Add(Ui.Text("S2 NOT_SUPPORTED 批次登记（S3-A/B/C 已由 NS-WIRE-A1 接线）", 13, "TextPrimary", bold: true));
         foreach (var item in viewModel.NsBatch)
@@ -1036,8 +1074,15 @@ public sealed class SettingsPage : UserControl
             _nsList.Children.Add(Ui.Text($"[{item.Status}] {item.Command} · {item.Page}", 11, "TextSecondary"));
         }
 
-        nsCard.Child = _nsList;
-        right.Children.Add(nsCard);
+        _nsCard = new Border
+        {
+            Padding = new Thickness(16),
+            CornerRadius = new CornerRadius(12),
+            Background = ThemePackService.Brush("CardBg"),
+            BorderBrush = ThemePackService.Brush("CardBorder"),
+            BorderThickness = new Thickness(1),
+            Child = _nsList,
+        };
 
         // CREDENTIAL-UI-1: settings-page credential block (masked input → credential_put/clear).
         // It is injected with the Host controller seam: production passes HostController; tests pass a
@@ -1052,16 +1097,15 @@ public sealed class SettingsPage : UserControl
             controller is null
                 ? (_, _, _) => Task.FromResult(CredentialOperationResult.NotReady())
                 : controller.ClearCredentialAsync);
-        var credentialCard = new Border
+        _credentialCard = new Border
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
             Background = ThemePackService.Brush("CardBg"),
             BorderBrush = ThemePackService.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
+            Child = Credentials,
         };
-        credentialCard.Child = Credentials;
-        right.Children.Insert(0, credentialCard);
 
         // SETTINGS-PROFILE-UI-1: provider / network profile management + binding slots. Same controller
         // seam as the credential block; the designer path (controller == null) shows typed empty states.
@@ -1126,23 +1170,120 @@ public sealed class SettingsPage : UserControl
             controller is null
                 ? (_, _) => Task.FromResult<ProviderBindingResult?>(null)
                 : controller.ResolveProviderBindingAsync);
-        right.Children.Insert(1, ProfileUi.Card(ProviderProfiles));
-        right.Children.Insert(2, ProfileUi.Card(NetworkProfiles));
-        right.Children.Insert(3, ProfileUi.Card(Bindings));
-        Grid.SetColumn(right, 1);
-        content.Children.Add(right);
-        // SETTINGS-PROFILE-UI-1: the settings page is now taller than the window (credential + provider
-        // + network + bindings cards), so the contract row scrolls instead of clipping the lower cards.
-        var pageScroll = new ScrollViewer
+        _providerCard = ProfileUi.Card(ProviderProfiles);
+        _networkCard = ProfileUi.Card(NetworkProfiles);
+        _bindingsCard = ProfileUi.Card(Bindings);
+
+        // ---- Sonoma tree: 320px theme card + scrolling card column ----
+        _sonomaThemeSlot = new Grid();
+        _sonomaRightSlot = new StackPanel { Spacing = 12 };
+        _sonomaContent = new Grid
         {
-            Content = content,
+            ColumnDefinitions = new ColumnDefinitions("320,*"),
+            ColumnSpacing = 18,
+            Margin = new Thickness(0, 12, 0, 0),
+        };
+        _sonomaThemeSlot.Children.Add(_themeCard);
+        _sonomaContent.Children.Add(_sonomaThemeSlot);
+        Grid.SetColumn(_sonomaRightSlot, 1);
+        _sonomaContent.Children.Add(_sonomaRightSlot);
+        var sonomaScroll = new ScrollViewer
+        {
+            Content = _sonomaContent,
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
         };
-        Grid.SetRow(pageScroll, 2);
-        root.Children.Add(pageScroll);
-        Content = root;
-        ApplyTheme();
+        Grid.SetRow(sonomaScroll, 2);
+        _sonomaRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto"), Margin = new Thickness(28, 18) };
+        _sonomaRoot.Children.Add(sonomaScroll);
+
+        // ---- Launchpad tree: one centred column (max width from the profile) ----
+        _launchpadStack = new StackPanel { Spacing = 14 };
+        _launchpadColumnHost = new Grid
+        {
+            MaxWidth = LayoutProfiles.Launchpad.SettingsMaxWidth,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Margin = new Thickness(0, 14, 0, 28),
+        };
+        _launchpadColumnHost.Children.Add(_launchpadStack);
+        var launchpadScroll = new ScrollViewer
+        {
+            Content = _launchpadColumnHost,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+        };
+        Grid.SetRow(launchpadScroll, 2);
+        _launchpadRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto"), Margin = new Thickness(28, 18) };
+        _launchpadRoot.Children.Add(launchpadScroll);
+
+        // ---- Split tree: section directory + one visible section panel ----
+        _splitNav = new StackPanel { Spacing = 4, Margin = new Thickness(10, 14, 10, 0) };
+        foreach (var (key, label) in new[]
+                 {
+                     (SplitSectionTheme, "主题"),
+                     (SplitSectionCredentials, "凭证"),
+                     (SplitSectionProvider, "Provider"),
+                     (SplitSectionNetwork, "网络"),
+                     (SplitSectionBindings, "绑定"),
+                     (SplitSectionRegistry, "登记"),
+                 })
+        {
+            var button = new Button
+            {
+                Content = label,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                Padding = new Thickness(12, 8),
+                CornerRadius = new CornerRadius(8),
+                FontSize = 13,
+                Background = ThemePackService.Brush("ChipBg"),
+                Foreground = ThemePackService.Brush("TextPrimary"),
+            };
+            button.Name = "SettingsSection_" + key;
+            button.Click += (_, _) => SelectSplitSection(key);
+            _splitSectionButtons.Add((key, label, button));
+            _splitNav.Children.Add(button);
+        }
+
+        _splitNavBorder = new Border
+        {
+            Background = ThemePackService.Brush(ThemePackService.SidebarBackground),
+            BorderBrush = ThemePackService.Brush("CardBorder"),
+            BorderThickness = new Thickness(0, 0, 1, 0),
+            Child = _splitNav,
+        };
+        _splitPages = new StackPanel { Spacing = 0 };
+        foreach (var (key, _) in new[]
+                 {
+                     (SplitSectionTheme, "主题"),
+                     (SplitSectionCredentials, "凭证"),
+                     (SplitSectionProvider, "Provider"),
+                     (SplitSectionNetwork, "网络"),
+                     (SplitSectionBindings, "绑定"),
+                     (SplitSectionRegistry, "登记"),
+                 })
+        {
+            var panel = new StackPanel { Spacing = 14, IsVisible = key == SplitSectionTheme };
+            _splitSectionPanels[key] = panel;
+            _splitPages.Children.Add(panel);
+        }
+
+        var splitContentScroll = new ScrollViewer
+        {
+            Content = _splitPages,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            Margin = new Thickness(20, 14, 20, 20),
+        };
+        _splitBody = new Grid { ColumnDefinitions = new ColumnDefinitions("240,*") };
+        _splitBody.Children.Add(_splitNavBorder);
+        Grid.SetColumn(splitContentScroll, 1);
+        _splitBody.Children.Add(splitContentScroll);
+        Grid.SetRow(_splitBody, 2);
+        _splitRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto"), Margin = new Thickness(24, 16, 24, 16) };
+        _splitRoot.Children.Add(_splitBody);
+
+        ApplyLayout(LayoutProfiles.Sonoma);
     }
 
     public SettingsViewModel ViewModel { get; }
@@ -1194,6 +1335,19 @@ public sealed class SettingsPage : UserControl
 
     public Button DarkVariantButton => _darkVariantButton;
 
+    /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to this page.</summary>
+    public LayoutProfile Layout => _layout;
+
+    public LayoutKind CurrentLayout => _layout.Kind;
+
+    /// <summary>THEME-MACOS-LAYOUTS-1: Split layout section buttons (主题/凭证/Provider/网络/绑定/登记).</summary>
+    public IReadOnlyList<Button> SplitSectionButtons => _splitSectionButtons.Select(entry => entry.Button).ToList();
+
+    /// <summary>THEME-MACOS-LAYOUTS-1: Split layout section currently shown.</summary>
+    public string SelectedSplitSection => _splitSection;
+
+    public IReadOnlyDictionary<string, StackPanel> SplitSections => _splitSectionPanels;
+
     public void UpdateSettingsJson(System.Text.Json.JsonElement value)
     {
         ViewModel.UpdateSettingsJson(value);
@@ -1207,10 +1361,10 @@ public sealed class SettingsPage : UserControl
         {
             ThemePackService.Apply(app, pack);
             ViewModel.SelectedPack = pack;
-            // Refresh this page's own theme-centric controls even when the host callback is a no-op
-            // (the real shell callback also repaints nav/title bar through MainWindow.ApplyTheme).
-            ApplyTheme();
+            // The shell callback re-lays out this page when the pack changes the layout kind; run it
+            // before ApplyTheme so the refreshed styling lands on the new structure.
             _onThemeApplied();
+            ApplyTheme();
         }
     }
 
@@ -1223,6 +1377,33 @@ public sealed class SettingsPage : UserControl
             ApplyTheme();
             _onThemeApplied();
         }
+    }
+
+    /// <summary>
+    /// THEME-MACOS-LAYOUTS-1: switches this page between the three frozen settings structures. The theme
+    /// centre and every section card keep their instances and public members in all three layouts.
+    /// </summary>
+    public void ApplyLayout(LayoutProfile profile)
+    {
+        _layout = profile;
+        DetachCards();
+        switch (profile.Settings)
+        {
+            case SettingsStyle.SingleColumn:
+                AttachLaunchpad(profile);
+                break;
+            case SettingsStyle.SplitSections:
+                AttachSplit(profile);
+                break;
+            default:
+                AttachSonoma();
+                break;
+        }
+
+        ApplyPageChrome(profile);
+        ApplyTheme();
+        InvalidateMeasure();
+        InvalidateVisual();
     }
 
     public void ApplyTheme()
@@ -1245,7 +1426,124 @@ public sealed class SettingsPage : UserControl
             button.CornerRadius = new CornerRadius(pack.Metrics.CornerButton);
         }
 
+        _sonomaRoot.Background = ThemePackService.Brush("AppBg");
+        _launchpadRoot.Background = ThemePackService.Brush("AppBg");
+        _splitRoot.Background = ThemePackService.Brush("AppBg");
+        _splitNavBorder.Background = ThemePackService.Brush(ThemePackService.SidebarBackground);
+        _splitNavBorder.BorderBrush = ThemePackService.Brush("CardBorder");
+        StyleSectionButtons();
+
         RefreshAppearance(pack);
+    }
+
+    /// <summary>THEME-MACOS-LAYOUTS-1: Split directory selection (visibility only, no re-parenting).</summary>
+    public void SelectSplitSection(string section)
+    {
+        if (!_splitSectionPanels.ContainsKey(section))
+        {
+            return;
+        }
+
+        _splitSection = section;
+        foreach (var pair in _splitSectionPanels)
+        {
+            pair.Value.IsVisible = string.Equals(pair.Key, section, StringComparison.Ordinal);
+        }
+
+        StyleSectionButtons();
+    }
+
+    private void AttachSonoma()
+    {
+        _sonomaRoot.Children.Add(_title);
+        Grid.SetRow(_wired, 1);
+        _sonomaRoot.Children.Add(_wired);
+        _sonomaThemeSlot.Children.Add(_themeCard);
+        _sonomaRightSlot.Children.Add(_credentialCard);
+        _sonomaRightSlot.Children.Add(_providerCard);
+        _sonomaRightSlot.Children.Add(_networkCard);
+        _sonomaRightSlot.Children.Add(_bindingsCard);
+        _sonomaRightSlot.Children.Add(_deviceCard);
+        _sonomaRightSlot.Children.Add(_dataCard);
+        _sonomaRightSlot.Children.Add(_nsCard);
+        Content = _sonomaRoot;
+    }
+
+    private void AttachLaunchpad(LayoutProfile profile)
+    {
+        _launchpadRoot.Children.Add(_title);
+        Grid.SetRow(_wired, 1);
+        _launchpadRoot.Children.Add(_wired);
+        _launchpadColumnHost.MaxWidth = profile.SettingsMaxWidth > 0 ? profile.SettingsMaxWidth : 900;
+        _launchpadStack.Children.Add(_themeCard);
+        _launchpadStack.Children.Add(_credentialCard);
+        _launchpadStack.Children.Add(_providerCard);
+        _launchpadStack.Children.Add(_networkCard);
+        _launchpadStack.Children.Add(_bindingsCard);
+        _launchpadStack.Children.Add(_deviceCard);
+        _launchpadStack.Children.Add(_dataCard);
+        _launchpadStack.Children.Add(_nsCard);
+        Content = _launchpadRoot;
+    }
+
+    private void AttachSplit(LayoutProfile profile)
+    {
+        _splitRoot.Children.Add(_title);
+        Grid.SetRow(_wired, 1);
+        _splitRoot.Children.Add(_wired);
+        _splitBody.ColumnDefinitions[0].Width = new GridLength(profile.SettingsNavWidth > 0 ? profile.SettingsNavWidth : 240);
+        _splitSectionPanels[SplitSectionTheme].Children.Add(_themeCard);
+        _splitSectionPanels[SplitSectionCredentials].Children.Add(_credentialCard);
+        _splitSectionPanels[SplitSectionProvider].Children.Add(_providerCard);
+        _splitSectionPanels[SplitSectionNetwork].Children.Add(_networkCard);
+        _splitSectionPanels[SplitSectionBindings].Children.Add(_bindingsCard);
+        _splitSectionPanels[SplitSectionRegistry].Children.Add(_nsCard);
+        _splitSectionPanels[SplitSectionRegistry].Children.Add(_deviceCard);
+        _splitSectionPanels[SplitSectionRegistry].Children.Add(_dataCard);
+        SelectSplitSection(_splitSection);
+        Content = _splitRoot;
+    }
+
+    /// <summary>Removes every shared block from whatever slot currently owns it (one parent per control).</summary>
+    private void DetachCards()
+    {
+        foreach (var card in new Control[] { _themeCard, _credentialCard, _providerCard, _networkCard, _bindingsCard, _deviceCard, _dataCard, _nsCard, _title, _wired })
+        {
+            if (card.Parent is Panel panel)
+            {
+                panel.Children.Remove(card);
+            }
+        }
+    }
+
+    private void ApplyPageChrome(LayoutProfile profile)
+    {
+        var launchpad = profile.Settings == SettingsStyle.SingleColumn;
+        var split = profile.Settings == SettingsStyle.SplitSections;
+        _title.FontSize = launchpad || split ? 22 : 26;
+        _wired.FontSize = split ? 11 : 12;
+        if (launchpad)
+        {
+            _launchpadRoot.Margin = new Thickness(28, 18);
+        }
+        else if (split)
+        {
+            _splitRoot.Margin = new Thickness(24, 16, 24, 16);
+        }
+        else
+        {
+            _sonomaRoot.Margin = new Thickness(28, 18);
+        }
+    }
+
+    private void StyleSectionButtons()
+    {
+        foreach (var (key, _, button) in _splitSectionButtons)
+        {
+            var active = string.Equals(key, _splitSection, StringComparison.Ordinal);
+            button.Background = ThemePackService.Brush(active ? "ChipActiveBg" : "ChipBg");
+            button.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextPrimary");
+        }
     }
 
     private void RefreshAppearance(ThemePack pack)

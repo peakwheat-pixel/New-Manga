@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "scenario": "App payload validated by HostIssuer (no contract change)",
+  "pdf_extension": "pdf",
+  "zip_extension": "zip",
+  "format_options": "{\u0022pdf_content\u0022:\u0022searchable_dual_layer\u0022}"
+}

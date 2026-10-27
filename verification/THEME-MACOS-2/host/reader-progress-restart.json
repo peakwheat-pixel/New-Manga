@@ -1,0 +1,15 @@
+{
+  "ac": "AC1/AC3",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "page_count": 8,
+  "first_saved_page_id": "c239be827f3a4448848d2c42bffc05d1",
+  "second_saved_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+  "first_total_read_seconds": 2.5,
+  "second_total_read_seconds": 2.5,
+  "resumed_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+  "resumed_total_read_seconds": 2.5,
+  "restart_resume_ok": true,
+  "core_wire_frames": 4,
+  "wire_log": "wire/core-service.ndjson"
+}

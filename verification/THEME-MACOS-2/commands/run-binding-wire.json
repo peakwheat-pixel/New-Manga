@@ -1,0 +1,14 @@
+{
+  "ac": "AC1/AC3",
+  "policy": "default = manga-ocr; injected when overrides absent/empty",
+  "cases": [
+    {
+      "case": "overrides absent",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022StartRun\u0022,\u0022payload\u0022:{\u0022command\u0022:\u0022translate_untranslated\u0022,\u0022scope\u0022:{\u0022kind\u0022:\u0022book\u0022,\u0022book_id\u0022:\u0022book-none\u0022},\u0022overrides\u0022:{\u0022provider_bindings\u0022:{\u0022ocr\u0022:\u0022manga-ocr\u0022}},\u0022idempotency_key\u0022:\u0022it-binding-1\u0022}}"
+    },
+    {
+      "case": "overrides {}",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-3\u0022,\u0022command\u0022:\u0022StartRun\u0022,\u0022payload\u0022:{\u0022command\u0022:\u0022translate_untranslated\u0022,\u0022scope\u0022:{\u0022kind\u0022:\u0022book\u0022,\u0022book_id\u0022:\u0022book-none\u0022},\u0022overrides\u0022:{\u0022provider_bindings\u0022:{\u0022ocr\u0022:\u0022manga-ocr\u0022}},\u0022idempotency_key\u0022:\u0022it-binding-2\u0022}}"
+    }
+  ]
+}

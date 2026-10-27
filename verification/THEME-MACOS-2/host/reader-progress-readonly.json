@@ -1,0 +1,6 @@
+{
+  "ac": "AC2",
+  "writes_allowed": false,
+  "error_code": "HOST_READ_ONLY",
+  "mode": "ReadOnlyUntilParity"
+}

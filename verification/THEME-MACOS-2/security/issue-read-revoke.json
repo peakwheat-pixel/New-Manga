@@ -1,0 +1,10 @@
+{
+  "task": "HOST-TILE-CHANNEL-1",
+  "at_utc": "2026-10-27T17:13:11.8974019Z",
+  "ac": "AC1",
+  "handle_opaque": "dcfb5cb7609c9a51442f5d4631f511e5",
+  "tile_count": 4,
+  "size": 262144,
+  "after_revoke": "TileGrantRevoked",
+  "ui_view_exposes_no_path_or_digest": true
+}
