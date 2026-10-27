@@ -36,11 +36,13 @@
 |F11-HOTKEY-1|—|ready（全局 F11 沉浸切换；base 171529b5d）|
 |GPU-ORT-PROBE-1|—|ready（GPU 状态改 ORT EP 探测）|
 |RUN-EXPORT-E2E-1|—|ready（Run/Export 端到端，fixture+models）|
+|NS-RECLASSIFY-1|—|ready（42 条 NS 重探测/重分类，只出证据）|
+|S4-CMD-BATCH-1|—|ready（S4-A/B/C：region 写 4 + reader 2）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：F11-HOTKEY-1、GPU-ORT-PROBE-1、RUN-EXPORT-E2E-1。
+READY 节点：F11-HOTKEY-1、GPU-ORT-PROBE-1、RUN-EXPORT-E2E-1、NS-RECLASSIFY-1、S4-CMD-BATCH-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
