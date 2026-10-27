@@ -1,0 +1,6128 @@
+{
+  "task": "RELEASE-REPACK-2",
+  "ac": "AC2/AC3",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\sidecar-models\\core-sidecar",
+  "sidecar_core_service_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+  "sidecar_core_service_bytes": 399492,
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\data-roots\\data-root-full-chain",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "commands": [
+    {
+      "command": "core.ping",
+      "elapsed_ms": 1765.2,
+      "ok": true
+    },
+    {
+      "command": "list_chapters",
+      "elapsed_ms": 0.3,
+      "ok": true
+    },
+    {
+      "command": "list_chapter_pages",
+      "elapsed_ms": 0.3,
+      "ok": true
+    },
+    {
+      "command": "StartRun",
+      "elapsed_ms": 13.7,
+      "ok": true
+    },
+    {
+      "command": "GetTaskProjection",
+      "elapsed_ms": 1.0,
+      "ok": true
+    }
+  ],
+  "run_timeline": [
+    {
+      "t_ms": 0.4,
+      "status": "pending"
+    },
+    {
+      "t_ms": 501.0,
+      "status": "running"
+    },
+    {
+      "t_ms": 86430.7,
+      "status": "completed"
+    }
+  ],
+  "projection_polls": 658,
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "page_count": 8,
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr",
+      "translate": "identity-translation"
+    }
+  },
+  "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+  "run_terminal_status": "completed",
+  "run_elapsed_ms": 86430.7,
+  "task_projection": {
+    "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+    "run_status": "completed",
+    "run_title": "全部翻译（跳过已翻译）",
+    "overall_progress": 1.0,
+    "current_page_id": "221d772e601e480e8e7508dfe9aff380",
+    "current_step_type": "",
+    "step_flow": [
+      {
+        "type": "detect",
+        "label": "检测",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      },
+      {
+        "type": "ocr",
+        "label": "OCR",
+        "state": "pending"
+      },
+      {
+        "type": "color",
+        "label": "配色",
+        "state": "pending"
+      },
+      {
+        "type": "term_extract",
+        "label": "术语",
+        "state": "pending"
+      },
+      {
+        "type": "translate",
+        "label": "翻译",
+        "state": "pending"
+      },
+      {
+        "type": "segment",
+        "label": "分割",
+        "state": "pending"
+      },
+      {
+        "type": "mask_refine",
+        "label": "掩膜",
+        "state": "pending"
+      },
+      {
+        "type": "inpaint",
+        "label": "修复",
+        "state": "pending"
+      },
+      {
+        "type": "render",
+        "label": "渲染",
+        "state": "pending"
+      }
+    ],
+    "rows": [
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_order": 1,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "page_order": 2,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_order": 3,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "page_order": 4,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "page_order": 5,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "page_order": 6,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "page_order": 7,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": false,
+        "error_code": null
+      },
+      {
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "page_order": 8,
+        "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "status": "completed",
+        "is_locked": false,
+        "is_pipeline_current": true,
+        "error_code": null
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:0",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-a3254d37a83049bfb42fafafff334bc6",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-66f923d075f14f3f8284c4a9d22c7a50",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b96e3983c80942a79ebfc1f139d6233c",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7f16666a1be74713aea969ca78159ca3",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a752ba5255f14a98ab5b9949bd43e0dd",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7b4a2d3665dc4ee0a5ba6a30ff42b8d1",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-815c30819e5a47d4908950fdf811145d",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-4c92ccb2b1da4509a720d833b9d4a0f0",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-429d4d869bf7417dadfcf2793612ea96",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-385da13ea0094c5fa585225062f25a3e",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-60b0d61b19d24fd1be68f44b9cf1c1f1",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b1d30dbd85194285a4b0eecd08c95168",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a5bb079cfce947f0a53066d0cc42ccb3",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-393f57cbf8484a10a3671e90aaaa76fb",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f4813c43aa434e7ab6de9e1d9bd1854f",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-bfa8a8709b7f4a598457419ac1cdd203",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e0b75261fac0403bb9ee0da406d7ee33",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-821944fdba62426a86c5ec5e69a13046",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9c67477f73de43a4b021662c15108f0c",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c94b7448fbeb45119bb2a047a2ebf991",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f60b736498e34c1787f21b7d34e36636",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5a6529c1b8394ef5b07b98de4f382ab0",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f2f325a75fdc4895964b160b0a9c847a",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b7d4f1b1a4154c4cb488d1d5298b35c7",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-245815bfad264aaca93829204285fdea",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b39f4ce4ee574df597f343f9f23e9c0e",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b480160d08ea4242a6784eb333baaed8",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f61f335a2dca49d2959ea5c5859aa120",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-674a225fe2474e2082a49c5caeb4df82",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-67010a3d9167436bb2dcdc302a29e3c9",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5ac5ecfe14cb4f05aebb59c0061b19a1",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a315b882c56b4f0ba7c0b0b8117f6ea1",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f5c8e7ee09874700aebfc8e1dd1175aa",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-8716acd26364484eaef70f11af243ff8",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-8e19d1e7de7945e5afc4777d8d0d34a9",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5f9b70f780364b03b6d53f37ff931125",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a98c1cbd815147fa9f01445e83255634",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-15d91dbc746b45879d6f6ddd664556bb",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-6af47b54d5ea4841b70b9c1febc5408e",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7c9ebc8a23c24a3c821162e8753ab484",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-022f6b6d08e248798785474949318ef6",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-8886321ebf4c424b8007c7b9554c8685",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f6b346d9b68f43e5ab5080872cb6ee5f",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b7f2f33c0e744724935427b74044a34c",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5ab0418e25ad4dbd974abf052f0681bc",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-905fe9f2d58448d0bece3a37721dcd3d",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b67e7ee135b34ce781657cdab4b28834",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ebe079761b0f4a10bff5532922c27c28",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-89f8ef43e13f4107b7950dda3646928a",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-98f42e2f913845cb930e2e86d02b626e",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fe9197a3b36c42e6a8c8e9d5c0ff69c7",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-905605f79b014d91b5b12bbcb23d6091",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e1244e83fc0c420c98f04b7a414d41e7",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5be1ecc4917043cdad21338c55647e9b",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-612e74bfdf244745828b53bb1be3f99b",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-649bf7d693c24deea00a3b584ea44246",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-eead57adfb8f4648bd58e2edf239824b",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fab57c53b6d24393b21c84e10349abf8",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c9f2f02e1ffd4f8b86f5eae739afec5c",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-14486b8eabda4398a03cd7951276557a",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-d85a11b01d3f490f8bde699f2e0f448b",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-2be5a278775c4862be516a650d995118",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f6d592afe265487aa5fc0571bbd43bf4",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-af26f58c2c1c40eeb9e89730fe4ee5ff",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-010f4761eef645c0a728aae706798672",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-df399eb3d5f14f2692d8a0c2d2c45be6",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-88045f32c21b4f50bc6947199a64323a",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-993f9208b4374a9c9a70fc4eb9cbd960",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7f30639b099f4b2ebf92ae6b9c944a25",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-dd427aa42e3e4c2089f5a867d2687aa7",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-3037129e39c34ac48169b82747f5d028",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9f826e7de58043f3b77f5adac46d811e",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-000d5d598cc04d2da45dae596715df02",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e79121efffec4c928e8bc977153666b5",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-25e0e433b32a4a1eac542d2d1077b7dd",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b933e20c831849ba8976a5878c6de13b",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e0ccf47902044b61a4a2cfac45e701ce",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-035e043a458d4eb69f62ae6cb3954ce0",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ef7f2fbbc1ba446b9d7a9deac9fe607e",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-57a46fffcef4409d97333bb48d0ef6e5",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7f26deff9fa8407d956f5755a213913a",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-dcfa5d4150c34d09af2eb73043debaef",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-130904e0c4ab49199cb701d6f5a0dcdf",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-bacaa8b1aba64b31b24db799a796fd77",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5b6f31dab30d4e89b35c8a931f431b45",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:1",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-d572583052d04a0f952ebdccc37dae3d",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ec63f3bd25d547ff84f554c2c21b9510",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-923ac1f49b2c4857844286805f4848ba",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9f004be242a341b386fe47b5efe83395",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-6885ea796dc848eea3da1c7f5be23043",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9ba917850f60412c956fe7c2ce203edc",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-3d425ef37bbc4c8c8ffee7e0aa7faaa5",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-983607fcf15f4ba78e592e33879f7435",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-bafcaa0ba27344f5aecdb80ef1c84088",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-04fd400abe32442fb869263c90fdccc4",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-8604f9c1a6e44b4592a4119766d694f4",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a0148c1287f24e61bf8f28aaa358add0",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7da61a28026c452abcffa06e125c0ad1",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-bc10998c150c4f9dbd630c6de26b89ed",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-cdc1af2a2da245719f032c80c561187d",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-12292ee932a445eead2ae930b92f4462",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c38564f231164f4ca2a138503da95db6",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-4744d22dbaab428985a7e44980daa67f",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-4e84d26f2364404ca9dab246220a212c",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-20d4b4ea003340b99ead0a7f204c8ffb",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-3369afdc54704b3ab66950e0d1dcb9dc",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ea8254089d0b4fd6865a0eb577fb5333",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-820b8d0fac8044248992aafb394fd9bd",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-15d726c6abeb4f6fa5bcb5f90bcff60d",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ab2ae0f994b24833a36745f9d586dbb7",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-350c97259ad84cfaaab6fbef6f676a6a",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-6247a57fa8ad4fd29f5e5f2ddc8e2209",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-1036623f7b6b466bbc33ad01e8f1872d",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-5c46bbbb8964468fbb23a933410d62e4",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ccec25f885a74432913bcd2541a0d0d4",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-901cc24fc6a64855a39c041b071a1a30",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fea660b2b52f4b7ea9995afdaace086f",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-1e9b9d1dc5fa45198b2de4d6a0332003",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-2fbdee8f6cbb4ef19c5a4182412ea14e",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-8e0538761e344a6cba59a2e6dc29d20a",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fc5355a2c47a424c9fdc00430407578d",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-4971c93e666c4a4793c84a25f295e032",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c83a15c2d1b043e4b7fbfdf743c0b412",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f929ac8d83484f4facd98e2eea98ccfe",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-d3d70a7bd2cf486eb662f79b6adbd5cf",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ca6b3c97df5e4ac5ace4e145c2059057",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-6090b31a88704679b7614a4c9476d2a8",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-60cc94e931554f35992f54cf8d27cde1",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9cf4304362204771bad64e7b082759ee",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-eafbe05a1b504115a7de082c5a9890ce",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-809e4ecbc50b4f1baec7aa3dfcb0958c",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e42a3b4aa06448ce8626203c2bc10708",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e3c4d292cc034763846d3d892928866b",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a1e6fe599def4d46aa164772f249e680",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:2",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-d994937c7f4b4bf89bd1c06847e75bbd",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-bb52da19676a44aab6199b81f61186be",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a797c6ed864948929f8af4f345fb0b6a",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-d2dc99edc61e416eb6e6202e9e177a91",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-76caec2c434949b3b137dde3bfb1e6a2",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ef998bd774154e3ba231d28b8eeb1ba9",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-439f854fef684a96ba56d99eb78edb85",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-52acc7fae5a0436d9a4bae621abe3207",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a55be965cea24c3d9d98f30ca20e80fd",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9fdf1cc4ea45417daf3f296bda71aec6",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-0c815989c5664fe3b525aa150a62624f",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e8ad0f68255a46e695ad9d60762df5cb",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fa827f1a3ca94f30b800e1d6803044c6",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fbaf1ad749ab421ea9efc28fbf4c2e16",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-fbd833f649c44232837ae53c46521d28",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f2a397c4be2f4988afba596a26cc9433",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-093a789baf4c4b09b029812f7a225f3a",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f21258e612464bd0bf226774758c071c",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-4ce8ecbe0813416b8574abc1d16e4835",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-ffc09da162a54a24bf68af822de68880",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7ec22cd6a9874218b69b8bf3b3b6ff12",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-4ba3fdc87664400391b293b1b7741ded",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-93ddc4aaec0a4724b30a7f1c55b10ef3",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-9422f37830a44507ad486997ec0e355d",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b2318e8cbb1f4471b861a694664e0648",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-332b4540460e4cd0af415ad365316516",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-22df287ac72449ea8efd907d8b3d9cb1",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c1f909ee942f4f4d82a516ee6f04559d",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-0f0f6947cb3943ceb22fb689e96b4d73",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-d2c0545c020d438bad8eeb24389f6349",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-f63dd4c5c3a54448bd9583f709a9b90e",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-2a9e51eaa1294602a978ba32136d66b1",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-be18dd23f90d4afd97f56541d6296841",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-1f8a207084e94861a0df232e98454159",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-52c68af8ad734a29b0cef3f4fc73da60",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-85bca51d0b624b8caccc8608f0cdfcd7",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-77a617d6704b471cb11e0e241f521530",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-677cd183e97443cbb1c3a6e2c79de149",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-19a7d03341dd4f49b26f1916f642a9a0",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7907071a786f4a6b89c2c8ee56c98005",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-0bb0955026db4e4992b1f2610566a3ef",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b40794fe7c574cc4818fce6de0ec36c1",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-dd5b06db59414a9cb3efc24382e8d066",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-889cc2510a2840caa94c5889cbae4a2d",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-a418075c18d44e0a90417960271c7a61",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-02b35b11276041dd933efbc1a088b1ba",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-cbafff43f0b241a5a189fe247418d9dc",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-2acaa4d7b23846739e304658d50e5238",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c3e8c2c332f44bc8baa8769e23879bfb",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c2bceec624c54490916be2d6b84c11e2",
+            "step_type": "ocr",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "manga-ocr",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-e8bdc256080a49f28154d2fa18e31287",
+            "step_type": "color",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-c913e04e054c44adab4f94d3e99da5ab",
+            "step_type": "term_extract",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-aa48ec9cb1b545988a4d30d1d1ea8ae6",
+            "step_type": "translate",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": "identity-translation",
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-b2c76ac483974168b8c6d7e2198f64ee",
+            "step_type": "segment",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-d30dc31e797f47f0acae360a1fec3437",
+            "step_type": "mask_refine",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-2dfaa0146ad94ea6a404bd57f0fb4053",
+            "step_type": "inpaint",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          },
+          {
+            "step_run_id": "step-7c05235d368148909dd889d3e7a53f2a",
+            "step_type": "render",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:3",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-d6666a1a8fd14904adf8231228cdc299",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:4",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-292382c74e0b43a28855859bfd977ae9",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:5",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-39a1183935b64fcfbb09ed2a8c0d8911",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:6",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-e7f0cad316ea4a0c82e86c0f9ae48708",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      },
+      {
+        "task_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf:task:7",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "status": "completed",
+        "error_code": null,
+        "error_message": null,
+        "steps": [
+          {
+            "step_run_id": "step-71b1a19ad873457498a62d4949f75295",
+            "step_type": "detect",
+            "status": "completed",
+            "retry_no": 0,
+            "error_code": null,
+            "error_message": null,
+            "provider": null,
+            "model": null,
+            "device": null
+          }
+        ]
+      }
+    ],
+    "counts": {
+      "total": 8,
+      "completed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "controls": {
+      "can_pause": false,
+      "can_stop": false,
+      "can_continue": false,
+      "can_restart": false,
+      "can_abandon": false,
+      "can_retry_failed": false
+    },
+    "extra": {}
+  },
+  "projection_poll_errors": [],
+  "step_type_durations_ms": {
+    "detect": 4399.3,
+    "ocr": 5582.0,
+    "color": 5250.1,
+    "term_extract": 1351.9,
+    "translate": 1155.6,
+    "segment": 8538.9,
+    "mask_refine": 15986.2,
+    "inpaint": 29758.7,
+    "render": 13848.7
+  },
+  "step_runs_by_type": [
+    {
+      "step_type": "color",
+      "status": "completed",
+      "n": 26
+    },
+    {
+      "step_type": "detect",
+      "status": "completed",
+      "n": 8
+    },
+    {
+      "step_type": "inpaint",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "mask_refine",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "ocr",
+      "status": "completed",
+      "n": 26
+    },
+    {
+      "step_type": "render",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "segment",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "term_extract",
+      "status": "completed",
+      "n": 26
+    },
+    {
+      "step_type": "translate",
+      "status": "completed",
+      "n": 22
+    }
+  ],
+  "stuck_running": [],
+  "regionless_invalid_input": [],
+  "provider_not_configured": [],
+  "db_run_status": "completed",
+  "events": [
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "ocr"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "color"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "term_extract"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "translate"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "segment"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "mask_refine"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "inpaint"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": "render"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "6814353f6d8544d6945ad5748d518f47",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "6814353f6d8544d6945ad5748d518f47",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f54739037525486e8704db23db5c0dc1",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "f54739037525486e8704db23db5c0dc1",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "7a39226851774f01a4cdb89bcf118296",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "7a39226851774f01a4cdb89bcf118296",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "221d772e601e480e8e7508dfe9aff380",
+        "current_step_type": "detect"
+      }
+    },
+    {
+      "event_type": "CurrentPageStepChanged",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "current_page_id": "221d772e601e480e8e7508dfe9aff380",
+        "current_step_type": ""
+      }
+    },
+    {
+      "event_type": "RunCompleted",
+      "payload": {
+        "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+        "status": "completed"
+      }
+    }
+  ]
+}

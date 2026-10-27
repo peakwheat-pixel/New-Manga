@@ -1,0 +1,19 @@
+{
+  "ac": "AC4",
+  "launched_from_install_dir": true,
+  "package_variant": "models",
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\install-smoke-models\\app\\NewManga.App.exe",
+  "window_handle_found": true,
+  "window_handle": 2168628,
+  "console_window_count": 0,
+  "exit_code": 0,
+  "exit_ok": true,
+  "residual_processes": 0,
+  "install_dir_after": false,
+  "sidecar_bundled": true,
+  "sidecar_files": 1965,
+  "sidecar_bytes": 868862035.0,
+  "models_bundled": true,
+  "license_copy_ok": true,
+  "generated_at_utc": "2026-10-27T12:46:48.1168295Z"
+}

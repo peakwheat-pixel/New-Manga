@@ -1,0 +1,31 @@
+{
+  "ac": "AC1",
+  "previous_build": {
+    "base": "ed499bd7859574a7a615ee1581610ff2b3ed829c870276938b762ff147d9cd7d",
+    "models": "9fcb9e8750ff7a52bc7ab5467f261ca689114a059874f9223054022ac41331dd",
+    "source": "task-envs/RELEASE-REPACK-1/out (integrated 429ca763c)"
+  },
+  "original_frozen": {
+    "core_service_sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+    "core_service_bytes": 399492
+  },
+  "base": {
+    "variant": "base",
+    "core_service_sha256": "091a201da8a044c1830e7cb8d541b012cf458c8c5b7d392624de913fa93bf45a",
+    "core_service_bytes": 399492,
+    "models_dir_present": false,
+    "bundle_bytes": 195375520.0
+  },
+  "models": {
+    "variant": "models",
+    "core_service_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+    "core_service_bytes": 399492,
+    "models_dir_present": true,
+    "bundle_bytes": 868862035.0
+  },
+  "builds": [
+    "build-base.log",
+    "build-models.log"
+  ],
+  "generated_at_utc": "2026-10-27T12:42:28.8367012+00:00"
+}
