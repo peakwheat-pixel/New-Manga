@@ -1,0 +1,15 @@
+{
+  "ac": "AC4",
+  "zips": [
+    {
+      "name": "NewManga-0.1.0-win-x64.zip",
+      "bytes": 102981645,
+      "sha256": "f42af3da50c5d83103f5e20f4c7838fd949991911833eb1679d7fe641f79c893"
+    },
+    {
+      "name": "NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 724989976,
+      "sha256": "ffb23b25407158dea1310f854c1df02d7d52bc7b0d5ebb852c80734b0668aa29"
+    }
+  ]
+}

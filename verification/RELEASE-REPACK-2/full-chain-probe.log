@@ -1,0 +1,70 @@
+RESULT {
+  "ac": "AC2/AC3",
+  "sidecar_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+  "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+  "terminal": "completed",
+  "elapsed_ms": 86430.7,
+  "projection_polls": 658,
+  "step_type_durations_ms": {
+    "detect": 4399.3,
+    "ocr": 5582.0,
+    "color": 5250.1,
+    "term_extract": 1351.9,
+    "translate": 1155.6,
+    "segment": 8538.9,
+    "mask_refine": 15986.2,
+    "inpaint": 29758.7,
+    "render": 13848.7
+  },
+  "stuck_running": 0,
+  "regionless_invalid_input": 0,
+  "provider_not_configured": 0,
+  "step_runs_by_type": [
+    {
+      "step_type": "color",
+      "status": "completed",
+      "n": 26
+    },
+    {
+      "step_type": "detect",
+      "status": "completed",
+      "n": 8
+    },
+    {
+      "step_type": "inpaint",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "mask_refine",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "ocr",
+      "status": "completed",
+      "n": 26
+    },
+    {
+      "step_type": "render",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "segment",
+      "status": "completed",
+      "n": 22
+    },
+    {
+      "step_type": "term_extract",
+      "status": "completed",
+      "n": 26
+    },
+    {
+      "step_type": "translate",
+      "status": "completed",
+      "n": 22
+    }
+  ],
+  "out": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\full-chain-run.json"
+}
