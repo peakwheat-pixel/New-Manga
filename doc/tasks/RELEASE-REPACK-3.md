@@ -53,6 +53,18 @@ RELEASE-SMOKE-1 发现 REPACK-2 包 `repo_head=0f4b836a5` **早于** IMPORT-EXPO
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-R3-REPORT | AC1-AC5 | `verification/RELEASE-REPACK-3/REPORT.md` | `b7e375921` | `b81a27d08f50511eb064a2be14bb158513507f6dab2eb7018d47b45a8fdbad57` | CANONICAL |
+| E-R3-SMOKE | AC2-AC4 | `verification/RELEASE-REPACK-3/smoke.json` | `b7e375921` | `03c1c2f72b053ff70f5dbce109ab2cc915205d03648078cd363805f074a0b54a` | CANONICAL |
+| E-R3-PKG | AC1 | `verification/RELEASE-REPACK-3/package-hashes.json` | `b7e375921` | `62f8bff84102925fed54421197b32bfa72769e1805e3f8704193a2a0da1bdaf3` | CANONICAL |
+| E-R3-ENV | AC3 | `verification/RELEASE-REPACK-3/environment.json` | `b7e375921` | `a954f03790f89754420ed0ccc9f598a33ec8c783537826e915e891c56960f126` | CANONICAL |
+| E-R3-SHOT-IMPORT | AC2 | `verification/RELEASE-REPACK-3/screens/11-import-result.png` | `b7e375921` | `0aca85cb9e307ac452834f539b4f0ae90bfea55cc03bc1340846700147809392` | CANONICAL |
+| E-R3-SHOT-READER | AC2 | `verification/RELEASE-REPACK-3/screens/05-reader.png` | `b7e375921` | `7a00df2975d17c9f03f0490a11b0bb80b7a0dc60c8d94e58419dcc0b4de689ba` | CANONICAL |
+| E-R3-SHOT-IMMERSIVE | AC2/AC3 | `verification/RELEASE-REPACK-3/screens/07-immersive.png` | `b7e375921` | `295796401b742955528e2d5249e42a40b174d9bca1d0f2809f30e7cadaa4d80b` | CANONICAL |
+| E-R3-SHOT-EXPORT | AC2 | `verification/RELEASE-REPACK-3/screens/08-export-panel.png` | `b7e375921` | `e97272604efa978568b9d602ba7a822d39dbaacbdc466c84b7ff1a2ab33997f6` | CANONICAL |
+| E-R3-SHOT-FOLDER | AC2 | `verification/RELEASE-REPACK-3/screens/10-export-folder.png` | `b7e375921` | `cfe4970101c4ef0f0c164fdfbf062224b62ed0d47616a5285708dec0a27f948e` | CANONICAL |
+| E-R3-DOTNET | AC5 | `verification/RELEASE-REPACK-3/dotnet-all.log` | `b7e375921` | `41842c9ce8c8bda7902b812efd471ab82636b51cdfc65797f548ce5ed22b0c99` | CANONICAL |
+| E-R3-PYTEST | AC5 | `verification/RELEASE-REPACK-3/pytest.log` | `b7e375921` | `68fb9c433c9950d19ed6f72b56c2c13bc0bab8f77fd2ca598d122ea88953439f` | CANONICAL |
+| E-R3-MICA | AC3 | `verification/RELEASE-REPACK-3/mica-window-material.log` | `b7e375921` | `9e3d4b35b79579ab9cd63e3c91792bdf23b3fa7052a554c34b74a193d5ff533b` | CANONICAL |
 
 ## Resource Manifest
 

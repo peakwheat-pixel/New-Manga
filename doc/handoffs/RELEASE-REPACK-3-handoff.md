@@ -3,7 +3,7 @@
 - Task: `doc/tasks/RELEASE-REPACK-3.md`（team task-53）
 - Branch/Worktree: `task/RELEASE-REPACK-3` / `G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-3`
 - Base / 构建 HEAD: **`dd2408869ce1d43f4d1dd0525ef1b13bb75bb38c`**
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列（本 Handoff 随最终 pin commit 更新）
+- Delivery head: `b7e375921`（实现+证据提交；pin 列在任务卡 Canonical Evidence）
 - 新包: `G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-3/out/`
   - `NewManga-0.1.0-win-x64.zip`（103,326,248B）
   - `NewManga-0.1.0-win-x64-models.zip`（**725,334,588B**）
