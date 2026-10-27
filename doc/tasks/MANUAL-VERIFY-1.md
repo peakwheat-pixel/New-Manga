@@ -77,3 +77,23 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 **结论**：DPR2 真机项通过；Mica 未能确证；工作集仅空载；Esc/H 与 IME 需真实书库/人工。
 
 **测试后显示状态**：三台屏均为扩展（1080p MiTV 主屏在 (0,0)，2K AOC 与 4K Philips 位于左侧负坐标）；Windows 拒绝脚本化摆位（ChangeDisplaySettingsEx 最终 apply rc=-5）。原始布局备份：G:\CODEX\New Manga.workspace\task-envs\MANUAL-VERIFY-1\display-before.json（原始：1080p 主屏 @(0,0) + 2K @(1920,0)）。**恢复方式**：设置→系统→屏幕→拖动显示器方块为主屏在左、其余靠右（10 秒操作），或告知期望布局由 DSH 再试。
+## 执行记录 2（2026-10-27，DSH；第 1/3/5 项）
+
+**AC1 Mica —— 判定 FAIL（代码证据充分）**
+- MainWindow.axaml:10 根窗口 Background="{DynamicResource AppBg}"、:18 TitleBar Background="{DynamicResource HeaderBg}" → 两层**不透明背景**把 Mica 完全盖住；TransparencyLevelHint="Mica,Blur,None" 实际不可见。
+- 与截图一致：标题栏为不透明白，壁纸区域在窗口外。修复方向：Mica 生效时把根/标题栏背景改透明或半透明（如 #00FFFFFF），仅 Win10 回退用 MicaFallback；并加 ActualTransparencyLevel 诊断输出。
+- 证据：pp-start-on-dpr2.png、pp-on-4k-dpr2.png、代码位置如上。
+
+**AC3 工作集 —— PARTIAL**
+- 空载：App **142.9 MB**；进入阅读器页后峰值 **146.3 MB**；sidecar：core_service 37.9 MB、host_bridge 22.1 MB。
+- **webtoon 长条滚动峰值仍无法测**：隔离数据根无书；阅读器页仅有提示文案（沉浸阅读 · Esc 退出 · F 切换 fit · H 隐藏 UI）。
+
+**AC5 沉浸 Esc/H —— BLOCKED（机制原因，非缺陷）**
+- 键位处理在**独立全屏沉浸窗口**（ReaderWorkbenchPages.cs:455-487：WindowState.FullScreen、KeyDown 绑定 Esc/H/F/方向键），该窗口只在**打开真实页面**时创建。
+- 主窗口的"阅读器"页只是提示屏，发送 H/Esc 后窗口截图 **sha 不变**（8ebec44e…），符合预期（没有书/页可沉浸）。
+- 结论：需导入一本书后复测；当前无法诚实验证。
+
+**下一步（需释放 Task）**
+1. MICA-FIX-1：Mica 可见化（透明背景 + ActualTransparencyLevel 诊断 + 深浅壁纸 A/B 截图）。
+2. DPI-DYNAMIC-1：跨屏拖动按 WM_DPICHANGED 重渲染（消除位图拉伸）。
+3. BOOK-FIXTURE-1：在隔离数据根导入一本书（用 	est_assets/comic_golden_suite），用于 webtoon 工作集与 Esc/H 的自动化复测。
