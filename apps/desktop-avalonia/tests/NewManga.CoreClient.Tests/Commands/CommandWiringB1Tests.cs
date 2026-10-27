@@ -41,8 +41,9 @@ public sealed class CommandWiringB1Tests
     [Fact]
     public void Registry_B1Commands_AreCoreBackedWithProbedMinor()
     {
-        Assert.Equal(55, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
-        Assert.Equal(11, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
+        // NS-WIRE-B2 raised the migrated set to 64; the residual pair is the credential BLOCKED set.
+        Assert.Equal(64, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
+        Assert.Equal(2, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
 
         foreach (var (name, expected) in B1Routes)
         {

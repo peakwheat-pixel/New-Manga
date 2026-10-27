@@ -1,0 +1,8 @@
+# NS-WIRE-B2: every file under this directory is referenced by a 64-hex SHA-256 pin in
+# doc/tasks/NS-WIRE-B2.md (Canonical Evidence). They are stored byte-exactly (-text): Git must never
+# rewrite line endings, otherwise a fresh checkout under core.autocrlf=true would change the bytes and
+# break every pin. Same intent as the "-text" pins in the root .gitattributes (GOV-EOL-PIN-1 family);
+# -text is used here because the evidence mixes JSON emitted by Utf8JsonWriter (LF) with logs emitted
+# by PowerShell/.NET test hosts (CRLF) and both must round-trip unchanged.
+* -text
+** -text

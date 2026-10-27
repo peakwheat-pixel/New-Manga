@@ -249,6 +249,13 @@ public sealed class HostCommandDispatcher
             case "backup_delete":
                 writer.WriteString("backup_id", RequireString(name, payload, "backup_id"));
                 break;
+            // NS-WIRE-B2: backup.restore is the B1 delete face's sibling. The Core handler refuses
+            // anything but an explicit confirm_restore:true (BACKUP_RESTORE_REQUIRES_CONFIRMATION),
+            // so the legacy boolean is required and forwarded verbatim.
+            case "backup_restore":
+                writer.WriteString("backup_id", RequireString(name, payload, "backup_id"));
+                writer.WriteBoolean("confirm_restore", RequireBool(name, payload, "confirm_restore"));
+                break;
             case "cleanup_retry_pending":
             case "settings_network_profile_default_clear":
                 // Legacy signatures take no arguments; the Core faces reject stray payload keys.
@@ -269,6 +276,32 @@ public sealed class HostCommandDispatcher
                 writer.WriteBoolean(
                     "confirm_permanent_delete",
                     RequireBool(name, deletePayload, "confirm_permanent_delete"));
+                break;
+            }
+
+            case "library_delete_books_permanently":
+            {
+                // NS-WIRE-B2: the batch permanent-delete face (protocol minor 10). The Core handler
+                // requires the exact key set {book_ids, confirmed_book_ids, confirm_count,
+                // confirm_permanent_delete} and rejects anything else with INVALID_REQUEST, so every
+                // element is enforced here. Both the legacy inlined shape and the clipped
+                // {"payload": {...}} shape are accepted, matching the single-book sibling.
+                var deleteBooksPayload = OptionalObject(name, payload, "payload") ?? payload;
+                writer.WritePropertyName("book_ids");
+                WriteRequiredStringArray(writer, name, deleteBooksPayload, "book_ids", requireNonEmpty: true);
+                writer.WritePropertyName("confirmed_book_ids");
+                WriteRequiredStringArray(
+                    writer,
+                    name,
+                    deleteBooksPayload,
+                    "confirmed_book_ids",
+                    requireNonEmpty: true);
+                writer.WriteNumber(
+                    "confirm_count",
+                    RequireInt64(name, deleteBooksPayload, "confirm_count"));
+                writer.WriteBoolean(
+                    "confirm_permanent_delete",
+                    RequireBool(name, deleteBooksPayload, "confirm_permanent_delete"));
                 break;
             }
 
@@ -297,6 +330,46 @@ public sealed class HostCommandDispatcher
             case "settings_network_profiles_delete":
                 writer.WriteString("network_profile_id", RequireString(name, payload, "network_profile_id"));
                 break;
+            // NS-WIRE-B2 batch: the provider-profile CRUD, provider-binding write, network-diagnostic
+            // and network-resolution faces. Payload keys mirror the legacy Tauri command signatures
+            // (apps/desktop/src-tauri/src/settings_bridge.rs) one-to-one; network_profile_id stays an
+            // explicit JSON null when the caller omits it (Core reads payload["network_profile_id"]).
+            case "settings_provider_profiles_create":
+                writer.WriteString("provider_id", RequireString(name, payload, "provider_id"));
+                writer.WriteString("display_name", RequireString(name, payload, "display_name"));
+                writer.WritePropertyName("capabilities");
+                WriteRequiredStringArray(writer, name, payload, "capabilities", requireNonEmpty: true);
+                writer.WriteString("endpoint", RequireString(name, payload, "endpoint"));
+                writer.WriteString("model", RequireString(name, payload, "model"));
+                WriteNullableString(writer, name, payload, "network_profile_id");
+                writer.WriteBoolean("enabled", RequireBool(name, payload, "enabled"));
+                break;
+            case "settings_provider_profiles_update":
+                writer.WriteString("profile_id", RequireString(name, payload, "profile_id"));
+                writer.WriteString("display_name", RequireString(name, payload, "display_name"));
+                writer.WritePropertyName("capabilities");
+                WriteRequiredStringArray(writer, name, payload, "capabilities", requireNonEmpty: true);
+                writer.WriteString("endpoint", RequireString(name, payload, "endpoint"));
+                writer.WriteString("model", RequireString(name, payload, "model"));
+                WriteNullableString(writer, name, payload, "network_profile_id");
+                writer.WriteBoolean("enabled", RequireBool(name, payload, "enabled"));
+                break;
+            case "settings_provider_profiles_delete":
+                writer.WriteString("profile_id", RequireString(name, payload, "profile_id"));
+                break;
+            case "settings_provider_bindings_set":
+                writer.WritePropertyName("scope");
+                RequireObject(name, payload, "scope").WriteTo(writer);
+                writer.WriteString("capability", RequireString(name, payload, "capability"));
+                writer.WriteString("profile_id", RequireString(name, payload, "profile_id"));
+                break;
+            case "settings_network_profiles_test":
+                writer.WriteString("network_profile_id", RequireString(name, payload, "network_profile_id"));
+                WriteOptionalString(writer, name, payload, "provider_profile_id");
+                break;
+            case "settings_network_profile_resolve":
+                WriteOptionalString(writer, name, payload, "provider_profile_id");
+                break;
             case "settings_provider_bindings_clear":
                 writer.WritePropertyName("scope");
                 RequireObject(name, payload, "scope").WriteTo(writer);
@@ -313,6 +386,11 @@ public sealed class HostCommandDispatcher
                 break;
             // S4-CMD-BATCH-1: region write face + reader progress face. The legacy Tauri signatures
             // are enforced here; the Core payload keys are identical to the wire contract.
+            case "list_region_revisions":
+                // NS-WIRE-B2: the legacy signature is a bare region_id (main.rs::list_region_revisions
+                // forwards json!({"region_id": region_id})), so the wire payload is the same one key.
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                break;
             case "set_region_type":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
                 writer.WriteString("new_region_type", RequireString(name, payload, "new_region_type"));
