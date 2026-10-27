@@ -80,7 +80,7 @@ allowed_paths:
 | R7 | AC4 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/ac4-identity-fallback.json | - | 2f892216c0f468ad75c5afaeed0e7746a6e085bad41d1c172cfaa59c37fb2bbc | CANONICAL |
 | R8 | AC4 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/ac4-identity-fallback.stderr.log | - | 3da5c558be89117dcf6f2c98d59682c9c267b950da3e08fd8f0b48a43ed5afca | CANONICAL |
 | R15 | AC5 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/dotnet/dotnet-test-Debug.log | - | 0198a1db77f88b1c4f3ba24fecaa16c84ee7a3518dd894a4bdd75c9c4ba410a6 | CANONICAL |
-| R14 | AC5 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/dotnet/results-host.trx | - | 8f1c632c506fb905f5f261f73056e0c0851a1d2d157fe6a23d6bc97d23377dd6 | CANONICAL |
+| R14 | AC5 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/dotnet/results-host.trx | - | 78ccbb04050b56483d6d750b5806189f81cbcf31e2cefe343ef296019f44546f | CANONICAL |
 | R13 | AC5 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/dotnet/summary.json | - | 32a3ed8bfc55f38ca7ab16e200ad6c2c224a5121793b8dd99494d35ef592e709 | CANONICAL |
 | R16 | AC2 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/host-logs/real-translate/core_service.stderr.log | - | c59789a51ef33cd4c1f0a5439f67f4c84800186dbb9fa35a08b3874e6200f5d1 | CANONICAL |
 | R16 | AC2 | verification/REAL-TRANSLATE-PROVIDER-1/evidence/host-logs/real-translate/credentials/put-20261027T1539323495079Z.json | - | d2dde05edeeccd4b6b9b30e987a87c9f7294bce0cb59eb453787f648fe639599 | CANONICAL |
@@ -127,3 +127,4 @@ allowed_paths:
 - AC3 BLOCKED：额度（429/402），装配链路正确、typed 降级正确、0 条翻译未伪造；充值后 	ools/run_translate_probe.py 复验。
 - 发现待定位：Host library_start_run 经 dispatcher 对该 sidecar 返回 INVALID_REQUEST（直连 Core 可用）→ 需专项诊断。
 - 集成：6bf084222。
+
