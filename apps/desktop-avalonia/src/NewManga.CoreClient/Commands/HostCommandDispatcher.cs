@@ -28,11 +28,16 @@ public sealed class HostCommandDispatcher
 {
     private readonly CoreServiceClient? _core;
     private readonly HostBridgeClient? _bridge;
+    private readonly Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? _hostLocal;
 
-    public HostCommandDispatcher(CoreServiceClient? core = null, HostBridgeClient? bridge = null)
+    public HostCommandDispatcher(
+        CoreServiceClient? core = null,
+        HostBridgeClient? bridge = null,
+        Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? hostLocal = null)
     {
         _core = core;
         _bridge = bridge;
+        _hostLocal = hostLocal;
     }
 
     public IReadOnlyDictionary<string, HostCommandDescriptor> Commands => HostCommandRegistry.All;
@@ -54,6 +59,9 @@ public sealed class HostCommandDispatcher
             HostCommandChannel.CoreService => await InvokeCoreAsync(descriptor, payload, cancellationToken)
                 .ConfigureAwait(false),
             HostCommandChannel.HostBridge => await InvokeBridgeAsync(descriptor, payload, cancellationToken)
+                .ConfigureAwait(false),
+            HostCommandChannel.HostLocal when _hostLocal is not null => await _hostLocal(
+                    descriptor.Name, payload, cancellationToken)
                 .ConfigureAwait(false),
             _ => throw new HostCommandNotSupportedException(descriptor),
         };

@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using System.Text.Json;
 using NewManga.CoreClient.Diagnostics;
+using NewManga.CoreClient.Issuer;
 using NewManga.CoreClient.Transport;
 using NewManga.CoreClient.Wire;
 
@@ -109,6 +111,10 @@ public sealed class CoreServiceClient : IAsyncDisposable
     private readonly CoreServiceOptions _options;
     private int _requestCounter;
     private bool _disposed;
+    private readonly SemaphoreSlim _sessionGate = new(1, 1);
+
+    /// <summary>GRANT-ISSUER-1: the host-control session opened at startup (null until opened).</summary>
+    public HostSessionInfo? HostSession { get; private set; }
 
     private CoreServiceClient(SidecarProcess process, CoreServiceOptions options)
     {
@@ -233,6 +239,123 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return new CorePing(ready, major, minor, status, capabilities);
+    }
+
+    /// <summary>
+    /// GRANT-ISSUER-1: opens the HOST-ISSUER-1 host-control session. The credential is a
+    /// 32-byte random token (base64url), the signing key is a separate 32-byte random key used by
+    /// <see cref="HostIssuer"/>; the Core echoes its own session id, which every later host-control
+    /// envelope must carry.
+    /// </summary>
+    public async Task<HostSessionInfo> OpenHostSessionAsync(CancellationToken cancellationToken = default)
+    {
+        await _sessionGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (HostSession is not null)
+            {
+                return HostSession;
+            }
+
+            var credential = HostIssuer.Base64Url(RandomNumberGenerator.GetBytes(32));
+            var hostSessionId = "host_" + HostIssuer.NewToken();
+            var response = await SendHostControlAsync(
+                    "OpenHostSession",
+                    writer =>
+                    {
+                        writer.WriteString("host_session_id", hostSessionId);
+                        writer.WriteString("host_session_credential", credential);
+                    },
+                    _options.RequestTimeout,
+                    session: null,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var result = RequireResult(response, "OpenHostSession");
+            var coreSessionId = ReadString(result, "core_session_id");
+            if (string.IsNullOrEmpty(coreSessionId))
+            {
+                throw new SidecarException(
+                    SidecarErrorCode.MalformedResponse,
+                    SidecarSpec.CoreServiceName,
+                    "OpenHostSession response has no core_session_id",
+                    _options.StderrLogPath);
+            }
+
+            HostSession = new HostSessionInfo(
+                hostSessionId, credential, coreSessionId, HostIssuer.NewSigningKey());
+            return HostSession;
+        }
+        finally
+        {
+            _sessionGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// Sends one HOST-ISSUER-1 host-control envelope (channel=host-control). Application-channel
+    /// commands keep using <see cref="SendAsync"/>; this surface is only for grant/session control,
+    /// exactly the set the frozen Core accepts on that channel.
+    /// </summary>
+    public async Task<CoreResponse> SendHostControlAsync(
+        string command,
+        Action<Utf8JsonWriter> payload,
+        CancellationToken cancellationToken = default) =>
+        await SendHostControlAsync(command, payload, _options.RequestTimeout, HostSession, cancellationToken)
+            .ConfigureAwait(false);
+
+    public async Task<CoreResponse> SendHostControlAsync(
+        string command,
+        Action<Utf8JsonWriter> payload,
+        TimeSpan timeout,
+        HostSessionInfo? session,
+        CancellationToken cancellationToken = default)
+    {
+        var requestId = $"hostctl-{Interlocked.Increment(ref _requestCounter)}";
+        var line = WireJson.Write(writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("protocol", CoreProtocol.ProtocolName);
+            writer.WritePropertyName("version");
+            writer.WriteStartObject();
+            writer.WriteNumber("major", CoreProtocol.Major);
+            writer.WriteNumber("minor", CoreProtocol.DefaultMinor);
+            writer.WriteEndObject();
+            writer.WriteString("request_id", requestId);
+            writer.WriteString("channel", "host-control");
+            writer.WriteString("command", command);
+            if (session is not null)
+            {
+                writer.WriteString("core_session_id", session.CoreSessionId);
+                writer.WriteString("host_session_id", session.HostSessionId);
+                writer.WriteString("host_session_credential", session.Credential);
+            }
+
+            writer.WritePropertyName("payload");
+            writer.WriteStartObject();
+            payload(writer);
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        });
+
+        var frame = await _process
+            .ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken)
+            .ConfigureAwait(false);
+        var responseLine = frame.ResponseLine;
+        for (var skipped = 0; skipped < 16 && CoreProtocol.IsEventFrame(responseLine); skipped++)
+        {
+            responseLine = await _process
+                .ReadNextResponseLineAsync(timeout, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        var response = CoreProtocol.Parse(responseLine);
+        if (response.Error is { } error)
+        {
+            throw new CoreOperationException(
+                error.Code, error.Category, error.Retryable, error.Message, response.RequestId ?? requestId);
+        }
+
+        return response;
     }
 
     public async Task<IReadOnlyList<BookSummary>> ListBooksAsync(CancellationToken cancellationToken = default)

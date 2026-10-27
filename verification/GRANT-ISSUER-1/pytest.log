@@ -1,0 +1,6 @@
+
+=========================== short test summary info ===========================
+ERROR tests/core/test_sfx_assembly.py
+ERROR tests/core/test_sfx_policy_settings.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!
+2 skipped, 2 errors in 4.40s

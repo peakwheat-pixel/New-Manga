@@ -1,5 +1,7 @@
 using NewManga.CoreClient;
 using NewManga.CoreClient.Bridge;
+using NewManga.CoreClient.Commands;
+using NewManga.CoreClient.Wire;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Transport;
 using NewManga.Host.Resources;
@@ -36,6 +38,12 @@ public sealed class HostRuntime : IAsyncDisposable
 
     public HostBridgeClient? HostBridge { get; private set; }
 
+    /// <summary>GRANT-ISSUER-1: host-control grant chain + whitelisted shell actions (null until ready).</summary>
+    public HostGrantCoordinator? Grants { get; private set; }
+
+    /// <summary>GRANT-ISSUER-1: the production command dispatcher, including the Host-local commands.</summary>
+    public HostCommandDispatcher? Commands { get; private set; }
+
     public HostLog Log => _log;
 
     public HostOptions Options => _options;
@@ -61,6 +69,43 @@ public sealed class HostRuntime : IAsyncDisposable
     {
         var core = CoreService ?? throw NotReady();
         return await core.ListBooksAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>GRANT-ISSUER-1: creates a chapter (CreateChapter, protocol minor 8) for imports.</summary>
+    public async Task<ChapterSummary> CreateChapterAsync(
+        string bookId,
+        string title,
+        CancellationToken cancellationToken = default)
+    {
+        if (!Policy.WritesAllowed)
+        {
+            throw new ReadOnlyHostException($"host is read-only ({Policy.Reason}); writes to production data are disabled until S2 parity");
+        }
+
+        var core = CoreService ?? throw NotReady();
+        var response = await core.SendAsync(
+                "CreateChapter",
+                CoreProtocol.CreateMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteString("title", title);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = response.Result ?? throw new SidecarException(
+            SidecarErrorCode.MalformedResponse,
+            SidecarSpec.CoreServiceName,
+            "CreateChapter returned no result",
+            _log.CoreServiceStderrPath);
+        return new ChapterSummary(
+            result.GetProperty("chapter_id").GetString() ?? string.Empty,
+            result.GetProperty("title").GetString() ?? string.Empty,
+            result.GetProperty("chapter_number").GetString() ?? string.Empty,
+            result.GetProperty("sort_order").GetInt32());
     }
 
     /// <summary>
@@ -369,6 +414,23 @@ public sealed class HostRuntime : IAsyncDisposable
                 },
                 cancellationToken).ConfigureAwait(false);
             _log.Info($"host_bridge ready ({HostBridge.Wire.Count} wire frames)");
+
+            // GRANT-ISSUER-1: open the HOST-ISSUER-1 host-control session and wire the dispatcher.
+            // A session failure is logged and leaves grant commands typed-unavailable; it does not
+            // fail the whole Host (reads keep working).
+            try
+            {
+                var session = await CoreService.OpenHostSessionAsync(cancellationToken).ConfigureAwait(false);
+                _log.Info($"host-control session opened ({session.HostSessionId})");
+                Grants = new HostGrantCoordinator(
+                    CoreService, _options.DataRoot, _options.LogDirectory, _options.RequestTimeout);
+                Commands = new HostCommandDispatcher(CoreService, HostBridge, Grants.HandleCommandAsync);
+            }
+            catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
+            {
+                _log.Warn($"host-control session unavailable: {ex.Message}");
+                Commands = new HostCommandDispatcher(CoreService, HostBridge);
+            }
 
             Result = HostStartResult.Ready(decision.Mode);
         }

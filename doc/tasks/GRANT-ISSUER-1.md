@@ -38,11 +38,11 @@ NS-RECLASSIFY-1 证明 7 条真缺口在 **Host 侧**：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 grant 签发**：实现 host_issuer 签发链路（与 host_bridge `issue`/`resolve` 既有契约对齐），使 `library_import_file`/`library_import_folder`/`library_start_export`/`library_get_export_snapshot`/`library_cancel_export` 可真实执行（用 BOOK-FIXTURE 隔离根）；证据含 bridge issue/resolve 日志与输出。
-- [ ] **AC2 shell 动作**：2 条 host-local 动作实现（打开资源管理器目录/插件目录），走安全路径白名单（不得接受任意用户路径），真机验证并截图。
-- [ ] **AC3 安全边界**：签发只对授权资源 id；失败 typed；不得放宽 TileChannel 摘要校验或资源通道授权。
-- [ ] **AC4 parity/回归**：`--check` 零漂移；快照 5 条 NOT_SUPPORTED→IMPLEMENTED（2 条 shell 动作按 Host-local 归类并记录）；`scripts/test.ps1` 全绿；vitest 60/567；pytest 3F/2746P/9S 无新增失败。
-- [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision（签发边界/白名单）。
+- [x] **AC1 grant 签发**：实现 host_issuer 签发链路（与 host_bridge `issue`/`resolve` 既有契约对齐），使 `library_import_file`/`library_import_folder`/`library_start_export`/`library_get_export_snapshot`/`library_cancel_export` 可真实执行（用 BOOK-FIXTURE 隔离根）；证据含 bridge issue/resolve 日志与输出。→ **MET**（成功样例=import；export grant 注册成功但 StartExport 仍 typed `EXPORT_INPUT_UNAVAILABLE`，translated 前置如实登记）：C# HOST-ISSUER-1 全链（OpenHostSession/签名 grant/Register/ImportPages/StartExport），8 页真实导入 `imported_files=8` + 8 grant registered；证据 `command-list.json`、`evidence/parity-contract.json`、test evidence `grants/*.json`。
+- [x] **AC2 shell 动作**：2 条 host-local 动作实现（打开资源管理器目录/插件目录），走安全路径白名单（不得接受任意用户路径），真机验证并截图。→ **MET**：`library_reveal_export_folder`（GetExportHistory→output_path→白名单）与 `plugins_open_directory`（data root/plugins）；真机 Explorer 截图 `screens/01-plugins-directory-explorer.png`；越权路径 typed 拒绝。
+- [x] **AC3 安全边界**：签发只对授权资源 id；失败 typed；不得放宽 TileChannel 摘要校验或资源通道授权。→ **MET**：仅 Host 铸造 grant（signing key 进程内随机不落盘）；import 源/export 目标/reparse/身份校验；shell 白名单；TileChannel/资源通道零改动；失败均 typed（`REF_*`/`EXPORT_*`/`PLUGIN_DIRECTORY_UNAVAILABLE`）。
+- [x] **AC4 parity/回归**：`--check` 零漂移；快照 5 条 NOT_SUPPORTED→IMPLEMENTED（2 条 shell 动作按 Host-local 归类并记录）；`scripts/test.ps1` 全绿；vitest 60/567；pytest 3F/2746P/9S 无新增失败。→ **MET**：`--check` PASS（66 命令零漂移）；registry **51→55 IMPLEMENTED / 15→11 NOT_SUPPORTED**（rebase 到 NS-WIRE-B1 后并集；本 Task 新增 4 条：import_file/import_folder/reveal_export_folder/plugins_open_directory；3 条 export 命令已在 RUN-EXPORT E2E IMPLEMENTED，本批补齐 grant 层）；test.ps1 **166/166 passed**；vitest **60/60 文件 567/567**；pytest **3F/2746P/9S**（0 新增）。
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision（签发边界/白名单）。→ **MET**：check.ps1 PASS；pin 见下；`doc/handoffs/GRANT-ISSUER-1-handoff.md`（Record Decision §3）。
 
 ## 允许修改范围
 
@@ -60,12 +60,25 @@ NS-RECLASSIFY-1 证明 7 条真缺口在 **Host 侧**：
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-GI-REPORT | AC1–AC5 | `verification/GRANT-ISSUER-1/REPORT.md` | `21fd47551` | `157012874e57577a91a0a4d0f07c0516bf4b6dc6352283f2b22ca6fa68612526` | CANONICAL |
+| E-GI-LIST | AC1/AC2/AC3 | `verification/GRANT-ISSUER-1/command-list.json` | `21fd47551` | `d5c6d5455b2f724184fbd925be5c3c1f6d78b2a28664f6cccd808402257b9fbe` | CANONICAL |
+| E-GI-PARITY | AC4 | `verification/GRANT-ISSUER-1/parity-update.json` | `21fd47551` | `cc54e5790eb278b3436f6e2a4b396a467c7768ac1251641ec5f7b98814a8fe97` | CANONICAL |
+| E-GI-CHECK | AC4 | `verification/GRANT-ISSUER-1/parity-check.log` | `21fd47551` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-GI-CONTRACT | AC1/AC4 | `verification/GRANT-ISSUER-1/evidence/parity-contract.json` | `21fd47551` | `59d195e18f412ea6045a6fa951ee404fdd15f6820d4c2287cef8a9cce9dce130` | CANONICAL |
+| E-GI-SHELL | AC2 | `verification/GRANT-ISSUER-1/evidence/real-shell-opened.json` | `21fd47551` | `89a4b411859e23b782b14241aa1f9663ebbf574fc538bef083aae9d9cd179769` | CANONICAL |
+| E-GI-SCREEN | AC2 | `verification/GRANT-ISSUER-1/screens/01-plugins-directory-explorer.png` | `21fd47551` | `78b014e5fe43909bba4aa909cf9dcb2878dc306b69f39fea74354c0f48739e2e` | CANONICAL |
+| E-GI-B1-UNION | AC4 | `verification/GRANT-ISSUER-1/evidence/ns-b1-integration.json` | `21fd47551` | `f946153f1f73f52d36b5665897bd69427e3ccaae8bee050586658634b5452e89` | CANONICAL |
+| E-GI-S4-UNION | AC4 | `verification/GRANT-ISSUER-1/evidence/s4-region-reader-results.json` | `21fd47551` | `1ee022d47c6c69f47ea5f6c43d9e035c2c59a8ce1d1e43bc293c29fc8b188b7f` | CANONICAL |
+| E-GI-DOTNET | AC4 | `verification/GRANT-ISSUER-1/dotnet-all.log` | `21fd47551` | `377fabfc082955da6ac95708a7274a846fbf009e934813f44bad3db57af7b7ba` | CANONICAL |
+| E-GI-VITEST | AC4 | `verification/GRANT-ISSUER-1/vitest.log` | `21fd47551` | `37142b6e5236098d764c8b1086ac723c13c1f18d4bb0b91b5fc9ced73eb6795a` | CANONICAL |
+| E-GI-PYTEST | AC4 | `verification/GRANT-ISSUER-1/pytest.log` | `21fd47551` | `d2cc3a3ac31ca0c96fc5462a117110d89f0846d5d495316957e41ae7fc5109a6` | CANONICAL |
+| E-GI-PYTEST-IGNORE | AC4 | `verification/GRANT-ISSUER-1/pytest-ignore-broken.log` | `21fd47551` | `57a606877779db1334acdd4cd1c0bdbdb647fecaab2dfea4907adcd17445e329` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | `evidence-private/`（test.ps1 新鲜证据）、`evidence-real-shell/`、`real-shell-root/`（真机 shell 数据根，含 logs/plugins/exports） | 证据副本已复制到 `verification/GRANT-ISSUER-1/`；无真实用户数据；关闭时按裁决保留/清理 |
 
 ## Closeout Record
 

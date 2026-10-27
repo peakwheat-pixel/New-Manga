@@ -1,0 +1,98 @@
+{
+  "ac": "AC1/AC2",
+  "sidecar": "frozen core_service (AC11 unlabelled copy)",
+  "wired_commands": 13,
+  "executed": 15,
+  "results": [
+    {
+      "command": "backup_create",
+      "basis": "success",
+      "core_command": "backup.create",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022backup.create\u0022,\u0022payload\u0022:{\u0022backup_type\u0022:\u0022manual\u0022}}"
+    },
+    {
+      "command": "backup_delete",
+      "basis": "success",
+      "core_command": "backup.delete",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-3\u0022,\u0022command\u0022:\u0022backup.delete\u0022,\u0022payload\u0022:{\u0022backup_id\u0022:\u002219065e43757346e783f3cb511c049412\u0022}}"
+    },
+    {
+      "command": "cleanup_retry_pending",
+      "basis": "success",
+      "core_command": "cleanup.retry_pending",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-4\u0022,\u0022command\u0022:\u0022cleanup.retry_pending\u0022,\u0022payload\u0022:{}}"
+    },
+    {
+      "command": "plugins_audit_list",
+      "basis": "success",
+      "core_command": "plugins.audit_list",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-5\u0022,\u0022command\u0022:\u0022plugins.audit_list\u0022,\u0022payload\u0022:{\u0022limit\u0022:5}}"
+    },
+    {
+      "command": "plugins_set_plugin_enabled",
+      "basis": "typed_PLUGIN_NOT_FOUND",
+      "core_command": "plugins.set_plugin_enabled",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-6\u0022,\u0022command\u0022:\u0022plugins.set_plugin_enabled\u0022,\u0022payload\u0022:{\u0022plugin_id\u0022:\u0022no-such-plugin\u0022,\u0022enabled\u0022:false}}"
+    },
+    {
+      "command": "settings_network_profiles_create",
+      "basis": "success",
+      "core_command": "settings_network_profiles_create",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-7\u0022,\u0022command\u0022:\u0022settings_network_profiles_create\u0022,\u0022payload\u0022:{\u0022display_name\u0022:\u0022NS-WIRE-B1 probe network\u0022,\u0022mode\u0022:\u0022Direct\u0022,\u0022proxy_endpoint\u0022:null}}"
+    },
+    {
+      "command": "settings_network_profile_default_set",
+      "basis": "success",
+      "core_command": "settings_network_profile_default_set",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-8\u0022,\u0022command\u0022:\u0022settings_network_profile_default_set\u0022,\u0022payload\u0022:{\u0022network_profile_id\u0022:\u0022771919d6e17648cdbe05023f7bc5c038\u0022}}"
+    },
+    {
+      "command": "settings_network_profiles_update",
+      "basis": "success",
+      "core_command": "settings_network_profiles_update",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-9\u0022,\u0022command\u0022:\u0022settings_network_profiles_update\u0022,\u0022payload\u0022:{\u0022network_profile_id\u0022:\u0022771919d6e17648cdbe05023f7bc5c038\u0022,\u0022display_name\u0022:\u0022NS-WIRE-B1 probe network v2\u0022,\u0022mode\u0022:\u0022Direct\u0022,\u0022proxy_endpoint\u0022:null,\u0022verify_tls\u0022:true,\u0022allow_proxy_failure_direct_fallback\u0022:false}}"
+    },
+    {
+      "command": "settings_network_profile_default_clear",
+      "basis": "success",
+      "core_command": "settings_network_profile_default_clear",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-10\u0022,\u0022command\u0022:\u0022settings_network_profile_default_clear\u0022,\u0022payload\u0022:{}}"
+    },
+    {
+      "command": "settings_network_profiles_delete",
+      "basis": "success",
+      "core_command": "settings_network_profiles_delete",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-11\u0022,\u0022command\u0022:\u0022settings_network_profiles_delete\u0022,\u0022payload\u0022:{\u0022network_profile_id\u0022:\u0022771919d6e17648cdbe05023f7bc5c038\u0022}}"
+    },
+    {
+      "command": "settings_provider_bindings_clear",
+      "basis": "success",
+      "core_command": "settings_provider_bindings_clear",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-12\u0022,\u0022command\u0022:\u0022settings_provider_bindings_clear\u0022,\u0022payload\u0022:{\u0022scope\u0022:{\u0022kind\u0022:\u0022global\u0022},\u0022capability\u0022:\u0022Translation\u0022}}"
+    },
+    {
+      "command": "settings_provider_bindings_resolve",
+      "basis": "success",
+      "core_command": "settings_provider_bindings_resolve",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-13\u0022,\u0022command\u0022:\u0022settings_provider_bindings_resolve\u0022,\u0022payload\u0022:{\u0022capability\u0022:\u0022Translation\u0022}}"
+    },
+    {
+      "command": "settings_provider_run_snapshot_get",
+      "basis": "typed_TARGET_NOT_FOUND",
+      "core_command": "settings_provider_run_snapshot_get",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:7},\u0022request_id\u0022:\u0022req-14\u0022,\u0022command\u0022:\u0022settings_provider_run_snapshot_get\u0022,\u0022payload\u0022:{\u0022run_id\u0022:\u0022no-such-run\u0022}}"
+    },
+    {
+      "command": "library_create_book",
+      "basis": "success",
+      "core_command": "CreateBook",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:8},\u0022request_id\u0022:\u0022req-15\u0022,\u0022command\u0022:\u0022CreateBook\u0022,\u0022payload\u0022:{\u0022title\u0022:\u0022NS-WIRE-B1 delete probe\u0022}}"
+    },
+    {
+      "command": "library_delete_book_permanently",
+      "basis": "success",
+      "core_command": "PermanentlyDeleteBook",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:10},\u0022request_id\u0022:\u0022req-16\u0022,\u0022command\u0022:\u0022PermanentlyDeleteBook\u0022,\u0022payload\u0022:{\u0022book_id\u0022:\u002229109c9b641b4bab9e2fce358a037e17\u0022,\u0022confirm_permanent_delete\u0022:true}}"
+    }
+  ]
+}

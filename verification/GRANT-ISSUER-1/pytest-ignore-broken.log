@@ -1,0 +1,399 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  7%]
+........................................................................ [ 10%]
+........................................................................ [ 13%]
+........................................................................ [ 15%]
+........................................................................ [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+..........................................s............................. [ 47%]
+..................................................................sssss. [ 50%]
+........................................................................ [ 52%]
+...................................................F........F........... [ 55%]
+............F........................................................... [ 58%]
+.....................................................FF................. [ 60%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+...s.................................................................... [ 74%]
+........................................................................ [ 76%]
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 79%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+........................................................................ [ 87%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+..................F...................................                   [100%]
+=========================== short test summary info ===========================
+FAILED tests/pipeline/test_regionless_rebinding.py::test_n3_detector_zero_candidates_fails_with_invalid_input
+FAILED tests/pipeline/test_regionless_rebinding.py::test_backfill_zero_detected_regions_leaves_units_regionless
+FAILED tests/providers/test_detect_handler.py::test_detect_fails_typed_when_no_candidates
+FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
+FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
+FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
+6 failed, 2705 passed, 9 skipped in 219.83s (0:03:39)

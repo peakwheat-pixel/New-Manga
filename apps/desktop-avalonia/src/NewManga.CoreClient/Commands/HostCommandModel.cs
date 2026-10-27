@@ -17,6 +17,8 @@ public enum HostCommandChannel
     None,
     CoreService,
     HostBridge,
+    /// <summary>GRANT-ISSUER-1: Host-local action (grant issuance / OS shell), no Core round-trip.</summary>
+    HostLocal,
 }
 
 public enum HostCommandStatus
