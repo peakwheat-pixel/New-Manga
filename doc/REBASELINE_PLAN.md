@@ -40,12 +40,12 @@
 |NS-WIRE-B1|—|done（13 条接线；parity 46/20；161/161；集成 6b47f377f）|
 |GRANT-ISSUER-1|—|ready（grant 签发+shell 动作 7 条）|
 |S4-CMD-BATCH-1|—|ready（S4-A/B/C：region 写 4 + reader 2）|
-|RUN-OCR-DIAG-1|—|ready（Run 链 OCR/detect 失败诊断；只诊断）|
+|RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：GRANT-ISSUER-1、S4-CMD-BATCH-1、RUN-OCR-DIAG-1。
+READY 节点：S4-CMD-BATCH-1、GRANT-ISSUER-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -55,5 +55,6 @@ READY 节点：GRANT-ISSUER-1、S4-CMD-BATCH-1、RUN-OCR-DIAG-1。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
 
 
