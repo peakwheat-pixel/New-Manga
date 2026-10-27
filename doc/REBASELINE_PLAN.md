@@ -35,7 +35,7 @@
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
 |F11-HOTKEY-1|—|done（应用内 F11 沉浸切换+输入框守卫；153/153；集成 b63025690）|
 |GPU-ORT-PROBE-1|—|done（ORT EP 探测；DML 可用；base 97.88MB；149/149；集成 3bb082627）|
-|RUN-EXPORT-E2E-1|—|ready（Run/Export 端到端，fixture+models）|
+|RUN-EXPORT-E2E-1|—|done（9 条接线；registry 24→33；Export/Run 真跑 BLOCKED 如实记录；集成 7af27bbe3）|
 |NS-RECLASSIFY-1|—|done（42 NS → 35 IMPLEMENTED / 7 NEEDS_IMPLEMENTATION；只出证据；集成 e49dec3dd）|
 |NS-WIRE-B1|—|ready（18 条高置信 NS 接线；base 45efe7f00）|
 |GRANT-ISSUER-1|—|ready（grant 签发+shell 动作 7 条）|
@@ -44,7 +44,7 @@
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：NS-WIRE-B1、GRANT-ISSUER-1、RUN-EXPORT-E2E-1、S4-CMD-BATCH-1。
+READY 节点：NS-WIRE-B1、GRANT-ISSUER-1、S4-CMD-BATCH-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

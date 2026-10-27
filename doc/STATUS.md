@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[NS-WIRE-B1](tasks/NS-WIRE-B1.md) `ready`（18 条高置信接线；并行 GRANT-ISSUER-1/RUN-EXPORT/S4）。
+- 当前 Task：[NS-WIRE-B1](tasks/NS-WIRE-B1.md) `ready`（18 条高置信接线；并行 GRANT-ISSUER-1/S4-CMD-BATCH-1）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
