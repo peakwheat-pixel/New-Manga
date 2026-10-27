@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[GRANT-ISSUER-1](tasks/GRANT-ISSUER-1.md) `ready`；并行 RUN-BINDING-FIX-1 `ready`、[CORE-PIPELINE-FIX-1](tasks/CORE-PIPELINE-FIX-1.md) `in_review`（color+空检测，证据已入库）。
+- 当前 Task：[GRANT-ISSUER-1](tasks/GRANT-ISSUER-1.md) `ready`（rebase 中）；并行 RUN-BINDING-FIX-1。CORE-PIPELINE-FIX-1 done。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
