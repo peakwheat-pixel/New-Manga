@@ -2,7 +2,8 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Fifty-one commands are migrated to the existing sidecars;
+/// organised into the six domain services. Fifty-five commands are migrated: the S2/A1/A2 sets,
+/// thirteen NS-WIRE-B1 bindings, five S4-CMD-BATCH-1 bindings and the four Host-local grant/shell faces.
 /// the rest are explicit NOT_SUPPORTED with a per-command reason (never silently missing).
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
@@ -183,6 +184,19 @@ public static class HostCommandRegistry
         "revoke_resource_refs",
     };
 
+    /// <summary>
+    /// GRANT-ISSUER-1: Host-local commands. The import pair mints host_issuer grants and drives the
+    /// Core through the host-control envelope plus ImportPages; the two shell actions open a
+    /// whitelisted OS directory. None of them is a plain application-channel passthrough.
+    /// </summary>
+    private static readonly HashSet<string> HostLocalBindings = new(StringComparer.Ordinal)
+    {
+        "library_import_file",
+        "library_import_folder",
+        "library_reveal_export_folder",
+        "plugins_open_directory",
+    };
+
     /// <summary>Commands whose legacy implementation is a Core round-trip still missing from the frozen Core.</summary>
     private static readonly Dictionary<string, string> CoreRoute = new(StringComparer.Ordinal)
     {
@@ -250,6 +264,19 @@ public static class HostCommandRegistry
                     name,
                     domain,
                     HostCommandChannel.HostBridge,
+                    HostCommandStatus.Implemented,
+                    null,
+                    null,
+                    0));
+                continue;
+            }
+
+            if (HostLocalBindings.Contains(name))
+            {
+                target.Add(new HostCommandDescriptor(
+                    name,
+                    domain,
+                    HostCommandChannel.HostLocal,
                     HostCommandStatus.Implemented,
                     null,
                     null,

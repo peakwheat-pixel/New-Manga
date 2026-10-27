@@ -345,7 +345,7 @@ public sealed class CommandIntegrationTests
             typed.Add(new { command = descriptor.Name, domain = descriptor.Domain.ToString(), code = error.Code });
         }
 
-        Assert.Equal(15, typed.Count);
+        Assert.Equal(11, typed.Count);
         var unknown = await Assert.ThrowsAsync<HostCommandUnknownException>(
             () => context.Dispatcher.InvokeAsync("not_a_production_command"));
         Assert.Equal("UNKNOWN_COMMAND", unknown.Code);
@@ -410,7 +410,7 @@ public sealed class CommandIntegrationTests
 
         Assert.Equal(66, seen.Count);
         Assert.Equal(66, services.Sum(service => service.Descriptors.Count));
-        Assert.Equal(51, services.Sum(service => service.ImplementedCount));
+        Assert.Equal(55, services.Sum(service => service.ImplementedCount));
 
         var crossDomain = await Assert.ThrowsAsync<ArgumentException>(
             () => context.Settings.InvokeAsync("library_list_books", Args("{}")));

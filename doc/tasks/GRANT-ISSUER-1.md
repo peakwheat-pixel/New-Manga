@@ -38,11 +38,11 @@ NS-RECLASSIFY-1 证明 7 条真缺口在 **Host 侧**：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 grant 签发**：实现 host_issuer 签发链路（与 host_bridge `issue`/`resolve` 既有契约对齐），使 `library_import_file`/`library_import_folder`/`library_start_export`/`library_get_export_snapshot`/`library_cancel_export` 可真实执行（用 BOOK-FIXTURE 隔离根）；证据含 bridge issue/resolve 日志与输出。
-- [ ] **AC2 shell 动作**：2 条 host-local 动作实现（打开资源管理器目录/插件目录），走安全路径白名单（不得接受任意用户路径），真机验证并截图。
-- [ ] **AC3 安全边界**：签发只对授权资源 id；失败 typed；不得放宽 TileChannel 摘要校验或资源通道授权。
-- [ ] **AC4 parity/回归**：`--check` 零漂移；快照 5 条 NOT_SUPPORTED→IMPLEMENTED（2 条 shell 动作按 Host-local 归类并记录）；`scripts/test.ps1` 全绿；vitest 60/567；pytest 3F/2746P/9S 无新增失败。
-- [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision（签发边界/白名单）。
+- [x] **AC1 grant 签发**：实现 host_issuer 签发链路（与 host_bridge `issue`/`resolve` 既有契约对齐），使 `library_import_file`/`library_import_folder`/`library_start_export`/`library_get_export_snapshot`/`library_cancel_export` 可真实执行（用 BOOK-FIXTURE 隔离根）；证据含 bridge issue/resolve 日志与输出。→ **MET**（成功样例=import；export grant 注册成功但 StartExport 仍 typed `EXPORT_INPUT_UNAVAILABLE`，translated 前置如实登记）：C# HOST-ISSUER-1 全链（OpenHostSession/签名 grant/Register/ImportPages/StartExport），8 页真实导入 `imported_files=8` + 8 grant registered；证据 `command-list.json`、`evidence/parity-contract.json`、test evidence `grants/*.json`。
+- [x] **AC2 shell 动作**：2 条 host-local 动作实现（打开资源管理器目录/插件目录），走安全路径白名单（不得接受任意用户路径），真机验证并截图。→ **MET**：`library_reveal_export_folder`（GetExportHistory→output_path→白名单）与 `plugins_open_directory`（data root/plugins）；真机 Explorer 截图 `screens/01-plugins-directory-explorer.png`；越权路径 typed 拒绝。
+- [x] **AC3 安全边界**：签发只对授权资源 id；失败 typed；不得放宽 TileChannel 摘要校验或资源通道授权。→ **MET**：仅 Host 铸造 grant（signing key 进程内随机不落盘）；import 源/export 目标/reparse/身份校验；shell 白名单；TileChannel/资源通道零改动；失败均 typed（`REF_*`/`EXPORT_*`/`PLUGIN_DIRECTORY_UNAVAILABLE`）。
+- [x] **AC4 parity/回归**：`--check` 零漂移；快照 5 条 NOT_SUPPORTED→IMPLEMENTED（2 条 shell 动作按 Host-local 归类并记录）；`scripts/test.ps1` 全绿；vitest 60/567；pytest 3F/2746P/9S 无新增失败。→ **MET**：`--check` PASS（66 命令零漂移）；registry **51→55 IMPLEMENTED / 15→11 NOT_SUPPORTED**（rebase 到 NS-WIRE-B1 后并集；本 Task 新增 4 条：import_file/import_folder/reveal_export_folder/plugins_open_directory；3 条 export 命令已在 RUN-EXPORT E2E IMPLEMENTED，本批补齐 grant 层）；test.ps1 **166/166 passed**；vitest **60/60 文件 567/567**；pytest **3F/2746P/9S**（0 新增）。
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision（签发边界/白名单）。→ **MET**：check.ps1 PASS；pin 见下；`doc/handoffs/GRANT-ISSUER-1-handoff.md`（Record Decision §3）。
 
 ## 允许修改范围
 
@@ -65,7 +65,7 @@ NS-RECLASSIFY-1 证明 7 条真缺口在 **Host 侧**：
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GRANT-ISSUER-1 | `evidence-private/`（test.ps1 新鲜证据）、`evidence-real-shell/`、`real-shell-root/`（真机 shell 数据根，含 logs/plugins/exports） | 证据副本已复制到 `verification/GRANT-ISSUER-1/`；无真实用户数据；关闭时按裁决保留/清理 |
 
 ## Closeout Record
 

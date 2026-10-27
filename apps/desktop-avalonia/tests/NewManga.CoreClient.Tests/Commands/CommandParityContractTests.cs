@@ -104,14 +104,14 @@ public sealed class CommandParityContractTests
         var implemented = HostCommandRegistry.All.Values.Where(command => command.IsImplemented).ToArray();
         var notSupported = HostCommandRegistry.All.Values.Where(command => !command.IsImplemented).ToArray();
 
-        Assert.Equal(51, implemented.Length);
-        Assert.Equal(15, notSupported.Length);
+        Assert.Equal(55, implemented.Length);
+        Assert.Equal(11, notSupported.Length);
         Assert.Equal(66, implemented.Length + notSupported.Length);
 
         foreach (var command in implemented)
         {
             Assert.True(
-                command.Channel is HostCommandChannel.CoreService or HostCommandChannel.HostBridge,
+                command.Channel is HostCommandChannel.CoreService or HostCommandChannel.HostBridge or HostCommandChannel.HostLocal,
                 $"{command.Name} has no sidecar channel");
             if (command.Channel == HostCommandChannel.CoreService)
             {

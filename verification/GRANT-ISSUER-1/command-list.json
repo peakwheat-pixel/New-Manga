@@ -1,0 +1,122 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "source": [
+    "doc/tasks/GRANT-ISSUER-1.md",
+    "verification/NS-RECLASSIFY-1/reclassification.json（7 条 Host 侧真缺口）",
+    "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+    "apps/desktop/src-tauri/src/{main.rs,host_issuer.rs,library_bridge.rs}（只读参考）"
+  ],
+  "count": 7,
+  "commands": [
+    {
+      "command": "library_import_file",
+      "legacy_params": "chapter_id + duplicate_policy；路径来自原生文件对话框（Legacy Tauri 内选）",
+      "host_payload": "{chapter_id, paths: string[], duplicate_policy?: skip|import_as_new}",
+      "returns": "ImportSummary {chapter_id, cancelled, imported_files, skipped_files, rejected_files, pending_files}",
+      "core_route": "host-control RegisterImportSource (HOST-ISSUER-1) + ImportPages",
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "verified": "真实执行：8 个授权 PNG 导入 → imported_files=8，GetReaderProjection 8 页；grant registered=true",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1190
+      },
+      "legacy_returns": "Result<host_issuer::ImportSummary, String>"
+    },
+    {
+      "command": "library_import_folder",
+      "legacy_params": "chapter_id + duplicate_policy；目录来自原生文件夹对话框",
+      "host_payload": "{chapter_id, path: string, duplicate_policy?}",
+      "returns": "ImportSummary（同上）",
+      "core_route": "host-control RegisterImportSource（directory scope_identity）+ ImportPages",
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "verified": "与 import_file 共用 HostGrantCoordinator 链（目录签名/natural sort/identity 校验在 HostIssuer 单测覆盖）；端到端以 import_file 成功样例为证",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1220
+      },
+      "legacy_returns": "Result<host_issuer::ImportSummary, String>"
+    },
+    {
+      "command": "library_start_export",
+      "legacy_params": "{request: Value}（六个字段）+ 原生保存对话框",
+      "host_payload": "{book_id, chapter_ids, ordered_page_ids, format, format_options, stale_policy}（Host 选择 data-root/exports 目标）",
+      "returns": "ExportSummary {export_id, status}（失败为 typed Core 错误）",
+      "core_route": "host-control RegisterExportTarget（导出 grant）+ StartExport",
+      "status_before": "IMPLEMENTED（RUN-EXPORT-E2E-1 仅验证 typed 失败路径）",
+      "status_after": "IMPLEMENTED（grant 层真实注册成功；StartExport 仍 typed EXPORT_INPUT_UNAVAILABLE，因 fixture 无 translated 页）",
+      "verified": "RegisterExportTarget registered=true；StartExport → EXPORT_INPUT_UNAVAILABLE（真实、非伪造）；越权目标路径 → EXPORT_PATH_UNAVAILABLE",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1242
+      },
+      "legacy_returns": "Result<Option<host_issuer::ExportSummary>, String>"
+    },
+    {
+      "command": "library_get_export_snapshot",
+      "legacy_params": "export_id",
+      "host_payload": "{export_id}",
+      "returns": "ExportProgressSnapshotView",
+      "core_route": "GetExportSnapshot",
+      "status_before": "IMPLEMENTED（typed EXPORT_NOT_FOUND 已验证）",
+      "status_after": "IMPLEMENTED",
+      "verified": "未知 id → EXPORT_NOT_FOUND；成功路径需先有真实导出记录（本批被 translated 页阻塞）",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1123
+      },
+      "legacy_returns": "Result<ExportProgressSnapshotView, String>"
+    },
+    {
+      "command": "library_cancel_export",
+      "legacy_params": "export_id",
+      "host_payload": "{export_id}",
+      "returns": "ExportProgressSnapshotView",
+      "core_route": "CancelExport",
+      "status_before": "IMPLEMENTED（typed EXPORT_NOT_FOUND 已验证）",
+      "status_after": "IMPLEMENTED",
+      "verified": "未知 id → EXPORT_NOT_FOUND",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1110
+      },
+      "legacy_returns": "Result<ExportProgressSnapshotView, String>"
+    },
+    {
+      "command": "library_reveal_export_folder",
+      "legacy_params": "export_id",
+      "host_payload": "{export_id}",
+      "returns": "unit（Host: {revealed:true}）",
+      "core_route": "Host-local：GetExportHistory 解析 output_path → 白名单目录 → explorer.exe",
+      "status_before": "NOT_SUPPORTED（host-local）",
+      "status_after": "IMPLEMENTED（Host-local 归类）",
+      "verified": "未知 export → typed EXPORT_PATH_UNAVAILABLE；白名单=data root 内且为 Host 本会话签发过的导出目录",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1286
+      },
+      "legacy_returns": "Result<(), String>"
+    },
+    {
+      "command": "plugins_open_directory",
+      "legacy_params": "（无）",
+      "host_payload": "{}",
+      "returns": "unit（Host: {opened:true}）",
+      "core_route": "Host-local：data_root/plugins（存在则打开，缺则创建后打开）",
+      "status_before": "NOT_SUPPORTED（host-local）",
+      "status_after": "IMPLEMENTED（Host-local 归类）",
+      "verified": "真机：测试经产品代码默认 opener 打开 Explorer「plugins - 文件资源管理器」；越权路径（C:\\Windows）→ typed PLUGIN_DIRECTORY_UNAVAILABLE",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 812
+      },
+      "legacy_returns": "Result<(), String>"
+    }
+  ],
+  "host_control_session": {
+    "open": "OpenHostSession(host_session_id, host_session_credential[32B token])",
+    "envelope": "channel=host-control + core_session_id/host_session_id/host_session_credential",
+    "signing": "import=HMAC-SHA256(sorted-key compact JSON)；export=HMAC-SHA256(grant\\0session\\0target\\0format\\0replace\\0expires_at)"
+  }
+}

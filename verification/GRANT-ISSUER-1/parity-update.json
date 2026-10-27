@@ -1,0 +1,53 @@
+{
+  "ac": "AC4",
+  "snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+  "extract_check": "PASS: production command surface matches snapshot (66 commands)",
+  "before": {
+    "implemented": 51,
+    "not_supported": 15,
+    "source": "S4-CMD-BATCH-1 delivered registry (main HEAD ed85c4173, post-rebase base)"
+  },
+  "after": {
+    "implemented": 55,
+    "not_supported": 11,
+    "source": "verification/GRANT-ISSUER-1/evidence/parity-contract.json (union rebase onto ed85c4173)"
+  },
+  "changed_commands": [
+    {
+      "command": "library_import_file",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED"
+    },
+    {
+      "command": "library_import_folder",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED"
+    },
+    {
+      "command": "library_reveal_export_folder",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED"
+    },
+    {
+      "command": "plugins_open_directory",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED"
+    }
+  ],
+  "already_implemented_before_this_task": [
+    "library_start_export",
+    "library_get_export_snapshot",
+    "library_cancel_export"
+  ],
+  "note": "本分支已 rebase 到 ed85c4173（NS-WIRE-B1 46/20 + S4-CMD-BATCH-1 5 条 → 51/15）；并集结果 55/11（B1 13 条 + S4 5 条 + 本 Task 4 条 HostLocal）。",
+  "host_local_classification": [
+    {
+      "command": "library_reveal_export_folder",
+      "reason": "无 Core 等价命令；Host 解析导出目录并白名单打开"
+    },
+    {
+      "command": "plugins_open_directory",
+      "reason": "无 Core 等价命令；Host 打开 data root/plugins"
+    }
+  ]
+}

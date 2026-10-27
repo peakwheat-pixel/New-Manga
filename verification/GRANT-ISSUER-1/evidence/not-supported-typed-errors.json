@@ -1,0 +1,63 @@
+{
+  "ac": "AC2/AC3",
+  "typed_not_supported": 11,
+  "every_reason_present": true,
+  "unknown_command_code": "UNKNOWN_COMMAND",
+  "commands": [
+    {
+      "command": "backup_restore",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "credential_clear",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "credential_put",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "domain": "Library",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "list_region_revisions",
+      "domain": "Region",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profile_resolve",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_network_profiles_test",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_bindings_set",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_profiles_delete",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    },
+    {
+      "command": "settings_provider_profiles_update",
+      "domain": "Settings",
+      "code": "NOT_SUPPORTED"
+    }
+  ]
+}
