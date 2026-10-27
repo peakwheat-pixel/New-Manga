@@ -33,11 +33,11 @@
 |BOOK-FIXTURE-1|—|done（隔离根建书 8 页/幂等/未污染 APPDATA；集成 377736213；AC3 PARTIAL→READER 接线）|
 |READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|done（阅读器接书库+沉浸入口；工作集 395.1MB；110/110；集成 bcde098e5）|
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
-|NS-WIRE-A1|—|ready（NS 第一批：settings/plugins/backup/cleanup；base 230164c5c）|
+|NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|ready（阅读进度保存）|
 |CHAPTER-SELECTOR-1|—|ready（多章/多书入口）|
 
-READY 节点：NS-WIRE-A1、READER-PROGRESS-1、CHAPTER-SELECTOR-1。
+READY 节点：READER-PROGRESS-1、CHAPTER-SELECTOR-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -47,4 +47,5 @@ READY 节点：NS-WIRE-A1、READER-PROGRESS-1、CHAPTER-SELECTOR-1。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
 

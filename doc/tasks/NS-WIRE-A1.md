@@ -3,7 +3,7 @@ id: NS-WIRE-A1
 title: NS 命令接线第一批（settings/plugins/backup/cleanup）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_followups_batch_a1
 suggested_owner: core-admin-rca
 owner: null
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 230164c5c
 branch: task/NS-WIRE-A1
 worktree: G:/CODEX/New Manga.workspace/worktrees/NS-WIRE-A1
-integration_commit: null
+integration_commit: 7e1ef00d7
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/NS-WIRE-A1
 allowed_paths:
   - doc/tasks/NS-WIRE-A1.md
@@ -61,6 +61,22 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| N1 | AC1–AC4 | verification/NS-WIRE-A1/command-list.json | 14e855407 | f6c9df117ae6c8b346312c3776cacdc6bff643c7bbca43555907880f771b2d82 | CANONICAL |
+| N2 | AC1–AC4 | verification/NS-WIRE-A1/dotnet-all.log | 14e855407 | b0157db389fd9757568ce1a68a95815b1dde3979a131e12940182a7b333365d5 | CANONICAL |
+| N3 | AC1–AC4 | verification/NS-WIRE-A1/parity-check.log | 14e855407 | 820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe | CANONICAL |
+| N4 | AC1–AC4 | verification/NS-WIRE-A1/parity-update.json | 14e855407 | fc1236936140684635ce25c2701c60f8878d57e21fb51f26dd2bbea5cd506c91 | CANONICAL |
+| N5 | AC1–AC4 | verification/NS-WIRE-A1/probe-results.json | 14e855407 | d60cbf21ae7814c638d73f217e900a5b7fa92b663c292ff2c0e27af44bea0f67 | CANONICAL |
+| N6 | AC1–AC4 | verification/NS-WIRE-A1/pytest.log | 14e855407 | 9f2537decad9141e62a81cb188a7dbf278c084d50e440de21f421ae32ba001ee | CANONICAL |
+| N7 | AC1–AC4 | verification/NS-WIRE-A1/REPORT.md | 14e855407 | cab1c7bc302a196fab62d249b3742944eb5d933563e17fb64553957146ff188c | CANONICAL |
+| N8 | AC1–AC4 | verification/NS-WIRE-A1/vitest-install.log | 14e855407 | 5ae5647600aa76bd44ec59a927c65d7518548484e8f2c30dd53af06e1e142b06 | CANONICAL |
+| N9 | AC1–AC4 | verification/NS-WIRE-A1/vitest.log | 14e855407 | 60f06accf43cbc0bcb320c6af57fa453172c0a60e3a74632bde161458522f56c | CANONICAL |
+| N10 | AC1–AC4 | verification/NS-WIRE-A1/evidence/chinese-roundtrip.json | 14e855407 | bbd6ee9d4ccf9ac6d3e1bd5c8d845a69c7845cd76e54e983874778185e95f130 | CANONICAL |
+| N11 | AC1–AC4 | verification/NS-WIRE-A1/evidence/domain-services.json | 14e855407 | 2036c66efbfe2a7a92cf13f3b4fb62f405b81f61f1679f78897eaeb7677d3184 | CANONICAL |
+| N12 | AC1–AC4 | verification/NS-WIRE-A1/evidence/integration-results.json | 14e855407 | e7fecd4a26dbaacdecc0f7d33ab12108d545dfbd5fb6140b3f140cedcaa61890 | CANONICAL |
+| N13 | AC1–AC4 | verification/NS-WIRE-A1/evidence/not-supported-typed-errors.json | 14e855407 | 9e7e7802b7ab89d45ebddbf0c649e9cf5434326d065981eedfe30418982b7246 | CANONICAL |
+| N14 | AC1–AC4 | verification/NS-WIRE-A1/evidence/parity-contract.json | 14e855407 | f0fe2042292d787b41b416cd11664d39c854c32ae50ce698727af610f5728ec2 | CANONICAL |
+| N15 | AC1–AC4 | verification/NS-WIRE-A1/evidence/wiring.json | 14e855407 | 1c3050a24274705d1857460168ca728959644ad49a9f39cfa4003a4d19529a01 | CANONICAL |
+| N16 | AC1–AC4 | verification/NS-WIRE-A1/tools/probe-ns-a1.ps1 | 14e855407 | 0e9fe1238e7b34095810625b900a054bc6c334ca1469d58dc1653a95251a0f01 | CANONICAL |
 |---|---|---|---|---|---|
 | E-A1-REPORT | AC1–AC5 | `verification/NS-WIRE-A1/REPORT.md` | `14e855407` | `cab1c7bc302a196fab62d249b3742944eb5d933563e17fb64553957146ff188c` | CANONICAL |
 | E-A1-LIST | AC1 | `verification/NS-WIRE-A1/command-list.json` | `14e855407` | `f6c9df117ae6c8b346312c3776cacdc6bff643c7bbca43555907880f771b2d82` | CANONICAL |
@@ -89,3 +105,13 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- **8/8 接线 IMPLEMENTED**：settings_update_section、settings_provider_profiles_list、settings_network_profiles_list、settings_resolve_overrides、ackup_create、plugins_set_enabled、cleanup_run、library_get_reader_projection。
+- 关键发现（已记录）：P15 settings 面 Core 硬拒 minor≠7（probe 反证 minor3→INVALID_REQUEST）；registry 三条固定 minor=7；dispatcher 按旧壳签名做参数边界校验与负载翻译（INVALID_ARGUMENTS），Core 业务错误码透传。
+- parity：xtract-command-surface.py --check PASS（66 命令零漂移，Rust 快照 sha 4c6a4da0… 未变）；**16→24 IMPLEMENTED / 50→42 NOT_SUPPORTED**。
+- 证据：command-list.json、probe-results.json（8 路由直连+2 负例；reader projection 在 BOOK-FIXTURE-1 上 8 页成功）、parity-update.json、vidence/。
+- 回归（DSH 复跑 scripts/test.ps1）：见执行记录；vitest 60/567、pytest 3F/2739P/9S 基线不变。
+- 基线说明：任务卡 base 原写 230164c5c（早于卡片创建，治理 FAIL），实际分支基于释放提交 50ab8fc5；已按实现方记录更正。
+- 遗留：S4-A/B/C 10 条仍 NS（后续批次）；reader projection 成功路径依赖 BOOK-FIXTURE 数据根；cleanup 仅空缓存、backup 仅创建。
+

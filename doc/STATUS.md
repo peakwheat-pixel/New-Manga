@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[NS-WIRE-A1](tasks/NS-WIRE-A1.md) `ready`（A 组第一批：NS 接线 / 阅读进度 / 多章选择）。
+- 当前 Task：[READER-PROGRESS-1](tasks/READER-PROGRESS-1.md) `ready`（A 组第一批：阅读进度/多章；NS-WIRE-A1 done）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
