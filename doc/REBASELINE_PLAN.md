@@ -34,7 +34,7 @@
 |READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|done（阅读器接书库+沉浸入口；工作集 395.1MB；110/110；集成 bcde098e5）|
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
 |F11-HOTKEY-1|—|ready（全局 F11 沉浸切换；base 171529b5d）|
-|GPU-ORT-PROBE-1|—|ready（GPU 状态改 ORT EP 探测）|
+|GPU-ORT-PROBE-1|—|done（ORT EP 探测；DML 可用；base 97.88MB；149/149；集成 3bb082627）|
 |RUN-EXPORT-E2E-1|—|ready（Run/Export 端到端，fixture+models）|
 |NS-RECLASSIFY-1|—|ready（42 条 NS 重探测/重分类，只出证据）|
 |S4-CMD-BATCH-1|—|ready（S4-A/B/C：region 写 4 + reader 2）|

@@ -1,0 +1,1093 @@
+{
+  "task": "NS-RECLASSIFY-1",
+  "ac": "AC1/AC2",
+  "base_commit": "171529b5d",
+  "sidecar": {
+    "core_service": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\core_service.exe",
+    "sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
+    "protocol": "2.3 (application channel) + host-control channel + P15 minor 7 + create minor 8 + delete minor 10"
+  },
+  "fixture": {
+    "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+    "private_copy": "G:/CODEX/New Manga.workspace/task-envs/NS-RECLASSIFY-1/probe/data",
+    "note": "探测全部跑在私有副本上；隔离数据根重建了 catalog 以匹配新路径绑定，原 BOOK-FIXTURE 数据未被修改",
+    "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+    "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+    "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+    "page_id_2": "4f8a24147b3044deabf4f5a2dd83b84f"
+  },
+  "s2_snapshot": {
+    "not_supported_source": "verification/NS-WIRE-A1/evidence/parity-contract.json",
+    "not_supported_count": 42,
+    "s2_probe_evidence": "verification/HOST-COMMAND-MIGRATION-1/parity/core-command-probe.json"
+  },
+  "stats": {
+    "total": 42,
+    "IMPLEMENTED": 35,
+    "NEEDS_IMPLEMENTATION": 7,
+    "by_confidence": {
+      "high": 26,
+      "medium": 16
+    }
+  },
+  "commands": [
+    {
+      "command": "backup_delete",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "backup.delete",
+      "face": "S3-C backup face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c"
+        },
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"removed\": true}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "backup_restore",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "backup.restore",
+      "face": "S3-C backup face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c"
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "BACKUP_RESTORE_REQUIRES_CONFIRMATION",
+        "error_category": "validation",
+        "basis": "other_error",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（BACKUP_RESTORE_REQUIRES_CONFIRMATION），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "cleanup_retry_pending",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "cleanup.retry_pending",
+      "face": "S3-C cleanup face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {},
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"items\": {}, \"removed\": 0, \"failed\": 0, \"skipped\": 0}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "credential_clear",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "ClearProfileCredential",
+      "face": "P15 settings face (minor 7)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "target": {
+            "kind": "provider_api",
+            "profile_id": null
+          }
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "credential_put",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "BindProfileCredential",
+      "face": "P15 settings face (minor 7)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "target": {
+            "kind": "provider_api",
+            "profile_id": null
+          },
+          "credential_ref": "NewManga/provider/"
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "library_cancel_export",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "CancelExport",
+      "face": "host-control + export session",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "medium",
+      "reason": "Core 侧 host-control 面存在（OpenHostSession 成功，core_session_id 可取；CancelExport 在 host-control 命令集中），但 Import/Export 需要 host_issuer 签发的 grant：冻结 Core 对未签名 ref 返回 typed REF_MALFORMED，而新 Avlonia Host 尚未实现等价签发 → 需要先在 Host 侧实现 grant 签发 + 调用。",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json (host_control)",
+        "open_host_session": true,
+        "grant_probe": {
+          "phase": "host-control",
+          "ns_command": "RegisterExportTarget",
+          "core_command": "RegisterExportTarget",
+          "request_payload": {
+            "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\export-target"
+          },
+          "ok": false,
+          "error_code": "REF_MALFORMED",
+          "error_category": "validation",
+          "error_message": "Export target reference was rejected",
+          "result": null,
+          "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-3\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Export target reference was rejected\",\"retryable\":false}}"
+        }
+      }
+    },
+    {
+      "command": "library_control_run",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "ControlRun",
+      "face": "run orchestration face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "run_id": "run-12b0184e443249069a87032b2520d6f6",
+          "action": "pause"
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "INVALID_RUN_TRANSITION",
+        "error_category": "conflict",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：INVALID_RUN_TRANSITION/conflict。S2 用假 id/错枚举才判成未实现。"
+    },
+    {
+      "command": "library_delete_book_permanently",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "PermanentlyDeleteBook",
+      "face": "DELETE face, protocol minor 10",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+          "confirm_permanent_delete": true
+        },
+        "protocol_minor": 10,
+        "ok": false,
+        "error_code": "BOOK_BUSY",
+        "error_category": "conflict",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：BOOK_BUSY/conflict。S2 用假 id/错枚举才判成未实现。"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "PermanentlyDeleteBooks",
+      "face": "DELETE face, protocol minor 10",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "book_ids": "no-such-book",
+          "confirm_permanent_delete": true
+        },
+        "protocol_minor": 10,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "library_get_export_snapshot",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "GetExportSnapshot",
+      "face": "host-control export session",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "medium",
+      "reason": "Core 侧 host-control 面存在（OpenHostSession 成功，core_session_id 可取；GetExportSnapshot 在 host-control 命令集中），但 Import/Export 需要 host_issuer 签发的 grant：冻结 Core 对未签名 ref 返回 typed REF_MALFORMED，而新 Avlonia Host 尚未实现等价签发 → 需要先在 Host 侧实现 grant 签发 + 调用。",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json (host_control)",
+        "open_host_session": true,
+        "grant_probe": {
+          "phase": "host-control",
+          "ns_command": "RegisterExportTarget",
+          "core_command": "RegisterExportTarget",
+          "request_payload": {
+            "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\export-target"
+          },
+          "ok": false,
+          "error_code": "REF_MALFORMED",
+          "error_category": "validation",
+          "error_message": "Export target reference was rejected",
+          "result": null,
+          "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-3\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Export target reference was rejected\",\"retryable\":false}}"
+        }
+      }
+    },
+    {
+      "command": "library_get_run_snapshot",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "GetRunSnapshot",
+      "face": "run orchestration face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "run_id": "run-12b0184e443249069a87032b2520d6f6"
+        },
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"run_id\": \"run-12b0184e443249069a87032b2520d6f6\", \"command\": \"reocr_all\", \"scope\": {\"kind\": \"chapter\", \"chapter_id\": \"240bdba549b74281bfc6d901b1a7abd7\"}, \"status\": \"interrupted\", \"targets\": [{\"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"target_type\": \"page\", \"order\": 0}, {\"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"target_type\": \"page\", \"order\": 1}, {\"target_id\": \"a607fc4ca3034f47b5bc4"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "library_get_task_projection",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "GetTaskProjection",
+      "face": "run orchestration face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "run_id": "run-12b0184e443249069a87032b2520d6f6",
+          "task_id": "no-such-task"
+        },
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"run_id\": \"run-12b0184e443249069a87032b2520d6f6\", \"run_status\": \"interrupted\", \"run_title\": \"重新 OCR（全部）\", \"overall_progress\": 0.5, \"current_page_id\": \"f54739037525486e8704db23db5c0dc1\", \"current_step_type\": \"\", \"step_flow\": [{\"type\": \"detect\", \"label\": \"检测\", \"state\": \"failed\"}, {\"type\": \"ocr\", \"label\": \"OCR\", \"state\": \"pending\"}], \"rows\": [{\"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"page_ord"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "library_import_file",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "ImportPages",
+      "face": "host-control + host-issued import grant",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "medium",
+      "reason": "Core 侧 host-control 面存在（OpenHostSession 成功，core_session_id 可取；ImportPages 在 host-control 命令集中），但 Import/Export 需要 host_issuer 签发的 grant：冻结 Core 对未签名 ref 返回 typed REF_MALFORMED，而新 Avlonia Host 尚未实现等价签发 → 需要先在 Host 侧实现 grant 签发 + 调用。",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json (host_control)",
+        "open_host_session": true,
+        "grant_probe": {
+          "phase": "host-control",
+          "ns_command": "RegisterImportSource",
+          "core_command": "RegisterImportSource",
+          "request_payload": {
+            "paths": [
+              "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\import-source.jpg"
+            ]
+          },
+          "ok": false,
+          "error_code": "REF_MALFORMED",
+          "error_category": "validation",
+          "error_message": "Import source reference was rejected",
+          "result": null,
+          "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-2\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Import source reference was rejected\",\"retryable\":false}}"
+        }
+      }
+    },
+    {
+      "command": "library_import_folder",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "ImportPages",
+      "face": "host-control + host-issued import grant",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "medium",
+      "reason": "Core 侧 host-control 面存在（OpenHostSession 成功，core_session_id 可取；ImportPages 在 host-control 命令集中），但 Import/Export 需要 host_issuer 签发的 grant：冻结 Core 对未签名 ref 返回 typed REF_MALFORMED，而新 Avlonia Host 尚未实现等价签发 → 需要先在 Host 侧实现 grant 签发 + 调用。",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json (host_control)",
+        "open_host_session": true,
+        "grant_probe": {
+          "phase": "host-control",
+          "ns_command": "RegisterImportSource",
+          "core_command": "RegisterImportSource",
+          "request_payload": {
+            "paths": [
+              "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\import-source.jpg"
+            ]
+          },
+          "ok": false,
+          "error_code": "REF_MALFORMED",
+          "error_category": "validation",
+          "error_message": "Import source reference was rejected",
+          "result": null,
+          "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-2\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Import source reference was rejected\",\"retryable\":false}}"
+        }
+      }
+    },
+    {
+      "command": "library_resume_blocked_run",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "ResumeBlockedRun",
+      "face": "run orchestration face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "run_id": "run-12b0184e443249069a87032b2520d6f6"
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "INVALID_RUN_TRANSITION",
+        "error_category": "conflict",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：INVALID_RUN_TRANSITION/conflict。S2 用假 id/错枚举才判成未实现。"
+    },
+    {
+      "command": "library_retry_failed_targets",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "RetryFailedTargets",
+      "face": "run orchestration face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "run_id": "run-12b0184e443249069a87032b2520d6f6",
+          "idempotency_key": "ns-reclassify-retry-1"
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "INVALID_RUN_TRANSITION",
+        "error_category": "conflict",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：INVALID_RUN_TRANSITION/conflict。S2 用假 id/错枚举才判成未实现。"
+    },
+    {
+      "command": "library_reveal_export_folder",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": null,
+      "face": "host-local shell action",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "high",
+      "reason": "旧壳本地 shell 动作（打开目录/资源管理器），Core 命令面没有等价命令；只能由 Host/App 层实现，registry 保持 NOT_SUPPORTED 属正确分类，但实现位置是 Host 而非 Core。",
+      "evidence": {
+        "source": "src/bootstrap/core_service.py 命令面（_HOST_CONTROL_COMMANDS/_RUN_COMMANDS/_CREATE_COMMANDS 等）",
+        "core_command": null
+      }
+    },
+    {
+      "command": "library_save_reading_progress",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "SaveReadingProgress",
+      "face": "reader face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+          "mode": "original",
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+          "scroll_offset_y": 0.0,
+          "elapsed_seconds_delta": 1
+        },
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"book_id\": \"14340ddad0ed472fbe687fe12340c5d8\", \"chapter_id\": \"240bdba549b74281bfc6d901b1a7abd7\", \"mode\": \"original\", \"last_page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"scroll_offset_y\": 0.0, \"progress_percent\": 0.0, \"last_read_at\": \"2026-10-27T18:21:38.95+08:00\", \"total_read_seconds\": 5.0}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。",
+      "s2_misclassification": "S2 探针 probe-25 用 {position, chapter_id:'probe-chapter'} → INVALID_REQUEST(validation)，被当作“未实现”；正确 payload 是 {chapter_id, mode, page_id, scroll_offset_y, elapsed_seconds_delta}",
+      "s2_probe": {
+        "command": "SaveReadingProgress",
+        "minor": 3,
+        "payload": {
+          "position": 0,
+          "chapter_id": "probe-chapter"
+        },
+        "ok": false,
+        "error_code": "INVALID_REQUEST"
+      }
+    },
+    {
+      "command": "library_start_export",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "StartExport",
+      "face": "host-control + host-issued export grant",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "medium",
+      "reason": "Core 侧 host-control 面存在（OpenHostSession 成功，core_session_id 可取；StartExport 在 host-control 命令集中），但 Import/Export 需要 host_issuer 签发的 grant：冻结 Core 对未签名 ref 返回 typed REF_MALFORMED，而新 Avlonia Host 尚未实现等价签发 → 需要先在 Host 侧实现 grant 签发 + 调用。",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json (host_control)",
+        "open_host_session": true,
+        "grant_probe": {
+          "phase": "host-control",
+          "ns_command": "RegisterExportTarget",
+          "core_command": "RegisterExportTarget",
+          "request_payload": {
+            "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\export-target"
+          },
+          "ok": false,
+          "error_code": "REF_MALFORMED",
+          "error_category": "validation",
+          "error_message": "Export target reference was rejected",
+          "result": null,
+          "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-3\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Export target reference was rejected\",\"retryable\":false}}"
+        }
+      }
+    },
+    {
+      "command": "library_start_run",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "StartRun",
+      "face": "run orchestration face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "command": "reocr_all",
+          "idempotency_key": "ns-reclassify-probe-1",
+          "scope": {
+            "kind": "chapter",
+            "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+          },
+          "overrides": {}
+        },
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"run_id\": \"run-12b0184e443249069a87032b2520d6f6\", \"status\": \"interrupted\"}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "list_region_revisions",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "list_region_revisions",
+      "face": "region face (CoreRoute)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "region_id": "no-such-region"
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND",
+        "error_category": "not_found",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：TARGET_NOT_FOUND/not_found。S2 用假 id/错枚举才判成未实现。",
+      "s2_misclassification": "S2 探针 probe-14 用 PascalCase 'ListRegionRevisions' → UNKNOWN_COMMAND；真实 Core 命令是 snake_case 'list_region_revisions'",
+      "s2_probe": {
+        "command": "list_region_revisions",
+        "minor": 3,
+        "payload": {
+          "region_id": "probe-region"
+        },
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND"
+      }
+    },
+    {
+      "command": "plugins_audit_list",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "plugins.audit_list",
+      "face": "PLUGIN-RUNTIME-1 face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {},
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "plugins_open_directory",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": null,
+      "face": "host-local shell action",
+      "proposed_status": "NEEDS_IMPLEMENTATION",
+      "confidence": "high",
+      "reason": "旧壳本地 shell 动作（打开目录/资源管理器），Core 命令面没有等价命令；只能由 Host/App 层实现，registry 保持 NOT_SUPPORTED 属正确分类，但实现位置是 Host 而非 Core。",
+      "evidence": {
+        "source": "src/bootstrap/core_service.py 命令面（_HOST_CONTROL_COMMANDS/_RUN_COMMANDS/_CREATE_COMMANDS 等）",
+        "core_command": null
+      }
+    },
+    {
+      "command": "plugins_set_plugin_enabled",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "plugins.set_plugin_enabled",
+      "face": "PLUGIN-RUNTIME-1 face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "plugin_id": "no-such-plugin",
+          "enabled": false
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "PLUGIN_NOT_FOUND",
+        "error_category": "not_found",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：PLUGIN_NOT_FOUND/not_found。S2 用假 id/错枚举才判成未实现。"
+    },
+    {
+      "command": "rerender_page",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "rerender_page",
+      "face": "region face (CoreRoute)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "MISSING_REQUIRED_INPUT",
+        "error_category": "unavailable",
+        "basis": "other_error",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 处理器返回 typed 语义错误 MISSING_REQUIRED_INPUT（缺输入/前置产物），说明路由与处理器已实现；正向路径需要真实产物（渲染/检测产物），S2 用假 id 才判成未实现。",
+      "residual": "正向路径依赖真实产物（artifact/revision），本任务未构造",
+      "s2_misclassification": "S2 探针 probe-20 用 {page_id:'probe-page'} → TARGET_NOT_FOUND，被当作“未实现”；真实 page_id 下进入 handler（MISSING_REQUIRED_INPUT）",
+      "s2_probe": {
+        "command": "rerender_page",
+        "minor": 3,
+        "payload": {
+          "page_id": "probe-page"
+        },
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND"
+      }
+    },
+    {
+      "command": "resolve_page_resource",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "resolve_page_resource",
+      "face": "region face (CoreRoute)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+        },
+        "protocol_minor": 3,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"resource_id\": \"page-original-f52f2772e8044557a72e82f5ea6ab932\", \"revision\": \"original\"}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。",
+      "s2_misclassification": "S2 探针 probe-21 用 {page_id:'probe-page'} → PAGE_NOT_FOUND，被当作“未实现”；真实 page_id 下返回 ok",
+      "s2_probe": {
+        "command": "resolve_page_resource",
+        "minor": 3,
+        "payload": {
+          "page_id": "probe-page"
+        },
+        "ok": false,
+        "error_code": "PAGE_NOT_FOUND"
+      }
+    },
+    {
+      "command": "restore_region_revision",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "restore_region_revision",
+      "face": "region face (CoreRoute)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "region_id": "no-such-region",
+          "revision_no": 1,
+          "expected_revision": 1
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND",
+        "error_category": "not_found",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：TARGET_NOT_FOUND/not_found。S2 用假 id/错枚举才判成未实现。",
+      "s2_misclassification": "S2 探针 probe-23 用假 region_id → TARGET_NOT_FOUND，被当作“未实现”",
+      "s2_probe": {
+        "command": "restore_region_revision",
+        "minor": 3,
+        "payload": {
+          "expected_revision": 1,
+          "revision_no": 1,
+          "region_id": "probe-region"
+        },
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND"
+      }
+    },
+    {
+      "command": "set_region_type",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "set_region_type",
+      "face": "region face (CoreRoute)",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fixture",
+        "request_payload": {
+          "region_id": "no-such-region",
+          "new_region_type": "sfx",
+          "expected_revision": 1
+        },
+        "protocol_minor": 3,
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND",
+        "error_category": "not_found",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：TARGET_NOT_FOUND/not_found。S2 用假 id/错枚举才判成未实现。",
+      "s2_misclassification": "S2 探针 probe-22 用 new_region_type:'probe' → INVALID_REQUEST，被当作“未实现”；合法枚举 narration/note/other/sfx/speech/title 才通过",
+      "s2_probe": {
+        "command": "set_region_type",
+        "minor": 3,
+        "payload": {
+          "region_id": "probe-region",
+          "new_region_type": "probe"
+        },
+        "ok": false,
+        "error_code": "INVALID_REQUEST"
+      }
+    },
+    {
+      "command": "settings_network_profile_default_clear",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profile_default_clear",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {},
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"network_profile_id\": null}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_network_profile_default_set",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profile_default_set",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+        },
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"network_profile_id\": \"697c64319c614086b51a8b208ce8ac0a\"}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_network_profile_resolve",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profile_resolve",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "provider_profile_id": null
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "settings_network_profiles_create",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profiles_create",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "display_name": "NS probe network",
+          "mode": "Direct",
+          "proxy_endpoint": null
+        },
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"profile\": {\"network_profile_id\": \"697c64319c614086b51a8b208ce8ac0a\", \"display_name\": \"NS probe network\", \"mode\": \"Direct\", \"proxy_endpoint\": null, \"verify_tls\": true, \"tls_verification_state\": \"enabled\", \"allow_proxy_failure_direct_fallback\": false, \"credential_state\": \"missing\"}}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_network_profiles_delete",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profiles_delete",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+        },
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"deleted\": true}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_network_profiles_test",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profiles_test",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+          "provider_profile_id": null
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "settings_network_profiles_update",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_network_profiles_update",
+      "face": "P15 network face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+          "display_name": "NS probe network v2",
+          "mode": "Direct",
+          "proxy_endpoint": null,
+          "verify_tls": true,
+          "allow_proxy_failure_direct_fallback": false
+        },
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"profile\": {\"network_profile_id\": \"697c64319c614086b51a8b208ce8ac0a\", \"display_name\": \"NS probe network v2\", \"mode\": \"Direct\", \"proxy_endpoint\": null, \"verify_tls\": true, \"tls_verification_state\": \"enabled\", \"allow_proxy_failure_direct_fallback\": false, \"credential_state\": \"missing\"}}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_provider_bindings_clear",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_bindings_clear",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "scope": {
+            "kind": "global"
+          },
+          "capability": "Translation"
+        },
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"cleared\": true}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_provider_bindings_resolve",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_bindings_resolve",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "capability": "Translation"
+        },
+        "protocol_minor": 7,
+        "ok": true,
+        "error_code": null,
+        "error_category": null,
+        "basis": "success",
+        "result_excerpt": "{\"profile_id\": null, \"source\": null}"
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "正确 payload 下 Core 返回成功结果，S2 的 NOT_SUPPORTED 是探针 payload/命令名错误导致的误分类。"
+    },
+    {
+      "command": "settings_provider_bindings_set",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_bindings_set",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "scope": {
+            "kind": "global"
+          },
+          "capability": "Translation",
+          "profile_id": null
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_profiles_create",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "provider_id": "custom",
+          "display_name": "NS probe provider",
+          "capabilities": "Translation",
+          "endpoint": "http://127.0.0.1:9/v1",
+          "model": "probe",
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+          "enabled": false
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "settings_provider_profiles_delete",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_profiles_delete",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "profile_id": null
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "settings_provider_profiles_update",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_profiles_update",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "profile_id": null,
+          "display_name": "NS probe provider v2",
+          "capabilities": "Translation",
+          "endpoint": "http://127.0.0.1:9/v1",
+          "model": "probe",
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+          "enabled": false
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "INVALID_REQUEST",
+        "error_category": "validation",
+        "basis": "payload_rejected",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "medium",
+      "reason": "Core 返回处理器级 typed 校验错误（INVALID_REQUEST），说明路由与处理器已实现；本任务尚未命中冻结二进制的完整正向 payload，正向路径需在应用改动时补一次确认。",
+      "residual": "正向路径未复现（字段校验未通过）"
+    },
+    {
+      "command": "settings_provider_run_snapshot_get",
+      "current_status": "NOT_SUPPORTED",
+      "core_command": "settings_provider_run_snapshot_get",
+      "face": "P15 provider face",
+      "evidence": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "probe_phase": "fresh",
+        "request_payload": {
+          "run_id": "no-such-run"
+        },
+        "protocol_minor": 7,
+        "ok": false,
+        "error_code": "TARGET_NOT_FOUND",
+        "error_category": "not_found",
+        "basis": "domain_error_handler_ran",
+        "result_excerpt": null
+      },
+      "proposed_status": "IMPLEMENTED",
+      "confidence": "high",
+      "reason": "Core 路由与处理器存在并被执行（返回 typed 域错误而不是 UNKNOWN_COMMAND）：TARGET_NOT_FOUND/not_found。S2 用假 id/错枚举才判成未实现。"
+    }
+  ]
+}
