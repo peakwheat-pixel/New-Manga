@@ -68,6 +68,7 @@ public partial class MainWindow : Window
             readerUserViewModel,
             NewManga.App.Views.ReaderFixtureLocator.TypographyPaths(),
             NewManga.App.Views.ReaderFixtureLocator.TileDirectory);
+        Reader.ImmersiveRequested += (_, _) => OpenImmersiveReader();
         _pages["workbench"] = Workbench;
         _pages["reader"] = Reader;
         Settings = new SettingsPage(settingsViewModel, OnThemeApplied);
@@ -129,6 +130,65 @@ public partial class MainWindow : Window
             pair.Value.Background = ThemePackService.Brush(active ? "NavActiveBg" : "NavBg");
             pair.Value.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextPrimary");
         }
+
+        if (string.Equals(page, "reader", StringComparison.Ordinal))
+        {
+            // READER-LIBRARY-WIRE-1 AC1: entering the reader loads the real library book (fixtures stay as fallback).
+            _ = EnsureReaderLoadedAsync();
+        }
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC2: the immersive window created by the reader page entry.</summary>
+    public ReaderWindow? LastImmersiveWindow { get; private set; }
+
+    /// <summary>
+    /// READER-LIBRARY-WIRE-1 AC1: pull the real book through Host/CoreClient
+    /// (ListBooks → list_chapters → GetReaderProjection); on empty/failure keep the fixture fallback
+    /// and show the empty-state hint. <c>NEWMANGA_READER_SOURCE=fixtures</c> forces the fixture path.
+    /// </summary>
+    public async Task EnsureReaderLoadedAsync(CancellationToken cancellationToken = default)
+    {
+        if (Reader.LibraryBook is not null)
+        {
+            return;
+        }
+
+        var source = Environment.GetEnvironmentVariable("NEWMANGA_READER_SOURCE");
+        if (string.Equals(source, "fixtures", StringComparison.OrdinalIgnoreCase))
+        {
+            Reader.SetLibraryEmpty("fixture 模式：NEWMANGA_READER_SOURCE=fixtures（跳过真实书库）");
+            return;
+        }
+
+        try
+        {
+            var book = await _controller.LoadReaderBookAsync(null, cancellationToken);
+            if (book is null)
+            {
+                Reader.SetLibraryEmpty("书架为空或 Core 未就绪：已保留 fixture 回退；导入一本书后重试。");
+                return;
+            }
+
+            Reader.LoadLibrary(book);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or TimeoutException or IOException or OperationCanceledException)
+        {
+            Reader.SetLibraryEmpty("读取书库失败：已保留 fixture 回退。");
+        }
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC2: instantiate the immersive window for the active source.</summary>
+    public ReaderWindow OpenImmersiveReader()
+    {
+        var window = Reader.LibraryBook is { } book
+            ? new ReaderWindow(Reader.ViewModel, book)
+            : new ReaderWindow(
+                Reader.ViewModel,
+                NewManga.App.Views.ReaderFixtureLocator.TypographyPaths(),
+                NewManga.App.Views.ReaderFixtureLocator.TileDirectory);
+        LastImmersiveWindow = window;
+        window.Show();
+        return window;
     }
 
     public void ApplyTheme()
@@ -217,6 +277,10 @@ public partial class MainWindow : Window
                 _ => "启动中…",
             };
             BookshelfPageControl.ApplyTheme();
+            if (string.Equals(CurrentPage, "reader", StringComparison.Ordinal))
+            {
+                await EnsureReaderLoadedAsync(CancellationToken.None);
+            }
         }
         catch (Exception ex) when (ex is InvalidOperationException or TimeoutException)
         {

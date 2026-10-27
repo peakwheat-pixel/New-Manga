@@ -1,0 +1,37 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "generated_at_utc": "2026-10-27T02:05:00Z",
+  "app": "READER-LIBRARY-WIRE-1 build: pkg/app/NewManga.App.exe (Release, single-file, self-contained)",
+  "data_root": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+  "host_log_data_root_line": "2026-10-27T01:55:41.6865589+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "flow": {
+    "bookshelf_book_visible": true,
+    "reader_page_title": "BOOK-FIXTURE-1 日漫_JA 测试书 · 第 1 章 · 8 页 · webtoon 长滚动",
+    "reader_page_pages_rendered": true,
+    "immersive_window_title": "阅读器",
+    "immersive_fullscreen": true,
+    "hud_visible_before_h": true,
+    "hud_visible_after_h": false,
+    "esc_closed_immersive_window": true,
+    "esc_returned_to_reader_page": true,
+    "webtoon_scrolled": true
+  },
+  "screenshots": [
+    "screens/01-bookshelf.png",
+    "screens/02-reader-library.png",
+    "screens/03-immersive.png",
+    "screens/04-hud-hidden.png",
+    "screens/05-after-esc.png",
+    "screens/06-webtoon-scrolled.png"
+  ],
+  "wire_counts": {
+    "list_books": 8,
+    "list_chapters": 2,
+    "get_reader_projection": 2,
+    "resolve_page_resource": 27,
+    "page_original_ids": 59,
+    "bridge_issue": 25,
+    "bridge_resolve": 25,
+    "bridge_revoke": 25
+  }
+}

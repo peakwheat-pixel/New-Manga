@@ -2,6 +2,7 @@ using NewManga.CoreClient;
 using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Transport;
+using NewManga.Host.Resources;
 
 namespace NewManga.Host;
 
@@ -17,6 +18,9 @@ public sealed class HostRuntime : IAsyncDisposable
     private SingleInstanceGuard? _guard;
     private DataRootPolicy? _policy;
     private bool _disposed;
+
+    // The host_bridge/core_service pipes are request/response only: page reads are serialized.
+    private readonly SemaphoreSlim _readerIoGate = new(1, 1);
 
     private HostRuntime(HostOptions options, HostLog log)
     {
@@ -95,6 +99,86 @@ public sealed class HostRuntime : IAsyncDisposable
         }
 
         return new ChineseRoundTripResult(title, created.Title, found);
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1: chapter navigation for the reader page (read-only).</summary>
+    public async Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(string bookId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1: ordered reader projection (pages + layout) for one chapter.</summary>
+    public async Task<ReaderProjection> GetReaderProjectionAsync(string chapterId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.GetReaderProjectionAsync(chapterId, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// READER-LIBRARY-WIRE-1: page image bytes through the existing resource channel —
+    /// Core resolve_page_resource → host_bridge issue/resolve grant → Host tile channel
+    /// (handle-verified, digest-checked whole-file read). No path or digest leaves the Host.
+    /// The resource pipe is strictly request/response, so the whole sequence is serialized.
+    /// </summary>
+    public async Task<byte[]> ReadPageImageAsync(string pageId, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            var bridge = HostBridge ?? throw NotReady();
+            var resolved = await core.ResolvePageResourceAsync(pageId, cancellationToken).ConfigureAwait(false);
+            var issued = await bridge.IssueAsync(resolved.ResourceId, resolved.Revision, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                var grant = await bridge.ResolveAsync(issued.GrantId, cancellationToken).ConfigureAwait(false);
+                var root = grant.ScopeClass switch
+                {
+                    "derived-read-only" => Path.Combine(_options.DataRoot, "derived"),
+                    "managed-read-only" => _options.ManagedRoot ?? Path.Combine(_options.DataRoot, "managed"),
+                    _ => throw new BridgeException("SCOPE_NOT_SERVABLE", grant.ScopeClass),
+                };
+                if (grant.Size <= 0 || grant.Size > int.MaxValue)
+                {
+                    throw new BridgeException("REF_MALFORMED", $"grant size out of range: {grant.Size}");
+                }
+
+                var absolutePath = Path.Combine(root, grant.RelPath);
+                var channel = new TileChannel();
+                var request = new TileGrantRequest(
+                    resolved.ResourceId,
+                    resolved.Revision,
+                    absolutePath,
+                    root,
+                    grant.Size,
+                    new[] { new TileDescriptor(0, 0, (int)grant.Size, grant.Sha256) });
+                var handle = channel.Issue(request).Handle;
+                try
+                {
+                    return channel.ReadTile(handle, 0).Bytes;
+                }
+                finally
+                {
+                    channel.Revoke(handle);
+                }
+            }
+            finally
+            {
+                try
+                {
+                    await bridge.RevokeAsync(issued.GrantId, cancellationToken).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is BridgeException or SidecarException or OperationCanceledException)
+                {
+                    // best effort: the grant expires on its own; the read already returned or threw
+                }
+            }
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
     }
 
     public async ValueTask DisposeAsync()
