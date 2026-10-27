@@ -1,0 +1,68 @@
+{
+  "captured_at": "2026-10-28T01:35:00+08:00",
+  "app": "NewManga.App (Debug build of branch task/THEME-MACOS-2-saber)",
+  "theme_pack": "macos-sonoma",
+  "theme_label": "macOS 风",
+  "default_theme": "saber-purple (unchanged; asserted by ThemeMacosTests)",
+  "window": "1440x920 requested, captured 1278x818 (display scaling 1.126)",
+  "data_root": "G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-2/real-app-data-root (isolated copy; no real %APPDATA% writes)",
+  "sidecar_dir": "G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-3/sidecar-base/core-sidecar (frozen)",
+  "startup_hook": "--theme=macos-sonoma --variant=light|dark --page=settings|bookshelf (THEME-MACOS-2 evidence hook; defaults untouched)",
+  "screenshots": [
+    {
+      "name": "settings-light",
+      "file": "real-app-settings-light.png",
+      "width": 1278,
+      "height": 818,
+      "sha256": "0871fa07d999711879eabbe07ab2cf199b477d1ff4703198005951769eabea84",
+      "bytes": 134114,
+      "samples": {
+        "top_left": "#FFFFFF",
+        "page_bg": "#FFFFFF",
+        "content_bg": "#FFFFFF"
+      }
+    },
+    {
+      "name": "settings-dark",
+      "file": "real-app-settings-dark.png",
+      "width": 1278,
+      "height": 818,
+      "sha256": "217e3e227e8c545494292153673e48abe91118c896af81af7699fdb5a35e6f86",
+      "bytes": 132999,
+      "samples": {
+        "top_left": "#212123",
+        "page_bg": "#000000",
+        "content_bg": "#2C2C2E"
+      }
+    },
+    {
+      "name": "bookshelf-light",
+      "file": "real-app-bookshelf-light.png",
+      "width": 1278,
+      "height": 818,
+      "sha256": "2602a93e9e9871ff984e9e774f3f39cf997091f174b97bf24ae70346bae449f3",
+      "bytes": 51236,
+      "samples": {
+        "top_left": "#FFFFFF",
+        "page_bg": "#F5F5F7",
+        "content_bg": "#F5F5F7"
+      }
+    },
+    {
+      "name": "bookshelf-dark",
+      "file": "real-app-bookshelf-dark.png",
+      "width": 1278,
+      "height": 818,
+      "sha256": "4ba22fc8b849010378722860908bc682380f9b0e7395de79dbce3675f03e598d",
+      "bytes": 50732,
+      "samples": {
+        "top_left": "#212123",
+        "page_bg": "#1E1E1E",
+        "content_bg": "#1E1E1E"
+      }
+    }
+  ],
+  "light_expected_app_bg": "#F5F5F7",
+  "dark_expected_app_bg": "#1E1E1E",
+  "note": "Real desktop window rendered by the product app on this machine; one process per screenshot; no fake frames."
+}
