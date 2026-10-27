@@ -3,7 +3,7 @@ id: IMPORT-EXPORT-UI-1
 title: 导入/导出 UI 入口（选择器+进度+历史+取消）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: route-research
 owner: route-research
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 49c9e7f24
 branch: task/IMPORT-EXPORT-UI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1
-integration_commit: null
+integration_commit: 29aad2c60
 delivery_head: 5019eb01dab0d9b94c0a71cafb3b96c9bb9caba2
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -126,3 +126,11 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 入口：书架 header + 工作台左栏「导入文件/文件夹」（IFilePickerGateway seam + Avalonia StorageProvider）→ 目标书/章/重复策略 → Host grant 链（RegisterImportSource→ImportPages）→ typed 结果 + 刷新书架；阅读器「导出」→ StartExport（RegisterExportTarget）→ GetExportSnapshot 轮询 → 完成显示路径+sha256 → GetExportHistory → 取消 → 打开导出目录。
+- 真机（Debug exe + REPACK-2 completed-run 副本 + models sidecar）：真实导入 8→9 页；真实导出 ZIP **7,070,562B** sha256 cb4d30db…6788c1（实现方独立复算 4 条目/3 页 manifest 一致）；打开导出目录成功；11 张真机截图 + wire 帧入库。
+- headless 10 例：import file/folder 参数、start_export 六字段、export_id、running→completed、cancel、typed 拒绝、无翻译页、picker 取消、工作台入口。
+- 回归：DSH 复跑 test.ps1 见执行记录（实现方报 225/225：61/55/109）；vitest 60/567；pytest 3F/2772P/9S（0 新增）；check.ps1 -TaskPath PASS。
+- 遗留：UI 仅接 ZIP（PDF 需 Qt composer，CBZ/text 未接）；真机取消点击未赶上 200ms 完成窗口（cancel 由 headless 覆盖）；多选导入/自定义导出路径仅 headless；大书性能未测；translated 为 identity experimental 占位。
+- 集成：29aad2c60。
