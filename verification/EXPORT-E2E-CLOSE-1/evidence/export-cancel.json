@@ -1,0 +1,15 @@
+{
+  "ac": "AC3",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "ordered_page_ids": 3,
+  "attempts": [
+    {
+      "export_id": "exp-96acd695ec04",
+      "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-cancel-1.zip",
+      "terminal_status": "cancelled",
+      "artifact_published": false,
+      "elapsed_ms": 23.9
+    }
+  ],
+  "cancelled_observed": true
+}
