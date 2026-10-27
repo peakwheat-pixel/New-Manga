@@ -3,7 +3,7 @@
 - Task: `doc/tasks/GPU-ORT-PROBE-1.md`（team task-27）
 - Branch: `task/GPU-ORT-PROBE-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/GPU-ORT-PROBE-1`
 - Base: `171529b5d`（卡面）；实际分支基于释放提交 `04b657131`（含任务卡与治理 PASS 状态）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `064e4fe22`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改推理默认 EP/模型清单/协议/Host 契约/旧壳。
 
 ## 1. 交付摘要

@@ -54,6 +54,14 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-GPU-REPORT | AC1–AC5 | `verification/GPU-ORT-PROBE-1/REPORT.md` | `064e4fe22` | `4eee5f907e6a26ae66480f680f25b77216b0deee231289d56a9d1ff0546cf50b` | CANONICAL |
+| E-GPU-UI | AC2 | `verification/GPU-ORT-PROBE-1/settings-page-evidence.json` | `064e4fe22` | `9a5de25d90f1a717710f3666a97b9e13028797ce10b7b1115d2460b0b587f2a6` | CANONICAL |
+| E-GPU-SCREEN | AC2 | `verification/GPU-ORT-PROBE-1/screens/01-settings-gpu.png` | `064e4fe22` | `2d0df3fec3939a9013ff992f96c94c028332cdd218634c9dae05375080a92247` | CANONICAL |
+| E-GPU-PROBE | AC1/AC2 | `verification/GPU-ORT-PROBE-1/device-probe-buildenv.json` | `064e4fe22` | `bfd588390c996f5ecdf43db00ccd016753e23e8b5a9fe8acfbf6519668c72b3a` | CANONICAL |
+| E-GPU-CLOSURE | AC4 | `verification/GPU-ORT-PROBE-1/sidecar-build.log` | `064e4fe22` | `bbb02077898e6588155dbb544b79856255e7588cd40a3fe7973b11046c62d953` | CANONICAL |
+| E-GPU-PACKAGE | AC2/AC4 | `verification/GPU-ORT-PROBE-1/package.log` | `064e4fe22` | `db76a842aa082b12fca1aab435cf2150b86737dba9ca964312ffe4da6c72dee1` | CANONICAL |
+| E-GPU-PYTEST | AC3/AC4 | `verification/GPU-ORT-PROBE-1/pytest.log` | `064e4fe22` | `d3613497b46d5bff95dc59c56bdaa9ff6672aafa0853f0d6125455a63b989263` | CANONICAL |
+| E-GPU-DOTNET | AC4 | `verification/GPU-ORT-PROBE-1/dotnet-all.log` | `064e4fe22` | `00a411ebec28c3fc0762da2288f86a5a428f2afb919898d6aba9f7d7ea369b75` | CANONICAL |
 
 ## Resource Manifest
 
