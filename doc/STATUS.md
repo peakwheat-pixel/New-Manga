@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[CHAPTER-SELECTOR-1](tasks/CHAPTER-SELECTOR-1.md) `ready`（A 组第一批：多章/多书；READER-PROGRESS-1 done）。
+- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) `proposed`（A 组第一批 3/3 完成；待你选第二批）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
