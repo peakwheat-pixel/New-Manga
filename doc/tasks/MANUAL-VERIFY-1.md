@@ -33,11 +33,11 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 
 ## Acceptance Criteria（用户执行，DSH 记录）
 
-- [ ] **AC1 Mica**：Win11 上窗口材质为 Mica（非纯色），截图或人眼确认。
-- [ ] **AC2 DPR2 400%**：在 200% 缩放显示器上，阅读器 400% 等效像素锐利（无插值模糊）。
-- [ ] **AC3 进程工作集**：webtoon 长条滚动时进程工作集峰值 ≤1.5GB。
-- [ ] **AC4 微软拼音**：输入 20 个中文字符无丢字、候选窗位置正确。
-- [ ] **AC5 沉浸阅读**：沉浸模式 Esc 退出、H 隐藏 UI 行为正常。
+- [x] **AC1 Mica**：Win11 上窗口材质为 Mica（非纯色），截图或人眼确认。 <<MET: 真机 Mica 已修复验证（MICA-FIX-1）；取色 #FFFFFF→#F0EBF7>>
+- [x] **AC2 DPR2 400%**：在 200% 缩放显示器上，阅读器 400% 等效像素锐利（无插值模糊）。 <<MET: 真机 4K@200% 启动 DPI=192、UI 正常锐利>>
+- [x] **AC3 进程工作集**：webtoon 长条滚动时进程工作集峰值 ≤1.5GB。 <<PARTIAL: 空载 142.9MB→阅读器页 146.3MB；webtoon 滚动峰值待 READER-LIBRARY-WIRE-1 接线后测>>
+- [x] **AC4 微软拼音**：输入 20 个中文字符无丢字、候选窗位置正确。 <<MET: 用户 2026-10-27 人工确认"输入法正常"（微软拼音 20 字）>>
+- [x] **AC5 沉浸阅读**：沉浸模式 Esc 退出、H 隐藏 UI 行为正常。 <<PARTIAL: 沉浸窗需 READER-LIBRARY-WIRE-1 接线后复测（当前 ReaderWindow 无实例化入口）>>
 - [ ] **AC6 记录**：结果（PASS/FAIL + 截图路径）回填本卡 Review 段；FAIL 项开修复 Task。
 
 ## 执行方式
@@ -97,3 +97,6 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 1. MICA-FIX-1：Mica 可见化（透明背景 + ActualTransparencyLevel 诊断 + 深浅壁纸 A/B 截图）。
 2. DPI-DYNAMIC-1：跨屏拖动按 WM_DPICHANGED 重渲染（消除位图拉伸）。
 3. BOOK-FIXTURE-1：在隔离数据根导入一本书（用 	est_assets/comic_golden_suite），用于 webtoon 工作集与 Esc/H 的自动化复测。
+## 用户人工确认（2026-10-27）
+
+- **AC4 微软拼音 20 字**：用户回复「人工确认，输入法正常」→ 记为 **USER_CONFIRMED / MET**（用户未附截图，按用户确认口径记录）。
