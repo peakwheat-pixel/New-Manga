@@ -37,12 +37,14 @@
 |GPU-ORT-PROBE-1|—|done（ORT EP 探测；DML 可用；base 97.88MB；149/149；集成 3bb082627）|
 |RUN-EXPORT-E2E-1|—|ready（Run/Export 端到端，fixture+models）|
 |NS-RECLASSIFY-1|—|done（42 NS → 35 IMPLEMENTED / 7 NEEDS_IMPLEMENTATION；只出证据；集成 e49dec3dd）|
+|NS-WIRE-B1|—|ready（18 条高置信 NS 接线；base 45efe7f00）|
+|GRANT-ISSUER-1|—|ready（grant 签发+shell 动作 7 条）|
 |S4-CMD-BATCH-1|—|ready（S4-A/B/C：region 写 4 + reader 2）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：RUN-EXPORT-E2E-1、S4-CMD-BATCH-1。
+READY 节点：NS-WIRE-B1、GRANT-ISSUER-1、RUN-EXPORT-E2E-1、S4-CMD-BATCH-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

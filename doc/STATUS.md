@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) `proposed`（NS 重分类完成：35 可实施/7 需 Host 实现；待用户裁决实施批次）。
+- 当前 Task：[NS-WIRE-B1](tasks/NS-WIRE-B1.md) `ready`（18 条高置信接线；并行 GRANT-ISSUER-1/RUN-EXPORT/S4）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
