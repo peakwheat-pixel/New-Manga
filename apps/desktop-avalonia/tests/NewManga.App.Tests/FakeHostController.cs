@@ -494,6 +494,130 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(result);
     }
 
+    // ---------------------------------------------------------------------------------------
+    // IMPORT-EXPORT-UI-1: recorded import/export traffic + scripted job state (headless tests never
+    // touch a real Core, never write real files: the target path is only recorded).
+    // ---------------------------------------------------------------------------------------
+
+    public string ExportDirectorySuggestionValue { get; set; } = string.Empty;
+
+    public string ExportDirectorySuggestion => ExportDirectorySuggestionValue;
+
+    public List<(string ChapterId, IReadOnlyList<string> Paths, string DuplicatePolicy)> ImportFileCalls { get; } = new();
+
+    public List<(string ChapterId, string FolderPath, string DuplicatePolicy)> ImportFolderCalls { get; } = new();
+
+    public Queue<ImportOutcome> ScriptedImportResults { get; } = new();
+
+    public Dictionary<string, IReadOnlyList<string>> TranslatedPagesByChapter { get; } = new(StringComparer.Ordinal);
+
+    public int TranslatedPageCalls { get; private set; }
+
+    public List<(string BookId, string ChapterId, IReadOnlyList<string> PageIds, string TargetPath)> StartExportCalls { get; } = new();
+
+    public Queue<ExportStartInfo?> ScriptedStartResults { get; } = new();
+
+    public Queue<ExportSnapshotInfo?> ScriptedSnapshots { get; } = new();
+
+    public ExportSnapshotInfo? LastSnapshotResult { get; private set; }
+
+    public List<string> SnapshotCalls { get; } = new();
+
+    public List<string> CancelCalls { get; } = new();
+
+    public List<string> RevealCalls { get; } = new();
+
+    public List<ExportHistoryEntry> ExportHistory { get; set; } = new();
+
+    public bool RevealResult { get; set; } = true;
+
+    public Task<ImportOutcome> ImportFilesAsync(
+        string chapterId,
+        IReadOnlyList<string> paths,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default)
+    {
+        ImportFileCalls.Add((chapterId, paths, duplicatePolicy));
+        return Task.FromResult(ScriptedImportResults.Count > 0
+            ? ScriptedImportResults.Dequeue()
+            : ImportOutcome.Success(paths.Count, 0));
+    }
+
+    public Task<ImportOutcome> ImportFolderAsync(
+        string chapterId,
+        string folderPath,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default)
+    {
+        ImportFolderCalls.Add((chapterId, folderPath, duplicatePolicy));
+        return Task.FromResult(ScriptedImportResults.Count > 0
+            ? ScriptedImportResults.Dequeue()
+            : ImportOutcome.Success(1, 0));
+    }
+
+    public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        TranslatedPageCalls++;
+        return Task.FromResult(
+            TranslatedPagesByChapter.TryGetValue(chapterId, out var pages)
+                ? pages
+                : (IReadOnlyList<string>)Array.Empty<string>());
+    }
+
+    public Task<ExportStartInfo?> StartExportAsync(
+        string bookId,
+        string chapterId,
+        IReadOnlyList<string> orderedPageIds,
+        string targetPath,
+        CancellationToken cancellationToken = default)
+    {
+        StartExportCalls.Add((bookId, chapterId, orderedPageIds, targetPath));
+        if (ScriptedStartResults.Count > 0)
+        {
+            return Task.FromResult(ScriptedStartResults.Dequeue());
+        }
+
+        return Task.FromResult<ExportStartInfo?>(
+            ExportStartInfo.FromState($"exp-fake-{StartExportCalls.Count}", "pending", orderedPageIds.Count));
+    }
+
+    public Task<ExportSnapshotInfo?> GetExportSnapshotAsync(
+        string exportId,
+        CancellationToken cancellationToken = default)
+    {
+        SnapshotCalls.Add(exportId);
+        if (ScriptedSnapshots.Count > 0)
+        {
+            LastSnapshotResult = ScriptedSnapshots.Dequeue();
+        }
+
+        return Task.FromResult(LastSnapshotResult);
+    }
+
+    public Task<IReadOnlyList<ExportHistoryEntry>> GetExportHistoryAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ExportHistoryEntry>>(ExportHistory.ToList());
+
+    public Task<ExportSnapshotInfo?> CancelExportAsync(
+        string exportId,
+        CancellationToken cancellationToken = default)
+    {
+        CancelCalls.Add(exportId);
+        var cancelled = ExportSnapshotInfo.FromState(exportId, ExportJobState.Cancelled);
+        LastSnapshotResult = cancelled;
+        return Task.FromResult<ExportSnapshotInfo?>(cancelled);
+    }
+
+    public Task<bool> RevealExportFolderAsync(
+        string exportId,
+        CancellationToken cancellationToken = default)
+    {
+        RevealCalls.Add(exportId);
+        return Task.FromResult(RevealResult);
+    }
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>CHAPTER-SELECTOR-1: resolve the scripted book that owns a chapter id.</summary>

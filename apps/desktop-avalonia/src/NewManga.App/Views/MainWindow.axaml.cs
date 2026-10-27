@@ -17,6 +17,8 @@ namespace NewManga.App.Views;
 public partial class MainWindow : Window
 {
     private readonly IHostController _controller;
+    private readonly IFilePickerGateway? _filePickerOverride;
+    private readonly IFilePickerGateway _filePicker;
     private readonly AppOptions _options;
     private readonly Dictionary<string, Button> _navButtons = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Control> _pages = new(StringComparer.Ordinal);
@@ -33,10 +35,11 @@ public partial class MainWindow : Window
     {
     }
 
-    public MainWindow(IHostController controller, AppOptions options)
+    public MainWindow(IHostController controller, AppOptions options, IFilePickerGateway? filePicker = null)
     {
         _controller = controller;
         _options = options;
+        _filePickerOverride = filePicker;
         InitializeComponent();
 
         Bookshelf = new BookshelfViewModel(
@@ -68,8 +71,11 @@ public partial class MainWindow : Window
         themeCycle.Click += (_, _) => CycleTheme();
         RightPanel.Children.Add(themeCycle);
 
-        _pages["bookshelf"] = new BookshelfPage(Bookshelf);
-        Workbench = new WorkbenchPage(new WorkbenchViewModel());
+        // IMPORT-EXPORT-UI-1: one storage-provider gateway for every import/export entry; the picker
+        // resolves the window's TopLevel lazily so construction stays headless-safe.
+        _filePicker = _filePickerOverride ?? new AvaloniaFilePickerGateway(_ => TopLevel.GetTopLevel(this));
+        _pages["bookshelf"] = new BookshelfPage(Bookshelf, _controller, _filePicker);
+        Workbench = new WorkbenchPage(new WorkbenchViewModel(), _controller, _filePicker);
         var readerUserViewModel = new ReaderViewModel();
         Reader = new ReaderPage(
             readerUserViewModel,
@@ -80,6 +86,7 @@ public partial class MainWindow : Window
             ProgressSink = _controller,
         };
         Reader.ImmersiveRequested += (_, _) => OpenImmersiveReader();
+        Reader.SetExportController(_controller, _filePicker);
         // CHAPTER-SELECTOR-1: book-card double-click / detail action opens that exact book, and the
         // reader's chapter picker re-loads the chosen chapter.
         BookshelfPageControl.OpenReaderRequested += (_, item) =>

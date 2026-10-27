@@ -901,6 +901,320 @@ public sealed class HostController : IHostController
             ? value.GetBoolean()
             : fallback;
 
+    // ---------------------------------------------------------------------------------------
+    // IMPORT-EXPORT-UI-1: import/export entries. Import uses the Host grant chain
+    // (HostGrantCoordinator.ImportAsync: host session -> RegisterImportSource -> ImportPages);
+    // export uses the Host grant + StartExport chain (EXPORT-E2E-CLOSE-1 verified), while
+    // snapshot/history/cancel are the Host command faces the UI polls.
+    // ---------------------------------------------------------------------------------------
+
+    public string ExportDirectorySuggestion => Path.Combine(_options.DataRoot, "exports");
+
+    public async Task<ImportOutcome> ImportFilesAsync(
+        string chapterId,
+        IReadOnlyList<string> paths,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default) =>
+        await ImportAsync(chapterId, paths, "file", duplicatePolicy, cancellationToken).ConfigureAwait(false);
+
+    public async Task<ImportOutcome> ImportFolderAsync(
+        string chapterId,
+        string folderPath,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default) =>
+        await ImportAsync(chapterId, new[] { folderPath }, "directory", duplicatePolicy, cancellationToken)
+            .ConfigureAwait(false);
+
+    private async Task<ImportOutcome> ImportAsync(
+        string chapterId,
+        IReadOnlyList<string> paths,
+        string sourceKind,
+        string duplicatePolicy,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId))
+        {
+            return ImportOutcome.Failed("INVALID_ARGUMENTS", "导入需要先选择目标章节");
+        }
+
+        if (paths.Count == 0)
+        {
+            return ImportOutcome.Failed("INVALID_ARGUMENTS", "没有选择要导入的文件或文件夹");
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady || _runtime.Grants is not { } grants)
+        {
+            return ImportOutcome.NotReady();
+        }
+
+        try
+        {
+            var projection = await grants
+                .ImportAsync(chapterId, paths, sourceKind, duplicatePolicy, cancellationToken)
+                .ConfigureAwait(false);
+            var imported = ReadInt(projection, "imported_files") ?? 0;
+            var skipped = ReadInt(projection, "skipped_files") ?? 0;
+            return ImportOutcome.Success(imported, skipped);
+        }
+        catch (ReadOnlyHostException)
+        {
+            return ImportOutcome.Failed("HOST_READ_ONLY", "Host 处于只读模式（parity 未达成），导入被拒绝");
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            var code = ErrorCodeOf(ex);
+            return ImportOutcome.Failed(code, $"导入失败：{UserMessageOf(ex)}");
+        }
+    }
+
+    public async Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<string>();
+        }
+
+        if (_runtime.Commands is not { } commands)
+        {
+            return Array.Empty<string>();
+        }
+
+        try
+        {
+            var response = await commands.InvokeAsync(
+                    "library_get_reader_projection",
+                    ImportExportPayloads.ReaderProjectionTranslated(chapterId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var value = response.Value;
+            if (value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                !value.TryGetProperty("pages", out var pages) ||
+                pages.ValueKind != System.Text.Json.JsonValueKind.Array)
+            {
+                return Array.Empty<string>();
+            }
+
+            var translated = new List<(int Order, string PageId)>();
+            foreach (var page in pages.EnumerateArray())
+            {
+                if (page.ValueKind != System.Text.Json.JsonValueKind.Object)
+                {
+                    continue;
+                }
+
+                if (!page.TryGetProperty("translated", out var translatedInfo) ||
+                    translatedInfo.ValueKind != System.Text.Json.JsonValueKind.Object)
+                {
+                    continue;
+                }
+
+                var revision = ReadString(translatedInfo, "artifact_revision_id");
+                var pageId = ReadString(page, "page_id");
+                if (string.IsNullOrWhiteSpace(revision) || string.IsNullOrWhiteSpace(pageId))
+                {
+                    continue;
+                }
+
+                translated.Add((ReadInt(page, "order") ?? translated.Count, pageId));
+            }
+
+            return translated.OrderBy(item => item.Order).Select(item => item.PageId).ToList();
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return Array.Empty<string>();
+        }
+    }
+
+    public async Task<ExportStartInfo?> StartExportAsync(
+        string bookId,
+        string chapterId,
+        IReadOnlyList<string> orderedPageIds,
+        string targetPath,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(chapterId) ||
+            orderedPageIds.Count == 0 || string.IsNullOrWhiteSpace(targetPath))
+        {
+            return null;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady || _runtime.Grants is not { } grants)
+        {
+            return null;
+        }
+
+        // Export targets are confined to the Host-owned exports directory; the UI only offers paths
+        // inside it and the Host re-validates (EXPORT_PATH_UNAVAILABLE otherwise).
+        try
+        {
+            var directory = Path.GetDirectoryName(Path.GetFullPath(targetPath));
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            return null;
+        }
+
+        try
+        {
+            var request = ImportExportPayloads.StartExportRequest(
+                bookId, new[] { chapterId }, orderedPageIds);
+            var started = await grants.StartExportAsync(request, targetPath, cancellationToken).ConfigureAwait(false);
+            return ExportStartInfo.FromJson(started);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
+    public async Task<ExportSnapshotInfo?> GetExportSnapshotAsync(
+        string exportId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(exportId))
+        {
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_get_export_snapshot", ImportExportPayloads.ExportId(exportId), cancellationToken)
+                .ConfigureAwait(false);
+            return ExportSnapshotInfo.FromJson(response.Value);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
+    public async Task<IReadOnlyList<ExportHistoryEntry>> GetExportHistoryAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<ExportHistoryEntry>();
+        }
+
+        try
+        {
+            var response = await commands.InvokeAsync("library_get_export_history", default, cancellationToken)
+                .ConfigureAwait(false);
+            if (response.Value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                !response.Value.TryGetProperty("exports", out var exports) ||
+                exports.ValueKind != System.Text.Json.JsonValueKind.Array)
+            {
+                return Array.Empty<ExportHistoryEntry>();
+            }
+
+            return exports.EnumerateArray()
+                .Where(entry => entry.ValueKind == System.Text.Json.JsonValueKind.Object)
+                .Select(ExportHistoryEntry.FromJson)
+                .Where(entry => !string.IsNullOrWhiteSpace(entry.ExportId))
+                .ToList();
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return Array.Empty<ExportHistoryEntry>();
+        }
+    }
+
+    public async Task<ExportSnapshotInfo?> CancelExportAsync(
+        string exportId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(exportId))
+        {
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_cancel_export", ImportExportPayloads.ExportId(exportId), cancellationToken)
+                .ConfigureAwait(false);
+            return ExportSnapshotInfo.FromJson(response.Value);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
+    public async Task<bool> RevealExportFolderAsync(
+        string exportId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(exportId) || _runtime is null || !_runtime.Result.IsReady ||
+            _runtime.Grants is not { } grants)
+        {
+            return false;
+        }
+
+        try
+        {
+            var result = await grants.RevealExportFolderAsync(exportId, cancellationToken).ConfigureAwait(false);
+            return ReadBool(result, "revealed", false) || ReadBool(result, "opened", false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return false;
+        }
+    }
+
+    private static bool IsUiFacingFailure(Exception ex) => ex is
+        CoreOperationException or SidecarException or BridgeException or ReadOnlyHostException or
+        HostCommandInvalidArgumentsException or ShellActionException or IOException or
+        UnauthorizedAccessException or InvalidOperationException or ArgumentException or
+        OperationCanceledException;
+
+    private static string ErrorCodeOf(Exception ex) => ex switch
+    {
+        CoreOperationException core => core.Code,
+        SidecarException sidecar => sidecar.Code.ToString(),
+        ShellActionException shell => shell.Code,
+        ReadOnlyHostException => "HOST_READ_ONLY",
+        HostCommandInvalidArgumentsException => "INVALID_ARGUMENTS",
+        OperationCanceledException => "CANCELLED",
+        _ => "HOST_UNAVAILABLE",
+    };
+
+    private static string UserMessageOf(Exception ex) => ex switch
+    {
+        CoreOperationException core => core.Message,
+        SidecarException sidecar => sidecar.UserMessage,
+        ShellActionException shell => shell.Message,
+        ReadOnlyHostException => "Host 处于只读模式（parity 未达成）",
+        HostCommandInvalidArgumentsException invalid => invalid.Message,
+        _ => "Host 请求失败",
+    };
+
+    private static int? ReadInt(System.Text.Json.JsonElement element, string property) =>
+        element.ValueKind == System.Text.Json.JsonValueKind.Object &&
+        element.TryGetProperty(property, out var value) &&
+        value.ValueKind == System.Text.Json.JsonValueKind.Number &&
+        value.TryGetInt32(out var parsed)
+            ? parsed
+            : null;
+
     public async ValueTask DisposeAsync()
     {
         if (_runtime is not null)

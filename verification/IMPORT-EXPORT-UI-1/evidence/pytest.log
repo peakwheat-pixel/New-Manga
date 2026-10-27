@@ -1,0 +1,858 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  7%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 15%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 46%]
+..........s............................................................. [ 49%]
+..................................sssss................................. [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+...................................FF................................... [ 62%]
+........................................................................ [ 64%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+...........................................................s............ [ 72%]
+........................................................................ [ 75%]
+........................................................................ [ 77%]
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+..........F...................................                           [100%]
+================================== FAILURES ===================================
+________________ test_real_detection_returns_block_candidates _________________
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+>           model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                str(weights_dir), local_files_only=True
+            )
+
+src\infrastructure\providers\detection_manga.py:525: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <module 'transformers' from 'C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\site-packages\\transformers\\__init__.py'>
+name = 'RTDetrV2ForObjectDetection'
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self._objects:
+            return self._objects[name]
+        if name in self._object_missing_backend.keys():
+            missing_backends = self._object_missing_backend[name]
+    
+            class Placeholder(metaclass=DummyObject):
+                _backends = missing_backends
+    
+                def __init__(self, *args, **kwargs):
+                    requires_backends(self, missing_backends)
+    
+            Placeholder.__name__ = name
+            Placeholder.__module__ = self.__spec__
+    
+            value = Placeholder
+        elif name in self._class_to_module.keys():
+            module = self._get_module(self._class_to_module[name])
+            value = getattr(module, name)
+        elif name in self._modules:
+            value = self._get_module(name)
+        else:
+>           raise AttributeError(f"module {self.__name__} has no attribute {name}")
+E           AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+C:\Users\49745\AppData\Roaming\Python\Python314\site-packages\transformers\utils\import_utils.py:1810: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+    def test_real_detection_returns_block_candidates() -> None:
+        from ports.detection.ports import DetectionRequest
+    
+>       result = _provider().detect(
+            DetectionRequest(
+                page_id="page-1",
+                image_bytes=_comic_page_bytes(),
+                width=900,
+                height=1300,
+            )
+        )
+
+tests\providers\test_detection_manga_real.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_manga.py:346: in detect
+    model, processor = self._engine_or_raise()
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_manga.py:417: in _engine_or_raise
+    self._engine = _build_engine(self.weights_dir, self.device)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model.eval()
+            if resolved == "cuda":
+                model = model.cuda()
+            return model, processor
+        except (ProviderNotConfigured, ProviderDependencyMissing, ProviderError):
+            raise
+        except Exception as error:  # noqa: BLE001 - any model-build failure is typed
+>           raise ProviderError(
+                f"manga detector engine failed to load from {weights_dir}: {error!r}",
+                stage="detection",
+            ) from error
+E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+
+src\infrastructure\providers\detection_manga.py:535: ProviderError
+_________________ test_real_blank_page_yields_zero_candidates _________________
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+>           model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                str(weights_dir), local_files_only=True
+            )
+
+src\infrastructure\providers\detection_manga.py:525: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <module 'transformers' from 'C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\site-packages\\transformers\\__init__.py'>
+name = 'RTDetrV2ForObjectDetection'
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self._objects:
+            return self._objects[name]
+        if name in self._object_missing_backend.keys():
+            missing_backends = self._object_missing_backend[name]
+    
+            class Placeholder(metaclass=DummyObject):
+                _backends = missing_backends
+    
+                def __init__(self, *args, **kwargs):
+                    requires_backends(self, missing_backends)
+    
+            Placeholder.__name__ = name
+            Placeholder.__module__ = self.__spec__
+    
+            value = Placeholder
+        elif name in self._class_to_module.keys():
+            module = self._get_module(self._class_to_module[name])
+            value = getattr(module, name)
+        elif name in self._modules:
+            value = self._get_module(name)
+        else:
+>           raise AttributeError(f"module {self.__name__} has no attribute {name}")
+E           AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+C:\Users\49745\AppData\Roaming\Python\Python314\site-packages\transformers\utils\import_utils.py:1810: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+    def test_real_blank_page_yields_zero_candidates() -> None:
+        """The adapter stays honest on a text-free page: zero candidates, no
+        padding boxes. The typed INVALID_INPUT lives in the handler (covered by
+        the seam tests' no-text case)."""
+        from ports.detection.ports import DetectionRequest
+    
+>       result = _provider().detect(
+            DetectionRequest(
+                page_id="page-2",
+                image_bytes=_blank_page_bytes(),
+                width=800,
+                height=1100,
+            )
+        )
+
+tests\providers\test_detection_manga_real.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_manga.py:346: in detect
+    model, processor = self._engine_or_raise()
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_manga.py:417: in _engine_or_raise
+    self._engine = _build_engine(self.weights_dir, self.device)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model.eval()
+            if resolved == "cuda":
+                model = model.cuda()
+            return model, processor
+        except (ProviderNotConfigured, ProviderDependencyMissing, ProviderError):
+            raise
+        except Exception as error:  # noqa: BLE001 - any model-build failure is typed
+>           raise ProviderError(
+                f"manga detector engine failed to load from {weights_dir}: {error!r}",
+                stage="detection",
+            ) from error
+E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+
+src\infrastructure\providers\detection_manga.py:535: ProviderError
+______________ test_pause_shows_optimistic_feedback_immediately _______________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x2595cfd4c00) at 0x000002595DBB69C0>
+
+    def test_pause_shows_optimistic_feedback_immediately(qapp_):
+        """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
+        synchronously on click, long before the executor boundary."""
+    
+        service, _ = make_pipeline(
+            pages=[(f"p{i}", i) for i in range(1, 9)], executor=slow_executor()
+        )
+        vm = make_vm(service)
+        vm.setContext("book-1", "chapter-1", "��", "��")
+        vm.startTranslateAll()
+    
+        started = time.monotonic()
+        vm.pauseRun()
+        elapsed_ms = (time.monotonic() - started) * 1000
+    
+        assert elapsed_ms <= 200
+        assert vm.taskProgress["pausing"] is True
+        assert vm.taskProgress["can_pause"] is False  # ��ͣ�в����ظ���ͣ
+    
+        assert wait_until(
+            qapp_, lambda: vm.taskProgress["run_status"] == "paused", timeout_ms=15000
+        )
+        assert vm.taskProgress["pausing"] is False
+        assert vm.taskProgress["can_continue"] is True
+    
+        vm.continueRun()
+>       assert wait_until(
+            qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
+        )
+E       assert False
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x2595cfd4c00) at 0x000002595DBB69C0>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000025996C954E0>, timeout_ms=15000)
+
+tests\workbench\test_workbench_viewmodel.py:210: AssertionError
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\IMPORT-EXPORT-UI-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.workspace\worktrees\IMPORT-EXPORT-UI-1\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
+FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
+FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
+3 failed, 2772 passed, 9 skipped, 2 warnings in 235.08s (0:03:55)

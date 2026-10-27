@@ -201,4 +201,56 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
     Task<ProviderBindingResult?> ResolveProviderBindingAsync(
         string capability,
         CancellationToken cancellationToken = default);
+
+    // ---------------------------------------------------------------------------------------
+    // IMPORT-EXPORT-UI-1: user-visible import/export entries. Import goes through the Host grant
+    // chain (HostIssuer mints the source grant; the UI never signs anything), export through the
+    // Host grant + StartExport chain verified by EXPORT-E2E-CLOSE-1.
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>Host-owned exports directory (the only accepted export destination root).</summary>
+    string ExportDirectorySuggestion { get; }
+
+    /// <summary>「导入文件」→ <c>library_import_file</c>（Host grant chain）；typed outcome only.</summary>
+    Task<ImportOutcome> ImportFilesAsync(
+        string chapterId,
+        IReadOnlyList<string> paths,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default);
+
+    /// <summary>「导入文件夹」→ <c>library_import_folder</c>（Host grant chain）；typed outcome only.</summary>
+    Task<ImportOutcome> ImportFolderAsync(
+        string chapterId,
+        string folderPath,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Pages of one chapter that carry a translated revision (the only exportable input).</summary>
+    Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>StartExport through the Host grant chain; null when the StartExport request was refused.</summary>
+    Task<ExportStartInfo?> StartExportAsync(
+        string bookId,
+        string chapterId,
+        IReadOnlyList<string> orderedPageIds,
+        string targetPath,
+        CancellationToken cancellationToken = default);
+
+    Task<ExportSnapshotInfo?> GetExportSnapshotAsync(
+        string exportId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<ExportHistoryEntry>> GetExportHistoryAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<ExportSnapshotInfo?> CancelExportAsync(
+        string exportId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>「打开导出目录」shell action; true only when the Host actually opened it.</summary>
+    Task<bool> RevealExportFolderAsync(
+        string exportId,
+        CancellationToken cancellationToken = default);
 }

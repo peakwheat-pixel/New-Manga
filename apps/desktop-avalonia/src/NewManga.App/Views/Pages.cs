@@ -53,10 +53,20 @@ public sealed class BookshelfPage : UserControl
     private readonly StackPanel _noResultsPanel;
     private readonly TextBlock _status;
     private readonly Grid _root;
+    private readonly IHostController? _controller;
+    private readonly IFilePickerGateway? _picker;
+    private readonly ImportPanel? _importPanel;
+    private readonly Button _importFilesButton;
+    private readonly Button _importFolderButton;
 
-    public BookshelfPage(BookshelfViewModel viewModel)
+    public BookshelfPage(
+        BookshelfViewModel viewModel,
+        IHostController? controller = null,
+        IFilePickerGateway? picker = null)
     {
         ViewModel = viewModel;
+        _controller = controller;
+        _picker = picker;
         Name = "BookshelfPage";
 
         _status = Ui.Text("只读骨架 · 数据经 Core command dispatcher", 12, "TextSecondary");
@@ -67,10 +77,18 @@ public sealed class BookshelfPage : UserControl
         headerText.Children.Add(Ui.Text("Saber-informed shell · 顶部渐变 / 1400 居中 / 3:4 书卡", 12, null));
         headerGrid.Children.Add(headerText);
         var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
+        // IMPORT-EXPORT-UI-1 AC1: system-picker entries. The buttons are always present; an inert
+        // controller/picker reports the typed "not ready" state instead of pretending to import.
+        _importFilesButton = Ui.Action("导入文件", () => LastImportOperation = BeginImportAsync(ImportSourceKind.Files));
+        _importFilesButton.Name = "ImportFilesButton";
+        _importFolderButton = Ui.Action("导入文件夹", () => LastImportOperation = BeginImportAsync(ImportSourceKind.Folder));
+        _importFolderButton.Name = "ImportFolderButton";
         var newButton = Ui.Action("新建", () => OpenNewDialog(), primary: true);
         newButton.Name = "NewBookButton";
         var refreshButton = Ui.Action("刷新", () => _ = ViewModel.RefreshAsync());
         refreshButton.Name = "RefreshButton";
+        actions.Children.Add(_importFilesButton);
+        actions.Children.Add(_importFolderButton);
         actions.Children.Add(newButton);
         actions.Children.Add(refreshButton);
         Grid.SetColumn(actions, 1);
@@ -193,6 +211,14 @@ public sealed class BookshelfPage : UserControl
         Grid.SetRow(statusRow, 1);
         inner.Children.Add(statusRow);
         _root.Children.Add(inner);
+        if (_controller is not null)
+        {
+            _importPanel = new ImportPanel(_controller) { IsVisible = false };
+            _importPanel.ImportCompleted += (_, _) => LastImportOperation = RefreshAfterImportAsync();
+            Grid.SetRowSpan(_importPanel, 2);
+            _root.Children.Add(_importPanel);
+        }
+
         Content = _root;
 
         ViewModel.PropertyChanged += (_, args) =>
@@ -244,6 +270,19 @@ public sealed class BookshelfPage : UserControl
     public Border Header => _header;
 
     public Button? NewBookButton => this.FindControl<Button>("NewBookButton");
+
+    /// <summary>IMPORT-EXPORT-UI-1 AC1: header entries.</summary>
+    public Button ImportFilesButton => _importFilesButton;
+
+    public Button ImportFolderButton => _importFolderButton;
+
+    public ImportPanel? ImportPanelControl => _importPanel;
+
+    /// <summary>IMPORT-EXPORT-UI-1: last page-level status line (picker/refresh feedback).</summary>
+    public string StatusLine => _status.Text ?? string.Empty;
+
+    /// <summary>Last import flow (tests await this; the picker itself is faked headless).</summary>
+    public Task LastImportOperation { get; private set; } = Task.CompletedTask;
 
     public void ApplyTheme()
     {
@@ -413,6 +452,48 @@ public sealed class BookshelfPage : UserControl
         actions.Children.Add(openReader);
         actions.Children.Add(Ui.Action("新建", () => OpenNewDialog(), primary: false));
         _detailBody.Children.Add(actions);
+    }
+
+    private async Task BeginImportAsync(ImportSourceKind kind)
+    {
+        if (_importPanel is null)
+        {
+            _status.Text = "Host 未接线：导入不可用";
+            return;
+        }
+
+        if (_picker is null)
+        {
+            _status.Text = "系统文件选择器不可用：导入不可用";
+            return;
+        }
+
+        try
+        {
+            IReadOnlyList<string> paths = kind == ImportSourceKind.Folder
+                ? (await _picker.PickFolderAsync() is { } folder ? new[] { folder } : Array.Empty<string>())
+                : await _picker.PickFilesAsync();
+            if (paths.Count == 0)
+            {
+                _status.Text = "未选择文件";
+                return;
+            }
+
+            await _importPanel.OpenAsync(kind, paths);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            _status.Text = "系统文件选择器不可用：导入不可用";
+        }
+    }
+
+    private async Task RefreshAfterImportAsync()
+    {
+        await ViewModel.RefreshAsync();
+        if (!string.IsNullOrEmpty(ViewModel.StatusMessage))
+        {
+            _status.Text = ViewModel.StatusMessage;
+        }
     }
 
     private void OpenNewDialog()

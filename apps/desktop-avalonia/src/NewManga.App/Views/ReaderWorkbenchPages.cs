@@ -18,19 +18,46 @@ namespace NewManga.App.Views;
 /// <summary>AC1 workbench: fixed 300/mid/230 columns, zoom 50-200%, tile canvas, region/bubble editing.</summary>
 public sealed class WorkbenchPage : UserControl
 {
-    public WorkbenchPage(WorkbenchViewModel viewModel)
+    private readonly IHostController? _controller;
+    private readonly IFilePickerGateway? _picker;
+    private ImportPanel? _importPanel;
+
+    public WorkbenchPage(
+        WorkbenchViewModel viewModel,
+        IHostController? controller = null,
+        IFilePickerGateway? picker = null)
     {
         ViewModel = viewModel;
+        _controller = controller;
+        _picker = picker;
         Name = "WorkbenchPage";
         var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("300,*,230") };
         grid.Children.Add(BuildLeft());
         grid.Children.Add(BuildCenter());
         grid.Children.Add(BuildRight());
+        if (_controller is not null)
+        {
+            // IMPORT-EXPORT-UI-1 AC1: the workbench exposes the same import entries as the shelf.
+            _importPanel = new ImportPanel(_controller) { IsVisible = false };
+            Grid.SetColumnSpan(_importPanel, 3);
+            _importPanel.ImportCompleted += (_, _) => LastImportOperation = RefreshAfterImportAsync();
+            grid.Children.Add(_importPanel);
+        }
+
         Content = grid;
         ApplyTheme();
     }
 
     public WorkbenchViewModel ViewModel { get; }
+
+    /// <summary>IMPORT-EXPORT-UI-1 AC1: workbench import entries.</summary>
+    public Button ImportFilesButton { get; private set; } = null!;
+
+    public Button ImportFolderButton { get; private set; } = null!;
+
+    public ImportPanel? ImportPanelControl => _importPanel;
+
+    public Task LastImportOperation { get; private set; } = Task.CompletedTask;
 
     public ITileSource? TileSource { get; private set; }
 
@@ -107,7 +134,49 @@ public sealed class WorkbenchPage : UserControl
         panel.Children.Add(addRegion);
         var deleteRegion = Ui.Action("删除选中区域", () => ViewModel.DeleteSelectedRegion());
         panel.Children.Add(deleteRegion);
+
+        panel.Children.Add(Ui.Text("导入", 13, "TextPrimary", bold: true));
+        var importRow = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 6 };
+        ImportFilesButton = Ui.Action("导入文件", () => LastImportOperation = BeginImportAsync(ImportSourceKind.Files));
+        ImportFilesButton.Name = "WorkbenchImportFilesButton";
+        ImportFolderButton = Ui.Action("导入文件夹", () => LastImportOperation = BeginImportAsync(ImportSourceKind.Folder));
+        ImportFolderButton.Name = "WorkbenchImportFolderButton";
+        importRow.Children.Add(ImportFilesButton);
+        importRow.Children.Add(ImportFolderButton);
+        panel.Children.Add(importRow);
         return new Border { Background = ThemePackService.Brush("CardBg"), Child = new ScrollViewer { Content = panel } };
+    }
+
+    private async Task BeginImportAsync(ImportSourceKind kind)
+    {
+        if (_importPanel is null || _picker is null)
+        {
+            return;
+        }
+
+        try
+        {
+            IReadOnlyList<string> paths = kind == ImportSourceKind.Folder
+                ? (await _picker.PickFolderAsync() is { } folder ? new[] { folder } : Array.Empty<string>())
+                : await _picker.PickFilesAsync();
+            if (paths.Count == 0)
+            {
+                return;
+            }
+
+            await _importPanel.OpenAsync(kind, paths);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+        }
+    }
+
+    private async Task RefreshAfterImportAsync()
+    {
+        if (_controller is not null)
+        {
+            await _controller.RefreshBooksAsync();
+        }
     }
 
     private Control BuildCenter()
@@ -206,7 +275,12 @@ public sealed class ReaderPage : UserControl
     private readonly TextBlock _libraryTitle;
     private readonly TextBlock _emptyState;
     private readonly Button _immersiveButton;
+    private readonly Button _exportButton;
     private readonly Border _root;
+    private IHostController? _exportController;
+    private IFilePickerGateway? _exportPicker;
+    private ExportPanel? _exportPanel;
+    private Grid? _pageGrid;
     private Bitmap? _currentBitmap;
     private ITileSource? _tileSource;
     private ReaderBookData? _libraryBook;
@@ -368,9 +442,24 @@ public sealed class ReaderPage : UserControl
         StyleToolbarButton(_immersiveButton);
         ImmersiveButton = _immersiveButton;
 
+        // IMPORT-EXPORT-UI-1 AC2: export entry for the currently loaded book/chapter (hidden until
+        // a controller is wired AND a real library book is open).
+        _exportButton = new Button
+        {
+            Content = "导出",
+            Name = "ExportButton",
+            FontSize = 12,
+            Padding = new Thickness(10, 4),
+            CornerRadius = new CornerRadius(8),
+            IsVisible = false,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        _exportButton.Click += (_, _) => LastExportOperation = OpenExportAsync();
+        StyleToolbarButton(_exportButton);
+
         var toolbar = new Grid
         {
-            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto,Auto,Auto,Auto"),
+            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto,Auto,Auto,Auto,Auto"),
             Margin = new Thickness(0, 6, 12, 6),
         };
         _hud.Margin = new Thickness(16, 0);
@@ -390,15 +479,18 @@ public sealed class ReaderPage : UserControl
         toolbar.Children.Add(_chapterSelector);
         toolbar.Children.Add(_nextChapter);
         toolbar.Children.Add(_immersiveButton);
+        toolbar.Children.Add(_exportButton);
         Grid.SetColumn(contextPanel, 1);
         Grid.SetColumn(_previousChapter, 2);
         Grid.SetColumn(_chapterSelector, 3);
         Grid.SetColumn(_nextChapter, 4);
         Grid.SetColumn(_immersiveButton, 5);
+        Grid.SetColumn(_exportButton, 6);
         _previousChapter.Margin = new Thickness(6, 0);
         _chapterSelector.Margin = new Thickness(6, 0);
         _nextChapter.Margin = new Thickness(6, 0);
         _immersiveButton.Margin = new Thickness(6, 0);
+        _exportButton.Margin = new Thickness(6, 0);
         var surface = BuildSurface();
         var grid = new Grid
         {
@@ -408,6 +500,7 @@ public sealed class ReaderPage : UserControl
         Grid.SetRow(surface, 1);
         Grid.SetRow(_webtoonScroll, 1);
         Grid.SetRow(_emptyState, 1);
+        _pageGrid = grid;
         _root = new Border { Background = Brushes.Black, Child = grid };
         Content = _root;
 
@@ -429,6 +522,13 @@ public sealed class ReaderPage : UserControl
     public TextBlock EmptyState { get; }
 
     public Button ImmersiveButton { get; }
+
+    /// <summary>IMPORT-EXPORT-UI-1 AC2: reader export entry (enabled once a book + controller exist).</summary>
+    public Button ExportButton => _exportButton;
+
+    public ExportPanel? ExportPanelControl => _exportPanel;
+
+    public Task LastExportOperation { get; private set; } = Task.CompletedTask;
 
     /// <summary>CHAPTER-SELECTOR-1 AC1: chapter picker in the reader toolbar (hidden for 1 chapter).</summary>
     public ComboBox ChapterSelector { get; }
@@ -508,6 +608,11 @@ public sealed class ReaderPage : UserControl
     /// <summary>READER-LIBRARY-WIRE-1 AC1: render a real book from Host/CoreClient data.</summary>
     public void LoadLibrary(ReaderBookData book)
     {
+        if (_exportController is not null)
+        {
+            _exportButton.IsVisible = true;
+        }
+
         _libraryBook = book;
         _renderedPages.Clear();
         _emptyState.IsVisible = false;
@@ -541,6 +646,8 @@ public sealed class ReaderPage : UserControl
     /// <summary>READER-LIBRARY-WIRE-1 AC1 empty state (fixture fallback keeps rendering behind it).</summary>
     public void SetLibraryEmpty(string message)
     {
+        _exportButton.IsVisible = false;
+
         _libraryBook = null;
         _emptyState.Text = message;
         _emptyState.IsVisible = true;
@@ -1028,6 +1135,44 @@ public sealed class ReaderPage : UserControl
     private double WebtoonScrollY => _webtoonScrollOverride ?? _webtoonScroll.Offset.Y;
 
     /// <summary>READER-LIBRARY-WIRE-1 AC2: request the immersive window (button / double-click).</summary>
+    /// <summary>
+    /// IMPORT-EXPORT-UI-1 AC2: wire the export entry (MainWindow does this once at construction).
+    /// Nothing changes for the fixture reader: without a controller the button stays hidden.
+    /// </summary>
+    public void SetExportController(IHostController controller, IFilePickerGateway? picker = null)
+    {
+        _exportController = controller;
+        _exportPicker = picker;
+        _exportPanel = new ExportPanel(controller) { IsVisible = false };
+        var pageGrid = _pageGrid;
+        if (pageGrid is not null)
+        {
+            var host = new Grid();
+            _root.Child = null;
+            host.Children.Add(pageGrid);
+            host.Children.Add(_exportPanel);
+            _root.Child = host;
+        }
+
+        _exportButton.IsVisible = _libraryBook is not null;
+    }
+
+    private async Task OpenExportAsync()
+    {
+        if (_exportPanel is null || _exportController is null)
+        {
+            return;
+        }
+
+        if (_libraryBook is not { } book)
+        {
+            return;
+        }
+
+        _exportPanel.IsVisible = true;
+        await _exportPanel.PrepareAsync(book.BookId, book.BookTitle, book.ChapterId, book.ChapterTitle);
+    }
+
     public void RequestImmersive() => ImmersiveRequested?.Invoke(this, EventArgs.Empty);
 
     /// <summary>Waits until a library page has decoded and been applied (tests/evidence).</summary>
