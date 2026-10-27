@@ -3,7 +3,7 @@ id: EXPORT-E2E-CLOSE-1
 title: Export 端到端真跑（新 sidecar + translated 产物 + grant）
 kind: verification
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: route-research
 owner: route-research
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: e30149258
 branch: task/EXPORT-E2E-CLOSE-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/EXPORT-E2E-CLOSE-1
-integration_commit: null
+integration_commit: 3f73c92a1
 delivery_head: 6ba640d9984fb647d97233883fe55bef6eba1e32
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -107,3 +107,13 @@ RELEASE-REPACK-2 新 sidecar（models `c5531930…` / base `091a201d…`）上 R
 - 删除、迁移、归档数量/字节数：待关闭时填写（交付后清理 `baseline-worktree`）。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- AC1：REPACK-2 新 sidecar 上 3 个 translated 页 revision/sha 与 DB/磁盘三方一致；导出前 GetExportHistory 为空。
+- AC2：grant 链真实导出 **ZIP 7,070,562B**，DSH 独立复算 sha256 `41d9d5fc…d57ef9`（与实现方一致，已用 Get-FileHash 复验）；3 页 + manifest，逐页字节 sha = manifest = 落库 translated revision；快照 running@26.6ms→completed@210.4ms。
+- AC3：GetExportSnapshot completed（path/sha256）；CancelExport→cancelled（25ms）无产物；未知 id 两侧 typed EXPORT_NOT_FOUND。
+- AC4：DSH 复跑 test.ps1 **191/191**（含 2 条真实 ExportE2ETests）；pytest 3F/2772P/9S（与纯净 base 逐条相同，0 新增）。
+- 遗留：PDF（需 Qt composer）/cbz/text 未覆盖；identity 翻译为 experimental 占位（不构成翻译质量验收）；大书性能未测。
+- 集成：3f73c92a1。
+

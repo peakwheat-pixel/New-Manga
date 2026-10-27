@@ -3,7 +3,7 @@ id: CREDENTIAL-UI-1
 title: 设置页凭据 UI（安全输入 → credential_put / clear）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 6f6e4a678
 branch: task/CREDENTIAL-UI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/CREDENTIAL-UI-1
-integration_commit: null
+integration_commit: dde7f50ee
 delivery_head: 5b5d67fc5a248f1081cab4dca49faa2d85d71f97
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -102,3 +102,14 @@ CREDENTIAL-PORT-1 已交付 `credential_put`/`credential_clear` 命令面 + Wind
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实 vault/真实 `%APPDATA%` 未触碰）。
 - 未关闭项及保留原因：真实 vault 提交未在 UI 层真机执行（卡面禁令，由 CREDENTIAL-PORT-1 Host 测试覆盖）；真机截图时 Host 未就绪故目标列表为空（掩码与安全属性已验证）；profile 创建/编辑 UI 属后续 Task；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 设置页「凭据 · Credential」卡：目标下拉（configured/missing）+ 掩码 SecretTextBox + 保存/清除/刷新 + typed 状态 + CREDENTIAL_CONFLICT 二次确认（确认前零调用）。
+- 安全：无明文 TextBox；复制快捷键/右键禁用；automation peer 无 value；提交/清除/切换/取消/关闭均清空；253 文件扫描 secret 0 命中。
+- 真机截图揪出并修复真实缺陷：派生 TextBox 缺 `StyleKeyOverride` → 0×0 不可见（已加可见性回归测试）。
+- 回归：DSH 复跑 test.ps1 见执行记录（实现方报 198/198）；vitest 60/567；pytest 3F/2772P/9S（0 新增）；check.ps1 -TaskPath PASS；18 条 pin。
+- 遗留：UI 未真机写入真实 vault（Host 链已由 CREDENTIAL-PORT-1 覆盖）；真机截图时 Host 未就绪故目标列表为空；profile 创建/编辑 UI 另属 SETTINGS-PROFILE-UI-1。
+- 集成：dde7f50ee。
+
+
