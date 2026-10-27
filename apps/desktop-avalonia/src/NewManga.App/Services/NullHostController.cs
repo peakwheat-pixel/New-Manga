@@ -173,6 +173,8 @@ public sealed class NullHostController : IHostController
         string chapterId,
         IReadOnlyList<string> orderedPageIds,
         string targetPath,
+        string format = "zip",
+        string? pdfContent = null,
         CancellationToken cancellationToken = default) =>
         Task.FromResult<ExportStartInfo?>(null);
 

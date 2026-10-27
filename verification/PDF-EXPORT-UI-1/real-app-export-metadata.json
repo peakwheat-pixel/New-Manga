@@ -1,0 +1,24 @@
+{
+  "captured_at": "2026-10-28T00:16:11.2087408+08:00",
+  "window": "NewManga.App 1440x920 (Debug build of task/PDF-EXPORT-UI-1)",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-UI-1\\real-app-data-root (isolated copy of RELEASE-REPACK-3/data-root)",
+  "sidecar_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-3\\sidecar-base\\core-sidecar",
+  "book": "BOOK-FIXTURE-1 日漫_JA 测试书",
+  "chapter": "第 1 章",
+  "exported_pdf_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-UI-1\\real-app-data-root\\exports\\BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261027-161525.pdf",
+  "exported_pdf_bytes": 20728075,
+  "exported_pdf_sha256": "c0a97eb3bac77ed538e72468034e3b80e3a989509aef0eea5bedde09b8fbb210",
+  "exported_pdf_header": "%PDF-1.7",
+  "exported_pdf_page_objects": 3,
+  "exported_pdf_has_font": true,
+  "exported_pdf_has_text_operators": true,
+  "format": "pdf",
+  "pdf_content": "searchable_dual_layer",
+  "translated_pages": 3,
+  "panel_status": "导出完成（PDF · searchable_dual_layer）：G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-UI-1\\real-app-data-root\\exports\\BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261027-161525.pdf · sha256 c0a97eb3bac77ed538e72468034e3b80e3a989509aef0eea5bedde09b8fbb210 · 3 页",
+  "screenshots": [
+    "real-app-pdf-options.png",
+    "real-app-pdf-completed.png"
+  ],
+  "note": "真实 Host/Core 全链导出；截图来自 Debug 构建 + 隔离数据根；未修改真实 %APPDATA%"
+}

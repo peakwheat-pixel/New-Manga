@@ -274,6 +274,12 @@ public sealed class ExportPanel : Border
     private readonly Button _reveal;
     private readonly Button _close;
     private readonly ItemsControl _history;
+    // PDF-EXPORT-UI-1: the export format is a real choice now (ZIP image pack or PDF); the PDF mode
+    // selects the Core composer's text layer behaviour. Both are forwarded as format/format_options.
+    private readonly ComboBox _formatSelector;
+    private readonly ComboBox _pdfModeSelector;
+    private readonly StackPanel _pdfModeRow;
+    private string? _requestedPdfContent;
     private string? _bookId;
     private string? _chapterId;
     private string _bookTitle = string.Empty;
@@ -327,6 +333,36 @@ public sealed class ExportPanel : Border
         _history.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<string>((line, _) =>
             Ui.Text(line, 11, "TextSecondary"));
 
+        // PDF-EXPORT-UI-1: format choice + PDF content mode. The HostIssuer already validates
+        // format=pdf with exactly {"pdf_content": "image_only" | "searchable_dual_layer"} and
+        // format=zip with {"compression": …}; the panel only gathers the user's choice.
+        _formatSelector = new ComboBox
+        {
+            Name = "ExportFormatSelector",
+            MinWidth = 190,
+            ItemsSource = new List<string> { "ZIP 图片包（zip）", "PDF（pdf）" },
+            SelectedIndex = 0,
+        };
+        _formatSelector.SelectionChanged += (_, _) => UpdateFormatUi();
+        _pdfModeSelector = new ComboBox
+        {
+            Name = "ExportPdfModeSelector",
+            MinWidth = 260,
+            ItemsSource = new List<string>
+            {
+                "searchable_dual_layer（可搜索 CJK 文本层）",
+                "image_only（无损图片）",
+            },
+            SelectedIndex = 0,
+        };
+        _pdfModeRow = new StackPanel { Spacing = 4, IsVisible = false };
+        _pdfModeRow.Children.Add(Ui.Text("PDF 内容模式", 11, "TextSecondary"));
+        _pdfModeRow.Children.Add(_pdfModeSelector);
+        var formatRow = new StackPanel { Spacing = 4 };
+        formatRow.Children.Add(Ui.Text("导出格式", 11, "TextSecondary"));
+        formatRow.Children.Add(_formatSelector);
+        UpdateFormatUi();
+
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Margin = new Thickness(0, 10, 0, 0) };
         buttons.Children.Add(_start);
         buttons.Children.Add(_cancel);
@@ -334,9 +370,14 @@ public sealed class ExportPanel : Border
         buttons.Children.Add(_close);
 
         var body = new StackPanel { Spacing = 6 };
-        body.Children.Add(Ui.Text("导出当前书（ZIP 图片包）", 17, "TextPrimary", bold: true));
+        body.Children.Add(Ui.Text("导出当前书", 17, "TextPrimary", bold: true));
         body.Children.Add(_context);
-        body.Children.Add(Ui.Text("导出由 Host 签发目标 grant，产物写入 Host 数据根 exports/；下方进度来自 GetExportSnapshot。", 11, "TextSecondary"));
+        body.Children.Add(Ui.Text(
+            "支持 ZIP 图片包与 PDF（image_only 无损图片 / searchable_dual_layer 可搜索 CJK 文本层）；导出由 Host 签发目标 grant，产物写入 Host 数据根 exports/。",
+            11,
+            "TextSecondary"));
+        body.Children.Add(formatRow);
+        body.Children.Add(_pdfModeRow);
         body.Children.Add(_status);
         body.Children.Add(_progress);
         body.Children.Add(new Border { Height = 4 });
@@ -360,9 +401,25 @@ public sealed class ExportPanel : Border
 
     public ItemsControl HistoryList => _history;
 
-    public string? ActiveExportId => _exportId;
+    /// <summary>PDF-EXPORT-UI-1: ZIP/PDF selector (index 0 = zip, 1 = pdf).</summary>
+    public ComboBox FormatSelector => _formatSelector;
+
+    /// <summary>PDF-EXPORT-UI-1: PDF content mode selector (index 0 = searchable_dual_layer, 1 = image_only).</summary>
+    public ComboBox PdfModeSelector => _pdfModeSelector;
+
+    public bool PdfModeRowVisible => _pdfModeRow.IsVisible;
+
+    /// <summary>Selected Host format value: <c>zip</c> or <c>pdf</c>.</summary>
+    public string SelectedFormat => _formatSelector.SelectedIndex == 1 ? "pdf" : "zip";
+
+    /// <summary>Selected PDF content mode; null for the ZIP format.</summary>
+    public string? SelectedPdfContent => SelectedFormat == "pdf"
+        ? _pdfModeSelector.SelectedIndex == 1 ? "image_only" : "searchable_dual_layer"
+        : null;
 
     public ExportSnapshotInfo? LastSnapshot => _last;
+
+    public string? ActiveExportId => _exportId;
 
     public IReadOnlyList<string> TranslatedPageIds => _translated;
 
@@ -379,7 +436,20 @@ public sealed class ExportPanel : Border
             return string.Empty;
         }
 
-        return Path.Combine(directory, ImportExportFormatting.DefaultExportFileName(_bookTitle, _chapterTitle));
+        return Path.Combine(
+            directory,
+            ImportExportFormatting.DefaultExportFileName(_bookTitle, _chapterTitle, SelectedFormat));
+    }
+
+    /// <summary>PDF-EXPORT-UI-1: show the PDF content selector only for the PDF format.</summary>
+    private void UpdateFormatUi()
+    {
+        _pdfModeRow.IsVisible = SelectedFormat == "pdf";
+        // Keep the ready hint in sync with the selected format (e.g. after switching ZIP → PDF).
+        if (_exportId is null && _translated.Count > 0 && !string.IsNullOrWhiteSpace(_controller.ExportDirectorySuggestion))
+        {
+            _status.Text = $"可导出 {_translated.Count} 页已翻译内容：选择「{ImportExportFormatting.FormatDisplay(SelectedFormat, SelectedPdfContent)}」后点击「开始导出」";
+        }
     }
 
     /// <summary>AC2: load the reader context (book/chapter + its translated pages + history).</summary>
@@ -391,6 +461,7 @@ public sealed class ExportPanel : Border
         _chapterTitle = string.IsNullOrWhiteSpace(chapterTitle) ? "第 1 章" : chapterTitle;
         _exportId = null;
         _last = null;
+        _requestedPdfContent = null;
         _pollCount = 0;
         IsVisible = true;
         _reveal.IsEnabled = false;
@@ -415,7 +486,7 @@ public sealed class ExportPanel : Border
         }
 
         _context.Text = $"{_bookTitle} · {_chapterTitle} · {_translated.Count} 页可导出";
-        _status.Text = $"可导出 {_translated.Count} 页已翻译内容：点击「开始导出」";
+        _status.Text = $"可导出 {_translated.Count} 页已翻译内容：选择「{ImportExportFormatting.FormatDisplay(SelectedFormat)}」后点击「开始导出」";
         _start.IsEnabled = true;
     }
 
@@ -450,13 +521,20 @@ public sealed class ExportPanel : Border
 
         _busy = true;
         _start.IsEnabled = false;
-        _status.Text = "正在请求 Host 导出（签发目标 grant）…";
+        _requestedPdfContent = SelectedPdfContent;
+        _status.Text = $"正在请求 Host 导出（{ImportExportFormatting.FormatDisplay(SelectedFormat, _requestedPdfContent)}；签发目标 grant）…";
         _progress.IsIndeterminate = true;
         _progress.Value = 0;
         _progress.IsVisible = true;
         try
         {
-            var started = await _controller.StartExportAsync(_bookId, _chapterId, _translated, target);
+            var started = await _controller.StartExportAsync(
+                _bookId,
+                _chapterId,
+                _translated,
+                target,
+                SelectedFormat,
+                _requestedPdfContent);
             if (started is null || string.IsNullOrWhiteSpace(started.ExportId))
             {
                 _progress.IsVisible = false;
@@ -465,7 +543,12 @@ public sealed class ExportPanel : Border
             }
 
             _exportId = started.ExportId;
-            _last = ExportSnapshotInfo.FromState(started.ExportId, started.State, 0, started.PageCount);
+            _last = ExportSnapshotInfo.FromState(
+                started.ExportId,
+                started.State,
+                0,
+                started.PageCount,
+                format: SelectedFormat);
             UpdateFromSnapshot(_last);
             await TickAsync();
             StartTimer();
@@ -556,7 +639,12 @@ public sealed class ExportPanel : Border
 
     private void UpdateFromSnapshot(ExportSnapshotInfo snapshot)
     {
-        _status.Text = ImportExportFormatting.SnapshotStatus(snapshot);
+        // PDF-EXPORT-UI-1: when the Core reported a PDF completion, name the requested PDF content
+        // mode so the completed state distinguishes PDF (searchable/image-only) from the ZIP pack.
+        var pdfContent = string.Equals(snapshot.Format, "pdf", StringComparison.Ordinal)
+            ? _requestedPdfContent
+            : null;
+        _status.Text = ImportExportFormatting.SnapshotStatus(snapshot, pdfContent);
         _progress.IsVisible = snapshot.IsActive;
         if (snapshot.IsActive)
         {
