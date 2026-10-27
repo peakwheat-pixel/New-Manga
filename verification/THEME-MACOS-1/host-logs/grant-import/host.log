@@ -1,0 +1,14 @@
+2026-10-27T15:55:43.6912206+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.7666c4eef283 (abandoned_recovered=False)
+2026-10-27T15:55:43.6913028+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\grant-import-74b77798ec
+2026-10-27T15:55:43.6913637+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T15:55:44.1029660+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T15:55:44.2088552+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T15:55:44.2090141+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T15:55:44.2097264+00:00 INFO host-control session opened (host_MBGtjAXnzzpl1sZaBX0mTEoIoFqUpzWtjHbOzU-WMeI)
+2026-10-27T15:59:51.4301009+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.a3b1b3a1e9a0 (abandoned_recovered=False)
+2026-10-27T15:59:51.4301419+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\grant-import-844cfc524f
+2026-10-27T15:59:51.4301786+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T15:59:51.8164105+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T15:59:51.8941306+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T15:59:51.8941720+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T15:59:51.8945018+00:00 INFO host-control session opened (host_-laxpMbRvfgP3E-DXJUM4MJ_O8Eml-gCMgwbPcRnvlk)

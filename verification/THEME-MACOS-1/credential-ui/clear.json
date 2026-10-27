@@ -1,0 +1,8 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "clear -\u003E credential_clear",
+  "target_kind": "proxy_auth",
+  "owner_id": "network-1",
+  "status_mentions_missing": true,
+  "state_refreshed_to_missing": true
+}

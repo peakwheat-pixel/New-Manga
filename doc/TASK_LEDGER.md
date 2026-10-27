@@ -7,23 +7,23 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 420 |
-| terminal | 404 |
-| non-terminal | 16 |
-| non-terminal named in the plan | 9 |
+| terminal | 405 |
+| non-terminal | 15 |
+| non-terminal named in the plan | 8 |
 | non-terminal outside the plan | 7 |
-| task files tracked by git | 419 |
-| task files untracked (drafts) | 1 |
+| task files tracked by git | 420 |
+| task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 15 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 334 | yes |
+| `done` | 335 | yes |
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
-| `ready` | 7 | no |
+| `ready` | 6 | no |
 | `superseded` | 6 | yes |
 | `in_review` | 4 | no |
 | `proposed` | 3 | no |
@@ -43,7 +43,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `AD002-FOLLOWUPS-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `READER-LIBRARY-WIRE-1` | `proposed` | no |
-| `FLAKY-PYTEST-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 | `PDF-EXPORT-UI-1` | `ready` | own row |
 | `REAL-TRANSLATE-PROVIDER-1` | `ready` | own row |

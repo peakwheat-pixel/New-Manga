@@ -3,7 +3,7 @@ id: FLAKY-PYTEST-1
 title: 稳定 3 个既有 flaky 失败
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_round_2_5
 suggested_owner: sandbox-verify
 owner: sandbox-verify
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 13cf26f6c
 branch: task/FLAKY-PYTEST-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1
-integration_commit: null
+integration_commit: ba4080752
 delivery_head: 4b0ac1831928a374ece45317e67933b9e47bc57e
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -116,3 +116,12 @@ pin 口径：sha256 为**提交内 blob 字节**（与全新 checkout 落盘字�
 - 删除、迁移、归档：本 Task 无删除/迁移/归档；临时 pre-fix worktree 保留引用（待 DSH closeout 处置）。
 - 未关闭项：① 本机 dev venv 落后 requirements pin（transformers/torch；2 个 detection 测试以显式 skip 待真跑）；② sandbox 20 s 上界为经验值；详见 Handoff 遗留。
 - Review：待 DSH 指定独立 Reviewer（owner 为实现者，不得自审）。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- ① detection 两项：环境依赖（dev venv transformers 4.48.3 缺 RTDetrV2，快照需 ≥4.49；requirements pin 5.17.0）→ **机器可判定显式 skip**（reason 含版本/需求/修复指引，-rs 可见），非静默。
+- ② workbench 	est_pause_shows_optimistic_feedback_immediately：**真 bug**——VM continueRun 误按 un.status 判 worker 准入，而 control_run("continue") 返回 ControlResult(PENDING) 且 run 置 RUNNING → worker 永不启动；已修（改用 esult.status + 根因注释）。
+- ③ sandbox 孙进程测试：OS 异步回收时序 flaky → 2s 固定窗口改 **20s 有界等待**，断言未放宽（探针 6/6 孙进程 ~20ms 被杀）。
+- 稳定性：**连续 5 次全量 pytest 0F/2773P/10S、EXIT=0**（219.7/227.8/210.3/204.1/204.3s，distinct=[[0,2773,10]] consistent=true）；-rs 固化 10 项 skip（9 既有 + 1 新增，均机器可判定）。
+- AC4：test.ps1 225/225（实现方在干净 worktree）；vitest 60/567 不变。
+- 遗留：dev venv 落后 pin（2 个 detection 测试待装 requirements-dev 后真跑，由 DSH 决策）；sandbox 20s 为经验上界。
+- 集成：ba4080752。

@@ -1,0 +1,84 @@
+{
+  "ac": "AC2",
+  "cases": 15,
+  "core_frames_before": 1,
+  "core_frames_after": 1,
+  "rejected_before_core": true,
+  "cases_detail": [
+    {
+      "command": "backup_delete",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "plugins_set_plugin_enabled",
+      "args": "{\u0022enabled\u0022:false}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "plugins_set_plugin_enabled",
+      "args": "{\u0022plugin_id\u0022:\u0022p\u0022,\u0022enabled\u0022:\u0022yes\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "plugins_audit_list",
+      "args": "{\u0022limit\u0022:-1}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "plugins_audit_list",
+      "args": "{\u0022limit\u0022:\u0022many\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "library_delete_book_permanently",
+      "args": "{\u0022book_id\u0022:\u0022book-1\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "library_delete_book_permanently",
+      "args": "{\u0022book_id\u0022:\u0022\u0022,\u0022confirm_permanent_delete\u0022:true}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profile_default_set",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profiles_create",
+      "args": "{\u0022display_name\u0022:\u0022x\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profiles_create",
+      "args": "{\u0022display_name\u0022:\u0022x\u0022,\u0022mode\u0022:\u0022Direct\u0022,\u0022proxy_endpoint\u0022:5}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profiles_update",
+      "args": "{\u0022network_profile_id\u0022:\u0022p\u0022,\u0022display_name\u0022:\u0022x\u0022,\u0022mode\u0022:\u0022Direct\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profiles_delete",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_bindings_clear",
+      "args": "{\u0022capability\u0022:\u0022Translation\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_bindings_resolve",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_run_snapshot_get",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    }
+  ]
+}
