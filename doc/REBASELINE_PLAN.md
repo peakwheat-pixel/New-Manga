@@ -30,10 +30,10 @@
 
 |MICA-FIX-1|—|done（Mica 可见：actual=Mica、标题栏取色 #FFFFFF→#F0EBF7；集成 93aaaeb8c）|
 |DPI-DYNAMIC-1|—|ready（跨屏动态 DPI 重渲染）|
-|BOOK-FIXTURE-1|—|ready（隔离数据根建测试书）|
-|READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|proposed（阅读器接真实书库 + 沉浸入口；BOOK-FIXTURE-1 已完成建书）|
+|BOOK-FIXTURE-1|—|done（隔离根建书 8 页/幂等/未污染 APPDATA；集成 377736213；AC3 PARTIAL→READER 接线）|
+|READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|ready（阅读器接书库+沉浸入口；base 377736213）|
 
-READY 节点：DPI-DYNAMIC-1、BOOK-FIXTURE-1。
+READY 节点：DPI-DYNAMIC-1、READER-LIBRARY-WIRE-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

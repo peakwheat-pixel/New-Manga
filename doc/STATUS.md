@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[DPI-DYNAMIC-1](tasks/DPI-DYNAMIC-1.md) `ready`（跨屏动态 DPI；MICA-FIX-1 done 93aaaeb8c）。
+- 当前 Task：[READER-LIBRARY-WIRE-1](tasks/READER-LIBRARY-WIRE-1.md) `ready`（阅读器接真实书库+沉浸入口；BOOK-FIXTURE-1 done 377736213）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

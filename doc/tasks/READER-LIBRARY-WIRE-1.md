@@ -3,13 +3,13 @@ id: READER-LIBRARY-WIRE-1
 title: 阅读器接真实书库 + 沉浸窗口入口（Esc/H/F 可达）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 approval: user_authorized_2026-10-27_manual_verify_followups
 suggested_owner: antigravity
 owner: null
 reviewer: dsh
 depends_on: [BOOK-FIXTURE-1]
-base_commit: null
+base_commit: 377736213
 branch: null
 worktree: null
 integration_commit: null
@@ -78,3 +78,4 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+
