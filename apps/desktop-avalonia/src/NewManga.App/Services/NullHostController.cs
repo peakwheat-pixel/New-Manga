@@ -70,6 +70,72 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult(CredentialOperationResult.NotReady());
 
+    // SETTINGS-PROFILE-UI-1: designer/inert path — no Host, so lists stay empty and mutations report
+    // HOST_NOT_READY instead of pretending to succeed.
+    public Task<IReadOnlyList<ProviderProfileInfo>> ListProviderProfilesAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(Array.Empty<ProviderProfileInfo>());
+
+    public Task<SettingsProfileResult> SaveProviderProfileAsync(
+        string? profileId,
+        ProviderProfileDraft draft,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<SettingsProfileResult> DeleteProviderProfileAsync(
+        string profileId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<IReadOnlyList<NetworkProfileInfo>> ListNetworkProfilesAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<NetworkProfileInfo>>(Array.Empty<NetworkProfileInfo>());
+
+    public Task<SettingsProfileResult> SaveNetworkProfileAsync(
+        string? networkProfileId,
+        NetworkProfileDraft draft,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<SettingsProfileResult> DeleteNetworkProfileAsync(
+        string networkProfileId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<SettingsProfileResult> SetNetworkDefaultAsync(
+        string? networkProfileId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<NetworkTestInfo?> TestNetworkProfileAsync(
+        string networkProfileId,
+        string providerProfileId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<NetworkTestInfo?>(null);
+
+    public Task<NetworkResolveInfo?> ResolveNetworkProfileAsync(
+        string? providerProfileId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<NetworkResolveInfo?>(null);
+
+    public Task<SettingsProfileResult> SetProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        string profileId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<SettingsProfileResult> ClearProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SettingsProfileResult.NotReady());
+
+    public Task<ProviderBindingResult?> ResolveProviderBindingAsync(
+        string capability,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<ProviderBindingResult?>(null);
+
     public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

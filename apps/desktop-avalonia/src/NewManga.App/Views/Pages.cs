@@ -575,10 +575,72 @@ public sealed class SettingsPage : UserControl
         };
         credentialCard.Child = Credentials;
         right.Children.Insert(0, credentialCard);
+
+        // SETTINGS-PROFILE-UI-1: provider / network profile management + binding slots. Same controller
+        // seam as the credential block; the designer path (controller == null) shows typed empty states.
+        ProviderProfiles = new ProviderProfileSection(
+            controller is null
+                ? _ => Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(Array.Empty<ProviderProfileInfo>())
+                : controller.ListProviderProfilesAsync,
+            controller is null
+                ? _ => Task.FromResult<IReadOnlyList<NetworkProfileInfo>>(Array.Empty<NetworkProfileInfo>())
+                : controller.ListNetworkProfilesAsync,
+            controller is null
+                ? (_, _, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.SaveProviderProfileAsync,
+            controller is null
+                ? (_, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.DeleteProviderProfileAsync);
+        NetworkProfiles = new NetworkProfileSection(
+            controller is null
+                ? _ => Task.FromResult<IReadOnlyList<NetworkProfileInfo>>(Array.Empty<NetworkProfileInfo>())
+                : controller.ListNetworkProfilesAsync,
+            controller is null
+                ? _ => Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(Array.Empty<ProviderProfileInfo>())
+                : controller.ListProviderProfilesAsync,
+            controller is null
+                ? (_, _, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.SaveNetworkProfileAsync,
+            controller is null
+                ? (_, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.DeleteNetworkProfileAsync,
+            controller is null
+                ? (_, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.SetNetworkDefaultAsync,
+            controller is null
+                ? (_, _, _) => Task.FromResult<NetworkTestInfo?>(null)
+                : controller.TestNetworkProfileAsync,
+            controller is null
+                ? (_, _) => Task.FromResult<NetworkResolveInfo?>(null)
+                : controller.ResolveNetworkProfileAsync);
+        Bindings = new ProviderBindingsSection(
+            controller is null
+                ? _ => Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(Array.Empty<ProviderProfileInfo>())
+                : controller.ListProviderProfilesAsync,
+            controller is null
+                ? (_, _, _, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.SetProviderBindingAsync,
+            controller is null
+                ? (_, _, _) => Task.FromResult(SettingsProfileResult.NotReady())
+                : controller.ClearProviderBindingAsync,
+            controller is null
+                ? (_, _) => Task.FromResult<ProviderBindingResult?>(null)
+                : controller.ResolveProviderBindingAsync);
+        right.Children.Insert(1, ProfileUi.Card(ProviderProfiles));
+        right.Children.Insert(2, ProfileUi.Card(NetworkProfiles));
+        right.Children.Insert(3, ProfileUi.Card(Bindings));
         Grid.SetColumn(right, 1);
         content.Children.Add(right);
-        Grid.SetRow(content, 2);
-        root.Children.Add(content);
+        // SETTINGS-PROFILE-UI-1: the settings page is now taller than the window (credential + provider
+        // + network + bindings cards), so the contract row scrolls instead of clipping the lower cards.
+        var pageScroll = new ScrollViewer
+        {
+            Content = content,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+        };
+        Grid.SetRow(pageScroll, 2);
+        root.Children.Add(pageScroll);
         Content = root;
         ApplyTheme();
     }
@@ -597,6 +659,23 @@ public sealed class SettingsPage : UserControl
 
     /// <summary>CREDENTIAL-UI-1 AC3: drop the masked plaintext (window close / leaving settings).</summary>
     public void ClearCredentialSecrets() => Credentials.ClearSecrets();
+
+    /// <summary>SETTINGS-PROFILE-UI-1: provider profile management card.</summary>
+    public ProviderProfileSection ProviderProfiles { get; }
+
+    /// <summary>SETTINGS-PROFILE-UI-1: network profile management card (CRUD + test/resolve/default).</summary>
+    public NetworkProfileSection NetworkProfiles { get; }
+
+    /// <summary>SETTINGS-PROFILE-UI-1: provider binding slot card.</summary>
+    public ProviderBindingsSection Bindings { get; }
+
+    /// <summary>SETTINGS-PROFILE-UI-1: reload provider/network profiles and binding targets.</summary>
+    public async Task RefreshProfilesAsync()
+    {
+        await ProviderProfiles.RefreshAsync();
+        await NetworkProfiles.RefreshAsync();
+        await Bindings.RefreshAsync();
+    }
 
     /// <summary>GPU-ORT-PROBE-1: packaged device probe (null in a dev run).</summary>
     public DeviceStatusInfo? DeviceStatus { get; }

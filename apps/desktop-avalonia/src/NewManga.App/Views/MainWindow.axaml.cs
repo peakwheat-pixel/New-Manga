@@ -195,8 +195,10 @@ public partial class MainWindow : Window
 
         if (string.Equals(page, "settings", StringComparison.Ordinal))
         {
-            // CREDENTIAL-UI-1 AC2: refresh configured/missing states every time settings opens.
+            // CREDENTIAL-UI-1 AC2 / SETTINGS-PROFILE-UI-1: refresh credential states and profile lists
+            // every time settings opens.
             _ = Settings.RefreshCredentialsAsync();
+            _ = Settings.RefreshProfilesAsync();
         }
     }
 
@@ -548,6 +550,8 @@ public partial class MainWindow : Window
 
             // CREDENTIAL-UI-1 AC2: configured/missing states once the Host is ready.
             await Settings.RefreshCredentialsAsync();
+            // SETTINGS-PROFILE-UI-1: provider/network profile lists once the Host is ready.
+            await Settings.RefreshProfilesAsync();
         }
         catch (Exception ex) when (ex is InvalidOperationException or TimeoutException)
         {

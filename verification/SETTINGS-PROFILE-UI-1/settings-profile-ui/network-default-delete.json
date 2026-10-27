@@ -1,0 +1,6 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "set default -\u003E clear default -\u003E delete network profile",
+  "default_set": true,
+  "empty_after_delete": true
+}

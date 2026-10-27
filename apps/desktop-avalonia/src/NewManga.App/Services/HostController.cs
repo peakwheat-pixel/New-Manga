@@ -1,5 +1,6 @@
 using NewManga.CoreClient;
 using NewManga.CoreClient.Bridge;
+using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Wire;
 using NewManga.Host;
@@ -426,6 +427,479 @@ public sealed class HostController : IHostController
 
     private static string FirstNonEmpty(params string?[] candidates) =>
         candidates.FirstOrDefault(candidate => !string.IsNullOrWhiteSpace(candidate)) ?? string.Empty;
+
+    // -------------------------------------------------------------------------------------
+    // SETTINGS-PROFILE-UI-1: P15 provider / network profile management + binding slots.
+    // Payloads are built by SettingsProfilePayload; every failure is mapped to a typed result.
+    // -------------------------------------------------------------------------------------
+
+    public async Task<IReadOnlyList<ProviderProfileInfo>> ListProviderProfilesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<ProviderProfileInfo>();
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("settings_provider_profiles_list", default, cancellationToken)
+                .ConfigureAwait(false);
+            return ParseProviderProfiles(response.Value);
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or IOException or
+                InvalidOperationException or OperationCanceledException)
+        {
+            return Array.Empty<ProviderProfileInfo>();
+        }
+    }
+
+    public async Task<SettingsProfileResult> SaveProviderProfileAsync(
+        string? profileId,
+        ProviderProfileDraft draft,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            var create = string.IsNullOrEmpty(profileId);
+            var payload = create
+                ? SettingsProfilePayload.ProviderCreate(draft)
+                : SettingsProfilePayload.ProviderUpdate(profileId!, draft);
+            await commands
+                .InvokeAsync(
+                    create ? "settings_provider_profiles_create" : "settings_provider_profiles_update",
+                    payload,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success(create ? "provider profile 已创建" : "provider profile 已更新");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<SettingsProfileResult> DeleteProviderProfileAsync(
+        string profileId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            await commands
+                .InvokeAsync("settings_provider_profiles_delete", SettingsProfilePayload.ProviderDelete(profileId), cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success("provider profile 已删除");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<NetworkProfileInfo>> ListNetworkProfilesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<NetworkProfileInfo>();
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("settings_network_profiles_list", default, cancellationToken)
+                .ConfigureAwait(false);
+            return ParseNetworkProfiles(response.Value);
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or IOException or
+                InvalidOperationException or OperationCanceledException)
+        {
+            return Array.Empty<NetworkProfileInfo>();
+        }
+    }
+
+    public async Task<SettingsProfileResult> SaveNetworkProfileAsync(
+        string? networkProfileId,
+        NetworkProfileDraft draft,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            var create = string.IsNullOrEmpty(networkProfileId);
+            var payload = create
+                ? SettingsProfilePayload.NetworkCreate(draft)
+                : SettingsProfilePayload.NetworkUpdate(networkProfileId!, draft);
+            await commands
+                .InvokeAsync(
+                    create ? "settings_network_profiles_create" : "settings_network_profiles_update",
+                    payload,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success(create ? "network profile 已创建" : "network profile 已更新");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<SettingsProfileResult> DeleteNetworkProfileAsync(
+        string networkProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            await commands
+                .InvokeAsync(
+                    "settings_network_profiles_delete",
+                    SettingsProfilePayload.NetworkDelete(networkProfileId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success("network profile 已删除");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<SettingsProfileResult> SetNetworkDefaultAsync(
+        string? networkProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            if (string.IsNullOrEmpty(networkProfileId))
+            {
+                await commands
+                    .InvokeAsync("settings_network_profile_default_clear", SettingsProfilePayload.Empty(), cancellationToken)
+                    .ConfigureAwait(false);
+                return SettingsProfileResult.Success("默认 network profile 已清除");
+            }
+
+            await commands
+                .InvokeAsync(
+                    "settings_network_profile_default_set",
+                    SettingsProfilePayload.NetworkDefaultSet(networkProfileId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success("默认 network profile 已设置");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<NetworkTestInfo?> TestNetworkProfileAsync(
+        string networkProfileId,
+        string providerProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady ||
+            string.IsNullOrWhiteSpace(networkProfileId) || string.IsNullOrWhiteSpace(providerProfileId))
+        {
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(
+                    "settings_network_profiles_test",
+                    SettingsProfilePayload.NetworkTest(networkProfileId, providerProfileId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var value = response.Value;
+            if (value.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                return null;
+            }
+
+            var stages = new List<NetworkTestStageInfo>();
+            if (value.TryGetProperty("stages", out var stageArray) &&
+                stageArray.ValueKind == System.Text.Json.JsonValueKind.Array)
+            {
+                foreach (var stage in stageArray.EnumerateArray())
+                {
+                    if (stage.ValueKind != System.Text.Json.JsonValueKind.Object)
+                    {
+                        continue;
+                    }
+
+                    stages.Add(new NetworkTestStageInfo(
+                        ReadString(stage, "stage") ?? "?",
+                        ReadString(stage, "status") ?? "?",
+                        ReadString(stage, "reason"),
+                        stage.TryGetProperty("duration_ms", out var duration) &&
+                        duration.ValueKind == System.Text.Json.JsonValueKind.Number &&
+                        duration.TryGetInt32(out var ms)
+                            ? ms
+                            : null));
+                }
+            }
+
+            return new NetworkTestInfo(
+                ReadString(value, "status") ?? "unknown",
+                ReadString(value, "failed_stage"),
+                ReadBool(value, "direct_fallback_used", false),
+                stages);
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or IOException or
+                InvalidOperationException or OperationCanceledException or HostCommandInvalidArgumentsException)
+        {
+            return null;
+        }
+    }
+
+    public async Task<NetworkResolveInfo?> ResolveNetworkProfileAsync(
+        string? providerProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(
+                    "settings_network_profile_resolve",
+                    SettingsProfilePayload.NetworkResolve(providerProfileId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var value = response.Value;
+            if (value.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                return null;
+            }
+
+            return new NetworkResolveInfo(
+                ReadString(value, "network_profile_id"),
+                ReadString(value, "mode") ?? "?",
+                ReadString(value, "source") ?? "?");
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or IOException or
+                InvalidOperationException or OperationCanceledException)
+        {
+            return null;
+        }
+    }
+
+    public async Task<SettingsProfileResult> SetProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        string profileId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            await commands
+                .InvokeAsync(
+                    "settings_provider_bindings_set",
+                    SettingsProfilePayload.BindingSet(scope, capability, profileId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success($"绑定已保存：{capability} → {profileId}");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<SettingsProfileResult> ClearProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return SettingsProfileResult.NotReady();
+        }
+
+        try
+        {
+            await commands
+                .InvokeAsync(
+                    "settings_provider_bindings_clear",
+                    SettingsProfilePayload.BindingClear(scope, capability),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return SettingsProfileResult.Success($"绑定已清除：{capability}");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return SettingsProfileResultMapper.MapException(ex);
+        }
+    }
+
+    public async Task<ProviderBindingResult?> ResolveProviderBindingAsync(
+        string capability,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(
+                    "settings_provider_bindings_resolve",
+                    SettingsProfilePayload.BindingResolve(capability),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var value = response.Value;
+            if (value.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                return null;
+            }
+
+            var source = value.TryGetProperty("source", out var sourceElement) &&
+                         sourceElement.ValueKind != System.Text.Json.JsonValueKind.Null
+                ? sourceElement.GetRawText()
+                : null;
+            return new ProviderBindingResult(false, ReadString(value, "profile_id"), capability, source);
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or IOException or
+                InvalidOperationException or OperationCanceledException)
+        {
+            return null;
+        }
+    }
+
+    private static IReadOnlyList<ProviderProfileInfo> ParseProviderProfiles(System.Text.Json.JsonElement value)
+    {
+        var providers = new List<ProviderProfileInfo>();
+        if (value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+            !value.TryGetProperty("profiles", out var profiles) ||
+            profiles.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return providers;
+        }
+
+        foreach (var profile in profiles.EnumerateArray())
+        {
+            if (profile.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                continue;
+            }
+
+            var profileId = ReadString(profile, "profile_id");
+            if (string.IsNullOrEmpty(profileId))
+            {
+                continue;
+            }
+
+            var capabilities = new List<string>();
+            if (profile.TryGetProperty("capabilities", out var caps) &&
+                caps.ValueKind == System.Text.Json.JsonValueKind.Array)
+            {
+                foreach (var capability in caps.EnumerateArray())
+                {
+                    if (capability.ValueKind == System.Text.Json.JsonValueKind.String)
+                    {
+                        capabilities.Add(capability.GetString()!);
+                    }
+                }
+            }
+
+            providers.Add(new ProviderProfileInfo(
+                profileId,
+                ReadString(profile, "provider_id") ?? string.Empty,
+                ReadString(profile, "display_name") ?? profileId,
+                capabilities,
+                ReadString(profile, "endpoint") ?? string.Empty,
+                ReadString(profile, "model") ?? string.Empty,
+                ReadString(profile, "network_profile_id"),
+                ReadBool(profile, "enabled", true),
+                ReadString(profile, "credential_state") ?? "missing"));
+        }
+
+        return providers;
+    }
+
+    private static IReadOnlyList<NetworkProfileInfo> ParseNetworkProfiles(System.Text.Json.JsonElement value)
+    {
+        var networks = new List<NetworkProfileInfo>();
+        if (value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+            !value.TryGetProperty("profiles", out var profiles) ||
+            profiles.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return networks;
+        }
+
+        foreach (var profile in profiles.EnumerateArray())
+        {
+            if (profile.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                continue;
+            }
+
+            var profileId = ReadString(profile, "network_profile_id");
+            if (string.IsNullOrEmpty(profileId))
+            {
+                continue;
+            }
+
+            networks.Add(new NetworkProfileInfo(
+                profileId,
+                ReadString(profile, "display_name") ?? profileId,
+                ReadString(profile, "mode") ?? NetworkModes.Direct,
+                ReadString(profile, "proxy_endpoint"),
+                ReadBool(profile, "verify_tls", true),
+                ReadString(profile, "tls_verification_state") ?? "enabled",
+                ReadBool(profile, "allow_proxy_failure_direct_fallback", false),
+                ReadString(profile, "credential_state") ?? "missing"));
+        }
+
+        return networks;
+    }
+
+    private static bool ReadBool(System.Text.Json.JsonElement element, string property, bool fallback) =>
+        element.TryGetProperty(property, out var value) &&
+        value.ValueKind is System.Text.Json.JsonValueKind.True or System.Text.Json.JsonValueKind.False
+            ? value.GetBoolean()
+            : fallback;
 
     public async ValueTask DisposeAsync()
     {

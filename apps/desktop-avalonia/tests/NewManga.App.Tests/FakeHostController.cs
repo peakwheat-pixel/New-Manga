@@ -260,6 +260,240 @@ public sealed class FakeHostController : IHostController
         }
     }
 
+    // -------------------------------------------------------------------------------------
+    // SETTINGS-PROFILE-UI-1: scripted P15 profile port. Records the exact call arguments the UI
+    // sends; default mutations succeed and update the visible lists (unless a scripted result says
+    // otherwise). Test/resolve default to null = "unavailable, never fabricated".
+    // -------------------------------------------------------------------------------------
+
+    public List<ProviderProfileInfo> ProviderProfiles { get; } = new();
+
+    public List<NetworkProfileInfo> NetworkProfiles { get; } = new();
+
+    public List<(string? ProfileId, ProviderProfileDraft Draft)> ProviderSaves { get; } = new();
+
+    public List<(string? NetworkProfileId, NetworkProfileDraft Draft)> NetworkSaves { get; } = new();
+
+    public List<string> ProviderDeletes { get; } = new();
+
+    public List<string> NetworkDeletes { get; } = new();
+
+    public List<string?> NetworkDefaults { get; } = new();
+
+    public List<(string NetworkProfileId, string ProviderProfileId)> NetworkTests { get; } = new();
+
+    public List<string?> NetworkResolves { get; } = new();
+
+    public List<(ProfileBindingScope Scope, string Capability, string ProfileId)> BindingSets { get; } = new();
+
+    public List<(ProfileBindingScope Scope, string Capability)> BindingClears { get; } = new();
+
+    public Queue<SettingsProfileResult> ScriptedProviderSaveResults { get; } = new();
+
+    public Queue<SettingsProfileResult> ScriptedNetworkSaveResults { get; } = new();
+
+    public Queue<SettingsProfileResult> ScriptedDeleteResults { get; } = new();
+
+    public Queue<SettingsProfileResult> ScriptedDefaultResults { get; } = new();
+
+    public Queue<NetworkTestInfo?> ScriptedNetworkTestResults { get; } = new();
+
+    public Queue<NetworkResolveInfo?> ScriptedNetworkResolveResults { get; } = new();
+
+    public Queue<SettingsProfileResult> ScriptedBindingResults { get; } = new();
+
+    public Queue<ProviderBindingResult?> ScriptedBindingResolveResults { get; } = new();
+
+    public int ProviderProfileListCalls { get; private set; }
+
+    public int NetworkProfileListCalls { get; private set; }
+
+    public Task<IReadOnlyList<ProviderProfileInfo>> ListProviderProfilesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        ProviderProfileListCalls++;
+        return Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(ProviderProfiles.ToList());
+    }
+
+    public Task<SettingsProfileResult> SaveProviderProfileAsync(
+        string? profileId,
+        ProviderProfileDraft draft,
+        CancellationToken cancellationToken = default)
+    {
+        ProviderSaves.Add((profileId, draft));
+        var result = ScriptedProviderSaveResults.Count > 0
+            ? ScriptedProviderSaveResults.Dequeue()
+            : SettingsProfileResult.Success(profileId is null ? "provider profile 已创建" : "provider profile 已更新");
+        if (result.IsSuccess)
+        {
+            var id = profileId ?? "provider-" + (ProviderProfiles.Count + 1);
+            var entry = new ProviderProfileInfo(
+                id,
+                draft.ProviderId,
+                draft.DisplayName,
+                draft.Capabilities,
+                draft.Endpoint,
+                draft.Model,
+                draft.NetworkProfileId,
+                draft.Enabled,
+                "missing");
+            var index = ProviderProfiles.FindIndex(item => string.Equals(item.ProfileId, id, StringComparison.Ordinal));
+            if (index >= 0)
+            {
+                ProviderProfiles[index] = entry;
+            }
+            else
+            {
+                ProviderProfiles.Add(entry);
+            }
+        }
+
+        return Task.FromResult(result);
+    }
+
+    public Task<SettingsProfileResult> DeleteProviderProfileAsync(
+        string profileId,
+        CancellationToken cancellationToken = default)
+    {
+        ProviderDeletes.Add(profileId);
+        var result = ScriptedDeleteResults.Count > 0
+            ? ScriptedDeleteResults.Dequeue()
+            : SettingsProfileResult.Success("provider profile 已删除");
+        if (result.IsSuccess)
+        {
+            ProviderProfiles.RemoveAll(item => string.Equals(item.ProfileId, profileId, StringComparison.Ordinal));
+        }
+
+        return Task.FromResult(result);
+    }
+
+    public Task<IReadOnlyList<NetworkProfileInfo>> ListNetworkProfilesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        NetworkProfileListCalls++;
+        return Task.FromResult<IReadOnlyList<NetworkProfileInfo>>(NetworkProfiles.ToList());
+    }
+
+    public Task<SettingsProfileResult> SaveNetworkProfileAsync(
+        string? networkProfileId,
+        NetworkProfileDraft draft,
+        CancellationToken cancellationToken = default)
+    {
+        NetworkSaves.Add((networkProfileId, draft));
+        var result = ScriptedNetworkSaveResults.Count > 0
+            ? ScriptedNetworkSaveResults.Dequeue()
+            : SettingsProfileResult.Success(networkProfileId is null ? "network profile 已创建" : "network profile 已更新");
+        if (result.IsSuccess)
+        {
+            var id = networkProfileId ?? "network-" + (NetworkProfiles.Count + 1);
+            var entry = new NetworkProfileInfo(
+                id,
+                draft.DisplayName,
+                draft.Mode,
+                draft.ProxyEndpoint,
+                draft.VerifyTls,
+                draft.VerifyTls ? "enabled" : "disabled_confirmed",
+                draft.AllowProxyFailureDirectFallback,
+                "missing");
+            var index = NetworkProfiles.FindIndex(item => string.Equals(item.NetworkProfileId, id, StringComparison.Ordinal));
+            if (index >= 0)
+            {
+                NetworkProfiles[index] = entry;
+            }
+            else
+            {
+                NetworkProfiles.Add(entry);
+            }
+        }
+
+        return Task.FromResult(result);
+    }
+
+    public Task<SettingsProfileResult> DeleteNetworkProfileAsync(
+        string networkProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        NetworkDeletes.Add(networkProfileId);
+        var result = ScriptedDeleteResults.Count > 0
+            ? ScriptedDeleteResults.Dequeue()
+            : SettingsProfileResult.Success("network profile 已删除");
+        if (result.IsSuccess)
+        {
+            NetworkProfiles.RemoveAll(item => string.Equals(item.NetworkProfileId, networkProfileId, StringComparison.Ordinal));
+        }
+
+        return Task.FromResult(result);
+    }
+
+    public Task<SettingsProfileResult> SetNetworkDefaultAsync(
+        string? networkProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        NetworkDefaults.Add(networkProfileId);
+        var result = ScriptedDefaultResults.Count > 0
+            ? ScriptedDefaultResults.Dequeue()
+            : SettingsProfileResult.Success(networkProfileId is null ? "默认 network profile 已清除" : "默认 network profile 已设置");
+        return Task.FromResult(result);
+    }
+
+    public Task<NetworkTestInfo?> TestNetworkProfileAsync(
+        string networkProfileId,
+        string providerProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        NetworkTests.Add((networkProfileId, providerProfileId));
+        var result = ScriptedNetworkTestResults.Count > 0
+            ? ScriptedNetworkTestResults.Dequeue()
+            : null;
+        return Task.FromResult(result);
+    }
+
+    public Task<NetworkResolveInfo?> ResolveNetworkProfileAsync(
+        string? providerProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        NetworkResolves.Add(providerProfileId);
+        var result = ScriptedNetworkResolveResults.Count > 0
+            ? ScriptedNetworkResolveResults.Dequeue()
+            : null;
+        return Task.FromResult(result);
+    }
+
+    public Task<SettingsProfileResult> SetProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        string profileId,
+        CancellationToken cancellationToken = default)
+    {
+        BindingSets.Add((scope, capability, profileId));
+        var result = ScriptedBindingResults.Count > 0
+            ? ScriptedBindingResults.Dequeue()
+            : SettingsProfileResult.Success($"绑定已保存：{capability} → {profileId}");
+        return Task.FromResult(result);
+    }
+
+    public Task<SettingsProfileResult> ClearProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        CancellationToken cancellationToken = default)
+    {
+        BindingClears.Add((scope, capability));
+        var result = ScriptedBindingResults.Count > 0
+            ? ScriptedBindingResults.Dequeue()
+            : SettingsProfileResult.Success($"绑定已清除：{capability}");
+        return Task.FromResult(result);
+    }
+
+    public Task<ProviderBindingResult?> ResolveProviderBindingAsync(
+        string capability,
+        CancellationToken cancellationToken = default)
+    {
+        var result = ScriptedBindingResolveResults.Count > 0
+            ? ScriptedBindingResolveResults.Dequeue()
+            : null;
+        return Task.FromResult(result);
+    }
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>CHAPTER-SELECTOR-1: resolve the scripted book that owns a chapter id.</summary>
