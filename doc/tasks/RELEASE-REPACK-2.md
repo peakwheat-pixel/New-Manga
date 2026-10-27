@@ -3,7 +3,7 @@ id: RELEASE-REPACK-2
 title: 第二次 sidecar 重打包（identity provider + 缓存竞态修复）与 8 页全链复验
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: core-admin-rca
 owner: null
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 2980608e0
 branch: task/RELEASE-REPACK-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-2
-integration_commit: null
+integration_commit: 090371703
 delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -86,3 +86,12 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- AC1：REPACK-1 base d499bd7…/models 9fcb9e87… → 新 base  91a201d… / models c5531930…（均 399,492B；bundle 195,375,520 / 868,862,035B）；torch-free 858 modules、0 shadowing ICU。
+- AC2 同构建 8 页全链（identity 绑定，真实 wire）：run **terminal=completed 86.43s**；step_runs translate/segment/mask_refine/inpaint/**render 各 22/22** completed；**0 条 PROVIDER_NOT_CONFIGURED**；页 4–8 completed(0)。每步耗时：detect 4.40 / ocr 5.58 / color 5.25 / term 1.35 / translate 1.16 / segment 8.54 / mask 15.99 / inpaint 29.76 / render 13.85s。
+- AC3 并发：同构建 wire 并发 GetTaskProjection **658 次@100ms** → stuck_running=0、regionless=0、PNC=0；epro_scheduler.py PASS。
+- AC4：base zip 102,981,645B / models 724,989,976B；install×2/卸载×2 幂等、license 一致、console=0、exit 0、sidecar 随包；VERSION.json.sidecar_build 两包实测正确；**UPGRADE.md 已补「构建识别」**（含 identity experimental 声明/覆盖升级），packaging README §2.1 同步。
+- AC5：DSH 复跑 test.ps1 **182/182**（首跑 1 例 coreclient 偶发，复跑全绿）；pytest 3F/2772P/9S（0 新增确定性失败）；check.ps1 PASS；15 条 pin；Handoff。
+- 遗留：identity 为 EXPERIMENTAL 占位（非真实翻译能力，UPGRADE 已声明）；旧包未动。
+- 集成：090371703。

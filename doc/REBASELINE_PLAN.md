@@ -23,13 +23,11 @@
 |CORE-TILE-EMIT-1|HOST-RESOURCE-SECURITY-1|done（Core 出 tile+摘要；一致率100%；pytest 0 新增失败；集成 7b07da6a4）|
 |RELEASE-PACKAGE-1|CORE-TILE-EMIT-1|done（S5-D 包 22.9MB；AC4a/b PASS；集成 8ff3d288d）|
 
-|MICA-FIX-1|—|done（Mica 可见：actual=Mica、标题栏取色 #FFFFFF→#F0EBF7；集成 93aaaeb8c）|
+|MICA/F11/GPU 三项修复|—|done（Mica 可见、F11 沉浸、ORT EP 探测；详见各自 Task 卡）|
 |DPI-DYNAMIC-1|—|done（PerMonitorV2+RenderScaling；真机 96→192→96 验证 PASS；集成 a6241b6c8）|
 |BOOK-FIXTURE-1|—|done（隔离根建书 8 页/幂等/未污染 APPDATA；集成 377736213；AC3 PARTIAL→READER 接线）|
 |READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|done（阅读器接书库+沉浸入口；工作集 395.1MB；110/110；集成 bcde098e5）|
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
-|F11-HOTKEY-1|—|done（应用内 F11 沉浸切换+输入框守卫；153/153；集成 b63025690）|
-|GPU-ORT-PROBE-1|—|done（ORT EP 探测；DML 可用；base 97.88MB；149/149；集成 3bb082627）|
 |RUN-EXPORT-E2E-1|—|done（9 条接线；registry 24→33；Export/Run 真跑 BLOCKED 如实记录；集成 7af27bbe3）|
 |NS-RECLASSIFY-1|—|done（42 NS → 35 IMPLEMENTED / 7 NEEDS_IMPLEMENTATION；只出证据；集成 e49dec3dd）|
 |NS-WIRE-B1|—|done（13 条接线；parity 46/20；161/161；集成 6b47f377f）|
@@ -41,14 +39,16 @@
 |RELEASE-REPACK-1|—|done（新 sidecar base/models；同构建 8 页 ocr/color 3/3；安装 smoke PASS；集成 429ca763c）|
 |TRANSLATE-PROVIDER-1|—|done（identity-experimental；源码 8 页全链到 render 22/22；PC3 同构建待重打包；集成 5b96c25ef）|
 |RUN-STORE-CACHE-RACE-FIX-1|—|done（视图读/执行缓存分离+CAS；前后 FAIL→PASS 实证；集成 2980608e0）|
-|NS-WIRE-B2|—|ready（剩余 11 条 NS 收尾接线）|
-|RELEASE-REPACK-2|—|ready（第二次重打包 + 8 页全链复验 + UPGRADE 文档）|
+|NS-WIRE-B2|—|done（9 接线/2 BLOCKED 凭据；parity 64/2；集成 e30149258）|
+|EXPORT-E2E-CLOSE-1|—|ready（Export 真跑闭环）|
+|CREDENTIAL-PORT-1|—|ready（Host 凭据端口，解 2 条 BLOCKED）|
+|RELEASE-REPACK-2|—|done（新构建全链 completed 86.43s/render 22/22；并发 0 卡；集成 090371703）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：NS-WIRE-B2、RELEASE-REPACK-2。
+READY 节点：EXPORT-E2E-CLOSE-1、CREDENTIAL-PORT-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

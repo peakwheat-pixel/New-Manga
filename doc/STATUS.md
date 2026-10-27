@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[RELEASE-REPACK-2](tasks/RELEASE-REPACK-2.md) `ready`（第二次重打包+全链复验）。
+- 当前 Task：[EXPORT-E2E-CLOSE-1](tasks/EXPORT-E2E-CLOSE-1.md) `ready`（并行 CREDENTIAL-PORT-1）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

@@ -3,7 +3,7 @@ id: NS-WIRE-B2
 title: 剩余 NOT_SUPPORTED 命令接线（以 registry 实际 11 条为准）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: ui-stack-research
 owner: ui-stack-research
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 27b5a4005
 branch: task/NS-WIRE-B2
 worktree: G:/CODEX/New Manga.workspace/worktrees/NS-WIRE-B2
-integration_commit: null
+integration_commit: e30149258
 delivery_head: dc87a67b3c1aae0fbe75b8ee7377e1f2bac97a1e
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -110,3 +110,12 @@ allowed_paths:
   2. Avalonia 设置页/工作台 UI 对这些新命令的入口；
   3. `settings_network_profiles_test` 的真实网络验收（本次只证明命令面与 Core 诊断链可用）；
   4. 版本控制：Core 协议 minor 升级后需重跑 `scripts/probe-core-commands.ps1` 并复核 64/2 计数。
+## Review（DSH 集成复核，2026-10-27）— PASS（9 接线 / 2 BLOCKED 如实）
+
+- parity：**55/11 → 64/2**（66 命令不变）；extract --check PASS。
+- 接线 9 条均对冻结 sidecar 真实执行并断言返回投影（含 list_region_revisions 真实 fixture current_revision_no≥1、library_delete_books_permanently minor 10、settings_network_profiles_test Core 真实跑 6 段诊断 status=passed）。
+- BLOCKED 2：credential_put/credential_clear——Core 只有 Bind/ClearProfileCredential，Host 无凭据端口；不标 IMPLEMENTED（原因具名 settings_bridge.rs:288-350）。
+- 回归：DSH 复跑 test.ps1 **182/182**（61/46/75）；vitest 60/567；pytest 3F/2764P/9S（与基线逐名一致、0 新增）。
+- AC5：check.ps1 PASS；13 条 64-hex pin（另加 .gitattributes * -text 保 CRLF 可复现，已在 Handoff 说明）。
+- 遗留：Host 凭据端口（解除 2 条 BLOCKED 前置）；9 条新命令无 UI 入口；minor 硬编码随 Core 升级重跑探针。
+- 集成：e30149258。
