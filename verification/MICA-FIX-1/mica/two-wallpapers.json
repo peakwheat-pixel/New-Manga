@@ -1,0 +1,28 @@
+{
+  "ac": "AC1/AC2",
+  "exe": "G:\\CODEX\\New Manga.workspace\\worktrees\\MICA-FIX-1\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Debug\\net9.0\\NewManga.App.exe",
+  "wallpapers": [
+    {
+      "wallpaper": "solid",
+      "window_handle": 3148348,
+      "titlebar_pixel": -1,
+      "hex": "#FFFFFF",
+      "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\MICA-FIX-1\\verification\\MICA-FIX-1\\mica\\titlebar-solid.png",
+      "exited": true,
+      "exit_code": 0
+    },
+    {
+      "wallpaper": "pattern",
+      "window_handle": 1311036,
+      "titlebar_pixel": -988169,
+      "hex": "#F0EBF7",
+      "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\MICA-FIX-1\\verification\\MICA-FIX-1\\mica\\titlebar-pattern.png",
+      "exited": true,
+      "exit_code": 0
+    }
+  ],
+  "titlebar_color_delta": "#FFFFFF -> #F0EBF7",
+  "diagnostics_log": "2026-10-27T01:22:56.5608904Z material=Mica; requested=Mica,Blur,None; actual=Mica || 2026-10-27T01:23:06.0090477Z material=Mica; requested=Mica,Blur,None; actual=Mica",
+  "restored_wallpaper": true,
+  "generated_at_utc": "2026-10-27T01:23:13.5951100Z"
+}

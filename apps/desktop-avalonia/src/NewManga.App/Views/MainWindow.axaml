@@ -7,7 +7,6 @@
         MinWidth="960"
         MinHeight="640"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource AppBg}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="48"
@@ -15,7 +14,6 @@
 
   <Grid RowDefinitions="48,*">
     <Grid x:Name="TitleBar" Grid.Row="0" ColumnDefinitions="Auto,*,Auto"
-          Background="{DynamicResource HeaderBg}"
           PointerPressed="OnTitleBarPressed">
       <StackPanel Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
         <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource Accent}" />

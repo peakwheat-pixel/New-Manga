@@ -87,6 +87,7 @@ public partial class MainWindow : Window
             Background = ThemePackService.Brush("MicaFallback");
         }
 
+        Opened += (_, _) => WriteMaterialDiagnostics();
         Loaded += OnLoaded;
         Closed += OnClosed;
         Navigate("bookshelf");
@@ -252,4 +253,24 @@ public partial class MainWindow : Window
         PageCount = book.PageCount,
         Tag = book.IsFavorite ? "收藏" : "未分类",
     };
+    /// <summary>AC2 diagnostics: material kind + requested/actual transparency level.</summary>
+    public string MaterialDiagnostics =>
+        $"material={_materialKind}; requested={string.Join(",", TransparencyLevelHint)}; actual={ActualTransparencyLevel}";
+
+    public string? DiagnosticsPath { get; private set; }
+
+    private void WriteMaterialDiagnostics()
+    {
+        try
+        {
+            var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs");
+            Directory.CreateDirectory(root);
+            DiagnosticsPath = Path.Combine(root, "window-material.log");
+            File.AppendAllText(DiagnosticsPath, $"{DateTime.UtcNow:o} {MaterialDiagnostics}{Environment.NewLine}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            DiagnosticsPath = null;
+        }
+    }
 }
