@@ -1,0 +1,40 @@
+{
+  "head": "dd2408869ce1d43f4d1dd0525ef1b13bb75bb38c",
+  "base_head_before": "10273c9ce",
+  "new": {
+    "base_zip": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-3\\out\\NewManga-0.1.0-win-x64.zip",
+      "bytes": 103326248,
+      "sha256": "f0f152d45016d61985a95d2d5c2c6d5350c747a13632f0cdd9066a892fd85227"
+    },
+    "models_zip": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-3\\out\\NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 725334588,
+      "sha256": "2b14c87b6ee7f60ab9c1b9f055e5ad64a1209d3ea31fe6c9720fa72274ea897e"
+    },
+    "sidecar_base_core_sha256": "65d7b55ad58f5d37709eb80fc25b22e7d5d04111f1f035162f7d48a98a3c422b",
+    "sidecar_models_core_sha256": "8cfc9080cf24fd01ffbaeed92c31c76f5fb3bdcb36128de5011644edcaeb9340",
+    "sidecar_base_core_bytes": 399492,
+    "sidecar_models_core_bytes": 399492,
+    "sidecar_base_bundle_bytes": 195375520,
+    "sidecar_models_bundle_bytes": 868862035,
+    "installed_version_json_repo_head": "dd2408869ce1d43f4d1dd0525ef1b13bb75bb38c",
+    "installed_sidecar_sha256": "8cfc9080cf24fd01ffbaeed92c31c76f5fb3bdcb36128de5011644edcaeb9340"
+  },
+  "old_repack2": {
+    "models_zip": {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\out\\NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 724989976,
+      "sha256": "ffb23b25407158dea1310f854c1df02d7d52bc7b0d5ebb852c80734b0668aa29"
+    },
+    "sidecar_base_core_sha256": "091a201da8a044c1830e7cb8d541b012cf458c8c5b7d392624de913fa93bf45a",
+    "sidecar_models_core_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+    "installed_version_json_repo_head": "0f4b836a55486d26ef7fbcbf7574edcafb1ec4da"
+  },
+  "torch_free_assertion": {
+    "sidecar_models_has_torch_dir": false,
+    "sidecar_models_has_onnxruntime": true,
+    "method": "Test-Path sidecar-models/core-sidecar/_internal/torch == False; onnxruntime present"
+  },
+  "not_reused_old_exe": true
+}

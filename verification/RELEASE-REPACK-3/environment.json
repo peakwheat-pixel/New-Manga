@@ -1,0 +1,32 @@
+{
+  "os": {
+    "registry_product_name": "Windows 10 Pro",
+    "cim_caption": "Microsoft Windows 11 专业版",
+    "display_version": "26H2",
+    "build": "26300",
+    "ubr": 9711,
+    "conclusion": "Windows 11 build 26300（注册表 ProductName 仍显示 Windows 10 Pro，属于 Windows 11 家族；以此纠正 RELEASE-SMOKE-1 的 Win10 判断）"
+  },
+  "displays": {
+    "primary": {
+      "bounds": "0,0 2560x1440",
+      "effective_dpi": 96,
+      "scale": "100%"
+    },
+    "secondary": {
+      "bounds": "2560,0 3840x2160",
+      "effective_dpi": 144,
+      "scale": "150%"
+    },
+    "app_window_dpi": 96,
+    "fourk_200_percent": "NOT_AVAILABLE: 4K 屏存在（3840x2160）但系统缩放为 150%（144 DPI）；本机无 200% 配置"
+  },
+  "mica": {
+    "material_log": "rename: app diagnostic log window-material.log; latest line actual=Mica",
+    "actual": "Mica",
+    "requested": "Mica,Blur,None",
+    "dwm_backdrop_attribute_38": "0 (Auto/None) — DWM 属性与 Avalonia 报告不一致，以 app 诊断日志 + 截图为证据",
+    "settled_after_ms": "about 60000 after window created (first frames actual=None, then actual=Mica)",
+    "prior_contradiction_resolution": "MICA-FIX-1 evidence (actual=Mica, wallpaper-tinted titlebar) is consistent with this run; RELEASE-SMOKE-1 reported Mica N/A because the REPACK-2 package predates MICA-FIX-1 integration."
+  }
+}

@@ -196,18 +196,26 @@ public sealed class HostCredentialCoordinator
         int? removed = null)
     {
         var path = Path.Combine(_evidenceDirectory, $"{operation}-{DateTime.UtcNow:yyyyMMddTHHmmssfffffffZ}.json");
-        var evidence = new Dictionary<string, object?>(StringComparer.Ordinal)
+        // RELEASE-REPACK-3: build the evidence JSON with Utf8JsonWriter instead of
+        // reflection-based JsonSerializer.Serialize so the trimmed Release publish has no
+        // IL2026/RequiresUnreferencedCode diagnostics (Debug builds did not surface it).
+        // Indented output keeps the human-readable evidence format the tests assert.
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true }))
         {
-            ["operation"] = operation,
-            ["target_kind"] = target.Kind,
-            ["owner_hash"] = ToHex(SHA256.HashData(Encoding.UTF8.GetBytes(target.OwnerId)))[..16],
-            ["intent"] = intent,
-            ["configured_before"] = configuredBefore,
-            ["state"] = operation == "put" ? "configured" : "missing",
-            ["orphans_removed"] = removed,
-            ["generated_at_utc"] = DateTimeOffset.UtcNow.ToString("o"),
-        };
-        File.WriteAllText(path, JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
+            writer.WriteStartObject();
+            writer.WriteString("operation", operation);
+            writer.WriteString("target_kind", target.Kind);
+            writer.WriteString("owner_hash", ToHex(SHA256.HashData(Encoding.UTF8.GetBytes(target.OwnerId)))[..16]);
+            writer.WriteString("intent", intent);
+            writer.WriteBoolean("configured_before", configuredBefore ?? false);
+            writer.WriteString("state", operation == "put" ? "configured" : "missing");
+            writer.WriteNumber("orphans_removed", removed ?? 0);
+            writer.WriteString("generated_at_utc", DateTimeOffset.UtcNow.ToString("o"));
+            writer.WriteEndObject();
+        }
+
+        File.WriteAllText(path, System.Text.Encoding.UTF8.GetString(stream.ToArray()));
     }
 
     private bool TryDelete(string credentialRef)
