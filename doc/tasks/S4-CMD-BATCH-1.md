@@ -13,7 +13,7 @@ base_commit: 171529b5d
 branch: task/S4-CMD-BATCH-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/S4-CMD-BATCH-1
 integration_commit: null
-delivery_head: 4f8b5f9503676c7193e978c31a364ab6d9abc8da
+delivery_head: 90535f048e388a513c19ba48ec6e4d304a0712a7
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/S4-CMD-BATCH-1

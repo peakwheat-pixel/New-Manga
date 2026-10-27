@@ -3,7 +3,7 @@
 - Task: `doc/tasks/S4-CMD-BATCH-1.md`（team task-30）
 - Branch: `task/S4-CMD-BATCH-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/S4-CMD-BATCH-1`
 - Base: `171529b5d`（任务卡基线，释放提交）；**已 rebase 到 `main` `9f58b4c1d`**（RUN-EXPORT-E2E-1 24→33、NS-WIRE-B1 33→46 均已先落地；按“先落地者为准”合并）
-- Delivery head: `4f8b5f9503676c7193e978c31a364ab6d9abc8da`（实现+证据提交；Task 卡 Canonical Evidence 的 sha256 pin 均指向该树）
+- Delivery head: `90535f048e388a513c19ba48ec6e4d304a0712a7`（实现+证据提交；Task 卡 Canonical Evidence 的 sha256 pin 均指向该树）
 - 未 push；未改 Python Core 语义、未改 Host wire 契约/旧壳。
 
 ## 1. 交付摘要
