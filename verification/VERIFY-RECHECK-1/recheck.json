@@ -1,0 +1,85 @@
+{
+  "task": "VERIFY-RECHECK-1（REPACK-4 三项真机复测补证）",
+  "base_head": "caa0fdda8",
+  "package_used": "task-envs/RELEASE-REPACK-4/out/NewManga-0.1.0-win-x64-models（REPACK-4 已验收包，未重打包）",
+  "mica": {
+    "first_run": {
+      "app_pid": 54660,
+      "material_log": "t0..t100 全部 actual=None（窗口被 Explorer/沉浸阅读器遮挡时）",
+      "dwm_backdrop_type": 0,
+      "note": "该 run 同时有 Explorer 覆盖窗口"
+    },
+    "clean_probe": {
+      "retry": "关闭旧实例后全新启动（保持主窗可见）",
+      "material_log_line": "2026-10-27T17:17:53.5753323Z material=Mica; requested=Mica,Blur,None; actual=Mica",
+      "actual": "Mica",
+      "elapsed_approx": "约 35s（<90s 窗口内）",
+      "pixel_sample": {
+        "corners": [
+          [
+            166,
+            166,
+            166
+          ],
+          [
+            122,
+            130,
+            136
+          ],
+          [
+            65,
+            83,
+            114
+          ],
+          [
+            78,
+            82,
+            96
+          ]
+        ],
+        "center": [
+          245,
+          243,
+          250
+        ]
+      },
+      "dwm_backdrop_type": 0,
+      "note": "DWM 属性 38 仍为 0（Avalonia 不上报该属性），以 app 诊断日志 ActualTransparencyLevel=Mica 与边缘透壁纸取色为证据"
+    },
+    "code_check": {
+      "mica_fix_commit": "c795cdb34 / merge 93aaaeb8c",
+      "is_ancestor_of_4ea86e03a": true,
+      "mainwindow_axaml_background": "与 a256ae63b（MICA-FIX-1 done）一致",
+      "mainwindow_axaml_cs": "MicaFallback/TransparencyLevelHint/WriteMaterialDiagnostics 均在位",
+      "conclusion": "代码层面无回归；4be1c3f4f 回退目标 4ea86e03a 已包含 MICA-FIX-1"
+    },
+    "verdict": "非回归：fresh launch 后 actual=Mica；REPACK-4 None 为测量时序/窗口遮挡下合成状态，不是代码回归"
+  },
+  "display_4k": {
+    "baseline": {
+      "screens": 1,
+      "primary": "2560x1440 @96dpi (100%)",
+      "mi_tv": "Win32_DesktopMonitor=3840x2160 / WmiMonitorID=Mi TV 物理连接但不在桌面",
+      "secondary_dpi": "GetDpiForMonitor hr=-2147024890（无有效 monitor）"
+    },
+    "attempts": [
+      "DisplaySwitch.exe /extend（两次）",
+      "Win+P 投影面板（截图 recheck-4k-project-pane*）",
+      "点击「扩展」选项（截图 recheck-4k-extend-before/extended）"
+    ],
+    "result": "Screen.AllScreens 仍为 1；无副屏加入、无缩放变化；因此无系统变更需还原",
+    "verdict": "NOT_ACHIEVABLE / environment BLOCKED：本机 4K（Mi TV）当前未被系统识别为可用输出，无法验证 GetDpiForWindow=192 与 200% 截图"
+  },
+  "esc_h": {
+    "method": "UIA ImmersiveButton 进入沉浸 → 枚举窗口，取最大窗口（阅读器 h=7868716, 0,0,2560x1440）→ AttachThreadInput+SetForegroundWindow → keybd_event H/Esc",
+    "screens_sha16": {
+      "before": "AB3DF5C1F663223B",
+      "immersive": "F6CE796852411DB4",
+      "after_H": "FDED931F9657C80D",
+      "after_Esc": "392E1E10AFCD9E02"
+    },
+    "h_result": "HUD 消失（esc-h-03-after-h.png 顶部 Esc/F/H 提示条消失），sha 变化 → H 生效",
+    "esc_result": "sha 变化（392E1E10…），窗口数=2（阅读器+主窗），UI 状态变化 → Esc 生效",
+    "verdict": "PASS：Esc/H 键盘在沉浸窗口获得焦点后可用"
+  }
+}
