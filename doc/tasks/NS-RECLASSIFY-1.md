@@ -3,7 +3,7 @@ id: NS-RECLASSIFY-1
 title: NOT_SUPPORTED 重探测与重分类（只出证据）
 kind: research
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_followups_a2_extra
 suggested_owner: baseline-scout
 owner: null
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 171529b5d
 branch: task/NS-RECLASSIFY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/NS-RECLASSIFY-1
-integration_commit: null
+integration_commit: e49dec3dd
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/NS-RECLASSIFY-1
 allowed_paths:
   - doc/tasks/NS-RECLASSIFY-1.md
@@ -91,3 +91,15 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS（重分类结论重大）
+
+**分类统计（42 条 NS）**：IMPLEMENTED **35**（high 26 / medium 16）、NEEDS_IMPLEMENTATION **7**、NEEDS_MODEL 0、BLOCKED 0。
+
+- AC1：按旧壳签名构造 payload，对冻结双 sidecar 逐条探测（54 次原始探测），区分成功/typed 域错误/缺契约；实证冻结 core_service sha256 0a1eff8…f6f14bc0（与 S2 同二进制）、协议 2.3；P15 settings 需 minor 7、Create 需 8、**DELETE 面需 minor 10**（3–12 扫描）。
+- AC2：eclassification.json 42 条逐条 current/proposed/confidence/evidence/reason/s2_probe/residual；另附 probe-results.json、REPORT.md（§5 应用顺序与风险）、probe-spec.json、	ools/**、esource-manifest.json。
+- 典型误分类（S2 探针错）：library_save_reading_progress（错误 payload）、esolve_page_resource（假 page_id）、list_region_revisions/set_region_type/estore_region_revision/erender_page（PascalCase 命令名、非法枚举、假 id；合法枚举 narration/note/other/sfx/speech/title）、以及一整批 settings/provider/network/credential/plugins/backup/cleanup/run 编排面**S2 从未探测就写死 NS**。
+- 7 条 NEEDS_IMPLEMENTATION：2 条 host-local shell 动作（library_reveal_export_folder、plugins_open_directory）+ 5 条 import/export（Core 有 ImportPages/StartExport/GetExportSnapshot/CancelExport，但 grant 需 host_issuer 签发；Avalonia Host 未实现签发）——**原因是 Host 侧未实现，不是 Core 未实现**。
+- AC3：未改产品源码/registry/parity 快照/冻结证据（探测在私有 data root，原件零修改）。
+- AC4：check.ps1 -TaskPath PASS；7 条 64-hex pin。
+- 顺手修复（已在 allowed_paths 内，接受）：README 陈旧 READY 行（GPU done 仍在 READY 列表）、INFER-BASELINE-EP-1 pin 列占位符格式。
+- 集成：e49dec3dd。
