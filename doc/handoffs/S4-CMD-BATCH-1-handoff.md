@@ -2,8 +2,8 @@
 
 - Task: `doc/tasks/S4-CMD-BATCH-1.md`（team task-30）
 - Branch: `task/S4-CMD-BATCH-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/S4-CMD-BATCH-1`
-- Base: `171529b5d`（任务卡基线，释放提交）；**已 rebase 到 `main` `b993e68bb`**（RUN-EXPORT-E2E-1 先落地，registry 24→33；按“先落地者为准”合并）
-- Delivery head: `c6beb61c60ae876b79dd0b09ff0e275b0d4a53d5`（实现+证据提交；Task 卡 Canonical Evidence 的 sha256 pin 均指向该树）
+- Base: `171529b5d`（任务卡基线，释放提交）；**已 rebase 到 `main` `9f58b4c1d`**（RUN-EXPORT-E2E-1 24→33、NS-WIRE-B1 33→46 均已先落地；按“先落地者为准”合并）
+- Delivery head: `4f8b5f9503676c7193e978c31a364ab6d9abc8da`（实现+证据提交；Task 卡 Canonical Evidence 的 sha256 pin 均指向该树）
 - 未 push；未改 Python Core 语义、未改 Host wire 契约/旧壳。
 
 ## 1. 交付摘要
@@ -12,15 +12,15 @@
 |---|---|---|
 | AC1 清单（6 条） | **MET** | `verification/S4-CMD-BATCH-1/command-list.json`（逐条：旧壳 handler/参数/返回/错误类型、Core 路由、payload、result、wire error、before→after、rebase 前后 parity） |
 | AC2 接线 | **MET** | registry 5 条 Core 绑定 + dispatcher 旧壳签名边界校验/负载翻译 + S4Wiring 账本更新；真实执行：`evidence/commands/s4-region-reader-results.json`（7/7，含 6 条目标命令，region 写带有效 target）+ raw wire 探针 `commands/core-command-probe.json`（6 目标路由 + list_regions/list_region_revisions 全 `ok:true`） |
-| AC3 parity | **MET** | `--check` PASS、快照 sha 未变；任务基线 24/42 → rebase main 33/33 → 合并后 **38 IMPLEMENTED / 28 NOT_SUPPORTED**（本批 5 条变更）；`parity-update.json` + `evidence/commands/parity-contract.json` |
-| AC4 回归 | **MET** | test.ps1 **158/158**（coreclient 41 / host 42 / app 75，0 skipped）；vitest **60/567**；pytest **3 failed / 2746 passed / 9 skipped**（失败集合与任务书基线 3F/2739P/9S 完全一致；main 已合入 7 个 device 测试使通过数 2739→2746，无新增失败） |
+| AC3 parity | **MET** | `--check` PASS、快照 sha 未变；任务基线 24/42 → RUN-EXPORT 33/33 → NS-WIRE-B1 46/20 → 合并后 **51 IMPLEMENTED / 15 NOT_SUPPORTED**（本批 5 条变更）；`parity-update.json` + `evidence/commands/parity-contract.json` |
+| AC4 回归 | **MET** | test.ps1 **162/162**（coreclient 45 / host 42 / app 75，0 skipped）；vitest **60/567**；pytest **3 failed / 2746 passed / 9 skipped**（失败集合与任务书基线 3F/2739P/9S 完全一致；main 已合入 7 个 device 测试使通过数 2739→2746，无新增失败） |
 | AC5 门禁 | **MET** | `check.ps1 -TaskPath` PASS；13 条 64-hex sha256 pin；本 Handoff + Task 卡 Record Decision |
 
 ## 2. 代码改动（全部 `apps/desktop-avalonia/**`，合并后）
 
 | 文件 | 改动 |
 |---|---|
-| `src/NewManga.CoreClient/Commands/HostCommandRegistry.cs` | `CoreBindings` 新增 5 条（`set_region_type` / `restore_region_revision` / `rerender_page` / `resolve_page_resource` / `SaveReadingProgress`，envelope minor 均为 3）；从 `CoreRoute` NS 原因表移除这 5 条；类注释与实现集清单更新为合并后 38 条 |
+| `src/NewManga.CoreClient/Commands/HostCommandRegistry.cs` | `CoreBindings` 新增 5 条（`set_region_type` / `restore_region_revision` / `rerender_page` / `resolve_page_resource` / `SaveReadingProgress`，envelope minor 均为 3）；从 `CoreRoute` NS 原因表移除这 5 条；与 RUN-EXPORT/NS-WIRE-B1 合并后实现集 51 条 |
 | `src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs` | `WriteCorePayload` 新增 5 个 case：按旧壳 Tauri 签名校验必填/可选参数并构造精确 Core payload（`region_id` / `new_region_type` / `expected_revision` / `revision_no` / `page_id` / `chapter_id` / `mode` / `scroll_offset_y` / `elapsed_seconds_delta`），新增 `RequireInt64` / `WriteOptionalInt64` / `WriteOptionalDouble`；参数错 → `INVALID_ARGUMENTS` |
 | `src/NewManga.App/Shell/ReaderWorkbenchSupport.cs` | `S4Wiring.WiredImplemented` 合并后 28 条（RUN-EXPORT 9 条 + 本批 5 条 + 既有）；`NsBatch` 清空（S4-A/B/C 全部接线）；`VerifyAgainstRegistry()` 仍为空 |
 | `scripts/seed_s4_region_fixture.py` | 新增 fixture 播种：复用 BOOK-FIXTURE durable state（缺失时回退 `test_assets` 导入），用生产 assembly/导入/编辑/artifact 用例追加 1 个 CLEAN artifact + 1 个 confirm 翻译区域；输出 `fixture.json` |
@@ -28,8 +28,8 @@
 | `scripts/probe-core-commands.ps1` | 新增可选 `-RegionFixtureDataRoot`：用真实 id 对一次性副本探针 region/reader 6 路由；默认行为不变（S2 历史探针） |
 | `tests/NewManga.CoreClient.Tests/Support/S4RegionFixture.cs` | fixture 定位/元数据读取/durable state 复制/独立 data root 的 CoreOptions |
 | `tests/NewManga.CoreClient.Tests/Commands/S4RegionReaderCommandTests.cs` | 6 命令 + list_regions 读改前的真实执行断言（fixture 缺失时自我跳过并给 reason），写 AC2 证据 |
-| `tests/.../CommandIntegrationTests.cs` | 5 条 routing typed-error 断言（`TARGET_NOT_FOUND`，`resolve_page_resource` 为 `PAGE_NOT_FOUND`）+ 合并后计数（24 成功执行 / 28 NS / 38 implemented） |
-| `tests/.../CommandParityContractTests.cs` | 38/28 |
+| `tests/.../CommandIntegrationTests.cs` | 5 条 routing typed-error 断言（`TARGET_NOT_FOUND`，`resolve_page_resource` 为 `PAGE_NOT_FOUND`）+ 合并后计数（24 成功执行 / 15 NS / 51 implemented） |
+| `tests/.../CommandParityContractTests.cs` | 51/15 |
 | `tests/NewManga.App.Tests/S4ReaderWorkbenchTests.cs` | 28 wired / 0 NS（含 JSON 断言）；S4 wiring 证据改名 `commands/s4-wiring.json`，不再与 S3 的 `commands/wiring.json` 互相覆盖 |
 
 ## 3. 关键决策（Record Decision）
@@ -41,16 +41,16 @@
 2. **未验证不标 IMPLEMENTED**：5 条全部有冻结 sidecar 真实成功执行；`library_get_reader_projection` 在 base 已实现（NS-WIRE-A1），本轮补真实 chapter 复验而非重复接线；`list_region_revisions`（读，非本批）仍 typed NOT_SUPPORTED。
 3. **region 写成功路径必须用真实 target**：BOOK-FIXTURE 初始 0 region/0 clean artifact，故新增 fixture 播种（生产用例，不写 SQL 领域状态），测试只在 durable 副本上执行；缺 fixture 时测试自我跳过并写明 reason，不会静默通过。
 4. **`resolve_page_resource` 的错误码特殊性**：冻结 Core 对该路由把缺失 page 映射为 `PAGE_NOT_FOUND`（`core_service.py:4409-4424`），不是 `TARGET_NOT_FOUND`；集成断言按真实契约写。
-5. **先落地者为准**：RUN-EXPORT-E2E-1 先落 main（`b993e68bb`）；本分支 rebase 后人工合并两批 registry/dispatcher/测试计数，保留其 9 条 + 本批 5 条，S4 账本清零；未触碰其契约。
+5. **先落地者为准**：RUN-EXPORT-E2E-1（`b993e68bb`）与 NS-WIRE-B1（`9f58b4c1d`）先落 main；本分支 rebase 后人工合并三批 registry/dispatcher/测试计数（Run/Export 9 + B1 13 + 本批 5），S4 账本清零；同步 `CommandWiringB1Tests` 硬编码计数 46/20→51/15；未触碰其契约。
 6. **Rust 命令面快照零改动**：`extract-command-surface.py --check` PASS、sha `4c6a4da0…` 未变；状态变化只在 C# registry。
 
 ## 4. 证据索引（`verification/S4-CMD-BATCH-1/`）
 
 - `command-list.json`（AC1 6 条契约 + rebase 前后 parity）
 - `commands/core-command-probe.json`（raw wire：真实 fixture 副本，6 目标路由 `ok:true`）
-- `parity-update.json` + `parity-check.log`（AC3：24/42 → 33/33 → 38/28；`--check` PASS）
+- `parity-update.json` + `parity-check.log`（AC3：24/42 → 33/33 → 46/20 → 51/15；`--check` PASS）
 - `evidence/commands/{s4-region-reader-results,integration-results,parity-contract,not-supported-typed-errors,s4-wiring,domain-services,chinese-roundtrip}.json`
-- `evidence/test/summary.json` + `evidence/test/{dotnet-test-Debug.log,results-*.trx}`
+- `evidence/test/summary.json`（162/162）+ `evidence/test/{dotnet-test-Debug.log,results-*.trx}`
 - `vitest.log`（60/567）、`pytest.log`（3F/2746P/9S，失败集合同基线）
 - `REPORT.md`
 
