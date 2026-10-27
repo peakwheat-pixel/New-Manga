@@ -1,0 +1,24 @@
+{
+  "ac": "AC1",
+  "old_core_service_sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+  "old_core_service_bytes": 399492,
+  "base": {
+    "variant": "base",
+    "core_service_sha256": "ed499bd7859574a7a615ee1581610ff2b3ed829c870276938b762ff147d9cd7d",
+    "core_service_bytes": 399492,
+    "models_dir_present": false,
+    "bundle_bytes": 195366432.0
+  },
+  "models": {
+    "variant": "models",
+    "core_service_sha256": "9fcb9e8750ff7a52bc7ab5467f261ca689114a059874f9223054022ac41331dd",
+    "core_service_bytes": 399492,
+    "models_dir_present": true,
+    "bundle_bytes": 868852947.0
+  },
+  "builds": [
+    "build-base.log",
+    "build-models.log"
+  ],
+  "generated_at_utc": "2026-10-27T11:41:46.4431519+00:00"
+}

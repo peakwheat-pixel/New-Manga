@@ -40,6 +40,21 @@ $modelsBundled=(Test-Path (Join-Path $sidecarDst 'models'))
 $modelsBytes=if($modelsBundled){(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File|Measure-Object Length -Sum).Sum}else{0}
 if($WithModels -and -not $modelsBundled){throw 'WithModels requested but the built sidecar has no models/ directory'}
 
+# ---- 2b) RELEASE-REPACK-1: record which sidecar build the package embeds ----
+# The frozen core_service.exe is rebuilt from src/ by packaging/m2ac5/build_sidecar.ps1;
+# the package metadata must identify the exact bytes so a stale build can never be
+# mistaken for the current one (AC1 requires old/new sha256 comparison).
+$sidecarExe = Join-Path $sidecarDst 'core_service.exe'
+$sidecarBuildInfo = [ordered]@{
+    core_service_sha256 = (Get-FileHash $sidecarExe -Algorithm SHA256).Hash.ToLower()
+    core_service_bytes = (Get-Item $sidecarExe).Length
+    core_service_built_at_utc = (Get-Item $sidecarExe).LastWriteTimeUtc.ToString('o')
+    repo_head = (& git -C $repo rev-parse HEAD 2>$null)
+    variant = $variant
+    models_bundled = $modelsBundled
+}
+Write-Host ("sidecar build: {0} ({1} bytes, HEAD={2})" -f $sidecarBuildInfo.core_service_sha256, $sidecarBuildInfo.core_service_bytes, $sidecarBuildInfo.repo_head)
+
 # ---- 3) license trio: byte-identical to the repo root ----------------------
 $lic=@('LICENSE','NOTICE.md','THIRD_PARTY_LICENSES.md')
 $licHashes=@{}
@@ -83,7 +98,7 @@ $modelsStrategy=if($modelsBundled){
 }else{
   "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\com.newmanga.desktop\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle"
 }
-@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe;sidecar_build=$sidecarBuildInfo}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
 # Keep a copy beside the exe too: the single-file host always sees its own directory,
 # so the settings page can render the packaged device probe on every layout.
 Copy-Item (Join-Path $stage 'VERSION.json') (Join-Path $stage 'app/VERSION.json') -Force
