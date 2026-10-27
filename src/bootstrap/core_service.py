@@ -175,6 +175,7 @@ from infrastructure.rendering.pillow_rendering import (
     PillowTextLayoutEngine,
     decode_nmfr_frame,
 )
+from infrastructure.rendering.pillow_source_style import PillowSourceStyleAnalyzer
 from infrastructure.resource_channel.catalog_store import (
     PreviewOrigin,
     ResourceCatalogStore,
@@ -651,12 +652,6 @@ class _PassthroughImageDecoder:
         return DecodedImage(width=1, height=1, mime_type="image/rgb")
 
 
-class _StubStyleAnalyzer:
-    def analyze_pixel_styles(self, image: Any) -> list[Any]:
-        del image
-        return []
-
-
 def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     """Assemble production Core services on the given or default data root.
 
@@ -712,7 +707,7 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
         font_catalog=catalog,
         layout_engine=PillowTextLayoutEngine(catalog),
         compositor=PillowImageCompositor(catalog),
-        source_styles=SourceStyleService(_StubStyleAnalyzer()),
+        source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
         content_decoder=decode_nmfr_frame,
         original_page_reader=read_original_page,
         recover_runs_on_assembly=False,

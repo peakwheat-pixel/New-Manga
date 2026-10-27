@@ -45,7 +45,10 @@ from bootstrap.core_assembly import (
     _sfx_policy_from_settings,
     assemble_core_services,
 )
-from bootstrap.core_service import _PassthroughImageDecoder, _StubStyleAnalyzer
+from bootstrap.core_service import _PassthroughImageDecoder
+    from infrastructure.rendering.pillow_source_style import (
+        PillowSourceStyleAnalyzer,
+    )
 from domain.regions.entities import SfxPolicy
 
 
@@ -74,7 +77,7 @@ def assembled(tmp_path, monkeypatch):
             font_catalog=object(),  # type: ignore[arg-type]
             layout_engine=object(),  # type: ignore[arg-type]
             compositor=object(),  # type: ignore[arg-type]
-            source_styles=SourceStyleService(_StubStyleAnalyzer()),
+            source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
             **kwargs,
         )
 

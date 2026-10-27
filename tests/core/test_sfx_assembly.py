@@ -35,7 +35,10 @@ from bootstrap.core_assembly import (
     _detected_region_type,
     assemble_core_services,
 )
-from bootstrap.core_service import _PassthroughImageDecoder, _StubStyleAnalyzer
+from bootstrap.core_service import _PassthroughImageDecoder
+    from infrastructure.rendering.pillow_source_style import (
+        PillowSourceStyleAnalyzer,
+    )
 from domain.regions.entities import BBox, RegionGeometry, RegionType
 from infrastructure.providers.detection_manga import (
     MangaDetectionProvider,
@@ -69,7 +72,7 @@ def assembled(tmp_path, monkeypatch):
             font_catalog=object(),  # type: ignore[arg-type]
             layout_engine=object(),  # type: ignore[arg-type]
             compositor=object(),  # type: ignore[arg-type]
-            source_styles=SourceStyleService(_StubStyleAnalyzer()),
+            source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
             **kwargs,
         )
 

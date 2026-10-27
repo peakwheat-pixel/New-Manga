@@ -25,6 +25,7 @@ error when its service was not assembled, never a silent degradation.
 from __future__ import annotations
 
 import json
+import sys
 from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from typing import Any, Protocol
@@ -108,6 +109,21 @@ STEP_SEGMENT = "segment"
 STEP_MASK_REFINE = "mask_refine"
 STEP_INPAINT = "inpaint"
 STEP_RENDER = "render"
+
+#: CORE-PIPELINE-FIX-1 (empty detection semantics). A page whose detector
+#: legitimately finds no text (cover / splash / art-only page) must not fail the
+#: whole page task; the step completes with zero Regions and says so in its
+#: output. ``fail`` keeps the pre-fix behaviour available for callers that still
+#: want a hard ``INVALID_INPUT``. Configured per run through the settings
+#: snapshot section ``detect`` (``{"detect": {"empty_detection_policy": "fail"}}``);
+#: the key rides the ordinary settings JSON and needs no new settings surface.
+EMPTY_DETECTION_POLICY_COMPLETE = "complete"
+EMPTY_DETECTION_POLICY_FAIL = "fail"
+EMPTY_DETECTION_POLICIES = (
+    EMPTY_DETECTION_POLICY_COMPLETE,
+    EMPTY_DETECTION_POLICY_FAIL,
+)
+DEFAULT_EMPTY_DETECTION_POLICY = EMPTY_DETECTION_POLICY_COMPLETE
 
 ARTIFACT_MASK = "mask"
 ARTIFACT_CLEAN = "clean"
@@ -239,17 +255,23 @@ class ProductionHandlers:
     ) -> StepResult:
         """Detect text regions on the page and land them as Regions.
 
-        Fail-closed ladder (TASK-049 AC ①):
+        Fail-closed ladder (TASK-049 AC ①, widened by CORE-PIPELINE-FIX-1):
 
         - no detector / no region writer wired at assembly →
           ``PROVIDER_NOT_CONFIGURED`` (the same taxonomy slot OCR_REGION uses
           when no OCR provider is ready — the failure stays at the capability
           gap, never at a fabricated success);
-        - the adapter reports zero candidates → ``INVALID_INPUT`` (a page
-          with no text has nothing for the following region steps to work
-          on; failing the step cancels the task's remaining units instead of
-          letting ``ocr`` fail with "requires a Region target");
+        - the adapter reports zero candidates → **completed with zero Regions**
+          by default (a cover / splash / art-only page is a legitimate empty
+          detection, not invalid input). The output records
+          ``detection.empty_detection/empty_detection_policy`` and stderr says
+          so, so the outcome is observable, never silent. A run that wants the
+          old hard failure sets ``detect.empty_detection_policy = "fail"`` and
+          gets the previous typed ``INVALID_INPUT``;
         - the adapter raised → typed provider error via ``_typed``.
+
+        Input validation is untouched: a frame the provider rejects still fails
+        with the provider's own typed code.
 
         Idempotency: a page that already has live Regions reuses them (in
         ``reading_order``), so re-planned page tasks never pile up duplicate
@@ -292,10 +314,26 @@ class ProductionHandlers:
             })
         candidates = detection.page_global_candidates()
         if not candidates:
-            raise ProviderInputError(
-                f"detector returned no candidates for page {unit.page_id!r}",
-                stage=STEP_DETECT,
+            # CORE-PIPELINE-FIX-1: an empty detection is a legitimate outcome on
+            # a text-free page. Default = complete with zero Regions (observable
+            # in the step output + stderr); ``empty_detection_policy="fail"``
+            # keeps the pre-fix INVALID_INPUT contract available.
+            policy = self._empty_detection_policy(run)
+            if policy == EMPTY_DETECTION_POLICY_FAIL:
+                raise ProviderInputError(
+                    f"detector returned no candidates for page {unit.page_id!r}",
+                    stage=STEP_DETECT,
+                )
+            provenance = dict(detection.provenance())
+            provenance.update(
+                {
+                    "candidate_count": 0,
+                    "empty_detection": True,
+                    "empty_detection_policy": policy,
+                }
             )
+            self._log_empty_detection(unit.page_id, policy)
+            return self._detect_result(unit, (), provenance)
         provenance = detection.provenance()
         region_ids = tuple(
             self.deps.region_creator(
@@ -1122,6 +1160,41 @@ class ProductionHandlers:
             return {}
         section = settings.get(name)
         return section if isinstance(section, Mapping) else {}
+
+    @classmethod
+    def _empty_detection_policy(cls, run: PipelineRun) -> str:
+        """Resolve ``detect.empty_detection_policy`` for this run.
+
+        Unknown / malformed values fall back to the default (``complete``) and
+        say so on stderr: an unrecognised knob must never turn into a silent
+        semantic change, and it must never turn a text-free page into a failure.
+        """
+        raw = cls._section(run.settings_snapshot, "detect").get(
+            "empty_detection_policy", DEFAULT_EMPTY_DETECTION_POLICY
+        )
+        value = raw.strip().lower() if isinstance(raw, str) else ""
+        if value in EMPTY_DETECTION_POLICIES:
+            return value
+        print(
+            "[core.detect] ignoring unknown empty_detection_policy "
+            f"{raw!r}; using {DEFAULT_EMPTY_DETECTION_POLICY!r}",
+            file=sys.stderr,
+            flush=True,
+        )
+        return DEFAULT_EMPTY_DETECTION_POLICY
+
+    @staticmethod
+    def _log_empty_detection(page_id: str, policy: str) -> None:
+        # Observability without a wire change: the same marker also lands in the
+        # step output (``detection.empty_detection``), so a run that completed
+        # with zero Regions is never indistinguishable from a run that detected
+        # nothing by accident.
+        print(
+            f"[core.detect] page {page_id!r} produced 0 candidates; "
+            f"empty_detection_policy={policy} -> step completed with 0 regions",
+            file=sys.stderr,
+            flush=True,
+        )
 
     @staticmethod
     def _require_region(unit: PlanUnit) -> str:

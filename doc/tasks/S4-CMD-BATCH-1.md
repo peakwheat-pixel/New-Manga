@@ -103,3 +103,12 @@ S2 遗留 42 条 NS 中，S4-A/B/C 登记 10 条：region 写 4、reader 2、Run
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- **5 条新增 IMPLEMENTED**（第 6 条 library_get_reader_projection 基线已由 NS-WIRE-A1 实现，本轮真实 chapter 复验）：set_region_type、estore_region_revision、erender_page、esolve_page_resource、library_save_reading_progress。
+- 全部对冻结 sidecar **真实执行**：新 fixture scripts/seed_s4_region_fixture.py（BOOK-FIXTURE durable 派生真实 region/clean artifact）测得 **7/7 all_ok**（vidence/commands/s4-region-reader-results.json）；raw wire 探针 6 目标路由 ok:true。
+- parity：xtract-command-surface.py --check PASS、Rust 快照 sha 未变；**51 IMPLEMENTED / 15 NOT_SUPPORTED**（24/42 → 33/33 → 46/20 → 51/15）。
+- 回归：DSH 复跑 scripts/test.ps1 → **162/162**；实现方报 vitest 60/567、pytest 3F/2746P/9S（失败集合同基线，无新增）。
+- AC5：check.ps1 -TaskPath PASS；13 条 64-hex pin；Handoff + Record Decision（region 写权限/只读门）。
+- 遗留（记录不阻塞）：list_region_revisions（读，本批未含）仍 NS、路由探针已 ok:true 可下批接线；region 写 UI 入口 + 只读门留 S5；rerender preview 仅断言存在性。
+- 集成：0fba83021。

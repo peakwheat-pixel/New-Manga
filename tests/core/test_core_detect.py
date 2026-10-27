@@ -72,7 +72,10 @@ def _make_mock_server(tmp_path: Path) -> tuple[CoreServiceServer, object]:
     """
     from application.translation.color.service import SourceStyleService
     from bootstrap.core_assembly import assemble_core_services
-    from bootstrap.core_service import _PassthroughImageDecoder, _StubStyleAnalyzer
+    from bootstrap.core_service import _PassthroughImageDecoder
+    from infrastructure.rendering.pillow_source_style import (
+        PillowSourceStyleAnalyzer,
+    )
 
     core = assemble_core_services(
         tmp_path / "data",
@@ -81,7 +84,7 @@ def _make_mock_server(tmp_path: Path) -> tuple[CoreServiceServer, object]:
         font_catalog=object(),  # type: ignore[arg-type]
         layout_engine=object(),  # type: ignore[arg-type]
         compositor=object(),  # type: ignore[arg-type]
-        source_styles=SourceStyleService(_StubStyleAnalyzer()),
+        source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
         mock_local_providers=True,
     )
     return CoreServiceServer(core), core

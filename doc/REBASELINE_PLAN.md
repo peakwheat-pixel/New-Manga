@@ -39,7 +39,7 @@
 |NS-RECLASSIFY-1|—|done（42 NS → 35 IMPLEMENTED / 7 NEEDS_IMPLEMENTATION；只出证据；集成 e49dec3dd）|
 |NS-WIRE-B1|—|done（13 条接线；parity 46/20；161/161；集成 6b47f377f）|
 |GRANT-ISSUER-1|—|ready（grant 签发+shell 动作 7 条）|
-|S4-CMD-BATCH-1|—|in_review（S4-A/B/C：region 写 4 + reader 2 接线；rebase NS-WIRE-B1 后 registry 46→51 IMPLEMENTED；交付证据见 Task 卡）|
+|S4-CMD-BATCH-1|—|done（5 条接线；parity 51/15；162/162；集成 0fba83021）|
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
 |RUN-BINDING-FIX-1|—|ready（Host StartRun 带 provider bindings；零 Core）|
 |CORE-PIPELINE-FIX-1|—|ready（color analyzer + 空检测语义）|
