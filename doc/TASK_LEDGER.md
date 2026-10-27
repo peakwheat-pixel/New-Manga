@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 413 |
+| task files | 417 |
 | terminal | 403 |
-| non-terminal | 10 |
-| non-terminal named in the plan | 5 |
-| non-terminal outside the plan | 5 |
+| non-terminal | 14 |
+| non-terminal named in the plan | 7 |
+| non-terminal outside the plan | 7 |
 | task files tracked by git | 413 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 4 |
 | non-terminal tracked by git | 10 |
 
 ## By status
@@ -24,11 +24,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
+| `ready` | 5 | no |
 | `in_review` | 4 | no |
 | `proposed` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -38,12 +38,16 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
-| `S4-CMD-BATCH-1` | `in_review` | own row |
+| `S4-CMD-BATCH-1` | `in_review` | no |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `AD002-FOLLOWUPS-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
-| `READER-LIBRARY-WIRE-1` | `proposed` | own row |
+| `READER-LIBRARY-WIRE-1` | `proposed` | no |
+| `FLAKY-PYTEST-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
+| `PDF-EXPORT-1` | `ready` | own row |
+| `REAL-TRANSLATE-PROVIDER-1` | `ready` | own row |
+| `RELEASE-SMOKE-1` | `ready` | own row |
 
 ## What this ledger does not say
 
