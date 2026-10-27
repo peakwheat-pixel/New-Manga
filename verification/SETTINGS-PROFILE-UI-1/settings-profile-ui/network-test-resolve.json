@@ -1,0 +1,8 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "real Core test/resolve results rendered; unavailable is explicit",
+  "unavailable_message_when_no_result": true,
+  "test_call": "network-1/profile-1",
+  "test_summary": "\u8BCA\u65AD\u7ED3\u679C\uFF1Astatus=passed, direct_fallback=False, Proxy:passed 12ms; DNS:passed 3ms; TCP:passed 4ms; TLS:not_applicable(provider_endpoint_uses_http); HTTP:passed 20ms; ProviderAuth:passed 9ms",
+  "resolve_summary": "\u89E3\u6790\u7ED3\u679C\uFF1Anetwork_profile_id=network-1 \u00B7 mode=HTTPS \u00B7 source=global"
+}

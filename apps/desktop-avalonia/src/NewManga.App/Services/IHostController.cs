@@ -139,4 +139,66 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
         string kind,
         string ownerId,
         CancellationToken cancellationToken = default);
+
+    // -------------------------------------------------------------------------------------
+    // SETTINGS-PROFILE-UI-1: P15 provider / network profile management + binding slots.
+    // Every method returns typed outcomes (never throws into the UI); list methods degrade to an
+    // empty list when the Host is not ready. None of these records carries a credential secret.
+    // -------------------------------------------------------------------------------------
+
+    Task<IReadOnlyList<ProviderProfileInfo>> ListProviderProfilesAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Creates (<paramref name="profileId"/> null) or updates one provider profile.</summary>
+    Task<SettingsProfileResult> SaveProviderProfileAsync(
+        string? profileId,
+        ProviderProfileDraft draft,
+        CancellationToken cancellationToken = default);
+
+    Task<SettingsProfileResult> DeleteProviderProfileAsync(
+        string profileId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<NetworkProfileInfo>> ListNetworkProfilesAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Creates (<paramref name="networkProfileId"/> null) or updates one network profile.</summary>
+    Task<SettingsProfileResult> SaveNetworkProfileAsync(
+        string? networkProfileId,
+        NetworkProfileDraft draft,
+        CancellationToken cancellationToken = default);
+
+    Task<SettingsProfileResult> DeleteNetworkProfileAsync(
+        string networkProfileId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Sets (<paramref name="networkProfileId"/> non-null) or clears the global network default.</summary>
+    Task<SettingsProfileResult> SetNetworkDefaultAsync(
+        string? networkProfileId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Runs the real Core network diagnostic; null when unavailable (never fabricated).</summary>
+    Task<NetworkTestInfo?> TestNetworkProfileAsync(
+        string networkProfileId,
+        string providerProfileId,
+        CancellationToken cancellationToken = default);
+
+    Task<NetworkResolveInfo?> ResolveNetworkProfileAsync(
+        string? providerProfileId,
+        CancellationToken cancellationToken = default);
+
+    Task<SettingsProfileResult> SetProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        string profileId,
+        CancellationToken cancellationToken = default);
+
+    Task<SettingsProfileResult> ClearProviderBindingAsync(
+        ProfileBindingScope scope,
+        string capability,
+        CancellationToken cancellationToken = default);
+
+    Task<ProviderBindingResult?> ResolveProviderBindingAsync(
+        string capability,
+        CancellationToken cancellationToken = default);
 }
