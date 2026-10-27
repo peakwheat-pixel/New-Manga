@@ -1,0 +1,175 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "generated_at_utc": "2026-10-27T15:59:14Z",
+  "ac1_probe": {
+    "base_url": "https://opencode.ai/zen/v1",
+    "api_style": "OpenAI-compatible (chat/completions + models)",
+    "models_http_status": 200,
+    "models_count": 44,
+    "usable_models": [],
+    "chat_probes": [
+      {
+        "model": "deepseek-v4.1-flash-free",
+        "http": 429,
+        "elapsed_ms": 2010.6
+      },
+      {
+        "model": "big-pickle",
+        "http": 429,
+        "elapsed_ms": 647.2
+      },
+      {
+        "model": "glm-5.3-flash-free",
+        "http": 429,
+        "elapsed_ms": 975.0
+      },
+      {
+        "model": "deepseek-v4.1-flash",
+        "http": 402,
+        "elapsed_ms": 1093.1
+      },
+      {
+        "model": "gpt-5.4-nano",
+        "http": 402,
+        "elapsed_ms": 697.3
+      }
+    ],
+    "quota_block": true
+  },
+  "ac2_credential": {
+    "profile_id": "3819f991cbe54001ba45b6f8524f260c",
+    "credential_state": "configured",
+    "vault_ref_prefix": "NewManga/provider/3819f991cbe54001ba45b6f8524f260c/",
+    "key_file_deleted": true,
+    "key_in_evidence": false,
+    "key_ever_logged": false,
+    "key_source": "user temp file (deleted after credential_put)"
+  },
+  "ac3_real_translate": {
+    "verdict": "BLOCKED_QUOTA",
+    "provider": "openai-compatible-translation @ https://opencode.ai/zen/v1",
+    "model": "deepseek-v4.1-flash-free",
+    "run_id": "run-6a044e6d2a974074a4931fc2f9ec0a40",
+    "terminal": "completed_with_failures",
+    "elapsed_ms": 7779.7,
+    "translate_targets": 3,
+    "failed_translate_steps": 3,
+    "error_codes": [
+      "PROVIDER_RATE_LIMITED"
+    ],
+    "output_differs_from_input": false,
+    "no_fabricated_output": true,
+    "blocked_reason": "all probed models answered 402 (paid, no balance) or 429 (free tier) for this key; /models is authenticated (HTTP 200)."
+  },
+  "ac4_degradation": {
+    "typed_error": "PROVIDER_RATE_LIMITED",
+    "typed_error_retryable": true,
+    "identity_fallback": {
+      "provider": "identity-translation",
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "terminal": "completed_with_failures",
+      "elapsed_ms": 76120.6,
+      "translate_completed": 22,
+      "downstream_completed": {
+        "segment": 22,
+        "mask_refine": 22,
+        "inpaint": 22,
+        "render": 22
+      },
+      "switch_mechanism": "frozen run provider_bindings (translate -> identity-translation)"
+    },
+    "identity_equality": {
+      "regions_with_identity_output": 22,
+      "regions": 26
+    }
+  },
+  "db_runs": [
+    {
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "command_type": "translate_untranslated",
+      "status": "completed_with_failures"
+    },
+    {
+      "run_id": "run-6a044e6d2a974074a4931fc2f9ec0a40",
+      "command_type": "translate_untranslated",
+      "status": "completed_with_failures"
+    }
+  ],
+  "db_failed_steps": [
+    {
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "step_type": "ocr",
+      "status": "failed",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "step_type": "ocr",
+      "status": "failed",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "step_type": "ocr",
+      "status": "failed",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "step_type": "ocr",
+      "status": "failed",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+      "step_type": "ocr",
+      "status": "failed",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "run_id": "run-6a044e6d2a974074a4931fc2f9ec0a40",
+      "step_type": "translate",
+      "status": "failed",
+      "error_code": "PROVIDER_RATE_LIMITED"
+    },
+    {
+      "run_id": "run-6a044e6d2a974074a4931fc2f9ec0a40",
+      "step_type": "translate",
+      "status": "failed",
+      "error_code": "PROVIDER_RATE_LIMITED"
+    },
+    {
+      "run_id": "run-6a044e6d2a974074a4931fc2f9ec0a40",
+      "step_type": "translate",
+      "status": "failed",
+      "error_code": "PROVIDER_RATE_LIMITED"
+    }
+  ],
+  "safety": {
+    "isolated_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\REAL-TRANSLATE-PROVIDER-1\\work-root",
+    "user_data_root_touched": false,
+    "real_vault_entry_kept_for_profile": "3819f991cbe54001ba45b6f8524f260c",
+    "orphan_vault_entries_removed": 2,
+    "key_in_repo": false
+  },
+  "regression": {
+    "base_commit": "606314829",
+    "test_ps1": {
+      "command": "apps/desktop-avalonia/scripts/test.ps1",
+      "total": 235,
+      "passed": 235,
+      "skipped": 0,
+      "projects": {
+        "coreclient": 61,
+        "host": 56,
+        "app": 118
+      }
+    },
+    "pytest": {
+      "command": "python -m pytest -q",
+      "passed": 2773,
+      "skipped": 10,
+      "failed": 0
+    }
+  }
+}

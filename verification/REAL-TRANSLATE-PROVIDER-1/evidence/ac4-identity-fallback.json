@@ -1,0 +1,1085 @@
+{
+  "ac": "AC3/AC4",
+  "generated_at_utc": "2026-10-27T15:57:05Z",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\REAL-TRANSLATE-PROVIDER-1\\work-root",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "command": "translate_untranslated",
+  "translate_provider": "identity-translation",
+  "label": "identity-fallback",
+  "api_key_read_by_tool": false,
+  "commands": [
+    {
+      "command": "core.ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      }
+    }
+  ],
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr",
+      "translate": "identity-translation"
+    }
+  },
+  "start": {
+    "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+    "status": "pending"
+  },
+  "run_id": "run-f36ad73724b64ff2aa56875ec4b7ad36",
+  "terminal": "completed_with_failures",
+  "status_transitions": [
+    "pending",
+    "running",
+    "completed_with_failures"
+  ],
+  "elapsed_ms": 76120.6,
+  "command_traces": {
+    "GetRunSnapshot_request": null
+  },
+  "task_projection": {
+    "run_status": "completed_with_failures",
+    "overall_progress": 1.0,
+    "counts": {
+      "total": 8,
+      "completed": 3,
+      "failed": 5,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "step_status": {
+      "translate": {
+        "completed": 22
+      },
+      "segment": {
+        "completed": 22
+      },
+      "mask_refine": {
+        "completed": 22
+      },
+      "inpaint": {
+        "completed": 22
+      },
+      "render": {
+        "completed": 22
+      },
+      "ocr": {
+        "completed": 23,
+        "failed": 5
+      },
+      "color": {
+        "completed": 23
+      },
+      "term_extract": {
+        "completed": 23
+      }
+    },
+    "error_codes": [
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      }
+    ],
+    "tasks": [
+      {
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "completed",
+        "steps": [
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          }
+        ]
+      },
+      {
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "status": "completed",
+        "steps": [
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          }
+        ]
+      },
+      {
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "status": "completed",
+        "steps": [
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "segment",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "mask_refine",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "inpaint",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "render",
+            "status": "completed",
+            "error_code": null
+          }
+        ]
+      },
+      {
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      }
+    ]
+  }
+}

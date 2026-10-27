@@ -1,0 +1,328 @@
+{
+  "ac": "AC3/AC4",
+  "generated_at_utc": "2026-10-27T15:38:14Z",
+  "db": "G:\\CODEX\\New Manga.workspace\\task-envs\\REAL-TRANSLATE-PROVIDER-1\\base-root\\library.db",
+  "pages": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "regions": [
+        {
+          "region_id": "e913de6ccf624c9facd38ddab1969562",
+          "region_type": "speech",
+          "reading_order": 1,
+          "source_text": "「キャロット?",
+          "machine_translation": "「キャロット?",
+          "final_translation": "「キャロット?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "19da317de2d84eb8a873a830e3da7d0e",
+          "region_type": "speech",
+          "reading_order": 2,
+          "source_text": "キャロット!",
+          "machine_translation": "キャロット!",
+          "final_translation": "キャロット!",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "18deffc1f4c44320858d66b2df9eaf71",
+          "region_type": "speech",
+          "reading_order": 3,
+          "source_text": "キャロット?",
+          "machine_translation": "キャロット?",
+          "final_translation": "キャロット?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "74d2c4497efd4911a47ad1ae52e1638f",
+          "region_type": "speech",
+          "reading_order": 4,
+          "source_text": "キャロット?!",
+          "machine_translation": "キャロット?!",
+          "final_translation": "キャロット?!",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "ea1f6ec160e64d6cbea48cb8cea0445e",
+          "region_type": "speech",
+          "reading_order": 5,
+          "source_text": "あの手段を使う必要があるみたい...",
+          "machine_translation": "あの手段を使う必要があるみたい...",
+          "final_translation": "あの手段を使う必要があるみたい...",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "2cc3ba1ddecc4f5f9b1316febf9de342",
+          "region_type": "speech",
+          "reading_order": 6,
+          "source_text": "キャロット?!!!",
+          "machine_translation": "キャロット?!!!",
+          "final_translation": "キャロット?!!!",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "3ce1434b1f3b47bd83a7b4dca390710f",
+          "region_type": "speech",
+          "reading_order": 7,
+          "source_text": "珍しい!ベッドの下にいないなんて?",
+          "machine_translation": "珍しい!ベッドの下にいないなんて?",
+          "final_translation": "珍しい!ベッドの下にいないなんて?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "774f7a4283144f1d817750fb14a6951f",
+          "region_type": "speech",
+          "reading_order": 8,
+          "source_text": "キャロット!",
+          "machine_translation": "キャロット!",
+          "final_translation": "キャロット!",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "36903c8d1d5d42008aca76ae52d32f15",
+          "region_type": "speech",
+          "reading_order": 9,
+          "source_text": "カラカラカラカラカラサッサッサッサッサッサッサ",
+          "machine_translation": "カラカラカラカラカラサッサッサッサッサッサッサ",
+          "final_translation": "カラカラカラカラカラサッサッサッサッサッサッサ",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "e5afe0ea8d2349b29b9a5d777ab8b485",
+          "region_type": "sfx",
+          "reading_order": 10,
+          "source_text": "カラーカラーカラーカラカラ",
+          "machine_translation": "",
+          "final_translation": "",
+          "identity": false,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "c3b6cd8912e64284b289c834eb8b28b1",
+          "region_type": "sfx",
+          "reading_order": 11,
+          "source_text": "サッサッサッサッサッ",
+          "machine_translation": "",
+          "final_translation": "",
+          "identity": false,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "493b705f6f2743ec8097d1eb9eb0f8aa",
+          "region_type": "sfx",
+          "reading_order": 12,
+          "source_text": "オーソルオーバーガード",
+          "machine_translation": "",
+          "final_translation": "",
+          "identity": false,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "dacdf10e2c58411eb626795c960428b3",
+          "region_type": "sfx",
+          "reading_order": 13,
+          "source_text": "カラカラカラカラカラカラサッサッサッサッサッサ",
+          "machine_translation": "",
+          "final_translation": "",
+          "identity": false,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        }
+      ]
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "regions": [
+        {
+          "region_id": "382146b72ab142d699627595627efaa2",
+          "region_type": "speech",
+          "reading_order": 1,
+          "source_text": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+          "machine_translation": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+          "final_translation": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "b28bbed8b025438cba3ce8dfe8ba2887",
+          "region_type": "speech",
+          "reading_order": 2,
+          "source_text": "丁度、今まさに手助けが必要なのよ",
+          "machine_translation": "丁度、今まさに手助けが必要なのよ",
+          "final_translation": "丁度、今まさに手助けが必要なのよ",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "d1deb60becb244c48d4e4fb95f185a01",
+          "region_type": "speech",
+          "reading_order": 3,
+          "source_text": "私の最新の傑作をお見せしましょう",
+          "machine_translation": "私の最新の傑作をお見せしましょう",
+          "final_translation": "私の最新の傑作をお見せしましょう",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "9352f3d4e6fe415e93d1be43ffc1e7f4",
+          "region_type": "speech",
+          "reading_order": 4,
+          "source_text": "天才の魔法薬です",
+          "machine_translation": "天才の魔法薬です",
+          "final_translation": "天才の魔法薬です",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "216a4c08abef49869f1e490537423d6c",
+          "region_type": "speech",
+          "reading_order": 5,
+          "source_text": "「さあ、一口お飲みください",
+          "machine_translation": "「さあ、一口お飲みください",
+          "final_translation": "「さあ、一口お飲みください",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "fe002495c976449fba0e232c4fb9f877",
+          "region_type": "speech",
+          "reading_order": 6,
+          "source_text": "うまくいけば、天才のひらめきが訪れるはず",
+          "machine_translation": "うまくいけば、天才のひらめきが訪れるはず",
+          "final_translation": "うまくいけば、天才のひらめきが訪れるはず",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        }
+      ]
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "regions": [
+        {
+          "region_id": "45be1343afc446c38380aafddc10f86a",
+          "region_type": "speech",
+          "reading_order": 1,
+          "source_text": "しゃぁぁぁ",
+          "machine_translation": "しゃぁぁぁ",
+          "final_translation": "しゃぁぁぁ",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "20080321d2a64e97a6ef39ff1f928f00",
+          "region_type": "speech",
+          "reading_order": 2,
+          "source_text": "わあ...キャロット!すごいじゃない...アル",
+          "machine_translation": "わあ...キャロット!すごいじゃない...アル",
+          "final_translation": "わあ...キャロット!すごいじゃない...アル",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "79ce394c3de34b4b971e9384425e9087",
+          "region_type": "speech",
+          "reading_order": 3,
+          "source_text": "『字を...書けるの?",
+          "machine_translation": "『字を...書けるの?",
+          "final_translation": "『字を...書けるの?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "4d5d241a93c341b69ad54dd4374711d4",
+          "region_type": "speech",
+          "reading_order": 4,
+          "source_text": "E?",
+          "machine_translation": "E?",
+          "final_translation": "E?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "14a582332a1a4c42b22f8b137e80fcf5",
+          "region_type": "speech",
+          "reading_order": 5,
+          "source_text": "エネルギー?",
+          "machine_translation": "エネルギー?",
+          "final_translation": "エネルギー?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "08f5cd4e5f5a4cf394eac3cacf868009",
+          "region_type": "speech",
+          "reading_order": 6,
+          "source_text": "永遠?",
+          "machine_translation": "永遠?",
+          "final_translation": "永遠?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        },
+        {
+          "region_id": "37445bcae8c049c5bf6e18e5748737a8",
+          "region_type": "speech",
+          "reading_order": 7,
+          "source_text": "感情?",
+          "machine_translation": "感情?",
+          "final_translation": "感情?",
+          "identity": true,
+          "translated_differs_from_source": false,
+          "translation_locked": false
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+      "command_type": "translate_untranslated",
+      "status": "completed",
+      "updated_at": "2026-10-27T12:44:09.523+00:00",
+      "termination_reason": null,
+      "fatal_error": null
+    }
+  ],
+  "failed_steps": [],
+  "target_states": [],
+  "summary": {
+    "pages_with_regions": 3,
+    "regions": 26,
+    "regions_translated_differs": 0,
+    "regions_identity": 22,
+    "runs": 1,
+    "failed_steps": 0
+  }
+}
