@@ -114,4 +114,7 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 - 回归（DSH 复跑 scripts/test.ps1）：见执行记录；vitest 60/567、pytest 3F/2739P/9S 基线不变。
 - 基线说明：任务卡 base 原写 230164c5c（早于卡片创建，治理 FAIL），实际分支基于释放提交 50ab8fc5；已按实现方记录更正。
 - 遗留：S4-A/B/C 10 条仍 NS（后续批次）；reader projection 成功路径依赖 BOOK-FIXTURE 数据根；cleanup 仅空缓存、backup 仅创建。
+## 集成验证补记（2026-10-27T04:44Z）
 
+- DSH 在 main 上复跑 pps/desktop-avalonia/scripts/test.ps1 → **TEST PASS (Debug): 110/110 passed, 0 skipped**（此前一次失败为遗留进程锁日志/并行抢占所致，清理后复现全绿）。
+- 结论：AC4 由实现方证据 + DSH 复跑双重确认。
