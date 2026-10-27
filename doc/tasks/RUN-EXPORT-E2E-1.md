@@ -54,6 +54,19 @@ S2 遗留的 42 条 NOT_SUPPORTED 中含 Run/Export 类命令；10 条最小集�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-RE-REPORT | AC1–AC5 | `verification/RUN-EXPORT-E2E-1/REPORT.md` | `5a7787504` | `41a3246f3717b49c9b5af09529dc99add1cb489f8e8600ae03fc887f7cc1c469` | CANONICAL |
+| E-RE-LIST | AC1 | `verification/RUN-EXPORT-E2E-1/command-list.json` | `5a7787504` | `39c1eef38c9f2177407c40e46ba9866ae9d724bf62b5b0c1d358cb1ed3ea8ec5` | CANONICAL |
+| E-RE-PARITY | AC4 | `verification/RUN-EXPORT-E2E-1/parity-update.json` | `5a7787504` | `092951052026b2d4bf99960eb0af8611a4435dab5906902b1c1534efaff0b815` | CANONICAL |
+| E-RE-CHECK | AC4 | `verification/RUN-EXPORT-E2E-1/parity-check.log` | `5a7787504` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-RE-PROBE-BASE | AC1/AC3 | `verification/RUN-EXPORT-E2E-1/probe-base.json` | `5a7787504` | `6eb069a959c38bc4b883a7ad25ecfa47f2beec309aa1f638748e410dd8bd13bf` | CANONICAL |
+| E-RE-PROBE-MODELS | AC3 | `verification/RUN-EXPORT-E2E-1/probe-models.json` | `5a7787504` | `c47e4de7e6f755dbf0d05942070e5f7b1399dcc02a436413ec48deb8c728910e` | CANONICAL |
+| E-RE-STDERR-BASE | AC1/AC3 | `verification/RUN-EXPORT-E2E-1/core-base.stderr.log` | `5a7787504` | `b10df9458cc6c24db0fe72846fca7f17df04cb83f861ca4c4e89a106aee3dfeb` | CANONICAL |
+| E-RE-STDERR-MODELS | AC3 | `verification/RUN-EXPORT-E2E-1/core-models.stderr.log` | `5a7787504` | `342f0e8a43043fb753794d45c76c954bd1415f8ddf7b62c61213aec57610e056` | CANONICAL |
+| E-RE-INTEGRATION | AC1/AC4 | `verification/RUN-EXPORT-E2E-1/evidence/integration-results.json` | `5a7787504` | `e7fecd4a26dbaacdecc0f7d33ab12108d545dfbd5fb6140b3f140cedcaa61890` | CANONICAL |
+| E-RE-CONTRACT | AC1/AC4 | `verification/RUN-EXPORT-E2E-1/evidence/parity-contract.json` | `5a7787504` | `2d62b2c5f1b28ea8114154061af3ea2a6576f2743114b72b47742d1800357499` | CANONICAL |
+| E-RE-DOTNET | AC4 | `verification/RUN-EXPORT-E2E-1/dotnet-all.log` | `5a7787504` | `7bbc39fa91b9a295c4dd057e0a871c05c87cea35cc345fa5264ede215173592c` | CANONICAL |
+| E-RE-VITEST | AC4 | `verification/RUN-EXPORT-E2E-1/vitest.log` | `5a7787504` | `51c0e149c3034efca7d7f6a6d495d0183d54f3fcb145e778b5805ac9680c782a` | CANONICAL |
+| E-RE-PYTEST | AC4 | `verification/RUN-EXPORT-E2E-1/pytest.log` | `5a7787504` | `037b4522162b1ce7b341fcb36a49ce6cfc6fbdb6c0b4f2b6914973a23db109be` | CANONICAL |
 
 ## Resource Manifest
 

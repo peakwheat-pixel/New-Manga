@@ -3,7 +3,7 @@
 - Task: `doc/tasks/RUN-EXPORT-E2E-1.md`（team task-28）
 - Branch: `task/RUN-EXPORT-E2E-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/RUN-EXPORT-E2E-1`
 - Base: `171529b5d`（卡面）；实际分支基于释放提交 `04b657131`（含任务卡 + 治理 PASS 状态）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `5a7787504`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改 Core 语义、未改 Host 契约语义、未改旧壳、未碰真实用户数据、不伪造运行成功。
 
 ## 1. 交付摘要
