@@ -1,0 +1,138 @@
+{
+  "ac": "AC3",
+  "task": "NS-WIRE-B1",
+  "snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+  "snapshot_sha256_before": "4c6a4da0e8968c6b62516fdbabd5608f4dd14cdd4d91c2c0b9d16a1092ccb574",
+  "extract_check": "PASS: production command surface matches snapshot (66 commands, domains={settings:33, library:8, region:6, reader:4, resource:3, workbench:12})",
+  "before": {
+    "implemented": 33,
+    "not_supported": 33
+  },
+  "after": {
+    "implemented": 46,
+    "not_supported": 20
+  },
+  "changed_commands": [
+    {
+      "command": "backup_delete",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "backup.delete",
+      "core_minor": 3,
+      "face": "S3-C backup face"
+    },
+    {
+      "command": "cleanup_retry_pending",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "cleanup.retry_pending",
+      "core_minor": 3,
+      "face": "S3-C cleanup face"
+    },
+    {
+      "command": "plugins_audit_list",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "plugins.audit_list",
+      "core_minor": 3,
+      "face": "PLUGIN-RUNTIME-1 face"
+    },
+    {
+      "command": "plugins_set_plugin_enabled",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "plugins.set_plugin_enabled",
+      "core_minor": 3,
+      "face": "PLUGIN-RUNTIME-1 face"
+    },
+    {
+      "command": "library_delete_book_permanently",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "PermanentlyDeleteBook",
+      "core_minor": 10,
+      "face": "DELETE face (protocol minor 10)"
+    },
+    {
+      "command": "settings_network_profile_default_clear",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_network_profile_default_clear",
+      "core_minor": 7,
+      "face": "P15 network face"
+    },
+    {
+      "command": "settings_network_profile_default_set",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_network_profile_default_set",
+      "core_minor": 7,
+      "face": "P15 network face"
+    },
+    {
+      "command": "settings_network_profiles_create",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_network_profiles_create",
+      "core_minor": 7,
+      "face": "P15 network face"
+    },
+    {
+      "command": "settings_network_profiles_delete",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_network_profiles_delete",
+      "core_minor": 7,
+      "face": "P15 network face"
+    },
+    {
+      "command": "settings_network_profiles_update",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_network_profiles_update",
+      "core_minor": 7,
+      "face": "P15 network face"
+    },
+    {
+      "command": "settings_provider_bindings_clear",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_provider_bindings_clear",
+      "core_minor": 7,
+      "face": "P15 provider face"
+    },
+    {
+      "command": "settings_provider_bindings_resolve",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_provider_bindings_resolve",
+      "core_minor": 7,
+      "face": "P15 provider face"
+    },
+    {
+      "command": "settings_provider_run_snapshot_get",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "settings_provider_run_snapshot_get",
+      "core_minor": 7,
+      "face": "P15 provider face"
+    }
+  ],
+  "already_implemented_in_batch_scope": [
+    "library_control_run",
+    "library_get_run_snapshot",
+    "library_get_task_projection",
+    "library_resume_blocked_run",
+    "library_retry_failed_targets",
+    "library_start_run"
+  ],
+  "evidence": {
+    "parity_contract": "verification/NS-WIRE-B1/commands/parity-contract.json",
+    "probe_results": "verification/NS-WIRE-B1/probe-results.json",
+    "dispatcher_integration": "verification/NS-WIRE-B1/commands/ns-b1-integration.json",
+    "invalid_arguments": "verification/NS-WIRE-B1/commands/ns-b1-invalid-arguments.json",
+    "extract_check_log": "verification/NS-WIRE-B1/extract-command-surface-check.log",
+    "test_summary": "verification/NS-WIRE-B1/test/summary.json"
+  },
+  "registry_contract": "C# HostCommandRegistry: 66 条全部有归属；46 IMPLEMENTED / 20 NOT_SUPPORTED（逐族原因保留）。批量 scope 19 条中 6 条已由 RUN-EXPORT-E2E-1 接线，本轮实际接线 13 条。"
+}

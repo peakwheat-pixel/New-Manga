@@ -1,0 +1,385 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "task": "NS-WIRE-B1",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
+  "sidecar_sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
+  "reclassification_source": "verification/NS-RECLASSIFY-1/reclassification.json",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-b1-cf6868fc",
+  "generated_at_utc": "2026-10-27T10:42:14Z",
+  "ping": {
+    "ns_command": "core_ping",
+    "core_command": "core.ping",
+    "minor": 3,
+    "payload": {},
+    "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-001\",\"command\":\"core.ping\",\"payload\":{}}",
+    "response": {
+      "protocol": "new-manga.core",
+      "version": {
+        "major": 2,
+        "minor": 3
+      },
+      "request_id": "b1-001",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      },
+      "error": null
+    },
+    "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-001\",\"result\":{\"status\":\"ready\",\"protocol_version\":{\"major\":2,\"minor\":3},\"capabilities\":[\"library.list_books\"]},\"error\":null}",
+    "basis": "success"
+  },
+  "results": [
+    {
+      "ns_command": "cleanup_retry_pending",
+      "core_command": "cleanup.retry_pending",
+      "minor": 3,
+      "payload": {},
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-002\",\"command\":\"cleanup.retry_pending\",\"payload\":{}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "items": {},
+        "removed": 0,
+        "failed": 0,
+        "skipped": 0
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-002\",\"result\":{\"items\":{},\"removed\":0,\"failed\":0,\"skipped\":0},\"error\":null}"
+    },
+    {
+      "ns_command": "plugins_audit_list",
+      "core_command": "plugins.audit_list",
+      "minor": 3,
+      "payload": {
+        "limit": 5
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-003\",\"command\":\"plugins.audit_list\",\"payload\":{\"limit\":5}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": [],
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-003\",\"result\":[],\"error\":null}"
+    },
+    {
+      "ns_command": "plugins_set_plugin_enabled",
+      "core_command": "plugins.set_plugin_enabled",
+      "minor": 3,
+      "payload": {
+        "plugin_id": "no-such-plugin",
+        "enabled": false
+      },
+      "note": "typed PLUGIN_NOT_FOUND proves the handler runs",
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-004\",\"command\":\"plugins.set_plugin_enabled\",\"payload\":{\"plugin_id\":\"no-such-plugin\",\"enabled\":false}}",
+      "ok": false,
+      "error_code": "PLUGIN_NOT_FOUND",
+      "error_category": "not_found",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-004\",\"result\":null,\"error\":{\"code\":\"PLUGIN_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"no-such-plugin\",\"retryable\":false}}"
+    },
+    {
+      "ns_command": "backup_create",
+      "core_command": "backup.create",
+      "minor": 3,
+      "payload": {
+        "backup_type": "manual"
+      },
+      "note": "control probe: yields backup_id",
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-005\",\"command\":\"backup.create\",\"payload\":{\"backup_type\":\"manual\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "backup_id": "e47a53d6cc264c96aa501d52a0739348",
+        "path": "e47a53d6cc264c96aa501d52a0739348.nmbak",
+        "size_bytes": 10820,
+        "created_at": "2026-10-27T10:42:14.697+00:00",
+        "verified": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-005\",\"result\":{\"backup_id\":\"e47a53d6cc264c96aa501d52a0739348\",\"path\":\"e47a53d6cc264c96aa501d52a0739348.nmbak\",\"size_bytes\":10820,\"created_at\":\"2026-10-27T10:42:14.697+00:00\",\"verified\":true},\"error\":null}"
+    },
+    {
+      "ns_command": "backup_delete",
+      "core_command": "backup.delete",
+      "minor": 3,
+      "payload": {
+        "backup_id": "e47a53d6cc264c96aa501d52a0739348"
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-006\",\"command\":\"backup.delete\",\"payload\":{\"backup_id\":\"e47a53d6cc264c96aa501d52a0739348\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "removed": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-006\",\"result\":{\"removed\":true},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_network_profiles_create",
+      "core_command": "settings_network_profiles_create",
+      "minor": 7,
+      "payload": {
+        "display_name": "NS-WIRE-B1 probe network",
+        "mode": "Direct",
+        "proxy_endpoint": null
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-007\",\"command\":\"settings_network_profiles_create\",\"payload\":{\"display_name\":\"NS-WIRE-B1 probe network\",\"mode\":\"Direct\",\"proxy_endpoint\":null}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "profile": {
+          "network_profile_id": "4b246886fce343caa5bcb0c05c411db6",
+          "display_name": "NS-WIRE-B1 probe network",
+          "mode": "Direct",
+          "proxy_endpoint": null,
+          "verify_tls": true,
+          "tls_verification_state": "enabled",
+          "allow_proxy_failure_direct_fallback": false,
+          "credential_state": "missing"
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-007\",\"result\":{\"profile\":{\"network_profile_id\":\"4b246886fce343caa5bcb0c05c411db6\",\"display_name\":\"NS-WIRE-B1 probe network\",\"mode\":\"Direct\",\"proxy_endpoint\":null,\"verify_tls\":true,\"tls_verification_state\":\"enabled\",\"allow_proxy_failure_direct_fallback\":false,\"credential_state\":\"missing\"}},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_network_profile_default_set",
+      "core_command": "settings_network_profile_default_set",
+      "minor": 7,
+      "payload": {
+        "network_profile_id": "4b246886fce343caa5bcb0c05c411db6"
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-008\",\"command\":\"settings_network_profile_default_set\",\"payload\":{\"network_profile_id\":\"4b246886fce343caa5bcb0c05c411db6\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "network_profile_id": "4b246886fce343caa5bcb0c05c411db6"
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-008\",\"result\":{\"network_profile_id\":\"4b246886fce343caa5bcb0c05c411db6\"},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_network_profiles_update",
+      "core_command": "settings_network_profiles_update",
+      "minor": 7,
+      "payload": {
+        "network_profile_id": "4b246886fce343caa5bcb0c05c411db6",
+        "display_name": "NS-WIRE-B1 probe network v2",
+        "mode": "Direct",
+        "proxy_endpoint": null,
+        "verify_tls": true,
+        "allow_proxy_failure_direct_fallback": false
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-009\",\"command\":\"settings_network_profiles_update\",\"payload\":{\"network_profile_id\":\"4b246886fce343caa5bcb0c05c411db6\",\"display_name\":\"NS-WIRE-B1 probe network v2\",\"mode\":\"Direct\",\"proxy_endpoint\":null,\"verify_tls\":true,\"allow_proxy_failure_direct_fallback\":false}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "profile": {
+          "network_profile_id": "4b246886fce343caa5bcb0c05c411db6",
+          "display_name": "NS-WIRE-B1 probe network v2",
+          "mode": "Direct",
+          "proxy_endpoint": null,
+          "verify_tls": true,
+          "tls_verification_state": "enabled",
+          "allow_proxy_failure_direct_fallback": false,
+          "credential_state": "missing"
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-009\",\"result\":{\"profile\":{\"network_profile_id\":\"4b246886fce343caa5bcb0c05c411db6\",\"display_name\":\"NS-WIRE-B1 probe network v2\",\"mode\":\"Direct\",\"proxy_endpoint\":null,\"verify_tls\":true,\"tls_verification_state\":\"enabled\",\"allow_proxy_failure_direct_fallback\":false,\"credential_state\":\"missing\"}},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_network_profile_default_clear",
+      "core_command": "settings_network_profile_default_clear",
+      "minor": 7,
+      "payload": {},
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-010\",\"command\":\"settings_network_profile_default_clear\",\"payload\":{}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "network_profile_id": null
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-010\",\"result\":{\"network_profile_id\":null},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_network_profiles_delete",
+      "core_command": "settings_network_profiles_delete",
+      "minor": 7,
+      "payload": {
+        "network_profile_id": "4b246886fce343caa5bcb0c05c411db6"
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-011\",\"command\":\"settings_network_profiles_delete\",\"payload\":{\"network_profile_id\":\"4b246886fce343caa5bcb0c05c411db6\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "deleted": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-011\",\"result\":{\"deleted\":true},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_provider_bindings_clear",
+      "core_command": "settings_provider_bindings_clear",
+      "minor": 7,
+      "payload": {
+        "scope": {
+          "kind": "global"
+        },
+        "capability": "Translation"
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-012\",\"command\":\"settings_provider_bindings_clear\",\"payload\":{\"scope\":{\"kind\":\"global\"},\"capability\":\"Translation\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "cleared": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-012\",\"result\":{\"cleared\":true},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_provider_bindings_resolve",
+      "core_command": "settings_provider_bindings_resolve",
+      "minor": 7,
+      "payload": {
+        "capability": "Translation"
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-013\",\"command\":\"settings_provider_bindings_resolve\",\"payload\":{\"capability\":\"Translation\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "profile_id": null,
+        "source": null
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-013\",\"result\":{\"profile_id\":null,\"source\":null},\"error\":null}"
+    },
+    {
+      "ns_command": "settings_provider_run_snapshot_get",
+      "core_command": "settings_provider_run_snapshot_get",
+      "minor": 7,
+      "payload": {
+        "run_id": "no-such-run"
+      },
+      "note": "typed TARGET_NOT_FOUND proves the handler runs",
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-014\",\"command\":\"settings_provider_run_snapshot_get\",\"payload\":{\"run_id\":\"no-such-run\"}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-014\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"SETTINGS_ITEM_NOT_FOUND\",\"retryable\":false,\"details\":{\"phase\":\"binding\",\"action\":\"none\",\"message_key\":\"SETTINGS_ITEM_NOT_FOUND\"}}}"
+    },
+    {
+      "ns_command": "settings_network_profile_default_set@minor3",
+      "core_command": "settings_network_profile_default_set",
+      "minor": 3,
+      "payload": {
+        "network_profile_id": "x"
+      },
+      "note": "version control: P15 face must reject the pre-P15 minor",
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-015\",\"command\":\"settings_network_profile_default_set\",\"payload\":{\"network_profile_id\":\"x\"}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"b1-015\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"settings_resolution\",\"action\":\"none\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "ns_command": "library_create_book",
+      "core_command": "CreateBook",
+      "minor": 8,
+      "payload": {
+        "title": "NS-WIRE-B1 delete probe"
+      },
+      "note": "control probe: minor 8 CREATE face",
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"b1-016\",\"command\":\"CreateBook\",\"payload\":{\"title\":\"NS-WIRE-B1 delete probe\"}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "book_id": "767d191aad7640ebbc9225adcf55ebe9",
+        "title": "NS-WIRE-B1 delete probe",
+        "original_title": "",
+        "is_favorite": false,
+        "is_archived": false,
+        "page_count": null,
+        "created_at": "2026-10-27T10:42:14.738+00:00",
+        "updated_at": "2026-10-27T10:42:14.738+00:00"
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"b1-016\",\"result\":{\"book_id\":\"767d191aad7640ebbc9225adcf55ebe9\",\"title\":\"NS-WIRE-B1 delete probe\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-27T10:42:14.738+00:00\",\"updated_at\":\"2026-10-27T10:42:14.738+00:00\"},\"error\":null}"
+    },
+    {
+      "ns_command": "PermanentlyDeleteBook@minor3",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 3,
+      "payload": {
+        "book_id": "no-such-book",
+        "confirm_permanent_delete": true
+      },
+      "note": "version control: DELETE face must reject minors below 10",
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"b1-017\",\"command\":\"PermanentlyDeleteBook\",\"payload\":{\"book_id\":\"no-such-book\",\"confirm_permanent_delete\":true}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"b1-017\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "ns_command": "library_delete_book_permanently",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 10,
+      "payload": {
+        "book_id": "767d191aad7640ebbc9225adcf55ebe9",
+        "confirm_permanent_delete": true
+      },
+      "note": null,
+      "request_line": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"b1-018\",\"command\":\"PermanentlyDeleteBook\",\"payload\":{\"book_id\":\"767d191aad7640ebbc9225adcf55ebe9\",\"confirm_permanent_delete\":true}}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "basis": "success",
+      "result": {
+        "book_id": "767d191aad7640ebbc9225adcf55ebe9",
+        "deleted": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"b1-018\",\"result\":{\"book_id\":\"767d191aad7640ebbc9225adcf55ebe9\",\"deleted\":true},\"error\":null}"
+    }
+  ],
+  "summary": {
+    "probes": 17,
+    "wired_commands_probed": 15,
+    "success": 13,
+    "typed_domain_error": 2,
+    "version_controls": 2
+  }
+}
