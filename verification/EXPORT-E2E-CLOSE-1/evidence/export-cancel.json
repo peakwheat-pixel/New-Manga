@@ -4,11 +4,11 @@
   "ordered_page_ids": 3,
   "attempts": [
     {
-      "export_id": "exp-96acd695ec04",
+      "export_id": "exp-827c4833b7cf",
       "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-cancel-1.zip",
       "terminal_status": "cancelled",
       "artifact_published": false,
-      "elapsed_ms": 23.9
+      "elapsed_ms": 25
     }
   ],
   "cancelled_observed": true

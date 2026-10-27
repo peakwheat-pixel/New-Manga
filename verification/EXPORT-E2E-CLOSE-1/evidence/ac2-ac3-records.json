@@ -28,31 +28,31 @@
           "translated_revision_id": "5216cf71f59b47008addb2842c40857c"
         }
       ],
-      "export_id": "exp-e8360b48094a",
+      "export_id": "exp-268d58e2d983",
       "format": "zip",
-      "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
+      "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
       "artifact_bytes": 7070562,
-      "artifact_sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
+      "artifact_sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
       "archive_entries": 4,
       "archive_page_entries": 3,
       "snapshot_timeline": [
         {
-          "elapsed_ms": 29.5,
+          "elapsed_ms": 26.6,
           "status": "running"
         },
         {
-          "elapsed_ms": 204.3,
+          "elapsed_ms": 210.4,
           "status": "completed"
         }
       ],
       "history_record": {
         "status": "completed",
-        "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
-        "sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
+        "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
+        "sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
         "ordered_page_ids": 3
       },
-      "host_start_to_export_complete_ms": 836.4,
-      "export_elapsed_ms": 237.7
+      "host_start_to_export_complete_ms": 786.9,
+      "export_elapsed_ms": 239.1
     },
     "cancel": {
       "ac": "AC3",
@@ -60,11 +60,11 @@
       "ordered_page_ids": 3,
       "attempts": [
         {
-          "export_id": "exp-96acd695ec04",
+          "export_id": "exp-827c4833b7cf",
           "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-cancel-1.zip",
           "terminal_status": "cancelled",
           "artifact_published": false,
-          "elapsed_ms": 23.9
+          "elapsed_ms": 25
         }
       ],
       "cancelled_observed": true
@@ -73,7 +73,7 @@
   "commands": [
     {
       "command": "core.ping",
-      "elapsed_ms": 302.6,
+      "elapsed_ms": 329.9,
       "ok": true,
       "payload": {}
     },
@@ -84,7 +84,7 @@
       "payload": {},
       "exports": [
         {
-          "export_id": "exp-96acd695ec04",
+          "export_id": "exp-827c4833b7cf",
           "book_id": "14340ddad0ed472fbe687fe12340c5d8",
           "chapter_ids": [
             "240bdba549b74281bfc6d901b1a7abd7"
@@ -98,8 +98,8 @@
           "format_options": {
             "compression": "store"
           },
-          "created_at": "2026-10-27T13:22:08.591+00:00",
-          "completed_at": "2026-10-27T13:22:08.599+00:00",
+          "created_at": "2026-10-27T13:47:28.655+00:00",
+          "completed_at": "2026-10-27T13:47:28.663+00:00",
           "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-cancel-1.zip",
           "status": "cancelled",
           "sha256": null,
@@ -141,7 +141,7 @@
           "stale_policy": "abort"
         },
         {
-          "export_id": "exp-e8360b48094a",
+          "export_id": "exp-268d58e2d983",
           "book_id": "14340ddad0ed472fbe687fe12340c5d8",
           "chapter_ids": [
             "240bdba549b74281bfc6d901b1a7abd7"
@@ -155,11 +155,11 @@
           "format_options": {
             "compression": "standard"
           },
-          "created_at": "2026-10-27T13:22:03.859+00:00",
-          "completed_at": "2026-10-27T13:22:04.034+00:00",
-          "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
+          "created_at": "2026-10-27T13:47:23.925+00:00",
+          "completed_at": "2026-10-27T13:47:24.098+00:00",
+          "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
           "status": "completed",
-          "sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
+          "sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
           "lineage": [
             {
               "page_id": "f52f2772e8044557a72e82f5ea6ab932",
@@ -204,15 +204,15 @@
       "elapsed_ms": 0.1,
       "ok": true,
       "payload": {
-        "export_id": "exp-e8360b48094a"
+        "export_id": "exp-268d58e2d983"
       },
       "snapshot": {
-        "export_id": "exp-e8360b48094a",
+        "export_id": "exp-268d58e2d983",
         "status": "completed",
         "output": {
           "format": "zip",
-          "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
-          "sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8"
+          "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
+          "sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9"
         },
         "completed_pages": 3,
         "total_pages": 3
@@ -223,10 +223,10 @@
       "elapsed_ms": 0.1,
       "ok": true,
       "payload": {
-        "export_id": "exp-96acd695ec04"
+        "export_id": "exp-827c4833b7cf"
       },
       "snapshot": {
-        "export_id": "exp-96acd695ec04",
+        "export_id": "exp-827c4833b7cf",
         "status": "cancelled",
         "output": null,
         "completed_pages": 0,
@@ -238,10 +238,10 @@
       "elapsed_ms": 0.1,
       "ok": true,
       "payload": {
-        "export_id": "exp-96acd695ec04"
+        "export_id": "exp-827c4833b7cf"
       },
       "snapshot": {
-        "export_id": "exp-96acd695ec04",
+        "export_id": "exp-827c4833b7cf",
         "status": "cancelled",
         "output": null,
         "completed_pages": 0,
@@ -250,7 +250,7 @@
     },
     {
       "command": "GetExportSnapshot",
-      "elapsed_ms": 0.1,
+      "elapsed_ms": 0.0,
       "ok": false,
       "error": {
         "code": "EXPORT_NOT_FOUND",
@@ -288,7 +288,7 @@
     },
     {
       "command": "GetExportSnapshot",
-      "elapsed_ms": 0.0,
+      "elapsed_ms": 0.1,
       "ok": false,
       "error": {
         "code": "EXPORT_NOT_FOUND",
@@ -307,10 +307,10 @@
     }
   ],
   "artifact_success": {
-    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
     "exists": true,
     "bytes": 7070562,
-    "sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
+    "sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
     "matches_expected_sha": true,
     "zip_opens": true,
     "entries": [
@@ -367,29 +367,29 @@
   "cancelled_target_absent": true,
   "export_history_rows": [
     {
-      "export_id": "exp-e8360b48094a",
+      "export_id": "exp-268d58e2d983",
       "book_id": "14340ddad0ed472fbe687fe12340c5d8",
       "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
       "export_type": "zip",
       "status": "completed",
-      "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
-      "file_hash": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
-      "created_at": "2026-10-27T13:22:03.864+00:00",
-      "completed_at": "2026-10-27T13:22:04.034+00:00",
+      "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
+      "file_hash": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
+      "created_at": "2026-10-27T13:47:23.928+00:00",
+      "completed_at": "2026-10-27T13:47:24.098+00:00",
       "detail": ""
     }
   ],
   "history_row_by_id": {
-    "exp-e8360b48094a": {
-      "export_id": "exp-e8360b48094a",
+    "exp-268d58e2d983": {
+      "export_id": "exp-268d58e2d983",
       "book_id": "14340ddad0ed472fbe687fe12340c5d8",
       "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
       "export_type": "zip",
       "status": "completed",
-      "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
-      "file_hash": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
-      "created_at": "2026-10-27T13:22:03.864+00:00",
-      "completed_at": "2026-10-27T13:22:04.034+00:00",
+      "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
+      "file_hash": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
+      "created_at": "2026-10-27T13:47:23.928+00:00",
+      "completed_at": "2026-10-27T13:47:24.098+00:00",
       "detail": ""
     }
   }

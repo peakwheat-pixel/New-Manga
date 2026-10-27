@@ -13,7 +13,7 @@
 | AC1 前置复验 | **MET** | RELEASE-REPACK-2 新 sidecar（models `c5531930…`）上，completed Run 的 3 个 translated 产物存在、可定位、哈希与 DB 一致；`GetExportHistory` 导出前为空 |
 | AC2 Export 真跑 | **MET** | Host `HostGrantCoordinator` 链（`RegisterExportTarget` host-control → `StartExport`）**真实产出 ZIP 图片包**：7,070,562 B / sha256 `cf9a0719…` / 3 页 + `manifest.json`；每页条目字节哈希 = manifest = 落库 translated revision |
 | AC3 get/cancel 成功路径 | **MET** | 成功记录 `GetExportSnapshot` → `completed`（含 output{format,path,sha256}）；取消：`CancelExport` 后记录 `cancelled`、**未发布任何文件**；未知 id 两侧均 typed `EXPORT_NOT_FOUND`（负例） |
-| AC4 回归/证据 | **MET** | `test.ps1` **184/184 passed**（新增 2 例真实 E2E；基线 ≥182）；pytest `3F/2764P/9S`（基线同值，0 新增）；`check.ps1 -TaskPath` PASS；64-hex pin；Handoff |
+| AC4 回归/证据 | **MET** | `test.ps1` **191/191 passed**（新增 2 例真实 E2E；基线 ≥182）；pytest `3F/2764P/9S`（基线同值，0 新增）；`check.ps1 -TaskPath` PASS；64-hex pin；Handoff |
 | AC5 门禁 | **MET** | 真实产物 + 命令面证据入库（`artifacts/`、`evidence/`）；未伪造任何导出产物 |
 
 ## 1. AC1 前置复验（新 sidecar 上 translated 产物存在且可定位）
@@ -50,16 +50,16 @@ HostRuntime.StartAsync → HostGrantCoordinator.StartExportAsync(request, target
 
 | 项 | 值 |
 |---|---|
-| export_id | `exp-e8360b48094a` |
+| export_id | `exp-268d58e2d983` |
 | 请求 | BOOK-FIXTURE 书 / chapter `240bdba5…` / 3 个 translated 页（顺序 E04P02→P03→P06） / format=`zip`（compression=standard）/ stale_policy=`abort` |
-| 目标路径 | `task-envs/EXPORT-E2E-CLOSE-1/data-root/exports/book-fixture-20261027-132203.zip`（Host 白名单：data root/exports） |
-| 产物 | **7,070,562 B**；sha256 **`cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8`**；zip 可打开、4 条目 = `0001/E04P02.jpg`（3,104,675B）+ `0002/E04P03.jpg`（2,802,034B）+ `0003/E04P06.jpg`（1,166,522B）+ `manifest.json`（2,273B） |
+| 目标路径 | `task-envs/EXPORT-E2E-CLOSE-1/data-root/exports/book-fixture-20261027-134723.zip`（Host 白名单：data root/exports） |
+| 产物 | **7,070,562 B**；sha256 **`41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9`**；zip 可打开、4 条目 = `0001/E04P02.jpg`（3,104,675B）+ `0002/E04P03.jpg`（2,802,034B）+ `0003/E04P06.jpg`（1,166,522B）+ `manifest.json`（2,273B） |
 | 内容校验 | manifest 3 页 sha = 落库 translated revision sha = 每页条目字节 sha256（独立复算） |
-| snapshot 时间线 | `running` @29.5ms → `completed` @204.3ms（Host 从启动到导出完成 836.4ms） |
+| snapshot 时间线 | `running` @26.6ms → `completed` @210.4ms（Host 从启动到导出完成 786.9ms） |
 | history 记录 | `status=completed`、`output_path`/`sha256` 与产物一致、`ordered_page_ids=3` |
 | grant 链 | Host wire 帧中确认 `RegisterExportTarget` 与 `StartExport`；无 grant 时 Core 拒绝（GRANT-ISSUER-1 既有证据，本卡未重复） |
 
-产物已入库：`verification/EXPORT-E2E-CLOSE-1/artifacts/book-fixture-20261027-132203.zip`（sha256 与上表一致）。证据：`evidence/export-success.json`、`evidence/ac2-ac3-records.json`（独立复算）。
+产物已入库：`verification/EXPORT-E2E-CLOSE-1/artifacts/book-fixture-20261027-134723.zip`（sha256 与上表一致）。证据：`evidence/export-success.json`、`evidence/ac2-ac3-records.json`（独立复算）。
 
 ## 3. AC3 get/cancel 在真实导出记录上验证
 
@@ -67,10 +67,10 @@ HostRuntime.StartAsync → HostGrantCoordinator.StartExportAsync(request, target
 
 | 场景 | 记录 | 结果 |
 |---|---|---|
-| 成功导出取快照 | `exp-e8360b48094a` | `GetExportSnapshot` → `completed`，`output={format:zip, output_path:…, sha256:cf9a0719…}`；`GetExportHistory` 命中同记录，`status=completed`、sha 一致 |
-| 取消（一次） | `exp-96acd695ec04` | `StartExport` 后立即 `library_cancel_export` → 终态 **`cancelled`**（23.9ms），**目标文件未发布**（`cancelled_target_absent=true`，`artifact_published=false`） |
-| 取消后取快照 | `exp-96acd695ec04` | `GetExportSnapshot` → `cancelled`，`output=null`（无半成品） |
-| 取消重放 | `exp-96acd695ec04` | `CancelExport` 幂等 → `cancelled` |
+| 成功导出取快照 | `exp-268d58e2d983` | `GetExportSnapshot` → `completed`，`output={format:zip, output_path:…, sha256:cf9a0719…}`；`GetExportHistory` 命中同记录，`status=completed`、sha 一致 |
+| 取消（一次） | `exp-827c4833b7cf` | `StartExport` 后立即 `library_cancel_export` → 终态 **`cancelled`**（25ms），**目标文件未发布**（`cancelled_target_absent=true`，`artifact_published=false`） |
+| 取消后取快照 | `exp-827c4833b7cf` | `GetExportSnapshot` → `cancelled`，`output=null`（无半成品） |
+| 取消重放 | `exp-827c4833b7cf` | `CancelExport` 幂等 → `cancelled` |
 | 未知 id 负例 | `exp-does-not-exist` / 空白 id | `GetExportSnapshot`、`CancelExport` 均 typed **`EXPORT_NOT_FOUND`** |
 
 观察（非缺陷、未改 Core）：durable `export_history` 表记录的是已发布结果（completed 行）；cancelled 记录由 P16 runtime 的 job store 保存，`GetExportHistory` 会合并两者返回（本卡只记录语义，不做改动——禁止改 Core）。
@@ -79,12 +79,14 @@ HostRuntime.StartAsync → HostGrantCoordinator.StartExportAsync(request, target
 
 | 门 | 命令 | 结果 |
 |---|---|---|
-| .NET 全量 | `apps/desktop-avalonia/scripts/test.ps1`（挂真实 E2E 环境变量） | **TEST PASS (Debug): 184/184 passed, 0 skipped**（coreclient 61 + host 48 + app 75；新增 ExportE2ETests ×2，基线 ≥182） |
+| .NET 全量 | `apps/desktop-avalonia/scripts/test.ps1`（挂真实 E2E 环境变量） | **TEST PASS (Debug): 191/191 passed, 0 skipped**（coreclient 61 + host 55 + app 75；新增 ExportE2ETests ×2，基线 ≥182） |
 | Python 全量 | `python -m pytest -q` | **3 failed / 2772 passed / 9 skipped**；同树纯净 base `e6c2db84f` 实测 **3F/2772P/9S**（失败集合逐条相同：`test_detection_manga_real` ×2 + `test_workbench_viewmodel` ×1），**0 新增** |
 | Export 记录独立复验 | `python verification/EXPORT-E2E-CLOSE-1/tools/verify_export_records.py --host-evidence <dir>` | 全部断言 true（见 §2/§3） |
 | 治理 | `check.ps1 -TaskPath doc/tasks/EXPORT-E2E-CLOSE-1.md` | PASS（见 Task 卡收口） |
 
 日志：`pytest.log`、`pytest-baseline-base.log`（同树纯净 base 对照）、`evidence/test-ps1.log`、`evidence/dotnet/{summary.json,dotnet-test-Debug.log,results-host.trx}`。
+
+> 树/口径说明：交付树已 rebase 到 `6f6e4a678`（CREDENTIAL-PORT-1/CREDENTIAL-UI-1 集成）。上述 **191/191** 与全部 Export E2E 证据均在该树上重跑生成；pytest 结果沿用同一 Python 树（rebase delta 仅 `apps/desktop-avalonia/**`、`doc/**`、`verification/**`，`git diff` 核对未触及 `src/**`、`tests/**`）。
 
 ## 5. Record Decision
 

@@ -11,12 +11,12 @@
   "commands": [
     {
       "command": "core.ping",
-      "elapsed_ms": 359.8,
+      "elapsed_ms": 395.0,
       "ok": true
     },
     {
       "command": "list_chapters",
-      "elapsed_ms": 0.2,
+      "elapsed_ms": 0.1,
       "ok": true
     },
     {
@@ -31,7 +31,7 @@
     },
     {
       "command": "GetReaderProjection",
-      "elapsed_ms": 240.3,
+      "elapsed_ms": 238.4,
       "ok": true
     }
   ],
@@ -88,7 +88,7 @@
       "translated_artifact_revision_id": "56d3c442cb8c49d4b692cb44167185c5",
       "translated_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
       "translated_resource_ref": {
-        "resource_id": "preview-4b3e00e29d474ba6a09462f50e165dc0",
+        "resource_id": "preview-3e97b66d8c7e4003886c0ae59cd8693c",
         "revision": "56d3c442cb8c49d4b692cb44167185c5"
       },
       "original_sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
@@ -99,7 +99,7 @@
       "translated_artifact_revision_id": "f5cbd019a6824c77903d0248d859ad48",
       "translated_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
       "translated_resource_ref": {
-        "resource_id": "preview-22509cc264b34466ae35d684cddca03f",
+        "resource_id": "preview-5cf83530957e42308953ee33af8b1ffe",
         "revision": "f5cbd019a6824c77903d0248d859ad48"
       },
       "original_sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
@@ -110,7 +110,7 @@
       "translated_artifact_revision_id": "5216cf71f59b47008addb2842c40857c",
       "translated_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
       "translated_resource_ref": {
-        "resource_id": "preview-8654ddc38d644b549e57b82be2f82a39",
+        "resource_id": "preview-4269b86abd634174a1fc1dfe2b75a53d",
         "revision": "5216cf71f59b47008addb2842c40857c"
       },
       "original_sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"
@@ -163,7 +163,7 @@
       "translated_artifact_revision_id": "56d3c442cb8c49d4b692cb44167185c5",
       "translated_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
       "translated_resource_ref": {
-        "resource_id": "preview-4b3e00e29d474ba6a09462f50e165dc0",
+        "resource_id": "preview-3e97b66d8c7e4003886c0ae59cd8693c",
         "revision": "56d3c442cb8c49d4b692cb44167185c5"
       },
       "original_sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
@@ -174,7 +174,7 @@
       "translated_artifact_revision_id": "f5cbd019a6824c77903d0248d859ad48",
       "translated_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
       "translated_resource_ref": {
-        "resource_id": "preview-22509cc264b34466ae35d684cddca03f",
+        "resource_id": "preview-5cf83530957e42308953ee33af8b1ffe",
         "revision": "f5cbd019a6824c77903d0248d859ad48"
       },
       "original_sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
@@ -185,7 +185,7 @@
       "translated_artifact_revision_id": "5216cf71f59b47008addb2842c40857c",
       "translated_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
       "translated_resource_ref": {
-        "resource_id": "preview-8654ddc38d644b549e57b82be2f82a39",
+        "resource_id": "preview-4269b86abd634174a1fc1dfe2b75a53d",
         "revision": "5216cf71f59b47008addb2842c40857c"
       },
       "original_sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"

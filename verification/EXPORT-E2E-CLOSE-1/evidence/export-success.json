@@ -22,29 +22,29 @@
       "translated_revision_id": "5216cf71f59b47008addb2842c40857c"
     }
   ],
-  "export_id": "exp-e8360b48094a",
+  "export_id": "exp-268d58e2d983",
   "format": "zip",
-  "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
+  "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
   "artifact_bytes": 7070562,
-  "artifact_sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
+  "artifact_sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
   "archive_entries": 4,
   "archive_page_entries": 3,
   "snapshot_timeline": [
     {
-      "elapsed_ms": 29.5,
+      "elapsed_ms": 26.6,
       "status": "running"
     },
     {
-      "elapsed_ms": 204.3,
+      "elapsed_ms": 210.4,
       "status": "completed"
     }
   ],
   "history_record": {
     "status": "completed",
-    "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-132203.zip",
-    "sha256": "cf9a0719bc7fca57d574e210fd2c82115ded6f3c76839851ac2e005a9092cdd8",
+    "output_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root\\exports\\book-fixture-20261027-134723.zip",
+    "sha256": "41d9d5fc8ee9fbed196b9155816a06cd4388b6010662bbd31957957d07d57ef9",
     "ordered_page_ids": 3
   },
-  "host_start_to_export_complete_ms": 836.4,
-  "export_elapsed_ms": 237.7
+  "host_start_to_export_complete_ms": 786.9,
+  "export_elapsed_ms": 239.1
 }
