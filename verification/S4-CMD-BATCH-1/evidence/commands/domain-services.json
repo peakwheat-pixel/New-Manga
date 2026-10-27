@@ -7,14 +7,14 @@
     {
       "domain": "Settings",
       "commands": 33,
-      "implemented": 11,
-      "not_supported": 22
+      "implemented": 23,
+      "not_supported": 10
     },
     {
       "domain": "Library",
       "commands": 8,
-      "implemented": 4,
-      "not_supported": 4
+      "implemented": 5,
+      "not_supported": 3
     },
     {
       "domain": "Region",

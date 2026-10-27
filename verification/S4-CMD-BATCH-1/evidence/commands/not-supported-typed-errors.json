@@ -1,21 +1,11 @@
 {
   "ac": "AC2/AC3",
-  "typed_not_supported": 28,
+  "typed_not_supported": 15,
   "every_reason_present": true,
   "unknown_command_code": "UNKNOWN_COMMAND",
   "commands": [
     {
-      "command": "backup_delete",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
       "command": "backup_restore",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "cleanup_retry_pending",
       "domain": "Settings",
       "code": "NOT_SUPPORTED"
     },
@@ -27,11 +17,6 @@
     {
       "command": "credential_put",
       "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_delete_book_permanently",
-      "domain": "Library",
       "code": "NOT_SUPPORTED"
     },
     {
@@ -60,27 +45,7 @@
       "code": "NOT_SUPPORTED"
     },
     {
-      "command": "plugins_audit_list",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
       "command": "plugins_open_directory",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "plugins_set_plugin_enabled",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_network_profile_default_clear",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_network_profile_default_set",
       "domain": "Settings",
       "code": "NOT_SUPPORTED"
     },
@@ -90,32 +55,7 @@
       "code": "NOT_SUPPORTED"
     },
     {
-      "command": "settings_network_profiles_create",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_network_profiles_delete",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
       "command": "settings_network_profiles_test",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_network_profiles_update",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_provider_bindings_clear",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_provider_bindings_resolve",
       "domain": "Settings",
       "code": "NOT_SUPPORTED"
     },
@@ -136,11 +76,6 @@
     },
     {
       "command": "settings_provider_profiles_update",
-      "domain": "Settings",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "settings_provider_run_snapshot_get",
       "domain": "Settings",
       "code": "NOT_SUPPORTED"
     }

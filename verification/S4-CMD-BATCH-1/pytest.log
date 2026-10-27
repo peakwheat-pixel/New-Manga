@@ -806,7 +806,7 @@ E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detecto
 src\infrastructure\providers\detection_manga.py:535: ProviderError
 ______________ test_pause_shows_optimistic_feedback_immediately _______________
 
-qapp_ = <PySide6.QtGui.QGuiApplication(0x23a8c27d340) at 0x0000023A8D50A140>
+qapp_ = <PySide6.QtGui.QGuiApplication(0x1eb6fe2fe50) at 0x000001EB5F258800>
 
     def test_pause_shows_optimistic_feedback_immediately(qapp_):
         """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
@@ -838,7 +838,7 @@ qapp_ = <PySide6.QtGui.QGuiApplication(0x23a8c27d340) at 0x0000023A8D50A140>
             qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
         )
 E       assert False
-E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x23a8c27d340) at 0x0000023A8D50A140>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000023B051397A0>, timeout_ms=15000)
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x1eb6fe2fe50) at 0x000001EB5F258800>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000001EBA9AC17A0>, timeout_ms=15000)
 
 tests\workbench\test_workbench_viewmodel.py:210: AssertionError
 ============================== warnings summary ===============================
@@ -855,4 +855,4 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
 FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
 FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
-3 failed, 2746 passed, 9 skipped, 2 warnings in 243.27s (0:04:03)
+3 failed, 2746 passed, 9 skipped, 2 warnings in 227.83s (0:03:47)

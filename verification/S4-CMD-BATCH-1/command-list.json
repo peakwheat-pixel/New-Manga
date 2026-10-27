@@ -313,11 +313,12 @@
     "task_base_commit": "171529b5d",
     "task_base_implemented": 24,
     "task_base_not_supported": 42,
-    "rebase_target_main": "b993e68bb",
-    "rebase_main_implemented": 33,
-    "rebase_main_not_supported": 33,
-    "after_merge_implemented": 38,
-    "after_merge_not_supported": 28,
-    "note": "RUN-EXPORT-E2E-1 先落地 main（24→33）；本分支 rebase 到 b993e68bb 后由 5 条新接线把 registry 推到 38/28"
+    "landed_first": [
+      "RUN-EXPORT-E2E-1@b993e68bb (24->33)",
+      "NS-WIRE-B1@9f58b4c1d (33->46)"
+    ],
+    "after_merge_implemented": 51,
+    "after_merge_not_supported": 15,
+    "note": "RUN-EXPORT-E2E-1 与 NS-WIRE-B1 先落地 main；本分支 rebase 到 9f58b4c1d 后由 5 条新接线把 registry 推到 51/15"
   }
 }

@@ -7,12 +7,12 @@
   "before": {
     "task_base_implemented": 24,
     "task_base_not_supported": 42,
-    "rebase_main_implemented": 33,
-    "rebase_main_not_supported": 33
+    "rebase_main_implemented": 46,
+    "rebase_main_not_supported": 20
   },
   "after": {
-    "implemented": 38,
-    "not_supported": 28
+    "implemented": 51,
+    "not_supported": 15
   },
   "changed_commands": [
     {
@@ -85,8 +85,11 @@
   },
   "registry_contract": "C# HostCommandRegistry 66 条全部有归属：29 IMPLEMENTED / 37 NOT_SUPPORTED（每族原因可见）",
   "rebase": {
-    "main_commit": "b993e68bb",
-    "landed_first": "RUN-EXPORT-E2E-1",
-    "resolution": "先落地者为准：保留 main 的 Run/Export 9 条接线与本批 region/reader 5 条；计数 33→38"
+    "main_commit": "9f58b4c1d",
+    "landed_first": [
+      "RUN-EXPORT-E2E-1 (24->33 @ b993e68bb)",
+      "NS-WIRE-B1 (33->46 @ 9f58b4c1d)"
+    ],
+    "resolution": "先落地者为准：保留 main 的 Run/Export 9 条与 NS-WIRE-B1 13 条，合并本批 region/reader 5 条；计数 46->51"
   }
 }

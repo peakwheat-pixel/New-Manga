@@ -8,12 +8,12 @@
   "projects": [
     {
       "project": "coreclient",
-      "total": 41,
-      "passed": 41,
+      "total": 45,
+      "passed": 45,
       "failed": 0,
       "skipped": 0,
       "trx": "test/results-coreclient.trx",
-      "trx_sha256": "d17b7e260e67dd7231d92a6cc0204c95994c2bd22a765de78fabd477f70d5c36"
+      "trx_sha256": "e526f2cccc60b2877b8d553b7d3e852b36b78d26e50d29783e81c85e339580d0"
     },
     {
       "project": "host",
@@ -22,7 +22,7 @@
       "failed": 0,
       "skipped": 0,
       "trx": "test/results-host.trx",
-      "trx_sha256": "20ee46b52abd9ad23db30e037d772aa02aa20b06757b12b39fce8ade1bb5838e"
+      "trx_sha256": "6af567d1d73f52841c148f3a73fcb945c0fd53a902426e95d59b66f2adb7efa7"
     },
     {
       "project": "app",
@@ -31,14 +31,14 @@
       "failed": 0,
       "skipped": 0,
       "trx": "test/results-app.trx",
-      "trx_sha256": "d58ac6824c4bd18ca5f20381323e05aa906ab5167870cc031b35d3a0daf95a0b"
+      "trx_sha256": "e2f07e9047b64728b9aff3e7b6b89aea0b4b8518a5e13069bf785402704cb62b"
     }
   ],
   "totals": {
-    "total": 158.0,
-    "passed": 158.0,
+    "total": 162.0,
+    "passed": 162.0,
     "failed": 0.0,
     "skipped": 0.0
   },
-  "at_utc": "2026-10-27T10:49:00.1230595Z"
+  "at_utc": "2026-10-27T11:00:20.4941217Z"
 }
