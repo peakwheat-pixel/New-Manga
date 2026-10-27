@@ -1,0 +1,34 @@
+{
+  "sidecar": "bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)",
+  "variant": "base",
+  "sidecar_build": {
+    "core_service_sha256": "ed499bd7859574a7a615ee1581610ff2b3ed829c870276938b762ff147d9cd7d",
+    "core_service_bytes": 399492,
+    "core_service_built_at_utc": "2026-10-27T11:40:46.1399627Z",
+    "repo_head": "ae7fe3334dd7ca652eb3ad9f13aead192567aab0",
+    "variant": "base",
+    "models_bundled": false
+  },
+  "devices": {
+    "onnxruntime_providers": [
+      "DmlExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": {
+      "kind": "gpu",
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "total_memory_mb": 16303,
+      "state": "available",
+      "error_code": "",
+      "detail": "onnxruntime providers=['DmlExecutionProvider', 'CPUExecutionProvider']; execution_provider=DirectML"
+    },
+    "ac": "AC1/AC2",
+    "source": "build-environment probe: onnxruntime.get_available_providers() + Windows display-adapter registry supplement"
+  },
+  "version": "0.1.0",
+  "models": "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\\com.newmanga.desktop\\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle",
+  "data_root": "%APPDATA%\\com.newmanga.desktop",
+  "channel": "stable",
+  "migration": "runtime dry-run script included"
+}

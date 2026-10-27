@@ -1,0 +1,19 @@
+{
+  "ac": "AC3",
+  "zips": [
+    {
+      "name": "NewManga-0.1.0-win-x64.zip",
+      "bytes": 102975176,
+      "sha256": "e9997898975006123a1303af0696ee88bc57291231f0805fa8c89b0e895675ea"
+    },
+    {
+      "name": "NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 724983494,
+      "sha256": "4cbd05667a1301e31c87b460f67e05fba5351473e147277d90809722450942c7"
+    }
+  ],
+  "extracted_dirs": [
+    "NewManga-0.1.0-win-x64",
+    "NewManga-0.1.0-win-x64-models"
+  ]
+}

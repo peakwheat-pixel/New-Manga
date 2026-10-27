@@ -1,0 +1,804 @@
+{
+  "ac": "AC2",
+  "run_id": "run-3dfbafe5c1b14c6aa29fd6bf63530d86",
+  "run_status": "completed_with_failures",
+  "timeline": [
+    {
+      "t_ms": 0,
+      "status": "pending"
+    },
+    {
+      "t_ms": 510,
+      "status": "running"
+    },
+    {
+      "t_ms": 5803,
+      "status": "completed_with_failures"
+    }
+  ],
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "page_count": 8,
+  "page_ids": [
+    "f52f2772e8044557a72e82f5ea6ab932",
+    "4f8a24147b3044deabf4f5a2dd83b84f",
+    "a607fc4ca3034f47b5bc43d59f94f2ca",
+    "6814353f6d8544d6945ad5748d518f47",
+    "f54739037525486e8704db23db5c0dc1",
+    "c239be827f3a4448848d2c42bffc05d1",
+    "7a39226851774f01a4cdb89bcf118296",
+    "221d772e601e480e8e7508dfe9aff380"
+  ],
+  "region_counts": {
+    "f52f2772e8044557a72e82f5ea6ab932": 13,
+    "4f8a24147b3044deabf4f5a2dd83b84f": 6,
+    "a607fc4ca3034f47b5bc43d59f94f2ca": 7,
+    "6814353f6d8544d6945ad5748d518f47": 0,
+    "f54739037525486e8704db23db5c0dc1": 0,
+    "c239be827f3a4448848d2c42bffc05d1": 0,
+    "7a39226851774f01a4cdb89bcf118296": 0,
+    "221d772e601e480e8e7508dfe9aff380": 0
+  },
+  "tasks": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "failed",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "ocr",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "color",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "term_extract",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "translate",
+          "status": "failed",
+          "error_code": "PROVIDER_NOT_CONFIGURED"
+        }
+      ]
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "failed",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "ocr",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "color",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "term_extract",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "translate",
+          "status": "failed",
+          "error_code": "PROVIDER_NOT_CONFIGURED"
+        }
+      ]
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "failed",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "ocr",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "color",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "term_extract",
+          "status": "completed",
+          "error_code": null
+        },
+        {
+          "step_type": "translate",
+          "status": "failed",
+          "error_code": "PROVIDER_NOT_CONFIGURED"
+        }
+      ]
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "status": "completed",
+      "error_code": null,
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        }
+      ]
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "status": "completed",
+      "error_code": null,
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        }
+      ]
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "status": "completed",
+      "error_code": null,
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        }
+      ]
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "status": "completed",
+      "error_code": null,
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        }
+      ]
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "status": "completed",
+      "error_code": null,
+      "steps": [
+        {
+          "step_type": "detect",
+          "status": "completed",
+          "error_code": null
+        }
+      ]
+    }
+  ],
+  "task_rows": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "page_order": 1,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "status": "failed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "page_order": 2,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+      "status": "failed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "page_order": 3,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+      "status": "failed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "page_order": 4,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+      "status": "completed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": null
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "page_order": 5,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+      "status": "completed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": null
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "page_order": 6,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+      "status": "completed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": null
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "page_order": 7,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+      "status": "completed",
+      "is_locked": false,
+      "is_pipeline_current": false,
+      "error_code": null
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "page_order": 8,
+      "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+      "status": "completed",
+      "is_locked": false,
+      "is_pipeline_current": true,
+      "error_code": null
+    }
+  ],
+  "step_flow": [
+    {
+      "type": "detect",
+      "label": "\u68C0\u6D4B",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    },
+    {
+      "type": "ocr",
+      "label": "OCR",
+      "state": "pending"
+    },
+    {
+      "type": "color",
+      "label": "\u914D\u8272",
+      "state": "pending"
+    },
+    {
+      "type": "term_extract",
+      "label": "\u672F\u8BED",
+      "state": "pending"
+    },
+    {
+      "type": "translate",
+      "label": "\u7FFB\u8BD1",
+      "state": "failed"
+    },
+    {
+      "type": "segment",
+      "label": "\u5206\u5272",
+      "state": "pending"
+    },
+    {
+      "type": "mask_refine",
+      "label": "\u63A9\u819C",
+      "state": "pending"
+    },
+    {
+      "type": "inpaint",
+      "label": "\u4FEE\u590D",
+      "state": "pending"
+    },
+    {
+      "type": "render",
+      "label": "\u6E32\u67D3",
+      "state": "pending"
+    }
+  ],
+  "sidecar_core_service_exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-1\\run-smoke-root\\logs\\core_service.stderr.log",
+  "wire_frames": 69,
+  "generated_at_utc": "2026-10-27T11:43:16.7202151\u002B00:00"
+}
