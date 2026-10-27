@@ -1,0 +1,16 @@
+{
+  "package": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\out\\NewManga-0.1.0-win-x64-models",
+  "package_zip_bytes": 724989976,
+  "installed_version_json": null,
+  "installed_version_json_note": "read before uninstall; see package VERSION snapshot below",
+  "package_repo_head": "0f4b836a55486d26ef7fbcbf7574edcafb1ec4da",
+  "ui_wiring_commit_expected": "13cf26f6c (IMPORT-EXPORT-UI-1 merged after REPACK-2 build)",
+  "ui_labels_probe": {
+    "导入文件": false,
+    "导入文件夹": false,
+    "开始导出": false,
+    "打开导出目录": false,
+    "正在读取可导出的翻译页": false
+  },
+  "conclusion": "RELEASE-REPACK-2 package was built at 0f4b836a5, BEFORE IMPORT-EXPORT-UI-1 (13cf26f6c); it has no import/export UI entries, so AC2 import/export cannot run on this package."
+}
