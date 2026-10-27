@@ -3,7 +3,7 @@ id: SETTINGS-PROFILE-UI-1
 title: 设置页 profile 管理 UI（provider / network profile 表单）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 327aa8526
 branch: task/SETTINGS-PROFILE-UI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/SETTINGS-PROFILE-UI-1
-integration_commit: null
+integration_commit: 31cf7f1ce
 delivery_head: f2cf8734325c2597d46c064e36b7824bb4cfe2ec
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -103,3 +103,11 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实 `%APPDATA%` 未触碰）。
 - 未关闭项及保留原因：真实 Host 全链由既有冻结 sidecar 测试覆盖（本卡 UI 用 fake）；真机截图时 Host 未就绪故列表为空态；provider_id/endpoint/model 为自由文本、无建议列表；book/chapter scope 的 id 为文本框（未接选择器）；App.Tests 既有 evidence 并发写 flake 已记录；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 三卡：Provider Profile 管理（CRUD + 空态 + typed）、Network Profile 管理（CRUD + test 真实六段诊断 + resolve + 默认切换）、Provider 绑定 slot（scope global/book/chapter + capability + set/clear/resolve）。
+- 真机发现并修复：设置页内容行改 ScrollViewer（新卡被窗口裁切）。
+- 证据：10 项 headless（CRUD 精确参数、typed 错误 0 调用、空态、test/resolve、TLS_CONFIRMATION_REQUIRED、15 条 payload 键集契约）+ 真机 2 张截图。
+- 回归：DSH 复跑 test.ps1 见执行记录（实现方报 210/210：61/55/94）；vitest 60/567；pytest 3F/2772P/9S（0 新增）。
+- 遗留：book/chapter scope 仍手填 id（需选择器）；provider_id/endpoint 自由文本无建议；截图时 Host 未就绪列表空态。
+- 集成：31cf7f1ce。
