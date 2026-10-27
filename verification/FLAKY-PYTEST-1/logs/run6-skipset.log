@@ -1,0 +1,427 @@
+=== RUN META ===
+command: python -m pytest tests -q -rs
+purpose: FLAKY-PYTEST-1 AC3 skip-set evidence (10 skipped: 9 baseline + 1 detection module)
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+=== OUTPUT ===
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  7%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 15%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+..........s............................................................. [ 49%]
+..................................sssss................................. [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 64%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+.........................................................s.............. [ 72%]
+........................................................................ [ 75%]
+........................................................................ [ 77%]
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/FLAKY-PYTEST-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+............................................                             [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_manga_real.py:30: installed transformers 4.48.3 has no RTDetrV2ForObjectDetection; the pinned snapshot needs transformers>=4.49 (requirements.txt pins 5.17.0). Install requirements-dev.txt or set NEW_MANGA_MANGA_WEIGHTS / the optional torch fallback remains unavailable.
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+SKIPPED [1] tests\providers\test_registry_readiness.py:274: dev venv intentionally carries the ML stack since T1.1.1 (user-approved requirements: torch==2.14.0, transformers==5.17.0) �� the TASK-019-era 'no model runtime in this environment' evidence is INVALIDATED, nothing left to guard here; separately, release-side ML-closure completeness is independently guaranteed at build time by packaging/m2ac5 core_sidecar.spec _assert_ml_closure (M2-PROD-DETECT-2), which is the opposite-direction assertion and must not be read as this test's replacement
+2773 passed, 10 skipped, 2 warnings in 229.33s (0:03:49)
+=== EXIT=0 ===

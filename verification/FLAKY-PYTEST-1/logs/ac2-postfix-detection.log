@@ -1,0 +1,19 @@
+=== RUN META ===
+command: python -m pytest 
+tests/providers/test_detection_manga_real.py -q -rs
+purpose: FLAKY-PYTEST-1 post-fix targeted verification
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+ (worktree with fixes)
+=== OUTPUT ===
+
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detection_manga_real.py:30: installed transformers 4.48.3 has no RTDetrV2ForObjectDetection; the pinned snapshot needs transformers>=4.49 (requirements.txt pins 5.17.0). Install requirements-dev.txt or set NEW_MANGA_MANGA_WEIGHTS / the optional torch fallback remains unavailable.
+1 skipped in 1.89s
+=== EXIT=5 ===

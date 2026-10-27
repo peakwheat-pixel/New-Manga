@@ -1,0 +1,10 @@
+=== RUN META ===
+command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FLAKY-PYTEST-1.md
+cwd: G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+=== OUTPUT ===
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\FLAKY-PYTEST-1.md
+WARN: 存在 14 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3170 bytes / 38 lines
+Governance check: PASS (2 warnings)
+=== EXIT=0 ===

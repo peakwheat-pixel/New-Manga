@@ -1,0 +1,84 @@
+diff --git a/src/ui/viewmodels/workbench/viewmodel.py b/src/ui/viewmodels/workbench/viewmodel.py
+index 4df0da303..217a430c2 100644
+--- a/src/ui/viewmodels/workbench/viewmodel.py
++++ b/src/ui/viewmodels/workbench/viewmodel.py
+@@ -968,7 +968,14 @@ class WorkbenchViewModel(QObject):
+             fresh = self._pipeline.plan_run(result.new_run_id)
+             self._run = fresh
+         self._refresh_projection()
+-        if self._run.status is PipelineRunStatus.PENDING:
++        if result.status is PipelineRunStatus.PENDING:
++            # FLAKY-PYTEST-1: ``continue`` answers PENDING in the control
++            # contract to ask the caller for a fresh worker, but the Run object
++            # itself is left RUNNING + ``_resumed_runs`` marker (the executor
++            # must be re-entered to observe the resume).  Checking
++            # ``self._run.status`` therefore missed every PAUSED→continue
++            # resume: the run stayed RUNNING with no worker and never reached a
++            # terminal state.  Gate the admission on the control answer.
+             self._start_pending_worker(self._run)
+ 
+     @Slot()
+diff --git a/tests/infrastructure/test_plugin_sandbox.py b/tests/infrastructure/test_plugin_sandbox.py
+index bc8c448a4..fc7972eb3 100644
+--- a/tests/infrastructure/test_plugin_sandbox.py
++++ b/tests/infrastructure/test_plugin_sandbox.py
+@@ -401,15 +401,22 @@ def test_sandbox_job_kills_grandchildren(sandboxed, tmp_path) -> None:
+ 
+     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+     kernel32.OpenProcess.restype = ctypes.c_void_p
++    # FLAKY-PYTEST-1: the kernel reclaims a closed job asynchronously, and under
++    # heavy machine load the old fixed 2 s budget was occasionally exceeded even
++    # though the tree died milliseconds later (the run itself, and a direct
++    # AppContainerSandbox probe, killed the grandchild in ~20 ms).  A bounded
++    # 20 s wait keeps the assertion strict — a genuinely leaked tree still
++    # fails — without asserting on kernel-notification latency.
+     still_alive = True
+-    for _ in range(20):  # the kernel reclaims the tree asynchronously
++    deadline = time.monotonic() + 20.0
++    while True:
+         handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+         try:
+             still_alive = bool(handle)
+         finally:
+             if handle:
+                 kernel32.CloseHandle(ctypes.c_void_p(handle))
+-        if not still_alive:
++        if not still_alive or time.monotonic() >= deadline:
+             break
+         time.sleep(0.1)
+     assert still_alive is False, "the job object must kill the whole tree"
+diff --git a/tests/providers/test_detection_manga_real.py b/tests/providers/test_detection_manga_real.py
+index 3b7e02705..99053b7df 100644
+--- a/tests/providers/test_detection_manga_real.py
++++ b/tests/providers/test_detection_manga_real.py
+@@ -16,7 +16,25 @@ from pathlib import Path
+ import pytest
+ 
+ pytest.importorskip("torch", reason="torch is not installed")
+-pytest.importorskip("transformers", reason="transformers is not installed")
++transformers = pytest.importorskip("transformers", reason="transformers is not installed")
++
++# FLAKY-PYTEST-1 (AC2): the pinned snapshot is an RT-DETR-v2 checkpoint
++# (``config.json``: ``architectures=["RTDetrV2ForObjectDetection"]``,
++# ``model_type=rt_detr_v2``, ``transformers_version=4.49.0``) and this repo pins
++# ``transformers==5.17.0`` (requirements.txt).  Dev machines can install an
++# older transformers (observed: 4.48.3) that has no ``RTDetrV2ForObjectDetection``
++# at all; that is a runtime-version gap of the OPTIONAL torch fallback (the
++# shipped Core uses the ONNX graph), not a product regression.  Skip with a
++# decidable reason instead of failing with ``AttributeError`` inside the loader.
++if not hasattr(transformers, "RTDetrV2ForObjectDetection"):
++    pytest.skip(
++        f"installed transformers {transformers.__version__} has no "
++        f"RTDetrV2ForObjectDetection; the pinned snapshot needs "
++        f"transformers>=4.49 (requirements.txt pins 5.17.0). Install "
++        f"requirements-dev.txt or set NEW_MANGA_MANGA_WEIGHTS / the optional "
++        f"torch fallback remains unavailable.",
++        allow_module_level=True,
++    )
+ 
+ #: env override first, then the local C4 qualification snapshot (gitignored
+ #: task-env tree; never committed, never fetched at test time).
+ src/ui/viewmodels/workbench/viewmodel.py     |  9 ++++++++-
+ tests/infrastructure/test_plugin_sandbox.py  | 11 +++++++++--
+ tests/providers/test_detection_manga_real.py | 20 +++++++++++++++++++-
+ 3 files changed, 36 insertions(+), 4 deletions(-)

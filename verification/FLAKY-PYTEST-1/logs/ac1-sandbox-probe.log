@@ -1,0 +1,20 @@
+=== RUN META ===
+command: python tools/probe_sandbox_tree.py 6 30
+purpose: AC1 sandbox flake attribution (does the grandchild die at all, and when?)
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+=== OUTPUT ===
+{"iteration": 1, "hook_ms": 1489.4, "applied": true, "errors": [], "pid": 30620, "died_after_ms": 20.2, "alive_after_window": false, "within_test_2s": true}
+{"iteration": 2, "hook_ms": 1591.0, "applied": true, "errors": [], "pid": 46088, "died_after_ms": 20.4, "alive_after_window": false, "within_test_2s": true}
+{"iteration": 3, "hook_ms": 1406.7, "applied": true, "errors": [], "pid": 48748, "died_after_ms": 20.4, "alive_after_window": false, "within_test_2s": true}
+{"iteration": 4, "hook_ms": 1578.6, "applied": true, "errors": [], "pid": 11048, "died_after_ms": 20.4, "alive_after_window": false, "within_test_2s": true}
+{"iteration": 5, "hook_ms": 1393.6, "applied": true, "errors": [], "pid": 23464, "died_after_ms": 20.2, "alive_after_window": false, "within_test_2s": true}
+{"iteration": 6, "hook_ms": 1434.4, "applied": true, "errors": [], "pid": 17096, "died_after_ms": 20.3, "alive_after_window": false, "within_test_2s": true}
+SUMMARY {"iterations": 6, "window_s": 30.0, "within_test_2s": 6, "alive_after_window": 0, "died_after_ms": [20.2, 20.4, 20.4, 20.4, 20.2, 20.3]}
+=== EXIT=0 ===

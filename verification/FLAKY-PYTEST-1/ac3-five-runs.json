@@ -1,0 +1,60 @@
+{
+  "task": "FLAKY-PYTEST-1",
+  "purpose": "AC3: 5 consecutive full-suite runs after the fixes",
+  "git_head": "170878dc4f6e808ee658b9e7378f4c7c14887cc1",
+  "runs": [
+    {
+      "run": 1,
+      "exit": 0,
+      "elapsed_s": 219.7,
+      "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\FLAKY-PYTEST-1\\log\\run1-pytest.log",
+      "failed": 0,
+      "passed": 2773,
+      "skipped": 10
+    },
+    {
+      "run": 2,
+      "exit": 0,
+      "elapsed_s": 227.8,
+      "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\FLAKY-PYTEST-1\\log\\run2-pytest.log",
+      "failed": 0,
+      "passed": 2773,
+      "skipped": 10
+    },
+    {
+      "run": 3,
+      "exit": 0,
+      "elapsed_s": 210.3,
+      "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\FLAKY-PYTEST-1\\log\\run3-pytest.log",
+      "failed": 0,
+      "passed": 2773,
+      "skipped": 10
+    },
+    {
+      "run": 4,
+      "exit": 0,
+      "elapsed_s": 204.1,
+      "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\FLAKY-PYTEST-1\\log\\run4-pytest.log",
+      "failed": 0,
+      "passed": 2773,
+      "skipped": 10
+    },
+    {
+      "run": 5,
+      "exit": 0,
+      "elapsed_s": 204.3,
+      "log": "G:\\CODEX\\New Manga.workspace\\task-envs\\FLAKY-PYTEST-1\\log\\run5-pytest.log",
+      "failed": 0,
+      "passed": 2773,
+      "skipped": 10
+    }
+  ],
+  "distinct_results": [
+    [
+      0,
+      2773,
+      10
+    ]
+  ],
+  "consistent": true
+}
