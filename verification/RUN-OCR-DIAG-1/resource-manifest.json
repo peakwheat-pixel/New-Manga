@@ -1,0 +1,62 @@
+{
+  "task": "RUN-OCR-DIAG-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/RUN-OCR-DIAG-1",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar",
+      "used_as": "冻结 models 包 sidecar 与 models/（只读；未修改、未复制进仓库）"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "used_as": "私有副本 data-root-*（原件零修改）"
+    }
+  ],
+  "written_in_repo": "verification/RUN-OCR-DIAG-1/**（仅证据，无产品代码）",
+  "artifacts": [
+    {
+      "rel": "scripts/run_diag.py",
+      "bytes": 13178,
+      "sha256": "00285d4f63b0537477752b6bcb0303940cf23ce4611f88e39c2a086cb4c061c4"
+    },
+    {
+      "rel": "scripts/detect_probe.py",
+      "bytes": 5926,
+      "sha256": "be4960135f3723a1615b928540f649bdd8aca4474c4480b0399e82e7e568c017"
+    },
+    {
+      "rel": "scripts/page_features.py",
+      "bytes": 2217,
+      "sha256": "db4e9d43317b5f8cbb90cd9d904b1d52ca6ab60f4dc2c744c2d2344c06309ab7"
+    },
+    {
+      "rel": "scripts/summarize.py",
+      "bytes": 1114,
+      "sha256": "983d5b005f921ca5137d21ee32068a818a05ab27c26d789f0e0df20efbc337e1"
+    },
+    {
+      "rel": "data-root-models-book/",
+      "dir": true,
+      "files": 20,
+      "mb": 4.8
+    },
+    {
+      "rel": "data-root-bind-ocr-page0/",
+      "dir": true,
+      "files": 20,
+      "mb": 4.6
+    },
+    {
+      "rel": "logs/",
+      "dir": true,
+      "files": 3,
+      "mb": 0.1
+    },
+    {
+      "rel": "evidence/",
+      "dir": true,
+      "files": 4,
+      "mb": 0.7
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "task": "RUN-OCR-DIAG-1",
+  "base_commit": "9f58b4c1d",
+  "sidecar": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\core_service.exe",
+    "sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+    "note": "与 AC11 无标签副本 e0a1eff8…f6f14bc0 不是同一构建"
+  },
+  "ac1_minimal_reproduction": {
+    "status": "MET",
+    "command": "StartRun translate_untranslated, scope book/page",
+    "observed": {
+      "pages_1_3": "detect completed; ocr failed PROVIDER_NOT_CONFIGURED",
+      "pages_4_8": "detect failed INVALID_INPUT",
+      "terminal": "completed_with_failures"
+    },
+    "step_level_evidence": [
+      {
+        "step_type": "ocr",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "error_detail": "no provider binding configured for step 'ocr' (stage=ocr)"
+      },
+      {
+        "step_type": "detect",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "detector returned no candidates for page '<page_id>' (stage=detect)"
+      }
+    ],
+    "evidence": "verification/RUN-OCR-DIAG-1/probe-models-book.json"
+  },
+  "ac2_ocr_root_cause": {
+    "status": "MET",
+    "verdict": "CORE_STEP_PROVIDER_BINDING_NOT_CONFIGURED",
+    "excluded": {
+      "model_missing_or_corrupt": {
+        "verdict": "EXCLUDED",
+        "evidence": [
+          "models/ocr/manga-ocr-onnx/{encoder_model.onnx,decoder_model.onnx,vocab.txt,generation_config.json,...} all present",
+          "sha256 match provider pins: encoder 15fa8155…def85f, decoder ef776526…61f5e8, vocab 5cb5c558…a36a3",
+          "no OCR weights warning on stderr (base sidecar does print such a warning)"
+        ]
+      },
+      "ep_or_provider_misconfig": {
+        "verdict": "EXCLUDED",
+        "evidence": [
+          "detect ran on DmlExecutionProvider; OCR provider device defaults to cpu; failure occurs in binding resolution, before weights/EP"
+        ]
+      },
+      "core_provider_not_registered": {
+        "verdict": "PARTIAL — provider IS registered; the BINDING is missing",
+        "evidence": [
+          "runtime.py:583-588 registers MangaOcrOnnxProvider (manga-ocr, capability OCR)",
+          "handlers.py:1068-1074 _chain() reads run.provider_binding_snapshot[step_type]",
+          "pipeline_defaults.provider_bindings_json == '{}' (measured in probe DB dump)",
+          "pipeline.py:929-947 seeds '{}' for a fresh install; no default bindings"
+        ]
+      },
+      "input_mismatch": {
+        "verdict": "EXCLUDED",
+        "evidence": [
+          "failure happens before input handling",
+          "same page + same image succeeds once the binding exists"
+        ]
+      }
+    },
+    "causal_experiment": {
+      "change": {
+        "overrides": {
+          "provider_bindings": {
+            "ocr": "manga-ocr"
+          }
+        }
+      },
+      "result": {
+        "detect": "completed",
+        "ocr": "completed",
+        "ocr_provider": "manga-ocr / local-manga-ocr-onnx / manga-ocr-base-onnx / device cpu",
+        "regions_with_text": "13/13",
+        "next_failure": "color: PROVIDER_FAILED '_StubStyleAnalyzer' object has no attribute 'analyze'"
+      },
+      "evidence": "verification/RUN-OCR-DIAG-1/probe-binding-override.json"
+    }
+  },
+  "ac3_detect_invalid_input": {
+    "status": "MET",
+    "verdict": "DETECTOR_RETURNS_ZERO_CANDIDATES_ON_TEXTLESS_PAGES_AND_CORE_MAPS_EMPTY_TO_INVALID_INPUT",
+    "not_causes": [
+      "image size",
+      "image format",
+      "fixed 640 constraint",
+      "empty/corrupt file"
+    ],
+    "per_page_candidates": {
+      "p1": 13,
+      "p2": 6,
+      "p3": 7,
+      "p4": 0,
+      "p5": 0,
+      "p6": 0,
+      "p7": 0,
+      "p8": 0
+    },
+    "input_features_p4_p8": {
+      "mean_gray": [
+        195.5,
+        182.0,
+        145.2,
+        199.5,
+        176.0
+      ],
+      "dark_frac": [
+        0.0868,
+        0.0984,
+        0.2608,
+        0.0512,
+        0.1093
+      ],
+      "edge_density": [
+        4.06,
+        4.79,
+        5.11,
+        3.64,
+        3.92
+      ]
+    },
+    "input_features_p1_p3": {
+      "mean_gray": [
+        132.7,
+        152.0,
+        148.3
+      ],
+      "dark_frac": [
+        0.4801,
+        0.3379,
+        0.4017
+      ],
+      "edge_density": [
+        7.48,
+        6.99,
+        6.92
+      ]
+    },
+    "source_of_mapping": "src/infrastructure/providers/handlers.py:296 (error_detail) with error_code INVALID_INPUT",
+    "evidence": [
+      "verification/RUN-OCR-DIAG-1/detect-per-page.json",
+      "verification/RUN-OCR-DIAG-1/page-features.json"
+    ]
+  },
+  "additional_defect_found": {
+    "step": "color",
+    "error_code": "PROVIDER_FAILED",
+    "error_detail": "'_StubStyleAnalyzer' object has no attribute 'analyze'",
+    "chain": [
+      "infrastructure/providers/handlers.py:726 source_styles.extract",
+      "application/translation/color/service.py:30 self._analyzer.analyze(...)",
+      "bootstrap/core_service.py:654 _StubStyleAnalyzer (only analyze_pixel_styles)",
+      "bootstrap/core_service.py:715 source_styles=SourceStyleService(_StubStyleAnalyzer())"
+    ],
+    "ready_implementations": [
+      "infrastructure/rendering/pillow_source_style.py:55 PillowSourceStyleAnalyzer",
+      "infrastructure/rendering/pixel_source_style.py:51 PixelSourceStyleAnalyzer"
+    ]
+  },
+  "ac4_recommendations": [
+    {
+      "order": 1,
+      "change": "Host passes StartRun.overrides.provider_bindings = {\"ocr\":\"manga-ocr\"} (or derived from configured profiles)",
+      "core_semantics_change": false,
+      "effect": "OCR runs (proven)",
+      "impact": [
+        "RUN-EXPORT-E2E-1 AC3 → PARTIAL"
+      ]
+    },
+    {
+      "order": 2,
+      "change": "seed default local provider bindings for a fresh install (pipeline.set_defaults / assembly) or fall back in _chain()",
+      "core_semantics_change": true,
+      "effect": "no caller needs to remember the override",
+      "impact": [
+        "all Run entry points"
+      ]
+    },
+    {
+      "order": 3,
+      "change": "replace _StubStyleAnalyzer with PixelSourceStyleAnalyzer/PillowSourceStyleAnalyzer (or add analyze)",
+      "core_semantics_change": true,
+      "effect": "color/segment/inpaint/render can proceed",
+      "impact": [
+        "Run chain",
+        "rendering tests"
+      ]
+    },
+    {
+      "order": 4,
+      "change": "treat zero candidates as completed(0 regions)/skipped instead of INVALID_INPUT (or add empty_detection_policy)",
+      "core_semantics_change": true,
+      "effect": "text-free pages no longer fail the run",
+      "impact": [
+        "all books with cover/art pages",
+        "run terminal status"
+      ]
+    },
+    {
+      "order": 5,
+      "change": "export closure: translated artifacts + host-control RegisterExportTarget grant",
+      "core_semantics_change": false,
+      "effect": "export can really run",
+      "impact": [
+        "RUN-EXPORT-E2E-1 AC2"
+      ]
+    }
+  ],
+  "not_run": [
+    "translate/inpaint/render full chain (needs translation provider endpoint/credentials; color fails first)",
+    "other steps' missing-binding errors (same mechanism, only ocr proven causally)",
+    "OCR text quality evaluation",
+    "per-page visual confirmation of pages 5-8 (page 4 confirmed visually as a text-free colour illustration)",
+    "difference between AC11 sidecar build and models-package build"
+  ]
+}
