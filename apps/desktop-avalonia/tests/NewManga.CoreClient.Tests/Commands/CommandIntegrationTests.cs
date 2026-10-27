@@ -171,6 +171,37 @@ public sealed class CommandIntegrationTests
                 Args($"{{\"chapter_id\":\"{chapterId}\",\"mode\":\"original\",\"start_position\":\"beginning\"}}")));
         Assert.Equal("TARGET_NOT_FOUND", readerProjectionError.Code);
 
+        // RUN-EXPORT-E2E-1: Run/Export control + projection faces really execute against the
+        // frozen Core. This fixture root has a book without page artifacts, so StartRun must
+        // fail with the Core's typed INVALID_REQUEST (EMPTY_TARGET_SELECTION) and the read
+        // commands must surface typed TARGET_NOT_FOUND / EXPORT_NOT_FOUND -- never a silent
+        // success. The real production-chain evidence (models sidecar, BOOK-FIXTURE 8 pages,
+        // StartRun accepted, run snapshot/task projection, export attempt) is under
+        // verification/RUN-EXPORT-E2E-1/probe-*.json.
+        var runErrors = new[]
+        {
+            await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync(
+                    "library_start_run",
+                    Args($"{{\"command\":\"translate_untranslated\",\"scope\":{{\"kind\":\"book\",\"book_id\":\"{bookId}\"}},\"overrides\":{{}},\"idempotency_key\":\"it-run-1\"}}"))),
+            await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync("library_get_run_snapshot", Args("{\"run_id\":\"run-missing\"}"))),
+            await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync("library_get_task_projection", Args("{\"run_id\":\"run-missing\"}"))),
+            await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync("library_get_export_snapshot", Args("{\"export_id\":\"export-missing\"}"))),
+            await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync("library_cancel_export", Args("{\"export_id\":\"export-missing\"}"))),
+            await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync(
+                    "library_start_export",
+                    Args($"{{\"book_id\":\"{bookId}\",\"chapter_ids\":[\"{chapterId}\"],\"ordered_page_ids\":[\"page-missing\"],\"format\":\"pdf\",\"format_options\":{{\"pdf_content\":\"image_only\"}},\"stale_policy\":\"abort\",\"target_ref\":\"etref1.not-registered.probe\"}}"))),
+        };
+        Assert.All(runErrors, error => Assert.False(string.IsNullOrEmpty(error.Code)));
+        Assert.Equal("INVALID_REQUEST", runErrors[0].Code);
+        Assert.Equal("TARGET_NOT_FOUND", runErrors[1].Code);
+        Assert.Equal("EXPORT_NOT_FOUND", runErrors[3].Code);
+
         var issued = await Run("issue_resource_url", "{\"resource_id\":\"res-1\",\"revision\":\"rev-1\"}");
         var grantId = issued.GetProperty("id").GetString();
         Assert.False(string.IsNullOrEmpty(grantId));
@@ -278,7 +309,7 @@ public sealed class CommandIntegrationTests
             typed.Add(new { command = descriptor.Name, domain = descriptor.Domain.ToString(), code = error.Code });
         }
 
-        Assert.Equal(42, typed.Count);
+        Assert.Equal(33, typed.Count);
         var unknown = await Assert.ThrowsAsync<HostCommandUnknownException>(
             () => context.Dispatcher.InvokeAsync("not_a_production_command"));
         Assert.Equal("UNKNOWN_COMMAND", unknown.Code);
@@ -343,7 +374,7 @@ public sealed class CommandIntegrationTests
 
         Assert.Equal(66, seen.Count);
         Assert.Equal(66, services.Sum(service => service.Descriptors.Count));
-        Assert.Equal(24, services.Sum(service => service.ImplementedCount));
+        Assert.Equal(33, services.Sum(service => service.ImplementedCount));
 
         var crossDomain = await Assert.ThrowsAsync<ArgumentException>(
             () => context.Settings.InvokeAsync("library_list_books", Args("{}")));

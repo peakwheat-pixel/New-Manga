@@ -1,0 +1,91 @@
+{
+  "ac": "AC4",
+  "snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+  "extract_check": "PASS: production command surface matches snapshot (66 commands)",
+  "before": {
+    "implemented": 24,
+    "not_supported": 42,
+    "source": "NS-WIRE-A1 registry state"
+  },
+  "after": {
+    "implemented": 33,
+    "not_supported": 33,
+    "source": "RUN-EXPORT-E2E-1 registry state"
+  },
+  "changed_commands": [
+    {
+      "command": "library_start_run",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "StartRun",
+      "core_minor": 3
+    },
+    {
+      "command": "library_control_run",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "ControlRun",
+      "core_minor": 3
+    },
+    {
+      "command": "library_resume_blocked_run",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "ResumeBlockedRun",
+      "core_minor": 3
+    },
+    {
+      "command": "library_get_run_snapshot",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "GetRunSnapshot",
+      "core_minor": 3
+    },
+    {
+      "command": "library_get_task_projection",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "GetTaskProjection",
+      "core_minor": 3
+    },
+    {
+      "command": "library_retry_failed_targets",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "RetryFailedTargets",
+      "core_minor": 3
+    },
+    {
+      "command": "library_start_export",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "StartExport",
+      "core_minor": 3
+    },
+    {
+      "command": "library_cancel_export",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "CancelExport",
+      "core_minor": 3
+    },
+    {
+      "command": "library_get_export_snapshot",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "GetExportSnapshot",
+      "core_minor": 3
+    }
+  ],
+  "not_wired_this_task": [
+    {
+      "command": "library_reveal_export_folder",
+      "reason": "host-local OS 行为（打开资源管理器）；无 Core 命令，非本批可验证面，保持 NOT_SUPPORTED"
+    }
+  ],
+  "runtime_evidence": {
+    "start_run_accepted": true,
+    "run_terminal_status": "completed_with_failures",
+    "export_attempt_error": "EXPORT_INPUT_UNAVAILABLE"
+  }
+}

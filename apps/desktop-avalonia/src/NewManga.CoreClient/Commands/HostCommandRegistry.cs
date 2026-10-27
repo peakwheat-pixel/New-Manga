@@ -2,14 +2,15 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Twenty-four commands are migrated to the existing sidecars;
+/// organised into the six domain services. Thirty-three commands are migrated to the existing sidecars;
 /// the rest are explicit NOT_SUPPORTED with a per-command reason (never silently missing).
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
 /// verification/HOST-COMMAND-MIGRATION-1/parity/):
 ///   core.ping, ListBooks, ListRecycleBinBooks, CreateBook, CreateChapter, list_chapters,
 ///   list_chapter_pages, list_regions, settings.get, backup.list, plugins.list,
-///   cleanup.preview, GetExportHistory (core_service protocol 2.3) and issue/revoke/revoke_resource
+///   cleanup.preview, GetExportHistory (core_service protocol 2.3), the RUN-EXPORT-E2E-1 set below,
+///   and issue/revoke/revoke_resource
 /// </summary>
 public static class HostCommandRegistry
 {
@@ -131,6 +132,19 @@ public static class HostCommandRegistry
         ["plugins_set_enabled"] = new("plugins.set_enabled", 3),
         ["cleanup_run"] = new("cleanup.run", 3),
         ["library_get_reader_projection"] = new("GetReaderProjection", 3),
+        // RUN-EXPORT-E2E-1: the Run/Export control + projection faces are Core-backed
+        // commands of the frozen 2.3 protocol (minor 3). Payload validation mirrors the
+        // legacy Tauri signatures; typed Core errors (PROVIDER_NOT_CONFIGURED /
+        // INVALID_RUN_TRANSITION / EXPORT_NOT_FOUND / EXPORT_INPUT_UNAVAILABLE) pass through.
+        ["library_start_run"] = new("StartRun", 3),
+        ["library_control_run"] = new("ControlRun", 3),
+        ["library_resume_blocked_run"] = new("ResumeBlockedRun", 3),
+        ["library_get_run_snapshot"] = new("GetRunSnapshot", 3),
+        ["library_get_task_projection"] = new("GetTaskProjection", 3),
+        ["library_retry_failed_targets"] = new("RetryFailedTargets", 3),
+        ["library_start_export"] = new("StartExport", 3),
+        ["library_cancel_export"] = new("CancelExport", 3),
+        ["library_get_export_snapshot"] = new("GetExportSnapshot", 3),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)

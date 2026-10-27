@@ -1,0 +1,356 @@
+{
+  "ac": "AC1",
+  "batch": "Run/Export Core-backed control + projection faces (S4-C residual)",
+  "count": 9,
+  "commands": [
+    {
+      "command": "library_start_run",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1026
+      },
+      "legacy_params": [
+        {
+          "name": "command",
+          "type": "String"
+        },
+        {
+          "name": "scope",
+          "type": "serde_json::Value"
+        },
+        {
+          "name": "overrides",
+          "type": "Option<serde_json::Value>"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<serde_json::Value, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "StartRun",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": true,
+        "probe_error_code": null,
+        "probe_result_keys": [
+          "run_id",
+          "status"
+        ],
+        "probe_elapsed_ms": 9.2
+      },
+      "probe_models": {
+        "probe_ok": true,
+        "probe_error_code": null,
+        "probe_result_keys": [
+          "run_id",
+          "status"
+        ],
+        "probe_elapsed_ms": 7.7
+      }
+    },
+    {
+      "command": "library_control_run",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1042
+      },
+      "legacy_params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        },
+        {
+          "name": "action",
+          "type": "String"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "Option<String>"
+        }
+      ],
+      "legacy_returns": "Result<serde_json::Value, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "ControlRun",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": false,
+        "probe_error_code": "INVALID_RUN_TRANSITION",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.1
+      },
+      "probe_models": {
+        "probe_ok": false,
+        "probe_error_code": "INVALID_RUN_TRANSITION",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.1
+      }
+    },
+    {
+      "command": "library_resume_blocked_run",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1057
+      },
+      "legacy_params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<serde_json::Value, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "ResumeBlockedRun",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": false,
+        "probe_error_code": "INVALID_RUN_TRANSITION",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.1
+      },
+      "probe_models": {
+        "probe_ok": false,
+        "probe_error_code": "INVALID_RUN_TRANSITION",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.0
+      }
+    },
+    {
+      "command": "library_get_run_snapshot",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1070
+      },
+      "legacy_params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<serde_json::Value, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "GetRunSnapshot",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": null,
+      "probe_models": null
+    },
+    {
+      "command": "library_get_task_projection",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1083
+      },
+      "legacy_params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<serde_json::Value, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "GetTaskProjection",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": true,
+        "probe_error_code": null,
+        "probe_result_keys": [
+          "run_id",
+          "run_status",
+          "run_title",
+          "overall_progress",
+          "current_page_id",
+          "current_step_type",
+          "step_flow",
+          "rows",
+          "tasks",
+          "counts",
+          "blocked_reasons",
+          "controls",
+          "extra"
+        ],
+        "probe_elapsed_ms": 1.0
+      },
+      "probe_models": {
+        "probe_ok": true,
+        "probe_error_code": null,
+        "probe_result_keys": [
+          "run_id",
+          "run_status",
+          "run_title",
+          "overall_progress",
+          "current_page_id",
+          "current_step_type",
+          "step_flow",
+          "rows",
+          "tasks",
+          "counts",
+          "blocked_reasons",
+          "controls",
+          "extra"
+        ],
+        "probe_elapsed_ms": 2.6
+      }
+    },
+    {
+      "command": "library_retry_failed_targets",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1096
+      },
+      "legacy_params": [
+        {
+          "name": "run_id",
+          "type": "String"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<serde_json::Value, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "RetryFailedTargets",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": null,
+      "probe_models": null
+    },
+    {
+      "command": "library_start_export",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1242
+      },
+      "legacy_params": [
+        {
+          "name": "request",
+          "type": "serde_json::Value"
+        }
+      ],
+      "legacy_returns": "Result<Option<host_issuer::ExportSummary>, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE",
+        "INVALID_REQUEST"
+      ],
+      "core_route": "StartExport",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": false,
+        "probe_error_code": "EXPORT_INPUT_UNAVAILABLE",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.4
+      },
+      "probe_models": {
+        "probe_ok": false,
+        "probe_error_code": "EXPORT_INPUT_UNAVAILABLE",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.5
+      }
+    },
+    {
+      "command": "library_cancel_export",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1110
+      },
+      "legacy_params": [
+        {
+          "name": "export_id",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<ExportProgressSnapshotView, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "CancelExport",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": false,
+        "probe_error_code": "EXPORT_NOT_FOUND",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.0
+      },
+      "probe_models": {
+        "probe_ok": false,
+        "probe_error_code": "EXPORT_NOT_FOUND",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.0
+      }
+    },
+    {
+      "command": "library_get_export_snapshot",
+      "domain": "workbench",
+      "legacy_handler": {
+        "file": "apps/desktop/src-tauri/src/main.rs",
+        "line": 1123
+      },
+      "legacy_params": [
+        {
+          "name": "export_id",
+          "type": "String"
+        }
+      ],
+      "legacy_returns": "Result<ExportProgressSnapshotView, String>",
+      "legacy_error_codes": [
+        "CORE_UNAVAILABLE"
+      ],
+      "core_route": "GetExportSnapshot",
+      "core_minor": 3,
+      "status_before": "NOT_SUPPORTED",
+      "status_after": "IMPLEMENTED",
+      "probe_base": {
+        "probe_ok": false,
+        "probe_error_code": "EXPORT_NOT_FOUND",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.1
+      },
+      "probe_models": {
+        "probe_ok": false,
+        "probe_error_code": "EXPORT_NOT_FOUND",
+        "probe_result_keys": null,
+        "probe_elapsed_ms": 0.1
+      }
+    }
+  ],
+  "probes": {
+    "base": "probe-base.json（无模型 sidecar + BOOK-FIXTURE 副本）",
+    "models": "probe-models.json（models 包 sidecar + 同一副本）"
+  }
+}

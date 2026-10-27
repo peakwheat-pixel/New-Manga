@@ -187,6 +187,51 @@ public sealed class HostCommandDispatcher
             case "plugins_set_enabled":
                 writer.WriteBoolean("enabled", RequireBool(name, payload, "enabled"));
                 break;
+            case "library_start_run":
+                writer.WriteString("command", RequireString(name, payload, "command"));
+                writer.WritePropertyName("scope");
+                RequireObject(name, payload, "scope").WriteTo(writer);
+                if (payload.TryGetProperty("overrides", out var overrides) &&
+                    overrides.ValueKind != JsonValueKind.Null)
+                {
+                    writer.WritePropertyName("overrides");
+                    overrides.WriteTo(writer);
+                }
+
+                writer.WriteString("idempotency_key", RequireString(name, payload, "idempotency_key"));
+                break;
+            case "library_control_run":
+                writer.WriteString("run_id", RequireString(name, payload, "run_id"));
+                writer.WriteString("action", RequireString(name, payload, "action"));
+                WriteOptionalString(writer, name, payload, "idempotency_key");
+                break;
+            case "library_resume_blocked_run":
+            case "library_get_run_snapshot":
+            case "library_get_task_projection":
+                writer.WriteString("run_id", RequireString(name, payload, "run_id"));
+                break;
+            case "library_retry_failed_targets":
+                writer.WriteString("run_id", RequireString(name, payload, "run_id"));
+                writer.WriteString("idempotency_key", RequireString(name, payload, "idempotency_key"));
+                break;
+            case "library_start_export":
+                writer.WriteString("book_id", RequireString(name, payload, "book_id"));
+                writer.WritePropertyName("chapter_ids");
+                WriteRequiredStringArray(writer, name, payload, "chapter_ids", requireNonEmpty: true);
+                writer.WritePropertyName("ordered_page_ids");
+                WriteRequiredStringArray(writer, name, payload, "ordered_page_ids", requireNonEmpty: true);
+                writer.WriteString("format", RequireString(name, payload, "format"));
+                writer.WritePropertyName("format_options");
+                RequireObject(name, payload, "format_options").WriteTo(writer);
+                writer.WriteString("stale_policy", RequireString(name, payload, "stale_policy"));
+                writer.WriteString("target_ref", RequireString(name, payload, "target_ref"));
+                break;
+            case "library_cancel_export":
+            case "library_get_export_snapshot":
+                writer.WriteString("export_id", RequireString(name, payload, "export_id"));
+                break;
+            case "library_get_export_history":
+                break;
             case "library_get_reader_projection":
                 writer.WriteString("chapter_id", RequireString(name, payload, "chapter_id"));
                 writer.WriteString("mode", RequireString(name, payload, "mode"));
@@ -202,6 +247,34 @@ public sealed class HostCommandDispatcher
         }
 
         writer.WriteEndObject();
+    }
+
+    private static void WriteRequiredStringArray(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property,
+        bool requireNonEmpty)
+    {
+        if (!args.TryGetProperty(property, out var value) ||
+            value.ValueKind != JsonValueKind.Array ||
+            value.GetArrayLength() == 0)
+        {
+            throw new HostCommandInvalidArgumentsException(command, $"missing required string[] argument '{property}'");
+        }
+
+        writer.WriteStartArray();
+        foreach (var element in value.EnumerateArray())
+        {
+            if (element.ValueKind != JsonValueKind.String || string.IsNullOrEmpty(element.GetString()))
+            {
+                throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must contain non-empty strings");
+            }
+
+            writer.WriteStringValue(element.GetString());
+        }
+
+        writer.WriteEndArray();
     }
 
     private static JsonElement RequireObject(string command, JsonElement args, string property)
