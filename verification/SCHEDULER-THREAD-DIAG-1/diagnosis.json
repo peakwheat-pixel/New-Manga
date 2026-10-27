@@ -1,0 +1,333 @@
+{
+  "task": "SCHEDULER-THREAD-DIAG-1",
+  "verdict": "CONFIRMED shared-mutable run cache race (SqlitePipelineStore._cache) between the scheduler execution thread and the stdio/host request thread calling GetTaskProjection(fresh=True) -> store.refresh()",
+  "root_cause": {
+    "one_line": "SqlitePipelineStore caches PipelineRun objects in a plain shared dict (_cache) while sqlite connections are thread-routed; GetTaskProjection calls pipeline.get_task_projection(fresh=True) -> store.refresh(), which replaces the cache entry with a newly loaded clone. The scheduler thread's execute_run keeps executing its own (now-stale) object, while commit_step_result/_find_step read the clone. Result: commit+backfill land on the clone, the stale object keeps the old regionless unit list -> downstream ocr INVALID_INPUT; the stale object's later _persist writes the pre-commit state back over pipeline_runs.run_json -> StepRun stuck at running.",
+    "code_points": [
+      {
+        "file": "src/bootstrap/core_service.py",
+        "symbol": "_cached_task_projection",
+        "line": 3236,
+        "detail": "GetTaskProjection RPC -> pipeline.get_task_projection(run_id, fresh=True)"
+      },
+      {
+        "file": "src/application/tasks/service.py",
+        "symbol": "PipelineService.get_run_snapshot",
+        "line": 1394,
+        "detail": "fresh=True -> self._store.refresh(run_id)"
+      },
+      {
+        "file": "src/infrastructure/sqlite/pipeline.py",
+        "symbol": "SqlitePipelineStore.refresh",
+        "line": 415,
+        "detail": "reads DB then self._cache[run_id] = run (replaces the object the executor thread is using)"
+      },
+      {
+        "file": "src/application/tasks/service.py",
+        "symbol": "PipelineService._find_step",
+        "line": 1531,
+        "detail": "commit_step_result resolves run via store.get() -> cache -> clone"
+      },
+      {
+        "file": "src/application/tasks/service.py",
+        "symbol": "PipelineService._persist",
+        "line": 1454,
+        "detail": "whole-run JSON write; stale local run overwrites newer committed state"
+      },
+      {
+        "file": "src/infrastructure/sqlite/connection.py",
+        "symbol": "ThreadRoutedConnection",
+        "line": 82,
+        "detail": "connections ARE thread-routed correctly; the leak is the un-shared cache, not the sqlite connection"
+      }
+    ],
+    "trigger": "any client calling GetTaskProjection while a Run is being executed (projection face is designed for UI polling)"
+  },
+  "thread_and_connection_routing": {
+    "threads": {
+      "MainThread": [
+        [
+          "0x22f0088fcb0",
+          "0x22f7f74a6b0"
+        ]
+      ],
+      "core-run-scheduler": [
+        [
+          "0x22f0088fcb0",
+          "0x22f00a4e4d0"
+        ]
+      ]
+    },
+    "note": "facade identity is shared (same ThreadRoutedConnection object); the per-thread sqlite3.Connection differs as designed; _cache is a plain dict shared by both threads."
+  },
+  "causal_chain_page1": [
+    {
+      "t_ms": 619.2,
+      "thread": "core-run-scheduler",
+      "event": "pipeline._record_step_attempt",
+      "run_obj": "0x22f009d7230",
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": ":f52f2772e8044557a72e82f5ea6ab932:detect",
+      "status": "running",
+      "outcome": null,
+      "task_units": null,
+      "step": "step-35e4b"
+    },
+    {
+      "t_ms": 2349.1,
+      "thread": "core-run-scheduler",
+      "event": "pipeline._find_step",
+      "run_obj": "0x22f0107e580",
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": ":f52f2772e8044557a72e82f5ea6ab932:detect",
+      "status": null,
+      "outcome": null,
+      "task_units": null,
+      "step": "step-35e4b"
+    },
+    {
+      "t_ms": 2349.2,
+      "thread": "core-run-scheduler",
+      "event": "catalog.commit_step.enter",
+      "run_obj": null,
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": null,
+      "status": null,
+      "outcome": null,
+      "task_units": null,
+      "step": null
+    },
+    {
+      "t_ms": 2349.5,
+      "thread": "core-run-scheduler",
+      "event": "pipeline._backfill_detected_regions.enter",
+      "run_obj": null,
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": null,
+      "status": null,
+      "outcome": null,
+      "task_units": null,
+      "step": null
+    },
+    {
+      "t_ms": 2350.5,
+      "thread": "core-run-scheduler",
+      "event": "pipeline._backfill_detected_regions.exit",
+      "run_obj": null,
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": null,
+      "status": null,
+      "outcome": null,
+      "task_units": 105,
+      "step": null
+    },
+    {
+      "t_ms": 2355.5,
+      "thread": "core-run-scheduler",
+      "event": "catalog.commit_step.exit",
+      "run_obj": null,
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": null,
+      "status": "applied",
+      "outcome": null,
+      "task_units": null,
+      "step": null
+    },
+    {
+      "t_ms": 2359.0,
+      "thread": "core-run-scheduler",
+      "event": "pipeline._record_step_attempt",
+      "run_obj": "0x22f009d7230",
+      "before_obj": null,
+      "after_obj": null,
+      "vector": null,
+      "unit": "k:0:f52f2772e8044557a72e82f5ea6ab932:ocr",
+      "status": "running",
+      "outcome": null,
+      "task_units": null,
+      "step": "step-ac93f"
+    }
+  ],
+  "ab_matrix": [
+    {
+      "evidence_file": "repro-scheduler-1793101520.json",
+      "mode": "source-scheduler",
+      "poll": "projection-fresh",
+      "terminal": "completed_with_failures",
+      "elapsed_ms": null,
+      "step_counts": {
+        "detect:running": 8,
+        "ocr:failed": 8
+      },
+      "stuck_running_steps": [
+        "detect@f52f2772",
+        "detect@4f8a2414",
+        "detect@a607fc4c",
+        "detect@6814353f",
+        "detect@f5473903",
+        "detect@c239be82",
+        "detect@7a392268",
+        "detect@221d772e"
+      ],
+      "tasks": {
+        "failed": 8
+      },
+      "invalid_input_tasks": [
+        "f52f2772",
+        "4f8a2414",
+        "a607fc4c",
+        "6814353f",
+        "f5473903",
+        "c239be82",
+        "7a392268",
+        "221d772e"
+      ],
+      "regions": 26
+    },
+    {
+      "evidence_file": "repro-scheduler-1793101385.json",
+      "mode": "source-scheduler",
+      "poll": "projection-cached",
+      "terminal": "completed_with_failures",
+      "elapsed_ms": null,
+      "step_counts": {
+        "color:completed": 3,
+        "detect:completed": 8,
+        "ocr:completed": 3,
+        "term_extract:completed": 3,
+        "translate:failed": 3
+      },
+      "stuck_running_steps": [],
+      "tasks": {
+        "completed": 5,
+        "failed": 3
+      },
+      "invalid_input_tasks": [],
+      "regions": 26
+    },
+    {
+      "evidence_file": "repro-scheduler-1793101390.json",
+      "mode": "source-scheduler",
+      "poll": "none",
+      "terminal": "completed_with_failures",
+      "elapsed_ms": null,
+      "step_counts": {
+        "color:completed": 3,
+        "detect:completed": 8,
+        "ocr:completed": 3,
+        "term_extract:completed": 3,
+        "translate:failed": 3
+      },
+      "stuck_running_steps": [],
+      "tasks": {
+        "completed": 5,
+        "failed": 3
+      },
+      "invalid_input_tasks": [],
+      "regions": 26
+    },
+    {
+      "evidence_file": "frozen-both.json",
+      "mode": "frozen-shipped",
+      "poll": "both",
+      "terminal": "completed_with_failures",
+      "elapsed_ms": 2687.7,
+      "step_counts": {
+        "detect:failed": 5,
+        "detect:running": 3,
+        "ocr:failed": 3
+      },
+      "stuck_running_steps": [
+        "detect@f52f2772",
+        "detect@4f8a2414",
+        "detect@a607fc4c"
+      ],
+      "tasks": {
+        "failed": 8
+      },
+      "invalid_input_tasks": [
+        "f52f2772",
+        "4f8a2414",
+        "a607fc4c",
+        "6814353f",
+        "f5473903",
+        "c239be82",
+        "7a392268",
+        "221d772e"
+      ],
+      "regions": 26
+    },
+    {
+      "evidence_file": "frozen-snaponly.json",
+      "mode": "frozen-shipped",
+      "poll": "snapshot",
+      "terminal": "completed_with_failures",
+      "elapsed_ms": 4541.1,
+      "step_counts": {
+        "color:failed": 3,
+        "detect:completed": 3,
+        "detect:failed": 5,
+        "ocr:completed": 3
+      },
+      "stuck_running_steps": [],
+      "tasks": {
+        "failed": 8
+      },
+      "invalid_input_tasks": [
+        "6814353f",
+        "f5473903",
+        "c239be82",
+        "7a392268",
+        "221d772e"
+      ],
+      "regions": 26
+    }
+  ],
+  "fix_recommendation": {
+    "minimal": "Stop view reads from mutating the execution cache: make get_run_snapshot(fresh=True)/refresh() return a detached read without replacing _cache[run_id] (or add a separate read-only path used by GetTaskProjection). Add a regression test: execute_run on one thread while another thread polls get_task_projection(fresh=True) -> run must complete with zero stuck StepRuns and no regionless-unit INVALID_INPUT.",
+    "hardening": "Also guard the whole-run write: pipeline_runs.run_json is last-writer-wins across threads. Either keep execution writes on the owner thread only (reject writes from non-owner runs) or add an updated_at/revision CAS check so a stale snapshot cannot overwrite a newer one.",
+    "no_core_semantics_change": true,
+    "suggested_next_task": "RUN-STORE-CACHE-RACE-FIX-1 (implementation; small, Core-only, with concurrency regression test)."
+  },
+  "product_impact": {
+    "shipped_binary_contains_race": true,
+    "frozen_repro": "packaged core_service.exe (sha256 2b36bfeb…4ec519b) with projection polling: 3 detect steps stuck running + regionless ocr INVALID_INPUT on 3 pages; with snapshot-only polling: 0 stuck (clean).",
+    "current_gui_polling": "Avalonia Host wires library_get_task_projection (apps/desktop-avalonia/src/NewManga.App/Shell/ReaderWorkbenchSupport.cs:195, CoreClient/Commands/HostCommandRegistry.cs:102/147) but no viewmodel invokes it on a timer yet -> the shipped GUI does not trigger it today; any workbench projection polling (next S4 UI batch), Host integration test or diagnostic tool that polls the face does.",
+    "verdict": "latent production defect in shipped binary; must be fixed before the workbench projection polling lands (or any tool that polls GetTaskProjection during a run)."
+  },
+  "source_pins": {
+    "src/application/tasks/service.py": {
+      "sha256": "3821ae5fe31e5716057479719855286dcb464d42263dfd5f862ee512eab8978e",
+      "bytes": 67386
+    },
+    "src/infrastructure/sqlite/pipeline.py": {
+      "sha256": "5b057e988bbd472009a0316a8d924177cdf993b800bbeb6796f408f9c1d8996a",
+      "bytes": 44756
+    },
+    "src/infrastructure/pipeline/assembly.py": {
+      "sha256": "ac571fbaf9bfb48b04f0da6bf04ee45e13047d837e060a0a2c6f3080773371a3",
+      "bytes": 1677
+    },
+    "src/bootstrap/core_service.py": {
+      "sha256": "480f531ea9c5cbb1a6b193712db0eb9020ef3e335be073196d20f03734330411",
+      "bytes": 229505
+    }
+  },
+  "repro": {
+    "script": "tools/repro_scheduler.py",
+    "frozen_probe": "tools/probe_frozen.py",
+    "stable": "source-mode projection-fresh repro: 3/3 runs showed stuck detect + INVALID_INPUT; projection-cached and no-poll controls: 2/2 clean."
+  }
+}

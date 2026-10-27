@@ -1,0 +1,4433 @@
+{
+  "mode": "scheduler",
+  "poll": "projection-fresh",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\SCHEDULER-THREAD-DIAG-1\\data-root-scheduler-1793101520",
+  "python": "3.14.6",
+  "started_at": "2026-10-27T19:45:20",
+  "terminal": "completed_with_failures",
+  "run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+  "db": {
+    "run": [
+      {
+        "run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "command_type": "translate_untranslated",
+        "scope_type": "book",
+        "requested_targets_json": "[\"14340ddad0ed472fbe687fe12340c5d8\"]",
+        "settings_snapshot_json": "{}",
+        "provider_binding_snapshot_json": "{\"ocr\": \"manga-ocr\"}",
+        "constraint_snapshot_ref": null,
+        "context_policy_json": "{}",
+        "status": "completed_with_failures",
+        "planned_step_units": 72,
+        "terminal_step_units": 64,
+        "pause_requested": 0,
+        "cancel_requested": 0,
+        "source_run_id": null,
+        "retry_reason": null,
+        "interruption_disposition": null,
+        "termination_reason": null,
+        "fatal_error": null,
+        "updated_at": "2026-10-27T11:45:23.081+00:00"
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:0",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:0",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "target_type": "page",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"f52f2772e8044557a72e82f5ea6ab932\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:render\"}]",
+        "step_run_ids_json": "[\"step-35e4b10b886d4673a6e300eda391f3bd\", \"step-ac93f01bd563419b8f05d13ab28d4291\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:1",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:1",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "target_type": "page",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"4f8a24147b3044deabf4f5a2dd83b84f\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:render\"}]",
+        "step_run_ids_json": "[\"step-73e1baf93b5a44be8faf6c6e4f058965\", \"step-61f1fb060ce14a8a847ae23304176ab8\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:2",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:2",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "target_type": "page",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"a607fc4ca3034f47b5bc43d59f94f2ca\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:render\"}]",
+        "step_run_ids_json": "[\"step-b110dd1b20a6470b99e075d69daebb58\", \"step-30fcb91f503f4a36bcba0831c7d8bc70\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:3",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:3",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "target_type": "page",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"6814353f6d8544d6945ad5748d518f47\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"6814353f6d8544d6945ad5748d518f47\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:render\"}]",
+        "step_run_ids_json": "[\"step-e17f604f6ee649b4a81f44aed6f4084d\", \"step-982e8ab474bc44388b0eda30c2f5b4c8\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:4",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:4",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "target_type": "page",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"f54739037525486e8704db23db5c0dc1\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"f54739037525486e8704db23db5c0dc1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:render\"}]",
+        "step_run_ids_json": "[\"step-db7040aa070542e39d087106f539022b\", \"step-80475c22cbc94b7f9029c92bf34f2cd9\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:5",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:5",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "target_type": "page",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"c239be827f3a4448848d2c42bffc05d1\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:render\"}]",
+        "step_run_ids_json": "[\"step-de7540cbf7dd4eee95507f7cc585010b\", \"step-66fb4d94a7e04b3cbffc10728e51a8d1\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:6",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:6",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "target_type": "page",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"7a39226851774f01a4cdb89bcf118296\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"7a39226851774f01a4cdb89bcf118296\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:render\"}]",
+        "step_run_ids_json": "[\"step-320be246fcef49c3b501087027765be1\", \"step-c4a9db2baeb94a98bdea0fcd7ac7187f\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      },
+      {
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:7",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "run_target_id": "run-f415fcc006a3432886fb862ce72ed4b7:target:7",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "target_type": "page",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "region_id": null,
+        "status": "failed",
+        "units_json": "[{\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"detect\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:detect\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"ocr\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:ocr\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"color\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:color\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"term_extract\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:term_extract\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"translate\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:translate\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"segment\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:segment\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"mask_refine\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:mask_refine\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"inpaint\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:inpaint\"}, {\"decision\": \"run\", \"expected_lock\": {\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}, \"expected_revisions\": {}, \"page_id\": \"221d772e601e480e8e7508dfe9aff380\", \"reason\": null, \"region_id\": null, \"step_type\": \"render\", \"target_id\": \"221d772e601e480e8e7508dfe9aff380\", \"task_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7\", \"unit_id\": \"run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:render\"}]",
+        "step_run_ids_json": "[\"step-671d32a66af04a8fa0d062b878e8c09b\", \"step-f6b28eaa64fa4d7bbc061b82b8851b75\"]",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)"
+      }
+    ],
+    "steps": [
+      {
+        "step_run_id": "step-35e4b10b886d4673a6e300eda391f3bd",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:0",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-ac93f01bd563419b8f05d13ab28d4291",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:0",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:0:f52f2772e8044557a72e82f5ea6ab932:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-73e1baf93b5a44be8faf6c6e4f058965",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:1",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-61f1fb060ce14a8a847ae23304176ab8",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:1",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:1:4f8a24147b3044deabf4f5a2dd83b84f:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-b110dd1b20a6470b99e075d69daebb58",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:2",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-30fcb91f503f4a36bcba0831c7d8bc70",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:2",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:2:a607fc4ca3034f47b5bc43d59f94f2ca:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-e17f604f6ee649b4a81f44aed6f4084d",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:3",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-982e8ab474bc44388b0eda30c2f5b4c8",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:3",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:3:6814353f6d8544d6945ad5748d518f47:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-db7040aa070542e39d087106f539022b",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:4",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-80475c22cbc94b7f9029c92bf34f2cd9",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:4",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:4:f54739037525486e8704db23db5c0dc1:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-de7540cbf7dd4eee95507f7cc585010b",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:5",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-66fb4d94a7e04b3cbffc10728e51a8d1",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:5",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:5:c239be827f3a4448848d2c42bffc05d1:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-320be246fcef49c3b501087027765be1",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:6",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-c4a9db2baeb94a98bdea0fcd7ac7187f",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:6",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:6:7a39226851774f01a4cdb89bcf118296:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-671d32a66af04a8fa0d062b878e8c09b",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:7",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "region_id": null,
+        "step_type": "detect",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:detect",
+        "status": "running",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": null,
+        "error_detail": null,
+        "output_json": "{}"
+      },
+      {
+        "step_run_id": "step-f6b28eaa64fa4d7bbc061b82b8851b75",
+        "pipeline_run_id": "run-f415fcc006a3432886fb862ce72ed4b7",
+        "task_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:7",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "region_id": null,
+        "step_type": "ocr",
+        "unit_id": "run-f415fcc006a3432886fb862ce72ed4b7:task:7:221d772e601e480e8e7508dfe9aff380:ocr",
+        "status": "failed",
+        "input_refs_json": "{}",
+        "lock_snapshot_json": "{\"inpaint_locked\": false, \"page_locked\": false, \"region_locked\": false, \"translation_locked\": false}",
+        "retry_no": 0,
+        "error_code": "INVALID_INPUT",
+        "error_detail": "step 'ocr' requires a Region target (stage=ocr)",
+        "output_json": "{}"
+      }
+    ],
+    "regions": [
+      {
+        "region_id": "63ceef04ef07434ab3a41ed08ee03693",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "58c73f541ac4424982b727fa5da162a7",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "4e3f39da3b6f49188bcef45b0fb4093c",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "7709e0394c494874bd68eb6f83cebafc",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "a4b80f12d1f54b3e9c8d2ae4a1839eb7",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "149ccd214f094d70aac9386af20cd14b",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "31fbb2eda56c4da6902fa67bd5649146",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "11235dd182164f49a10e3071c5dd2b75",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "d8f42396e90f4b16b4c42706b351e057",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "78e0a5a947364c838953c4b9c85030f7",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "b6d9159ec8a44a3a9c512c93a1394df4",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "388c5b10ee3744be99ccecf5a6939c06",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "10e55ae863fa49faa88c410bd0b83b24",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      {
+        "region_id": "52ca5633761c4818897f61743caf034a",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "b541999e291f4b6dabd7f5a2fd923ab8",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "4d5a7c7cdd2844a6aae02bb7b01c959f",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "9dc77aaca7db4f1bbaa62b303e163d23",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "3f15d309f4b34ce39600c0b1db94afb0",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "a535f8b3f8c44790b1ab57dffbf3a932",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f"
+      },
+      {
+        "region_id": "5d82b84007b14743b9e5777f4ac541a5",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "1fe2a7a484914258b3baf9280ec9194e",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "6ab8212ff5c64134838df459fe319d48",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "6898332890f94ad89086e1981155166e",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "08774e4bbce241629a4e7952d14ba62d",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "76d968e1431545879a28ab1c99b22af1",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      },
+      {
+        "region_id": "e740946abfca4549b9dbe406a8b2b230",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca"
+      }
+    ],
+    "stage_states": [
+      {
+        "target_type": "page",
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.372+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.470+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.541+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.632+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.763+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.855+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:22.957+00:00"
+      },
+      {
+        "target_type": "page",
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "stage": "detect",
+        "status": "completed",
+        "updated_at": "2026-10-27T11:45:23.069+00:00"
+      }
+    ]
+  },
+  "log": [
+    {
+      "t_ms": 352.6,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "scheduler.started",
+      "thread_owner": true,
+      "lease": true,
+      "worker": "core-run-scheduler"
+    },
+    {
+      "t_ms": 360.7,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "run.accepted",
+      "run": "run-f415fcc0",
+      "created": true,
+      "status": "pending",
+      "tasks": 0,
+      "thread_name": "MainThread"
+    },
+    {
+      "t_ms": 360.9,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f00a9ee40",
+      "after_obj": "0x22f00a95d10",
+      "before_status": "pending",
+      "after_status": "pending",
+      "before_vector": [],
+      "after_vector": []
+    },
+    {
+      "t_ms": 361.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "steps": 0,
+      "step_states": [],
+      "tasks": []
+    },
+    {
+      "t_ms": 361.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "run.status",
+      "run": "run-f415fcc0",
+      "status": "pending"
+    },
+    {
+      "t_ms": 461.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f00a95d10",
+      "after_obj": "0x22f00a96990",
+      "before_status": "pending",
+      "after_status": "pending",
+      "before_vector": [],
+      "after_vector": []
+    },
+    {
+      "t_ms": 461.4,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "steps": 0,
+      "step_states": [],
+      "tasks": []
+    },
+    {
+      "t_ms": 562.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f00a96990",
+      "after_obj": "0x22f009d7230",
+      "before_status": "pending",
+      "after_status": "pending",
+      "before_vector": [],
+      "after_vector": []
+    },
+    {
+      "t_ms": 562.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "steps": 0,
+      "step_states": [],
+      "tasks": []
+    },
+    {
+      "t_ms": 611.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "steps": 0,
+      "step_states": [],
+      "tasks": []
+    },
+    {
+      "t_ms": 611.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "steps": 0,
+      "step_states": [],
+      "tasks": []
+    },
+    {
+      "t_ms": 611.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "steps": 0,
+      "step_states": [],
+      "tasks": []
+    },
+    {
+      "t_ms": 611.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "pending",
+      "terminal_units": 0,
+      "steps": []
+    },
+    {
+      "t_ms": 611.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "pending",
+      "steps": 0,
+      "tasks": 8,
+      "vector": []
+    },
+    {
+      "t_ms": 614.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 0,
+      "steps": []
+    },
+    {
+      "t_ms": 614.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 0,
+      "tasks": 8,
+      "vector": []
+    },
+    {
+      "t_ms": 616.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 0,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 616.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 1,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 619.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":f52f2772e8044557a72e82f5ea6ab932:detect",
+      "step": "step-35e4b",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 663.1,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f00af9f30",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 663.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 663.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "run.status",
+      "run": "run-f415fcc0",
+      "status": "running"
+    },
+    {
+      "t_ms": 764.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f00af9f30",
+      "after_obj": "0x22f00aaac30",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 764.4,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 865.1,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f00aaac30",
+      "after_obj": "0x22f0107f460",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 865.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 1975.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f0107f460",
+      "after_obj": "0x22f011de140",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 1975.2,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2304.4,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f011de140",
+      "after_obj": "0x22f0107e580",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2304.6,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2349.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2349.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-35e4b",
+      "run_obj": "0x22f0107e580",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":f52f2772e8044557a72e82f5ea6ab932:detect"
+    },
+    {
+      "t_ms": 2349.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "running"
+        ],
+        [
+          "4f8a2414",
+          "pending"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2349.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "f52f2772e804",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2349.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "f52f2772",
+      "region_ids": [
+        "63ceef04ef07434ab3a41ed08ee03693",
+        "58c73f541ac4424982b727fa5da162a7",
+        "4e3f39da3b6f49188bcef45b0fb4093c",
+        "7709e0394c494874bd68eb6f83cebafc",
+        "a4b80f12d1f54b3e9c8d2ae4a1839eb7",
+        "149ccd214f094d70aac9386af20cd14b",
+        "31fbb2eda56c4da6902fa67bd5649146",
+        "11235dd182164f49a10e3071c5dd2b75",
+        "d8f42396e90f4b16b4c42706b351e057",
+        "78e0a5a947364c838953c4b9c85030f7",
+        "b6d9159ec8a44a3a9c512c93a1394df4",
+        "388c5b10ee3744be99ccecf5a6939c06",
+        "10e55ae863fa49faa88c410bd0b83b24"
+      ],
+      "detection": null
+    },
+    {
+      "t_ms": 2350.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "f52f2772",
+      "task_units": 105,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2355.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 1
+    },
+    {
+      "t_ms": 2355.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "f52f2772e804",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2356.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-35e4b",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": [
+        "63ceef04ef07434ab3a41ed08ee03693",
+        "58c73f541ac4424982b727fa5da162a7",
+        "4e3f39da3b6f49188bcef45b0fb4093c"
+      ]
+    },
+    {
+      "t_ms": 2356.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 0,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2356.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 2,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2359.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:0:f52f2772e8044557a72e82f5ea6ab932:ocr",
+      "step": "step-ac93f",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2359.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 1,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2359.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 2,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2361.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 8,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2361.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 3,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2363.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":4f8a24147b3044deabf4f5a2dd83b84f:detect",
+      "step": "step-73e1b",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 2405.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f011de360",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2405.4,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 3,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2446.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 3,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2446.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-73e1b",
+      "run_obj": "0x22f011de360",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":4f8a24147b3044deabf4f5a2dd83b84f:detect"
+    },
+    {
+      "t_ms": 2446.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 3,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2446.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "4f8a24147b30",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2447.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "4f8a2414",
+      "region_ids": [
+        "52ca5633761c4818897f61743caf034a",
+        "b541999e291f4b6dabd7f5a2fd923ab8",
+        "4d5a7c7cdd2844a6aae02bb7b01c959f",
+        "9dc77aaca7db4f1bbaa62b303e163d23",
+        "3f15d309f4b34ce39600c0b1db94afb0",
+        "a535f8b3f8c44790b1ab57dffbf3a932"
+      ],
+      "detection": null
+    },
+    {
+      "t_ms": 2447.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "4f8a2414",
+      "task_units": 49,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2450.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 3
+    },
+    {
+      "t_ms": 2450.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "4f8a24147b30",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2451.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-73e1b",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": [
+        "52ca5633761c4818897f61743caf034a",
+        "b541999e291f4b6dabd7f5a2fd923ab8",
+        "4d5a7c7cdd2844a6aae02bb7b01c959f"
+      ]
+    },
+    {
+      "t_ms": 2451.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 8,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2451.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 4,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2453.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:1:4f8a24147b3044deabf4f5a2dd83b84f:ocr",
+      "step": "step-61f1f",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2453.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 9,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2453.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 4,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2456.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 16,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2456.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 5,
+      "tasks": 8,
+      "vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2458.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":a607fc4ca3034f47b5bc43d59f94f2ca:detect",
+      "step": "step-b110d",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 2506.5,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f011de690",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2506.6,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 5,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2517.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 5,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2517.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-b110d",
+      "run_obj": "0x22f011de690",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":a607fc4ca3034f47b5bc43d59f94f2ca:detect"
+    },
+    {
+      "t_ms": 2517.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 5,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2517.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "a607fc4ca303",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2518.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "a607fc4c",
+      "region_ids": [
+        "5d82b84007b14743b9e5777f4ac541a5",
+        "1fe2a7a484914258b3baf9280ec9194e",
+        "6ab8212ff5c64134838df459fe319d48",
+        "6898332890f94ad89086e1981155166e",
+        "08774e4bbce241629a4e7952d14ba62d",
+        "76d968e1431545879a28ab1c99b22af1",
+        "e740946abfca4549b9dbe406a8b2b230"
+      ],
+      "detection": null
+    },
+    {
+      "t_ms": 2518.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "a607fc4c",
+      "task_units": 57,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2521.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 5
+    },
+    {
+      "t_ms": 2522.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "a607fc4ca303",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2522.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-b110d",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": [
+        "5d82b84007b14743b9e5777f4ac541a5",
+        "1fe2a7a484914258b3baf9280ec9194e",
+        "6ab8212ff5c64134838df459fe319d48"
+      ]
+    },
+    {
+      "t_ms": 2522.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 16,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2522.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 6,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2525.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:2:a607fc4ca3034f47b5bc43d59f94f2ca:ocr",
+      "step": "step-30fcb",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2525.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 17,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2525.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 6,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2527.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 24,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2527.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 7,
+      "tasks": 8,
+      "vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2530.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":6814353f6d8544d6945ad5748d518f47:detect",
+      "step": "step-e17f6",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 2607.9,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f0107e580",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2608.3,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 7,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2609.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 7,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2609.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-e17f6",
+      "run_obj": "0x22f0107e580",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":6814353f6d8544d6945ad5748d518f47:detect"
+    },
+    {
+      "t_ms": 2609.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 7,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2609.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "6814353f6d85",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2609.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "6814353f",
+      "region_ids": [],
+      "detection": true
+    },
+    {
+      "t_ms": 2609.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "6814353f",
+      "task_units": 9,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2612.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 7
+    },
+    {
+      "t_ms": 2612.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "6814353f6d85",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2612.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-e17f6",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": []
+    },
+    {
+      "t_ms": 2612.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 24,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2612.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 8,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2649.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:3:6814353f6d8544d6945ad5748d518f47:ocr",
+      "step": "step-982e8",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2649.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 25,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2649.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 8,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2655.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 32,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2655.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 9,
+      "tasks": 8,
+      "vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2658.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":f54739037525486e8704db23db5c0dc1:detect",
+      "step": "step-db704",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 2709.5,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f011de690",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2709.6,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 9,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2739.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 9,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2739.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-db704",
+      "run_obj": "0x22f011de690",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":f54739037525486e8704db23db5c0dc1:detect"
+    },
+    {
+      "t_ms": 2740.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 9,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2740.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "f54739037525",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2740.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "f5473903",
+      "region_ids": [],
+      "detection": true
+    },
+    {
+      "t_ms": 2740.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "f5473903",
+      "task_units": 9,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2742.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 9
+    },
+    {
+      "t_ms": 2742.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "f54739037525",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2743.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-db704",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": []
+    },
+    {
+      "t_ms": 2743.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 32,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2743.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 10,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2745.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:4:f54739037525486e8704db23db5c0dc1:ocr",
+      "step": "step-80475",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2745.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 33,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2745.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 10,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2748.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 40,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2748.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 11,
+      "tasks": 8,
+      "vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2750.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":c239be827f3a4448848d2c42bffc05d1:detect",
+      "step": "step-de754",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 2810.8,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f0107e580",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2811.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 11,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2832.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 11,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2832.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-de754",
+      "run_obj": "0x22f0107e580",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":c239be827f3a4448848d2c42bffc05d1:detect"
+    },
+    {
+      "t_ms": 2832.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 11,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2832.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "c239be827f3a",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2832.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "c239be82",
+      "region_ids": [],
+      "detection": true
+    },
+    {
+      "t_ms": 2832.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "c239be82",
+      "task_units": 9,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2835.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 11
+    },
+    {
+      "t_ms": 2835.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "c239be827f3a",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2835.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-de754",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": []
+    },
+    {
+      "t_ms": 2836.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 40,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2836.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 12,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2838.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:5:c239be827f3a4448848d2c42bffc05d1:ocr",
+      "step": "step-66fb4",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2838.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 41,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2838.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 12,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2841.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 48,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2841.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 13,
+      "tasks": 8,
+      "vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2844.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":7a39226851774f01a4cdb89bcf118296:detect",
+      "step": "step-320be",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 2912.2,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f011de360",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2913.1,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 13,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2934.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 13,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2934.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-320be",
+      "run_obj": "0x22f011de360",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":7a39226851774f01a4cdb89bcf118296:detect"
+    },
+    {
+      "t_ms": 2934.5,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 13,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2934.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "7a3922685177",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 2934.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "7a392268",
+      "region_ids": [],
+      "detection": true
+    },
+    {
+      "t_ms": 2934.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "7a392268",
+      "task_units": 9,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 2937.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 13
+    },
+    {
+      "t_ms": 2937.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "7a3922685177",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 2938.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-320be",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": []
+    },
+    {
+      "t_ms": 2938.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 48,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2938.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 14,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2941.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:6:7a39226851774f01a4cdb89bcf118296:ocr",
+      "step": "step-c4a9d",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 2941.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 49,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2941.7,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 14,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2945.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 56,
+      "steps": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2945.0,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 15,
+      "tasks": 8,
+      "vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 2948.4,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": ":221d772e601e480e8e7508dfe9aff380:detect",
+      "step": "step-671d3",
+      "step_type": "detect",
+      "status": "running"
+    },
+    {
+      "t_ms": 3014.2,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f011de580",
+      "before_status": "running",
+      "after_status": "running",
+      "before_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "after_vector": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3014.5,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 15,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3045.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 15,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3045.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._find_step",
+      "step": "step-671d3",
+      "run_obj": "0x22f011de580",
+      "run_status": "running",
+      "step_status": "running",
+      "unit": ":221d772e601e480e8e7508dfe9aff380:detect"
+    },
+    {
+      "t_ms": 3045.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 15,
+      "step_states": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3045.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.enter",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "221d772e601e",
+      "expected_revisions": {},
+      "lock": "LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)"
+    },
+    {
+      "t_ms": 3046.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.enter",
+      "page": "221d772e",
+      "region_ids": [],
+      "detection": true
+    },
+    {
+      "t_ms": 3046.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._backfill_detected_regions.exit",
+      "page": "221d772e",
+      "task_units": 9,
+      "task_status": "running"
+    },
+    {
+      "t_ms": 3049.6,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.write_in_current_transaction.ok",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx_before": true,
+      "in_tx_after": true,
+      "run": "run-f415fcc0",
+      "status": "running",
+      "steps": 15
+    },
+    {
+      "t_ms": 3049.9,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "catalog.commit_step.exit",
+      "conn": 2400895696048,
+      "in_tx": false,
+      "target": "221d772e601e",
+      "status": "applied",
+      "detail": ""
+    },
+    {
+      "t_ms": 3050.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline.commit_step_result",
+      "step": "step-671d3",
+      "step_type": "detect",
+      "outcome": "committed",
+      "region_ids": []
+    },
+    {
+      "t_ms": 3050.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 56,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3050.3,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 16,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "running"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3054.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._record_step_attempt",
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "unit": "k:7:221d772e601e480e8e7508dfe9aff380:ocr",
+      "step": "step-f6b28",
+      "step_type": "ocr",
+      "status": "running"
+    },
+    {
+      "t_ms": 3054.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "running",
+      "terminal_units": 57,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3054.1,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "running",
+      "steps": 16,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3058.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "pipeline._persist",
+      "run": "run-f415fcc0",
+      "status": "completed_with_failures",
+      "terminal_units": 64,
+      "steps": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3058.2,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.put",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f00a4e4d0",
+      "in_tx": false,
+      "run": "run-f415fcc0",
+      "run_obj": "0x22f009d7230",
+      "status": "completed_with_failures",
+      "steps": 16,
+      "tasks": 8,
+      "vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3062.8,
+      "thread": "core-run-scheduler",
+      "tid": 25664,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "completed_with_failures",
+      "steps": 16,
+      "step_states": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3115.8,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.refresh.CACHE-REPLACED",
+      "run": "run-f415fcc0",
+      "facade": "0x22f0088fcb0",
+      "real_conn": "0x22f7f74a6b0",
+      "before_obj": "0x22f009d7230",
+      "after_obj": "0x22f0107e580",
+      "before_status": "completed_with_failures",
+      "after_status": "completed_with_failures",
+      "before_vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ],
+      "after_vector": [
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3116.0,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "store.get",
+      "conn": 2400895696048,
+      "run": "run-f415fcc0",
+      "status": "completed_with_failures",
+      "steps": 16,
+      "step_states": [
+        [
+          "ocr",
+          "failed"
+        ],
+        [
+          "detect",
+          "running"
+        ],
+        [
+          "ocr",
+          "failed"
+        ]
+      ],
+      "tasks": [
+        [
+          "f52f2772",
+          "failed"
+        ],
+        [
+          "4f8a2414",
+          "failed"
+        ]
+      ]
+    },
+    {
+      "t_ms": 3116.1,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "run.status",
+      "run": "run-f415fcc0",
+      "status": "completed_with_failures"
+    },
+    {
+      "t_ms": 3116.1,
+      "thread": "MainThread",
+      "tid": 17396,
+      "event": "run.terminal",
+      "run": "run-f415fcc0",
+      "status": "completed_with_failures"
+    }
+  ],
+  "finished_at": "2026-10-27T19:45:23"
+}

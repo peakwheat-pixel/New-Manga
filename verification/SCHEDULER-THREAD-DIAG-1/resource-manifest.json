@@ -1,0 +1,81 @@
+{
+  "task": "SCHEDULER-THREAD-DIAG-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/SCHEDULER-THREAD-DIAG-1",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "used_as": "每轮私有数据根副本（data-root-*），原件零修改"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar",
+      "used_as": "已发布 frozen sidecar 只读复测（core_service.exe sha256 2b36bfeb…4ec519b 未修改）"
+    }
+  ],
+  "written_in_repo": "verification/SCHEDULER-THREAD-DIAG-1/**（仅证据；产品源码只读，未修改）",
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/task-envs/SCHEDULER-THREAD-DIAG-1/**（data roots、logs、scripts；保留引用）",
+  "artifacts": [
+    {
+      "rel": "diagnosis.json",
+      "bytes": 11684,
+      "sha256": "c34de96baa886414549c5cc709a59add8655308bff47a47a8305534ba37e55cc"
+    },
+    {
+      "rel": "frozen-projection-polling.json",
+      "bytes": 243623,
+      "sha256": "b0ca7f23fc2dca4a66e5b86291ee17fa9ac958edf76154c82e91c029c5548144"
+    },
+    {
+      "rel": "frozen-snapshot-only.json",
+      "bytes": 275445,
+      "sha256": "5bf5514800a354297e326d2b61f27e68ce3dfa0afeeac852713616344cde2ecb"
+    },
+    {
+      "rel": "logs/frozen-projection-polling.log",
+      "bytes": 97316,
+      "sha256": "061641afc5011d37ffed5a59a67b45a36ecb27a93da046484f5b4e1ee0117c86"
+    },
+    {
+      "rel": "logs/frozen-snapshot-only.log",
+      "bytes": 51277,
+      "sha256": "5dac321d14e142f9386360219a5981b5bcc86ed898c872bc6a2858598045c206"
+    },
+    {
+      "rel": "REPORT.md",
+      "bytes": 8279,
+      "sha256": "9de6fe6be96653277a0317585c2d7709c08285146738aaee3bf18d04fecdf393"
+    },
+    {
+      "rel": "source-no-poll.json",
+      "bytes": 299151,
+      "sha256": "76c65709fe6ec38735446398467bb93def53b21f69b2681fd24b1ba3346faf1b"
+    },
+    {
+      "rel": "source-projection-cached.json",
+      "bytes": 315969,
+      "sha256": "0858e97642f660b290e128b1be8a6d50d7955610ab82b2d27b0d63b3a2abd1f9"
+    },
+    {
+      "rel": "source-projection-fresh.json",
+      "bytes": 146275,
+      "sha256": "1a1cca22050d72a0d8689edf5847e598d68921b25e94da0581df2d64a2915103"
+    },
+    {
+      "rel": "tools/build_diagnosis.py",
+      "bytes": 10611,
+      "sha256": "186192ff1d9a8236004c252eab101f3f197d37b09a0d709a27afbb01c9d4d215"
+    },
+    {
+      "rel": "tools/probe_frozen.py",
+      "bytes": 9153,
+      "sha256": "38408b392f9a1173e78e897cfe744dd6ce156b896642eb6977d2bcbd955c3e81"
+    },
+    {
+      "rel": "tools/repro_scheduler.py",
+      "bytes": 15346,
+      "sha256": "46ce6be3eba52244970c6b4ad5b0b28d66d4b88ce8cc16bf795db0a46610b159"
+    }
+  ],
+  "process_check": "只诊断：src/** 零改动（git status 可核）；task-env 仅本次数据根/日志/脚本；无 push/gc/prune。",
+  "closeout": "pending（resource_closeout_status: pending，Task 终态时按本清单处置）"
+}
