@@ -1,0 +1,10 @@
+{
+  "ac": "AC5",
+  "generated_by": "ThemeMacosAuditTests.MacosFontStack_ShipsNoFontBinary_AndIsSystemOrOflFallbackOnly",
+  "bundled_font_files": 0,
+  "font_files": [],
+  "macos_font_stack": "Segoe UI Variable Text, Inter, Segoe UI, Microsoft YaHei UI, PingFang SC, Noto Sans CJK SC, sans-serif",
+  "default_font_stack": "Segoe UI, Microsoft YaHei UI, PingFang SC, Noto Sans CJK SC, sans-serif",
+  "license_note": "No font binary is shipped. Both stacks name system-installed families (Segoe UI / Microsoft YaHei UI / PingFang SC / Noto Sans CJK SC) plus Inter (SIL OFL 1.1) as an optional fallback; sans-serif is the final fallback. Redistribution therefore adds no commercial or system font payload.",
+  "no_embedded_font_uri": true
+}

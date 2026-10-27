@@ -35,6 +35,19 @@ public sealed class AppOptions
 
     public int WindowHeight { get; private set; } = 760;
 
+    /// <summary>
+    /// THEME-MACOS-2 evidence hook: start the real shell on a given ThemePack id
+    /// (e.g. <c>macos-sonoma</c>), so real-machine screenshots of one variant are reproducible without
+    /// pointer automation. Null keeps the normal default theme (saber-purple).
+    /// </summary>
+    public string? StartupThemeId { get; private set; }
+
+    /// <summary>THEME-MACOS-2 evidence hook: <c>light</c> / <c>dark</c> for the startup theme variant.</summary>
+    public string? StartupVariant { get; private set; }
+
+    /// <summary>THEME-MACOS-2 evidence hook: page to open after start (<c>bookshelf</c> / <c>settings</c> / <c>workbench</c> / <c>reader</c>).</summary>
+    public string? StartupPage { get; private set; }
+
     public static AppOptions Parse(string[] args)
     {
         var options = new AppOptions();
@@ -74,6 +87,15 @@ public sealed class AppOptions
                     break;
                 case "legacy-shell-check":
                     options.DetectLegacyShell = !value.Equals("off", StringComparison.OrdinalIgnoreCase);
+                    break;
+                case "theme":
+                    options.StartupThemeId = value;
+                    break;
+                case "variant":
+                    options.StartupVariant = value;
+                    break;
+                case "page":
+                    options.StartupPage = value;
                     break;
                 case "exit-after":
                     options.ExitAfterMs = int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)

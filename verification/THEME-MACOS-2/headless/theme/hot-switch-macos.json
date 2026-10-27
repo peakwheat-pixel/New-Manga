@@ -1,0 +1,246 @@
+{
+  "ac": "AC3",
+  "generated_by": "ThemeMacosTests.HotSwitch_MacosLightDarkAndLegacyPacks_P95Under100ms",
+  "threshold_ms": "100",
+  "threshold": 100,
+  "samples": 48,
+  "cycles": 8,
+  "p95_ms": 13.916,
+  "max_ms": 18.963,
+  "min_ms": 4.557,
+  "p95_pass": true,
+  "max_pass": true,
+  "no_color_residue": true,
+  "steps": [
+    {
+      "label": "macos-light",
+      "kind": "pack",
+      "variant": "Light",
+      "expected_app_bg": "#F5F5F7"
+    },
+    {
+      "label": "macos-dark",
+      "kind": "variant",
+      "variant": "Dark",
+      "expected_app_bg": "#1E1E1E"
+    },
+    {
+      "label": "macos-light",
+      "kind": "variant",
+      "variant": "Light",
+      "expected_app_bg": "#F5F5F7"
+    },
+    {
+      "label": "saber-purple",
+      "kind": "pack",
+      "variant": "Light",
+      "expected_app_bg": "#F5F3FA"
+    },
+    {
+      "label": "midnight",
+      "kind": "pack",
+      "variant": "Dark",
+      "expected_app_bg": "#101322"
+    },
+    {
+      "label": "sakura",
+      "kind": "pack",
+      "variant": "Light",
+      "expected_app_bg": "#FDF5F7"
+    }
+  ],
+  "samples": [
+    {
+      "label": "macos-light",
+      "ms": 4.83
+    },
+    {
+      "label": "macos-dark",
+      "ms": 9.344
+    },
+    {
+      "label": "macos-light",
+      "ms": 8.522
+    },
+    {
+      "label": "saber-purple",
+      "ms": 4.782
+    },
+    {
+      "label": "midnight",
+      "ms": 9.059
+    },
+    {
+      "label": "sakura",
+      "ms": 6.148
+    },
+    {
+      "label": "macos-light",
+      "ms": 4.935
+    },
+    {
+      "label": "macos-dark",
+      "ms": 9.053
+    },
+    {
+      "label": "macos-light",
+      "ms": 6.01
+    },
+    {
+      "label": "saber-purple",
+      "ms": 4.685
+    },
+    {
+      "label": "midnight",
+      "ms": 9
+    },
+    {
+      "label": "sakura",
+      "ms": 5.422
+    },
+    {
+      "label": "macos-light",
+      "ms": 5.279
+    },
+    {
+      "label": "macos-dark",
+      "ms": 9.012
+    },
+    {
+      "label": "macos-light",
+      "ms": 5.877
+    },
+    {
+      "label": "saber-purple",
+      "ms": 4.557
+    },
+    {
+      "label": "midnight",
+      "ms": 8.776
+    },
+    {
+      "label": "sakura",
+      "ms": 7.347
+    },
+    {
+      "label": "macos-light",
+      "ms": 5.003
+    },
+    {
+      "label": "macos-dark",
+      "ms": 9.042
+    },
+    {
+      "label": "macos-light",
+      "ms": 5.677
+    },
+    {
+      "label": "saber-purple",
+      "ms": 4.703
+    },
+    {
+      "label": "midnight",
+      "ms": 8.705
+    },
+    {
+      "label": "sakura",
+      "ms": 5.314
+    },
+    {
+      "label": "macos-light",
+      "ms": 4.854
+    },
+    {
+      "label": "macos-dark",
+      "ms": 8.696
+    },
+    {
+      "label": "macos-light",
+      "ms": 7.255
+    },
+    {
+      "label": "saber-purple",
+      "ms": 7.835
+    },
+    {
+      "label": "midnight",
+      "ms": 13.734
+    },
+    {
+      "label": "sakura",
+      "ms": 8.508
+    },
+    {
+      "label": "macos-light",
+      "ms": 12.951
+    },
+    {
+      "label": "macos-dark",
+      "ms": 9.153
+    },
+    {
+      "label": "macos-light",
+      "ms": 15.867
+    },
+    {
+      "label": "saber-purple",
+      "ms": 5.94
+    },
+    {
+      "label": "midnight",
+      "ms": 13.511
+    },
+    {
+      "label": "sakura",
+      "ms": 8.778
+    },
+    {
+      "label": "macos-light",
+      "ms": 12.811
+    },
+    {
+      "label": "macos-dark",
+      "ms": 9.195
+    },
+    {
+      "label": "macos-light",
+      "ms": 13.916
+    },
+    {
+      "label": "saber-purple",
+      "ms": 7.925
+    },
+    {
+      "label": "midnight",
+      "ms": 18.963
+    },
+    {
+      "label": "sakura",
+      "ms": 6.984
+    },
+    {
+      "label": "macos-light",
+      "ms": 5.943
+    },
+    {
+      "label": "macos-dark",
+      "ms": 13.54
+    },
+    {
+      "label": "macos-light",
+      "ms": 8.571
+    },
+    {
+      "label": "saber-purple",
+      "ms": 12.161
+    },
+    {
+      "label": "midnight",
+      "ms": 6.894
+    },
+    {
+      "label": "sakura",
+      "ms": 5.303
+    }
+  ]
+}
