@@ -3,7 +3,7 @@ id: NS-WIRE-B1
 title: 高置信 NS 命令接线（18 条）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_ns_b1_grant
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: b993e68bb
 branch: task/NS-WIRE-B1
 worktree: G:/CODEX/New Manga.workspace/worktrees/NS-WIRE-B1
-integration_commit: null
+integration_commit: 6b47f377f
 delivery_head: 2644214eba730373a191a576d4979010642c70e1
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/NS-WIRE-B1
 allowed_paths:
   - doc/tasks/NS-WIRE-B1.md
@@ -101,3 +101,14 @@ backup_delete、cleanup_retry_pending、library_control_run、library_delete_boo
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实删除测试只在临时数据根创建并删除测试书）。
 - 未关闭项及保留原因：剩余 20 条 NOT_SUPPORTED（medium 11 + 其它 Task 范围 9）；本批只做 Host 命令面，未接 Avalonia 设置页 UI 入口（后续 UI Task）；minor 硬编码依赖冻结 core_service 2.3，Core 协议升级需重跑版本控制探针；与 GRANT-ISSUER-1 / S4-CMD-BATCH-1 的 registry 冲突按先落地者为准 rebase；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- **实际接线 13 条**（清单 19 条中 6 条已由 RUN-EXPORT-E2E-1 接线，未重复改）：backup_delete、cleanup_retry_pending、plugins_audit_list、plugins_set_plugin_enabled、library_delete_book_permanently、settings_network_profile_default_clear/set、settings_network_profiles_create/delete/update、settings_provider_bindings_clear/resolve、settings_provider_run_snapshot_get。
+- 13 条全部对冻结 core_service 真实执行：**11 success + 2 typed 域错误**（PLUGIN_NOT_FOUND/TARGET_NOT_FOUND，证明 handler 在跑）；每条请求行（minor 可见）入证据。
+- 版本坑按证据落地：P15=minor 7、DELETE=minor 10、CREATE=minor 8；错误 minor 被 INVALID_REQUEST 拒（独立探针）。
+- 参数边界 15 个非法用例全 INVALID_ARGUMENTS 且 **0 Core 帧**；delete 兼容旧壳 payload:{...} 与内联两种调用。
+- parity：xtract-command-surface.py --check PASS 零漂移；契约 **33/33 → 46 IMPLEMENTED / 20 NOT_SUPPORTED**（13 条 changed，coverage 100）。
+- 回归：DSH 复跑 scripts/test.ps1 见执行记录（实现方报 161/161：44/42/75）；vitest 60/567；pytest 3F/2746P/9S 无新增。
+- AC5：check.ps1 -TaskPath PASS；13 条 64-hex pin；Handoff + Record Decision（minor/参数边界策略）。
+- 遗留（记录不阻塞）：剩余 20 条 NS（medium 11 + 其它 Task 9）；Avalonia 设置页 UI 入口未接（后续 UI Task）；minor 硬编码随 Core 升级需重跑 probe-b1.py。
+- 集成：6b47f377f。
