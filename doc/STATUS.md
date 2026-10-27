@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) `proposed`（主线收口：66/0 命令、200+ 测试、Export 闭环、凭据/配置 UI）。
+- 当前 Task：[READER-SELECTOR-UI-1](tasks/READER-SELECTOR-UI-1.md) `ready`（并行 IMPORT-EXPORT-UI-1）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

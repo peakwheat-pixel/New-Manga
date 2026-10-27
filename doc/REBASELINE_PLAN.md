@@ -23,7 +23,7 @@
 |CORE-TILE-EMIT-1|HOST-RESOURCE-SECURITY-1|done（Core 出 tile+摘要；一致率100%；pytest 0 新增失败；集成 7b07da6a4）|
 |RELEASE-PACKAGE-1|CORE-TILE-EMIT-1|done（S5-D 包 22.9MB；AC4a/b PASS；集成 8ff3d288d）|
 
-|MICA/F11/GPU 三项修复|—|done（Mica 可见、F11 沉浸、ORT EP 探测；详见各自 Task 卡）|
+|修复批次（Mica/F11/GPU/缓存竞态）|—|done（Mica 可见、F11 沉浸、ORT EP 探测、缓存竞态 FAIL→PASS）|
 |DPI-DYNAMIC-1|—|done（PerMonitorV2+RenderScaling；真机 96→192→96 验证 PASS；集成 a6241b6c8）|
 |BOOK-FIXTURE-1|—|done（隔离根建书 8 页/幂等/未污染 APPDATA；集成 377736213；AC3 PARTIAL→READER 接线）|
 |READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|done（阅读器接书库+沉浸入口；工作集 395.1MB；110/110；集成 bcde098e5）|
@@ -35,19 +35,19 @@
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
 |RUN-BINDING-FIX-1|—|done（Host 注入 provider_bindings；ocr 3/3；A/B；173/173；集成 692347b58）|
 |CORE-PIPELINE-FIX-1|—|done（color analyzer + 空检测语义；同构建 8 页 color 3/3；pytest 2753P；集成 aac638781）|
-|RELEASE-REPACK-1|—|done（新 sidecar base/models；同构建 8 页 ocr/color 3/3；安装 smoke PASS；集成 429ca763c）|
+|RELEASE-REPACK-1/2|—|done（两次重打包：ocr/color 修复 + identity 全链 completed 86.43s；UPGRADE 构建识别）|
 |TRANSLATE-PROVIDER-1|—|done（identity-experimental；源码 8 页全链到 render 22/22；PC3 同构建待重打包；集成 5b96c25ef）|
-|RUN-STORE-CACHE-RACE-FIX-1|—|done（视图读/执行缓存分离+CAS；前后 FAIL→PASS 实证；集成 2980608e0）|
 |EXPORT-E2E-CLOSE-1 + CREDENTIAL-UI-1|—|done（Export 真跑 7.07MB sha 复验；凭据 UI 掩码/0 泄露）|
 |CREDENTIAL-PORT-1|—|done（ICredentialStore+Windows vault；全链 PASS；parity 66/0；集成 0726abdd3）|
 |SETTINGS-PROFILE-UI-1|—|done（provider/network/bindings 三卡 + ScrollViewer 修复；集成 31cf7f1ce）|
-|RELEASE-REPACK-2|—|done（新构建全链 completed 86.43s/render 22/22；并发 0 卡；集成 090371703）|
+|READER-SELECTOR-UI-1|—|ready（book/chapter 选择器）|
+|IMPORT-EXPORT-UI-1|—|ready（导入/导出 UI 入口）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |NS-WIRE-A1/B1/B2|—|done（NS 分批接线：16→24→46→64→66；详见各 Task 卡）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：无。
+READY 节点：READER-SELECTOR-UI-1、IMPORT-EXPORT-UI-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

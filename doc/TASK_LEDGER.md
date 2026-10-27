@@ -6,14 +6,14 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 411 |
+| task files | 413 |
 | terminal | 401 |
-| non-terminal | 10 |
-| non-terminal named in the plan | 5 |
+| non-terminal | 12 |
+| non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 5 |
-| task files tracked by git | 411 |
+| task files tracked by git | 413 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 10 |
+| non-terminal tracked by git | 12 |
 
 ## By status
 
@@ -26,9 +26,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `superseded` | 6 | yes |
 | `in_review` | 4 | no |
 | `proposed` | 3 | no |
+| `ready` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -44,6 +44,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `READER-LIBRARY-WIRE-1` | `proposed` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
+| `IMPORT-EXPORT-UI-1` | `ready` | own row |
+| `READER-SELECTOR-UI-1` | `ready` | own row |
 
 ## What this ledger does not say
 
