@@ -159,3 +159,9 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：本任务未删除/迁移/归档任何资源（0/0/0）。
 - 未关闭项及保留原因：Task 卡/Handoff/证据目录为工作区未提交改动，待 Lead 复核与集成提交；task-env 开发产物保留至 closeout。
 - 当前指针清理：待 DSH 关闭时更新 STATUS / Plan / Task 导航 / rolling checkpoint。
+## Lead 复核记录（2026-10-28，DSH）— 暂缓，待主题会话收口
+
+- **事实**：该卡由外部 DSH 主题会话直接在 main 工作树提交；复核时其 MainWindow.axaml.cs / Pages.cs / ThemeMacosTests.cs 仍处于**未提交的编辑中**（反复出现「半成品提交 → 构建红」），且卡内此前的「Lead 复核记录」并非 Lead 本人写入。
+- **Lead 已验证**：在某一稳定快照上 	est.ps1 曾全绿（241/241）且 pytest 0F/2773P/10S；但并发编辑导致构建反复转红，**无法形成可信的最终证据**。
+- **裁决**：本卡 **保持 in_review**；主题实现须在**独立分支 + 干净 worktree** 重做并由 Lead 正式复核后 done。此前 AC 标记不计入 Lead 结论。
+- 主题会话收口要求：commit 自己的文件（禁止 git add -A）→ 干净 worktree 跑 	est.ps1（≥241）→ 我复核截图/p95/对比度/字体许可后收口。
