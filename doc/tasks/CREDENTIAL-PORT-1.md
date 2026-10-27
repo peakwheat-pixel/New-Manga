@@ -3,7 +3,7 @@ id: CREDENTIAL-PORT-1
 title: Host 凭据管理器端口（解除 credential_put/clear BLOCKED）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: core-admin-rca
 owner: null
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: e30149258
 branch: task/CREDENTIAL-PORT-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/CREDENTIAL-PORT-1
-integration_commit: null
+integration_commit: 0726abdd3
 delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -77,3 +77,12 @@ NS-WIRE-B2 中 `credential_put`/`credential_clear` **BLOCKED**：Core 只有 `Bi
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 端口设计：ICredentialStore + WindowsCredentialStore（CredReadW/CredWriteW/CredDeleteW/CredEnumerateW；CRED_TYPE_GENERIC + PERSIST_LOCAL_MACHINE + UTF-16LE，与冻结 Core 字节兼容）+ ICoreCredentialBridge；两段式 put/clear 协议。
+- 全链（真实 sidecar + 真实 Windows Credential Manager）：put→vault 读回 marker→Core configured；重复 create→CREDENTIAL_CONFLICT；clear→vault 0 条 + Core missing；unknown→CREDENTIAL_NOT_FOUND 无孤儿；7 新测试全绿。
+- 安全：secret 仅 App→Host→OS vault；Core 只拿 ref；证据仅 owner_hash/state；日志/证据/verification 目录扫描 0 命中；bind 失败删 vault。
+- **parity 64/2 → 66/0（全部命令 IMPLEMENTED）**；extract --check PASS。
+- 回归：DSH 复跑 test.ps1 **189/189**；pytest 4F/2771P/9S（4F=3 既有 flaky + 1 并发计时 flake，单跑 PASS，0 新增）。
+- 遗留：App UI 未接线（凭据输入/清除控件 → 后续 UI Task）；proxy_auth 仅单测覆盖。
+- 集成：0726abdd3。
