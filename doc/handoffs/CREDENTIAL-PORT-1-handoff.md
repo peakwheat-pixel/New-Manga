@@ -3,7 +3,7 @@
 - Task: `doc/tasks/CREDENTIAL-PORT-1.md`（team task-43）
 - Branch: `task/CREDENTIAL-PORT-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/CREDENTIAL-PORT-1`
 - Base: 卡面 `e30149258`；实际基于 Lead 指定的当前 HEAD **`e6c2db84f`**
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `e414673a3`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改 Python Core 语义/协议/旧壳；**secret 未写入日志/DB/测试快照/提交**。
 
 ## 1. 交付摘要

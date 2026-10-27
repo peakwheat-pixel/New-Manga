@@ -54,6 +54,14 @@ NS-WIRE-B2 中 `credential_put`/`credential_clear` **BLOCKED**：Core 只有 `Bi
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-CP-REPORT | AC1–AC5 | `verification/CREDENTIAL-PORT-1/REPORT.md` | `e414673a3` | `3af576b7821be24754aba36b0ea58e7cd0c40c8d58e25d1a4090d2fb30de63a6` | CANONICAL |
+| E-CP-CHECK | AC5 | `verification/CREDENTIAL-PORT-1/parity-check.log` | `e414673a3` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-CP-CONTRACT | AC2/AC5 | `verification/CREDENTIAL-PORT-1/evidence/parity-contract.json` | `e414673a3` | `87dc2cef2ca615d65720af40005707ffb474e2aff1a9a12651c9d439bc8c0963` | CANONICAL |
+| E-CP-CRED | AC4 | `verification/CREDENTIAL-PORT-1/evidence/credential-port.json` | `e414673a3` | `275f265dca9f80ba22d3cc6c112888759c324fcded12ab133b0f3323b24dc70d` | CANONICAL |
+| E-CP-TYPED | AC2 | `verification/CREDENTIAL-PORT-1/evidence/not-supported-typed-errors.json` | `e414673a3` | `92ab32df0f918ffd1161521f12e3f3d49a8039b3d8063732bbd4c6f7ee214e85` | CANONICAL |
+| E-CP-DOMAINS | AC2 | `verification/CREDENTIAL-PORT-1/evidence/domain-services.json` | `e414673a3` | `b41c2f3e901131e2adf32851f51f29e26b1bb6d83b8b05611e56ee98424862af` | CANONICAL |
+| E-CP-DOTNET | AC5 | `verification/CREDENTIAL-PORT-1/dotnet-all.log` | `e414673a3` | `19e73aa672548089cbb0c62893cc541a4e81ea6f18a0c03d010e30fb0bf3a04b` | CANONICAL |
+| E-CP-PYTEST | AC5 | `verification/CREDENTIAL-PORT-1/pytest.log` | `e414673a3` | `00e661dc51e6945c245e1aeffffbf1b92b440b34498baa1278e23e447e031c30` | CANONICAL |
 
 ## Resource Manifest
 
