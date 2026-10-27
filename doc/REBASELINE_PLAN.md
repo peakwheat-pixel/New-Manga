@@ -40,14 +40,14 @@
 |EXPORT-E2E-CLOSE-1 + CREDENTIAL-UI-1|—|done（Export 真跑 7.07MB sha 复验；凭据 UI 掩码/0 泄露）|
 |CREDENTIAL-PORT-1|—|done（ICredentialStore+Windows vault；全链 PASS；parity 66/0；集成 0726abdd3）|
 |SETTINGS-PROFILE-UI-1|—|done（provider/network/bindings 三卡 + ScrollViewer 修复；集成 31cf7f1ce）|
-|READER-SELECTOR-UI-1|—|ready（book/chapter 选择器）|
+|READER-SELECTOR-UI-1|—|done（book/chapter 选择器；215/215；集成 093cc691d）|
 |IMPORT-EXPORT-UI-1|—|ready（导入/导出 UI 入口）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |NS-WIRE-A1/B1/B2|—|done（NS 分批接线：16→24→46→64→66；详见各 Task 卡）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：READER-SELECTOR-UI-1、IMPORT-EXPORT-UI-1。
+READY 节点：IMPORT-EXPORT-UI-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 

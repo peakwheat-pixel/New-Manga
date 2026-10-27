@@ -3,7 +3,7 @@ id: READER-SELECTOR-UI-1
 title: book/chapter 选择器（替代手填 id）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 558a48a76
 branch: task/READER-SELECTOR-UI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/READER-SELECTOR-UI-1
-integration_commit: null
+integration_commit: 093cc691d
 delivery_head: 05a55e1bec81d8500113dd8613f618badeb2ca56
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -93,3 +93,10 @@ SETTINGS-PROFILE-UI-1 的「Provider 绑定」scope=book/chapter 仍需手填 id
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实 `%APPDATA%` 未触碰）。
 - 未关闭项及保留原因：真实 Core 读取由既有 READER-LIBRARY-WIRE-1/CHAPTER-SELECTOR-1 测试覆盖；本卡 AC 未要求真机截图（行为由 5 项 headless 覆盖）；书籍列表刷新为进入设置页触发（无跨页 live 同步）；IMPORT-EXPORT-UI-1 若先落地需 rebase；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- scope=book/chapter：书籍下拉（library_list_books → Snapshot.Books 书名）+ 章节下拉（list_chapters 章名）；选书自动加载并默认首章；切 scope 重置；未选齐禁用提交；空库/无章节空态；手填 id 输入已移除。
+- 证据：5 项 headless（chapter 全链 chapter_id=chapter-2、book scope ook_id=book-0、空库 0 调用、无章+重置、选章后可绑定）。
+- 回归：DSH 复跑 test.ps1 见执行记录（实现方报 215/215：61/55/99）；vitest 60/567；pytest 3F/2772P/9S（0 新增）；check.ps1 -TaskPath PASS；11 条 pin。
+- 遗留：真实 Core 读取由 READER-LIBRARY-WIRE-1/CHAPTER-SELECTOR-1 冻结 sidecar 覆盖（本卡用 seam）；书架列表进设置页刷新（无跨页 live）；book scope 不显示章节。
+- 集成：093cc691d。
