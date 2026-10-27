@@ -1,0 +1,7 @@
+2026-10-27T17:00:07.0419143+00:00 INFO single-instance acquired: NewManga.ReleaseRepack4.Smoke3 (abandoned_recovered=False)
+2026-10-27T17:00:07.0480367+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\RELEASE-REPACK-4\data-root
+2026-10-27T17:00:07.0481439+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T17:00:07.4407230+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T17:00:07.5781574+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T17:00:07.5783844+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T17:00:07.5802192+00:00 INFO host-control session opened (host_4e4v7PDWR9gocGtsscfuecO-xAY6A85eOPOzJquuI5c)

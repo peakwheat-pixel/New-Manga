@@ -1,0 +1,39 @@
+{
+  "head": "f1b89c5e5ead68e5959e6256f36d2089eba66a4e",
+  "base_head_used_card": "84dd38978",
+  "build_fix_commit_required": "4be1c3f4f",
+  "new": {
+    "base_zip": {
+      "bytes": 103330812,
+      "sha256": "cbd1b9e1725c8c399611d98bdaede7380efa9aec3e79f81b5f26cdca61964adf"
+    },
+    "models_zip": {
+      "bytes": 725339894,
+      "sha256": "aaa02c8b07b3a18d6e4f60a7403b1caf310debae04b766e628963f18b9b4c3c7"
+    },
+    "sidecar_base_core_sha256": "bd23e66fd98874e254578e0caa3caf446bc60bf472474794341abd746d010d99",
+    "sidecar_models_core_sha256": "3909a4a209922432df5448241caf388490125ccf1bf2a71501c7f4d86f57dde5",
+    "sidecar_base_core_bytes": 399492,
+    "sidecar_models_core_bytes": 399492,
+    "sidecar_base_bundle_bytes": 195375520,
+    "sidecar_models_bundle_bytes": 868862035,
+    "installed_version_json_repo_head": "f1b89c5e5ead68e5959e6256f36d2089eba66a4e",
+    "installed_sidecar_sha256": "3909a4a209922432df5448241caf388490125ccf1bf2a71501c7f4d86f57dde5"
+  },
+  "old_repack3": {
+    "base_zip": {
+      "bytes": 103326248,
+      "sha256": "f0f152d45016d61985a95d2d5c2c6d5350c747a13632f0cdd9066a892fd85227"
+    },
+    "models_zip": {
+      "bytes": 725334588,
+      "sha256": "2b14c87b6ee7f60ab9c1b9f055e5ad64a1209d3ea31fe6c9720fa72274ea897e"
+    },
+    "sidecar_models_core_sha256": "8cfc9080cf24fd01ffbaeed92c31c76f5fb3bdcb36128de5011644edcaeb9340",
+    "installed_version_json_repo_head": "dd2408869ce1d43f4d1dd0525ef1b13bb75bb38c"
+  },
+  "torch_free": {
+    "models_has_torch_dir": false,
+    "has_onnxruntime": true
+  }
+}

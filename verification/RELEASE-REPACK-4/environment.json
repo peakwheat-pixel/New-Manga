@@ -1,0 +1,35 @@
+{
+  "os": {
+    "registry_product_name": "Windows 10 Pro",
+    "cim_caption": "Microsoft Windows 11 专业版",
+    "build": "26300",
+    "ubr": 9711,
+    "conclusion": "Windows 11 build 26300.9711（注册表 ProductName 仍是历史字段）"
+  },
+  "displays": {
+    "primary": {
+      "device": "\\\\.\\DISPLAY1",
+      "bounds": "2560x1440",
+      "dpi": 96,
+      "scale": "100%"
+    },
+    "secondary_current_state": "Mi TV 3840x2160 已连接（WmiMonitorID=Mi TV, Win32_DesktopMonitor=3840x2160）但当前不在桌面扩展中：Screen.AllScreens 仅 DISPLAY1；REPACK-3 时段测得副屏 3840x2160@144dpi=150%",
+    "fourk_200": "NOT_AVAILABLE：当前桌面无活跃 4K 输出，且切换 Windows 显示缩放需交互式 Settings/可能影响共享桌面；未强制修改"
+  },
+  "mica": {
+    "transparency_effects": 1,
+    "dwm_backdrop_attr_38": 0,
+    "actual_this_run": "None",
+    "material_log_tail": "全部 actual=None（17:05:18/19 起），本 run 未出现 actual=Mica",
+    "historical": "同机 window-material.log 共 973 行，其中 actual=Mica 50 行（REPACK-3 时段）",
+    "conclusion": "REPACK-4 本次运行 actual=None（MicaFallback 不透明）；与 REPACK-3 actual=Mica 不一致，需 DSH 复核是否为 HEAD 回退/环境波动"
+  },
+  "keyboard_esc_h": {
+    "foreground_acquired": true,
+    "method": "AttachThreadInput + ShowWindow + SwitchToThisWindow + SetForegroundWindow；foreground_pid == app_pid（脚本实测）",
+    "real_input": "keybd_event Esc / H（前台真实键盘事件）",
+    "observed": "Esc/H 前后截图 sha256 相同（12/13/14 三张均为 421093b3…），UI 无可观察变化；组件按钮路径（UIA ImmersiveButton）可进入沉浸全屏",
+    "conclusion": "PARTIAL：前台已取得且真键盘事件已发送，但 Esc/H 未产生可观察 UI 变化，需用户真机确认"
+  },
+  "ime": "N/A（需人工确认，未自动化）"
+}
