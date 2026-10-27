@@ -108,11 +108,61 @@ public sealed class HostRuntime : IAsyncDisposable
         return await core.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>READER-LIBRARY-WIRE-1: ordered reader projection (pages + layout) for one chapter.</summary>
-    public async Task<ReaderProjection> GetReaderProjectionAsync(string chapterId, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// READER-LIBRARY-WIRE-1: ordered reader projection (pages + layout) for one chapter.
+    /// READER-PROGRESS-1: <paramref name="startPosition"/> defaults to <c>resume</c> so the Core echoes
+    /// the persisted page (book, chapter, mode) and never mutates it on read.
+    /// </summary>
+    public async Task<ReaderProjection> GetReaderProjectionAsync(
+        string chapterId,
+        string startPosition = ReaderStartPosition.Resume,
+        CancellationToken cancellationToken = default)
     {
         var core = CoreService ?? throw NotReady();
-        return await core.GetReaderProjectionAsync(chapterId, cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await core
+            .GetReaderProjectionAsync(chapterId, startPosition: startPosition, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// READER-PROGRESS-1: persists reading progress through the frozen Core command
+    /// (<c>SaveReadingProgress</c>). It is a write, so the read-only-until-parity policy refuses it
+    /// with a typed <see cref="ReadOnlyHostException"/> and no request reaches the Core. The
+    /// core_service pipe is strictly request/response, so this shares the reader I/O gate with page
+    /// reads (concurrent frames would cross responses).
+    /// </summary>
+    public async Task<ReadingProgressSnapshot> SaveReadingProgressAsync(
+        string chapterId,
+        string mode,
+        string pageId,
+        double? scrollOffsetY = null,
+        double? elapsedSecondsDelta = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (!Policy.WritesAllowed)
+        {
+            throw new ReadOnlyHostException(
+                $"host is read-only ({Policy.Reason}); reading progress is not persisted until parity");
+        }
+
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core
+                .SaveReadingProgressAsync(
+                    chapterId,
+                    mode,
+                    pageId,
+                    scrollOffsetY,
+                    elapsedSecondsDelta,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
     }
 
     /// <summary>

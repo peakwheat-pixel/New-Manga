@@ -41,8 +41,20 @@ public sealed class NullHostController : IHostController
     public Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 
-    public Task<ReaderBookData?> LoadReaderBookAsync(string? bookId = null, CancellationToken cancellationToken = default) =>
+    public Task<ReaderBookData?> LoadReaderBookAsync(
+        string? bookId = null,
+        string? chapterId = null,
+        CancellationToken cancellationToken = default) =>
         Task.FromResult<ReaderBookData?>(null);
+
+    public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
+        string chapterId,
+        string pageId,
+        string mode = "original",
+        double? scrollOffsetY = null,
+        double elapsedSecondsDelta = 0,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(ReaderProgressSaveResult.NotReady());
 
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

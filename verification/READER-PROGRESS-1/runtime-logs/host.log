@@ -1,0 +1,10 @@
+2026-10-27T05:05:01.3403276+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T05:05:01.3463719+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\READER-PROGRESS-1\isolated-data
+2026-10-27T05:05:01.3464672+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T05:05:01.7082981+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T05:05:01.8050694+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T05:06:34.2890037+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T05:06:34.2952181+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\READER-PROGRESS-1\isolated-data
+2026-10-27T05:06:34.2991610+00:00 INFO first-run backup created: catalog.20261027T050634Z.sqlite.nmbak
+2026-10-27T05:06:34.6271214+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T05:06:34.7267652+00:00 INFO host_bridge ready (1 wire frames)

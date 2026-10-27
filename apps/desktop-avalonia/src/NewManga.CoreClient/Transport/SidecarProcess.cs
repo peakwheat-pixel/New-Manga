@@ -238,9 +238,66 @@ public sealed class SidecarProcess : IAsyncDisposable
         return frame;
     }
 
-    public async Task StopAsync(int gracefulTimeoutMs = 3000)
+    /// <summary>
+    /// READER-PROGRESS-1: drains one line that arrived on the response channel without a request of
+    /// ours — the frozen core_service pushes <c>ReadingProgressChanged</c>/<c>ExportProgressChanged</c>
+    /// event frames on the same stdout pipe before answering the command that caused them. The caller
+    /// keeps reading until the frame carries the actual response envelope.
+    /// </summary>
+    public async Task<string> ReadNextResponseLineAsync(
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
     {
-        if (_disposed)
+        ThrowIfPoisoned();
+        if (HasExited)
+        {
+            throw ProcessExitedFailure();
+        }
+
+        var stopwatch = Stopwatch.StartNew();
+        string? line;
+        using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutSource.CancelAfter(timeout);
+        try
+        {
+            line = await _stdout.ReadLineAsync(timeoutSource.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            _poisoned = true;
+            throw new SidecarException(
+                SidecarErrorCode.RequestTimeout,
+                Spec.Name,
+                $"no event/response line within {timeout.TotalMilliseconds:F0} ms; stderr tail: {Truncate(StderrTail)}",
+                Spec.StderrLogPath);
+        }
+        catch (Exception ex) when (ex is IOException or ObjectDisposedException or InvalidOperationException)
+        {
+            throw ProcessExitedFailure(ex);
+        }
+
+        stopwatch.Stop();
+        if (line is null)
+        {
+            throw ProcessExitedFailure();
+        }
+
+        var bytes = Encoding.UTF8.GetBytes(line);
+        Log.Add(new WireFrame(
+            Spec.Name,
+            string.Empty,
+            line,
+            string.Empty,
+            AsciiWire.Hex(bytes),
+            true,
+            AsciiWire.IsAscii(line),
+            stopwatch.Elapsed.TotalMilliseconds,
+            DateTimeOffset.UtcNow));
+        return line;
+    }
+
+    public async Task StopAsync(int gracefulTimeoutMs = 3000)
+    {        if (_disposed)
         {
             return;
         }

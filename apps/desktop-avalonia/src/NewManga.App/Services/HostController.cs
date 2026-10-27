@@ -154,7 +154,10 @@ public sealed class HostController : IHostController
         }
     }
 
-    public async Task<ReaderBookData?> LoadReaderBookAsync(string? bookId = null, CancellationToken cancellationToken = default)
+    public async Task<ReaderBookData?> LoadReaderBookAsync(
+        string? bookId = null,
+        string? chapterId = null,
+        CancellationToken cancellationToken = default)
     {
         if (_runtime is null || !_runtime.Result.IsReady)
         {
@@ -183,9 +186,18 @@ public sealed class HostController : IHostController
                 return null;
             }
 
-            // Reader navigation face: first chapter (projection order is the user's sort order).
-            var chapter = chapters[0];
-            var projection = await runtime.GetReaderProjectionAsync(chapter.ChapterId, cancellationToken).ConfigureAwait(false);
+            // CHAPTER-SELECTOR-1: an explicit chapter wins; otherwise the first chapter is the
+            // reader's previous behaviour (projection order is the user's sort order).
+            var chapter = string.IsNullOrWhiteSpace(chapterId)
+                ? chapters[0]
+                : chapters.FirstOrDefault(candidate => string.Equals(candidate.ChapterId, chapterId, StringComparison.Ordinal))
+                  ?? chapters[0];
+
+            // READER-PROGRESS-1 AC1: resume so the Core echoes the persisted page for
+            // (book, chapter, mode); the projection read never mutates saved progress.
+            var projection = await runtime
+                .GetReaderProjectionAsync(chapter.ChapterId, ReaderStartPosition.Resume, cancellationToken)
+                .ConfigureAwait(false);
             if (projection.Pages.Count == 0)
             {
                 return null;
@@ -201,6 +213,58 @@ public sealed class HostController : IHostController
             ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
         {
             return null;
+        }
+    }
+
+    /// <summary>
+    /// READER-PROGRESS-1: persist one reading position. Typed degradation only — nothing is thrown
+    /// into the UI: no Core = NotReady, parity not reached = ReadOnly, Core rejection = Failed(code).
+    /// </summary>
+    public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
+        string chapterId,
+        string pageId,
+        string mode = "original",
+        double? scrollOffsetY = null,
+        double elapsedSecondsDelta = 0,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId) || string.IsNullOrWhiteSpace(pageId))
+        {
+            return ReaderProgressSaveResult.Failed("INVALID_REQUEST");
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return ReaderProgressSaveResult.NotReady();
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            var snapshot = await runtime
+                .SaveReadingProgressAsync(
+                    chapterId,
+                    mode,
+                    pageId,
+                    scrollOffsetY,
+                    elapsedSecondsDelta > 0 ? elapsedSecondsDelta : null,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return ReaderProgressSaveResult.Saved(snapshot.ProgressPercent, snapshot.LastPageId);
+        }
+        catch (ReadOnlyHostException)
+        {
+            return ReaderProgressSaveResult.ReadOnly();
+        }
+        catch (CoreOperationException ex)
+        {
+            return ReaderProgressSaveResult.Failed(ex.Code);
+        }
+        catch (Exception ex) when (
+            ex is SidecarException or BridgeException or IOException or InvalidOperationException or OperationCanceledException)
+        {
+            return ReaderProgressSaveResult.Failed(
+                ex is SidecarException sidecar ? sidecar.Code.ToString() : "READER_PROGRESS_UNAVAILABLE");
         }
     }
 

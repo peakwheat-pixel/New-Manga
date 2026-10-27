@@ -209,6 +209,28 @@ public sealed class ReaderPage : UserControl
     private ITileSource? _tileSource;
     private ReaderBookData? _libraryBook;
 
+    // READER-PROGRESS-1: reading clock accumulates only time not yet accepted by the Core
+    // (reset after every successful save), so elapsed_seconds_delta is never replayed.
+    private readonly Stopwatch _readingClock = Stopwatch.StartNew();
+    private readonly SemaphoreSlim _saveGate = new(1, 1);
+    private readonly List<Image> _webtoonImages = new();
+    private readonly List<double> _webtoonPageHeights = new();
+    private ProgressPayload? _pendingPayload;
+    private Task _saveLoopTask = Task.CompletedTask;
+    private int _saveLoopRunning;
+    private string? _lastSavedPageId;
+    private double _lastSavedScrollOffsetY;
+    private double _lastScrollSaveAtMs;
+
+    // Headless tests have no real scroll extent, so the webtoon offset can be injected.
+    private double? _webtoonScrollOverride;
+
+    // READER-PROGRESS-1: a programmatic restore (resume page/offset) fires ScrollChanged events with
+    // half-laid-out geometry. Only user-driven navigation may persist, otherwise reopening a webtoon
+    // book would immediately overwrite the very position it just restored.
+    private bool _webtoonRestoreInProgress;
+    private bool _userInteractionSeen;
+
     public ReaderPage(ReaderViewModel viewModel, IReadOnlyList<string> pages, string? tileDirectory = null)
     {
         ViewModel = viewModel;
@@ -302,6 +324,7 @@ public sealed class ReaderPage : UserControl
 
         PointerPressed += OnPointerPressed;
         PointerWheelChanged += OnWheel;
+        _webtoonScroll.ScrollChanged += OnWebtoonScrollChanged;
     }
 
     public ReaderViewModel ViewModel { get; }
@@ -323,6 +346,27 @@ public sealed class ReaderPage : UserControl
 
     /// <summary>Real library book currently rendered (null = fixture fallback).</summary>
     public ReaderBookData? LibraryBook => _libraryBook;
+
+    /// <summary>READER-PROGRESS-1: progress persistence seam (null = fixture fallback / not wired).</summary>
+    public IReaderProgressSink? ProgressSink { get; set; }
+
+    /// <summary>READER-PROGRESS-1: number of save attempts issued by this page (tests/evidence).</summary>
+    public int ProgressSaveAttempts { get; private set; }
+
+    /// <summary>READER-PROGRESS-1: last typed save result (null = nothing was attempted yet).</summary>
+    public ReaderProgressSaveResult? LastProgressResult { get; private set; }
+
+    /// <summary>READER-PROGRESS-1: page id of the last successfully persisted position.</summary>
+    public string? LastSavedPageId => _lastSavedPageId;
+
+    /// <summary>READER-PROGRESS-1: last successful webtoon offset in logical page pixels.</summary>
+    public double LastSavedScrollOffsetY => _lastSavedScrollOffsetY;
+
+    /// <summary>READER-PROGRESS-1: diagnostic summary of the last save payload (evidence/tests).</summary>
+    public string? LastProgressPayloadSummary { get; private set; }
+
+    /// <summary>READER-PROGRESS-1: raised after the Core accepted a progress write.</summary>
+    public event EventHandler? ProgressSaved;
 
     public IReadOnlyList<string> TileFiles => _tileFiles;
 
@@ -352,16 +396,25 @@ public sealed class ReaderPage : UserControl
         _renderedPages.Clear();
         _emptyState.IsVisible = false;
         _libraryTitle.Text = book.Summary;
-        ViewModel.SetPageCount(book.Pages.Count, 0);
+        _lastSavedPageId = null;
+        _lastSavedScrollOffsetY = 0;
+        LastProgressResult = null;
+        ProgressSaveAttempts = 0;
+        _userInteractionSeen = false;
+        _readingClock.Restart();
+
+        var initialIndex = Math.Clamp(book.InitialPageIndex, 0, Math.Max(0, book.Pages.Count - 1));
+        ViewModel.SetPageCount(book.Pages.Count, initialIndex);
         if (book.IsWebtoon)
         {
             PrepareLibraryWebtoon();
         }
         else
         {
+            _webtoonRestoreInProgress = false;
             _webtoonScroll.IsVisible = false;
             _pageImage.IsVisible = true;
-            ShowPage(0);
+            ShowPage(initialIndex);
         }
     }
 
@@ -372,7 +425,312 @@ public sealed class ReaderPage : UserControl
         _emptyState.Text = message;
         _emptyState.IsVisible = true;
         _libraryTitle.Text = "fixture 回退";
+        _readingClock.Restart();
     }
+
+    // ------------------------------------------------------------------
+    // READER-PROGRESS-1: navigation + progress persistence
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// Applies one page index (clamped) to the canvas and the view model. Kept synchronous so a
+    /// turn is observable immediately; the image decodes asynchronously in the background.
+    /// </summary>
+    public int GoToPage(int index)
+    {
+        var book = _libraryBook;
+        if (book is null)
+        {
+            var clampedFixture = Math.Clamp(index, 0, Math.Max(0, _pages.Count - 1));
+            ShowPage(clampedFixture);
+            return clampedFixture;
+        }
+
+        var clamped = Math.Clamp(index, 0, Math.Max(0, book.Pages.Count - 1));
+        ViewModel.SetPageCount(book.Pages.Count, clamped);
+        if (book.IsWebtoon)
+        {
+            ScrollWebtoonToPage(clamped);
+        }
+        else
+        {
+            _ = ShowLibraryPageAsync(clamped);
+        }
+
+        return clamped;
+    }
+
+    /// <summary>Applies a turn and awaits its progress save (headless-testable unit of "turn a page").</summary>
+    public async Task<int> GoToPageAsync(int index)
+    {
+        _userInteractionSeen = true;
+        var applied = GoToPage(index);
+        await SaveProgressAsync().ConfigureAwait(true);
+        return applied;
+    }
+
+    /// <summary>Turns one page forward/backward (mouse zones, wheel, arrow keys).</summary>
+    public Task<int> TurnPageAsync(int delta) => GoToPageAsync(ViewModel.CurrentPageIndex + delta);
+
+    /// <summary>
+    /// Queues a save of the current position and drains the single-flight queue. Every call returns
+    /// a typed result; a Core/transport failure is recorded and never thrown into the UI.
+    /// </summary>
+    public async Task<ReaderProgressSaveResult?> SaveProgressAsync()
+    {
+        QueueProgressSave();
+        for (var attempt = 0; attempt < 200; attempt++)
+        {
+            var loop = _saveLoopTask;
+            if (!loop.IsCompleted)
+            {
+                await loop.ConfigureAwait(true);
+                continue;
+            }
+
+            if (Volatile.Read(ref _saveLoopRunning) == 0 && _pendingPayload is null)
+            {
+                break;
+            }
+
+            await Task.Yield();
+        }
+
+        return LastProgressResult;
+    }
+
+    /// <summary>Flushes the current position before leaving the page / closing a window.</summary>
+    public Task<ReaderProgressSaveResult?> FlushProgressAsync() => SaveProgressAsync();
+
+    /// <summary>READER-PROGRESS-1: true when the last save was accepted by the Core.</summary>
+    public bool HasPersistedProgress => LastProgressResult is { IsSaved: true };
+
+    private void QueueProgressSave()
+    {
+        if (BuildProgressPayload() is not { } payload)
+        {
+            return;
+        }
+
+        _pendingPayload = payload;
+        if (Interlocked.CompareExchange(ref _saveLoopRunning, 1, 0) == 0)
+        {
+            _saveLoopTask = RunSaveLoopAsync();
+        }
+    }
+
+    private async Task RunSaveLoopAsync()
+    {
+        try
+        {
+            while (true)
+            {
+                var payload = _pendingPayload;
+                _pendingPayload = null;
+                if (payload is null)
+                {
+                    break;
+                }
+
+                await SavePayloadAsync(payload).ConfigureAwait(true);
+            }
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _saveLoopRunning, 0);
+            if (_pendingPayload is not null && Interlocked.CompareExchange(ref _saveLoopRunning, 1, 0) == 0)
+            {
+                _saveLoopTask = RunSaveLoopAsync();
+            }
+        }
+    }
+
+    private async Task<ReaderProgressSaveResult?> SavePayloadAsync(ProgressPayload payload)
+    {
+        var sink = ProgressSink;
+        if (sink is null)
+        {
+            return null;
+        }
+
+        await _saveGate.WaitAsync().ConfigureAwait(true);
+        try
+        {
+            // READER-PROGRESS-1: accumulate elapsed *at send time*. Two queued payloads for the same
+            // position (turn + scroll coalescing) must not each carry the whole interval, otherwise
+            // the Core would add the same accepted seconds twice.
+            var elapsed = _readingClock.Elapsed.TotalSeconds;
+            var offset = payload.ScrollOffsetY ?? 0;
+            if (string.Equals(payload.PageId, _lastSavedPageId, StringComparison.Ordinal) &&
+                Math.Abs(offset - _lastSavedScrollOffsetY) < 0.5 &&
+                elapsed < 0.05)
+            {
+                // Duplicate of the accepted position: nothing new to persist.
+                return LastProgressResult;
+            }
+
+            ProgressSaveAttempts++;
+            LastProgressPayloadSummary = payload.Describe(elapsed);
+            var result = await sink
+                .SaveReadingProgressAsync(
+                    payload.ChapterId,
+                    payload.PageId,
+                    payload.Mode,
+                    payload.ScrollOffsetY,
+                    elapsed)
+                .ConfigureAwait(true);
+            LastProgressResult = result;
+            if (result.IsSaved)
+            {
+                _lastSavedPageId = payload.PageId;
+                _lastSavedScrollOffsetY = offset;
+                _readingClock.Restart();
+                ProgressSaved?.Invoke(this, EventArgs.Empty);
+            }
+
+            return result;
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or OperationCanceledException or TimeoutException)
+        {
+            LastProgressResult = ReaderProgressSaveResult.Failed("READER_PROGRESS_UNAVAILABLE");
+            return LastProgressResult;
+        }
+        finally
+        {
+            _saveGate.Release();
+        }
+    }
+
+    private ProgressPayload? BuildProgressPayload()
+    {
+        var book = _libraryBook;
+        if (book is null || ProgressSink is null || book.Pages.Count == 0)
+        {
+            return null;
+        }
+
+        var index = Math.Clamp(ViewModel.CurrentPageIndex, 0, book.Pages.Count - 1);
+        var page = book.Pages[index];
+        double? offset = book.IsWebtoon ? CurrentWebtoonOffsetPixels(index) : null;
+        return new ProgressPayload(book.ChapterId, page.PageId, "original", offset);
+    }
+
+    /// <summary>READER-PROGRESS-1: webtoon offset in the current page's original pixel coordinates.</summary>
+    private double? CurrentWebtoonOffsetPixels(int pageIndex)
+    {
+        var book = _libraryBook;
+        if (book is null || pageIndex < 0 || pageIndex >= book.Pages.Count)
+        {
+            return null;
+        }
+
+        if (_webtoonPageHeights.Count != book.Pages.Count || ViewModel.ViewportWidth <= 0)
+        {
+            return Math.Max(0, _lastSavedScrollOffsetY);
+        }
+
+        var scroll = WebtoonScrollY;
+        var top = 0d;
+        for (var index = 0; index < _webtoonPageHeights.Count; index++)
+        {
+            var height = _webtoonPageHeights[index];
+            if (index == pageIndex)
+            {
+                var displayed = Math.Max(1, height);
+                var local = Math.Clamp(scroll - top, 0, displayed);
+                var pageHeight = Math.Max(1, book.Pages[index].HeightPx);
+                return Math.Clamp(local / displayed * pageHeight, 0, pageHeight);
+            }
+
+            top += height;
+        }
+
+        return 0;
+    }
+
+    private void ScrollWebtoonToPage(int pageIndex)
+    {
+        if (_webtoonPageHeights.Count == 0)
+        {
+            return;
+        }
+
+        var offset = 0d;
+        for (var index = 0; index < Math.Min(pageIndex, _webtoonPageHeights.Count); index++)
+        {
+            offset += _webtoonPageHeights[index];
+        }
+
+        _webtoonScroll.Offset = new Vector(_webtoonScroll.Offset.X, offset);
+    }
+
+    private void OnWebtoonScrollChanged(object? sender, ScrollChangedEventArgs e) => UpdateWebtoonPosition();
+
+    private void UpdateWebtoonPosition()
+    {
+        var book = _libraryBook;
+        if (book is null || !book.IsWebtoon || book.Pages.Count == 0 || _webtoonPageHeights.Count != book.Pages.Count)
+        {
+            return;
+        }
+
+        // READER-PROGRESS-1: a programmatic restore (resume) must not be treated as a position edit.
+        // ScrollChanged fires while the stack is still being laid out, so persisting those frames
+        // would immediately overwrite the saved page this open just restored.
+        if (_webtoonRestoreInProgress || !_userInteractionSeen)
+        {
+            return;
+        }
+
+        var scroll = WebtoonScrollY;
+        var top = 0d;
+        var index = book.Pages.Count - 1;
+        for (var candidate = 0; candidate < _webtoonPageHeights.Count; candidate++)
+        {
+            if (scroll < top + Math.Max(1, _webtoonPageHeights[candidate]))
+            {
+                index = candidate;
+                break;
+            }
+
+            top += _webtoonPageHeights[candidate];
+        }
+
+        var previous = ViewModel.CurrentPageIndex;
+        ViewModel.SetPageCount(book.Pages.Count, index);
+
+        // Scroll events are frequent: throttle persisted writes, and only when the position moved.
+        var now = _readingClock.Elapsed.TotalMilliseconds;
+        if (previous != ViewModel.CurrentPageIndex || now - _lastScrollSaveAtMs > 1000)
+        {
+            _lastScrollSaveAtMs = now;
+            QueueProgressSave();
+        }
+    }
+
+    /// <summary>READER-PROGRESS-1: restore finished; user-driven scroll may persist from now on.</summary>
+    private void CompleteWebtoonRestore()
+    {
+        _webtoonRestoreInProgress = false;
+        _lastScrollSaveAtMs = _readingClock.Elapsed.TotalMilliseconds;
+    }
+
+    /// <summary>
+    /// READER-PROGRESS-1 test seam: apply a webtoon scroll offset (display pixels) without a
+    /// pointer device, then expose the mapped page/offset to assertions.
+    /// </summary>
+    public int ApplyWebtoonScrollForTest(double offsetPixels)
+    {
+        _webtoonRestoreInProgress = false;
+        _userInteractionSeen = true;
+        _webtoonScrollOverride = Math.Max(0, offsetPixels);
+        _webtoonScroll.Offset = new Vector(0, Math.Max(0, offsetPixels));
+        UpdateWebtoonPosition();
+        return ViewModel.CurrentPageIndex;
+    }
+
+    /// <summary>READER-PROGRESS-1: current webtoon scroll position in display pixels.</summary>
+    private double WebtoonScrollY => _webtoonScrollOverride ?? _webtoonScroll.Offset.Y;
 
     /// <summary>READER-LIBRARY-WIRE-1 AC2: request the immersive window (button / double-click).</summary>
     public void RequestImmersive() => ImmersiveRequested?.Invoke(this, EventArgs.Empty);
@@ -530,10 +888,15 @@ public sealed class ReaderPage : UserControl
     }
 
     /// <summary>READER-LIBRARY-WIRE-1 AC4: real webtoon book rendered as one vertical page stack.</summary>
-    public void PrepareLibraryWebtoon() => _ = PrepareLibraryWebtoonAsync();
+    public void PrepareLibraryWebtoon()
+    {
+        _webtoonRestoreInProgress = true;
+        _ = PrepareLibraryWebtoonAsync();
+    }
 
     private async Task PrepareLibraryWebtoonAsync()
     {
+        _webtoonRestoreInProgress = true;
         var book = _libraryBook;
         if (book is null)
         {
@@ -544,28 +907,50 @@ public sealed class ReaderPage : UserControl
         ViewModel.SetFitMode(ReaderFitMode.Webtoon);
         _pageImage.IsVisible = false;
         _webtoonScroll.IsVisible = true;
+        _webtoonImages.Clear();
+        _webtoonPageHeights.Clear();
         var images = new List<Image>();
         for (var index = 0; index < book.Pages.Count; index++)
         {
+            var height = LibraryPageHeight(book.Pages[index]);
             var image = new Image
             {
                 Name = $"WebtoonPage_{index}",
                 Stretch = Stretch.Fill,
-                Height = LibraryPageHeight(book.Pages[index]),
+                Height = height,
             };
+            RenderOptions.SetBitmapInterpolationMode(_pageImage, BitmapInterpolationMode.None);
             RenderOptions.SetBitmapInterpolationMode(image, BitmapInterpolationMode.None);
             images.Add(image);
+            _webtoonImages.Add(image);
+            _webtoonPageHeights.Add(height);
         }
 
         _webtoonItems.ItemsSource = images;
         _webtoonItems.Measure(new Size(ViewModel.ViewportWidth, ViewModel.ViewportHeight));
         _webtoonItems.Arrange(new Rect(0, 0, ViewModel.ViewportWidth, ViewModel.ViewportHeight));
 
+        // READER-PROGRESS-1 AC1: restore the persisted webtoon position (page + in-page offset).
+        var initialPage = Math.Clamp(book.InitialPageIndex, 0, Math.Max(0, book.Pages.Count - 1));
+        ViewModel.SetPageCount(book.Pages.Count, initialPage);
+        ScrollWebtoonToPage(initialPage);
+        if (book.InitialScrollOffsetY > 0)
+        {
+            var pageHeight = Math.Max(1, _webtoonPageHeights[initialPage]);
+            var localPixels = Math.Clamp(
+                book.InitialScrollOffsetY / Math.Max(1, book.Pages[initialPage].HeightPx) * pageHeight,
+                0,
+                pageHeight - 1);
+            _webtoonScroll.Offset = new Vector(0, _webtoonScroll.Offset.Y + localPixels);
+        }
+
         // The resource pipe is request/response: load page images one at a time.
         for (var index = 0; index < book.Pages.Count; index++)
         {
             await LoadWebtoonPageAsync(images[index], index).ConfigureAwait(true);
         }
+
+        CompleteWebtoonRestore();
     }
 
     private double LibraryPageHeight(ReaderPageData page)
@@ -726,29 +1111,44 @@ public sealed class ReaderPage : UserControl
             return;
         }
 
+        _userInteractionSeen = true;
         var position = e.GetPosition(this);
         if (position.X < Bounds.Width * 0.25)
         {
-            ViewModel.PreviousPage();
+            _ = TurnPageAsync(-1);
         }
         else if (position.X > Bounds.Width * 0.75)
         {
-            ViewModel.NextPage();
+            _ = TurnPageAsync(1);
         }
     }
 
     private void OnWheel(object? sender, PointerWheelEventArgs e)
     {
+        _userInteractionSeen = true;
         if (e.Delta.Y > 0)
         {
-            ViewModel.PreviousPage();
+            _ = TurnPageAsync(-1);
         }
         else if (e.Delta.Y < 0)
         {
-            ViewModel.NextPage();
+            _ = TurnPageAsync(1);
         }
 
         e.Handled = true;
+    }
+
+    /// <summary>READER-PROGRESS-1: one immutable progress write (captured on the UI thread).</summary>
+    private sealed record ProgressPayload(
+        string ChapterId,
+        string PageId,
+        string Mode,
+        double? ScrollOffsetY)
+    {
+        public string Describe(double elapsedSeconds) =>
+            $"chapter={ChapterId} page={PageId} mode={Mode} " +
+            $"offset={(ScrollOffsetY is { } offset ? offset.ToString("F1") : "omitted")} " +
+            $"elapsed={elapsedSeconds:F3}s";
     }
 }
 
@@ -764,8 +1164,8 @@ public sealed class ReaderWindow : Window
     {
     }
 
-    public ReaderWindow(ReaderViewModel viewModel, ReaderBookData book)
-        : this(viewModel, CreateLibraryPage(viewModel, book))
+    public ReaderWindow(ReaderViewModel viewModel, ReaderBookData book, IReaderProgressSink? progressSink = null)
+        : this(viewModel, CreateLibraryPage(viewModel, book, progressSink))
     {
     }
 
@@ -784,6 +1184,9 @@ public sealed class ReaderWindow : Window
         Page = effectivePage;
         Content = effectivePage;
         KeyDown += OnKeyDown;
+
+        // READER-PROGRESS-1 AC1: closing the immersive window is one of the save triggers.
+        Closed += (_, _) => _ = effectivePage.FlushProgressAsync();
         Opened += (_, _) =>
         {
             if (effectivePage.LibraryBook is { IsWebtoon: true })
@@ -792,7 +1195,7 @@ public sealed class ReaderWindow : Window
             }
             else
             {
-                effectivePage.ShowPage(viewModel.CurrentPageIndex);
+                effectivePage.GoToPage(viewModel.CurrentPageIndex);
             }
         };
     }
@@ -809,6 +1212,7 @@ public sealed class ReaderWindow : Window
         {
             case Key.Escape:
                 EscapeCount++;
+                _ = Page.FlushProgressAsync();
                 Close();
                 return true;
             case Key.H:
@@ -819,20 +1223,23 @@ public sealed class ReaderWindow : Window
                 return true;
             case Key.Right:
             case Key.Down:
-                Page.ViewModel.NextPage();
+                _ = Page.TurnPageAsync(1);
                 return true;
             case Key.Left:
             case Key.Up:
-                Page.ViewModel.PreviousPage();
+                _ = Page.TurnPageAsync(-1);
                 return true;
             default:
                 return false;
         }
     }
 
-    private static ReaderPage CreateLibraryPage(ReaderViewModel viewModel, ReaderBookData book)
+    private static ReaderPage CreateLibraryPage(
+        ReaderViewModel viewModel,
+        ReaderBookData book,
+        IReaderProgressSink? progressSink)
     {
-        var page = new ReaderPage(viewModel, Array.Empty<string>());
+        var page = new ReaderPage(viewModel, Array.Empty<string>()) { ProgressSink = progressSink };
         page.LoadLibrary(book);
         return page;
     }

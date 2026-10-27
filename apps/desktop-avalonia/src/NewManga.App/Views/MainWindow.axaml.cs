@@ -69,7 +69,11 @@ public partial class MainWindow : Window
         Reader = new ReaderPage(
             readerUserViewModel,
             NewManga.App.Views.ReaderFixtureLocator.TypographyPaths(),
-            NewManga.App.Views.ReaderFixtureLocator.TileDirectory);
+            NewManga.App.Views.ReaderFixtureLocator.TileDirectory)
+        {
+            // READER-PROGRESS-1 AC1: the page persists its position through the controller seam.
+            ProgressSink = _controller,
+        };
         Reader.ImmersiveRequested += (_, _) => OpenImmersiveReader();
         _pages["workbench"] = Workbench;
         _pages["reader"] = Reader;
@@ -153,6 +157,13 @@ public partial class MainWindow : Window
             return;
         }
 
+        // READER-PROGRESS-1 AC1: leaving the reader page is a save trigger (关闭阅读器).
+        if (string.Equals(CurrentPage, "reader", StringComparison.Ordinal) &&
+            !string.Equals(page, "reader", StringComparison.Ordinal))
+        {
+            _ = Reader.FlushProgressAsync();
+        }
+
         CurrentPage = page;
         PageHost.Content = target;
         foreach (var pair in _navButtons)
@@ -176,6 +187,8 @@ public partial class MainWindow : Window
     /// READER-LIBRARY-WIRE-1 AC1: pull the real book through Host/CoreClient
     /// (ListBooks → list_chapters → GetReaderProjection); on empty/failure keep the fixture fallback
     /// and show the empty-state hint. <c>NEWMANGA_READER_SOURCE=fixtures</c> forces the fixture path.
+    /// READER-PROGRESS-1: the projection resumes the persisted page, so reopening the reader shows
+    /// the position the user left.
     /// </summary>
     public async Task EnsureReaderLoadedAsync(CancellationToken cancellationToken = default)
     {
@@ -184,27 +197,41 @@ public partial class MainWindow : Window
             return;
         }
 
+        await LoadReaderAsync(null, null, cancellationToken).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// READER-PROGRESS-1/CHAPTER-SELECTOR-1: (re)loads one book/chapter from the Host and applies the
+    /// Core-resumed page. Null book ids mean "the reader's default book/chapter".
+    /// </summary>
+    public async Task<bool> LoadReaderAsync(
+        string? bookId,
+        string? chapterId,
+        CancellationToken cancellationToken = default)
+    {
         var source = Environment.GetEnvironmentVariable("NEWMANGA_READER_SOURCE");
         if (string.Equals(source, "fixtures", StringComparison.OrdinalIgnoreCase))
         {
             Reader.SetLibraryEmpty("fixture 模式：NEWMANGA_READER_SOURCE=fixtures（跳过真实书库）");
-            return;
+            return false;
         }
 
         try
         {
-            var book = await _controller.LoadReaderBookAsync(null, cancellationToken);
+            var book = await _controller.LoadReaderBookAsync(bookId, chapterId, cancellationToken).ConfigureAwait(true);
             if (book is null)
             {
                 Reader.SetLibraryEmpty("书架为空或 Core 未就绪：已保留 fixture 回退；导入一本书后重试。");
-                return;
+                return false;
             }
 
             Reader.LoadLibrary(book);
+            return true;
         }
         catch (Exception ex) when (ex is InvalidOperationException or TimeoutException or IOException or OperationCanceledException)
         {
             Reader.SetLibraryEmpty("读取书库失败：已保留 fixture 回退。");
+            return false;
         }
     }
 
@@ -212,7 +239,7 @@ public partial class MainWindow : Window
     public ReaderWindow OpenImmersiveReader()
     {
         var window = Reader.LibraryBook is { } book
-            ? new ReaderWindow(Reader.ViewModel, book)
+            ? new ReaderWindow(Reader.ViewModel, book, Reader.ProgressSink)
             : new ReaderWindow(
                 Reader.ViewModel,
                 NewManga.App.Views.ReaderFixtureLocator.TypographyPaths(),
@@ -321,6 +348,18 @@ public partial class MainWindow : Window
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        // READER-PROGRESS-1 AC1: closing the app is a save trigger. Flush on the thread pool so the
+        // UI-thread continuations of the save chain can run (a sync wait here would deadlock).
+        try
+        {
+            var flush = Task.Run(() => Reader.FlushProgressAsync());
+            flush.Wait(TimeSpan.FromSeconds(5));
+        }
+        catch (Exception ex) when (ex is AggregateException or InvalidOperationException or OperationCanceledException)
+        {
+            // best effort: a failed progress save must never block shutdown
+        }
+
         try
         {
             _controller.DisposeAsync().AsTask().GetAwaiter().GetResult();
