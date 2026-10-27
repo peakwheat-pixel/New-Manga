@@ -52,6 +52,24 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<ChapterSummary>>(Array.Empty<ChapterSummary>());
 
+    public Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<CredentialTargetOption>>(Array.Empty<CredentialTargetOption>());
+
+    public Task<CredentialOperationResult> PutCredentialAsync(
+        string kind,
+        string ownerId,
+        string intent,
+        string secret,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(CredentialOperationResult.NotReady());
+
+    public Task<CredentialOperationResult> ClearCredentialAsync(
+        string kind,
+        string ownerId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(CredentialOperationResult.NotReady());
+
     public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

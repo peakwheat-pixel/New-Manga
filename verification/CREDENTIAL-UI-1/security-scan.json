@@ -1,0 +1,18 @@
+{
+  "ac": "AC3",
+  "markers_sha256": [
+    "093fcf21c07d5aa434f0c93fb244d29fdecdd8ee48860920e45880754ede88a1",
+    "064b745bf0e8a02039b865b6f176d75bd579f82a3f0e69176df8c082f6e599c7"
+  ],
+  "scanned_roots": [
+    "G:\\CODEX\\New Manga.workspace\\task-envs\\CREDENTIAL-UI-1",
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\CREDENTIAL-UI-1\\verification\\CREDENTIAL-UI-1",
+    "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop\\logs"
+  ],
+  "scanned_files": 253,
+  "hit_files": [],
+  "plaintext_textbox_in_credential_ui": false,
+  "real_windows_vault_written": false,
+  "automation_peer_exposes_value": false,
+  "result": "PASS: no secret marker in evidence/logs"
+}

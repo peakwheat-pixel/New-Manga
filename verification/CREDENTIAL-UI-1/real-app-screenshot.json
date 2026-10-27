@@ -1,0 +1,38 @@
+{
+  "ac": "AC1/AC3/AC4",
+  "scenario": "real-machine screenshot of the settings-page credential block in masked state",
+  "app": "NewManga.App (Debug build of this worktree)",
+  "app_exe": "apps/desktop-avalonia/src/NewManga.App/bin/Debug/net9.0/NewManga.App.exe",
+  "data_root": "G:/CODEX/New Manga.workspace/task-envs/CREDENTIAL-UI-1/screenshot-root (isolated NEWMANGA_DATA_ROOT; real %APPDATA% untouched)",
+  "window": {
+    "title": "New Manga",
+    "size_px": "1278x818",
+    "page": "设置 / settings"
+  },
+  "screenshot": {
+    "path": "verification/CREDENTIAL-UI-1/real-app-masked.png",
+    "sha256": "79b19c1d59c4b66a25019bec59cd68b7559d9386bc71dbd938ebd3e927d22a33",
+    "bytes": 113559,
+    "shows": [
+      "凭据 · Credential 区块（目标选择、掩码输入、保存凭据/清除凭据/刷新状态）",
+      "掩码输入框内 22 个圆点（仅键入了一个非真实示范值到 PasswordChar 掩码框，从未提交；该值不记录于任何日志/证据/快照）",
+      "目标状态：未选择（真实 Host 未就绪，无可配置 profile；形状与真实配置时一致）"
+    ]
+  },
+  "ui_automation_observation": {
+    "query": "凭据密码",
+    "elements": 15,
+    "observed_edit": "Edit \"凭据密码（掩码输入，不暴露明文）\"",
+    "value_pattern_exposed": false,
+    "note": "custom automation peer exposes only the masked name; the type_text probe reported it could not read the field back because no ValuePattern is published"
+  },
+  "safety": {
+    "real_windows_credential_store_written": false,
+    "real_appdata_touched": false,
+    "save_button_clicked": false,
+    "demo_secret_is_real": false,
+    "secret_in_screenshot": false,
+    "secret_in_evidence": false
+  },
+  "captured_at_utc": "2026-10-27T13:41:00Z"
+}

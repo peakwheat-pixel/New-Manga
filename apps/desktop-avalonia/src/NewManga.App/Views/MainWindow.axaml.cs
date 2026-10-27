@@ -88,7 +88,7 @@ public partial class MainWindow : Window
             LastReaderNavigation = OpenReaderForBookAsync(Reader.LibraryBook?.BookId, chapterId);
         _pages["workbench"] = Workbench;
         _pages["reader"] = Reader;
-        Settings = new SettingsPage(settingsViewModel, OnThemeApplied);
+        Settings = new SettingsPage(settingsViewModel, OnThemeApplied, _controller);
         _pages["settings"] = Settings;
 
         AddNav("bookshelf", "书架", "Icon.bookshelf");
@@ -191,6 +191,12 @@ public partial class MainWindow : Window
         {
             // READER-LIBRARY-WIRE-1 AC1: entering the reader loads the real library book (fixtures stay as fallback).
             _ = EnsureReaderLoadedAsync();
+        }
+
+        if (string.Equals(page, "settings", StringComparison.Ordinal))
+        {
+            // CREDENTIAL-UI-1 AC2: refresh configured/missing states every time settings opens.
+            _ = Settings.RefreshCredentialsAsync();
         }
     }
 
@@ -539,6 +545,9 @@ public partial class MainWindow : Window
             {
                 await EnsureReaderLoadedAsync(CancellationToken.None);
             }
+
+            // CREDENTIAL-UI-1 AC2: configured/missing states once the Host is ready.
+            await Settings.RefreshCredentialsAsync();
         }
         catch (Exception ex) when (ex is InvalidOperationException or TimeoutException)
         {
@@ -548,6 +557,9 @@ public partial class MainWindow : Window
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        // CREDENTIAL-UI-1 AC3: closing the window must not leave a plaintext credential reference.
+        Settings.ClearCredentialSecrets();
+
         // READER-PROGRESS-1 AC1: closing the app is a save trigger. Flush on the thread pool so the
         // UI-thread continuations of the save chain can run (a sync wait here would deadlock).
         try
