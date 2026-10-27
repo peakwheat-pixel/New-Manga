@@ -41,7 +41,7 @@
 |GRANT-ISSUER-1|—|ready（grant 签发+shell 动作 7 条）|
 |S4-CMD-BATCH-1|—|done（5 条接线；parity 51/15；162/162；集成 0fba83021）|
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
-|RUN-BINDING-FIX-1|—|ready（Host StartRun 带 provider bindings；零 Core）|
+|RUN-BINDING-FIX-1|—|done（Host 注入 provider_bindings；ocr 3/3；A/B；173/173；集成 692347b58）|
 |CORE-PIPELINE-FIX-1|—|done（color analyzer + 空检测语义；同构建 8 页 color 3/3；pytest 2753P；集成 aac638781）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|

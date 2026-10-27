@@ -3,7 +3,7 @@ id: RUN-BINDING-FIX-1
 title: Host 侧 StartRun 携带 provider bindings（零 Core 改动）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_run_fix_a_b
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 146377373
 branch: task/RUN-BINDING-FIX-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/RUN-BINDING-FIX-1
-integration_commit: null
+integration_commit: 692347b58
 delivery_head: 33ddc2804c0ba018b7c0d83df85226e7cc851a09
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -98,3 +98,9 @@ RUN-OCR-DIAG-1 实证：OCR `PROVIDER_NOT_CONFIGURED` 根因是 Core `pipeline_d
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实 run 只在临时数据根创建并运行）。
 - 未关闭项及保留原因：color `PROVIDER_FAILED`、detect 0 候选 `INVALID_INPUT` 属 CORE-PIPELINE-FIX-1（B）范围；Export/Retry 等其它 run 入口未注入 bindings；若需 UI 开关应为后续 UI Task；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 合并冲突仅 scripts/test.ps1（S4 fixture 种子 vs models sidecar 环境）→ 保留双方两块，无冲突标记；DSH 复跑 	est.ps1 **173/173**。
+- 接线：HostCommandDispatcher.library_start_run → WriteStartRunOverrides/RunBindingDefaults；默认注入 {"ocr":"manga-ocr"}；用户显式优先；NEWMANGA_RUN_PROVIDER_BINDINGS 可配置/关闭；非对象 → INVALID_ARGUMENTS 且 0 Core 帧。
+- 同构建 8 页 A/B：注入后 ocr **3/3 completed、0 条 PROVIDER_NOT_CONFIGURED**；关闭注入 → 3/3 PROVIDER_NOT_CONFIGURED；链停 color（属 CORE 修复、冻结 exe 未重打包）；**未写成整链通**。
+- 集成：692347b58。
