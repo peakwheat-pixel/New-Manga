@@ -1,0 +1,15 @@
+{
+  "installed": true,
+  "sidecar_bundled": true,
+  "version": "0.1.0",
+  "license_copy_ok": true,
+  "data_root_created": false,
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-SMOKE-1\\install\\app\\NewManga.App.exe",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-SMOKE-1\\data-root",
+  "first_run_backup": null,
+  "install_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-SMOKE-1\\install",
+  "variant": "models",
+  "models_bundled": true,
+  "sidecar_files": 1965,
+  "sidecar_bytes": 868862035.0
+}

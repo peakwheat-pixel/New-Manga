@@ -1,0 +1,106 @@
+{
+  "ac": "AC1-AC4",
+  "environment": {
+    "os": "Windows 10 Pro 26H2 build 26300.9711",
+    "screens": "2 x 2560x1440 @ 96 DPI (100%)",
+    "mica": "N/A on Windows 10 (DwmGetWindowAttribute DWMWA_SYSTEMBACKDROP_TYPE hr=0 type=0=auto/none; window pixels opaque: titlebar #FFFFFF, body #F5F3FA)",
+    "dpi_4k_200": "N/A: machine is 2560x1440 @96 DPI; 4K@200% needs a 3840x2160@200% machine"
+  },
+  "ac1_install": {
+    "install_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-SMOKE-1\\install",
+    "fresh_dir": true,
+    "install_ms": 2602.8,
+    "host_ready_ms": 4098.0,
+    "console_window_count": 0,
+    "sidecar_files": 1965,
+    "sidecar_bytes": 868862035,
+    "models_bundled": true,
+    "window_title": "New Manga",
+    "screenshot": "screens/09-fresh-install-bookshelf.png"
+  },
+  "ac2_flow": {
+    "bookshelf": {
+      "screenshot": "screens/02-bookshelf-loaded.png",
+      "books": 1,
+      "book": "BOOK-FIXTURE-1 日漫_JA 测试书",
+      "pages": 8
+    },
+    "import_fixture_book": {
+      "status": "BLOCKED",
+      "reason": "installed REPACK-2 package (0f4b836a5) predates IMPORT-EXPORT-UI-1 (13cf26f6c): no 导入文件/导入文件夹 controls in workbench, no 开始导出/打开导出目录 in reader",
+      "evidence": [
+        "screens/03-workbench.png",
+        "package-evidence.json"
+      ]
+    },
+    "reader": {
+      "screenshot": "screens/04-reader.png",
+      "mode": "webtoon 长滚动",
+      "toolbar": "Esc 退出 · F fit/翻页 · H 隐藏 UI"
+    },
+    "page_turn_scroll": {
+      "screenshot": "screens/05-reader-page2.png",
+      "method": "WM_MOUSEWHEEL 8 notches",
+      "result": "reader scrolled to later page content"
+    },
+    "progress": {
+      "table": "reading_progress",
+      "row": {
+        "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+        "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "last_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "scroll_offset_y": 37.5,
+        "progress_percent": 2.26,
+        "total_read_seconds": 68.3231823
+      },
+      "result": "persisted by reader after scroll"
+    },
+    "immersive_esc_h": {
+      "screenshot": "screens/06-immersive.png",
+      "method": "UIA InvokePattern on ImmersiveButton (label 沉浸模式 (Esc/H/F))",
+      "result": "fullscreen borderless, nav/status chrome hidden; keyboard Esc/H path not foreground-verifiable in this automation session (user's DSH window owns foreground)"
+    },
+    "export_zip": {
+      "status": "BLOCKED",
+      "reason": "no 导出 button / 开始导出 panel in installed package (same stale-package cause)"
+    },
+    "open_export_folder": {
+      "status": "BLOCKED",
+      "reason": "no 打开导出目录 entry in installed package"
+    }
+  },
+  "ac3_stability": {
+    "close_method": "WM_CLOSE",
+    "close_ms": 4084.3,
+    "residual_processes_after_close": 0,
+    "uninstall": {
+      "exit": 0,
+      "install_dir_after": false
+    },
+    "registry_newmanga_keys": 0,
+    "credential_manager_residue": [
+      "LegacyGeneric:target=NewManga/provider/p15-host-2-smoke/4131fe467df0b5699cab3a7dc311088b"
+    ],
+    "credential_residue_note": "pre-existing from older Tauri p15-host-2-smoke test; NOT created by this smoke (no credential UI/commands exercised); left untouched",
+    "temp_dirs_note": "old task-env temp dirs (newmanga-*) exist from previous tasks, not from this install",
+    "data_root_untouched_by_uninstall": true,
+    "residual_process_note": "Our app/core_service/host_bridge exited with 0 residual after WM_CLOSE. A later system scan showed 10+ sidecar processes belonging to another agent testhost.exe (HOST-CORECLIENT-1/FINAL-VALIDATION copies), not this smoke; left untouched."
+  },
+  "ac4_device": {
+    "mica_sampling": "N/A (Windows 10); opaque pixels body #F5F3FA, titlebar #FFFFFF; DWM backdrop type=0",
+    "dpi": {
+      "screen": "2560x1440",
+      "dpi": 96,
+      "scale": "100%",
+      "4k200": "N/A"
+    },
+    "working_set_mb": {
+      "app_idle": 147.5,
+      "app_reader_scroll": 411.9,
+      "core_service": 41.1,
+      "host_bridge": 22.7
+    },
+    "ime": "requires user confirmation (per task; not automatable here)",
+    "esc_h": "immersive button verified; keyboard Esc/H/hide-UI requires foreground confirmation"
+  }
+}

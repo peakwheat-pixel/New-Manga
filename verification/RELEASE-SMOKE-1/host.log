@@ -1,0 +1,12 @@
+2026-10-27T15:22:55.0740201+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T15:22:55.0806804+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\RELEASE-SMOKE-1\data-root
+2026-10-27T15:22:55.0807788+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T15:22:57.2310416+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T15:22:57.3857794+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T15:22:57.3875963+00:00 INFO host-control session opened (host_vKSAOu_I-yPlWtOIkgOYyObT7DOvU2sqN6TIBemrZpE)
+2026-10-27T15:31:35.1121740+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T15:31:35.1195769+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\RELEASE-SMOKE-1\data-root
+2026-10-27T15:31:35.1201006+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T15:31:35.4383212+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T15:31:35.5317215+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T15:31:35.5336147+00:00 INFO host-control session opened (host_EdnFxyI8U9EWPcaVPE8T8ZzQREyZMlw9Xms5QsXvO9g)
