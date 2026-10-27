@@ -1,0 +1,79 @@
+{
+  "status": "existing",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "book_title": "BOOK-FIXTURE-1 日漫_JA 测试书",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "chapter_title": "第 1 章",
+  "chapter_type": "webtoon",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "pages_root": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA",
+  "pages_requested": 8,
+  "page_count": 8,
+  "pages": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "order": 1,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 657353
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+      "order": 2,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 605434
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+      "order": 3,
+      "width": 1200,
+      "height": 726,
+      "source_size_bytes": 249097
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+      "order": 4,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 477560
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+      "order": 5,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 512573
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+      "order": 6,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 587669
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+      "order": 7,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 474212
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+      "order": 8,
+      "width": 1200,
+      "height": 1660,
+      "source_size_bytes": 495759
+    }
+  ],
+  "import_report": null
+}

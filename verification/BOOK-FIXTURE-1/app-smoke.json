@@ -1,0 +1,22 @@
+{
+  "ac": "AC3 (app-level smoke)",
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64\\app\\NewManga.App.exe",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "args": "--data-root=\"G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data\" --exit-after=8000",
+  "window_handle_found": true,
+  "window_handle": 3477932,
+  "exit_code": 0,
+  "exit_ok": true,
+  "residual_processes": 0,
+  "real_appdata_files_before": 17,
+  "real_appdata_files_after": 17,
+  "real_appdata_untouched": true,
+  "logs_dir": true,
+  "host_log_exists": true,
+  "host_data_root_line": "2026-10-27T01:37:17.4370711+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "host_used_fixture_root": true,
+  "wire_log_exists": true,
+  "listbooks_wire_calls": 2,
+  "fixture_book_seen_in_wire": true,
+  "generated_at_utc": "2026-10-27T01:37:30.9431609Z"
+}
