@@ -94,17 +94,17 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EV-AC1-BENCH | AC1 | verification/INFER-BASELINE-EP-1/bench-matrix.json | — | 78e831e877973134b75742596ca91719634c9ce51864b4d008adaa8b9a8e29b7 | CANONICAL |
-| EV-AC1-PARITY | AC1 | verification/INFER-BASELINE-EP-1/parity.json | — | 6f6aec1e97e384031433af58df05caf2ff83c4c202ab7c09f099b240f541a171 | CANONICAL |
-| EV-AC1-SIZES | AC1 | verification/INFER-BASELINE-EP-1/sizes-and-startup.json | — | 9f952f287a51ca589ccd4715d36efbd3b489843a7f977444df62e7e7109073b2 | CANONICAL |
-| EV-AC1-DMLPROBE | AC1 | verification/INFER-BASELINE-EP-1/dml-lama-probe.json | — | 02cb6777c7ae591510c1657f39eac5a8cbb7b129a13f8101b60e2176eb519a3d | CANONICAL |
-| EV-AC2-RTDETR | AC2 | verification/INFER-BASELINE-EP-1/export-rtdetr.json | — | 8b9dcb84aacfb4fc5ec48574c2e129aa2c91ad717d2998a367ceb8b5760b8f52 | CANONICAL |
-| EV-AC2-MANGAOCR | AC2 | verification/INFER-BASELINE-EP-1/export-mangaocr.json | — | 540e7d45c04fad71aca913882ff52aafe494feea13cf078ce2a2dcff40529d1e | CANONICAL |
-| EV-AC2-SHIPPED | AC2 | verification/INFER-BASELINE-EP-1/export-shipped.json | — | 5b3d526b227eb2dba63cf41e4b93da2289c758864e29cf0497d6017586a43f1b | CANONICAL |
-| EV-AC3-MATRIX | AC3 | verification/INFER-BASELINE-EP-1/decision-matrix.json | — | 9fa59fd6461e807301fd5639d15c16600aa407452185bfba40ec0c02cff0dc3d | CANONICAL |
-| EV-AC3-REPORT | AC3/AC4 | verification/INFER-BASELINE-EP-1/REPORT.md | — | 2d683edf51ec23bf90c4e57ebaacd768f16f5b4f829b001235f600c5cf02ff90 | CANONICAL |
-| EV-AC4-MANIFEST | AC4 | verification/INFER-BASELINE-EP-1/models-manifest.json | — | 0d61136a7cdf98166e65727c2a7921baee4d352fff29b8cdc37bafd2718c01eb | SOURCE_PIN |
-| EV-AC5-LICENSES | AC5 | verification/INFER-BASELINE-EP-1/licenses.md | — | 7585ecbfb7d0c16de0a3e6e996a0bef1d61ad8bd351020c177545a49ef5042bc | CANONICAL |
+| EV-AC1-BENCH | AC1 | verification/INFER-BASELINE-EP-1/bench-matrix.json |  | 78e831e877973134b75742596ca91719634c9ce51864b4d008adaa8b9a8e29b7 | CANONICAL |
+| EV-AC1-PARITY | AC1 | verification/INFER-BASELINE-EP-1/parity.json |  | 6f6aec1e97e384031433af58df05caf2ff83c4c202ab7c09f099b240f541a171 | CANONICAL |
+| EV-AC1-SIZES | AC1 | verification/INFER-BASELINE-EP-1/sizes-and-startup.json |  | 9f952f287a51ca589ccd4715d36efbd3b489843a7f977444df62e7e7109073b2 | CANONICAL |
+| EV-AC1-DMLPROBE | AC1 | verification/INFER-BASELINE-EP-1/dml-lama-probe.json |  | 02cb6777c7ae591510c1657f39eac5a8cbb7b129a13f8101b60e2176eb519a3d | CANONICAL |
+| EV-AC2-RTDETR | AC2 | verification/INFER-BASELINE-EP-1/export-rtdetr.json |  | 8b9dcb84aacfb4fc5ec48574c2e129aa2c91ad717d2998a367ceb8b5760b8f52 | CANONICAL |
+| EV-AC2-MANGAOCR | AC2 | verification/INFER-BASELINE-EP-1/export-mangaocr.json |  | 540e7d45c04fad71aca913882ff52aafe494feea13cf078ce2a2dcff40529d1e | CANONICAL |
+| EV-AC2-SHIPPED | AC2 | verification/INFER-BASELINE-EP-1/export-shipped.json |  | 5b3d526b227eb2dba63cf41e4b93da2289c758864e29cf0497d6017586a43f1b | CANONICAL |
+| EV-AC3-MATRIX | AC3 | verification/INFER-BASELINE-EP-1/decision-matrix.json |  | 9fa59fd6461e807301fd5639d15c16600aa407452185bfba40ec0c02cff0dc3d | CANONICAL |
+| EV-AC3-REPORT | AC3/AC4 | verification/INFER-BASELINE-EP-1/REPORT.md |  | 2d683edf51ec23bf90c4e57ebaacd768f16f5b4f829b001235f600c5cf02ff90 | CANONICAL |
+| EV-AC4-MANIFEST | AC4 | verification/INFER-BASELINE-EP-1/models-manifest.json |  | 0d61136a7cdf98166e65727c2a7921baee4d352fff29b8cdc37bafd2718c01eb | SOURCE_PIN |
+| EV-AC5-LICENSES | AC5 | verification/INFER-BASELINE-EP-1/licenses.md |  | 7585ecbfb7d0c16de0a3e6e996a0bef1d61ad8bd351020c177545a49ef5042bc | CANONICAL |
 
 说明：证据为工作树未提交状态，故用 64-hex SHA-256 pin，commit 列留 —。
 
@@ -112,7 +112,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/INFER-BASELINE-EP-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/INFER-BASELINE-EP-1 | venvs ×4（ort-dml 362.6 MB / ort-cuda 639.5 MB / torch-cuda 4709.8 MB / ocr-ref 265.9 MB）+ 模型 1014.5 MB + results/logs/scripts；权重的来源 URL 与 sha256 见 verification/INFER-BASELINE-EP-1/models-manifest.json | 已核：全部路径在 workspace 下，仓库内无权重（只有 REPORT/JSON/MD 证据）；关闭时按 PRESERVE_REFERENCED 保留 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/INFER-BASELINE-EP-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/INFER-BASELINE-EP-1 | verification/INFER-BASELINE-EP-1/models-manifest.json | 已核：全部路径在 workspace 下，仓库内无权重（只有 REPORT/JSON/MD 证据）；关闭时按 PRESERVE_REFERENCED 保留 |
 
 ## Closeout Record
 

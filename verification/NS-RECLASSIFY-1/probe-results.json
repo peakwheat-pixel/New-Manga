@@ -1,0 +1,1407 @@
+{
+  "ac": "AC1",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\core_service.exe",
+  "sidecar_sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
+  "probe_spec": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\scripts\\probe_spec.json",
+  "probe_spec_sha256": "e9058c87b61513536daed1ee4678f471d09fd0ec12243771c77b45cb0dcea3fd",
+  "fixture": {
+    "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+    "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+    "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+    "page_id_2": "4f8a24147b3044deabf4f5a2dd83b84f"
+  },
+  "timestamps": {
+    "started_utc": "2026-10-27T10:21:37.9464343Z",
+    "finished_utc": "2026-10-27T10:21:39.4232982Z"
+  },
+  "phases": {
+    "fresh": {
+      "stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n"
+    },
+    "fixture": {
+      "stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=1 dead_rows_removed=0\r\n[core.rerender_page] code=MISSING_REQUIRED_INPUT detail=rerender requires a current clean artifact (missing_clean_artifact); run inpaint first\r\n"
+    },
+    "host-control": {
+      "stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\sidecar\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n"
+    }
+  },
+  "results": [
+    {
+      "phase": "fresh",
+      "ns_command": "cleanup_retry_pending",
+      "core_command": "cleanup.retry_pending",
+      "minor": 3,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 367.2,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "items": {},
+        "removed": 0,
+        "failed": 0,
+        "skipped": 0
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-001\",\"result\":{\"items\":{},\"removed\":0,\"failed\":0,\"skipped\":0},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "plugins_audit_list",
+      "core_command": "plugins.audit_list",
+      "minor": 3,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 1.0,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-002\",\"result\":[],\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "plugins_set_plugin_enabled",
+      "core_command": "plugins.set_plugin_enabled",
+      "minor": 3,
+      "request_payload": {
+        "plugin_id": "no-such-plugin",
+        "enabled": false
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.3,
+      "ok": false,
+      "error_code": "PLUGIN_NOT_FOUND",
+      "error_category": "not_found",
+      "error_message": "no-such-plugin",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-003\",\"result\":null,\"error\":{\"code\":\"PLUGIN_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"no-such-plugin\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "backup_create",
+      "core_command": "backup.create",
+      "minor": 3,
+      "request_payload": {
+        "backup_type": "manual"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 35.6,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c",
+        "path": "9eb63bdd723f41d0bb7c97e058d5204c.nmbak",
+        "size_bytes": 10811,
+        "created_at": "2026-10-27T18:21:38.42+08:00",
+        "verified": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-004\",\"result\":{\"backup_id\":\"9eb63bdd723f41d0bb7c97e058d5204c\",\"path\":\"9eb63bdd723f41d0bb7c97e058d5204c.nmbak\",\"size_bytes\":10811,\"created_at\":\"2026-10-27T10:21:38.420+00:00\",\"verified\":true},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "backup_delete",
+      "core_command": "backup.delete",
+      "minor": 3,
+      "request_payload": {
+        "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.6,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "removed": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-005\",\"result\":{\"removed\":true},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "backup_restore",
+      "core_command": "backup.restore",
+      "minor": 3,
+      "request_payload": {
+        "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "BACKUP_RESTORE_REQUIRES_CONFIRMATION",
+      "error_category": "validation",
+      "error_message": "confirm_restore must be true",
+      "basis": "other_error",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-006\",\"result\":null,\"error\":{\"code\":\"BACKUP_RESTORE_REQUIRES_CONFIRMATION\",\"category\":\"validation\",\"message\":\"confirm_restore must be true\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "backup_restore_confirmed",
+      "core_command": "backup.restore",
+      "minor": 3,
+      "request_payload": {
+        "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c",
+        "confirm": true
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "BACKUP_RESTORE_REQUIRES_CONFIRMATION",
+      "error_category": "validation",
+      "error_message": "confirm_restore must be true",
+      "basis": "other_error",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-007\",\"result\":null,\"error\":{\"code\":\"BACKUP_RESTORE_REQUIRES_CONFIRMATION\",\"category\":\"validation\",\"message\":\"confirm_restore must be true\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profiles_create",
+      "core_command": "settings_network_profiles_create",
+      "minor": 7,
+      "request_payload": {
+        "display_name": "NS probe network",
+        "mode": "Direct",
+        "proxy_endpoint": null
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 1.2,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "profile": {
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+          "display_name": "NS probe network",
+          "mode": "Direct",
+          "proxy_endpoint": null,
+          "verify_tls": true,
+          "tls_verification_state": "enabled",
+          "allow_proxy_failure_direct_fallback": false,
+          "credential_state": "missing"
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-008\",\"result\":{\"profile\":{\"network_profile_id\":\"697c64319c614086b51a8b208ce8ac0a\",\"display_name\":\"NS probe network\",\"mode\":\"Direct\",\"proxy_endpoint\":null,\"verify_tls\":true,\"tls_verification_state\":\"enabled\",\"allow_proxy_failure_direct_fallback\":false,\"credential_state\":\"missing\"}},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_profiles_create",
+      "core_command": "settings_provider_profiles_create",
+      "minor": 7,
+      "request_payload": {
+        "provider_id": "custom",
+        "display_name": "NS probe provider",
+        "capabilities": "Translation",
+        "endpoint": "http://127.0.0.1:9/v1",
+        "model": "probe",
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+        "enabled": false
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.3,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-009\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"profile\",\"action\":\"edit_profile\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_profiles_update",
+      "core_command": "settings_provider_profiles_update",
+      "minor": 7,
+      "request_payload": {
+        "profile_id": null,
+        "display_name": "NS probe provider v2",
+        "capabilities": "Translation",
+        "endpoint": "http://127.0.0.1:9/v1",
+        "model": "probe",
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+        "enabled": false
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-010\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"profile\",\"action\":\"edit_profile\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_bindings_set",
+      "core_command": "settings_provider_bindings_set",
+      "minor": 7,
+      "request_payload": {
+        "scope": {
+          "kind": "global"
+        },
+        "capability": "Translation",
+        "profile_id": null
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-011\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"binding\",\"action\":\"none\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_bindings_resolve",
+      "core_command": "settings_provider_bindings_resolve",
+      "minor": 7,
+      "request_payload": {
+        "capability": "Translation"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.3,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "profile_id": null,
+        "source": null
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-012\",\"result\":{\"profile_id\":null,\"source\":null},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_bindings_clear",
+      "core_command": "settings_provider_bindings_clear",
+      "minor": 7,
+      "request_payload": {
+        "scope": {
+          "kind": "global"
+        },
+        "capability": "Translation"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 1.1,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "cleared": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-013\",\"result\":{\"cleared\":true},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_run_snapshot_get",
+      "core_command": "settings_provider_run_snapshot_get",
+      "minor": 7,
+      "request_payload": {
+        "run_id": "no-such-run"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found",
+      "error_message": "SETTINGS_ITEM_NOT_FOUND",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-014\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"SETTINGS_ITEM_NOT_FOUND\",\"retryable\":false,\"details\":{\"phase\":\"binding\",\"action\":\"none\",\"message_key\":\"SETTINGS_ITEM_NOT_FOUND\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profiles_update",
+      "core_command": "settings_network_profiles_update",
+      "minor": 7,
+      "request_payload": {
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+        "display_name": "NS probe network v2",
+        "mode": "Direct",
+        "proxy_endpoint": null,
+        "verify_tls": true,
+        "allow_proxy_failure_direct_fallback": false
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 1.8,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "profile": {
+          "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+          "display_name": "NS probe network v2",
+          "mode": "Direct",
+          "proxy_endpoint": null,
+          "verify_tls": true,
+          "tls_verification_state": "enabled",
+          "allow_proxy_failure_direct_fallback": false,
+          "credential_state": "missing"
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-015\",\"result\":{\"profile\":{\"network_profile_id\":\"697c64319c614086b51a8b208ce8ac0a\",\"display_name\":\"NS probe network v2\",\"mode\":\"Direct\",\"proxy_endpoint\":null,\"verify_tls\":true,\"tls_verification_state\":\"enabled\",\"allow_proxy_failure_direct_fallback\":false,\"credential_state\":\"missing\"}},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profiles_test",
+      "core_command": "settings_network_profiles_test",
+      "minor": 7,
+      "request_payload": {
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+        "provider_profile_id": null
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-016\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"profile\",\"action\":\"edit_profile\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profile_default_set",
+      "core_command": "settings_network_profile_default_set",
+      "minor": 7,
+      "request_payload": {
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 3.0,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-017\",\"result\":{\"network_profile_id\":\"697c64319c614086b51a8b208ce8ac0a\"},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profile_resolve",
+      "core_command": "settings_network_profile_resolve",
+      "minor": 7,
+      "request_payload": {
+        "provider_profile_id": null
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-018\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"profile\",\"action\":\"edit_profile\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profile_default_clear",
+      "core_command": "settings_network_profile_default_clear",
+      "minor": 7,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 3.4,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "network_profile_id": null
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-019\",\"result\":{\"network_profile_id\":null},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "credential_put",
+      "core_command": "BindProfileCredential",
+      "minor": 7,
+      "request_payload": {
+        "target": {
+          "kind": "provider_api",
+          "profile_id": null
+        },
+        "credential_ref": "NewManga/provider/"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-020\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"credential_binding\",\"action\":\"none\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "credential_clear",
+      "core_command": "ClearProfileCredential",
+      "minor": 7,
+      "request_payload": {
+        "target": {
+          "kind": "provider_api",
+          "profile_id": null
+        }
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-021\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"credential_binding\",\"action\":\"none\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_provider_profiles_delete",
+      "core_command": "settings_provider_profiles_delete",
+      "minor": 7,
+      "request_payload": {
+        "profile_id": null
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": "SETTINGS_INVALID_INPUT",
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-022\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"profile\",\"action\":\"edit_profile\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "settings_network_profiles_delete",
+      "core_command": "settings_network_profiles_delete",
+      "minor": 7,
+      "request_payload": {
+        "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 1.9,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "deleted": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"rc-023\",\"result\":{\"deleted\":true},\"error\":null}"
+    },
+    {
+      "phase": "fresh",
+      "ns_command": "control_list_regions",
+      "core_command": "list_regions",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-rc-01fda01d",
+      "elapsed_ms": 0.3,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "regions": [],
+        "page_size": null
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-024\",\"result\":{\"regions\":[],\"page_size\":null},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "list_regions",
+      "core_command": "list_regions",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 379.1,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "regions": [],
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-025\",\"result\":{\"regions\":[],\"page_size\":{\"width\":1200,\"height\":1660}},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_save_reading_progress",
+      "core_command": "SaveReadingProgress",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "mode": "original",
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "scroll_offset_y": 0.0,
+        "elapsed_seconds_delta": 1
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.8,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+        "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "mode": "original",
+        "last_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "scroll_offset_y": 0.0,
+        "progress_percent": 0.0,
+        "last_read_at": "2026-10-27T18:21:38.95+08:00",
+        "total_read_seconds": 5.0
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-026\",\"result\":{\"book_id\":\"14340ddad0ed472fbe687fe12340c5d8\",\"chapter_id\":\"240bdba549b74281bfc6d901b1a7abd7\",\"mode\":\"original\",\"last_page_id\":\"f52f2772e8044557a72e82f5ea6ab932\",\"scroll_offset_y\":0.0,\"progress_percent\":0.0,\"last_read_at\":\"2026-10-27T10:21:38.950+00:00\",\"total_read_seconds\":5.0},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "resolve_page_resource",
+      "core_command": "resolve_page_resource",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 19.5,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "resource_id": "page-original-f52f2772e8044557a72e82f5ea6ab932",
+        "revision": "original"
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-027\",\"result\":{\"resource_id\":\"page-original-f52f2772e8044557a72e82f5ea6ab932\",\"revision\":\"original\"},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "rerender_page",
+      "core_command": "rerender_page",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.3,
+      "ok": false,
+      "error_code": "MISSING_REQUIRED_INPUT",
+      "error_category": "unavailable",
+      "error_message": "required render input is missing",
+      "basis": "other_error",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-028\",\"result\":null,\"error\":{\"code\":\"MISSING_REQUIRED_INPUT\",\"category\":\"unavailable\",\"message\":\"required render input is missing\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "list_region_revisions",
+      "core_command": "list_region_revisions",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "no-such-region"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found",
+      "error_message": "region not found",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-029\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "set_region_type",
+      "core_command": "set_region_type",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "no-such-region",
+        "new_region_type": "sfx",
+        "expected_revision": 1
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found",
+      "error_message": "region not found",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-030\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "restore_region_revision",
+      "core_command": "restore_region_revision",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "no-such-region",
+        "revision_no": 1,
+        "expected_revision": 1
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found",
+      "error_message": "region not found",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-031\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_start_run",
+      "core_command": "StartRun",
+      "minor": 3,
+      "request_payload": {
+        "command": "reocr_all",
+        "idempotency_key": "ns-reclassify-probe-1",
+        "scope": {
+          "kind": "chapter",
+          "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+        },
+        "overrides": {}
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.3,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6",
+        "status": "interrupted"
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-032\",\"result\":{\"run_id\":\"run-12b0184e443249069a87032b2520d6f6\",\"status\":\"interrupted\"},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_get_run_snapshot",
+      "core_command": "GetRunSnapshot",
+      "minor": 3,
+      "request_payload": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6",
+        "command": "reocr_all",
+        "scope": {
+          "kind": "chapter",
+          "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+        },
+        "status": "interrupted",
+        "targets": [
+          {
+            "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "target_type": "page",
+            "order": 0
+          },
+          {
+            "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "target_type": "page",
+            "order": 1
+          },
+          {
+            "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "target_type": "page",
+            "order": 2
+          },
+          {
+            "target_id": "6814353f6d8544d6945ad5748d518f47",
+            "target_type": "page",
+            "order": 3
+          },
+          {
+            "target_id": "f54739037525486e8704db23db5c0dc1",
+            "target_type": "page",
+            "order": 4
+          },
+          {
+            "target_id": "c239be827f3a4448848d2c42bffc05d1",
+            "target_type": "page",
+            "order": 5
+          },
+          {
+            "target_id": "7a39226851774f01a4cdb89bcf118296",
+            "target_type": "page",
+            "order": 6
+          },
+          {
+            "target_id": "221d772e601e480e8e7508dfe9aff380",
+            "target_type": "page",
+            "order": 7
+          }
+        ]
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-033\",\"result\":{\"run_id\":\"run-12b0184e443249069a87032b2520d6f6\",\"command\":\"reocr_all\",\"scope\":{\"kind\":\"chapter\",\"chapter_id\":\"240bdba549b74281bfc6d901b1a7abd7\"},\"status\":\"interrupted\",\"targets\":[{\"target_id\":\"f52f2772e8044557a72e82f5ea6ab932\",\"target_type\":\"page\",\"order\":0},{\"target_id\":\"4f8a24147b3044deabf4f5a2dd83b84f\",\"target_type\":\"page\",\"order\":1},{\"target_id\":\"a607fc4ca3034f47b5bc43d59f94f2ca\",\"target_type\":\"page\",\"order\":2},{\"target_id\":\"6814353f6d8544d6945ad5748d518f47\",\"target_type\":\"page\",\"order\":3},{\"target_id\":\"f54739037525486e8704db23db5c0dc1\",\"target_type\":\"page\",\"order\":4},{\"target_id\":\"c239be827f3a4448848d2c42bffc05d1\",\"target_type\":\"page\",\"order\":5},{\"target_id\":\"7a39226851774f01a4cdb89bcf118296\",\"target_type\":\"page\",\"order\":6},{\"target_id\":\"221d772e601e480e8e7508dfe9aff380\",\"target_type\":\"page\",\"order\":7}]},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_get_task_projection",
+      "core_command": "GetTaskProjection",
+      "minor": 3,
+      "request_payload": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6",
+        "task_id": "no-such-task"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.7,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6",
+        "run_status": "interrupted",
+        "run_title": "重新 OCR（全部）",
+        "overall_progress": 0.5,
+        "current_page_id": "f54739037525486e8704db23db5c0dc1",
+        "current_step_type": "",
+        "step_flow": [
+          {
+            "type": "detect",
+            "label": "检测",
+            "state": "failed"
+          },
+          {
+            "type": "ocr",
+            "label": "OCR",
+            "state": "pending"
+          }
+        ],
+        "rows": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "page_order": 1,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "page_order": 2,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "page_order": 3,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "page_order": 4,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+            "status": "failed",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "page_order": 5,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+            "status": "waiting",
+            "is_locked": false,
+            "is_pipeline_current": true,
+            "error_code": null
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "page_order": 6,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+            "status": "waiting",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": null
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "page_order": 7,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+            "status": "waiting",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": null
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "page_order": 8,
+            "filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+            "status": "waiting",
+            "is_locked": false,
+            "is_pipeline_current": false,
+            "error_code": null
+          }
+        ],
+        "tasks": [
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:0",
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-21b81dba23c34a13b4e2431999338ee9",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:1",
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-25b05ecfa95b42d0b9b572744331e96f",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:2",
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-e873183d0a8e44cfa254b2e3fcf43a4a",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:3",
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED",
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-1ef27fd1bb6443c9ac6bc68aa30ab874",
+                "step_type": "detect",
+                "status": "failed",
+                "retry_no": 0,
+                "error_code": "PROVIDER_NOT_CONFIGURED",
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:4",
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "status": "interrupted",
+            "error_code": null,
+            "error_message": null,
+            "steps": [
+              {
+                "step_run_id": "step-56b9db6d70274386a1cb8e2bb5831b21",
+                "step_type": "detect",
+                "status": "interrupted",
+                "retry_no": 0,
+                "error_code": null,
+                "error_message": null,
+                "provider": null,
+                "model": null,
+                "device": null
+              }
+            ]
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:5",
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "status": "pending",
+            "error_code": null,
+            "error_message": null,
+            "steps": []
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:6",
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "status": "pending",
+            "error_code": null,
+            "error_message": null,
+            "steps": []
+          },
+          {
+            "task_id": "run-12b0184e443249069a87032b2520d6f6:task:7",
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "status": "pending",
+            "error_code": null,
+            "error_message": null,
+            "steps": []
+          }
+        ],
+        "counts": {
+          "total": 8,
+          "completed": 0,
+          "failed": 4,
+          "skipped": 0,
+          "blocked": 0,
+          "waiting": 4,
+          "processing": 0
+        },
+        "blocked_reasons": [],
+        "controls": {
+          "can_pause": false,
+          "can_stop": false,
+          "can_continue": true,
+          "can_restart": true,
+          "can_abandon": true,
+          "can_retry_failed": false
+        },
+        "extra": {}
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-034\",\"result\":{\"run_id\":\"run-12b0184e443249069a87032b2520d6f6\",\"run_status\":\"interrupted\",\"run_title\":\"\\u91cd\\u65b0 OCR\\uff08\\u5168\\u90e8\\uff09\",\"overall_progress\":0.5,\"current_page_id\":\"f54739037525486e8704db23db5c0dc1\",\"current_step_type\":\"\",\"step_flow\":[{\"type\":\"detect\",\"label\":\"\\u68c0\\u6d4b\",\"state\":\"failed\"},{\"type\":\"ocr\",\"label\":\"OCR\",\"state\":\"pending\"}],\"rows\":[{\"page_id\":\"f52f2772e8044557a72e82f5ea6ab932\",\"page_order\":1,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg\",\"status\":\"failed\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":\"PROVIDER_NOT_CONFIGURED\"},{\"page_id\":\"4f8a24147b3044deabf4f5a2dd83b84f\",\"page_order\":2,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg\",\"status\":\"failed\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":\"PROVIDER_NOT_CONFIGURED\"},{\"page_id\":\"a607fc4ca3034f47b5bc43d59f94f2ca\",\"page_order\":3,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg\",\"status\":\"failed\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":\"PROVIDER_NOT_CONFIGURED\"},{\"page_id\":\"6814353f6d8544d6945ad5748d518f47\",\"page_order\":4,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg\",\"status\":\"failed\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":\"PROVIDER_NOT_CONFIGURED\"},{\"page_id\":\"f54739037525486e8704db23db5c0dc1\",\"page_order\":5,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg\",\"status\":\"waiting\",\"is_locked\":false,\"is_pipeline_current\":true,\"error_code\":null},{\"page_id\":\"c239be827f3a4448848d2c42bffc05d1\",\"page_order\":6,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg\",\"status\":\"waiting\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":null},{\"page_id\":\"7a39226851774f01a4cdb89bcf118296\",\"page_order\":7,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg\",\"status\":\"waiting\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":null},{\"page_id\":\"221d772e601e480e8e7508dfe9aff380\",\"page_order\":8,\"filename\":\"ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg\",\"status\":\"waiting\",\"is_locked\":false,\"is_pipeline_current\":false,\"error_code\":null}],\"tasks\":[{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:0\",\"page_id\":\"f52f2772e8044557a72e82f5ea6ab932\",\"status\":\"failed\",\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"steps\":[{\"step_run_id\":\"step-21b81dba23c34a13b4e2431999338ee9\",\"step_type\":\"detect\",\"status\":\"failed\",\"retry_no\":0,\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"provider\":null,\"model\":null,\"device\":null}]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:1\",\"page_id\":\"4f8a24147b3044deabf4f5a2dd83b84f\",\"status\":\"failed\",\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"steps\":[{\"step_run_id\":\"step-25b05ecfa95b42d0b9b572744331e96f\",\"step_type\":\"detect\",\"status\":\"failed\",\"retry_no\":0,\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"provider\":null,\"model\":null,\"device\":null}]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:2\",\"page_id\":\"a607fc4ca3034f47b5bc43d59f94f2ca\",\"status\":\"failed\",\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"steps\":[{\"step_run_id\":\"step-e873183d0a8e44cfa254b2e3fcf43a4a\",\"step_type\":\"detect\",\"status\":\"failed\",\"retry_no\":0,\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"provider\":null,\"model\":null,\"device\":null}]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:3\",\"page_id\":\"6814353f6d8544d6945ad5748d518f47\",\"status\":\"failed\",\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"steps\":[{\"step_run_id\":\"step-1ef27fd1bb6443c9ac6bc68aa30ab874\",\"step_type\":\"detect\",\"status\":\"failed\",\"retry_no\":0,\"error_code\":\"PROVIDER_NOT_CONFIGURED\",\"error_message\":null,\"provider\":null,\"model\":null,\"device\":null}]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:4\",\"page_id\":\"f54739037525486e8704db23db5c0dc1\",\"status\":\"interrupted\",\"error_code\":null,\"error_message\":null,\"steps\":[{\"step_run_id\":\"step-56b9db6d70274386a1cb8e2bb5831b21\",\"step_type\":\"detect\",\"status\":\"interrupted\",\"retry_no\":0,\"error_code\":null,\"error_message\":null,\"provider\":null,\"model\":null,\"device\":null}]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:5\",\"page_id\":\"c239be827f3a4448848d2c42bffc05d1\",\"status\":\"pending\",\"error_code\":null,\"error_message\":null,\"steps\":[]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:6\",\"page_id\":\"7a39226851774f01a4cdb89bcf118296\",\"status\":\"pending\",\"error_code\":null,\"error_message\":null,\"steps\":[]},{\"task_id\":\"run-12b0184e443249069a87032b2520d6f6:task:7\",\"page_id\":\"221d772e601e480e8e7508dfe9aff380\",\"status\":\"pending\",\"error_code\":null,\"error_message\":null,\"steps\":[]}],\"counts\":{\"total\":8,\"completed\":0,\"failed\":4,\"skipped\":0,\"blocked\":0,\"waiting\":4,\"processing\":0},\"blocked_reasons\":[],\"controls\":{\"can_pause\":false,\"can_stop\":false,\"can_continue\":true,\"can_restart\":true,\"can_abandon\":true,\"can_retry_failed\":false},\"extra\":{}},\"error\":null}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_control_run",
+      "core_command": "ControlRun",
+      "minor": 3,
+      "request_payload": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6",
+        "action": "pause"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_RUN_TRANSITION",
+      "error_category": "conflict",
+      "error_message": "Run operation is not valid in the current state",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-035\",\"result\":null,\"error\":{\"code\":\"INVALID_RUN_TRANSITION\",\"category\":\"conflict\",\"message\":\"Run operation is not valid in the current state\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_resume_blocked_run",
+      "core_command": "ResumeBlockedRun",
+      "minor": 3,
+      "request_payload": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "INVALID_RUN_TRANSITION",
+      "error_category": "conflict",
+      "error_message": "Run operation is not valid in the current state",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-036\",\"result\":null,\"error\":{\"code\":\"INVALID_RUN_TRANSITION\",\"category\":\"conflict\",\"message\":\"Run operation is not valid in the current state\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_retry_failed_targets",
+      "core_command": "RetryFailedTargets",
+      "minor": 3,
+      "request_payload": {
+        "run_id": "run-12b0184e443249069a87032b2520d6f6",
+        "idempotency_key": "ns-reclassify-retry-1"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.3,
+      "ok": false,
+      "error_code": "INVALID_RUN_TRANSITION",
+      "error_category": "conflict",
+      "error_message": "Run operation is not valid in the current state",
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-037\",\"result\":null,\"error\":{\"code\":\"INVALID_RUN_TRANSITION\",\"category\":\"conflict\",\"message\":\"Run operation is not valid in the current state\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_delete_books_permanently",
+      "core_command": "PermanentlyDeleteBooks",
+      "minor": 10,
+      "request_payload": {
+        "book_ids": "no-such-book",
+        "confirm_permanent_delete": true
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-038\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "library_delete_book_permanently",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 10,
+      "request_payload": {
+        "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+        "confirm_permanent_delete": true
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.3,
+      "ok": false,
+      "error_code": "BOOK_BUSY",
+      "error_category": "conflict",
+      "error_message": null,
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-039\",\"result\":null,\"error\":{\"code\":\"BOOK_BUSY\",\"category\":\"conflict\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 3,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-040\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 4,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-041\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 5,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-042\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 6,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-043\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 7,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-044\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 8,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-045\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 9,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-046\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 10,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": false,
+      "error_code": "BOOK_NOT_FOUND",
+      "error_category": "not_found",
+      "error_message": null,
+      "basis": "domain_error_handler_ran",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-047\",\"result\":null,\"error\":{\"code\":\"BOOK_NOT_FOUND\",\"category\":\"not_found\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 11,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-048\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "minor_sweep_PermanentlyDeleteBook",
+      "core_command": "PermanentlyDeleteBook",
+      "minor": 12,
+      "request_payload": {
+        "confirm_permanent_delete": true,
+        "book_id": "no-such-book"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.1,
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "error_message": null,
+      "basis": "payload_rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":10},\"request_id\":\"rc-049\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"retryable\":false}}"
+    },
+    {
+      "phase": "fixture",
+      "ns_command": "control_list_regions",
+      "core_command": "list_regions",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\data",
+      "elapsed_ms": 0.2,
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "error_message": null,
+      "basis": "success",
+      "result": {
+        "regions": [],
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-050\",\"result\":{\"regions\":[],\"page_size\":{\"width\":1200,\"height\":1660}},\"error\":null}"
+    }
+  ],
+  "host_control": [
+    {
+      "phase": "host-control",
+      "ns_command": "control_open_host_session",
+      "core_command": "OpenHostSession",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "core_session_id": "6ab300f7c83c43cdbf7dafcfab57616c"
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-1\",\"result\":{\"core_session_id\":\"6ab300f7c83c43cdbf7dafcfab57616c\"},\"error\":null}",
+      "core_session_id": "6ab300f7c83c43cdbf7dafcfab57616c"
+    },
+    {
+      "phase": "host-control",
+      "ns_command": "RegisterImportSource",
+      "core_command": "RegisterImportSource",
+      "request_payload": {
+        "paths": [
+          "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\import-source.jpg"
+        ]
+      },
+      "ok": false,
+      "error_code": "REF_MALFORMED",
+      "error_category": "validation",
+      "error_message": "Import source reference was rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-2\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Import source reference was rejected\",\"retryable\":false}}"
+    },
+    {
+      "phase": "host-control",
+      "ns_command": "library_import_file",
+      "core_command": "ImportPages",
+      "ok": false,
+      "error_code": "PRECONDITION_FAILED",
+      "error_message": "RegisterImportSource did not return a grant_id",
+      "basis": "blocked_precondition"
+    },
+    {
+      "phase": "host-control",
+      "ns_command": "RegisterExportTarget",
+      "core_command": "RegisterExportTarget",
+      "request_payload": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NS-RECLASSIFY-1\\probe\\export-target"
+      },
+      "ok": false,
+      "error_code": "REF_MALFORMED",
+      "error_category": "validation",
+      "error_message": "Export target reference was rejected",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"rc-host-3\",\"result\":null,\"error\":{\"code\":\"REF_MALFORMED\",\"category\":\"validation\",\"message\":\"Export target reference was rejected\",\"retryable\":false}}"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ id: F11-HOTKEY-1
 title: 全局 F11 快捷键（沉浸/全屏切换）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_followups_batch_a2
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 171529b5d
 branch: task/F11-HOTKEY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/F11-HOTKEY-1
-integration_commit: null
+integration_commit: b63025690
 delivery_head: ec94991c399c94f771e7bc1958dcf868585eae34
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/F11-HOTKEY-1
 allowed_paths:
   - doc/tasks/F11-HOTKEY-1.md
@@ -67,6 +67,11 @@ READER-LIBRARY-WIRE-1 的沉浸入口目前只有工具栏按钮 + 双击；遗�
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| F1 | AC3 | verification/F11-HOTKEY-1/runtime-logs/core-service.stderr.log | ec94991c3 | f9bf37a4bbf2620164a2e563db17b136f7da1026aa9c5495af818cd71f89776b | CANONICAL |
+| F2 | AC3 | verification/F11-HOTKEY-1/test/results-app.trx | ec94991c3 | cfe2ed92ebaa50ccaa245df26d87683c62c4c26077240e47595ecf51ff07cd73 | CANONICAL |
+| F3 | AC3 | verification/F11-HOTKEY-1/test/results-coreclient.trx | ec94991c3 | 961a7abf362bb77a1af9ccf6d0f3a9d12f0aac8706a32f16a35b5554182be154 | CANONICAL |
+| F4 | AC3 | verification/F11-HOTKEY-1/test/results-host.trx | ec94991c3 | be235f6bfa370b6432aad74ac4086cfacf0f684d0893748f888e183ad958d862 | CANONICAL |
+| F5 | AC3 | verification/F11-HOTKEY-1/test/test.ps1-final.log | ec94991c3 | 6f8d21f482104a8a8093f6d91419e880bc08df1e228e39aef638579914433960 | CANONICAL |
 |---|---|---|---|---|---|
 | F11-TEST-SUMMARY | AC4 | verification/F11-HOTKEY-1/test/summary.json | ec94991c399c94f771e7bc1958dcf868585eae34 | bd19da29eed72d4669689b876137b9d2fb52b9cde039c8fe9a54fa384ddc72b1 | CANONICAL |
 | F11-TEST-LOG | AC4 | verification/F11-HOTKEY-1/test/dotnet-test-Debug.log | ec94991c399c94f771e7bc1958dcf868585eae34 | adc3ed73d424b917c164109c95e462d4578053abba7c8844feb8d90f533c61ff | CANONICAL |
@@ -99,3 +104,13 @@ READER-LIBRARY-WIRE-1 的沉浸入口目前只有工具栏按钮 + 双击；遗�
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；数据根为 workspace 副本，源 BOOK-FIXTURE 未改）。
 - 未关闭项及保留原因：真机未单跑「书架来源 + Esc」组合（与「书架来源 + F11 关闭」共用同一 `Closed` 恢复路径；headless 已覆盖）；从书架返回时焦点若自动回到搜索框，F11 被输入框守卫忽略（设计使然，Record Decision 已声明）；未注册系统级 F11（应用不在前台时不生效，符合任务限制）；需独立 Review。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 行为定义（Record Decision）：Avalonia 窗口级 Tunnel KeyDown，仅裸 F11；**不注册系统级热键**（RegisterHotKey/HotKeyManager/GlobalHotKey/SetWindowsHookEx/Win32Properties 源码 0 命中）；输入框聚焦优先。
+- AC1：阅读器页 F11→当前书沉浸（全屏 1400×787）；非阅读器页 F11→先切阅读器页加载当前/默认书再开沉浸并记录来源页；Esc/再按 F11→回来源页。
+- AC2：搜索框聚焦时 F11 不触发/不消费/文本不变；修饰键 F11 忽略；H/F/Esc/方向键不受影响。
+- AC3：Headless 8 项 + 真机 6 张截图（01–06，含窗口时间线、搜索文本保留）+ live-evidence.json（10 断言 true、source_grep=0）。
+- AC4：DSH 复跑 scripts/test.ps1 → 见执行记录（实现方报 153/153：40/42/71）；vitest 60/567；pytest 3F/2739P/9S 无新增。
+- AC5：check.ps1 -TaskPath PASS；14 条 64-hex pin；Handoff（含 Record Decision）。
+- 遗留（记录不阻塞）：① 未注册系统级 F11（后台不生效，需另开任务+授权）；② 书架返回时焦点若自动回搜索框则 F11 被守卫忽略（设计声明）；③ 真机未单跑「书架来源+Esc」（与 F11 关闭同路径，headless 覆盖）。
+- 集成：b63025690。

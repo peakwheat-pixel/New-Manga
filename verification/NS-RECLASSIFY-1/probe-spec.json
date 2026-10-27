@@ -1,0 +1,66 @@
+{
+  "task": "NS-RECLASSIFY-1",
+  "fixture": {
+    "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+    "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+    "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+    "page_id_2": "4f8a24147b3044deabf4f5a2dd83b84f"
+  },
+  "phases": [
+    {
+      "name": "fresh",
+      "data": "fresh",
+      "description": "孤立空数据根：settings / plugins / backup / cleanup / credential 面（含 id 链）",
+      "probes": [
+        { "ns": "cleanup_retry_pending", "core": "cleanup.retry_pending", "minor": 3, "payload": {} },
+        { "ns": "plugins_audit_list", "core": "plugins.audit_list", "minor": 3, "payload": {} },
+        { "ns": "plugins_set_plugin_enabled", "core": "plugins.set_plugin_enabled", "minor": 3, "payload": { "plugin_id": "no-such-plugin", "enabled": false }, "note": "typed PLUGIN_NOT_FOUND proves the handler runs" },
+        { "ns": "backup_create", "core": "backup.create", "minor": 3, "payload": { "backup_type": "manual" }, "note": "control probe (known IMPLEMENTED); yields backup_id" },
+        { "ns": "backup_delete", "core": "backup.delete", "minor": 3, "payload": { "backup_id": "@backup_id" } },
+        { "ns": "backup_restore", "core": "backup.restore", "minor": 3, "payload": { "backup_id": "@backup_id" } },
+        { "ns": "backup_restore_confirmed", "core": "backup.restore", "minor": 3, "payload": { "backup_id": "@backup_id", "confirm": true } },
+        { "ns": "settings_network_profiles_create", "core": "settings_network_profiles_create", "minor": 7, "payload": { "display_name": "NS probe network", "mode": "Direct", "proxy_endpoint": null }, "note": "mode 取值 Direct/System/HTTP/HTTPS/SOCKS5；Direct 要求 proxy_endpoint=null" },
+        { "ns": "settings_provider_profiles_create", "core": "settings_provider_profiles_create", "minor": 7, "payload": { "provider_id": "custom", "display_name": "NS probe provider", "capabilities": ["Translation"], "endpoint": "http://127.0.0.1:9/v1", "model": "probe", "network_profile_id": "@network_profile_id", "enabled": false }, "note": "capabilities 取值 OCR/Translation/Inpaint/Detection/Rendering；profile_id 由 Core 生成，不可自带" },
+        { "ns": "settings_provider_profiles_update", "core": "settings_provider_profiles_update", "minor": 7, "payload": { "profile_id": "@provider_profile_id", "display_name": "NS probe provider v2", "capabilities": ["Translation"], "endpoint": "http://127.0.0.1:9/v1", "model": "probe", "network_profile_id": "@network_profile_id", "enabled": false } },
+        { "ns": "settings_provider_bindings_set", "core": "settings_provider_bindings_set", "minor": 7, "payload": { "scope": { "kind": "global" }, "capability": "Translation", "profile_id": "@provider_profile_id" } },
+        { "ns": "settings_provider_bindings_resolve", "core": "settings_provider_bindings_resolve", "minor": 7, "payload": { "capability": "Translation" } },
+        { "ns": "settings_provider_bindings_clear", "core": "settings_provider_bindings_clear", "minor": 7, "payload": { "scope": { "kind": "global" }, "capability": "Translation" } },
+        { "ns": "settings_provider_run_snapshot_get", "core": "settings_provider_run_snapshot_get", "minor": 7, "payload": { "run_id": "no-such-run" } },
+        { "ns": "settings_network_profiles_update", "core": "settings_network_profiles_update", "minor": 7, "payload": { "network_profile_id": "@network_profile_id", "display_name": "NS probe network v2", "mode": "Direct", "proxy_endpoint": null, "verify_tls": true, "allow_proxy_failure_direct_fallback": false } },
+        { "ns": "settings_network_profiles_test", "core": "settings_network_profiles_test", "minor": 7, "payload": { "network_profile_id": "@network_profile_id", "provider_profile_id": "@provider_profile_id" } },
+        { "ns": "settings_network_profile_default_set", "core": "settings_network_profile_default_set", "minor": 7, "payload": { "network_profile_id": "@network_profile_id" } },
+        { "ns": "settings_network_profile_resolve", "core": "settings_network_profile_resolve", "minor": 7, "payload": { "provider_profile_id": "@provider_profile_id" } },
+        { "ns": "settings_network_profile_default_clear", "core": "settings_network_profile_default_clear", "minor": 7, "payload": {} },
+        { "ns": "credential_put", "core": "BindProfileCredential", "minor": 7, "payload": { "target": { "kind": "provider_api", "profile_id": "@provider_profile_id" }, "credential_ref": "NewManga/provider/@provider_profile_id" }, "note": "target.kind ∈ provider_api|proxy_auth" },
+        { "ns": "credential_clear", "core": "ClearProfileCredential", "minor": 7, "payload": { "target": { "kind": "provider_api", "profile_id": "@provider_profile_id" } } },
+        { "ns": "settings_provider_profiles_delete", "core": "settings_provider_profiles_delete", "minor": 7, "payload": { "profile_id": "@provider_profile_id" } },
+        { "ns": "settings_network_profiles_delete", "core": "settings_network_profiles_delete", "minor": 7, "payload": { "network_profile_id": "@network_profile_id" } }
+      ]
+    },
+    {
+      "name": "fixture",
+      "data": "fixture",
+      "description": "BOOK-FIXTURE 隔离副本（私有 catalog 重建）：library / reader / region / workbench 面，真实 id",
+      "probes": [
+        { "ns": "list_regions", "core": "list_regions", "minor": 3, "payload": { "page_id": "@page_id" }, "note": "control probe (known IMPLEMENTED)" },
+        { "ns": "library_save_reading_progress", "core": "SaveReadingProgress", "minor": 3, "payload": { "chapter_id": "@chapter_id", "mode": "original", "page_id": "@page_id", "scroll_offset_y": 0.0, "elapsed_seconds_delta": 1 }, "note": "S2 误分类 headline 用例" },
+        { "ns": "resolve_page_resource", "core": "resolve_page_resource", "minor": 3, "payload": { "page_id": "@page_id" } },
+        { "ns": "rerender_page", "core": "rerender_page", "minor": 3, "payload": { "page_id": "@page_id" } },
+        { "ns": "list_region_revisions", "core": "list_region_revisions", "minor": 3, "payload": { "region_id": "no-such-region" } },
+        { "ns": "set_region_type", "core": "set_region_type", "minor": 3, "payload": { "region_id": "no-such-region", "new_region_type": "sfx", "expected_revision": 1 }, "note": "合法枚举 narration/note/other/sfx/speech/title" },
+        { "ns": "restore_region_revision", "core": "restore_region_revision", "minor": 3, "payload": { "region_id": "no-such-region", "revision_no": 1, "expected_revision": 1 } },
+        { "ns": "library_start_run", "core": "StartRun", "minor": 3, "payload": { "command": "reocr_all", "idempotency_key": "ns-reclassify-probe-1", "scope": { "kind": "chapter", "chapter_id": "@chapter_id" }, "overrides": {} }, "note": "成功则产出 run_id 供后续 run 面命令复用" },
+        { "ns": "library_get_run_snapshot", "core": "GetRunSnapshot", "minor": 3, "payload": { "run_id": "@run_id" } },
+        { "ns": "library_get_task_projection", "core": "GetTaskProjection", "minor": 3, "payload": { "run_id": "@run_id", "task_id": "no-such-task" } },
+        { "ns": "library_control_run", "core": "ControlRun", "minor": 3, "payload": { "run_id": "@run_id", "action": "pause" } },
+        { "ns": "library_resume_blocked_run", "core": "ResumeBlockedRun", "minor": 3, "payload": { "run_id": "@run_id" } },
+        { "ns": "library_retry_failed_targets", "core": "RetryFailedTargets", "minor": 3, "payload": { "run_id": "@run_id", "idempotency_key": "ns-reclassify-retry-1" } },
+        { "ns": "library_delete_books_permanently", "core": "PermanentlyDeleteBooks", "minor": 10, "payload": { "book_ids": ["no-such-book"], "confirm_permanent_delete": true }, "note": "批量删除面；用不存在的 id，验证路由存在而不销毁数据" },
+        { "ns": "library_delete_book_permanently", "core": "PermanentlyDeleteBook", "minor": 10, "payload": { "book_id": "@book_id", "confirm_permanent_delete": true }, "note": "delete 面要求 {book_id, confirm_permanent_delete} 正好两个键；破坏性，排在最后" }
+      ]
+    }
+  ]
+}
+
+
+

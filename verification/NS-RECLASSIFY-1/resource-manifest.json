@@ -1,0 +1,79 @@
+{
+  "task": "NS-RECLASSIFY-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/NS-RECLASSIFY-1",
+  "note": "任务结束后按 PRESERVE_REFERENCED 保留；sidecar 为 HOST-CORECLIENT-1 无标签副本的再副本，probe/data 为 BOOK-FIXTURE-1/isolated-data 的私有副本（原件未修改）",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy (AC11 无标签副本)",
+      "used_as": "冻结 core_service.exe / host_bridge.exe / catalog_loader.exe"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "used_as": "真实 book/chapter/page id 的私有副本；探测未写原件"
+    }
+  ],
+  "written_in_repo": "verification/NS-RECLASSIFY-1/**（仅证据，无产品代码）",
+  "artifacts": [
+    {
+      "rel": "sidecar/core_service.exe",
+      "bytes": 68887500,
+      "sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0"
+    },
+    {
+      "rel": "sidecar/host_bridge.exe",
+      "bytes": 1835134,
+      "sha256": "92aa37d1da9d5f4318c7abd284083b2a4f93460064a06822c4ff6d9176f22cab"
+    },
+    {
+      "rel": "sidecar/catalog_loader.exe",
+      "bytes": 1833029,
+      "sha256": "b8d549bc4afd7bb59af826725483df324addcccf357b5ae7c23b927752e84cd4"
+    },
+    {
+      "rel": "probe/probe-results.json",
+      "bytes": 67813,
+      "sha256": "51beb8df0b0b44ccc0f6eb421a3cdcc28c8e3ec49eba834a22a6f04e2e5ae7f7"
+    },
+    {
+      "rel": "scripts/probe-core.ps1",
+      "bytes": 19762,
+      "sha256": "13d8e2d5dfbac721510bf1cd7520ec680f8645ab019f52f4f7afd964661a34a1"
+    },
+    {
+      "rel": "scripts/classify.py",
+      "bytes": 16400,
+      "sha256": "468d4968c9208c0d58c06d7050fe447d81002ac850339b3594e1e85e9a2502b6"
+    },
+    {
+      "rel": "sidecar/",
+      "dir": true,
+      "files": 3432,
+      "mb": 992.1
+    },
+    {
+      "rel": "probe/",
+      "dir": true,
+      "files": 21,
+      "mb": 5.2
+    },
+    {
+      "rel": "scripts/",
+      "dir": true,
+      "files": 3,
+      "mb": 0.0
+    },
+    {
+      "rel": "logs/",
+      "dir": true,
+      "files": 0,
+      "mb": 0.0
+    },
+    {
+      "rel": "evidence/",
+      "dir": true,
+      "files": 0,
+      "mb": 0.0
+    }
+  ]
+}
