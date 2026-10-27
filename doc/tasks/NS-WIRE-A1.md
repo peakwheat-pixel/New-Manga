@@ -62,6 +62,18 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-A1-REPORT | AC1–AC5 | `verification/NS-WIRE-A1/REPORT.md` | `14e855407` | `cab1c7bc302a196fab62d249b3742944eb5d933563e17fb64553957146ff188c` | CANONICAL |
+| E-A1-LIST | AC1 | `verification/NS-WIRE-A1/command-list.json` | `14e855407` | `f6c9df117ae6c8b346312c3776cacdc6bff643c7bbca43555907880f771b2d82` | CANONICAL |
+| E-A1-PROBE | AC1/AC2 | `verification/NS-WIRE-A1/probe-results.json` | `14e855407` | `d60cbf21ae7814c638d73f217e900a5b7fa92b663c292ff2c0e27af44bea0f67` | CANONICAL |
+| E-A1-PARITY | AC3 | `verification/NS-WIRE-A1/parity-update.json` | `14e855407` | `fc1236936140684635ce25c2701c60f8878d57e21fb51f26dd2bbea5cd506c91` | CANONICAL |
+| E-A1-CHECK | AC3 | `verification/NS-WIRE-A1/parity-check.log` | `14e855407` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-A1-INTEGRATION | AC2/AC4 | `verification/NS-WIRE-A1/evidence/integration-results.json` | `14e855407` | `e7fecd4a26dbaacdecc0f7d33ab12108d545dfbd5fb6140b3f140cedcaa61890` | CANONICAL |
+| E-A1-CONTRACT | AC2/AC3 | `verification/NS-WIRE-A1/evidence/parity-contract.json` | `14e855407` | `f0fe2042292d787b41b416cd11664d39c854c32ae50ce698727af610f5728ec2` | CANONICAL |
+| E-A1-NOTSUP | AC2 | `verification/NS-WIRE-A1/evidence/not-supported-typed-errors.json` | `14e855407` | `9e7e7802b7ab89d45ebddbf0c649e9cf5434326d065981eedfe30418982b7246` | CANONICAL |
+| E-A1-DOMAINS | AC2 | `verification/NS-WIRE-A1/evidence/domain-services.json` | `14e855407` | `2036c66efbfe2a7a92cf13f3b4fb62f405b81f61f1679f78897eaeb7677d3184` | CANONICAL |
+| E-A1-DOTNET | AC4 | `verification/NS-WIRE-A1/dotnet-all.log` | `14e855407` | `b0157db389fd9757568ce1a68a95815b1dde3979a131e12940182a7b333365d5` | CANONICAL |
+| E-A1-VITEST | AC4 | `verification/NS-WIRE-A1/vitest.log` | `14e855407` | `60f06accf43cbc0bcb320c6af57fa453172c0a60e3a74632bde161458522f56c` | CANONICAL |
+| E-A1-PYTEST | AC4 | `verification/NS-WIRE-A1/pytest.log` | `14e855407` | `9f2537decad9141e62a81cb188a7dbf278c084d50e440de21f421ae32ba001ee` | CANONICAL |
 
 ## Resource Manifest
 

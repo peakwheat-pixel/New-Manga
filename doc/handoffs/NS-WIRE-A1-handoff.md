@@ -3,7 +3,7 @@
 - Task: `doc/tasks/NS-WIRE-A1.md`（team task-23）
 - Branch: `task/NS-WIRE-A1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/NS-WIRE-A1`
 - Base: `230164c5c`（卡面）；实际分支基于释放提交 `b50ab8fc5`（含任务卡与治理 PASS 状态）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `14e855407`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改 Python Core 语义、未改 Host 契约（wire 契约不变）、未改旧壳。
 
 ## 1. 交付摘要
