@@ -47,7 +47,7 @@
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：无（等待 DSH 释放下一批）。
+READY 节点：无。
 
 ## 历史快照（终态节点，非当前 DAG）
 

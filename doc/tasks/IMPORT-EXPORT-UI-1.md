@@ -13,7 +13,7 @@ base_commit: 49c9e7f24
 branch: task/IMPORT-EXPORT-UI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1
 integration_commit: null
-delivery_head: __DELIVERY_HEAD__
+delivery_head: 5019eb01dab0d9b94c0a71cafb3b96c9bb9caba2
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/IMPORT-EXPORT-UI-1
@@ -84,23 +84,23 @@ allowed_paths:
 | E11 | AC4 | verification/IMPORT-EXPORT-UI-1/evidence/dotnet/dotnet-test-Debug.log | - | 5a7c12d34d7487f9a98ece4ceaeb8fd9895fa0aad6d5c3b361182f9bff7163b5 | CANONICAL |
 | E12 | AC4 | verification/IMPORT-EXPORT-UI-1/evidence/vitest.log | - | a38874e07b3c6fb6feb0d2b407db5d8bc600a722d93148a65e514fd9a1bc7588 | CANONICAL |
 | E13 | AC4 | verification/IMPORT-EXPORT-UI-1/evidence/pytest.log | - | bd5a66acf40f811fd4b53f0c31d1c31f28c42c5fafd38c65f2732278ab5ae04d | CANONICAL |
-| E14 | AC3 | IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/export-cancel.json | - | 5439b1fc170ca6538aea3bbb7d7a10e217a212b10cc1019e47a08cfec73c4032 | CANONICAL |
-| E15 | AC3 | IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/export-flow.json | - | b1cbb92151d5e5f53831c1414189e774cd5d0a4dc1314a7354cd225c5914228d | CANONICAL |
-| E16 | AC3 | IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/export-reveal.json | - | 380479633728d51171a796d46f230c30175f456412e00c995b802167ed3a723f | CANONICAL |
-| E17 | AC3 | IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/import-files.json | - | ed43a9830da85785ad1f4b31d06f715e54a597854e5763e60081e323b4b91fe6 | CANONICAL |
-| E18 | AC3 | IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/import-folder.json | - | 5223bdb50839f91259dfb005e302319915a479aa2d32bcc425d4683a3fd08982 | CANONICAL |
-| E19 | AC3 | IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/payload-contract.json | - | d34c1f5bd62207bdc895abc66df0218359099dc0a3f6e97b43b16cf97bc1fec6 | CANONICAL |
-| E20 | AC3 | IMPORT-EXPORT-UI-1/screens/01-bookshelf-import-entries.png | - | 2827224aa6b9341b1d34a8665cd264520d0da3840bdb1bb7b7ae6d4bbd3ad929 | CANONICAL |
-| E21 | AC3 | IMPORT-EXPORT-UI-1/screens/02-reader-export-entry.png | - | ba3f635fb1887404b979aebc235be12b8c2ba20a0990607da97c21f8820d904a | CANONICAL |
-| E22 | AC3 | IMPORT-EXPORT-UI-1/screens/03-export-ready.png | - | 4c0765afca8c359ba0bce527c2eb6a7e9c423f3db524b829ccc58dc9e896a295 | CANONICAL |
-| E23 | AC3 | IMPORT-EXPORT-UI-1/screens/04-export-completed.png | - | 8dbe4f7d98f763bffea71f3de84254f1efbfa9b22fd233dcb7fe988c7190c7a1 | CANONICAL |
-| E24 | AC3 | IMPORT-EXPORT-UI-1/screens/05-export-revealed.png | - | 0a7d08721349e8aa76c46538741f0e7970613b6315882012f39d2f09e7d033b8 | CANONICAL |
-| E25 | AC3 | IMPORT-EXPORT-UI-1/screens/06-export-second-run.png | - | 98638db807ae4ade6e7d05546fe54493b8b776cc93633d4a07517bf3ed9bcd18 | CANONICAL |
-| E26 | AC3 | IMPORT-EXPORT-UI-1/screens/07-workbench-import-entry.png | - | b4689bdf87001f5c6df46fb2c63d02347570abae2e586dfbf06fe539c6ed215d | CANONICAL |
-| E27 | AC3 | IMPORT-EXPORT-UI-1/screens/08-picker-dialog.png | - | f11c3ca25b86e01488e2f08db83e0becaab31a15221c1c98db8cc366c4786a52 | CANONICAL |
-| E28 | AC3 | IMPORT-EXPORT-UI-1/screens/09-picker-filled.png | - | e764a78015d89fbf6b8b0c8e114212ceec5c5f3bdfae8369d826b1a250ba8440 | CANONICAL |
-| E29 | AC3 | IMPORT-EXPORT-UI-1/screens/10-import-panel.png | - | f56036cf0716e153eb66339660e9e67bd02a1d238857d1b2812efe9aad14acfd | CANONICAL |
-| E30 | AC3 | IMPORT-EXPORT-UI-1/screens/11-import-completed.png | - | 859a8aba8d9012c550f88b9b9201cdb40d8af6652f5af26e74d57f0033e48a89 | CANONICAL |
+| E14 | AC3 | verification/IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/export-cancel.json | - | 5439b1fc170ca6538aea3bbb7d7a10e217a212b10cc1019e47a08cfec73c4032 | CANONICAL |
+| E15 | AC3 | verification/IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/export-flow.json | - | b1cbb92151d5e5f53831c1414189e774cd5d0a4dc1314a7354cd225c5914228d | CANONICAL |
+| E16 | AC3 | verification/IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/export-reveal.json | - | 380479633728d51171a796d46f230c30175f456412e00c995b802167ed3a723f | CANONICAL |
+| E17 | AC3 | verification/IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/import-files.json | - | ed43a9830da85785ad1f4b31d06f715e54a597854e5763e60081e323b4b91fe6 | CANONICAL |
+| E18 | AC3 | verification/IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/import-folder.json | - | 5223bdb50839f91259dfb005e302319915a479aa2d32bcc425d4683a3fd08982 | CANONICAL |
+| E19 | AC3 | verification/IMPORT-EXPORT-UI-1/evidence/headless/import-export-ui/payload-contract.json | - | d34c1f5bd62207bdc895abc66df0218359099dc0a3f6e97b43b16cf97bc1fec6 | CANONICAL |
+| E20 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/01-bookshelf-import-entries.png | - | 2827224aa6b9341b1d34a8665cd264520d0da3840bdb1bb7b7ae6d4bbd3ad929 | CANONICAL |
+| E21 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/02-reader-export-entry.png | - | ba3f635fb1887404b979aebc235be12b8c2ba20a0990607da97c21f8820d904a | CANONICAL |
+| E22 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/03-export-ready.png | - | 4c0765afca8c359ba0bce527c2eb6a7e9c423f3db524b829ccc58dc9e896a295 | CANONICAL |
+| E23 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/04-export-completed.png | - | 8dbe4f7d98f763bffea71f3de84254f1efbfa9b22fd233dcb7fe988c7190c7a1 | CANONICAL |
+| E24 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/05-export-revealed.png | - | 0a7d08721349e8aa76c46538741f0e7970613b6315882012f39d2f09e7d033b8 | CANONICAL |
+| E25 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/06-export-second-run.png | - | 98638db807ae4ade6e7d05546fe54493b8b776cc93633d4a07517bf3ed9bcd18 | CANONICAL |
+| E26 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/07-workbench-import-entry.png | - | b4689bdf87001f5c6df46fb2c63d02347570abae2e586dfbf06fe539c6ed215d | CANONICAL |
+| E27 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/08-picker-dialog.png | - | f11c3ca25b86e01488e2f08db83e0becaab31a15221c1c98db8cc366c4786a52 | CANONICAL |
+| E28 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/09-picker-filled.png | - | e764a78015d89fbf6b8b0c8e114212ceec5c5f3bdfae8369d826b1a250ba8440 | CANONICAL |
+| E29 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/10-import-panel.png | - | f56036cf0716e153eb66339660e9e67bd02a1d238857d1b2812efe9aad14acfd | CANONICAL |
+| E30 | AC3 | verification/IMPORT-EXPORT-UI-1/screens/11-import-completed.png | - | 859a8aba8d9012c550f88b9b9201cdb40d8af6652f5af26e74d57f0033e48a89 | CANONICAL |
 | E31 | AC2 | apps/desktop-avalonia/src/NewManga.App/Services/ImportExportContracts.cs | - | 0b9b72a14947ee97d8141aabc2092ba2eccfcf4257d201bff4175257e94da671 | SOURCE_PIN |
 | E32 | AC1/AC2 | apps/desktop-avalonia/src/NewManga.App/Services/FilePickerGateway.cs | - | 3301eb6ef781cf88877102d03994ae8abd9bc790b46367376f5f15781284838b | SOURCE_PIN |
 | E33 | AC1/AC2 | apps/desktop-avalonia/src/NewManga.App/Views/ImportExportPanels.cs | - | 96f155f0477f541da585f1a9f16d481c337079b2937fdfd0b85a6d0f31f34b8a | SOURCE_PIN |

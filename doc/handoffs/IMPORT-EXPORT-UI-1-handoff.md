@@ -3,7 +3,7 @@
 - Task: `doc/tasks/IMPORT-EXPORT-UI-1.md`（team task-47）
 - Branch: `task/IMPORT-EXPORT-UI-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/IMPORT-EXPORT-UI-1`
 - Base: 卡面 `49c9e7f24`；按 Lead 指示基于 HEAD `558a48a76` 开分支，交付前 rebase 到 main `b874b2cf7`（READER-SELECTOR-UI-1 先落地；无冲突）
-- Delivery head: `__DELIVERY_HEAD__`（实现 + 证据提交；未改 Core 语义/协议/Host 契约/旧壳/packaging）
+- Delivery head: `5019eb01dab0d9b94c0a71cafb3b96c9bb9caba2`（实现 + 证据提交；未改 Core 语义/协议/Host 契约/旧壳/packaging）
 - 未 push；未 gc/prune。
 
 ## 1. 交付摘要
