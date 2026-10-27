@@ -63,6 +63,16 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-RLW-REPORT | AC1–AC5 | `verification/READER-LIBRARY-WIRE-1/REPORT.md` | `cd4500dcc` | `f9ec6f1e9153ee6f1d9c14d1585be19ec53469c20c0fbfb6a8c3922462e04c30` | CANONICAL |
+| E-RLW-LIVE | AC1–AC4 | `verification/READER-LIBRARY-WIRE-1/live-evidence.json` | `cd4500dcc` | `67207233be1903f6ed12b1918527f4b0c296f624199a8308419392bd5e330e7f` | CANONICAL |
+| E-RLW-MEM | AC4 | `verification/READER-LIBRARY-WIRE-1/working-set-samples.json` | `cd4500dcc` | `5a1ffd1dcc7b32eb11b6d258a1004965e3bf3a0c0143609380321c80e969943c` | CANONICAL |
+| E-RLW-IMMERSIVE | AC2/AC3 | `verification/READER-LIBRARY-WIRE-1/screens/03-immersive.png` | `cd4500dcc` | `4796aa735dfb5dd586872d319d75a6712685c6b6f6581b0f80ee8dc166248bcb` | CANONICAL |
+| E-RLW-HUD | AC2/AC3 | `verification/READER-LIBRARY-WIRE-1/screens/04-hud-hidden.png` | `cd4500dcc` | `eb118ff09ccf20e9bfd5856206a3017de3e0bc6b41e56758fdc6a1fd8d25d806` | CANONICAL |
+| E-RLW-SCROLL | AC4 | `verification/READER-LIBRARY-WIRE-1/screens/06-webtoon-scrolled.png` | `cd4500dcc` | `ebb960f97878d919d642e69a5ec675c532df2447f07c938217026bae24d893b4` | CANONICAL |
+| E-RLW-HOSTLOG | AC3 | `verification/READER-LIBRARY-WIRE-1/runtime-logs/host.log` | `cd4500dcc` | `3dda317ece18348dc6cf25e747c329435882b6d8d241ab9225cae019291e9777` | CANONICAL |
+| E-RLW-DOTNET | AC5 | `verification/READER-LIBRARY-WIRE-1/dotnet-all.log` | `cd4500dcc` | `2827697e00d7ba920f4c655e81480abe38623a039560c1b5142359c15bf4cab3` | CANONICAL |
+| E-RLW-VITEST | AC5 | `verification/READER-LIBRARY-WIRE-1/vitest.log` | `cd4500dcc` | `abfdebd690ce26f6d5a08f09810b62e741092913a4e0af059aa58ddcc903f3ad` | CANONICAL |
+| E-RLW-PYTEST | AC5 | `verification/READER-LIBRARY-WIRE-1/pytest.log` | `cd4500dcc` | `cb26b43bb5e9e367c78ba990c52aa440c9ed88ed491f33c35a0125ffd66464af` | CANONICAL |
 
 ## Resource Manifest
 

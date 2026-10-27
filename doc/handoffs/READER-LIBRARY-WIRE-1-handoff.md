@@ -3,7 +3,7 @@
 - Task: `doc/tasks/READER-LIBRARY-WIRE-1.md`（team task-21）
 - Branch: `task/READER-LIBRARY-WIRE-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/READER-LIBRARY-WIRE-1`
 - Base: `377736213`（BOOK-FIXTURE-1 集成提交）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `cd4500dcc`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改协议/Host 契约（wire 契约不变）；未改 Python Core；未改旧壳；fixture 回退保留。
 
 ## 1. 交付摘要
