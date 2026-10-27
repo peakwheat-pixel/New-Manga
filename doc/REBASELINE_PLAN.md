@@ -6,12 +6,8 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|GIT-CLEAN-RUST-CAPACITY-DESIGN-1|—|ready（Rust 线仅设计；AD-002 下 Rust host 于 S5 退役，释放前需用户确认）|
-|GIT-CLEAN-RUST-ISOLATION-1|—|in_review（r2 blocked 保留；同上）|
-|GIT-CLEAN-CORE-ENV-2|—|proposed（V2–V5未定义）|
-|GIT-CLEAN-PUBLICATION-DIAG-1|—|approved（仅诊断）|
-|GIT-CLEAN-PUBLICATION-1|—|in_review（root e34a90d00；r1 blocked；push-gate approved）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
+|GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 |DISPLAY-PERF-DECISION-1|—|done（AC1–AC16 全 MET；随 FINAL-VALIDATION-1 关闭）|
 |HOST-COMMAND-MIGRATION-1|HOST-CORECLIENT-1|done（S2 parity：66 快照/16 实现/50 NS 分批；集成 5a11fa7d9）|
@@ -43,11 +39,14 @@
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
 |RUN-BINDING-FIX-1|—|done（Host 注入 provider_bindings；ocr 3/3；A/B；173/173；集成 692347b58）|
 |CORE-PIPELINE-FIX-1|—|done（color analyzer + 空检测语义；同构建 8 页 color 3/3；pytest 2753P；集成 aac638781）|
+|RELEASE-REPACK-1|—|ready（sidecar 重打包+同构建复验）|
+|TRANSLATE-PROVIDER-1|—|ready（最小翻译 provider 接线）|
+|SCHEDULER-THREAD-DIAG-1|—|ready（调度线程异常诊断）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：无。
+READY 节点：RELEASE-REPACK-1、TRANSLATE-PROVIDER-1、SCHEDULER-THREAD-DIAG-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
