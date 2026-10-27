@@ -1,0 +1,11 @@
+{
+  "ac": "AC1/AC2",
+  "fixture": "S4-CMD-BATCH-1 region fixture (disposable copy)",
+  "region_id": "69a60abebf914684b3fa0485b6728622",
+  "current_revision_no": 3,
+  "revision_count": 3,
+  "core_command": "list_region_revisions",
+  "core_minor": 3,
+  "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022list_region_revisions\u0022,\u0022payload\u0022:{\u0022region_id\u0022:\u002269a60abebf914684b3fa0485b6728622\u0022}}",
+  "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022result\u0022:{\u0022region_id\u0022:\u002269a60abebf914684b3fa0485b6728622\u0022,\u0022current_revision_no\u0022:3,\u0022revisions\u0022:[{\u0022region_revision_id\u0022:\u002251d924c8ce754a28a9743804b28e0c6f\u0022,\u0022revision_no\u0022:1,\u0022origin\u0022:\u0022user\u0022,\u0022review_state\u0022:\u0022unreviewed\u0022,\u0022is_pinned\u0022:false,\u0022restored_from_revision_id\u0022:null,\u0022created_at\u0022:\u00222026-10-27T13:19:13.074\u002B00:00\u0022,\u0022region_type\u0022:\u0022speech\u0022,\u0022sfx_policy\u0022:\u0022skip\u0022,\u0022is_current\u0022:false},{\u0022region_revision_id\u0022:\u0022aa3ebadbc4554958a95cce1eb522eb6a\u0022,\u0022revision_no\u0022:2,\u0022origin\u0022:\u0022user\u0022,\u0022review_state\u0022:\u0022needs_review\u0022,\u0022is_pinned\u0022:false,\u0022restored_from_revision_id\u0022:null,\u0022created_at\u0022:\u00222026-10-27T13:19:13.074\u002B00:00\u0022,\u0022region_type\u0022:\u0022speech\u0022,\u0022sfx_policy\u0022:\u0022skip\u0022,\u0022is_current\u0022:false},{\u0022region_revision_id\u0022:\u0022afa5e67c9a57429a8809bfa275898497\u0022,\u0022revision_no\u0022:3,\u0022origin\u0022:\u0022user\u0022,\u0022review_state\u0022:\u0022confirmed\u0022,\u0022is_pinned\u0022:false,\u0022restored_from_revision_id\u0022:null,\u0022created_at\u0022:\u00222026-10-27T13:19:13.074\u002B00:00\u0022,\u0022region_type\u0022:\u0022speech\u0022,\u0022sfx_policy\u0022:\u0022skip\u0022,\u0022is_current\u0022:true}]},\u0022error\u0022:null}"
+}
