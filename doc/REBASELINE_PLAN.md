@@ -41,7 +41,7 @@
 |CORE-PIPELINE-FIX-1|—|done（color analyzer + 空检测语义；同构建 8 页 color 3/3；pytest 2753P；集成 aac638781）|
 |RELEASE-REPACK-1|—|done（新 sidecar base/models；同构建 8 页 ocr/color 3/3；安装 smoke PASS；集成 429ca763c）|
 |TRANSLATE-PROVIDER-1|—|done（identity-experimental；源码 8 页全链到 render 22/22；PC3 同构建待重打包；集成 5b96c25ef）|
-|RUN-STORE-CACHE-RACE-FIX-1|—|ready（共享缓存竞态修复；latent 生产缺陷）|
+|RUN-STORE-CACHE-RACE-FIX-1|—|done（视图读/执行缓存分离+CAS；前后 FAIL→PASS 实证；集成 2980608e0）|
 |NS-WIRE-B2|—|ready（剩余 11 条 NS 收尾接线）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|

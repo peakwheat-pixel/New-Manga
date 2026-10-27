@@ -3,7 +3,7 @@ id: RUN-STORE-CACHE-RACE-FIX-1
 title: 修复 SqlitePipelineStore 共享缓存跨线程对象替换竞态
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_goal_auto_except_recommended
 suggested_owner: sandbox-verify
 owner: sandbox-verify
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 97de0fa99
 branch: task/RUN-STORE-CACHE-RACE-FIX-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/RUN-STORE-CACHE-RACE-FIX-1
-integration_commit: null
+integration_commit: 2980608e0
 delivery_head: dadcf72b9d0feaf786e660d23ef28a63244060bf
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/RUN-STORE-CACHE-RACE-FIX-1
 allowed_paths:
   - doc/tasks/RUN-STORE-CACHE-RACE-FIX-1.md
@@ -121,3 +121,12 @@ pin 口径：sha256 为 **提交内 blob 字节**（与全新 checkout 落盘字
 - 删除、迁移、归档：本 Task 无删除/迁移/归档；临时 pre-fix worktree 保留引用（待 DSH closeout 处置）。
 - 未关闭项：① frozen sidecar 重打包属发布步骤；② 修订 CAS 为单进程/单 store 实例内存态（限制见 REPORT §8）；详见 Handoff 遗留。
 - Review：待 DSH 指定独立 Reviewer（owner 为实现者，不得自审）。
+## Review（DSH 集成复核，2026-10-27）— PASS（前后对照实证）
+
+- AC1：SqlitePipelineStore.refresh() 改为独立视图读、**绝不替换 _cache**（fresh 轮询保留未降级）；InMemoryPipelineStore.refresh() 返回 detached 结构克隆。
+- AC2：un_json 写入前 owner/修订 CAS（_write_revision + _check_write_revision，put 与事务内同一守卫），旧快照抛 STALE_RUN_SNAPSHOT；无 Schema/协议/Host 变更。
+- AC3 端到端（真实 scheduler 线程 + 100ms projection-fresh + 私有数据根）：修复前 **FAIL**（8/8 StepRun 卡 running、8 个 regionless INVALID_INPUT、8/8 任务 failed，EXIT=1）→ 修复后 **PASS**（0 卡 running、0 regionless、completed 17 / failed 3、5 任务 completed，与 cached/不轮询对照逐项一致，EXIT=0）；pytest 并发用例修复前 FAIL → 后 PASS（3/3）。
+- 回归：DSH 复跑 	est.ps1 **177/177**；-k "projection or scheduler or concurrent" **72 passed / 2 skipped**；实现方全量 pytest pre-fix **4F/2752P/9S** → post-fix **4F/2760P/9S**（失败集合相同、+8 新用例、0 新增；第 4 项为既有 flaky plugin_sandbox）。
+- AC5：check.ps1 -TaskPath PASS；26 条 64-hex pin（口径=提交 blob）；Handoff + Record Decision。
+- 遗留：frozen sidecar 未重打包（→ RELEASE-REPACK-2）；CAS 为单进程/store 实例内存态（前提单 Core 独占 data root）；run_json 仍整份写、无字段级合并。
+- 集成：2980608e0。
