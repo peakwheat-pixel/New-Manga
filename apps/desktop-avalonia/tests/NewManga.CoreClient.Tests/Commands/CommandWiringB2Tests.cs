@@ -16,9 +16,9 @@ namespace NewManga.CoreClient.Tests.Commands;
 /// NS-WIRE-B2 AC1/AC2/AC3: the final nine NOT_SUPPORTED commands are Core-backed with the route +
 /// minor proven by verification/NS-RECLASSIFY-1, really execute against the frozen sidecars (a
 /// projected result or a typed domain error — both prove the handler ran), and reject bad arguments
-/// at the dispatcher boundary before any frame reaches the Core. The two credential commands stay
-/// NOT_SUPPORTED with an explicit BLOCKED reason because their Host half needs the OS credential
-/// manager port the Avalonia Host does not have yet.
+/// at the dispatcher boundary before any frame reaches the Core. The two credential commands were
+/// BLOCKED here and are unblocked by CREDENTIAL-PORT-1 (Host OS vault + Core BindProfileCredential/
+/// ClearProfileCredential); this file now asserts they are Host-local implemented.
 /// </summary>
 public sealed class CommandWiringB2Tests
 {
@@ -35,7 +35,7 @@ public sealed class CommandWiringB2Tests
         ["list_region_revisions"] = ("list_region_revisions", 3),
     };
 
-    private static readonly string[] BlockedCommands = { "credential_clear", "credential_put" };
+    private static readonly string[] CredentialCommands = { "credential_clear", "credential_put" };
 
     private static JsonElement Args(string json)
     {
@@ -46,8 +46,8 @@ public sealed class CommandWiringB2Tests
     [Fact]
     public void Registry_B2Commands_AreCoreBackedWithProbedMinor()
     {
-        Assert.Equal(64, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
-        Assert.Equal(2, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
+        Assert.Equal(66, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
+        Assert.Equal(0, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
 
         foreach (var (name, expected) in B2Routes)
         {
@@ -59,15 +59,13 @@ public sealed class CommandWiringB2Tests
             Assert.Null(descriptor.Reason);
         }
 
-        // The two blocked commands keep a typed, long-form BLOCKED reason (never a vague sentence).
-        foreach (var name in BlockedCommands)
+        // CREDENTIAL-PORT-1 unblocked the pair: Host-local (OS vault + Core bind/clear), no BLOCKED reason.
+        foreach (var name in CredentialCommands)
         {
             var descriptor = HostCommandRegistry.Get(name);
-            Assert.False(descriptor.IsImplemented, $"{name} must stay NOT_SUPPORTED until the Host credential port exists");
-            Assert.Equal(HostCommandChannel.None, descriptor.Channel);
-            Assert.NotNull(descriptor.Reason);
-            Assert.StartsWith("BLOCKED（NS-WIRE-B2 AC3）", descriptor.Reason, StringComparison.Ordinal);
-            Assert.Contains("凭据", descriptor.Reason, StringComparison.Ordinal);
+            Assert.True(descriptor.IsImplemented, $"{name} must be IMPLEMENTED after CREDENTIAL-PORT-1");
+            Assert.Equal(HostCommandChannel.HostLocal, descriptor.Channel);
+            Assert.Null(descriptor.Reason);
         }
     }
 
@@ -75,7 +73,7 @@ public sealed class CommandWiringB2Tests
     public void Inventory_B2Commands_IsWrittenAsEvidence()
     {
         var rows = new List<object>();
-        foreach (var name in B2Routes.Keys.Concat(BlockedCommands).OrderBy(item => item, StringComparer.Ordinal))
+        foreach (var name in B2Routes.Keys.Concat(CredentialCommands).OrderBy(item => item, StringComparer.Ordinal))
         {
             var descriptor = HostCommandRegistry.Get(name);
             rows.Add(new
@@ -97,7 +95,7 @@ public sealed class CommandWiringB2Tests
             writer.WriteStartObject();
             writer.WriteString("ac", "AC1");
             writer.WriteString("base", "verification/NS-RECLASSIFY-1/reclassification.json");
-            writer.WriteString("registry", "HostCommandRegistry (64 IMPLEMENTED / 2 NOT_SUPPORTED of 66)");
+            writer.WriteString("registry", "HostCommandRegistry (66 IMPLEMENTED / 0 NOT_SUPPORTED of 66)");
             writer.WriteNumber("commands", rows.Count);
             writer.WriteStartArray("inventory");
             foreach (var row in rows)

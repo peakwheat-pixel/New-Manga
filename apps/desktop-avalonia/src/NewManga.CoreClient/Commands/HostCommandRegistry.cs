@@ -2,11 +2,10 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Sixty-four commands are migrated: the S2/A1/A2 sets,
-/// thirteen NS-WIRE-B1 bindings, nine NS-WIRE-B2 bindings, five S4-CMD-BATCH-1 bindings and the
-/// four Host-local grant/shell faces. The remaining two are explicit NOT_SUPPORTED with a per-command
-/// BLOCKED reason (never silently missing): the credential pair needs the Host-side OS credential
-/// manager port that the Avalonia Host does not have yet.
+/// organised into the six domain services. Sixty-six commands are migrated: the S2/A1/A2 sets,
+/// thirteen NS-WIRE-B1 bindings, nine NS-WIRE-B2 bindings, five S4-CMD-BATCH-1 bindings, the
+/// four Host-local grant/shell faces and the CREDENTIAL-PORT-1 credential pair (OS vault +
+/// Core BindProfileCredential/ClearProfileCredential). There is no NOT_SUPPORTED command left.
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
 /// verification/HOST-COMMAND-MIGRATION-1/parity/, verification/NS-WIRE-A1/,
@@ -206,9 +205,10 @@ public static class HostCommandRegistry
     };
 
     /// <summary>
-    /// GRANT-ISSUER-1: Host-local commands. The import pair mints host_issuer grants and drives the
-    /// Core through the host-control envelope plus ImportPages; the two shell actions open a
-    /// whitelisted OS directory. None of them is a plain application-channel passthrough.
+    /// GRANT-ISSUER-1 / CREDENTIAL-PORT-1: Host-local commands. The import pair mints host_issuer
+    /// grants and drives the Core through the host-control envelope plus ImportPages; the two shell
+    /// actions open a whitelisted OS directory; the credential pair writes/reads the OS vault and
+    /// binds/clears only the opaque <c>credential_ref</c> in the Core. None is a plain passthrough.
     /// </summary>
     private static readonly HashSet<string> HostLocalBindings = new(StringComparer.Ordinal)
     {
@@ -216,29 +216,8 @@ public static class HostCommandRegistry
         "library_import_folder",
         "library_reveal_export_folder",
         "plugins_open_directory",
-    };
-
-    /// <summary>
-    /// NS-WIRE-B2 AC3: the two commands that stay NOT_SUPPORTED because the *Host* half of their
-    /// legacy implementation has no port in the Avalonia Host yet. The Core routes exist
-    /// (BindProfileCredential / ClearProfileCredential, both executed by NS-RECLASSIFY-1's probe),
-    /// but they only bind/clear a <c>credential_ref</c> that the Host must have minted through the
-    /// OS credential store. Marking them IMPLEMENTED would report a credential surface that cannot
-    /// store or delete a secret, so they carry an explicit BLOCKED reason instead.
-    /// </summary>
-    private static readonly Dictionary<string, string> BlockedReasons = new(StringComparer.Ordinal)
-    {
-        ["credential_put"] =
-            "BLOCKED（NS-WIRE-B2 AC3）：Core 等价命令为 `BindProfileCredential`，它只接受**已存在**且由 " +
-            "host 凭据存储铸造的 credential_ref；旧 Tauri 的 credential_put 依赖 Host 本地 Windows " +
-            "凭据存储 + 交互式凭据输入（apps/desktop/src-tauri/src/settings_bridge.rs:288-332 " +
-            "prompt_and_store）。Avalonia Host 尚无凭据管理器端口，伪造 ref 会写入无法解密的引用 → " +
-            "不得标 IMPLEMENTED，待 Host 凭据端口移植（AD-002 后续 Slice）后接入。",
-        ["credential_clear"] =
-            "BLOCKED（NS-WIRE-B2 AC3）：Core 等价命令为 `ClearProfileCredential`，它只清除 profile 上的 " +
-            "credential_ref，**不删除** OS 凭据存储里的密钥；旧 Tauri 的 credential_clear 是 " +
-            "Core 清除 + Host 凭据管理器 delete 两段式（settings_bridge.rs:334-350）。只接 Core 半段会留下" +
-            "孤儿凭据并把 credential_state 误报为 missing → 不得标 IMPLEMENTED，待 Host 凭据端口移植后接入。",
+        "credential_put",
+        "credential_clear",
     };
 
     private static readonly IReadOnlyDictionary<string, HostCommandDescriptor> Commands =
@@ -322,10 +301,12 @@ public static class HostCommandRegistry
                 continue;
             }
 
-            var reason = BlockedReasons.TryGetValue(name, out var blocked)
-                ? blocked
-                : "该命令的语义在旧 Tauri/Rust host 本地实现（设置持久化、凭证、插件、备份恢复、导入导出或运行编排）；" +
-                  "S2 只迁移已探测通过的命令面，host-local 逻辑按 AD-002 在后续 Slice 移植，本 Slice 显式 NOT_SUPPORTED。";
+            // Defensive only: every production command is bound after CREDENTIAL-PORT-1, so this
+            // branch is unreachable (a parity test asserts 66/0). It stays explicit rather than
+            // silently dropping a command if a future name is added without a binding.
+            const string reason =
+                "该命令在旧 Tauri/Rust host 本地实现，S2/Credential Slice 未覆盖；新增命令必须同时登记绑定，" +
+                "不得依赖本兜底分支。";
 
             target.Add(new HostCommandDescriptor(
                 name,

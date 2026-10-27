@@ -104,14 +104,10 @@ public sealed class CommandParityContractTests
         var implemented = HostCommandRegistry.All.Values.Where(command => command.IsImplemented).ToArray();
         var notSupported = HostCommandRegistry.All.Values.Where(command => !command.IsImplemented).ToArray();
 
-        // NS-WIRE-B2: nine more Core routes were wired, so the residual NOT_SUPPORTED set is exactly
-        // the two credential commands whose Host-side OS credential store does not exist yet.
-        Assert.Equal(64, implemented.Length);
-        Assert.Equal(2, notSupported.Length);
+        // CREDENTIAL-PORT-1 wired the last pair (OS vault + Core bind/clear): nothing is NOT_SUPPORTED.
+        Assert.Equal(66, implemented.Length);
+        Assert.Empty(notSupported);
         Assert.Equal(66, implemented.Length + notSupported.Length);
-        Assert.Equal(
-            new[] { "credential_clear", "credential_put" },
-            notSupported.Select(command => command.Name).OrderBy(name => name, StringComparer.Ordinal));
 
         foreach (var command in implemented)
         {

@@ -3,6 +3,7 @@ using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Wire;
 using NewManga.CoreClient.Diagnostics;
+using NewManga.Host.Credentials;
 using NewManga.CoreClient.Transport;
 using NewManga.Host.Resources;
 
@@ -40,6 +41,9 @@ public sealed class HostRuntime : IAsyncDisposable
 
     /// <summary>GRANT-ISSUER-1: host-control grant chain + whitelisted shell actions (null until ready).</summary>
     public HostGrantCoordinator? Grants { get; private set; }
+
+    /// <summary>CREDENTIAL-PORT-1: OS-vault credential port + Core bind/clear bridge (null when unavailable).</summary>
+    public HostCredentialCoordinator? Credentials { get; private set; }
 
     /// <summary>GRANT-ISSUER-1: the production command dispatcher, including the Host-local commands.</summary>
     public HostCommandDispatcher? Commands { get; private set; }
@@ -415,21 +419,56 @@ public sealed class HostRuntime : IAsyncDisposable
                 cancellationToken).ConfigureAwait(false);
             _log.Info($"host_bridge ready ({HostBridge.Wire.Count} wire frames)");
 
+            // CREDENTIAL-PORT-1: the credential port does not depend on the host-control session;
+            // construct it first so put/clear stay available even if grant issuance is down.
+            try
+            {
+                var credentialStore = new WindowsCredentialStore();
+                Credentials = new HostCredentialCoordinator(
+                    new CoreCredentialBridge(CoreService, _options.RequestTimeout),
+                    credentialStore,
+                    _options.LogDirectory);
+                _log.Info("credential port ready (Windows Credential Manager)");
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or PlatformNotSupportedException or EntryPointNotFoundException)
+            {
+                _log.Warn($"credential port unavailable: {ex.Message}");
+            }
+
+            async Task<HostCommandResult> HostLocalAsync(
+                string name,
+                System.Text.Json.JsonElement payload,
+                CancellationToken token)
+            {
+                if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
+                {
+                    var credentials = Credentials
+                        ?? throw new CredentialPortException(
+                            "CREDENTIAL_STORE_UNAVAILABLE",
+                            "the Host credential port is unavailable on this machine");
+                    return await credentials.HandleCommandAsync(name, payload, token).ConfigureAwait(false);
+                }
+
+                var grants = Grants
+                    ?? throw new HostCommandNotSupportedException(HostCommandRegistry.Get(name));
+                return await grants.HandleCommandAsync(name, payload, token).ConfigureAwait(false);
+            }
+
             // GRANT-ISSUER-1: open the HOST-ISSUER-1 host-control session and wire the dispatcher.
             // A session failure is logged and leaves grant commands typed-unavailable; it does not
-            // fail the whole Host (reads keep working).
+            // fail the whole Host (reads and credential commands keep working).
             try
             {
                 var session = await CoreService.OpenHostSessionAsync(cancellationToken).ConfigureAwait(false);
                 _log.Info($"host-control session opened ({session.HostSessionId})");
                 Grants = new HostGrantCoordinator(
                     CoreService, _options.DataRoot, _options.LogDirectory, _options.RequestTimeout);
-                Commands = new HostCommandDispatcher(CoreService, HostBridge, Grants.HandleCommandAsync);
+                Commands = new HostCommandDispatcher(CoreService, HostBridge, HostLocalAsync);
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
             {
                 _log.Warn($"host-control session unavailable: {ex.Message}");
-                Commands = new HostCommandDispatcher(CoreService, HostBridge);
+                Commands = new HostCommandDispatcher(CoreService, HostBridge, HostLocalAsync);
             }
 
             Result = HostStartResult.Ready(decision.Mode);
