@@ -1,7 +1,8 @@
 {
   "task": "RUN-STORE-CACHE-RACE-FIX-1",
   "disposition": "PRESERVE_REFERENCED",
-  "delivery_head": "dadcf72b9d0feaf786e660d23ef28a63244060bf",
+  "delivery_head": "dadcf72b9",
+  "docs_commit": "e35238075",
   "base_commit": "9ef53f24d",
   "task_env": "G:/CODEX/New Manga.workspace/task-envs/RUN-STORE-CACHE-RACE-FIX-1",
   "consumed": [
@@ -22,124 +23,124 @@
   "written_in_workspace": "G:/CODEX/New Manga.workspace/task-envs/RUN-STORE-CACHE-RACE-FIX-1/**（data-roots、evidence、finalize 脚本；保留引用）",
   "artifacts": [
     {
-      "rel": "ab-matrix.json",
-      "bytes": 3207,
-      "sha256": "b73f34c5dcd577ab791a6e18b8b53b6ac7bc13fe854141dd8af517e821f221e1"
-    },
-    {
-      "rel": "check-taskpath.log",
-      "bytes": 656,
-      "sha256": "c4c135b87da18e2c5a79af06a4047be93b819ee029217c1bc547e5293d726fda"
-    },
-    {
-      "rel": "logs/dotnet-test.log",
-      "bytes": 18464,
-      "sha256": "5333ff6863c34621ad6fabd1a62e4e67236ccd5e401feafc0cdda737cebaac70"
-    },
-    {
-      "rel": "logs/flaky-plugin-sandbox-reruns.log",
-      "bytes": 832,
-      "sha256": "4b059d0fdd2d6bf02c6f71ee432b5d052e3cdd6cc1982ba4f7f2070d30e876b1"
-    },
-    {
-      "rel": "logs/post-fix-plugin-sandbox-module.log",
-      "bytes": 2499,
-      "sha256": "d60afa45b48821d7858b1cd2904e61eb3bc80483f0bee173c71ce3464a321ebc"
-    },
-    {
-      "rel": "logs/post-fix-pytest-concurrency.log",
-      "bytes": 572,
-      "sha256": "a46b728d2bc7651525fa75f0aeb46e6185b36f058f0be31d771e37823b61e124"
-    },
-    {
-      "rel": "logs/post-fix-pytest-full-runA-aux.log",
-      "bytes": 87986,
-      "sha256": "681bd5aa8a4ceb29328ce1f2238fefc94540e407e64cb7c94959f37d97d9c846"
-    },
-    {
-      "rel": "logs/post-fix-pytest-full.log",
-      "bytes": 90233,
-      "sha256": "ee24a106930454644f88944b1fbbe124446cce4ccb70c634f650f6ecbd390630"
-    },
-    {
-      "rel": "logs/post-fix-pytest-unit.log",
-      "bytes": 557,
-      "sha256": "d9ff2a122f258d133172dc81be20188113edee731b271f6e5121ae9f47e4598e"
-    },
-    {
-      "rel": "logs/post-fix-repro-cached-control.log",
-      "bytes": 33219,
-      "sha256": "f2233bfc14dee9860b7cc8fa823a116f08b7dbfa095df3650275839b50332be5"
-    },
-    {
-      "rel": "logs/post-fix-repro-nopoll-control.log",
-      "bytes": 33116,
-      "sha256": "dbf1665c837e7b0bc86c8c8c58cb8733857fa8a629a57c46f002511fe7cce91e"
-    },
-    {
-      "rel": "logs/post-fix-repro-projection-fresh.log",
-      "bytes": 40653,
-      "sha256": "61b1e0d0f9ab7d51baedc9d2c8d66f090aa027a6caea202210b9c5a45c5ca070"
-    },
-    {
-      "rel": "logs/pre-fix-pytest-concurrency.log",
-      "bytes": 4179,
-      "sha256": "a386f21d7e71b1383cdc17311c780ee3c6cb6b19d865e008cab1ea8c590db272"
-    },
-    {
-      "rel": "logs/pre-fix-pytest-full-baseline.log",
-      "bytes": 96562,
-      "sha256": "fbff48856fa5b72526056c7cb8790e54c03518bbaf4e41a60e1b412a801a1f7d"
-    },
-    {
-      "rel": "logs/pre-fix-pytest-unit.log",
-      "bytes": 10319,
-      "sha256": "4944442d5661f32551545dd10043626b1b8d88c9659af5ede41634353bb9ba22"
-    },
-    {
-      "rel": "logs/pre-fix-repro-cached-control.log",
-      "bytes": 33367,
-      "sha256": "f41783672d50652ce3b133b2c1b93133f6cb6432abc929c1b203a5855968f63d"
-    },
-    {
-      "rel": "logs/pre-fix-repro-projection-fresh.log",
-      "bytes": 31244,
-      "sha256": "494c5f97b18b6998f9abbbd3240d783de711adc47c2a46d19371b32f6246c4c6"
-    },
-    {
       "rel": "REPORT.md",
       "bytes": 11676,
       "sha256": "afeeba14a0713b47a91e5f9c92e68df6e87b54c83231a748b3c33b929e8a8e07"
     },
     {
+      "rel": "ab-matrix.json",
+      "bytes": 3101,
+      "sha256": "e2966644877429ffe6b1c6a186a4d2202a1a4578f40043a1268209a5eb8fd9e3"
+    },
+    {
+      "rel": "check-taskpath.log",
+      "bytes": 645,
+      "sha256": "507142f9f823e4526b8a4e8ff5aebd391140f391cda1702fae1e181145abdc27"
+    },
+    {
+      "rel": "logs/dotnet-test.log",
+      "bytes": 18094,
+      "sha256": "b18a59399deaba0bc59f9662a725faa27ae5cb7dfb66a996f971917509780729"
+    },
+    {
+      "rel": "logs/flaky-plugin-sandbox-reruns.log",
+      "bytes": 813,
+      "sha256": "89a4f4456f2a7e4aaccf8891d5e50a57fa57b91298c974fb62f226ff058cdca8"
+    },
+    {
+      "rel": "logs/post-fix-plugin-sandbox-module.log",
+      "bytes": 2441,
+      "sha256": "b5e2f3f6ce2b9999a7512b3626939b62209e8291f046b2cc85875bbd04d4bede"
+    },
+    {
+      "rel": "logs/post-fix-pytest-concurrency.log",
+      "bytes": 561,
+      "sha256": "5c97a8cbf525bf887cd41e06c978cc28e3c8b961f8149025d90c9adb4a32dfe3"
+    },
+    {
+      "rel": "logs/post-fix-pytest-full-runA-aux.log",
+      "bytes": 87128,
+      "sha256": "f424d4b62fdac0150d611c90f8f6b2e5481179e21caae1a32ccf35dae9716509"
+    },
+    {
+      "rel": "logs/post-fix-pytest-full.log",
+      "bytes": 89320,
+      "sha256": "2b78a6d3a9c7f2bcf24fc15e40d055329f09f7f61fc4312738d377099630acb9"
+    },
+    {
+      "rel": "logs/post-fix-pytest-unit.log",
+      "bytes": 546,
+      "sha256": "76647283294b446393c65aede3e16c96a3c64ccf563a063ad62ba32e0dfe43e9"
+    },
+    {
+      "rel": "logs/post-fix-repro-cached-control.log",
+      "bytes": 33074,
+      "sha256": "14416b1b90ac31d529a94dff23e5d41a38e463928cda076845d74363660569dd"
+    },
+    {
+      "rel": "logs/post-fix-repro-nopoll-control.log",
+      "bytes": 32971,
+      "sha256": "251f5b6d14089dcfb7dc8f080b80f32629154cde2d0ea211b4b8dafb32c2c54a"
+    },
+    {
+      "rel": "logs/post-fix-repro-projection-fresh.log",
+      "bytes": 40468,
+      "sha256": "b54414aa745ba8de85ef1e0376aae779a3c7ab1e8191120657c3f7fb352ad603"
+    },
+    {
+      "rel": "logs/pre-fix-pytest-concurrency.log",
+      "bytes": 4105,
+      "sha256": "ca7797ee9e666a6b52959a425dfd72d4ed2ea3c90abb59a5f4ae566392cb9b39"
+    },
+    {
+      "rel": "logs/pre-fix-pytest-full-baseline.log",
+      "bytes": 95649,
+      "sha256": "92eb673d3b1b61e62b273ba1d2528dd13344f3d9e748f229ad1bd3b9f234d277"
+    },
+    {
+      "rel": "logs/pre-fix-pytest-unit.log",
+      "bytes": 10177,
+      "sha256": "dd8e1c285415a619759c521e5c92e1258ab188b1fcb9ed1489053064e6e94c80"
+    },
+    {
+      "rel": "logs/pre-fix-repro-cached-control.log",
+      "bytes": 33220,
+      "sha256": "67bf3dfb4e46bff5db4d9a0a97cc0c1a63cc90fca474f477c1f394c2454aad5c"
+    },
+    {
+      "rel": "logs/pre-fix-repro-projection-fresh.log",
+      "bytes": 31106,
+      "sha256": "d74472342d27603b239e9346f16324573bf320c67bd5e5ce7ed4d06c0ea3b1f7"
+    },
+    {
       "rel": "repro/post-fix-cached-control.json",
-      "bytes": 213911,
-      "sha256": "5dd9ae79e2567a216527bdf6079eb3617d5c4cb4a246bed0cc2666813ee9d27b"
+      "bytes": 212220,
+      "sha256": "6f8c8840ba59d8d4361787bd4a39944dfc54a7ba62e5580866c6a4bc9bcecfe4"
     },
     {
       "rel": "repro/post-fix-projection-fresh.json",
-      "bytes": 223586,
-      "sha256": "0f2869a87634909857e90a6545311ed7890ae820efd84b35b87985e011e5151d"
+      "bytes": 221535,
+      "sha256": "c6edf38d5d1959c0a88f7b5e679b4dc41b9c26dc110344243bca1b63d3c0fc34"
     },
     {
       "rel": "repro/pre-fix-cached-control.json",
-      "bytes": 213929,
-      "sha256": "b8adbc8dc4107ab3a8c07b63c5c46f09de7a4b4c2548745f8c20e58e060baaf5"
+      "bytes": 212238,
+      "sha256": "4534904b7ad3cdbaea2fbd3c086d37f638d71dc446b6573a6ec5faedfdbd9ac2"
     },
     {
       "rel": "repro/pre-fix-projection-fresh.json",
-      "bytes": 88068,
-      "sha256": "1d0cbbf5f414aa75d441084cdea63e25deef10f7b3adc3783ccd53f06cfeecdc"
+      "bytes": 86374,
+      "sha256": "baafefb30877d29f11fdde7d77fe25a48191ad4334c69287b231493682f9220d"
     },
     {
       "rel": "src-changes-vs-base.patch",
-      "bytes": 19350,
-      "sha256": "15fef9b9dadbe6c90f5c9f3af2de71033406cfa61ba707d1b4ba52a29b8bd77d"
+      "bytes": 19349,
+      "sha256": "d95791215a511eab6d95f27dc9c251f147df3b4f7cee597a0fbc5705c4aa31bf"
     },
     {
       "rel": "test/avalonia-summary.json",
-      "bytes": 1366,
-      "sha256": "4293d4eeb35e6fb283211eec14378742872b5bd4df80d5a7f201d959fe551832"
+      "bytes": 1322,
+      "sha256": "f13df036b8593d60777b313f1d9da417152604061932823c16b05db319f7c452"
     },
     {
       "rel": "tools/repro_scheduler.py",
@@ -147,6 +148,7 @@
       "sha256": "59c000cebbb9d34e040d1500a7c56c2c694c00f8d9b4325e971bab6587d535e1"
     }
   ],
+  "pin_mode": "sha256 of the committed git blob (same bytes a fresh checkout materialises)",
   "process_check": "未 push、未 gc/prune；未修改协议/Host 契约/旧壳；未禁用 fresh 轮询；未改真实 %APPDATA% 数据根；临时 pre-fix worktree 仅用于修复前判别证据，按 Worktree Safety Inventory 规则保留于 task-env、不删除、不 prune，关闭时由 DSH 按 Task 资源处置。",
   "closeout": "pending（canonical_evidence_status=complete；resource_closeout_status=pending，DSH 终态时按本清单处置）"
 }
