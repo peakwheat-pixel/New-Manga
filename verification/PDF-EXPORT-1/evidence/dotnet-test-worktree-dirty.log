@@ -1,0 +1,1117 @@
+    0 个错误
+
+已用时间 00:00:02.77
+{
+  "ac": "AC3/AC4",
+  "strip_image": "4000x60000",
+  "tile": "4000x2048",
+  "tile_count": 30,
+  "device_raster_claim": "4000x2048 device rasters",
+  "typography_vertical": "48820436433a9a30a5eecbe73a4033a22ecaba0863f33e70830399369874fafe",
+  "typography_horizontal": "3292b5776805cf863f27538b3f83019d716b81c5c91f31fe32eb90d4e1e0f226",
+  "fixtures_meta": "G:\\CODEX\\New Manga.workspace\\task-envs\\UI-WORKBENCH-READER-1\\fixtures\\meta.json",
+  "reuses_s0_method": true
+}
+{
+  "status": "created",
+  "title": "BOOK-FIXTURE-1 ����_JA ������",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\S4-CMD-BATCH-1\\region-fixture",
+  "source": "book-fixture",
+  "source_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "chapter_title": "�� 1 ��",
+  "chapter_type": "webtoon",
+  "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+  "page_width": 1200,
+  "page_height": 1660,
+  "page_count": 8,
+  "page_ids": [
+    "f52f2772e8044557a72e82f5ea6ab932",
+    "4f8a24147b3044deabf4f5a2dd83b84f",
+    "a607fc4ca3034f47b5bc43d59f94f2ca",
+    "6814353f6d8544d6945ad5748d518f47",
+    "f54739037525486e8704db23db5c0dc1",
+    "c239be827f3a4448848d2c42bffc05d1",
+    "7a39226851774f01a4cdb89bcf118296",
+    "221d772e601e480e8e7508dfe9aff380"
+  ],
+  "source_filenames": [
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg"
+  ],
+  "region_id": "58b39bbd74cd4bc8bd91945d8232b17d",
+  "region_revision_no": 3,
+  "region_type": "speech",
+  "region_text": "S4 �����Ű�����ı�",
+  "clean_artifact_id": "2a487045eb0845f499fad4001a267b04",
+  "clean_revision_no": 1,
+  "library_db_sha256": "5d9b6657899afdf95239e2d4affab81d7d59b6f6806feeedca0bc3cbff55ff01",
+  "import_report": null
+}
+{"ok": true, "manifest": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-TILE-EMIT-1\\e2e\\artifact\\tile-manifest.json", "size": 15566, "tiles": 2, "resource_id": "page:9b5bdfb35a06fd2a"}
+PASS: production command surface matches snapshot (66 commands, domains={'resource': 3, 'workbench': 12, 'library': 8, 'settings': 33, 'region': 6, 'reader': 4})
+{
+  "ac": "AC1/AC3",
+  "region_fixture": "",
+  "region_fixture_meta": null,
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
+  "sidecar_sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-ce19cf23",
+  "core_stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-ce19cf23\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-ce19cf23\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "probes": [
+    {
+      "command": "core.ping",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-1\",\"result\":{\"status\":\"ready\",\"protocol_version\":{\"major\":2,\"minor\":3},\"capabilities\":[\"library.list_books\"]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListBooks",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-2\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListRecycleBinBooks",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-3\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "CreateBook",
+      "minor": 8,
+      "request_payload": {
+        "title": "命令面探测・日本語テスト"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"8055eafa0a564d58ba63339e51ddf104\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-27T15:34:07.811+00:00\",\"updated_at\":\"2026-10-27T15:34:07.811+00:00\"},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "CreateChapter",
+      "minor": 8,
+      "request_payload": {
+        "book_id": "8055eafa0a564d58ba63339e51ddf104",
+        "chapter_number": "1",
+        "title": "第1章"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"8f36f1a5f77e4ec19f63009465a4807e\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListChapters",
+      "minor": 3,
+      "request_payload": {
+        "book_id": "8055eafa0a564d58ba63339e51ddf104"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-6\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapters'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ListChapterPages",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "8f36f1a5f77e4ec19f63009465a4807e"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-7\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapterPages'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "settings.get",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-8\",\"result\":{\"settings\":{}},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "backup.list",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-9\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "plugins.list",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-10\",\"result\":{\"global_enabled\":false,\"plugins\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "cleanup.preview",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-11\",\"result\":{\"targets\":[],\"total_bytes\":0,\"pending_cleanups\":0},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "GetExportHistory",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-12\",\"result\":{\"exports\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListRegions",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-13\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListRegions'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ListRegionRevisions",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-14\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListRegionRevisions'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ResolvePageResource",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-15\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ResolvePageResource'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "list_chapters",
+      "minor": 3,
+      "request_payload": {
+        "book_id": "probe-book"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-16\",\"result\":{\"chapters\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_chapter_pages",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-17\",\"result\":{\"pages\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_regions",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-18\",\"result\":{\"regions\":[],\"page_size\":null},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_region_revisions",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "probe-region"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-19\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "rerender_page",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-20\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"page not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-21\",\"result\":null,\"error\":{\"code\":\"PAGE_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"page or its managed original is not available\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "PAGE_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "set_region_type",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "probe-region",
+        "new_region_type": "probe"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-22\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"set_region_type requires 'new_region_type': one of ['narration', 'note', 'other', 'sfx', 'speech', 'title']\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    },
+    {
+      "command": "restore_region_revision",
+      "minor": 3,
+      "request_payload": {
+        "revision_no": 1,
+        "region_id": "probe-region",
+        "expected_revision": 1
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-23\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "GetReaderProjection",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "probe-chapter",
+        "start_position": 0,
+        "mode": "scroll"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-24\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"Reader request is invalid\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    },
+    {
+      "command": "SaveReadingProgress",
+      "minor": 3,
+      "request_payload": {
+        "position": 0,
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-25\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"Reading progress request is invalid\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    }
+  ],
+  "at_utc": "2026-10-27T15:34:07.9563087Z"
+}
+probe evidence: G:\CODEX\New Manga.workspace\task-envs\PDF-EXPORT-1\dotnet\parity\core-command-probe.json
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\task-envs\PDF-EXPORT-1\dotnet\test\results-coreclient.trx
+
+已通过! - 失败:     0，通过:    61，已跳过:     0，总计:    61，持续时间: 1 m 49 s - NewManga.CoreClient.Tests.dll (net9.0)
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\task-envs\PDF-EXPORT-1\dotnet\test\results-host.trx
+
+已通过! - 失败:     0，通过:    55，已跳过:     0，总计:    55，持续时间: 1 m - NewManga.Host.Tests.dll (net9.0)
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.96]     NewManga.App.Tests.F11HotkeyTests.F11_DoesNotSwallowOtherKeys [FAIL]
+[xUnit.net 00:00:00.96]     NewManga.App.Tests.F11HotkeyTests.F11_IsIgnoredWhileSearchBoxHasFocus_AndDoesNotEatText [FAIL]
+[xUnit.net 00:00:00.96]     NewManga.App.Tests.F11HotkeyTests.F11_WithoutLibraryBook_StillOpensFixtureImmersive_AndRestoresPage [FAIL]
+[xUnit.net 00:00:00.96]     NewManga.App.Tests.F11HotkeyTests.F11_WhileImmersiveIsOpen_ClosesItAndRestoresOriginPage [FAIL]
+[xUnit.net 00:00:00.97]     NewManga.App.Tests.F11HotkeyTests.F11_FromBookshelf_OpensImmersiveForCurrentBook_AndEscRestoresBookshelf [FAIL]
+[xUnit.net 00:00:00.97]     NewManga.App.Tests.F11HotkeyTests.F11_WithModifier_IsNotTreatedAsTheHotkey [FAIL]
+[xUnit.net 00:00:00.97]     NewManga.App.Tests.F11HotkeyTests.F11_InImmersiveWindow_ClosesAndKeepsH_F_ArrowBehaviour [FAIL]
+[xUnit.net 00:00:00.97]     NewManga.App.Tests.F11HotkeyTests.F11_OnReaderPage_ReturnsToReaderPageAfterClose [FAIL]
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_DoesNotSwallowOtherKeys [115 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_DoesNotSwallowOtherKeys() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 175
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_IsIgnoredWhileSearchBoxHasFocus_AndDoesNotEatText [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_IsIgnoredWhileSearchBoxHasFocus_AndDoesNotEatText() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 125
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_WithoutLibraryBook_StillOpensFixtureImmersive_AndRestoresPage [< 1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_WithoutLibraryBook_StillOpensFixtureImmersive_AndRestoresPage() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 215
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_WhileImmersiveIsOpen_ClosesItAndRestoresOriginPage [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_WhileImmersiveIsOpen_ClosesItAndRestoresOriginPage() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 82
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_FromBookshelf_OpensImmersiveForCurrentBook_AndEscRestoresBookshelf [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_FromBookshelf_OpensImmersiveForCurrentBook_AndEscRestoresBookshelf() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 55
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_WithModifier_IsNotTreatedAsTheHotkey [< 1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_WithModifier_IsNotTreatedAsTheHotkey() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 160
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_InImmersiveWindow_ClosesAndKeepsH_F_ArrowBehaviour [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_InImmersiveWindow_ClosesAndKeepsH_F_ArrowBehaviour() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 188
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.F11HotkeyTests.F11_OnReaderPage_ReturnsToReaderPageAfterClose [< 1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.F11HotkeyTests.NewWindow(Boolean withBook) in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 49
+   at NewManga.App.Tests.F11HotkeyTests.F11_OnReaderPage_ReturnsToReaderPageAfterClose() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\F11HotkeyTests.cs:line 103
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.04]     NewManga.App.Tests.CredentialUiTests.SecretTextBox_RendersThroughTheTextBoxTheme_NotCollapsed [FAIL]
+[xUnit.net 00:00:01.06]     NewManga.App.Tests.CredentialUiTests.MainWindow_Closing_ClearsTheMaskedPlaintext [FAIL]
+  失败 NewManga.App.Tests.CredentialUiTests.SecretTextBox_RendersThroughTheTextBoxTheme_NotCollapsed [31 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at Avalonia.Controls.WindowBase.EnsureInitialized()
+   at Avalonia.Controls.Window.ShowCore[TResult](Window owner, Boolean modal)
+   at Avalonia.Controls.Window.Show()
+   at NewManga.App.Tests.CredentialUiTests.SecretTextBox_RendersThroughTheTextBoxTheme_NotCollapsed() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\CredentialUiTests.cs:line 425
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.CredentialUiTests.MainWindow_Closing_ClearsTheMaskedPlaintext [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.CredentialUiTests.MainWindow_Closing_ClearsTheMaskedPlaintext() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\CredentialUiTests.cs:line 487
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.12]     NewManga.App.Tests.ReaderLibraryTests.ReaderWindow_Escape_Closes_And_H_F_Arrow_Keys_Work [FAIL]
+[xUnit.net 00:00:01.13]     NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Fixture_Override_Keeps_Fallback [FAIL]
+[xUnit.net 00:00:01.14]     NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Uses_Library_Book_And_Opens_Immersive [FAIL]
+  失败 NewManga.App.Tests.ReaderLibraryTests.ReaderWindow_Escape_Closes_And_H_F_Arrow_Keys_Work [24 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at Avalonia.Controls.WindowBase.EnsureInitialized()
+   at Avalonia.Controls.Window.ShowCore[TResult](Window owner, Boolean modal)
+   at Avalonia.Controls.Window.Show()
+   at NewManga.App.Tests.ReaderLibraryTests.ReaderWindow_Escape_Closes_And_H_F_Arrow_Keys_Work() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderLibraryTests.cs:line 97
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Fixture_Override_Keeps_Fallback [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Fixture_Override_Keeps_Fallback() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderLibraryTests.cs:line 144
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Uses_Library_Book_And_Opens_Immersive [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+[xUnit.net 00:00:01.14]     NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Empty_Library_Shows_Empty_State [FAIL]
+   at NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Uses_Library_Book_And_Opens_Immersive() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderLibraryTests.cs:line 123
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.17]     NewManga.App.Tests.ReaderProgressTests.ImmersiveWindow_EscapeFlushesProgress [FAIL]
+[xUnit.net 00:00:01.18]     NewManga.App.Tests.ReaderProgressTests.ClosingMainWindow_FlushesPosition [FAIL]
+  失败 NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Empty_Library_Shows_Empty_State [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderLibraryTests.MainWindow_Reader_Empty_Library_Shows_Empty_State() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderLibraryTests.cs:line 160
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderProgressTests.ImmersiveWindow_EscapeFlushesProgress [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at Avalonia.Controls.WindowBase.EnsureInitialized()
+   at Avalonia.Controls.Window.ShowCore[TResult](Window owner, Boolean modal)
+   at Avalonia.Controls.Window.Show()
+   at NewManga.App.Tests.ReaderProgressTests.ImmersiveWindow_EscapeFlushesProgress() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderProgressTests.cs:line 397
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderProgressTests.ClosingMainWindow_FlushesPosition [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderProgressTests.ClosingMainWindow_FlushesPosition() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderProgressTests.cs:line 295
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.41]     NewManga.App.Tests.ReaderProgressTests.NavigateAwayFromReader_FlushesPosition [FAIL]
+  失败 NewManga.App.Tests.ReaderProgressTests.NavigateAwayFromReader_FlushesPosition [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderProgressTests.NavigateAwayFromReader_FlushesPosition() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderProgressTests.cs:line 278
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.42]     NewManga.App.Tests.ReaderProgressTests.MainWindow_ReaderRestoresPageAfterRelaunch [FAIL]
+[xUnit.net 00:00:01.46]     NewManga.App.Tests.S4WiringTests.MainWindow_WorkbenchAndReaderPages_AreMounted [FAIL]
+  失败 NewManga.App.Tests.ReaderProgressTests.MainWindow_ReaderRestoresPageAfterRelaunch [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderProgressTests.MainWindow_ReaderRestoresPageAfterRelaunch() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderProgressTests.cs:line 104
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.S4WiringTests.MainWindow_WorkbenchAndReaderPages_AreMounted [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.S4WiringTests.MainWindow_WorkbenchAndReaderPages_AreMounted() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\S4ReaderWorkbenchTests.cs:line 365
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.47]     NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95 [FAIL]
+[xUnit.net 00:00:01.48]     NewManga.App.Tests.ImportExportUiTests.Workbench_ImportFiles_OpensTheSameFlow [FAIL]
+[xUnit.net 00:00:01.49]     NewManga.App.Tests.ImportExportUiTests.Reader_ExportCancel_WhileRunning_MarksRecordCancelled [FAIL]
+[xUnit.net 00:00:01.49]     NewManga.App.Tests.ImportExportUiTests.Reader_ExportStartRefused_ShowsTypedReason [FAIL]
+[xUnit.net 00:00:01.49]     NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportTypedFailure_ShowsCodeAndDoesNotRefresh [FAIL]
+[xUnit.net 00:00:01.50]     NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportFiles_CallsHostWithPickerPathsChapterAndRefreshes [FAIL]
+[xUnit.net 00:00:01.50]     NewManga.App.Tests.ImportExportUiTests.Reader_ExportFlow_StartPollCompleteHistoryReveal [FAIL]
+  失败 NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95 [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ThemeCenterTests.ThemeDictionaries_HoldLightAndDarkVariants_AndHotSwitchUnder100msP95() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 70
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.ImportExportUiTests.Workbench_ImportFiles_OpensTheSameFlow [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenShell() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 72
+   at NewManga.App.Tests.ImportExportUiTests.Workbench_ImportFiles_OpensTheSameFlow() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 269
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Reader_ExportCancel_WhileRunning_MarksRecordCancelled [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenReaderWithExport() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 309
+   at NewManga.App.Tests.ImportExportUiTests.Reader_ExportCancel_WhileRunning_MarksRecordCancelled() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 422
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Reader_ExportStartRefused_ShowsTypedReason [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenReaderWithExport() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 309
+   at NewManga.App.Tests.ImportExportUiTests.Reader_ExportStartRefused_ShowsTypedReason() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 483
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportTypedFailure_ShowsCodeAndDoesNotRefresh [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenShell() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 72
+   at NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportTypedFailure_ShowsCodeAndDoesNotRefresh() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 231
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportFiles_CallsHostWithPickerPathsChapterAndRefreshes [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenShell() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 72
+   at NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportFiles_CallsHostWithPickerPathsChapterAndRefreshes() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 155
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Reader_ExportFlow_StartPollCompleteHistoryReveal [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenReaderWithExport() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 309
+   at NewManga.App.Tests.ImportExportUiTests.Reader_ExportFlow_StartPollCompleteHistoryReveal() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 318
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.51]     NewManga.App.Tests.ImportExportUiTests.Reader_ExportWithoutTranslatedPages_DisablesStart [FAIL]
+[xUnit.net 00:00:01.51]     NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportPickerCancel_LeavesFlowClosed [FAIL]
+[xUnit.net 00:00:01.51]     NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportFolder_PassesTheFolderPathAndPolicy [FAIL]
+[xUnit.net 00:00:01.83]     NewManga.App.Tests.S4WorkbenchTests.WorkbenchPage_Renders_WithTileNoInterpolationContract [FAIL]
+  失败 NewManga.App.Tests.ImportExportUiTests.Reader_ExportWithoutTranslatedPages_DisablesStart [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.Reader_ExportWithoutTranslatedPages_DisablesStart() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 464
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportPickerCancel_LeavesFlowClosed [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenShell() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 72
+   at NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportPickerCancel_LeavesFlowClosed() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 253
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportFolder_PassesTheFolderPathAndPolicy [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ImportExportUiTests.OpenShell() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 72
+   at NewManga.App.Tests.ImportExportUiTests.Bookshelf_ImportFolder_PassesTheFolderPathAndPolicy() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ImportExportUiTests.cs:line 198
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.S4WorkbenchTests.WorkbenchPage_Renders_WithTileNoInterpolationContract [4 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at Avalonia.Controls.WindowBase.EnsureInitialized()
+   at Avalonia.Controls.Window.ShowCore[TResult](Window owner, Boolean modal)
+   at Avalonia.Controls.Window.Show()
+   at NewManga.App.Tests.S4WorkbenchTests.WorkbenchPage_Renders_WithTileNoInterpolationContract() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\S4ReaderWorkbenchTests.cs:line 324
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.85]     NewManga.App.Tests.ReaderChapterSelectorTests.MultiBookEntry_OpensRequestedBook [FAIL]
+[xUnit.net 00:00:01.85]     NewManga.App.Tests.ReaderChapterSelectorTests.BookshelfOpenRequest_OpensThatBookInTheReader [FAIL]
+[xUnit.net 00:00:01.86]     NewManga.App.Tests.ReaderChapterSelectorTests.DefaultReaderEntry_StillOpensFirstReadableBook [FAIL]
+[xUnit.net 00:00:01.86]     NewManga.App.Tests.ReaderChapterSelectorTests.SwitchingChapter_FlushesPreviousChapterProgress [FAIL]
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.MultiBookEntry_OpensRequestedBook [2 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.MultiBookEntry_OpensRequestedBook() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 228
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.BookshelfOpenRequest_OpensThatBookInTheReader [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.BookshelfOpenRequest_OpensThatBookInTheReader() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 245
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.DefaultReaderEntry_StillOpensFirstReadableBook [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.DefaultReaderEntry_StillOpensFirstReadableBook() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 287
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.SwitchingChapter_FlushesPreviousChapterProgress [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.SwitchingChapter_FlushesPreviousChapterProgress() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 197
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.87]     NewManga.App.Tests.ReaderChapterSelectorTests.OpeningDifferentBook_FlushesCurrentBookProgress [FAIL]
+[xUnit.net 00:00:01.87]     NewManga.App.Tests.ReaderChapterSelectorTests.ImmersiveWindow_ShowsContextButNoChapterPicker [FAIL]
+[xUnit.net 00:00:01.88]     NewManga.App.Tests.ReaderChapterSelectorTests.EmptyChapterList_HidesSelectorWithoutCrash [FAIL]
+[xUnit.net 00:00:01.88]     NewManga.App.Tests.ReaderChapterSelectorTests.SwitchingChapter_UpdatesPageCountProjectionAndContext [FAIL]
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.OpeningDifferentBook_FlushesCurrentBookProgress [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.OpeningDifferentBook_FlushesCurrentBookProgress() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 267
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.ImmersiveWindow_ShowsContextButNoChapterPicker [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.ImmersiveWindow_ShowsContextButNoChapterPicker() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 324
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.EmptyChapterList_HidesSelectorWithoutCrash [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.EmptyChapterList_HidesSelectorWithoutCrash() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 309
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.ReaderChapterSelectorTests.SwitchingChapter_UpdatesPageCountProjectionAndContext [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ReaderChapterSelectorTests.SwitchingChapter_UpdatesPageCountProjectionAndContext() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\ReaderChapterSelectorTests.cs:line 167
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.05]     NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame [FAIL]
+[xUnit.net 00:00:02.07]     NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus [FAIL]
+  失败 NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ShellTests.Startup_DoesNotBlockFirstFrame() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 280
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus [1 ms]
+  错误消息:
+   System.InvalidCastException : Unable to cast object of type 'System.String' to type 'Avalonia.Media.FontFamily'.
+  堆栈跟踪:
+     at Avalonia.PropertyStore.EffectiveValue`1.GetValue(IValueEntry entry)
+   at Avalonia.PropertyStore.EffectiveValue`1.SetAndRaise(ValueStore owner, IValueEntry value, BindingPriority priority)
+   at Avalonia.PropertyStore.ValueStore.ReevaluateEffectiveValues(IValueEntry changedValueEntry)
+   at Avalonia.PropertyStore.ValueStore.EndStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.ApplyStyling()
+   at Avalonia.StyledElement.EndInit()
+   at NewManga.App.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views/MainWindow.axaml:line 36
+   at NewManga.App.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at NewManga.App.Views.MainWindow.InitializeComponent(Boolean loadXaml) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\Avalonia.Generators\Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator\NewManga.App.Views.MainWindow.g.cs:line 33
+   at NewManga.App.Views.MainWindow..ctor(IHostController controller, AppOptions options, IFilePickerGateway filePicker) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\Views\MainWindow.axaml.cs:line 43
+   at NewManga.App.Tests.ShellTests.FourPageNavigation_AndKeyboardFocus() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\S3ShellTests.cs:line 259
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+结果文件: G:\CODEX\New Manga.workspace\task-envs\PDF-EXPORT-1\dotnet\test\results-app.trx
+
+失败!  - 失败:    40，通过:    69，已跳过:     0，总计:   109，持续时间: 1 s - NewManga.App.Tests.dll (net9.0)
+Exception: G:\CODEX\New Manga\apps\desktop-avalonia\scripts\test.ps1:136
+Line |
+ 136 |              throw "dotnet test $($project.Name) failed (exit=$code, f …
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | dotnet test app failed (exit=1, failed=40)

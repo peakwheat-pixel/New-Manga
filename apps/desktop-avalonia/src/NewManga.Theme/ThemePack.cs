@@ -18,9 +18,34 @@ public sealed record MotionProfile(TimeSpan Fast, TimeSpan Normal, TimeSpan Slow
 }
 
 /// <summary>
+/// THEME-MACOS-1: non-color design tokens (shape + shadow). Colors stay in
+/// <see cref="ThemePack.Tokens"/> / <see cref="ThemePack.Materials"/>; geometry and shadows live here so a
+/// pack can define its own chrome without changing every other pack's look.
+/// </summary>
+public sealed record ThemePackMetrics(
+    double CornerWindow,
+    double CornerCard,
+    double CornerButton,
+    double CornerSmall,
+    string CardShadowLight,
+    string CardShadowDark)
+{
+    /// <summary>Legacy geometry: existing packs keep corner 12/12/8/6 and no box shadow.</summary>
+    public static ThemePackMetrics Default { get; } = new(12, 12, 8, 6, string.Empty, string.Empty);
+
+    public string CardShadowFor(ThemeVariant variant) => IsDark(variant) ? CardShadowDark : CardShadowLight;
+
+    public static bool IsDark(ThemeVariant variant) =>
+        string.Equals(variant.Key?.ToString(), "Dark", StringComparison.Ordinal);
+}
+
+/// <summary>
 /// AC2 ThemePack: one skin = manifest + tokens + control-theme keys + materials + motion + icons.
 /// Hot switching swaps a ThemeDictionaries resource dictionary in place: controls use DynamicResource,
 /// so no control is recreated and no restart is needed.
+/// THEME-MACOS-1 extends this record backwards-compatibly: <see cref="DarkTokens"/> /
+/// <see cref="DarkMaterials"/> are optional (null = reuse Tokens/Materials, exactly the old behaviour),
+/// and <see cref="Metrics"/> / <see cref="FontFamily"/> default to the legacy geometry and font stack.
 /// </summary>
 public sealed record ThemePack(
     string Id,
@@ -33,6 +58,20 @@ public sealed record ThemePack(
     MotionProfile Motion,
     IReadOnlyDictionary<string, string> Icons)
 {
+    /// <summary>Optional Dark token override; null/empty keeps the legacy "same tokens both variants" behaviour.</summary>
+    public IReadOnlyDictionary<string, string>? DarkTokens { get; init; }
+
+    /// <summary>Optional Dark material override; null/empty reuses <see cref="Materials"/>.</summary>
+    public IReadOnlyDictionary<string, string>? DarkMaterials { get; init; }
+
+    public ThemePackMetrics Metrics { get; init; } = ThemePackMetrics.Default;
+
+    /// <summary>Font stack string bridged to <c>AppFontFamily</c> (no font binaries ship with the app).</summary>
+    public string FontFamily { get; init; } = ThemePacks.DefaultFontFamily;
+
+    /// <summary>True when this single pack carries its own Light and Dark token sets.</summary>
+    public bool SupportsVariants => DarkTokens is { Count: > 0 };
+
     public bool ReducedMotion => Motion.Reduced;
 
     public ThemePack WithReducedMotion(bool reduced) => this with
@@ -44,6 +83,16 @@ public sealed record ThemePack(
 public static class ThemePacks
 {
     public const string SaberPurpleId = "saber-purple";
+
+    /// <summary>THEME-MACOS-1 pack id (single pack, two token sets).</summary>
+    public const string MacOsSonomaId = "macos-sonoma";
+
+    /// <summary>Legacy font stack shared by every pre-existing pack (system fallbacks only, no bundled font).</summary>
+    public const string DefaultFontFamily = "Segoe UI, Microsoft YaHei UI, PingFang SC, Noto Sans CJK SC, sans-serif";
+
+    /// <summary>macOS pack font stack: prefers Segoe UI Variable Text / Inter, keeps the CJK system fallbacks.</summary>
+    public const string MacOsFontFamily =
+        "Segoe UI Variable Text, Inter, Segoe UI, Microsoft YaHei UI, PingFang SC, Noto Sans CJK SC, sans-serif";
 
     private static readonly IReadOnlyDictionary<string, string> IconSet = new Dictionary<string, string>
     {
@@ -246,7 +295,89 @@ public static class ThemePacks
             ["MicaFallback"] = "#F6F6F6",
         });
 
-    public static IReadOnlyList<ThemePack> All { get; } = new[] { SaberPurple, SaberLight, Midnight, Sakura, Emerald, Mono };
+    /// <summary>
+    /// THEME-MACOS-1: macOS Sonoma skin. One pack carries both token sets (Light in Tokens/Materials,
+    /// Dark in DarkTokens/DarkMaterials); the plugin lists it once and ThemePackService switches variants.
+    /// Spec source: doc/tasks/THEME-MACOS-1.md「设计规格（用户冻结）」. System fonts only (no bundled font).
+    /// </summary>
+    public static ThemePack MacOsSonoma { get; } = Create(
+        MacOsSonomaId,
+        "macOS 风",
+        isDark: false,
+        tokens: new Dictionary<string, string>
+        {
+            ["AppBg"] = "#F5F5F7",
+            ["HeaderBg"] = "#E6FFFFFF",
+            ["CardBg"] = "#FFFFFF",
+            ["CardBorder"] = "#D2D2D7",
+            ["TextPrimary"] = "#1D1D1F",
+            ["TextSecondary"] = "#6E6E73",
+            ["Accent"] = "#007AFF",
+            ["AccentText"] = "#FFFFFF",
+            ["ChipBg"] = "#F0F0F3",
+            ["ChipActiveBg"] = "#007AFF",
+            ["SearchBg"] = "#FFFFFF",
+            ["NavBg"] = "#ECECEF",
+            ["NavActiveBg"] = "#D6E9FF",
+            ["NavActiveText"] = "#003E7E",
+            ["EmptyBg"] = "#FAFAFC",
+            ["Danger"] = "#FF3B30",
+            ["Success"] = "#34C759",
+            ["Warning"] = "#FF9500",
+            ["Separator"] = "#D2D2D7",
+        },
+        materials: new Dictionary<string, string>
+        {
+            ["HeaderGradientStart"] = "#FDFDFE",
+            ["HeaderGradientEnd"] = "#ECECEF",
+            ["CardShadow"] = "#14000000",
+            ["MicaFallback"] = "#F5F5F7",
+        },
+        darkTokens: new Dictionary<string, string>
+        {
+            ["AppBg"] = "#1E1E1E",
+            ["HeaderBg"] = "#E6252527",
+            ["CardBg"] = "#2C2C2E",
+            ["CardBorder"] = "#3A3A3C",
+            ["TextPrimary"] = "#F5F5F7",
+            ["TextSecondary"] = "#98989D",
+            ["Accent"] = "#0A84FF",
+            ["AccentText"] = "#FFFFFF",
+            ["ChipBg"] = "#3A3A3C",
+            ["ChipActiveBg"] = "#0A84FF",
+            ["SearchBg"] = "#2C2C2E",
+            ["NavBg"] = "#252527",
+            ["NavActiveBg"] = "#1F3A5F",
+            ["NavActiveText"] = "#D7E9FF",
+            ["EmptyBg"] = "#1E1E1E",
+            ["Danger"] = "#FF453A",
+            ["Success"] = "#32D74B",
+            ["Warning"] = "#FF9F0A",
+            ["Separator"] = "#3A3A3C",
+        },
+        darkMaterials: new Dictionary<string, string>
+        {
+            ["HeaderGradientStart"] = "#2C2C2E",
+            ["HeaderGradientEnd"] = "#1E1E1E",
+            ["CardShadow"] = "#66000000",
+            ["MicaFallback"] = "#1E1E1E",
+        },
+        metrics: new ThemePackMetrics(
+            CornerWindow: 12,
+            CornerCard: 14,
+            CornerButton: 8,
+            CornerSmall: 6,
+            CardShadowLight: "0 1 3 0 #14000000",
+            CardShadowDark: "0 1 3 0 #66000000"),
+        fontFamily: MacOsFontFamily,
+        motion: new MotionProfile(
+            TimeSpan.FromMilliseconds(120),
+            TimeSpan.FromMilliseconds(160),
+            TimeSpan.FromMilliseconds(240),
+            Reduced: false));
+
+    public static IReadOnlyList<ThemePack> All { get; } =
+        new[] { SaberPurple, SaberLight, Midnight, Sakura, Emerald, Mono, MacOsSonoma };
 
     public static ThemePack Default => SaberPurple;
 
@@ -268,7 +399,12 @@ public static class ThemePacks
         string label,
         bool isDark,
         IReadOnlyDictionary<string, string> tokens,
-        IReadOnlyDictionary<string, string> materials) =>
+        IReadOnlyDictionary<string, string> materials,
+        IReadOnlyDictionary<string, string>? darkTokens = null,
+        IReadOnlyDictionary<string, string>? darkMaterials = null,
+        ThemePackMetrics? metrics = null,
+        string? fontFamily = null,
+        MotionProfile? motion = null) =>
         new(
             id,
             label,
@@ -278,17 +414,26 @@ public static class ThemePacks
             tokens,
             materials,
             ControlThemeSet,
-            Motion,
-            IconSet);
+            motion ?? Motion,
+            IconSet)
+        {
+            DarkTokens = darkTokens,
+            DarkMaterials = darkMaterials,
+            Metrics = metrics ?? ThemePackMetrics.Default,
+            FontFamily = fontFamily ?? DefaultFontFamily,
+        };
 }
 
 /// <summary>
 /// AC2 theme service. Applies packs by swapping one merged ResourceDictionary whose ThemeDictionaries
 /// hold Light/Dark variants, so DynamicResource consumers update without recreation or restart.
+/// THEME-MACOS-1 adds <see cref="ApplyVariant"/> / <see cref="CurrentVariant"/> for packs that carry
+/// both token sets; existing <see cref="Apply(Application, ThemePack)"/> semantics are unchanged.
 /// </summary>
 public static class ThemePackService
 {
     public const string AppBackground = "AppBg";
+    public const string HeaderBackground = "HeaderBg";
     public const string HeaderGradientStart = "HeaderGradientStart";
     public const string HeaderGradientEnd = "HeaderGradientEnd";
     public const string CardBackground = "CardBg";
@@ -302,13 +447,23 @@ public static class ThemePackService
     public const string SearchBackground = "SearchBg";
     public const string NavBackground = "NavBg";
     public const string NavActiveBackground = "NavActiveBg";
+    public const string NavActiveText = "NavActiveText";
     public const string EmptyBackground = "EmptyBg";
     public const string MicaFallback = "MicaFallback";
+
+    /// <summary>Font stack resource key consumed by AppStyles.axaml Window style (THEME-MACOS-1).</summary>
+    public const string AppFontFamily = "AppFontFamily";
+
+    /// <summary>Card shadow resource key (THEME-MACOS-1): a BoxShadows string, empty = no shadow.</summary>
+    public const string CardShadowBox = "CardShadowBox";
 
     private static ResourceDictionary? _active;
     private static long _switchTicks;
 
     public static ThemePack Current { get; private set; } = ThemePacks.Default;
+
+    /// <summary>THEME-MACOS-1: the variant currently applied (Light or Dark).</summary>
+    public static ThemeVariant CurrentVariant { get; private set; } = ThemeVariant.Light;
 
     /// <summary>Duration of the last apply (used by the p95 regression test).</summary>
     public static TimeSpan LastApplyDuration { get; private set; }
@@ -317,30 +472,17 @@ public static class ThemePackService
 
     public static void Apply(Application application, ThemePack pack)
     {
-        var start = System.Diagnostics.Stopwatch.GetTimestamp();
-        if (_active is not null)
-        {
-            application.Resources.MergedDictionaries.Remove(_active);
-        }
-
-        var light = BuildVariant(pack);
-        var dark = BuildVariant(pack);
-        var root = new ResourceDictionary
-        {
-            ThemeDictionaries =
-            {
-                [ThemeVariant.Light] = light,
-                [ThemeVariant.Dark] = dark,
-            },
-        };
-
-        application.Resources.MergedDictionaries.Add(root);
-        _active = root;
-        Current = pack;
-        application.RequestedThemeVariant = pack.IsDark ? ThemeVariant.Dark : ThemeVariant.Light;
-        LastApplyDuration = System.Diagnostics.Stopwatch.GetElapsedTime(start);
-        _switchTicks = LastApplyDuration.Ticks;
+        var variant = pack.IsDark ? ThemeVariant.Dark : ThemeVariant.Light;
+        ApplyCore(application, pack, variant);
     }
+
+    /// <summary>
+    /// THEME-MACOS-1: switches only the Light/Dark variant of the pack that is already applied.
+    /// Packs without <see cref="ThemePack.DarkTokens"/> keep their existing token values in Dark
+    /// (BuildVariant falls back to the pack's single token set), so old themes behave exactly as before.
+    /// </summary>
+    public static void ApplyVariant(Application application, ThemeVariant variant) =>
+        ApplyCore(application, Current, variant);
 
     public static void ApplyDefault(Application application) => Apply(application, ThemePacks.Default);
 
@@ -359,15 +501,52 @@ public static class ThemePackService
 
     public static Color ColorOf(string key) => Brush(key) is ISolidColorBrush solid ? solid.Color : Colors.Magenta;
 
-    private static ResourceDictionary BuildVariant(ThemePack pack)
+    private static void ApplyCore(Application application, ThemePack pack, ThemeVariant variant)
     {
+        var start = System.Diagnostics.Stopwatch.GetTimestamp();
+        if (_active is not null)
+        {
+            application.Resources.MergedDictionaries.Remove(_active);
+        }
+
+        var root = new ResourceDictionary
+        {
+            ThemeDictionaries =
+            {
+                [ThemeVariant.Light] = BuildVariant(pack, ThemeVariant.Light),
+                [ThemeVariant.Dark] = BuildVariant(pack, ThemeVariant.Dark),
+            },
+        };
+
+        application.Resources.MergedDictionaries.Add(root);
+        _active = root;
+        Current = pack;
+        CurrentVariant = variant;
+        application.RequestedThemeVariant = variant;
+        LastApplyDuration = System.Diagnostics.Stopwatch.GetElapsedTime(start);
+        _switchTicks = LastApplyDuration.Ticks;
+    }
+
+    private static ResourceDictionary BuildVariant(ThemePack pack, ThemeVariant variant)
+    {
+        var dark = ThemePackMetrics.IsDark(variant);
+        var tokens = dark && pack.DarkTokens is { Count: > 0 } ? pack.DarkTokens : pack.Tokens;
+        var materials = dark && pack.DarkMaterials is { Count: > 0 } ? pack.DarkMaterials : pack.Materials;
+
         var dictionary = new ResourceDictionary();
-        foreach (var pair in pack.Tokens)
+        foreach (var pair in tokens)
         {
             dictionary[pair.Key] = new SolidColorBrush(Color.Parse(pair.Value));
         }
 
-        foreach (var pair in pack.Materials)
+        // THEME-MACOS-1: legacy packs have no NavActiveText token; fall back to AccentText so the old
+        // six themes keep their exact nav-selected colour. macOS defines it per variant.
+        if (!tokens.ContainsKey(NavActiveText))
+        {
+            dictionary[NavActiveText] = new SolidColorBrush(Color.Parse(tokens[AccentText]));
+        }
+
+        foreach (var pair in materials)
         {
             dictionary[pair.Key] = new SolidColorBrush(Color.Parse(pair.Value));
         }
@@ -378,10 +557,20 @@ public static class ThemePackService
             EndPoint = new RelativePoint(1, 0.2, RelativeUnit.Relative),
             GradientStops =
             {
-                new GradientStop(Color.Parse(pack.Materials["HeaderGradientStart"]), 0),
-                new GradientStop(Color.Parse(pack.Materials["HeaderGradientEnd"]), 1),
+                new GradientStop(Color.Parse(materials[HeaderGradientStart]), 0),
+                new GradientStop(Color.Parse(materials[HeaderGradientEnd]), 1),
             },
         };
+
+        // THEME-MACOS-1: non-color tokens + font stack bridged as resources. FontFamily is stored as a
+        // parsed FontFamily (not a string) because DynamicResource assigns the resource verbatim to the
+        // Window.FontFamily property; a string resource would fail the property cast.
+        dictionary[AppFontFamily] = new FontFamily(pack.FontFamily);
+        dictionary[CardShadowBox] = pack.Metrics.CardShadowFor(variant);
+        dictionary["Corner.Window"] = pack.Metrics.CornerWindow;
+        dictionary["Corner.Card"] = pack.Metrics.CornerCard;
+        dictionary["Corner.Button"] = pack.Metrics.CornerButton;
+        dictionary["Corner.Small"] = pack.Metrics.CornerSmall;
 
         foreach (var pair in pack.Icons)
         {
@@ -389,7 +578,9 @@ public static class ThemePackService
         }
 
         dictionary["Motion.Reduced"] = pack.Motion.Reduced;
+        dictionary["Motion.FastMs"] = pack.Motion.Fast.TotalMilliseconds;
         dictionary["Motion.NormalMs"] = pack.Motion.Normal.TotalMilliseconds;
+        dictionary["Motion.SlowMs"] = pack.Motion.Slow.TotalMilliseconds;
         return dictionary;
     }
 }

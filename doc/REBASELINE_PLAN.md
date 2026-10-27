@@ -7,10 +7,11 @@
 |节点/目标|依赖|状态|
 |---|---|---|
 |REAL-TRANSLATE-PROVIDER-1|—|ready（真实翻译接入；key 走 Windows vault）|
-|PDF-EXPORT-1|—|ready（Pillow PDF 导出）|
+|PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
 |PDF-EXPORT-UI-1|—|ready（导出面板 PDF 选项；Core 已支持）|
 |FLAKY-PYTEST-1|—|ready（3 flaky 根治/隔离）|
 |RELEASE-SMOKE-1|—|ready（新包真机全流程快检）|
+|RELEASE-REPACK-3|—|ready（含 UI 收尾的第三次重打包）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
@@ -19,7 +20,7 @@
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
 |THEME-MACOS-1|—|ready（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
 
-READY 节点：REAL-TRANSLATE-PROVIDER-1、PDF-EXPORT-1、FLAKY-PYTEST-1、RELEASE-SMOKE-1、PDF-EXPORT-UI-1。
+READY 节点：REAL-TRANSLATE-PROVIDER-1、FLAKY-PYTEST-1、PDF-EXPORT-UI-1、RELEASE-REPACK-3。
 
 ## 历史快照（终态节点，非当前 DAG）
 

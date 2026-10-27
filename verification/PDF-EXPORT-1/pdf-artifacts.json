@@ -1,0 +1,187 @@
+{
+  "task": "PDF-EXPORT-1",
+  "base": "170878dc4",
+  "verdict": "PDF export is ALREADY implemented Qt-free at HEAD (QtFreePdfComposer, wired in core_assembly.py); this card records the acceptance evidence and the Record Decision. No new Pillow composer was written (Pillow's Image.save('PDF') is lossy JPEG and drops the text layer -> would regress the existing asset).",
+  "extension_point": {
+    "port": "src/application/export/ports.py: PdfComposer.compose(images) / compose_searchable(images, regions)",
+    "service": "src/application/export/service.py: ExportFormat.PDF + _build_payload pdf branch ('pdf_content' = image_only | searchable_dual_layer)",
+    "production_wiring": "src/bootstrap/core_assembly.py:1374 ExportService(..., pdf_composer=QtFreePdfComposer())",
+    "composer": "src/infrastructure/export/qt_free.py QtFreePdfComposer (Qt-free: stdlib zlib/struct + Pillow only for searchable-mode font metrics; no PySide6/Qt import in the closure)",
+    "wire": "StartExport format='pdf' + format_options={'pdf_content': ...}; host-control RegisterExportTarget/grant; src/bootstrap/core_service.py handle_start_export"
+  },
+  "artefacts": {
+    "wire_image_only_3pages": {
+      "case": "real host-control grant + handle_start_export, BOOK-FIXTURE chapter (8-page book, 3 translated pages)",
+      "pages_requested": [
+        "f52f2772e8044557a72e82f5ea6ab932",
+        "4f8a24147b3044deabf4f5a2dd83b84f",
+        "a607fc4ca3034f47b5bc43d59f94f2ca"
+      ],
+      "status": "completed",
+      "export_id": "exp-e1d695995b54",
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-1\\out\\BOOK-FIXTURE-1-第1章-20261027-233025.pdf",
+      "bytes": 8696282,
+      "sha256": "975b87d40a30939df389c84bcbc2fc76adb544a72bbea46e0a6b5353888d2eae",
+      "header": "%PDF-1.7",
+      "eof": "\n%%EOF",
+      "pdf_page_count": 3,
+      "pages": [
+        {
+          "page": 1,
+          "width_pt": 1200.0,
+          "height_pt": 1660.0,
+          "images": 1,
+          "text_chars": 0,
+          "ink_samples": 3885
+        },
+        {
+          "page": 2,
+          "width_pt": 1200.0,
+          "height_pt": 1660.0,
+          "images": 1,
+          "text_chars": 0,
+          "ink_samples": 3575
+        },
+        {
+          "page": 3,
+          "width_pt": 1200.0,
+          "height_pt": 726.0,
+          "images": 1,
+          "text_chars": 0,
+          "ink_samples": 1555
+        }
+      ],
+      "sizes_match_db": true,
+      "page_count_matches": true,
+      "progress_events": 17,
+      "committed_copy": {
+        "rel": "verification/PDF-EXPORT-1/artifacts/BOOK-FIXTURE-1-3pages-image-only.pdf",
+        "bytes": 8696282,
+        "sha256": "975b87d40a30939df389c84bcbc2fc76adb544a72bbea46e0a6b5353888d2eae"
+      },
+      "committed_copy_matches": true
+    },
+    "engine_8page": {
+      "case": "engine-level whole-book export: 3 translated renders + 5 original fallbacks (stale_policy=continue_existing)",
+      "pages_requested": 8,
+      "translated_pages": 3,
+      "status": "completed",
+      "artifact": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-1\\out\\BOOK-FIXTURE-1-8pages-20261027-233231.pdf",
+        "bytes": 26755308,
+        "header": "%PDF-1.7",
+        "eof": "\n%%EOF",
+        "sha256": "eae5a85866feac54592a3beaec2ee5640a2a167c5a4765d064cdc821b8639bc5",
+        "pdf_page_count": 8,
+        "pages": [
+          {
+            "page": 1,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 3885
+          },
+          {
+            "page": 2,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 3575
+          },
+          {
+            "page": 3,
+            "width_pt": 1200.0,
+            "height_pt": 726.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 1555
+          },
+          {
+            "page": 4,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 3300
+          },
+          {
+            "page": 5,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 3983
+          },
+          {
+            "page": 6,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 4232
+          },
+          {
+            "page": 7,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 2195
+          },
+          {
+            "page": 8,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 0,
+            "ink_samples": 4063
+          }
+        ],
+        "sizes_match": true
+      }
+    },
+    "wire_searchable_3pages": {
+      "case": "wire-level pdf_content=searchable_dual_layer (text layer over translated pages)",
+      "status": "completed",
+      "error_code": null,
+      "artifact": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-1\\out\\BOOK-FIXTURE-1-searchable-20261027-233231.pdf",
+        "bytes": 21106403,
+        "header": "%PDF-1.7",
+        "eof": "\n%%EOF",
+        "sha256": "e0f7fd4951f7ffa8b075ea77d2ca23d7222c66244e3ff3de2ae02f45f05f5e14",
+        "pdf_page_count": 3,
+        "pages": [
+          {
+            "page": 1,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 277,
+            "ink_samples": 3885
+          },
+          {
+            "page": 2,
+            "width_pt": 1200.0,
+            "height_pt": 1660.0,
+            "images": 1,
+            "text_chars": 204,
+            "ink_samples": 3575
+          },
+          {
+            "page": 3,
+            "width_pt": 1200.0,
+            "height_pt": 726.0,
+            "images": 1,
+            "text_chars": 120,
+            "ink_samples": 1555
+          }
+        ],
+        "sizes_match": true
+      }
+    }
+  },
+  "regression": {}
+}

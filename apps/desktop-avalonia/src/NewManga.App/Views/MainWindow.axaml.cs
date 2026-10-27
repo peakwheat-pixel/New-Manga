@@ -191,7 +191,7 @@ public partial class MainWindow : Window
         {
             var active = pair.Key == page;
             pair.Value.Background = ThemePackService.Brush(active ? "NavActiveBg" : "NavBg");
-            pair.Value.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextPrimary");
+            pair.Value.Foreground = ThemePackService.Brush(active ? "NavActiveText" : "TextPrimary");
         }
 
         if (string.Equals(page, "reader", StringComparison.Ordinal))
@@ -468,15 +468,31 @@ public partial class MainWindow : Window
     {
         BookshelfPageControl.ApplyTheme();
         Settings.ApplyTheme();
+        ApplyWindowChrome();
         foreach (var pair in _navButtons)
         {
             var active = pair.Key == CurrentPage;
             pair.Value.Background = ThemePackService.Brush(active ? "NavActiveBg" : "NavBg");
-            pair.Value.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextPrimary");
+            pair.Value.Foreground = ThemePackService.Brush(active ? "NavActiveText" : "TextPrimary");
         }
 
         _status.Foreground = ThemePackService.Brush("TextSecondary");
     }
+
+    /// <summary>
+    /// THEME-MACOS-1: macOS-only window chrome — show the three traffic lights and paint the title-bar
+    /// strip with the pack's HeaderBg token. Every other pack keeps the legacy title bar untouched so the
+    /// existing six themes look exactly as before.
+    /// </summary>
+    private void ApplyWindowChrome()
+    {
+        var macChrome = string.Equals(ThemePackService.Current.Id, ThemePacks.MacOsSonomaId, StringComparison.Ordinal);
+        TrafficLights.IsVisible = macChrome;
+        TitleBar.Background = macChrome ? ThemePackService.Brush("HeaderBg") : null;
+    }
+
+    /// <summary>THEME-MACOS-1 AC1: true when the macOS pack's traffic lights are currently shown.</summary>
+    public bool AreTrafficLightsVisible => TrafficLights.IsVisible;
 
     public BookshelfPage BookshelfPageControl => (BookshelfPage)_pages["bookshelf"];
 

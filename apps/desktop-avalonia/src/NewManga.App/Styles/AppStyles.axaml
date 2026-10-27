@@ -1,8 +1,10 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+  <!-- THEME-MACOS-1: font stack is a per-pack token (no font binaries ship with the app). Theme packs
+       publish AppFontFamily (a parsed FontFamily); the app applies the default theme before creating the
+       main window, so the Window always resolves the active pack's stack. -->
   <Style Selector="Window">
-    <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei UI, PingFang SC, Noto Sans CJK SC, sans-serif" />
+    <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}" />
   </Style>
 
   <Style Selector="TextBlock">

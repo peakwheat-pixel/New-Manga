@@ -295,6 +295,9 @@ public sealed class SettingsViewModel
 
     public ThemePack SelectedPack { get; set; } = ThemePackService.Current;
 
+    /// <summary>THEME-MACOS-1: true when the selected pack carries both Light and Dark token sets.</summary>
+    public bool AppearanceSwitchVisible => SelectedPack.SupportsVariants;
+
     public string WiredSummary =>
         $"已接线命令 {Shell.ShellCommandCatalog.WiredCommandCount} 条 · S2 NOT_SUPPORTED 批登记 {Shell.ShellCommandCatalog.NsRegisteredCount} 条" +
         $"（完成 {Shell.ShellCommandCatalog.NsDoneCount}/{Shell.ShellCommandCatalog.NsRegisteredCount}）";

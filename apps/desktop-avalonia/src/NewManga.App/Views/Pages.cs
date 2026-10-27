@@ -522,10 +522,20 @@ public sealed class SettingsPage : UserControl
     private readonly TextBlock _wired;
     private readonly TextBlock _settingsJson;
     private readonly StackPanel _nsList;
+    private readonly Action _onThemeApplied;
+
+    // THEME-MACOS-1: theme card geometry comes from the active pack's Metrics (old packs = corner 12, no
+    // shadow; macOS = corner 14 + soft card shadow) and the appearance row toggles Light/Dark.
+    private readonly Border _themeCard;
+    private readonly StackPanel _appearanceRow;
+    private readonly Button _lightVariantButton;
+    private readonly Button _darkVariantButton;
+    private readonly List<(ThemePack Pack, Button Button)> _themeButtons = new();
 
     public SettingsPage(SettingsViewModel viewModel, Action onThemeApplied, IHostController? controller = null)
     {
         ViewModel = viewModel;
+        _onThemeApplied = onThemeApplied;
         Name = "SettingsPage";
         var root = new Grid
         {
@@ -539,10 +549,10 @@ public sealed class SettingsPage : UserControl
         root.Children.Add(_wired);
 
         var content = new Grid { ColumnDefinitions = new ColumnDefinitions("320,*"), ColumnSpacing = 18, Margin = new Thickness(0, 12, 0, 0) };
-        var themeCard = new Border
+        _themeCard = new Border
         {
             Padding = new Thickness(16),
-            CornerRadius = new CornerRadius(12),
+            CornerRadius = new CornerRadius(ThemePackService.Current.Metrics.CornerCard),
             Background = ThemePackService.Brush("CardBg"),
             BorderBrush = ThemePackService.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
@@ -558,23 +568,42 @@ public sealed class SettingsPage : UserControl
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Left,
                 Padding = new Thickness(10, 6),
-                CornerRadius = new CornerRadius(8),
+                CornerRadius = new CornerRadius(pack.Metrics.CornerButton),
                 Background = pack.Id == ThemePackService.Current.Id ? ThemePackService.Brush("ChipActiveBg") : ThemePackService.Brush("ChipBg"),
                 Foreground = pack.Id == ThemePackService.Current.Id ? ThemePackService.Brush("AccentText") : ThemePackService.Brush("TextPrimary"),
             };
-            button.Click += (_, _) =>
-            {
-                if (Application.Current is { } app)
-                {
-                    ThemePackService.Apply(app, pack);
-                    onThemeApplied();
-                }
-            };
+            button.Name = "ThemePack_" + pack.Id;
+            button.Click += (_, _) => SelectTheme(pack);
+            _themeButtons.Add((pack, button));
             return button;
         });
         _themeList.Children.Add(ThemeList);
-        themeCard.Child = _themeList;
-        content.Children.Add(themeCard);
+
+        // THEME-MACOS-1: minimal「外观：浅色 / 深色」row; visible only for packs that carry both token sets.
+        _appearanceRow = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 8,
+            Margin = new Thickness(0, 6, 0, 0),
+            IsVisible = false,
+        };
+        _appearanceRow.Children.Add(new TextBlock
+        {
+            Text = "外观",
+            FontSize = 12,
+            VerticalAlignment = VerticalAlignment.Center,
+            Foreground = ThemePackService.Brush("TextSecondary"),
+        });
+        _lightVariantButton = CreateVariantButton("浅色");
+        _darkVariantButton = CreateVariantButton("深色");
+        _lightVariantButton.Click += (_, _) => SwitchVariant(Avalonia.Styling.ThemeVariant.Light);
+        _darkVariantButton.Click += (_, _) => SwitchVariant(Avalonia.Styling.ThemeVariant.Dark);
+        _appearanceRow.Children.Add(_lightVariantButton);
+        _appearanceRow.Children.Add(_darkVariantButton);
+        _themeList.Children.Add(_appearanceRow);
+
+        _themeCard.Child = _themeList;
+        content.Children.Add(_themeCard);
 
         var right = new StackPanel { Spacing = 12 };
         var dataCard = new Border
@@ -777,15 +806,102 @@ public sealed class SettingsPage : UserControl
 
     public TextBlock DeviceStatusText { get; }
 
+    public List<(ThemePack Pack, Button Button)> ThemeButtons => _themeButtons;
+
+    /// <summary>THEME-MACOS-1: theme card border (reads the active pack's Metrics).</summary>
+    public Border ThemeCard => _themeCard;
+
+    /// <summary>THEME-MACOS-1:「外观：浅色 / 深色」row (visible only for a dual-variant pack).</summary>
+    public StackPanel AppearanceRow => _appearanceRow;
+
+    public Button LightVariantButton => _lightVariantButton;
+
+    public Button DarkVariantButton => _darkVariantButton;
+
     public void UpdateSettingsJson(System.Text.Json.JsonElement value)
     {
         ViewModel.UpdateSettingsJson(value);
         _settingsJson.Text = ViewModel.SettingsJson;
     }
 
+    /// <summary>THEME-MACOS-1 AC1: applies one theme pack (same path as clicking its list button).</summary>
+    public void SelectTheme(ThemePack pack)
+    {
+        if (Application.Current is { } app)
+        {
+            ThemePackService.Apply(app, pack);
+            ViewModel.SelectedPack = pack;
+            // Refresh this page's own theme-centric controls even when the host callback is a no-op
+            // (the real shell callback also repaints nav/title bar through MainWindow.ApplyTheme).
+            ApplyTheme();
+            _onThemeApplied();
+        }
+    }
+
+    /// <summary>THEME-MACOS-1: switches the Light/Dark variant of the active dual-variant pack.</summary>
+    public void SwitchVariant(Avalonia.Styling.ThemeVariant variant)
+    {
+        if (Application.Current is { } app)
+        {
+            ThemePackService.ApplyVariant(app, variant);
+            ApplyTheme();
+            _onThemeApplied();
+        }
+    }
+
     public void ApplyTheme()
     {
         _wired.Text = ViewModel.WiredSummary;
+        ViewModel.SelectedPack = ThemePackService.Current;
+        var pack = ThemePackService.Current;
+
+        // Metrics are pack-level (not per variant), so corner radius + card shadow follow the pack even
+        // during an in-place variant switch. Text/background colours of the code-built cards keep their
+        // construction-time values (pre-existing behaviour of this shell's code-built pages).
+        _themeCard.CornerRadius = new CornerRadius(pack.Metrics.CornerCard);
+        var shadow = pack.Metrics.CardShadowFor(ThemePackService.CurrentVariant);
+        _themeCard.BoxShadow = string.IsNullOrWhiteSpace(shadow) ? default : BoxShadows.Parse(shadow);
+        foreach (var (themePack, button) in _themeButtons)
+        {
+            var selected = string.Equals(themePack.Id, pack.Id, StringComparison.Ordinal);
+            button.Background = ThemePackService.Brush(selected ? "ChipActiveBg" : "ChipBg");
+            button.Foreground = ThemePackService.Brush(selected ? "AccentText" : "TextPrimary");
+            button.CornerRadius = new CornerRadius(pack.Metrics.CornerButton);
+        }
+
+        RefreshAppearance(pack);
+    }
+
+    private void RefreshAppearance(ThemePack pack)
+    {
+        _appearanceRow.IsVisible = pack.SupportsVariants;
+        if (!pack.SupportsVariants)
+        {
+            return;
+        }
+
+        var dark = ThemePackMetrics.IsDark(ThemePackService.CurrentVariant);
+        StyleVariantButton(_lightVariantButton, active: !dark);
+        StyleVariantButton(_darkVariantButton, active: dark);
+    }
+
+    private static Button CreateVariantButton(string label) => new()
+    {
+        Content = label,
+        FontSize = 12,
+        Padding = new Thickness(10, 4),
+        CornerRadius = new CornerRadius(ThemePackService.Current.Metrics.CornerSmall),
+        Background = ThemePackService.Brush("ChipBg"),
+        Foreground = ThemePackService.Brush("TextSecondary"),
+        BorderBrush = ThemePackService.Brush("CardBorder"),
+        BorderThickness = new Thickness(1),
+    };
+
+    private static void StyleVariantButton(Button button, bool active)
+    {
+        button.Background = ThemePackService.Brush(active ? "ChipActiveBg" : "ChipBg");
+        button.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextSecondary");
+        button.BorderBrush = ThemePackService.Brush("CardBorder");
     }
 }
 

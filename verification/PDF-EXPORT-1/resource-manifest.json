@@ -1,0 +1,98 @@
+{
+  "task": "PDF-EXPORT-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-1",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-2/data-roots/data-root-full-chain",
+      "used_as": "真实数据根私有副本（8 页 BOOK-FIXTURE 完成态：3 页 translated + clean + mask）；原件零修改"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "used_as": "页面/尺寸对照参考（只读）"
+    }
+  ],
+  "written_in_repo": "verification/PDF-EXPORT-1/**（REPORT + pdf-artifacts.json + 8.29 MiB 真实 PDF 产物 + 校验工具/日志）；产品源码零修改",
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-1/**（data-root、out 产物、logs、scripts；保留引用）",
+  "external_artifacts": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-1\\out\\BOOK-FIXTURE-1-第1章-20261027-233025.pdf",
+      "sha256": "975b87d40a30939df389c84bcbc2fc76adb544a72bbea46e0a6b5353888d2eae",
+      "note": "repo 内已有复算一致的副本 verification/PDF-EXPORT-1/artifacts/"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-1\\out\\BOOK-FIXTURE-1-searchable-20261027-233231.pdf",
+      "sha256": "e0f7fd4951f7ffa8b075ea77d2ca23d7222c66244e3ff3de2ae02f45f05f5e14",
+      "note": "20.1 MB，留 workspace 以 sha 引用，避免仓库膨胀"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\PDF-EXPORT-1\\out\\BOOK-FIXTURE-1-8pages-20261027-233231.pdf",
+      "sha256": "eae5a85866feac54592a3beaec2ee5640a2a167c5a4765d064cdc821b8639bc5",
+      "note": "full sha in pdf-artifacts.json；25.5 MB"
+    }
+  ],
+  "artifacts": [
+    {
+      "rel": "artifacts/BOOK-FIXTURE-1-3pages-image-only.pdf",
+      "bytes": 8696282,
+      "sha256": "975b87d40a30939df389c84bcbc2fc76adb544a72bbea46e0a6b5353888d2eae"
+    },
+    {
+      "rel": "check-taskpath.log",
+      "bytes": 334,
+      "sha256": "90c2f9388a647aa9ca64228262370862382582b10bac1f26d4b230fea38b4e9e"
+    },
+    {
+      "rel": "evidence/dotnet-summary-clean-head.json",
+      "bytes": 1343,
+      "sha256": "dc2e61d75624c603e4329968285a2780edd91ac1efe0d0dbc328cef838f6fc3b"
+    },
+    {
+      "rel": "evidence/dotnet-test-clean-head.log",
+      "bytes": 20122,
+      "sha256": "aa6fefc2b50f8457ec68ce889a5a26720b2b7dd7e5f38c0d9d1245d9793b0c6e"
+    },
+    {
+      "rel": "evidence/dotnet-test-worktree-dirty.log",
+      "bytes": 94100,
+      "sha256": "a7d9b3569d1f9b2a002922e009cdad1bc657627c3f2b8d73c214c249854c99f6"
+    },
+    {
+      "rel": "evidence/pytest-full.log",
+      "bytes": 71301,
+      "sha256": "cb01dc4c2ae2f396884c29ea3e17861976adfa7caac766069b83bb973d469dbf"
+    },
+    {
+      "rel": "pdf-artifacts.json",
+      "bytes": 6449,
+      "sha256": "8108d4a9b49780148d304114d2d315e5a01cba94a8feea12aa1bdd2e2a47bd0a"
+    },
+    {
+      "rel": "REPORT.md",
+      "bytes": 10102,
+      "sha256": "b36e5c9ddc769dc55f9b57606f460b2dafd8ea984239a3b72cda77aed40f554a"
+    },
+    {
+      "rel": "tools/build_evidence.py",
+      "bytes": 4572,
+      "sha256": "d3765577461d5f04b2c0e1b5808a51bfd0164a23b2094ce1e16e3423c4b900d3"
+    },
+    {
+      "rel": "tools/real_pdf_export.py",
+      "bytes": 9144,
+      "sha256": "dd1e90785817fb3de54fcf41660d698c834c5165e1b7d0120d4cea9bccd7847e"
+    },
+    {
+      "rel": "tools/sanity_pdf.py",
+      "bytes": 2119,
+      "sha256": "6041963c2a037e4a3b0fb98d3804e905956fffafafcda08f6267a20444e15938"
+    },
+    {
+      "rel": "tools/supplementary_pdf.py",
+      "bytes": 10647,
+      "sha256": "43b633683c1afe6b85554c6825bca860bfbbb338ded6adf831706756d19072dd"
+    }
+  ],
+  "process_check": "src/**、tests/** 零改动（git status 可核）；未 push/gc/prune；未改协议/Host 契约/旧壳；未伪造 PDF（全部由真实 Core 代码路径产生，pymupdf 独立复核）。",
+  "closeout": "pending（resource_closeout_status: pending，Task 终态时按本清单处置）"
+}
