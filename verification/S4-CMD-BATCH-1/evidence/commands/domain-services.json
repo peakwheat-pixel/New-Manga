@@ -37,8 +37,8 @@
     {
       "domain": "Workbench",
       "commands": 12,
-      "implemented": 2,
-      "not_supported": 10
+      "implemented": 11,
+      "not_supported": 1
     }
   ]
 }

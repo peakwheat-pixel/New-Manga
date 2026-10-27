@@ -6,7 +6,7 @@
   "chapter_type": "webtoon",
   "page_id": "f52f2772e8044557a72e82f5ea6ab932",
   "page_count": 8,
-  "region_id": "ebe44480b8064157b2f70c97adf2a51a",
+  "region_id": "db7612aa2aef49d88597ba06645b1b7d",
   "region_revision_no": 3,
   "region_type": "speech",
   "all_ok": true,
@@ -34,7 +34,7 @@
       "command": "rerender_page",
       "core_command": "rerender_page",
       "ok": true,
-      "detail": "artifact_id=9804f0bb279e4eb390a6be9bfc45e45d revision_no=1 reports=1"
+      "detail": "artifact_id=c53f95bb4d124741b0ed1787ad18376d revision_no=1 reports=1"
     },
     {
       "command": "resolve_page_resource",

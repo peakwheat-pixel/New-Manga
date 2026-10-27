@@ -5,9 +5,9 @@
 | Task | `doc/tasks/S4-CMD-BATCH-1.md` |
 | Owner | `route-research` |
 | Branch / Worktree | `task/S4-CMD-BATCH-1` / `G:/CODEX/New Manga.workspace/worktrees/S4-CMD-BATCH-1` |
-| Base commit | `171529b5d` |
+| Base commit | `171529b5d`（任务基线）；已 rebase 到 `main` `b993e68bb`（RUN-EXPORT-E2E-1 先落地，24→33 IMPLEMENTED） |
 | Scope | C# Avalonia Host `NewManga.CoreClient` registry / dispatcher / domain services；本报告与证据 |
-| 结果 | 5 条由 NOT_SUPPORTED → IMPLEMENTED；第 6 条 `library_get_reader_projection` 在 base 已由 NS-WIRE-A1 实现，本轮补真实 chapter 成功复验 |
+| 结果 | 5 条由 NOT_SUPPORTED → IMPLEMENTED；第 6 条 `library_get_reader_projection` 在 base 已由 NS-WIRE-A1 实现，本轮补真实 chapter 成功复验。合并后 registry 33 → **38 IMPLEMENTED / 28 NOT_SUPPORTED** |
 | 冻结 sidecar | `G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy`（AC11 仓外未标注副本） |
 
 ## AC1 — 逐命令契约表
@@ -28,7 +28,7 @@
 
 - `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs`：新增 5 条 `CoreBindings`（`set_region_type` / `restore_region_revision` / `rerender_page` / `resolve_page_resource` / `SaveReadingProgress`，envelope minor 均为 3），并从 `CoreRoute` NS 原因表移出这 5 条；`list_region_revisions`（读，非本批）仍保持显式 NOT_SUPPORTED。
 - `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs`：在 `WriteCorePayload` 中按 legacy Tauri 签名做 Host 边界校验并构造精确 Core payload（含 `RequireInt64` / `WriteOptionalInt64` / `WriteOptionalDouble`）；未知命令保持原透传。
-- `apps/desktop-avalonia/src/NewManga.App/Shell/ReaderWorkbenchSupport.cs`：`S4Wiring.WiredImplemented` 14→19，`NsBatch` 9→4（仅剩 Run/Export 4 条 S4-C）；`VerifyAgainstRegistry()` 仍为空。
+- `apps/desktop-avalonia/src/NewManga.App/Shell/ReaderWorkbenchSupport.cs`：合并后 `S4Wiring.WiredImplemented` = 28（RUN-EXPORT 9 + 本批 5 + 既有 14），`NsBatch` = 0（S4-A/B/C 全部接线）；`VerifyAgainstRegistry()` 仍为空；S4 wiring 证据改名 `commands/s4-wiring.json`，与 S3 的 `commands/wiring.json` 分离。
 
 ## AC2 — 对冻结 sidecar 的真实执行断言
 
@@ -56,23 +56,23 @@ fixture：`apps/desktop-avalonia/scripts/seed_s4_region_fixture.py`（生产 ass
 
 - 命令面提取器：`python apps/desktop-avalonia/scripts/extract-command-surface.py --check` →
   `PASS: production command surface matches snapshot (66 commands, ...)`，见 [`parity-check.log`](parity-check.log)。Rust 命令面未改，snapshot sha256 仍为 `4c6a4da0e8968c6b62516fdbabd5608f4dd14cdd4d91c2c0b9d16a1092ccb574`。
-- C# registry parity：`24 IMPLEMENTED / 42 NOT_SUPPORTED` → **`29 IMPLEMENTED / 37 NOT_SUPPORTED`**（66 全归属、每族原因可见），见 [`parity-update.json`](parity-update.json) 与 [`evidence/parity-contract.json`](evidence/parity-contract.json)（`implemented=29, not_supported=37, coverage=100`）。
+- C# registry parity：任务基线 `24/42`；rebase 目标 main（RUN-EXPORT-E2E-1 先落地）为 `33/33`；合并本批 5 条后 **`38 IMPLEMENTED / 28 NOT_SUPPORTED`**（66 全归属、每族原因可见），见 [`parity-update.json`](parity-update.json) 与 [`evidence/commands/parity-contract.json`](evidence/commands/parity-contract.json)。
 
 ## AC4 — 回归
 
 | 套件 | 结果 | 证据 |
 | --- | --- | --- |
-| `apps/desktop-avalonia/scripts/test.ps1` | **PASS：146/146 passed，0 skipped**（coreclient 41 / host 42 / app 63） | [`evidence/test/summary.json`](evidence/test/summary.json)、[`evidence/test/dotnet-test-Debug.log`](evidence/test/dotnet-test-Debug.log) |
+| `apps/desktop-avalonia/scripts/test.ps1` | **PASS：158/158 passed，0 skipped**（coreclient 41 / host 42 / app 75） | [`evidence/test/summary.json`](evidence/test/summary.json)、[`evidence/test/dotnet-test-Debug.log`](evidence/test/dotnet-test-Debug.log)、[`evidence/commands/s4-wiring.json`](evidence/commands/s4-wiring.json)（28 wired / 0 NS） |
 | vitest | **60 files / 567 tests passed** | [`vitest.log`](vitest.log) |
-| pytest | **3 failed, 2739 passed, 9 skipped**，与基线一致，无新增失败 | [`pytest.log`](pytest.log) |
+| pytest | **3 failed, 2746 passed, 9 skipped**（与任务书基线 3F/2739P/9S 的失败集合完全一致；main 已合入 7 个 device 测试使通过数 2739→2746，无新增失败） | [`pytest.log`](pytest.log) |
 
-pytest 3 个基线失败（未变化，与本批无关）：`tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates`、`...::test_real_blank_page_yields_zero_candidates`、`tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately`。
+pytest 3 个基线失败（未变化，与本批无关；detection 两条为同一 `transformers` 缺 `RTDetrV2ForObjectDetection` 的环境原因）：`tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates`、`...::test_real_blank_page_yields_zero_candidates`、`tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately`。
 
 ## AC5 — 治理
 
 - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/S4-CMD-BATCH-1.md` → 见交付回报（PASS，0 error）。
 - 64-hex pin / delivery head 见 Task 卡 Canonical Evidence 与 Handoff。
-- 并发：`core-admin-rca` 的 RUN-EXPORT-E2E-1 同改 `HostCommandRegistry.cs`；本分支先落地，后续集成如遇冲突按先落地者为准 rebase 并只在 Handoff 记一行。
+- 并发：`core-admin-rca` 的 RUN-EXPORT-E2E-1 **先落地 main**（`b993e68bb`，registry 24→33）。本分支按“先落地者为准”rebase 到该提交并手动合并：保留其 Run/Export 9 条 + 本批 region/reader 5 条，测试计数改为合并后的 `38/28`、S4Wiring `28 wired / 0 NS`；无契约改动。
 
 ## 复跑方式
 
@@ -103,5 +103,5 @@ fixture 依赖：`NEWMANGA_BOOK_FIXTURE_ROOT`（或 workspace 默认 BOOK-FIXTUR
 
 1. `list_region_revisions`（region 读）仍 NOT_SUPPORTED：不属本批 6 条，但其 Core 路由在真实 fixture 探针中已 `ok:true`，可作为下一批（S4 读面/撤销 UI）直接接线。
 2. `library_get_reader_projection` 仅在 base 已有实现（NS-WIRE-A1），本批未改其代码，只补真实 chapter 成功复验；回执中已明确“5 新 + 1 既有”。
-3. 本分支基于 `171529b5d`（落后 main 2 个 commit：`321cbc195` 仅 task card 发布提交）；集成 rebase 时以先落地者为准。
+3. 分支基于任务基线 `171529b5d` 并已 rebase 到 main `b993e68bb`（RUN-EXPORT-E2E-1 先落地）；评测/集成时以该合并树为准。
 4. `probe-core-commands.ps1` 的 S2 默认探针仍保留旧的 invalid payload 记录（历史证据）；真实 id 探针通过新参数 `-RegionFixtureDataRoot` 启用，默认行为不变。

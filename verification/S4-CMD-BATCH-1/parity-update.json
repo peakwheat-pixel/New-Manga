@@ -5,12 +5,14 @@
   "extract_check": "PASS: production command surface matches snapshot (66 commands, domains={'resource': 3, 'workbench': 12, 'library': 8, 'settings': 33, 'region': 6, 'reader': 4})",
   "extract_check_log": "verification/S4-CMD-BATCH-1/parity-check.log",
   "before": {
-    "implemented": 24,
-    "not_supported": 42
+    "task_base_implemented": 24,
+    "task_base_not_supported": 42,
+    "rebase_main_implemented": 33,
+    "rebase_main_not_supported": 33
   },
   "after": {
-    "implemented": 29,
-    "not_supported": 37
+    "implemented": 38,
+    "not_supported": 28
   },
   "changed_commands": [
     {
@@ -74,11 +76,17 @@
   "snapshot_mutation": "none (the Rust-derived command surface is unchanged; statuses live only in the C# HostCommandRegistry)",
   "evidence": {
     "before_parity_contract": "verification/HOST-COMMAND-MIGRATION-1/commands/parity-contract.json",
-    "after_parity_contract": "verification/S4-CMD-BATCH-1/evidence/parity-contract.json",
-    "integration_results": "verification/S4-CMD-BATCH-1/evidence/integration-results.json",
+    "after_parity_contract": "verification/S4-CMD-BATCH-1/evidence/commands/parity-contract.json",
+    "integration_results": "verification/S4-CMD-BATCH-1/evidence/commands/integration-results.json",
     "s4_region_reader_results": "verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json",
     "core_command_probe": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
-    "not_supported_typed_errors": "verification/S4-CMD-BATCH-1/evidence/not-supported-typed-errors.json"
+    "not_supported_typed_errors": "verification/S4-CMD-BATCH-1/evidence/not-supported-typed-errors.json",
+    "s4_wiring": "verification/S4-CMD-BATCH-1/evidence/commands/s4-wiring.json"
   },
-  "registry_contract": "C# HostCommandRegistry 66 条全部有归属：29 IMPLEMENTED / 37 NOT_SUPPORTED（每族原因可见）"
+  "registry_contract": "C# HostCommandRegistry 66 条全部有归属：29 IMPLEMENTED / 37 NOT_SUPPORTED（每族原因可见）",
+  "rebase": {
+    "main_commit": "b993e68bb",
+    "landed_first": "RUN-EXPORT-E2E-1",
+    "resolution": "先落地者为准：保留 main 的 Run/Export 9 条接线与本批 region/reader 5 条；计数 33→38"
+  }
 }

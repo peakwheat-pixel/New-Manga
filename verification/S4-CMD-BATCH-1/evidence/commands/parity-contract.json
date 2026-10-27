@@ -3,8 +3,8 @@
   "snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
   "probe": "verification/HOST-COMMAND-MIGRATION-1/parity/core-command-probe.json",
   "snapshot_commands": 66,
-  "implemented": 29,
-  "not_supported": 37,
+  "implemented": 38,
+  "not_supported": 28,
   "coverage_percent": 100,
   "every_command_has_owner": true,
   "domain_counts": {
@@ -23,12 +23,21 @@
     "core_ping",
     "create_chapter",
     "issue_resource_url",
+    "library_cancel_export",
+    "library_control_run",
     "library_create_book",
     "library_get_export_history",
+    "library_get_export_snapshot",
     "library_get_reader_projection",
+    "library_get_run_snapshot",
+    "library_get_task_projection",
     "library_list_books",
     "library_list_recycle_bin_books",
+    "library_resume_blocked_run",
+    "library_retry_failed_targets",
     "library_save_reading_progress",
+    "library_start_export",
+    "library_start_run",
     "list_chapter_pages",
     "list_chapters",
     "list_regions",
@@ -68,31 +77,11 @@
       "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
     },
     {
-      "name": "library_cancel_export",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_control_run",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
       "name": "library_delete_book_permanently",
       "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
     },
     {
       "name": "library_delete_books_permanently",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_get_export_snapshot",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_get_run_snapshot",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_get_task_projection",
       "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
     },
     {
@@ -104,23 +93,7 @@
       "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
     },
     {
-      "name": "library_resume_blocked_run",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_retry_failed_targets",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
       "name": "library_reveal_export_folder",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_start_export",
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
-    },
-    {
-      "name": "library_start_run",
       "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
     },
     {
@@ -347,11 +320,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1110",
       "rust_params": 1,
       "rust_returns": "Result\u003CExportProgressSnapshotView, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "CancelExport",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_control_run",
@@ -359,11 +332,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1042",
       "rust_params": 3,
       "rust_returns": "Result\u003Cserde_json::Value, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "ControlRun",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_create_book",
@@ -419,11 +392,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1123",
       "rust_params": 1,
       "rust_returns": "Result\u003CExportProgressSnapshotView, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "GetExportSnapshot",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_get_reader_projection",
@@ -443,11 +416,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1070",
       "rust_params": 1,
       "rust_returns": "Result\u003Cserde_json::Value, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "GetRunSnapshot",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_get_task_projection",
@@ -455,11 +428,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1083",
       "rust_params": 1,
       "rust_returns": "Result\u003Cserde_json::Value, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "GetTaskProjection",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_import_file",
@@ -515,11 +488,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1057",
       "rust_params": 1,
       "rust_returns": "Result\u003Cserde_json::Value, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "ResumeBlockedRun",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_retry_failed_targets",
@@ -527,11 +500,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1096",
       "rust_params": 2,
       "rust_returns": "Result\u003Cserde_json::Value, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "RetryFailedTargets",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_reveal_export_folder",
@@ -563,11 +536,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1242",
       "rust_params": 1,
       "rust_returns": "Result\u003COption\u003Chost_issuer::ExportSummary\u003E, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "StartExport",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "library_start_run",
@@ -575,11 +548,11 @@
       "rust_handler": "apps/desktop/src-tauri/src/main.rs:1026",
       "rust_params": 4,
       "rust_returns": "Result\u003Cserde_json::Value, String\u003E",
-      "status": "NotSupported",
-      "channel": "None",
-      "core_command": null,
-      "core_minor": 0,
-      "reason": "\u8BE5\u547D\u4EE4\u7684\u8BED\u4E49\u5728\u65E7 Tauri/Rust host \u672C\u5730\u5B9E\u73B0\uFF08\u8BBE\u7F6E\u6301\u4E45\u5316\u3001\u51ED\u8BC1\u3001\u63D2\u4EF6\u3001\u5907\u4EFD\u6062\u590D\u3001\u5BFC\u5165\u5BFC\u51FA\u6216\u8FD0\u884C\u7F16\u6392\uFF09\uFF1BS2 \u53EA\u8FC1\u79FB\u5DF2\u63A2\u6D4B\u901A\u8FC7\u7684\u547D\u4EE4\u9762\uFF0Chost-local \u903B\u8F91\u6309 AD-002 \u5728\u540E\u7EED Slice \u79FB\u690D\uFF0C\u672C Slice \u663E\u5F0F NOT_SUPPORTED\u3002"
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "StartRun",
+      "core_minor": 3,
+      "reason": null
     },
     {
       "name": "list_chapter_pages",

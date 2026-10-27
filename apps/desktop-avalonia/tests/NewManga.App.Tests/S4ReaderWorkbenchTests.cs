@@ -347,11 +347,13 @@ public sealed class S4WiringTests
 
         var vm = new ReaderViewModel();
         vm.SetViewport(1200, 800, 2.0);
+        // Distinct from ShellCommandCatalog's commands/wiring.json (S3 shelf+settings scope):
+        // both used to write the same file, so the last writer hid the other's counts.
         S4Wiring.WriteEvidence(
-            Path.Combine(Evidence.Directory, "commands", "wiring.json"),
+            Path.Combine(Evidence.Directory, "commands", "s4-wiring.json"),
             vm,
             new List<double> { 1.2, 1.8, 2.1 });
-        var json = File.ReadAllText(Path.Combine(Evidence.Directory, "commands", "wiring.json"));
+        var json = File.ReadAllText(Path.Combine(Evidence.Directory, "commands", "s4-wiring.json"));
         Assert.Contains("\"wired_implemented_count\": 28", json, StringComparison.Ordinal);
         Assert.Contains("\"ns_registered_count\": 0", json, StringComparison.Ordinal);
     }

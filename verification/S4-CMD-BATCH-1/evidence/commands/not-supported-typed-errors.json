@@ -1,6 +1,6 @@
 {
   "ac": "AC2/AC3",
-  "typed_not_supported": 37,
+  "typed_not_supported": 28,
   "every_reason_present": true,
   "unknown_command_code": "UNKNOWN_COMMAND",
   "commands": [
@@ -30,16 +30,6 @@
       "code": "NOT_SUPPORTED"
     },
     {
-      "command": "library_cancel_export",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_control_run",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
       "command": "library_delete_book_permanently",
       "domain": "Library",
       "code": "NOT_SUPPORTED"
@@ -47,21 +37,6 @@
     {
       "command": "library_delete_books_permanently",
       "domain": "Library",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_get_export_snapshot",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_get_run_snapshot",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_get_task_projection",
-      "domain": "Workbench",
       "code": "NOT_SUPPORTED"
     },
     {
@@ -75,27 +50,7 @@
       "code": "NOT_SUPPORTED"
     },
     {
-      "command": "library_resume_blocked_run",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_retry_failed_targets",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
       "command": "library_reveal_export_folder",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_start_export",
-      "domain": "Workbench",
-      "code": "NOT_SUPPORTED"
-    },
-    {
-      "command": "library_start_run",
       "domain": "Workbench",
       "code": "NOT_SUPPORTED"
     },
