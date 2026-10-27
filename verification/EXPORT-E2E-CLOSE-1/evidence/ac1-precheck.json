@@ -1,0 +1,272 @@
+{
+  "task": "EXPORT-E2E-CLOSE-1",
+  "ac": "AC1",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar",
+  "sidecar_core_service_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+  "sidecar_core_service_bytes": 399492,
+  "source_run_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-2\\data-roots\\data-root-full-chain",
+  "copied_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\EXPORT-E2E-CLOSE-1\\data-root",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "commands": [
+    {
+      "command": "core.ping",
+      "elapsed_ms": 395.0,
+      "ok": true
+    },
+    {
+      "command": "list_chapters",
+      "elapsed_ms": 0.1,
+      "ok": true
+    },
+    {
+      "command": "list_chapter_pages",
+      "elapsed_ms": 0.2,
+      "ok": true
+    },
+    {
+      "command": "GetExportHistory",
+      "elapsed_ms": 0.1,
+      "ok": true
+    },
+    {
+      "command": "GetReaderProjection",
+      "elapsed_ms": 238.4,
+      "ok": true
+    }
+  ],
+  "page_count": 8,
+  "pages": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "sort_order": 1
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+      "sort_order": 2
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+      "sort_order": 3
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+      "sort_order": 4
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+      "sort_order": 5
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+      "sort_order": 6
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+      "sort_order": 7
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+      "sort_order": 8
+    }
+  ],
+  "export_history": {
+    "exports": []
+  },
+  "reader_projection": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "order": 0,
+      "translated_artifact_revision_id": "56d3c442cb8c49d4b692cb44167185c5",
+      "translated_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "translated_resource_ref": {
+        "resource_id": "preview-3e97b66d8c7e4003886c0ae59cd8693c",
+        "revision": "56d3c442cb8c49d4b692cb44167185c5"
+      },
+      "original_sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "order": 1,
+      "translated_artifact_revision_id": "f5cbd019a6824c77903d0248d859ad48",
+      "translated_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "translated_resource_ref": {
+        "resource_id": "preview-5cf83530957e42308953ee33af8b1ffe",
+        "revision": "f5cbd019a6824c77903d0248d859ad48"
+      },
+      "original_sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "order": 2,
+      "translated_artifact_revision_id": "5216cf71f59b47008addb2842c40857c",
+      "translated_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
+      "translated_resource_ref": {
+        "resource_id": "preview-4269b86abd634174a1fc1dfe2b75a53d",
+        "revision": "5216cf71f59b47008addb2842c40857c"
+      },
+      "original_sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "order": 3,
+      "translated_artifact_revision_id": null,
+      "translated_sha256": null,
+      "translated_resource_ref": null,
+      "original_sha256": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1"
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "order": 4,
+      "translated_artifact_revision_id": null,
+      "translated_sha256": null,
+      "translated_resource_ref": null,
+      "original_sha256": "e6ea0d306bd353db62275c344e17807d4252d6f5574fc30d7120f28f783878c6"
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "order": 5,
+      "translated_artifact_revision_id": null,
+      "translated_sha256": null,
+      "translated_resource_ref": null,
+      "original_sha256": "dc23b0f16b02ce14f7d60ad1805dd13b9ce4e0ad5f6ead75cf4b955713d6e638"
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "order": 6,
+      "translated_artifact_revision_id": null,
+      "translated_sha256": null,
+      "translated_resource_ref": null,
+      "original_sha256": "87a342f78a2b1c387b4edfb8ed3b835f748dc13c1de15fcccea3d273daaf7b26"
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "order": 7,
+      "translated_artifact_revision_id": null,
+      "translated_sha256": null,
+      "translated_resource_ref": null,
+      "original_sha256": "c50404045f08bdd81001896082ede352bebd938e541ae31b2d119a9f6b5900cc"
+    }
+  ],
+  "translated_pages": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "order": 0,
+      "translated_artifact_revision_id": "56d3c442cb8c49d4b692cb44167185c5",
+      "translated_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "translated_resource_ref": {
+        "resource_id": "preview-3e97b66d8c7e4003886c0ae59cd8693c",
+        "revision": "56d3c442cb8c49d4b692cb44167185c5"
+      },
+      "original_sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "order": 1,
+      "translated_artifact_revision_id": "f5cbd019a6824c77903d0248d859ad48",
+      "translated_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "translated_resource_ref": {
+        "resource_id": "preview-5cf83530957e42308953ee33af8b1ffe",
+        "revision": "f5cbd019a6824c77903d0248d859ad48"
+      },
+      "original_sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "order": 2,
+      "translated_artifact_revision_id": "5216cf71f59b47008addb2842c40857c",
+      "translated_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
+      "translated_resource_ref": {
+        "resource_id": "preview-4269b86abd634174a1fc1dfe2b75a53d",
+        "revision": "5216cf71f59b47008addb2842c40857c"
+      },
+      "original_sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"
+    }
+  ],
+  "run_rows": [
+    {
+      "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+      "command_type": "translate_untranslated",
+      "scope_type": "book",
+      "status": "completed",
+      "provider_binding_snapshot_json": "{\"ocr\": \"manga-ocr\", \"translate\": \"identity-translation\"}",
+      "updated_at": "2026-10-27T12:44:09.523+00:00",
+      "completed_at": null,
+      "started_at": null
+    }
+  ],
+  "page_rows": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "source_order": 1,
+      "sort_order": 1,
+      "width": 1200,
+      "height": 1660,
+      "translated_managed_path": "books/14340ddad0ed472fbe687fe12340c5d8/chapters/240bdba549b74281bfc6d901b1a7abd7/translated/20938f2f51ab4fa2ab8731b2e8f701ed.png",
+      "translated_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "translated_revision_id": "56d3c442cb8c49d4b692cb44167185c5",
+      "translated_artifact_id": "46d29a778662412183cfef42438d4aed",
+      "translated_size_bytes": 3104675,
+      "translated_mime_type": "image/png",
+      "translated_source_run_id": null,
+      "translated_file_exists": true,
+      "translated_file_bytes": 3104675,
+      "translated_file_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "translated_file_match": true
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "source_order": 2,
+      "sort_order": 2,
+      "width": 1200,
+      "height": 1660,
+      "translated_managed_path": "books/14340ddad0ed472fbe687fe12340c5d8/chapters/240bdba549b74281bfc6d901b1a7abd7/translated/76ac8793c32e4d528f64982a6e857910.png",
+      "translated_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "translated_revision_id": "f5cbd019a6824c77903d0248d859ad48",
+      "translated_artifact_id": "3e2f2ad5e2a4495599c6ea0397b07740",
+      "translated_size_bytes": 2802034,
+      "translated_mime_type": "image/png",
+      "translated_source_run_id": null,
+      "translated_file_exists": true,
+      "translated_file_bytes": 2802034,
+      "translated_file_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "translated_file_match": true
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "source_order": 3,
+      "sort_order": 3,
+      "width": 1200,
+      "height": 726,
+      "translated_managed_path": "books/14340ddad0ed472fbe687fe12340c5d8/chapters/240bdba549b74281bfc6d901b1a7abd7/translated/7f3b4e21178e49baa7879a6030d6796e.png",
+      "translated_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
+      "translated_revision_id": "5216cf71f59b47008addb2842c40857c",
+      "translated_artifact_id": "b89dc537873343dbaa1381b49f0159d7",
+      "translated_size_bytes": 1166522,
+      "translated_mime_type": "image/png",
+      "translated_source_run_id": null,
+      "translated_file_exists": true,
+      "translated_file_bytes": 1166522,
+      "translated_file_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
+      "translated_file_match": true
+    }
+  ],
+  "translated_page_count": 3,
+  "read_only_source_root_note": "RELEASE-REPACK-2's completed-run data root was copied into this task env; the other task's evidence root was not modified.",
+  "upstream_run": {
+    "task": "RELEASE-REPACK-2",
+    "run_id": "run-236e8cfe1b764fdcbc1fc17854b22ebf",
+    "run_terminal_status": "completed",
+    "run_elapsed_ms": 86430.7,
+    "sidecar_core_service_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+    "step_counts": null
+  }
+}

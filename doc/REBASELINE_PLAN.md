@@ -38,7 +38,7 @@
 |RELEASE-REPACK-1|—|done（新 sidecar base/models；同构建 8 页 ocr/color 3/3；安装 smoke PASS；集成 429ca763c）|
 |TRANSLATE-PROVIDER-1|—|done（identity-experimental；源码 8 页全链到 render 22/22；PC3 同构建待重打包；集成 5b96c25ef）|
 |RUN-STORE-CACHE-RACE-FIX-1|—|done（视图读/执行缓存分离+CAS；前后 FAIL→PASS 实证；集成 2980608e0）|
-|EXPORT-E2E-CLOSE-1|—|ready（Export 真跑闭环）|
+|EXPORT-E2E-CLOSE-1|—|in_review（Export 真跑闭环；ZIP 图片包 + get/cancel 真实记录；见 verification/EXPORT-E2E-CLOSE-1）|
 |CREDENTIAL-PORT-1|—|done（ICredentialStore+Windows vault；全链 PASS；parity 66/0；集成 0726abdd3）|
 |CREDENTIAL-UI-1|—|ready（设置页凭据 UI：安全输入→put/clear）|
 |RELEASE-REPACK-2|—|done（新构建全链 completed 86.43s/render 22/22；并发 0 卡；集成 090371703）|
@@ -47,7 +47,7 @@
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：EXPORT-E2E-CLOSE-1、CREDENTIAL-UI-1。
+READY 节点：CREDENTIAL-UI-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
