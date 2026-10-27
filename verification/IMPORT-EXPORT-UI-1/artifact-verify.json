@@ -1,0 +1,51 @@
+{
+  "ac": "AC2 independent artifact re-check",
+  "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\IMPORT-EXPORT-UI-1\\verification\\IMPORT-EXPORT-UI-1\\artifacts\\ui-export-exp-583026330d98.zip",
+  "bytes": 7070562,
+  "sha256": "cb4d30db7c61f73169c74ca3a36b21e82df196333a44df36b001bb67696788c1",
+  "zip_opens": true,
+  "entries": [
+    {
+      "name": "0001_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "bytes": 3104675
+    },
+    {
+      "name": "0002_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+      "bytes": 2802034
+    },
+    {
+      "name": "0003_ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+      "bytes": 1166522
+    },
+    {
+      "name": "manifest.json",
+      "bytes": 2273
+    }
+  ],
+  "manifest_pages": 3,
+  "entry_match_manifest": true,
+  "lineage_entries": 3,
+  "checks": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "filename": "0001_ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "manifest_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "entry_sha256": "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "match": true
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "filename": "0002_ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+      "manifest_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "entry_sha256": "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "match": true
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "filename": "0003_ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+      "manifest_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
+      "entry_sha256": "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2",
+      "match": true
+    }
+  ]
+}

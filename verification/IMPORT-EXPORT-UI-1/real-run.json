@@ -1,0 +1,169 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "scenario": "real-machine Debug NewManga.App.exe with isolated NEWMANGA_DATA_ROOT (copy of the RELEASE-REPACK-2 completed-run root), real RELEASE-REPACK-2 models sidecar, --parity; real system picker; real Host grant chains",
+  "app": {
+    "exe": "apps/desktop-avalonia/src/NewManga.App/bin/Debug/net9.0/NewManga.App.exe",
+    "arguments": [
+      "--data-root=<task-env>/screenshot-root",
+      "--sidecar-dir=<task-env>/RELEASE-REPACK-2/out/NewManga-0.1.0-win-x64-models/app/core-sidecar",
+      "--parity",
+      "--log-dir=<task-env>/app-logs"
+    ],
+    "host_mode": "ReadWrite (parity reached)",
+    "sidecar_core_service_sha256": "c55319306e3022f325c1879deaa96a476dc105b206fa7135c6ae312a2a5c027b",
+    "data_root_book": "14340ddad0ed472fbe687fe12340c5d8",
+    "data_root_chapter": "240bdba549b74281bfc6d901b1a7abd7",
+    "pages_before_import": 8,
+    "pages_after_import": 9
+  },
+  "import": {
+    "entry": "Bookshelf → 导入文件 → Windows picker → ImportPanel (目标书/章/跳过重复) → 开始导入",
+    "source_file": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-EXPORT-UI-1\\import-src\\ui-import-1.png",
+    "source_bytes": 134,
+    "wire_frames": [
+      "{\"timestamp_utc\":\"2026-10-27T14:54:03.3067417+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"hostctl-42\\\",\\\"channel\\\":\\\"host-control\\\",\\\"command\\\":\\\"RegisterImportSource\\\",\\\"core_session_id\\\":\\\"42e4f3cc34a941ceb703d4340c7e1caa\\\",\\\"host_session_id\\\":\\\"host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI\\\",\\\"host_session_credential\\\":\\\"O_rX1czr0kwhXl2UZQdT6egUK_vU1naGINV_tM9OqoA\\\",\\\"payload\\\":{\\\"grant_id\\\":\\\"grant_FaeYuycaqdv5JzY4UzKPeSkay08mjFV774IIA7JM0JU\\\",\\\"session_id\\\":\\\"host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI\\\",\\\"scope_class\\\":\\\"user-source\\\",\\\"operation\\\":\\\"ImportPages\\\",\\\"access\\\":\\\"read-only\\\",\\\"source_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\import-src\\\\\\\\ui-import-1.png\\\",\\\"source_kind\\\":\\\"file\\\",\\\"scope_identity\\\":null,\\\"entries\\\":[{\\\"path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\import-src\\\\\\\\ui-import-1.png\\\",\\\"facts\\\":{\\\"volume_serial\\\":3401956556,\\\"file_index\\\":562949955523322,\\\"size\\\":134,\\\"sha256\\\":\\\"e1b6787b41c62d4dfcd21713771036567bcadb34b46e827c6ba6d85d8801d4a8\\\"}}],\\\"expires_at\\\":1793113142,\\\"signin",
+      "{\"timestamp_utc\":\"2026-10-27T14:54:03.4281240+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-43\\\",\\\"command\\\":\\\"ImportPages\\\",\\\"payload\\\":{\\\"chapter_id\\\":\\\"240bdba549b74281bfc6d901b1a7abd7\\\",\\\"sources\\\":[{\\\"grant_id\\\":\\\"grant_FaeYuycaqdv5JzY4UzKPeSkay08mjFV774IIA7JM0JU\\\",\\\"host_signature\\\":\\\"wwKL1Oww2o2VWYre5xmqD3djGuzS4YmSntnq1mJ_iHk\\\"}],\\\"duplicate_policy\\\":\\\"skip\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-43\\\",\\\"result\\\":{\\\"chapter_id\\\":\\\"240bdba549b74281bfc6d901b1a7abd7\\\",\\\"duplicate_policy\\\":\\\"skip\\\",\\\"cancelled\\\":false,\\\"sources\\\":[{\\\"source_index\\\":0,\\\"source_name\\\":\\\"ui-import-1.png\\\",\\\"files\\\":[{\\\"filename\\\":\\\"ui-import-1.png\\\",\\\"outcome\\\":\\\"imported\\\",\\\"source_sha256\\\":\\\"e1b6787b41c62d4dfcd21713771036567bcadb34b46e827c6ba6d85d8801d4a8\\\",\\\"pages\\\":[{\\\"page_index\\\":1,\\\"outcome\\\":\\\"imported\\\",\\\"page_id\\\":\\\"cc3b8532d13a4b5ca0392dec37fd4093\\\",\\\"source_order\\\":9,\\\"sort_order\\\":9,\\\"sha256\\\":\\\"e1b6787b41c62d4dfcd21713771036567bcadb34b46e827c6ba6d85d8801d4a8\\\",\\\"width\\\":40,\\\"height\\\":30,\\\"duplicate\\\":false,\\\"error\\\":null,\\\"side_e"
+    ],
+    "result": "已导入 1 个文件（Host grant 链：host-control RegisterImportSource → ImportPages）",
+    "shelf_refreshed_pages": "8 → 9"
+  },
+  "export": {
+    "entry": "Reader toolbar → 导出 → ExportPanel → 开始导出; 轮询 GetExportSnapshot; GetExportHistory; 打开导出目录",
+    "export_id": "exp-583026330d98",
+    "target_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-EXPORT-UI-1\\screenshot-root\\exports\\BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261027-144637.zip",
+    "artifact_bytes": 7070562,
+    "artifact_sha256": "cb4d30db7c61f73169c74ca3a36b21e82df196333a44df36b001bb67696788c1",
+    "artifact_entries": 4,
+    "page_entries": 3,
+    "manifest_page_shas": [
+      "4ca8a215401a237380cf62562f1b07137f8e3e9e1da126c6e74320d71f285b7d",
+      "69344431e3c221dd7374602670d008f3321583fffffd2b74291b17b6132d7a0c",
+      "562a672aee571e9c26f0d4c427d07f71ed5316d933e07c15fb18c6b4746af2f2"
+    ],
+    "entry_sha_matches_manifest": true,
+    "wire_frames": [
+      "{\"timestamp_utc\":\"2026-10-27T14:41:44.0812858+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-24\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-24\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-827c4833b7cf\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"store\\\"},\\\"created_at\\\":\\\"2026-10-27T13:47:28.655+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T13:47:28.663+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\EXPORT-E2E-CLOSE-1\\\\\\\\data-root\\\\\\\\exports\\\\\\\\book-fixture-cancel-1.zip\\\",\\\"status\\\":\\\"cancelled\\\",\\\"sha256\\\":null,\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"order\\\":0,\\\"source_artifact_id\\\":\\\"46d29a778662412183cfef42438d4aed\\\",\\\"source_artifact_revision_id\\\":\\\"56d3c442cb8c49d4b692cb44167185c5\\\",\\\"",
+      "{\"timestamp_utc\":\"2026-10-27T14:44:21.3858693+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-24\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-24\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-827c4833b7cf\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"store\\\"},\\\"created_at\\\":\\\"2026-10-27T13:47:28.655+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T13:47:28.663+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\EXPORT-E2E-CLOSE-1\\\\\\\\data-root\\\\\\\\exports\\\\\\\\book-fixture-cancel-1.zip\\\",\\\"status\\\":\\\"cancelled\\\",\\\"sha256\\\":null,\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"order\\\":0,\\\"source_artifact_id\\\":\\\"46d29a778662412183cfef42438d4aed\\\",\\\"source_artifact_revision_id\\\":\\\"56d3c442cb8c49d4b692cb44167185c5\\\",\\\"",
+      "{\"timestamp_utc\":\"2026-10-27T14:46:20.6478588+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-25\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-25\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-827c4833b7cf\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"store\\\"},\\\"created_at\\\":\\\"2026-10-27T13:47:28.655+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T13:47:28.663+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\EXPORT-E2E-CLOSE-1\\\\\\\\data-root\\\\\\\\exports\\\\\\\\book-fixture-cancel-1.zip\\\",\\\"status\\\":\\\"cancelled\\\",\\\"sha256\\\":null,\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"order\\\":0,\\\"source_artifact_id\\\":\\\"46d29a778662412183cfef42438d4aed\\\",\\\"source_artifact_revision_id\\\":\\\"56d3c442cb8c49d4b692cb44167185c5\\\",\\\"",
+      "{\"timestamp_utc\":\"2026-10-27T14:46:37.7069118+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"hostctl-26\\\",\\\"channel\\\":\\\"host-control\\\",\\\"command\\\":\\\"RegisterExportTarget\\\",\\\"core_session_id\\\":\\\"42e4f3cc34a941ceb703d4340c7e1caa\\\",\\\"host_session_id\\\":\\\"host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI\\\",\\\"host_session_credential\\\":\\\"O_rX1czr0kwhXl2UZQdT6egUK_vU1naGINV_tM9OqoA\\\",\\\"payload\\\":{\\\"grant_id\\\":\\\"grant_ANIHyirjk8flXtcUnf73j1QkAxaBCsU48j8QWdVm26s\\\",\\\"session_id\\\":\\\"host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI\\\",\\\"target_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\screenshot-root\\\\\\\\exports\\\\\\\\BOOK-FIXTURE-1 \\\\u65e5\\\\u6f2b_JA \\\\u6d4b\\\\u8bd5\\\\u4e66-\\\\u7b2c 1 \\\\u7ae0-20261027-144637.zip\\\",\\\"format\\\":\\\"zip\\\",\\\"replace_existing\\\":false,\\\"expires_at\\\":1793112696,\\\"signing_key\\\":\\\"4un3CdrJaoRxOso00aPIf4wlybLo5lShZcuEFxTJqO4\\\",\\\"signature\\\":\\\"vR8Tb9QkFmXE9cfZkgt3rquG4BWno69gqfocMJxUayU\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"hostctl-26\\\",\\\"result\\\":{\\\"registered\\\":true},\\\"error\\\":null}\",\"request_u",
+      "{\"timestamp_utc\":\"2026-10-27T14:46:37.7261457+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-27\\\",\\\"command\\\":\\\"StartExport\\\",\\\"payload\\\":{\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"standard\\\"},\\\"stale_policy\\\":\\\"abort\\\",\\\"target_ref\\\":\\\"etref1.grant_ANIHyirjk8flXtcUnf73j1QkAxaBCsU48j8QWdVm26s.vR8Tb9QkFmXE9cfZkgt3rquG4BWno69gqfocMJxUayU\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-27\\\",\\\"result\\\":{\\\"export_id\\\":\\\"exp-583026330d98\\\",\\\"status\\\":\\\"pending\\\",\\\"accepted_at\\\":\\\"2026-10-27T14:46:37.722+00:00\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compress",
+      "{\"timestamp_utc\":\"2026-10-27T14:46:37.7358362+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-28\\\",\\\"command\\\":\\\"GetExportSnapshot\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-583026330d98\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"event_id\\\":\\\"36b931301b87455ba351884e42323871\\\",\\\"event_type\\\":\\\"ExportProgressChanged\\\",\\\"emitted_at\\\":\\\"2026-10-27T14:46:37.729+00:00\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-583026330d98\\\",\\\"status\\\":\\\"running\\\",\\\"completed_pages\\\":0,\\\"total_pages\\\":3}}\",\"request_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d3238222c22636f6d6d616e64223a224765744578706f7274536e617073686f74222c227061796c6f6164223a7b226578706f72745f6964223a226578702d353833303236333330643938227d7d\",\"response_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c226576656e745f6964223a223336623933313330316238373435356261333531383834653432333233383731222c226576656e745f747970652",
+      "{\"timestamp_utc\":\"2026-10-27T14:46:38.0601561+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-29\\\",\\\"command\\\":\\\"GetExportSnapshot\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-583026330d98\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"event_id\\\":\\\"473c7f2ab0a245bb8b23795aeddb8a83\\\",\\\"event_type\\\":\\\"ExportProgressChanged\\\",\\\"emitted_at\\\":\\\"2026-10-27T14:46:37.803+00:00\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-583026330d98\\\",\\\"status\\\":\\\"running\\\",\\\"completed_pages\\\":1,\\\"total_pages\\\":3}}\",\"request_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d3239222c22636f6d6d616e64223a224765744578706f7274536e617073686f74222c227061796c6f6164223a7b226578706f72745f6964223a226578702d353833303236333330643938227d7d\",\"response_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c226576656e745f6964223a223437336337663261623061323435626238623233373935616564646238613833222c226576656e745f747970652",
+      "{\"timestamp_utc\":\"2026-10-27T14:46:38.0635326+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-30\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-30\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-583026330d98\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"standard\\\"},\\\"created_at\\\":\\\"2026-10-27T14:46:37.722+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T14:46:37.923+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\screenshot-root\\\\\\\\exports\\\\\\\\BOOK-FIXTURE-1 \\\\u65e5\\\\u6f2b_JA \\\\u6d4b\\\\u8bd5\\\\u4e66-\\\\u7b2c 1 \\\\u7ae0-20261027-144637.zip\\\",\\\"status\\\":\\\"completed\\\",\\\"sha256\\\":\\\"cb4d30db7c61f73169c74ca3a36b21e82df196333a44df36b001bb67696788c1\\\",\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"o",
+      "{\"timestamp_utc\":\"2026-10-27T14:47:16.0595420+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-31\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-31\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-583026330d98\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"standard\\\"},\\\"created_at\\\":\\\"2026-10-27T14:46:37.722+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T14:46:37.923+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\screenshot-root\\\\\\\\exports\\\\\\\\BOOK-FIXTURE-1 \\\\u65e5\\\\u6f2b_JA \\\\u6d4b\\\\u8bd5\\\\u4e66-\\\\u7b2c 1 \\\\u7ae0-20261027-144637.zip\\\",\\\"status\\\":\\\"completed\\\",\\\"sha256\\\":\\\"cb4d30db7c61f73169c74ca3a36b21e82df196333a44df36b001bb67696788c1\\\",\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"o",
+      "{\"timestamp_utc\":\"2026-10-27T14:48:41.8556892+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-33\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-33\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-583026330d98\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"standard\\\"},\\\"created_at\\\":\\\"2026-10-27T14:46:37.722+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T14:46:37.923+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\screenshot-root\\\\\\\\exports\\\\\\\\BOOK-FIXTURE-1 \\\\u65e5\\\\u6f2b_JA \\\\u6d4b\\\\u8bd5\\\\u4e66-\\\\u7b2c 1 \\\\u7ae0-20261027-144637.zip\\\",\\\"status\\\":\\\"completed\\\",\\\"sha256\\\":\\\"cb4d30db7c61f73169c74ca3a36b21e82df196333a44df36b001bb67696788c1\\\",\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"o",
+      "{\"timestamp_utc\":\"2026-10-27T14:48:48.0775127+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"hostctl-34\\\",\\\"channel\\\":\\\"host-control\\\",\\\"command\\\":\\\"RegisterExportTarget\\\",\\\"core_session_id\\\":\\\"42e4f3cc34a941ceb703d4340c7e1caa\\\",\\\"host_session_id\\\":\\\"host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI\\\",\\\"host_session_credential\\\":\\\"O_rX1czr0kwhXl2UZQdT6egUK_vU1naGINV_tM9OqoA\\\",\\\"payload\\\":{\\\"grant_id\\\":\\\"grant_231wo2CMOJbyOBLu3ckZ-vsotEb_PGDnaRsMy5cMeog\\\",\\\"session_id\\\":\\\"host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI\\\",\\\"target_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\screenshot-root\\\\\\\\exports\\\\\\\\BOOK-FIXTURE-1 \\\\u65e5\\\\u6f2b_JA \\\\u6d4b\\\\u8bd5\\\\u4e66-\\\\u7b2c 1 \\\\u7ae0-20261027-144848.zip\\\",\\\"format\\\":\\\"zip\\\",\\\"replace_existing\\\":false,\\\"expires_at\\\":1793112827,\\\"signing_key\\\":\\\"4un3CdrJaoRxOso00aPIf4wlybLo5lShZcuEFxTJqO4\\\",\\\"signature\\\":\\\"18MDXhet9AxmeoDWALN7MEWDZhLgmPJNoW47MagfcGk\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"hostctl-34\\\",\\\"result\\\":{\\\"registered\\\":true},\\\"error\\\":null}\",\"request_u",
+      "{\"timestamp_utc\":\"2026-10-27T14:48:48.0952590+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-35\\\",\\\"command\\\":\\\"StartExport\\\",\\\"payload\\\":{\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"standard\\\"},\\\"stale_policy\\\":\\\"abort\\\",\\\"target_ref\\\":\\\"etref1.grant_231wo2CMOJbyOBLu3ckZ-vsotEb_PGDnaRsMy5cMeog.18MDXhet9AxmeoDWALN7MEWDZhLgmPJNoW47MagfcGk\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-35\\\",\\\"result\\\":{\\\"export_id\\\":\\\"exp-0bf422817526\\\",\\\"status\\\":\\\"pending\\\",\\\"accepted_at\\\":\\\"2026-10-27T14:48:48.090+00:00\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compress",
+      "{\"timestamp_utc\":\"2026-10-27T14:48:48.0990600+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-36\\\",\\\"command\\\":\\\"GetExportSnapshot\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-0bf422817526\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"event_id\\\":\\\"88d2a44686004acab099f6f25ac63721\\\",\\\"event_type\\\":\\\"ExportProgressChanged\\\",\\\"emitted_at\\\":\\\"2026-10-27T14:48:48.098+00:00\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-0bf422817526\\\",\\\"status\\\":\\\"running\\\",\\\"completed_pages\\\":0,\\\"total_pages\\\":3}}\",\"request_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d3336222c22636f6d6d616e64223a224765744578706f7274536e617073686f74222c227061796c6f6164223a7b226578706f72745f6964223a226578702d306266343232383137353236227d7d\",\"response_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c226576656e745f6964223a223838643261343436383630303461636162303939663666323561633633373231222c226576656e745f747970652",
+      "{\"timestamp_utc\":\"2026-10-27T14:48:48.4045102+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-37\\\",\\\"command\\\":\\\"GetExportSnapshot\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-0bf422817526\\\"}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"event_id\\\":\\\"271cd804b1a540ed936a24c338c948c1\\\",\\\"event_type\\\":\\\"ExportProgressChanged\\\",\\\"emitted_at\\\":\\\"2026-10-27T14:48:48.175+00:00\\\",\\\"payload\\\":{\\\"export_id\\\":\\\"exp-0bf422817526\\\",\\\"status\\\":\\\"running\\\",\\\"completed_pages\\\":1,\\\"total_pages\\\":3}}\",\"request_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c22726571756573745f6964223a227265712d3337222c22636f6d6d616e64223a224765744578706f7274536e617073686f74222c227061796c6f6164223a7b226578706f72745f6964223a226578702d306266343232383137353236227d7d\",\"response_utf8_hex\":\"7b2270726f746f636f6c223a226e65772d6d616e67612e636f7265222c2276657273696f6e223a7b226d616a6f72223a322c226d696e6f72223a337d2c226576656e745f6964223a223237316364383034623161353430656439333661323463333338633934386331222c226576656e745f747970652",
+      "{\"timestamp_utc\":\"2026-10-27T14:48:48.4071029+00:00\",\"sidecar\":\"core_service\",\"request\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-38\\\",\\\"command\\\":\\\"GetExportHistory\\\",\\\"payload\\\":{}}\",\"response\":\"{\\\"protocol\\\":\\\"new-manga.core\\\",\\\"version\\\":{\\\"major\\\":2,\\\"minor\\\":3},\\\"request_id\\\":\\\"req-38\\\",\\\"result\\\":{\\\"exports\\\":[{\\\"export_id\\\":\\\"exp-0bf422817526\\\",\\\"book_id\\\":\\\"14340ddad0ed472fbe687fe12340c5d8\\\",\\\"chapter_ids\\\":[\\\"240bdba549b74281bfc6d901b1a7abd7\\\"],\\\"ordered_page_ids\\\":[\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"4f8a24147b3044deabf4f5a2dd83b84f\\\",\\\"a607fc4ca3034f47b5bc43d59f94f2ca\\\"],\\\"format\\\":\\\"zip\\\",\\\"format_options\\\":{\\\"compression\\\":\\\"standard\\\"},\\\"created_at\\\":\\\"2026-10-27T14:48:48.090+00:00\\\",\\\"completed_at\\\":\\\"2026-10-27T14:48:48.298+00:00\\\",\\\"output_path\\\":\\\"G:\\\\\\\\CODEX\\\\\\\\New Manga.workspace\\\\\\\\task-envs\\\\\\\\IMPORT-EXPORT-UI-1\\\\\\\\screenshot-root\\\\\\\\exports\\\\\\\\BOOK-FIXTURE-1 \\\\u65e5\\\\u6f2b_JA \\\\u6d4b\\\\u8bd5\\\\u4e66-\\\\u7b2c 1 \\\\u7ae0-20261027-144848.zip\\\",\\\"status\\\":\\\"completed\\\",\\\"sha256\\\":\\\"f5a7bf323af5683ddf7ff5ea9343b53362e66762db06451b5cbbe3abb6b59fc8\\\",\\\"lineage\\\":[{\\\"page_id\\\":\\\"f52f2772e8044557a72e82f5ea6ab932\\\",\\\"o"
+    ],
+    "second_run": {
+      "export_id": "exp-0bf422817526",
+      "target_file": "BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261027-144848.zip",
+      "sha256_preview": "f5a7bf323af5683ddf7ff5ea9343b53362e66762db06451b5cbbe3abb6b59fc8"
+    },
+    "reveal": "已打开导出目录（Host RevealExportFolder 成功）",
+    "cancel_note": "3 页 ZIP 导出约 200ms，人工点击取消未能赶上真实 running 窗口；取消状态迁移由 headless 用例 Reader_ExportCancel_WhileRunning_MarksRecordCancelled 确定性覆盖"
+  },
+  "screenshots": [
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/01-bookshelf-import-entries.png",
+      "sha256": "2827224aa6b9341b1d34a8665cd264520d0da3840bdb1bb7b7ae6d4bbd3ad929",
+      "bytes": 52724,
+      "shows": [
+        "书架 header：导入文件 / 导入文件夹 入口（Host 就绪）",
+        "1 本书（8 页）经 command dispatcher 加载"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/02-reader-export-entry.png",
+      "sha256": "ba3f635fb1887404b979aebc235be12b8c2ba20a0990607da97c21f8820d904a",
+      "bytes": 1238822,
+      "shows": [
+        "阅读器 toolbar：沉浸模式 + 导出 入口；当前书/章/8 页 webtoon"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/03-export-ready.png",
+      "sha256": "4c0765afca8c359ba0bce527c2eb6a7e9c423f3db524b829ccc58dc9e896a295",
+      "bytes": 973660,
+      "shows": [
+        "导出面板：当前书·第 1 章·3 页可导出",
+        "最近导出（真实 Core 历史：completed exp-268d…、cancelled exp-827c…）"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/04-export-completed.png",
+      "sha256": "8dbe4f7d98f763bffea71f3de84254f1efbfa9b22fd233dcb7fe988c7190c7a1",
+      "bytes": 950884,
+      "shows": [
+        "真实导出完成：产物路径 + sha256 cb4d30db…",
+        "历史新增 exp-583026330d98 · zip · 导出完成"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/05-export-revealed.png",
+      "sha256": "0a7d08721349e8aa76c46538741f0e7970613b6315882012f39d2f09e7d033b8",
+      "bytes": 957932,
+      "shows": [
+        "「打开导出目录」→ 状态已打开导出目录（Host shell action）"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/06-export-second-run.png",
+      "sha256": "98638db807ae4ade6e7d05546fe54493b8b776cc93633d4a07517bf3ed9bcd18",
+      "bytes": 942643,
+      "shows": [
+        "重复导出：第二次成功（exp-0bf422817526 / f5a7bf32…）；取消按钮因 3 页导出过快未捕获到真实 cancelled（headless 已覆盖）"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/07-workbench-import-entry.png",
+      "sha256": "b4689bdf87001f5c6df46fb2c63d02347570abae2e586dfbf06fe539c6ed215d",
+      "bytes": 39974,
+      "shows": [
+        "工作台左栏：导入文件 / 导入文件夹 入口"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/08-picker-dialog.png",
+      "sha256": "f11c3ca25b86e01488e2f08db83e0becaab31a15221c1c98db8cc366c4786a52",
+      "bytes": 132397,
+      "shows": [
+        "系统文件选择器（Windows IFileOpenDialog）已打开"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/09-picker-filled.png",
+      "sha256": "e764a78015d89fbf6b8b0c8e114212ceec5c5f3bdfae8369d826b1a250ba8440",
+      "bytes": 70331,
+      "shows": [
+        "选择器填入真实源文件路径"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/10-import-panel.png",
+      "sha256": "f56036cf0716e153eb66339660e9e67bd02a1d238857d1b2812efe9aad14acfd",
+      "bytes": 85010,
+      "shows": [
+        "导入面板：目标书/章/重复策略 + 已选择 1 个文件"
+      ]
+    },
+    {
+      "path": "verification/IMPORT-EXPORT-UI-1/screens/11-import-completed.png",
+      "sha256": "859a8aba8d9012c550f88b9b9201cdb40d8af6652f5af26e74d57f0033e48a89",
+      "bytes": 81162,
+      "shows": [
+        "真实导入成功：已导入 1 个文件；书架刷新 8 页 → 9 页"
+      ]
+    }
+  ],
+  "safety": {
+    "isolated_data_root": true,
+    "real_appdata_library_touched": false,
+    "real_credential_store_touched": false,
+    "artifacts_are_real": "ZIP 由真实 sidecar 写出；size/sha/条目/manifest 均由独立 Python 再计算",
+    "note": "first launch attempt (before quoting fix) wrote one host.log line to the default %APPDATA% log dir; subsequent runs used the isolated --log-dir and the isolated data root"
+  }
+}

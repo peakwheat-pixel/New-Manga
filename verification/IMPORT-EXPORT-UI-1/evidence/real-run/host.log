@@ -1,0 +1,21 @@
+2026-10-27T14:40:38.0514434+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T14:40:38.0594349+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\IMPORT-EXPORT-UI-1\screenshot-root
+2026-10-27T14:40:38.0597684+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T14:40:38.5802588+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T14:40:38.7364989+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T14:40:38.7368991+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T14:40:38.7397528+00:00 INFO host-control session opened (host_Q_tOUTRmdKv1-l7p4q3EMHAqsLmw1edMdOmNDRsmpd0)
+2026-10-27T14:43:49.6870179+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T14:43:49.6946769+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\IMPORT-EXPORT-UI-1\screenshot-root
+2026-10-27T14:43:49.6953178+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T14:43:50.0095067+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T14:43:50.0983484+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T14:43:50.0985575+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T14:43:50.1014984+00:00 INFO host-control session opened (host_EEsazAJoKJvBEHh7BCR5tUKU0iHBBuixSYG33Q0eBhY)
+2026-10-27T14:45:47.4778818+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T14:45:47.4863174+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\IMPORT-EXPORT-UI-1\screenshot-root
+2026-10-27T14:45:47.4870380+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T14:45:47.8136045+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T14:45:47.9037760+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T14:45:47.9039945+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T14:45:47.9067127+00:00 INFO host-control session opened (host_8kl3TXZaTNSNlZFnGe12fW0H8kQqqdbwLhLwtVysFvI)

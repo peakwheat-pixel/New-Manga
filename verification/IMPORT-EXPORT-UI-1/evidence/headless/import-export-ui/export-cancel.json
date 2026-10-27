@@ -1,0 +1,7 @@
+{
+  "ac": "AC3",
+  "cancelled_export_id": "exp-fake-1",
+  "terminal_status": "cancelled",
+  "status_text": "\u5DF2\u53D6\u6D88\uFF08\u672A\u53D1\u5E03\u6587\u4EF6\uFF09",
+  "reveal_disabled_after_cancel": true
+}

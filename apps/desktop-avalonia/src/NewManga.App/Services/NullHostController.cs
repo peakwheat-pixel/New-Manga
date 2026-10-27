@@ -145,5 +145,55 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult(ReaderProgressSaveResult.NotReady());
 
+    // IMPORT-EXPORT-UI-1: the designer/inert shell never imports or exports anything; every entry
+    // reports the typed "not ready" outcome instead of pretending to succeed.
+    public string ExportDirectorySuggestion => string.Empty;
+
+    public Task<ImportOutcome> ImportFilesAsync(
+        string chapterId,
+        IReadOnlyList<string> paths,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(ImportOutcome.NotReady());
+
+    public Task<ImportOutcome> ImportFolderAsync(
+        string chapterId,
+        string folderPath,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(ImportOutcome.NotReady());
+
+    public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<string>>(Array.Empty<string>());
+
+    public Task<ExportStartInfo?> StartExportAsync(
+        string bookId,
+        string chapterId,
+        IReadOnlyList<string> orderedPageIds,
+        string targetPath,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<ExportStartInfo?>(null);
+
+    public Task<ExportSnapshotInfo?> GetExportSnapshotAsync(
+        string exportId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<ExportSnapshotInfo?>(null);
+
+    public Task<IReadOnlyList<ExportHistoryEntry>> GetExportHistoryAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ExportHistoryEntry>>(Array.Empty<ExportHistoryEntry>());
+
+    public Task<ExportSnapshotInfo?> CancelExportAsync(
+        string exportId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<ExportSnapshotInfo?>(null);
+
+    public Task<bool> RevealExportFolderAsync(
+        string exportId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }
