@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 383 |
+| task files | 386 |
 | terminal | 375 |
-| non-terminal | 8 |
-| non-terminal named in the plan | 8 |
+| non-terminal | 11 |
+| non-terminal named in the plan | 11 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 383 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 3 |
 | non-terminal tracked by git | 8 |
 
 ## By status
@@ -24,12 +24,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
+| `ready` | 4 | no |
 | `in_review` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `in_progress` | 1 | no |
 | `proposed` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -42,7 +42,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | own row |
+| `BOOK-FIXTURE-1` | `ready` | own row |
+| `DPI-DYNAMIC-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | own row |
+| `MICA-FIX-1` | `ready` | own row |
 
 ## What this ledger does not say
 
