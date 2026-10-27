@@ -52,6 +52,22 @@ REPACK-3（repo_head dd2408869）之后合入了 PDF-EXPORT-UI-1（PDF 面板）
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-R4-REPORT | AC1-AC5 | `verification/RELEASE-REPACK-4/REPORT.md` | `089714d1e` | `1b2a4a903ccf89892828c8503f9ee264dd16a42bde7f7f14d2709eaff9f3e080` | CANONICAL |
+| E-R4-SMOKE | AC2-AC4 | `verification/RELEASE-REPACK-4/smoke.json` | `089714d1e` | `c47be54a36ce7b6252dc0caf749c78f92b0f3d932bba53a341b738271520200f` | CANONICAL |
+| E-R4-PKG | AC1 | `verification/RELEASE-REPACK-4/package-hashes.json` | `089714d1e` | `16596c5d7d61d17514116af5568fb5820c1bf08b5b9dc7bbc2a2dad87a1c03a1` | CANONICAL |
+| E-R4-ENV | AC3 | `verification/RELEASE-REPACK-4/environment.json` | `089714d1e` | `dfbcc362da656017a4afc516b9858e3329952f081ef8c8fac79798229149cdbe` | CANONICAL |
+| E-R4-SHOT-BOOKSHELF | AC2 | `verification/RELEASE-REPACK-4/screens/01-bookshelf.png` | `089714d1e` | `35c8a407f0ae190058375b030d4de542c5291a658304757075aaf9a639937581` | CANONICAL |
+| E-R4-SHOT-IMPORT | AC2 | `verification/RELEASE-REPACK-4/screens/03-import-result.png` | `089714d1e` | `a726872ae36473521bdfc3464269098df0e43d05f6f0703070a27de984fee1bc` | CANONICAL |
+| E-R4-SHOT-READER | AC2 | `verification/RELEASE-REPACK-4/screens/04-reader.png` | `089714d1e` | `94f84dcfee1374d3a4b304fb26377080925c73691893aae7712afd741fa617d9` | CANONICAL |
+| E-R4-SHOT-IMMERSIVE | AC2/AC3 | `verification/RELEASE-REPACK-4/screens/06-immersive.png` | `089714d1e` | `295796401b742955528e2d5249e42a40b174d9bca1d0f2809f30e7cadaa4d80b` | CANONICAL |
+| E-R4-SHOT-PDFPANEL | AC2 | `verification/RELEASE-REPACK-4/screens/07-export-panel-pdf.png` | `089714d1e` | `603b8cfb25c79113c1ff5f8630bbee6bcf8653a6d67b14f88cafff2d59dd67d4` | CANONICAL |
+| E-R4-SHOT-PDFDONE | AC2 | `verification/RELEASE-REPACK-4/screens/08-export-pdf-done.png` | `089714d1e` | `12b27cb9e7c1b112fda6952e30d30f20339db1a2ce5f95097e5077baca88cd05` | CANONICAL |
+| E-R4-SHOT-ZIPDONE | AC2 | `verification/RELEASE-REPACK-4/screens/09-export-zip-done.png` | `089714d1e` | `b9f1883063a096cd84fc132775a9530d2a431572ac3f12e0b3cbd4c5e2eb23ef` | CANONICAL |
+| E-R4-SHOT-FOLDER | AC2 | `verification/RELEASE-REPACK-4/screens/10-export-folder.png` | `089714d1e` | `a2b6ccd488d2deaac61f805388f3006fdfcff1e5b9f8cb84e04d1a95050466ca` | CANONICAL |
+| E-R4-ESC-H | AC3 | `verification/RELEASE-REPACK-4/screens/12-esc-immersive.png` | `089714d1e` | `421093b3086134eb1b7b4f0d4e33b5e4fa93761da97399744a7b3ff19f6abd94` | CANONICAL |
+| E-R4-DOTNET | AC5 | `verification/RELEASE-REPACK-4/dotnet-all.log` | `089714d1e` | `f174e8678ffb05939df0917cd44a11571007c27a21cbf4e4eae94417305ae5df` | CANONICAL |
+| E-R4-PYTEST | AC5 | `verification/RELEASE-REPACK-4/pytest.log` | `089714d1e` | `9c7ec24538678c31cd0a9bae67841bb17c410930abb48095878de5123175ce99` | CANONICAL |
+| E-R4-BLOCKER | AC1 | `verification/RELEASE-REPACK-4/build-head-failure.log` | `089714d1e` | `146b5b290ce0fba26169d950764b00667738dd9fc459ef072b9c665c103e9c89` | CANONICAL |
 
 ## Resource Manifest
 

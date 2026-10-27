@@ -3,7 +3,7 @@
 - Task: `doc/tasks/RELEASE-REPACK-4.md`（team task-55）
 - Branch/Worktree: `task/RELEASE-REPACK-4` / `G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-4`
 - 构建 HEAD: **`f1b89c5e5`**（含 Lead 修复 `4be1c3f4f`；原 base `84dd38978` 编译失败，证据 `build-head-failure.log`）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `089714d1e`（实现+证据提交；pin 列在任务卡 Canonical Evidence）
 - 新包: `G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-4/out/`
   - `NewManga-0.1.0-win-x64.zip`（103,330,812B）
   - `NewManga-0.1.0-win-x64-models.zip`（**725,339,894B**）
