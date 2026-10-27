@@ -22,17 +22,9 @@ public partial class MainWindow : Window
     private readonly AppOptions _options;
     private readonly Dictionary<string, Button> _navButtons = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Control> _pages = new(StringComparer.Ordinal);
-    private readonly List<string> _navOrder = new();
-    private readonly Dictionary<string, NavVisual> _navVisuals = new(StringComparer.Ordinal);
     private readonly TextBlock _status;
     private WindowMaterialKind _materialKind;
     private double _lastRenderScaling;
-
-    /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to the shell and both pages.</summary>
-    private LayoutProfile _layout = LayoutProfiles.Sonoma;
-
-    /// <summary>One navigation button plus the parts whose geometry/orientation change per layout.</summary>
-    private sealed record NavVisual(Button Button, StackPanel Content, TextBlock Icon, TextBlock Label);
 
     /// <summary>F11-HOTKEY-1: page to return to after an F11-initiated immersive session (null = reader).</summary>
     private string? _pageBeforeImmersive;
@@ -110,9 +102,6 @@ public partial class MainWindow : Window
         AddNav("workbench", "工作台", "Icon.workbench");
         AddNav("reader", "阅读器", "Icon.reader");
         AddNav("settings", "设置", "Icon.settings");
-        // THEME-MACOS-LAYOUTS-1: place the four buttons in the host the active pack asks for (title bar /
-        // Dock / sidebar) and build the pages' shelf/settings structure before the first navigation.
-        ApplyLayout();
 
         _materialKind = WindowMaterial.ForCurrentOs().Kind;
         TransparencyLevelHint = _materialKind == WindowMaterialKind.Mica
@@ -174,22 +163,6 @@ public partial class MainWindow : Window
 
     public StackPanel NavPanelControl => NavPanel;
 
-    /// <summary>THEME-MACOS-LAYOUTS-1: bottom Dock host (visible only for a Dock layout pack).</summary>
-    public Border DockHostControl => DockHost;
-
-    /// <summary>THEME-MACOS-LAYOUTS-1: left Sidebar host (visible only for a Sidebar layout pack).</summary>
-    public Border SidebarHostControl => SidebarHost;
-
-    /// <summary>THEME-MACOS-LAYOUTS-1: panel that currently holds the four navigation buttons.</summary>
-    public StackPanel DockNavPanelControl => DockNavPanel;
-
-    public StackPanel SidebarNavPanelControl => SidebarNavPanel;
-
-    /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to the shell (kind + geometry).</summary>
-    public LayoutProfile Layout => _layout;
-
-    public LayoutKind CurrentLayout => _layout.Kind;
-
     public IReadOnlyDictionary<string, Button> NavButtons => _navButtons;
 
     public string CurrentPage { get; private set; } = "bookshelf";
@@ -214,7 +187,12 @@ public partial class MainWindow : Window
 
         CurrentPage = page;
         PageHost.Content = target;
-        UpdateNavVisuals();
+        foreach (var pair in _navButtons)
+        {
+            var active = pair.Key == page;
+            pair.Value.Background = ThemePackService.Brush(active ? "NavActiveBg" : "NavBg");
+            pair.Value.Foreground = ThemePackService.Brush(active ? "NavActiveText" : "TextPrimary");
+        }
 
         if (string.Equals(page, "reader", StringComparison.Ordinal))
         {
@@ -491,25 +469,26 @@ public partial class MainWindow : Window
         BookshelfPageControl.ApplyTheme();
         Settings.ApplyTheme();
         ApplyWindowChrome();
-        UpdateNavVisuals();
+        foreach (var pair in _navButtons)
+        {
+            var active = pair.Key == CurrentPage;
+            pair.Value.Background = ThemePackService.Brush(active ? "NavActiveBg" : "NavBg");
+            pair.Value.Foreground = ThemePackService.Brush(active ? "NavActiveText" : "TextPrimary");
+        }
+
         _status.Foreground = ThemePackService.Brush("TextSecondary");
     }
 
     /// <summary>
-    /// THEME-MACOS-1 / THEME-MACOS-LAYOUTS-1: macOS-only window chrome — show the three traffic lights and
-    /// paint the title-bar strip with the pack's HeaderBg token. Every non-macOS pack keeps the legacy title
-    /// bar untouched so the existing six themes look exactly as before. The Dock / Sidebar hosts get the
-    /// pack's chrome surfaces (they are only visible when the active pack asks for those layouts).
+    /// THEME-MACOS-1: macOS-only window chrome — show the three traffic lights and paint the title-bar
+    /// strip with the pack's HeaderBg token. Every other pack keeps the legacy title bar untouched so the
+    /// existing six themes look exactly as before.
     /// </summary>
     private void ApplyWindowChrome()
     {
-        var macChrome = ThemePacks.IsMacOsPack(ThemePackService.Current);
+        var macChrome = string.Equals(ThemePackService.Current.Id, ThemePacks.MacOsSonomaId, StringComparison.Ordinal);
         TrafficLights.IsVisible = macChrome;
         TitleBar.Background = macChrome ? ThemePackService.Brush("HeaderBg") : null;
-        SidebarHost.Background = ThemePackService.Brush(ThemePackService.SidebarBackground);
-        SidebarHost.BorderBrush = ThemePackService.Brush("CardBorder");
-        DockHost.Background = ThemePackService.Brush(ThemePackService.DockBackground);
-        DockHost.BorderBrush = ThemePackService.Brush("CardBorder");
     }
 
     /// <summary>THEME-MACOS-1 AC1: true when the macOS pack's traffic lights are currently shown.</summary>
@@ -529,203 +508,32 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>
-    /// THEME-MACOS-LAYOUTS-1: the single hot-switch entry point. A pack whose <see cref="ThemePack.Layout"/>
-    /// kind differs from the applied one rebuilds the shell + both page structures; a variant switch or a
-    /// pack with the same layout only re-applies colors (existing THEME-MACOS-1 behaviour).
-    /// </summary>
     public void OnThemeApplied()
     {
-        if (ThemePackService.Current.Layout.Kind != _layout.Kind)
-        {
-            ApplyLayout();
-        }
-        else
-        {
-            ApplyTheme();
-        }
-
-        InvalidateVisual();
-    }
-
-    /// <summary>
-    /// THEME-MACOS-LAYOUTS-1: applies the active pack's <see cref="LayoutProfile"/> to the shell and to the
-    /// two code-built pages. The four nav buttons keep their instances (and their click handlers) and are
-    /// moved between the three pre-built hosts, because Avalonia allows one visual parent per control.
-    /// </summary>
-    public void ApplyLayout()
-    {
-        var profile = ThemePackService.Current.Layout;
-        _layout = profile;
-
-        foreach (var key in _navOrder)
-        {
-            DetachFromParent(_navButtons[key]);
-        }
-
-        var host = profile.Nav switch
-        {
-            NavPlacement.Dock => (Panel)DockNavPanel,
-            NavPlacement.Sidebar => SidebarNavPanel,
-            _ => NavPanel,
-        };
-        foreach (var key in _navOrder)
-        {
-            StyleNavVisual(key, profile);
-            host.Children.Add(_navButtons[key]);
-        }
-
-        NavPanel.IsVisible = profile.Nav == NavPlacement.TitleBar;
-        DockHost.IsVisible = profile.UsesDock;
-        SidebarHost.IsVisible = profile.UsesSidebar;
-        DockHost.Height = profile.DockHeight > 0 ? profile.DockHeight : DockHost.Height;
-        BodyHost.ColumnDefinitions[0].Width = new GridLength(profile.UsesSidebar ? profile.SidebarWidth : 0);
-        if (profile.UsesSidebar)
-        {
-            MoveBrandToSidebar();
-        }
-        else
-        {
-            MoveBrandToTitleBar();
-        }
-
-        BookshelfPageControl.ApplyLayout(profile);
-        Settings.ApplyLayout(profile);
         ApplyTheme();
-        InvalidateMeasure();
         InvalidateVisual();
-    }
-
-    /// <summary>Moves the traffic-lights / brand block into the Split sidebar (Finder-like chrome).</summary>
-    private void MoveBrandToSidebar()
-    {
-        if (ReferenceEquals(TitleBrandPanel.Parent, SidebarBrand))
-        {
-            return;
-        }
-
-        DetachFromParent(TitleBrandPanel);
-        TitleBrandPanel.Margin = new Thickness(0);
-        SidebarBrand.Children.Insert(0, TitleBrandPanel);
-    }
-
-    /// <summary>Restores the traffic-lights / brand block to the title bar (Sonoma / Launchpad).</summary>
-    private void MoveBrandToTitleBar()
-    {
-        if (ReferenceEquals(TitleBrandPanel.Parent, TitleBar))
-        {
-            return;
-        }
-
-        DetachFromParent(TitleBrandPanel);
-        TitleBrandPanel.Margin = new Thickness(16, 0, 0, 0);
-        Grid.SetColumn(TitleBrandPanel, 0);
-        TitleBar.Children.Insert(0, TitleBrandPanel);
-    }
-
-    /// <summary>
-    /// Per-layout navigation button geometry: Sonoma keeps the THEME-MACOS-1 pill, Launchpad uses an
-    /// icon-over-label Dock tile, Split uses a full-width sidebar row.
-    /// </summary>
-    private void StyleNavVisual(string key, LayoutProfile profile)
-    {
-        if (!_navVisuals.TryGetValue(key, out var visual))
-        {
-            return;
-        }
-
-        switch (profile.Nav)
-        {
-            case NavPlacement.Dock:
-                visual.Content.Orientation = Avalonia.Layout.Orientation.Vertical;
-                visual.Content.Spacing = 3;
-                visual.Content.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                visual.Icon.FontSize = 18;
-                visual.Label.FontSize = 11;
-                visual.Button.Width = 76;
-                visual.Button.Height = 54;
-                visual.Button.Padding = new Thickness(4, 4);
-                visual.Button.CornerRadius = new CornerRadius(14);
-                visual.Button.HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                visual.Button.VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                visual.Button.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                break;
-            case NavPlacement.Sidebar:
-                visual.Content.Orientation = Avalonia.Layout.Orientation.Horizontal;
-                visual.Content.Spacing = 10;
-                visual.Content.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
-                visual.Icon.FontSize = 14;
-                visual.Label.FontSize = 13;
-                visual.Button.Width = double.NaN;
-                visual.Button.Height = double.NaN;
-                visual.Button.Padding = new Thickness(12, 9);
-                visual.Button.CornerRadius = new CornerRadius(9);
-                visual.Button.HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Left;
-                visual.Button.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
-                break;
-            default:
-                visual.Content.Orientation = Avalonia.Layout.Orientation.Horizontal;
-                visual.Content.Spacing = 6;
-                visual.Content.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
-                visual.Icon.FontSize = 13;
-                visual.Label.FontSize = 13;
-                visual.Button.Width = double.NaN;
-                visual.Button.Height = double.NaN;
-                visual.Button.Padding = new Thickness(14, 6);
-                visual.Button.CornerRadius = new CornerRadius(9);
-                visual.Button.HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                visual.Button.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
-                break;
-        }
-    }
-
-    /// <summary>Paints the four nav buttons for the active layout + selected page (single source of truth).</summary>
-    private void UpdateNavVisuals()
-    {
-        var chromeOnly = _layout.Nav is NavPlacement.Dock or NavPlacement.Sidebar;
-        foreach (var pair in _navButtons)
-        {
-            var active = pair.Key == CurrentPage;
-            pair.Value.Background = active
-                ? ThemePackService.Brush("NavActiveBg")
-                : chromeOnly ? Brushes.Transparent : ThemePackService.Brush("NavBg");
-            pair.Value.Foreground = ThemePackService.Brush(active ? "NavActiveText" : "TextPrimary");
-        }
-    }
-
-    private static void DetachFromParent(Control control)
-    {
-        if (control.Parent is Panel panel)
-        {
-            panel.Children.Remove(control);
-        }
     }
 
     private void AddNav(string key, string label, string iconKey)
     {
-        var icon = new TextBlock
-        {
-            Text = Application.Current?.TryGetResource(iconKey, null, out var glyph) == true
-                ? glyph?.ToString()
-                : string.Empty,
-            FontSize = 13,
-            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-        };
-        var labelBlock = new TextBlock
-        {
-            Text = label,
-            FontSize = 13,
-            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-        };
-        var content = new StackPanel
-        {
-            Orientation = Avalonia.Layout.Orientation.Horizontal,
-            Spacing = 6,
-            Children = { icon, labelBlock },
-        };
         var button = new Button
         {
-            Content = content,
+            Content = new StackPanel
+            {
+                Orientation = Avalonia.Layout.Orientation.Horizontal,
+                Spacing = 6,
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = Application.Current?.TryGetResource(iconKey, null, out var glyph) == true
+                            ? glyph?.ToString()
+                            : string.Empty,
+                        FontSize = 13,
+                    },
+                    new TextBlock { Text = label, FontSize = 13 },
+                },
+            },
             Padding = new Thickness(14, 6),
             CornerRadius = new CornerRadius(9),
             Background = ThemePackService.Brush("NavBg"),
@@ -735,8 +543,6 @@ public partial class MainWindow : Window
         button.Name = "Nav_" + key;
         button.Click += (_, _) => Navigate(key);
         _navButtons[key] = button;
-        _navVisuals[key] = new NavVisual(button, content, icon, labelBlock);
-        _navOrder.Add(key);
         NavPanel.Children.Add(button);
     }
 
