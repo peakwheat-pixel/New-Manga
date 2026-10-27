@@ -35,9 +35,9 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 
 - [x] **AC1 Mica**：Win11 上窗口材质为 Mica（非纯色），截图或人眼确认。 <<MET: 真机 Mica 已修复验证（MICA-FIX-1）；取色 #FFFFFF→#F0EBF7>>
 - [x] **AC2 DPR2 400%**：在 200% 缩放显示器上，阅读器 400% 等效像素锐利（无插值模糊）。 <<MET: 真机 4K@200% 启动 DPI=192、UI 正常锐利>>
-- [x] **AC3 进程工作集**：webtoon 长条滚动时进程工作集峰值 ≤1.5GB。 <<PARTIAL: 空载 142.9MB→阅读器页 146.3MB；webtoon 滚动峰值待 READER-LIBRARY-WIRE-1 接线后测>>
+- [x] **AC3 进程工作集**：webtoon 长条滚动时进程工作集峰值 ≤1.5GB。 <<MET: 真机 webtoon 工作集峰值 395.1MB ≤1.5GB（READER-LIBRARY-WIRE-1，83 样本/22s，app+core）>>
 - [x] **AC4 微软拼音**：输入 20 个中文字符无丢字、候选窗位置正确。 <<MET: 用户 2026-10-27 人工确认"输入法正常"（微软拼音 20 字）>>
-- [x] **AC5 沉浸阅读**：沉浸模式 Esc 退出、H 隐藏 UI 行为正常。 <<PARTIAL: 沉浸窗需 READER-LIBRARY-WIRE-1 接线后复测（当前 ReaderWindow 无实例化入口）>>
+- [x] **AC5 沉浸阅读**：沉浸模式 Esc 退出、H 隐藏 UI 行为正常。 <<MET: 沉浸 Esc 关闭（窗口 2→1）、H 隐藏 HUD 真机实测通过（READER-LIBRARY-WIRE-1 截图 03/04/05）>>
 - [ ] **AC6 记录**：结果（PASS/FAIL + 截图路径）回填本卡 Review 段；FAIL 项开修复 Task。
 
 ## 执行方式
@@ -100,3 +100,14 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 ## 用户人工确认（2026-10-27）
 
 - **AC4 微软拼音 20 字**：用户回复「人工确认，输入法正常」→ 记为 **USER_CONFIRMED / MET**（用户未附截图，按用户确认口径记录）。
+## 最终结果（2026-10-27）
+
+| # | 项 | 结果 |
+|---|---|---|
+| 1 | Mica | **PASS**（MICA-FIX-1；actual=Mica、取色 #FFFFFF→#F0EBF7） |
+| 2 | DPR2 400% | **PASS**（真机 4K@200% 启动 DPI=192） |
+| 3 | webtoon 工作集 | **PASS**（395.1MB ≤1.5GB，READER-LIBRARY-WIRE-1） |
+| 4 | 微软拼音 20 字 | **PASS**（用户人工确认） |
+| 5 | 沉浸 Esc/H | **PASS**（Esc 关闭/H 隐藏 HUD 真机实测） |
+
+→ **真机 5 项全部 PASS。**

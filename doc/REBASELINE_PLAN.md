@@ -29,11 +29,11 @@
 |RELEASE-PACKAGE-1|CORE-TILE-EMIT-1|done（S5-D 包 22.9MB；AC4a/b PASS；集成 8ff3d288d）|
 
 |MICA-FIX-1|—|done（Mica 可见：actual=Mica、标题栏取色 #FFFFFF→#F0EBF7；集成 93aaaeb8c）|
-|DPI-DYNAMIC-1|—|done（PerMonitorV2+RenderScaling 重排+日志；真机拖动待 4K 屏；集成 a6241b6c8）|
+|DPI-DYNAMIC-1|—|done（PerMonitorV2+RenderScaling；真机 96→192→96 验证 PASS；集成 a6241b6c8）|
 |BOOK-FIXTURE-1|—|done（隔离根建书 8 页/幂等/未污染 APPDATA；集成 377736213；AC3 PARTIAL→READER 接线）|
-|READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|ready（阅读器接书库+沉浸入口；base 377736213）|
+|READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|done（阅读器接书库+沉浸入口；工作集 395.1MB；110/110；集成 bcde098e5）|
 
-READY 节点：READER-LIBRARY-WIRE-1。
+READY 节点：无（真机五项全部通过，待最终收口）。
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -43,3 +43,4 @@ READY 节点：READER-LIBRARY-WIRE-1。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+

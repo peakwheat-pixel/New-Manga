@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[READER-LIBRARY-WIRE-1](tasks/READER-LIBRARY-WIRE-1.md) `ready`（阅读器接书库；DPI-DYNAMIC-1 done a6241b6c8，真机待 4K 屏接回）。
+- 当前 Task：[MANUAL-VERIFY-1](tasks/MANUAL-VERIFY-1.md) `in_progress`（真机 5 项已全部 PASS；待最终收口）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。

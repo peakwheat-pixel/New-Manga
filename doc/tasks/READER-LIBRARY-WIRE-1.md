@@ -12,10 +12,10 @@ depends_on: [BOOK-FIXTURE-1]
 base_commit: null
 branch: task/READER-LIBRARY-WIRE-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/READER-LIBRARY-WIRE-1
-integration_commit: null
+integration_commit: bcde098e5
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/READER-LIBRARY-WIRE-1
 allowed_paths:
   - doc/tasks/READER-LIBRARY-WIRE-1.md
@@ -88,3 +88,12 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 合并：cde098e5；DSH 复跑 scripts/test.ps1 → **110/110 passed / 0 skipped**。
+- AC1：阅读器接真实书库（ListChapters/GetReaderProjection/ResolvePageResource + 资源通道 + TileChannel 摘要校验）；fixture 回退保留。
+- AC2：沉浸入口（工具栏+双击）→ ReaderWindow；实现方真机实测 **Esc 关闭（窗口 2→1）**、**H 隐藏 HUD**（截图 03/04/05）、F/方向键 headless 覆盖（8 项新测）。
+- AC3：BOOK-FIXTURE 隔离根真机截图 01–05 + live-evidence.json + wire 日志（27 次读命令、bridge issue/resolve/revoke 各 25）。
+- AC4：8 页 webtoon 渲染并滚动（截图 06）；**工作集峰值 395.1MB ≤1.5GB**（83 样本/22s）。
+- AC5：test.ps1 110/110、vitest 60/567、pytest 3F/2739P/9S（0 新增）、check PASS、10 条 pin、Handoff。
+- 遗留（记录不阻塞）：阅读进度保存未接线、无全局 F11 快捷键、工作集单次 22s 测量、多章选择器固定第一章。

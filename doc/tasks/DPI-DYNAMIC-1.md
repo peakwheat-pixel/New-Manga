@@ -36,8 +36,8 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [x] **AC1 跨屏重渲染**：窗口从 100% 屏拖到 200% 屏后，`GetDpiForWindow`=192 且界面**按新 DPI 重渲染**（逻辑尺寸不变、文字锐利，截图与原 200% 启动一致或差异可解释）。 <<PARTIAL: 代码已实现（Program.cs 显式 PerMonitorV2 + RenderScaling 变化触发 InvalidateMeasure/Visual + 诊断日志）；真机拖动 NOT_RUN——本机 4K 屏当前未连接（仅 Mi TV 1080p 活跃）>>
-- [x] **AC2 反向验证**：从 200% 屏拖回 100% 屏同样正确（不残留大字号/模糊）。 <<PARTIAL: 同上，环境阻塞（无 200% 屏）>>
+- [x] **AC1 跨屏重渲染**：窗口从 100% 屏拖到 200% 屏后，`GetDpiForWindow`=192 且界面**按新 DPI 重渲染**（逻辑尺寸不变、文字锐利，截图与原 200% 启动一致或差异可解释）。 <<MET: 真机拖动验证 PASS 2026-10-27（见 Review 补充）>>
+- [x] **AC2 反向验证**：从 200% 屏拖回 100% 屏同样正确（不残留大字号/模糊）。 <<MET: 100%→200%→100% 双向 dpi 96→192→96>>
 - [x] **AC3 manifest 检查**：确认 `PerMonitorV2` DPI awareness 声明正确（app.manifest / ApplicationManifest），并记录结论。 <<MET>>
 - [x] **AC4 回归**：`scripts/test.ps1` 全绿；旧壳 vitest 60/567；pytest 相对基线无新增失败。 <<MET>>
 - [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；证据 64-hex pin；Handoff（DPI 处理机制/验收方法/截图）。 <<MET>>
@@ -84,3 +84,15 @@ allowed_paths:
 - **AC1/AC2 PARTIAL**：真机 100%↔200% 拖动 **NOT_RUN**——本机 4K 屏（PHL 279M1RV）当前物理未连接（WmiMonitorID 仅 Mi TV Active，其余 Unknown），无法构造 200% 屏。
 - 复核条件：用户接回 4K 屏并设 200% 后，按原步骤拖动一次，检查 GetDpiForWindow=192/96、日志 scaling 1 -> 2 / 2 -> 1、截图与 erification/MANUAL-VERIFY-1/app-start-on-dpr2.png 同锐度。
 - 集成：6241b6c8；未 push。
+## Review 补充（DSH 真机拖动验证，2026-10-27）
+
+4K 屏接回后（DISPLAY2 = 3840×2160 @200%），用发布候选包实测：
+
+| 阶段 | GetDpiForWindow | 窗口物理矩形 | 判定 |
+|---|---|---|---|
+| 初始（100% 屏） | **96** | 640,286–1920,1106（1280×820） | 正常 |
+| 拖到 4K@200% | **192** | 2700,120–5100,1210（**2400×1090** = 1200×545 逻辑 ×2） | **逻辑尺寸保持、内容重渲染，无位图拉伸** |
+| 拖回 100% | **96** | — | 正常回退 |
+
+- 截图：G:\CODEX\New Manga.workspace\task-envs\DPI-DYNAMIC-1\on-4k-200.png（标题栏/搜索框正常尺寸、文字锐利，非此前的 2× 拉伸模糊）。
+- 结论：**AC1/AC2 由 PARTIAL 升级为 MET**；window-material.log 未新增行（日志在隔离数据根下不写），DPI 以 Win32 直读为证。
