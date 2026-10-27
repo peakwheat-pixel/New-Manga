@@ -12,10 +12,16 @@
         ExtendClientAreaTitleBarHeightHint="48"
         TransparencyLevelHint="Mica,Blur,None">
 
-  <Grid RowDefinitions="48,*">
+  <!-- THEME-MACOS-LAYOUTS-1: one window, three pre-built navigation hosts. ApplyLayout() moves the four
+       nav buttons between NavPanel (Sonoma), DockNavPanel (Launchpad) and SidebarNavPanel (Split); the
+       page content always lives in PageHost so page instances are never recreated by a layout switch. -->
+  <Grid x:Name="ShellRoot" RowDefinitions="48,*">
     <Grid x:Name="TitleBar" Grid.Row="0" ColumnDefinitions="Auto,*,Auto"
           PointerPressed="OnTitleBarPressed">
-      <StackPanel Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+      <!-- Traffic lights + brand. In the Split layout this whole panel is moved into SidebarBrand so the
+           macOS chrome reads as a Finder sidebar; it is moved back for Sonoma / Launchpad. -->
+      <StackPanel x:Name="TitleBrandPanel" Grid.Column="0" Orientation="Horizontal" Spacing="10"
+                  Margin="16,0,0,0" VerticalAlignment="Center">
         <!-- THEME-MACOS-1: macOS-style traffic lights (visual only, hidden for non-macOS packs;
              IsHitTestVisible=false keeps the existing OnTitleBarPressed / BeginMoveDrag behaviour). -->
         <StackPanel x:Name="TrafficLights" Orientation="Horizontal" Spacing="8"
@@ -33,6 +39,28 @@
       <StackPanel x:Name="RightPanel" Grid.Column="2" Orientation="Horizontal" Spacing="10"
                   Margin="0,0,16,0" VerticalAlignment="Center" />
     </Grid>
-    <ContentControl x:Name="PageHost" Grid.Row="1" />
+    <Grid x:Name="BodyHost" Grid.Row="1" ColumnDefinitions="0,*">
+      <!-- Split layout: 220px sidebar (traffic lights / logo block + vertical nav). Hidden otherwise. -->
+      <Border x:Name="SidebarHost" Grid.Column="0" IsVisible="False"
+              Background="{DynamicResource SidebarBg}" BorderBrush="{DynamicResource CardBorder}"
+              BorderThickness="0,0,1,0">
+        <Grid RowDefinitions="Auto,*">
+          <StackPanel x:Name="SidebarBrand" Grid.Row="0" Orientation="Horizontal" Spacing="10"
+                      Margin="16,14,16,10" />
+          <StackPanel x:Name="SidebarNavPanel" Grid.Row="1" Orientation="Vertical" Spacing="4"
+                      Margin="10,6,10,0" />
+        </Grid>
+      </Border>
+      <ContentControl x:Name="PageHost" Grid.Column="1" />
+      <!-- Launchpad layout: floating rounded Dock capsule pinned to the bottom centre, above the page. -->
+      <Border x:Name="DockHost" Grid.Column="0" Grid.ColumnSpan="2" IsVisible="False"
+              HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,18"
+              Padding="12,8" CornerRadius="22" Height="76"
+              Background="{DynamicResource DockBg}" BorderBrush="{DynamicResource CardBorder}"
+              BorderThickness="1">
+        <StackPanel x:Name="DockNavPanel" Orientation="Horizontal" Spacing="8"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+    </Grid>
   </Grid>
 </Window>

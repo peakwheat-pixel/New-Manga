@@ -3,7 +3,7 @@ id: REAL-TRANSLATE-PROVIDER-1
 title: 接入真实翻译服务（OpenCode/OpenAI-compatible）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_round_2_5
 suggested_owner: route-research
 owner: route-research
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 13cf26f6c
 branch: task/REAL-TRANSLATE-PROVIDER-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/REAL-TRANSLATE-PROVIDER-1
-integration_commit: null
+integration_commit: 6bf084222
 delivery_head: be587bf822c05ccae7dce7cdeba68b6e6b95b150 
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -40,7 +40,7 @@ allowed_paths:
 
 - [x] **AC1 探测**：确认 `https://opencode.ai/zen/v1`（OpenAI-compatible）与可用模型；`GET /models` HTTP 200 → 44 models；chat 探测免费模型 429、付费模型 402；记录 base_url/模型名，key 仅标“存在”。证据 `evidence/ac1-probe.json`（R3）。<<MET>>
 - [x] **AC2 密钥安全**：key 从临时文件读取 → `credential_put` 写入 Windows vault 并绑定 profile `3819f991…`（`credential_state=configured`）→ 临时文件删除；证据/日志/截图无 key（`oc_sk_` 扫描 0 命中）；失败尝试遗留的 2 个 vault 孤儿条目已清理。证据 R4/R16、`run-summary.json`。<<MET>>
-- [ ] **AC3 真实翻译**：profile（openai-compatible）+ translate binding + settings 装配成功；真跑 `translate_untranslated` 时 3 个有文字页的 translate step 全部 typed `PROVIDER_RATE_LIMITED`（真实 HTTP 429），运行 `completed_with_failures`、0 条新翻译、未伪造。**BLOCKED：该 key 无付费余额（402）且免费层限流（429），无法获得 completed 且产出≠输入的真实翻译。** 证据 R5/R6/R9/R10。<<BLOCKED: OpenCode 账户额度受限（付费 402/免费 429），需用户充值或提供可用 key 后复跑；已实现链路经真实 429 证明接通>>
+- [ ] **AC3 真实翻译**：profile（openai-compatible）+ translate binding + settings 装配成功；真跑 `translate_untranslated` 时 3 个有文字页的 translate step 全部 typed `PROVIDER_RATE_LIMITED`（真实 HTTP 429），运行 `completed_with_failures`、0 条新翻译、未伪造。**BLOCKED：该 key 无付费余额（402）且免费层限流（429），无法获得 completed 且产出≠输入的真实翻译。** 证据 R5/R6/R9/R10。<<BLOCKED: OpenCode 账户额度受限（付费 402/免费 429），需用户充值或提供可用 key 后复跑；已实现链路经真实 429 证明接通>> <<BLOCKED: OpenCode 额度——free=429 / paid=402；3 页真实 HTTP 429→typed PROVIDER_RATE_LIMITED，0 条翻译（未伪造）；充值后跑 tools/run_translate_probe.py 即可复验>>
 - [x] **AC4 降级**：真实 provider 4xx → typed `PROVIDER_RATE_LIMITED`（retryable）；同一数据根切回 `identity-translation` 后 translate 22/22、segment/mask_refine/inpaint/render 各 22/22 completed（76.1s），DB 22/26 regions identity；切换仅是 frozen run binding，可配置回退。证据 R7/R10。<<MET>>
 - [x] **AC5 回归/门禁**：`test.ps1` **235/235 passed, 0 skipped**（61/56/118）；pytest **2773 passed / 10 skipped / 0 failed**（rebase 后基线）；`check.ps1 -TaskPath` PASS；64-hex pin；Handoff + Record Decision（REPORT §6）。<<MET>>
 
@@ -121,3 +121,9 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：AC3 BLOCKED（额度）；Host `library_start_run` 兼容性发现；目标语言未接入。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-28）— PASS（AC3 BLOCKED 额度）
+
+- AC1/AC2/AC4/AC5 MET；key 入 Windows vault（profile 3819f991…）、临时文件即删、oc_sk_ 0 命中、孤儿条目已清。
+- AC3 BLOCKED：额度（429/402），装配链路正确、typed 降级正确、0 条翻译未伪造；充值后 	ools/run_translate_probe.py 复验。
+- 发现待定位：Host library_start_run 经 dispatcher 对该 sidecar 返回 INVALID_REQUEST（直连 Core 可用）→ 需专项诊断。
+- 集成：6bf084222。

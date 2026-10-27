@@ -43,21 +43,71 @@ internal static class Ui
     }
 }
 
-/// <summary>AC3 bookshelf page (Saber-informed, not pixel-identical).</summary>
+/// <summary>
+/// AC3 bookshelf page (Saber-informed, not pixel-identical).
+/// THEME-MACOS-LAYOUTS-1: three structural layouts share one ViewModel, one book-card template and the
+/// same public members. The Sonoma tree is the THEME-MACOS-1 tree, unchanged; the Launchpad / Split
+/// layouts re-parent the same header, search card, grid and detail panel into their own pre-built slots,
+/// because Avalonia allows one visual parent per control (every switch detaches before it attaches).
+/// </summary>
 public sealed class BookshelfPage : UserControl
 {
     private readonly Border _header;
+    private readonly TextBlock _headerTitle;
+    private readonly TextBlock _headerSubtitle;
     private readonly Border _searchCard;
     private readonly StackPanel _detailBody;
+    private readonly Border _detailPanel;
     private readonly StackPanel _emptyPanel;
     private readonly StackPanel _noResultsPanel;
     private readonly TextBlock _status;
-    private readonly Grid _root;
+    private readonly StackPanel _statusRow;
+    private readonly Grid _contentGrid;
     private readonly IHostController? _controller;
     private readonly IFilePickerGateway? _picker;
     private readonly ImportPanel? _importPanel;
     private readonly Button _importFilesButton;
     private readonly Button _importFolderButton;
+    private readonly ItemsControl _splitBookList;
+
+    // Sonoma (THEME-MACOS-1) tree: the structure is persistent, only the shared blocks move between slots.
+    private readonly Grid _sonomaRoot;
+    private readonly Grid _sonomaInner;
+    private readonly Grid _sonomaBody;
+    private readonly Grid _sonomaContentRow;
+    private readonly Grid _sonomaHeaderSlot;
+    private readonly Grid _sonomaSearchSlot;
+    private readonly Grid _sonomaGridSlot;
+    private readonly Grid _sonomaDetailSlot;
+    private readonly StackPanel _sonomaStatusSlot;
+    private readonly Grid _sonomaOverlaySlot;
+
+    // Launchpad tree: compact header + centred 1200-wide icon grid + right detail overlay + bottom inset.
+    private readonly Grid _launchpadRoot;
+    private readonly Grid _launchpadHeaderSlot;
+    private readonly Grid _launchpadSearchSlot;
+    private readonly Grid _launchpadContentHost;
+    private readonly Grid _launchpadGridSlot;
+    private readonly Grid _launchpadDetailSlot;
+    private readonly StackPanel _launchpadStatusSlot;
+    private readonly Grid _launchpadOverlaySlot;
+
+    // Split tree: 260px book list on the left, search / grid / detail on the right (Finder style).
+    private readonly Grid _splitRoot;
+    private readonly Grid _splitBody;
+    private readonly Border _splitLeft;
+    private readonly TextBlock _splitListTitle;
+    private readonly Grid _splitHeaderSlot;
+    private readonly Grid _splitSearchSlot;
+    private readonly Grid _splitGridSlot;
+    private readonly Grid _splitDetailSlot;
+    private readonly StackPanel _splitStatusSlot;
+    private readonly Grid _splitOverlaySlot;
+    private readonly Grid _splitRight;
+    private readonly Grid _splitRightBody;
+
+    /// <summary>THEME-MACOS-LAYOUTS-1: layout currently applied to this page.</summary>
+    private LayoutProfile _layout = LayoutProfiles.Sonoma;
 
     public BookshelfPage(
         BookshelfViewModel viewModel,
@@ -70,11 +120,16 @@ public sealed class BookshelfPage : UserControl
         Name = "BookshelfPage";
 
         _status = Ui.Text("只读骨架 · 数据经 Core command dispatcher", 12, "TextSecondary");
-        var header = new Border { Padding = new Thickness(28, 18), Background = ThemePackService.Brush("HeaderGradient") };
-        var headerGrid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
+        _statusRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        _statusRow.Children.Add(_status);
+
+        // ---- header: one instance, restyled/reparented per layout ----
+        _headerTitle = Ui.Text("书架", 26, null, bold: true);
+        _headerSubtitle = Ui.Text("Saber-informed shell · 顶部渐变 / 1400 居中 / 3:4 书卡", 12, null);
         var headerText = new StackPanel { Spacing = 4 };
-        headerText.Children.Add(Ui.Text("书架", 26, null, bold: true));
-        headerText.Children.Add(Ui.Text("Saber-informed shell · 顶部渐变 / 1400 居中 / 3:4 书卡", 12, null));
+        headerText.Children.Add(_headerTitle);
+        headerText.Children.Add(_headerSubtitle);
+        var headerGrid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
         headerGrid.Children.Add(headerText);
         var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
         // IMPORT-EXPORT-UI-1 AC1: system-picker entries. The buttons are always present; an inert
@@ -93,9 +148,14 @@ public sealed class BookshelfPage : UserControl
         actions.Children.Add(refreshButton);
         Grid.SetColumn(actions, 1);
         headerGrid.Children.Add(actions);
-        header.Child = headerGrid;
-        _header = header;
+        _header = new Border
+        {
+            Padding = new Thickness(28, 18),
+            Background = ThemePackService.Brush("HeaderGradient"),
+            Child = headerGrid,
+        };
 
+        // ---- search card: search box + tag chips (shared by all three layouts) ----
         var searchBox = new TextBox
         {
             Watermark = "搜索书名 / 原书名",
@@ -108,7 +168,6 @@ public sealed class BookshelfPage : UserControl
         searchBox.TextChanged += (_, _) => ViewModel.SearchText = searchBox.Text ?? string.Empty;
         SearchBox = searchBox;
 
-        var chips = new WrapPanel { Orientation = Orientation.Horizontal };
         TagChips = new ItemsControl { ItemsPanel = new FuncTemplate<Panel?>(() => new WrapPanel()), ItemsSource = ViewModel.Tags };
         TagChips.ItemTemplate = new FuncDataTemplate<string>((tag, _) =>
         {
@@ -139,7 +198,7 @@ public sealed class BookshelfPage : UserControl
         };
         Grid.SetRow(chipScroll, 1);
         searchGrid.Children.Add(chipScroll);
-        var card = new Border
+        _searchCard = new Border
         {
             Padding = new Thickness(18),
             CornerRadius = new CornerRadius(14),
@@ -148,8 +207,8 @@ public sealed class BookshelfPage : UserControl
             BorderThickness = new Thickness(1),
             Child = searchGrid,
         };
-        _searchCard = card;
 
+        // ---- book grid + empty / no-results states (one content grid, never reparented internally) ----
         GridPanel = new UniformGrid { Columns = ViewModel.ColumnCount };
         BookGrid = new ItemsControl { ItemsSource = ViewModel.Books, ItemsPanel = new FuncTemplate<Panel?>(() => GridPanel) };
         BookGrid.ItemTemplate = new FuncDataTemplate<BookCardItem>((item, _) => BuildCard(item));
@@ -164,13 +223,14 @@ public sealed class BookshelfPage : UserControl
         _noResultsPanel = BuildState("没有匹配的书", "换个关键词，或切回「全部」标签。");
         _noResultsPanel.IsVisible = false;
 
-        var content = new Grid();
-        content.Children.Add(scroll);
-        content.Children.Add(_emptyPanel);
-        content.Children.Add(_noResultsPanel);
+        _contentGrid = new Grid();
+        _contentGrid.Children.Add(scroll);
+        _contentGrid.Children.Add(_emptyPanel);
+        _contentGrid.Children.Add(_noResultsPanel);
 
+        // ---- detail panel: right-side card, overlay in the Launchpad layout ----
         _detailBody = new StackPanel { Spacing = 10 };
-        DetailPanel = new Border
+        _detailPanel = new Border
         {
             Width = 360,
             Padding = new Thickness(20),
@@ -182,51 +242,128 @@ public sealed class BookshelfPage : UserControl
             IsVisible = false,
             Child = new ScrollViewer { Content = _detailBody },
         };
-        var body = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto"), RowSpacing = 14 };
-        var contentRow = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
-        Grid.SetRow(contentRow, 2);
-        contentRow.Children.Add(content);
-        Grid.SetColumn(DetailPanel, 1);
-        contentRow.Children.Add(DetailPanel);
-        Grid.SetRow(_searchCard, 0);
-        body.Children.Add(_searchCard);
-        Grid.SetRow(contentRow, 1);
-        body.Children.Add(contentRow);
 
-        _root = new Grid
-        {
-            RowDefinitions = new RowDefinitions("Auto,*"),
-            Background = ThemePackService.Brush("AppBg"),
-        };
-        _root.Children.Add(_header);
-        var inner = new Grid
+        // ---- Sonoma tree (THEME-MACOS-1 structure) ----
+        _sonomaHeaderSlot = new Grid();
+        _sonomaSearchSlot = new Grid();
+        _sonomaGridSlot = new Grid();
+        _sonomaDetailSlot = new Grid();
+        _sonomaStatusSlot = new StackPanel { Orientation = Orientation.Horizontal };
+        _sonomaOverlaySlot = new Grid();
+        _sonomaContentRow = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
+        _sonomaContentRow.Children.Add(_sonomaGridSlot);
+        Grid.SetColumn(_sonomaDetailSlot, 1);
+        _sonomaContentRow.Children.Add(_sonomaDetailSlot);
+        _sonomaBody = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto"), RowSpacing = 14 };
+        _sonomaBody.Children.Add(_sonomaSearchSlot);
+        Grid.SetRow(_sonomaContentRow, 1);
+        _sonomaBody.Children.Add(_sonomaContentRow);
+        _sonomaInner = new Grid { RowDefinitions = new RowDefinitions("*,Auto"), Margin = new Thickness(24, 18, 24, 12) };
+        _sonomaInner.Children.Add(_sonomaBody);
+        Grid.SetRow(_sonomaStatusSlot, 1);
+        _sonomaInner.Children.Add(_sonomaStatusSlot);
+        _sonomaRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,*") };
+        _sonomaRoot.Children.Add(_sonomaHeaderSlot);
+        Grid.SetRow(_sonomaInner, 1);
+        _sonomaRoot.Children.Add(_sonomaInner);
+        Grid.SetRowSpan(_sonomaOverlaySlot, 2);
+        _sonomaRoot.Children.Add(_sonomaOverlaySlot);
+
+        // ---- Launchpad tree ----
+        _launchpadHeaderSlot = new Grid();
+        _launchpadSearchSlot = new Grid { HorizontalAlignment = HorizontalAlignment.Center };
+        _launchpadGridSlot = new Grid();
+        _launchpadDetailSlot = new Grid { HorizontalAlignment = HorizontalAlignment.Right };
+        _launchpadStatusSlot = new StackPanel { Orientation = Orientation.Horizontal };
+        _launchpadOverlaySlot = new Grid();
+        _launchpadContentHost = new Grid
         {
             RowDefinitions = new RowDefinitions("*,Auto"),
-            Margin = new Thickness(24, 18, 24, 12),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            MaxWidth = LayoutProfiles.Launchpad.ContentMaxWidth,
+            Margin = new Thickness(24, 10, 24, LayoutProfiles.Launchpad.LaunchpadBottomInset),
         };
-        Grid.SetRow(inner, 1);
-        inner.Children.Add(body);
-        var statusRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
-        statusRow.Children.Add(_status);
-        Grid.SetRow(statusRow, 1);
-        inner.Children.Add(statusRow);
-        _root.Children.Add(inner);
+        _launchpadContentHost.Children.Add(_launchpadGridSlot);
+        _launchpadContentHost.Children.Add(_launchpadDetailSlot);
+        Grid.SetRow(_launchpadStatusSlot, 1);
+        _launchpadContentHost.Children.Add(_launchpadStatusSlot);
+        _launchpadRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*") };
+        _launchpadRoot.Children.Add(_launchpadHeaderSlot);
+        Grid.SetRow(_launchpadSearchSlot, 1);
+        _launchpadRoot.Children.Add(_launchpadSearchSlot);
+        Grid.SetRow(_launchpadContentHost, 2);
+        _launchpadRoot.Children.Add(_launchpadContentHost);
+        Grid.SetRow(_launchpadOverlaySlot, 1);
+        Grid.SetRowSpan(_launchpadOverlaySlot, 2);
+        _launchpadRoot.Children.Add(_launchpadOverlaySlot);
+
+        // ---- Split tree ----
+        _splitListTitle = Ui.Text("书库", 12, "TextSecondary", bold: true);
+        _splitBookList = new ItemsControl
+        {
+            Name = "SplitBookList",
+            ItemsSource = ViewModel.Books,
+            ItemsPanel = new FuncTemplate<Panel?>(() => new StackPanel { Spacing = 2 }),
+        };
+        _splitBookList.ItemTemplate = new FuncDataTemplate<BookCardItem>((item, _) => BuildSplitRow(item));
+        _splitHeaderSlot = new Grid();
+        _splitSearchSlot = new Grid { Margin = new Thickness(20, 14, 20, 0) };
+        _splitGridSlot = new Grid();
+        _splitDetailSlot = new Grid { HorizontalAlignment = HorizontalAlignment.Right };
+        _splitStatusSlot = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(4, 6, 4, 2) };
+        _splitOverlaySlot = new Grid();
+        _splitLeft = new Border
+        {
+            Background = ThemePackService.Brush(ThemePackService.SidebarBackground),
+            BorderBrush = ThemePackService.Brush("CardBorder"),
+            BorderThickness = new Thickness(0, 0, 1, 0),
+        };
+        var leftGrid = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto") };
+        _splitListTitle.Margin = new Thickness(12, 10, 12, 6);
+        leftGrid.Children.Add(_splitListTitle);
+        var listScroll = new ScrollViewer
+        {
+            Content = _splitBookList,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            Margin = new Thickness(8, 0, 8, 0),
+        };
+        Grid.SetRow(listScroll, 1);
+        leftGrid.Children.Add(listScroll);
+        Grid.SetRow(_splitStatusSlot, 2);
+        leftGrid.Children.Add(_splitStatusSlot);
+        _splitLeft.Child = leftGrid;
+        _splitRight = new Grid { RowDefinitions = new RowDefinitions("Auto,*") };
+        _splitRight.Children.Add(_splitSearchSlot);
+        _splitRightBody = new Grid { Margin = new Thickness(20, 12, 20, 16) };
+        _splitRightBody.Children.Add(_splitGridSlot);
+        _splitRightBody.Children.Add(_splitDetailSlot);
+        Grid.SetRow(_splitRightBody, 1);
+        _splitRight.Children.Add(_splitRightBody);
+        _splitBody = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*") };
+        _splitBody.Children.Add(_splitLeft);
+        Grid.SetColumn(_splitRight, 1);
+        _splitBody.Children.Add(_splitRight);
+        _splitRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,*") };
+        _splitRoot.Children.Add(_splitHeaderSlot);
+        Grid.SetRow(_splitBody, 1);
+        _splitRoot.Children.Add(_splitBody);
+        Grid.SetRow(_splitOverlaySlot, 0);
+        Grid.SetRowSpan(_splitOverlaySlot, 2);
+        _splitRoot.Children.Add(_splitOverlaySlot);
+
         if (_controller is not null)
         {
             _importPanel = new ImportPanel(_controller) { IsVisible = false };
             _importPanel.ImportCompleted += (_, _) => LastImportOperation = RefreshAfterImportAsync();
-            Grid.SetRowSpan(_importPanel, 2);
-            _root.Children.Add(_importPanel);
         }
-
-        Content = _root;
 
         ViewModel.PropertyChanged += (_, args) =>
         {
             switch (args.PropertyName)
             {
                 case nameof(BookshelfViewModel.ColumnCount):
-                    GridPanel.Columns = ViewModel.ColumnCount;
+                    GridPanel.Columns = EffectiveColumns(_layout);
                     break;
                 case nameof(BookshelfViewModel.IsDetailOpen):
                     UpdateDetail();
@@ -248,7 +385,7 @@ public sealed class BookshelfPage : UserControl
                 _status.Text = ViewModel.StatusMessage!;
             }
         };
-        ApplyTheme();
+        ApplyLayout(LayoutProfiles.Sonoma);
     }
 
     public BookshelfViewModel ViewModel { get; }
@@ -261,7 +398,7 @@ public sealed class BookshelfPage : UserControl
 
     public UniformGrid GridPanel { get; }
 
-    public Border DetailPanel { get; }
+    public Border DetailPanel => _detailPanel;
 
     public StackPanel EmptyPanel => _emptyPanel;
 
@@ -278,22 +415,198 @@ public sealed class BookshelfPage : UserControl
 
     public ImportPanel? ImportPanelControl => _importPanel;
 
-    /// <summary>IMPORT-EXPORT-UI-1: last page-level status line (picker/refresh feedback).</summary>
-    public string StatusLine => _status.Text ?? string.Empty;
+    /// <summary>THEME-MACOS-LAYOUTS-1: the Split layout's left-hand book list.</summary>
+    public ItemsControl SplitBookList => _splitBookList;
+
+    /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to this page.</summary>
+    public LayoutProfile Layout => _layout;
+
+    public LayoutKind CurrentLayout => _layout.Kind;
 
     /// <summary>Last import flow (tests await this; the picker itself is faked headless).</summary>
     public Task LastImportOperation { get; private set; } = Task.CompletedTask;
 
+    /// <summary>
+    /// THEME-MACOS-LAYOUTS-1: switches this page between the three frozen shelf structures. The public
+    /// members above stay valid in every layout because the same control instances are re-parented.
+    /// </summary>
+    public void ApplyLayout(LayoutProfile profile)
+    {
+        _layout = profile;
+        DetachSharedControls();
+        switch (profile.Shelf)
+        {
+            case ShelfStyle.LaunchpadGrid:
+                AttachLaunchpad(profile);
+                break;
+            case ShelfStyle.SplitList:
+                AttachSplit(profile);
+                break;
+            default:
+                AttachSonoma();
+                break;
+        }
+
+        ApplyShelfChrome(profile);
+        GridPanel.Columns = EffectiveColumns(profile);
+        // Cards are sized per layout (168x220 in Launchpad), so rebuild the item template once.
+        BookGrid.ItemTemplate = new FuncDataTemplate<BookCardItem>((item, _) => BuildCard(item));
+        ApplyTheme();
+        InvalidateMeasure();
+        InvalidateVisual();
+    }
+
     public void ApplyTheme()
     {
-        _root.Background = ThemePackService.Brush("AppBg");
-        _header.Background = ThemePackService.Brush("HeaderGradient");
+        _sonomaRoot.Background = ThemePackService.Brush("AppBg");
+        _launchpadRoot.Background = ThemePackService.Brush("AppBg");
+        _splitRoot.Background = ThemePackService.Brush("AppBg");
         _searchCard.Background = ThemePackService.Brush("CardBg");
         _searchCard.BorderBrush = ThemePackService.Brush("CardBorder");
-        DetailPanel.Background = ThemePackService.Brush("CardBg");
-        DetailPanel.BorderBrush = ThemePackService.Brush("CardBorder");
+        _detailPanel.Background = ThemePackService.Brush("CardBg");
+        _detailPanel.BorderBrush = ThemePackService.Brush("CardBorder");
+        _splitLeft.Background = ThemePackService.Brush(ThemePackService.SidebarBackground);
+        _splitLeft.BorderBrush = ThemePackService.Brush("CardBorder");
+        _splitListTitle.Foreground = ThemePackService.Brush("TextSecondary");
         RebuildChips();
+        ApplyShelfChrome(_layout);
     }
+
+    private void AttachSonoma()
+    {
+        _sonomaHeaderSlot.Children.Add(_header);
+        _sonomaSearchSlot.Children.Add(_searchCard);
+        _sonomaGridSlot.Children.Add(_contentGrid);
+        _sonomaDetailSlot.Children.Add(_detailPanel);
+        _sonomaStatusSlot.Children.Add(_statusRow);
+        if (_importPanel is not null)
+        {
+            _sonomaOverlaySlot.Children.Add(_importPanel);
+        }
+
+        Content = _sonomaRoot;
+    }
+
+    private void AttachLaunchpad(LayoutProfile profile)
+    {
+        _launchpadContentHost.MaxWidth = profile.ContentMaxWidth;
+        _launchpadContentHost.Margin = new Thickness(24, 10, 24, profile.LaunchpadBottomInset);
+        _launchpadHeaderSlot.Children.Add(_header);
+        _launchpadSearchSlot.Children.Add(_searchCard);
+        _launchpadGridSlot.Children.Add(_contentGrid);
+        _launchpadDetailSlot.Children.Add(_detailPanel);
+        _launchpadStatusSlot.Children.Add(_statusRow);
+        if (_importPanel is not null)
+        {
+            _launchpadOverlaySlot.Children.Add(_importPanel);
+        }
+
+        Content = _launchpadRoot;
+    }
+
+    private void AttachSplit(LayoutProfile profile)
+    {
+        _splitBody.ColumnDefinitions[0].Width = new GridLength(profile.ShelfListWidth > 0 ? profile.ShelfListWidth : 260);
+        _splitHeaderSlot.Children.Add(_header);
+        _splitSearchSlot.Children.Add(_searchCard);
+        _splitGridSlot.Children.Add(_contentGrid);
+        _splitDetailSlot.Children.Add(_detailPanel);
+        _splitStatusSlot.Children.Add(_statusRow);
+        if (_importPanel is not null)
+        {
+            _splitOverlaySlot.Children.Add(_importPanel);
+        }
+
+        Content = _splitRoot;
+    }
+
+    /// <summary>Removes every shared block from whatever slot currently owns it (one parent per control).</summary>
+    private void DetachSharedControls()
+    {
+        Detach(_header);
+        Detach(_searchCard);
+        Detach(_contentGrid);
+        Detach(_detailPanel);
+        Detach(_statusRow);
+        if (_importPanel is not null)
+        {
+            Detach(_importPanel);
+        }
+    }
+
+    private static void Detach(Control control)
+    {
+        if (control.Parent is Panel panel)
+        {
+            panel.Children.Remove(control);
+        }
+    }
+
+    /// <summary>Per-layout geometry / copy / chrome for the shared header, search card and detail panel.</summary>
+    private void ApplyShelfChrome(LayoutProfile profile)
+    {
+        var launchpad = profile.Shelf == ShelfStyle.LaunchpadGrid;
+        var split = profile.Shelf == ShelfStyle.SplitList;
+
+        ApplyHeaderChrome(profile);        _header.Padding = launchpad
+            ? new Thickness(24, 12, 24, 6)
+            : split ? new Thickness(24, 12, 24, 8) : new Thickness(28, 18);
+        _headerTitle.FontSize = launchpad || split ? 18 : 26;
+        _headerSubtitle.FontSize = split ? 11 : 12;
+        _headerSubtitle.Text = launchpad
+            ? "Launchpad 网格 · 168×220 卡片 · 底部 Dock"
+            : split
+                ? "Finder 分栏 · 左栏书列表 · 右侧网格/详情"
+                : "Saber-informed shell · 顶部渐变 / 1400 居中 / 3:4 书卡";
+
+        _searchCard.MaxWidth = launchpad ? 900 : double.PositiveInfinity;
+        _searchCard.HorizontalAlignment = launchpad ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
+
+        if (launchpad)
+        {
+            _detailPanel.Width = 420;
+            _detailPanel.BorderThickness = new Thickness(1);
+            _detailPanel.CornerRadius = new CornerRadius(16);
+            _detailPanel.Padding = new Thickness(20);
+        }
+        else if (split)
+        {
+            _detailPanel.Width = 340;
+            _detailPanel.BorderThickness = new Thickness(1, 0, 0, 0);
+            _detailPanel.CornerRadius = new CornerRadius(0);
+            _detailPanel.Padding = new Thickness(18);
+        }
+        else
+        {
+            _detailPanel.Width = 360;
+            _detailPanel.BorderThickness = new Thickness(1, 0, 0, 0);
+            _detailPanel.CornerRadius = new CornerRadius(0);
+            _detailPanel.Padding = new Thickness(20);
+        }
+    }
+
+    /// <summary>Header surface per layout: gradient (Sonoma), transparent (Launchpad), translucent strip (Split).</summary>
+    private void ApplyHeaderChrome(LayoutProfile profile)
+    {
+        _header.Background = profile.Shelf == ShelfStyle.LaunchpadGrid
+            ? Brushes.Transparent
+            : profile.Shelf == ShelfStyle.SplitList
+                ? ThemePackService.Brush("HeaderBg")
+                : ThemePackService.Brush("HeaderGradient");
+    }
+
+    /// <summary>Columns per layout: Sonoma keeps the ViewModel's 1400-wide calculation, the other two are fixed.</summary>
+    private int EffectiveColumns(LayoutProfile profile) => profile.Shelf switch
+    {
+        // 1200-wide centred Launchpad grid with 168px cards (+16 gap) => 6 columns.
+        ShelfStyle.LaunchpadGrid => Math.Clamp(
+            (int)Math.Floor((profile.ContentMaxWidth - 48 + BookshelfViewModel.CardGap) / (profile.LaunchpadCardWidth + BookshelfViewModel.CardGap)),
+            2,
+            8),
+        // Right-hand grid of the split view: the 1280-wide default window minus the 260px list column.
+        ShelfStyle.SplitList => BookshelfViewModel.ComputeColumns(Math.Max(480, 1280 - profile.ShelfListWidth - 48)),
+        _ => ViewModel.ColumnCount,
+    };
 
     private void RebuildChips()
     {
@@ -337,17 +650,80 @@ public sealed class BookshelfPage : UserControl
         return panel;
     }
 
-    private Control BuildCard(BookCardItem item)
+    /// <summary>One book row of the Split layout's left list (cover thumb + title + tag).</summary>
+    private Control BuildSplitRow(BookCardItem item)
     {
         var cover = new Border
         {
-            Height = 226,
-            CornerRadius = new CornerRadius(10),
+            Width = 38,
+            Height = 52,
+            CornerRadius = new CornerRadius(6),
             Background = ThemePackService.Brush("ChipBg"),
             Child = new TextBlock
             {
                 Text = item.Glyph,
-                FontSize = 44,
+                FontSize = 18,
+                FontWeight = FontWeight.SemiBold,
+                Foreground = ThemePackService.Brush("Accent"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            },
+        };
+        var text = new StackPanel
+        {
+            Spacing = 2,
+            VerticalAlignment = VerticalAlignment.Center,
+            Children =
+            {
+                new TextBlock
+                {
+                    Text = item.Title,
+                    FontSize = 12,
+                    FontWeight = FontWeight.SemiBold,
+                    Foreground = ThemePackService.Brush("TextPrimary"),
+                    TextTrimming = TextTrimming.CharacterEllipsis,
+                },
+                Ui.Text(item.Tag, 11, "TextSecondary"),
+            },
+        };
+        var row = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*"), ColumnSpacing = 10 };
+        row.Children.Add(cover);
+        Grid.SetColumn(text, 1);
+        row.Children.Add(text);
+        var button = new Button
+        {
+            Content = row,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            Padding = new Thickness(10, 7),
+            CornerRadius = new CornerRadius(8),
+            Background = ThemePackService.Brush("CardBg"),
+            BorderBrush = ThemePackService.Brush("CardBorder"),
+            BorderThickness = new Thickness(1),
+        };
+        button.Click += (_, _) => ViewModel.OpenDetails(item);
+        button.DoubleTapped += (_, args) =>
+        {
+            args.Handled = true;
+            RequestOpenReader(item);
+        };
+        return button;
+    }
+
+    private Control BuildCard(BookCardItem item)
+    {
+        var launchpad = _layout.Shelf == ShelfStyle.LaunchpadGrid;
+        var cardWidth = launchpad ? _layout.LaunchpadCardWidth : BookshelfViewModel.CardWidth;
+        var coverHeight = launchpad ? Math.Max(140, _layout.LaunchpadCardHeight - 58) : 226;
+        var cover = new Border
+        {
+            Height = coverHeight,
+            CornerRadius = new CornerRadius(launchpad ? 14 : 10),
+            Background = ThemePackService.Brush("ChipBg"),
+            Child = new TextBlock
+            {
+                Text = item.Glyph,
+                FontSize = launchpad ? 52 : 44,
                 FontWeight = FontWeight.SemiBold,
                 Foreground = ThemePackService.Brush("Accent"),
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -361,7 +737,7 @@ public sealed class BookshelfPage : UserControl
         var overlay = new Border
         {
             Background = new ImmutableSolidColorBrush(Color.Parse("#73000000")),
-            CornerRadius = new CornerRadius(0, 0, 10, 10),
+            CornerRadius = new CornerRadius(0, 0, launchpad ? 14 : 10, launchpad ? 14 : 10),
             Padding = new Thickness(6),
             VerticalAlignment = VerticalAlignment.Bottom,
             Child = hint,
@@ -383,10 +759,10 @@ public sealed class BookshelfPage : UserControl
 
         var card = new Border
         {
-            Width = BookshelfViewModel.CardWidth,
+            Width = cardWidth,
             Margin = new Thickness(0, 0, BookshelfViewModel.CardGap, BookshelfViewModel.CardGap),
-            CornerRadius = new CornerRadius(12),
-            Padding = new Thickness(8),
+            CornerRadius = new CornerRadius(launchpad ? 16 : 12),
+            Padding = new Thickness(launchpad ? 10 : 8),
             Background = ThemePackService.Brush("CardBg"),
             BorderBrush = ThemePackService.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
@@ -428,7 +804,7 @@ public sealed class BookshelfPage : UserControl
     private void UpdateDetail()
     {
         _detailBody.Children.Clear();
-        DetailPanel.IsVisible = ViewModel.IsDetailOpen;
+        _detailPanel.IsVisible = ViewModel.IsDetailOpen;
         if (ViewModel.SelectedBook is not { } book)
         {
             return;
@@ -511,7 +887,7 @@ public sealed class BookshelfPage : UserControl
         stack.Children.Add(create);
         _detailBody.Children.Clear();
         _detailBody.Children.Add(stack);
-        DetailPanel.IsVisible = true;
+        _detailPanel.IsVisible = true;
     }
 }
 
