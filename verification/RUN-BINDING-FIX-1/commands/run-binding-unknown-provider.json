@@ -1,0 +1,8 @@
+{
+  "ac": "AC3",
+  "binding": "{\u0022ocr\u0022:\u0022no-such-provider\u0022}",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "run_id": "run-b451794565b34e83ae525449009bfe7d",
+  "terminal_status": "completed_with_failures",
+  "note": "the typed provider error code is asserted on the copied library.db by verification/RUN-BINDING-FIX-1/tools/check_run_binding.py"
+}
