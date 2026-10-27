@@ -66,6 +66,18 @@ public sealed class FakeHostController : IHostController
     /// <summary>READER-PROGRESS-1: overrides the next save results (queue, consumed in order).</summary>
     public Queue<ReaderProgressSaveResult> ScriptedSaveResults { get; } = new();
 
+    /// <summary>CHAPTER-SELECTOR-1: scripted books by book id (multi-book entry).</summary>
+    public Dictionary<string, ReaderBookData> ReaderBooksByBookId { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>CHAPTER-SELECTOR-1: scripted books by chapter id (chapter switching).</summary>
+    public Dictionary<string, ReaderBookData> ReaderBooksByChapterId { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>CHAPTER-SELECTOR-1: scripted chapter lists per book (falls back to one chapter).</summary>
+    public Dictionary<string, IReadOnlyList<ChapterSummary>> ChaptersByBook { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>CHAPTER-SELECTOR-1: number of ListChaptersAsync calls (tests/evidence).</summary>
+    public int ChapterListCalls { get; private set; }
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,
@@ -73,7 +85,19 @@ public sealed class FakeHostController : IHostController
     {
         ReaderLoadCalled = true;
         LastReaderRequest = (bookId, chapterId);
-        var book = ReaderBook;
+
+        // CHAPTER-SELECTOR-1: an exact chapter wins, then an exact book, then the legacy single book.
+        ReaderBookData? book = null;
+        if (!string.IsNullOrWhiteSpace(chapterId) && ReaderBooksByChapterId.TryGetValue(chapterId, out var chapterBook))
+        {
+            book = chapterBook;
+        }
+        else if (!string.IsNullOrWhiteSpace(bookId) && ReaderBooksByBookId.TryGetValue(bookId, out var idBook))
+        {
+            book = idBook;
+        }
+
+        book ??= ReaderBook;
         if (book is null)
         {
             return Task.FromResult<ReaderBookData?>(null);
@@ -116,6 +140,28 @@ public sealed class FakeHostController : IHostController
         });
     }
 
+    /// <summary>CHAPTER-SELECTOR-1: read-only chapter list (scripted, else one chapter from the book).</summary>
+    public Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(
+        string bookId,
+        CancellationToken cancellationToken = default)
+    {
+        ChapterListCalls++;
+        if (ChaptersByBook.TryGetValue(bookId, out var chapters))
+        {
+            return Task.FromResult(chapters);
+        }
+
+        if (ReaderBooksByBookId.TryGetValue(bookId, out var book))
+        {
+            return Task.FromResult<IReadOnlyList<ChapterSummary>>(new[]
+            {
+                new ChapterSummary(book.ChapterId, book.ChapterTitle, "1", 0),
+            });
+        }
+
+        return Task.FromResult<IReadOnlyList<ChapterSummary>>(Array.Empty<ChapterSummary>());
+    }
+
     public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,
@@ -131,11 +177,32 @@ public sealed class FakeHostController : IHostController
             return Task.FromResult(scripted);
         }
 
-        var result = Progress.Save(ReaderBook, chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta);
+        var result = Progress.Save(ResolveBookForChapter(chapterId), chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta);
         return Task.FromResult(result);
     }
 
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+    /// <summary>CHAPTER-SELECTOR-1: resolve the scripted book that owns a chapter id.</summary>
+    private ReaderBookData? ResolveBookForChapter(string chapterId)
+    {
+        if (ReaderBooksByChapterId.TryGetValue(chapterId, out var exact))
+        {
+            return exact;
+        }
+
+        foreach (var book in ReaderBooksByBookId.Values)
+        {
+            if (string.Equals(book.ChapterId, chapterId, StringComparison.Ordinal))
+            {
+                return book;
+            }
+        }
+
+        return ReaderBook is { } fallback && string.Equals(fallback.ChapterId, chapterId, StringComparison.Ordinal)
+            ? fallback
+            : null;
+    }
 
     public static HostViewSnapshot ReadySnapshot(params string[] titles)
     {

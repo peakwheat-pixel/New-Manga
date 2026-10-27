@@ -1,0 +1,5 @@
+2026-10-27T05:33:40.6916465+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T05:33:40.6980826+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\CHAPTER-SELECTOR-1\isolated-data
+2026-10-27T05:33:40.6981936+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T05:33:41.0618182+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T05:33:41.1588038+00:00 INFO host_bridge ready (1 wire frames)

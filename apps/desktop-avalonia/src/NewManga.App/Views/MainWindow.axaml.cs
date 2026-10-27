@@ -75,6 +75,12 @@ public partial class MainWindow : Window
             ProgressSink = _controller,
         };
         Reader.ImmersiveRequested += (_, _) => OpenImmersiveReader();
+        // CHAPTER-SELECTOR-1: book-card double-click / detail action opens that exact book, and the
+        // reader's chapter picker re-loads the chosen chapter.
+        BookshelfPageControl.OpenReaderRequested += (_, item) =>
+            LastReaderNavigation = OpenReaderForBookAsync(item.BookId);
+        Reader.ChapterSelectionRequested += (_, chapterId) =>
+            LastReaderNavigation = OpenReaderForBookAsync(Reader.LibraryBook?.BookId, chapterId);
         _pages["workbench"] = Workbench;
         _pages["reader"] = Reader;
         Settings = new SettingsPage(settingsViewModel, OnThemeApplied);
@@ -197,8 +203,74 @@ public partial class MainWindow : Window
             return;
         }
 
-        await LoadReaderAsync(null, null, cancellationToken).ConfigureAwait(true);
+        if (await LoadReaderAsync(null, null, cancellationToken).ConfigureAwait(true))
+        {
+            await PopulateChaptersAsync(cancellationToken).ConfigureAwait(true);
+        }
     }
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC2: open the reader on a specific book (and optionally chapter). The
+    /// current position is flushed first when switching book/chapter; then the target chapter is
+    /// loaded with the Core-resumed page and its chapter list is populated.
+    /// </summary>
+    public async Task<bool> OpenReaderForBookAsync(
+        string? bookId,
+        string? chapterId = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (Reader.LibraryBook is { } current &&
+            (!string.IsNullOrWhiteSpace(bookId) || !string.IsNullOrWhiteSpace(chapterId)) &&
+            (!string.Equals(current.BookId, bookId, StringComparison.Ordinal) ||
+             (!string.IsNullOrWhiteSpace(chapterId) && !string.Equals(current.ChapterId, chapterId, StringComparison.Ordinal))))
+        {
+            // Leaving this (book, chapter, mode) session: persist where the user stopped.
+            await Reader.FlushProgressAsync().ConfigureAwait(true);
+        }
+
+        var loaded = await LoadReaderAsync(bookId, chapterId, cancellationToken).ConfigureAwait(true);
+        if (!loaded)
+        {
+            return false;
+        }
+
+        Navigate("reader");
+        await PopulateChaptersAsync(cancellationToken).ConfigureAwait(true);
+        return true;
+    }
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC1: pull the chapter list for the loaded book and hand it to the reader
+    /// page (single-chapter books keep the selector hidden). Stale responses for a previous book are
+    /// dropped.
+    /// </summary>
+    public async Task PopulateChaptersAsync(CancellationToken cancellationToken = default)
+    {
+        if (Reader.LibraryBook is not { } book)
+        {
+            Reader.LoadChapters(Array.Empty<ChapterSummary>());
+            return;
+        }
+
+        var chapters = await _controller.ListChaptersAsync(book.BookId, cancellationToken).ConfigureAwait(true);
+        if (Reader.LibraryBook is not { } stillLoaded ||
+            !string.Equals(stillLoaded.BookId, book.BookId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        Reader.LoadChapters(chapters, stillLoaded.ChapterId);
+        Reader.SetBookContext(stillLoaded.BookTitle, stillLoaded.ChapterTitle);
+    }
+
+    /// <summary>CHAPTER-SELECTOR-1: last reader navigation task (tests/evidence await this).</summary>
+    public Task LastReaderNavigation { get; private set; } = Task.CompletedTask;
+
+    /// <summary>CHAPTER-SELECTOR-1 AC2: current reader book id (null = fixture/empty).</summary>
+    public string? CurrentReaderBookId => Reader.LibraryBook?.BookId;
+
+    /// <summary>CHAPTER-SELECTOR-1 AC1: current reader chapter id (null = fixture/empty).</summary>
+    public string? CurrentReaderChapterId => Reader.LibraryBook?.ChapterId;
 
     /// <summary>
     /// READER-PROGRESS-1/CHAPTER-SELECTOR-1: (re)loads one book/chapter from the Host and applies the
@@ -244,6 +316,15 @@ public partial class MainWindow : Window
                 Reader.ViewModel,
                 NewManga.App.Views.ReaderFixtureLocator.TypographyPaths(),
                 NewManga.App.Views.ReaderFixtureLocator.TileDirectory);
+        if (Reader.LibraryBook is { } loadedBook)
+        {
+            // CHAPTER-SELECTOR-1: the immersive chrome shows the book/chapter context but keeps the
+            // fullscreen surface distraction-free (chapter switching happens in the reader page).
+            window.Page.LoadChapters(Reader.Chapters, Reader.CurrentChapterId);
+            window.Page.HideChapterSelector();
+            window.Page.SetBookContext(loadedBook.BookTitle, loadedBook.ChapterTitle);
+        }
+
         LastImmersiveWindow = window;
         window.Show();
         return window;

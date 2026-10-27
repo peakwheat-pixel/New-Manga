@@ -353,7 +353,35 @@ public sealed class BookshelfPage : UserControl
         };
         card.Classes.Add("nm-bookcard");
         card.PointerPressed += (_, _) => ViewModel.OpenDetails(item);
+        // CHAPTER-SELECTOR-1 AC2: double-click a card opens the reader on THAT book (single click
+        // still opens the detail panel).
+        card.DoubleTapped += (_, args) =>
+        {
+            args.Handled = true;
+            RequestOpenReader(item);
+        };
         return card;
+    }
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC2: raised when the user opens the reader from a book card (double-click)
+    /// or from the detail panel. The window loads that book id instead of the first library book.
+    /// </summary>
+    public event EventHandler<BookCardItem>? OpenReaderRequested;
+
+    /// <summary>CHAPTER-SELECTOR-1 AC2: last book the user asked to open (tests/evidence).</summary>
+    public BookCardItem? LastOpenReaderRequest { get; private set; }
+
+    /// <summary>CHAPTER-SELECTOR-1 AC2: request the reader for one book (card double-click / panel).</summary>
+    public void RequestOpenReader(BookCardItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        LastOpenReaderRequest = item;
+        OpenReaderRequested?.Invoke(this, item);
     }
 
     private void UpdateDetail()
@@ -377,7 +405,11 @@ public sealed class BookshelfPage : UserControl
         _detailBody.Children.Add(new TextBox { Watermark = "新书名（示例：雾港来信・日本語テスト）", Name = "NewTitleBox" });
         var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
         actions.Children.Add(Ui.Action("关闭", ViewModel.CloseDetails));
-        actions.Children.Add(Ui.Action("新建", () => OpenNewDialog(), primary: true));
+        // CHAPTER-SELECTOR-1 AC2: explicit reader entry for this book (in addition to double-click).
+        var openReader = Ui.Action("进入阅读", () => RequestOpenReader(book), primary: true);
+        openReader.Name = "OpenReaderFromDetail";
+        actions.Children.Add(openReader);
+        actions.Children.Add(Ui.Action("新建", () => OpenNewDialog(), primary: false));
         _detailBody.Children.Add(actions);
     }
 

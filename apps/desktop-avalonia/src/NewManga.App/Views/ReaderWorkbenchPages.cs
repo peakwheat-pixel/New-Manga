@@ -6,9 +6,11 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.ViewModels;
+using NewManga.CoreClient;
 using NewManga.Theme;
 
 namespace NewManga.App.Views;
@@ -231,6 +233,15 @@ public sealed class ReaderPage : UserControl
     private bool _webtoonRestoreInProgress;
     private bool _userInteractionSeen;
 
+    // CHAPTER-SELECTOR-1: chapter list of the loaded book + current chapter context.
+    private readonly ComboBox _chapterSelector;
+    private readonly TextBlock _bookContext;
+    private readonly Button _previousChapter;
+    private readonly Button _nextChapter;
+    private bool _suppressChapterChange;
+    private IReadOnlyList<ChapterSummary> _chapters = Array.Empty<ChapterSummary>();
+    private string? _loadedChapterId;
+
     public ReaderPage(ReaderViewModel viewModel, IReadOnlyList<string> pages, string? tileDirectory = null)
     {
         ViewModel = viewModel;
@@ -261,7 +272,7 @@ public sealed class ReaderPage : UserControl
 
         _hud = new TextBlock
         {
-            Text = "沉浸阅读 · Esc 退出 · F 切换 fit · H 隐藏 UI",
+            Text = "Esc 退出 · F fit · H 隐藏 UI",
             FontSize = 12,
             Foreground = Brushes.White,
             Margin = new Thickness(16, 10),
@@ -292,6 +303,58 @@ public sealed class ReaderPage : UserControl
         };
         EmptyState = _emptyState;
 
+        // CHAPTER-SELECTOR-1 AC1: current book/chapter context + chapter picker (hidden for one chapter).
+        _bookContext = new TextBlock
+        {
+            Text = string.Empty,
+            Name = "ReaderBookContext",
+            FontSize = 12,
+            Foreground = Brushes.White,
+            Opacity = 0.85,
+            Margin = new Thickness(8, 10),
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        BookContext = _bookContext;
+
+        _chapterSelector = new ComboBox
+        {
+            Name = "ChapterSelector",
+            FontSize = 12,
+            MinWidth = 200,
+            IsVisible = false,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        _chapterSelector.SelectionChanged += OnChapterSelectionChanged;
+        ChapterSelector = _chapterSelector;
+
+        // CHAPTER-SELECTOR-1: previous/next chapter buttons (fast navigation without the popup).
+        _previousChapter = new Button
+        {
+            Content = "上一章",
+            Name = "PreviousChapter",
+            FontSize = 12,
+            Padding = new Thickness(8, 4),
+            CornerRadius = new CornerRadius(8),
+            IsVisible = false,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        _previousChapter.Click += (_, _) => SelectAdjacentChapter(-1);
+        PreviousChapterButton = _previousChapter;
+        _nextChapter = new Button
+        {
+            Content = "下一章",
+            Name = "NextChapter",
+            FontSize = 12,
+            Padding = new Thickness(8, 4),
+            CornerRadius = new CornerRadius(8),
+            IsVisible = false,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        _nextChapter.Click += (_, _) => SelectAdjacentChapter(1);
+        NextChapterButton = _nextChapter;
+        StyleToolbarButton(_previousChapter);
+        StyleToolbarButton(_nextChapter);
+
         _immersiveButton = new Button
         {
             Content = "沉浸模式 (Esc/H/F)",
@@ -302,14 +365,40 @@ public sealed class ReaderPage : UserControl
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
         };
         _immersiveButton.Click += (_, _) => RequestImmersive();
+        StyleToolbarButton(_immersiveButton);
         ImmersiveButton = _immersiveButton;
 
-        var toolbar = new StackPanel
+        var toolbar = new Grid
         {
-            Orientation = Avalonia.Layout.Orientation.Horizontal,
-            Spacing = 12,
-            Children = { _hud, _libraryTitle, _immersiveButton },
+            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto,Auto,Auto,Auto"),
+            Margin = new Thickness(0, 6, 12, 6),
         };
+        _hud.Margin = new Thickness(16, 0);
+        _libraryTitle.Margin = new Thickness(0);
+        _libraryTitle.TextTrimming = TextTrimming.CharacterEllipsis;
+        _bookContext.Margin = new Thickness(0);
+        _bookContext.TextTrimming = TextTrimming.CharacterEllipsis;
+        var contextPanel = new StackPanel
+        {
+            Spacing = 1,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            Children = { _libraryTitle, _bookContext },
+        };
+        toolbar.Children.Add(_hud);
+        toolbar.Children.Add(contextPanel);
+        toolbar.Children.Add(_previousChapter);
+        toolbar.Children.Add(_chapterSelector);
+        toolbar.Children.Add(_nextChapter);
+        toolbar.Children.Add(_immersiveButton);
+        Grid.SetColumn(contextPanel, 1);
+        Grid.SetColumn(_previousChapter, 2);
+        Grid.SetColumn(_chapterSelector, 3);
+        Grid.SetColumn(_nextChapter, 4);
+        Grid.SetColumn(_immersiveButton, 5);
+        _previousChapter.Margin = new Thickness(6, 0);
+        _chapterSelector.Margin = new Thickness(6, 0);
+        _nextChapter.Margin = new Thickness(6, 0);
+        _immersiveButton.Margin = new Thickness(6, 0);
         var surface = BuildSurface();
         var grid = new Grid
         {
@@ -340,6 +429,33 @@ public sealed class ReaderPage : UserControl
     public TextBlock EmptyState { get; }
 
     public Button ImmersiveButton { get; }
+
+    /// <summary>CHAPTER-SELECTOR-1 AC1: chapter picker in the reader toolbar (hidden for 1 chapter).</summary>
+    public ComboBox ChapterSelector { get; }
+
+    /// <summary>CHAPTER-SELECTOR-1 AC1: jump to the previous chapter (hidden for 1 chapter).</summary>
+    public Button PreviousChapterButton { get; }
+
+    /// <summary>CHAPTER-SELECTOR-1 AC1: jump to the next chapter (hidden for 1 chapter).</summary>
+    public Button NextChapterButton { get; }
+
+    /// <summary>CHAPTER-SELECTOR-1 AC1: "书：… · 章：…" context label.</summary>
+    public TextBlock BookContext { get; }
+
+    /// <summary>CHAPTER-SELECTOR-1: chapters of the currently loaded book (empty = unknown/fixture).</summary>
+    public IReadOnlyList<ChapterSummary> Chapters => _chapters;
+
+    /// <summary>CHAPTER-SELECTOR-1: chapter id currently rendered (null = fixture/empty).</summary>
+    public string? CurrentChapterId => _loadedChapterId;
+
+    /// <summary>CHAPTER-SELECTOR-1: chapter id selected in the picker.</summary>
+    public string? SelectedChapterId => (_chapterSelector.SelectedItem as ChapterChoice)?.ChapterId;
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC1: the user picked another chapter; the window re-loads that chapter
+    /// (flush current progress → projection resume → render).
+    /// </summary>
+    public event EventHandler<string>? ChapterSelectionRequested;
 
     /// <summary>READER-LIBRARY-WIRE-1 AC2: raised by the toolbar button / double-click.</summary>
     public event EventHandler? ImmersiveRequested;
@@ -396,6 +512,8 @@ public sealed class ReaderPage : UserControl
         _renderedPages.Clear();
         _emptyState.IsVisible = false;
         _libraryTitle.Text = book.Summary;
+        _loadedChapterId = book.ChapterId;
+        SetBookContext(book.BookTitle, book.ChapterTitle);
         _lastSavedPageId = null;
         _lastSavedScrollOffsetY = 0;
         LastProgressResult = null;
@@ -416,6 +534,8 @@ public sealed class ReaderPage : UserControl
             _pageImage.IsVisible = true;
             ShowPage(initialIndex);
         }
+
+        SyncChapterSelection();
     }
 
     /// <summary>READER-LIBRARY-WIRE-1 AC1 empty state (fixture fallback keeps rendering behind it).</summary>
@@ -425,7 +545,182 @@ public sealed class ReaderPage : UserControl
         _emptyState.Text = message;
         _emptyState.IsVisible = true;
         _libraryTitle.Text = "fixture 回退";
+        SetBookContext(null, null);
+        LoadChapters(Array.Empty<ChapterSummary>());
         _readingClock.Restart();
+    }
+
+    // ------------------------------------------------------------------
+    // CHAPTER-SELECTOR-1: book/chapter context + chapter list
+    // ------------------------------------------------------------------
+
+    /// <summary>CHAPTER-SELECTOR-1 AC1: current book/chapter line ("书：… · 章：…").</summary>
+    public void SetBookContext(string? bookTitle, string? chapterTitle)
+    {
+        var book = string.IsNullOrWhiteSpace(bookTitle) ? "—" : bookTitle.Trim();
+        var chapter = string.IsNullOrWhiteSpace(chapterTitle) ? "—" : chapterTitle.Trim();
+        _bookContext.Text = $"书：{book} · 章：{chapter}";
+    }
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC1: populate the chapter picker. A single chapter hides the selector, so
+    /// single-chapter books keep the old toolbar; an empty list also hides it (fixture/unknown).
+    /// </summary>
+    public void LoadChapters(IReadOnlyList<ChapterSummary> chapters, string? currentChapterId = null)
+    {
+        _chapters = chapters ?? Array.Empty<ChapterSummary>();
+        var choices = _chapters.Select(chapter => new ChapterChoice(chapter.ChapterId, FormatChapterLabel(chapter))).ToList();
+        _suppressChapterChange = true;
+        try
+        {
+            _chapterSelector.ItemsSource = choices;
+            var target = string.IsNullOrEmpty(currentChapterId)
+                ? choices.FirstOrDefault()
+                : choices.FirstOrDefault(choice => string.Equals(choice.ChapterId, currentChapterId, StringComparison.Ordinal))
+                  ?? choices.FirstOrDefault();
+            _chapterSelector.SelectedItem = target;
+            _chapterSelector.IsVisible = choices.Count > 1;
+        }
+        finally
+        {
+            _suppressChapterChange = false;
+        }
+
+        if (!string.IsNullOrEmpty(currentChapterId))
+        {
+            _loadedChapterId = currentChapterId;
+        }
+
+        UpdateChapterNavigation();
+    }
+
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC1: switch to the previous (-1) / next (+1) chapter. Used by the two
+    /// toolbar buttons and exposed for tests; the window reloads the chapter through the same
+    /// <see cref="ChapterSelectionRequested"/> path as the picker.
+    /// </summary>
+    public bool SelectAdjacentChapter(int delta)
+    {
+        if (_chapters.Count < 2 || _loadedChapterId is null)
+        {
+            return false;
+        }
+
+        var index = IndexOfChapter(_loadedChapterId);
+        var target = index + delta;
+        if (index < 0 || target < 0 || target >= _chapters.Count)
+        {
+            return false;
+        }
+
+        var chapterId = _chapters[target].ChapterId;
+        if (string.Equals(chapterId, _loadedChapterId, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        ChapterSelectionRequested?.Invoke(this, chapterId);
+        return true;
+    }
+
+    /// <summary>CHAPTER-SELECTOR-1: index of the loaded chapter inside the current list (-1 = unknown).</summary>
+    public int CurrentChapterIndex => IndexOfChapter(_loadedChapterId);
+
+    private int IndexOfChapter(string? chapterId)
+    {
+        if (string.IsNullOrEmpty(chapterId))
+        {
+            return -1;
+        }
+
+        for (var index = 0; index < _chapters.Count; index++)
+        {
+            if (string.Equals(_chapters[index].ChapterId, chapterId, StringComparison.Ordinal))
+            {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    private void UpdateChapterNavigation()
+    {
+        var multiple = _chapters.Count > 1 && _loadedChapterId is not null;
+        var index = IndexOfChapter(_loadedChapterId);
+        _previousChapter.IsVisible = multiple;
+        _nextChapter.IsVisible = multiple;
+        _previousChapter.IsEnabled = multiple && index > 0;
+        _nextChapter.IsEnabled = multiple && index >= 0 && index < _chapters.Count - 1;
+    }
+
+    /// <summary>CHAPTER-SELECTOR-1: immersive chrome keeps the context but hides the picker.</summary>
+    public void HideChapterSelector() => _chapterSelector.IsVisible = false;
+
+    private void SyncChapterSelection()
+    {
+        if (_chapters.Count == 0 || _loadedChapterId is null)
+        {
+            return;
+        }
+
+        var match = _chapters.FirstOrDefault(chapter =>
+            string.Equals(chapter.ChapterId, _loadedChapterId, StringComparison.Ordinal));
+        if (match is null)
+        {
+            return;
+        }
+
+        _suppressChapterChange = true;
+        try
+        {
+            _chapterSelector.SelectedItem = _chapterSelector.ItemsSource?
+                .OfType<ChapterChoice>()
+                .FirstOrDefault(choice => string.Equals(choice.ChapterId, match.ChapterId, StringComparison.Ordinal));
+        }
+        finally
+        {
+            _suppressChapterChange = false;
+        }
+
+        UpdateChapterNavigation();
+    }
+
+    private void OnChapterSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressChapterChange || _chapterSelector.SelectedItem is not ChapterChoice choice)
+        {
+            return;
+        }
+
+        if (string.Equals(choice.ChapterId, _loadedChapterId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        ChapterSelectionRequested?.Invoke(this, choice.ChapterId);
+    }
+
+    private static string FormatChapterLabel(ChapterSummary chapter)
+    {
+        if (!string.IsNullOrWhiteSpace(chapter.Title))
+        {
+            // Fixture/Core titles often already read "第 1 章"; avoid a doubled prefix.
+            var titleHasNumber = chapter.Title.StartsWith("第", StringComparison.Ordinal);
+            return titleHasNumber || string.IsNullOrWhiteSpace(chapter.ChapterNumber)
+                ? chapter.Title
+                : $"第 {chapter.ChapterNumber} 章 · {chapter.Title}";
+        }
+
+        return string.IsNullOrWhiteSpace(chapter.ChapterNumber)
+            ? $"第 {chapter.SortOrder} 章"
+            : $"第 {chapter.ChapterNumber} 章";
+    }
+
+    /// <summary>CHAPTER-SELECTOR-1: one entry of the chapter picker.</summary>
+    public sealed record ChapterChoice(string ChapterId, string Label)
+    {
+        public override string ToString() => Label;
     }
 
     // ------------------------------------------------------------------
@@ -1104,6 +1399,14 @@ public sealed class ReaderPage : UserControl
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        // CHAPTER-SELECTOR-1: only presses on the reading surface (page image / webtoon stack) may
+        // turn pages or toggle immersive; clicks on the toolbar (chapter picker), buttons or the
+        // scrollbar must never page-turn.
+        if (!IsReadingSurfaceSource(e.Source))
+        {
+            return;
+        }
+
         if (e.ClickCount >= 2)
         {
             RequestImmersive();
@@ -1122,6 +1425,43 @@ public sealed class ReaderPage : UserControl
             _ = TurnPageAsync(1);
         }
     }
+
+    /// <summary>CHAPTER-SELECTOR-1: true when the press originated on the reading surface.</summary>
+    private bool IsReadingSurfaceSource(object? source)
+    {
+        if (source is not Visual visual)
+        {
+            return false;
+        }
+
+        // Scrollbar drags/thumbs live inside the webtoon scroll viewer but are not page turns.
+        if (visual is ScrollBar || visual.FindAncestorOfType<ScrollBar>() is not null)
+        {
+            return false;
+        }
+
+        for (Visual? current = visual; current is not null; current = current.GetVisualParent())
+        {
+            if (ReferenceEquals(current, _webtoonScroll) || ReferenceEquals(current, _pageImage))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>CHAPTER-SELECTOR-1: make toolbar buttons readable on the black reader chrome.</summary>
+    private static void StyleToolbarButton(Button button)
+    {
+        button.Background = ThemePackService.Brush("CardBg");
+        button.Foreground = ThemePackService.Brush("TextPrimary");
+        button.BorderBrush = ThemePackService.Brush("CardBorder");
+        button.BorderThickness = new Thickness(1);
+    }
+
+    /// <summary>CHAPTER-SELECTOR-1 test seam: would a press from this source page-turn?</summary>
+    public bool IsPageTurnSourceForTest(object? source) => IsReadingSurfaceSource(source);
 
     private void OnWheel(object? sender, PointerWheelEventArgs e)
     {

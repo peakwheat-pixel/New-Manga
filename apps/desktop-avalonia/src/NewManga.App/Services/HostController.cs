@@ -271,6 +271,31 @@ public sealed class HostController : IHostController
     private static async Task<byte[]?> LoadPageBytesAsync(HostRuntime runtime, string pageId, CancellationToken token) =>
         await runtime.ReadPageImageAsync(pageId, token).ConfigureAwait(false);
 
+    /// <summary>
+    /// CHAPTER-SELECTOR-1 AC1: read-only chapter list for the reader's selector. Degrades to an empty
+    /// list (selector hidden, single-chapter behaviour) when the Host/Core is unavailable.
+    /// </summary>
+    public async Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(
+        string bookId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<ChapterSummary>();
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (
+            ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return Array.Empty<ChapterSummary>();
+        }
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_runtime is not null)
