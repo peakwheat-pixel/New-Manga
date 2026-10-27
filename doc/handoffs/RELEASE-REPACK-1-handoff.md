@@ -3,7 +3,7 @@
 - Task: `doc/tasks/RELEASE-REPACK-1.md`（team task-36）
 - Branch: `task/RELEASE-REPACK-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-1`
 - Base: 卡面 `97de0fa99`；实际基于 Lead 指定的当前 HEAD **`ae7fe3334`**
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `dd3e7d68e`（实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改 Core 语义/Host 契约/旧壳；未碰真实用户数据。
 
 ## 1. 交付摘要

@@ -54,6 +54,18 @@ CORE-PIPELINE-FIX-1（color analyzer + 空检测语义）与 RUN-BINDING-FIX-1�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-RP-REPORT | AC1–AC5 | `verification/RELEASE-REPACK-1/REPORT.md` | `dd3e7d68e` | `b3cf4a4ac7254058f1d41ebf588e05daa3c0f6df2ab8f7270797df18c821ebb7` | CANONICAL |
+| E-RP-HASHES | AC1 | `verification/RELEASE-REPACK-1/sidecar-hashes.json` | `dd3e7d68e` | `5c4b2e116792e7320122ecc28e8c1a4438e2a4bf648faa5f7d3a0da88f23ed69` | CANONICAL |
+| E-RP-RUN | AC2 | `verification/RELEASE-REPACK-1/run-smoke.json` | `dd3e7d68e` | `4ef7abaecb1ea06499b65e4eee5e53671350f2404afa161567d1db4f3a6c84bf` | CANONICAL |
+| E-RP-ZIPS | AC3 | `verification/RELEASE-REPACK-1/packages/zip-hashes.json` | `dd3e7d68e` | `af2007aa15d319a31fa5d8de72cb360adf9f2cba85d4a75a5b5a817091f86a56` | CANONICAL |
+| E-RP-VERSION | AC4 | `verification/RELEASE-REPACK-1/packages/VERSION-base.json` | `dd3e7d68e` | `3c042e21fc2b9b9137f2e8589dd5b9fe60a55ea7db43ef7633550db72a493543` | CANONICAL |
+| E-RP-VERIFY | AC3 | `verification/RELEASE-REPACK-1/smoke/install-verify-base.json` | `dd3e7d68e` | `b5f48b2940e1c625e3cfdba884f77fcaec0fa31ac0fdea46b88c52ca953f1f74` | CANONICAL |
+| E-RP-SMOKE-BASE | AC3 | `verification/RELEASE-REPACK-1/smoke/install-smoke-base.json` | `dd3e7d68e` | `47bee733350803e4f9a60539240f7dd1e5dd4fa62489296eaf07820e0f700ae2` | CANONICAL |
+| E-RP-SMOKE-MODELS | AC3 | `verification/RELEASE-REPACK-1/smoke/install-smoke-models.json` | `dd3e7d68e` | `c31cd7a4fda8caee9307b2af18c6789a9444d2e70c06b316168afe0bf0044078` | CANONICAL |
+| E-RP-BUILD-BASE | AC1 | `verification/RELEASE-REPACK-1/build-base.log` | `dd3e7d68e` | `65918a7a561f594a0b355d6cb38b4f7a2ec47c210c5bc6e68696ff9f783874e8` | CANONICAL |
+| E-RP-BUILD-MODELS | AC1 | `verification/RELEASE-REPACK-1/build-models.log` | `dd3e7d68e` | `5d2c107bd0a6c8dd0a59f7ff1ad0bd19a88fefbc5accbaa211d684502f40357f` | CANONICAL |
+| E-RP-DOTNET | AC5 | `verification/RELEASE-REPACK-1/dotnet-all.log` | `dd3e7d68e` | `32a8f8102af3450cbeb33c496b0cd95cef53717363cf522bce4a7c3d70d42d5f` | CANONICAL |
+| E-RP-PYTEST | AC5 | `verification/RELEASE-REPACK-1/pytest.log` | `dd3e7d68e` | `354233c61dc7963a0459982495407e412ef9304f3e9b9721d1ecd7c1ce9bb93c` | CANONICAL |
 
 ## Resource Manifest
 
