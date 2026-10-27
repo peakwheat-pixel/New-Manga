@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using NewManga.App.Services;
 using NewManga.App.ViewModels;
+using NewManga.CoreClient;
 using NewManga.Theme;
 
 namespace NewManga.App.Views;
@@ -613,10 +614,23 @@ public sealed class SettingsPage : UserControl
             controller is null
                 ? (_, _) => Task.FromResult<NetworkResolveInfo?>(null)
                 : controller.ResolveNetworkProfileAsync);
+        // READER-SELECTOR-UI-1: real library reads for the book/chapter selectors.
+        Func<CancellationToken, Task<IReadOnlyList<BookSummary>>> listBooks = controller is null
+            ? _ => Task.FromResult<IReadOnlyList<BookSummary>>(Array.Empty<BookSummary>())
+            : async cancellationToken =>
+            {
+                await controller.RefreshBooksAsync(cancellationToken);
+                return controller.Snapshot.Books;
+            };
+        Func<string, CancellationToken, Task<IReadOnlyList<ChapterSummary>>> listChapters = controller is null
+            ? (_, _) => Task.FromResult<IReadOnlyList<ChapterSummary>>(Array.Empty<ChapterSummary>())
+            : controller.ListChaptersAsync;
         Bindings = new ProviderBindingsSection(
             controller is null
                 ? _ => Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(Array.Empty<ProviderProfileInfo>())
                 : controller.ListProviderProfilesAsync,
+            listBooks,
+            listChapters,
             controller is null
                 ? (_, _, _, _) => Task.FromResult(SettingsProfileResult.NotReady())
                 : controller.SetProviderBindingAsync,

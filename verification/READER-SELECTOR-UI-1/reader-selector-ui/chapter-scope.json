@@ -1,0 +1,9 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "scenario": "scope=chapter -\u003E book selector -\u003E chapters loaded -\u003E bind",
+  "book_title": "\u6211\u7684\u6F2B\u753B",
+  "chapters_loaded": 2,
+  "bound_chapter_id": "chapter-2",
+  "bound_capability": "OCR",
+  "book_id_not_in_scope": true
+}

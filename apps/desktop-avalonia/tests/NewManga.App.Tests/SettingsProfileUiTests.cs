@@ -406,20 +406,22 @@ public sealed class SettingsProfileUiTests
         Assert.Equal("profile-1", global.ProfileId);
 
         section.ScopeKindInput.SelectedIndex = ProfileBindingScope.Kinds.ToList().IndexOf(ProfileBindingScope.Book);
-        section.BookIdInput.Text = "book-1";
+        await section.LastOperation;
+        Assert.Equal(1, section.BookSelector.ItemCount);
+        section.BookSelector.SelectedIndex = 0;
         section.CapabilityInput.SelectedIndex = SettingsCapabilities.All.ToList().IndexOf(SettingsCapabilities.Translation);
         Click(section.SetButton);
         await section.LastOperation;
         var book = controller.BindingSets[^1];
         Assert.Equal(ProfileBindingScope.Book, book.Scope.Kind);
-        Assert.Equal("book-1", book.Scope.BookId);
+        Assert.Equal("book-0", book.Scope.BookId);
         Assert.Equal(SettingsCapabilities.Translation, book.Capability);
 
         Click(section.ClearButton);
         await section.LastOperation;
         var clear = controller.BindingClears[^1];
         Assert.Equal(ProfileBindingScope.Book, clear.Scope.Kind);
-        Assert.Equal("book-1", clear.Scope.BookId);
+        Assert.Equal("book-0", clear.Scope.BookId);
 
         WriteEvidence("bindings-set-clear", writer =>
         {
