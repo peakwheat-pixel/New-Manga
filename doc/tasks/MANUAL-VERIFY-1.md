@@ -3,7 +3,7 @@ id: MANUAL-VERIFY-1
 title: 真机人工核验（AD-002 重构收尾的唯一人工环节）
 kind: verification
 governance_version: 3
-status: in_progress
+status: done
 approval: user_authorized_2026-10-26_ad002_autonomy
 suggested_owner: user
 owner: user
@@ -14,8 +14,8 @@ branch: null
 worktree: null
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/MANUAL-VERIFY-1
 allowed_paths:
   - doc/tasks/MANUAL-VERIFY-1.md
@@ -55,7 +55,7 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 
 ## Closeout Record
 
-- Closeout date / DSH：待用户回填后关闭。
+- Closeout date / DSH：2026-10-27（真机 5 项全部 PASS；用户确认 IME；证据见上表与 MICA-FIX-1/READER-LIBRARY-WIRE-1）。
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：待关闭时填写。
@@ -111,3 +111,8 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 | 5 | 沉浸 Esc/H | **PASS**（Esc 关闭/H 隐藏 HUD 真机实测） |
 
 → **真机 5 项全部 PASS。**
+## Closeout（2026-10-27，DSH）
+
+- 5 项全部 PASS（AC1–AC5）；用户人工确认 IME（AC4）。
+- 关联修复：MICA-FIX-1（93aaaeb8c）、DPI-DYNAMIC-1（6241b6c8 + 真机 96→192→96）、READER-LIBRARY-WIRE-1（cde098e5，工作集 395.1MB + Esc/H）。
+- 遗留项集中登记于 AD002-FOLLOWUPS-1（proposed）。

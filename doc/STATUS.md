@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[MANUAL-VERIFY-1](tasks/MANUAL-VERIFY-1.md) `in_progress`（真机 5 项已全部 PASS；待最终收口）。
+- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) `proposed`（重构遗留项登记；真机 5 项全 PASS，MANUAL-VERIFY-1 已 done）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
