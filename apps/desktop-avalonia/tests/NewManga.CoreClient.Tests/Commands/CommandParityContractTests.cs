@@ -104,8 +104,8 @@ public sealed class CommandParityContractTests
         var implemented = HostCommandRegistry.All.Values.Where(command => command.IsImplemented).ToArray();
         var notSupported = HostCommandRegistry.All.Values.Where(command => !command.IsImplemented).ToArray();
 
-        Assert.Equal(46, implemented.Length);
-        Assert.Equal(20, notSupported.Length);
+        Assert.Equal(51, implemented.Length);
+        Assert.Equal(15, notSupported.Length);
         Assert.Equal(66, implemented.Length + notSupported.Length);
 
         foreach (var command in implemented)

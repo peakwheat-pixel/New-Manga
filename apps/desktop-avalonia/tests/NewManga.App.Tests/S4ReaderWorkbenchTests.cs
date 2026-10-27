@@ -335,8 +335,9 @@ public sealed class S4WiringTests
     public void ReaderWorkbenchWiring_IsVerified_AndNsBatchRegistered()
     {
         Assert.Empty(S4Wiring.VerifyAgainstRegistry());
-        Assert.Equal(23, S4Wiring.WiredCommandCount);
-        Assert.Equal(5, S4Wiring.NsRegisteredCount);
+        // RUN-EXPORT-E2E-1 and S4-CMD-BATCH-1 wired the remaining ledger entries.
+        Assert.Equal(28, S4Wiring.WiredCommandCount);
+        Assert.Equal(0, S4Wiring.NsRegisteredCount);
         Assert.Equal(0, S4Wiring.NsDoneCount);
         Assert.All(S4Wiring.NsBatch, item =>
         {
@@ -346,13 +347,15 @@ public sealed class S4WiringTests
 
         var vm = new ReaderViewModel();
         vm.SetViewport(1200, 800, 2.0);
+        // Distinct from ShellCommandCatalog's commands/wiring.json (S3 shelf+settings scope):
+        // both used to write the same file, so the last writer hid the other's counts.
         S4Wiring.WriteEvidence(
-            Path.Combine(Evidence.Directory, "commands", "wiring.json"),
+            Path.Combine(Evidence.Directory, "commands", "s4-wiring.json"),
             vm,
             new List<double> { 1.2, 1.8, 2.1 });
-        var json = File.ReadAllText(Path.Combine(Evidence.Directory, "commands", "wiring.json"));
-        Assert.Contains("\"wired_implemented_count\": 23", json, StringComparison.Ordinal);
-        Assert.Contains("\"ns_registered_count\": 5", json, StringComparison.Ordinal);
+        var json = File.ReadAllText(Path.Combine(Evidence.Directory, "commands", "s4-wiring.json"));
+        Assert.Contains("\"wired_implemented_count\": 28", json, StringComparison.Ordinal);
+        Assert.Contains("\"ns_registered_count\": 0", json, StringComparison.Ordinal);
     }
 
     [AvaloniaFact]

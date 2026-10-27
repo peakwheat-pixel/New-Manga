@@ -41,8 +41,8 @@ public sealed class CommandWiringB1Tests
     [Fact]
     public void Registry_B1Commands_AreCoreBackedWithProbedMinor()
     {
-        Assert.Equal(46, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
-        Assert.Equal(20, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
+        Assert.Equal(51, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
+        Assert.Equal(15, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
 
         foreach (var (name, expected) in B1Routes)
         {

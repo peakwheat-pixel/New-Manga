@@ -2,18 +2,18 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Forty-six commands are migrated to the existing sidecars;
+/// organised into the six domain services. Fifty-one commands are migrated to the existing sidecars;
 /// the rest are explicit NOT_SUPPORTED with a per-command reason (never silently missing).
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
-/// verification/HOST-COMMAND-MIGRATION-1/parity/, verification/NS-WIRE-A1/ and
-/// verification/NS-WIRE-B1/):
+/// verification/HOST-COMMAND-MIGRATION-1/parity/, verification/NS-WIRE-A1/,
+/// verification/NS-WIRE-B1/, verification/RUN-EXPORT-E2E-1/ and verification/S4-CMD-BATCH-1/):
 ///   core.ping, ListBooks, ListRecycleBinBooks, CreateBook, CreateChapter, list_chapters,
 ///   list_chapter_pages, list_regions, settings.get, backup.list, plugins.list,
 ///   cleanup.preview, GetExportHistory (core_service protocol 2.3), the RUN-EXPORT-E2E-1 run/export
 ///   set, the NS-WIRE-A1 settings/plugins/backup/cleanup batch, the NS-WIRE-B1 P15 settings /
 ///   provider binding / network profile / backup / cleanup / plugin / permanent-delete batch,
-///   and issue/revoke/revoke_resource
+///   the S4-CMD-BATCH-1 region write + reader progress batch, and issue/revoke/revoke_resource
 /// </summary>
 public static class HostCommandRegistry
 {
@@ -165,6 +165,15 @@ public static class HostCommandRegistry
         ["settings_provider_bindings_clear"] = new("settings_provider_bindings_clear", 7),
         ["settings_provider_bindings_resolve"] = new("settings_provider_bindings_resolve", 7),
         ["settings_provider_run_snapshot_get"] = new("settings_provider_run_snapshot_get", 7),
+        // S4-CMD-BATCH-1 batch: the region write face (set/restore/rerender/resolve) and the reader
+        // progress write face. The Core envelopes stay at protocol minor 3 exactly like the
+        // list_regions / list_chapters read faces; payload shapes are proven against the frozen
+        // core_service by verification/S4-CMD-BATCH-1/commands/s4-integration-results.json.
+        ["set_region_type"] = new("set_region_type", 3),
+        ["restore_region_revision"] = new("restore_region_revision", 3),
+        ["rerender_page"] = new("rerender_page", 3),
+        ["resolve_page_resource"] = new("resolve_page_resource", 3),
+        ["library_save_reading_progress"] = new("SaveReadingProgress", 3),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
@@ -177,12 +186,7 @@ public static class HostCommandRegistry
     /// <summary>Commands whose legacy implementation is a Core round-trip still missing from the frozen Core.</summary>
     private static readonly Dictionary<string, string> CoreRoute = new(StringComparer.Ordinal)
     {
-        ["library_save_reading_progress"] = "SaveReadingProgress",
-        ["set_region_type"] = "set_region_type",
         ["list_region_revisions"] = "list_region_revisions",
-        ["restore_region_revision"] = "restore_region_revision",
-        ["rerender_page"] = "rerender_page",
-        ["resolve_page_resource"] = "resolve_page_resource",
     };
 
     private static readonly IReadOnlyDictionary<string, HostCommandDescriptor> Commands =

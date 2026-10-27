@@ -74,6 +74,16 @@ try {
     if (Test-Path (Join-Path $bookFixtureRoot 'library.db')) {
         $env:NEWMANGA_BOOK_FIXTURE_ROOT = $bookFixtureRoot
     }
+    # S4-CMD-BATCH-1: seed the region-write / reader-progress fixture (book+chapter+pages from the
+    # BOOK-FIXTURE when present, plus a CLEAN artifact and a confirmed translated region) and export
+    # its root. Without it the region/reader write integration tests self-skip with an explicit reason.
+    $regionFixtureRoot = 'G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture'
+    & $fixturePython (Join-Path $root 'scripts/seed_s4_region_fixture.py') `
+        --data-root $regionFixtureRoot `
+        --json-out (Join-Path $regionFixtureRoot 'fixture.json') 2>&1 |
+        Tee-Object -FilePath $testLog -Append
+    if ($LASTEXITCODE -ne 0) { throw "S4 region fixture seeding failed" }
+    $env:NEWMANGA_S4_REGION_FIXTURE = $regionFixtureRoot
     # CORE-TILE-EMIT-1: produce a real Python-Core tile artifact for the Host E2E test.
     $coreTileE2e = 'G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e'
     $env:NEWMANGA_CORE_TILE_E2E = "$coreTileE2e/artifact"

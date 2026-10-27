@@ -1,0 +1,95 @@
+{
+  "ac": "AC3",
+  "snapshot": "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json",
+  "snapshot_sha256": "4c6a4da0e8968c6b62516fdbabd5608f4dd14cdd4d91c2c0b9d16a1092ccb574",
+  "extract_check": "PASS: production command surface matches snapshot (66 commands, domains={'resource': 3, 'workbench': 12, 'library': 8, 'settings': 33, 'region': 6, 'reader': 4})",
+  "extract_check_log": "verification/S4-CMD-BATCH-1/parity-check.log",
+  "before": {
+    "task_base_implemented": 24,
+    "task_base_not_supported": 42,
+    "rebase_main_implemented": 46,
+    "rebase_main_not_supported": 20
+  },
+  "after": {
+    "implemented": 51,
+    "not_supported": 15
+  },
+  "changed_commands": [
+    {
+      "command": "set_region_type",
+      "domain": "region",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "set_region_type",
+      "core_minor": 3
+    },
+    {
+      "command": "restore_region_revision",
+      "domain": "region",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "restore_region_revision",
+      "core_minor": 3
+    },
+    {
+      "command": "rerender_page",
+      "domain": "region",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "rerender_page",
+      "core_minor": 3
+    },
+    {
+      "command": "resolve_page_resource",
+      "domain": "region",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "resolve_page_resource",
+      "core_minor": 3
+    },
+    {
+      "command": "library_save_reading_progress",
+      "domain": "reader",
+      "before": "NOT_SUPPORTED",
+      "after": "IMPLEMENTED",
+      "core_route": "SaveReadingProgress",
+      "core_minor": 3
+    }
+  ],
+  "already_implemented_reverified": [
+    {
+      "command": "library_get_reader_projection",
+      "domain": "reader",
+      "status": "IMPLEMENTED (NS-WIRE-A1)",
+      "core_route": "GetReaderProjection",
+      "core_minor": 3,
+      "note": "re-executed with a real chapter in this batch to complete the reader pair's success evidence"
+    }
+  ],
+  "remaining_not_supported_in_batch": [
+    {
+      "command": "list_region_revisions",
+      "domain": "region",
+      "reason": "read face outside this write batch; primary Core route answered in the S4 real-target probe (ok=true) but the command itself is still typed NOT_SUPPORTED pending its own wiring batch"
+    }
+  ],
+  "snapshot_mutation": "none (the Rust-derived command surface is unchanged; statuses live only in the C# HostCommandRegistry)",
+  "evidence": {
+    "before_parity_contract": "verification/HOST-COMMAND-MIGRATION-1/commands/parity-contract.json",
+    "after_parity_contract": "verification/S4-CMD-BATCH-1/evidence/commands/parity-contract.json",
+    "integration_results": "verification/S4-CMD-BATCH-1/evidence/commands/integration-results.json",
+    "s4_region_reader_results": "verification/S4-CMD-BATCH-1/commands/s4-region-reader-results.json",
+    "core_command_probe": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+    "not_supported_typed_errors": "verification/S4-CMD-BATCH-1/evidence/not-supported-typed-errors.json",
+    "s4_wiring": "verification/S4-CMD-BATCH-1/evidence/commands/s4-wiring.json"
+  },
+  "registry_contract": "C# HostCommandRegistry 66 条全部有归属：29 IMPLEMENTED / 37 NOT_SUPPORTED（每族原因可见）",
+  "rebase": {
+    "main_commit": "9f58b4c1d",
+    "landed_first": [
+      "RUN-EXPORT-E2E-1 (24->33 @ b993e68bb)",
+      "NS-WIRE-B1 (33->46 @ 9f58b4c1d)"
+    ],
+    "resolution": "先落地者为准：保留 main 的 Run/Export 9 条与 NS-WIRE-B1 13 条，合并本批 region/reader 5 条；计数 46->51"
+  }
+}
