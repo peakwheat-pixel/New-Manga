@@ -60,6 +60,19 @@ NS-RECLASSIFY-1 证明 7 条真缺口在 **Host 侧**：
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-GI-REPORT | AC1–AC5 | `verification/GRANT-ISSUER-1/REPORT.md` | `21fd47551` | `157012874e57577a91a0a4d0f07c0516bf4b6dc6352283f2b22ca6fa68612526` | CANONICAL |
+| E-GI-LIST | AC1/AC2/AC3 | `verification/GRANT-ISSUER-1/command-list.json` | `21fd47551` | `d5c6d5455b2f724184fbd925be5c3c1f6d78b2a28664f6cccd808402257b9fbe` | CANONICAL |
+| E-GI-PARITY | AC4 | `verification/GRANT-ISSUER-1/parity-update.json` | `21fd47551` | `cc54e5790eb278b3436f6e2a4b396a467c7768ac1251641ec5f7b98814a8fe97` | CANONICAL |
+| E-GI-CHECK | AC4 | `verification/GRANT-ISSUER-1/parity-check.log` | `21fd47551` | `820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe` | CANONICAL |
+| E-GI-CONTRACT | AC1/AC4 | `verification/GRANT-ISSUER-1/evidence/parity-contract.json` | `21fd47551` | `59d195e18f412ea6045a6fa951ee404fdd15f6820d4c2287cef8a9cce9dce130` | CANONICAL |
+| E-GI-SHELL | AC2 | `verification/GRANT-ISSUER-1/evidence/real-shell-opened.json` | `21fd47551` | `89a4b411859e23b782b14241aa1f9663ebbf574fc538bef083aae9d9cd179769` | CANONICAL |
+| E-GI-SCREEN | AC2 | `verification/GRANT-ISSUER-1/screens/01-plugins-directory-explorer.png` | `21fd47551` | `78b014e5fe43909bba4aa909cf9dcb2878dc306b69f39fea74354c0f48739e2e` | CANONICAL |
+| E-GI-B1-UNION | AC4 | `verification/GRANT-ISSUER-1/evidence/ns-b1-integration.json` | `21fd47551` | `f946153f1f73f52d36b5665897bd69427e3ccaae8bee050586658634b5452e89` | CANONICAL |
+| E-GI-S4-UNION | AC4 | `verification/GRANT-ISSUER-1/evidence/s4-region-reader-results.json` | `21fd47551` | `1ee022d47c6c69f47ea5f6c43d9e035c2c59a8ce1d1e43bc293c29fc8b188b7f` | CANONICAL |
+| E-GI-DOTNET | AC4 | `verification/GRANT-ISSUER-1/dotnet-all.log` | `21fd47551` | `377fabfc082955da6ac95708a7274a846fbf009e934813f44bad3db57af7b7ba` | CANONICAL |
+| E-GI-VITEST | AC4 | `verification/GRANT-ISSUER-1/vitest.log` | `21fd47551` | `37142b6e5236098d764c8b1086ac723c13c1f18d4bb0b91b5fc9ced73eb6795a` | CANONICAL |
+| E-GI-PYTEST | AC4 | `verification/GRANT-ISSUER-1/pytest.log` | `21fd47551` | `d2cc3a3ac31ca0c96fc5462a117110d89f0846d5d495316957e41ae7fc5109a6` | CANONICAL |
+| E-GI-PYTEST-IGNORE | AC4 | `verification/GRANT-ISSUER-1/pytest-ignore-broken.log` | `21fd47551` | `57a606877779db1334acdd4cd1c0bdbdb647fecaab2dfea4907adcd17445e329` | CANONICAL |
 
 ## Resource Manifest
 

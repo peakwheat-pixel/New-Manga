@@ -4,7 +4,7 @@
 - Branch: `task/GRANT-ISSUER-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1`
 - Base: 卡面 `45efe7f00` 早于本卡；实际按 Lead 指定从 **`b993e68bb`** 开分支，交付前 rebase 到
   **`9f58b4c1d`**（NS-WIRE-B1 已合并，46/20）；三文件冲突取并集，test.ps1 165/165。
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `21fd47551`（rebase 到 ed85c4173 后的实现+证据提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 未 push；未改 Python Core 语义、未扩展 host_bridge wire 版本、未改旧壳、未碰真实用户数据。
 
 ## 1. 交付摘要
