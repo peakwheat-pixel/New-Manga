@@ -3,16 +3,16 @@ id: GRANT-ISSUER-1
 title: Host grant 签发 + shell 动作（7 条真缺口）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_ns_b1_grant
 suggested_owner: core-admin-rca
 owner: null
 reviewer: dsh
 depends_on: []
-base_commit: 45efe7f00
+base_commit: ed85c4173
 branch: task/GRANT-ISSUER-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/GRANT-ISSUER-1
-integration_commit: null
+integration_commit: 941de7f5a
 delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -88,3 +88,11 @@ NS-RECLASSIFY-1 证明 7 条真缺口在 **Host 侧**：
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS（二次 rebase 后干净合并）
+
+- rebase 到 d85c4173 后分支 499dd7c98；与 main（含 RUN-BINDING）合并**零冲突**；DSH 复跑 	est.ps1 **177/177**；parity --check 见执行记录（**55 IMPLEMENTED / 11 NOT_SUPPORTED**）；pytest 见执行记录（基线一致、0 新增）。
+- grant 链路：OpenHostSession → HostIssuer 签名 grant（import=排序键压缩 JSON HMAC；export=\0 拼接串 HMAC）→ RegisterImportSource/RegisterExportTarget → ImportPages/StartExport；失败回滚 revoke。
+- 成功样例：8 PNG 真实导入（imported_files=8、投影 8 页、grant registered=true）；Export grant 注册成功但 StartExport 仍 EXPORT_INPUT_UNAVAILABLE（fixture 无 translated 页，如实 BLOCKED）；越权 export → EXPORT_PATH_UNAVAILABLE。
+- shell 动作：library_reveal_export_folder、plugins_open_directory（白名单；越权 C:\Windows → PLUGIN_DIRECTORY_UNAVAILABLE；真机 Explorer 截图）。
+- 安全：仅 Host 铸造 grant（signing key 进程内随机不落盘）、路径/reparse/身份校验、export 限 data root/exports；TileChannel/资源通道零改动。
+- 集成：941de7f5a。
