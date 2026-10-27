@@ -1,0 +1,49 @@
+{
+  "ac": "AC2",
+  "app": "packaged build (torch-free closure) from app/NewManga.App.exe, stage NewManga-0.1.0-win-x64",
+  "data_root": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+  "observation": {
+    "settings_page_text": "GPU：NVIDIA GeForce RTX 5070 Ti · DirectML 可用",
+    "detection_source_line": "探测源：ONNX Runtime 执行提供程序（打包时写入 VERSION.json）"
+  },
+  "screenshot": "screens/01-settings-gpu.png",
+  "package": {
+    "zip_mb": 97.88,
+    "variant": "base",
+    "models_bundled": false
+  },
+  "version_json_devices": {
+    "onnxruntime_providers": [
+      "DmlExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": {
+      "kind": "gpu",
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "total_memory_mb": 16303,
+      "state": "available",
+      "error_code": "",
+      "detail": "onnxruntime providers=['DmlExecutionProvider', 'CPUExecutionProvider']; execution_provider=DirectML"
+    },
+    "ac": "AC1/AC2",
+    "source": "build-environment probe: onnxruntime.get_available_providers() + Windows display-adapter registry supplement"
+  },
+  "buildenv_probe": {
+    "onnxruntime_providers": [
+      "DmlExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": {
+      "kind": "gpu",
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "total_memory_mb": 16303,
+      "state": "available",
+      "error_code": "",
+      "detail": "onnxruntime providers=['DmlExecutionProvider', 'CPUExecutionProvider']; execution_provider=DirectML"
+    },
+    "ac": "AC1/AC2",
+    "source": "build-environment probe: onnxruntime.get_available_providers() + Windows display-adapter registry supplement"
+  }
+}

@@ -2,6 +2,7 @@
   [string]$OutputRoot='G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out',
   [string]$Version='0.1.0',
   [string]$SidecarDir='',
+  [string]$BuildPython='G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe',
   [switch]$WithModels,
   [int]$MaxZipMB=0
 )
@@ -57,13 +58,35 @@ Copy-Item (Join-Path $docs 'MANUAL_VERIFY.md') $stage -Force
 Copy-Item (Join-Path $docs 'UPGRADE.md') $stage -Force
 Copy-Item (Join-Path $docs 'LICENSE_AUDIT.md') $stage -Force
 
+# ---- 4b) GPU-ORT-PROBE-1: packaged device probe (ORT EP list) ----------------
+# The release closure is torch-free and ships onnxruntime-directml, so the
+# device verdict must come from the build environment's ONNX Runtime provider
+# list; the settings page renders it from VERSION.json. A probe failure leaves
+# devices=null (the UI then shows "未打包探测") and is never faked.
+$deviceProbe = $null
+$gpuProbeScript = Join-Path $PSScriptRoot 'gpu_probe.py'
+if (Test-Path $BuildPython) {
+    try {
+        $probeOutput = & $BuildPython $gpuProbeScript 2>$null | Out-String
+        if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($probeOutput)) {
+            $deviceProbe = $probeOutput | ConvertFrom-Json
+        }
+    } catch {
+        $deviceProbe = $null
+    }
+}
+if ($null -eq $deviceProbe) { Write-Warning 'GPU device probe unavailable; VERSION.json devices=null' }
+
 # ---- 5) VERSION.json: real model distribution strategy ---------------------
 $modelsStrategy=if($modelsBundled){
   "bundled: app/core-sidecar/models ($([math]::Round($modelsBytes/1MB,1)) MiB in-package); no download at run time"
 }else{
   "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\com.newmanga.desktop\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle"
 }
-@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included'}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+# Keep a copy beside the exe too: the single-file host always sees its own directory,
+# so the settings page can render the packaged device probe on every layout.
+Copy-Item (Join-Path $stage 'VERSION.json') (Join-Path $stage 'app/VERSION.json') -Force
 
 # ---- 6) manifest + zip + budget gate ---------------------------------------
 $files=Get-ChildItem $stage -Recurse -File; $bytes=($files|Measure-Object Length -Sum).Sum

@@ -36,11 +36,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 探测替换**：设备探测改为 **onnxruntime EP**（`get_available_providers()`：DmlExecutionProvider/CUDAExecutionProvider/CPUExecutionProvider），返回设备名与可用状态；torch 仅在开发环境（有 torch 时）作为补充信息，不作为主判据。
-- [ ] **AC2 打包验证**：用发布包（无 torch 闭包）启动 → 设置页 GPU 状态显示 **DML 可用**（本机 RTX 5070 Ti）；证据：截图 + 探测 JSON。
-- [ ] **AC3 单测**：EP 组合矩阵（DML only / CUDA+DML / CPU only）单测覆盖。
-- [ ] **AC4 回归**：pytest 相对基线（3F/2739P/9S）无新增失败；`scripts/test.ps1` 全绿；闭包仍无 torch（spec 断言）。
-- [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。
+- [x] **AC1 探测替换**：设备探测改为 **onnxruntime EP**（`get_available_providers()`：DmlExecutionProvider/CUDAExecutionProvider/CPUExecutionProvider），返回设备名与可用状态；torch 仅在开发环境（有 torch 时）作为补充信息，不作为主判据。→ **MET**：`manager.py` 以 ORT EP 为唯一可用性判据（DML>CUDU>ROCm>MIGraphX>TensorRT→CPU），注册表补名称/显存，torch 仅名称补充；`probe_snapshot()` 供证据。
+- [x] **AC2 打包验证**：用发布包（无 torch 闭包）启动 → 设置页 GPU 状态显示 **DML 可用**（本机 RTX 5070 Ti）；证据：截图 + 探测 JSON。→ **MET**：重建 torch-free 闭包并重打包（base 97.88MB），发布件设置页显示「GPU：NVIDIA GeForce RTX 5070 Ti · DirectML 可用」；`screens/01-settings-gpu.png` + `settings-page-evidence.json` + `device-probe-buildenv.json`。
+- [x] **AC3 单测**：EP 组合矩阵（DML only / CUDA+DML / CPU only）单测覆盖。→ **MET**：新增 7 项（DML only / CUDA+DML / CPU only / 空 providers / torch-only 补充 / snapshot）；`test_devices.py` 28 passed。
+- [x] **AC4 回归**：pytest 相对基线（3F/2739P/9S）无新增失败；`scripts/test.ps1` 全绿；闭包仍无 torch（spec 断言）。→ **MET**：pytest **3F/2746P/9S**（基线 2739P+新增 7，失败集合同基线 0 新增）；test.ps1 **149/149 passed, 0 skipped**；`build_sidecar.ps1 -Force` 闭包断言 `(856 pure modules, torch-free) + DirectML.dll`。
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：check.ps1 PASS；pin 见下；`doc/handoffs/GPU-ORT-PROBE-1-handoff.md`。
 
 ## 允许修改范围
 
@@ -54,12 +54,20 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-GPU-REPORT | AC1–AC5 | `verification/GPU-ORT-PROBE-1/REPORT.md` | `064e4fe22` | `4eee5f907e6a26ae66480f680f25b77216b0deee231289d56a9d1ff0546cf50b` | CANONICAL |
+| E-GPU-UI | AC2 | `verification/GPU-ORT-PROBE-1/settings-page-evidence.json` | `064e4fe22` | `9a5de25d90f1a717710f3666a97b9e13028797ce10b7b1115d2460b0b587f2a6` | CANONICAL |
+| E-GPU-SCREEN | AC2 | `verification/GPU-ORT-PROBE-1/screens/01-settings-gpu.png` | `064e4fe22` | `2d0df3fec3939a9013ff992f96c94c028332cdd218634c9dae05375080a92247` | CANONICAL |
+| E-GPU-PROBE | AC1/AC2 | `verification/GPU-ORT-PROBE-1/device-probe-buildenv.json` | `064e4fe22` | `bfd588390c996f5ecdf43db00ccd016753e23e8b5a9fe8acfbf6519668c72b3a` | CANONICAL |
+| E-GPU-CLOSURE | AC4 | `verification/GPU-ORT-PROBE-1/sidecar-build.log` | `064e4fe22` | `bbb02077898e6588155dbb544b79856255e7588cd40a3fe7973b11046c62d953` | CANONICAL |
+| E-GPU-PACKAGE | AC2/AC4 | `verification/GPU-ORT-PROBE-1/package.log` | `064e4fe22` | `db76a842aa082b12fca1aab435cf2150b86737dba9ca964312ffe4da6c72dee1` | CANONICAL |
+| E-GPU-PYTEST | AC3/AC4 | `verification/GPU-ORT-PROBE-1/pytest.log` | `064e4fe22` | `d3613497b46d5bff95dc59c56bdaa9ff6672aafa0853f0d6125455a63b989263` | CANONICAL |
+| E-GPU-DOTNET | AC4 | `verification/GPU-ORT-PROBE-1/dotnet-all.log` | `064e4fe22` | `00a411ebec28c3fc0762da2288f86a5a428f2afb919898d6aba9f7d7ea369b75` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/GPU-ORT-PROBE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GPU-ORT-PROBE-1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/GPU-ORT-PROBE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GPU-ORT-PROBE-1 | `out/`（base 包 97.88MB，VERSION.json.devices 记录 DML 能力）、`evidence-private/`（test.ps1 证据副本） | 发布件与证据引用；关闭时按裁决保留/清理 |
 
 ## Closeout Record
 

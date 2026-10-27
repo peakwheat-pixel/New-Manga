@@ -16,25 +16,24 @@ Codex's r42 adjudication required both sides to be covered deterministically and
 no production seam be added for the purpose. Everything below patches only
 test-visible lookups, so nothing in src/ learns about tests.
 
+GPU-ORT-PROBE-1 (2026-10-27): the GPU probe authority moved from ``torch.cuda``
+to ONNX Runtime's execution-provider list, so the simulation patches that list
+(plus the name/memory supplements) instead of installing a fake torch.
+
 The two seams used:
 
   ``infrastructure.providers.dependencies.probe_module``
       called by ``evaluate_requirements`` at call time through module globals,
       so patching it changes provider readiness for the duration of a test.
 
-  ``infrastructure.devices.manager._module_present``
-      called by ``DeviceManager._probe_gpu``. For the available side a fake
-      ``torch`` is also installed in ``sys.modules``, because the probe imports
-      torch for real once the module check passes.
-
-Neither is a new interface: both already existed and are already the only places
-that answer "is this runtime here?".
+  ``infrastructure.devices.manager._onnxruntime_providers`` /
+  ``_windows_gpu_name`` / ``_torch_supplement``
+      called by ``DeviceManager._probe_gpu``; the first answers "which execution
+      providers exist", the other two supply the display name/memory only.
 """
 
 from __future__ import annotations
 
-import sys
-import types
 from contextlib import contextmanager
 from typing import Iterator
 
@@ -102,35 +101,30 @@ def with_optional_runtimes(*, available: bool) -> Iterator[None]:
 @contextmanager
 def gpu_state(*, available: bool, name: str = "Simulated GPU",
               total_memory_mb: int = 12288) -> Iterator[None]:
-    """Force ``DeviceManager`` to see, or not see, a usable CUDA GPU.
+    """Force ``DeviceManager`` to see, or not see, a GPU execution provider.
 
-    The available side installs a stand-in ``torch`` in ``sys.modules`` so the
-    real ``import torch`` inside the probe resolves to something whose
-    ``cuda.is_available()`` we control. The stand-in is removed afterwards, and
-    a real installed torch is restored.
+    The available side reports the DirectML provider (the release form) and a
+    deterministic adapter name/memory; the unavailable side reports CPU only.
+    All three probe seams are restored afterwards.
     """
-    real_present = manager_module._module_present
-    had_torch = "torch" in sys.modules
-    previous_torch = sys.modules.get("torch")
+    real_providers = manager_module._onnxruntime_providers
+    real_adapter = manager_module._windows_gpu_name
+    real_supplement = manager_module._torch_supplement
 
     if available:
-        fake_cuda = types.SimpleNamespace(
-            is_available=lambda: True,
-            get_device_properties=lambda index: types.SimpleNamespace(
-                name=name, total_memory=total_memory_mb * 1024 * 1024),
+        manager_module._onnxruntime_providers = lambda: (
+            "DmlExecutionProvider",
+            "CPUExecutionProvider",
         )
-        fake_torch = types.SimpleNamespace(cuda=fake_cuda)
-        manager_module._module_present = lambda module: True
-        sys.modules["torch"] = fake_torch  # type: ignore[assignment]
+        manager_module._windows_gpu_name = lambda: (name, total_memory_mb)
     else:
-        manager_module._module_present = lambda module: False
+        manager_module._onnxruntime_providers = lambda: ("CPUExecutionProvider",)
+        manager_module._windows_gpu_name = lambda: None
+    manager_module._torch_supplement = lambda: (None, None)
 
     try:
         yield
     finally:
-        manager_module._module_present = real_present
-        if available:
-            if had_torch:
-                sys.modules["torch"] = previous_torch  # type: ignore[assignment]
-            else:
-                sys.modules.pop("torch", None)
+        manager_module._onnxruntime_providers = real_providers
+        manager_module._windows_gpu_name = real_adapter
+        manager_module._torch_supplement = real_supplement

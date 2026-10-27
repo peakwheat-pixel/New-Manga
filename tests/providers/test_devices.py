@@ -34,7 +34,7 @@ def test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented() -> Non
         info = manager.gpu_info()
         assert info.state == GPU_UNAVAILABLE
         assert info.available is False
-        assert "torch" in info.detail
+        assert "onnxruntime" in info.detail
         # AC-GPU-003: no silent downgrade when the provider cannot run on CPU.
         with pytest.raises(DeviceUnavailable):
             manager.plan(requires_gpu=True, supports_cpu_fallback=False)
@@ -297,3 +297,94 @@ def test_run_guarded_preference_keeps_oom_isolation() -> None:
                 allow_cpu_fallback=False,
                 supports_cpu_fallback=False,
             )
+
+
+# ---------------------------------------------------------------------------
+# GPU-ORT-PROBE-1 AC3: the ONNX Runtime execution-provider matrix
+#
+# The release closure is torch-free and ships onnxruntime-directml, so the
+# availability verdict comes from ``get_available_providers()``: DML only,
+# CUDA+DML (DML preferred), CPU only and an absent runtime are all covered.
+# ---------------------------------------------------------------------------
+
+
+def _force_ep_matrix(monkeypatch, providers, *, adapter=None, supplement=(None, None)):
+    import infrastructure.devices.manager as manager_module
+
+    monkeypatch.setattr(manager_module, "_onnxruntime_providers", lambda: providers)
+    monkeypatch.setattr(manager_module, "_windows_gpu_name", lambda: adapter)
+    monkeypatch.setattr(manager_module, "_torch_supplement", lambda: supplement)
+
+
+@pytest.mark.parametrize(
+    "providers,expected_available,expected_label",
+    [
+        (("DmlExecutionProvider", "CPUExecutionProvider"), True, "DirectML"),
+        (
+            (
+                "CUDAExecutionProvider",
+                "DmlExecutionProvider",
+                "CPUExecutionProvider",
+            ),
+            True,
+            "DirectML",
+        ),
+        (("CPUExecutionProvider",), False, None),
+        ((), False, None),
+    ],
+)
+def test_onnxruntime_ep_matrix_decides_availability(
+    monkeypatch, providers, expected_available, expected_label
+) -> None:
+    _force_ep_matrix(monkeypatch, providers, adapter=("Adapter X", 8192))
+    info = DeviceManager().gpu_info()
+    assert info.available is expected_available
+    if expected_label is None:
+        assert info.state == GPU_UNAVAILABLE
+        assert "onnxruntime" in info.detail
+        return
+    assert info.state == GPU_AVAILABLE
+    assert info.name == "Adapter X"
+    assert info.total_memory_mb == 8192
+    assert expected_label in info.detail
+
+
+def test_onnxruntime_ep_matrix_cuda_only_uses_cuda_label(monkeypatch) -> None:
+    _force_ep_matrix(
+        monkeypatch,
+        ("CUDAExecutionProvider", "CPUExecutionProvider"),
+        adapter=None,
+    )
+    info = DeviceManager().gpu_info()
+    assert info.available is True
+    assert info.name == "CUDA"
+    assert "execution_provider=CUDA" in info.detail
+
+
+def test_onnxruntime_ep_matrix_torch_is_only_a_name_supplement(monkeypatch) -> None:
+    """torch may supply the name, but a torch-only machine without a GPU EP stays unavailable."""
+    _force_ep_matrix(
+        monkeypatch,
+        ("CPUExecutionProvider",),
+        adapter=None,
+        supplement=("Torch GPU", 24576),
+    )
+    info = DeviceManager().gpu_info()
+    assert info.available is False
+    assert "torch supplement: Torch GPU" in info.detail
+    assert "onnxruntime" in info.detail
+
+
+def test_probe_snapshot_records_providers_and_state(monkeypatch) -> None:
+    import infrastructure.devices.manager as manager_module
+
+    _force_ep_matrix(
+        monkeypatch,
+        ("DmlExecutionProvider", "CPUExecutionProvider"),
+        adapter=("Adapter X", 8192),
+    )
+    snapshot = manager_module.probe_snapshot()
+    assert "DmlExecutionProvider" in snapshot["onnxruntime_providers"]
+    assert snapshot["gpu"]["state"] == GPU_AVAILABLE
+    assert snapshot["gpu"]["name"] == "Adapter X"
+    assert snapshot["gpu"]["total_memory_mb"] == 8192
