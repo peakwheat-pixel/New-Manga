@@ -12,6 +12,8 @@ param(
     [string]$DataRoot = 'G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data',
     [string]$AppExe = '',
     [string]$S4Fixtures = 'G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/fixtures',
+    # READER-PROGRESS-1: extra AppOptions (e.g. --demo-write on an isolated root) for evidence runs.
+    [string[]]$ExtraArgs = @(),
     [switch]$NoLaunch
 )
 
@@ -64,7 +66,7 @@ if (Test-Path $S4Fixtures) { $env:NEWMANGA_S4_FIXTURES = $S4Fixtures }
 # AppOptions only has --data-root=<value> form: a bare "--data-root <path>" would
 # be parsed as the literal value "true" (AppOptions.Parse). The = form plus
 # quotes is required because the workspace path contains a space.
-$argLine = "--data-root=`"$DataRoot`""
+$argLine = "--data-root=`"$DataRoot`"" + (($ExtraArgs | ForEach-Object { " $_" }) -join "")
 Write-Host "launch args: $argLine"
 $process = Start-Process -FilePath $exe -ArgumentList $argLine -PassThru
 Write-Host "started NewManga.App.exe (pid=$($process.Id)); close the window (or kill the pid) to end the session."

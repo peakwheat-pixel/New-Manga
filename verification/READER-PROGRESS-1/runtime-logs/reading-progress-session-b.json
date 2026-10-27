@@ -1,0 +1,17 @@
+{
+ "db_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\READER-PROGRESS-1\\isolated-data\\library.db",
+ "db_sha256": "982d6f42104b21286e254ab9be3c9ca697f72051bd32c525dbfbb8a4a997d0a2",
+ "row": {
+  "progress_id": "rp-fede8b96cf0c",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "mode": "original",
+  "last_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+  "scroll_offset_x": 0.0,
+  "scroll_offset_y": 0.0,
+  "progress_percent": 0.0,
+  "last_read_at": "2026-10-27T05:06:03.219+00:00",
+  "total_read_seconds": 34.6412367,
+  "updated_at": "2026-10-27T05:06:03.219+00:00"
+ }
+}

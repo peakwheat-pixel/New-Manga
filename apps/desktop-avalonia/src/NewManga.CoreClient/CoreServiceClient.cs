@@ -41,7 +41,32 @@ public sealed record ReaderProjection(
     string ChapterId,
     string Mode,
     string Layout,
-    IReadOnlyList<ReaderPageSummary> Pages);
+    IReadOnlyList<ReaderPageSummary> Pages)
+{
+    /// <summary>
+    /// READER-PROGRESS-1: <c>initial_position.page_id</c>. With <c>start_position="resume"</c> the
+    /// Core echoes the persisted page for (book, chapter, mode); it falls back to the first page when
+    /// nothing was saved or the saved page left the chapter (page list shrank/reordered).
+    /// </summary>
+    public string? InitialPageId { get; init; }
+
+    /// <summary>READER-PROGRESS-1: <c>initial_position.scroll_offset_y</c> (webtoon logical page pixels).</summary>
+    public double InitialScrollOffsetY { get; init; }
+
+    /// <summary>READER-PROGRESS-1: progress row echoed by the projection (null = never read).</summary>
+    public ReadingProgressSnapshot? SavedProgress { get; init; }
+}
+
+/// <summary>READER-PROGRESS-1: committed reading-progress row (contract M2-C1 §6.3).</summary>
+public sealed record ReadingProgressSnapshot(
+    string BookId,
+    string ChapterId,
+    string Mode,
+    string? LastPageId,
+    double ScrollOffsetY,
+    double ProgressPercent,
+    string? LastReadAt,
+    double TotalReadSeconds);
 
 /// <summary>Catalog key returned by <c>resolve_page_resource</c> (idempotent per page).</summary>
 public sealed record ResolvedPageResource(string ResourceId, string Revision);
@@ -293,11 +318,17 @@ public sealed class CoreServiceClient : IAsyncDisposable
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
         string mode = "original",
+        string startPosition = ReaderStartPosition.Resume,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(chapterId))
         {
             throw new ArgumentException("chapter_id is required", nameof(chapterId));
+        }
+
+        if (startPosition is not (ReaderStartPosition.Resume or ReaderStartPosition.Beginning))
+        {
+            throw new ArgumentException($"unknown start_position: {startPosition}", nameof(startPosition));
         }
 
         var response = await SendAsync(
@@ -308,7 +339,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
                     writer.WriteStartObject();
                     writer.WriteString("chapter_id", chapterId);
                     writer.WriteString("mode", mode);
-                    writer.WriteString("start_position", "beginning");
+                    writer.WriteString("start_position", startPosition);
                     writer.WriteEndObject();
                 },
                 _options.RequestTimeout,
@@ -349,12 +380,95 @@ public sealed class CoreServiceClient : IAsyncDisposable
             }
         }
 
+        var initialPageId = (string?)null;
+        var initialOffsetY = 0d;
+        if (result.TryGetProperty("initial_position", out var initial) && initial.ValueKind == JsonValueKind.Object)
+        {
+            initialPageId = ReadString(initial, "page_id");
+            initialOffsetY = ReadDouble(initial, "scroll_offset_y");
+        }
+
+        ReadingProgressSnapshot? saved = null;
+        if (result.TryGetProperty("saved_progress", out var savedElement) && savedElement.ValueKind == JsonValueKind.Object)
+        {
+            saved = ParseProgressSnapshot(savedElement);
+        }
+
         return new ReaderProjection(
             ReadString(result, "book_id") ?? string.Empty,
             ReadString(result, "chapter_id") ?? chapterId,
             ReadString(result, "mode") ?? mode,
             ReadString(result, "layout") ?? string.Empty,
-            pages);
+            pages)
+        {
+            InitialPageId = initialPageId,
+            InitialScrollOffsetY = initialOffsetY,
+            SavedProgress = saved,
+        };
+    }
+
+    /// <summary>
+    /// READER-PROGRESS-1: persists one progress coordinate via the frozen Core command
+    /// <c>SaveReadingProgress</c> (contract M2-C1 §5). Optional fields follow the old shell
+    /// discipline: MISSING = NOT SENT (no <c>elapsed_seconds_delta</c> replay for accepted
+    /// intervals; the caller only sends the delta accumulated since its previous success).
+    /// </summary>
+    public async Task<ReadingProgressSnapshot> SaveReadingProgressAsync(
+        string chapterId,
+        string mode,
+        string pageId,
+        double? scrollOffsetY = null,
+        double? elapsedSecondsDelta = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId))
+        {
+            throw new ArgumentException("chapter_id is required", nameof(chapterId));
+        }
+
+        if (string.IsNullOrWhiteSpace(pageId))
+        {
+            throw new ArgumentException("page_id is required", nameof(pageId));
+        }
+
+        if (mode is not ("original" or "translated"))
+        {
+            throw new ArgumentException($"unknown reading mode: {mode}", nameof(mode));
+        }
+
+        var response = await SendAsync(
+                "SaveReadingProgress",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("chapter_id", chapterId);
+                    writer.WriteString("mode", mode);
+                    writer.WriteString("page_id", pageId);
+                    if (scrollOffsetY is { } offset && double.IsFinite(offset) && offset >= 0)
+                    {
+                        writer.WriteNumber("scroll_offset_y", offset);
+                    }
+
+                    // M2-C1 §5: elapsed_seconds_delta is the non-negative time accumulated by the
+                    // caller since its previous successful save; omit it when there is nothing new.
+                    if (elapsedSecondsDelta is { } elapsed && double.IsFinite(elapsed) && elapsed > 0)
+                    {
+                        writer.WriteNumber("elapsed_seconds_delta", elapsed);
+                    }
+
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "SaveReadingProgress");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("SaveReadingProgress result is not an object");
+        }
+
+        return ParseProgressSnapshot(result);
     }
 
     /// <summary>Publishes/looks up the page-original catalog key used by the Host resource channel.</summary>
@@ -401,7 +515,19 @@ public sealed class CoreServiceClient : IAsyncDisposable
         var requestId = $"req-{Interlocked.Increment(ref _requestCounter)}";
         var line = CoreProtocol.BuildRequest(requestId, command, minor, payload);
         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
-        var response = CoreProtocol.Parse(frame.ResponseLine);
+
+        // READER-PROGRESS-1: core_service pushes event frames (ReadingProgressChanged …) on the same
+        // stdout pipe *before* the command response. Skip them until the response envelope arrives
+        // (bounded so a broken sidecar still fails fast instead of hanging).
+        var responseLine = frame.ResponseLine;
+        for (var skipped = 0; skipped < 16 && CoreProtocol.IsEventFrame(responseLine); skipped++)
+        {
+            responseLine = await _process
+                .ReadNextResponseLineAsync(timeout, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        var response = CoreProtocol.Parse(responseLine);
         if (response.Error is { } error)
         {
             throw new CoreOperationException(error.Code, error.Category, error.Retryable, error.Message, response.RequestId ?? requestId);
@@ -472,10 +598,26 @@ public sealed class CoreServiceClient : IAsyncDisposable
     private static SidecarException Malformed(string detail) =>
         new(SidecarErrorCode.MalformedResponse, SidecarSpec.CoreServiceName, detail);
 
+    /// <summary>READER-PROGRESS-1: parses the committed <c>ReadingProgressSnapshot</c> (contract §6.3).</summary>
+    private static ReadingProgressSnapshot ParseProgressSnapshot(JsonElement element) => new(
+        ReadString(element, "book_id") ?? string.Empty,
+        ReadString(element, "chapter_id") ?? string.Empty,
+        ReadString(element, "mode") ?? "original",
+        ReadString(element, "last_page_id"),
+        ReadDouble(element, "scroll_offset_y"),
+        ReadDouble(element, "progress_percent"),
+        ReadString(element, "last_read_at"),
+        ReadDouble(element, "total_read_seconds"));
+
     private static string? ReadString(JsonElement element, string property) =>
         element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String
             ? value.GetString()
             : null;
+
+    private static double ReadDouble(JsonElement element, string property) =>
+        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.Number
+            ? value.GetDouble()
+            : 0d;
 
     private static bool ReadBool(JsonElement element, string property) =>
         element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.True;
@@ -484,4 +626,14 @@ public sealed class CoreServiceClient : IAsyncDisposable
         element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.Number
             ? value.GetInt32()
             : 0;
+}
+
+/// <summary>Frozen <c>GetReaderProjection.start_position</c> values (contract M2-C1 §5).</summary>
+public static class ReaderStartPosition
+{
+    /// <summary>Restores the persisted (book, chapter, mode) page; never mutates saved progress.</summary>
+    public const string Resume = "resume";
+
+    /// <summary>Starts at the first page / offset 0 without touching saved progress.</summary>
+    public const string Beginning = "beginning";
 }

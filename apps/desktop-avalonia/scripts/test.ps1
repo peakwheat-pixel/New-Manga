@@ -16,7 +16,9 @@
 param(
     [string]$Configuration = 'Debug',
     [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy',
-    [switch]$CanonicalEvidence
+    [switch]$CanonicalEvidence,
+    # READER-PROGRESS-1: opt-in private evidence root so parallel task runs never share the rerun log.
+    [string]$EvidenceDirectory = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -26,6 +28,8 @@ $repoRoot = Resolve-Path (Join-Path $root '..\..')
 # workspace task-env. Only the owner regenerates pins with -CanonicalEvidence.
 $evidence = if ($CanonicalEvidence) {
     Join-Path $repoRoot 'verification/HOST-RESOURCE-SECURITY-1'
+} elseif (-not [string]::IsNullOrWhiteSpace($EvidenceDirectory)) {
+    $EvidenceDirectory
 } else {
     'G:/CODEX/New Manga.workspace/task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun'
 }
@@ -64,6 +68,12 @@ try {
     & $fixturePython (Join-Path $root 'scripts/make_reader_fixtures.py') 2>&1 | Tee-Object -FilePath $testLog -Append
     if ($LASTEXITCODE -ne 0) { throw "S4 fixture generation failed" }
     $env:NEWMANGA_S4_FIXTURES = $fixtureRoot
+    # READER-PROGRESS-1: the Host E2E progress test copies the BOOK-FIXTURE data root (book+chapter+
+    # 8 pages) into a disposable root; without it those tests self-skip with an explicit reason.
+    $bookFixtureRoot = 'G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data'
+    if (Test-Path (Join-Path $bookFixtureRoot 'library.db')) {
+        $env:NEWMANGA_BOOK_FIXTURE_ROOT = $bookFixtureRoot
+    }
     # CORE-TILE-EMIT-1: produce a real Python-Core tile artifact for the Host E2E test.
     $coreTileE2e = 'G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e'
     $env:NEWMANGA_CORE_TILE_E2E = "$coreTileE2e/artifact"

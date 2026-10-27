@@ -1,0 +1,142 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "task": "READER-PROGRESS-1",
+  "captured_at_utc": "2026-10-27T05:10:06+00:00",
+  "environment": {
+    "app_exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\READER-PROGRESS-1\\pkg\\app\\NewManga.App.exe",
+    "app_exe_bytes": 29364046,
+    "app_exe_sha256": "e201ba5ee40b733cc102660a5ae8e6486cad17adbb9af5bd1d1d8a068c199958",
+    "app_publish": "dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true",
+    "sidecar_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\READER-PROGRESS-1\\pkg\\app\\core-sidecar",
+    "sidecar_provenance": "junction -> FINAL-VALIDATION-1 packaged core-sidecar (core_service.exe + host_bridge.exe, unmodified)",
+    "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\READER-PROGRESS-1\\isolated-data",
+    "data_root_isolation": "copy of BOOK-FIXTURE-1 durable state (library.db + managed/); derived/ and catalog/ are rebuilt by the Core because they bind to the source root identity",
+    "launch": "pwsh -File apps/desktop-avalonia/scripts/start-book-fixture.ps1 -AppExe <pkg>/NewManga.App.exe -DataRoot <isolated-data> -ExtraArgs '--demo-write'",
+    "host_log_mode_lines": [
+      "2026-10-27T05:05:01.3463719+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\\CODEX\\New Manga.workspace\\task-envs\\READER-PROGRESS-1\\isolated-data",
+      "2026-10-27T05:06:34.2952181+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\\CODEX\\New Manga.workspace\\task-envs\\READER-PROGRESS-1\\isolated-data"
+    ],
+    "host_mode": "ReadWrite (parity reached, isolated root)"
+  },
+  "book": {
+    "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+    "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+    "page_count": 8,
+    "layout": "webtoon_vertical"
+  },
+  "session_a": {
+    "description": "first launch: open reader (nothing saved), turn page twice, leave the reader, close the app",
+    "wire_commands": {
+      "core.ping": 1,
+      "ListBooks": 3,
+      "list_chapters": 1,
+      "GetReaderProjection": 1,
+      "resolve_page_resource": 8,
+      "SaveReadingProgress": 3,
+      "<event>": 3
+    },
+    "projections": [
+      {
+        "timestamp_utc": "2026-10-27T05:05:28.5681941+00:00",
+        "start_position": "resume",
+        "requested_chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "initial_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "page_count": 8
+      }
+    ],
+    "saves": [
+      {
+        "timestamp_utc": "2026-10-27T05:05:41.4248285+00:00",
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "mode": "original",
+        "scroll_offset_y": "0",
+        "elapsed_seconds_delta": "12.8495023"
+      },
+      {
+        "timestamp_utc": "2026-10-27T05:05:51.7878768+00:00",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "mode": "original",
+        "scroll_offset_y": "0",
+        "elapsed_seconds_delta": "10.360584"
+      },
+      {
+        "timestamp_utc": "2026-10-27T05:06:03.2201028+00:00",
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "mode": "original",
+        "scroll_offset_y": "0",
+        "elapsed_seconds_delta": "11.4311504"
+      }
+    ],
+    "db_row_after_a": {
+      "progress_id": "rp-fede8b96cf0c",
+      "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+      "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+      "mode": "original",
+      "last_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "scroll_offset_x": 0.0,
+      "scroll_offset_y": 0.0,
+      "progress_percent": 0.0,
+      "last_read_at": "2026-10-27T05:06:03.219+00:00",
+      "total_read_seconds": 34.6412367,
+      "updated_at": "2026-10-27T05:06:03.219+00:00"
+    },
+    "db_sha256_after_a": null,
+    "screens": [
+      "screens/01-bookshelf-session-a.png"
+    ]
+  },
+  "session_b": {
+    "description": "relaunch on the same data root: open reader; restore must not rewrite the row",
+    "wire_commands": {
+      "core.ping": 1,
+      "ListBooks": 3,
+      "list_chapters": 1,
+      "GetReaderProjection": 1,
+      "resolve_page_resource": 8
+    },
+    "projections": [
+      {
+        "timestamp_utc": "2026-10-27T05:06:54.5305196+00:00",
+        "start_position": "resume",
+        "requested_chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "initial_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "page_count": 8
+      }
+    ],
+    "saves": [],
+    "db_row_after_b": {
+      "progress_id": "rp-fede8b96cf0c",
+      "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+      "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+      "mode": "original",
+      "last_page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "scroll_offset_x": 0.0,
+      "scroll_offset_y": 0.0,
+      "progress_percent": 0.0,
+      "last_read_at": "2026-10-27T05:06:03.219+00:00",
+      "total_read_seconds": 34.6412367,
+      "updated_at": "2026-10-27T05:06:03.219+00:00"
+    },
+    "db_sha256_after_b": "982d6f42104b21286e254ab9be3c9ca697f72051bd32c525dbfbb8a4a997d0a2",
+    "row_unchanged_during_restore": true,
+    "screens": [
+      "screens/02-reader-restored-page.png"
+    ]
+  },
+  "assertions": {
+    "resume_request_used": true,
+    "first_open_initial_page_is_page_1": true,
+    "relaunch_initial_page_is_saved_page": true,
+    "saved_page_matches_last_turn": true,
+    "restore_issued_no_save": true,
+    "no_duplicate_saves_in_session_a": true,
+    "elapsed_seconds_only_positive": true,
+    "total_read_seconds_monotonic": true
+  },
+  "wire_evidence_files": {
+    "session_a": "runtime-logs/wire-session-a.ndjson",
+    "session_b_only": "runtime-logs/wire-session-b-only.ndjson",
+    "combined": "runtime-logs/wire-full-a-plus-b.ndjson",
+    "host_log": "runtime-logs/host.log"
+  }
+}

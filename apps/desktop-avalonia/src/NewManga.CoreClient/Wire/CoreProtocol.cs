@@ -39,6 +39,15 @@ public static class CoreProtocol
     public static string BuildCreateRequest(string requestId, string command, Action<Utf8JsonWriter> payload) =>
         BuildRequest(requestId, command, CreateMinor, payload);
 
+    /// <summary>
+    /// READER-PROGRESS-1: true when a stdout line is an unsolicited event envelope
+    /// (<c>event_type</c>/<c>event_id</c>, no <c>request_id</c>). core_service mixes these into the
+    /// response stream right before answering the command that produced them.
+    /// </summary>
+    public static bool IsEventFrame(string line) =>
+        line.Contains("\"event_type\"", StringComparison.Ordinal) &&
+        !line.Contains("\"request_id\"", StringComparison.Ordinal);
+
     /// <summary>Parses a response line; throws <see cref="SidecarException"/> on malformed JSON.</summary>
     public static CoreResponse Parse(string line)
     {

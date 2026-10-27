@@ -57,10 +57,82 @@ public sealed class FakeHostController : IHostController
 
     public bool ReaderLoadCalled { get; private set; }
 
-    public Task<ReaderBookData?> LoadReaderBookAsync(string? bookId = null, CancellationToken cancellationToken = default)
+    /// <summary>READER-PROGRESS-1: last (bookId, chapterId) requested from the reader seam.</summary>
+    public (string? BookId, string? ChapterId) LastReaderRequest { get; private set; }
+
+    /// <summary>READER-PROGRESS-1: in-memory Core stand-in for per (book, chapter, mode) progress.</summary>
+    public FakeProgressStore Progress { get; } = new();
+
+    /// <summary>READER-PROGRESS-1: overrides the next save results (queue, consumed in order).</summary>
+    public Queue<ReaderProgressSaveResult> ScriptedSaveResults { get; } = new();
+
+    public Task<ReaderBookData?> LoadReaderBookAsync(
+        string? bookId = null,
+        string? chapterId = null,
+        CancellationToken cancellationToken = default)
     {
         ReaderLoadCalled = true;
-        return Task.FromResult(ReaderBook);
+        LastReaderRequest = (bookId, chapterId);
+        var book = ReaderBook;
+        if (book is null)
+        {
+            return Task.FromResult<ReaderBookData?>(null);
+        }
+
+        if (!string.IsNullOrWhiteSpace(bookId) && !string.Equals(book.BookId, bookId, StringComparison.Ordinal))
+        {
+            book = book with { BookId = bookId };
+        }
+
+        if (!string.IsNullOrWhiteSpace(chapterId) && !string.Equals(book.ChapterId, chapterId, StringComparison.Ordinal))
+        {
+            book = book with { ChapterId = chapterId };
+        }
+
+        // Mimic the Core: resume maps the persisted page id back onto this page list.
+        var saved = Progress.TryGet(book.ChapterId, "original");
+        if (saved is null)
+        {
+            return Task.FromResult<ReaderBookData?>(book with { InitialPageIndex = 0, InitialScrollOffsetY = 0, SavedPageId = null });
+        }
+
+        var index = -1;
+        for (var candidate = 0; candidate < book.Pages.Count; candidate++)
+        {
+            if (string.Equals(book.Pages[candidate].PageId, saved.PageId, StringComparison.Ordinal))
+            {
+                index = candidate;
+                break;
+            }
+        }
+
+        // Core semantics on a shrunken/reordered chapter: unknown saved page → start from page 1.
+        var initialIndex = index < 0 ? 0 : Math.Clamp(index, 0, Math.Max(0, book.Pages.Count - 1));
+        return Task.FromResult<ReaderBookData?>(book with
+        {
+            InitialPageIndex = initialIndex,
+            InitialScrollOffsetY = saved.ScrollOffsetY,
+            SavedPageId = index < 0 ? null : saved.PageId,
+        });
+    }
+
+    public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
+        string chapterId,
+        string pageId,
+        string mode = "original",
+        double? scrollOffsetY = null,
+        double elapsedSecondsDelta = 0,
+        CancellationToken cancellationToken = default)
+    {
+        if (ScriptedSaveResults.Count > 0)
+        {
+            var scripted = ScriptedSaveResults.Dequeue();
+            Progress.Attempts.Add(new FakeProgressAttempt(chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta));
+            return Task.FromResult(scripted);
+        }
+
+        var result = Progress.Save(ReaderBook, chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta);
+        return Task.FromResult(result);
     }
 
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
@@ -103,4 +175,74 @@ public sealed class FakeHostController : IHostController
         0,
         true,
         null);
+}
+
+/// <summary>READER-PROGRESS-1: one scripted save call recorded by <see cref="FakeProgressStore"/>.</summary>
+public sealed record FakeProgressAttempt(
+    string ChapterId,
+    string PageId,
+    string Mode,
+    double? ScrollOffsetY,
+    double ElapsedSecondsDelta);
+
+/// <summary>READER-PROGRESS-1: one persisted position (Core <c>reading_progress</c> row stand-in).</summary>
+public sealed record FakeProgressEntry(string PageId, double ScrollOffsetY, double ProgressPercent);
+
+/// <summary>
+/// READER-PROGRESS-1: in-memory Core stand-in. It keys progress by (chapter, mode) exactly like
+/// <c>reading_progress</c> does by (book, chapter, mode), validates the page belongs to the book, and
+/// keeps the accepted elapsed time so tests can assert "no resend after success".
+/// </summary>
+public sealed class FakeProgressStore
+{
+    private readonly Dictionary<string, FakeProgressEntry> _entries = new(StringComparer.Ordinal);
+
+    public List<FakeProgressAttempt> Attempts { get; } = new();
+
+    public int SaveCount => Attempts.Count;
+
+    public double TotalReadSeconds { get; private set; }
+
+    public IReadOnlyDictionary<string, FakeProgressEntry> Entries => _entries;
+
+    public FakeProgressEntry? TryGet(string chapterId, string mode = "original") =>
+        _entries.TryGetValue(Key(chapterId, mode), out var entry) ? entry : null;
+
+    public ReaderProgressSaveResult Save(
+        ReaderBookData? book,
+        string chapterId,
+        string pageId,
+        string mode,
+        double? scrollOffsetY,
+        double elapsedSecondsDelta)
+    {
+        Attempts.Add(new FakeProgressAttempt(chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta));
+        if (book is null || !string.Equals(book.ChapterId, chapterId, StringComparison.Ordinal))
+        {
+            return ReaderProgressSaveResult.Failed("TARGET_NOT_FOUND");
+        }
+
+        var index = -1;
+        for (var candidate = 0; candidate < book.Pages.Count; candidate++)
+        {
+            if (string.Equals(book.Pages[candidate].PageId, pageId, StringComparison.Ordinal))
+            {
+                index = candidate;
+                break;
+            }
+        }
+
+        if (index < 0)
+        {
+            return ReaderProgressSaveResult.Failed("TARGET_NOT_FOUND");
+        }
+
+        var percent = Math.Round((index + 1) / (double)Math.Max(1, book.Pages.Count) * 100.0, 2);
+        var offset = Math.Max(0, scrollOffsetY ?? 0);
+        TotalReadSeconds += Math.Max(0, elapsedSecondsDelta);
+        _entries[Key(chapterId, mode)] = new FakeProgressEntry(pageId, offset, percent);
+        return ReaderProgressSaveResult.Saved(percent, pageId);
+    }
+
+    private static string Key(string chapterId, string mode) => chapterId + "|" + mode;
 }
