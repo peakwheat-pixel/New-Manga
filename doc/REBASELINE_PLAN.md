@@ -33,8 +33,11 @@
 |BOOK-FIXTURE-1|—|done（隔离根建书 8 页/幂等/未污染 APPDATA；集成 377736213；AC3 PARTIAL→READER 接线）|
 |READER-LIBRARY-WIRE-1|BOOK-FIXTURE-1|done（阅读器接书库+沉浸入口；工作集 395.1MB；110/110；集成 bcde098e5）|
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
+|NS-WIRE-A1|—|ready（NS 第一批：settings/plugins/backup/cleanup；base 230164c5c）|
+|READER-PROGRESS-1|—|ready（阅读进度保存）|
+|CHAPTER-SELECTOR-1|—|ready（多章/多书入口）|
 
-READY 节点：无（重构完成；遗留项见 AD002-FOLLOWUPS-1）。
+READY 节点：NS-WIRE-A1、READER-PROGRESS-1、CHAPTER-SELECTOR-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
