@@ -51,6 +51,7 @@
 - 卸载 `uninstall.ps1`：exit=0、安装目录不存在、数据根保留（用户数据不删）。
 - 系统残留：HKCU/HKLM `*NewManga*` 注册表键 **0**；凭据管理器 **1 条历史遗留**（`NewManga/provider/p15-host-2-smoke/4131fe…`，旧 Tauri smoke 产生，未由本 Task 创建/未删）；`%TEMP%` 仅旧 task-env 目录，无本次安装残留。
 - 证据：`host.log`、`install-timed.log`、`uninstall-timed.log`、`core-service.ndjson`。
+- 备注：收尾扫描时系统出现的 10+ 个 core_service/host_bridge 属**另一个 Agent 的 testhost.exe**（HOST-CORECLIENT-1/FINAL-VALIDATION 副本），非本 smoke；未动。
 
 ## 4. AC4 真机 5 项
 

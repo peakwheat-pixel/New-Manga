@@ -83,7 +83,8 @@
     ],
     "credential_residue_note": "pre-existing from older Tauri p15-host-2-smoke test; NOT created by this smoke (no credential UI/commands exercised); left untouched",
     "temp_dirs_note": "old task-env temp dirs (newmanga-*) exist from previous tasks, not from this install",
-    "data_root_untouched_by_uninstall": true
+    "data_root_untouched_by_uninstall": true,
+    "residual_process_note": "Our app/core_service/host_bridge exited with 0 residual after WM_CLOSE. A later system scan showed 10+ sidecar processes belonging to another agent testhost.exe (HOST-CORECLIENT-1/FINAL-VALIDATION copies), not this smoke; left untouched."
   },
   "ac4_device": {
     "mica_sampling": "N/A (Windows 10); opaque pixels body #F5F3FA, titlebar #FFFFFF; DWM backdrop type=0",

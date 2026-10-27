@@ -52,6 +52,17 @@ REPACK-2 包（base 102,981,645B / models 724,989,976B）已产出；UI 导入/�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-RS-REPORT | AC1–AC5 | `verification/RELEASE-SMOKE-1/REPORT.md` | `5c3e90269` | `ed87156017ff067d47f92b1545baf2810a12bd69bba2a6188bee71107cebfb26` | CANONICAL |
+| E-RS-SMOKE | AC1–AC4 | `verification/RELEASE-SMOKE-1/smoke.json` | `5c3e90269` | `82a65f0370957c0f13e8ace5ed58cc0fce058d722201bc41db4ba400354a8968` | CANONICAL |
+| E-RS-PKG | AC2 | `verification/RELEASE-SMOKE-1/package-evidence.json` | `5c3e90269` | `a55fccffac96952c05fbadff760c5fd5af9e8dcd8e5698906b4587eda4ae67c2` | CANONICAL |
+| E-RS-BOOKSHELF | AC1/AC2 | `verification/RELEASE-SMOKE-1/screens/09-fresh-install-bookshelf.png` | `5c3e90269` | `54c44d20ff6c5cc8134d405d5087317a0255430af8b3781c85ea1f72026289ca` | CANONICAL |
+| E-RS-WORKBENCH | AC2 | `verification/RELEASE-SMOKE-1/screens/03-workbench.png` | `5c3e90269` | `85954f09cf058bbf151a18d492c234e02356acc4e052441848dea312b50ffb79` | CANONICAL |
+| E-RS-READER | AC2 | `verification/RELEASE-SMOKE-1/screens/04-reader.png` | `5c3e90269` | `2b46dbcbb89819ecac0254840954d8eeaf6d2c51f96ce42d8269df3884ec52e0` | CANONICAL |
+| E-RS-SCROLL | AC2 | `verification/RELEASE-SMOKE-1/screens/05-reader-page2.png` | `5c3e90269` | `d6f6a843e2be348ee4f1a8dec364b1951851b192d184191f625b1a519596329d` | CANONICAL |
+| E-RS-IMMERSIVE | AC2/AC4 | `verification/RELEASE-SMOKE-1/screens/06-immersive.png` | `5c3e90269` | `3fc2c1df1f67982c75c3e46117034f68309e3591585748970990b2e0f08dd356` | CANONICAL |
+| E-RS-HOSTLOG | AC1/AC3 | `verification/RELEASE-SMOKE-1/host.log` | `5c3e90269` | `79b79615b0e9b690b584122e8b95d9b1f91e1989fa1402d0771475a9511fd158` | CANONICAL |
+| E-RS-INSTALL | AC1 | `verification/RELEASE-SMOKE-1/install-timed.log` | `5c3e90269` | `8ae9284eab6072c337b5503aa3bf72cf0e55c327ffc46976cc0fe55415fef66c` | CANONICAL |
+| E-RS-UNINSTALL | AC3 | `verification/RELEASE-SMOKE-1/uninstall-timed.log` | `5c3e90269` | `babbccf06adb6765e3a6a6cc625436685a8b5b2e023c3db95a541a003df23b32` | CANONICAL |
 
 ## Resource Manifest
 

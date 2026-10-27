@@ -3,7 +3,7 @@
 - Task: `doc/tasks/RELEASE-SMOKE-1.md`（team task-51）
 - Branch: `task/RELEASE-SMOKE-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/RELEASE-SMOKE-1`
 - Base: 卡面 `13cf26f6c`；实际基于 Lead 指定的当前 HEAD **`170878dc4`**
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `5c3e90269`（证据+卡提交；任务卡 Canonical Evidence 的 pin 均指向它）
 - 安装包：`G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-2/out/NewManga-0.1.0-win-x64-models`
 - 未改产品源码/协议/Host 契约/旧壳；未 push；不删旧包；证据不含任何 secret。
 
