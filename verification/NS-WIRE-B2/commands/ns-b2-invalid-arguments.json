@@ -1,0 +1,99 @@
+{
+  "ac": "AC2",
+  "cases": 18,
+  "core_frames_before": 1,
+  "core_frames_after": 1,
+  "rejected_before_core": true,
+  "cases_detail": [
+    {
+      "command": "backup_restore",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "backup_restore",
+      "args": "{\u0022backup_id\u0022:\u0022b1\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "backup_restore",
+      "args": "{\u0022backup_id\u0022:\u0022b1\u0022,\u0022confirm_restore\u0022:\u0022yes\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "args": "{\u0022display_name\u0022:\u0022x\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "args": "{\u0022provider_id\u0022:\u0022p\u0022,\u0022display_name\u0022:\u0022x\u0022,\u0022capabilities\u0022:[],\u0022endpoint\u0022:\u0022http://127.0.0.1:1\u0022,\u0022model\u0022:\u0022m\u0022,\u0022enabled\u0022:true}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "args": "{\u0022provider_id\u0022:\u0022p\u0022,\u0022display_name\u0022:\u0022x\u0022,\u0022capabilities\u0022:[\u0022Translation\u0022],\u0022endpoint\u0022:\u0022http://127.0.0.1:1\u0022,\u0022model\u0022:\u0022m\u0022,\u0022enabled\u0022:\u0022yes\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_profiles_update",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_profiles_delete",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_bindings_set",
+      "args": "{\u0022capability\u0022:\u0022Translation\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_provider_bindings_set",
+      "args": "{\u0022scope\u0022:\u0022global\u0022,\u0022capability\u0022:\u0022Translation\u0022,\u0022profile_id\u0022:\u0022p\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profiles_test",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "settings_network_profile_resolve",
+      "args": "{\u0022provider_profile_id\u0022:5}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "args": "{\u0022book_ids\u0022:[\u0022b\u0022],\u0022confirmed_book_ids\u0022:[\u0022b\u0022]}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "args": "{\u0022book_ids\u0022:[],\u0022confirmed_book_ids\u0022:[],\u0022confirm_count\u0022:0,\u0022confirm_permanent_delete\u0022:true}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "args": "{\u0022book_ids\u0022:[\u0022b\u0022],\u0022confirmed_book_ids\u0022:[\u0022b\u0022],\u0022confirm_count\u0022:\u00221\u0022,\u0022confirm_permanent_delete\u0022:true}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "list_region_revisions",
+      "args": "{}",
+      "code": "INVALID_ARGUMENTS"
+    },
+    {
+      "command": "list_region_revisions",
+      "args": "{\u0022region_id\u0022:\u0022\u0022}",
+      "code": "INVALID_ARGUMENTS"
+    }
+  ]
+}

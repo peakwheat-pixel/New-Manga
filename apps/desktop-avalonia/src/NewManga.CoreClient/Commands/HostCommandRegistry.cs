@@ -2,18 +2,23 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Fifty-five commands are migrated: the S2/A1/A2 sets,
-/// thirteen NS-WIRE-B1 bindings, five S4-CMD-BATCH-1 bindings and the four Host-local grant/shell faces.
-/// the rest are explicit NOT_SUPPORTED with a per-command reason (never silently missing).
+/// organised into the six domain services. Sixty-four commands are migrated: the S2/A1/A2 sets,
+/// thirteen NS-WIRE-B1 bindings, nine NS-WIRE-B2 bindings, five S4-CMD-BATCH-1 bindings and the
+/// four Host-local grant/shell faces. The remaining two are explicit NOT_SUPPORTED with a per-command
+/// BLOCKED reason (never silently missing): the credential pair needs the Host-side OS credential
+/// manager port that the Avalonia Host does not have yet.
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
 /// verification/HOST-COMMAND-MIGRATION-1/parity/, verification/NS-WIRE-A1/,
-/// verification/NS-WIRE-B1/, verification/RUN-EXPORT-E2E-1/ and verification/S4-CMD-BATCH-1/):
+/// verification/NS-WIRE-B1/, verification/NS-WIRE-B2/, verification/RUN-EXPORT-E2E-1/ and
+/// verification/S4-CMD-BATCH-1/):
 ///   core.ping, ListBooks, ListRecycleBinBooks, CreateBook, CreateChapter, list_chapters,
 ///   list_chapter_pages, list_regions, settings.get, backup.list, plugins.list,
 ///   cleanup.preview, GetExportHistory (core_service protocol 2.3), the RUN-EXPORT-E2E-1 run/export
 ///   set, the NS-WIRE-A1 settings/plugins/backup/cleanup batch, the NS-WIRE-B1 P15 settings /
 ///   provider binding / network profile / backup / cleanup / plugin / permanent-delete batch,
+///   the NS-WIRE-B2 backup-restore / provider-profile / provider-binding / network-test /
+///   network-resolve / batch-delete / region-revision batch,
 ///   the S4-CMD-BATCH-1 region write + reader progress batch, and issue/revoke/revoke_resource
 /// </summary>
 public static class HostCommandRegistry
@@ -175,6 +180,22 @@ public static class HostCommandRegistry
         ["rerender_page"] = new("rerender_page", 3),
         ["resolve_page_resource"] = new("resolve_page_resource", 3),
         ["library_save_reading_progress"] = new("SaveReadingProgress", 3),
+        // NS-WIRE-B2 batch: the last nine commands whose Core routes were proven by
+        // verification/NS-RECLASSIFY-1/reclassification.json (route + handler executed; the old S2
+        // probes only failed because of wrong payloads / fake ids). Payloads below are the exact
+        // ones the frozen core_service accepts (verified by verification/NS-WIRE-B2/probe-results.json
+        // and the NS-WIRE-B2 integration tests): the P15 settings/credential faces need minor 7,
+        // PermanentlyDeleteBooks needs minor 10, backup.restore and list_region_revisions stay on
+        // minor 3 exactly like their sibling read faces.
+        ["backup_restore"] = new("backup.restore", 3),
+        ["settings_provider_profiles_create"] = new("settings_provider_profiles_create", 7),
+        ["settings_provider_profiles_update"] = new("settings_provider_profiles_update", 7),
+        ["settings_provider_profiles_delete"] = new("settings_provider_profiles_delete", 7),
+        ["settings_provider_bindings_set"] = new("settings_provider_bindings_set", 7),
+        ["settings_network_profiles_test"] = new("settings_network_profiles_test", 7),
+        ["settings_network_profile_resolve"] = new("settings_network_profile_resolve", 7),
+        ["library_delete_books_permanently"] = new("PermanentlyDeleteBooks", 10),
+        ["list_region_revisions"] = new("list_region_revisions", 3),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
@@ -197,10 +218,27 @@ public static class HostCommandRegistry
         "plugins_open_directory",
     };
 
-    /// <summary>Commands whose legacy implementation is a Core round-trip still missing from the frozen Core.</summary>
-    private static readonly Dictionary<string, string> CoreRoute = new(StringComparer.Ordinal)
+    /// <summary>
+    /// NS-WIRE-B2 AC3: the two commands that stay NOT_SUPPORTED because the *Host* half of their
+    /// legacy implementation has no port in the Avalonia Host yet. The Core routes exist
+    /// (BindProfileCredential / ClearProfileCredential, both executed by NS-RECLASSIFY-1's probe),
+    /// but they only bind/clear a <c>credential_ref</c> that the Host must have minted through the
+    /// OS credential store. Marking them IMPLEMENTED would report a credential surface that cannot
+    /// store or delete a secret, so they carry an explicit BLOCKED reason instead.
+    /// </summary>
+    private static readonly Dictionary<string, string> BlockedReasons = new(StringComparer.Ordinal)
     {
-        ["list_region_revisions"] = "list_region_revisions",
+        ["credential_put"] =
+            "BLOCKED（NS-WIRE-B2 AC3）：Core 等价命令为 `BindProfileCredential`，它只接受**已存在**且由 " +
+            "host 凭据存储铸造的 credential_ref；旧 Tauri 的 credential_put 依赖 Host 本地 Windows " +
+            "凭据存储 + 交互式凭据输入（apps/desktop/src-tauri/src/settings_bridge.rs:288-332 " +
+            "prompt_and_store）。Avalonia Host 尚无凭据管理器端口，伪造 ref 会写入无法解密的引用 → " +
+            "不得标 IMPLEMENTED，待 Host 凭据端口移植（AD-002 后续 Slice）后接入。",
+        ["credential_clear"] =
+            "BLOCKED（NS-WIRE-B2 AC3）：Core 等价命令为 `ClearProfileCredential`，它只清除 profile 上的 " +
+            "credential_ref，**不删除** OS 凭据存储里的密钥；旧 Tauri 的 credential_clear 是 " +
+            "Core 清除 + Host 凭据管理器 delete 两段式（settings_bridge.rs:334-350）。只接 Core 半段会留下" +
+            "孤儿凭据并把 credential_state 误报为 missing → 不得标 IMPLEMENTED，待 Host 凭据端口移植后接入。",
     };
 
     private static readonly IReadOnlyDictionary<string, HostCommandDescriptor> Commands =
@@ -284,10 +322,8 @@ public static class HostCommandRegistry
                 continue;
             }
 
-            var reason = CoreRoute.TryGetValue(name, out var route)
-                ? $"旧壳经 Core 命令 `{route}` 实现；冻结 core_service.exe 在 S2 探测中未返回可用结果" +
-                  "（见 verification/HOST-COMMAND-MIGRATION-1/parity/core-command-probe.json），" +
-                  "故本 Slice 显式 NOT_SUPPORTED，待 Core 命令补齐后接入。"
+            var reason = BlockedReasons.TryGetValue(name, out var blocked)
+                ? blocked
                 : "该命令的语义在旧 Tauri/Rust host 本地实现（设置持久化、凭证、插件、备份恢复、导入导出或运行编排）；" +
                   "S2 只迁移已探测通过的命令面，host-local 逻辑按 AD-002 在后续 Slice 移植，本 Slice 显式 NOT_SUPPORTED。";
 

@@ -1,0 +1,107 @@
+{
+  "ac": "AC1",
+  "base": "verification/NS-RECLASSIFY-1/reclassification.json",
+  "registry": "HostCommandRegistry (64 IMPLEMENTED / 2 NOT_SUPPORTED of 66)",
+  "commands": 11,
+  "inventory": [
+    {
+      "command": "backup_restore",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "backup.restore",
+      "core_minor": 3,
+      "reason": ""
+    },
+    {
+      "command": "credential_clear",
+      "domain": "settings",
+      "status": "NotSupported",
+      "channel": "None",
+      "core_command": "",
+      "core_minor": 0,
+      "reason": "BLOCKED\uFF08NS-WIRE-B2 AC3\uFF09\uFF1ACore \u7B49\u4EF7\u547D\u4EE4\u4E3A \u0060ClearProfileCredential\u0060\uFF0C\u5B83\u53EA\u6E05\u9664 profile \u4E0A\u7684 credential_ref\uFF0C**\u4E0D\u5220\u9664** OS \u51ED\u636E\u5B58\u50A8\u91CC\u7684\u5BC6\u94A5\uFF1B\u65E7 Tauri \u7684 credential_clear \u662F Core \u6E05\u9664 \u002B Host \u51ED\u636E\u7BA1\u7406\u5668 delete \u4E24\u6BB5\u5F0F\uFF08settings_bridge.rs:334-350\uFF09\u3002\u53EA\u63A5 Core \u534A\u6BB5\u4F1A\u7559\u4E0B\u5B64\u513F\u51ED\u636E\u5E76\u628A credential_state \u8BEF\u62A5\u4E3A missing \u2192 \u4E0D\u5F97\u6807 IMPLEMENTED\uFF0C\u5F85 Host \u51ED\u636E\u7AEF\u53E3\u79FB\u690D\u540E\u63A5\u5165\u3002"
+    },
+    {
+      "command": "credential_put",
+      "domain": "settings",
+      "status": "NotSupported",
+      "channel": "None",
+      "core_command": "",
+      "core_minor": 0,
+      "reason": "BLOCKED\uFF08NS-WIRE-B2 AC3\uFF09\uFF1ACore \u7B49\u4EF7\u547D\u4EE4\u4E3A \u0060BindProfileCredential\u0060\uFF0C\u5B83\u53EA\u63A5\u53D7**\u5DF2\u5B58\u5728**\u4E14\u7531 host \u51ED\u636E\u5B58\u50A8\u94F8\u9020\u7684 credential_ref\uFF1B\u65E7 Tauri \u7684 credential_put \u4F9D\u8D56 Host \u672C\u5730 Windows \u51ED\u636E\u5B58\u50A8 \u002B \u4EA4\u4E92\u5F0F\u51ED\u636E\u8F93\u5165\uFF08apps/desktop/src-tauri/src/settings_bridge.rs:288-332 prompt_and_store\uFF09\u3002Avalonia Host \u5C1A\u65E0\u51ED\u636E\u7BA1\u7406\u5668\u7AEF\u53E3\uFF0C\u4F2A\u9020 ref \u4F1A\u5199\u5165\u65E0\u6CD5\u89E3\u5BC6\u7684\u5F15\u7528 \u2192 \u4E0D\u5F97\u6807 IMPLEMENTED\uFF0C\u5F85 Host \u51ED\u636E\u7AEF\u53E3\u79FB\u690D\uFF08AD-002 \u540E\u7EED Slice\uFF09\u540E\u63A5\u5165\u3002"
+    },
+    {
+      "command": "library_delete_books_permanently",
+      "domain": "library",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "PermanentlyDeleteBooks",
+      "core_minor": 10,
+      "reason": ""
+    },
+    {
+      "command": "list_region_revisions",
+      "domain": "region",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "list_region_revisions",
+      "core_minor": 3,
+      "reason": ""
+    },
+    {
+      "command": "settings_network_profile_resolve",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "settings_network_profile_resolve",
+      "core_minor": 7,
+      "reason": ""
+    },
+    {
+      "command": "settings_network_profiles_test",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "settings_network_profiles_test",
+      "core_minor": 7,
+      "reason": ""
+    },
+    {
+      "command": "settings_provider_bindings_set",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "settings_provider_bindings_set",
+      "core_minor": 7,
+      "reason": ""
+    },
+    {
+      "command": "settings_provider_profiles_create",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "settings_provider_profiles_create",
+      "core_minor": 7,
+      "reason": ""
+    },
+    {
+      "command": "settings_provider_profiles_delete",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "settings_provider_profiles_delete",
+      "core_minor": 7,
+      "reason": ""
+    },
+    {
+      "command": "settings_provider_profiles_update",
+      "domain": "settings",
+      "status": "Implemented",
+      "channel": "CoreService",
+      "core_command": "settings_provider_profiles_update",
+      "core_minor": 7,
+      "reason": ""
+    }
+  ]
+}
