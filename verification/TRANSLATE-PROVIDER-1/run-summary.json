@@ -1,0 +1,932 @@
+{
+  "ac": "AC3",
+  "task": "TRANSLATE-PROVIDER-1",
+  "book": {
+    "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+    "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+    "page_count": 8
+  },
+  "inproc_identity_override": {
+    "run_status": "PipelineRunStatus.COMPLETED",
+    "elapsed_ms": 82164.7,
+    "frozen_provider_bindings": {
+      "ocr": "manga-ocr",
+      "translate": "identity-translation"
+    },
+    "persisted_default_binding": null,
+    "step_counts": {
+      "detect:StepRunStatus.COMPLETED": 8,
+      "ocr:StepRunStatus.COMPLETED": 26,
+      "color:StepRunStatus.COMPLETED": 26,
+      "term_extract:StepRunStatus.COMPLETED": 26,
+      "translate:StepRunStatus.COMPLETED": 22,
+      "segment:StepRunStatus.COMPLETED": 22,
+      "mask_refine:StepRunStatus.COMPLETED": 22,
+      "inpaint:StepRunStatus.COMPLETED": 22,
+      "render:StepRunStatus.COMPLETED": 22
+    },
+    "pages": [
+      {
+        "order": 1,
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "filename": "E04P02",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "ocr",
+          "color",
+          "term_extract",
+          "ocr",
+          "color",
+          "term_extract",
+          "ocr",
+          "color",
+          "term_extract"
+        ],
+        "regions_processed": 9,
+        "translate_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "translate_error_codes": [],
+        "render_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "all_steps_completed": true
+      },
+      {
+        "order": 2,
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "filename": "E04P03",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render"
+        ],
+        "regions_processed": 6,
+        "translate_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "translate_error_codes": [],
+        "render_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "all_steps_completed": true
+      },
+      {
+        "order": 3,
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "filename": "E04P06",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render"
+        ],
+        "regions_processed": 7,
+        "translate_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "translate_error_codes": [],
+        "render_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "all_steps_completed": true
+      },
+      {
+        "order": 4,
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "filename": "E20P01",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 5,
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "filename": "E20P02",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 6,
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "filename": "E20P03",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 7,
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "filename": "E20P04",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 8,
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "filename": "E20P05",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      }
+    ],
+    "translate_pages_completed": 3,
+    "translate_units_total": 22,
+    "identity_samples": [
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "「キャロット?",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット!",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット?",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット?!",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "あの手段を使う必要があるみたい...",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット?!!!",
+        "provider": "identity-translation"
+      }
+    ],
+    "identity_registry": {
+      "provider_id": "identity-translation",
+      "provider_type": "identity-experimental",
+      "capabilities": [
+        "translation"
+      ],
+      "state": "ready",
+      "error_code": "",
+      "detail": "",
+      "missing_requirements": []
+    },
+    "identity_resolves": "IdentityTranslationProvider"
+  },
+  "inproc_persisted_default_binding": {
+    "run_status": "PipelineRunStatus.COMPLETED",
+    "elapsed_ms": 82433.7,
+    "frozen_provider_bindings": {
+      "translate": "identity-translation",
+      "ocr": "manga-ocr"
+    },
+    "persisted_default_binding": {
+      "translate": "identity-translation"
+    },
+    "step_counts": {
+      "detect:StepRunStatus.COMPLETED": 8,
+      "ocr:StepRunStatus.COMPLETED": 26,
+      "color:StepRunStatus.COMPLETED": 26,
+      "term_extract:StepRunStatus.COMPLETED": 26,
+      "translate:StepRunStatus.COMPLETED": 22,
+      "segment:StepRunStatus.COMPLETED": 22,
+      "mask_refine:StepRunStatus.COMPLETED": 22,
+      "inpaint:StepRunStatus.COMPLETED": 22,
+      "render:StepRunStatus.COMPLETED": 22
+    },
+    "pages": [
+      {
+        "order": 1,
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "filename": "E04P02",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "ocr",
+          "color",
+          "term_extract",
+          "ocr",
+          "color",
+          "term_extract",
+          "ocr",
+          "color",
+          "term_extract"
+        ],
+        "regions_processed": 9,
+        "translate_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "translate_error_codes": [],
+        "render_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "all_steps_completed": true
+      },
+      {
+        "order": 2,
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "filename": "E04P03",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render"
+        ],
+        "regions_processed": 6,
+        "translate_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "translate_error_codes": [],
+        "render_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "all_steps_completed": true
+      },
+      {
+        "order": 3,
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "filename": "E04P06",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render",
+          "ocr",
+          "color",
+          "term_extract",
+          "translate",
+          "segment",
+          "mask_refine",
+          "inpaint",
+          "render"
+        ],
+        "regions_processed": 7,
+        "translate_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "translate_error_codes": [],
+        "render_status": [
+          "StepRunStatus.COMPLETED"
+        ],
+        "all_steps_completed": true
+      },
+      {
+        "order": 4,
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "filename": "E20P01",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 5,
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "filename": "E20P02",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 6,
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "filename": "E20P03",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 7,
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "filename": "E20P04",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      },
+      {
+        "order": 8,
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "filename": "E20P05",
+        "task_status": "PipelineTaskStatus.COMPLETED",
+        "step_types": [
+          "detect"
+        ],
+        "regions_processed": 0,
+        "translate_status": [],
+        "translate_error_codes": [],
+        "render_status": [],
+        "all_steps_completed": true
+      }
+    ],
+    "translate_pages_completed": 3,
+    "translate_units_total": 22,
+    "identity_samples": [
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "「キャロット?",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット!",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット?",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット?!",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "あの手段を使う必要があるみたい...",
+        "provider": "identity-translation"
+      },
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "text": "キャロット?!!!",
+        "provider": "identity-translation"
+      }
+    ],
+    "identity_registry": {
+      "provider_id": "identity-translation",
+      "provider_type": "identity-experimental",
+      "capabilities": [
+        "translation"
+      ],
+      "state": "ready",
+      "error_code": "",
+      "detail": "",
+      "missing_requirements": []
+    },
+    "identity_resolves": "IdentityTranslationProvider"
+  },
+  "inproc_no_binding_control": {
+    "run_status": "PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "frozen_provider_bindings": {
+      "ocr": "manga-ocr"
+    },
+    "translate_units_total": 3,
+    "translate_statuses": [
+      "StepRunStatus.FAILED"
+    ],
+    "typed_error_codes": [],
+    "translate_error_codes": [
+      "PROVIDER_NOT_CONFIGURED"
+    ],
+    "pages_4_8_completed": [
+      "6814353f6d8544d6945ad5748d518f47",
+      "f54739037525486e8704db23db5c0dc1",
+      "c239be827f3a4448848d2c42bffc05d1",
+      "7a39226851774f01a4cdb89bcf118296",
+      "221d772e601e480e8e7508dfe9aff380"
+    ]
+  },
+  "same_build_sidecar_witness": {
+    "sidecar_sha256": "9fcb9e8750ff7a52bc7ab5467f261ca689114a059874f9223054022ac41331dd",
+    "sidecar_size_bytes": 399492,
+    "sidecar_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-1\\sidecar-models\\core-sidecar",
+    "run_status": "completed_with_failures",
+    "run_elapsed_ms": 9351.9,
+    "counts": {
+      "total": 8,
+      "completed": 5,
+      "failed": 3,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "pages_1_3": [
+      {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "task_status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "task_status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "task_status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "translate",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      }
+    ],
+    "pages_4_8_status": [
+      {
+        "page_id": "6814353f6d8544d6945ad5748d518f47",
+        "task_status": "completed"
+      },
+      {
+        "page_id": "f54739037525486e8704db23db5c0dc1",
+        "task_status": "completed"
+      },
+      {
+        "page_id": "c239be827f3a4448848d2c42bffc05d1",
+        "task_status": "completed"
+      },
+      {
+        "page_id": "7a39226851774f01a4cdb89bcf118296",
+        "task_status": "completed"
+      },
+      {
+        "page_id": "221d772e601e480e8e7508dfe9aff380",
+        "task_status": "completed"
+      }
+    ]
+  },
+  "notes": [
+    "in-process entries use the exact production assembly path (assemble_production_core + PipelineService.create_run/plan_run/execute_run) with the real models directory; the repacked exe was built before this task's provider existed, so the same-build identity run needs the next RELEASE-REPACK rebuild.",
+    "the new repacked exe (sha 9fcb9e87...) proves the CORE-PIPELINE-FIX-1 build: detect/ocr/color/term_extract complete and the only remaining typed gap is translate PROVIDER_NOT_CONFIGURED (pages 1-3); pages 4-8 complete with 0 regions."
+  ]
+}

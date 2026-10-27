@@ -1,0 +1,2077 @@
+{
+  "task": "TRANSLATE-PROVIDER-1",
+  "variant": "default-binding",
+  "entry": "assemble_production_core + PipelineService.create_run/plan_run/execute_run",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\TRANSLATE-PROVIDER-1\\inproc-default-binding",
+  "models_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\models",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr"
+    }
+  },
+  "persisted_default_binding": {
+    "translate": "identity-translation"
+  },
+  "identity_registry": {
+    "provider_id": "identity-translation",
+    "provider_type": "identity-experimental",
+    "capabilities": [
+      "translation"
+    ],
+    "state": "ready",
+    "error_code": "",
+    "detail": "",
+    "missing_requirements": []
+  },
+  "identity_resolves": "IdentityTranslationProvider",
+  "run_id": "run-40e3985de64d418da55d652f85d5b570",
+  "frozen_provider_bindings": {
+    "translate": "identity-translation",
+    "ocr": "manga-ocr"
+  },
+  "elapsed_ms": 82433.7,
+  "run_status": "PipelineRunStatus.COMPLETED",
+  "steps": [
+    {
+      "step_type": "detect",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e66b9068d886434b92e89fa245c607ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e66b9068d886434b92e89fa245c607ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e66b9068d886434b92e89fa245c607ca",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "3f287cfdc33e478e8bc0e5265f62879c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "3f287cfdc33e478e8bc0e5265f62879c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "3f287cfdc33e478e8bc0e5265f62879c",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "424f3461e11a4c078a9b35d99cc80022",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "424f3461e11a4c078a9b35d99cc80022",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "424f3461e11a4c078a9b35d99cc80022",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "4700f241e88f4742833fd9d57df6e1ed",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "4700f241e88f4742833fd9d57df6e1ed",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "4700f241e88f4742833fd9d57df6e1ed",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "segment",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "mask_refine",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "inpaint",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "render",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    }
+  ],
+  "step_counts": {
+    "detect:StepRunStatus.COMPLETED": 8,
+    "ocr:StepRunStatus.COMPLETED": 26,
+    "color:StepRunStatus.COMPLETED": 26,
+    "term_extract:StepRunStatus.COMPLETED": 26,
+    "translate:StepRunStatus.COMPLETED": 22,
+    "segment:StepRunStatus.COMPLETED": 22,
+    "mask_refine:StepRunStatus.COMPLETED": 22,
+    "inpaint:StepRunStatus.COMPLETED": 22,
+    "render:StepRunStatus.COMPLETED": 22
+  },
+  "tasks": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    }
+  ],
+  "translate_outputs": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "「キャロット?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "キャロット!",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "キャロット?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "キャロット?!",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "あの手段を使う必要があるみたい...",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "キャロット?!!!",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "珍しい!ベッドの下にいないなんて?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "キャロット!",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "カラカラカラカラカラサッサッサッサッサッサッサ",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "丁度、今まさに手助けが必要なのよ",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "私の最新の傑作をお見せしましょう",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "天才の魔法薬です",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "「さあ、一口お飲みください",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "うまくいけば、天才のひらめきが訪れるはず",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "しゃぁぁぁ",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "わあ...キャロット!すごいじゃない...アル",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "『字を...書けるの?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "E?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "エネルギー?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "永遠?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "status": "StepRunStatus.COMPLETED",
+      "machine_translation": "感情?",
+      "provider": "identity-translation",
+      "provider_type": "identity-experimental",
+      "experimental": "identity-placeholder"
+    }
+  ],
+  "regions": [
+    {
+      "region_id": "81d7cc4128de492b86efa2995009485d",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "「キャロット?",
+      "machine_translation": "「キャロット?",
+      "final_translation": "「キャロット?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "298fd60a201a4d008c54f21c7ee1bc3f",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "キャロット!",
+      "machine_translation": "キャロット!",
+      "final_translation": "キャロット!",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "21f6122f6760465fba57fbd1987d0d1c",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "キャロット?",
+      "machine_translation": "キャロット?",
+      "final_translation": "キャロット?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e4fcd3a1ece64f849cc709ed2aa26c7d",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "キャロット?!",
+      "machine_translation": "キャロット?!",
+      "final_translation": "キャロット?!",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ad29735f0dbe49279e235db5530fe0a9",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "あの手段を使う必要があるみたい...",
+      "machine_translation": "あの手段を使う必要があるみたい...",
+      "final_translation": "あの手段を使う必要があるみたい...",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1a72b74cce9848d2b8a78c555d7b4e10",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "キャロット?!!!",
+      "machine_translation": "キャロット?!!!",
+      "final_translation": "キャロット?!!!",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "279acaf054d3481a916cd2adeb9a9077",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "珍しい!ベッドの下にいないなんて?",
+      "machine_translation": "珍しい!ベッドの下にいないなんて?",
+      "final_translation": "珍しい!ベッドの下にいないなんて?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0bbca48e701249759c9fab151cebacb8",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "キャロット!",
+      "machine_translation": "キャロット!",
+      "final_translation": "キャロット!",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a33462795b4b44ebba6c9e4bbcddd25e",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "カラカラカラカラカラサッサッサッサッサッサッサ",
+      "machine_translation": "カラカラカラカラカラサッサッサッサッサッサッサ",
+      "final_translation": "カラカラカラカラカラサッサッサッサッサッサッサ",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e66b9068d886434b92e89fa245c607ca",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "カラーカラーカラーカラカラ",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "3f287cfdc33e478e8bc0e5265f62879c",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "サッサッサッサッサッ",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "424f3461e11a4c078a9b35d99cc80022",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "オーソルオーバーガード",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "4700f241e88f4742833fd9d57df6e1ed",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "カラカラカラカラカラカラサッサッサッサッサッサ",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ef7e7289a1104e1581231874e19940c7",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+      "machine_translation": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+      "final_translation": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ac6e87e0ae5843988888b5bdc95a4d3b",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "丁度、今まさに手助けが必要なのよ",
+      "machine_translation": "丁度、今まさに手助けが必要なのよ",
+      "final_translation": "丁度、今まさに手助けが必要なのよ",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7f90d742aa6a4047bfe8fdb1982f36a8",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "私の最新の傑作をお見せしましょう",
+      "machine_translation": "私の最新の傑作をお見せしましょう",
+      "final_translation": "私の最新の傑作をお見せしましょう",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fe245172bcc34b9d9ac6875da0767dcf",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "天才の魔法薬です",
+      "machine_translation": "天才の魔法薬です",
+      "final_translation": "天才の魔法薬です",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7e6882c842b5499bb3251699e8adafbe",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "「さあ、一口お飲みください",
+      "machine_translation": "「さあ、一口お飲みください",
+      "final_translation": "「さあ、一口お飲みください",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c8ee575b7d6c46bf909bbe5a4092d3ad",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "うまくいけば、天才のひらめきが訪れるはず",
+      "machine_translation": "うまくいけば、天才のひらめきが訪れるはず",
+      "final_translation": "うまくいけば、天才のひらめきが訪れるはず",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9a242f5ec248453983cce58a2fab54be",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "しゃぁぁぁ",
+      "machine_translation": "しゃぁぁぁ",
+      "final_translation": "しゃぁぁぁ",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b294b9128aa94ce28ead583324c505a7",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "わあ...キャロット!すごいじゃない...アル",
+      "machine_translation": "わあ...キャロット!すごいじゃない...アル",
+      "final_translation": "わあ...キャロット!すごいじゃない...アル",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1ce12b25f6734a84b3fc1d9bbb5e5caf",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "『字を...書けるの?",
+      "machine_translation": "『字を...書けるの?",
+      "final_translation": "『字を...書けるの?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "70ef82a850ad47a387146d352f32b8e3",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "E?",
+      "machine_translation": "E?",
+      "final_translation": "E?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "dd3215c7a4874d6b9ca2be4e6069565b",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "エネルギー?",
+      "machine_translation": "エネルギー?",
+      "final_translation": "エネルギー?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "127ade5a5d094fbfa8788f86d6063518",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "永遠?",
+      "machine_translation": "永遠?",
+      "final_translation": "永遠?",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "82240dc009a7445199bcf4ba2e446405",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "感情?",
+      "machine_translation": "感情?",
+      "final_translation": "感情?",
+      "final_source": "machine"
+    }
+  ]
+}
