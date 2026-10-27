@@ -30,7 +30,6 @@
 |AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
 |RUN-EXPORT-E2E-1|—|done（9 条接线；registry 24→33；Export/Run 真跑 BLOCKED 如实记录；集成 7af27bbe3）|
 |NS-RECLASSIFY-1|—|done（42 NS → 35 IMPLEMENTED / 7 NEEDS_IMPLEMENTATION；只出证据；集成 e49dec3dd）|
-|NS-WIRE-B1|—|done（13 条接线；parity 46/20；161/161；集成 6b47f377f）|
 |GRANT-ISSUER-1|—|done（HOST-ISSUER 全链；import 8/8；parity 55/11；集成 941de7f5a）|
 |S4-CMD-BATCH-1|—|done（5 条接线；parity 51/15；162/162；集成 0fba83021）|
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
@@ -39,16 +38,16 @@
 |RELEASE-REPACK-1|—|done（新 sidecar base/models；同构建 8 页 ocr/color 3/3；安装 smoke PASS；集成 429ca763c）|
 |TRANSLATE-PROVIDER-1|—|done（identity-experimental；源码 8 页全链到 render 22/22；PC3 同构建待重打包；集成 5b96c25ef）|
 |RUN-STORE-CACHE-RACE-FIX-1|—|done（视图读/执行缓存分离+CAS；前后 FAIL→PASS 实证；集成 2980608e0）|
-|NS-WIRE-B2|—|done（9 接线/2 BLOCKED 凭据；parity 64/2；集成 e30149258）|
 |EXPORT-E2E-CLOSE-1|—|ready（Export 真跑闭环）|
 |CREDENTIAL-PORT-1|—|done（ICredentialStore+Windows vault；全链 PASS；parity 66/0；集成 0726abdd3）|
+|CREDENTIAL-UI-1|—|ready（设置页凭据 UI：安全输入→put/clear）|
 |RELEASE-REPACK-2|—|done（新构建全链 completed 86.43s/render 22/22；并发 0 卡；集成 090371703）|
 |SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
-|NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
+|NS-WIRE-A1/B1/B2|—|done（NS 分批接线：16→24→46→64→66；详见各 Task 卡）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：EXPORT-E2E-CLOSE-1。
+READY 节点：EXPORT-E2E-CLOSE-1、CREDENTIAL-UI-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
