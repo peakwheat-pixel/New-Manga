@@ -113,4 +113,30 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
     Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(
         string bookId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// CREDENTIAL-UI-1 AC1/AC2: credential-capable targets (provider profiles + proxy network
+    /// profiles) with the Core-reported <c>credential_state</c> (configured|missing). Never returns a
+    /// secret; an empty list means no profiles or the Host is not ready.
+    /// </summary>
+    Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// CREDENTIAL-UI-1 AC1: stores one credential through the <c>credential_put</c> Host command
+    /// (two-phase vault + Core ref). <paramref name="intent"/> is <c>create</c> or <c>replace</c>;
+    /// implementations return typed outcomes and never throw into the UI.
+    /// </summary>
+    Task<CredentialOperationResult> PutCredentialAsync(
+        string kind,
+        string ownerId,
+        string intent,
+        string secret,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>CREDENTIAL-UI-1 AC1: clears one credential through <c>credential_clear</c>.</summary>
+    Task<CredentialOperationResult> ClearCredentialAsync(
+        string kind,
+        string ownerId,
+        CancellationToken cancellationToken = default);
 }

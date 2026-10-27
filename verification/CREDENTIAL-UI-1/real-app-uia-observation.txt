@@ -1,0 +1,14 @@
+CREDENTIAL-UI-1 / AC3 — real-app UI automation tree observation (cua-driver get_window_state)
+window="New Manga" (1278x818), page=设置
+
+- Window
+  - [4] Button "换主题" [actions=[invoke]]
+    - [5] List [actions=[scroll]]
+      - Text "凭据 · Credential"
+      - Text "凭据内容（掩码，不可复制明文）"
+      - Edit "凭据密码（掩码输入，不暴露明文）"        <- SecretTextBox; no value / no ValuePattern published
+      - [13] Button "保存凭据" [id=CredentialSaveButton actions=[invoke]]
+      - Button "清除凭据"
+
+The masked input's automation peer publishes only the fixed name "凭据密码（掩码输入，不暴露明文）";
+the typed demo value never appears in the automation tree or in this observation.

@@ -181,6 +181,85 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(result);
     }
 
+    // -------------------------------------------------------------------------------------
+    // CREDENTIAL-UI-1: scripted credential port. Records the exact command arguments the UI
+    // would send (kind/owner/intent/secret) so headless tests can assert them; it never persists
+    // the secret beyond the recorded call, mirroring the real Host (vault + opaque Core ref).
+    // -------------------------------------------------------------------------------------
+
+    /// <summary>Targets shown by the settings credential block (state configured|missing).</summary>
+    public List<CredentialTargetOption> CredentialTargets { get; } = new();
+
+    /// <summary>Every <c>credential_put</c> the UI issued, in order (kind, owner, intent, secret).</summary>
+    public List<(string Kind, string OwnerId, string Intent, string Secret)> PutCredentialCalls { get; } = new();
+
+    /// <summary>Every <c>credential_clear</c> the UI issued (kind, owner).</summary>
+    public List<(string Kind, string OwnerId)> ClearCredentialCalls { get; } = new();
+
+    /// <summary>Scripted results consumed by put calls; default = configured (state updated).</summary>
+    public Queue<CredentialOperationResult> ScriptedPutResults { get; } = new();
+
+    /// <summary>Scripted results consumed by clear calls; default = cleared (state updated).</summary>
+    public Queue<CredentialOperationResult> ScriptedClearResults { get; } = new();
+
+    public int CredentialListCalls { get; private set; }
+
+    public Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        CredentialListCalls++;
+        return Task.FromResult<IReadOnlyList<CredentialTargetOption>>(CredentialTargets.ToList());
+    }
+
+    public Task<CredentialOperationResult> PutCredentialAsync(
+        string kind,
+        string ownerId,
+        string intent,
+        string secret,
+        CancellationToken cancellationToken = default)
+    {
+        PutCredentialCalls.Add((kind, ownerId, intent, secret));
+        var result = ScriptedPutResults.Count > 0
+            ? ScriptedPutResults.Dequeue()
+            : CredentialOperationResult.Configured();
+        if (result.Status == CredentialOperationStatus.Configured)
+        {
+            UpdateCredentialState(kind, ownerId, "configured");
+        }
+
+        return Task.FromResult(result);
+    }
+
+    public Task<CredentialOperationResult> ClearCredentialAsync(
+        string kind,
+        string ownerId,
+        CancellationToken cancellationToken = default)
+    {
+        ClearCredentialCalls.Add((kind, ownerId));
+        var result = ScriptedClearResults.Count > 0
+            ? ScriptedClearResults.Dequeue()
+            : CredentialOperationResult.Cleared();
+        if (result.Status == CredentialOperationStatus.Cleared)
+        {
+            UpdateCredentialState(kind, ownerId, "missing");
+        }
+
+        return Task.FromResult(result);
+    }
+
+    private void UpdateCredentialState(string kind, string ownerId, string state)
+    {
+        for (var index = 0; index < CredentialTargets.Count; index++)
+        {
+            var target = CredentialTargets[index];
+            if (string.Equals(target.Kind, kind, StringComparison.Ordinal) &&
+                string.Equals(target.OwnerId, ownerId, StringComparison.Ordinal))
+            {
+                CredentialTargets[index] = target with { CredentialState = state };
+            }
+        }
+    }
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>CHAPTER-SELECTOR-1: resolve the scripted book that owns a chapter id.</summary>

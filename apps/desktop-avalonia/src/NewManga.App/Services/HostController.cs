@@ -296,6 +296,137 @@ public sealed class HostController : IHostController
         }
     }
 
+    /// <summary>
+    /// CREDENTIAL-UI-1 AC1/AC2: provider + proxy targets with the Core <c>credential_state</c>. Reads the
+    /// two existing P15 profile-list commands (no new Host contract); an empty list means "no profiles or
+    /// Host not ready". Never reads or returns a secret.
+    /// </summary>
+    public async Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || _runtime.Commands is not { } commands)
+        {
+            return Array.Empty<CredentialTargetOption>();
+        }
+
+        var options = new List<CredentialTargetOption>();
+        await CollectProfilesAsync(commands, "settings_provider_profiles_list", CredentialKinds.ProviderApi, "profile_id");
+        await CollectProfilesAsync(commands, "settings_network_profiles_list", CredentialKinds.ProxyAuth, "network_profile_id");
+        return options;
+
+        async Task CollectProfilesAsync(
+            NewManga.CoreClient.Commands.HostCommandDispatcher dispatcher,
+            string command,
+            string kind,
+            string ownerProperty)
+        {
+            try
+            {
+                var response = await dispatcher.InvokeAsync(command, default, cancellationToken).ConfigureAwait(false);
+                if (response.Value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                    !response.Value.TryGetProperty("profiles", out var profiles) ||
+                    profiles.ValueKind != System.Text.Json.JsonValueKind.Array)
+                {
+                    return;
+                }
+
+                foreach (var profile in profiles.EnumerateArray())
+                {
+                    if (profile.ValueKind != System.Text.Json.JsonValueKind.Object)
+                    {
+                        continue;
+                    }
+
+                    var owner = ReadString(profile, ownerProperty);
+                    if (string.IsNullOrEmpty(owner))
+                    {
+                        continue;
+                    }
+
+                    var display = FirstNonEmpty(
+                        ReadString(profile, "display_name"),
+                        ReadString(profile, "name"),
+                        ReadString(profile, "label"),
+                        owner);
+                    var state = ReadString(profile, "credential_state") ?? "missing";
+                    options.Add(new CredentialTargetOption(kind, owner, display, state));
+                }
+            }
+            catch (Exception ex) when (
+                ex is CoreOperationException or SidecarException or BridgeException or IOException or
+                    InvalidOperationException or OperationCanceledException)
+            {
+                // Degrade: the settings block renders its own "unavailable" hint.
+            }
+        }
+    }
+
+    /// <summary>
+    /// CREDENTIAL-UI-1 AC1: store one credential through the Host-local <c>credential_put</c> command.
+    /// The secret goes only into the transient dispatcher payload; nothing is logged or retained here.
+    /// </summary>
+    public async Task<CredentialOperationResult> PutCredentialAsync(
+        string kind,
+        string ownerId,
+        string intent,
+        string secret,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrEmpty(secret))
+        {
+            return CredentialResultMapper.MapCode("INVALID_ARGUMENTS", "secret must not be empty");
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return CredentialOperationResult.NotReady();
+        }
+
+        try
+        {
+            await commands
+                .InvokeAsync("credential_put", CredentialCommandPayload.BuildPut(kind, ownerId, intent, secret), cancellationToken)
+                .ConfigureAwait(false);
+            return CredentialOperationResult.Configured();
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return CredentialResultMapper.MapException(ex);
+        }
+    }
+
+    /// <summary>CREDENTIAL-UI-1 AC1: clear one credential through <c>credential_clear</c>.</summary>
+    public async Task<CredentialOperationResult> ClearCredentialAsync(
+        string kind,
+        string ownerId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return CredentialOperationResult.NotReady();
+        }
+
+        try
+        {
+            await commands
+                .InvokeAsync("credential_clear", CredentialCommandPayload.BuildClear(kind, ownerId), cancellationToken)
+                .ConfigureAwait(false);
+            return CredentialOperationResult.Cleared();
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return CredentialResultMapper.MapException(ex);
+        }
+    }
+
+    private static string? ReadString(System.Text.Json.JsonElement element, string property) =>
+        element.TryGetProperty(property, out var value) && value.ValueKind == System.Text.Json.JsonValueKind.String
+            ? value.GetString()
+            : null;
+
+    private static string FirstNonEmpty(params string?[] candidates) =>
+        candidates.FirstOrDefault(candidate => !string.IsNullOrWhiteSpace(candidate)) ?? string.Empty;
+
     public async ValueTask DisposeAsync()
     {
         if (_runtime is not null)

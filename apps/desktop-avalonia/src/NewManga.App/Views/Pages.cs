@@ -441,7 +441,7 @@ public sealed class SettingsPage : UserControl
     private readonly TextBlock _settingsJson;
     private readonly StackPanel _nsList;
 
-    public SettingsPage(SettingsViewModel viewModel, Action onThemeApplied)
+    public SettingsPage(SettingsViewModel viewModel, Action onThemeApplied, IHostController? controller = null)
     {
         ViewModel = viewModel;
         Name = "SettingsPage";
@@ -551,6 +551,30 @@ public sealed class SettingsPage : UserControl
 
         nsCard.Child = _nsList;
         right.Children.Add(nsCard);
+
+        // CREDENTIAL-UI-1: settings-page credential block (masked input → credential_put/clear).
+        // It is injected with the Host controller seam: production passes HostController; tests pass a
+        // scripted fake; the XAML designer path (controller == null) renders a typed "Host 未就绪" stub.
+        Credentials = new CredentialSection(
+            controller is null
+                ? _ => Task.FromResult<IReadOnlyList<CredentialTargetOption>>(Array.Empty<CredentialTargetOption>())
+                : controller.ListCredentialTargetsAsync,
+            controller is null
+                ? (_, _, _, _, _) => Task.FromResult(CredentialOperationResult.NotReady())
+                : controller.PutCredentialAsync,
+            controller is null
+                ? (_, _, _) => Task.FromResult(CredentialOperationResult.NotReady())
+                : controller.ClearCredentialAsync);
+        var credentialCard = new Border
+        {
+            Padding = new Thickness(16),
+            CornerRadius = new CornerRadius(12),
+            Background = ThemePackService.Brush("CardBg"),
+            BorderBrush = ThemePackService.Brush("CardBorder"),
+            BorderThickness = new Thickness(1),
+        };
+        credentialCard.Child = Credentials;
+        right.Children.Insert(0, credentialCard);
         Grid.SetColumn(right, 1);
         content.Children.Add(right);
         Grid.SetRow(content, 2);
@@ -564,6 +588,15 @@ public sealed class SettingsPage : UserControl
     public ItemsControl ThemeList { get; }
 
     public StackPanel NsList => _nsList;
+
+    /// <summary>CREDENTIAL-UI-1: credential block (target list + masked input + put/clear).</summary>
+    public CredentialSection Credentials { get; }
+
+    /// <summary>CREDENTIAL-UI-1: reload targets + configured/missing states from the Host.</summary>
+    public Task RefreshCredentialsAsync() => Credentials.RefreshAsync();
+
+    /// <summary>CREDENTIAL-UI-1 AC3: drop the masked plaintext (window close / leaving settings).</summary>
+    public void ClearCredentialSecrets() => Credentials.ClearSecrets();
 
     /// <summary>GPU-ORT-PROBE-1: packaged device probe (null in a dev run).</summary>
     public DeviceStatusInfo? DeviceStatus { get; }
