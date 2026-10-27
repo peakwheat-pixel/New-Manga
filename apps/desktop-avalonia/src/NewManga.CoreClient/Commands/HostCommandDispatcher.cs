@@ -237,6 +237,76 @@ public sealed class HostCommandDispatcher
                 writer.WriteString("mode", RequireString(name, payload, "mode"));
                 writer.WriteString("start_position", RequireString(name, payload, "start_position"));
                 break;
+            // NS-WIRE-B1 batch B1: the legacy Tauri signatures of the backup / cleanup / plugin /
+            // permanent-delete / P15 settings faces. Required arguments are enforced at the dispatcher
+            // boundary (INVALID_ARGUMENTS); optional ones are only sent when present, exactly like the
+            // legacy json!() construction did. Nullable strings keep the explicit JSON null the Core
+            // expects (proxy_endpoint).
+            case "backup_delete":
+                writer.WriteString("backup_id", RequireString(name, payload, "backup_id"));
+                break;
+            case "cleanup_retry_pending":
+            case "settings_network_profile_default_clear":
+                // Legacy signatures take no arguments; the Core faces reject stray payload keys.
+                break;
+            case "plugins_audit_list":
+                WriteOptionalInt(writer, name, payload, "limit");
+                break;
+            case "plugins_set_plugin_enabled":
+                writer.WriteString("plugin_id", RequireString(name, payload, "plugin_id"));
+                writer.WriteBoolean("enabled", RequireBool(name, payload, "enabled"));
+                break;
+            case "library_delete_book_permanently":
+            {
+                // Legacy takes one optional object argument; accept the clipped object and the
+                // inlined shape so both call styles keep working.
+                var deletePayload = OptionalObject(name, payload, "payload") ?? payload;
+                writer.WriteString("book_id", RequireString(name, deletePayload, "book_id"));
+                writer.WriteBoolean(
+                    "confirm_permanent_delete",
+                    RequireBool(name, deletePayload, "confirm_permanent_delete"));
+                break;
+            }
+
+            case "settings_network_profile_default_set":
+                writer.WriteString("network_profile_id", RequireString(name, payload, "network_profile_id"));
+                break;
+            case "settings_network_profiles_create":
+                writer.WriteString("display_name", RequireString(name, payload, "display_name"));
+                writer.WriteString("mode", RequireString(name, payload, "mode"));
+                WriteNullableString(writer, name, payload, "proxy_endpoint");
+                WriteOptionalBool(writer, name, payload, "verify_tls");
+                WriteOptionalBool(writer, name, payload, "confirm_disable_tls_verification");
+                WriteOptionalBool(writer, name, payload, "allow_proxy_failure_direct_fallback");
+                break;
+            case "settings_network_profiles_update":
+                writer.WriteString("network_profile_id", RequireString(name, payload, "network_profile_id"));
+                writer.WriteString("display_name", RequireString(name, payload, "display_name"));
+                writer.WriteString("mode", RequireString(name, payload, "mode"));
+                WriteNullableString(writer, name, payload, "proxy_endpoint");
+                writer.WriteBoolean("verify_tls", RequireBool(name, payload, "verify_tls"));
+                WriteOptionalBool(writer, name, payload, "confirm_disable_tls_verification");
+                writer.WriteBoolean(
+                    "allow_proxy_failure_direct_fallback",
+                    RequireBool(name, payload, "allow_proxy_failure_direct_fallback"));
+                break;
+            case "settings_network_profiles_delete":
+                writer.WriteString("network_profile_id", RequireString(name, payload, "network_profile_id"));
+                break;
+            case "settings_provider_bindings_clear":
+                writer.WritePropertyName("scope");
+                RequireObject(name, payload, "scope").WriteTo(writer);
+                writer.WriteString("capability", RequireString(name, payload, "capability"));
+                break;
+            case "settings_provider_bindings_resolve":
+                writer.WriteString("capability", RequireString(name, payload, "capability"));
+                WriteOptionalString(writer, name, payload, "book_id");
+                WriteOptionalString(writer, name, payload, "chapter_id");
+                WriteOptionalString(writer, name, payload, "run_id");
+                break;
+            case "settings_provider_run_snapshot_get":
+                writer.WriteString("run_id", RequireString(name, payload, "run_id"));
+                break;
             default:
                 foreach (var property in payload.EnumerateObject())
                 {
@@ -320,6 +390,73 @@ public sealed class HostCommandDispatcher
         {
             writer.WriteString(property, value);
         }
+    }
+
+    /// <summary>NS-WIRE-B1: nullable string that keeps an explicit JSON null (legacy Option&lt;String&gt;).</summary>
+    private static void WriteNullableString(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            writer.WriteNull(property);
+            return;
+        }
+
+        if (value.ValueKind == JsonValueKind.String && value.GetString() is { Length: > 0 } text)
+        {
+            writer.WriteString(property, text);
+            return;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be a string or null");
+    }
+
+    private static void WriteOptionalBool(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind is JsonValueKind.True or JsonValueKind.False)
+        {
+            writer.WriteBoolean(property, value.GetBoolean());
+            return;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be a boolean");
+    }
+
+    private static void WriteOptionalInt(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind == JsonValueKind.Number &&
+            value.TryGetInt32(out var number) &&
+            number >= 0)
+        {
+            writer.WriteNumber(property, number);
+            return;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be a non-negative integer");
+    }
+
+    private static JsonElement? OptionalObject(string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return null;
+        }
+
+        if (value.ValueKind == JsonValueKind.Object)
+        {
+            return value;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be an object");
     }
 
     private static void WriteStringArray(Utf8JsonWriter writer, string command, JsonElement args, string property)

@@ -2,14 +2,17 @@ namespace NewManga.CoreClient.Commands;
 
 /// <summary>
 /// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Thirty-three commands are migrated to the existing sidecars;
+/// organised into the six domain services. Forty-six commands are migrated to the existing sidecars;
 /// the rest are explicit NOT_SUPPORTED with a per-command reason (never silently missing).
 ///
 /// Implemented set (probed against the frozen sidecars, evidence under
-/// verification/HOST-COMMAND-MIGRATION-1/parity/):
+/// verification/HOST-COMMAND-MIGRATION-1/parity/, verification/NS-WIRE-A1/ and
+/// verification/NS-WIRE-B1/):
 ///   core.ping, ListBooks, ListRecycleBinBooks, CreateBook, CreateChapter, list_chapters,
 ///   list_chapter_pages, list_regions, settings.get, backup.list, plugins.list,
-///   cleanup.preview, GetExportHistory (core_service protocol 2.3), the RUN-EXPORT-E2E-1 set below,
+///   cleanup.preview, GetExportHistory (core_service protocol 2.3), the RUN-EXPORT-E2E-1 run/export
+///   set, the NS-WIRE-A1 settings/plugins/backup/cleanup batch, the NS-WIRE-B1 P15 settings /
+///   provider binding / network profile / backup / cleanup / plugin / permanent-delete batch,
 ///   and issue/revoke/revoke_resource
 /// </summary>
 public static class HostCommandRegistry
@@ -145,6 +148,23 @@ public static class HostCommandRegistry
         ["library_start_export"] = new("StartExport", 3),
         ["library_cancel_export"] = new("CancelExport", 3),
         ["library_get_export_snapshot"] = new("GetExportSnapshot", 3),
+        // NS-WIRE-B1 batch B1: the 13 remaining high-confidence NS commands whose Core routes were
+        // proven by verification/NS-RECLASSIFY-1/reclassification.json. Payloads/minors come from the
+        // exact probe that succeeded: the P15 settings face needs minor 7 and the DELETE face needs
+        // minor 10; the backup/cleanup/plugin/run faces stay on minor 3.
+        ["backup_delete"] = new("backup.delete", 3),
+        ["cleanup_retry_pending"] = new("cleanup.retry_pending", 3),
+        ["plugins_audit_list"] = new("plugins.audit_list", 3),
+        ["plugins_set_plugin_enabled"] = new("plugins.set_plugin_enabled", 3),
+        ["library_delete_book_permanently"] = new("PermanentlyDeleteBook", 10),
+        ["settings_network_profile_default_clear"] = new("settings_network_profile_default_clear", 7),
+        ["settings_network_profile_default_set"] = new("settings_network_profile_default_set", 7),
+        ["settings_network_profiles_create"] = new("settings_network_profiles_create", 7),
+        ["settings_network_profiles_delete"] = new("settings_network_profiles_delete", 7),
+        ["settings_network_profiles_update"] = new("settings_network_profiles_update", 7),
+        ["settings_provider_bindings_clear"] = new("settings_provider_bindings_clear", 7),
+        ["settings_provider_bindings_resolve"] = new("settings_provider_bindings_resolve", 7),
+        ["settings_provider_run_snapshot_get"] = new("settings_provider_run_snapshot_get", 7),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
