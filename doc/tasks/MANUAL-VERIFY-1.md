@@ -61,3 +61,19 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：关闭时更新 STATUS/PLAN/LEDGER。
+## 执行记录（2026-10-27，DSH 自动化执行）
+
+环境：Win11 26300；试验时将 Philips 4K（PHL 279M1RV）设为 3840×2160 @ **200%** 并临时设为主屏（用户授权 B）；应用用发布候选包解压到无标签目录 C:\Users\49745\AppData\Local\Temp\nm-verify（规避仓库树 Low IL 标签）。
+
+| AC | 结果 | 证据 |
+|---|---|---|
+| AC1 Mica | **PARTIAL / 未确认** | 截图 pp-start-on-dpr2.png、pp-on-4k-dpr2.png（标题栏为不透明白）；DWM DWMWA_SYSTEMBACKDROP_TYPE=0，但 **S0 spike 应用同样=0** → 该属性不是有效探针；代码确实请求 Mica（MainWindow.axaml TransparencyLevelHint="Mica,Blur,None"，Win11 分支 Mica 优先）。结论：**代码请求了 Mica，但窗口视觉上不透明白，Mica 是否实际生效无法用现有探针确证**，需人眼对比壁纸或加 Avalonia ActualTransparencyLevel 诊断输出 |
+| AC2 DPR2 | **PASS（真机 200%，非模拟）** | 4K 屏 200% 下启动：窗口 DPI=**192**，UI 尺寸正常、文字锐利（pp-start-on-dpr2.png，2560×1640 设备像素）；Settings 缩放选中项读回 **200%**、逻辑分辨率 1920×1080 |
+| AC2b 跨屏动态 DPI | **发现缺陷** | 从 100% 屏拖到 200% 屏后内容被 DWM 位图拉伸（pp-on-4k-dpr2.png，3600×1090 设备像素但内容 2× 放大且发虚）→ 运行中 WM_DPICHANGED 未重渲染 |
+| AC3 工作集 | **PARTIAL** | DPR2 主屏启动后 10s 采样：NewManga.App 峰值 **143.6 MB**、core_service 37.5 MB、host_bridge 22.0 MB；**webtoon 滚动峰值未测**（隔离数据根无书，无法进入长条阅读） |
+| AC4 微软拼音 20 字 | **NOT_RUN（需用户）** | 合成输入无法驱动真 IME |
+| AC5 沉浸 Esc/H | **NOT_RUN（无书）** | 空书架，无法进入阅读器验证键位 |
+
+**结论**：DPR2 真机项通过；Mica 未能确证；工作集仅空载；Esc/H 与 IME 需真实书库/人工。
+
+**测试后显示状态**：三台屏均为扩展（1080p MiTV 主屏在 (0,0)，2K AOC 与 4K Philips 位于左侧负坐标）；Windows 拒绝脚本化摆位（ChangeDisplaySettingsEx 最终 apply rc=-5）。原始布局备份：G:\CODEX\New Manga.workspace\task-envs\MANUAL-VERIFY-1\display-before.json（原始：1080p 主屏 @(0,0) + 2K @(1920,0)）。**恢复方式**：设置→系统→屏幕→拖动显示器方块为主屏在左、其余靠右（10 秒操作），或告知期望布局由 DSH 再试。
