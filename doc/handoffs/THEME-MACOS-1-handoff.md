@@ -53,7 +53,7 @@ status: draft
 
 ## 接收方式
 
-- 仓库 `G:/CODEX/New Manga`，实际 HEAD `dd2408869`（实现代码所在 commit）；本 Handoff 与 `doc/tasks/THEME-MACOS-1.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`verification/THEME-MACOS-1/**` 为工作区未提交改动，由 DSH 复核后决定集成提交。
+- 仓库 `G:/CODEX/New Manga`。实现代码在 `dd2408869`（被并行 PDF-EXPORT-1 提交并入）；本 Handoff、任务卡、Plan/Ledger 与证据目录由并行 RELEASE-REPACK-3 提交并入 `d6e484b93`；Lead 复核记录见 `feat(theme-macos): …` 提交锚点。复跑请使用 workspace 私有证据目录，勿覆盖 canonical pin。
 - 复跑：`pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory <abs>/verification/THEME-MACOS-1`（相对路径会因脚本 Push-Location 解析到错误目录，请用绝对路径）；`cd apps/desktop/frontend; npx vitest run`；`python -m pytest -q`。
 - 前置：Windows 11 / .NET SDK 9；无标签 sidecar 副本 `G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy`；BOOK-FIXTURE/region fixture 已存在（test.ps1 自检）。
 - 接收者检查：`ThemeMacosTests` 9/9；`test/summary.json` 234/234；4 张截图肉眼核对（交通灯/浅深色/设置页外观行）；`apps/desktop/**`、`src/**` 无 diff；`check.ps1 -TaskPath` PASS。

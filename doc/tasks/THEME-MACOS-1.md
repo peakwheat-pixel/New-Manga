@@ -113,7 +113,15 @@ allowed_paths:
   - `python -m pytest -q` → **2773 passed, 0 failed, 10 skipped**（本任务零 Python 改动；同一环境首次探索运行曾出现 3 个既有 flaky 失败——`test_detection_manga_real` ×2、workbench pause——重跑全绿，日志为准）。
   - `ThemeMacosTests`：**9/9 passed**（结构/default、双 variant 逐 key、legacy token 回归、p95、WCAG、reduced-motion、外观切换/无残留、交通灯/字体、4 张截图）。
   - 热切换 p95：**14.729ms**（48 样本）/ 开发期另一次 12.039ms，阈值 100ms。
-- 后续：Lead 复核后填写 `integration_commit`（本任务不 push；证据以 64-hex SHA-256 pin）。
+- **Lead 独立复核（2026-10-28，owner≠reviewer）**：owner=macos-theme-owner，reviewer=DSH。
+  - 空载独立复跑 `test.ps1 -EvidenceDirectory G:/CODEX/New Manga.workspace/task-envs/THEME-MACOS-1/lead-rerun` → **TEST PASS 234/234 passed / 0 skipped / exit 0**（私有证据目录，不覆盖 canonical pin）。
+  - `check.ps1 -TaskPath doc/tasks/THEME-MACOS-1.md` 独立复跑 → **PASS**（仅预算/非终态/evidence_dir 过程文件 WARN，无 FAIL）。
+  - 4 张截图目视核对：交通灯三圆点、Light/Dark 背景/卡片/正文/强调色、设置页 7 项主题与「外观：浅色/深色」选中态均符合规格；PNG 1280×820 与 `theme/screenshots.json` 一致。
+  - 对比度独立复算（Lead 脚本，不读 owner JSON）：Light 正文 15.46/16.83、次要 4.66/5.07；Dark 正文 15.31/12.80、次要 5.81/4.85，全部达标；p95 复核 14.729ms（canonical JSON，48 样本）。
+  - 旧壳 vitest 独立跑 60/567 通过；pytest.log 复核 2773 passed / 10 skipped / 0 failed（零 Python diff）。
+  - **提交归属说明**：并行 agent 使用 `git add -A`，把本任务实现代码并入 `dd2408869`（PDF-EXPORT-1）、把证据/卡/Handoff/台账并入 `d6e484b93`（RELEASE-REPACK-3）；未单独拆出实现 commit（拆分须改写他人提交，禁止 reset/revert），Lead 复核记录作为 `feat(theme-macos): …` 单独提交锚点。
+  - 结论：AC1–AC6 复核 **MET**；进入独立 Review 与集成裁决，不判 done、不 push。
+- 后续：Lead/集成方决定独立 Review（owner≠reviewer）与 `integration_commit`；本任务不 push；证据以 64-hex SHA-256 pin。
 
 ## Canonical Evidence
 
