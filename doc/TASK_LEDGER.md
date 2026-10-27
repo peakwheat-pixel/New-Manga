@@ -7,19 +7,19 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 423 |
-| terminal | 408 |
-| non-terminal | 15 |
-| non-terminal named in the plan | 8 |
+| terminal | 409 |
+| non-terminal | 14 |
+| non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 7 |
-| task files tracked by git | 422 |
-| task files untracked (drafts) | 1 |
+| task files tracked by git | 423 |
+| task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 14 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 338 | yes |
+| `done` | 339 | yes |
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
@@ -27,7 +27,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `in_review` | 5 | no |
 | `ready` | 4 | no |
 | `proposed` | 3 | no |
-| `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 
@@ -35,7 +34,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | task | status | in plan |
 |---|---|---|
-| `VERIFY-RECHECK-1` | `(none)` | own row |
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
