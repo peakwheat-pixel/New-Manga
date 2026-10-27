@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 386 |
+| task files | 387 |
 | terminal | 376 |
-| non-terminal | 10 |
-| non-terminal named in the plan | 10 |
+| non-terminal | 11 |
+| non-terminal named in the plan | 11 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 386 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 10 |
 
 ## By status
@@ -26,10 +26,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `superseded` | 6 | yes |
 | `in_review` | 3 | no |
 | `ready` | 3 | no |
+| `proposed` | 2 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `in_progress` | 1 | no |
-| `proposed` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -42,6 +42,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | own row |
+| `READER-LIBRARY-WIRE-1` | `proposed` | own row |
 | `BOOK-FIXTURE-1` | `ready` | own row |
 | `DPI-DYNAMIC-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | own row |
