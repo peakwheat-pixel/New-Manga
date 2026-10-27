@@ -44,7 +44,7 @@ allowed_paths:
 - [x] **AC2 写入加固**：`run_json` 写入前 owner/修订 CAS（`_write_revision` + `_check_write_revision()`，`put`/`write_in_current_transaction` 同一守卫）；旧快照抛 `STALE_RUN_SNAPSHOT` 而非静默覆盖；无 Schema 变更。单测覆盖 stale 拒绝（put/事务内）与 owner 连续写接受。<<MET>>
 - [x] **AC3 并发回归**：`tools/repro_scheduler.py`（真实 scheduler 线程 + 100 ms `projection-fresh` 轮询）：修复前 FAIL（8 卡 running、8 regionless INVALID_INPUT、8/8 任务 failed，EXIT=1）→ 修复后 PASS（0/0，与 cached/不轮询对照逐项一致，EXIT=0）；pytest 并发用例 `test_projection_fresh_polling_does_not_corrupt_execution` 修复前 FAIL → 修复后 PASS（3/3 重复）。精确满足「0 卡 running、0 regionless INVALID_INPUT」。<<MET>>
 - [x] **AC4 回归**：同机同时段全量 A/B：pre-fix base **4F/2752P/9S/1 deselected** vs post-fix **4F/2760P/9S**，失败集合完全相同、0 新增（+8 = 本卡新增用例）；第 4 项为既有 flaky `test_sandbox_job_kills_grandchildren`（base 同跑同样失败，同树 6 次 pass/fail 交替）；辅助运行 3F/2761P/9S 与历史基线一致。`apps/desktop-avalonia/scripts/test.ps1` → **177/177 passed, 0 skipped**。<<MET>>
-- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS（`check-taskpath.log`）；证据 64-hex sha256 pin 见 `## Canonical Evidence`（commit 列 `-`，由 DSH 集成时按需补）；Handoff `doc/handoffs/RUN-STORE-CACHE-RACE-FIX-1-handoff.md`；Record Decision（缓存/归属模型、影响面、回退开关、限制）见 `REPORT.md` §8。<<MET>>
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS（`check-taskpath.log`）；证据 64-hex sha256 pin 见 `## Canonical Evidence`（commit 列=包含该文件的交付/证据提交）；Handoff `doc/handoffs/RUN-STORE-CACHE-RACE-FIX-1-handoff.md`；Record Decision（缓存/归属模型、影响面、回退开关、限制）见 `REPORT.md` §8。<<MET>>
 
 ## 允许修改范围
 
@@ -69,34 +69,34 @@ allowed_paths:
 
 | ID | AC/场景 | 路径 | commit | sha256 (64-hex) | 类型 |
 |---|---|---|---|---|---|
-| EV-REPORT | AC1–AC5 总报告（含 Record Decision） | verification/RUN-STORE-CACHE-RACE-FIX-1/REPORT.md | - | afeeba14a0713b47a91e5f9c92e68df6e87b54c83231a748b3c33b929e8a8e07 | CANONICAL |
-| EV-AB-MATRIX | AC3 修复前/后 A/B 矩阵 | verification/RUN-STORE-CACHE-RACE-FIX-1/ab-matrix.json | - | b73f34c5dcd577ab791a6e18b8b53b6ac7bc13fe854141dd8af517e821f221e1 | CANONICAL |
-| EV-SRC-DIFF | AC1/AC2 源码 diff（base→delivery） | verification/RUN-STORE-CACHE-RACE-FIX-1/src-changes-vs-base.patch | - | 15fef9b9dadbe6c90f5c9f3af2de71033406cfa61ba707d1b4ba52a29b8bd77d | SOURCE_PIN |
-| EV-RESOURCE-MANIFEST | AC5 资源清单 | verification/RUN-STORE-CACHE-RACE-FIX-1/resource-manifest.json | - | 05f33568397e8d4d888e63def8fd088d8edf1e45d07d1597645553d4da8b453c | SOURCE_PIN |
-| EV-CHECK-TASKPATH | AC5 治理门禁日志 | verification/RUN-STORE-CACHE-RACE-FIX-1/check-taskpath.log | - | c4c135b87da18e2c5a79af06a4047be93b819ee029217c1bc547e5293d726fda | CANONICAL |
-| EV-TOOL-REPRO | AC3 并发复现/判别工具 | verification/RUN-STORE-CACHE-RACE-FIX-1/tools/repro_scheduler.py | - | 59c000cebbb9d34e040d1500a7c56c2c694c00f8d9b4325e971bab6587d535e1 | CANONICAL |
-| EV-DOTNET-SUMMARY | AC4 Avalonia 177/177 摘要 | verification/RUN-STORE-CACHE-RACE-FIX-1/test/avalonia-summary.json | - | 4293d4eeb35e6fb283211eec14378742872b5bd4df80d5a7f201d959fe551832 | CANONICAL |
-| EV-DOTNET-LOG | AC4 dotnet test 日志 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/dotnet-test.log | - | 5333ff6863c34621ad6fabd1a62e4e67236ccd5e401feafc0cdda737cebaac70 | CANONICAL |
-| EV-FLAKY-RERUNS | AC4 既有 flaky 复跑证明 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/flaky-plugin-sandbox-reruns.log | - | 4b059d0fdd2d6bf02c6f71ee432b5d052e3cdd6cc1982ba4f7f2070d30e876b1 | CANONICAL |
-| EV-SANDBOX-MODULE | AC4 沙箱模块复跑（flake 说明） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-plugin-sandbox-module.log | - | d60afa45b48821d7858b1cd2904e61eb3bc80483f0bee173c71ce3464a321ebc | CANONICAL |
-| EV-PREFIX-PYTEST-FULL | AC4 pre-fix base 同机全量基线 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-pytest-full-baseline.log | - | fbff48856fa5b72526056c7cb8790e54c03518bbaf4e41a60e1b412a801a1f7d | CANONICAL |
-| EV-POSTFIX-PYTEST-FULL | AC4 post-fix 全量回归 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-full.log | - | ee24a106930454644f88944b1fbbe124446cce4ccb70c634f650f6ecbd390630 | CANONICAL |
-| EV-POSTFIX-PYTEST-RUNA | AC4 辅助运行（flake 未触发） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-full-runA-aux.log | - | 681bd5aa8a4ceb29328ce1f2238fefc94540e407e64cb7c94959f37d97d9c846 | CANONICAL |
-| EV-PREFIX-UNIT | AC1/AC2 单测（修复前 6F/1P） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-pytest-unit.log | - | 4944442d5661f32551545dd10043626b1b8d88c9659af5ede41634353bb9ba22 | CANONICAL |
-| EV-POSTFIX-UNIT | AC1/AC2 单测（修复后 7P） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-unit.log | - | d9ff2a122f258d133172dc81be20188113edee731b271f6e5121ae9f47e4598e | CANONICAL |
-| EV-PREFIX-CONC | AC3 并发 pytest（修复前 FAIL） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-pytest-concurrency.log | - | a386f21d7e71b1383cdc17311c780ee3c6cb6b19d865e008cab1ea8c590db272 | CANONICAL |
-| EV-POSTFIX-CONC | AC3 并发 pytest（修复后 PASS） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-concurrency.log | - | a46b728d2bc7651525fa75f0aeb46e6185b36f058f0be31d771e37823b61e124 | CANONICAL |
-| EV-PREFIX-REPRO-LOG | AC3 端到端判别（EXIT=1） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-repro-projection-fresh.log | - | 494c5f97b18b6998f9abbbd3240d783de711adc47c2a46d19371b32f6246c4c6 | CANONICAL |
-| EV-POSTFIX-REPRO-LOG | AC3 端到端判别（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-repro-projection-fresh.log | - | 61b1e0d0f9ab7d51baedc9d2c8d66f090aa027a6caea202210b9c5a45c5ca070 | CANONICAL |
-| EV-PREFIX-CACHED-LOG | AC3 cached 对照（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-repro-cached-control.log | - | f41783672d50652ce3b133b2c1b93133f6cb6432abc929c1b203a5855968f63d | CANONICAL |
-| EV-POSTFIX-CACHED-LOG | AC3 cached 对照（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-repro-cached-control.log | - | f2233bfc14dee9860b7cc8fa823a116f08b7dbfa095df3650275839b50332be5 | CANONICAL |
-| EV-POSTFIX-NOPOLL-LOG | AC3 不轮询对照（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-repro-nopoll-control.log | - | dbf1665c837e7b0bc86c8c8c58cb8733857fa8a629a57c46f002511fe7cce91e | CANONICAL |
-| EV-PREFIX-REPRO | AC3 修复前原始结果（FAIL） | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/pre-fix-projection-fresh.json | - | 1d0cbbf5f414aa75d441084cdea63e25deef10f7b3adc3783ccd53f06cfeecdc | CANONICAL |
-| EV-POSTFIX-REPRO | AC3 修复后原始结果（PASS） | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/post-fix-projection-fresh.json | - | 0f2869a87634909857e90a6545311ed7890ae820efd84b35b87985e011e5151d | CANONICAL |
-| EV-PREFIX-CACHED | AC3 修复前 cached 对照 | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/pre-fix-cached-control.json | - | b8adbc8dc4107ab3a8c07b63c5c46f09de7a4b4c2548745f8c20e58e060baaf5 | CANONICAL |
-| EV-POSTFIX-CACHED | AC3 修复后 cached 对照 | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/post-fix-cached-control.json | - | 5dd9ae79e2567a216527bdf6079eb3617d5c4cb4a246bed0cc2666813ee9d27b | CANONICAL |
+| EV-REPORT | AC1–AC5 总报告（含 Record Decision） | verification/RUN-STORE-CACHE-RACE-FIX-1/REPORT.md | e35238075 | afeeba14a0713b47a91e5f9c92e68df6e87b54c83231a748b3c33b929e8a8e07 | CANONICAL |
+| EV-AB-MATRIX | AC3 修复前/后 A/B 矩阵 | verification/RUN-STORE-CACHE-RACE-FIX-1/ab-matrix.json | e35238075 | e2966644877429ffe6b1c6a186a4d2202a1a4578f40043a1268209a5eb8fd9e3 | CANONICAL |
+| EV-SRC-DIFF | AC1/AC2 源码 diff（base→delivery） | verification/RUN-STORE-CACHE-RACE-FIX-1/src-changes-vs-base.patch | e35238075 | d95791215a511eab6d95f27dc9c251f147df3b4f7cee597a0fbc5705c4aa31bf | SOURCE_PIN |
+| EV-RESOURCE-MANIFEST | AC5 资源清单 | verification/RUN-STORE-CACHE-RACE-FIX-1/resource-manifest.json | 0a43a9a7a7e5d58b7199ce83704404e10fea96ce | f4287f267260ee77f630a590fb0709afe6e5e7e286e7ab8fb38131496dc08a56 | SOURCE_PIN |
+| EV-CHECK-TASKPATH | AC5 治理门禁日志 | verification/RUN-STORE-CACHE-RACE-FIX-1/check-taskpath.log | e35238075 | 507142f9f823e4526b8a4e8ff5aebd391140f391cda1702fae1e181145abdc27 | CANONICAL |
+| EV-TOOL-REPRO | AC3 并发复现/判别工具 | verification/RUN-STORE-CACHE-RACE-FIX-1/tools/repro_scheduler.py | e35238075 | 59c000cebbb9d34e040d1500a7c56c2c694c00f8d9b4325e971bab6587d535e1 | CANONICAL |
+| EV-DOTNET-SUMMARY | AC4 Avalonia 177/177 摘要 | verification/RUN-STORE-CACHE-RACE-FIX-1/test/avalonia-summary.json | e35238075 | f13df036b8593d60777b313f1d9da417152604061932823c16b05db319f7c452 | CANONICAL |
+| EV-DOTNET-LOG | AC4 dotnet test 日志 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/dotnet-test.log | e35238075 | b18a59399deaba0bc59f9662a725faa27ae5cb7dfb66a996f971917509780729 | CANONICAL |
+| EV-FLAKY-RERUNS | AC4 既有 flaky 复跑证明 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/flaky-plugin-sandbox-reruns.log | e35238075 | 89a4f4456f2a7e4aaccf8891d5e50a57fa57b91298c974fb62f226ff058cdca8 | CANONICAL |
+| EV-SANDBOX-MODULE | AC4 沙箱模块复跑（flake 说明） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-plugin-sandbox-module.log | e35238075 | b5e2f3f6ce2b9999a7512b3626939b62209e8291f046b2cc85875bbd04d4bede | CANONICAL |
+| EV-PREFIX-PYTEST-FULL | AC4 pre-fix base 同机全量基线 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-pytest-full-baseline.log | e35238075 | 92eb673d3b1b61e62b273ba1d2528dd13344f3d9e748f229ad1bd3b9f234d277 | CANONICAL |
+| EV-POSTFIX-PYTEST-FULL | AC4 post-fix 全量回归 | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-full.log | e35238075 | 2b78a6d3a9c7f2bcf24fc15e40d055329f09f7f61fc4312738d377099630acb9 | CANONICAL |
+| EV-POSTFIX-PYTEST-RUNA | AC4 辅助运行（flake 未触发） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-full-runA-aux.log | e35238075 | f424d4b62fdac0150d611c90f8f6b2e5481179e21caae1a32ccf35dae9716509 | CANONICAL |
+| EV-PREFIX-UNIT | AC1/AC2 单测（修复前 6F/1P） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-pytest-unit.log | e35238075 | dd8e1c285415a619759c521e5c92e1258ab188b1fcb9ed1489053064e6e94c80 | CANONICAL |
+| EV-POSTFIX-UNIT | AC1/AC2 单测（修复后 7P） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-unit.log | e35238075 | 76647283294b446393c65aede3e16c96a3c64ccf563a063ad62ba32e0dfe43e9 | CANONICAL |
+| EV-PREFIX-CONC | AC3 并发 pytest（修复前 FAIL） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-pytest-concurrency.log | e35238075 | ca7797ee9e666a6b52959a425dfd72d4ed2ea3c90abb59a5f4ae566392cb9b39 | CANONICAL |
+| EV-POSTFIX-CONC | AC3 并发 pytest（修复后 PASS） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-pytest-concurrency.log | e35238075 | 5c97a8cbf525bf887cd41e06c978cc28e3c8b961f8149025d90c9adb4a32dfe3 | CANONICAL |
+| EV-PREFIX-REPRO-LOG | AC3 端到端判别（EXIT=1） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-repro-projection-fresh.log | e35238075 | d74472342d27603b239e9346f16324573bf320c67bd5e5ce7ed4d06c0ea3b1f7 | CANONICAL |
+| EV-POSTFIX-REPRO-LOG | AC3 端到端判别（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-repro-projection-fresh.log | e35238075 | b54414aa745ba8de85ef1e0376aae779a3c7ab1e8191120657c3f7fb352ad603 | CANONICAL |
+| EV-PREFIX-CACHED-LOG | AC3 cached 对照（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/pre-fix-repro-cached-control.log | e35238075 | 67bf3dfb4e46bff5db4d9a0a97cc0c1a63cc90fca474f477c1f394c2454aad5c | CANONICAL |
+| EV-POSTFIX-CACHED-LOG | AC3 cached 对照（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-repro-cached-control.log | e35238075 | 14416b1b90ac31d529a94dff23e5d41a38e463928cda076845d74363660569dd | CANONICAL |
+| EV-POSTFIX-NOPOLL-LOG | AC3 不轮询对照（EXIT=0） | verification/RUN-STORE-CACHE-RACE-FIX-1/logs/post-fix-repro-nopoll-control.log | e35238075 | 251f5b6d14089dcfb7dc8f080b80f32629154cde2d0ea211b4b8dafb32c2c54a | CANONICAL |
+| EV-PREFIX-REPRO | AC3 修复前原始结果（FAIL） | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/pre-fix-projection-fresh.json | e35238075 | baafefb30877d29f11fdde7d77fe25a48191ad4334c69287b231493682f9220d | CANONICAL |
+| EV-POSTFIX-REPRO | AC3 修复后原始结果（PASS） | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/post-fix-projection-fresh.json | e35238075 | c6edf38d5d1959c0a88f7b5e679b4dc41b9c26dc110344243bca1b63d3c0fc34 | CANONICAL |
+| EV-PREFIX-CACHED | AC3 修复前 cached 对照 | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/pre-fix-cached-control.json | e35238075 | 4534904b7ad3cdbaea2fbd3c086d37f638d71dc446b6573a6ec5faedfdbd9ac2 | CANONICAL |
+| EV-POSTFIX-CACHED | AC3 修复后 cached 对照 | verification/RUN-STORE-CACHE-RACE-FIX-1/repro/post-fix-cached-control.json | e35238075 | 6f8c8840ba59d8d4361787bd4a39944dfc54a7ba62e5580866c6a4bc9bcecfe4 | CANONICAL |
 
-pin 口径：sha256 为 worktree 字节（commit 列 `-`；交付提交见 front matter `delivery_head`，集成 commit 由 DSH 填写）。
+pin 口径：sha256 为 **提交内 blob 字节**（与全新 checkout 落盘字节一致）；commit 列指向包含该文件的交付/证据提交（集成 commit 由 DSH 填写）。
 
 ## Resource Manifest
 
