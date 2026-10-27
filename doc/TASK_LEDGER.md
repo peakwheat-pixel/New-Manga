@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 399 |
+| task files | 401 |
 | terminal | 388 |
-| non-terminal | 11 |
-| non-terminal named in the plan | 11 |
+| non-terminal | 13 |
+| non-terminal named in the plan | 13 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 399 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 2 |
 | non-terminal tracked by git | 11 |
 
 ## By status
@@ -24,9 +24,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
+| `ready` | 5 | no |
 | `in_review` | 3 | no |
 | `proposed` | 3 | no |
-| `ready` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 
@@ -42,8 +42,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `AD002-FOLLOWUPS-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | own row |
 | `READER-LIBRARY-WIRE-1` | `proposed` | own row |
+| `CORE-PIPELINE-FIX-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | own row |
 | `GRANT-ISSUER-1` | `ready` | own row |
+| `RUN-BINDING-FIX-1` | `ready` | own row |
 | `S4-CMD-BATCH-1` | `ready` | own row |
 
 ## What this ledger does not say

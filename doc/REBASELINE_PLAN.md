@@ -41,11 +41,13 @@
 |GRANT-ISSUER-1|—|ready（grant 签发+shell 动作 7 条）|
 |S4-CMD-BATCH-1|—|ready（S4-A/B/C：region 写 4 + reader 2）|
 |RUN-OCR-DIAG-1|—|done（根因：provider_bindings 未配置；detect 0 候选→INVALID_INPUT 语义；证据入库 72a4779f3）|
+|RUN-BINDING-FIX-1|—|ready（Host StartRun 带 provider bindings；零 Core）|
+|CORE-PIPELINE-FIX-1|—|ready（color analyzer + 空检测语义）|
 |NS-WIRE-A1|—|done（8/8 实现；parity 24 implemented/42 NS；110/110；集成 7e1ef00d7）|
 |READER-PROGRESS-1|—|done（进度保存/resume；真机两会话；修 3 缺陷；集成 bafe73709）|
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
-READY 节点：S4-CMD-BATCH-1、GRANT-ISSUER-1。
+READY 节点：S4-CMD-BATCH-1、GRANT-ISSUER-1、RUN-BINDING-FIX-1、CORE-PIPELINE-FIX-1。
 
 ## 历史快照（终态节点，非当前 DAG）
 
