@@ -16,7 +16,25 @@ from pathlib import Path
 import pytest
 
 pytest.importorskip("torch", reason="torch is not installed")
-pytest.importorskip("transformers", reason="transformers is not installed")
+transformers = pytest.importorskip("transformers", reason="transformers is not installed")
+
+# FLAKY-PYTEST-1 (AC2): the pinned snapshot is an RT-DETR-v2 checkpoint
+# (``config.json``: ``architectures=["RTDetrV2ForObjectDetection"]``,
+# ``model_type=rt_detr_v2``, ``transformers_version=4.49.0``) and this repo pins
+# ``transformers==5.17.0`` (requirements.txt).  Dev machines can install an
+# older transformers (observed: 4.48.3) that has no ``RTDetrV2ForObjectDetection``
+# at all; that is a runtime-version gap of the OPTIONAL torch fallback (the
+# shipped Core uses the ONNX graph), not a product regression.  Skip with a
+# decidable reason instead of failing with ``AttributeError`` inside the loader.
+if not hasattr(transformers, "RTDetrV2ForObjectDetection"):
+    pytest.skip(
+        f"installed transformers {transformers.__version__} has no "
+        f"RTDetrV2ForObjectDetection; the pinned snapshot needs "
+        f"transformers>=4.49 (requirements.txt pins 5.17.0). Install "
+        f"requirements-dev.txt or set NEW_MANGA_MANGA_WEIGHTS / the optional "
+        f"torch fallback remains unavailable.",
+        allow_module_level=True,
+    )
 
 #: env override first, then the local C4 qualification snapshot (gitignored
 #: task-env tree; never committed, never fetched at test time).

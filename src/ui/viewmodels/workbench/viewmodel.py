@@ -968,7 +968,14 @@ class WorkbenchViewModel(QObject):
             fresh = self._pipeline.plan_run(result.new_run_id)
             self._run = fresh
         self._refresh_projection()
-        if self._run.status is PipelineRunStatus.PENDING:
+        if result.status is PipelineRunStatus.PENDING:
+            # FLAKY-PYTEST-1: ``continue`` answers PENDING in the control
+            # contract to ask the caller for a fresh worker, but the Run object
+            # itself is left RUNNING + ``_resumed_runs`` marker (the executor
+            # must be re-entered to observe the resume).  Checking
+            # ``self._run.status`` therefore missed every PAUSED→continue
+            # resume: the run stayed RUNNING with no worker and never reached a
+            # terminal state.  Gate the admission on the control answer.
             self._start_pending_worker(self._run)
 
     @Slot()
