@@ -230,12 +230,19 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
         string chapterId,
         CancellationToken cancellationToken = default);
 
-    /// <summary>StartExport through the Host grant chain; null when the StartExport request was refused.</summary>
+    /// <summary>
+    /// StartExport through the Host grant chain; null when the StartExport request was refused.
+    /// PDF-EXPORT-UI-1: <paramref name="format"/> is <c>zip</c> or <c>pdf</c>; for PDF
+    /// <paramref name="pdfContent"/> selects <c>image_only</c> / <c>searchable_dual_layer</c>
+    /// (the Host contract already validates exactly that pair).
+    /// </summary>
     Task<ExportStartInfo?> StartExportAsync(
         string bookId,
         string chapterId,
         IReadOnlyList<string> orderedPageIds,
         string targetPath,
+        string format = "zip",
+        string? pdfContent = null,
         CancellationToken cancellationToken = default);
 
     Task<ExportSnapshotInfo?> GetExportSnapshotAsync(

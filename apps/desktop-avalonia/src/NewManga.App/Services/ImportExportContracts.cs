@@ -194,13 +194,17 @@ public static class ImportExportPayloads
     /// <summary>
     /// The six-field StartExport request the Host validates; the Host appends the minted
     /// <c>target_ref</c> after validating/confining the target (GRANT-ISSUER-1).
+    /// PDF-EXPORT-UI-1: <paramref name="pdfContent"/> selects the Core's PDF composer mode
+    /// (<c>image_only</c> / <c>searchable_dual_layer</c>); the HostIssuer already accepts
+    /// <c>format=pdf</c> with exactly <c>{"pdf_content": …}</c>.
     /// </summary>
     public static JsonElement StartExportRequest(
         string bookId,
         IReadOnlyList<string> chapterIds,
         IReadOnlyList<string> orderedPageIds,
         string format = "zip",
-        string stalePolicy = "abort") => Build(writer =>
+        string stalePolicy = "abort",
+        string? pdfContent = null) => Build(writer =>
     {
         writer.WriteStartObject();
         writer.WriteString("book_id", bookId);
@@ -226,6 +230,10 @@ public static class ImportExportPayloads
         if (string.Equals(format, "zip", StringComparison.Ordinal))
         {
             writer.WriteString("compression", "standard");
+        }
+        else if (string.Equals(format, "pdf", StringComparison.Ordinal))
+        {
+            writer.WriteString("pdf_content", pdfContent ?? "searchable_dual_layer");
         }
 
         writer.WriteEndObject();
@@ -283,12 +291,18 @@ public static class ImportExportFormatting
         _ => "未知状态",
     };
 
-    public static string SnapshotStatus(ExportSnapshotInfo snapshot)
+    /// <summary>
+    /// AC2 text for one snapshot. PDF-EXPORT-UI-1: completed exports name the real format
+    /// (ZIP 图片包 / PDF · mode) and append path + sha256 + page count, so the two formats are
+    /// distinguishable and the result stays the Host-returned one.
+    /// </summary>
+    public static string SnapshotStatus(ExportSnapshotInfo snapshot, string? pdfContent = null)
     {
         if (snapshot.State == ExportJobState.Completed)
         {
             var sha = string.IsNullOrEmpty(snapshot.Sha256) ? string.Empty : $" · sha256 {snapshot.Sha256}";
-            return $"导出完成：{snapshot.OutputPath}{sha}";
+            var pages = snapshot.TotalPages > 0 ? $" · {snapshot.TotalPages} 页" : string.Empty;
+            return $"导出完成（{FormatDisplay(snapshot.Format, pdfContent)}）：{snapshot.OutputPath}{sha}{pages}";
         }
 
         if (snapshot.State == ExportJobState.Failed)
@@ -307,18 +321,28 @@ public static class ImportExportFormatting
         return ExportStateText(snapshot.State) + progress;
     }
 
+    /// <summary>PDF-EXPORT-UI-1: human label for a Core export format (+ optional PDF content mode).</summary>
+    public static string FormatDisplay(string? format, string? pdfContent = null) => format switch
+    {
+        "zip" => "ZIP 图片包",
+        "pdf" => string.IsNullOrWhiteSpace(pdfContent) ? "PDF" : $"PDF · {pdfContent}",
+        null or "" => "未知格式",
+        _ => format.ToUpperInvariant(),
+    };
+
     public static string HistoryLine(ExportHistoryEntry entry)
     {
         var size = string.IsNullOrEmpty(entry.Sha256) ? string.Empty : $" · {entry.Sha256[..Math.Min(12, entry.Sha256.Length)]}…";
         return $"{entry.ExportId} · {entry.Format} · {ExportStateText(entry.State)}{size}";
     }
 
-    /// <summary>Deterministic, filesystem-safe default file name for the ZIP export target.</summary>
-    public static string DefaultExportFileName(string bookTitle, string chapterTitle)
+    /// <summary>Deterministic, filesystem-safe default file name for the selected export format.</summary>
+    public static string DefaultExportFileName(string bookTitle, string chapterTitle, string format = "zip")
     {
         var stem = Sanitize(bookTitle) + "-" + Sanitize(chapterTitle);
         var stamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
-        return $"{stem}-{stamp}.zip";
+        var extension = string.Equals(format, "pdf", StringComparison.Ordinal) ? ".pdf" : ".zip";
+        return $"{stem}-{stamp}{extension}";
     }
 
     public static string Sanitize(string value)

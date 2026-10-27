@@ -1033,6 +1033,8 @@ public sealed class HostController : IHostController
         string chapterId,
         IReadOnlyList<string> orderedPageIds,
         string targetPath,
+        string format = "zip",
+        string? pdfContent = null,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(chapterId) ||
@@ -1064,7 +1066,7 @@ public sealed class HostController : IHostController
         try
         {
             var request = ImportExportPayloads.StartExportRequest(
-                bookId, new[] { chapterId }, orderedPageIds);
+                bookId, new[] { chapterId }, orderedPageIds, format, pdfContent: pdfContent);
             var started = await grants.StartExportAsync(request, targetPath, cancellationToken).ConfigureAwait(false);
             return ExportStartInfo.FromJson(started);
         }

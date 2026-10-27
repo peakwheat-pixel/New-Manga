@@ -513,7 +513,7 @@ public sealed class FakeHostController : IHostController
 
     public int TranslatedPageCalls { get; private set; }
 
-    public List<(string BookId, string ChapterId, IReadOnlyList<string> PageIds, string TargetPath)> StartExportCalls { get; } = new();
+    public List<(string BookId, string ChapterId, IReadOnlyList<string> PageIds, string TargetPath, string Format, string? PdfContent)> StartExportCalls { get; } = new();
 
     public Queue<ExportStartInfo?> ScriptedStartResults { get; } = new();
 
@@ -571,9 +571,11 @@ public sealed class FakeHostController : IHostController
         string chapterId,
         IReadOnlyList<string> orderedPageIds,
         string targetPath,
+        string format = "zip",
+        string? pdfContent = null,
         CancellationToken cancellationToken = default)
     {
-        StartExportCalls.Add((bookId, chapterId, orderedPageIds, targetPath));
+        StartExportCalls.Add((bookId, chapterId, orderedPageIds, targetPath, format, pdfContent));
         if (ScriptedStartResults.Count > 0)
         {
             return Task.FromResult(ScriptedStartResults.Dequeue());
