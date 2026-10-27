@@ -3,7 +3,7 @@ id: MICA-FIX-1
 title: Mica 材质可见化（透明背景+诊断+回退）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_manual_verify_followups
 suggested_owner: zcode
 owner: null
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 4deb9ef3e
 branch: task/MICA-FIX-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/MICA-FIX-1
-integration_commit: null
+integration_commit: 93aaaeb8c
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/MICA-FIX-1
 allowed_paths:
   - doc/tasks/MICA-FIX-1.md
@@ -61,6 +61,9 @@ allowed_paths:
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| M1 | AC1/AC2 | verification/MICA-FIX-1/mica/titlebar-pattern.png | c795cdb34 | 64965c49227ddfc78c5c1447084f340fe355cd529c4e28f56c01ff1f179456b0 | CANONICAL |
+| M2 | AC1/AC2 | verification/MICA-FIX-1/mica/titlebar-solid.png | c795cdb34 | 7ce9ed83b3cd4702f1a1cfba3f8abe7686371d4c16acd736d6d4ba15c65f3bf7 | CANONICAL |
+| M3 | AC1/AC2 | verification/MICA-FIX-1/mica/two-wallpapers.json | c795cdb34 | 655d8d6b1a9a774271606301e0c7b0abe27a978dabf103a04652a6bc6f209443 | CANONICAL |
 |---|---|---|---|---|---|
 
 ## Resource Manifest
@@ -77,3 +80,12 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-27）— PASS
+
+- 修复内容：根窗口/TitleBar 去不透明背景；Mica 时 Transparent + 标题栏半透明 scrim；回退仍不透明 MicaFallback。
+- **AC2 PASS**（实测日志）：material=Mica; requested=Mica,Blur,None; actual=Mica（两次启动一致）→ 证明拿到 Mica 而非 None。
+- **AC1 PASS**（真机 A/B）：同窗口置于纯色壁纸 vs 图案壁纸，标题栏取样色 **#FFFFFF → #F0EBF7**（数值化色差），截图 erification/MICA-FIX-1/mica/titlebar-{solid,pattern}.png；壁纸已恢复。
+- **AC3 PARTIAL**：Win10 真机不可得（NOT_RUN）；WindowMaterial.Choose(10,19045)→Opaque 单测覆盖，回退背景不透明。
+- **AC4 PASS**：DSH 复跑 scripts/test.ps1 **102/102**；旧壳 vitest **60/567**；pytest **3F/2739P/9S**（0 新增失败）。
+- **AC5 PASS**：check.ps1 -TaskPath PASS；证据 pin 已入库；Handoff 见 doc/handoffs/MICA-FIX-1-handoff.md。
+- 集成：93aaaeb8c；未 push。

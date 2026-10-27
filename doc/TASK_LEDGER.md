@@ -7,25 +7,25 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 386 |
-| terminal | 375 |
-| non-terminal | 11 |
-| non-terminal named in the plan | 11 |
+| terminal | 376 |
+| non-terminal | 10 |
+| non-terminal named in the plan | 10 |
 | non-terminal outside the plan | 0 |
-| task files tracked by git | 383 |
-| task files untracked (drafts) | 3 |
-| non-terminal tracked by git | 8 |
+| task files tracked by git | 386 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 10 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 305 | yes |
+| `done` | 306 | yes |
 | `closed_with_limitations` | 35 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
-| `ready` | 4 | no |
 | `in_review` | 3 | no |
+| `ready` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `in_progress` | 1 | no |
@@ -45,7 +45,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `BOOK-FIXTURE-1` | `ready` | own row |
 | `DPI-DYNAMIC-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | own row |
-| `MICA-FIX-1` | `ready` | own row |
 
 ## What this ledger does not say
 
