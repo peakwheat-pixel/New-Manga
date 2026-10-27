@@ -1,0 +1,17 @@
+=== RUN META ===
+command: python -m pytest 
+tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately -q
+purpose: FLAKY-PYTEST-1 post-fix targeted verification
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+ (worktree with fixes)
+=== OUTPUT ===
+.                                                                        [100%]
+1 passed in 1.49s
+=== EXIT=0 ===

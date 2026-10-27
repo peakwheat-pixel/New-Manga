@@ -1,0 +1,39 @@
+=== RUN META ===
+command: python env probe (transformers version / RTDetrV2 class / requirements pin / snapshot config)
+purpose: FLAKY-PYTEST-1 AC1 attribution of the two test_detection_manga_real failures
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+=== OUTPUT ===
+import json, pathlib, re, transformers, torch
+print("python:", __import__("sys").version.split()[0])
+print("transformers.__version__:", transformers.__version__)
+print("has RTDetrV2ForObjectDetection:", hasattr(transformers, "RTDetrV2ForObjectDetection"))
+print("has RTDetrForObjectDetection:", hasattr(transformers, "RTDetrForObjectDetection"))
+print("torch.__version__:", torch.__version__)
+req = pathlib.Path("requirements.txt").read_text(encoding="utf-8")
+print("requirements pin:", [line for line in req.splitlines() if line.startswith("transformers")])
+weights = pathlib.Path(r"G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector")
+cfg = json.loads((weights / "config.json").read_text(encoding="utf-8"))
+print("snapshot exists:", weights.is_dir())
+print("snapshot architectures:", cfg.get("architectures"))
+print("snapshot model_type:", cfg.get("model_type"))
+print("snapshot transformers_version:", cfg.get("transformers_version"))
+print("provider source line:", [line.strip() for line in pathlib.Path("src/infrastructure/providers/detection_manga.py").read_text(encoding="utf-8").splitlines() if "RTDetrV2ForObjectDetection" in line][:3])
+python: 3.14.6
+transformers.__version__: 4.48.3
+has RTDetrV2ForObjectDetection: False
+has RTDetrForObjectDetection: True
+torch.__version__: 2.11.0+cu128
+requirements pin: ['transformers==5.17.0']
+snapshot exists: True
+snapshot architectures: ['RTDetrV2ForObjectDetection']
+snapshot model_type: rt_detr_v2
+snapshot transformers_version: 4.49.0
+provider source line: ['model = transformers.RTDetrV2ForObjectDetection.from_pretrained(']
+=== EXIT=0 ===

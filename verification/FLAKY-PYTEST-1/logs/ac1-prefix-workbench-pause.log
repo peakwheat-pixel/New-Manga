@@ -1,0 +1,27 @@
+=== RUN META ===
+command: python -m pytest 
+tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately -q --tb=short
+purpose: FLAKY-PYTEST-1 AC1 minimal rerun on the UNMODIFIED base commit
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\task-envs\FLAKY-PYTEST-1\pre-fix-worktree
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+ (detached = pre-fix)
+git_status: 
+
+=== OUTPUT ===
+F                                                                        [100%]
+================================== FAILURES ===================================
+______________ test_pause_shows_optimistic_feedback_immediately _______________
+tests\workbench\test_workbench_viewmodel.py:210: in test_pause_shows_optimistic_feedback_immediately
+    assert wait_until(
+E   assert False
+E    +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x26c594d6f80) at 0x0000026C5BA7F9C0>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x0000026C5BAFD590>, timeout_ms=15000)
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
+1 failed in 15.37s
+=== EXIT=1 ===

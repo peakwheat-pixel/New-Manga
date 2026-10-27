@@ -1,0 +1,153 @@
+{
+  "task": "FLAKY-PYTEST-1",
+  "disposition": "PRESERVE_REFERENCED",
+  "delivery_head": "4b0ac1831928a374ece45317e67933b9e47bc57e",
+  "base_commit": "170878dc4",
+  "task_env": "G:/CODEX/New Manga.workspace/task-envs/FLAKY-PYTEST-1",
+  "consumed": [
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/FLAKY-PYTEST-1/pre-fix-worktree",
+      "used_as": "AC1 修复前最小重跑证据（detached base 170878dc4；保留引用，不删除、不 prune）"
+    },
+    {
+      "source": "G:/CODEX/New Manga/apps/desktop/frontend/node_modules",
+      "used_as": "AC4 vitest 运行（worktree 无 node_modules；frontend tracked 源两树零 diff）"
+    },
+    {
+      "source": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy",
+      "used_as": "AC4 test.ps1 默认 sidecar（只读，未修改）"
+    }
+  ],
+  "written_in_repo": "verification/FLAKY-PYTEST-1/**（证据）；src/ui/viewmodels/workbench/viewmodel.py、tests/providers/test_detection_manga_real.py、tests/infrastructure/test_plugin_sandbox.py、本卡、Handoff",
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/task-envs/FLAKY-PYTEST-1/**（log、evidence、脚本、临时 pre-fix worktree；保留引用）",
+  "artifacts": [
+    {
+      "rel": "REPORT.md",
+      "bytes": 12500,
+      "sha256": "df8157239f068f5b70c2076aaf35638b52f3da044cf3e9190761c4cf84028910"
+    },
+    {
+      "rel": "ac3-five-runs.json",
+      "bytes": 1410,
+      "sha256": "c2ef4aec1c3a2ba230aca1ce38f5cc3f3712d1d00952ab6573df00c2aa8c77b2"
+    },
+    {
+      "rel": "check-taskpath.log",
+      "bytes": 533,
+      "sha256": "2230fa7d416869ffdda5fbe24d8d41aa7b9a430cb984635b8f801159fb46c318"
+    },
+    {
+      "rel": "logs/ac1-env-probe.log",
+      "bytes": 2011,
+      "sha256": "b265f5906b4d975c13ba5bbdcd3c69a1bd49f300818116c45234a89fe69c08f8"
+    },
+    {
+      "rel": "logs/ac1-prefix-detection.log",
+      "bytes": 2245,
+      "sha256": "d6be9d2990c197cb3feff3ac8d586c782f1825f697da610ac665e787dfd80e7a"
+    },
+    {
+      "rel": "logs/ac1-prefix-sandbox.log",
+      "bytes": 536,
+      "sha256": "7279ecbe3c39251320b7d4f4281651191aa07f27aa57b830e6e4453a9b49f693"
+    },
+    {
+      "rel": "logs/ac1-prefix-workbench-pause.log",
+      "bytes": 1264,
+      "sha256": "7c4c741afcc9d3865cfbc83e395dceb5cbee49574325c0727dc26d8114f80e5f"
+    },
+    {
+      "rel": "logs/ac1-sandbox-probe.log",
+      "bytes": 1420,
+      "sha256": "f6295f75004886e95acf10e5eaeb5c937bf9e446c4273e91a592d94d3e3dbca9"
+    },
+    {
+      "rel": "logs/ac1-sandbox-single-6x.log",
+      "bytes": 550,
+      "sha256": "902c3c6880e2a32c47f67049ecfaebfbd5caa6aa5c31e6dcd2ec4bc4063e88bf"
+    },
+    {
+      "rel": "logs/ac2-postfix-detection.log",
+      "bytes": 772,
+      "sha256": "5213988bbdb294fd58adf96086cec90d7648af326195c1fdcbb0389b9d31395e"
+    },
+    {
+      "rel": "logs/ac2-postfix-sandbox.log",
+      "bytes": 453,
+      "sha256": "25ef3e49878a32dec158f1df6834650cf2081e7205de8fa1a69a36bd91b34e57"
+    },
+    {
+      "rel": "logs/ac2-postfix-workbench-pause.log",
+      "bytes": 501,
+      "sha256": "481ff31494a441089b93508fc962787fbac128992b5afd09e34a1690320aeaac"
+    },
+    {
+      "rel": "logs/ac4-dotnet-test.log",
+      "bytes": 18009,
+      "sha256": "32d08c96daa30d331f950aa6857ff6c20e269d33ddd5f33890ac8d66dfe6db70"
+    },
+    {
+      "rel": "logs/ac4-vitest.log",
+      "bytes": 231349,
+      "sha256": "410bccc4cbd24608c4df0564e178b6e746261a7889d1048e6266d2e64c37a01e"
+    },
+    {
+      "rel": "logs/run0-baseline.log",
+      "bytes": 83160,
+      "sha256": "e90b228502cb3f92ff61459a0e8bac40ce4c943f44e5a6eba55746d8498626ed"
+    },
+    {
+      "rel": "logs/run1-pytest.log",
+      "bytes": 60656,
+      "sha256": "d999510a37b27a72dd29c162d85d6f3b870b707868cb938015497d0f05955446"
+    },
+    {
+      "rel": "logs/run2-pytest.log",
+      "bytes": 60656,
+      "sha256": "0e86209245a541e422a1e2392f9f4e721ee85b750a7dda67fc997ad9e1958994"
+    },
+    {
+      "rel": "logs/run3-pytest.log",
+      "bytes": 60656,
+      "sha256": "1ae342667df2914ca8b825aa07554b1c633cd188c0048c8c67086fc9468b8f54"
+    },
+    {
+      "rel": "logs/run4-pytest.log",
+      "bytes": 60656,
+      "sha256": "1ddf3fd28ae61117419c22b8c2d915e95c989d5cde71f3987c54f57c6a85d42d"
+    },
+    {
+      "rel": "logs/run5-pytest.log",
+      "bytes": 60656,
+      "sha256": "4fbc198d2cfdeb5eea5d3018484a7fe4efcde5f00c052e4b22cc42757e35412f"
+    },
+    {
+      "rel": "logs/run6-skipset.log",
+      "bytes": 62082,
+      "sha256": "8c98c0154732e6c818feda3d7ea1828ae04feb72bb42d92975902f8a9b8fddee"
+    },
+    {
+      "rel": "src-changes-vs-base.patch",
+      "bytes": 4666,
+      "sha256": "6f54bc0ab9e11b235b2f7e0976f39c52d87ea97559752b82b674edc5e55c6bf2"
+    },
+    {
+      "rel": "test/avalonia-summary.json",
+      "bytes": 1312,
+      "sha256": "5a83b7a3a5bb6f5ff1067b6e5ca62ecc0ee28d4ef4dbe54a95e8a04ef3f60b53"
+    },
+    {
+      "rel": "tools/probe_sandbox_tree.py",
+      "bytes": 4404,
+      "sha256": "d0d640d71620f1012b45e4a892b0a1a1d17d414cc2e2a010f41c78b53290d4fa"
+    },
+    {
+      "rel": "tools/run_five.py",
+      "bytes": 3644,
+      "sha256": "8d7544b8d22e85acc87726f30c78745aaad77eab5a261a1374dfd40cd3480b48"
+    }
+  ],
+  "pin_mode": "sha256 of the committed git blob (identical to the bytes a fresh checkout materialises)",
+  "process_check": "未 push、未 gc/prune；未改协议/Host/旧壳/持久化语义；未改动机器环境；5 次全量运行顺序执行并逐次留存 EXIT；未伪造记录；无 secret 入库。",
+  "closeout": "pending（canonical_evidence_status=complete；resource_closeout_status=pending，DSH 终态时按本清单处置）"
+}

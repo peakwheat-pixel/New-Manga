@@ -1,0 +1,30 @@
+=== RUN META ===
+command: python -m pytest 
+tests/providers/test_detection_manga_real.py -q --tb=line -rs
+purpose: FLAKY-PYTEST-1 AC1 minimal rerun on the UNMODIFIED base commit
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\task-envs\FLAKY-PYTEST-1\pre-fix-worktree
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+ (detached = pre-fix)
+git_status: 
+
+=== OUTPUT ===
+FF                                                                       [100%]
+================================== FAILURES ===================================
+E   AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+The above exception was the direct cause of the following exception:
+E   ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+G:\CODEX\New Manga.workspace\task-envs\FLAKY-PYTEST-1\pre-fix-worktree\src\infrastructure\providers\detection_manga.py:535: ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+E   AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+The above exception was the direct cause of the following exception:
+E   ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+G:\CODEX\New Manga.workspace\task-envs\FLAKY-PYTEST-1\pre-fix-worktree\src\infrastructure\providers\detection_manga.py:535: ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+2 failed in 5.05s
+=== EXIT=1 ===

@@ -401,15 +401,22 @@ def test_sandbox_job_kills_grandchildren(sandboxed, tmp_path) -> None:
 
     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel32.OpenProcess.restype = ctypes.c_void_p
+    # FLAKY-PYTEST-1: the kernel reclaims a closed job asynchronously, and under
+    # heavy machine load the old fixed 2 s budget was occasionally exceeded even
+    # though the tree died milliseconds later (the run itself, and a direct
+    # AppContainerSandbox probe, killed the grandchild in ~20 ms).  A bounded
+    # 20 s wait keeps the assertion strict — a genuinely leaked tree still
+    # fails — without asserting on kernel-notification latency.
     still_alive = True
-    for _ in range(20):  # the kernel reclaims the tree asynchronously
+    deadline = time.monotonic() + 20.0
+    while True:
         handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
         try:
             still_alive = bool(handle)
         finally:
             if handle:
                 kernel32.CloseHandle(ctypes.c_void_p(handle))
-        if not still_alive:
+        if not still_alive or time.monotonic() >= deadline:
             break
         time.sleep(0.1)
     assert still_alive is False, "the job object must kill the whole tree"

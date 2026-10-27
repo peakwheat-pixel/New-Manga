@@ -1,0 +1,18 @@
+=== RUN META ===
+command: python -m pytest tests/infrastructure/test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren -q  (x6)
+purpose: AC1 minimal rerun evidence for the sandbox failure at base HEAD
+shell: pwsh 
+7.6.8
+python: 
+Python 3.14.6
+cwd: 
+G:\CODEX\New Manga.workspace\worktrees\FLAKY-PYTEST-1
+git_head: 
+170878dc4f6e808ee658b9e7378f4c7c14887cc1
+=== OUTPUT ===
+repeat 1 : 1 passed in 6.64s
+repeat 2 : 1 passed in 4.25s
+repeat 3 : 1 passed in 1.82s
+repeat 4 : 1 passed in 2.08s
+repeat 5 : 1 passed in 1.79s
+repeat 6 : 1 passed in 1.56s
