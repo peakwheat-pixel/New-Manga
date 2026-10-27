@@ -36,11 +36,11 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 清单**：从 `doc/handoffs/HOST-COMMAND-MIGRATION-1-handoff.md` 与 `verification/HOST-COMMAND-MIGRATION-1/parity/` 列出 S3-A/B/C 对应命令（预期 8 条），逐条标注 Core 路由/参数/返回。
-- [ ] **AC2 实现**：在 C# `HostCommandRegistry`/dispatcher 与 domain service 中接线；每条命令对冻结 sidecar 真实执行，参数/返回/错误码与旧壳 parity 一致。
-- [ ] **AC3 parity 更新**：`extract-command-surface.py --check` 零漂移；parity 快照中这些命令从 NOT_SUPPORTED → IMPLEMENTED，证据 JSON 落 `verification/NS-WIRE-A1/`。
-- [ ] **AC4 回归**：`scripts/test.ps1` 全绿（新增命令测试）；旧壳 vitest 60/567；pytest 基线 3F/2739P/9S 无新增失败。
-- [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。
+- [x] **AC1 清单**：从 `doc/handoffs/HOST-COMMAND-MIGRATION-1-handoff.md` 与 `verification/HOST-COMMAND-MIGRATION-1/parity/` 列出 S3-A/B/C 对应命令（预期 8 条），逐条标注 Core 路由/参数/返回。→ **MET**：8 条全部列出（旧壳 handler/参数/返回/错误类型 + Core 路由 + minor + probe 实测）：`verification/NS-WIRE-A1/command-list.json`。
+- [x] **AC2 实现**：在 C# `HostCommandRegistry`/dispatcher 与 domain service 中接线；每条命令对冻结 sidecar 真实执行，参数/返回/错误码与旧壳 parity 一致。→ **MET**：registry 8 条 Core 绑定（P15 三条 minor=7，其余 minor=3）；dispatcher 复刻旧壳签名做参数边界校验/负载翻译；集成测试 24 implemented 真实执行 + `probe-results.json` 8 路由实测（含 reader projection 在 BOOK-FIXTURE-1 上 8 页成功路径；P15 错 minor/空 chapter 两类负例）。
+- [x] **AC3 parity 更新**：`extract-command-surface.py --check` 零漂移；parity 快照中这些命令从 NOT_SUPPORTED → IMPLEMENTED，证据 JSON 落 `verification/NS-WIRE-A1/`。→ **MET**：`--check` PASS（66 命令零漂移，快照 sha `4c6a4da0…` 未变）；registry 16→24 IMPLEMENTED / 50→42 NOT_SUPPORTED（8 条变更）：`parity-update.json` + `evidence/parity-contract.json`。
+- [x] **AC4 回归**：`scripts/test.ps1` 全绿（新增命令测试）；旧壳 vitest 60/567；pytest 基线 3F/2739P/9S 无新增失败。→ **MET**：test.ps1 **110/110 passed, 0 skipped**；vitest **60/60 文件、567/567 用例**；pytest **3F/2739P/9S（0 新增）**。
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：check.ps1 PASS；pin 见下；`doc/handoffs/NS-WIRE-A1-handoff.md`。
 
 ## 允许修改范围
 
@@ -54,8 +54,9 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 | 逐命令真实 sidecar 执行 | 无标签副本 + 隔离 env | NOT_RUN | 待填 |
-| AC3/AC4/AC5 | parity --check + 全量回归 + 治理 | 全量 | NOT_RUN | 待填 |
+| AC1/AC2 | `verification/NS-WIRE-A1/tools/probe-ns-a1.ps1`（8 路由直连）+ `scripts/test.ps1` 集成测试 | 无标签 sidecar 副本 + 隔离 data root（+ BOOK-FIXTURE-1 数据根） | **PASS**：8/8 路由实测；24 implemented 真实执行；P15 错 minor/空 chapter 负例按预期 typed error | `probe-results.json`、`evidence/integration-results.json` |
+| AC3 | `extract-command-surface.py --check` + registry 前后对比 | Rust 源只读 | **PASS**：66 命令零漂移、快照 sha 未变；16→24 / 50→42 | `parity-update.json`、`parity-check.log` |
+| AC4/AC5 | test.ps1 / vitest / pytest / check.ps1 | 全量 | **PASS**：110/110、60/567、3F/2739P/9S、治理 PASS | `dotnet-all.log`、`vitest.log`、`pytest.log` |
 
 ## Canonical Evidence
 
@@ -66,7 +67,7 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/NS-WIRE-A1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NS-WIRE-A1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/NS-WIRE-A1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NS-WIRE-A1 | 本轮 probe 临时根已清理；证据副本在 `verification/NS-WIRE-A1/` | 无残留进程；task-env 仅脚本副本 |
 
 ## Closeout Record
 

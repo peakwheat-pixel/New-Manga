@@ -1,0 +1,362 @@
+{
+  "ac": "AC1/AC2",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\sidecar-copy\\core_service.exe",
+  "sidecar_sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+  "fixture_data_root": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+  "fixture_chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "timestamps": {
+    "started_utc": "2026-10-27T04:28:12.7646036Z",
+    "finished_utc": "2026-10-27T04:28:13.5683111Z"
+  },
+  "results": [
+    {
+      "name": "settings_update_section",
+      "legacy_command": "settings.update_section",
+      "minor": 3,
+      "request_payload": {
+        "section": "ocr",
+        "values": {}
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "settings": {
+          "ocr": {}
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"a1-1\",\"result\":{\"settings\":{\"ocr\":{}}},\"error\":null}"
+    },
+    {
+      "name": "settings_provider_profiles_list",
+      "legacy_command": "settings_provider_profiles_list",
+      "minor": 7,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "profiles": []
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"a1-2\",\"result\":{\"profiles\":[]},\"error\":null}"
+    },
+    {
+      "name": "settings_network_profiles_list",
+      "legacy_command": "settings_network_profiles_list",
+      "minor": 7,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "profiles": []
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"a1-3\",\"result\":{\"profiles\":[]},\"error\":null}"
+    },
+    {
+      "name": "settings_resolve_overrides",
+      "legacy_command": "settings_resolve_overrides",
+      "minor": 7,
+      "request_payload": {
+        "keys": [
+          "sfx.policy"
+        ]
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "values": [
+          {
+            "key": "sfx.policy",
+            "value": "skip",
+            "source": "global",
+            "is_default": true
+          }
+        ]
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"a1-4\",\"result\":{\"values\":[{\"key\":\"sfx.policy\",\"value\":\"skip\",\"source\":\"global\",\"is_default\":true}]},\"error\":null}"
+    },
+    {
+      "name": "backup_create",
+      "legacy_command": "backup.create",
+      "minor": 3,
+      "request_payload": {
+        "backup_type": "manual"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "backup_id": "2f314c930645494ab2d36aa9c00635bd",
+        "path": "2f314c930645494ab2d36aa9c00635bd.nmbak",
+        "size_bytes": 10827,
+        "created_at": "2026-10-27T12:28:13.152+08:00",
+        "verified": true
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"a1-5\",\"result\":{\"backup_id\":\"2f314c930645494ab2d36aa9c00635bd\",\"path\":\"2f314c930645494ab2d36aa9c00635bd.nmbak\",\"size_bytes\":10827,\"created_at\":\"2026-10-27T04:28:13.152+00:00\",\"verified\":true},\"error\":null}"
+    },
+    {
+      "name": "plugins_set_enabled",
+      "legacy_command": "plugins.set_enabled",
+      "minor": 3,
+      "request_payload": {
+        "enabled": false
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "global_enabled": false
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"a1-6\",\"result\":{\"global_enabled\":false},\"error\":null}"
+    },
+    {
+      "name": "cleanup_run",
+      "legacy_command": "cleanup.run",
+      "minor": 3,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "items": {},
+        "removed": 0,
+        "failed": 0,
+        "skipped": 0
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"a1-7\",\"result\":{\"items\":{},\"removed\":0,\"failed\":0,\"skipped\":0},\"error\":null}"
+    },
+    {
+      "name": "negative_p15_wrong_minor",
+      "legacy_command": "settings_provider_profiles_list",
+      "minor": 3,
+      "request_payload": {},
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":7},\"request_id\":\"a1-8\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"SETTINGS_INVALID_INPUT\",\"retryable\":false,\"details\":{\"phase\":\"settings_resolution\",\"action\":\"none\",\"message_key\":\"SETTINGS_INVALID_INPUT\"}}}"
+    },
+    {
+      "name": "negative_reader_empty_chapter",
+      "legacy_command": "GetReaderProjection",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "no-such-chapter",
+        "mode": "original",
+        "start_position": "beginning"
+      },
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\ns-a1-365ef93d",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found",
+      "result": null,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"a1-9\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"Reader chapter was not found\",\"retryable\":false}}"
+    },
+    {
+      "name": "library_get_reader_projection",
+      "legacy_command": "GetReaderProjection",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "mode": "original",
+        "start_position": "beginning"
+      },
+      "data_root": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "ok": true,
+      "error_code": null,
+      "error_category": null,
+      "result": {
+        "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+        "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+        "mode": "original",
+        "layout": "webtoon_vertical",
+        "pages": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "order": 0,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-f52f2772e8044557a72e82f5ea6ab932",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-f52f2772e8044557a72e82f5ea6ab932",
+              "sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "order": 1,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-4f8a24147b3044deabf4f5a2dd83b84f",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-4f8a24147b3044deabf4f5a2dd83b84f",
+              "sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "order": 2,
+            "width_px": 1200,
+            "height_px": 726,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-a607fc4ca3034f47b5bc43d59f94f2ca",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-a607fc4ca3034f47b5bc43d59f94f2ca",
+              "sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "order": 3,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-6814353f6d8544d6945ad5748d518f47",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-6814353f6d8544d6945ad5748d518f47",
+              "sha256": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "order": 4,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-f54739037525486e8704db23db5c0dc1",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-f54739037525486e8704db23db5c0dc1",
+              "sha256": "e6ea0d306bd353db62275c344e17807d4252d6f5574fc30d7120f28f783878c6"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "order": 5,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-c239be827f3a4448848d2c42bffc05d1",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-c239be827f3a4448848d2c42bffc05d1",
+              "sha256": "dc23b0f16b02ce14f7d60ad1805dd13b9ce4e0ad5f6ead75cf4b955713d6e638"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "order": 6,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-7a39226851774f01a4cdb89bcf118296",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-7a39226851774f01a4cdb89bcf118296",
+              "sha256": "87a342f78a2b1c387b4edfb8ed3b835f748dc13c1de15fcccea3d273daaf7b26"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "order": 7,
+            "width_px": 1200,
+            "height_px": 1660,
+            "original": {
+              "resource_ref": {
+                "resource_id": "page-original-221d772e601e480e8e7508dfe9aff380",
+                "revision": "original"
+              },
+              "artifact_revision_id": "page-original-221d772e601e480e8e7508dfe9aff380",
+              "sha256": "c50404045f08bdd81001896082ede352bebd938e541ae31b2d119a9f6b5900cc"
+            },
+            "translated": {
+              "resource_ref": null,
+              "artifact_revision_id": null,
+              "rendered_from_revision_id": null,
+              "current_source_revision_id": null,
+              "sha256": null
+            }
+          }
+        ],
+        "saved_progress": null,
+        "initial_position": {
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+          "scroll_offset_y": 0.0
+        }
+      },
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"a1-10\",\"result\":{\"book_id\":\"14340ddad0ed472fbe687fe12340c5d8\",\"chapter_id\":\"240bdba549b74281bfc6d901b1a7abd7\",\"mode\":\"original\",\"layout\":\"webtoon_vertical\",\"pages\":[{\"page_id\":\"f52f2772e8044557a72e82f5ea6ab932\",\"order\":0,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-f52f2772e8044557a72e82f5ea6ab932\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-f52f2772e8044557a72e82f5ea6ab932\",\"sha256\":\"17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"4f8a24147b3044deabf4f5a2dd83b84f\",\"order\":1,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-4f8a24147b3044deabf4f5a2dd83b84f\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-4f8a24147b3044deabf4f5a2dd83b84f\",\"sha256\":\"fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"a607fc4ca3034f47b5bc43d59f94f2ca\",\"order\":2,\"width_px\":1200,\"height_px\":726,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-a607fc4ca3034f47b5bc43d59f94f2ca\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-a607fc4ca3034f47b5bc43d59f94f2ca\",\"sha256\":\"695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"6814353f6d8544d6945ad5748d518f47\",\"order\":3,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-6814353f6d8544d6945ad5748d518f47\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-6814353f6d8544d6945ad5748d518f47\",\"sha256\":\"250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"f54739037525486e8704db23db5c0dc1\",\"order\":4,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-f54739037525486e8704db23db5c0dc1\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-f54739037525486e8704db23db5c0dc1\",\"sha256\":\"e6ea0d306bd353db62275c344e17807d4252d6f5574fc30d7120f28f783878c6\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"c239be827f3a4448848d2c42bffc05d1\",\"order\":5,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-c239be827f3a4448848d2c42bffc05d1\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-c239be827f3a4448848d2c42bffc05d1\",\"sha256\":\"dc23b0f16b02ce14f7d60ad1805dd13b9ce4e0ad5f6ead75cf4b955713d6e638\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"7a39226851774f01a4cdb89bcf118296\",\"order\":6,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-7a39226851774f01a4cdb89bcf118296\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-7a39226851774f01a4cdb89bcf118296\",\"sha256\":\"87a342f78a2b1c387b4edfb8ed3b835f748dc13c1de15fcccea3d273daaf7b26\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}},{\"page_id\":\"221d772e601e480e8e7508dfe9aff380\",\"order\":7,\"width_px\":1200,\"height_px\":1660,\"original\":{\"resource_ref\":{\"resource_id\":\"page-original-221d772e601e480e8e7508dfe9aff380\",\"revision\":\"original\"},\"artifact_revision_id\":\"page-original-221d772e601e480e8e7508dfe9aff380\",\"sha256\":\"c50404045f08bdd81001896082ede352bebd938e541ae31b2d119a9f6b5900cc\"},\"translated\":{\"resource_ref\":null,\"artifact_revision_id\":null,\"rendered_from_revision_id\":null,\"current_source_revision_id\":null,\"sha256\":null}}],\"saved_progress\":null,\"initial_position\":{\"page_id\":\"f52f2772e8044557a72e82f5ea6ab932\",\"scroll_offset_y\":0.0}},\"error\":null}"
+    }
+  ]
+}

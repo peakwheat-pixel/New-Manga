@@ -486,7 +486,7 @@ public sealed class SettingsPage : UserControl
             BorderThickness = new Thickness(1),
         };
         _nsList = new StackPanel { Spacing = 4 };
-        _nsList.Children.Add(Ui.Text("S2 NOT_SUPPORTED 批次登记（S3-A/B/C）", 13, "TextPrimary", bold: true));
+        _nsList.Children.Add(Ui.Text("S2 NOT_SUPPORTED 批次登记（S3-A/B/C 已由 NS-WIRE-A1 接线）", 13, "TextPrimary", bold: true));
         foreach (var item in viewModel.NsBatch)
         {
             _nsList.Children.Add(Ui.Text($"[{item.Status}] {item.Command} · {item.Page}", 11, "TextSecondary"));

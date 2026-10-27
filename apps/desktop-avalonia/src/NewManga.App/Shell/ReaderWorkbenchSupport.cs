@@ -185,6 +185,8 @@ public static class S4Wiring
         "library_list_recycle_bin_books",
         "library_create_book",
         "create_chapter",
+        // NS-WIRE-A1: the reader projection is now a real Host command route (S3-C entry).
+        "library_get_reader_projection",
     };
 
     public static IReadOnlyList<NsBatchItem> NsBatch { get; } = new NsBatchItem[]
@@ -193,7 +195,6 @@ public static class S4Wiring
         new("rerender_page", "S4-A", "工作台-区域", "冻结 Core 的 rerender_page 返回 TARGET_NOT_FOUND（命令存在，需真实 page）", "PLANNED"),
         new("resolve_page_resource", "S4-A", "工作台-画布", "冻结 Core 返回 PAGE_NOT_FOUND；需真实 page_id 与 catalog 接线", "PLANNED"),
         new("restore_region_revision", "S4-A", "工作台-区域", "冻结 Core 返回 TARGET_NOT_FOUND；撤销/恢复语义待 S5", "PLANNED"),
-        new("library_get_reader_projection", "S4-B", "阅读器", "GetReaderProjection 负载语义未定（INVALID_REQUEST），S4 用本地 fixture", "PLANNED"),
         new("library_save_reading_progress", "S4-B", "阅读器", "SaveReadingProgress 负载语义未定（INVALID_REQUEST）", "PLANNED"),
         new("library_get_run_snapshot", "S4-C", "工作台-Run", "Run 投影依赖 Python 运行编排（host-local 未迁移）", "PLANNED"),
         new("library_control_run", "S4-C", "工作台-Run", "Run 控制依赖 Python 运行编排（host-local 未迁移）", "PLANNED"),

@@ -1,0 +1,44 @@
+{
+  "ac": "AC2",
+  "services": 6,
+  "commands_covered": 66,
+  "cross_domain_rejected": true,
+  "domains": [
+    {
+      "domain": "Settings",
+      "commands": 33,
+      "implemented": 11,
+      "not_supported": 22
+    },
+    {
+      "domain": "Library",
+      "commands": 8,
+      "implemented": 4,
+      "not_supported": 4
+    },
+    {
+      "domain": "Region",
+      "commands": 6,
+      "implemented": 1,
+      "not_supported": 5
+    },
+    {
+      "domain": "Reader",
+      "commands": 4,
+      "implemented": 3,
+      "not_supported": 1
+    },
+    {
+      "domain": "Resource",
+      "commands": 3,
+      "implemented": 3,
+      "not_supported": 0
+    },
+    {
+      "domain": "Workbench",
+      "commands": 12,
+      "implemented": 2,
+      "not_supported": 10
+    }
+  ]
+}

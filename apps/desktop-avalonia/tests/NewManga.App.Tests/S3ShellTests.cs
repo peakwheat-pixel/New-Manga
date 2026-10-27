@@ -292,8 +292,8 @@ public sealed class ShellTests
     public void SettingsWiring_CoversImplementedCommands_AndRegistersNsBatch()
     {
         Assert.Empty(ShellCommandCatalog.VerifyAgainstRegistry());
-        Assert.Equal(13, ShellCommandCatalog.WiredCommandCount);
-        Assert.Equal(8, ShellCommandCatalog.NsRegisteredCount);
+        Assert.Equal(21, ShellCommandCatalog.WiredCommandCount);
+        Assert.Equal(0, ShellCommandCatalog.NsRegisteredCount);
         Assert.Equal(0, ShellCommandCatalog.NsDoneCount);
         Assert.All(ShellCommandCatalog.NsBatch, item =>
         {
@@ -308,8 +308,8 @@ public sealed class ShellTests
             new List<double> { 1, 2, 3 },
             3);
         var json = File.ReadAllText(Path.Combine(Evidence.Directory, "commands", "wiring.json"));
-        Assert.Contains("\"wired_implemented_count\": 13", json, StringComparison.Ordinal);
-        Assert.Contains("\"ns_registered_count\": 8", json, StringComparison.Ordinal);
+        Assert.Contains("\"wired_implemented_count\": 21", json, StringComparison.Ordinal);
+        Assert.Contains("\"ns_registered_count\": 0", json, StringComparison.Ordinal);
     }
 
     [AvaloniaFact]

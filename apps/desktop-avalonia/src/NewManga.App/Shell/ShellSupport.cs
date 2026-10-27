@@ -45,21 +45,22 @@ public static class ShellCommandCatalog
         "plugins_list",
         "cleanup_preview",
         "library_get_export_history",
+        // NS-WIRE-A1 batch A1: the S3-A/B/C faces are now real Host command routes.
+        "settings_update_section",
+        "settings_provider_profiles_list",
+        "settings_network_profiles_list",
+        "settings_resolve_overrides",
+        "backup_create",
+        "plugins_set_enabled",
+        "cleanup_run",
+        "library_get_reader_projection",
     };
 
     public sealed record NsBatchItem(string Command, string Batch, string Page, string Reason, string Status);
 
-    public static IReadOnlyList<NsBatchItem> NsBatch { get; } = new NsBatchItem[]
-    {
-        new("settings_update_section", "S3-A", "设置-外观", "设置写回需要 host-local 设置持久化迁移", "PLANNED"),
-        new("settings_provider_profiles_list", "S3-A", "设置-提供方", "provider profile 读面依赖 host-local 设置库", "PLANNED"),
-        new("settings_network_profiles_list", "S3-A", "设置-网络", "网络 profile 读面依赖 host-local 设置库", "PLANNED"),
-        new("settings_resolve_overrides", "S3-A", "设置-覆盖", "解析逻辑在 Rust host 本地", "PLANNED"),
-        new("backup_create", "S3-B", "设置-数据", "备份写面依赖 host-local 备份包实现", "PLANNED"),
-        new("plugins_set_enabled", "S3-B", "设置-插件", "插件运行时开关在 Rust host 本地", "PLANNED"),
-        new("cleanup_run", "S3-B", "设置-数据", "清理执行面依赖 host-local 缓存编排", "PLANNED"),
-        new("library_get_reader_projection", "S3-C", "阅读器", "冻结 Core 的 GetReaderProjection 负载语义待验证", "PLANNED"),
-    };
+    // NS-WIRE-A1 batch A1: S3-A/B/C is fully wired (settings / plugins / backup / cleanup), so the
+    // planned-NOT_SUPPORTED ledger for this batch is empty. S4 A/B/C entries live in S4Wiring.
+    public static IReadOnlyList<NsBatchItem> NsBatch { get; } = Array.Empty<NsBatchItem>();
 
     public static int WiredCommandCount => WiredImplemented.Count;
 
