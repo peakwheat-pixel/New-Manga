@@ -1,0 +1,349 @@
+{
+  "ac": "AC1",
+  "task": "TRANSLATE-PROVIDER-1",
+  "registry_entry": "infrastructure.providers.runtime.build_provider_registry",
+  "registration_api": "ProviderRegistry.register(ProviderDescriptor, factory, gate=..., enabled=...)",
+  "resolution_api": "ProviderRegistry.resolve(capability, provider_id) / resolve_binding(capability, frozen_binding)",
+  "binding_sources": [
+    "pipeline_defaults.provider_bindings -> SqliteSnapshotProvider.freeze() -> PipelineRun.provider_binding_snapshot (persisted default; PipelineDefaultsService.save_provider_binding)",
+    "StartRun payload.overrides.provider_bindings -> recursive merge into the same frozen snapshot (per-run override, protocol 2.3)"
+  ],
+  "translation_providers": [
+    {
+      "provider_id": "openai-compatible-translation",
+      "provider_type": "openai-compatible",
+      "capabilities": [
+        "translation"
+      ],
+      "requirements": [
+        {
+          "kind": "endpoint",
+          "name": "|",
+          "detail": "remote endpoint"
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "",
+      "state": "not_configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "provider_id": "sakura-local",
+      "provider_type": "local-sakura",
+      "capabilities": [
+        "translation"
+      ],
+      "requirements": [
+        {
+          "kind": "endpoint",
+          "name": "|",
+          "detail": "local Sakura endpoint (D02 §6.2.2)"
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "local OpenAI-compatible Sakura server; readiness means 'configured' — reachability is reported by the connection test",
+      "state": "not_configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "provider_id": "identity-translation",
+      "provider_type": "identity-experimental",
+      "capabilities": [
+        "translation"
+      ],
+      "requirements": [],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "EXPERIMENTAL identity placeholder: returns the source text unchanged; no translation quality; bind a real provider for production (experimental, not a finished translator)",
+      "state": "ready",
+      "error_code": ""
+    }
+  ],
+  "offline_capable_existing": {
+    "openai-compatible-translation": false,
+    "sakura-local": "only with a local OpenAI-compatible Sakura server listening (configured endpoint); not a bundled/offline provider",
+    "summary": "no existing translation provider runs out of the box offline: the OpenAI-compatible slot requires endpoint+model(+credential); the Sakura slot requires a live local server. The user-profile projection maps a configured profile onto those same two slots."
+  },
+  "selected": {
+    "provider_id": "identity-translation",
+    "provider_type": "identity-experimental",
+    "semantics": "input equals output (source text passed through unchanged); no translation quality; experimental placeholder",
+    "offline": true,
+    "requirements": [],
+    "registered_in": "infrastructure/providers/runtime.py::build_provider_registry (translation section)",
+    "replacement_path": "bind openai-compatible-translation / sakura-local / a user profile instead; the binding is a Run-frozen snapshot, no pipeline code change required"
+  },
+  "all_slots": [
+    {
+      "provider_id": "openai-vision-detection",
+      "provider_type": "openai-compatible-vision",
+      "capabilities": [
+        "detection"
+      ],
+      "requirements": [
+        {
+          "kind": "endpoint",
+          "name": "|",
+          "detail": "remote endpoint"
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "detection port only; no Detect AC is assigned to TASK-019",
+      "state": "not_configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "provider_id": "manga-ocr",
+      "provider_type": "local-manga-ocr-onnx",
+      "capabilities": [
+        "ocr"
+      ],
+      "requirements": [
+        {
+          "kind": "module",
+          "name": "onnxruntime",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "PIL",
+          "detail": ""
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "recognition-only (ONNX Runtime encoder/decoder); never supplies detection boxes",
+      "state": "ready",
+      "error_code": ""
+    },
+    {
+      "provider_id": "paddleocr-korean",
+      "provider_type": "local-paddleocr",
+      "capabilities": [
+        "ocr"
+      ],
+      "requirements": [
+        {
+          "kind": "module",
+          "name": "paddleocr",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "paddle",
+          "detail": ""
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "Korean Webtoon route target (D06 §7.2)",
+      "state": "missing_dependency",
+      "error_code": "PROVIDER_DEPENDENCY_MISSING"
+    },
+    {
+      "provider_id": "openai-vision-ocr",
+      "provider_type": "openai-compatible-vision",
+      "capabilities": [
+        "ocr"
+      ],
+      "requirements": [
+        {
+          "kind": "endpoint",
+          "name": "|",
+          "detail": "remote endpoint"
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "explicit Vision fallback for art text / low-quality OCR",
+      "state": "not_configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "provider_id": "openai-compatible-translation",
+      "provider_type": "openai-compatible",
+      "capabilities": [
+        "translation"
+      ],
+      "requirements": [
+        {
+          "kind": "endpoint",
+          "name": "|",
+          "detail": "remote endpoint"
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "",
+      "state": "not_configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "provider_id": "sakura-local",
+      "provider_type": "local-sakura",
+      "capabilities": [
+        "translation"
+      ],
+      "requirements": [
+        {
+          "kind": "endpoint",
+          "name": "|",
+          "detail": "local Sakura endpoint (D02 §6.2.2)"
+        }
+      ],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "local OpenAI-compatible Sakura server; readiness means 'configured' — reachability is reported by the connection test",
+      "state": "not_configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED"
+    },
+    {
+      "provider_id": "identity-translation",
+      "provider_type": "identity-experimental",
+      "capabilities": [
+        "translation"
+      ],
+      "requirements": [],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "EXPERIMENTAL identity placeholder: returns the source text unchanged; no translation quality; bind a real provider for production (experimental, not a finished translator)",
+      "state": "ready",
+      "error_code": ""
+    },
+    {
+      "provider_id": "inpaint-simple-fill",
+      "provider_type": "local-simple-fill",
+      "capabilities": [
+        "inpaint"
+      ],
+      "requirements": [],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "dependency-free baseline route (TASK-018)",
+      "state": "ready",
+      "error_code": ""
+    },
+    {
+      "provider_id": "inpaint-edge-bleed",
+      "provider_type": "local-edge-bleed",
+      "capabilities": [
+        "inpaint"
+      ],
+      "requirements": [],
+      "requires_gpu": false,
+      "implements": true,
+      "note": "structural baseline, not a learned model",
+      "state": "ready",
+      "error_code": ""
+    },
+    {
+      "provider_id": "inpaint-manga-lama",
+      "provider_type": "local-diffusion",
+      "capabilities": [
+        "inpaint"
+      ],
+      "requirements": [
+        {
+          "kind": "module",
+          "name": "torch",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "diffusers",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "numpy",
+          "detail": ""
+        }
+      ],
+      "requires_gpu": true,
+      "implements": false,
+      "note": "Manga LaMa has no implementation in this build (TASK-018)",
+      "state": "not_ready",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED"
+    },
+    {
+      "provider_id": "inpaint-aot-gan",
+      "provider_type": "local-diffusion",
+      "capabilities": [
+        "inpaint"
+      ],
+      "requirements": [
+        {
+          "kind": "module",
+          "name": "torch",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "numpy",
+          "detail": ""
+        }
+      ],
+      "requires_gpu": true,
+      "implements": false,
+      "note": "AOT-GAN has no implementation in this build (TASK-018)",
+      "state": "not_ready",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED"
+    },
+    {
+      "provider_id": "inpaint-brushnet",
+      "provider_type": "local-diffusion",
+      "capabilities": [
+        "inpaint"
+      ],
+      "requirements": [
+        {
+          "kind": "module",
+          "name": "torch",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "diffusers",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "numpy",
+          "detail": ""
+        }
+      ],
+      "requires_gpu": true,
+      "implements": false,
+      "note": "BrushNet/PowerPaint has no implementation in this build (TASK-018)",
+      "state": "not_ready",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED"
+    },
+    {
+      "provider_id": "inpaint-flux-fill",
+      "provider_type": "local-diffusion",
+      "capabilities": [
+        "inpaint"
+      ],
+      "requirements": [
+        {
+          "kind": "module",
+          "name": "torch",
+          "detail": ""
+        },
+        {
+          "kind": "module",
+          "name": "diffusers",
+          "detail": ""
+        }
+      ],
+      "requires_gpu": true,
+      "implements": false,
+      "note": "FLUX Fill has no implementation in this build (TASK-018)",
+      "state": "not_ready",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED"
+    }
+  ]
+}

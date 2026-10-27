@@ -51,6 +51,11 @@ from infrastructure.providers.openai_client import (
 from infrastructure.providers.registry import ProviderDescriptor, ProviderRegistry
 from infrastructure.providers.retry import RetryPolicy
 from infrastructure.providers.sakura_probe import SakuraProbe
+from infrastructure.providers.translation_identity import (
+    IDENTITY_PROVIDER_TYPE,
+    PROVIDER_IDENTITY_TRANSLATION,
+    IdentityTranslationProvider,
+)
 from infrastructure.providers.translation_openai import (
     PROVIDER_OPENAI_TRANSLATION,
     PROVIDER_SAKURA,
@@ -677,6 +682,28 @@ def build_provider_registry(
         enabled=_slot_enabled(settings, PROVIDER_SAKURA),
     )
 
+    # -- translation: experimental offline placeholder (TRANSLATE-PROVIDER-1) --
+    # Registered unconditionally so an offline install can advance the Run
+    # pipeline through ``translate`` without a network/model dependency. It is
+    # NOT a product translator: input equals output, the type/note/options say
+    # ``experimental``, and it is never selected implicitly (a Run must name it
+    # in its frozen provider binding). Replacing it never touches pipeline code:
+    # bind a real provider id instead (D06 §50).
+    registry.register(
+        ProviderDescriptor(
+            provider_id=PROVIDER_IDENTITY_TRANSLATION,
+            provider_type=IDENTITY_PROVIDER_TYPE,
+            capabilities=frozenset({CAPABILITY_TRANSLATION}),
+            note=(
+                "EXPERIMENTAL identity placeholder: returns the source text "
+                "unchanged; no translation quality; bind a real provider for "
+                "production (experimental, not a finished translator)"
+            ),
+        ),
+        IdentityTranslationProvider,
+        enabled=True,
+    )
+
     # -- inpaint -------------------------------------------------------
     registry.register(
         ProviderDescriptor(
@@ -787,6 +814,7 @@ __all__ = [
     "PROVIDER_INPAINT_EDGE_BLEED",
     "PROVIDER_INPAINT_FLUX",
     "PROVIDER_INPAINT_MANGA_LAMA",
+    "PROVIDER_IDENTITY_TRANSLATION",
     "PROVIDER_INPAINT_SIMPLE_FILL",
     "PROVIDER_MANGA_OCR",
     "PROVIDER_PADDLE_KOREAN",

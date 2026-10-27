@@ -1,0 +1,491 @@
+{
+  "task": "TRANSLATE-PROVIDER-1",
+  "variant": "no-binding",
+  "entry": "assemble_production_core + PipelineService.create_run/plan_run/execute_run",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\TRANSLATE-PROVIDER-1\\inproc-no-binding",
+  "models_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\models",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr"
+    }
+  },
+  "persisted_default_binding": null,
+  "identity_registry": {
+    "provider_id": "identity-translation",
+    "provider_type": "identity-experimental",
+    "capabilities": [
+      "translation"
+    ],
+    "state": "ready",
+    "error_code": "",
+    "detail": "",
+    "missing_requirements": []
+  },
+  "identity_resolves": "IdentityTranslationProvider",
+  "run_id": "run-d82c3c755a464c07b9d7f2d50a746688",
+  "frozen_provider_bindings": {
+    "ocr": "manga-ocr"
+  },
+  "elapsed_ms": 4046.4,
+  "run_status": "PipelineRunStatus.COMPLETED_WITH_FAILURES",
+  "steps": [
+    {
+      "step_type": "detect",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "f8505d72569d4eb9a450b0ef093dbac0",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "f8505d72569d4eb9a450b0ef093dbac0",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "f8505d72569d4eb9a450b0ef093dbac0",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "f8505d72569d4eb9a450b0ef093dbac0",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "a2cad02698724f9a90b8c896e4b0c5ac",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "a2cad02698724f9a90b8c896e4b0c5ac",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "a2cad02698724f9a90b8c896e4b0c5ac",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "a2cad02698724f9a90b8c896e4b0c5ac",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "ocr",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "e1d8fa7baf0a4dacb7b7f3814da29498",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "color",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "e1d8fa7baf0a4dacb7b7f3814da29498",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "term_extract",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "e1d8fa7baf0a4dacb7b7f3814da29498",
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "translate",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "e1d8fa7baf0a4dacb7b7f3814da29498",
+      "status": "StepRunStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "step_type": "detect",
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "step_type": "detect",
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "region_id": null,
+      "status": "StepRunStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    }
+  ],
+  "step_counts": {
+    "detect:StepRunStatus.COMPLETED": 8,
+    "ocr:StepRunStatus.COMPLETED": 3,
+    "color:StepRunStatus.COMPLETED": 3,
+    "term_extract:StepRunStatus.COMPLETED": 3,
+    "translate:StepRunStatus.FAILED": 3
+  },
+  "tasks": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "status": "PipelineTaskStatus.FAILED",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "error_detail": "no provider binding configured for step 'translate' (stage=translate)"
+    },
+    {
+      "page_id": "6814353f6d8544d6945ad5748d518f47",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "f54739037525486e8704db23db5c0dc1",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "c239be827f3a4448848d2c42bffc05d1",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "7a39226851774f01a4cdb89bcf118296",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    },
+    {
+      "page_id": "221d772e601e480e8e7508dfe9aff380",
+      "status": "PipelineTaskStatus.COMPLETED",
+      "error_code": null,
+      "error_detail": ""
+    }
+  ],
+  "translate_outputs": [
+    {
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "region_id": "f8505d72569d4eb9a450b0ef093dbac0",
+      "status": "StepRunStatus.FAILED",
+      "machine_translation": null,
+      "provider": null,
+      "provider_type": null,
+      "experimental": null
+    },
+    {
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "region_id": "a2cad02698724f9a90b8c896e4b0c5ac",
+      "status": "StepRunStatus.FAILED",
+      "machine_translation": null,
+      "provider": null,
+      "provider_type": null,
+      "experimental": null
+    },
+    {
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "region_id": "e1d8fa7baf0a4dacb7b7f3814da29498",
+      "status": "StepRunStatus.FAILED",
+      "machine_translation": null,
+      "provider": null,
+      "provider_type": null,
+      "experimental": null
+    }
+  ],
+  "regions": [
+    {
+      "region_id": "f8505d72569d4eb9a450b0ef093dbac0",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "「キャロット?",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "efbd4f2e8db241c1b14a86a04d3b0d50",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e88b457a7b864b748343a5de1e918b76",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "96f31fb6e3dc40908ca6caa98fdfba7b",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "22a26c8ab75c41cbb69c93d6a41b2d7f",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "7658d631e5e3464e92dba782db0c116c",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ff41698fbdec459fb0a82652e2dc816a",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "d1bc8f1e6af242519521980be0a90a66",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "6d9131e4646845d5925fe5ee7809c5d2",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "28dac51509574fe89e0e80f6f73788a5",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "bc3425916ff348bdbc507e777257874e",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "938177dac357497aa8dbde8862d7593a",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "6812cfdf2fe5459fb69058ec1d898624",
+      "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "a2cad02698724f9a90b8c896e4b0c5ac",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "あー、キャロット!かわいい子ねこちゃんちゃんと",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "24398f26f1834af6b5de831d3c97a313",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "aaddec551556472191557b96b85279f9",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "002458c6d0974e56aa2a81edae19c320",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "2247cb1c54894ba38d14b59ef0b98e66",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "c9654d7ac2e84e36a3a571ea9f072a14",
+      "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e1d8fa7baf0a4dacb7b7f3814da29498",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "しゃぁぁぁ",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "d77781185cf741538dde902cf4e03921",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "f6129b20156e4d5cb471e6687fca7cc8",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "239344434395479ca3e8961a77de19a5",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ba632f3fe3714bb4a712d113af09bfbb",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "2ae1d56a9af0413981646926ac18ed65",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "c5625fb1896b41f3a192b913c611d2ed",
+      "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+      "ocr_text": "",
+      "machine_translation": "",
+      "final_translation": "",
+      "final_source": "none"
+    }
+  ]
+}

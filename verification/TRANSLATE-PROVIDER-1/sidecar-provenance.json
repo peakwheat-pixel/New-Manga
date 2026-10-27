@@ -1,0 +1,37 @@
+{
+  "ac": "AC3 (same-build provenance)",
+  "task": "TRANSLATE-PROVIDER-1",
+  "frozen_old_sidecar": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\core_service.exe",
+    "sha256": "2b36bfebcf09ea118537a0bc77a6c7c9a47c8845d7a853bc60d56ed004ec519b",
+    "size_bytes": 399492,
+    "built_at": "2026-10-27T05:15:27",
+    "note": "旧 frozen models sidecar；CORE-PIPELINE-FIX-1 报告确认其不含 color/empty-detection 修复"
+  },
+  "repack_new_sidecar": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-1\\sidecar-models\\core-sidecar\\core_service.exe",
+    "sha256": "9fcb9e8750ff7a52bc7ab5467f261ca689114a059874f9223054022ac41331dd",
+    "size_bytes": 399492,
+    "built_at": "2026-10-27T19:41:32",
+    "owned_by": "RELEASE-REPACK-1 (core-admin-rca) task-env；本卡只读消费，不宣称其构建完成/验收",
+    "contains": [
+      "CORE-PIPELINE-FIX-1 (PillowSourceStyleAnalyzer + empty_detection_policy)",
+      "RUN-BINDING-FIX-1 (Host side; not exercised by this probe)"
+    ],
+    "does_not_contain": [
+      "TRANSLATE-PROVIDER-1 identity translation provider (built before this task)"
+    ],
+    "measured_behavior": "evidence/new-sidecar-run.json: 8 页 Run -> 5 completed / 3 failed；页1-3 detect/ocr/color/term_extract completed、translate typed PROVIDER_NOT_CONFIGURED；页4-8 completed(0 region)"
+  },
+  "models_bundle": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-1\\sidecar-models\\core-sidecar\\models",
+    "detector": [
+      "detector/rtdetr-v2-fixed.onnx",
+      "detector/yolo11s-seg.onnx"
+    ],
+    "ocr": [
+      "ocr/manga-ocr-onnx/{encoder_model.onnx,decoder_model.onnx,tokenizer/vocab}"
+    ]
+  },
+  "inproc_consistency": "源码直跑与重打包 exe 使用同一 CORE-PIPELINE-FIX-1 语义（页4-8 empty_detection completed、页1-3 color/term completed），差异仅在于 identity provider 是否已注入。"
+}

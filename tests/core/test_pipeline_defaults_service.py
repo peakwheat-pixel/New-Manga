@@ -86,6 +86,39 @@ def test_binding_roundtrips_through_the_real_defaults_row(tmp_path) -> None:
         conn.close()
 
 
+def test_identity_translation_default_binding_reaches_the_run_snapshot(tmp_path) -> None:
+    """TRANSLATE-PROVIDER-1 AC2: a persisted default binding for ``translate``
+    naming the experimental identity provider is (a) accepted by the write face,
+    (b) frozen into the Run snapshot, and (c) readable by the production
+    fallback-chain reader the translate handler uses."""
+    from infrastructure.providers.fallback import chain_from_binding
+
+    conn = _conn(tmp_path)
+    try:
+        service = _service(conn)
+        service.save_provider_binding("translate", "identity-translation")
+        assert service.read().provider_bindings["translate"] == "identity-translation"
+
+        # same row the pipeline snapshots are seeded from
+        snapshot = SqliteSnapshotProvider(conn).freeze("run-identity", overrides=None)
+        assert snapshot.provider_bindings["translate"] == "identity-translation"
+
+        chain = chain_from_binding(snapshot.provider_bindings["translate"])
+        assert chain is not None
+        assert chain.primary == "identity-translation"
+        assert chain.explicit_fallbacks == ()
+
+        # a StartRun override supersedes the persist default for that run only
+        overridden = SqliteSnapshotProvider(conn).freeze(
+            "run-override",
+            overrides={"provider_bindings": {"translate": "sakura-local"}},
+        )
+        assert overridden.provider_bindings["translate"] == "sakura-local"
+        assert service.read().provider_bindings["translate"] == "identity-translation"
+    finally:
+        conn.close()
+
+
 def test_unknown_step_and_bad_shapes_are_typed_rejections(tmp_path) -> None:
     conn = _conn(tmp_path)
     try:

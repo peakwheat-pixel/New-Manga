@@ -37,6 +37,10 @@ from infrastructure.providers.handlers import (
 )
 from infrastructure.providers.registry import ProviderDescriptor, ProviderRegistry
 from infrastructure.providers.retry import RetryPolicy
+from infrastructure.providers.translation_identity import (
+    PROVIDER_IDENTITY_TRANSLATION,
+    IdentityTranslationProvider,
+)
 from infrastructure.providers.step_writes import (
     ArtifactStepWriter,
     RegionStepWriter,
@@ -185,6 +189,18 @@ def workspace(tmp_path: Path):
             capabilities=frozenset({CAPABILITY_TRANSLATION}),
         ),
         lambda: translate_provider,
+    )
+    # TRANSLATE-PROVIDER-1: the production experimental identity adapter joins the
+    # fixture registry exactly as production registers it (same class, same slot),
+    # so a binding naming it exercises the real adapter path.
+    registry.register(
+        ProviderDescriptor(
+            provider_id=PROVIDER_IDENTITY_TRANSLATION,
+            provider_type="identity-experimental",
+            capabilities=frozenset({CAPABILITY_TRANSLATION}),
+            note=("EXPERIMENTAL identity placeholder: source text passes through"),
+        ),
+        IdentityTranslationProvider,
     )
     registry.register(
         ProviderDescriptor(
@@ -387,6 +403,77 @@ def test_translate_step_commits_but_render_remains_unwired(workspace) -> None:
     assert text["machine_translation"] == "[en]B-source"
     assert text["final_translation"] == "[en]B-source"
     assert text["final_source"] == "machine"
+
+
+def test_translate_with_identity_binding_echoes_source_text(workspace) -> None:
+    """TRANSLATE-PROVIDER-1 AC2: an explicit binding to the experimental
+    identity provider makes the translate step succeed with input==output.
+
+    The binding names the production registry slot; provenance and the stored
+    Region text must both stay traceable to the experimental adapter.
+    """
+    conn = workspace["conn"]
+    service = _pipeline(
+        workspace,
+        bindings={
+            "ocr": {"provider_id": "fake-ocr"},
+            "translate": {"provider_id": PROVIDER_IDENTITY_TRANSLATION},
+            "inpaint": {"provider_id": "inpaint-simple-fill"},
+        },
+    )
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    steps = {step.step_type: step for step in executed.step_runs}
+    translate = steps["translate"]
+    assert translate.status is StepRunStatus.COMPLETED
+    # identity: the machine translation is the OCR source, byte for byte
+    assert translate.output["machine_translation"] == "B-source"
+    assert translate.output["provenance"]["provider_id"] == PROVIDER_IDENTITY_TRANSLATION
+    assert translate.output["provenance"]["provider_type"] == "identity-experimental"
+    assert translate.output["provenance"]["options"]["experimental"] == "identity-placeholder"
+
+    text = _text(conn, "region-b")["text"]
+    assert text["machine_translation"] == "B-source"
+    assert text["final_translation"] == "B-source"
+    assert text["final_source"] == "machine"
+
+    # no provider profile / user binding was invented anywhere: the run's frozen
+    # snapshot only carries what the caller explicitly named
+    frozen = conn.execute(
+        "SELECT provider_binding_snapshot_json FROM pipeline_runs WHERE run_id = ?",
+        (run.run_id,),
+    ).fetchone()
+    assert '"translate": "identity-translation"' in frozen[0] or (
+        '"provider_id": "identity-translation"' in frozen[0]
+    )
+
+
+def test_translate_without_binding_stays_typed_not_configured(workspace) -> None:
+    """TRANSLATE-PROVIDER-1 AC2 negative: registering the identity slot never
+    auto-binds it. Without an explicit binding the step keeps the closed,
+    typed ``PROVIDER_NOT_CONFIGURED`` gap and writes nothing."""
+    conn = workspace["conn"]
+    before = _text(conn, "region-b")["text"]
+    service = _pipeline(
+        workspace,
+        bindings={"ocr": {"provider_id": "fake-ocr"}},
+    )
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    translate = next(step for step in executed.step_runs if step.step_type == "translate")
+    assert translate.status is StepRunStatus.FAILED
+    assert translate.error_code == "PROVIDER_NOT_CONFIGURED"
+    assert _text(conn, "region-b")["text"] == before
 
 
 def test_reinpaint_chain_persists_masks_and_clean_revisions(workspace) -> None:
