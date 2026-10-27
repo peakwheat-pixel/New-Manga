@@ -1,0 +1,33 @@
+{
+  "ac": "AC2",
+  "generated_at_utc": "2026-10-27T15:56:36.4054591\u002B00:00",
+  "profile_id": "3819f991cbe54001ba45b6f8524f260c",
+  "credential_state": "configured",
+  "vault_ref_prefix": "NewManga/provider/3819f991cbe54001ba45b6f8524f260c/",
+  "base_url": "https://opencode.ai/zen/v1",
+  "model": "deepseek-v4.1-flash-free",
+  "key_file_deleted": true,
+  "phase_a": {
+    "host_ready": true,
+    "profile_created": true,
+    "bindings_set": "global/Translation -\u003E profile",
+    "settings_section": "providers",
+    "key_file_deleted": true
+  },
+  "ac2": {
+    "credential_put": "configured",
+    "vault_binding": "NewManga/provider/\u003Cprofile\u003E/\u003Cref\u003E",
+    "key_in_evidence": false,
+    "key_ever_logged": false
+  },
+  "timing": {
+    "config_ms": 4506
+  },
+  "safety": {
+    "isolated_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\REAL-TRANSLATE-PROVIDER-1\\work-root",
+    "user_data_root_touched": false,
+    "key_file_deleted": true,
+    "note": "the vault entry stays bound to the provider profile (that is AC2); no secret is written to logs or evidence"
+  },
+  "run_path": "NEWMANGA_REAL_TRANSLATE_WORK_ROOT (kept for tools/run_translate_probe.py)"
+}

@@ -1,0 +1,421 @@
+    0 个错误
+
+已用时间 00:00:02.10
+{
+  "ac": "AC3/AC4",
+  "strip_image": "4000x60000",
+  "tile": "4000x2048",
+  "tile_count": 30,
+  "device_raster_claim": "4000x2048 device rasters",
+  "typography_vertical": "48820436433a9a30a5eecbe73a4033a22ecaba0863f33e70830399369874fafe",
+  "typography_horizontal": "3292b5776805cf863f27538b3f83019d716b81c5c91f31fe32eb90d4e1e0f226",
+  "fixtures_meta": "G:\\CODEX\\New Manga.workspace\\task-envs\\UI-WORKBENCH-READER-1\\fixtures\\meta.json",
+  "reuses_s0_method": true
+}
+{
+  "status": "created",
+  "title": "BOOK-FIXTURE-1 ����_JA ������",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\S4-CMD-BATCH-1\\region-fixture",
+  "source": "book-fixture",
+  "source_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "chapter_title": "�� 1 ��",
+  "chapter_type": "webtoon",
+  "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+  "page_width": 1200,
+  "page_height": 1660,
+  "page_count": 8,
+  "page_ids": [
+    "f52f2772e8044557a72e82f5ea6ab932",
+    "4f8a24147b3044deabf4f5a2dd83b84f",
+    "a607fc4ca3034f47b5bc43d59f94f2ca",
+    "6814353f6d8544d6945ad5748d518f47",
+    "f54739037525486e8704db23db5c0dc1",
+    "c239be827f3a4448848d2c42bffc05d1",
+    "7a39226851774f01a4cdb89bcf118296",
+    "221d772e601e480e8e7508dfe9aff380"
+  ],
+  "source_filenames": [
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg"
+  ],
+  "region_id": "6ebd24160222488681c6fc8f44b46707",
+  "region_revision_no": 3,
+  "region_type": "speech",
+  "region_text": "S4 �����Ű�����ı�",
+  "clean_artifact_id": "fcb16c9628084b3b9e74fa0054bba37a",
+  "clean_revision_no": 1,
+  "library_db_sha256": "75bcc52ac9301495e0009bbd497d42e5f2b1d12e3ce6f9b97e6ff0eb666b4b99",
+  "import_report": null
+}
+{"ok": true, "manifest": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-TILE-EMIT-1\\e2e\\artifact\\tile-manifest.json", "size": 15566, "tiles": 2, "resource_id": "page:9b5bdfb35a06fd2a"}
+PASS: production command surface matches snapshot (66 commands, domains={'resource': 3, 'workbench': 12, 'library': 8, 'settings': 33, 'region': 6, 'reader': 4})
+{
+  "ac": "AC1/AC3",
+  "region_fixture": "",
+  "region_fixture_meta": null,
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
+  "sidecar_sha256": "e0a1eff8d9ee7558eae903f83af3870ada94afc2d083f82e2cc0b571f6f14bc0",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-2ab40a5f",
+  "core_stderr": "WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-2ab40a5f\\models\\detector\\ogkalu-comic-text-and-bubble-detector | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS\r\nWARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-2ab40a5f\\models\\detector\\yolo11s-seg.onnx | G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\models\\detector\\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "probes": [
+    {
+      "command": "core.ping",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-1\",\"result\":{\"status\":\"ready\",\"protocol_version\":{\"major\":2,\"minor\":3},\"capabilities\":[\"library.list_books\"]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListBooks",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-2\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListRecycleBinBooks",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-3\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "CreateBook",
+      "minor": 8,
+      "request_payload": {
+        "title": "命令面探测・日本語テスト"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"571e18b4f3ee4084a27045ca5ea7bc86\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-10-27T16:15:56.873+00:00\",\"updated_at\":\"2026-10-27T16:15:56.873+00:00\"},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "CreateChapter",
+      "minor": 8,
+      "request_payload": {
+        "chapter_number": "1",
+        "title": "第1章",
+        "book_id": "571e18b4f3ee4084a27045ca5ea7bc86"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"ddd8092a0ba94e2f8f27b385aaa1546b\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListChapters",
+      "minor": 3,
+      "request_payload": {
+        "book_id": "571e18b4f3ee4084a27045ca5ea7bc86"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-6\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapters'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ListChapterPages",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "ddd8092a0ba94e2f8f27b385aaa1546b"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-7\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapterPages'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "settings.get",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-8\",\"result\":{\"settings\":{}},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "backup.list",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-9\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "plugins.list",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-10\",\"result\":{\"global_enabled\":false,\"plugins\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "cleanup.preview",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-11\",\"result\":{\"targets\":[],\"total_bytes\":0,\"pending_cleanups\":0},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "GetExportHistory",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-12\",\"result\":{\"exports\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListRegions",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-13\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListRegions'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ListRegionRevisions",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-14\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListRegionRevisions'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ResolvePageResource",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-15\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ResolvePageResource'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "list_chapters",
+      "minor": 3,
+      "request_payload": {
+        "book_id": "probe-book"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-16\",\"result\":{\"chapters\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_chapter_pages",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-17\",\"result\":{\"pages\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_regions",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-18\",\"result\":{\"regions\":[],\"page_size\":null},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_region_revisions",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "probe-region"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-19\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "rerender_page",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-20\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"page not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-21\",\"result\":null,\"error\":{\"code\":\"PAGE_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"page or its managed original is not available\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "PAGE_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "set_region_type",
+      "minor": 3,
+      "request_payload": {
+        "new_region_type": "probe",
+        "region_id": "probe-region"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-22\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"set_region_type requires 'new_region_type': one of ['narration', 'note', 'other', 'sfx', 'speech', 'title']\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    },
+    {
+      "command": "restore_region_revision",
+      "minor": 3,
+      "request_payload": {
+        "revision_no": 1,
+        "expected_revision": 1,
+        "region_id": "probe-region"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-23\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "GetReaderProjection",
+      "minor": 3,
+      "request_payload": {
+        "mode": "scroll",
+        "start_position": 0,
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-24\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"Reader request is invalid\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    },
+    {
+      "command": "SaveReadingProgress",
+      "minor": 3,
+      "request_payload": {
+        "position": 0,
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-25\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"Reading progress request is invalid\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    }
+  ],
+  "at_utc": "2026-10-27T16:15:56.9881566Z"
+}
+probe evidence: G:\CODEX\New Manga.workspace\task-envs\REAL-TRANSLATE-PROVIDER-1\dotnet-evidence-final\parity\core-command-probe.json
+G:\CODEX\New Manga.workspace\worktrees\REAL-TRANSLATE-PROVIDER-1\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\task-envs\REAL-TRANSLATE-PROVIDER-1\dotnet-evidence-final\test\results-coreclient.trx
+
+已通过! - 失败:     0，通过:    61，已跳过:     0，总计:    61，持续时间: 1 m 48 s - NewManga.CoreClient.Tests.dll (net9.0)
+G:\CODEX\New Manga.workspace\worktrees\REAL-TRANSLATE-PROVIDER-1\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\task-envs\REAL-TRANSLATE-PROVIDER-1\dotnet-evidence-final\test\results-host.trx
+
+已通过! - 失败:     0，通过:    56，已跳过:     0，总计:    56，持续时间: 1 m - NewManga.Host.Tests.dll (net9.0)
+G:\CODEX\New Manga.workspace\worktrees\REAL-TRANSLATE-PROVIDER-1\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\task-envs\REAL-TRANSLATE-PROVIDER-1\dotnet-evidence-final\test\results-app.trx
+
+已通过! - 失败:     0，通过:   118，已跳过:     0，总计:   118，持续时间: 2 s - NewManga.App.Tests.dll (net9.0)
+{
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1",
+  "evidence_root": "G:/CODEX/New Manga.workspace/task-envs/REAL-TRANSLATE-PROVIDER-1/dotnet-evidence-final",
+  "configuration": "Debug",
+  "fixture": "NEWMANGA_CORECLIENT_SIDECAR_DIR (AC11 unlabelled copy)",
+  "sidecar_directory": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
+  "projects": [
+    {
+      "project": "coreclient",
+      "total": 61,
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0,
+      "trx": "test/results-coreclient.trx",
+      "trx_sha256": "c7fb0e1a02f6d3f3d74c62a72aa1d451f38bbcd5e89b99667fef8979a495b9f2"
+    },
+    {
+      "project": "host",
+      "total": 56,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "trx": "test/results-host.trx",
+      "trx_sha256": "8f1c632c506fb905f5f261f73056e0c0851a1d2d157fe6a23d6bc97d23377dd6"
+    },
+    {
+      "project": "app",
+      "total": 118,
+      "passed": 118,
+      "failed": 0,
+      "skipped": 0,
+      "trx": "test/results-app.trx",
+      "trx_sha256": "52f1baa8335bb93adac809b4f69de7e7b1f4ca689faba4f6f16eb8b422a2df36"
+    }
+  ],
+  "totals": {
+    "total": 235.0,
+    "passed": 235.0,
+    "failed": 0.0,
+    "skipped": 0.0
+  },
+  "at_utc": "2026-10-27T16:18:52.7696034Z"
+}
+log: G:\CODEX\New Manga.workspace\task-envs\REAL-TRANSLATE-PROVIDER-1\dotnet-evidence-final\test\dotnet-test-Debug.log
+evidence root: G:/CODEX/New Manga.workspace/task-envs/REAL-TRANSLATE-PROVIDER-1/dotnet-evidence-final (use -CanonicalEvidence only when regenerating pins)
+summary: G:\CODEX\New Manga.workspace\task-envs\REAL-TRANSLATE-PROVIDER-1\dotnet-evidence-final\test\summary.json
+TEST PASS (Debug): 235/235 passed, 0 skipped
