@@ -3,7 +3,7 @@
 - Task: `doc/tasks/TRANSLATE-PROVIDER-1.md`（team task-37）
 - Branch: `task/TRANSLATE-PROVIDER-1`；Worktree: `G:/CODEX/New Manga.workspace/worktrees/TRANSLATE-PROVIDER-1`
 - Base: `97de0fa99`（卡面）；实际分支基于 `ae7fe3334`（卡面允许 HEAD）
-- Delivery head: `0fc3124cbfb4fa1887c7f5765e5684d57bb8c39b`（实现+证据提交；Canonical Evidence 的 sha256 pin 指向该树）
+- Delivery head: `f96f245f4b5f435275767a6b00d7721debd64ea3`（实现+证据提交；Canonical Evidence 的 sha256 pin 指向该树）
 - 未 push；未改协议/Host 契约/旧壳；未改 `packaging/**`（RELEASE-REPACK-1 的领域）。
 
 ## 1. 交付摘要

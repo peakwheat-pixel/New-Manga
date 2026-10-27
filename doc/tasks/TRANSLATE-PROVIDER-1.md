@@ -13,7 +13,7 @@ base_commit: 97de0fa99
 branch: task/TRANSLATE-PROVIDER-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/TRANSLATE-PROVIDER-1
 integration_commit: null
-delivery_head: 0fc3124cbfb4fa1887c7f5765e5684d57bb8c39b
+delivery_head: f96f245f4b5f435275767a6b00d7721debd64ea3
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/TRANSLATE-PROVIDER-1
