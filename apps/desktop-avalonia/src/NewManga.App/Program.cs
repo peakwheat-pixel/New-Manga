@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 
 namespace NewManga.App;
@@ -45,4 +46,24 @@ public static class Program
             // nothing else to do in a windowless startup failure
         }
     }
+internal static class DpiAwareness
+{
+    private const int PerMonitorAwareV2 = -4;
+
+    [DllImport("user32.dll")]
+    private static extern bool SetProcessDpiAwarenessContext(IntPtr value);
+
+    public static void EnablePerMonitorV2()
+    {
+        try
+        {
+            // Manifest already declares PerMonitorV2; this also covers hosts that ignore it.
+            _ = SetProcessDpiAwarenessContext(new IntPtr(PerMonitorAwareV2));
+        }
+        catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+        {
+            // pre-Windows 10 1703: manifest <dpiAware>true/pm</dpiAware> still applies
+        }
+    }
+}
 }

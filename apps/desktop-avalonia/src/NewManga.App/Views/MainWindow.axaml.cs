@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
 using Avalonia.Media;
 using NewManga.App.Services;
 using NewManga.App.Shell;
@@ -19,6 +20,7 @@ public partial class MainWindow : Window
     private readonly Dictionary<string, Control> _pages = new(StringComparer.Ordinal);
     private readonly TextBlock _status;
     private WindowMaterialKind _materialKind;
+    private double _lastRenderScaling;
 
     /// <summary>Design-time / XAML loader constructor.</summary>
     public MainWindow()
@@ -87,7 +89,36 @@ public partial class MainWindow : Window
             Background = ThemePackService.Brush("MicaFallback");
         }
 
-        Opened += (_, _) => WriteMaterialDiagnostics();
+        Opened += (_, _) =>
+        {
+            _lastRenderScaling = RenderScaling;
+            WriteMaterialDiagnostics();
+        };
+        PropertyChanged += (_, args) =>
+        {
+            if (string.Equals(args.Property?.Name, "RenderScaling", StringComparison.Ordinal))
+            {
+                var previous = _lastRenderScaling;
+                _lastRenderScaling = RenderScaling;
+                InvalidateMeasure();
+                InvalidateVisual();
+                Dispatcher.UIThread.Post(() =>
+                {
+                    InvalidateMeasure();
+                    InvalidateVisual();
+                    WriteMaterialDiagnostics();
+                }, DispatcherPriority.Render);
+                try
+                {
+                    var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs");
+                    Directory.CreateDirectory(root);
+                    File.AppendAllText(Path.Combine(root, "window-material.log"), $"{DateTime.UtcNow:o} scaling {previous:0.##} -> {RenderScaling:0.##}{Environment.NewLine}");
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                }
+            }
+        };
         Loaded += OnLoaded;
         Closed += OnClosed;
         Navigate("bookshelf");
