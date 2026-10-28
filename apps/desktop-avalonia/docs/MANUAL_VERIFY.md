@@ -4,6 +4,10 @@
 > 以下 5 项需用户在真实 Windows 11 桌面会话执行，Agent 不得代填数字。
 > 被测包：`NewManga-0.1.0-win-x64.zip`（base，97.75MB，Core sidecar 186.3MiB 内含、模型分离）或
 > `NewManga-0.1.0-win-x64-models.zip`（含基础模型，690.94MB，开箱即可检测/OCR）。
+>
+> 安装方式、许可（base=GPL-3.0-or-later / models=AGPL-3.0）、**未签名与 SmartScreen「更多信息→仍要运行」指引**、
+> SHA-256 校验步骤、数据根与卸载说明见 [发行说明 RELEASE_NOTES_0.1.0.md](RELEASE_NOTES_0.1.0.md)；
+> 下载后请先用 `SHA256SUMS` 校验（脚本：[packaging/release/verify-release.ps1](../../../packaging/release/verify-release.ps1)）。
 
 | # | 项目 | 通过标准 | 用户记录 |
 |---|---|---|---|
