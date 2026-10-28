@@ -16,11 +16,14 @@
 | P0-1 | 在**公开默认分支**根目录加入 `LICENSE`（GPL-3.0 全文）、`LICENSE-AGPL-3.0.txt`、`NOTICE.md`、`THIRD_PARTY_LICENSES.md` | GitHub 当前 `license=null`；SignPath 需要可验证的开源许可 | `https://raw.githubusercontent.com/peakwheat-pixel/New-Manga/main/LICENSE` 返回 200，GitHub 仓库页显示 GPL-3.0 |
 | P0-2 | 在默认分支加入 `README.md`（可用本仓库根目录草案：项目简介、技术栈、构建/测试/发布步骤、许可、未签名说明） | 审核人需要看懂项目与构建方式；发布页也需要 | `…/main/README.md` 返回 200，内容含构建与发布命令 |
 | P0-3 | 把**当前产品源码树**推到公开仓库默认分支（或明确的 release 分支并告知审核方） | 默认分支现在是旧 Python-only 树，无 `apps/`、无打包脚本，审核方无法复现构建 | `…/main/apps/desktop-avalonia/scripts/package.ps1` 存在；或申请中明确 `[RELEASE_BRANCH]` |
-| P0-4 | 加入 `.github/workflows/build-release.yml`（本仓库草案，见下） | SignPath 要求构建在公开 CI 中完成、按产物提交签名请求 | Actions 页出现该 workflow，且一次跑通构建步骤（签名步骤可先禁用） |
+| P0-4 | 加入 `.github/workflows/build-release.yml`（本仓库草案）并**手动 Run 一次**（签名输入保持 false） | SignPath 要求构建在公开 CI 中完成、按产物提交签名请求 | Actions 页出现该 workflow，手动运行通过（构建/上传产物成功；签名步骤被 `sign=false` 跳过） |
 | P0-5 | 复核公开内容不含私有素材/模型权重/密钥/历史敏感材料 | 公开仓库是申请与签名构建的基础；泄露不修复会直接导致拒绝 | `git ls-files` 无 `.onnx`/`.pfx`/`.env`/密钥；仓库体积与文件清单复核通过 |
 
-> 注意：`clean-snapshot-20261026` 分支根目录也没有 LICENSE（`…/clean-snapshot-20261026/LICENSE` → 404），
-> 因此**不能直接拿该分支当审核对象**；先在本地补许可文件再推，或把许可文件补进该分支。
+> 注意 1：`clean-snapshot-20261026` 分支根目录也没有 LICENSE（`…/clean-snapshot-20261026/LICENSE` → 404），
+> 因此**不能直接拿该分支当审核对象**；先补齐许可文件再推，或把许可文件补进该分支。
+> 注意 2：公开 CI 构建需 `pip install -r requirements.txt -r requirements-dev.txt`（PyInstaller/pytest 在
+> dev 依赖里），sidecar 用 `-PythonExe python -SkipWeights`（不公开模型权重）；workflow 草案已按此编写，
+> 清单在其内部生成 base-only 版本，完整三产物清单仍由维护者本机发布流程生成。
 
 ## P1 — 申请与集成（你本人操作，约 30–60 分钟）
 
@@ -31,8 +34,10 @@
 3. **拿到凭据后**（审核通过才有）：SignPath 会给出 organization id、project slug、signing policy slug，
    并在 GitHub 安装 SignPath GitHub App；把这些值填入仓库 **Actions secrets**（不是提交进仓库）：
    `SIGNPATH_API_TOKEN`、`SIGNPATH_ORGANIZATION_ID`、`SIGNPATH_PROJECT_SLUG`、`SIGNPATH_SIGNING_POLICY_SLUG`。
-4. **启用签名步骤**：取消 `.github/workflows/build-release.yml` 中签名 step 的注释/条件，提交一次
-   `v0.1.1` 之类的 tag，触发构建 → SignPath 签名 → 发布 signed installer。
+4. **启用签名**：在 Actions 页手动 Run `build-release`，把 `sign` 输入设为 true（workflow 用输入而非
+   `secrets` 判断是否执行签名步骤——GitHub Actions 的 `secrets` 不能用于 `if:`），或按需启用 tag 触发
+   （workflow 里已注释，确认后再打开）。
+5. 触发一次签名构建 → 签名 installer 作为 artifact 产出 → 创建 GitHub Release。
 
 ## P2 — 发布与验证（签名跑通后）
 

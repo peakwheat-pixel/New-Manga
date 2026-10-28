@@ -2,17 +2,22 @@
 #
 # Purpose: build the release installer from public source on a clean Windows runner, then submit the
 # unsigned installer to SignPath for Authenticode signing. This file is a DRAFT delivered by the
-# SIGNPATH-OSS-SIGNING-1 task: it is intentionally NOT triggered automatically (no push/tag trigger yet)
-# and the signing step stays disabled until the maintainer adds the repository secrets issued by
-# SignPath Foundation. It must never publish a fake or partially signed artifact.
+# SIGNPATH-OSS-SIGNING-1 task: it is intentionally NOT triggered by tags yet (only workflow_dispatch) and
+# the signing step only runs when the `sign` input is true AND the SignPath secrets exist. It must never
+# publish a fake or partially signed artifact.
 #
 # Secrets used only by the signing step (never committed):
 #   SIGNPATH_API_TOKEN, SIGNPATH_ORGANIZATION_ID, SIGNPATH_PROJECT_SLUG, SIGNPATH_SIGNING_POLICY_SLUG
 #
 # Rollout plan (see doc/release/SIGNPATH-APPLICATION-CHECKLIST.md):
 #   1. push this workflow together with LICENSE/README and the public source tree;
-#   2. run it once with signing disabled to prove the public build works;
-#   3. after SignPath approval: add secrets, enable the signing steps, cut a tag.
+#   2. run it once with sign=false to prove the public build works;
+#   3. after SignPath approval: add secrets, run with sign=true, cut a release tag.
+#
+# Scope: the public CI builds a WEIGHTS-FREE base package (sidecar -SkipWeights). The full local release
+# pipeline (`packaging/release/*`) additionally builds the -models variant and the three-artifact manifest.
+# The 258-test .NET suite (including Host integration tests that need a prebuilt sidecar) runs on the
+# maintainer machine; this workflow runs pytest + the projects that do not need a prebuilt sidecar.
 
 name: build-release
 
@@ -23,6 +28,11 @@ on:
         description: "Version string, e.g. 0.1.0"
         required: true
         default: "0.1.0"
+      sign:
+        description: "Submit the installer to SignPath (requires secrets; keep false until approved)"
+        type: boolean
+        required: false
+        default: false
   # Tags are enabled deliberately only after SignPath approval:
   # push:
   #   tags: ["v*"]
@@ -55,41 +65,36 @@ jobs:
         run: |
           dotnet --info
           python --version
-          # NSIS is required by build-installer.ps1; the local pipeline uses a portable NSIS 3.13.
-          # On a public runner install it from Chocolatey so builders do not need a private cache.
           choco install nsis --no-progress -y
 
-      - name: Restore Python dependencies (Core sidecar build)
+      - name: Restore Python dependencies (runtime + dev: pytest/PyInstaller)
         shell: pwsh
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run Python tests
         shell: pwsh
         run: python -m pytest -q
 
-      - name: Run .NET tests
+      - name: Run .NET tests (projects that do not require a prebuilt sidecar)
         shell: pwsh
         run: |
-          # The Host integration tests need a frozen sidecar directory; the public pipeline runs the
-          # projects that do not require a prebuilt sidecar, and the full suite runs on the maintainer
-          # machine (258/258 on 2026-10-28). Host tests are added back once the sidecar build step is public.
           dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release
           dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release
 
-      - name: Build Core sidecar bundle
+      - name: Build Core sidecar bundle (weights-free public build)
         shell: pwsh
         run: |
-          # Produces apps/desktop/src-tauri/target/core-sidecar/core-sidecar with core_service.exe etc.
-          pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1
+          pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -PythonExe python -SkipWeights
 
       - name: Build base package (unsigned)
         shell: pwsh
         run: |
           pwsh -NoProfile -File apps/desktop-avalonia/scripts/package.ps1 `
             -OutputRoot "${{ github.workspace }}/out" `
-            -Version "${{ github.event.inputs.version }}"
+            -Version "${{ github.event.inputs.version }}" `
+            -SidecarDir "${{ github.workspace }}/apps/desktop/src-tauri/target/core-sidecar/core-sidecar"
 
       - name: Build NSIS installer (unsigned)
         shell: pwsh
@@ -99,34 +104,49 @@ jobs:
             -OutDir "${{ github.workspace }}/out" `
             -Version "${{ github.event.inputs.version }}"
 
-      - name: Write SHA-256 manifest
+      - name: Write base-only SHA-256 manifest
         shell: pwsh
         run: |
-          pwsh -NoProfile -File packaging/release/generate-checksums.ps1 `
-            -BaseZip "${{ github.workspace }}/out/NewManga-${{ github.event.inputs.version }}-win-x64.zip" `
-            -SetupExe "${{ github.workspace }}/out/NewManga-${{ github.event.inputs.version }}-setup.exe" `
-            -OutFile "${{ github.workspace }}/out/SHA256SUMS"
+          # The full three-artifact manifest (base + models + setup) is produced by the maintainer release
+          # pipeline via packaging/release/generate-checksums.ps1; the public CI only builds the base
+          # variant, so it writes a base-only manifest for its own artifacts.
+          $out = "${{ github.workspace }}/out"
+          $entries = @(
+            "NewManga-${{ github.event.inputs.version }}-win-x64.zip",
+            "NewManga-${{ github.event.inputs.version }}-setup.exe"
+          ) | ForEach-Object {
+            $p = Join-Path $out $_
+            if (-not (Test-Path -LiteralPath $p)) { throw "missing artifact: $p" }
+            ((Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash.ToLower()) + "  " + $_
+          }
+          Set-Content -LiteralPath (Join-Path $out "SHA256SUMS") -Value ($entries -join "`n") -Encoding utf8
+          Get-Content (Join-Path $out "SHA256SUMS")
 
       - name: Upload unsigned artifacts (build evidence)
+        id: upload
         uses: actions/upload-artifact@v4
         with:
           name: unsigned-release
           path: |
             out/NewManga-*-setup.exe
+            out/NewManga-*-win-x64.zip
             out/SHA256SUMS
           if-no-files-found: error
 
       # ---------------------------------------------------------------------------------------------
-      # SignPath signing (enable ONLY after SignPath Foundation approval + repository secrets).
-      # The official action submits a signing request; SignPath builds and signs the installer on its
-      # own infrastructure and returns the signed artifact. Keep the condition so a missing secret can
-      # never silently produce an unsigned "release".
+      # SignPath signing. Enable ONLY after SignPath Foundation approval + repository secrets.
+      # GitHub Actions `secrets` cannot be used in `if:`; the switch is the `sign` workflow input,
+      # and the token is injected only into this step's env. SignPath signs the installer on its own
+      # infrastructure and returns the signed artifact. Never fabricate a signature when secrets are
+      # missing: the step fails fast instead.
       # ---------------------------------------------------------------------------------------------
       # - name: Submit signing request to SignPath
-      #   if: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+      #   if: ${{ inputs.sign == true }}
+      #   env:
+      #     SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
       #   uses: signpath/github-action-submit-signing-request@v1
       #   with:
-      #     api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+      #     api-token: ${{ env.SIGNPATH_API_TOKEN }}
       #     organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
       #     project-slug: ${{ secrets.SIGNPATH_PROJECT_SLUG }}
       #     signing-policy-slug: ${{ secrets.SIGNPATH_SIGNING_POLICY_SLUG }}
@@ -135,12 +155,14 @@ jobs:
       #     output-artifact-directory: signed
       #
       # - name: Verify signed installer (Authenticode)
+      #   if: ${{ inputs.sign == true }}
       #   shell: pwsh
       #   run: |
       #     $sig = Get-AuthenticodeSignature ./signed/NewManga-${{ github.event.inputs.version }}-setup.exe
       #     if ($sig.Status -ne 'Valid') { throw "signature not valid: $($sig.Status)" }
       #
       # - name: Upload signed installer
+      #   if: ${{ inputs.sign == true }}
       #   uses: actions/upload-artifact@v4
       #   with:
       #     name: signed-release
