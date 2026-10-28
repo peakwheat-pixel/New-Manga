@@ -115,3 +115,16 @@ allowed_paths:
 - 真机截图 4 张：erification/THEME-MACOS-2/real-app-{bookshelf,settings}-{light,dark}.png（背景采样 #F5F5F7 / #1E1E1E）。
 - 遗留：冲突 worktree 的外部 WIP（Lead 另行处置）；launchpad/split 不在范围。
 - 集成：ec7316738。
+## 合并实现（择优裁决，2026-10-28，DSH）
+
+**结论：取外部实现的三布局能力 + 保留 saber 版的审计/截图，合并为一套（superset）**，main 828c7c68e，test.ps1 **249/249**。
+
+| 版本 | 内容 | 裁决 |
+|---|---|---|
+| 外部 	ask/THEME-MACOS-2（ e1f71151） | 三套布局主题（Sonoma / **Launchpad** / **Split**）：ThemePack.cs +425 行（LayoutProfiles）、Pages.cs +412（SettingsPage/BookshelfPage.ApplyLayout）、MainWindow +6、ThemeLayoutsTests.cs 909 行 | **采用**（功能 richer） |
+| saber 	ask/THEME-MACOS-2-saber（faec8f54） | macos-sonoma 达标判定、9 项 ThemeMacosTests、2 项审计（字体许可/交通灯）、4 张真机截图、p95 10.456ms、对比度数据 | **保留**（证据/审计） |
+
+- 冲突处置：代码冲突取外部实现；ThemePack.cs 与 MainWindow.axaml 取 84dd38978 的布局版（外部实现依赖）；文档保留本卡版本；外部证据另存 erification/THEME-MACOS-2-external/；外部 Handoff 存档为 doc/handoffs/THEME-MACOS-2-external-handoff.md。
+- 合并后验证：dotnet build OK；	est.ps1 **249/249**（含外部 ThemeLayoutsTests）。
+- 遗留：macos-launchpad / macos-split 布局未做真机截图验收（仅测试覆盖）；如需发布级验收另开小卡。
+- integration_commit: 828c7c68e。
