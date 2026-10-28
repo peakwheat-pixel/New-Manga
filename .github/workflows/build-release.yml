@@ -123,9 +123,11 @@ jobs:
       - name: Build NSIS installer (unsigned)
         shell: pwsh
         run: |
+          # build-installer.ps1 refuses to write into the repository (release artifacts belong outside
+          # the checkout), so point -OutDir at the runner temp directory.
           pwsh -NoProfile -File apps/desktop-avalonia/scripts/build-installer.ps1 `
             -StageDir "${{ github.workspace }}/out/NewManga-${{ github.event.inputs.version }}-win-x64" `
-            -OutDir "${{ github.workspace }}/out" `
+            -OutDir "${{ runner.temp }}/installer-out" `
             -Version "${{ github.event.inputs.version }}"
 
       - name: Write base-only SHA-256 manifest
@@ -135,11 +137,12 @@ jobs:
           # pipeline via packaging/release/generate-checksums.ps1; the public CI only builds the base
           # variant, so it writes a base-only manifest for its own artifacts.
           $out = "${{ github.workspace }}/out"
+          $instOut = "${{ runner.temp }}/installer-out"
           $entries = @(
             "NewManga-${{ github.event.inputs.version }}-win-x64.zip",
             "NewManga-${{ github.event.inputs.version }}-setup.exe"
           ) | ForEach-Object {
-            $p = Join-Path $out $_
+            $p = if ($_ -like "*-setup.exe") { Join-Path $instOut $_ } else { Join-Path $out $_ }
             if (-not (Test-Path -LiteralPath $p)) { throw "missing artifact: $p" }
             ((Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash.ToLower()) + "  " + $_
           }
@@ -152,7 +155,7 @@ jobs:
         with:
           name: unsigned-release
           path: |
-            out/NewManga-*-setup.exe
+            ${{ runner.temp }}/installer-out/NewManga-*-setup.exe
             out/NewManga-*-win-x64.zip
             out/SHA256SUMS
           if-no-files-found: error
