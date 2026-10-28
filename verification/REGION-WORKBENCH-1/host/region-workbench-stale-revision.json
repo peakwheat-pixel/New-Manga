@@ -1,0 +1,9 @@
+{
+  "ac": "AC2",
+  "region_id": "df24eda4229247ec81e53a523d42aa9d",
+  "expected_revision_sent": 13,
+  "error_code": "INPUT_REVISION_CHANGED",
+  "error_category": "conflict",
+  "region_revision_after_refusal": 3,
+  "zero_write": true
+}

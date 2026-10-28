@@ -1,0 +1,2 @@
+PASS: production command surface matches snapshot (66 commands, domains={'resource': 3, 'workbench': 12, 'library': 8, 'settings': 33, 'region': 6, 'reader': 4})
+exit=0

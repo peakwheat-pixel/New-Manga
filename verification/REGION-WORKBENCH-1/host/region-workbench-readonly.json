@@ -1,0 +1,13 @@
+{
+  "ac": "AC3",
+  "mode": "ReadOnlyUntilParity",
+  "writes_allowed": false,
+  "retype_error_code": "HOST_READ_ONLY",
+  "restore_error_code": "HOST_READ_ONLY",
+  "rerender_error_code": "HOST_READ_ONLY",
+  "core_frames_before_writes": 4,
+  "core_frames_after_writes": 4,
+  "zero_core_frames": true,
+  "read_face_available": true,
+  "regions_read_in_read_only_mode": 1
+}

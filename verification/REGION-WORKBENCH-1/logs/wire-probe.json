@@ -1,0 +1,216 @@
+{
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\REGION-WORKBENCH-1\\probe",
+  "fixture_region_id": "ab064bd8c33a470e8f339c3f246b94e7",
+  "results": {
+    "core.ping": {
+      "protocol": "new-manga.core",
+      "version": {
+        "major": 2,
+        "minor": 3
+      },
+      "request_id": "probe-1",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      },
+      "error": null
+    },
+    "list_chapter_pages(minor=3)": {
+      "protocol": "new-manga.core",
+      "version": {
+        "major": 2,
+        "minor": 3
+      },
+      "request_id": "probe-2",
+      "result": {
+        "pages": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+            "sort_order": 1
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+            "sort_order": 2
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+            "sort_order": 3
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+            "sort_order": 4
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+            "sort_order": 5
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+            "sort_order": 6
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+            "sort_order": 7
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+            "sort_order": 8
+          }
+        ]
+      },
+      "error": null
+    },
+    "list_chapter_pages(minor=6)": {
+      "protocol": "new-manga.core",
+      "version": {
+        "major": 2,
+        "minor": 3
+      },
+      "request_id": "probe-3",
+      "result": {
+        "pages": [
+          {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+            "sort_order": 1
+          },
+          {
+            "page_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+            "sort_order": 2
+          },
+          {
+            "page_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+            "sort_order": 3
+          },
+          {
+            "page_id": "6814353f6d8544d6945ad5748d518f47",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+            "sort_order": 4
+          },
+          {
+            "page_id": "f54739037525486e8704db23db5c0dc1",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+            "sort_order": 5
+          },
+          {
+            "page_id": "c239be827f3a4448848d2c42bffc05d1",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+            "sort_order": 6
+          },
+          {
+            "page_id": "7a39226851774f01a4cdb89bcf118296",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+            "sort_order": 7
+          },
+          {
+            "page_id": "221d772e601e480e8e7508dfe9aff380",
+            "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+            "sort_order": 8
+          }
+        ]
+      },
+      "error": null
+    },
+    "list_regions(minor=3)": {
+      "protocol": "new-manga.core",
+      "version": {
+        "major": 2,
+        "minor": 3
+      },
+      "request_id": "probe-4",
+      "result": {
+        "regions": [
+          {
+            "region_id": "ab064bd8c33a470e8f339c3f246b94e7",
+            "region_type": "speech",
+            "sfx_policy": "skip",
+            "origin": "user",
+            "revision_no": 3,
+            "geometry": {
+              "bbox": [
+                0.1,
+                0.1,
+                0.8,
+                0.8
+              ],
+              "polygon": []
+            }
+          }
+        ],
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        }
+      },
+      "error": null
+    },
+    "list_region_revisions(minor=3)": {
+      "protocol": "new-manga.core",
+      "version": {
+        "major": 2,
+        "minor": 3
+      },
+      "request_id": "probe-5",
+      "result": {
+        "region_id": "ab064bd8c33a470e8f339c3f246b94e7",
+        "current_revision_no": 3,
+        "revisions": [
+          {
+            "region_revision_id": "126bb1f744a74cefba3ee34e01997cdd",
+            "revision_no": 1,
+            "origin": "user",
+            "review_state": "unreviewed",
+            "is_pinned": false,
+            "restored_from_revision_id": null,
+            "created_at": "2026-10-28T04:10:25.019+00:00",
+            "region_type": "speech",
+            "sfx_policy": "skip",
+            "is_current": false
+          },
+          {
+            "region_revision_id": "909345b6e5674391a62b57f60a534ab9",
+            "revision_no": 2,
+            "origin": "user",
+            "review_state": "needs_review",
+            "is_pinned": false,
+            "restored_from_revision_id": null,
+            "created_at": "2026-10-28T04:10:25.020+00:00",
+            "region_type": "speech",
+            "sfx_policy": "skip",
+            "is_current": false
+          },
+          {
+            "region_revision_id": "40b194ddccfd49f5947250f232cef7ca",
+            "revision_no": 3,
+            "origin": "user",
+            "review_state": "confirmed",
+            "is_pinned": false,
+            "restored_from_revision_id": null,
+            "created_at": "2026-10-28T04:10:25.020+00:00",
+            "region_type": "speech",
+            "sfx_policy": "skip",
+            "is_current": true
+          }
+        ]
+      },
+      "error": null
+    }
+  }
+}
