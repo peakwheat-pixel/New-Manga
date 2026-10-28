@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) ready（P0 公开仓库整改：许可/README/产品源码树/CI 推到 `public-release` 分支；Reviewer region-workbench-owner）。
+- 当前 Task：[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) in_review（P0 整改已推送 `public-release`=`3207e9c18`；CI Run/默认分支待用户两步；Reviewer region-workbench-owner）。
 - 最近完成：[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`；SignPath 免费签名申请材料，独立审阅 3 轮 PASS）；[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) `done`（`5364652b0`）；[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`）；[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。

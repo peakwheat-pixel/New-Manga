@@ -27,12 +27,12 @@
 |NSIS-INSTALLER-1|AGPL-RELEASE-1|done（NSIS 无签名安装包：per-user 安装/卸载/数据根保留；AC1–AC5 MET；独立安装 6.64s/卸载 0.74s；集成 `64d41f329`）|
 |RELEASE-VERIFY-1|NSIS-INSTALLER-1、AGPL-RELEASE-1|done（免证书发布完整性：SHA-256 清单 + 校验脚本 + 发行说明/SmartScreen 指引；AC1–AC5 MET；PASS 3/3 + 独立负向篡改 FAIL；集成 `5364652b0`）|
 |SIGNPATH-OSS-SIGNING-1|RELEASE-VERIFY-1、V1-RELEASE-SIGNING-1|done（SignPath Foundation 免费 OSS 签名申请材料：英文草案 + 中文前置清单 + CI 草案 + README；独立审阅 3 轮修复后 PASS；集成 `f632ee39c`）|
-|PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|ready（P0 公开仓库整改：许可四件套 + README + 产品源码树 + CI 推到公开 release 分支 `public-release`；不覆盖 main；Owner dsh-lead / Reviewer region-workbench-owner）|
+|PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|in_review（P0 公开仓库整改已推送 `public-release`=`3207e9c18`：许可/README/产品源码树/CI 草案 + 安全扫描；CI Run 与默认分支切换待用户；Owner dsh-lead / Reviewer region-workbench-owner）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
 |THEME-MACOS-LAYOUTS-1|—|done（并入 THEME-MACOS-2：三套布局 Sonoma/Launchpad/Split，`0e1f71151`；REPACK-5 已合并）|
 
-READY 节点：PUBLIC-RELEASE-P0-1
+READY 节点：无
 
 ## 历史快照（终态节点，非当前 DAG）
 

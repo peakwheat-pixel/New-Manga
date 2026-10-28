@@ -26,6 +26,15 @@
 > `python.exe` 路径，不能只传命令名；不公开模型权重）；workflow 草案已按此编写，
 > 清单在其内部生成 base-only 版本，完整三产物清单仍由维护者本机发布流程生成。
 
+> **执行状态（2026-10-28，Task `PUBLIC-RELEASE-P0-1`）**：公开分支 `public-release` 已推送
+> （`3207e9c18…`，1040 文件/16.73 MiB，含许可四件套 + README + 产品源码树 + CI 草案；远端 `main` 未动）。
+> - P0-1 / P0-2 / P0-3 / P0-5：**已在 `public-release` 分支完成**（raw 全部 200；“无真实凭据/模型/私有文件，
+>   仅 107 行开发机路径字符串”已登记为非敏感 follow-up）。
+> - P0-4：**部分完成** —— workflow 已公开且 YAML 可解析，但首次 Run 与默认分支切换需用户两步：
+>   ① GitHub Settings → Branches → 默认分支改为 `public-release`；② Actions → `build-release` → Run
+>   （`version=0.1.0`、`sign=false`）。本机 `gh` 未认证、无 `GH_TOKEN`，Agent 未代持 token、未伪造 Run。
+>   默认分支切换后，P0-1/P0-2 的 GitHub 许可徽标/默认分支判据才完全达成。
+
 ## P1 — 申请与集成（你本人操作，约 30–60 分钟）
 
 1. **注册 / 申请**：在 <https://signpath.io> 注册账号；进入 SignPath Foundation 申请表单
