@@ -136,6 +136,7 @@ allowed_paths:
 | ac4-test-summary | AC4 | verification/NSIS-INSTALLER-1/test/summary.json | d657b52b347a4bb8fa3a43b2788939a815545175 | e6a6ff0672770418c03147b408b38e026367b1fd46ac1b7a3b333bf5da6d091b | CANONICAL |
 | ac3-uninstall-phase | AC2/AC3 | verification/NSIS-INSTALLER-1/uninstall-phase.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 75af332f123862391764c8deb2313632083ed850898206c0672109d6451f6309 | CANONICAL |
 | ac3-verify | AC2/AC3 | verification/NSIS-INSTALLER-1/verify.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 6234544614b5a88346020ad01f3ea9007d2ee0d3e54052d005b4cc3050d11df4 | CANONICAL |
+| ac4-governance-check | AC4 | verification/NSIS-INSTALLER-1/check-governance.json | - | 2b9557f8c5977f88c95d42a97f0d6a2fa5a7f8684fe1e7c9e14d025c96af802d | CANONICAL |
 
 ## Resource Manifest
 
