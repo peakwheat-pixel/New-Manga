@@ -109,9 +109,13 @@ jobs:
       - name: Build base package (unsigned)
         shell: pwsh
         run: |
+          # The public CI builds the full release stack inside the sidecar closure, so its
+          # uncompressed package is larger than the maintainer's trimmed release zip. Raise the
+          # zip guard for CI builds only; the published 0.1.0 base zip stays at the 150MB default.
           pwsh -NoProfile -File apps/desktop-avalonia/scripts/package.ps1 `
             -OutputRoot "${{ github.workspace }}/out" `
             -Version "${{ github.event.inputs.version }}" `
+            -MaxZipMB 900 `
             -SidecarDir "${{ github.workspace }}/apps/desktop/src-tauri/target/core-sidecar/core-sidecar"
 
       - name: Build NSIS installer (unsigned)
