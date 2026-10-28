@@ -16,7 +16,8 @@ status: in_review
 - Base：`8831b4273`（Task 卡登记；worktree 起点 `4f1796f17` 释放提交）。
 - Delivery head：`54118364022588d9dea95ba44d09134a1065dae7`（实现 + 证据提交；本 Handoff 为紧随其后的文档提交）。
 - 实现提交：`ce023a02be85070ad5f041d179feaad33ee7679b`。
-- rebase：已 rebase 到 main `a9c4b49ad`（`docs(status): keep STATUS within byte budget for CRLF worktrees`；其前 `46ffadc48`/`d8aadc0de` 亦为纯文档提交）；rebase 只带入文档变化（`git diff fa2294f25… 541183640…` 仅 doc/STATUS、PLAN/LEDGER 与其它 Task 卡，代码树不变）。本 Task 只提交自己的 Task 卡 + Handoff + verification/** + 代码，未改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`。
+- rebase：先 rebase 到 main `a9c4b49ad`，再按 DSH 更新 rebase 到 main `aab480156`（`docs(task): REGION-WORKBENCH-1 in_review pointer; READY narrowed to AGPL-RELEASE-1`；此前 `a9c4b49ad` 为 STATUS 预算修复）；rebase 只带入文档变化（`git diff fa2294f25… 541183640…` 仅 doc/STATUS、PLAN/LEDGER 与其它 Task 卡，代码树不变）。本 Task 只提交自己的 Task 卡 + Handoff + verification/** + 代码，未改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`。
+- 门禁日志提交：`f47cadc54`（仅新增 `verification/REGION-WORKBENCH-1/logs/check-governance.log`；rebase 后 `check.ps1 -TaskPath` PASS，3 条 warning 均非阻断：非终态 Task 提示、STATUS 80% 预算提示、check 日志为未登记过程文件）。
 - 未 push；未改 Python Core 语义、未改 Host 协议/冻结契约语义、未改旧壳 Tauri/React。
 
 | AC | 结论 | 证据（`verification/REGION-WORKBENCH-1/`） |
