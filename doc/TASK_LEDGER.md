@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 424 |
+| task files | 425 |
 | terminal | 411 |
-| non-terminal | 13 |
-| non-terminal named in the plan | 6 |
+| non-terminal | 14 |
+| non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 7 |
 | task files tracked by git | 424 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 13 |
 
 ## By status
@@ -25,8 +25,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `historical` | 11 | yes |
 | `superseded` | 6 | yes |
 | `in_review` | 5 | no |
+| `ready` | 4 | no |
 | `proposed` | 3 | no |
-| `ready` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 
@@ -45,6 +45,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `READER-LIBRARY-WIRE-1` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
+| `IMPORT-TRIAGE-1` | `ready` | mentioned |
 | `PDF-EXPORT-UI-1` | `ready` | own row |
 | `RELEASE-SMOKE-1` | `ready` | own row |
 
