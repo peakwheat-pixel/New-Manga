@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) ready（NSIS 无签名安装包：per-user 安装/卸载/数据根保留；Reviewer dsh）。
+- 当前 Task：[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) in_review（NSIS 无签名安装包：per-user 安装/卸载/数据根保留；Reviewer dsh）。
 - 最近完成：[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`；models 包 AGPL-3.0 声明 + 全文随包 + 重打包验证）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`；工作台真实 region 读/改标/撤销/重渲染 + 只读门）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
