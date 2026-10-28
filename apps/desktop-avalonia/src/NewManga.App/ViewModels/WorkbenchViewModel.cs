@@ -4,18 +4,50 @@ using System.Runtime.CompilerServices;
 
 namespace NewManga.App.ViewModels;
 
+/// <summary>
+/// One workbench region. READER-WORKBENCH-1 wires this to the real Core <c>list_regions</c> row
+/// (region_id / type / origin / revision_no) plus the normalized geometry projected to page pixels;
+/// the in-memory constructor keeps the S4 skeleton's model test working without a Host.
+/// </summary>
 public sealed class RegionItem : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>Core region id (or a local skeleton id when no Host is attached).</summary>
     public string Id { get; init; } = Guid.NewGuid().ToString("N")[..8];
+
+    /// <summary>Page-pixel rectangle of the region on the current page image.</summary>
     public double X { get; set; }
+
     public double Y { get; set; }
+
     public double Width { get; set; }
+
     public double Height { get; set; }
+
+    /// <summary>Core <c>region_type</c> (speech / narration / sfx / …) or the skeleton default.</summary>
     public string Kind { get; set; } = "text";
+
+    /// <summary>Core <c>origin</c> (user / machine) — null on the skeleton path.</summary>
+    public string Origin { get; set; } = string.Empty;
+
+    /// <summary>Core current <c>revision_no</c> (0 = unknown/skeleton).</summary>
+    public int RevisionNo { get; set; }
+
+    /// <summary>Core <c>sfx_policy</c> (skip / render / …) — null on the skeleton path.</summary>
+    public string SfxPolicy { get; set; } = string.Empty;
+
+    /// <summary>Region text (not part of the read face; kept for the skeleton model/tests).</summary>
     public string Text { get; set; } = string.Empty;
 
+    /// <summary>Display label for the region list ("type · origin · rev N").</summary>
+    public string Label => RevisionNo > 0
+        ? $"{Kind} · {Origin} · rev {RevisionNo}"
+        : Kind;
+
     public void Raise() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+
+    public override string ToString() => Label;
 }
 
 public sealed class BubbleItem : INotifyPropertyChanged
@@ -73,15 +105,34 @@ public sealed class WorkbenchViewModel : INotifyPropertyChanged
 
     public string ZoomLabel => $"{ZoomPercent:0}%";
 
+    /// <summary>Display scale applied to the page image and the region overlay (zoom 50–200%).</summary>
+    public double DisplayScale => ZoomPercent / 100.0;
+
     public RegionItem? SelectedRegion
     {
         get => _selectedRegion;
         set
         {
+            if (ReferenceEquals(_selectedRegion, value))
+            {
+                return;
+            }
+
             _selectedRegion = value;
             Raise(nameof(SelectedRegion));
+            Raise(nameof(SelectedRegionLabel));
+            Raise(nameof(SelectedRegionText));
+            Raise(nameof(SelectedRegionDetail));
         }
     }
+
+    /// <summary>READER-WORKBENCH-1: list-box friendly label of the selected region.</summary>
+    public string SelectedRegionLabel => SelectedRegion?.Label ?? string.Empty;
+
+    /// <summary>READER-WORKBENCH-1: "region_id · origin · revision" detail line of the selection.</summary>
+    public string SelectedRegionDetail => SelectedRegion is { } region
+        ? $"id {ShortId(region.Id)} · {region.Kind} · {region.Origin} · sfx {region.SfxPolicy} · revision {region.RevisionNo}"
+        : string.Empty;
 
     public BubbleItem? SelectedBubble
     {
@@ -113,6 +164,42 @@ public sealed class WorkbenchViewModel : INotifyPropertyChanged
         Regions.Add(region);
         SelectedRegion = region;
         return region;
+    }
+
+    /// <summary>
+    /// READER-WORKBENCH-1 AC1: replaces the region list with the Core read-face rows (pixel-projected
+    /// geometry already applied). Keeps the previous selection when the same region id survives.
+    /// </summary>
+    public void ReplaceRegions(IEnumerable<RegionItem> regions)
+    {
+        var previousId = SelectedRegion?.Id;
+        Regions.Clear();
+        foreach (var region in regions)
+        {
+            Regions.Add(region);
+        }
+
+        SelectedRegion =
+            (previousId is null ? null : Regions.FirstOrDefault(region => string.Equals(region.Id, previousId, StringComparison.Ordinal)))
+            ?? Regions.FirstOrDefault();
+    }
+
+    /// <summary>Selects one region by Core id (canvas ↔ list synchronization); false when absent.</summary>
+    public bool SelectRegionById(string? regionId)
+    {
+        if (string.IsNullOrEmpty(regionId))
+        {
+            return false;
+        }
+
+        var match = Regions.FirstOrDefault(region => string.Equals(region.Id, regionId, StringComparison.Ordinal));
+        if (match is null)
+        {
+            return false;
+        }
+
+        SelectedRegion = match;
+        return true;
     }
 
     public bool DeleteSelectedRegion()
@@ -179,6 +266,8 @@ public sealed class WorkbenchViewModel : INotifyPropertyChanged
             Thumbnails.Add(label);
         }
     }
+
+    private static string ShortId(string id) => id.Length <= 8 ? id : id[..8];
 
     private void Raise(string? name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }

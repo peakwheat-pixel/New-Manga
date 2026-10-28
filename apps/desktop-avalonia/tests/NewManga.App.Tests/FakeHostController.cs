@@ -620,6 +620,256 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(RevealResult);
     }
 
+    // ---------------------------------------------------------------------------------------
+    // READER-WORKBENCH-1: scripted single-page region data. Reads are dictionary lookups; writes
+    // mimic the Core's optimistic-commit semantics in memory (new revision on every successful
+    // write, restored revision appended as a NEW revision) so UI refresh assertions are real.
+    // ---------------------------------------------------------------------------------------
+
+    public Dictionary<string, IReadOnlyList<ChapterPageSummary>> ChapterPagesByChapter { get; } = new(StringComparer.Ordinal);
+
+    public Dictionary<string, RegionPageProjection> RegionsByPage { get; } = new(StringComparer.Ordinal);
+
+    public Dictionary<string, RegionRevisionHistory> RevisionsByRegion { get; } = new(StringComparer.Ordinal);
+
+    public Dictionary<string, byte[]> PageImagesByPage { get; } = new(StringComparer.Ordinal);
+
+    public List<string> ChapterPageCalls { get; } = new();
+
+    public List<string> RegionListCalls { get; } = new();
+
+    public List<string> RevisionListCalls { get; } = new();
+
+    public List<string> PageImageCalls { get; } = new();
+
+    public List<(string RegionId, string NewType, int ExpectedRevision)> SetRegionTypeCalls { get; } = new();
+
+    public List<(string RegionId, int RevisionNo, int ExpectedRevision)> RestoreRegionCalls { get; } = new();
+
+    public List<string> RerenderCalls { get; } = new();
+
+    public Queue<RegionOperationResult> ScriptedSetTypeResults { get; } = new();
+
+    public Queue<RegionOperationResult> ScriptedRestoreResults { get; } = new();
+
+    public Queue<PageRerenderOutcome> ScriptedRerenderResults { get; } = new();
+
+    public Task<IReadOnlyList<ChapterPageSummary>> ListChapterPagesAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        ChapterPageCalls.Add(chapterId);
+        return Task.FromResult(
+            ChapterPagesByChapter.TryGetValue(chapterId, out var pages)
+                ? pages
+                : (IReadOnlyList<ChapterPageSummary>)Array.Empty<ChapterPageSummary>());
+    }
+
+    public Task<RegionPageProjection?> LoadPageRegionsAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        RegionListCalls.Add(pageId);
+        return Task.FromResult<RegionPageProjection?>(
+            RegionsByPage.TryGetValue(pageId, out var projection) ? projection : null);
+    }
+
+    public Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
+        string regionId,
+        CancellationToken cancellationToken = default)
+    {
+        RevisionListCalls.Add(regionId);
+        return Task.FromResult<RegionRevisionHistory?>(
+            RevisionsByRegion.TryGetValue(regionId, out var history) ? history : null);
+    }
+
+    public Task<byte[]?> ReadPageImageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        PageImageCalls.Add(pageId);
+        return Task.FromResult<byte[]?>(
+            PageImagesByPage.TryGetValue(pageId, out var bytes) ? bytes : null);
+    }
+
+    public Task<RegionOperationResult> SetRegionTypeAsync(
+        string regionId,
+        string newRegionType,
+        int expectedRevision,
+        CancellationToken cancellationToken = default)
+    {
+        if (Snapshot.State != HostViewState.Ready)
+        {
+            return Task.FromResult(RegionOperationResult.NotReady());
+        }
+
+        if (!Snapshot.WritesAllowed)
+        {
+            return Task.FromResult(RegionOperationResult.ReadOnly());
+        }
+
+        SetRegionTypeCalls.Add((regionId, newRegionType, expectedRevision));
+        if (ScriptedSetTypeResults.Count > 0)
+        {
+            return Task.FromResult(ScriptedSetTypeResults.Dequeue());
+        }
+
+        var row = FindRegion(regionId);
+        if (row is null)
+        {
+            return Task.FromResult(RegionOperationResult.Failed("TARGET_NOT_FOUND"));
+        }
+
+        if (expectedRevision > 0 && row.RevisionNo != expectedRevision)
+        {
+            return Task.FromResult(RegionOperationResult.Failed("INPUT_REVISION_CHANGED"));
+        }
+
+        var revision = row.RevisionNo + 1;
+        WriteRegion(regionId, row with { RegionType = newRegionType, RevisionNo = revision });
+        AppendRevision(regionId, revision, newRegionType, row.SfxPolicy);
+        return Task.FromResult(RegionOperationResult.Success(
+            new RegionWriteSnapshot(regionId, revision, newRegionType, row.SfxPolicy),
+            $"类型已更新为 {newRegionType}（revision {revision}）"));
+    }
+
+    public Task<RegionOperationResult> RestoreRegionRevisionAsync(
+        string regionId,
+        int revisionNo,
+        int expectedRevision,
+        CancellationToken cancellationToken = default)
+    {
+        if (Snapshot.State != HostViewState.Ready)
+        {
+            return Task.FromResult(RegionOperationResult.NotReady());
+        }
+
+        if (!Snapshot.WritesAllowed)
+        {
+            return Task.FromResult(RegionOperationResult.ReadOnly());
+        }
+
+        RestoreRegionCalls.Add((regionId, revisionNo, expectedRevision));
+        if (ScriptedRestoreResults.Count > 0)
+        {
+            return Task.FromResult(ScriptedRestoreResults.Dequeue());
+        }
+
+        var row = FindRegion(regionId);
+        if (row is null)
+        {
+            return Task.FromResult(RegionOperationResult.Failed("TARGET_NOT_FOUND"));
+        }
+
+        if (row.RevisionNo != expectedRevision)
+        {
+            return Task.FromResult(RegionOperationResult.Failed("INPUT_REVISION_CHANGED"));
+        }
+
+        var source = RevisionsByRegion.TryGetValue(regionId, out var history)
+            ? history.Revisions.FirstOrDefault(revision => revision.RevisionNo == revisionNo)
+            : null;
+        if (source is null)
+        {
+            return Task.FromResult(RegionOperationResult.Failed("TARGET_NOT_FOUND"));
+        }
+
+        var revision = row.RevisionNo + 1;
+        WriteRegion(regionId, row with { RegionType = source.RegionType, RevisionNo = revision });
+        AppendRevision(regionId, revision, source.RegionType, source.SfxPolicy);
+        return Task.FromResult(RegionOperationResult.Success(
+            new RegionWriteSnapshot(regionId, revision, source.RegionType, source.SfxPolicy),
+            $"已恢复 revision {revisionNo} → revision {revision}（{source.RegionType}）"));
+    }
+
+    public Task<PageRerenderOutcome> RerenderPageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        if (Snapshot.State != HostViewState.Ready)
+        {
+            return Task.FromResult(PageRerenderOutcome.NotReady());
+        }
+
+        if (!Snapshot.WritesAllowed)
+        {
+            return Task.FromResult(PageRerenderOutcome.ReadOnly());
+        }
+
+        RerenderCalls.Add(pageId);
+        if (ScriptedRerenderResults.Count > 0)
+        {
+            return Task.FromResult(ScriptedRerenderResults.Dequeue());
+        }
+
+        var reports = RegionsByPage.TryGetValue(pageId, out var projection)
+            ? projection.Regions
+                .Select(region => new RerenderRegionReport(region.RegionId, "rendered", null, false))
+                .ToList()
+            : new List<RerenderRegionReport>();
+        var result = new PageRerenderResult(pageId, "artifact-fake", 1, reports, "preview-fake", null);
+        return Task.FromResult(PageRerenderOutcome.Success(
+            result,
+            $"已重渲染 revision 1（{reports.Count} 区域，预览已发布）"));
+    }
+
+    private RegionSummary? FindRegion(string regionId)
+    {
+        foreach (var projection in RegionsByPage.Values)
+        {
+            var row = projection.Regions.FirstOrDefault(region =>
+                string.Equals(region.RegionId, regionId, StringComparison.Ordinal));
+            if (row is not null)
+            {
+                return row;
+            }
+        }
+
+        return null;
+    }
+
+    private void WriteRegion(string regionId, RegionSummary updated)
+    {
+        foreach (var entry in RegionsByPage.ToList())
+        {
+            var index = entry.Value.Regions.ToList().FindIndex(region =>
+                string.Equals(region.RegionId, regionId, StringComparison.Ordinal));
+            if (index < 0)
+            {
+                continue;
+            }
+
+            var rows = entry.Value.Regions.ToList();
+            rows[index] = updated;
+            RegionsByPage[entry.Key] = entry.Value with { Regions = rows };
+            return;
+        }
+    }
+
+    private void AppendRevision(string regionId, int revisionNo, string regionType, string sfxPolicy)
+    {
+        if (!RevisionsByRegion.TryGetValue(regionId, out var history))
+        {
+            history = new RegionRevisionHistory(regionId, 0, Array.Empty<RegionRevisionSummary>());
+        }
+
+        var rows = history.Revisions
+            .Select(revision => revision with { IsCurrent = false })
+            .ToList();
+        rows.Add(new RegionRevisionSummary(
+            "rev-" + revisionNo,
+            revisionNo,
+            "restored",
+            "unreviewed",
+            false,
+            null,
+            "2026-10-28T00:00:00Z",
+            regionType,
+            sfxPolicy,
+            true));
+        RevisionsByRegion[regionId] = new RegionRevisionHistory(regionId, revisionNo, rows);
+    }
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>CHAPTER-SELECTOR-1: resolve the scripted book that owns a chapter id.</summary>
@@ -670,6 +920,14 @@ public sealed class FakeHostController : IHostController
             true,
             null);
     }
+
+    /// <summary>READER-WORKBENCH-1 AC3: a ready Host whose data-root policy is still read-only.</summary>
+    public static HostViewSnapshot ReadOnlySnapshot(params string[] titles) =>
+        ReadySnapshot(titles) with
+        {
+            ModeLine = "只读（S2 parity 前） · sidecars ready",
+            WritesAllowed = false,
+        };
 
     public static HostViewSnapshot FailureSnapshot() => new(
         HostViewState.Failed,

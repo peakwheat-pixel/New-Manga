@@ -1,0 +1,457 @@
+{
+  "ac": "AC5",
+  "mode": "real machine (Avalonia desktop app against the real frozen sidecars on a disposable data-root copy)",
+  "command": [
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\REGION-WORKBENCH-1\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Debug\\net9.0\\NewManga.App.exe",
+    "--data-root=\"G:\\CODEX\\New Manga.workspace\\task-envs\\REGION-WORKBENCH-1\\region-fixture-copy\"",
+    "--demo-write",
+    "--sidecar-dir=\"G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\"",
+    "--log-dir=\"G:\\CODEX\\New Manga.workspace\\task-envs\\REGION-WORKBENCH-1\\ac5-logs\"",
+    "--mutex-name=Local\\REGION-WORKBENCH-1-AC5",
+    "--legacy-shell-check=off",
+    "--page=workbench"
+  ],
+  "app_pid": 30812,
+  "window": "1280x820 (MainWindow.axaml default)",
+  "data_root": "G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1/region-fixture-copy",
+  "sidecar_directory": "G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy",
+  "fixture_source": "G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture (current test.ps1 re-seed)",
+  "ids": {
+    "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+    "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+    "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+    "page_width": 1200,
+    "page_height": 1660,
+    "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+    "region_revision_before": 3,
+    "region_type_before": "speech"
+  },
+  "ui_flow": [
+    "launch with --page=workbench: book/chapter/page selectors auto-load the real book → chapter → page",
+    "region list loads speech · user · rev 3 + the page image and the normalized geometry overlay",
+    "type ComboBox speech → narration, click 应用类型 (apply)",
+    "click 撤销到上一 revision (undo to previous revision)",
+    "click 重渲染本页 (rerender this page)"
+  ],
+  "observed": {
+    "ac1_loaded": {
+      "status": "已加载 1 个 region · 页 1200×1660",
+      "region_row": "speech · user · rev 3",
+      "page_selector": "1 · ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+      "screenshot": "ac5/screens/ac5-01-loaded.png"
+    },
+    "ac2_retyped": {
+      "status": "类型已更新为 narration（revision 4）",
+      "region_row": "narration · user · rev 4",
+      "screenshot": "ac5/screens/ac5-03-retyped.png"
+    },
+    "ac2_restored": {
+      "status": "已恢复 revision 3 → revision 5（speech）",
+      "region_row": "speech · restored · rev 5",
+      "screenshot": "ac5/screens/ac5-04-restored.png"
+    },
+    "ac2_rerendered": {
+      "status": "已重渲染 revision 1（1 区域，预览已发布）",
+      "screenshot": "ac5/screens/ac5-05-rerendered.png"
+    },
+    "selection_sync": "RegionList.SelectedItem 与画布覆盖框共用 ViewModel.SelectedRegion（列表项显示 speech · user · rev 3）"
+  },
+  "db_before_after": {
+    "before_sha256": "5333a4c5e68426a9d418d2586dcc6f1c15324eef880e18f9e72e1d81b850f2ed",
+    "after_sha256": "8abd39b3689f6fb413c9c615de8aec1b95c3d570a7b7927120f709222319485a",
+    "before_region": {
+      "region_type": "speech",
+      "bbox_page_pixels": "{\"bbox\": [120, 166, 960, 1328], \"polygon\": []}",
+      "current_revision_id": "1c8bfcbf01254794bd97dab6c3981c06"
+    },
+    "after_region": {
+      "region_type": "speech",
+      "bbox_page_pixels": "{\"bbox\": [120, 166, 960, 1328], \"polygon\": []}",
+      "current_revision_id": "c4c3d68e1f694a09945e6e23ba6e55d2",
+      "updated_at": "2026-10-28T12:39:02.996+08:00"
+    },
+    "after_revision_count": 5,
+    "detail": "ac5/db-before-after.json"
+  },
+  "core_wire_frames": 26,
+  "core_wire": [
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.4014486+08:00",
+      "request_id": "req-1",
+      "command": "core.ping",
+      "minor": 3,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.4868043+08:00",
+      "request_id": "hostctl-2",
+      "command": "OpenHostSession",
+      "minor": 3,
+      "payload": {
+        "host_session_id": "host__85yYU__XVzshXl0bp854uYJgLUbOCRHwtPzlgXO6eU",
+        "host_session_credential": "UMymQR4895Qr3EDt-QDxFE66leI64O1kPseIg5kdsd8"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.4895813+08:00",
+      "request_id": "req-3",
+      "command": "ListBooks",
+      "minor": 3,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.4918572+08:00",
+      "request_id": "req-4",
+      "command": "ListBooks",
+      "minor": 3,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.4937264+08:00",
+      "request_id": "req-5",
+      "command": "ListBooks",
+      "minor": 3,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.4973717+08:00",
+      "request_id": "req-6",
+      "command": "list_chapters",
+      "minor": 3,
+      "payload": {
+        "book_id": "14340ddad0ed472fbe687fe12340c5d8"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5006068+08:00",
+      "request_id": "req-7",
+      "command": "list_chapter_pages",
+      "minor": 6,
+      "payload": {
+        "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+      },
+      "error": null,
+      "result_summary": {
+        "page_count": 8,
+        "first_page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5346139+08:00",
+      "request_id": "req-8",
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5713046+08:00",
+      "request_id": "req-9",
+      "command": "list_regions",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": {
+        "region_count": 1,
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        },
+        "first_region": {
+          "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+          "region_type": "speech",
+          "revision_no": 3,
+          "origin": "user",
+          "geometry": {
+            "bbox": [
+              0.1,
+              0.1,
+              0.8,
+              0.8
+            ],
+            "polygon": []
+          }
+        }
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5836002+08:00",
+      "request_id": "req-10",
+      "command": "settings_provider_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5893467+08:00",
+      "request_id": "req-11",
+      "command": "settings_network_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5912304+08:00",
+      "request_id": "req-12",
+      "command": "settings_network_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5921791+08:00",
+      "request_id": "req-13",
+      "command": "settings_provider_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5934375+08:00",
+      "request_id": "req-14",
+      "command": "settings_provider_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.5937887+08:00",
+      "request_id": "req-15",
+      "command": "settings_network_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:36:46.594677+08:00",
+      "request_id": "req-16",
+      "command": "settings_provider_profiles_list",
+      "minor": 7,
+      "payload": {},
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:38:48.4043942+08:00",
+      "request_id": "req-17",
+      "command": "set_region_type",
+      "minor": 3,
+      "payload": {
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+        "new_region_type": "narration",
+        "expected_revision": 3
+      },
+      "error": null,
+      "result_summary": {
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+        "revision_no": 4,
+        "region_type": "narration",
+        "sfx_policy": "skip"
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:38:48.4075641+08:00",
+      "request_id": "req-18",
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:38:48.4326652+08:00",
+      "request_id": "req-19",
+      "command": "list_regions",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": {
+        "region_count": 1,
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        },
+        "first_region": {
+          "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+          "region_type": "narration",
+          "revision_no": 4,
+          "origin": "user",
+          "geometry": {
+            "bbox": [
+              0.1,
+              0.1,
+              0.8,
+              0.8
+            ],
+            "polygon": []
+          }
+        }
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:02.993165+08:00",
+      "request_id": "req-20",
+      "command": "list_region_revisions",
+      "minor": 3,
+      "payload": {
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:02.9969804+08:00",
+      "request_id": "req-21",
+      "command": "restore_region_revision",
+      "minor": 3,
+      "payload": {
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+        "revision_no": 3,
+        "expected_revision": 4
+      },
+      "error": null,
+      "result_summary": {
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+        "revision_no": 5,
+        "region_type": "speech",
+        "sfx_policy": "skip"
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:02.9987072+08:00",
+      "request_id": "req-22",
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:03.0189198+08:00",
+      "request_id": "req-23",
+      "command": "list_regions",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": {
+        "region_count": 1,
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        },
+        "first_region": {
+          "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+          "region_type": "speech",
+          "revision_no": 5,
+          "origin": "restored",
+          "geometry": {
+            "bbox": [
+              0.1,
+              0.1,
+              0.8,
+              0.8
+            ],
+            "polygon": []
+          }
+        }
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:15.2796761+08:00",
+      "request_id": "req-24",
+      "command": "rerender_page",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "artifact_id": "e5cc69f3549a4ff6a0cd03661bdf7b7b",
+        "revision_no": 1,
+        "report_count": 1,
+        "preview": {
+          "resource_id": "preview-a0ddba96a7df44d694ebbe33d56a8212",
+          "revision": "rev-1"
+        },
+        "preview_error": null
+      }
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:15.2822171+08:00",
+      "request_id": "req-25",
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": null
+    },
+    {
+      "timestamp_utc": "2026-10-28T12:39:15.3033892+08:00",
+      "request_id": "req-26",
+      "command": "list_regions",
+      "minor": 3,
+      "payload": {
+        "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+      },
+      "error": null,
+      "result_summary": {
+        "region_count": 1,
+        "page_size": {
+          "width": 1200,
+          "height": 1660
+        },
+        "first_region": {
+          "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+          "region_type": "speech",
+          "revision_no": 5,
+          "origin": "restored",
+          "geometry": {
+            "bbox": [
+              0.1,
+              0.1,
+              0.8,
+              0.8
+            ],
+            "polygon": []
+          }
+        }
+      }
+    }
+  ],
+  "wire_ndjson": "ac5/wire/core-service.ndjson",
+  "host_bridge_ndjson": "ac5/wire/host-bridge.ndjson"
+}

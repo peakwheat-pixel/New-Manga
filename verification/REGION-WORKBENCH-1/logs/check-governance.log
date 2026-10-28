@@ -1,0 +1,6 @@
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\REGION-WORKBENCH-1.md
+WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3140 bytes / 36 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga.workspace\worktrees\REGION-WORKBENCH-1\verification\REGION-WORKBENCH-1\logs\check-governance.log
+Governance check: PASS (3 warnings)

@@ -70,6 +70,102 @@ public sealed record ReadingProgressSnapshot(
     string? LastReadAt,
     double TotalReadSeconds);
 
+/// <summary>
+/// One navigation row from the Core <c>list_chapter_pages</c> read face
+/// (M2-PAGE-NAV-PROJECTION-1, contract M2-C1 rev 1.8 §5): page id, source filename and the
+/// user sort order only — the page image itself is fetched through the resource channel.
+/// </summary>
+public sealed record ChapterPageSummary(string PageId, string SourceFilename, int SortOrder);
+
+/// <summary>
+/// Normalized (0..1) region geometry from <c>list_regions</c> (M2-WORKBENCH-REACT-1 additive
+/// widening, contract rev 1.5): <c>bbox</c> is the display rectangle and <c>polygon</c> keeps the
+/// stored ring shape (empty for rectangles created from two corners).
+/// </summary>
+public sealed record RegionGeometrySummary(
+    double X,
+    double Y,
+    double Width,
+    double Height,
+    IReadOnlyList<RegionGeometryPoint> Polygon)
+{
+    /// <summary>Page-pixel rectangle for one Core page extent (normalized × page_size).</summary>
+    public RegionPixelRect ToPagePixels(RegionPageSize pageSize) => new(
+        X * pageSize.Width,
+        Y * pageSize.Height,
+        Width * pageSize.Width,
+        Height * pageSize.Height);
+}
+
+/// <summary>One normalized polygon vertex (0..1 on each axis).</summary>
+public sealed record RegionGeometryPoint(double X, double Y);
+
+/// <summary>Page-pixel rectangle projected from normalized region geometry.</summary>
+public sealed record RegionPixelRect(double X, double Y, double Width, double Height);
+
+/// <summary>Pixel extent of one Core page row (<c>list_regions.page_size</c>).</summary>
+public sealed record RegionPageSize(int Width, int Height);
+
+/// <summary>
+/// One region row of the <c>list_regions</c> read face (contract rev 1.4 §5.4, geometry added
+/// additively by rev 1.5). <see cref="Geometry"/> is null when the Core has no page extent for the
+/// page (unknown/hidden page: rows stay addressable, overlay math is unavailable).
+/// </summary>
+public sealed record RegionSummary(
+    string RegionId,
+    string RegionType,
+    string SfxPolicy,
+    string Origin,
+    int RevisionNo,
+    RegionGeometrySummary? Geometry);
+
+/// <summary>Result of <c>list_regions</c>: live region summaries + the page pixel extent.</summary>
+public sealed record RegionPageProjection(
+    IReadOnlyList<RegionSummary> Regions,
+    RegionPageSize? PageSize);
+
+/// <summary>One row of the <c>list_region_revisions</c> frozen revision history face (RC-4).</summary>
+public sealed record RegionRevisionSummary(
+    string RegionRevisionId,
+    int RevisionNo,
+    string Origin,
+    string ReviewState,
+    bool IsPinned,
+    string? RestoredFromRevisionId,
+    string? CreatedAt,
+    string RegionType,
+    string SfxPolicy,
+    bool IsCurrent);
+
+/// <summary>Result of <c>list_region_revisions</c> for one region.</summary>
+public sealed record RegionRevisionHistory(
+    string RegionId,
+    int CurrentRevisionNo,
+    IReadOnlyList<RegionRevisionSummary> Revisions);
+
+/// <summary>Post-write effective state echoed by <c>set_region_type</c> / <c>restore_region_revision</c>.</summary>
+public sealed record RegionWriteSnapshot(
+    string RegionId,
+    int RevisionNo,
+    string RegionType,
+    string SfxPolicy);
+
+/// <summary>One region row of a <c>rerender_page</c> report.</summary>
+public sealed record RerenderRegionReport(
+    string RegionId,
+    string Status,
+    string? SkipReason,
+    bool FontSubstituted);
+
+/// <summary>Result of <c>rerender_page</c>: published translated artifact revision + preview state.</summary>
+public sealed record PageRerenderResult(
+    string PageId,
+    string ArtifactId,
+    int RevisionNo,
+    IReadOnlyList<RerenderRegionReport> Reports,
+    string? PreviewResourceId,
+    string? PreviewError);
+
 /// <summary>Catalog key returned by <c>resolve_page_resource</c> (idempotent per page).</summary>
 public sealed record ResolvedPageResource(string ResourceId, string Revision);
 
@@ -107,6 +203,9 @@ public sealed class CoreServiceOptions
 /// </summary>
 public sealed class CoreServiceClient : IAsyncDisposable
 {
+    /// <summary>M2-PAGE-NAV-PROJECTION-1: <c>list_chapter_pages</c> was introduced at protocol minor 6.</summary>
+    private const int ChapterPagesMinor = 6;
+
     private readonly SidecarProcess _process;
     private readonly CoreServiceOptions _options;
     private int _requestCounter;
@@ -437,6 +536,305 @@ public sealed class CoreServiceClient : IAsyncDisposable
         return chapters;
     }
 
+    /// <summary>
+    /// M2-PAGE-NAV-PROJECTION-1 page navigation read face (<c>list_chapter_pages</c>, contract
+    /// M2-C1 rev 1.8 §5): committed pages of one chapter in the user's current sort order.
+    /// The command was introduced at protocol minor 6; the frozen 2.3 sidecar accepts it (evidence:
+    /// verification/REGION-WORKBENCH-1/logs/wire-probe.json), so the request carries 6 while the
+    /// registry's proven dispatcher binding keeps its own minor.
+    /// </summary>
+    public async Task<IReadOnlyList<ChapterPageSummary>> ListChapterPagesAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId))
+        {
+            throw new ArgumentException("chapter_id is required", nameof(chapterId));
+        }
+
+        var response = await SendAsync(
+                "list_chapter_pages",
+                ChapterPagesMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("chapter_id", chapterId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "list_chapter_pages");
+        var pages = new List<ChapterPageSummary>();
+        if (result.TryGetProperty("pages", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object)
+                {
+                    throw Malformed("list_chapter_pages entry is not an object");
+                }
+
+                pages.Add(new ChapterPageSummary(
+                    ReadString(item, "page_id") ?? string.Empty,
+                    ReadString(item, "source_filename") ?? string.Empty,
+                    ReadInt(item, "sort_order")));
+            }
+        }
+
+        return pages;
+    }
+
+    /// <summary>
+    /// Region read face (<c>list_regions</c>, contract rev 1.4 §5.4 + rev 1.5 additive widening):
+    /// live region summaries in reading order plus the page pixel extent the overlay math needs.
+    /// </summary>
+    public async Task<RegionPageProjection> ListRegionsAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId))
+        {
+            throw new ArgumentException("page_id is required", nameof(pageId));
+        }
+
+        var response = await SendAsync(
+                "list_regions",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("page_id", pageId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "list_regions");
+
+        RegionPageSize? pageSize = null;
+        if (result.TryGetProperty("page_size", out var size) && size.ValueKind == JsonValueKind.Object)
+        {
+            pageSize = new RegionPageSize(ReadInt(size, "width"), ReadInt(size, "height"));
+        }
+
+        var regions = new List<RegionSummary>();
+        if (result.TryGetProperty("regions", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object)
+                {
+                    throw Malformed("list_regions entry is not an object");
+                }
+
+                regions.Add(new RegionSummary(
+                    ReadString(item, "region_id") ?? string.Empty,
+                    ReadString(item, "region_type") ?? string.Empty,
+                    ReadString(item, "sfx_policy") ?? string.Empty,
+                    ReadString(item, "origin") ?? string.Empty,
+                    ReadInt(item, "revision_no"),
+                    ParseRegionGeometry(item)));
+            }
+        }
+
+        return new RegionPageProjection(regions, pageSize);
+    }
+
+    /// <summary>Region revision history read face (<c>list_region_revisions</c>, RC-4).</summary>
+    public async Task<RegionRevisionHistory> ListRegionRevisionsAsync(
+        string regionId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(regionId))
+        {
+            throw new ArgumentException("region_id is required", nameof(regionId));
+        }
+
+        var response = await SendAsync(
+                "list_region_revisions",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("region_id", regionId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "list_region_revisions");
+
+        var revisions = new List<RegionRevisionSummary>();
+        if (result.TryGetProperty("revisions", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object)
+                {
+                    throw Malformed("list_region_revisions entry is not an object");
+                }
+
+                revisions.Add(new RegionRevisionSummary(
+                    ReadString(item, "region_revision_id") ?? string.Empty,
+                    ReadInt(item, "revision_no"),
+                    ReadString(item, "origin") ?? string.Empty,
+                    ReadString(item, "review_state") ?? string.Empty,
+                    ReadBool(item, "is_pinned"),
+                    ReadString(item, "restored_from_revision_id"),
+                    ReadString(item, "created_at"),
+                    ReadString(item, "region_type") ?? string.Empty,
+                    ReadString(item, "sfx_policy") ?? string.Empty,
+                    ReadBool(item, "is_current")));
+            }
+        }
+
+        return new RegionRevisionHistory(
+            ReadString(result, "region_id") ?? regionId,
+            ReadInt(result, "current_revision_no"),
+            revisions);
+    }
+
+    /// <summary>
+    /// Region retype write face (<c>set_region_type</c>). <paramref name="expectedRevision"/> is the
+    /// optimistic guard: it must be the revision the caller read, never a guessed value. The Core
+    /// answers INPUT_REVISION_CHANGED when it no longer matches.
+    /// </summary>
+    public async Task<RegionWriteSnapshot> SetRegionTypeAsync(
+        string regionId,
+        string newRegionType,
+        int? expectedRevision = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(regionId))
+        {
+            throw new ArgumentException("region_id is required", nameof(regionId));
+        }
+
+        if (string.IsNullOrWhiteSpace(newRegionType))
+        {
+            throw new ArgumentException("new_region_type is required", nameof(newRegionType));
+        }
+
+        var response = await SendAsync(
+                "set_region_type",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("region_id", regionId);
+                    writer.WriteString("new_region_type", newRegionType);
+                    if (expectedRevision is { } expected)
+                    {
+                        writer.WriteNumber("expected_revision", expected);
+                    }
+
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        return ParseRegionWriteSnapshot(RequireResult(response, "set_region_type"), regionId);
+    }
+
+    /// <summary>
+    /// Restores one region revision into a NEW revision (<c>restore_region_revision</c>). Both
+    /// integers are required by the frozen Core: the source revision and the current revision the
+    /// optimistic guard must match.
+    /// </summary>
+    public async Task<RegionWriteSnapshot> RestoreRegionRevisionAsync(
+        string regionId,
+        int revisionNo,
+        int expectedRevision,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(regionId))
+        {
+            throw new ArgumentException("region_id is required", nameof(regionId));
+        }
+
+        if (revisionNo <= 0 || expectedRevision <= 0)
+        {
+            throw new ArgumentException("revision_no and expected_revision must be positive", nameof(revisionNo));
+        }
+
+        var response = await SendAsync(
+                "restore_region_revision",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("region_id", regionId);
+                    writer.WriteNumber("revision_no", revisionNo);
+                    writer.WriteNumber("expected_revision", expectedRevision);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        return ParseRegionWriteSnapshot(RequireResult(response, "restore_region_revision"), regionId);
+    }
+
+    /// <summary>
+    /// Manual page rerender (<c>rerender_page</c>): applies the current global typeset settings and
+    /// commits a translated artifact revision; the optional preview publication is projected as
+    /// <see cref="PageRerenderResult.PreviewResourceId"/> / <see cref="PageRerenderResult.PreviewError"/>.
+    /// </summary>
+    public async Task<PageRerenderResult> RerenderPageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId))
+        {
+            throw new ArgumentException("page_id is required", nameof(pageId));
+        }
+
+        var response = await SendAsync(
+                "rerender_page",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("page_id", pageId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "rerender_page");
+        var reports = new List<RerenderRegionReport>();
+        if (result.TryGetProperty("reports", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object)
+                {
+                    throw Malformed("rerender_page report entry is not an object");
+                }
+
+                reports.Add(new RerenderRegionReport(
+                    ReadString(item, "region_id") ?? string.Empty,
+                    ReadString(item, "status") ?? string.Empty,
+                    ReadString(item, "skip_reason"),
+                    ReadBool(item, "font_substituted")));
+            }
+        }
+
+        string? previewResourceId = null;
+        if (result.TryGetProperty("preview", out var preview) && preview.ValueKind == JsonValueKind.Object)
+        {
+            previewResourceId = ReadString(preview, "resource_id");
+        }
+
+        return new PageRerenderResult(
+            ReadString(result, "page_id") ?? pageId,
+            ReadString(result, "artifact_id") ?? string.Empty,
+            ReadInt(result, "revision_no"),
+            reports,
+            previewResourceId,
+            ReadString(result, "preview_error"));
+    }
+
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
@@ -720,6 +1118,68 @@ public sealed class CoreServiceClient : IAsyncDisposable
 
     private static SidecarException Malformed(string detail) =>
         new(SidecarErrorCode.MalformedResponse, SidecarSpec.CoreServiceName, detail);
+
+    /// <summary>
+    /// Parses the optional <c>geometry</c> row field (contract rev 1.5): <c>bbox</c> = [x, y, w, h]
+    /// normalized and <c>polygon</c> = [[x, y], ...]. A row without geometry (page with no extent)
+    /// yields null instead of a fabricated rectangle.
+    /// </summary>
+    private static RegionGeometrySummary? ParseRegionGeometry(JsonElement row)
+    {
+        if (!row.TryGetProperty("geometry", out var geometry) || geometry.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        if (!geometry.TryGetProperty("bbox", out var bbox) ||
+            bbox.ValueKind != JsonValueKind.Array ||
+            bbox.GetArrayLength() < 4)
+        {
+            throw Malformed("list_regions geometry.bbox is not a 4-element array");
+        }
+
+        var values = new double[4];
+        var index = 0;
+        foreach (var value in bbox.EnumerateArray())
+        {
+            if (index >= values.Length || value.ValueKind != JsonValueKind.Number)
+            {
+                throw Malformed("list_regions geometry.bbox has a non-numeric value");
+            }
+
+            values[index++] = value.GetDouble();
+        }
+
+        var polygon = new List<RegionGeometryPoint>();
+        if (geometry.TryGetProperty("polygon", out var ring) && ring.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var point in ring.EnumerateArray())
+            {
+                if (point.ValueKind != JsonValueKind.Array || point.GetArrayLength() < 2)
+                {
+                    throw Malformed("list_regions geometry.polygon point is not a 2-element array");
+                }
+
+                var x = point[0];
+                var y = point[1];
+                if (x.ValueKind != JsonValueKind.Number || y.ValueKind != JsonValueKind.Number)
+                {
+                    throw Malformed("list_regions geometry.polygon point has a non-numeric value");
+                }
+
+                polygon.Add(new RegionGeometryPoint(x.GetDouble(), y.GetDouble()));
+            }
+        }
+
+        return new RegionGeometrySummary(values[0], values[1], values[2], values[3], polygon);
+    }
+
+    /// <summary>Parses the post-write effective state (<c>set_region_type</c> / <c>restore_region_revision</c>).</summary>
+    private static RegionWriteSnapshot ParseRegionWriteSnapshot(JsonElement result, string fallbackRegionId) => new(
+        ReadString(result, "region_id") ?? fallbackRegionId,
+        ReadInt(result, "revision_no"),
+        ReadString(result, "region_type") ?? string.Empty,
+        ReadString(result, "sfx_policy") ?? string.Empty);
 
     /// <summary>READER-PROGRESS-1: parses the committed <c>ReadingProgressSnapshot</c> (contract §6.3).</summary>
     private static ReadingProgressSnapshot ParseProgressSnapshot(JsonElement element) => new(

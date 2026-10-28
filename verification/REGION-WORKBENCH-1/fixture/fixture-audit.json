@@ -1,0 +1,90 @@
+{
+  "ac": "AC5 / fixture protection audit",
+  "generated_at": "2026-10-28T12:50:00+08:00",
+  "note": "本任务不直接写共享 fixture；共享 S4 region fixture 是既有脚本 scripts/seed_s4_region_fixture.py 的派生播种产物，apps/desktop-avalonia/scripts/test.ps1 每次门禁都会删除并重建它。region_id 每次播种新生成（uuid），book_id / chapter_id / page_id 沿用 BOOK-FIXTURE-1 的 durable state，因此稳定。本 Task 的代码/测试断言一律从副本的 fixture.json 动态读取 id，不写死。",
+  "shared_fixtures": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture",
+      "manifest_disposition": "PRESERVE_REFERENCED（只读消费，复制后写）",
+      "role": "derived fixture seeded by scripts/seed_s4_region_fixture.py; re-seeded by scripts/test.ps1",
+      "observations": [
+        {
+          "when": "2026-10-28T12:09+08:00 (任务卡登记口径，实现开始前观测)",
+          "region_id": "117094eb28354fe1b2282c1372c0babb",
+          "region_revision_no": 3,
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+          "library_db_sha256_manifest": "170fbb570af5fc43ab64b6582097a0fcd2612128130c4bf8717ec4af14693ff2"
+        },
+        {
+          "when": "2026-10-28T12:10:25+08:00 (被其它既有进程重播种后)",
+          "region_id": "ab064bd8c33a470e8f339c3f246b94e7",
+          "region_revision_no": 3,
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+          "library_db_sha256_manifest": "88a0bb58979703ffa7b0d99a5ac81ec0a984b26582d9eb261ef861eac931141c",
+          "probe_copy_hashes": {
+            "library.db": "daaf08fb1ed69d65e74c2441dcebb3b5e25b3e815c574e2aaf205e86e31a2d18",
+            "library.db-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "fixture.json": "bb953bb1a03bc1e0baac7c79fa209696d5c65c8712c0882822208b1bf1df471c",
+            "note": "以上是 G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1/probe 副本的实际 sha256：副本创建于该次播种之后、本任务 test.ps1 之前，用于 AC1 wire 版本探针；本表按实测值记录。"
+          }
+        },
+        {
+          "when": "2026-10-28T12:29:37+08:00 (本任务 AC4 门禁 test.ps1 的既有播种步骤)",
+          "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+          "region_revision_no": 3,
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+          "library_db_sha256_manifest": "bb44a80bad6a66c3b37ac0a48a46cd0d0cb8572e336b9f6aaff9945cf6f37f6a",
+          "library_db_sha256_after_core_close": "5333a4c5e68426a9d418d2586dcc6f1c15324eef880e18f9e72e1d81b850f2ed",
+          "fixture_json_sha256": "3df9d0924b49519cf6954f09e432786e338bcf2f74977426f078446e77a67115",
+          "note": "fixture.json 里的 library_db_sha256 是播种时 db+wal 的合并摘要；Core 正常退出后 WAL 被 checkpoint 进 db，单文件 sha256 变化属预期。"
+        },
+        {
+          "when": "2026-10-28T12:48:57+08:00 (最终 AC4 门禁 test.ps1 的既有播种步骤；交付代码含工作台三列修复后的重跑)",
+          "region_id": "df24eda4229247ec81e53a523d42aa9d",
+          "region_revision_no": 3,
+          "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+          "library_db_sha256_manifest": "691efb9d56f6dc9ff7056ca535991dcb1c8bfd906482d3a452578df560d3b762",
+          "library_db_sha256_after_core_close": "d671dcf8f42f676fce22e30238782bb1dcb43dba907ced1b2058989d520a6cde",
+          "fixture_json_sha256": "36595360e7de19d7e72b79ae76650b28b9be290098cc5d5ccfad66d384097bf6",
+          "note": "最终门禁 258/258 使用的播种；AC5 真机副本仍基于 12:29 播种（region 436da52c…），两者互不影响（AC5 只写自己的副本）。"
+        }
+      ],
+      "conclusion": "共享路径被既有测试脚本按设计重播种，非本任务写入。本任务只读取并复制 durable state（library.db + managed/）到 task-env 副本后再写；未对共享路径执行任何写操作。"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "manifest_disposition": "PRESERVE_REFERENCED（上游只读 fixture）",
+      "library_db_sha256_observed": "6e6e10f73f0c28534fc2083a7c809b4829aea91f208024126c26dbb62b8b74f5",
+      "note": "本任务只经既有 seed 脚本间接读取；未写入。"
+    }
+  ],
+  "task_env_copies": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1/region-fixture-copy",
+      "source": "S4 region-fixture re-seed of 2026-10-28T12:29:37+08:00",
+      "purpose": "AC5 真机写操作的数据根副本（只写这里）",
+      "before": {
+        "library_db_sha256": "5333a4c5e68426a9d418d2586dcc6f1c15324eef880e18f9e72e1d81b850f2ed",
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+        "region_revision_no": 3,
+        "region_type": "speech",
+        "current_revision_id": "1c8bfcbf01254794bd97dab6c3981c06"
+      },
+      "after": {
+        "library_db_sha256": "8abd39b3689f6fb413c9c615de8aec1b95c3d570a7b7927120f709222319485a",
+        "region_id": "436da52c1ac84fc0ae96c0ad6a87acca",
+        "region_revision_no": 5,
+        "region_type": "speech",
+        "current_revision_id": "c4c3d68e1f694a09945e6e23ba6e55d2",
+        "revision_count": 5,
+        "note": "sequence = seed(rev3 speech) → set_region_type narration(rev4) → restore revision 3(rev5 speech)；region geometry 未变（bbox [120,166,960,1328]）。"
+      },
+      "db_comparison": "ac5/db-before-after.json"
+    }
+  ],
+  "checks": {
+    "shared_fixture_written_by_this_task": false,
+    "copies_written_only_in_task_env": true,
+    "ids_read_dynamically_from_fixture_json": true
+  }
+}

@@ -297,13 +297,207 @@ public sealed class HostController : IHostController
         }
     }
 
+    // ---------------------------------------------------------------------------------------
+    // READER-WORKBENCH-1 AC1/AC2: single-page workbench region data. Reads degrade to empty/null;
+    // writes return typed outcomes and never throw into the UI.
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>AC1: ordered pages of one chapter; empty when the Host/Core is unavailable.</summary>
+    public async Task<IReadOnlyList<ChapterPageSummary>> ListChapterPagesAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<ChapterPageSummary>();
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListChapterPagesAsync(chapterId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return Array.Empty<ChapterPageSummary>();
+        }
+    }
+
+    /// <summary>AC1: live regions + page pixel extent; null when the Host/Core is unavailable.</summary>
+    public async Task<RegionPageProjection?> LoadPageRegionsAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListRegionsAsync(pageId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
+    /// <summary>AC1: region revision history; null when the Host/Core is unavailable.</summary>
+    public async Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
+        string regionId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(regionId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListRegionRevisionsAsync(regionId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
+    /// <summary>AC1: page image bytes through the Host resource channel; null when unavailable.</summary>
+    public async Task<byte[]?> ReadPageImageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ReadPageImageAsync(pageId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
+    /// <summary>AC2: retype one region with the caller's read revision as the optimistic guard.</summary>
+    public async Task<RegionOperationResult> SetRegionTypeAsync(
+        string regionId,
+        string newRegionType,
+        int expectedRevision,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(regionId) || string.IsNullOrWhiteSpace(newRegionType) || expectedRevision <= 0)
+        {
+            return RegionOperationResult.Failed("INVALID_REQUEST", "region_id / new_region_type / expected_revision 无效");
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return RegionOperationResult.NotReady();
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            var snapshot = await runtime
+                .SetRegionTypeAsync(regionId, newRegionType, expectedRevision, cancellationToken)
+                .ConfigureAwait(false);
+            return RegionOperationResult.Success(snapshot, $"类型已更新为 {snapshot.RegionType}（revision {snapshot.RevisionNo}）");
+        }
+        catch (ReadOnlyHostException)
+        {
+            return RegionOperationResult.ReadOnly();
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return RegionOperationResult.Failed(ErrorCodeOf(ex), UserMessageOf(ex));
+        }
+    }
+
+    /// <summary>AC2: restore one region revision into a new revision.</summary>
+    public async Task<RegionOperationResult> RestoreRegionRevisionAsync(
+        string regionId,
+        int revisionNo,
+        int expectedRevision,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(regionId) || revisionNo <= 0 || expectedRevision <= 0)
+        {
+            return RegionOperationResult.Failed("INVALID_REQUEST", "region_id / revision_no / expected_revision 无效");
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return RegionOperationResult.NotReady();
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            var snapshot = await runtime
+                .RestoreRegionRevisionAsync(regionId, revisionNo, expectedRevision, cancellationToken)
+                .ConfigureAwait(false);
+            return RegionOperationResult.Success(
+                snapshot,
+                $"已恢复 revision {revisionNo} → revision {snapshot.RevisionNo}（{snapshot.RegionType}）");
+        }
+        catch (ReadOnlyHostException)
+        {
+            return RegionOperationResult.ReadOnly();
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return RegionOperationResult.Failed(ErrorCodeOf(ex), UserMessageOf(ex));
+        }
+    }
+
+    /// <summary>AC2: manual page rerender with a typed outcome (artifact/revision/preview).</summary>
+    public async Task<PageRerenderOutcome> RerenderPageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId))
+        {
+            return PageRerenderOutcome.Failed("INVALID_REQUEST", "page_id 无效");
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return PageRerenderOutcome.NotReady();
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            var result = await runtime.RerenderPageAsync(pageId, cancellationToken).ConfigureAwait(false);
+            var preview = !string.IsNullOrEmpty(result.PreviewResourceId) ? "预览已发布" : "预览不可用";
+            return PageRerenderOutcome.Success(
+                result,
+                $"已重渲染 revision {result.RevisionNo}（{result.Reports.Count} 区域，{preview}）");
+        }
+        catch (ReadOnlyHostException)
+        {
+            return PageRerenderOutcome.ReadOnly();
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return PageRerenderOutcome.Failed(ErrorCodeOf(ex), UserMessageOf(ex));
+        }
+    }
+
     /// <summary>
     /// CREDENTIAL-UI-1 AC1/AC2: provider + proxy targets with the Core <c>credential_state</c>. Reads the
     /// two existing P15 profile-list commands (no new Host contract); an empty list means "no profiles or
     /// Host not ready". Never reads or returns a secret.
     /// </summary>
-    public async Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(        CancellationToken cancellationToken = default)
     {
         if (_runtime is null || !_runtime.Result.IsReady || _runtime.Commands is not { } commands)
         {
@@ -1256,7 +1450,11 @@ public sealed class HostController : IHostController
             books ?? Array.Empty<BookSummary>(),
             wireCount + bridgeFrames,
             allAscii,
-            _snapshot.LastChineseRoundTrip);
+            _snapshot.LastChineseRoundTrip)
+        {
+            // READER-WORKBENCH-1 AC3: the workbench's write gate mirrors the Host data-root policy.
+            WritesAllowed = _runtime.Policy.WritesAllowed,
+        };
         Changed?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -20,7 +20,15 @@ public sealed record HostViewSnapshot(
     IReadOnlyList<BookSummary> Books,
     int WireFrameCount,
     bool AllRequestsAsciiOnly,
-    string? LastChineseRoundTrip);
+    string? LastChineseRoundTrip)
+{
+    /// <summary>
+    /// READER-WORKBENCH-1 AC3: <see cref="NewManga.Host.DataRootPolicy.WritesAllowed"/> at the last
+    /// host transition. The workbench disables its write controls when this is false; headless fakes
+    /// default to true so existing UI suites keep exercising the writable path.
+    /// </summary>
+    public bool WritesAllowed { get; init; } = true;
+}
 
 /// <summary>READER-PROGRESS-1: typed outcome of one progress save (never throws into the UI).</summary>
 public enum ReaderProgressSaveStatus
@@ -112,6 +120,51 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
     /// </summary>
     Task<IReadOnlyList<ChapterSummary>> ListChaptersAsync(
         string bookId,
+        CancellationToken cancellationToken = default);
+
+    // ---------------------------------------------------------------------------------------
+    // READER-WORKBENCH-1: single-page workbench region data. Reads never throw into the UI (empty /
+    // null on an unavailable Host); writes return typed outcomes. Every write carries the revision
+    // the UI actually read (optimistic guard); the Host never guesses revision numbers or ids.
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>AC1: ordered pages of one chapter (<c>list_chapter_pages</c>); empty when unavailable.</summary>
+    Task<IReadOnlyList<ChapterPageSummary>> ListChapterPagesAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>AC1: live regions + page pixel extent (<c>list_regions</c>); null when unavailable.</summary>
+    Task<RegionPageProjection?> LoadPageRegionsAsync(
+        string pageId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>AC1: region revision history (<c>list_region_revisions</c>); null when unavailable.</summary>
+    Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
+        string regionId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>AC1: page image bytes through the Host resource channel; null when unavailable.</summary>
+    Task<byte[]?> ReadPageImageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>AC2: retype one region (<c>set_region_type</c>) with the read revision as the guard.</summary>
+    Task<RegionOperationResult> SetRegionTypeAsync(
+        string regionId,
+        string newRegionType,
+        int expectedRevision,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>AC2: restore one revision into a new revision (<c>restore_region_revision</c>).</summary>
+    Task<RegionOperationResult> RestoreRegionRevisionAsync(
+        string regionId,
+        int revisionNo,
+        int expectedRevision,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>AC2: manual page rerender (<c>rerender_page</c>) with typed outcome.</summary>
+    Task<PageRerenderOutcome> RerenderPageAsync(
+        string pageId,
         CancellationToken cancellationToken = default);
 
     /// <summary>
