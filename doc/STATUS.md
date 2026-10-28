@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) ready（models 包 AGPL 声明 + AGPL 全文随包 + 重打包；Reviewer dsh）。
+- 当前 Task：[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) in_review（models 包 AGPL 声明 + 全文随包 + 重打包；Reviewer dsh）。
 - 最近完成：[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`；258/258；工作台真实 region 读/改标/撤销/重渲染 + 只读门）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
