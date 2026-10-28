@@ -3,7 +3,7 @@ id: REGION-WORKBENCH-1
 title: 工作台接真实 region（读/改标/撤销/重渲染）+ 只读门
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: user_authorized_2026-10-27_followups
 suggested_owner: region-workbench-owner
 owner: null
