@@ -15,7 +15,7 @@
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
 |PDF-EXPORT-UI-1|—|done（导出面板 ZIP/PDF 格式选择；集成 `6deefdcc3`；249/249；2026-10-28 DSH 复核）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
-|RELEASE-SMOKE-1|—|ready（新包真机全流程快检）|
+|RELEASE-SMOKE-1|—|superseded（REPACK-3/4/5 真机全流程验收 + IMPORT-TRIAGE-1 已覆盖其目标；原证据保留）|
 |RELEASE-REPACK-3|—|done（新包全流程真跑：UI 导入/导出 ZIP；Mica=actual；234/234；集成 4290afb1b）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
@@ -24,8 +24,8 @@
 |AD002-FOLLOWUPS-1|—|proposed（20 项遗留登记：NS 批次/签名/进度/多章/精度/region 写 UI 等）|
 |REGION-WORKBENCH-1|S4-CMD-BATCH-1|ready（工作台真实 region 读/改标/撤销/重渲染 + 只读门；Owner region-workbench-owner / Reviewer dsh；2026-10-28 释放）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
-|THEME-MACOS-1|—|in_review（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
-|THEME-MACOS-LAYOUTS-1|—|ready（三套不同布局的 macOS 风主题：Sonoma/Launchpad/Split；证据 verification/THEME-MACOS-LAYOUTS-1）|
+|THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
+|THEME-MACOS-LAYOUTS-1|—|done（并入 THEME-MACOS-2：三套布局 Sonoma/Launchpad/Split，`0e1f71151`；REPACK-5 已合并）|
 
 READY 节点：REGION-WORKBENCH-1
 

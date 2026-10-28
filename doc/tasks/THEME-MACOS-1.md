@@ -3,7 +3,7 @@ id: THEME-MACOS-1
 title: 新增 macOS Sonoma 风主题（id macos-sonoma，中文名「macOS 风」）
 kind: implementation
 governance_version: 3
-status: in_review
+status: superseded
 approval: user_authorized_2026-10-27_theme_macos_1
 suggested_owner: macos-theme-owner
 owner: macos-theme-owner
@@ -165,3 +165,9 @@ allowed_paths:
 - **Lead 已验证**：在某一稳定快照上 	est.ps1 曾全绿（241/241）且 pytest 0F/2773P/10S；但并发编辑导致构建反复转红，**无法形成可信的最终证据**。
 - **裁决**：本卡 **保持 in_review**；主题实现须在**独立分支 + 干净 worktree** 重做并由 Lead 正式复核后 done。此前 AC 标记不计入 Lead 结论。
 - 主题会话收口要求：commit 自己的文件（禁止 git add -A）→ 干净 worktree 跑 	est.ps1（≥241）→ 我复核截图/p95/对比度/字体许可后收口。
+
+## 收口裁决（2026-10-28，DSH）— superseded
+
+- 本卡交付的 Sonoma 单 pack 主题已被 [THEME-MACOS-2](THEME-MACOS-2.md) 在独立分支 + 干净 worktree 重做并 `done`（集成 `ec7316738`；test.ps1 249/249；真机截图 4 张；热切换 p95 10.456ms），三套布局（Sonoma/Launchpad/Split）由 `0e1f71151` 补齐并已由 RELEASE-REPACK-5 打包验收。
+- 按本卡 2026-10-28 Lead 复核记录的要求（「独立分支 + 干净 worktree 重做后 done」），重做由 THEME-MACOS-2 承接；本卡不再单独集成，标 `superseded`。
+- 原证据与 16 条 pin 保留为历史证据，不删除、不迁移。

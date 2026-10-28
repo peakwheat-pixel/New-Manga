@@ -3,7 +3,7 @@ id: RELEASE-SMOKE-1
 title: 新包真机全流程快检
 kind: implementation
 governance_version: 3
-status: ready
+status: superseded
 approval: user_authorized_2026-10-27_round_2_5
 suggested_owner: core-admin-rca
 owner: null
@@ -78,3 +78,9 @@ REPACK-2 包（base 102,981,645B / models 724,989,976B）已产出；UI 导入/�
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：AC2 导入/导出被陈旧包阻塞（需 REPACK-3）；AC4 Mica/4K/IME/键盘 Esc/H 待环境或用户确认。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+
+## 收口裁决（2026-10-28，DSH）— superseded
+
+- 本卡目标（新包真机全流程快检）已被后续更完整的验收覆盖：RELEASE-REPACK-3（UI 导入/导出真跑，234/234）、RELEASE-REPACK-4（base 103.33MB / models 725.34MB；安装 2,545ms；UI 导入 9→10；ZIP 7.07MB + PDF 20.73MB；退出/卸载干净；243/243）、RELEASE-REPACK-5（含三布局主题重打包 + 安装/导出/沉浸真机；249/249）、IMPORT-TRIAGE-1（REPACK-5 干净根 UI 导入 8→9，非回归）。
+- 本卡 AC2 当时 BLOCKED 的导入/导出，与 AC4 的 Mica/DPI 环境项，均已由上述后续 Task 在更新的包与环境上复测通过；无需再以陈旧 REPACK-2 包重跑。
+- 证据与 11 条 pin 保留为历史；标 `superseded`，不删除、不迁移。
