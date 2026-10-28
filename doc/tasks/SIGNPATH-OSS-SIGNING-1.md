@@ -13,7 +13,7 @@ base_commit: 8fcba8a89632502754acfdda61803c3398fcd2f2
 branch: task/SIGNPATH-OSS-SIGNING-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/SIGNPATH-OSS-SIGNING-1
 integration_commit: null
-delivery_head: 1ab7f904aeb084fdcdefd74209e8b344b12209ab
+delivery_head: e38f32dbf1b8080b19519717693108823c11d206
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/SIGNPATH-OSS-SIGNING-1
@@ -77,7 +77,7 @@ allowed_paths:
 
 - Handoff：[SIGNPATH-OSS-SIGNING-1-handoff.md](../handoffs/SIGNPATH-OSS-SIGNING-1-handoff.md)
 - Review：**独立审阅 CHANGES_REQUESTED → Rev2 已修复**（Reviewer=`region-workbench-owner`；Owner=`dsh-lead`，不同人）。3 个 P0（隐私表述、pin 可达性、CI 可执行性）+ 8 个 P1 + 9 个 P2，逐项修复记录见 `REPORT.md` §7 与文末 Rev2 记录；待 Reviewer 复核 Rev2。
-- delivery_head：`1ab7f904aeb084fdcdefd74209e8b344b12209ab`（Rev2 材料 + 证据提交）。
+- delivery_head：`e38f32dbf1b8080b19519717693108823c11d206`（Rev3 材料 + 证据提交；Rev2 提交 `1ab7f904a` 为其祖先）。
 - 明确未做：未 push、未创建 GitHub Release、未运行 CI、未调用 SignPath API、未签名。
 
 ## Canonical Evidence
@@ -85,12 +85,12 @@ allowed_paths:
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
 | facts | AC1 | verification/SIGNPATH-OSS-SIGNING-1/facts.json | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | ad17365336aa5d1bc3a62be18113aebced84def90c0943502f5b26d26c11976d | CANONICAL |
-| report | AC1–AC5 | verification/SIGNPATH-OSS-SIGNING-1/REPORT.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 24f8a0f2cfadf4f1470a22bc1ea506a7d0313a5b2148f41f5188f02c52c54999 | CANONICAL |
-| application-en | AC2 | doc/release/SIGNPATH-APPLICATION.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | d517d2679040a783cdd4da60eeec3e50072c2eb97a8232ed9e901d8285173dfc | CANONICAL |
-| checklist-zh | AC3 | doc/release/SIGNPATH-APPLICATION-CHECKLIST.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 22f05352063c1e4b3655d8d3b7b0a60eeec6120d731186e9128fc77d309f081c | CANONICAL |
-| ci-draft | AC4 | .github/workflows/build-release.yml | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 4a6332d2f972ba1028daa49159d589419ea76c0a9a58e884470f0dc39ea7ac94 | SOURCE_PIN |
-| readme | AC4 | README.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 04c7bc9b0431c61f23b3f76618591c56da433f03150ea60209550e9fde454a73 | CANONICAL |
-| handoff | 交付 | doc/handoffs/SIGNPATH-OSS-SIGNING-1-handoff.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 4e0b1e72f9638d4af939ebbcfc7a35decb49aa7fb95b594c6a4ed3b8d764b350 | CANONICAL |
+| report | AC1–AC5 | verification/SIGNPATH-OSS-SIGNING-1/REPORT.md | e38f32dbf1b8080b19519717693108823c11d206 | 367ad97fda2817a45ee5fcd5e54a12e7e6f118d57eb95bda8440f18735641ecd | CANONICAL |
+| application-en | AC2 | doc/release/SIGNPATH-APPLICATION.md | e38f32dbf1b8080b19519717693108823c11d206 | 744c60d4656443f59b11084e12a8c4456c349db577be61c66d132d7fd3d6c6ea | CANONICAL |
+| checklist-zh | AC3 | doc/release/SIGNPATH-APPLICATION-CHECKLIST.md | e38f32dbf1b8080b19519717693108823c11d206 | ec63fe6b223c7c50800b0b349ce57389e33042e111940d921487ccbb27fc329f | CANONICAL |
+| ci-draft | AC4 | .github/workflows/build-release.yml | e38f32dbf1b8080b19519717693108823c11d206 | cca6d473f7c07c35164fb5b333e6060b79f712416e313c49d2715bd4d2a84d1a | SOURCE_PIN |
+| readme | AC4 | README.md | e38f32dbf1b8080b19519717693108823c11d206 | 04c7bc9b0431c61f23b3f76618591c56da433f03150ea60209550e9fde454a73 | CANONICAL |
+| handoff | 交付 | doc/handoffs/SIGNPATH-OSS-SIGNING-1-handoff.md | e38f32dbf1b8080b19519717693108823c11d206 | 4e0b1e72f9638d4af939ebbcfc7a35decb49aa7fb95b594c6a4ed3b8d764b350 | CANONICAL |
 | command-surface-log | AC5 | verification/SIGNPATH-OSS-SIGNING-1/logs/extract-command-surface.log | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 9c7099a79eb909378494fb65cd2eb015c2693d521db46e94853de683c3b95c94 | SOURCE_PIN |
 | governance-check | AC5 | verification/SIGNPATH-OSS-SIGNING-1/check-governance.json | - | 4e7fabebdf9511a9ca4309064d0edad8e8fe3f326a5d102c6950df41d946990d | CANONICAL |
 
@@ -121,3 +121,4 @@ allowed_paths:
 - 已修：P0-A `build-release.yml` step name 含 `dev:` 导致 YAML scanner error → 加引号（已验证 `yaml.safe_load` 通过；jobs=build、steps=12）；P0-B `-PythonExe python` 在 `build_sidecar.ps1` 内 `Test-Path` 失败 → workflow 改为 `$py = (Get-Command python).Source` 后传 `-PythonExe $py`，APPLICATION §5 与 CHECKLIST 注意 2 同步；P2-A `extract-command-surface.log` pin 由 CRLF worktree sha 改为 git blob sha256 `9c7099a7…`（162 B LF；`check.ps1` 双 basis 仍 PASS）。
 - 修复后自验：YAML 解析 PASS；`check.ps1 -TaskPath` PASS（2 warnings）；pin 校验（含新 blob 口径）PASS。
 - 待办：Reviewer 复核 Rev3 → PASS 后 DSH 集成收口。
+- Rev3 复核后修复（P1-1）：Rev3 修改了 4 个已 pin 文件（APPLICATION/CHECKLIST/workflow/REPORT），证据表仍指向 Rev2 blob → 已把 `delivery_head` 前移到 `e38f32dbf` 并按 HEAD blob 重打 report/application/checklist/ci-draft 四行 pin（readme/handoff/facts/log 的 blob 未变，仅 commit 列统一到 `e38f32dbf`）；自验 5 个 pin 的 blob sha256 与 HEAD 一致。
