@@ -1,0 +1,95 @@
+{
+  "task": "SIGNPATH-OSS-SIGNING-1",
+  "generated_at_utc": "2026-10-28T07:40:00Z",
+  "revised_at_utc": "2026-10-28T07:58:00Z",
+  "revision_note": "Rev2 after independent review: license byte basis clarified (git blob vs CRLF checkout), root entries completed, no other fact changes.",
+  "method": "GitHub REST API (read-only), git ls-remote, local git, PowerShell file hashes. No credentials used.",
+  "github_repository": {
+    "full_name": "peakwheat-pixel/New-Manga",
+    "html_url": "https://github.com/peakwheat-pixel/New-Manga",
+    "private": false,
+    "fork": false,
+    "default_branch": "main",
+    "license": null,
+    "language": "Python",
+    "size_kb": 28456,
+    "created_at": "2026-09-24T17:31:46Z",
+    "pushed_at": "2026-10-26T11:48:10Z",
+    "has_issues": true,
+    "has_discussions": false,
+    "stargazers_count": 0,
+    "forks_count": 0,
+    "topics": [],
+    "description": null,
+    "homepage": null,
+    "source": "https://api.github.com/repos/peakwheat-pixel/New-Manga (fetched 2026-10-28)"
+  },
+  "remote_branches": [
+    { "name": "main", "sha": "6a68fdeb92d8a1c7903166a8076d6260bf8fa79a" },
+    { "name": "clean-snapshot-20261026", "sha": "e8147c6c8a7edde4e5784999454acb5732a869fb" },
+    { "name": "codex/clean-source-snapshot", "sha": "e34a90d001cce1fa966aec7d2b032bb5ad1cf148" }
+  ],
+  "default_branch_root_entries": [".gitignore", ".repowikiignore", "AGENTS.md", "doc", "docs", "experiments", "pytest.ini", "requirements-dev.txt", "requirements.txt", "src", "tests", "verification", "wiki"],
+  "default_branch_gaps_for_application": {
+    "license_at_repo_root": "MISSING (raw …/main/LICENSE -> 404; GitHub license = null)",
+    "readme_at_repo_root": "MISSING (raw …/main/README.md -> 404)",
+    "ci_workflow": "MISSING (raw …/main/.github/workflows/build.yml -> 404)",
+    "apps_directory": "MISSING on default branch (old Python-only tree); current product lives on local main / clean-snapshot branch"
+  },
+  "clean_snapshot_branch_root_entries": ["apps", "packaging", "src", "tests", "test_assets", "tools", "pytest.ini", "requirements.txt", "requirements-dev.txt", ".gitignore", ".gitattributes"],
+  "clean_snapshot_branch_gaps": {
+    "license_at_repo_root": "MISSING (raw …/clean-snapshot-20261026/LICENSE -> 404)",
+    "readme_at_repo_root": "MISSING (raw …/clean-snapshot-20261026/README.md -> 404)"
+  },
+  "local_repository": {
+    "path": "G:/CODEX/New Manga",
+    "branch": "main",
+    "head": "8fcba8a89632502754acfdda61803c3398fcd2f2",
+    "pushed": false,
+    "commits": 4167,
+    "license_file": {
+      "path": "LICENSE",
+      "text": "GNU GPL-3.0",
+      "bytes_worktree": 34906,
+      "bytes_git_blob": 34674,
+      "note": "worktree checkout uses CRLF (+232 bytes); git blob is LF"
+    },
+    "license_agpl_text": {
+      "path": "LICENSE-AGPL-3.0.txt",
+      "text": "GNU AGPL-3.0 official text",
+      "bytes_worktree": 35184,
+      "bytes_git_blob": 34523,
+      "note": "worktree checkout uses CRLF (+661 bytes); git blob is LF and byte-identical to the official GNU text"
+    },
+    "notices": ["NOTICE.md", "THIRD_PARTY_LICENSES.md", "apps/desktop-avalonia/docs/LICENSE_AUDIT.md"],
+    "ci_workflows": "none under .github/"
+  },
+  "release_artifacts_0_1_0": [
+    { "file": "NewManga-0.1.0-setup.exe", "bytes": 68611208, "sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691", "kind": "unsigned NSIS per-user installer (PE32)", "path": "G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe" },
+    { "file": "NewManga-0.1.0-win-x64.zip", "bytes": 103492048, "sha256": "722fc62b53a4488dff8e3043b419a720cb59c3e4c790a9c8d19511efb627e8ef", "kind": "base zip (no model weights)", "path": "G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64.zip" },
+    { "file": "NewManga-0.1.0-win-x64-models.zip", "bytes": 725499708, "sha256": "480d06323ce482214955582dc86696bfdd8023e9227100941fd6b8873b237f67", "kind": "models zip (AGPL-3.0 weights bundled)", "path": "G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64-models.zip" }
+  ],
+  "integrity_tooling": {
+    "checksums_manifest": "packaging/release/SHA256SUMS (sha256sum compatible, 3 entries)",
+    "verify_script": "packaging/release/verify-release.ps1 (per-item PASS/FAIL, exit 1 on mismatch)",
+    "generate_script": "packaging/release/generate-checksums.ps1",
+    "release_notes": "apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md"
+  },
+  "quality_baseline_2026_10_28": {
+    "dotnet_tests": "258/258 passed, 0 skipped (coreclient 61 / host 60 / app 137)",
+    "pytest": "2773 passed, 10 skipped, 0 failed",
+    "command_surface": "66/66 IMPLEMENTED (extract-command-surface.py --check PASS)",
+    "governance": "tools/governance/check.ps1 PASS"
+  },
+  "signing_status": {
+    "current": "NotSigned (SmartScreen warns; user accepted unsigned release on 2026-10-21)",
+    "signtool_pipeline": "self-signed test certificate + DigiCert RFC3161 timestamp verified on a copy (V1-RELEASE-SIGNING-1); no production certificate",
+    "signpath": "not applied yet; this task only drafts the application"
+  },
+  "privacy_fact": {
+    "default_processing": "local only; no telemetry, no account, no network listener",
+    "remote_provider": "user-configured remote providers may receive data kinds listed in the settings privacy notice (OCR: page images; translation: text; inpainting: images/masks) per src/application/settings/privacy.py",
+    "source": "src/application/settings/privacy.py (read 2026-10-28 during review fixes)"
+  },
+  "untrusted_note": "GitHub API payload was treated as external data. No instructions from it were executed."
+}
