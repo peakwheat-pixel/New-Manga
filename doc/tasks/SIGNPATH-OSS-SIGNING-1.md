@@ -3,7 +3,7 @@ id: SIGNPATH-OSS-SIGNING-1
 title: SignPath Foundation 免费 OSS 代码签名申请材料（英文草案 + 前置清单 + CI 草案）
 kind: planning
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-28_signpath_draft
 suggested_owner: dsh-lead
 owner: dsh-lead
@@ -12,10 +12,10 @@ depends_on: [RELEASE-VERIFY-1, V1-RELEASE-SIGNING-1]
 base_commit: 8fcba8a89632502754acfdda61803c3398fcd2f2
 branch: task/SIGNPATH-OSS-SIGNING-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/SIGNPATH-OSS-SIGNING-1
-integration_commit: null
+integration_commit: f632ee39cac93a057ee186ee663756f03ef39a6e
 delivery_head: e38f32dbf1b8080b19519717693108823c11d206
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/SIGNPATH-OSS-SIGNING-1
 allowed_paths:
   - doc/tasks/SIGNPATH-OSS-SIGNING-1.md
@@ -76,7 +76,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - Handoff：[SIGNPATH-OSS-SIGNING-1-handoff.md](../handoffs/SIGNPATH-OSS-SIGNING-1-handoff.md)
-- Review：**独立审阅 CHANGES_REQUESTED → Rev2 已修复**（Reviewer=`region-workbench-owner`；Owner=`dsh-lead`，不同人）。3 个 P0（隐私表述、pin 可达性、CI 可执行性）+ 8 个 P1 + 9 个 P2，逐项修复记录见 `REPORT.md` §7 与文末 Rev2 记录；待 Reviewer 复核 Rev2。
+- Review：**独立审阅 Rev1→CHANGES_REQUESTED（3 P0/8 P1/9 P2）→ Rev2 修复 → Rev2 复核 CHANGES_REQUESTED（2 P0/1 P2）→ Rev3 修复 → Rev3 复核 CHANGES_REQUESTED（1 P1 pin 前移）→ 修复 → 最终 PASS（可集成）**（Reviewer=`region-workbench-owner`；Owner=`dsh-lead`，不同人；修复记录见 `REPORT.md` §7/§8 与文末 Rev2/Rev3 记录）。
 - delivery_head：`e38f32dbf1b8080b19519717693108823c11d206`（Rev3 材料 + 证据提交；Rev2 提交 `1ab7f904a` 为其祖先）。
 - 明确未做：未 push、未创建 GitHub Release、未运行 CI、未调用 SignPath API、未签名。
 
@@ -102,23 +102,23 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-10-28（集成 `f632ee39c`；Reviewer 最终 PASS）。
 - canonical_evidence_status：`complete`（9 项 pin：7 CANONICAL + 2 SOURCE_PIN；含 `check-governance.json`）。
-- resource_closeout_status：`pending`（worktree 保留至集成）。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`；无 task-env；未 push；无产物复制）。
 - 删除、迁移、归档数量/字节数：0。
-- 未关闭项及保留原因：材料为草案，申请与签名由用户在 SignPath 审核通过后执行（不在本卡）；V1-RELEASE-SIGNING-1 保持 in_review。
-- 当前指针清理：交付时更新 STATUS/PLAN/LEDGER。
+- 未关闭项及保留原因：材料为草案，申请与签名由用户在 SignPath 审核通过后执行（不在本卡）；V1-RELEASE-SIGNING-1 保持 in_review（等待证书/SignPath 审核）。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
 
 ## Rev2 记录（独立审阅修复，2026-10-28）
 
 - Reviewer（region-workbench-owner）结论：CHANGES_REQUESTED（3 P0 / 8 P1 / 9 P2）。
 - 已修：P0-1 隐私表述（README + 申请 §2 + facts.privacy_fact）；P0-2 pin/交付 head 重打到 `1ab7f904a`（blob hash 不变）；P0-3 CI 草案（dev 依赖、`-SkipWeights`、base-only 清单、注释说明完整清单来源）；P1-1 字节口径；P1-2 README 中文要点；P1-3 Handoff 模板节；P1-4 删除不存在的 task-env 行；P1-5 `sign` 输入替代 `secrets` in `if:` + upload `id`；P1-6 手动 Run 触发口径；P1-7 门禁证据 pin；P2 项（PE32、four license/notice files、发行说明语言、证据路径、NSIS 3.x、根条目）已逐一修正。
-- 待办：Reviewer 复核 Rev2 后给最终结论；随后 DSH 集成收口。
+- 待办：Reviewer 复核 Rev2 后给最终结论；随后 DSH 集成收口。→ 已完成（见 Rev3 记录与 Closeout）。
 
 ## Rev3 记录（Rev2 复核修复，2026-10-28）
 
 - Reviewer 复核 Rev2：CHANGES_REQUESTED（2 P0-A/B + 1 P2-A）。
 - 已修：P0-A `build-release.yml` step name 含 `dev:` 导致 YAML scanner error → 加引号（已验证 `yaml.safe_load` 通过；jobs=build、steps=12）；P0-B `-PythonExe python` 在 `build_sidecar.ps1` 内 `Test-Path` 失败 → workflow 改为 `$py = (Get-Command python).Source` 后传 `-PythonExe $py`，APPLICATION §5 与 CHECKLIST 注意 2 同步；P2-A `extract-command-surface.log` pin 由 CRLF worktree sha 改为 git blob sha256 `9c7099a7…`（162 B LF；`check.ps1` 双 basis 仍 PASS）。
 - 修复后自验：YAML 解析 PASS；`check.ps1 -TaskPath` PASS（2 warnings）；pin 校验（含新 blob 口径）PASS。
-- 待办：Reviewer 复核 Rev3 → PASS 后 DSH 集成收口。
-- Rev3 复核后修复（P1-1）：Rev3 修改了 4 个已 pin 文件（APPLICATION/CHECKLIST/workflow/REPORT），证据表仍指向 Rev2 blob → 已把 `delivery_head` 前移到 `e38f32dbf` 并按 HEAD blob 重打 report/application/checklist/ci-draft 四行 pin（readme/handoff/facts/log 的 blob 未变，仅 commit 列统一到 `e38f32dbf`）；自验 5 个 pin 的 blob sha256 与 HEAD 一致。
+- 待办：Reviewer 复核 Rev3 → PASS 后 DSH 集成收口。→ 已完成：Reviewer 最终 PASS，集成 `f632ee39c`。
+- Rev3 复核后修复（P1-1）：Rev3 修改了 4 个已 pin 文件（APPLICATION/CHECKLIST/workflow/REPORT），证据表仍指向 Rev2 blob → 已把 `delivery_head` 前移到 `e38f32dbf` 并按 HEAD blob 重打 report/application/checklist/ci-draft 四行 pin（readme/handoff/facts/log 的 blob 未变，仅 commit 列统一到 `e38f32dbf`）；自验 9 个 pin 的 worktree/blob 双 basis 全部一致（bad=0）。
