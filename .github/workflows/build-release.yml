@@ -67,7 +67,7 @@ jobs:
           python --version
           choco install nsis --no-progress -y
 
-      - name: Restore Python dependencies (runtime + dev: pytest/PyInstaller)
+      - name: "Restore Python dependencies (runtime + dev: pytest/PyInstaller)"
         shell: pwsh
         run: |
           python -m pip install --upgrade pip
@@ -86,7 +86,10 @@ jobs:
       - name: Build Core sidecar bundle (weights-free public build)
         shell: pwsh
         run: |
-          pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -PythonExe python -SkipWeights
+          # build_sidecar.ps1 requires a real python.exe path (Test-Path/Resolve-Path inside the script),
+          # so resolve the interpreter from PATH instead of passing the bare command name.
+          $py = (Get-Command python).Source
+          pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -PythonExe $py -SkipWeights
 
       - name: Build base package (unsigned)
         shell: pwsh

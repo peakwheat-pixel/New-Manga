@@ -71,3 +71,11 @@
 | P1-6 | 清单 P1-4 说 tag 触发但 workflow 仅 workflow_dispatch | 改为「手动 Run（sign=false/true）」并说明 tag 触发需先取消注释 |
 | P1-7 | AC5 门禁证据未 pin | 新增 `check-governance.json` 与 `logs/extract-command-surface.log` 并 pin |
 | P2 | PE32+/license trio/release notes 语言/证据路径/NSIS 版本/根条目等 | 逐一修正（PE32、four license/notice files、中文发行说明并计划补英文摘要、证据路径限定、NSIS 3.x（本机 3.13）、根条目补 .gitignore/.repowikiignore） |
+
+## 8. Rev2 复核修复（Rev3，Reviewer 复核后，2026-10-28）
+
+| 编号 | 问题 | 修复 |
+|---|---|---|
+| P0-A | `build-release.yml` 的 step name 含 `dev:` 造成 YAML scanner error（line 70），workflow 不可解析 | step name 加引号；修复后 `yaml.safe_load` 通过（jobs=build、steps=12）；REPORT/卡中静态检查声明重新为真 |
+| P0-B | `-PythonExe python` 在 `build_sidecar.ps1` 内 `Test-Path` 失败（脚本要求真实 python.exe 路径） | workflow 改为 `$py = (Get-Command python).Source` 并传 `-PythonExe $py`；APPLICATION §5、CHECKLIST 注意 2 同步修正 |
+| P2-A | `extract-command-surface.log` 的 pin 是 CRLF worktree sha，LF checkout/新克隆会失配 | 改为 git blob sha256 `9c7099a7…`（162 B LF）；`check.ps1` 双 basis 校验仍 PASS |

@@ -22,7 +22,8 @@
 > 注意 1：`clean-snapshot-20261026` 分支根目录也没有 LICENSE（`…/clean-snapshot-20261026/LICENSE` → 404），
 > 因此**不能直接拿该分支当审核对象**；先补齐许可文件再推，或把许可文件补进该分支。
 > 注意 2：公开 CI 构建需 `pip install -r requirements.txt -r requirements-dev.txt`（PyInstaller/pytest 在
-> dev 依赖里），sidecar 用 `-PythonExe python -SkipWeights`（不公开模型权重）；workflow 草案已按此编写，
+> dev 依赖里），sidecar 用 `-PythonExe (Get-Command python).Source -SkipWeights`（脚本要求真实
+> `python.exe` 路径，不能只传命令名；不公开模型权重）；workflow 草案已按此编写，
 > 清单在其内部生成 base-only 版本，完整三产物清单仍由维护者本机发布流程生成。
 
 ## P1 — 申请与集成（你本人操作，约 30–60 分钟）

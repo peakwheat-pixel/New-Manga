@@ -79,8 +79,9 @@ Current pipeline (reproducible on a clean Windows machine):
 1. Install dependencies: .NET 9 SDK, Python 3.11, `pip install -r requirements.txt -r requirements-dev.txt`
    (dev requirements include PyInstaller and pytest), NSIS 3.x, PowerShell 7.
 2. Build the Python Core sidecar bundle with
-   `packaging/m2ac5/build_sidecar.ps1 -PythonExe python -SkipWeights` for a weights-free public build (the
-   `-models` variant stages weights separately; weights are never uploaded to the repository).
+   `packaging/m2ac5/build_sidecar.ps1 -PythonExe (Get-Command python).Source -SkipWeights` for a
+   weights-free public build (the script requires a real `python.exe` path; the `-models` variant stages
+   weights separately and weights are never uploaded to the repository).
 3. `dotnet publish` the Avalonia host (single-file, self-contained, trimmed) → `app/`.
 4. Robocopy the Core sidecar into `app/core-sidecar/`.
 5. Copy the license/notice set (`LICENSE`, `LICENSE-AGPL-3.0.txt`, `NOTICE.md`, `THIRD_PARTY_LICENSES.md`)

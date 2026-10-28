@@ -91,7 +91,7 @@ allowed_paths:
 | ci-draft | AC4 | .github/workflows/build-release.yml | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 4a6332d2f972ba1028daa49159d589419ea76c0a9a58e884470f0dc39ea7ac94 | SOURCE_PIN |
 | readme | AC4 | README.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 04c7bc9b0431c61f23b3f76618591c56da433f03150ea60209550e9fde454a73 | CANONICAL |
 | handoff | 交付 | doc/handoffs/SIGNPATH-OSS-SIGNING-1-handoff.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 4e0b1e72f9638d4af939ebbcfc7a35decb49aa7fb95b594c6a4ed3b8d764b350 | CANONICAL |
-| command-surface-log | AC5 | verification/SIGNPATH-OSS-SIGNING-1/logs/extract-command-surface.log | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe | SOURCE_PIN |
+| command-surface-log | AC5 | verification/SIGNPATH-OSS-SIGNING-1/logs/extract-command-surface.log | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 9c7099a79eb909378494fb65cd2eb015c2693d521db46e94853de683c3b95c94 | SOURCE_PIN |
 | governance-check | AC5 | verification/SIGNPATH-OSS-SIGNING-1/check-governance.json | - | 4e7fabebdf9511a9ca4309064d0edad8e8fe3f326a5d102c6950df41d946990d | CANONICAL |
 
 ## Resource Manifest
@@ -114,3 +114,10 @@ allowed_paths:
 - Reviewer（region-workbench-owner）结论：CHANGES_REQUESTED（3 P0 / 8 P1 / 9 P2）。
 - 已修：P0-1 隐私表述（README + 申请 §2 + facts.privacy_fact）；P0-2 pin/交付 head 重打到 `1ab7f904a`（blob hash 不变）；P0-3 CI 草案（dev 依赖、`-SkipWeights`、base-only 清单、注释说明完整清单来源）；P1-1 字节口径；P1-2 README 中文要点；P1-3 Handoff 模板节；P1-4 删除不存在的 task-env 行；P1-5 `sign` 输入替代 `secrets` in `if:` + upload `id`；P1-6 手动 Run 触发口径；P1-7 门禁证据 pin；P2 项（PE32、four license/notice files、发行说明语言、证据路径、NSIS 3.x、根条目）已逐一修正。
 - 待办：Reviewer 复核 Rev2 后给最终结论；随后 DSH 集成收口。
+
+## Rev3 记录（Rev2 复核修复，2026-10-28）
+
+- Reviewer 复核 Rev2：CHANGES_REQUESTED（2 P0-A/B + 1 P2-A）。
+- 已修：P0-A `build-release.yml` step name 含 `dev:` 导致 YAML scanner error → 加引号（已验证 `yaml.safe_load` 通过；jobs=build、steps=12）；P0-B `-PythonExe python` 在 `build_sidecar.ps1` 内 `Test-Path` 失败 → workflow 改为 `$py = (Get-Command python).Source` 后传 `-PythonExe $py`，APPLICATION §5 与 CHECKLIST 注意 2 同步；P2-A `extract-command-surface.log` pin 由 CRLF worktree sha 改为 git blob sha256 `9c7099a7…`（162 B LF；`check.ps1` 双 basis 仍 PASS）。
+- 修复后自验：YAML 解析 PASS；`check.ps1 -TaskPath` PASS（2 warnings）；pin 校验（含新 blob 口径）PASS。
+- 待办：Reviewer 复核 Rev3 → PASS 后 DSH 集成收口。
