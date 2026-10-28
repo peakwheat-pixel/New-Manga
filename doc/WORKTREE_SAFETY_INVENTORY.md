@@ -365,3 +365,9 @@ Task：GIT-MAINLINE-CONVERGENCE-1；当前主线 main；初始 HEAD fdca2057e。
 **完整性复验**：`git worktree list` 仅主 checkout；`refs/heads` 仅 main；`refs/archive/*` 21 不变；tracked 工作区干净；声明审计 0 errors / 1983 保护根；治理检查 PASS。
 
 **未触碰**：未删除任何 Git 对象、ref 或工作树目录；仅清理已无对应工作树的元数据。
+## 2026-10-28 主题合并清理记录（DSH）
+
+- 删除 G:/CODEX/New Manga.workspace/worktrees/THEME-MACOS-2：worktree 干净（0 未提交项）、HEAD  e1f71151 已合并入 main（merge commit 828c7c68e），内容与主线一致（三布局实现已择优采用）；删除前逐项核对。
+- 删除 G:/CODEX/New Manga.workspace/worktrees/THEME-MACOS-2-saber：干净（0 未提交项）、HEAD d030e3d5 已合并（8e4ec7066）。
+- 分支 	ask/THEME-MACOS-2、	ask/THEME-MACOS-2-saber 保留（未 push，作为追溯记录）。
+- 备份：外部会话早期未提交 WIP 已在 G:/CODEX/New Manga.workspace/task-envs/EXTERNAL-THEME-WIP-20261028。
