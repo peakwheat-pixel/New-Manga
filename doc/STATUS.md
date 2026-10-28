@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) ready（SignPath Foundation 免费 OSS 签名申请材料：英文草案 + 前置清单 + CI 草案；Reviewer region-workbench-owner）。
+- 当前 Task：[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) in_review（SignPath Foundation 免费 OSS 签名申请材料；Reviewer region-workbench-owner）。
 - 最近完成：[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) `done`（`5364652b0`；SHA-256 清单/校验脚本/发行说明+SmartScreen 指引）；[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`；独立安装 6.64s/卸载 0.74s）；[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
