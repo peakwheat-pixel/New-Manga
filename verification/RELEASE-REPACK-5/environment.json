@@ -1,0 +1,19 @@
+{
+  "os": {
+    "registry_product_name": "Windows 10 Pro",
+    "cim_caption": "Microsoft Windows 11 专业版",
+    "build": "26300",
+    "ubr": 9711
+  },
+  "displays": {
+    "screens": 1,
+    "primary": "2560x1440 @96dpi (100%)",
+    "mi_tv": "3840x2160 物理连接但当前不在桌面扩展"
+  },
+  "mica": {
+    "fresh_launch_actual": "Mica",
+    "material_log_line": "2026-10-28T00:59:54.0079348Z material=Mica; requested=Mica,Blur,None; actual=Mica",
+    "note": "本包全新启动后 actual=Mica（REPACK-4 补证结论的非回归路径一致）"
+  },
+  "ime": "N/A（需人工确认）"
+}
