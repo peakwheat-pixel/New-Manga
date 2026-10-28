@@ -1,0 +1,31 @@
+{
+  "ac": "AC1",
+  "generated_by": "ThemeLayoutsTests.SwitchingLayoutPacks_MovesNavHosts_AndAppliesBookshelfAndSettingsLayouts",
+  "switches": [
+    {
+      "pack_id": "macos-sonoma",
+      "layout_kind": "Sonoma",
+      "nav_host": "TitleBar/NavPanel",
+      "shelf_style": "CenteredGrid",
+      "settings_style": "TwoColumn",
+      "nav_buttons_total_4": true
+    },
+    {
+      "pack_id": "macos-launchpad",
+      "layout_kind": "Launchpad",
+      "nav_host": "DockHost",
+      "shelf_style": "LaunchpadGrid",
+      "settings_style": "SingleColumn",
+      "nav_buttons_total_4": true
+    },
+    {
+      "pack_id": "macos-split",
+      "layout_kind": "Split",
+      "nav_host": "SidebarHost",
+      "shelf_style": "SplitList",
+      "settings_style": "SplitSections",
+      "nav_buttons_total_4": true
+    }
+  ],
+  "legacy_pack_returns_to_sonoma": true
+}

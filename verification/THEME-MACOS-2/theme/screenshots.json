@@ -1,0 +1,66 @@
+{
+  "ac": "AC2",
+  "generated_by": "ThemeMacosTests.MacosScreenshots_RenderFourRealFrames_WithVariantBackgrounds",
+  "renderer": "Avalonia.Headless + Skia (UseHeadlessDrawing=false) CaptureRenderedFrame()",
+  "width": 1280,
+  "height": 820,
+  "captures": [
+    {
+      "name": "bookshelf-light",
+      "path": "screenshots/bookshelf-light.png",
+      "width": 1280,
+      "height": 820,
+      "bytes": 29349,
+      "expected_app_bg": "#F5F5F7",
+      "primary_background": "#fff5f5f7",
+      "sampled_pixels": 41984,
+      "matched_app_bg_samples": 23955,
+      "matched_app_bg_ratio": 0.5706,
+      "distinct_colors": 204,
+      "pass": true
+    },
+    {
+      "name": "settings-light",
+      "path": "screenshots/settings-light.png",
+      "width": 1280,
+      "height": 820,
+      "bytes": 73642,
+      "expected_app_bg": "#F5F5F7",
+      "primary_background": "#fff5f5f7",
+      "sampled_pixels": 41984,
+      "matched_app_bg_samples": 4131,
+      "matched_app_bg_ratio": 0.0984,
+      "distinct_colors": 328,
+      "pass": true
+    },
+    {
+      "name": "settings-dark",
+      "path": "screenshots/settings-dark.png",
+      "width": 1280,
+      "height": 820,
+      "bytes": 72650,
+      "expected_app_bg": "#1E1E1E",
+      "primary_background": "#ff1e1e1e",
+      "sampled_pixels": 41984,
+      "matched_app_bg_samples": 3914,
+      "matched_app_bg_ratio": 0.0932,
+      "distinct_colors": 329,
+      "pass": true
+    },
+    {
+      "name": "bookshelf-dark",
+      "path": "screenshots/bookshelf-dark.png",
+      "width": 1280,
+      "height": 820,
+      "bytes": 28676,
+      "expected_app_bg": "#1E1E1E",
+      "primary_background": "#ff1e1e1e",
+      "sampled_pixels": 41984,
+      "matched_app_bg_samples": 23103,
+      "matched_app_bg_ratio": 0.5503,
+      "distinct_colors": 210,
+      "pass": true
+    }
+  ],
+  "light_and_dark_differ": true
+}

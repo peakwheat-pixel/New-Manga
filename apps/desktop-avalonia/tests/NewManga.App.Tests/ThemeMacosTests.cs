@@ -116,10 +116,16 @@ public sealed class ThemeMacosTests
     [AvaloniaFact]
     public void MacosPack_IsRegistered_WithChineseLabel_AndDefaultIsUnchanged()
     {
-        Assert.Equal(7, ThemePacks.All.Count);
+        // THEME-MACOS-2 adds macos-launchpad / macos-split next to macos-sonoma: the macOS family is now
+        // three packs, each listed exactly once, and the default pack is still saber-purple.
+        Assert.Equal(9, ThemePacks.All.Count);
         Assert.Equal("saber-purple", ThemePacks.Default.Id);
         Assert.Equal(
-            new[] { "saber-purple", "saber-light", "midnight", "sakura", "emerald", "mono", MacosId },
+            new[]
+            {
+                "saber-purple", "saber-light", "midnight", "sakura", "emerald", "mono",
+                MacosId, ThemePacks.MacOsLaunchpadId, ThemePacks.MacOsSplitId,
+            },
             ThemePacks.All.Select(pack => pack.Id).ToArray());
 
         var mac = ThemePacks.ById(MacosId);

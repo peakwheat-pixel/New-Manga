@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "payload shapes mirror HostCommandDispatcher keys",
+  "provider_create_keys": "provider_id,display_name,capabilities,endpoint,model,network_profile_id,enabled",
+  "network_create_keys": "display_name,mode,proxy_endpoint,verify_tls,confirm_disable_tls_verification,allow_proxy_failure_direct_fallback",
+  "global_scope_only_kind": true
+}

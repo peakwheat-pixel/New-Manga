@@ -1,0 +1,109 @@
+{
+  "ac": "AC4",
+  "generated_by": "ThemeMacosTests.MacosContrast_MeetsWcag_ForBodyAndSecondaryText",
+  "formula": "WCAG 2.x relative luminance: L = 0.2126*R + 0.7152*G + 0.0722*B (channel linearized: c<=0.03928 ? c/12.92 : ((c+0.055)/1.055)^2.4); ratio = (Lmax+0.05)/(Lmin+0.05)",
+  "requirements": "body text >=4.5, secondary text >=3, nav-active text >=4.5",
+  "pairs": [
+    {
+      "variant": "Light",
+      "text_token": "TextPrimary",
+      "text_hex": "#ff1d1d1f",
+      "background_token": "AppBg",
+      "background_hex": "#fff5f5f7",
+      "ratio": 15.457,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "variant": "Light",
+      "text_token": "TextPrimary",
+      "text_hex": "#ff1d1d1f",
+      "background_token": "CardBg",
+      "background_hex": "White",
+      "ratio": 16.83,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "variant": "Light",
+      "text_token": "TextSecondary",
+      "text_hex": "#ff6e6e73",
+      "background_token": "AppBg",
+      "background_hex": "#fff5f5f7",
+      "ratio": 4.658,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "variant": "Light",
+      "text_token": "TextSecondary",
+      "text_hex": "#ff6e6e73",
+      "background_token": "CardBg",
+      "background_hex": "White",
+      "ratio": 5.071,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "variant": "Light",
+      "text_token": "NavActiveText",
+      "text_hex": "#ff003e7e",
+      "background_token": "NavActiveBg",
+      "background_hex": "#ffd6e9ff",
+      "ratio": 8.521,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "variant": "Dark",
+      "text_token": "TextPrimary",
+      "text_hex": "#fff5f5f7",
+      "background_token": "AppBg",
+      "background_hex": "#ff1e1e1e",
+      "ratio": 15.311,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "variant": "Dark",
+      "text_token": "TextPrimary",
+      "text_hex": "#fff5f5f7",
+      "background_token": "CardBg",
+      "background_hex": "#ff2c2c2e",
+      "ratio": 12.8,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "variant": "Dark",
+      "text_token": "TextSecondary",
+      "text_hex": "#ff98989d",
+      "background_token": "AppBg",
+      "background_hex": "#ff1e1e1e",
+      "ratio": 5.806,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "variant": "Dark",
+      "text_token": "TextSecondary",
+      "text_hex": "#ff98989d",
+      "background_token": "CardBg",
+      "background_hex": "#ff2c2c2e",
+      "ratio": 4.853,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "variant": "Dark",
+      "text_token": "NavActiveText",
+      "text_hex": "#ffd7e9ff",
+      "background_token": "NavActiveBg",
+      "background_hex": "#ff1f3a5f",
+      "ratio": 9.29,
+      "required": 4.5,
+      "pass": true
+    }
+  ],
+  "pass": true
+}

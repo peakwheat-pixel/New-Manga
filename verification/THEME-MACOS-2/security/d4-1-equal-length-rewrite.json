@@ -1,0 +1,11 @@
+{
+  "task": "HOST-RESOURCE-SECURITY-1",
+  "at_utc": "2026-10-27T17:13:12.0954678Z",
+  "ac": "AC1",
+  "scenario": "same-size rewrite with mtime restored to original",
+  "file_size": 2097152,
+  "mtime_utc": "2026-10-27T17:13:12.0845244Z",
+  "mtime_unchanged": true,
+  "validation_uses_mtime": false,
+  "read_result": "TileDigestMismatch"
+}

@@ -1,0 +1,6 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "scenario": "failed snapshot \u002B refused start render typed text",
+  "failed_status": "\u5BFC\u51FA\u5931\u8D25\uFF08EXPORT_INPUT_UNAVAILABLE\uFF09",
+  "refused_status": "\u5BFC\u51FA\u88AB\u62D2\u7EDD\uFF1A\u76EE\u6807/\u8F93\u5165\u4E0D\u53EF\u7528\uFF08EXPORT_PATH_UNAVAILABLE / EXPORT_INPUT_UNAVAILABLE\uFF09\uFF0C\u8BE6\u89C1 Host \u65E5\u5FD7"
+}

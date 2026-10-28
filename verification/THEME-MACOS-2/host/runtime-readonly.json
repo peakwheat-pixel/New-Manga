@@ -1,0 +1,11 @@
+{
+  "ac": "AC4/AC5",
+  "ready": true,
+  "mode": "ReadOnlyUntilParity",
+  "writes_allowed": false,
+  "write_blocked_code": "HOST_READ_ONLY",
+  "core_wire_frames": 3,
+  "bridge_wire_frames": 1,
+  "all_core_requests_ascii": true,
+  "host_log": "host-logs/runtime-readonly/host.log"
+}

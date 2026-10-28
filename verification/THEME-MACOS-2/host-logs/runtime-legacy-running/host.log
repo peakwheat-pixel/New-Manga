@@ -1,0 +1,16 @@
+2026-10-27T17:04:51.7038543+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.27271bef51be (abandoned_recovered=False)
+2026-10-27T17:04:51.7092380+00:00 WARN legacy shell detected (pid 36372); entering read-only mode
+2026-10-27T17:04:51.7092674+00:00 INFO mode=ReadOnlyLegacyShellRunning reason=legacy Tauri shell (new-manga.exe) is running; new host starts read-only and shows a notice data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-legacy-running-af83951b72
+2026-10-27T17:04:51.7093150+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T17:04:52.0774690+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T17:04:52.1503231+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T17:04:52.1505753+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T17:04:52.1508756+00:00 INFO host-control session opened (host_CR-zPxgzed5sFh0vjTmJgRQtE5Xj0arwNVZe-usEFco)
+2026-10-27T17:12:57.8597210+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.cd3ade0f83b1 (abandoned_recovered=False)
+2026-10-27T17:12:57.8671047+00:00 WARN legacy shell detected (pid 53088); entering read-only mode
+2026-10-27T17:12:57.8671258+00:00 INFO mode=ReadOnlyLegacyShellRunning reason=legacy Tauri shell (new-manga.exe) is running; new host starts read-only and shows a notice data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\runtime-legacy-running-4a1e29578a
+2026-10-27T17:12:57.8671830+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-27T17:12:58.2429747+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T17:12:58.3162758+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T17:12:58.3163217+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-27T17:12:58.3166980+00:00 INFO host-control session opened (host_3c1Cr9qigs4Dw9P8_5_AZuqEAYOo4MD5-parSWoUm2o)
