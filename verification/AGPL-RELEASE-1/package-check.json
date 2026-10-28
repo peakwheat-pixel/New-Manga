@@ -1,0 +1,290 @@
+{
+  "ac": "AC4",
+  "task": "AGPL-RELEASE-1",
+  "generated_at_utc": "2026-10-28T05:19:21.6673510Z",
+  "repo_license_hashes": {
+    "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+    "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+    "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+    "LICENSE_AUDIT.md": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb"
+  },
+  "package_license_sources": {
+    "NOTICE.md": "repo root NOTICE.md",
+    "THIRD_PARTY_LICENSES.md": "repo root THIRD_PARTY_LICENSES.md",
+    "LICENSE-AGPL-3.0.txt": "repo root LICENSE-AGPL-3.0.txt (GNU AGPL-3.0 official text)",
+    "LICENSE": "repo root LICENSE (GPL-3.0, unchanged)",
+    "LICENSE_AUDIT.md": "apps/desktop-avalonia/docs/LICENSE_AUDIT.md"
+  },
+  "variants": {
+    "base": {
+      "variant": "base",
+      "stage": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64",
+      "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64.zip",
+      "zip_bytes": 103492048,
+      "zip_sha256": "722fc62b53a4488dff8e3043b419a720cb59c3e4c790a9c8d19511efb627e8ef",
+      "zip_mb": 98.7,
+      "version_json": {
+        "variant": "base",
+        "license": "GPL-3.0-or-later",
+        "license_files": [
+          "LICENSE",
+          "LICENSE-AGPL-3.0.txt",
+          "NOTICE.md",
+          "THIRD_PARTY_LICENSES.md"
+        ],
+        "bundled_weights_license": "none (no model weights in this variant)",
+        "models": "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\\com.newmanga.desktop\\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle",
+        "sidecar_build": {
+          "core_service_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+          "core_service_bytes": 399492,
+          "core_service_built_at_utc": "2026-10-28T00:49:34.7313144Z",
+          "repo_head": "7f0d1daef1b3741ff3bb47903ffe71f809fa3be2",
+          "variant": "base",
+          "models_bundled": false
+        }
+      },
+      "manifest": {
+        "variant": "base",
+        "models_bundled": false,
+        "models_bytes": 0,
+        "license_hashes": {
+          "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+          "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+        },
+        "license_manifest_entries": [
+          {
+            "path": "LICENSE",
+            "sha256": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+          },
+          {
+            "path": "LICENSE_AUDIT.md",
+            "sha256": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb"
+          },
+          {
+            "path": "LICENSE-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          },
+          {
+            "path": "NOTICE.md",
+            "sha256": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c"
+          },
+          {
+            "path": "THIRD_PARTY_LICENSES.md",
+            "sha256": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+          }
+        ]
+      },
+      "license_files_in_zip": {
+        "LICENSE-AGPL-3.0.txt": {
+          "zip_entry": "LICENSE-AGPL-3.0.txt",
+          "zip_entry_bytes": 34523,
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\LICENSE-AGPL-3.0.txt",
+          "byte_identical": true
+        },
+        "NOTICE.md": {
+          "zip_entry": "NOTICE.md",
+          "zip_entry_bytes": 3411,
+          "sha256": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\NOTICE.md",
+          "byte_identical": true
+        },
+        "THIRD_PARTY_LICENSES.md": {
+          "zip_entry": "THIRD_PARTY_LICENSES.md",
+          "zip_entry_bytes": 4769,
+          "sha256": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\THIRD_PARTY_LICENSES.md",
+          "byte_identical": true
+        },
+        "LICENSE": {
+          "zip_entry": "LICENSE",
+          "zip_entry_bytes": 34906,
+          "sha256": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\LICENSE",
+          "byte_identical": true
+        },
+        "LICENSE_AUDIT.md": {
+          "zip_entry": "LICENSE_AUDIT.md",
+          "zip_entry_bytes": 1958,
+          "sha256": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\apps\\desktop-avalonia\\docs\\LICENSE_AUDIT.md",
+          "byte_identical": true
+        }
+      },
+      "license_files_in_stage": {
+        "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+        "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+        "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+        "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+        "LICENSE_AUDIT.md": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb"
+      },
+      "models_dir_present": false,
+      "weight_checks": [],
+      "repack5_comparison": {
+        "zip_bytes": 103374546,
+        "zip_mb": 98.59,
+        "delta_bytes": 117502,
+        "delta_mb": 0.11,
+        "file_count": 1968,
+        "repack5_file_count": 1967,
+        "delta_file_count": 1,
+        "models_bytes": 0,
+        "repack5_models_bytes": 0
+      }
+    },
+    "models": {
+      "variant": "models",
+      "stage": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64-models",
+      "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+      "zip_bytes": 725499708,
+      "zip_sha256": "480d06323ce482214955582dc86696bfdd8023e9227100941fd6b8873b237f67",
+      "zip_mb": 691.89,
+      "version_json": {
+        "variant": "models",
+        "license": "AGPL-3.0",
+        "license_files": [
+          "LICENSE",
+          "LICENSE-AGPL-3.0.txt",
+          "NOTICE.md",
+          "THIRD_PARTY_LICENSES.md"
+        ],
+        "bundled_weights_license": "AGPL-3.0 (Ultralytics YOLO11s-seg: app/core-sidecar/models/detector/yolo11s-seg.onnx)",
+        "models": "bundled: app/core-sidecar/models (642.3 MiB in-package); no download at run time",
+        "sidecar_build": {
+          "core_service_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+          "core_service_bytes": 399492,
+          "core_service_built_at_utc": "2026-10-28T00:49:34.7313144Z",
+          "repo_head": "7f0d1daef1b3741ff3bb47903ffe71f809fa3be2",
+          "variant": "models",
+          "models_bundled": true
+        }
+      },
+      "manifest": {
+        "variant": "models",
+        "models_bundled": true,
+        "models_bytes": 673486515.0,
+        "license_hashes": {
+          "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+          "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+        },
+        "license_manifest_entries": [
+          {
+            "path": "LICENSE",
+            "sha256": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+          },
+          {
+            "path": "LICENSE_AUDIT.md",
+            "sha256": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb"
+          },
+          {
+            "path": "LICENSE-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          },
+          {
+            "path": "NOTICE.md",
+            "sha256": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c"
+          },
+          {
+            "path": "THIRD_PARTY_LICENSES.md",
+            "sha256": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+          }
+        ]
+      },
+      "license_files_in_zip": {
+        "LICENSE-AGPL-3.0.txt": {
+          "zip_entry": "LICENSE-AGPL-3.0.txt",
+          "zip_entry_bytes": 34523,
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\LICENSE-AGPL-3.0.txt",
+          "byte_identical": true
+        },
+        "NOTICE.md": {
+          "zip_entry": "NOTICE.md",
+          "zip_entry_bytes": 3411,
+          "sha256": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\NOTICE.md",
+          "byte_identical": true
+        },
+        "THIRD_PARTY_LICENSES.md": {
+          "zip_entry": "THIRD_PARTY_LICENSES.md",
+          "zip_entry_bytes": 4769,
+          "sha256": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\THIRD_PARTY_LICENSES.md",
+          "byte_identical": true
+        },
+        "LICENSE": {
+          "zip_entry": "LICENSE",
+          "zip_entry_bytes": 34906,
+          "sha256": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\LICENSE",
+          "byte_identical": true
+        },
+        "LICENSE_AUDIT.md": {
+          "zip_entry": "LICENSE_AUDIT.md",
+          "zip_entry_bytes": 1958,
+          "sha256": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb",
+          "repo_source": "G:\\CODEX\\New Manga.workspace\\worktrees\\AGPL-RELEASE-1\\apps\\desktop-avalonia\\docs\\LICENSE_AUDIT.md",
+          "byte_identical": true
+        }
+      },
+      "license_files_in_stage": {
+        "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+        "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+        "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+        "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+        "LICENSE_AUDIT.md": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb"
+      },
+      "models_dir_present": true,
+      "weight_checks": [
+        {
+          "rel_path": "detector/yolo11s-seg.onnx",
+          "present": true,
+          "bytes": 40824255,
+          "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+        },
+        {
+          "rel_path": "detector/rtdetr-v2-fixed.onnx",
+          "present": true,
+          "bytes": 171618071,
+          "sha256": "c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3"
+        },
+        {
+          "rel_path": "ocr/manga-ocr-onnx/encoder_model.onnx",
+          "present": true,
+          "bytes": 343454249,
+          "sha256": "15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f"
+        },
+        {
+          "rel_path": "ocr/manga-ocr-onnx/decoder_model.onnx",
+          "present": true,
+          "bytes": 117480262,
+          "sha256": "ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8"
+        }
+      ],
+      "repack5_comparison": {
+        "zip_bytes": 725382787,
+        "zip_mb": 691.78,
+        "delta_bytes": 116921,
+        "delta_mb": 0.11,
+        "file_count": 1978,
+        "repack5_file_count": 1977,
+        "delta_file_count": 1,
+        "models_bytes": 673486515.0,
+        "repack5_models_bytes": 673486515.0
+      }
+    }
+  },
+  "checks": {
+    "every_license_zip_entry_byte_identical": true,
+    "every_license_stage_file_byte_identical": true,
+    "version_json_declares_license": true,
+    "base_has_no_weights": true,
+    "models_ships_yolo11s_seg": true,
+    "size_delta_vs_repack5_small": true
+  }
+}

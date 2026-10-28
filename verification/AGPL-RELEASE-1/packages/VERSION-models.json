@@ -1,0 +1,42 @@
+{
+  "migration": "runtime dry-run script included",
+  "variant": "models",
+  "data_root": "%APPDATA%\\com.newmanga.desktop",
+  "license": "AGPL-3.0",
+  "sidecar_build": {
+    "core_service_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+    "core_service_bytes": 399492,
+    "core_service_built_at_utc": "2026-10-28T00:49:34.7313144Z",
+    "repo_head": "7f0d1daef1b3741ff3bb47903ffe71f809fa3be2",
+    "variant": "models",
+    "models_bundled": true
+  },
+  "devices": {
+    "onnxruntime_providers": [
+      "DmlExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": {
+      "kind": "gpu",
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "total_memory_mb": 16303,
+      "state": "available",
+      "error_code": "",
+      "detail": "onnxruntime providers=['DmlExecutionProvider', 'CPUExecutionProvider']; execution_provider=DirectML"
+    },
+    "ac": "AC1/AC2",
+    "source": "build-environment probe: onnxruntime.get_available_providers() + Windows display-adapter registry supplement"
+  },
+  "license_files": [
+    "LICENSE",
+    "LICENSE-AGPL-3.0.txt",
+    "NOTICE.md",
+    "THIRD_PARTY_LICENSES.md"
+  ],
+  "bundled_weights_license": "AGPL-3.0 (Ultralytics YOLO11s-seg: app/core-sidecar/models/detector/yolo11s-seg.onnx)",
+  "channel": "stable",
+  "models": "bundled: app/core-sidecar/models (642.3 MiB in-package); no download at run time",
+  "version": "0.1.0",
+  "sidecar": "bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)"
+}

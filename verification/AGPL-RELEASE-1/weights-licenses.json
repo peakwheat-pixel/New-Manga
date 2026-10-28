@@ -1,0 +1,335 @@
+{
+  "ac": "AC1",
+  "generated_at_utc": "2026-10-28T05:18:10.439140+00:00",
+  "task": "AGPL-RELEASE-1",
+  "input_package": {
+    "source": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\models",
+    "repack5_out": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out",
+    "repack5_package_summaries": {
+      "base": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\package-summary-base.json",
+        "bytes": 829,
+        "sha256": "3a8b5ac85499b0ab819e5d90f28418b69fdbe7ee4b83ae893dbc038549253af1",
+        "fetched_at_utc": "2026-10-28T00:50:32.187055+00:00",
+        "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\NewManga-0.1.0-win-x64.zip",
+        "zip_bytes": 103374546,
+        "zip_mb": 98.59,
+        "uncompressed_bytes": 225557313.0,
+        "file_count": 1967,
+        "models_bundled": false,
+        "models_bytes": 0,
+        "license_hashes": {
+          "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+          "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+        }
+      },
+      "models": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\package-summary-models.json",
+        "bytes": 849,
+        "sha256": "5d7bea9aae43baf0cd741ea2ccd493b33a8fb02943c6adab8bab9d8f5d78e2b1",
+        "fetched_at_utc": "2026-10-28T00:51:07.807425+00:00",
+        "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\NewManga-0.1.0-win-x64-models.zip",
+        "zip_bytes": 725382787,
+        "zip_mb": 691.78,
+        "uncompressed_bytes": 899043364.0,
+        "file_count": 1977,
+        "models_bundled": true,
+        "models_bytes": 673486515.0,
+        "license_hashes": {
+          "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412"
+        }
+      }
+    }
+  },
+  "weights": [
+    {
+      "rel_path": "detector/rtdetr-v2-fixed.onnx",
+      "kind": "weight",
+      "bytes": 171618071,
+      "sha256": "c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "Apache-2.0 (HF model card) [待核实]",
+      "license_conclusion": "UNVERIFIED — no license metadata embedded; upstream model card to be checked; NOT blocking this task per AC1.",
+      "blocking": false,
+      "onnx_metadata": {
+        "producer_name": "pytorch",
+        "producer_version": "2.11.0",
+        "metadata_props": [],
+        "error": null
+      }
+    },
+    {
+      "rel_path": "detector/yolo11s-seg.onnx",
+      "kind": "weight",
+      "bytes": 40824255,
+      "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+      "embedded_text_markers": [
+        "ultralytics",
+        "Ultralytics",
+        "YOLO11"
+      ],
+      "embedded_string_samples": [
+        "Ultralytics YOLO11s-seg model trained on G:\\CODEX\\New Manga.",
+        "Ultralyticsr(",
+        "2AGPL-3.0 License (https://ultralytics.com/license)r$",
+        "https://docs.ultralytics.comr"
+      ],
+      "license": "AGPL-3.0",
+      "license_conclusion": "MET — first-party: ONNX metadata_props.license = 'AGPL-3.0 License (https://ultralytics.com/license)', author = 'Ultralytics'; Ultralytics official license page + repo LICENSE corroborate.",
+      "blocking": true,
+      "onnx_metadata": {
+        "producer_name": "pytorch",
+        "producer_version": "2.11.0",
+        "metadata_props": [
+          {
+            "key": "description",
+            "value": "Ultralytics YOLO11s-seg model trained on G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\dataset\\dataset.yaml"
+          },
+          {
+            "key": "author",
+            "value": "Ultralytics"
+          },
+          {
+            "key": "date",
+            "value": "2026-10-05T09:02:20.866697+08:00"
+          },
+          {
+            "key": "version",
+            "value": "8.4.172"
+          },
+          {
+            "key": "license",
+            "value": "AGPL-3.0 License (https://ultralytics.com/license)"
+          },
+          {
+            "key": "docs",
+            "value": "https://docs.ultralytics.com"
+          },
+          {
+            "key": "stride",
+            "value": "32"
+          },
+          {
+            "key": "task",
+            "value": "segment"
+          },
+          {
+            "key": "head",
+            "value": "Segment"
+          },
+          {
+            "key": "batch",
+            "value": "1"
+          },
+          {
+            "key": "imgsz",
+            "value": "[1024, 1024]"
+          },
+          {
+            "key": "names",
+            "value": "{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}"
+          },
+          {
+            "key": "args",
+            "value": "{'data': None, 'batch': 1, 'fraction': 1.0, 'quantize': None, 'nms': None, 'dynamic': False, 'simplify': True, 'opset': None}"
+          },
+          {
+            "key": "channels",
+            "value": "3"
+          },
+          {
+            "key": "end2end",
+            "value": "False"
+          }
+        ],
+        "error": null
+      }
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/config.json",
+      "kind": "config/tokenizer (non-weight asset)",
+      "bytes": 77161,
+      "sha256": "fda165bab7a9cd1b4a0ce57ed9a78e516f101fcd23afd9f58c9e779c9b5ed11b",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — config/tokenizer asset shipped with the MangaOCR weights; NOT blocking this task per AC1.",
+      "blocking": false
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/decoder_model.onnx",
+      "kind": "weight",
+      "bytes": 117480262,
+      "sha256": "ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — no license metadata embedded; NOT blocking this task per AC1.",
+      "blocking": false,
+      "onnx_metadata": {
+        "producer_name": "pytorch",
+        "producer_version": "2.7.0",
+        "metadata_props": [],
+        "error": null
+      }
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/encoder_model.onnx",
+      "kind": "weight",
+      "bytes": 343454249,
+      "sha256": "15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — no license metadata embedded; NOT blocking this task per AC1.",
+      "blocking": false,
+      "onnx_metadata": {
+        "producer_name": "pytorch",
+        "producer_version": "2.7.0",
+        "metadata_props": [],
+        "error": null
+      }
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/generation_config.json",
+      "kind": "config/tokenizer (non-weight asset)",
+      "bytes": 273,
+      "sha256": "012bcb0da9625702d55556b6ed20b1da39de5eba707c5c9ee1575336cfc2a804",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — config/tokenizer asset shipped with the MangaOCR weights; NOT blocking this task per AC1.",
+      "blocking": false
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/preprocessor_config.json",
+      "kind": "config/tokenizer (non-weight asset)",
+      "bytes": 376,
+      "sha256": "ee6588147df4bcd5ca13110900697f7b43b64f07da18a4427fa0d88eae857326",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — config/tokenizer asset shipped with the MangaOCR weights; NOT blocking this task per AC1.",
+      "blocking": false
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/special_tokens_map.json",
+      "kind": "config/tokenizer (non-weight asset)",
+      "bytes": 132,
+      "sha256": "3c3507f36dff57bce437223db3b3081d1e2b52ec3e56ee55438193ecb2c94dd6",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — config/tokenizer asset shipped with the MangaOCR weights; NOT blocking this task per AC1.",
+      "blocking": false
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/tokenizer_config.json",
+      "kind": "config/tokenizer (non-weight asset)",
+      "bytes": 1520,
+      "sha256": "7779b90f519efb8f34f8ca7781d5d183fd4a3c3d3dce54109048978013c18b71",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — config/tokenizer asset shipped with the MangaOCR weights; NOT blocking this task per AC1.",
+      "blocking": false
+    },
+    {
+      "rel_path": "ocr/manga-ocr-onnx/vocab.txt",
+      "kind": "config/tokenizer (non-weight asset)",
+      "bytes": 30216,
+      "sha256": "5cb5c5586d98a2f331d9f8828e4586479b0611bfba5d8c3b6dadffc84d6a36a3",
+      "embedded_text_markers": [],
+      "embedded_string_samples": [],
+      "license": "upstream MangaOCR [待核实]",
+      "license_conclusion": "UNVERIFIED — config/tokenizer asset shipped with the MangaOCR weights; NOT blocking this task per AC1.",
+      "blocking": false
+    }
+  ],
+  "models_totals": {
+    "file_count": 10,
+    "weight_file_count": 4,
+    "total_bytes": 673486515,
+    "total_mib": 642.29
+  },
+  "first_party_sources": [
+    {
+      "id": "gnu-agpl-3.0-text",
+      "url": "https://www.gnu.org/licenses/agpl-3.0.txt",
+      "purpose": "GNU AGPL-3.0 official full text (shipped verbatim as LICENSE-AGPL-3.0.txt)",
+      "bytes": 34523,
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "fetched_at_utc": "2026-10-28T05:14:03.970219+00:00"
+    },
+    {
+      "id": "ultralytics-repo-license",
+      "url": "https://raw.githubusercontent.com/ultralytics/ultralytics/main/LICENSE",
+      "purpose": "Ultralytics upstream LICENSE (itself the GNU AGPL-3.0 text)",
+      "bytes": 34523,
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "fetched_at_utc": "2026-10-28T05:14:04.418017+00:00",
+      "byte_identical_to_gnu_agpl": true
+    },
+    {
+      "id": "ultralytics-license-page",
+      "url": "https://www.ultralytics.com/license",
+      "purpose": "Ultralytics official licensing page (states AGPL-3.0 for YOLO models)",
+      "bytes": 398454,
+      "sha256": "cf51e004b69e2e001ffb6b896367f608fdd5c8b2278f1a17c9ccca74b491169e",
+      "fetched_at_utc": "2026-10-28T05:14:04.857558+00:00",
+      "excerpts": [
+        "AGPL-3.0 and Enterprise licensing options for YOLO models and applications.",
+        "AGPL-3.0 covers a lot of use cases - but there are specific triggers that require an"
+      ]
+    },
+    {
+      "id": "ultralytics-docs-quickstart",
+      "url": "https://docs.ultralytics.com/quickstart/",
+      "purpose": "Ultralytics docs (cross-reference page fetched with the license page)",
+      "bytes": 364754,
+      "sha256": "e4b65447d99b8f2b0348c8fd8ab0743561293e7e03a8beca934d8c80c3c9bc34",
+      "fetched_at_utc": "2026-10-28T05:14:19.628002+00:00"
+    },
+    {
+      "id": "ultralytics-docs-help",
+      "url": "https://docs.ultralytics.com/help/",
+      "purpose": "Ultralytics docs help index (cross-reference page fetched with the license page)",
+      "bytes": 292429,
+      "sha256": "cc481b362fe0ae783f3c41ce01a5e876f33e427153bc074d32697c6e248849ce",
+      "fetched_at_utc": "2026-10-28T05:14:20.838382+00:00"
+    }
+  ],
+  "license_conclusions": {
+    "models_variant": {
+      "overall_license": "AGPL-3.0",
+      "reason": "ships Ultralytics YOLO11s-seg weights (AGPL-3.0) in app/core-sidecar/models/detector/yolo11s-seg.onnx",
+      "agpl_full_text_shipped": "LICENSE-AGPL-3.0.txt",
+      "agpl_full_text_sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+    },
+    "base_variant": {
+      "overall_license": "GPL-3.0-or-later",
+      "reason": "ships no model weights (packaging excludes app/core-sidecar/models)",
+      "agpl_full_text_shipped": "LICENSE-AGPL-3.0.txt (optional-component notice only; does not change the GPL-3.0-or-later declaration)"
+    },
+    "non_blocking_unverified": [
+      "detector/rtdetr-v2-fixed.onnx",
+      "ocr/manga-ocr-onnx/* (encoder/decoder/config/tokenizer)"
+    ]
+  },
+  "run_meta": {
+    "task": "AGPL-RELEASE-1",
+    "worktree": "G:/CODEX/New Manga.workspace/worktrees/AGPL-RELEASE-1",
+    "repo_head_at_evidence": "7f0d1daef1b3741ff3bb47903ffe71f809fa3be2",
+    "repack5_input_sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar",
+    "repack5_input_core_service_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+    "repack5_input_sidecar_bytes": 868862035.0,
+    "fetch_method": "Invoke-WebRequest (PowerShell 7.6.8, UseBasicParsing); files stored in evidence-raw and hashed here",
+    "fetch_date_local": "2026-10-28",
+    "onnx_metadata_reader": "G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe with onnx 1.23.2",
+    "notes": "Weights come from the read-only RELEASE-REPACK-5 models package copy; no write to REPACK-5."
+  }
+}
