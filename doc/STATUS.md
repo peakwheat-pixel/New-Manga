@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留；READY 空，待用户/环境决策）。
+- 当前 Task：[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) ready（免证书发布完整性：SHA-256 清单 + 校验脚本 + 发行说明/SmartScreen 指引；Reviewer dsh）。
 - 最近完成：[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`；无签名 NSIS 安装包，独立安装 6.64s/卸载 0.74s，数据根不变）；[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
@@ -17,7 +17,7 @@
 - WORKSPACE-CONSOLIDATION-1 `closed_with_limitations`（r212）；禁再清理/GC/prune。
 - v1 收口（2026-10-21，HEAD `239b165c2`）：ACL 已修；source/packaged/前端/pytest/NSIS/Sandbox 实测过；签名待证书。
 - ARCH-DOC-REBASELINE `closed_with_limitations`；P18 4/8；P20 6/7；DETECT-* / SEC-* / PDF-* / P09-AC3-* 等 `closed_with_limitations`。
-- 台账 TASK_LEDGER（10 非终）；DIR-4/5=2/1000。
+- 台账 TASK_LEDGER（11 非终）；DIR-4/5=2/1000。
 - 真机端到端：脚本化验收（run-i18 7/7、run-i36 10/10）。
 - `?view=legacy` 保留历史容器；次级面板仍为令牌桥接；21 处非 gap 间距字面量与 2 处颜色字面量记 DESIGN-V2-IMPL-1 P2 债。
 

@@ -25,11 +25,12 @@
 |REGION-WORKBENCH-1|S4-CMD-BATCH-1|done（工作台真实 region 读/改标/撤销/重渲染 + 只读门；AC1–AC5 MET；258/258；集成 `60d087627`）|
 |AGPL-RELEASE-1|—|done（models 包含 Ultralytics YOLO11s-seg=AGPL-3.0 → models 包整体 AGPL-3.0 声明 + AGPL 全文随包 + 重打包验证；AC1–AC5 MET；集成 `9948c3209`）|
 |NSIS-INSTALLER-1|AGPL-RELEASE-1|done（NSIS 无签名安装包：per-user 安装/卸载/数据根保留；AC1–AC5 MET；独立安装 6.64s/卸载 0.74s；集成 `64d41f329`）|
+|RELEASE-VERIFY-1|NSIS-INSTALLER-1、AGPL-RELEASE-1|ready（免证书发布完整性：SHA-256 清单 + 校验脚本 + 发行说明/SmartScreen 指引；Owner region-workbench-owner / Reviewer dsh；2026-10-28 用户无证书替代方案）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
 |THEME-MACOS-LAYOUTS-1|—|done（并入 THEME-MACOS-2：三套布局 Sonoma/Launchpad/Split，`0e1f71151`；REPACK-5 已合并）|
 
-READY 节点：无
+READY 节点：RELEASE-VERIFY-1
 
 ## 历史快照（终态节点，非当前 DAG）
 
