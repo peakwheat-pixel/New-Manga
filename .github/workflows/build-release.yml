@@ -93,12 +93,17 @@ jobs:
           dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release
           dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release
 
-      - name: Build Core sidecar bundle (weights-free public build)
+      - name: Build Core sidecar bundle (weights-free public build, dedicated build venv)
         shell: pwsh
         run: |
-          # build_sidecar.ps1 requires a real python.exe path (Test-Path/Resolve-Path inside the script),
-          # so resolve the interpreter from PATH instead of passing the bare command name.
-          $py = (Get-Command python).Source
+          # The sidecar closure must match the release stack: install the pinned build
+          # requirements into a dedicated venv (same model as the maintainer build venv).
+          # Pointing PyInstaller at the full test environment would bundle every runtime/dev
+          # package and blow past package.ps1's base-variant 150MB zip guard.
+          python -m venv .venv-build
+          .\.venv-build\Scripts\python.exe -m pip install --upgrade pip
+          .\.venv-build\Scripts\python.exe -m pip install -r packaging\m2ac5\requirements-build.txt
+          $py = (Resolve-Path .\.venv-build\Scripts\python.exe).Path
           pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -PythonExe $py -SkipWeights
 
       - name: Build base package (unsigned)
