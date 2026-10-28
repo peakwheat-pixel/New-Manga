@@ -1,0 +1,37 @@
+{
+  "ac": "AC4",
+  "file": "apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md",
+  "bytes": 7335,
+  "line_count": 107,
+  "required_keywords": [
+    "GPL-3.0-or-later",
+    "AGPL-3.0",
+    "SmartScreen",
+    "更多信息",
+    "仍要运行",
+    "SHA-256",
+    "%APPDATA%\\com.newmanga.desktop",
+    "卸载",
+    "已知限制",
+    "SignPath",
+    "未签名",
+    "NewManga-0.1.0-setup.exe",
+    "install.ps1",
+    "SHA256SUMS",
+    "V1-RELEASE-SIGNING-1"
+  ],
+  "missing_keywords": [],
+  "section_headings": [
+    "1. 发行变体与许可证",
+    "2. 文件与 SHA-256",
+    "3. 安装方式",
+    "4. SHA-256 校验步骤",
+    "5. 未签名与 SmartScreen（重要）",
+    "6. 数据根、升级与卸载",
+    "7. 已知限制",
+    "8. 免费替代方案（签名不可得时）",
+    "9. 验证与反馈"
+  ],
+  "pass": true,
+  "generated_at_utc": "2026-10-28T07:17:57.4205350Z"
+}

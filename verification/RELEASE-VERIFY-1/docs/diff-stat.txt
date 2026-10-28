@@ -1,0 +1,6 @@
+ apps/desktop-avalonia/docs/MANUAL_VERIFY.md | 4 ++++
+ 1 file changed, 4 insertions(+)
+ M apps/desktop-avalonia/docs/MANUAL_VERIFY.md
+?? apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md
+?? packaging/release/
+?? verification/RELEASE-VERIFY-1/

@@ -1,0 +1,6 @@
+manifest: G:\CODEX\New Manga.workspace\worktrees\RELEASE-VERIFY-1\packaging\release\SHA256SUMS (3 entries)
+OK    NewManga-0.1.0-setup.exe  ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691  (68,611,208 bytes)  G:\CODEX\New Manga.workspace\task-envs\NSIS-INSTALLER-1\out\NewManga-0.1.0-setup.exe
+OK    NewManga-0.1.0-win-x64-models.zip  480d06323ce482214955582dc86696bfdd8023e9227100941fd6b8873b237f67  (725,499,708 bytes)  G:\CODEX\New Manga.workspace\task-envs\AGPL-RELEASE-1\out\NewManga-0.1.0-win-x64-models.zip
+OK    NewManga-0.1.0-win-x64.zip  722fc62b53a4488dff8e3043b419a720cb59c3e4c790a9c8d19511efb627e8ef  (103,492,048 bytes)  G:\CODEX\New Manga.workspace\task-envs\AGPL-RELEASE-1\out\NewManga-0.1.0-win-x64.zip
+RELEASE VERIFY: PASS (3/3 artifacts match SHA256SUMS)
+exit=0

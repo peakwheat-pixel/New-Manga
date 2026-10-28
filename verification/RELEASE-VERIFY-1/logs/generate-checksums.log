@@ -1,0 +1,46 @@
+hashing NewManga-0.1.0-win-x64.zip (103,492,048 bytes) ...
+hashing NewManga-0.1.0-win-x64-models.zip (725,499,708 bytes) ...
+hashing NewManga-0.1.0-setup.exe (68,611,208 bytes) ...
+
+--- SHA256SUMS ---
+ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691  NewManga-0.1.0-setup.exe
+480d06323ce482214955582dc86696bfdd8023e9227100941fd6b8873b237f67  NewManga-0.1.0-win-x64-models.zip
+722fc62b53a4488dff8e3043b419a720cb59c3e4c790a9c8d19511efb627e8ef  NewManga-0.1.0-win-x64.zip
+
+wrote: G:\CODEX\New Manga.workspace\worktrees\RELEASE-VERIFY-1\packaging\release\SHA256SUMS
+wrote: G:\CODEX\New Manga.workspace\worktrees\RELEASE-VERIFY-1\packaging\release\SHA256SUMS.json
+{
+  "task": "RELEASE-VERIFY-1",
+  "release": "0.1.0",
+  "format": "sha256sum",
+  "separator": "two spaces (sha256sum compatible)",
+  "artifacts": [
+    {
+      "role": "setup_exe",
+      "filename": "NewManga-0.1.0-setup.exe",
+      "bytes": 68611208,
+      "mb": 65.43,
+      "sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe"
+    },
+    {
+      "role": "models_zip",
+      "filename": "NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 725499708,
+      "mb": 691.89,
+      "sha256": "480d06323ce482214955582dc86696bfdd8023e9227100941fd6b8873b237f67",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64-models.zip"
+    },
+    {
+      "role": "base_zip",
+      "filename": "NewManga-0.1.0-win-x64.zip",
+      "bytes": 103492048,
+      "mb": 98.7,
+      "sha256": "722fc62b53a4488dff8e3043b419a720cb59c3e4c790a9c8d19511efb627e8ef",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64.zip"
+    }
+  ],
+  "total_bytes": 897602964.0,
+  "generated_at_utc": "2026-10-28T07:16:25.2817163Z"
+}
+exit=0
