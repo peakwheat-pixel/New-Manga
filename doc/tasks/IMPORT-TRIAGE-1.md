@@ -3,7 +3,7 @@ id: IMPORT-TRIAGE-1
 title: REPACK-5 导入 BLOCKED 诊断（HEAD 回归 vs 数据根）
 kind: diagnosis
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-28_diag
 suggested_owner: route-research
 owner: route-research
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 3be9ff938
 branch: task/IMPORT-TRIAGE-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/IMPORT-TRIAGE-1
-integration_commit: null
+integration_commit: 87fdc2246
 delivery_head: 24e5a3f04ce66f81f8f14639a4a4568fa5005231
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -69,3 +69,11 @@ erification/IMPORT-TRIAGE-1/**\、workspace。
 | R9 | AC1 | verification/IMPORT-TRIAGE-1/evidence/screens/03-import-panel.png | - | bb077143fc9e3089185e7d258b362955a5357ca9edb5a061d9ceb9d83e70a72b | CANONICAL |
 | R10 | AC1 | verification/IMPORT-TRIAGE-1/evidence/screens/04-import-result.png | - | 394436b52a1d1015c2420fd31de17f319fd668104a683254db263cb41c01139c | CANONICAL |
 | R11 | AC1 | verification/IMPORT-TRIAGE-1/evidence/screens/06-tiny-result.png | - | f41b9303908f13a14e8de21387f9ea54bc38d89e20e81a74e25e82ee62ffb6ab | CANONICAL |
+## Review（DSH 集成复核，2026-10-28）— PASS
+
+- **结论：非 HEAD 回归、非数据根/catalog 缺陷，产品无需修复。**
+- AC1：new-test-book.ps1 全新空数据根（8 页）真机 UI 导入 → wire RegisterImportSource -> ImportPages（16-18ms）、DB 8->9 页；烟测同 sha 输入（ui-import-2.png，134B）亦成功。
+- AC2：干净根成功 => 非回归；AC3/AC4 N/A；AC5：check.ps1 -TaskPath PASS、11 份证据 pin。
+- 烟测失败签名：grant 注册后剩 299s（未过期）、同秒 client RevokeImportSource、无 ImportPages => 烟测自动化/安装环境半途 revoke；REF_MALFORMED 未能本地复现（已如实记录）。
+- 建议：烟测脚本断言三选择器可用 + 点 ImportStartButton 后断言状态行与 DB 增量。
+- 集成：87fdc2246。

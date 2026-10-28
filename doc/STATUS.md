@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[IMPORT-TRIAGE-1](tasks/IMPORT-TRIAGE-1.md) `in_review`（诊断结论：非回归；干净根真机导入成功 pages 8→9）。
+- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（主线全收口；交接见 handoffs/SESSION-HANDOFF-2026-10-28.md）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
