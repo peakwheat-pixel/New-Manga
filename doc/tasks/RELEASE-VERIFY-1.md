@@ -3,18 +3,18 @@ id: RELEASE-VERIFY-1
 title: 免证书发布完整性（SHA-256 清单 + 校验脚本 + 发行说明/SmartScreen 指引）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: user_authorized_2026-10-28_no_cert_fallback
 suggested_owner: region-workbench-owner
-owner: null
+owner: region-workbench-owner
 reviewer: dsh
 depends_on: [NSIS-INSTALLER-1, AGPL-RELEASE-1]
 base_commit: b54d2d36f56ac60cf9d1e7b01db27b67f66df566
 branch: task/RELEASE-VERIFY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/RELEASE-VERIFY-1
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 75db4fd643f47a92924f607617c348fd85e6d411
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/RELEASE-VERIFY-1
 allowed_paths:
@@ -43,11 +43,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 校验清单与脚本**：新增 `packaging/release/generate-checksums.ps1`（对 base zip / models zip / setup.exe 生成标准 `SHA256SUMS`：`<sha256>  <filename>` + 附带字节数注释或 sidecar JSON）与 `packaging/release/verify-release.ps1`（按清单逐项校验，缺失/不匹配时 exit 1 并打印具体项；`-Quiet` 可选）；两个脚本必须支持产物不在同一目录（显式参数 + 默认回退），不把 ~900MB 产物复制进仓库。证据：脚本源码、真实产物生成/校验日志。
-- [ ] **AC2 清单入库与可复算**：`packaging/release/SHA256SUMS` 入库，包含 0.1.0 三个产物的文件名、字节数、sha256（与上列实测值一致）；给出复算命令（脚本）。证据：文件内容 + `verify-release.ps1` PASS 日志。
-- [ ] **AC3 负向验证**：对副本篡改 1 字节后校验必须 FAIL 且指出该文件（证明校验脚本不是恒真）。证据：负向日志 + 篡改副本 hash。
-- [ ] **AC4 发行说明**：新增 `apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md`：变体与整体许可（base=GPL-3.0-or-later / models=AGPL-3.0）、两种安装方式（NSIS setup per-user / zip+install.ps1）、**未签名说明与 SmartScreen「更多信息→仍要运行」指引**、SHA-256 校验步骤、数据根位置（`%APPDATA%\com.newmanga.desktop`）与卸载方式、已知限制（未签名、models 变体为 zip、per-user/覆盖升级、无自动更新）、免费替代说明（哈希校验；开源项目可申请 SignPath 等免费 OSS 签名，未来版本可签）。`MANUAL_VERIFY.md` 增补指向发行说明的链接。证据：文档 diff + 链接检查。
-- [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；`extract-command-surface.py --check` PASS（66）；`scripts/test.ps1` 全绿（产品代码零改动，可引用隔离复跑 258/258 并记录日期）；64-hex evidence pin；Handoff。证据：logs/summary/pin。
+- [x] **AC1 校验清单与脚本**：新增 `packaging/release/generate-checksums.ps1`（对 base zip / models zip / setup.exe 生成标准 `SHA256SUMS`：`<sha256>  <filename>` + 附带字节数注释或 sidecar JSON）与 `packaging/release/verify-release.ps1`（按清单逐项校验，缺失/不匹配时 exit 1 并打印具体项；`-Quiet` 可选）；两个脚本必须支持产物不在同一目录（显式参数 + 默认回退），不把 ~900MB 产物复制进仓库。证据：脚本源码、真实产物生成/校验日志。 <<MET>>
+- [x] **AC2 清单入库与可复算**：`packaging/release/SHA256SUMS` 入库，包含 0.1.0 三个产物的文件名、字节数、sha256（与上列实测值一致）；给出复算命令（脚本）。证据：文件内容 + `verify-release.ps1` PASS 日志。 <<MET>>
+- [x] **AC3 负向验证**：对副本篡改 1 字节后校验必须 FAIL 且指出该文件（证明校验脚本不是恒真）。证据：负向日志 + 篡改副本 hash。 <<MET>>
+- [x] **AC4 发行说明**：新增 `apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md`：变体与整体许可（base=GPL-3.0-or-later / models=AGPL-3.0）、两种安装方式（NSIS setup per-user / zip+install.ps1）、**未签名说明与 SmartScreen「更多信息→仍要运行」指引**、SHA-256 校验步骤、数据根位置（`%APPDATA%\com.newmanga.desktop`）与卸载方式、已知限制（未签名、models 变体为 zip、per-user/覆盖升级、无自动更新）、免费替代说明（哈希校验；开源项目可申请 SignPath 等免费 OSS 签名，未来版本可签）。`MANUAL_VERIFY.md` 增补指向发行说明的链接。证据：文档 diff + 链接检查。 <<MET>>
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；`extract-command-surface.py --check` PASS（66）；`scripts/test.ps1` 全绿（产品代码零改动，可引用隔离复跑 258/258 并记录日期）；64-hex evidence pin；Handoff。证据：logs/summary/pin。 <<MET>>
 
 ## 允许修改范围
 
@@ -61,9 +61,29 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 | `pwsh -File packaging/release/generate-checksums.ps1 -BaseZip … -ModelsZip … -SetupExe … -OutFile packaging/release/SHA256SUMS` 然后 `verify-release.ps1` | 三个真实产物 | NOT_RUN | planned |
-| AC3 | 复制 setup.exe 到 task-env、改 1 字节 → verify 必须 FAIL | 副本 | NOT_RUN | planned |
-| AC5 | `extract-command-surface.py --check`、`scripts/test.ps1`、`check.ps1 -TaskPath` | 仓库 | NOT_RUN | planned |
+| AC1/AC2 | `pwsh -File packaging/release/generate-checksums.ps1` 然后 `verify-release.ps1`（默认定位与 `-ArtifactDir` 各一次） | 三真实产物（只读） | **PASS**：生成 exit 0；正向校验 `RELEASE VERIFY: PASS (3/3)`，默认 task-env 定位与 `-ArtifactDir`（硬链接 staging）均通过 | `logs/generate-checksums.log`、`logs/verify-positive.log`、`logs/verify-artifactdir.log` |
+| AC3 | setup.exe 复制到 task-env 改 1 字节（offset 34,305,604）→ `verify-release.ps1 -SetupExe <篡改副本>` 必须 FAIL | 副本（发布产物未改） | **PASS（负向生效）**：`HASH NewManga-0.1.0-setup.exe expected=ebad8662… actual=bb84e283…`、`FAIL (1/3)`、**exit 1**；随后真实产物 `-Quiet` 复验 PASS；缺失产物场景 `FAIL (3/3)` exit 1 | `logs/verify-negative-tamper.log`、`negative/tamper.json`、`logs/verify-missing.log`、`logs/verify-quiet-after-negative.log` |
+| AC4 | `RELEASE_NOTES_0.1.0.md` 编写 + MANUAL_VERIFY 链接 + 关键词/链接自动检查 | 仓库 | **PASS**：required_keywords 全部命中（`missing_keywords=[]`）；MANUAL_VERIFY 链接 target 存在 | `docs/release-notes-check.json`、`docs/manual-verify-link.json`、`docs/diff-stat.txt` |
+| AC5 | `extract-command-surface.py --check`、`scripts/test.ps1`、`check.ps1 -TaskPath` | 仓库 + 隔离 evidence dir | **PASS**：`--check` 66；`test.ps1` 258/258 passed, 0 skipped（2026-10-28）；`check.ps1` PASS | `logs/extract-command-surface.log`、`test/summary.json`、`logs/test-ps1-console.log`、`check-governance.json` |
+
+## Record Decisions（交付记录）
+
+1. **清单格式**：采用标准 `sha256sum` 格式 `<sha256>  <filename>`（两空格、文件名按字节序），保证 `sha256sum -c SHA256SUMS` 可直接使用；字节数/来源/生成时间放入 sidecar `SHA256SUMS.json`（校验脚本自动读取并额外核对字节数）。
+2. **产物定位三级回退**：显式路径 → `-ArtifactDir`（发布 staging 目录）→ 已知 task-env 默认位置；清单本身不含本机绝对路径，可跨机器分发。`-ArtifactDir` 模式用同一卷硬链接副本验证（零复制 900MB）。
+3. **不复制产物**：生成/校验脚本只读哈希；zip/exe 未入 Git（`RELEASE_NOTES` 与 Task 卡记录路径/hash；证据目录只放清单副本与日志）。
+4. **负向可证伪**：`verify-release.ps1` 对篡改副本必须 exit 1 并点名文件；同时验证「真实产物仍 PASS」，排除脚本恒真/环境误判；另补缺失产物负向。
+5. **签名边界**：本卡**不做签名**、**不关闭** V1-RELEASE-SIGNING-1；发行说明明确 SmartScreen「更多信息→仍要运行」流程与免费替代（哈希校验；SignPath Foundation 等免费 OSS 签名未来可申请）。
+6. **文档职责**：发行说明为面向用户的主入口；MANUAL_VERIFY 顶部状态块加链接，保持原 5 项人工核验表不变。
+7. **产物只读**：三个发布产物（base zip / models zip / setup.exe）全程未修改；只有 setup.exe 的 task-env 副本被单字节篡改（证据记录 offset/字节/hash）。
+
+## 交付与运行记录
+
+- Handoff：[RELEASE-VERIFY-1-handoff.md](../handoffs/RELEASE-VERIFY-1-handoff.md)
+- Review：尚未（reviewer=`dsh`；Owner 与 Reviewer 不同）。
+- 实现提交：`8d149ca6d749d9fb8ebe67812713603977a648c2`（`packaging/release/**` + 发行说明 + MANUAL_VERIFY 链接）。
+- 证据提交 / delivery_head：`75db4fd643f47a92924f607617c348fd85e6d411`（`verification/RELEASE-VERIFY-1/**`）。
+- Task 卡 + Handoff：紧随 delivery head 的文档提交（本卡所在提交）（紧随 delivery head 的文档提交）。
+- 实际测试：见「测试要求」表；`packaging/release/SHA256SUMS` 入库（3 产物，284 B），`sha256sum` 兼容。
 
 ## 依赖、风险与阻塞
 
@@ -81,21 +101,41 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| delivery-report | 交付报告 | verification/RELEASE-VERIFY-1/REPORT.md | 75db4fd643f47a92924f607617c348fd85e6d411 | 147650915f63e40c47b142a8f7b069d10101f6798d88c8ad0132012eb3e8ff92 | CANONICAL |
+| ac1-artifacts | AC1/AC2 | verification/RELEASE-VERIFY-1/artifacts.json | 75db4fd643f47a92924f607617c348fd85e6d411 | 75b1e3f583a18a9b028dc233d9d5353129bedc47a9024899f9f74630d7a8b4db | CANONICAL |
+| ac2-sha256sums | AC2 | verification/RELEASE-VERIFY-1/checksums/SHA256SUMS | 75db4fd643f47a92924f607617c348fd85e6d411 | 153f29420dfbe6bdfd8237fee1221052ae9e89956053e4ada153eef06d958ad6 | CANONICAL |
+| ac2-sha256sums-sidecar | AC1/AC2 | verification/RELEASE-VERIFY-1/checksums/SHA256SUMS.json | 75db4fd643f47a92924f607617c348fd85e6d411 | 6b7f150314fc7e41b20097012874db00750ec290ee4f046f5b4f9f1f2557a336 | CANONICAL |
+| ac4-docs-diff | AC4 | verification/RELEASE-VERIFY-1/docs/diff-stat.txt | 75db4fd643f47a92924f607617c348fd85e6d411 | 33295d48f34ceb051e9856ec67c4962890d246de423014dc8f9a958e007d6a26 | CANONICAL |
+| ac4-manual-verify-link | AC4 | verification/RELEASE-VERIFY-1/docs/manual-verify-link.json | 75db4fd643f47a92924f607617c348fd85e6d411 | 8d664c328fa9039641732fb6a605f0956a193713a890d92f32071557e8bf6a5f | CANONICAL |
+| ac4-release-notes-check | AC4 | verification/RELEASE-VERIFY-1/docs/release-notes-check.json | 75db4fd643f47a92924f607617c348fd85e6d411 | a248f66fb17c961ab9d7b4c9ff5a1599cca5f22edd5076c73729bfcb1ccc0fee | CANONICAL |
+| ac5-command-surface | AC5 | verification/RELEASE-VERIFY-1/logs/extract-command-surface.log | 75db4fd643f47a92924f607617c348fd85e6d411 | 564676d393ad475f6924d84dce57281e51ba6ae22d4f7984379030a8e05dfda1 | CANONICAL |
+| ac1-generate-log | AC1/AC2 | verification/RELEASE-VERIFY-1/logs/generate-checksums.log | 75db4fd643f47a92924f607617c348fd85e6d411 | b3aec2044956250520f5b1eba6b69ef955dbe55058f26b4bdfb6db4f1c62e53b | CANONICAL |
+| ac5-test-console | AC5 | verification/RELEASE-VERIFY-1/logs/test-ps1-console.log | 75db4fd643f47a92924f607617c348fd85e6d411 | 827ba3a5afd3643fda2e32b9e2fb62413fa63c4f74fc119e16fa0fd8d0a20c59 | CANONICAL |
+| ac1-verify-artifactdir | AC1 | verification/RELEASE-VERIFY-1/logs/verify-artifactdir.log | 75db4fd643f47a92924f607617c348fd85e6d411 | f2dea3b63149926f65c32bbc7c9786d1c7d1029f95f3674761eabe6a84b86c69 | CANONICAL |
+| ac3-verify-missing | AC3 | verification/RELEASE-VERIFY-1/logs/verify-missing.log | 75db4fd643f47a92924f607617c348fd85e6d411 | b90a79fc6e9d1dfcce9371a3a677fa85129190e5355847b1f4f0ac43cb569ded | CANONICAL |
+| ac3-verify-negative-tamper | AC3 | verification/RELEASE-VERIFY-1/logs/verify-negative-tamper.log | 75db4fd643f47a92924f607617c348fd85e6d411 | bf7211c75fd5215ef752d13e5f350ac44bab341ab70b4bbeaeffad0631e98ce2 | CANONICAL |
+| ac2-verify-positive | AC2 | verification/RELEASE-VERIFY-1/logs/verify-positive.log | 75db4fd643f47a92924f607617c348fd85e6d411 | e169233f95c3de19eb9005ae69182c55dcc6b4c7196cd948195f020f6bde3c60 | CANONICAL |
+| ac3-verify-quiet-after | AC3 | verification/RELEASE-VERIFY-1/logs/verify-quiet-after-negative.log | 75db4fd643f47a92924f607617c348fd85e6d411 | ed1b6101cfd410d0d8bef03aaf98cbe875165721e04dd86aa7cba2aed7e05089 | CANONICAL |
+| ac3-tamper | AC3 | verification/RELEASE-VERIFY-1/negative/tamper.json | 75db4fd643f47a92924f607617c348fd85e6d411 | a1b3997a581255e3d850c1462c52f809fdf973002ab70e1730ccd946cc5e7811 | CANONICAL |
+| ac5-test-summary | AC5 | verification/RELEASE-VERIFY-1/test/summary.json | 75db4fd643f47a92924f607617c348fd85e6d411 | 91a382da7ea7623a79bc4a0c3ac1d0aab342ccab42a843807be41965bbfba5ad | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/RELEASE-VERIFY-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/RELEASE-VERIFY-1 | branch `task/RELEASE-VERIFY-1` @ `b54d2d36f` | 交付后按 Worktree Safety Inventory 复核 |
-| task-env | G:/CODEX/New Manga.workspace/task-envs/RELEASE-VERIFY-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/RELEASE-VERIFY-1 | 待交付时登记 | 负向篡改副本与日志只写此处 |
-| input | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out | PRESERVE_REFERENCED（只读） | 原路径 | base/models zip sha256 见卡 | 只读校验，不覆盖 |
-| input | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out | PRESERVE_REFERENCED（只读） | 原路径 | setup.exe sha256 见卡 | 只读校验，不覆盖 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/RELEASE-VERIFY-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/RELEASE-VERIFY-1 | verification/RELEASE-VERIFY-1/artifacts.json | 交付 head/产物登记见证据 JSON；未 push；按 Worktree Safety Inventory 复核后由 DSH 处置 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/RELEASE-VERIFY-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/RELEASE-VERIFY-1 | verification/RELEASE-VERIFY-1/artifacts.json | 含 tamper/ 篡改副本、staged-replicas/ 硬链接校验目录、evidence-test/、logs/；只写此处 |
+| package-input | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out | verification/RELEASE-VERIFY-1/checksums/SHA256SUMS.json | 只读校验 base/models zip（未覆盖、未复制入仓库） |
+| package-input | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out | verification/RELEASE-VERIFY-1/checksums/SHA256SUMS.json | 只读校验 setup.exe（未覆盖、未复制入仓库） |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64.zip | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64.zip | 722fc62b53a4488dff8e3043b419a720cb59c3e4c790a9c8d19511efb627e8ef | 发布产物（103,492,048 B），已由 SHA256SUMS/verify 校验；只读 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64-models.zip | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64-models.zip | 480d06323ce482214955582dc86696bfdd8023e9227100941fd6b8873b237f67 | 发布产物（725,499,708 B），已由 SHA256SUMS/verify 校验；只读 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe | ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691 | 发布产物（68,611,208 B），篡改测试仅针对 task-env 副本；原件只读 |
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：交付时更新 STATUS/PLAN/LEDGER。
+- canonical_evidence_status：`complete`（`verification/RELEASE-VERIFY-1/**` 全部登记为 Canonical Evidence，64-hex pin；`check-governance.json` 含 `check.ps1 -TaskPath` PASS 记录）。
+- resource_closeout_status：`pending`（由 DSH 在集成窗口按本 Manifest 逐项处置；三个发布产物保持只读，task-env 篡改副本保留供复核）。
+- 删除、迁移、归档数量/字节数：本 Task 未删除/迁移/归档；task-env（篡改副本 65.4MB + 硬链接 staging + 日志）与 worktree 保留。
+- 未关闭项及保留原因：发布产物只读保留（被清单/发行说明引用）；V1-RELEASE-SIGNING-1 仍未关闭（等待证书，本卡不改变签名状态）。
+- 当前指针清理：STATUS/PLAN/LEDGER 由 DSH 统一更新（Owner 未改这三份文件）。
