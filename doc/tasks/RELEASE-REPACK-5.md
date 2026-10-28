@@ -3,7 +3,7 @@ id: RELEASE-REPACK-5
 title: 第五次重打包（含三布局主题合并）与安装验收
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-28_repack
 suggested_owner: core-admin-rca
 owner: null
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 6120f91e5
 branch: task/RELEASE-REPACK-5
 worktree: G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-5
-integration_commit: null
+integration_commit: 21d27abc8
 delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -83,3 +83,12 @@ packaging/**、pps/desktop-avalonia/scripts/**、pps/desktop-avalonia/docs/**�
 - 删除、迁移、归档数量/字节数：待关闭时填写。
 - 未关闭项及保留原因：导入 BLOCKED（待 DSH triage：HEAD 回归 vs 数据根/环境）；主题数量 9 与预期 7 口径确认；4K@200% 环境限制；凭据 2 条历史残留待裁决。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+## Review（DSH 集成复核，2026-10-28）— PASS（AC3 PARTIAL：导入 BLOCKED 转诊断）
+
+- 新包：base 103,374,546B sha 7e178f29…；models **725,382,787B** sha 41b330f5…（新 sidecar，未复用；torch-free）；epo_head=6120f91e5。
+- 主题：全新安装后设置页 **9 packs**（6 legacy + macOS 风 Sonoma/**Launchpad（底部 Dock）**/**Split（左侧 Sidebar）**）——比任务预期 7 多 2，属合并后超集，**口径按实际 9 接受**；三套切换生效并截图。
+- 冒烟：书架/阅读/沉浸 Esc-H（真实 keybd_event，H/Esc 截图 sha 均变化）/导出 ZIP **7,070,562B** sha 5cfffa9f… 成功。
+- **导入 BLOCKED（转 IMPORT-TRIAGE-1）**：Register/RevokeImportSource 有、无 ImportPages；UI 卡「正在导入文件…」>40s；已复现于书架/工作台/默认主题/重复 fixture；面板与控制器相对 REPACK-4 无 diff。
+- 稳定性：WM_CLOSE 4,116ms、0 残留、卸载干净、注册表 0；console 0；WS App 311.7/core 41.7/bridge 23.5MB；Mica fresh launch actual=Mica。
+- 回归：干净 worktree test.ps1 **249/249**；pytest 0F/2773P/10S；check PASS；15 条 pin。
+- 集成：21d27abc8。
