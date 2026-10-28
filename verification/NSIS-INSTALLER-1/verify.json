@@ -1,0 +1,456 @@
+{
+  "task": "NSIS-INSTALLER-1",
+  "ac": "AC2/AC3",
+  "generated_at_utc": "2026-10-28T07:02:18.2858365Z",
+  "machine": {
+    "user": "49745",
+    "local_appdata": "C:\\Users\\49745\\AppData\\Local",
+    "appdata": "C:\\Users\\49745\\AppData\\Roaming"
+  },
+  "paths": {
+    "install_dir": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+    "start_menu_dir": "C:\\Users\\49745\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\New Manga",
+    "data_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+    "isolated_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\isolated-data-root",
+    "app_log_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\app-logs"
+  },
+  "installer": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe",
+    "bytes": 68611208,
+    "sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691"
+  },
+  "install_seconds": 6.81,
+  "install_file_count": 1970,
+  "install_bytes": 226130010.0,
+  "uninstall_seconds": 0.73,
+  "reinstall_seconds": 6.57,
+  "final_uninstall_seconds": 0.72,
+  "app_ready": true,
+  "app_ready_seconds": 2.48,
+  "app_main_window_title": "New Manga",
+  "app_argument_string": "\"--data-root=G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\isolated-data-root\" \"--log-dir=G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\app-logs\" --mutex-name=Local\\NSIS-INSTALLER-1-VERIFY --legacy-shell-check=off --page=bookshelf",
+  "install_log": "verification/NSIS-INSTALLER-1/logs/install.log",
+  "uninstall_log": "verification/NSIS-INSTALLER-1/logs/uninstall.log",
+  "app_host_log": "verification/NSIS-INSTALLER-1/logs/app-host.log",
+  "app_uia": "verification/NSIS-INSTALLER-1/app-uia.txt",
+  "screenshot": "verification/NSIS-INSTALLER-1/screens/installed-app.png",
+  "data_root_durable_digest_before": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_durable_digest_after_install": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_durable_digest_after_launch": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_durable_digest_after_uninstall": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_durable_digest_after_reinstall": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_durable_digest_final": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_full_digests": {
+    "before": "44f2bfed5d7e997beca6322cdefa85cc8d40756da263da6ea7a280b012b33c4d",
+    "after_install": "44f2bfed5d7e997beca6322cdefa85cc8d40756da263da6ea7a280b012b33c4d",
+    "after_launch": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+    "after_uninstall": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+    "after_reinstall": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+    "final": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda"
+  },
+  "data_root_changes": {
+    "after_install": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "after_launch": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "logs/window-material.log"
+      ]
+    },
+    "after_app_run": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "logs/window-material.log"
+      ]
+    }
+  },
+  "assertion_count": 54,
+  "assertion_failed": 0,
+  "assertions": [
+    {
+      "id": "installer_exists",
+      "pass": true,
+      "expected": "setup.exe exists",
+      "actual": "G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe",
+      "detail": ""
+    },
+    {
+      "id": "preexisting_install_dir",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "preexisting_uninstall_key",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "hk_hklm_uninstall_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "program_files_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "data_root_exists_before",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "install_exit_code",
+      "pass": true,
+      "expected": "0",
+      "actual": 0,
+      "detail": ""
+    },
+    {
+      "id": "install_dir_exists",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "installed_app_executable",
+      "pass": true,
+      "expected": "1",
+      "actual": 4,
+      "detail": ""
+    },
+    {
+      "id": "installed_uninstaller",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "installed_app_bytes_identical_to_stage",
+      "pass": true,
+      "expected": "stage app digest",
+      "actual": "mismatch",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_LICENSE",
+      "pass": true,
+      "expected": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+      "actual": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_LICENSE_AGPL_3_0_txt",
+      "pass": true,
+      "expected": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "actual": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_NOTICE_md",
+      "pass": true,
+      "expected": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+      "actual": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_THIRD_PARTY_LICENSES_md",
+      "pass": true,
+      "expected": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+      "actual": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+      "detail": ""
+    },
+    {
+      "id": "installed_exe_is_gui_subsystem",
+      "pass": true,
+      "expected": "2 (WINDOWS_GUI)",
+      "actual": 2,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_shortcut",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_shortcut_target",
+      "pass": true,
+      "expected": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "actual": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "detail": ""
+    },
+    {
+      "id": "start_menu_uninstall_shortcut",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "registry_display_version",
+      "pass": true,
+      "expected": "0.1.0",
+      "actual": "0.1.0",
+      "detail": ""
+    },
+    {
+      "id": "registry_install_location",
+      "pass": true,
+      "expected": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "actual": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "detail": ""
+    },
+    {
+      "id": "registry_uninstall_string",
+      "pass": true,
+      "expected": "*Uninstall.exe*",
+      "actual": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\"",
+      "detail": ""
+    },
+    {
+      "id": "registry_quiet_uninstall_string",
+      "pass": true,
+      "expected": "*/S*",
+      "actual": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\" /S",
+      "detail": ""
+    },
+    {
+      "id": "registry_display_icon",
+      "pass": true,
+      "expected": "*NewManga.App.exe*",
+      "actual": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "detail": ""
+    },
+    {
+      "id": "hk_hklm_uninstall_still_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "program_files_still_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "install_log_present",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "install_log_complete",
+      "pass": true,
+      "expected": "install_complete=1",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_install",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "app_process_alive",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "app_host_ready",
+      "pass": true,
+      "expected": "host.log core_service ready + host_bridge ready",
+      "actual": true,
+      "detail": "(elapsed 2.48s)"
+    },
+    {
+      "id": "app_main_window",
+      "pass": true,
+      "expected": "nonzero handle",
+      "actual": {
+        "value": 19730986
+      },
+      "detail": "title='New Manga'"
+    },
+    {
+      "id": "app_isolated_data_root_exists",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_untouched_by_launch",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "app_closed_before_uninstall",
+      "pass": true,
+      "expected": "process exited",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_app_run",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "uninstaller_exists_before_uninstall",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "uninstall_exit_code",
+      "pass": true,
+      "expected": "0",
+      "actual": 0,
+      "detail": ""
+    },
+    {
+      "id": "install_dir_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_shortcut_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_dir_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "uninstall_key_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "app_reg_key_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "hk_hklm_uninstall_absent_after",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "program_files_absent_after",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "uninstall_log_complete",
+      "pass": true,
+      "expected": "uninstall_complete=1",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_uninstall",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "reinstall_exit_code",
+      "pass": true,
+      "expected": "0",
+      "actual": 0,
+      "detail": ""
+    },
+    {
+      "id": "reinstall_install_dir",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "reinstall_app_sha_matches",
+      "pass": true,
+      "expected": "9aeeb5ed56bc85207ef1dbb141e454027efdb2c7adb9ccee85bd3d683aff026e",
+      "actual": "9aeeb5ed56bc85207ef1dbb141e454027efdb2c7adb9ccee85bd3d683aff026e",
+      "detail": ""
+    },
+    {
+      "id": "reinstall_uninstall_key",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_reinstall",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "final_uninstall_clean",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_final",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "ac": "AC2/AC3",
+  "path": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+  "before_entries": [
+    {
+      "rel": "backups/catalog.20261026T190515Z.sqlite.nmbak",
+      "bytes": 24576,
+      "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+    },
+    {
+      "rel": "backups/first-run-20261026190335.zip",
+      "bytes": 11955,
+      "sha256": "f0ebdccd92614e9b77c4def57f60398cb65460c7949b23ec74b295cac62a8c8e"
+    },
+    {
+      "rel": "backups/first-run-20261026190358.zip",
+      "bytes": 22815,
+      "sha256": "fff74a70aa2f5dea80cdda0e57cb0c4e7075a27d4580722b1bb4a484717c8fec"
+    },
+    {
+      "rel": "catalog/catalog.sqlite",
+      "bytes": 24576,
+      "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+    },
+    {
+      "rel": "data/library.db",
+      "bytes": 344064,
+      "sha256": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa"
+    },
+    {
+      "rel": "data/library.db.run-owner.lock",
+      "bytes": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "rel": "derived/.preview-lifecycle.lock",
+      "bytes": 315,
+      "sha256": "503af1690a8817d60c67a7e392ce29d7f4946f667e3c437d284d0b4dc96698b5"
+    },
+    {
+      "rel": "library.db",
+      "bytes": 344064,
+      "sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9"
+    },
+    {
+      "rel": "library.db.run-owner.lock",
+      "bytes": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "rel": "logs/core_service.stderr.log",
+      "bytes": 7790,
+      "sha256": "67c76c569b4df094db2ac1b80d0c4ce8b4e2a6b7cb4bbc75cb183def08ec9022"
+    },
+    {
+      "rel": "logs/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel": "logs/host.log",
+      "bytes": 10892,
+      "sha256": "f6c2a5dfaaca48313e59f7dd2ee4e4e84aca6d9561984be2e1e728488741b849"
+    },
+    {
+      "rel": "logs/window-material.log",
+      "bytes": 122757,
+      "sha256": "df26221220729426c711344d50c99b33c5be500c6a12b0351dd06b38840a9855"
+    },
+    {
+      "rel": "logs/wire/core-service.ndjson",
+      "bytes": 40711,
+      "sha256": "2c34ca0f0b55822f10a20b965f4a9500e436b13405686f2b7fc7b4d0341a05c1"
+    },
+    {
+      "rel": "logs/wire/host-bridge.ndjson",
+      "bytes": 6063,
+      "sha256": "b3675bdf00c47e1747720a577ce91b032d38ddc3451f3569118fed913355da94"
+    }
+  ],
+  "current_entries": [
+    {
+      "rel": "library.db",
+      "bytes": 344064,
+      "sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9"
+    },
+    {
+      "rel": "library.db.run-owner.lock",
+      "bytes": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "rel": "backups/catalog.20261026T190515Z.sqlite.nmbak",
+      "bytes": 24576,
+      "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+    },
+    {
+      "rel": "backups/first-run-20261026190335.zip",
+      "bytes": 11955,
+      "sha256": "f0ebdccd92614e9b77c4def57f60398cb65460c7949b23ec74b295cac62a8c8e"
+    },
+    {
+      "rel": "backups/first-run-20261026190358.zip",
+      "bytes": 22815,
+      "sha256": "fff74a70aa2f5dea80cdda0e57cb0c4e7075a27d4580722b1bb4a484717c8fec"
+    },
+    {
+      "rel": "catalog/catalog.sqlite",
+      "bytes": 24576,
+      "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+    },
+    {
+      "rel": "data/library.db",
+      "bytes": 344064,
+      "sha256": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa"
+    },
+    {
+      "rel": "data/library.db.run-owner.lock",
+      "bytes": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "rel": "derived/.preview-lifecycle.lock",
+      "bytes": 315,
+      "sha256": "503af1690a8817d60c67a7e392ce29d7f4946f667e3c437d284d0b4dc96698b5"
+    },
+    {
+      "rel": "logs/core_service.stderr.log",
+      "bytes": 7790,
+      "sha256": "67c76c569b4df094db2ac1b80d0c4ce8b4e2a6b7cb4bbc75cb183def08ec9022"
+    },
+    {
+      "rel": "logs/host_bridge.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel": "logs/host.log",
+      "bytes": 10892,
+      "sha256": "f6c2a5dfaaca48313e59f7dd2ee4e4e84aca6d9561984be2e1e728488741b849"
+    },
+    {
+      "rel": "logs/window-material.log",
+      "bytes": 122840,
+      "sha256": "9f0b8f1afef203b11ee56ba90f0f858a86d6817030840e914a3cbec7ed1a18aa"
+    },
+    {
+      "rel": "logs/wire/core-service.ndjson",
+      "bytes": 40711,
+      "sha256": "2c34ca0f0b55822f10a20b965f4a9500e436b13405686f2b7fc7b4d0341a05c1"
+    },
+    {
+      "rel": "logs/wire/host-bridge.ndjson",
+      "bytes": 6063,
+      "sha256": "b3675bdf00c47e1747720a577ce91b032d38ddc3451f3569118fed913355da94"
+    }
+  ],
+  "durable_digest_before": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "durable_digest_after_install": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "durable_digest_after_launch": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "durable_digest_final": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "changes": [
+    {
+      "rel": "logs/window-material.log",
+      "before": "df26221220729426c711344d50c99b33c5be500c6a12b0351dd06b38840a9855",
+      "after": "9f0b8f1afef203b11ee56ba90f0f858a86d6817030840e914a3cbec7ed1a18aa",
+      "note": "app diagnostics append (product behavior), not installer/uninstaller"
+    }
+  ],
+  "library_db": {
+    "before": {
+      "rel": "library.db",
+      "bytes": 344064,
+      "sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9"
+    },
+    "current": {
+      "rel": "library.db",
+      "bytes": 344064,
+      "sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9"
+    }
+  },
+  "generated_at_utc": "2026-10-28T07:02:33.9823070Z"
+}

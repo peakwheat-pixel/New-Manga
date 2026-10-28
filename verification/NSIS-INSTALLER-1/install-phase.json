@@ -1,0 +1,499 @@
+{
+  "phase": "install",
+  "version": "0.1.0",
+  "installer": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe",
+    "bytes": 68611208,
+    "sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691"
+  },
+  "machine": {
+    "user": "49745",
+    "local_appdata": "C:\\Users\\49745\\AppData\\Local",
+    "appdata": "C:\\Users\\49745\\AppData\\Roaming"
+  },
+  "paths": {
+    "install_dir": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+    "start_menu_dir": "C:\\Users\\49745\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\New Manga",
+    "data_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+    "isolated_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\isolated-data-root",
+    "app_log_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\app-logs"
+  },
+  "install": {
+    "seconds": 6.81,
+    "exit_code": 0,
+    "file_count": 1970,
+    "bytes": 226130010.0,
+    "tree_digest": "bbb4597b82320436580618a715eb6a4f2f0c8124628f83f8d4899a8518d49e08",
+    "app_tree_digest": "7f3bdf51a702264d1e7fa42a23c930b6d006b5763cc0e516702f0d21a68e6ab7",
+    "stage": {
+      "path": "G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64",
+      "exists": true,
+      "root_digest": "f1ace7a06919b9da49942b11577f2091a244c689e25da43e19ddc0d768aa3db4",
+      "app_digest": "7f3bdf51a702264d1e7fa42a23c930b6d006b5763cc0e516702f0d21a68e6ab7"
+    },
+    "files": [
+      {
+        "rel": "app/NewManga.App.exe",
+        "exists": true,
+        "bytes": 30234828,
+        "sha256": "9aeeb5ed56bc85207ef1dbb141e454027efdb2c7adb9ccee85bd3d683aff026e"
+      },
+      {
+        "rel": "app/core-sidecar/core_service.exe",
+        "exists": true,
+        "bytes": 399492,
+        "sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a"
+      },
+      {
+        "rel": "LICENSE",
+        "exists": true,
+        "bytes": 34906,
+        "sha256": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+      },
+      {
+        "rel": "LICENSE-AGPL-3.0.txt",
+        "exists": true,
+        "bytes": 34523,
+        "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+      },
+      {
+        "rel": "NOTICE.md",
+        "exists": true,
+        "bytes": 3411,
+        "sha256": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c"
+      },
+      {
+        "rel": "THIRD_PARTY_LICENSES.md",
+        "exists": true,
+        "bytes": 4769,
+        "sha256": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+      },
+      {
+        "rel": "LICENSE_AUDIT.md",
+        "exists": true,
+        "bytes": 1958,
+        "sha256": "7a0db863dfa8396584d18063c649ac49babd904f67b5a3ee7cbb58f9e7bfeaeb"
+      },
+      {
+        "rel": "VERSION.json",
+        "exists": true,
+        "bytes": 1803,
+        "sha256": "cf9982423d5c0e3465a6931d985ec5f472b8427926be7f93e3cf6b9d161b4279"
+      },
+      {
+        "rel": "Uninstall.exe",
+        "exists": true,
+        "bytes": 46628,
+        "sha256": "a8f7d06502f222f9293c5495d8e30d9528f3a9a10ca0e935cc401c71e672971b"
+      },
+      {
+        "rel": "install.ps1",
+        "exists": true,
+        "bytes": 2493,
+        "sha256": "76c6abbde7f4222c5bd23a86e24d8a6de3985df187472e587d99817dbbbdd1e9"
+      },
+      {
+        "rel": "uninstall.ps1",
+        "exists": true,
+        "bytes": 782,
+        "sha256": "0ed96618e670e7efd8c1d2938025cceb68363a58714c4cd14f8eeb86d617b3f7"
+      }
+    ],
+    "shortcut": {
+      "exists": true,
+      "path": "C:\\Users\\49745\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\New Manga\\New Manga.lnk",
+      "target": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "working_directory": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "icon": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe,0"
+    },
+    "uninstall_shortcut": {
+      "exists": true,
+      "path": "C:\\Users\\49745\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\New Manga\\卸载 New Manga.lnk",
+      "target": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe",
+      "working_directory": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "icon": ",0"
+    },
+    "registry": {
+      "DisplayName": "New Manga",
+      "DisplayVersion": "0.1.0",
+      "Publisher": "New Manga",
+      "InstallLocation": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "UninstallString": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\"",
+      "QuietUninstallString": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\" /S",
+      "DisplayIcon": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "EstimatedSize": 220785
+    },
+    "pe_subsystem": {
+      "value": 2,
+      "kind": "WINDOWS_GUI"
+    },
+    "temp_log": "C:\\Users\\49745\\AppData\\Local\\Temp\\NewManga-install-0.1.0.log",
+    "log_copied": true
+  },
+  "data_root_before": {
+    "exists": true,
+    "path": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+    "file_count": 15,
+    "bytes": 960580.0,
+    "entries": [
+      {
+        "rel": "backups/catalog.20261026T190515Z.sqlite.nmbak",
+        "bytes": 24576,
+        "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+      },
+      {
+        "rel": "backups/first-run-20261026190335.zip",
+        "bytes": 11955,
+        "sha256": "f0ebdccd92614e9b77c4def57f60398cb65460c7949b23ec74b295cac62a8c8e"
+      },
+      {
+        "rel": "backups/first-run-20261026190358.zip",
+        "bytes": 22815,
+        "sha256": "fff74a70aa2f5dea80cdda0e57cb0c4e7075a27d4580722b1bb4a484717c8fec"
+      },
+      {
+        "rel": "catalog/catalog.sqlite",
+        "bytes": 24576,
+        "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+      },
+      {
+        "rel": "data/library.db",
+        "bytes": 344064,
+        "sha256": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa"
+      },
+      {
+        "rel": "data/library.db.run-owner.lock",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "rel": "derived/.preview-lifecycle.lock",
+        "bytes": 315,
+        "sha256": "503af1690a8817d60c67a7e392ce29d7f4946f667e3c437d284d0b4dc96698b5"
+      },
+      {
+        "rel": "library.db",
+        "bytes": 344064,
+        "sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9"
+      },
+      {
+        "rel": "library.db.run-owner.lock",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "rel": "logs/core_service.stderr.log",
+        "bytes": 7790,
+        "sha256": "67c76c569b4df094db2ac1b80d0c4ce8b4e2a6b7cb4bbc75cb183def08ec9022"
+      },
+      {
+        "rel": "logs/host_bridge.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "rel": "logs/host.log",
+        "bytes": 10892,
+        "sha256": "f6c2a5dfaaca48313e59f7dd2ee4e4e84aca6d9561984be2e1e728488741b849"
+      },
+      {
+        "rel": "logs/window-material.log",
+        "bytes": 122757,
+        "sha256": "df26221220729426c711344d50c99b33c5be500c6a12b0351dd06b38840a9855"
+      },
+      {
+        "rel": "logs/wire/core-service.ndjson",
+        "bytes": 40711,
+        "sha256": "2c34ca0f0b55822f10a20b965f4a9500e436b13405686f2b7fc7b4d0341a05c1"
+      },
+      {
+        "rel": "logs/wire/host-bridge.ndjson",
+        "bytes": 6063,
+        "sha256": "b3675bdf00c47e1747720a577ce91b032d38ddc3451f3569118fed913355da94"
+      }
+    ],
+    "digest": "44f2bfed5d7e997beca6322cdefa85cc8d40756da263da6ea7a280b012b33c4d"
+  },
+  "data_root_durable_before": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_after_install_digest": "44f2bfed5d7e997beca6322cdefa85cc8d40756da263da6ea7a280b012b33c4d",
+  "data_root_durable_after_install": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_changes_after_install": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "data_root_after_launch_digest": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+  "data_root_durable_after_launch": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_changes_after_launch": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      "logs/window-material.log"
+    ]
+  },
+  "app": {
+    "pid": 44608,
+    "exe": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+    "argument_string": "\"--data-root=G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\isolated-data-root\" \"--log-dir=G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\app-logs\" --mutex-name=Local\\NSIS-INSTALLER-1-VERIFY --legacy-shell-check=off --page=bookshelf",
+    "ready": true,
+    "ready_seconds": 2.48,
+    "main_window_handle": {
+      "value": 19730986
+    },
+    "main_window_title": "New Manga",
+    "host_log": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\app-logs\\host.log",
+    "host_log_tail": [
+      "2026-10-28T07:00:04.2345054+00:00 INFO single-instance acquired: Local\\NSIS-INSTALLER-1-VERIFY (abandoned_recovered=False)",
+      "2026-10-28T07:00:04.2346253+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\verify\\isolated-data-root",
+      "2026-10-28T07:00:04.2346988+00:00 INFO first-run backup skipped: catalog database not present yet",
+      "2026-10-28T07:00:04.6451311+00:00 INFO core_service ready (1 wire frames)",
+      "2026-10-28T07:00:04.7672083+00:00 INFO host_bridge ready (1 wire frames)",
+      "2026-10-28T07:00:04.7675353+00:00 INFO credential port ready (Windows Credential Manager)",
+      "2026-10-28T07:00:04.7692372+00:00 INFO host-control session opened (host_-hMEgEroh2IuK78Xf4j2i-Ozdt9PXo987K4qUwKwpx4)",
+      ""
+    ]
+  },
+  "assertions": [
+    {
+      "id": "installer_exists",
+      "pass": true,
+      "expected": "setup.exe exists",
+      "actual": "G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe",
+      "detail": ""
+    },
+    {
+      "id": "preexisting_install_dir",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "preexisting_uninstall_key",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "hk_hklm_uninstall_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "program_files_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "data_root_exists_before",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "install_exit_code",
+      "pass": true,
+      "expected": "0",
+      "actual": 0,
+      "detail": ""
+    },
+    {
+      "id": "install_dir_exists",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "installed_app_executable",
+      "pass": true,
+      "expected": "1",
+      "actual": 4,
+      "detail": ""
+    },
+    {
+      "id": "installed_uninstaller",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "installed_app_bytes_identical_to_stage",
+      "pass": true,
+      "expected": "stage app digest",
+      "actual": "mismatch",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_LICENSE",
+      "pass": true,
+      "expected": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+      "actual": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_LICENSE_AGPL_3_0_txt",
+      "pass": true,
+      "expected": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "actual": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_NOTICE_md",
+      "pass": true,
+      "expected": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+      "actual": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+      "detail": ""
+    },
+    {
+      "id": "installed_license_THIRD_PARTY_LICENSES_md",
+      "pass": true,
+      "expected": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+      "actual": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+      "detail": ""
+    },
+    {
+      "id": "installed_exe_is_gui_subsystem",
+      "pass": true,
+      "expected": "2 (WINDOWS_GUI)",
+      "actual": 2,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_shortcut",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_shortcut_target",
+      "pass": true,
+      "expected": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "actual": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "detail": ""
+    },
+    {
+      "id": "start_menu_uninstall_shortcut",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "registry_display_version",
+      "pass": true,
+      "expected": "0.1.0",
+      "actual": "0.1.0",
+      "detail": ""
+    },
+    {
+      "id": "registry_install_location",
+      "pass": true,
+      "expected": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "actual": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+      "detail": ""
+    },
+    {
+      "id": "registry_uninstall_string",
+      "pass": true,
+      "expected": "*Uninstall.exe*",
+      "actual": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\"",
+      "detail": ""
+    },
+    {
+      "id": "registry_quiet_uninstall_string",
+      "pass": true,
+      "expected": "*/S*",
+      "actual": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\" /S",
+      "detail": ""
+    },
+    {
+      "id": "registry_display_icon",
+      "pass": true,
+      "expected": "*NewManga.App.exe*",
+      "actual": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+      "detail": ""
+    },
+    {
+      "id": "hk_hklm_uninstall_still_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "program_files_still_absent",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "install_log_present",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "install_log_complete",
+      "pass": true,
+      "expected": "install_complete=1",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_install",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "app_process_alive",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "app_host_ready",
+      "pass": true,
+      "expected": "host.log core_service ready + host_bridge ready",
+      "actual": true,
+      "detail": "(elapsed 2.48s)"
+    },
+    {
+      "id": "app_main_window",
+      "pass": true,
+      "expected": "nonzero handle",
+      "actual": {
+        "value": 19730986
+      },
+      "detail": "title='New Manga'"
+    },
+    {
+      "id": "app_isolated_data_root_exists",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_untouched_by_launch",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    }
+  ],
+  "started_at_utc": "2026-10-28T07:00:04.8540220Z"
+}

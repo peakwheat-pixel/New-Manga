@@ -2,6 +2,24 @@
 
 - 版本策略：SemVer `MAJOR.MINOR.PATCH`；安装包文件名 `NewManga-<version>-win-x64.zip`；`VERSION.json` 内嵌版本与数据根。
 
+## NSIS 安装包（NSIS-INSTALLER-1，无签名）
+
+- 发布形态新增 per-user NSIS 安装包：`NewManga-<version>-setup.exe`（`packaging/nsis/installer.nsi` 构建，
+  `apps/desktop-avalonia/scripts/build-installer.ps1` 产出；**未签名**，SmartScreen 会提示，签名由 V1-RELEASE-SIGNING-1 后续处理）。
+- 安装范围：当前用户 `%LOCALAPPDATA%\Programs\NewManga`（`RequestExecutionLevel user`，无 UAC；不写 HKLM/Program Files）。
+- 安装内容：base 变体 stage（`app/` 单文件 exe + 内置 `app/core-sidecar/` + 4 个许可文件 + `LICENSE_AUDIT.md` +
+  `install.ps1`/`uninstall.ps1` + `UPGRADE.md`/`MANUAL_VERIFY.md` + `VERSION.json`/`package-manifest.json`）。
+- 快捷方式与卸载项：开始菜单 `New Manga`（含卸载快捷方式）+ HKCU
+  `Software\Microsoft\Windows\CurrentVersion\Uninstall\NewManga`（DisplayName/DisplayVersion/Publisher/
+  InstallLocation/UninstallString/QuietUninstallString/DisplayIcon/EstimatedSize）。
+- 静默安装/卸载：`NewManga-<version>-setup.exe /S`、`"%LOCALAPPDATA%\Programs\NewManga\Uninstall.exe" /S`。
+- **数据根保留**：安装/卸载只处理安装目录、快捷方式与 HKCU 项，绝不触碰 `%APPDATA%\com.newmanga.desktop`
+  （含 `library.db`）；应用启动时会按产品行为向数据根 `logs/window-material.log` 追加诊断行，与安装器无关。
+- 升级：再运行新版本 setup 覆盖安装到同一目录（安装器先清理旧 payload 再复制），数据根与 HKCU 卸载项更新为
+  新版本；`VERSION.json` 记录新版本与 sidecar 构建。
+- models 变体（`-models` zip）仍按 zip 分发，不提供 NSIS 安装包（本卡范围）。
+
+
 ## 构建识别（RELEASE-REPACK-2 起）
 
 - `VERSION.json.sidecar_build` 记录本包内嵌 `core_service.exe` 的 `core_service_sha256`、

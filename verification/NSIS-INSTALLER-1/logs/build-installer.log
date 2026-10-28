@@ -1,0 +1,27 @@
+Command line defined: "VERSION=0.1.0"
+Command line defined: "VERSION4=0.1.0.0"
+Command line defined: "STAGE_DIR=G:\CODEX\New Manga.workspace\task-envs\AGPL-RELEASE-1\out\NewManga-0.1.0-win-x64"
+Command line defined: "OUT_FILE=G:\CODEX\New Manga.workspace\task-envs\NSIS-INSTALLER-1\out\NewManga-0.1.0-setup.exe"
+Command line defined: "INSTALL_SIZE_KB=220785"
+Command line defined: "LICENSE_FILE=G:\CODEX\New Manga.workspace\task-envs\AGPL-RELEASE-1\out\NewManga-0.1.0-win-x64\NOTICE.md"
+Command line defined: "ICON_FILE=G:\CODEX\New Manga.workspace\worktrees\NSIS-INSTALLER-1\apps\desktop\src-tauri\icons\icon.ico"
+Processing config: C:\Users\49745\AppData\Local\tauri\NSIS\nsisconf.nsh
+Processing script file: "G:\CODEX\New Manga.workspace\worktrees\NSIS-INSTALLER-1\packaging\nsis\installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "G:\CODEX\New Manga.workspace\task-envs\NSIS-INSTALLER-1\out\NewManga-0.1.0-setup.exe"
+Install: 5 pages (320 bytes), 1 section (2072 bytes), 2666 instructions (74648 bytes), 2066 strings (87210 bytes), 2 language tables (604 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (2072 bytes), 73 instructions (2044 bytes), 162 strings (4320 bytes), 2 language tables (500 bytes).
+Datablock optimizer saved 17109 KiB (~7.7%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:               44544 / 38912 bytes
+Install code:                          (165318 bytes)
+Install data:                          (208646202 bytes)
+Uninstall code+data:                   (13840 bytes)
+Compressed data:            68566660 / 208825360 bytes
+CRC (0x44B9E45F):                  4 / 4 bytes
+
+Total size:                 68611208 / 208864276 bytes (32.8%)

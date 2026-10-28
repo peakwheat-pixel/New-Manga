@@ -16,9 +16,15 @@
 ## 安装前置（终验已自动验证项）
 - 解压 → `install.ps1 -PackageDir <解压目录>`；安装后 `app/core-sidecar/core_service.exe` 与 `host_bridge.exe` 必须存在
   （终验 install-smoke：sidecar_bundled=true，1954 文件/186.3MiB）。
+- 或使用 NSIS 安装包（NSIS-INSTALLER-1）：运行 `NewManga-<version>-setup.exe`（per-user，安装到
+  `%LOCALAPPDATA%\Programs\NewManga`，无需管理员权限；未签名，SmartScreen 提示属已知限制）；静默安装 `/S`；
+  卸载用开始菜单「卸载 New Manga」或 `"%LOCALAPPDATA%\Programs\NewManga\Uninstall.exe" /S`。安装/卸载均不触碰
+  `%APPDATA%\com.newmanga.desktop` 数据根（AC2 自动断言；应用启动仅向其 `logs/window-material.log` 追加诊断行）。
 - base 包不含模型：首次检测会以 typed `PROVIDER_NOT_CONFIGURED` 报错——把模型放到
   `%APPDATA%\com.newmanga.desktop\models\{detector,ocr}` 或改用 `-models` 包；属预期（模型分发策略见包内 `VERSION.json`）。
 - 卸载：`uninstall.ps1 -InstallDir <安装目录>`；退出后不得残留 `NewManga.App` / `core_service` / `host_bridge` 进程。
+- NSIS 安装包卸载后：安装目录、开始菜单快捷方式、HKCU 卸载项必须消失，且 `%APPDATA%\com.newmanga.desktop` 保留
+  （验证 command：`verification/NSIS-INSTALLER-1/verify.json`）。
 
 ## 采集方法
 - 工作集：任务管理器 → 详细信息 → NewManga.App（+ core_service.exe）→ 内存峰值（MB）。
