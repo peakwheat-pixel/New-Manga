@@ -6,7 +6,7 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|REAL-TRANSLATE-PROVIDER-1|—|in_review（AC1 探测/AC2 vault/AC4 降级回退达成；AC3 BLOCKED=OpenCode 额度 402/429；235/235）|
+|REAL-TRANSLATE-PROVIDER-1|—|done（AC3 BLOCKED=OpenCode 额度 402/429；集成 6bf084222；充值后 `tools/run_translate_probe.py` 复验）|
 |THEME-MACOS-2|—|done（三布局 Sonoma/Launchpad/Split + 审计/截图合并；249/249；828c7c68e）|
 |RELEASE-REPACK-5|—|done（含三布局主题的新包；249/249；导入 BLOCKED→IMPORT-TRIAGE-1；21d27abc8）|
 |IMPORT-TRIAGE-1|—|done（非回归：干净根导入 8->9；烟测自动化半途 revoke；无代码修复；87fdc2246）|
@@ -21,12 +21,13 @@
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 
-|AD002-FOLLOWUPS-1|—|proposed（13 项遗留登记：NS 批次/签名/进度/多章/精度等）|
-|SCHEDULER-THREAD-DIAG-1|—|in_review（调度线程 detect 卡 running 根因：共享 run 缓存被 GetTaskProjection refresh 替换；证据 verification/SCHEDULER-THREAD-DIAG-1）|
+|AD002-FOLLOWUPS-1|—|proposed（20 项遗留登记：NS 批次/签名/进度/多章/精度/region 写 UI 等）|
+|REGION-WORKBENCH-1|S4-CMD-BATCH-1|ready（工作台真实 region 读/改标/撤销/重渲染 + 只读门；Owner region-workbench-owner / Reviewer dsh；2026-10-28 释放）|
+|SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|in_review（macOS Sonoma 风主题；单 pack 双 token 集 Light/Dark；证据 verification/THEME-MACOS-1）|
 |THEME-MACOS-LAYOUTS-1|—|ready（三套不同布局的 macOS 风主题：Sonoma/Launchpad/Split；证据 verification/THEME-MACOS-LAYOUTS-1）|
 
-READY 节点：无。
+READY 节点：REGION-WORKBENCH-1
 
 ## 历史快照（终态节点，非当前 DAG）
 
