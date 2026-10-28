@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "task_id": "PDF-EXPORT-UI-1",
+  "resources": [
+    {
+      "resource_type": "task-env",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-UI-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-UI-1",
+      "process_check": "2026-10-28 DSH closeout: task-env exists and is retained (evidence/, real-app-data-root/ with the real 20,728,075 B PDF, app-logs/); repository copy is verification/PDF-EXPORT-UI-1/ evidence only; no delete/move/archive performed.",
+      "deleted": false,
+      "moved": false
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  }
+}

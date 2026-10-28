@@ -3,7 +3,7 @@ id: PDF-EXPORT-UI-1
 title: PDF 导出 UI 选项（导出面板格式选择）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-27_round_2_5
 suggested_owner: saber-ui-spec
 owner: saber-ui-spec
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 2591ef028
 branch: task/PDF-EXPORT-UI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/PDF-EXPORT-UI-1
-integration_commit: null
+integration_commit: 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95
 delivery_head: 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/PDF-EXPORT-UI-1
 allowed_paths:
   - doc/tasks/PDF-EXPORT-UI-1.md
@@ -40,11 +40,11 @@ Core 已支持 PDF 导出（`QtFreePdfComposer`：`image_only` 无损 RGB / `sea
 
 ## Acceptance Criteria
 
-- [x] **AC1 格式选择**：导出面板新增格式选项（ZIP 图片包 / PDF；PDF 可选 image_only / searchable_dual_layer）→ 参数正确传给 `library_start_export`。→ **MET**：面板新增「导出格式」下拉 + PDF 内容模式下拉；payload 为既有六字段 `format` + `format_options`（PDF → `pdf_content`，ZIP → `compression`），HostIssuer 已支持该组合，未改契约。
-- [x] **AC2 结果展示**：导出完成显示真实文件路径 + sha256 + 页数/格式；PDF 与 ZIP 提示区分。→ **MET**：`导出完成（PDF · searchable_dual_layer）：<路径> · sha256 <64hex> · 3 页`；ZIP 显示 `ZIP 图片包`；真机 PDF sha256 与 UI 一致。
-- [x] **AC3 测试**：Headless 覆盖格式参数传递（ZIP/PDF 两种 + 模式）、完成态展示、错误提示；真机截图一次（导出面板含 PDF 选项）。→ **MET**：6 项 headless + 真机截图 2 张（PDF 选项面板、真实 PDF 导出完成）。
-- [x] **AC4 回归**：test.ps1 全绿（≥225）；vitest 60/567；pytest 无新增失败。→ **MET**：test.ps1 **231/231**（61/55/115，0 skipped）；vitest **60/567**；pytest **3F/2772P/9S**（同一组 3 失败，0 新增）。
-- [x] **AC5 门禁**：check.ps1 -TaskPath PASS；64-hex pin；Handoff。→ **MET**：check PASS；15 条 pin；Handoff 含 Record Decision。
+- [x] **AC1 格式选择**：导出面板新增格式选项（ZIP 图片包 / PDF；PDF 可选 image_only / searchable_dual_layer）→ 参数正确传给 `library_start_export`。→ **MET**：面板新增「导出格式」下拉 + PDF 内容模式下拉；payload 为既有六字段 `format` + `format_options`（PDF → `pdf_content`，ZIP → `compression`），HostIssuer 已支持该组合，未改契约。 <<MET>>
+- [x] **AC2 结果展示**：导出完成显示真实文件路径 + sha256 + 页数/格式；PDF 与 ZIP 提示区分。→ **MET**：`导出完成（PDF · searchable_dual_layer）：<路径> · sha256 <64hex> · 3 页`；ZIP 显示 `ZIP 图片包`；真机 PDF sha256 与 UI 一致。 <<MET>>
+- [x] **AC3 测试**：Headless 覆盖格式参数传递（ZIP/PDF 两种 + 模式）、完成态展示、错误提示；真机截图一次（导出面板含 PDF 选项）。→ **MET**：6 项 headless + 真机截图 2 张（PDF 选项面板、真实 PDF 导出完成）。 <<MET>>
+- [x] **AC4 回归**：test.ps1 全绿（≥225）；vitest 60/567；pytest 无新增失败。→ **MET**：test.ps1 **231/231**（61/55/115，0 skipped）；vitest **60/567**；pytest **3F/2772P/9S**（同一组 3 失败，0 新增）。 <<MET>>
+- [x] **AC5 门禁**：check.ps1 -TaskPath PASS；64-hex pin；Handoff。→ **MET**：check PASS；15 条 pin；Handoff 含 Record Decision。 <<MET>>
 
 ## Record Decision（摘要，完整版在 Handoff / REPORT）
 
@@ -82,18 +82,30 @@ Core 已支持 PDF 导出（`QtFreePdfComposer`：`image_only` 无损 RGB / `sea
 | PE-REAL-COMPLETED | AC2/AC3 | verification/PDF-EXPORT-UI-1/real-app-pdf-completed.png | 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95 | b8e34e7b1d82dafa868a9981f6d9e9576756e3721aae3aaafcb5f5da3ec5048e | CANONICAL |
 | PE-REAL-META | AC2/AC3 | verification/PDF-EXPORT-UI-1/real-app-export-metadata.json | 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95 | 586333cc5329f6ccfa29cfe938c06831d7f766e0489011900ff58eb3323e787e | CANONICAL |
 | PE-REPORT | AC5 | verification/PDF-EXPORT-UI-1/REPORT.md | 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95 | 8ea84295a48f12a673f700226b9e0a58c773d9d11139a7c18a851c6a748940df | CANONICAL |
+| PE-TRX-APP | AC4 | verification/PDF-EXPORT-UI-1/test/results-app.trx | 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95 | 266010ec4be7efe394289b131a89678e71baf44bc9f727a7f74c56556e5027e9 | SOURCE_PIN |
+| PE-TRX-CORECLIENT | AC4 | verification/PDF-EXPORT-UI-1/test/results-coreclient.trx | 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95 | 8d63b22980e5b99ad97893c00d78d2fff1781208837874c364099d1d6f645ac7 | SOURCE_PIN |
+| PE-TRX-HOST | AC4 | verification/PDF-EXPORT-UI-1/test/results-host.trx | 6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95 | 94f1fb6ffea406d5154b4d442d646c39cd9fc485e160dd533ae16469d94bb59e | SOURCE_PIN |
+| PE-RESOURCE-MANIFEST | Closeout | verification/PDF-EXPORT-UI-1/resource-manifest.json | - | dbb4746f3050761265bbb6006d03b41a4e10b62e22af83789f6190402abd04b0 | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-UI-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-UI-1 | `evidence/`（test/pdf-export-ui/logs）+ `real-app-data-root/`（隔离数据根，含真实导出 PDF）+ `app-logs/` | 2026-10-28 收口时存在；真实导出 PDF `exports/BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261027-161525.pdf`（20,728,075 B，sha256 `c0a97eb3…`）保留在此供复核，不入 Git；未移动/未删除；关闭时由 DSH 复核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-UI-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/PDF-EXPORT-UI-1 | verification/PDF-EXPORT-UI-1/resource-manifest.json | 2026-10-28 收口时存在；真实导出 PDF `exports/BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261027-161525.pdf`（20,728,075 B，sha256 `c0a97eb3…`）保留在此供复核，不入 Git；未移动/未删除；关闭时由 DSH 复核 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写（owner 交付 `6deefdcc3`，待 DSH 集成验证与独立 Review）。
-- canonical_evidence_status：`complete`（15 条 CANONICAL pin，指向 delivery_head）。
-- resource_closeout_status：`pending`（task-env + 隔离数据根 + 真实 PDF 保留引用）。
+- Closeout date / DSH：2026-10-28（DSH 独立复核 PASS；实现提交 `6deefdcc3` 已在 main 历史）。
+- canonical_evidence_status：`complete`（15 条 CANONICAL + 4 条 SOURCE_PIN；worktree/blob 双 basis 校验通过）。
+- resource_closeout_status：`complete`（task-env 与隔离数据根 `PRESERVE_REFERENCED`；真实 PDF 原件保留在 task-env，不入 Git）。
 - 删除、迁移、归档数量/字节数：0（本任务未删除任何文件；真实 `%APPDATA%` 未触碰；主工作树他人改动未触碰）。
-- 未关闭项及保留原因：真实 PDF 原件 20.7MB 留在 task-env 不入 Git；`image_only` 未真机导出（参数由 headless 钉住，composer 两路径由 baseline-scout 验证）；未翻译章节沿用既有「没有可导出的翻译页」提示；与主工作树在途主题改动需 rebase；需独立 Review。
-- 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+- 未关闭项及保留原因：`image_only` 未真机导出（参数由 headless 钉住，composer 两路径由 baseline-scout 验证）；未翻译章节沿用既有「没有可导出的翻译页」提示。均为已记录限制，不阻塞。
+- 当前指针清理：已更新 STATUS/PLAN/LEDGER。
+
+## Review（DSH 独立复核，2026-10-28）— PASS
+
+- 证据核对：15 条 CANONICAL pin 全部命中（worktree 或 `6deefdcc3` blob 双 basis 均校验通过）；补登 3 条 trx + 1 条 resource-manifest 为 SOURCE_PIN；`verification/PDF-EXPORT-UI-1/` 无未登记文件。
+- 代码核对（main HEAD `4f1796f17`）：`Services/ImportExportContracts.cs`（`pdfContent`、`FormatDisplay`、`SnapshotStatus` 路径+sha256+页数）、`Views/ImportExportPanels.cs`（ZIP/PDF 格式选择、PDF 内容模式、扩展名与状态文案）、`IHostController`/`HostController`/`NullHostController`、`tests/NewManga.App.Tests/PdfExportUiTests.cs`（6 项）均在库。
+- 集成：实现提交 `6deefdcc3` 已在 main 历史（`git merge-base --is-ancestor` = 0）。
+- 回归：DSH 在 main HEAD `4f1796f17` 用隔离 evidence 目录复跑 `apps/desktop-avalonia/scripts/test.ps1` → **TEST PASS 249/249, 0 skipped**（coreclient 61 / host 56 / app 132）。首次与并发测试共用默认 evidence 目录时 `D4SecurityHarnessTests` 出现 1 例环境干扰（TileDigestMismatch 期望收到 NO_ERROR），隔离重跑该组 **6/6 PASS**，判定为并发污染而非回归。`extract-command-surface.py --check` 当前基线 PASS（66 命令）。
+- 结论：AC1–AC5 全部 MET；实现已集成、证据齐备、无阻塞遗留；标 `done`，集成点 `6deefdcc3`。

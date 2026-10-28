@@ -13,7 +13,7 @@
 |VERIFY-RECHECK-1|—|done（Mica 非回归/Esc-H PASS/4K 环境阻塞；204f98fb4）|
 |RELEASE-REPACK-4|—|done（最终包 103.33MB/725.34MB；ZIP+PDF 真机；232/232；集成 31af88610）|
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
-|PDF-EXPORT-UI-1|—|ready（导出面板 PDF 选项；Core 已支持）|
+|PDF-EXPORT-UI-1|—|done（导出面板 ZIP/PDF 格式选择；集成 `6deefdcc3`；249/249；2026-10-28 DSH 复核）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
 |RELEASE-SMOKE-1|—|ready（新包真机全流程快检）|
 |RELEASE-REPACK-3|—|done（新包全流程真跑：UI 导入/导出 ZIP；Mica=actual；234/234；集成 4290afb1b）|
