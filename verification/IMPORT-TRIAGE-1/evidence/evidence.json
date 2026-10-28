@@ -1,0 +1,81 @@
+{
+  "ac": "AC1/AC2",
+  "generated_at_utc": "2026-10-28T01:21:52Z",
+  "ac1_clean_root_real_ui_import": {
+    "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\ac1-root",
+    "fresh_not_a_copy": true,
+    "fixture_creation": "apps/desktop-avalonia/scripts/new-test-book.ps1 (fixture book 8 pages)",
+    "fixture_creation_evidence": "evidence/ac1-fixture.json",
+    "package": "task-envs/RELEASE-REPACK-5/out/NewManga-0.1.0-win-x64-models/app",
+    "app_exe_sha256": "b81ce6ef15871f1c6a3484e8db17c4b5098bba14efdb1b346b1d1956e7c3cdcf",
+    "host_ready": true,
+    "ui_imports": [
+      {
+        "attempt": 1,
+        "source": "triage-fresh-import-1.jpg (copy of E04P02 iffixture page → duplicate skip)",
+        "ui_result": "已导入 0 个文件，跳过 1 个重复",
+        "wire": [
+          "hostctl-14 RegisterImportSource @01:16:58.608",
+          "req-15 ImportPages @01:16:58.626"
+        ],
+        "pages_after": 8,
+        "screenshot": "evidence/screens/04-import-result.png"
+      },
+      {
+        "attempt": 2,
+        "source": "triage-tiny-134.png — EXACT smoke input (sha256 e1b6787b41c62d4dfcd21713771036567bcadb34b46e827c6ba6d85d8801d4a8, size 134)",
+        "ui_result": "已导入 1 个文件",
+        "wire": [
+          "hostctl-23 RegisterImportSource @01:21:10.930",
+          "req-24 ImportPages @01:21:10.946"
+        ],
+        "pages_before": 8,
+        "pages_after": 9,
+        "screenshot": "evidence/screens/06-tiny-result.png"
+      }
+    ],
+    "wire_evidence": "evidence/logs/core-service.wire.ndjson",
+    "grant_evidence": "evidence/grants/*.json",
+    "db_after": {
+      "pages": 9,
+      "newest_page": "triage-tiny-134.png"
+    }
+  },
+  "ac2_verdict": {
+    "verdict": "NOT_A_HEAD_REGRESSION",
+    "reason": "Clean, freshly generated empty data root + REPACK-5 package: real UI import produced RegisterImportSource -> ImportPages (16-18 ms) both times, UI reported per-file results, and DB pages 8->9. The exact smoke input (ui-import-2.png, sha e1b6787b…, 134 B) imported successfully.",
+    "smoke_parsed_evidence": {
+      "source_path": "...\\task-envs\\IMPORT-EXPORT-UI-1\\import-src\\ui-import-2.png",
+      "size": 134,
+      "sha256": "e1b6787b…",
+      "grant_expires_epoch": 1793149393,
+      "parsed_grant_expiry_utc": "2026-10-28T01:03:13Z (299 s after registration)",
+      "observation": "RegisterImportSource then RevokeImportSource in the same second; no further commands for 34 s"
+    },
+    "interpretation": "Grant was valid (299 s remaining, never expired) and the same bytes import fine in a clean root; the smoke session revoked the grant client-side without ever sending ImportPages → the BLOCKED is a smoke harness/installed-environment artifact, not a product regression and not a data-root/catalog defect.",
+    "not_reproduced_caveat": "The smoke grant error record (error_code=REF_MALFORMED, grants=[]) could not be reproduced locally; the REPACK-5 install directory used by the smoke session no longer exists, so its binary mix cannot be re-verified."
+  },
+  "ac3_bisect": {
+    "performed": false,
+    "reason": "AC2 clean-root real UI import succeeded → no HEAD regression to bisect."
+  },
+  "ac4_fix": {
+    "performed": false,
+    "reason": "No product regression found; no source change required.",
+    "recommendations": [
+      "Harden the REPACK smoke import automation: after opening the import panel, assert ImportBookSelector/ImportChapterSelector/ImportPolicySelector exist and are enabled, click ImportStartButton, then assert the result line (已导入 N 个文件 / 已跳过) and the DB page delta.",
+      "Record the import-error record + wire tail on failure (the current smoke captured REF_MALFORMED without the failing call context).",
+      "Re-run smoke from the freshly installed package only (verify install dir app/core-sidecar hashes match out/ before importing)."
+    ]
+  },
+  "ac5_gates": {
+    "code_changed": false,
+    "test_ps1": "not rerun (evidence-only diagnosis; no source/test change)",
+    "check_ps1": "see Task card closeout"
+  },
+  "safety": {
+    "isolated_data_root": true,
+    "user_data_root_touched": false,
+    "app_process_stopped": true
+  }
+}
