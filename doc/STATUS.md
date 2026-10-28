@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) `proposed`（主线全部收口；最终验收见 [FINAL_ACCEPTANCE_2026-10-28.md](FINAL_ACCEPTANCE_2026-10-28.md)）。
+- 当前 Task：[RELEASE-REPACK-5](tasks/RELEASE-REPACK-5.md) `ready`（含三布局主题的重新打包）。
 - 已收口：[DISPLAY-PERF-DECISION-1](tasks/DISPLAY-PERF-DECISION-1.md) `done`。
 - 最近完成：[UIUX-V2-RUNTIME-NARROW-1](tasks/UIUX-V2-RUNTIME-NARROW-1.md) `done`（根因 `.nm-app min-width:1024`；900 档四页 900/900；`e9a409927`）。
 - 前序：REALCORE-2 `closed_with_limitations`（run-i36 10/10）。
