@@ -195,6 +195,151 @@ public sealed class HostRuntime : IAsyncDisposable
     }
 
     /// <summary>
+    /// READER-WORKBENCH-1 AC1: ordered page navigation for one chapter (<c>list_chapter_pages</c>,
+    /// protocol minor 6). Read-only; shares the reader I/O gate so a page list never crosses a
+    /// concurrent projection/page-image response on the strictly request/response core pipe.
+    /// </summary>
+    public async Task<IReadOnlyList<ChapterPageSummary>> ListChapterPagesAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.ListChapterPagesAsync(chapterId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// READER-WORKBENCH-1 AC1: live regions of one page + the page pixel extent the workbench
+    /// overlay projects normalized geometry through (<c>list_regions</c>). Read-only; same gate.
+    /// </summary>
+    public async Task<RegionPageProjection> ListRegionsAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.ListRegionsAsync(pageId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// READER-WORKBENCH-1 AC1: frozen region revision history (<c>list_region_revisions</c>).
+    /// Read-only; same gate.
+    /// </summary>
+    public async Task<RegionRevisionHistory> ListRegionRevisionsAsync(
+        string regionId,
+        CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.ListRegionRevisionsAsync(regionId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// READER-WORKBENCH-1 AC2/AC3: retype one region (<c>set_region_type</c>). It is a write, so the
+    /// read-only-until-parity policy refuses it with a typed <see cref="ReadOnlyHostException"/>
+    /// BEFORE any gate is taken or any frame is written to the Core. The caller must pass the
+    /// revision it actually read as <paramref name="expectedRevision"/>; concurrent writes surface
+    /// as the Core's typed INPUT_REVISION_CHANGED and are never guessed away here.
+    /// </summary>
+    public async Task<RegionWriteSnapshot> SetRegionTypeAsync(
+        string regionId,
+        string newRegionType,
+        int? expectedRevision = null,
+        CancellationToken cancellationToken = default)
+    {
+        RequireWrites($"region retype ({regionId})");
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core
+                .SetRegionTypeAsync(regionId, newRegionType, expectedRevision, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// READER-WORKBENCH-1 AC2/AC3: restore one region revision into a NEW revision
+    /// (<c>restore_region_revision</c>). Read-only policy refuses before any Core frame; the
+    /// optimistic guard is the caller's read revision, never a guessed one.
+    /// </summary>
+    public async Task<RegionWriteSnapshot> RestoreRegionRevisionAsync(
+        string regionId,
+        int revisionNo,
+        int expectedRevision,
+        CancellationToken cancellationToken = default)
+    {
+        RequireWrites($"region revision restore ({regionId})");
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core
+                .RestoreRegionRevisionAsync(regionId, revisionNo, expectedRevision, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// READER-WORKBENCH-1 AC2/AC3: manual page rerender (<c>rerender_page</c>). Read-only policy
+    /// refuses before any Core frame; the same reader I/O gate serializes the write with page reads.
+    /// </summary>
+    public async Task<PageRerenderResult> RerenderPageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default)
+    {
+        RequireWrites($"page rerender ({pageId})");
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.RerenderPageAsync(pageId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    private void RequireWrites(string what)
+    {
+        if (!Policy.WritesAllowed)
+        {
+            throw new ReadOnlyHostException(
+                $"host is read-only ({Policy.Reason}); {what} is disabled until S2 parity");
+        }
+    }
+
+    /// <summary>
     /// READER-PROGRESS-1: persists reading progress through the frozen Core command
     /// (<c>SaveReadingProgress</c>). It is a write, so the read-only-until-parity policy refuses it
     /// with a typed <see cref="ReadOnlyHostException"/> and no request reaches the Core. The

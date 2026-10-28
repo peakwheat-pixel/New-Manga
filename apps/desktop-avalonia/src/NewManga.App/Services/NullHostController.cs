@@ -52,6 +52,47 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<ChapterSummary>>(Array.Empty<ChapterSummary>());
 
+    // READER-WORKBENCH-1: the designer/inert path never has a Core, so reads stay empty/null and every
+    // write reports HOST_NOT_READY (the real Host is the only writer).
+    public Task<IReadOnlyList<ChapterPageSummary>> ListChapterPagesAsync(
+        string chapterId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ChapterPageSummary>>(Array.Empty<ChapterPageSummary>());
+
+    public Task<RegionPageProjection?> LoadPageRegionsAsync(
+        string pageId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<RegionPageProjection?>(null);
+
+    public Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
+        string regionId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<RegionRevisionHistory?>(null);
+
+    public Task<byte[]?> ReadPageImageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<byte[]?>(null);
+
+    public Task<RegionOperationResult> SetRegionTypeAsync(
+        string regionId,
+        string newRegionType,
+        int expectedRevision,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(RegionOperationResult.NotReady());
+
+    public Task<RegionOperationResult> RestoreRegionRevisionAsync(
+        string regionId,
+        int revisionNo,
+        int expectedRevision,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(RegionOperationResult.NotReady());
+
+    public Task<PageRerenderOutcome> RerenderPageAsync(
+        string pageId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(PageRerenderOutcome.NotReady());
+
     public Task<IReadOnlyList<CredentialTargetOption>> ListCredentialTargetsAsync(
         CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<CredentialTargetOption>>(Array.Empty<CredentialTargetOption>());

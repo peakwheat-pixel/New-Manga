@@ -225,6 +225,13 @@ public partial class MainWindow : Window
             _ = EnsureReaderLoadedAsync();
         }
 
+        if (string.Equals(page, "workbench", StringComparison.Ordinal))
+        {
+            // READER-WORKBENCH-1 AC1: entering the workbench loads the real book → chapter → page
+            // chain and the Core region projection (no-op until the Host is ready).
+            _ = Workbench.EnsureLoadedAsync();
+        }
+
         if (string.Equals(page, "settings", StringComparison.Ordinal))
         {
             // CREDENTIAL-UI-1 AC2 / SETTINGS-PROFILE-UI-1: refresh credential states and profile lists
@@ -769,6 +776,13 @@ public partial class MainWindow : Window
             if (string.Equals(CurrentPage, "reader", StringComparison.Ordinal))
             {
                 await EnsureReaderLoadedAsync(CancellationToken.None);
+            }
+
+            // READER-WORKBENCH-1 AC1: a `--page=workbench` startup navigation happens before the Host
+            // starts, so the real region load is re-attempted once the Host is ready.
+            if (string.Equals(CurrentPage, "workbench", StringComparison.Ordinal))
+            {
+                await Workbench.EnsureLoadedAsync(CancellationToken.None);
             }
 
             // CREDENTIAL-UI-1 AC2: configured/missing states once the Host is ready.
