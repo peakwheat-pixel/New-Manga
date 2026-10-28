@@ -3,18 +3,18 @@ id: NSIS-INSTALLER-1
 title: NSIS 无签名安装包（per-user 安装/卸载/数据根保留）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: user_selected_2026-10-28_option_A
 suggested_owner: region-workbench-owner
-owner: null
+owner: region-workbench-owner
 reviewer: dsh
 depends_on: [AGPL-RELEASE-1]
 base_commit: 7401a53039c46f0c0ff7d2799fb725c57cdae1f3
 branch: task/NSIS-INSTALLER-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/NSIS-INSTALLER-1
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: d657b52b347a4bb8fa3a43b2788939a815545175
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/NSIS-INSTALLER-1
 allowed_paths:
@@ -50,11 +50,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 安装器实现**：新增 `packaging/nsis/`（`installer.nsi` + 必要的 include/品牌资源）与 `apps/desktop-avalonia/scripts/build-installer.ps1`；安装器把 base stage 打包为 `NewManga-<ver>-setup.exe`：per-user 安装到 `%LOCALAPPDATA%\Programs\NewManga`（无需 UAC）、写入 HKCU 卸载项（DisplayName/DisplayVersion/Publisher/InstallLocation/UninstallString/DisplayIcon）、创建开始菜单快捷方式（可选桌面快捷方式）；`/S` 静默可用；安装/卸载不依赖 `install.ps1`（但脚本仍随包）。证据：`nsis/` 源码 diff、构建日志、installer exe 路径/字节/sha256。
-- [ ] **AC2 数据保护**：安装与卸载**不触碰**用户数据根 `%APPDATA%\com.newmanga.desktop`（含 `library.db`）；卸载只删安装目录、快捷方式、HKCU 卸载项；不写 HKLM。证据：安装前/后/卸载后数据根文件清单 + sha256、HKCU 导出、目录存在性断言。
-- [ ] **AC3 真机验证**：在隔离环境执行：静默安装（记录耗时/文件数/目标目录关键文件 sha256）→ 启动安装后的 `NewManga.App.exe`（`--data-root` 指向隔离副本，Host 就绪 + 无 console + 窗口出现，截图）→ 卸载（记录耗时；安装目录消失、开始菜单快捷方式消失、HKCU 项清零、数据根保留）→ 再次安装（幂等）。证据：`install.log`/`uninstall.log`/截图/`verify.json`。
-- [ ] **AC4 门禁**：`check.ps1 -TaskPath` PASS；`extract-command-surface.py --check` PASS（66）；`apps/desktop-avalonia/scripts/test.ps1` 全绿（产品代码零改动，可引用隔离复跑的 258/258 并记录日期）；installer exe 与产物字节/sha256 登记（exe 不入 Git）；64-hex evidence pin；Handoff。证据：logs/summary/pin。
-- [ ] **AC5 已知限制**：安装包**未签名**（SmartScreen 会提示；证书到手后由 SIGNING 线签核）；仅 base 变体；per-user 安装（同一用户可装，无需管理员）；升级安装为覆盖式（保留数据根）。证据：`verification/NSIS-INSTALLER-1/REPORT.md` 与 Handoff。
+- [x] **AC1 安装器实现**：新增 `packaging/nsis/`（`installer.nsi` + 必要的 include/品牌资源）与 `apps/desktop-avalonia/scripts/build-installer.ps1`；安装器把 base stage 打包为 `NewManga-<ver>-setup.exe`：per-user 安装到 `%LOCALAPPDATA%\Programs\NewManga`（无需 UAC）、写入 HKCU 卸载项（DisplayName/DisplayVersion/Publisher/InstallLocation/UninstallString/DisplayIcon）、创建开始菜单快捷方式（可选桌面快捷方式）；`/S` 静默可用；安装/卸载不依赖 `install.ps1`（但脚本仍随包）。证据：`nsis/` 源码 diff、构建日志、installer exe 路径/字节/sha256。 <<MET>>
+- [x] **AC2 数据保护**：安装与卸载**不触碰**用户数据根 `%APPDATA%\com.newmanga.desktop`（含 `library.db`）；卸载只删安装目录、快捷方式、HKCU 卸载项；不写 HKLM。证据：安装前/后/卸载后数据根文件清单 + sha256、HKCU 导出、目录存在性断言。 <<MET>>
+- [x] **AC3 真机验证**：在隔离环境执行：静默安装（记录耗时/文件数/目标目录关键文件 sha256）→ 启动安装后的 `NewManga.App.exe`（`--data-root` 指向隔离副本，Host 就绪 + 无 console + 窗口出现，截图）→ 卸载（记录耗时；安装目录消失、开始菜单快捷方式消失、HKCU 项清零、数据根保留）→ 再次安装（幂等）。证据：`install.log`/`uninstall.log`/截图/`verify.json`。 <<MET>>
+- [x] **AC4 门禁**：`check.ps1 -TaskPath` PASS；`extract-command-surface.py --check` PASS（66）；`apps/desktop-avalonia/scripts/test.ps1` 全绿（产品代码零改动，可引用隔离复跑的 258/258 并记录日期）；installer exe 与产物字节/sha256 登记（exe 不入 Git）；64-hex evidence pin；Handoff。证据：logs/summary/pin。 <<MET>>
+- [x] **AC5 已知限制**：安装包**未签名**（SmartScreen 会提示；证书到手后由 SIGNING 线签核）；仅 base 变体；per-user 安装（同一用户可装，无需管理员）；升级安装为覆盖式（保留数据根）。证据：`verification/NSIS-INSTALLER-1/REPORT.md` 与 Handoff。 <<MET>>
 
 ## 实现提示（Lead 已核实的事实）
 
@@ -76,9 +76,31 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/build-installer.ps1 -StageDir <AGPL base stage> -MakensisPath <NSIS>` | Win11 + NSIS 3.13 | NOT_RUN | planned |
-| AC3 | `NewManga-0.1.0-setup.exe /S` → 启动 → `Uninstall.exe /S` → 再安装 | 隔离数据根副本 | NOT_RUN | planned |
-| AC4 | `extract-command-surface.py --check`、`scripts/test.ps1`、`check.ps1 -TaskPath` | 仓库 | NOT_RUN | planned |
+| AC1 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/build-installer.ps1 -StageDir <AGPL base stage> -MakensisPath <NSIS> -OutDir <task-env>/out` | Win11 + NSIS 3.13 便携（Tauri 缓存） | **PASS**：`NewManga-0.1.0-setup.exe` 68,611,208 B sha256 `ebad8662…3691`，NotSigned，构建 55.23s（LZMA solid 32.8%） | `packages/build-info.json`、`logs/build-installer.log` |
+| AC2 | 安装前/后/卸载后数据根文件清单 + sha256；HKCU/HKLM 断言 | 隔离数据根启动；真实数据根只读 | **PASS**：durable 摘要全程 `fdf52d87…b530`（与 DSH 独立 before 快照一致）；`library.db` sha256 不变；HKLM/Program Files 全程不存在 | `data-root.json`、`registry.json`、`verify.json` |
+| AC3 | 静默安装 `/S` → 启动安装后 exe（隔离 `--data-root`）→ 卸载 `/S` → 再安装 → 最终卸载 | 隔离数据根 + 窗口截图/UIA | **PASS**：安装 6.81s / 卸载 0.73s / 重装 6.57s / 最终卸载 0.72s；Host 就绪 2.48s；UIA 含「Host 就绪」；54 断言 0 失败 | `install-phase.json`、`uninstall-phase.json`、`verify.json`、`app-uia.txt`、`screens/installed-app.png` |
+| AC4 | `extract-command-surface.py --check`、`scripts/test.ps1`、`check.ps1 -TaskPath` | 仓库 + 隔离 evidence dir | `--check` **PASS（66）**；`test.ps1` **PASS 258/258 passed, 0 skipped**（61/60/137）；`check.ps1` **PASS** | `logs/extract-command-surface.log`、`test/summary.json`、`logs/test-ps1-console.log`、`check-governance.json` |
+| AC5 | 已知限制核对（无签名/per-user/仅 base/覆盖升级） | — | **PASS**：REPORT §5 + Handoff 明确列出；Authenticode=`NotSigned` 实测 | `REPORT.md`、`packages/build-info.json` |
+
+## Record Decisions（交付记录）
+
+1. **per-user 安装口径**：`RequestExecutionLevel user` + `$LOCALAPPDATA\Programs\NewManga`（无需 UAC），不写 HKLM/Program Files；卸载只清安装目录、开始菜单、HKCU 项。多用户机器每个用户各自一份，已在 AC5 记录。
+2. **安装内容 = base stage 全量**：`app/`（单文件 exe + 内置 core-sidecar）+ 4 许可文件 + `LICENSE_AUDIT.md` + install/uninstall/migrate 脚本 + `UPGRADE.md`/`MANUAL_VERIFY.md` + `VERSION.json`/`package-manifest.json`；不打包 `%APPDATA%` 任何内容，不打包 models（base 变体）。
+3. **许可页**：MUI license 页展示随包 `NOTICE.md`，顶部/底部文本明确「base=GPL-3.0-or-later；models（含 Ultralytics YOLO11s-seg）=AGPL-3.0」并指向四个随包许可文件（承接 AGPL-RELEASE-1 结论）。
+4. **静默/升级**：`/S` 静默安装与卸载；升级=重跑新 setup 覆盖安装（先清理旧 payload 再复制，避免残留），`InstallDirRegKey` 沿用目录；数据根与 HKCU 项保留/更新。
+5. **NSIS 脚本编码**：中文 UI 在 `Unicode true` 下要求脚本以 **UTF-8 BOM** 保存（makensis 默认按 ACP 解析，首版缺 BOM 导致 `Bad text encoding`）；已在 `packaging/nsis/README.md` 记录。
+6. **installer exe 不入 Git**：产物只写 task-env（`-OutDir` 在仓库内会被脚本拒绝），字节/sha256/Authenticode/版本资源登记在 `packages/build-info.json`；签名不在本卡范围（V1-RELEASE-SIGNING-1）。
+7. **真机验证安全边界**：应用以隔离 `--data-root`（task-env 下空目录）启动；真实数据根只读快照 + durable 断言（排除应用自身追加的 `logs/window-material.log`）。首轮因 `Start-Process` 未给含空格路径加引号导致应用回落默认数据根（仅追加该日志行、durable 内容不变），修复后重跑 54/54；迭代如实记录在 REPORT §3。
+8. **数据根独立交叉核对**：DSH 复核快照 `task-env/LEAD-NSIS-REVIEW-1/data-root-before.json`（15 文件）与本卡 `data-root.json` 的 durable 摘要同为 `fdf52d873d…b530`。
+
+## 交付与运行记录
+
+- Handoff：[NSIS-INSTALLER-1-handoff.md](../handoffs/NSIS-INSTALLER-1-handoff.md)
+- Review：尚未（reviewer=`dsh`；Owner 与 Reviewer 不同）。
+- 实现提交：`acf1a5fab8500abc69482016e4649ce25f955dce`（NSIS 脚本 + 构建脚本 + 安装说明）。
+- 证据提交 / delivery_head：`d657b52b347a4bb8fa3a43b2788939a815545175`（`verification/NSIS-INSTALLER-1/**`）。
+- Task 卡 + Handoff：紧随 delivery head 的文档提交（本卡所在提交）（紧随 delivery head 的文档提交）。
+- 实际测试：见「测试要求」表与 REPORT §3–§4；installer 产物 `task-env/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe`（68,611,208 B / sha256 `ebad8662…3691`，不入 Git）。
 
 ## 依赖、风险与阻塞
 
@@ -95,20 +117,41 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| delivery-report | 交付报告 | verification/NSIS-INSTALLER-1/REPORT.md | d657b52b347a4bb8fa3a43b2788939a815545175 | e4d02937cc773e84cdfa98a3884964cf22cd2515fa4fbfd7ec74d2ca76d32636 | CANONICAL |
+| ac3-app-uia | AC3 | verification/NSIS-INSTALLER-1/app-uia.txt | d657b52b347a4bb8fa3a43b2788939a815545175 | ecbfb87e3d2f7d857cdb75edd5bef7569d1d56fc2bc06fb5c3b828e4f7561ee6 | CANONICAL |
+| ac3-app-window | AC3 | verification/NSIS-INSTALLER-1/app-window.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 0ee08e80ff0acd847b933a9469b003478de6788de037359fdbcff9abff0463f9 | CANONICAL |
+| ac2-data-root | AC2/AC3 | verification/NSIS-INSTALLER-1/data-root.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 2860c4dbd78909df56cc4ad4c569a84ceb78962749aab24827c82187e35a2fd4 | CANONICAL |
+| ac3-install-phase | AC2/AC3 | verification/NSIS-INSTALLER-1/install-phase.json | d657b52b347a4bb8fa3a43b2788939a815545175 | e70022c18f8009df4edc91d66ec9499d9a5568059e9267e98b6e34f997b7ecd1 | CANONICAL |
+| ac3-app-host-log | AC3 | verification/NSIS-INSTALLER-1/logs/app-host.log | d657b52b347a4bb8fa3a43b2788939a815545175 | 1bb2dbe917d191df1e79d8c657933d33460a63b445b155092e69ac8b34fb6d5d | CANONICAL |
+| ac1-build-log | AC1 | verification/NSIS-INSTALLER-1/logs/build-installer.log | d657b52b347a4bb8fa3a43b2788939a815545175 | d1743c372cfd2fef0d79bc0cec31917c60dcbd40d18ccd42e116c6a100fe1406 | CANONICAL |
+| ac4-command-surface | AC4 | verification/NSIS-INSTALLER-1/logs/extract-command-surface.log | d657b52b347a4bb8fa3a43b2788939a815545175 | 564676d393ad475f6924d84dce57281e51ba6ae22d4f7984379030a8e05dfda1 | CANONICAL |
+| ac3-install-log | AC1/AC3 | verification/NSIS-INSTALLER-1/logs/install.log | d657b52b347a4bb8fa3a43b2788939a815545175 | fba92bbcf2568ce03eeb1b1cad92eb250a6d77471268529b8e814a8e432136a4 | CANONICAL |
+| ac4-test-console | AC4 | verification/NSIS-INSTALLER-1/logs/test-ps1-console.log | d657b52b347a4bb8fa3a43b2788939a815545175 | d7f77e0942a8f1f0ddfb62c81e3124b673584b7377f54a188b054903e8d06fdf | CANONICAL |
+| ac3-uninstall-log | AC2/AC3 | verification/NSIS-INSTALLER-1/logs/uninstall.log | d657b52b347a4bb8fa3a43b2788939a815545175 | d61b4ada6ae66bcae7dba87146d1e8be9e046c62a10897a830874051668dbaef | CANONICAL |
+| ac3-verify-finish-console | AC3 | verification/NSIS-INSTALLER-1/logs/verify-finish-console.log | d657b52b347a4bb8fa3a43b2788939a815545175 | 9a479be552ade6596b399eb6d4004234f9442c478cca381012edd4343e237e6c | CANONICAL |
+| ac3-verify-install-console | AC3 | verification/NSIS-INSTALLER-1/logs/verify-install-console.log | d657b52b347a4bb8fa3a43b2788939a815545175 | d11e482aced12c45d737987c41192647c7a0304cd26473bc8b2d5a17c2d7799e | CANONICAL |
+| ac1-build-info | AC1/AC4 | verification/NSIS-INSTALLER-1/packages/build-info.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 97b30efe084d20f05439ed31d87eb64107f20b3df4406d566c7fa9a9991a3d6e | CANONICAL |
+| ac2-registry | AC2 | verification/NSIS-INSTALLER-1/registry.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 044b65241ba3b46c3d1a15b036eb48dc4417458a3526494aecb85d8abb740ef6 | CANONICAL |
+| ac3-screenshot | AC3 | verification/NSIS-INSTALLER-1/screens/installed-app.png | d657b52b347a4bb8fa3a43b2788939a815545175 | fd9518624287378b838a3ccbe14767821a816de8876496514893b321c9fc8645 | CANONICAL |
+| ac4-test-summary | AC4 | verification/NSIS-INSTALLER-1/test/summary.json | d657b52b347a4bb8fa3a43b2788939a815545175 | e6a6ff0672770418c03147b408b38e026367b1fd46ac1b7a3b333bf5da6d091b | CANONICAL |
+| ac3-uninstall-phase | AC2/AC3 | verification/NSIS-INSTALLER-1/uninstall-phase.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 75af332f123862391764c8deb2313632083ed850898206c0672109d6451f6309 | CANONICAL |
+| ac3-verify | AC2/AC3 | verification/NSIS-INSTALLER-1/verify.json | d657b52b347a4bb8fa3a43b2788939a815545175 | 6234544614b5a88346020ad01f3ea9007d2ee0d3e54052d005b4cc3050d11df4 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/NSIS-INSTALLER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/NSIS-INSTALLER-1 | branch `task/NSIS-INSTALLER-1` @ `7401a5303` | 交付后按 Worktree Safety Inventory 复核 |
-| task-env | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1 | 待交付时登记 | installer exe 与安装/卸载证据只写此处 |
-| input | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out | PRESERVE_REFERENCED（只读） | 原路径 | base zip sha256 `722fc62b…e8ef` | 只读作为安装内容，不覆盖 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/NSIS-INSTALLER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/NSIS-INSTALLER-1 | verification/NSIS-INSTALLER-1/verify.json | 交付 head 与产物登记见该 JSON；未 push；按 Worktree Safety Inventory 复核后由 DSH 处置 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1 | verification/NSIS-INSTALLER-1/packages/build-info.json | 含 out/（setup.exe + build-info/log）、verify/（隔离数据根与状态）、evidence-test/、logs/；installer 产物只写此处；引用检查见 build-info.json |
+| package-input | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64 | verification/NSIS-INSTALLER-1/packages/build-info.json | 只读作为安装内容（stage 1,969 文件 / 226,083,382 B / manifest sha256 见该 JSON）；未覆盖 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe | ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691 | 无签名 NSIS 安装包（68,611,208 B）；字节/sha256 实测；证据见 packages/build-info.json |
+| user-data | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | PRESERVE_USER_DATA | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | verification/NSIS-INSTALLER-1/data-root.json | 安装/卸载/应用验证全程只读；durable 摘要 `fdf52d87…b530` 不变（`library.db` sha256 `df9d424c…08a9`）；唯一变化为应用自身追加的 `logs/window-material.log`，已单列 |
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：交付时更新 STATUS/PLAN/LEDGER。
+- canonical_evidence_status：`complete`（`verification/NSIS-INSTALLER-1/**` 全部登记为 Canonical Evidence，64-hex pin；`check-governance.json` 含 `check.ps1 -TaskPath` PASS 记录）。
+- resource_closeout_status：`pending`（由 DSH 在集成窗口按本 Manifest 逐项处置；installer exe 与 task-env 保留至 Review/集成）。
+- 删除、迁移、归档数量/字节数：本 Task 未删除/迁移/归档；task-env（installer 65.4MB + 隔离数据根 + 日志）与 worktree 保留。
+- 未关闭项及保留原因：AGPL base stage 只读保留（被本卡安装内容引用）；安装包签名由 V1-RELEASE-SIGNING-1 后续处理；models 变体安装包不在本卡范围。
+- 当前指针清理：STATUS/PLAN/LEDGER 由 DSH 统一更新（Owner 未改这三份文件）。
