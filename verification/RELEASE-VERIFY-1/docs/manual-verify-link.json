@@ -1,0 +1,10 @@
+{
+  "ac": "AC4",
+  "file": "apps/desktop-avalonia/docs/MANUAL_VERIFY.md",
+  "link_present": true,
+  "link_target": "RELEASE_NOTES_0.1.0.md",
+  "link_target_exists": true,
+  "resolved_target": "G:\\CODEX\\New Manga.workspace\\worktrees\\RELEASE-VERIFY-1\\apps\\desktop-avalonia\\docs\\RELEASE_NOTES_0.1.0.md",
+  "verify_script_link_present": true,
+  "generated_at_utc": "2026-10-28T07:17:57.4295301Z"
+}

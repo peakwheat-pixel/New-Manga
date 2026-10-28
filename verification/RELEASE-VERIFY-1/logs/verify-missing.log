@@ -1,0 +1,10 @@
+manifest: G:\CODEX\New Manga.workspace\worktrees\RELEASE-VERIFY-1\packaging\release\SHA256SUMS (3 entries)
+FAIL  NewManga-0.1.0-setup.exe  MISSING (looked for: G:\CODEX\New Manga.workspace\task-envs\RELEASE-VERIFY-1\empty-dir\NewManga-0.1.0-setup.exe)
+FAIL  NewManga-0.1.0-win-x64-models.zip  MISSING (looked for: G:\CODEX\New Manga.workspace\task-envs\RELEASE-VERIFY-1\empty-dir\NewManga-0.1.0-win-x64-models.zip)
+FAIL  NewManga-0.1.0-win-x64.zip  MISSING (looked for: G:\CODEX\New Manga.workspace\task-envs\RELEASE-VERIFY-1\empty-dir\NewManga-0.1.0-win-x64.zip)
+
+MISSING  NewManga-0.1.0-setup.exe  (looked for: G:\CODEX\New Manga.workspace\task-envs\RELEASE-VERIFY-1\empty-dir\NewManga-0.1.0-setup.exe)
+MISSING  NewManga-0.1.0-win-x64-models.zip  (looked for: G:\CODEX\New Manga.workspace\task-envs\RELEASE-VERIFY-1\empty-dir\NewManga-0.1.0-win-x64-models.zip)
+MISSING  NewManga-0.1.0-win-x64.zip  (looked for: G:\CODEX\New Manga.workspace\task-envs\RELEASE-VERIFY-1\empty-dir\NewManga-0.1.0-win-x64.zip)
+RELEASE VERIFY: FAIL (3/3 entries failed)
+exit=1

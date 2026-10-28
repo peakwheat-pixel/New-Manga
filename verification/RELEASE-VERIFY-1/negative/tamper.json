@@ -1,0 +1,13 @@
+{
+  "ac": "AC3",
+  "original_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe",
+  "original_bytes": 68611208,
+  "original_sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691",
+  "tampered_copy": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-VERIFY-1\\tamper\\NewManga-0.1.0-setup.exe",
+  "tampered_bytes": 68611208,
+  "tampered_sha256": "bb84e2832a9bf6bdbb899d89f672864b5a7c1d3acbbf27f4400ec32be25c0fa9",
+  "flipped_offset": 34305604,
+  "original_byte": 216,
+  "tampered_byte": 39,
+  "note": "one byte flipped in a task-env copy; published artifact untouched"
+}
