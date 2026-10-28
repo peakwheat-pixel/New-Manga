@@ -3,7 +3,7 @@ id: NSIS-INSTALLER-1
 title: NSIS 无签名安装包（per-user 安装/卸载/数据根保留）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_selected_2026-10-28_option_A
 suggested_owner: region-workbench-owner
 owner: region-workbench-owner
@@ -12,10 +12,10 @@ depends_on: [AGPL-RELEASE-1]
 base_commit: 7401a53039c46f0c0ff7d2799fb725c57cdae1f3
 branch: task/NSIS-INSTALLER-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/NSIS-INSTALLER-1
-integration_commit: null
+integration_commit: 64d41f3298699453794212f721200623854ff2cb
 delivery_head: d657b52b347a4bb8fa3a43b2788939a815545175
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/NSIS-INSTALLER-1
 allowed_paths:
   - doc/tasks/NSIS-INSTALLER-1.md
@@ -96,7 +96,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - Handoff：[NSIS-INSTALLER-1-handoff.md](../handoffs/NSIS-INSTALLER-1-handoff.md)
-- Review：尚未（reviewer=`dsh`；Owner 与 Reviewer 不同）。
+- Review：DSH 独立复核 PASS（2026-10-28；独立安装/卸载/启动 + 数据根 before/after + 包 hash；见文末 Review）。
 - 实现提交：`acf1a5fab8500abc69482016e4649ce25f955dce`（NSIS 脚本 + 构建脚本 + 安装说明）。
 - 证据提交 / delivery_head：`d657b52b347a4bb8fa3a43b2788939a815545175`（`verification/NSIS-INSTALLER-1/**`）。
 - Task 卡 + Handoff：紧随 delivery head 的文档提交（本卡所在提交）（紧随 delivery head 的文档提交）。
@@ -109,9 +109,8 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- Review：DSH 独立复核 PASS（见文末；含独立安装/卸载/启动验证）。
+- 实际测试：`check.ps1 -TaskPath` PASS；命令面 `--check` PASS（66）；`scripts/test.ps1` 隔离复跑 258/258；独立安装 6.64s/1,970 文件、独立启动 Host 就绪 0.57s、独立卸载 0.74s 且全部清理、数据根 durable 不变。
 
 ## Canonical Evidence
 
@@ -150,9 +149,21 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`complete`（`verification/NSIS-INSTALLER-1/**` 全部登记为 Canonical Evidence，64-hex pin；`check-governance.json` 含 `check.ps1 -TaskPath` PASS 记录）。
-- resource_closeout_status：`pending`（由 DSH 在集成窗口按本 Manifest 逐项处置；installer exe 与 task-env 保留至 Review/集成）。
-- 删除、迁移、归档数量/字节数：本 Task 未删除/迁移/归档；task-env（installer 65.4MB + 隔离数据根 + 日志）与 worktree 保留。
-- 未关闭项及保留原因：AGPL base stage 只读保留（被本卡安装内容引用）；安装包签名由 V1-RELEASE-SIGNING-1 后续处理；models 变体安装包不在本卡范围。
-- 当前指针清理：STATUS/PLAN/LEDGER 由 DSH 统一更新（Owner 未改这三份文件）。
+- Closeout date / DSH：2026-10-28（集成 `64d41f329`；DSH 独立复核 PASS）。
+- canonical_evidence_status：`complete`（`verification/NSIS-INSTALLER-1/**` 20 文件全部登记为 Canonical Evidence，64-hex pin）。
+- resource_closeout_status：`complete`（worktree/task-env/package-input/installer artifact/user-data 均按 Manifest 处置：`PRESERVE_REFERENCED` ×4 + `PRESERVE_USER_DATA`；installer exe 保留在 task-env 不入 Git）。
+- 删除、迁移、归档数量/字节数：0（本 Task 未删除/迁移/归档；task-env 与 installer 保留）。
+- 未关闭项及保留原因：① 安装包未签名（SmartScreen；归 V1-RELEASE-SIGNING-1，需用户证书）；② 仅 base 变体（models 725MB 仍 zip）；③ per-user 安装/覆盖式升级、无自动更新，已写入 REPORT/Handoff。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
+## Review（DSH 独立复核，2026-10-28）— PASS
+
+- 治理与证据：`check.ps1 -TaskPath` PASS（2 非阻断 warning）；19 条 Canonical Evidence pin 全部校验通过（worktree/blob 双 basis）；`verification/NSIS-INSTALLER-1/` 20 文件全登记。
+- 安装器安全复查：`packaging/nsis/installer.nsi` 为 `RequestExecutionLevel user`、`InstallDir "$LOCALAPPDATA\Programs\NewManga"`、仅 HKCU 卸载项（`HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\NewManga`）与开始菜单快捷方式；脚本注释与实现均声明不触碰数据根、无 HKLM/Program Files 写入；`build-installer.ps1` 支持 `-StageDir/-MakensisPath/-OutDir/-Version` 并对产物做字节/sha256/Authenticode 登记。
+- **独立安装验证**（我自己的隔离执行）：`NewManga-0.1.0-setup.exe` 68,611,208 B sha256 `ebad8662…3691`（与交付一致，`NotSigned`）；`/S` 静默安装 **6.64s** exit 0 → 安装目录 1,970 文件、`app/NewManga.App.exe`+`app/core-sidecar/core_service.exe`+`Uninstall.exe` 存在、HKCU 卸载项（DisplayVersion 0.1.0 / InstallLocation / UninstallString）与开始菜单存在、**HKLM 与 Program Files 零写入**。
+- **独立启动验证**：安装后 exe + 隔离数据根副本（`LEAD-NSIS-REVIEW-1/data-root-copy`）+ 显式 sidecar 目录；**0.57s 内 host.log 出现 single-instance acquired + mode=ReadOnlyUntilParity**，`data_root` 正确指向副本；进程存活后停止。
+- **独立卸载验证**：`Uninstall.exe /S` **0.74s** exit 0 → 安装目录消失、HKCU 卸载项与 `HKCU\Software\NewManga` 清零、开始菜单消失；数据根 durable 摘要（排除 `logs/`，9 文件）安装前后与卸载后**完全不变**（`0eb22db2…7e9d`），`library.db` sha256 `df9d424c…08a9` 不变。
+- **复核迭代（如实记录）**：我第一次启动验证用 `Start-Process -ArgumentList` 数组传含空格路径，参数被拆断 → 应用回落默认数据根且 `SidecarBundleMissing`（进程存活 26.5s 未就绪）；该次仅使应用向真实数据根 `logs/window-material.log` 追加 1 行诊断（durable 文件与 `library.db` 不变），修正引号后重跑通过。与 Owner 报告的同类迭代一致，属验证脚本缺陷而非安装器缺陷。
+- 回归：`extract-command-surface.py --check` PASS（66）；`scripts/test.ps1` 258/258（产品代码零改动）。
+- 集成：`git merge --no-ff` → `64d41f3298699453794212f721200623854ff2cb`。
+- 结论：AC1–AC5 MET，PASS；标 `done`。遗留为已记录限制（签名/变体/自动更新）。
