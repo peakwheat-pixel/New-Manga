@@ -49,3 +49,18 @@ python apps/desktop-avalonia/scripts/extract-command-surface.py --check
 # 打包（参考 scripts/package.ps1 + 既有 evidence 流程）
 Get-ChildItem G:\CODEX\New Manga.workspace\task-envs\RELEASE-REPACK-5\out
 ```
+
+## 6. 收尾更新（2026-10-28，会话结束前）
+
+- **IMPORT-TRIAGE-1 已完成（done）**：结论 **非 HEAD 回归、非数据根缺陷，产品无需修复**。
+  - 干净空数据根 + REPACK-5 真机 UI 导入 → `RegisterImportSource` → **`ImportPages`（16–18ms）**、DB 8→9 页；烟测同 sha 输入（134B `ui-import-2.png`）亦成功。
+  - REPACK-5 烟测失败签名：grant 注册后仍剩 299s（未过期），同秒 client `RevokeImportSource`、无 `ImportPages` ⇒ **烟测自动化/安装环境半途 revoke**，不是产品缺陷。
+  - 证据：`verification/IMPORT-TRIAGE-1/`（REPORT/wire/grants/4 截图），集成 `87fdc2246`，卡 `doc/tasks/IMPORT-TRIAGE-1.md`。
+- **REPACK-5 无需重打**：包本身正常，导入失败系烟测操作问题。
+- 当前 HEAD：ec4a8bfc1；治理 `check.ps1` PASS；工作树干净。
+
+### 仍留在待办（不阻塞）
+
+1. 烟测脚本增强（建议）：打开导入面板后断言三个选择器可用、点击 `ImportStartButton` 后断言行文本 + DB 增量；失败保留 grant error/wire 上下文与安装目录哈希。
+2. 4K@200%（Mi TV 未加入桌面扩展）；IME 人工确认；OpenCode 额度（充值后跑 `tools/run_translate_probe.py`）；2 条历史凭据残留。
+3. `macos-launchpad` / `macos-split` 布局的发布级视觉验收（可选）。
