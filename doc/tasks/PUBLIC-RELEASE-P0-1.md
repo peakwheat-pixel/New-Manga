@@ -44,7 +44,7 @@ allowed_paths:
 - [x] **AC1 公开分支内容**：分支根目录含许可四件套 + README + workflow；产品树来自公开快照 + `apps/desktop-avalonia` 同步；文件清单与来源可追溯（`ls-tree.txt` 1040 行原始输出）。<<MET>>
 - [x] **AC2 推送**：`git push origin HEAD:refs/heads/public-release` 成功（`[new branch]`，无 force）；远端 `public-release` SHA = `3207e9c18…`；远端 `main` 保持 `6a68fdeb…`；`clean-snapshot-20261026`/`codex/clean-source-snapshot` 未动（`ls-remote.txt` 原始输出）。<<MET>>
 - [x] **AC3 内容安全**：推送树 1040 文件 / 17,539,433 B（16.73 MiB）；禁止扩展名 0；密钥模式原始命中 2（均为 `tests/network/test_transport_local.py` 测试 fixture，真实凭据 0）；无私有文件/模型/用户数据；开发机路径字符串 107 行/41 文件（本次新增 61 行/28 文件）已登记为非敏感 follow-up 清理（修正后口径，见 `security-scan.json`）。<<MET>>
-- [x] **AC4 CI 与默认分支（含用户动作）**：workflow 存在于 `public-release` 且 YAML 可解析（12 steps，raw 200）；**如实记录**首次 workflow_dispatch Run 与默认分支切换需用户操作：（1）Settings → Branches → 默认分支改为 `public-release`；（2）Actions → `build-release` → Run（`sign=false`）。本机 `gh` 未认证、无 `GH_TOKEN`，未伪造 Run。<<MET（CI Run 待用户）>>
+- [x] **AC4 CI 与默认分支（含用户动作）**：workflow 存在于 `public-release` 且 YAML 可解析（12 steps，raw 200）；**如实记录**首次 workflow_dispatch Run 与默认分支切换需用户操作：（1）Settings → Branches → 默认分支改为 `public-release`；（2）Actions → `build-release` → Run（`sign=false`）。本机 `gh` 未认证、无 `GH_TOKEN`，未伪造 Run。 <<PARTIAL: CI Run 与默认分支切换待用户两步（本机无 GitHub API 权限）>>
 - [x] **AC5 门禁与证据**：`check.ps1 -TaskPath` PASS；6 文件证据 64-hex pin；Handoff。<<MET>>
 
 ## 允许修改范围
