@@ -1,0 +1,46 @@
+{
+  "task": "PUBLIC-RELEASE-P0-1",
+  "at_utc": "2026-10-28T10:08:08.7404508Z",
+  "raw_checks": [
+    {
+      "path": "LICENSE",
+      "status": 200
+    },
+    {
+      "path": "README.md",
+      "status": 200
+    },
+    {
+      "path": "LICENSE-AGPL-3.0.txt",
+      "status": 200
+    },
+    {
+      "path": "NOTICE.md",
+      "status": 200
+    },
+    {
+      "path": "THIRD_PARTY_LICENSES.md",
+      "status": 200
+    },
+    {
+      "path": ".github/workflows/build-release.yml",
+      "status": 200
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/package.ps1",
+      "status": 200
+    },
+    {
+      "path": "packaging/release/verify-release.ps1",
+      "status": 200
+    },
+    {
+      "path": "doc/release/SIGNPATH-APPLICATION.md",
+      "status": 200
+    }
+  ],
+  "branch_api_sha": "3207e9c18726c62a2692cf7c5d89fb85ea9fabec",
+  "default_branch": "main",
+  "license_field": "null (default branch unchanged; license visible on public-release)",
+  "ci_run": "NOT RUN — gh CLI not authenticated, workflow_dispatch requires user action"
+}

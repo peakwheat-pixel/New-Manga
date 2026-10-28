@@ -1,0 +1,43 @@
+{
+  "task": "PUBLIC-RELEASE-P0-1",
+  "at_utc": "2026-10-28T10:29:24.7479579Z",
+  "scan_command": "PowerShell Get-ChildItem (exclude .git) + Select-String patterns: ghp_[A-Za-z0-9]{20,} | -----BEGIN ... PRIVATE KEY----- | AKIA[0-9A-Z]{16} | password\\s*=\\s*[\"'][^\"']{8,}; tree counted from git ls-tree -r -l 3207e9c18",
+  "tree_commit": "3207e9c18726c62a2692cf7c5d89fb85ea9fabec",
+  "tree_file_count": 1040,
+  "tree_bytes": 17539433,
+  "tree_size_mib": 16.73,
+  "forbidden_extension_files": 0,
+  "forbidden_extensions": ".onnx/.pfx/.p12/.pem/.key/.env/.db/.sqlite",
+  "secret_pattern_raw_hits": 2,
+  "secret_pattern_classification": [
+    {
+      "file": "tests/network/test_transport_local.py",
+      "line": 75,
+      "text": "password=\"correct-password\"",
+      "kind": "test fixture for local SOCKS/tunnel transport; not a real credential"
+    },
+    {
+      "file": "tests/network/test_transport_local.py",
+      "line": 139,
+      "text": "password=\"secret-pw\"",
+      "kind": "test fixture for MiniSocks5Server; not a real credential"
+    }
+  ],
+  "real_credentials_found": 0,
+  "dev_machine_path_references": {
+    "patterns": "G:/CODEX | G:\\\\CODEX | C:\\\\Users\\\\49745 | task-envs",
+    "total_lines": 107,
+    "total_files": 41,
+    "added_by_this_push_lines": 61,
+    "added_by_this_push_files": 28,
+    "examples": [
+      "apps/desktop-avalonia/scripts/build-installer.ps1:40,42",
+      "apps/desktop-avalonia/scripts/install-smoke.ps1:3,4,12",
+      "packaging/m2ac5/README.md:14",
+      "NOTICE.md:19,31"
+    ],
+    "assessment": "Path strings only (developer machine / task-env defaults); no private files, credentials, models or user data are shipped. Registered as follow-up cleanup outside this task scope."
+  },
+  "bin_obj_node_modules_present": false,
+  "private_material_present": false
+}
