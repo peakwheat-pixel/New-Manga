@@ -1,0 +1,7 @@
+2026-10-28T01:14:32.6901944+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-28T01:14:32.6958306+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=G:\CODEX\New Manga.workspace\task-envs\IMPORT-TRIAGE-1\ac1-root
+2026-10-28T01:14:32.6995863+00:00 INFO first-run backup created: catalog.20261028T011432Z.sqlite.nmbak
+2026-10-28T01:14:32.9859144+00:00 INFO core_service ready (1 wire frames)
+2026-10-28T01:14:33.0683875+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-28T01:14:33.0687065+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-28T01:14:33.0704932+00:00 INFO host-control session opened (host_TsQ7orhLe9VDrbMhMd_DzLoBOsUgH3Scs5AMGiMePQk)

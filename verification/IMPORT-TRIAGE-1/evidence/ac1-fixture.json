@@ -1,0 +1,308 @@
+{
+  "ac": "AC1/AC2",
+  "generated_at_utc": "2026-10-28T01:14:20.9859732Z",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\ac1-root",
+  "isolated_env": {
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\ac1-root\\_env\\Roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\ac1-root\\_env\\Local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\ac1-root\\_env\\Temp"
+  },
+  "real_appdata": {
+    "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+    "before": {
+      "exists": true,
+      "file_count": 15,
+      "last_write": "2026-10-27T12:46:47.5230879Z"
+    },
+    "after": {
+      "exists": true,
+      "file_count": 15,
+      "last_write": "2026-10-27T12:46:47.5230879Z"
+    },
+    "untouched": true
+  },
+  "creation": {
+    "status": "created",
+    "book_id": "1d608d0bc40b4b2f9d2a567627af9cd4",
+    "book_title": "BOOK-FIXTURE-1 日漫_JA 测试书",
+    "chapter_id": "06e29bd037474b9f8b8ce00af094e70f",
+    "chapter_title": "第 1 章",
+    "chapter_type": "webtoon",
+    "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\ac1-root",
+    "pages_root": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\日漫_JA",
+    "pages_requested": 8,
+    "page_count": 8,
+    "pages": [
+      {
+        "page_id": "badeeb67acb2469da290554805096339",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+        "order": 1,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 657353
+      },
+      {
+        "page_id": "f987dc8048704c8881e5f5e829dc28cd",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+        "order": 2,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 605434
+      },
+      {
+        "page_id": "9043959a5a85480fada6cb8aa9ff7c06",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "order": 3,
+        "width": 1200,
+        "height": 726,
+        "source_size_bytes": 249097
+      },
+      {
+        "page_id": "6586e0e08d144ba78d99a79847d1aca9",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "order": 4,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 477560
+      },
+      {
+        "page_id": "ffdd8154998044ba99a7be85af971614",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "order": 5,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 512573
+      },
+      {
+        "page_id": "e4b878d081344f4c8e3fedfc1377cb40",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "order": 6,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 587669
+      },
+      {
+        "page_id": "a9413265b3ba4e01858ebdf899d7d338",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "order": 7,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 474212
+      },
+      {
+        "page_id": "0368ee0fd6614703aa4ba0c11f152b7b",
+        "source_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "order": 8,
+        "width": 1200,
+        "height": 1660,
+        "source_size_bytes": 495759
+      }
+    ],
+    "import_report": {
+      "imported": 8,
+      "failed": []
+    }
+  },
+  "creation_duration_ms": 1533,
+  "verification": {
+    "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\NewManga-0.1.0-win-x64-models\\app\\core-sidecar\\core_service.exe",
+    "sidecar_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+    "ping_ok": true,
+    "list_books_count": 1,
+    "book_found": true,
+    "page_count": 8,
+    "chapters": [
+      {
+        "chapter_id": "06e29bd037474b9f8b8ce00af094e70f",
+        "title": "第 1 章",
+        "chapter_number": "1",
+        "sort_order": 1
+      }
+    ],
+    "reader_pages": [
+      {
+        "page_id": "badeeb67acb2469da290554805096339",
+        "order": 0,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-badeeb67acb2469da290554805096339",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-badeeb67acb2469da290554805096339",
+          "sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "f987dc8048704c8881e5f5e829dc28cd",
+        "order": 1,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-f987dc8048704c8881e5f5e829dc28cd",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-f987dc8048704c8881e5f5e829dc28cd",
+          "sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "9043959a5a85480fada6cb8aa9ff7c06",
+        "order": 2,
+        "width_px": 1200,
+        "height_px": 726,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-9043959a5a85480fada6cb8aa9ff7c06",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-9043959a5a85480fada6cb8aa9ff7c06",
+          "sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "6586e0e08d144ba78d99a79847d1aca9",
+        "order": 3,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-6586e0e08d144ba78d99a79847d1aca9",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-6586e0e08d144ba78d99a79847d1aca9",
+          "sha256": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "ffdd8154998044ba99a7be85af971614",
+        "order": 4,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-ffdd8154998044ba99a7be85af971614",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-ffdd8154998044ba99a7be85af971614",
+          "sha256": "e6ea0d306bd353db62275c344e17807d4252d6f5574fc30d7120f28f783878c6"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "e4b878d081344f4c8e3fedfc1377cb40",
+        "order": 5,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-e4b878d081344f4c8e3fedfc1377cb40",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-e4b878d081344f4c8e3fedfc1377cb40",
+          "sha256": "dc23b0f16b02ce14f7d60ad1805dd13b9ce4e0ad5f6ead75cf4b955713d6e638"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "a9413265b3ba4e01858ebdf899d7d338",
+        "order": 6,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-a9413265b3ba4e01858ebdf899d7d338",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-a9413265b3ba4e01858ebdf899d7d338",
+          "sha256": "87a342f78a2b1c387b4edfb8ed3b835f748dc13c1de15fcccea3d273daaf7b26"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      },
+      {
+        "page_id": "0368ee0fd6614703aa4ba0c11f152b7b",
+        "order": 7,
+        "width_px": 1200,
+        "height_px": 1660,
+        "original": {
+          "resource_ref": {
+            "resource_id": "page-original-0368ee0fd6614703aa4ba0c11f152b7b",
+            "revision": "original"
+          },
+          "artifact_revision_id": "page-original-0368ee0fd6614703aa4ba0c11f152b7b",
+          "sha256": "c50404045f08bdd81001896082ede352bebd938e541ae31b2d119a9f6b5900cc"
+        },
+        "translated": {
+          "resource_ref": null,
+          "artifact_revision_id": null,
+          "rendered_from_revision_id": null,
+          "current_source_revision_id": null,
+          "sha256": null
+        }
+      }
+    ],
+    "reader_layout": "webtoon_vertical",
+    "error": null,
+    "page_dimensions_parseable": true,
+    "book_summary": {
+      "book_id": "1d608d0bc40b4b2f9d2a567627af9cd4",
+      "title": "BOOK-FIXTURE-1 日漫_JA 测试书",
+      "original_title": "",
+      "is_favorite": false,
+      "is_archived": false,
+      "page_count": 8,
+      "created_at": "2026-10-28T09:14:20.041+08:00",
+      "updated_at": "2026-10-28T09:14:20.041+08:00"
+    }
+  },
+  "helper_log": "G:\\CODEX\\New Manga.workspace\\task-envs\\IMPORT-TRIAGE-1\\new-test-book.helper.log",
+  "core_stderr_tail": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n"
+}
