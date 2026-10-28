@@ -1,0 +1,42 @@
+{
+  "bundled_weights_license": "none (no model weights in this variant)",
+  "sidecar_build": {
+    "core_service_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+    "core_service_bytes": 399492,
+    "core_service_built_at_utc": "2026-10-28T00:49:34.7313144Z",
+    "repo_head": "7f0d1daef1b3741ff3bb47903ffe71f809fa3be2",
+    "variant": "base",
+    "models_bundled": false
+  },
+  "version": "0.1.0",
+  "channel": "stable",
+  "sidecar": "bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)",
+  "models": "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\\com.newmanga.desktop\\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle",
+  "data_root": "%APPDATA%\\com.newmanga.desktop",
+  "migration": "runtime dry-run script included",
+  "license": "GPL-3.0-or-later",
+  "devices": {
+    "onnxruntime_providers": [
+      "DmlExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": {
+      "kind": "gpu",
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "total_memory_mb": 16303,
+      "state": "available",
+      "error_code": "",
+      "detail": "onnxruntime providers=['DmlExecutionProvider', 'CPUExecutionProvider']; execution_provider=DirectML"
+    },
+    "ac": "AC1/AC2",
+    "source": "build-environment probe: onnxruntime.get_available_providers() + Windows display-adapter registry supplement"
+  },
+  "variant": "base",
+  "license_files": [
+    "LICENSE",
+    "LICENSE-AGPL-3.0.txt",
+    "NOTICE.md",
+    "THIRD_PARTY_LICENSES.md"
+  ]
+}

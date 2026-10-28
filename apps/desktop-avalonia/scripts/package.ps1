@@ -55,11 +55,15 @@ $sidecarBuildInfo = [ordered]@{
 }
 Write-Host ("sidecar build: {0} ({1} bytes, HEAD={2})" -f $sidecarBuildInfo.core_service_sha256, $sidecarBuildInfo.core_service_bytes, $sidecarBuildInfo.repo_head)
 
-# ---- 3) license trio: byte-identical to the repo root ----------------------
-$lic=@('LICENSE','NOTICE.md','THIRD_PARTY_LICENSES.md')
+# ---- 3) license files: byte-identical to the repo root ----------------------
+# AGPL-RELEASE-1: the models variant ships Ultralytics YOLO11s-seg (AGPL-3.0), so the GNU
+# AGPL-3.0 full text rides in BOTH variants (base carries it as the optional-component notice;
+# its own declaration stays GPL-3.0-or-later). Every file is copied and SHA-256 verified.
+$lic=@('LICENSE','LICENSE-AGPL-3.0.txt','NOTICE.md','THIRD_PARTY_LICENSES.md')
 $licHashes=@{}
 foreach($n in $lic){
   $src=Join-Path $repo $n; $dst=Join-Path $stage $n
+  if(-not (Test-Path $src)){throw "license file missing in repo root: $n"}
   Copy-Item $src $dst -Force
   $a=(Get-FileHash $src -Algorithm SHA256).Hash.ToLower(); $b=(Get-FileHash $dst -Algorithm SHA256).Hash.ToLower()
   if($a -ne $b){throw "license mismatch $n"}
@@ -92,13 +96,18 @@ if (Test-Path $BuildPython) {
 }
 if ($null -eq $deviceProbe) { Write-Warning 'GPU device probe unavailable; VERSION.json devices=null' }
 
-# ---- 5) VERSION.json: real model distribution strategy ---------------------
+# ---- 5) VERSION.json: real model distribution strategy + license declaration
 $modelsStrategy=if($modelsBundled){
   "bundled: app/core-sidecar/models ($([math]::Round($modelsBytes/1MB,1)) MiB in-package); no download at run time"
 }else{
   "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\com.newmanga.desktop\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle"
 }
-@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe;sidecar_build=$sidecarBuildInfo}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+# AGPL-RELEASE-1 AC2/AC4: the package metadata itself must state the variant's overall license.
+# models ships Ultralytics YOLO11s-seg (AGPL-3.0) -> the whole variant is AGPL-3.0; base has no
+# weights -> GPL-3.0-or-later. The AGPL full text rides in both variants (see section 3).
+$licenseDeclaration=if($modelsBundled){'AGPL-3.0'}else{'GPL-3.0-or-later'}
+$bundledWeightsLicense=if($modelsBundled){'AGPL-3.0 (Ultralytics YOLO11s-seg: app/core-sidecar/models/detector/yolo11s-seg.onnx)'}else{'none (no model weights in this variant)'}
+@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';license=$licenseDeclaration;license_files=$lic;bundled_weights_license=$bundledWeightsLicense;models=$modelsStrategy;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe;sidecar_build=$sidecarBuildInfo}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
 # Keep a copy beside the exe too: the single-file host always sees its own directory,
 # so the settings page can render the packaged device probe on every layout.
 Copy-Item (Join-Path $stage 'VERSION.json') (Join-Path $stage 'app/VERSION.json') -Force

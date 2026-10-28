@@ -27,16 +27,28 @@
 | React / Vite / TypeScript（旧壳，S5 退役） | MIT | 旧前端 |
 | Tauri / wry（旧壳，S5 退役） | MIT / Apache-2.0 | 旧宿主 |
 
-## 3. 模型权重（不随本仓库代码分发）
+## 3. 模型权重（`models` 发行包随包分发；`base` 发行包不含）
 
-| 模型 | 用途 | 许可证（核实状态） | 备注 |
-|---|---|---|---|
-| YOLO11s-seg（v2b pin） | SFX 检测 | **AGPL-3.0（Ultralytics）** | 若进主安装包 → 整体须 AGPL-3.0 声明；否则单独下载/可选包 |
-| RT-DETR-v2 (comic-text-and-bubble-detector) | 检测 | Apache-2.0（HF 模型卡） [待核实] | |
-| PaddleOCR 系 | OCR | Apache-2.0 | |
-| MangaOCR | 日文 OCR | [待核实]（HF 模型卡） | 若移植需先核 |
-| LaMa / litelama | 修复 | [待核实] | |
-| Saber 随包模型 | 参考 | 各自上游许可 [待核实] | **不得直接拷贝进仓库** |
+`models` 变体把完整权重随包放在 `app/core-sidecar/models/`。以下为 REPACK-5 实测清单（路径相对 `models/`，字节/ sha256 与包内文件逐一核对；一手许可来源与抓取日期见 `verification/AGPL-RELEASE-1/weights-licenses.json`）：
+
+| 文件 | 字节 | sha256 | 用途 | 许可证（核实状态） |
+|---|---|---|---|---|
+| `detector/yolo11s-seg.onnx` | 40,824,255 | `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d` | SFX 检测 | **AGPL-3.0（Ultralytics YOLO11s-seg）已核实** |
+| `detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3` | 文本/气泡检测 | Apache-2.0（HF 模型卡）**[待核实，不阻断本卡]** |
+| `ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f` | 日文 OCR | MangaOCR 上游 **[待核实，不阻断本卡]** |
+| `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8` | 日文 OCR | 同上 **[待核实，不阻断本卡]** |
+| `ocr/manga-ocr-onnx/{config,generation_config,preprocessor_config,special_tokens_map,tokenizer_config,vocab.*}` | 2–77 KB 级 | 见 `weights-licenses.json` | OCR 配置/词表（非权重） | 随上游 MangaOCR **[待核实，不阻断本卡]** |
+
+**YOLO11s-seg 的 AGPL-3.0 一手依据**：
+1. 该 ONNX 文件自身元数据包含 `Ultralytics YOLO11s-seg model trained on …` 与 `AGPL-3.0 License (https://ultralytics.com/license)`（扫描记录见 `verification/AGPL-RELEASE-1/weights-licenses.json`）。
+2. Ultralytics 官方许可页（https://www.ultralytics.com/license，抓取日期记录于证据 JSON）明确 YOLO 模型按 **AGPL-3.0** 提供。
+3. Ultralytics 仓库 `LICENSE`（https://raw.githubusercontent.com/ultralytics/ultralytics/main/LICENSE）与 GNU 官方 AGPL-3.0 全文逐字节一致（sha256 `0d96a4ff…`）。
+
+**发行后果（强制）**：
+- **models** 变体包含上述 AGPL-3.0 权重 → **该发行包整体按 AGPL-3.0 分发**；随包附 `LICENSE-AGPL-3.0.txt` 全文，并提供对应源码（本仓库/发行页）。
+- **base** 变体不含任何模型权重 → 仍按 **GPL-3.0-or-later** 分发；其随包的 `LICENSE-AGPL-3.0.txt` 仅作为可选组件许可说明。
+
+[待核实] 项（RT-DETR / MangaOCR 配置与权重）不作为本卡阻断项；在下一次发行 Gate 前补成一手结论。
 
 ## 4. 字体
 
@@ -49,5 +61,6 @@
 ## 5. 发行 Gate
 
 - [ ] 每次发行前重跑本表逐项核对（一手 license 文件/模型卡）。
-- [ ] 主包若含 AGPL 组件 → `NOTICE` 与发行页明确 AGPL-3.0。
+- [x] models 变体含 AGPL 组件（Ultralytics YOLO11s-seg）→ `NOTICE` 与发行页明确 **AGPL-3.0**，随包附 `LICENSE-AGPL-3.0.txt` 全文（AGPL-RELEASE-1 落地）。
+- [ ] base 变体不含权重 → 保持 GPL-3.0-or-later 声明；包内 4 个许可文件与仓库根逐字节一致（`package.ps1` 校验）。
 - [ ] 输出 `THIRD_PARTY_LICENSES` 与源码同包/同页提供。

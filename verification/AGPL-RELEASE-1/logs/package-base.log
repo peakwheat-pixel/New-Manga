@@ -1,0 +1,25 @@
+sidecar build: bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a (399492 bytes, HEAD=7f0d1daef1b3741ff3bb47903ffe71f809fa3be2)
+{
+  "ac": "AC2",
+  "variant": "base",
+  "version": "0.1.0",
+  "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64.zip",
+  "zip_bytes": 103492048,
+  "zip_mb": 98.7,
+  "max_zip_mb": 150,
+  "uncompressed_bytes": 225701934.0,
+  "uncompressed_mb": 215.25,
+  "file_count": 1968,
+  "sidecar_bytes": 195375520.0,
+  "sidecar_mb": 186.32,
+  "models_bundled": false,
+  "models_bytes": 0,
+  "licenses_byte_identical": true,
+  "license_hashes": {
+    "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+    "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+    "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+  },
+  "generated_at_utc": "2026-10-28T05:17:03.9062362Z"
+}
