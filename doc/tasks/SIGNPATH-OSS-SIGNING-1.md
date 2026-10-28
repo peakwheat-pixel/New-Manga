@@ -92,6 +92,7 @@ allowed_paths:
 | readme | AC4 | README.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 04c7bc9b0431c61f23b3f76618591c56da433f03150ea60209550e9fde454a73 | CANONICAL |
 | handoff | 交付 | doc/handoffs/SIGNPATH-OSS-SIGNING-1-handoff.md | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 4e0b1e72f9638d4af939ebbcfc7a35decb49aa7fb95b594c6a4ed3b8d764b350 | CANONICAL |
 | command-surface-log | AC5 | verification/SIGNPATH-OSS-SIGNING-1/logs/extract-command-surface.log | 1ab7f904aeb084fdcdefd74209e8b344b12209ab | 820f6d456abeab98d52599b5fffdfa051b58369b8a108e8860b1fde4f6db82fe | SOURCE_PIN |
+| governance-check | AC5 | verification/SIGNPATH-OSS-SIGNING-1/check-governance.json | - | 4e7fabebdf9511a9ca4309064d0edad8e8fe3f326a5d102c6950df41d946990d | CANONICAL |
 
 ## Resource Manifest
 
@@ -102,7 +103,7 @@ allowed_paths:
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`complete`（8 项 pin：6 CANONICAL + 2 SOURCE_PIN；check-governance 行在最终 gate 后补登）。
+- canonical_evidence_status：`complete`（9 项 pin：7 CANONICAL + 2 SOURCE_PIN；含 `check-governance.json`）。
 - resource_closeout_status：`pending`（worktree 保留至集成）。
 - 删除、迁移、归档数量/字节数：0。
 - 未关闭项及保留原因：材料为草案，申请与签名由用户在 SignPath 审核通过后执行（不在本卡）；V1-RELEASE-SIGNING-1 保持 in_review。
