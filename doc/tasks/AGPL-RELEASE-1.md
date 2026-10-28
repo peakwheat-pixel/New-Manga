@@ -118,6 +118,7 @@ allowed_paths:
 | ac4-summary-models | AC4 | verification/AGPL-RELEASE-1/packages/package-summary-models.json | 35fd83c3ab28e0f3293238bd17543c5cec2f8e91 | 4523620b65eb4d96e765b9ec570221304f32804edb92cd921c0a4a2dfce8f539 | CANONICAL |
 | ac5-test-summary | AC5 | verification/AGPL-RELEASE-1/test/summary.json | 35fd83c3ab28e0f3293238bd17543c5cec2f8e91 | cca4a2a804aa72722e2eeeae82e34492736551d09295543515a649d858fa3a53 | CANONICAL |
 | ac1-weights-licenses | AC1 | verification/AGPL-RELEASE-1/weights-licenses.json | 35fd83c3ab28e0f3293238bd17543c5cec2f8e91 | 99bb7bb2695d27b42bdc0746dee5b9e836b3a4d647d985f562e1594e8546e171 | CANONICAL |
+| ac5-governance-check | AC5 | verification/AGPL-RELEASE-1/check-governance.json | - | f020d1f577cfd4e117d99ee4a75e687945b94c8eea4b1b2ea6519d028b278b17 | CANONICAL |
 
 ## Resource Manifest
 

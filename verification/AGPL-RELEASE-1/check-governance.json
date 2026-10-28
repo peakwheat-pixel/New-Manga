@@ -1,0 +1,21 @@
+{
+  "ac": "AC5",
+  "command": "pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/AGPL-RELEASE-1.md",
+  "task_path": "doc/tasks/AGPL-RELEASE-1.md",
+  "worktree_head": "4a27e7bb184c66ebcbbf53408884b70ab623c7b4",
+  "exit_code": 0,
+  "result": "PASS (2 warnings)",
+  "warnings": [
+    "存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）",
+    "doc/STATUS.md 已达到预算的 80%：2765 bytes / 32 lines"
+  ],
+  "stdout": [
+    "Governance scope: 13 current documents; no historical directory scan.",
+    "Task: doc\\tasks\\AGPL-RELEASE-1.md",
+    "WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）",
+    "WARN: doc/STATUS.md 已达到预算的 80%：2765 bytes / 32 lines",
+    "Governance check: PASS (2 warnings)"
+  ],
+  "generated_at_utc": "2026-10-28T05:25:31.3613836Z",
+  "raw_log_task_env": "G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/logs/check-governance.log"
+}
