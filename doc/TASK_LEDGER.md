@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 426 |
+| task files | 427 |
 | terminal | 415 |
-| non-terminal | 11 |
-| non-terminal named in the plan | 5 |
+| non-terminal | 12 |
+| non-terminal named in the plan | 6 |
 | non-terminal outside the plan | 6 |
 | task files tracked by git | 426 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 11 |
 
 ## By status
@@ -26,7 +26,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `superseded` | 8 | yes |
 | `in_review` | 4 | no |
 | `proposed` | 3 | no |
-| `ready` | 2 | no |
+| `ready` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 
@@ -43,6 +43,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `AD002-FOLLOWUPS-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `READER-LIBRARY-WIRE-1` | `proposed` | no |
+| `AGPL-RELEASE-1` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 | `REGION-WORKBENCH-1` | `ready` | own row |
 
