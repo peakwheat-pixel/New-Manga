@@ -3,7 +3,7 @@ id: AGPL-RELEASE-1
 title: AGPL-3.0 声明落地（models 包含 Ultralytics 权重）+ 重打包验证
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_followups
 suggested_owner: release-compliance-owner
 owner: region-workbench-owner
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: d8aadc0deb9bcd696953a75ce6b65a7bab54b5e5
 branch: task/AGPL-RELEASE-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/AGPL-RELEASE-1
-integration_commit: null
+integration_commit: 9948c3209642f3bb0ecd526b0d30644bef9cc178
 delivery_head: 35fd83c3ab28e0f3293238bd17543c5cec2f8e91
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/AGPL-RELEASE-1
 allowed_paths:
   - doc/tasks/AGPL-RELEASE-1.md
@@ -96,9 +96,9 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- Handoff：[AGPL-RELEASE-1-handoff.md](../handoffs/AGPL-RELEASE-1-handoff.md)
+- Review：DSH 独立复核 PASS（见文末）。
+- 实际测试：`extract-command-surface.py --check` PASS（66）；`scripts/test.ps1` 隔离复跑 258/258 passed / 0 skipped；`check.ps1 -TaskPath` PASS（2 warnings）；重打包 base/models 双包并在 zip 条目流 + staging 双验 4 许可文件（证据见 `verification/AGPL-RELEASE-1/package-check.json`）。
 
 ## Canonical Evidence
 
@@ -132,9 +132,19 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-10-28（集成 `9948c3209`；DSH 独立复核 PASS）。
 - canonical_evidence_status：`complete`（15 项 64-hex evidence pin；`check-governance.json` 含 `check.ps1 -TaskPath` PASS 记录）。
-- resource_closeout_status：`pending`（由 DSH 在集成窗口按本 Manifest 逐项处置）。
-- 删除、迁移、归档数量/字节数：本 Task 未删除/迁移/归档；task-env（两变体 stage+zip ~1.7GB）与 worktree 保留至 Review/集成。
-- 未关闭项及保留原因：REPACK-5 out 只读保留（被本卡证据引用）；AGPL 义务的发行页「对应源码」链接属发布流程，交 DSH/发布项处理。
-- 当前指针清理：STATUS/PLAN/LEDGER 由 DSH 统一更新（Owner 未改这三份文件）。
+- resource_closeout_status：`complete`（worktree/task-env/package-input/两 zip 均 `PRESERVE_REFERENCED`；REPACK-5 out 未被覆盖）。
+- 删除、迁移、归档数量/字节数：0（本 Task 未删除/迁移/归档；task-env 保留两变体 stage+zip ~1.7GB）。
+- 未关闭项及保留原因：① RT-DETR / MangaOCR 权重许可仍 `[待核实]`（无内嵌许可元数据；下一发行 Gate 补，AC1 明确不阻断）；② AGPL 发行侧「对应源码获取方式」属发布流程（发行页链接）；③ 主工作树曾出现一份 Owner 误写的未跟踪 handoff 草稿，已移到 `task-envs/AGPL-RELEASE-1/stray-main-worktree-write-handoff.md` 保留（未删除、未并入仓库）。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
+## Review（DSH 独立复核，2026-10-28）— PASS
+
+- 证据：15 条 evidence pin 校验通过（worktree/blob 双 basis）；`verification/AGPL-RELEASE-1/` 15 文件全部登记（check 无「未登记文件」）。
+- 独立验证包内容：直接读取 models zip 条目流 → `LICENSE-AGPL-3.0.txt` 34,523 B sha256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`（与 GNU 官方 AGPL-3.0 全文及仓库 HEAD blob 逐字节一致）；`NOTICE.md` `dc36e35f…`、`THIRD_PARTY_LICENSES.md` `ee539368…`、`LICENSE_AUDIT.md` `7a0db863…`、`LICENSE`（GPL-3.0 未改）`cde3a5c4…` 均与仓库源一致。
+- 声明修正复查：`NOTICE.md` 双变体表（base=GPL-3.0-or-later / models=AGPL-3.0）与 AGPL 一手依据；`THIRD_PARTY_LICENSES.md` 权重事实表（yolo11s-seg 40,824,255 B `944e8114…`）+「[待核实] 不阻断」；`docs/LICENSE_AUDIT.md` 按变体纠正（删除「权重不随包」矛盾表述）；`package.ps1` 仅新增第 4 许可文件复制+SHA-256 校验与 VERSION.json 许可声明，未改打包逻辑。
+- 重打包复核：base `103,492,048 B` sha `722fc62b…`、models `725,499,708 B` sha `480d0632…`；较 REPACK-5 各 +0.11 MB / +1 文件（AGPL 全文+审计）；`VERSION.json` variant/license 正确；base 无 models 目录、models 含 yolo11s-seg 且实测字节一致。
+- 回归：`extract-command-surface.py --check` PASS（66）；`scripts/test.ps1` 258/258 passed / 0 skipped（产品代码零改动）；`check.ps1 -TaskPath` PASS。
+- 集成：`git merge --no-ff` → `9948c3209642f3bb0ecd526b0d30644bef9cc178`。
+- 结论：AC1–AC5 MET，PASS；标 `done`。
