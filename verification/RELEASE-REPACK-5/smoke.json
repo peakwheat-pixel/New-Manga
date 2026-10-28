@@ -1,0 +1,112 @@
+{
+  "head": "6120f91e5",
+  "themes": {
+    "registered_packs_all": [
+      "saber-purple",
+      "saber-light",
+      "midnight",
+      "sakura",
+      "emerald",
+      "mono",
+      "macos-sonoma",
+      "macos-launchpad",
+      "macos-split"
+    ],
+    "visible_count": 9,
+    "expected_count_from_task": 7,
+    "expected_note": "任务卡/Lead 预期 7 packs，实际注册表 ThemePacks.All=9（6 legacy + 3 macOS 三布局）；9 为超集且完整包含 Sonoma/Launchpad/Split，按实际记录",
+    "labels": {
+      "macos-sonoma": "macOS 风",
+      "macos-launchpad": "macOS 启动台",
+      "macos-split": "macOS 分栏"
+    },
+    "switched": [
+      {
+        "theme": "macos-sonoma",
+        "screenshot": "screens/02-theme-macos-sonoma.png"
+      },
+      {
+        "theme": "macos-launchpad",
+        "screenshot": "screens/02-theme-macos-launchpad.png",
+        "observed": "底部 Dock 导航 + 居中卡片"
+      },
+      {
+        "theme": "macos-split",
+        "screenshot": "screens/02-theme-macos-split.png",
+        "observed": "左侧 Sidebar 导航 + 分栏设置"
+      }
+    ],
+    "screenshots": [
+      "screens/01-settings-themes.png"
+    ]
+  },
+  "import": {
+    "status": "BLOCKED（本包/本机实测）",
+    "observed": "选择文件后「开始导入」→ ImportStatus 长时间停在「正在导入文件…」>40s；DB pages 保持 10（未增加）",
+    "attempts": [
+      "bookshelf ImportFilesButton",
+      "workbench WorkbenchImportFilesButton",
+      "default theme (saber-purple) 复试",
+      "已知重复 fixture（ui-import-2.png）复试"
+    ],
+    "wire_evidence": "import-wire-tail.ndjson：仅 RegisterImportSource/RevokeImportSource，未出现 ImportPages/ImportFiles 请求",
+    "screenshots": [
+      "screens/04-import-panel.png",
+      "screens/04b-import-panel-workbench.png",
+      "screens/04c-import-dup-panel.png",
+      "screens/05-import-result.png"
+    ],
+    "contrast": "同一数据根血统（REPACK-4 副本）在 REPACK-4 包（f1b89c5e5）导入正常（9→10 页）；ImportExportPanels/HostController 与 REPACK-4 无 diff",
+    "verdict": "疑似回归/环境问题，需 DSH triage；未伪造导入成功"
+  },
+  "reader_immersive": {
+    "reader": "BOOK-FIXTURE-1 第 1 章 10 页 webtoon（进入阅读成功）",
+    "screenshots": [
+      "screens/06-reader.png",
+      "screens/10-reader-restored.png"
+    ],
+    "esc_h": {
+      "method": "沉浸按钮→SetForegroundWindow(阅读器 h=11864750)→keybd_event H/Esc",
+      "sha16": {
+        "before": "1D3E3CBF0292A54F",
+        "immersive": "238C10E2457CE628",
+        "after_H": "CCC9E3AE78F16E34",
+        "after_Esc": "1D3E3CBF0292A54F"
+      },
+      "result": "H 后 UI 变化；Esc 后回到 before sha（退出沉浸回阅读器）→ PASS"
+    }
+  },
+  "export_zip": {
+    "artifact": "data-root\\exports\\BOOK-FIXTURE-1 日漫_JA 测试书-第 1 章-20261028-010058.zip",
+    "bytes": 7070562,
+    "sha256": "5cfffa9f52fd2ab5967d40b6b6fcf1341a45e31b8670128feb0a5c4263e33609",
+    "entries": 4,
+    "elapsed_ms_observed": 9400,
+    "status_text": "导出完成（ZIP 图片包）… sha256 5cfffa9f… · 3 页",
+    "screenshot": "screens/08-export-panel.png"
+  },
+  "stability": {
+    "close_method": "WM_CLOSE",
+    "close_ms": 4116.1,
+    "residual": 0,
+    "uninstall_exit": 0,
+    "install_dir_after": false,
+    "registry_newmanga": 0,
+    "credential_targets": 2,
+    "credential_note": "p15-host-2-smoke / 3819f991… 历史残留，只上报未删"
+  },
+  "device": {
+    "console_windows": 0,
+    "working_set_mb": {
+      "app": 311.7,
+      "core_service": 41.7,
+      "host_bridge": 23.5
+    },
+    "mica": "actual=Mica（fresh launch 日志）",
+    "ime": "N/A"
+  },
+  "gates": {
+    "test_ps1": "TEST PASS 249/249",
+    "pytest": "2773 passed, 10 skipped, 0 failed"
+  }
+}

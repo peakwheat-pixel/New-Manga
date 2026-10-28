@@ -1,0 +1,38 @@
+{
+  "head": "6120f91e50c7a8ba53f5d46a3f64cf3654b0ac0d",
+  "theme_merge": "679967c6e",
+  "new": {
+    "base_zip": {
+      "bytes": 103374546,
+      "sha256": "7e178f29aba35a1fb9eb1941ee66828d3c1127e387c187233c12fe427b42bbff"
+    },
+    "models_zip": {
+      "bytes": 725382787,
+      "sha256": "41b330f575f28e62e1b5b566f1ba5c4ba90dd6b5d251d0adf069b99974a9d32e"
+    },
+    "sidecar_base_core_sha256": "28ba3bb984c6b802f5d9438657d68f51968393ae434e13352512ae1467028cda",
+    "sidecar_models_core_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+    "sidecar_base_core_bytes": 399492,
+    "sidecar_models_core_bytes": 399492,
+    "sidecar_base_bundle_bytes": 195375520,
+    "sidecar_models_bundle_bytes": 868862035,
+    "installed_version_json_repo_head": "6120f91e50c7a8ba53f5d46a3f64cf3654b0ac0d",
+    "installed_sidecar_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a"
+  },
+  "old_repack4": {
+    "base_zip": {
+      "bytes": 103330812,
+      "sha256": "cbd1b9e1725c8c399611d98bdaede7380efa9aec3e79f81b5f26cdca61964adf"
+    },
+    "models_zip": {
+      "bytes": 725339894,
+      "sha256": "aaa02c8b07b3a18d6e4f60a7403b1caf310debae04b766e628963f18b9b4c3c7"
+    },
+    "sidecar_models_core_sha256": "3909a4a209922432df5448241caf388490125ccf1bf2a71501c7f4d86f57dde5",
+    "installed_version_json_repo_head": "f1b89c5e5ead68e5959e6256f36d2089eba66a4e"
+  },
+  "torch_free": {
+    "models_has_torch_dir": false,
+    "has_onnxruntime": true
+  }
+}

@@ -1,0 +1,24 @@
+sidecar build: 28ba3bb984c6b802f5d9438657d68f51968393ae434e13352512ae1467028cda (399492 bytes, HEAD=6120f91e50c7a8ba53f5d46a3f64cf3654b0ac0d)
+{
+  "ac": "AC2",
+  "variant": "base",
+  "version": "0.1.0",
+  "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\out\\NewManga-0.1.0-win-x64.zip",
+  "zip_bytes": 103374546,
+  "zip_mb": 98.59,
+  "max_zip_mb": 150,
+  "uncompressed_bytes": 225557313.0,
+  "uncompressed_mb": 215.11,
+  "file_count": 1967,
+  "sidecar_bytes": 195375520.0,
+  "sidecar_mb": 186.32,
+  "models_bundled": false,
+  "models_bytes": 0,
+  "licenses_byte_identical": true,
+  "license_hashes": {
+    "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+    "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+    "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+  },
+  "generated_at_utc": "2026-10-28T00:50:32.1866835Z"
+}

@@ -1,0 +1,15 @@
+{
+  "sidecar_files": 1965,
+  "models_bundled": true,
+  "version": "0.1.0",
+  "data_root_created": false,
+  "sidecar_bytes": 868862035.0,
+  "exe": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\install\\app\\NewManga.App.exe",
+  "install_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\install",
+  "license_copy_ok": true,
+  "sidecar_bundled": true,
+  "installed": true,
+  "variant": "models",
+  "first_run_backup": null,
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-5\\data-root"
+}
