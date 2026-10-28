@@ -1,0 +1,37 @@
+assert ok: installer_exists
+assert ok: preexisting_install_dir
+assert ok: preexisting_uninstall_key
+assert ok: hk_hklm_uninstall_absent
+assert ok: program_files_absent
+assert ok: data_root_exists_before
+running silent install: G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe /S
+assert ok: install_exit_code
+assert ok: install_dir_exists
+assert ok: installed_app_executable
+assert ok: installed_uninstaller
+assert ok: installed_app_bytes_identical_to_stage
+assert ok: installed_license_LICENSE
+assert ok: installed_license_LICENSE_AGPL_3_0_txt
+assert ok: installed_license_NOTICE_md
+assert ok: installed_license_THIRD_PARTY_LICENSES_md
+assert ok: installed_exe_is_gui_subsystem
+assert ok: start_menu_shortcut
+assert ok: start_menu_shortcut_target
+assert ok: start_menu_uninstall_shortcut
+assert ok: registry_display_version
+assert ok: registry_install_location
+assert ok: registry_uninstall_string
+assert ok: registry_quiet_uninstall_string
+assert ok: registry_display_icon
+assert ok: hk_hklm_uninstall_still_absent
+assert ok: program_files_still_absent
+assert ok: install_log_present
+assert ok: install_log_complete
+assert ok: data_root_durable_unchanged_after_install
+launching installed app: C:\Users\49745\AppData\Local\Programs\NewManga\app\NewManga.App.exe "--data-root=G:\CODEX\New Manga.workspace\task-envs\NSIS-INSTALLER-1\verify\isolated-data-root" "--log-dir=G:\CODEX\New Manga.workspace\task-envs\NSIS-INSTALLER-1\verify\app-logs" --mutex-name=Local\NSIS-INSTALLER-1-VERIFY --legacy-shell-check=off --page=bookshelf
+assert ok: app_process_alive
+assert ok: app_host_ready
+assert ok: app_main_window
+assert ok: app_isolated_data_root_exists
+assert ok: data_root_durable_untouched_by_launch
+install phase: 34 assertions, 0 failed; install 6.81s; app ready=True pid=44608

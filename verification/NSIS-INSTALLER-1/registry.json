@@ -1,0 +1,30 @@
+{
+  "ac": "AC2",
+  "hive": "HKCU only (no HKLM writes)",
+  "key": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\NewManga",
+  "installed_values": {
+    "DisplayName": "New Manga",
+    "DisplayVersion": "0.1.0",
+    "Publisher": "New Manga",
+    "InstallLocation": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+    "UninstallString": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\"",
+    "QuietUninstallString": "\"C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\Uninstall.exe\" /S",
+    "DisplayIcon": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+    "EstimatedSize": 220785
+  },
+  "expected_values": {
+    "DisplayName": "New Manga",
+    "DisplayVersion": "0.1.0",
+    "Publisher": "New Manga",
+    "InstallLocation": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga",
+    "UninstallString": "\"%LOCALAPPDATA%\\Programs\\NewManga\\Uninstall.exe\"",
+    "QuietUninstallString": "\"%LOCALAPPDATA%\\Programs\\NewManga\\Uninstall.exe\" /S",
+    "DisplayIcon": "%LOCALAPPDATA%\\Programs\\NewManga\\app\\NewManga.App.exe"
+  },
+  "after_uninstall_key_exists": false,
+  "after_uninstall_app_reg_key_exists": false,
+  "hklm_uninstall_key_exists": false,
+  "hklm_wow6432_uninstall_key_exists": false,
+  "program_files_install_dir_exists": false,
+  "generated_at_utc": "2026-10-28T07:02:33.9222801Z"
+}

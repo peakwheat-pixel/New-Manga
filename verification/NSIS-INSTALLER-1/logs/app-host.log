@@ -1,0 +1,7 @@
+2026-10-28T07:00:04.2345054+00:00 INFO single-instance acquired: Local\NSIS-INSTALLER-1-VERIFY (abandoned_recovered=False)
+2026-10-28T07:00:04.2346253+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\CODEX\New Manga.workspace\task-envs\NSIS-INSTALLER-1\verify\isolated-data-root
+2026-10-28T07:00:04.2346988+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-28T07:00:04.6451311+00:00 INFO core_service ready (1 wire frames)
+2026-10-28T07:00:04.7672083+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-28T07:00:04.7675353+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-28T07:00:04.7692372+00:00 INFO host-control session opened (host_-hMEgEroh2IuK78Xf4j2i-Ozdt9PXo987K4qUwKwpx4)

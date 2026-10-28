@@ -1,0 +1,27 @@
+{
+  "ac": "AC3",
+  "pid": 44608,
+  "process": "NewManga.App",
+  "main_window_title": "New Manga",
+  "main_window_handle": {
+    "value": 19730986
+  },
+  "top_level_window_count": 1,
+  "host_ready_text_present": true,
+  "uia_tree_file": "verification/NSIS-INSTALLER-1/app-uia.txt",
+  "uia_tree_line_count": 32,
+  "screenshot": "verification/NSIS-INSTALLER-1/screens/installed-app.png",
+  "exe_path": "C:\\Users\\49745\\AppData\\Local\\Programs\\NewManga\\app\\NewManga.App.exe",
+  "child_processes": [
+    {
+      "pid": 11160,
+      "name": "core_service.exe"
+    },
+    {
+      "pid": 42016,
+      "name": "host_bridge.exe"
+    }
+  ],
+  "console_window_detected": false,
+  "generated_at_utc": "2026-10-28T07:01:17.6537517Z"
+}

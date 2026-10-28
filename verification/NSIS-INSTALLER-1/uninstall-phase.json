@@ -1,0 +1,268 @@
+{
+  "phase": "finish",
+  "version": "0.1.0",
+  "installer": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe",
+    "bytes": 68611208,
+    "sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691"
+  },
+  "app_close": {
+    "pid": 44608,
+    "closed_gracefully": true
+  },
+  "uninstall": {
+    "seconds": 0.73,
+    "exit_code": 0,
+    "log_copied": true,
+    "temp_log": "C:\\Users\\49745\\AppData\\Local\\Temp\\NewManga-uninstall-0.1.0.log"
+  },
+  "reinstall": {
+    "seconds": 6.57,
+    "exit_code": 0
+  },
+  "final_uninstall": {
+    "seconds": 0.72,
+    "exit_code": 0
+  },
+  "data_root_before": {
+    "exists": true,
+    "path": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+    "file_count": 15,
+    "bytes": 960580.0,
+    "entries": [
+      {
+        "rel": "backups/catalog.20261026T190515Z.sqlite.nmbak",
+        "bytes": 24576,
+        "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+      },
+      {
+        "rel": "backups/first-run-20261026190335.zip",
+        "bytes": 11955,
+        "sha256": "f0ebdccd92614e9b77c4def57f60398cb65460c7949b23ec74b295cac62a8c8e"
+      },
+      {
+        "rel": "backups/first-run-20261026190358.zip",
+        "bytes": 22815,
+        "sha256": "fff74a70aa2f5dea80cdda0e57cb0c4e7075a27d4580722b1bb4a484717c8fec"
+      },
+      {
+        "rel": "catalog/catalog.sqlite",
+        "bytes": 24576,
+        "sha256": "b5e05cdd052ddaa4af51f5609a38779b169918b694cba3177b63aa27b24634ce"
+      },
+      {
+        "rel": "data/library.db",
+        "bytes": 344064,
+        "sha256": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa"
+      },
+      {
+        "rel": "data/library.db.run-owner.lock",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "rel": "derived/.preview-lifecycle.lock",
+        "bytes": 315,
+        "sha256": "503af1690a8817d60c67a7e392ce29d7f4946f667e3c437d284d0b4dc96698b5"
+      },
+      {
+        "rel": "library.db",
+        "bytes": 344064,
+        "sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9"
+      },
+      {
+        "rel": "library.db.run-owner.lock",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "rel": "logs/core_service.stderr.log",
+        "bytes": 7790,
+        "sha256": "67c76c569b4df094db2ac1b80d0c4ce8b4e2a6b7cb4bbc75cb183def08ec9022"
+      },
+      {
+        "rel": "logs/host_bridge.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "rel": "logs/host.log",
+        "bytes": 10892,
+        "sha256": "f6c2a5dfaaca48313e59f7dd2ee4e4e84aca6d9561984be2e1e728488741b849"
+      },
+      {
+        "rel": "logs/window-material.log",
+        "bytes": 122757,
+        "sha256": "df26221220729426c711344d50c99b33c5be500c6a12b0351dd06b38840a9855"
+      },
+      {
+        "rel": "logs/wire/core-service.ndjson",
+        "bytes": 40711,
+        "sha256": "2c34ca0f0b55822f10a20b965f4a9500e436b13405686f2b7fc7b4d0341a05c1"
+      },
+      {
+        "rel": "logs/wire/host-bridge.ndjson",
+        "bytes": 6063,
+        "sha256": "b3675bdf00c47e1747720a577ce91b032d38ddc3451f3569118fed913355da94"
+      }
+    ],
+    "digest": "44f2bfed5d7e997beca6322cdefa85cc8d40756da263da6ea7a280b012b33c4d"
+  },
+  "data_root_durable_before": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_changes_after_app_run": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      "logs/window-material.log"
+    ]
+  },
+  "data_root_after_uninstall_digest": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+  "data_root_durable_after_uninstall": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_after_reinstall_digest": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+  "data_root_durable_after_reinstall": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "data_root_final_digest": "9de15a8d7c0cffada9312c6a24d581474d45e25153da3ed719714601dbc51bda",
+  "data_root_durable_final": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+  "assertions": [
+    {
+      "id": "app_closed_before_uninstall",
+      "pass": true,
+      "expected": "process exited",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_app_run",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "uninstaller_exists_before_uninstall",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "uninstall_exit_code",
+      "pass": true,
+      "expected": "0",
+      "actual": 0,
+      "detail": ""
+    },
+    {
+      "id": "install_dir_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_shortcut_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "start_menu_dir_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "uninstall_key_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "app_reg_key_removed",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "hk_hklm_uninstall_absent_after",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "program_files_absent_after",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "uninstall_log_complete",
+      "pass": true,
+      "expected": "uninstall_complete=1",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_uninstall",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "reinstall_exit_code",
+      "pass": true,
+      "expected": "0",
+      "actual": 0,
+      "detail": ""
+    },
+    {
+      "id": "reinstall_install_dir",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "reinstall_app_sha_matches",
+      "pass": true,
+      "expected": "9aeeb5ed56bc85207ef1dbb141e454027efdb2c7adb9ccee85bd3d683aff026e",
+      "actual": "9aeeb5ed56bc85207ef1dbb141e454027efdb2c7adb9ccee85bd3d683aff026e",
+      "detail": ""
+    },
+    {
+      "id": "reinstall_uninstall_key",
+      "pass": true,
+      "expected": "true",
+      "actual": true,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_after_reinstall",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    },
+    {
+      "id": "final_uninstall_clean",
+      "pass": true,
+      "expected": "absent",
+      "actual": false,
+      "detail": ""
+    },
+    {
+      "id": "data_root_durable_unchanged_final",
+      "pass": true,
+      "expected": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "actual": "fdf52d873daadd73433b64c0f0c9c50f5c5e992c7fdc07edffd4ac990761b530",
+      "detail": ""
+    }
+  ],
+  "finished_at_utc": "2026-10-28T07:01:34.9098817Z"
+}

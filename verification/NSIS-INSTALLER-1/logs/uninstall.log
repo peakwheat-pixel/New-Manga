@@ -1,0 +1,7 @@
+NewManga uninstaller 0.1.0
+install_dir=C:\Users\49745\AppData\Local\Programs\NewManga
+data_root_preserved=%APPDATA%\com.newmanga.desktop
+shortcuts_removed=1
+registry_removed=HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\NewManga
+install_dir_removed=1
+uninstall_complete=1

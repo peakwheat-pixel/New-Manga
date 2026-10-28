@@ -1,0 +1,21 @@
+assert ok: app_closed_before_uninstall
+assert ok: data_root_durable_unchanged_after_app_run
+assert ok: uninstaller_exists_before_uninstall
+assert ok: uninstall_exit_code
+assert ok: install_dir_removed
+assert ok: start_menu_shortcut_removed
+assert ok: start_menu_dir_removed
+assert ok: uninstall_key_removed
+assert ok: app_reg_key_removed
+assert ok: hk_hklm_uninstall_absent_after
+assert ok: program_files_absent_after
+assert ok: uninstall_log_complete
+assert ok: data_root_durable_unchanged_after_uninstall
+assert ok: reinstall_exit_code
+assert ok: reinstall_install_dir
+assert ok: reinstall_app_sha_matches
+assert ok: reinstall_uninstall_key
+assert ok: data_root_durable_unchanged_after_reinstall
+assert ok: final_uninstall_clean
+assert ok: data_root_durable_unchanged_final
+verify-installer.ps1: Argument types do not match

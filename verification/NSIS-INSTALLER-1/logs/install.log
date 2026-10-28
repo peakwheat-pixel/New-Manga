@@ -1,0 +1,9 @@
+NewManga installer 0.1.0
+variant=base (GPL-3.0-or-later; unsigned)
+install_dir=C:\Users\49745\AppData\Local\Programs\NewManga
+data_root_not_touched=%APPDATA%\com.newmanga.desktop
+payload_copied_from=G:\CODEX\New Manga.workspace\task-envs\AGPL-RELEASE-1\out\NewManga-0.1.0-win-x64
+payload_copied_to=C:\Users\49745\AppData\Local\Programs\NewManga
+shortcut=C:\Users\49745\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\New Manga\New Manga.lnk
+registry=HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\NewManga
+install_complete=1
