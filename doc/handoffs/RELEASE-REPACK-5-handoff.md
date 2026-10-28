@@ -3,7 +3,7 @@
 - Task: `doc/tasks/RELEASE-REPACK-5.md`（team task-57）
 - Branch/Worktree: `task/RELEASE-REPACK-5` / `G:/CODEX/New Manga.workspace/worktrees/RELEASE-REPACK-5`
 - 构建 HEAD: **`6120f91e5`**（含 `679967c6e` 主题合并 / `7a79e5522` 三布局 superset）
-- Delivery head: 见任务卡 Canonical Evidence 的 commit 列
+- Delivery head: `9c026a496`（实现+证据提交；pin 列在任务卡 Canonical Evidence）
 - 新包: `G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-5/out/`
   - `NewManga-0.1.0-win-x64.zip`（103,374,546B，sha256 `7e178f29…bbff`）
   - `NewManga-0.1.0-win-x64-models.zip`（**725,382,787B**，sha256 `41b330f5…d32e`）

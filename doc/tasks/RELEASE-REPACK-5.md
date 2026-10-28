@@ -53,6 +53,21 @@ packaging/**、pps/desktop-avalonia/scripts/**、pps/desktop-avalonia/docs/**�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| E-R5-REPORT | AC1-AC5 | `verification/RELEASE-REPACK-5/REPORT.md` | `9c026a496` | `8fea9485dc69b00b8f51ec74aac717ebee5680fe9d1fec621d0a892527bb1d2d` | CANONICAL |
+| E-R5-SMOKE | AC2-AC4 | `verification/RELEASE-REPACK-5/smoke.json` | `9c026a496` | `d6294fe2c661c02e44cae941f979e1f34a90baaaef6c86e8958ab101cc9596a1` | CANONICAL |
+| E-R5-PKG | AC1 | `verification/RELEASE-REPACK-5/package-hashes.json` | `9c026a496` | `3104ef0a3ac543de341852550bc9cc83025c4c2cbc2523298a2c264006880a9d` | CANONICAL |
+| E-R5-ENV | AC2/设备 | `verification/RELEASE-REPACK-5/environment.json` | `9c026a496` | `1146ab6962763f36d34cfdc90646e101ef14e8c087498165a300d93a2aaa5f33` | CANONICAL |
+| E-R5-SHOT-THEMES | AC2 | `verification/RELEASE-REPACK-5/screens/01-settings-themes.png` | `9c026a496` | `a014d36d51c5fbc282d5e3812c997efe0d7231505ba7a1834970d00d53e162a8` | CANONICAL |
+| E-R5-SHOT-SONOMA | AC2 | `verification/RELEASE-REPACK-5/screens/02-theme-macos-sonoma.png` | `9c026a496` | `92ff366f5e3a9a36726275e896b69a3baf75539a8d7b8bb41ce95121ff44f68e` | CANONICAL |
+| E-R5-SHOT-LAUNCHPAD | AC2/AC5 | `verification/RELEASE-REPACK-5/screens/02-theme-macos-launchpad.png` | `9c026a496` | `4a103c5d2d03fc660d3e25efb1a940fce128a561bde6ed658443ef39a2d9be32` | CANONICAL |
+| E-R5-SHOT-SPLIT | AC2/AC5 | `verification/RELEASE-REPACK-5/screens/02-theme-macos-split.png` | `9c026a496` | `543e65a706898086a684fcd3fd90d297876693a8e2b1209c3cf1cf7994c4717a` | CANONICAL |
+| E-R5-SHOT-BOOKSHELF | AC3 | `verification/RELEASE-REPACK-5/screens/03-bookshelf.png` | `9c026a496` | `f56b52a4c833602da56da73d86603c8ffa2e1171384c01f33138379f1a990d32` | CANONICAL |
+| E-R5-SHOT-IMPORT | AC3 | `verification/RELEASE-REPACK-5/screens/05-import-result.png` | `9c026a496` | `7a39b9e9e85827f30f08d3aa354afe7c5fb0282ecf7621d5784b5fddb04c2509` | CANONICAL |
+| E-R5-SHOT-README | AC3 | `verification/RELEASE-REPACK-5/screens/06-reader.png` | `9c026a496` | `25010cf1863b2294946ac7a05c09b6b6872825a0f2561f3b54d3d62cdda55471` | CANONICAL |
+| E-R5-SHOT-EXPORT | AC3 | `verification/RELEASE-REPACK-5/screens/08-export-panel.png` | `9c026a496` | `0a7bc2d0a75144036dbcb62119277328fe9311b8c08dc9943b9a25773c8dfcb2` | CANONICAL |
+| E-R5-WIRE | AC3 | `verification/RELEASE-REPACK-5/import-wire-tail.ndjson` | `9c026a496` | `34e0a4a4673c00e939a5a392dd11440fd1e53c05e3d457adc3203105487153fd` | CANONICAL |
+| E-R5-DOTNET | AC4 | `verification/RELEASE-REPACK-5/dotnet-all.log` | `9c026a496` | `3ac62e9a859f32710d4d5056476d917611e69c7027043d4652b1be3682426946` | CANONICAL |
+| E-R5-PYTEST | AC4 | `verification/RELEASE-REPACK-5/pytest.log` | `9c026a496` | `f478d36e996fca3f50d0737c5ff30d2392876852f80dbe7e3dd22628ddb1f6dc` | CANONICAL |
 
 ## Resource Manifest
 
