@@ -3,7 +3,7 @@ id: RELEASE-VERIFY-1
 title: 免证书发布完整性（SHA-256 清单 + 校验脚本 + 发行说明/SmartScreen 指引）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-28_no_cert_fallback
 suggested_owner: region-workbench-owner
 owner: region-workbench-owner
@@ -12,10 +12,10 @@ depends_on: [NSIS-INSTALLER-1, AGPL-RELEASE-1]
 base_commit: b54d2d36f56ac60cf9d1e7b01db27b67f66df566
 branch: task/RELEASE-VERIFY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/RELEASE-VERIFY-1
-integration_commit: null
+integration_commit: 5364652b0bb5a67b6acfb5108fcbb045e678cf5b
 delivery_head: 75db4fd643f47a92924f607617c348fd85e6d411
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/RELEASE-VERIFY-1
 allowed_paths:
   - doc/tasks/RELEASE-VERIFY-1.md
@@ -79,7 +79,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - Handoff：[RELEASE-VERIFY-1-handoff.md](../handoffs/RELEASE-VERIFY-1-handoff.md)
-- Review：尚未（reviewer=`dsh`；Owner 与 Reviewer 不同）。
+- Review：DSH 独立复核 PASS（2026-10-28；自生成哈希比对 + 独立负向篡改 + 脚本/发行说明审阅；见文末 Review）。
 - 实现提交：`8d149ca6d749d9fb8ebe67812713603977a648c2`（`packaging/release/**` + 发行说明 + MANUAL_VERIFY 链接）。
 - 证据提交 / delivery_head：`75db4fd643f47a92924f607617c348fd85e6d411`（`verification/RELEASE-VERIFY-1/**`）。
 - Task 卡 + Handoff：紧随 delivery head 的文档提交（本卡所在提交）（紧随 delivery head 的文档提交）。
@@ -90,12 +90,6 @@ allowed_paths:
 - 硬依赖：`NSIS-INSTALLER-1`、`AGPL-RELEASE-1`（产物输入，均 `done`）。
 - 风险：①产物在 task-env，路径不同机器可能变化——清单只记录相对文件名，校验脚本用 `-ArtifactDir` 显式定位；②SHA256SUMS 与产物同源但不在同一目录（发布时需一起分发，文档说明）；③无签名仍是既知限制（SmartScreen），本卡不改变该事实。
 - 与 `V1-RELEASE-SIGNING-1` 的关系：签名线保持 `in_review`（等待用户证书），本卡不关闭它；证书到位后补签由该卡处理。
-
-## 交付与运行记录
-
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
 
 ## Canonical Evidence
 
@@ -134,9 +128,20 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`complete`（`verification/RELEASE-VERIFY-1/**` 全部登记为 Canonical Evidence，64-hex pin；`check-governance.json` 含 `check.ps1 -TaskPath` PASS 记录）。
-- resource_closeout_status：`pending`（由 DSH 在集成窗口按本 Manifest 逐项处置；三个发布产物保持只读，task-env 篡改副本保留供复核）。
-- 删除、迁移、归档数量/字节数：本 Task 未删除/迁移/归档；task-env（篡改副本 65.4MB + 硬链接 staging + 日志）与 worktree 保留。
-- 未关闭项及保留原因：发布产物只读保留（被清单/发行说明引用）；V1-RELEASE-SIGNING-1 仍未关闭（等待证书，本卡不改变签名状态）。
-- 当前指针清理：STATUS/PLAN/LEDGER 由 DSH 统一更新（Owner 未改这三份文件）。
+- Closeout date / DSH：2026-10-28（集成 `5364652b0`；DSH 独立复核 PASS）。
+- canonical_evidence_status：`complete`（`verification/RELEASE-VERIFY-1/**` 18 文件全部登记为 Canonical Evidence，64-hex pin）。
+- resource_closeout_status：`complete`（worktree/task-env/package-input 均 `PRESERVE_REFERENCED`；三个发布产物只读；篡改副本保留在 task-env 供复核）。
+- 删除、迁移、归档数量/字节数：0（本 Task 未删除/迁移/归档）。
+- 未关闭项及保留原因：发布产物只读保留（被清单/发行说明引用）；`V1-RELEASE-SIGNING-1` 仍未关闭（等待用户证书，本卡不改变签名状态，SmartScreen 指引已写入发行说明）。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
+## Review（DSH 独立复核，2026-10-28）— PASS
+
+- 治理与证据：`check.ps1 -TaskPath` PASS（2 非阻断 warning）；17 条可见 pin 全部校验通过（另有 `check-governance.json` 为 `-` commit 的 64-hex pin）；`verification/RELEASE-VERIFY-1/` 18 文件全登记。
+- **自生成哈希比对**：我独立对三个真实产物重算 SHA-256 → `NewManga-0.1.0-setup.exe` `ebad8662…3691`（68,611,208 B）、`models.zip` `480d0632…7f67`（725,499,708 B）、`base.zip` `722fc62b…e8ef`（103,492,048 B），与入库 `SHA256SUMS` 三行完全一致。
+- **独立负向篡改**：我把 setup.exe 复制到 `task-env/LEAD-RELEASE-VERIFY-1/tampered-setup.exe` 并翻转 offset 12,345,678 一字节（sha256 → `e7b3d34d…0984`），用仓库脚本 `verify-release.ps1 -SetupExe <tampered>` → **FAIL (1/3)、exit 1**，输出点名 `NewManga-0.1.0-setup.exe` 且打印 expected/actual；随后对真实产物重跑 → **PASS (3/3)、exit 0**。证明校验逻辑不是恒真、且不会误报。
+- 脚本复查：`verify-release.ps1` 逐行解析清单、每项独立校验、缺失/不匹配计入 failures 并 `exit 1`，支持 `-ArtifactDir/-BaseZip/-ModelsZip/-SetupExe/-Quiet`；`generate-checksums.ps1` 只读哈希并写 `SHA256SUMS`/JSON，不复制 ~900MB 产物（`SHA256SUMS.json` 仅记录字节/来源/时间）。
+- 发行说明复查：`RELEASE_NOTES_0.1.0.md` 覆盖变体/许可（base=GPL-3.0-or-later / models=AGPL-3.0 含 Ultralytics 说明）、NSIS per-user 与 zip 两种安装、**未签名 + SmartScreen「更多信息→仍要运行」**、SHA-256 校验、数据根/卸载、已知限制、免费替代（哈希校验；SignPath 等 OSS 免费签名未来可签）；`MANUAL_VERIFY.md` 链接 target 存在。
+- 回归：`extract-command-surface.py --check` PASS（66）；`scripts/test.ps1` 258/258（产品代码零改动）。
+- 集成：`git merge --no-ff` → `5364652b0bb5a67b6acfb5108fcbb045e678cf5b`。
+- 结论：AC1–AC5 MET，PASS；标 `done`。签名线继续保持 `in_review`（等待证书），不因本卡改变。
