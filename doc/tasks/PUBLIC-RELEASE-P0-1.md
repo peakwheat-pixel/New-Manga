@@ -73,7 +73,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - Handoff：[PUBLIC-RELEASE-P0-1-handoff.md](../handoffs/PUBLIC-RELEASE-P0-1-handoff.md)
-- Review：独立复核 **CHANGES_REQUESTED（P0=0；2 P1 + 6 P2）→ 已修复 P1-1/P1-2/P2-1/P2-2/P2-4/P2-5**；待 Reviewer 复核修复后给 PASS。
+- Review：独立复核 **PASS（修复闭环）**：首轮 CHANGES_REQUESTED（P0=0；2 P1 + 6 P2）→ 修复 P1-1/P1-2/P2-1/P2-2/P2-4/P2-5 → 复核确认证据与远端一致、无新矛盾、pin 双 basis 通过。**AC4 为 `<<PARTIAL>>`（CI Run 与默认分支切换需用户两步），按治理不得标 done**，故保持 `in_review`；用户完成两步后由 DSH 复验、补 Closeout 再收口（或经用户授权改 `closed_with_limitations`）。P2 余项：开发机路径计数简单模式 107 行/41 文件、稳健模式（含转义路径 `tests/core/test_core_detect.py:356`）108 行/42 文件；公开文档内链/测试假凭据为 follow-up。
 - 推送事实：`public-release` = `3207e9c18`（远端与本地一致）；远端 `main` 未变。
 - delivery_head：`53481a9d9214d1c44434711fccfb2fb52f27792d`（证据提交；main 上的证据 commit，worktree 证据 commit 为 `1b456fb0d` 但无共同祖先，不予导入历史）。
 - 未 push 本地 main；未运行 CI；未签名。
@@ -82,12 +82,12 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| push | AC2 | verification/PUBLIC-RELEASE-P0-1/push.json | 53481a9d9214d1c44434711fccfb2fb52f27792d | de13772af7e6d96251bfd368c09a85c4f14538ca7a8074650cf1bad4d0cefbd7 | CANONICAL |
-| remote-verify | AC2/AC4 | verification/PUBLIC-RELEASE-P0-1/remote-verify.json | 53481a9d9214d1c44434711fccfb2fb52f27792d | 03dda2cfb5c80fa9b6e629e45a69c62af2d46b577645360f340d94d266264ed0 | CANONICAL |
-| security-scan | AC3 | verification/PUBLIC-RELEASE-P0-1/security-scan.json | 53481a9d9214d1c44434711fccfb2fb52f27792d | 3259e79e32829f95c8579cabbba128749dac96edd0477b3735588b6e3cd61833 | CANONICAL |
+| push | AC2 | verification/PUBLIC-RELEASE-P0-1/push.json | 53481a9d9214d1c44434711fccfb2fb52f27792d | 084a880f25a167bc2b342ea5d49ca7d7cdc820cb9eb1eb7f700b5cb50714a8d2 | CANONICAL |
+| remote-verify | AC2/AC4 | verification/PUBLIC-RELEASE-P0-1/remote-verify.json | 53481a9d9214d1c44434711fccfb2fb52f27792d | da14907112bca39b5791e48ba2e5a3f8ccf96e72c443bbd4b0dacfd743433844 | CANONICAL |
+| security-scan | AC3 | verification/PUBLIC-RELEASE-P0-1/security-scan.json | 53481a9d9214d1c44434711fccfb2fb52f27792d | 1b3dd73d18c784b053ac48e13452e6a69f7dc563e8d1c1d16e1b12955fc4134c | CANONICAL |
 | report | AC1–AC5 | verification/PUBLIC-RELEASE-P0-1/REPORT.md | 53481a9d9214d1c44434711fccfb2fb52f27792d | be93eef2198841382db47d71f4ddde075207149509ed166e7add07bf5c36b62b | CANONICAL |
-| ls-tree-raw | AC1 | verification/PUBLIC-RELEASE-P0-1/ls-tree.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | 5888441db73ad8f9a5745f525ccec2056430d4ad883208bac6074a6a1d8e9ee8 | CANONICAL |
-| ls-remote-raw | AC2 | verification/PUBLIC-RELEASE-P0-1/ls-remote.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | 05087f9230f3989e44ef0630cc605e3d3215cb6a09e2fa011117e6202a470461 | CANONICAL |
+| ls-tree-raw | AC1 | verification/PUBLIC-RELEASE-P0-1/ls-tree.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | 9a6fa2ea8b8a9ecb28def3a55811b128f693b483678f097570a32cbc57a8cf37 | CANONICAL |
+| ls-remote-raw | AC2 | verification/PUBLIC-RELEASE-P0-1/ls-remote.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | d899782e6c9f70a4ac1a31d6f08a7080e7fdaa78af1b0b6218e4a98265450f71 | CANONICAL |
 
 ## Resource Manifest
 
