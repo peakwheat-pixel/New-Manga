@@ -118,6 +118,7 @@ allowed_paths:
 | ac3-verify-quiet-after | AC3 | verification/RELEASE-VERIFY-1/logs/verify-quiet-after-negative.log | 75db4fd643f47a92924f607617c348fd85e6d411 | ed1b6101cfd410d0d8bef03aaf98cbe875165721e04dd86aa7cba2aed7e05089 | CANONICAL |
 | ac3-tamper | AC3 | verification/RELEASE-VERIFY-1/negative/tamper.json | 75db4fd643f47a92924f607617c348fd85e6d411 | a1b3997a581255e3d850c1462c52f809fdf973002ab70e1730ccd946cc5e7811 | CANONICAL |
 | ac5-test-summary | AC5 | verification/RELEASE-VERIFY-1/test/summary.json | 75db4fd643f47a92924f607617c348fd85e6d411 | 91a382da7ea7623a79bc4a0c3ac1d0aab342ccab42a843807be41965bbfba5ad | CANONICAL |
+| ac5-governance-check | AC5 | verification/RELEASE-VERIFY-1/check-governance.json | - | d4d224d3154e6d5578f377361fa396b3185cac21cba156d5c05901d2ceaf0562 | CANONICAL |
 
 ## Resource Manifest
 
