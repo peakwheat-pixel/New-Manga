@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "task_id": "REGION-WORKBENCH-1",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/REGION-WORKBENCH-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/REGION-WORKBENCH-1",
+      "process_check": "Worktree clean; branch task/REGION-WORKBENCH-1 rebased to aab480156; delivery head 541183640; merged to main at 60d087627; not pushed; deletion still requires the Worktree Safety Inventory.",
+      "deleted": false,
+      "moved": false
+    },
+    {
+      "resource_type": "task-env",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1",
+      "process_check": "Evidence originals retained (evidence-test/, region-fixture-copy/, ac5-logs/, ac5-screens/, probe/); AC5 copy library.db sha256 8abd39b3...854a; repo copy is verification/REGION-WORKBENCH-1/ only; no delete/move/archive.",
+      "deleted": false,
+      "moved": false
+    },
+    {
+      "resource_type": "fixture",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture",
+      "process_check": "Shared S4 fixture consumed read-only by this task; re-seeding observed from the existing scripts/test.ps1 gate (3 rounds, before/after sha256 in verification/REGION-WORKBENCH-1/fixture/fixture-audit.json); current fixture.json sha256 90ade2a8...27cd7; no task write to the original.",
+      "deleted": false,
+      "moved": false
+    },
+    {
+      "resource_type": "upstream-fixture",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data",
+      "process_check": "Upstream BOOK-FIXTURE consumed only through the existing seed path; library.db sha256 6e6e10f7...2b8b74f5 unchanged; not written by this task.",
+      "deleted": false,
+      "moved": false
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  }
+}

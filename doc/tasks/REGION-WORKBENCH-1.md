@@ -3,7 +3,7 @@ id: REGION-WORKBENCH-1
 title: 工作台接真实 region（读/改标/撤销/重渲染）+ 只读门
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_followups
 suggested_owner: region-workbench-owner
 owner: region-workbench-owner
@@ -12,10 +12,10 @@ depends_on: [S4-CMD-BATCH-1]
 base_commit: 8831b4273d48faf4b6fd1e105321e89fdb7427bc
 branch: task/REGION-WORKBENCH-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/REGION-WORKBENCH-1
-integration_commit: null
+integration_commit: 60d08762794a53dce7a6aab951f11d9ba9f97003
 delivery_head: 54118364022588d9dea95ba44d09134a1065dae7
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/REGION-WORKBENCH-1
 allowed_paths:
   - doc/tasks/REGION-WORKBENCH-1.md
@@ -144,21 +144,32 @@ allowed_paths:
 | ac5-rerendered-screen | AC5 | verification/REGION-WORKBENCH-1/ac5/screens/ac5-05-rerendered.png | 54118364022588d9dea95ba44d09134a1065dae7 | e97edfca4a23858a5c4ea2d42f49fb71315b961ea0b5d64f734d783a8d82ac6c | CANONICAL |
 | ac5-host-bridge-wire | AC5 | verification/REGION-WORKBENCH-1/ac5/wire/host-bridge.ndjson | 54118364022588d9dea95ba44d09134a1065dae7 | 05b92b347647c21ceb2d43416993cb6672dbb2ee9d8ef50d3d90f03c65d035c1 | CANONICAL |
 | delivery-report | 交付报告 | verification/REGION-WORKBENCH-1/REPORT.md | 54118364022588d9dea95ba44d09134a1065dae7 | 6e8467a9fd3c63705d4b4fb9379c4bad807b2c7d57b8a5ab1fb3ce9303f20067 | CANONICAL |
+| ac4-check-governance-log | AC4 | verification/REGION-WORKBENCH-1/logs/check-governance.log | f47cadc54c15032b36df6401a1b0fa042b441707 | 26c1b0a27a5c8062ace07f92bc62dbdd9ecc5f603d0398aadb1b89c37d068bb4 | SOURCE_PIN |
+| resource-manifest | Closeout | verification/REGION-WORKBENCH-1/resource-manifest.json | - | 32ebe37487bd1a520a3b874874a90afffc42bec698bd139480593954b69970c2 | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/REGION-WORKBENCH-1 | PRESERVE_REFERENCED | 原路径 | branch `task/REGION-WORKBENCH-1` @ delivery head `541183640`（rebase main 后由文档提交更新指针） | 交付后按 Worktree Safety Inventory 复核；未 push |
-| task-env | G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1 | PRESERVE_REFERENCED | 原路径 | 目录：`evidence-test/`（门禁原始产物）、`region-fixture-copy/`（AC5 写副本）、`db-before/`、`ac5-logs/`、`ac5-screens/`、`ac5-evidence/`、`probe/`；证据指纹见 `verification/REGION-WORKBENCH-1/` | 证据/数据根副本只写此处；AC5 后 `region-fixture-copy/library.db` sha256=`8abd39b3689f6fb413c9c615de8aec1b95c3d570a7b7927120f709222319485a` |
-| fixture | G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture | PRESERVE_REFERENCED（只读消费，复制后写） | 原路径 | `fixture.json`（`library_db_sha256` 覆盖 db+wal）；三次播种观测（`117094eb…`→`ab064bd8…`→`436da52c…`→`df24eda4…`）与实测 db/fixture.json sha256 见 `verification/REGION-WORKBENCH-1/fixture/fixture-audit.json` | 原件零本任务写入；重播种由既有 `scripts/test.ps1` 执行，审计已登记 |
-| upstream fixture | G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data | PRESERVE_REFERENCED | 原路径 | `library.db` sha256=`6e6e10f73f0c28534fc2083a7c809b4829aea91f208024126c26dbb62b8b74f5` | 仅经既有 seed 脚本间接读取，未写 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/REGION-WORKBENCH-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/REGION-WORKBENCH-1 | verification/REGION-WORKBENCH-1/resource-manifest.json | 交付后按 Worktree Safety Inventory 复核；未 push；已 merge 到 main `60d087627` |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/REGION-WORKBENCH-1 | 8abd39b3689f6fb413c9c615de8aec1b95c3d570a7b7927120f709222319485a | 证据/数据根副本只写此处；AC5 后 `region-fixture-copy/library.db` 指纹（目录资源，hash 供复核） |
+| fixture | G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture | 90ade2a84ab13650eff6ee3f97bca08eded54720c34fe5334d40f63914e27cd7 | 共享 fixture 本任务只读；重播种由既有 `test.ps1` 执行，审计见 `verification/REGION-WORKBENCH-1/fixture/fixture-audit.json` |
+| upstream fixture | G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data | 6e6e10f73f0c28534fc2083a7c809b4829aea91f208024126c26dbb62b8b74f5 | `library.db` 指纹（目录资源，hash 供复核）；仅经既有 seed 脚本间接读取，未写 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`complete`（in_review 时已 pin；`logs/check-governance.log` 为 rebase 后 gate 运行的过程文件，未 pin，随交付回报给出路径）。
-- resource_closeout_status：`pending`（由 DSH 在集成窗口按本 Manifest 逐项处置）。
-- 删除、迁移、归档数量/字节数：本 Task 未删除/迁移/归档；task-env 保留。
-- 未关闭项及保留原因：task-env（证据原始产物）与 worktree 保留至 Review/集成；共享 fixture 由既有测试脚本重播种（非本任务写入）。
-- 当前指针清理：STATUS/PLAN/LEDGER 由 DSH 在 Review/集成阶段统一更新（Owner 未改这三份文件）。
+- Closeout date / DSH：2026-10-28（集成 `60d087627`；DSH 独立复核 PASS）。
+- canonical_evidence_status：`complete`（29 条 CANONICAL + 1 条 SOURCE_PIN；worktree/blob 双 basis 校验通过）。
+- resource_closeout_status：`complete`（worktree/task-env/fixture 均 `PRESERVE_REFERENCED`；未删除/迁移/归档）。
+- 删除、迁移、归档数量/字节数：0。
+- 未关闭项及保留原因：① region_id 每次播种非稳定（代码/测试/证据动态读取）；② rerender 预览像素展示不在首切片范围；③ 页选择器无多页缩略图导航；④ pytest 2 条 Pillow DeprecationWarning 为既有。均记录不阻塞。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
+## Review（DSH 独立复核，2026-10-28）— PASS
+
+- 独立复跑（Owner worktree `b3331cdab`，隔离 evidence 目录，不复用 Owner 的 evidence）：`scripts/test.ps1` → **TEST PASS 258/258, 0 skipped**（coreclient 61 / host 60 / app 137）；`python -m pytest -q` → **2773 passed, 10 skipped, 0 failed**（205.41s）；`extract-command-surface.py --check` → **PASS（66 commands）**；`check.ps1 -TaskPath` → **PASS（3 非阻断 warning）**。
+- 证据：29 条 CANONICAL + 1 条 SOURCE_PIN 全部校验通过（worktree 字节或 commit blob 双 basis）；`verification/REGION-WORKBENCH-1/` 31 个文件全部登记（补登 `logs/check-governance.log`）。
+- 代码复查：`HostRuntime` 三个写方法均先 `RequireWrites()`（在 gate/Core 帧之前）→ typed `ReadOnlyHostException`；读写共用 `_readerIoGate`；`CoreServiceClient` 以 `ChapterPagesMinor = 6` 固定 wire minor、payload 键与契约一致；Host 集成测试真实 frozen sidecar（几何 0.1→120px@1200×1660、revision 递增、stale guard `INPUT_REVISION_CHANGED` 且状态不变、只读三写零 Core 帧、读面仍可用）；App headless 断言真实接线/双向选中/只读禁用+原因；未发现伪造或 mock Core 语义。
+- 真机 AC5：task-env 副本数据根（region `436da52c…`、rev3、page `f52f2772…`）改类型 narration rev4 → 撤销 rev5 speech/restored → 重渲染 artifact+preview；6 张截图 + core/host wire + DB 前后 sha256；共享 S4 fixture 只读审计见 `fixture/fixture-audit.json`。
+- 集成：`git merge --no-ff` → `60d08762794a53dce7a6aab951f11d9ba9f97003`。
+- 结论：AC1–AC5 MET，PASS；标 `done`。
