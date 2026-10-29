@@ -3,6 +3,7 @@
              xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
              xmlns:v="using:NewManga.App.Views.V2.Shell"
              xmlns:lv="using:NewManga.App.Views.V2.Library"
+             xmlns:cn="using:NewManga.App.Views.V2.Console"
              x:Class="NewManga.App.Views.V2.Shell.V2WorkspaceHost"
              x:DataType="vm:AppShellViewModel">
   <!-- The three spaces are created ONCE and only toggled here: switching Ctrl+1/2/3 must not rebuild a
@@ -12,6 +13,8 @@
       <lv:LibraryView DataContext="{Binding Library}" />
     </Grid>
     <v:StudioPendingView IsVisible="{Binding IsStudioSpace}" />
-    <v:ConsolePendingView IsVisible="{Binding IsConsoleSpace}" />
+    <Grid IsVisible="{Binding IsConsoleSpace}">
+      <cn:ConsoleView DataContext="{Binding Console}" />
+    </Grid>
   </Grid>
 </UserControl>

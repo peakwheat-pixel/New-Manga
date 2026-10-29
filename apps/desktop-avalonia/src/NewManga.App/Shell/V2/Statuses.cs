@@ -21,11 +21,11 @@ public enum NmStatus
 
 public static class NmStatusInfo
 {
-    /// <summary>Contract §2.3 symbol set (the frozen UI contract; tokens.json uses "·" for queued).</summary>
+    /// <summary>Frozen DESIGN_SYSTEM §2.2 symbol set (Lead ruling 2026-10-30: queued = "·", not "◦").</summary>
     public static string Symbol(NmStatus status) => status switch
     {
         NmStatus.NotStarted => "○",
-        NmStatus.Queued => "◦",
+        NmStatus.Queued => "·",
         NmStatus.Running => "◐",
         NmStatus.Done => "●",
         NmStatus.Failed => "✗",

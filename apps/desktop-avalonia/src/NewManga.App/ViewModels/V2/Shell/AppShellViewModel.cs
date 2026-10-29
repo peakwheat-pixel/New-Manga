@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Avalonia.Input;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
+using NewManga.App.ViewModels.V2.Console;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.CoreClient;
 
@@ -37,6 +38,15 @@ public sealed class AppShellViewModel : ObservableObject
         _controller = controller;
         State = new ShellState();
         Library = new LibraryViewModel(controller, State, Notify, RequestConfirm, picker);
+        Console = new ConsoleViewModel(
+            controller,
+            State,
+            Notify,
+            RequestConfirm,
+            () => IsDarkTheme,
+            ToggleTheme,
+            OpenThemeStudio,
+            () => SwitchSpace(SpaceId.Studio));
         SpaceTabs = new[]
         {
             new SpaceTabItem(SpaceId.Library, "资料柜", "1", () => SwitchSpace(SpaceId.Library)),
@@ -93,6 +103,13 @@ public sealed class AppShellViewModel : ObservableObject
                 RefreshChrome();
             }
         };
+        Console.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ConsoleViewModel.SelectedSection))
+            {
+                RefreshChrome();
+            }
+        };
         Library.Reader.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(ReaderOverlayViewModel.IsOpen))
@@ -115,6 +132,8 @@ public sealed class AppShellViewModel : ObservableObject
     public ShellState State { get; }
 
     public LibraryViewModel Library { get; }
+
+    public ConsoleViewModel Console { get; }
 
     public KeyMap KeyMap => _keyMap;
 
@@ -455,6 +474,10 @@ public sealed class AppShellViewModel : ObservableObject
     public void SwitchSpace(SpaceId space)
     {
         State.SwitchSpace(space);
+        if (space == SpaceId.Console)
+        {
+            _ = Console.InitializeAsync();
+        }
         if (space == SpaceId.Studio)
         {
             // Studio content is owned by V11R-B-3/B-4 (ui-studio). This shell keeps the routing and

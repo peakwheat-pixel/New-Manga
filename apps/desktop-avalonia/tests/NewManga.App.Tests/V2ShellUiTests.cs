@@ -88,6 +88,63 @@ internal static class V2Fixture
             readerPages);
         return fake;
     }
+
+    /// <summary>V11R-B-2: real settings/credential/export fixtures for the Console space tests.</summary>
+    public static void AddConsoleData(FakeHostController fake)
+    {
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "provider-1",
+            "openai",
+            "OpenAI · GPT",
+            new[] { SettingsCapabilities.Translation, SettingsCapabilities.Ocr },
+            "https://api.example.invalid/v1",
+            "gpt-4o-mini",
+            null,
+            true,
+            "missing"));
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "provider-2",
+            "local",
+            "本地 Provider",
+            new[] { SettingsCapabilities.Inpaint, SettingsCapabilities.Rendering },
+            "http://127.0.0.1:8080",
+            "local-model",
+            "network-1",
+            false,
+            "configured"));
+
+        fake.NetworkProfiles.Add(new NetworkProfileInfo(
+            "network-1",
+            "公司代理",
+            "HTTP",
+            "127.0.0.1:7890",
+            true,
+            "enabled",
+            false,
+            "missing"));
+        fake.NetworkProfiles.Add(new NetworkProfileInfo(
+            "network-2",
+            "直连",
+            "Direct",
+            null,
+            true,
+            "enabled",
+            true,
+            "missing"));
+
+        fake.CredentialTargets.Add(new CredentialTargetOption(
+            CredentialKinds.ProviderApi, "provider-1", "OpenAI · GPT", "missing"));
+        fake.CredentialTargets.Add(new CredentialTargetOption(
+            CredentialKinds.ProviderApi, "provider-2", "本地 Provider", "configured"));
+        fake.CredentialTargets.Add(new CredentialTargetOption(
+            CredentialKinds.ProxyAuth, "network-1", "公司代理", "missing"));
+
+        fake.ScriptedNetworkResolveResults.Enqueue(new NetworkResolveInfo("network-1", "HTTP", "global_default"));
+        fake.ExportHistory.Add(new ExportHistoryEntry(
+            "exp-1", "zip", "completed", null, null, 240, "2026-10-29T01:00:00Z"));
+        fake.ExportHistory.Add(new ExportHistoryEntry(
+            "exp-2", "pdf", "failed", null, null, 0, "2026-10-28T22:00:00Z"));
+    }
 }
 
 /// <summary>
@@ -472,7 +529,10 @@ public sealed class V2ShellUiTests
         Assert.True(shell.HandleKeyForTest(Key.D3, KeyModifiers.Control));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(SpaceId.Console, shell.ViewModel.State.CurrentSpace);
-        Capture(window, "10-console-pending");
+        await shell.ViewModel.Console.InitializeAsync();
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(9, shell.ViewModel.Console.Sections.Count);
+        Capture(window, "10-console-providers");
         window.Close();
     }
 

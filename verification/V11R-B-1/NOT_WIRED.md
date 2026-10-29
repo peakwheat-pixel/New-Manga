@@ -13,7 +13,7 @@
 | 6 | 工位空间内容（Page/Batch） | 属 **ui-studio**（B-3/B-4） | `StudioPendingView` 诚实占位；空间路由、Tab 模式切换、共享 selection 已可验证 | V11R-B-3 / B-4 |
 | 7 | 控制台空间 9 分区 | 本 Owner 下一任务卡 **V11R-B-2** | `ConsolePendingView` 诚实占位 | V11R-B-2 |
 | 8 | 主题工作室 7 分区 | **V11R-C-2** | `ThemeStudioPendingView` 占位 + **真实**深浅外观切换（DesignSystemThemeManager） | V11R-C-2 |
-| 9 | 封面图片 / 页缩略图 | Host 无封面/缩略图读取命令 | 书卡用标题首字占位（不伪造图片）；页以真实文件名清单呈现 | core-bridge / 资源通道扩展 |
+| 9 | 封面图片 / 页缩略图 | Host 无封面/缩略图读取命令 | 书卡用标题首字占位（不伪造图片）；页以真实文件名清单呈现。**页缩略图网格：待 Host 缩略图命令（follow-up，Lead 裁决定为 V1 后可延项）** | core-bridge / 资源通道扩展（follow-up） |
 | 10 | 未选中章节的页数 | `list_chapters` 不返回页数；逐章 `list_chapter_pages` 代价高 | 未选中章节显示「—」，选中后真实填充 | Core 投影扩展（可选） |
 | 11 | 文件夹导入的逐文件明细 | `ImportFolderAsync` 为单次调用，Host 只回聚合计数 | 文件夹行显示聚合结果并注明「Core 不返回逐文件明细」；**文件导入**为逐文件真实状态 | 契约扩展（可选） |
 | 12 | Webtoon 断点像素级还原 | `SaveReadingProgressAsync.scrollOffsetY` 当前传 null，按页 id 保存 | 滚动百分比为 UI 近似（用于双模态显示），保存仍为真实 page id + 结果状态 | Core 进度语义确认 |
