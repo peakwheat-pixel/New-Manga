@@ -182,7 +182,11 @@
 | **R-18** | 断点统一 `>=1600` 完整 / `1280–1599` 紧凑 / `<1280` 覆盖式；令牌 `Nm.Size.Breakpoint.Full=1600/.Compact=1280/.Narrow=1024`，禁止各 Owner 自造 1400/1200 | 审查发现三套断点不一致 |
 | **R-19** | 证据纪律：每个任务只写 `verification/<TASK-ID>/`；**禁止复制其它任务证据/二进制 DB 入库**；测试证据写入默认落仓库而非 `%TEMP%`；交付后证据须随 fix commit 重生成；被审 pin 冻结 | 审查发现 B-1 证据 42% 为外任务复制品 |
 | **R-20** | `App` 项目引用 `NewManga.ThemeEngine`（依赖 `App → ThemeEngine → DesignSystem`）；Theme Studio 可直接调用引擎，禁止条件编译桩冒充生产适配器 | Theme Studio 需要真实引擎能力 |## 9. 变更记录
-
+| **R-21** | `Nm.Color.Scrim` 为**主题不变量全局派生色**（rgba(0,0,0,0.55)，Modal 遮罩），不属于 appearance palette、不属于主题包 59 键白名单；引擎的必需颜色集必须用 DS 公开 `PaletteColorKeys`（35）而非 `NmKeys.Color.*` 全量 | DS 返修新增该键导致引擎 46 测试失败；Scrim 无语义个性 |
+| **R-22** | **幂等键语义统一**（改写 R-08 的 UI 侧解释）：UI 可以为"一次新的用户意图"生成幂等键，但必须 ①意图创建时生成并存住、②同一意图的重试**复用同一键**、③提交进行中按钮禁用（防双击）；禁止每次点击新生成 GUID。Console 手填键与 Batch 自动键都需满足②③；Batch 必须在 UI 显示/记录键来源 | 审查发现 Batch 每次点击 Guid.NewGuid() 使幂等保护失效，且与 Console 纪律相反 |
+| **R-23** | **状态词表只表达状态**：`done/blocked/not_started` 等七态不得用于"是否接入/是否已保存/分区可用性"等非状态语义；这类语义用中性文字徽标或 `StatusBadge` 之外的组件 | DESIGN_SYSTEM §2.1/§2.2 明确禁止状态参与装饰 |
+| **R-24** | **Run 投影单一来源**：收敛为一个可注入间隔的 `IRunProjectionPoller` + `IRunDataSource`，Console / Batch 共用同一投影与同一控制面（Start/Stop/Pause/Retry/Resume 语义一致，Stop 必须确认）；禁止两个空间各自轮询同一 `IRunController` | 审查发现 Console 1s/Batch 750ms 双源、Stop 纪律分裂 |
+| **R-25** | 证据禁止"字面量-backed 字段"：JSON/截图中的每个字段必须从被测对象读取（如 `batch.GateImpactText`），禁止 `writer.WriteString("field","字面量")`；恒真断言（`x is null` 与取值、`Contains("A","A")`）一律删除 | 连续两轮审查发现证据作假模式 |
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-10-30 | 建立程序；合并冻结 A+C 设计基线；建立 DAG；裁定 R-01/R-02 | DSH |
