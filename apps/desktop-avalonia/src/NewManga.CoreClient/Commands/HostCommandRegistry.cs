@@ -1,24 +1,24 @@
 namespace NewManga.CoreClient.Commands;
 
 /// <summary>
-/// AC2 mapping table: every one of the 66 runtime production commands is registered exactly once,
-/// organised into the six domain services. Sixty-six commands are migrated: the S2/A1/A2 sets,
-/// thirteen NS-WIRE-B1 bindings, nine NS-WIRE-B2 bindings, five S4-CMD-BATCH-1 bindings, the
-/// four Host-local grant/shell faces and the CREDENTIAL-PORT-1 credential pair (OS vault +
-/// Core BindProfileCredential/ClearProfileCredential). There is no NOT_SUPPORTED command left.
+/// AC2 mapping table: every runtime production command is registered exactly
+/// once, organised into the six domain services. The frozen legacy surface is
+/// the 66 commands migrated by S2/A1/A2, the thirteen NS-WIRE-B1 bindings, the
+/// nine NS-WIRE-B2 bindings, the five S4-CMD-BATCH-1 bindings, the four
+/// Host-local grant/shell faces and the CREDENTIAL-PORT-1 credential pair (OS
+/// vault + Core BindProfileCredential/ClearProfileCredential). There is no
+/// NOT_SUPPORTED command left.
 ///
-/// Implemented set (probed against the frozen sidecars, evidence under
-/// verification/HOST-COMMAND-MIGRATION-1/parity/, verification/NS-WIRE-A1/,
-/// verification/NS-WIRE-B1/, verification/NS-WIRE-B2/, verification/RUN-EXPORT-E2E-1/ and
-/// verification/S4-CMD-BATCH-1/):
-///   core.ping, ListBooks, ListRecycleBinBooks, CreateBook, CreateChapter, list_chapters,
-///   list_chapter_pages, list_regions, settings.get, backup.list, plugins.list,
-///   cleanup.preview, GetExportHistory (core_service protocol 2.3), the RUN-EXPORT-E2E-1 run/export
-///   set, the NS-WIRE-A1 settings/plugins/backup/cleanup batch, the NS-WIRE-B1 P15 settings /
-///   provider binding / network profile / backup / cleanup / plugin / permanent-delete batch,
-///   the NS-WIRE-B2 backup-restore / provider-profile / provider-binding / network-test /
-///   network-resolve / batch-delete / region-revision batch,
-///   the S4-CMD-BATCH-1 region write + reader progress batch, and issue/revoke/revoke_resource
+/// V11R-F0-1 (Region write face / audit §5.1 F-01) deliberately APPENDS ten
+/// Region write commands to the Region domain: create_region / delete_region /
+/// save_region_geometry / merge_regions / split_region / reorder_regions /
+/// save_manual_translation / confirm_region_final / set_region_lock /
+/// pin_revision. They are additive to the frozen 66-command snapshot (the
+/// snapshot file is NOT edited) and ride the SAME per-command Core minor (3)
+/// as their set_region_type/list_regions siblings -- zero protocol bump, see
+/// doc/contracts/V11R_REGION_WRITE_CONTRACT.md. The parity test derives the
+/// legacy set from the frozen snapshot and the additive set explicitly, so a
+/// missing/duplicated binding still fails closed.
 /// </summary>
 public static class HostCommandRegistry
 {
@@ -79,6 +79,18 @@ public static class HostCommandRegistry
         "restore_region_revision",
         "rerender_page",
         "resolve_page_resource",
+        // V11R-F0-1: the Region write face the Studio Page mode consumes
+        // (additive to the frozen 66-command snapshot, Core minor 3).
+        "create_region",
+        "delete_region",
+        "save_region_geometry",
+        "merge_regions",
+        "split_region",
+        "reorder_regions",
+        "save_manual_translation",
+        "confirm_region_final",
+        "set_region_lock",
+        "pin_revision",
     };
 
     private static readonly string[] ReaderNames =
@@ -195,6 +207,20 @@ public static class HostCommandRegistry
         ["settings_network_profile_resolve"] = new("settings_network_profile_resolve", 7),
         ["library_delete_books_permanently"] = new("PermanentlyDeleteBooks", 10),
         ["list_region_revisions"] = new("list_region_revisions", 3),
+        // V11R-F0-1: the ten Region write commands. Keys are the frozen wire
+        // command names handled by bootstrap/core_service.py; minor 3 is the
+        // existing Region command family minor (zero protocol bump -- see
+        // doc/contracts/V11R_REGION_WRITE_CONTRACT.md §2.1/§7).
+        ["create_region"] = new("create_region", 3),
+        ["delete_region"] = new("delete_region", 3),
+        ["save_region_geometry"] = new("save_region_geometry", 3),
+        ["merge_regions"] = new("merge_regions", 3),
+        ["split_region"] = new("split_region", 3),
+        ["reorder_regions"] = new("reorder_regions", 3),
+        ["save_manual_translation"] = new("save_manual_translation", 3),
+        ["confirm_region_final"] = new("confirm_region_final", 3),
+        ["set_region_lock"] = new("set_region_lock", 3),
+        ["pin_revision"] = new("pin_revision", 3),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
@@ -234,6 +260,28 @@ public static class HostCommandRegistry
 
     public static IReadOnlyList<HostCommandDescriptor> ForDomain(HostCommandDomain domain) => ByDomain[domain];
 
+    /// <summary>
+    /// V11R-F0-1: the ten Region write commands ADDED on top of the frozen
+    /// 66-command snapshot (the snapshot file is not edited). The parity test
+    /// derives the additive set from the registry and asserts it matches this
+    /// set exactly, so the frozen legacy surface keeps its own independent
+    /// gate while the V11R widening stays explicit.
+    /// </summary>
+    public static IReadOnlySet<string> RegionWriteCommandNames { get; } =
+        new HashSet<string>(StringComparer.Ordinal)
+        {
+            "create_region",
+            "delete_region",
+            "save_region_geometry",
+            "merge_regions",
+            "split_region",
+            "reorder_regions",
+            "save_manual_translation",
+            "confirm_region_final",
+            "set_region_lock",
+            "pin_revision",
+        };
+
     public static HostCommandDescriptor Get(string name) =>
         Commands.TryGetValue(name, out var descriptor)
             ? descriptor
@@ -241,7 +289,8 @@ public static class HostCommandRegistry
 
     private static IReadOnlyDictionary<string, HostCommandDescriptor> BuildCommands()
     {
-        var descriptors = new List<HostCommandDescriptor>(66);
+        // Frozen legacy 66 + the ten V11R-F0-1 Region write commands.
+        var descriptors = new List<HostCommandDescriptor>(76);
         AddDomain(descriptors, HostCommandDomain.Settings, SettingsNames);
         AddDomain(descriptors, HostCommandDomain.Library, LibraryNames);
         AddDomain(descriptors, HostCommandDomain.Region, RegionNames);

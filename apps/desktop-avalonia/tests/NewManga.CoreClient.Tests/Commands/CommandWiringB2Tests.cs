@@ -46,7 +46,11 @@ public sealed class CommandWiringB2Tests
     [Fact]
     public void Registry_B2Commands_AreCoreBackedWithProbedMinor()
     {
-        Assert.Equal(66, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
+        // Derived: every registered command is implemented (V11R-F0-1 appends
+        // the Region write batch on top of the frozen legacy 66).
+        Assert.Equal(
+            HostCommandRegistry.All.Count,
+            HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
         Assert.Equal(0, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
 
         foreach (var (name, expected) in B2Routes)
@@ -95,7 +99,11 @@ public sealed class CommandWiringB2Tests
             writer.WriteStartObject();
             writer.WriteString("ac", "AC1");
             writer.WriteString("base", "verification/NS-RECLASSIFY-1/reclassification.json");
-            writer.WriteString("registry", "HostCommandRegistry (66 IMPLEMENTED / 0 NOT_SUPPORTED of 66)");
+            writer.WriteString(
+                "registry",
+                $"HostCommandRegistry ({HostCommandRegistry.All.Values.Count(command => command.IsImplemented)}" +
+                $" IMPLEMENTED / {HostCommandRegistry.All.Values.Count(command => !command.IsImplemented)}" +
+                $" NOT_SUPPORTED of {HostCommandRegistry.All.Count})");
             writer.WriteNumber("commands", rows.Count);
             writer.WriteStartArray("inventory");
             foreach (var row in rows)

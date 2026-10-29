@@ -41,8 +41,12 @@ public sealed class CommandWiringB1Tests
     [Fact]
     public void Registry_B1Commands_AreCoreBackedWithProbedMinor()
     {
-        // CREDENTIAL-PORT-1 migrated the last two commands (credential_put/clear): 66/0.
-        Assert.Equal(66, HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
+        // CREDENTIAL-PORT-1 migrated the last two commands (credential_put/clear):
+        // every registered command is implemented. Totals are DERIVED from the
+        // registry (V11R-F0-1 appends the Region write batch).
+        Assert.Equal(
+            HostCommandRegistry.All.Count,
+            HostCommandRegistry.All.Values.Count(command => command.IsImplemented));
         Assert.Equal(0, HostCommandRegistry.All.Values.Count(command => !command.IsImplemented));
 
         foreach (var (name, expected) in B1Routes)
@@ -58,7 +62,11 @@ public sealed class CommandWiringB1Tests
     [Fact]
     public void Registry_B1Commands_StayInTheSixDomainSurface()
     {
-        Assert.Equal(66, HostCommandRegistry.All.Count);
+        // Derived: the six domains partition the registry exactly once.
+        Assert.Equal(
+            HostCommandRegistry.All.Count,
+            Enum.GetValues<HostCommandDomain>()
+                .Sum(domain => HostCommandRegistry.ForDomain(domain).Count));
         Assert.All(B1Routes.Keys, name =>
         {
             var descriptor = HostCommandRegistry.Get(name);

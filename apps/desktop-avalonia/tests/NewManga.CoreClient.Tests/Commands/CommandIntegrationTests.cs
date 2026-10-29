@@ -408,9 +408,16 @@ public sealed class CommandIntegrationTests
             });
         }
 
-        Assert.Equal(66, seen.Count);
-        Assert.Equal(66, services.Sum(service => service.Descriptors.Count));
-        Assert.Equal(66, services.Sum(service => service.ImplementedCount));
+        // Derived from the registry itself (V11R-F0-1 appends the Region
+        // write batch): the six domain services must cover every command
+        // exactly once and every command is implemented.
+        Assert.Equal(HostCommandRegistry.All.Count, seen.Count);
+        Assert.Equal(
+            HostCommandRegistry.All.Count,
+            services.Sum(service => service.Descriptors.Count));
+        Assert.Equal(
+            HostCommandRegistry.All.Count,
+            services.Sum(service => service.ImplementedCount));
 
         var crossDomain = await Assert.ThrowsAsync<ArgumentException>(
             () => context.Settings.InvokeAsync("library_list_books", Args("{}")));
