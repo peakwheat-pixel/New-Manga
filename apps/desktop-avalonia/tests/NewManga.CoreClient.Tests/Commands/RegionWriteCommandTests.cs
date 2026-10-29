@@ -307,6 +307,32 @@ public sealed class RegionWriteCommandTests
         { "list_page_region_texts", "{\"page_id\":\"page-1\",\"region_ids\":\"r1\"}" },
         { "list_page_region_texts", "{\"page_id\":\"page-1\",\"region_ids\":[\"r1\",\"r1\"]}" },
         { "list_page_region_texts", "{\"page_id\":\"page-1\",\"region_ids\":[\"\",\"r2\"]}" },
+        // V11R-F0-1 I1/P2-5: domain-invalid values must fail BEFORE any frame.
+        { "create_region", "{\"page_id\":\"page-1\",\"reading_order\":0," +
+                            "\"geometry\":{\"points\":[[0.1,0.1],[0.2,0.2]]}}" },
+        { "create_region", "{\"page_id\":\"page-1\",\"reading_order\":-1," +
+                            "\"geometry\":{\"points\":[[0.1,0.1],[0.2,0.2]]}}" },
+        { "create_region", "{\"page_id\":\"page-1\"," +
+                            "\"geometry\":{\"points\":[[-0.1,0.1],[0.2,0.2]]}}" },
+        { "create_region", "{\"page_id\":\"page-1\"," +
+                            "\"geometry\":{\"points\":[[0.1,0.1],[1.2,0.4]]}}" },
+        { "create_region", "{\"page_id\":\"page-1\"," +
+                            "\"geometry\":{\"points\":[[0.1,0.1],[0.2,2.0]]}}" },
+        { "save_region_geometry", "{\"region_id\":\"r1\"," +
+                                   "\"geometry\":{\"points\":[[0.1,0.1],[0.2,0.2]]}," +
+                                   "\"expected_revision\":0}" },
+        { "delete_region", "{\"region_id\":\"r1\",\"expected_revision\":0}" },
+        { "split_region", "{\"region_id\":\"r1\"," +
+                          "\"parts\":[[[0.1,0.1],[0.2,0.2]],[[0.2,0.1],[0.3,0.2]]]," +
+                          "\"expected_revision\":-2}" },
+        { "merge_regions", "{\"page_id\":\"page-1\",\"region_ids\":[\"r1\",\"r2\"]," +
+                            "\"expected_revisions\":{\"r1\":0,\"r2\":1}}" },
+        { "reorder_regions", "{\"page_id\":\"page-1\",\"ordered_region_ids\":[\"r1\"]," +
+                              "\"expected_revisions\":{\"r1\":0}}" },
+        { "pin_revision", "{\"region_id\":\"r1\",\"revision_no\":0,\"pinned\":true}" },
+        { "pin_revision", "{\"region_id\":\"r1\",\"revision_no\":-3,\"pinned\":true}" },
+        { "set_region_lock", "{\"region_id\":\"r1\",\"region_locked\":true," +
+                              "\"expected_revision\":0}" },
     };
 
     [Theory]

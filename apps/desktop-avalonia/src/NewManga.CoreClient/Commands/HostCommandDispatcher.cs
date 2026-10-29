@@ -397,11 +397,11 @@ public sealed class HostCommandDispatcher
             case "set_region_type":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
                 writer.WriteString("new_region_type", RequireString(name, payload, "new_region_type"));
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "restore_region_revision":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
-                writer.WriteNumber("revision_no", RequireInt64(name, payload, "revision_no"));
+                writer.WriteNumber("revision_no", RequirePositiveInt64(name, payload, "revision_no"));
                 writer.WriteNumber("expected_revision", RequireInt64(name, payload, "expected_revision"));
                 break;
             case "rerender_page":
@@ -419,17 +419,17 @@ public sealed class HostCommandDispatcher
             case "create_region":
                 writer.WriteString("page_id", RequireString(name, payload, "page_id"));
                 WriteOptionalString(writer, name, payload, "region_type");
-                WriteOptionalInt64(writer, name, payload, "reading_order");
+                WriteOptionalPositiveInt64(writer, name, payload, "reading_order");
                 WriteGeometryPayload(writer, name, payload, "geometry");
                 break;
             case "delete_region":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "save_region_geometry":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
                 WriteGeometryPayload(writer, name, payload, "geometry");
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "merge_regions":
                 writer.WriteString("page_id", RequireString(name, payload, "page_id"));
@@ -440,7 +440,7 @@ public sealed class HostCommandDispatcher
             case "split_region":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
                 WriteGeometryPartsPayload(writer, name, payload, "parts");
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "reorder_regions":
                 writer.WriteString("page_id", RequireString(name, payload, "page_id"));
@@ -451,11 +451,11 @@ public sealed class HostCommandDispatcher
             case "save_manual_translation":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
                 writer.WriteString("edited_translation", RequireText(name, payload, "edited_translation"));
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "confirm_region_final":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "set_region_lock":
                 RequireAnyLockProperty(name, payload);
@@ -463,13 +463,13 @@ public sealed class HostCommandDispatcher
                 WriteOptionalBool(writer, name, payload, "region_locked");
                 WriteOptionalBool(writer, name, payload, "translation_locked");
                 WriteOptionalBool(writer, name, payload, "inpaint_locked");
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "pin_revision":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
-                writer.WriteNumber("revision_no", RequireInt64(name, payload, "revision_no"));
+                writer.WriteNumber("revision_no", RequirePositiveInt64(name, payload, "revision_no"));
                 writer.WriteBoolean("pinned", RequireBool(name, payload, "pinned"));
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             // V11R-F0-2: the page-scoped Region text read projection. The
             // optional strict region filter is enforced as non-empty distinct
@@ -659,6 +659,16 @@ public sealed class HostCommandDispatcher
                         command, $"argument '{label}' coordinates must be finite numbers");
                 }
 
+                // I1/P2-5: the wire geometry is NORMALIZED (0..1); an
+                // out-of-range coordinate is a domain-invalid argument and
+                // must fail here, before any Core frame.
+                if (value < 0 || value > 1)
+                {
+                    throw new HostCommandInvalidArgumentsException(
+                        command,
+                        $"argument '{label}' coordinates must be normalized within [0, 1]");
+                }
+
                 writer.WriteNumberValue(value);
             }
 
@@ -696,10 +706,11 @@ public sealed class HostCommandDispatcher
         {
             if (string.IsNullOrEmpty(entry.Name) ||
                 entry.Value.ValueKind != JsonValueKind.Number ||
-                !entry.Value.TryGetInt64(out var revisionNo))
+                !entry.Value.TryGetInt64(out var revisionNo) ||
+                revisionNo <= 0)
             {
                 throw new HostCommandInvalidArgumentsException(
-                    command, $"argument '{property}' must map non-empty region ids to integer revision numbers");
+                    command, $"argument '{property}' must map non-empty region ids to POSITIVE integer revision numbers");
             }
 
             writer.WriteNumber(entry.Name, revisionNo);
@@ -740,6 +751,23 @@ public sealed class HostCommandDispatcher
         throw new HostCommandInvalidArgumentsException(
             command,
             "requires at least one of 'region_locked' / 'translation_locked' / 'inpaint_locked'");
+    }
+
+    /// <summary>
+    /// V11R-F0-1 I1/P2-5: required positive integer (revision numbers are
+    /// 1-based; a 0/negative value is a domain-invalid argument and must be
+    /// rejected BEFORE any frame instead of round-tripping to the Core).
+    /// </summary>
+    private static long RequirePositiveInt64(string command, JsonElement args, string property)
+    {
+        var value = RequireInt64(command, args, property);
+        if (value <= 0)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be a positive integer");
+        }
+
+        return value;
     }
 
     private static JsonElement RequireObject(string command, JsonElement args, string property)
@@ -949,6 +977,33 @@ public sealed class HostCommandDispatcher
         if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt64(out var number))
         {
             throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be an integer");
+        }
+
+        writer.WriteNumber(property, number);
+    }
+
+    /// <summary>
+    /// V11R-F0-1 I1/P2-5: optional 1-based integer (``expected_revision`` /
+    /// ``reading_order``): present =&gt; strictly positive, so domain-invalid
+    /// values fail at the dispatcher boundary before any Core frame.
+    /// </summary>
+    private static void WriteOptionalPositiveInt64(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Number ||
+            !value.TryGetInt64(out var number) ||
+            number <= 0)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be a positive integer");
         }
 
         writer.WriteNumber(property, number);
