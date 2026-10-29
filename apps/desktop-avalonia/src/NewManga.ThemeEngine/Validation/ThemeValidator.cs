@@ -192,9 +192,21 @@ public sealed class ThemeValidator : IThemeValidator
                 continue;
             }
 
+            if (ThemeTokenKeys.ThemeInvariantColorKeys.Contains(pair.Key, StringComparer.Ordinal))
+            {
+                // R-21: theme-invariant derived colors (Modal scrim) live in the DS global token
+                // dictionary; a theme package may not define them, but their presence is not an error.
+                issues.Add(ThemeValidationIssue.Warning(
+                    ThemeIssueCodes.ColorUnknownKey,
+                    $"color token '{pair.Key}' is a theme-invariant derived color owned by the design system; " +
+                    "it is ignored and is not part of the theme package",
+                    $"{scope}.colors.{pair.Key}"));
+                continue;
+            }
+
             issues.Add(ThemeValidationIssue.Warning(
                 ThemeIssueCodes.ColorUnknownKey,
-                $"unknown color token '{pair.Key}' is ignored (contract §2.2 defines {ThemeTokenKeys.Colors.Count} keys)",
+                $"unknown color token '{pair.Key}' is ignored (R-15 theme layer defines {ThemeTokenKeys.Colors.Count} color keys)",
                 $"{scope}.colors.{pair.Key}"));
         }
     }
@@ -273,8 +285,10 @@ public sealed class ThemeValidator : IThemeValidator
 
     private static void ValidateMotion(ThemeMotion motion, string scope, List<ThemeValidationIssue> issues)
     {
-        if (motion.FastMs < 0 || motion.NormalMs < 0 ||
-            motion.FastMs > ThemeMotion.MaxDurationMs || motion.NormalMs > ThemeMotion.MaxDurationMs)
+        if (motion.FastMs < 0 || motion.NormalMs < 0 || motion.SlowMs < 0 ||
+            motion.FastMs > ThemeMotion.MaxDurationMs ||
+            motion.NormalMs > ThemeMotion.MaxDurationMs ||
+            motion.SlowMs > ThemeMotion.MaxDurationMs)
         {
             issues.Add(ThemeValidationIssue.Error(
                 ThemeIssueCodes.MotionDurationOutOfRange,
@@ -283,11 +297,12 @@ public sealed class ThemeValidator : IThemeValidator
             return;
         }
 
-        if (motion.FastMs > motion.NormalMs)
+        // R-15: the three theme-owned tiers must be ordered fast <= normal <= slow.
+        if (motion.FastMs > motion.NormalMs || motion.NormalMs > motion.SlowMs)
         {
             issues.Add(ThemeValidationIssue.Warning(
                 ThemeIssueCodes.MotionDurationOrder,
-                $"fast motion ({motion.FastMs}ms) is slower than normal motion ({motion.NormalMs}ms)",
+                $"motion tiers are not ordered fast <= normal <= slow ({motion.FastMs}ms/{motion.NormalMs}ms/{motion.SlowMs}ms)",
                 $"{scope}.motion"));
         }
     }

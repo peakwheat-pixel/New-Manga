@@ -144,7 +144,7 @@ public sealed class ThemeValidatorTests
     [Fact]
     public void Motion_durations_outside_the_supported_range_are_errors()
     {
-        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(-5, 140));
+        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(-5, 140, 220));
         var result = Validator.Validate(WithDark(Default, set));
 
         Assert.False(result.IsValid);
@@ -154,7 +154,7 @@ public sealed class ThemeValidatorTests
     [Fact]
     public void Fast_motion_slower_than_normal_is_a_warning()
     {
-        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(500, 140));
+        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(500, 140, 220));
         var result = Validator.Validate(WithDark(Default, set));
 
         Assert.True(result.IsValid, Describe(result.Errors));
@@ -221,6 +221,25 @@ public sealed class ThemeValidatorTests
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, issue => issue.Code == ThemeIssueCodes.ForbiddenDeclaration);
+    }
+
+    [Fact]
+    public void Theme_invariant_scrim_is_not_required_and_is_only_a_warning_when_declared()
+    {
+        // R-21: the Modal scrim color is published by the DS global dictionary; the shipped theme must
+        // not need it and declaring it must not invalidate the package.
+        Assert.DoesNotContain(
+            Validator.Validate(Default).Issues,
+            issue => issue.Path?.Contains("Nm.Color.Scrim", StringComparison.Ordinal) == true);
+
+        var set = ThemeFixtures.WithColor(Default.Light, NmKeys.Color.Scrim, "rgba(0,0,0,0.55)");
+        var result = Validator.Validate(WithLight(Default, set));
+
+        Assert.True(result.IsValid, Describe(result.Errors));
+        Assert.Contains(result.Warnings, issue =>
+            issue.Code == ThemeIssueCodes.ColorUnknownKey &&
+            issue.Path == "light.colors.Nm.Color.Scrim" &&
+            issue.Message.Contains("theme-invariant", StringComparison.Ordinal));
     }
 
     [Theory]

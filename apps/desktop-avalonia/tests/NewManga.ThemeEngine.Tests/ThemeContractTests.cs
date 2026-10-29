@@ -1,4 +1,6 @@
 using System.Reflection;
+using NewManga.DesignSystem;
+using NewManga.DesignSystem.Theming;
 using NewManga.ThemeEngine;
 
 namespace NewManga.ThemeEngine.Tests;
@@ -98,6 +100,27 @@ public sealed class ThemeContractTests
         Assert.Equal("themes", ThemeDefaults.ThemeDirectoryName);
         Assert.Equal("theme-settings.json", ThemeDefaults.SettingsFileName);
         Assert.Equal("settings.legacy-theme-id", ThemeIssueCodes.SettingsLegacyThemeId);
+    }
+
+    [Fact]
+    public void Theme_invariant_derived_colors_are_excluded_from_the_theme_layer()
+    {
+        // R-21: Nm.Color.Scrim (Modal scrim) is a derived theme-invariant color that lives in the DS
+        // global token dictionary; it must never be required from a theme package nor be part of the
+        // 59-key theme-layer whitelist.
+        Assert.Equal(35, ThemeTokenKeys.Colors.Count);
+        Assert.DoesNotContain(NmKeys.Color.Scrim, ThemeTokenKeys.Colors);
+        Assert.Contains(NmKeys.Color.Scrim, ThemeTokenKeys.ThemeInvariantColorKeys);
+        Assert.Contains(NmKeys.Color.Scrim, NmKeys.All);
+
+        Assert.Equal(59, ThemeTokenKeys.ThemeLayer.Count);
+        Assert.Equal(ThemePaletteComposer.ThemeLayerKeyCount, ThemeTokenKeys.ThemeLayer.Count);
+        Assert.Equal(
+            DesignSystemThemeManager.ThemeLayerRequiredKeys.OrderBy(key => key, StringComparer.Ordinal),
+            ThemeTokenKeys.ThemeLayer.OrderBy(key => key, StringComparer.Ordinal));
+        Assert.Contains(NmKeys.Motion.Duration.Slow, ThemeTokenKeys.ThemeLayer);
+        Assert.DoesNotContain(NmKeys.Motion.Duration.Instant, ThemeTokenKeys.ThemeLayer);
+        Assert.Equal(35, ThemeTokenKeys.ThemeLayer.Count(key => key.StartsWith("Nm.Color.", StringComparison.Ordinal)));
     }
 
     [Fact]

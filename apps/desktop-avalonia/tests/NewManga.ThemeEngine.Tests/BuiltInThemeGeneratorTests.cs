@@ -122,7 +122,7 @@ public sealed class BuiltInThemeGeneratorTests
             Assert.Equal(ThemeMaterial.Solid, variant.Material);
             Assert.Equal(ThemeElevation.None, variant.Elevation);
             Assert.Equal(new ThemeCorners(0, 2, 3), variant.Corners);
-            Assert.Equal(new ThemeMotion(90, 140), variant.Motion);
+            Assert.Equal(new ThemeMotion(90, 140, ThemeMotion.DefaultSlowMs), variant.Motion);
             Assert.Contains("Segoe UI Variable Text", variant.Typography.Ui, StringComparison.Ordinal);
             Assert.Contains("Cascadia Mono", variant.Typography.Data, StringComparison.Ordinal);
             Assert.Contains("Georgia", variant.Typography.Display, StringComparison.Ordinal);

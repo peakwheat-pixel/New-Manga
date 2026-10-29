@@ -141,4 +141,11 @@ public static class ThemeIssueCodes
     // ---- Preview -------------------------------------------------------------------------------
     /// <summary>The preview session switched to an unknown theme id.</summary>
     public const string PreviewThemeUnknown = "preview.theme-unknown";
+
+    // ---- Service / application layer -----------------------------------------------------------
+    /// <summary>The requested theme could not be applied and the shipped default was applied instead (warning).</summary>
+    public const string ThemeFallbackApplied = "theme.fallback-applied";
+
+    /// <summary>The theme layer could not be applied to the application surface (error).</summary>
+    public const string ThemeLayerApplyFailed = "theme.layer-apply-failed";
 }
