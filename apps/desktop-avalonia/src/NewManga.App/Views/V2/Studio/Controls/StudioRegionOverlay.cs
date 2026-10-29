@@ -36,13 +36,13 @@ public sealed class StudioRegionBox : Border
         _labelChip.Margin = new Thickness(2);
 
         _failBadge = StudioUi.Box("studio-region-badge");
-        _failBadge.Child = StudioUi.Text("✗", "studio-region-badge-failed", "data");
+        _failBadge.Child = StudioUi.Text(StudioStates.Glyph(StudioStateKind.Failed), "studio-region-badge-failed", "data");
         _failBadge.HorizontalAlignment = HorizontalAlignment.Right;
         _failBadge.VerticalAlignment = VerticalAlignment.Top;
         _failBadge.Margin = new Thickness(2);
 
         _lockBadge = StudioUi.Box("studio-region-badge");
-        _lockBadge.Child = StudioUi.Text("▮", "studio-region-badge-locked", "data");
+        _lockBadge.Child = StudioUi.Text(NewManga.DesignSystem.Controls.StatusCatalog.Symbol(NewManga.DesignSystem.Controls.StatusKind.Locked), "studio-region-badge-locked", "data");
         _lockBadge.HorizontalAlignment = HorizontalAlignment.Right;
         _lockBadge.VerticalAlignment = VerticalAlignment.Bottom;
         _lockBadge.Margin = new Thickness(2);
@@ -63,11 +63,18 @@ public sealed class StudioRegionBox : Border
             args.Handled = true;
         };
 
+        _onSelect = onSelect;
         item.PropertyChanged += (_, _) => ApplyState();
         ApplyState();
     }
 
+    private readonly Action<StudioRegionItem> _onSelect;
+
     public StudioRegionItem Item => _item;
+
+    /// <summary>Programmatic selection through the same handler the pointer press invokes (tests + a11y).</summary>
+    public void Select() => _onSelect(_item);
+
 
     public Border LabelChip => _labelChip;
 

@@ -560,7 +560,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         ? $"{GateWarningText}（失败 {projection.FailedPageCount} · 阻塞 {projection.BlockedPageCount}）"
         : string.Empty;
 
-    public string GateWarningGlyph => HasGateWarning ? "✗" : "●";
+    public string GateWarningGlyph => HasGateWarning ? StudioStates.Glyph(StudioStateKind.Failed) : StudioStates.Glyph(StudioStateKind.Done);
 
     public string GateWarningClass => HasGateWarning ? "studio-state-failed" : "studio-state-done";
 

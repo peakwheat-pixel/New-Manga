@@ -35,6 +35,7 @@ public sealed class StudioPageWorkspace : Grid
     private TextBlock _partialText = null!;
     private Button _retryButton = null!;
     private Grid _emptyOverlay = null!;
+    private Grid _loadingOverlay = null!;
     private TextBlock _emptyTitle = null!;
     private TextBlock _emptyDetail = null!;
     private Button _emptyAction = null!;
@@ -111,6 +112,9 @@ public sealed class StudioPageWorkspace : Grid
     public Border PartialBanner => _partialBanner;
 
     public Grid EmptyOverlay => _emptyOverlay;
+
+    /// <summary>P2-6: DS Skeleton loading placeholder (static, no shimmer).</summary>
+    public Grid LoadingOverlay => _loadingOverlay;
 
     public Button RetryButton => _retryButton;
 
@@ -209,6 +213,8 @@ public sealed class StudioPageWorkspace : Grid
         canvasHost.Children.Add(_canvas);
         BuildEmptyOverlay();
         canvasHost.Children.Add(_emptyOverlay);
+        BuildLoadingOverlay();
+        canvasHost.Children.Add(_loadingOverlay);
 
         // status line (24px): page counter · regions · selection · transient action result
         var statusBorder = StudioUi.Box("studio-sunken-band");
@@ -312,7 +318,7 @@ public sealed class StudioPageWorkspace : Grid
             return;
         }
 
-        var compact = width < 1280;
+        var compact = width < StudioMetrics.BreakpointCompact;
         _inspector.SetOverlayMode(compact);
         _filmStrip.Width = compact ? 40 : _viewModel.FilmStripWidth;
         _inspector.Width = compact ? 40 : _viewModel.InspectorWidth;
@@ -323,12 +329,12 @@ public sealed class StudioPageWorkspace : Grid
         }
 
         _responsiveApplied = true;
-        if (width < 1600)
+        if (width < StudioMetrics.BreakpointFull)
         {
             _viewModel.FilmStripExpanded = false;
         }
 
-        if (width < 1400)
+        if (width < StudioMetrics.BreakpointCompact + 120)
         {
             _viewModel.InspectorExpanded = false;
         }
@@ -360,5 +366,32 @@ public sealed class StudioPageWorkspace : Grid
         border.Width = width;
         border.Height = height;
         return border;
+    }
+    /// <summary>P2-6: loading skeleton built from the DS Skeleton control.</summary>
+    private void BuildLoadingOverlay()
+    {
+        _loadingOverlay = new Grid { IsHitTestVisible = false };
+        var column = StudioUi.Column(8);
+        column.Margin = new Thickness(24);
+        column.Children.Add(new NewManga.DesignSystem.Controls.Skeleton
+        {
+            Variant = NewManga.DesignSystem.Controls.SkeletonVariant.Panel,
+            Width = 220,
+            HorizontalAlignment = HorizontalAlignment.Left,
+        });
+        column.Children.Add(new NewManga.DesignSystem.Controls.Skeleton
+        {
+            Variant = NewManga.DesignSystem.Controls.SkeletonVariant.Row,
+            Width = 320,
+            HorizontalAlignment = HorizontalAlignment.Left,
+        });
+        column.Children.Add(new NewManga.DesignSystem.Controls.Skeleton
+        {
+            Variant = NewManga.DesignSystem.Controls.SkeletonVariant.BookCard,
+            Width = 180,
+            HorizontalAlignment = HorizontalAlignment.Left,
+        });
+        _loadingOverlay.Children.Add(column);
+        StudioUi.TrackVisible(_loadingOverlay, _viewModel, () => _viewModel.IsLoading);
     }
 }

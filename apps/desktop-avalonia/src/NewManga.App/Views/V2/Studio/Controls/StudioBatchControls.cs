@@ -107,7 +107,7 @@ public sealed class StudioBatchMatrixControl : Border
             {
                 Text = string.IsNullOrEmpty(stage.Label) ? stage.CoreStepType : stage.Label,
                 Classes = { "meta" },
-                FontSize = 11,
+                FontSize = StudioMetrics.FontXs,
                 TextAlignment = TextAlignment.Center,
             };
             ToolTip.SetTip(glyph, stage.Label);
@@ -151,7 +151,7 @@ public sealed class StudioBatchMatrixControl : Border
                 var glyph = new TextBlock
                 {
                     Text = cell.Glyph,
-                    FontSize = 11,
+                    FontSize = StudioMetrics.FontXs,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
@@ -280,7 +280,7 @@ public sealed class StudioBatchStageRailControl : Border
             head.Children.Add(StudioUi.Text(item.RatioText, "data", "muted"));
             if (item.Failed > 0)
             {
-                var failed = StudioUi.Text($"✗{item.Failed}", "meta");
+                var failed = StudioUi.Text(StudioStates.Glyph(StudioStateKind.Failed) + "×" + item.Failed, "meta");
                 failed.Classes.Add("studio-state-failed");
                 head.Children.Add(failed);
             }

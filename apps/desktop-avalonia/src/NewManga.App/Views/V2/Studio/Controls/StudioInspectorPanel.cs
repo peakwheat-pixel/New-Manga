@@ -269,7 +269,7 @@ public sealed class StudioInspectorPanel : Border
         var head = StudioUi.Row(6);
         head.Children.Add(StudioUi.Text(tier.Label, "label"));
         head.Children.Add(StudioUi.Text(tier.SourceHint, "meta", "muted"));
-        var lockBadge = StudioUi.Text("▮", "studio-state-blocked", "data");
+        var lockBadge = StudioUi.Text(NewManga.DesignSystem.Controls.StatusCatalog.Symbol(NewManga.DesignSystem.Controls.StatusKind.Locked), "studio-state-blocked", "data");
         head.Children.Add(lockBadge);
         var notWired = StudioUi.Box(StudioUi.Text("能力待接入", "meta"), "studio-chip");
         head.Children.Add(notWired);
@@ -487,7 +487,7 @@ public sealed class StudioInspectorPanel : Border
         var current = StudioUi.Box(StudioUi.Text("当前", "meta"), "studio-chip-accent");
         current.IsVisible = item.IsCurrent;
         row.Children.Add(current);
-        var pinned = StudioUi.Text("▮", "studio-state-blocked", "data");
+        var pinned = StudioUi.Text(NewManga.DesignSystem.Controls.StatusCatalog.Symbol(NewManga.DesignSystem.Controls.StatusKind.Locked), "studio-state-blocked", "data");
         pinned.IsVisible = item.IsPinned;
         row.Children.Add(pinned);
 
