@@ -1,0 +1,6 @@
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 225 毫秒)。
+  4 个项目(共 5 个)是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\Theming\DesignSystemThemeManager.cs(482,26): error IL2026: Using member 'Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(Uri, Uri)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. AvaloniaXamlLoader.Load(uri, baseUri) dynamically loads referenced assembly with Avalonia resources. [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj]
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll

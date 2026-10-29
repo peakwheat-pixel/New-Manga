@@ -1,0 +1,16 @@
+{
+  "schema": "newmanga.theme-settings/1",
+  "themeId": "newmanga-default",
+  "appearance": "system",
+  "contrast": "standard",
+  "layout": {
+    "id": "default",
+    "navigation": "top-band",
+    "shelf": "grid",
+    "density": "comfortable",
+    "workbench": "stacked",
+    "reader": "fit-page"
+  },
+  "reducedMotion": false,
+  "followSystemAccent": false
+}

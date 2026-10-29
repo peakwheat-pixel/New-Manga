@@ -1,0 +1,12 @@
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 200 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 200 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 201 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 200 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 200 毫秒)。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\win-x64\NewManga.App.dll
+C:\Users\49745\.nuget\packages\microsoft.dotnet.ilcompiler\9.0.20\build\Microsoft.NETCore.Native.Publish.targets(56,5): error : PublishTrimmed is implied by native compilation and cannot be disabled. [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj]

@@ -1,0 +1,428 @@
+[
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.List",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "Avalonia.Controls.StackPanel",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "资料柜",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "1",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "Avalonia.Controls.StackPanel",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "工位",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "2",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "Avalonia.Controls.StackPanel",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "控制台",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "3",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Pane",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.List",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "资料柜",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "Avalonia.Controls.StackPanel",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "作用域",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "未选择对象",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "Avalonia.Controls.StackPanel",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "需要我处理",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "Avalonia.Controls.StackPanel",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "命令",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "Ctrl+K",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "主题工作室",
+    "id": "ThemeStudioButton",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "主题工作室",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "浅色",
+    "id": "ThemeToggleButton",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "浅色",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "NewManga.App.Views.V2.Shell.Controls.Kbd",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "F1",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "资料柜",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "0 / 0 作品",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Edit",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.ComboBox",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "最近更新",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.List",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "全部 0",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "全部 0",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "收藏 0",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "收藏 0",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "已归档 0",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "已归档 0",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "导入文件",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "导入文件",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "导入文件夹",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "导入文件夹",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "新建作品",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "新建作品",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "回收站",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "回收站",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "书架还是空的",
+    "id": "TitleText",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "新建一本作品，选择章节后导入页面；所有读写都经 Core。",
+    "id": "HintText",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "新建作品",
+    "id": "ActionButton",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "新建作品",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Pane",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "选择一本作品",
+    "id": "TitleText",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "右栏驻留详情：作品元信息、章节账本、页数与阅读进度；导入/阅读/新建章节都在这里。",
+    "id": "HintText",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "新建作品",
+    "id": "ActionButton",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "新建作品",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Custom",
+    "name": "",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "●",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "Host 就绪",
+    "id": "",
+    "enabled": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "作用域 未选择对象 · Host 就绪",
+    "id": "",
+    "enabled": true
+  }
+]

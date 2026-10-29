@@ -1,0 +1,14 @@
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 188 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 188 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 188 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 188 毫秒)。
+  已还原 G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 192 毫秒)。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\win-x64\NewManga.App.dll
+  优化程序集以调整大小可能会更改应用的行为。请务必在发布后进行测试。请参阅: https://aka.ms/dotnet-illink
+  正在优化程序集以调整大小。此过程可能需要一段时间。
+  NewManga.App -> G:\CODEX\New Manga.workspace\tmp\publish-trimmed2\

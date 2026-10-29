@@ -1,0 +1,129 @@
+{
+  "executed_at": "2026-10-30T07:5x+08:00",
+  "machine": {
+    "os": "Windows 10.0.26300",
+    "arch": "x64",
+    "session": "interactive",
+    "display": "2560x1440",
+    "scale": "100%",
+    "dpi": 96
+  },
+  "head": "9e9ae5d58",
+  "sidecar": "apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar",
+  "items": [
+    {
+      "id": 1,
+      "name": "launch matrix",
+      "result": "PASS",
+      "detail": "7/7 cases window+host_ready+natural exit 0",
+      "evidence": "../launch-matrix.json"
+    },
+    {
+      "id": 2,
+      "name": "host ready",
+      "result": "PASS",
+      "detail": "7/7 host logs: core_service ready + host_bridge ready + self-check Degraded(ReadWrite)",
+      "evidence": "../host-readiness.md"
+    },
+    {
+      "id": 3,
+      "name": "restart persistence E2E",
+      "result": "PASS",
+      "detail": "UIA apply light -> settings appearance=light -> restart keeps light",
+      "evidence": "restart-persisted-light.png, theme-settings-*.json"
+    },
+    {
+      "id": 4,
+      "name": "IME chinese input",
+      "result": "PASS",
+      "detail": "real keystrokes: nihao+space -> 你好 committed in search box",
+      "evidence": "ime-input.png"
+    },
+    {
+      "id": 5,
+      "name": "DPI awareness",
+      "result": "PASS",
+      "detail": "manifest PerMonitorV2; runtime GetDpiForWindow=96 (100%)",
+      "evidence": "app.manifest"
+    },
+    {
+      "id": 5.1,
+      "name": "DPI 150/200 percent",
+      "result": "NOT_RUN",
+      "detail": "requires changing system display scaling",
+      "evidence": ""
+    },
+    {
+      "id": 6,
+      "name": "screen reader / UIA",
+      "result": "PARTIAL",
+      "detail": "71 elements, 52 named; 7 buttons with type-name as accessible name (P2)",
+      "evidence": "uia-tree.json"
+    },
+    {
+      "id": 7,
+      "name": "single-file self-contained publish",
+      "result": "PASS",
+      "detail": "93.5MB single exe; window+host ready+exit 0",
+      "evidence": "published-singlefile-running.png"
+    },
+    {
+      "id": 8,
+      "name": "trimmed publish (default)",
+      "result": "FAIL",
+      "detail": "IL2026 AvaloniaXamlLoader.Load elevated by TreatWarningsAsErrors",
+      "evidence": "publish-trimmed.log"
+    },
+    {
+      "id": 8.1,
+      "name": "trimmed publish (suppressed analysis)",
+      "result": "PASS_WITH_CAVEAT",
+      "detail": "smoke OK incl Theme Studio; trim safety not analyzed",
+      "evidence": "publish-trimmed-suppressed.log"
+    },
+    {
+      "id": 9,
+      "name": "AOT publish (default)",
+      "result": "FAIL",
+      "detail": "PublishTrimmed implied by native compilation cannot be disabled (csproj conflict)",
+      "evidence": "publish-aot.log"
+    },
+    {
+      "id": 9.1,
+      "name": "AOT publish (PublishTrimmed=true + suppressed)",
+      "result": "PASS",
+      "detail": "28.8MB native exe; window+host ready+exit 0; 1 IL3050 MicroCom warning",
+      "evidence": "publish-aot-final.log"
+    },
+    {
+      "id": 10,
+      "name": "GitHub Actions real run",
+      "result": "NOT_RUN",
+      "detail": "no self-hosted runner on this machine",
+      "evidence": ""
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "area": "testability",
+      "summary": "theme settings path ignores --data-root isolation; writes real %APPDATA%",
+      "follow_up": "FOLLOW-UP-E2E-1",
+      "status": "environment restored (test-created file backed up + removed)"
+    },
+    {
+      "severity": "P2",
+      "area": "accessibility",
+      "summary": "7 buttons expose type name as UIA Name (Avalonia.Controls.StackPanel x6, Kbd x1)",
+      "follow_up": "FOLLOW-UP-A11Y-1",
+      "status": "open"
+    },
+    {
+      "severity": "P3",
+      "area": "publishing",
+      "summary": "trimming default fails (IL2026 via TreatWarningsAsErrors); install AOT needs explicit PublishTrimmed=true",
+      "follow_up": "FOLLOW-UP-PUB-1",
+      "status": "documented"
+    }
+  ]
+}

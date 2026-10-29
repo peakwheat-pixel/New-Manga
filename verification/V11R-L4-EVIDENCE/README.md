@@ -128,3 +128,20 @@ verification/V11R-L4-EVIDENCE/
   logs/<case>/host.log / wire / stderr       （逐组 Host 日志与真实 Core wire 帧）
   logs/host-readiness/**                     （修复前误解析/WriteFatal 证据 + legacy/v2 就绪日志）
 ```
+
+## 8. 真机实机清单（2026-10-30）
+
+在真实 Windows 交互桌面上按本文档执行并补测了原先受限的项目，结果（详见
+[`real-machine/checklist.md`](real-machine/checklist.md) / [`real-machine/checklist.json`](real-machine/checklist.json)）：
+
+| 项 | 结果 |
+|---|---|
+| 启动矩阵 / Host 就绪 | **PASS 7/7**（复跑） |
+| 重启持久化 E2E（UIA 真实点击） | **PASS**（apply light → 重启保持；测试写入已恢复） |
+| 中文 IME 真实输入 | **PASS**（`nihao`+空格 上屏「你好」） |
+| DPI 感知 | **PASS @100%**（PerMonitorV2、DPI=96）；**150%/200% NOT_RUN**（需改系统缩放，未擅改） |
+| 屏幕阅读器（UIA 结构级） | **PARTIAL**：71 元素/52 命名；发现 7 个按钮可访问名称为类型名（P2，`FOLLOW-UP-A11Y-1`） |
+| 单文件自包含发布 | **PASS**（93.5 MB 单 exe，窗口+Host 就绪+exit 0） |
+| Trimmed 发布 | **FAIL（默认，IL2026）** / **PASS-with-caveat（抑制分析后 smoke）** |
+| AOT 发布 | **FAIL（默认参数冲突）** / **PASS（PublishTrimmed=true+抑制，28.8 MB 原生 exe 可运行）** |
+| GitHub Actions 真实运行 | **NOT_RUN**（无 runner） |
