@@ -1,0 +1,1030 @@
+"""Production handlers against the real TASK-013 pipeline seam.
+
+These are the integration checks for TASK-019's write contract: real SQLite,
+real optimistic guard, fake providers. They prove that
+
+- a Region step writes exactly one Region (AC-OCR-001, AC-RFULL-002);
+- manual/translation-locked results are never overwritten (AC-OCR-002);
+- Mask/Clean revisions are persisted and re-inpaint creates a *new* Clean
+  instead of overwriting the previous one (AC-INPAINT-001/002);
+- a missing binding or an unimplemented route fails the step with a typed
+  code and leaves the data untouched (AC-FALLBACK-001, fail-closed).
+"""
+
+from __future__ import annotations
+
+import json
+import sqlite3
+from pathlib import Path
+
+import pytest
+
+from application.tasks.service import PipelineService
+from domain.tasks.models import (
+    CommandType,
+    PipelineRunStatus,
+    PipelineScope,
+    ScopeType,
+    StageState,
+    StepRunStatus,
+)
+from infrastructure.filesystem.managed_storage import ManagedFileStorage
+from infrastructure.pipeline.assembly import build_production_pipeline
+from infrastructure.providers.handlers import (
+    HandlerDependencies,
+    ProductionHandlers,
+    RegionMaskGeometry,
+)
+from infrastructure.providers.registry import ProviderDescriptor, ProviderRegistry
+from infrastructure.providers.retry import RetryPolicy
+from infrastructure.providers.translation_identity import (
+    PROVIDER_IDENTITY_TRANSLATION,
+    IdentityTranslationProvider,
+)
+from infrastructure.providers.step_writes import (
+    ArtifactStepWriter,
+    RegionStepWriter,
+    decode_mask_payload,
+)
+from application.translation.inpaint.router import RoutePolicy
+from infrastructure.providers.inpaint_routes import EdgeBleedProvider, SimpleFillProvider
+from infrastructure.sqlite.connection import open_database
+from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.regions import SqliteRegionRepository
+from infrastructure.sqlite.schema import default_migrations
+from ports.inpaint.ports import ROUTE_EDGE_BLEED, ROUTE_MANGA_LAMA, ROUTE_SIMPLE_FILL
+from ports.providers.errors import LockBlocked
+from ports.providers.profiles import (
+    CAPABILITY_INPAINT,
+    CAPABILITY_OCR,
+    CAPABILITY_TRANSLATION,
+)
+
+from providers_helpers import (
+    FakeGeometry,
+    FakeOcrProvider,
+    FakePageImages,
+    FakeTranslationProvider,
+    frame,
+)
+
+NOW = "2026-09-17T00:00:00+00:00"
+
+
+class _FakeGeometrySource:
+    def __init__(self, boxes):
+        self._boxes = boxes
+
+    def mask_geometry(self, region_id: str) -> RegionMaskGeometry:
+        return RegionMaskGeometry(boxes=self._boxes.get(region_id, ((0, 0, 2, 2),)))
+
+
+@pytest.fixture()
+def workspace(tmp_path: Path):
+    latest = max(migration.schema_version for migration in default_migrations())
+    conn, _opened = open_database(tmp_path / "app.db", latest_known_schema_version=latest)
+    MigrationRunner(conn, default_migrations()).apply_pending()
+
+    def region_text(**overrides):
+        text = {
+            "ocr_text": "",
+            "machine_translation": "",
+            "edited_translation": "",
+            "final_translation": "",
+            "final_source": "none",
+            "edited_confirmed": False,
+            "manual_edited": False,
+            "translation_locked": False,
+        }
+        text.update(overrides)
+        return text
+
+    with conn:
+        conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at) VALUES (?, ?, ?, ?)",
+            ("book-1", "Book", NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+            " VALUES (?, ?, ?, ?, ?)",
+            ("chapter-1", "book-1", "Chapter", NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, source_filename, source_order, sort_order,"
+            " source_hash, source_size_bytes, width, height, managed_original_ref, created_at, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            ("page-1", "chapter-1", "001.png", 0, 0, "hash", 3, 20, 20, "original/001.png", NOW, NOW),
+        )
+        for region_id, text in (
+            ("region-a", region_text(ocr_text="A-text")),
+            ("region-b", region_text(ocr_text="B-source")),
+            (
+                "region-c",
+                region_text(
+                    ocr_text="C-text",
+                    machine_translation="old-machine",
+                    edited_translation="人工译文",
+                    final_translation="人工译文",
+                    final_source="edited",
+                    edited_confirmed=True,
+                    manual_edited=True,
+                    translation_locked=True,
+                ),
+            ),
+        ):
+            conn.execute(
+                "INSERT INTO regions (region_id, page_id, region_type, geometry_json, text_json,"
+                " style_json, sfx_policy, translation_locked, current_revision_id, created_at, updated_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)",
+                (
+                    region_id,
+                    "page-1",
+                    "speech",
+                    json.dumps({"bbox": [2, 2, 3, 3], "polygon": []}),
+                    json.dumps(text),
+                    "{}",
+                    "translate",
+                    1 if text["translation_locked"] else 0,
+                    NOW,
+                    NOW,
+                ),
+            )
+            conn.execute(
+                "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+                " snapshot_json, origin, review_state, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (f"{region_id}-rev-1", region_id, 1, "{}", "imported", "unreviewed", NOW),
+            )
+            conn.execute(
+                "UPDATE regions SET current_revision_id = ? WHERE region_id = ?",
+                (f"{region_id}-rev-1", region_id),
+            )
+
+        # region-b has already been OCR'ed in the product flow: the planner
+        # requires a valid ``ocr`` stage before translate/segment (D06 §26).
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('region', 'region-b', 'ocr', 'completed', ?)",
+            (NOW,),
+        )
+
+    storage = ManagedFileStorage(tmp_path / "managed")
+    storage.ensure_layout()
+    regions = SqliteRegionRepository(conn)
+
+    ocr_provider = FakeOcrProvider("こんにちは")
+    translate_provider = FakeTranslationProvider()
+    registry = ProviderRegistry()
+    registry.register(
+        ProviderDescriptor(
+            provider_id="fake-ocr",
+            provider_type="fake",
+            capabilities=frozenset({CAPABILITY_OCR}),
+        ),
+        lambda: ocr_provider,
+    )
+    registry.register(
+        ProviderDescriptor(
+            provider_id="fake-translate",
+            provider_type="fake",
+            capabilities=frozenset({CAPABILITY_TRANSLATION}),
+        ),
+        lambda: translate_provider,
+    )
+    # TRANSLATE-PROVIDER-1: the production experimental identity adapter joins the
+    # fixture registry exactly as production registers it (same class, same slot),
+    # so a binding naming it exercises the real adapter path.
+    registry.register(
+        ProviderDescriptor(
+            provider_id=PROVIDER_IDENTITY_TRANSLATION,
+            provider_type="identity-experimental",
+            capabilities=frozenset({CAPABILITY_TRANSLATION}),
+            note=("EXPERIMENTAL identity placeholder: source text passes through"),
+        ),
+        IdentityTranslationProvider,
+    )
+    registry.register(
+        ProviderDescriptor(
+            provider_id="inpaint-simple-fill",
+            provider_type="local-simple-fill",
+            capabilities=frozenset({CAPABILITY_INPAINT}),
+        ),
+        SimpleFillProvider,
+    )
+    registry.register(
+        ProviderDescriptor(
+            provider_id="inpaint-edge-bleed",
+            provider_type="local-edge-bleed",
+            capabilities=frozenset({CAPABILITY_INPAINT}),
+        ),
+        EdgeBleedProvider,
+    )
+
+    handlers = ProductionHandlers(
+        HandlerDependencies(
+            registry=registry,
+            regions=regions,
+            region_writer=RegionStepWriter(conn, regions),
+            artifacts=ArtifactStepWriter(conn, storage),
+            images=FakePageImages(page=frame(20, 20, (240, 240, 240))),
+            geometry=_FakeGeometrySource(
+                {
+                    "region-a": ((1, 1, 4, 4),),
+                    "region-b": ((1, 1, 3, 3),),
+                    "region-c": ((10, 10, 14, 14),),
+                }
+            ),
+            retry_policy=RetryPolicy(max_attempts=1, backoff_seconds=0),
+            route_policy=RoutePolicy(
+                allowed_routes=(ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED),
+                color_route=ROUTE_MANGA_LAMA,
+                requirements={ROUTE_MANGA_LAMA: False},
+            ),
+        )
+    )
+
+    yield {
+        "conn": conn,
+        "regions": regions,
+        "storage": storage,
+        "handlers": handlers,
+        "ocr_provider": ocr_provider,
+        "translate_provider": translate_provider,
+    }
+    conn.close()
+
+
+def _pipeline(workspace, *, bindings=None, settings=None) -> PipelineService:
+    return build_production_pipeline(
+        workspace["conn"],
+        handlers=workspace["handlers"].as_mapping(),
+        settings=settings or {"ocr": {"script": "japanese"}},
+        provider_bindings=bindings
+        if bindings is not None
+        else {
+            "ocr": {"provider_id": "fake-ocr"},
+            "translate": {"provider_id": "fake-translate"},
+        },
+    )
+
+
+def _text(conn: sqlite3.Connection, region_id: str) -> dict:
+    row = conn.execute(
+        "SELECT text_json, current_revision_id, sfx_policy FROM regions WHERE region_id = ?",
+        (region_id,),
+    ).fetchone()
+    return {
+        "text": json.loads(row["text_json"]),
+        "current_revision_id": row["current_revision_id"],
+        "sfx_policy": row["sfx_policy"],
+    }
+
+
+def _revision_ids(conn: sqlite3.Connection, region_id: str) -> list[str]:
+    rows = conn.execute(
+        "SELECT region_revision_id FROM region_revisions WHERE region_id = ?"
+        " ORDER BY revision_no",
+        (region_id,),
+    ).fetchall()
+    return [row["region_revision_id"] for row in rows]
+
+
+def _stage(conn: sqlite3.Connection, target_id: str, stage: str):
+    row = conn.execute(
+        "SELECT status FROM pipeline_stage_states WHERE target_type = 'region'"
+        " AND target_id = ? AND stage = ?",
+        (target_id, stage),
+    ).fetchone()
+    return StageState(row["status"]) if row else None
+
+
+def test_ocr_region_writes_only_the_target_region(workspace) -> None:
+    conn = workspace["conn"]
+    before_a = _text(conn, "region-a")
+    before_c = _text(conn, "region-c")
+
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.OCR_REGION, PipelineScope(ScopeType.REGION, selected_ids=("region-b",))
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    assert len(executed.step_runs) == 1
+    step = executed.step_runs[0]
+    assert step.status is StepRunStatus.COMPLETED
+    assert step.output["ocr_text"] == "こんにちは"
+    assert step.output["provenance"]["provider_id"] == "fake-ocr"
+    assert step.output["provenance"]["model"] == "fake-model"
+    assert step.output["provenance"]["attempt_count"] == 1
+
+    target = _text(conn, "region-b")
+    assert target["text"]["ocr_text"] == "こんにちは"
+    assert target["current_revision_id"] == _revision_ids(conn, "region-b")[-1]
+    assert len(_revision_ids(conn, "region-b")) == 2
+    assert _stage(conn, "region-b", "ocr") is StageState.COMPLETED
+
+    # A/C untouched: text, pointer and stage state.
+    assert _text(conn, "region-a") == before_a
+    assert _text(conn, "region-c") == before_c
+    assert _stage(conn, "region-a", "ocr") is None
+    assert _stage(conn, "region-c", "ocr") is None
+
+
+def test_ocr_keeps_manual_translation_and_reports_the_hint(workspace) -> None:
+    """AC-OCR-002 stays the domain's decision, not the adapter's."""
+    conn = workspace["conn"]
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.OCR_REGION, PipelineScope(ScopeType.REGION, selected_ids=("region-c",))
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    assert executed.step_runs[0].output["retranslate_hint"] is True
+    text = _text(conn, "region-c")["text"]
+    assert text["ocr_text"] == "こんにちは"
+    assert text["edited_translation"] == "人工译文"
+    assert text["final_translation"] == "人工译文"
+    assert text["translation_locked"] is True
+
+
+def test_locked_region_is_skipped_and_never_translated(workspace) -> None:
+    conn = workspace["conn"]
+    before = _text(conn, "region-c")
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-c",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.step_runs == []
+    assert executed.status is PipelineRunStatus.COMPLETED
+    decisions = {unit.step_type: unit.decision for unit in executed.tasks[0].units}
+    assert decisions["translate"].value == "skip_lock"
+    assert _text(conn, "region-c") == before
+
+
+def test_translate_step_commits_but_render_remains_unwired(workspace) -> None:
+    """Evidence for AC-RFULL-001 (TASK-019): a translate-only command does
+    not reach render. The render handler itself is wired since TASK-033; the
+    planning guard (no Clean Artifact in this command) still blocks it."""
+    conn = workspace["conn"]
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    steps = {step.step_type: step for step in executed.step_runs}
+    assert steps["translate"].status is StepRunStatus.COMPLETED
+    assert steps["translate"].output["machine_translation"] == "[en]B-source"
+    assert steps["translate"].output["provenance"]["provider_id"] == "fake-translate"
+    assert tuple(steps["translate"].output["context_provenance"]["context_pages"]) == ()
+
+    # AC-RFULL-001 evidence: `render` is planned BLOCKED for a translate-only
+    # command (no Clean Artifact, no same-run inpaint), and no StepRun is
+    # created for it — it is never faked.
+    assert "render" not in steps
+    decisions = {unit.step_type: unit.decision for unit in executed.tasks[0].units}
+    assert decisions["render"].value == "blocked"
+    render_unit = next(
+        unit for unit in executed.tasks[0].units if unit.step_type == "render"
+    )
+    assert render_unit.reason == "missing_clean_artifact"
+    assert executed.status is PipelineRunStatus.BLOCKED
+
+    text = _text(conn, "region-b")["text"]
+    assert text["machine_translation"] == "[en]B-source"
+    assert text["final_translation"] == "[en]B-source"
+    assert text["final_source"] == "machine"
+
+
+def test_translate_with_identity_binding_echoes_source_text(workspace) -> None:
+    """TRANSLATE-PROVIDER-1 AC2: an explicit binding to the experimental
+    identity provider makes the translate step succeed with input==output.
+
+    The binding names the production registry slot; provenance and the stored
+    Region text must both stay traceable to the experimental adapter.
+    """
+    conn = workspace["conn"]
+    service = _pipeline(
+        workspace,
+        bindings={
+            "ocr": {"provider_id": "fake-ocr"},
+            "translate": {"provider_id": PROVIDER_IDENTITY_TRANSLATION},
+            "inpaint": {"provider_id": "inpaint-simple-fill"},
+        },
+    )
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    steps = {step.step_type: step for step in executed.step_runs}
+    translate = steps["translate"]
+    assert translate.status is StepRunStatus.COMPLETED
+    # identity: the machine translation is the OCR source, byte for byte
+    assert translate.output["machine_translation"] == "B-source"
+    assert translate.output["provenance"]["provider_id"] == PROVIDER_IDENTITY_TRANSLATION
+    assert translate.output["provenance"]["provider_type"] == "identity-experimental"
+    assert translate.output["provenance"]["options"]["experimental"] == "identity-placeholder"
+
+    text = _text(conn, "region-b")["text"]
+    assert text["machine_translation"] == "B-source"
+    assert text["final_translation"] == "B-source"
+    assert text["final_source"] == "machine"
+
+    # no provider profile / user binding was invented anywhere: the run's frozen
+    # snapshot only carries what the caller explicitly named
+    frozen = conn.execute(
+        "SELECT provider_binding_snapshot_json FROM pipeline_runs WHERE run_id = ?",
+        (run.run_id,),
+    ).fetchone()
+    assert '"translate": "identity-translation"' in frozen[0] or (
+        '"provider_id": "identity-translation"' in frozen[0]
+    )
+
+
+def test_translate_without_binding_stays_typed_not_configured(workspace) -> None:
+    """TRANSLATE-PROVIDER-1 AC2 negative: registering the identity slot never
+    auto-binds it. Without an explicit binding the step keeps the closed,
+    typed ``PROVIDER_NOT_CONFIGURED`` gap and writes nothing."""
+    conn = workspace["conn"]
+    before = _text(conn, "region-b")["text"]
+    service = _pipeline(
+        workspace,
+        bindings={"ocr": {"provider_id": "fake-ocr"}},
+    )
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    translate = next(step for step in executed.step_runs if step.step_type == "translate")
+    assert translate.status is StepRunStatus.FAILED
+    assert translate.error_code == "PROVIDER_NOT_CONFIGURED"
+    assert _text(conn, "region-b")["text"] == before
+
+
+def test_reinpaint_chain_persists_masks_and_clean_revisions(workspace) -> None:
+    conn = workspace["conn"]
+    service = _pipeline(
+        workspace,
+        settings={
+            "inpaint": {
+                "dilate_radius": 0,
+                "erode_radius": 0,
+                "is_solid_background": True,
+                "route_policy": {
+                    "allowed_routes": [ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED],
+                    "requirements": {ROUTE_SIMPLE_FILL: True, ROUTE_EDGE_BLEED: True},
+                },
+            }
+        },
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail) for step in executed.step_runs
+    ]
+    steps = {step.step_type: step for step in executed.step_runs}
+    assert set(steps) == {"segment", "mask_refine", "inpaint"}
+
+    mask_artifact = conn.execute(
+        "SELECT artifact_id, current_revision_id FROM media_artifacts"
+        " WHERE page_id = 'page-1' AND artifact_type = 'mask'"
+    ).fetchone()
+    clean_artifact = conn.execute(
+        "SELECT artifact_id, current_revision_id FROM media_artifacts"
+        " WHERE page_id = 'page-1' AND artifact_type = 'clean'"
+    ).fetchone()
+    assert mask_artifact is not None and clean_artifact is not None
+
+    mask_revisions = conn.execute(
+        "SELECT artifact_revision_id, revision_no, managed_path, provenance_json"
+        " FROM artifact_revisions WHERE artifact_id = ? ORDER BY revision_no",
+        (mask_artifact["artifact_id"],),
+    ).fetchall()
+    assert [row["revision_no"] for row in mask_revisions] == [1, 2]
+    assert mask_artifact["current_revision_id"] == mask_revisions[-1]["artifact_revision_id"]
+
+    # AC-INPAINT-001: the current Mask Revision is readable after the run.
+    workspace["storage"].absolute_path(mask_revisions[-1]["managed_path"])
+    payload = Path(
+        workspace["storage"].absolute_path(mask_revisions[1]["managed_path"])
+    ).read_bytes()
+    header, restored = decode_mask_payload(payload)
+    assert (header["width"], header["height"]) == (20, 20)
+    assert restored.area > 0
+    record = json.loads(mask_revisions[1]["provenance_json"])["mask_record"]
+    assert record["final_covers_raw"] is True
+    assert record["mask_params"]["dilate_radius"] == "0"
+    assert record["mask_params"]["min_region_pixels"] == "1"
+
+    # AC-INPAINT-003: router provenance travels with the clean revision.
+    clean_rows = conn.execute(
+        "SELECT artifact_revision_id, provenance_json FROM artifact_revisions"
+        " WHERE artifact_id = ? ORDER BY revision_no",
+        (clean_artifact["artifact_id"],),
+    ).fetchall()
+    assert len(clean_rows) == 1
+    provenance = json.loads(clean_rows[0]["provenance_json"])
+    assert provenance["router_route"] == ROUTE_SIMPLE_FILL
+    assert provenance["router_reason"]
+    assert provenance["mask_params"]
+    assert provenance["new_revision_required"] is True
+    assert steps["inpaint"].output["route"] == ROUTE_SIMPLE_FILL
+
+    # AC-INPAINT-002: a second repaint creates a new Clean revision.
+    second = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(second.run_id)
+    executed_again = service.execute_run(second.run_id)
+    assert executed_again.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail)
+        for step in executed_again.step_runs
+    ]
+    clean_rows = conn.execute(
+        "SELECT artifact_revision_id, revision_no FROM artifact_revisions"
+        " WHERE artifact_id = ? ORDER BY revision_no",
+        (clean_artifact["artifact_id"],),
+    ).fetchall()
+    assert [row["revision_no"] for row in clean_rows] == [1, 2]
+    assert clean_rows[0]["artifact_revision_id"] != clean_rows[1]["artifact_revision_id"]
+    current = conn.execute(
+        "SELECT current_revision_id FROM media_artifacts WHERE artifact_id = ?",
+        (clean_artifact["artifact_id"],),
+    ).fetchone()["current_revision_id"]
+    assert current == clean_rows[1]["artifact_revision_id"]
+
+
+def test_run_settings_route_policy_goes_through_the_shared_parser(workspace) -> None:
+    """AC ① call-site regression (Run side).
+
+    The Inpaint handler resolves the Run's policy through the same
+    ``RoutePolicy.from_settings`` entry point the assembly uses, so the
+    run-level ``allowed_routes`` is honoured verbatim — including the absence
+    of any default color route (R-6 / Option B).
+    """
+    service = _pipeline(
+        workspace,
+        settings={
+            "inpaint": {
+                "dilate_radius": 0,
+                "erode_radius": 0,
+                "is_solid_background": True,
+                "route_policy": {"allowed_routes": [ROUTE_EDGE_BLEED]},
+            }
+        },
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail) for step in executed.step_runs
+    ]
+    step = {item.step_type: item for item in executed.step_runs}["inpaint"]
+    assert step.output["route"] == ROUTE_EDGE_BLEED
+    provenance = step.output["provenance"]
+    assert tuple(provenance["router_allowed_routes"]) == (ROUTE_EDGE_BLEED,)
+    assert provenance["router_color_route_selected"] is False
+
+
+def test_run_settings_malformed_route_policy_fails_the_step_loudly(workspace) -> None:
+    """AC ① / R-2 call-site regression (Run side): no silent fallback."""
+    conn = workspace["conn"]
+    service = _pipeline(
+        workspace, settings={"inpaint": {"route_policy": "simple-fill"}}
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    step = {item.step_type: item for item in executed.step_runs}["inpaint"]
+    assert step.status is StepRunStatus.FAILED
+    assert step.error_code == "INVALID_INPUT"
+    assert "must be a mapping" in (step.error_detail or "")
+    # Nothing was published for the page: the malformed policy is not a no-op.
+    assert (
+        conn.execute(
+            "SELECT COUNT(*) FROM media_artifacts WHERE artifact_type = 'clean'"
+        ).fetchone()[0]
+        == 0
+    )
+
+
+def test_run_settings_non_mapping_inpaint_section_fails_the_step_loudly(workspace) -> None:
+    """TASK-036 AC ① (R-02) call-site regression (Run side).
+
+    The ``inpaint`` **section** itself being the wrong type is a different
+    configuration error from a malformed ``route_policy``, and it must fail
+    loud too — previously the handler silently used the assembled default.
+    """
+    conn = workspace["conn"]
+    service = _pipeline(workspace, settings={"inpaint": "oops"})
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    step = {item.step_type: item for item in executed.step_runs}["inpaint"]
+    assert step.status is StepRunStatus.FAILED
+    assert step.error_code == "INVALID_INPUT"
+    assert "inpaint must be a mapping" in (step.error_detail or "")
+    assert "route_policy" not in (step.error_detail or "")
+    assert (
+        conn.execute(
+            "SELECT COUNT(*) FROM media_artifacts WHERE artifact_type = 'clean'"
+        ).fetchone()[0]
+        == 0
+    )
+
+
+def test_unimplemented_route_blocks_without_writing_anything(workspace) -> None:
+    conn = workspace["conn"]
+    service = _pipeline(
+        workspace,
+        settings={
+            "inpaint": {
+                "is_color_webtoon": True,
+                "route_policy": {"allowed_routes": [ROUTE_MANGA_LAMA]},
+            }
+        },
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    steps = {step.step_type: step for step in executed.step_runs}
+    assert steps["inpaint"].status is StepRunStatus.FAILED
+    assert steps["inpaint"].error_code == "PROVIDER_NOT_IMPLEMENTED"
+    assert "not implemented" in (steps["inpaint"].error_detail or "")
+    assert (
+        conn.execute(
+            "SELECT COUNT(*) FROM media_artifacts WHERE artifact_type = 'clean'"
+        ).fetchone()[0]
+        == 0
+    )
+
+
+def test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean(workspace) -> None:
+    """Page-scope commands expand into Region units (D06 §48) and stay cumulative."""
+    conn = workspace["conn"]
+    # Every Region of the page has already been OCR'ed (the planner requires a
+    # valid OCR stage before segment; see the fixture note).
+    for region_id in ("region-a", "region-c"):
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('region', ?, 'ocr', 'completed', ?)",
+            (region_id, NOW),
+        )
+    conn.commit()
+    service = _pipeline(
+        workspace,
+        settings={
+            "inpaint": {
+                "dilate_radius": 0,
+                "erode_radius": 0,
+                "route_policy": {
+                    "allowed_routes": [ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED],
+                    "requirements": {ROUTE_SIMPLE_FILL: True, ROUTE_EDGE_BLEED: True},
+                },
+            }
+        },
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_ALL, PipelineScope(ScopeType.PAGE, selected_ids=("page-1",))
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail) for step in executed.step_runs
+    ]
+    step_types = [step.step_type for step in executed.step_runs]
+    assert step_types.count("segment") == 3
+    assert step_types.count("mask_refine") == 3
+    assert step_types.count("inpaint") == 3
+    # Every unit is Region-scoped even though the command was page-scoped.
+    assert {step.target_id for step in executed.step_runs} == {
+        "region-a",
+        "region-b",
+        "region-c",
+    }
+
+    clean_artifact = conn.execute(
+        "SELECT artifact_id FROM media_artifacts WHERE artifact_type = 'clean'"
+    ).fetchone()
+    clean_rows = conn.execute(
+        "SELECT artifact_revision_id, revision_no, source_artifact_revision_id"
+        " FROM artifact_revisions WHERE artifact_id = ? ORDER BY revision_no",
+        (clean_artifact["artifact_id"],),
+    ).fetchall()
+    assert [row["revision_no"] for row in clean_rows] == [1, 2, 3]
+    # Each region's repair is based on the previous Clean revision: the page's
+    # repairs accumulate instead of overwriting each other.
+    assert clean_rows[0]["source_artifact_revision_id"] is None
+    assert clean_rows[1]["source_artifact_revision_id"] == clean_rows[0]["artifact_revision_id"]
+    assert clean_rows[2]["source_artifact_revision_id"] == clean_rows[1]["artifact_revision_id"]
+    current = conn.execute(
+        "SELECT current_revision_id FROM media_artifacts WHERE artifact_id = ?",
+        (clean_artifact["artifact_id"],),
+    ).fetchone()["current_revision_id"]
+    assert current == clean_rows[2]["artifact_revision_id"]
+
+    mask_artifact = conn.execute(
+        "SELECT artifact_id FROM media_artifacts WHERE artifact_type = 'mask'"
+    ).fetchone()
+    mask_count = conn.execute(
+        "SELECT COUNT(*) FROM artifact_revisions WHERE artifact_id = ?",
+        (mask_artifact["artifact_id"],),
+    ).fetchone()[0]
+    assert mask_count == 6  # raw + refined per Region, history preserved
+
+
+def test_missing_provider_binding_fails_closed(workspace) -> None:
+    conn = workspace["conn"]
+    before = _text(conn, "region-b")
+    service = _pipeline(workspace, bindings={})
+    run = service.create_run(
+        CommandType.OCR_REGION, PipelineScope(ScopeType.REGION, selected_ids=("region-b",))
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    step = executed.step_runs[0]
+    assert step.status is StepRunStatus.FAILED
+    assert step.error_code == "PROVIDER_NOT_CONFIGURED"
+    assert _text(conn, "region-b") == before
+    assert len(_revision_ids(conn, "region-b")) == 1
+
+
+def test_stale_region_revision_is_refused_before_any_write(workspace) -> None:
+    """The writer applies the seam's optimistic guard before mutating text."""
+    conn = workspace["conn"]
+    writer = RegionStepWriter(conn, workspace["regions"])
+    before = _text(conn, "region-b")
+
+    with pytest.raises(LockBlocked) as error:
+        writer.prepare_ocr_text(
+            "region-b", "stale", expected_current_revision_id="region-b-rev-999"
+        )
+    assert error.value.error_code == "LOCK_CHANGED"
+    assert _text(conn, "region-b") == before
+    assert len(_revision_ids(conn, "region-b")) == 1
+
+    # The matching expectation still writes.
+    prepared = writer.prepare_ocr_text(
+        "region-b", "fresh", expected_current_revision_id="region-b-rev-1"
+    )
+    assert prepared.revision_id in _revision_ids(conn, "region-b")
+
+
+def test_locked_region_refuses_ocr_and_translation_writes(workspace) -> None:
+    conn = workspace["conn"]
+    conn.execute(
+        "UPDATE regions SET region_locked = 1 WHERE region_id = 'region-a'"
+    )
+    conn.commit()
+    writer = RegionStepWriter(conn, workspace["regions"])
+    with pytest.raises(LockBlocked):
+        writer.prepare_ocr_text("region-a", "x")
+
+    # Translation lock on region-c (the planner skips it; the writer refuses too).
+    with pytest.raises(LockBlocked):
+        writer.prepare_machine_translation("region-c", "y")
+    assert _text(conn, "region-c")["text"]["edited_translation"] == "人工译文"
+
+
+def test_stale_artifact_pointer_is_refused_before_publishing(workspace) -> None:
+    storage = workspace["storage"]
+    writer = ArtifactStepWriter(workspace["conn"], storage)
+    with pytest.raises(LockBlocked):
+        writer.prepare_revision(
+            page_id="page-1",
+            artifact_type="mask",
+            payload=b"payload",
+            mime_type="application/x-newmanga-mask",
+            expected_current_revision_id="not-the-current-one",
+        )
+    assert (
+        workspace["conn"].execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0]
+        == 0
+    )
+
+
+def test_sfx_translate_region_carries_type_and_maps_output(workspace) -> None:
+    """M2-SFX-SEM-1 end-to-end: a policy=translate SFX region reaches the
+    translation provider with region_type='sfx' (the type that used to be
+    dropped between the bundle entry and the provider request) and its
+    output maps back onto the region."""
+
+    conn = workspace["conn"]
+    translate_provider = workspace["translate_provider"]
+    with conn:
+        conn.execute(
+            "INSERT INTO regions (region_id, page_id, region_type, geometry_json, text_json,"
+            " style_json, sfx_policy, translation_locked, current_revision_id, created_at, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, 0, NULL, ?, ?)",
+            (
+                "region-sfx",
+                "page-1",
+                "sfx",
+                json.dumps({"bbox": [2, 2, 3, 3], "polygon": []}),
+                json.dumps(
+                    {
+                        "ocr_text": "ドガ",
+                        "machine_translation": "",
+                        "edited_translation": "",
+                        "final_translation": "",
+                        "final_source": "none",
+                        "edited_confirmed": False,
+                        "manual_edited": False,
+                        "translation_locked": False,
+                    }
+                ),
+                "{}",
+                "translate",
+                NOW,
+                NOW,
+            ),
+        )
+        conn.execute(
+            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+            " snapshot_json, origin, review_state, created_at)"
+            " VALUES ('region-sfx-rev-1', 'region-sfx', 1, '{}', 'imported', 'unreviewed', ?)",
+            (NOW,),
+        )
+        conn.execute(
+            "UPDATE regions SET current_revision_id = 'region-sfx-rev-1'"
+            " WHERE region_id = 'region-sfx'"
+        )
+        # the planner requires a completed ocr stage before translate (D06 §26)
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('region', 'region-sfx', 'ocr', 'completed', ?)",
+            (NOW,),
+        )
+
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-sfx",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    # a translate-only command leaves render blocked (no Clean Artifact) —
+    # same shape as test_translate_step_commits_but_render_remains_unwired;
+    # the translate step itself must complete.
+    steps = {step.step_type: step for step in executed.step_runs}
+    assert steps["translate"].status is StepRunStatus.COMPLETED
+    decisions = {unit.step_type: unit.decision for unit in executed.tasks[0].units}
+    assert decisions["render"].value == "blocked"
+
+    # the provider request carried the sfx type
+    payload = translate_provider.payloads[-1]
+    assert [(r.region_id, r.region_type) for r in payload.regions] == [
+        ("region-sfx", "sfx")
+    ]
+
+    # output mapped back onto the region (AC-TRANS-003 write scope)
+    assert steps["translate"].output["machine_translation"] == "[en]ドガ"
+    text = _text(conn, "region-sfx")["text"]
+    assert text["machine_translation"] == "[en]ドガ"
+    assert text["final_translation"] == "[en]ドガ"
+
+
+@pytest.mark.parametrize("behavior", ["override", "disabled", "crash", "timeout", "invalid"])
+def test_plugin_hooks_inside_ocr_run(workspace, tmp_path, behavior):
+    from infrastructure.plugins.service import PluginService
+    root = tmp_path / "plugins"
+    plugin = root / "run-hook"
+    plugin.mkdir(parents=True)
+    hooks = ["before_ocr", "after_ocr"]
+    (plugin / "manifest.json").write_text(json.dumps({
+        "id": "run-hook", "name": "Run hook", "version": "1.0.0",
+        "entry": "plugin.py", "hooks": hooks, "permissions": [],
+    }), encoding="utf-8")
+    body = {
+        "override": "return {'direction': 'vertical'}",
+        "disabled": "raise AssertionError('must not run')",
+        "crash": "raise RuntimeError('crash')",
+        "timeout": "import time; time.sleep(2)",
+        "invalid": "return {'script': 'invalid-script'}",
+    }[behavior]
+    (plugin / "plugin.py").write_text(
+        "def before_ocr(payload):\n"
+        "    assert payload['schema_ref'] == 'nm-plugin-hook/1'\n"
+        "    assert payload['run_id']\n"
+        f"    {body}\n"
+        "def after_ocr(payload):\n"
+        "    assert payload['text'] == 'こんにちは'\n"
+        "    return {'text': 'must be ignored'}\n", encoding="utf-8")
+    plugins = PluginService(workspace["conn"], root, app_version="0.1.0",
+                            hook_timeout_seconds=0.3)
+    plugins.set_plugin_enabled("run-hook", True)
+    plugins.set_global_enabled(behavior != "disabled")
+    workspace["handlers"].deps.plugins = plugins
+    service = _pipeline(workspace)
+    run = service.create_run(CommandType.OCR_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)))
+    service.plan_run(run.run_id)
+    result = service.execute_run(run.run_id)
+    assert result.status is PipelineRunStatus.COMPLETED
+    assert _text(workspace["conn"], "region-b")["text"]["ocr_text"] == "こんにちは"
+    request = workspace["ocr_provider"].requests[-1]
+    assert request.direction == ("vertical" if behavior == "override" else "horizontal")
+    events = plugins.audit_list(limit=100)
+    hook_events = [e for e in events if e["event_type"] in ("hook_invoked", "plugin_error")]
+    if behavior == "disabled":
+        assert hook_events == []
+    elif behavior in ("crash", "timeout", "invalid"):
+        assert any(e["event_type"] == "plugin_error" for e in hook_events)
+    else:
+        assert len([e for e in hook_events if e["event_type"] == "hook_invoked"]) == 2
+
+
+@pytest.mark.parametrize("stage", ["detect", "export"])
+def test_plugin_real_detect_and_export_inputs(workspace, tmp_path, stage):
+    from types import SimpleNamespace
+    from infrastructure.plugins.service import PluginService
+    from ports.detection.ports import DetectionResult, RegionCandidate
+    from application.export.service import ExportService, ExportRequest, ExportPage, ExportFormat
+    from application.export.ports import JsonHistoryDocumentStore
+    import zipfile
+
+    root = tmp_path / "plugins"
+    plugin = root / "input-hook"
+    plugin.mkdir(parents=True)
+    (plugin / "manifest.json").write_text(json.dumps({
+        "id": "input-hook", "name": "Input", "version": "1.0.0",
+        "entry": "plugin.py", "hooks": ["before_" + stage, "after_" + stage],
+        "permissions": [],
+    }), encoding="utf-8")
+    override = {"options": {"test": "applied"}} if stage == "detect" else {
+        "format_options": {"compression": "store"}}
+    (plugin / "plugin.py").write_text(
+        f"def before_{stage}(payload):\n    return {override!r}\n"
+        f"def after_{stage}(payload):\n    return {{'output_path': 'ignored'}}\n",
+        encoding="utf-8")
+    plugins = PluginService(workspace["conn"], root, app_version="0.1.0")
+    plugins.set_plugin_enabled("input-hook", True)
+    plugins.set_global_enabled(True)
+    if stage == "detect":
+        seen = []
+        def detect(request):
+            seen.append(request)
+            return DetectionResult(request.page_id, (RegionCandidate(((0, 0), (1, 0), (1, 1))),))
+        handlers = workspace["handlers"]
+        handlers.deps.plugins = plugins
+        handlers.deps.detector = SimpleNamespace(detect=detect)
+        handlers.deps.regions = SimpleNamespace(list_regions=lambda _: [])
+        handlers.deps.region_creator = lambda *args: "created-region"
+        result = handlers.handle_detect(None, SimpleNamespace(page_id="page-1", target_id="page-1"),
+                                        SimpleNamespace(run_id="test-run"))
+        assert seen[0].option_dict() == {"test": "applied"}
+        assert result.outputs["region_ids"] == ("created-region",)
+    else:
+        service = ExportService(JsonHistoryDocumentStore(tmp_path / "history.json"), plugins=plugins)
+        path = tmp_path / "export.zip"
+        result = service.export(ExportRequest("book-1", "chapter-1", ExportFormat.ZIP, path,
+            (ExportPage("page-1", "page.png", lambda: b"image"),), pipeline_run_id="test-run"))
+        assert result.output_path == path
+        with zipfile.ZipFile(path) as archive:
+            assert archive.infolist()[0].compress_type == zipfile.ZIP_STORED
+            assert archive.read(archive.namelist()[0]) == b"image"
+    events = plugins.audit_list(limit=100)
+    assert {e["hook_name"] for e in events if e["event_type"] == "hook_invoked"} == {
+        "before_" + stage, "after_" + stage}

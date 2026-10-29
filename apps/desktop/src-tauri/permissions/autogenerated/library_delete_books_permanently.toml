@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-delete-books-permanently"
+description = "Enables the library_delete_books_permanently command without any pre-configured scope."
+commands.allow = ["library_delete_books_permanently"]
+
+[[permission]]
+identifier = "deny-library-delete-books-permanently"
+description = "Denies the library_delete_books_permanently command without any pre-configured scope."
+commands.deny = ["library_delete_books_permanently"]

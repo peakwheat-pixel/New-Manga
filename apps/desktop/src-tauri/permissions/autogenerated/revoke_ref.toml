@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-revoke-ref"
+description = "Enables the revoke_ref command without any pre-configured scope."
+commands.allow = ["revoke_ref"]
+
+[[permission]]
+identifier = "deny-revoke-ref"
+description = "Denies the revoke_ref command without any pre-configured scope."
+commands.deny = ["revoke_ref"]

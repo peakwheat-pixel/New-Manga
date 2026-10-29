@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-network-profiles-delete"
+description = "Enables the settings_network_profiles_delete command without any pre-configured scope."
+commands.allow = ["settings_network_profiles_delete"]
+
+[[permission]]
+identifier = "deny-settings-network-profiles-delete"
+description = "Denies the settings_network_profiles_delete command without any pre-configured scope."
+commands.deny = ["settings_network_profiles_delete"]

@@ -1,0 +1,154 @@
+/*
+ * 运行时根与共享状态面的样式。页面几何仍在 src/pages/pages.css；这里只放
+ * 「运行时根 + 四页共用的状态表达 + 命令面板增量」，避免与页面 CSS 抢同一批
+ * 选择器。
+ */
+
+/* ---- runtime root -------------------------------------------------- */
+
+/*
+ * 根容器铺满视口。`data-view="app"` 由 UiRoot 挂到 <html> 上，base.css 的
+ * 元素级 reset 才会生效；这里只负责根自身盒模型。
+ *
+ * 不设 min-width：UIUX-V2-RUNTIME-NARROW-1 实测 900×700/DPR2 下四页全部
+ * documentElement.scrollWidth=1024（横向溢出 124px），根因就是这里曾经的
+ * `min-width: 1024px` 把根盒撑到 1024 再溢出 #root/body。窄窗几何由各页
+ * 自己的窄断点（见 pages.css 的 max-width: 1023px 段）承接。
+ */
+.nm-app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 680px;
+  overflow: hidden;
+  background: var(--nm-bg-canvas);
+  color: var(--nm-text-primary);
+  font: var(--nm-text-body);
+}
+
+/* ---- shared page states ------------------------------------------- */
+
+.nm-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--nm-space-2);
+  margin: auto;
+  padding: var(--nm-space-5);
+  max-width: 460px;
+  border: 1px solid var(--nm-line-divider);
+  border-radius: var(--nm-radius-overlay);
+  background: var(--nm-bg-layer);
+}
+
+.nm-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--nm-radius-control);
+  background: var(--nm-accent-muted);
+  color: var(--nm-accent-base);
+}
+
+.nm-state__title {
+  margin: 0;
+  font: var(--nm-text-body-strong);
+  color: var(--nm-text-primary);
+}
+
+.nm-state__detail {
+  margin: 0;
+  font: var(--nm-text-caption);
+  color: var(--nm-text-secondary);
+}
+
+.nm-state__code {
+  margin: 0;
+  padding: var(--nm-space-1) var(--nm-space-2);
+  border-radius: var(--nm-radius-cell);
+  background: var(--nm-bg-alt);
+  color: var(--nm-text-tertiary);
+}
+
+.nm-state__actions {
+  display: flex;
+  gap: var(--nm-space-2);
+  margin-top: var(--nm-space-2);
+}
+
+.nm-state__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-2);
+  width: 240px;
+  margin-top: var(--nm-space-2);
+}
+
+.nm-state__skeleton-row {
+  height: 10px;
+  border-radius: var(--nm-radius-cell);
+  background: var(--nm-bg-alt);
+}
+
+.nm-state__skeleton-row:nth-child(2) {
+  width: 82%;
+}
+
+.nm-state__skeleton-row:nth-child(3) {
+  width: 64%;
+}
+
+/* 错误面用左侧色条而不是给整块上色：色条只占 2px，文字对比度不受影响。 */
+.nm-state--error {
+  border-left: 2px solid var(--nm-status-failed);
+}
+
+.nm-state--blocked {
+  border-left: 2px solid var(--nm-status-blocked);
+}
+
+/* ---- recycle-bin surface (mounted from the shelf) ------------------ */
+
+/*
+ * 回收站是既有真实功能面（查看看得见的真数据 + 永久删除确认），内联样式已由
+ * 令牌桥接到 v2 取值；这里只给它的宿主一层 v2 模态框约束：居中、限高、
+ * 圆角与描边走令牌，不引入第二套外观。
+ */
+.nm-shelf-recycle-surface {
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  max-height: 650px;
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid var(--nm-line-control);
+  border-radius: var(--nm-radius-overlay);
+  background: var(--nm-bg-solid);
+  box-shadow: var(--nm-elevation-16);
+}
+
+/* ---- command palette additions ------------------------------------ */
+
+.nm-command__empty {
+  margin: 0;
+  padding: var(--nm-space-4);
+  text-align: center;
+}
+
+.nm-command__count {
+  margin-left: auto;
+}
+
+.nm-command__item[disabled] {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* 高亮项同时给出背景与左侧指示，不靠颜色单一编码状态。 */
+.nm-command__item[data-active="true"] {
+  background: var(--nm-accent-muted);
+  color: var(--nm-text-primary);
+}
