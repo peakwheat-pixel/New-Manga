@@ -1,0 +1,11 @@
+{
+  "attempt": "startup-with-isolated-APPDATA",
+  "shell": "legacy",
+  "isolated_appdata": "C:\\Users\\49745\\AppData\\Local\\Temp\\l4-persist-ae011c\\appdata",
+  "theme_settings_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\l4-persist-ae011c\\appdata\\NewManga\\theme-settings.json",
+  "theme_settings_created": false,
+  "host_ready": true,
+  "ui_input_simulated": false,
+  "result": "NOT_RUN",
+  "reason": "启动只加载已持久化的 theme-settings.json；写盘仅发生在 Theme Studio 的“应用”动作（UI 交互）。本任务禁止伪造点击/键盘输入，因此无法在无人值守下产生一次真实设置变更并验证重启保持。"
+}
