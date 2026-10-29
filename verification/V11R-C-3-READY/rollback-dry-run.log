@@ -1,0 +1,6 @@
+DRY RUN - no files, refs or settings are changed.
+repo   : G:/CODEX/New Manga.workspace/worktrees/V11R-C3-READY
+branch : v11r/c3-ready @ ae28d308f1dbbe04774f24b7cc4edaf11c99d521
+dirty  : True
+tag    : v11r-pre-retire (exists=False)
+  - git tag -a v11r-pre-retire -m 'V11R pre-retire rollback point'
