@@ -1,0 +1,22 @@
+    0 个错误
+
+已用时间 00:00:03.21
+== v2-1600x1000-dark ==
+   pass=True exit=0 exit_kind=natural elapsed=12505ms host_ready=True reason=
+== v2-1600x1000-light ==
+   pass=True exit=0 exit_kind=natural elapsed=12078ms host_ready=True reason=
+== v2-1280x800-dark ==
+   pass=True exit=0 exit_kind=natural elapsed=12104ms host_ready=True reason=
+== v2-1280x800-light ==
+   pass=True exit=0 exit_kind=natural elapsed=12113ms host_ready=True reason=
+== v2-1024x700-dark ==
+   pass=True exit=0 exit_kind=natural elapsed=12082ms host_ready=True reason=
+== v2-1024x700-light ==
+   pass=True exit=0 exit_kind=natural elapsed=12111ms host_ready=True reason=
+== legacy-rollback ==
+   pass=True exit=0 exit_kind=natural elapsed=11581ms host_ready=True reason=
+
+launch matrix: 7/7 passed, 0 failed
+host ready: 7/7 | natural=7 graceful_close=0 harness_terminated=0
+screenshots: 9 in G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-L4-EVIDENCE\screens
+json: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-L4-EVIDENCE\launch-matrix.json
