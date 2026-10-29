@@ -897,6 +897,11 @@ class RegionEditingService:
             merged.text.translation_locked = True
             manuals = [r.text.edited_translation for r in regions if r.text.edited_translation]
             merged.text.edited_translation = " ".join(manuals)
+        # V11R-F0-1 I1/P1-3: inherit the EFFECTIVE locks (region-level OR
+        # text-level) and persist them to BOTH projections -- an explicitly
+        # locked source must stay locked after the merge, otherwise the
+        # translation step could overwrite the merged machine translation.
+        _apply_effective_locks(merged, effective_region_locks(regions))
         merged.text.refresh_final()
 
         staged = merged
@@ -957,6 +962,7 @@ class RegionEditingService:
                 manual_edited=source.text.manual_edited,
                 translation_locked=source.text.translation_locked,
             )
+            _apply_effective_locks(part, source_locks)
             part.text.refresh_final()
             revision = self._build_revision(
                 part, RegionOrigin.USER, ReviewState.UNREVIEWED
