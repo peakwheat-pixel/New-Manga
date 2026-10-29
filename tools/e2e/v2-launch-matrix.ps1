@@ -5,16 +5,22 @@
 .DESCRIPTION
   Launches the real app (no headless/CI fakes) for six size x appearance combinations plus the legacy
   rollback shell, waits for the actual top-level window, captures it with Win32/GDI (PrintWindow, with a
-  CopyFromScreen fallback), records the process exit code and elapsed time, and writes
-  verification/V11R-L4-EVIDENCE/launch-matrix.json + screens/*.png.
+  CopyFromScreen fallback), waits for the process to exit naturally (the app's own --exit-after timer),
+  and writes verification/V11R-L4-EVIDENCE/launch-matrix.json + screens/*.png.
+
+  Exit handling (V11R-A-8 / Lead ruling after the first INT-2 rerun): a pass requires the window, a
+  successful screenshot, Host ready, and a graceful exit code 0. The harness waits for the natural
+  --exit-after exit; only if the app does not exit within a grace window does it send WM_CLOSE to the
+  main window (recorded as exit_kind=graceful_close). Force-killing is the last resort, is recorded as
+  terminated_by_harness=true, and can never count as a pass.
 
   Each case uses an isolated --data-root (temp, deleted afterwards) and an isolated --log-dir (kept as
   evidence). The real sidecar bundle is required: without it the Host legitimately reports
   SidecarBundleMissing and the window is not "Host ready", so the script fails fast instead of
   producing misleading screenshots.
 
-  Any non-zero exit code, missing window, screenshot failure or timeout makes the script exit non-zero
-  with the reason recorded in the JSON (failures are never swallowed).
+  Any non-zero exit code, missing window, screenshot failure, Host-not-ready case or timeout makes the
+  script exit non-zero with the reason recorded in the JSON (failures are never swallowed).
 
 .PARAMETER SidecarDir
   Packaged sidecar directory (core_service.exe + host_bridge.exe). Defaults to
@@ -24,7 +30,10 @@
   Evidence root. Defaults to <repo>/verification/V11R-L4-EVIDENCE.
 
 .PARAMETER TimeoutSeconds
-  Per-case timeout for window appearance + process exit (default 90).
+  Per-case window-appearance timeout (default 30).
+
+.PARAMETER ExitGraceSeconds
+  Extra wait after --exit-after before the harness sends WM_CLOSE (default 20).
 
 .PARAMETER SettleMs
   Extra wait after the window appears before the screenshot (default 1800 ms, lets first layout paint).
@@ -46,7 +55,8 @@
 param(
     [string]$SidecarDir = $env:NEWMANGA_CORECLIENT_SIDECAR_DIR,
     [string]$OutputRoot = '',
-    [int]$TimeoutSeconds = 90,
+    [int]$TimeoutSeconds = 30,
+    [int]$ExitGraceSeconds = 20,
     [int]$SettleMs = 1800,
     [switch]$SkipBuild,
     [bool]$IncludeLegacy = $true,
@@ -65,7 +75,7 @@ $logsDir = Join-Path $OutputRoot 'logs'
 New-Item -ItemType Directory -Force -Path $OutputRoot, $screensDir, $logsDir | Out-Null
 
 # ---------------------------------------------------------------------------------------------
-# Win32/GDI capture (PrintWindow with PW_RENDERFULLCONTENT; CopyFromScreen fallback). No CUA.
+# Win32/GDI capture (PrintWindow with PW_RENDERFULLCONTENT; CopyFromScreen fallback) + WM_CLOSE.
 # System.Drawing is loaded as a PowerShell type reference, so only user32 needs Add-Type.
 # ---------------------------------------------------------------------------------------------
 Add-Type -AssemblyName System.Drawing.Common
@@ -88,8 +98,16 @@ public static class L4Native
     [DllImport("user32.dll")]
     public static extern bool IsWindowVisible(IntPtr hWnd);
 
+    [DllImport("user32.dll")]
+    public static extern bool IsWindow(IntPtr hWnd);
+
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
+
+    [DllImport("user32.dll")]
+    public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    public const uint WM_CLOSE = 0x0010;
 
     public static string Title(IntPtr hWnd)
     {
@@ -97,6 +115,8 @@ public static class L4Native
         GetWindowText(hWnd, buffer, buffer.Capacity);
         return buffer.ToString();
     }
+
+    public static bool CloseWindow(IntPtr hWnd) => hWnd != IntPtr.Zero && IsWindow(hWnd) && PostMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 }
 '@
 
@@ -144,6 +164,13 @@ function Get-RepoHead {
     try { return (& git rev-parse HEAD) } finally { Pop-Location }
 }
 
+function Clear-LeftoverApps {
+    $leftovers = @(Get-Process -Name 'NewManga.App' -ErrorAction SilentlyContinue)
+    foreach ($leftover in $leftovers) { try { $leftover.Kill() } catch { } }
+    if ($leftovers.Count -gt 0) { Start-Sleep -Milliseconds 400 }
+    return $leftovers.Count
+}
+
 function Wait-AppWindow {
     param([datetime]$StartedAt, [int]$TimeoutSeconds)
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
@@ -161,11 +188,22 @@ function Wait-AppWindow {
     return $null
 }
 
-function Stop-CaseProcesses {
-    param([datetime]$StartedAt)
-    Get-Process -Name 'NewManga.App' -ErrorAction SilentlyContinue |
-        Where-Object { $_.StartTime -ge $StartedAt } |
-        ForEach-Object { try { $_.Kill() } catch { } }
+function Wait-ProcessExit {
+    param([int]$ProcessId, [int]$TimeoutSeconds)
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+        if (-not $process) { return $true }
+        Start-Sleep -Milliseconds 200
+    }
+
+    return $false
+}
+
+function Stop-AppProcess {
+    param([int]$ProcessId)
+    $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+    if ($process) { try { $process.Kill() } catch { } }
 }
 
 function Invoke-LaunchCase {
@@ -179,12 +217,7 @@ function Invoke-LaunchCase {
         [string]$Sidecar
     )
 
-    # A leftover app window from a previous case would be picked up by the window poll and would
-    # make the screenshot/exit-code evidence ambiguous, so every case starts from zero app processes.
-    $leftovers = @(Get-Process -Name 'NewManga.App' -ErrorAction SilentlyContinue)
-    foreach ($leftover in $leftovers) { try { $leftover.Kill() } catch { } }
-    if ($leftovers.Count -gt 0) { Start-Sleep -Milliseconds 400 }
-
+    $leftoversKilled = Clear-LeftoverApps
     $caseStart = Get-Date
     $dataRoot = Join-Path $env:TEMP ("nm-l4-data-$Name-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
     $caseLogDir = Join-Path $logsDir $Name
@@ -208,6 +241,9 @@ function Invoke-LaunchCase {
         window_width = $null
         window_height = $null
         exit_code = $null
+        exit_kind = $null
+        terminated_by_harness = $false
+        leftovers_killed_before_case = $leftoversKilled
         elapsed_ms = $null
         failure_reason = $null
         host_ready = $false
@@ -237,13 +273,14 @@ function Invoke-LaunchCase {
         $output | ForEach-Object { "APP_OUTPUT: $_" }
     } -ArgumentList $appProjectDir, $Shell, $Width, $Height, $Variant, $ExitAfterMs, $dataRoot, $caseLogDir, $Sidecar, $mutex
 
+    $appProcessId = 0
     try {
-        $windowTimeout = [Math]::Max(10, [int]($ExitAfterMs / 1000) + 10)
-        $window = Wait-AppWindow -StartedAt $caseStart -TimeoutSeconds $windowTimeout
+        $window = Wait-AppWindow -StartedAt $caseStart -TimeoutSeconds $TimeoutSeconds
         if (-not $window) {
-            $result.failure_reason = "window not found within ${windowTimeout}s (no NewManga.App window with a non-zero handle)"
+            $result.failure_reason = "window not found within ${TimeoutSeconds}s (no NewManga.App window with a non-zero handle)"
         }
         else {
+            $appProcessId = $window.Process.Id
             $result.window_found = $true
             $result.window_title = $window.Title
             $rect = New-Object L4Native+RECT
@@ -260,12 +297,30 @@ function Invoke-LaunchCase {
             else {
                 $result.failure_reason = "screenshot failed: $captureError"
             }
+
+            # Graceful-exit ladder: natural --exit-after first, WM_CLOSE only if it overruns, kill last.
+            $naturalDeadline = [Math]::Max(5, [int]($ExitAfterMs / 1000) + $ExitGraceSeconds)
+            if (Wait-ProcessExit -ProcessId $appProcessId -TimeoutSeconds $naturalDeadline) {
+                $result.exit_kind = 'natural'
+            }
+            else {
+                $closed = [L4Native]::CloseWindow($window.Handle)
+                $graceful = $closed -and (Wait-ProcessExit -ProcessId $appProcessId -TimeoutSeconds 8)
+                if ($graceful) {
+                    $result.exit_kind = 'graceful_close'
+                }
+                else {
+                    $result.exit_kind = 'harness_terminated'
+                    $result.terminated_by_harness = $true
+                    $result.failure_reason = 'app did not exit naturally or after WM_CLOSE; harness terminated it'
+                    Stop-AppProcess -ProcessId $appProcessId
+                }
+            }
         }
 
-        $exitTimeout = [Math]::Max(30, [int]($ExitAfterMs / 1000) + $TimeoutSeconds)
-        $job | Wait-Job -Timeout $exitTimeout | Out-Null
+        $job | Wait-Job -Timeout ([Math]::Max(30, $ExitGraceSeconds + 15)) | Out-Null
         if ($job.State -ne 'Completed') {
-            $result.failure_reason = "app did not exit within ${exitTimeout}s (job state $($job.State))"
+            if (-not $result.failure_reason) { $result.failure_reason = "launcher did not finish (job state $($job.State))" }
             $job | Stop-Job -ErrorAction SilentlyContinue
         }
         else {
@@ -279,7 +334,8 @@ function Invoke-LaunchCase {
         }
     }
     finally {
-        Stop-CaseProcesses -StartedAt $caseStart
+        if ($appProcessId -gt 0) { Stop-AppProcess -ProcessId $appProcessId }
+        Clear-LeftoverApps | Out-Null
         if ($job) { Remove-Job $job -Force -ErrorAction SilentlyContinue }
         $result.elapsed_ms = [int]((Get-Date) - $caseStart).TotalMilliseconds
 
@@ -297,7 +353,7 @@ function Invoke-LaunchCase {
         if (-not $result.failure_reason) { $result.failure_reason = 'exit code was not reported by the launcher' }
     }
     elseif ($result.exit_code -ne 0) {
-        $result.failure_reason = "non-zero exit code $($result.exit_code)"
+        $result.failure_reason = "non-zero exit code $($result.exit_code) (exit_kind=$($result.exit_kind))"
     }
     elseif (-not $result.window_found) {
         if (-not $result.failure_reason) { $result.failure_reason = 'window not found' }
@@ -305,6 +361,13 @@ function Invoke-LaunchCase {
     elseif (-not (Test-Path -LiteralPath $screenshot)) {
         if (-not $result.failure_reason) { $result.failure_reason = 'screenshot file missing' }
     }
+    elseif (-not $result.host_ready) {
+        if (-not $result.failure_reason) { $result.failure_reason = 'Host did not reach ready state (see logs/<case>/host.log)' }
+    }
+    elseif ($result.terminated_by_harness) {
+        if (-not $result.failure_reason) { $result.failure_reason = 'terminated_by_harness is never a pass' }
+    }
+
     $result.pass = [string]::IsNullOrEmpty($result.failure_reason)
     return [pscustomobject]$result
 }
@@ -352,8 +415,8 @@ foreach ($size in $matrix) {
         $case = Invoke-LaunchCase -Name $name -Shell 'v2' -Width $size.Width -Height $size.Height `
             -Variant $variant -ExitAfterMs 10000 -Sidecar $SidecarDir
         $cases.Add($case) | Out-Null
-        Write-Host ("   pass={0} exit={1} elapsed={2}ms host_ready={3} reason={4}" -f `
-            $case.pass, $case.exit_code, $case.elapsed_ms, $case.host_ready, $case.failure_reason)
+        Write-Host ("   pass={0} exit={1} exit_kind={2} elapsed={3}ms host_ready={4} reason={5}" -f `
+            $case.pass, $case.exit_code, $case.exit_kind, $case.elapsed_ms, $case.host_ready, $case.failure_reason)
     }
 }
 
@@ -362,14 +425,13 @@ if ($IncludeLegacy) {
     Write-Host '== legacy-rollback =='
     $legacy = Invoke-LaunchCase -Name 'legacy-1280x800-dark' -Shell 'legacy' -Width 1280 -Height 800 `
         -Variant 'dark' -ExitAfterMs 6000 -Sidecar $SidecarDir
-    Write-Host ("   pass={0} exit={1} elapsed={2}ms host_ready={3} reason={4}" -f `
-        $legacy.pass, $legacy.exit_code, $legacy.elapsed_ms, $legacy.host_ready, $legacy.failure_reason)
+    Write-Host ("   pass={0} exit={1} exit_kind={2} elapsed={3}ms host_ready={4} reason={5}" -f `
+        $legacy.pass, $legacy.exit_code, $legacy.exit_kind, $legacy.elapsed_ms, $legacy.host_ready, $legacy.failure_reason)
 }
 
 $failures = @($cases | Where-Object { -not $_.pass })
 if ($legacy -and -not $legacy.pass) { $failures += $legacy }
 
-try {
 $allCases = @($cases) + $(if ($legacy) { @($legacy) } else { @() })
 $summary = [ordered]@{
     total = $allCases.Count
@@ -377,6 +439,9 @@ $summary = [ordered]@{
     failed = $failures.Count
     host_ready_cases = ($allCases | Where-Object { $_.host_ready }).Count
     host_ready_expected_cases = ($allCases | Where-Object { $_.host_ready_expected }).Count
+    natural_exit_cases = ($allCases | Where-Object { $_.exit_kind -eq 'natural' }).Count
+    graceful_close_cases = ($allCases | Where-Object { $_.exit_kind -eq 'graceful_close' }).Count
+    harness_terminated_cases = ($allCases | Where-Object { $_.terminated_by_harness }).Count
 }
 
 $document = [ordered]@{
@@ -389,23 +454,19 @@ $document = [ordered]@{
     evidence_root = $OutputRoot
     matrix = $matrix
     variants = $variants
+    exit_policy = 'natural --exit-after exit; WM_CLOSE only after the grace window (graceful_close); kill is recorded as terminated_by_harness and never passes'
     summary = $summary
     cases = $cases
     legacy_rollback = $legacy
-    failures = @($failures | ForEach-Object { [ordered]@{ case = $_.case; reason = $_.failure_reason } })
+    failures = @($failures | ForEach-Object { [ordered]@{ case = $_.case; reason = $_.failure_reason; exit_code = $_.exit_code; exit_kind = $_.exit_kind } })
 }
 
 $jsonPath = Join-Path $OutputRoot 'launch-matrix.json'
 $document | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $jsonPath -Encoding utf8
-}
-catch {
-    Write-Host "SUMMARY ERROR: $($_.Exception.GetType().FullName): $($_.Exception.Message)"
-    Write-Host $_.ScriptStackTrace
-    exit 1
-}
 
 Write-Host ''
 Write-Host "launch matrix: $($summary.passed)/$($summary.total) passed, $($summary.failed) failed"
+Write-Host "host ready: $($summary.host_ready_cases)/$($summary.total) | natural=$($summary.natural_exit_cases) graceful_close=$($summary.graceful_close_cases) harness_terminated=$($summary.harness_terminated_cases)"
 Write-Host "screenshots: $((Get-ChildItem -LiteralPath $screensDir -Filter '*.png' -ErrorAction SilentlyContinue).Count) in $screensDir"
 Write-Host "json: $jsonPath"
 

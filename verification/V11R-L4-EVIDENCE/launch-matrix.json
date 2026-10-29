@@ -1,7 +1,7 @@
 {
   "task": "V11R-L4-EVIDENCE",
-  "generated_at": "2026-10-29T19:50:53.4217418Z",
-  "git_head": "287705e653d490941c6acf310d1acc2304355f05",
+  "generated_at": "2026-10-29T20:36:18.3065734Z",
+  "git_head": "4374dfeae5e1eec68138b9e8056cbbf4f24d372f",
   "dotnet": "10.0.401",
   "os": "Microsoft Windows 10.0.26300",
   "sidecar_dir": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
@@ -24,12 +24,16 @@
     "dark",
     "light"
   ],
+  "exit_policy": "natural --exit-after exit; WM_CLOSE only after the grace window (graceful_close); kill is recorded as terminated_by_harness and never passes",
   "summary": {
     "total": 7,
     "passed": 7,
     "failed": 0,
-    "host_ready_cases": 1,
-    "host_ready_expected_cases": 7
+    "host_ready_cases": 7,
+    "host_ready_expected_cases": 7,
+    "natural_exit_cases": 7,
+    "graceful_close_cases": 0,
+    "harness_terminated_cases": 0
   },
   "cases": [
     {
@@ -39,7 +43,7 @@
       "height": 1000,
       "variant": "dark",
       "exit_after_ms": 10000,
-      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1600x1000-dark-8b3fd960",
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1600x1000-dark-d18985ee",
       "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1600x1000-dark",
       "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\v2-1600x1000-dark.png",
       "pass": true,
@@ -48,11 +52,14 @@
       "window_width": 1616,
       "window_height": 1039,
       "exit_code": 0,
-      "elapsed_ms": 12318,
+      "exit_kind": "natural",
+      "terminated_by_harness": false,
+      "leftovers_killed_before_case": 0,
+      "elapsed_ms": 12505,
       "failure_reason": null,
-      "host_ready": false,
+      "host_ready": true,
       "host_ready_expected": true,
-      "host_log": null
+      "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1600x1000-dark\\host.log"
     },
     {
       "case": "v2-1600x1000-light",
@@ -61,7 +68,7 @@
       "height": 1000,
       "variant": "light",
       "exit_after_ms": 10000,
-      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1600x1000-light-c53e3254",
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1600x1000-light-3fe147a6",
       "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1600x1000-light",
       "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\v2-1600x1000-light.png",
       "pass": true,
@@ -70,11 +77,14 @@
       "window_width": 1616,
       "window_height": 1039,
       "exit_code": 0,
-      "elapsed_ms": 12068,
+      "exit_kind": "natural",
+      "terminated_by_harness": false,
+      "leftovers_killed_before_case": 0,
+      "elapsed_ms": 12078,
       "failure_reason": null,
-      "host_ready": false,
+      "host_ready": true,
       "host_ready_expected": true,
-      "host_log": null
+      "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1600x1000-light\\host.log"
     },
     {
       "case": "v2-1280x800-dark",
@@ -83,7 +93,7 @@
       "height": 800,
       "variant": "dark",
       "exit_after_ms": 10000,
-      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1280x800-dark-66274df4",
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1280x800-dark-3755c35b",
       "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1280x800-dark",
       "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\v2-1280x800-dark.png",
       "pass": true,
@@ -92,11 +102,14 @@
       "window_width": 1296,
       "window_height": 839,
       "exit_code": 0,
-      "elapsed_ms": 12106,
+      "exit_kind": "natural",
+      "terminated_by_harness": false,
+      "leftovers_killed_before_case": 0,
+      "elapsed_ms": 12104,
       "failure_reason": null,
-      "host_ready": false,
+      "host_ready": true,
       "host_ready_expected": true,
-      "host_log": null
+      "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1280x800-dark\\host.log"
     },
     {
       "case": "v2-1280x800-light",
@@ -105,7 +118,7 @@
       "height": 800,
       "variant": "light",
       "exit_after_ms": 10000,
-      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1280x800-light-cc280665",
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1280x800-light-d2e79c70",
       "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1280x800-light",
       "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\v2-1280x800-light.png",
       "pass": true,
@@ -114,11 +127,14 @@
       "window_width": 1296,
       "window_height": 839,
       "exit_code": 0,
-      "elapsed_ms": 12318,
+      "exit_kind": "natural",
+      "terminated_by_harness": false,
+      "leftovers_killed_before_case": 0,
+      "elapsed_ms": 12113,
       "failure_reason": null,
-      "host_ready": false,
+      "host_ready": true,
       "host_ready_expected": true,
-      "host_log": null
+      "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1280x800-light\\host.log"
     },
     {
       "case": "v2-1024x700-dark",
@@ -127,7 +143,7 @@
       "height": 700,
       "variant": "dark",
       "exit_after_ms": 10000,
-      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1024x700-dark-178df923",
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1024x700-dark-6295de53",
       "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1024x700-dark",
       "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\v2-1024x700-dark.png",
       "pass": true,
@@ -136,11 +152,14 @@
       "window_width": 1040,
       "window_height": 739,
       "exit_code": 0,
-      "elapsed_ms": 12120,
+      "exit_kind": "natural",
+      "terminated_by_harness": false,
+      "leftovers_killed_before_case": 0,
+      "elapsed_ms": 12082,
       "failure_reason": null,
-      "host_ready": false,
+      "host_ready": true,
       "host_ready_expected": true,
-      "host_log": null
+      "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1024x700-dark\\host.log"
     },
     {
       "case": "v2-1024x700-light",
@@ -149,7 +168,7 @@
       "height": 700,
       "variant": "light",
       "exit_after_ms": 10000,
-      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1024x700-light-7a2633b2",
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-v2-1024x700-light-5a6b0d6e",
       "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1024x700-light",
       "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\v2-1024x700-light.png",
       "pass": true,
@@ -158,11 +177,14 @@
       "window_width": 1040,
       "window_height": 739,
       "exit_code": 0,
-      "elapsed_ms": 12182,
+      "exit_kind": "natural",
+      "terminated_by_harness": false,
+      "leftovers_killed_before_case": 0,
+      "elapsed_ms": 12111,
       "failure_reason": null,
-      "host_ready": false,
+      "host_ready": true,
       "host_ready_expected": true,
-      "host_log": null
+      "host_log": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\v2-1024x700-light\\host.log"
     }
   ],
   "legacy_rollback": {
@@ -172,7 +194,7 @@
     "height": 800,
     "variant": "dark",
     "exit_after_ms": 6000,
-    "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-legacy-1280x800-dark-541c4d95",
+    "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-l4-data-legacy-1280x800-dark-c031a48e",
     "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\legacy-1280x800-dark",
     "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\legacy-1280x800-dark.png",
     "pass": true,
@@ -181,7 +203,10 @@
     "window_width": 1280,
     "window_height": 820,
     "exit_code": 0,
-    "elapsed_ms": 11587,
+    "exit_kind": "natural",
+    "terminated_by_harness": false,
+    "leftovers_killed_before_case": 0,
+    "elapsed_ms": 11581,
     "failure_reason": null,
     "host_ready": true,
     "host_ready_expected": true,
