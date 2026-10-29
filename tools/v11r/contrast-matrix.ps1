@@ -8,7 +8,7 @@
   high-contrast dictionary, then computes every required foreground/background pair with the WCAG 2.1
   relative-luminance formula. Writes:
     verification/V11R-D-1/contrast-matrix.md      (deliverable, markdown)
-    verification/V11R-C-3-READY/contrast-matrix.json (machine-readable data)
+    verification/V11R-C-3/contrast-matrix.json (execution evidence; the READY package is byte-restored\n    after C-3 and is not overwritten by later runs)
   Thresholds follow DESIGN_SYSTEM §2.3 as adjudicated by the Lead:
     body text >= 7.0, secondary/tertiary text >= 4.5, status text >= 4.5, focus/emphasis >= 3.0.
   Accent-on-accent text is checked separately (>= 4.5) because it is text on an accent fill.
@@ -17,7 +17,7 @@
 param(
     [string]$RepositoryRoot = '',
     [string]$MatrixPath = 'verification/V11R-D-1/contrast-matrix.md',
-    [string]$DataPath = 'verification/V11R-C-3-READY/contrast-matrix.json'
+    [string]$DataPath = 'verification/V11R-C-3/contrast-matrix.json'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +29,7 @@ $tokensPath = Join-Path $RepositoryRoot 'doc/design/redesign-v1/40-fusion/tokens
 $highContrastPath = Join-Path $RepositoryRoot 'apps/desktop-avalonia/src/NewManga.DesignSystem/Themes/Tokens.HighContrast.axaml'
 $tokens = Get-Content -LiteralPath $tokensPath -Raw | ConvertFrom-Json
 $commit = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
+$workingTreeDirty = ((& git -C $RepositoryRoot status --porcelain | Out-String).Trim().Length -gt 0)
 $generatedAt = (Get-Date).ToString('yyyy-MM-ddTHH:mm:sszzz')
 
 $backgrounds = [ordered]@{
@@ -290,8 +291,9 @@ New-Item -ItemType Directory -Path (Split-Path -Parent $dataAbsolute) -Force | O
 
 $data = [ordered]@{
     schema = 'newmanga.v11r.contrast-matrix/1'
-    task = 'V11R-C-3-READY'
+    task = 'V11R-C-3'
     baseCommit = $commit
+    workingTreeDirty = $workingTreeDirty
     generatedAt = $generatedAt
     method = 'WCAG 2.1 relative luminance; (L1+0.05)/(L2+0.05)'
     failures = $failures
@@ -305,6 +307,8 @@ Write-Output "matrix : $matrixAbsolute"
 Write-Output "data   : $dataAbsolute"
 Write-Output "failing rows: $failures"
 Write-Output "failing pairs: $($failingPairs.Count)"
+
+
 
 
 

@@ -27,3 +27,16 @@
 - 回滚点 tag 未被移动；L1/L2 真实回滚演练仍 NOT_RUN（按计划留待实际回滚）。
 - 未改 ThemeEngine / DesignSystem 语义。
 
+
+## C-3-I1 定点修复（独立窄复审 r1）
+
+- 分支 `v11r/c3-i1`；7 条 P2 处置见 `verification/V11R-C-3/C3-I1-DISPOSITION.md`。
+- 旧壳外观切换改走共享 `DesignSystemThemeManager.SetAppearance`（top bar + 设置页两条路径，测试断言
+  manager 状态、Nm.Color.Bg.App 解析值与渲染帧哈希）。
+- `--theme` 通过 `LegacyStartupTheme` 把迁移后的 appearance/density 传给 DS 初始化（显式
+  `--variant` 优先），App.axaml.cs 仅最小改动以降低与 INT-2 的合并冲突。
+- v2 壳新增等价断言（首帧非阻塞、共享 manager 外观切换、材质 fallback），映射表
+  `R4-ASSERTION-MAP.md`。
+- READY 包 6 个文件已从 `b5f7d88fc` 逐字节恢复；执行态副本在 `final/`，工具默认输出改到
+  `verification/V11R-C-3/`（`READY-RESTORE.md`）。
+- 干净树 R6 重跑记录见 `R6-report-clean.md`（dirty=false、完整文件清单、两个 shell 正常退出码）。

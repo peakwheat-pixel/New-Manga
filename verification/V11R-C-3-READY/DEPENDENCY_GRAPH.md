@@ -1,9 +1,9 @@
 # V11R-C-3 旧主题依赖图（当前 main 重核）
 
 - 任务：`V11R-C-3-READY`（C-3 拆除前置就绪包）
-- 基线 commit：`df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e`（R1 tag `v11r-pre-retire`，当前 main；已合入新 UI / ThemeEngine Part B / DS D-1 终态 / B-4 I2b）
+- 基线 commit：`c5037b65fb4c80a42e96869789d12a6e2427e954`（当前 `main`，已合入新 UI / ThemeEngine Part B / DS D-1 终态 / B-4 I2b）
 - 生成方式：`pwsh -NoProfile -File tools/v11r/build-dependency-graph.ps1`
-- 机器可读证据：`dependency-graph.json`（634 条引用明细，`references[]` 含 file/line/symbol/kind/fate/text）
+- 机器可读证据：`dependency-graph.json`（631 条引用明细，`references[]` 含 file/line/symbol/kind/fate/text）
 - 人类可读全表：`dependency-graph-table.md`
 - 扫描范围：`git grep` 全部 tracked 文件（排除 `archive/**`、`bin/obj/node_modules`），符号 12 个
   `ThemePack/ThemePacks/ThemePackService/ThemePackMetrics/LayoutKind/NavPlacement/ShelfStyle/SettingsStyle/MotionProfile/LayoutProfile/LayoutProfiles`（`ThemePack` 的正则同时覆盖其派生符号）。
@@ -16,13 +16,13 @@
 | `legacy-shell-production`（`src/NewManga.App/**` 旧壳） | 192 | 10 | **MIGRATE-THEN-DELETE**：R3 先迁移入口 |
 | `legacy-tests`（`tests/NewManga.App.Tests/**` 旧测试） | 218 | 5 | **REPLACE-BEFORE-DELETE**：R4 替换断言后删 |
 | `new-architecture`（src/**） | 14 | 6 | **NOT-A-DEPENDENCY**：新 `LayoutProfile` 类型 / 退役说明文字 |
-| `new-architecture-tests`（tests/**） | 21 | 5 | **NOT-A-DEPENDENCY**：新架构测试引用新 `LayoutProfile` |
+| `new-architecture-tests`（tests/**） | 19 | 4 | **NOT-A-DEPENDENCY**：新架构测试引用新 `LayoutProfile` |
 | `platform-struct-unrelated` | 19 | 12 | **NOT-A-DEPENDENCY**：`[StructLayout(LayoutKind...)]` P/Invoke，与主题无关 |
-| `evidence-or-documentation` | 87 | 30 | **EVIDENCE-PIN-PROTECTED**：不改不删，按字节保留 |
-| **合计** | **634** | **69** | — |
+| `evidence-or-documentation` | 86 | 30 | **EVIDENCE-PIN-PROTECTED**：不改不删，按字节保留 |
+| **合计** | **631** | **68** | — |
 
 按符号：`ThemePackService=238`、`ThemePacks=108`、`ThemePack=81`、`LayoutKind=54`（其中 19 为 P/Invoke 假阳性）、
-`LayoutProfile=58`（其中 21 为新架构同名类型，脚本按 using 命名空间消歧）、`LayoutProfiles=18`、`ThemePackMetrics=20`、`ShelfStyle=18`、
+`LayoutProfile=56`（其中约 20 为新架构同名类型）、`LayoutProfiles=18`、`ThemePackMetrics=19`、`ShelfStyle=18`、
 `NavPlacement=17`、`SettingsStyle=13`、`MotionProfile=9`。
 
 ## 2. 真实代码依赖（C-3 必须消除的部分）
@@ -66,7 +66,7 @@
 
 1. `LayoutKind` × 19：`[StructLayout(LayoutKind.Sequential)]` 等 P/Invoke 声明（`Host/Credentials`、
    `Host/Resources/TileChannel.cs`、`CoreClient/Issuer`、`scripts/smoke.ps1`、历史 verification 脚本）。
-2. `LayoutProfile` × 21（新架构：ThemeEngine 12 + 新架构测试 9）：`NewManga.ThemeEngine.Models.LayoutProfile` 是新类型，与旧
+2. `LayoutProfile` × 17（新架构）：`NewManga.ThemeEngine.Models.LayoutProfile` 是新类型，与旧
    `NewManga.Theme.LayoutProfile` 同名不同命名空间；C-3 零引用门必须按**命名空间/文件路径**区分，禁止
    简单文本 grep 直接判失败。
 3. `ThemePack` × 少数：ThemeEngine 的 README/csproj 中“取代旧 ThemePack 架构”的说明文字，以及新增的
@@ -86,7 +86,7 @@ $graph.references | Where-Object { $_.fate -in @('DELETE-WITH-C3','MIGRATE-THEN-
 
 随机漂移时重新运行生成脚本即可刷新 `dependency-graph.json` 与全表。
 
-## 6. 证据 pin 保护清单（87 处 / 30 文件，禁止修改或删除）
+## 6. 证据 pin 保护清单（86 处 / 30 文件，禁止修改或删除）
 
 - 计划/契约/任务/交接：`doc/plan/V11R_THEME_RETIREMENT_PLAN.md`（13）、`doc/plan/V11R_AVALONIA_CONTRACT.md`（3）、
   `doc/tasks/V11R-C-3.md`（3）、`doc/tasks/THEME-MACOS-1.md`（7）、`doc/tasks/THEME-MACOS-2.md`（3）、
@@ -98,8 +98,5 @@ $graph.references | Where-Object { $_.fate -in @('DELETE-WITH-C3','MIGRATE-THEN-
   `verification/PUBLIC-RELEASE-P0-1/ls-tree.txt`（1）、`verification/RELEASE-REPACK-5/**`（2）、
   `verification/V11R-C-1/**`（4）、`verification/V11R-B-1/layout/hot-switch.json`（1）。
 - 处理原则：C-3 代码改动不得修改这些字节；如新事实与旧文档冲突，按治理规则由 Lead 追加说明/新证据，不就地改写。
-
-
-
 
 
