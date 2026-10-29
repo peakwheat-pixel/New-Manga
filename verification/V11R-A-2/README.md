@@ -107,7 +107,7 @@ dotnet test tests/NewManga.App.Tests/NewManga.App.Tests.csproj --no-build \
 1. **R-08 已按 Lead 裁定实现**：`ControlRunAsync(runId, action, string? idempotencyKey = null, CancellationToken)`；`RetryFailedTargetsAsync(runId, string idempotencyKey, CancellationToken)`；StartRun 用 `RunStartRequest.IdempotencyKey`；缺失/空白 → 本地 `INVALID_REQUEST`，不生成。未加 `RestartRunAsync` 重载。
 2. **`CancelExportAsync` 不在 `IRunController`**（Lead 采纳）：导出归导出域，沿用 `IHostController.CancelExportAsync`。
 3. **Run 写的只读策略门（新增行为，请 Reviewer 关注）**：StartRun/ControlRun/ResumeBlockedRun/RetryFailedTargets 在 `HostRuntime.Policy.WritesAllowed == false` 时本地拒绝 `HOST_READ_ONLY`，与既有 region 写方法一致；读操作不受限。契约 §5.2 未明写，属安全默认，已在 `RunCommands_WhenReadOnly_PublishHostReadOnly` 固化。
-4. **restart 的 `new_run_id/new_run_status` 未做集成实证**：需要“undisposed interrupted run”状态（进程重启/中断恢复），当前测试夹具无法在单一会话内制造；DTO/解析/载荷已实现并有单测覆盖映射，集成留待运行时恢复场景（`V11R-B-4` 前后可用真实中断 run 补齐）。
+4. **restart 的 `new_run_id/new_run_status` 未做集成实证（未验证项；Lead 2026-10-30 受理为已知限制）**：需要“undisposed interrupted run”状态（进程重启/中断恢复），当前测试夹具无法在单一会话内制造；DTO/解析/载荷已实现并有单测覆盖映射，集成留待运行时恢复场景（`V11R-B-4` 前后可用真实中断 run 补齐）。不得据此在 UI 侧假设 restart 一定返回 child run。
 5. **Core `abandon` action 未暴露**：冻结枚举只有 4 个动作；`abandon` 仅用于中断处置，记录为 A-3 契约 GAP。
 6. **集成测试使用既有 AC11 sidecar 副本 + BOOK-FIXTURE 数据根**（未从 `c73239999` 重建）；行为已逐条对照当前源码（§5.1）；证据不声称副本由本 SHA 构建。数据根均复制到临时目录，不写共享夹具。
 7. **投影测试需轮询**：新 run 为 pending 时 Core 投影 `rows=[]`、`counts=0`（真实状态，非伪造），测试等待调度器计划（≤250ms 轮询、上限 10s）后再断言 8 行；已在 wire 证据中显示 pending→running 的真实转变。
