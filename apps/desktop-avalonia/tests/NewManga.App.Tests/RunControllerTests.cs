@@ -480,7 +480,7 @@ internal static class RunFixture
     private const string SidecarVariable = "NEWMANGA_CORECLIENT_SIDECAR_DIR";
     private const string EvidenceVariable = "NEWMANGA_EVIDENCE_DIR";
     private const string BookFixtureVariable = "NEWMANGA_BOOK_FIXTURE_ROOT";
-    private const string DefaultBookFixtureRoot = @"G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data";
+    private static string DefaultBookFixtureRoot => TestWorkspacePaths.Path("task-envs/BOOK-FIXTURE-1/isolated-data");
 
     public static bool TryGetSidecarDirectory(out string directory, out string reason)
     {

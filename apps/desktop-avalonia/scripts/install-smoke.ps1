@@ -1,7 +1,7 @@
 [CmdletBinding()] param(
   [string]$PackageDir,
-  [string]$InstallDir='G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/install',
-  [string]$Out='G:/CODEX/New Manga.workspace/worktrees/FINAL-VALIDATION-1/verification/FINAL-VALIDATION-1/install-smoke.json'
+  [string]$InstallDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/install' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/install' } ),
+  [string]$Out=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'worktrees/FINAL-VALIDATION-1/verification/FINAL-VALIDATION-1/install-smoke.json' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'worktrees/FINAL-VALIDATION-1/verification/FINAL-VALIDATION-1/install-smoke.json' } )
 )
 $ErrorActionPreference='Stop'
 Add-Type -TypeDefinition @"
@@ -9,7 +9,7 @@ using System;using System.Runtime.InteropServices;using System.Text;using System
 public static class WinGuard{public delegate bool EnumProc(IntPtr h,IntPtr l);[DllImport("user32.dll")]static extern bool EnumWindows(EnumProc p,IntPtr l);[DllImport("user32.dll")]static extern uint GetWindowThreadProcessId(IntPtr h,out uint p);[DllImport("user32.dll",CharSet=CharSet.Unicode)]static extern int GetClassName(IntPtr h,StringBuilder s,int n);
 public static int ConsoleWindows(uint pid){int n=0;EnumWindows((h,l)=>{uint p;GetWindowThreadProcessId(h,out p);if(p==pid){var sb=new StringBuilder(64);GetClassName(h,sb,64);if(sb.ToString().Contains("Console"))n++;}return true;},IntPtr.Zero);return n;}}
 "@
-if([string]::IsNullOrWhiteSpace($PackageDir)){$PackageDir=(Get-ChildItem 'G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out' -Directory -Filter 'NewManga-*win-x64'|Select-Object -First 1).FullName}
+if([string]::IsNullOrWhiteSpace($PackageDir)){$PackageDir=(Get-ChildItem $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/out' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/out' } ) -Directory -Filter 'NewManga-*win-x64'|Select-Object -First 1).FullName}
 New-Item -ItemType Directory -Force (Split-Path $Out)|Out-Null
 $installJson=& (Join-Path $PSScriptRoot 'install.ps1') -PackageDir $PackageDir -InstallDir $InstallDir -SkipBackup | ConvertFrom-Json
 $exe=Join-Path $InstallDir 'app/NewManga.App.exe'

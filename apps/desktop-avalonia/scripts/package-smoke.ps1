@@ -1,7 +1,7 @@
-[CmdletBinding()] param([string]$PackageDir,[string]$OutDir='G:/CODEX/New Manga.workspace/worktrees/RELEASE-PACKAGE-1/verification/RELEASE-PACKAGE-1/smoke')
+[CmdletBinding()] param([string]$PackageDir,[string]$OutDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'worktrees/RELEASE-PACKAGE-1/verification/RELEASE-PACKAGE-1/smoke' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'worktrees/RELEASE-PACKAGE-1/verification/RELEASE-PACKAGE-1/smoke' } ))
 $ErrorActionPreference='Stop'
-$install='G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1/install'
-if([string]::IsNullOrWhiteSpace($PackageDir)){$PackageDir=(Get-ChildItem 'G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1/out' -Directory -Filter 'NewManga-*win-x64'|Select-Object -First 1).FullName}
+$install=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/RELEASE-PACKAGE-1/install' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/RELEASE-PACKAGE-1/install' } )
+if([string]::IsNullOrWhiteSpace($PackageDir)){$PackageDir=(Get-ChildItem $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/RELEASE-PACKAGE-1/out' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/RELEASE-PACKAGE-1/out' } ) -Directory -Filter 'NewManga-*win-x64'|Select-Object -First 1).FullName}
 New-Item -ItemType Directory -Force $OutDir|Out-Null
 $installJson=& (Join-Path $PSScriptRoot 'install.ps1') -PackageDir $PackageDir -InstallDir $install | ConvertFrom-Json
 $exe=Join-Path $install 'app/NewManga.App.exe'

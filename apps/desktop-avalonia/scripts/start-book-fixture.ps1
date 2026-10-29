@@ -9,9 +9,9 @@
 # 不会读写真实 %APPDATA%；清理见 verification/BOOK-FIXTURE-1/RETEST.md。
 [CmdletBinding()]
 param(
-    [string]$DataRoot = 'G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data',
+    [string]$DataRoot = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/BOOK-FIXTURE-1/isolated-data' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/BOOK-FIXTURE-1/isolated-data' } ),
     [string]$AppExe = '',
-    [string]$S4Fixtures = 'G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/fixtures',
+    [string]$S4Fixtures = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/UI-WORKBENCH-READER-1/fixtures' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/UI-WORKBENCH-READER-1/fixtures' } ),
     # READER-PROGRESS-1: extra AppOptions (e.g. --demo-write on an isolated root) for evidence runs.
     [string[]]$ExtraArgs = @(),
     [switch]$NoLaunch
@@ -24,8 +24,8 @@ $repoRoot = Resolve-Path (Join-Path $root '..\..')
 function Resolve-AppExe([string]$explicit) {
     if (-not [string]::IsNullOrWhiteSpace($explicit)) { return $explicit }
     $candidates = @(
-        'G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64/app/NewManga.App.exe',
-        'G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/NewManga.App.exe',
+        $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64/app/NewManga.App.exe' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64/app/NewManga.App.exe' } ),
+        $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/NewManga.App.exe' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/NewManga.App.exe' } ),
         (Join-Path $repoRoot 'apps/desktop-avalonia/src/NewManga.App/bin/Release/net9.0/win-x64/publish/NewManga.App.exe')
     )
     foreach ($candidate in $candidates) {

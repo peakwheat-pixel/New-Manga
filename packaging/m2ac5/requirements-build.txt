@@ -1,7 +1,7 @@
 # M2-AC5 build venv requirements (packager + runtime closure).
 #
 # This file never enters the product runtime dependency list: it is installed
-# into a dedicated build venv (G:/CODEX/New Manga.task-envs/m2ac5-build) used
+# into a dedicated build venv ($env:NEWMANGA_WORKSPACE_ROOT/task-envs/m2ac5-build) used
 # solely to run PyInstaller. The product runtime requirements
 # (../../requirements.txt, repo root) stay untouched. [r2 P3-6 path fix]
 #

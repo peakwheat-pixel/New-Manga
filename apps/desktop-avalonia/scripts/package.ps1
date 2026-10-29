@@ -1,8 +1,8 @@
 [CmdletBinding()] param(
-  [string]$OutputRoot='G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out',
+  [string]$OutputRoot=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/out' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/out' } ),
   [string]$Version='0.1.0',
   [string]$SidecarDir='',
-  [string]$BuildPython='G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe',
+  [string]$BuildPython=$( if ($env:NEWMANGA_BUILD_PYTHON) { $env:NEWMANGA_BUILD_PYTHON } else { 'python' } ),
   [switch]$WithModels,
   [int]$MaxZipMB=0
 )

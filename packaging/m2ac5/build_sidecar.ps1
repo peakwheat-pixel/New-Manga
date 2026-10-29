@@ -34,7 +34,7 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string]$PythonExe = "G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe",
+    [string]$PythonExe = $( if ($env:NEWMANGA_BUILD_PYTHON) { $env:NEWMANGA_BUILD_PYTHON } else { 'python' } ),
     # M2-AC5-BUILD-FRESH-CHECKOUT: force a full PyInstaller rebuild even when
     # the onedir bundle already exists (default: incremental short-circuit).
     [switch]$Force,
@@ -44,12 +44,12 @@ param (
     # below (the copy fails closed on any mismatch), so this parameter only
     # relocates the source, never relaxes the verification.
     [Parameter(Mandatory = $false)]
-    [string]$WeightsSource = "G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2/models/detector",
+    [string]$WeightsSource = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/CORE-SLIM-2/models/detector' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/CORE-SLIM-2/models/detector' } ),
     # CORE-SLIM-2: directory holding the manga-ocr ONNX bundle directory
     # (manga-ocr-onnx/ with encoder_model.onnx + decoder_model.onnx + vocab.txt
     # + tokenizer/config json). Same relocation-only semantics.
     [Parameter(Mandatory = $false)]
-    [string]$OcrWeightsSource = "G:/CODEX/New Manga.workspace/task-envs/CORE-SLIM-2/models/ocr",
+    [string]$OcrWeightsSource = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/CORE-SLIM-2/models/ocr' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/CORE-SLIM-2/models/ocr' } ),
     # M2-SFX-PROD-1 / M2-SFX-T4-SWITCH: source directory holding the pinned
     # SFX ONNX export (yolo11s-seg.onnx). Since the v2b switch the default
     # points at the v2b deploy directory (the previous chiqui7 file stays in
@@ -57,7 +57,7 @@ param (
     # Same relocation-only semantics as -WeightsSource:
     # the file must STILL match the SHA-256 pin below or the build fails.
     [Parameter(Mandatory = $false)]
-    [string]$SfxWeightsSource = "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b",
+    [string]$SfxWeightsSource = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/M2-SFX-DETECT/weights-v2b' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/M2-SFX-DETECT/weights-v2b' } ),
     # M2-PROD-DETECT-2: skip the manga weights copy step (debug only — the
     # shipped bundle then has NO in-bundle weights; per the DSH r1 R5/R6
     # review-fix the frozen assembly does NOT crash: it prints one stderr
@@ -357,3 +357,4 @@ if ($BundlePythonRuntime) {
     Copy-PluginPythonRuntime -Bundle $bundle -RuntimeDir $BundlePythonRuntime
 }
 Write-Host "build_sidecar: OK -> $bundle (HEAD=$gitHead, pyinstaller=$pyinstallerVersion)"
+

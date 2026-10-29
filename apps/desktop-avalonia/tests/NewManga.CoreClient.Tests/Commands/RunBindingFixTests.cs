@@ -527,10 +527,10 @@ internal static class ModelSidecarFixture
 {
     public const string ModelsSidecarVariable = "NEWMANGA_MODELS_SIDECAR_DIR";
     public const string BookFixtureVariable = "NEWMANGA_BOOK_FIXTURE_ROOT";
-    private const string DefaultModelsSidecar =
-        @"G:\CODEX\New Manga.workspace\task-envs\FINAL-VALIDATION-1\out\NewManga-0.1.0-win-x64-models\app\core-sidecar";
-    private const string DefaultBookFixture =
-        @"G:\CODEX\New Manga.workspace\task-envs\BOOK-FIXTURE-1\isolated-data";
+    private static readonly string DefaultModelsSidecar =
+        TestWorkspacePaths.Path("task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar");
+    private static readonly string DefaultBookFixture =
+        TestWorkspacePaths.Path("task-envs/BOOK-FIXTURE-1/isolated-data");
     private const string FixtureBookId = "14340ddad0ed472fbe687fe12340c5d8";
     private const string FixtureChapterId = "240bdba549b74281bfc6d901b1a7abd7";
 
@@ -644,3 +644,4 @@ internal static class ModelSidecarFixture
     /// <summary>First page id of the fixture chapter (stable BOOK-FIXTURE content).</summary>
     public const string FirstPageId = "f52f2772e8044557a72e82f5ea6ab932";
 }
+

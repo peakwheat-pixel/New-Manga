@@ -13,7 +13,7 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy',
+    [string]$SidecarDirectory = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-CORECLIENT-1/sidecar-copy' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/HOST-CORECLIENT-1/sidecar-copy' } ),
     [string]$OutputPath = '',
     # S4-CMD-BATCH-1: optional seeded region fixture root (produced by
     # scripts/seed_s4_region_fixture.py). When supplied, the region write face and the

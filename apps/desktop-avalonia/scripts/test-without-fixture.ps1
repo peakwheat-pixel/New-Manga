@@ -23,7 +23,7 @@ $repoRoot = Resolve-Path (Join-Path $root '..\..')
 $evidence = if ($CanonicalEvidence) {
     Join-Path $repoRoot 'verification/HOST-RESOURCE-SECURITY-1'
 } else {
-    'G:/CODEX/New Manga.workspace/task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun'
+    $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun' } )
 }
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null

@@ -29,8 +29,8 @@ public static class BookFixture
 {
     public const string DataRootVariable = "NEWMANGA_BOOK_FIXTURE_ROOT";
 
-    private const string DefaultDataRoot =
-        @"G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data";
+    private static readonly string DefaultDataRoot =
+        TestWorkspacePaths.Path("task-envs/BOOK-FIXTURE-1/isolated-data");
 
     public static bool TryGetDataRoot(out string dataRoot, out string reason)
     {
@@ -95,3 +95,4 @@ public static class BookFixture
         }
     }
 }
+

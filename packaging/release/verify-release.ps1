@@ -27,9 +27,9 @@ Set-StrictMode -Version Latest
 
 $releaseDir = $PSScriptRoot
 $repoRoot = (Resolve-Path (Join-Path $releaseDir '..\..')).Path
-$defaultBase = 'G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64.zip'
-$defaultModels = 'G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64-models.zip'
-$defaultSetup = 'G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe'
+$defaultBase = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64.zip' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64.zip' } )
+$defaultModels = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64-models.zip' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64-models.zip' } )
+$defaultSetup = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/NSIS-INSTALLER-1/out/NewManga-0.1.0-setup.exe' } )
 
 if ([string]::IsNullOrWhiteSpace($Manifest)) {
     $Manifest = Join-Path $releaseDir 'SHA256SUMS'

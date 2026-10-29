@@ -11,8 +11,8 @@ sidecar + Tauri NSIS 安装包。**全部内容仅为本 Task 构建工具**，�
 
 ```powershell
 # 基础解释器 = Python 3.12.3（与产品运行时同系列）
-C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe -m venv "G:/CODEX/New Manga.task-envs/m2ac5-build"
-"G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe" -m pip install -r packaging/m2ac5/requirements-build.txt
+python -m venv "$env:NEWMANGA_WORKSPACE_ROOT/task-envs/m2ac5-build"
+"$env:NEWMANGA_WORKSPACE_ROOT/task-envs/m2ac5-build/Scripts/python.exe" -m pip install -r packaging/m2ac5/requirements-build.txt
 ```
 
 固定版本（`requirements-build.txt`）：
@@ -96,7 +96,7 @@ npm run build
 # 2b. sidecar onedir（产出 apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar/）
 #     M2-PROD-DETECT-2：PyInstaller 构建后自动把 pinned manga 权重三文件
 #     （sha256 逐文件校验，失败即 throw）复制进 <bundle>/models/detector/...；
-#     权重快照默认取 G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/
+#     权重快照默认取 $env:NEWMANGA_WORKSPACE_ROOT/task-envs/M2-DOCTR-QUAL-C4/weights/
 #     ogkalu-comic-text-and-bubble-detector/，其他机器用 -WeightsSource 指向
 #     本地快照（pin 校验不放宽）；-SkipWeights 跳过复制（debug only：装配期
 #     stderr 警告 + detect 期 typed NOT_CONFIGURED，不崩启动）。
@@ -173,7 +173,7 @@ Rust host 侧对接（packaged 判定与 fail-closed 语义见
 
 ```powershell
 # --output-dir 为必选参数，调用方须显式提供历史 raw 树之外的全新隔离输出目录，防止意外覆盖历史证据
-"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py --output-dir "$env:TEMP/m2ac5-cleanstart-artifacts-$(Get-Date -Format yyyyMMdd-HHmmss-fff)"
+"$env:NEWMANGA_WORKSPACE_ROOT/task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py --output-dir "$env:TEMP/m2ac5-cleanstart-artifacts-$(Get-Date -Format yyyyMMdd-HHmmss-fff)"
 ```
 
 净化 PATH（剔除 python/venv/conda/WindowsApps）+ 清空 `M2RC1_*` → NSIS `/S /D=`

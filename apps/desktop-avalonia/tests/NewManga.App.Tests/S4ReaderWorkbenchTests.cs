@@ -26,7 +26,7 @@ internal static class S4Fixtures
                 return configured;
             }
 
-            var fallback = @"G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/fixtures";
+            var fallback = TestWorkspacePaths.Path("task-envs/UI-WORKBENCH-READER-1/fixtures");
             return File.Exists(Path.Combine(fallback, "meta.json")) ? fallback : null;
         }
     }
@@ -34,7 +34,7 @@ internal static class S4Fixtures
     public static bool Ready => Root is not null;
 
     public static string TileDirectory =>
-        @"G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/tiles";
+        TestWorkspacePaths.Path("task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/tiles");
 
     public static IReadOnlyList<string> Typography =>
         Ready
