@@ -56,6 +56,7 @@ from application.editing.ports import (
     RegionRevisionCommitter,
 )
 from application.editing.region_canvas import (
+    MAX_GEOMETRY_POINTS,
     MAX_REGION_IDS_PER_BATCH,
     MAX_REGIONS_PER_PAGE,
     MAX_SPLIT_PARTS,
@@ -100,9 +101,23 @@ def _sync_region_state(region: Region, staged: Region) -> None:
     region.updated_at = staged.updated_at
 
 
+def assert_geometry_within_limits(geometry: RegionGeometry) -> None:
+    """I3/P2-B: service-layer vertex bound (same value as the wire/Host cap).
+
+    ``MAX_GEOMETRY_POINTS`` was only enforced on the wire/Host, so a direct
+    application caller could persist an unbounded polygon inside one write
+    transaction. The application service now rejects it BEFORE persistence
+    with the typed limit failure (wire INVALID_REQUEST/validation).
+    """
+    points = len(geometry.polygon) if geometry.polygon else 4
+    if points > MAX_GEOMETRY_POINTS:
+        raise RegionLimitExceeded(
+            f"geometry supports at most {MAX_GEOMETRY_POINTS} points"
+        )
+
+
 def effective_region_locks(regions: Sequence[Region]) -> tuple[bool, bool, bool]:
     """V11R-F0-1 I1: effective lock inheritance for merge/split.
-
     A source lock is EFFECTIVE when either the region-level projection OR the
     text-level manual-protection flag is set. The derived state is written to
     BOTH projections on the resulting region(s), so an explicit user lock
@@ -578,6 +593,10 @@ class RegionEditingService:
         sfx_policy: SfxPolicy = SfxPolicy.SKIP,
         origin: RegionOrigin = RegionOrigin.USER,
     ) -> Region:
+        # I3/P2-B: the vertex bound is enforced in the APPLICATION layer too
+        # (the wire/Host caps alone let a direct caller persist an unbounded
+        # polygon inside one write transaction).
+        assert_geometry_within_limits(geometry)
         existing = [r for r in self._repo.list_regions(page_id) if not r.deleted]
         # I3/P2-A: the authoritative check is the in-transaction page cap passed
         # to the batch seam below (two callers can both count N-1 here); this
@@ -893,6 +912,7 @@ class RegionEditingService:
         expected_current_revision_id: str | None = None,
         expected_revision_no: int | None = None,
     ) -> GuardedWriteOutcome:
+        assert_geometry_within_limits(geometry)
         region = self._require_region(region_id)
         expected_current_revision_id = self._resolve_expected_current(
             region, expected_revision_no, expected_current_revision_id
@@ -946,6 +966,8 @@ class RegionEditingService:
         geometry = regions[0].geometry
         for region in regions[1:]:
             geometry = geometry.union(region.geometry)
+        # I3/P2-B: the derived merged polygon must also fit the vertex bound.
+        assert_geometry_within_limits(geometry)
 
         merged = Region(
             region_id=_new_id(),
@@ -1013,9 +1035,12 @@ class RegionEditingService:
         if len(parts) < 2:
             raise ValueError("split needs at least two parts")
         if len(parts) > MAX_SPLIT_PARTS:
-            raise ValueError(
+            raise RegionLimitExceeded(
                 f"split supports at most {MAX_SPLIT_PARTS} parts"
             )
+        # I3/P2-B: the per-part vertex bound is enforced before persistence.
+        for geometry in parts:
+            assert_geometry_within_limits(geometry)
         expected_current_revision_id = self._resolve_expected_current(
             source, expected_revision_no
         )
