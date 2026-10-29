@@ -63,6 +63,7 @@ allowed_paths:
 ## Review
 
 - 实施与自查：DSH（Lead）。独立复核：**待补**（region-workbench-owner 轻量复核 4 项 P2 修复与无回归）。
+- 独立复核（region-workbench-owner，reviewed_head `d03f6e115`）：**PASS**（P0=0，P1=0；11 passed、全列 EXPECTED 已覆盖 NULL/默认值、seed 表额外行可捕获、14 表结构检查、FROZEN_V1_COLUMNS 与实际 v1 列一致、3/3 pin/5 行头/check PASS、仅测试+证据；剩余 3×P2：未 seed 后续表额外行范围、book_tags 仅计数、更多 v1 表列冻结，均为可选增强）。详见 [`doc/reviews/UPGRADE-SCHEMA-MIGRATION-P2-1.md`](../reviews/UPGRADE-SCHEMA-MIGRATION-P2-1.md)。
 
 ## Canonical Evidence
 
