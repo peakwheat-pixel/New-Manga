@@ -1,0 +1,142 @@
+{
+  "schema": "newmanga.theme/1",
+  "descriptor": {
+    "id": "newmanga-default",
+    "name": "New Manga Default",
+    "version": "1.0.0",
+    "author": "New Manga",
+    "description": "Shipped A+C fusion theme generated from the frozen design tokens (dark + light).",
+    "kind": "builtin",
+    "tags": [
+      "builtin",
+      "fusion",
+      "a+c"
+    ],
+    "supportsLight": true,
+    "supportsDark": true,
+    "previewHint": null
+  },
+  "light": {
+    "colors": {
+      "Nm.Color.Accent.Active": "#6B470F",
+      "Nm.Color.Accent.Base": "#96651A",
+      "Nm.Color.Accent.Hover": "#7F5515",
+      "Nm.Color.Accent.Muted": "rgba(150,101,26,0.12)",
+      "Nm.Color.Accent.On": "#FFFFFF",
+      "Nm.Color.Accent.Ring": "rgba(150,101,26,0.40)",
+      "Nm.Color.Bg.App": "#FAF9F7",
+      "Nm.Color.Bg.Canvas": "#F4F3F0",
+      "Nm.Color.Bg.Overlay": "#FFFFFF",
+      "Nm.Color.Bg.Panel": "#FFFFFF",
+      "Nm.Color.Bg.Raised": "#F2F1EE",
+      "Nm.Color.Bg.Sunken": "#ECEAE5",
+      "Nm.Color.Line.Default": "rgba(0,0,0,0.11)",
+      "Nm.Color.Line.Grid": "rgba(0,0,0,0.05)",
+      "Nm.Color.Line.Strong": "rgba(0,0,0,0.18)",
+      "Nm.Color.Line.Subtle": "rgba(0,0,0,0.06)",
+      "Nm.Color.Status.Blocked": "#8A6A1F",
+      "Nm.Color.Status.Done": "#3F6B4F",
+      "Nm.Color.Status.Failed": "#A8462F",
+      "Nm.Color.Status.Queued": "#6E7378",
+      "Nm.Color.Status.Running": "#3D6E8E",
+      "Nm.Color.Status.Skipped": "#73777B",
+      "Nm.Color.Status.Stale": "#6B5E82",
+      "Nm.Color.StatusMuted.Blocked": "rgba(138,106,31,0.12)",
+      "Nm.Color.StatusMuted.Done": "rgba(63,107,79,0.12)",
+      "Nm.Color.StatusMuted.Failed": "rgba(168,70,47,0.12)",
+      "Nm.Color.StatusMuted.Queued": "rgba(110,115,120,0.12)",
+      "Nm.Color.StatusMuted.Running": "rgba(61,110,142,0.12)",
+      "Nm.Color.StatusMuted.Skipped": "rgba(138,143,148,0.12)",
+      "Nm.Color.StatusMuted.Stale": "rgba(107,94,130,0.12)",
+      "Nm.Color.Text.Disabled": "#B4B8BD",
+      "Nm.Color.Text.Inverse": "#FAF9F7",
+      "Nm.Color.Text.Primary": "#1C1E21",
+      "Nm.Color.Text.Secondary": "#55595F",
+      "Nm.Color.Text.Tertiary": "#83888F"
+    },
+    "font": {
+      "family": {
+        "ui": "\"Segoe UI Variable Text\", \"Microsoft YaHei UI\", \"Noto Sans SC\", system-ui, sans-serif",
+        "data": "\"Cascadia Mono\", Consolas, \"Noto Sans SC\", monospace",
+        "display": "Georgia, \"Noto Serif SC\", serif"
+      },
+      "scale": 1,
+      "lineHeight": "normal"
+    },
+    "corners": {
+      "none": 0,
+      "sm": 2,
+      "md": 3
+    },
+    "material": "solid",
+    "elevation": "none",
+    "motion": {
+      "fastMs": 90,
+      "normalMs": 140
+    }
+  },
+  "dark": {
+    "colors": {
+      "Nm.Color.Accent.Active": "#C08A34",
+      "Nm.Color.Accent.Base": "#D9A04B",
+      "Nm.Color.Accent.Hover": "#E8B264",
+      "Nm.Color.Accent.Muted": "rgba(217,160,75,0.14)",
+      "Nm.Color.Accent.On": "#17181A",
+      "Nm.Color.Accent.Ring": "rgba(217,160,75,0.45)",
+      "Nm.Color.Bg.App": "#141518",
+      "Nm.Color.Bg.Canvas": "#0F1012",
+      "Nm.Color.Bg.Overlay": "#2A2E34",
+      "Nm.Color.Bg.Panel": "#1A1C1F",
+      "Nm.Color.Bg.Raised": "#22252A",
+      "Nm.Color.Bg.Sunken": "#0B0C0E",
+      "Nm.Color.Line.Default": "rgba(255,255,255,0.10)",
+      "Nm.Color.Line.Grid": "rgba(255,255,255,0.04)",
+      "Nm.Color.Line.Strong": "rgba(255,255,255,0.16)",
+      "Nm.Color.Line.Subtle": "rgba(255,255,255,0.06)",
+      "Nm.Color.Status.Blocked": "#C8903F",
+      "Nm.Color.Status.Done": "#6FA97D",
+      "Nm.Color.Status.Failed": "#CC6A57",
+      "Nm.Color.Status.Queued": "#8A9099",
+      "Nm.Color.Status.Running": "#5B93B8",
+      "Nm.Color.Status.Skipped": "#82878E",
+      "Nm.Color.Status.Stale": "#9A8AB0",
+      "Nm.Color.StatusMuted.Blocked": "rgba(200,144,63,0.16)",
+      "Nm.Color.StatusMuted.Done": "rgba(111,169,125,0.14)",
+      "Nm.Color.StatusMuted.Failed": "rgba(201,99,79,0.16)",
+      "Nm.Color.StatusMuted.Queued": "rgba(92,97,105,0.18)",
+      "Nm.Color.StatusMuted.Running": "rgba(91,147,184,0.16)",
+      "Nm.Color.StatusMuted.Skipped": "rgba(74,79,85,0.14)",
+      "Nm.Color.StatusMuted.Stale": "rgba(154,138,176,0.16)",
+      "Nm.Color.Text.Disabled": "#4E5359",
+      "Nm.Color.Text.Inverse": "#0F1012",
+      "Nm.Color.Text.Primary": "#E9EAEC",
+      "Nm.Color.Text.Secondary": "#A3A8AF",
+      "Nm.Color.Text.Tertiary": "#71767D"
+    },
+    "font": {
+      "family": {
+        "ui": "\"Segoe UI Variable Text\", \"Microsoft YaHei UI\", \"Noto Sans SC\", system-ui, sans-serif",
+        "data": "\"Cascadia Mono\", Consolas, \"Noto Sans SC\", monospace",
+        "display": "Georgia, \"Noto Serif SC\", serif"
+      },
+      "scale": 1,
+      "lineHeight": "normal"
+    },
+    "corners": {
+      "none": 0,
+      "sm": 2,
+      "md": 3
+    },
+    "material": "solid",
+    "elevation": "none",
+    "motion": {
+      "fastMs": 90,
+      "normalMs": 140
+    }
+  },
+  "metadata": {
+    "engineVersion": "1",
+    "generator": "newmanga-theme-gen/1",
+    "extra": {}
+  }
+}

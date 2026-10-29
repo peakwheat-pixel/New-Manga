@@ -1,0 +1,243 @@
+{
+  "task": "V11R-A-3",
+  "ac": "AC5 library_start_run minor compatibility",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\v11r-a3-minor-j338d6ty",
+  "results": [
+    {
+      "label": "core.ping",
+      "request": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "32420346d41e44e88250f36b452576c3",
+        "command": "core.ping",
+        "payload": {}
+      },
+      "response": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "32420346d41e44e88250f36b452576c3",
+        "result": {
+          "status": "ready",
+          "protocol_version": {
+            "major": 2,
+            "minor": 3
+          },
+          "capabilities": [
+            "library.list_books"
+          ]
+        },
+        "error": null
+      }
+    },
+    {
+      "label": "ListBooks",
+      "request": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "3494cfe5cd1d4b7d883357f020691462",
+        "command": "ListBooks",
+        "payload": {}
+      },
+      "response": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "3494cfe5cd1d4b7d883357f020691462",
+        "result": [
+          {
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+            "title": "BOOK-FIXTURE-1 日漫_JA 测试书",
+            "original_title": "",
+            "is_favorite": false,
+            "is_archived": false,
+            "page_count": 8,
+            "created_at": "2026-10-27T01:25:52.758+00:00",
+            "updated_at": "2026-10-27T01:25:52.758+00:00"
+          }
+        ],
+        "error": null
+      }
+    },
+    {
+      "label": "a: StartRun minor=3 ordinary overrides",
+      "request": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "8ae1b9ff10fe409eb6a83ab946e6220e",
+        "command": "StartRun",
+        "payload": {
+          "command": "translate_all",
+          "scope": {
+            "kind": "book",
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8"
+          },
+          "overrides": {
+            "provider_bindings": {
+              "ocr": "manga-ocr"
+            }
+          },
+          "idempotency_key": "v11r-a3-a-809198a7"
+        }
+      },
+      "response": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "8ae1b9ff10fe409eb6a83ab946e6220e",
+        "result": {
+          "run_id": "run-44e51983f1854ef6974aa2be9d5ae1b9",
+          "status": "pending"
+        },
+        "error": null
+      }
+    },
+    {
+      "label": "b: StartRun minor=3 provider_profiles overrides",
+      "request": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "901c4c9fb1ac48e7a882486febbbdd24",
+        "command": "StartRun",
+        "payload": {
+          "command": "translate_all",
+          "scope": {
+            "kind": "book",
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8"
+          },
+          "overrides": {
+            "provider_profiles": {
+              "translation": {
+                "provider_id": "openai-compatible",
+                "model": "probe-model",
+                "endpoint": "http://127.0.0.1:6124"
+              }
+            }
+          },
+          "idempotency_key": "v11r-a3-b-4a5be275"
+        }
+      },
+      "response": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 3
+        },
+        "request_id": "901c4c9fb1ac48e7a882486febbbdd24",
+        "result": null,
+        "error": {
+          "code": "INVALID_REQUEST",
+          "category": "validation",
+          "message": "Run request is invalid",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "label": "c: StartRun minor=7 provider_profiles overrides",
+      "request": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 7
+        },
+        "request_id": "dbbf00521033420f96957824b694805a",
+        "command": "StartRun",
+        "payload": {
+          "command": "translate_all",
+          "scope": {
+            "kind": "book",
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8"
+          },
+          "overrides": {
+            "provider_profiles": {
+              "translation": {
+                "provider_id": "openai-compatible",
+                "model": "probe-model",
+                "endpoint": "http://127.0.0.1:6124"
+              }
+            }
+          },
+          "idempotency_key": "v11r-a3-c-11f61031"
+        }
+      },
+      "response": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 7
+        },
+        "request_id": "dbbf00521033420f96957824b694805a",
+        "result": null,
+        "error": {
+          "code": "INVALID_REQUEST",
+          "category": "validation",
+          "message": "SETTINGS_INVALID_INPUT",
+          "retryable": false,
+          "details": {
+            "phase": "binding",
+            "action": "select_profile",
+            "message_key": "SETTINGS_INVALID_INPUT"
+          }
+        }
+      }
+    },
+    {
+      "label": "d: StartRun minor=7 ordinary overrides",
+      "request": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 7
+        },
+        "request_id": "68edfc0e0bc049f7b461d95acaf5ba9f",
+        "command": "StartRun",
+        "payload": {
+          "command": "translate_all",
+          "scope": {
+            "kind": "book",
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8"
+          },
+          "overrides": {
+            "provider_bindings": {
+              "ocr": "manga-ocr"
+            }
+          },
+          "idempotency_key": "v11r-a3-d-d45a0fa5"
+        }
+      },
+      "response": {
+        "protocol": "new-manga.core",
+        "version": {
+          "major": 2,
+          "minor": 7
+        },
+        "request_id": "68edfc0e0bc049f7b461d95acaf5ba9f",
+        "result": {
+          "run_id": "run-431c8fcbc02d460b8bd32b1046ea8f5c",
+          "status": "pending"
+        },
+        "error": null
+      }
+    }
+  ]
+}
