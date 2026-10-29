@@ -51,7 +51,7 @@ A-1 `CreateChapterAsync`；A-2 `IRunController`（暂停/继续/停止/重试，
 | 层级 | 内容 | 结果 |
 |---|---|---|
 | L1 任务级 | 各任务 build `-warnaserror` + 聚焦测试 | PASS（证据各 `verification/<TASK>/`） |
-| L2 功能级 | 全量 `dotnet test`（5 项目）+ `pytest` | **PASS（最后一次干净运行 ×2）**：DS 82 / ThemeEngine 229 / Host 49(+28 skip) / CoreClient 45(+22 skip) / App 305(+7 skip) = **710 通过 / 57 环境性跳过 / 0 失败**；Python **2727 passed / 10 skipped / 0 failed**（F0 分支） |
+| L2 功能级 | 全量 `dotnet test`（5 项目）+ `pytest` | **PASS（最后一次干净运行 ×2）**：DS **85** / ThemeEngine **235** / Host 49(+28 skip) / CoreClient 119(+22 skip) / App 308(+7 skip) = **796 通过 / 57 环境性跳过 / 0 失败**（CoreClient 偶发 1 例跨项目并行 flake，单项目复跑 0 失败，已登记 FOLLOW-UP-TEST-1）；Python **2727 passed / 10 skipped / 0 failed**（F0 分支） |
 | L3 里程碑 | 独立 Reviewer（≠ Owner）对 UI/主题/DS 的固定 pin 审查 | UI r3：`PASS_WITH_ISSUES`（P1 后已修）；主题域：C-1 PASS、C-2 PASS_WITH_ISSUES、C-3-READY FAIL；DS r2 FAIL→I2 已修待终审；F0 4 轮审查 P1 全关闭 |
 | L4 发布验收 | Windows 实机 / DPI / IME / Trim / AOT / 真 sidecar E2E | **NOT_RUN**（环境限制，见 §9）；新壳在**真实窗口**已启动并截图取证（`verification/V11R-INT-1/v2-shell-default-first-run.png`） |
 
@@ -127,10 +127,30 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 
 | # | 级别 | 缺陷 | 影响 | 状态 |
 |---|---|---|---|---|
-| 1 | **P0** | **v2 默认壳从不启动 Host**（唯一 `StartAsync` 只在 legacy `MainWindow`；v2 链路 `RefreshBooksAsync` 在 `_runtime is null` 时静默返回） | 默认安装后数据面全不可用、状态栏永远"Host 未就绪"、无错误提示 | 修复中（`V11R-INT-2`） |
+| 1 | **P0** | **v2 默认壳从不启动 Host**（唯一 `StartAsync` 只在 legacy `MainWindow`；v2 链路 `RefreshBooksAsync` 在 `_runtime is null` 时静默返回） | 默认安装后数据面全不可用、状态栏永远"Host 未就绪"、无错误提示 | **已修**（INT-2：Start→数据读取、幂等 StartAsync、失败/只读上状态栏、跨线程 Changed marshal）；真实窗口 L4 复跑 **7/7 Host 就绪** |
 | 2 | **P1** | 主题引擎 `ThemePaletteComposer` 把 `Nm.LineHeight.*` 写成绝对像素，DS 按倍数再乘字号 → 行高 ×12（194.4px），任意主题层应用后版式崩坏（含 v2 启动） | 全 UI 版式崩坏 | **已修**（C-2-I1，engine 倍数/绝对分离 + 6 例回归） |
-| 3 | **P1** | 资料柜空态 4 个 `EmptyState` 兄弟节点重叠，Host 未就绪 + 空库时多个同时可见 | 首屏文字叠印（真实截图可见） | 修复中（随 `V11R-INT-2`） |
-| 4 | **P1** | CLI 只接受 `--key=value`，空格形式被静默解析为 `true`（sidecar/data-root/log-dir 全部失效，无 InvalidReason） | 诊断/部署参数静默失效 | 修复中（`A-8`） |
-| 5 | **P2** | `--variant=dark|light` 在 v2 壳无可见差异（主题栈未接 StartupVariant/被覆盖） | 明暗偏好失效 | 修复中（随 `V11R-INT-2`） |
+| 3 | **P1** | 资料柜空态 4 个 `EmptyState` 兄弟节点重叠，Host 未就绪 + 空库时多个同时可见 | 首屏文字叠印（真实截图可见） | **已修**（INT-2：单一状态容器 + 互斥选择器 + 5 组合"恰有一个可见"渲染树断言） |
+| 4 | **P1** | CLI 只接受 `--key=value`，空格形式被静默解析为 `true`（sidecar/data-root/log-dir 全部失效，无 InvalidReason） | 诊断/部署参数静默失效 | **已修**（A-8：两种写法等价、非法/裸值 exit 2、WriteFatal 永不崩） |
+| 5 | **P2** | `--variant=dark\|light` 在 v2 壳无可见差异（主题栈未接 StartupVariant/被覆盖） | 明暗偏好失效 | **已修**（INT-2：采纳已应用外观 + 显式 variant 优先，dark/light 截图哈希不同） |
 
 > 结论：**若只跑单元/headless 测试会全部"通过"**；这批缺陷只有真实窗口 + 真实 sidecar + 真实渲染才能暴露。已在验收报告标注，修复后需重跑 L4 矩阵（`tools/e2e/v2-launch-matrix.ps1`）并重新生成证据。
+
+---
+
+## 11. 最终门禁快照（main `4374dfeae`）
+
+| 项 | 结果 |
+|---|---|
+| `dotnet build NewManga.sln -warnaserror` | **0 warning / 0 error** |
+| `dotnet test NewManga.sln`（runsettings 串行宿主） | DS 85 / ThemeEngine 235 / Host 49(+28 skip) / CoreClient 119(+22 skip) / App 308(+7 skip) = **796 passed / 0 failed** |
+| Python `pytest`（F0 合入时） | **2727 passed / 10 skipped / 0 failed** |
+| 旧主题退役 | `src/**`、`tests/**` 旧符号 0；`NewManga.Theme` 已删除；双壳均可启动 |
+| 真实窗口 L4 | 启动矩阵 7 组：窗口出现 + **Host 就绪 7/7** + 截图 9 张；退出码判定脚本修正后重跑（core-bridge） |
+| 主题切换画布像素 | ThemeEngine `DesignSystemThemeLayerSinkTests`：32×32 区域像素差 **0**，同时断言资源色确实改变 |
+| 主题层行高契约 | 倍数/绝对分离（C-2-I1），6 例回归 + 真实窗口 TextBlock 行高 ≤ 字号×2.5 |
+
+## 12. 交付判定
+
+- **可交付状态**：新壳默认入口 + 三空间 + Studio 双模式 + Theme Studio + 新主题引擎 + 旧主题退役 + V1.1 整改（A 系列）+ Region 写面（F0）+ 导出/术语/Console/Library 全部功能面已集成，main 全量测试 0 失败。
+- **仍需人工确认**：L4 实机项目（DPI/IME/Trim/AOT/真机交互）与 C-3/D-1 的窄验证结论；`FOLLOW-UP-*` 清单为 V1.x 收尾项，不阻塞本轮交付判定。
+- **禁止事项遵守**：未 push 远端、未删除用户数据、未伪造 PASS；所有 NOT_RUN 均如实标注。
