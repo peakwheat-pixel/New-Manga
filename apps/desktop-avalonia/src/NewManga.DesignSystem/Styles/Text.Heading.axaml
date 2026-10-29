@@ -1,20 +1,19 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <!-- Heading tiers: Display (serif, 24/400/1.25) and Title (18/600/1.25). -->
+  <!-- Heading tiers: Display (serif, 24/400/1.25) and Title (18/600/1.25). Foreground is inherited
+       from the root/containing control on purpose (see Text.Inline.axaml). -->
 
   <Style Selector="TextBlock.display">
     <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Display}" />
     <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xxl}" />
     <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Regular}" />
-    <Setter Property="LineHeight" Value="{DynamicResource Nm.LineHeight.Display}" />
-    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="LineHeight" Value="{DynamicResource Nm.TextLineBox.Display}" />
   </Style>
 
   <Style Selector="TextBlock.title">
     <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
     <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xl}" />
     <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.SemiBold}" />
-    <Setter Property="LineHeight" Value="{DynamicResource Nm.LineHeight.Title}" />
-    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="LineHeight" Value="{DynamicResource Nm.TextLineBox.Title}" />
   </Style>
 </Styles>

@@ -1,0 +1,23 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nm="using:NewManga.DesignSystem.Theming">
+  <!-- DESIGN_SYSTEM §8 focus ring: 2px accent outline drawn OUTSIDE the control bounds, never a
+       border-thickness change and never a shadow. The ring visuals live here; controls opt in through
+       NewManga.DesignSystem.Theming.FocusRing.IsEnabled, which hosts the border in the adorner layer.
+       The behavior positions the ring outside the control bounds by exactly one stroke width, so no
+       negative margin exception is needed at the XAML level. -->
+  <Style Selector="Border.nm-focus-ring">
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Focus}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="Border.nm-focus-ring.invalid">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+
+  <Style Selector="Button, TextBox, ComboBox, ToggleSwitch, CheckBox, RadioButton, TabItem, ListBoxItem">
+    <Setter Property="(nm:FocusRing.IsEnabled)" Value="True" />
+  </Style>
+</Styles>

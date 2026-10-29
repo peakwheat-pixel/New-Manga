@@ -6,6 +6,7 @@ public enum TokenValueKind
     Brush,
     FontFamily,
     Double,
+    EmRatio,
     FontWeight,
     CornerRadius,
     Thickness,
@@ -68,9 +69,9 @@ public static class TokenMap
         ("font.lineHeight.tight", "Nm.LineHeight.Tight", TokenValueKind.Double),
         ("font.lineHeight.normal", "Nm.LineHeight.Normal", TokenValueKind.Double),
         ("font.lineHeight.loose", "Nm.LineHeight.Loose", TokenValueKind.Double),
-        ("font.tracking.normal", "Nm.FontTracking.Normal", TokenValueKind.Double),
-        ("font.tracking.caps", "Nm.FontTracking.Caps", TokenValueKind.Double),
-        ("font.tracking.data", "Nm.FontTracking.Data", TokenValueKind.Double),
+        ("font.tracking.normal", "Nm.FontTracking.Normal", TokenValueKind.EmRatio),
+        ("font.tracking.caps", "Nm.FontTracking.Caps", TokenValueKind.EmRatio),
+        ("font.tracking.data", "Nm.FontTracking.Data", TokenValueKind.EmRatio),
 
         // Spacing scale (DESIGN_SYSTEM §4).
         ("space.0", "Nm.Space.0", TokenValueKind.Double),
@@ -171,26 +172,56 @@ public static class TokenMap
             "contract §3.1 icon buttons: square padding = space.2"),
         new("Nm.Padding.IconSm", TokenValueKind.Thickness, "2",
             "contract §3.1 small icon buttons: square padding = space.1"),
+        new("Nm.Padding.Tight", TokenValueKind.Thickness, "2",
+            "tight inset for compound controls (segmented track) = space.1"),
+        new("Nm.Padding.Snug", TokenValueKind.Thickness, "4",
+            "snug inset for dense compound rows = space.2"),
         new("Nm.Icon.Stroke", TokenValueKind.Double, "1.25",
             "contract §2.2 + DESIGN_SYSTEM §5: icon stroke width 1.25px"),
         new("Nm.Icon.SizeSmall", TokenValueKind.Double, "16",
             "DESIGN_SYSTEM §5: dense-area icon size 16px"),
-        new("Nm.Motion.Enabled", TokenValueKind.Boolean, "true",
+        // R-15 extension: a slow exit/reveal duration (220ms) in addition to fast/normal.
+        new("Nm.Motion.Duration.Slow", TokenValueKind.TimeSpan, "220ms",
+            "R-15 extension: slow duration for 200-260ms reveal/exit transitions"),        new("Nm.Motion.Enabled", TokenValueKind.Boolean, "true",
             "contract §2.2: motion toggle; reduced-motion overlay flips it to false and zeroes durations"),
-        new("Nm.LineHeight.Display", TokenValueKind.Double, "30",
-            "DESIGN_SYSTEM §3: 24px x 1.25 (Avalonia LineHeight is absolute, not a multiplier)"),
-        new("Nm.LineHeight.Title", TokenValueKind.Double, "22.5",
-            "DESIGN_SYSTEM §3: 18px x 1.25"),
-        new("Nm.LineHeight.Body", TokenValueKind.Double, "18.85",
-            "DESIGN_SYSTEM §3: 13px x 1.45"),
-        new("Nm.LineHeight.Label", TokenValueKind.Double, "16.2",
-            "DESIGN_SYSTEM §3: 12px x 1.35 (1.35 line-height is a §3 rule, absent from tokens.json)"),
-        new("Nm.LineHeight.Meta", TokenValueKind.Double, "14.85",
-            "DESIGN_SYSTEM §3: 11px x 1.35"),
-        new("Nm.LineHeight.Data", TokenValueKind.Double, "15.6",
-            "DESIGN_SYSTEM §3: 12px x 1.30 (mono data line-height rule)"),
+        // R-14: Nm.LineHeight.Body/Label/Meta/Data are semantic aliases and MUST equal one of the
+        // frozen multipliers (Tight 1.25 / Normal 1.45 / Loose 1.6); the generator asserts that rule.
+        new("Nm.LineHeight.Display", TokenValueKind.Double, "1.25",
+            "R-14 semantic alias: Display uses the frozen Tight multiplier (1.25)"),
+        new("Nm.LineHeight.Title", TokenValueKind.Double, "1.25",
+            "R-14 semantic alias: Title uses the frozen Tight multiplier (1.25)"),
+        new("Nm.LineHeight.Body", TokenValueKind.Double, "1.45",
+            "R-14 semantic alias: Body uses the frozen Normal multiplier (1.45)"),
+        new("Nm.LineHeight.Label", TokenValueKind.Double, "1.25",
+            "R-14 semantic alias: Label uses the frozen Tight multiplier (1.25)"),
+        new("Nm.LineHeight.Meta", TokenValueKind.Double, "1.25",
+            "R-14 semantic alias: Meta uses the frozen Tight multiplier (1.25)"),
+        new("Nm.LineHeight.Data", TokenValueKind.Double, "1.25",
+            "R-14 semantic alias: Data uses the frozen Tight multiplier (1.25)"),
+        // Avalonia TextBlock.LineHeight is an absolute pixel height, not a multiplier, so the styles
+        // consume these derived absolute boxes (font size x the R-14 alias multiplier above).
+        new("Nm.TextLineBox.Display", TokenValueKind.Double, "30",
+            "DESIGN_SYSTEM §3: 24px font x 1.25 absolute line box for Avalonia TextBlock.LineHeight"),
+        new("Nm.TextLineBox.Title", TokenValueKind.Double, "22.5",
+            "DESIGN_SYSTEM §3: 18px font x 1.25"),
+        new("Nm.TextLineBox.Body", TokenValueKind.Double, "18.85",
+            "DESIGN_SYSTEM §3: 13px font x 1.45"),
+        new("Nm.TextLineBox.Label", TokenValueKind.Double, "15",
+            "DESIGN_SYSTEM §3: 12px font x 1.25 (R-14 alias multiplier)"),
+        new("Nm.TextLineBox.Meta", TokenValueKind.Double, "13.75",
+            "DESIGN_SYSTEM §3: 11px font x 1.25 (R-14 alias multiplier)"),
+        new("Nm.TextLineBox.Data", TokenValueKind.Double, "15",
+            "DESIGN_SYSTEM §3: 12px mono font x 1.25 (R-14 alias multiplier)"),
+        new("Nm.Size.Marker", TokenValueKind.Double, "16",
+            "DESIGN_SYSTEM §6.1 Checkbox/Radio: 16px marker box (hit area stays Nm.Size.ControlHeight)"),
+        new("Nm.Size.MarkerCore", TokenValueKind.Double, "8",
+            "DESIGN_SYSTEM §6.1 Radio: 8px selected core inside the marker box"),
+        new("Nm.Size.ScrollBar", TokenValueKind.Double, "8",
+            "DESIGN_SYSTEM §6.1: scrollbar thickness 8px"),
         new("Nm.Opacity.Disabled", TokenValueKind.Double, "0.4",
             "DESIGN_SYSTEM §6.4: disabled HUD actions are 40% opaque"),
+        new("Nm.Color.Scrim", TokenValueKind.Brush, "rgba(0,0,0,0.55)",
+            "DESIGN_SYSTEM §6.2 Modal: overlay scrim; the frozen baseline defines Modal but no scrim color, so a neutral 55% black scrim is derived (abandoning the layer behind, never decorative)"),
     ];
 
     /// <summary>
@@ -307,3 +338,5 @@ public static class TokenMap
         return new string(characters);
     }
 }
+
+

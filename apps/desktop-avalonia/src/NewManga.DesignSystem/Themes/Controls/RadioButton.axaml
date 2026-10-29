@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <!-- RadioButton: square 2px-radius marker (DESIGN_SYSTEM forbids radii > 3px) with an accent core
-       when selected. Same hit-area rule as CheckBox. -->
+       when selected. Same hit-area and outside-focus-ring rules as CheckBox. -->
   <ControlTheme x:Key="{x:Type RadioButton}" TargetType="RadioButton">
     <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeight}" />
     <Setter Property="Background" Value="Transparent" />
@@ -14,29 +14,33 @@
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}" Background="Transparent">
-          <Border Name="PART_Outer"
-                  Width="16" Height="16"
-                  VerticalAlignment="Center"
-                  Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="{TemplateBinding CornerRadius}">
-            <Border Name="PART_Core"
-                    Width="8" Height="8"
-                    IsVisible="False"
-                    CornerRadius="{DynamicResource Nm.Corner.Sm}"
-                    Background="{DynamicResource Nm.Color.Accent.Base}" />
-          </Border>
-          <ContentPresenter Name="PART_ContentPresenter"
-                            Grid.Column="1"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            Foreground="{TemplateBinding Foreground}"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            VerticalContentAlignment="Center" />
-        </Grid>
+        <Panel Background="Transparent">
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <Border Name="PART_Outer"
+                    Width="{DynamicResource Nm.Size.Marker}"
+                    Height="{DynamicResource Nm.Size.Marker}"
+                    VerticalAlignment="Center"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+              <Border Name="PART_Core"
+                      Width="{DynamicResource Nm.Size.MarkerCore}"
+                      Height="{DynamicResource Nm.Size.MarkerCore}"
+                      IsVisible="False"
+                      CornerRadius="{DynamicResource Nm.Corner.Sm}"
+                      Background="{DynamicResource Nm.Color.Accent.Base}" />
+            </Border>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Grid.Column="1"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontFamily="{TemplateBinding FontFamily}"
+                              FontSize="{TemplateBinding FontSize}"
+                              VerticalContentAlignment="Center" />
+          </Grid>
+        </Panel>
       </ControlTemplate>
     </Setter>
 
