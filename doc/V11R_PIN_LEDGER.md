@@ -12,9 +12,9 @@
 | V11R-A-5 P0 写入策略 | `06914ec1f`（代码 `74d6f37e9`） | `f23f44da7` | `doc/plan/V11R_WRITE_POLICY.md`、`verification/V11R-A-5/` | 待 L3 批次（高风险，优先） |
 | V11R-A-6 启动自检 | — | — | — | in_progress |
 | V11R-A-7 export stale_policy | — | — | — | in_progress |
-| V11R-D-1 Design System | `be76f1681` | `e070cc074` | `verification/V11R-D-1/`（含 contrast-matrix） | r1 FAIL（P1 已修）；**r2 审查进行中** |
+| V11R-D-1 Design System | `a53376f`（D-1 终态） | `e070cc074`、`e7c…` 系列 | `verification/V11R-D-1/`（I2/I3 证据） | r1/r2/r3 FAIL→修复；**r4 PASS_WITH_ISSUES，FocusRing P2 已 CLOSED → 已收口** |
 | V11R-C-1 Theme Engine | `09cd62710`（代码 `daff73dba`） | `cc14a41d5`、`907339511`、`69ce04eef`、`0b44645ea` | `verification/V11R-C-1/`、`CONSUMER_GUIDE.md`、`INT_WIRING.md` | 待 L3 批次（203–229 测试） |
-| V11R-C-3-READY 退役就绪 | `9acddc23f` | `5f4a0eee5` | `verification/V11R-C-3-READY/` | 待 L3 批次 |
+| V11R-C-3 旧主题退役 | `a466a150`(R1-R6) + `e0b743a3`(I1) | `67b86c519`、`4374dfeae`、`e077e57f5` | `verification/V11R-C-3/**`（READY 包字节还原） | r1 FAIL(P2-only)→I1 修；窄验证：D-1 可封闭、**C-3 待干净树 R6 证据（I2）** |
 | V11R-F0-1 Region 写面 | `1a457111c`（I2 最终） | **未合并（等复审）** | `doc/contracts/V11R_REGION_WRITE_CONTRACT.md` v1.3、`verification/V11R-F0-1-I2/` | r1 FAIL、r2 FAIL；**r3 审查进行中** |
 | V11R-F0-2 Region 文本投影 | `089cdb761`（修复 `1798d2e00`） | 随 F0-1 整支合并 | `verification/V11R-F0-2/` | 随 F0-1 复审 |
 | V11R-B-1 外壳+Library | `09f8ad183` + `23217ac25`（证据） | `9a58f71ee`、`22b57ca91` | `verification/V11R-B-1/` | r1 PASS_WITH_ISSUES→I1 已修；**r3 审查进行中** |
@@ -24,7 +24,7 @@
 | V11R-B-5 导出/术语 | `455d2c432` | `1e6a3c4ee` | `verification/V11R-B-5/` | 待独立复核（拟并入下一轮） |
 | V11R-C-2 Theme Studio | — | — | — | in_progress |
 | V11R-INT-0 壳集成 | — | — | — | in_progress（ui-shell） |
-| V11R-INT-1 默认入口切换 | — | — | — | pending（Lead） |
+| V11R-INT-1 默认入口切换 | `--shell=v2` 默认（AppOptions） | main 集成 | `verification/V11R-INT-1/` | 真实窗口首启证据；L4 矩阵 7/7 PASS（含 Host 就绪 7/7） |
 | V11R-C-3 旧主题退役 | — | — | `doc/plan/V11R_THEME_RETIREMENT_PLAN.md` | pending（R1–R6，前置 C-3-READY 已交付） |
 
 ## 已知缺口（须在 L4 前关闭）

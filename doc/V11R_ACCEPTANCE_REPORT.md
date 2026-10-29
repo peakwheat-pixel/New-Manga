@@ -145,7 +145,7 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 | `dotnet test NewManga.sln`（runsettings 串行宿主） | DS 85 / ThemeEngine 235 / Host 49(+28 skip) / CoreClient 119(+22 skip) / App 308(+7 skip) = **796 passed / 0 failed** |
 | Python `pytest`（F0 合入时） | **2727 passed / 10 skipped / 0 failed** |
 | 旧主题退役 | `src/**`、`tests/**` 旧符号 0；`NewManga.Theme` 已删除；双壳均可启动 |
-| 真实窗口 L4 | 启动矩阵 7 组：窗口出现 + **Host 就绪 7/7** + 截图 9 张；退出码判定脚本修正后重跑（core-bridge） |
+| 真实窗口 L4 | 启动矩阵 **7/7 PASS**：三尺寸×明暗 + legacy 回滚；窗口出现 + **Host 就绪 7/7** + 截图 9 张 + **自然退出 exit 0（7/7）**，无 harness 终止 |
 | 主题切换画布像素 | ThemeEngine `DesignSystemThemeLayerSinkTests`：32×32 区域像素差 **0**，同时断言资源色确实改变 |
 | 主题层行高契约 | 倍数/绝对分离（C-2-I1），6 例回归 + 真实窗口 TextBlock 行高 ≤ 字号×2.5 |
 
