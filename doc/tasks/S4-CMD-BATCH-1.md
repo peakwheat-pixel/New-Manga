@@ -3,7 +3,7 @@ id: S4-CMD-BATCH-1
 title: S4-A/B/C 命令接线（region 写 4 + reader 2）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-27_followups_a2_extra
 suggested_owner: saber-ui-spec
 owner: route-research
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 171529b5d
 branch: task/S4-CMD-BATCH-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/S4-CMD-BATCH-1
-integration_commit: null
+integration_commit: 0fba83021
 delivery_head: 90535f048e388a513c19ba48ec6e4d304a0712a7
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/S4-CMD-BATCH-1
 allowed_paths:
   - doc/tasks/S4-CMD-BATCH-1.md
@@ -97,18 +97,11 @@ S2 遗留 42 条 NS 中，S4-A/B/C 登记 10 条：region 写 4、reader 2、Run
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`complete`（13 条 sha256 pin）。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
-## Review（DSH 集成复核，2026-10-27）— PASS
-
-- **5 条新增 IMPLEMENTED**（第 6 条 library_get_reader_projection 基线已由 NS-WIRE-A1 实现，本轮真实 chapter 复验）：set_region_type、estore_region_revision、erender_page、esolve_page_resource、library_save_reading_progress。
-- 全部对冻结 sidecar **真实执行**：新 fixture scripts/seed_s4_region_fixture.py（BOOK-FIXTURE durable 派生真实 region/clean artifact）测得 **7/7 all_ok**（vidence/commands/s4-region-reader-results.json）；raw wire 探针 6 目标路由 ok:true。
-- parity：xtract-command-surface.py --check PASS、Rust 快照 sha 未变；**51 IMPLEMENTED / 15 NOT_SUPPORTED**（24/42 → 33/33 → 46/20 → 51/15）。
-- 回归：DSH 复跑 scripts/test.ps1 → **162/162**；实现方报 vitest 60/567、pytest 3F/2746P/9S（失败集合同基线，无新增）。
-- AC5：check.ps1 -TaskPath PASS；13 条 64-hex pin；Handoff + Record Decision（region 写权限/只读门）。
-- 遗留（记录不阻塞）：list_region_revisions（读，本批未含）仍 NS、路由探针已 ok:true 可下批接线；region 写 UI 入口 + 只读门留 S5；rerender preview 仅断言存在性。
-- 集成：0fba83021。
+- Closed：2026-10-29 as **done**（DSH 独立复核：交付 `90535f048` 已是 main 祖先、集成 merge `0fba83021`、
+  13/13 evidence pin SHA-256 全部匹配、main registry 57 条命令映射（S4 的 6 条均在）、AC1–AC5 全 MET）。
+- 补记：本卡在 2026-10-27 已由 author=route-research 完成并经 verify=DSH 集成（`0fba83021`），
+  后续状态未及时转为 done（遗留 in_review），本次为复核收口。
+- canonical_evidence_status：`complete`（13 条 CANONICAL pin，全部匹配）。
+- resource_closeout_status：`complete`（无派生资源需清理；fixture 脚本在仓库内）。
+- 删除、迁移、归档数量/字节数：无。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
