@@ -138,7 +138,7 @@ public sealed class TokenResourceDictionaryTests
         Assert.Equal(expectedCompact, ActualStringKeys(compact));
         Assert.Equal(expectedCompact, ActualStringKeys(spacious));
 
-        var reducedKeys = new[] { "Nm.Motion.Duration.Instant", "Nm.Motion.Duration.Fast", "Nm.Motion.Duration.Normal", "Nm.Motion.Enabled" }
+        var reducedKeys = new[] { "Nm.Motion.Duration.Instant", "Nm.Motion.Duration.Fast", "Nm.Motion.Duration.Normal", "Nm.Motion.Duration.Slow", "Nm.Motion.Enabled" }
             .OrderBy(static key => key, StringComparer.Ordinal).ToArray();
         Assert.Equal(reducedKeys, ActualStringKeys(reduced));
     }
@@ -170,3 +170,4 @@ public sealed class TokenResourceDictionaryTests
     private static Color ColorOf(ResourceDictionary dictionary, string key, ThemeVariant? theme = null) =>
         Assert.IsType<SolidColorBrush>(Resolve(dictionary, key, theme)).Color;
 }
+

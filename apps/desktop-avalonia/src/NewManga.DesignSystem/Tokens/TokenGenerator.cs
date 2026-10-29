@@ -1,4 +1,5 @@
 using System.Globalization;
+using Avalonia;
 using NewManga.DesignSystem.Accessibility;
 
 namespace NewManga.DesignSystem.Tokens;
@@ -181,6 +182,8 @@ public static class TokenGenerator
             ("Nm.Motion.Duration.Instant", TokenValueKind.TimeSpan, "0ms"),
             ("Nm.Motion.Duration.Fast", TokenValueKind.TimeSpan, "0ms"),
             ("Nm.Motion.Duration.Normal", TokenValueKind.TimeSpan, "0ms"),
+            // I2/P2-④: every published duration key must be zeroed, including the R-15 Slow extension.
+            ("Nm.Motion.Duration.Slow", TokenValueKind.TimeSpan, "0ms"),
             ("Nm.Motion.Enabled", TokenValueKind.Boolean, "false"),
         };
         foreach (var (key, kind, value) in reducedMotionRows)
@@ -411,8 +414,22 @@ public static class TokenGenerator
         IReadOnlyList<(string Key, string RawValue)> compactRows,
         IReadOnlyList<(string Key, string RawValue)> spaciousRows)
     {
-        var globalKeys = TokenMap.GlobalBindings.ToDictionary(static binding => binding.ResourceKey, StringComparer.Ordinal);
         var globalValues = entries.ToDictionary(static entry => entry.Path, static entry => entry.Value, StringComparer.Ordinal);
+        // Comfortable baselines come from frozen token bindings or from generator-derived globals; both
+        // are the single authoritative source, so every density row can be checked without skipping.
+        var comfortableBaselines = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var binding in TokenMap.GlobalBindings)
+        {
+            if (globalValues.TryGetValue(binding.TokenPath, out var value))
+            {
+                comfortableBaselines[binding.ResourceKey] = value;
+            }
+        }
+
+        foreach (var derived in TokenMap.DerivedGlobals)
+        {
+            comfortableBaselines[derived.ResourceKey] = derived.RawValue;
+        }
 
         for (var index = 0; index < compactRows.Count; index++)
         {
@@ -423,31 +440,46 @@ public static class TokenGenerator
                 throw new InvalidOperationException($"density rows drifted at index {index}");
             }
 
-            var globalBinding = TokenMap.GlobalBindings.FirstOrDefault(
-                binding => string.Equals(binding.ResourceKey, compactKey, StringComparison.Ordinal));
-            if (globalBinding is null || !globalValues.TryGetValue(globalBinding.TokenPath, out var rawValue))
+            if (!comfortableBaselines.TryGetValue(compactKey, out var rawValue))
             {
+                throw new InvalidOperationException(
+                    $"density key '{compactKey}' has no comfortable baseline in the frozen token source");
+            }
+
+            if (DensityKind(compactKey) == TokenValueKind.Thickness)
+            {
+                // I2/P2-⑦: compare every Thickness component instead of skipping padding aggregates.
+                var reference = TokenValues.ParseThickness(rawValue);
+                var compact = TokenValues.ParseThickness(compactRows[index].RawValue);
+                var spacious = TokenValues.ParseThickness(spaciousRows[index].RawValue);
+                if (!IsStrictlySmallerThickness(compact, reference) ||
+                    !IsStrictlySmallerThickness(reference, spacious))
+                {
+                    throw new InvalidOperationException(
+                        $"density derivation for '{compactKey}' must satisfy Compact < Comfortable < Spacious " +
+                        $"component-wise (Thickness {compact} / {reference} / {spacious})");
+                }
+
                 continue;
             }
 
-            if (compactKey.Contains("Padding", StringComparison.Ordinal))
-            {
-                continue; // thickness aggregates are compared by their leading numeric value only
-            }
-
-            var reference = TokenValues.ParseDimension(rawValue);
-            var compact = TokenValues.ParseDimension(compactRows[index].RawValue);
-            var spacious = TokenValues.ParseDimension(spaciousRows[index].RawValue);
-            if (!(compact < reference && reference < spacious))
+            var doubleReference = TokenValues.ParseDimension(rawValue);
+            var doubleCompact = TokenValues.ParseDimension(compactRows[index].RawValue);
+            var doubleSpacious = TokenValues.ParseDimension(spaciousRows[index].RawValue);
+            if (!(doubleCompact < doubleReference && doubleReference < doubleSpacious))
             {
                 throw new InvalidOperationException(
                     $"density derivation for '{compactKey}' must satisfy Compact < Comfortable < Spacious " +
-                    $"({compact} / {reference} / {spacious})");
+                    $"({doubleCompact} / {doubleReference} / {doubleSpacious})");
             }
         }
-
-        _ = globalKeys;
     }
+
+    private static bool IsStrictlySmallerThickness(Thickness smaller, Thickness larger) =>
+        smaller.Left < larger.Left &&
+        smaller.Top < larger.Top &&
+        smaller.Right < larger.Right &&
+        smaller.Bottom < larger.Bottom;
 
     private static void ValidateHighContrastContrast(
         IReadOnlyDictionary<string, string> darkBrushes,
@@ -505,3 +537,5 @@ public static class TokenGenerator
         ? TokenValueKind.Thickness
         : TokenValueKind.Double;
 }
+
+

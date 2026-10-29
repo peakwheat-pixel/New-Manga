@@ -18,8 +18,10 @@ namespace NewManga.DesignSystem.Theming;
 /// Boundary with the Theme Engine (V11R-C-1 Part B): the design system owns tokens, styles, controls
 /// and the mechanism that applies a dictionary to the running application; the theme engine owns theme
 /// semantics (packages, registry, persistence, preview). The engine feeds a theme layer through
-/// <see cref="ApplyThemeLayer"/> (contract §4.1 / R-15: 59 whitelisted keys — 35 colors, 3 font
-/// families, 6 font sizes, 9 line heights, 3 corner radii, 3 motion durations) or just the color subset
+/// <see cref="ApplyThemeLayer"/> (contract §4.1 / R-15: 59 required keys — 35 colors, 3 font
+/// families, 6 font sizes, 9 line heights, 3 corner radii, 3 motion durations; the six absolute
+/// <c>Nm.TextLineBox.*</c> keys are optional and derived from the layer's own sizes/multipliers when
+/// omitted) or just the color subset
 /// through <see cref="ApplyPalette"/>, and restores the shipped look with <see cref="RevertPalette"/>.
 /// </para>
 /// </summary>
@@ -70,6 +72,17 @@ public sealed class DesignSystemThemeManager : IDisposable
         NmKeys.LineHeight.Data,
     ];
 
+    /// <summary>Absolute line-box keys the text styles consume (Avalonia LineHeight is px, not a multiplier).</summary>
+    public static IReadOnlyList<string> ThemeLayerLineBoxKeys { get; } =
+    [
+        NmKeys.TextLineBox.Display,
+        NmKeys.TextLineBox.Title,
+        NmKeys.TextLineBox.Body,
+        NmKeys.TextLineBox.Label,
+        NmKeys.TextLineBox.Meta,
+        NmKeys.TextLineBox.Data,
+    ];
+
     /// <summary>Corner-radius keys a theme layer carries (R-15).</summary>
     public static IReadOnlyList<string> ThemeLayerCornerKeys { get; } =
     [
@@ -107,8 +120,14 @@ public sealed class DesignSystemThemeManager : IDisposable
             .Concat(ThemeLayerMotionKeys)
             .ToArray();
 
-    /// <summary>Keys a theme layer may define; anything outside this whitelist is ignored and recorded.</summary>
-    public static IReadOnlyList<string> ThemeLayerAllowedKeys => ThemeLayerRequiredKeys;
+    /// <summary>
+    /// Keys a theme layer may define: the 59 required keys plus the six absolute line boxes. The line
+    /// boxes may be supplied explicitly; when omitted the manager derives them from the layer's own font
+    /// sizes and line-height multipliers so text styles always read consistent values. Anything else is
+    /// ignored and recorded.
+    /// </summary>
+    public static IReadOnlyList<string> ThemeLayerAllowedKeys { get; } =
+        ThemeLayerRequiredKeys.Concat(ThemeLayerLineBoxKeys).ToArray();
 
     private readonly Application _application;
     private readonly IDesignSystemResourceSource _resources;
@@ -169,42 +188,101 @@ public sealed class DesignSystemThemeManager : IDisposable
     /// Ensures the token dictionaries exist, then applies the current settings. An optional
     /// <paramref name="appearance"/> lets the host pass the persisted/user startup choice; when omitted
     /// the frozen default (dark) is used, so initialization never silently overrides a known choice.
-    /// Safe to call twice; the second call re-normalizes a foreign palette provider.
+    /// All dictionaries are loaded before any state is committed: a failure leaves the manager and the
+    /// application resource stack untouched.
     /// </summary>
     public bool Initialize(AppearanceMode? appearance = null)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
+        var mode = appearance ?? Appearance;
+        if (!TryLoadPaletteFor(mode, out var palette, out var isLight))
+        {
+            return false;
+        }
+
+        var needsGlobalTokens = !AnyProviderHasKey(GlobalProbeKey);
+        ResourceDictionary? globalTokens = null;
+        if (needsGlobalTokens && !TryLoadAndRecord(_resources.GlobalTokens, out globalTokens))
+        {
+            return false;
+        }
+
+        ResourceDictionary? contrast = null;
+        ResourceDictionary? density = null;
+        ResourceDictionary? motion = null;
+        if (Contrast != ContrastMode.Standard &&
+            !TryLoadAndRecord(_resources.HighContrastPalette, out contrast))
+        {
+            return false;
+        }
+
+        if (Density != DensityMode.Comfortable &&
+            !TryLoadAndRecord(DensitySource(Density), out density))
+        {
+            return false;
+        }
+
+        if (ReducedMotion && !TryLoadAndRecord(_resources.ReducedMotion, out motion))
+        {
+            return false;
+        }
+
+        // ---- Commit (no failure can happen past this point) --------------------------------
         if (!_listening)
         {
             _application.ActualThemeVariantChanged += OnActualThemeVariantChanged;
             _listening = true;
         }
 
-        if (appearance is not null)
+        _application.RequestedThemeVariant = VariantFor(mode);
+        Appearance = mode;
+        if (needsGlobalTokens && globalTokens is not null)
         {
-            Appearance = appearance.Value;
+            _application.Resources.MergedDictionaries.Add(globalTokens);
         }
 
-        var ok = ApplyRequestedVariant(forceBuiltin: true);
-        ok &= SetContrast(Contrast);
-        ok &= SetDensity(Density);
-        ok &= SetReducedMotion(ReducedMotion);
+        SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true, themeLayerId: null);
+        CommitOverlay(ref _contrastOverlay, contrast);
+        CommitOverlay(ref _densityOverlay, density);
+        CommitOverlay(ref _motionOverlay, motion);
+        ReorderResourceStack();
+        ThemeLayerIssues = [];
+        LastError = null;
         IsInitialized = true;
-        return ok;
+        return true;
     }
 
-    /// <summary>Switches appearance; the shipped palette for that appearance becomes active (a custom theme layer is dropped).</summary>
+    /// <summary>
+    /// Switches appearance; the shipped palette for that appearance becomes active (a custom theme layer
+    /// is dropped). The target palette is loaded and validated before the request/state is changed, so a
+    /// failed switch keeps the previous appearance and resources intact.
+    /// </summary>
     public bool SetAppearance(AppearanceMode mode)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
+
+        if (!TryLoadPaletteFor(mode, out var palette, out var isLight))
+        {
+            return false;
+        }
+
+        if (!EnsureGlobalTokens())
+        {
+            return false;
+        }
+
+        _application.RequestedThemeVariant = VariantFor(mode);
         Appearance = mode;
-        return ApplyRequestedVariant(forceBuiltin: true);
+        SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true, themeLayerId: null);
+        ThemeLayerIssues = [];
+        LastError = null;
+        return true;
     }
 
     /// <summary>
     /// Theme Engine seam (contract §4.1 / R-15): replaces the themeable layer with a whitelisted set of
-    /// 59 keys (35 colors + 3 font families + 6 font sizes + 9 line heights + 3 corner radii + 3 motion
+    /// 59 required keys (35 colors + 3 font families + 6 font sizes + 9 line heights + 3 corner radii + 3 motion
     /// durations). Keys outside the whitelist are ignored and reported in
     /// <see cref="ThemeLayerIssues"/>; material/elevation keys are not part of the frozen whitelist.
     /// The previous state is kept if the layer is incomplete or a value has the wrong type.
@@ -271,26 +349,31 @@ public sealed class DesignSystemThemeManager : IDisposable
     public bool RevertPalette()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        return ApplyRequestedVariant(forceBuiltin: true);
+        return SetAppearance(Appearance);
     }
 
     /// <summary>Adds/removes the complete high-contrast palette overlay.</summary>
     public bool SetContrast(ContrastMode mode)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        Contrast = mode;
+
         if (mode == ContrastMode.Standard)
         {
-            RemoveOverlay(ref _contrastOverlay);
+            CommitOverlay(ref _contrastOverlay, null);
+            Contrast = mode;
+            LastError = null;
             return true;
         }
 
+        // Load before mutating: a broken overlay must not change Contrast or the stack.
         if (!TryLoadAndRecord(_resources.HighContrastPalette, out var dictionary))
         {
             return false;
         }
 
-        ReplaceOverlay(ref _contrastOverlay, dictionary);
+        CommitOverlay(ref _contrastOverlay, dictionary);
+        Contrast = mode;
+        LastError = null;
         return true;
     }
 
@@ -298,20 +381,23 @@ public sealed class DesignSystemThemeManager : IDisposable
     public bool SetDensity(DensityMode mode)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        Density = mode;
+
         if (mode == DensityMode.Comfortable)
         {
-            RemoveOverlay(ref _densityOverlay);
+            CommitOverlay(ref _densityOverlay, null);
+            Density = mode;
+            LastError = null;
             return true;
         }
 
-        var source = mode == DensityMode.Compact ? _resources.CompactDensity : _resources.SpaciousDensity;
-        if (!TryLoadAndRecord(source, out var dictionary))
+        if (!TryLoadAndRecord(DensitySource(mode), out var dictionary))
         {
             return false;
         }
 
-        ReplaceOverlay(ref _densityOverlay, dictionary);
+        CommitOverlay(ref _densityOverlay, dictionary);
+        Density = mode;
+        LastError = null;
         return true;
     }
 
@@ -319,10 +405,12 @@ public sealed class DesignSystemThemeManager : IDisposable
     public bool SetReducedMotion(bool enabled)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        ReducedMotion = enabled;
+
         if (!enabled)
         {
-            RemoveOverlay(ref _motionOverlay);
+            CommitOverlay(ref _motionOverlay, null);
+            ReducedMotion = false;
+            LastError = null;
             return true;
         }
 
@@ -331,7 +419,9 @@ public sealed class DesignSystemThemeManager : IDisposable
             return false;
         }
 
-        ReplaceOverlay(ref _motionOverlay, dictionary);
+        CommitOverlay(ref _motionOverlay, dictionary);
+        ReducedMotion = true;
+        LastError = null;
         return true;
     }
 
@@ -339,14 +429,29 @@ public sealed class DesignSystemThemeManager : IDisposable
     public bool ResetToDefaults()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        RemoveOverlay(ref _contrastOverlay);
-        RemoveOverlay(ref _densityOverlay);
-        RemoveOverlay(ref _motionOverlay);
+
+        if (!TryLoadPaletteFor(AppearanceMode.Dark, out var palette, out var isLight))
+        {
+            return false;
+        }
+
+        if (!EnsureGlobalTokens())
+        {
+            return false;
+        }
+
+        CommitOverlay(ref _contrastOverlay, null);
+        CommitOverlay(ref _densityOverlay, null);
+        CommitOverlay(ref _motionOverlay, null);
+        _application.RequestedThemeVariant = ThemeVariant.Dark;
         Appearance = AppearanceMode.Dark;
         Contrast = ContrastMode.Standard;
         Density = DensityMode.Comfortable;
         ReducedMotion = false;
-        return ApplyRequestedVariant(forceBuiltin: true);
+        SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true, themeLayerId: null);
+        ThemeLayerIssues = [];
+        LastError = null;
+        return true;
     }
 
     public void Dispose()
@@ -387,23 +492,52 @@ public sealed class DesignSystemThemeManager : IDisposable
     private static string RequireId(string id) =>
         string.IsNullOrWhiteSpace(id) ? "unnamed" : id;
 
+    /// <summary>
+    /// Derivation table for the absolute line boxes the text styles consume. The theme layer carries the
+    /// multipliers (R-15 line-height group); the manager multiplies them by the layer's own font sizes so
+    /// styles never read a stale absolute value after a theme switch (I2/P2-①).
+    /// </summary>
+    private static readonly (string LineBoxKey, string FontSizeKey, string LineHeightKey)[] LineBoxDerivations =
+    [
+        (NmKeys.TextLineBox.Display, NmKeys.FontSize.Xxl, NmKeys.LineHeight.Display),
+        (NmKeys.TextLineBox.Title, NmKeys.FontSize.Xl, NmKeys.LineHeight.Title),
+        (NmKeys.TextLineBox.Body, NmKeys.FontSize.Md, NmKeys.LineHeight.Body),
+        (NmKeys.TextLineBox.Label, NmKeys.FontSize.Sm, NmKeys.LineHeight.Label),
+        (NmKeys.TextLineBox.Meta, NmKeys.FontSize.Xs, NmKeys.LineHeight.Meta),
+        (NmKeys.TextLineBox.Data, NmKeys.FontSize.Sm, NmKeys.LineHeight.Data),
+    ];
+
     private bool ApplyThemeLayerCore(
         ResourceDictionary layer,
         string themeId,
         IReadOnlyList<string> inheritedIssues)
     {
         var issues = new List<string>(inheritedIssues);
-        var filtered = new ResourceDictionary();
+        var entries = new Dictionary<string, object?>(StringComparer.Ordinal);
         foreach (var (key, value) in ReadEntries(layer))
         {
             if (ThemeLayerAllowedKeys.Contains(key, StringComparer.Ordinal))
             {
-                filtered[key] = value;
+                entries[key] = value;
             }
             else
             {
-                issues.Add($"ignored key '{key}' from theme layer '{themeId}': outside the R-15 59-key whitelist");
+                issues.Add(
+                    $"ignored key '{key}' from theme layer '{themeId}': outside the R-15 59-key whitelist " +
+                    "or the six absolute line-box keys");
             }
+        }
+
+        if (!TryDeriveLineBoxes(entries, themeId, out var lineBoxError))
+        {
+            LastError = lineBoxError;
+            return false;
+        }
+
+        var filtered = new ResourceDictionary();
+        foreach (var (key, value) in entries)
+        {
+            filtered[key] = value;
         }
 
         if (!ValidateValues(filtered, themeId, ThemeLayerRequiredKeys, out var error))
@@ -421,6 +555,46 @@ public sealed class DesignSystemThemeManager : IDisposable
         SwapPalette(filtered, IsLightConfigured(), themeId, isBuiltin: false, themeLayerId: themeId);
         ThemeLayerIssues = issues;
         LastError = null;
+        return true;
+    }
+
+    /// <summary>
+    /// Fills in any missing absolute line box from the layer's font size and multiplier. Explicit line
+    /// boxes are validated instead of silently overwritten.
+    /// </summary>
+    private static bool TryDeriveLineBoxes(
+        IDictionary<string, object?> entries,
+        string themeId,
+        out string? error)
+    {
+        foreach (var (lineBoxKey, fontSizeKey, lineHeightKey) in LineBoxDerivations)
+        {
+            if (entries.TryGetValue(lineBoxKey, out var supplied))
+            {
+                if (supplied is not double)
+                {
+                    error = $"theme layer '{themeId}': '{lineBoxKey}' must be a double";
+                    return false;
+                }
+
+                continue;
+            }
+
+            if (!entries.TryGetValue(fontSizeKey, out var sizeValue) ||
+                sizeValue is not double size ||
+                !entries.TryGetValue(lineHeightKey, out var lineHeightValue) ||
+                lineHeightValue is not double lineHeight)
+            {
+                error =
+                    $"theme layer '{themeId}': cannot derive '{lineBoxKey}' because " +
+                    $"'{fontSizeKey}' or '{lineHeightKey}' is missing";
+                return false;
+            }
+
+            entries[lineBoxKey] = size * lineHeight;
+        }
+
+        error = null;
         return true;
     }
 
@@ -459,6 +633,7 @@ public sealed class DesignSystemThemeManager : IDisposable
         _ when key.StartsWith("Nm.FontFamily.", StringComparison.Ordinal) => value is FontFamily,
         _ when key.StartsWith("Nm.FontSize.", StringComparison.Ordinal) => value is double,
         _ when key.StartsWith("Nm.LineHeight.", StringComparison.Ordinal) => value is double,
+        _ when key.StartsWith("Nm.TextLineBox.", StringComparison.Ordinal) => value is double,
         _ when key.StartsWith("Nm.Corner.", StringComparison.Ordinal) => value is CornerRadius,
         _ when key.StartsWith("Nm.Motion.Duration.", StringComparison.Ordinal) => value is TimeSpan,
         _ => false,
@@ -501,17 +676,28 @@ public sealed class DesignSystemThemeManager : IDisposable
         }
 
         _application.Resources.MergedDictionaries.Add(global!);
+        ReorderResourceStack();
         return true;
     }
 
+    /// <summary>
+    /// Resolves a value from the <em>effective</em> resource stack (last provider wins), not from the
+    /// first provider that happens to contain the key. Palette-only application must preserve the active
+    /// theme layer's typography instead of re-reading the base global dictionary (I2/P2-③).
+    /// </summary>
     private bool TryResolveApplicationValue(string key, out object? value)
     {
-        foreach (var provider in _application.Resources.MergedDictionaries)
+        var providers = _application.Resources.MergedDictionaries;
+        for (var index = providers.Count - 1; index >= 0; index--)
         {
+            var provider = providers[index];
             if (provider.TryGetResource(key, ThemeVariant.Default, out value) ||
                 provider.TryGetResource(key, _application.ActualThemeVariant, out value))
             {
-                return true;
+                if (value is not null)
+                {
+                    return true;
+                }
             }
         }
 
@@ -541,17 +727,27 @@ public sealed class DesignSystemThemeManager : IDisposable
         ApplyPaletteForActualVariant(forceBuiltin: false);
     }
 
-    private bool ApplyRequestedVariant(bool forceBuiltin)
+    private static ThemeVariant VariantFor(AppearanceMode mode) => mode switch
     {
-        _application.RequestedThemeVariant = Appearance switch
+        AppearanceMode.Light => ThemeVariant.Light,
+        AppearanceMode.Dark => ThemeVariant.Dark,
+        _ => ThemeVariant.Default,
+    };
+
+    private bool TryLoadPaletteFor(AppearanceMode mode, out ResourceDictionary? palette, out bool isLight)
+    {
+        isLight = mode switch
         {
-            AppearanceMode.Light => ThemeVariant.Light,
-            AppearanceMode.Dark => ThemeVariant.Dark,
-            _ => ThemeVariant.Default,
+            AppearanceMode.Light => true,
+            AppearanceMode.Dark => false,
+            _ => _application.ActualThemeVariant == ThemeVariant.Light,
         };
 
-        return ApplyPaletteForActualVariant(forceBuiltin);
+        return TryLoadAndRecord(isLight ? _resources.LightPalette : _resources.DarkPalette, out palette);
     }
+
+    private Uri DensitySource(DensityMode mode) =>
+        mode == DensityMode.Compact ? _resources.CompactDensity : _resources.SpaciousDensity;
 
     private bool ApplyPaletteForActualVariant(bool forceBuiltin)
     {
@@ -576,6 +772,7 @@ public sealed class DesignSystemThemeManager : IDisposable
 
         SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true, themeLayerId: null);
         ThemeLayerIssues = [];
+        LastError = null;
         return true;
     }
 
@@ -598,9 +795,15 @@ public sealed class DesignSystemThemeManager : IDisposable
         _paletteIsBuiltin = isBuiltin;
         _themeLayerId = themeLayerId;
         AppliedPaletteId = paletteId;
-        ReorderOverlays();
+        ReorderResourceStack();
     }
 
+    /// <summary>
+    /// Removes the previous dedicated palette/theme-layer provider only. Providers that also carry the
+    /// theme-invariant tokens (the App.axaml aggregate dictionary) are never removed: doing so used to
+    /// drop spacing/font/Scrim tokens after an appearance switch (I2/P1-1). Global tokens stay in front
+    /// of the palette, so the freshly added palette still wins for every color key.
+    /// </summary>
     private void RemovePaletteProviders()
     {
         foreach (var provider in _application.Resources.MergedDictionaries.ToArray())
@@ -610,6 +813,11 @@ public sealed class DesignSystemThemeManager : IDisposable
             if (ReferenceEquals(provider, _contrastOverlay) ||
                 ReferenceEquals(provider, _densityOverlay) ||
                 ReferenceEquals(provider, _motionOverlay))
+            {
+                continue;
+            }
+
+            if (ProviderHasKey(provider, GlobalProbeKey))
             {
                 continue;
             }
@@ -633,74 +841,90 @@ public sealed class DesignSystemThemeManager : IDisposable
     private static string BuiltinPaletteId(bool isLight) =>
         isLight ? BuiltinLightPaletteId : BuiltinDarkPaletteId;
 
-    private void ReplaceOverlay(ref ResourceDictionary? slot, ResourceDictionary? dictionary)
-    {
-        RemoveOverlay(ref slot);
-        if (dictionary is null)
-        {
-            return;
-        }
-
-        _application.Resources.MergedDictionaries.Add(dictionary);
-        slot = dictionary;
-        ReorderOverlays();
-    }
-
-    private void RemoveOverlay(ref ResourceDictionary? slot)
+    private void CommitOverlay(ref ResourceDictionary? slot, ResourceDictionary? dictionary)
     {
         if (slot is not null)
         {
             _application.Resources.MergedDictionaries.Remove(slot);
-            slot = null;
         }
+
+        slot = dictionary;
+        if (dictionary is not null)
+        {
+            _application.Resources.MergedDictionaries.Add(dictionary);
+        }
+
+        ReorderResourceStack();
     }
 
     /// <summary>
-    /// Keeps the precedence deterministic: palette/theme layer first, then contrast, density and motion
-    /// overlays, so an appearance switch can never re-order a high-contrast palette underneath the base
-    /// palette and a density overlay always wins over the theme layer.
+    /// Deterministic precedence for every token lookup (<em>last provider wins</em>):
+    /// foreign dictionaries → global/aggregate token dictionaries → palette/theme layer → contrast →
+    /// density → reduced-motion overlays. This guarantees a theme layer's fonts/sizes are not shadowed by
+    /// an independent Global provider and that every overlay stays on top (I2/P2-②).
     /// </summary>
-    private void ReorderOverlays()
+    private void ReorderResourceStack()
     {
-        var ordered = new List<ResourceDictionary>(3);
+        var providers = _application.Resources.MergedDictionaries.ToList();
+
+        bool IsOverlay(IResourceProvider provider) =>
+            ReferenceEquals(provider, _contrastOverlay) ||
+            ReferenceEquals(provider, _densityOverlay) ||
+            ReferenceEquals(provider, _motionOverlay);
+
+        bool IsGlobal(IResourceProvider provider) =>
+            !IsOverlay(provider) && ProviderHasKey(provider, GlobalProbeKey);
+
+        bool IsPalette(IResourceProvider provider) =>
+            !IsOverlay(provider) && !IsGlobal(provider) && ProviderHasKey(provider, PaletteProbeKey);
+
+        var foreign = providers.Where(provider => !IsOverlay(provider) && !IsGlobal(provider) && !IsPalette(provider)).ToList();
+        var globals = providers.Where(IsGlobal).ToList();
+        var palette = _palette is not null && providers.Contains(_palette) && !globals.Contains(_palette)
+            ? new List<IResourceProvider> { _palette }
+            : [];
+        // A stale palette provider that is no longer tracked must still sit after global tokens so an
+        // old provider can never shadow the fresh one. It is removed on the next palette swap.
+        var stalePalettes = providers
+            .Where(provider => IsPalette(provider) && !ReferenceEquals(provider, _palette))
+            .ToList();
+        var overlays = new List<IResourceProvider>(3);
         if (_contrastOverlay is not null)
         {
-            ordered.Add(_contrastOverlay);
+            overlays.Add(_contrastOverlay);
         }
 
         if (_densityOverlay is not null)
         {
-            ordered.Add(_densityOverlay);
+            overlays.Add(_densityOverlay);
         }
 
         if (_motionOverlay is not null)
         {
-            ordered.Add(_motionOverlay);
+            overlays.Add(_motionOverlay);
         }
 
-        if (ordered.Count == 0)
+        var ordered = foreign
+            .Concat(globals)
+            .Concat(palette)
+            .Concat(stalePalettes)
+            .Concat(overlays)
+            .ToList();
+
+        if (ordered.Count != providers.Count)
+        {
+            ordered.AddRange(providers.Where(provider => !ordered.Contains(provider)));
+        }
+
+        if (ordered.SequenceEqual(providers))
         {
             return;
         }
 
-        if (_palette is not null)
+        _application.Resources.MergedDictionaries.Clear();
+        foreach (var provider in ordered)
         {
-            var index = _application.Resources.MergedDictionaries.IndexOf(_palette);
-            if (index > 0)
-            {
-                _application.Resources.MergedDictionaries.Remove(_palette);
-                _application.Resources.MergedDictionaries.Insert(0, _palette);
-            }
-        }
-
-        foreach (var overlay in ordered)
-        {
-            _application.Resources.MergedDictionaries.Remove(overlay);
-        }
-
-        foreach (var overlay in ordered)
-        {
-            _application.Resources.MergedDictionaries.Add(overlay);
+            _application.Resources.MergedDictionaries.Add(provider);
         }
     }
 
@@ -720,3 +944,5 @@ public sealed class DesignSystemThemeManager : IDisposable
     private static bool ProviderHasKey(IResourceProvider provider, string key) =>
         provider.TryGetResource(key, ThemeVariant.Default, out _);
 }
+
+

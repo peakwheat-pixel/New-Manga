@@ -54,7 +54,7 @@ public sealed class FocusRing : AvaloniaObject
             control.LostFocus += OnLostFocus;
             control.DetachedFromVisualTree += OnDetached;
             state.Subscribed = true;
-            if (control.IsFocused)
+            if (control.IsFocused && state.KeyboardFocus)
             {
                 Show(control, state);
             }
@@ -68,9 +68,21 @@ public sealed class FocusRing : AvaloniaObject
 
     private static void OnGotFocus(object? sender, GotFocusEventArgs args)
     {
-        if (sender is Control control && States.TryGetValue(control, out var state))
+        if (sender is not Control control || !States.TryGetValue(control, out var state))
+        {
+            return;
+        }
+
+        // Keyboard-only outline (I2/P2-⑤): pointer focus never draws the ring; only keyboard
+        // navigation (Tab / directional) does, matching :focus-visible semantics.
+        state.KeyboardFocus = args.NavigationMethod is NavigationMethod.Tab or NavigationMethod.Directional;
+        if (state.KeyboardFocus)
         {
             Show(control, state);
+        }
+        else
+        {
+            Hide(control, state);
         }
     }
 
@@ -134,6 +146,15 @@ public sealed class FocusRing : AvaloniaObject
             return;
         }
 
+        // The outline must not leak outside a scrolled viewport (I2/P2-⑤): when the focused control is
+        // clipped by an ancestor ScrollViewer (or the window), hide the ring until it is fully visible.
+        var visible = state.KeyboardFocus && control.IsFocused && IsFullyVisible(control);
+        state.Ring.IsVisible = visible;
+        if (!visible)
+        {
+            return;
+        }
+
         var topLeft = control.TranslatePoint(new Point(0, 0), state.Host);
         if (topLeft is null)
         {
@@ -154,6 +175,52 @@ public sealed class FocusRing : AvaloniaObject
         {
             state.Ring.Margin = new Thickness(topLeft.Value.X - stroke.Left, topLeft.Value.Y - stroke.Top, 0, 0);
         }
+    }
+
+    /// <summary>
+    /// True while the control is fully visible inside every ancestor ScrollViewer and inside the window.
+    /// A partially clipped control hides its outline instead of painting an outline outside its viewport.
+    /// </summary>
+    private static bool IsFullyVisible(Control control)
+    {
+        var window = TopLevel.GetTopLevel(control);
+        if (window is null)
+        {
+            return false;
+        }
+
+        foreach (var ancestor in control.GetVisualAncestors())
+        {
+            if (ancestor is ScrollViewer scrollViewer)
+            {
+                var position = control.TranslatePoint(default, scrollViewer);
+                if (position is null)
+                {
+                    return false;
+                }
+
+                var viewport = scrollViewer.Viewport;
+                const double tolerance = 0.5;
+                if (position.Value.X < -tolerance ||
+                    position.Value.Y < -tolerance ||
+                    position.Value.X + control.Bounds.Width > viewport.Width + tolerance ||
+                    position.Value.Y + control.Bounds.Height > viewport.Height + tolerance)
+                {
+                    return false;
+                }
+            }
+        }
+
+        var windowPosition = control.TranslatePoint(default, window);
+        if (windowPosition is null)
+        {
+            return false;
+        }
+
+        return windowPosition.Value.X >= -0.5 &&
+               windowPosition.Value.Y >= -0.5 &&
+               windowPosition.Value.X + control.Bounds.Width <= window.Bounds.Width + 0.5 &&
+               windowPosition.Value.Y + control.Bounds.Height <= window.Bounds.Height + 0.5;
     }
 
     /// <summary>Reads the 2px outline stroke from the frozen token dictionary (no naked pin in code).</summary>
@@ -217,9 +284,15 @@ public sealed class FocusRing : AvaloniaObject
 
         public bool LayoutSubscribed { get; set; }
 
+        public bool ViewportSubscribed { get; set; }
+
+        /// <summary>True when the last focus came from keyboard navigation (I2/P2-⑤).</summary>
+        public bool KeyboardFocus { get; set; }
+
         public Panel? Host { get; set; }
 
         public Border? Ring { get; set; }
     }
 }
+
 

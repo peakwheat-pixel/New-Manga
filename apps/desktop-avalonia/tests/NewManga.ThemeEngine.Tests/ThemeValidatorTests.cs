@@ -287,14 +287,15 @@ public sealed class ThemeValidatorTests
     public void Edge_surface_status_contrast_is_reported_as_a_warning_not_an_error()
     {
         // The frozen R-09 baseline only guarantees the panel floor, so status hues on raised/canvas
-        // surfaces are warnings. Characterization: light has canvas + raised misses, dark only raised.
+        // surfaces are warnings. Characterization after D-1 I2 badge remediation: only dark status on
+        // Bg.Raised remains a warning; the light canvas/raised misses were fixed with the status hues.
         var result = Validator.Validate(Default);
 
         Assert.True(result.IsValid, Describe(result.Errors));
         var edgeWarnings = result.Warnings.Where(issue => issue.Code == ThemeIssueCodes.ContrastStatus).ToArray();
-        Assert.Equal(3, edgeWarnings.Length);
-        Assert.All(edgeWarnings, issue => Assert.Contains("Bg.", issue.Path!, StringComparison.Ordinal));
-        Assert.All(edgeWarnings, issue => Assert.False(issue.IsError));
+        var edgeWarning = Assert.Single(edgeWarnings);
+        Assert.Contains("Bg.", edgeWarning.Path!, StringComparison.Ordinal);
+        Assert.False(edgeWarning.IsError);
     }
 
     [Fact]
@@ -329,3 +330,6 @@ public sealed class ThemeValidatorTests
     private static string Describe(IReadOnlyList<ThemeValidationIssue> issues) =>
         string.Join(" | ", issues.Select(issue => $"{issue.Code}@{issue.Path}: {issue.Message}"));
 }
+
+
+

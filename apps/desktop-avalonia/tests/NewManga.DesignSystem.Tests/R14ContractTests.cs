@@ -88,11 +88,18 @@ public sealed class R14ContractTests
         Assert.Equal(9, DesignSystemThemeManager.ThemeLayerLineHeightKeys.Count);
         Assert.Equal(3, DesignSystemThemeManager.ThemeLayerCornerKeys.Count);
         Assert.Equal(3, DesignSystemThemeManager.ThemeLayerMotionKeys.Count);
+        Assert.Equal(6, DesignSystemThemeManager.ThemeLayerLineBoxKeys.Count);
         Assert.Equal(59, DesignSystemThemeManager.ThemeLayerRequiredKeys.Count);
-        Assert.Equal(59, DesignSystemThemeManager.ThemeLayerAllowedKeys.Count);
+        Assert.Equal(65, DesignSystemThemeManager.ThemeLayerAllowedKeys.Count);
+        Assert.All(
+            DesignSystemThemeManager.ThemeLayerLineBoxKeys,
+            key => Assert.Contains(key, DesignSystemThemeManager.ThemeLayerAllowedKeys));
         // The whitelist must not allow spacing/size overrides through a theme layer.
         Assert.DoesNotContain(NmKeys.Space.S3, DesignSystemThemeManager.ThemeLayerAllowedKeys);
         Assert.DoesNotContain(NmKeys.Size.ControlHeight, DesignSystemThemeManager.ThemeLayerAllowedKeys);
+        Assert.All(
+            DesignSystemThemeManager.ThemeLayerLineBoxKeys,
+            key => Assert.DoesNotContain(key, DesignSystemThemeManager.ThemeLayerRequiredKeys));
     }
 
     [Fact]
@@ -125,6 +132,7 @@ public sealed class R14ContractTests
         }
     }
 }
+
 
 
 
