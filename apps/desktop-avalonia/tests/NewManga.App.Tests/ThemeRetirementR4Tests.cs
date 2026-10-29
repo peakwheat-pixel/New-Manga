@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
@@ -21,12 +22,26 @@ public sealed class ThemeRetirementR4Tests
     public void No_font_binaries_ship_with_the_application()
     {
         var root = FindRepositoryRoot();
-        var offenders = new[] { "*.ttf", "*.otf", "*.woff", "*.woff2" }
+        // The app ships no font binaries. Only TRACKED files count as shipped: local training data
+        // (training_data/** in .gitignore, e.g. TanukiMagic.ttf) lives in the worktree but is not packaged.
+        // Any font that exists locally must be either git-ignored or outside the worktree enumeration;
+        // an untracked-but-not-ignored font would fail the second assertion below.
+        var tracked = GitFileList(root).Select(path => Path.GetFullPath(Path.Combine(root, path))).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var existingFonts = new[] { "*.ttf", "*.otf", "*.woff", "*.woff2" }
             .SelectMany(pattern => Directory.EnumerateFiles(root, pattern, SearchOption.AllDirectories))
             .Where(path => !IsBuildOutput(path))
             .ToArray();
 
-        Assert.Empty(offenders);
+        var trackedFonts = existingFonts.Where(tracked.Contains).ToArray();
+        Assert.Empty(trackedFonts.Select(path => Path.GetRelativePath(root, path)));
+
+        foreach (var font in existingFonts)
+        {
+            var relative = Path.GetRelativePath(root, font);
+            Assert.True(
+                IsGitIgnored(root, relative),
+                $"font '{relative}' exists in the worktree but is neither tracked nor git-ignored; it could leak into the package");
+        }
     }
 
     [AvaloniaFact]
@@ -99,6 +114,31 @@ public sealed class ThemeRetirementR4Tests
                 yield return descendant;
             }
         }
+    }
+
+    private static string[] GitFileList(string root) =>
+        RunGit(root, "ls-files -z").Output.Split('\0', StringSplitOptions.RemoveEmptyEntries);
+
+    private static bool IsGitIgnored(string root, string relativePath) =>
+        RunGit(root, $"check-ignore --quiet -- \"{relativePath}\"").ExitCode == 0;
+
+    private static (int ExitCode, string Output) RunGit(string root, string arguments)
+    {
+        using var process = new Process
+        {
+            StartInfo = new ProcessStartInfo("git", arguments)
+            {
+                WorkingDirectory = root,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            },
+        };
+        process.Start();
+        var output = process.StandardOutput.ReadToEnd();
+        _ = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return (process.ExitCode, output);
     }
 
     private static bool IsBuildOutput(string path)
