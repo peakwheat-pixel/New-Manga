@@ -203,15 +203,20 @@ class SqliteRegionRepository:
         try:
             conn.execute("BEGIN IMMEDIATE")
             row = conn.execute(
-                "SELECT current_revision_id, region_locked, translation_locked,"
-                " inpaint_locked FROM regions WHERE region_id = ?",
+                "SELECT current_revision_id, deleted_at, region_locked,"
+                " translation_locked, inpaint_locked"
+                " FROM regions WHERE region_id = ?",
                 (region.region_id,),
             ).fetchone()
-            if row is None:
+            if row is None or row["deleted_at"] is not None:
+                # I3/P1: a single-revision write must not land on a target that
+                # was soft-deleted between the service pre-check and this
+                # transaction (a merge/split/delete from another connection).
+                # Roll back and surface the typed not-found outcome.
                 conn.rollback()
                 return RegionCommitResult(
-                    RegionCommitStatus.DB_FAILED,
-                    detail=f"region {region.region_id} disappeared mid-commit",
+                    RegionCommitStatus.TARGET_NOT_FOUND,
+                    detail=region.region_id,
                 )
 
             current = row["current_revision_id"]

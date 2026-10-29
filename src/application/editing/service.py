@@ -196,10 +196,12 @@ class InMemoryRegionCommitter:
         lock_snapshot: RegionLockSnapshot | None = None,
     ) -> RegionCommitResult:
         stored = self._repo.get_region(region.region_id)
-        if stored is None:
+        if stored is None or stored.deleted:
+            # I3/P1: same typed outcome as the SQLite seam's in-transaction
+            # live check (the in-memory twin has no real transaction).
             return RegionCommitResult(
-                RegionCommitStatus.DB_FAILED,
-                detail=f"region {region.region_id} is not persisted",
+                RegionCommitStatus.TARGET_NOT_FOUND,
+                detail=region.region_id,
             )
         if (
             expected_current_revision_id is not None
@@ -396,7 +398,12 @@ class RegionEditingService:
         expected_current_revision_id: str | None = None,
         lock_snapshot: RegionLockSnapshot | None = None,
     ) -> RegionCommitResult:
-        """Single commit path for every revision write (TASK-028 §4.2)."""
+        """Single commit path for every revision write (TASK-028 §4.2).
+
+        I3/P1: the seam re-reads the target inside its transaction; a target
+        soft-deleted after the service pre-check is the typed
+        :class:`RegionNotFound` (wire TARGET_NOT_FOUND) with ZERO write.
+        """
         result = self._committer.commit_region_revision(
             staged,
             revision,
@@ -405,6 +412,8 @@ class RegionEditingService:
         )
         if result.status is RegionCommitStatus.APPLIED:
             _sync_region_state(region, staged)
+        elif result.status is RegionCommitStatus.TARGET_NOT_FOUND:
+            raise RegionNotFound(result.detail or region.region_id)
         return result
 
     def _commit_batch_or_raise(self, **batch: object) -> None:
@@ -459,6 +468,11 @@ class RegionEditingService:
         if result.status is RegionCommitStatus.APPLIED:
             _sync_region_state(region, staged)
             return replace(revision, revision_no=result.revision_no or 0)
+        if result.status is RegionCommitStatus.TARGET_NOT_FOUND:
+            # I3/P1: the region was soft-deleted between the service pre-check
+            # and the commit transaction (typed TARGET_NOT_FOUND on the wire,
+            # zero write).
+            raise RegionNotFound(result.detail or region.region_id)
         if (
             result.status is RegionCommitStatus.INPUT_REVISION_CHANGED
             and expected_current_revision_id is not None
