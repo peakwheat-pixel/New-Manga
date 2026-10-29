@@ -1,0 +1,135 @@
+{
+  "task": "V11R-F0-1",
+  "title": "Region write face contract (Core + Host + IPC)",
+  "owner": "core-writer",
+  "branch": "v11r/region-write",
+  "base_commit": "c73239999",
+  "worktree_base": "ba59a6c0d (fast-forward, docs only)",
+  "code_commits": ["bb1f378f7", "a29c0aeb2", "25107770c"],
+  "contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md",
+  "protocol": {"name": "new-manga.core", "major": 2, "command_family_minor": 3, "bump": false},
+  "error_codes": {
+    "validation": "INVALID_REQUEST",
+    "conflict": "INPUT_REVISION_CHANGED",
+    "not_found": "TARGET_NOT_FOUND",
+    "internal": "UNKNOWN"
+  },
+  "commands": [
+    {
+      "contract_id": "C067", "name": "create_region", "core_command": "create_region",
+      "channel": "core", "minor": 3,
+      "payload_required": ["page_id", "geometry.points"],
+      "payload_optional": ["region_type", "reading_order"],
+      "result_fields": ["region_id", "revision_no", "reading_order", "region_type", "sfx_policy"],
+      "optimistic_lock": "not_applicable",
+      "idempotency": "non_idempotent_append_only",
+      "tests": ["tests/core/test_region_write_commands.py::test_create_region_*"]
+    },
+    {
+      "contract_id": "C068", "name": "delete_region", "core_command": "delete_region",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id"], "payload_optional": ["expected_revision"],
+      "result_fields": ["region_id", "deleted"],
+      "optimistic_lock": "optional_expected_revision",
+      "idempotency": "safe_repeat_returns_target_not_found_no_revision",
+      "tests": ["tests/core/test_region_write_commands.py::test_delete_region_*"]
+    },
+    {
+      "contract_id": "C069", "name": "save_region_geometry", "core_command": "save_region_geometry",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id", "geometry.points"], "payload_optional": ["expected_revision"],
+      "result_fields": ["region_id", "revision_no", "geometry"],
+      "optimistic_lock": "optional_expected_revision_in_transaction_recheck",
+      "idempotency": "non_idempotent_append_only",
+      "tests": ["tests/core/test_region_write_commands.py::test_save_region_geometry_*"]
+    },
+    {
+      "contract_id": "C070", "name": "merge_regions", "core_command": "merge_regions",
+      "channel": "core", "minor": 3,
+      "payload_required": ["page_id", "region_ids"],
+      "payload_optional": ["expected_revisions"],
+      "result_fields": ["region_id", "revision_no", "reading_order", "region_type", "sfx_policy", "deleted_region_ids"],
+      "optimistic_lock": "optional_expected_revisions_full_batch_check",
+      "idempotency": "non_idempotent_append_only",
+      "tests": ["tests/core/test_region_write_commands.py::test_merge_regions_*"]
+    },
+    {
+      "contract_id": "C071", "name": "split_region", "core_command": "split_region",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id", "parts"], "payload_optional": ["expected_revision"],
+      "result_fields": ["source_region_id", "source_deleted", "regions"],
+      "optimistic_lock": "optional_expected_revision",
+      "idempotency": "non_idempotent_append_only",
+      "tests": ["tests/core/test_region_write_commands.py::test_split_region_*"]
+    },
+    {
+      "contract_id": "C072", "name": "reorder_regions", "core_command": "reorder_regions",
+      "channel": "core", "minor": 3,
+      "payload_required": ["page_id", "ordered_region_ids"],
+      "payload_optional": ["expected_revisions"],
+      "result_fields": ["page_id", "regions"],
+      "optimistic_lock": "optional_expected_revisions_full_batch_check",
+      "idempotency": "effect_idempotent_same_order_creates_no_revision",
+      "tests": ["tests/core/test_region_write_commands.py::test_reorder_regions_*"]
+    },
+    {
+      "contract_id": "C073", "name": "save_manual_translation", "core_command": "save_manual_translation",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id", "edited_translation"],
+      "payload_optional": ["expected_revision"],
+      "result_fields": ["region_id", "revision_no", "review_state", "text"],
+      "optimistic_lock": "optional_expected_revision_in_transaction_recheck",
+      "idempotency": "non_idempotent_append_only",
+      "tests": ["tests/core/test_region_write_commands.py::test_save_manual_translation_*"]
+    },
+    {
+      "contract_id": "C074", "name": "confirm_region_final", "core_command": "confirm_region_final",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id"], "payload_optional": ["expected_revision"],
+      "result_fields": ["region_id", "revision_no", "review_state", "text"],
+      "optimistic_lock": "optional_expected_revision_in_transaction_recheck",
+      "idempotency": "non_idempotent_append_only",
+      "tests": ["tests/core/test_region_write_commands.py::test_confirm_region_final_*"]
+    },
+    {
+      "contract_id": "C075", "name": "set_region_lock", "core_command": "set_region_lock",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id"],
+      "payload_optional": ["region_locked", "translation_locked", "inpaint_locked", "expected_revision"],
+      "result_fields": ["region_id", "revision_no", "review_state", "region_locked", "translation_locked", "inpaint_locked"],
+      "optimistic_lock": "optional_expected_revision_in_transaction_recheck",
+      "idempotency": "non_idempotent_append_only",
+      "note": "GAP-1 filled: application-layer use case did not exist before V11R-F0-1",
+      "tests": ["tests/core/test_region_write_commands.py::test_set_region_lock_*", "tests/editing/test_region_write_guards.py::test_set_locks_*"]
+    },
+    {
+      "contract_id": "C076", "name": "pin_revision", "core_command": "pin_revision",
+      "channel": "core", "minor": 3,
+      "payload_required": ["region_id", "revision_no", "pinned"],
+      "payload_optional": ["expected_revision"],
+      "result_fields": ["region_id", "revision_no", "is_pinned", "current_revision_no"],
+      "optimistic_lock": "optional_expected_revision_guards_current_pointer",
+      "idempotency": "idempotent_flag_no_revision",
+      "tests": ["tests/core/test_region_write_commands.py::test_pin_revision_*"]
+    }
+  ],
+  "gates": {
+    "python_full": {"command": "python -m pytest -q", "exit_code": 0, "result": "2661 passed, 10 skipped, 2 warnings in 215.16s", "log": "logs/pytest-full.log"},
+    "python_region_write": {"command": "python -m pytest -q tests/core/test_region_write_commands.py tests/editing/test_region_write_guards.py", "exit_code": 0, "result": "38 passed in 2.04s", "log": "logs/pytest-region-write.log"},
+    "dotnet_build": {"command": "dotnet build NewManga.sln -warnaserror", "exit_code": 0, "result": "0 warnings / 0 errors", "log": "logs/dotnet-build.log"},
+    "dotnet_test": {"command": "dotnet test NewManga.sln --no-build", "exit_code": 0, "result": "App 137 passed; Host 39 passed + 21 skipped; CoreClient 87 passed + 22 skipped; 0 failed", "log": "logs/dotnet-test.log"},
+    "dotnet_test_region_write": {"command": "dotnet test NewManga.sln --no-build --filter RegionWriteCommandTests|CommandParityContractTests", "exit_code": 0, "result": "53 passed / 0 failed", "log": "logs/dotnet-test-region-write.log"}
+  },
+  "evidence": [
+    "dotnet-evidence/commands/v11r-region-write-registration.json",
+    "dotnet-evidence/commands/parity-contract.json"
+  ],
+  "gaps": {
+    "GAP-1": "filled: set_region_lock application use case added (explicitly marked new)",
+    "GAP-2": "open: region text read projection missing on IPC (out of F-01 scope, Lead decision needed)",
+    "GAP-3": "recorded: pre-existing dual translation-lock projection; explicit lock syncs both, manual save unchanged",
+    "GAP-4": "decision: create_region has no expected_revision (no prior revision)",
+    "GAP-5": "boundary: IHostController convenience methods owned by core-bridge",
+    "GAP-6": "recorded: merge/split soft-delete creates no deletion revision (existing semantics)"
+  }
+}
