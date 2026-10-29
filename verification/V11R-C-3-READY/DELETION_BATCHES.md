@@ -1,8 +1,8 @@
 # V11R-C-3 删除批次清单与顺序（C-3 执行手册）
 
 - 任务：`V11R-C-3-READY`（就绪包）；执行任务：`V11R-C-3`
-- 基线：`907339511454ab90aa503d640512ab0260bc1369`（当前 `main`）
-- 依赖图证据：`DEPENDENCY_GRAPH.md` / `dependency-graph.json`（609 引用 / 65 文件）
+- 基线：`c5037b65fb4c80a42e96869789d12a6e2427e954`（当前 `main`）
+- 依赖图证据：`DEPENDENCY_GRAPH.md` / `dependency-graph.json`（631 引用 / 68 文件）
 - 原则：**先建新（R1–R2）→ 迁移入口（R3）→ 替换测试后删（R4）→ 删项目（R5）→ 零引用门（R6）**
 - 回滚点：R1 创建的 tag `v11r-pre-retire`（脚本 `tools/v11r/rollback-theme-retire.ps1`）
 

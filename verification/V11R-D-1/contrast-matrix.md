@@ -1,7 +1,7 @@
 # V11R-D-1 L3 无障碍对比度矩阵
 
-- 生成时间：2026-10-30T02:16:53+08:00
-- 基线 commit：`ae28d308f1dbbe04774f24b7cc4edaf11c99d521`
+- 生成时间：2026-10-30T02:18:24+08:00
+- 基线 commit：`7f6787b91f15e9ae7485cff8103206b0f2a4704d`
 - 数据来源：`doc/design/redesign-v1/40-fusion/tokens.json`（冻结标准盘）、`apps/desktop-avalonia/src/NewManga.DesignSystem/Themes/Tokens.HighContrast.axaml`（R-14 规则派生高对比盘）
 - 计算方法：WCAG 2.1 相对亮度与对比度公式（(L1+0.05)/(L2+0.05)），与 DS `ContrastMath` 实现一致；比率保留两位小数。
 - 门槛（Lead 裁定）：正文 `text.primary` ≥ 7.0；次要 `text.secondary/tertiary` ≥ 4.5；状态 7 色 ≥ 4.5；强调/焦点环（非文本 UI）≥ 3.0；`accent.on` 落在 `accent.base` 上按文本要求 ≥ 4.5。

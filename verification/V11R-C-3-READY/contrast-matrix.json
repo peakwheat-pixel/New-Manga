@@ -1,8 +1,8 @@
 {
   "schema": "newmanga.v11r.contrast-matrix/1",
   "task": "V11R-C-3-READY",
-  "baseCommit": "ae28d308f1dbbe04774f24b7cc4edaf11c99d521",
-  "generatedAt": "2026-10-30T02:16:53+08:00",
+  "baseCommit": "7f6787b91f15e9ae7485cff8103206b0f2a4704d",
+  "generatedAt": "2026-10-30T02:18:24+08:00",
   "method": "WCAG 2.1 relative luminance; (L1+0.05)/(L2+0.05)",
   "failures": 8,
   "themes": [

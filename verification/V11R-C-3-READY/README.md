@@ -1,14 +1,14 @@
 # V11R-C-3-READY 证据与就绪包索引
 
 Owner: `design-platform`。分支 `v11r/c3-ready`，基线 = 当前 `main`
-`907339511454ab90aa503d640512ab0260bc1369`（已合入新 UI / ThemeEngine Part B / DS D-1 终态）。
+`c5037b65fb4c80a42e96869789d12a6e2427e954`（已合入新 UI / ThemeEngine Part B / DS D-1 终态 / B-4 I2b）。
 本目录证据由真实执行产生；未执行项明确标注 `NOT_RUN`。
 
 ## 交付物
 
 | 项 | 文件 | 说明 |
 |---|---|---|
-| 依赖图（结论/分类/迁移清单/零引用门） | `DEPENDENCY_GRAPH.md` | 609 引用 / 65 文件，按代码角色与处置分类 |
+| 依赖图（结论/分类/迁移清单/零引用门） | `DEPENDENCY_GRAPH.md` | 631 引用 / 68 文件，按代码角色与处置分类 |
 | 依赖图（机器可读） | `dependency-graph.json` | `references[]` 精确到 file/line/symbol/kind/fate/text |
 | 依赖图（全表） | `dependency-graph-table.md` | 脚本生成，勿手改 |
 | 依赖图生成器 | `tools/v11r/build-dependency-graph.ps1` | main 移动后重跑即可刷新 |
@@ -20,6 +20,13 @@ Owner: `design-platform`。分支 `v11r/c3-ready`，基线 = 当前 `main`
 | L3 对比度矩阵 | `verification/V11R-D-1/contrast-matrix.md` | 4 套盘 × 5 级背景；含未达标明细与判定依据 |
 | L3 数据 | `contrast-matrix.json` | 机器可读比率/门槛/pass |
 | L3 生成器 | `tools/v11r/contrast-matrix.ps1` | 从 tokens.json + 高对比字典重算 |
+
+## 最终门禁（基线 `c5037b65`）
+
+- `dotnet build NewManga.sln -warnaserror`：**0 warning / 0 error**（`build.log`）
+- `dotnet test NewManga.sln --no-build`：**0 fail**；ThemeEngine **229**、DS **67**、App **237**(+6 skip)、Host **42**(+24 skip)、CoreClient **42**(+25 skip)（`test.log`）
+- 迁移门 `LegacyThemeRetirementGate`：**26/26 pass**（`migration-gate-tests.log`）
+- ThemeEngine 全量：**229/229 pass**（`themeengine-tests.log`）
 
 ## 验证命令
 
@@ -46,3 +53,4 @@ pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -DryRun
 - 对比度矩阵的 8 行未达标明细是**真实计算结果**，已附判定与建议；不是伪造通过。
 - 旧测试替代映射中 5 条“需新增”断言（字体二进制审计、窗口 chrome 行为、窗口材质 fallback、首帧非阻塞、
   Theme Studio 设置页）必须在 C-3 R4 前补齐，否则不得删对应旧测试。
+

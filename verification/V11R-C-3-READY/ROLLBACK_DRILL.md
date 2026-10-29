@@ -19,7 +19,7 @@ L0 证据（本目录 `rollback-dry-run.log`）：
 ```text
 DRY RUN - no files, refs or settings are changed.
 repo   : G:/CODEX/New Manga.workspace/worktrees/V11R-C3-READY
-branch : v11r/c3-ready @ 907339511454ab90aa503d640512ab0260bc1369
+branch : v11r/c3-ready @ <HEAD>
 tag    : v11r-pre-retire (exists=False)
   - git tag -a v11r-pre-retire -m 'V11R pre-retire rollback point'
   - backup settings: %APPDATA%\NewManga\theme-settings.json -> %TEMP%\v11r-c3-rollback\<ts>

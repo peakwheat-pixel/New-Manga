@@ -1,9 +1,9 @@
 # V11R-C-3 旧主题依赖图（当前 main 重核）
 
 - 任务：`V11R-C-3-READY`（C-3 拆除前置就绪包）
-- 基线 commit：`907339511454ab90aa503d640512ab0260bc1369`（当前 `main`，已合入新 UI / ThemeEngine Part B / DS D-1 终态）
+- 基线 commit：`c5037b65fb4c80a42e96869789d12a6e2427e954`（当前 `main`，已合入新 UI / ThemeEngine Part B / DS D-1 终态 / B-4 I2b）
 - 生成方式：`pwsh -NoProfile -File tools/v11r/build-dependency-graph.ps1`
-- 机器可读证据：`dependency-graph.json`（609 条引用明细，`references[]` 含 file/line/symbol/kind/fate/text）
+- 机器可读证据：`dependency-graph.json`（631 条引用明细，`references[]` 含 file/line/symbol/kind/fate/text）
 - 人类可读全表：`dependency-graph-table.md`
 - 扫描范围：`git grep` 全部 tracked 文件（排除 `archive/**`、`bin/obj/node_modules`），符号 12 个
   `ThemePack/ThemePacks/ThemePackService/ThemePackMetrics/LayoutKind/NavPlacement/ShelfStyle/SettingsStyle/MotionProfile/LayoutProfile/LayoutProfiles`（`ThemePack` 的正则同时覆盖其派生符号）。
@@ -16,14 +16,14 @@
 | `legacy-shell-production`（`src/NewManga.App/**` 旧壳） | 192 | 10 | **MIGRATE-THEN-DELETE**：R3 先迁移入口 |
 | `legacy-tests`（`tests/NewManga.App.Tests/**` 旧测试） | 218 | 5 | **REPLACE-BEFORE-DELETE**：R4 替换断言后删 |
 | `new-architecture`（src/**） | 14 | 6 | **NOT-A-DEPENDENCY**：新 `LayoutProfile` 类型 / 退役说明文字 |
-| `new-architecture-tests`（tests/**） | 5 | 3 | **NOT-A-DEPENDENCY**：新架构测试引用新 `LayoutProfile` |
+| `new-architecture-tests`（tests/**） | 19 | 4 | **NOT-A-DEPENDENCY**：新架构测试引用新 `LayoutProfile` |
 | `platform-struct-unrelated` | 19 | 12 | **NOT-A-DEPENDENCY**：`[StructLayout(LayoutKind...)]` P/Invoke，与主题无关 |
-| `evidence-or-documentation` | 78 | 28 | **EVIDENCE-PIN-PROTECTED**：不改不删，按字节保留 |
-| **合计** | **609** | **65** | — |
+| `evidence-or-documentation` | 86 | 30 | **EVIDENCE-PIN-PROTECTED**：不改不删，按字节保留 |
+| **合计** | **631** | **68** | — |
 
-按符号：`ThemePackService=230`、`ThemePacks=107`、`ThemePack=78`、`LayoutKind=53`（其中 19 为 P/Invoke 假阳性）、
-`LayoutProfile=52`（其中 17 为新架构同名类型）、`LayoutProfiles=18`、`ThemePackMetrics=18`、`ShelfStyle=17`、
-`NavPlacement=16`、`SettingsStyle=12`、`MotionProfile=8`。
+按符号：`ThemePackService=238`、`ThemePacks=108`、`ThemePack=81`、`LayoutKind=54`（其中 19 为 P/Invoke 假阳性）、
+`LayoutProfile=56`（其中约 20 为新架构同名类型）、`LayoutProfiles=18`、`ThemePackMetrics=19`、`ShelfStyle=18`、
+`NavPlacement=17`、`SettingsStyle=13`、`MotionProfile=9`。
 
 ## 2. 真实代码依赖（C-3 必须消除的部分）
 
@@ -69,7 +69,9 @@
 2. `LayoutProfile` × 17（新架构）：`NewManga.ThemeEngine.Models.LayoutProfile` 是新类型，与旧
    `NewManga.Theme.LayoutProfile` 同名不同命名空间；C-3 零引用门必须按**命名空间/文件路径**区分，禁止
    简单文本 grep 直接判失败。
-3. `ThemePack` × 3：ThemeEngine 的 README/csproj 中“取代旧 ThemePack 架构”的说明文字。
+3. `ThemePack` × 少数：ThemeEngine 的 README/csproj 中“取代旧 ThemePack 架构”的说明文字，以及新增的
+   `NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs`（该测试**主动断言**新引擎程序集不引用旧符号，属于
+   保护性引用，不计入依赖）。
 
 ## 5. C-3 R6 零引用门命令（按分类判定）
 
