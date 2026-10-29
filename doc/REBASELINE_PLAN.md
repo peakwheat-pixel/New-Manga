@@ -15,7 +15,6 @@
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
 |PDF-EXPORT-UI-1|—|done（导出面板 ZIP/PDF 格式选择；集成 `6deefdcc3`；249/249；2026-10-28 DSH 复核）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
-|RELEASE-SMOKE-1|—|superseded（REPACK-3/4/5 真机全流程验收 + IMPORT-TRIAGE-1 已覆盖其目标；原证据保留）|
 |RELEASE-REPACK-3|—|done（全流程真跑；Mica=actual；234/234；4290afb1b）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
