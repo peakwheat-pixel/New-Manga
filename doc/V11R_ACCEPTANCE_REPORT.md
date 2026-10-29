@@ -13,7 +13,7 @@ Lead / Integrator：DeepSeek Harness（DSH）
 
 | 范围 | 结论 | 说明 |
 |---|---|---|
-| V1.1 审计整改（工作流 A） | **PASS_WITH_ISSUES** | A-1/A-2/A-3/A-5/A-6/A-7 完成并集成；66 命令契约 FROZEN 49 / PARTIAL 17 / GAP 0；**追加发现并修复 P0**：发布版默认 `ReadOnlyUntilParity` 导致导入/建书/运行全被拒（A-5）。F0-1 Region 写面 4 轮审查 P1 全关闭、I4 后仅待独立复核（见 §7）。 |
+| V1.1 审计整改（工作流 A） | **PASS_WITH_ISSUES** | A-1/A-2/A-3/A-5/A-6/A-7 完成并集成；66 命令契约 FROZEN 49 / PARTIAL 17 / GAP 0；**追加发现并修复 P0**：发布版默认 `ReadOnlyUntilParity` 导致导入/建书/运行全被拒（A-5）。F0-1/F0-2 Region 写面 4 轮审查 P1 全关闭、I4 修 3×P2 并经独立窄验证 CLOSED，已合入 main（见 §7）。 |
 | 全新 UI/UX（工作流 B） | **PASS_WITH_ISSUES** | 新 Avalonia 外壳 + Library/Console/Studio Page/Studio Batch + 导出/术语工作面全部交付；main 已切**新壳为默认入口**（`--shell=legacy` 保留回滚）。独立审查 r1/r2/r3 的 P1 均已关闭；剩余 P2/P3 见 §8。 |
 | Theme Studio 重建（工作流 C） | **PASS_WITH_ISSUES** | C-1 新主题引擎 **PASS**；C-2 Theme Studio 7 分区 **PASS_WITH_ISSUES（2×P2）**；C-3 旧主题**退役执行 BLOCKED**（准备包就绪，但回滚安全网 P1 待修）。 |
 | 设计系统（工作流 D） | **PASS_WITH_ISSUES** | D-1 独立审查 r2 的 2×P1 已修（真实 App 资源栈全局令牌、徽标合成对比度），DS 82 测试；仍有 6 行/6 对状态色落极端表面未达 4.5:1（已登记组件约束）。 |
@@ -98,7 +98,7 @@ A-1 `CreateChapterAsync`；A-2 `IRunController`（暂停/继续/停止/重试，
 | 项 | 状态 | 原因 / 解除条件 |
 |---|---|---|
 | **C-3 旧主题退役执行** | **BLOCKED** | 准备包就绪，但回滚脚本 DryRun 在 tag 校验前 throw（P1，Reviewer 实测 exit=1）+ 对比度计数错误（P2）+ 陈旧数字（P3）。最小修复集已派并给出窄复审要求；修复+窄复审通过后按 R1–R6 执行（先打 `v11r-pre-retire` tag）。 |
-| **F0-1 合并** | **BLOCKED（窄复核中）** | 4 轮审查 P1 全关闭，I4 修 3×P2；独立 Reviewer 正在只核这 3 条，通过即整支合入（含 C077 `list_page_region_texts`）。 |
+| F0-1 / F0-2 Region 写面 | **已合入** | 4 轮审查 P1 全关闭；I4 修 3×P2 后独立窄验证 3 项 **CLOSED**（`doc/reviews/V11R-F0-1-r5-verification.md`），整支（含 C077 `list_page_region_texts`）合入 main `d217b3658`；合入后 build 0W/0E、CoreClient 119 pass、App 305 pass。 |
 | D-1 终审 | 待审 | I2 已交付（2×P1+P2 全闭），需固定 pin 终审。 |
 | C-2 2×P2 | 待修 | ThemeStudio C# 裸几何值 + conformance 排除、AC9 像素探针恒真。 |
 
