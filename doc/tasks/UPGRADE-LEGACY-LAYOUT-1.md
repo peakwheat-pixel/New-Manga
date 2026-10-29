@@ -80,6 +80,7 @@ allowed_paths:
 
 - 实施与自查：DSH（Lead）。独立审查：**待补**（建议 `region-workbench-owner`：复核 `main()` 调用时机、
   Windows 文件占用边界、`NEWMANGA_DATA_ROOT` 隔离环境下行为）。Review 通过后转 `done`。
+- 独立审查结论（region-workbench-owner，2026-10-29，reviewed_head `154f97a5c`）：**FAIL / CHANGES_REQUESTED**（P0=0；4×P1 + 6×P2；关键问题：unit-tests.log 证据内容是“no tests ran”、real-data 证据只记录第二次运行、Windows I/O 失败未捕获会崩溃启动、DB 先 promote 目录后复制的部分失败不可自愈）。详见 [`doc/reviews/UPGRADE-LEGACY-LAYOUT-1.md`](../reviews/UPGRADE-LEGACY-LAYOUT-1.md)。
 
 ## Canonical Evidence
 
