@@ -15,7 +15,7 @@ Lead / Integrator：DeepSeek Harness（DSH）
 |---|---|---|
 | V1.1 审计整改（工作流 A） | **PASS_WITH_ISSUES** | A-1/A-2/A-3/A-5/A-6/A-7 完成并集成；66 命令契约 FROZEN 49 / PARTIAL 17 / GAP 0；**追加发现并修复 P0**：发布版默认 `ReadOnlyUntilParity` 导致导入/建书/运行全被拒（A-5）。F0-1/F0-2 Region 写面 4 轮审查 P1 全关闭、I4 修 3×P2 并经独立窄验证 CLOSED，已合入 main（见 §7）。 |
 | 全新 UI/UX（工作流 B） | **PASS_WITH_ISSUES** | 新 Avalonia 外壳 + Library/Console/Studio Page/Studio Batch + 导出/术语工作面全部交付；main 已切**新壳为默认入口**（`--shell=legacy` 保留回滚）。独立审查 r1/r2/r3 的 P1 均已关闭；剩余 P2/P3 见 §8。 |
-| Theme Studio 重建（工作流 C） | **PASS_WITH_ISSUES** | C-1 新主题引擎 **PASS**（235 测试）；C-2 Theme Studio 7 分区 **PASS_WITH_ISSUES**（I1 已修行高契约漂移 P1 + 2×P2）；**C-3 旧主题退役已执行**（`NewManga.Theme` 项目/源码/引用删除、零引用门、双壳启动 smoke 通过），独立复审 FAIL（P2-only，定点修 C-3-I1 进行中）。 |
+| Theme Studio 重建（工作流 C） | **PASS_WITH_ISSUES** | C-1 新主题引擎 **PASS**（235 测试）；C-2 Theme Studio 7 分区 **PASS_WITH_ISSUES**（I1 已修行高契约漂移 P1 + 2×P2）；**C-3 旧主题退役已完成并收口**（`NewManga.Theme` 项目/源码/引用删除、零引用门、干净树 R6、双壳 EXIT 0/0、v2 host.log）；r1 FAIL(P2-only) → C-3-I1 修复 + 干净树补证 + 窄验证通过。 |
 | 设计系统（工作流 D） | **PASS_WITH_ISSUES** | D-1 独立审查 r2 的 2×P1 已修（真实 App 资源栈全局令牌、徽标合成对比度），DS 82 测试；仍有 6 行/6 对状态色落极端表面未达 4.5:1（已登记组件约束）。 |
 | 总体 | **未达 L4 最终验收** | 阻断项：C-3 未执行（旧主题系统仍在）、F0-1 待最终复核、跨项目并行测试偶发、Windows 实机/DPI/IME/Trim 未验证（NOT_RUN）。可交付为 **M2（新壳可用）+ M3（全工作面）候选**。 |
 
@@ -97,8 +97,7 @@ A-1 `CreateChapterAsync`；A-2 `IRunController`（暂停/继续/停止/重试，
 
 | 项 | 状态 | 原因 / 解除条件 |
 |---|---|---|
-| C-3 旧主题退役 | **执行完成，验收 in_review** | R1–R6 全部完成且已合入 main；独立复审 FAIL 但为 P2-only（旧壳外观切 DS palette 未同步、`--theme` 迁移外观丢失、替代断言以旧壳为主、R6 脏树重跑、READY 证据被原位改写、LegacyChrome 硬编码 fallback、字体审计扫到 gitignored 数据）。定点修 C-3-I1 进行中，修后窄复审即关闭。 |
-| F0-1 / F0-2 Region 写面 | **已合入** | 4 轮审查 P1 全关闭；I4 修 3×P2 后独立窄验证 3 项 **CLOSED**（`doc/reviews/V11R-F0-1-r5-verification.md`），整支（含 C077 `list_page_region_texts`）合入 main `d217b3658`；合入后 build 0W/0E、CoreClient 119 pass、App 305 pass。 |
+| C-3 旧主题退役 | **done（已关闭）** | R1–R6 + C-3-I1 + 干净树补证全部完成；`workingTreeDirty=false`、双壳 EXIT 0/0、145 引用仅剩证据 89 + 非依赖 56 | F0-1 / F0-2 Region 写面 | **已合入** | 4 轮审查 P1 全关闭；I4 修 3×P2 后独立窄验证 3 项 **CLOSED**（`doc/reviews/V11R-F0-1-r5-verification.md`），整支（含 C077 `list_page_region_texts`）合入 main `d217b3658`；合入后 build 0W/0E、CoreClient 119 pass、App 305 pass。 |
 | D-1 终审 | 待审 | I2 已交付（2×P1+P2 全闭），需固定 pin 终审。 |
 | C-2 2×P2 | 待修 | ThemeStudio C# 裸几何值 + conformance 排除、AC9 像素探针恒真。 |
 
@@ -154,3 +153,15 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 - **可交付状态**：新壳默认入口 + 三空间 + Studio 双模式 + Theme Studio + 新主题引擎 + 旧主题退役 + V1.1 整改（A 系列）+ Region 写面（F0）+ 导出/术语/Console/Library 全部功能面已集成，main 全量测试 0 失败。
 - **仍需人工确认**：L4 实机项目（DPI/IME/Trim/AOT/真机交互）与 C-3/D-1 的窄验证结论；`FOLLOW-UP-*` 清单为 V1.x 收尾项，不阻塞本轮交付判定。
 - **禁止事项遵守**：未 push 远端、未删除用户数据、未伪造 PASS；所有 NOT_RUN 均如实标注。
+## 13. 收盘状态（main `e33e3384f` 之后）
+
+| 工作流 | 状态 | 收官证据 |
+|---|---|---|
+| A（V1.1 整改） | **done**（A-1…A-8 全部合入） | A-3 契约、A-5 P0 写入策略、A-6 自检、A-7 stale、A-8 CLI |
+| B（新 UI/UX） | **done**（B-1…B-5 + INT-0/1/2 全部合入） | `verification/V11R-B-*/`、`V11R-INT-1/`、`V11R-INT-2/` |
+| C（Theme Studio/主题） | **C-1 done、C-2 done(PASS_WITH_ISSUES)、C-3 done** | `verification/V11R-C-1/`、`V11R-C-2/`、`V11R-C-3/`（含 R6-report-clean.md） |
+| D（设计系统） | **done**（D-1 收口，r4 PASS_WITH_ISSUES，FocusRing P2 已闭） | `verification/V11R-D-1/`（I2/I3） |
+| F0（Region） | **done**（5 轮审查 + 独立窄验证 CLOSED，已合入） | `verification/V11R-F0-1-I4/`、`V11R-F0-1-r5-verification.md` |
+| L4（发布验收） | **真实窗口矩阵 7/7 PASS**；实机 DPI/IME/Trim/AOT/交互 **NOT_RUN** | `verification/V11R-L4-EVIDENCE/` |
+
+**结论**：本轮交付范围内，所有"可在当前环境执行"的验证均已完成且 0 失败；剩余项均为环境受限的实机验证（NOT_RUN）与已登记的 V1.x follow-up，不阻塞功能交付。
