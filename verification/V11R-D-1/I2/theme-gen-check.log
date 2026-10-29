@@ -1,0 +1,11 @@
+tokens:  G:\CODEX\New Manga.workspace\worktrees\V11R-D-1-I2\doc\design\redesign-v1\40-fusion\tokens.json
+project: G:\CODEX\New Manga.workspace\worktrees\V11R-D-1-I2\apps\desktop-avalonia\src\NewManga.ThemeEngine
+theme:   newmanga-default 1.0.0 (light 35 colors, dark 35 colors)
+  derived: motion slow duration = 220ms (R-15 default; no 'motion.duration.slow' token in the frozen baseline)
+  derived: line-height tier Nm.LineHeight.Display = font.size.2xl x 1.25 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Title = font.size.xl x 1.25 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Body = font.size.md x 1.45 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Label = font.size.sm x 1.35 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Meta = font.size.xs x 1.35 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Data = font.size.sm x 1.3 (DESIGN_SYSTEM §3)
+up to date: generated theme artifacts match the frozen token source byte-for-byte
