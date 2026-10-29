@@ -30,6 +30,9 @@ public sealed class StudioBatchMatrixControl : Border
     private readonly List<Control> _cellControls = new();
     private readonly List<Control> _rowControls = new();
     private StudioBatchCellViewModel? _dragAnchor;
+    private readonly List<string> _rowIds = new();
+    private readonly List<TextBlock> _pageLabels = new();
+    private readonly List<Border> _rowHosts = new();
     private bool _dragging;
 
     public StudioBatchMatrixControl(StudioBatchViewModel viewModel)
@@ -104,7 +107,7 @@ public sealed class StudioBatchMatrixControl : Border
             {
                 Text = string.IsNullOrEmpty(stage.Label) ? stage.CoreStepType : stage.Label,
                 Classes = { "meta" },
-                FontSize = 10,
+                FontSize = 11,
                 TextAlignment = TextAlignment.Center,
             };
             ToolTip.SetTip(glyph, stage.Label);
@@ -130,6 +133,7 @@ public sealed class StudioBatchMatrixControl : Border
             ToolTip.SetTip(pageLabel, row.Tooltip);
             var pageButton = StudioUi.Button(string.Empty, "studio-matrix-page", () => _viewModel.SelectRow(row.Index));
             pageButton.Content = pageLabel;
+            _pageLabels.Add(pageLabel);
             pageButton.Width = PageColumnWidth;
             pageButton.HorizontalContentAlignment = HorizontalAlignment.Left;
             rowPanel.Children.Add(pageButton);
@@ -147,7 +151,7 @@ public sealed class StudioBatchMatrixControl : Border
                 var glyph = new TextBlock
                 {
                     Text = cell.Glyph,
-                    FontSize = 10,
+                    FontSize = 11,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };

@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
@@ -483,4 +484,43 @@ public sealed class V2StudioBatchTests
             writer.WriteEndObject();
         });
     }
+
+    // ---------------------------------------------------------------- I2a: P1-A / P1-B
+
+    [AvaloniaFact]
+    public async Task Poll_IncrementalUpdate_KeepsScrollAndReusesCells()
+    {
+        var (view, host, vm, _) = await OpenBatchAsync(projection: Projection(TenStages, pages: 60));
+        var matrix = view.BatchWorkspace.Matrix;
+        StudioFixtures.Pump();
+        matrix.Scroll.Offset = new Vector(0, 240);
+        StudioFixtures.Pump();
+        Assert.True(matrix.Scroll.Offset.Y > 0, "60 rows must overflow the viewport so the offset is meaningful");
+        var applied = 0;
+        vm.Batch.ProjectionApplied += (_, _) => applied++;
+        Assert.NotNull(matrix.CellAt(0, 0));
+        Assert.Equal(60 * 10, matrix.CellControls.Count);
+
+        host.ScriptedTaskProjections.Enqueue(Projection(TenStages, pages: 60, runStatus: "paused", failedPages: 0, blockedPages: 0));
+        Assert.True(await vm.Batch.RefreshAsync());
+        StudioFixtures.Pump();
+
+        Assert.Equal(new Vector(0, 240), matrix.Scroll.Offset);
+        Assert.Equal(1, applied); // one projection notification, not one per row
+        Assert.NotNull(matrix.CellAt(0, 0));
+        Assert.Equal(60 * 10, matrix.CellControls.Count);
+
+        StudioEvidence.Write(Task, "poll-incremental.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "P1-A 每轮轮询增量更新（不重建、滚动保持）");
+            writer.WriteNumber("rows", vm.Batch.Rows.Count);
+            writer.WriteNumber("scroll_offset_y", matrix.Scroll.Offset.Y);
+            writer.WriteNumber("projection_applied_events", applied);
+            writer.WriteBoolean("scroll_preserved", matrix.Scroll.Offset.Y == 240);
+            writer.WriteNumber("cell_controls", matrix.CellControls.Count);
+            writer.WriteEndObject();
+        });
+    }
+
 }

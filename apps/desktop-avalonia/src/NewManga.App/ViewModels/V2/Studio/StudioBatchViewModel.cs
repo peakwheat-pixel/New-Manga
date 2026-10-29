@@ -358,6 +358,9 @@ public sealed class StudioBatchViewModel : StudioObservable
     /// <summary>Raised when the matrix asks to drill into Page mode for one page (+ optional stage).</summary>
     public event EventHandler<(string PageId, string? StageType)>? DrillToPageRequested;
 
+    /// <summary>P1-A: ONE notification per poll; the matrix diffs cells instead of rebuilding the tree.</summary>
+    public event EventHandler? ProjectionApplied;
+
     public StudioSelection Selection { get; }
 
     public IRunDataSource DataSource => _dataSource;
@@ -695,6 +698,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         ApplyHighlight();
         RaiseProjectionProps();
         SyncSelectionToSharedModel();
+        ProjectionApplied?.Invoke(this, EventArgs.Empty);
     }
 
     private void RaiseProjectionProps()
@@ -1096,6 +1100,28 @@ public sealed class StudioBatchViewModel : StudioObservable
         return info;
     }
 
+    /// <summary>P1-B: the scope can only be materialized from real ids; no silent chapter fallback.</summary>
+    public bool CanMaterializeScope()
+    {
+        if (!_dataSource.IsWired)
+        {
+            return false;
+        }
+
+        var chapterId = Selection.ChapterId ?? _page.ChapterId;
+        if (Selection.ResolvedScope == StudioScopeKind.SelectedPages)
+        {
+            return Selection.SelectedPageIds.Count > 0 && !string.IsNullOrWhiteSpace(chapterId);
+        }
+
+        return _scope switch
+        {
+            StudioBatchScope.Selected => Selection.SelectedPageIds.Count > 0,
+            StudioBatchScope.CurrentPage => !string.IsNullOrWhiteSpace(Selection.CurrentPageId),
+            _ => !string.IsNullOrWhiteSpace(chapterId),
+        };
+    }
+
     private Dictionary<string, object?>? BuildScope()
     {
         var chapterId = Selection.ChapterId ?? _page.ChapterId;
@@ -1244,7 +1270,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         foreach (var action in Actions)
         {
             action.ScopeSuffix = ScopeSuffix;
-            action.IsEnabled = _dataSource.IsWired;
+            action.IsEnabled = CanMaterializeScope();
             action.Tooltip = _dataSource.IsWired
                 ? $"{action.Label}{ScopeSuffix}"
                 : StudioCapabilityGate.NotWiredTooltip;
