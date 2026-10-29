@@ -464,15 +464,6 @@ class RegionEditingService:
             raise RegionRevisionChanged()
         return expected.region_revision_id
 
-    def _assert_current_revision(
-        self, region: Region, expected_revision_no: int | None
-    ) -> None:
-        """Guard a write that does not pass through the commit seam (soft
-        delete / pin). The Core sidecar serves requests serially, so the
-        read-check-write window is bounded by the single request loop; the
-        mutation itself never rewrites revision-owned state."""
-        self._resolve_expected_current(region, expected_revision_no)
-
     def _expected_current_ids(
         self,
         regions: list[Region],
@@ -567,9 +558,16 @@ class RegionEditingService:
         (stale -> :class:`RegionRevisionChanged`, zero write).
         """
         region = self._require_region(region_id)
-        self._assert_current_revision(region, expected_revision_no)
+        expected_current_revision_id = self._resolve_expected_current(
+            region, expected_revision_no
+        )
+        # V11R-F0-1 I1/P2-4: the current-pointer re-check and the soft delete
+        # run in ONE transaction, so a concurrent revision cannot make the
+        # delete land on a changed region.
+        self._commit_batch_or_raise(
+            soft_delete_region_ids=[(region_id, expected_current_revision_id)]
+        )
         region.soft_delete()
-        self._repo.update_region(region)
 
     # ------------------------------------------------------------------
     # region retype (M2-REGION-RETYPE-CORE, contract M2-C1 rev 1.4 §5.4)
@@ -1322,15 +1320,27 @@ class RegionEditingService:
         no revision (the flag lives on the immutable row itself). The optional
         ``expected_revision_no`` guards that the CURRENT pointer is still the
         revision the caller saw; an unknown target revision is the typed
-        :class:`RegionRevisionNotFound`."""
+        :class:`RegionRevisionNotFound`.
+
+        V11R-F0-1 I1/P2-4: the current-pointer comparison and the is_pinned
+        update run in ONE transaction (history is append-only, so the target
+        revision's existence is a race-free pre-check)."""
         region = self._require_region(region_id)
-        self._assert_current_revision(region, expected_revision_no)
-        try:
-            self._repo.set_revision_pinned(region_id, revision_no, pinned)
-        except LookupError as error:
+        expected_current_revision_id = self._resolve_expected_current(
+            region, expected_revision_no
+        )
+        if self._repo.get_revision(region_id, revision_no) is None:
             raise RegionRevisionNotFound(
                 f"revision {revision_no} not found for region {region_id}"
-            ) from error
+            )
+        self._commit_batch_or_raise(
+            revision_pins=[(region_id, revision_no, pinned)],
+            expected_current_checks=(
+                [(region_id, expected_current_revision_id)]
+                if expected_current_revision_id is not None
+                else []
+            ),
+        )
 
 
 class EditingSession:
