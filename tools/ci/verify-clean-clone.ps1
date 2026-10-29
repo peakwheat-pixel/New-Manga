@@ -196,6 +196,16 @@ try {
         $hardFailures.Add('model weights missing and -RequireModels was passed') | Out-Null
     }
 
+    # Windows clones need core.longpaths=true for the deep verification/** artifact paths; GitHub
+    # Actions checkout enables it, local operators must do the same. Reported, not failed, because the
+    # checkout already happened by the time this script runs.
+    $longPaths = (& git config --get core.longpaths) 2>$null
+    $longPathsStatus = if ($longPaths -eq 'true') {
+        'enabled'
+    } else {
+        'not-set (run: git config core.longpaths true; required on Windows for verification/** deep paths)'
+    }
+
     $pythonExe = (Get-Command python -ErrorAction SilentlyContinue)?.Source
     $pyInstaller = $null
     if ($pythonExe) {
@@ -225,6 +235,7 @@ try {
             pyinstaller = if ($pyInstaller) { "$pyInstaller" } else { 'MISSING (sidecar job will skip)' }
         }
         dotnet = if ($dotnetVersion) { "$dotnetVersion" } else { 'MISSING' }
+        long_paths = $longPathsStatus
         model_weights = [ordered]@{
             status = $weightsStatus
             path = $weights
@@ -240,6 +251,7 @@ try {
 
     Write-Output "clean-clone check: files=$($tracked.Count) hard_failures=$($hardFailures.Count) allowed_hits=$($allowed.Count)"
     Write-Output "model weights: $weightsStatus$(if ($weights) { " ($weights)" })"
+    Write-Output "long paths: $longPathsStatus"
     if ($hardFailures.Count -gt 0) {
         Write-Output 'HARD FAILURES:'
         $hardFailures | ForEach-Object { Write-Output "  - $_" }
