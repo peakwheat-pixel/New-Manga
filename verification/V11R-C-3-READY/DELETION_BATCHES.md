@@ -1,8 +1,8 @@
 # V11R-C-3 删除批次清单与顺序（C-3 执行手册）
 
 - 任务：`V11R-C-3-READY`（就绪包）；执行任务：`V11R-C-3`
-- 基线：`c5037b65fb4c80a42e96869789d12a6e2427e954`（当前 `main`）
-- 依赖图证据：`DEPENDENCY_GRAPH.md` / `dependency-graph.json`（631 引用 / 68 文件）
+- 基线：`df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e`（R1 tag `v11r-pre-retire`，当前 main）
+- 依赖图证据：`DEPENDENCY_GRAPH.md` / `dependency-graph.json`（634 引用 / 69 文件）
 - 原则：**先建新（R1–R2）→ 迁移入口（R3）→ 替换测试后删（R4）→ 删项目（R5）→ 零引用门（R6）**
 - 回滚点：R1 创建的 tag `v11r-pre-retire`（脚本 `tools/v11r/rollback-theme-retire.ps1`）
 
@@ -46,7 +46,7 @@
 
 ### C 类：受证据 pin 保护（禁止修改/删除）
 
-86 处 / 30 文件（完整清单见 `DEPENDENCY_GRAPH.md` §6）：计划/契约/任务/交接/历史验证证据（`doc/**`、
+87 处 / 30 文件（完整清单见 `DEPENDENCY_GRAPH.md` §6）：计划/契约/任务/交接/历史验证证据（`doc/**`、
 `verification/THEME-MACOS-2/**`、`verification/V11R-C-1/**`、`verification/RELEASE-REPACK-5/**` 等）。
 处理原则：保持原字节；如新事实与旧文档冲突，由 Lead 追加新说明/新证据，不就地改写；删除任务不得以
 “清理旧文档”为名触碰这些文件。
@@ -107,8 +107,11 @@
 
 - 迁移门测试：`tests/NewManga.ThemeEngine.Tests/LegacyThemeRetirementGateTests.cs` 26 例全绿（9 旧 ID ×
   文件级端到端 + 未知 ID（有/无 registry）+ 空/缺失 + 旧键组合 + 幂等 + 表完整性）。
-- 依赖图：631 引用/68 文件已分类，含机器可读 JSON 与全表。
+- 依赖图：634 引用/69 文件已分类，含机器可读 JSON 与全表。
 - 回滚脚本：dry-run 通过（见 `verification/V11R-C-3-READY/rollback-dry-run.log`）；实际 git 回滚 + 启动
   smoke 演练留到 C-3 执行（`ROLLBACK_DRILL.md` 标注 NOT_RUN 步骤）。
-- L3 对比度矩阵：`verification/V11R-D-1/contrast-matrix.md`（4 套盘 × 5 背景，含 8 行/15 对未达标明细与判定依据）。
+- L3 对比度矩阵：`verification/V11R-D-1/contrast-matrix.md`（4 套盘 × 5 背景，含 6 行/7 对未达标明细与判定依据）。
+
+
+
 

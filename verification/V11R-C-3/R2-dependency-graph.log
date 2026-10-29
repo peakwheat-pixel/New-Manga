@@ -1,0 +1,17 @@
+base main   : df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e
+repo HEAD   : 3a5bdfa686692e51f07f57d8d3b112e3d50c92dc
+references  : 634 in 69 files
+json        : G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\verification\V11R-C-3-READY\dependency-graph.json
+table       : G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\verification\V11R-C-3-READY\dependency-graph-table.md
+  kind  evidence-or-documentation=87
+  kind  legacy-shell-production=192
+  kind  legacy-tests=218
+  kind  legacy-theme-source=83
+  kind  new-architecture=14
+  kind  new-architecture-tests=21
+  kind  platform-struct-unrelated=19
+  fate  DELETE-WITH-C3=83
+  fate  EVIDENCE-PIN-PROTECTED=87
+  fate  MIGRATE-THEN-DELETE=192
+  fate  NOT-A-DEPENDENCY=54
+  fate  REPLACE-BEFORE-DELETE=218

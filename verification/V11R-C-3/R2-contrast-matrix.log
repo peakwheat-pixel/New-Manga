@@ -1,0 +1,4 @@
+matrix : G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\verification\V11R-D-1\contrast-matrix.md
+data   : G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\verification\V11R-C-3-READY\contrast-matrix.json
+failing rows: 6
+failing pairs: 7

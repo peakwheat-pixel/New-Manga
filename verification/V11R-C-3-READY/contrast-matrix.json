@@ -1,11 +1,11 @@
 {
   "schema": "newmanga.v11r.contrast-matrix/1",
   "task": "V11R-C-3-READY",
-  "baseCommit": "9acddc23f6f69959606f57f58f24921d0db5d730",
-  "generatedAt": "2026-10-30T03:14:37+08:00",
+  "baseCommit": "3a5bdfa686692e51f07f57d8d3b112e3d50c92dc",
+  "generatedAt": "2026-10-30T03:19:04+08:00",
   "method": "WCAG 2.1 relative luminance; (L1+0.05)/(L2+0.05)",
-  "failures": 8,
-  "failing_pairs": 15,
+  "failures": 6,
+  "failing_pairs": 7,
   "failing_pairs_detail": [
     {
       "theme": "Dark（冻结标准盘）",
@@ -16,100 +16,44 @@
     },
     {
       "theme": "Dark（冻结标准盘）",
-      "label": "状态 `status.running` = #5B93B8",
+      "label": "状态 `status.failed` = #D27A69",
       "background": "bg.overlay",
-      "ratio": 4.1,
+      "ratio": 4.37,
       "floor": 4.5
     },
     {
       "theme": "Dark（冻结标准盘）",
-      "label": "状态 `status.failed` = #CC6A57",
+      "label": "状态 `status.skipped` = #868B91",
       "background": "bg.raised",
-      "ratio": 4.22,
+      "ratio": 4.48,
       "floor": 4.5
     },
     {
       "theme": "Dark（冻结标准盘）",
-      "label": "状态 `status.failed` = #CC6A57",
+      "label": "状态 `status.skipped` = #868B91",
       "background": "bg.overlay",
-      "ratio": 3.75,
-      "floor": 4.5
-    },
-    {
-      "theme": "Dark（冻结标准盘）",
-      "label": "状态 `status.stale` = #9A8AB0",
-      "background": "bg.overlay",
-      "ratio": 4.31,
-      "floor": 4.5
-    },
-    {
-      "theme": "Dark（冻结标准盘）",
-      "label": "状态 `status.skipped` = #82878E",
-      "background": "bg.raised",
-      "ratio": 4.25,
-      "floor": 4.5
-    },
-    {
-      "theme": "Dark（冻结标准盘）",
-      "label": "状态 `status.skipped` = #82878E",
-      "background": "bg.overlay",
-      "ratio": 3.77,
+      "ratio": 3.97,
       "floor": 4.5
     },
     {
       "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.queued` = #6E7378",
-      "background": "bg.canvas",
-      "ratio": 4.31,
-      "floor": 4.5
-    },
-    {
-      "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.queued` = #6E7378",
+      "label": "状态 `status.queued` = #676C71",
       "background": "bg.sunken",
-      "ratio": 3.98,
+      "ratio": 4.41,
       "floor": 4.5
     },
     {
       "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.queued` = #6E7378",
-      "background": "bg.raised",
-      "ratio": 4.24,
-      "floor": 4.5
-    },
-    {
-      "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.blocked` = #8A6A1F",
+      "label": "状态 `status.blocked` = #84661E",
       "background": "bg.sunken",
-      "ratio": 4.2,
+      "ratio": 4.48,
       "floor": 4.5
     },
     {
       "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.blocked` = #8A6A1F",
-      "background": "bg.raised",
-      "ratio": 4.47,
-      "floor": 4.5
-    },
-    {
-      "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.skipped` = #73777B",
-      "background": "bg.canvas",
-      "ratio": 4.07,
-      "floor": 4.5
-    },
-    {
-      "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.skipped` = #73777B",
+      "label": "状态 `status.skipped` = #6A6D71",
       "background": "bg.sunken",
-      "ratio": 3.75,
-      "floor": 4.5
-    },
-    {
-      "theme": "Light（冻结标准盘）",
-      "label": "状态 `status.skipped` = #73777B",
-      "background": "bg.raised",
-      "ratio": 4.0,
+      "ratio": 4.32,
       "floor": 4.5
     }
   ],
@@ -267,39 +211,39 @@
           ]
         },
         {
-          "label": "状态 `status.running` = #5B93B8",
+          "label": "状态 `status.running` = #689CBE",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 5.72,
+              "ratio": 6.42,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 5.88,
+              "ratio": 6.6,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.panel",
-              "ratio": 5.13,
+              "ratio": 5.76,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.62,
+              "ratio": 5.19,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.overlay",
-              "ratio": 4.1,
+              "ratio": 4.61,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             }
           ]
         },
@@ -341,37 +285,37 @@
           ]
         },
         {
-          "label": "状态 `status.failed` = #CC6A57",
+          "label": "状态 `status.failed` = #D27A69",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 5.23,
+              "ratio": 6.1,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 5.37,
+              "ratio": 6.27,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.panel",
-              "ratio": 4.69,
+              "ratio": 5.47,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.22,
+              "ratio": 4.93,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             },
             {
               "background": "bg.overlay",
-              "ratio": 3.75,
+              "ratio": 4.37,
               "floor": 4.5,
               "pass": false
             }
@@ -415,74 +359,74 @@
           ]
         },
         {
-          "label": "状态 `status.stale` = #9A8AB0",
+          "label": "状态 `status.stale` = #9F90B4",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 6.02,
+              "ratio": 6.46,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 6.18,
+              "ratio": 6.64,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.panel",
-              "ratio": 5.4,
+              "ratio": 5.79,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.86,
+              "ratio": 5.21,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.overlay",
-              "ratio": 4.31,
+              "ratio": 4.63,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             }
           ]
         },
         {
-          "label": "状态 `status.skipped` = #82878E",
+          "label": "状态 `status.skipped` = #868B91",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 5.26,
+              "ratio": 5.54,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 5.41,
+              "ratio": 5.7,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.panel",
-              "ratio": 4.72,
+              "ratio": 4.97,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.25,
+              "ratio": 4.48,
               "floor": 4.5,
               "pass": false
             },
             {
               "background": "bg.overlay",
-              "ratio": 3.77,
+              "ratio": 3.97,
               "floor": 4.5,
               "pass": false
             }
@@ -767,37 +711,37 @@
           ]
         },
         {
-          "label": "状态 `status.queued` = #6E7378",
+          "label": "状态 `status.queued` = #676C71",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 4.31,
+              "ratio": 4.78,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 3.98,
+              "ratio": 4.41,
               "floor": 4.5,
               "pass": false
             },
             {
               "background": "bg.panel",
-              "ratio": 4.79,
+              "ratio": 5.3,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.24,
+              "ratio": 4.69,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             },
             {
               "background": "bg.overlay",
-              "ratio": 4.79,
+              "ratio": 5.3,
               "floor": 4.5,
               "pass": true
             }
@@ -915,37 +859,37 @@
           ]
         },
         {
-          "label": "状态 `status.blocked` = #8A6A1F",
+          "label": "状态 `status.blocked` = #84661E",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 4.55,
+              "ratio": 4.85,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 4.2,
+              "ratio": 4.48,
               "floor": 4.5,
               "pass": false
             },
             {
               "background": "bg.panel",
-              "ratio": 5.05,
+              "ratio": 5.38,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.47,
+              "ratio": 4.77,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             },
             {
               "background": "bg.overlay",
-              "ratio": 5.05,
+              "ratio": 5.38,
               "floor": 4.5,
               "pass": true
             }
@@ -989,37 +933,37 @@
           ]
         },
         {
-          "label": "状态 `status.skipped` = #73777B",
+          "label": "状态 `status.skipped` = #6A6D71",
           "kind": "status",
           "floor": 4.5,
           "pairs": [
             {
               "background": "bg.canvas",
-              "ratio": 4.07,
+              "ratio": 4.69,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             },
             {
               "background": "bg.sunken",
-              "ratio": 3.75,
+              "ratio": 4.32,
               "floor": 4.5,
               "pass": false
             },
             {
               "background": "bg.panel",
-              "ratio": 4.51,
+              "ratio": 5.2,
               "floor": 4.5,
               "pass": true
             },
             {
               "background": "bg.raised",
-              "ratio": 4.0,
+              "ratio": 4.6,
               "floor": 4.5,
-              "pass": false
+              "pass": true
             },
             {
               "background": "bg.overlay",
-              "ratio": 4.51,
+              "ratio": 5.2,
               "floor": 4.5,
               "pass": true
             }

@@ -86,6 +86,18 @@ if ($null -eq $lines) { $lines = @() }
 
 $entries = [System.Collections.Generic.List[object]]::new()
 $fileRows = @{}
+$fileTextCache = @{}
+function Get-FileText([string]$relativePath) {
+    if (-not $fileTextCache.ContainsKey($relativePath)) {
+        $absolute = Join-Path $RepositoryRoot $relativePath
+        $fileTextCache[$relativePath] = if (Test-Path -LiteralPath $absolute) {
+            Get-Content -LiteralPath $absolute -Raw -ErrorAction SilentlyContinue
+        } else {
+            $null
+        }
+    }
+    return $fileTextCache[$relativePath]
+}
 foreach ($line in $lines) {
     if ($line -notmatch '^(?<path>[^:]+):(?<line>\d+):(?<text>.*)$') { continue }
     $path = $Matches['path']
@@ -95,6 +107,17 @@ foreach ($line in $lines) {
     $kind = Get-ReferenceKind $path
     if ($symbol -eq 'LayoutKind' -and $text -match 'StructLayout\(') {
         $kind = 'platform-struct-unrelated'
+    }
+    elseif ($symbol -in @('LayoutProfile', 'LayoutProfiles')) {
+        # Same-name collision: NewManga.ThemeEngine.Models.LayoutProfile is a new-architecture type.
+        # When the file imports the ThemeEngine namespace and not the legacy NewManga.Theme namespace,
+        # the match is a new-architecture reference, not a legacy dependency.
+        $content = Get-FileText $path
+        if ($null -ne $content -and
+            $content -match 'using\s+NewManga\.ThemeEngine' -and
+            $content -notmatch 'using\s+NewManga\.Theme\s*;') {
+            $kind = if ($path -like 'apps/desktop-avalonia/tests/*') { 'new-architecture-tests' } else { 'new-architecture' }
+        }
     }
 
     $fate = Get-RetireFate $kind
