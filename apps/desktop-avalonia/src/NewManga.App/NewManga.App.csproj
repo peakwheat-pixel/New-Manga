@@ -37,7 +37,6 @@
     <ProjectReference Include="..\NewManga.Host\NewManga.Host.csproj" />
     <!-- V11R-INT: App consumes the new theme engine (contract App → ThemeEngine → DesignSystem). -->
     <ProjectReference Include="..\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj" />
-    <ProjectReference Include="..\NewManga.Theme\NewManga.Theme.csproj" />
     <!-- V11R-D-1: the design system is the single source of tokens/styles/controls. -->
     <ProjectReference Include="..\NewManga.DesignSystem\NewManga.DesignSystem.csproj" />
   </ItemGroup>
