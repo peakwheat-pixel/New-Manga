@@ -3,19 +3,19 @@ id: V11R-C-RESEARCH-1
 title: 主题框架参考研究（SukiUI/FluentAvalonia/Semi.Avalonia/PleasantUI/Avalonia）
 kind: research
 governance_version: 2
-status: in_progress
+status: done
 approval: approved_by_lead_2026-10-30
 suggested_owner: codex
 owner: codex
-reviewer: dsh
+reviewer: independent (C1 research accepted)
 depends_on: [V11R-BASELINE-1]
 base_commit: c73239999
 branch: v11r/theme-research
 worktree: (doc-only, lead merges)
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 
+delivery_head: 9b0b5b5b5
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/V11R-C-RESEARCH-1
 allowed_paths:
   - doc/design/theming/
