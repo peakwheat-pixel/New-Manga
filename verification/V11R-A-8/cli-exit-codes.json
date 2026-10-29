@@ -1,0 +1,42 @@
+[
+  {
+    "case": "space-form-legacy",
+    "exit": 0,
+    "data_created": true,
+    "logs_created": true,
+    "host_ready": true,
+    "tail": ""
+  },
+  {
+    "case": "bare-key",
+    "exit": 2,
+    "data_created": null,
+    "logs_created": null,
+    "host_ready": null,
+    "tail": ""
+  },
+  {
+    "case": "unknown-option",
+    "exit": 2,
+    "data_created": null,
+    "logs_created": null,
+    "host_ready": null,
+    "tail": ""
+  },
+  {
+    "case": "empty-log-dir",
+    "exit": 2,
+    "data_created": null,
+    "logs_created": null,
+    "host_ready": null,
+    "tail": ""
+  },
+  {
+    "case": "invalid-numeric",
+    "exit": 2,
+    "data_created": null,
+    "logs_created": null,
+    "host_ready": null,
+    "tail": ""
+  }
+]

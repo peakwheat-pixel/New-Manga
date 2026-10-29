@@ -33,17 +33,43 @@ public static class Program
             .UsePlatformDetect()
             .LogToTrace();
 
-    private static void WriteFatal(AppOptions options, string name, string detail)
+    /// <summary>
+    /// Best-effort startup-failure log. V11R-A-8: this must NEVER throw — an empty/too-long/read-only
+    /// log path used to escape as an unhandled ArgumentException and mask the original startup error
+    /// (exit -532462766 with no diagnostic). Invalid paths now degrade to stderr.
+    /// </summary>
+    internal static void WriteFatal(AppOptions options, string name, string detail)
     {
         try
         {
             var hostOptions = options.ToHostOptions();
-            Directory.CreateDirectory(hostOptions.LogDirectory);
-            File.WriteAllText(Path.Combine(hostOptions.LogDirectory, name + ".log"), detail);
+            var logDirectory = hostOptions.LogDirectory;
+            if (string.IsNullOrWhiteSpace(logDirectory))
+            {
+                WriteStderr(name, detail, "log directory is empty");
+                return;
+            }
+
+            Directory.CreateDirectory(logDirectory);
+            File.WriteAllText(Path.Combine(logDirectory, name + ".log"), detail);
         }
-        catch (Exception logError) when (logError is IOException or UnauthorizedAccessException)
+        catch (Exception logError)
         {
-            // nothing else to do in a windowless startup failure
+            // Nothing else to do in a windowless startup failure; never crash while trying to log.
+            WriteStderr(name, detail, logError.GetType().Name + ": " + logError.Message);
+        }
+    }
+
+    private static void WriteStderr(string name, string detail, string logFailure)
+    {
+        try
+        {
+            Console.Error.WriteLine($"[{name}] {detail}");
+            Console.Error.WriteLine($"log unavailable: {logFailure}");
+        }
+        catch
+        {
+            // stderr itself can be unavailable in a windowless host; nothing left to report to.
         }
     }
 internal static class DpiAwareness
