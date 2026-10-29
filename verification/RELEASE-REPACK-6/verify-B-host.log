@@ -1,0 +1,19 @@
+2026-10-29T10:59:37.3240398+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-29T10:59:37.3295166+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\CODEX\New Manga.workspace\task-envs\RELEASE-REPACK-6\legacy-data
+2026-10-29T10:59:37.3342912+00:00 INFO first-run backup created: catalog.20261029T105937Z.sqlite.nmbak
+2026-10-29T10:59:37.6661787+00:00 ERROR code=HandshakeFailed sidecar=core_service [HandshakeFailed] core_service: core.ping handshake failed: [ProcessExited] core_service: process exited (code=1); stderr tail: [core.upgrade] migrated legacy data layout: library.db
+Traceback (most recent call last):
+  File "entry_core_service.py", line 10, in <module>
+  File "bootstrap\core_service.py", line 4631, in main
+  File "bootstrap\core_service.py", line 4583, in _ensure_preview_namespace
+  File "infrastructure\resource_channel\catalog_store.py", line 314, in restore_namespace_lock
+  File "infrastructure\resource_channel\catalog_store.py", line 341, in _verify_catalog_binding
+application.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace binding identity mismatch
+[PYI-35424:ERROR] Failed to execute script 'entry_core_service' due to unhandled exception!
+2026-10-29T11:00:25.8928818+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-29T11:00:25.8979880+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\CODEX\New Manga.workspace\task-envs\RELEASE-REPACK-6\legacy-data
+2026-10-29T11:00:25.8980699+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T11:00:26.2522020+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T11:00:26.3417662+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T11:00:26.3420036+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T11:00:26.3440914+00:00 INFO host-control session opened (host_VhU6pwHQOmnMGyxZMbQrS0TdU2A9blUg6MZbYB_ZmnA)

@@ -1,0 +1,94 @@
+2026-10-26T19:05:15.4144724+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-26T19:05:15.4197711+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-26T19:05:15.4236829+00:00 INFO first-run backup created: catalog.20261026T190515Z.sqlite.nmbak
+2026-10-26T19:05:15.4249469+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-26T21:18:10.8988778+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-26T21:18:10.9047131+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-26T21:18:10.9054516+00:00 INFO first-run backup skipped: backup already exists
+2026-10-26T21:18:12.3426931+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T21:18:12.4750497+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-26T21:20:20.6336186+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-26T21:20:20.6392152+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-26T21:20:20.6396939+00:00 INFO first-run backup skipped: backup already exists
+2026-10-26T21:20:22.0015088+00:00 INFO core_service ready (1 wire frames)
+2026-10-26T21:20:22.1317399+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T00:53:01.4414517+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T00:53:01.4466948+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T00:53:01.4471448+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T00:53:01.8042024+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T00:53:01.9260283+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T00:53:54.3599316+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T00:53:54.3651306+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T00:53:54.3655449+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T00:53:54.6254935+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T00:53:54.7012748+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T01:01:14.9474495+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T01:01:14.9528349+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T01:01:14.9532497+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T01:01:15.3168938+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T01:01:15.4377836+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T01:22:56.5959507+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T01:22:56.6045508+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T01:22:56.6054495+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T01:22:56.6068963+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-27T01:23:06.0414684+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T01:23:06.0481665+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T01:23:06.0489214+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T01:23:06.0498084+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-27T01:46:03.3546711+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T01:46:03.3613350+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T01:46:03.3617663+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T01:46:03.7192550+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T01:46:03.8404242+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T02:12:59.7641636+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T02:12:59.7709161+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T02:12:59.7713822+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T02:13:00.1418203+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T02:13:00.2666085+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T11:45:13.0588408+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T11:45:13.0717099+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T11:45:13.0726226+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T11:45:14.6276287+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T11:45:14.7718694+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T11:45:14.7737604+00:00 INFO host-control session opened (host_9lO5ia3Vo563gykbX4AsMqvBYYxadZla2sn_ye86DfQ)
+2026-10-27T11:45:33.3886104+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T11:45:33.4010045+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T11:45:33.4015039+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T11:45:34.9170628+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T11:45:35.0550984+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T11:45:35.0570191+00:00 INFO host-control session opened (host_rzSSlTkiV_5pAyJKw5EgUhzjI-Q4SswtBRkcdx2caMQ)
+2026-10-27T12:46:13.5874056+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T12:46:13.6047293+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T12:46:13.6061064+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T12:46:15.7639195+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T12:46:15.9641718+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T12:46:15.9669147+00:00 INFO host-control session opened (host_1AKKoRPkrq-qMp0YEPzB2zg4IFoimDP0wt89XhpCy4c)
+2026-10-27T12:46:37.5772993+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T12:46:37.5939491+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T12:46:37.5944250+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T12:46:39.6239173+00:00 INFO core_service ready (1 wire frames)
+2026-10-27T12:46:39.8155771+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-27T12:46:39.8176324+00:00 INFO host-control session opened (host_8hjoqSBHI9-x1lwhYuWI3aHzFErj4ez9fHYmfLtA4rU)
+2026-10-27T13:38:30.6705407+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T13:38:30.6860210+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T13:38:30.6871759+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T13:38:30.6883230+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-27T13:41:08.4959049+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T13:41:08.5101268+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T13:41:08.5109655+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T13:41:08.5119052+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-27T14:10:02.7111920+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T14:10:02.7246163+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T14:10:02.7254879+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T14:10:02.7266693+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-27T14:10:47.6620721+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-27T14:10:47.6758029+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Roaming\com.newmanga.desktop
+2026-10-27T14:10:47.6765880+00:00 INFO first-run backup skipped: backup already exists
+2026-10-27T14:10:47.6776215+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations
+2026-10-29T10:58:51.3945556+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-29T10:58:51.3998485+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=G:\CODEX\New Manga.workspace\task-envs\RELEASE-REPACK-6\u-data
+2026-10-29T10:58:51.3999272+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T10:58:51.8621824+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T10:58:52.0009730+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T10:58:52.0013766+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T10:58:52.0032977+00:00 INFO host-control session opened (host_jWx0buPu6MhKnCJHJPqB8DHmGL2WhrWiBhw5yfxCmuM)

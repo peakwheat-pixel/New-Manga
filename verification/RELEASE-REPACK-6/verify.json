@@ -1,0 +1,50 @@
+{
+ "version": "0.1.1",
+ "installer": {
+  "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-6\\installer\\NewManga-0.1.1-setup.exe",
+  "sha256": "5b5931b9fa7c38845af9746ffedb54921428838a88e792d1482488450a19c634",
+  "bytes": 68629676
+ },
+ "packages": {
+  "base_zip": {
+   "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-6\\out\\NewManga-0.1.1-win-x64.zip",
+   "bytes": 103500348,
+   "sha256": "7b3a4306e9277632a2bc6cade09b22ca34644df4237b0558f4c3c4086448020e"
+  },
+  "models_zip": {
+   "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-6\\out\\NewManga-0.1.1-win-x64-models.zip",
+   "bytes": 725509599,
+   "sha256": "5c17ddb0537c95f88ebd986d2af7d0c1cf5aea67c7e5fd13c8f8ba77a91f6fd4"
+  }
+ },
+ "sidecar": {
+  "core_service_sha256": "8889944dd65c6b43f4ee8e650325c81bce90d7e994d67f7b376d788ec3bad901",
+  "official_0_1_0_sha256": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+  "contains_migration_fix": true
+ },
+ "verify_A_real_data": {
+  "db_sha256_before": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9",
+  "db_sha256_after": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9",
+  "byte_identical": true,
+  "backups": 3,
+  "host_ready": true
+ },
+ "verify_B_legacy": {
+  "root_library_exists": true,
+  "legacy_library_shaken": false,
+  "sha_equal": true,
+  "books": 1,
+  "book_titles": [
+   "家族战记"
+  ],
+  "integrity": "ok",
+  "schema_version": 6,
+  "host_ready": true
+ },
+ "install_smoke": {
+  "silent_install": true,
+  "silent_uninstall": true,
+  "registry_cleaned": true,
+  "real_data_root_untouched": true
+ }
+}

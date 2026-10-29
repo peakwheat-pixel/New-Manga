@@ -1,0 +1,40 @@
+{
+  "task": "NSIS-INSTALLER-1",
+  "variant": "base",
+  "version": "0.1.1",
+  "version4": "0.1.1.0",
+  "installer": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-6\\installer\\NewManga-0.1.1-setup.exe",
+    "file_name": "NewManga-0.1.1-setup.exe",
+    "bytes": 68629676,
+    "mb": 65.45,
+    "sha256": "5b5931b9fa7c38845af9746ffedb54921428838a88e792d1482488450a19c634",
+    "build_seconds": 69.54,
+    "authenticode_status": "NotSigned",
+    "file_version": "0.1.1",
+    "product_name": "New Manga",
+    "product_version": "0.1.1",
+    "description": "New Manga setup (per-user, unsigned)"
+  },
+  "stage": {
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\RELEASE-REPACK-6\\out\\NewManga-0.1.1-win-x64",
+    "file_count": 1970,
+    "bytes": 226100538.0,
+    "mb": 215.63,
+    "manifest_sha256": "4898f266c1eaebc689353a7a9ed11b5e7ea381f70eb07112c4baf88f52d62216",
+    "install_size_kb": 220802,
+    "version_json": {
+      "version": "0.1.1",
+      "variant": "base",
+      "license": "GPL-3.0-or-later"
+    }
+  },
+  "toolchain": {
+    "makensis": "C:\\Users\\49745\\AppData\\Local\\tauri\\NSIS\\makensis.exe",
+    "makensis_version": "v3.13",
+    "makensis_sha256": "4ec390d0f96f9728507fbc2f4e91311dd90bfc6c8ddfe2159357b3651ae151c0",
+    "nsi_script": "G:\\CODEX\\New Manga.workspace\\worktrees\\RELEASE-REPACK-6\\packaging\\nsis\\installer.nsi",
+    "icon": "G:\\CODEX\\New Manga.workspace\\worktrees\\RELEASE-REPACK-6\\apps\\desktop\\src-tauri\\icons\\icon.ico"
+  },
+  "generated_at_utc": "2026-10-29T10:58:00.2390749Z"
+}
