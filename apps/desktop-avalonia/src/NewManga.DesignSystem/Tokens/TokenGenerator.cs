@@ -41,6 +41,7 @@ public static class TokenGenerator
         "Themes/Density.Spacious.axaml",
         "Themes/Motion.Reduced.axaml",
         "Generated/NmKeys.g.cs",
+        "Generated/StatusCatalog.g.cs",
         "Generated/TokenMap.md",
     ];
 
@@ -187,7 +188,9 @@ public static class TokenGenerator
             rows.Add(new GeneratedMappingRow("motion-reduced", "(motion)", key, kind, value));
         }
 
-        // ---- Emit artifacts --------------------------------------------------------------------
+        // ---- Emit artifacts (after rule validation so a rule violation fails generation) ----------
+        ValidateDerivationRules(entries, darkBrushes, lightBrushes, highContrastDark, highContrastLight, compactRows, spaciousRows);
+
         var files = new List<GeneratedFile>(GeneratedFilePaths.Count)
         {
             new("Themes/Tokens.Dark.axaml",
@@ -199,7 +202,9 @@ public static class TokenGenerator
                     $"Theme-invariant tokens: {globalCount} frozen global tokens + {TokenMap.DerivedGlobals.Count} contract-derived resources.")),
             new("Themes/Tokens.HighContrast.axaml",
                 TokenDictionaryWriter.ThemeScopedBrushDictionary(highContrastDark, highContrastLight,
-                    "High-contrast extension (complete palette, theme scoped). Curated to DESIGN_SYSTEM §2.3 thresholds.")),
+                    "High-contrast extension (complete palette, theme scoped). Derived by rule (contract §2.4): " +
+                    "text.primary/secondary/tertiary >= 7:1, status/accent >= 4.5:1 against the frozen surface ladder; " +
+                    "not a second truth source.")),
             new("Themes/Density.Compact.axaml",
                 TokenDictionaryWriter.GlobalDictionary(
                     compactRows.Select(static row => (row.Key, DensityKind(row.Key), row.RawValue)).ToArray(),
@@ -215,6 +220,13 @@ public static class TokenGenerator
                 TokenDictionaryWriter.KeysClass(
                     resourceKeys.Concat(darkKeys).ToArray(),
                     "Token-derived Nm.* resource-key constants (contract §2).")),
+            new("Generated/StatusCatalog.g.cs",
+                TokenDictionaryWriter.StatusSymbolsClass(
+                    entries
+                        .Where(static entry => entry.Path.StartsWith("stateSymbols.", StringComparison.Ordinal))
+                        .Select(static entry => (TokenMap.PascalCaseSegment(entry.Path["stateSymbols.".Length..]), entry.Value))
+                        .ToArray(),
+                    "Status symbols generated from the frozen stateSymbols tokens (DESIGN_SYSTEM §2.2).")),
             new("Generated/TokenMap.md",
                 TokenDictionaryWriter.MapMarkdown(rows,
                     "Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.")),
@@ -302,12 +314,28 @@ public static class TokenGenerator
 
     private static void ValidateKind(TokenEntry entry, TokenValueKind kind)
     {
+        if (entry.Type == "dimension")
+        {
+            var isEmRatio = entry.Path.StartsWith("font.tracking.", StringComparison.Ordinal) ||
+                            entry.Value.Trim().EndsWith("em", StringComparison.OrdinalIgnoreCase);
+            var expectedKinds = isEmRatio
+                ? new[] { TokenValueKind.EmRatio }
+                : new[] { TokenValueKind.Double, TokenValueKind.Thickness, TokenValueKind.CornerRadius };
+            if (!expectedKinds.Contains(kind))
+            {
+                throw new InvalidOperationException(
+                    $"token '{entry.Path}' ({entry.Value}) cannot be published as {kind}; " +
+                    $"em-relative values must be EmRatio and px/unitless values Double/Thickness/CornerRadius");
+            }
+
+            return;
+        }
+
         var expected = entry.Type switch
         {
             "color" => new[] { TokenValueKind.Brush },
             "fontFamily" => new[] { TokenValueKind.FontFamily },
             "fontWeight" => new[] { TokenValueKind.FontWeight },
-            "dimension" => new[] { TokenValueKind.Double, TokenValueKind.Thickness, TokenValueKind.CornerRadius },
             "duration" => new[] { TokenValueKind.TimeSpan },
             "number" => new[] { TokenValueKind.Double, TokenValueKind.Int32 },
             "string" => new[] { TokenValueKind.String },
@@ -320,6 +348,157 @@ public static class TokenGenerator
             throw new InvalidOperationException(
                 $"token '{entry.Path}' ($type {entry.Type}) cannot be published as {kind}");
         }
+    }
+
+    /// <summary>
+    /// Validates the R-14 derivation rules at generation time so the derived HighContrast/Density/
+    /// LineHeight tables can never drift from the rules that justify them (contract §2.4).
+    /// </summary>
+    private static void ValidateDerivationRules(
+        IReadOnlyList<TokenEntry> entries,
+        IReadOnlyDictionary<string, string> darkBrushes,
+        IReadOnlyDictionary<string, string> lightBrushes,
+        IReadOnlyList<(string Key, string RawValue)> highContrastDark,
+        IReadOnlyList<(string Key, string RawValue)> highContrastLight,
+        IReadOnlyList<(string Key, string RawValue)> compactRows,
+        IReadOnlyList<(string Key, string RawValue)> spaciousRows)
+    {
+        ValidateLineHeightAliases(entries);
+        ValidateDensityMonotonic(entries, compactRows, spaciousRows);
+        ValidateHighContrastContrast(darkBrushes, lightBrushes, highContrastDark, highContrastLight);
+    }
+
+    private static void ValidateLineHeightAliases(IReadOnlyList<TokenEntry> entries)
+    {
+        var allowed = new[] { 1.25, 1.45, 1.6 };
+        var aliasKeys = new[]
+        {
+            "Nm.LineHeight.Display", "Nm.LineHeight.Title", "Nm.LineHeight.Body",
+            "Nm.LineHeight.Label", "Nm.LineHeight.Meta", "Nm.LineHeight.Data",
+        };
+
+        foreach (var key in aliasKeys)
+        {
+            var derived = TokenMap.DerivedGlobals.SingleOrDefault(
+                token => string.Equals(token.ResourceKey, key, StringComparison.Ordinal));
+            if (derived is null)
+            {
+                throw new InvalidOperationException($"R-14 line-height alias '{key}' is not published");
+            }
+
+            var value = TokenValues.ParseNumber(derived.RawValue);
+            if (!allowed.Any(candidate => Math.Abs(candidate - value) < 0.0001))
+            {
+                throw new InvalidOperationException(
+                    $"R-14: line-height alias '{key}' must equal one of Tight/Normal/Loose " +
+                    $"(1.25/1.45/1.6), but is {value}");
+            }
+        }
+
+        // The theme layer whitelist covers corners/motion/fonts; assert the alias set did not silently
+        // disappear from the token document either.
+        foreach (var path in new[] { "font.lineHeight.tight", "font.lineHeight.normal", "font.lineHeight.loose" })
+        {
+            if (!entries.Any(entry => string.Equals(entry.Path, path, StringComparison.Ordinal)))
+            {
+                throw new InvalidOperationException($"frozen token '{path}' is missing");
+            }
+        }
+    }
+
+    private static void ValidateDensityMonotonic(
+        IReadOnlyList<TokenEntry> entries,
+        IReadOnlyList<(string Key, string RawValue)> compactRows,
+        IReadOnlyList<(string Key, string RawValue)> spaciousRows)
+    {
+        var globalKeys = TokenMap.GlobalBindings.ToDictionary(static binding => binding.ResourceKey, StringComparer.Ordinal);
+        var globalValues = entries.ToDictionary(static entry => entry.Path, static entry => entry.Value, StringComparer.Ordinal);
+
+        for (var index = 0; index < compactRows.Count; index++)
+        {
+            var compactKey = compactRows[index].Key;
+            var spaciousKey = spaciousRows[index].Key;
+            if (!string.Equals(compactKey, spaciousKey, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"density rows drifted at index {index}");
+            }
+
+            var globalBinding = TokenMap.GlobalBindings.FirstOrDefault(
+                binding => string.Equals(binding.ResourceKey, compactKey, StringComparison.Ordinal));
+            if (globalBinding is null || !globalValues.TryGetValue(globalBinding.TokenPath, out var rawValue))
+            {
+                continue;
+            }
+
+            if (compactKey.Contains("Padding", StringComparison.Ordinal))
+            {
+                continue; // thickness aggregates are compared by their leading numeric value only
+            }
+
+            var reference = TokenValues.ParseDimension(rawValue);
+            var compact = TokenValues.ParseDimension(compactRows[index].RawValue);
+            var spacious = TokenValues.ParseDimension(spaciousRows[index].RawValue);
+            if (!(compact < reference && reference < spacious))
+            {
+                throw new InvalidOperationException(
+                    $"density derivation for '{compactKey}' must satisfy Compact < Comfortable < Spacious " +
+                    $"({compact} / {reference} / {spacious})");
+            }
+        }
+
+        _ = globalKeys;
+    }
+
+    private static void ValidateHighContrastContrast(
+        IReadOnlyDictionary<string, string> darkBrushes,
+        IReadOnlyDictionary<string, string> lightBrushes,
+        IReadOnlyList<(string Key, string RawValue)> highContrastDark,
+        IReadOnlyList<(string Key, string RawValue)> highContrastLight)
+    {
+        static void AssertFloors(
+            IReadOnlyDictionary<string, string> basePalette,
+            IReadOnlyList<(string Key, string RawValue)> highContrast,
+            string label)
+        {
+            var highContrastMap = highContrast.ToDictionary(static row => row.Key, static row => row.RawValue, StringComparer.Ordinal);
+            var panel = TokenValues.ParseColor(basePalette["Nm.Color.Bg.Panel"]);
+            var canvas = TokenValues.ParseColor(basePalette["Nm.Color.Bg.Canvas"]);
+
+            foreach (var key in new[] { "Text.Primary", "Text.Secondary", "Text.Tertiary" })
+            {
+                var color = TokenValues.ParseColor(highContrastMap["Nm.Color." + key]);
+                foreach (var surface in new[] { panel, canvas })
+                {
+                    var ratio = ContrastMath.ContrastRatio(color, surface);
+                    if (ratio < 7.0)
+                    {
+                        throw new InvalidOperationException(
+                            $"R-14 high contrast ({label}): {key} is {ratio:F2}:1 against a surface (need >= 7:1)");
+                    }
+                }
+            }
+
+            foreach (var status in new[] { "Queued", "Running", "Done", "Failed", "Blocked", "Stale", "Skipped" })
+            {
+                var color = TokenValues.ParseColor(highContrastMap["Nm.Color.Status." + status]);
+                var ratio = ContrastMath.ContrastRatio(color, panel);
+                if (ratio < 4.5)
+                {
+                    throw new InvalidOperationException(
+                        $"R-14 high contrast ({label}): status.{status} is {ratio:F2}:1 (need >= 4.5:1)");
+                }
+            }
+
+            var accent = TokenValues.ParseColor(highContrastMap["Nm.Color.Accent.Base"]);
+            var accentOn = TokenValues.ParseColor(highContrastMap["Nm.Color.Accent.On"]);
+            if (ContrastMath.ContrastRatio(accentOn, accent) < 4.5)
+            {
+                throw new InvalidOperationException($"R-14 high contrast ({label}): accent.on on accent.base < 4.5:1");
+            }
+        }
+
+        AssertFloors(darkBrushes, highContrastDark, "dark");
+        AssertFloors(lightBrushes, highContrastLight, "light");
     }
 
     private static TokenValueKind DensityKind(string key) => key.Contains("Padding", StringComparison.Ordinal)

@@ -10,14 +10,17 @@ namespace NewManga.DesignSystem.Theming;
 /// Applies the design system to a running Avalonia application by swapping resource dictionaries in
 /// <see cref="Application.Resources"/> — never by recreating the visual tree (AC7). Appearance swaps
 /// the palette dictionary, contrast/density/reduced-motion append or remove overlay dictionaries.
-/// Failures to load a dictionary are reported through <see cref="LastError"/> and leave the previous
-/// state intact (AC9).
+/// Failures to load or validate a dictionary are reported through <see cref="LastError"/> and leave the
+/// previous state intact: the manager builds and validates the replacement layer first and only then
+/// performs an atomic swap (AC9).
 ///
 /// <para>
-/// Boundary with the Theme Engine (V11R-C-1): the design system owns tokens, styles, controls and the
-/// mechanism that applies a dictionary to the running application; the theme engine owns theme
-/// semantics (packages, registry, persistence, preview). The engine feeds a complete palette in through
-/// <see cref="ApplyPalette"/> and can restore the shipped palette with <see cref="RevertPalette"/>.
+/// Boundary with the Theme Engine (V11R-C-1 Part B): the design system owns tokens, styles, controls
+/// and the mechanism that applies a dictionary to the running application; the theme engine owns theme
+/// semantics (packages, registry, persistence, preview). The engine feeds a theme layer through
+/// <see cref="ApplyThemeLayer"/> (contract §4.1 / R-15: 59 whitelisted keys — 35 colors, 3 font
+/// families, 6 font sizes, 9 line heights, 3 corner radii, 3 motion durations) or just the color subset
+/// through <see cref="ApplyPalette"/>, and restores the shipped look with <see cref="RevertPalette"/>.
 /// </para>
 /// </summary>
 public sealed class DesignSystemThemeManager : IDisposable
@@ -34,10 +37,78 @@ public sealed class DesignSystemThemeManager : IDisposable
     /// <summary>Palette id reported while the shipped light appearance palette is applied.</summary>
     public const string BuiltinLightPaletteId = "builtin.light";
 
-    /// <summary>Every color key a complete palette must define (contract §2.2 color groups).</summary>
+    /// <summary>Font-family keys a theme layer carries (R-15).</summary>
+    public static IReadOnlyList<string> ThemeLayerFontKeys { get; } =
+    [
+        NmKeys.FontFamily.Ui,
+        NmKeys.FontFamily.Data,
+        NmKeys.FontFamily.Display,
+    ];
+
+    /// <summary>Font-size keys a theme layer carries (R-15).</summary>
+    public static IReadOnlyList<string> ThemeLayerFontSizeKeys { get; } =
+    [
+        NmKeys.FontSize.Xs,
+        NmKeys.FontSize.Sm,
+        NmKeys.FontSize.Md,
+        NmKeys.FontSize.Lg,
+        NmKeys.FontSize.Xl,
+        NmKeys.FontSize.Xxl,
+    ];
+
+    /// <summary>Line-height keys a theme layer carries (R-15: 3 multipliers + 6 semantic aliases).</summary>
+    public static IReadOnlyList<string> ThemeLayerLineHeightKeys { get; } =
+    [
+        NmKeys.LineHeight.Tight,
+        NmKeys.LineHeight.Normal,
+        NmKeys.LineHeight.Loose,
+        NmKeys.LineHeight.Display,
+        NmKeys.LineHeight.Title,
+        NmKeys.LineHeight.Body,
+        NmKeys.LineHeight.Label,
+        NmKeys.LineHeight.Meta,
+        NmKeys.LineHeight.Data,
+    ];
+
+    /// <summary>Corner-radius keys a theme layer carries (R-15).</summary>
+    public static IReadOnlyList<string> ThemeLayerCornerKeys { get; } =
+    [
+        NmKeys.Corner.None,
+        NmKeys.Corner.Sm,
+        NmKeys.Corner.Md,
+    ];
+
+    /// <summary>Motion-duration keys a theme layer carries (R-15: fast/normal/slow).</summary>
+    public static IReadOnlyList<string> ThemeLayerMotionKeys { get; } =
+    [
+        NmKeys.Motion.Duration.Fast,
+        NmKeys.Motion.Duration.Normal,
+        NmKeys.Motion.Duration.Slow,
+    ];
+
+    /// <summary>
+    /// Every color key a complete palette must define (contract §2.2 color groups). Theme-invariant
+    /// derived colors (e.g. <c>Nm.Color.Scrim</c>, which lives in the global token dictionary and is not
+    /// part of any appearance palette) are excluded: a palette layer never carries them.
+    /// </summary>
     public static IReadOnlyList<string> PaletteColorKeys { get; } = NmKeys.All
-        .Where(static key => key.StartsWith("Nm.Color.", StringComparison.Ordinal))
+        .Where(static key =>
+            key.StartsWith("Nm.Color.", StringComparison.Ordinal) &&
+            !string.Equals(key, NmKeys.Color.Scrim, StringComparison.Ordinal))
         .ToArray();
+
+    /// <summary>All 59 keys a theme layer must define (contract §4.1 / R-15).</summary>
+    public static IReadOnlyList<string> ThemeLayerRequiredKeys { get; } =
+        PaletteColorKeys
+            .Concat(ThemeLayerFontKeys)
+            .Concat(ThemeLayerFontSizeKeys)
+            .Concat(ThemeLayerLineHeightKeys)
+            .Concat(ThemeLayerCornerKeys)
+            .Concat(ThemeLayerMotionKeys)
+            .ToArray();
+
+    /// <summary>Keys a theme layer may define; anything outside this whitelist is ignored and recorded.</summary>
+    public static IReadOnlyList<string> ThemeLayerAllowedKeys => ThemeLayerRequiredKeys;
 
     private readonly Application _application;
     private readonly IDesignSystemResourceSource _resources;
@@ -45,6 +116,7 @@ public sealed class DesignSystemThemeManager : IDisposable
     private ResourceDictionary? _palette;
     private bool _paletteIsLight;
     private bool _paletteIsBuiltin = true;
+    private string? _themeLayerId;
     private ResourceDictionary? _contrastOverlay;
     private ResourceDictionary? _densityOverlay;
     private ResourceDictionary? _motionOverlay;
@@ -68,27 +140,38 @@ public sealed class DesignSystemThemeManager : IDisposable
 
     public bool ReducedMotion { get; private set; }
 
-    /// <summary>Last resource-load failure, if any. Never thrown at the caller (AC9).</summary>
+    /// <summary>Last resource-load/validation failure, if any. Never thrown at the caller (AC9).</summary>
     public string? LastError
     {
         get => _lastError;
         private set => _lastError = value;
     }
 
+    /// <summary>
+    /// Non-fatal issues recorded by the last theme-layer application: keys outside the R-15 whitelist
+    /// are ignored (never applied) and reported here for the Theme Studio diagnostics surface.
+    /// </summary>
+    public IReadOnlyList<string> ThemeLayerIssues { get; private set; } = [];
+
     public bool IsInitialized { get; private set; }
 
     /// <summary>
     /// Id of the palette currently applied: <see cref="BuiltinDarkPaletteId"/> /
     /// <see cref="BuiltinLightPaletteId"/> for the shipped appearance palettes, otherwise the id the
-    /// Theme Engine supplied through <see cref="ApplyPalette"/>.
+    /// Theme Engine supplied through <see cref="ApplyThemeLayer"/> / <see cref="ApplyPalette"/>.
     /// </summary>
     public string? AppliedPaletteId { get; private set; }
 
+    /// <summary>Id of the applied theme layer, or null when the shipped layers are active.</summary>
+    public string? AppliedThemeLayerId => _themeLayerId;
+
     /// <summary>
-    /// Ensures the token dictionaries exist, then applies the current settings. Safe to call twice;
-    /// the second call re-normalizes a foreign palette provider (e.g. the aggregate theme include).
+    /// Ensures the token dictionaries exist, then applies the current settings. An optional
+    /// <paramref name="appearance"/> lets the host pass the persisted/user startup choice; when omitted
+    /// the frozen default (dark) is used, so initialization never silently overrides a known choice.
+    /// Safe to call twice; the second call re-normalizes a foreign palette provider.
     /// </summary>
-    public bool Initialize()
+    public bool Initialize(AppearanceMode? appearance = null)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
@@ -98,7 +181,12 @@ public sealed class DesignSystemThemeManager : IDisposable
             _listening = true;
         }
 
-        var ok = ApplyRequestedVariant();
+        if (appearance is not null)
+        {
+            Appearance = appearance.Value;
+        }
+
+        var ok = ApplyRequestedVariant(forceBuiltin: true);
         ok &= SetContrast(Contrast);
         ok &= SetDensity(Density);
         ok &= SetReducedMotion(ReducedMotion);
@@ -106,60 +194,84 @@ public sealed class DesignSystemThemeManager : IDisposable
         return ok;
     }
 
-    /// <summary>Switches palette; <see cref="AppearanceMode.System"/> follows the platform variant.</summary>
+    /// <summary>Switches appearance; the shipped palette for that appearance becomes active (a custom theme layer is dropped).</summary>
     public bool SetAppearance(AppearanceMode mode)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         Appearance = mode;
-        return ApplyRequestedVariant();
+        return ApplyRequestedVariant(forceBuiltin: true);
     }
 
     /// <summary>
-    /// Palette seam for the Theme Engine (V11R-C-1): replaces only the color layer
-    /// (<c>Nm.Color.*</c>) and preserves the theme-invariant tokens and the density/motion/contrast
-    /// overlay semantics. The palette must define every key in <see cref="PaletteColorKeys"/>; a
-    /// palette with missing keys or non-brush values is rejected without touching the current state
-    /// (no half-applied palette).
+    /// Theme Engine seam (contract §4.1 / R-15): replaces the themeable layer with a whitelisted set of
+    /// 59 keys (35 colors + 3 font families + 6 font sizes + 9 line heights + 3 corner radii + 3 motion
+    /// durations). Keys outside the whitelist are ignored and reported in
+    /// <see cref="ThemeLayerIssues"/>; material/elevation keys are not part of the frozen whitelist.
+    /// The previous state is kept if the layer is incomplete or a value has the wrong type.
     /// </summary>
-    /// <param name="palette">Complete, flat (or theme-scoped) palette dictionary for the active appearance.</param>
-    /// <param name="paletteId">Stable palette id reported back through <see cref="AppliedPaletteId"/>.</param>
-    /// <returns>True when the palette was applied; false when validation/merge failed.</returns>
+    public bool ApplyThemeLayer(ResourceDictionary layer, string themeId)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        ArgumentNullException.ThrowIfNull(layer);
+        return ApplyThemeLayerCore(layer, RequireId(themeId), []);
+    }
+
+    /// <summary>
+    /// Color-only convenience over <see cref="ApplyThemeLayer"/>: the theme engine migrates the 35
+    /// color keys and the remaining 24 non-color keys are inherited from the currently loaded theme
+    /// tokens, so a palette swap never accidentally resets typography/motion/corners.
+    /// </summary>
     public bool ApplyPalette(ResourceDictionary palette, string paletteId)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         ArgumentNullException.ThrowIfNull(palette);
-        if (string.IsNullOrWhiteSpace(paletteId))
-        {
-            LastError = "palette id must not be empty";
-            return false;
-        }
 
-        var invalidKeys = new List<string>();
-        foreach (var key in PaletteColorKeys)
+        var id = RequireId(paletteId);
+        var issues = new List<string>();
+        var complete = new ResourceDictionary();
+        var entries = ReadEntries(palette);
+        foreach (var (key, value) in entries)
         {
-            if (!TryResolvePaletteValue(palette, key, out var value) || value is not IBrush)
+            if (PaletteColorKeys.Contains(key, StringComparer.Ordinal))
             {
-                invalidKeys.Add(key);
+                complete[key] = value;
+            }
+            else
+            {
+                issues.Add($"ignored key '{key}' from palette '{id}': ApplyPalette only accepts the 35 color keys");
             }
         }
 
-        if (invalidKeys.Count > 0)
+        var missingColors = PaletteColorKeys
+            .Where(key => !entries.Any(entry => string.Equals(entry.Key, key, StringComparison.Ordinal)))
+            .Take(10)
+            .ToArray();
+        if (missingColors.Length > 0)
         {
-            LastError =
-                $"palette '{paletteId}' is not a complete color layer: {invalidKeys.Count} key(s) missing or not a brush " +
-                $"({string.Join(", ", invalidKeys.Take(5))}{(invalidKeys.Count > 5 ? ", ..." : string.Empty)})";
+            LastError = $"palette '{id}' is missing {missingColors.Length} color key(s): {string.Join(", ", missingColors)}";
             return false;
         }
 
-        SwapPalette(palette, IsLightConfigured(), paletteId, isBuiltin: false);
-        return true;
+        foreach (var key in ThemeLayerRequiredKeys.Where(key => !PaletteColorKeys.Contains(key, StringComparer.Ordinal)))
+        {
+            if (!TryResolveApplicationValue(key, out var value))
+            {
+                LastError =
+                    $"palette '{id}' cannot inherit theme-layer key '{key}': load the design-system tokens first";
+                return false;
+            }
+
+            complete[key] = value!;
+        }
+
+        return ApplyThemeLayerCore(complete, id, issues);
     }
 
-    /// <summary>Restores the shipped built-in palette for the current appearance (cancel/uninstall path).</summary>
+    /// <summary>Restores the shipped built-in palette (and drops any theme layer) for the current appearance.</summary>
     public bool RevertPalette()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        return ApplyPaletteForActualVariant(forceBuiltin: true);
+        return ApplyRequestedVariant(forceBuiltin: true);
     }
 
     /// <summary>Adds/removes the complete high-contrast palette overlay.</summary>
@@ -234,7 +346,7 @@ public sealed class DesignSystemThemeManager : IDisposable
         Contrast = ContrastMode.Standard;
         Density = DensityMode.Comfortable;
         ReducedMotion = false;
-        return ApplyRequestedVariant();
+        return ApplyRequestedVariant(forceBuiltin: true);
     }
 
     public void Dispose()
@@ -272,6 +384,141 @@ public sealed class DesignSystemThemeManager : IDisposable
         }
     }
 
+    private static string RequireId(string id) =>
+        string.IsNullOrWhiteSpace(id) ? "unnamed" : id;
+
+    private bool ApplyThemeLayerCore(
+        ResourceDictionary layer,
+        string themeId,
+        IReadOnlyList<string> inheritedIssues)
+    {
+        var issues = new List<string>(inheritedIssues);
+        var filtered = new ResourceDictionary();
+        foreach (var (key, value) in ReadEntries(layer))
+        {
+            if (ThemeLayerAllowedKeys.Contains(key, StringComparer.Ordinal))
+            {
+                filtered[key] = value;
+            }
+            else
+            {
+                issues.Add($"ignored key '{key}' from theme layer '{themeId}': outside the R-15 59-key whitelist");
+            }
+        }
+
+        if (!ValidateValues(filtered, themeId, ThemeLayerRequiredKeys, out var error))
+        {
+            LastError = error;
+            return false;
+        }
+
+        // Ensure the theme-invariant tokens exist before any provider is touched (atomic swap).
+        if (!EnsureGlobalTokens())
+        {
+            return false;
+        }
+
+        SwapPalette(filtered, IsLightConfigured(), themeId, isBuiltin: false, themeLayerId: themeId);
+        ThemeLayerIssues = issues;
+        LastError = null;
+        return true;
+    }
+
+    private bool ValidateValues(
+        ResourceDictionary dictionary,
+        string id,
+        IReadOnlyList<string> requiredKeys,
+        out string? error)
+    {
+        var invalid = new List<string>();
+        var entries = ReadEntries(dictionary).ToDictionary(static entry => entry.Key, static entry => entry.Value, StringComparer.Ordinal);
+        foreach (var key in requiredKeys)
+        {
+            if (!entries.TryGetValue(key, out var value) || !HasExpectedType(key, value))
+            {
+                invalid.Add(key);
+            }
+        }
+
+        if (invalid.Count > 0)
+        {
+            error =
+                $"'{id}' is not a complete theme layer: {invalid.Count} key(s) missing or with the wrong value type " +
+                $"({string.Join(", ", invalid.Take(5))}{(invalid.Count > 5 ? ", ..." : string.Empty)})";
+            return false;
+        }
+
+        error = null;
+        return true;
+    }
+
+    private static bool HasExpectedType(string key, object? value) => value switch
+    {
+        null => false,
+        _ when key.StartsWith("Nm.Color.", StringComparison.Ordinal) => value is IBrush,
+        _ when key.StartsWith("Nm.FontFamily.", StringComparison.Ordinal) => value is FontFamily,
+        _ when key.StartsWith("Nm.FontSize.", StringComparison.Ordinal) => value is double,
+        _ when key.StartsWith("Nm.LineHeight.", StringComparison.Ordinal) => value is double,
+        _ when key.StartsWith("Nm.Corner.", StringComparison.Ordinal) => value is CornerRadius,
+        _ when key.StartsWith("Nm.Motion.Duration.", StringComparison.Ordinal) => value is TimeSpan,
+        _ => false,
+    };
+
+    private static IReadOnlyList<(string Key, object? Value)> ReadEntries(ResourceDictionary dictionary)
+    {
+        var entries = new List<(string Key, object? Value)>();
+        if (dictionary is IDictionary<object, object> map)
+        {
+            foreach (var pair in map)
+            {
+                if (pair.Key is string key)
+                {
+                    entries.Add((key, pair.Value));
+                }
+            }
+
+            return entries;
+        }
+
+        foreach (var key in dictionary.Keys.OfType<string>())
+        {
+            entries.Add((key, null));
+        }
+
+        return entries;
+    }
+
+    private bool EnsureGlobalTokens()
+    {
+        if (AnyProviderHasKey(GlobalProbeKey))
+        {
+            return true;
+        }
+
+        if (!TryLoadAndRecord(_resources.GlobalTokens, out var global))
+        {
+            return false;
+        }
+
+        _application.Resources.MergedDictionaries.Add(global!);
+        return true;
+    }
+
+    private bool TryResolveApplicationValue(string key, out object? value)
+    {
+        foreach (var provider in _application.Resources.MergedDictionaries)
+        {
+            if (provider.TryGetResource(key, ThemeVariant.Default, out value) ||
+                provider.TryGetResource(key, _application.ActualThemeVariant, out value))
+            {
+                return true;
+            }
+        }
+
+        value = null;
+        return false;
+    }
+
     /// <summary>Loads and records <see cref="LastError"/> on failure while keeping the previous state.</summary>
     private bool TryLoadAndRecord(Uri uri, out ResourceDictionary? dictionary)
     {
@@ -291,10 +538,10 @@ public sealed class DesignSystemThemeManager : IDisposable
             return;
         }
 
-        ApplyPaletteForActualVariant();
+        ApplyPaletteForActualVariant(forceBuiltin: false);
     }
 
-    private bool ApplyRequestedVariant()
+    private bool ApplyRequestedVariant(bool forceBuiltin)
     {
         _application.RequestedThemeVariant = Appearance switch
         {
@@ -303,10 +550,10 @@ public sealed class DesignSystemThemeManager : IDisposable
             _ => ThemeVariant.Default,
         };
 
-        return ApplyPaletteForActualVariant();
+        return ApplyPaletteForActualVariant(forceBuiltin);
     }
 
-    private bool ApplyPaletteForActualVariant(bool forceBuiltin = false)
+    private bool ApplyPaletteForActualVariant(bool forceBuiltin)
     {
         var isLight = IsLightConfigured();
         if (!forceBuiltin && _palette is not null && _paletteIsBuiltin && _paletteIsLight == isLight)
@@ -321,24 +568,59 @@ public sealed class DesignSystemThemeManager : IDisposable
             return false;
         }
 
-        SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true);
+        // Load the theme-invariant tokens before touching the palette provider (atomic swap).
+        if (!EnsureGlobalTokens())
+        {
+            return false;
+        }
+
+        SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true, themeLayerId: null);
+        ThemeLayerIssues = [];
         return true;
     }
 
     /// <summary>
-    /// Swaps only the palette layer. The theme-invariant tokens are re-ensured and the overlays are
-    /// re-ordered afterwards so density/motion/high-contrast semantics keep their precedence.
+    /// Atomic swap: the replacement layer has already been loaded, filtered and validated, and the
+    /// theme-invariant tokens are ensured by the caller <em>before</em> any provider is removed. A
+    /// failed global load therefore aborts the swap and leaves the previous layer untouched.
     /// </summary>
-    private void SwapPalette(ResourceDictionary palette, bool isLight, string paletteId, bool isBuiltin)
+    private void SwapPalette(
+        ResourceDictionary palette,
+        bool isLight,
+        string paletteId,
+        bool isBuiltin,
+        string? themeLayerId)
     {
         RemovePaletteProviders();
-        EnsureGlobalTokens();
         _application.Resources.MergedDictionaries.Add(palette);
         _palette = palette;
         _paletteIsLight = isLight;
         _paletteIsBuiltin = isBuiltin;
+        _themeLayerId = themeLayerId;
         AppliedPaletteId = paletteId;
         ReorderOverlays();
+    }
+
+    private void RemovePaletteProviders()
+    {
+        foreach (var provider in _application.Resources.MergedDictionaries.ToArray())
+        {
+            // Overlays (high contrast, density, reduced motion) are tracked separately and must survive
+            // an appearance/theme-layer switch; only the current palette/theme layer is replaced.
+            if (ReferenceEquals(provider, _contrastOverlay) ||
+                ReferenceEquals(provider, _densityOverlay) ||
+                ReferenceEquals(provider, _motionOverlay))
+            {
+                continue;
+            }
+
+            if (ProviderHasKey(provider, PaletteProbeKey))
+            {
+                _application.Resources.MergedDictionaries.Remove(provider);
+            }
+        }
+
+        _palette = null;
     }
 
     private bool IsLightConfigured() => Appearance switch
@@ -350,52 +632,6 @@ public sealed class DesignSystemThemeManager : IDisposable
 
     private static string BuiltinPaletteId(bool isLight) =>
         isLight ? BuiltinLightPaletteId : BuiltinDarkPaletteId;
-
-    /// <summary>Resolves a palette value for validation, tolerating flat and theme-scoped palettes.</summary>
-    private bool TryResolvePaletteValue(ResourceDictionary palette, string key, out object? value)
-    {
-        if (palette.TryGetResource(key, ThemeVariant.Default, out value))
-        {
-            return true;
-        }
-
-        if (palette.TryGetResource(key, _application.ActualThemeVariant, out value))
-        {
-            return true;
-        }
-
-        return palette.TryGetResource(key, ThemeVariant.Dark, out value) ||
-               palette.TryGetResource(key, ThemeVariant.Light, out value);
-    }
-
-    private void RemovePaletteProviders()
-    {
-        foreach (var provider in _application.Resources.MergedDictionaries.ToArray())
-        {
-            if (ProviderHasKey(provider, PaletteProbeKey))
-            {
-                _application.Resources.MergedDictionaries.Remove(provider);
-            }
-        }
-
-        _palette = null;
-    }
-
-    private bool EnsureGlobalTokens()
-    {
-        if (AnyProviderHasKey(GlobalProbeKey))
-        {
-            return true;
-        }
-
-        if (!TryLoadAndRecord(_resources.GlobalTokens, out var global))
-        {
-            return false;
-        }
-
-        _application.Resources.MergedDictionaries.Add(global!);
-        return true;
-    }
 
     private void ReplaceOverlay(ref ResourceDictionary? slot, ResourceDictionary? dictionary)
     {
@@ -420,8 +656,9 @@ public sealed class DesignSystemThemeManager : IDisposable
     }
 
     /// <summary>
-    /// Keeps the precedence deterministic: palette first, then contrast, density and motion overlays,
-    /// so an appearance switch can never re-order a high-contrast palette underneath the base palette.
+    /// Keeps the precedence deterministic: palette/theme layer first, then contrast, density and motion
+    /// overlays, so an appearance switch can never re-order a high-contrast palette underneath the base
+    /// palette and a density overlay always wins over the theme layer.
     /// </summary>
     private void ReorderOverlays()
     {

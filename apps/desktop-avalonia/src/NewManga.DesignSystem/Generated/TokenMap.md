@@ -4,7 +4,7 @@
 
 Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.
 
-Rows: 259.
+Rows: 277.
 
 | Scope | DTCG token | Resource key | Kind | Raw value |
 |---|---|---|---|---|
@@ -81,9 +81,9 @@ Rows: 259.
 | global | `font.size.sm` | `Nm.FontSize.Sm` | Double | `12px` |
 | global | `font.size.xl` | `Nm.FontSize.Xl` | Double | `18px` |
 | global | `font.size.xs` | `Nm.FontSize.Xs` | Double | `11px` |
-| global | `font.tracking.caps` | `Nm.FontTracking.Caps` | Double | `0.08em` |
-| global | `font.tracking.data` | `Nm.FontTracking.Data` | Double | `-0.01em` |
-| global | `font.tracking.normal` | `Nm.FontTracking.Normal` | Double | `0` |
+| global | `font.tracking.caps` | `Nm.FontTracking.Caps` | EmRatio | `0.08em` |
+| global | `font.tracking.data` | `Nm.FontTracking.Data` | EmRatio | `-0.01em` |
+| global | `font.tracking.normal` | `Nm.FontTracking.Normal` | EmRatio | `0` |
 | global | `font.weight.medium` | `Nm.FontWeight.Medium` | FontWeight | `500` |
 | global | `font.weight.regular` | `Nm.FontWeight.Regular` | FontWeight | `400` |
 | global | `font.weight.semibold` | `Nm.FontWeight.SemiBold` | FontWeight | `600` |
@@ -148,16 +148,34 @@ Rows: 259.
 | global-derived | `(derived)` | `Nm.Padding.Section` | Thickness | `16` |
 | global-derived | `(derived)` | `Nm.Padding.Icon` | Thickness | `4` |
 | global-derived | `(derived)` | `Nm.Padding.IconSm` | Thickness | `2` |
+| global-derived | `(derived)` | `Nm.Padding.Tight` | Thickness | `2` |
+| global-derived | `(derived)` | `Nm.Padding.Snug` | Thickness | `4` |
 | global-derived | `(derived)` | `Nm.Icon.Stroke` | Double | `1.25` |
 | global-derived | `(derived)` | `Nm.Icon.SizeSmall` | Double | `16` |
+| global-derived | `(derived)` | `Nm.Motion.Duration.Slow` | TimeSpan | `220ms` |
 | global-derived | `(derived)` | `Nm.Motion.Enabled` | Boolean | `true` |
-| global-derived | `(derived)` | `Nm.LineHeight.Display` | Double | `30` |
-| global-derived | `(derived)` | `Nm.LineHeight.Title` | Double | `22.5` |
-| global-derived | `(derived)` | `Nm.LineHeight.Body` | Double | `18.85` |
-| global-derived | `(derived)` | `Nm.LineHeight.Label` | Double | `16.2` |
-| global-derived | `(derived)` | `Nm.LineHeight.Meta` | Double | `14.85` |
-| global-derived | `(derived)` | `Nm.LineHeight.Data` | Double | `15.6` |
+| global-derived | `(derived)` | `Nm.LineHeight.Display` | Double | `1.25` |
+| global-derived | `(derived)` | `Nm.LineHeight.Title` | Double | `1.25` |
+| global-derived | `(derived)` | `Nm.LineHeight.Body` | Double | `1.45` |
+| global-derived | `(derived)` | `Nm.LineHeight.Label` | Double | `1.25` |
+| global-derived | `(derived)` | `Nm.LineHeight.Meta` | Double | `1.25` |
+| global-derived | `(derived)` | `Nm.LineHeight.Data` | Double | `1.25` |
+| global-derived | `(derived)` | `Nm.TextLineBox.Display` | Double | `30` |
+| global-derived | `(derived)` | `Nm.TextLineBox.Title` | Double | `22.5` |
+| global-derived | `(derived)` | `Nm.TextLineBox.Body` | Double | `18.85` |
+| global-derived | `(derived)` | `Nm.TextLineBox.Label` | Double | `15` |
+| global-derived | `(derived)` | `Nm.TextLineBox.Meta` | Double | `13.75` |
+| global-derived | `(derived)` | `Nm.TextLineBox.Data` | Double | `15` |
+| global-derived | `(derived)` | `Nm.Size.Breakpoint.Full` | Double | `1600` |
+| global-derived | `(derived)` | `Nm.Size.Breakpoint.Compact` | Double | `1280` |
+| global-derived | `(derived)` | `Nm.Size.Breakpoint.Narrow` | Double | `1024` |
+| global-derived | `(derived)` | `Nm.Size.SkeletonBookCard` | Double | `180` |
+| global-derived | `(derived)` | `Nm.Size.SkeletonPanel` | Double | `96` |
+| global-derived | `(derived)` | `Nm.Size.Marker` | Double | `16` |
+| global-derived | `(derived)` | `Nm.Size.MarkerCore` | Double | `8` |
+| global-derived | `(derived)` | `Nm.Size.ScrollBar` | Double | `8` |
 | global-derived | `(derived)` | `Nm.Opacity.Disabled` | Double | `0.4` |
+| global-derived | `(derived)` | `Nm.Color.Scrim` | Brush | `rgba(0,0,0,0.55)` |
 | high-contrast-dark | `(contrast)` | `Nm.Color.Accent.Active` | Brush | `#E8A84E` |
 | high-contrast-dark | `(contrast)` | `Nm.Color.Accent.Base` | Brush | `#FFC46B` |
 | high-contrast-dark | `(contrast)` | `Nm.Color.Accent.Hover` | Brush | `#FFD08A` |
@@ -267,3 +285,12 @@ Rows: 259.
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Fast` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Normal` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Enabled` | Boolean | `false` |
+
+## Naming and derivation notes (R-14, contract §2.4)
+
+- `font.size.2xl` is published as `Nm.FontSize.Xxl` (frozen contract key, R-14). `Nm.FontSize.2Xl` must not exist.
+- `Nm.LineHeight.Display/Title/Body/Label/Meta/Data` are semantic aliases whose values are constrained to one of the frozen multipliers (1.25 / 1.45 / 1.6); the generator asserts this rule. Absolute pixel line boxes for Avalonia live in `Nm.TextLineBox.*`.
+- `Nm.FontTracking.*` values are **em-relative ratios**, not pixels (Avalonia 11 has no em-based letter spacing); consumers that need device pixels must multiply by their font size.
+- `Themes/Tokens.HighContrast.axaml` and `Themes/Density.*.axaml` are rule-derived generator extensions (contract §2.4), not second truth sources: high contrast enforces text >= 7:1 / status >= 4.5:1; density enforces Compact < Comfortable < Spacious; both are asserted at generation time.
+- `Nm.Color.Scrim` is a derived theme-invariant color used by Modal; it belongs to the global token dictionary and is never part of an appearance palette layer.
+- Material/elevation keys are reserved (`Nm.Material.*` / `Nm.Elevation.*`) and currently empty: the frozen system expresses elevation only through the five-level surface ladder.

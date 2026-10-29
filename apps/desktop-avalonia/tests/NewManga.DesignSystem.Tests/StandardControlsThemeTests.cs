@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -165,8 +166,43 @@ public sealed class StandardControlsThemeTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public void TextBox_focus_shows_the_two_pixel_accent_ring_outside_the_control()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+
+        var textBox = new TextBox { Watermark = "focus" };
+        var window = new Window { Width = 320, Height = 120, Content = textBox };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(ThemeTestHarness.ColorOf(app, NmKeys.Color.Line.Default), ((ISolidColorBrush)textBox.BorderBrush!).Color);
+        Assert.Equal(new Thickness(1), textBox.BorderThickness);
+
+        textBox.Focus(NavigationMethod.Tab);
+        Dispatcher.UIThread.RunJobs();
+
+        // Review P2: focus is an OUTSIDE 2px accent outline, not a border-thickness change.
+        var ring = window.GetVisualDescendants().OfType<Border>()
+            .SingleOrDefault(border => border.Classes.Contains("nm-focus-ring") && border.IsVisible);
+        Assert.NotNull(ring);
+        Assert.Equal(ThemeTestHarness.ColorOf(app, NmKeys.Color.Accent.Base), ((ISolidColorBrush)ring!.BorderBrush!).Color);
+        Assert.Equal(new Thickness(2), ring.BorderThickness);
+        Assert.True(ring.Bounds.Width >= textBox.Bounds.Width + 4, $"ring width {ring.Bounds.Width} vs textbox {textBox.Bounds.Width}");
+        Assert.Equal(new Thickness(1), textBox.BorderThickness);
+
+        window.Close();
+    }
+
     private static T Named<T>(Control control, string name)
         where T : Control =>
         control.GetVisualDescendants().OfType<T>().FirstOrDefault(candidate => candidate.Name == name)
         ?? throw new InvalidOperationException($"{name} not found in {control.GetType().Name} template");
 }
+
+
+
+
+
+
