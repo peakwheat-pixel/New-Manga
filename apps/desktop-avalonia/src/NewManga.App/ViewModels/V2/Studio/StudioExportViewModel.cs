@@ -494,6 +494,7 @@ public sealed class StudioExportViewModel : StudioObservable
             _format == StudioExportFormat.Pdf
                 ? _pdfContent == StudioPdfContentMode.SearchableDualLayer ? "searchable_dual_layer" : "image_only"
                 : null,
+            stalePolicy: null,
             cancellationToken).ConfigureAwait(true);
 
         if (started is null)
