@@ -1,0 +1,9 @@
+COMMAND: NEWMANGA_DATA_ROOT=<corrupt-legacy-probe> python -c 'import bootstrap.core_service as cs; cs.main()'
+CWD: G:\CODEX\New Manga.workspace\worktrees\UPGRADE-LEGACY-LAYOUT-1
+AT: 
+2026-10-29T08:28:36.5570720Z
+----
+[core.upgrade] legacy data layout was NOT migrated: legacy library.db is not readable: file is not a database
+MAIN_RETURN 2
+[core.upgrade] refusing to start while legacy data is un-migrated; fix the filesystem issue and restart
+root library.db created: False

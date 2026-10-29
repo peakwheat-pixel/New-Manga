@@ -191,3 +191,53 @@ def test_only_legacy_subdirectories_still_migrate(tmp_path: Path) -> None:
     assert result.migrated is True
     assert result.copied == ("managed/",)
     assert (root / "managed" / "books" / "x" / "p.png").read_bytes() == b"p"
+
+
+def test_sidecar_promote_failure_leaves_no_root_database(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A WAL promotion failure must not leave a root DB without its WAL data."""
+    root = _legacy_root(tmp_path)
+    (root / "data" / "library.db-wal").write_bytes(b"")
+    real_replace = __import__("os").replace
+
+    def _fail_wal(source: object, destination: object) -> None:
+        if str(destination).endswith("library.db-wal"):
+            raise PermissionError("wal locked")
+        return real_replace(source, destination)
+
+    monkeypatch.setattr("infrastructure.sqlite.upgrade_legacy_layout.os.replace", _fail_wal)
+
+    with pytest.raises(LegacyLayoutError):
+        migrate_legacy_layout(root)
+
+    # Sidecars are promoted before the database, so the root has no library.db
+    # (and therefore never a DB stripped of its WAL content); directories may
+    # already be promoted, which the retry skips (idempotent).
+    assert not (root / "library.db").exists()
+    assert (root / "managed").exists()  # promoted before the DB, safe on retry
+    assert (root / "data" / "library.db").is_file()
+
+    monkeypatch.undo()
+    result = migrate_legacy_layout(root)
+    assert result.migrated is True
+    assert (root / "library.db").is_file()
+    assert (root / "library.db-wal").is_file()
+    assert (root / "library.db-wal").read_bytes() == b""
+
+
+def test_current_database_with_corrupt_legacy_db_still_fills_directories(
+    tmp_path: Path,
+) -> None:
+    """A present current DB skips the legacy DB entirely, so a corrupt legacy
+    database must not block filling in the missing managed/backups trees."""
+    root = _legacy_root(tmp_path)
+    _make_library(root / "library.db", books=4)
+    (root / "data" / "library.db").write_bytes(b"corrupt legacy bytes")
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert result.copied == ("managed/", "backups/")
+    assert _book_count(root / "library.db") == 4
+    assert (root / "managed" / "books" / "abc" / "page.png").is_file()

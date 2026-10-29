@@ -4595,10 +4595,20 @@ def main() -> int:
     try:
         migration = migrate_legacy_layout(data_root)
     except LegacyLayoutError as error:
+        # Refusing to continue matters: assemble_production_core would create an
+        # empty root library.db on first use, after which the legacy data would
+        # never be migrated again (the current layout wins). Exit instead so the
+        # Host surfaces the filesystem error and the user data stays intact.
         print(
             f"[core.upgrade] legacy data layout was NOT migrated: {error}",
             file=sys.stderr,
         )
+        print(
+            "[core.upgrade] refusing to start while legacy data is un-migrated;"
+            " fix the filesystem issue and restart",
+            file=sys.stderr,
+        )
+        return 2
     else:
         if migration.migrated:
             print(

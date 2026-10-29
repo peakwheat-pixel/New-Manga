@@ -173,7 +173,14 @@ def migrate_legacy_layout(data_root: Path) -> MigrationResult:
 
         staging_dir.mkdir(parents=True, exist_ok=True)
         # 1) Stage everything first; nothing in the data root is touched yet.
-        staged_db_files = _stage_database(legacy_db, staging_dir) if legacy_db.is_file() else []
+        #    When the current database already exists only the legacy
+        #    sub-directories are considered - a broken/locked legacy DB must not
+        #    block filling in missing managed/backups trees.
+        staged_db_files = (
+            _stage_database(legacy_db, staging_dir)
+            if (not current_exists and legacy_db.is_file())
+            else []
+        )
         staged_dirs = {
             name: staged
             for name, staged in (
@@ -209,9 +216,17 @@ def migrate_legacy_layout(data_root: Path) -> MigrationResult:
             _promote_directory(staged, data_root / name)
             copied.append(name + "/")
         if promote_db:
-            for staged in staged_db_files:
+            # WAL/SHM/journal sidecars are promoted before the main database:
+            # if a sidecar rename fails the root still has no library.db (so the
+            # next start-up retries the whole promotion) instead of a database
+            # stripped of its un-checkpointed WAL content.
+            sidecars = [item for item in staged_db_files if item.name != LEGACY_DB_NAME]
+            databases = [item for item in staged_db_files if item.name == LEGACY_DB_NAME]
+            for staged in sidecars:
                 suffix = staged.name[len(LEGACY_DB_NAME):]
                 _promote_file(staged, current_db.with_name(current_db.name + suffix))
+            for staged in databases:
+                _promote_file(staged, current_db)
             copied.append(current_db.name)
 
         result = MigrationResult(True, copied=tuple(copied))
