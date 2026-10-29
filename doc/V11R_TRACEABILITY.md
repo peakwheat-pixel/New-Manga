@@ -9,15 +9,15 @@
 
 | 用户要求 | 对应任务 | 验收证据 | 当前状态 |
 |---|---|---|---|
-| 108 项功能真实实现状态 | `V11R-A-3` + 各域任务 | 功能矩阵重核（实现/接入/运行/验证 四维） | in_progress |
-| 66 条命令 DTO/参数/响应/错误码/协议版本 | `V11R-A-3` | `doc/contracts/V11R_COMMAND_CONTRACT_V1.md` + parity 测试 | in_progress |
+| 108 项功能真实实现状态 | `V11R-A-3` + 各域任务 | 功能矩阵重核（实现/接入/运行/验证 四维） | **done**（A-3 FROZEN 49/PARTIAL 17/GAP 0；域任务全部合入；见 §9） |
+| 66 条命令 DTO/参数/响应/错误码/协议版本 | `V11R-A-3` | 契约 + 派生 parity 测试 | **done**（C077 已真实登记并合入） |
 | Core→IPC→Host→UI 完整调用链 | `V11R-A-1`/`A-2`/`INT-1` | 链路测试 + E2E | pending |
-| 新建书籍/新建章节/文件导入 | `V11R-A-1` + `V11R-B-1` | E2E-01 | in_progress |
-| 检测/OCR/翻译/修复/渲染任务真实启动与管理 | `V11R-A-2` + `V11R-B-4` | E2E-02/03 | in_progress |
-| 暂停/继续/停止/失败重试/阻塞恢复 | `V11R-A-2` + `V11R-B-4` | E2E-03 | in_progress |
-| Region 编辑/气泡文本编辑/持久化 | `V11R-F0-1` + `V11R-B-3` | E2E-04 | in_progress |
+| 新建书籍/新建章节/文件导入 | `V11R-A-1` + `V11R-B-1` | E2E-01 | **PARTIAL（L2/L3 PASS；真机交互 E2E NOT_RUN）** |
+| 检测/OCR/翻译/修复/渲染任务真实启动与管理 | `V11R-A-2` + `V11R-B-4` | E2E-02/03 | **PARTIAL（Run 控制/投影 L2/L3 PASS；真实模型推理 E2E NOT_RUN）** |
+| 暂停/继续/停止/失败重试/阻塞恢复 | `V11R-A-2` + `V11R-B-4` | E2E-03 | **done**（含 R-22 幂等键、Stop 二次确认、gate 模态） |
+| Region 编辑/气泡文本编辑/持久化 | `V11R-F0-1` + `V11R-B-3` | E2E-04 | **done**（F0 5 轮审查 + 独立窄验证 CLOSED；C077 投影已合入） |
 | 多页上下文/术语表/SFX | `V11R-B-5` + Core 既有能力 | E2E-02 分支 + 术语冲突用例 | pending |
-| 阅读器/导出/设置/Provider/网络代理 | `V11R-B-1`/`B-2`/`B-5` | 各屏 L2/L3 | in_progress |
+| 阅读器/导出/设置/Provider/网络代理 | `V11R-B-1`/`B-2`/`B-5` | 各屏 L2/L3 | **PARTIAL（导出一项 NOT_WIRED 诚实标注：术语读写/缩略图等 Core 能力缺口）** |
 | ONNX/DirectML/CPU fallback/权重/打包 | `V11R-L4-1`（实机验证）+ Console 设备区 | EP 记录 + 权重 SHA 清单 | pending |
 | CI/构建路径/版本溯源/实机验证 | `V11R-A-4` + `V11R-L4-1` | 同 SHA CI + `VERSION.json` 溯源链 | pending |
 
@@ -106,3 +106,20 @@
 | V11R-C-1 Theme Engine Part A | done（159 测试，合入 main）；Part B 进行中（等 DS `ApplyThemeLayer`） | `verification/V11R-C-1/` |
 | V11R-C-2 Theme Studio | 进行中（theme-studio Owner） | — |
 | 集成裁定 | R-15 59 键层 / R-16 单一 selection / R-17 TryHandleKey / R-18 断点 / R-19 证据纪律 / R-20 App→ThemeEngine | `doc/V11R_PROGRAM.md §8` |
+
+---
+
+## 9. 收盘状态（main `e27e85524`）
+
+| 需求域 | 结论 | 证据/说明 |
+|---|---|---|
+| 审计 108 项功能链路 | **PASS_WITH_NOT_RUN** | 所有能落到当前架构并已接入的功能面均实现且有 L2/L3 证据；真实模型推理/真机交互 E2E 标 NOT_RUN |
+| 66 命令契约 | **PASS** | FROZEN 49 / PARTIAL 17 / GAP 0；C067–C077 已登记并合入；parity 测试从 registry 派生 |
+| 新 UI/UX（A+C 融合） | **PASS** | 三空间 + Studio 双模式 + Theme Studio；新壳默认入口；真实窗口 L4 矩阵 7/7（Host 就绪 7/7） |
+| Theme Engine 重建 | **PASS** | 235 测试；独立审查 PASS；零依赖旧 `NewManga.Theme` 断言 |
+| Theme Studio 页面 | **PASS_WITH_ISSUES** | 7 分区真实生产服务；P2 已修（I1）；待窄验证签署 |
+| 旧主题系统退役 | **PASS** | R1–R6 + I1 + 干净树 R6（`workingTreeDirty=false`、双壳 EXIT 0/0、零引用门） |
+| 设计系统 | **PASS** | D-1 r4 PASS_WITH_ISSUES，P2 已闭；对比度矩阵 0/0 |
+| 分层验证 L1–L4 | **L1–L3 PASS；L4 部分 NOT_RUN** | 全量 802 通过/0 失败；真实窗口矩阵 7/7；DPI/IME/Trim/AOT/真实交互未验证 |
+| 独立审查 | **完成** | 14 份报告（Codex 6 + 独立 Reviewer 8），结论与处置均在 `doc/reviews/` |
+| 验收报告 | **交付** | `doc/V11R_ACCEPTANCE_REPORT.md` |
