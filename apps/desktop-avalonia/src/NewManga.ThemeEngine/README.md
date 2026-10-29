@@ -116,9 +116,13 @@ dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGe
 - 对比度 warning **不阻塞**应用（`IsValid` 只由 error 决定）；Studio 应把 warning 呈现为“可选改进”，
   error 才阻止导入/应用。
 - `IThemeLayerSink` 是 Avalonia-free 的应用面 seam（`ApplyThemeLayer/RevertToBuiltInLayer/SetAppearance/
-  SetContrast/SetReducedMotion/PlatformIsLight/LastError`），单测用 fake 注入。等 DS `ApplyThemeLayer`
-  合入后，适配器仅需把合成的 `IReadOnlyDictionary<string, object?>` 转成 `ResourceDictionary` 并委托
-  `DesignSystemThemeManager`（3 行级改动）。
+  SetContrast/SetReducedMotion/PlatformIsLight/PlatformThemeChanged/LastError`），单测用 fake 注入。
+- **真实适配器已交付**：`DesignSystemThemeLayerSink`（唯一接触 Avalonia 资源的 ThemeEngine 类型）把
+  合成的 `IReadOnlyDictionary<string, object?>` 转 `ResourceDictionary`，调用 DS
+  `ApplyThemeLayer`（59 键白名单）/`RevertPalette`/`SetAppearance`/`SetContrast`/`SetReducedMotion`，
+  透传 `LastError`/`ThemeLayerIssues`，并把 `Application.ActualThemeVariantChanged` 转成
+  `PlatformThemeChanged`。headless 验收测试证明：应用后资源变化、布局/密度键不变、非法层拒绝且保留
+  原状、重复切主题不泄漏资源提供者、**窗口实例与漫画画布位图像素不变**（不重建窗口）。
 
 ## 9. 测试与证据
 

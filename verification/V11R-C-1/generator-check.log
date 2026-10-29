@@ -1,10 +1,11 @@
 # command: dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen --no-build -- --check
 # workdir: apps/desktop-avalonia
-# head: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
+# head: daff73dbaefcd5ba960d8852d6cc2a6b0cfaac32
 
 tokens:  G:\CODEX\New Manga.workspace\worktrees\V11R-THEME-ENGINE\doc\design\redesign-v1\40-fusion\tokens.json
 project: G:\CODEX\New Manga.workspace\worktrees\V11R-THEME-ENGINE\apps\desktop-avalonia\src\NewManga.ThemeEngine
 theme:   newmanga-default 1.0.0 (light 35 colors, dark 35 colors)
+  derived: motion slow duration = 220ms (R-15 default; no 'motion.duration.slow' token in the frozen baseline)
   derived: line-height tier Nm.LineHeight.Display = font.size.2xl x 1.25 (DESIGN_SYSTEM §3)
   derived: line-height tier Nm.LineHeight.Title = font.size.xl x 1.25 (DESIGN_SYSTEM §3)
   derived: line-height tier Nm.LineHeight.Body = font.size.md x 1.45 (DESIGN_SYSTEM §3)

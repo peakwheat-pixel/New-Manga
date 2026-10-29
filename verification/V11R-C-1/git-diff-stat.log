@@ -1,51 +1,8 @@
-# command: git diff --stat bb957359e..HEAD
-# base: bb957359e (main)
-# head: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
+# command: git diff --stat ecfe8921a89596484726ecbdabb4c9348bc46387..daff73dbaefcd5ba960d8852d6cc2a6b0cfaac32 (C-1 closeout since main)
+# base: ecfe8921a89596484726ecbdabb4c9348bc46387
+# head: daff73dbaefcd5ba960d8852d6cc2a6b0cfaac32
 
- apps/desktop-avalonia/NewManga.sln                 |  45 ++
- .../src/NewManga.ThemeEngine/.gitattributes        |   4 +
- .../Generated/ThemeTokenBaseline.g.cs              |  56 ++
- .../NewManga.ThemeEngine/Models/ThemeContracts.cs  | 235 ++++++
- .../NewManga.ThemeEngine/Models/ThemeIssueCodes.cs | 144 ++++
- .../src/NewManga.ThemeEngine/Models/ThemeModels.cs | 457 +++++++++++
- .../NewManga.ThemeEngine/Models/ThemeTokenKeys.cs  |  30 +
- .../NewManga.ThemeEngine.csproj                    |  35 +
- .../Palette/ThemePaletteComposer.cs                | 213 ++++++
- .../Persistence/LegacyThemeMigration.cs            | 131 ++++
- .../Persistence/ThemeSettingsStore.cs              | 181 +++++
- .../Preview/ThemePreviewEngine.cs                  | 362 +++++++++
- .../src/NewManga.ThemeEngine/README.md             | 114 +++
- .../NewManga.ThemeEngine/Registry/ThemeRegistry.cs | 472 ++++++++++++
- .../Serialization/JsonSupport.cs                   | 212 ++++++
- .../Serialization/ThemePackageJson.cs              | 831 +++++++++++++++++++++
- .../Serialization/ThemeSettingsJson.cs             | 337 +++++++++
- .../Themes/BuiltInThemeGenerator.cs                | 365 +++++++++
- .../NewManga.ThemeEngine/Themes/BuiltInThemes.cs   |  82 ++
- .../Themes/newmanga-default.nmtheme                | 142 ++++
- .../Validation/ThemeContrast.cs                    |  55 ++
- .../Validation/ThemeValidator.cs                   | 477 ++++++++++++
- .../NewManga.ThemeEngine.ThemeGen.csproj           |  15 +
- .../tools/NewManga.ThemeEngine.ThemeGen/Program.cs | 121 +++
- .../BuiltInThemeGeneratorTests.cs                  | 225 ++++++
- .../LegacyThemeMigrationTests.cs                   | 229 ++++++
- .../NewManga.ThemeEngine.Tests.csproj              |  31 +
- .../NewManga.ThemeEngine.Tests/TestSupport.cs      | 148 ++++
- .../ThemeContractTests.cs                          | 111 +++
- .../ThemePackageJsonTests.cs                       | 204 +++++
- .../ThemePaletteComposerTests.cs                   | 251 +++++++
- .../ThemePreviewEngineTests.cs                     | 227 ++++++
- .../ThemeRegistryTests.cs                          | 247 ++++++
- .../ThemeValidatorTests.cs                         | 312 ++++++++
- verification/V11R-C-1/DEVIATIONS.md                | 109 +++
- verification/V11R-C-1/MIGRATION_CASES.md           |  32 +
- verification/V11R-C-1/README.md                    |  81 ++
- verification/V11R-C-1/build.log                    |  27 +
- verification/V11R-C-1/dotnet-test-full.log         |  26 +
- verification/V11R-C-1/dotnet-test-themeengine.log  | 160 ++++
- verification/V11R-C-1/generator-check.log          |  16 +
- verification/V11R-C-1/git-diff-stat.log            |  37 +
- verification/V11R-C-1/git-head.txt                 |   5 +
- verification/V11R-C-1/schema-sample.nmtheme        | 142 ++++
- 44 files changed, 7736 insertions(+)
+ .../DependencyBoundaryTests.cs                     | 79 ++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
 EXIT=0

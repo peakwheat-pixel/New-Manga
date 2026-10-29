@@ -1,6 +1,6 @@
 # command: dotnet build NewManga.sln -warnaserror -t:Rebuild -v m -nologo
 # workdir: apps/desktop-avalonia
-# head: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
+# head: daff73dbaefcd5ba960d8852d6cc2a6b0cfaac32
 
   正在确定要还原的项目…
   所有项目均是最新的，无法还原。
@@ -22,6 +22,6 @@
     0 个警告
     0 个错误
 
-已用时间 00:00:02.64
+已用时间 00:00:03.53
 
 EXIT=0

@@ -1,5 +1,7 @@
 # branch: v11r/theme-engine
-# code head under test: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
-# base commit: bb957359e7ea51762a114cc22c02abde7838a500
+# code head under test: daff73dbaefcd5ba960d8852d6cc2a6b0cfaac32
+# part A merge on main: cc14a41d50395c06916a325bdf521ec4bfea2bca
+# part B merge on main: 907339511 (adapter commit d8b953055)
+# main baseline at closeout round start: ecfe8921a89596484726ecbdabb4c9348bc46387
 # captured: 2026-10-30
-# note: evidence files are committed after the code head; the code is unchanged by evidence-only commits.
+# note: evidence-only commits follow the code head; code is unchanged by them.
