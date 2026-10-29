@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import replace
+from typing import Sequence
 
 from application.editing.errors import (
     GuardStatus,
@@ -83,6 +84,38 @@ def _sync_region_state(region: Region, staged: Region) -> None:
     region.restore_from_snapshot(staged.snapshot_state())
     region.current_revision_id = staged.current_revision_id
     region.updated_at = staged.updated_at
+
+
+def effective_region_locks(regions: Sequence[Region]) -> tuple[bool, bool, bool]:
+    """V11R-F0-1 I1: effective lock inheritance for merge/split.
+
+    A source lock is EFFECTIVE when either the region-level projection OR the
+    text-level manual-protection flag is set. The derived state is written to
+    BOTH projections on the resulting region(s), so an explicit user lock
+    survives merge/split instead of silently becoming unlocked (which would
+    let the translation step overwrite the merged/protected text).
+    """
+    region_locked = any(region.region_locked for region in regions)
+    translation_locked = any(
+        region.translation_locked or region.text.translation_locked
+        for region in regions
+    )
+    inpaint_locked = any(region.inpaint_locked for region in regions)
+    return bool(region_locked), bool(translation_locked), bool(inpaint_locked)
+
+
+def _apply_effective_locks(
+    region: Region, locks: tuple[bool, bool, bool]
+) -> None:
+    """Persist inherited locks into BOTH projections (I1 / GAP-3 discipline)."""
+    region_locked, translation_locked, inpaint_locked = locks
+    region.region_locked = bool(region_locked)
+    region.translation_locked = bool(translation_locked)
+    region.inpaint_locked = bool(inpaint_locked)
+    if translation_locked:
+        region.text.lock_translation()
+    else:
+        region.text.unlock_translation()
 
 
 def _guard_status_of(result: RegionCommitResult) -> GuardStatus:
@@ -191,6 +224,91 @@ class InMemoryRegionCommitter:
             RegionCommitStatus.APPLIED, revision_no=stored_revision.revision_no
         )
 
+    def commit_region_batch(
+        self,
+        *,
+        new_regions: "Sequence[tuple[Region, RegionRevision]]" = (),
+        updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]" = (),
+        soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
+        revision_pins: "Sequence[tuple[str, int, bool]]" = (),
+        expected_current_checks: "Sequence[tuple[str, str]]" = (),
+    ) -> RegionCommitResult:
+        """In-memory twin of the SQLite composite seam (contract-faithful).
+
+        Every expectation is re-checked before the first write; the fake has
+        no transaction to roll back, so it mirrors the production order and
+        never mutates caller objects before all steps succeeded.
+        """
+        repo = self._repo
+        expectations: list[tuple[str, str | None]] = []
+        expectations.extend(
+            (region_id, expected)
+            for region_id, expected in soft_delete_region_ids
+            if expected is not None
+        )
+        expectations.extend(expected_current_checks)
+        expectations.extend(
+            (region.region_id, expected)
+            for region, _revision, expected in updated_regions
+            if expected is not None
+        )
+        for region_id, expected in expectations:
+            stored = repo.get_region(region_id)
+            if stored is None:
+                return RegionCommitResult(
+                    RegionCommitStatus.DB_FAILED,
+                    detail=f"region {region_id} is not persisted",
+                )
+            if stored.current_revision_id != expected:
+                return RegionCommitResult(
+                    RegionCommitStatus.INPUT_REVISION_CHANGED,
+                    detail=(
+                        f"expected current {expected!r},"
+                        f" stored current {stored.current_revision_id!r}"
+                    ),
+                )
+
+        applied: list[tuple[Region, str]] = []
+        for region, revision in new_regions:
+            stored_revision = replace(revision, revision_no=1)
+            repo.add_revision(stored_revision)
+            applied.append((region, stored_revision.region_revision_id))
+        for region, revision, _expected in updated_regions:
+            revision_no = max(
+                (rev.revision_no for rev in repo.list_revisions(region.region_id)),
+                default=0,
+            ) + 1
+            stored_revision = replace(revision, revision_no=revision_no)
+            repo.add_revision(stored_revision)
+            applied.append((region, stored_revision.region_revision_id))
+        for region, revision in new_regions:
+            repo.add_region(region)
+        for region, revision_id in applied:
+            region.current_revision_id = revision_id
+        for region, _revision, _expected in updated_regions:
+            # Reference-stable sync: mutate the repository's own object, so
+            # readers that already hold it observe the committed state.
+            stored = repo.get_region(region.region_id)
+            if stored is not None:
+                stored.restore_from_snapshot(region.snapshot_state())
+                stored.current_revision_id = region.current_revision_id
+                repo.update_region(stored)
+        for region_id, _expected in soft_delete_region_ids:
+            stored = repo.get_region(region_id)
+            if stored is not None:
+                stored.soft_delete()
+                repo.update_region(stored)
+        for region_id, revision_no, pinned in revision_pins:
+            try:
+                repo.set_revision_pinned(region_id, revision_no, pinned)
+            except LookupError:
+                return RegionCommitResult(
+                    RegionCommitStatus.DB_FAILED,
+                    detail=f"revision {revision_no} not found for region"
+                    f" {region_id}",
+                )
+        return RegionCommitResult(RegionCommitStatus.APPLIED)
+
 
 class RegionEditingService:
     def __init__(
@@ -262,6 +380,22 @@ class RegionEditingService:
         if result.status is RegionCommitStatus.APPLIED:
             _sync_region_state(region, staged)
         return result
+
+    def _commit_batch_or_raise(self, **batch: object) -> None:
+        """V11R-F0-1 I1: the ALL-OR-NOTHING composite seam used by
+        create/merge/split/reorder/delete/pin.
+
+        A stale expectation (re-read inside the transaction) is the typed
+        :class:`RegionRevisionChanged` with ZERO write; any persistence
+        failure rolls the whole batch back and surfaces as ``RuntimeError``
+        (wire UNKNOWN, same convention as the single-region user writes).
+        """
+        result = self._committer.commit_region_batch(**batch)  # type: ignore[arg-type]
+        if result.status is RegionCommitStatus.APPLIED:
+            return
+        if result.status is RegionCommitStatus.INPUT_REVISION_CHANGED:
+            raise RegionRevisionChanged()
+        raise RuntimeError(f"region batch commit failed: {result.detail}")
 
     def _commit_user_or_raise(
         self,
@@ -404,12 +538,14 @@ class RegionEditingService:
             geometry=geometry,
             sfx_policy=SfxPolicy(sfx_policy),
         )
-        self._repo.add_region(region)
-        # TASK-002 §2.1: first revision + pointer in one atomic commit.
-        staged = _clone_region(region)
-        self._commit_user_or_raise(
-            region, staged, RegionOrigin(origin), ReviewState.UNREVIEWED
+        # V11R-F0-1 I1: the row, its first revision and the current pointer are
+        # ONE transaction -- a failure can never leave a region without a
+        # current revision (TASK-002 §2.1). The caller's object is the same
+        # object the repository holds (reference stability).
+        revision = self._build_revision(
+            region, RegionOrigin(origin), ReviewState.UNREVIEWED
         )
+        self._commit_batch_or_raise(new_regions=[(region, revision)])
         return region
 
     def get_region(self, region_id: str) -> Region:
@@ -733,7 +869,7 @@ class RegionEditingService:
         regions = [self._require_region(rid) for rid in region_ids]
         if any(region.page_id != page_id for region in regions):
             raise ValueError("merge is limited to regions of one page")
-        self._expected_current_ids(regions, expected_revisions)
+        expected_ids = self._expected_current_ids(regions, expected_revisions)
 
         geometry = regions[0].geometry
         for region in regions[1:]:
@@ -763,15 +899,23 @@ class RegionEditingService:
             merged.text.edited_translation = " ".join(manuals)
         merged.text.refresh_final()
 
-        self._repo.add_region(merged)
-        staged = _clone_region(merged)
-        self._commit_user_or_raise(
-            merged, staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+        staged = merged
+        revision = self._build_revision(
+            staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+        )
+        # V11R-F0-1 I1/P1-1: the new region row + its first revision/pointer and
+        # every source soft delete are ONE transaction; a failure can never
+        # leave the merged region together with still-live sources.
+        self._commit_batch_or_raise(
+            new_regions=[(staged, revision)],
+            soft_delete_region_ids=[
+                (region.region_id, expected_ids.get(region.region_id))
+                for region in regions
+            ],
         )
         deleted_ids = []
         for region in regions:
             region.soft_delete()
-            self._repo.update_region(region)
             deleted_ids.append(region.region_id)
         return merged, tuple(deleted_ids)
 
@@ -791,8 +935,14 @@ class RegionEditingService:
         source = self._require_region(region_id)
         if len(parts) < 2:
             raise ValueError("split needs at least two parts")
-        self._assert_current_revision(source, expected_revision_no)
+        expected_current_revision_id = self._resolve_expected_current(
+            source, expected_revision_no
+        )
+        # V11R-F0-1 I1/P1-3: every part inherits the source's EFFECTIVE locks
+        # (region-level OR text-level) into both projections.
+        source_locks = effective_region_locks([source])
         created: list[Region] = []
+        new_entries: list[tuple[Region, RegionRevision]] = []
         for index, geometry in enumerate(parts, start=1):
             part = Region(
                 region_id=_new_id(),
@@ -808,14 +958,21 @@ class RegionEditingService:
                 translation_locked=source.text.translation_locked,
             )
             part.text.refresh_final()
-            self._repo.add_region(part)
-            staged = _clone_region(part)
-            self._commit_user_or_raise(
-                part, staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+            revision = self._build_revision(
+                part, RegionOrigin.USER, ReviewState.UNREVIEWED
             )
             created.append(part)
+            new_entries.append((part, revision))
+        # V11R-F0-1 I1/P1-1: all parts + their first revisions/pointers and the
+        # source soft delete are ONE transaction; a mid-way failure can never
+        # leave the live source next to a half set of parts.
+        self._commit_batch_or_raise(
+            new_regions=new_entries,
+            soft_delete_region_ids=[
+                (region_id, expected_current_revision_id)
+            ],
+        )
         source.soft_delete()
-        self._repo.update_region(source)
         return tuple(created)
 
     # ------------------------------------------------------------------
