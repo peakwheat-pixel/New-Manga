@@ -1,9 +1,9 @@
 # M2-AC5 sidecar build script (build tooling only).
 #
 # Runs PyInstaller with the frozen spec and drops the onedir bundle into the
-# desktop target tree (`apps/desktop/src-tauri/target/core-sidecar/`), which
+# Avalonia build tree (`apps/desktop-avalonia/build/sidecar/core-sidecar/`), which
 # the tauri bundle then declares as `resources` (see tauri.conf.json). The
-# output lives under the gitignored `target/` tree so build artifacts can
+# output lives under the gitignored `apps/desktop-avalonia/build/` tree so build artifacts can
 # never enter a commit.
 #
 # CORE-SLIM-2 (AC2/AC3): after the PyInstaller build this script copies the
@@ -252,7 +252,7 @@ if (-not $SkipPythonRuntime) {
 # behavior, parameters and the output layout are unchanged). The weights
 # step still runs on the skip path (idempotent sha256-verified copy), so a
 # previously -SkipWeights-built bundle gets its weights on the next call.
-$existingBundle = Join-Path $repoRoot "apps/desktop/src-tauri/target/core-sidecar/core-sidecar"
+$existingBundle = Join-Path $repoRoot "apps/desktop-avalonia/build/sidecar/core-sidecar"
 if (-not $Force -and (Test-Path -LiteralPath $existingBundle -PathType Container)) {
     Write-Host "build_sidecar: target exists, skipping PyInstaller (use -Force to rebuild)"
     if (-not $SkipWeights) {
@@ -277,7 +277,7 @@ $PythonExe = (Resolve-Path -LiteralPath $PythonExe).Path
 $gitHead = (git -C $repoRoot rev-parse HEAD 2>$null)
 if ($LASTEXITCODE -ne 0 -or -not $gitHead) { throw "Unable to resolve source HEAD at $repoRoot" }
 
-$targetRoot = Join-Path $repoRoot "apps/desktop/src-tauri/target"
+$targetRoot = Join-Path $repoRoot "apps/desktop-avalonia/build/sidecar"
 $distPath = Join-Path $targetRoot "core-sidecar"
 $workPath = Join-Path $targetRoot "pyinstaller-work"
 

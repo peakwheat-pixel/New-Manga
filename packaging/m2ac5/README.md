@@ -3,7 +3,7 @@
 本目录是 M2-AC5 的最小可复现 Windows 打包链：PyInstaller onedir 自包含 Core
 sidecar + Tauri NSIS 安装包。**全部内容仅为本 Task 构建工具**，不进产品运行时
 依赖清单（产品 `requirements.txt` 零改动）；产物全部落在 gitignored 的
-`apps/desktop/src-tauri/target/**`。
+`apps/desktop-avalonia/build/sidecar/**`。
 
 ## 1. 构建 venv（与产品依赖完全隔离）
 
@@ -46,7 +46,7 @@ C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe -m venv "G:/CO
 > 注意（DSH r1 P3-2）：cargo 路径前置不止 sidecar——`frontend/dist` 同为 gitignored 构建产物（`frontendDist`），fresh checkout 需先完成 frontend build（§2a），否则 `generate_context!` 将以类似方式失败。
 
 
-sidecar onedir 产物（`apps/desktop/src-tauri/target/core-sidecar/core-sidecar/`）
+sidecar onedir 产物（`apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar/`）
 是 **gitignored 构建产物**：fresh clone / fresh worktree 里不存在，而
 `tauri.conf.json` 的 `bundle.resources` 引用它，任何 cargo 驱动的构建
 （`cargo check` / `cargo test` / `cargo build` / `tauri build`）在编译期都
@@ -93,7 +93,7 @@ cd apps/desktop/frontend
 npm install --no-audit --no-fund
 npm run build
 
-# 2b. sidecar onedir（产出 apps/desktop/src-tauri/target/core-sidecar/core-sidecar/）
+# 2b. sidecar onedir（产出 apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar/）
 #     M2-PROD-DETECT-2：PyInstaller 构建后自动把 pinned manga 权重三文件
 #     （sha256 逐文件校验，失败即 throw）复制进 <bundle>/models/detector/...；
 #     权重快照默认取 G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/

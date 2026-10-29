@@ -17,3 +17,6 @@ experiments/M2-SFX-DATA-INFRA/*.bak
 
 # ZCode 会话本地文件不进 Git
 .zcode/
+
+# Avalonia sidecar build output (LEGACY-SHELL-ARCHIVE-1 decoupling)
+/apps/desktop-avalonia/build/

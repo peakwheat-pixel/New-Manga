@@ -97,7 +97,7 @@ jobs:
           pwsh -NoProfile -File apps/desktop-avalonia/scripts/package.ps1 `
             -OutputRoot "${{ github.workspace }}/out" `
             -Version "${{ github.event.inputs.version }}" `
-            -SidecarDir "${{ github.workspace }}/apps/desktop/src-tauri/target/core-sidecar/core-sidecar"
+            -SidecarDir "${{ github.workspace }}/apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar"
 
       - name: Build NSIS installer (unsigned)
         shell: pwsh

@@ -17,3 +17,13 @@ Status: **FROZEN / HISTORICAL**（2026-10-27，AD-002 S5-C）
 - `apps/desktop-avalonia/`（四页 + 主题中心 + TileChannel + 打包脚本）
 - 契约：`apps/desktop-avalonia/docs/TILE-CHANNEL-CONTRACT-V1.md`
 - 发布件：`apps/desktop-avalonia/scripts/package.ps1`（22.9MB zip）
+
+## 2026-10-29 更新（LEGACY-SHELL-ARCHIVE-1）
+
+- **构建路径已解耦**：sidecar 构建输出从 `apps/desktop/src-tauri/target/` 迁到 `apps/desktop-avalonia/build/sidecar/`
+  （`packaging/m2ac5/build_sidecar.ps1`、`package.ps1`、README、公开 CI workflow 已同步）。本目录不再参与任何构建/发布链路。
+- **可移动部分已归档**：`src/ui`（PySide6/QML）、`tests/ui_shell` 与依赖它们的旧壳测试/打包文件已移入
+  `archive/history/legacy-shell/`（0 条 evidence pin，已核实）。
+- **本目录保持原位冻结**：42 条历史 done Task 的 Canonical Evidence pin 直接引用 `apps/desktop/src-tauri/src/**`
+  与 `apps/desktop/frontend/src/**`；按治理「仍被 evidence pin 引用的文件留在原路径」不得移动。彻底移动需
+  先做历史 pin 迁移方案（不在本卡范围）。
