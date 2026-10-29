@@ -27,9 +27,9 @@ per-user、**未签名** 的 NSIS 安装器，把 AGPL-RELEASE-1 的 base 变体
 
 ```powershell
 pwsh -NoProfile -File apps/desktop-avalonia/scripts/build-installer.ps1 `
-  -StageDir "G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64" `
-  -MakensisPath "C:/Users/<you>/AppData/Local/tauri/NSIS/makensis.exe" `
-  -OutDir "G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out"
+  -StageDir "$env:NEWMANGA_WORKSPACE_ROOT/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64" `
+  -MakensisPath "$env:LOCALAPPDATA/tauri/NSIS/makensis.exe" `
+  -OutDir "$env:NEWMANGA_WORKSPACE_ROOT/task-envs/NSIS-INSTALLER-1/out"
 ```
 
 - `-MakensisPath` 缺省时脚本会依次探测 `$env:NEWMANGA_MAKENSIS`、`%LOCALAPPDATA%\tauri\NSIS\makensis.exe`、
@@ -41,7 +41,7 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/build-installer.ps1 `
 ## 验证
 
 真机验证脚本位于本任务 task-env（不入库）：
-`G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/verify-installer.ps1`
+`$env:NEWMANGA_WORKSPACE_ROOT/task-envs/NSIS-INSTALLER-1/verify-installer.ps1`
 （`-Phase install` → 截图/UIA → `-Phase finish`）。证据与结论见
 `verification/NSIS-INSTALLER-1/REPORT.md` 与 `verify.json`。
 

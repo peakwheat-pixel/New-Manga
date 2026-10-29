@@ -22,10 +22,10 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 REPO = Path(__file__).resolve().parents[3]
-TASK_ENV = Path(r"G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1")
-S0_STRIP = Path(
-    r"G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000"
-)
+# V11R-A-4: no hardcoded machine checkout; explicit env wins, else the workspace sibling of the repo.
+_WORKSPACE = Path(os.environ.get("NEWMANGA_WORKSPACE_ROOT") or (REPO.parent / (REPO.name + ".workspace")))
+TASK_ENV = _WORKSPACE / "task-envs" / "UI-WORKBENCH-READER-1"
+S0_STRIP = _WORKSPACE / "task-envs" / "DISPLAY-PERF-DECISION-1" / "spike" / "avalonia" / "fixtures" / "strip-4000x60000"
 SRC_PAGES = REPO / "test_assets" / "comic_golden_suite" / "日漫_JA" / "oc material" / "17"
 EVIDENCE = REPO / "verification" / "UI-WORKBENCH-READER-1"
 
@@ -121,3 +121,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

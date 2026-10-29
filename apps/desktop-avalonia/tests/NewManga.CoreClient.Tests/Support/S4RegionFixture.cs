@@ -34,8 +34,8 @@ public static class S4RegionFixture
 {
     public const string DataRootVariable = "NEWMANGA_S4_REGION_FIXTURE";
 
-    private const string DefaultDataRoot =
-        @"G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture";
+    private static readonly string DefaultDataRoot =
+        TestWorkspacePaths.Path("task-envs/S4-CMD-BATCH-1/region-fixture");
 
     private const string MetaFileName = "fixture.json";
 
@@ -145,3 +145,4 @@ public static class S4RegionFixture
         }
     }
 }
+

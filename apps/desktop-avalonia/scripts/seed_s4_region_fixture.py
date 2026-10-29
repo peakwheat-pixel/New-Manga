@@ -27,7 +27,7 @@ consumes: ``book_id``, ``chapter_id``, ``chapter_type``, ``page_id``, ``page_cou
 
 Usage (called by scripts/test.ps1, can also be re-run by hand):
   python apps/desktop-avalonia/scripts/seed_s4_region_fixture.py \
-      --data-root "G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture"
+      --data-root "$env:NEWMANGA_WORKSPACE_ROOT/task-envs/S4-CMD-BATCH-1/region-fixture"
 """
 
 from __future__ import annotations
@@ -45,9 +45,9 @@ SRC_ROOT = REPO_ROOT / "src"
 DEFAULT_PAGES_ROOT = (
     REPO_ROOT / "test_assets" / "comic_golden_suite" / "日漫_JA" / "oc material" / "17"
 )
-DEFAULT_BOOK_FIXTURE = Path(
-    r"G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data"
-)
+# V11R-A-4: no hardcoded machine checkout; explicit env wins, else the workspace sibling of the repo.
+_WORKSPACE = Path(os.environ.get("NEWMANGA_WORKSPACE_ROOT") or (REPO_ROOT.parent / (REPO_ROOT.name + ".workspace")))
+DEFAULT_BOOK_FIXTURE = _WORKSPACE / "task-envs" / "BOOK-FIXTURE-1" / "isolated-data"
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
 TITLE = "S4-CMD-BATCH-1 region fixture"
 CHAPTER_TITLE = "第 1 章"
@@ -309,3 +309,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

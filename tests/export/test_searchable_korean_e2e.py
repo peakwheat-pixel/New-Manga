@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import io
 import os
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -22,8 +23,16 @@ pymupdf = pytest.importorskip("pymupdf", reason="PyMuPDF is required")
 
 Image.MAX_IMAGE_PIXELS = 200_000_000
 
-ROOT = os.path.join(r"G:\CODEX\New Manga", "test_assets", "comic_golden_suite")
+# V11R-A-4: repo-relative assets; NEWMANGA_GOLDEN_ASSETS overrides for an out-of-tree asset root.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+ROOT = os.environ.get("NEWMANGA_GOLDEN_ASSETS") or str(REPO_ROOT / "test_assets" / "comic_golden_suite")
 KOREAN_TREE = os.path.join(ROOT, "韩漫_KO")
+if not os.path.isdir(KOREAN_TREE):
+    pytest.skip(
+        f"Korean comic assets missing at {KOREAN_TREE}; set NEWMANGA_GOLDEN_ASSETS "
+        "or check out the asset bundle (environmental, not a product failure)",
+        allow_module_level=True,
+    )
 KOREAN_TEXT = "안녕하세요 세계"
 
 

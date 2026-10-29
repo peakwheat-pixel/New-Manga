@@ -19,7 +19,12 @@ from application.resource_channel.tiles import (
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-E2E_DEFAULT = Path(r"G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e")
+# V11R-A-4: no hardcoded machine checkout. NEWMANGA_WORKSPACE_ROOT wins, else the workspace sibling;
+# the E2E test itself falls back to pytest's tmp_path when no workspace is configured.
+E2E_DEFAULT = Path(
+    os.environ.get("NEWMANGA_WORKSPACE_ROOT")
+    or (REPO_ROOT.parent / (REPO_ROOT.name + ".workspace"))
+) / "task-envs" / "CORE-TILE-EMIT-1" / "e2e"
 
 
 def _evidence_dir() -> Path | None:
@@ -115,7 +120,8 @@ def test_contract_rejects_tampered_manifest(page_source: Path, tmp_path: Path) -
 
 
 def test_e2e_artifact_for_host_channel(page_source: Path, tmp_path: Path) -> None:
-    target = Path(os.environ.get("NEWMANGA_CORE_TILE_E2E", E2E_DEFAULT))
+    configured = os.environ.get("NEWMANGA_CORE_TILE_E2E")
+    target = Path(configured) if configured else tmp_path / "e2e"
     started = time.perf_counter()
     manifest = emit_tiles(page_source, target / "artifact")
     elapsed = (time.perf_counter() - started) * 1000.0

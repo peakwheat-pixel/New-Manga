@@ -77,11 +77,18 @@ jobs:
         shell: pwsh
         run: python -m pytest -q
 
-      - name: Run .NET tests (projects that do not require a prebuilt sidecar)
+      - name: Build .NET solution (warnings are errors)
+        shell: pwsh
+        run: dotnet build apps/desktop-avalonia/NewManga.sln -c Release -warnaserror
+
+      - name: Run .NET tests (serialized; projects that do not require a prebuilt sidecar)
         shell: pwsh
         run: |
-          dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release
-          dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release
+          # V11R-A-4: same-SHA CI lives in .github/workflows/ci.yml; this release job keeps the
+          # sidecar-free subset it always ran. -m:1 serializes MSBuild/project test execution so the
+          # temp SQLite fixtures never contend across parallel project builds.
+          dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release -m:1
+          dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release -m:1
 
       - name: Build Core sidecar bundle (weights-free public build)
         shell: pwsh

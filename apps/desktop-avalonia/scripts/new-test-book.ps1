@@ -13,12 +13,12 @@
 # 前后状态并断言未变化。
 [CmdletBinding()]
 param(
-    [string]$DataRoot = 'G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data',
+    [string]$DataRoot = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/BOOK-FIXTURE-1/isolated-data' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/BOOK-FIXTURE-1/isolated-data' } ),
     [string]$BookTitle = 'BOOK-FIXTURE-1 日漫_JA 测试书',
     [string]$ChapterTitle = '第 1 章',
     [int]$PageLimit = 8,
-    [string]$PythonExe = 'G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe',
-    [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/sidecar-copy',
+    [string]$PythonExe = $( if ($env:NEWMANGA_BUILD_PYTHON) { $env:NEWMANGA_BUILD_PYTHON } else { 'python' } ),
+    [string]$SidecarDirectory = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/sidecar-copy' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/sidecar-copy' } ),
     [string]$PagesRoot = '',
     [string]$EvidencePath = '',
     [switch]$Force,
@@ -36,7 +36,7 @@ function Resolve-PagesRoot([string]$explicit) {
     if (-not [string]::IsNullOrWhiteSpace($explicit)) { return $explicit }
     $candidates = @(
         (Join-Path $repoRoot 'test_assets/comic_golden_suite/日漫_JA'),
-        'G:/CODEX/New Manga/test_assets/comic_golden_suite/日漫_JA'
+        $( if ($env:NEWMANGA_REPO_ROOT) { Join-Path $env:NEWMANGA_REPO_ROOT 'test_assets/comic_golden_suite/日漫_JA' } else { Join-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) 'test_assets/comic_golden_suite/日漫_JA' } )
     )
     foreach ($candidate in $candidates) {
         if (-not (Test-Path $candidate)) { continue }

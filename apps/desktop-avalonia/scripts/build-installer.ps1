@@ -37,9 +37,9 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$StageDir = 'G:/CODEX/New Manga.workspace/task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64',
+    [string]$StageDir = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64' } ),
     [string]$MakensisPath = '',
-    [string]$OutDir = 'G:/CODEX/New Manga.workspace/task-envs/NSIS-INSTALLER-1/out',
+    [string]$OutDir = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/NSIS-INSTALLER-1/out' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/NSIS-INSTALLER-1/out' } ),
     [string]$Version = '',
     [string]$NsiScript = '',
     [string]$IconPath = ''

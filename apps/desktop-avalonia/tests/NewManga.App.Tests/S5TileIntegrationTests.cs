@@ -115,7 +115,7 @@ public sealed class S5TileIntegrationTests : IDisposable
         var vm = new ReaderViewModel();
         var page = new ReaderPage(vm, Array.Empty<string>());
         Assert.Null(page.TileSource);
-        var fixture = new FixtureTileSource(@"G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/tiles");
+        var fixture = new FixtureTileSource(TestWorkspacePaths.Path("task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/tiles"));
         Assert.True(fixture.TileCount == 0 || fixture.TileCount == 30);
         if (fixture.TileCount > 0)
         {

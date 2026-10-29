@@ -1,6 +1,6 @@
 [CmdletBinding()] param(
   [Parameter(Mandatory=$true)][string]$PackageDir,
-  [string]$InstallDir='G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/install',
+  [string]$InstallDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/install' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/install' } ),
   [string]$DataRoot=$(Join-Path $env:APPDATA 'com.newmanga.desktop'),
   [switch]$SkipBackup
 )

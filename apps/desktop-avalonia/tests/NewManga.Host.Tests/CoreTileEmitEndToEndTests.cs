@@ -14,7 +14,7 @@ public sealed class CoreTileEmitEndToEndTests
 {
     private static string ArtifactDir =>
         Environment.GetEnvironmentVariable("NEWMANGA_CORE_TILE_E2E")
-        ?? @"G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e/artifact";
+        ?? TestWorkspacePaths.Path("task-envs/CORE-TILE-EMIT-1/e2e/artifact");
 
     private static string EvidenceDir
     {

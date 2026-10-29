@@ -20,13 +20,22 @@ from __future__ import annotations
 
 import io
 import os
+from pathlib import Path
 
 import pytest
 from PIL import Image
 
 pymupdf = pytest.importorskip("pymupdf", reason="PyMuPDF is required")
 
-ASSETS = os.path.join(r"G:\CODEX\New Manga", "test_assets", "comic_golden_suite")
+# V11R-A-4: repo-relative assets; NEWMANGA_GOLDEN_ASSETS overrides for an out-of-tree asset root.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+ASSETS = os.environ.get("NEWMANGA_GOLDEN_ASSETS") or str(REPO_ROOT / "test_assets" / "comic_golden_suite")
+if not os.path.isdir(ASSETS):
+    pytest.skip(
+        f"comic_golden_suite assets missing at {ASSETS}; set NEWMANGA_GOLDEN_ASSETS "
+        "or check out the asset bundle (environmental, not a product failure)",
+        allow_module_level=True,
+    )
 
 
 def _find_page():

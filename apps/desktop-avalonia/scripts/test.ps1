@@ -15,7 +15,7 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Debug',
-    [string]$SidecarDirectory = 'G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy',
+    [string]$SidecarDirectory = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-CORECLIENT-1/sidecar-copy' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/HOST-CORECLIENT-1/sidecar-copy' } ),
     [switch]$CanonicalEvidence,
     # READER-PROGRESS-1: opt-in private evidence root so parallel task runs never share the rerun log.
     [string]$EvidenceDirectory = ''
@@ -31,7 +31,7 @@ $evidence = if ($CanonicalEvidence) {
 } elseif (-not [string]::IsNullOrWhiteSpace($EvidenceDirectory)) {
     $EvidenceDirectory
 } else {
-    'G:/CODEX/New Manga.workspace/task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun'
+    $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun' } )
 }
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
@@ -61,7 +61,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "dotnet build failed with exit code $LASTEXITCODE" }
 
     # S4: compose/refresh reader fixtures (reuses the S0 long-strip method) and export their root.
-    $fixtureRoot = 'G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/fixtures'
+    $fixtureRoot = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/UI-WORKBENCH-READER-1/fixtures' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/UI-WORKBENCH-READER-1/fixtures' } )
     $fixturePython = (Get-Command python -ErrorAction SilentlyContinue)?.Source
     if (-not $fixturePython) { $fixturePython = (Get-Command py -ErrorAction SilentlyContinue)?.Source }
     if (-not $fixturePython) { throw "python is required for S4 reader fixtures" }
@@ -70,14 +70,14 @@ try {
     $env:NEWMANGA_S4_FIXTURES = $fixtureRoot
     # READER-PROGRESS-1: the Host E2E progress test copies the BOOK-FIXTURE data root (book+chapter+
     # 8 pages) into a disposable root; without it those tests self-skip with an explicit reason.
-    $bookFixtureRoot = 'G:/CODEX/New Manga.workspace/task-envs/BOOK-FIXTURE-1/isolated-data'
+    $bookFixtureRoot = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/BOOK-FIXTURE-1/isolated-data' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/BOOK-FIXTURE-1/isolated-data' } )
     if (Test-Path (Join-Path $bookFixtureRoot 'library.db')) {
         $env:NEWMANGA_BOOK_FIXTURE_ROOT = $bookFixtureRoot
     }
     # S4-CMD-BATCH-1: seed the region-write / reader-progress fixture (book+chapter+pages from the
     # BOOK-FIXTURE when present, plus a CLEAN artifact and a confirmed translated region) and export
     # its root. Without it the region/reader write integration tests self-skip with an explicit reason.
-    $regionFixtureRoot = 'G:/CODEX/New Manga.workspace/task-envs/S4-CMD-BATCH-1/region-fixture'
+    $regionFixtureRoot = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/S4-CMD-BATCH-1/region-fixture' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/S4-CMD-BATCH-1/region-fixture' } )
     & $fixturePython (Join-Path $root 'scripts/seed_s4_region_fixture.py') `
         --data-root $regionFixtureRoot `
         --json-out (Join-Path $regionFixtureRoot 'fixture.json') 2>&1 |
@@ -86,12 +86,12 @@ try {
     $env:NEWMANGA_S4_REGION_FIXTURE = $regionFixtureRoot
     # RUN-BINDING-FIX-1: the models-package core_service carries the OCR weights; the StartRun binding
     # fix re-verifies the full 8-page run against that exact build when the package is present.
-    $modelsSidecar = 'G:/CODEX/New Manga.workspace/task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar'
+    $modelsSidecar = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/FINAL-VALIDATION-1/out/NewManga-0.1.0-win-x64-models/app/core-sidecar' } )
     if (Test-Path (Join-Path $modelsSidecar 'core_service.exe')) {
         $env:NEWMANGA_MODELS_SIDECAR_DIR = $modelsSidecar
     }
     # CORE-TILE-EMIT-1: produce a real Python-Core tile artifact for the Host E2E test.
-    $coreTileE2e = 'G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e'
+    $coreTileE2e = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/CORE-TILE-EMIT-1/e2e' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/CORE-TILE-EMIT-1/e2e' } )
     $env:NEWMANGA_CORE_TILE_E2E = "$coreTileE2e/artifact"
     $previousPythonPath = $env:PYTHONPATH
     $env:PYTHONPATH = Join-Path $repoRoot 'src'
