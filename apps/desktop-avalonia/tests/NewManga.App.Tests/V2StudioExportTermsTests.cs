@@ -95,33 +95,51 @@ public sealed class V2StudioExportTermsTests
     }
 
     [AvaloniaFact]
-    public async Task StalePolicy_OnlyTheHostSupportedOptionIsSelectable()
+    public async Task StalePolicy_BothValuesAreSelectable_AndPassedToHost()
     {
-        var (view, _, vm, _) = await OpenAsync();
+        var (view, host, vm, _) = await OpenAsync();
         var export = vm.Export;
         await view.Tools.OpenAsync(StudioToolsTab.Preflight);
         StudioFixtures.Pump();
 
         Assert.True(export.CanSelectStalePolicy(StudioStalePolicy.Abort));
-        Assert.False(export.CanSelectStalePolicy(StudioStalePolicy.ContinueExisting));
-        Assert.False(view.Tools.Preflight.ContinueExistingButton.IsEnabled);
-        Assert.Contains("未支持", view.Tools.Preflight.ContinueExistingButton.Content?.ToString());
+        Assert.True(export.CanSelectStalePolicy(StudioStalePolicy.ContinueExisting)); // A-7 merged
+        Assert.True(view.Tools.Preflight.ContinueExistingButton.IsEnabled);
 
-        // Attempting the unsupported policy reports why; it never silently becomes selected.
-        Assert.False(export.TrySelectStalePolicy(StudioStalePolicy.ContinueExisting));
-        Assert.Equal(StudioStalePolicy.Abort, export.StalePolicy);
-        Assert.Contains("未暴露 stale_policy", export.StatusText);
-        Assert.Contains("continue_existing", StudioExportViewModel.ContinueExistingNotSupported);
+        // continue_existing is passed through to the Host (A-7: 7th tuple element).
+        Assert.True(await export.RefreshPreflightAsync());
+        host.ScriptedStartResults.Enqueue(ExportStartInfo.FromState("exp-stale", "pending", 3));
+        host.ScriptedSnapshots.Enqueue(new ExportSnapshotInfo("exp-stale", ExportJobState.Running, 0, 3));
+        Assert.True(export.TrySelectStalePolicy(StudioStalePolicy.ContinueExisting));
+        var startedContinue = await export.StartExportAsync();
+        Assert.True(startedContinue is not null, $"phase={export.Phase} canStart={export.CanStart} pages={export.ExportablePageIds.Count} status={export.StatusText} hostErr={host.Snapshot.LastError}");
+        Assert.Equal("continue_existing", host.StartExportCalls[^1].StalePolicy);
+
+        // Settle the first job, then abort is passed through as well.
+        host.ScriptedSnapshots.Enqueue(new ExportSnapshotInfo("exp-stale", ExportJobState.Completed, 3, 3, null, "/exports/x.zip", "aabb", null, "zip"));
+        await export.RefreshSnapshotAsync();
+        Assert.True(export.TrySelectStalePolicy(StudioStalePolicy.Abort));
+        host.ScriptedStartResults.Enqueue(ExportStartInfo.FromState("exp-abort", "pending", 3));
+        host.ScriptedSnapshots.Enqueue(new ExportSnapshotInfo("exp-abort", ExportJobState.Running, 0, 3));
+        Assert.NotNull(await export.StartExportAsync());
+        Assert.Equal("abort", host.StartExportCalls[^1].StalePolicy);
+
+        // No UI path can produce an out-of-enum policy; unknown values are rejected by the Host.
+        Assert.DoesNotContain(
+            Enum.GetValues<StudioStalePolicy>(),
+            policy => !export.CanSelectStalePolicy(policy));
 
         StudioEvidence.Write(EvidenceTask, "stale-policy.json", writer =>
         {
             writer.WriteStartObject();
-            writer.WriteString("ac", "AC1 stale 策略诚实降级");
+            writer.WriteString("ac", "AC1 stale 策略两值真实可选（V11R-A-7 已合并）");
             writer.WriteBoolean("abort_supported", export.CanSelectStalePolicy(StudioStalePolicy.Abort));
             writer.WriteBoolean("continue_existing_supported", export.CanSelectStalePolicy(StudioStalePolicy.ContinueExisting));
-            writer.WriteString("verified_fact", StudioExportViewModel.ContinueExistingNotSupported);
-            writer.WriteBoolean("ui_option_disabled", !view.Tools.Preflight.ContinueExistingButton.IsEnabled);
-            writer.WriteBoolean("selection_attempt_refused", export.StalePolicy == StudioStalePolicy.Abort);
+            writer.WriteString("verified_fact", "V11R-A-7 merged: stalePolicy passed to Host/Core (abort | continue_existing)");
+            writer.WriteBoolean("ui_option_enabled", view.Tools.Preflight.ContinueExistingButton.IsEnabled);
+            writer.WriteString("passed_continue_existing", host.StartExportCalls[^2].StalePolicy);
+            writer.WriteString("passed_abort", host.StartExportCalls[^1].StalePolicy);
+            writer.WriteString("invalid_value_guard", "Host rejects unknown stalePolicy with INVALID_REQUEST and zero Core frames (V11R-A-7 service tests)");
             writer.WriteEndObject();
         });
     }
