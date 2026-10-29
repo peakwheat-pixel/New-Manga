@@ -101,4 +101,5 @@ allowed_paths:
 ## Closeout Record
 
 - Closed：2026-10-29 as **done**（0.1.1 构建 + 安装包 + 真实升级验收 + GitHub Release v0.1.1 发布；官方 0.1.0 的升级缺口已在新构件修复）。
-- 遗留：SignPath 签名（审计中，获批后对 0.1.1 重新签名并替换资产）；public-release 分支尚未含 0.1.1 版本号改动（仅 tag）。
+- 遗留：SignPath 签名（审计中，获批后对 0.1.1 重新签名并替换资产）。
+- **public-release 已同步（2026-10-29）**：`a12c8fdfd` → `143e70d70`（最小补丁：public 版 core_service.py 内加迁移调用 + 新增 `upgrade_legacy_layout.py` + 测试 + App 版本 0.1.1；全量复制 main 版 core_service.py 的 `d0671feb3` 因引用公开快照缺失的 `PillowImageDecoder` 被回退）。公开 CI run `40865669572` **全绿**（pytest / .NET / sidecar / package / NSIS / manifest / upload 全部 success；产物 unsigned-release 969,474,054 B）。
