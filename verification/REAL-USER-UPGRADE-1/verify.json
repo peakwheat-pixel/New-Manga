@@ -1,0 +1,29 @@
+{
+ "A_real_data": {
+  "library_db_sha256": "df9d424cacedbfe0f6c82f29adc2d9947edaeec60e5d8ca9d74c0bbdf5ca08a9",
+  "backups": [
+   "catalog.20261026T190515Z.sqlite.nmbak",
+   "first-run-20261026190335.zip",
+   "first-run-20261026190358.zip"
+  ],
+  "schema_version": 6
+ },
+ "B_legacy_upgrade": {
+  "root_library_exists": true,
+  "legacy_data_library_exists": true,
+  "legacy_sha256": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+  "root_sha256": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+  "sha_equal": true,
+  "books": 1,
+  "book_titles": [
+   "家族战记"
+  ],
+  "integrity": "ok"
+ },
+ "sidecar": {
+  "official_0_1_0_sha": "bde2d86627d5a915d7df22f16dfe19ec630ce91a4ec7e08d1291797bc09ebc7a",
+  "fixed_build_sha": "d08e095164100fc2cbbb78c265c8371464fb8dd8de84e857a63a31430c48929a",
+  "official_contains_migration_fix": false
+ },
+ "note": "official 0.1.0 installer ships the pre-fix sidecar; the fixed build (HEAD 474d57b02) is required for legacy-layout migration -- release package must be rebuilt"
+}

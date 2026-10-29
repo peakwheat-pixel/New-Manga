@@ -8,15 +8,15 @@
 |---|---|---|
 |REAL-TRANSLATE-PROVIDER-1|—|done（AC3 BLOCKED=OpenCode 额度 402/429；集成 6bf084222；充值后 `tools/run_translate_probe.py` 复验）|
 |THEME-MACOS-2|—|done（三布局 Sonoma/Launchpad/Split + 审计/截图合并；249/249；828c7c68e）|
-|RELEASE-REPACK-5|—|done（含三布局主题的新包；249/249；导入 BLOCKED→IMPORT-TRIAGE-1；21d27abc8）|
+|RELEASE-REPACK-5|—|done（含三布局主题包；249/249；21d27abc8）|
 |IMPORT-TRIAGE-1|—|done（非回归：干净根导入 8->9；烟测自动化半途 revoke；无代码修复；87fdc2246）|
 |VERIFY-RECHECK-1|—|done（Mica 非回归/Esc-H PASS/4K 环境阻塞；204f98fb4）|
-|RELEASE-REPACK-4|—|done（最终包 103.33MB/725.34MB；ZIP+PDF 真机；232/232；集成 31af88610）|
+|RELEASE-REPACK-4|—|done（最终包 103.33/725.34MB；ZIP+PDF 真机；232/232；31af88610）|
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
 |PDF-EXPORT-UI-1|—|done（导出面板 ZIP/PDF 格式选择；集成 `6deefdcc3`；249/249；2026-10-28 DSH 复核）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
 |RELEASE-SMOKE-1|—|superseded（REPACK-3/4/5 真机全流程验收 + IMPORT-TRIAGE-1 已覆盖其目标；原证据保留）|
-|RELEASE-REPACK-3|—|done（新包全流程真跑：UI 导入/导出 ZIP；Mica=actual；234/234；集成 4290afb1b）|
+|RELEASE-REPACK-3|—|done（全流程真跑；Mica=actual；234/234；4290afb1b）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
@@ -29,14 +29,14 @@
 |SIGNPATH-OSS-SIGNING-1|RELEASE-VERIFY-1、V1-RELEASE-SIGNING-1|done（SignPath Foundation 免费 OSS 签名申请材料：英文草案 + 中文前置清单 + CI 草案 + README；独立审阅 3 轮修复后 PASS；集成 `f632ee39c`）|
 |CUDA-PACKAGE-DECISION-1|INFER-BASELINE-EP-1、CORE-SLIM-2、GPU-ORT-PROBE-1|done（决策 = defer：主包保持 DirectML；CUDA 仅对 manga-ocr/LaMa 必要；可选包 2.3GB/7GB ≤8GB 预算；触发条件与备选方案已登记）|
 |LEGACY-SHELL-ARCHIVE-1|PUBLIC-RELEASE-P0-1|closed_with_limitations（构建输出解耦到 `apps/desktop-avalonia/build/sidecar` + 归档 17 个旧壳测试/spec/dev 脚本；`apps/desktop` 受 42 条 evidence pin、`src/ui` 受产品 import 约束原位冻结；集成 `7d4c7764c`）|
-|UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|closed_with_limitations（本机无 AD-001 原始数据，用 2026-10-26 升级前备份执行 dry-run + 真实布局迁移完整性 PASS；发现升级缺口：Core 不识别旧布局 data/library.db）|
-|UPGRADE-LEGACY-LAYOUT-1|UPGRADE-REHEARSAL-1|done（Core 启动迁移旧布局：原子 staging/promote + fail-closed + 补迁；3 轮独立 Review 后 PASS；单测 12/12、全量 2612P；集成 `098c60381`）|
-|UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|done（合成 v1–v5 旧 schema 数据迁移：11 用例、v5 四重建表逐列断言、全量 2623P；3 轮 Review PASS；集成 `61601dc8c`）|
-|UPGRADE-SCHEMA-MIGRATION-P2-1|UPGRADE-SCHEMA-MIGRATION-1|done（4×P2 补齐：全列 EXPECTED/NULL 覆盖、额外行检测、14 表结构检查、冻结 v1 列；复核 PASS；集成 `d03f6e115`）|
+|UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|closed_with_limitations（无 AD-001 原始数据；2026-10-26 备份 dry-run + 迁移完整性 PASS；发现升级缺口）|
+|UPGRADE-LEGACY-LAYOUT-1|UPGRADE-REHEARSAL-1|done（Core 启动迁移：原子 staging/promote + fail-closed；3 轮 Review PASS；2612P；`098c60381`）|
+|UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|done（合成 v1–v5 迁移：11 用例、v5 四重建表逐列断言；2623P；3 轮 Review PASS；`61601dc8c`）|
+|UPGRADE-SCHEMA-MIGRATION-P2-1|UPGRADE-SCHEMA-MIGRATION-1|done（4×P2：全列/NULL 断言、额外行、14 表结构、冻结 v1 列；复核 PASS；`d03f6e115`）|
+|REAL-USER-UPGRADE-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1、NSIS-INSTALLER-1|done（真实数据副本 + 官方 0.1.0 升级：A 字节一致；B 旧布局备份迁移书架 1 本；**官方包 sidecar 无迁移修复 → 需重建发布包**）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
-|THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
-|THEME-MACOS-LAYOUTS-1|—|done（并入 THEME-MACOS-2：三套布局 Sonoma/Launchpad/Split，`0e1f71151`；REPACK-5 已合并）|
+|THEME-MACOS-1、THEME-MACOS-LAYOUTS-1|—|superseded（均并入 THEME-MACOS-2：`ec7316738`/`0e1f71151`；原证据保留）|
 
 READY 节点：无
 
