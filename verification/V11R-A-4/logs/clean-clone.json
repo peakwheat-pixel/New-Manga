@@ -1,0 +1,278 @@
+{
+  "task": "V11R-A-4",
+  "repo_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\V11R-A-4\\clean-clone",
+  "git_head": "fff8b63e9dcbe0272d75cf9e5a9fdf98763dc05f",
+  "checked_files": 17238,
+  "hard_failures": [],
+  "pending_owner_fixes": [
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs",
+      "line": 2696,
+      "reason": "out-of-scope source hit; owner fix tracked by the V11R-A-4 report",
+      "text": "var fallback = @\"G:/CODEX/New Manga.workspace/task-envs/UI-WORKBENCH-READER-1/fixtures\";"
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs",
+      "line": 2707,
+      "reason": "out-of-scope source hit; owner fix tracked by the V11R-A-4 report",
+      "text": "public static string? TileDirectory => Root is null ? null : @\"G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/tiles\";"
+    }
+  ],
+  "allowed_hit_count": 127086,
+  "allowed_hits_sample": [
+    {
+      "file": ".codex/skills/ask-matt",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.codex/)",
+      "text": "C:/Users/49745/.skills-manager/skills/ask-matt"
+    },
+    {
+      "file": ".codex/skills/grill-me-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.codex/)",
+      "text": "C:/Users/49745/.skills-manager/skills/grill-me-2"
+    },
+    {
+      "file": ".codex/skills/grill-with-docs-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.codex/)",
+      "text": "C:/Users/49745/.skills-manager/skills/grill-with-docs-2"
+    },
+    {
+      "file": ".codex/skills/handoff-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.codex/)",
+      "text": "C:/Users/49745/.skills-manager/skills/handoff-2"
+    },
+    {
+      "file": ".codex/skills/manage-skills",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.codex/)",
+      "text": "C:/Users/49745/.skills-manager/skills/manage-skills"
+    },
+    {
+      "file": ".codex/skills/vibehub",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.codex/)",
+      "text": "C:/Users/49745/.skills-manager/skills/vibehub"
+    },
+    {
+      "file": ".dsh/skills/ask-matt",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.dsh/)",
+      "text": "C:/Users/49745/.skills-manager/skills/ask-matt"
+    },
+    {
+      "file": ".dsh/skills/grill-me-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.dsh/)",
+      "text": "C:/Users/49745/.skills-manager/skills/grill-me-2"
+    },
+    {
+      "file": ".dsh/skills/grill-with-docs-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.dsh/)",
+      "text": "C:/Users/49745/.skills-manager/skills/grill-with-docs-2"
+    },
+    {
+      "file": ".dsh/skills/handoff-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.dsh/)",
+      "text": "C:/Users/49745/.skills-manager/skills/handoff-2"
+    },
+    {
+      "file": ".dsh/skills/manage-skills",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.dsh/)",
+      "text": "C:/Users/49745/.skills-manager/skills/manage-skills"
+    },
+    {
+      "file": ".dsh/skills/vibehub",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.dsh/)",
+      "text": "C:/Users/49745/.skills-manager/skills/vibehub"
+    },
+    {
+      "file": ".gemini/antigravity/skills/ask-matt",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.gemini/)",
+      "text": "C:/Users/49745/.skills-manager/skills/ask-matt"
+    },
+    {
+      "file": ".gemini/antigravity/skills/grill-me-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.gemini/)",
+      "text": "C:/Users/49745/.skills-manager/skills/grill-me-2"
+    },
+    {
+      "file": ".gemini/antigravity/skills/grill-with-docs-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.gemini/)",
+      "text": "C:/Users/49745/.skills-manager/skills/grill-with-docs-2"
+    },
+    {
+      "file": ".gemini/antigravity/skills/handoff-2",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.gemini/)",
+      "text": "C:/Users/49745/.skills-manager/skills/handoff-2"
+    },
+    {
+      "file": ".gemini/antigravity/skills/manage-skills",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.gemini/)",
+      "text": "C:/Users/49745/.skills-manager/skills/manage-skills"
+    },
+    {
+      "file": ".gemini/antigravity/skills/vibehub",
+      "line": 1,
+      "reason": "historical evidence/doc tree (.gemini/)",
+      "text": "C:/Users/49745/.skills-manager/skills/vibehub"
+    },
+    {
+      "file": ".orchestrator/BACKLOG.md",
+      "line": 7,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "| BL-1 | ~~环境缺陷~~ **已解决（2026-10-16）** | `refs/codex/turn-diffs/checkpoints/2a21a8a6…/ba2cc422-…` 为 loose ref 且**内容为空白**（`git fsck`：`badRefContent` + `invalid sha1 pointer 0000…`）；用户授权后清理（`git update-ref -d` 因 ref 损坏失败 → 直接删除 loose ref 文件）。**验证：`git fsck` 无错误；`git gc --auto` exit=0**。证据 `G:/CODEX/New Manga.workspace/tmp/guarded/BL-1-broken-ref-evidence.txt` | Codex / Coordinator | 2026-10-15 登记 / 2026-10-16 解决 | 已解决；若 Codex CLI 再产生空 ref 需复现登记 |"
+    },
+    {
+      "file": ".orchestrator/BL11-ENV-EVIDENCE.md",
+      "line": 68,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- `G:/CODEX/New Manga.workspace/tmp/guarded/bl11-cargo-build.log`（worktree：`cargo build` exit 0）"
+    },
+    {
+      "file": ".orchestrator/BL11-ENV-EVIDENCE.md",
+      "line": 69,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- `G:/CODEX/New Manga.workspace/tmp/guarded/bl11-cargo-test.log`（worktree：58 passed / 6 failed）"
+    },
+    {
+      "file": ".orchestrator/BL11-ENV-EVIDENCE.md",
+      "line": 70,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- `G:/CODEX/New Manga.workspace/tmp/guarded/bl11-main-cargo-test.log`（**主仓对照：同样 58 passed / 6 failed**）"
+    },
+    {
+      "file": ".orchestrator/PAUSE-CHECKPOINT.md",
+      "line": 112,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- **技能脚本**：`C:\\Users\\49745\\.agents\\skills\\multi-agent-project-orchestrator\\scripts\\`"
+    },
+    {
+      "file": ".orchestrator/PAUSE-CHECKPOINT.md",
+      "line": 113,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- **本会话 worktree**：`G:\\CODEX\\New Manga.workspace\\worktrees\\{P13*,P16*,P12-C1*,P09-FU2*,P18*,HOST-CORE-1,HOST-ISSUER-1,HOST-ISSUER-1-C1}`"
+    },
+    {
+      "file": ".orchestrator/PAUSE-CHECKPOINT.md",
+      "line": 114,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- **临时/证据**：`G:\\CODEX\\New Manga.workspace\\tmp\\guarded\\`（各 Task 的 prompt 与 owner 结果）"
+    },
+    {
+      "file": ".orchestrator/PAUSE-CHECKPOINT.md",
+      "line": 115,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "- **BL-11 证据**：`.orchestrator/BL11-ENV-EVIDENCE.md` + `G:\\CODEX\\New Manga.workspace\\tmp\\guarded\\bl11-*.log`"
+    },
+    {
+      "file": ".orchestrator/RUNTIME_DIRECTIVES.md",
+      "line": 46,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "本机无 `zcode` PATH 命令；桌面版内置 CLI 为 `E:\\Program Files\\ZCode\\resources\\glm\\zcode.cjs`，"
+    },
+    {
+      "file": ".orchestrator/RUNTIME_DIRECTIVES.md",
+      "line": 51,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "$env:ZCODE_BUILTIN_PROVIDER_CONFIG_FILE = 'E:\\Program Files\\ZCode\\resources\\config\\provider\\zcode-builtin.json'"
+    },
+    {
+      "file": ".orchestrator/migration.json",
+      "line": 106,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "\"excerpt\": \"{\\\"conversation_id\\\":\\\"dc47ca98-0699-4c58-bb97-14226fb58acf\\\",\\\"status\\\":\\\"SUCCESS\\\",\\\"response\\\":\\\"# M2-P1（Regionless Detection Fan-out and Guard Rebinding）交付报告\\\\n\\\\n作为 M2-P1 的 Owner，我已在工作树 `G:/CODEX/New Manga.worktrees/M2-P1-agy`（分支 `agent/antigravity\""
+    },
+    {
+      "file": ".orchestrator/migration.json",
+      "line": 112,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "\"excerpt\": \"{\\\"conversation_id\\\":\\\"bdf7cf60-f078-4ece-bca7-299e18fa1bb6\\\",\\\"status\\\":\\\"SUCCESS\\\",\\\"response\\\":\\\"decision: approved\\\\n\\\\n### AC 判定表\\\\n\\\\n| AC 项 | 判定 | 依据 |\\\\n|---|---|---|\\\\n| **AC1 — 可复现** | **PASS** | 自包含复现脚本 [`reproduce.py`](file:///G:/CODEX/New%20Man\""
+    },
+    {
+      "file": ".orchestrator/migration.json",
+      "line": 124,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "\"excerpt\": \"> 你是 Codex（Integrator，非本 Task 作者）。目标 worktree：`G:/CODEX/New Manga.worktrees/M2-AC2-zcode`，Task `doc/tasks/M2-AC2.md`，Owner 交付 tip `375cf43b`（代码返修 commit `8d72f91f`）。DSH 非作者 Review 结论为 `approved_with_conditions`。请：① 关闭 Review 条件 C1–C3（修正 `ve\""
+    },
+    {
+      "file": ".orchestrator/migration.json",
+      "line": 178,
+      "reason": "historical evidence/doc tree (.orchestrator/)",
+      "text": "\"excerpt\": \"- Recovery point：仓库=`G:/CODEX/New Manga`；本 Handoff 固定 delivery=`2e8f4bf951ad8a16af50300463f990d325b768e6`，审计的实际 base 应在 AD-001 集成后由 Codex 固定；审计 branch/worktree **待 Codex 创建**，不得用此作者 worktree 开工。\""
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 190,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 199,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/handoffs/M2-C1-4d66523.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 208,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/verification/M2-C1/review-remediation-r3.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 217,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/templates/REVIEW.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 226,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 262,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 280,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 298,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh\","
+    }
+  ],
+  "required_inputs": {
+    "missing": []
+  },
+  "sidecar_build": {
+    "entry_points": 5,
+    "python": "C:\\Python314\\python.exe",
+    "pyinstaller": "MISSING (sidecar job will skip)"
+  },
+  "dotnet": "10.0.401",
+  "long_paths": "enabled",
+  "model_weights": {
+    "status": "SKIPPED",
+    "path": null
+  }
+}
