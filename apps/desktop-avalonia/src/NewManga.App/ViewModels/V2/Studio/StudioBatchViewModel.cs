@@ -323,6 +323,9 @@ public sealed class StudioBatchViewModel : StudioObservable
     private string _gateImpactText = string.Empty;
     private StudioBatchActionViewModel? _pendingGateAction;
     private StudioBatchRowViewModel? _drawerRow;
+    private bool _submitInFlight;
+    private string? _intentIdempotencyKey;
+    private bool _stopArmed;
     private IReadOnlyList<StudioRunStageState> _stageColumns = Array.Empty<StudioRunStageState>();
 
     public StudioBatchViewModel(
@@ -505,6 +508,46 @@ public sealed class StudioBatchViewModel : StudioObservable
     public bool CanRestart => _projection?.Controls.CanRestart ?? false;
 
     public bool CanRetryFailed => _projection?.Controls.CanRetryFailed ?? false;
+
+    /// <summary>R-22: intent-level idempotency key (generated once, reused on retry, cleared on success).</summary>
+    public string? CurrentIntentKey => _intentIdempotencyKey;
+
+    /// <summary>R-22: while a submit is in flight the actions are disabled (double-click guard).</summary>
+    public bool IsSubmitInFlight => _submitInFlight;
+
+    /// <summary>B-2 D-4 parity: the first 「停止」 arms the confirmation, the second cancels the run.</summary>
+    public bool StopArmed => _stopArmed;
+
+    public async Task<RunControlInfo?> RequestStopAsync(CancellationToken cancellationToken = default)
+    {
+        if (!_stopArmed)
+        {
+            _stopArmed = true;
+            _statusText = $"确认停止？再次点击「停止」将中止 Run {_runId}（未完成页保留现状）";
+            Raise(nameof(StopArmed));
+            Raise(nameof(StatusText));
+            return null;
+        }
+
+        return await CancelConfirmedStopAsync(cancellationToken).ConfigureAwait(true);
+    }
+
+    /// <summary>Cancel exit of the stop confirmation: no Core call, no residual state.</summary>
+    public void CancelStop()
+    {
+        _stopArmed = false;
+        _statusText = "已取消停止（Run 继续运行）";
+        Raise(nameof(StopArmed));
+        Raise(nameof(StatusText));
+    }
+
+    /// <summary>Confirm exit of the stop confirmation (used by the modal's 确认 button).</summary>
+    public async Task<RunControlInfo?> CancelConfirmedStopAsync(CancellationToken cancellationToken = default)
+    {
+        _stopArmed = false;
+        Raise(nameof(StopArmed));
+        return await ControlAsync(RunControlAction.Stop, cancellationToken).ConfigureAwait(true);
+    }
 
     public bool CanResumeBlocked => _projection is { } projection &&
         (string.Equals(projection.RunStatus, "blocked", StringComparison.OrdinalIgnoreCase) ||
@@ -1006,9 +1049,39 @@ public sealed class StudioBatchViewModel : StudioObservable
             return null;
         }
 
-        var started = await _controller
-            .StartRunAsync(new RunStartRequest(command, scope, null, Guid.NewGuid().ToString("N")), cancellationToken)
-            .ConfigureAwait(true);
+        if (_submitInFlight)
+        {
+            _statusText = "提交中：请等待当前动作返回（双击已被阻止）";
+            Raise(nameof(StatusText));
+            return null;
+        }
+
+        _intentIdempotencyKey ??= Guid.NewGuid().ToString("N");
+        Raise(nameof(CurrentIntentKey));
+        _submitInFlight = true;
+        Raise(nameof(IsSubmitInFlight));
+        BuildActions();
+        RunStartInfo? started = null;
+        try
+        {
+            started = await _controller
+                .StartRunAsync(new RunStartRequest(command, scope, null, _intentIdempotencyKey), cancellationToken)
+                .ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
+        {
+            _errorText = $"提交失败：{ex.GetType().Name}";
+            State = StudioBatchRunState.Error;
+            Raise(nameof(HeaderLine));
+            Raise(nameof(ErrorText));
+            return null;
+        }
+        finally
+        {
+            _submitInFlight = false;
+            Raise(nameof(IsSubmitInFlight));
+            BuildActions();
+        }
         if (started is null)
         {
             _errorText = _host.Snapshot.LastError ?? "StartRun 被拒绝";
@@ -1018,7 +1091,14 @@ public sealed class StudioBatchViewModel : StudioObservable
             return null;
         }
 
+        if (started is null)
+        {
+            return null;
+        }
+
         SetRunId(started.RunId);
+        _intentIdempotencyKey = null;
+        Raise(nameof(CurrentIntentKey));
         _statusText = $"已创建 Run {started.RunId}（{started.Status}）";
         Raise(nameof(StatusText));
         State = StudioBatchRunState.Loading;
@@ -1270,7 +1350,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         foreach (var action in Actions)
         {
             action.ScopeSuffix = ScopeSuffix;
-            action.IsEnabled = CanMaterializeScope();
+            action.IsEnabled = CanMaterializeScope() && !_submitInFlight;
             action.Tooltip = _dataSource.IsWired
                 ? $"{action.Label}{ScopeSuffix}"
                 : StudioCapabilityGate.NotWiredTooltip;
