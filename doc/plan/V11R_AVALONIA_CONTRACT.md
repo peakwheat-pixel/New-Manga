@@ -69,7 +69,7 @@ CSS 变量 `--nm-color-bg-canvas` 与本键一一对应。
 ### 2.3 状态令牌的使用方式
 
 每个状态必须同时有色相 + 符号 + 文字标签（DESIGN_SYSTEM §2.2）。符号常量：
-`◦ queued · ◐ running ● done ✗ failed ▲ blocked ▨ stale – skipped ○ not_started ▮ locked`，由 `NewManga.DesignSystem.Controls.StatusGlyph` 提供，UI 不得自造。
+`· queued ◐ running ● done ✗ failed ▲ blocked ▨ stale – skipped ○ not_started ▮ locked`，由 `NewManga.DesignSystem.Controls.StatusGlyph` 提供，UI 不得自造。
 
 ---
 
