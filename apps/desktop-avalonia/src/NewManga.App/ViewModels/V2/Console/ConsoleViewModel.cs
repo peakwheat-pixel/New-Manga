@@ -17,6 +17,7 @@ public sealed class ConsoleViewModel : ObservableObject
 {
     private readonly IHostController _controller;
     private readonly ShellState _state;
+    private readonly RunStatusMonitor _runMonitor;
     private readonly Action<string, NmStatus> _notify;
     private readonly Action<ConfirmRequest> _requestConfirm;
     private readonly Func<bool> _isDarkTheme;
@@ -70,7 +71,6 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private string _runIdInput = string.Empty;
     private string _runIdempotencyKey = string.Empty;
-    private bool _isRunPollingEnabled = true;
     private bool _hasRunLoaded;
     private string _runStatusText = "未加载 Run";
     private string _runCommandText = "—";
@@ -87,11 +87,11 @@ public sealed class ConsoleViewModel : ObservableObject
     private bool _runCanRetryFailed;
     private RunSnapshotInfo? _runSnapshot;
     private TaskProjectionInfo? _runProjection;
-    private DispatcherTimer? _runPollTimer;
 
     public ConsoleViewModel(
         IHostController controller,
         ShellState state,
+        RunStatusMonitor runMonitor,
         Action<string, NmStatus> notify,
         Action<ConfirmRequest> requestConfirm,
         Func<bool> isDarkTheme,
@@ -101,6 +101,7 @@ public sealed class ConsoleViewModel : ObservableObject
     {
         _controller = controller;
         _state = state;
+        _runMonitor = runMonitor;
         _notify = notify;
         _requestConfirm = requestConfirm;
         _isDarkTheme = isDarkTheme;
@@ -176,13 +177,19 @@ public sealed class ConsoleViewModel : ObservableObject
         RebuildBindingScopes();
         SelectSection(Sections[0]);
         _state.SelectionChanged += (_, _) => RebuildBindingScopes();
-        _state.SpaceChanged += (_, _) =>
+        // R-24: the shared RunStatusMonitor owns polling; leaving the Console does not stop the shared
+        // source (the shell StatusBand keeps showing the active Run).
+        _runMonitor.Updated += OnRunMonitorUpdated;
+    }
+
+    private void OnRunMonitorUpdated(object? sender, EventArgs e)
+    {
+        if (!HasRunLoaded || _runMonitor.RunId is not { } runId)
         {
-            if (_state.CurrentSpace != SpaceId.Console)
-            {
-                StopRunPolling();
-            }
-        };
+            return;
+        }
+
+        ApplyRun(runId, _runMonitor.Snapshot, _runMonitor.Projection);
     }
 
     // ── Sections ─────────────────────────────────────────────────────────────────────────
@@ -382,14 +389,8 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public bool IsRunPollingEnabled
     {
-        get => _isRunPollingEnabled;
-        set
-        {
-            if (Set(ref _isRunPollingEnabled, value) && !value)
-            {
-                StopRunPolling();
-            }
-        }
+        get => _runMonitor.IsPollingEnabled;
+        set => _runMonitor.SetPollingEnabled(value);
     }
 
     public bool HasRunLoaded
@@ -495,34 +496,8 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public RelayCommand RetryFailedRunCommand { get; }
 
-    public void StopRunPolling()
-    {
-        if (_runPollTimer is null)
-        {
-            return;
-        }
-
-        _runPollTimer.Stop();
-        _runPollTimer = null;
-    }
-
-    private void StartRunPolling()
-    {
-        if (!IsRunPollingEnabled || _runPollTimer is not null || !HasRunLoaded)
-        {
-            return;
-        }
-
-        _runPollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        _runPollTimer.Tick += (_, _) =>
-        {
-            if (HasRunLoaded)
-            {
-                _ = RefreshRunAsync(notifyFailure: false);
-            }
-        };
-        _runPollTimer.Start();
-    }
+    /// <summary>Test seam: pauses the SHARED poller (R-24); the tracked run + snapshot stay intact.</summary>
+    public void StopRunPolling() => _runMonitor.SetPollingEnabled(false);
 
     private async Task LoadRunAsync()
     {
@@ -533,45 +508,50 @@ public sealed class ConsoleViewModel : ObservableObject
             return;
         }
 
-        await RefreshRunAsync(notifyFailure: true).ConfigureAwait(true);
-        if (HasRunLoaded)
+        _runMonitor.Track(runId);
+        // Track starts the shared refresh; only await it when no snapshot exists yet, so StatusBand +
+        // Console share exactly one Host read per poll (R-24).
+        if (!_runMonitor.HasSnapshot)
         {
-            StartRunPolling();
+            await _runMonitor.RefreshAsync().ConfigureAwait(true);
         }
+
+        if (_runMonitor.Snapshot is null && _runMonitor.Projection is null)
+        {
+            _notify($"Run 读取被拒绝或不存在：{RunFailureCode()}", NmStatus.Failed);
+            return;
+        }
+
+        ApplyRun(runId, _runMonitor.Snapshot, _runMonitor.Projection);
     }
 
     private async Task RefreshRunAsync(bool notifyFailure)
     {
-        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        var runId = _runMonitor.RunId ?? _runSnapshot?.RunId ?? RunIdInput.Trim();
         if (runId.Length == 0)
         {
             return;
         }
 
-        try
+        if (!string.Equals(_runMonitor.RunId, runId, StringComparison.Ordinal))
         {
-            var snapshot = await _controller.GetRunSnapshotAsync(runId).ConfigureAwait(true);
-            var projection = await _controller.GetTaskProjectionAsync(runId).ConfigureAwait(true);
-            if (snapshot is null && projection is null)
-            {
-                if (notifyFailure)
-                {
-                    _notify($"Run 读取被拒绝或不存在：{RunFailureCode()}", NmStatus.Failed);
-                }
-
-                StopRunPolling();
-                return;
-            }
-
-            ApplyRun(runId, snapshot, projection);
+            _runMonitor.Track(runId);
         }
-        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+
+        await _runMonitor.RefreshAsync().ConfigureAwait(true);
+        var snapshot = _runMonitor.Snapshot;
+        var projection = _runMonitor.Projection;
+        if (snapshot is null && projection is null)
         {
             if (notifyFailure)
             {
-                _notify("Run 读取失败：Host 不可用", NmStatus.Failed);
+                _notify($"Run 读取被拒绝或不存在：{RunFailureCode()}", NmStatus.Failed);
             }
+
+            return;
         }
+
+        ApplyRun(runId, snapshot, projection);
     }
 
     private string RunFailureCode()

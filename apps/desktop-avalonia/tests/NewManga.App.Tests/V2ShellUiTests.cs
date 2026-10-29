@@ -8,8 +8,12 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
+using NewManga.App.Shell.V2.Studio;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.App.Views.V2.Library;
+using NewManga.App.ViewModels.V2.Studio;
+using NewManga.App.Views.V2.Shell;
+using NewManga.App.Views.V2.Studio;
 using NewManga.CoreClient;
 using NewManga.DesignSystem.Theming;
 
@@ -279,12 +283,12 @@ public sealed class V2ShellUiTests
     }
 
     /// <summary>R-19: temp-first capture (unique name incl. test method); repo sync only when curated.</summary>
-    private static void Capture(Window window, string name, [System.Runtime.CompilerServices.CallerMemberName] string? testName = null)
+    private static void Capture(Window window, string name, string task = "V11R-B-1", [System.Runtime.CompilerServices.CallerMemberName] string? testName = null)
     {
         Dispatcher.UIThread.RunJobs();
         var frame = window.CaptureRenderedFrame()
             ?? throw new InvalidOperationException($"{name}: CaptureRenderedFrame() returned null");
-        var bytes = EvidenceFiles.SaveFrame(frame, "V11R-B-1", name, testName);
+        var bytes = EvidenceFiles.SaveFrame(frame, task, name, testName);
         Assert.True(bytes is null or > 4096, $"{name}: {bytes} bytes — blank/placeholder screenshot");
     }
 
@@ -607,7 +611,10 @@ public sealed class V2ShellUiTests
         Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(SpaceId.Studio, shell.ViewModel.State.CurrentSpace);
-        Capture(window, "09-studio-pending");
+        var studioWorkspace = window.GetVisualDescendants().OfType<StudioWorkspaceView>().Single();
+        Assert.True(studioWorkspace.IsVisible);
+        Assert.True(shell.ViewModel.State.IsWorkspaceRegistered(SpaceId.Studio));
+        Capture(window, "09-studio-page");
         Assert.True(shell.HandleKeyForTest(Key.D3, KeyModifiers.Control));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(SpaceId.Console, shell.ViewModel.State.CurrentSpace);
@@ -694,6 +701,125 @@ public sealed class V2ShellUiTests
         await shell.Initialization;
         Dispatcher.UIThread.RunJobs();
         Assert.False(shell.ViewModel.Library.IsLoading);
+        window.Close();
+    }
+
+    // ── V11R-INT-0: CreateRoot / built-in workspaces / ThemeStudio / shared Run StatusBand ─────
+
+    [AvaloniaFact]
+    public async Task Int0_CreateRoot_BuildsStandaloneWindow_WithBuiltInWorkspaces()
+    {
+        var fake = V2Fixture.Create();
+        var options = AppOptions.Parse(Array.Empty<string>());
+        var window = AppShellV2.CreateRoot(fake, options);
+        var shell = Assert.IsType<AppShellV2>(window.Content);
+        Assert.Equal("New Manga", window.Title);
+        Assert.Equal(options.WindowWidth, window.Width);
+        Assert.Equal(options.WindowHeight, window.Height);
+        Assert.Equal(1024, window.MinWidth); // DS Nm.Size.Breakpoint.Narrow
+        window.Show();
+        _ = shell.Initialization;
+        await shell.Initialization;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(shell.ViewModel.State.IsWorkspaceRegistered(SpaceId.Library));
+        Assert.True(shell.ViewModel.State.IsWorkspaceRegistered(SpaceId.Console));
+        Assert.True(shell.ViewModel.State.IsWorkspaceRegistered(SpaceId.Studio));
+        Capture(window, "14-int0-create-root", task: "V11R-INT-0");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Int0_StudioSpace_RendersRealSurface_TabStaysInStudio()
+    {
+        var (window, shell) = await HostReadyAsync(V2Fixture.Create());
+        Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+
+        var studioView = window.GetVisualDescendants().OfType<StudioWorkspaceView>().Single();
+        Assert.True(studioView.IsVisible);
+        Assert.True(studioView.ViewModel.IsPageMode);
+        Capture(window, "15-int0-studio-page", task: "V11R-INT-0");
+
+        // R-17: Studio owns Tab; the shell's StudioMode stays in sync instead of being toggled again.
+        Assert.True(shell.HandleKeyForTest(Key.Tab, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(StudioMode.Batch, shell.ViewModel.State.StudioMode);
+        Assert.True(studioView.ViewModel.IsBatchMode);
+
+        Assert.True(shell.HandleKeyForTest(Key.D1, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(SpaceId.Library, shell.ViewModel.State.CurrentSpace);
+        Assert.Equal("book-0", shell.ViewModel.State.Selection.BookId);
+        Capture(window, "19-int0-three-spaces-context", task: "V11R-INT-0");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Int0_ThemeStudio_OpensAsHonestPlaceholder_AndEscCloses()
+    {
+        var (window, shell) = await HostReadyAsync(V2Fixture.Create());
+        shell.ViewModel.OpenThemeStudio();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(shell.ViewModel.State.IsThemeStudioOpen);
+        Assert.False(shell.ViewModel.IsThemeStudioWorkspaceRegistered);
+        Assert.True(shell.ViewModel.IsThemeStudioPlaceholderVisible);
+        var placeholder = window.GetVisualDescendants()
+            .OfType<WorkspacePlaceholderView>()
+            .Single(view => view.IsVisible && view.Title == "主题中心");
+        Assert.Contains("尚未注册", placeholder.Detail, StringComparison.Ordinal);
+        Capture(window, "16-int0-theme-studio-placeholder", task: "V11R-INT-0");
+
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.ViewModel.State.IsThemeStudioOpen);
+        Assert.Equal("book-0", shell.ViewModel.State.Selection.BookId); // context untouched
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Int0_StatusBand_UsesSharedRunMonitor_AndHidesWithoutRun()
+    {
+        var fake = V2Fixture.Create();
+        V2Fixture.AddConsoleData(fake);
+        var (window, shell) = await HostReadyAsync(fake);
+
+        shell.ViewModel.TrackRun("run-1");
+        Dispatcher.UIThread.RunJobs();
+        if (!shell.ViewModel.RunMonitor.HasSnapshot)
+        {
+            await shell.ViewModel.RunMonitor!.RefreshAsync();
+            Dispatcher.UIThread.RunJobs();
+        }
+
+        Assert.True(shell.ViewModel.IsStatusBandVisible);
+        Assert.Contains("run-1", shell.ViewModel.StatusBandLeft, StringComparison.Ordinal);
+        Assert.Single(fake.RunSnapshotRequests); // one shared read per poll (R-24)
+        Assert.Single(fake.TaskProjectionRequests);
+        Capture(window, "17-int0-statusband-run", task: "V11R-INT-0");
+
+        shell.ViewModel.TrackRun(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.ViewModel.IsStatusBandVisible);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Int0_UnregisteredStudio_ShowsHonestPlaceholder_NoFakeWorkspace()
+    {
+        var (window, shell) = await HostReadyAsync(V2Fixture.Create());
+        Assert.True(shell.ViewModel.UnregisterWorkspace(SpaceId.Studio));
+        Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(shell.ViewModel.IsStudioPlaceholderVisible);
+        Assert.DoesNotContain(window.GetVisualDescendants().OfType<StudioWorkspaceView>(), view => view.IsVisible);
+        var placeholder = window.GetVisualDescendants()
+            .OfType<WorkspacePlaceholderView>()
+            .Single(view => view.IsVisible && view.Title == "工位");
+        Assert.Contains("尚未注册", placeholder.Detail, StringComparison.Ordinal);
+        Capture(window, "18-int0-studio-unregistered", task: "V11R-INT-0");
         window.Close();
     }
 }

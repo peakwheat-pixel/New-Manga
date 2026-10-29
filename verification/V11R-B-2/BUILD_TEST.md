@@ -1,4 +1,4 @@
-# V11R-B-2 构建与测试记录
+# V11R-B-2 构建与测试记录（I1/INT-0 共享基础设施后的复跑）
 
 执行目录：`apps/desktop-avalonia`；证据文件：`build.log`、`test.log`（命令原样输出）。
 
@@ -21,14 +21,15 @@ dotnet test NewManga.sln -m:1 --no-build --nologo
 
 | 测试项目 | 通过 | 跳过 | 失败 | 总计 |
 |---|---|---|---|---|
-| NewManga.Host.Tests | 39 | 21 | 0 | 60 |
-| NewManga.DesignSystem.Tests | 40 | 0 | 0 | 40 |
-| NewManga.App.Tests | 200 | 5 | 0 | 205 |
-| NewManga.CoreClient.Tests | 39 | 22 | 0 | 61 |
+| NewManga.Host.Tests | 42 | 24 | 0 | 66 |
+| NewManga.DesignSystem.Tests | 67 | 0 | 0 | 67 |
+| NewManga.ThemeEngine.Tests | 229 | 0 | 0 | 229 |
+| NewManga.App.Tests | 254 | 6 | 0 | 260 |
+| NewManga.CoreClient.Tests | 42 | 25 | 0 | 67 |
 
 跳过项为既有环境依赖用例（真实 sidecar / 冻结二进制），与本次改动无关。
 
-## 3. 本任务新增测试（11 条，全部通过）
+## 3. 本任务测试（11 条，全部通过）
 
 `tests/NewManga.App.Tests/V2ConsoleUiTests.cs`：
 
@@ -43,17 +44,18 @@ dotnet test NewManga.sln -m:1 --no-build --nologo
 | `Appearance_TogglesRealDesignTokens_AndOpensThemeStudioSurface` | 深浅外观真实切换令牌、主题工作室入口打开真实表面、Esc 关闭 |
 | `Diagnostics_ShowsHostFacts_AndExportHistoryWithoutPaths` | Host 事实、导出历史、揭示目录真实调用、不含 OS 路径 |
 | `Console_FailedSave_RendersTypedCodeOnly_NoPathOrSecretInNotice` | 注入含路径+假 secret 的 Core Message，通知只含 typed code |
-| `Tasks_LoadsRealRunSnapshotAndProjection_AndHonorsRunControlRules` | 真实快照/投影（状态/命令/作用域/进度/计数/阶段/任务行）；Restart 缺幂等键零调用；有键才调用；Stop 需确认、取消不写、确认执行 |
+| `Tasks_LoadsRealRunSnapshotAndProjection_AndHonorsRunControlRules` | 真实快照/投影（状态/命令/作用域/进度/计数/阶段/任务行）；Restart 缺幂等键零调用；有键才调用；Stop 需确认、取消不写、确认执行；R-24：Console 与 StatusBand 共享 `RunStatusMonitor`，LoadRun 只产生 1 次快照/投影读取 |
 | `Tasks_WithoutRunId_DoesNotFabricateAnything` | 无 run_id 时零 Host 调用、无伪造行、给出提示 |
 
 ## 4. 证据生成
 
 ```
-$env:NEWMANGA_EVIDENCE_DIR = "<repo>/verification/V11R-B-2"
-dotnet test tests/NewManga.App.Tests/NewManga.App.Tests.csproj --filter "FullyQualifiedName~V2Console"
+# R-19：仓库证据唯一入口（脚本内部显式 NEWMANGA_EVIDENCE_SYNC=1）
+pwsh -NoProfile -File ../../verification/V11R-B-2/curate.ps1
 ```
 
-生成 9 张截图与 `conformance/v2-tokens-and-classes.json`。
+- 生成 8 张截图（R-19 唯一命名 `<TestName>--<name>.png`）；`conformance/v2-tokens-and-classes.json` 保留自 B-1 的静态扫描产物（B-2 无独立 conformance 测试）。
+- 普通测试只写 `%TEMP%/newmanga-evidence/V11R-B-2/`，镜像仓库需显式 `NEWMANGA_EVIDENCE_SYNC=1`/`NEWMANGA_EVIDENCE_DIR`。
 
 ## 5. NOT RUN（环境限制）
 

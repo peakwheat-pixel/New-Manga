@@ -13,7 +13,10 @@
                                 Detail="{Binding LibraryPlaceholderDetail}"
                                 IsVisible="{Binding IsLibraryPlaceholderVisible}" />
 
-    <v:StudioPendingView IsVisible="{Binding IsStudioSpace}" />
+    <ContentControl Content="{Binding StudioWorkspaceContent}" IsVisible="{Binding IsStudioSpace}" />
+    <v:WorkspacePlaceholderView Title="工位"
+                                Detail="{Binding StudioPlaceholderDetail}"
+                                IsVisible="{Binding IsStudioPlaceholderVisible}" />
 
     <ContentControl Content="{Binding ConsoleWorkspaceContent}" IsVisible="{Binding IsConsoleSpace}" />
     <v:WorkspacePlaceholderView Title="控制台"

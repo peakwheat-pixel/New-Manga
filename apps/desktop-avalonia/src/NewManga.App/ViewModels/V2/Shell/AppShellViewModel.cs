@@ -38,10 +38,12 @@ public sealed class AppShellViewModel : ObservableObject
     {
         _controller = controller;
         State = new ShellState();
+        RunMonitor = new RunStatusMonitor(controller);
         Library = new LibraryViewModel(controller, State, Notify, RequestConfirm, picker);
         Console = new ConsoleViewModel(
             controller,
             State,
+            RunMonitor,
             Notify,
             RequestConfirm,
             () => IsDarkTheme,
@@ -92,7 +94,12 @@ public sealed class AppShellViewModel : ObservableObject
         State.WorkspacesChanged += (_, _) => RaiseWorkspaceChrome();
         State.ModeChanged += (_, _) => RefreshChrome();
         State.SelectionChanged += (_, _) => RefreshChrome();
-        State.SurfaceChanged += (_, _) => OnPropertyChanged(nameof(IsReaderSurfaceVisible), nameof(IsThemeStudioOpen), nameof(IsOverlayOpen));
+        State.SurfaceChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(IsReaderSurfaceVisible), nameof(IsThemeStudioOpen), nameof(IsOverlayOpen));
+            RaiseWorkspaceChrome();
+        };
+        RunMonitor.Updated += (_, _) => RaiseRunChrome();
         Library.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName is nameof(LibraryViewModel.SelectedChapter)
@@ -249,17 +256,34 @@ public sealed class AppShellViewModel : ObservableObject
     /// Status band is only an activity strip here (screen spec §1: it exists for a Run). Before the Run
     /// projection lands it appears for real activity/status only; notices live in the AlertBanner.
     /// </summary>
-    public bool IsStatusBandVisible => Library.ImportDock.IsRunning || !IsHostReady;
+    /// <summary>
+    /// Status band: R-24 — the single shared <see cref="RunStatusMonitor"/> snapshot is the Run source
+    /// (no Run ⇒ hidden); real import/Host activity still shows before any Run exists.
+    /// </summary>
+    public bool IsStatusBandVisible =>
+        (RunMonitor.IsActive && RunMonitor.HasSnapshot) || Library.ImportDock.IsRunning || !IsHostReady;
 
-    public string StatusBandLeft => Library.ImportDock.IsRunning
-        ? $"导入中 · {Library.ImportDock.Summary}"
-        : "Host 未就绪：等待 Core sidecar";
+    public string StatusBandLeft => RunMonitor.IsActive && RunMonitor.HasSnapshot
+        ? RunMonitor.SummaryText
+        : Library.ImportDock.IsRunning
+            ? $"导入中 · {Library.ImportDock.Summary}"
+            : "Host 未就绪：等待 Core sidecar";
 
     public string StatusBandRight => $"作用域 {ScopeText} · {HostStatusText}";
 
-    public NmStatus StatusBandState => Library.ImportDock.IsRunning ? NmStatus.Running : NmStatus.Blocked;
+    public NmStatus StatusBandState => RunMonitor.IsActive && RunMonitor.HasSnapshot
+        ? RunMonitor.Status
+        : Library.ImportDock.IsRunning
+            ? NmStatus.Running
+            : NmStatus.Blocked;
 
     public string StatusBandSymbol => NmStatusInfo.Symbol(StatusBandState);
+
+    /// <summary>R-24: the ONE Run snapshot/poller shared by StatusBand, Console and (later) Studio Batch.</summary>
+    public RunStatusMonitor RunMonitor { get; }
+
+    /// <summary>Shell-level seam for INT-1/B-4: track the active run on the shared monitor.</summary>
+    public void TrackRun(string? runId) => RunMonitor.Track(runId);
 
     // ── Theme / viewport ─────────────────────────────────────────────────────────────────
 
@@ -351,6 +375,37 @@ public sealed class AppShellViewModel : ObservableObject
 
     public string StudioPlaceholderDetail => ShellState.WorkspacePlaceholderDetail(SpaceId.Studio);
 
+    /// <summary>Registers the Theme Studio surface implementation (C-2/INT-1); null keeps the placeholder.</summary>
+    public bool RegisterSurfaceWorkspace(ISurfaceWorkspace workspace)
+    {
+        var registered = State.RegisterSurfaceWorkspace(workspace);
+        RaiseWorkspaceChrome();
+        return registered;
+    }
+
+    public bool UnregisterSurfaceWorkspace(ShellSurface surface)
+    {
+        var removed = State.UnregisterSurfaceWorkspace(surface);
+        RaiseWorkspaceChrome();
+        return removed;
+    }
+
+    public bool IsThemeStudioWorkspaceRegistered =>
+        State.IsSurfaceWorkspaceRegistered(ShellSurface.ThemeStudio);
+
+    public object? ThemeStudioWorkspaceContent =>
+        State.GetSurfaceWorkspace(ShellSurface.ThemeStudio)?.CreateContent();
+
+    public bool IsThemeStudioPlaceholderVisible =>
+        IsThemeStudioOpen && !IsThemeStudioWorkspaceRegistered;
+
+    public string ThemeStudioPlaceholderDetail => ShellState.ThemeStudioPlaceholderDetail;
+
+    private void RaiseRunChrome() => OnPropertyChanged(
+        nameof(IsStatusBandVisible),
+        nameof(StatusBandLeft),
+        nameof(StatusBandState),
+        nameof(StatusBandSymbol));
     private void RaiseWorkspaceChrome() => OnPropertyChanged(
         nameof(IsLibraryWorkspaceRegistered),
         nameof(IsConsoleWorkspaceRegistered),
@@ -363,7 +418,11 @@ public sealed class AppShellViewModel : ObservableObject
         nameof(IsStudioPlaceholderVisible),
         nameof(LibraryPlaceholderDetail),
         nameof(ConsolePlaceholderDetail),
-        nameof(StudioPlaceholderDetail));
+        nameof(StudioPlaceholderDetail),
+        nameof(IsThemeStudioWorkspaceRegistered),
+        nameof(ThemeStudioWorkspaceContent),
+        nameof(IsThemeStudioPlaceholderVisible),
+        nameof(ThemeStudioPlaceholderDetail));
 
     // ── Command palette ──────────────────────────────────────────────────────────────────
 

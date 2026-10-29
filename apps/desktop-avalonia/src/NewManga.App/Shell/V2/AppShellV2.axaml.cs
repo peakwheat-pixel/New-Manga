@@ -3,8 +3,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using NewManga.App.Services;
+using NewManga.App.Shell.V2.Studio;
 using NewManga.App.ViewModels.V2.Shell;
+using NewManga.App.ViewModels.V2.Studio;
+using NewManga.DesignSystem;
 using NewManga.DesignSystem.Theming;
 
 namespace NewManga.App.Shell.V2;
@@ -42,6 +46,11 @@ public partial class AppShellV2 : UserControl
         DataContext = _viewModel;
         _viewModel.RegisterWorkspace(new LibraryWorkspaceView(_viewModel.Library));
         _viewModel.RegisterWorkspace(new ConsoleWorkspaceView(_viewModel.Console));
+        StudioWorkspace = new StudioWorkspaceAdapter(
+            new StudioWorkspaceView(new StudioWorkspaceViewModel(
+                controller,
+                new StudioSelection(_viewModel.State))));
+        _viewModel.RegisterWorkspace(StudioWorkspace);
 
         _themeManager = themeManager;
         if (_themeManager is null && Application.Current is { } application)
@@ -59,8 +68,42 @@ public partial class AppShellV2 : UserControl
 
     public AppShellViewModel ViewModel => _viewModel;
 
+    /// <summary>INT-0: the Studio workspace adapter registered by the built-in shell.</summary>
+    public StudioWorkspaceAdapter StudioWorkspace { get; }
+
     /// <summary>Completes after the first Host read; headless tests await it before asserting data.</summary>
     public Task Initialization => _viewModel.Initialization;
+
+    /// <summary>INT-1 integration seam: register an extra top-level workspace (e.g. settings).</summary>
+    public bool RegisterWorkspace(IWorkspaceView workspace) => _viewModel.RegisterWorkspace(workspace);
+
+    /// <summary>INT-1/C-2 integration seam: register the Theme Studio surface implementation.</summary>
+    public bool RegisterSurfaceWorkspace(ISurfaceWorkspace workspace) =>
+        _viewModel.RegisterSurfaceWorkspace(workspace);
+
+    /// <summary>
+    /// V11R-INT-0: the shell's standalone window factory. MainWindow is not involved; INT-1 is expected to
+    /// switch the default entry point to this factory. Options only supply window geometry (AppOptions is
+    /// parse-only, so a caller can pass <see cref="AppOptions.Parse"/> of its real arguments).
+    /// </summary>
+    public static Window CreateRoot(
+        IHostController controller,
+        AppOptions? options = null,
+        IFilePickerGateway? picker = null,
+        DesignSystemThemeManager? themeManager = null)
+    {
+        var shell = new AppShellV2(controller, picker, themeManager);
+        var window = new Window
+        {
+            Title = "New Manga",
+            Width = options?.WindowWidth ?? 1100,
+            Height = options?.WindowHeight ?? 760,
+            MinWidth = ShellLayout.BreakpointNarrow,
+            Content = shell,
+        };
+        window[!Window.BackgroundProperty] = new DynamicResourceExtension(NmKeys.Color.Bg.App);
+        return window;
+    }
 
     /// <summary>Test/automation seam: routes a key through the same funnel the window uses.</summary>
     public bool HandleKeyForTest(Key key, KeyModifiers modifiers, bool textInputFocused = false) =>

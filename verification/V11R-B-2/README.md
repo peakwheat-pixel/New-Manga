@@ -10,7 +10,7 @@
 | 文件 | 说明 |
 |---|---|
 | `ViewModels/V2/Console/ConsoleItems.cs` | 分区项、Provider/Network/凭据/能力绑定/导出历史行、Run 阶段与任务行、状态词表映射 |
-| `ViewModels/V2/Console/ConsoleViewModel.cs` | 9 分区状态机；Provider/Network/凭据/绑定/导出历史真实 IPC；Run 快照/投影（`IRunController`）+ 1s 轮询（停机条件：离开分区/离开控制台/关闭开关）；危险动作确认；凭据遮蔽；诚实未接入文案 |
+| `ViewModels/V2/Console/ConsoleViewModel.cs` | 9 分区状态机；Provider/Network/凭据/绑定/导出历史真实 IPC；Run 快照/投影（`IRunController`，经壳共享 `RunStatusMonitor`；R-24：与 StatusBand 同源、单一 poller，不再私有 timer）；危险动作确认；凭据遮蔽；诚实未接入文案 |
 | `Views/V2/Console/ConsoleView.axaml(.cs)` | 左 9 分区索引 + 右内容：①Run 表 ②Provider 与凭据 ③网络与代理 ④--⑦能力待接入 ⑧诊断与日志 ⑨外观入口 |
 | 壳接线（同 Owner 的 B-1 工作域） | `ViewModels/V2/Shell/AppShellViewModel.cs`（Console VM 单例、进入惰性加载、控制台面包屑/分区导航）、`Views/V2/Shell/V2WorkspaceHost.axaml`（真实 ConsoleView 替换占位） |
 | `Shell/V2/Statuses.cs` | Lead 裁决：`queued` 符号 = `·`（DESIGN_SYSTEM §2.2 权威） |
@@ -19,7 +19,7 @@
 
 | # | 分区 | 真实数据源 | 状态 |
 |---|---|---|---|
-| 01 | 任务与队列 | `IRunController.GetRunSnapshotAsync` / `GetTaskProjectionAsync`（V11R-A-2）+ 控制/恢复/重试（`ControlRunAsync`/`ResumeBlockedRunAsync`/`RetryFailedTargetsAsync`） | 真实；契约无「List Run」，必须显式输入 run_id；1s 轮询独立实现并标注数据同源（B-4 共享视图合入后改为订阅） |
+| 01 | 任务与队列 | `IRunController.GetRunSnapshotAsync` / `GetTaskProjectionAsync`（V11R-A-2）+ 控制/恢复/重试（`ControlRunAsync`/`ResumeBlockedRunAsync`/`RetryFailedTargetsAsync`） | 真实；契约无「List Run」，必须显式输入 run_id；由壳 `RunStatusMonitor` 单一 poller 统一快照/投影（R-24，与 StatusBand 共享） |
 | 02 | Provider 与凭据 | `ListProviderProfilesAsync`/`SaveProviderProfileAsync`/`DeleteProviderProfileAsync`；`ListCredentialTargetsAsync`/`PutCredentialAsync`/`ClearCredentialAsync`；`SetProviderBindingAsync`/`ClearProviderBindingAsync`/`ResolveProviderBindingAsync` | 真实 |
 | 03 | 网络与代理 | `ListNetworkProfilesAsync`/`SaveNetworkProfileAsync`/`DeleteNetworkProfileAsync`/`SetNetworkDefaultAsync`/`TestNetworkProfileAsync`/`ResolveNetworkProfileAsync` | 真实（含 TLS 关闭确认规则） |
 | 04 | 模型与设备 | 无 Host 设备命令（打包 VERSION.json 由 Host 拥有，UI 不直读文件） | 能力待接入 |
@@ -41,15 +41,16 @@
 
 | 文件 | 证明 |
 |---|---|
-| `01-console-providers.png` | 9 分区索引 + Provider 列表 + 凭据（掩码输入、只显示已保存/未保存）+ 能力绑定 |
-| `02-console-credentials-state-only.png` | 凭据状态行（保存后状态变为已保存，secret 已清空） |
-| `03-console-network.png` | 网络配置行（模式/端点/TLS/默认）+ 真实连通测试结果 + 默认网络解析 + TLS 关闭确认规则 |
-| `04-console-storage-not-wired.png` | 能力待接入 banner + 接入前置条件 + 阻断态危险按钮 |
-| `05-console-appearance-light.png` | 外观真实切换为浅色（整窗令牌切换）+ 主题工作室入口（即将可用） |
-| `06-console-diagnostics.png` | Host 状态事实（真实）+ 导出历史（真实）+ 日志/诊断包能力待接入 |
-| `07-console-tasks-run.png` | 真实 Run 状态/计数/阶段流/任务行 + 控制按钮可用性 + 幂等键 |
-| `08-console-danger-confirm-blocked.png` | 危险确认（阻断态）：写明影响面、确认禁用、原因「能力待接入」 |
-| `09-console-shell-entry.png` | 从外壳 Ctrl+3 进入控制台（面包屑/顶带/9 分区） |
+| `<TestName>--01-console-providers.png` | 9 分区索引 + Provider 列表 + 凭据（掩码输入、只显示已保存/未保存）+ 能力绑定 |
+| `<TestName>--02-console-credentials-state-only.png` | 凭据状态行（保存后状态变为已保存，secret 已清空） |
+| `<TestName>--03-console-network.png` | 网络配置行（模式/端点/TLS/默认）+ 真实连通测试结果 + 默认网络解析 + TLS 关闭确认规则 |
+| `<TestName>--04-console-storage-not-wired.png` | 能力待接入 banner + 接入前置条件 + 阻断态危险按钮 |
+| `<TestName>--05-console-appearance-light.png` | 外观真实切换为浅色（整窗令牌切换）+ 主题工作室表面入口 |
+| `<TestName>--06-console-diagnostics.png` | Host 状态事实（真实）+ 导出历史（真实）+ 日志/诊断包能力待接入 |
+| `<TestName>--07-console-tasks-run.png` | 真实 Run 状态/计数/阶段流/任务行 + 控制按钮可用性 + 幂等键 |
+| `<TestName>--08-console-danger-confirm-blocked.png` | 危险确认（阻断态）：写明影响面、确认禁用、原因「能力待接入」 |
+
+> 实际文件名带 R-19 唯一化前缀 `<TestName>--`。壳入口（Ctrl+3 进入控制台）截图由 B-1/INT-0 证据覆盖，B-2 不再重复。
 
 ## 4. 命令
 
@@ -58,13 +59,14 @@ cd apps/desktop-avalonia
 dotnet build NewManga.sln -warnaserror          # 见 BUILD_TEST.md
 dotnet test NewManga.sln -m:1 --no-build        # 见 BUILD_TEST.md（串行避免既有测试临时目录争用）
 
-$env:NEWMANGA_EVIDENCE_DIR = "<repo>/verification/V11R-B-2"
-dotnet test tests/NewManga.App.Tests/NewManga.App.Tests.csproj --filter "FullyQualifiedName~V2Console"
+# R-19：仓库证据唯一入口（脚本内部显式 NEWMANGA_EVIDENCE_SYNC=1）
+pwsh -NoProfile -File ../../verification/V11R-B-2/curate.ps1
 ```
 
 | 证据 | 内容 |
 |---|---|
-| `BUILD_TEST.md` + `build.log` + `test.log` | 命令、exit code、汇总 |
+| `BUILD_TEST.md` + `build.log` + `test.log` | 命令、exit code、汇总（含 I1/INT-0 后全量计数） |
+| `curate.ps1` | R-19 唯一证据生成入口（8 张截图） |
 | `conformance/v2-tokens-and-classes.json` | 全部 `Nm.*` 键（含 Console 新增）与 Classes 词表（静态扫描生成） |
 | `NOT_WIRED.md` | 未接入能力清单（4 个分区 + 细节） |
 | `DEVIATIONS.md` | 与规格偏差及理由 |
@@ -72,4 +74,4 @@ dotnet test tests/NewManga.App.Tests/NewManga.App.Tests.csproj --filter "FullyQu
 
 ## 5. 测试（`tests/NewManga.App.Tests/V2ConsoleUiTests.cs`，11 条全绿）
 
-分区真实度（5 真实/4 待接入）、Provider 创建走真实 draft、凭据不回显 + 反射扫描、删除 Provider 取消/ Esc / 确认三条路径、网络测试+默认+ TLS 规则、未接分区阻断危险确认、外观真实切换+主题工作室表面、诊断 Host 事实+导出历史+揭示目录、失败保存只渲染 typed code、Run 快照/投影+控制规则、无 run_id 不伪造。另 B-1 全部 33 条回归通过（V2 合计 44 条）。
+分区真实度（5 真实/4 待接入）、Provider 创建走真实 draft、凭据不回显 + 反射扫描、删除 Provider 取消/ Esc / 确认三条路径、网络测试+默认+ TLS 规则、未接分区阻断危险确认、外观真实切换+主题工作室表面、诊断 Host 事实+导出历史+揭示目录、失败保存只渲染 typed code、Run 快照/投影+控制规则、无 run_id 不伪造。另 B-1/INT-0 全部回归通过（V2 合计 95 条）。

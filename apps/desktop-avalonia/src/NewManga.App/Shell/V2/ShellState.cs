@@ -275,6 +275,7 @@ public sealed class ShellState : ObservableObject
 
         _surfaces.Add(surface);
         RaiseSurfaceChanged();
+        ActivateSurfaceWorkspace(surface);
         return true;
     }
 
@@ -286,8 +287,10 @@ public sealed class ShellState : ObservableObject
             return false;
         }
 
+        var closed = _surfaces[^1];
         _surfaces.RemoveAt(_surfaces.Count - 1);
         RaiseSurfaceChanged();
+        DeactivateSurfaceWorkspace(closed);
         return true;
     }
 
@@ -298,9 +301,63 @@ public sealed class ShellState : ObservableObject
             return;
         }
 
+        var closed = _surfaces.Skip(1).ToList();
         _surfaces.RemoveRange(1, _surfaces.Count - 1);
         RaiseSurfaceChanged();
+        foreach (var surface in closed)
+        {
+            DeactivateSurfaceWorkspace(surface);
+        }
     }
+
+    // ── V11R-INT-0 surface workspaces (Theme Studio overlay) ────────────────────────────────
+
+    private readonly Dictionary<ShellSurface, ISurfaceWorkspace> _surfaceWorkspaces = new();
+
+    public ISurfaceWorkspace? GetSurfaceWorkspace(ShellSurface surface) =>
+        _surfaceWorkspaces.TryGetValue(surface, out var workspace) ? workspace : null;
+
+    public bool IsSurfaceWorkspaceRegistered(ShellSurface surface) =>
+        _surfaceWorkspaces.ContainsKey(surface);
+
+    public bool RegisterSurfaceWorkspace(ISurfaceWorkspace workspace)
+    {
+        if (workspace is null || _surfaceWorkspaces.ContainsKey(workspace.Surface))
+        {
+            return false;
+        }
+
+        _surfaceWorkspaces[workspace.Surface] = workspace;
+        RaiseWorkspacesChanged();
+        if (CurrentSurface == workspace.Surface)
+        {
+            workspace.OnActivated(this);
+        }
+
+        return true;
+    }
+
+    public bool UnregisterSurfaceWorkspace(ShellSurface surface)
+    {
+        if (!_surfaceWorkspaces.Remove(surface))
+        {
+            return false;
+        }
+
+        RaiseWorkspacesChanged();
+        return true;
+    }
+
+    private void ActivateSurfaceWorkspace(ShellSurface surface) =>
+        GetSurfaceWorkspace(surface)?.OnActivated(this);
+
+    private void DeactivateSurfaceWorkspace(ShellSurface surface) =>
+        GetSurfaceWorkspace(surface)?.OnDeactivated(this);
+
+    /// <summary>Honest placeholder copy for the Theme Studio surface when no implementation is registered.</summary>
+    public static string ThemeStudioPlaceholderDetail =>
+        "主题中心尚未注册：V11R-C-2 的 Theme Studio 接入后由壳承载；此处不显示伪造主题编辑内容。";
+
 
     public SpaceViewState GetView(SpaceId space, StudioMode? mode) =>
         _views[Key(space, space == SpaceId.Studio ? mode : null)];
