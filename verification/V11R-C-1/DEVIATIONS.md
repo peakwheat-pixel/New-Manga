@@ -174,3 +174,43 @@ DS P1/P2 返修新增了 Modal 遮罩色 `Nm.Color.Scrim`（`rgba(0,0,0,0.55)`�
 修复后全量 `dotnet test NewManga.sln --no-build -m:1` = 0 失败（ThemeEngine 188/188）。生成器产物
 `Generated/ThemeTokenBaseline.g.cs` 的输入只有 tokens.json（未变，sha 一致），`--check` 仍逐字节一致；
 主题包 `.nmtheme` 无颜色/动效值变化（Slow 值仍 220ms）。
+## D-17 Part B 真实适配器与 headless 应用验收
+
+`DesignSystemThemeLayerSink(Application, DesignSystemThemeManager)` 是 ThemeEngine 中唯一接触 Avalonia
+资源的类型，只做转发（不解释主题语义）：
+
+- `ApplyThemeLayer`：`IReadOnlyDictionary<string, object?>` → `ResourceDictionary` → DS
+  `ApplyThemeLayer`（59 键白名单；非白名单键被 DS 忽略并记入 `ThemeLayerIssues`；失败保留原层并透传
+  `LastError`）；
+- `RevertToBuiltInLayer` → DS `RevertPalette()`；`SetAppearance/SetContrast/SetReducedMotion` → DS
+  同名方法（Enum 映射：引擎枚举 ⇄ DS `AppearanceMode`/`ContrastMode`）；
+- `PlatformThemeChanged` ← `Application.ActualThemeVariantChanged`（System 外观下服务重算变体并重放层）；
+- 值类型与 DS 校验一致（`IBrush`/`FontFamily`/`double`/`CornerRadius`/`TimeSpan`）。
+
+headless 验收（`Avalonia.Headless` + Skia；`DesignSystemThemeLayerSinkTests`，11 tests，全部通过）：
+
+| 验收点 | 结果 |
+|---|---|
+| 59 键完整层应用后 `Application.Resources` 解析到主题值（含 Slow=220ms、LineHeight.Body=18.85、Corner.Md=3、FontSize.Md=13） | PASS |
+| 布局/密度/间距键（`Nm.Space.3`/`Nm.Size.ControlHeight`/`Nm.Padding.Panel`）不被主题层改写 | PASS |
+| 不完整层 / 错误值类型 → 返回 false、`LastError` 有值、上一层保持原状 | PASS |
+| 非白名单键（如 `Nm.Space.3`）→ DS 忽略并记 issue，层仍应用成功且布局值不变 | PASS |
+| `RevertToBuiltInLayer` 恢复 DS 内建盘（`builtin.dark`）且 `AppliedThemeLayerId` 清空 | PASS |
+| 服务 initialize/Apply/SetAppearance/Reset 走真实 DS manager（暗→亮资源重算） | PASS |
+| 连续切换 5 次不增加 `MergedDictionaries` 数量（无资源提供者泄漏） | PASS |
+| **切换主题不重建窗口**：同一 `Window` 实例/同一 `Content` 引用仍可见 | PASS |
+| **不改画布像素**：切换前后漫画画布位图区域像素差 = 0（SKBitmap 逐像素比较），同时资源色确实改变 | PASS |
+
+说明：headless 应用共享一个 `Application`，测试 harness 每个用例重置 `MergedDictionaries`（与 DS 测试
+同策略）并 `DisableTestParallelization`；测试宿主组合 FluentTheme + DS 样式，等价产品样式栈。
+## D-18 C-1 收尾：未验证项登记与 C-3 前置断言
+
+**未验证项**（本任务环境为 headless/CI，见 README §5）：Windows 实机运行、真实 OS 系统跟随端到端、
+屏幕阅读器实测、Trim/AOT 发布、真实 `%APPDATA%` 读写（测试有意注入临时路径）、真实用户主题大样本。
+均标记 `NOT_RUN`/`PARTIAL`，不作为已验收事实。
+
+**C-3 前置断言**（已补测试）：`DependencyBoundaryTests` 断言 `NewManga.ThemeEngine` 程序集
+`GetReferencedAssemblies()` 不含 `NewManga.Theme`、仅向下依赖 `NewManga.DesignSystem`（不含
+App/Host/CoreClient），且类型/成员集合中不存在 `ThemePack`/`ThemePackService`/`LayoutKind`/
+`NavPlacement` 等退役符号；`LayoutProfile` 作为契约替代类型存在。design-platform 执行 C-3 旧主题退役时，
+可直接引用该测试与 `dotnet-test-themeengine.log` 作为“引擎侧零依赖旧 ThemePack”的证据。
