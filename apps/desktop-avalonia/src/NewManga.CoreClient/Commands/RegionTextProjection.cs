@@ -200,7 +200,9 @@ public sealed record RegionTextDetail(
             ? value.GetString()!
             : throw new FormatException($"missing string field '{property}'");
 
-    private static int RequireInt(JsonElement element, string property) =>
+    /// <summary>I3/P3: the single shared required-integer projection helper
+    /// (RegionPageTextProjection.Parse reuses it for page_size).</summary>
+    internal static int RequireInt(JsonElement element, string property) =>
         element.TryGetProperty(property, out var value) &&
         value.ValueKind == JsonValueKind.Number &&
         value.TryGetInt32(out var number)
@@ -251,8 +253,8 @@ public sealed record RegionPageTextProjection(
                 throw new FormatException("page_size must be an object or null");
             }
 
-            width = RequireInt(pageSize, "width");
-            height = RequireInt(pageSize, "height");
+            width = RegionTextDetail.RequireInt(pageSize, "width");
+            height = RegionTextDetail.RequireInt(pageSize, "height");
         }
 
         if (!element.TryGetProperty("regions", out var regions) ||
@@ -276,11 +278,4 @@ public sealed record RegionPageTextProjection(
             height,
             parsed);
     }
-
-    private static int RequireInt(JsonElement element, string property) =>
-        element.TryGetProperty(property, out var value) &&
-        value.ValueKind == JsonValueKind.Number &&
-        value.TryGetInt32(out var number)
-            ? number
-            : throw new FormatException($"missing integer field '{property}'");
 }
