@@ -1,0 +1,1713 @@
+{
+  "schema": "newmanga.v11r.c3-dependency-graph/1",
+  "task": "V11R-C-3-READY",
+  "baseCommit": "c504158f3015f6b93e747f7084810457337f880c",
+  "repoHead": "754dc0d8d7cfb095a1b86cad863e9404f1df5734",
+  "workingTreeDirty": true,
+  "generatedAt": "2026-10-30T03:34:14+08:00",
+  "symbols": [
+    "ThemePackMetrics",
+    "ThemePackService",
+    "ThemePacks",
+    "ThemePack",
+    "LayoutProfiles",
+    "LayoutProfile",
+    "LayoutKind",
+    "NavPlacement",
+    "ShelfStyle",
+    "SettingsStyle",
+    "MotionProfile"
+  ],
+  "excludePaths": [
+    "archive/**",
+    "**/bin/**",
+    "**/obj/**",
+    "**/node_modules/**",
+    "tools/v11r/**",
+    "verification/V11R-C-3-READY/**",
+    "verification/V11R-C-3/**"
+  ],
+  "summary": {
+    "totalReferences": 142,
+    "totalFiles": 54,
+    "byKind": [
+      "evidence-or-documentation=87",
+      "new-architecture=15",
+      "new-architecture-tests=21",
+      "platform-struct-unrelated=19"
+    ],
+    "byFate": [
+      "EVIDENCE-PIN-PROTECTED=87",
+      "NOT-A-DEPENDENCY=55"
+    ],
+    "bySymbol": [
+      "LayoutKind=20",
+      "LayoutProfile=33",
+      "MotionProfile=3",
+      "NavPlacement=1",
+      "SettingsStyle=1",
+      "ShelfStyle=1",
+      "ThemePack=44",
+      "ThemePackMetrics=5",
+      "ThemePacks=11",
+      "ThemePackService=23"
+    ]
+  },
+  "files": [
+    {
+      "file": "apps/desktop-avalonia/scripts/smoke.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/tasks/V11R-C-3.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeServiceTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "doc/tasks/PDF-EXPORT-UI-1.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 5,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 4,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/ThemeSettingsJson.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 3,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ThemeStudioTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/README.md",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 3,
+      "symbols": [
+        "LayoutProfile",
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/THEME-MACOS-2/layout/hot-switch.json",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 13,
+      "symbols": [
+        "LayoutProfile",
+        "MotionProfile",
+        "ThemePack",
+        "ThemePackMetrics",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 14,
+      "symbols": [
+        "LayoutKind",
+        "LayoutProfile",
+        "MotionProfile",
+        "NavPlacement",
+        "SettingsStyle",
+        "ShelfStyle",
+        "ThemePack",
+        "ThemePackMetrics",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 6,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks"
+      ]
+    },
+    {
+      "file": "verification/P20-MEM-OPT-1/test-interaction-and-pages.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/handoffs/UI-SHELL-THEME-1-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/LegacyThemeMigrationTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/V11R-C-1/README.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "verification/V11R-C-1/DEVIATIONS.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "LayoutProfile",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/design/ADR-0001_REPO_LAYOUT_AND_COEXISTENCE.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "doc/tasks/DISPLAY-PERF-DECISION-1.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "doc/V11R_TRACEABILITY.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/ThemeService.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 7,
+      "symbols": [
+        "MotionProfile",
+        "ThemePack",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeContractTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "doc/plan/V11R_AVALONIA_CONTRACT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/P20-AC4-FPS-1/run-ac4-fps.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeContracts.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/PUBLIC-RELEASE-P0-1/ls-tree.txt",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/P20-MEM-OPT-1/probe-process-tree.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "verification/RELEASE-REPACK-5/smoke.json",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePacks"
+      ]
+    },
+    {
+      "file": "doc/reviews/V11R-THEME-L3-r1-independent.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePackMetrics",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/DISPLAY-PERF-DECISION-1/baseline/harness/paint-probe.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/HostIssuer.cs",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/reviews/V11R-D-1-r1-codex.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "verification/DISPLAY-PERF-DECISION-1/spike/scripts/window_probe.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "verification/V11R-C-1/dotnet-test-themeengine.log",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/V11R-C-1/INT_WIRING.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 5,
+      "symbols": [
+        "ThemePack",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/NewManga.ThemeEngine.csproj",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/P19-BOOT-1/capture_real_startup.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 6,
+      "symbols": [
+        "LayoutProfile",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "verification/PDF-EXPORT-UI-1/REPORT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "doc/V11R_PROGRAM.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 5,
+      "symbols": [
+        "LayoutProfile",
+        "ThemePack",
+        "ThemePackMetrics"
+      ]
+    },
+    {
+      "file": "verification/P20-MEM-OPT-1/experiment-flags.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/tasks/THEME-MACOS-2.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks"
+      ]
+    },
+    {
+      "file": "verification/V11R-C-1/CONSUMER_GUIDE.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/P20-MEM-OPT-1/experiment-steady-after-trim.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 4,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "verification/PDF-EXPORT-1/REPORT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "doc/handoffs/THEME-MACOS-2-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/RELEASE-REPACK-5/REPORT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePacks"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "symbol": "LayoutKind",
+      "file": "apps/desktop-avalonia/scripts/smoke.ps1",
+      "line": 53,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs",
+      "line": 42,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "NewManga.ThemeEngine.LayoutProfile.Default,"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/HostIssuer.cs",
+      "line": 757,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+      "line": 210,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+      "line": 441,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeContracts.cs",
+      "line": 32,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "Task SetLayoutAsync(LayoutProfile layout);"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "line": 327,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "/// Layout is independent of the theme and persisted separately (contract §4 <c>LayoutProfile</c>);"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "line": 330,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "public sealed record LayoutProfile("
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "line": 339,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "public static LayoutProfile Default { get; } = new("
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "line": 353,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "LayoutProfile Layout,"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "line": 465,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "LayoutProfile.Default,"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/NewManga.ThemeEngine.csproj",
+      "line": 7,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "<Description>New Manga theme engine (V11R-C-1): theme package schema newmanga.theme/1, registry, validation, persistence with legacy-id migration, preview sessions, fallback and ThemePackage -> Nm.* palette composition. Replaces the retired ThemePack architecture; depends on NewManga.DesignSystem, never the other way round.</Description>"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/README.md",
+      "line": 3,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "新主题引擎。**取代**旧 `NewManga.Theme`（`ThemePack` 架构）；旧预设（Saber/Midnight/Sakura/Emerald/Mono/macOS…）不再提供，旧配置按退役计划迁移到内置默认主题。"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/README.md",
+      "line": 17,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "禁止：ThemeEngine 被 DesignSystem 引用；ThemeEngine 依赖 App；在主题包里出现布局/导航/密度字段（布局是 `LayoutProfile`，独立持久化）。"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/README.md",
+      "line": 19,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "公开面严格对应 `doc/plan/V11R_AVALONIA_CONTRACT.md` §4（`ThemeKind`/`AppearanceMode`/`ContrastMode`/`ThemeDescriptor`/`ThemePackage`/`LayoutProfile`/`ThemeSettings`/`ThemeValidationIssue`/`ThemeValidationResult`/`ThemeApplyResult` 与 6 个接口）。"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/ThemeSettingsJson.cs",
+      "line": 173,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "private static LayoutProfile ReadLayout("
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/ThemeSettingsJson.cs",
+      "line": 177,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "var defaults = LayoutProfile.Default;"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/ThemeSettingsJson.cs",
+      "line": 252,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "return new LayoutProfile(id, navigation, shelf, density, workbench, reader);"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/ThemeService.cs",
+      "line": 258,
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "public Task SetLayoutAsync(LayoutProfile layout)"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ThemeStudioTests.cs",
+      "line": 437,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "LayoutProfile.Default,"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ThemeStudioTests.cs",
+      "line": 475,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "LayoutProfile.Default,"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 8,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "/// compile/runtime dependency on the retired <c>NewManga.Theme</c> (<c>ThemePack</c>) assembly and may"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 18,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"ThemePack\","
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 19,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"ThemePacks\","
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 20,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"ThemePackService\","
+    },
+    {
+      "symbol": "ThemePackMetrics",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 21,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"ThemePackMetrics\","
+    },
+    {
+      "symbol": "MotionProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 22,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"MotionProfile\","
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 23,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"LayoutKind\","
+    },
+    {
+      "symbol": "NavPlacement",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 24,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"NavPlacement\","
+    },
+    {
+      "symbol": "ShelfStyle",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 25,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"ShelfStyle\","
+    },
+    {
+      "symbol": "SettingsStyle",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 26,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "\"SettingsStyle\","
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 72,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "Assert.DoesNotContain(\"ThemePack\", typeNames);"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 73,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "Assert.DoesNotContain(\"ThemePackService\", typeNames);"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 75,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "// The new contract type LayoutProfile is expected (it replaces the retired LayoutKind/NavPlacement"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/DependencyBoundaryTests.cs",
+      "line": 77,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "Assert.Contains(\"LayoutProfile\", typeNames);"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/LegacyThemeMigrationTests.cs",
+      "line": 19,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "Layout = LayoutProfile.Default with { Density = density },"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/LegacyThemeMigrationTests.cs",
+      "line": 127,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "LayoutProfile.Default with { Shelf = ShelfLayout.List, Density = Density.Compact },"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeContractTests.cs",
+      "line": 42,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[InlineData(typeof(LayoutProfile), \"Id,Navigation,Shelf,Density,Workbench,Reader\")]"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeServiceTests.cs",
+      "line": 362,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "var layout = LayoutProfile.Default with"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeServiceTests.cs",
+      "line": 385,
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "await service.SetLayoutAsync(LayoutProfile.Default with { Shelf = ShelfLayout.Masonry });"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md",
+      "line": 63,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "> 复刻原则：**视觉与交互规格可参考；代码按 GPL-3.0 合规移植**（见 §5 许可证）。Avalonia 侧用 ThemePack + 自定义 ControlTheme 实现，令牌集中成一个 JSON，便于主题中心切换。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md",
+      "line": 85,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "**ThemePack 结构**（目录或 `.nmtheme` zip）："
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md",
+      "line": 130,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| D-C | 主题中心 | 内置 6 套 + Saber Purple 默认；ThemePack 三档换肤；后续可导入 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/V11R_PROGRAM.md",
+      "line": 25,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 旧主题全部集中在 `src/NewManga.Theme/ThemePack.cs`（34 KB，1 文件）：`ThemePack` 记录 + 6 个旧预设（Saber/Midnight/Sakura/Emerald/Mono/macOS）+ `LayoutKind/NavPlacement/ShelfStyle/SettingsStyle` **把颜色、导航、书架布局、密度耦合在一个包里** —— 与本程序 C2「必须解耦」要求直接冲突，判定为整体废弃对象。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/V11R_PROGRAM.md",
+      "line": 57,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| **C · Theme Studio** | 从零重建主题引擎（10 子系统）+ 独立 Theme Studio 页面（7 分区）+ 旧主题彻底退役 | 新引擎为唯一运行路径；旧 `ThemePack` 删除；旧配置 ID 安全迁移 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/V11R_PROGRAM.md",
+      "line": 103,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `V11R-C-3` | **旧主题退役**（高风险）：依赖图、替换清单、配置 ID 安全迁移、删除 `ThemePack`/旧 UI 入口/旧测试 | `V11R-C-1`、`V11R-C-2` | `design-platform` | 独立（强制） | L2+高风险 |"
+    },
+    {
+      "symbol": "ThemePackMetrics",
+      "file": "doc/V11R_PROGRAM.md",
+      "line": 145,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `src/NewManga.Theme/ThemePack.cs`（ThemePack/ThemePacks/ThemePackService/LayoutKind/NavPlacement/ShelfStyle/SettingsStyle/MotionProfile/ThemePackMetrics/LayoutProfiles） | `App.axaml.cs`(3)、`AppOptions.cs`(1)、`MainViewModels.cs`、`CredentialSection.cs`、`ImportExportPanels.cs`、`MainWindow.axaml.cs`、`Pages.cs`、`ProfileSections.cs`、`ProviderBindingsSection.cs`、`ReaderWorkbenchPages.cs` | 新引擎等价后删除；`NewManga.Theme` 项目退役或改名替换 |"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/V11R_PROGRAM.md",
+      "line": 148,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| 布局枚举（LayoutKind/NavPlacement/ShelfStyle/SettingsStyle） | 旧壳 + 设置 | 迁移到新 `LayoutProfile`（与颜色包解耦） |"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/V11R_TRACEABILITY.md",
+      "line": 45,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| C2 颜色风格与导航/书架布局/密度解耦 | 契约 §4 `ThemePackage` vs `LayoutProfile` | 单测：主题包不可含布局 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/design/ADR-0001_REPO_LAYOUT_AND_COEXISTENCE.md",
+      "line": 23,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "src/NewManga.Theme/      # ThemePack 加载（ResourceDictionary/ControlTheme/DynamicResource）"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "line": 14,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "实现提交 **`6deefdcc3ee1ab8b6d1c3b4b58e8960d728cab95`**（branch `task/PDF-EXPORT-UI-1`，worktree `G:/CODEX/New Manga.workspace/worktrees/PDF-EXPORT-UI-1`；卡面 base `170878dc4`，按 DSH 指令从当前 HEAD `2591ef028` 建分支）；本 Handoff 与任务卡 pin 在后续文档提交记录。未改 Python Core / 协议 / Host 契约 / 旧壳；未 push / gc / prune；不伪造导出结果；**未触碰主工作树另一会话在途的 `ThemePack.cs` / `MainWindow.axaml*` 改动，也未 `git add -A`**（只按显式路径提交本卡文件）。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "line": 46,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "6. **并发**：主工作树另有会话在改 `ThemePack.cs` / `MainWindow.axaml*`（mac 风主题）；本卡分支独立，未触碰这些文件；若其先集成，本卡 rebase 后需重跑 gate。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "line": 71,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 并发说明：主工作树在途主题改动（`ThemePack.cs`/`MainWindow.axaml*`）未触碰；若先集成，本卡 rebase 后重跑 gate。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "line": 95,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "6) 确认未改 Core/协议/Host 契约/旧壳、未触碰主工作树 ThemePack.cs/MainWindow.axaml*、未 push。"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
+      "line": 14,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- AC1 主题中心：新增第 7 套 pack `macos-sonoma`（中文名「macOS 风」），在设置页主题列表**只出现一次**（单 pack 内嵌 Light/Dark 双 token 集）；`ThemePacks.Default` 仍为 `saber-purple`，既有 6 套的 id/标签/顺序/token 值不变（回归断言 + `theme/pack.json`）。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
+      "line": 15,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- AC2 双模式：同一 pack 的 `Tokens/Materials`（Light）与新增可选 `DarkTokens/DarkMaterials`（Dark）逐 key 覆盖全部既有 token（14 个）+ 新增 `NavActiveText` + 3 个语义色 + 4 个 Materials；`ThemePackService.ApplyVariant/CurrentVariant` 提供可编程明暗入口，设置页「外观：浅色/深色」最小 UI；4 张 **真实 headless-Skia 渲染** 1280x820 PNG（书架/设置 × Light/Dark）含 AppBg 像素断言与中心像素断言。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
+      "line": 21,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- `apps/desktop-avalonia/src/NewManga.Theme/ThemePack.cs`"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
+      "line": 47,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "1. **双 variant 模型（向后兼容扩展）**：`ThemePack` 仍是同一 record，新增可选 `DarkTokens`/`DarkMaterials`（null/空 = 复用 Tokens/Materials，旧 6 套行为逐字节等价）、`Metrics`（默认 12/12/8/6 且无阴影）、`FontFamily`（默认旧字体栈）、按 pack 的 `Motion`。`ThemePackService.Apply` 语义不变；新增 `ApplyVariant(Application, ThemeVariant)` / `CurrentVariant`，`BuildVariant` 仅在 Dark 有覆盖时取 Dark token、否则回退 Light token；`NavActiveText` 旧 pack 回退 `AccentText`，因此 6 套旧主题视觉零变化。macOS Light/Dark 必须同 pack（列表仍 7 项）是用户冻结约束。"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "line": 16,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- **AC1 主题可见可切换**：`ThemePacks.All` 现为 9 套（6 旧 + 3 mac）；新增 `macos-launchpad`「macOS 启动台」与 `macos-split`「macOS 分栏」，连同既有 `macos-sonoma`「macOS 风」共三套 mac 主题，设置页主题列表各出现一次；`ThemePacks.Default` 仍为 `saber-purple`；旧 6 套 id/标签/顺序/token 均不变。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "line": 23,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- **AC8 三套布局**：`LayoutKind/LayoutProfile/LayoutProfiles` 落在 Theme 模块，`ThemePack.Layout` 默认 Sonoma；`MainWindow` XAML 预置 `TitleBar/NavPanel`、底部 `DockHost/DockNavPanel`、左侧 `SidebarHost/SidebarNavPanel` 三态宿主，`ApplyLayout()` 移动同一批 nav 按钮（不重建）并驱动两页布局；Split 布局把交通灯/品牌块移入 Sidebar 顶部；`PageHost` 在 Dock 布局下预留 Dock 带（120px）。`BookshelfPage.ApplyLayout` 三结构（Sonoma 树/Launchpad 168×220 定高瓦片+1200 居中/260 列表+右侧网格），`SettingsPage.ApplyLayout` 三结构（双栏/900 单列/分区目录+右侧分区，Split 内切换只改可见性）。切换路径：`SettingsPage.SelectTheme` → `ThemePackService.Apply` → `MainWindow.OnThemeApplied` 检测 `Layout.Kind` 变化 → `ApplyLayout`；同 Layout 切 variant 只换 token。"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "line": 27,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- `apps/desktop-avalonia/src/NewManga.Theme/ThemePack.cs`：`LayoutKind/NavPlacement/ShelfStyle/SettingsStyle/LayoutProfile/LayoutProfiles`、`ThemePack.Layout`、`ThemePacks.MacOsLaunchpad/MacOsSplit`（共享 Sonoma 双 token + `SidebarBg/DockBg` 及 fallback）、`IsMacOsPack`。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "line": 51,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "1. **布局属于主题（LayoutProfile 模型）**：`ThemePack` 仍是同一 record，新增可选 `Layout`（默认 `LayoutProfiles.Sonoma`）→ 旧 6 套零改动。`LayoutProfile` 携带 `Kind + Nav + Shelf + Settings + DockHeight/SidebarWidth/ShelfListWidth/SettingsNavWidth/LaunchpadCardWidth/LaunchpadCardHeight/ContentMaxWidth/SettingsMaxWidth`，并派生 `UsesDock/UsesSidebar/LaunchpadBottomInset`。三套 mac pack 共享 THEME-MACOS-1 的颜色/度量/动效/字体契约，只微调页面/侧栏/Dock 背景（WCAG 通过）。**不按 pack id 硬编码布局**，壳只读 `ThemePackService.Current.Layout`。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "line": 55,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "5. **切换路径与性能**：`SettingsPage.SelectTheme` → `ThemePackService.Apply` → `MainWindow.OnThemeApplied()` 检测 `Layout.Kind` 变化 → `ApplyLayout()`（壳 + 两页 + `PageHost` Dock 预留）→ `ApplyTheme()`；同 Layout 的 `SwitchVariant` 只换 token 不重建布局（`LayoutAndVariantHotSwitch_P95Under100ms` 里对每次 variant 切换断言 `CurrentLayout` 不变）。布局重建只做 re-parent + 一次模板重设，canonical p95=20.151ms，无需预构建/可见性缓存方案。"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "line": 84,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- **并发事故**：主树曾被并行 agent `git add -A` 吞掉中间态并回退，本 worktree 内已重新落盘、验证并取证；无 git 写操作残留（未 commit/push）。回退方法：删除三套 mac pack 的 LayoutProfile 与 Views 增量即可回到单 Sonoma 布局基线；本任务未删除文件。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/THEME-MACOS-2-handoff.md",
+      "line": 17,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- **冲突处置**：Lead 指定的 `worktrees/THEME-MACOS-2` 被外部会话并发写入（未跟踪 `ThemeLayoutsTests.cs`、`verification/THEME-MACOS-2/`、`ThemePack.cs` 被改回 9-pack layouts 版等）。我**未 reset/未删除/未提交**该目录，已报告 Lead 并获准改在独立 worktree 继续；冲突目录留 Lead 处置。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/THEME-MACOS-2-handoff.md",
+      "line": 19,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 未改 `ThemePack.cs`、Core、协议、Host 契约、旧壳；未 push / gc / prune；未写真实 `%APPDATA%`；不伪造结果。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/handoffs/UI-SHELL-THEME-1-handoff.md",
+      "line": 15,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- AC2 主题中心：`ThemePack = manifest+tokens+controlthemes+materials+motion+icons`，内置 **6 套**（Saber Purple 默认 + Saber Light/Midnight/Sakura/Emerald/Mono）；`ResourceDictionary.ThemeDictionaries{Light,Dark}` 热切；实测 **p95 2.215ms**（3 套 × 10 次，≤100ms）；reduced-motion 全部时长归零；切换后资源色与目标 pack 一致（无色残留）。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/handoffs/UI-SHELL-THEME-1-handoff.md",
+      "line": 38,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "1. **主题服务**：单例 `ThemePackService` 合并单个 `ResourceDictionary`，其 `ThemeDictionaries` 同时提供 Light/Dark 变体；控件用 DynamicResource，页面级代码构建控件通过 `ApplyTheme()` 重读 token（不重建控件），保证热切 <3ms 且无残留。reduced-motion 由 `MotionProfile.Reduced` 归零。"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/plan/V11R_AVALONIA_CONTRACT.md",
+      "line": 135,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "public sealed record LayoutProfile("
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/plan/V11R_AVALONIA_CONTRACT.md",
+      "line": 145,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "string ThemeId, AppearanceMode Appearance, ContrastMode Contrast, LayoutProfile Layout,"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/plan/V11R_AVALONIA_CONTRACT.md",
+      "line": 161,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "Task SetLayoutAsync(LayoutProfile layout);"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 14,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| 旧主题实现 | `apps/desktop-avalonia/src/NewManga.Theme/ThemePack.cs` | 34 KB / 1 文件 / 64 处符号 |"
+    },
+    {
+      "symbol": "ThemePackMetrics",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 20,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "`MotionProfile`、`ThemePackMetrics`、`LayoutKind`、`NavPlacement`、`ShelfStyle`、`SettingsStyle`、`LayoutProfile`、`LayoutProfiles`、`ThemePack`、`ThemePacks`（含 `SaberPurple/SaberLight/Midnight/Sakura/Emerald/Mono/MacOsSonoma/MacOsLaunchpad/MacOsSplit/Default/ById/IsMacOsPack`）、`ThemePackService`（`Apply/ApplyVariant/ApplyDefault/Brush/ColorOf`）。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 47,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `ThemePack`（颜色+材质+布局+圆角+动效混合） | `ThemePackage`（仅性格：颜色/字体/圆角/材质/阴影/动效） | 不复用；新内置主题从 `tokens.json` 生成 |"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 48,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `ThemePackService.Apply(Application, pack)` | `IThemeService.ApplyAsync(themeId)` | 资源字典整体替换；失败回退默认 |"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 49,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `ThemePackService.ApplyVariant` | `IThemeService.SetAppearanceAsync(Light/Dark/System)` | 外观与主题解耦 |"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 50,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `LayoutKind`/`NavPlacement`/`ShelfStyle`/`SettingsStyle`（在主题包里） | `LayoutProfile`（独立持久化：Navigation/Shelf/Density/Workbench/Reader） | 从主题包剥离；V1 仅实现 `Navigation=TopBand`，其余枚举保留 |"
+    },
+    {
+      "symbol": "ThemePackMetrics",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 51,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `ThemePackMetrics`（圆角/阴影） | 令牌 `Nm.Corner.*`、`Nm.Shadow.*` | 进主题包的 radius/shadow 段 |"
+    },
+    {
+      "symbol": "MotionProfile",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 52,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `MotionProfile` | `IThemeService.SetReducedMotionAsync` + `Nm.Motion.*` | 动效全局可关 |"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 53,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `ThemePacks.Default`（SaberPurple） | 新默认主题 `newmanga-default` | 见 §3 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 78,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 不得引用旧 `ThemePack` 任何代码或值。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 88,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| R3 | 删除旧主题 UI 入口（旧设置页主题中心、旧 `ThemePack` 选择器） | R2 PASS | R1 tag |"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 91,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| R6 | 全仓 `ThemePack|ThemePacks|ThemePackService|LayoutKind|NavPlacement|ShelfStyle|SettingsStyle` 零引用断言 + 构建/测试全绿 | R5 | R1 tag |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
+      "line": 101,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- [ ] `ThemePack` 等 12 个旧符号全仓零引用（含注释）。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/reviews/V11R-D-1-r1-codex.md",
+      "line": 38,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "2. **[P1] 初始化时默认 Dark 可能覆盖启动/用户主题选择** — [DesignSystemThemeManager.cs](<G:/CODEX/New Manga/apps/desktop-avalonia/src/NewManga.DesignSystem/DesignSystemThemeManager.cs>)（`:43`、`:224`）、[App.axaml.cs](<G:/CODEX/New Manga/apps/desktop-avalonia/src/NewManga.App/App.axaml.cs>)（`:51`、`:52`）— `App` 调用 `Initialize()`，Manager 的默认 `Appearance` 为 Dark 并设置 `RequestedThemeVariant`；可能覆盖启动时先由 `ThemePackService` 应用的主题。建议把已加载的用户选择传入 Manager，并增加 Light/System 启动测试。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/reviews/V11R-THEME-L3-r1-independent.md",
+      "line": 34,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "4. **零依赖断言真实**（C-3 前置）：`DependencyBoundaryTests`（79 行）用反射断言引擎程序集不引用 `NewManga.Theme`、不引用 App/Host/CoreClient、仅含 `NewManga.DesignSystem`；成员/类型集合不含 `ThemePack/ThemePackService/LayoutKind/NavPlacement/...`；`LayoutProfile` 存在。`NewManga.ThemeEngine.csproj` 仅 `Avalonia` 包 + `NewManga.DesignSystem` 工程引用。"
+    },
+    {
+      "symbol": "ThemePackMetrics",
+      "file": "doc/reviews/V11R-THEME-L3-r1-independent.md",
+      "line": 94,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "1. **依赖图可复现、数字准确**：我按脚本同样的 `git grep -n -E '\\b(12 符号)\\b'` + 排除项在 pin 上重跑，得到 **631 行 / 68 文件**，逐符号首匹配计数 `ThemePackService=238、ThemePacks=108、ThemePack=81、LayoutProfile=56、LayoutKind=54、ThemePackMetrics=19、ShelfStyle=18、LayoutProfiles=18、NavPlacement=17、SettingsStyle=13、MotionProfile=9`，与 `DEPENDENCY_GRAPH.md` **完全一致**；`dependency-graph.json` 的 `baseCommit=c5037b65`、`repoHead=7f6787b91`、`workingTreeDirty=false` 诚实区分基线/证据头；假阳性（P/Invoke `StructLayout(LayoutKind…)` ×19、新架构同名 `LayoutProfile`、保护性 `DependencyBoundaryTests` 引用）均有说明。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/DISPLAY-PERF-DECISION-1.md",
+      "line": 61,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- [x] **AC12 新架构草案 + Saber 参考规格**（AD-002 草案：Avalonia+Python Core 边界/接线/主题中心 ThemePack/书架 1:1 复刻令牌与流程/许可证决策树 L1–L3/灰度迁移 S0–S5/成本 200–400 人日；Saber 实测栈与 CSS 令牌已存证）<<MET>>"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/PDF-EXPORT-UI-1.md",
+      "line": 35,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "> 主工作树中另一会话在途的 `ThemePack.cs` / `MainWindow.axaml*` 等改动未触碰、未提交（只按显式路径提交本卡文件）。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 40,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 依据：`doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md` §4（ThemePack = manifest + tokens + controlthemes + materials + motion + icons；运行时热切换 p95 ≤100ms）；`doc/tasks/UI-SHELL-THEME-1.md` 与 `doc/handoffs/UI-SHELL-THEME-1-handoff.md`（主题中心/热切换口径）。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 42,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 现有实现事实：`ThemePacks.All` 内置 6 套（Saber Purple 默认 / Saber Light / Midnight / Sakura / Emerald / Mono）；`ThemePackService.Apply` 对每套 pack 构建 Light/Dark 两个 ResourceDictionary，但当前两者使用同一 token 集；设置页 `SettingsPage` 的主题列表直接绑定 `ThemePacks.All`，点击调用 `ThemePackService.Apply` + `OnThemeApplied`。"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 47,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- [x] **AC1 主题可见可切换**：`macos-sonoma` 出现在设置页主题列表中（中文名「macOS 风」），点击可切换；`ThemePacks.Default` 仍为 `saber-purple`（默认不变）；现有 6 套主题标签/顺序/行为不变。<<MET>>"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 49,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- [x] **AC3 热切换 p95 ≤100ms**：沿用现有 `S3ShellTests` 的测量机制（`ThemePackService.Apply` + `window.ApplyTheme()` + `Dispatcher.UIThread.RunJobs()`，≥30 次采样），macos-sonoma Light↔Dark 与既有主题互切 p95 ≤100ms，给出实际数字。<<MET>>"
+    },
+    {
+      "symbol": "MotionProfile",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 62,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 动效：hover/pressed 120–160ms ease-out；reduced-motion 时归零（沿用现有 `MotionProfile` 机制）。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 64,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 实现约束：`ThemePack` record 只允许**向后兼容**扩展（新增可选字段/默认值；既有 6 套 token 值不得修改）；macos-sonoma 的 Light/Dark 两套 token 必须落在同一 pack 内（不得拆成两个列表项）；明暗切换需有可编程入口（设置页「外观：浅色/深色」最小 UI，或 `ThemePackService` 明确的 variant API），reduced-motion 归零。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "line": 99,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 风险 1：`ThemePack` 扩展若破坏既有 6 套主题的资源构建（Light/Dark 回退逻辑）→ 用“DarkTokens 为空则复用 Tokens”的向后兼容回退 + 既有断言回归。"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "doc/tasks/THEME-MACOS-2.md",
+      "line": 39,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- [x] **AC1 主题可见可切换**：`macos-sonoma`（「macOS 风」）在设置页主题列表；`ThemePacks.Default` 仍 `saber-purple`；既有主题不回归。→ **MET**：7 packs、macOS 单行中文、default 不变、6 个 legacy pack 的 token/字体/单 token 集不变；交通灯仅视觉（装饰/缩放/客户区不变，审计测试）。证据：`headless/theme/pack.json`、`headless/theme/traffic-lights-visual-only.json`。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/THEME-MACOS-2.md",
+      "line": 53,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| 实现范围 | **不新增 pack/id**；验证 + 补齐证据；`ThemePack.cs` 未改 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/THEME-MACOS-2.md",
+      "line": 127,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 冲突处置：代码冲突取外部实现；ThemePack.cs 与 MainWindow.axaml 取 84dd38978 的布局版（外部实现依赖）；文档保留本卡版本；外部证据另存 \u000berification/THEME-MACOS-2-external/；外部 Handoff 存档为 doc/handoffs/THEME-MACOS-2-external-handoff.md。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/V11R-C-3.md",
+      "line": 3,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "title: 旧主题系统彻底退役（依赖图/迁移/删除 ThemePack 与旧入口，高风险）"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/V11R-C-3.md",
+      "line": 21,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- apps/desktop-avalonia/src/NewManga.Theme/ (整项目删除), apps/desktop-avalonia/src/NewManga.App/ 内旧 ThemePack 引用点"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "doc/tasks/V11R-C-3.md",
+      "line": 30,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "# V11R-C-3：旧主题系统彻底退役（依赖图/迁移/删除 ThemePack 与旧入口，高风险）"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/DISPLAY-PERF-DECISION-1/baseline/harness/paint-probe.ps1",
+      "line": 44,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left; public int Top; public int Right; public int Bottom; }"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/DISPLAY-PERF-DECISION-1/baseline/harness/paint-probe.ps1",
+      "line": 45,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)] public struct POINT { public int X; public int Y; }"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/DISPLAY-PERF-DECISION-1/spike/scripts/window_probe.ps1",
+      "line": 43,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/DISPLAY-PERF-DECISION-1/spike/scripts/window_probe.ps1",
+      "line": 44,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)] public struct POINT { public int X, Y; }"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P19-BOOT-1/capture_real_startup.ps1",
+      "line": 21,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-AC4-FPS-1/run-ac4-fps.ps1",
+      "line": 128,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-AC4-FPS-1/run-ac4-fps.ps1",
+      "line": 130,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/experiment-flags.ps1",
+      "line": 16,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/experiment-flags.ps1",
+      "line": 38,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/experiment-steady-after-trim.ps1",
+      "line": 14,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/experiment-steady-after-trim.ps1",
+      "line": 36,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/probe-process-tree.ps1",
+      "line": 32,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/probe-process-tree.ps1",
+      "line": 54,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/test-interaction-and-pages.ps1",
+      "line": 16,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]"
+    },
+    {
+      "symbol": "LayoutKind",
+      "file": "verification/P20-MEM-OPT-1/test-interaction-and-pages.ps1",
+      "line": 38,
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "text": "[StructLayout(LayoutKind.Sequential)]"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/PDF-EXPORT-1/REPORT.md",
+      "line": 58,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 说明（如实记录）：主工作树当时的 test.ps1 失败 40 项（`NewManga.App.Tests` 109 中 69 通过），原因是**并发 Agent 未提交的 UI 改动**（`apps/desktop-avalonia/src/**` 的 `MainWindow.axaml`/`Pages.cs`/`MainViewModels.cs`/`AppStyles.axaml`/`ThemePack.cs`/`TestAppBuilder.cs` 等 7 个改动 + 新增 `ThemeMacosTests.cs`），与本卡零交集（本卡 `src/**`/`tests/**` 零 diff）；失败日志保留在 `evidence/dotnet-test-worktree-dirty.log` 供核对。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/PDF-EXPORT-UI-1/REPORT.md",
+      "line": 7,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 主工作树中另一会话在途的 `ThemePack.cs` / `MainWindow.axaml*` 等改动**未触碰、未提交**；本卡只提交自己的文件。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/PDF-EXPORT-UI-1/REPORT.md",
+      "line": 78,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "5. **并发**：`route-research`/`core-admin-rca` 等在跑；主工作树另一会话的 `ThemePack.cs`/`MainWindow.axaml*` 在途改动未被本卡触碰或提交；如主工作树先集成，rebase 后重跑 gate。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/PUBLIC-RELEASE-P0-1/ls-tree.txt",
+      "line": 103,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "100644 blob b67d924d8d6a7e90f14d90086ccecb46b34566f0   33571\tapps/desktop-avalonia/src/NewManga.Theme/ThemePack.cs"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "verification/RELEASE-REPACK-5/REPORT.md",
+      "line": 24,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 设置页主题列表**全部可见 9 packs**（任务预期 7；实际注册表 `ThemePacks.All` = 6 legacy + 3 macOS 三布局 = 9，属超集，按实际记录）："
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "verification/RELEASE-REPACK-5/smoke.json",
+      "line": 17,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "\"expected_note\": \"任务卡/Lead 预期 7 packs，实际注册表 ThemePacks.All=9（6 legacy + 3 macOS 三布局）；9 为超集且完整包含 Sonoma/Launchpad/Split，按实际记录\","
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "line": 6,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- **未新建重复的 `macos-sonoma` 或新主题 id**：主线 `ThemePack.cs`（`4ea86e03a` 版本，含 7 packs + `macos-sonoma`）经核验已基本达标，本任务定位为「验证 + 补齐 + 出证据」，并把被 Lead 移出的主题测试恢复为自洽证据。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "line": 11,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "Lead 指定的 `worktrees/THEME-MACOS-2` 在开始后被另一进程并发写入（未跟踪的 `ThemeLayoutsTests.cs`/`verification/THEME-MACOS-2/`、`ThemePack.cs` 被改回 9-pack layouts 版、`Pages.cs`/`MainWindow.axaml.cs`/`ThemeMacosTests.cs` 被替换）。我未在该目录 reset/删除/提交；已向 Lead 报告，获准以 **`f1b89c5e5`** 为 base 在独立 worktree `THEME-MACOS-2-saber`（branch `task/THEME-MACOS-2-saber`）继续。冲突目录留给 Lead 处置。"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "line": 17,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| AC1 主题可见可切换 | **MET** | 设置页主题中心列出 7 个 pack（含「macOS 风」`macos-sonoma`，单行、中文名）；`ThemePacks.Default` 仍为 `saber-purple`；6 个既有 pack 的 AppBg/Accent/TextPrimary/单 token 集/字体栈不变；macOS 交通灯仅视觉（不改窗口行为）。证据：`headless/theme/pack.json`、`headless/theme/traffic-lights-visual-only.json`。 |"
+    },
+    {
+      "symbol": "ThemePacks",
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "line": 31,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| 注册与默认 | `ThemePacks.All` = 6 legacy + `macos-sonoma`（7）；`Default.Id == \"saber-purple\"`；设置页单行「macOS 风」 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "line": 61,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "未改 `ThemePack.cs` / 既有主题页 / Host / Core / 协议 / 旧���。"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "line": 83,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "3. **未包含 launchpad/split 布局**：base 修复已把 `ThemePack.cs` 回退到 7-pack（去 layout）；本任务范围只到 `macos-sonoma`，未恢复那三个布局 pack 的 WIP。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/THEME-MACOS-2/layout/hot-switch.json",
+      "line": 4,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "\"mechanism\": \"ThemePackService.Apply/ApplyVariant + MainWindow.OnThemeApplied (shell + BookshelfPage + SettingsPage relayout) + Dispatcher.UIThread.RunJobs\","
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "verification/V11R-C-1/CONSUMER_GUIDE.md",
+      "line": 53,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `Task SetLayoutAsync(LayoutProfile)` | 仅持久化布局（V1 仅 `Navigation=TopBand` 生效，其余枚举保留）；不换主题层 | null → `ArgumentNullException` |"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "verification/V11R-C-1/DEVIATIONS.md",
+      "line": 17,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- 布局/导航/密度**不在** `ThemePackage` 内（DESIGN_SYSTEM §1 解耦硬约束），只在 `LayoutProfile`；"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/V11R-C-1/DEVIATIONS.md",
+      "line": 214,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "App/Host/CoreClient），且类型/成员集合中不存在 `ThemePack`/`ThemePackService`/`LayoutKind`/"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "verification/V11R-C-1/DEVIATIONS.md",
+      "line": 215,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "`NavPlacement` 等退役符号；`LayoutProfile` 作为契约替代类型存在。design-platform 执行 C-3 旧主题退役时，"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/V11R-C-1/INT_WIRING.md",
+      "line": 9,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- `NewManga.App.csproj` 已引用 `NewManga.ThemeEngine`（R-20），但 App 仍只使用旧 `ThemePackService` 与"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/V11R-C-1/INT_WIRING.md",
+      "line": 11,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- `App.axaml.cs`：`ThemePackService.ApplyDefault` → 旧的 `--theme/--variant` 钩子 → `_designSystemTheme.Initialize(startupAppearance)`"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/V11R-C-1/INT_WIRING.md",
+      "line": 13,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- `AppOptions`：`--theme`（旧 `ThemePack` id）/`--variant light|dark`（THEME-MACOS-2 证据钩子）。"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/V11R-C-1/INT_WIRING.md",
+      "line": 19,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "ThemePackService.ApplyDefault(this);"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/V11R-C-1/INT_WIRING.md",
+      "line": 103,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| 3 | 旧 `ThemePackService.Apply*` 只能在 DS 初始化之前调用；`ThemeService.InitializeAsync` 之后不得再调 | 旧包会改写资源，覆盖数据驱动的主题层；C-3 删除旧入口 |"
+    },
+    {
+      "symbol": "ThemePack",
+      "file": "verification/V11R-C-1/README.md",
+      "line": 3,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "- Task：`task-10 / V11R-C-1`（10 子系统：Tokens/Registry/Schema/Resolver/State/Persistence/Preview/ImportExport/Validation/Fallback，取代旧 `ThemePack`）"
+    },
+    {
+      "symbol": "ThemePackService",
+      "file": "verification/V11R-C-1/README.md",
+      "line": 93,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "| `DependencyBoundaryTests`（测试源码） | **C-3 退役前置证据**：`NewManga.ThemeEngine` 程序集不引用 `NewManga.Theme`、仅依赖 `NewManga.DesignSystem`、不暴露 `ThemePack/ThemePackService/LayoutKind/NavPlacement` 等旧符号（design-platform 执行 C-3 时直接引用该测试与日志） |"
+    },
+    {
+      "symbol": "LayoutProfile",
+      "file": "verification/V11R-C-1/dotnet-test-themeengine.log",
+      "line": 50,
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "text": "已通过 NewManga.ThemeEngine.Tests.ThemeContractTests.Record_components_match_the_frozen_contract(recordType: typeof(NewManga.ThemeEngine.LayoutProfile), expected: \"Id,Navigation,Shelf,Density,Workbench,Reader\") [< 1 ms]"
+    }
+  ]
+}

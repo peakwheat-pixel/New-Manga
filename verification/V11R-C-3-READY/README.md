@@ -8,7 +8,7 @@ Owner: `design-platform`。分支 `v11r/c3-ready`，基线 = 当前 `main`
 
 | 项 | 文件 | 说明 |
 |---|---|---|
-| 依赖图（结论/分类/迁移清单/零引用门） | `DEPENDENCY_GRAPH.md` | 634 引用 / 69 文件，按代码角色与处置分类 |
+| 依赖图（结论/分类/迁移清单/零引用门） | `DEPENDENCY_GRAPH.md` | 631 引用 / 68 文件，按代码角色与处置分类 |
 | 依赖图（机器可读） | `dependency-graph.json` | `references[]` 精确到 file/line/symbol/kind/fate/text |
 | 依赖图（全表） | `dependency-graph-table.md` | 脚本生成，勿手改 |
 | 依赖图生成器 | `tools/v11r/build-dependency-graph.ps1` | main 移动后重跑即可刷新 |
@@ -50,10 +50,9 @@ pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -DryRun   # tag 未�
 - 本任务**不改** DS / ThemeEngine 产品代码、不改旧 `NewManga.Theme`、不改 App；仅新增测试、证据与 `tools/v11r/**`。
 - 依赖图按当前 main 快照生成；C-3 执行时必须重跑（R2/R6），不能沿用旧 JSON 判定零引用。
 - 回滚 L1/L2 演练、真实桌面启动 smoke：`NOT_RUN`（C-3 执行时）。
-- 对比度矩阵的 **6 行 / 7 对**未达标明细是**真实计算结果**（JSON 含 `failing_pairs` 与 pair 明细），已附判定与建议；不是伪造通过。
+- 对比度矩阵的 **8 行 / 15 对**未达标明细是**真实计算结果**（JSON 含 `failing_pairs` 与 pair 明细），已附判定与建议；不是伪造通过。
 - 旧测试替代映射中 5 条“需新增”断言（字体二进制审计、窗口 chrome 行为、窗口材质 fallback、首帧非阻塞、
   Theme Studio 设置页）必须在 C-3 R4 前补齐，否则不得删对应旧测试。
-
 
 
 

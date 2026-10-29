@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using NewManga.App.Services;
+using NewManga.App.Shell;
 using NewManga.App.Shell.V2.Studio;
 using NewManga.App.ViewModels.V2.Shell;
 using NewManga.App.ViewModels.V2.Studio;
@@ -109,6 +110,17 @@ public partial class AppShellV2 : UserControl
             Content = shell,
         };
         window[!Window.BackgroundProperty] = new DynamicResourceExtension(NmKeys.Color.Bg.App);
+        // C-3-I1: the v2 shell applies the same window-material policy as the legacy shell (Mica on
+        // Win11, opaque fallback elsewhere) so the R4 material assertion is not legacy-only.
+        var material = WindowMaterial.ForCurrentOs();
+        window.TransparencyLevelHint = material.Hints
+            .Select(hint => hint switch
+            {
+                "Mica" => WindowTransparencyLevel.Mica,
+                "Blur" => WindowTransparencyLevel.Blur,
+                _ => WindowTransparencyLevel.None,
+            })
+            .ToArray();
         return window;
     }
 
