@@ -332,7 +332,7 @@ public sealed class DesignSystemThemeManager : IDisposable
 
         foreach (var key in ThemeLayerRequiredKeys.Where(key => !PaletteColorKeys.Contains(key, StringComparer.Ordinal)))
         {
-            if (!TryResolveApplicationValue(key, out var value))
+            if (!TryResolveApplicationValue(key, out var value, includeOverlays: false))
             {
                 LastError =
                     $"palette '{id}' cannot inherit theme-layer key '{key}': load the design-system tokens first";
@@ -716,12 +716,20 @@ public sealed class DesignSystemThemeManager : IDisposable
     /// first provider that happens to contain the key. Palette-only application must preserve the active
     /// theme layer's typography instead of re-reading the base global dictionary (I2/P2-③).
     /// </summary>
-    private bool TryResolveApplicationValue(string key, out object? value)
+    private bool TryResolveApplicationValue(string key, out object? value, bool includeOverlays = true)
     {
         var providers = _application.Resources.MergedDictionaries;
         for (var index = providers.Count - 1; index >= 0; index--)
         {
             var provider = providers[index];
+            // D-1 I3/P2: palette inheritance must not copy transient overlay values (notably the
+            // reduced-motion Slow=0ms) into the persistent theme layer; overlays stay on top and are
+            // re-applied/removed independently.
+            if (!includeOverlays && IsOverlayProvider(provider))
+            {
+                continue;
+            }
+
             if (provider.TryGetResource(key, ThemeVariant.Default, out value) ||
                 provider.TryGetResource(key, _application.ActualThemeVariant, out value))
             {
@@ -735,6 +743,11 @@ public sealed class DesignSystemThemeManager : IDisposable
         value = null;
         return false;
     }
+
+    private bool IsOverlayProvider(IResourceProvider provider) =>
+        ReferenceEquals(provider, _contrastOverlay) ||
+        ReferenceEquals(provider, _densityOverlay) ||
+        ReferenceEquals(provider, _motionOverlay);
 
     /// <summary>Loads and records <see cref="LastError"/> on failure while keeping the previous state.</summary>
     private bool TryLoadAndRecord(Uri uri, out ResourceDictionary? dictionary)
@@ -975,5 +988,6 @@ public sealed class DesignSystemThemeManager : IDisposable
     private static bool ProviderHasKey(IResourceProvider provider, string key) =>
         provider.TryGetResource(key, ThemeVariant.Default, out _);
 }
+
 
 

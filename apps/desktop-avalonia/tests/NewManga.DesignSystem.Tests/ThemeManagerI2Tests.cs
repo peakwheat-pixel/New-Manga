@@ -135,6 +135,66 @@ public sealed class ThemeManagerI2Tests
     }
 
     [AvaloniaFact]
+    public void ApplyPalette_does_not_copy_transient_reduced_motion_values()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var application = Application.Current!;
+
+        Assert.True(manager.SetReducedMotion(true), manager.LastError);
+        Assert.Equal(TimeSpan.Zero, ThemeTestHarness.ValueOf<TimeSpan>(application, NmKeys.Motion.Duration.Slow));
+
+        var palette = CompletePalette(dictionary =>
+        {
+            dictionary[NmKeys.Color.Bg.Canvas] = new SolidColorBrush(Color.Parse("#101010"));
+        });
+        Assert.True(manager.ApplyPalette(palette, "i3-palette"), manager.LastError);
+        Assert.Equal("i3-palette", manager.AppliedPaletteId);
+
+        // Disabling the overlay must restore the real duration: ApplyPalette must not have persisted
+        // the transient Slow=0 override into the theme layer (D-1 I3/P2).
+        Assert.True(manager.SetReducedMotion(false), manager.LastError);
+        Assert.Equal(TimeSpan.FromMilliseconds(220), ThemeTestHarness.ValueOf<TimeSpan>(application, NmKeys.Motion.Duration.Slow));
+    }
+
+    [AvaloniaFact]
+    public void Every_overlay_provider_sits_after_the_palette_in_the_fixed_order()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var application = Application.Current!;
+        Assert.True(manager.SetContrast(ContrastMode.High), manager.LastError);
+        Assert.True(manager.SetDensity(DensityMode.Compact), manager.LastError);
+        Assert.True(manager.SetReducedMotion(true), manager.LastError);
+
+        var providers = application.Resources.MergedDictionaries.ToList();
+        int IndexOf<T>(string key, T expected, ThemeVariant variant) => providers.FindIndex(provider =>
+            provider.TryGetResource(key, variant, out var value) &&
+            value is T typed && Equals(typed, expected));
+
+        var standardDark = (ResourceDictionary)AvaloniaXamlLoader.Load(
+            new Uri("avares://NewManga.DesignSystem/Themes/Tokens.Dark.axaml"));
+        var highContrast = (ResourceDictionary)AvaloniaXamlLoader.Load(
+            new Uri("avares://NewManga.DesignSystem/Themes/Tokens.HighContrast.axaml"));
+        Assert.True(highContrast.TryGetResource(NmKeys.Color.Bg.Panel, ThemeVariant.Light, out var hcPanel));
+        var darkPanel = Assert.IsType<SolidColorBrush>(standardDark[NmKeys.Color.Bg.Panel]).Color;
+        var contrastPanel = Assert.IsType<SolidColorBrush>(hcPanel).Color;
+        int IndexOfBrush(string key, Color expected, ThemeVariant variant) => providers.FindIndex(provider =>
+            provider.TryGetResource(key, variant, out var value) &&
+            value is ISolidColorBrush brush && brush.Color == expected);
+        var global = IndexOf(NmKeys.Space.S3, 8d, ThemeVariant.Default);
+        var palette = IndexOfBrush(NmKeys.Color.Bg.Panel, darkPanel, ThemeVariant.Default);
+        var contrast = IndexOfBrush(NmKeys.Color.Bg.Panel, contrastPanel, ThemeVariant.Light);
+        var density = IndexOf(NmKeys.Size.ControlHeight, 24d, ThemeVariant.Default);
+        var motion = IndexOf(NmKeys.Motion.Duration.Slow, TimeSpan.Zero, ThemeVariant.Default);
+
+        Assert.True(global >= 0 && palette >= 0 && contrast >= 0 && density >= 0 && motion >= 0,
+            $"expected all providers, got global={global} palette={palette} contrast={contrast} density={density} motion={motion}");
+        Assert.True(global < palette, $"global ({global}) must precede palette ({palette})");
+        Assert.True(palette < contrast, $"palette ({palette}) must precede contrast overlay ({contrast})");
+        Assert.True(contrast < density, $"contrast ({contrast}) must precede density overlay ({density})");
+        Assert.True(density < motion, $"density ({density}) must precede motion overlay ({motion})");
+    }
+
+    [AvaloniaFact]
     public void Failed_appearance_switch_keeps_previous_appearance_and_resources()
     {
         var application = Application.Current!;
@@ -324,4 +384,6 @@ public sealed class ThemeManagerI2Tests
         public Uri ReducedMotion => DesignSystemResourceSource.Default.ReducedMotion;
     }
 }
+
+
 

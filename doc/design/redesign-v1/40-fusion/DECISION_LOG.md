@@ -111,4 +111,24 @@ B（校阅台）不被采纳为方向；其"逐条校对流"的思想以 `Review
 - 证据：`verification/V11R-D-1/REVIEW-R2-DISPOSITION.md`、
   `verification/V11R-D-1/I2/badge-contrast-tests.log`。
 
+---
+
+## 7. D-1 I3 / r3-P1：状态徽标全部允许表面的对比度
+
+- 日期：2026-10-30
+- 裁决来源：Lead `V11R-D-1` 终审 r3 **P1**——`BadgeCompositeContrastTests` 只采样 `Bg.Panel` 父背景；
+  规范/样式未限制状态文字只能落 panel，dark blocked 经 muted 合成到 `Bg.Raised` ≈4.26:1 < 4.5。
+- 裁决：采用 Lead 优先方案 (a)——**提高状态前景令牌**，使"状态色经 `statusMuted` 合成到
+  `bg.panel / bg.raised / bg.overlay` 三类允许表面"后均 ≥4.5:1；`statusMuted.*` 语义不变。
+- 范围：标准盘 dark 7 色 + light 7 色，高对比盘 dark 4 色 + light 1 色（HC 扩展同步重生成）；
+  其余令牌保持原字节。允许表面清单写入 `BadgeCompositeContrastTests.AllowedSurfaces` 并在
+  `verification/V11R-D-1/I3/README.md` 说明。
+- 结果：标准盘与高对比盘的状态前景在 panel/raised/overlay 三类合成背景上全部 ≥4.5:1；
+  `tools/v11r/contrast-matrix.ps1` 重算后标准盘未达标行/对为 **0 / 0**。
+- 验证：`BadgeCompositeContrastTests` 扩到 3 类允许表面 × 9 状态 × dark/light × standard/HC
+  全绿；`R14ContractTests`/`ContrastTokenTests` 保持通过；token 生成器 `--check` 与 ThemeEngine
+  内置主题基线同步再生成。
+- 证据：`verification/V11R-D-1/I3/{README,badge-surface-tests.log,contrast-matrix.log,matrix.json}`。
+
+
 

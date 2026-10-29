@@ -260,12 +260,12 @@ public static class TokenMap
         new("Nm.Color.Accent.Ring", "rgba(255,196,107,0.85)", "rgba(122,78,0,0.70)"),
 
         new("Nm.Color.Status.Queued", "#C6CCD3", "#4E5257"),
-        new("Nm.Color.Status.Running", "#8CC4E8", "#1F4F6E"),
+        new("Nm.Color.Status.Running", "#93C8E9", "#1F4F6E"),
         new("Nm.Color.Status.Done", "#8FD49F", "#1E4A2E"),
-        new("Nm.Color.Status.Failed", "#F08A74", "#7A1F0F"),
+        new("Nm.Color.Status.Failed", "#F4A999", "#7A1F0F"),
         new("Nm.Color.Status.Blocked", "#F0BE6B", "#5E4400"),
-        new("Nm.Color.Status.Stale", "#C6B4E0", "#4A3D63"),
-        new("Nm.Color.Status.Skipped", "#A8AEB5", "#5C6166"),
+        new("Nm.Color.Status.Stale", "#CABAE2", "#4A3D63"),
+        new("Nm.Color.Status.Skipped", "#B4B9BF", "#595E62"),
 
         new("Nm.Color.StatusMuted.Queued", "rgba(198,204,211,0.22)", "rgba(78,82,87,0.16)"),
         new("Nm.Color.StatusMuted.Running", "rgba(140,196,232,0.22)", "rgba(31,79,110,0.16)"),
@@ -349,6 +349,7 @@ public static class TokenMap
         return new string(characters);
     }
 }
+
 
 
 

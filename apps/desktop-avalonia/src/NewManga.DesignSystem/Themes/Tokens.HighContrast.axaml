@@ -23,11 +23,11 @@
       <SolidColorBrush x:Key="Nm.Color.Line.Subtle" Color="#FF3A3F46" />
       <SolidColorBrush x:Key="Nm.Color.Status.Blocked" Color="#FFF0BE6B" />
       <SolidColorBrush x:Key="Nm.Color.Status.Done" Color="#FF8FD49F" />
-      <SolidColorBrush x:Key="Nm.Color.Status.Failed" Color="#FFF08A74" />
+      <SolidColorBrush x:Key="Nm.Color.Status.Failed" Color="#FFF4A999" />
       <SolidColorBrush x:Key="Nm.Color.Status.Queued" Color="#FFC6CCD3" />
-      <SolidColorBrush x:Key="Nm.Color.Status.Running" Color="#FF8CC4E8" />
-      <SolidColorBrush x:Key="Nm.Color.Status.Skipped" Color="#FFA8AEB5" />
-      <SolidColorBrush x:Key="Nm.Color.Status.Stale" Color="#FFC6B4E0" />
+      <SolidColorBrush x:Key="Nm.Color.Status.Running" Color="#FF93C8E9" />
+      <SolidColorBrush x:Key="Nm.Color.Status.Skipped" Color="#FFB4B9BF" />
+      <SolidColorBrush x:Key="Nm.Color.Status.Stale" Color="#FFCABAE2" />
       <SolidColorBrush x:Key="Nm.Color.StatusMuted.Blocked" Color="#38F0BE6B" />
       <SolidColorBrush x:Key="Nm.Color.StatusMuted.Done" Color="#388FD49F" />
       <SolidColorBrush x:Key="Nm.Color.StatusMuted.Failed" Color="#3DF08A74" />
@@ -63,7 +63,7 @@
       <SolidColorBrush x:Key="Nm.Color.Status.Failed" Color="#FF7A1F0F" />
       <SolidColorBrush x:Key="Nm.Color.Status.Queued" Color="#FF4E5257" />
       <SolidColorBrush x:Key="Nm.Color.Status.Running" Color="#FF1F4F6E" />
-      <SolidColorBrush x:Key="Nm.Color.Status.Skipped" Color="#FF5C6166" />
+      <SolidColorBrush x:Key="Nm.Color.Status.Skipped" Color="#FF595E62" />
       <SolidColorBrush x:Key="Nm.Color.Status.Stale" Color="#FF4A3D63" />
       <SolidColorBrush x:Key="Nm.Color.StatusMuted.Blocked" Color="#295E4400" />
       <SolidColorBrush x:Key="Nm.Color.StatusMuted.Done" Color="#291E4A2E" />

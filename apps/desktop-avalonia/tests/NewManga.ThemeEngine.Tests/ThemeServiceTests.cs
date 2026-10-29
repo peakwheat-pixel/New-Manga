@@ -184,7 +184,9 @@ public sealed class ThemeServiceTests : IDisposable
 
         Assert.True(result.Success);
         Assert.False(result.Recovered);
-        Assert.Contains(result.Issues, issue =>
+        // D-1 I3 raised the status hues: the shipped default no longer emits edge-surface contrast
+        // warnings, but the apply path still succeeds and never turns them into errors.
+        Assert.DoesNotContain(result.Issues, issue =>
             issue.Code == ThemeIssueCodes.ContrastStatus && issue.Severity == ThemeValidationIssue.WarningSeverity);
         Assert.DoesNotContain(result.Issues, issue => issue.IsError);
     }
@@ -520,3 +522,4 @@ public sealed class ThemeServiceTests : IDisposable
     private static Avalonia.Media.Color ColorOf(IReadOnlyDictionary<string, object?> layer, string key) =>
         Assert.IsAssignableFrom<ISolidColorBrush>(layer[key]).Color;
 }
+

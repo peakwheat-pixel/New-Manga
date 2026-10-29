@@ -148,7 +148,9 @@ public sealed class FocusRing : AvaloniaObject
 
         // The outline must not leak outside a scrolled viewport (I2/P2-⑤): when the focused control is
         // clipped by an ancestor ScrollViewer (or the window), hide the ring until it is fully visible.
-        var visible = state.KeyboardFocus && control.IsFocused && IsFullyVisible(control);
+        // The 2px stroke sits outside the control bounds, so visibility must include the stroke extent.
+        var stroke = ResolveStroke(control);
+        var visible = state.KeyboardFocus && control.IsFocused && IsFullyVisible(control, stroke);
         state.Ring.IsVisible = visible;
         if (!visible)
         {
@@ -161,7 +163,6 @@ public sealed class FocusRing : AvaloniaObject
             return;
         }
 
-        var stroke = ResolveStroke(control);
         var bounds = control.Bounds;
         state.Ring.Width = bounds.Width + (stroke.Left * 2);
         state.Ring.Height = bounds.Height + (stroke.Top * 2);
@@ -178,10 +179,11 @@ public sealed class FocusRing : AvaloniaObject
     }
 
     /// <summary>
-    /// True while the control is fully visible inside every ancestor ScrollViewer and inside the window.
-    /// A partially clipped control hides its outline instead of painting an outline outside its viewport.
+    /// True while the control <em>and its outside stroke</em> is fully visible inside every ancestor
+    /// ScrollViewer and inside the window. A partially clipped control hides its outline instead of
+    /// painting an outline outside its viewport (D-1 I3/P2).
     /// </summary>
-    private static bool IsFullyVisible(Control control)
+    private static bool IsFullyVisible(Control control, Thickness stroke)
     {
         var window = TopLevel.GetTopLevel(control);
         if (window is null)
@@ -201,10 +203,10 @@ public sealed class FocusRing : AvaloniaObject
 
                 var viewport = scrollViewer.Viewport;
                 const double tolerance = 0.5;
-                if (position.Value.X < -tolerance ||
-                    position.Value.Y < -tolerance ||
-                    position.Value.X + control.Bounds.Width > viewport.Width + tolerance ||
-                    position.Value.Y + control.Bounds.Height > viewport.Height + tolerance)
+                if (position.Value.X - stroke.Left < -tolerance ||
+                    position.Value.Y - stroke.Top < -tolerance ||
+                    position.Value.X + control.Bounds.Width + stroke.Right > viewport.Width + tolerance ||
+                    position.Value.Y + control.Bounds.Height + stroke.Bottom > viewport.Height + tolerance)
                 {
                     return false;
                 }
@@ -217,6 +219,7 @@ public sealed class FocusRing : AvaloniaObject
             return false;
         }
 
+        // The window clips the outline naturally; only the scroll viewport needs stroke-aware suppression.
         return windowPosition.Value.X >= -0.5 &&
                windowPosition.Value.Y >= -0.5 &&
                windowPosition.Value.X + control.Bounds.Width <= window.Bounds.Width + 0.5 &&
@@ -294,5 +297,6 @@ public sealed class FocusRing : AvaloniaObject
         public Border? Ring { get; set; }
     }
 }
+
 
 
