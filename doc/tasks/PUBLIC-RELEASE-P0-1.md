@@ -95,6 +95,8 @@ allowed_paths:
 | ls-remote-raw | AC2 | verification/PUBLIC-RELEASE-P0-1/ls-remote.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | d899782e6c9f70a4ac1a31d6f08a7080e7fdaa78af1b0b6218e4a98265450f71 | CANONICAL |
 | signpath-submission | 后续 | verification/PUBLIC-RELEASE-P0-1/signpath-submission.json | - | e104b523ce5ba7cadd7ff0380bee9aafe7a4560dd346198becc523f51e325191 | CANONICAL |
 | signpath-submitted-screenshot | 后续 | verification/PUBLIC-RELEASE-P0-1/screenshots/signpath-form-submitted.png | - | 7a98dafca1fc432216b5c606d3e4e89cab3bbf29d5d7f399cf43f2ea2665045a | CANONICAL |
+| signpath-ack | 后续 | verification/PUBLIC-RELEASE-P0-1/signpath-application-ack.json | - | 008183616d216adc1c85594bf4e89f81f9aa97b5663ddc6241910dbc48cf0313 | CANONICAL |
+| signpath-ack-email | 后续 | verification/PUBLIC-RELEASE-P0-1/screenshots/signpath-application-received-email.png | - | dcd24d9f3552c64cd2321e64407cd0884ce72e54c422a435d1527a394ad6c804 | CANONICAL |
 | ci-run-success | AC4 | verification/PUBLIC-RELEASE-P0-1/ci-run-success.json | - | 961ce2e18ec74fb884d5a8c463372ec31547459234f6b132688b60b8d016c94a | CANONICAL |
 
 ## Resource Manifest
@@ -119,3 +121,4 @@ allowed_paths:
 - **SignPath Foundation 申请已提交**（用户授权，DSH 通过浏览器代填）：字段与结果见 `signpath-submission.json`；提交成功页截图 `screenshots/signpath-form-submitted.png`（“Form submitted — Thank you, we'll be in touch soon.”）。
 - 申请信息：peakwheat / pixel（peak.wheat@gmail.com，GitHub `peakwheat-pixel`，Individual maintainer(s)）；Project Name = New Manga；Category = AI Tools；Build System = GitHub Actions；Discovery = AI / LLM tools。
 - 下一步：等待 SignPath 审核（可能要求补充材料）；通过后安装 SignPath GitHub App、创建 project / artifact configuration / signing policy、配置 4 个 Actions secrets，`sign=true` 触发签名并验证 Authenticode，再收口 `V1-RELEASE-SIGNING-1`。
+- **2026-10-29 10:54 收到确认邮件**（SignPath Foundation Team `<oss-support@signpath.org>`，主题 “Open Source Project Submitted”）：申请已收到，将在**接下来几个工作日内**回复后续步骤或补充问题；证据 `signpath-application-ack.json` + `screenshots/signpath-application-received-email.png`。状态：**等待审核**（请留意 peak.wheat@gmail.com，含垃圾邮件箱）。

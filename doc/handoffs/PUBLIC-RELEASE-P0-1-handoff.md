@@ -43,4 +43,5 @@
 
 - 资格补齐：README **Code signing policy** 节 + **PRIVACY.md**（public-release `9501e33e8`）；GitHub Release **`v0.1.0`**（unsigned installer + SHA256SUMS，body 声明 SignPath Foundation 签名）。
 - **申请已提交**：<https://signpath.org/apply>（用户授权，DSH 通过浏览器代填）；成功页 “Form submitted — Thank you, we'll be in touch soon.”；证据 `verification/PUBLIC-RELEASE-P0-1/{signpath-submission.json,screenshots/signpath-form-submitted.png}`。
+- **2026-10-29 10:54 收到确认邮件**（oss-support@signpath.org，“Open Source Project Submitted”）：申请已收到，接下来几个工作日内回复后续步骤/补充问题；证据 `signpath-application-ack.json` + `screenshots/signpath-application-received-email.png`。状态：**等待审核**。
 - 等待审核结果（可能要求补充材料）。通过后：安装 SignPath GitHub App → 创建 project/artifact configuration/signing policy → 配置 Actions secrets → `sign=true` 触发签名 → 验证 Authenticode → 收口 V1-RELEASE-SIGNING-1。

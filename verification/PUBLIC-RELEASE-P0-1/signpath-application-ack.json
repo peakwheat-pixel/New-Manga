@@ -1,0 +1,16 @@
+{
+  "task": "PUBLIC-RELEASE-P0-1",
+  "kind": "SignPath Foundation acknowledgement email",
+  "from": "SignPath Foundation Team <oss-support@signpath.org>",
+  "subject": "Open Source Project Submitted",
+  "received_at_local": "2026-10-29T10:54:00+08:00",
+  "received_at_utc": "2026-10-29T03:11:45.0191778Z",
+  "summary": "Thank you for submitting your project to the SignPath Foundation. We've received your application and will review it shortly. Our team will get back to you within the next few business days with next steps or any follow-up questions. If we need additional information, we'll contact you via this email address.",
+  "status": "Application acknowledged; awaiting review (next few business days)",
+  "next_actions": [
+    "Wait for SignPath follow-up (check peak.wheat@gmail.com, including spam)",
+    "If they ask for details, reply with public repo/CI evidence links",
+    "After approval: install SignPath GitHub App, create project/artifact configuration/signing policy, add 4 Actions secrets, run sign=true"
+  ],
+  "evidence": "screenshots/signpath-application-received-email.png"
+}
