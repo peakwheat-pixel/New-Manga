@@ -1,8 +1,14 @@
 # Current Development Status
 
 状态：2026-10-25 起 DSH 接任 Lead / Architect / Integrator；授权与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
-## 当前 Task
-- 当前 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) blocked（历史审计，素材不传播）。最近完成：READER-LIBRARY-WIRE-1 done（阅读器/沉浸，复核收口）。0.1.1 未签名发布。
+## 当前程序（2026-10-30）
+- **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建的唯一 DAG）；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
+- 当前 Task：`V11R-BASELINE-1` done（审计受理、设计基线合并 `c78db96ed`/`c73239999`、DAG 建立）。进行中：`V11R-D-1`（Design System）、`V11R-A-1/A-2/A-3`（服务层与契约）、`V11R-C-RESEARCH-1`（主题框架研究）、`V11R-F0-1`（Region 写面）。
+- 基线：`main@eaacd872d` + 设计合并；`dotnet build NewManga.sln` 0W/0E 实测；**不 push 远端**。
+- 最近完成（上一程序）：READER-LIBRARY-WIRE-1 done（阅读器/沉浸，复核收口）。0.1.1 未签名发布。
+
+## 当前 Task（上一程序，历史）
+- 历史 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) blocked（历史审计，素材不传播）。
 - 最近完成（新增）：[UPGRADE-LEGACY-LAYOUT-1](tasks/UPGRADE-LEGACY-LAYOUT-1.md) `done`（集成 `098c60381`；3 轮独立 Review PASS；单测 12/12、全量 2612P）。
 - 最近完成：[LEGACY-SHELL-ARCHIVE-1](tasks/LEGACY-SHELL-ARCHIVE-1.md) `closed_with_limitations`（集成 `7d4c7764c`；公开 CI `40830315601` 全绿 17/17）；[CUDA-PACKAGE-DECISION-1](tasks/CUDA-PACKAGE-DECISION-1.md) `done`（defer）；[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) `done`（`cd58c50fe`）；[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
