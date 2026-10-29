@@ -188,3 +188,22 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 | 旧主题退役 | `src/**`/`tests/**` 旧符号 0；`NewManga.Theme` 已删除；双壳启动 EXIT 0/0 |
 
 **收盘判定**：本轮目标的可执行范围已全部完成且门禁全绿；仅剩环境受限的实机验证（Windows 真实 DPI/IME/屏幕阅读器/Trim/AOT/GitHub Actions 真跑/受支持的 UI 自动化输入）为 `NOT_RUN`，以及 `FOLLOW-UP-*` 清单中的 V1.x 收尾项，均已在报告与 `doc/V11R_PROGRAM.md §10` 诚实登记。
+---
+
+## 16. 真机实机清单执行结果（2026-10-30 补测）
+
+按 `verification/V11R-L4-EVIDENCE/README.md` 在真实 Windows 交互桌面（10.0.26300 / x64 / 2560×1440 / 100%）执行，完整证据 `verification/V11R-L4-EVIDENCE/real-machine/`（`checklist.md`、`checklist.json`、UIA 树、截图、发布日志）。
+
+| 清单项 | 结论 | 说明 |
+|---|---|---|
+| 启动矩阵 + Host 就绪 | **PASS 7/7** | 复跑真实窗口三尺寸×明暗 + legacy；全部自然退出 exit 0 |
+| 重启持久化 E2E | **PASS** | UIA 真实点击「主题工作室 → 外观 → 浅色 → 应用」→ 关闭 → 重启：`theme-settings.json` `appearance=light` 保持，界面浅色 |
+| 中文 IME | **PASS** | 真实键盘输入经 IME 复合后上屏「你好」写入搜索框 |
+| DPI 感知 | **PASS @100%**；150%/200% **NOT_RUN** | manifest PerMonitorV2、运行时 DPI=96；改系统缩放未擅自执行 |
+| 屏幕阅读器/可访问性 | **PARTIAL（发现 P2）** | UIA 71 元素/52 命名；**7 个按钮 Name 为类型名**（6×`Avalonia.Controls.StackPanel`、1×`Kbd`）→ `FOLLOW-UP-A11Y-1` |
+| 单文件自包含发布 | **PASS** | 93.5 MB 单 exe；窗口+Host 就绪+exit 0 |
+| Trimmed 发布 | **FAIL（默认 IL2026）/ PASS-with-caveat（抑制分析）** | 默认被 `TreatWarningsAsErrors` 升级为 error；抑制后窗口/Host/Theme Studio 可用，trim 安全性未分析 |
+| AOT 发布 | **FAIL（默认参数冲突）/ PASS（`PublishTrimmed=true`+抑制）** | 28.8 MB 原生 exe 可运行，Host 就绪，仅 1 条 IL3050（MicroCom）警告 |
+| GitHub Actions 真实运行 | **NOT_RUN** | 本机无 runner |
+
+**新发现并登记**：`FOLLOW-UP-E2E-1`（主题设置路径不受 `--data-root` 隔离，E2E 写真实 `%APPDATA%`；本次测试产生的文件已备份并删除，用户环境已恢复）、`FOLLOW-UP-A11Y-1`（UIA 命名缺陷）、`FOLLOW-UP-PUB-1`（trim/AOT 发布参数需固化）。
