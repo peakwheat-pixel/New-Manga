@@ -1,0 +1,21 @@
+{
+  "ac": "AC1 \u52A8\u6001\u5217",
+  "screenshot": "batch-matrix-24x10-legend.png",
+  "stage_columns_ten_projection": 10,
+  "stage_columns_five_projection": 5,
+  "rows": 24,
+  "cells": 240,
+  "legend_always_on": true,
+  "column_keys": [
+    "detect",
+    "ocr",
+    "color",
+    "term_extract",
+    "translate",
+    "segment",
+    "mask_refine",
+    "inpaint",
+    "render",
+    "review"
+  ]
+}

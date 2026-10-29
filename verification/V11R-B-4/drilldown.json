@@ -1,0 +1,9 @@
+{
+  "ac": "AC2 \u53CC\u5411\u4E0B\u94BB",
+  "screenshot": "batch-drawer-gate.png",
+  "batch_to_page": "p02 \u00B7 inpaint",
+  "page_to_batch_stage": "render",
+  "filter_kept": "Failed",
+  "scroll_kept": true,
+  "host_accessed": true
+}

@@ -1,0 +1,9 @@
+{
+  "ac": "AC5",
+  "hud_slots": 8,
+  "first_focus_after_tab": 0,
+  "tab_cycles_hud_while_region_selected": true,
+  "tab_switches_mode_without_region": true,
+  "enter_executes_focused_slot": true,
+  "esc_stepwise": true
+}

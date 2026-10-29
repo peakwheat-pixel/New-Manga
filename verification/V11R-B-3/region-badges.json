@@ -1,0 +1,9 @@
+{
+  "ac": "AC1/AC6 control-state fixture",
+  "screenshot": "region-badges.png",
+  "states": "selected \u002B hover \u002B locked \u002B failed",
+  "selected_outline_accent": true,
+  "locked_badge_rendered": true,
+  "failed_badge_rendered": true,
+  "product_path_never_invents_badges": true
+}
