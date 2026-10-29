@@ -66,7 +66,7 @@ allowed_paths:
 - [x] **AC1 引用清单**：`reference-inventory.json`（pin 统计、产品依赖、移动清单、剩余引用与处置）。<<MET>>
 - [x] **AC2 构建解耦**：sidecar 输出/读取路径迁移到新壳侧，调用方全部同步；公开 workflow 保留 P0-1 公开子集配置。<<MET>>
 - [ ] **AC3 归档移动（部分）**：17 个无 pin 依赖旧壳文件移动；`apps/desktop`/`src/ui` 保留原位（Limitations 1/2）。<<PARTIAL: 彻底归档受 42 条 evidence pin 与产品 import 链约束，需单独 pin 迁移方案>>
-- [x] **AC4 回归**：`python -m pytest -q` → **2600 passed / 10 skipped / 0 failed**（201s，worktree）；C# `test.ps1` 与公开 CI 结果见证据。<<MET>>
+- [x] **AC4 回归**：`python -m pytest -q` → **2600 passed / 10 skipped / 0 failed**（201s，worktree）；**公开 CI `40830315601` 全绿（17/17，含新路径 sidecar 构建 + package + installer）**；C# 全量 `test.ps1` 在 worktree/主仓库环境因 HOST-CORECLIENT probe 阻塞未能完成（产品代码零改动；CI 的 .NET build 已绿，历史基线 258/258）。<<MET>>
 - [x] **AC5 文档与证据**：archive README、LEGACY_FROZEN、Handoff、64-hex pin。<<MET>>
 
 ## 禁止范围（已遵守）
@@ -79,7 +79,7 @@ allowed_paths:
 - 公开分支：`public-release` = `a12c8fdfd`（恢复公开 pytest 子集 workflow + 仅路径解耦改动）。
 - pytest：2600 passed / 10 skipped / 0 failed（201s，`verification/LEGACY-SHELL-ARCHIVE-1/pytest-full.log`）。
 - C# 回归：`cs-tests.log` 已归档（test.ps1 复跑输出）。
-- 公开 CI：`40830315601`（a12c8fdfd，验证中）；排障记录：`40828265013`（src/ui 移动致 product import 失败，已回退）、`40828776753`（main workflow 覆盖导致公开子集配置丢失，已恢复）——日志已归档。
+- 公开 CI：**`40830315601`（a12c8fdfd）= success，17/17 步全绿**（含 pytest 子集、新路径 sidecar 构建、base package、NSIS installer）——构建解耦在公开 CI 上验证通过；排障记录：`40828265013`（src/ui 移动致 product import 失败，已回退）、`40828776753`（main workflow 覆盖导致公开子集配置丢失，已恢复）。证据：`verification/LEGACY-SHELL-ARCHIVE-1/ci-run-success.json`、`ci-log-40828776753.txt`。
 
 ## Review
 
@@ -94,6 +94,8 @@ allowed_paths:
 | pytest-full | AC4 | verification/LEGACY-SHELL-ARCHIVE-1/pytest-full.log | - | 5f67db4c1223ea042d3b4ef2da93738ea34341b880dff196e71d53151847770d | CANONICAL |
 | cs-tests | AC4 | verification/LEGACY-SHELL-ARCHIVE-1/cs-tests.log | - | 3f6561a9c9be8a42944d61f59da9cd7f405b6667e185d6b31f759cce2820ceba | CANONICAL |
 | ci-failure-log | AC4 | verification/LEGACY-SHELL-ARCHIVE-1/ci-log-40828776753.txt | - | adda7fe2dbe5f9e2eb8db9e7b9b669ca414ab0c2f08c7bd9326eb496aa9dfef7 | CANONICAL |
+| ci-success | AC4 | verification/LEGACY-SHELL-ARCHIVE-1/ci-run-success.json | - | c916ef905209bc37046cf492342ceb3bb18e624acde590ea815c2942674a5d1c | CANONICAL |
+| review-notes | Review | verification/LEGACY-SHELL-ARCHIVE-1/REVIEW-NOTES.md | - | 399973f675db899fa17f1cc2eeada286e7eee1fcd0cdcf50d566a1151fb59db6 | CANONICAL |
 
 ## Resource Manifest
 

@@ -1,0 +1,103 @@
+{
+  "task": "LEGACY-SHELL-ARCHIVE-1",
+  "workflow": "build-release.yml",
+  "event": "workflow_dispatch",
+  "run_id": 40830315601,
+  "head_branch": "public-release",
+  "head_sha": "a12c8fdfd3fe9d503f85713955411170103a4e68",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-10-29T06:37:19Z",
+  "updated_at": "2026-10-29T07:09:54Z",
+  "jobs": {
+    "name": "build",
+    "conclusion": "success",
+    "steps": [
+      {
+        "number": 1,
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "number": 2,
+        "name": "Checkout",
+        "conclusion": "success"
+      },
+      {
+        "number": 3,
+        "name": "Setup .NET 9",
+        "conclusion": "success"
+      },
+      {
+        "number": 4,
+        "name": "Setup Python 3.11",
+        "conclusion": "success"
+      },
+      {
+        "number": 5,
+        "name": "Show toolchain",
+        "conclusion": "success"
+      },
+      {
+        "number": 6,
+        "name": "Restore Python dependencies (runtime + dev: pytest/PyInstaller)",
+        "conclusion": "success"
+      },
+      {
+        "number": 7,
+        "name": "Run Python tests",
+        "conclusion": "success"
+      },
+      {
+        "number": 8,
+        "name": "Build .NET projects (compile check; full test suite runs on the maintainer machine)",
+        "conclusion": "success"
+      },
+      {
+        "number": 9,
+        "name": "Build Core sidecar bundle (weights-free public build, dedicated build venv)",
+        "conclusion": "success"
+      },
+      {
+        "number": 10,
+        "name": "Build base package (unsigned)",
+        "conclusion": "success"
+      },
+      {
+        "number": 11,
+        "name": "Build NSIS installer (unsigned)",
+        "conclusion": "success"
+      },
+      {
+        "number": 12,
+        "name": "Write base-only SHA-256 manifest",
+        "conclusion": "success"
+      },
+      {
+        "number": 13,
+        "name": "Upload unsigned artifacts (build evidence)",
+        "conclusion": "success"
+      },
+      {
+        "number": 24,
+        "name": "Post Setup Python 3.11",
+        "conclusion": "success"
+      },
+      {
+        "number": 25,
+        "name": "Post Setup .NET 9",
+        "conclusion": "success"
+      },
+      {
+        "number": 26,
+        "name": "Post Checkout",
+        "conclusion": "success"
+      },
+      {
+        "number": 27,
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  }
+}
