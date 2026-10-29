@@ -2,7 +2,7 @@
 id: V1-RELEASE-SIGNING-1
 title: v1 代码签名与发布签核（等待用户证书）
 kind: release
-status: in_review
+status: closed_with_limitations
 approval: user_authorized_release_20261021
 suggested_owner: DeepSeek Harness
 owner: dsh-lead
@@ -70,3 +70,22 @@ created: 2026-10-21
 - 关闭日期 / 决定：2026-10-21；用户明确接受未签名 v1，Task 改为 `in_review`（发布签核待最终发布动作，不标 done 以保持 STATUS 指针合法）。
 - 限制：安装包未签名，Windows SmartScreen 可能显示“未知发布者”；不可宣称已签名发布；证书采购/签名可在后续版本补做。
 - 其余发布验证：全新机器安装/卸载 PASS；签名流水线已用自签名测试证书验证（非真实签名）。
+
+## SignPath Foundation 结果（2026-10-29）
+
+- 申请（2026-10-29 10:54 提交）收到 SignPath 回复（Phillip Deng，15:06）：**未获批准**。
+- 理由：Foundation 项目要求已有的公共信任与可见度（GitHub stars/forks/contributors、外部文章/独立引用/讨论、机构支持、持续活跃证据）；
+  项目当前尚无足够外部信号（明确说明"不是对作品质量/潜力的判断"）。
+- 建议：继续发展、获得更广认知后**可重新申请**；或改用 SignPath **付费订阅**（https://docs.signpath.io/change-subscription）。
+- 结论：免费 OSS 签名路线**关闭（当前不可用）**；0.1.1 保持未签名发布（`NotSigned`，SHA256SUMS 可校验）。
+- 后续可选签名路线（待用户决策）：
+  1. SignPath 付费订阅（按量计费）；
+  2. 自有 OV/EV 代码签名证书（DigiCert/Sectigo 等，约 $100–500/年），用已验证的 signtool 流水线签名；
+  3. 保持未签名（现状，SmartScreen 会提示）。
+
+## Closeout Record
+
+- Closed：2026-10-29 as **closed_with_limitations**（真实签名未执行：用户 2026-10-21 已明确接受未签名 v1；
+  SignPath Foundation 免费路线 2026-10-29 被拒，原因=项目公共可见度不足；AC1–AC3 NOT_APPLICABLE、AC4 MET）。
+- 备选路线见上（付费订阅 / 自有证书 / 保持未签名）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。

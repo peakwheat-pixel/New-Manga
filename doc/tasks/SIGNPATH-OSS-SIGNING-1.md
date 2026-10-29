@@ -122,3 +122,11 @@ allowed_paths:
 - 修复后自验：YAML 解析 PASS；`check.ps1 -TaskPath` PASS（2 warnings）；pin 校验（含新 blob 口径）PASS。
 - 待办：Reviewer 复核 Rev3 → PASS 后 DSH 集成收口。→ 已完成：Reviewer 最终 PASS，集成 `f632ee39c`。
 - Rev3 复核后修复（P1-1）：Rev3 修改了 4 个已 pin 文件（APPLICATION/CHECKLIST/workflow/REPORT），证据表仍指向 Rev2 blob → 已把 `delivery_head` 前移到 `e38f32dbf` 并按 HEAD blob 重打 report/application/checklist/ci-draft 四行 pin（readme/handoff/facts/log 的 blob 未变，仅 commit 列统一到 `e38f32dbf`）；自验 9 个 pin 的 worktree/blob 双 basis 全部一致（bad=0）。
+
+## 申请结果（2026-10-29）
+
+- 申请已提交（2026-10-29 10:54，确认邮件 "Open Source Project Submitted"）。
+- 结果（2026-10-29 15:06，Phillip Deng）：**未获批准**。理由：Foundation 要求既有公共信任/可见度信号
+  （stars/forks/contributors、外部文章/独立引用/讨论、机构支持、持续活跃），项目当前不足；明确"非质量判断"。
+- 建议：积累知名度后重新申请，或改用付费订阅（https://docs.signpath.io/change-subscription）。
+- 本卡材料仍有效（`doc/release/SIGNPATH-APPLICATION*.md`、`build-release.yml` 签名步骤），未来复审/付费可复用。

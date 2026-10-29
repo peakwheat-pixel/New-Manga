@@ -18,7 +18,7 @@
 |RELEASE-REPACK-3|—|done（全流程真跑；Mica=actual；234/234；4290afb1b）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
-|V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
+|V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|closed_with_limitations（用户接受未签名；SignPath Foundation 2026-10-29 拒绝=可见度不足；付费/证书路线待用户决策）|
 
 |AD002-FOLLOWUPS-1|—|closed_with_limitations（20 项遗留：18 项已释放完成；#8 精度需人工 GT、#12 Win10 真机不可得；登记使命完成）|
 |REGION-WORKBENCH-1|S4-CMD-BATCH-1|done（工作台真实 region 读/改标/撤销/重渲染 + 只读门；AC1–AC5 MET；258/258；集成 `60d087627`）|
