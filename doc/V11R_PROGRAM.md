@@ -175,7 +175,7 @@
 | **R-11** | 视觉/交互差异一律以冻结 FUSION_SPEC + DESIGN_SYSTEM 为准；发现缺口先改冻结文件并记 DECISION_LOG，禁止各页自行发挥 | 防止 B/C 分叉 |
 | **R-12** | DS 与 ThemeEngine 职责边界：DS 拥有令牌/样式/控件/资源应用机制；ThemeEngine 拥有主题包语义与数据；依赖方向 `App → ThemeEngine → DesignSystem`；DS 暴露 `ApplyThemeLayer/ApplyPalette/RevertPalette` 供引擎调用 | 防止两套主题真值 |
 | **R-13** | **生产写入策略**：`ReadOnlyUntilParity` 使发布版完全不可写（P0，审计未覆盖）。改为默认 ReadWrite，保留三重护栏（旧 Tauri 壳运行 / `--parity=false` / Host 未就绪）与首次写前 first-run backup；`--parity=false` 为回滚手段。此为 DSH 依授权做出的产品策略修复，须在最终报告显著标注 | 用户核心工作流被真实阻断，且无任何文档告知用户 |
-
+| **R-14** | 冻结基线键名/例外登记：字号键统一 `Nm.FontSize.Xxl`（非 `2Xl`）；行高保留 `Tight/Normal/Loose` 并提供语义别名 `Body/Label/Meta/Data`；高对比/密度令牌为 DS 生成器按设计规则派生的**冻结扩展**；`Transparent` 与图标按钮 `Margin="-2"` 为唯一裸值例外；其余裸值违规 | 独立审查发现契约与实现键名不一致、派生令牌被误判为"第二真值"；集中登记避免反复争议 |
 ## 9. 变更记录
 
 | 日期 | 变更 | 记录 |
