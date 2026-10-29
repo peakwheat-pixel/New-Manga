@@ -74,6 +74,7 @@
 | `V11R-A-1` | **CreateChapter 服务层**：`CreateChapterAsync` + 新建章节对话框契约 + 空库→建书→建章→导入链路测试 | — | `core-bridge` | 独立 Reviewer | L2 | `App/Services/IHostController.cs`、`HostController.cs`、`NullHostController.cs`、`CoreClient/**`、`tests/NewManga.App.Tests/**` |
 | `V11R-A-2` | **Run 控制服务层**：`IRunController`（Start/Control/Resume/Snapshot/TaskProjection/RetryFailed）+ 幂等键 + 状态投影轮询 | — | `core-bridge` | 独立 Reviewer | L2 | 同上 + `App/Services/Run*/**` |
 | `V11R-A-3` | **66 命令契约包**：DTO/错误码/样例/minor 兼容表 + parity 测试补强 | — | `core-bridge` | 独立 Reviewer | L2 | `CoreClient/**`、`doc/contracts/**`、tests |
+| `V11R-A-5` | **P0 生产写入策略**（Lead 新发现）：默认 `ReadOnlyUntilParity` 使发布版 GUI 完全不可写；改为默认 ReadWrite + 三重护栏（旧壳运行 / `--parity=false` / 启动未就绪）+ first-run 备份 | — | `core-bridge` | 独立 Reviewer | L2 + 高风险（数据策略） | `NewManga.Host/**`、`AppOptions.cs`、`doc/plan/V11R_WRITE_POLICY.md` |
 
 ### 3.2 波次 2（DS 骨架合入后释放）
 
@@ -82,6 +83,7 @@
 | `V11R-B-1` | 新外壳：TopBand + 三空间路由 + 上下文保留 + 命令面板 + 键位注册表 + 焦点管理；Library 空间（作品/章节/页/导入 dock/回收站/阅读浮层） | `V11R-D-1`(M0 骨架) | `ui-shell` | 独立 | L3 |
 | `V11R-C-1` | **Theme Engine**：Semantic Tokens / Registry / Package Schema / Resolver / State Manager / Persistence / Preview / Import-Export / Validation / Fallback（10 子系统） | `V11R-D-1` | `design-platform` | 独立 | L2 |
 | `V11R-F0-1` | **Region 写面契约**（高风险）：Core 新增 create/delete/geometry/merge/split/reorder/save_manual_translation/confirm_final/set_lock/pin_revision + Host/IPC + typed error + 乐观锁 | — | Codex（架构/协议） | 独立（DSH 指派第三方） | L2+高风险 |
+| `V11R-F0-2` | **Region 文本只读投影**（GAP-2）：单次命令返回一页 region 四轨文本/锁/review_state/is_pinned/几何，Studio Page 初次载入必需 | `V11R-F0-1` | `core-writer` | 独立 | L2 |
 | `V11R-A-4` | 新快照 CI 与可重建测试（V-01）：GitHub Actions 同 SHA、无本机绝对路径 | — | `core-bridge` | 独立 | L2 |
 
 ### 3.3 波次 3（B-1 与 A-2 可用后）
@@ -171,6 +173,8 @@
 | **R-09** | 修订冻结 `tokens.json` 的对比度不达标值（dark queued/skipped/failed、light skipped/accent 族），以 DESIGN_SYSTEM §2.3 ≥4.5:1 为准；修订记入 `40-fusion/DECISION_LOG.md` | 规范条款优先于数据值；无障碍不可协商 |
 | **R-10** | Motion 时长以 `tokens.json` 的 140ms 为准，契约 §2.2 的 150ms 为示例笔误 | 单一来源 |
 | **R-11** | 视觉/交互差异一律以冻结 FUSION_SPEC + DESIGN_SYSTEM 为准；发现缺口先改冻结文件并记 DECISION_LOG，禁止各页自行发挥 | 防止 B/C 分叉 |
+| **R-12** | DS 与 ThemeEngine 职责边界：DS 拥有令牌/样式/控件/资源应用机制；ThemeEngine 拥有主题包语义与数据；依赖方向 `App → ThemeEngine → DesignSystem`；DS 暴露 `ApplyThemeLayer/ApplyPalette/RevertPalette` 供引擎调用 | 防止两套主题真值 |
+| **R-13** | **生产写入策略**：`ReadOnlyUntilParity` 使发布版完全不可写（P0，审计未覆盖）。改为默认 ReadWrite，保留三重护栏（旧 Tauri 壳运行 / `--parity=false` / Host 未就绪）与首次写前 first-run backup；`--parity=false` 为回滚手段。此为 DSH 依授权做出的产品策略修复，须在最终报告显著标注 | 用户核心工作流被真实阻断，且无任何文档告知用户 |
 
 ## 9. 变更记录
 
