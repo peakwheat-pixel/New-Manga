@@ -15,7 +15,6 @@
 |PDF-EXPORT-1|—|done（验收纠偏：Qt-free composer 早已实现；PDF 8.69MB+文本层证据；集成 10273c9ce）|
 |PDF-EXPORT-UI-1|—|done（导出面板 ZIP/PDF 格式选择；集成 `6deefdcc3`；249/249；2026-10-28 DSH 复核）|
 |FLAKY-PYTEST-1|—|done（0F/2773P/10S × 5 一致；修 workbench 真 bug；集成 ba4080752）|
-|RELEASE-SMOKE-1|—|superseded（REPACK-3/4/5 真机全流程验收 + IMPORT-TRIAGE-1 已覆盖其目标；原证据保留）|
 |RELEASE-REPACK-3|—|done（全流程真跑；Mica=actual；234/234；4290afb1b）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
@@ -34,11 +33,12 @@
 |UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|done（合成 v1–v5 迁移：11 用例、v5 四重建表逐列断言；2623P；3 轮 Review PASS；`61601dc8c`）|
 |UPGRADE-SCHEMA-MIGRATION-P2-1|UPGRADE-SCHEMA-MIGRATION-1|done（4×P2：全列/NULL 断言、额外行、14 表结构、冻结 v1 列；复核 PASS；`d03f6e115`）|
 |REAL-USER-UPGRADE-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1、NSIS-INSTALLER-1|done（真实数据副本 + 官方 0.1.0 升级：A 字节一致；B 旧布局备份迁移书架 1 本；**官方包 sidecar 无迁移修复 → 需重建发布包**）|
+|RELEASE-REPACK-6|REAL-USER-UPGRADE-1、UPGRADE-LEGACY-LAYOUT-1、NSIS-INSTALLER-1、AGPL-RELEASE-1|ready（重建 0.1.1：含迁移修复 sidecar + App + NSIS；重新验收 + 替换发布构件）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1、THEME-MACOS-LAYOUTS-1|—|superseded（均并入 THEME-MACOS-2：`ec7316738`/`0e1f71151`；原证据保留）|
 
-READY 节点：无
+READY 节点：RELEASE-REPACK-6
 
 ## 历史快照（终态节点，非当前 DAG）
 
