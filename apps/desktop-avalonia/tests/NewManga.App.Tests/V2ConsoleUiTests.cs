@@ -365,7 +365,7 @@ public sealed class V2ConsoleUiTests
         controller.ScriptedProviderSaveResults.Enqueue(new SettingsProfileResult(
             SettingsProfileStatus.Failed,
             "INVALID_REQUEST",
-            @"C:\Users\someone\secret-config.json sk-live-should-not-leak"));
+            @"C:\Users\someone\secret-config.json sk-live-should-not-leak")); // ci-allow-fixture-path: negative-test payload, asserts the notice redacts paths/secrets; not a real machine path
         console.NewProviderCommand.Execute(null);
         console.FormProviderId = "x";
         console.FormDisplayName = "X";
