@@ -102,8 +102,17 @@ public sealed record RegionTextDetail(
 
     private static RegionGeometryProjection? ParseGeometry(JsonElement element)
     {
-        if (!element.TryGetProperty("geometry", out var geometry) ||
-            geometry.ValueKind == JsonValueKind.Null)
+        // I2/P2-C: property PRESENCE is required (the contract says every field
+        // exists; only ``geometry``'s VALUE may be null when the page extent is
+        // unavailable). Treating a missing property as "null" silently turned a
+        // broken payload into "no geometry".
+        if (!element.TryGetProperty("geometry", out var geometry))
+        {
+            throw new FormatException(
+                "missing geometry field (must be an object or null)");
+        }
+
+        if (geometry.ValueKind == JsonValueKind.Null)
         {
             return null;
         }
@@ -226,8 +235,16 @@ public sealed record RegionPageTextProjection(
 
         int? width = null;
         int? height = null;
-        if (element.TryGetProperty("page_size", out var pageSize) &&
-            pageSize.ValueKind != JsonValueKind.Null)
+        // I2/P2-C: ``page_size`` must EXIST (value null is the real
+        // "extent unavailable" case); a missing property is a malformed
+        // result, not "no size".
+        if (!element.TryGetProperty("page_size", out var pageSize))
+        {
+            throw new FormatException(
+                "missing page_size field (must be an object or null)");
+        }
+
+        if (pageSize.ValueKind != JsonValueKind.Null)
         {
             if (pageSize.ValueKind != JsonValueKind.Object)
             {

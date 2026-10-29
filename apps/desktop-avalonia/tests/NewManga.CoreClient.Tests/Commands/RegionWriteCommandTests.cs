@@ -479,6 +479,39 @@ public sealed class RegionWriteCommandTests
     }
 
     [Fact]
+    public void RegionTextProjection_RejectsMissingRequiredFields()
+    {
+        // I2/P2-C (F0-2 repair): a MISSING required property is malformed even
+        // when its value would be allowed to be null. The pre-fix parser
+        // silently mapped a missing "geometry" to null and a missing
+        // "page_size" to "no page size".
+        var missingGeometry = Args("""
+        {"page_id":"p","page_size":null,"regions":[
+          {"region_id":"r1","page_id":"p","region_type":"speech","sfx_policy":"skip",
+           "reading_order":0,"text":{"ocr_text":"","machine_translation":"",
+           "edited_translation":"","final_translation":"","final_source":"none",
+           "edited_confirmed":false,"manual_edited":false,"translation_locked":false},
+           "locks":{"region_locked":false,"translation_locked":false,
+           "inpaint_locked":false},
+           "review_state":"unreviewed","origin":"user","revision_no":1,
+           "current_revision_id":"rev-1","is_pinned":false,
+           "pinned_revision_nos":[],"created_at":"t","updated_at":"t"}
+        ]}
+        """);
+        Assert.Throws<FormatException>(() => RegionPageTextProjection.Parse(missingGeometry));
+
+        var missingPageSize = Args("""
+        {"page_id":"p","regions":[]}
+        """);
+        Assert.Throws<FormatException>(() => RegionPageTextProjection.Parse(missingPageSize));
+
+        // An explicitly null value stays legal (real "extent unavailable").
+        var explicitNulls = Args(
+            "{\"page_id\":\"p\",\"page_size\":null,\"regions\":[]}");
+        Assert.Empty(RegionPageTextProjection.Parse(explicitNulls).Regions);
+    }
+
+    [Fact]
     public void Evidence_RegionWriteRegistration_IsWritten()
     {
         SidecarFixture.WriteEvidenceJson("commands/v11r-region-write-registration.json", writer =>
