@@ -3,7 +3,7 @@ id: READER-LIBRARY-WIRE-1
 title: 阅读器接真实书库 + 沉浸窗口入口（Esc/H/F 可达）
 kind: implementation
 governance_version: 3
-status: proposed
+status: done
 approval: user_authorized_2026-10-27_manual_verify_followups
 suggested_owner: antigravity
 owner: null
@@ -82,12 +82,14 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+- Closed：2026-10-29 as **done**（DSH 收口复核：AC1–AC5 全 MET，集成 `bcde098e5`，2026-10-27 集成 Review PASS，
+  10 条 evidence pin；卡此前误留 `proposed` 状态，本次更正）。
+- 交付：阅读器接真实书库（ListChapters/GetReaderProjection/ResolvePageResource + 资源通道 + TileChannel 摘要校验）；
+  沉浸窗口入口（工具栏 + 双击 → ReaderWindow；Esc 退出 / H 隐藏 HUD / F 切换 fit / 方向键翻页）；
+  真机验证 8 页 webtoon、工作集峰值 395.1MB ≤1.5GB。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`（task-env 保留）。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
 - 合并：cde098e5；DSH 复跑 scripts/test.ps1 → **110/110 passed / 0 skipped**。
