@@ -3,7 +3,7 @@ id: UPGRADE-SCHEMA-MIGRATION-P2-1
 title: 合成旧 schema 迁移测试的 4×P2 补齐（NULL 列、额外行、结构全量、冻结 v1 列）
 kind: chore
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-29_p2_closeout
 suggested_owner: dsh
 owner: dsh-lead
@@ -75,4 +75,6 @@ allowed_paths:
 
 ## Closeout Record
 
-- 待独立复核通过后填写（target: done）。
+- Closed：2026-10-29 as **done**（独立复核 PASS：P0=0、P1=0；3 项可选 P2 不阻塞）。
+- 交付：4×P2 补齐（全列 EXPECTED 含 NULL/默认值、seed 表额外行检测、14 表结构检查、FROZEN_V1_COLUMNS）；集成 main `d03f6e115`。
+- 已修复 `UPGRADE-SCHEMA-MIGRATION-1` round 3 复审记录的 4 个非阻塞 P2。

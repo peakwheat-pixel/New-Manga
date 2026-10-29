@@ -7,24 +7,24 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 437 |
-| terminal | 426 |
-| non-terminal | 11 |
-| non-terminal named in the plan | 5 |
+| terminal | 427 |
+| non-terminal | 10 |
+| non-terminal named in the plan | 4 |
 | non-terminal outside the plan | 6 |
 | task files tracked by git | 437 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 11 |
+| non-terminal tracked by git | 10 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 352 | yes |
+| `done` | 353 | yes |
 | `closed_with_limitations` | 37 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `in_review` | 5 | no |
+| `in_review` | 4 | no |
 | `proposed` | 3 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
@@ -39,7 +39,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `S4-CMD-BATCH-1` | `in_review` | own row |
-| `UPGRADE-SCHEMA-MIGRATION-P2-1` | `in_review` | own row |
 | `V1-RELEASE-SIGNING-1` | `in_review` | own row |
 | `AD002-FOLLOWUPS-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
