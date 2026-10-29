@@ -1,0 +1,2158 @@
+{
+  "schema": "newmanga.v11r.contrast-matrix/1",
+  "task": "V11R-C-3-READY",
+  "baseCommit": "7f6787b91f15e9ae7485cff8103206b0f2a4704d",
+  "generatedAt": "2026-10-30T02:18:24+08:00",
+  "method": "WCAG 2.1 relative luminance; (L1+0.05)/(L2+0.05)",
+  "failures": 8,
+  "themes": [
+    {
+      "id": "dark",
+      "name": "Dark（冻结标准盘）",
+      "rows": [
+        {
+          "label": "正文 `text.primary` = #E9EAEC",
+          "kind": "text",
+          "floor": 7.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 15.81,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 16.26,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 14.19,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 12.77,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 11.34,
+              "floor": 7.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "次要 `text.secondary` = #A3A8AF",
+          "kind": "text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 7.96,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.18,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 7.14,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.43,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.7,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "三级(信息性) `text.tertiary` = #71767D",
+          "kind": "text",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 4.16,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 4.28,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 3.73,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 3.36,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 2.98,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.queued` = #8A9099",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.92,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 6.08,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.31,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.78,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.24,
+              "floor": 4.5,
+              "pass": false
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.running` = #5B93B8",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.72,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.88,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.13,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.62,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.1,
+              "floor": 4.5,
+              "pass": false
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.done` = #6FA97D",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 6.93,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 7.13,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 6.22,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.6,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.97,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.failed` = #CC6A57",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.23,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.37,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 4.69,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.22,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 3.75,
+              "floor": 4.5,
+              "pass": false
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.blocked` = #C8903F",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 6.81,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 7.0,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 6.11,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.5,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.88,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.stale` = #9A8AB0",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 6.02,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 6.18,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.4,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.86,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.31,
+              "floor": 4.5,
+              "pass": false
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.skipped` = #82878E",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.26,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.41,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 4.72,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.25,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 3.77,
+              "floor": 4.5,
+              "pass": false
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.base`（非文本 UI）= #D9A04B",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 8.23,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.46,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 7.38,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.65,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.9,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.hover`（非文本 UI）= #E8B264",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 9.96,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 10.23,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 8.93,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.04,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.14,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.active`（非文本 UI）= #C08A34",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 6.28,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 6.45,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.63,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.07,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.5,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "焦点外发光 `accent.ring`（装饰，无下限）= rgba(217,160,75,0.45)",
+          "kind": "focus",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 2.55,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 2.54,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 2.53,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 2.45,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 2.34,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "accent.on on accent.base",
+          "kind": "accent-text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "accent.base",
+              "ratio": 7.68,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "light",
+      "name": "Light（冻结标准盘）",
+      "rows": [
+        {
+          "label": "正文 `text.primary` = #1C1E21",
+          "kind": "text",
+          "floor": 7.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 15.06,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 13.9,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 16.71,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 14.79,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 16.71,
+              "floor": 7.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "次要 `text.secondary` = #55595F",
+          "kind": "text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 6.35,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.86,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 7.05,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.24,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.05,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "三级(信息性) `text.tertiary` = #83888F",
+          "kind": "text",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 3.22,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 2.97,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 3.57,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 3.16,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 3.57,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.queued` = #6E7378",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 4.31,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 3.98,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 4.79,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.24,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.79,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.running` = #3D6E8E",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 4.96,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 4.57,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.5,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.87,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.5,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.done` = #3F6B4F",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.52,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.1,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 6.13,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.42,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 6.13,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.failed` = #A8462F",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.28,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 4.88,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.86,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.19,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.86,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.blocked` = #8A6A1F",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 4.55,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 4.2,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.05,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.47,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.05,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.stale` = #6B5E82",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.33,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 4.92,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.92,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.24,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.92,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.skipped` = #73777B",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 4.07,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 3.75,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 4.51,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.0,
+              "floor": 4.5,
+              "pass": false
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 4.51,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.base`（非文本 UI）= #96651A",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 4.53,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 4.19,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 5.03,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 4.46,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.03,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.hover`（非文本 UI）= #7F5515",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.89,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.44,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 6.54,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.79,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 6.54,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.active`（非文本 UI）= #6B470F",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 7.47,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 6.89,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 8.29,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 7.34,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 8.29,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "焦点外发光 `accent.ring`（装饰，无下限）= rgba(150,101,26,0.40)",
+          "kind": "focus",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 1.7,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 1.66,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 1.75,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 1.69,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 1.75,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "accent.on on accent.base",
+          "kind": "accent-text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "accent.base",
+              "ratio": 5.03,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "highcontrast-dark",
+      "name": "High Contrast / Dark",
+      "rows": [
+        {
+          "label": "正文 `text.primary` = #FFFFFFFF",
+          "kind": "text",
+          "floor": 7.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 19.04,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 19.57,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 17.08,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 15.37,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 13.65,
+              "floor": 7.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "次要 `text.secondary` = #FFDDE0E4",
+          "kind": "text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 14.37,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 14.78,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 12.89,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 11.61,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 10.3,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "三级(信息性) `text.tertiary` = #FFC3C8CE",
+          "kind": "text",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 11.31,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 11.62,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 10.14,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 9.13,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 8.11,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.queued` = #FFC6CCD3",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 11.77,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 12.09,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 10.55,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 9.5,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 8.43,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.running` = #FF8CC4E8",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 10.13,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 10.41,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 9.09,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.18,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.26,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.done` = #FF8FD49F",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 10.96,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 11.26,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 9.83,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.85,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.85,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.failed` = #FFF08A74",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 7.79,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.01,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 6.99,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.29,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 5.58,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.blocked` = #FFF0BE6B",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 11.13,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 11.45,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 9.99,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.99,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.98,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.stale` = #FFC6B4E0",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 9.98,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 10.26,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 8.95,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.06,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.15,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.skipped` = #FFA8AEB5",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 8.51,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.75,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 7.63,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.87,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 6.1,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.base`（非文本 UI）= #FFFFC46B",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 12.11,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 12.45,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 10.86,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 9.78,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 8.68,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.hover`（非文本 UI）= #FFFFD08A",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 13.27,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 13.64,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 11.91,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 10.72,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 9.51,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.active`（非文本 UI）= #FFE8A84E",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 9.19,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 9.45,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 8.25,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 7.42,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 6.59,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "焦点外发光 `accent.ring`（装饰，无下限）= #D9FFC46B",
+          "kind": "focus",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 8.95,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 9.14,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 8.18,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 7.47,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 6.73,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "accent.on on accent.base",
+          "kind": "accent-text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "accent.base",
+              "ratio": 11.3,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "highcontrast-light",
+      "name": "High Contrast / Light",
+      "rows": [
+        {
+          "label": "正文 `text.primary` = #FF000000",
+          "kind": "text",
+          "floor": 7.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 18.93,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 17.47,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 21.0,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 18.59,
+              "floor": 7.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 21.0,
+              "floor": 7.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "次要 `text.secondary` = #FF202326",
+          "kind": "text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 14.23,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 13.13,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 15.79,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 13.98,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 15.79,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "三级(信息性) `text.tertiary` = #FF3C4045",
+          "kind": "text",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 9.41,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.68,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 10.44,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 9.24,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 10.44,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.queued` = #FF4E5257",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 7.09,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 6.55,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 7.87,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.97,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.87,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.running` = #FF1F4F6E",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 7.88,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 7.27,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 8.74,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 7.74,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 8.74,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.done` = #FF1E4A2E",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 9.12,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.42,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 10.12,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.96,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 10.12,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.failed` = #FF7A1F0F",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 9.32,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.6,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 10.34,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 9.16,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 10.34,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.blocked` = #FF5E4400",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 8.22,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 7.59,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 9.12,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.07,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 9.12,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.stale` = #FF4A3D63",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 8.85,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.17,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 9.82,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.69,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 9.82,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "状态 `status.skipped` = #FF5C6166",
+          "kind": "status",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 5.64,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.2,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 6.26,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 5.54,
+              "floor": 4.5,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 6.26,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.base`（非文本 UI）= #FF7A4E00",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 6.49,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 5.99,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 7.2,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 6.37,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 7.2,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.hover`（非文本 UI）= #FF5F3C00",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 8.87,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 8.19,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 9.85,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 8.72,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 9.85,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "强调 `accent.active`（非文本 UI）= #FF4A2F00",
+          "kind": "emphasis",
+          "floor": 3.0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 11.15,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 10.29,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 12.37,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 10.95,
+              "floor": 3.0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 12.37,
+              "floor": 3.0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "焦点外发光 `accent.ring`（装饰，无下限）= #B37A4E00",
+          "kind": "focus",
+          "floor": 0,
+          "pairs": [
+            {
+              "background": "bg.canvas",
+              "ratio": 3.38,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.sunken",
+              "ratio": 3.23,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.panel",
+              "ratio": 3.58,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.raised",
+              "ratio": 3.35,
+              "floor": 0,
+              "pass": true
+            },
+            {
+              "background": "bg.overlay",
+              "ratio": 3.58,
+              "floor": 0,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "label": "accent.on on accent.base",
+          "kind": "accent-text",
+          "floor": 4.5,
+          "pairs": [
+            {
+              "background": "accent.base",
+              "ratio": 7.2,
+              "floor": 4.5,
+              "pass": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
