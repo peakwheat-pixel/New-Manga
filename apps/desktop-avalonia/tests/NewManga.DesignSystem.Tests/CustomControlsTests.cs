@@ -240,6 +240,96 @@ public sealed class CustomControlsTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public void Skeleton_renders_the_three_canonical_shapes_from_tokens()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+
+        var bookCard = new Skeleton { Variant = SkeletonVariant.BookCard, Width = 120 };
+        var row = new Skeleton { Variant = SkeletonVariant.Row, Width = 320 };
+        var panel = new Skeleton { Variant = SkeletonVariant.Panel, Width = 240 };
+        var window = new Window
+        {
+            Width = 520,
+            Height = 420,
+            Content = new StackPanel { Spacing = 12, Children = { bookCard, row, panel } },
+        };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(180d, bookCard.Height);
+        Assert.Equal(28d, row.Height);
+        Assert.Equal(96d, panel.Height);
+        Assert.Equal(ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Raised), ((ISolidColorBrush)bookCard.Background!).Color);
+        Assert.Equal(new CornerRadius(2), bookCard.CornerRadius);
+        Assert.Contains("book-card", bookCard.Classes);
+        Assert.Contains("row", row.Classes);
+        Assert.Contains("panel", panel.Classes);
+
+        // Skeleton blocks are static: no pulse/shimmer animation is attached.
+        Assert.Null(bookCard.Transitions);
+
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Icon_set_covers_the_primary_spaces_and_state_actions()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+
+        var required = new[]
+        {
+            // four primary spaces
+            NmIconKind.Library, NmIconKind.Studio, NmIconKind.Reader, NmIconKind.Settings,
+            // transport / run state actions
+            NmIconKind.Play, NmIconKind.Pause, NmIconKind.Stop, NmIconKind.Retry,
+            // data and navigation actions
+            NmIconKind.Export, NmIconKind.Import, NmIconKind.Search, NmIconKind.Command,
+            NmIconKind.Theme, NmIconKind.Lock, NmIconKind.History, NmIconKind.Refresh,
+            NmIconKind.Close, NmIconKind.Delete, NmIconKind.Edit, NmIconKind.Folder,
+            NmIconKind.File, NmIconKind.Chapter, NmIconKind.Page, NmIconKind.Eye,
+            NmIconKind.Split, NmIconKind.ZoomIn, NmIconKind.ZoomOut, NmIconKind.FitWindow,
+        };
+
+        var missing = required.Where(kind => !Enum.IsDefined(kind)).ToArray();
+        Assert.Empty(missing);
+
+        var window = new Window
+        {
+            Width = 880,
+            Height = 220,
+            Content = new WrapPanel(),
+        };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        var wrap = (WrapPanel)window.Content!;
+        foreach (var kind in required)
+        {
+            var icon = new NmIcon { Kind = kind };
+            wrap.Children.Add(icon);
+            Assert.NotNull(icon.Data);
+            Assert.True(icon.Data!.Bounds.Width > 0 && icon.Data.Bounds.Height > 0, $"{kind} has empty geometry");
+            Assert.Equal(20d, icon.Width);
+            Assert.Equal(1.25d, icon.StrokeThickness);
+        }
+
+        Assert.True(Enum.GetValues<NmIconKind>().Length >= 40, "the icon vocabulary should cover every primary action");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Breakpoint_tokens_are_the_single_shared_layout_scale()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+
+        Assert.Equal(1600d, ThemeTestHarness.ValueOf<double>(app, NmKeys.Size.Breakpoint.Full));
+        Assert.Equal(1280d, ThemeTestHarness.ValueOf<double>(app, NmKeys.Size.Breakpoint.Compact));
+        Assert.Equal(1024d, ThemeTestHarness.ValueOf<double>(app, NmKeys.Size.Breakpoint.Narrow));
+    }
+
     private static PointerPressedEventArgs CreatePointerPressed(Control target) =>
         new(
             target,
@@ -250,3 +340,4 @@ public sealed class CustomControlsTests
             new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
             KeyModifiers.None);
 }
+

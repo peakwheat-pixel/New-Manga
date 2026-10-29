@@ -212,7 +212,18 @@ public static class TokenMap
             "DESIGN_SYSTEM §3: 11px font x 1.25 (R-14 alias multiplier)"),
         new("Nm.TextLineBox.Data", TokenValueKind.Double, "15",
             "DESIGN_SYSTEM §3: 12px mono font x 1.25 (R-14 alias multiplier)"),
-        new("Nm.Size.Marker", TokenValueKind.Double, "16",
+        // R-18: shared breakpoint semantics; both UI owners must use these instead of local 1400/1200 numbers.
+        new("Nm.Size.Breakpoint.Full", TokenValueKind.Double, "1600",
+            "R-18: full layout breakpoint (>=1600 uses the four-column workspace)"),
+        new("Nm.Size.Breakpoint.Compact", TokenValueKind.Double, "1280",
+            "R-18: compact layout breakpoint (>=1280 keeps the inspector docked)"),
+        new("Nm.Size.Breakpoint.Narrow", TokenValueKind.Double, "1024",
+            "R-18: narrow layout breakpoint (<1280 collapses the inspector to a drawer)"),
+        // DESIGN_SYSTEM §7: skeleton placeholder sizes for the three loading shapes.
+        new("Nm.Size.SkeletonBookCard", TokenValueKind.Double, "180",
+            "DESIGN_SYSTEM §7: skeleton height of a book card"),
+        new("Nm.Size.SkeletonPanel", TokenValueKind.Double, "96",
+            "DESIGN_SYSTEM §7: skeleton height of a panel/table block"),        new("Nm.Size.Marker", TokenValueKind.Double, "16",
             "DESIGN_SYSTEM §6.1 Checkbox/Radio: 16px marker box (hit area stays Nm.Size.ControlHeight)"),
         new("Nm.Size.MarkerCore", TokenValueKind.Double, "8",
             "DESIGN_SYSTEM §6.1 Radio: 8px selected core inside the marker box"),
@@ -338,5 +349,6 @@ public static class TokenMap
         return new string(characters);
     }
 }
+
 
 

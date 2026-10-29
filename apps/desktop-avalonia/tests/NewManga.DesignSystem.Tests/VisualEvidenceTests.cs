@@ -244,6 +244,18 @@ public sealed class VisualEvidenceTests
         icons.Children.Add(new NmIcon { Kind = NmIconKind.Settings, Classes = { "active" } });
         icons.Children.Add(new NmIcon { Kind = NmIconKind.Grid, Classes = { "sm" } });
 
+        var skeletons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 12,
+            Children =
+            {
+                new Skeleton { Variant = SkeletonVariant.BookCard, Width = 120 },
+                new Skeleton { Variant = SkeletonVariant.Row, Width = 140 },
+                new Skeleton { Variant = SkeletonVariant.Panel, Width = 160 },
+            },
+        };
+
         var topBand = new TopBand
         {
             LeftContent = new TextBlock { Text = "Library   Studio   Console", Classes = { "label" } },
@@ -253,7 +265,7 @@ public sealed class VisualEvidenceTests
 
         var content = new Grid
         {
-            RowDefinitions = new RowDefinitions("Auto,Auto,Auto,Auto,Auto,Auto,Auto,*,Auto"),
+            RowDefinitions = new RowDefinitions("Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*,Auto"),
             Children =
             {
                 topBand,
@@ -264,7 +276,8 @@ public sealed class VisualEvidenceTests
                 Widget(last, 5),
                 Widget(counts, 6),
                 Widget(alerts, 7),
-                Widget(icons, 8),
+                Widget(skeletons, 8),
+                Widget(icons, 9),
             },
         };
 
@@ -375,4 +388,5 @@ public sealed class VisualEvidenceTests
             : configured;
     }
 }
+
 

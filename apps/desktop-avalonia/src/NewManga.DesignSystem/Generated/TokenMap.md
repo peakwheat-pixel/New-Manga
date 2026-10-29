@@ -4,7 +4,7 @@
 
 Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.
 
-Rows: 272.
+Rows: 277.
 
 | Scope | DTCG token | Resource key | Kind | Raw value |
 |---|---|---|---|---|
@@ -166,6 +166,11 @@ Rows: 272.
 | global-derived | `(derived)` | `Nm.TextLineBox.Label` | Double | `15` |
 | global-derived | `(derived)` | `Nm.TextLineBox.Meta` | Double | `13.75` |
 | global-derived | `(derived)` | `Nm.TextLineBox.Data` | Double | `15` |
+| global-derived | `(derived)` | `Nm.Size.Breakpoint.Full` | Double | `1600` |
+| global-derived | `(derived)` | `Nm.Size.Breakpoint.Compact` | Double | `1280` |
+| global-derived | `(derived)` | `Nm.Size.Breakpoint.Narrow` | Double | `1024` |
+| global-derived | `(derived)` | `Nm.Size.SkeletonBookCard` | Double | `180` |
+| global-derived | `(derived)` | `Nm.Size.SkeletonPanel` | Double | `96` |
 | global-derived | `(derived)` | `Nm.Size.Marker` | Double | `16` |
 | global-derived | `(derived)` | `Nm.Size.MarkerCore` | Double | `8` |
 | global-derived | `(derived)` | `Nm.Size.ScrollBar` | Double | `8` |

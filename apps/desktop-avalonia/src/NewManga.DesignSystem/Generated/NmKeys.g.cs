@@ -100,6 +100,9 @@ public static class NmKeys
         "Nm.Padding.Section",
         "Nm.Padding.Snug",
         "Nm.Padding.Tight",
+        "Nm.Size.Breakpoint.Compact",
+        "Nm.Size.Breakpoint.Full",
+        "Nm.Size.Breakpoint.Narrow",
         "Nm.Size.ControlHeight",
         "Nm.Size.ControlHeightSm",
         "Nm.Size.Drawer",
@@ -116,6 +119,8 @@ public static class NmKeys
         "Nm.Size.RowPage",
         "Nm.Size.RowPageTall",
         "Nm.Size.ScrollBar",
+        "Nm.Size.SkeletonBookCard",
+        "Nm.Size.SkeletonPanel",
         "Nm.Size.StatusBandBatch",
         "Nm.Size.StatusBandExpanded",
         "Nm.Size.StatusBandPage",
@@ -409,6 +414,16 @@ public static class NmKeys
 
     public static class Size
     {
+
+        public static class Breakpoint
+        {
+            /// <summary>Nm.Size.Breakpoint.Compact</summary>
+            public const string Compact = "Nm.Size.Breakpoint.Compact";
+            /// <summary>Nm.Size.Breakpoint.Full</summary>
+            public const string Full = "Nm.Size.Breakpoint.Full";
+            /// <summary>Nm.Size.Breakpoint.Narrow</summary>
+            public const string Narrow = "Nm.Size.Breakpoint.Narrow";
+        }
         /// <summary>Nm.Size.ControlHeight</summary>
         public const string ControlHeight = "Nm.Size.ControlHeight";
         /// <summary>Nm.Size.ControlHeightSm</summary>
@@ -441,6 +456,10 @@ public static class NmKeys
         public const string RowPageTall = "Nm.Size.RowPageTall";
         /// <summary>Nm.Size.ScrollBar</summary>
         public const string ScrollBar = "Nm.Size.ScrollBar";
+        /// <summary>Nm.Size.SkeletonBookCard</summary>
+        public const string SkeletonBookCard = "Nm.Size.SkeletonBookCard";
+        /// <summary>Nm.Size.SkeletonPanel</summary>
+        public const string SkeletonPanel = "Nm.Size.SkeletonPanel";
         /// <summary>Nm.Size.StatusBandBatch</summary>
         public const string StatusBandBatch = "Nm.Size.StatusBandBatch";
         /// <summary>Nm.Size.StatusBandExpanded</summary>

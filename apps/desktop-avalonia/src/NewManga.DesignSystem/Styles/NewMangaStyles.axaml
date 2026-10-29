@@ -10,6 +10,7 @@
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Selection.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Navigation.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Feedback.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Skeleton.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Scrolling.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Status.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Custom.axaml" />
@@ -25,3 +26,4 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Canvas}" />
   </Style>
 </Styles>
+
