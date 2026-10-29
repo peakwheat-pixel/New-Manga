@@ -1411,6 +1411,10 @@ class RegionEditingService:
             RegionCommitStatus.LOCK_CHANGED,
         ):
             raise RegionRevisionChanged()
+        if result.status is RegionCommitStatus.TARGET_NOT_FOUND:
+            # I4/P2: same typed not-found contract as the other single-revision
+            # writes (wire TARGET_NOT_FOUND, zero write) instead of UNKNOWN.
+            raise RegionNotFound(result.detail or region_id)
         if result.status is not RegionCommitStatus.APPLIED:
             raise RuntimeError(f"region revision commit failed: {result.detail}")
         _sync_region_state(region, staged)
