@@ -36,7 +36,7 @@ public sealed class V2ConformanceTests
     private static readonly Regex CSharpRawOpacity = new(@"\bOpacity\s*=\s*0?\.\d", RegexOptions.Compiled);
     private static readonly Regex CSharpBrushLiteral = new(@"\bBrushes\.|new\s+SolidColorBrush\(|Color\.FromRgb|Color\.Parse\(", RegexOptions.Compiled);
     private static readonly Regex CSharpLayoutLiteral = new(
-        @"\b(Width|Height|MinWidth|MinHeight|MaxWidth|MaxHeight|FontSize)\s*=>\s*\d",
+        @"\b(Width|Height|MinWidth|MinHeight|MaxWidth|MaxHeight|FontSize)\s*(?:=>|=)\s*\d",
         RegexOptions.Compiled);
     private static readonly Regex CSharpOldBreakpoint = new(@"(>=|<)\s*(1400|1200)\b", RegexOptions.Compiled);
 
@@ -336,5 +336,20 @@ public sealed class V2ConformanceTests
         Assert.DoesNotContain("BindingStatus", text, StringComparison.Ordinal);
         Assert.DoesNotContain("Status=\"Queued\"", text, StringComparison.Ordinal);
         Assert.Contains("WiringText", text, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Reviewer follow-up: the C# layout-literal ban must cover both expression-bodied members
+    /// (<c>Width => 12</c>) and field/property constants (<c>Width = 12</c>); a token-based
+    /// assignment such as <c>Width = Nm.Size.X</c> must stay allowed.
+    /// </summary>
+    [Fact]
+    public void CSharpLayoutLiteral_MatchesExpressionBodiedAndFieldConstants_NotTokenAssignments()
+    {
+        Assert.Matches(CSharpLayoutLiteral, "public double Width => 12;");
+        Assert.Matches(CSharpLayoutLiteral, "private const double MinWidth = 240;");
+        Assert.Matches(CSharpLayoutLiteral, "public double FontSize = 14;");
+        Assert.DoesNotMatch(CSharpLayoutLiteral, "Width = Nm.Size.Panel.Wide;");
+        Assert.DoesNotMatch(CSharpLayoutLiteral, "Width = width;");
     }
 }

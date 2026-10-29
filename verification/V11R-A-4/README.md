@@ -118,3 +118,71 @@ CI 对应关系：`path-audit` = 步骤 2；`python-tests` = 步骤 4；`dotnet-
 4. 历史证据树保留本机路径属**冻结证据**（字节不可变），白名单非"忽略"：`verify-clean-clone` 报告逐条
    记录分类与理由，供审计复核。
 5. `test.ps1` 等证据脚本的语义未削弱：仅路径来源参数化；缺失输入仍 fail-fast（可读原因），不静默跳过。
+
+## 8. C-3 删除旧 Theme 后最终树复检（2026-10-30，Lead 指派的有界修复）
+
+C-3 合入后最终树 `tracked=17605`，首次复检 `hard_failures=1`，命中
+`apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs:368`：
+
+```csharp
+@"C:\Users\someone\secret-config.json sk-live-should-not-leak"));
+```
+
+这是**故意的负向安全测试夹具**（断言错误提示不泄漏路径/密钥），不是本机真实路径，不应算 hard failure。
+
+### 8.1 修法：显式标记式豁免（方案 A），不放宽整体扫描
+
+- 仅 **`tests/**`（含 `apps/desktop-avalonia/tests/**`）** 文件内的行尾标记
+  `// ci-allow-fixture-path: <reason>` 生效；`reason` 必填，空理由不生效；
+- 标记在**非 tests 文件**中不生效：该行仍 hard fail，并在报告
+  `ignored_fixture_markers_outside_tests` 中可见；
+- 未带标记的同类路径（即使位于 tests/**）**仍然 hard fail**（自测覆盖）；
+- 豁免结果单独列在报告 `allowed_fixture_paths`（file/line/reason/text），可审计；
+- 既有分类（历史证据/负向测试数据/env 驱动夹具）与白名单不变，未整体放宽。
+
+本次标记加在 `V2ConsoleUiTests.cs:368` 行尾（理由：负向安全夹具、非真实路径）。
+
+### 8.2 分类自测（`-SelfTest`，防"整体放宽"回归）
+
+`pwsh -NoProfile -File tools/ci/verify-clean-clone.ps1 -SelfTest` → **6/6 PASS**：
+
+| # | 用例 | 期望 | 结果 |
+|---|---|---|---:|
+| 1 | tests/** 内带标记 → 允许 | ALLOW_FIXTURE_PATH | PASS |
+| 2 | tests/** 内**不带标记**的同类路径 → 仍 hard fail | FAIL | PASS |
+| 3 | 非 tests 文件带标记 → 不生效（仍 fail） | FAIL | PASS |
+| 4 | 标记无理由（`ci-allow-fixture-path:` 后为空）→ 不生效 | FAIL | PASS |
+| 5 | env 驱动夹具默认值（无标记）→ 仍允许 | ALLOW | PASS |
+| 6 | 历史证据前缀（verification/）→ 仍允许 | ALLOW | PASS |
+
+正常扫描时该自测也会执行；任一条失败会写入 `hard_failures`（报告 `classification_self_test` 字段）。
+
+### 8.3 复检结果（最终树）
+
+```powershell
+pwsh -NoProfile -File tools/ci/verify-clean-clone.ps1 -ReportPath verification/V11R-A-4/recheck-final.json
+```
+
+| 指标 | 结果 |
+|---|---|
+| checked_files | 17605 |
+| hard_failures | **0** |
+| allowed_fixture_paths | 1（V2ConsoleUiTests.cs:368，带理由） |
+| ignored_fixture_markers_outside_tests | 0 |
+| classification_self_test | 6/6 PASS |
+| model weights | SKIPPED（未传 `-RequireModels`） |
+| long paths | enabled |
+
+- 报告：`verification/V11R-A-4/recheck-final.json`（含 `allowed_fixture_paths`、
+  `ignored_fixture_markers_outside_tests`、`classification_self_test`）。
+- 结论：C-3 删除旧 Theme 后的最终树 **clean-clone 路径审计通过（hard_failures=0）**；
+  唯一豁免是显式标记的负向安全测试夹具，可见、可审计、不放宽其他文件。
+
+### 8.4 顺带修复（Reviewer 建议，非阻塞）
+
+`V2ConformanceTests.CSharpLayoutLiteral` 原来只匹配表达式体 `=> 数字`，不覆盖字段/属性常量
+`= 数字`；已扩展为 `\s*(?:=>|=)\s*\d`，并新增
+`CSharpLayoutLiteral_MatchesExpressionBodiedAndFieldConstants_NotTokenAssignments` 断言
+（`Width => 12`、`MinWidth = 240`、`FontSize = 14` 命中；`Width = Nm.Size...`、`Width = width` 不命中）。
+`V2ConformanceTests` 8/8 PASS、`V2ConsoleUiTests` 13/13 PASS（`dotnet build -warnaserror` 0W/0E）。
+
